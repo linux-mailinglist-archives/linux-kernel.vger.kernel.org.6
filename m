@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-280224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B3794C763
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:33:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC00194C766
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57EF51C22887
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:33:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6921A1F21948
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB0B15EFCD;
-	Thu,  8 Aug 2024 23:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A1015EFCD;
+	Thu,  8 Aug 2024 23:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZC2cC4bb"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHhQlPJ7"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9E4146D55
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 23:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704AC55769
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 23:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723160009; cv=none; b=UfZQNfwL4DPnDyYvCoMz9r4lx7gn/EgzpyB1l38U0KobCUBpte3LyIJ+hKLjuXIIbLYJiBiRfipMGRQlsEbmLobhzcQh/Fv/LZALIt7laqoAvREbyCxqK3V1SzDh8uhSA9xkImf7J2d9dIG+sm6ZDEmuTklCFOQAplehuP0fNl8=
+	t=1723160220; cv=none; b=Fsbsdfw9b7P3P8u9klG/6StcnT9nS1X7GBO1axiMWZw70n6Lp5hrR8xxiaoVSG+/ppXNtsl/EdunrBoeqkXPgOP4yEtIjyjrh2r1gV9dSLItrmiTkANIk8Az9wEURABu2YzbJO0Ax34BO4ujfw896FlQ3ltSkcPMTNB6RF+8C98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723160009; c=relaxed/simple;
-	bh=524bUS/jikPk0prhYgnLoimooCyCKUal6MFrC3vnAWw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mjqJ7P3kccn+2JzUuQLyEvhytA4Lubp5r/BP/Pnyq4zS+lkGhimRbY/aDO/LvsEPnmAu+LRkRjLvQyNRZg7UR2H9igtpqgcrGEr7xPUUvD66xizgfjmeTpo63EztNB6o9VMJCFT0h0Nujfj/Zp/d12yij3A4Ag7JO/zH1vvSCT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZC2cC4bb; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efe4c7c16so2063088e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:33:27 -0700 (PDT)
+	s=arc-20240116; t=1723160220; c=relaxed/simple;
+	bh=IFGCuVSOsdaGpfzk2MUva+8/dMtshSbq/rwFgRY8iQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1WsdS3c+TWXCLruYNz+W2YBRruDqHuE98P5b3ICNE3SOS6oIO4PL9Ik42bAEz1X+NERLkKgKvUZUV//Pv4cVducngcCoghzcFUT4/vOIiEC3sv2tPZXVwm34/KONUB9+ar2uPE7IlCj9TMabMcEiM8I9JuC4T5fts6yMhh/Tj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fHhQlPJ7; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc47abc040so12375095ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:36:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1723160006; x=1723764806; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rqlZbaQMZu+3GtlIS+SGt/2J89sdAOurpYSJPp/fzz4=;
-        b=ZC2cC4bbNr9T6tDiPiGPyCTs4nkUnDyTCwyVRaEPPTbTgE7NPrZpaHRGh6aYt9dXCG
-         4ZpTr+QryMp2OVvTVxL012oJ+NiSBqeaDu4/w4TxN1wUrxuYdOQ6sq63ZyBXWDh+ZuIJ
-         049IDno2gSi3EeVFFJYFss8Fp0lcWou4J7tfE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723160006; x=1723764806;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1723160219; x=1723765019; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rqlZbaQMZu+3GtlIS+SGt/2J89sdAOurpYSJPp/fzz4=;
-        b=A6L04eunyqxitVAo1fpHccaS40b9mc7ROYJqcrt9E+vaVnQ6aKQl+I+O4nFncUq67t
-         P9hrw/gaHUpCC/DdYO7Nm+C6LjiaJA5lSgom7FLxNnb/EJRZNSntb1rsKy6z6v4lKmSm
-         kjj2rRY10THBQzfR1ZLj/5Jf1qqLHeIeCL2vV+bSiypbj+0KYu0TeOKp/QaiNSx48ABm
-         DGYfkEeuJNp/VH6D7DRRhawlmSvwk3bA+6co2gs1UEPtuEw5heWh/rfNT1ShqcZBQ+pf
-         NNXwZ9iYdvkO4R2OQCrciWuC/MCp3vRr4GCt1rvEjwlkUHt5vcktnwKR0M8gxzBmbqM6
-         946Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWXaT2Bva89gtqdbnXB14ecLFOMGFMps9k1omklm78l0Odc8v9/c3xbLoFja+9vW1NYVzyCy+f27PX0nDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvgRfBLw4LADBKGBs3xluwJqVgRpCVw5oXBVoUE4ECweaBtta3
-	jykkhFcSWqPgYywRWpgeVLsHiwQ3R8DPD+nAQ42ofGBzFFD3kSt4iZgYRj+CzGFn4UZl/OLKc3f
-	hR3G7rg==
-X-Google-Smtp-Source: AGHT+IGIJIpBW71GcpF18Iq3MoQTRou05t4s7aEF6KIpaBUq0Gb9Aq5gLDUc5soqL9Llna+Lr4d5dQ==
-X-Received: by 2002:a05:6512:b03:b0:530:db85:e02a with SMTP id 2adb3069b0e04-530e5875653mr2541197e87.22.1723160005642;
-        Thu, 08 Aug 2024 16:33:25 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf869dsm1057743a12.1.2024.08.08.16.33.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 16:33:24 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so178821766b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:33:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVOUin+HxTdH3q4vnNOjOgCmHuGgkoprJy54fj+qYehRC/BxLiT27EdJD0sL1y8fzmR904QbsZJ4axm/RY=@vger.kernel.org
-X-Received: by 2002:a17:906:bc02:b0:a77:db36:1ccf with SMTP id
- a640c23a62f3a-a8090e40894mr247283366b.42.1723160003998; Thu, 08 Aug 2024
- 16:33:23 -0700 (PDT)
+        bh=mITn/MSXAVgt+5vmRw9rpVIRN+t7nOiV+AkQJ7hoJqo=;
+        b=fHhQlPJ7N8eZApfzZAQz/JkzWqz2VkiA3bagiiVB8yBxxzzAhOfiNLOQ2rGCi2pJah
+         bq6YDpoJcWJXNCp545Qddqq6/dxhDfTENnsHcdqSZR/wjd7sImhfsaCA4zfDxvZxsbTO
+         RHSwRgGxZn7Wfs6eCk4olK6Q1GC+dAZrdKJf8YPPAtyS4k0jgfqHIo+nAsZtAKqZ3ogt
+         jPsMNn5kKpkqCvvG/ZweDaMNqCV5Tj45W6VMpn0xBCK+a9hVIrv8QARAdJeMU8LeT/Uh
+         2f0Y50Y55jBhDDn9AW2uP3IaDgBaUZslnkcsrN5CCQR0QOlA6mQIOH7m0No/H5UyBgqk
+         4idw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723160219; x=1723765019;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mITn/MSXAVgt+5vmRw9rpVIRN+t7nOiV+AkQJ7hoJqo=;
+        b=Bo5xUy9UVtxB9GQsPC9BP3h24wWv7DRQs58P/6LB/XwpdBScnZsE/gSINWkG294LqH
+         vPNVJVSxEyeBit0olobjqX4oDQT3aZVtuN2/0aadnMWmr22fCvOnSXsgmgQNqgN1jYUT
+         0sUssbUoYoj6Yr5Ag/Dn36Ykpfh5983Q0xckXbqdfcfUSH8yq/WtTnM0zD1h6Od8mXmU
+         zNjFT8HyMvDhnLhrUO1zqBqigX1TuN+bqWEJLN8MkpIx590QJpsNRWrbuzuljpqChWbp
+         3erCUNCTsuPJx1nT7flR0vM9BpxTrh0BFUW6hERu7G9n7BZDeV15U8F99nQrIJVjy9Ki
+         4kFQ==
+X-Gm-Message-State: AOJu0YxOsj4plDJxmTzLZ0/z1wv+zziHNeQt26jCLzx8guHs3PIsr0Yf
+	RaCPJVyk1tz/CYn0NS86ZO7+Jb4QIPa1p2luAXdG3rxk/iLbDqqy
+X-Google-Smtp-Source: AGHT+IGded0otR8FSuFL4IVWvRf7TfIZCGnzDGI86l/Bi3TGEofpMdbHenlzF+APj5QsoSYfUSXS7Q==
+X-Received: by 2002:a17:902:ecc9:b0:1fb:9280:c96e with SMTP id d9443c01a7336-200953c3611mr39050135ad.62.1723160218513;
+        Thu, 08 Aug 2024 16:36:58 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29e0dsm130271005ad.38.2024.08.08.16.36.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 16:36:57 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 8 Aug 2024 13:36:56 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Fix unsafe list iteration
+ in process_ddsp_deferred_locals()
+Message-ID: <ZrVWmEY9dB9u6Twv@slm.duckdns.org>
+References: <ZrPWYqSbif3eTME4@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731095022.970699670@linuxfoundation.org> <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
- <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
- <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
- <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net> <87plqjz6aa.ffs@tglx>
- <CAHk-=wi_YCS9y=0VJ+Rs9dcY-hbt_qFdiV_6AJnnHN4QaXsbLg@mail.gmail.com>
- <87a5hnyox6.ffs@tglx> <CAHk-=wh4rxXPpYatnuXpu98KswLzg+u7Z9vYWJCLNHC_yXZtWw@mail.gmail.com>
- <8734nezz0g.ffs@tglx> <CAHk-=wiZUidi6Gm_6XFArT621H7vAzhDA63zn2pSGJHdnjRCMA@mail.gmail.com>
- <eba27c56-dc36-4410-bb6b-cbe8769b8a6d@roeck-us.net> <ac7284f9-ba29-4068-ab00-82ddc839afaf@bell.net>
- <37f94771-4ebc-46d2-ad10-f145d139dd9d@bell.net>
-In-Reply-To: <37f94771-4ebc-46d2-ad10-f145d139dd9d@bell.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 8 Aug 2024 16:33:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiwG4-5UZY9-ZvnhXuGXMsu+u8k5b2BBL-jRcyagW5oxg@mail.gmail.com>
-Message-ID: <CAHk-=wiwG4-5UZY9-ZvnhXuGXMsu+u8k5b2BBL-jRcyagW5oxg@mail.gmail.com>
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-To: John David Anglin <dave.anglin@bell.net>
-Cc: Guenter Roeck <linux@roeck-us.net>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
-	Linux-MM <linux-mm@kvack.org>, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, 
-	Richard Henderson <richard.henderson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrPWYqSbif3eTME4@slm.duckdns.org>
 
-On Thu, 8 Aug 2024 at 15:30, John David Anglin <dave.anglin@bell.net> wrote:
->
-> > I believe the shladd instruction should be changed to shladd,l (shift left and add logical).
->
-> diff --git a/arch/parisc/kernel/entry.S b/arch/parisc/kernel/entry.S
-> index ab23e61a6f01..1ec60406f841 100644
-> --- a/arch/parisc/kernel/entry.S
-> +++ b/arch/parisc/kernel/entry.S
-> @@ -399,7 +399,7 @@
-> -    shladd        \index,BITS_PER_PTE_ENTRY,\pmd,\pmd /* pmd is now pte */
-> +    shladd,l    \index,BITS_PER_PTE_ENTRY,\pmd,\pmd /* pmd is now pte */
+On Wed, Aug 07, 2024 at 10:17:38AM -1000, Tejun Heo wrote:
+> process_ddsp_deferred_locals() executes deferred direct dispatches to the
+> local DSQs of remote CPUs. It iterates the tasks on
+> rq->scx.ddsp_deferred_locals list, removing and calling
+> dispatch_to_local_dsq() on each. However, the list is protected by the rq
+> lock that can be dropped by dispatch_to_local_dsq() temporarily, so the list
+> can be modified during the iteration, which can lead to oopses and other
+> failures.
+> 
+> Fix it by popping from the head of the list instead of iterating the list.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Fixes: 5b26f7b920f7 ("sched_ext: Allow SCX_DSQ_LOCAL_ON for direct dispatches")
 
-This doesn't seem wrong, but doesn't RFIR already restore the status word?
+Applied to sched_ext/for-6.12.
 
-So even if the itlb fill modifies C/B, I don't see why that should
-actually matter.
+Thanks.
 
-But again, parisc is very much not one of the architectures I've ever
-worked with, so..
-
-          Linus
+-- 
+tejun
 
