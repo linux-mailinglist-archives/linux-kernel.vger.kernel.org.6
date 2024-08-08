@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-279804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F8E94C20B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:54:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC12994C210
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEEDD280C62
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:54:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8209728ACD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C0B19004F;
-	Thu,  8 Aug 2024 15:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BCF18FDB8;
+	Thu,  8 Aug 2024 15:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpD3PSsF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjMwUih1"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571CF18FDD0;
-	Thu,  8 Aug 2024 15:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464E7183CCB;
+	Thu,  8 Aug 2024 15:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723132447; cv=none; b=agcBU5NWyyBB28tihdaeFjDLaVdgrLSIX5eSJCkRzU7PO71CQPwHAZyb9y1DYA36caXcnxYqe2f8c5wB0eel40bBuGW6pB7wmkaMOqzPdotF6+lpxWL1+UkYJcWvxRfo1N6O0bbiV1LYTJx5+Y0Q6t6o+1Lh3kKjyDIv8TLOYMA=
+	t=1723132488; cv=none; b=HFxxgsD9BH6+eqzb7/eHZ/G4/xs3fwICEaYAaQQyXdyc/KSDA44dkvLZFSvgVLQR3SCL3StUamoyOiZT8aI+pmDHvu40mkKkVN3U3qA2ennvh5D4A+9oOIqzIvaSxQmsWjiXcLrI/ieE8VjRtFMbBLeeTzwj8i14O0aoWg8geLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723132447; c=relaxed/simple;
-	bh=7QVMA4gZW04TulQ8RvcdZrL4LP1a4XGmaliSJwlefcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEgad0zwENg5gkDtCrkyavsrRxd6LHa0W/6uuMn4/7cXdLRQHQJuCxtG1C1m5VJeNLJgRaqEh9Oi/IWxjEUWzVExy1Nmboe3IYekSxrYx101HHOQd+ELY8AtDapNuK/5tVIQEyzQr14F376cMkE6spYnjxSxErth1ogvfpYi/SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpD3PSsF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 140DEC32782;
-	Thu,  8 Aug 2024 15:54:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723132446;
-	bh=7QVMA4gZW04TulQ8RvcdZrL4LP1a4XGmaliSJwlefcI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kpD3PSsFNm5q0PF96AAwKQJZPp0qrXD9DM462UnRSTU8QpLLnGmDZsj2iSkHv+Ftt
-	 E7agi8T85hlQPAQTSfw9IWPMiwq5Wt80v6Usbkj1ASkTfHdN32UtyQJvEbzI31BLda
-	 FMvjOczqVCgm+x6IpDsNj1ODlKZcv6Hzr8Z+pd3xsYHdaz3oWUMjFpCTn8UBiT2B8l
-	 xP/mr7svITTyNgdwkAdCK6IhIyNmaqxnPMIDJo5lyQxTZ9PQNMAP9cHKcLZR8GNVKP
-	 SgkIEWey47+rOR8O6iy8yF/hCdLSTspVoG8etZ6zqDHd+ygE2l+FbozpuTg/BWNFWD
-	 V+Z0sGZuWN13g==
-Date: Thu, 8 Aug 2024 17:53:59 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"ytcoode@gmail.com" <ytcoode@gmail.com>,
-	"Huang, Kai" <kai.huang@intel.com>,
-	"Yao, Yuan" <yuan.yao@intel.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"John.Starks@microsoft.com" <John.Starks@microsoft.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"Cui, Dexuan" <decui@microsoft.com>,
-	"oleg@redhat.com" <oleg@redhat.com>,
-	"bhe@redhat.com" <bhe@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"geert@linux-m68k.org" <geert@linux-m68k.org>,
-	"cho@microsoft.com" <cho@microsoft.com>
-Subject: Re: [PATCH v2 2/5] x86/tdx: Add validation of userspace MMIO
- instructions
-Message-ID: <ZrTqF2CvkpcIkpPc@example.org>
-References: <cover.1722356794.git.legion@kernel.org>
- <cover.1722862355.git.legion@kernel.org>
- <6f989aea155817ef2f8a5fd2240ccff3f74d4edd.1722862355.git.legion@kernel.org>
- <83c9b05e7d359c0486a061f3bd31920ddb5c33a0.camel@intel.com>
+	s=arc-20240116; t=1723132488; c=relaxed/simple;
+	bh=g2iwU3kTZWYexXO7EP+tPVGA5m/ulc15bcFrrIeT+2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VpTqYfnSvHbdwmZHnmUdCTebzbl1EfZ3ilyevWEBBzRwW3syAPinAgxB7d0O/osGkxU5SwKY63BAQC68rJcXbLRChbMV9uWM+pguUOwe/kr/sd0L5vFYc+Oe0ptErwborXi5arjeHCH5DPoR5IzECh6dgwF+290uq/k8JoeTjOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjMwUih1; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a20de39cfbso1225995a12.1;
+        Thu, 08 Aug 2024 08:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723132486; x=1723737286; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mQ0G3gIYv0zW5ywze1/rQd1nVJRudLESup0uQOy1PM4=;
+        b=fjMwUih19cRjvvz8bxpNcj7YnLhI+SsztZKSqb7aQY9c0n6k4DJL2Tv9cJSH5b8aij
+         Hhg0r3i66TFB1gaVUxRZVCOS0L2dwsq2qBUVv9kCeGCIGUxJOZ+H83i/erMisn0frMsU
+         IBf6vcmpI9w7ujeZh48cEOC6BXjM4RASlPDIwKsseOIxYjWl2G0YeQ5Lw9cifJ56kZxl
+         HPdpCDVLEQo1b1C+Lb+zHh9PcZqqv0YRazEd/qXgNTSh8Bxic7tLex168RCDN7+iCXj1
+         IVsTq9wmXzCz16oWie4zrRpwd4oNG1N2xRoZUiH0FxDRQXEkV8me0O1zbEXIPkh1DbEc
+         ghHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723132486; x=1723737286;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mQ0G3gIYv0zW5ywze1/rQd1nVJRudLESup0uQOy1PM4=;
+        b=NuHxC9Ak4SEhTVV8SoZdnc643gJMLyjLsJLhToPjYdUdNISppbpovmsCVE7zSuKSaj
+         pNQaFe+vmFf5Vzj+BxMmx0SGGAF/io1wjLgjSjgjyhnbvvVEWQXKRZ3qIFstyb3TrRfz
+         Vm1G3EYBZj/jUm4fC5dJK5XHsUdRsfhDAorFkN8GTcVDeBaQ+6YohBhVUqhekNwyGnZv
+         y+B++ThiMZ/ZadksZHSDEAI4kmqcUr9H9xCprbSXLtELsAS/ts+Rtx00QfBltYevLaCn
+         yN9ntNTirjs+oFTb3xZkx+UWZH0kfZKNee0JtI0p/GIKFvDLUWy3jZ25XkipzBBBBfiq
+         ohzA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+5bwrpadKC2eyV1Fb28IGQCKMXVeMBPnpj9C6NwODLRCuGY21C6iRwHL7TMWsr9a7Gx+jb2dVcCGfi3ckiuRUnQ3PHx9tD2/fnDNqObXGB4tRjjMD31cDy57/bJdUjQGdkqUax34VSeVaVg==
+X-Gm-Message-State: AOJu0Ywr93n20H8bCZzvRaNkevSKxIqgB4uV6QTR6D/A4RAqYVQ2Ecge
+	r4IBeGmF8mb7uB8qDUIS4vVIeBJ4pzCTqIdeEmIrzBkPd8V1mxlQ
+X-Google-Smtp-Source: AGHT+IFiFsQmRCqKqrSpUCyJTAg+hoj7Nf9Zlunp7PnwX/h7AT7D2qpyBrWyLBDzqhhS0nNVq+/JTg==
+X-Received: by 2002:a05:6402:50d2:b0:5a2:694e:5faa with SMTP id 4fb4d7f45d1cf-5bbb21f42ddmr1885843a12.8.1723132485167;
+        Thu, 08 Aug 2024 08:54:45 -0700 (PDT)
+Received: from f.. (cst-prg-72-52.cust.vodafone.cz. [46.135.72.52])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2d34a7fsm744335a12.74.2024.08.08.08.54.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 08:54:44 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] vfs: only read fops once in fops_get/put
+Date: Thu,  8 Aug 2024 17:54:28 +0200
+Message-ID: <20240808155429.1080545-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <83c9b05e7d359c0486a061f3bd31920ddb5c33a0.camel@intel.com>
 
-On Mon, Aug 05, 2024 at 10:40:55PM +0000, Edgecombe, Rick P wrote:
-> On Mon, 2024-08-05 at 15:29 +0200, Alexey Gladkov (Intel) wrote:
-> > +       vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
-> > +
-> > +       if (user_mode(regs)) {
-> > +               if (mmap_read_lock_killable(current->mm))
-> > +                       return -EINTR;
-> > +
-> > +               ret = valid_vaddr(ve, mmio, size, vaddr);
-> > +               if (ret)
-> > +                       goto unlock;
-> > +       }
-> > +
-> 
-> In the case of user MMIO, if the user instruction + MAX_INSN_SIZE straddles a
-> page, then the "fetch" in the kernel could trigger a #VE. In this case the  
-> kernel would handle this second #VE as a !user_mode() MMIO I guess.
-> 
-> Would something prevent the same munmap() checks needing to happen for that
-> second kernel #VE? If not, I wonder if the munmap() protection logic should also
-> trigger for any userspace range ve->gpa as well.
+The compiler emits 2 access in fops_get(), put is patched to maintain some
+consistency.
 
-I've added two more patches that should fix the problem. We can try to
-avoid crossing the page boundary by first reading the data to the end of
-the page and trying to parse it and only if that fails read MAX_INSN_SIZE.
+This makes do_dentry_open() go down from 1177 to 1154 bytes.
 
-I fixed this locally for tdx because it is required to read and parse the
-buffer at the same time.
+This popped up due to false-sharing where loads from inode->i_fop end up
+bouncing a cacheline on parallel open. While this is going to be fixed,
+the spurious load does not need to be there.
 
-It's generally worth fixing elsewhere as well. But this I propose to do by
-a separate patchset.
+No functional changes.
 
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ include/linux/fs.h | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ef5ada9d5e33..87d191798454 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2565,10 +2565,17 @@ struct super_block *sget(struct file_system_type *type,
+ struct super_block *sget_dev(struct fs_context *fc, dev_t dev);
+ 
+ /* Alas, no aliases. Too much hassle with bringing module.h everywhere */
+-#define fops_get(fops) \
+-	(((fops) && try_module_get((fops)->owner) ? (fops) : NULL))
+-#define fops_put(fops) \
+-	do { if (fops) module_put((fops)->owner); } while(0)
++#define fops_get(fops) ({						\
++	const struct file_operations *_fops = (fops);			\
++	(((_fops) && try_module_get((_fops)->owner) ? (_fops) : NULL));	\
++})
++
++#define fops_put(fops) ({						\
++	const struct file_operations *_fops = (fops);			\
++	if (_fops)							\
++		module_put((_fops)->owner);				\
++})
++
+ /*
+  * This one is to be used *ONLY* from ->open() instances.
+  * fops must be non-NULL, pinned down *and* module dependencies
 -- 
-Rgrds, legion
+2.43.0
 
 
