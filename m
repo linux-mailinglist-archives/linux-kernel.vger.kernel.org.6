@@ -1,65 +1,114 @@
-Return-Path: <linux-kernel+bounces-278843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A584394B58C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:38:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FA194B58F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECF10B22FBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:38:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E2C1C21057
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2AB4317B;
-	Thu,  8 Aug 2024 03:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343864F606;
+	Thu,  8 Aug 2024 03:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ToO2+3tZ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nu9Ty+nm"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A6D84047
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 03:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA086E61B;
+	Thu,  8 Aug 2024 03:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723088289; cv=none; b=AI4k+3JFwO/VZQNA/FfhqSYnrWqX1PWxS8Ijj/OMlLlzH+/xc/egUvDmXsTgKjEiKXaACRQs+r+xNiJ4fZzuHavRCRyHrEEANE1shdUNiJIa4B9mqiGHsdbgbaMj4J2oA09bSDR8TZ0q46mgRJuOtRbNDOL8Gu4/IDiY5JHcQ1M=
+	t=1723088330; cv=none; b=XQhxR7wS5OU6bnYow7ouSepYnaKc+5kDP/o7vrs++CvVP+LjkMJdRrMATgl+yp8EmrV5ImWGqK2RwHU1kiC1smy69yR/Qq43NHPeE5JcSa0/7FFwg+VL2p0LUSFcKy2/uMoYzhXAPsoYAe7K+/J7FO7hxDkRrCA9HPiU9I+cWy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723088289; c=relaxed/simple;
-	bh=h1fQ6oOu5qM814cpSWIfiMzDsDByfjlzRueTVvi5zf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/h6Pts/Jicw5Z9+pNTjLc1b5e78OKWtr7ps29CrZZ4+8cbV+9bozfF7uH4rRQgev6mHkpscxkHGeIbl8Y0wQoQ1hrE6nLDbfMj62XdafRNHujTG6HPJH6NlAzaZJPG7hJabjnGWfjyOq62jYyhvPVaqe5tskGMn6i6+Y8qEc1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ToO2+3tZ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mg+rAaQV6uHCHFuKE6cEx9PFXjNi2reAUID+6kuiVYw=; b=ToO2+3tZpKTnZZVMENmOHaRWXF
-	YK0MnsWEJGe61JEJAsI6qF6KPpWQ1C7r6F+qjEzKqfcLmCNuf3KXjNrnZvMrWG51/YSgfbQs/xJop
-	sXzTikQcEsMkU5WEXu5M+IRaPwtfESKnYIbOqMODNOvXuyEP8q2xS4awmIPB+xvGUiDYg9Xtg2ipA
-	ia/soPjsg83x4+/L6ybzghl7FfP43qzqMUPIl67bvgjVPMQ5jCpdjVZRejeTwGWnl6hM7GwUp6uWC
-	8igLfpjd3Q04RMCtmFI6Vck7lV/s+abrRresDTwfdYTLTNU9tI4ogQ0uT+zNNHTfn3rRsXfk8j2cv
-	51Z03BmA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbtyQ-00000008J2z-47q0;
-	Thu, 08 Aug 2024 03:37:59 +0000
-Date: Thu, 8 Aug 2024 04:37:58 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Yosry Ahmed <yosryahmed@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>, alexs@kernel.org,
-	Vitaly Wool <vitaly.wool@konsulko.com>,
-	Miaohe Lin <linmiaohe@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, minchan@kernel.org, david@redhat.com,
-	42.hyeyoo@gmail.com, nphamcs@gmail.com
-Subject: Re: [PATCH v5 00/21] mm/zsmalloc: add zpdesc memory descriptor for
- zswap.zpool
-Message-ID: <ZrQ9lrZKWdPR7Zfu@casper.infradead.org>
-References: <20240806022143.3924396-1-alexs@kernel.org>
- <20240806022311.3924442-1-alexs@kernel.org>
- <20240806123213.2a747a8321bdf452b3307fa9@linux-foundation.org>
- <CAJD7tkakcaLVWi0viUqaW0K81VoCuGmkCHN4KQXp5+SSJLMB9g@mail.gmail.com>
- <20240807051754.GA428000@google.com>
+	s=arc-20240116; t=1723088330; c=relaxed/simple;
+	bh=o3iCVRfCxyAV4yucGowm2nEoEX1XenIXzDijjdbSHXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Chppaz4bVIPtORFMDcpo7b5oKwmfoT5wwRTgY5qgEG0eYeb3w3rOg+fmAVb6n/nUICX9ZAWtB72ALYsOpkTasSEqjWI5pqzuXLjVaxUn4DOeI02j83t3PxA88yl/X24xERE6+umYwyI9dUp857eFHM8tblpi+TrmVOLa02cWloc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nu9Ty+nm; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-44ff99fcd42so2917301cf.0;
+        Wed, 07 Aug 2024 20:38:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723088328; x=1723693128; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=3AIlr4XfDvb56arFpxdJIuYixPMu5WSuoxZGudet8EY=;
+        b=Nu9Ty+nmFgIM6RG8PxXTdTkNLvepjkTqwP3QDYtWUovedveq5j7Od3CsbbPKIpcwJT
+         Jkky70dDBD3MvBzDx3g/YhcJoKHBnlvbw+KOxFlwIL1wRQQctgAy/2fE3F3ctavYphzg
+         8CigQ2dEvs3aBjCGeVIAlm6EzfNN/+2uJuUybN7RWdxbzBWCY4jeErkHFZ8+QktMK5dC
+         18mwmyM/T+HeQZaB/beUN+iR6kN9MzovLmKxhMwK8nfSJG/fry5pc6k6055f6jUqAF6N
+         AgWa35vm0Vz3/VS+bHnLMORyN8S/b5Dd9+yDsqiVRpe0pdjyZctIEGDyRAy7QVRgRP4R
+         et2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723088328; x=1723693128;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3AIlr4XfDvb56arFpxdJIuYixPMu5WSuoxZGudet8EY=;
+        b=A0//PcCxs4phk3ccsc7HoxxNkmINYQkY5qbe7UWm/6zyVswh2e03OMcvqca/Axle1R
+         QtOOb080G0TYMUOo8WcTryCZFkB1CfVKxJigGSJyGJ7APAnglCKcHz/kN5J6kiUsqYh9
+         7LY5TvVVwiy99EyGMk7SB6oH/3hE7m29GcVLUwx4KZm77u+yCLruo+/ZIzGReCuRNxAC
+         s1WkBnHZDJNgRCUxCJDbnhYJV1thmzmTwrtPUySDZBZjpSFidH8/0xzEAZl02ksqX7EU
+         IkfuebEBsrhw+oYQoMa4ZmN3dw+uCnNBJLyhUxFxObBpOiJ8h84NDc/SQ5FPGvBPy7KO
+         9v5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX5wwqySJ/8fy2b7SR+AzQr6FwLVwlNuWvLIMyB1owkixSHtxUa9B2LuJfQZgGRhpT9nvShif2LmQdwxooY4M0zZzPpyGfpdtx3A/jpuNAWlVjJEIQM9uurQSK5bo1zt93K
+X-Gm-Message-State: AOJu0YzJPOa0FluREHGzTEUVtLUvEICdaoSgCaYUjU1xKMJ63NaaYw4i
+	/aXDW+y8A4qNckACEaQ0JWJDHGEnA2A5EIVFPdPsXtZqzOpmNTBP
+X-Google-Smtp-Source: AGHT+IEl2GFr6diHEIF4ap/P5fEdWq2f2yIGnx1lGSRUjs1iHJznSyICcqvfJ6dhUBzGvE4y9W5bLw==
+X-Received: by 2002:a05:622a:514d:b0:44f:f06a:d6f5 with SMTP id d75a77b69052e-451d426d4fdmr8737281cf.36.1723088327545;
+        Wed, 07 Aug 2024 20:38:47 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451c87da6f7sm9642251cf.70.2024.08.07.20.38.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 20:38:47 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 509AB1200066;
+	Wed,  7 Aug 2024 23:38:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 07 Aug 2024 23:38:46 -0400
+X-ME-Sender: <xms:xj20Zhqhyhya3HEhsaxTxly-RylHcMPzC_wZq-nxqRGHLZ4Ja09C2A>
+    <xme:xj20ZjoQ8qbPYkySX8d1yUtNcFRVgG3oBTiGZV7htrqyU2iXHSDbnvE6moxgsRD7b
+    xEXsMfNFFtpJ8vsSA>
+X-ME-Received: <xmr:xj20ZuNcfciZhdqWBXHSZArCBl2V0jK2a5nLLiKEanECAvnLFAJf9Y3Bu5ftgG34trZKIdUTt7lhBzSfaI1e6DcYsbI1SZBT>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledugdejfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuf
+    fkgggtugesthdtredttddtvdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhu
+    nhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtthgvrhhnpeeltdefueegfe
+    fhuedtheefvdelhfeftedvhfdtveelueegtdejjedvieettedugfenucffohhmrghinhep
+    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidq
+    ieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilh
+    drtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedugedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpd
+    hrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhl
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtg
+    homhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphht
+    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehprghulhhm
+    tghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehfrhgvuggvrhhitgeskhgvrhhnvg
+    hlrdhorhhg
+X-ME-Proxy: <xmx:xj20Zs7q-77QXzSJJpsFXsMx8ahtn7H0lThi13m8PkeTXNGDHkQhsQ>
+    <xmx:xj20Zg7SY_zCFBwrQfwI9oNYAcCUtysZf0As8c_6RAosMO24CwuJAA>
+    <xmx:xj20ZkigB29pHt8QKjq-eN9QNntC9W92B-TDGnQ_C5ukpcF5MO4GsA>
+    <xmx:xj20Zi6APcVWteL_n4dDR5hcDGrbNTgu3Y-rMRbWJEtFgOLk5U5EiA>
+    <xmx:xj20ZnK0cVO2GFMerVwuE68f-I7CQf2coChehrexfiCLJzA4kCG2RoRl>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 7 Aug 2024 23:38:45 -0400 (EDT)
+Date: Wed, 7 Aug 2024 20:39:25 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: peterz@infradead.org, mingo@redhat.com
+Cc: will@kernel.org, longman@redhat.com, boqun.feng@gmail.com,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de,
+	paulmck@kernel.org, frederic@kernel.org, josh@joshtriplett.org,
+	neeraj.iitr10@gmail.com, urezki@gmail.com, rcu@vger.kernel.org
+Subject: [GIT PULL] LOCKDEP changes for v6.12
+Message-ID: <ZrQ97Zz27Tzmr0Zi@tardis>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,60 +117,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240807051754.GA428000@google.com>
 
-On Wed, Aug 07, 2024 at 02:17:54PM +0900, Sergey Senozhatsky wrote:
-> On (24/08/06 12:34), Yosry Ahmed wrote:
-> [..]
-> > > So the sole reason for this work is as a part of the mem_desc
-> > > conversion.  I'd like to hear from others who are to be involved in
-> > > that conversion, please - it this patchset something we should be
-> > > merging?
-> > >
-> > 
-> > Matthew asked an important question here that needs to be answered by
-> > zsmalloc experts:
-> > https://lore.kernel.org/lkml/Zq0zucMFsOwATsAC@casper.infradead.org/
-> 
-> Iff "zsmalloc experts" include me: I was under impression that there was
-> a zsmalloc conversion plan otherwise this zpdesc effort is a little
-> confusing, and, frankly, it hasn't appeared to me that this is "my problem"
-> now.
+Hi Peter & Ingo,
 
-I don't know if it's _your_ problem.  It's _our_ problem.  The arguments
-for (at least attempting) to shrink struct page seem quite compelling.
-We have a plan for most of the users of struct page, in greater or
-lesser detail.  I don't think we have a plan for zsmalloc.  Or at least
-if there is a plan, I don't know what it is.
+Per discussion:
 
-> > Do you allocate a per-page struct zpdesc, and have each one pointing
-> > to a zspage?
-> 
-> I'm not very knowledgeable when it comes to memdesc, excuse my
-> ignorance, and please feel free to educate me.
+	https://lore.kernel.org/lkml/20240802151619.GN39708@noisy.programming.kicks-ass.net/
 
-I've written about it here:
-https://kernelnewbies.org/MatthewWilcox/Memdescs
-https://kernelnewbies.org/MatthewWilcox/FolioAlloc
-https://kernelnewbies.org/MatthewWilcox/Memdescs/Path
+I'm sending a PR with some lockdep changes to tip.
 
-> So I guess if we have something
-> 
-> struct zspage {
-> 	..
-> 	struct zpdesc *first_desc;
-> 	..
-> }
-> 
-> and we "chain" zpdesc-s to form a zspage, and make each of them point to
-> a corresponding struct page (memdesc -> *page), then it'll resemble current
-> zsmalloc and should work for everyone? I also assume for zspdesc-s zsmalloc
-> will need to maintain a dedicated kmem_cache?
 
-Right, we could do that.  Each memdesc has to be a multiple of 16 bytes,
-sp we'd be doing something like allocating 32 bytes for each page.
-Is there really 32 bytes of information that we want to store for
-each page?  Or could we store all of the information in (a somewhat
-larger) zspage?  Assuming we allocate 3 pages per zspage, if we allocate
-an extra 64 bytes in the zspage, we've saved 32 bytes per zspage.
+The following changes since commit d5934e76316e84eced836b6b2bafae1837d1cd58:
+
+  cleanup: Add usage and style documentation (2024-08-05 16:54:41 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux tags/lockdep-for-tip.20240806
+
+for you to fetch changes up to 39dea484e2bb9066abbc01e2c5e03b6917b0b775:
+
+  locking/lockdep: Simplify character output in seq_line() (2024-08-06 10:46:43 -0700)
+
+
+I've reviewed and tested these changes from my end, but since I don't
+have a branch tracked by linux-next, so that part of testing is missing.
+It does pass the 0day build test though.
+
+RCU is Cced since I believe patch:
+
+      lockdep: fix deadlock issue between lockdep and rcu
+
+is also queued in the upcoming RCU PR for v6.12. However, since it's a
+bug fix in lockdep, I feel it makes more sense to go via tip. Worst
+case, git merge will eventually find the duplicate commit, so not a
+problem.
+
+I'm doing this "sub-maintenance" via a PR, but I'm also OK to send them
+as patch series, whatever makes your life easier. ;-) Also since this is
+a sub-maintenance, I plan to stop pusing anything new after -rc2 for a
+particular release (i.e. anything new after -rc3 will be in a PR from me
+in the later release), mostly due to lockdep shouldn't have anything
+urgent (famous last words though), and give you guys more time to
+prepare the PRs from the tip tree, but again I'm open to any suggestion
+as well.
+
+
+----------------------------------------------------------------
+Lockdep changes for v6.12:
+
+- Fixes a deadlock in lockdep by avoiding calling rcu with the graph
+  lock held.
+- Uses str_plural() to fix Coccinelle warning.
+- Uses seq_putc() instead of seq_printf() to print a single character in
+  lockdep proc file.
+
+
+Regards,
+Boqun
+
+----------------------------------------------------------------
+Markus Elfring (1):
+      locking/lockdep: Simplify character output in seq_line()
+
+Thorsten Blum (1):
+      lockdep: Use str_plural() to fix Coccinelle warning
+
+Zhiguo Niu (1):
+      lockdep: fix deadlock issue between lockdep and rcu
+
+ kernel/locking/lockdep.c      | 50 ++++++++++++++++++++++++++++---------------
+ kernel/locking/lockdep_proc.c |  2 +-
+ 2 files changed, 34 insertions(+), 18 deletions(-)
 
