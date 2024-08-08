@@ -1,142 +1,139 @@
-Return-Path: <linux-kernel+bounces-279958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986E694C3DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:43:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9747394C3DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 443A81F2215D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:43:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5026A1F21E80
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187801917D9;
-	Thu,  8 Aug 2024 17:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D411917CC;
+	Thu,  8 Aug 2024 17:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4jJ96iz"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L1ZOeR6X"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085891917C4;
-	Thu,  8 Aug 2024 17:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AA61917D9
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723138978; cv=none; b=L0Q1rJcPQWPKf9AhB5ygMWdJyyc/zyppFL+VR/K6JysOZZYxNQmYzaA7yG14ca4apBA4PmCjjwyq2rmUfTVPazUZRfdOMWFjytBt5pRd8eE6p2xDvtizOXEtCL5PLCuxEZp+qN+5fcbZ7vDEZlY4m9H+/L1RBJ2bRL0uFP6PiHM=
+	t=1723138996; cv=none; b=WbteNbldhxox6+doGKPCZCYQpSw6/25T3tyBxQ7q4PGS1TjM7EuC1V1CA9RfpzmylvPJzpaEL+81+ureJvgidaahkuXT+krw/+DQmI1CKOJZl/y3jeFVNlNBynhr3rZFAh0WjlnJsoPWZngmL9dylEObY/WgyLBhYL8JoFu9nKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723138978; c=relaxed/simple;
-	bh=/x/GCpUGs1ftk2R59xqPZXhiosBrNlEUyHkv9BnhTVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P1xMnD0WkjRGjUX/JsTsYZvN5WOf7Ew+XkoB4zfLTJKO/6C6jf4pBeLxUmh4ZXgrB0Wj80NUOHf/AQ27I8vTMKPw4NQ6tXsM7p3dCLbKhf7qeZsP/Gy31VeA/UtxBdPE+G8NsWU6PRWb22Lr1wiapiPt8+Yyxm1cb/H2ouzf/1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M4jJ96iz; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6bce380eb96so791167a12.0;
-        Thu, 08 Aug 2024 10:42:56 -0700 (PDT)
+	s=arc-20240116; t=1723138996; c=relaxed/simple;
+	bh=86H8Hq/QrVp+2XHWtnQLOHjNx6b6/aA0SVYTRipkXQo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=YfKrMTxfC8aoVkh2imlNS/f/fUMm9iVFOyhS3znmLau3r8yfN7I7Jno8vOIRCBgAA+RYuxU/SqwaTj5KYatytiUhOijz6ufr8fXQiAUIRuN/knceDhSL9jj+I6mG8vSmFHNVk+IpMif8TB+r+qWLLbtvJp/oIwF1kGLbxJpl1ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L1ZOeR6X; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-68f95e37bbfso28637927b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:43:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723138976; x=1723743776; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wgUjbjxEgBMHqGe4yMa1OEWmwGmO34nRyalLE55xTRc=;
-        b=M4jJ96izykUnQCiIDefFVZKZxOyBBpo/8ry+Mt1xuu7Fz2UkqDg77V7gNAFbsJ93wf
-         RwA+sG8NL+MdwcvGQMxy4bl8CwoOpP35seQ2IaNEa/976PW2GXqShlzHYhb33LURJF5m
-         ztjeNUUksk2Qjx3lQ3mHXmDkObfovx3m6sAXeO+nOx8+mS6EJSR/yOyjusw41AUyNXPW
-         VHm6XIumLCvgDz1HqBuqgmlsVNFhsM55efP8imhZ4I5uDKa8ZSCNk7ZWgyhRNDTo9X2r
-         24/XhTZItl9SP8RL77Ul+U8Axsrn25Vu2QyW1hTk0ARlEa/ZJYyqj7FluiGzUpUN83UE
-         EumQ==
+        d=google.com; s=20230601; t=1723138993; x=1723743793; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4+1jkb/kSvflaKrQy8nLqEfji7x/G0gMXefyaO4Ttzs=;
+        b=L1ZOeR6XdnnHhgekiLjOqSQHwNnZ7mr0vm7do/FJPnjNttxoK2RPqUVYNkBOAr8Pgh
+         UPsxV1azor1oaAlcYfDhDNChjptEkQjcgKFaSe7uBhEf5ozixUvzp9fcxK0bcuZzmj2D
+         o8pVNsRak9BDNszEi7JrilF/DEwG9i89TaOla01C89YnTAnMulVEDXDyM7faMFWYY7JD
+         4TnknO0vwmEbXMVwOQhs2PP186MIeqss1HSceJUGEBr5H81d5jewPZxJRZkfDaGvpl3m
+         deekAGj8kgNBOYezD8MInYGgYdUM9hug8W00Dl464I+M4MDNPJOiEXjZGdeA/TzqjE0A
+         Kz5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723138976; x=1723743776;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wgUjbjxEgBMHqGe4yMa1OEWmwGmO34nRyalLE55xTRc=;
-        b=S63aHQH1fE2fOJ9TavAQY0VBlGnkIKnEkZ5IfcipnAYhoobnYetDWp31pARk195M8S
-         UY6ixwSghqZqnWYzNkeLv9j8mGw7QyeDX+m3FSKGSYv6l77MIGU7IgVMA3dPEHv02OKI
-         u5w8qPq76hi/pwNIw/H2zhkXBRE6PGyZ/CVh0Gud+OB+GAzwjP1XenQtgc9QQLI2ZnCN
-         R8T31GW2J534gtNT2HzmA/0W7Jgs0J2Z+WZKa4xSSpi5VdFhAdjDesXAKMc2Cu8mkcve
-         avATJS3PevuQeDMbh0lmR9rewRrYwM/O3MXX026M1BD/cdVxiRGmOritcZ5vomH61LKh
-         IT4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXo5REsG2R4nrhpW3tdB1D/QEjAgTWizIEcfSnLEUThddL1GHRfkwn8iN5D8+rklBPulQRH7QnXcIzHEOLTs8BscFjasMyqYZ3zZFHfVBkCWOBCIzoFcJhG6Q4bf1ozidMaqE/gz+zFb2k=
-X-Gm-Message-State: AOJu0YzYFVTT8J6qTQTnZYgdNQa5nYs/Llc/pC0C9AqWtud92wDZyjhz
-	+eOCUMYoibDpETg+BDvpmASOGXJcFfxSGyCIWyFbWd2GIHMIrPvb
-X-Google-Smtp-Source: AGHT+IE2Whix2iRuRVCvGmEQbKjesFBkdadz1VWz5QmdV/xueZHYDCKRwPjKk1N5gUmnCly+nVWONQ==
-X-Received: by 2002:a05:6a20:a107:b0:1c6:a65f:299 with SMTP id adf61e73a8af0-1c6fcedf133mr3313532637.21.1723138976056;
-        Thu, 08 Aug 2024 10:42:56 -0700 (PDT)
-Received: from embed-PC.myguest.virtualbox.org ([110.225.178.109])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2e7405sm1366964b3a.169.2024.08.08.10.42.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 10:42:55 -0700 (PDT)
-Date: Thu, 8 Aug 2024 23:11:01 +0530
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: jdelvare@suse.com, skhan@linuxfoundation.org, rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (lm93) Return error values on read failure
-Message-ID: <ZrUDLVhjH8uKflCN@embed-PC.myguest.virtualbox.org>
-References: <20240807181746.508972-1-abhishektamboli9@gmail.com>
- <bdca4f35-ec3e-4fac-bbcf-ed5326feb6f4@roeck-us.net>
- <ZrQqhOvt3zCHNh38@embed-PC.myguest.virtualbox.org>
- <e03f91c4-c25a-4c9f-a0f4-2774f4019f54@roeck-us.net>
+        d=1e100.net; s=20230601; t=1723138993; x=1723743793;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4+1jkb/kSvflaKrQy8nLqEfji7x/G0gMXefyaO4Ttzs=;
+        b=hRN4ZMeD1MkRjBLhdvKnU4/83pldGbWIRQYfbCCVy0XosdtDAdP5yKMA8kwIY5q14U
+         S7ya8Ni8ag6I9NzBVjNrquNnaC6Jx1L9pz14LdoDw+rKPCLS5pfzeWQAS8nXbEtsHM51
+         QhGPkxMm4MLZy8q1pMd98fOlZEbfwfp7lgzWrnm2C79XBMe1T5slt0TXCwTqxpWyimUZ
+         pS7r4IDDUnyOoiAL2IvWHCP6IAfANxJzRug4JH1lTjqPiKPJEt/3CGedy9CjwzGtJl3p
+         lgSvkfCqq4VaU+JLgyKpu74SEE+Lk5r5RR50fe738rFERhN9SwMHBRhSWHlyCLZPNb5i
+         By1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXbcToy1m0lEOnyA+xXiIQ+xaQ0hi1QGcpJnB3vBjEwbiF0DQc4TzKxafX1+pOzcTtRu9zN7iyBdES+GbGvcv99r3qfWVlCu227/THP
+X-Gm-Message-State: AOJu0Yzts5ZxPWOut01SsjMRt/vYFZ1Vw7NRHZysBjvOs3V3ib/3uYXW
+	StRsDrAIbHnSFnvOkeO1Pw2ecGkGmqqAD58t97EXaEGFldM8+iktP4nDRG2mJaxBXzWFo37tR6U
+	FFZ585Tv4ByD/uJSDNwP/Bw==
+X-Google-Smtp-Source: AGHT+IFI0rnzef7ISFTxPTkBDSrqwcN8rzvq+R6/y07Cu867kKIpT/4oVZnVFq4JrZ5GCRkcJ1KbtYBJHpkWdkmDpA==
+X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
+ (user=coltonlewis job=sendgmr) by 2002:a05:690c:961:b0:62f:1f63:ae4f with
+ SMTP id 00721157ae682-69bf6f7ec1fmr200267b3.1.1723138993566; Thu, 08 Aug 2024
+ 10:43:13 -0700 (PDT)
+Date: Thu,  8 Aug 2024 17:42:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e03f91c4-c25a-4c9f-a0f4-2774f4019f54@roeck-us.net>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240808174243.2836363-1-coltonlewis@google.com>
+Subject: [PATCH v2] KVM: arm64: Move data barrier to end of split walk
+From: Colton Lewis <coltonlewis@google.com>
+To: kvm@vger.kernel.org
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Ricardo Koller <ricarkol@google.com>, James Morse <james.morse@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Colton Lewis <coltonlewis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 08, 2024 at 09:54:40AM -0700, Guenter Roeck wrote:
-> On Thu, Aug 08, 2024 at 07:46:36AM +0530, Abhishek Tamboli wrote:
-> > On Wed, Aug 07, 2024 at 11:38:34AM -0700, Guenter Roeck wrote:
-> > Hi Guenter,
-> > Thank you for your feedback.
-> > > On 8/7/24 11:17, Abhishek Tamboli wrote:
-> > > > Fix the issue of lm93_read_byte() and lm93_read_word() return 0 on
-> > > > read failure after retries, which could be confused with valid data.
-> > > > 
-> > > > Address the TODO: what to return in case of error?
-> > > > 
-> > > > Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> > > > ---
-> > > >   drivers/hwmon/lm93.c | 10 ++++++----
-> > > >   1 file changed, 6 insertions(+), 4 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/hwmon/lm93.c b/drivers/hwmon/lm93.c
-> > > > index be4853fad80f..b76f3c1c6297 100644
-> > > > --- a/drivers/hwmon/lm93.c
-> > > > +++ b/drivers/hwmon/lm93.c
-> > > > @@ -798,6 +798,7 @@ static unsigned LM93_ALARMS_FROM_REG(struct block1_t b1)
-> > > >   static u8 lm93_read_byte(struct i2c_client *client, u8 reg)
-> > > 
-> > > This is still returning an u8.
-> > My interpretation of the TODO was to address the error condition while keeping the 
-> > existing logic of the driver intact. I understand that this driver is 
-> > old and that changes should be approached with caution.
-> 
-> Those TODOs are, at this point, pretty much pointless. If you want to help
-> with improving kernel code, it might be better to pick something from the
-> drivers/staging/ directory and help improve it.
-> 
-> The only thing that would really help for the lm93 driver would be a
-> complete overhaul, and that would only make sense if someone has real
-> hardware to test the resulting code; the driver is too complex to just
-> rely on unit tests. For example, the excessive retries might be because
-> the chip is really bad with its communication, or it may have been
-> observed on a system with a bad i2c controller, making it completely
-> unnecesssary today. Either case, if those retries are really necessary
-> due to chip issues, they should be hiddden behind regmap (which should
-> also be used to replace in-driver caching). And so on.
-> 
-> Really, if you want to get into kenrel development, it would be much
-> better to help improving code which is actually being used, as mentioned
-> above.
+This DSB guarantees page table updates have been made visible to the
+hardware table walker. Moving the DSB from stage2_split_walker() to
+after the walk is finished in kvm_pgtable_stage2_split() results in a
+roughly 70% reduction in Clear Dirty Log Time in
+dirty_log_perf_test (modified to use eager page splitting) when using
+huge pages. This gain holds steady through a range of vcpus
+used (tested 1-64) and memory used (tested 1-64GB).
 
-Hi Guenter,
-Thank you for the feedback. I'll look into the drivers/staging directory
-and see where I might be able to contribute effectively.
+This is safe to do because nothing else is using the page tables while
+they are still being mapped and this is how other page table walkers
+already function. None of them have a data barrier in the walker
+itself because relative ordering of table PTEs to table contents comes
+from the release semantics of stage2_make_pte().
 
-Regards,
-Abhishek
+Signed-off-by: Colton Lewis <coltonlewis@google.com>
+---
+
+v2:
+  * Added more information about purpose of DSB to commit message
+  * Rebased to v6.11-rc2
+
+v1:
+https://lore.kernel.org/kvmarm/20240718223519.1673835-1-coltonlewis@google.com/
+
+ arch/arm64/kvm/hyp/pgtable.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
+index 9e2bbee77491..9788af2ca8c0 100644
+--- a/arch/arm64/kvm/hyp/pgtable.c
++++ b/arch/arm64/kvm/hyp/pgtable.c
+@@ -1547,7 +1547,6 @@ static int stage2_split_walker(const struct kvm_pgtable_visit_ctx *ctx,
+ 	 */
+ 	new = kvm_init_table_pte(childp, mm_ops);
+ 	stage2_make_pte(ctx, new);
+-	dsb(ishst);
+ 	return 0;
+ }
+
+@@ -1559,8 +1558,11 @@ int kvm_pgtable_stage2_split(struct kvm_pgtable *pgt, u64 addr, u64 size,
+ 		.flags	= KVM_PGTABLE_WALK_LEAF,
+ 		.arg	= mc,
+ 	};
++	int ret;
+
+-	return kvm_pgtable_walk(pgt, addr, size, &walker);
++	ret = kvm_pgtable_walk(pgt, addr, size, &walker);
++	dsb(ishst);
++	return ret;
+ }
+
+ int __kvm_pgtable_stage2_init(struct kvm_pgtable *pgt, struct kvm_s2_mmu *mmu,
+--
+2.46.0.76.ge559c4bf1a-goog
 
