@@ -1,158 +1,133 @@
-Return-Path: <linux-kernel+bounces-279620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B629B94BFA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:24:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A354E94BFA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 689F41F26AA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:24:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57FE528A174
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A36618E77B;
-	Thu,  8 Aug 2024 14:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF83148310;
+	Thu,  8 Aug 2024 14:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J4EDy2/l"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJIj9B1R"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB61F18A946;
-	Thu,  8 Aug 2024 14:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4132770E;
+	Thu,  8 Aug 2024 14:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723126976; cv=none; b=pZNDiloZC+Ew42RbArDsbfx9NB1rOGYwLAe0KIvEoVVMvJTQEK3RoduHcSeAQUQJy7iz53ZiHDdCBXXShVGtE7HkgLXOFL26hpJgKM6JGg959vJnh3YYSKovFP2+964yjtlLRvo3EAjRXDBkwOJFHNvZrJFDzByKuP9vqX1LwIs=
+	t=1723127050; cv=none; b=bkcU2YOD8vlVUJSk+JchkAAzkpKvuRH9P6O7JaxIGNdoWwCdcm3FyRN4ech0s9gWi/XAPJsfFUSqfPEQuIgVOYhIPvSlv6xnZViqDkptgfN3W0R+RmaF/gA8dcKbbHMBg3YxtpmmqXQ0ZIcOICmtCZow+Rx91pDfFscHBYfZLEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723126976; c=relaxed/simple;
-	bh=rp8GsHSO3IypfCrpJwpLlvhbMjqR2AIuzom2m2KI8fk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GT4vTpD20CZEb4J0FRfiwM+b2MvZya2XQ0lhZaVT1ApmvRUEX+ioBgFsOs4TVqyq0s4uy1cjXXCWeJrC+fhW9wb4tsMVVjoe3CMHlfLOs7me1kJoeCJOJXipcje5KDaIbFcCISuTrqy4R7KTeUNlDG3BVJj9k6MxzjW8w6Xf47Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=J4EDy2/l; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 478EMdvn051128;
-	Thu, 8 Aug 2024 09:22:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723126959;
-	bh=eHDHxPq50DGM3g84s3Jqk1v6dSzgUEZFw0neW81oseI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=J4EDy2/lr7OFOgA+HnRaP8XDARttD1sWneo83IXIRhBMx6gGfqa1C3gVWHA/Bqrap
-	 GXZ5mszM+xd7K+cJHatJyxWCKCoTq+HWsfOcFvjAe8BgVSnCBn7aPNE2hVkoHxaN/1
-	 Jk3IEfcZDaE6XGfIjd66eeFQpkm5K9KRcRVTLFNM=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 478EMdDO005009
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 Aug 2024 09:22:39 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- Aug 2024 09:22:38 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 Aug 2024 09:22:38 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 478EMcGA106772;
-	Thu, 8 Aug 2024 09:22:38 -0500
-Message-ID: <4fb4a772-e564-4d25-99fe-ef02f86c96c8@ti.com>
-Date: Thu, 8 Aug 2024 09:22:38 -0500
+	s=arc-20240116; t=1723127050; c=relaxed/simple;
+	bh=rQPaIp3gvnKwKfiqvePOZNVA8JAw1Wkt4p/m1gvKaw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sqocDkX1xeRlOF/XILtzB0AJak+PgbdscqwNlDWsodFoSMHyLlAbnGplFU4J/3ggm4xFKS1CZgVwWSpdFEbYNPAjlXa2QD1HuAphuAP6h7iiK4n3wSGJuDgREt7bn8qTxzDFe4dY6TKxHtEfoSUIELQRz5udVm1kQgnIp/8RtWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJIj9B1R; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a20de39cfbso1097041a12.1;
+        Thu, 08 Aug 2024 07:24:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723127047; x=1723731847; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RwycnN0pOkHu6v/Wf/jldzzdbOFGNUEkeQ9Th2/NQ/k=;
+        b=YJIj9B1ROlIyVwnHpiD9Xf274ZdsAQGXytU/uS3unuWwHLflDKixniOCrrx5jMNfED
+         D8PiqBsArP9KnB2afDpHDGfH/DHtBmaVKAq/RmTjrIaVazZMHK3bX+VQ+DuDHkQo2OFa
+         t5un8r65lN6Z6RIZz0cQ8iniRfwzT+D4I8IWL6flAWjOwrDbgSobuwpWEYT3uh3OoxRu
+         ZjTOUzqidxuUU+3qRJBmSPsRKrseUUGbOmQKcQsutlikL3brTy/H/ES5krRBty7DZT78
+         HvfSIdJ9iNJ7ulMrU6pkgJLhhnIj+UjIb+3K0gIlzmTFA931LRu7XonG8n11BBqzrvxC
+         q4nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723127047; x=1723731847;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RwycnN0pOkHu6v/Wf/jldzzdbOFGNUEkeQ9Th2/NQ/k=;
+        b=P63nYuMs/nqoQSz4Uf3Tw4rAx/95bt/oPxf35XZWX4nSV2ICAeIqU0kDLju3eIO/ws
+         75x+k7sP0s2T3cOBb/9yaIoeeIQHSIesr3g5+gB0cfCyV0W25303yh4nzCqoB25vlmI1
+         9jYI/If8OwN5LhGmXd+TvYPErxE0yGq8OTKT35LRolEQmhNJX8i+FJKB36pJDeop+U1D
+         kE7cY6eqKhP2P6elxNJOHrwmO3eWNL78L38g+v0xv4LagLutjj6nwYW/EHjSvsRxzYOG
+         KMApsWIHcGV9GCCIbjkJsDzZq68TbBP636OFbrSFGNRcUlHdrhsKqm87JUzH47DTO7Gl
+         Jryw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+3walGzgncUs+61ur4XtqA11e1Y+itQXAB+nv6rfptwM7RGM3y4KCGdlaXxSRd7vy3CL0zLAV4eEKZYJKSEkkYbSUqOzqvoxMjgyyB4ye1u7zuL3GhB5eOCoZp4c62NBNkP6mf1hjtw==
+X-Gm-Message-State: AOJu0YzkmeDVsslUoxkm1J24zK71Ppmy395P5+/GwyDqdpVR3ztB0cE4
+	edx6ZSX50rZ9l65T/MlQC6wXtMuj7eAkkr6N54Hf8t/zD4PKc8r5
+X-Google-Smtp-Source: AGHT+IGAINzcfiz5VbZvk6czh2iTO/zbsODVhNEtsHllWPWdBHr1pJaKrq/NQVeRwkMi6E2tT4xUfg==
+X-Received: by 2002:a05:6402:2708:b0:5a2:189:6306 with SMTP id 4fb4d7f45d1cf-5bbb22330a3mr1890210a12.18.1723127047008;
+        Thu, 08 Aug 2024 07:24:07 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c6f6ebsm682635a12.56.2024.08.08.07.24.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Aug 2024 07:24:06 -0700 (PDT)
+Date: Thu, 8 Aug 2024 14:24:05 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, gerald.schaefer@linux.ibm.com,
+	hca@linux.ibm.com, rppt@kernel.org, akpm@linux-foundation.org,
+	brauner@kernel.org, oleg@redhat.com, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v6 1/3] mm/memblock: introduce a new helper
+ memblock_estimated_nr_free_pages()
+Message-ID: <20240808142405.ttlcfkximywtde6i@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240808001415.6298-1-richard.weiyang@gmail.com>
+ <ZrSYruB/Aa8+oBoZ@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] remoteproc: k3-r5: Use devm_rproc_alloc() helper
-To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-anna@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240808074127.2688131-1-b-padhi@ti.com>
- <20240808074127.2688131-2-b-padhi@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240808074127.2688131-2-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrSYruB/Aa8+oBoZ@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On 8/8/24 2:41 AM, Beleswar Padhi wrote:
-> Use the device lifecycle managed allocation function. This helps prevent
-> mistakes like freeing out of order in cleanup functions and forgetting
-> to free on error paths.
-> 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
+On Thu, Aug 08, 2024 at 12:06:38PM +0200, Alexander Gordeev wrote:
+>On Thu, Aug 08, 2024 at 12:14:13AM +0000, Wei Yang wrote:
+>
+>Hi Wei,
+>
+>...
+>> + * Return:
+>> + * An estimated number of free pages from memblock point of view.
+>> + */
+>> +unsigned long __init memblock_estimated_nr_free_pages(void)
+>> +{
+>> +	return PHYS_PFN(memblock_phys_mem_size() - memblock_reserved_size());
+>> +}
+>
+>This could possibly be short on up to two pages due to lack of alignment.
+>The current uses are okay, but since you make it generic it probably matters.
+>
 
-LGTM
+I don't follow, would you mind giving more detail?
 
-Reviewed-by: Andrew Davis <afd@ti.com>
+>Also, the returned value is not an estimation. Meaning the function name
+>is rather unfortunate AFAICT.
 
->   drivers/remoteproc/ti_k3_r5_remoteproc.c | 16 +++++-----------
->   1 file changed, 5 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 39a47540c590..57067308b3c0 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -1259,8 +1259,8 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   			goto out;
->   		}
->   
-> -		rproc = rproc_alloc(cdev, dev_name(cdev), &k3_r5_rproc_ops,
-> -				    fw_name, sizeof(*kproc));
-> +		rproc = devm_rproc_alloc(cdev, dev_name(cdev), &k3_r5_rproc_ops,
-> +					 fw_name, sizeof(*kproc));
->   		if (!rproc) {
->   			ret = -ENOMEM;
->   			goto out;
-> @@ -1280,7 +1280,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   
->   		ret = k3_r5_rproc_configure_mode(kproc);
->   		if (ret < 0)
-> -			goto err_config;
-> +			goto out;
->   		if (ret)
->   			goto init_rmem;
->   
-> @@ -1288,7 +1288,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   		if (ret) {
->   			dev_err(dev, "initial configure failed, ret = %d\n",
->   				ret);
-> -			goto err_config;
-> +			goto out;
->   		}
->   
->   init_rmem:
-> @@ -1298,7 +1298,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   		if (ret) {
->   			dev_err(dev, "reserved memory init failed, ret = %d\n",
->   				ret);
-> -			goto err_config;
-> +			goto out;
->   		}
->   
->   		ret = rproc_add(rproc);
-> @@ -1351,9 +1351,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   	rproc_del(rproc);
->   err_add:
->   	k3_r5_reserved_mem_exit(kproc);
-> -err_config:
-> -	rproc_free(rproc);
-> -	core->rproc = NULL;
->   out:
->   	/* undo core0 upon any failures on core1 in split-mode */
->   	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1) {
-> @@ -1398,9 +1395,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
->   		rproc_del(rproc);
->   
->   		k3_r5_reserved_mem_exit(kproc);
-> -
-> -		rproc_free(rproc);
-> -		core->rproc = NULL;
->   	}
->   }
->   
+From my point of view, this is an estimation for two reasons:
+
+* value from memblock_xxx is not page size aligned
+* reserved memory maybe released during boot stage
+
+It is not that easy to get the exact number of free pages here. Do I miss
+something?
+
+>
+>> +#define PHYS_PFN(x)	((unsigned long)((x) >> PAGE_SHIFT))
+>
+>Thanks!
+
+-- 
+Wei Yang
+Help you, Help me
 
