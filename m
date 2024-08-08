@@ -1,326 +1,183 @@
-Return-Path: <linux-kernel+bounces-279041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E4A94B830
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:48:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4264794B89B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6BB01C24244
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:48:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A54BAB217F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693E1189538;
-	Thu,  8 Aug 2024 07:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE151891C3;
+	Thu,  8 Aug 2024 08:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YPoGvyze"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X/ef6wPm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67E8189504
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 07:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A858013CA8A
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723103287; cv=none; b=BiwOKSrA/VMUVqnbISACkYKxPVr9LyLszYmY6lnZm4pS9MdCHz+5u1/urhex3wC5MKXSL9HRXHHJUp4yynS8rdg5lUGmr0OdgTzc2pFeLgmpwPQHUo5njG3LKNFwN2LMrz/CGgReIez51EkYmt/kHJk8JMcxmFa+CSa+dEtmnyQ=
+	t=1723104633; cv=none; b=IV44hqLIj6Fe7463JKS+jU6BjhhUgbnYrkhEk5EZPnAnvDqSbe1aeGPCaIM7DpPIlCOjGYeoKK9zcwPxdzGVXaTHID8S1POUV5ZLGWH/IMlQYbMrDWBw4UrUVN9ZD3zXM4FQj4ZqSjXP/vpO+TE9etk+JxdJVXQoH84HGYvE8wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723103287; c=relaxed/simple;
-	bh=eyP8EXCfAfqSnnT1kSDBXLC7pBoA8mE4FZ3jGxxt0M4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WPa685/G8qmDlsVH2eHsHtcANddByzJvnZMM3Pg/PbWm0rSwe2NA0TWqtAglald2gvaFu7fTbx6EpDgTeN00HVpWdlm4f7ohLS59opXpdTpbPDXIKW8lLvQ/SnptNJ1zNFlNeisfbwaXdrCMUYPn0625nD/TTlYmYKA4mkVVWDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YPoGvyze; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723103286; x=1754639286;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=eyP8EXCfAfqSnnT1kSDBXLC7pBoA8mE4FZ3jGxxt0M4=;
-  b=YPoGvyzeFT/0Sz2XRqyCzrI9PPG/fBUfPKPymWfLyPJupKndBORZwiNe
-   aE/Sii1iyyB47vjrMwpwTPXNGCpQfFh8lPFt3iEUSYUXJ0SRXLzJqVhGW
-   owez+lNttiTz5lquZGSwKg8a6w3MfezJx+615G0mGy+ZYwlshH+Y5Utal
-   qkXOidrzSiHMOFCMm8aVmrNKnmyeC9LMCfwu9z5JfcTfhjfjibBFOsazj
-   zdOqgtSCRA+giGqO/32P43m1VdJm606g76/PZuEbHEYCgN2blZmXEBHpK
-   ds2DIBfW6dLarbW1A9FeBXNxsUYzTBkZ/M4Exj6zMZnajUPLiru+R7lX/
-   g==;
-X-CSE-ConnectionGUID: MK2oZjGDTcy6FveRHNSE9A==
-X-CSE-MsgGUID: 4RX5K3CYQ7CLw7i6PsWiwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="38721001"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="38721001"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 00:48:05 -0700
-X-CSE-ConnectionGUID: VAJS7QaHTrqmkX/ZQaJ+8A==
-X-CSE-MsgGUID: z6sJ4PFATqiOfjA4kItPog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="57090948"
-Received: from emr.sh.intel.com ([10.112.229.56])
-  by fmviesa009.fm.intel.com with ESMTP; 08 Aug 2024 00:48:02 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	Andi Kleen <ak@linux.intel.com>,
-	Zhenyu Wang <zhenyuw@linux.intel.com>,
-	Yongwei Ma <yongwei.ma@intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [PATCH 4/4] perf/x86/intel: Add PMU support for ArrowLake-H
-Date: Thu,  8 Aug 2024 14:02:10 +0000
-Message-Id: <20240808140210.1666783-5-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240808140210.1666783-1-dapeng1.mi@linux.intel.com>
-References: <20240808140210.1666783-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1723104633; c=relaxed/simple;
+	bh=gS03c8L4Br7kqJ0FBcylqY2gUGQivWm3ynHkwI3GMCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NBYEtIauTjuvzadi7uuaDwdq2GBwWe19dCEOlrSVeK2vB/J2lBfoH41SWlUDOJe2oJbRVapXpTiH9ExbqdGB3EDmrfHRFEHsOUtMRwL4bHOlehZ7wq3njr4prKcS0/ZWJixh/dZmQc/Yqetz3lGdBPzg3NOXrF6cpSXkBqOqlPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X/ef6wPm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723104630;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IZOKtfV/4youKQKE4PG+0p4dlew66jnamMTdwNpcUh4=;
+	b=X/ef6wPmymJ/oZ29iW9d6zFwtwHT9Ty13meQiE5Pt928rrw6YuYEnk9ooNk+UrEf949KSE
+	B/xlAk5zieGd09y6+ZU4uOKOV7u55tdXpfbA7V5En+aiQfGNq/VO2avn++19V5PwB8/DEX
+	GJJeBJM3Sze5ozlKZr79Vl6vQSlpOOw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-UFr8ovxXPFKm2Ba07fJt7Q-1; Thu, 08 Aug 2024 04:10:28 -0400
+X-MC-Unique: UFr8ovxXPFKm2Ba07fJt7Q-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-428e48612acso9084255e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 01:10:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723104627; x=1723709427;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IZOKtfV/4youKQKE4PG+0p4dlew66jnamMTdwNpcUh4=;
+        b=EDYYZJsr51NcUwd6och3DGUIykHVVRDHv26RleHl6ojO47jhKOuub3w0O0ZCqc9M3A
+         nB0pBoO0H7xE2hHS9B0KZf1O5ZfKFxSRioNNEQ/OJ+CY9nYVdzj1crdVbLUNtVgDL/Lv
+         iy+DC4NZXFInND//0is/yPCN5nO7mWADfEb9Qhr8v2sSTrymNx39xlmDyFdCoiGKHdHG
+         wnrNgNKqvAAsTTUbcD8TWzaCMyuwWap3TlBjvnOVA3wfzxJhiUDMc2Eo/Steh+1xCWKB
+         rhSHjyJb4dW+IDqKRFfmOOlR3i59MfvB0atWH0TFTDdrdwnzsWBvDTetZgAE8/vOBfz2
+         bRzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLxY7xktn7pjRORJuX9WtQ2/JUB39t84gdT+J+590YFWaCxa/SkIv2Mly8a2UwUcXgDds/s37n9GSUMGT9z5+qUlJzXs0pB0WyGFcP
+X-Gm-Message-State: AOJu0Yx0oyPgQ/j8LVH936h8F3v/7QNExS9yJ9a3e4MxnZo3H0K9qccd
+	q8Z9CbMEm8JqLsn/PHs9GxP8Y5JOjL3YEkHB16hwUiyFxKTaKNrwikujLLrnAXpObib2sfw8SoS
+	wUJ97l7YH26LamuryAD5ZohalyQBdFPqgMluydEOChJfkoBeSi7jNt+VmCo+Phw==
+X-Received: by 2002:a05:600c:45cb:b0:426:5e8e:aa48 with SMTP id 5b1f17b1804b1-4290af12dfdmr13366085e9.22.1723104627523;
+        Thu, 08 Aug 2024 01:10:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxN6qNl6UlFXvnE+K8ZEpnOSBzULcVL7ISHO1sfn2HUAE1cDsohRfMX5Atopuw8Q7heP2zaQ==
+X-Received: by 2002:a05:600c:45cb:b0:426:5e8e:aa48 with SMTP id 5b1f17b1804b1-4290af12dfdmr13365825e9.22.1723104627054;
+        Thu, 08 Aug 2024 01:10:27 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c713:2a00:f151:50f1:7164:32e6? (p200300cbc7132a00f15150f1716432e6.dip0.t-ipconnect.de. [2003:cb:c713:2a00:f151:50f1:7164:32e6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c7a357bsm9697425e9.43.2024.08.08.01.10.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 01:10:26 -0700 (PDT)
+Message-ID: <7d7dd1d2-0c5f-49d4-b3ca-39115f67d2d8@redhat.com>
+Date: Thu, 8 Aug 2024 10:10:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] mm: rename instances of swap_info_struct to
+ meaningful 'si'
+To: Barry Song <21cnbao@gmail.com>, Chris Li <chrisl@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hughd@google.com,
+ justinjiang@vivo.com, kaleshsingh@google.com, kasong@tencent.com,
+ linux-kernel@vger.kernel.org, ryan.roberts@arm.com, v-songbaohua@oppo.com,
+ ying.huang@intel.com
+References: <20240807215859.57491-1-21cnbao@gmail.com>
+ <20240807215859.57491-2-21cnbao@gmail.com>
+ <CACePvbV5nxGz=gPKZLzZ_nF-Wzxy_4bXFw-t40rsmA0zk=irCg@mail.gmail.com>
+ <CAGsJ_4z=sCyYU9z-HGN=G3wDkoEFrXPXm9nwPnqJhjvjHjufTw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAGsJ_4z=sCyYU9z-HGN=G3wDkoEFrXPXm9nwPnqJhjvjHjufTw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-ArrowLake-H contains 3 different uarchs, LionCove, Skymont and Crestmont.
-It is different with previous hybrid processors which only contains two
-kinds of uarchs.
+On 08.08.24 02:21, Barry Song wrote:
+> On Thu, Aug 8, 2024 at 12:01 PM Chris Li <chrisl@kernel.org> wrote:
+>>
+>> On Wed, Aug 7, 2024 at 2:59 PM Barry Song <21cnbao@gmail.com> wrote:
+>>>
+>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>
+>>> "p" means "pointer to something", rename it to a more meaningful
+>>> identifier - "si".
+>>
+>> Hi Berry,
+>>
+>> I am fine with the reason for renaming it to something more
+>> meaningful. On the other hand this will create a huge conflict on the
+>> next iteration of the swap allocator series. There is not much urgency
+>> in the renaming variable, right? Just try to figure out a way to
+>> coordinate it better. As it is, I am not sure how to handle the next
+>> refresh of swap allocator series, should I revert the rename or submit
+>> a refresh of patches with rename conflict resolved, effectively foldin
+>> the rename patch.
+> 
+> right, it is not urgent. if you are going to make another iteration
+> for the swap allocation series. I am perfect fine that you can add
+> these two patches into your series? it should be fine as this patchset
+> obviously depends on Kairui's and Your work.
 
-This patch adds PMU support for ArrowLake-H processor, adds ARL-H
-specific events which supports the 3 kinds of uarchs, such as
-td_retiring_arl_h, and extends some existed format attributes like
-offcore_rsp to make them be available to support ARL-H as well. Althrough
-these format attributes like offcore_rsp have been extended to support
-ARL-H, they can still support the regular hybrid platforms with 2 kinds
-of uarchs since the helper hybrid_format_is_visible() would filter PMU
-types and only show the format attribute for available PMUs.
+If it can be resolved within 5min of merging I think we shouldn't bother 
+about delaying this.
 
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Tested-by: Yongwei Ma <yongwei.ma@intel.com>
----
- arch/x86/events/intel/core.c | 105 ++++++++++++++++++++++++++++++++++-
- arch/x86/events/intel/ds.c   |  21 +++++++
- arch/x86/events/perf_event.h |   4 ++
- 3 files changed, 127 insertions(+), 3 deletions(-)
+I assume it can be resolved within 5min of merging ;)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index b6429bc009c0..72836bb05387 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4589,6 +4589,28 @@ static enum hybrid_cpu_type adl_get_hybrid_cpu_type(void)
- 	return HYBRID_INTEL_CORE;
- }
- 
-+static struct event_constraint *
-+arl_h_get_event_constraints(struct cpu_hw_events *cpuc, int idx,
-+			  struct perf_event *event)
-+{
-+	struct x86_hybrid_pmu *pmu = hybrid_pmu(event->pmu);
-+
-+	if (pmu->pmu_type == hybrid_small2)
-+		return cmt_get_event_constraints(cpuc, idx, event);
-+
-+	return mtl_get_event_constraints(cpuc, idx, event);
-+}
-+
-+static int arl_h_hw_config(struct perf_event *event)
-+{
-+	struct x86_hybrid_pmu *pmu = hybrid_pmu(event->pmu);
-+
-+	if (pmu->pmu_type == hybrid_small2)
-+		return intel_pmu_hw_config(event);
-+
-+	return adl_hw_config(event);
-+}
-+
- /*
-  * Broadwell:
-  *
-@@ -5952,6 +5974,37 @@ static struct attribute *lnl_hybrid_events_attrs[] = {
- 	NULL
- };
- 
-+/* The event string must be in PMU IDX order. */
-+EVENT_ATTR_STR_HYBRID(topdown-retiring,
-+		      td_retiring_arl_h,
-+		      "event=0xc2,umask=0x02;event=0x00,umask=0x80;event=0xc2,umask=0x0",
-+		      hybrid_big_small_arl_h);
-+EVENT_ATTR_STR_HYBRID(topdown-bad-spec,
-+		      td_bad_spec_arl_h,
-+		      "event=0x73,umask=0x0;event=0x00,umask=0x81;event=0x73,umask=0x0",
-+		      hybrid_big_small_arl_h);
-+EVENT_ATTR_STR_HYBRID(topdown-fe-bound,
-+		      td_fe_bound_arl_h,
-+		      "event=0x9c,umask=0x01;event=0x00,umask=0x82;event=0x71,umask=0x0",
-+		      hybrid_big_small_arl_h);
-+EVENT_ATTR_STR_HYBRID(topdown-be-bound,
-+		      td_be_bound_arl_h,
-+		      "event=0xa4,umask=0x02;event=0x00,umask=0x83;event=0x74,umask=0x0",
-+		      hybrid_big_small_arl_h);
-+
-+static struct attribute *arl_h_hybrid_events_attrs[] = {
-+	EVENT_PTR(slots_adl),
-+	EVENT_PTR(td_retiring_arl_h),
-+	EVENT_PTR(td_bad_spec_arl_h),
-+	EVENT_PTR(td_fe_bound_arl_h),
-+	EVENT_PTR(td_be_bound_arl_h),
-+	EVENT_PTR(td_heavy_ops_adl),
-+	EVENT_PTR(td_br_mis_adl),
-+	EVENT_PTR(td_fetch_lat_adl),
-+	EVENT_PTR(td_mem_bound_adl),
-+	NULL,
-+};
-+
- /* Must be in IDX order */
- EVENT_ATTR_STR_HYBRID(mem-loads,     mem_ld_adl,     "event=0xd0,umask=0x5,ldlat=3;event=0xcd,umask=0x1,ldlat=3", hybrid_big_small);
- EVENT_ATTR_STR_HYBRID(mem-stores,    mem_st_adl,     "event=0xd0,umask=0x6;event=0xcd,umask=0x2",                 hybrid_big_small);
-@@ -5970,6 +6023,21 @@ static struct attribute *mtl_hybrid_mem_attrs[] = {
- 	NULL
- };
- 
-+EVENT_ATTR_STR_HYBRID(mem-loads,
-+		      mem_ld_arl_h,
-+		      "event=0xd0,umask=0x5,ldlat=3;event=0xcd,umask=0x1,ldlat=3;event=0xd0,umask=0x5,ldlat=3",
-+		      hybrid_big_small_arl_h);
-+EVENT_ATTR_STR_HYBRID(mem-stores,
-+		      mem_st_arl_h,
-+		      "event=0xd0,umask=0x6;event=0xcd,umask=0x2;event=0xd0,umask=0x6",
-+		      hybrid_big_small_arl_h);
-+
-+static struct attribute *arl_h_hybrid_mem_attrs[] = {
-+	EVENT_PTR(mem_ld_arl_h),
-+	EVENT_PTR(mem_st_arl_h),
-+	NULL,
-+};
-+
- EVENT_ATTR_STR_HYBRID(tx-start,          tx_start_adl,          "event=0xc9,umask=0x1",          hybrid_big);
- EVENT_ATTR_STR_HYBRID(tx-commit,         tx_commit_adl,         "event=0xc9,umask=0x2",          hybrid_big);
- EVENT_ATTR_STR_HYBRID(tx-abort,          tx_abort_adl,          "event=0xc9,umask=0x4",          hybrid_big);
-@@ -5993,8 +6061,8 @@ static struct attribute *adl_hybrid_tsx_attrs[] = {
- 
- FORMAT_ATTR_HYBRID(in_tx,       hybrid_big);
- FORMAT_ATTR_HYBRID(in_tx_cp,    hybrid_big);
--FORMAT_ATTR_HYBRID(offcore_rsp, hybrid_big_small);
--FORMAT_ATTR_HYBRID(ldlat,       hybrid_big_small);
-+FORMAT_ATTR_HYBRID(offcore_rsp, hybrid_big_small_arl_h);
-+FORMAT_ATTR_HYBRID(ldlat,       hybrid_big_small_arl_h);
- FORMAT_ATTR_HYBRID(frontend,    hybrid_big);
- 
- #define ADL_HYBRID_RTM_FORMAT_ATTR	\
-@@ -6017,7 +6085,7 @@ static struct attribute *adl_hybrid_extra_attr[] = {
- 	NULL
- };
- 
--FORMAT_ATTR_HYBRID(snoop_rsp,	hybrid_small);
-+FORMAT_ATTR_HYBRID(snoop_rsp,	hybrid_small_all);
- 
- static struct attribute *mtl_hybrid_extra_attr_rtm[] = {
- 	ADL_HYBRID_RTM_FORMAT_ATTR,
-@@ -7098,6 +7166,37 @@ __init int intel_pmu_init(void)
- 		name = "lunarlake_hybrid";
- 		break;
- 
-+	case INTEL_ARROWLAKE_H:
-+		intel_pmu_init_hybrid(hybrid_big_small_arl_h);
-+
-+		x86_pmu.pebs_latency_data = arl_h_latency_data;
-+		x86_pmu.get_event_constraints = arl_h_get_event_constraints;
-+		x86_pmu.hw_config = arl_h_hw_config;
-+
-+		td_attr = arl_h_hybrid_events_attrs;
-+		mem_attr = arl_h_hybrid_mem_attrs;
-+		tsx_attr = adl_hybrid_tsx_attrs;
-+		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
-+			mtl_hybrid_extra_attr_rtm : mtl_hybrid_extra_attr;
-+
-+		/* Initialize big core specific PerfMon capabilities.*/
-+		pmu = &x86_pmu.hybrid_pmu[X86_HYBRID_PMU_CORE_IDX];
-+		intel_pmu_init_lnc(&pmu->pmu);
-+
-+		/* Initialize Atom core specific PerfMon capabilities.*/
-+		pmu = &x86_pmu.hybrid_pmu[X86_HYBRID_PMU_ATOM_IDX];
-+		intel_pmu_init_skt(&pmu->pmu);
-+
-+		/* Initialize Atom2 core specific PerfMon capabilities.*/
-+		pmu = &x86_pmu.hybrid_pmu[X86_HYBRID_PMU_ATOM2_IDX];
-+		intel_pmu_init_grt(&pmu->pmu);
-+		pmu->extra_regs = intel_cmt_extra_regs;
-+
-+		intel_pmu_pebs_data_source_arl_h();
-+		pr_cont("ArrowLake-H Hybrid events, ");
-+		name = "arrowlake_h_hybrid";
-+		break;
-+
- 	default:
- 		switch (x86_pmu.version) {
- 		case 1:
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index fa5ea65de0d0..64242a8ffaf1 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -177,6 +177,17 @@ void __init intel_pmu_pebs_data_source_mtl(void)
- 	__intel_pmu_pebs_data_source_cmt(data_source);
- }
- 
-+void __init intel_pmu_pebs_data_source_arl_h(void)
-+{
-+	u64 *data_source;
-+
-+	intel_pmu_pebs_data_source_lnl();
-+
-+	data_source = x86_pmu.hybrid_pmu[X86_HYBRID_PMU_ATOM2_IDX].pebs_data_source;
-+	memcpy(data_source, pebs_data_source, sizeof(pebs_data_source));
-+	__intel_pmu_pebs_data_source_cmt(data_source);
-+}
-+
- void __init intel_pmu_pebs_data_source_cmt(void)
- {
- 	__intel_pmu_pebs_data_source_cmt(pebs_data_source);
-@@ -388,6 +399,16 @@ u64 lnl_latency_data(struct perf_event *event, u64 status)
- 	return lnc_latency_data(event, status);
- }
- 
-+u64 arl_h_latency_data(struct perf_event *event, u64 status)
-+{
-+	struct x86_hybrid_pmu *pmu = hybrid_pmu(event->pmu);
-+
-+	if (pmu->pmu_type == hybrid_small2)
-+		return cmt_latency_data(event, status);
-+
-+	return lnl_latency_data(event, status);
-+}
-+
- static u64 load_latency_data(struct perf_event *event, u64 status)
- {
- 	union intel_x86_pebs_dse dse;
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index f7b55c909eff..32fcbdb464e2 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -1591,6 +1591,8 @@ u64 cmt_latency_data(struct perf_event *event, u64 status);
- 
- u64 lnl_latency_data(struct perf_event *event, u64 status);
- 
-+u64 arl_h_latency_data(struct perf_event *event, u64 status);
-+
- extern struct event_constraint intel_core2_pebs_event_constraints[];
- 
- extern struct event_constraint intel_atom_pebs_event_constraints[];
-@@ -1710,6 +1712,8 @@ void intel_pmu_pebs_data_source_grt(void);
- 
- void intel_pmu_pebs_data_source_mtl(void);
- 
-+void intel_pmu_pebs_data_source_arl_h(void);
-+
- void intel_pmu_pebs_data_source_cmt(void);
- 
- void intel_pmu_pebs_data_source_lnl(void);
 -- 
-2.40.1
+Cheers,
+
+David / dhildenb
 
 
