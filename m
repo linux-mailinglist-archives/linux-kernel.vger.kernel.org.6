@@ -1,154 +1,122 @@
-Return-Path: <linux-kernel+bounces-280162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A2794C67A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:52:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9517C94C677
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469A31F22C1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:52:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE0461C218E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F4615ECD2;
-	Thu,  8 Aug 2024 21:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKjTNqgh"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DE515D5B8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081CF15B99F;
 	Thu,  8 Aug 2024 21:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rShFr4c0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511D08827
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723153913; cv=none; b=bYpKLNbnE04nG522oCzchu28m9BDu/yzZcIyAxSuAFcktjuc807ymMRNFGHjLjCRHPoaD6FTJLPIh/OcNhMk/sjN6JtVulDOEVu1woHYka8qNOguM9SYQlS7w3Ugq0mQa69ZExB74tEDKqEfj9f/qLW1IUjG9uRJT5Cao0sVvcg=
+	t=1723153910; cv=none; b=dTXeTsW+vBVIwSinbSTDEqtEqOBaRC1dSsOmE8pa5xfcqehDhFLtdS7MMw2aiz7Wg8+EC+2DabLcw9ZxFGxL/tN1WusEnbkOuf5KjuTuu0U+Xqx1REOduzdKhqct7GdBQSzPS3ak7iy5sPd2kyGY1Y92MilDeW2exkoZwsztl0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723153913; c=relaxed/simple;
-	bh=DTz30EgiQatv3b3Mf5x670oIHDaDHPcPkrLDKRckk8I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V7SAvRB9YPOtOvBtxSQQdr6TjVWwDQPYqxiiTNvJAluCe0xg5MPdecrWogUEB1Eckw+cal3H9h5C6IKgdERAgUD9jUGL2hSWd02SRDscyHYh5lVTt/AlkjvEK0Kraj12q+/qGGmioc+9LXKOro665TVd54EySbhnnPwLLXoA5+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKjTNqgh; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f1798eaee6so13758191fa.0;
-        Thu, 08 Aug 2024 14:51:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723153910; x=1723758710; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zTilJSTMzzmTUfM8PwyjqnLeW2jPuc+7Tc/WpwcfYso=;
-        b=RKjTNqghkpGIVR3bL/EYmcntQ4ApexBlQ9r4LtfBM+WZDKZ5LhrLkm8vhzO/oA3Nbk
-         RxSzZ1s8+TPLyZ6oLZ0xaWIJnK3CRsSdJH8Yu/sxDWPMEVV0YOdzPMdVKx9A9ZXHjlPn
-         yt2zyrA4IvtoK0cSOwXzsJV0OtnVM3GGZyivf7IamgUP7Lq0pGy8VqeJ9z1u8hzR1Isu
-         Ak7ipouiiauHcUWbXPzLCUqSUuy6MPJ1Qcs+2DWN7xAUSuZwCswpdAmmVJM0+jfhRngy
-         kjFymzJ2D6Vcl7mxVm4DeiYV+myh38XmrG59vazjMWq7pmlZmMhe7s7JcKHdKxafjicp
-         pQXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723153910; x=1723758710;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zTilJSTMzzmTUfM8PwyjqnLeW2jPuc+7Tc/WpwcfYso=;
-        b=Cp1MqTxaaR5bWVhhTBZya9pt2et4VNfuUhtOKsdqx+j7NkjKY+UISnzYRxdas7xlcu
-         3wfhwVjj9rcSG+s7zyjGj9tgbVuP/Z74Ui5KeYiLOLfMe8orRsm+Baa1Y+tf+940DewS
-         mjyuP1c7eDvbaLtKrzx5JPIJx8I8Q7jvY2ywl53CWJii7oSSsi9jBPc+a5m/1anK9vDx
-         B7t+vwEYZmjIVghAxn/1t3feItrawt7Gcc7yztNB1BNWeBMPBkly6xBeppFwknCnks9a
-         KU3JyxcUUnFRtK73QxJwUffL4+hmZC2FSTKkLMjoMtTHjLf4PRZTrHs5D44zG1cxwHKG
-         AYEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVs0R5zQoT/NJZTN5UxOlPPIbwPV5dyUakpkmpLwnnTlH3VWCLA6veGX9NMFP1O832LsJR6+YunOgpHg/TOJ7gNkpRQo7GRKl5XRcPdceMk5P/erkpsMZ58qHAVWX2nSdCjmgPHo1S+6yUJnBiL76KGNNYiBkaGUzd5wH5D27iSHd0JSho/yXkJCQ==
-X-Gm-Message-State: AOJu0Yx/huGQ6lho3h41kM9JBrFzgiblCBOAE+i4BH+OAIeh2+o8DvcE
-	HyWFad9Ih5Fh06GuYd+QBMS6mIQhM2kZ0Q+P/GSMH+tYiyKvPIWP5sPmMqvRAHv+b/MxgrO5CIw
-	EEFKZcGvwZItUCMoHgJQjn6+mjZQ=
-X-Google-Smtp-Source: AGHT+IGES8fNHsGvpYv7uRV9s1I4pkbSiW25z5WmM1/EEFB1wRmanyCXIXI8O8RexuT7mqGHIaX1FSuWqO2mBT4epPY=
-X-Received: by 2002:a05:6512:15aa:b0:52e:987f:cfe4 with SMTP id
- 2adb3069b0e04-530e5876b8fmr2151699e87.30.1723153909723; Thu, 08 Aug 2024
- 14:51:49 -0700 (PDT)
+	s=arc-20240116; t=1723153910; c=relaxed/simple;
+	bh=3TwS60iIKkqYIWLXbVPdeRGu64tLBLQpiHvY1xMb4xY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DNMfV1r0ecQ+R/I6nPtsCptQ5FYCyVli2w8MOa5KJo7BjEZpq0ivIE7Gjs0pCepOEk0duYI2QwXQxamTmFKHtj3yPCP9UX8amCxg08l8gWDI9G99ZvOzkZcm9H17Djo/ryA/AsXNv8o6TQUqSbU5g04aWoyAKsEBulvsz8ujMF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rShFr4c0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB63C32782;
+	Thu,  8 Aug 2024 21:51:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723153909;
+	bh=3TwS60iIKkqYIWLXbVPdeRGu64tLBLQpiHvY1xMb4xY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rShFr4c0XMySRfus8TDmx/uyPwFwu03rtMybAa2GpZNuFDoEuG9ReBBVD1zfRIbkB
+	 nAMHbWdw5aHi+zKcy0/oMgYtuNDVZQ/1XyoxtvsJXBcBl0UlmmZGgGBPiQpcKlR6Ty
+	 /wlgTuyPW7z3+FxK/+87xlWeBQjeviO/UIf/GRtJAfT/DnasoKgfR7hPhtJNBnlPJ0
+	 ndUd2OoTdUu0O+3xXeLjN6hXk1A2Cxvgvb2cpd675HA3Gd9zId1GlPMGqE/MmhJn3H
+	 VPrq3uGiwcmhu3unWTHLMEjproGLYgb1rz3r5NPV9U/78nkR1nDDlhwTPoYMZMaUwZ
+	 241d+m3L/r39w==
+Date: Thu, 8 Aug 2024 23:51:44 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: John Snow <jsnow@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, Cleber Rosa <crosa@redhat.com>,
+ linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 7/7] scripts/ghes_inject: add a script to generate
+ GHES error inject
+Message-ID: <20240808235144.726ab8e4@foz.lan>
+In-Reply-To: <CAFn=p-bM3oECXtPt5zVZSh53dJx+TDciU_N+vCW4Xp-Jd0MaHw@mail.gmail.com>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<0654a89fe24f4343016b9cecc0752594ad1cd49f.1722634602.git.mchehab+huawei@kernel.org>
+	<CAFn=p-bM3oECXtPt5zVZSh53dJx+TDciU_N+vCW4Xp-Jd0MaHw@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808122331.342473-1-suhui@nfschina.com>
-In-Reply-To: <20240808122331.342473-1-suhui@nfschina.com>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 8 Aug 2024 16:51:37 -0500
-Message-ID: <CAH2r5mshFXCMO38WMZP0NzrugKZn1QexLSH+2aEMcZnB2S0+zA@mail.gmail.com>
-Subject: Re: [PATCH] smb/client: avoid possible NULL dereference in cifs_free_subrequest()
-To: Su Hui <suhui@nfschina.com>
-Cc: pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
-	tom@talpey.com, bharathsm@microsoft.com, nathan@kernel.org, 
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	kernel-janitors@vger.kernel.org, David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Tentatively merged into cifs-2.6.git pending review/testing
+Em Thu, 8 Aug 2024 16:58:38 -0400
+John Snow <jsnow@redhat.com> escreveu:
 
-Did minor update to add Cc: stable
+> On Fri, Aug 2, 2024 at 5:44=E2=80=AFPM Mauro Carvalho Chehab <
+> mchehab+huawei@kernel.org> wrote: =20
+>=20
 
-On Thu, Aug 8, 2024 at 7:26=E2=80=AFAM Su Hui <suhui@nfschina.com> wrote:
->
-> Clang static checker (scan-build) warning:
->         cifsglob.h:line 890, column 3
->         Access to field 'ops' results in a dereference of a null pointer.
->
-> Commit 519be989717c ("cifs: Add a tracepoint to track credits involved in
-> R/W requests") adds a check for 'rdata->server', and let clang throw this
-> warning about NULL dereference.
->
-> When 'rdata->credits.value !=3D 0 && rdata->server =3D=3D NULL' happens,
-> add_credits_and_wake_if() will call rdata->server->ops->add_credits().
-> This will cause NULL dereference problem. Add a check for 'rdata->server'
-> to avoid NULL dereference.
->
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  fs/smb/client/file.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-> index b2405dd4d4d4..45459af5044d 100644
-> --- a/fs/smb/client/file.c
-> +++ b/fs/smb/client/file.c
-> @@ -315,7 +315,7 @@ static void cifs_free_subrequest(struct netfs_io_subr=
-equest *subreq)
->  #endif
->         }
->
-> -       if (rdata->credits.value !=3D 0)
-> +       if (rdata->credits.value !=3D 0) {
->                 trace_smb3_rw_credits(rdata->rreq->debug_id,
->                                       rdata->subreq.debug_index,
->                                       rdata->credits.value,
-> @@ -323,8 +323,12 @@ static void cifs_free_subrequest(struct netfs_io_sub=
-request *subreq)
->                                       rdata->server ? rdata->server->in_f=
-light : 0,
->                                       -rdata->credits.value,
->                                       cifs_trace_rw_credits_free_subreq);
-> +               if (rdata->server)
-> +                       add_credits_and_wake_if(rdata->server, &rdata->cr=
-edits, 0);
-> +               else
-> +                       rdata->credits.value =3D 0;
-> +       }
->
-> -       add_credits_and_wake_if(rdata->server, &rdata->credits, 0);
->         if (rdata->have_xid)
->                 free_xid(rdata->xid);
->  }
-> --
-> 2.30.2
->
->
+> > +#!/usr/bin/env python3
+> > +#
+> > +# pylint: disable=3DC0301, C0114, R0912, R0913, R0914, R0915, W0511
+> > =20
+>=20
+> Out of curiosity, what tools are you using to delint your files=20
 
+Primarily I use pylint, almost always with disable line(s), as those lint
+tools have some warnings that sound too silly (like too many/too low=20
+functions/branches/arguments...). From time to time, I review the disable
+lines, to keep the code as clean as desired.
 
---=20
-Thanks,
+Sometimes I also use pep8 (now named as pycodestyle) and black, specially=20
+when I want some autoformat hints (I manually commit the hunks that make
+sense), but I prefer pylint as the primary checking tool. I'm not too
+found of the black's coding style, though[1].
 
-Steve
+[1] For instance, black would do this change:
+
+	-        g_arm.add_argument("--arm", "--arm-valid",
+	-                           help=3Df"ARM valid bits: {arm_valid_bits}")
+	+        g_arm.add_argument(
+	+            "--arm", "--arm-valid", help=3Df"ARM valid bits: {arm_valid_b=
+its}"
+	+        )
+
+IMO, the original coding style I wrote is a lot better than black's
+suggestion - and it is closer to the C style I use at the Linux Kernel ;-)
+
+> and how are
+> you invoking them?
+
+I don't play much with such tools, though. I usually just invoke them with
+the python file names(s) without passing any parameters nor creating any
+configuration file.
+
+> I don't really maintain any strict regime for python files under
+> qemu.git/scripts (yet), so I am mostly curious as to what regimes others
+> are using currently. I don't see most QEMU contributors checking in pylint
+> ignores etc directly into the files, so it caught my eye.
+
+Having some verification sounds interesting, as it may help preventing
+some hidden bugs (like re-defining a variable that it was already used
+globally), if such check is not too picky and if stupid warnings can be=20
+bypassed.
+
+Regards,
+Mauro
+
 
