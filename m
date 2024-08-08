@@ -1,186 +1,253 @@
-Return-Path: <linux-kernel+bounces-279124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B1D94B939
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40FD594B949
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E85481C20E2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:48:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 645051C21A3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B46189B92;
-	Thu,  8 Aug 2024 08:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB071189B93;
+	Thu,  8 Aug 2024 08:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="LLdDRSK/";
-	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="sEZqwcAu"
-Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IKjjd/0C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB25925634;
-	Thu,  8 Aug 2024 08:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D5B25634
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723106894; cv=none; b=oZn0pvToXvaN8wKsT0DNyrFso+wVVuYkQ0Ki4o2ZwGdqvlwLEpQGlg/ZtakmSPfhUFFzZS8jlosFwx34YtXOLJsVDos8hFSFHTX14mV56bN7IBtCTcBV/pzEQ1o6l3pS5U008TD6+s40Atn4PDm7/Yu58XId7HzxyWuXKeg42Bo=
+	t=1723107045; cv=none; b=TC2bPRITxZ5/9pcsI33HfJJoK0Zw9TmTOEyJ7O4EwMQ9xi6lGhyk97u3XCFnsoC/j3IJe10GJDVxhPQagg7G6bnXliOON6nJcsAv3c9r0lbaLtu6vVd1MTMr2uSnnmpGmZBP0H03wUnaze74cNDRAdSrxaV+4SNmvdvdh0WWeG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723106894; c=relaxed/simple;
-	bh=uRH/ciiHycNXip9jjHyyUFJfgnUsV443g3yhFyDelNY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CG4ywN/1cxnO4GWxN+ZX+9XmJ9j6GU3WNTXLZ9lpf9yHEQquoh90SD+DFsd0aZ4Ptn9+T6lGQQuUA1Jl0j+YTVdedSgj3sbyMfXgxJDov8zacvWBX2TblU62VYFRyOgLZ0VdbfK+qL5xp63BKKwS4evR63Ocvw9Gc2pdBVZyWo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=LLdDRSK/; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=sEZqwcAu; arc=none smtp.client-ip=88.97.38.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-	t=1723106890; bh=uRH/ciiHycNXip9jjHyyUFJfgnUsV443g3yhFyDelNY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LLdDRSK/UKmCKanuLW49XqVQ8szl4DmFV9uyRWJ+hM0lb0SwBpAJynIlsI7bOsb1p
-	 IdSh6rqDF0VI4p400+QTNw8T7DbMzn2axD4LbPmAgc61kyr76BVFLjMj20ZyMRLUtc
-	 XIoBwDJrMUMSuikmEVcj3xDl32aVtSVGtXYssnDn/0jZXBZqYJFfPq7zwTUQmrNQR5
-	 a5o6KAA6irrj/rEABhkAYH2XyF8jAzSdZQdkZir7jT0Ow4xcv3M525xdmmKA1z3ADr
-	 zprEEFH/JnJ05cIEcsr7HNQYhE5ndWwKvktMXVC5Ps0DcM2lBxuSTuW+m5Q4Adwyla
-	 lw224SUzIK3kw==
-Received: by gofer.mess.org (Postfix, from userid 501)
-	id D07A4100105; Thu,  8 Aug 2024 09:48:10 +0100 (BST)
-X-Spam-Level: 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-	t=1723106888; bh=uRH/ciiHycNXip9jjHyyUFJfgnUsV443g3yhFyDelNY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sEZqwcAuz1JmMJHEundW0lrxice1lJTwMjbN1H6EqyQe48jUf3TBbaNEyZ/sAs2C9
-	 lBQMWmlmNKGvsiUe8GloMhmaZb5Aq085WrE3LGPYVIE8q9CD2TR8lRvlFAqpnDOR8T
-	 ZzSBKqjoqhUtnUhwIBb0+jGDCQzJ8BhJMOMKErY+z4FjQ0d4JL6f1NTt9Y7QuWqngr
-	 AjY5e2hOi0NOPGpoHjG5oihte7HNSSjSK3JjERZy5q2tH+dzEUQXq28Bmda/yandhb
-	 v7AtPFrbLEl8PAvVk33M5GBbFKOOIFACACej6qkoSmxv1edHHxZC3xNN59F8y8A3um
-	 3hgimU52UkumQ==
-Received: from localhost.localdomain (bigcore.local [IPv6:2a02:8011:d000:212:bc3c:1b4a:a6fa:362f])
+	s=arc-20240116; t=1723107045; c=relaxed/simple;
+	bh=wwZICW0t5V3Pd8bNX1iK1ZZCUo6uil1UKFCK4o0f7WQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MoccWygTVGTefqpsloRScqeNPe6yWkLRfgnvFnoYhAXrZj3UOgjsooh6iVjSQXY9LQIc8QYaWhIkXtcPSzGSjfMt5qo8G1ank590+aI2oKqIbPNh39IkwYVEXxLF/SZ9FkG45tU98i1is49Uou4f3GstSk5ky080Jmyn2zPwyVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IKjjd/0C; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723107041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+P945oXoh8Dg1hOM4d9au0nq9mZ8s5CjyWl9HOYb1UU=;
+	b=IKjjd/0C16e/tiPQ6N6cLluw9yN3VVZ4gZ3xuC/ABmPmsYBWLw9TsiwTGiUy6/Z0bOr8R7
+	6caO7tvroIwFOLyuK+atdlxon/EVNPkljwQ9C34G80nBNdBhZTUqU+SHafMc4RMgD1Ivwh
+	yh0IOd2fhfIQ2jCFAdgDd9ukBPDNo4c=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-271-dA68Y6d5O2CCl_orbzP6HQ-1; Thu,
+ 08 Aug 2024 04:50:38 -0400
+X-MC-Unique: dA68Y6d5O2CCl_orbzP6HQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by gofer.mess.org (Postfix) with ESMTPSA id 69724100074;
-	Thu,  8 Aug 2024 09:48:08 +0100 (BST)
-From: Sean Young <sean@mess.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Sean Young <sean@mess.org>,
-	Stefan Lippers-Hollmann <s.l-h@gmx.de>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Revert "media: dvb-usb: Fix unexpected infinite loop in dvb_usb_read_remote_control()"
-Date: Thu,  8 Aug 2024 09:47:57 +0100
-Message-ID: <20240808084757.18084-1-sean@mess.org>
-X-Mailer: git-send-email 2.46.0
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 99DAF1944B2F;
+	Thu,  8 Aug 2024 08:50:36 +0000 (UTC)
+Received: from blackfin.pond.sub.org (unknown [10.39.193.245])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4EFF11956056;
+	Thu,  8 Aug 2024 08:50:35 +0000 (UTC)
+Received: by blackfin.pond.sub.org (Postfix, from userid 1000)
+	id 12BAF21E6692; Thu,  8 Aug 2024 10:50:33 +0200 (CEST)
+From: Markus Armbruster <armbru@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,  Shiju Jose
+ <shiju.jose@huawei.com>,  "Michael S. Tsirkin" <mst@redhat.com>,  Ani
+ Sinha <anisinha@redhat.com>,  Dongjiu Geng <gengdongjiu1@gmail.com>,  Eric
+ Blake <eblake@redhat.com>,  Igor Mammedov <imammedo@redhat.com>,  Michael
+ Roth <michael.roth@amd.com>,  Paolo Bonzini <pbonzini@redhat.com>,  Peter
+ Maydell <peter.maydell@linaro.org>,  linux-kernel@vger.kernel.org,
+  qemu-arm@nongnu.org,  qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 5/7] qapi/ghes-cper: add an interface to do generic
+ CPER error injection
+In-Reply-To: <51cbdc8a53e58c69ee17b15c398feeeeeeb64f34.1722634602.git.mchehab+huawei@kernel.org>
+	(Mauro Carvalho Chehab's message of "Fri, 2 Aug 2024 23:44:00 +0200")
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<51cbdc8a53e58c69ee17b15c398feeeeeeb64f34.1722634602.git.mchehab+huawei@kernel.org>
+Date: Thu, 08 Aug 2024 10:50:33 +0200
+Message-ID: <87v80b1jqe.fsf@pond.sub.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-This reverts commit 2052138b7da52ad5ccaf74f736d00f39a1c9198c.
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-This breaks the TeVii s480 dual DVB-S2 S660. The device has a bulk in
-endpoint but no corresponding out endpoint, so the device does not pass
-the "has both receive and send bulk endpoint" test.
+> Creates a QMP command to be used for generic ACPI APEI hardware error
+> injection (HEST) via GHESv2.
+>
+> The actual GHES code will be added at the followup patch.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  MAINTAINERS              |  7 +++++
+>  hw/acpi/Kconfig          |  5 ++++
+>  hw/acpi/ghes_cper.c      | 45 ++++++++++++++++++++++++++++++++
+>  hw/acpi/ghes_cper_stub.c | 18 +++++++++++++
+>  hw/acpi/meson.build      |  2 ++
+>  hw/arm/Kconfig           |  5 ++++
+>  include/hw/acpi/ghes.h   |  7 +++++
+>  qapi/ghes-cper.json      | 55 ++++++++++++++++++++++++++++++++++++++++
+>  qapi/meson.build         |  1 +
+>  qapi/qapi-schema.json    |  1 +
+>  10 files changed, 146 insertions(+)
+>  create mode 100644 hw/acpi/ghes_cper.c
+>  create mode 100644 hw/acpi/ghes_cper_stub.c
+>  create mode 100644 qapi/ghes-cper.json
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 98eddf7ae155..655edcb6688c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2075,6 +2075,13 @@ F: hw/acpi/ghes.c
+>  F: include/hw/acpi/ghes.h
+>  F: docs/specs/acpi_hest_ghes.rst
+>  
+> +ACPI/HEST/GHES/ARM processor CPER
+> +R: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> +S: Maintained
+> +F: hw/arm/ghes_cper.c
+> +F: hw/acpi/ghes_cper_stub.c
+> +F: qapi/ghes-cper.json
+> +
 
-Seemingly this device does not use dvb_usb_generic_rw() so I have tried
-removing the generic_bulk_ctrl_endpoint entry, but this resulted in
-different problems.
+Here's the reason for creating a new QAPI module instead of adding to
+existing module acpi.json: different maintainers.
 
-As we have no explanation yet, revert.
+Hypothetical question: if we didn't care for that, would this go into
+qapi/acpi.json?
 
-$ dmesg | grep -i -e dvb -e dw21 -e usb\ 4
-[    0.999122] usb 1-1: new high-speed USB device number 2 using ehci-pci
-[    1.023123] usb 4-1: new high-speed USB device number 2 using ehci-pci
-[    1.130247] usb 1-1: New USB device found, idVendor=9022, idProduct=d482,
-+bcdDevice= 0.01
-[    1.130257] usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-[    1.152323] usb 4-1: New USB device found, idVendor=9022, idProduct=d481,
-+bcdDevice= 0.01
-[    1.152329] usb 4-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-[    6.701033] dvb-usb: found a 'TeVii S480.2 USB' in cold state, will try to
-+load a firmware
-[    6.701178] dvb-usb: downloading firmware from file 'dvb-usb-s660.fw'
-[    6.701179] dw2102: start downloading DW210X firmware
-[    6.703715] dvb-usb: found a 'Microsoft Xbox One Digital TV Tuner' in cold
-+state, will try to load a firmware
-[    6.703974] dvb-usb: downloading firmware from file 'dvb-usb-dib0700-1.20.fw'
-[    6.756432] usb 1-1: USB disconnect, device number 2
-[    6.862119] dvb-usb: found a 'TeVii S480.2 USB' in warm state.
-[    6.862194] dvb-usb: TeVii S480.2 USB error while loading driver (-22)
-[    6.862209] dvb-usb: found a 'TeVii S480.1 USB' in cold state, will try to
-+load a firmware
-[    6.862244] dvb-usb: downloading firmware from file 'dvb-usb-s660.fw'
-[    6.862245] dw2102: start downloading DW210X firmware
-[    6.914811] usb 4-1: USB disconnect, device number 2
-[    7.014131] dvb-usb: found a 'TeVii S480.1 USB' in warm state.
-[    7.014487] dvb-usb: TeVii S480.1 USB error while loading driver (-22)
-[    7.014538] usbcore: registered new interface driver dw2102
+If yes, then should we call it acpi-ghes-cper.json or acpi-ghes.json
+instead?
 
-Closes: https://lore.kernel.org/stable/20240801165146.38991f60@mir/
-Reported-by: Stefan Lippers-Hollmann <s.l-h@gmx.de>
-Signed-off-by: Sean Young <sean@mess.org>
----
- drivers/media/usb/dvb-usb/dvb-usb-init.c | 35 +++---------------------
- 1 file changed, 4 insertions(+), 31 deletions(-)
+>  ppc4xx
+>  L: qemu-ppc@nongnu.org
+>  S: Orphan
 
-diff --git a/drivers/media/usb/dvb-usb/dvb-usb-init.c b/drivers/media/usb/dvb-usb/dvb-usb-init.c
-index 22d83ac18eb7..fbf58012becd 100644
---- a/drivers/media/usb/dvb-usb/dvb-usb-init.c
-+++ b/drivers/media/usb/dvb-usb/dvb-usb-init.c
-@@ -23,40 +23,11 @@ static int dvb_usb_force_pid_filter_usage;
- module_param_named(force_pid_filter_usage, dvb_usb_force_pid_filter_usage, int, 0444);
- MODULE_PARM_DESC(force_pid_filter_usage, "force all dvb-usb-devices to use a PID filter, if any (default: 0).");
- 
--static int dvb_usb_check_bulk_endpoint(struct dvb_usb_device *d, u8 endpoint)
--{
--	if (endpoint) {
--		int ret;
--
--		ret = usb_pipe_type_check(d->udev, usb_sndbulkpipe(d->udev, endpoint));
--		if (ret)
--			return ret;
--		ret = usb_pipe_type_check(d->udev, usb_rcvbulkpipe(d->udev, endpoint));
--		if (ret)
--			return ret;
--	}
--	return 0;
--}
--
--static void dvb_usb_clear_halt(struct dvb_usb_device *d, u8 endpoint)
--{
--	if (endpoint) {
--		usb_clear_halt(d->udev, usb_sndbulkpipe(d->udev, endpoint));
--		usb_clear_halt(d->udev, usb_rcvbulkpipe(d->udev, endpoint));
--	}
--}
--
- static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
- {
- 	struct dvb_usb_adapter *adap;
- 	int ret, n, o;
- 
--	ret = dvb_usb_check_bulk_endpoint(d, d->props.generic_bulk_ctrl_endpoint);
--	if (ret)
--		return ret;
--	ret = dvb_usb_check_bulk_endpoint(d, d->props.generic_bulk_ctrl_endpoint_response);
--	if (ret)
--		return ret;
- 	for (n = 0; n < d->props.num_adapters; n++) {
- 		adap = &d->adapter[n];
- 		adap->dev = d;
-@@ -132,8 +103,10 @@ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
- 	 * when reloading the driver w/o replugging the device
- 	 * sometimes a timeout occurs, this helps
- 	 */
--	dvb_usb_clear_halt(d, d->props.generic_bulk_ctrl_endpoint);
--	dvb_usb_clear_halt(d, d->props.generic_bulk_ctrl_endpoint_response);
-+	if (d->props.generic_bulk_ctrl_endpoint != 0) {
-+		usb_clear_halt(d->udev, usb_sndbulkpipe(d->udev, d->props.generic_bulk_ctrl_endpoint));
-+		usb_clear_halt(d->udev, usb_rcvbulkpipe(d->udev, d->props.generic_bulk_ctrl_endpoint));
-+	}
- 
- 	return 0;
- 
--- 
-2.46.0
+[...]
+
+> diff --git a/qapi/ghes-cper.json b/qapi/ghes-cper.json
+> new file mode 100644
+> index 000000000000..3cc4f9f2aaa9
+> --- /dev/null
+> +++ b/qapi/ghes-cper.json
+> @@ -0,0 +1,55 @@
+> +# -*- Mode: Python -*-
+> +# vim: filetype=python
+> +
+> +##
+> +# = GHESv2 CPER Error Injection
+> +#
+> +# These are defined at
+> +# ACPI 6.2: 18.3.2.8 Generic Hardware Error Source version 2
+> +# (GHESv2 - Type 10)
+> +##
+
+Feels a bit terse.  These what?
+
+The reference could be clearer: "defined in the ACPI Specification 6.2,
+section 18.3.2.8 Generic Hardware Error Source version 2".  A link would
+be nice, if it's stable.
+
+> +
+> +##
+> +# @CommonPlatformErrorRecord:
+> +#
+> +# Common Platform Error Record - CPER - as defined at the UEFI
+> +# specification.  See
+> +# https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#record-header
+> +# for more details.
+> +#
+> +# @notification-type: pre-assigned GUID string indicating the record
+> +#   association with an error event notification type, as defined
+> +#   at https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#record-header
+
+Please indent four spaces for consistency, like this:
+
+   # @notification-type: pre-assigned GUID string indicating the record
+   #     association with an error event notification type, as defined at
+   #     https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#record-header
+
+> +#
+> +# @raw-data: Contains a base64 encoded string with the payload of
+> +#   the CPER.
+
+Suggest
+
+  # @raw-data: payload of the CPER encoded in base64
+
+Have you considered naming this @payload instead?
+
+> +#
+> +# Since: 9.2
+> +##
+> +{ 'struct': 'CommonPlatformErrorRecord',
+> +  'data': {
+> +      'notification-type': 'str',
+> +      'raw-data': 'str'
+> +  }
+> +}
+> +
+> +##
+> +# @ghes-cper:
+> +#
+> +# Inject ARM Processor error with data to be filled according with
+> +# ACPI 6.2 GHESv2 spec.
+
+according to
+
+(Beware, I'm not a native speaker)
+
+> +#
+> +# @cper: a single CPER record to be sent to the guest OS.
+> +#
+> +# Features:
+> +#
+> +# @unstable: This command is experimental.
+> +#
+> +# Since: 9.2
+> +##
+> +{ 'command': 'ghes-cper',
+> +  'data': {
+> +    'cper': 'CommonPlatformErrorRecord'
+> +  },
+> +  'features': [ 'unstable' ]
+> +}
+> diff --git a/qapi/meson.build b/qapi/meson.build
+> index e7bc54e5d047..bd13cd7d40c9 100644
+> --- a/qapi/meson.build
+> +++ b/qapi/meson.build
+> @@ -35,6 +35,7 @@ qapi_all_modules = [
+>    'dump',
+>    'ebpf',
+>    'error',
+> +  'ghes-cper',
+>    'introspect',
+>    'job',
+>    'machine-common',
+> diff --git a/qapi/qapi-schema.json b/qapi/qapi-schema.json
+> index b1581988e4eb..c1a267399fe5 100644
+> --- a/qapi/qapi-schema.json
+> +++ b/qapi/qapi-schema.json
+> @@ -75,6 +75,7 @@
+>  { 'include': 'misc-target.json' }
+>  { 'include': 'audio.json' }
+>  { 'include': 'acpi.json' }
+> +{ 'include': 'ghes-cper.json' }
+>  { 'include': 'pci.json' }
+>  { 'include': 'stats.json' }
+>  { 'include': 'virtio.json' }
 
 
