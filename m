@@ -1,192 +1,142 @@
-Return-Path: <linux-kernel+bounces-279341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005FE94BC0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:15:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BE494BC04
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CF51F220D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:15:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31BD21C212D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B40C187872;
-	Thu,  8 Aug 2024 11:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C1418B477;
+	Thu,  8 Aug 2024 11:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KuKBFgO0"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RAvjiZe3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F7510F9
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A22C17FD;
+	Thu,  8 Aug 2024 11:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723115713; cv=none; b=c+VNyLL61ORyongYYJlAvGwRaLpFOf1C+36dmvmpkl45xp/xQ/lY/HsUS1fBoo+O5nsb3Z1DpmwL3EPlkAuODLzMkn8Bxg7PT4vcvaC/3AwYFXXBCNvt0t23nhn92VmPzShvhu4K18WAbDO8nTWXgNuSIgyVkRPePWVF8eSLMo0=
+	t=1723115569; cv=none; b=hsxUepD6ssvdzzmgYeNUcjfBLz3gEwepkLtkfQYL2EWs+Lt0UIFdy84eEBlwMXNPHfzmlOtaCX5ztiaALLDCSQAcSwvVAmv5xYKopmAL6Z2dRC4Hg+aBa28frDDsicgipqWNRQoHBgq5k6dKWBFWSUQEKZmRbowKmNy65tEf7pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723115713; c=relaxed/simple;
-	bh=VlLbHnoBUvgzo0/4b+vT8l9eZEtlypj9cjmzCtOIy6w=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=m1lEJHy0yfe8yJ42cOCTXUsR3TlMTRRcfATEBLJcZx+W/3+OW7X8Zpn07eolvb7CpEE8N3kQBT4COrMM5kpLkhQL87acs2mY0SBq0pXpYL2CLFuMRf7Jx6CtAa26MoDQeCys6jdxfAwONQOHjYOO+Fp8g0oT0gQLI11FviSUHGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KuKBFgO0; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723115406; bh=COkWnKsPsilMoDYNZxGcD82fAVOaCJ/rNNrMju4jH9s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=KuKBFgO0lz09+ZNKoFz1xMinQgLsS8qLTjdz1xUfcXK7TzN/JpTCurqrE1ebE5w/R
-	 gKLdKdM1nEbgAJms1VLZAfbbbjRPGVQcRWO26ffdGkjfggzrnT6tN7hJF3g/Cj/CYF
-	 4bQSWQYd6+ErjxQd7GqZXbegnQZgJt/loZVP84Ok=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 2821B01A; Thu, 08 Aug 2024 19:10:02 +0800
-X-QQ-mid: xmsmtpt1723115402tlik6e18k
-Message-ID: <tencent_1E27F746D652D8C64C49BE6EDBAEEF4CA506@qq.com>
-X-QQ-XMAILINFO: MXHIEC8P0R7hR8hvDqbuOHIfCJ9VhHV3iFRHCsmtFCeSb5i5zuCVOjgr2nO2jN
-	 RgGI3Hy3Y+XTm6AgfuUjkziyCwUnKxq0MB3/rDek+GyjxTeDob/EFXLvtAchKqeqJYsc94ENoG02
-	 aEmQV12oRvKC9JHK4hEhuRv3c1AmXrstuuF6N/7JviudyzC/Bu6zrntPVfYU/ET3JM4r31bIu2nl
-	 XyNjGFuF6HSQFQDpHKgy/8fqBSw899nPDE6oVqQh6NRBgrdxh3lFNDfsYQ+OEx5qYVa3XtGxMLLH
-	 Dw7miaQy7mmI65rI5wYtTW+Fpzp5iL1T7rPh7z2Sw6pw7vZFg8d8LqGMoaybD85r7Pt9T8zMUXa6
-	 rN8aO+rSwSLDRYM64jR0QIapgCdwmw89jqKvJgiACLbUW04yX52VR+pvJAub8dMRT7LDtaVUbpYP
-	 gra6lIWnCYJzVz6ePpUZa8eOt5ywOhJUfBWlDOZY+n4GkMtzhwy1Y5Bo6D04xX9SRVJA2bSm3rr8
-	 HI8PCK831jmD6IZfT4Kjzh+1f96PAUHHoJ+naZdpJecO8Y4REBnV5/sfOg7Xgf/dI408SlSddooQ
-	 0a1WFEyq5WzNJHATHM2P4X0/5JCiBbeya3FaZcQzPt33a90kjdXMPP/LwOEoI2nKNfTSaRit+60F
-	 Iiy1zOFmNM+xjVGX1ejuCLT9TI0XgjKAOJSS1/aOR7ITg4NzDMKJ6yK904aqfuejP4jf5xbsmagn
-	 DOtPgaKVK6bnZ2M8ou7UyJuInZswFx1W6B5IGKDINh8bu46MB+8LY8RhDFlFdVEfwbHeSjJ6ik7M
-	 nfJmz3JjvnXzMu6zH7SwIZxhGdp/u/7jQMa90JC1MA+/X+OZnJwD1Rz9czi0IG0L4VS1lR2HzCLp
-	 7lbKoxsjmM0XDMIHenJr+WoaMC2yQdTW+bmq0js6iOav/g2CWWw8RMNsdBdFuZTg==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-Date: Thu,  8 Aug 2024 19:10:02 +0800
-X-OQ-MSGID: <20240808111001.1278041-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
-References: <0000000000007ec511061f00a7b2@google.com>
+	s=arc-20240116; t=1723115569; c=relaxed/simple;
+	bh=hve/sLIedZ/7OwEbxUW7nOAwAuDnbF9YZxcJcFWT4Gs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XWx1WfR36y6QHepWaWl0LWGhvXwHHTsEes/F9GrkmXW2ka1T4oilOa8CAyHBh5a3eSMmKSLuEGjidZ5SlTuE/JxLUtkuwimLmay9PgYZ7IznkslS42WLZVUioP2XtgXmV8tORQsTHAKhGelibCCzK8hql5njSd5qEfhujJYEDF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RAvjiZe3; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723115568; x=1754651568;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hve/sLIedZ/7OwEbxUW7nOAwAuDnbF9YZxcJcFWT4Gs=;
+  b=RAvjiZe3ZKZfodXUilFqsr0n+dKoG/XZT0luFZtL8k4Eo65nP+YgT7j4
+   rOFbxSwbLfHzhVU3ZIDcva+JrKNV3euS2X7x4aQ/Z2SMNUf8d8JTT/Gf3
+   OM0JEtOtEB7ovcms4IGIty+NlYg4sNwi1KS/Ifr6kC/o7Lvbp2bqpZD3X
+   jv+6dDjFHWDG9LEDBLO1E8x9bWXvZseWSvAdIrpNzoLP4tBxXPbpDK6BD
+   2DrGWMFYO1qJ2LNlf3qvJu+RMREm4sm2695F4KmlKCsLg2ewvkbjqu/ak
+   wZqYhBiZfb6VBLQDmBvmoMwM5RZSe9q+rNoUyBWf8puLCA0HAo68x0iIU
+   A==;
+X-CSE-ConnectionGUID: sEir1PfcT+elR5vfuLDPCg==
+X-CSE-MsgGUID: 2FH5wNWRT/SOXIXzDTpEyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21091977"
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="21091977"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 04:12:47 -0700
+X-CSE-ConnectionGUID: eRQQvbl2QU2UaOfjSf/lFw==
+X-CSE-MsgGUID: bCj3M3+SSKGCr9oXhgM0kA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="57054756"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.150.149])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 04:12:43 -0700
+Message-ID: <95455271-83dc-4765-b5b8-0851a75b9164@intel.com>
+Date: Thu, 8 Aug 2024 14:12:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf script python: Add the ins_lat field to event
+ handler
+To: Zixian Cai <fzczx123@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240808080027.3559776-1-fzczx123@gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240808080027.3559776-1-fzczx123@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-debug
+On 8/08/24 11:00, Zixian Cai wrote:
+> For example, when using the Alder Lake PMU memory load event, the
+> instruction latency is stored in ins_lat, while the cache latency is
+> stored in weight.
+> 
+> This patch reports the ins_lat field for Python scripting.
 
-#syz test: upstream c0ecd6388360
+Patch does not apply.
 
-diff --git a/fs/9p/fid.c b/fs/9p/fid.c
-index de009a33e0e2..a5b716b716d4 100644
---- a/fs/9p/fid.c
-+++ b/fs/9p/fid.c
-@@ -67,6 +67,7 @@ struct p9_fid *v9fs_fid_find_inode(struct inode *inode, bool want_writeable,
- 
- 	spin_lock(&inode->i_lock);
- 	h = (struct hlist_head *)&inode->i_private;
-+	printk("ino: %p, inode fid list is empty: %d, %s\n", inode, hlist_empty(h), __func__);
- 	hlist_for_each_entry(fid, h, ilist) {
- 		if (any || uid_eq(fid->uid, uid)) {
- 			if (want_writeable && !v9fs_is_writeable(fid->mode)) {
-diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-index 348cc90bf9c5..0da8ff7f38fb 100644
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -44,6 +44,7 @@ int v9fs_file_open(struct inode *inode, struct file *file)
- 	struct p9_fid *fid;
- 	int omode;
- 
-+	printk("1ind: %p, %s\n", inode, __func__);
- 	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, file);
- 	v9ses = v9fs_inode2v9ses(inode);
- 	if (v9fs_proto_dotl(v9ses))
-@@ -54,8 +55,10 @@ int v9fs_file_open(struct inode *inode, struct file *file)
- 	fid = file->private_data;
- 	if (!fid) {
- 		fid = v9fs_fid_clone(file_dentry(file));
--		if (IS_ERR(fid))
--			return PTR_ERR(fid);
-+		if (IS_ERR(fid)) {
-+			err = PTR_ERR(fid);
-+			goto error;
-+		}
- 
- 		if ((v9ses->cache & CACHE_WRITEBACK) && (omode & P9_OWRITE)) {
- 			int writeback_omode = (omode & ~P9_OWRITE) | P9_ORDWR;
-@@ -72,7 +75,7 @@ int v9fs_file_open(struct inode *inode, struct file *file)
- 		}
- 		if (err < 0) {
- 			p9_fid_put(fid);
--			return err;
-+			goto error;
- 		}
- 		if ((file->f_flags & O_APPEND) &&
- 			(!v9fs_proto_dotu(v9ses) && !v9fs_proto_dotl(v9ses)))
-@@ -87,8 +90,12 @@ int v9fs_file_open(struct inode *inode, struct file *file)
- 				   file->f_mode & FMODE_WRITE);
- #endif
- 	v9fs_fid_add_modes(fid, v9ses->flags, v9ses->cache, file->f_flags);
-+	printk("2ind: %p, %s\n", inode, __func__);
- 	v9fs_open_fid_add(inode, &fid);
- 	return 0;
-+error:
-+	printk("err: %d, ind: %p, %s\n", err, inode, __func__);
-+
- }
- 
- /**
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index fd72fc38c8f5..29a055f2fe7b 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -738,6 +738,7 @@ v9fs_vfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 	struct inode *inode;
- 	int p9_omode;
- 
-+	printk("1ind: %p, %s\n", inode, __func__);
- 	if (d_in_lookup(dentry)) {
- 		res = v9fs_vfs_lookup(dir, dentry, 0);
- 		if (IS_ERR(res))
-@@ -781,6 +782,7 @@ v9fs_vfs_atomic_open(struct inode *dir, struct dentry *dentry,
- #endif
- 
- 	v9fs_fid_add_modes(fid, v9ses->flags, v9ses->cache, file->f_flags);
-+	printk("2ind: %p, %s\n", inode, __func__);
- 	v9fs_open_fid_add(inode, &fid);
- 
- 	file->f_mode |= FMODE_CREATED;
-@@ -789,6 +791,7 @@ v9fs_vfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 	return err;
- 
- error:
-+	printk("err: %d, ind: %p, %s\n", err, inode, __func__);
- 	p9_fid_put(fid);
- 	goto out;
- }
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index c61b97bd13b9..3c4c744af0e8 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -194,6 +194,7 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
- 	struct posix_acl *pacl = NULL, *dacl = NULL;
- 	struct dentry *res = NULL;
- 
-+	printk("1ind: %p, %s\n", inode, __func__);
- 	if (d_in_lookup(dentry)) {
- 		res = v9fs_vfs_lookup(dir, dentry, 0);
- 		if (IS_ERR(res))
-@@ -284,9 +285,11 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
- 	}
- #endif
- 	v9fs_fid_add_modes(ofid, v9ses->flags, v9ses->cache, flags);
-+	printk("2ind: %p, %s\n", inode, __func__);
- 	v9fs_open_fid_add(inode, &ofid);
- 	file->f_mode |= FMODE_CREATED;
- out:
-+	printk("err: %d, ind: %p, %s\n", err, inode, __func__);
- 	p9_fid_put(dfid);
- 	p9_fid_put(ofid);
- 	p9_fid_put(fid);
+Needs to be based on upstream kernel.  Latest perf tools kernel
+tree and branch is:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git	perf-tools-next
+
+> 
+> Signed-off-by: Zixian Cai <fzczx123@gmail.com>
+> ---
+>  tools/perf/util/scripting-engines/trace-event-python.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+> index 41d4f9e6a..68eb0586c 100644
+> --- a/tools/perf/util/scripting-engines/trace-event-python.c
+> +++ b/tools/perf/util/scripting-engines/trace-event-python.c
+> @@ -861,6 +861,8 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
+>  	set_sample_read_in_dict(dict_sample, sample, evsel);
+>  	pydict_set_item_string_decref(dict_sample, "weight",
+>  			PyLong_FromUnsignedLongLong(sample->weight));
+> +	pydict_set_item_string_decref(dict_sample, "ins_lat",
+> +			PyLong_FromUnsignedLongLong(sample->ins_lat));
+>  	pydict_set_item_string_decref(dict_sample, "transaction",
+>  			PyLong_FromUnsignedLongLong(sample->transaction));
+>  	set_sample_datasrc_in_dict(dict_sample, sample);
+> @@ -1286,7 +1288,7 @@ static void python_export_sample_table(struct db_export *dbe,
+>  	struct tables *tables = container_of(dbe, struct tables, dbe);
+>  	PyObject *t;
+> 
+> -	t = tuple_new(25);
+> +	t = tuple_new(26);
+> 
+>  	tuple_set_d64(t, 0, es->db_id);
+>  	tuple_set_d64(t, 1, es->evsel->db_id);
+> @@ -1313,6 +1315,7 @@ static void python_export_sample_table(struct db_export *dbe,
+>  	tuple_set_d64(t, 22, es->sample->insn_cnt);
+>  	tuple_set_d64(t, 23, es->sample->cyc_cnt);
+>  	tuple_set_s32(t, 24, es->sample->flags);
+> +	tuple_set_s32(t, 25, es->sample->ins_lat);
+> 
+>  	call_object(tables->sample_handler, t, "sample_table");
+> 
+> --
+> 2.25.1
+> 
 
 
