@@ -1,252 +1,154 @@
-Return-Path: <linux-kernel+bounces-279576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7BD94BF2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:09:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082D894C055
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C23FCB26DFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90CA41F279C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB0918E74D;
-	Thu,  8 Aug 2024 14:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB8818EFC4;
+	Thu,  8 Aug 2024 14:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="QqhTjXFW"
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="euaPm5W2"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A39518CC05
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1348F25570
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723126178; cv=none; b=aa1Nr/uXGRyZi+xAlREGQ2qglmysmfVYPzd0dqyB4RaxGK7F0EL/jGGkRbAjKKLY/PZMKnYEH28MDMVxaDqTwGlP5A07mweMdaOGfshi4537eG5AOI8ZfWP+uXgWhoaFsgjsqqTGXP5bxm/FV07VvLTs1X+eeGP9BCBrcB/16tg=
+	t=1723128967; cv=none; b=ftLWV3MCGdMBN9X2RtD1PxcpwBUTHM1hpDnhWRDJmIkm0tLmVk8fWdaQmV7vDl1dDeW9MHmlEy7YdkYhjeKi+Nm+tucurf8snqxf0FLY9OraSSirXDyCU/yFszqYdQEp36jr09Rd9z15JRn1UgfUuBZPNfzUnnUxeWwEO5eJ48w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723126178; c=relaxed/simple;
-	bh=zbW+TnT2zxyMB+yxd0fACCt1cAOudRQVOD0lCGX/HEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eqIf67oysaDwi0kAM7QDkPx7rvtQuTCFIG6V36ucq/iE4XVxul5Zc3ZMczObKItYBJ2BbHIpBDuMk8JRTm4Vqn5tg12z+ZK0jVi3UroZXBJDG8byizytivS3aJs2McUIjCSpWciEabdApimCwhGND7SlkidNyXCophLDXgwO414=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=QqhTjXFW; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wfpng0q8YzRVT;
-	Thu,  8 Aug 2024 16:09:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723126167;
-	bh=MbLKs2A5zMNmmzak6XvmEHCMnOoCd8Xu8lOUJ5M2KQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QqhTjXFW5BJKsWENy5GGCaj2cL+YpbF2ZFQOTgDmHVVg+Y+IOItc7XD/Xuz8gC1HI
-	 evfGSiybrDBagWMU9EKiHSHPNzU73aIMEjLAGVY0gWKCU1I6O6Ww8fZUxS4J9pZ5fI
-	 3f0CYWuKs/sULKTbnDSDd4lFOqrOXVT1RApX4ego=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wfpnd5BQYzrQF;
-	Thu,  8 Aug 2024 16:09:25 +0200 (CEST)
-Date: Thu, 8 Aug 2024 16:09:20 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jann Horn <jannh@google.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>, outreachy@lists.linux.dev, 
-	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
-Message-ID: <20240808.kaiyaeZoo1ha@digikod.net>
-References: <cover.1722966592.git.fahimitahera@gmail.com>
- <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net>
- <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
+	s=arc-20240116; t=1723128967; c=relaxed/simple;
+	bh=3uV1fuMQTRFXuTNBkDloolIsfEw6mH5RqeD6IH0xgHE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=Jg+TtsIR7CbQ9M5BOjWgbrdOg5iw5xbZepUh/LDnrQ0Ia2BRYlvV8wp23w8OH5EiMWG4WdJQ7qOVuceuX0WxpIGTIVcdTCNK05QEUHBECy+ZND1EWIqJgl6FY9dIztoJbhoWHf/vp8tOf5kqtPCVpwGQgj4vIBZl9PwwBK6ZeIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=euaPm5W2; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240808145559epoutp038a7631620ffa49bcd0de6afd86abbe9a~pyKjaxT5s1416614166epoutp03X
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:55:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240808145559epoutp038a7631620ffa49bcd0de6afd86abbe9a~pyKjaxT5s1416614166epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723128960;
+	bh=iNHEhsKUx1AEHn4RcoaHOHCYihBFYUXlK4KIGR/VKI4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=euaPm5W2EvDLHTi3jNAj9v4Fep8mgfIhmfJUG+Iaxia6p5YGyNCzw3+Us/+aFAsna
+	 rIf6KOCUoeDQcFdcQsAsJ7KhSikXgkFpUt8cXG5MQqSVumTIwoFaPrVurVfRxU2U8q
+	 ZL/8hiNULWnYGyQPxQ8jgTk4mFEnGch0qi4m067Q=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240808145558epcas5p2c825edfc5676142867b54dee74fdac81~pyKiPHUfs2090620906epcas5p2r;
+	Thu,  8 Aug 2024 14:55:58 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WfqqK0hG5z4x9Pr; Thu,  8 Aug
+	2024 14:55:57 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	99.71.09640.C7CD4B66; Thu,  8 Aug 2024 23:55:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240808135645epcas5p37c6bf0c6ad8efbe43e8451874900c111~pxW00INr_1294112941epcas5p3h;
+	Thu,  8 Aug 2024 13:56:45 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240808135645epsmtrp2a2c13c9a9563ffaaf1c17b590ae4e28e~pxW0zGl0S1652216522epsmtrp2V;
+	Thu,  8 Aug 2024 13:56:45 +0000 (GMT)
+X-AuditID: b6c32a49-a57ff700000025a8-d9-66b4dc7c889c
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	63.BB.08456.D9EC4B66; Thu,  8 Aug 2024 22:56:45 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240808135643epsmtip14a883be020d8fe2f9098ecd4adea68f2~pxWy2ngIn3179631796epsmtip1h;
+	Thu,  8 Aug 2024 13:56:43 +0000 (GMT)
+From: Aakarsh Jain <aakarsh.jain@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
+	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
+	aswani.reddy@samsung.com, pankaj.dubey@samsung.com, Aakarsh Jain
+	<aakarsh.jain@samsung.com>
+Subject: [PATCH v4] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt binding
+Date: Thu,  8 Aug 2024 19:14:32 +0530
+Message-Id: <20240808134432.50073-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGKsWRmVeSWpSXmKPExsWy7bCmlm7NnS1pBs/fmVs83TGT1eL+4s8s
+	Foc2b2W3uHlgJ5PFxZl3WSz6Xjxkttj0+BqrxeVdc9gsejZsZbWYcX4fk8XaI3fZLZZt+sNk
+	sWjrF3YHXo/Fe14yeWxa1cnmcefaHjaPzUvqPfq2rGL0+LxJzuPU18/sAexR2TYZqYkpqUUK
+	qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QNcqKZQl5pQChQISi4uV
+	9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7IzTlzex1Jwhb3i
+	35rLjA2Md9i6GDk4JARMJM5e4QQxhQR2M0pscOhi5AQyPzFKHP9a1sXIBWR/Y5S4c/QOK0gC
+	pPzK4dUsEIm9jBJrV69ngehoZZJ4sFoSZBCbgK7E2e05IGERgVSJV+vWsoLUMwssYZJYdOQZ
+	E0hCWMBbYsWud+wgNouAqsSDyTvBbF4BW4m1jauZIZbJS6zecIAZpFlC4CW7xNUp06ASLhJH
+	Vsxjg7CFJV4d38IOYUtJfH63FyqeLPF40Uuo+hyJ9XumsEDY9hIHrsxhATmUWUBTYv0ufYiw
+	rMTUU+vAbmMW4JPo/f2ECSLOK7FjHoytJjHnzg9oQMhIHF69lBHC9pDoeHCYDRIOsRJn5k1g
+	m8AoOwthwwJGxlWMkqkFxbnpqcWmBYZ5qeXwSErOz93ECE6AWp47GO8++KB3iJGJg/EQowQH
+	s5IIb3P4pjQh3pTEyqrUovz4otKc1OJDjKbAMJvILCWanA9MwXkl8YYmlgYmZmZmJpbGZoZK
+	4ryvW+emCAmkJ5akZqemFqQWwfQxcXBKNTBFM/r135v85M/td4fEvK6sLTv5WOzI1h4tS8/q
+	nuzoB4U3rFZGcj52//77jFT2Lma17XdPBx2UWani2/d0aqrN+aziKmfpc2cTm858KlzPMpM1
+	d3pfQ1j9B4fvx1Llz9UIyq5i8xTq9RWNb7Bq2xTi82+KY8vmZMYPQWt/XNGMizXoWW/Klrzk
+	jFineVHov7/tDtJb1lp/lonZvaPukcOObTdLBecFzGc1OnDU8/BOi1/b722KXT3xppntpub6
+	WXZZB3vO2e7Y27v3+99e9h2RBlEqVyMO/RYPV1LjZ4416vjrJD5Z++ky/dtM5/qYDKrPJCkm
+	Xt56ZsLHjJ6iApt3509uTOngrVFZMYE5+awSS3FGoqEWc1FxIgA/gwlKCQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGLMWRmVeSWpSXmKPExsWy7bCSnO7cc1vSDHZd47J4umMmq8X9xZ9Z
+	LA5t3spucfPATiaLizPvslj0vXjIbLHp8TVWi8u75rBZ9GzYymox4/w+Jou1R+6yWyzb9IfJ
+	YtHWL+wOvB6L97xk8ti0qpPN4861PWwem5fUe/RtWcXo8XmTnMepr5/ZA9ijuGxSUnMyy1KL
+	9O0SuDJOXN7HUnCFveLfmsuMDYx32LoYOTkkBEwkrhxezdLFyMUhJLCbUeLrrYWsEAkZif9t
+	x9ghbGGJlf+es0MUNTNJTLswGaiDg4NNQFfi7PYckBoRgXSJSXe+gg1iFljHJLFz5USwQcIC
+	3hIrdr0DG8QioCrxYPJOMJtXwFZibeNqZogF8hKrNxxgnsDIs4CRYRWjZGpBcW56brFhgVFe
+	arlecWJucWleul5yfu4mRnBQamntYNyz6oPeIUYmDsZDjBIczEoivM3hm9KEeFMSK6tSi/Lj
+	i0pzUosPMUpzsCiJ83573ZsiJJCeWJKanZpakFoEk2Xi4JRqYNoTPEX0q7DwtHvbTDb9jjqv
+	wt2pFBTr9PNRx2PLM19nxiWULsq9Knx6+sNebbXbTOVHJlzf8V5KfE2Ayv5PZ7pvu5xmYmCb
+	LvfhXKd/q+3s8l6z81H8K9NFijUc57o0Pt1gu8qYy+G75p7+K5NnZX55uCu551nPLf85HEFf
+	WFXKnjgZ5GQaFLgvn/dB8BIbx3/tn2kOkSkrbgoEqtcV/Vgka7j1zhF9VtdXez8qBMr9fhQt
+	kaIkmfes1vW8n5hY+3+WU1cmX+WV2OqWdLL7XIH6Nq+sRY/j9n+rEf2W+sH6nkTMvbSWi55N
+	v+SWlUpOP7ThQ7T/fK0jAWmHFnwWSBTNiJSLv37uaPlxxrZlXkosxRmJhlrMRcWJAOUkQJC5
+	AgAA
+X-CMS-MailID: 20240808135645epcas5p37c6bf0c6ad8efbe43e8451874900c111
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240808135645epcas5p37c6bf0c6ad8efbe43e8451874900c111
+References: <CGME20240808135645epcas5p37c6bf0c6ad8efbe43e8451874900c111@epcas5p3.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Thu, Aug 08, 2024 at 03:10:54AM +0200, Jann Horn wrote:
-> On Thu, Aug 8, 2024 at 1:36 AM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> > On Wed, Aug 07, 2024 at 08:16:47PM +0200, Mickaël Salaün wrote:
-> > > On Tue, Aug 06, 2024 at 11:55:27PM +0200, Jann Horn wrote:
-> > > > On Tue, Aug 6, 2024 at 8:56 PM Jann Horn <jannh@google.com> wrote:
-> > > > > On Tue, Aug 6, 2024 at 8:11 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> > > > > > Currently, a sandbox process is not restricted to send a signal
-> > > > > > (e.g. SIGKILL) to a process outside of the sandbox environment.
-> > > > > > Ability to sending a signal for a sandboxed process should be
-> > > > > > scoped the same way abstract unix sockets are scoped. Therefore,
-> > > > > > we extend "scoped" field in a ruleset with
-> > > > > > "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset will deny
-> > > > > > sending any signal from within a sandbox process to its
-> > > > > > parent(i.e. any parent sandbox or non-sandboxed procsses).
-> > > > [...]
-> > > > > > +       if (is_scoped)
-> > > > > > +               return 0;
-> > > > > > +
-> > > > > > +       return -EPERM;
-> > > > > > +}
-> > > > > > +
-> > > > > > +static int hook_file_send_sigiotask(struct task_struct *tsk,
-> > > > > > +                                   struct fown_struct *fown, int signum)
-> > >
-> > > I was wondering if we should handle this case, but I guess it makes
-> > > sense to have a consistent policy for all kind of user-triggerable
-> > > signals.
-> > >
-> > > > > > +{
-> > > > > > +       bool is_scoped;
-> > > > > > +       const struct landlock_ruleset *dom, *target_dom;
-> > > > > > +       struct task_struct *result = get_pid_task(fown->pid, fown->pid_type);
-> > > > >
-> > > > > I'm not an expert on how the fowner stuff works, but I think this will
-> > > > > probably give you "result = NULL" if the file owner PID has already
-> > > > > exited, and then the following landlock_get_task_domain() would
-> > > > > probably crash? But I'm not entirely sure about how this works.
-> > > > >
-> > > > > I think the intended way to use this hook would be to instead use the
-> > > > > "file_set_fowner" hook to record the owning domain (though the setup
-> > > > > for that is going to be kind of a pain...), see the Smack and SELinux
-> > > > > definitions of that hook. Or alternatively maybe it would be even
-> > > > > nicer to change the fown_struct to record a cred* instead of a uid and
-> > > > > euid and then use the domain from those credentials for this hook...
-> > > > > I'm not sure which of those would be easier.
-> > > >
-> > > > (For what it's worth, I think the first option would probably be
-> > > > easier to implement and ship for now, since you can basically copy
-> > > > what Smack and SELinux are already doing in their implementations of
-> > > > these hooks. I think the second option would theoretically result in
-> > > > nicer code, but it might require a bit more work, and you'd have to
-> > > > include the maintainers of the file locking code in the review of such
-> > > > refactoring and have them approve those changes. So if you want to get
-> > > > this patchset into the kernel quickly, the first option might be
-> > > > better for now?)
-> > > >
-> > >
-> > > I agree, let's extend landlock_file_security with a new "fown" pointer
-> > > to a Landlock domain. We'll need to call landlock_get_ruleset() in
-> > > hook_file_send_sigiotask(), and landlock_put_ruleset() in a new
-> > > hook_file_free_security().
-> > I think we should add a new hook (hook_file_set_owner()) to initialize
-> > the "fown" pointer and call landlock_get_ruleset() in that?
-> 
-> Yeah. Initialize the pointer in the file_set_fowner hook, and read the
-> pointer in the file_send_sigiotask hook.
-> 
-> Note that in the file_set_fowner hook, you'll probably need to use
-> both landlock_get_ruleset() (to take a reference on the ruleset you're
-> storing in the fown pointer) and landlock_put_ruleset() (to drop the
-> reference to the ruleset that the fown pointer was pointing to
-> before). And you'll need to use some kind of lock to protect the fown
-> pointer - either by adding an appropriate lock next to your fown
-> pointer or by using some appropriate existing lock in "struct file".
-> Probably it's cleanest to have your own lock for this? (This lock will
-> have to be something like a spinlock, not a mutex, since you need to
-> be able to acquire it in the file_set_fowner hook, which runs inside
-> an RCU read-side critical section, where sleeping is forbidden -
-> acquiring a mutex can sleep and therefore is forbidden in this
-> context, acquiring a spinlock can't sleep.)
+s5p-mfc bindings to json-schema is already merged with
+this commit 538af6e5856b ("dt-bindings: media: s5p-mfc:
+convert bindings to json-schema"). Remove s5p-mfc.txt
+file.
 
-Yes, I think this should work for file_set_fowner:
+Fixes: 538af6e5856b ("dt-bindings: media: s5p-mfc: convert bindings to json-schema")
+Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+---
+changelog:
+v1->v2
+Add Fixes tag suggested by Krzysztof
+v2->v3
+Aligned Fixes tag in oneline and corrected commit message
+Link: https://patchwork.kernel.org/project/linux-media/patch/20240213045733.63876-1-aakarsh.jain@samsung.com/
+v3->v4
+Placed changelog at proper place
+ Documentation/devicetree/bindings/media/s5p-mfc.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
 
-struct landlock_ruleset *prev_dom, *new_dom;
+diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+deleted file mode 100644
+index e69de29bb2d1..000000000000
+-- 
+2.17.1
 
-new_dom = landlock_get_current_domain();
-landlock_get_ruleset(new_dom);
-
-/* Cf. f_modown() */
-write_lock_irq(&filp->f_owner.lock);
-prev_dom = rcu_replace_pointer(&landlock_file(file)->fown_domain,
-	new_dom, lockdep_is_held(&filp->f_owner.lock));
-write_unlock_irq(&filp->f_owner.lock);
-
-landlock_put_ruleset_rcu(prev_dom);
-
-
-With landlock_put_ruleset_rcu() define with this:
-
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-index a93bdbf52fff..897116205520 100644
---- a/security/landlock/ruleset.c
-+++ b/security/landlock/ruleset.c
-@@ -524,6 +524,20 @@ void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset)
- 	}
- }
- 
-+static void free_ruleset_rcu(struct rcu_head *const head)
-+{
-+	struct landlock_ruleset *ruleset;
-+
-+	ruleset = container_of(head, struct landlock_ruleset, rcu);
-+	free_ruleset(ruleset);
-+}
-+
-+void landlock_put_ruleset_rcu(struct landlock_ruleset *const ruleset)
-+{
-+	if (ruleset && refcount_dec_and_test(&ruleset->usage))
-+		call_rcu(&ruleset->rcu, free_ruleset_rcu);
-+}
-+
- /**
-  * landlock_merge_ruleset - Merge a ruleset with a domain
-  *
-diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-index c749fa0b3ecd..c930b39174b0 100644
---- a/security/landlock/ruleset.h
-+++ b/security/landlock/ruleset.h
-@@ -190,19 +190,35 @@ struct landlock_ruleset {
- 		 * @work_free: Enables to free a ruleset within a lockless
- 		 * section.  This is only used by
- 		 * landlock_put_ruleset_deferred() when @usage reaches zero.
--		 * The fields @lock, @usage, @num_rules, @num_layers and
-+		 * The fields @rcu, @lock, @usage, @num_rules, @num_layers and
- 		 * @access_masks are then unused.
- 		 */
- 		struct work_struct work_free;
- 		struct {
--			/**
--			 * @lock: Protects against concurrent modifications of
--			 * @root, if @usage is greater than zero.
--			 */
--			struct mutex lock;
-+			union {
-+				/**
-+				 * @rcu: Protects RCU read-side critical
-+				 * sections.  This is only used by
-+				 * landlock_put_ruleset_rcu() when @usage
-+				 * reaches zero.
-+				 *
-+				 * Only used for domains.
-+				 */
-+				struct rcu_head rcu;
-+				/**
-+				 * @lock: Protects against concurrent
-+				 * modifications of @root_inode and
-+				 * @root_net_port, if @usage is greater than
-+				 * zero.
-+				 *
-+				 * Only used for rulesets.
-+				 */
-+				struct mutex lock;
-+			};
- 			/**
- 			 * @usage: Number of processes (i.e. domains) or file
--			 * descriptors referencing this ruleset.
-+			 * descriptors referencing this ruleset.  It can be
-+			 * zero in RCU read-side critical sections.
- 			 */
- 			refcount_t usage;
- 			/**
-@@ -241,6 +257,7 @@ landlock_create_ruleset(const access_mask_t access_mask_fs,
- 
- void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
- void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
-+void landlock_put_ruleset_rcu(struct landlock_ruleset *const ruleset);
- 
- int landlock_insert_rule(struct landlock_ruleset *const ruleset,
- 			 const struct landlock_id id,
 
