@@ -1,231 +1,288 @@
-Return-Path: <linux-kernel+bounces-279954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589E894C3D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:38:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B17B94C3CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FD5D1C2203F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:38:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4F71F22808
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9DD191472;
-	Thu,  8 Aug 2024 17:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E621917C6;
+	Thu,  8 Aug 2024 17:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QujyUa84"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MNJTCbmd";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="0U5o+Qw0"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F4413D8A3
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723138702; cv=none; b=VD6tDChiN2o0E/oDTsGIBRO02dfyoSbCA5WYDRtTBs9Ka/9H3UNhIO9ECpC5qigIZNDbgY2nOvx7z64cE5GPywFDeEdxGTGKZb0JN0sE6/DYi9U1ut9d90VzKKzfZ5cCI5YnECGs7JaGYJJ1+DEruc3UrHDD1O5pa2kfTh6nuZE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723138702; c=relaxed/simple;
-	bh=gnD/HT6O0crLNlUAz+OP0EZijUHm0EAnPKnEJo9bls0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i1qc+W3boUwT6IaIThQewjfeMfUhYWI/Z3BqqveUn1lPP34DtbbP096k2RPaGyBhRN7Pc13WJl9/vgfYj/KVRYlnaMjqqpdMVgmicxPzKQ1FbF5pqC7qZTBE4i3wEYO4Z0FYhgREamCgo1BEfomkZmdI+0r1ruW7lB+GckXkUDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QujyUa84; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a728f74c23dso140806866b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:38:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFF8191466
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723138308; cv=fail; b=pEaWUH0n5q68B5d99BGvZngjH/CIZ48UpNJvCALclqSeDDizuZQNQDyso3xOzFkWL1AJ2hCE6LlLm6r0dkrkpudA80h7VbY0FoUvqLSscuxoFt+DPAsot3m6bBIBLBkdYSZEFYEpE4urJHUUQGVZ2hRl5plBMwdc1ZkXUUQpziM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723138308; c=relaxed/simple;
+	bh=mebltZpz0RjAS0mI6jWNbWplrvz1JDybYTgvrOx3zeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=D+O9gPXy5s3LjWcxAGXuwcmdadQ+4lu4h65HG43s3cDte061NuHwt75TP0ovymDjrK53/hjzLXvzl3chddp8YGk0qZfFZLn2RSTV6MKk0IPhG1iwr6TwIcsNxUviYjEMdzfDvnagwJfUMRUIyeMFDOdiTLx440vpp3WbRMEWlds=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MNJTCbmd; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=0U5o+Qw0; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478AMY19024565;
+	Thu, 8 Aug 2024 17:31:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=C9m/KGP8JbjtqI5
+	d8Kk9VAM6uBJWbefK+FhDm9Lft4M=; b=MNJTCbmdvC1MzOTGMHUyvix1qFX5wiY
+	7btlxVzgsM/AVi6Ji9ZqCSHrrpej92u2k1CTZHrDV0hXTN/v7NH2Y/h2nWpPgv0Y
+	WSgIIoASXrb95snpxWBuoaTsivnbe59bXQW2V4MWbZuoTxHTrF8OQ5kdWjrfbOuq
+	RyCJ3DDM+dyrSSqLQXrzgCQb3eO5Ds6Gc8+rDXtK2USbPKuWbAEggoy2cEfRTGLn
+	qOB9skonYKczLG+JJ+gH3UOg5x8XHTZgJyguHClaDYALCXVlUG3vGBlw0Fr0O+zN
+	jeKFRUOmQGlDbRO9ps/8DvwzG0Wf2+jWJjcIMxavZTs9JG5vjhZZFDA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40sayea92w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 08 Aug 2024 17:31:34 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 478G2quB023765;
+	Thu, 8 Aug 2024 17:31:34 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2040.outbound.protection.outlook.com [104.47.56.40])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40sb0hps7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 08 Aug 2024 17:31:34 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PnOJpHoTDdFakHoprVGkwK5nvCnk3b6qwXo4nHk1tWdEBbXzElp+81Az6hSz9O2cThVBqvqwIS/CYguiJaA/A9y89LPBiLxCGgTUp6rv8nE1QsykQ+cEs4xPawCHByr4nrhCGOC/Unu5vQ0GxUlcY66I7NZdlgwUm9GGEjzjp3wyHbI5tr/+bp8UDvPSf1k5YgrIptoI7Aqw9mpT1cVE//5LCiZu8oqlANR07tP4vZpRtqlaJoLBeI20bp0V4UvukV3jk9li7idGNVNbEK5OvhccWe+Ne6hG2MPs2Y452FrUwIS5qVQgkrgZgFwYv3lIQwJ/uyisrm5Rvk/uraO5Gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C9m/KGP8JbjtqI5d8Kk9VAM6uBJWbefK+FhDm9Lft4M=;
+ b=slIVcOilMk09/cT+gCOXlBD7E86U32WHsopaHMR/fCzc7cOtoJPHU+ZUWM7eKXSa7TXYLbLh3Ly6ex5+f+Hzqb8XlnyRj80KhYWMDNpv/uCRqWTlWvrcS8fjK6UIAcgFVcXJe+vYJJxNVw+fEa/Bo3UwqnsxqCpyaIj/MT/x9gorBE7ftQiICfUXgCd7LtXPv3KOwfgwh81OqLnkmPBPo6vvnoVnAm82PGIzrJVW9TBnbQ2kuzZ9oqUwFXauZH4t7puarMsftgjfTKe64B0UGgnzDJ8SOmQYVgJcMSlf5HkFb/zVfAT/EKVoIt6dZj2e5a20N3xoriePeeCISXG3zg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723138699; x=1723743499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4/eyEs7VGUKV5+tA+ktUUedwCkeY9RR2fMIgk//OJ+0=;
-        b=QujyUa84IJHfP9BeV53xUMkEipAQeyzPyqg50JIhPj1D0IM8C1NrqSafYy04+UHkIF
-         nWxbo4N60tEefJJkEkl8G4ictiRJ/0hrLRUjsM66bVyZ+4O0E8b+PQRPPHyBnZFjqSn1
-         elTbPMg2l6jWgO372R1svKEAjdF3WP2G7fefI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723138699; x=1723743499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4/eyEs7VGUKV5+tA+ktUUedwCkeY9RR2fMIgk//OJ+0=;
-        b=WJkidomDehdvaZkaI3L/arrAefDL7R/dEXCg4xji3DklkA6VzYrltJM+zZ8YxZ/G2i
-         9bffzh98NVcm6OKJoxxPmoXO5J3gzNNSZgp/almw4p0vDwpm9Ytp0o0t3I9olNwKel9A
-         bpWp891FxSVlHKqNEZgs/zA4zwdYujZATMSiKA9QOGA2klt+FFxzTakH1nAAgkHBvOKH
-         r/Zevje8acmynKfMMyTTEGBW81jtpHEp8q1XcKvp2jzMisUQEdBbTm8MW/sCQtk2Bqrr
-         WR1stytqsQOUtZmp4FWIqGy2BcSVCclsmVxk3sIBjtteU6jk4RyZd3ubbIL0qipNh1I9
-         xuzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQrkyjdX5upiQKNt7mFviYiPNfvp8Hw2393sKopUL6m8fjctr9UQq5jxOSoYSKo+XPkLbcSIozB2v9Dbg6DjMM4e5245IZf1pvhnyB
-X-Gm-Message-State: AOJu0Yz/42Fd7Jxrk0ShxuKdqIWCdMwUbj7HXD1sqtUbg9t3MRtpk5yu
-	e/MG81nEB5+OV546L1a5RCAJeuS4YAeAk0ytuOurfCWwxD+JBMTW9YIYBTIFRpi65lAo3UpcQkw
-	Zug==
-X-Google-Smtp-Source: AGHT+IFAychwe474cZE2mwBqcG0ChwEXKPjizIpXAJD4vxdItWxwqC/0y3cLO65Na0zTWTsXuMI13g==
-X-Received: by 2002:a17:907:f1d4:b0:a77:b784:deba with SMTP id a640c23a62f3a-a8090c0026bmr183926066b.6.1723138698841;
-        Thu, 08 Aug 2024 10:38:18 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3ce6sm762441266b.4.2024.08.08.10.38.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 10:38:18 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bb85e90ad5so1098312a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:38:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBHY/qCR9wof/W/e+Tk4vb30uNeqvsjKmEJv6cIKhLLj2rC0Tr6vCM3w7n7Uk0zBSk1uN17s498oGNaDiyTZ2o/P0Db1T6lPef+0Lm
-X-Received: by 2002:a17:907:e64d:b0:a7a:9ca6:531 with SMTP id
- a640c23a62f3a-a8090beb612mr192822566b.4.1723138266201; Thu, 08 Aug 2024
- 10:31:06 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C9m/KGP8JbjtqI5d8Kk9VAM6uBJWbefK+FhDm9Lft4M=;
+ b=0U5o+Qw0gZNzBNza269g+9J49keEZvakZ0cRh/2Kw2YXgNDbg6rSLfl1cd27IQt4CeRas6//eEM6rcnDKB4H8RpZCboZ3imhq1vtd22o1VSO5Irt3SAouQXEikcTCLTbMnRbL11k6z+Cd5BusaUzAVlWyeykrI0yulC8nxhW528=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by IA0PR10MB6769.namprd10.prod.outlook.com (2603:10b6:208:43e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.9; Thu, 8 Aug
+ 2024 17:31:31 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7849.008; Thu, 8 Aug 2024
+ 17:31:31 +0000
+Date: Thu, 8 Aug 2024 13:31:29 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org
+Subject: Re: [PATCH 2/2] maple_tree: reset mas->index and mas->last on write
+ retries
+Message-ID: <lxwpafvlnw5fyquhehlfoe53hqtfmdo42krhzxacurjpu77r2d@zmzxm6mh7z2q>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org
+References: <20240808163000.25053-1-sidhartha.kumar@oracle.com>
+ <20240808163000.25053-2-sidhartha.kumar@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808163000.25053-2-sidhartha.kumar@oracle.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT4PR01CA0254.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10f::9) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230707191721.1.Id08823b2f848237ae90ce5c5fa7e027e97c33ad3@changeid>
- <b32ae8af-7950-c725-5632-6ec13420bf77@infradead.org> <6101a3bb-30eb-97fc-3a8e-6d15afc4efb5@amd.com>
- <3de1ff24-3970-6e22-a73c-70446b8de4bd@infradead.org> <CAHQZ30BLb13Mz5+3MCgV30eG-LiU-6-4F7AEinGQmsgiyzD-yA@mail.gmail.com>
- <ZLF5_dJyQgzNnrnO@alley> <CAHQZ30DjZE6Mg-KUrLQOLHh+OxNHZXRDkuZopxJb3F7G29TsXA@mail.gmail.com>
- <ZLGVYg1FAZN7VFxB@alley> <CAHQZ30Abpvm+__VK9oaU9eWwLKpiND+rmfjrPvF_R_09d2JqGQ@mail.gmail.com>
- <ZLZgZvE35fYCkgOq@alley> <CAHQZ30DQw9n=uiuz3-nqnOKVbZdp-=DfeSn2feoPL08RjYzT=A@mail.gmail.com>
-In-Reply-To: <CAHQZ30DQw9n=uiuz3-nqnOKVbZdp-=DfeSn2feoPL08RjYzT=A@mail.gmail.com>
-From: Raul Rangel <rrangel@chromium.org>
-Date: Thu, 8 Aug 2024 11:30:53 -0600
-X-Gmail-Original-Message-ID: <CAHQZ30AEuwUzJs0bjsZ4eisJhmG8zkrXx4eKnfGsJ1jBt=jTUA@mail.gmail.com>
-Message-ID: <CAHQZ30AEuwUzJs0bjsZ4eisJhmG8zkrXx4eKnfGsJ1jBt=jTUA@mail.gmail.com>
-Subject: Re: [PATCH] init: Don't proxy console= to earlycon
-To: Petr Mladek <pmladek@suse.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Mario Limonciello <mario.limonciello@amd.com>, 
-	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	kramasub@chromium.org, Alexander Potapenko <glider@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Li Zhe <lizhe.67@bytedance.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Will Deacon <will@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Zhou jie <zhoujie@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|IA0PR10MB6769:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4dc4865-017c-4fe3-cfa7-08dcb7cff17d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bj2B0otB+24hoPmgCmxwyR5kb41tH/ePTllQDNtpQ9dvXz8JgiHqR6yZ3N0l?=
+ =?us-ascii?Q?NJizeiJfHdCU0sTkhQEfCyHTXgFrrjqBGyEb+QXnIg32aT3nXx3l3KPlYXnH?=
+ =?us-ascii?Q?ye/NagDFbHeLDqbmxMhq7uxtC1g5bitkqyDRF7qezw+FU1oFqOj8LZ8dVCUg?=
+ =?us-ascii?Q?Xts8vMie2Evd6hYIZywBKuyOH/JU+8lNByRy0diI30rrElo1sxOGeDk+V7v1?=
+ =?us-ascii?Q?JDSmV1VGO6EPVuEv+0Bh+N563F0Uj/FJ9ItKvLvhF3ykg6/43zC1avvXN4l8?=
+ =?us-ascii?Q?cf7CSWx0nnuc0Ti8wRsykJvVGU3tToJg/S1u+ATIDy0nSXPW/S1B/zA2UW64?=
+ =?us-ascii?Q?GwT5OaciuiqA6O3F+9VyvEEUMU71P00nxQF/ln69XzePW7eqi7Ij6mI7Lovb?=
+ =?us-ascii?Q?N8cuu3AB/ZaYSsY0iR3mSw6iMwX0PCdSf5OzESQVVRJvqisc6MUDp0Pcc5NA?=
+ =?us-ascii?Q?CniS9XxgsX4pwA9kUjJMXkHogeX/3WzWpq9i5/KvXKdmxODiaP9QiEb6oJNK?=
+ =?us-ascii?Q?PcCK/J4omWJdtiv1+2OFMN/BNPtPoU1AIdiLgpO+4skMClSrgKBJAeOBGB35?=
+ =?us-ascii?Q?0jTokHTCWtrQgmTNJpUaYI+3LbfX/YjjGKB7SaIECykrX366AKrE3rax4Iy6?=
+ =?us-ascii?Q?YQ6nQZZ1hL4WFPNdfUzpMajRTa9MzC6wXc9BETOS/RL/sejmYPXScVFc7O74?=
+ =?us-ascii?Q?aU+VY0Qx69Bg/WPbgWWvUhNUb+sLM134HlA0D3LOLLSe8uXlOgau+mI++etQ?=
+ =?us-ascii?Q?Q/NPINxrMtJVJ7tRAKLha3n+3N0ASWeM3U9Sj2NfzAltY0m+a86OiLsdFtJM?=
+ =?us-ascii?Q?0OquW0ynpqONJP6q3fe7emY8AFYhzc9c9Q3w3utZG01DzkQeFPvH4nC5rtix?=
+ =?us-ascii?Q?YKAHzkdW8WBbSzusfsTJVlRTsxk+T6mpjqfFjAPvN+ay5MrFSuPU7kM+G135?=
+ =?us-ascii?Q?/66r5FRWHwUlLh8cc856KYMa7K7CnqdveTIfCN/JxzW/Y/iyLENt8TzMrrnM?=
+ =?us-ascii?Q?Pt/CM3OZ3muPjknh9nUwmHUOU38pyiXPS3ZMX7qxtaIP5EAYo9P7pZJWGlRq?=
+ =?us-ascii?Q?fZeAxNsaFWCsmp6sZA60SbL4LjV3B6UhoOitsNBABcUN+gWF/Z1xe1sIkTkr?=
+ =?us-ascii?Q?LFOwSY65Kz0qSgQPHjo5wiZvVhehuCo7sR/yhLAlSmmhtlN/RK6B5+w0nm3V?=
+ =?us-ascii?Q?mQYGWXsvgzr9sTA3CTC1s0OLHyn0iBJ71AozrRYCpRvhWKwnBAact7Y+1bqj?=
+ =?us-ascii?Q?xcQEvlIuTBrQ5LDDrs0VE43lVM6EEbeLRg2yT/oRlPpK20piHZnfUXj6cujW?=
+ =?us-ascii?Q?3+jrYGbHXOhU9pRJPacb2PO/wCEZ+qaBNJv5uZ98E/jHVA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?P3dYNrKqQhvVmvTOE8+Yj8bPPuDzm6m7AIeLT/wn9y4s1/UNvG6r7D1qCIM0?=
+ =?us-ascii?Q?DM4vWAlSu5ANPVTRtCuAsPQw93WuoS386sQhH9bBAv9034Qj8RlKGUpRjmW4?=
+ =?us-ascii?Q?3lPYKhcdd1QUZmRGBhsGJDwUvT/vKk6GLvOvoBS9ML6jA9KeZ2QBRAMumGI6?=
+ =?us-ascii?Q?Fxah8N3OtWs4+vKuswViOrn9h9aeEBIP6TES7EAjqHZRRTLkJDRkIiRGM5+t?=
+ =?us-ascii?Q?0qKgGrxOKRN06DH2ikCoAlxz2L0PxZH0ZdtTSku+0qAzSIeH9zU3eqoNHqsh?=
+ =?us-ascii?Q?SG7KjsMUG9mrV9yqN8WaBaSYFikCouoJ4cUocSKm90SVeuwsxHB72i5PEQDd?=
+ =?us-ascii?Q?DE7SrFcyeeVIwGF6sazXD0T+W13nWR/Qu6icNFga1c66Zgk75k5nPWqqewZK?=
+ =?us-ascii?Q?OSNZS9qe8KRxOcfvSJXhAo5sQafemK5NwEOE46DPaA19zDbCIJeoiIAVOmEF?=
+ =?us-ascii?Q?t2JNsKezONLQiukUkKYOIyz73tnBUSWA/qIww2j4FQ8wFG+kMIrEJUbIrGty?=
+ =?us-ascii?Q?As6hEU9Kq+Az9HjuD+5Tcx8D3013myzZqjLtbSKzF6eK0SHh3rCL5bFO/v8L?=
+ =?us-ascii?Q?2Wsv7oy0YI6J6suwh78Tg9BdKToiyxgWIhwrf5o+YNOwQxLD5jg1q3ctpVur?=
+ =?us-ascii?Q?8xGoWfAKWGqH11mEKlLT80aAIlDBKwiCRjbwgx5Ahw+WbXC8EHY6FOHIz4Wl?=
+ =?us-ascii?Q?+ZyR8P8ue2LC+65wgoTSRGioQwjmL38tMwYr4VK2YYoGCKmKQK6W604gM/h9?=
+ =?us-ascii?Q?kAZ1HveNHPukRecOfcoKGIZsrS+VE0kkrnV8az1lA5eD96sKGQLRDZv2GTpS?=
+ =?us-ascii?Q?94e9sh18duDztfF/19Jg5WHTv0DejOoocTtm/9FX056l4HMo2Bz1BxYKHuiX?=
+ =?us-ascii?Q?u+GyQ+58hRuqNjmq+Iu17Q5lQoM5I1OEhLg+N8wN7+4Tral7rGKA99nRYWrW?=
+ =?us-ascii?Q?QLIRFX2AC+/KmNxereh0agTAr5GoybvFwG+2Dcy5wfpmmAvXy4gQxWMgNeBE?=
+ =?us-ascii?Q?tSSQVywPqTn5AkVDDDrADj6IiyTDRXGJzFBpVrct1+6HxDfG2rCJSiLdaUgU?=
+ =?us-ascii?Q?d8LAeZqHeSUguTGNVN1VKFoO1L4sXNy1TgH9zxY8O+VwX5Edp33lekV9Roh2?=
+ =?us-ascii?Q?i85BRJu5Q6ngNKDZsPT7DmFrfrT5jx2UEv/V7CL6Ne0wWnqs20ktJd3Bo6ai?=
+ =?us-ascii?Q?mQsWrEbG2iM7mNBAu1fej1MtwdGEAFZ5lbQQDjmDAth10twXsHkeNRYu9/9K?=
+ =?us-ascii?Q?Qs8FNg/eFOYJ+G0kjiUmHpN5rs3T0K9qtOdeuhVLVItTlvLmyVEJGppLw5dM?=
+ =?us-ascii?Q?L1DTpqno2hq4b1piNp1+z27zF/TST1/b5OX5ic8KfmtXFFZO5CBqt4jxCa3i?=
+ =?us-ascii?Q?0YxqvuqADzAYaZ1jS52iPICn7DH4PG4JGN+EHNokLB552ItLuE9BYShovibE?=
+ =?us-ascii?Q?wEpMW//nvDrfhz6HiZNPL3OpLQT4bVsJvU9QfXBmNHWh8ms5ht6+aczRYbh9?=
+ =?us-ascii?Q?MbwAwDpSPmnCrdKh8bsCtvm6oinHuW0Sx3EnXd8QM5008Z6DJp3MSqX8vOHY?=
+ =?us-ascii?Q?8cf5YAH85k67HnDbIL7wIL4A7Sg2tQqeAVleE1Tp?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	WfndPE5RkfiZXeBvNJ78agg7h4H7B3aZrklzMixfkLDBMyWOjRgc/rOJuyLCOVXeXm3hqIUaJ1/1dtiVzAvVXdTRYqyPM7++NHqJO2uKoJe+umAxd1iBT4wqm6OMkX2HTcDRBLfFGMcgRh53jlhfHQqeRX7HjVsPw48ULJxJmfqfAuDbFtbhiQ3SVm6wq17YcX7FksNDg/zNoqKdZrz3mKa5Ri5OnV5NvtYEzFO3iaDLVzTOMQuaAZVsiBW/+Wd6yp1TVNO1QJMKQDU5bBm19SLJx61ULQcr+XATX/qIF8F66Wt2a52QZyNtVJt2645C8nYMKt5Hf3n33RoEsH9pkEomDtHLzi6zn89Q6yWXGGND9IgrlgVR/xk+56G7CNbd3J2SbRiwZ8wMpHvQDEfXK7vUb8HZTpcT8MVh+fzuMvh/D0alIQ8QoS+eM7+SMp135QShQPvm0J495YAxizbjO4fqheKXU1OFFMmFEjsrlL2vVS2behZHzEcaJYv7s+vH5OtR/0sbDJqqgVHRdeLPbdM6EaHsakEUC3b5ssrOrnbiMDQmmD9pmOKQZI1eje5APa4xAzDqZy5tw9VZPIf5vuaAqlgpvvLeNb2DBS+/3L8=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4dc4865-017c-4fe3-cfa7-08dcb7cff17d
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 17:31:31.8547
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wEtN6uziAcZmcZqttUxdzPtIahvCkWJILlPQGU6ihoi6qUmqXvfn2rNPsF7pnV/mXc52UMt22Cx9O+s3FuI00A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB6769
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-08_17,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 bulkscore=0
+ adultscore=0 mlxscore=0 phishscore=0 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408080124
+X-Proofpoint-ORIG-GUID: hZCNVeJSaRHQ-eX23jCH3usHYQV4_qbR
+X-Proofpoint-GUID: hZCNVeJSaRHQ-eX23jCH3usHYQV4_qbR
 
-On Fri, Jul 28, 2023 at 11:57=E2=80=AFAM Raul Rangel <rrangel@chromium.org>=
- wrote:
-> > Your patch is good then. Well, would you mind to add a comment into
-> > the code and make the commit message more clear even for dummies like
-> > me?
-> >
-> > Something like the patch below. It would be better to split it into
-> > two:
-> >
-> >    + 1st shuffling the check and adding the first part of the comment
-> >    + 2nd fixing the case with empty console=3D options.
-> >
-> > I could prepare the patchset. I would keep your SOB for the 2nd patch
-> > if you agreed.
->
-> Yes, feel free. Thanks!
->
+* Sidhartha Kumar <sidhartha.kumar@oracle.com> [240808 12:30]:
+> The following scenario can result in a race condition:
+> 
+> Consider a node with the following indices and values
+> 
+> 	a<------->b<----------->c<--------->d
+> 	    0xA        NULL          0xB
+> 
+> 	CPU 1			  CPU 2
+>       ---------        		---------
+> 	mas_set_range(a,b)
+> 	mas_erase()
+> 		-> range is expanded (a,c) because of null expansion
+> 
+> 	mas_nomem()
+> 	mas_unlock()
+> 				mas_store_range(b,c,0xC)
+> 
+> The node now looks like:
+> 
+> 	a<------->b<----------->c<--------->d
+> 	    0xA        0xC          0xB
+> 
+> 	mas_lock()
+> 	mas_erase() <------ range of erase is still (a,c)
+> 
+> The node is now NULL from (a,c) but the write from CPU 2 should have been
+> retained and range (b,c) should still have 0xC as its value. We can fix
+> this by re-intializing to the original index and last. This does not need
+> a cc: Stable as there are no users of the maple tree which use internal
+> locking and this condition is only possible with internal locking.
+> 
+> Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+> ---
+>  lib/maple_tree.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index 65fba37ef999..6ba95a278326 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -5451,14 +5451,21 @@ EXPORT_SYMBOL_GPL(mas_store);
+>   */
+>  int mas_store_gfp(struct ma_state *mas, void *entry, gfp_t gfp)
+>  {
+> +	unsigned long index = mas->index;
+> +	unsigned long last = mas->last;
+>  	MA_WR_STATE(wr_mas, mas, entry);
+>  
+>  	mas_wr_store_setup(&wr_mas);
+>  	trace_ma_write(__func__, mas, 0, entry);
+>  retry:
+>  	mas_wr_store_entry(&wr_mas);
+> -	if (unlikely(mas_nomem(mas, gfp)))
+> +	if (unlikely(mas_nomem(mas, gfp))) {
+> +		if (!entry) {
+> +			mas->index = index;
+> +			mas->last = last;
 
-Hey Petr,
-I was just following up on this. Were you going to prepare the two patches?
+__mas_set_range(mas, index, last);
 
-> >
-> > Here is the proposal:
-> >
-> > From d2fb7c54bed4c67df229c56fcc1b0af83ada5227 Mon Sep 17 00:00:00 2001
-> > From: Raul E Rangel <rrangel@chromium.org>
-> > Date: Fri, 7 Jul 2023 19:17:25 -0600
-> > Subject: [PATCH] init: Don't proxy the empty console=3D options to earl=
-ycon
-> >
-> > Right now we are proxying the `console=3DXXX` command line args to the
-> > param_setup_earlycon. This is done because the early consoles used to
-> > be enabled via the `console` parameter.
-> >
-> > The `earlycon` parameter was added later by the commit 18a8bd949d6adb31=
-1
-> > ("serial: convert early_uart to earlycon for 8250"). It allowed to
-> > setup the early consoles using another callback. And it was indeed
-> > more self-explanatory and cleaner approach.
-> >
-> > As a result, for example, the following parameters have the same effect=
-:
-> >
-> >     console=3Duart[8250],mmio,<addr>[,options]
-> >     earlycon=3Duart[8250],mmio,<addr>[,options]
-> >
-> > Nevertheless, `console` and `earlycon` parameters behave different when
-> > the options do not match an early console. setup_earlycon() accepts onl=
-y
-> > console names in __earlycon_table. Also the empty options are handled
-> > differently:
-> >
-> >   + When `earlycon=3D` or just `earlycon` is specified on the command l=
-ine,
-> >     param_setup_earlycon() tries to enable an early console via the SPC=
-R
-> >     table or the device tree.
-> >
-> >   + When `console=3D` is specified on the command line, it's intention =
-is to
-> >     disable the console.
-> >
-> > Here comes the problem. The current code calls param_setup_earlycon()
-> > even when `console=3D` is used with no options. As a result, it might
-> > enable the early console when it is defined in the SPCR table or
-> > a device tree. This is obviously not what users want.
-> >
-> > The early console should be enabled via SPCR or DT only when `earlycon`
-> > is used explicitly with no options.
-> >
-> > Signed-off-by: Raul E Rangel <rrangel@chromium.org>
-> > [pmladek@suse.com: Add comments and more details into the commit messag=
-e]
-> > ---
-> >  init/main.c | 20 ++++++++++++++++----
-> >  1 file changed, 16 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/init/main.c b/init/main.c
-> > index ad920fac325c..3b059e316e62 100644
-> > --- a/init/main.c
-> > +++ b/init/main.c
-> > @@ -733,13 +733,25 @@ static int __init do_early_param(char *param, cha=
-r *val,
-> >         const struct obs_kernel_param *p;
-> >
-> >         for (p =3D __setup_start; p < __setup_end; p++) {
-> > -               if ((p->early && parameq(param, p->str)) ||
-> > -                   (strcmp(param, "console") =3D=3D 0 &&
-> > -                    strcmp(p->str, "earlycon") =3D=3D 0)
-> > -               ) {
-> > +               if (p->early && parameq(param, p->str)) {
-> >                         if (p->setup_func(val) !=3D 0)
-> >                                 pr_warn("Malformed early option '%s'\n"=
-, param);
-> >                 }
-> > +
-> > +               /*
-> > +                * Early consoles can be historically enabled also when=
- earlycon
-> > +                * specific options are passed via console=3D[earlycon =
-options]
-> > +                * parameter.
-> > +                *
-> > +                * Do not try it with an empty value. "console=3D" is u=
-sed to
-> > +                * disable real normal consoles. While "earlycon" is us=
-ed to
-> > +                * enable an early console via SPCR or DT.
-> > +                */
-> > +               if (strcmp(param, "console") =3D=3D 0 && val && val[0] =
-&&
-> > +                   strcmp(p->str, "earlycon") =3D=3D 0) {
-> > +                       if (p->setup_func(val) !=3D 0)
-> > +                               pr_warn("Failed to setup earlycon via c=
-onsole=3D%s\n", val);
-> > +               }
-> >         }
-> >         /* We accept everything at this stage. */
-> >         return 0;
-> > --
-> > 2.35.3
-> >
->
-> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+> +		}
+>  		goto retry;
+> +	}
+>  
+>  	if (unlikely(mas_is_err(mas)))
+>  		return xa_err(mas->node);
+> @@ -6245,17 +6252,19 @@ EXPORT_SYMBOL_GPL(mas_find_range_rev);
+>  void *mas_erase(struct ma_state *mas)
+>  {
+>  	void *entry;
+> +	unsigned long index = mas->index;
+>  	MA_WR_STATE(wr_mas, mas, NULL);
+>  
+>  	if (!mas_is_active(mas) || !mas_is_start(mas))
+>  		mas->status = ma_start;
+>  
+> -	/* Retry unnecessary when holding the write lock. */
+> +write_retry:
+> +	/* reset mas->index and mas->last in case range of entry changed */
+> +	mas->index = mas->last = index;
 
-Thanks,
-Raul
+it might make sense to re-init in the mas_nomem() case only, to avoid
+extra instructions in the fast path.
+
+>  	entry = mas_state_walk(mas);
+>  	if (!entry)
+>  		return NULL;
+>  
+> -write_retry:
+>  	/* Must reset to ensure spanning writes of last slot are detected */
+>  	mas_reset(mas);
+>  	mas_wr_store_setup(&wr_mas);
+> -- 
+> 2.46.0
+> 
 
