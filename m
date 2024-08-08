@@ -1,305 +1,154 @@
-Return-Path: <linux-kernel+bounces-279100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931DC94B8F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:23:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3003C94B8F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2987B24225
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:23:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D68F828AEB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F441898E1;
-	Thu,  8 Aug 2024 08:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E56B189538;
+	Thu,  8 Aug 2024 08:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IWB/w5kP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S5fDgCzo"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DCB145B0C
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2AB1891BD
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723105399; cv=none; b=fKd5Qi8ahfhkqVHJ6C3nbNtAas4RUlc3quAW83LWaTyPryc50Ti7Wfsw7u0UYGzhq7+pup0jmv1N53GXLI4nLzC9V51NPxliB8zClVgy9BcKQJxmimqQhyAumJTQNR8ltwSb+JTrU/wIdSdA1fOxBF73dR/ahyXSG1FD3YvVFtA=
+	t=1723105524; cv=none; b=lgkx/Mux0JnHBrlgpGn2maaNJVMkh9TZkVbLcPPS6u/RD0yrxQ8SHt0uMk+4A9vW6vBd42bW23g6jTR3xJxWTToSvdGJEcUDNpY1SPUXQMq+WYP0DMNl7XNwPs2+RXx5Bo16IQis1haz517otySIHaEI/flVvRLOcRrtbswDuos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723105399; c=relaxed/simple;
-	bh=rYs0xBw0Gjql2y66a/D5Zjd80I5J6xFemY/YYFHA1vk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N7rs6Upb3IFX4iShgG5O1aVmWPEDVMwFDG2s4yyFTYE0FHFjZdLsdjKbZHVqjGNXGT4t+6tDxIz/QPksT1TIKlzZoclWbk/+XK+VeQ1j0Ngu1H3Fl0Ju6m9ngCtPoQyvI52Y7K9cq0t4yvKfmeCf0yFNWAdfbasEWfL1GfLOgRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IWB/w5kP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723105397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l0A20Uov+OyNtb3al7aHaWJQ9qEXD3mIhigIcXWDeEM=;
-	b=IWB/w5kPU4Pb/J6LeHI0gEysc/WI/RB9wxfl0jTLv7AehlbsQz708cMmlAs8srx+OqAOdg
-	qDpOwSnOyHjqzQzBrpjWbeZ5x00Rwc16Z0le4GFFR+NPqoeNxkVkic2ZaAiDycDKy32T53
-	hms0iyVAoGhL9gyq6tyllD/RBGFuy9s=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-665-AvswMDx4MY2hdG3HeBjQ3Q-1; Thu, 08 Aug 2024 04:23:15 -0400
-X-MC-Unique: AvswMDx4MY2hdG3HeBjQ3Q-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1fc596b86a6so17609865ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 01:23:15 -0700 (PDT)
+	s=arc-20240116; t=1723105524; c=relaxed/simple;
+	bh=YxGufwd9ZP0RAM+uNjC03nZfOIl3APMGF5EUwjJ/Mnk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RKYZEuaBVXCktZ89ZJHq+ohh3jlIJu8kSSy6HRmeMewzKFM/JozSqacTdV7xDxAYLRKqFR/iZBPHsDU2ieC5Mo/Z9mcvl7VWp9qmr68bVCZozRBy+1wVyRPZh9dwVUUYgRmm9yRIJ5NX2xqtK79pToPeOM4Z9tCstBFGacvT4jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S5fDgCzo; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b7a36f26f3so15562456d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 01:25:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1723105522; x=1723710322; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=lZa4iL5XprHrN5HHLymuFJropJGE7xvng0lU1qszo5A=;
+        b=S5fDgCzo3F1KrsNjlVj5u/QTn/FEAhvsPsJMbXT0vtYk5DBG2imtbZuY0bit3YBUYV
+         Kbp70FyTc3DeSNE1SVcjius1tYnlJ9NOj5pglH1SlbniTXsQQMjjb5WGWmhO6l7dswjs
+         CqLuZa9Sxkf30ZgYOjOsM3nDnT55yV+uQ3Joo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723105393; x=1723710193;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l0A20Uov+OyNtb3al7aHaWJQ9qEXD3mIhigIcXWDeEM=;
-        b=b8SH5tGSsM2Ue5Vf+9ouBaJx3bz/XncyN6S4Y2Xouz3hvqLSqRWpJZlXwODR5bB5T2
-         89XD0ispxdT2IEnIMsdFDE/QYDCoO3A6HueFDGUFH1kyLZgkMrTquD+oiJRXZ3eo8RlT
-         UAKOavDG0t5werrR1guP+sF+wyOmJ2AlVQbUl82sHNobZNYCFaMElbVykWPMfU9tTIoR
-         zdqPraEHZlVkwc5NoR5g6DTmmRNyjIwSB6c5ohWiHV4V4fqpRZnwnxuCgcIMUJbwhO+3
-         r3nYnhu1orS0M98P7tu/aYs07Osa7dyvbEVgW0ioIUE4AcFIuWMwGmxMGPr/73cmYYAO
-         v1dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVF7ZSeknYIlmAL5fg1zF03avJAQ0hDR5lheomCGjTzhxrwU6Pov/IPU6ieWJLiG1Nh37jF2pC92Ggkz8NDP57QXqz3XsKkAmzKwIxU
-X-Gm-Message-State: AOJu0YxpZmI/tVAiAdC6lUfttAiKNSpd204/HA9WBUZlQhhUerP7eTES
-	UG+2a5eN0HgxzhAq9O5PLZJ91+nUKmkLoBN453b0tp4T95v5mZuqbtoB7FTd0eTc7M3Szdd5czW
-	cdM2zk3Gw6k93YdWUgdEmrKcD4qGUDljZksMwu4K0f8TbhCvQOHzLkhCpK94jjhUBNSbT0tqK+e
-	ygvXXYbSiS4/UNlrchpxLynITgWETN4MaWciJh
-X-Received: by 2002:a17:90a:1101:b0:2c9:63fb:d3ab with SMTP id 98e67ed59e1d1-2d1c516396emr1412642a91.22.1723105392622;
-        Thu, 08 Aug 2024 01:23:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHXkUKCyr84JcKtnNjWT4uFvHMb5WKTN4thytsIwauo27ntH/qn52Bv+h4iEAijzx22xOWvDB9gGJpUvf9V5+o=
-X-Received: by 2002:a17:90a:1101:b0:2c9:63fb:d3ab with SMTP id
- 98e67ed59e1d1-2d1c516396emr1412602a91.22.1723105391894; Thu, 08 Aug 2024
- 01:23:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723105522; x=1723710322;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lZa4iL5XprHrN5HHLymuFJropJGE7xvng0lU1qszo5A=;
+        b=T19z4mV2d6xZNi3HNWY7Zg5iyaaxKw6bKBaifvjOUHwx6vSVtyIMXqNv+VX9mMR0un
+         x9m3T9lLeadp4OEyDlh+KjjR3TeeNKIwZsdHGuXKGYQ4hSmVpfBVkXaWMiEiwoeUMEzl
+         gOABsG+yAlWfg9bqtREX7mlAhlb74iaoj9XVdTTzCzlP3w0XcGjLUss41nh0Vrxk2X8i
+         evBKJCi77sxM2fLu6qll2nr78dHB2b9SA7NkoNJLjr+GqDMa2LUuGXRmiqRkihpS3jaa
+         qVlv9O1dwIc31o/qYwKcWDczTSZIftQxYyhUtVVhPeOfRTPfAi3Rk6nuyYgm/YGZPb/v
+         YCRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZRNDhoEyQATlHXd9WVCiMHGdp6zvvpoWFYUWF767De04p+V1X7yNvGWzwQxl63UgOSZSlJN+7BpGEIFelE4nUXFhYo3YVBaQ+6sG+
+X-Gm-Message-State: AOJu0YzHGrkVEXxjHjlc74kgPGR+T3VUPvGX5YtIqv3PNf3KFVNJwvnR
+	vUVEkJSD6g4Y7PuEH274KQLfTrfr2a7wDILuUp6XIsZHXfhyHxaMUerxaxdU579zoKQAkoQToZT
+	Zxzzb
+X-Google-Smtp-Source: AGHT+IFCVFsE7N4pVcWELICWR9jjvv0RXXNb11DeQBDB26YzXpwJn9iFi19LjHTQAAk8Wt4yH7vfvA==
+X-Received: by 2002:a05:6214:d87:b0:6b5:d90d:ea4f with SMTP id 6a1803df08f44-6bd6cb1191emr16330526d6.15.1723105521683;
+        Thu, 08 Aug 2024 01:25:21 -0700 (PDT)
+Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c79744esm63892586d6.40.2024.08.08.01.25.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 01:25:21 -0700 (PDT)
+Message-ID: <15c3fc2a-8298-4f6b-a5b6-ef8786f07585@broadcom.com>
+Date: Thu, 8 Aug 2024 10:25:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801153722.191797-2-dtatulea@nvidia.com> <CACGkMEutqWK+N+yddiTsnVW+ZDwyM+EV-gYC8WHHPpjiDzY4_w@mail.gmail.com>
- <51e9ed8f37a1b5fbee9603905b925aedec712131.camel@nvidia.com>
- <CACGkMEuHECjNVEu=QhMDCc5xT_ajaETqAxNFPfb2-_wRwgvyrA@mail.gmail.com>
- <cc771916-62fe-4f6b-88d2-9c17dff65523@nvidia.com> <CACGkMEvPNvdhYmAofP5Xoqf7mPZ97Sv2EaooyEtZVBoGuA-8vA@mail.gmail.com>
- <b603ff51-88d6-4066-aafa-64a60335db37@nvidia.com> <69850046-6b14-4910-9a89-cca8305c1bb9@nvidia.com>
- <CACGkMEt3Zuv9UcF6YoUgw1UPyHhZCpZufCSejTp6mA6aNVB4oA@mail.gmail.com>
-In-Reply-To: <CACGkMEt3Zuv9UcF6YoUgw1UPyHhZCpZufCSejTp6mA6aNVB4oA@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 8 Aug 2024 16:23:00 +0800
-Message-ID: <CACGkMEtzmYwoOj7Z0fnDkB+t6HCx+387_VjH0byWcsOxm3thmg@mail.gmail.com>
-Subject: Re: [RFC PATCH vhost] vhost-vdpa: Fix invalid irq bypass unregister
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "mst@redhat.com" <mst@redhat.com>, 
-	"eperezma@redhat.com" <eperezma@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa
+ deletion
+To: j@jannau.net, Kalle Valo <kvalo@kernel.org>,
+ Hector Martin <marcan@marcan.st>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org,
+ asahi@lists.linux.dev, stable@vger.kernel.org
+References: <20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 8, 2024 at 10:56=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> On Tue, Aug 6, 2024 at 10:45=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.c=
-om> wrote:
-> >
-> >
-> >
-> > On 06.08.24 10:18, Dragos Tatulea wrote:
-> > > (Re-sending. I messed up the previous message, sorry about that.)
-> > >
-> > > On 06.08.24 04:57, Jason Wang wrote:
-> > >> On Mon, Aug 5, 2024 at 11:59=E2=80=AFPM Dragos Tatulea <dtatulea@nvi=
-dia.com> wrote:
-> > >>>
-> > >>> On 05.08.24 05:17, Jason Wang wrote:
-> > >>>> On Fri, Aug 2, 2024 at 2:51=E2=80=AFPM Dragos Tatulea <dtatulea@nv=
-idia.com> wrote:
-> > >>>>>
-> > >>>>> On Fri, 2024-08-02 at 11:29 +0800, Jason Wang wrote:
-> > >>>>>> On Thu, Aug 1, 2024 at 11:38=E2=80=AFPM Dragos Tatulea <dtatulea=
-@nvidia.com> wrote:
-> > >>>>>>>
-> > >>>>>>> The following workflow triggers the crash referenced below:
-> > >>>>>>>
-> > >>>>>>> 1) vhost_vdpa_unsetup_vq_irq() unregisters the irq bypass produ=
-cer
-> > >>>>>>>    but the producer->token is still valid.
-> > >>>>>>> 2) vq context gets released and reassigned to another vq.
-> > >>>>>>
-> > >>>>>> Just to make sure I understand here, which structure is referred=
- to as
-> > >>>>>> "vq context" here? I guess it's not call_ctx as it is a part of =
-the vq
-> > >>>>>> itself.
-> > >>>>>>
-> > >>>>>>> 3) That other vq registers it's producer with the same vq conte=
-xt
-> > >>>>>>>    pointer as token in vhost_vdpa_setup_vq_irq().
-> > >>>>>>
-> > >>>>>> Or did you mean when a single eventfd is shared among different =
-vqs?
-> > >>>>>>
-> > >>>>> Yes, that's what I mean: vq->call_ctx.ctx which is a eventfd_ctx.
-> > >>>>>
-> > >>>>> But I don't think it's shared in this case, only that the old eve=
-ntfd_ctx value
-> > >>>>> is lingering in producer->token. And this old eventfd_ctx is assi=
-gned now to
-> > >>>>> another vq.
-> > >>>>
-> > >>>> Just to make sure I understand the issue. The eventfd_ctx should b=
-e
-> > >>>> still valid until a new VHOST_SET_VRING_CALL().
-> > >>>>
-> > >>> I think it's not about the validity of the eventfd_ctx. More about
-> > >>> the lingering ctx value of the producer after vhost_vdpa_unsetup_vq=
-_irq().
-> > >>
-> > >> Probably, but
-> > >>
-> > >>> That value is the eventfd ctx, but it could be anything else really=
-...
-> > >>
-> > >> I mean we hold a refcnt of the eventfd so it should be valid until t=
-he
-> > >> next set_vring_call() or vhost_dev_cleanup().
-> > >>
-> > >> But I do spot some possible issue:
-> > >>
-> > >> 1) We swap and assign new ctx in vhost_vring_ioctl():
-> > >>
-> > >>                 swap(ctx, vq->call_ctx.ctx);
-> > >>
-> > >> 2) and old ctx will be put there as well:
-> > >>
-> > >>                 if (!IS_ERR_OR_NULL(ctx))
-> > >>                         eventfd_ctx_put(ctx);
-> > >>
-> > >> 3) but in vdpa, we try to unregister the producer with the new token=
-:
-> > >>
-> > >> static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned in=
-t cmd,
-> > >>                            void __user *argp)
-> > >> {
-> > >> ...
-> > >>         r =3D vhost_vring_ioctl(&v->vdev, cmd, argp);
-> > >> ...
-> > >>         switch (cmd) {
-> > >> ...
-> > >>         case VHOST_SET_VRING_CALL:
-> > >>                 if (vq->call_ctx.ctx) {
-> > >>                         cb.callback =3D vhost_vdpa_virtqueue_cb;
-> > >>                         cb.private =3D vq;
-> > >>                         cb.trigger =3D vq->call_ctx.ctx;
-> > >>                 } else {
-> > >>                         cb.callback =3D NULL;
-> > >>                         cb.private =3D NULL;
-> > >>                         cb.trigger =3D NULL;
-> > >>                 }
-> > >>                 ops->set_vq_cb(vdpa, idx, &cb);
-> > >>                 vhost_vdpa_setup_vq_irq(v, idx);
-> > >>
-> > >> in vhost_vdpa_setup_vq_irq() we had:
-> > >>
-> > >>         irq_bypass_unregister_producer(&vq->call_ctx.producer);
-> > >>
-> > >> here the producer->token still points to the old one...
-> > >>
-> > >> Is this what you have seen?
-> > > Yup. That is the issue. The unregister already happened at
-> > > vhost_vdpa_unsetup_vq_irq(). So this second unregister will
-> > > work on an already unregistered element due to the token still
-> > > being set.
-> > >
-> > >>
-> > >>>
-> > >>>
-> > >>>> I may miss something but the only way to assign exactly the same
-> > >>>> eventfd_ctx value to another vq is where the guest tries to share =
-the
-> > >>>> MSI-X vector among virtqueues, then qemu will use a single eventfd=
- as
-> > >>>> the callback for multiple virtqueues. If this is true:
-> > >>>>
-> > >>> I don't think this is the case. I see the issue happening when runn=
-ing qemu vdpa
-> > >>> live migration tests on the same host. From a vdpa device it's basi=
-cally a device
-> > >>> starting on a VM over and over.
-> > >>>
-> > >>>> For bypass registering, only the first registering can succeed as =
-the
-> > >>>> following registering will fail because the irq bypass manager alr=
-eady
-> > >>>> had exactly the same producer token.
-> > >>>> For registering, all unregistering can succeed:
-> > >>>>
-> > >>>> 1) the first unregistering will do the real job that unregister th=
-e token
-> > >>>> 2) the following unregistering will do nothing by iterating the
-> > >>>> producer token list without finding a match one
-> > >>>>
-> > >>>> Maybe you can show me the userspace behaviour (ioctls) when you se=
-e this?
-> > >>>>
-> > >>> Sure, what would you need? qemu traces?
-> > >>
-> > >> Yes, that would be helpful.
-> > >>
-> > > Will try to get them.
-> > As the traces are quite large (~5MB), I uploaded them in this location =
-[0].
-> > I used the following qemu traces:
-> > --trace vhost_vdpa* --trace virtio_net_handle*
-> >
-> > [0] https://drive.google.com/file/d/1XyXYyockJ_O7zMgI7vot6AxYjze9Ljju/v=
-iew?usp=3Dsharing
->
-> Thanks for doing this.
->
-> So it looks not like a case of eventfd sharing:
->
-> """
-> 153@1722953531.918958:vhost_vdpa_iotlb_begin_batch vdpa:0x7f6f9cfb5190
-> fd: 17 msg_type: 2 type: 5
-> 153@1722953531.918959:vhost_vdpa_set_vring_base dev: 0x55573cc9ca70
-> index: 6 num: 0 svq 1
-> 153@1722953531.918961:vhost_vdpa_set_vring_kick dev: 0x55573cc9ca70
-> index: 6 fd: 237
-> 153@1722953531.918964:vhost_vdpa_set_vring_call dev: 0x55573cc9ca70
-> index: 6 fd: 238
-> 153@1722953531.918978:vhost_vdpa_dma_map vdpa:0x7f6f9cfb5190 fd: 17
-> msg_type: 2 asid: 1 iova: 0x13000 size: 0x2000 uaddr: 0x7f6f9da1a000
-> perm: 0x1 type: 2
-> 153@1722953531.918984:vhost_vdpa_dma_map vdpa:0x7f6f9cfb5190 fd: 17
-> msg_type: 2 asid: 1 iova: 0x15000 size: 0x1000 uaddr: 0x7f6f9da19000
-> perm: 0x3 type: 2
-> 153@1722953531.918987:vhost_vdpa_set_vring_addr dev: 0x55573cc9ca70
-> index: 6 flags: 0x0 desc_user_addr: 0x13000 used_user_addr: 0x15000
-> avail_user_addr: 0x14000 log_guest_\
-> addr: 0x0
-> 153@1722953531.918989:vhost_vdpa_set_vring_base dev: 0x55573cc9ca70
-> index: 7 num: 0 svq 1
-> 153@1722953531.918991:vhost_vdpa_set_vring_kick dev: 0x55573cc9ca70
-> index: 7 fd: 239
-> 153@1722953531.918993:vhost_vdpa_set_vring_call dev: 0x55573cc9ca70
-> index: 7 fd: 240
-> """
->
-> I think a more proper way is to unregister and clean the token before
-> calling vhost_vring_ioctl() in the case of SET_VRING_KICK. Let me try
-> to draft a patch and see.
+On 8/3/2024 9:52 PM, Janne Grunau via B4 Relay wrote:
+> From: Janne Grunau <j@jannau.net>
+> 
+> wpa_supplicant 2.11 sends since 1efdba5fdc2c ("Handle PMKSA flush in the
+> driver for SAE/OWE offload cases") SSID based PMKSA del commands.
+> brcmfmac is not prepared and tries to dereference the NULL bssid and
+> pmkid pointers in cfg80211_pmksa. PMKID_V3 operations support SSID based
+> updates so copy the SSID.
+> 
+> Fixes: a96202acaea4 ("wifi: brcmfmac: cfg80211: Add support for PMKID_V3 operations")
+>- Cc: stable@vger.kernel.org
++ Cc: stable@vger.kernel.org # 6.4.x
 
-I've posted a RFC patch, please try to see if it works.
+This should be applied to the wireless tree.
 
-Thanks
-
->
-> Thanks
->
-> >
-> > Thanks,
-> > Dragos
-> >
-
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 13 ++++++++++---
+>   1 file changed, 10 insertions(+), 3 deletions(-)
 
