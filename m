@@ -1,150 +1,116 @@
-Return-Path: <linux-kernel+bounces-279368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D97A94BC5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:38:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACEDA94BC5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40D791F2253A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:38:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA441F22638
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D900A18C34A;
-	Thu,  8 Aug 2024 11:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B01A18B486;
+	Thu,  8 Aug 2024 11:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="oosftomQ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ic87owmA"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D9A189F52
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5435318B46F
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723117069; cv=none; b=kuz+9kBwpoFRX/b7wUlR1Ee0Pk4HTaeUL1Bccp8aYhYT5snBQMAMQo/6M5vwKb/ihElTxtEfyNgiJBMR8uMiGcZdx/K4MZPPTzdf2Q3zHPAaetKTMZniqOOKgqyBvKyK7SV6SNfhf/NQCxnyDuuzTC1ztcQCfuxNEd8jvqXImcM=
+	t=1723117084; cv=none; b=IXUs/au5zLj5ZvTIPpUz4clYaaEXjWvEsqOQsQNZFtFJ+685Fdryk36+6GtOBB9NyE0lM3uK4Wru3Qy+yXnXkGyNeTIn2Hs9gH11z+N1DIT0t9cYfPFgH1PLmFsCfzlcc239kWuzQXIrOmtTyHh6gE6sobiZ3sHO/K1q9L5NTvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723117069; c=relaxed/simple;
-	bh=PcDtehXPOnRp+0v2GaOgoZgVtGYtvFdOku2SbV4p6wU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=so0Nhx7ZGtLrlygutKRkXPzSZzITclo2d/inKh5aqxV5MSTFYAE4CBVb0DakilI7c6fQKH/pECf0wIz7ez2ilndXQHwqgOVXB0hkoWxLwMi8iHYwdCa36SrEvmy1UAAQc4JRNjX9V0m/6RfP/ZTBRoqAdILdayldssSvi+1kV9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=oosftomQ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42808071810so6400505e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 04:37:45 -0700 (PDT)
+	s=arc-20240116; t=1723117084; c=relaxed/simple;
+	bh=+dwr+DGgf+0YuXp31MYMDF30WY8nbqTnvkjcVriwSwg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g4ukgNTB7Vj4m5VSM4/23dczrYByA0Yj9yIVB5N4A6wx1glOSx4Uc7bj6JF/eX1HxtMa8meqDhkdZooPrdvPAKq0AL377D/uZ7/TITt4mtE7vxGGrmBgZF3Lk1RFHwe9W8r3zuAVL5gp40uv22aKmwvnPBU4ys0nX5xOY8ChApI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ic87owmA; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52f01613acbso2127952e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 04:38:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1723117064; x=1723721864; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qYjuaeJy2Pvg9rMTABhna8aZrftptocvWC4VLyaxXc4=;
-        b=oosftomQ2DkU4kqKjVnqaAdubBQRDj7rzEslCAT9Y54Nmej+KSWJ9k5vXYlUCbYOY1
-         HHg4J9POWaDWhTcV58j5sUsNrOK3g/kOq1sQ8x9+ckJYYdptiKp/jsagKQvuM3T72tbC
-         N2/pzrIRhagiOL3EwmGuj2Vo3Z2PdFi5bX6h9MXkFAj7Mq5Nzs+uHjibBpgjIe9xTxu1
-         KjDSltwXoTq8oFYktwaPCDrZlF+WrsXK04ToTYYiJ+KFH7z/SvfdndgsRvzta1b7mk08
-         qzAE1xaNOM/z1fc/H336fGY+Ud/FFWHKIoDJ2ez5Y/OJyZe2Q4yIs6UyPju7qRQuUceI
-         c8Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723117064; x=1723721864;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723117080; x=1723721880; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qYjuaeJy2Pvg9rMTABhna8aZrftptocvWC4VLyaxXc4=;
-        b=YxNiUPLwv2noPjfs0UHjoki1tRCQbCZ2A878SUy5/cM41jAWe6LbF9opM/ZJ10hC23
-         0UjRgU39xybO/UyadOcj+fqdD6I9+wZQ38cvTsIff8soRUQN/LFoQs1HMB9MvJKVQVAk
-         3szosNBs6nYplTzkj0vwubCDRRkxpOTzS5MyhRZ0kIbVcBkc1krdlQGJQoXTXlN11VNM
-         vOKNyF6Wkt0GOIebqd4t54xLW4Auz/JnW90hZTGxw6dzSZAiFIjjMFjZDAtaxdoafzMg
-         smau7HWzis3V9RUKANtlQSOGTyzwXEApahcsBC4fwDlDSzVVVueZuI+yGg72Biy2X9WY
-         G2iA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXvyciFLieDDlrzYbp+FO7dTgFt1sSyOQs+mLF+ouVIUBrBFArup1/0SHp3Aezsa5dHscCrtm9hCM/jOYPzZSPh8Fr+mxgtpxpCHSP
-X-Gm-Message-State: AOJu0YylaUHEmyXbYiehj71fqwDoddxqsMPambK7v2Vkz1MhLj5y5iBw
-	3sdqyGC+Lx5/UNGr/CIivIrnFpX5lJmIzi63MPQWMvSM9tW/0y3vombihkLhZkU=
-X-Google-Smtp-Source: AGHT+IGBaalm8I6v0NRwaz9hlc6hExrICBmkwG4RPAmXg++Ta5D8Vis1zmZkzdJ+0LOm4jWmhw0pRg==
-X-Received: by 2002:a05:600c:1d10:b0:426:62c5:4742 with SMTP id 5b1f17b1804b1-4290aee068cmr16351235e9.7.1723117063943;
-        Thu, 08 Aug 2024 04:37:43 -0700 (PDT)
-Received: from localhost ([213.235.133.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c72d6d3sm18713035e9.6.2024.08.08.04.37.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 04:37:43 -0700 (PDT)
-Date: Thu, 8 Aug 2024 13:37:42 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Hongyu Ning <hongyu.ning@linux.intel.com>
-Subject: Re: [PATCH] virtio: Remove virtio devices on device_shutdown()
-Message-ID: <ZrSuBlWkE-USicQw@nanopsycho.orion>
-References: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
+        bh=u4RYVOZDorjhiVwWLiQjhwLOB5M2EEGPW2lhhTwpepA=;
+        b=ic87owmAizGKMwb7oTow8EUOWecJ3c8NQmFdWeeo3Rr5X+mpWvJ1TZoB0I/byLnFoK
+         8lWgQ+/kdio2SJj2TndfuPgABSfOu3zu8kMwhKL7gZaAjxCYZhg7klNcJXDGIGWdtJ9l
+         7YVPSqLsJjspLWK8R9HAxBI/nc6xEehvwTJq+YDeK+facsQ2+fbKUhDXienuOk5GrNOp
+         VHZ82GUmFY5zH1RjXubixUpehFEJRE6DO4VwUD2Qo+4caZxzNtalTdnBgtXPXjIJMY8R
+         VaWdSulP85OPb8/1aR+0K7PE1UP5mJLXd84c1o+r0osckAu2MalFYdPq/rcX2syJc6CE
+         WqAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723117080; x=1723721880;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u4RYVOZDorjhiVwWLiQjhwLOB5M2EEGPW2lhhTwpepA=;
+        b=AoMKm10/nIBBT/0o6m6z7bOvXEl989r003OAMI8rhbpCnTQ7t/Utq8uHxg00npxk9D
+         bXGAWLguTBE5tJhYuS+rIt1ScTbWrCnPZHQefJRW9z1iX6mffbHHPO0XYGdzwpyz9zTc
+         jSIjGe8rDqDsNzUfNZACN6jFN7lAkULtSbBZOOpF80hu9RyT+Womhz+pddB3tfl8Vmh2
+         haO1UNFR8r/0dP3ue96wqU5ZyQTBggIlExDcYNFVI2jgSI9gjaLnaSyTQhTf8cGuAZ7G
+         HGGPGdBY5rf8rgQZbN4AoUATihLBfdAC2hoMmoTTQ1eAiS0sNszB+bY4n5/3CZCtYCWH
+         54lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUh2su7UTe8WouEkNS5WwKmM3EH2OMY5QVJNZw+G+d2ICDSZQUw/vX1pYm4rvmKbz6ldJ1nqHp+Gcd7Cytf7ZHZ3rRBrRzftq/+VVMZ
+X-Gm-Message-State: AOJu0Yy40IPhIJnEoMqPEd5L28HHbaVh4QNO95anE5TY8l1SP4NM/MRj
+	Key72nVy5HaxsRgrN1/Dz/Mvj2NgdcFNbx9VMDPXuTQH0YncEwNwJU7ob3o7yieBZvr1SdVAQbp
+	YdfbsecTlrIUH0jJndU+O6MeVJSrMwSK8F+72exmMFR7N/bGibb0=
+X-Google-Smtp-Source: AGHT+IFA5CTIPhUdy3XUOHKtdMWX19Sn1vMQxMfwAIRT2acIXFlSX8/kWezxWMNLBS2ML2mSkcozlYFT/FZM/biui4s=
+X-Received: by 2002:a05:6512:3b12:b0:52c:dbfe:9b11 with SMTP id
+ 2adb3069b0e04-530e5dc69afmr518118e87.21.1723117080137; Thu, 08 Aug 2024
+ 04:38:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
+References: <20240808104118.430670-1-jirislaby@kernel.org>
+In-Reply-To: <20240808104118.430670-1-jirislaby@kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 8 Aug 2024 13:37:49 +0200
+Message-ID: <CAMRc=MdrcX+UuU0Obubc0Rc36p8V_+dHpc+9jFf2sXNaLbR8SQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] genirq/irq_sim: Remove unused irq_sim_work_ctx::irq_base
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thu, Aug 08, 2024 at 09:51:41AM CEST, kirill.shutemov@linux.intel.com wrote:
->Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
->accesses during the hang.
+On Thu, Aug 8, 2024 at 12:41=E2=80=AFPM Jiri Slaby (SUSE) <jirislaby@kernel=
+.org> wrote:
 >
->	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
->	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
->	...
+> Since commit 337cbeb2c13e ("genirq/irq_sim: Simplify the API"),
+> irq_sim_work_ctx::irq_base is unused. Drop it.
 >
->It was traced down to virtio-console. Kexec works fine if virtio-console
->is not in use.
+> Found by https://github.com/jirislaby/clang-struct.
 >
->Looks like virtio-console continues to write to the MMIO even after
->underlying virtio-pci device is removed.
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> ---
+>  kernel/irq/irq_sim.c | 1 -
+>  1 file changed, 1 deletion(-)
 >
->The problem can be mitigated by removing all virtio devices on virtio
->bus shutdown.
+> diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+> index 3d4036db15ac..1a3d483548e2 100644
+> --- a/kernel/irq/irq_sim.c
+> +++ b/kernel/irq/irq_sim.c
+> @@ -13,7 +13,6 @@
 >
->Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
+>  struct irq_sim_work_ctx {
+>         struct irq_work         work;
+> -       int                     irq_base;
+>         unsigned int            irq_count;
+>         unsigned long           *pending;
+>         struct irq_domain       *domain;
+> --
+> 2.46.0
+>
 
-Could you provide a "Fixes:" tag pointing to the commit that introduced
-the bug?
-
-
-
->---
-> drivers/virtio/virtio.c | 10 ++++++++++
-> 1 file changed, 10 insertions(+)
->
->diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
->index a9b93e99c23a..6c2f908eb22c 100644
->--- a/drivers/virtio/virtio.c
->+++ b/drivers/virtio/virtio.c
->@@ -356,6 +356,15 @@ static void virtio_dev_remove(struct device *_d)
-> 	of_node_put(dev->dev.of_node);
-> }
-> 
->+static void virtio_dev_shutdown(struct device *_d)
->+{
->+	struct virtio_device *dev = dev_to_virtio(_d);
->+	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
->+
->+	if (drv && drv->remove)
->+		drv->remove(dev);
->+}
->+
-> static const struct bus_type virtio_bus = {
-> 	.name  = "virtio",
-> 	.match = virtio_dev_match,
->@@ -363,6 +372,7 @@ static const struct bus_type virtio_bus = {
-> 	.uevent = virtio_uevent,
-> 	.probe = virtio_dev_probe,
-> 	.remove = virtio_dev_remove,
->+	.shutdown = virtio_dev_shutdown,
-> };
-> 
-> int __register_virtio_driver(struct virtio_driver *driver, struct module *owner)
->-- 
->2.43.0
->
->
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
