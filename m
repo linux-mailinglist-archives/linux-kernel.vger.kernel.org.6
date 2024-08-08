@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-279962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8608B94C3E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:50:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB6694C3E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336D41F23131
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE9E11C2212B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E5E13DDCD;
-	Thu,  8 Aug 2024 17:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755BE145359;
+	Thu,  8 Aug 2024 17:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwLljYqW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ON+3KrsS"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686E1635;
-	Thu,  8 Aug 2024 17:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397C012FF71;
+	Thu,  8 Aug 2024 17:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723139395; cv=none; b=J/Lhnd3XPbicoD/KEojlEZxHcALWHYzd4IoCMO4GRReLkNlrodutqNrLXkW/9WCHJwvmjN8ebwfQ41Guc76P4PsA4SPAnDM1SKzTt3QEMtgkvMiBxHnL4JS9wCrn6QhHt+itmzBxJE+qbYyc7I92UEIV30EuNk3JDw3HSy3nkXo=
+	t=1723139428; cv=none; b=oJlQ1ebe6YZskk3KDr6XVseNeR+Dtad2S1HV96lMtuGL+mnIl4YuPsfaE62OFDmqJZEEFt9trNij1Xbg+Yq+3BDnN8i9/dqzHJ6SLoCctqDHIJuQWYWpI9oPHL5/JEbBFNnCTGVHDGgLEbfdIeoxMASsiQG58UGAnmXD/GfVYyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723139395; c=relaxed/simple;
-	bh=5+aelMbURuH5w4Acf65OlNYwqYxFl+suSWuEQ7s74BE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h67bZvYstD5DC3mSpOx97w1VSNriEfbJBB7VfoMr+ZYU7HXnIpCOg3USNipALwAhC2yQyFA9xqAeJwIKjNmTKsUH65l5ir99MK07dCaoAAnZG0e10HIgrwcKq6TrLPL1gMANDCUKSoj4A5F8/UN2A6hrDiWIymJGVyYGk3lqIVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PwLljYqW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C34B8C32782;
-	Thu,  8 Aug 2024 17:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723139395;
-	bh=5+aelMbURuH5w4Acf65OlNYwqYxFl+suSWuEQ7s74BE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PwLljYqWdV99qq+FG4d7s+pMQofwnCrgZrhqdxNEaERupcsqgSXWjCcDiecrinZ3L
-	 0Fg7w3GiirSCJMSe10umnH3WujARsfzSk9HmhiFDpCIU4Xhho4zeB/3oQ3Nen3oqVZ
-	 5DCNp6Rnq5TDRnEdKKm4LKdEQMSnzfo9PGI4y+wMCzgZGBSqtk5QB2ho9jmLWT6Icu
-	 zFZCwiFEA8tvUyxHf2asLiotHTh2dG2Z+Wl5lBYfSLFCHLNtiTW70aCCjjYt2UVIzL
-	 NUBW4mcFRxoPVTliV5RqKs6NKh4Do4aR02DBNQDa7hWQi+xhPIKO4HHvK5IFjKokjp
-	 bPoUloCM1Gvpg==
-Date: Thu, 8 Aug 2024 11:49:53 -0600
-From: Rob Herring <robh@kernel.org>
-To: Stefan Wiehler <stefan.wiehler@nokia.com>
-Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] of/irq: Consider device address size in interrupt map
- walk
-Message-ID: <20240808174953.GA1670999-robh@kernel.org>
-References: <20240807120153.1208858-2-stefan.wiehler@nokia.com>
- <CAL_JsqLciDTxfeKwuNNWEOZjrUDFp9g7ZAzTuY4nQ1GCwPmaow@mail.gmail.com>
- <9d19cec9-3e40-471c-8c76-8842a5d86973@nokia.com>
+	s=arc-20240116; t=1723139428; c=relaxed/simple;
+	bh=y5Eps1sP9g5XINUkuc8EppCP1VRYdFpU3srS4PkyN4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LUwTjrUo/Jg+fWgx9vpia5BW6Z5z7P+u2AsqHmnxhvxciTqUq1ag+Xjcc9kMYYMUseXnaIr4PO1HHIviUJN2gZgJ8PCBpm6BtHvBjMPnadro/8zvWr99IkbKUFj4l5IAOvN9OWj15FEy5k/JsYWtr85q9EV00BUHFg0j4AkIiUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ON+3KrsS; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a94aa5080so154422666b.3;
+        Thu, 08 Aug 2024 10:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723139425; x=1723744225; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u4bdDhWQ7X8qQM++M7HovEdjs5/KPCkAJnqC/2R+xhg=;
+        b=ON+3KrsSCd9RsVBEDtScpj2dxC6D7oyJnRODkh3o0DdlhlCYFNQhQmTbz/HlvH5LDy
+         s2c2G2u6VIzfBSqL0eXxKhmlDTw+T81A7keAMypX04G5WHEyMOaQyBzXms4hasp8YHk6
+         TGTCgIIBClMVtacm2ooqhzcJGRekoXh9Nv76Xw4OKmY3Dkmgi3u8E05mLjVb5T0ta+tn
+         hy6wKA7mB6lCUSKBiAbE5I6eAyvhprtdnyEPBwAkROqnQ3t+JLEPyWnGwIv+Ote8WHxa
+         Ql7unGzCiZ+Go4n7nbmqHefKR209e4o4RLEfvLl7AvMNajdKIN+zdTxmwDBSQcTYXlFX
+         07tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723139425; x=1723744225;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u4bdDhWQ7X8qQM++M7HovEdjs5/KPCkAJnqC/2R+xhg=;
+        b=YzN5Df7hRDHwzQr7ZS1SP4aMWKVB1ULyxDv6q7Q5L9yd1eiNCcBtkeFxpqXvRThpg1
+         dcoSh5R1hrCPwVsXQjByN+bM8SIlhPWvgW0SyWKsMJn3h1k4E4Q91X49RefC4F69xuiN
+         3byDzONouPHsM7lRz/fzEMS3YVUao0/YlLWX1T+u0QXYcD2qgxqHUUasJxLmWtE5S7wR
+         /caBagmkhaWS9KW8ytgwPP/8G24Wi7rSNYW4Rit0q6aEAPgYItlV8XDVXo6+3E9Ym8rN
+         /l4amxnetYEwcr2tamhNUWKt8ZarbeF+/B+CceQSyT90aFJjFHppibzDyO1t0hCWyTFA
+         fNig==
+X-Forwarded-Encrypted: i=1; AJvYcCX3KXh5C9iY9+srHy3ot6lSwRU/cYhlOi3CfEvN7mT76S6gVs+WcfVc9e/aGp9iQCmAt1WmeTaHXNCvvok3k8tm2sFPd7a6TFrkZRdAM9iiuAZv2w76gGLOajhNU6ZseJ8opM++Obk6kYFIB35VsGKp0Au2zdRirjlv20078gi6pJ789Hnl
+X-Gm-Message-State: AOJu0YxUrGk+ccmK4Pujj3GA28usUKEXp67yWIi+O8Ecl58Y/zVBA6ZS
+	K6jnT6kUtozWWMy0z7GqwTAbYS9Ck9nEVoN8pKkySDPcig4qEMFAQI8uzixDoLgz4Rx08deu6sf
+	cnv/3Q6OFdmiAw0SpeZYEAVoBz60=
+X-Google-Smtp-Source: AGHT+IF7SXPWsuvpgoKrIXu0BcFSy0oLb+NpblV2FfSs12++pT5suHBnBpPwRMCYhNJbrOvyRyn8Xr6bxDCLiZFRZVE=
+X-Received: by 2002:a17:907:c7db:b0:a77:d7f1:42eb with SMTP id
+ a640c23a62f3a-a8090c825dcmr191339966b.23.1723139425115; Thu, 08 Aug 2024
+ 10:50:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d19cec9-3e40-471c-8c76-8842a5d86973@nokia.com>
+References: <20240808002118.918105-1-andrii@kernel.org> <20240808002118.918105-5-andrii@kernel.org>
+ <20240808144013.GG8020@redhat.com>
+In-Reply-To: <20240808144013.GG8020@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 8 Aug 2024 10:50:08 -0700
+Message-ID: <CAEf4BzbDZ46kc8bcYcg4pNfsnXBy-P5PktSifpHXqd4XFnO-HQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] uprobes: travers uprobe's consumer list locklessly
+ under SRCU protection
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
+	paulmck@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2024 at 09:53:59AM +0200, Stefan Wiehler wrote:
-> > You've missed a bunch of people/lists. Use get_maintainers.pl.
-> 
-> Sorry, indeed, did not think about about PCI...
-> 
-> > Can you provide some details on what these nodes look like. The
-> > interrupt provider to an SoC device is a PCI device? That's weird...
-> 
-> The DTO looks like this:
-> 
-> watchdog {
-> 	...
-> 	reg = <0x00002064 0x00000028>;
-> 	...
-> 	interrupt-parent = <&gpio_17_0>;
-> 	interrupts = <4 0x8>; // 8 -> IRQ_TYPE_LEVEL_LOW
-> 	...
-> };
-> 
-> And the base DT:
-> 
-> ecam0: pci@878000000000 {
-> 	...
-> 	#size-cells = <2>;
-> 	#address-cells = <3>;
-> 	...
-> 	gpio_17_0: gpio0@17,0 {
-> 		...
-> 		reg = <0x8800 0 0 0 0>; /*  DEVFN = 0x88 (17:0) */
-> 		...
-> 	};
-> 	...
-> };
-> 
-> I completely agree it's a bit sketchy, but it's not me who came up with
-> this ;-) Nevertheless I think other people might run into this issue of
-> mismatching address sizes as well when no interrupt mapping was intended.
-> 
-> > Note that of_irq_parse_raw() was refactored in 6.10, so your patch is
-> > not going to apply.
-> 
-> I'm aware of that and have adapted the patch accordingly.
-> 
-> > That's not the right information to parse the address correctly. You
-> > would need the device's #address-cells. However, in most cases we
-> > don't really need to parse the address. The address is not really used
-> > except in cases where interrupt routing matches the bus and so there
-> > is only one size. That's effectively only PCI devices today. In that
-> > case, the address size would always be equal, and the code implicitly
-> > assumes that. It would be better if we could just detect when to use
-> > the address or not. I think we'd have to look at 'interrupt-map-mask'
-> > first to see whether or not to read the address cells. Or maybe we
-> > could detect when the interrupt parent is the device's parent node.
-> > Either way, this code is tricky and hard to change without breaking
-> > something.
-> 
-> Thanks for confirming that it's PCI only and no address size mismatch
-> should occur. I also was thinking in the direction of checking first if
-> interrupt mapping is intended and return early otherwise, but was
-> worried to break something along the way...
-> 
-> > A simpler way to fix this is just always pass in an address buffer of
-> > 3 cells to of_irq_parse_raw. You would just need to copy the cells in
-> > of_irq_parse_one() to a temporary buffer.
-> 
-> That indeed sounds like the easiest solution to me; I'll send a new patch
-> shortly. However I don't understand how you came up with an address
-> buffer size of 3 - shouldn't it be MAX_PHANDLE_ARGS
-> (addrsize = MAX_PHANDLE_ARGS and intsize = 0 in the worst case)?
+On Thu, Aug 8, 2024 at 7:40=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wrot=
+e:
+>
+> On 08/07, Andrii Nakryiko wrote:
+> >
+> > @@ -1127,18 +1105,30 @@ void uprobe_unregister(struct uprobe *uprobe, s=
+truct uprobe_consumer *uc)
+> >       int err;
+> >
+> >       down_write(&uprobe->register_rwsem);
+> > -     if (WARN_ON(!consumer_del(uprobe, uc))) {
+> > -             err =3D -ENOENT;
+> > -     } else {
+> > -             err =3D register_for_each_vma(uprobe, NULL);
+> > -             /* TODO : cant unregister? schedule a worker thread */
+> > -             if (unlikely(err))
+> > -                     uprobe_warn(current, "unregister, leaking uprobe"=
+);
+> > -     }
+> > +
+> > +     list_del_rcu(&uc->cons_node);
+> > +     err =3D register_for_each_vma(uprobe, NULL);
+> > +
+> >       up_write(&uprobe->register_rwsem);
+> >
+> > -     if (!err)
+> > -             put_uprobe(uprobe);
+> > +     /* TODO : cant unregister? schedule a worker thread */
+> > +     if (unlikely(err)) {
+> > +             uprobe_warn(current, "unregister, leaking uprobe");
+> > +             return;
+>
+> Looks wrong... We can (should) skip put_uprobe(), but we can't avoid
+> synchronize_srcu().
+>
+> The caller can free the consumer right after return. You even added
+> a fat comment below.
+>
 
-There is simply no supported case of more than 3 address-cells. If 
-someone has 4, then their address translation is not going to work and 
-we won't even get to worrying about interrupts...
+Yep, totally my bad, you are right. I'll add a goto synchronize (and
+yep, we'll later remove it, but we should be thorough here).
 
-Rob
+> Yes, the problem will go away after you split it into nosync/sync, but
+> still.
+>
+> Oleg.
+>
 
