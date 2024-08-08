@@ -1,173 +1,173 @@
-Return-Path: <linux-kernel+bounces-280231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF2294C770
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 719F994C772
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0343E1F24312
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96621F21817
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0B1161321;
-	Thu,  8 Aug 2024 23:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D99E15F40A;
+	Thu,  8 Aug 2024 23:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="QLuaar3r"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qynb4fBD"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCAD15A851
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 23:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AD02F23
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 23:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723160663; cv=none; b=OS4caFMlIw85rNCWgey5v+EByiOyGstgxcMcVQqynOf4BqUR1pCJKhU6dO6UBX3KpEQd8nwqHVaIRb5XTK9FFqwte98eIWItvpi/MIsBFeWephc3lcuCZoqkibuxdFdTPRoPy63s3N0vVEUzSazvS2CgHodyXQNcosb2VOslb/U=
+	t=1723160848; cv=none; b=lN03DAYFeLklaCUvH1uUo5TUDFgNjolYcQiZagviAsNcSUN61HV7YbVb2pUA4+YEgqBV5R3pHMF6JSjPRVMNxGkNA4Eafsu8nDy83vZgb9Rj1qtZ/xlBJs6wj2I4SjL7DPXS6yIosZOVByMHZlh7EIOrlrh0Sl6DFuQ7t+C4wKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723160663; c=relaxed/simple;
-	bh=o/NeEUEEPbRHH+4cOkUfuiP/C6hPXj0NMTmrXdr/eys=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=db/JvZN1uPONP+6rMMF6IOoFJxAONR5tLSfQTVWHjtCXHjUYsLak0X+9MNSG6IlCuSpTnNemVN/ngDo6PG6BYQ210sZvM8PSUlFG1VcSYAuSnTYp8IHJIRjOu4R2EaeB9Y+NZzDJ8SoUQGgw588sJ2rktLjr3lDIhG9RB9xWeH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=QLuaar3r; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3685b3dbcdcso847169f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:44:20 -0700 (PDT)
+	s=arc-20240116; t=1723160848; c=relaxed/simple;
+	bh=Tsd2EcXhnmUz+221YdJ5PDCbtnvwGKdxA893zq8JtIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=txEm6mQfPWffy1Oqw9YgHv1EWOfCqAWIG88vdSYN3o/JEO1dAO6bcSLmdsvTlJYjXuBCi/9LBxEWQUEts6s3AP1QU6gjAo35nvSO+7xyD5mETuDBwoYruLNJ1XrHAtZRmlCIttUblo4XAceGQxqmRq6H2GUHB4SrTojc3/vVKjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qynb4fBD; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7b80afeb099so1077759a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:47:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1723160659; x=1723765459; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wpIOIz+eJ2EDI15m0KcmC252UQEoCmNdQr22+6Ldus8=;
-        b=QLuaar3rZ6cn30lmRVm4ZsQctLTiuwn98gsqwH9tE2fdJ5E6y1lXo5HphgW+4YPqzk
-         6NpqQTlFnVV4SXHZ4W/37PDZpt3IusSkhnagExHbs+CU106KMiq25lq40ZuBSLLceWPt
-         K2jxahP1LiED3ftAiuegtOFtR4AJJmZtjU23U+JYn2cTUGmM8X/7jRKdAe2CwdFIT0Pa
-         kPjccgVqq5qdf69ATqL6gc6+PrCuNvUhArq23LXup+lnS6J2UqqXoYVUeHucXu91g95H
-         5TBoVuBre87d0PLFVwr3TXjUqxI/ezNPDJIyRCpDNMJVl15HnegBkc30kzIwHQQ0ODtg
-         7vnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723160659; x=1723765459;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1723160846; x=1723765646; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wpIOIz+eJ2EDI15m0KcmC252UQEoCmNdQr22+6Ldus8=;
-        b=GRIxdcE3m4JBZIbI3l2EtlXkXbRd5XDqVquO3M9nHwjzK8rtm+AyI/zZiK5tkkpN00
-         oLYnXLeL00uRuSW+/Q8rqesU4yHxwimx6y3MvwBNFfnjBc/dYInGwn3fUUw9w6DdFDrI
-         22vPHTTvlmD5MRuvi5Yel3i70K3CcHSALkFtNVLuizqz/4yZhlzkekb34fBWBVJzmvZ8
-         PO1BG7fcZnZZInKkfwD00sExfcG2u1hDMjg3zZe1WZUPJpcbbw+j+gWoLD2QhcWM6aK6
-         268bcYbQ0S5dWsAnLsP9VM1oyKPwO7mVmvRT56++2hX0omB5fEQ7kPhMsfMCsIejai0M
-         Y0hA==
-X-Gm-Message-State: AOJu0YzucHadb64Gb9JuWjBKkWLdqY96U1ahutNV5ytppbhCaZF7CZTT
-	6LCH1HGG7l6/7RDUBZMDXjgzYI3sPBv9HPqczsKXFaSiMx0NEnnHirC/sNNcwI4=
-X-Google-Smtp-Source: AGHT+IF5WGofAa3s9FWKI8I6nuBJ247zT4E/5cpCXyN76sgpTHR9BEpdZYWFSSOGbuONhaebr4+sFw==
-X-Received: by 2002:a5d:6e48:0:b0:35f:1cc9:1d1d with SMTP id ffacd0b85a97d-36d27561030mr2592313f8f.38.1723160659259;
-        Thu, 08 Aug 2024 16:44:19 -0700 (PDT)
-Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d27193339sm3466071f8f.63.2024.08.08.16.44.18
+        bh=dheW5IIS0EcRkzqbr/liUgn7V1Dn1bc2ejneEUhfSZ8=;
+        b=Qynb4fBD97c37JTkz16yiUt71X9g1EOFcmKYKu9z2aCnvXqUBQIgZLyHK1d4cfs/Bz
+         Ml1aSFnYku2RfvjrtuRZyey20pV0Kn4P8zCWmJEYlon3RO52p6nlzUaqiCqNs7HwUpYK
+         h4uwD4RgKNuLiIKRXpu66tpCrjKPeVosogfAHMooKd7jfK0K2cb7S+91IfYWt27p3MfP
+         CFpOqr3FfGNQ3Xwkxx+VwdCMxMrxPygaIVHWJUWRBY0Sskpu2/PmzQiVhHHYX38KD2RE
+         Ukj8P3vpX616vo2yDrqTvoMpPyC7piOtd8jriq2dBUqLhpS9jjr8BzDIUNDBQurWrViU
+         wucA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723160846; x=1723765646;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dheW5IIS0EcRkzqbr/liUgn7V1Dn1bc2ejneEUhfSZ8=;
+        b=JipZvdWSzWXhTSMRG8lUiJ7oUcdn+jIadz6g+UGTdFZAqD3WBIb3NM/uSB/ETQj84p
+         ob5TkkEnRW2VIj7yZT6r10VRh15BMzmcyFtmJiwIrVPrxeBO42UKhEQvvcsbltaK5WsN
+         lUy6xQalybxjR5lFqC5h+aaZnPnXVwKGwBPezkrWpwBrUDw0/cRUGUSE6mM97mrnGJgP
+         8QiVJeXI31bEkNCWsUGwqKM6rAK/pgKPPeImb2ADmEo6SpYc2EjVsuJWvZpDVlS1vDmj
+         oiFYB4/XHtgX1/9qxOY6APUItYUaymfmn7XcDJEj70JnkfVkUb4mLKbP72wl576ASgrE
+         dzpg==
+X-Gm-Message-State: AOJu0Yyzk54ecnteKQA6Sy/4OOF8824X22bj1Uz2ei6Ao9VLSWaW+OfJ
+	I+VL81ipLawI/7Unp8aOqjFR6i0ci5F2vd+fRjOEImDd4yofErV8
+X-Google-Smtp-Source: AGHT+IEZXoSQLFAhHgphaP43w7Hllhd+zAKZxeEL7kWZhYKWWXsRMRAisexewW0C/Wm1RYD71Hdlmw==
+X-Received: by 2002:a17:902:db01:b0:1fb:4f8f:f212 with SMTP id d9443c01a7336-200952e8615mr38659585ad.60.1723160846010;
+        Thu, 08 Aug 2024 16:47:26 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592aa11csm130083195ad.272.2024.08.08.16.47.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 16:44:18 -0700 (PDT)
-From: Qais Yousef <qyousef@layalina.io>
-To: Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Qais Yousef <qyousef@layalina.io>
-Subject: [PATCH v3] sched: cpufreq: Rename map_util_perf to sugov_apply_dvfs_headroom
-Date: Fri,  9 Aug 2024 00:44:15 +0100
-Message-Id: <20240808234415.554937-1-qyousef@layalina.io>
-X-Mailer: git-send-email 2.34.1
+        Thu, 08 Aug 2024 16:47:25 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 8 Aug 2024 13:47:24 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>, Phil Auld <pauld@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: [PATCH v2 sched_ext/for-6.12] sched_ext: Improve logging around
+ enable/disable
+Message-ID: <ZrVZDDDssK-gA8Xe@slm.duckdns.org>
+References: <ZrQW4gqIr_hTgp0z@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrQW4gqIr_hTgp0z@slm.duckdns.org>
 
-We are providing headroom for the utilization to grow until the next
-decision point to pick the next frequency. Give the function a better
-name and give it some documentation. It is not really mapping anything.
+From 344576fa6a69ce1292ef669c8d50c2088c36dc1e Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Wed, 7 Aug 2024 14:52:50 -1000
+Subject: [PATCH] sched_ext: Improve logging around enable/disable
 
-Also move it to cpufreq_schedutil.c. This function relies on updating
-util signal appropriately to give a headroom to grow. This is tied to
-schedutil and scheduler and not something that can be shared with other
-governors.
+sched_ext currently doesn't generate messages when the BPF scheduler is
+enabled and disabled unless there are errors. It is useful to have paper
+trail. Improve logging around enable/disable:
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Qais Yousef <qyousef@layalina.io>
+- Generate info messages on enable and non-error disable.
+
+- Update error exit message formatting so that it's consistent with
+  non-error message. Also, prefix ei->msg with the BPF scheduler's name to
+  make it clear where the message is coming from.
+
+- Shorten scx_exit_reason() strings for SCX_EXIT_UNREG* for brevity and
+  consistency.
+
+v2: Use pr_*() instead of KERN_* consistently. (David)
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Suggested-by: Phil Auld <pauld@redhat.com>
+Reviewed-by: Phil Auld <pauld@redhat.com>
+Acked-by: David Vernet <void@manifault.com>
 ---
 
-Changes in v3:
+Applied to sched_ext/for-6.12 w/ the pr_err() update.
 
-	1. Add Reviewed-by from Vincent
+Thanks.
 
-Changes in v2:
+ kernel/sched/ext.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-	1. Add Acked-by from Viresh and Raphael (Thanks!)
-	2. Move the function to cpufreq_schedutil.c instead of sched.h
-	3. Name space the function with sugov_ to indicate it is special to
-	   this governor only and not generic.
-
- include/linux/sched/cpufreq.h    |  5 -----
- kernel/sched/cpufreq_schedutil.c | 20 +++++++++++++++++++-
- 2 files changed, 19 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
-index bdd31ab93bc5..d01755d3142f 100644
---- a/include/linux/sched/cpufreq.h
-+++ b/include/linux/sched/cpufreq.h
-@@ -28,11 +28,6 @@ static inline unsigned long map_util_freq(unsigned long util,
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 17af9c46d891..143c4207a826 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -4013,11 +4013,11 @@ static const char *scx_exit_reason(enum scx_exit_kind kind)
  {
- 	return freq * util / cap;
- }
--
--static inline unsigned long map_util_perf(unsigned long util)
--{
--	return util + (util >> 2);
--}
- #endif /* CONFIG_CPU_FREQ */
+ 	switch (kind) {
+ 	case SCX_EXIT_UNREG:
+-		return "Scheduler unregistered from user space";
++		return "unregistered from user space";
+ 	case SCX_EXIT_UNREG_BPF:
+-		return "Scheduler unregistered from BPF";
++		return "unregistered from BPF";
+ 	case SCX_EXIT_UNREG_KERN:
+-		return "Scheduler unregistered from the main kernel";
++		return "unregistered from the main kernel";
+ 	case SCX_EXIT_SYSRQ:
+ 		return "disabled by sysrq-S";
+ 	case SCX_EXIT_ERROR:
+@@ -4135,14 +4135,16 @@ static void scx_ops_disable_workfn(struct kthread_work *work)
+ 	percpu_up_write(&scx_fork_rwsem);
  
- #endif /* _LINUX_SCHED_CPUFREQ_H */
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index eece6244f9d2..575df3599813 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -178,12 +178,30 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
- 	return cpufreq_driver_resolve_freq(policy, freq);
- }
+ 	if (ei->kind >= SCX_EXIT_ERROR) {
+-		printk(KERN_ERR "sched_ext: BPF scheduler \"%s\" errored, disabling\n", scx_ops.name);
++		pr_err("sched_ext: BPF scheduler \"%s\" disabled (%s)\n",
++		       scx_ops.name, ei->reason);
  
-+/*
-+ * DVFS decision are made at discrete points. If CPU stays busy, the util will
-+ * continue to grow, which means it could need to run at a higher frequency
-+ * before the next decision point was reached. IOW, we can't follow the util as
-+ * it grows immediately, but there's a delay before we issue a request to go to
-+ * higher frequency. The headroom caters for this delay so the system continues
-+ * to run at adequate performance point.
-+ *
-+ * This function provides enough headroom to provide adequate performance
-+ * assuming the CPU continues to be busy.
-+ *
-+ * At the moment it is a constant multiplication with 1.25.
-+ */
-+static inline unsigned long sugov_apply_dvfs_headroom(unsigned long util)
-+{
-+	return util + (util >> 2);
-+}
-+
- unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
- 				 unsigned long min,
- 				 unsigned long max)
- {
- 	/* Add dvfs headroom to actual utilization */
--	actual = map_util_perf(actual);
-+	actual = sugov_apply_dvfs_headroom(actual);
- 	/* Actually we don't need to target the max performance */
- 	if (actual < max)
- 		max = actual;
+-		if (ei->msg[0] == '\0')
+-			printk(KERN_ERR "sched_ext: %s\n", ei->reason);
+-		else
+-			printk(KERN_ERR "sched_ext: %s (%s)\n", ei->reason, ei->msg);
++		if (ei->msg[0] != '\0')
++			pr_err("sched_ext: %s: %s\n", scx_ops.name, ei->msg);
+ 
+ 		stack_trace_print(ei->bt, ei->bt_len, 2);
++	} else {
++		pr_info("sched_ext: BPF scheduler \"%s\" disabled (%s)\n",
++			scx_ops.name, ei->reason);
+ 	}
+ 
+ 	if (scx_ops.exit)
+@@ -4817,6 +4819,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 	if (!(ops->flags & SCX_OPS_SWITCH_PARTIAL))
+ 		static_branch_enable(&__scx_switched_all);
+ 
++	pr_info("sched_ext: BPF scheduler \"%s\" enabled%s\n",
++		scx_ops.name, scx_switched_all() ? "" : " (partial)");
+ 	kobject_uevent(scx_root_kobj, KOBJ_ADD);
+ 	mutex_unlock(&scx_ops_enable_mutex);
+ 
 -- 
-2.34.1
+2.46.0
 
 
