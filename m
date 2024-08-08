@@ -1,161 +1,151 @@
-Return-Path: <linux-kernel+bounces-279313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E565394BBAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:52:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850E694BBB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39DC9B21789
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:52:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40B42281894
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1D918A925;
-	Thu,  8 Aug 2024 10:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083FA18A950;
+	Thu,  8 Aug 2024 10:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gjDr0gbZ"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HBG9tYpv"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620B918A6AB
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC11C18A6CD;
+	Thu,  8 Aug 2024 10:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723114357; cv=none; b=VeoF87ZpCSkmaNDQd8L5ys09atppkB2e2JBlKg6dOqyAix08bfert7sUI7+kXqI22+NK3vkkkz5jqDC6ckEzTKAXusCh255F/1KZ/nw844gK3SFDNaVfu7gn8Y+fy7CkkCJ1mE+HfRaWcs0GOLCycgcty+TzFcTGZ4cMaggYrTI=
+	t=1723114393; cv=none; b=K41CAssStfad5ZoFgMTvI/SGDFSjAoVZKFQ/7BBq2NyOfNyF49gAWCgz2+NpZYz58BIq7mJ+cu0QB9WwRNyvQWvKmMuAalrcBtNyTwUHgXbul9LmTxSziUlvi0CFtgIPLWjUUvkJiBLewxtown2A6caTzjq839aX7E0trXgDYMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723114357; c=relaxed/simple;
-	bh=32a7io2SChK8ZRpVpwvY+OWrnTIu/XJXf81hGGeOTAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oxnVOOiEMnAn9rSlevU2SisXkGI3pp8hOehvuZkeUeOX6ZDhzs32c5PrAQtINjdV1Cpv1s0DwoeTYJi1bqlE96/RZdezX6VsoVqmHAgTdYpFJieb4MBVWKSLmfU4bl3VqXgHYwbII/5yWqlrNuRUcdC0y3B39wf2x4qrv+qoH/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gjDr0gbZ; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7a18ba4143bso670160a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 03:52:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723114355; x=1723719155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZZLYjyqauE0XTZU17OzHb00VCoqMdI4Lj7iAwvx9OiM=;
-        b=gjDr0gbZ+9eBdXZfGTUHZPOdah6oNu62Qc0ulLO7krPUaVu+uMfFn5TULiyAM1k8O8
-         +kKcwyHA/IXRVoZ9VedUugqY3zyaxpCRv2KdwNlCq+Q1SN9hmWaFW7Fzjo1KMvUR7AjM
-         uJmHeW86Wnr+VDewASXPReuYl4KEPkfPbJCmDYhWMgJ7SDKnkTHrNYZxerGyDXYpv6F5
-         ubkmBFXPjGjjZOu09yEXCPhBcZNY0s8kIzZYougqXUHeXOGeNCHvjq0TMqNA6csYwnVK
-         GDUueAlUHv9uf+F6A16U4glQNE05SqXBk1N8mQ0wnyRM9/zTkqnCgAgH2vlpwO1VQUch
-         Cmvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723114355; x=1723719155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZZLYjyqauE0XTZU17OzHb00VCoqMdI4Lj7iAwvx9OiM=;
-        b=st82osNXdrzfoAG+n2Z7fJa8gbTItiB6YRG9tZ38rvLCufjPeHSvSvYDYe9EDxxQyS
-         e55j24hG1NaX52EBFCCdkD6x/SvizmttQk/0tQpziGygNPSqqH61cUa1ZLASc/PoTBp9
-         2tXhc+BftUyPo2QoSH4UBieIYtTlUZTDtBbDepDH5cMXTuFWUW5+2L46pKTun4lBaBeB
-         E8nK+jhgx3D9DXiDSJaWaPLBsnGGspGYJxL3dpNt1eg6Kq6AyotbOAPv5AdHdfrOBypS
-         7iIRyZvM4TLLM0Z4k8if6IZt1mfT0cuEkSHpiQAySH5ORiZHLc/HoTSf516oWEDU47Vn
-         Sotw==
-X-Forwarded-Encrypted: i=1; AJvYcCXo0ghVwjPpQoSl+O9I06/Ozqj+ADpRAmmyCXSfE5AaSLrLPDFPVZ6c9J6A7XgEL0bYoFvnoL5jYqTt4Sz2ZbCoKbkLs/SZxjtOFly+
-X-Gm-Message-State: AOJu0YxDoCNNMKgVt9EbMUtHHob9u4AQajqbBVW2PgLsRiaThprfz4NL
-	JdZtEMYrgVXLg7N4mOEb/KzdeJCMhpHisi2N83EdDCKyphFKeGtuPEjJ/2j6IuAI+WITY79F+TA
-	rRNFhTfK5ZwWZIZ57VCUJ4oU2qYhGbYjidMkD
-X-Google-Smtp-Source: AGHT+IFcr7xL28cGBaoGPz4X18wYJjgXp6byzUZO/GroOKeF0RdMycw/CywkZwmJsg+D4t4pUbw8contMlYR7PysfzU=
-X-Received: by 2002:a05:6a21:6d92:b0:1c4:dfa7:d3ce with SMTP id
- adf61e73a8af0-1c6fcebedfemr1441920637.17.1723114354688; Thu, 08 Aug 2024
- 03:52:34 -0700 (PDT)
+	s=arc-20240116; t=1723114393; c=relaxed/simple;
+	bh=wz6VfZxt63c9DtHqIc2OsLJG6x/b0G4bHEdbEZmRaos=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKPhMhDmL6rRDtyS6WF501xc1f/eSgDU93Lsdm3ATsxR6GZZn5y8zpZUNYnfniQL+eotCcmhMkM5TUQckHwWTvXardQcdppeNtRxHeL5shFqaqEBZPlsenPHR+j76Fhm5Djjq5zKmhUci+8TzLq3+WAxIqMDHC3HNK6sJ2aIsH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HBG9tYpv; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 478Ar68p125594;
+	Thu, 8 Aug 2024 05:53:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723114386;
+	bh=dWxdi8HTTXFR+eyz0Ut/74IaZvXdRjO+e8qgAdYq/GA=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=HBG9tYpv7bUVZkRJPIE5onpJYl+f92Y4q6kykZFaDDPfL9phjG2G6nGsRdHhZiuD9
+	 ZdSMYRGocW/40Wjor/Tm6Xi/jeHt8m0MzI2kDqNtZo2eXJYJDdwpxqrddQgcWdfVuR
+	 D6TehEWHGSDxFulpSj9BODwyKx+bOM5/UWf0J4C4=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 478Ar6au073671
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 8 Aug 2024 05:53:06 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
+ Aug 2024 05:53:06 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 8 Aug 2024 05:53:06 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 478Ar6Ix063841;
+	Thu, 8 Aug 2024 05:53:06 -0500
+Date: Thu, 8 Aug 2024 05:53:06 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Neha Malcom Francis <n-francis@ti.com>
+CC: Bhavya Kapoor <b-kapoor@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
+        <kristo@kernel.org>, <m-chawdhry@ti.com>, <vigneshr@ti.com>,
+        <sinthu.raja@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am68-sk-base-board: Add clklb pin mux
+ for mmc1
+Message-ID: <20240808105306.clwdgrfulqhsyeyt@studied>
+References: <20240807101624.2713490-1-b-kapoor@ti.com>
+ <8fa39624-9a92-404d-8651-9ade5700a7d3@ti.com>
+ <1319a6ac-6784-45d6-8a0e-170e40d3aa18@ti.com>
+ <2279305f-2efa-4320-866a-fc4340d2e70c@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805082106.65847-1-jasowang@redhat.com> <CACycT3uM1jSdqFT0LGqy1zXZkWF8BNQN=8EMKYMoyP_wjRtsng@mail.gmail.com>
- <CACGkMEtYE1OY+okxHAj=cVfW-Qz45an28oO=Wv15yOtpD6UqdQ@mail.gmail.com>
-In-Reply-To: <CACGkMEtYE1OY+okxHAj=cVfW-Qz45an28oO=Wv15yOtpD6UqdQ@mail.gmail.com>
-From: Yongji Xie <xieyongji@bytedance.com>
-Date: Thu, 8 Aug 2024 18:52:23 +0800
-Message-ID: <CACycT3vAv1K0yBKgc_8GBLpEPwASTCCPZYAxMyUROQsyntQdOw@mail.gmail.com>
-Subject: Re: Re: [PATCH] vduse: avoid using __GFP_NOFAIL
-To: Jason Wang <jasowang@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio Perez Martin <eperezma@redhat.com>, Maxime Coquelin <maxime.coquelin@redhat.com>, 
-	virtualization@lists.linux.dev, linux-kernel <linux-kernel@vger.kernel.org>, 
-	21cnbao@gmail.com, penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2279305f-2efa-4320-866a-fc4340d2e70c@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu, Aug 8, 2024 at 10:58=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> On Wed, Aug 7, 2024 at 2:52=E2=80=AFPM Yongji Xie <xieyongji@bytedance.co=
-m> wrote:
-> >
-> > On Mon, Aug 5, 2024 at 4:21=E2=80=AFPM Jason Wang <jasowang@redhat.com>=
- wrote:
-> > >
-> > > Barry said [1]:
-> > >
-> > > """
-> > > mm doesn't support non-blockable __GFP_NOFAIL allocation. Because
-> > > __GFP_NOFAIL without direct reclamation may just result in a busy
-> > > loop within non-sleepable contexts.
-> > > ""=E2=80=9C
-> > >
-> > > Unfortuantely, we do that under read lock. A possible way to fix that
-> > > is to move the pages allocation out of the lock into the caller, but
-> > > having to allocate a huge number of pages and auxiliary page array
-> > > seems to be problematic as well per Tetsuon [2]:
-> > >
-> > > """
-> > > You should implement proper error handling instead of using
-> > > __GFP_NOFAIL if count can become large.
-> > > """
-> > >
-> > > So I choose another way, which does not release kernel bounce pages
-> > > when user tries to register usersapce bounce pages. Then we don't nee=
-d
-> > > to do allocation in the path which is not expected to be fail (e.g in
-> > > the release). We pay this for more memory usage but further
-> > > optimizations could be done on top.
-> > >
-> > > [1] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8Z=
-Q2saLnUdfOGOLg@mail.gmail.com/T/#m3caef86a66ea6318ef94f9976ddb3a0ccfe6fcf8
-> > > [2] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8Z=
-Q2saLnUdfOGOLg@mail.gmail.com/T/#m7ad10eaba48ade5abf2d572f24e185d9fb146480
-> > >
-> > > Fixes: 6c77ed22880d ("vduse: Support using userspace pages as bounce =
-buffer")
-> > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > ---
-> >
-> > Reviewed-by: Xie Yongji <xieyongji@bytedance.com>
-> > Tested-by: Xie Yongji <xieyongji@bytedance.com>
->
-> Thanks.
->
-> >
-> > Have tested it with qemu-storage-daemon [1]:
-> >
-> > $ qemu-storage-daemon \
-> >     --chardev socket,id=3Dcharmonitor,path=3D/tmp/qmp.sock,server=3Don,=
-wait=3Doff \
-> >     --monitor chardev=3Dcharmonitor \
-> >     --blockdev driver=3Dhost_device,cache.direct=3Don,aio=3Dnative,file=
-name=3D/dev/nullb0,node-name=3Ddisk0
-> > \
-> >     --export type=3Dvduse-blk,id=3Dvduse-test,name=3Dvduse-test,node-na=
-me=3Ddisk0,writable=3Don
-> >
-> > [1] https://github.com/bytedance/qemu/tree/vduse-umem
->
-> Great, would you want to post them to the Qemu?
->
+On 13:19-20240808, Neha Malcom Francis wrote:
+> Hi Bhavya
+> 
+> On 08/08/24 13:08, Bhavya Kapoor wrote:
+> > Hi Neha,
+> > 
+> > On 08/08/24 11:51 am, Neha Malcom Francis wrote:
+> > > Hi Bhavya
+> > > 
+> > > On 07/08/24 15:46, Bhavya Kapoor wrote:
+> > > > mmc1 was not functional since pin mux for clklb was not present.
+> > > > Thus, add clklb pin mux to get MMC working.
+> > > > 
+> > > > Fixes: a266c180b398 ("arm64: dts: ti: k3-am68-sk: Add support
+> > > > for AM68 SK base board")
+> > > > Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+> > > > ---
+> > > > 
+> > > > rebased to next-20240807
+> > > > 
+> > > >   arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts | 1 +
+> > > >   1 file changed, 1 insertion(+)
+> > > > 
+> > > > diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+> > > > b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+> > > > index 90dbe31c5b81..d5ceab79536c 100644
+> > > > --- a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+> > > > +++ b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
+> > > > @@ -204,6 +204,7 @@ main_mmc1_pins_default: main-mmc1-default-pins {
+> > > >           pinctrl-single,pins = <
+> > > >               J721S2_IOPAD(0x104, PIN_INPUT, 0) /* (P23) MMC1_CLK */
+> > > >               J721S2_IOPAD(0x108, PIN_INPUT, 0) /* (N24) MMC1_CMD */
+> > > > +            J721S2_IOPAD(0x100, PIN_INPUT, 0) /* (###) MMC1_CLKLB */
+> > > >               J721S2_IOPAD(0x0fc, PIN_INPUT, 0) /* (M23) MMC1_DAT0 */
+> > > >               J721S2_IOPAD(0x0f8, PIN_INPUT, 0) /* (P24) MMC1_DAT1 */
+> > > >               J721S2_IOPAD(0x0f4, PIN_INPUT, 0) /* (R24) MMC1_DAT2 */
+> > > 
+> > > How is this different from the P23 pinmux for MMC1_CLK? Could you
+> > > explain what CLKLB is, since it doesn't have a ball number I'm
+> > > finding it difficult to understand what it is?
+> > > 
+> > This pin needs to be setup so that MMC_CLK is looped back at pad level
+> > for highspeed SDIO operations (has been same across K3 family). MMC0/1
+> > has this pin configured as INPUT by reset default as these have boot
+> > media
+> > 
 
-Looks like qemu-storage-daemon would not benefit from this feature
-which is designed for some hugepage users such as SPDK/DPDK.
+Please update the commit message with the explanation of what CLKLB pin
+is. the "reset default" is a bit confusing description.
 
-Thanks,
-Yongji
+
+> >   These pinmuxes are derived from pinmux file shared by EVM team during
+> > wakeup/board bringup.
+> > 
+> 
+> Thank you for explaining.
+> 
+> Reviewed-by: Neha Malcom Francis <n-francis@ti.com>
+> 
+
+
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
