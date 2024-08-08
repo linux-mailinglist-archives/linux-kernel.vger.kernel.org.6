@@ -1,279 +1,214 @@
-Return-Path: <linux-kernel+bounces-280204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B484294C720
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:57:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABC394C723
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B878AB20FF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:57:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAE2C1F256F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594EB15ECC5;
-	Thu,  8 Aug 2024 22:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F4515EFA3;
+	Thu,  8 Aug 2024 22:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cMt0EU1U"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Qvy+ooSf"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2065.outbound.protection.outlook.com [40.107.220.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07034A1E;
-	Thu,  8 Aug 2024 22:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723157811; cv=none; b=WopxwEoJ1uX/DBsbooDmK5Vs6h4PAvEDG3d68SB6oqGzqb45vuy6zQFXYNP/5i0g9uVjCx+8rm0zFmzvdmZ0hNcIJlyc2pHEKfShOCoq1hXhGWSr+Slu6ae2J/DtjKJt60ZYOcUL0tYkpg6ahOAmR2TJU6MYsJhfZIP+eJ/2L+k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723157811; c=relaxed/simple;
-	bh=t84dMCvYdOlyqzN44mh6uzzWI1ooIs+mn61Ru4IlkCE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jxdrz4iRxVgEY+HdVfAC5EN58eSsh4c3qWZIknlvFZpA4E/GgIOtCEiUCqSkN29JXqV+jgpHnzNj3NACWJQ60WlqA2qz9XThOIoZAzykevsDe/H7MQnyD54HFKwy9Z6nAaQrmZRlEG9GMijoiTJc78d11xwZOlS+zVMaSpnm/jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cMt0EU1U; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478LJ7HW016234;
-	Thu, 8 Aug 2024 22:56:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+bK8U451oKXQpHMw6SXQEmr7FNx10pP5FH9M9n1I8+g=; b=cMt0EU1UwZAyH0qU
-	P+9zkTGboAqGebbanImFVEq9+HziqzwxnbVRRE1d5UMZGXVPVCBXDwjrbATwB85j
-	uUVeJ557m1Ii3u7yICywm3B0EcXjXzJrA4sEqtWZWZYAsQ98KAb5OI4fWbYnQhka
-	kK3qNlCt9NUzBChmW6un4cWznsUsQYnPMuczugKGlFj0L1VRS+a3XqHUzPNwsr53
-	ynQaGKmhQMtRMXwRqSmM77jfEhapOh1+BJ6mMR2K7+RM56NJgzRUxhMQ0PPfL9CK
-	URHM/j5uwaQTGrq1NfiXhptQK5vI+saq6L+TsRQc2I4l5SPO2F+sSj6F6vhKfNfk
-	CB2tQg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vue3t0sx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 22:56:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 478MuX6t012837
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 8 Aug 2024 22:56:33 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 8 Aug 2024
- 15:56:32 -0700
-Message-ID: <1518bded-72d8-4ed0-a63f-3dd21473b23b@quicinc.com>
-Date: Thu, 8 Aug 2024 15:56:32 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD9C4A1E;
+	Thu,  8 Aug 2024 22:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723157985; cv=fail; b=PIWmlbmOgsmcTgZ+immHJcfyJwQkAr5GhQAKD8/ZYYxfGHxtMqo4k2ivDgpIEvLfXANclaI1VB1gTH71uh/WDq6QtwXcAmbdSxpowiZpDiMJHtfnx8TlwoN9Nssn9XrUEqZKgNC6VWacsA/BXg1miL8/Sq0cs5M25AW3B9xJTlo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723157985; c=relaxed/simple;
+	bh=/QVbRI3otnDyKn3dsbJmKA5jNBg5mDRthvosbvQ8yD0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LlOE5y6SJLjgnn3nMpSy8QC3NC0fJxIiEVEWp4MAFPxUkm0abVzqwmvBs9/qTEe+ZfAFUL3UaQ5QGCbl6jpbTgkcLgHdYGcZdIlVM3d8Yi2Cryzsl8ylDtiUbjV1ztLVg/OSrHtMCzNOJlP2HL/HiRlWDDSaQ8asiFU2XPMmI+Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Qvy+ooSf; arc=fail smtp.client-ip=40.107.220.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fQjXZN0CjppK7x7D2vduOdUqIPHq/zcE7PKDTgmWpl6jGLggBtZIl/+tDi9HSqs9nZKjlMedbxzQlZfVRsOGBonTvaOtvfOrrDhW6S5GREZqiaaTSdoz1FfmYsuNbthhEbJD6915xG3ZCXmQIAFW8uYb0l2gNXz+SNMCV431e58i920OgmtlfP7loYngpFhw2VYwiRo1QddKFZA9+Hnva+EN07eVu4FrjdJUhCyD9ir/ZyDL866EfWx3vrxDUTErAeICo+XLNlAAUz1R2KCZ1bculCSIY/xcjtKbYYnVwdo+He3fMlHFFxRLlW2FGWtIYE2Pw0eD2DUB+A9xpb+WoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CqpeD/RBoKpF5PU0rGqO0JeYpWpF4Z7YTcDsmG4Yvh4=;
+ b=Vdi/g7XiP4N6cADw7ckl7AbTZamvfMUaAQRfI5NAhgXtocVX73+zFbtLP3+RqkV6WiGprU//DMZwKGNWUAqzlwqGggWt5UgYoDxrrKgOayW698RrtTKojsWZPqFijzFjFRoYoE2UShW8NJavDnx6pHecvRrLYlqjpy+MjXGN1pHvT0OxmugvJdndDjd7A3Bi/okwUi5ALkvoQIrWCfs1017rZrG63rDwau/ecL39kiU5nm2Wd8yJ0R8n0rVRDLg/gxuKGrPDTaUA/bN3AVF+C0tBoCTC0W2yH1KIR6nHMhuTx7AB2Qdxf2q29dqfkUf44TR/AW1uy1PKYkvhVOaXBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CqpeD/RBoKpF5PU0rGqO0JeYpWpF4Z7YTcDsmG4Yvh4=;
+ b=Qvy+ooSfWS/U4k8DgGi0oXAUfrdS+kHD3H1dyAfUgWpQIB/Ku8JwEiBqYrD0B1x2tm64+XhwTJhdfYPeYxtTToSfqsUlGYRN/chrQ0iLgWGZBSua1z4IyXR518gqmYxsahSSmoU4ZdhYm9ecdUjE2+cCWJ9Bcrf8G2urgBm8j3TiHgLHa9BkWEJcp+CNzD6FDtxZQhvwuBotgqQnQwBYB/UfWSo4heWteDm88/RpT76zimFYUkJ791Vip5kL6L2Zg5NGyiNQOr6M6cpg8r8lVd/dsgr+Oq+R1mYed9yszd4UcTB7f20XBKcb+UpCVYOHlV8zup0LKff4cunueSDvAg==
+Received: from BYAPR11CA0074.namprd11.prod.outlook.com (2603:10b6:a03:f4::15)
+ by PH0PR12MB7094.namprd12.prod.outlook.com (2603:10b6:510:21d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Thu, 8 Aug
+ 2024 22:59:40 +0000
+Received: from SJ1PEPF000023DA.namprd21.prod.outlook.com
+ (2603:10b6:a03:f4:cafe::50) by BYAPR11CA0074.outlook.office365.com
+ (2603:10b6:a03:f4::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.30 via Frontend
+ Transport; Thu, 8 Aug 2024 22:59:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ1PEPF000023DA.mail.protection.outlook.com (10.167.244.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.2 via Frontend Transport; Thu, 8 Aug 2024 22:59:40 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 8 Aug 2024
+ 15:59:34 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 8 Aug 2024 15:59:33 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 8 Aug 2024 15:59:33 -0700
+Date: Thu, 8 Aug 2024 15:59:31 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Robin Murphy <robin.murphy@arm.com>
+CC: "Tian, Kevin" <kevin.tian@intel.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	"joro@8bytes.org" <joro@8bytes.org>, "will@kernel.org" <will@kernel.org>,
+	"shuah@kernel.org" <shuah@kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] iommu/dma: Support MSIs through nested domains
+Message-ID: <ZrVN05VylFq8lK4q@Asurada-Nvidia>
+References: <cover.1722644866.git.nicolinc@nvidia.com>
+ <b1b8ff9c716f22f524be0313ad12e5c6d10f5bd4.1722644866.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276E59FBD67B1119B3E2A858CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <6da4f216-594b-4c51-848c-86e281402820@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] drm/panel: jd9365da: Move "exit sleep mode" and
- "set display on" cmds
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>,
-        <neil.armstrong@linaro.org>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <dianders@chromium.org>,
-        <hsinyi@google.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <jagan@edgeble.ai>, <dmitry.baryshkov@linaro.org>,
-        <jani.nikula@linux.intel.com>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240807100429.13260-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240807100429.13260-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240807100429.13260-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kIrhcZcEoOFHAKuekpBSfd5nlyTMSNx7
-X-Proofpoint-ORIG-GUID: kIrhcZcEoOFHAKuekpBSfd5nlyTMSNx7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_23,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 bulkscore=0 mlxscore=0 spamscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408080164
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <6da4f216-594b-4c51-848c-86e281402820@arm.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023DA:EE_|PH0PR12MB7094:EE_
+X-MS-Office365-Filtering-Correlation-Id: 692ae60d-bced-4605-cf5a-08dcb7fdc8d6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0q0p7qk/TRZSB0sfkZfXpGWZWnj7o9yvcWklI43mpCtOILtPhvtmhwssfV+X?=
+ =?us-ascii?Q?LFO/cubY1WCv51d7mcuxPwBxvXKN2sfvpeOoO/t8hIdQblbW3hrw86ybROq8?=
+ =?us-ascii?Q?P1heqZPFbMXaTyAA3JUfOQ51FXZk7e2LWG4+P3ED15Y3dFREDvZ6X5Tqyjia?=
+ =?us-ascii?Q?ELCaqeHjDdFqlAOKprz8ECaxeayMbfL8zDLzIDeckAXrkxoCiIDejO3rdoij?=
+ =?us-ascii?Q?yA8/CQNDgb0XtSz/1f66Yng0eMb0M0Iy2o+gqCwr/rdkYJlksDVX6HYJ+cXS?=
+ =?us-ascii?Q?mybj/95jdZ3zFLgJ6bQjf/bsiA/dSxsAhFE+uD9PHMwH0A7Dm986i1d+dfLV?=
+ =?us-ascii?Q?7TVuNFA6E+nWc5/eSpE2mWoaOTrNKkEcxAVQj8oD/+d7WMQk9M9EhCDdRBS3?=
+ =?us-ascii?Q?2pmzhGt4o6Oe0rYuVj2NkkuX3bCLXt5Aojbg6BYvJm+9sEyWKtFXE60uZ7S9?=
+ =?us-ascii?Q?xQpExRJaB5JU+CZ7zoQgJchbX2x4BtYSxBdcwJ4P6RaRRXTWD7QB6fDjCcTr?=
+ =?us-ascii?Q?f1ovkxkwBg7IuQ34aE+Wfhr0wEdG0QRxYL3GGyQKKTPTDOlGVJWJ7a5yBSGb?=
+ =?us-ascii?Q?M795s0nh1wBjYxEe9yZMzas6/b5vZW6ByRg0tQtvGQqpvXT3YR5yPbi332g8?=
+ =?us-ascii?Q?PgGSfnSel9T3CMsoztTkfd5uggUxDoKqiPI2c5lJeuh4/SS0AS+v4nD8SxoU?=
+ =?us-ascii?Q?k2oVdK3g6NDBXGSE4LbZ5z1jVKCI/EMxhAvagEJa2b2QBYgKXv5+fkSs29wu?=
+ =?us-ascii?Q?MyoKWPfeRBiA6a4QpoL9Z4C+Q9GfVUA1b3jvmbv+XeRxRrpY4BNdSSMOJVXW?=
+ =?us-ascii?Q?4+/Lt9YUg14e2RcwGBNy7AdxjDWZGEFonw/RfjMf37l1Pi6zi0bZ7OGqlbke?=
+ =?us-ascii?Q?qzyTNnKCVnlDHYqCjmblJIwEuf5LLVyhu9Ay4OaqmmlAkEftnuJNSeLR0o1w?=
+ =?us-ascii?Q?hPpBJTtael92fXok5DUSrPVP5BrzRpFFOSDZga3bdssscait5fLNqKbat/+u?=
+ =?us-ascii?Q?DQEEoIshfF6lSNKix9IIbGfmPOFdl3BRdiGpYf5wuIsfSG3tuLbBPUkyeAWH?=
+ =?us-ascii?Q?b+rdGqDB0JZD+WJb/OezIhvHh3TSUIhrQp0Em40EIZdCMnMxA+lqIasfUKfQ?=
+ =?us-ascii?Q?oYdIZzVzd/XsomnhQwWJPKwuVTjO4nEsDq9ujWQ70xMmpwgYgNM0kpc8yCW5?=
+ =?us-ascii?Q?FIFx40gDmhDKPv/eHpeD8Wal5sS2Nd7s8t73lsQtYto+VOqP1MYMVJS7X+Pb?=
+ =?us-ascii?Q?OoFpjKSMceRd64uAALjZol6oH+3qT5z8tDhky4C+Nk4vHjyI0zZqUuAe4Uq7?=
+ =?us-ascii?Q?R7moi/KL41vgqnlgaZYs/Ya323lBFlIo6ZQK66gZXVh9bV3lCXHRciMskycv?=
+ =?us-ascii?Q?XMcW10gfTYnGqJNIZXCvNyaVCMAaYcKWeBKgZS/7nO4rxY8VantSBuSojmY3?=
+ =?us-ascii?Q?ABC0aI9GqiNMrXzINIv3nHYlPeIWlzS4?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 22:59:40.3585
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 692ae60d-bced-4605-cf5a-08dcb7fdc8d6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023DA.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7094
 
+On Thu, Aug 08, 2024 at 01:38:44PM +0100, Robin Murphy wrote:
+> On 06/08/2024 9:25 am, Tian, Kevin wrote:
+> > > From: Nicolin Chen <nicolinc@nvidia.com>
+> > > Sent: Saturday, August 3, 2024 8:32 AM
+> > > 
+> > > From: Robin Murphy <robin.murphy@arm.com>
+> > > 
+> > > Currently, iommu-dma is the only place outside of IOMMUFD and drivers
+> > > which might need to be aware of the stage 2 domain encapsulated within
+> > > a nested domain. This would be in the legacy-VFIO-style case where we're
+> > 
+> > why is it a legacy-VFIO-style? We only support nested in IOMMUFD.
+> 
+> Because with proper nesting we ideally shouldn't need the host-managed
+> MSI mess at all, which all stems from the old VFIO paradigm of
+> completely abstracting interrupts from userspace. I'm still hoping
+> IOMMUFD can grow its own interface for efficient MSI passthrough, where
+> the VMM can simply map the physical MSI doorbell into whatever IPA (GPA)
+> it wants it to appear at in the S2 domain, then whatever the guest does
+> with S1 it can program the MSI address into the endpoint accordingly
+> without us having to fiddle with it.
 
+Hmm, until now I wasn't so convinced myself that it could work as I
+was worried about the data. But having a second thought, since the
+host configures the MSI, it can still set the correct data. What we
+only need is to change the MSI address from a RMRed IPA/gIOVA to a
+real gIOVA of the vITS page.
 
-On 8/7/2024 3:04 AM, Zhaoxiong Lv wrote:
-> Move the "exit sleep mode" and "set display on" command from
-> enable() to init() function.
-> 
-> As mentioned in the patch:
-> https://lore.kernel.org/all/20240624141926.5250-2-lvzhaoxiong@huaqin.corp-partner.google.com/
-> 
-> The Mediatek Soc DSI host has different modes in prepare() and
-> enable() functions, prepare() is in LP mode and enable() is in
-> HS mode. Since the "exit sleep mode" and "set display on"
-> command must also be sent in LP mode, so we also move "exit
-> sleep mode" and "set display on" command to the init() function.
-> 
-> We have no other actions in the enable() function after moves
-> "exit sleep mode" and "set display on", and we checked the call
-> of the enable() function during the "startup" process. It seems
-> that only one judgment was made in drm_panel_enabel(). If the
-> panel does not define enable(), the judgment will skip the
-> enable() and continue execution. This does not seem to have
-> any other effect, and we found that some drivers also seem
-> to have no enable() function added, for example:
-> panel-asus-z00t-tm5p5-n35596 / panel-boe-himax8279d...
-> In addition, we briefly tested the kingdisplay_kd101ne3 panel and
-> melfas_lmfbx101117480 panel, and it seems that there is no garbage
-> on the panel, so we delete enable() function.
-> 
-> After moving the "exit sleep mode" and "set display on" command
-> to the init() function, we no longer need additional delay
-> judgment, so we delete variables "exit_sleep_to_display_on_delay_ms"
-> and "display_on_delay_ms".
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+I did a quick hack to test that loop. MSI in the guest still works
+fine without having the RMR node in its IORT. Sweet!
 
-Acked-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+To go further on this path, we will need the following changes:
+- MSI configuration in the host (via a VFIO_IRQ_SET_ACTION_TRIGGER
+  hypercall) should set gIOVA instead of fetching from msi_cookie.
+  That hypercall doesn't forward an address currently, since host
+  kernel pre-sets the msi_cookie. So, we need a way to forward the
+  gIOVA to kernel and pack it into the msi_msg structure. I haven't
+  read the VFIO PCI code thoroughly, yet wonder if we could just
+  let the guest program the gIOVA to the PCI register and fall it
+  through to the hardware, so host kernel handling that hypercall
+  can just read it back from the register?
+- IOMMUFD should provide VMM a way to tell the gPA (or directly + 
+  GITS_TRANSLATER?). Then kernel should do the stage-2 mapping. I
+  have talked to Jason about this a while ago, and we have a few
+  thoughts how to implement it. But eventually, I think we still
+  can't avoid a middle man like msi_cookie to associate the gPA in
+  IOMMUFD to PA in irqchip?
 
-> ---
-> Changes between V3 and V2:
-> -  1. The code has not changed, Just modified the nit in the commit
-> -     information mentioned by Doug.
-> v2: https://lore.kernel.org/all/20240806034015.11884-2-lvzhaoxiong@huaqin.corp-partner.google.com/
-> 
-> Changes between V2 and V1:
-> -  1. The code has not changed, Modify the commit information.
-> v1: https://lore.kernel.org/all/20240725083245.12253-2-lvzhaoxiong@huaqin.corp-partner.google.com/
-> ---
->   .../gpu/drm/panel/panel-jadard-jd9365da-h3.c  | 59 ++++++++++---------
->   1 file changed, 32 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> index 04d315d96bff..ce73e8cb1db5 100644
-> --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> @@ -31,8 +31,6 @@ struct jadard_panel_desc {
->   	bool reset_before_power_off_vcioo;
->   	unsigned int vcioo_to_lp11_delay_ms;
->   	unsigned int lp11_to_reset_delay_ms;
-> -	unsigned int exit_sleep_to_display_on_delay_ms;
-> -	unsigned int display_on_delay_ms;
->   	unsigned int backlight_off_to_display_off_delay_ms;
->   	unsigned int display_off_to_enter_sleep_delay_ms;
->   	unsigned int enter_sleep_to_reset_down_delay_ms;
-> @@ -66,26 +64,6 @@ static inline struct jadard *panel_to_jadard(struct drm_panel *panel)
->   	return container_of(panel, struct jadard, panel);
->   }
->   
-> -static int jadard_enable(struct drm_panel *panel)
-> -{
-> -	struct jadard *jadard = panel_to_jadard(panel);
-> -	struct mipi_dsi_multi_context dsi_ctx = { .dsi = jadard->dsi };
-> -
-> -	msleep(120);
-> -
-> -	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> -
-> -	if (jadard->desc->exit_sleep_to_display_on_delay_ms)
-> -		mipi_dsi_msleep(&dsi_ctx, jadard->desc->exit_sleep_to_display_on_delay_ms);
-> -
-> -	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> -
-> -	if (jadard->desc->display_on_delay_ms)
-> -		mipi_dsi_msleep(&dsi_ctx, jadard->desc->display_on_delay_ms);
-> -
-> -	return dsi_ctx.accum_err;
-> -}
-> -
->   static int jadard_disable(struct drm_panel *panel)
->   {
->   	struct jadard *jadard = panel_to_jadard(panel);
-> @@ -202,7 +180,6 @@ static const struct drm_panel_funcs jadard_funcs = {
->   	.disable = jadard_disable,
->   	.unprepare = jadard_unprepare,
->   	.prepare = jadard_prepare,
-> -	.enable = jadard_enable,
->   	.get_modes = jadard_get_modes,
->   	.get_orientation = jadard_panel_get_orientation,
->   };
-> @@ -382,6 +359,12 @@ static int radxa_display_8hd_ad002_init_cmds(struct jadard *jadard)
->   
->   	jd9365da_switch_page(&dsi_ctx, 0x00);
->   
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +
->   	return dsi_ctx.accum_err;
->   };
->   
-> @@ -608,6 +591,12 @@ static int cz101b4001_init_cmds(struct jadard *jadard)
->   	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE6, 0x02);
->   	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE7, 0x0C);
->   
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +
->   	return dsi_ctx.accum_err;
->   };
->   
-> @@ -831,6 +820,16 @@ static int kingdisplay_kd101ne3_init_cmds(struct jadard *jadard)
->   
->   	jd9365da_switch_page(&dsi_ctx, 0x00);
->   
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_msleep(&dsi_ctx, 20);
-> +
->   	return dsi_ctx.accum_err;
->   };
->   
-> @@ -859,8 +858,6 @@ static const struct jadard_panel_desc kingdisplay_kd101ne3_40ti_desc = {
->   	.reset_before_power_off_vcioo = true,
->   	.vcioo_to_lp11_delay_ms = 5,
->   	.lp11_to_reset_delay_ms = 10,
-> -	.exit_sleep_to_display_on_delay_ms = 120,
-> -	.display_on_delay_ms = 20,
->   	.backlight_off_to_display_off_delay_ms = 100,
->   	.display_off_to_enter_sleep_delay_ms = 50,
->   	.enter_sleep_to_reset_down_delay_ms = 100,
-> @@ -1074,6 +1071,16 @@ static int melfas_lmfbx101117480_init_cmds(struct jadard *jadard)
->   	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe6, 0x02);
->   	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe7, 0x06);
->   
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
-> +
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +
-> +	mipi_dsi_msleep(&dsi_ctx, 20);
-> +
->   	return dsi_ctx.accum_err;
->   };
->   
-> @@ -1102,8 +1109,6 @@ static const struct jadard_panel_desc melfas_lmfbx101117480_desc = {
->   	.reset_before_power_off_vcioo = true,
->   	.vcioo_to_lp11_delay_ms = 5,
->   	.lp11_to_reset_delay_ms = 10,
-> -	.exit_sleep_to_display_on_delay_ms = 120,
-> -	.display_on_delay_ms = 20,
->   	.backlight_off_to_display_off_delay_ms = 100,
->   	.display_off_to_enter_sleep_delay_ms = 50,
->   	.enter_sleep_to_reset_down_delay_ms = 100,
-> -- 
-> 2.17.1
-> 
+One more concern is the MSI window size. VMM sets up a MSI region
+that must fit the hardware window size. Most of ITS versions have
+only one page size but one of them can have multiple pages? What
+if vITS is one-page size while the underlying pITS has multiple?
+
+My understanding of the current kernel-defined 1MB size is also a
+hard-coding window to potential fit all cases, since IOMMU code in
+the code can just eyeball what's going on in the irqchip subsystem
+and adjust accordingly if someday it needs to. But VMM can't?
+
+Thanks
+Nicolin
 
