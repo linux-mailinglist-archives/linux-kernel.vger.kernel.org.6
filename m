@@ -1,239 +1,232 @@
-Return-Path: <linux-kernel+bounces-280163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F4794C67C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:52:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D6994C67F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A73C1C220BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:52:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9EDE1F233B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88BF15B0FC;
-	Thu,  8 Aug 2024 21:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C59915B561;
+	Thu,  8 Aug 2024 21:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYgWMHU5"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSqiQlli"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4417C155A59
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90D5155A59;
+	Thu,  8 Aug 2024 21:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723153965; cv=none; b=G7q5sAxmdsNrv2IuS0a0c41Oh60VAriasvc9Y7pqXQV6j1zULIRSseabF1LaRda+YJdjdu2E2JXQWSpZ01ikMQJrsFvLqTIvJXx+BefNUYS3ea7/iYokVH/AWj2O9AOwECGrOAtqjweOs3nAZFHQqvCC6Tqh7t/QG7UK+VDDx2w=
+	t=1723154012; cv=none; b=czUyY++CRjhYI12+iWsPPhx2sfX7uhdjdIclDSO1DtUekiPzCitbESyLMGigTWt6NSV/UGdBwW0rtb2/9bGsj+DQc2znYUb1R6ugdhzb0QVIxnmKp6p07TWdK/MipChteiIuDT7EN3S9HL4VpEPeuR2GwgJoMnXjnDrLy3R1dNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723153965; c=relaxed/simple;
-	bh=n1ciUhKaReCbIoIp2AATMkvQ4WDZoryQ+o/3wGZjNfA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bJU6SSzG+hZUWWyP8TIDRYxyIXqsO7lTpBHF+xvnLZrcuwW0YR6063Ps7r9Nnv4+XNwilNTdD2+MwoBYuMqRiF2a1J+mNf+OhiMuGR3hoYltn6+CluDywS9b+xg3RVHqxlwpPSV1FnLLejKFbsk787dFkJq5s/9BIIFzB1Wq5Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYgWMHU5; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4f8b5e5671bso562764e0c.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:52:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723153963; x=1723758763; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SPpfNVrH2MkNchUISULx8fD/VEpEq0fygt8tZKRjEsU=;
-        b=XYgWMHU57SUH3C15b/TM74hKuWLEYZHjKiOHJqaD8/+IZbA+E9eY/fCcMWictfWUSA
-         330Yd1DIjaWXJAbzgjgIPVMIX/W18l7WX1DqiW7OQEet0klnVayIewVfoDtJaHdrjGlJ
-         oW8jBIOqcthbkwpBhwTrTPJYMp0986CxK72awmUCt7UKVjpMgqB0aEeY3ieJZfx8xTcC
-         TLY5lqWECGO9y1kNjMIGtKS2Ap40QNgI39LzKR75bDX+jpKWsoVxspgOnLyz9V2cI6dw
-         TiAYoUfHra3YK4a7cBnK4wn1QzEJA4S6jlYcpmIzB5uUba5kOSdPwQMJiMb8w1EfzfTw
-         rLQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723153963; x=1723758763;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SPpfNVrH2MkNchUISULx8fD/VEpEq0fygt8tZKRjEsU=;
-        b=iCNuPIqKmc2fg7ArLrLIc2acxpHZdvoYZYDSMPTnOcJuJwohri2QXVKcHfID22fQpe
-         XZMhFGUj6QQjEZrnSSlNIj7+ss+l3xhRF4WEaF7ra8R/ZZ4n3FlMxA9AdPRURV+RPRBP
-         jdEI2PLqv8ovFY+b48McUtsO8vTp/De0BP9Q87psgNhuKWJUuVyRHyeOc8yy8il0SrN4
-         ovVUCfCYXn62TwgS7Aw+wpzS7mJUnoHbiyIS1QfqahvX2wHRy3aCyRLFf3eCkXLmF8X6
-         Dxpy9XJ5W4z6e4POT+bMTezPLe1F8M5ozfFGC/4y+gSL4+WYTr/oo/4maqMOI4REZVS2
-         A9PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVySyxdYkoBN+YrOagCirnG2G8fcoRNU5bHq4GH+3Ms72eZwKxKX1917FVmc3NyvU3fJtuo3PXftwXmsaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydfmmLqXx4Gw37Uwur63FSVlJbQJ3wVTYJcvcgjPcCBg/4POhN
-	2x6N94fQ8PnOy5FyRxNbZS21ACuEHWUWoTVutXLNWZ/hhxrHHb0tPDHKo1ex8Zb8IuQ1lfG2ypA
-	7bBl8BjiWXf3zPEfAuvR1wmmcKJY=
-X-Google-Smtp-Source: AGHT+IFRFIkowlP+xzoy5xCnMmjEGt1/1LyRlpnqrSHuxpInxb90Pj2BISdIV78amQBmHP4XTxLemUG9rhJLzpGCoKs=
-X-Received: by 2002:a05:6102:2ad0:b0:48f:4bd5:23d9 with SMTP id
- ada2fe7eead31-495c57162eamr3837973137.5.1723153963086; Thu, 08 Aug 2024
- 14:52:43 -0700 (PDT)
+	s=arc-20240116; t=1723154012; c=relaxed/simple;
+	bh=v5eKzoiQ/fJqm4MD4HfH7D6JYuktig1GDmrJwTTjiHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Dlwjd4EMIV2JndRqs3n0GGVhPOqdHWokLE9OR06Umy8y9nsEbPHAt2GlhMcIl0LwVrSiHe3NWYeI8YnKyu3zjgluNIkC27qMgPkjzZgEab5+miRfPAvBaJnjoqk5XjGQpjSYNAJa94mHAcujX230pOOQFU5NxGoW7ZsOslBl3pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSqiQlli; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD92AC4AF09;
+	Thu,  8 Aug 2024 21:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723154012;
+	bh=v5eKzoiQ/fJqm4MD4HfH7D6JYuktig1GDmrJwTTjiHk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=BSqiQllima3fa6iHhxo2XtOMmOjXPRFugQX8JU5GD1LaAOpIG/nqqeOpYe6diLCT3
+	 aqCf5BwKFb3XbafqBkAy2hcEjWFj2f8WWk7AfgwxK1nhPseZQZt0jYOqxWeg1hvfKA
+	 uFzZ6hptZhYNdI50D/Wl8mGRMl21ZtvU5kQD5Sjs1Sy0zuEjpm24Ak/DI+CwwW4ZfY
+	 JOVEbK3rG60tYbj6VKRfJu6t6Tig5cL6KAMs7R8iw3KZ6LK0k2Sg3nvdiFogaqVhsg
+	 ZbjFqO/Mx8PGmlKSFCptyhRZ1RgUcZ6WixDisX8FeQERM2epFe91Qsr6bT1iMN8K6z
+	 DkR3fHWDJzlPw==
+Date: Thu, 8 Aug 2024 16:53:29 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Stewart Hildebrand <stewart.hildebrand@amd.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 8/8] PCI: Align small BARs
+Message-ID: <20240808215329.GA155982@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808125430.1172152-1-longman@redhat.com>
-In-Reply-To: <20240808125430.1172152-1-longman@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 9 Aug 2024 09:52:31 +1200
-Message-ID: <CAGsJ_4wXnB_bz32hVcK5OWPBge5dXNThfSAozb_koWMkz_-6VQ@mail.gmail.com>
-Subject: Re: [PATCH v3] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is enabled
-To: Waiman Long <longman@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Marco Elver <elver@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807151723.613742-9-stewart.hildebrand@amd.com>
 
-On Fri, Aug 9, 2024 at 12:54=E2=80=AFAM Waiman Long <longman@redhat.com> wr=
-ote:
->
-> As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
-> capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
-> for all kmalloc/kfree calls. So stackdepot capacity was increased 8
-> times to accommodate KASAN usage even thought it was claimed 4X should
-> be enough at that time.
->
-> With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
-> for stack records"), all stackdepot records uses a fixed size with
-> CONFIG_STACKDEPOT_MAX_FRAMES (default=3D64) entries. This is merged to
-> support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
-> use variable size records for non-evictable entries") re-enabled
-> the use of variable size records for non-KASAN use cases, but KASAN
-> (generic mode) still uses the large fixed size stack records.
->
-> With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
-> stackdepot space had been more than double than before. Assuming an
-> average stack frame size of 16, a KASAN stack record is almost 4X the
-> size of a non-KASAN one.
->
-> When a wide variety of workloads are run on a debug kernel with KASAN
-> enabled, the following warning may sometimes be printed.
->
->  [ 6818.650674] Stack depot reached limit capacity
->  [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot=
-_alloc_stack+0x39e/0x3d0
->    :
->  [ 6818.650907] Call Trace:
->  [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
->  [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
->  [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
->  [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
->  [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
->  [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
->  [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
->  [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
->  [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
->  [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
->  [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
->  [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
->  [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
->  [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
->  [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
->  [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
->  [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
->  [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
->  [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
->  [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 =
-[xfs]
->  [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs=
-]
->  [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
->  [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
->  [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
->  [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
->  [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
->
-> With all the recent changes in stackdepot to support new KASAN features,
-> it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
-> enough when KASAN is enabled. Fix this stackdepot capability issue
-> by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
-> maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
->
-> Also use the MIN() macro for defining DEPOT_MAX_POOLS to clarify the
-> intention.
->
-> Fixes: fc60e0caa94d ("lib/stackdepot: use fixed-sized slots for stack rec=
-ords")
-> Signed-off-by: Waiman Long <longman@redhat.com>
+On Wed, Aug 07, 2024 at 11:17:17AM -0400, Stewart Hildebrand wrote:
+> In this context, "small" is defined as less than max(SZ_4K, PAGE_SIZE).
+> 
+> Issues observed when small BARs are not sufficiently aligned are:
+> 
+> 1. Devices to be passed through (to e.g. a Xen HVM guest) with small
+> BARs require each memory BAR to be page aligned. Currently, the only way
+> to guarantee this alignment from a user perspective is to fake the size
+> of the BARs using the pci=resource_alignment= option. This is a bad user
+> experience, and faking the BAR size is not always desirable. For
+> example, pcitest is a tool that is useful for PCI passthrough validation
+> with Xen, but pcitest fails with a fake BAR size.
 
-Hi Waiman,
+I guess this is the "money" patch for the main problem you're solving,
+i.e., passthrough to a guest doesn't work as you want?
 
-I am getting this issue on ARM64:
+Is it the case that if you have two BARs in the same page, a device
+can't be passed through to a guest at all?  Or is it just that all
+devices with BARs that share a page have to be passed through to the
+same guest, sort of like how lack of ACS can force several devices to
+be in the same IOMMU isolation group?
 
-lib/stackdepot.c:44:9: error: implicit declaration of function =E2=80=98MIN=
-=E2=80=99
-[-Werror=3Dimplicit-function-declaration]
-   44 |         MIN((1LL << (DEPOT_POOL_INDEX_BITS)) - 1, DEPOT_POOLS_CAP)
-      |         ^~~
-lib/stackdepot.c:66:26: note: in expansion of macro =E2=80=98DEPOT_MAX_POOL=
-S=E2=80=99
-   66 | static void *stack_pools[DEPOT_MAX_POOLS];
-      |                          ^~~~~~~~~~~~~~~
-lib/stackdepot.c:66:14: error: variably modified =E2=80=98stack_pools=E2=80=
-=99 at file scope
-   66 | static void *stack_pools[DEPOT_MAX_POOLS];
-      |              ^~~~~~~~~~~
+I think the subject should mention the problem to help motivate this.
 
-I've temporarily added this to get the build to pass, though I'm not sure
-if it's the correct fix,
+The fact that we address this by potentially reassigning every BAR of
+every device, regardless of whether the admin even wants to pass
+through a device to a guest, seems a bit aggressive to me.
 
-diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-index beeb70b57710..f210e3202927 100644
---- a/lib/stackdepot.c
-+++ b/lib/stackdepot.c
-@@ -36,6 +36,8 @@
- #include <linux/memblock.h>
- #include <linux/kasan-enabled.h>
+Previously we haven't trusted our reassignment machinery enough to
+enable it all the time, so we still have the "pci=realloc" parameter.
+By default, I don't think we even move devices around to make space
+for a BAR that we failed to allocate.
 
-+#define MIN(a,b) ((a)<(b) ? (a):(b))
-+
- /* KASAN is a big user of stackdepot, double the cap if KASAN is enabled *=
-/
- #define DEPOT_POOLS_CAP (8192 * (IS_ENABLED(CONFIG_KASAN) ? 2 : 1))
+I agree "pci=resource_alignment=" is a bit user-unfriendly, and I
+don't think it solves the problem unless we apply it to every device
+in the system.
 
+> 2. Devices with multiple small BARs could have the MSI-X tables located
+> in one of its small BARs. This may lead to the MSI-X tables being mapped
+> in the same 4k region as other data. The PCIe 6.1 specification (section
+> 7.7.2 MSI-X Capability and Table Structure) says we probably should
+> avoid that.
 
+If you're referring to this:
+
+  If a Base Address Register or entry in the Enhanced Allocation
+  capability that maps address space for the MSI-X Table or MSI-X PBA
+  also maps other usable address space that is not associated with
+  MSI-X structures, locations (e.g., for CSRs) used in the other
+  address space must not share any naturally aligned 4-KB address
+  range with one where either MSI-X structure resides. This allows
+  system software where applicable to use different processor
+  attributes for MSI-X structures and the other address space.
+
+I think this is technically a requirement about how space within a
+single BAR should be organized, not about how multiple BARs should be
+assigned.  I don't think this really adds to the case for what you're
+doing, so we could just drop it.
+
+> To improve the user experience (i.e. don't require the user to specify
+> pci=resource_alignment=), and increase conformance to PCIe spec, set the
+> default minimum resource alignment of memory BARs to the greater of 4k
+> or PAGE_SIZE.
+> 
+> Quoting the comment in
+> drivers/pci/pci.c:pci_request_resource_alignment(), there are two ways
+> we can increase the resource alignment:
+> 
+> 1) Increase the size of the resource.  BARs are aligned on their
+>    size, so when we reallocate space for this resource, we'll
+>    allocate it with the larger alignment.  This also prevents
+>    assignment of any other BARs inside the alignment region, so
+>    if we're requesting page alignment, this means no other BARs
+>    will share the page.
+> 
+>    The disadvantage is that this makes the resource larger than
+>    the hardware BAR, which may break drivers that compute things
+>    based on the resource size, e.g., to find registers at a
+>    fixed offset before the end of the BAR.
+> 
+> 2) Retain the resource size, but use IORESOURCE_STARTALIGN and
+>    set r->start to the desired alignment.  By itself this
+>    doesn't prevent other BARs being put inside the alignment
+>    region, but if we realign *every* resource of every device in
+>    the system, none of them will share an alignment region.
+> 
+> Changing pcibios_default_alignment() results in the second method of
+> alignment with IORESOURCE_STARTALIGN.
+> 
+> The new default alignment may be overridden by arches by implementing
+> pcibios_default_alignment(), or by the user on a per-device basis with
+> the pci=resource_alignment= option (although this reverts to using
+> IORESOURCE_SIZEALIGN).
+> 
+> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
 > ---
->  lib/stackdepot.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
->  [v3] Include <linux/minmax.h"> to avoid potential undefined macro proble=
-m.
->
-> diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-> index 5ed34cc963fc..1f1673b357b5 100644
-> --- a/lib/stackdepot.c
-> +++ b/lib/stackdepot.c
-> @@ -20,6 +20,7 @@
->  #include <linux/kernel.h>
->  #include <linux/kmsan.h>
->  #include <linux/list.h>
-> +#include <linux/minmax.h>
->  #include <linux/mm.h>
->  #include <linux/mutex.h>
->  #include <linux/poison.h>
-> @@ -36,11 +37,12 @@
->  #include <linux/memblock.h>
->  #include <linux/kasan-enabled.h>
->
-> -#define DEPOT_POOLS_CAP 8192
-> +/* KASAN is a big user of stackdepot, double the cap if KASAN is enabled=
- */
-> +#define DEPOT_POOLS_CAP (8192 * (IS_ENABLED(CONFIG_KASAN) ? 2 : 1))
-> +
->  /* The pool_index is offset by 1 so the first record does not have a 0 h=
-andle. */
->  #define DEPOT_MAX_POOLS \
-> -       (((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
-> -        (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
-> +       MIN((1LL << (DEPOT_POOL_INDEX_BITS)) - 1, DEPOT_POOLS_CAP)
->
->  static bool stack_depot_disabled;
->  static bool __stack_depot_early_init_requested __initdata =3D IS_ENABLED=
-(CONFIG_STACKDEPOT_ALWAYS_INIT);
-> --
-> 2.43.5
->
->
+> Preparatory patches in this series are prerequisites to this patch.
+> 
+> v2->v3:
+> * new subject (was: "PCI: Align small (<4k) BARs")
+> * clarify 4k vs PAGE_SIZE in commit message
+> 
+> v1->v2:
+> * capitalize subject text
+> * s/4 * 1024/SZ_4K/
+> * #include <linux/sizes.h>
+> * update commit message
+> * use max(SZ_4K, PAGE_SIZE) for alignment value
+> ---
+>  drivers/pci/pci.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index af34407f2fb9..efdd5b85ea8c 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -31,6 +31,7 @@
+>  #include <asm/dma.h>
+>  #include <linux/aer.h>
+>  #include <linux/bitfield.h>
+> +#include <linux/sizes.h>
+>  #include "pci.h"
+>  
+>  DEFINE_MUTEX(pci_slot_mutex);
+> @@ -6484,7 +6485,12 @@ struct pci_dev __weak *pci_real_dma_dev(struct pci_dev *dev)
+>  
+>  resource_size_t __weak pcibios_default_alignment(void)
+>  {
+> -	return 0;
+> +	/*
+> +	 * Avoid MSI-X tables being mapped in the same 4k region as other data
+> +	 * according to PCIe 6.1 specification section 7.7.2 MSI-X Capability
+> +	 * and Table Structure.
+> +	 */
 
-Thanks
-Barry
+I think this is sort of a "spec compliance" comment that is not the
+*real* reason we want to do this, i.e., it doesn't say that by doing
+this we can pass through more devices to guests.
+
+Doing this in pcibios_default_alignment() ends up being a very
+non-obvious way to make this happen.  We have to:
+
+  - Know what the purpose of this is, and the current comment doesn't
+    point to that.
+
+  - Look at all the implementations of pcibios_default_alignment()
+    (thanks, powerpc).
+
+  - Trace up through pci_specified_resource_alignment(), which
+    contains a bunch of code that is not relevant to this case and
+    always just returns PAGE_SIZE.
+
+  - Trace up again to pci_reassigndev_resource_alignment() to see
+    where this finally applies to the resources we care about.  The
+    comment here about "check if specified PCI is target device" is
+    actively misleading for the passthrough usage.
+
+I hate adding new kernel parameters, but I kind of think this would be
+easier if we added one that mentioned passthrough or guests and tested
+it directly in pci_reassigndev_resource_alignment().
+
+This would also be a way to avoid the "Can't reassign resources to
+host bridge" warning that I think we're going to see all the time.
+
+> +	return max(SZ_4K, PAGE_SIZE);
+>  }
+>  
+>  /*
+> -- 
+> 2.46.0
+> 
 
