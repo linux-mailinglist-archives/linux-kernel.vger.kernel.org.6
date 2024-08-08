@@ -1,110 +1,84 @@
-Return-Path: <linux-kernel+bounces-279055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA5794B865
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:59:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F13F94B86A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550E31F254EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25BA5283069
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342371891BD;
-	Thu,  8 Aug 2024 07:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gT9XD+Dt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37861891B2;
+	Thu,  8 Aug 2024 07:59:53 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672F312C475;
-	Thu,  8 Aug 2024 07:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F067712C475;
+	Thu,  8 Aug 2024 07:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723103960; cv=none; b=jUn4DxgRgn5iz4yHOoDuAPf+JXtr+AsGh98dxWs2phY/Cszm8BlZLIbiNelQOuel10nDUR0ZffahpfjN9Y9Pgj3/OfUSArjZCtoqpThHiKfYXRT8/W5mbqIwlEqE7w9QleUQ8Np0OAYFGa9wvXJwW0+9vZ5V+r2tAG+4sJLoffs=
+	t=1723103993; cv=none; b=NccnbPrTceSKFQodLGnmpXcoRUpskRgi1TO50WrygA3m++tzEOyLCMilcgYUaL9qAjk6CSi4JqllBEolQ2BMV9pEbO+HQ8+f7cSMbae2uqBzIw920i+fk9HNUi88ds1bqY8YX6MmfI7R5sl9xuTngzOglUs8vaJF6wAxC3wmEbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723103960; c=relaxed/simple;
-	bh=gWg/r/1SvXDtl8mHhSTr6bVgnFi9se9px6nxtby4afo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eaqfv/o9sdFfabChzKnFqHmN9HBdElWDMGTwaB6ctbKtIjA0efSV6sX6HJZZH/qX1nHCDq5h9Xu9vkg+iA9VEsBlctKwhIL1ru+Dk/3XMCyP1h5wuHeOkMu5x0Vse7l5pHW5o4zbOK1HlmJGxQVbSzuqEkZ9Drr9aYCz0d1UBzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gT9XD+Dt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 619B1C32782;
-	Thu,  8 Aug 2024 07:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723103959;
-	bh=gWg/r/1SvXDtl8mHhSTr6bVgnFi9se9px6nxtby4afo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gT9XD+DtkP2sOGMCsCMBMBcBc2edggYdxMyfaVr2HosFjVU+PB2Z7x/+FLZ90NvwW
-	 ZMa1th8LDVyiZiR7PyoYOdB7F3swfuRUlwbCjKo/hW8e8YGlwaE87mV7bwAdleV8Qr
-	 0+yYXVZzA12yJAmlgqMsMg2mmR1UBVI3bMlFLox8ruXSCymBXcYTh1w1h40Tz9Moz9
-	 Pu5H2OmErH1JmiHa3PL9bLSKd6c4goEzlEsYtBtIqVhaQ8L6258Sv+gfNKo/SEFudW
-	 g4SdnfX7HA4EHUG5JIjknF/SD7oNj365o30yZ6PONVw86hVIZZl7f+kHnDMfFyGgCO
-	 hJVMJtMo1jDOw==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
-Cc: =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-rdma@vger.kernel.org, Michael Margolin <mrgolin@amazon.com>, 
- Mustafa Ismail <mustafa.ismail@intel.com>, netdev@vger.kernel.org, 
- Saeed Mahameed <saeedm@nvidia.com>, 
- Selvin Xavier <selvin.xavier@broadcom.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, Tariq Toukan <tariqt@nvidia.com>, 
- Tatyana Nikolova <tatyana.e.nikolova@intel.com>, 
- Yishai Hadas <yishaih@nvidia.com>, Leon Romanovsky <leon@kernel.org>
-In-Reply-To: <cover.1722512548.git.leon@kernel.org>
-References: <cover.1722512548.git.leon@kernel.org>
-Subject: Re: (subset) [PATCH rdma-next 0/8] Introducing Multi-Path DMA
- Support for mlx5 RDMA Driver
-Message-Id: <172310395487.1779734.12051360068889087637.b4-ty@kernel.org>
-Date: Thu, 08 Aug 2024 10:59:14 +0300
+	s=arc-20240116; t=1723103993; c=relaxed/simple;
+	bh=0c7oFVjrGMLk7zC3cd+inAQX07SFAa3D5XGIj8d0OW4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hYms5kj2pKCvib6RudWtUXCTpAt1F48Ou3GQlONdGQtRO+MXJ4sJqgs4SZzAGkeF+pTDtDn1GHLtEAhBYBaxOT7pB1M5bSmzFW7DyTnEKDXlIujI6fI5CnmKyQ7rdGuGb0aJn+cFcW4QixBXpaAQezC1Wo8oHWRjTmk/Z8pJAFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Thu, 8 Aug
+ 2024 15:59:37 +0800
+Received: from twmbx02.aspeed.com (192.168.10.152) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Thu, 8 Aug 2024 15:59:37 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH 0/4] Add support for AST2700 clk driver
+Date: Thu, 8 Aug 2024 15:59:33 +0800
+Message-ID: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+This patch series is add clk driver for AST2700.
 
-On Thu, 01 Aug 2024 15:05:09 +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> From Yishai,
-> 
-> Overview
-> --------
-> This patch series aims to enable multi-path DMA support, allowing an
-> mlx5 RDMA device to issue DMA commands through multiple paths. This
-> feature is critical for improving performance and reaching line rate
-> in certain environments where issuing PCI transactions over one path
-> may be significantly faster than over another. These differences can
-> arise from various PCI generations in the system or the specific system
-> topology.
-> 
-> [...]
+AST2700 is the 8th generation of Integrated Remote Management Processor
+introduced by ASPEED Technology Inc. Which is Board Management controller
+(BMC) SoC family.
 
-Applied, thanks!
+Ryan Chen (4):
+  dt-bindings: mfd: aspeed: support for AST2700
+  dt-bindings: reset Add AST2700 reset bindings
+  dt-bindings: clock: Add AST2700 clock bindings
+  dt-bindings: clock: Add AST2700 clock bindings
 
-[2/8] RDMA/mlx5: Introduce the 'data direct' driver
-      https://git.kernel.org/rdma/rdma/c/281658bd04e7b9
-[3/8] RDMA/mlx5: Add the initialization flow to utilize the 'data direct' device
-      https://git.kernel.org/rdma/rdma/c/302b01afc28b1e
-[4/8] RDMA/umem: Add support for creating pinned DMABUF umem with a given dma device
-      https://git.kernel.org/rdma/rdma/c/b047ecbd7672d2
-[5/8] RDMA/umem: Introduce an option to revoke DMABUF umem
-      https://git.kernel.org/rdma/rdma/c/bc9be75e01373c
-[6/8] RDMA: Pass uverbs_attr_bundle as part of '.reg_user_mr_dmabuf' API
-      https://git.kernel.org/rdma/rdma/c/83f44068da564d
-[7/8] RDMA/mlx5: Add support for DMABUF MR registrations with Data-direct
-      https://git.kernel.org/rdma/rdma/c/19ae08911f8be1
-[8/8] RDMA/mlx5: Introduce GET_DATA_DIRECT_SYSFS_PATH ioctl
-      https://git.kernel.org/rdma/rdma/c/d222b19c595f63
+ .../bindings/mfd/aspeed,ast2x00-scu.yaml      |   31 +-
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1091 +++++++++++++++++
+ .../dt-bindings/clock/aspeed,ast2700-clk.h    |  175 +++
+ .../dt-bindings/reset/aspeed,ast2700-reset.h  |  132 ++
+ 5 files changed, 1428 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
+ create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
 
-Best regards,
 -- 
-Leon Romanovsky <leon@kernel.org>
+2.34.1
 
 
