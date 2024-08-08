@@ -1,178 +1,120 @@
-Return-Path: <linux-kernel+bounces-279984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6132594C427
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:19:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2085094C42C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12B9F287337
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:19:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF383286DCC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBF4146A7A;
-	Thu,  8 Aug 2024 18:19:34 +0000 (UTC)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCCE146D6E;
+	Thu,  8 Aug 2024 18:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="K6+KVbq0"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF0F78281
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8771F13F435
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723141173; cv=none; b=GKTZWAn/AvTrrYPe2UVqhursiGkYjWHtgvBZvX6i4qdksqoRQjqGEzpUbW1mztTVXV4arrYVOm5rc2M3ClS8UIj0Y53YqLIAqnRGVObTK5sfpjcBJay7fnZJicqQ7e7m0zIOnvPBO7mqg4tJcgOFMxTEdhwtf06vjCa0KM5UUdQ=
+	t=1723141217; cv=none; b=meOilNY6FuwJWndzpjH/EAXDLVliyYHCDf5ZyUVutjiCEfWqnF7U9o9oPcYAadXZeq64+MNwwiGnphIx16ufrU+fN6/doVaiZ1b8USXnxvq4d50RNffWFsxZuoxAGwihbC8/Vqpv0NoZCTQ2lGPf5/Ea28jBsip/zkEurXo885U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723141173; c=relaxed/simple;
-	bh=eX0NccdwTCvkYRYBoX+cyAF2+5W8RRBZrb3Zm72W86o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VHH2nFTQl9E+1CG9SSUW9kdMt6Jqs26MnlVd2Gib3Gi96JWLdJwTqiLcxEoLMtmN9SQWiPVIcWsuBzDYVk/YzYGLxQscKQ3sYTTfDP7MfCZ8j7vLSlcDp2IEmcSDBvP7XE3giWKBppIkCeZWfM1MI7b6ke+gDqozRVVT5peL7G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-44ff9281e93so6604561cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:19:30 -0700 (PDT)
+	s=arc-20240116; t=1723141217; c=relaxed/simple;
+	bh=wpwjiHoc7VgLtkIkF9IrlpNoofn0hUJ7BBPVJfy6oSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HVPvesBhRXvSvML6RX26e/MdBxIaS+sDQqhoJNNyLgp5+QryPxWCEmDFZfbqh0hcshyM6tMeZXSXYYGChpRpt6i99T/46Zi1D/ulxR/B04ZZoUdBKcHn+v9Pk67x1KlQzabFXqHAgVZwCYrQqTjNYRJNhvj8gr7RXWgTf64JshE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=K6+KVbq0; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so1531103a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1723141213; x=1723746013; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vs6dpRbqJripr2KpHyDnR1cQAk+xLDTiAQY8cHPi6fA=;
+        b=K6+KVbq0xGSWoiEpmXAxpx4VGY/6UbjMLK/2nRskVwzNrv4zDwHsE573Q0+taJ2e6m
+         slt7i4G12Wtf0VxC2uAGHsoHjJkTw/UiEObjcnd/1OgTbm9L+FXCUxfO8qQCwWD7WG8w
+         zlw+8UMJEuHl2Ngg+KuDYmZbTYEte0xTbyptI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723141170; x=1723745970;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=56gEFcQ+7FsmWGX5zf5waZqtpTKHFwpGyqer14r3mAA=;
-        b=F1mrr/b3nxUCnhlZfyoQP/4PIKxRLQlaA6Bzhgw3gZBbxxfH4XwBnowC5Ytx+9F200
-         lXKaxu6OROuKNHUnYp8ZeRUtX1r4rnAEoEJ+KLxzsv8a/3Os3PIq2h8wknvbXgy4ZiWr
-         3yFpEat7KthDWEUtEtlLJD4Ds8rrpxfDT34reBp7AYuDHYxtmX5+2+7qQJD7JFa05ewK
-         fQPzq8PO6dl00Q91Zi49Ju59KH2/D07p5cA7e+zE2AsTn/J8OvBHSAERNNEKcKurg75X
-         a+k7ZuTLxqH23ZBRVY2PfBoaWQySbytpo6EOPvhOA1z5WBZHPR0OO1PrllVbbPR26qk2
-         XDew==
-X-Gm-Message-State: AOJu0Yz8VS7NwS/msjLUXaDNpdvHyHriXxrhrkflf0/VhQBCi2uOTb0C
-	zUW0deByoMiKMracMImK+edjKY5AXAtObVTOQgKJRoNr9/zhYWg6DopUzQ==
-X-Google-Smtp-Source: AGHT+IFu1hdnCuQzXZNpgIn8h/1FGOX+w9Q/sGtwD429aPynBVaGjK3wkHxw2feTVbhULUXw1VM1BA==
-X-Received: by 2002:ad4:5490:0:b0:6bd:7389:2bb3 with SMTP id 6a1803df08f44-6bd73892ccbmr7609396d6.33.1723141169886;
-        Thu, 08 Aug 2024 11:19:29 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c8a9379sm68327806d6.145.2024.08.08.11.19.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 11:19:29 -0700 (PDT)
-Date: Thu, 8 Aug 2024 13:19:27 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH RESEND sched_ext/for-6.12] sched_ext: Don't use double
- locking to migrate tasks across CPUs
-Message-ID: <20240808181927.GE6223@maniforge>
-References: <ZrP_zUjrTcrfdHDe@slm.duckdns.org>
- <ZrQAB_d1WSqgYQmB@slm.duckdns.org>
+        d=1e100.net; s=20230601; t=1723141213; x=1723746013;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vs6dpRbqJripr2KpHyDnR1cQAk+xLDTiAQY8cHPi6fA=;
+        b=HskUpVE7rywXqJi1Qaiwq9YI0qpwXKKHtJNlNDMmrqH7zkiYV+hwGsGoj/8VgY7C96
+         nhn/nylN68jVQMjLUBg6IrUrPG/L1i8OD+w8gAkMxkjFFWm/RT5aAWmvCSrNFOY8Yokr
+         QcxaySoBWBlOqsIYPdzHSXhLjbv90mrP00rg14PNLifZ7hne/vF1fygwponzJExGLGTG
+         4WwMtlcgPPHEGBYVqj8WlRxkK7CwVXhHJIz+47VwW9J/+Ab+tHWf2nphQzaB9O4zt9ne
+         YcdWu2e8rNrg8bRdhBNZElpJFgcak7jtKQOTDjyn3MbtFfXdtLwH7FQ6C9FcyfxRLQAS
+         +SHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWG//HqsoZRneSytY0Ptg2c2Ar13OUEscQdLSELvRrDhW1gyqq+BzsG4CurgKHYGTogCer2wxpAgCfen/ZSSDjmCF93pLfpNAymm8Ol
+X-Gm-Message-State: AOJu0YzvFiiuCwuraJx5OMqgcQBt1xBWd1st5lwraNa1PmbjPCjzAxib
+	XJ8zthMvEvIgtAdpNQzCbTuusOUelG/1mCTy/y+4OkmQRxgVY2o08PLDTCk9FTYexeU8Wum+EAa
+	PuUG33g==
+X-Google-Smtp-Source: AGHT+IEo3sxLEjLLnMVK4fM/7yKIky9NXqZxB7IsDV/yMjQwQcogCFvYtX6P6ABbgrssxdXXupsjQg==
+X-Received: by 2002:a05:6402:5108:b0:5a3:3b44:ae00 with SMTP id 4fb4d7f45d1cf-5bbb21cde2dmr2011312a12.20.1723141213310;
+        Thu, 08 Aug 2024 11:20:13 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c1f6c4sm855007a12.29.2024.08.08.11.20.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 11:20:12 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7ac449a0e6so130830566b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:20:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVrDsgUj/fqM6BmOb3bKa/m7sEStcudsTF9KQGZ7RD/fRdBLpIhijeksSQ5mYHicgMH1JkXyXNJnEeCt0CMj5ObNVH8gOuogBtI1Iu0
+X-Received: by 2002:a17:907:969e:b0:a7d:2c91:fb1b with SMTP id
+ a640c23a62f3a-a8090f1a339mr207711166b.68.1723141212363; Thu, 08 Aug 2024
+ 11:20:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xOWZwxtfQAqOkla0"
-Content-Disposition: inline
-In-Reply-To: <ZrQAB_d1WSqgYQmB@slm.duckdns.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+References: <20240731095022.970699670@linuxfoundation.org> <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
+ <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
+ <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
+ <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net> <87plqjz6aa.ffs@tglx>
+ <CAHk-=wi_YCS9y=0VJ+Rs9dcY-hbt_qFdiV_6AJnnHN4QaXsbLg@mail.gmail.com>
+ <87a5hnyox6.ffs@tglx> <CAHk-=wh4rxXPpYatnuXpu98KswLzg+u7Z9vYWJCLNHC_yXZtWw@mail.gmail.com>
+ <8734nezz0g.ffs@tglx>
+In-Reply-To: <8734nezz0g.ffs@tglx>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 8 Aug 2024 11:19:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiZUidi6Gm_6XFArT621H7vAzhDA63zn2pSGJHdnjRCMA@mail.gmail.com>
+Message-ID: <CAHk-=wiZUidi6Gm_6XFArT621H7vAzhDA63zn2pSGJHdnjRCMA@mail.gmail.com>
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Guenter Roeck <linux@roeck-us.net>, Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
+	Linux-MM <linux-mm@kvack.org>, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 8 Aug 2024 at 10:48, Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Here is the disassembly from my latest crashing debug kernel which
+> shifts it up a couple of pages. Add 0x10 or sub 0x20 to make it work.
 
---xOWZwxtfQAqOkla0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks like I was off by an instruction, it's the 28th divide-step (not
+29) that does the page crosser:
 
-On Wed, Aug 07, 2024 at 01:15:19PM -1000, Tejun Heo wrote:
+>     4121dffc:   0b 21 04 41     ds r1,r25,r1
+>     4121e000:   0b bd 07 1d     add,c ret1,ret1,ret1
 
-Hi Tejun,
+but my parisc knowledge is not good enough to even guess at what could go wrong.
 
-[...]
+And I have no actual reason to believe this has *anything* to do with
+an itlb miss, except for that whole "exact placement seems to matter,
+and it crosses a page boundary" detail.
 
-> -static bool move_task_to_local_dsq(struct rq *rq, struct task_struct *p,
-> -				   u64 enq_flags)
-> +static bool move_task_to_local_dsq(struct task_struct *p, u64 enq_flags,
-> +				   struct rq *src_rq, struct rq *dst_rq)
->  {
-> -	struct rq *task_rq;
-> -
-> -	lockdep_assert_rq_held(rq);
-> +	lockdep_assert_rq_held(src_rq);
-> =20
->  	/*
-> -	 * If dequeue got to @p while we were trying to lock both rq's, it'd
-> -	 * have cleared @p->scx.holding_cpu to -1. While other cpus may have
-> -	 * updated it to different values afterwards, as this operation can't be
-> +	 * If dequeue got to @p while we were trying to lock @src_rq, it'd have
-> +	 * cleared @p->scx.holding_cpu to -1. While other cpus may have updated
-> +	 * it to different values afterwards, as this operation can't be
->  	 * preempted or recurse, @p->scx.holding_cpu can never become
->  	 * raw_smp_processor_id() again before we're done. Thus, we can tell
->  	 * whether we lost to dequeue by testing whether @p->scx.holding_cpu is
->  	 * still raw_smp_processor_id().
->  	 *
-> +	 * @p->rq couldn't have changed if we're still the holding cpu.
-> +	 *
->  	 * See dispatch_dequeue() for the counterpart.
->  	 */
-> -	if (unlikely(p->scx.holding_cpu !=3D raw_smp_processor_id()))
-> +	if (unlikely(p->scx.holding_cpu !=3D raw_smp_processor_id()) ||
-> +	    WARN_ON_ONCE(src_rq !=3D task_rq(p))) {
-> +		raw_spin_rq_unlock(src_rq);
-> +		raw_spin_rq_lock(dst_rq);
->  		return false;
-> +	}
-> =20
-> -	/* @p->rq couldn't have changed if we're still the holding cpu */
-> -	task_rq =3D task_rq(p);
-> -	lockdep_assert_rq_held(task_rq);
-> -
-> -	WARN_ON_ONCE(!cpumask_test_cpu(cpu_of(rq), p->cpus_ptr));
-> -	deactivate_task(task_rq, p, 0);
-> -	set_task_cpu(p, cpu_of(rq));
-> -	p->scx.sticky_cpu =3D cpu_of(rq);
-> +	/* the following marks @p MIGRATING which excludes dequeue */
-> +	deactivate_task(src_rq, p, 0);
-> +	set_task_cpu(p, cpu_of(dst_rq));
-> +	p->scx.sticky_cpu =3D cpu_of(dst_rq);
-> +
-> +	raw_spin_rq_unlock(src_rq);
-> +	raw_spin_rq_lock(dst_rq);
-> =20
->  	/*
->  	 * We want to pass scx-specific enq_flags but activate_task() will
->  	 * truncate the upper 32 bit. As we own @rq, we can pass them through
->  	 * @rq->scx.extra_enq_flags instead.
->  	 */
-> -	WARN_ON_ONCE(rq->scx.extra_enq_flags);
-> -	rq->scx.extra_enq_flags =3D enq_flags;
-> -	activate_task(rq, p, 0);
-> -	rq->scx.extra_enq_flags =3D 0;
-> +	WARN_ON_ONCE(!cpumask_test_cpu(cpu_of(dst_rq), p->cpus_ptr));
+None of this makes sense. I think we'll have to wait for Helge. It's
+not like parisc is a huge concern, and for all we know this is all a
+qemu bug to begin with.
 
-Hmmm, what's to stop someone from issuing a call to
-set_cpus_allowed_ptr() after we drop the src_rq lock above?  Before we
-held any relevant rq lock so everything should have been protected, but
-I'm not following how we prevent racing with the cpus_allowed logic in
-core.c here.
-
-> +	WARN_ON_ONCE(dst_rq->scx.extra_enq_flags);
-> +	dst_rq->scx.extra_enq_flags =3D enq_flags;
-> +	activate_task(dst_rq, p, 0);
-> +	dst_rq->scx.extra_enq_flags =3D 0;
-> =20
->  	return true;
->  }
-
-Thanks,
-David
-
---xOWZwxtfQAqOkla0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZrUMLwAKCRBZ5LhpZcTz
-ZPWpAP99+7Zi6xS14yOfXnji0FSCQn7FZRtIdXAoF3cvBo4JfgEAq2Hj//6Ne9MD
-QyZeGtwgJomOg9PxWiM6GQFIHvniqQM=
-=r18G
------END PGP SIGNATURE-----
-
---xOWZwxtfQAqOkla0--
+          Linus
 
