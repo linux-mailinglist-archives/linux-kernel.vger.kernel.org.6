@@ -1,149 +1,449 @@
-Return-Path: <linux-kernel+bounces-279141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 958A894B97C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:09:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1724194B981
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402BE1F212C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:09:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BF05B20C9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0DD189BA0;
-	Thu,  8 Aug 2024 09:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188D0189BAD;
+	Thu,  8 Aug 2024 09:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QyBedtPD"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OLm9Yq7u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5BB146A97
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3899146A97;
+	Thu,  8 Aug 2024 09:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723108173; cv=none; b=EdmJ6Eiculb8KTmC1YjhqYGwHHs8Fz4xcvKZdOeuuSaL1w4iSbQCraR+xmvML19bf6/xZTVWdhmGpEa8aHcn3LVzuewAu+b9G/YoIm3rb6JPNYgnPnT9bvrOIBjiH6Rdifofl3uI9BTkJ9+YH+nJBc/7ioCWjmZG1RmOJfz/1Ds=
+	t=1723108313; cv=none; b=Ht45HlzwRhTMtHy4aoVisqBp6xFWeZka+WKKDCtrIoCzbH+YqnZ/eyxG2ZKoWzEaMiLttLt7ZL7f10psnasIdozj1evAWc/k3yYSDfvA+GFCypLGB6vOPMRYof1xTZ6wNUzgbrhvFG9lbyXlO2Di43pLs7wdVY5P0czvXTgZkrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723108173; c=relaxed/simple;
-	bh=l+TMunnaDzYEBDNbqkyGomfHVtIf7SPRSveFE+c8bCE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pTlov8ICGnKNawJixcBVcdciPiwqy85DqzeFUgJOZ6Z4SxAbVFmXIg2UbFeI5oKYpwauwNc9779IzNYMI/Fd/RhnEkz7na+fGjQHgM40Q/EW96WBc1l9UY8fjsbpDhn1gy8OIZYne25JPRMzqMRQXH/4H3hTU0mgsBrDwNafk6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QyBedtPD; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7a1be7b5d70so597432a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 02:09:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723108171; x=1723712971; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L6K1xKrigqLUKfosZWg5PePAmCLxQRgMDc7IWF6RGgE=;
-        b=QyBedtPDXa1SBAY3HAWIEX3HWunEOjnk5mfau0UX3fvVBYYk9qmdiCvCqIxDk9YUs5
-         rpo3Y/YCs83UoEWDcWm8nKxr0XbWvTorsAJ9GSCxgrRSU4vNr03u5CXE5xS7m4dDU0dU
-         /GnGmbLNkFgxlmvKY5Q7lBwq7DNL36UI/3JZg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723108171; x=1723712971;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L6K1xKrigqLUKfosZWg5PePAmCLxQRgMDc7IWF6RGgE=;
-        b=DgNRNtNJVZuAlj284WYgrV522JeciTZzYv5XyFIWBhR1Fji7XjVvvk+RAg5NZGpJ9Y
-         zJio3EAXeZDQKXdE/BTXbNNnj5mvpE2zVlpOYAt9oD4BARlcRkf+kf2HaCVc/4Pz0fjQ
-         3UkXHVcoWQAnIQA/FSioSoAMwvw7m59kxvjRNY8rpQJhwnVDczZRtINsbMQ8loTEvVzj
-         Antaqxr+xxlg5gLtm3Xh7TMZDj5ItjKO9pKvXa4fvqFb9abZf0Q+GuOB/Cx37Y2BHOd2
-         0a2v5jT7+efSLSTMQECML7a7I0yw15QJE0xtUVesEEv7DgQpC38AH7y3anz6SRf2+3L9
-         2w+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUopaW/BcLy49hP/MUIB9V6NxW8P0Jt69LbtNj2/FbvNb1MA9EbHkKkvq2M/v6/XtYOJ58bk9GG3AgM1Qy9fn/pp817tIVkW73OpyGW
-X-Gm-Message-State: AOJu0Yx2YI0PbbVLUZvjPEHYYP7p6v/V66R+WmpowbXaOQYl3bfTsuog
-	S/G+6vibsMLL1kmxQNsMlRIWJ3Kt5nUc2pCcTKEmQIjAkNNuKaPxsU1daqff9Q==
-X-Google-Smtp-Source: AGHT+IEpIPr/0CxKkHq6jZNXwMVmpNr4/DF3EQ3KKvxR+I1+GgdpapQxRaKB/YWa0tZ6ccU9yAFqBg==
-X-Received: by 2002:a17:902:d488:b0:1fd:7ff5:c673 with SMTP id d9443c01a7336-200967f6b7cmr16916805ad.2.1723108170942;
-        Thu, 08 Aug 2024 02:09:30 -0700 (PDT)
-Received: from yuanhsinte.c.googlers.com (46.165.189.35.bc.googleusercontent.com. [35.189.165.46])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5927f40dsm119661445ad.229.2024.08.08.02.09.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 02:09:30 -0700 (PDT)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Thu, 08 Aug 2024 09:09:25 +0000
-Subject: [PATCH] arm64: dts: mt8183-kukui: Add trip points to each thermal
- zone
+	s=arc-20240116; t=1723108313; c=relaxed/simple;
+	bh=fU73Fxxw1HBjZeIB4osdlPAJ0Ogxm4tW47Lf4TGo2PI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WYUzn1yOTn/NPK0QNkebsg/wT8Jk5caimkEaAVFsp3BoKN+v1OrnMJVnXNrGPgvAWBr9YDN5TyiAic/tIIpY0jsfSMhX51ebjwnJhgHOFbU1YW1JeAFeIczM3QW9wSEoNCi6Xq7ruVfrmQKrjJC+UArtvdUg6ttcljQbrf98TX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OLm9Yq7u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6F88C32782;
+	Thu,  8 Aug 2024 09:11:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723108313;
+	bh=fU73Fxxw1HBjZeIB4osdlPAJ0Ogxm4tW47Lf4TGo2PI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OLm9Yq7uWeceyvf8XeOtFFkmZ0mkf3/3aQmXBHCwTHAXwi4wnlONuDqOCe8hAVzW4
+	 DzJPkEr723sShS6aNuWm1slTMxmLuAAt1cf029Ok7lR7kqjTnXriaVTGyfr+r45pEL
+	 zFBiuBO40GSHeeP17z3tghCDb6sMUPAOXgUNfpos=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org
+Subject: [PATCH 6.1 00/86] 6.1.104-rc2 review
+Date: Thu,  8 Aug 2024 11:11:49 +0200
+Message-ID: <20240808091131.014292134@linuxfoundation.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240808-kukui_trip-v1-1-6a73c8e0b79a@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAESLtGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCwND3ezS7NLM+JKizAJdMzMj02SDRFOTZFMDJaCGgqLUtMwKsGHRsbW
- 1AEhUmk5cAAAA
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.15-dev-37811
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.104-rc2.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.1.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.1.104-rc2
+X-KernelTest-Deadline: 2024-08-10T09:11+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add trip points to the tboard1 and tboard2 thermal zones to ensure they
-are registered successfully.
+This is the start of the stable review cycle for the 6.1.104 release.
+There are 86 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
----
- arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Responses should be made by Sat, 10 Aug 2024 09:11:02 +0000.
+Anything received after that time might be too late.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
-index 6345e969efae..1593ea14f81f 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
-@@ -978,12 +978,38 @@ tboard1 {
- 		polling-delay = <1000>; /* milliseconds */
- 		polling-delay-passive = <0>; /* milliseconds */
- 		thermal-sensors = <&tboard_thermistor1>;
-+		trips {
-+			tboard1_alert: trip-alert {
-+				temperature = <85000>;
-+				hysteresis = <2000>;
-+				type = "passive";
-+			};
-+
-+			tboard1_crit: trip-crit {
-+				temperature = <100000>;
-+				hysteresis = <2000>;
-+				type = "critical";
-+			};
-+		};
- 	};
- 
- 	tboard2 {
- 		polling-delay = <1000>; /* milliseconds */
- 		polling-delay-passive = <0>; /* milliseconds */
- 		thermal-sensors = <&tboard_thermistor2>;
-+		trips {
-+			tboard2_alert: trip-alert {
-+				temperature = <85000>;
-+				hysteresis = <2000>;
-+				type = "passive";
-+			};
-+
-+			tboard2_crit: trip-crit {
-+				temperature = <100000>;
-+				hysteresis = <2000>;
-+				type = "critical";
-+			};
-+		};
- 	};
- };
- 
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.104-rc2.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+and the diffstat can be found below.
 
----
-base-commit: 21b136cc63d2a9ddd60d4699552b69c214b32964
-change-id: 20240801-kukui_trip-6625c0a54c50
+thanks,
 
-Best regards,
--- 
-Hsin-Te Yuan <yuanhsinte@chromium.org>
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.1.104-rc2
+
+Alexander Maltsev <keltar.gw@gmail.com>
+    netfilter: ipset: Add list flush to cancel_gc
+
+Liu Jing <liujing@cmss.chinamobile.com>
+    selftests: mptcp: always close input's FD if opened
+
+Paolo Abeni <pabeni@redhat.com>
+    mptcp: fix duplicate data handling
+
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+    mptcp: pm: only set request_bkup flag when sending MP_PRIO
+
+Paolo Abeni <pabeni@redhat.com>
+    mptcp: fix bad RCVPRUNED mib accounting
+
+Paolo Abeni <pabeni@redhat.com>
+    mptcp: fix NL PM announced address accounting
+
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+    mptcp: distinguish rcv vs sent backup flag in requests
+
+Paolo Abeni <pabeni@redhat.com>
+    mptcp: fix user-space PM announced address accounting
+
+Heiner Kallweit <hkallweit1@gmail.com>
+    r8169: don't increment tx_dropped in case of NETDEV_TX_BUSY
+
+Ma Ke <make24@iscas.ac.cn>
+    net: usb: sr9700: fix uninitialized variable use in sr_mdio_read
+
+Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+    drm/i915: Fix possible int overflow in skl_ddi_calculate_wrpll()
+
+Zack Rusin <zack.rusin@broadcom.com>
+    drm/vmwgfx: Fix a deadlock in dma buf fence polling
+
+Edmund Raile <edmund.raile@protonmail.com>
+    Revert "ALSA: firewire-lib: operate for period elapse event in process context"
+
+Edmund Raile <edmund.raile@protonmail.com>
+    Revert "ALSA: firewire-lib: obsolete workqueue for period update"
+
+Mavroudis Chatzilazaridis <mavchatz@protonmail.com>
+    ALSA: hda/realtek: Add quirk for Acer Aspire E5-574G
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: usb-audio: Correct surround channels in UAC1 channel map
+
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+    mptcp: sched: check both directions for backup
+
+Al Viro <viro@zeniv.linux.org.uk>
+    protect the fetch of ->fd[fd] in do_dup2() from mispredictions
+
+Naohiro Aota <naohiro.aota@wdc.com>
+    btrfs: zoned: fix zone_unusable accounting on making block group read-write again
+
+Tatsunosuke Tobita <tatsunosuke.tobita@wacom.com>
+    HID: wacom: Modify pen IDs
+
+Patryk Duda <patrykd@google.com>
+    platform/chrome: cros_ec_proto: Lock device when updating MKBP version
+
+Alice Ryhl <aliceryhl@google.com>
+    rust: SHADOW_CALL_STACK is incompatible with Rust
+
+Will Deacon <will@kernel.org>
+    arm64: jump_label: Ensure patched jump_labels are visible to all CPUs
+
+Zhe Qiao <qiaozhe@iscas.ac.cn>
+    riscv/mm: Add handling for VM_FAULT_SIGSEGV in mm_fault_error()
+
+Maciej Żenczykowski <maze@google.com>
+    ipv6: fix ndisc_is_useropt() handling for PIO
+
+Shahar Shitrit <shshitrit@nvidia.com>
+    net/mlx5e: Add a check for the return value from mlx5_port_set_eth_ptys
+
+Moshe Shemesh <moshe@nvidia.com>
+    net/mlx5: Fix missing lock on sync reset reload
+
+Mark Bloch <mbloch@nvidia.com>
+    net/mlx5: Lag, don't use the hardcoded value of the first port
+
+Kuniyuki Iwashima <kuniyu@amazon.com>
+    netfilter: iptables: Fix potential null-ptr-deref in ip6table_nat_table_init().
+
+Kuniyuki Iwashima <kuniyu@amazon.com>
+    netfilter: iptables: Fix null-ptr-deref in iptable_nat_table_init().
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: hda: Conditionally use snooping for AMD HDMI
+
+Dan Carpenter <dan.carpenter@linaro.org>
+    net: mvpp2: Don't re-use loop iterator
+
+Suraj Kandpal <suraj.kandpal@intel.com>
+    drm/i915/hdcp: Fix HDCP2_STREAM_STATUS macro
+
+Alexandra Winter <wintera@linux.ibm.com>
+    net/iucv: fix use after free in iucv_sock_close()
+
+Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+    ice: add missing WRITE_ONCE when clearing ice_rx_ring::xdp_prog
+
+Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+    ice: replace synchronize_rcu with synchronize_net
+
+Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+    ice: don't busy wait for Rx queue disable in ice_qp_dis()
+
+Michal Kubiak <michal.kubiak@intel.com>
+    ice: respect netif readiness in AF_XDP ZC related ndo's
+
+Kuniyuki Iwashima <kuniyu@amazon.com>
+    rtnetlink: Don't ignore IFLA_TARGET_NETNSID when ifname is specified in rtnl_dellink().
+
+Andy Chiu <andy.chiu@sifive.com>
+    net: axienet: start napi before enabling Rx/Tx
+
+Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+    Bluetooth: hci_sync: Fix suspending with wrong filter policy
+
+songxiebing <songxiebing@kylinos.cn>
+    ALSA: hda: conexant: Fix headset auto detect fail in the polling mode
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: hda: conexant: Reduce CONFIG_PM dependencies
+
+Eric Dumazet <edumazet@google.com>
+    sched: act_ct: take care of padding in struct zones_ht_key
+
+Ian Forbes <ian.forbes@broadcom.com>
+    drm/vmwgfx: Trigger a modeset when the screen moves
+
+Ian Forbes <ian.forbes@broadcom.com>
+    drm/vmwgfx: Fix overlay when using Screen Targets
+
+Danilo Krummrich <dakr@kernel.org>
+    drm/nouveau: prime: fix refcount underflow
+
+Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+    HID: amd_sfh: Move sensor discovery before HID device initialization
+
+Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+    HID: amd_sfh: Split sensor and HID initialization
+
+Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+    HID: amd_sfh: Remove duplicate cleanup
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    MIPS: dts: loongson: Fix ls2k1000-rtc interrupt
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    MIPS: dts: loongson: Fix liointc IRQ polarity
+
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+    MIPS: Loongson64: DTS: Fix PCIe port nodes for ls7a
+
+Binbin Zhou <zhoubinbin@loongson.cn>
+    MIPS: Loongson64: DTS: Add RTC support to Loongson-2K1000
+
+Imre Deak <imre.deak@intel.com>
+    drm/i915/dp: Don't switch the LTTPR mode on an active link
+
+Thomas Zimmermann <tzimmermann@suse.de>
+    drm/udl: Remove DRM_CONNECTOR_POLL_HPD
+
+Thomas Zimmermann <tzimmermann@suse.de>
+    drm/udl: Move connector to modesetting code
+
+Thomas Zimmermann <tzimmermann@suse.de>
+    drm/udl: Various improvements to the connector
+
+Thomas Zimmermann <tzimmermann@suse.de>
+    drm/udl: Use USB timeout constant when reading EDID
+
+Thomas Zimmermann <tzimmermann@suse.de>
+    drm/udl: Test pixel limit in mode-config's mode-valid function
+
+Thomas Zimmermann <tzimmermann@suse.de>
+    drm/udl: Rename struct udl_drm_connector to struct udl_connector
+
+Herve Codina <herve.codina@bootlin.com>
+    irqdomain: Fixed unbalanced fwnode get and put
+
+Jaegeuk Kim <jaegeuk@kernel.org>
+    f2fs: assign CURSEG_ALL_DATA_ATGC if blkaddr is valid
+
+Zhiguo Niu <zhiguo.niu@unisoc.com>
+    f2fs: fix to avoid use SSR allocate when do defragment
+
+Li Zhijian <lizhijian@fujitsu.com>
+    mm/page_alloc: fix pcp->count race between drain_pages_zone() vs __rmqueue_pcplist()
+
+Lucas Stach <l.stach@pengutronix.de>
+    mm: page_alloc: control latency caused by zone PCP draining
+
+Huang Ying <ying.huang@intel.com>
+    mm: restrict the pcp batch scale factor to avoid too long latency
+
+Thomas Weißschuh <linux@weissschuh.net>
+    leds: triggers: Flush pending brightness before activating trigger
+
+Hans de Goede <hdegoede@redhat.com>
+    leds: trigger: Call synchronize_rcu() before calling trig->activate()
+
+Heiner Kallweit <hkallweit1@gmail.com>
+    leds: trigger: Store brightness set by led_trigger_event()
+
+Heiner Kallweit <hkallweit1@gmail.com>
+    leds: trigger: Remove unused function led_trigger_rename_static()
+
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+    cpufreq: qcom-nvmem: fix memory leaks in probe error paths
+
+Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+    cpufreq: qcom-nvmem: Simplify driver data allocation
+
+Yangtao Li <frank.li@vivo.com>
+    cpufreq: qcom-nvmem: Convert to platform remove callback returning void
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: check the extent status again before inserting delalloc block
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: factor out a common helper to query extent map
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: convert to exclusive lock while inserting delalloc extents
+
+Zhang Yi <yi.zhang@huawei.com>
+    ext4: refactor ext4_da_map_blocks()
+
+Baokun Li <libaokun1@huawei.com>
+    ext4: make ext4_es_insert_extent() return void
+
+Thomas Weißschuh <linux@weissschuh.net>
+    sysctl: always initialize i_uid/i_gid
+
+Thomas Weißschuh <linux@weissschuh.net>
+    sysctl: treewide: drop unused argument ctl_table_root::set_ownership(table)
+
+Alexey Gladkov <legion@kernel.org>
+    sysctl: allow to change limits for posix messages queues
+
+Alexey Gladkov <legion@kernel.org>
+    sysctl: allow change system v ipc sysctls inside ipc namespace
+
+Krishna Kurapati <quic_kriskura@quicinc.com>
+    arm64: dts: qcom: ipq8074: Disable SS instance in Parkmode for USB
+
+Krishna Kurapati <quic_kriskura@quicinc.com>
+    arm64: dts: qcom: msm8998: Disable SS instance in Parkmode for USB
+
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+    arm64: dts: qcom: msm8998: switch USB QMP PHY to new style of bindings
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              |   2 +
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              |  36 +++---
+ arch/arm64/include/asm/jump_label.h                |   1 +
+ arch/arm64/kernel/jump_label.c                     |  11 +-
+ arch/mips/boot/dts/loongson/loongson64-2k1000.dtsi |  84 +++++++++----
+ arch/riscv/mm/fault.c                              |  17 +--
+ drivers/cpufreq/qcom-cpufreq-nvmem.c               |  56 ++++-----
+ .../gpu/drm/i915/display/intel_dp_link_training.c  |  54 +++++++-
+ drivers/gpu/drm/i915/display/intel_dpll_mgr.c      |   6 +-
+ drivers/gpu/drm/i915/display/intel_hdcp_regs.h     |   2 +-
+ drivers/gpu/drm/nouveau/nouveau_prime.c            |   3 +-
+ drivers/gpu/drm/udl/Makefile                       |   2 +-
+ drivers/gpu/drm/udl/udl_connector.c                | 139 ---------------------
+ drivers/gpu/drm/udl/udl_connector.h                |  15 ---
+ drivers/gpu/drm/udl/udl_drv.h                      |  11 ++
+ drivers/gpu/drm/udl/udl_modeset.c                  | 135 ++++++++++++++++++++
+ drivers/gpu/drm/vmwgfx/vmwgfx_fence.c              |  17 ++-
+ drivers/gpu/drm/vmwgfx/vmwgfx_overlay.c            |   2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               |  29 ++++-
+ drivers/hid/amd-sfh-hid/amd_sfh_client.c           |  55 ++++----
+ drivers/hid/wacom_wac.c                            |   3 +-
+ drivers/leds/led-triggers.c                        |  32 ++---
+ drivers/leds/trigger/ledtrig-timer.c               |   5 -
+ drivers/net/ethernet/intel/ice/ice_txrx.c          |   2 +-
+ drivers/net/ethernet/intel/ice/ice_xsk.c           |  19 +--
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c    |   6 +-
+ .../net/ethernet/mellanox/mlx5/core/en_ethtool.c   |   7 +-
+ drivers/net/ethernet/mellanox/mlx5/core/fw_reset.c |   5 +-
+ drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c  |   2 +-
+ drivers/net/ethernet/realtek/r8169_main.c          |   8 +-
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c  |   2 +-
+ drivers/net/usb/sr9700.c                           |  11 +-
+ drivers/platform/chrome/cros_ec_proto.c            |   2 +
+ fs/btrfs/block-group.c                             |  13 +-
+ fs/btrfs/extent-tree.c                             |   3 +-
+ fs/btrfs/free-space-cache.c                        |   4 +-
+ fs/btrfs/space-info.c                              |   2 +-
+ fs/btrfs/space-info.h                              |   1 +
+ fs/ext4/extents.c                                  |   5 +-
+ fs/ext4/extents_status.c                           |  14 +--
+ fs/ext4/extents_status.h                           |   6 +-
+ fs/ext4/inode.c                                    | 115 +++++++++--------
+ fs/f2fs/segment.c                                  |   4 +-
+ fs/file.c                                          |   1 +
+ fs/proc/proc_sysctl.c                              |   8 +-
+ include/linux/leds.h                               |  30 +++--
+ include/linux/sysctl.h                             |   1 -
+ include/trace/events/btrfs.h                       |   8 ++
+ include/trace/events/mptcp.h                       |   2 +-
+ init/Kconfig                                       |   1 +
+ ipc/ipc_sysctl.c                                   |  36 +++++-
+ ipc/mq_sysctl.c                                    |  35 ++++++
+ kernel/irq/irqdomain.c                             |   7 +-
+ mm/Kconfig                                         |  11 ++
+ mm/page_alloc.c                                    |  19 ++-
+ net/bluetooth/hci_sync.c                           |  21 ++++
+ net/core/rtnetlink.c                               |   2 +-
+ net/ipv4/netfilter/iptable_nat.c                   |  18 +--
+ net/ipv6/ndisc.c                                   |  34 ++---
+ net/ipv6/netfilter/ip6table_nat.c                  |  14 ++-
+ net/iucv/af_iucv.c                                 |   4 +-
+ net/mptcp/options.c                                |   2 +-
+ net/mptcp/pm_netlink.c                             |  28 +++--
+ net/mptcp/protocol.c                               |  18 +--
+ net/mptcp/protocol.h                               |   1 +
+ net/mptcp/subflow.c                                |  17 ++-
+ net/netfilter/ipset/ip_set_list_set.c              |   3 +
+ net/sched/act_ct.c                                 |   4 +-
+ net/sysctl_net.c                                   |   1 -
+ sound/firewire/amdtp-stream.c                      |  38 +++---
+ sound/firewire/amdtp-stream.h                      |   1 +
+ sound/pci/hda/hda_controller.h                     |   2 +-
+ sound/pci/hda/hda_intel.c                          |  10 +-
+ sound/pci/hda/patch_conexant.c                     |  58 ++-------
+ sound/pci/hda/patch_realtek.c                      |   1 +
+ sound/usb/stream.c                                 |   4 +-
+ tools/testing/selftests/net/mptcp/mptcp_connect.c  |   8 +-
+ 78 files changed, 813 insertions(+), 587 deletions(-)
+
 
 
