@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-278975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E8B94B749
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:13:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3850794B746
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6796E1C2304A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:13:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BFD31C22D03
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CA318A6D7;
-	Thu,  8 Aug 2024 07:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C72D18A6AA;
+	Thu,  8 Aug 2024 07:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eOLs6cIe"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="flcINJit"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14101188CD1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22067188CD5;
 	Thu,  8 Aug 2024 07:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723101113; cv=none; b=K9mjibR8rUxCiIxz04/Uy+uAYcp70cl31gbVGOw9Jif2BBVYtEW2NVi09ieynz3DOQOulKFDSuohteGLNIq/3I+0tiSWRR7WhA49GYNjKgv7HFxDqC23RBIU62wDXvw85UEH0oBckl3E0DZF+rxMuuxdEbzJLQJC1N2emap1sms=
+	t=1723101112; cv=none; b=HXQ9xgfRjwNQtJwAWjdAUBKofT7LEp1RAqLMvSsK/DYl6X3HoNhiHFyctAGFSVgO5WecalARsZabsV+NdFfT1q9xSwTYZcEAu+RZU4uqzWcjhYvJgKTK9vFoW3hl1SU0P8S16R15LHMD5Pv1iol0WyWZffeKi6TLmWulSjcu3B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723101113; c=relaxed/simple;
-	bh=N3pHs4DHkm4SRLpWbBv/zPeG66O56XEX1HmouWdGeFE=;
+	s=arc-20240116; t=1723101112; c=relaxed/simple;
+	bh=UdmTmJDtmijEO1fc+tdwkqDQEHTXO8qK4x3LO2Zj4tg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i0Ug2SjY1/VKCl5lZKtNJtZ2pPh5uPezgRJ1oUmWY7LB6I10TDwhQ3HykfEmJF71C0fUh05FaNHfd9fsV4So7f1KaHcipKm99BId4zKwSPCIVhcA1SZ2/IpbkJSOSkoFLC2fMoJbYoHpM2uFqZtFZZKGYrBr4Z+9Jlazp5T4j4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eOLs6cIe; arc=none smtp.client-ip=217.70.183.198
+	 MIME-Version; b=PF2mdi4qgowg9hs5rKxusWGeuIhlCOxAVRscQNcXiPoSE7gtKHgJ5T6uJtmVXI+HC8KmJsPkZkdo5AdJJEez8R4CAGv8Kr2eHqpL4OSFUtpQx9p+KNRPX+PYbPsXxRcjiRK3hqvpRPIs7t/WmLhlI6ABhfE3PUV629XSEYY6NBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=flcINJit; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 9700AC0016;
-	Thu,  8 Aug 2024 07:11:45 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 64917C0004;
+	Thu,  8 Aug 2024 07:11:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723101106;
+	t=1723101107;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XF7ZThYLSlIm1RWwY+vjDfKpa9VxBTeErEIk/Q4bWKk=;
-	b=eOLs6cIekuq5hgZkjL1+PIlbFtELmd+l4W+HjQi3Sl0lWavaMvPbIZZslpGzjEIHr6Dinu
-	arVHur9dMaefWSePklQb+dek5oY9xWeechCuM8IkK4eIXBzCUp24kP8QpqqsggsRZveL+t
-	G6m6nOCjJNAXmRJsvBrfry3zA1D012gECDtckTAo9KA2Idg2yFmSpaHs/4t2kW6GkLvDLm
-	MLdcIk4Dy360tdMsvpHVJN6D5LhdlVd8HinNaV1RjPRsOuLf0dJdZiy489hHtepdHB5aJX
-	31Q60TM2IKzAY3Ad4NKt3pMqz+TMBj1ro6iDLL9CPt2kWcYHjnD1JRboxw2srA==
+	bh=y0c0Y9aM9tPVnaugg+JBgsxyaPRjLvE5XFJiybzMlz4=;
+	b=flcINJit/MBMiS1jEIfOUFlLOS4QEYBXBUdbSYLwtVx+z1IvRDsXjQqzi3Rc7ABIX+PC8b
+	7VwoqGsOl4JrZ1gClTK1U9wR2SqQjtXjDf+gWDFvUi2xwlwpWfutqPoM5PEVq9DjSdwPH6
+	cnNW7cMW401pTFnom2WSHEobI2RqRC1bah2TOkRZbvcFn9Ipc4nrHuFt3VZR85vGYZHaHN
+	NTCQLK8BfSkSTBpNQq43FEcqjPkfzHcVzEk+Ny2yPXRcDwTGWTWPMycXtgWpm+K5fAX3Su
+	TuGsUIxZqFzncAFV1Iuw7sPNOD8FaP4ILx+DN8DIOxBs0OiO5aehdst+loSh9g==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
@@ -58,9 +58,9 @@ Cc: linuxppc-dev@lists.ozlabs.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 10/36] soc: fsl: cpm1: tsa: Make SIRAM entries specific to CPM1
-Date: Thu,  8 Aug 2024 09:11:03 +0200
-Message-ID: <20240808071132.149251-11-herve.codina@bootlin.com>
+Subject: [PATCH v2 11/36] soc: fsl: cpm1: tsa: Introduce tsa_setup() and its CPM1 compatible version
+Date: Thu,  8 Aug 2024 09:11:04 +0200
+Message-ID: <20240808071132.149251-12-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240808071132.149251-1-herve.codina@bootlin.com>
 References: <20240808071132.149251-1-herve.codina@bootlin.com>
@@ -73,163 +73,157 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-Current code handles the CPM1 version of TSA. Compared against QUICC
-Engine (QE) version of TSA, CPM1 SIRAM entries are slightly different.
+Current code handles the CPM1 version of TSA. Setting up TSA consists in
+handling SIMODE and SIGMR registers. These registers are CPM1 specific.
 
-In order to prepare the support for the QE version, clearly identify
-these entries and functions handling them as CPM1 compatible.
+Setting up the QUICC Engine (QE) version of TSA is slightly different.
+
+In order to prepare the support for QE version, clearly identify these
+registers as CPM1 compatible and isolate their handling in a CPM1
+specific function.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/soc/fsl/qe/tsa.c | 75 ++++++++++++++++++++++++----------------
- 1 file changed, 46 insertions(+), 29 deletions(-)
+ drivers/soc/fsl/qe/tsa.c | 93 +++++++++++++++++++++++-----------------
+ 1 file changed, 54 insertions(+), 39 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/tsa.c b/drivers/soc/fsl/qe/tsa.c
-index 3d0c31a62dbb..bf7354ebaca4 100644
+index bf7354ebaca4..239b71187e07 100644
 --- a/drivers/soc/fsl/qe/tsa.c
 +++ b/drivers/soc/fsl/qe/tsa.c
-@@ -18,18 +18,18 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
--/* TSA SI RAM routing tables entry */
--#define TSA_SIRAM_ENTRY_LAST		BIT(16)
--#define TSA_SIRAM_ENTRY_BYTE		BIT(17)
--#define TSA_SIRAM_ENTRY_CNT_MASK	GENMASK(21, 18)
--#define TSA_SIRAM_ENTRY_CNT(x)		FIELD_PREP(TSA_SIRAM_ENTRY_CNT_MASK, x)
--#define TSA_SIRAM_ENTRY_CSEL_MASK	GENMASK(24, 22)
--#define TSA_SIRAM_ENTRY_CSEL_NU		FIELD_PREP_CONST(TSA_SIRAM_ENTRY_CSEL_MASK, 0x0)
--#define TSA_SIRAM_ENTRY_CSEL_SCC2	FIELD_PREP_CONST(TSA_SIRAM_ENTRY_CSEL_MASK, 0x2)
--#define TSA_SIRAM_ENTRY_CSEL_SCC3	FIELD_PREP_CONST(TSA_SIRAM_ENTRY_CSEL_MASK, 0x3)
--#define TSA_SIRAM_ENTRY_CSEL_SCC4	FIELD_PREP_CONST(TSA_SIRAM_ENTRY_CSEL_MASK, 0x4)
--#define TSA_SIRAM_ENTRY_CSEL_SMC1	FIELD_PREP_CONST(TSA_SIRAM_ENTRY_CSEL_MASK, 0x5)
--#define TSA_SIRAM_ENTRY_CSEL_SMC2	FIELD_PREP_CONST(TSA_SIRAM_ENTRY_CSEL_MASK, 0x6)
-+/* TSA SI RAM routing tables entry (CPM1) */
-+#define TSA_CPM1_SIRAM_ENTRY_LAST	BIT(16)
-+#define TSA_CPM1_SIRAM_ENTRY_BYTE	BIT(17)
-+#define TSA_CPM1_SIRAM_ENTRY_CNT_MASK	GENMASK(21, 18)
-+#define TSA_CPM1_SIRAM_ENTRY_CNT(x)	FIELD_PREP(TSA_CPM1_SIRAM_ENTRY_CNT_MASK, x)
-+#define TSA_CPM1_SIRAM_ENTRY_CSEL_MASK	GENMASK(24, 22)
-+#define TSA_CPM1_SIRAM_ENTRY_CSEL_NU	FIELD_PREP_CONST(TSA_CPM1_SIRAM_ENTRY_CSEL_MASK, 0x0)
-+#define TSA_CPM1_SIRAM_ENTRY_CSEL_SCC2	FIELD_PREP_CONST(TSA_CPM1_SIRAM_ENTRY_CSEL_MASK, 0x2)
-+#define TSA_CPM1_SIRAM_ENTRY_CSEL_SCC3	FIELD_PREP_CONST(TSA_CPM1_SIRAM_ENTRY_CSEL_MASK, 0x3)
-+#define TSA_CPM1_SIRAM_ENTRY_CSEL_SCC4	FIELD_PREP_CONST(TSA_CPM1_SIRAM_ENTRY_CSEL_MASK, 0x4)
-+#define TSA_CPM1_SIRAM_ENTRY_CSEL_SMC1	FIELD_PREP_CONST(TSA_CPM1_SIRAM_ENTRY_CSEL_MASK, 0x5)
-+#define TSA_CPM1_SIRAM_ENTRY_CSEL_SMC2	FIELD_PREP_CONST(TSA_CPM1_SIRAM_ENTRY_CSEL_MASK, 0x6)
+@@ -32,14 +32,14 @@
+ #define TSA_CPM1_SIRAM_ENTRY_CSEL_SMC2	FIELD_PREP_CONST(TSA_CPM1_SIRAM_ENTRY_CSEL_MASK, 0x6)
  
  /* SI mode register (32 bits) */
- #define TSA_SIMODE	0x00
-@@ -228,8 +228,8 @@ int tsa_serial_get_info(struct tsa_serial *tsa_serial, struct tsa_serial_info *i
- }
- EXPORT_SYMBOL(tsa_serial_get_info);
+-#define TSA_SIMODE	0x00
+-#define   TSA_SIMODE_SMC2			BIT(31)
+-#define   TSA_SIMODE_SMC1			BIT(15)
+-#define   TSA_SIMODE_TDMA_MASK			GENMASK(11, 0)
+-#define   TSA_SIMODE_TDMA(x)			FIELD_PREP(TSA_SIMODE_TDMA_MASK, x)
+-#define   TSA_SIMODE_TDMB_MASK			GENMASK(27, 16)
+-#define   TSA_SIMODE_TDMB(x)			FIELD_PREP(TSA_SIMODE_TDMB_MASK, x)
+-#define     TSA_SIMODE_TDM_MASK			GENMASK(11, 0)
++#define TSA_CPM1_SIMODE		0x00
++#define   TSA_CPM1_SIMODE_SMC2			BIT(31)
++#define   TSA_CPM1_SIMODE_SMC1			BIT(15)
++#define   TSA_CPM1_SIMODE_TDMA_MASK		GENMASK(11, 0)
++#define   TSA_CPM1_SIMODE_TDMA(x)		FIELD_PREP(TSA_CPM1_SIMODE_TDMA_MASK, x)
++#define   TSA_CPM1_SIMODE_TDMB_MASK		GENMASK(27, 16)
++#define   TSA_CPM1_SIMODE_TDMB(x)		FIELD_PREP(TSA_CPM1_SIMODE_TDMB_MASK, x)
++#define     TSA_CPM1_SIMODE_TDM_MASK		GENMASK(11, 0)
+ #define     TSA_SIMODE_TDM_SDM_MASK		GENMASK(11, 10)
+ #define       TSA_SIMODE_TDM_SDM_NORM		FIELD_PREP_CONST(TSA_SIMODE_TDM_SDM_MASK, 0x0)
+ #define       TSA_SIMODE_TDM_SDM_ECHO		FIELD_PREP_CONST(TSA_SIMODE_TDM_SDM_MASK, 0x1)
+@@ -49,22 +49,22 @@
+ #define     TSA_SIMODE_TDM_RFSD(x)		FIELD_PREP(TSA_SIMODE_TDM_RFSD_MASK, x)
+ #define     TSA_SIMODE_TDM_DSC			BIT(7)
+ #define     TSA_SIMODE_TDM_CRT			BIT(6)
+-#define     TSA_SIMODE_TDM_STZ			BIT(5)
++#define     TSA_CPM1_SIMODE_TDM_STZ		BIT(5)
+ #define     TSA_SIMODE_TDM_CE			BIT(4)
+ #define     TSA_SIMODE_TDM_FE			BIT(3)
+ #define     TSA_SIMODE_TDM_GM			BIT(2)
+ #define     TSA_SIMODE_TDM_TFSD_MASK		GENMASK(1, 0)
+ #define     TSA_SIMODE_TDM_TFSD(x)		FIELD_PREP(TSA_SIMODE_TDM_TFSD_MASK, x)
  
--static void tsa_init_entries_area(struct tsa *tsa, struct tsa_entries_area *area,
--				  u32 tdms, u32 tdm_id, bool is_rx)
-+static void tsa_cpm1_init_entries_area(struct tsa *tsa, struct tsa_entries_area *area,
-+				       u32 tdms, u32 tdm_id, bool is_rx)
- {
- 	resource_size_t quarter;
- 	resource_size_t half;
-@@ -280,7 +280,13 @@ static void tsa_init_entries_area(struct tsa *tsa, struct tsa_entries_area *area
- 	}
+-/* SI global mode register (8 bits) */
+-#define TSA_SIGMR	0x04
+-#define TSA_SIGMR_ENB			BIT(3)
+-#define TSA_SIGMR_ENA			BIT(2)
+-#define TSA_SIGMR_RDM_MASK		GENMASK(1, 0)
+-#define   TSA_SIGMR_RDM_STATIC_TDMA	FIELD_PREP_CONST(TSA_SIGMR_RDM_MASK, 0x0)
+-#define   TSA_SIGMR_RDM_DYN_TDMA	FIELD_PREP_CONST(TSA_SIGMR_RDM_MASK, 0x1)
+-#define   TSA_SIGMR_RDM_STATIC_TDMAB	FIELD_PREP_CONST(TSA_SIGMR_RDM_MASK, 0x2)
+-#define   TSA_SIGMR_RDM_DYN_TDMAB	FIELD_PREP_CONST(TSA_SIGMR_RDM_MASK, 0x3)
++/* CPM SI global mode register (8 bits) */
++#define TSA_CPM1_SIGMR	0x04
++#define TSA_CPM1_SIGMR_ENB			BIT(3)
++#define TSA_CPM1_SIGMR_ENA			BIT(2)
++#define TSA_CPM1_SIGMR_RDM_MASK			GENMASK(1, 0)
++#define   TSA_CPM1_SIGMR_RDM_STATIC_TDMA	FIELD_PREP_CONST(TSA_CPM1_SIGMR_RDM_MASK, 0x0)
++#define   TSA_CPM1_SIGMR_RDM_DYN_TDMA		FIELD_PREP_CONST(TSA_CPM1_SIGMR_RDM_MASK, 0x1)
++#define   TSA_CPM1_SIGMR_RDM_STATIC_TDMAB	FIELD_PREP_CONST(TSA_CPM1_SIGMR_RDM_MASK, 0x2)
++#define   TSA_CPM1_SIGMR_RDM_DYN_TDMAB		FIELD_PREP_CONST(TSA_CPM1_SIGMR_RDM_MASK, 0x3)
+ 
+ /* SI clock route register (32 bits) */
+ #define TSA_SICR	0x0C
+@@ -656,13 +656,45 @@ static void tsa_init_si_ram(struct tsa *tsa)
+ 		tsa_write32(tsa->si_ram + i, TSA_CPM1_SIRAM_ENTRY_LAST);
  }
  
--static const char *tsa_serial_id2name(struct tsa *tsa, u32 serial_id)
-+static void tsa_init_entries_area(struct tsa *tsa, struct tsa_entries_area *area,
-+				  u32 tdms, u32 tdm_id, bool is_rx)
++static int tsa_cpm1_setup(struct tsa *tsa)
 +{
-+	tsa_cpm1_init_entries_area(tsa, area, tdms, tdm_id, is_rx);
++	u32 val;
++
++	/* Set SIMODE */
++	val = 0;
++	if (tsa->tdm[0].is_enable)
++		val |= TSA_CPM1_SIMODE_TDMA(tsa->tdm[0].simode_tdm);
++	if (tsa->tdm[1].is_enable)
++		val |= TSA_CPM1_SIMODE_TDMB(tsa->tdm[1].simode_tdm);
++
++	tsa_clrsetbits32(tsa->si_regs + TSA_CPM1_SIMODE,
++			 TSA_CPM1_SIMODE_TDMA(TSA_CPM1_SIMODE_TDM_MASK) |
++			 TSA_CPM1_SIMODE_TDMB(TSA_CPM1_SIMODE_TDM_MASK),
++			 val);
++
++	/* Set SIGMR */
++	val = (tsa->tdms == BIT(TSA_TDMA)) ?
++		TSA_CPM1_SIGMR_RDM_STATIC_TDMA : TSA_CPM1_SIGMR_RDM_STATIC_TDMAB;
++	if (tsa->tdms & BIT(TSA_TDMA))
++		val |= TSA_CPM1_SIGMR_ENA;
++	if (tsa->tdms & BIT(TSA_TDMB))
++		val |= TSA_CPM1_SIGMR_ENB;
++	tsa_write8(tsa->si_regs + TSA_CPM1_SIGMR, val);
++
++	return 0;
 +}
 +
-+static const char *tsa_cpm1_serial_id2name(struct tsa *tsa, u32 serial_id)
- {
- 	switch (serial_id) {
- 	case FSL_CPM_TSA_NU:	return "Not used";
-@@ -295,22 +301,27 @@ static const char *tsa_serial_id2name(struct tsa *tsa, u32 serial_id)
- 	return NULL;
- }
- 
--static u32 tsa_serial_id2csel(struct tsa *tsa, u32 serial_id)
-+static const char *tsa_serial_id2name(struct tsa *tsa, u32 serial_id)
++static int tsa_setup(struct tsa *tsa)
 +{
-+	return tsa_cpm1_serial_id2name(tsa, serial_id);
++	return tsa_cpm1_setup(tsa);
 +}
 +
-+static u32 tsa_cpm1_serial_id2csel(struct tsa *tsa, u32 serial_id)
- {
- 	switch (serial_id) {
--	case FSL_CPM_TSA_SCC2:	return TSA_SIRAM_ENTRY_CSEL_SCC2;
--	case FSL_CPM_TSA_SCC3:	return TSA_SIRAM_ENTRY_CSEL_SCC3;
--	case FSL_CPM_TSA_SCC4:	return TSA_SIRAM_ENTRY_CSEL_SCC4;
--	case FSL_CPM_TSA_SMC1:	return TSA_SIRAM_ENTRY_CSEL_SMC1;
--	case FSL_CPM_TSA_SMC2:	return TSA_SIRAM_ENTRY_CSEL_SMC2;
-+	case FSL_CPM_TSA_SCC2:	return TSA_CPM1_SIRAM_ENTRY_CSEL_SCC2;
-+	case FSL_CPM_TSA_SCC3:	return TSA_CPM1_SIRAM_ENTRY_CSEL_SCC3;
-+	case FSL_CPM_TSA_SCC4:	return TSA_CPM1_SIRAM_ENTRY_CSEL_SCC4;
-+	case FSL_CPM_TSA_SMC1:	return TSA_CPM1_SIRAM_ENTRY_CSEL_SMC1;
-+	case FSL_CPM_TSA_SMC2:	return TSA_CPM1_SIRAM_ENTRY_CSEL_SMC2;
- 	default:
- 		break;
- 	}
--	return TSA_SIRAM_ENTRY_CSEL_NU;
-+	return TSA_CPM1_SIRAM_ENTRY_CSEL_NU;
- }
- 
--static int tsa_add_entry(struct tsa *tsa, struct tsa_entries_area *area,
--			 u32 count, u32 serial_id)
-+static int tsa_cpm1_add_entry(struct tsa *tsa, struct tsa_entries_area *area,
-+			      u32 count, u32 serial_id)
- {
- 	void __iomem *addr;
- 	u32 left;
-@@ -328,21 +339,21 @@ static int tsa_add_entry(struct tsa *tsa, struct tsa_entries_area *area,
- 
- 	if (area->last_entry) {
- 		/* Clear last flag */
--		tsa_clrbits32(area->last_entry, TSA_SIRAM_ENTRY_LAST);
-+		tsa_clrbits32(area->last_entry, TSA_CPM1_SIRAM_ENTRY_LAST);
- 	}
- 
- 	left = count;
- 	while (left) {
--		val = TSA_SIRAM_ENTRY_BYTE | tsa_serial_id2csel(tsa, serial_id);
-+		val = TSA_CPM1_SIRAM_ENTRY_BYTE | tsa_cpm1_serial_id2csel(tsa, serial_id);
- 
- 		if (left > 16) {
- 			cnt = 16;
- 		} else {
- 			cnt = left;
--			val |= TSA_SIRAM_ENTRY_LAST;
-+			val |= TSA_CPM1_SIRAM_ENTRY_LAST;
- 			area->last_entry = addr;
- 		}
--		val |= TSA_SIRAM_ENTRY_CNT(cnt - 1);
-+		val |= TSA_CPM1_SIRAM_ENTRY_CNT(cnt - 1);
- 
- 		tsa_write32(addr, val);
- 		addr += 4;
-@@ -352,6 +363,12 @@ static int tsa_add_entry(struct tsa *tsa, struct tsa_entries_area *area,
- 	return 0;
- }
- 
-+static int tsa_add_entry(struct tsa *tsa, struct tsa_entries_area *area,
-+			 u32 count, u32 serial_id)
-+{
-+	return tsa_cpm1_add_entry(tsa, area, count, serial_id);
-+}
-+
- static int tsa_of_parse_tdm_route(struct tsa *tsa, struct device_node *tdm_np,
- 				  u32 tdms, u32 tdm_id, bool is_rx)
- {
-@@ -636,7 +653,7 @@ static void tsa_init_si_ram(struct tsa *tsa)
- 
- 	/* Fill all entries as the last one */
- 	for (i = 0; i < tsa->si_ram_sz; i += 4)
--		tsa_write32(tsa->si_ram + i, TSA_SIRAM_ENTRY_LAST);
-+		tsa_write32(tsa->si_ram + i, TSA_CPM1_SIRAM_ENTRY_LAST);
- }
- 
  static int tsa_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct resource *res;
+ 	struct tsa *tsa;
+ 	unsigned int i;
+-	u32 val;
+ 	int ret;
+ 
+ 	tsa = devm_kzalloc(&pdev->dev, sizeof(*tsa), GFP_KERNEL);
+@@ -696,26 +728,9 @@ static int tsa_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	/* Set SIMODE */
+-	val = 0;
+-	if (tsa->tdm[0].is_enable)
+-		val |= TSA_SIMODE_TDMA(tsa->tdm[0].simode_tdm);
+-	if (tsa->tdm[1].is_enable)
+-		val |= TSA_SIMODE_TDMB(tsa->tdm[1].simode_tdm);
+-
+-	tsa_clrsetbits32(tsa->si_regs + TSA_SIMODE,
+-			 TSA_SIMODE_TDMA(TSA_SIMODE_TDM_MASK) |
+-			 TSA_SIMODE_TDMB(TSA_SIMODE_TDM_MASK),
+-			 val);
+-
+-	/* Set SIGMR */
+-	val = (tsa->tdms == BIT(TSA_TDMA)) ?
+-		TSA_SIGMR_RDM_STATIC_TDMA : TSA_SIGMR_RDM_STATIC_TDMAB;
+-	if (tsa->tdms & BIT(TSA_TDMA))
+-		val |= TSA_SIGMR_ENA;
+-	if (tsa->tdms & BIT(TSA_TDMB))
+-		val |= TSA_SIGMR_ENB;
+-	tsa_write8(tsa->si_regs + TSA_SIGMR, val);
++	ret = tsa_setup(tsa);
++	if (ret)
++		return ret;
+ 
+ 	platform_set_drvdata(pdev, tsa);
+ 
 -- 
 2.45.0
 
