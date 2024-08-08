@@ -1,181 +1,117 @@
-Return-Path: <linux-kernel+bounces-280130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689E594C628
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:05:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29D894C62A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF0361F244EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:05:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 594FC2837CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C9D15820F;
-	Thu,  8 Aug 2024 21:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20D61586DB;
+	Thu,  8 Aug 2024 21:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OpFPRAR/"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FD0NbEAy"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967A57E1;
-	Thu,  8 Aug 2024 21:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5FA7E1;
+	Thu,  8 Aug 2024 21:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723151119; cv=none; b=cdWCVfM1/0f8e0/pWo/M2sPGOc3RAz7kW/4f03Lygm1p8H7BN29u8IDNwedKUuwuesisdKdA+XIfsAFGZxFwelG2MAS5nYpiYbhq3TuzPYDHOoufP0r4RYg0ZeUrO9SokvMh1xqxTuVbO7o92JHVVgsj6gATG7vwRxAv9RBFCwQ=
+	t=1723151193; cv=none; b=pqiw9+OsFf2N0jnfLVN93VuMTSexhcFcBLq/OVjZKB8C+q9CTNC4XDF5KXnk2KrJ89Bb3E1yumK55FIXtoSZ6fdXUssxTwyvI2M0gQQFchxk+cPUY6mQ8PQXXu0PTWimFBUwZnJXaqK95xLpPFTtsFljgJukCy4gVSXriah8Oqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723151119; c=relaxed/simple;
-	bh=AzxTlK8d/8HPZmIPTyg8dGto3vYoDePium7toEyLDM8=;
+	s=arc-20240116; t=1723151193; c=relaxed/simple;
+	bh=2KhSXvEi+4E0vAWvEqIBh/2CHUHT/ogt2idkJScSSbo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dAU00zwYb4V0w9H+7nJ3v/vGAwyLT+Xo9Ie4fe0nLXEBmXk5/y+0jPj9uGB/yVqpCfQ9R7R9J6v4xK+ap838NsxJmDJZyCoZ7TCr/UNASw4ALJtKKqGw3Vl8IuTDtzm3f+upU/kGsmOWO1ccggOgfXeCJKAPue1GmPgBnNDhxcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OpFPRAR/; arc=none smtp.client-ip=209.85.167.174
+	 To:Cc:Content-Type; b=TuT61rWHETNIv+TF5izn3hNNtyxab9M8kvOwv6adkzDmuEtaS4SUTrMobhedaWcUdRJlWX0+Szl3mmRm6JTM+0Q9FB5VWa8xKqyzqjVsz9FN5dILsoko4JNX6J/UDS+bZZU/FlsyiQ+Lai30wT/miisjI+BtfVqO8Qm2hsXNHhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FD0NbEAy; arc=none smtp.client-ip=209.85.160.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3dc16d00ba6so992030b6e.0;
-        Thu, 08 Aug 2024 14:05:17 -0700 (PDT)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-44fded90c41so7353521cf.3;
+        Thu, 08 Aug 2024 14:06:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723151116; x=1723755916; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723151191; x=1723755991; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hiuna0tSCDQBT7Iidr/W4z/hr7onQ/GC0/68Zq0Ogtk=;
-        b=OpFPRAR/e+gr9QlimS56Y/zJFLOnHOkGZOMYF/As4L6EP2JxsSPwh0NRMpBzM4nnrI
-         m+mZZeMcK/3aku0Vzo40wbMJBlscegUB0aKpHPwPOqZ1QagegFgfqtzdXbnqCmxxgfqa
-         ddUNY48KrlDVjIT5w6L0dIaTabt8UfyJsuP7C/L0MYGkVZG0jmWEBoVugfpE7QZDBTGO
-         G3PRN4yDWgx3oUS7xV+k4Kqul54zcBTaNCDWgyFbfCOfJxVmggQhf4yfhrHR9u4ZMOav
-         xXnKBsF7ZEzU+z64PTOzNybRUR5weCTe4fYCMRMvIeElDnxyteHnLW8SrH2dnyKKUkDm
-         b83Q==
+        bh=um7RbV0IrsDEC/LVZ0wcfpKaFxjLE/jsVz1wJxiXSzY=;
+        b=FD0NbEAyRUUMfzywvFipJgfv7glwUf3O0w/XQRsttqO8SPGXMxMta5LB0bLRVE1rwo
+         JXL+laCyZE/chqoN3tQH5FkfLBDs8UUYU0nGAjeq7p3TLZYtjOuUwfrh7jG1tJ013G59
+         FDmUhvY1SWd0q/X/8BSujxQ5jAlIB1/DPoA+1Y0fjtLFxLmnERc90lisHLOqsUNW9F1T
+         5sT3qfii0Ii1mdMqr/s7kv9FwSdX7gLW8w0tYqSCE4Ih0EQAKubqQolkH775WOZcErJr
+         ni8sGJZu3/g233UBi/1z+BMztsF8oHVvQahGAkLNvOae0ZdqFHhvRh1CQaxFjkoVK+lx
+         jCbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723151116; x=1723755916;
+        d=1e100.net; s=20230601; t=1723151191; x=1723755991;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hiuna0tSCDQBT7Iidr/W4z/hr7onQ/GC0/68Zq0Ogtk=;
-        b=VRZiEY7hqdc1EgmCHhkXkb6tVJ1tOGhKOPUNKWHlxNl3WAiuygxErC4GcxcO7X4L0O
-         lGrd5zMs+LCZkalH55SOzS5SoKofiVvBifXYYcYA5pRUumnnJJBSKzn/2mPOnCzzHPCO
-         44ZN7q/lEsFXR77iYpZiiYQXNcFLtFgUX+ynlhiDPN2+r/TOPNALGtFVXDXt+sroqfWV
-         UH9FZp20wgSFzCajpfjfG7Dso4PXrwUS54AmeXueuqcJXRHFy6fYUeWtjTyOCloiVBpt
-         9BFHinJJuJl7+Df2YIyG5mABJVb2AMvIwlkIeTmsqiBO11s7ZFvT50qWdfpVjYKwhLNz
-         eP/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWxsRIv09RPr5X+Dy3u8vUeaYbdZbP3jvXMKdZQyY0S3x6Sdi5/kPMQnKyolhLvEU8RUkPIE8yR3ImYkukqsaN7RUXG8ovS0xV7FgnKwGRarSUykyonp3aANcwRXCuwGrYgOgZo
-X-Gm-Message-State: AOJu0Yw+7B02Cc0Wvx1xkSwVlLnGtSCbkdGPnFzbUdR0dy2O40GiBxyp
-	XjHUwNCv1s7BdFU1/hafKt6kR/lLtUUIcapclt7cd4BsHW09iuBCSrgnxmh+tEffTO0foOaBjiB
-	p7sWKBwV38DV+nSPPwEY1kU2usPI=
-X-Google-Smtp-Source: AGHT+IH1naOuZoG8Xqc6HAUdtz5PmzN418+Kgpawt6IZkftwIf0pPolI/YMYZpCUzr2EhVq2FcQ0SA4hjYUHvVuUL1Q=
-X-Received: by 2002:a05:6808:178c:b0:3db:251b:c16 with SMTP id
- 5614622812f47-3dc3b45fa99mr3744915b6e.42.1723151116528; Thu, 08 Aug 2024
- 14:05:16 -0700 (PDT)
+        bh=um7RbV0IrsDEC/LVZ0wcfpKaFxjLE/jsVz1wJxiXSzY=;
+        b=u15ZfXi58Prto31kgYlH6cEVDeM0dcv5UO69XvP76xcp8WX1DibpHf3fEjAbhOs8SI
+         AYikdPxv5J/cU4frz3ytfsssn1NCCjwPaqA8UEj8k6cQKPqUviSEs4M7cdo92nVF3L/a
+         uNQsIEjFQ6y4+kd8bU7beF00IFCeVL6x7HRebeY1d3x7eaTHZ3EUf8IQmW6jcHjaKcPY
+         0sC5kqVurxNTb8/YJ/IZwTH3NK7UWRQMp5SB8Q+TPpFp+Z0Vx5U7bv/EH2s66Kw8M6Lm
+         SkvseoOmRURAUFBpc9teT4CbCIqjHuP+b1H0GzY9DK3wu/xRrd4Fup29GH/I9Kj9E6WU
+         Vsrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPczP2oOnbhhlH+4nQaIoqBeh+dK6S4pKAvug1W9EH0TJEZgN6stllSoDiUCSpVEmcrlYvCO7z40GvGT2dHPkWfP+6aL1RcTMP4bsGPMWGxDWSWwktZ28JpyOzdbbuwDo243KtQiz8
+X-Gm-Message-State: AOJu0Ywke9HsEj13hHytyPZ8QskRgU4lodkiylPF/N8/5NjCTDDVVjtb
+	3RvFBQJjopNrZI9MeMFV6w4ZYRzgLT57LZGr/UsKnN29sY9vmwQgYBakRnIxnVPCWZnaSs27sCw
+	WOr8RTKj6EHVgFKGb92oMBFPvKO0=
+X-Google-Smtp-Source: AGHT+IFaD819WBVk/HK17CFibSNyhPA8oi6zhLiHnkKTrwjvmmTG2vkQYtM2k0e0Wn4586us8DbbN3+Lvcdm4YU02vE=
+X-Received: by 2002:a05:622a:514d:b0:44f:f06a:d6f5 with SMTP id
+ d75a77b69052e-451d426d4fdmr41234451cf.36.1723151190677; Thu, 08 Aug 2024
+ 14:06:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808122019.3361-1-hailong.liu@oppo.com>
-In-Reply-To: <20240808122019.3361-1-hailong.liu@oppo.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 9 Aug 2024 09:05:05 +1200
-Message-ID: <CAGsJ_4z4+CCDoPR7+dPEhemBQN60Cj84rCeqRY7-xvWapY4LGg@mail.gmail.com>
-Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
- vm_area_alloc_pages() with high order fallback to order 0
-To: Hailong Liu <hailong.liu@oppo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>, 
-	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org, 
-	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
+References: <CAM_RzfZWns316GziuWbX-ZhO-xZm8rhssoC6tAdizGK1s3Ai+g@mail.gmail.com>
+ <20240806213602.GA79716@bhelgaas>
+In-Reply-To: <20240806213602.GA79716@bhelgaas>
+From: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
+Date: Thu, 8 Aug 2024 18:05:54 -0300
+Message-ID: <CAM_RzfYZLVTNgvML3OuBDoupcz4BxWHY3R1mUmVaskD5648x1A@mail.gmail.com>
+Subject: Re: [PATCH] PCI: remove type return
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	bhelgaas@google.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 9, 2024 at 12:20=E2=80=AFAM Hailong Liu <hailong.liu@oppo.com> =
-wrote:
+Bjorn Helgaas <helgaas@kernel.org> writes:
 >
-> The __vmap_pages_range_noflush() assumes its argument pages** contains
-> pages with the same page shift. However, since commit e9c3cda4d86e
-> ("mm, vmalloc: fix high order __GFP_NOFAIL allocations"), if gfp_flags
-> includes __GFP_NOFAIL with high order in vm_area_alloc_pages()
-> and page allocation failed for high order, the pages** may contain
-> two different page shifts (high order and order-0). This could
-> lead __vmap_pages_range_noflush() to perform incorrect mappings,
-> potentially resulting in memory corruption.
+> On Tue, Aug 06, 2024 at 05:54:15PM -0300, Guilherme Gi=C3=A1como Sim=C3=
+=B5es wrote:
+> > Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+> > > On Sat, 3 Aug 2024, Guilherme Giacomo Simoes wrote:
+> > >
+> > > > I can see that the function pci_hp_add_brigde have a int return
+> > > > propagation.
+> > ...
 >
-> Users might encounter this as follows (vmap_allow_huge =3D true, 2M is fo=
-r PMD_SIZE):
-> kvmalloc(2M, __GFP_NOFAIL|GFP_X)
->     __vmalloc_node_range_noprof(vm_flags=3DVM_ALLOW_HUGE_VMAP)
->         vm_area_alloc_pages(order=3D9) ---> order-9 allocation failed and=
- fallback to order-0
->             vmap_pages_range()
->                 vmap_pages_range_noflush()
->                     __vmap_pages_range_noflush(page_shift =3D 21) ----> w=
-rong mapping happens
+> > > The lack of return value checking seems to be on the list in
+> > > pci_hp_add_bridge(). So perhaps the right course of action would be t=
+o
+> > > handle return values correctly.
+> >
+> > Ok, so if the right course is for the driver to handle return value,
+> > then this is a
+> > task for the driver developers, because only they know what to do when
+> > pci_hp_add_bridge() doesn't work correctly, right?
 >
-> We can remove the fallback code because if a high-order
-> allocation fails, __vmalloc_node_range_noprof() will retry with
-> order-0. Therefore, it is unnecessary to fallback to order-0
-> here. Therefore, fix this by removing the fallback code.
+> pci_hp_add_bridge() is only for hotplug drivers, so the list of
+> callers is short and completely under our control.  There's plenty of
+> opportunity for improving this.  Beyond just the return value, all the
+> callers of pci_hp_add_bridge() should be doing much of the same work
+> that could potentially be factored out.
 >
-> Fixes: e9c3cda4d86e ("mm, vmalloc: fix high order __GFP_NOFAIL allocation=
-s")
-> Signed-off-by: Hailong Liu <hailong.liu@oppo.com>
-> Reported-by: Tangquan Zheng <zhengtangquan@oppo.com>
-> Cc: <stable@vger.kernel.org>
-> CC: Barry Song <21cnbao@gmail.com>
-> CC: Baoquan He <bhe@redhat.com>
-> CC: Matthew Wilcox <willy@infradead.org>
-> ---
+> Bjorn
 
-Acked-by: Barry Song <baohua@kernel.org>
-
-because we already have a fallback here:
-
-void *__vmalloc_node_range_noprof :
-
-fail:
-        if (shift > PAGE_SHIFT) {
-                shift =3D PAGE_SHIFT;
-                align =3D real_align;
-                size =3D real_size;
-                goto again;
-        }
-
-
->  mm/vmalloc.c | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
->
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 6b783baf12a1..af2de36549d6 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3584,15 +3584,8 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->                         page =3D alloc_pages_noprof(alloc_gfp, order);
->                 else
->                         page =3D alloc_pages_node_noprof(nid, alloc_gfp, =
-order);
-> -               if (unlikely(!page)) {
-> -                       if (!nofail)
-> -                               break;
-> -
-> -                       /* fall back to the zero order allocations */
-> -                       alloc_gfp |=3D __GFP_NOFAIL;
-> -                       order =3D 0;
-> -                       continue;
-> -               }
-> +               if (unlikely(!page))
-> +                       break;
->
->                 /*
->                  * Higher order allocations must be able to be treated as
-> ---
-> Sorry for fat fingers. with .rej file. resend this.
->
-> Baoquan suggests set page_shift to 0 if fallback in (2 and concern about
-> performance of retry with order-0. But IMO with retry,
-> - Save memory usage if high order allocation failed.
-> - Keep consistancy with align and page-shift.
-> - make use of bulk allocator with order-0
->
-> [2] https://lore.kernel.org/lkml/20240725035318.471-1-hailong.liu@oppo.co=
-m/
-> --
-> 2.30.0
+Okay, then what the action that the drivers must be do when the add
+bridge is failed?
 
