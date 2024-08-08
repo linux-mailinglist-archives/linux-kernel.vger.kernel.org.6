@@ -1,305 +1,234 @@
-Return-Path: <linux-kernel+bounces-279173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB3994B9EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:45:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B200394B9E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A5A1C21C36
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:45:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEB161C21C2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E32148853;
-	Thu,  8 Aug 2024 09:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDABC189BA4;
+	Thu,  8 Aug 2024 09:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C27E4ULa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPPpeXhO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BED373466
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D184086A;
+	Thu,  8 Aug 2024 09:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723110347; cv=none; b=N2phj3sk9LlyO1VEk0per+P9wkx5YQ6JNjvLYL3B+34/k/RKka7I/sGYPLRsmb7Yenyc5e0Hsr2jF9px8Nhp9UZ3KSwcYpCCYic3GtT7npUfWH4mfYtouRaEa5VqmJRR6bA+E9Xttf1GFlvBCNfGi3Ja++CqNsrKtFAfIHVaI5g=
+	t=1723110149; cv=none; b=CmO4uNpiZLTVBuqXH5m4K4QTgnyjVGC6YPc2TYKWiIQGg6/ONqj7Ft88ETrA1rpRvXSf4/LgTHsEyq3Tn/HzeC8LyEcuPEUxVxQla+pvLiqzh4lL1R5I2GNQInHzV4kL5RXtn5B+PZpSZlgMypcDCY/a+emBzhubp85BHjgBvqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723110347; c=relaxed/simple;
-	bh=O3OpgvGL6EBGYmIK1l4IN84yeeD25cz9IWaGe1jiQ8w=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=fe4XiqqFXqnzo+ckt6BXH9PBHIfoD9ygsM8mcZsHsJVt8zKTTBd1L19RKzBizPVNxpWwmUVzVbZRbjSebtU2b8dZ5Y/WC/RuBTq1CZG/kpi+jvc5YKWH5fGbhh0AK3JyDh1dhdCoagvdCtbkYtpJrJUgxTstffiuSy66wPhKKdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C27E4ULa; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723110346; x=1754646346;
-  h=date:from:to:cc:subject:message-id;
-  bh=O3OpgvGL6EBGYmIK1l4IN84yeeD25cz9IWaGe1jiQ8w=;
-  b=C27E4ULa16alxR+3RcgWOvkhyJqJie3hLSR/aHFn2uSxCzr6192xJRdo
-   S7QTiuAV1LqOOsfJhaMjDyz2oWS5Edyp8h7NhqVk4bT2Do5/8fdnpZqHU
-   d9kSzEevg7GjpBAMUeCE5zwMFTC48jZzhyRmeJ0uLybtklKgHjkTTkdmG
-   DouxNZvTXqtDGyZllT3KHCVXR6RiucBXhJnvPQUUiwcsRUJk7sNqYw32R
-   aDZhA72CsnB2do8jIGEcgJgrtXzftxtVoorRcryz2F4FDgMNIBZl0UtAS
-   fwCoU3EQitBzEseCHrq9oy5gapiF3e7Zrhe68hTcZYOocXFbYxps+wmVN
-   Q==;
-X-CSE-ConnectionGUID: LOvoJ8ayR0mKwE5cftzV1w==
-X-CSE-MsgGUID: /u2sSNzFQd2iIHZUeg8/Gg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="32371585"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="32371585"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 02:45:45 -0700
-X-CSE-ConnectionGUID: BPsFjTnvQNm9TB9WCLVK5A==
-X-CSE-MsgGUID: BkN7cjWSS9GuOkmwq0S5QQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="57122231"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 08 Aug 2024 02:45:44 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sbzh7-00065g-14;
-	Thu, 08 Aug 2024 09:44:46 +0000
-Date: Thu, 08 Aug 2024 17:41:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:sched/core] BUILD SUCCESS
- 4ae0c2b91110dab6f4291c2c7f99dde60ecc97d8
-Message-ID: <202408081744.Q2aszqsn-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1723110149; c=relaxed/simple;
+	bh=Ruu1Dibsz/xmziCilreMjnHwkPH7+MJ6SjlGdxeoEDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aUdVbzIL0dmzPPnC1PKSV3Qs8Aubr3ChF08witgzyQwj9bxxmXNS6UeLE3AedTRuDWBnCqzCgcBoEg/PXNX6v9l2qS7Kq3gnxDbHACHMpUtZzn2B8NOsyZKwu9e69AomGV7MMfdbvKJ6SCbyDwvG0GWcVXe+hOV0KUK3R+mjUyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPPpeXhO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7D3C32782;
+	Thu,  8 Aug 2024 09:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723110148;
+	bh=Ruu1Dibsz/xmziCilreMjnHwkPH7+MJ6SjlGdxeoEDA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EPPpeXhO4FAZMRakG3y7vAqRGeL1HUCfD1TObCc+Vp6GKpvNzJk0yrNDPsl++4blV
+	 f7ab4r5Vev2Jh5VYOOfqX/dVJ0kFU66V+X9JiF1HREsw2yviNl4ajGRPD4Rs+yogvE
+	 9qlvO53cvT1PjBTgAPSDXU4l06K2D0HPdlp9l5eCen7pWPDzf6zA74EtveZMqb8nAA
+	 p9ilGoqpH5vsvu0Yy3pViuT+PxYyBOMqXrFKH+imxJ1hKmITyJgL8cvd2BCdblGMEP
+	 ThoBCHryJKOdTcasDgndCZKEr0XF1rPv+z18ZTzoi3mAu1eH1VdOaOgNkkvyKzBSL0
+	 xmgfnvKicJAgg==
+Date: Thu, 8 Aug 2024 11:42:20 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
+	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v4 04/28] rust: alloc: implement `Allocator` for `Kmalloc`
+Message-ID: <ZrSS_N1R7zkiH_-E@pollux>
+References: <20240805152004.5039-1-dakr@kernel.org>
+ <20240805152004.5039-5-dakr@kernel.org>
+ <fe982cb6-4910-4ba2-ae4d-892514c9e7f7@proton.me>
+ <ZrJxkwF2Y59xln1e@pollux.localdomain>
+ <8ab83e4b-9c72-4a5d-974a-7f123753e7fe@proton.me>
+ <ZrNIaAcGkGU0d8I3@pollux>
+ <9e22d4ab-eff2-4c69-8a2f-f55a8eaeb892@proton.me>
+ <ZrP90NR1lOpDrQ0X@pollux>
+ <d005fe7e-74a8-4609-92e0-5dd3743ca060@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d005fe7e-74a8-4609-92e0-5dd3743ca060@proton.me>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-branch HEAD: 4ae0c2b91110dab6f4291c2c7f99dde60ecc97d8  sched/debug: Fix fair_server_period_max value
+On Thu, Aug 08, 2024 at 08:55:29AM +0000, Benno Lossin wrote:
+> On 08.08.24 01:05, Danilo Krummrich wrote:
+> > On Wed, Aug 07, 2024 at 08:15:41PM +0000, Benno Lossin wrote:
+> >>> So, that's not permitted. `free` can't be called with a dangling pointer. The
+> >>> kernel free functions (*1) can't handle it, and I can't detect it, since a
+> >>> dangling pointer does not have a descrete value.
+> >>
+> >> That is true, but only if we do not have access to the old layout of the
+> >> allocation. If we add `old_layout` as a parameter, then we can handle
+> >> dangling pointers.
+> > 
+> > Then we'd need `free` to be `fn free(ptr: NonNull<u8>, layout: Layout)` just to
+> > compare whether `ptr.as_ptr() == layout.align() as _`. Same for `realloc`, but
+> > that's less weird.
+> 
+> I don't think that's a problem (though we would check against the size
+> and not compare the address!). `Allocator` from stdlib also has the
+> extra argument.
 
-elapsed time: 1298m
+Because `Allocator` from stdlib actually needs it, e.g. they have to open code
+`realloc`, since userspace allocators don't give proper alignment guarantees.
 
-configs tested: 213
-configs skipped: 9
+Again, the kernel allocators neither need, nor take and honor this extra
+information.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> 
+> > It's also not that we safe code with that. `Box`, `Vec`, any other user, still
+> > would have to create the `Layout` before they call `A::free`.
+> 
+> But for `Box` it would just be `Layout::<T>::new()` and `Vec` needs
+> `Layout::<T>::new().repeat(self.cap)`.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                          axs101_defconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240808   gcc-13.2.0
-arc                   randconfig-002-20240808   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-20
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-14.1.0
-arm                                 defconfig   gcc-13.2.0
-arm                          moxart_defconfig   gcc-14.1.0
-arm                        neponset_defconfig   gcc-13.2.0
-arm                   randconfig-001-20240808   gcc-13.2.0
-arm                   randconfig-002-20240808   gcc-13.2.0
-arm                   randconfig-003-20240808   gcc-13.2.0
-arm                   randconfig-004-20240808   gcc-13.2.0
-arm                             rpc_defconfig   gcc-13.2.0
-arm                         s3c6400_defconfig   gcc-13.2.0
-arm                           stm32_defconfig   gcc-13.2.0
-arm64                            allmodconfig   clang-20
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240808   gcc-13.2.0
-arm64                 randconfig-002-20240808   gcc-13.2.0
-arm64                 randconfig-003-20240808   gcc-13.2.0
-arm64                 randconfig-004-20240808   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-13.2.0
-csky                                defconfig   gcc-14.1.0
-csky                  randconfig-001-20240808   gcc-13.2.0
-csky                  randconfig-002-20240808   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             alldefconfig   gcc-14.1.0
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240808   clang-18
-i386         buildonly-randconfig-002-20240808   clang-18
-i386         buildonly-randconfig-002-20240808   gcc-12
-i386         buildonly-randconfig-003-20240808   clang-18
-i386         buildonly-randconfig-004-20240808   clang-18
-i386         buildonly-randconfig-005-20240808   clang-18
-i386         buildonly-randconfig-006-20240808   clang-18
-i386         buildonly-randconfig-006-20240808   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240808   clang-18
-i386                  randconfig-001-20240808   gcc-12
-i386                  randconfig-002-20240808   clang-18
-i386                  randconfig-002-20240808   gcc-12
-i386                  randconfig-003-20240808   clang-18
-i386                  randconfig-004-20240808   clang-18
-i386                  randconfig-004-20240808   gcc-12
-i386                  randconfig-005-20240808   clang-18
-i386                  randconfig-005-20240808   gcc-12
-i386                  randconfig-006-20240808   clang-18
-i386                  randconfig-006-20240808   gcc-12
-i386                  randconfig-011-20240808   clang-18
-i386                  randconfig-012-20240808   clang-18
-i386                  randconfig-012-20240808   gcc-11
-i386                  randconfig-013-20240808   clang-18
-i386                  randconfig-014-20240808   clang-18
-i386                  randconfig-014-20240808   gcc-11
-i386                  randconfig-015-20240808   clang-18
-i386                  randconfig-015-20240808   gcc-12
-i386                  randconfig-016-20240808   clang-18
-i386                  randconfig-016-20240808   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240808   gcc-13.2.0
-loongarch             randconfig-002-20240808   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                         apollo_defconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-m68k                       m5275evb_defconfig   gcc-14.1.0
-m68k                       m5475evb_defconfig   gcc-13.2.0
-m68k                        mvme16x_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-14.1.0
-mips                        bcm47xx_defconfig   gcc-13.2.0
-mips                         db1xxx_defconfig   gcc-14.1.0
-mips                     decstation_defconfig   gcc-14.1.0
-mips                     loongson1b_defconfig   gcc-14.1.0
-mips                         rt305x_defconfig   gcc-14.1.0
-mips                   sb1250_swarm_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240808   gcc-13.2.0
-nios2                 randconfig-002-20240808   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-openrisc                       virt_defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                generic-32bit_defconfig   gcc-13.2.0
-parisc                randconfig-001-20240808   gcc-13.2.0
-parisc                randconfig-002-20240808   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                      chrp32_defconfig   gcc-14.1.0
-powerpc               randconfig-001-20240808   gcc-13.2.0
-powerpc               randconfig-002-20240808   gcc-13.2.0
-powerpc                     skiroot_defconfig   gcc-13.2.0
-powerpc64             randconfig-001-20240808   gcc-13.2.0
-powerpc64             randconfig-002-20240808   gcc-13.2.0
-riscv                            allmodconfig   clang-20
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                    nommu_virt_defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240808   gcc-13.2.0
-riscv                 randconfig-002-20240808   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240808   gcc-13.2.0
-s390                  randconfig-002-20240808   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                    randconfig-001-20240808   gcc-13.2.0
-sh                    randconfig-002-20240808   gcc-13.2.0
-sh                      rts7751r2d1_defconfig   gcc-14.1.0
-sh                           se7705_defconfig   gcc-14.1.0
-sh                           se7721_defconfig   gcc-13.2.0
-sh                        sh7757lcr_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240808   gcc-13.2.0
-sparc64               randconfig-002-20240808   gcc-13.2.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240808   gcc-13.2.0
-um                    randconfig-002-20240808   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240808   gcc-12
-x86_64       buildonly-randconfig-002-20240808   gcc-12
-x86_64       buildonly-randconfig-003-20240808   gcc-12
-x86_64       buildonly-randconfig-004-20240808   gcc-12
-x86_64       buildonly-randconfig-005-20240808   gcc-12
-x86_64       buildonly-randconfig-006-20240808   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                randconfig-001-20240808   gcc-12
-x86_64                randconfig-002-20240808   gcc-12
-x86_64                randconfig-003-20240808   gcc-12
-x86_64                randconfig-004-20240808   gcc-12
-x86_64                randconfig-005-20240808   gcc-12
-x86_64                randconfig-006-20240808   gcc-12
-x86_64                randconfig-011-20240808   gcc-12
-x86_64                randconfig-012-20240808   gcc-12
-x86_64                randconfig-013-20240808   gcc-12
-x86_64                randconfig-014-20240808   gcc-12
-x86_64                randconfig-015-20240808   gcc-12
-x86_64                randconfig-016-20240808   gcc-12
-x86_64                randconfig-071-20240808   gcc-12
-x86_64                randconfig-072-20240808   gcc-12
-x86_64                randconfig-073-20240808   gcc-12
-x86_64                randconfig-074-20240808   gcc-12
-x86_64                randconfig-075-20240808   gcc-12
-x86_64                randconfig-076-20240808   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240808   gcc-13.2.0
-xtensa                randconfig-002-20240808   gcc-13.2.0
+Let's take `Vec` for instance, there it's either
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+current code
+------------
+```
+	if cap != 0 {
+		unsafe { A::free(self.ptr.as_non_null().cast()) };
+	}
+```
+
+your proposal
+-------------
+```
+	let layout = Layout::<T>::array(self.cap).unwrap();
+	unsafe { A::free(self.ptr.as_non_null().cast(), layout) };
+```
+
+I really don't see how that's an improvement.
+
+> 
+> Though for `repeat` we need the `alloc_layout_extra` feature, which is
+> an argument against doing this.
+> 
+> >>> Surely, we could also let the caller pass the old alignment, but this all sounds
+> >>> complicated for something that is very trivial for the caller to take care of,
+> >>> i.e. just don't try to free something that was never actually allocated.
+> >>>
+> >>> It can also lead to subtle bugs, e.g. what if someone calls `Box::from_raw` for
+> >>> a ZST with some other random pointer? Currently, that doesn't hurt us, which for
+> >>> robustness, seems to be a good thing.
+> >>
+> >> I think we should forbid that. To me it's just plain wrong to take a
+> >> random integer literal and cast it to a ZST. IIRC it even is UB if that
+> >> points to a previously allocated object that has been freed (but I don't
+> >> remember where I read it...).
+> > 
+> > I think my argument about robustness still holds even if we forbid it.
+> > 
+> > The documentation says "For operations of size zero, every pointer is valid,
+> > including the null pointer." [1]
+> 
+> How does this increase robustness? I am not allowed to call `free` with
+> a random pointer, only pointers returned by that allocator. The same
+> should also be true for `Box::from_raw`. That way the ZST dangling
+> pointer stuff leaks into that API.
+
+This point was about your first proposal to use the alignment. With cosidering
+only the alignment we can't handle the case where `Box::from_raw` is called with
+a random pointer for a ZST, which *technically* isn't illegal. We can define it
+as illegal, but I'd consider it to be more robust, if we don't oops in case.
+
+But as you say checking the size instead of the alignment does not have this
+problem.
+
+> 
+> > [1] https://doc.rust-lang.org/std/ptr/index.html
+> > 
+> >>
+> >> Also if we use the size of the old layout instead of comparing alignment
+> >> with the address of the pointer, then we avoid this issue.
+> > 
+> > That is just another problem when passing the old `Layout` (or maybe just the
+> > old size as usize). Neither do we need the old size, nor do we honor it with any
+> > kernel allocator. This has the following implications:
+> > 
+> > (1) We never see any error if the old size that is passed is garbage (unless
+> >     it's non-zero, when it should be zero and vice versa), which is bad.
+> 
+> We could add debug support for that though?
+
+And add even more complexity just to avoid a simple `if !zero` check before
+calling `free`? I don't like that.
+
+Just to clarify, I'm not against passing the old layout in general. But I really
+don't want to pass something in that is not required *and* not honored by a
+single kernel allocator.
+
+IMO, the only other valid reason to accept unneeded arguments would be if we
+could use the `Allocator` interface from stdlib.
+
+> 
+> > (2) We'd need `free` to be `fn free(ptr: NonNull<u8>, size: usize)`, which is
+> >     confusing, because it implies that an actual free relies on this size for
+> >     freeing the memory.
+> 
+> I don't think that it is confusing to ask for the old layout.
+
+It is always confusing if a function asks for information that it doesn't need
+and doesn't consider, because asking for it in the first place creates the
+impression that it is indeed needed and considered.
+
+> 
+> > If we want to avoid (1) and (2), we'd need to make it
+> > `fn free(ptr: NonNull<u8>, zero: bool)` instead, but then also the caller can
+> > just check this boolean and conditionally call `free`.
+> 
+> Yeah having `free` with a `zero: bool` sounds like a bad idea.
+> 
+> > I don't really see why it's better to let `free` do the `if !zero` check.
+> 
+> You did not reply to my last argument:
+> 
+> >> I think it's better to just let `Box` and `Vec` figure out if calling `free` is
+> >> the right thing to do. The code for that is simple and obvious, i.e. check if
+> >> `T` is a ZST.
+> >
+> > I don't think that it is as simple as you make it out to be. To me this
+> > is functionality that we can move into one place and never have to think
+> > about again.
+> > Also if we at some point decide to add some sort of debugging allocator
+> > (am I right in assuming that such a thing already exists for C?) then we
+
+The C side allocators have quite a lot of debugging capabilities, but there is
+no separate one.
+
+> > might want to tag on extra data in the allocation, in that case it would
+> > be very useful if the allocator also saw zero-sized allocations, since
+> > we should check all allocations.
+
+What would such a debugging allocator do on the Rust side?
+
+The allocators we have are just simple wrappers around the real kernel
+allocators from the C side.
+
+I don't really see the need for some sort of debugging allocator.
 
