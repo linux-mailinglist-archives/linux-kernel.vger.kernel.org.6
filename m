@@ -1,207 +1,161 @@
-Return-Path: <linux-kernel+bounces-279312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C67994BBA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E565394BBAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD966B24371
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39DC9B21789
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2974E18A925;
-	Thu,  8 Aug 2024 10:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1D918A925;
+	Thu,  8 Aug 2024 10:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f047jw5F"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gjDr0gbZ"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554F618A6AB
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620B918A6AB
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723114266; cv=none; b=g4MWgLYJ8GfDkr1FS+0nXMroqVQCicbov4GRjgIwcpQuGbj+2Q8W7WIp8+7nMmippXJnXJSmLzg57al1/CIAQdrJ1uwotR5sQDBV/kzf68eTGflWuU8oAWE0jGI4VMFAc7VnqkHmfzVDDMRZRIRB1stnaeoQbZAAoEki0HvDPSE=
+	t=1723114357; cv=none; b=VeoF87ZpCSkmaNDQd8L5ys09atppkB2e2JBlKg6dOqyAix08bfert7sUI7+kXqI22+NK3vkkkz5jqDC6ckEzTKAXusCh255F/1KZ/nw844gK3SFDNaVfu7gn8Y+fy7CkkCJ1mE+HfRaWcs0GOLCycgcty+TzFcTGZ4cMaggYrTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723114266; c=relaxed/simple;
-	bh=sDXpopSO8OTBT44eDgHGiG7YygXpNJImxfELGAGEqBI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=U8IPHfCEh/Xy9dzYFjSCbl2/GDFHg9NeTVbz8IEGfjWWenM9NrBrGNJUMIQkI3bDxuWLMdz3z8Es+G6e7nPxJny6jM77u31RCQO8k7heqObHfRaTue53BE+jFPXx+zWT0rRDxiey8e9KEBQ18TLsn9/8V58AIxtVg0X2JbTMzRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f047jw5F; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-368380828d6so440430f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 03:51:03 -0700 (PDT)
+	s=arc-20240116; t=1723114357; c=relaxed/simple;
+	bh=32a7io2SChK8ZRpVpwvY+OWrnTIu/XJXf81hGGeOTAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oxnVOOiEMnAn9rSlevU2SisXkGI3pp8hOehvuZkeUeOX6ZDhzs32c5PrAQtINjdV1Cpv1s0DwoeTYJi1bqlE96/RZdezX6VsoVqmHAgTdYpFJieb4MBVWKSLmfU4bl3VqXgHYwbII/5yWqlrNuRUcdC0y3B39wf2x4qrv+qoH/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gjDr0gbZ; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7a18ba4143bso670160a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 03:52:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723114262; x=1723719062; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4rFtwmjq+6gSRzGjHdsp3/4i675ak1VK4xDruVkNphg=;
-        b=f047jw5FwYxAbxtVDkLiTSY0n5u3BMytMpPuQkPyJzLgOCZd4MAl9/nG5lWdInFA4M
-         jvUuDiqCclDrjTUaeIO7aIyLKRf+fzmvtTtpa3SuViQmHEVHyqrjxZWdtLbUtafCFCjo
-         uiEjoIWMqlm6QHu95VjqZx+Uq4aT4diLb1XAZWAtJWhEHvP9qauqWyV28bEwcZ7b4HBE
-         //3AELE+bUld2ar4FxhGIc1FfxyfrXcoWy74lMQ43zLT6KKk32igGB1XciipiufA/9Ng
-         D43eNaOjPVIug0AGN27wq7F0tSFNl5nTivC7vIzEcDIAVJw/u0fc0EsUIxw/l+BA05Hq
-         Sspw==
+        d=bytedance.com; s=google; t=1723114355; x=1723719155; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZZLYjyqauE0XTZU17OzHb00VCoqMdI4Lj7iAwvx9OiM=;
+        b=gjDr0gbZ+9eBdXZfGTUHZPOdah6oNu62Qc0ulLO7krPUaVu+uMfFn5TULiyAM1k8O8
+         +kKcwyHA/IXRVoZ9VedUugqY3zyaxpCRv2KdwNlCq+Q1SN9hmWaFW7Fzjo1KMvUR7AjM
+         uJmHeW86Wnr+VDewASXPReuYl4KEPkfPbJCmDYhWMgJ7SDKnkTHrNYZxerGyDXYpv6F5
+         ubkmBFXPjGjjZOu09yEXCPhBcZNY0s8kIzZYougqXUHeXOGeNCHvjq0TMqNA6csYwnVK
+         GDUueAlUHv9uf+F6A16U4glQNE05SqXBk1N8mQ0wnyRM9/zTkqnCgAgH2vlpwO1VQUch
+         Cmvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723114262; x=1723719062;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4rFtwmjq+6gSRzGjHdsp3/4i675ak1VK4xDruVkNphg=;
-        b=iap0GFV8vSfg34/Li1vj5ERoKi9cXUbJ0zt+e/zYOe1VmKFGPXsL0W1avo6+ah2Asw
-         qK1vG3+QN6MFwzsCLQ7WdYbroBiV+AcXhh3wP0wuEUyhFtpob/SeoajNQ94p0EoEslSq
-         0CtRtG79O5RUWEO2iAhc/8t0uBjZq8pCUw5hJLrugFNe/1QzSTiPFUVKCFR/VMBk7cAm
-         jENfr58QB5O+83Gdvb486NbWMuXk/Rhs+Y2QUjBM/GekNX5pdU+lsoKtwaRETVqiMrfz
-         tZcDO9LcHcAmKvvWiy3CIncC9iCCexb+hls4o6gYaiLcX2zySZK23y1FUfTgIrelM7Rz
-         S1TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOl3P1o1drNcCDTg8HwfuRkkgJu9qadT9VxdR8naR7t5sT6WwkzWZoS4YFEbY4RZ2pe5P2rl7CI87y7MeHZox6A1xm2hLPmTCqcQqm
-X-Gm-Message-State: AOJu0YyEGRF2sfinxWSP5eIjUq/95cb9qit219LYxwVjwIUFs4vKOdNf
-	1+KCMeRO6lVaRma7bJylTxK/n7o39QCnLBTFOw3yFHlTBlHNH771Zr8bg/qD7YU=
-X-Google-Smtp-Source: AGHT+IHYODqKwPOkMQH3b0u677P1na0+txhJF5Z0f9RBhMkkYBGsORMwRzJ90PQBs6LpH+5KU3ZylA==
-X-Received: by 2002:adf:f3c4:0:b0:369:e72c:875f with SMTP id ffacd0b85a97d-36d2756eeb3mr1100344f8f.48.1723114262310;
-        Thu, 08 Aug 2024 03:51:02 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d27180b97sm1497150f8f.46.2024.08.08.03.51.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 03:51:01 -0700 (PDT)
-Message-ID: <16ea091e-0f3b-44cf-b3b4-b07efabe9c02@linaro.org>
-Date: Thu, 8 Aug 2024 11:51:00 +0100
+        d=1e100.net; s=20230601; t=1723114355; x=1723719155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZZLYjyqauE0XTZU17OzHb00VCoqMdI4Lj7iAwvx9OiM=;
+        b=st82osNXdrzfoAG+n2Z7fJa8gbTItiB6YRG9tZ38rvLCufjPeHSvSvYDYe9EDxxQyS
+         e55j24hG1NaX52EBFCCdkD6x/SvizmttQk/0tQpziGygNPSqqH61cUa1ZLASc/PoTBp9
+         2tXhc+BftUyPo2QoSH4UBieIYtTlUZTDtBbDepDH5cMXTuFWUW5+2L46pKTun4lBaBeB
+         E8nK+jhgx3D9DXiDSJaWaPLBsnGGspGYJxL3dpNt1eg6Kq6AyotbOAPv5AdHdfrOBypS
+         7iIRyZvM4TLLM0Z4k8if6IZt1mfT0cuEkSHpiQAySH5ORiZHLc/HoTSf516oWEDU47Vn
+         Sotw==
+X-Forwarded-Encrypted: i=1; AJvYcCXo0ghVwjPpQoSl+O9I06/Ozqj+ADpRAmmyCXSfE5AaSLrLPDFPVZ6c9J6A7XgEL0bYoFvnoL5jYqTt4Sz2ZbCoKbkLs/SZxjtOFly+
+X-Gm-Message-State: AOJu0YxDoCNNMKgVt9EbMUtHHob9u4AQajqbBVW2PgLsRiaThprfz4NL
+	JdZtEMYrgVXLg7N4mOEb/KzdeJCMhpHisi2N83EdDCKyphFKeGtuPEjJ/2j6IuAI+WITY79F+TA
+	rRNFhTfK5ZwWZIZ57VCUJ4oU2qYhGbYjidMkD
+X-Google-Smtp-Source: AGHT+IFcr7xL28cGBaoGPz4X18wYJjgXp6byzUZO/GroOKeF0RdMycw/CywkZwmJsg+D4t4pUbw8contMlYR7PysfzU=
+X-Received: by 2002:a05:6a21:6d92:b0:1c4:dfa7:d3ce with SMTP id
+ adf61e73a8af0-1c6fcebedfemr1441920637.17.1723114354688; Thu, 08 Aug 2024
+ 03:52:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf scripts python arm-cs-trace-disasm.py: Skip disasm
- if address continuity is broken
-From: James Clark <james.clark@linaro.org>
-To: Leo Yan <leo.yan@arm.com>,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- scclevenger@os.amperecomputing.com
-Cc: acme@redhat.com, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- darren@os.amperecomputing.com, james.clark@arm.com, suzuki.poulose@arm.com,
- Al.Grant@arm.com, Mike Leach <mike.leach@linaro.org>
-References: <20240719092619.274730-1-gankulkarni@os.amperecomputing.com>
- <543813f6-cb1f-4759-b26f-75246750814d@linaro.org>
- <f72038a0-c6b5-4245-8515-3b735ca38cbb@linaro.org>
- <ae1b2d8c-588a-4f0a-b3c9-c869f8dd0f25@os.amperecomputing.com>
- <00fac24c-d664-4ebb-8c60-f4697b7f76c1@linaro.org>
- <8b53a424-19f7-4042-a2db-e1c5d051f9cc@os.amperecomputing.com>
- <6adf84fa-b755-4d7a-957a-9bf01e442238@linaro.org>
- <d71dff17-6f1e-4a67-89c6-7ecc86af0f3a@linaro.org>
- <6f535bb6-2cee-48e6-93f1-ea19887bae74@os.amperecomputing.com>
- <027c76a9-9bd4-43e9-a170-8391a0037291@linaro.org>
- <3d7a6f93-0555-48fa-99cb-bf26b53c2da5@os.amperecomputing.com>
- <d6170beb-754e-4be3-8ff7-18acddccf077@linaro.org>
- <4ba157c2-4a56-4d77-9a15-071e46adc33b@os.amperecomputing.com>
- <d3c86965-090b-41c5-85a9-187704754072@arm.com>
- <915fefb2-b0bc-4306-83ec-22570719e8e4@os.amperecomputing.com>
- <d34d402c-7765-41be-8a7c-b9d564c5bedb@arm.com>
- <2c0cd5b7-1ca6-4088-817c-209026266d58@linaro.org>
-Content-Language: en-US
-In-Reply-To: <2c0cd5b7-1ca6-4088-817c-209026266d58@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240805082106.65847-1-jasowang@redhat.com> <CACycT3uM1jSdqFT0LGqy1zXZkWF8BNQN=8EMKYMoyP_wjRtsng@mail.gmail.com>
+ <CACGkMEtYE1OY+okxHAj=cVfW-Qz45an28oO=Wv15yOtpD6UqdQ@mail.gmail.com>
+In-Reply-To: <CACGkMEtYE1OY+okxHAj=cVfW-Qz45an28oO=Wv15yOtpD6UqdQ@mail.gmail.com>
+From: Yongji Xie <xieyongji@bytedance.com>
+Date: Thu, 8 Aug 2024 18:52:23 +0800
+Message-ID: <CACycT3vAv1K0yBKgc_8GBLpEPwASTCCPZYAxMyUROQsyntQdOw@mail.gmail.com>
+Subject: Re: Re: [PATCH] vduse: avoid using __GFP_NOFAIL
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio Perez Martin <eperezma@redhat.com>, Maxime Coquelin <maxime.coquelin@redhat.com>, 
+	virtualization@lists.linux.dev, linux-kernel <linux-kernel@vger.kernel.org>, 
+	21cnbao@gmail.com, penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 8, 2024 at 10:58=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> On Wed, Aug 7, 2024 at 2:52=E2=80=AFPM Yongji Xie <xieyongji@bytedance.co=
+m> wrote:
+> >
+> > On Mon, Aug 5, 2024 at 4:21=E2=80=AFPM Jason Wang <jasowang@redhat.com>=
+ wrote:
+> > >
+> > > Barry said [1]:
+> > >
+> > > """
+> > > mm doesn't support non-blockable __GFP_NOFAIL allocation. Because
+> > > __GFP_NOFAIL without direct reclamation may just result in a busy
+> > > loop within non-sleepable contexts.
+> > > ""=E2=80=9C
+> > >
+> > > Unfortuantely, we do that under read lock. A possible way to fix that
+> > > is to move the pages allocation out of the lock into the caller, but
+> > > having to allocate a huge number of pages and auxiliary page array
+> > > seems to be problematic as well per Tetsuon [2]:
+> > >
+> > > """
+> > > You should implement proper error handling instead of using
+> > > __GFP_NOFAIL if count can become large.
+> > > """
+> > >
+> > > So I choose another way, which does not release kernel bounce pages
+> > > when user tries to register usersapce bounce pages. Then we don't nee=
+d
+> > > to do allocation in the path which is not expected to be fail (e.g in
+> > > the release). We pay this for more memory usage but further
+> > > optimizations could be done on top.
+> > >
+> > > [1] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8Z=
+Q2saLnUdfOGOLg@mail.gmail.com/T/#m3caef86a66ea6318ef94f9976ddb3a0ccfe6fcf8
+> > > [2] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8Z=
+Q2saLnUdfOGOLg@mail.gmail.com/T/#m7ad10eaba48ade5abf2d572f24e185d9fb146480
+> > >
+> > > Fixes: 6c77ed22880d ("vduse: Support using userspace pages as bounce =
+buffer")
+> > > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> > > ---
+> >
+> > Reviewed-by: Xie Yongji <xieyongji@bytedance.com>
+> > Tested-by: Xie Yongji <xieyongji@bytedance.com>
+>
+> Thanks.
+>
+> >
+> > Have tested it with qemu-storage-daemon [1]:
+> >
+> > $ qemu-storage-daemon \
+> >     --chardev socket,id=3Dcharmonitor,path=3D/tmp/qmp.sock,server=3Don,=
+wait=3Doff \
+> >     --monitor chardev=3Dcharmonitor \
+> >     --blockdev driver=3Dhost_device,cache.direct=3Don,aio=3Dnative,file=
+name=3D/dev/nullb0,node-name=3Ddisk0
+> > \
+> >     --export type=3Dvduse-blk,id=3Dvduse-test,name=3Dvduse-test,node-na=
+me=3Ddisk0,writable=3Don
+> >
+> > [1] https://github.com/bytedance/qemu/tree/vduse-umem
+>
+> Great, would you want to post them to the Qemu?
+>
 
+Looks like qemu-storage-daemon would not benefit from this feature
+which is designed for some hugepage users such as SPDK/DPDK.
 
-On 08/08/2024 10:21 am, James Clark wrote:
-> 
-> 
-> On 08/08/2024 8:42 am, Leo Yan wrote:
->> On 8/8/2024 5:36 AM, Ganapatrao Kulkarni wrote:
->>>
->>> On 08-08-2024 12:50 am, Leo Yan wrote:
->>>> On 8/7/2024 5:18 PM, Ganapatrao Kulkarni wrote:
->>>>
->>>>> Is below diff with force option looks good?
->>>>>
->>>>> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py
->>>>> b/tools/perf/scripts/python/arm-cs-trace-disasm.py
->>>>> index d973c2baed1c..efe34f308beb 100755
->>>>> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
->>>>> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
->>>>> @@ -36,7 +36,10 @@ option_list = [
->>>>>                       help="Set path to objdump executable file"),
->>>>>           make_option("-v", "--verbose", dest="verbose",
->>>>>                       action="store_true", default=False,
->>>>> -                   help="Enable debugging log")
->>>>> +                   help="Enable debugging log"),
->>>>> +       make_option("-f", "--force", dest="force",
->>>>> +                   action="store_true", default=False,
->>>>> +                   help="Force decoder to continue")
->>>>>    ]
->>>>>
->>>>>    parser = OptionParser(option_list=option_list)
->>>>> @@ -257,6 +260,12 @@ def process_event(param_dict):
->>>>>                   print("Stop address 0x%x is out of range [ 0x%x 
->>>>> .. 0x%x
->>>>> ] for dso %s" % (stop_addr, int(dso_start), int(dso_end), dso))
->>>>>                   return
->>>>>
->>>>> +       if (stop_addr < start_addr):
->>>>> +               if (options.verbose == True or options.force):
->>>>> +                       print("Packet Discontinuity detected 
->>>>> [stop_add:0x%x start_addr:0x%x ] for dso %s" % (stop_addr, 
->>>>> start_addr, dso))
-> 
-> The options.force for the print should be "options.verbose or not 
-> options.force" I think? You want to print the error until the user adds 
-> -f, then hide it. Unless verbose is on.
-> 
->>>>> +               if (options.force):
->>>>> +                       return
-> 
-> Oops I had this one the wrong way around in my example. This way is 
-> correct.
-> 
->>>>
->>>> I struggled a bit for the code - it is confused that force mode 
->>>> bails out
->>>> and the non-force mode continues to run. I prefer to always bail out 
->>>> for
->>>> the discontinuity case, as it is pointless to continue in this case.
->>>
->>> Kept bail out with force option since I though it is not good to hide
->>> the error in normal use, otherwise we never able to notice this error in
->>> the future and it becomes default hidden. Eventually this error should
->>> be fixed.
->>
->> As James said, the issue should be fixed in OpenCSD or Perf decoding 
->> flow.
->>
->> Thus, perf tool should be tolerant errors - report warning and drop
->> discontinuous samples. This would be easier for developers later if face
->> the same issue, they don't need to spend time to locate issue and 
->> struggle
->> for overriding the error.
->>
->> If you prefer to use force option, it might be better to give 
->> reasoning and
->> *suggestion* in one go, something like:
->>
->>      if (stop_addr < start_addr):
->>         print("Packet Discontinuity detected [stop_add:0x%x 
->> start_addr:0x%x ] for dso %s" % (stop_addr, start_addr, dso))
->>         print("Use option '-f' following the script for force mode"
->>         if (options.force)
->>             return
->>
->> Either way is fine for me. Thanks a lot for taking time on the issue.
->>
->> Leo
-> 
-> But your diff looks good Ganapat, I think send a patch with Leo's extra 
-> help message added and the first force flipped.
-
-One other small detail about Leo's suggestion print out. Can you add an 
-instruction of how to keep the warnings as well:
-
-   print("Use option '-f' following the script for force mode. Add '-v' \
-     to continue printing decode warnings.")
-
+Thanks,
+Yongji
 
