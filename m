@@ -1,64 +1,89 @@
-Return-Path: <linux-kernel+bounces-279455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A989994BD80
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:29:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95AF794BD85
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E6FEB242C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:29:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 511541F222B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787B118FC89;
-	Thu,  8 Aug 2024 12:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B25F18C92A;
+	Thu,  8 Aug 2024 12:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUFymcJd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CNgCi2wp"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BDC18C937
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B06154C17;
+	Thu,  8 Aug 2024 12:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723120003; cv=none; b=T/Hz4y7yN4yB87iMPTdTdPpMGFNAQX3B8ZlKdZH9juD5lVqsHGCqw3mPVjIftlMsPMtweI3mtAcOx4oob7oAf51Dw70QoVmzjmRT5+3tNfHBbs9OIkAeCeLA10jiDXhnjPEUfSF7YdaywwDiIJ4xPlA8w4b4gglB5b5Nae4SM/Y=
+	t=1723120136; cv=none; b=ouAwWbKz/4tr2xE73jkRYdtO1MIK0GHgCnQejSZhLiHaoEI+JGyyUmhoNKlnWIcjMQJO+E//xn40OYgF3yFxbe/4p76ycrmWP1bUWSCiFh7F45hF9HoOWKH5nON/YC9/FStOGiOHYTCcdf8b5ECElpD3hyoGDjLyXueZS45j0FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723120003; c=relaxed/simple;
-	bh=rEyXbt+nHyXfhaHjwgifZvCFRsjRrNRv8uaioILzvnk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jGGsqCOX7hJQijdjwhU6eu2fKqe0USB8SQe9yn26mFrZRW/G3rjjnfRF4Ds4G7FDh69LZePwV6xrcscszSUqHb0Zr/MjddIpeja4+7/mA6/pZNuWxVng53Qw2a0zhb7fobSHaK4PcookMG157mYKtDmbyPcFmCXXgdtPWN+7G58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUFymcJd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB218C4AF19;
-	Thu,  8 Aug 2024 12:26:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723120003;
-	bh=rEyXbt+nHyXfhaHjwgifZvCFRsjRrNRv8uaioILzvnk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oUFymcJd+FLhY18BhBN9DZVPJ5JTVDrqAPSAC08ovTReEk4oiVx0HGCueUBlAO2d/
-	 GvY2OIXFCWhWSWSrcR0/IgtcWHeg+GDS5rY+ZnBypCh3mrZnBeF3c4ZiFOkk7ag9VA
-	 buMx+OvGVC1wk/KTfh2l4RZRNsfMQ5jNGttUwgs3ZDiubg4DWsrYu3ETCzC7gGdO+f
-	 tvJvYV43YEGMsfIBSAXQjB0sH7ncL85O0aVtYZLJqNtdgpt5asn4sOar/BaMAg69Mk
-	 PlGQg35UZN6JchM7EMAomGYibgnuSdR3VKZh4UhorTCHm9ZE/GyTjEVd1F0YMt4aS1
-	 KH3yMmcQCMXaA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1sc2E5-00000000oDm-0Iiu;
-	Thu, 08 Aug 2024 14:26:41 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: 
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Cleber Rosa <crosa@redhat.com>,
-	John Snow <jsnow@redhat.com>,
+	s=arc-20240116; t=1723120136; c=relaxed/simple;
+	bh=0FdOeou9MfhtoDpBtONpO0k3RoBpQmdH3thG2TSFsD4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JotMc7NkM4IrGtVBI4AT0XwbEVKsULfLZTN8EraXPFGhMUt4RBeMEAqUxkOafqWG+f9r11F/kkY+4Fpn2sNYr3VZfkZ6twVbOXdeyuITW5oe9vF7T9vkXWrlcmq5Geq2q9GFpfgkarSek4BWdQwFbpUYMZjFk+DmOs/kUS7V2NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CNgCi2wp; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ff1cd07f56so8054765ad.2;
+        Thu, 08 Aug 2024 05:28:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723120135; x=1723724935; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0FdOeou9MfhtoDpBtONpO0k3RoBpQmdH3thG2TSFsD4=;
+        b=CNgCi2wpUmRZojjGLmBAkNq3kvT8jIEYdD7CWiXrtrhenXBtPhEwT/M9hEZn1kvMc4
+         Q1YYY4y5/4ONbFM3lr3p/+JSMQdX7g/jwcaopeVq22+uwPc4BIq+mYBNcKgSLkd9O+Pf
+         Wfk6b+CxlMhJOopRH0O/mCUOwfKVTnNE/i2FhEFEWps4riOauiKq+gClfe6CEev62wgl
+         9CdWXPaCdau9vVfE4XcVo4ulxW+wQtMaIgc8OEoXl6m6sYRKCu0RFd95ehVO003Y7aLV
+         m2lgtKuhkixUv9V+j3Zb3aIP2J7hrfXwtmePsUPhacHy3ABOb5IZE9+ds8vev+e4cJ/h
+         AEYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723120135; x=1723724935;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0FdOeou9MfhtoDpBtONpO0k3RoBpQmdH3thG2TSFsD4=;
+        b=tzke7E/hCCQvd63Tm51o6CZE+SaxBHiPa9HTfxf4bJoHGccnkfBrRDpvfDT50lzcU1
+         9KrZBi8WMkR0Jxu8he5x/8gMnD0M4IW4FeM27MDeqnVnaJJZ3q6hv7VroT8BcHgxXMOA
+         jgvw4tHdbo3HTDVP3AzgiHI4gTUK4KzHqvXYW+WR2UHJY2hlknTzFehc7Xewic0zaq7Z
+         lUdxkxKU7eanEH8/CPFWzwjePoN/vdK5StmjRAv2AiPxQSPSyVZ9l2TT4XmQGgELEk9d
+         QrzYNbg24swbn+86DzxJjgFZWfaXMeZwspF0TjFqb4/ygvh1XE+vBhYwCbhmATU1hPCQ
+         HTIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlmvdHBiLdz6D2gxhDIAj3SlACCXtRxRjPKCYns03GqoocQwZpoqeD2otxHAbLx5C5eAR1/oY82Dc7aZNV5+S5ErYqZtgjd7qTmGiIb/+A8vUQ22RUiGoYoPI/hR3oI8gRKc9JjaU2MQsphd835j6ZQAnHdTgXil0DHdAv8rO/UkQJTnPM
+X-Gm-Message-State: AOJu0Ywfr/J1nQ2CiFBA4XL9EaYnOSJf3J4GY9gjPgb0489vQzHsofom
+	jdusNinoIiob9JcLYmHqZy2PQbIhvi5mw/6jZN2sajojB1SRi+Jp
+X-Google-Smtp-Source: AGHT+IFlI/nsaAsoAwlZ930o2MviWWEEUgxZQpRbcm/HigNXs4xBllGLYD/zd0E0rXPSBOqj+jqbQw==
+X-Received: by 2002:a17:902:ef10:b0:1fb:94e2:5643 with SMTP id d9443c01a7336-200952248e8mr18880575ad.12.1723120134582;
+        Thu, 08 Aug 2024 05:28:54 -0700 (PDT)
+Received: from dev0.. ([49.43.168.245])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905f64dsm123258585ad.126.2024.08.08.05.28.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 05:28:54 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: kuba@kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	jain.abhinav177@gmail.com,
+	javier.carrasco.cruz@gmail.com,
 	linux-kernel@vger.kernel.org,
-	qemu-devel@nongnu.org
-Subject: [PATCH v6 10/10] scripts/arm_processor_error.py: retrieve mpidr if not filled
-Date: Thu,  8 Aug 2024 14:26:36 +0200
-Message-ID: <f23fd60f36a9d1a1483f80eb298de06526b46eb6.1723119423.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1723119423.git.mchehab+huawei@kernel.org>
-References: <cover.1723119423.git.mchehab+huawei@kernel.org>
+	linux-kselftest@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH v4 1/2] selftests: net: Create veth pair for testing in networkless kernel
+Date: Thu,  8 Aug 2024 12:28:47 +0000
+Message-Id: <20240808122847.25721-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240807182834.25b8df00@kernel.org>
+References: <20240807182834.25b8df00@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,75 +91,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Add support to retrieve mpidr value via qom-get.
+On Wed, 7 Aug 2024 18:28:34 -0700 Jakub Kicinski wrote:
+> That's not the right syntax..
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Thanks for the feedback Jakub. I have rectified this and while at it,
+I tested using vng on a network based kernel and found another issue in
+veth removal logic. I have fixed that as well.
+
+Please kindly check the v5 series here:
+https://lore.kernel.org/all/20240808122452.25683-1-jain.abhinav177@gmail.com/
 ---
- scripts/arm_processor_error.py | 30 ++++++++++++++++++++++--------
- 1 file changed, 22 insertions(+), 8 deletions(-)
-
-diff --git a/scripts/arm_processor_error.py b/scripts/arm_processor_error.py
-index b464254c8b7c..756935a2263c 100644
---- a/scripts/arm_processor_error.py
-+++ b/scripts/arm_processor_error.py
-@@ -5,12 +5,10 @@
- #
- # Copyright (C) 2024 Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
- 
--# TODO: current implementation has dummy defaults.
--#
--# For a better implementation, a QMP addition/call is needed to
--# retrieve some data for ARM Processor Error injection:
--#
--#   - ARM registers: power_state, mpidr.
-+# Note: currently it lacks a method to fill the ARM Processor Error CPER
-+# psci field from emulation. On a real hardware, this is filled only
-+# when a CPU is not running. Implementing support for it to simulate a
-+# real hardware is not trivial.
- 
- import argparse
- import re
-@@ -168,11 +166,27 @@ def send_cper(self, args):
-         else:
-             cper["running-state"] = 0
- 
-+        if args.mpidr:
-+            cper["mpidr-el1"] = arg["mpidr"]
-+        elif cpus:
-+            get_mpidr = {
-+                "execute": "qom-get",
-+                "arguments": {
-+                    'path': cpus[0],
-+                    'property': "x-mpidr"
-+                }
-+            }
-+            ret = qmp_cmd.send_cmd(get_mpidr, may_open=True)
-+            if isinstance(ret, int):
-+                cper["mpidr-el1"] = ret
-+            else:
-+                cper["mpidr-el1"] = 0
-+
-         if arm_valid_init:
-             if args.affinity:
-                 cper["valid"] |= self.arm_valid_bits["affinity"]
- 
--            if args.mpidr:
-+            if "mpidr-el1" in cper:
-                 cper["valid"] |= self.arm_valid_bits["mpidr"]
- 
-             if "running-state" in cper:
-@@ -360,7 +374,7 @@ def send_cper(self, args):
-                 if isinstance(ret, int):
-                     arg["midr-el1"] = ret
- 
--        util.data_add(data, arg.get("mpidr-el1", 0), 8)
-+        util.data_add(data, cper["mpidr-el1"], 8)
-         util.data_add(data, arg.get("midr-el1", 0), 8)
-         util.data_add(data, cper["running-state"], 4)
-         util.data_add(data, arg.get("psci-state", 0), 4)
--- 
-2.45.2
-
 
