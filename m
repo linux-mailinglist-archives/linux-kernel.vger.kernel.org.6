@@ -1,301 +1,129 @@
-Return-Path: <linux-kernel+bounces-279509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D32794BE35
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8839394BE3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578D81C2553A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93532873A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF23718DF64;
-	Thu,  8 Aug 2024 13:08:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9D818CC10;
+	Thu,  8 Aug 2024 13:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="UHAF29oj"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBF663D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 13:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723122530; cv=none; b=Ix59gXsZxCLTrp9WwfxV9qY8UGmEvXSkK/dZtmcIHTtClohgqj4SmHfzWeL1OUmAB8XCPxLpflA1fk/yU6KGxJlgFpN7qeuNaD9Nz40AeDEvS6je4qymNfzWMKqsW/3hZi5ZG+J5Ts8o62WQ8yWxZoZZIncrQzEzFPtOTWomTGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723122530; c=relaxed/simple;
-	bh=PKQ9lxWZQhmt2mIRtx4xqXWId90eIBNmwJdFoQAr2v4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hPkDej3PiesBacoOd46DNl9PYqkUScuIvLjsyL51bLmTIX4Qv/4hQ/wxS1Chiu9PhUTF1eEGuSqGuDBcPk8KVGNyCNXr4BiG7OyBujEtWaRNUDnoDkdvHJS5qbT9zNf0etBUBGbRXwTdES8R9TTETTOWaw6oqxOVfoA99x+QH6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sc2se-0000gG-4O; Thu, 08 Aug 2024 15:08:36 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sc2sc-005R25-Pw; Thu, 08 Aug 2024 15:08:34 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sc2sc-008k7a-2K;
-	Thu, 08 Aug 2024 15:08:34 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v2 3/3] net: phy: dp83tg720: Add cable testing support
-Date: Thu,  8 Aug 2024 15:08:33 +0200
-Message-Id: <20240808130833.2083875-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240808130833.2083875-1-o.rempel@pengutronix.de>
-References: <20240808130833.2083875-1-o.rempel@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78531E511;
+	Thu,  8 Aug 2024 13:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723122641; cv=pass; b=V970dnwYKV/NRiQZRbJoLDALQrfvlKjgdU4hJJR8kb7fJAzqIw2Kdw3xAo0sgYiyDq4WHlkvNRa0yg2/yD6NfbmvjFDUS3ABEm+84mm5P7M0FDMcNAMiaxifJbjFl+TM4RDRjZe4KdAUDascGt3GBHDadb0AwWQ9vuD+3ThIEbA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723122641; c=relaxed/simple;
+	bh=ZY0FSscEcQivkYIlbxu8A/3+ds5ckFcTwpIi8w7tEfo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WbRGDkurb+DoKbtehSsd9CvPVc3dXeJqpb/L1YzDSXFxQOiJle1CLaOiyYYltMjJOCV7nPn8MbS6hMMLvyLVP/0gTezQc8s5kZ9sL1tEvJ1Td1RaHSeHS6fac+71sv0FcdMrx8swqpjXRwsf7Tv5oSGvtb0/0ydmjFd3wESOObE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=UHAF29oj; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723122617; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SiVm3yEuhgFW8aFATjomSh5HsPR9cJNNxBUyRmc2Z7SaoxsZDCQ8CYKU31ypcy5FGxKw1qffKcRjXLM9rKsWY0yHszcel9RMSNyHSzPhbSjtpd8aZ5U6n8+XxWr8958+sN0YB/Ml7QCnDoG42CnM9dMALkbUT+opDtZMWLU55Js=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723122617; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZY0FSscEcQivkYIlbxu8A/3+ds5ckFcTwpIi8w7tEfo=; 
+	b=OXglsNDRf72AQ+usz7XVKQSjydo+8MMXRsxMgjsmFtE5pfsoOgUq0IV6yF3DmCCI05JIX3VR0vcWzWeYsEn85XaYXdM/GkgVuLPOnTu8W0tkHj2IAd7OYOssBXd9QJRLNhKCROellcZS0xN2T37lN92FfMt67nEWFm7Uxu4X4rA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723122617;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=ZY0FSscEcQivkYIlbxu8A/3+ds5ckFcTwpIi8w7tEfo=;
+	b=UHAF29ojODlUPsshmbEHXjt6cYzoO44Y64kn3tMgAwAyG3KNTCqdzzMbowfdEM8N
+	U05Xg5L1TQa1ZSrYT4WY45uwZNCSqlQLk8opIUMRmbp75RF5PQVuEZK10My0AJINJt1
+	FP/vSs1RDFxTzoIM/THHKVGltP22IgJluFmo7ps4=
+Received: by mx.zohomail.com with SMTPS id 1723122616970646.6105827752397;
+	Thu, 8 Aug 2024 06:10:16 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [RFC PATCH 2/5] doc: rust: safety standard: add examples
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <37d7b08d-f37a-45ff-9993-08fa7ed87443@proton.me>
+Date: Thu, 8 Aug 2024 10:10:00 -0300
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9959901D-0839-454C-9141-F0661C956AD5@collabora.com>
+References: <20240717221133.459589-1-benno.lossin@proton.me>
+ <20240717221133.459589-3-benno.lossin@proton.me>
+ <B0E3D539-2D29-4BB4-9CB7-98672F590A57@collabora.com>
+ <37d7b08d-f37a-45ff-9993-08fa7ed87443@proton.me>
+To: Benno Lossin <benno.lossin@proton.me>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-ZohoMailClient: External
 
-Introduce cable testing support for the DP83TG720 PHY. This implementation
-is based on the "DP83TG720S-Q1: Configuring for Open Alliance Specification
-Compliance (Rev. B)" application note.
+Hi Benno,
 
-The feature has been tested with cables of various lengths:
-- No cable: 1m till open reported.
-- 5 meter cable: reported properly.
-- 20 meter cable: reported as 19m.
-- 40 meter cable: reported as cable ok.
+>=20
+> I will try to rephrase this, tell me if it helps. When checking if an
+> API is sound, you are not allowed to change the code behind the API.
+> That is because `unsafe` code often relies on the surrounding safe =
+code
+> to work properly. In the example above, safe code ensures that the raw
+> pointer `ptr` is valid. This is OK (and also very necessary), since we
+> expect people to be *aware* of the `unsafe` block and thus more
+> carefully review the changes in surrounding safe code. If you have =
+safe
+> code that only interfaces with other safe code you don't need to be =
+this
+> careful.
+>=20
+> Note that this heavily depends on where you put the API boundary. In =
+our
+> case, we generally have this boundary: driver code <-> `kernel` crate.
+> But if your driver requires very specific helper code that does not =
+fit
+> into the `kernel` crate, then you might also have an API boundary =
+there.
+>=20
+> If it doesn't help, then it would great to get some more detailed
+> questions which part(s) you need help with.
+>=20
+> ---
+> Cheers,
+> Benno
+>=20
+>=20
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v2:
-- use open alliance specific helpers for the TDR results
+Yes, I think this is more clear, but note that this explanation is more =
+thorough
+than the actual example.
 
- drivers/net/phy/dp83tg720.c | 153 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 153 insertions(+)
+My point being, maybe you should take some of what you just wrote and =
+put it
+into the actual docs.
 
-diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
-index c706429b225a2..06542fce83c95 100644
---- a/drivers/net/phy/dp83tg720.c
-+++ b/drivers/net/phy/dp83tg720.c
-@@ -3,8 +3,10 @@
-  * Copyright (c) 2023 Pengutronix, Oleksij Rempel <kernel@pengutronix.de>
-  */
- #include <linux/bitfield.h>
-+#include <linux/ethtool_netlink.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/open_alliance_helpers.h>
- #include <linux/phy.h>
-
- #define DP83TG720S_PHY_ID			0x2000a284
-@@ -14,6 +16,17 @@
- #define DP83TG720S_STS_MII_INT			BIT(7)
- #define DP83TG720S_LINK_STATUS			BIT(0)
-
-+/* TDR Configuration Register (0x1E) */
-+#define DP83TG720S_TDR_CFG			0x1e
-+/* 1b = TDR start, 0b = No TDR */
-+#define DP83TG720S_TDR_START			BIT(15)
-+/* 1b = TDR auto on link down, 0b = Manual TDR start */
-+#define DP83TG720S_CFG_TDR_AUTO_RUN		BIT(14)
-+/* 1b = TDR done, 0b = TDR in progress */
-+#define DP83TG720S_TDR_DONE			BIT(1)
-+/* 1b = TDR fail, 0b = TDR success */
-+#define DP83TG720S_TDR_FAIL			BIT(0)
-+
- #define DP83TG720S_PHY_RESET			0x1f
- #define DP83TG720S_HW_RESET			BIT(15)
-
-@@ -22,18 +35,155 @@
- /* Power Mode 0 is Normal mode */
- #define DP83TG720S_LPS_CFG3_PWR_MODE_0		BIT(0)
-
-+/* Open Aliance 1000BaseT1 compatible HDD.TDR Fault Status Register */
-+#define DP83TG720S_TDR_FAULT_STATUS		0x30f
-+
-+/* Register 0x0301: TDR Configuration 2 */
-+#define DP83TG720S_TDR_CFG2			0x301
-+
-+/* Register 0x0303: TDR Configuration 3 */
-+#define DP83TG720S_TDR_CFG3			0x303
-+
-+/* Register 0x0304: TDR Configuration 4 */
-+#define DP83TG720S_TDR_CFG4			0x304
-+
-+/* Register 0x0405: Unknown Register */
-+#define DP83TG720S_UNKNOWN_0405			0x405
-+
-+/* Register 0x0576: TDR Master Link Down Control */
-+#define DP83TG720S_TDR_MASTER_LINK_DOWN		0x576
-+
- #define DP83TG720S_RGMII_DELAY_CTRL		0x602
- /* In RGMII mode, Enable or disable the internal delay for RXD */
- #define DP83TG720S_RGMII_RX_CLK_SEL		BIT(1)
- /* In RGMII mode, Enable or disable the internal delay for TXD */
- #define DP83TG720S_RGMII_TX_CLK_SEL		BIT(0)
-
-+/* Register 0x083F: Unknown Register */
-+#define DP83TG720S_UNKNOWN_083F			0x83f
-+
- #define DP83TG720S_SQI_REG_1			0x871
- #define DP83TG720S_SQI_OUT_WORST		GENMASK(7, 5)
- #define DP83TG720S_SQI_OUT			GENMASK(3, 1)
-
- #define DP83TG720_SQI_MAX			7
-
-+/**
-+ * dp83tg720_cable_test_start - Start the cable test for the DP83TG720 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ *
-+ * This sequence is based on the documented procedure for the DP83TG720 PHY.
-+ *
-+ * Returns: 0 on success, a negative error code on failure.
-+ */
-+static int dp83tg720_cable_test_start(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* Initialize the PHY to run the TDR test as described in the
-+	 * "DP83TG720S-Q1: Configuring for Open Alliance Specification
-+	 * Compliance (Rev. B)" application note.
-+	 * Most of the registers are not documented. Some of register names
-+	 * are guessed by comparing the register offsets with the DP83TD510E.
-+	 */
-+
-+	/* Force master link down */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2,
-+			       DP83TG720S_TDR_MASTER_LINK_DOWN, 0x0400);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG2,
-+			    0xa008);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG3,
-+			    0x0928);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG4,
-+			    0x0004);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_UNKNOWN_0405,
-+			    0x6400);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_UNKNOWN_083F,
-+			    0x3003);
-+	if (ret)
-+		return ret;
-+
-+	/* Start the TDR */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG,
-+			       DP83TG720S_TDR_START);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+/**
-+ * dp83tg720_cable_test_get_status - Get the status of the cable test for the
-+ *                                   DP83TG720 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ * @finished: Pointer to a boolean that indicates whether the test is finished.
-+ *
-+ * The function sets the @finished flag to true if the test is complete.
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+static int dp83tg720_cable_test_get_status(struct phy_device *phydev,
-+					   bool *finished)
-+{
-+	int ret, stat;
-+
-+	*finished = false;
-+
-+	/* Read the TDR status */
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Check if the TDR test is done */
-+	if (!(ret & DP83TG720S_TDR_DONE))
-+		return 0;
-+
-+	/* Check for TDR test failure */
-+	if (!(ret & DP83TG720S_TDR_FAIL)) {
-+		int location;
-+
-+		/* Read fault status */
-+		ret = phy_read_mmd(phydev, MDIO_MMD_VEND2,
-+				   DP83TG720S_TDR_FAULT_STATUS);
-+		if (ret < 0)
-+			return ret;
-+
-+		/* Get fault type */
-+		stat = oa_1000bt1_get_ethtool_cable_result_code(ret);
-+
-+		/* Determine fault location */
-+		location = oa_1000bt1_get_tdr_distance(ret);
-+		if (location > 0)
-+			ethnl_cable_test_fault_length(phydev,
-+						      ETHTOOL_A_CABLE_PAIR_A,
-+						      location);
-+	} else {
-+		/* Active link partner or other issues */
-+		stat = ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
-+	}
-+
-+	*finished = true;
-+
-+	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A, stat);
-+
-+	return phy_init_hw(phydev);
-+}
-+
- static int dp83tg720_config_aneg(struct phy_device *phydev)
- {
- 	int ret;
-@@ -195,12 +345,15 @@ static struct phy_driver dp83tg720_driver[] = {
- 	PHY_ID_MATCH_MODEL(DP83TG720S_PHY_ID),
- 	.name		= "TI DP83TG720S",
-
-+	.flags          = PHY_POLL_CABLE_TEST,
- 	.config_aneg	= dp83tg720_config_aneg,
- 	.read_status	= dp83tg720_read_status,
- 	.get_features	= genphy_c45_pma_read_ext_abilities,
- 	.config_init	= dp83tg720_config_init,
- 	.get_sqi	= dp83tg720_get_sqi,
- 	.get_sqi_max	= dp83tg720_get_sqi_max,
-+	.cable_test_start = dp83tg720_cable_test_start,
-+	.cable_test_get_status = dp83tg720_cable_test_get_status,
-
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
---
-2.39.2
-
+=E2=80=94 Daniel=
 
