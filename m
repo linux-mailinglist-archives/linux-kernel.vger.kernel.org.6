@@ -1,116 +1,155 @@
-Return-Path: <linux-kernel+bounces-279742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FED94C11C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D8594C14B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9BA1F2A416
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:27:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3211F2B7AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1D4190676;
-	Thu,  8 Aug 2024 15:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB0218FDB4;
+	Thu,  8 Aug 2024 15:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PM6z/hFM"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="B+w6oTaR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="aj8lF0Qk"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7412190661
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB3D18FC8F;
+	Thu,  8 Aug 2024 15:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723130759; cv=none; b=V7G99vaasi3wJbP+uJd4ivqA01kmndQas0/3b77aKB/9Cj9u514FeCRmX3y/+yhjMnWOQ9ICD/UUsPENkFf3iEeS9BIFbEcx0oeDh1B7qnssrtffaWpL8dzjmw1PQYieaBwEGL4MzHnJrXDvIFoamDxW+mfTm3sNI/GtPt63Vhc=
+	t=1723130871; cv=none; b=RsMOuh1huSQkVowuh3xLpXIw7I91MesmuYU8v4Ve+ScLCASGvS8XcjOG6UUZ2D0Mf1ciUxp5CbaCkjiQ5KWnX04rZU55cgtmom9EwFpPv+1ID8b0P1e1H2Oc0pWmIMLDNpiR9/pXGM3IbNSRPS+hJgVl+GOsPOUH7vPEaL0Ugmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723130759; c=relaxed/simple;
-	bh=yZSdhAeriQBvEwlIPlA4E/h7HDRDO81uC5zyS31ik6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LUWgtN9PbZzwb/9FfmSWjawIsMfS3rkkzKsuBRoj8Xtahqg1c681E1neDcbFLT36EXVIN5WPWGLIkYTRs5zKFvA5KravE1BCVtQgd+hbwkKhgYeqte2wvVWngx0lFCf+cCJhCmrPB+orLRy9ekGBSdKhOy73nmI1S/FBCt8aE9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PM6z/hFM; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=9Fdc
-	ANs1on3I97A255uoAnclJyRo9UTpI5fg6RNrTuQ=; b=PM6z/hFMtapvopOa6SY2
-	ZDrhMHOCM1fQuSeJAw/HiMXGNJ3BQWRHDVla7li1HebDe6IPWwKrOUFAXYSlL74I
-	jPM68v6meNkz/JNmbMy0UMjgw00kPmQWUs/l7FF53Q3aS7811m8SWjCLdaHTO7/g
-	ubnVD/hoXaTE5AbgQNUr1wU4iObpmXE15hPxnkhPRvu/Kru0ECxzfwfKenUgoBjj
-	CH1OHj2w30W2GFaAdeuOii9rvS9IL5sk9pNgUhm/5aoFz4VJIeh4g96YEAZXco3q
-	Ikr9YHrpivggNJmALlHOnsUC/iuZrLiSn5Pwl1PghM718q/FFc7qWS+dunVCWDJW
-	dA==
-Received: (qmail 356473 invoked from network); 8 Aug 2024 17:25:55 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Aug 2024 17:25:55 +0200
-X-UD-Smtp-Session: l3s3148p1@ptePpC0fczVtKPBr
-Date: Thu, 8 Aug 2024 17:25:54 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 08/11] i2c: riic: Add support for fast mode plus
-Message-ID: <ZrTjgqBlq0xM5VDq@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
- <20240711115207.2843133-9-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1723130871; c=relaxed/simple;
+	bh=pVXT/WpO/Vd+dSlyATMq7jQ1Q/Ms9tqOBgO9J2528xU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FEBESiNipDgP5SROq6sH1QXkbA5IIAdoa+ylbDh5IHb/CdGmZoroZNpzu9Ad0ucQEe2QTcwS6WiL4vgqRE4CjZcp5cmgGiPe3es3+Phj5LQtrzA01dYv5ERaOeKVZkS+GyAKWK4eEDDIToKGaRtdhsmGy35i78vtXaHTh0dyWvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=B+w6oTaR; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=aj8lF0Qk reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1723130866; x=1754666866;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=O3S37yAL7py1iqZdhmEM/jnGQrTXFEljfmn4dyezkII=;
+  b=B+w6oTaRhDuMKbTFBk0vX1WS22Fm20j7bpG0ENkrhK8KqGqSJSyQrug2
+   L6Og/VRCQYD/Kb97QtxGmS0jcoUpHytrB4CzuzvjXLnoc2Xz2XRwQdxPM
+   53NRCAOL4FApyNNeHWdxru3YUPRzZ9pcCjBqgPF+D/qFcNWjtSzvz45Cy
+   X73NuZ1bEcuGwo0kzU9SjtSojh46TwR1Rz+0R3KrEuFR1ILs3coG5Flh7
+   atK5UPOs5qWlROtAMKJYhofk7LMscndDauXYqbhIpL43TH5V1WUO2YzRr
+   J6RLIJ6GYXlQYHPbvq3FKfM0WQkenL0mTqUdAvjCTPhsz7tzA9CGegn83
+   A==;
+X-CSE-ConnectionGUID: 0wLTaXIwTD2fd/4FQ+5ajw==
+X-CSE-MsgGUID: 28+Zl++PSV69A5l8RYZXrQ==
+X-IronPort-AV: E=Sophos;i="6.09,273,1716242400"; 
+   d="scan'208";a="38319885"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 08 Aug 2024 17:27:43 +0200
+X-CheckPoint: {66B4E3EF-12-DD19D171-FBE73682}
+X-MAIL-CPID: 763AB2045628BCB4D3D087BA8D28C6F6_5
+X-Control-Analysis: str=0001.0A782F1D.66B4E3EF.012A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F2149160A0C;
+	Thu,  8 Aug 2024 17:27:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1723130859;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=O3S37yAL7py1iqZdhmEM/jnGQrTXFEljfmn4dyezkII=;
+	b=aj8lF0QkVhsxHv10leLLBYcFFhyNrnFMHCxdO+qRBHqCXF3X9nXJw5yzfJeHI9OTDj+lDF
+	hMxfll7WJabig2mxinq/cY/IPnr8/MYfWNOL5UTLY7mkdzkjkVUM3/cN3kVybuGuvuIiY9
+	GF2UZq2gj55H+GUVwyxaaYd0USFUyCwUrImQRMm6abDkwjBMLc6/vUWFZ1GJctI/Hd2+TD
+	OgJMQ6k6gdwN+WMU1dJ889UL1r29pBntowJbSR3J44ECJKpu1A7qouUFdEx3iMfjGllpeX
+	FbY3yVYBHFLPuKuNzzbTfJGFBCJWSFh09FnHLRkxm1oyADOULe9JP1ebjoNtAA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, u.kleine-koenig@pengutronix.de, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: sherry.sun@nxp.com, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH] tty: serial: fsl_lpuart: mark last busy before uart_add_one_port
+Date: Thu, 08 Aug 2024 17:27:40 +0200
+Message-ID: <3306657.aeNJFYEL58@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240808140325.580105-1-peng.fan@oss.nxp.com>
+References: <20240808140325.580105-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3fJ13j0m+/v9PmJB"
-Content-Disposition: inline
-In-Reply-To: <20240711115207.2843133-9-claudiu.beznea.uj@bp.renesas.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
+
+Am Donnerstag, 8. August 2024, 16:03:25 CEST schrieb Peng Fan (OSS):
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> With "earlycon initcall_debug=3D1 loglevel=3D8" in bootargs, kernel
+> sometimes boot hang. It is because normal console still is not ready,
+> but runtime suspend is called, so early console putchar will hang
+> in waiting TRDE set in UARTSTAT.
+>=20
+> The lpuart driver has auto suspend delay set to 3000ms, but during
+> uart_add_one_port, a child device serial ctrl will added and probed with
+> its pm runtime enabled(see serial_ctrl.c).
+> The runtime suspend call path is:
+> device_add
+>      |-> bus_probe_device
+>            |->device_initial_probe
+> 	           |->__device_attach
+>                          |-> pm_runtime_get_sync(dev->parent);
+> 			 |-> pm_request_idle(dev);
+> 			 |-> pm_runtime_put(dev->parent);
+>=20
+> So in the end, before normal console ready, the lpuart get runtime
+> suspended. And earlycon putchar will hang.
+>=20
+> To address the issue, mark last busy just after pm_runtime_enable,
+> three seconds is long enough to switch from bootconsole to normal
+> console.
+>=20
+> Fixes: 43543e6f539b ("tty: serial: fsl_lpuart: Add runtime pm support")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/tty/serial/fsl_lpuart.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpu=
+art.c
+> index 615291ea9b5e..77efa7ee6eda 100644
+> --- a/drivers/tty/serial/fsl_lpuart.c
+> +++ b/drivers/tty/serial/fsl_lpuart.c
+> @@ -2923,6 +2923,7 @@ static int lpuart_probe(struct platform_device *pde=
+v)
+>  	pm_runtime_set_autosuspend_delay(&pdev->dev, UART_AUTOSUSPEND_TIMEOUT);
+>  	pm_runtime_set_active(&pdev->dev);
+>  	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_mark_last_busy(&pdev->dev);
+
+This change looks sensible to me. Is maybe [1] addressing the same issue at=
+ a
+different level?
+
+Best regards,
+Alexander
+
+[1] https://lore.kernel.org/all/20240808-gs101-non-essential-clocks-2-v6-0-=
+e91c537acedc@linaro.org/
+
+> =20
+>  	ret =3D lpuart_global_reset(sport);
+>  	if (ret)
+>=20
 
 
---3fJ13j0m+/v9PmJB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
 
-> +	if (info->fast_mode_plus && t->bus_freq_hz == I2C_MAX_FAST_MODE_PLUS_FREQ)
-> +		riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
-
-Shouldn't that be something like
-
-	t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ
-
-? On R-Car, we have to enable the FM+ bit as soon as we exceed plain
-FastMode bus speeds.
-
-
---3fJ13j0m+/v9PmJB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma044IACgkQFA3kzBSg
-Kbahlw//clBKVVxJR8v/y4MjuV+7h+izOqHoMEN1O8HcQPXZXo5wHGA045nNLvtc
-woeB8Nj+tOdQq0lsGbee+JBNqDB/TMs/4dVPhDrt1dAaxjQVUYAInxAYmSw6cisL
-FFzXuepXyV8MtEZHLN82aJSapPQlr8fYD3ZcxEqBiq1yLXmf8ftmqS1ix//fN41H
-JOVpscDFjSxBu/EiYu15bxdv2oOs5My5jQ2h0kaPVtI65zT3wbCY8lNQmxUx87N2
-+JwDNG8szdCOZprcfL9y9piAv6phAMeTReDA/r0age9l70dtPwsmr8rql0iJRaQu
-SthS1MKIOPMgHKPCbVcs0HrFFnT8y6sXDA3pDn4QuDQfO231i1ILDe0/hHEM4Dbm
-GRt0JGhjPCSjvEje/07LILFxqsA8I9ao85J1E+U9Cg/4N3UjYu30gHovWVgvdofI
-vGwDRFjRXzqgeb/GYdjOQNAUtO9HSym1JvH4FbDDpE0DfMbdfniVTpOjkW46D1gz
-mDUroBtaCn4PElVqc6F6pvhlU8fMEfCdT+pkKWDU39Piuyc2TkOaVeyzmuiyZdL8
-bmKOTb3oWHpF1nfqdWjob+U0Ht+Vnzpr/09tx/4Vs0LOtO67PvELXYLevVGI3Nk6
-unZzwDbeAZyl4lnluKFLcm4coh55jXjOAUA4CpnF4iI681upAr4=
-=X0bi
------END PGP SIGNATURE-----
-
---3fJ13j0m+/v9PmJB--
 
