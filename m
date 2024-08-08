@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-278980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C416194B754
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 854B294B757
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6EA51C22D51
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70CE1C23051
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69B618C353;
-	Thu,  8 Aug 2024 07:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A0018C919;
+	Thu,  8 Aug 2024 07:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kltMQayP"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jmH/p9dc"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F44189BBE;
-	Thu,  8 Aug 2024 07:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC6018A6C0;
+	Thu,  8 Aug 2024 07:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723101116; cv=none; b=GH4D861ST07FoYzWUlnAWxxR+nqaby1vd8eM0XoDxNgSQIvWJUeAb2PxiDCEltk17a+IrD54lAlqkab1PH8w+ro3YNdd4m77fDxYeCAT6VQQBJ8UjZK1kqcxaGkfVf273TeP5b5gd1+DjOuRmXDYLkEIZIRfZLBe0wif2MjwMlI=
+	t=1723101117; cv=none; b=LHIphoT6+r3fsTgCiVYRY1PQyec/mFqizNjFfdflOnV1cwSWKj7NZanfB6T27H9o801dMIMcWkIH9QWfCO8rLFFJdnowTFQC/Su3m+ww1hxs9vRfyPaylLI2x/FxP0/iYPxML3UYCUte9TXIKRsF9E60wVLAusD/L4jFdht36x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723101116; c=relaxed/simple;
-	bh=tf3yEnLy6hz5tA0teZmEcogjgsPMz/GZgYxe71iTFHE=;
+	s=arc-20240116; t=1723101117; c=relaxed/simple;
+	bh=GKkfyc4hjyRdwPY0DtvO6HF/PkMY18v3bIsnth4Ixy8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eSfbUIYxAn0o+Zf6euIbpr0cDLR8oiyxbwVToug5+NuZtBWyW8GDhWc7+50AKBDufbXORoVkx66y5DvnSanJlfA+F4lXccyOeIrUCriXsnm9/+fj6SbkDSOCu5XkItn93Xzj/kOTaWCjqmgrEzNlQsUad3bIaoSfLvHQDhn+PjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kltMQayP; arc=none smtp.client-ip=217.70.183.198
+	 MIME-Version; b=esjKaXHkdtCCVB1luxt0mOHogrh6NbqYiuAPWNq0zU5UvqTUNS8jhrSnNUL5POdDXLMSKyMZ71E3qCHi8O0nDJrOv5fWA3G1rl6fyIWT97FUbU8SSYUaKEQGHxwwwgU4/csngUOlIBhAj3jMmz8xabc/NbPHmtqaUO0lSUSsqwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jmH/p9dc; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id D26EFC0003;
-	Thu,  8 Aug 2024 07:11:51 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 9DDF2C000B;
+	Thu,  8 Aug 2024 07:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723101112;
+	t=1723101113;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MHg3HP7c5auUlRoAbWHwCc/VjOiwCEiJpIw8nensMgk=;
-	b=kltMQayPVSAq/gx4A60Nog+eoB7UgZP6QLBmIjpOEq7qpzRCgyHEBIuY/ZfioVkBcqd7OA
-	euMTQzybpwPUCWnFUnILq1f2t3fF4OcaxsSBgel+krX+l+dncOv5NuWpyv+DIZhc3PRX3Z
-	6Ji3Q/mlw87yh32USWlblup+juKwYpClmm9ohEogqDYr7ts0byB50ijNtyBw33WM7jRi93
-	/VFeIPmk6lal1xpo56qa8Hrp82J0ya31W7iZksSp5cQsNYIawXl3xCXeYMyXAnm0CUQkwJ
-	XeKyrQEypHb5H9HGc6chsUIeprirpSWn4FpAIex+y1iRse6sk5sEHc07+S9DMA==
+	bh=PujWEEqVrHtZSSAKi2FwKGenicKUYocXZABNhblP/pE=;
+	b=jmH/p9dcVg+hH1/DKo62k72CzWiJoK/TyyYOI8qT6qXNNQfg+WySuJHrUBlGKETRG98v5t
+	mtrw3MKTI/KYaJj4TmfH75arD8yhOf6g67Wzx7mMnAB8KargQuB721Q0+R4j6uFGvjB+/S
+	FeUBDJs1QPMT8r9m/JHAh2vtFGz/D9EfLnrgdS3E7Off64Uktdsm4PC+3hbIFAxIhw6cHJ
+	DtwOYtBmosk+ijjilIIB7NSLvRSxaWrhmQJC5LOpUMwVuDDbOKNezVuFEhWgeU14iD1vo0
+	D12EqV/RA9oyJwJFjuqZHEVuDnfhDhk+7fAGvi+u3cgNf3a1O9mk+PLodKug2A==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
@@ -58,9 +58,9 @@ Cc: linuxppc-dev@lists.ozlabs.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 18/36] soc: fsl: cpm1: qmc: Use BIT(), GENMASK() and FIELD_PREP() macros
-Date: Thu,  8 Aug 2024 09:11:11 +0200
-Message-ID: <20240808071132.149251-19-herve.codina@bootlin.com>
+Subject: [PATCH v2 19/36] soc: fsl: cpm1: qmc: Fix blank line and spaces
+Date: Thu,  8 Aug 2024 09:11:12 +0200
+Message-ID: <20240808071132.149251-20-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240808071132.149251-1-herve.codina@bootlin.com>
 References: <20240808071132.149251-1-herve.codina@bootlin.com>
@@ -73,217 +73,73 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-checkpatch.pl signals the following improvement for qmc.c
-  CHECK: Prefer using the BIT macro
+checkpatch.pl raises the following issues
+  CHECK: Please don't use multiple blank lines
+  CHECK: Alignment should match open parenthesis
 
-Follow its suggestion and convert the code to BIT() and related macros.
+Fix them.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/soc/fsl/qe/qmc.c | 132 +++++++++++++++++++++------------------
- 1 file changed, 72 insertions(+), 60 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 721e0770510c..e2ac3e59bb79 100644
+index e2ac3e59bb79..44bd9b949770 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -8,6 +8,7 @@
-  */
+@@ -274,7 +274,6 @@ static void qmc_setbits32(void __iomem *addr, u32 set)
+ 	qmc_write32(addr, qmc_read32(addr) | set);
+ }
  
- #include <soc/fsl/qe/qmc.h>
-+#include <linux/bitfield.h>
- #include <linux/dma-mapping.h>
- #include <linux/hdlc.h>
- #include <linux/interrupt.h>
-@@ -23,23 +24,24 @@
- 
- /* SCC general mode register high (32 bits) */
- #define SCC_GSMRL	0x00
--#define SCC_GSMRL_ENR		(1 << 5)
--#define SCC_GSMRL_ENT		(1 << 4)
--#define SCC_GSMRL_MODE_QMC	(0x0A << 0)
-+#define SCC_GSMRL_ENR		BIT(5)
-+#define SCC_GSMRL_ENT		BIT(4)
-+#define SCC_GSMRL_MODE_MASK	GENMASK(3, 0)
-+#define SCC_GSMRL_MODE_QMC	FIELD_PREP_CONST(SCC_GSMRL_MODE_MASK, 0x0A)
- 
- /* SCC general mode register low (32 bits) */
- #define SCC_GSMRH	0x04
--#define   SCC_GSMRH_CTSS	(1 << 7)
--#define   SCC_GSMRH_CDS		(1 << 8)
--#define   SCC_GSMRH_CTSP	(1 << 9)
--#define   SCC_GSMRH_CDP		(1 << 10)
-+#define   SCC_GSMRH_CTSS	BIT(7)
-+#define   SCC_GSMRH_CDS		BIT(8)
-+#define   SCC_GSMRH_CTSP	BIT(9)
-+#define   SCC_GSMRH_CDP		BIT(10)
- 
- /* SCC event register (16 bits) */
- #define SCC_SCCE	0x10
--#define   SCC_SCCE_IQOV		(1 << 3)
--#define   SCC_SCCE_GINT		(1 << 2)
--#define   SCC_SCCE_GUN		(1 << 1)
--#define   SCC_SCCE_GOV		(1 << 0)
-+#define   SCC_SCCE_IQOV		BIT(3)
-+#define   SCC_SCCE_GINT		BIT(2)
-+#define   SCC_SCCE_GUN		BIT(1)
-+#define   SCC_SCCE_GOV		BIT(0)
- 
- /* SCC mask register (16 bits) */
- #define SCC_SCCM	0x14
-@@ -75,25 +77,31 @@
- #define QMC_GBL_C_MASK16	0xA0
- 
- /* TSA entry (16bit entry in TSATRX and TSATTX) */
--#define QMC_TSA_VALID		(1 << 15)
--#define QMC_TSA_WRAP		(1 << 14)
--#define QMC_TSA_MASK_8BIT	(0x303F)
--#define QMC_TSA_CHANNEL(x)	((x) << 6)
-+#define QMC_TSA_VALID		BIT(15)
-+#define QMC_TSA_WRAP		BIT(14)
-+#define QMC_TSA_MASK_MASKH	GENMASK(13, 12)
-+#define QMC_TSA_MASK_MASKL	GENMASK(5, 0)
-+#define QMC_TSA_MASK_8BIT	(FIELD_PREP_CONST(QMC_TSA_MASK_MASKH, 0x3) | \
-+				 FIELD_PREP_CONST(QMC_TSA_MASK_MASKL, 0x3F))
-+#define QMC_TSA_CHANNEL_MASK	GENMASK(11, 6)
-+#define QMC_TSA_CHANNEL(x)	FIELD_PREP(QMC_TSA_CHANNEL_MASK, x)
- 
- /* Tx buffer descriptor base address (16 bits, offset from MCBASE) */
- #define QMC_SPE_TBASE	0x00
- 
- /* Channel mode register (16 bits) */
- #define QMC_SPE_CHAMR	0x02
--#define   QMC_SPE_CHAMR_MODE_HDLC	(1 << 15)
--#define   QMC_SPE_CHAMR_MODE_TRANSP	((0 << 15) | (1 << 13))
--#define   QMC_SPE_CHAMR_ENT		(1 << 12)
--#define   QMC_SPE_CHAMR_POL		(1 << 8)
--#define   QMC_SPE_CHAMR_HDLC_IDLM	(1 << 13)
--#define   QMC_SPE_CHAMR_HDLC_CRC	(1 << 7)
--#define   QMC_SPE_CHAMR_HDLC_NOF	(0x0f << 0)
--#define   QMC_SPE_CHAMR_TRANSP_RD	(1 << 14)
--#define   QMC_SPE_CHAMR_TRANSP_SYNC	(1 << 10)
-+#define   QMC_SPE_CHAMR_MODE_MASK	GENMASK(15, 15)
-+#define   QMC_SPE_CHAMR_MODE_HDLC	FIELD_PREP_CONST(QMC_SPE_CHAMR_MODE_MASK, 1)
-+#define   QMC_SPE_CHAMR_MODE_TRANSP	(FIELD_PREP_CONST(QMC_SPE_CHAMR_MODE_MASK, 0) | BIT(13))
-+#define   QMC_SPE_CHAMR_ENT		BIT(12)
-+#define   QMC_SPE_CHAMR_POL		BIT(8)
-+#define   QMC_SPE_CHAMR_HDLC_IDLM	BIT(13)
-+#define   QMC_SPE_CHAMR_HDLC_CRC	BIT(7)
-+#define   QMC_SPE_CHAMR_HDLC_NOF_MASK	GENMASK(3, 0)
-+#define   QMC_SPE_CHAMR_HDLC_NOF(x)	FIELD_PREP(QMC_SPE_CHAMR_HDLC_NOF_MASK, x)
-+#define   QMC_SPE_CHAMR_TRANSP_RD	BIT(14)
-+#define   QMC_SPE_CHAMR_TRANSP_SYNC	BIT(10)
- 
- /* Tx internal state (32 bits) */
- #define QMC_SPE_TSTATE	0x04
-@@ -120,43 +128,47 @@
- 
- /* Transparent synchronization (16 bits) */
- #define QMC_SPE_TRNSYNC 0x3C
--#define   QMC_SPE_TRNSYNC_RX(x)	((x) << 8)
--#define   QMC_SPE_TRNSYNC_TX(x)	((x) << 0)
-+#define   QMC_SPE_TRNSYNC_RX_MASK	GENMASK(15, 8)
-+#define   QMC_SPE_TRNSYNC_RX(x)		FIELD_PREP(QMC_SPE_TRNSYNC_RX_MASK, x)
-+#define   QMC_SPE_TRNSYNC_TX_MASK	GENMASK(7, 0)
-+#define   QMC_SPE_TRNSYNC_TX(x)		FIELD_PREP(QMC_SPE_TRNSYNC_TX_MASK, x)
- 
- /* Interrupt related registers bits */
--#define QMC_INT_V		(1 << 15)
--#define QMC_INT_W		(1 << 14)
--#define QMC_INT_NID		(1 << 13)
--#define QMC_INT_IDL		(1 << 12)
--#define QMC_INT_GET_CHANNEL(x)	(((x) & 0x0FC0) >> 6)
--#define QMC_INT_MRF		(1 << 5)
--#define QMC_INT_UN		(1 << 4)
--#define QMC_INT_RXF		(1 << 3)
--#define QMC_INT_BSY		(1 << 2)
--#define QMC_INT_TXB		(1 << 1)
--#define QMC_INT_RXB		(1 << 0)
-+#define QMC_INT_V		BIT(15)
-+#define QMC_INT_W		BIT(14)
-+#define QMC_INT_NID		BIT(13)
-+#define QMC_INT_IDL		BIT(12)
-+#define QMC_INT_CHANNEL_MASK	GENMASK(11, 6)
-+#define QMC_INT_GET_CHANNEL(x)	FIELD_GET(QMC_INT_CHANNEL_MASK, x)
-+#define QMC_INT_MRF		BIT(5)
-+#define QMC_INT_UN		BIT(4)
-+#define QMC_INT_RXF		BIT(3)
-+#define QMC_INT_BSY		BIT(2)
-+#define QMC_INT_TXB		BIT(1)
-+#define QMC_INT_RXB		BIT(0)
- 
- /* BD related registers bits */
--#define QMC_BD_RX_E	(1 << 15)
--#define QMC_BD_RX_W	(1 << 13)
--#define QMC_BD_RX_I	(1 << 12)
--#define QMC_BD_RX_L	(1 << 11)
--#define QMC_BD_RX_F	(1 << 10)
--#define QMC_BD_RX_CM	(1 << 9)
--#define QMC_BD_RX_UB	(1 << 7)
--#define QMC_BD_RX_LG	(1 << 5)
--#define QMC_BD_RX_NO	(1 << 4)
--#define QMC_BD_RX_AB	(1 << 3)
--#define QMC_BD_RX_CR	(1 << 2)
 -
--#define QMC_BD_TX_R	(1 << 15)
--#define QMC_BD_TX_W	(1 << 13)
--#define QMC_BD_TX_I	(1 << 12)
--#define QMC_BD_TX_L	(1 << 11)
--#define QMC_BD_TX_TC	(1 << 10)
--#define QMC_BD_TX_CM	(1 << 9)
--#define QMC_BD_TX_UB	(1 << 7)
--#define QMC_BD_TX_PAD	(0x0f << 0)
-+#define QMC_BD_RX_E	BIT(15)
-+#define QMC_BD_RX_W	BIT(13)
-+#define QMC_BD_RX_I	BIT(12)
-+#define QMC_BD_RX_L	BIT(11)
-+#define QMC_BD_RX_F	BIT(10)
-+#define QMC_BD_RX_CM	BIT(9)
-+#define QMC_BD_RX_UB	BIT(7)
-+#define QMC_BD_RX_LG	BIT(5)
-+#define QMC_BD_RX_NO	BIT(4)
-+#define QMC_BD_RX_AB	BIT(3)
-+#define QMC_BD_RX_CR	BIT(2)
-+
-+#define QMC_BD_TX_R		BIT(15)
-+#define QMC_BD_TX_W		BIT(13)
-+#define QMC_BD_TX_I		BIT(12)
-+#define QMC_BD_TX_L		BIT(11)
-+#define QMC_BD_TX_TC		BIT(10)
-+#define QMC_BD_TX_CM		BIT(9)
-+#define QMC_BD_TX_UB		BIT(7)
-+#define QMC_BD_TX_PAD_MASK	GENMASK(3, 0)
-+#define QMC_BD_TX_PAD(x)	FIELD_PREP(QMC_BD_TX_PAD_MASK, x)
- 
- /* Numbers of BDs and interrupt items */
- #define QMC_NB_TXBDS	8
-@@ -662,7 +674,7 @@ static int qmc_chan_setup_tsa_64rxtx(struct qmc_chan *chan, const struct tsa_ser
- 			continue;
- 
- 		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATRX + (i * 2),
--				 ~QMC_TSA_WRAP, enable ? val : 0x0000);
-+				 (u16)~QMC_TSA_WRAP, enable ? val : 0x0000);
+ int qmc_chan_get_info(struct qmc_chan *chan, struct qmc_chan_info *info)
+ {
+ 	struct tsa_serial_info tsa_info;
+@@ -1411,7 +1410,7 @@ static int qmc_setup_chan(struct qmc *qmc, struct qmc_chan *chan)
+ 		qmc_write32(chan->s_param + QMC_SPE_ZDSTATE, 0x00000080);
+ 		qmc_write16(chan->s_param + QMC_SPE_MFLR, 60);
+ 		qmc_write16(chan->s_param + QMC_SPE_CHAMR,
+-			QMC_SPE_CHAMR_MODE_HDLC | QMC_SPE_CHAMR_HDLC_IDLM);
++			    QMC_SPE_CHAMR_MODE_HDLC | QMC_SPE_CHAMR_HDLC_IDLM);
  	}
  
- 	return 0;
-@@ -698,7 +710,7 @@ static int qmc_chan_setup_tsa_32rx(struct qmc_chan *chan, const struct tsa_seria
- 			continue;
+ 	/* Do not enable interrupts now. They will be enabled later */
+@@ -1604,7 +1603,6 @@ static int qmc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(qmc->scc_regs))
+ 		return PTR_ERR(qmc->scc_regs);
  
- 		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATRX + (i * 2),
--				 ~QMC_TSA_WRAP, enable ? val : 0x0000);
-+				 (u16)~QMC_TSA_WRAP, enable ? val : 0x0000);
- 	}
+-
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "scc_pram");
+ 	if (!res)
+ 		return -EINVAL;
+@@ -1650,7 +1648,7 @@ static int qmc_probe(struct platform_device *pdev)
+ 	 */
+ 	qmc->bd_size = (nb_chans * (QMC_NB_TXBDS + QMC_NB_RXBDS)) * sizeof(cbd_t);
+ 	qmc->bd_table = dmam_alloc_coherent(qmc->dev, qmc->bd_size,
+-		&qmc->bd_dma_addr, GFP_KERNEL);
++					    &qmc->bd_dma_addr, GFP_KERNEL);
+ 	if (!qmc->bd_table) {
+ 		dev_err(qmc->dev, "Failed to allocate bd table\n");
+ 		ret = -ENOMEM;
+@@ -1663,7 +1661,7 @@ static int qmc_probe(struct platform_device *pdev)
+ 	/* Allocate the interrupt table */
+ 	qmc->int_size = QMC_NB_INTS * sizeof(u16);
+ 	qmc->int_table = dmam_alloc_coherent(qmc->dev, qmc->int_size,
+-		&qmc->int_dma_addr, GFP_KERNEL);
++					     &qmc->int_dma_addr, GFP_KERNEL);
+ 	if (!qmc->int_table) {
+ 		dev_err(qmc->dev, "Failed to allocate interrupt table\n");
+ 		ret = -ENOMEM;
+@@ -1711,7 +1709,7 @@ static int qmc_probe(struct platform_device *pdev)
  
- 	return 0;
-@@ -734,7 +746,7 @@ static int qmc_chan_setup_tsa_32tx(struct qmc_chan *chan, const struct tsa_seria
- 			continue;
+ 	/* Enable interrupts */
+ 	qmc_write16(qmc->scc_regs + SCC_SCCM,
+-		SCC_SCCE_IQOV | SCC_SCCE_GINT | SCC_SCCE_GUN | SCC_SCCE_GOV);
++		    SCC_SCCE_IQOV | SCC_SCCE_GINT | SCC_SCCE_GUN | SCC_SCCE_GOV);
  
- 		qmc_clrsetbits16(chan->qmc->scc_pram + QMC_GBL_TSATTX + (i * 2),
--				 ~QMC_TSA_WRAP, enable ? val : 0x0000);
-+				 (u16)~QMC_TSA_WRAP, enable ? val : 0x0000);
- 	}
- 
- 	return 0;
+ 	ret = qmc_finalize_chans(qmc);
+ 	if (ret < 0)
 -- 
 2.45.0
 
