@@ -1,177 +1,120 @@
-Return-Path: <linux-kernel+bounces-278789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF2894B4E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:11:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDAC94B4E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59481F2389F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E129283A43
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C19C2C8;
-	Thu,  8 Aug 2024 02:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF65C2C8;
+	Thu,  8 Aug 2024 02:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayltXs3f"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DCFD528;
-	Thu,  8 Aug 2024 02:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="k5o5+I7a"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EB7DF78;
+	Thu,  8 Aug 2024 02:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723083099; cv=none; b=pgE03S4yUph/+byhPfPomMom4l6MJTntMUdFP/rf5D5rfFzWR6u9PkRKzOtQYFFBWKgzO7oX36EmTlPEMxRGHjPl7AtfBwNvjCAafWd/UEzHvNAWqqe8lDeZ/WUA8UcT0UAZbeLoKYJ6p40Zmypt4dqz36Isgp9hwyb+oB93wCo=
+	t=1723083196; cv=none; b=L4TvW+ZTJN1ZX9SYPGq/9twYpE0mU7r7oOAowzh8u2vaHOMbJDv65H2VZLzDscrc2idr7Z658gYPNOKArv1zQQ/0zz/WSHu5u07Mmit8axQ8gLM9Zkbf5X7gI+zSs/lIfZUxKmMfa+xk+SPqlctgqzAkj35Ucy6jJNrO1lB1vPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723083099; c=relaxed/simple;
-	bh=z+EViZNV79VB4O8ziUlmq6Dl+gQYNPEHQDlMMj3Dcgk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qKCDphxOhS57ja8f3Yv1XA9dzCFHGitkh+UHA9X+vAsLYmBCUCOKmzZgc1ojNk9NcRh5P6lxPcTqE+8fkEifR+jDI5VAJhSk9EcbK+mqrQZrZvgG6bn0W2lpDqlXyvniNfyGf3lNn0QKlO4QhhaOmUX//uVL3wOMIVXsDpj8eo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayltXs3f; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0e86974172so395718276.2;
-        Wed, 07 Aug 2024 19:11:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723083097; x=1723687897; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ayuCxxzou3rjkAIxd0SiAGa/p1U9ai3VeQLbkYZyQ0=;
-        b=ayltXs3fcOaL8uVqb3RMGdkERKLmwXlKRAz5j9Ux9UuMJbNc3JBMASpDsbCDO2XVcT
-         kjyn2TeUCuwkSLtDNdCo1hj7TxdNhFAFOpkUUIH8dF1UgCWCBsFVyUkp3HhWRjGDE5GC
-         hlrEwAiC7je4Z29tatsKtD6zwPrdLHD6CRf71pob2lwNjq35Fe62iXfZ1oVt9k2au43x
-         wGgSL/pOly30Pg8GkyUklDqrJKRtXCw98L2KCA0JH2cCF2l+0ctVsUDA5XDrh81j2vYJ
-         zkwsepeE9iqgqp1auolWbus3kmav61/OyAbQRC9FMtTsYAdu1NuMYe//Xs1/HN0OdSbW
-         nocw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723083097; x=1723687897;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6ayuCxxzou3rjkAIxd0SiAGa/p1U9ai3VeQLbkYZyQ0=;
-        b=UlLWoc017fbeQ7+d+NHdLsDZmJUj/2d9hDGoMwnM0PT3A0oiWjpMfwsTY48lXThHoM
-         rIBUgLrVTZZVyxax4Ewmk2zeL0wopSIOnqV/2FOvN9hPkU5JKeZ/5U2ZpCsXQLeT3jiK
-         T2gPiMtn/g28VBKKVnwvLP2iCectucwr2eThLZGpqALntNCZ246UTli+vjuAIo8AREfj
-         i5ZM5sCSqPfPWYMIfq0F5KjoSe3VE7qDbbJxfg+Bnq1URZ7LXpw5NKE369VymCb0rpcK
-         ySAk7riStfTJsancD14f0B9gwnIQ14oiIU5LH6cm7WS61BQXFffsS6T4+toafoIjiDRF
-         YnCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkt3ELPkvTTGWvj/WAOkhpu5IPehMmbv4ts+4nGLWNvaHOBbgMCp7gv+quZEUu/oXmgASy0PJpc+vFhB+X4O2SCll6vhSQm/ehppVl
-X-Gm-Message-State: AOJu0Ywm1PScGjGAzJT7G19CECXKOMjmpoq6GTDpaN86z3GxWjU7LzOZ
-	m3SRbXpMBlLJF7cS6S/hEx+t9+xaCb4OLTBsmY43dJF1x5rueuYGjxNBTKXTPvEbNOPperLlqEy
-	sAhEX/sHNO+ZUKaB1++/gWRazPyw=
-X-Google-Smtp-Source: AGHT+IFgyYRQZ0T+crlRbvXmISDuqo7qHyO7d2SIq+Im3nOTgzA7sQVUzIdByO5Rx+pb6VTN58XUXIo+sJjYZ8XC6yc=
-X-Received: by 2002:a05:6902:2b0c:b0:e0d:71a7:5973 with SMTP id
- 3f1490d57ef6-e0e9dbf3dd2mr544251276.40.1723083096542; Wed, 07 Aug 2024
- 19:11:36 -0700 (PDT)
+	s=arc-20240116; t=1723083196; c=relaxed/simple;
+	bh=tyD5vs3mOIkUVXbSmuXmJ+XPJxiVZS225LbV3CxUg8w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ao90IcocohzVnrqyu9x4+BhQBIJLfL0MM/rP77cI9913zS/SAslHntpMrXBlf7JMvWXseC5Fo+J/hMCxip/IRAfXouZeYsLLyiCAZXknNNcWV8xiJi/oWlM/Z7V6B7i688q/kGTWSpRG1ZPVeW/Ic9qT5nkM4a6iYzNPOKOguuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=k5o5+I7a; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=0uUS1mbrT0GFBr5kKfwam9cXdDE28lHd2w/B3ulUFSM=;
+	b=k5o5+I7a6LKDXhG9LDIY2L51oItGEvTvbKQ6qc2QODQa9jj3acA/cW7Wgvj2M9
+	qJQNFhFd2FEwSAS4P+jQWG0TkdGZjcDDIlCxT1MvDVuu6/TpGRhvslRGE1zdZMfq
+	TfMrB1tf5MPMke5mEnwLVcIVezIJ2Nxkxar2pqnRXq5w4=
+Received: from localhost.localdomain (unknown [111.48.58.13])
+	by gzga-smtp-mta-g3-5 (Coremail) with SMTP id _____wD3XzOXKbRmg4gKGQ--.53944S2;
+	Thu, 08 Aug 2024 10:12:40 +0800 (CST)
+From: 412574090@163.com
+To: helgaas@kernel.org
+Cc: bhelgaas@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	xiongxin@kylinos.cn
+Subject: Re: [PATCH] PCI: Add PCI_EXT_CAP_ID_PL_64GT define
+Date: Thu,  8 Aug 2024 10:12:39 +0800
+Message-Id: <20240808021239.24428-1-412574090@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240806175905.GA70868@bhelgaas>
+References: <20240806175905.GA70868@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731111940.8383-1-ayaka@soulik.info> <66aa463e6bcdf_20b4e4294ea@willemb.c.googlers.com.notmuch>
- <bd69202f-c0da-4f46-9a6c-2375d82a2579@soulik.info> <66aab3614bbab_21c08c29492@willemb.c.googlers.com.notmuch>
- <3d8b1691-6be5-4fe5-aa3f-58fd3cfda80a@soulik.info> <66ab87ca67229_2441da294a5@willemb.c.googlers.com.notmuch>
- <343bab39-65c5-4f02-934b-84b6ceed1c20@soulik.info> <66ab99162673_246b0d29496@willemb.c.googlers.com.notmuch>
- <328c71e7-17c7-40f4-83b3-f0b8b40f4730@soulik.info> <66acf6cc551a0_2751b6294bf@willemb.c.googlers.com.notmuch>
- <3a3695a1-367c-4868-b6e1-1190b927b8e7@soulik.info>
-In-Reply-To: <3a3695a1-367c-4868-b6e1-1190b927b8e7@soulik.info>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Wed, 7 Aug 2024 22:10:58 -0400
-Message-ID: <CAF=yD-+9HUkzDnfhOgpVkGyeMEJPhzabebt3bdzUHmpEPR1New@mail.gmail.com>
-Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue index
-To: Randy Li <ayaka@soulik.info>
-Cc: netdev@vger.kernel.org, jasowang@redhat.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3XzOXKbRmg4gKGQ--.53944S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tF4kCF1xArWrKrykWF18AFb_yoW8ZFWxpr
+	s8ZF1jyr4UJanF93Z3Awn8KryjqwnayFnag3yagrnIyFy3Gw1xK3Z29rZIka4SqrZ7tF1a
+	qrn2qryrCayjvFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRg18QUUUUU=
+X-CM-SenderInfo: yursklauqziqqrwthudrp/1tbivh01AGV4Kc49GwAAsK
 
-> >> I think this question is about why I do the filter in the kernel not the
-> >> userspace?
-> >>
-> >> It would be much more easy to the dispatch work in kernel, I only need
-> >> to watch the established peer with the help of epoll(). Kernel could
-> >> drop all the unwanted packets. Besides, if I do the filter/dispatcher
-> >> work in the userspace, it would need to copy the packet's data to the
-> >> userspace first, even decide its fate by reading a few bytes from its
-> >> beginning offset. I think we can avoid such a cost.
-> > A custom mapping function is exactly the purpose of TUNSETSTEERINGEBPF.
-> >
-> > Please take a look at that. It's a lot more elegant than going through
-> > userspace and then inserting individual tc skbedit filters.
+> On Tue, Aug 06, 2024 at 10:27:46AM +0800, 412574090@163.com wrote:
+> > From: weiyufeng <weiyufeng@kylinos.cn>
+> > 
+> > PCIe r6.0, sec 7.7.7.1, defines a new 64.0 GT/s PCIe Extended Capability
+> > ID,Add the define for PCI_EXT_CAP_ID_PL_64GT for drivers that will want
+> > this whilst doing Gen6 accesses.
+> > 
+> > Signed-off-by: weiyufeng <weiyufeng@kylinos.cn>
+> > ---
+> >  include/uapi/linux/pci_regs.h | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> > index 94c00996e633..cc875534dae1 100644
+> > --- a/include/uapi/linux/pci_regs.h
+> > +++ b/include/uapi/linux/pci_regs.h
+> > @@ -741,6 +741,7 @@
+> >  #define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
+> >  #define PCI_EXT_CAP_ID_PL_16GT	0x26	/* Physical Layer 16.0 GT/s */
+> >  #define PCI_EXT_CAP_ID_PL_32GT  0x2A    /* Physical Layer 32.0 GT/s */
+> > +#define PCI_EXT_CAP_ID_PL_64GT  0x31    /* Physical Layer 64.0 GT/s */
 >
-> I checked how this socket filter works, I think we still need this
-> serial of patch.
+> It probably makes sense to add this (with the corrections noted by
+> Ilpo), but I *would* like to see where it's used.
 >
-> If I was right, this eBPF doesn't work like a regular socket filter. The
-> eBPF's return value here means the target queue index not the size of
-> the data that we want to keep from the sk_buf parameter's buf.
-
-TUNSETSTEERINGEBPF is a queue selection mechanism for multi-queue tun devices.
-
-It replaces the need to set skb->queue_mapping.
-
-See also
-
-"
-commit 96f84061620c6325a2ca9a9a05b410e6461d03c3
-Author: Jason Wang <jasowang@redhat.com>
-Date:   Mon Dec 4 17:31:23 2017 +0800
-
-    tun: add eBPF based queue selection method
-"
-
-> Besides, according to
-> https://ebpf-docs.dylanreimerink.nl/linux/program-type/BPF_PROG_TYPE_SOCKET_FILTER/
+> I asked a similar question at
+> https://lore.kernel.org/all/20230531095713.293229-1-ben.dooks@codethink.co.uk/
+> when we added PCI_EXT_CAP_ID_PL_32GT, but never got a specific
+> response.  I don't really want to end up with drivers doing their own
+> thing if it's something that could be done in the PCI core and shared.
 >
-> I think the eBPF here can modify neither queue_mapping field nor hash
-> field here.
->
-> > See SKF_AD_QUEUE for classic BPF and __sk_buff queue_mapping for eBPF.
->
-> Is it a map type BPF_MAP_TYPE_QUEUE?
->
-> Besides, I think the eBPF in TUNSETSTEERINGEBPF would NOT take
-> queue_mapping.
+PCI_EXT_CAP_ID_PL_32GT and PCI_EXT_CAP_ID_PL_64GT have not used now,but 
+PCI_EXT_CAP_ID_PL_16GT have usage example,in drivers/pci/controller/dwc/pcie-tegra194.c
+function config_gen3_gen4_eq_presets():
 
-It obviates the need.
+offset = dw_pcie_find_ext_capability(pci,
+				     PCI_EXT_CAP_ID_PL_16GT) +
+		PCI_PL_16GT_LE_CTRL;
 
-It sounds like you want to both filter and steer to a specific queue. Why?
+PCI_EXT_CAP_ID_PL_32GT and PCI_EXT_CAP_ID_PL_64GT could be used while need to
+get this similar attribute。
 
-In that case, a tc egress tc_bpf program may be able to do both.
-Again, by writing to __sk_buff queue_mapping. Instead of u32 +
-skbedit.
+> >  #define PCI_EXT_CAP_ID_DOE	0x2E	/* Data Object Exchange */
+> >  #define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_DOE
+> >  
+> > -- 
+> > 2.25.1
+> > 
+--
+Thanks,
 
-See also
+weiyufeng
 
-"
-commit 74e31ca850c1cddeca03503171dd145b6ce293b6
-Author: Jesper Dangaard Brouer <brouer@redhat.com>
-Date:   Tue Feb 19 19:53:02 2019 +0100
-
-    bpf: add skb->queue_mapping write access from tc clsact
-"
-
-But I suppose you could prefer u32 + skbedit.
-
-Either way, the pertinent point is that you want to map some flow
-match to a specific queue id.
-
-This is straightforward if all queues are opened and none are closed.
-But it is not if queues can get detached and attached dynamically.
-Which I guess you encounter in practice?
-
-I'm actually not sure how the current `tfile->queue_index =
-tun->numqueues;` works in that case. As __tun_detach will do decrement
-`--tun->numqueues;`. So multiple tfiles could end up with the same
-queue_index. Unless dynamic detach + attach is not possible. But it
-seems it is. Jason, if you're following, do you know this?
-
-> If I want to drop packets for unwanted destination, I think
-> TUNSETFILTEREBPF is what I need?
->
-> That would lead to lookup the same mapping table twice, is there a
-> better way for the CPU cache?
-
-I agree that two programs should not be needed.
 
