@@ -1,103 +1,155 @@
-Return-Path: <linux-kernel+bounces-279151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECEA94B99B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:24:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6240394B9A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A29284673
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:24:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93AE91C21CBB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825DE1487C3;
-	Thu,  8 Aug 2024 09:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A3D1474CE;
+	Thu,  8 Aug 2024 09:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWU8/L6r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="yZayPp/n"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F571465BE;
-	Thu,  8 Aug 2024 09:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0208C0B;
+	Thu,  8 Aug 2024 09:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723109069; cv=none; b=Ru7Zl0jflk9VnAGVeqtHXcMbKRAWr22PPZGxI7O2F2vwn3ex4x5NpP3rj9ClBLrT70LYGVwq2zjTEGqCNyR7e1KH/CZGfCjfFdaCmdfZHvxfKJcGBbRMmLBtFotdNM2wYXSXsdk8oqnMLPD0w5xxRqOeqTOt5LDikMQik7ykPFs=
+	t=1723109143; cv=none; b=uEIQS+4OAmXgEjDSunQdBDZ20/zVKFbHZSwJhK0OFF1WyLTxnNLON0ewg5SyQFtbag6/yIy42M+ufZeWKUV1PFoIker/56sxaQ3XAs6xBA4Y4C9zNfPUtRWzm9b42oDt5BtVXvzmCgwY5XoyYCmrq9zjlwZsSgfdZaZ6R7jU5ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723109069; c=relaxed/simple;
-	bh=uX5ep/PSOVtOKHu44Nss6ozVLTd5AuP0lWO5Jg0wheA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qunA790C6XxSsZfDtb0SZG69IU7Xps1ErhX8JTh9hg6PFbjxW7OOUxuEUejHAtvaLsQ4Qn5P79I7Ef3zZhvPsRnYATHrTDUkChrjLssN7WlXvG1L7uSGoajPRBf7LTnes+UVT6L5a0TVgZI2mzdTkF7TDRvh+EswOgxyDJ6VnGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWU8/L6r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 081A7C32782;
-	Thu,  8 Aug 2024 09:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723109069;
-	bh=uX5ep/PSOVtOKHu44Nss6ozVLTd5AuP0lWO5Jg0wheA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CWU8/L6rtcD/JU2QJr5xEWmJ5IFCbthmLwc6ZChNljQljQK/wgMEMlJZkyEFEMyZ0
-	 PZjSB3Wd/q8XJ4bq2Q4WwKAr2eA50ihT8nLDFNc1vYxs8DpwwyreiAwoHXBUiB8ltw
-	 1MwBXX3ogBujRv2dEj9dPh6xUI17dhw0bkfv5l9Zo9oTbWTBjiESn71NBRkR7tli/D
-	 K8BXDNq4vSxXxE5BifRbfFmPhNgYAWP3DqvDJ1MUMShmPlIf61Ol3MKk0DMMKiSZ7p
-	 8F0CwtBEW341rsK9KJ5m1z1iaNmqIZ+EHzCjheFQZmeBTIcD9bCDABtkVmCIGtVsfT
-	 TPeQdWovWJz7w==
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 2A41414AD64A; Thu, 08 Aug 2024 11:24:26 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
-To: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
- <ast@fiberby.net>, bpf@vger.kernel.org
-Cc: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
- <ast@fiberby.net>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
- <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
- Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko
- <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, Tushar Vyavahare
- <tushar.vyavahare@intel.com>, Magnus Karlsson <magnus.karlsson@intel.com>,
- Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] selftests/bpf: Avoid subtraction after htons()
- in ipip tests
-In-Reply-To: <20240808075906.1849564-1-ast@fiberby.net>
-References: <20240808075906.1849564-1-ast@fiberby.net>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Thu, 08 Aug 2024 11:24:25 +0200
-Message-ID: <87sevfpdti.fsf@toke.dk>
+	s=arc-20240116; t=1723109143; c=relaxed/simple;
+	bh=Bs/fM66kNUesp8I3kdiBJAsvR94cBNh+5NInJ20SHDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z71EJe8swePqeSJhnkWg0YLQ4T0qKP0LV/3DrFCgeyLRnPliBhJRPxjnoUuIxcfv5RIMDIXpuY6CwTHgJfmY8ZyDGt+TXCD9HixN6ys32zvLIV2ajhwd6mtpm66X3PFakVn+NXjmuDaQ81Hd+dUcHp2JRcCQ3AT0yTAaa1CaIoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=yZayPp/n; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723109138; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=pXCJkAPkhTG7MXZaWb8NJHl6lRqrO2/QVfKwU5lsJJY=;
+	b=yZayPp/n/RFQDb+Ns3z6jnbfAjKjhEgQ6VW6yR9rGvwo+5INE6FMB3WmpFvzGH/YAV1ZjibUKEgbv2LQ60ETk//SKZ9LF/0/uFa0zOzyWuGnMk/ve688t6hyK89JZfHz581eUPqA/VMr8QEvk0uK1mnu24aPIOrOwBCIPbDXtMQ=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R351e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045220184;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0WCM6yhO_1723109137;
+Received: from 30.97.56.61(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCM6yhO_1723109137)
+          by smtp.aliyun-inc.com;
+          Thu, 08 Aug 2024 17:25:38 +0800
+Message-ID: <3a509a3a-9bdd-4f7e-a3a8-309739776d28@linux.alibaba.com>
+Date: Thu, 8 Aug 2024 17:25:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm/numa: no task_numa_fault() call if page table is
+ changed
+To: David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Huang, Ying" <ying.huang@intel.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20240807184730.1266736-1-ziy@nvidia.com>
+ <956553dc-587c-4a43-9877-7e8844f27f95@linux.alibaba.com>
+ <1881267a-723d-4ba0-96d0-d863ae9345a4@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <1881267a-723d-4ba0-96d0-d863ae9345a4@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
 
-> On little-endian systems, doing subtraction after htons()
-> leads to interesting results:
->
-> Given:
->   MAGIC_BYTES =3D 123 =3D 0x007B aka. in big endian: 0x7B00 =3D 31488
->   sizeof(struct iphdr) =3D 20
->
-> Before this patch:
-> __bpf_constant_htons(MAGIC_BYTES) - sizeof(struct iphdr) =3D 0x7AEC
-> 0x7AEC =3D htons(0xEC7A) =3D htons(60538)
->
-> So these were outer IP packets with a total length of 123 bytes,
-> containing an inner IP packet with a total length of 60538 bytes.
 
-It's just using bag of holding technology!
+On 2024/8/8 16:22, David Hildenbrand wrote:
+> On 08.08.24 05:19, Baolin Wang wrote:
+>>
+>>
+>> On 2024/8/8 02:47, Zi Yan wrote:
+>>> When handling a numa page fault, task_numa_fault() should be called by a
+>>> process that restores the page table of the faulted folio to avoid
+>>> duplicated stats counting. Commit b99a342d4f11 ("NUMA balancing: reduce
+>>> TLB flush via delaying mapping on hint page fault") restructured
+>>> do_numa_page() and do_huge_pmd_numa_page() and did not avoid
+>>> task_numa_fault() call in the second page table check after a numa
+>>> migration failure. Fix it by making all !pte_same()/!pmd_same() return
+>>> immediately.
+>>>
+>>> This issue can cause task_numa_fault() being called more than necessary
+>>> and lead to unexpected numa balancing results (It is hard to tell 
+>>> whether
+>>> the issue will cause positive or negative performance impact due to
+>>> duplicated numa fault counting).
+>>>
+>>> Reported-by: "Huang, Ying" <ying.huang@intel.com>
+>>> Closes: 
+>>> https://lore.kernel.org/linux-mm/87zfqfw0yw.fsf@yhuang6-desk2.ccr.corp.intel.com/
+>>> Fixes: b99a342d4f11 ("NUMA balancing: reduce TLB flush via delaying 
+>>> mapping on hint page fault")
+>>> Cc: <stable@vger.kernel.org>
+>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>>
+>> The fix looks reasonable to me. Feel free to add:
+>> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>
+>> (Nit: These goto labels are a bit confusing and might need some cleanup
+>> in the future.)
+> 
+> Agreed, maybe we should simply handle that right away and replace the 
+> "goto out;" users by "return 0;".
+> 
+> Then, just copy the 3 LOC.
+> 
+> For mm/memory.c that would be:
+> 
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 67496dc5064f..410ba50ca746 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -5461,7 +5461,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+> 
+>          if (unlikely(!pte_same(old_pte, vmf->orig_pte))) {
+>                  pte_unmap_unlock(vmf->pte, vmf->ptl);
+> -               goto out;
+> +               return 0;
+>          }
+> 
+>          pte = pte_modify(old_pte, vma->vm_page_prot);
+> @@ -5528,15 +5528,14 @@ static vm_fault_t do_numa_page(struct vm_fault 
+> *vmf)
+>                  vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+>                                                 vmf->address, &vmf->ptl);
+>                  if (unlikely(!vmf->pte))
+> -                       goto out;
+> +                       return 0;
+>                  if (unlikely(!pte_same(ptep_get(vmf->pte), 
+> vmf->orig_pte))) {
+>                          pte_unmap_unlock(vmf->pte, vmf->ptl);
+> -                       goto out;
+> +                       return 0;
+>                  }
+>                  goto out_map;
+>          }
+> 
+> -out:
+>          if (nid != NUMA_NO_NODE)
+>                  task_numa_fault(last_cpupid, nid, nr_pages, flags);
+>          return 0;
+> @@ -5552,7 +5551,9 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+>                  numa_rebuild_single_mapping(vmf, vma, vmf->address, 
+> vmf->pte,
+>                                              writable);
+>          pte_unmap_unlock(vmf->pte, vmf->ptl);
+> -       goto out;
+> +       if (nid != NUMA_NO_NODE)
+> +               task_numa_fault(last_cpupid, nid, nr_pages, flags);
+> +       return 0;
+>   }
 
-> After this patch:
-> __bpf_constant_htons(MAGIC_BYTES - sizeof(struct iphdr)) =3D htons(103)
->
-> Now these packets are outer IP packets with a total length of 123 bytes,
-> containing an inner IP packet with a total length of 103 bytes.
->
-> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
-
-Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@kernel.org>
+Thanks. Looks better:)
 
