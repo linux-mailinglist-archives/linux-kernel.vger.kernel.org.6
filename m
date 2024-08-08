@@ -1,300 +1,287 @@
-Return-Path: <linux-kernel+bounces-280128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA7794C623
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:02:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 117E294C626
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7507E28417C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB75288131
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2921F15820F;
-	Thu,  8 Aug 2024 21:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B378715921B;
+	Thu,  8 Aug 2024 21:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OcIMbpzg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sarLhQAV"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4D77E1
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0521494CF
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723150954; cv=none; b=VBWz3Pvm3nP0yBrhNfkAa2WD/Gpr1mdsY8R6YuWQnDXT/sMJgzFTbbxfse/ztQ2T3dlwRrG4jiWdodlhsO6Ye7FFDkeli4fHMmkdU6hE0FZPGk+mcsJdSCZ7mWrvW0q5dGVWR/NmWPh5VmXieeehET5NTJwlg2p4IMsl1GIgQIU=
+	t=1723150968; cv=none; b=tlRBxcE8Io3tsASO7mpCZmwHLRi1bDAyJyb2VXx7KiwFvpqqYUES7aMt1Ek/gMlqCczfdFy91XAVzymw6aFnhSU9oi+ylZWLeKA77NkSRKFYzo85TQ58qXH4ObmUGJ7hu4vRFB0lZ46vqdQKzEU6qi5x+wWIrsfW+Z6Is3mT0ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723150954; c=relaxed/simple;
-	bh=52F+XlV5CWDZYPxEUr2Pg3UT6rlpCxe/oZjyFFNJGVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mbhbI1L+7gEyYbz0TGYap21Ciyq1hnEDIWdszxyjf0zaXRbihPJ06N9fKFlukCtdplrDfr5ivaBf7Pkr7xB+7fKXUz103YSyOx2oKQGKut8gzP5uT1gCWodZC8p448HNCFFEkxRA+pLWbI+412azDgoWb/8nhhB7U+m46/KZn28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OcIMbpzg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478A1H0T006798;
-	Thu, 8 Aug 2024 21:02:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5aOhLNTr+v8KDwgXDHnpZ05L7XflBzEt1eInRR5Otls=; b=OcIMbpzgVvCHmZ7G
-	ipWsG3KOH09aj6EKwhc01dgwFc2COYc1NW9dBeBI5ovjOZFuUYzdtPFtXB3JEfgt
-	W1/0gwwVAQGoprhTtKl2iMPXHyJfJbyFfbAQhycJnb1ANv7inIS2fhVSYPQQClDu
-	0L1eoXFBaD1ektozRM1P1Sa+KqhfF3rCWzaBFRxnh6QN8PB8uErrHeQWmqV2pTYr
-	JG7NsRgjYzjM6LXSiYn3Crc1UNO44n0Oln+w9WAkW2mMIZnltHor7iqEFtsrDgCH
-	ncgeRCmw38TKV9BMAtp0gRSOqI6KaxnyXgp+ky30DhAlellBBQ5+GTi0p2zkCp+s
-	+CDHSw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vuwaspvh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 21:02:19 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 478L2Hat025557
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 8 Aug 2024 21:02:17 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 8 Aug 2024
- 14:02:17 -0700
-Message-ID: <61da2ecf-88c1-4d03-afb0-98f0395ad229@quicinc.com>
-Date: Thu, 8 Aug 2024 14:02:17 -0700
+	s=arc-20240116; t=1723150968; c=relaxed/simple;
+	bh=VY51RKJYIhAtdHkkbjl1TUnGz6MpnqdBpmdAogXPmVg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ciGoGAqwFsg2xjz5SMuN4Igge9k1aCv+QDJlno2OOMFTNkvykV3XXtX+0N8QpvALvz0T+O4nTiafkfiirV8wsDSwicMPhXiA5+aEjPsCLk+F5tqqBsPdOO77UvecTGSBnrneZP4+Q6QxnQ1xxgnGaycjSCRO8pkCT7+UoNECA6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sarLhQAV; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-66ca5e8cc51so14862287b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:02:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723150966; x=1723755766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VK0xxjAchJmTqLyqblW6a1BSUgp4bmsDLqA1sO88AlI=;
+        b=sarLhQAVLE8uktbsXhTZZNnq6BXniCGMm5LkzfXZ5IpeudAIOLliMC1Hcp0e02BI9i
+         e/xVmTwgL6RhtjnzeXsOUV2tjMg04aU8o8yEJUDP9iEzGNvswJyG1Kyp+RXPcaFMMOVR
+         oKZWURTj5qVStR7dWoL6/T5krUKJm9yrMcmwUxOSR8Wloxllao/2twxI7/Gj1biwi6iE
+         FywxYIK9zlg3hSVwEM57s32aEEUFkuDNLnZQiyG3LiV4AhpAjWYFQiMn/TOmgUfauiRf
+         e4fBxOH5iMgRp76OTsRBuQ10KDE+gwqGapY6GXa0WBKpvls5Kk9s7PdkpXoyo60cZtDp
+         yLJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723150966; x=1723755766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VK0xxjAchJmTqLyqblW6a1BSUgp4bmsDLqA1sO88AlI=;
+        b=Slc1GpQETYy8dhAC2AVVJTE7MiN+0rwECv4SaQQlU3ShJ32ldLq8ESenqb3jbi+PzM
+         0oekA+H4opds2svi3tb8nCS2LCbIseU8gGv/VnLMULBRk0qP+vtUL0HbVS3ilF3dNOT8
+         AsJ0FXkTnkzCv6TFaoBEV90Mbrq6qZuYXbP4UCzzlbf02yN3uoZ7KpE4kHepsl2Z6Joo
+         wEE6jAUzNnjQzIXYfGxMixasFyZnjE8bL9q5MF/zNT91d/CF6Qv4Z/E8YbhGYfA1HO7Z
+         sKM+46ufjqO6/30NYKdubJqJi0PVj0J4R2cHn7g5DeOpcMxyDHARSl+xMJjPt1cClvoj
+         Ciqg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1yWkEVCp9H60jnI1vnV14vJwMq77B6/z4ynoR9L4WWWLHj6aAsxqwLtwM7Hk10u/UKDSIUyVGTxfuYMWCPw3rV7pbgm61p4AjsTrR
+X-Gm-Message-State: AOJu0YzeArh/XJ6+USuXUSAsSCJtqExiVYIgY1kvQxsSjFJWat13eLF7
+	nXDk0exb8Mt9JghfovWruNBbIq+jCFCl6O76VdPOEVJ8/RSYIZ//x7QqBj6k+Td3fySkdtdZzYv
+	AutPiSrnyJncwODmZceximY0texfbAEEWSUz+
+X-Google-Smtp-Source: AGHT+IEtGpSOUY+7BEqAMsrA6RDC+KM1NYPNuRKKblL87JlMO05gMjbAol7QNVp6PBC4L80ueZKGVTxHTa6ugxo2rps=
+X-Received: by 2002:a05:690c:618a:b0:64b:2cf2:391c with SMTP id
+ 00721157ae682-69bf81ddd67mr29616357b3.18.1723150965620; Thu, 08 Aug 2024
+ 14:02:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] drm/panel: startek-kd070fhfid015: transition to
- mipi_dsi wrapped functions
-To: Tejas Vipin <tejasvipin76@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>,
-        <neil.armstrong@linaro.org>
-CC: <dianders@chromium.org>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240806135949.468636-1-tejasvipin76@gmail.com>
- <20240806135949.468636-3-tejasvipin76@gmail.com>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240806135949.468636-3-tejasvipin76@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fr2CZduB7f0PHyj3X8kXqm-06tJOrOWZ
-X-Proofpoint-GUID: fr2CZduB7f0PHyj3X8kXqm-06tJOrOWZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_21,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- mlxscore=0 phishscore=0 adultscore=0 bulkscore=0 impostorscore=0
- mlxlogscore=999 suspectscore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408080149
+References: <20240807182325.2585582-1-surenb@google.com> <CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com>
+In-Reply-To: <CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 8 Aug 2024 21:02:32 +0000
+Message-ID: <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com>
+Subject: Re: [RFC 1/1] mm: introduce mmap_lock_speculation_{start|end}
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: akpm@linux-foundation.org, peterz@infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Jann Horn <jannh@google.com>, Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 8, 2024 at 8:19=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Wed, Aug 7, 2024 at 11:23=E2=80=AFAM Suren Baghdasaryan <surenb@google=
+.com> wrote:
+> >
+> > Add helper functions to speculatively perform operations without
+> > read-locking mmap_lock, expecting that mmap_lock will not be
+> > write-locked and mm is not modified from under us.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > ---
+>
+> This change makes sense and makes mm's seq a bit more useful and
+> meaningful. I've also tested it locally with uprobe stress-test, and
+> it seems to work great, I haven't run into any problems with a
+> multi-hour stress test run so far. Thanks!
 
+Thanks for testing and feel free to include this patch into your set.
 
-On 8/6/2024 6:59 AM, Tejas Vipin wrote:
-> Use multi style wrapped functions for mipi_dsi in the
-> startek-kd070fhfid015 panel.
-> 
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+I've been thinking about this some more and there is a very unlikely
+corner case if between mmap_lock_speculation_start() and
+mmap_lock_speculation_end() mmap_lock is write-locked/unlocked so many
+times that mm->mm_lock_seq (int) overflows and just happen to reach
+the same value as we recorded in mmap_lock_speculation_start(). This
+would generate a false positive, which would show up as if the
+mmap_lock was never touched. Such overflows are possible for vm_lock
+as well (see: https://elixir.bootlin.com/linux/v6.10.3/source/include/linux=
+/mm_types.h#L688)
+but they are not critical because a false result would simply lead to
+a retry under mmap_lock. However for your case this would be a
+critical issue. This is an extremely low probability scenario but
+should we still try to handle it?
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+I'm CC'ing several mm folks and Jann Horn to chime in.
 
-> ---
->   .../drm/panel/panel-startek-kd070fhfid015.c   | 115 ++++++------------
->   1 file changed, 35 insertions(+), 80 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
-> index 0156689f41cd..c0c95355b743 100644
-> --- a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
-> +++ b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
-> @@ -24,10 +24,10 @@
->   #include <drm/drm_modes.h>
->   #include <drm/drm_panel.h>
->   
-> -#define DSI_REG_MCAP	0xB0
-> -#define DSI_REG_IS	0xB3 /* Interface Setting */
-> -#define DSI_REG_IIS	0xB4 /* Interface ID Setting */
-> -#define DSI_REG_CTRL	0xB6
-> +#define DSI_REG_MCAP	0xb0
-> +#define DSI_REG_IS	0xb3 /* Interface Setting */
-> +#define DSI_REG_IIS	0xb4 /* Interface ID Setting */
-> +#define DSI_REG_CTRL	0xb6
->   
->   enum {
->   	IOVCC = 0,
-> @@ -52,92 +52,55 @@ static inline struct stk_panel *to_stk_panel(struct drm_panel *panel)
->   static int stk_panel_init(struct stk_panel *stk)
->   {
->   	struct mipi_dsi_device *dsi = stk->dsi;
-> -	struct device *dev = &stk->dsi->dev;
-> -	int ret;
-> -
-> -	ret = mipi_dsi_dcs_soft_reset(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to mipi_dsi_dcs_soft_reset: %d\n", ret);
-> -		return ret;
-> -	}
-> -	mdelay(5);
-> +	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
->   
-> -	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to set exit sleep mode: %d\n", ret);
-> -		return ret;
-> -	}
-> -	msleep(120);
-> +	mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 5);
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 120);
->   
-> -	mipi_dsi_generic_write_seq(dsi, DSI_REG_MCAP, 0x04);
-> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_MCAP, 0x04);
->   
->   	/* Interface setting, video mode */
-> -	mipi_dsi_generic_write_seq(dsi, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
-> -	mipi_dsi_generic_write_seq(dsi, DSI_REG_IIS, 0x0C, 0x00);
-> -	mipi_dsi_generic_write_seq(dsi, DSI_REG_CTRL, 0x3A, 0xD3);
-> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
-> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IIS, 0x0c, 0x00);
-> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_CTRL, 0x3a, 0xd3);
->   
-> -	ret = mipi_dsi_dcs_set_display_brightness(dsi, 0x77);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to write display brightness: %d\n", ret);
-> -		return ret;
-> -	}
-> +	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x77);
->   
-> -	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY,
-> -			       MIPI_DCS_WRITE_MEMORY_START);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY,
-> +				     MIPI_DCS_WRITE_MEMORY_START);
->   
-> -	ret = mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to set pixel format: %d\n", ret);
-> -		return ret;
-> -	}
-> +	mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
-> +	mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0, stk->mode->hdisplay - 1);
-> +	mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0, stk->mode->vdisplay - 1);
->   
-> -	ret = mipi_dsi_dcs_set_column_address(dsi, 0, stk->mode->hdisplay - 1);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to set column address: %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	ret = mipi_dsi_dcs_set_page_address(dsi, 0, stk->mode->vdisplay - 1);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to set page address: %d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	return 0;
-> +	return dsi_ctx.accum_err;
->   }
->   
->   static int stk_panel_on(struct stk_panel *stk)
->   {
->   	struct mipi_dsi_device *dsi = stk->dsi;
-> -	struct device *dev = &stk->dsi->dev;
-> -	int ret;
-> +	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
->   
-> -	ret = mipi_dsi_dcs_set_display_on(dsi);
-> -	if (ret < 0)
-> -		dev_err(dev, "failed to set display on: %d\n", ret);
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
->   
-> -	mdelay(20);
-> +	mipi_dsi_msleep(&dsi_ctx, 20);
->   
-> -	return ret;
-> +	return dsi_ctx.accum_err;
->   }
->   
->   static void stk_panel_off(struct stk_panel *stk)
->   {
->   	struct mipi_dsi_device *dsi = stk->dsi;
-> -	struct device *dev = &stk->dsi->dev;
-> -	int ret;
-> +	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
->   
->   	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
->   
-> -	ret = mipi_dsi_dcs_set_display_off(dsi);
-> -	if (ret < 0)
-> -		dev_err(dev, "failed to set display off: %d\n", ret);
-> +	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-> +	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
->   
-> -	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
-> -	if (ret < 0)
-> -		dev_err(dev, "failed to enter sleep mode: %d\n", ret);
-> -
-> -	msleep(100);
-> +	mipi_dsi_msleep(&dsi_ctx, 100);
->   }
->   
->   static int stk_panel_unprepare(struct drm_panel *panel)
-> @@ -155,7 +118,6 @@ static int stk_panel_unprepare(struct drm_panel *panel)
->   static int stk_panel_prepare(struct drm_panel *panel)
->   {
->   	struct stk_panel *stk = to_stk_panel(panel);
-> -	struct device *dev = &stk->dsi->dev;
->   	int ret;
->   
->   	gpiod_set_value(stk->reset_gpio, 0);
-> @@ -175,16 +137,12 @@ static int stk_panel_prepare(struct drm_panel *panel)
->   	gpiod_set_value(stk->reset_gpio, 1);
->   	mdelay(10);
->   	ret = stk_panel_init(stk);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to init panel: %d\n", ret);
-> +	if (ret < 0)
->   		goto poweroff;
-> -	}
->   
->   	ret = stk_panel_on(stk);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to set panel on: %d\n", ret);
-> +	if (ret < 0)
->   		goto poweroff;
-> -	}
->   
->   	return 0;
->   
-> @@ -250,18 +208,15 @@ static int dsi_dcs_bl_get_brightness(struct backlight_device *bl)
->   static int dsi_dcs_bl_update_status(struct backlight_device *bl)
->   {
->   	struct mipi_dsi_device *dsi = bl_get_data(bl);
-> -	struct device *dev = &dsi->dev;
-> -	int ret;
-> +	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
->   
->   	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
-> -	ret = mipi_dsi_dcs_set_display_brightness(dsi, bl->props.brightness);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to set DSI control: %d\n", ret);
-> -		return ret;
-> -	}
-> +	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, bl->props.brightness);
-> +	if (dsi_ctx.accum_err)
-> +		return dsi_ctx.accum_err;
->   
->   	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
-> -	return 0;
-> +	return dsi_ctx.accum_err;
->   }
->   
->   static const struct backlight_ops dsi_bl_ops = {
-> -- 
-> 2.46.0
-> 
+>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+>
+> > Discussion [1] follow-up. If proves to be useful can be included in tha=
+t
+> > patchset. Based on mm-unstable.
+> >
+> > [1] https://lore.kernel.org/all/20240730134605.GO33588@noisy.programmin=
+g.kicks-ass.net/
+> >
+> >  include/linux/mm_types.h  |  3 +++
+> >  include/linux/mmap_lock.h | 53 +++++++++++++++++++++++++++++++--------
+> >  kernel/fork.c             |  3 ---
+> >  3 files changed, 46 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > index 003619fab20e..a426e6ced604 100644
+> > --- a/include/linux/mm_types.h
+> > +++ b/include/linux/mm_types.h
+> > @@ -887,6 +887,9 @@ struct mm_struct {
+> >                  * Roughly speaking, incrementing the sequence number i=
+s
+> >                  * equivalent to releasing locks on VMAs; reading the s=
+equence
+> >                  * number can be part of taking a read lock on a VMA.
+> > +                * Incremented every time mmap_lock is write-locked/unl=
+ocked.
+> > +                * Initialized to 0, therefore odd values indicate mmap=
+_lock
+> > +                * is write-locked and even values that it's released.
+> >                  *
+> >                  * Can be modified under write mmap_lock using RELEASE
+> >                  * semantics.
+> > diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+> > index de9dc20b01ba..5410ce741d75 100644
+> > --- a/include/linux/mmap_lock.h
+> > +++ b/include/linux/mmap_lock.h
+> > @@ -71,15 +71,12 @@ static inline void mmap_assert_write_locked(const s=
+truct mm_struct *mm)
+> >  }
+> >
+> >  #ifdef CONFIG_PER_VMA_LOCK
+> > -/*
+> > - * Drop all currently-held per-VMA locks.
+> > - * This is called from the mmap_lock implementation directly before re=
+leasing
+> > - * a write-locked mmap_lock (or downgrading it to read-locked).
+> > - * This should normally NOT be called manually from other places.
+> > - * If you want to call this manually anyway, keep in mind that this wi=
+ll release
+> > - * *all* VMA write locks, including ones from further up the stack.
+> > - */
+> > -static inline void vma_end_write_all(struct mm_struct *mm)
+> > +static inline void init_mm_lock_seq(struct mm_struct *mm)
+> > +{
+> > +       mm->mm_lock_seq =3D 0;
+> > +}
+> > +
+> > +static inline void inc_mm_lock_seq(struct mm_struct *mm)
+> >  {
+> >         mmap_assert_write_locked(mm);
+> >         /*
+> > @@ -91,19 +88,52 @@ static inline void vma_end_write_all(struct mm_stru=
+ct *mm)
+> >          */
+> >         smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1);
+> >  }
+> > +
+> > +static inline bool mmap_lock_speculation_start(struct mm_struct *mm, i=
+nt *seq)
+> > +{
+> > +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
+> > +       *seq =3D smp_load_acquire(&mm->mm_lock_seq);
+> > +       /* Allow speculation if mmap_lock is not write-locked */
+> > +       return (*seq & 1) =3D=3D 0;
+> > +}
+> > +
+> > +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, int=
+ seq)
+> > +{
+> > +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
+> > +       return seq =3D=3D smp_load_acquire(&mm->mm_lock_seq);
+> > +}
+> > +
+> >  #else
+> > -static inline void vma_end_write_all(struct mm_struct *mm) {}
+> > +static inline void init_mm_lock_seq(struct mm_struct *mm) {}
+> > +static inline void inc_mm_lock_seq(struct mm_struct *mm) {}
+> > +static inline bool mmap_lock_speculation_start(struct mm_struct *mm, i=
+nt *seq) { return false; }
+> > +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, int=
+ seq) { return false; }
+> >  #endif
+> >
+> > +/*
+> > + * Drop all currently-held per-VMA locks.
+> > + * This is called from the mmap_lock implementation directly before re=
+leasing
+> > + * a write-locked mmap_lock (or downgrading it to read-locked).
+> > + * This should normally NOT be called manually from other places.
+> > + * If you want to call this manually anyway, keep in mind that this wi=
+ll release
+> > + * *all* VMA write locks, including ones from further up the stack.
+> > + */
+> > +static inline void vma_end_write_all(struct mm_struct *mm)
+> > +{
+> > +       inc_mm_lock_seq(mm);
+> > +}
+> > +
+> >  static inline void mmap_init_lock(struct mm_struct *mm)
+> >  {
+> >         init_rwsem(&mm->mmap_lock);
+> > +       init_mm_lock_seq(mm);
+> >  }
+> >
+> >  static inline void mmap_write_lock(struct mm_struct *mm)
+> >  {
+> >         __mmap_lock_trace_start_locking(mm, true);
+> >         down_write(&mm->mmap_lock);
+> > +       inc_mm_lock_seq(mm);
+> >         __mmap_lock_trace_acquire_returned(mm, true, true);
+> >  }
+> >
+> > @@ -111,6 +141,7 @@ static inline void mmap_write_lock_nested(struct mm=
+_struct *mm, int subclass)
+> >  {
+> >         __mmap_lock_trace_start_locking(mm, true);
+> >         down_write_nested(&mm->mmap_lock, subclass);
+> > +       inc_mm_lock_seq(mm);
+> >         __mmap_lock_trace_acquire_returned(mm, true, true);
+> >  }
+> >
+> > @@ -120,6 +151,8 @@ static inline int mmap_write_lock_killable(struct m=
+m_struct *mm)
+> >
+> >         __mmap_lock_trace_start_locking(mm, true);
+> >         ret =3D down_write_killable(&mm->mmap_lock);
+> > +       if (!ret)
+> > +               inc_mm_lock_seq(mm);
+> >         __mmap_lock_trace_acquire_returned(mm, true, ret =3D=3D 0);
+> >         return ret;
+> >  }
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 3d590e51ce84..73e37af8a24d 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -1259,9 +1259,6 @@ static struct mm_struct *mm_init(struct mm_struct=
+ *mm, struct task_struct *p,
+> >         seqcount_init(&mm->write_protect_seq);
+> >         mmap_init_lock(mm);
+> >         INIT_LIST_HEAD(&mm->mmlist);
+> > -#ifdef CONFIG_PER_VMA_LOCK
+> > -       mm->mm_lock_seq =3D 0;
+> > -#endif
+> >         mm_pgtables_bytes_init(mm);
+> >         mm->map_count =3D 0;
+> >         mm->locked_vm =3D 0;
+> >
+> > base-commit: 98808d08fc0f78ee638e0c0a88020fbbaf581ec6
+> > --
+> > 2.46.0.rc2.264.g509ed76dc8-goog
+> >
 
