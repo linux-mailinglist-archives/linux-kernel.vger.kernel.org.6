@@ -1,157 +1,106 @@
-Return-Path: <linux-kernel+bounces-278949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E3A94B6F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:54:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A72694B6FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E441F216C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:54:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABFFD1C22D6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935C3187FF0;
-	Thu,  8 Aug 2024 06:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92679187FEC;
+	Thu,  8 Aug 2024 06:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IaTeITjV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bJu69KUW"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=uter.be header.i=@uter.be header.b="S0ZvMeNn"
+Received: from lounge.grep.be (lounge.grep.be [144.76.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024FF5228;
-	Thu,  8 Aug 2024 06:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E945228;
+	Thu,  8 Aug 2024 06:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723100040; cv=none; b=eliywxH2Wq1VDw1Fj/99TtfiUVsMa/JnoQQcbItv297vL4EbxV1+ZRJ9SJQzhZ4LRPrUIXqETcEG7FJPV0cyMfrXdenIlUvF6IV62AwfWp3f19/74IGw/oI6YC1888zbVd81o51LyKH+K23ciTEUomS4mO48pD+XY0Q4mdjtNQk=
+	t=1723100134; cv=none; b=dvRPRWOPT3gSvvFVRFbfJYDdywRHbrjO+DNpV3h9aKW30go0p+yaL18h5VNn14gb1rN7EfnQLD0JBkdMIjZMuNtvAfGdmkV6HGDlp5RwokyFE/+8ShyiLhe4g3Rr0WEiBS/6zWVvjqusT4FXw23ybbKsKr9aYTwKfXD9nmGLsbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723100040; c=relaxed/simple;
-	bh=tciyC43LBPP6ReuR8JiV299C77gEYtlCSfoeVbeoRFU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bqmU7rgFJXdPU0pNQWpFZuJZD+vnfl5s7zvemlDSRiszwwHC23zpjgkrVuFqpzlxwyEBth+9EqUT8rro8ZulvIibQJgme9oq8F2qB8UTbIfXc3onZ1cK1m7ufikjmf+g2VdkOZJuSR5LWO9mkTMTTteIcVzUdNcCgJNOWRakmss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IaTeITjV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bJu69KUW; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 14AF81151BBE;
-	Thu,  8 Aug 2024 02:53:57 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Thu, 08 Aug 2024 02:53:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723100037;
-	 x=1723186437; bh=/FT6YYLHJ8Rtqq3tE6sAPdg9+du2pO5FFAdLqh/r+OM=; b=
-	IaTeITjVZ921QuAZEF+s1PYOzQ1zGlIu1R0JdMG1xAzqZ00bzRMBsKhR4Ktxn1Q8
-	UzXe4ugUHBoDtMlgmUZkc79v3SehUTk2cOt4y5kGttCGG6OI4A+xTiEqF7pw7xPh
-	dndDXKAS8gnY9t6t/pq/RqyIDwzP7ohHTvenoIunMbUdLENPWIjt7Adx1wSaExX8
-	yuThMtbs8ty+PFR6HmV51EQST2bJJz8ra8/7CVdNXlS57ynmNuXWp86cbN5RT1+q
-	TV738KTZRB/N/OgaOLECspJJ9yZKVLBWek3Iwu6i2Zrm9NLl7NHX7jcLaMyrkcKQ
-	Xv7D8LYK6cQJZEV2xXHoyA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723100037; x=
-	1723186437; bh=/FT6YYLHJ8Rtqq3tE6sAPdg9+du2pO5FFAdLqh/r+OM=; b=b
-	Ju69KUWZWfseoEuZCvTltgQXAxi/THXdDPVvxWpq9ZLWiLXfAXNMmZYt11lZwq6q
-	u9QFALVyl81oqXV9vyxzlbcuH6x/mvoCgoa1w9WaZUwsKfBxObxm4groFhm3rsTd
-	ixjBU42nuDXtev6rd2ThkOccpDAGrZmC88XAgnJh3YEZ2/kxXMtucuZdKe4rd2yL
-	LPUb/8I/FcrxYZieesN9kjjqa6K5z8QWfWqNk3h5heyxSO6/OsNqbZD8UmFRX58j
-	Qmv/ufVr6rxV1uUB7l71nYfa/MhEEXTlDGrR8+qeRirLZ2N+6S58pRymG9YsfNgw
-	I+3iU3T/JW9c9jlMvmH+g==
-X-ME-Sender: <xms:hGu0ZpQp4Xkw26iJWp9zgJRTwcy_-WkJGY4tC5RL-oNDycnZlaT2Qw>
-    <xme:hGu0ZizInySN6l-eD8VA_uIvQI12pbAj6zxDJX-ESYZ4vLgOLq4Jz1FWOXHBc9Uwe
-    Kw8nueAp1bK40ReNB0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledugdduudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudej
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsvghnjhgrmhhinhdrghgrihhgnh
-    grrhgusegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepmhgrrhgvgiesuggvnhig
-    rdguvgdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpd
-    hrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgr
-    khgvvdegsehishgtrghsrdgrtgdrtghnpdhrtghpthhtohepshhhrgifnhhguhhosehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrih
-    hnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhig
-    rdguvghv
-X-ME-Proxy: <xmx:hGu0Zu0a0M0qb-BPXikGrAVD0SHfsz9kcGVblxSL9MWJ8JL6GQ0T8g>
-    <xmx:hGu0ZhDRKzd5zBaKK1-X7b_-ImWfJYklm8Nzl9SEyX_AtS9LE5MCKg>
-    <xmx:hGu0ZigogLKKqK1AtfuTlbZtqo3Oja_d5TAZjKiibEjxfDH8HNuqgQ>
-    <xmx:hGu0Zlqla1oZzi-Zi8sczt26ZrMJ-qiWjZzsLoP6zoLzoPvd_E2wjA>
-    <xmx:hWu0ZpSEuk8TKyoNXpowJM-vV9D5nvQ19SyhwlxSEfEUKqha79J5QjwJ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id B8C25B6008D; Thu,  8 Aug 2024 02:53:56 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723100134; c=relaxed/simple;
+	bh=NnzCTWKFk4fMDzybs5ufDvwnluiHHkvq8tShRnEldW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEhVkAYaYmRM0Q185w+xgdWs2SCz56387aW518ld/SMSHRIZZQVmVHEtWoKArRXxreiRnBljLcYoQnqLN579meTEYQwwYgmEYL5U/bs/ODArlbsz/3JHY53L+T1kS3YBcL5+eLeY9mn1wt6zmSwE9DEljOonM8Fd7fW6NEAdN8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be; spf=pass smtp.mailfrom=uter.be; dkim=pass (2048-bit key) header.d=uter.be header.i=@uter.be header.b=S0ZvMeNn; arc=none smtp.client-ip=144.76.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uter.be
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=uter.be;
+	s=2021.lounge; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=CkNQ++hXOcHLfwKCSMCwfF8NRO3P+JNlXngejOjZghQ=; b=S0ZvMeNnnjtmOJADtybifiI/sS
+	NcmG5eoqDLvMYm8Pve9jqUor6pEvq+5JApd46AyrJ6ugV/RT0O9HNmSsrbJWbyhog3RKe/G0GZS1S
+	+WsS6u3Hr5pt/u6w7tvFDkrTLY8ZhefawnhsWZJxN0Mk1vIRcVxdoTe3/RPPALZdjOf5MgGKby+p0
+	dXb0w2soa8Icto3I4Nuao+PRKGrrttX/HW2OMFCE0a7cdpAGBo066Xo6P+0RuIs3H7HoebMbeU+UD
+	o7fO3YVdH2NTOABarSM/MZt8O8c7cHExrdWpT+tYIXdEl9BvWmeoD8fSd2LZDZU2hVDXH3oqo5fao
+	iNqIIKJg==;
+Received: from [102.39.154.62] (helo=pc220518)
+	by lounge.grep.be with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <w@uter.be>)
+	id 1sbx3N-002Rr1-0o;
+	Thu, 08 Aug 2024 08:55:17 +0200
+Received: from wouter by pc220518 with local (Exim 4.98)
+	(envelope-from <w@uter.be>)
+	id 1sbx3F-000000001HC-21dN;
+	Thu, 08 Aug 2024 08:55:09 +0200
+Date: Thu, 8 Aug 2024 08:55:09 +0200
+From: Wouter Verhelst <w@uter.be>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	nbd@other.debian.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] nbd: correct the maximum value for discard sectors
+Message-ID: <ZrRrzTKiAVXNItFo@pc220518.home.grep.be>
+References: <20240803130432.5952-1-w@uter.be>
+ <20240806133058.268058-1-w@uter.be>
+ <20240806133058.268058-3-w@uter.be>
+ <20240807135625.GA242945@perftesting>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 08 Aug 2024 08:53:35 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Marco Felsch" <m.felsch@pengutronix.de>, "Ma Ke" <make24@iscas.ac.cn>
-Cc: "Ulf Hansson" <ulf.hansson@linaro.org>, "Shawn Guo" <shawnguo@kernel.org>,
- "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Fabio Estevam" <festevam@gmail.com>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Peng Fan" <peng.fan@nxp.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- "Marek Vasut" <marex@denx.de>,
- "Benjamin Gaignard" <benjamin.gaignard@collabora.com>, imx@lists.linux.dev,
- stable@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Message-Id: <1b04b8b3-44ca-427f-a5c9-d765ec30ec33@app.fastmail.com>
-In-Reply-To: <20240808061245.szz5lq6hx2qwi2ja@pengutronix.de>
-References: <20240808042858.2768309-1-make24@iscas.ac.cn>
- <20240808061245.szz5lq6hx2qwi2ja@pengutronix.de>
-Subject: Re: [PATCH] soc: imx: imx8m-blk-ctrl: Fix NULL pointer dereference
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807135625.GA242945@perftesting>
+X-Speed: Gates' Law: Every 18 months, the speed of software halves.
+Organization: none
 
-On Thu, Aug 8, 2024, at 08:12, Marco Felsch wrote:
->
-> On 24-08-08, Ma Ke wrote:
->> Check bc->bus_power_dev = dev_pm_domain_attach_by_name() return value using
->> IS_ERR_OR_NULL() instead of plain IS_ERR(), and fail if bc->bus_power_dev 
->> is either error or NULL.
->> 
->> In case a power domain attached by dev_pm_domain_attach_by_name() is not
->> described in DT, dev_pm_domain_attach_by_name() returns NULL, which is
->> then used, which leads to NULL pointer dereference.
->
-> Argh.. there are other users of this API getting this wrong too. This
-> make me wonder why dev_pm_domain_attach_by_name() return NULL instead of
-> the error code returned by of_property_match_string().
->
-> IMHO to fix once and for all users we should fix the return code of
-> dev_pm_domain_attach_by_name().
+Hi Josef,
 
-Agreed, in general any use of IS_ERR_OR_NULL() indicates that there
-is a bad API that should be fixed instead, and this is probably the
-case for genpd_dev_pm_attach_by_id().
+On Wed, Aug 07, 2024 at 09:56:25AM -0400, Josef Bacik wrote:
+> We use 512 as the "sectors" measurement throughout the block layer, so our limit
+> is actually
+> 
+> UINT32_MAX >> 9
+> 
+> since we can only send at most UINT32_MAX as our length.  Fix it to be that for
+> both patches and you should be good.  Thanks,
 
-One common use that is widely accepted is returning NULL when
-a subsystem is completely disabled. In this case an IS_ERR()
-check returns false on a NULL pointer and the returned structure
-should be opaque so callers are unable to dereference that
-NULL pointer.
+My first stab actually used UINT32_MAX, but that didn't compile.
 
-genpd_dev_pm_attach_by_{id,name}() is documented to also return
-a NULL pointer when no PM domain is needed, but they return
-a normal 'struct device' that can easily be used in an unsafe
-way after checking for IS_ERR().
+I investigated and found that for the kernel, UINT32_MAX and UINT_MAX
+are actually the same, but in order for me to be able to use UINT32_MAX
+(or U32_MAX, which is also defined to the same value), I would need
+extra includes.
 
-Fortunately it seems that there are only a few callers at the
-moment, so coming up with a safer interface is still possible.
+So I'll stick with the UINT_MAX >> SECTOR_SHIFT definition that Damien
+suggested.
 
-       Arnd
+Thanks,
+
+-- 
+     w@uter.{be,co.za}
+wouter@{grep.be,fosdem.org,debian.org}
+
+I will have a Tin-Actinium-Potassium mixture, thanks.
 
