@@ -1,169 +1,157 @@
-Return-Path: <linux-kernel+bounces-278948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BADA94B6F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:52:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E3A94B6F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65E03B21D78
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37E441F216C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7925187878;
-	Thu,  8 Aug 2024 06:52:17 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D07A5228;
-	Thu,  8 Aug 2024 06:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935C3187FF0;
+	Thu,  8 Aug 2024 06:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IaTeITjV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bJu69KUW"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024FF5228;
+	Thu,  8 Aug 2024 06:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723099937; cv=none; b=p9n4Wx89q3pDSxaekwejhPL2YIQb83zCJuAqERlhmsCTRemVWqaFrQYL9iioAq0d0gzVIR2TYcNJlHjDk/64hLJIMzR5+4ERvvMeBsvQZaww77WIA9o3HULuBWxIkaYvdsXdv7VbxiG8U19YB4rIxkqGy6sr37vkpZze9c8M744=
+	t=1723100040; cv=none; b=eliywxH2Wq1VDw1Fj/99TtfiUVsMa/JnoQQcbItv297vL4EbxV1+ZRJ9SJQzhZ4LRPrUIXqETcEG7FJPV0cyMfrXdenIlUvF6IV62AwfWp3f19/74IGw/oI6YC1888zbVd81o51LyKH+K23ciTEUomS4mO48pD+XY0Q4mdjtNQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723099937; c=relaxed/simple;
-	bh=tyzblumlpNxy/lgpFjj9twjGD98ubq+OFuL+jONNIco=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=YWRlALZHxDp5yAK8fG5S0k4udiYQ+nItVuhC4GBPpW6rGh48rhQ0lxgmJkxnPU345+GPPOMRlOZsZllbajF6Hu48tbbGjh59F2vKSc+cpuXCpK2zcvgVVpP3qBdEjD+t8TXONyVVwUEwyOYFCjdM3Fa1ErQxwR0gTLlxHfj8LNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.24])
-	by gateway (Coremail) with SMTP id _____8Bx35sca7Rm4H0LAA--.8264S3;
-	Thu, 08 Aug 2024 14:52:12 +0800 (CST)
-Received: from [10.20.42.24] (unknown [10.20.42.24])
-	by front1 (Coremail) with SMTP id qMiowMDxnWcYa7RmilIJAA--.17111S3;
-	Thu, 08 Aug 2024 14:52:10 +0800 (CST)
-Subject: Re: [PATCH V8 2/2] irqchip/loongarch-avec: Add AVEC irqchip support
-To: Thomas Gleixner <tglx@linutronix.de>, corbet@lwn.net, alexs@kernel.org,
- chenhuacai@kernel.org, kernel@xen0n.name, jiaxun.yang@flygoat.com,
- gaoliang@loongson.cn, wangliupu@loongson.cn, lvjianmin@loongson.cn,
- yijun@loongson.cn, mhocko@suse.com, akpm@linux-foundation.org,
- dianders@chromium.org, maobibo@loongson.cn, xry111@xry111.site,
- zhaotianrui@loongson.cn, nathan@kernel.org, yangtiezhu@loongson.cn,
- zhoubinbin@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
-References: <20240806115557.4750-1-zhangtianyang@loongson.cn>
- <87le180z8b.ffs@tglx>
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-Message-ID: <bc5d4e7a-ba81-f8f7-3629-2c80897d8ffc@loongson.cn>
-Date: Thu, 8 Aug 2024 14:52:08 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1723100040; c=relaxed/simple;
+	bh=tciyC43LBPP6ReuR8JiV299C77gEYtlCSfoeVbeoRFU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=bqmU7rgFJXdPU0pNQWpFZuJZD+vnfl5s7zvemlDSRiszwwHC23zpjgkrVuFqpzlxwyEBth+9EqUT8rro8ZulvIibQJgme9oq8F2qB8UTbIfXc3onZ1cK1m7ufikjmf+g2VdkOZJuSR5LWO9mkTMTTteIcVzUdNcCgJNOWRakmss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IaTeITjV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bJu69KUW; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 14AF81151BBE;
+	Thu,  8 Aug 2024 02:53:57 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Thu, 08 Aug 2024 02:53:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1723100037;
+	 x=1723186437; bh=/FT6YYLHJ8Rtqq3tE6sAPdg9+du2pO5FFAdLqh/r+OM=; b=
+	IaTeITjVZ921QuAZEF+s1PYOzQ1zGlIu1R0JdMG1xAzqZ00bzRMBsKhR4Ktxn1Q8
+	UzXe4ugUHBoDtMlgmUZkc79v3SehUTk2cOt4y5kGttCGG6OI4A+xTiEqF7pw7xPh
+	dndDXKAS8gnY9t6t/pq/RqyIDwzP7ohHTvenoIunMbUdLENPWIjt7Adx1wSaExX8
+	yuThMtbs8ty+PFR6HmV51EQST2bJJz8ra8/7CVdNXlS57ynmNuXWp86cbN5RT1+q
+	TV738KTZRB/N/OgaOLECspJJ9yZKVLBWek3Iwu6i2Zrm9NLl7NHX7jcLaMyrkcKQ
+	Xv7D8LYK6cQJZEV2xXHoyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723100037; x=
+	1723186437; bh=/FT6YYLHJ8Rtqq3tE6sAPdg9+du2pO5FFAdLqh/r+OM=; b=b
+	Ju69KUWZWfseoEuZCvTltgQXAxi/THXdDPVvxWpq9ZLWiLXfAXNMmZYt11lZwq6q
+	u9QFALVyl81oqXV9vyxzlbcuH6x/mvoCgoa1w9WaZUwsKfBxObxm4groFhm3rsTd
+	ixjBU42nuDXtev6rd2ThkOccpDAGrZmC88XAgnJh3YEZ2/kxXMtucuZdKe4rd2yL
+	LPUb/8I/FcrxYZieesN9kjjqa6K5z8QWfWqNk3h5heyxSO6/OsNqbZD8UmFRX58j
+	Qmv/ufVr6rxV1uUB7l71nYfa/MhEEXTlDGrR8+qeRirLZ2N+6S58pRymG9YsfNgw
+	I+3iU3T/JW9c9jlMvmH+g==
+X-ME-Sender: <xms:hGu0ZpQp4Xkw26iJWp9zgJRTwcy_-WkJGY4tC5RL-oNDycnZlaT2Qw>
+    <xme:hGu0ZizInySN6l-eD8VA_uIvQI12pbAj6zxDJX-ESYZ4vLgOLq4Jz1FWOXHBc9Uwe
+    Kw8nueAp1bK40ReNB0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledugdduudefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsvghnjhgrmhhinhdrghgrihhgnh
+    grrhgusegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepmhgrrhgvgiesuggvnhig
+    rdguvgdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpd
+    hrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgr
+    khgvvdegsehishgtrghsrdgrtgdrtghnpdhrtghpthhtohepshhhrgifnhhguhhosehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrih
+    hnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhig
+    rdguvghv
+X-ME-Proxy: <xmx:hGu0Zu0a0M0qb-BPXikGrAVD0SHfsz9kcGVblxSL9MWJ8JL6GQ0T8g>
+    <xmx:hGu0ZhDRKzd5zBaKK1-X7b_-ImWfJYklm8Nzl9SEyX_AtS9LE5MCKg>
+    <xmx:hGu0ZigogLKKqK1AtfuTlbZtqo3Oja_d5TAZjKiibEjxfDH8HNuqgQ>
+    <xmx:hGu0Zlqla1oZzi-Zi8sczt26ZrMJ-qiWjZzsLoP6zoLzoPvd_E2wjA>
+    <xmx:hWu0ZpSEuk8TKyoNXpowJM-vV9D5nvQ19SyhwlxSEfEUKqha79J5QjwJ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id B8C25B6008D; Thu,  8 Aug 2024 02:53:56 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87le180z8b.ffs@tglx>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowMDxnWcYa7RmilIJAA--.17111S3
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxWF4rCr1xur1DZF4ftFWfCrX_yoW5Ww1UpF
-	WUJw4Dur48tFyFqrWkX3yDZryavryIg3WDK34fCa4xAa4Y9ryI9Fy0kF47uFyUCr48Aw4j
-	vr40vrykCan8JagCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2pVbDU
-	UUU
+Date: Thu, 08 Aug 2024 08:53:35 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Marco Felsch" <m.felsch@pengutronix.de>, "Ma Ke" <make24@iscas.ac.cn>
+Cc: "Ulf Hansson" <ulf.hansson@linaro.org>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Fabio Estevam" <festevam@gmail.com>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Peng Fan" <peng.fan@nxp.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ "Marek Vasut" <marex@denx.de>,
+ "Benjamin Gaignard" <benjamin.gaignard@collabora.com>, imx@lists.linux.dev,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Message-Id: <1b04b8b3-44ca-427f-a5c9-d765ec30ec33@app.fastmail.com>
+In-Reply-To: <20240808061245.szz5lq6hx2qwi2ja@pengutronix.de>
+References: <20240808042858.2768309-1-make24@iscas.ac.cn>
+ <20240808061245.szz5lq6hx2qwi2ja@pengutronix.de>
+Subject: Re: [PATCH] soc: imx: imx8m-blk-ctrl: Fix NULL pointer dereference
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi, Thomas
-
-Thank you for your feedback.
-
-ÔÚ 2024/8/8 ÉÏÎç6:01, Thomas Gleixner Ð´µÀ:
-
->> +	guard(raw_spinlock_irqsave)(&loongarch_avec.lock);
->> +
->> +	for (i = 0; i < nr_irqs; i++) {
->> +		d = irq_domain_get_irq_data(domain, virq + i);
->> +		if (d) {
->> +			clear_free_vector(d);
->> +			irq_domain_reset_irq_data(d);
->> +
-> Stray newline, but the more important question is what kfree()'s 'd'?
+On Thu, Aug 8, 2024, at 08:12, Marco Felsch wrote:
 >
-> AFAICT, nothing. So that's a memory leak, no?
-With my understand , 'd' as 'struct irq_data' can be free at public 
-irqdomain process, and really miss a kfree targeting 'struct chip_data'
+> On 24-08-08, Ma Ke wrote:
+>> Check bc->bus_power_dev = dev_pm_domain_attach_by_name() return value using
+>> IS_ERR_OR_NULL() instead of plain IS_ERR(), and fail if bc->bus_power_dev 
+>> is either error or NULL.
+>> 
+>> In case a power domain attached by dev_pm_domain_attach_by_name() is not
+>> described in DT, dev_pm_domain_attach_by_name() returns NULL, which is
+>> then used, which leads to NULL pointer dereference.
 >
->> +static int __init avecintc_init(struct irq_domain *parent)
->> +{
->> +	parent_irq = irq_create_mapping(parent, INT_AVEC);
->> +	if (!parent_irq) {
->> +		pr_err("Failed to mapping hwirq\n");
->> +		ret = -EINVAL;
->> +		goto out_remove_domain;
->> +	}
->> +	irq_set_chained_handler_and_data(parent_irq, avecintc_irq_dispatch, NULL);
->> +
->> +	ret = irq_matrix_init();
->> +	if (ret < 0) {
->> +		pr_err("Failed to init irq matrix\n");
->> +		goto out_remove_domain;
-> Which still leaves the disfunct chained handler installed and the
-> mapping intact.
+> Argh.. there are other users of this API getting this wrong too. This
+> make me wonder why dev_pm_domain_attach_by_name() return NULL instead of
+> the error code returned by of_property_match_string().
+>
+> IMHO to fix once and for all users we should fix the return code of
+> dev_pm_domain_attach_by_name().
 
-There is indeed a problem here, but we have not found a similar approach 
-for reference.
+Agreed, in general any use of IS_ERR_OR_NULL() indicates that there
+is a bad API that should be fixed instead, and this is probably the
+case for genpd_dev_pm_attach_by_id().
 
-Is it reasonable to replace here with handle_bad_irq in case of failure? 
-or is there any other more suitable way. We hope you can give us some 
-suggestions, thank you very much
+One common use that is widely accepted is returning NULL when
+a subsystem is completely disabled. In this case an IS_ERR()
+check returns false on a NULL pointer and the returned structure
+should be opaque so callers are unable to dereference that
+NULL pointer.
 
->> +#endif
->> +	value = iocsr_read64(LOONGARCH_IOCSR_MISC_FUNC);
->> +	value |= IOCSR_MISC_FUNC_AVEC_EN;
->> +	iocsr_write64(value, LOONGARCH_IOCSR_MISC_FUNC);
->> +
->> +	return ret;
->> +
->> +out_remove_domain:
->> +	irq_domain_remove(loongarch_avec.domain);
->> +out_free_handle:
->> +	irq_domain_free_fwnode(loongarch_avec.fwnode);
->> +out:
->> +	return ret;
->> +}
->> +
->> +static int __init pch_msi_parse_madt(union acpi_subtable_headers *header,
->> +				     const unsigned long end)
->> +{
->> +	struct acpi_madt_msi_pic *pchmsi_entry = (struct acpi_madt_msi_pic *)header;
->> +
->> +	msi_base_addr = pchmsi_entry->msg_address - AVEC_MSG_OFFSET;
-> What validates that msi_base_addr has none of the lower 16 bits set, as
-> they are required to be zero to make MSI message composing work, right?
+genpd_dev_pm_attach_by_{id,name}() is documented to also return
+a NULL pointer when no PM domain is needed, but they return
+a normal 'struct device' that can easily be used in an unsafe
+way after checking for IS_ERR().
 
-This operation originates from some hardware designs.
+Fortunately it seems that there are only a few callers at the
+moment, so coming up with a safer interface is still possible.
 
-In 3C6000, either eiointc or avecintc can be the parent controller for 
-MSI interrupts and these two controllers have different MSI msg address.
-
-In our platform design scheme, we fix avec-msg-address to the address of 
-(eiointc-msg-address - 0x100000). Therefore, here we need to subtract 
-AVEC_MSG_OFFSET from the msg_address obtained by MCFG
-
-The main purpose of the design that users of 3C6000 can freely choose 
-the version of the Linux kernel that supports loongarch (regardless of 
-whether AVEC is supported or not) without having to change the firmware
-
-
-Thanks again
-
-Tianyang
-
+       Arnd
 
