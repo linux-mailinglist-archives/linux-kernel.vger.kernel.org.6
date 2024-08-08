@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-280156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B81094C66E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:47:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B31494C66F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07DFEB22577
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:47:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0718D284E84
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DA415DBA5;
-	Thu,  8 Aug 2024 21:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B6815ADB1;
+	Thu,  8 Aug 2024 21:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZ9cjZe0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GB7iBy2z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308F515CD55;
-	Thu,  8 Aug 2024 21:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A708215A85F;
+	Thu,  8 Aug 2024 21:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723153611; cv=none; b=DQKhj2s6IzXTa0WYWYXDrJfHruEWFQsY67THp22/9SGb2Du2ReXH9TQjX2YW/1VlnlhY++pFnVIgm+3z+WmTwYrIVciaVhxJPSlroVdsAm99ZliPNzuWJTiX8z/qjTH+1fgiOj1WdMwUi+3UZBnI3Du0sCb4PFnQfbj4Si/eibo=
+	t=1723153615; cv=none; b=CTOC5hWE5tJmZK/X1Qns9HGDjcZP5Z997nCMfKLE7cE3qYKlIy+9HGpOFWCGRTRxCcOtT49A0cwNW06t1zu2qj6RAe6XMdgHYPbgBIguUxP0Uom64miaxbySiXGr7CNJfCk2Qxz8SRqlmC88kb1hIylQt5okercvBnATR5Wz3Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723153611; c=relaxed/simple;
-	bh=SrCA00LIf/8WOXQ3qcmUmKiAAagWu7ZJgow5VDaam+c=;
+	s=arc-20240116; t=1723153615; c=relaxed/simple;
+	bh=qtAK0UeXQRcCnP7Y+pZwRW9Qdm29Lj43pKM6k3a4U4I=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=p6an+DjkSLcyF6FnR5rOO9yvgidmejg+7fdELpHS4Y/Ss7gtEprjX25VfGzX+DYx55QZDJMihk+JYPkxsXioyjgHdWsSkotpuRjBM+eP2PwRHAX2L5Gw2e4fJotNuvz/EV1WIzfCAenE8VcNCEUmJy9owmr4WuySdSKWi3JY25s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZ9cjZe0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E72C4AF09;
-	Thu,  8 Aug 2024 21:46:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=DXbhTzW2NPjhSekLtcnVmVAeIXOo9jF6wuf5+B2035CZNBO5hznsHa3MUVubQJT7jQl0S8YAqs5S/+V0iYJPHHKAITwltlX7YR9AUCn3GIRWKNuY/bToL3quTrOHWnlnxaNLPUngNXpdZV1DvMvuk8redHgYStdBMYn7v6kFmHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GB7iBy2z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3CBAC4AF0C;
+	Thu,  8 Aug 2024 21:46:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723153611;
-	bh=SrCA00LIf/8WOXQ3qcmUmKiAAagWu7ZJgow5VDaam+c=;
+	s=k20201202; t=1723153615;
+	bh=qtAK0UeXQRcCnP7Y+pZwRW9Qdm29Lj43pKM6k3a4U4I=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=bZ9cjZe0POp4JGOuDLjdD6aQkYB+P7985cL9FZtK88aqOJBK768izyFn6wcwfL5W+
-	 XcP0+JAdA8Z+wPTtJjE0mvOQl1w4ZduBXONflK1+08LBQXMDxOzmdqIC01Qc50uacl
-	 lr1ORJYjMFgcDuUnw81+w1o2qpPb9PoqlTh5c/dlhppguJbk6e2axJvPwVcG9tC6mW
-	 U+2HvWvvIv+Sm7tQytU3ev+8tic3NCGltcOArLUIjhSW+iUVqX+peYhsndOOPXCZhx
-	 BQuJlAfsj/ZgK0y/2iqPv/HJRBfXhOytWI4w4Nk10ue+DBjDJ/RZ9wMUmKCoTOj9wp
-	 vO/9KY2+tFXZg==
+	b=GB7iBy2zOeWDJaLuvF3/XzjgSBufy8srdgMk7h+UCiYbiGidb8LtqyFWVikrd2AAA
+	 4DehsFUaMiOS+XE2iIKdMzJlQCpszYg29ZvL7bYlPL+yg60MayHfVaP5+CUrfotPKy
+	 17fXirqE5RtqZ9kJ3SBgYP8YHxZqGDarp5fbh96B+7miSyNiALUNG4oYrNZzH/aEw8
+	 CNM2M1Lcta0NGOQ2PxMSPsOX6qiti92Usx4mRsf+6+xWmxEtEHyVJrsJkKOxUX5/ln
+	 J6N79l2h0fueSsEmkv34gxldPIeqbv9McxUZw+UuhlyLV5NFsX0PFBx4CjGqdD8+Dq
+	 VBTlcWCqmbtUw==
 From: Mark Brown <broonie@kernel.org>
-To: Simon Trimmer <simont@opensource.cirrus.com>
-Cc: linux-sound@vger.kernel.org, alsa-devel@alsa-project.org, 
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-In-Reply-To: <20240807142648.46932-1-simont@opensource.cirrus.com>
-References: <20240807142648.46932-1-simont@opensource.cirrus.com>
-Subject: Re: [PATCH] ASoC: cs35l56: Patch CS35L56_IRQ1_MASK_18 to the
- default value
-Message-Id: <172315360941.480667.13660715615333697845.b4-ty@kernel.org>
-Date: Thu, 08 Aug 2024 22:46:49 +0100
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>, 
+ Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Shenghao Ding <13916275206@139.com>, alsa-devel@alsa-project.org
+In-Reply-To: <20240807-asoc-tas-gpios-v2-0-bd0f2705d58b@linaro.org>
+References: <20240807-asoc-tas-gpios-v2-0-bd0f2705d58b@linaro.org>
+Subject: Re: [PATCH v2 0/3] ASoC: tas*: Fix up GPIO usage
+Message-Id: <172315361213.480667.14057947911720144793.b4-ty@kernel.org>
+Date: Thu, 08 Aug 2024 22:46:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,13 +62,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Wed, 07 Aug 2024 14:26:48 +0000, Simon Trimmer wrote:
-> Device tuning files made with early revision tooling may contain
-> configuration that can unmask IRQ signals that are owned by the host.
+On Wed, 07 Aug 2024 17:02:31 +0200, Linus Walleij wrote:
+> The TI TAS drivers use some legacy GPIO code and headers,
+> this series fixes it up.
 > 
-> Adding a safe default to the regmap patch ensures that the hardware
-> matches the driver expectations.
-> 
+> The TAS2781 is a special case since it adds a handful of
+> lines of deviating code to reconfigure a GPIO line for
+> IRQ mode and then never actually use the IRQ obtained in
+> the code. Is the line used by autonomous hardware? I'm
+> puzzled by this.
 > 
 > [...]
 
@@ -76,8 +80,12 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: cs35l56: Patch CS35L56_IRQ1_MASK_18 to the default value
-      commit: 72776774b55bb59b7b1b09117e915a5030110304
+[1/3] ASoC: tas2781-i2c: Drop weird GPIO code
+      commit: c2c0b67dca3cb3b3cea0dd60075a1c5ba77e2fcd
+[2/3] ASoC: tas2781-i2c: Get the right GPIO line
+      commit: 1c4b509edad15192bfb64c81d3c305bbae8070db
+[3/3] ASoC: tas*: Drop unused GPIO includes
+      commit: caab9a1cbb9a9fca24ceabeef57b3764d861ad32
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
