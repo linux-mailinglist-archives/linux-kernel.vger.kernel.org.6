@@ -1,109 +1,90 @@
-Return-Path: <linux-kernel+bounces-279914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28D194C358
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4012594C359
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:07:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8A91C21FC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:07:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 716651C2221B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C920190067;
-	Thu,  8 Aug 2024 17:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76AA19066F;
+	Thu,  8 Aug 2024 17:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PG4s4DFn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FrY8Ujw6"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE20B1F19A;
-	Thu,  8 Aug 2024 17:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FF619049A
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723136859; cv=none; b=PvifBCKx9089wRNiWEtpi8JFy7JdoPmi8a+iJNrLb/EzZk/8QGXXPLtZXGr1t0+WA2sm6NPOtfA0p5s/6woM0VkegOTJ2IxuH8T4f5Q89H6bDrucANjVyzYxSJKj+G9zGkxNzwZBFyG40c0iOcace2g0ls0vMjiXXo2F6bvK2MU=
+	t=1723136873; cv=none; b=NFztPl4VlbRoPeNNNVgdDfHH3jV75Ka02ZTBeR33wuOB5aSauS8ciyHC+56adeDOjqiHHn061fK//4fPYtkqgUs1CbLkBYqOHXvPk40bR6Z1iT/zvd4Ynw/Z52bH5B2xPFuU8ujZTyzLn3+DX5cTcLRWR/o/KwltRqiqA7FHwm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723136859; c=relaxed/simple;
-	bh=Rzb89voYZneQbKj+/f0ulrexRm3ovFyYt+v+0qoef/Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A0e4Bm1mkn2d70DnET7op+eyaobRiOk2AAiRnWIK/YHCZ2aQbtZZta+YUyOFMr9TSp5y4XrfP82zEndbCOqRkGMeYg7S+CxPi4YgScpqCMFtNU9AT/D/uyZoDM+NDzgo8D4L6oDM9u1T6bzE6NLKRPVpnQze7l8nN6iI2ToFadI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PG4s4DFn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 387F9C32782;
-	Thu,  8 Aug 2024 17:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723136859;
-	bh=Rzb89voYZneQbKj+/f0ulrexRm3ovFyYt+v+0qoef/Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PG4s4DFnzGXjKx4aHAhfKQYSD74T2NqVQXgdLo9daTYt/zrZ+FJUAmI0AJZRIoQhL
-	 40qjBwL8utd3dqA8WCSBSDO1oKpHJmX6p8kemr9NYaq9jraUHj8X8ulFDgapxpo+0r
-	 /RPXebbNsy9EihbqyGdygZq2r4pofFEW2J75BNAqqWRwGdW4GBBt8yEW+49L6nvn8S
-	 1yZJFFkqHmtF8viLrmbNAyJ/+j48ZOcEoWyLPOhYMPfDTZRdUGPoa3346hmPqarK5b
-	 bVlojbXehChFLMRbGaPN9O0hOQdsAEWAtetOVz9eR5BoD6r1g4hW/IGWFbjUNNIfB4
-	 wxlG2udqPwabA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Bart Van Assche <bvanassche@acm.org>,
-	linux-scsi@vger.kernel.org,
+	s=arc-20240116; t=1723136873; c=relaxed/simple;
+	bh=n1CckrRpxHusTNjhXFfmCWXWaNGy0qsTYBqlNkvgqk8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B/mhoTTLc0YOXqWz8njJl1Wnuzz3Ukk/V3mgetQQZBURkiVyJuYnASTL8S7WYxr4/apx0JnNsXTwlI81XYGVnKw6eZRuUWVfkB8TGAgScGw+wTMKxYQ8r1Zw9pXWoe6XaLxUcUBS0iPCfow32CxCqNrbM7DkNg9PTfpTnktWGEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FrY8Ujw6; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723136869;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aTGYHwhlXrNgcnqJdaAC4NJzJ7epnTy+OOYuWbGCTs8=;
+	b=FrY8Ujw61+pqGjGoDbK093NopnMYwfH05klZqL+VL4ZZe1sNwmKdDAQAdjHH8xGO+QWWqn
+	D89XBukPOnCfWfDPV81XZOPQ8u3nbvbfh7NdyTpEdrcdEIYVLiqfoNwRCycCgzUA5KLaUL
+	SHmKzkclZv1xQpBNYzl5bDHjEhNrzeM=
+From: Oliver Upton <oliver.upton@linux.dev>
+To: kvmarm@lists.linux.dev,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] scsi: ufs: ufshcd-pltfrm: Use of_property_count_u32_elems() to get property length
-Date: Thu,  8 Aug 2024 11:07:03 -0600
-Message-ID: <20240808170704.1438658-1-robh@kernel.org>
-X-Mailer: git-send-email 2.43.0
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	wanghaibin.wang@huawei.com,
+	maz@kernel.org,
+	james.morse@arm.com,
+	suzuki.poulose@arm.com
+Subject: Re: [PATCH] KVM: arm64: vgic-debug: Exit the iterator properly w/o LPI
+Date: Thu,  8 Aug 2024 17:07:39 +0000
+Message-ID: <172313677516.561165.2999728205776923887.b4-ty@linux.dev>
+In-Reply-To: <20240807052024.2084-1-yuzenghui@huawei.com>
+References: <20240807052024.2084-1-yuzenghui@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Replace of_get_property() with the type specific
-of_property_count_u32_elems() to get the property length.
+On Wed, 7 Aug 2024 13:20:24 +0800, Zenghui Yu wrote:
+> In case the guest doesn't have any LPI, we previously relied on the
+> iterator setting
+> 
+> 	'intid = nr_spis + VGIC_NR_PRIVATE_IRQS' && 'lpi_idx = 1'
+> 
+> to exit the iterator. But it was broken with commit 85d3ccc8b75b ("KVM:
+> arm64: vgic-debug: Use an xarray mark for debug iterator") -- the intid
+> remains at 'nr_spis + VGIC_NR_PRIVATE_IRQS - 1', and we end up endlessly
+> printing the last SPI's state.
+> 
+> [...]
 
-This is part of a larger effort to remove callers of of_get_property()
-and similar functions. of_get_property() leaks the DT property data
-pointer which is a problem for dynamically allocated nodes which may
-be freed.
+Applied to kvmarm/fixes, thanks!
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
-v2:
- - Update subject to include 'ufshcd-pltfrm'
----
- drivers/ufs/host/ufshcd-pltfrm.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+[1/1] KVM: arm64: vgic-debug: Exit the iterator properly w/o LPI
+      https://git.kernel.org/kvmarm/kvmarm/c/01ab08cafece
 
-diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
-index 2e1eb898a27c..0c9b303ccfa0 100644
---- a/drivers/ufs/host/ufshcd-pltfrm.c
-+++ b/drivers/ufs/host/ufshcd-pltfrm.c
-@@ -31,7 +31,6 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
- 	const char *name;
- 	u32 *clkfreq = NULL;
- 	struct ufs_clk_info *clki;
--	int len = 0;
- 	size_t sz = 0;
- 
- 	if (!np)
-@@ -50,15 +49,12 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
- 	if (cnt <= 0)
- 		goto out;
- 
--	if (!of_get_property(np, "freq-table-hz", &len)) {
-+	sz = of_property_count_u32_elems(np, "freq-table-hz");
-+	if (sz <= 0) {
- 		dev_info(dev, "freq-table-hz property not specified\n");
- 		goto out;
- 	}
- 
--	if (len <= 0)
--		goto out;
--
--	sz = len / sizeof(*clkfreq);
- 	if (sz != 2 * cnt) {
- 		dev_err(dev, "%s len mismatch\n", "freq-table-hz");
- 		ret = -EINVAL;
--- 
-2.43.0
-
+--
+Best,
+Oliver
 
