@@ -1,136 +1,151 @@
-Return-Path: <linux-kernel+bounces-279696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF8E94C09A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:11:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9CD694C09D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFE8B1F269A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:11:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88253283B43
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBD818F2D6;
-	Thu,  8 Aug 2024 15:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8879E18F2CF;
+	Thu,  8 Aug 2024 15:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="QPOJcy0b"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uk0vuUOr"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EEE18EFC8
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBC918C355;
+	Thu,  8 Aug 2024 15:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723129872; cv=none; b=pU9ed7qXFOOojOJLbK6kz45WVI12zQwjltJlx+0EZCCWX38Y+R2841zdAPD3czNKkbSQ/lEyu1Agr0huMfidUUYajmAShKGMz22ImWp9tEX+s8xJclnwrTievd6lXiJ+kpnLkcVP+r5iQSDhOTWIiSJAwZaR2jeVMBEAnHVapWk=
+	t=1723129971; cv=none; b=brVE/6ZFhrrrJJhcdxXqKnNdJ4ethCYUJP0Bt/GSIrQdvbamF5YE9kVVVFe80evIGprMi+kFHI8sf2ZcM1PPDtoIyJGhLqgRL4WY9Oxtm7IVE9th9coJLgFqNqc58BgDABy46IrwmSOBUgLG7FEF41EiV/bQxjoEYELmbyB8pFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723129872; c=relaxed/simple;
-	bh=iI7j9YM9NkAwGs4tVidYT/BcH0w5Sb7CColD3m3raU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qQNUpY2FqjJIyTotdgUREyUSBL+mjM+TE6gepC3ZM3t/Q3ZOomxkxphephoImu5Gzm+yCsbZHJTsyPhUaQgUoSIj4EmXp9b+67vBS0uVVRIPzcIKbawyyMHGe4oU0xV+PdtLUd7dkn/9qtfw74MmzkO68CK0W+mC5/Qp6I0a3RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=QPOJcy0b; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5009a.ext.cloudfilter.net ([10.0.29.176])
-	by cmsmtp with ESMTPS
-	id c2EqsdEApiA19c4nEsFnQN; Thu, 08 Aug 2024 15:11:08 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id c4nDsNi5scHN5c4nDsIhhF; Thu, 08 Aug 2024 15:11:07 +0000
-X-Authority-Analysis: v=2.4 cv=W64+VwWk c=1 sm=1 tr=0 ts=66b4e00b
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=ZI_cG6RJAAAA:8 a=VwQbUJbxAAAA:8
- a=bAOmJZEJ0AiGMNYyOQsA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
- a=zZCYzV9kfG8A:10 a=CiASUvFRIoiJKylo2i9u:22 a=AjGcO6oz07-iQ99wixmX:22
- a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=qMvp7AEo4WmmqjYvoT0LxSj9ZRUdxlBj+1r+x+WzKsg=; b=QPOJcy0bKYUHFKPiOS+BzJO7Zp
-	hGLQy30vuBk2njANV6abwBg0NNmarHyj6+WEtgsxSWPqovSklNnH8Up9dqjkJYmLnU8NBYEwT1Okb
-	YDz0jXOfqmglifhEestYNCfQFRtX4L67ElcJikhYwUQUko1sd4sBKb+EJJwy1ldxPkS+2bjldOV4O
-	7qzHbSKRNluUdwogVg0sgQ0pvc8XkUzu5wFq5E+LnuigRPXy05mqYclD1B0waOlyAx8tQ01SAGuIh
-	a1rdOTlrlZTJ8t2mtqWCmnvxaJPk3TMsJeVBCn0qY452n01zJvxlG6Qiua3vKFxWL3746M+hdwvSa
-	zBDyjgVg==;
-Received: from [201.172.173.139] (port=37952 helo=[192.168.15.14])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sc4nC-000RNY-2T;
-	Thu, 08 Aug 2024 10:11:06 -0500
-Message-ID: <481a0b09-2e6f-4076-8e03-6205bae31f59@embeddedor.com>
-Date: Thu, 8 Aug 2024 09:11:04 -0600
+	s=arc-20240116; t=1723129971; c=relaxed/simple;
+	bh=ca0M/lgnDfsmI9N2dHuUiExLnhm74NvrG+D1yePsoeY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=asz2ZV/QbYzBfx41CoNR4YSQoWMiVZftpcjuiwHYRQgwwwL/cnhOHDHF7aoB0PKC4Rv80Resa0y3x4N+HTRtGCdcxHDRMWAtPhbwMwoUQAbq13RsL2zWxLc+RrVWQeI4kqL+gsb2dYUiGTXbhCBNHS+w7eV8D1eKwUQz6zw3Tic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uk0vuUOr; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-428243f928fso11136015e9.0;
+        Thu, 08 Aug 2024 08:12:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723129968; x=1723734768; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6KtF+zsK4gh5wBrd2V369YVuRxfiS/GTtNKOYSm0scE=;
+        b=Uk0vuUOrwRS0ULwOgGVAXziLOTSAFpnyb9/9lm2xKhq+7t6C95Cty2tycTB30WFqGq
+         FpwpsP6kco5Rrapb6SgcuIgpknSLYlD2m3G4VnJuRLFiIBSGZjlbQ5Yf2l5TIGn1VLVc
+         AWA2YyeCBkEuoa1D8mN9D4JCjbzxOeq9i+ihMH8Q+G+V79LaR9o62lVEmpDaxL+D68Wi
+         O5s6523QboR8uTKU34SeimFxDu59BCryVCUf2Xq4WO6i80cJXE5zDxfA1x3fITU8KdD4
+         Pb/N0jRSzC++qYwz60xjkwWsCDU/sCsw+qV/jDgadZxuxrzrtm9JBinra4mFZHZj0+IV
+         pFEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723129968; x=1723734768;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6KtF+zsK4gh5wBrd2V369YVuRxfiS/GTtNKOYSm0scE=;
+        b=wfrwfItorn0kvn5vZE0eQctLVRfWhsUxdJt2uef8Z75dNHW/t1ZqGaC/skEZIWDWhn
+         lQL4lz1GbCuMfglDkS7vorYVmLzmNs/Nm0ZZ86qfQvXMRxzWO18NPCZ0J2ISGfZj36We
+         XdeZ9qqDQkx7LGrmYI9fyYNpyvGXkV7zMf4TORbqro8s3PDpx1BIaexBKFoz2D1R8xe1
+         fVEHdzP54509xQyYWAM6EdyvgTyXWpxcBDT1932q27yzhGE85zvpmqFocYAw46y5Os2A
+         4DICWsabE3YbLs3O29e9YG9bVwoWqhsDcI5S4yUU5AlJFQs3kS6/CWw/agr9Pi6StBUt
+         MLsw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3iiAcles8s1JsZzfjZ05RbDM5RW+PR4GLDuNN/pvqmEALOlHaZETMyoXsHpn9I1VUxDcGAVCJDx0LaKlTtAu+yQsI7KQM0CekOptQ/C8SCo6s8vSkyjBjKVGqYaNkk5YH96DyGzJBArJvBs6plyIyUFzfOqNVcwXGsgrxqDj9vUTgMw==
+X-Gm-Message-State: AOJu0YwF7bw/TyrNUSO1UBmy9bLaRCIqSmM79qPqtGb/O1FokemurGVW
+	5lVB0Hv5g2Y/sqIk5kJYkK0bFZu2yvQ3ir+v+iTDNT2KxRc7KENWKpAAZb41
+X-Google-Smtp-Source: AGHT+IEmQ+Wjo1pu8wA3o8BPezfHpD/QX+EMqKP6+lIS8jhtcWqtGNQnCja/XUgJv2rBNpHXvbjTIw==
+X-Received: by 2002:a05:6000:1f81:b0:368:7868:2d76 with SMTP id ffacd0b85a97d-36d27590b52mr2494620f8f.51.1723129967661;
+        Thu, 08 Aug 2024 08:12:47 -0700 (PDT)
+Received: from [127.0.1.1] ([213.208.157.67])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d27157145sm2179881f8f.12.2024.08.08.08.12.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 08:12:47 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v2 0/3] use device_for_each_child_node_scoped to access
+ device child nodes
+Date: Thu, 08 Aug 2024 17:12:36 +0200
+Message-Id: <20240808-device_child_node_access-v2-0-fc757cc76650@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/select: Annotate struct poll_list with __counted_by()
-To: Thorsten Blum <thorsten.blum@toblux.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz, kees@kernel.org, gustavoars@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240808150023.72578-2-thorsten.blum@toblux.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240808150023.72578-2-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sc4nC-000RNY-2T
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.14]) [201.172.173.139]:37952
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfGXBNDyKUmjKCCR2yWVp8ToRkAB5UoyT865QL9A96tPKikwEpT/w+ZbHQPZVkqUBecGDImQYjZ1QVPCQlN/GnVA/NUSggxqjp8eZn4mOdzWAdmYcJTz0
- zbUziB6SHLA0XPWYSFWwr6Gr0INUkijEGd8Ti+QcR/fo/SWpZYjaNXQLuqWtpG/XJ/uIsBGIS+GqtjKWUrbc2RG6XjuiXMPggtMx+C5+HMhPvj3HwcBhUsfz
+X-B4-Tracking: v=1; b=H4sIAGTgtGYC/3WNzQrCMBCEX6Xs2Uiy/VF78j2klJhs2oU2kUSKU
+ vruxnr2+A0z36yQKDIlaIsVIi2cOPgMeCjAjNoPJNhmBpRYyRPWwuaSod6MPNneB0u9NoZSElW
+ FdVlelNSNgzx/RHL82tW3LvPI6Rnie39a1Df9Sc9S/ZcuSkhhrdOo7uQah9dh1jwdTZih27btA
+ 0Pd+TnAAAAA
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, 
+ Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, 
+ Michal Simek <michal.simek@amd.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, 
+ Lee Jones <lee@kernel.org>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+ linux-leds@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723129965; l=2074;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=ca0M/lgnDfsmI9N2dHuUiExLnhm74NvrG+D1yePsoeY=;
+ b=ghu7H7XxFXYSwhyp49247Tu3pYhOgsX5bojOozYtl1FnGKmyaJQwxZjOeLEggBHab41H902Om
+ o7omPSe2nfLDlC7/I1iY+bgxjk96KWSJ8krWFeiR/pGW4xE/53ZqP5U
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
+This series removes accesses to the device `fwnode` to iterate over its
+own child nodes. Using the `device_for_each_child_node` macro provides
+direct access to the device child nodes, and given that in all cases
+they are only required within the loop, the scoped variant of the macro
+can be used.
 
+It has been stated in previous discussions [1] that `device_for_each_*`
+should be used to access device child nodes, removing the need to access
+its internal fwnode, and restricting `fwnode_for_each_*` to traversing
+subnodes when required.
 
-On 08/08/24 09:00, Thorsten Blum wrote:
-> Add the __counted_by compiler attribute to the flexible array member
-> entries to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+Note that `device_for_each_*` implies availability, which means that
+after this conversion, unavailable nodes will not be accessible within
+the loop. The affected drivers does not seem to have any reason to
+iterate over unavailable nodes, though. But if someone has a case where
+the affected drivers might require accessing unavailable nodes, please
+let me know.
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Link: https://lore.kernel.org/linux-hwmon/cffb5885-3cbc-480c-ab6d-4a442d1afb8a@gmail.com/ [1]
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v2:
+- Rebase onto next-20240808, drop upstreamed patches (changes for ad7768-1)
+- xilinx-ams.c: drop fwnode_device_is_available(child) (implicit in the
+  loop).
+- Link to v1: https://lore.kernel.org/r/20240801-device_child_node_access-v1-0-ddfa21bef6f2@gmail.com
 
-Thanks
---
-Gustavo
+---
+Javier Carrasco (3):
+      coresight: cti: use device_* to iterate over device child nodes
+      iio: adc: xilinx-ams: use device_* to iterate over device child nodes
+      leds: as3645a: use device_* to iterate over device child nodes
 
-> ---
->   fs/select.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/select.c b/fs/select.c
-> index 9515c3fa1a03..1a4849e2afb9 100644
-> --- a/fs/select.c
-> +++ b/fs/select.c
-> @@ -840,7 +840,7 @@ SYSCALL_DEFINE1(old_select, struct sel_arg_struct __user *, arg)
->   struct poll_list {
->   	struct poll_list *next;
->   	unsigned int len;
-> -	struct pollfd entries[];
-> +	struct pollfd entries[] __counted_by(len);
->   };
->   
->   #define POLLFD_PER_PAGE  ((PAGE_SIZE-sizeof(struct poll_list)) / sizeof(struct pollfd))
+ drivers/hwtracing/coresight/coresight-cti-platform.c | 10 +++-------
+ drivers/iio/adc/xilinx-ams.c                         | 15 +++++----------
+ drivers/leds/flash/leds-as3645a.c                    |  8 +++-----
+ 3 files changed, 11 insertions(+), 22 deletions(-)
+---
+base-commit: 222a3380f92b8791d4eeedf7cd750513ff428adf
+change-id: 20240725-device_child_node_access-442533910a6f
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
