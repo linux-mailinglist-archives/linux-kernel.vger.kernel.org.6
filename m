@@ -1,107 +1,130 @@
-Return-Path: <linux-kernel+bounces-279208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2B194BA7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:06:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E6894BA80
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347B1281256
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:06:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617F91F222AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D153189F48;
-	Thu,  8 Aug 2024 10:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152BC189F33;
+	Thu,  8 Aug 2024 10:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="n4HxHa5y"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CZm4wM8v"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EBA1891BD
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4853A1482E9;
+	Thu,  8 Aug 2024 10:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723111562; cv=none; b=rkTZz98Z2N/v9HK+s/N25YVJfBXtv6edg5XaJMX7dkF+7/Zkgder3NBQ6VGBB0lG0FOiBl6bcyp14KG7cJkAjmr82oS1nbz0G7Xhlz+k2ahkdqIaMEEHuvBM1H1N6XqmafgzQ3tisgytQf4AJGc3HVvC7upGPmugslN4uwb4cFI=
+	t=1723111611; cv=none; b=toGCai4yeilgibImvYD8fBwkURcAEhtl8t58+NfdQSSPv5lIDToKE546cr5f4OWns8sjwRRvhp5jl+fo7F9P4EJTBRhCs3hv2e3lI3fV5eW8pemsiPmZEgbzio6sV//H3SSSblaX/5Z8PrldSgazmXhWUEuAEil9XeCHmdcTh1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723111562; c=relaxed/simple;
-	bh=6hv5xKMBa4EVOIETsZgjUJj1tDj/hE5EZ3N7WS+BMmU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=giAAnYHc9VDobKWwDQjuiVtSWoNl0NnPYokx8ZAZBEY9ASajKTAT0fi4kU2ZaZopnP0BJmFjSyTVcdaK+l/tKIV122Vo6Xp5hTIZMbr0H4jth+hnZY7dVigAAnSTnG99fV7qgexItw95m2O4ys1ks/N4XA9Bn3YXH6Wckcn/Yl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=n4HxHa5y; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3683178b226so303412f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 03:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723111558; x=1723716358; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/qPsQ8QVE2zEks663h1JC5K+bSl/B5g3BfpyLqR4k0g=;
-        b=n4HxHa5yTpH9UzfsbLnDthna3m6hI9+Ph9C11hPNDhuFyxyvZWvcquKzyHlfgW+zCm
-         rAM1IqSmCWhEpo7d4miB0Lz/P14bOUBykfZCtviX7G5WOp91C5cliuxD/vE2H8lWEYqa
-         ELWGQlXHECzDSmzBsGXOlJa6L/5p0Umh7ilLKhbk5+D6OmyieophBIespy/24cRMawGR
-         E5V8KopGRrH4aAinUudbK5pTvfi1XKH72VPkGSLvQjzk9mg1qeij79k5Tl2zf7DIXezD
-         23IFklpluLBYy9ZVbPNK5Qqz3W8POP2kQ657Vb+WrHiageXZYF0OjeMa32u47Kf2eUWh
-         3CpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723111558; x=1723716358;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/qPsQ8QVE2zEks663h1JC5K+bSl/B5g3BfpyLqR4k0g=;
-        b=s6w069CE1l48NByJUg347sY9uzXW4bChUz5e0TgYaWP25lSABRFu32BYYKZUpVM/Or
-         isJmOzgcPkecim85F6WjUQqKv7ZSFE+gHeaCvvAZ78DYH3l23bkbyPybdS5eon6D6NY7
-         7qT/z6WQt9SM+22SYEfc8fvXAakJSBZusen+J9a8+fDTszaeH2Q2TBUX699UgnUYeCtp
-         GrQ2ZQaPA0oqO7RhWPam3atPYHEatMwaUDiR5DLoSM8CgcxopAA0Y0PdtWsaJM69K6ex
-         ODR71vz6py9dnRqWtlmamAS+YErptGhSnKiED2RLRpFUTTNMOtl3YfxFzYFlHL8IvYK7
-         mZnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFiDl8Ii9Akbr3aUPsBhiRhKRAjkWDfxbMjeS6uRQV8IrwAuZtq5GybhwjbQCEIBkVXG7sMaBlocrM5DU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXCsSXBgO7wcCDrpQiZqLfsqNFZFpjEPvAzYXC/uqF+/rSD1Mf
-	f6v/yo5UpZbZCowC4orZghx73lGh7naQ9fIVCLsYd8V9qbYmCT7+u/V46IhBzvU=
-X-Google-Smtp-Source: AGHT+IHuYbrCTlKt5TCgiFSu5JCjZWHBFhE44QTQFbwLXgNURs2glTBXxCRbpAs970Ya85dt2iUAZw==
-X-Received: by 2002:a05:6000:259:b0:368:4e98:6e9e with SMTP id ffacd0b85a97d-36d275900a9mr806392f8f.63.1723111558368;
-        Thu, 08 Aug 2024 03:05:58 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:ae7:4e79:8821:15db])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d27209a5esm1390336f8f.80.2024.08.08.03.05.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 03:05:57 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Linus Walleij <linus.walleij@linaro.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
-  linux-kernel@vger.kernel.org,  kernel-janitors@vger.kernel.org,
-  linux-gpio@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v2] pinctrl: meson: Constify some structures
-In-Reply-To: <f74e326bd7d48003c06219545bad7c2ef1a84bf8.1723053850.git.christophe.jaillet@wanadoo.fr>
-	(Christophe JAILLET's message of "Wed, 7 Aug 2024 20:05:36 +0200")
-References: <f74e326bd7d48003c06219545bad7c2ef1a84bf8.1723053850.git.christophe.jaillet@wanadoo.fr>
-Date: Thu, 08 Aug 2024 12:05:57 +0200
-Message-ID: <1jplqjxray.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1723111611; c=relaxed/simple;
+	bh=uKQ3e+rRipbc52EZ9/3ubN4gDzaoIHsFcfDD6xQ/S1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAJh5lm9SwAU3Hzjdu5QxQjv9nFpUg/pyOI5zu5vfZYe4sbSGRhdbWBatYTgwjLCxahA1TR5wEVYf1Mh+nqQYJ5qc2kX7QNbsy8zGqgq9CBIULRevqsJGxyuy7djaLwwsT6h3LTehvECOaCsEsZwZoASznLqh1K3CV4GF4omux8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CZm4wM8v; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4782fNrJ016194;
+	Thu, 8 Aug 2024 10:06:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=y1zPW2qtS6K8ZiAt0cYh2AtCXW5
+	MiQGck8fcLF0AWPA=; b=CZm4wM8vF+vLu4UtHmjXu6YNx85wgWZEKd4uT49Ml2n
+	SEuEXU6P12/t76ra+zQxaf6Nn8XPStg1Lx9dlYZPba2o0YbnsjXHg4dCdvdemPuL
+	zCLZ8xO0UbIUPqhYvytuaM1x3q8ybitpGTbs2hISicAjpPLqHau1AFyGBNY62jj4
+	WQKEG2NVcG2EHb+PfuYT9t1FIpm6c3T3QLoFtaoOcS2f9KcLtuS98IVHLDi/iUF9
+	FuDr7A3k3wfFkepqzULb+yCemqYeNV11i7LEXJc++OoOpjmw23BiB+TuxJt+4cAI
+	qldimK8ki5k4cocyMiptyFpd6F9viZrrbIdebnmXWhg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40uqcmvrta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 10:06:47 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 478A6kWL017511;
+	Thu, 8 Aug 2024 10:06:46 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40uqcmvrt8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 10:06:46 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4789IVg3030238;
+	Thu, 8 Aug 2024 10:06:45 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40t1k3d9sf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 10:06:45 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 478A6flS51904982
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 8 Aug 2024 10:06:44 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DD28520074;
+	Thu,  8 Aug 2024 10:06:41 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A90A520067;
+	Thu,  8 Aug 2024 10:06:40 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.56.231])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  8 Aug 2024 10:06:40 +0000 (GMT)
+Date: Thu, 8 Aug 2024 12:06:38 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, rppt@kernel.org,
+        akpm@linux-foundation.org, brauner@kernel.org, oleg@redhat.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v6 1/3] mm/memblock: introduce a new helper
+ memblock_estimated_nr_free_pages()
+Message-ID: <ZrSYruB/Aa8+oBoZ@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20240808001415.6298-1-richard.weiyang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808001415.6298-1-richard.weiyang@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: QoRIWgoznaqXPJrGrCf_ad_2IXqdjEgp
+X-Proofpoint-ORIG-GUID: D-c-bENEGnZt3vXfddoTRXf4D97jZCS0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-08_10,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0 spamscore=0
+ suspectscore=0 mlxlogscore=910 bulkscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408080072
 
-On Wed 07 Aug 2024 at 20:05, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On Thu, Aug 08, 2024 at 12:14:13AM +0000, Wei Yang wrote:
 
-> The following structures are not modified in these drivers.
->   - struct meson_bank
->   - struct meson_pmx_bank
->   - struct meson_pmx_func
->   - struct meson_pmx_group
->   - struct meson_pinctrl_data
->   - struct meson_axg_pmx_data
->
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
->
+Hi Wei,
 
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+...
+> + * Return:
+> + * An estimated number of free pages from memblock point of view.
+> + */
+> +unsigned long __init memblock_estimated_nr_free_pages(void)
+> +{
+> +	return PHYS_PFN(memblock_phys_mem_size() - memblock_reserved_size());
+> +}
 
-On the vim3l:
-Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+This could possibly be short on up to two pages due to lack of alignment.
+The current uses are okay, but since you make it generic it probably matters.
+
+Also, the returned value is not an estimation. Meaning the function name
+is rather unfortunate AFAICT.
+
+> +#define PHYS_PFN(x)	((unsigned long)((x) >> PAGE_SHIFT))
+
+Thanks!
 
