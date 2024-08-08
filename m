@@ -1,141 +1,94 @@
-Return-Path: <linux-kernel+bounces-279849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5572494C285
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E0194C286
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 860EF1C22F8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15E891C25190
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B73518FC99;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AF818FDD6;
 	Thu,  8 Aug 2024 16:20:38 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EG2Bue/v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3701A269;
-	Thu,  8 Aug 2024 16:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86AC646;
+	Thu,  8 Aug 2024 16:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723134037; cv=none; b=Qc/+UIQWgkiImKKNaY1Ovpy4F4elzZdyOjkn+TxUq2W4KHbxW92EfkihSAo+n+wKZESGkA52BoWSGWTefzeyX3xd7mIH6YAtLbhOSjXVXOqdQvaatI4we2UyCd+qQ1kxt9DrB8f5OjxCuTom82LHkDwZAS6xHJc3m1cQRKTqGU0=
+	t=1723134037; cv=none; b=rxQx0/oYtJib19wjsBm+s9pnrtBJC8ZY4boOtlbzlpEv4BKZoJsbn0YIpPW191DTUNdEqwebeO4XWsVeFYvMMFsD42/ZElxL8OaGzpiq+JrsAEKol8UTs7UAdrr5Sz6bDexvBpiddabgJep6R0rB6lL8r/id4baZ7FUD/peB2ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723134037; c=relaxed/simple;
-	bh=uUFZmNG7KZC90pIUDOI51+FHQt5jYILjr8zsdF5VOlw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n7g8/6C8rrsJMqgfpMQL1wIsp0agTin+QptWuiCepWojLroSXAwgVGNrv0YTRTmAslFhQDRWuLF5FyyngkzrAZMvIS/6jpuJYsQL/gPuW8HR3iL6KlPBFUYih+iP8DNcK0pow3OaaUb6DX2S1Ne19851yyzvfXT1ciaFWiIir9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WfsdV2dZ1z6K6Kb;
-	Fri,  9 Aug 2024 00:17:34 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id E3BA5140A70;
-	Fri,  9 Aug 2024 00:20:31 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 8 Aug
- 2024 17:20:31 +0100
-Date: Thu, 8 Aug 2024 17:20:30 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <412574090@163.com>
-CC: <helgaas@kernel.org>, <bhelgaas@google.com>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<xiongxin@kylinos.cn>
-Subject: Re: [PATCH] PCI: Add PCI_EXT_CAP_ID_PL_64GT define
-Message-ID: <20240808172030.00006950@Huawei.com>
-In-Reply-To: <20240808021239.24428-1-412574090@163.com>
-References: <20240806175905.GA70868@bhelgaas>
-	<20240808021239.24428-1-412574090@163.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	bh=/F9CzbDaHZlcXmh2nFEN2EBENa7yJncXVXhwq9kWCSg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=uQR/x6ij3i6s2x8w+0ThzWpO8KOOkX7kBtn9+KZv8xAi6XZBEgI86jdMnQr/K6WfkMW2pDgP3Tosl15pVZCU7d6wtfgUrfU17jH8u+RoMC+pt+ryEHeuwwGZIRajuNBhSY8QMdZm+6NQQpYkTDRk3zXlQU0jd9v87tx8anx2X/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EG2Bue/v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EB66C32786;
+	Thu,  8 Aug 2024 16:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723134037;
+	bh=/F9CzbDaHZlcXmh2nFEN2EBENa7yJncXVXhwq9kWCSg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EG2Bue/vE/dgXHELWVDPsC/Fh8x0u6VNSoKtRFExlOVYaaMifUFJvfoZtV+8iI3i3
+	 3HI2gPNEzEJeTv2W6ghXmYkoOgB+B2oMF0lFaFI8eFPfGXkgkeQfpOP3qLZ1AXPQRK
+	 XDtQ1ZBTZcvYn/cUDfTZHX+yDhWUd9mYkFXrYN7K0C3BIdNl5Rv0LpsEC5bdUg10ib
+	 YBbH2m4/VVZSVzUP8r7IAVgqf4Qbo4ADiLF9MgNesb5WPFPZyy4GSAfLUAcs4uuh9c
+	 4YEb2djkjpsx7IMMe7CNEzLdCpeKRhJJL06Fk+miC5DeSidnt2hEq1A9oUY0YtScxo
+	 gJcn8FoixvySA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 5F2DF382336A;
+	Thu,  8 Aug 2024 16:20:37 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] net: bcmgenet: Properly overlay PHY and MAC
+ Wake-on-LAN capabilities
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172313403624.3227143.18053785706101144239.git-patchwork-notify@kernel.org>
+Date: Thu, 08 Aug 2024 16:20:36 +0000
+References: <20240806175659.3232204-1-florian.fainelli@broadcom.com>
+In-Reply-To: <20240806175659.3232204-1-florian.fainelli@broadcom.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: netdev@vger.kernel.org, opendmb@gmail.com,
+ bcm-kernel-feedback-list@broadcom.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Thu,  8 Aug 2024 10:12:39 +0800
-412574090@163.com wrote:
+Hello:
 
-> > On Tue, Aug 06, 2024 at 10:27:46AM +0800, 412574090@163.com wrote: =20
-> > > From: weiyufeng <weiyufeng@kylinos.cn>
-> > >=20
-> > > PCIe r6.0, sec 7.7.7.1, defines a new 64.0 GT/s PCIe Extended Capabil=
-ity
-> > > ID,Add the define for PCI_EXT_CAP_ID_PL_64GT for drivers that will wa=
-nt
-> > > this whilst doing Gen6 accesses.
-> > >=20
-> > > Signed-off-by: weiyufeng <weiyufeng@kylinos.cn>
-> > > ---
-> > >  include/uapi/linux/pci_regs.h | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >=20
-> > > diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_r=
-egs.h
-> > > index 94c00996e633..cc875534dae1 100644
-> > > --- a/include/uapi/linux/pci_regs.h
-> > > +++ b/include/uapi/linux/pci_regs.h
-> > > @@ -741,6 +741,7 @@
-> > >  #define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
-> > >  #define PCI_EXT_CAP_ID_PL_16GT	0x26	/* Physical Layer 16.0 GT/s */
-> > >  #define PCI_EXT_CAP_ID_PL_32GT  0x2A    /* Physical Layer 32.0 GT/s =
-*/
-> > > +#define PCI_EXT_CAP_ID_PL_64GT  0x31    /* Physical Layer 64.0 GT/s =
-*/ =20
-> >
-> > It probably makes sense to add this (with the corrections noted by
-> > Ilpo), but I *would* like to see where it's used.
-> >
-> > I asked a similar question at
-> > https://lore.kernel.org/all/20230531095713.293229-1-ben.dooks@codethink=
-.co.uk/
-> > when we added PCI_EXT_CAP_ID_PL_32GT, but never got a specific
-> > response.  I don't really want to end up with drivers doing their own
-> > thing if it's something that could be done in the PCI core and shared.
-> > =20
-> PCI_EXT_CAP_ID_PL_32GT and PCI_EXT_CAP_ID_PL_64GT have not used now,but=20
-> PCI_EXT_CAP_ID_PL_16GT have usage example,in drivers/pci/controller/dwc/p=
-cie-tegra194.c
-> function config_gen3_gen4_eq_presets():
->=20
-> offset =3D dw_pcie_find_ext_capability(pci,
-> 				     PCI_EXT_CAP_ID_PL_16GT) +
-> 		PCI_PL_16GT_LE_CTRL;
->=20
-> PCI_EXT_CAP_ID_PL_32GT and PCI_EXT_CAP_ID_PL_64GT could be used while nee=
-d to
-> get this similar attribute=E3=80=82
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-I'll bite.  In PCI_EXTE_CAP_ID_PL_32GT PCIe 6.1 which I happen to have
-open has some writeable fields in the control register.  So
-kind of fair enough a driver might write them.  In my view we should
-probably have waited for such a use to turn up.
+On Tue,  6 Aug 2024 10:56:59 -0700 you wrote:
+> Some Wake-on-LAN modes such as WAKE_FILTER may only be supported by the MAC,
+> while others might be only supported by the PHY. Make sure that the .get_wol()
+> returns the union of both rather than only that of the PHY if the PHY supports
+> Wake-on-LAN.
+> 
+> Fixes: 7e400ff35cbe ("net: bcmgenet: Add support for PHY-based Wake-on-LAN")
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> 
+> [...]
 
-The Physical Layer 64.0 GT/s Extended Capability control register is
-entirely reserved. So as of now, I don't see a use for this capability
-until the PCIe spec adds something.
+Here is the summary with links:
+  - [net,v2] net: bcmgenet: Properly overlay PHY and MAC Wake-on-LAN capabilities
+    https://git.kernel.org/netdev/net/c/9ee09edc05f2
 
->=20
-> > >  #define PCI_EXT_CAP_ID_DOE	0x2E	/* Data Object Exchange */
-> > >  #define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_DOE
-> > > =20
-> > > --=20
-> > > 2.25.1
-> > >  =20
-> --
-> Thanks,
->=20
-> weiyufeng
->=20
->=20
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
