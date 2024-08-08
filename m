@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-279684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80B694C06E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B255294C073
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA54285A9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F2C42885BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0105518EFE7;
-	Thu,  8 Aug 2024 15:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2601A18FC6E;
+	Thu,  8 Aug 2024 15:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Y3Qm1zXG"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="aEP+UHP3"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B526118A944
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661E018F2CA
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723129244; cv=none; b=pyOdAJJ6qxuLFspmWXZsL0j2MTytcD89eey3JAFTHE208XH6Tb+vSrGMmmtfkQU16jU+/LpafkqCcDFP6acZGkrRmhySftvvTe/QX+/dNRbMAqHZbKlWqAfWDdkSmB2g/O7O8OM6+0Q3MMioqaSJvEv0y+M/DYg+5jOLd6ty8tg=
+	t=1723129248; cv=none; b=m1MB/OVWWUi5VXjKOmc9xx2OPUogTzqjipN4Z9P3J8B+GpA3WtTJ7P64Zz21RwIs5ECmQWyqUizyRa7gLqJhNbYE9pKPLqhqNRn5yMzFbVo0LY5aDxt8/Ar4girKi8udKJQaSQA/H1Hd2BF4RddM3FUHOIaKnFy43GUS7PfXbnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723129244; c=relaxed/simple;
-	bh=vuvMWh6YATvbV2e/4JH4NJzWpYvqaaRTdIQvBVZ710s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IuRSA3NMP+Hj905kYkXSnGndjpqp+lSJrLflxTRxFkFRF8/jTWzS1j4QE6KHtJCc7SB2VZDqypsaAy1qUra0UZ3tcrvmJuiIm9DWq4gYR2Kuld7RJcNv7JSkUU1S2jdKhWN+egRjYDfwy/W2KySHaoCwHF59jwvvs18dPn7OuXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Y3Qm1zXG; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bba25c1e15so1259188a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723129241; x=1723734041; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rAu/fAt9pD45BuwjaKWE/kC9nLY3RaeXFsWLxqTj2xI=;
-        b=Y3Qm1zXGGB9WN+rnRUikO6VRXtHsRLxrwAzNrb7iZKnFAFXurxCQMBqxnLNUGQvaZg
-         gWxv6fq+jooWxp5XE+u+yBu3bCgUVILpqM+8pM9CjgQEmpYwi7QGQ7YeOk8CDxZyD79l
-         ZrJi8bmBzR8JANdd73oaX7LY42s5kcT1wiBykqzFg6A41xNnbor/LkV5Q+hmdwEmkrMv
-         KECKGhBVC/vh+xZS+Uw8jcbhIaVHo2FA7CYYQhl/yi6v+DU0zf+6rNLLfEKigKiHh+na
-         N4R99Ymmi3OtI/nkVcYTr5JyKsI98Qke5zyi0vxMX3MD4fekUVYxKsw7xlrNQiTXzh8f
-         KgWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723129241; x=1723734041;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rAu/fAt9pD45BuwjaKWE/kC9nLY3RaeXFsWLxqTj2xI=;
-        b=egjDTCIrolB4n6oxeTUVs0gb85E6ch/UFHeHhmgjU50YI/OQwAXsFAmnMD6mSfDMsT
-         7wJNAlnX7+548RRFcyv29AH6lZ/IqIhQor6h5YcTcc6AmO/C/kQ9yVnDgE0b8ulOU4vA
-         8v8g0sZX9kx6WR8I8xGVDAn0DEb6aV0KfnH9sli0PFeDINXpKqTlS6iC2H2chNQyNNFL
-         Nrac9T7AV2uTzORNK/oeNUiXpEoUpw0R6Wl8OcCFEkqMRAfpX99qbnQ7BZ5qmARECq+N
-         72TCfX/42KVJN7kFQQQPNdz5T3smoMdc1sReU6dVFSJZ7o60dBlZPor9xVW/QglGI2eA
-         Pv5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUCFMy66UlSHs9xtwGLJMS802vN7z7vzTH8+Yl46dolXFzol4Vt3HjceP4Aw5Zy0gskfsQPRX0RMAQS8AQoxlt7KO26mszrsqm/xqOs
-X-Gm-Message-State: AOJu0Yxyk7EE+F4VNnTVqHez5NYxIyKPXV9rIkde1iV0nJdznmSir32v
-	PbCrFsWXvuYK7OMtcAG+UM1UJie8JKE8m0abxBmpV+RRxzt9TLLh0t0THdgf2USBwEgBzXFBlef
-	hiwQ=
-X-Google-Smtp-Source: AGHT+IHJsIUMLs0BIicJgJK+av1Wa9E1DZrzzBCC/VZUB70rVlhYNgRsGns9/IL3QCsWu+oHUYyEdA==
-X-Received: by 2002:a05:6402:3550:b0:5a0:c709:aa0b with SMTP id 4fb4d7f45d1cf-5bbb233a752mr1705181a12.24.1723129241008;
-        Thu, 08 Aug 2024 08:00:41 -0700 (PDT)
-Received: from fedora.fritz.box (pd9e1640a.dip0.t-ipconnect.de. [217.225.100.10])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c1dbe4sm698105a12.27.2024.08.08.08.00.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 08:00:40 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kees@kernel.org,
-	gustavoars@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1723129248; c=relaxed/simple;
+	bh=lcfbc8kqDOW5a9qjIc68nR/HZWnHBfFGHgWF4MQOB4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dVDtpmaeQsqDePyybimfqXFxmxWM2kJhX/kWhLGszcpDXcmOcN7gdAvU6w/nFZQjGJ1fraKFFmNNMVNn9R/Ak7tSjw2/np0d6GpYN9LePqtZz0/F9jhIJb2EToJ6swCc+kGDb6kFijdlKreUCDjp6ztCyHCZTCVZfiuKB7q6ghE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=aEP+UHP3; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=lcfb
+	c8kqDOW5a9qjIc68nR/HZWnHBfFGHgWF4MQOB4I=; b=aEP+UHP3Nw3R/DkswVWh
+	kN9Gi2bacxwWnyQvjzdobGyrZOEPvMQCzAxtJAdxZrwW9kEz1NMYpZrfavaJqAGv
+	dNkZvv9BCApGcEih1bWnj2Wl5DUuiKWKf+gDBsCHRtSvUH1vugkINBYKAKcifvGC
+	Qf3hvi1jt6WxeRbYI5LdmYQ+GG2seQTc3P62czb14fyAMOERwHWSTGlLM0Xs1Gwp
+	S7WTVrf5TghbgRKJFuDNys5tq0G2KdLMslZQgi1Ei/qC721m9L9UZpne6PYK6qlE
+	s3s12m7cT5ddOtwEoL1TsatgBtRCUmErSxHPWsqyATxZEFADPJvorg43LnOPkn3O
+	oA==
+Received: (qmail 349538 invoked from network); 8 Aug 2024 17:00:43 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Aug 2024 17:00:43 +0200
+X-UD-Smtp-Session: l3s3148p1@5kxsSi0fsCttKPBr
+Date: Thu, 8 Aug 2024 17:00:42 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+	magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 02/11] i2c: riic: Call pm_runtime_get_sync() when need
+ to access registers
+Message-ID: <ZrTdmqyzq_XLs5-z@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
+	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] fs/select: Annotate struct poll_list with __counted_by()
-Date: Thu,  8 Aug 2024 17:00:24 +0200
-Message-ID: <20240808150023.72578-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240711115207.2843133-3-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zHX5K+jQW1p1NSJH"
+Content-Disposition: inline
+In-Reply-To: <20240711115207.2843133-3-claudiu.beznea.uj@bp.renesas.com>
 
-Add the __counted_by compiler attribute to the flexible array member
-entries to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- fs/select.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--zHX5K+jQW1p1NSJH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/select.c b/fs/select.c
-index 9515c3fa1a03..1a4849e2afb9 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -840,7 +840,7 @@ SYSCALL_DEFINE1(old_select, struct sel_arg_struct __user *, arg)
- struct poll_list {
- 	struct poll_list *next;
- 	unsigned int len;
--	struct pollfd entries[];
-+	struct pollfd entries[] __counted_by(len);
- };
- 
- #define POLLFD_PER_PAGE  ((PAGE_SIZE-sizeof(struct poll_list)) / sizeof(struct pollfd))
--- 
-2.45.2
+On Thu, Jul 11, 2024 at 02:51:58PM +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> There is no need to runtime resume the device as long as the IP registers
+> are not accessed. Calling pm_runtime_get_sync() at the register access
+> time leads to a simpler error path.
+>=20
+> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
+Makes sense to me:
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--zHX5K+jQW1p1NSJH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma03ZoACgkQFA3kzBSg
+Kbb5pw//RIVxyNAUBcwrlJncjgwrkUYptK3TLARFEbJXKT1KwA0hcjPTIRi1f10O
+PDmFPeMfm9hoFGWGCFkKm+5yhXIDpURMSei5lrqUcRTVl7U+ygQPtAYPsSJwayGS
+nrDQDhAkMNyl9/NMtovm2I27bJ9u/OhzZY5XkKs5wP3Uw91/9J4G5SiZ8ovUOghR
+9HuFHzaBgj8kf5XELQ8o2idwsZkduQ+MkOkFLZQ3nDpV94MBn934aaNZmeWFYkpt
+UnYoZVZCR+tD/mzGw8xp8ahJC/niTPlFFM9/jOtLnnaznVlorASgFZvTvb0d+e1a
+rbuR/Nj4gv+m+de9MmT3WzL+6cXvYj6zsC8eAnO5fsVvf1BOQokf1Htwv045b8Qh
+4+cyzYNHk9J11dqNNfxp1NqkGxdayq34tbgcd/k30xUPl+QL6bLvrbPMBc1PpZKT
+wWQiV9fu5vwMzKpc6rQRL+WPWwR1WwRAIFiPHcTsPiJnkjedVo6r4TAwst8DZI8q
+ZErMsWLyWIdTBoVCdrdtvUkmtY6x1L9vuEYvWIuXx/Aiu0ZWIFdeH5R33B9SN51h
+hv+LzhQrMK6K0TtdZu2h2uFBDZvy/Tg9rwDgN0h4jQP9n8k1azCQyLaPxP3dHirT
+FmDdKRS9R2wXsPn7NDaLcBLjJ8HL0R8q6Sq2Es4ZmGdtQamb7+A=
+=7jUQ
+-----END PGP SIGNATURE-----
+
+--zHX5K+jQW1p1NSJH--
 
