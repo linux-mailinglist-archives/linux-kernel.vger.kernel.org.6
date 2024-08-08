@@ -1,164 +1,124 @@
-Return-Path: <linux-kernel+bounces-279971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41FDA94C406
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:00:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74B494C407
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 653D41C2284D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:00:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787301F26112
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF5714659B;
-	Thu,  8 Aug 2024 18:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AAB13DDAE;
+	Thu,  8 Aug 2024 18:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1/YRpIw"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDBJ1sfr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A7033F7;
-	Thu,  8 Aug 2024 18:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0120233F7;
+	Thu,  8 Aug 2024 18:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723140044; cv=none; b=fuTzf1mHyQAjvccUi2cqFQ9y0vLK4cUgS/mldPQrIxe8dgYnvMXcPJVuRyhY7FILcnvhWDRqndGLF0iDfWBJwKmwsTh1lgZoMjXBEN8SrWRNw0g1hVUtRxRXAn+Sjtfcnn/bVs8ApXTHXsPNSzDAPgz4/eJ9oH27nI/qXC7LNsE=
+	t=1723140089; cv=none; b=LDXSrfdQq+2tdh5fJYnYjERk38xW7PWlDMNrC3/KvEywnqfxWz8PAxxNJQFen0J5UPs4hj7p+a2CaIk/3insVITfwWy15nE8Se1mJXPfPQPQRwJ/dNjmCKKhqzJH/9+zj0uSXyMD5B5jXtTSKdKqatGPSpsX66MRaNuOlNAqPc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723140044; c=relaxed/simple;
-	bh=iloXxDGruNoFK3WMjxkdVwZgDaK2n76p6HZmSWL9tMc=;
+	s=arc-20240116; t=1723140089; c=relaxed/simple;
+	bh=CVp2GLuewmyFFc6NwbWeOoPtNl/w7OIBR0Cgbit0W2Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UN9rS/I6ZYlxb0+Kh2Oaifwv/SSVF6O5b+APvXvcun2CNvd2PNHDrCk4e109E+5pTLqMcFBsQMK16NtPe0oF2y2yw8tgKNCQ7Uxg/hvvLFVK2lXvJ5R4K4CY2YBaZ9KxQ/1x9WTONxalOObfrJ3z5R+3bdCf960d1V7wvhBzOTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1/YRpIw; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fec34f94abso12276085ad.2;
-        Thu, 08 Aug 2024 11:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723140042; x=1723744842; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s2KXVrIDntiwv323wOQhLAY5VMse6JMKaP5+kYMUsCQ=;
-        b=L1/YRpIwAYae1OqNDXXxYzuFaydI5UWuAOr+RU8zu8QrAuzdrfSk7WIrhW14oLDx/Z
-         /4BlLOBrl2GTrHhvZa0PdQo+Bheb2kq8kvTxK+k9ro5RanyTIw3RfAXHlvRePLl83eYF
-         vltPFJHJeuPKB8GLX9IqxGFC6rHmlMrgGnzl5xnrnYyLDCyfWnGJZiJrWttJ/lOTls80
-         TVcWQuuLUS38RWyEFPEEysIzGSwAH6rb6X1Hwj9jEclXQ1FJn0oSq8a4aAvEckFrXgIE
-         AOz0qhzD/MfgQJFSjHdeEayENeBZa4ZXi7Kk3lfTimlgjpmgXiN8sp7uEhLadWvaryM3
-         saJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723140042; x=1723744842;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s2KXVrIDntiwv323wOQhLAY5VMse6JMKaP5+kYMUsCQ=;
-        b=vvhEmFjSdFGmMnjB5VevjwzVUCWD+rcU+qu2fMOI6+CSIPYaASGhtxfXN8e/BO93VE
-         8BKliTCQxk4rZfRyCRQWOMslYTvYKa6aHXPmsJA5ETVwgwwaJyiQ6vL3+CcnuwvrBgYc
-         68Q+4FW9QaUhTeM4vREzdpmgxaskvH3259Jta/8kFb8pt6ttZi6sBn/0yuCKSLCnFH/w
-         non16qYA6y8UTZ/crLO/0/QLG2PTi8ClwYBLp09jIa/cqHxKRkMreV+pNaf6s3kXThOl
-         JcOjRZ2CMM2NpUJTleS7caPseUGjVb9kWNt7kdwBW+yb6HMN8LYb1Yr6WdCNT9ug22Qq
-         viEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnpEm8LnE1LrBfe54tdK4XLA6SNsJHefBvBEZfM+2WApsu7k/5STBXL/CInocQqDP2jCAuX4SszlONsaEYp/eshfufDKFaTLEPWTE0nbNu1ZVnoBff2XuvRjU5vEqxPcu1RNh8oipdwiyLPUX6Va6Pp2VN
-X-Gm-Message-State: AOJu0YxgqrZPqGWPlyWrzNPvZPzIpjfwJ+Su3nVz7aU4BF+UphGRg9AI
-	IDfKHWGEgORRoT+SUtxEwZIWb3jXvxRWmq5DdGU90kBfp5zVpvMu
-X-Google-Smtp-Source: AGHT+IHztOZ1jku+YOzW//V6Nt0XSwNWJIS82+IgbYY4kXvel4+T/NXRFPIVJ4G3aRUDv1KRWpykBQ==
-X-Received: by 2002:a17:903:1105:b0:1ff:498b:5857 with SMTP id d9443c01a7336-20095252d1fmr34411975ad.24.1723140041972;
-        Thu, 08 Aug 2024 11:00:41 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f53c41sm127534025ad.71.2024.08.08.11.00.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 11:00:40 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 8 Aug 2024 11:00:39 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: KP Singh <kpsingh@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	bp@alien8.de, sfr@canb.auug.org.au, peterz@infradead.org
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-Message-ID: <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net>
-References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
- <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net>
- <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net>
- <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
- <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net>
- <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vg1me+IKJhVdDmSyKeMsQgiWvfCN+HhsESW9aQkD0S7TfN/kxTet5i+K8yOod703eP9rIxx0qtisN/La5J1GbyiqYgFWArDtW4XUwoRe3hAVYCJ37Lz3MIylReOvSZEX/nUANUEK1mbGj+mub1MqCulhCS9QYVO2PvC8GvR6FXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDBJ1sfr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82347C32782;
+	Thu,  8 Aug 2024 18:01:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723140088;
+	bh=CVp2GLuewmyFFc6NwbWeOoPtNl/w7OIBR0Cgbit0W2Y=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=sDBJ1sfrjhefk3YF6t1zqBKAptt/vxIq4dByYx+HHER+0NfKNloS1b37cLsXmvek2
+	 ZkgMAy8IDeNBlZzTbyZBi+cxA7ZEtTs+gvyfE+U3omkcwBnHdwPHIZp3MXUaugIRDe
+	 ck6xsDWJfkJaqQ/Brl7QIVZy+XUg+aiTPZm4Wnu5Mh8XcrXrXCdDvWtG1bwg8AZtkq
+	 BbFvow7vzQwCO6TnLXHEtkoWRfY1ZTNfNa/ryxrRpKJDMWzAS/Nff7EDzrX0tD5srP
+	 tqXzsRLqTyoF1ObZr1USse3b0K6h5eLyJ8f2C0y0/Gyi0szTmjWR2oy0SVfdRUm8Mt
+	 B6iyR9XT/wEpw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 32E27CE09DB; Thu,  8 Aug 2024 11:01:28 -0700 (PDT)
+Date: Thu, 8 Aug 2024 11:01:28 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: neeraj.upadhyay@kernel.org
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	joel@joelfernandes.org, frederic@kernel.org, boqun.feng@gmail.com,
+	urezki@gmail.com, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com, neeraj.iitr10@gmail.com
+Subject: Re: [PATCH 2/2] context_tracking: Invoke Tasks-RCU enter/exit for
+ NMI context
+Message-ID: <8eac856d-0b09-4f5e-939d-b24d6fad8311@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240807163506.434885-1-neeraj.upadhyay@kernel.org>
+ <20240807163506.434885-3-neeraj.upadhyay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
+In-Reply-To: <20240807163506.434885-3-neeraj.upadhyay@kernel.org>
 
-On Thu, Aug 08, 2024 at 01:32:37PM -0400, Paul Moore wrote:
-> On Thu, Aug 8, 2024 at 12:43 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> >
-> > Also, there is a backtrace on ppc (also see below), but that is unrelated
-> > to your patches and only seen now because I enabled the security modules
-> > on that architecture. I'll bring that up with ppc maintainers.
+On Wed, Aug 07, 2024 at 10:05:06PM +0530, neeraj.upadhyay@kernel.org wrote:
+> From: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
 > 
-> Thanks for all your help testing this Guenter.  I see you've also
-> already submitted an AppArmor fix for the endian issue, that's very
-> helpful and I'm sure John will be happy to see it.
+> rcu_task_enter() and rcu_task_exit() are not called on NMI
+> entry and exit. So, Tasks-RCU-Rude grace period wait is required to
+> ensure that NMI handlers have entered/exited into Tasks-RCU eqs.
+> For architectures which do not require Tasks-RCU-Rude (as the code
+> sections where RCU is not watching are marked as noinstr), when
+> those architectures switch to not using Tasks-RCU-Rude, NMI handlers
+> task exit to eqs will need to be handled correctly for Tasks-RCU holdout
+> tasks running on nohz_full CPUs. As it is safe to call these two
+> functions from NMI context, remove the in_nmi() check to ensure that
+> Tasks-RCU entry/exit is marked correctly for NMI handlers.
+
+This last sentence could be broken up.  ;-)
+
+Other than that, looks good!
+
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+
+> Reported-by: Frederic Weisbecker <frederic@kernel.org>
+> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+> Suggested-by: "Paul E. McKenney" <paulmck@kernel.org>
+> Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+> ---
+>  kernel/context_tracking.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> Beyond this work testing the static call patches from KP, would you be
-> willing to add a LSM configuration to your normal testing?  While most
-> of the LSM subsystem should be architecture agnostic, there are
-> definitely bits and pieces that can vary (as you've seen), and I think
-> it would be great to get more testing across a broad range of
-> supported arches, even if it is just some simple "does it boot" tests.
+> diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
+> index 152b485a62db..626dd7a173a5 100644
+> --- a/kernel/context_tracking.c
+> +++ b/kernel/context_tracking.c
+> @@ -239,8 +239,7 @@ void noinstr ct_nmi_exit(void)
+>  	ct_kernel_exit_state(CT_RCU_WATCHING);
+>  	// ... but is no longer watching here.
+>  
+> -	if (!in_nmi())
+> -		rcu_task_exit();
+> +	rcu_task_exit();
+>  }
+>  
+>  /**
+> @@ -273,8 +272,7 @@ void noinstr ct_nmi_enter(void)
+>  	 */
+>  	if (!rcu_is_watching_curr_cpu()) {
+>  
+> -		if (!in_nmi())
+> -			rcu_task_enter();
+> +		rcu_task_enter();
+>  
+>  		// RCU is not watching here ...
+>  		ct_kernel_enter_state(CT_RCU_WATCHING);
+> -- 
+> 2.40.1
 > 
-
-That really depends. I already enabled some of the kernel security modules.
-
-CONFIG_SECURITY=y
-CONFIG_SECURITY_APPARMOR=y
-CONFIG_SECURITY_APPARMOR_KUNIT_TEST=y
-CONFIG_SECURITY_LANDLOCK=y
-CONFIG_SECURITY_LANDLOCK_KUNIT_TEST=y
-CONFIG_SECURITY_LOCKDOWN_LSM=y
-CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=y
-CONFIG_SECURITY_YAMA=y
-CONFIG_SECURITY_LOADPIN=y
-CONFIG_SECURITY_SAFESETID=y
-CONFIG_BPF_LSM=y
-CONFIG_LSM="landlock,lockdown,yama,loadpin,safesetid,bpf"
-
-I can easily add more if you tell me what else I should enable.
-
-Userspace is more difficult. My root file systems are generated using
-buildroot. I run some basic tests, such as network interface tests
-and TPM tests, but those are just simple scripts utilizing packages
-provided by buildroot. I can add more, but I would need to know what
-exactly to add and how to execute it.
-
-In general my tests are intended to cover a large number of different
-configurations; they are intended to be broad, not deep. That means an
-individual test should not take longer than a couple of seconds. If you
-can provide something that would run in the buildroot environment and
-not take long to execute (example: tpm2 selftests), I'd be happy to add
-it.
-
-For more comprehensive tests, it might make sense to discuss adding
-security tests to KernelCI; they have much more resources available
-and target deeper testing. That would make sense if you have, for example,
-test suites to run on upstream kernels or stable release candidates. 
-
-> Out of curiosity, do you have your test setup documented anywhere?  It
-> sounds fairly impressive and I'd be curious to learn more about it.
-> 
-
-Not really. The code is at https://github.com/groeck/linux-build-test.
-My clone of buildroot is at https://github.com/groeck/buildroot (look
-for local- branches to see my changes). Please feel free to have a look,
-but documentation is seriously lacking (and README is completely out
-of date).
-
-Guenter
 
