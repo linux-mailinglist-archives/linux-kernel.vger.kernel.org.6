@@ -1,409 +1,340 @@
-Return-Path: <linux-kernel+bounces-279253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883C594BAF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:30:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93AB94BB26
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 452DB2856CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:29:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6151C209AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010BB18CBEC;
-	Thu,  8 Aug 2024 10:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IAQmB/jl"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D25818A93F;
+	Thu,  8 Aug 2024 10:33:46 +0000 (UTC)
+Received: from out198-27.us.a.mail.aliyun.com (out198-27.us.a.mail.aliyun.com [47.90.198.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19CA18C352
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB5F18A6C7;
+	Thu,  8 Aug 2024 10:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112892; cv=none; b=hG6oB1+SWRaajds7EhiU+rSl4GgvKPE9bCt1dTSYiXrhBlKpF5kj7RliEM5AGFvBn+FM5f+7gtA+wlTY+xwaMmFj3fGuRns4EqYFySTB1Mr7ZLHPZWvE5HvFBlZ7JzUPA4ff9Ru+4jYojZdgsl2GXNmc05YMyHlFko1MK8vtPas=
+	t=1723113225; cv=none; b=ORbDuBOiNaqSMp4fRayxlvMz55zIaSv9xKbRZvksvediD9Bg8JgMUct/kNTssHEqDbc/kDifF8kx23YC2zmM/4gPEW+FtU3sX8SLkLAZt8t7ZnElyX4UQnIOg63NzDZFsczM334pno/HcVeZwxxVZgFXwCNdx56sqMZqP8Tq89M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112892; c=relaxed/simple;
-	bh=gRHaE5OE2DJ9BlHyPGeEP4d66Ka94js69R0NwtbyaDg=;
+	s=arc-20240116; t=1723113225; c=relaxed/simple;
+	bh=sB5eVYzozK5UeLkzKGb11rMntIwr6+yqbwdmr59szCc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dAvcf+0MUt/e7cpI/iRxg6H2pbGeVyf5fcq/7UPiUP/Oq1nagkoZZ4CzaQcO0pR61c6pGNMbUurN28pLLlidoxaEmrMnMIpIsb5+Yi63p/CJGFFz5vYNs/mf23OPEIawWvg2ENlzV3gcAoAFpZMfiJ+LoM8elhfwflnidR10NLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IAQmB/jl; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-36844375001so369594f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 03:28:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723112888; x=1723717688; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uHAo36qJMD+4wxk3g0lOFfwjuuv+/seGus04OZIl27g=;
-        b=IAQmB/jl+gSjMp0fkHgUe73FiiQCJSOHsKK+vkA+N7QC4dFVFdAMfTPMUq3elIJ5zY
-         OrbDzY1xPj4ffvcm+aWo4PXj77GGDm6j68SBn2+fcT2KLBQKLyta5pgKir0QvgzDKGYQ
-         yPlTP8ImalFSfIArT4H9AjEBaHC/WBfEWRDcSFLu7FslV+OFWCCCgldPdrm08BxKr23h
-         cVYgKg2PxmBOQwMOAXDUlCZAI4BNCDkKBa7lH2BJhjxrErDNOzpjSTntXFnfQxQ8C975
-         F45LisbMH2BSG0NX0NNObycMRUDIAaCh/rJPJJS9Zz6/Ec5OnLQJZa3qFWGU0FEmVdbw
-         jVHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723112888; x=1723717688;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uHAo36qJMD+4wxk3g0lOFfwjuuv+/seGus04OZIl27g=;
-        b=B7X4GFpglTOKFb4T4d2i26Q5zr7chnK7PPL0q3YzhZPI9+eLiVWhzOA9h4aKNkXKOe
-         bHjB2lc5Iv9BkTuUq+273xR3xXfaAwgZujiNj/71RymLILGBu4TD+Hhxp+xZX4/aQX6q
-         fvXz7dZL6Iva6Vx25l3TVxzwbshnuwNlILDPWbo+HBgRys1EN7wX95bH7I3ELOlo5aMF
-         77LPwRER81Tk/AAl+Bus1UBz+EHT3G82kUfGBl2oUCheFrC0gAtfOt+/FdR1K817cXx2
-         W/pt4/ws8xL3OJ9sULlEAALTUWMwicSZ0TwKOzVfZZMziV2Z6P/2lPvXiupF0ZeQhVux
-         Oxog==
-X-Forwarded-Encrypted: i=1; AJvYcCWn11GQlpd6Y/7yt3+DPFN+Ky9fiRDufLNA/BqeILKXnmHL7yHweumFAfhgef/bToyx0izrBAeSWsinHHT7bcaA2CvpYAb5fvTj4Md1
-X-Gm-Message-State: AOJu0YxYw3SDGsDPvdMphxocxciUDmq6/dK26MxGA9CBsz+lOA+Tw4D8
-	zleFwplLeoNCyD3QbXNVCcKSQgc3tlvVoEqEgt9azf1ZxfLQZ6NSX7UzWq+OUbo=
-X-Google-Smtp-Source: AGHT+IFmqwaJ4o87yD8ryfkxnUfmJJm0YXqGEqbQfeRoZvj1W0kleGmTnVkbk+wyr5B0NIdesRL0ew==
-X-Received: by 2002:adf:e80f:0:b0:368:7943:146f with SMTP id ffacd0b85a97d-36d27565ec6mr910185f8f.26.1723112887996;
-        Thu, 08 Aug 2024 03:28:07 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:ae7:4e79:8821:15db])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36d27208c98sm1454596f8f.75.2024.08.08.03.28.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 03:28:07 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	 MIME-Version; b=TGVjcHQGJxxcCfgEM6rlUghPAWwYyDUZRu69aWf7xGOgf1emZEFXVl5pyHhtc2lcr5OGKMUY9tA8jazHkTzAqcA82Q2kZCEDdnuSn4jBF/KiLMlHivS/arqaUfNs4AOUduMXvOnhI3QKGSZR9wfjIZe236ePvvCu22ZXQ0W4xPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=47.90.198.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07436259|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0415989-0.0246649-0.933736;FP=7446490164482491419|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033023181100;MF=wangshuaijie@awinic.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.Ylkb51Q_1723112873;
+Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.Ylkb51Q_1723112873)
+          by smtp.aliyun-inc.com;
+          Thu, 08 Aug 2024 18:28:03 +0800
+From: wangshuaijie@awinic.com
+To: jic23@kernel.org
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	kangjiajun@awinic.com,
+	krzk+dt@kernel.org,
+	lars@metafoo.de,
+	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3 9/9] reset: amlogic: add auxiliary reset driver support
-Date: Thu,  8 Aug 2024 12:27:39 +0200
-Message-ID: <20240808102742.4095904-10-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240808102742.4095904-1-jbrunet@baylibre.com>
-References: <20240808102742.4095904-1-jbrunet@baylibre.com>
+	liweilei@awinic.com,
+	robh@kernel.org,
+	wangshuaijie@awinic.com,
+	waqar.hameed@axis.com
+Subject: Re: [PATCH V5 2/2] iio: proximity: aw9610x: Add support for aw9610x proximity sensor
+Date: Thu,  8 Aug 2024 10:27:52 +0000
+Message-ID: <20240808102753.4023286-1-wangshuaijie@awinic.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20240727160216.2488ed29@jic23-huawei>
+References: <20240727160216.2488ed29@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-Add support for the reset controller present in the audio clock
-controller of the g12 and sm1 SoC families, using the auxiliary bus.
-
-This is expected to replace the driver currently present directly
-within the related clock driver.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/reset/amlogic/Kconfig               |   8 ++
- drivers/reset/amlogic/Makefile              |   1 +
- drivers/reset/amlogic/reset-meson-aux.c     | 136 ++++++++++++++++++++
- drivers/reset/amlogic/reset-meson-core.c    |  25 +++-
- drivers/reset/amlogic/reset-meson-pltf.c    |   3 +
- drivers/reset/amlogic/reset-meson.h         |   4 +
- include/soc/amlogic/meson-auxiliary-reset.h |  23 ++++
- 7 files changed, 198 insertions(+), 2 deletions(-)
- create mode 100644 drivers/reset/amlogic/reset-meson-aux.c
- create mode 100644 include/soc/amlogic/meson-auxiliary-reset.h
-
-diff --git a/drivers/reset/amlogic/Kconfig b/drivers/reset/amlogic/Kconfig
-index 04c7be0f3165..ee1c7620a2b1 100644
---- a/drivers/reset/amlogic/Kconfig
-+++ b/drivers/reset/amlogic/Kconfig
-@@ -11,6 +11,14 @@ config RESET_MESON
- 	help
- 	  This enables the reset platform driver for Amlogic SoCs.
- 
-+config RESET_MESON_AUX
-+	tristate "Meson Reset Platform Driver"
-+	depends on ARCH_MESON || COMPILE_TEST
-+	select AUXILIARY_BUS
-+	select RESET_MESON_CORE
-+	help
-+	  This enables the reset auxiliary driver for Amlogic SoCs.
-+
- config RESET_MESON_AUDIO_ARB
- 	tristate "Meson Audio Memory Arbiter Reset Driver"
- 	depends on ARCH_MESON || COMPILE_TEST
-diff --git a/drivers/reset/amlogic/Makefile b/drivers/reset/amlogic/Makefile
-index 0f8f9121b566..5d53a4b11ed9 100644
---- a/drivers/reset/amlogic/Makefile
-+++ b/drivers/reset/amlogic/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_RESET_MESON) += reset-meson-pltf.o
-+obj-$(CONFIG_RESET_MESON_AUX) += reset-meson-aux.o
- obj-$(CONFIG_RESET_MESON_CORE) += reset-meson-core.o
- obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
-diff --git a/drivers/reset/amlogic/reset-meson-aux.c b/drivers/reset/amlogic/reset-meson-aux.c
-new file mode 100644
-index 000000000000..caf26eb67c14
---- /dev/null
-+++ b/drivers/reset/amlogic/reset-meson-aux.c
-@@ -0,0 +1,136 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Amlogic Meson Reset Auxiliary driver
-+ *
-+ * Copyright (c) 2024 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/auxiliary_bus.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+#include <linux/slab.h>
-+
-+#include "reset-meson.h"
-+#include <soc/amlogic/meson-auxiliary-reset.h>
-+
-+static DEFINE_IDA(meson_rst_aux_ida);
-+
-+struct meson_reset_adev {
-+	struct auxiliary_device adev;
-+	struct regmap *map;
-+};
-+
-+#define to_meson_reset_adev(_adev) \
-+	container_of((_adev), struct meson_reset_adev, adev)
-+
-+static const struct meson_reset_param meson_g12a_audio_param = {
-+	.reset_ops	= &meson_reset_toggle_ops,
-+	.reset_num	= 26,
-+	.level_offset	= 0x24,
-+};
-+
-+static const struct meson_reset_param meson_sm1_audio_param = {
-+	.reset_ops	= &meson_reset_toggle_ops,
-+	.reset_num	= 39,
-+	.level_offset	= 0x28,
-+};
-+
-+static const struct auxiliary_device_id meson_reset_aux_ids[] = {
-+	{
-+		.name = "axg-audio-clkc.rst-g12a",
-+		.driver_data = (kernel_ulong_t)&meson_g12a_audio_param,
-+	}, {
-+		.name = "axg-audio-clkc.rst-sm1",
-+		.driver_data = (kernel_ulong_t)&meson_sm1_audio_param,
-+	}, {}
-+};
-+MODULE_DEVICE_TABLE(auxiliary, meson_reset_aux_ids);
-+
-+static int meson_reset_aux_probe(struct auxiliary_device *adev,
-+				 const struct auxiliary_device_id *id)
-+{
-+	const struct meson_reset_param *param =
-+		(const struct meson_reset_param *)(id->driver_data);
-+	struct meson_reset_adev *raux =
-+		to_meson_reset_adev(adev);
-+
-+	return meson_reset_probe(&adev->dev, raux->map, param);
-+}
-+
-+static struct auxiliary_driver meson_reset_aux_driver = {
-+	.probe		= meson_reset_aux_probe,
-+	.id_table	= meson_reset_aux_ids,
-+};
-+module_auxiliary_driver(meson_reset_aux_driver);
-+
-+static void meson_rst_aux_release(struct device *dev)
-+{
-+	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-+	struct meson_reset_adev *raux =
-+		to_meson_reset_adev(adev);
-+
-+	ida_free(&meson_rst_aux_ida, adev->id);
-+	kfree(raux);
-+}
-+
-+static void meson_rst_aux_unregister_adev(void *_adev)
-+{
-+	struct auxiliary_device *adev = _adev;
-+
-+	auxiliary_device_delete(adev);
-+	auxiliary_device_uninit(adev);
-+}
-+
-+int devm_meson_rst_aux_register(struct device *dev,
-+				struct regmap *map,
-+				const char *adev_name)
-+{
-+	struct meson_reset_adev *raux;
-+	struct auxiliary_device *adev;
-+	int ret;
-+
-+	raux = kzalloc(sizeof(*raux), GFP_KERNEL);
-+	if (!raux)
-+		return -ENOMEM;
-+
-+	ret = ida_alloc(&meson_rst_aux_ida, GFP_KERNEL);
-+	if (ret < 0)
-+		goto raux_free;
-+
-+	raux->map = map;
-+
-+	adev = &raux->adev;
-+	adev->id = ret;
-+	adev->name = adev_name;
-+	adev->dev.parent = dev;
-+	adev->dev.release = meson_rst_aux_release;
-+	device_set_of_node_from_dev(&adev->dev, dev);
-+
-+	ret = auxiliary_device_init(adev);
-+	if (ret)
-+		goto ida_free;
-+
-+	ret = __auxiliary_device_add(adev, dev->driver->name);
-+	if (ret) {
-+		auxiliary_device_uninit(adev);
-+		return ret;
-+	}
-+
-+	return devm_add_action_or_reset(dev, meson_rst_aux_unregister_adev,
-+					adev);
-+
-+ida_free:
-+	ida_free(&meson_rst_aux_ida, adev->id);
-+raux_free:
-+	kfree(raux);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(devm_meson_rst_aux_register);
-+
-+MODULE_DESCRIPTION("Amlogic Meson Reset Auxiliary driver");
-+MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_LICENSE("Dual BSD/GPL");
-+MODULE_IMPORT_NS(MESON_RESET);
-diff --git a/drivers/reset/amlogic/reset-meson-core.c b/drivers/reset/amlogic/reset-meson-core.c
-index ea4fc562f7e6..774902527d17 100644
---- a/drivers/reset/amlogic/reset-meson-core.c
-+++ b/drivers/reset/amlogic/reset-meson-core.c
-@@ -85,12 +85,33 @@ static int meson_reset_deassert(struct reset_controller_dev *rcdev,
- 	return meson_reset_level(rcdev, id, false);
- }
- 
--static const struct reset_control_ops meson_reset_ops = {
-+static int meson_reset_level_toggle(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	int ret;
-+
-+	ret = meson_reset_assert(rcdev, id);
-+	if (ret)
-+		return ret;
-+
-+	return meson_reset_deassert(rcdev, id);
-+}
-+
-+const struct reset_control_ops meson_reset_ops = {
- 	.reset		= meson_reset_reset,
- 	.assert		= meson_reset_assert,
- 	.deassert	= meson_reset_deassert,
- 	.status		= meson_reset_status,
- };
-+EXPORT_SYMBOL_NS_GPL(meson_reset_ops, MESON_RESET);
-+
-+const struct reset_control_ops meson_reset_toggle_ops = {
-+	.reset		= meson_reset_level_toggle,
-+	.assert		= meson_reset_assert,
-+	.deassert	= meson_reset_deassert,
-+	.status		= meson_reset_status,
-+};
-+EXPORT_SYMBOL_NS_GPL(meson_reset_toggle_ops, MESON_RESET);
- 
- int meson_reset_probe(struct device *dev, struct regmap *map,
- 		      const struct meson_reset_param *param)
-@@ -105,7 +126,7 @@ int meson_reset_probe(struct device *dev, struct regmap *map,
- 	data->map = map;
- 	data->rcdev.owner = dev->driver->owner;
- 	data->rcdev.nr_resets = param->reset_num;
--	data->rcdev.ops = &meson_reset_ops;
-+	data->rcdev.ops = data->param->reset_ops;
- 	data->rcdev.of_node = dev->of_node;
- 
- 	return devm_reset_controller_register(dev, &data->rcdev);
-diff --git a/drivers/reset/amlogic/reset-meson-pltf.c b/drivers/reset/amlogic/reset-meson-pltf.c
-index 97e933b4aa34..2bc3ea42c6ec 100644
---- a/drivers/reset/amlogic/reset-meson-pltf.c
-+++ b/drivers/reset/amlogic/reset-meson-pltf.c
-@@ -16,6 +16,7 @@
- #include "reset-meson.h"
- 
- static const struct meson_reset_param meson8b_param = {
-+	.reset_ops	= &meson_reset_ops,
- 	.reset_num	= 256,
- 	.reset_offset	= 0x0,
- 	.level_offset	= 0x7c,
-@@ -23,6 +24,7 @@ static const struct meson_reset_param meson8b_param = {
- };
- 
- static const struct meson_reset_param meson_a1_param = {
-+	.reset_ops	= &meson_reset_ops,
- 	.reset_num	= 96,
- 	.reset_offset	= 0x0,
- 	.level_offset	= 0x40,
-@@ -30,6 +32,7 @@ static const struct meson_reset_param meson_a1_param = {
- };
- 
- static const struct meson_reset_param meson_s4_param = {
-+	.reset_ops	= &meson_reset_ops,
- 	.reset_num	= 192,
- 	.reset_offset	= 0x0,
- 	.level_offset	= 0x40,
-diff --git a/drivers/reset/amlogic/reset-meson.h b/drivers/reset/amlogic/reset-meson.h
-index c2e8a5cf2e46..5ab2ac9ab2e5 100644
---- a/drivers/reset/amlogic/reset-meson.h
-+++ b/drivers/reset/amlogic/reset-meson.h
-@@ -12,6 +12,7 @@
- #include <linux/reset-controller.h>
- 
- struct meson_reset_param {
-+	const struct reset_control_ops *reset_ops;
- 	unsigned int reset_num;
- 	unsigned int reset_offset;
- 	unsigned int level_offset;
-@@ -21,4 +22,7 @@ struct meson_reset_param {
- int meson_reset_probe(struct device *dev, struct regmap *map,
- 		      const struct meson_reset_param *param);
- 
-+extern const struct reset_control_ops meson_reset_ops;
-+extern const struct reset_control_ops meson_reset_toggle_ops;
-+
- #endif /* __MESON_RESET_CORE_H */
-diff --git a/include/soc/amlogic/meson-auxiliary-reset.h b/include/soc/amlogic/meson-auxiliary-reset.h
-new file mode 100644
-index 000000000000..f70dd864ef6a
---- /dev/null
-+++ b/include/soc/amlogic/meson-auxiliary-reset.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __SOC_AMLOGIC_MESON_AUX_RESET_H
-+#define __SOC_AMLOGIC_MESON_AUX_RESET_H
-+
-+#include <linux/err.h>
-+
-+struct device;
-+struct regmap;
-+
-+#if IS_ENABLED(CONFIG_RESET_MESON_AUX)
-+int devm_meson_rst_aux_register(struct device *dev,
-+				struct regmap *map,
-+				const char *adev_name);
-+#else
-+static inline int devm_meson_rst_aux_register(struct device *dev,
-+					      struct regmap *map,
-+					      const char *adev_name)
-+{
-+	return 0;
-+}
-+#endif
-+
-+#endif /* __SOC_AMLOGIC_MESON_AUX_RESET_H */
--- 
-2.43.0
-
+Hi Jonathan,=0D
+=0D
+On Sat, 27 Jul 2024 16:02:16 +0100, jic23@kernel.org wrote:=0D
+>On Fri, 26 Jul 2024 06:13:12 +0000=0D
+>wangshuaijie@awinic.com wrote:=0D
+>=0D
+>> From: shuaijie wang <wangshuaijie@awinic.com>=0D
+>> =0D
+>> AW9610X is a low power consumption capacitive touch and proximity contro=
+ller.=0D
+>> Each channel can be independently config as sensor input, shield output.=
+=0D
+>=0D
+>Needs more information, particularly what the USB powersupply notification=
+ is about.=0D
+>It's unlikely that belongs directly in an IIO driver, unless that supply i=
+s=0D
+>part of this same chip.=0D
+>=0D
+>> =0D
+>> Channel Information:=0D
+>>   aw96103: 3-channel=0D
+>>   aw96105: 5-channel=0D
+>I don't see where this is implemented. Seems to assume 5 channels for both=
+.=0D
+>=0D
+>> =0D
+>> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>=0D
+>> ---=0D
+>>  drivers/iio/proximity/Kconfig   |  11 +=0D
+>>  drivers/iio/proximity/Makefile  |   1 +=0D
+>>  drivers/iio/proximity/aw9610x.c | 791 ++++++++++++++++++++++++++++++++=
+=0D
+>>  drivers/iio/proximity/aw9610x.h | 140 ++++++=0D
+>>  4 files changed, 943 insertions(+)=0D
+>>  create mode 100644 drivers/iio/proximity/aw9610x.c=0D
+>>  create mode 100644 drivers/iio/proximity/aw9610x.h=0D
+>> =0D
+>>  =0D
+=0D
+...=0D
+=0D
+=0D
+>> +static int aw9610x_cfg_all_loaded(const struct firmware *cont,=0D
+>> +		struct aw9610x *aw9610x)=0D
+>> +{=0D
+>> +	struct aw_bin *aw_bin;=0D
+>> +	int ret;=0D
+>> +=0D
+>> +	if (!cont)=0D
+>> +		return -EINVAL;=0D
+>> +=0D
+>> +	aw_bin =3D kzalloc(cont->size + sizeof(*aw_bin), GFP_KERNEL);=0D
+>Use __free(kfree) =0D
+>=0D
+>lots of examples in tree, but will avoid need to manually free and=0D
+>simplify this code a little.=0D
+>=0D
+=0D
+I'm sorry, I didn't quite understand what you meant. Are you suggesting=0D
+the use of devm_? Could you please provide more detailed suggestions?=0D
+Thank you!=0D
+=0D
+>> +	if (!aw_bin)=0D
+>> +		return -ENOMEM;=0D
+>> +=0D
+>> +	aw_bin->len =3D cont->size;=0D
+>> +	memcpy(aw_bin->data, cont->data, cont->size);=0D
+>> +	aw9610x_parsing_bin_file(aw_bin);=0D
+>> +=0D
+>> +	snprintf(aw9610x->chip_type, sizeof(aw9610x->chip_type), "%s",=0D
+>> +			aw_bin->chip_type);=0D
+>> +	ret =3D aw9610x_bin_valid_loaded(aw9610x, aw_bin);=0D
+>> +	kfree(aw_bin);=0D
+>> +=0D
+>> +	return ret;=0D
+>> +}=0D
+>> +=0D
+>> +static int aw9610x_cfg_update(struct aw9610x *aw9610x)=0D
+>> +{=0D
+>> +	const struct firmware *fw;=0D
+>> +	int ret;=0D
+>> +=0D
+>> +	ret =3D request_firmware(&fw, "aw9610x_0.bin", aw9610x->dev);=0D
+>=0D
+>No wild cards in this either.=0D
+>=0D
+>> +	if (ret)=0D
+>> +		return ret;=0D
+>> +	ret =3D aw9610x_cfg_all_loaded(fw, aw9610x);=0D
+>> +	if (ret)=0D
+>> +		ret =3D aw9610x_para_loaded(aw9610x);=0D
+>> +	release_firmware(fw);=0D
+>> +=0D
+>> +	return ret;=0D
+>> +}=0D
+>> +=0D
+>> +static void aw9610x_cfg_work_routine(struct work_struct *work)=0D
+>> +{=0D
+>> +	struct aw9610x *aw9610x =3D container_of(work, struct aw9610x,=0D
+>> +			cfg_work.work);=0D
+>> +=0D
+>> +	aw9610x_cfg_update(aw9610x);=0D
+>=0D
+>So this is polling in driver.   We'd normally hook up to a hrtimer=0D
+>trigger for that.  Perhaps you need this for your events sampling though?=
+=0D
+>If so that may be fine to do somewhat like this. I'm just not sure=0D
+>of the usecase currently.=0D
+>=0D
+=0D
+The primary objective of this delayed task is to load the register=0D
+configuration file. The chip needs to load the register configuration=0D
+file during power-on initialization. In cases where the driver is compiled=
+=0D
+directly into the kernel, rather than existing as a dynamically loaded=0D
+module, there may be a situation where the driver attempts to load before=0D
+the file system is fully prepared, resulting in an inability to access the=
+=0D
+register configuration file. Therefore, a delayed task mechanism is employe=
+d=0D
+to ensure the register configuration file is loaded properly.=0D
+=0D
+If there are any concerns about my understanding or approach, please feel=0D
+free to offer suggestions. Thank you very much!=0D
+=0D
+>> +}=0D
+>> +=0D
+>> +static int aw9610x_sar_cfg_init(struct aw9610x *aw9610x)=0D
+>> +{=0D
+>> +	INIT_DELAYED_WORK(&aw9610x->cfg_work, aw9610x_cfg_work_routine);=0D
+>> +	schedule_delayed_work(&aw9610x->cfg_work, msecs_to_jiffies(5000));=0D
+>> +=0D
+>> +	return 0;=0D
+>> +}=0D
+>> +=0D
+>> +static int aw9610x_sw_reset(struct aw9610x *aw9610x)=0D
+>> +{=0D
+>> +	int ret;=0D
+>> +=0D
+>> +	ret =3D aw9610x_i2c_write(aw9610x, REG_RESET, 0);=0D
+>> +	msleep(20);=0D
+>> +=0D
+>> +	return ret;=0D
+>> +}=0D
+>> +=0D
+>> +static ssize_t update_store(struct device *dev, struct device_attribute=
+ *attr,=0D
+>> +		const char *buf, size_t count)=0D
+>> +{=0D
+>> +	struct aw9610x *aw9610x =3D dev_get_drvdata(dev);=0D
+>> +	unsigned int state;=0D
+>> +	ssize_t ret;=0D
+>> +=0D
+>> +	ret =3D kstrtouint(buf, 10, &state);=0D
+>> +	if (ret)=0D
+>> +		return ret;=0D
+>> +	if (state) {=0D
+>> +		aw9610x_i2c_write(aw9610x, REG_IRQEN, 0);=0D
+>> +		aw9610x_sw_reset(aw9610x);=0D
+>> +		schedule_delayed_work(&aw9610x->cfg_work,=0D
+>> +					msecs_to_jiffies(10));=0D
+>> +	}=0D
+>> +=0D
+>> +	return count;=0D
+>> +}=0D
+>> +=0D
+>> +static DEVICE_ATTR_WO(update);=0D
+>> +=0D
+>> +static struct attribute *aw9610x_sar_attributes[] =3D {=0D
+>> +	&dev_attr_update.attr,=0D
+>=0D
+>This needs documenting as it's custom ABI.=0D
+>Note that we don't often accept custom ABI.=0D
+>Particularly not a hook that seems to reset the device.=0D
+>If you want to do that, unbind and rebind the whole drive so=0D
+>we are in a known state etc.=0D
+>=0D
+>=0D
+>> +	NULL=0D
+>> +};=0D
+>> +=0D
+>> +static struct attribute_group aw9610x_sar_attribute_group =3D {=0D
+>> +	.attrs =3D aw9610x_sar_attributes=0D
+>> +};=0D
+>> +=0D
+>> +static void aw9610x_irq_handle(struct aw9610x *aw9610x)=0D
+>> +{=0D
+>> +	u32 curr_status_val;=0D
+>> +	u32 curr_status;=0D
+>> +	unsigned char i;=0D
+>> +	int ret;=0D
+>> +=0D
+>> +	ret =3D aw9610x_i2c_read(aw9610x, REG_STAT0, &curr_status_val);=0D
+>> +	if (ret)=0D
+>> +		return;=0D
+>> +=0D
+>> +	for (i =3D 0; i < AW_CHANNEL_MAX; i++) {=0D
+>> +		curr_status =3D (((curr_status_val >> (24 + i)) & 0x1)) |=0D
+>> +			(((curr_status_val >> (16 + i)) & 0x1) << 1) |=0D
+>> +			(((curr_status_val >> (8 + i)) & 0x1) << 2) |=0D
+>> +			(((curr_status_val >> (i)) & 0x1) << 3);=0D
+>=0D
+>Add a comment on what is going on here as it's tricky to read.=0D
+>Also, no brackets around the i in last line.=0D
+>Probably better expressed as a series of FIELD_GET() calls with appropriat=
+=0D
+>masks of the 32 bit value.=0D
+>=0D
+>=0D
+=0D
+The work processed here is to parse the interrupt status of different chann=
+els.=0D
+bit0/bit8/bit16/bit24 represent the interrupt status of channel 0, with eac=
+h of=0D
+the 4 bits corresponding to an interrupt status for approaching a threshold=
+.=0D
+Similarly, bit1/bit9/bit17/bit25 represent the interrupt status of channel =
+1.=0D
+To facilitate subsequent interrupt status judgments, the 4 interrupt status=
+es=0D
+of the same channel are combined into a single data.=0D
+=0D
+Sorry, I have not found a suitable way to utilize FIELD_GET for this purpos=
+e.=0D
+=0D
+>> +=0D
+>> +		if (!aw9610x->channels_arr[i].used ||=0D
+>> +				(aw9610x->channels_arr[i].last_channel_info =3D=3D=0D
+>> +				curr_status))=0D
+>Align as=0D
+>		if (!aw=0D
+>		    (aw9610...=0D
+>=0D
+>> +			continue;=0D
+>> +=0D
+>> +		switch (curr_status) {=0D
+>> +		case FAR:=0D
+>> +			iio_push_event(aw9610x->aw_iio_dev,=0D
+>> +					IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, i,=0D
+>> +						IIO_EV_TYPE_THRESH,=0D
+>> +						IIO_EV_DIR_RISING),=0D
+>> +					iio_get_time_ns(aw9610x->aw_iio_dev));=0D
+>> +			break;=0D
+>> +		case TRIGGER_TH0:=0D
+>> +		case TRIGGER_TH1:=0D
+>> +		case TRIGGER_TH2:=0D
+>> +		case TRIGGER_TH3:=0D
+>4 thresholds on the same channel? This is confusing given we are reporting=
+ them=0D
+>as events on different channels. but this loop is over the channels.=0D
+>=0D
+>=0D
+=0D
+There are 4 proximity thresholds on the same channel, each representing=0D
+a different level of proximity. TRIGGER_TH0/TRIGGER_TH1/TRIGGER_TH2/TRIGGER=
+_TH3=0D
+all represent proximity states, but with varying degrees of proximity.=0D
+=0D
+Here I have a question to ask. I'm not sure how to use iio to report=0D
+different proximity states. Can you give me some suggestions? Thank you!=0D
+=0D
+>> +			iio_push_event(aw9610x->aw_iio_dev,=0D
+>> +					IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, i,=0D
+>> +						IIO_EV_TYPE_THRESH,=0D
+>> +						IIO_EV_DIR_FALLING),=0D
+>> +					iio_get_time_ns(aw9610x->aw_iio_dev));=0D
+>> +			break;=0D
+>> +		default:=0D
+>> +			return;=0D
+>> +		}=0D
+>> +		aw9610x->channels_arr[i].last_channel_info =3D curr_status;=0D
+>> +	}=0D
+>> +}=0D
+>> +=0D
+=0D
+Kind regards,=0D
+Wang Shuaijie=
 
