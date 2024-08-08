@@ -1,165 +1,165 @@
-Return-Path: <linux-kernel+bounces-278801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CEAE94B508
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:22:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A16894B509
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D131C2182A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:22:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1B511C219E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EF710A0D;
-	Thu,  8 Aug 2024 02:22:29 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A7AD268;
+	Thu,  8 Aug 2024 02:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TooUNO6M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0436C8F7D;
-	Thu,  8 Aug 2024 02:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF12C2C6
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 02:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723083749; cv=none; b=UTsESXguPgcbqSMV2lCQZAwIt/NXGmnbR9dZgSrGI1YEV6wdkcI6m06l/jm+XuHUNI1f9ODQ5oH0E+2mnY54KbCZij/6qpsNBADvLkpzGguaKxx+u0pTvnPi0s8qkUwVrfcsHHhnAKtlt3BiQt3I+esJBdE8g/I7ak79RME38xM=
+	t=1723083901; cv=none; b=RocaB4u+SbXgRiNNEu9Eq2kfN8joHyps5DxOc7ecu/rn8xn93eOwSkh+QaRqFs0fnM4LILDCTADTyFudI6LVo0g2pQNSrdNKEEfiCotCZ1/yFnfdRmiP3kMJUs93wIe3ySfouMR3KxCuEOPMEmGTU4ZUM+kTxEsT4RKym7rA6G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723083749; c=relaxed/simple;
-	bh=hNYNxJn1Gu4e4cnU+3Ow8D4IXYCa7RwMSJ3ds/xAtQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WH/fpv8ZUoDGuRSB08/mVP4LAJfaFgb8o3jfNLdzA2CYz6GsCLRrNcdF9O2cn1Q6Qtt8VQfhY9stX87gkpr05aBr4DBH5SdcxpfSWUIOoDqla9FxLn9o9BXJdQEsAsHzaA4jVmcy0DwZPMJWfvPv3QWNT3QTDprJLa8nJzj6bqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WfW5g1JDMzcdQY;
-	Thu,  8 Aug 2024 10:22:15 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 24BA714041A;
-	Thu,  8 Aug 2024 10:22:23 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 8 Aug
- 2024 10:22:22 +0800
-Message-ID: <8be4c357-a111-4134-b7de-ffa6f769c9e4@huawei.com>
-Date: Thu, 8 Aug 2024 10:22:21 +0800
+	s=arc-20240116; t=1723083901; c=relaxed/simple;
+	bh=ssGG+CKUWsnuo7DJG4Us0vDPXriTTmU6BtXhSuzPDm8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p3GFgfemPyLFkCkfb97FbatxhtQuxV2VgQMYaTCJGJHYhC5yjI5bYjbjz+e1z9TMOV9VntEc/x+iBnayX8a82danJGlk61AIMcoB2hQKkogZGAFG6UPlTw9vCawzYGYld3VGNONnssCefV8YUmo5fbZ9r2YvVXzUjlEaXEXKbHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TooUNO6M; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723083897;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ndEu3RRqwHVmaDc3taG18G8e1bpdKYoIpCuypgGJMPA=;
+	b=TooUNO6MVkkO09h1zQbAKz6HENsOYqIEFlgam/Bc9hFv/OmBMlJB8zJ1+AvdIT53RwldyS
+	KWS1sh6AhD9OoTHiJjkfWZaXb+s/NqwuNAONFOYZjGto8qI4Fu/dRb076dkYKMJ892f+xg
+	98jrkoJ3RevmUkUTVjfM/bu9d4GAu6Q=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-85-OSscJpGhPtOQ2DSZM0Xzag-1; Wed,
+ 07 Aug 2024 22:24:53 -0400
+X-MC-Unique: OSscJpGhPtOQ2DSZM0Xzag-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2A474195608D;
+	Thu,  8 Aug 2024 02:24:52 +0000 (UTC)
+Received: from llong.com (unknown [10.2.16.123])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C566630001A5;
+	Thu,  8 Aug 2024 02:24:50 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v2] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is enabled
+Date: Wed,  7 Aug 2024 22:24:41 -0400
+Message-ID: <20240808022441.1160346-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -v2] cgroup: fix deadlock caused by cgroup_mutex and
- cpu_hotplug_lock
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-CC: Hillf Danton <hdanton@sina.com>, Roman Gushchin
-	<roman.gushchin@linux.dev>, <tj@kernel.org>, <bpf@vger.kernel.org>,
-	<cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240724110834.2010-1-hdanton@sina.com>
- <53ed023b-c86c-498a-b1fc-2b442059f6af@huawei.com>
- <ohqau62jzer57mypyoiic4zwhz2zxwk5rsni4softabxyybgke@nnsqdj2dbvkl>
- <e7d4e1ce-7c12-4a06-ad03-1291dc6f22b5@huawei.com>
- <mxyismki3ln2pvrbhd36japfffpfcwgyvgmy5him3n746w6wd6@24zlflalef6x>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <mxyismki3ln2pvrbhd36japfffpfcwgyvgmy5him3n746w6wd6@24zlflalef6x>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
+As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
+capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
+for all kmalloc/kfree calls. So stackdepot capacity was increased 8
+times to accommodate KASAN usage even thought it was claimed 4X should
+be enough at that time.
 
+With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
+for stack records"), all stackdepot records uses a fixed size with
+CONFIG_STACKDEPOT_MAX_FRAMES (default=64) entries. This is merged to
+support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
+use variable size records for non-evictable entries") re-enabled
+the use of variable size records for non-KASAN use cases, but KASAN
+(generic mode) still uses the large fixed size stack records.
 
-On 2024/8/7 21:32, Michal Koutný wrote:
-> Hello.
-> 
-> On Sat, Jul 27, 2024 at 06:21:55PM GMT, chenridong <chenridong@huawei.com> wrote:
->> Yes, I have offered the scripts in Link(V1).
-> 
-> Thanks (and thanks for patience).
-> There is no lockdep complain about a deadlock (i.e. some circular
-> locking dependencies). (I admit the multiple holders of cgroup_mutex
-> reported there confuse me, I guess that's an artifact of this lockdep
-> report and they could be also waiters.)
-> 
->>> Who'd be the holder of cgroup_mutex preventing cgroup_bpf_release from
->>> progress? (That's not clear to me from your diagram.)
->>>
->> This is a cumulative process. The stress testing deletes a large member of
->> cgroups, and cgroup_bpf_release is asynchronous, competing with cgroup
->> release works.
-> 
-> Those are different situations:
-> - waiting for one holder that's stuck for some reason (that's what we're
->    after),
-> - waiting because the mutex is contended (that's slow but progresses
->    eventually).
-> 
->> You know, cgroup_mutex is used in many places. Finally, the number of
->> `cgroup_bpf_release` instances in system_wq accumulates up to 256, and
->> it leads to this issue.
-> 
-> Reaching max_active doesn't mean that queue_work() would block or the
-> items were lost. They are only queued onto inactive_works list.
+With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
+stackdepot space had been more than double than before. Assuming an
+average stack frame size of 16, a KASAN stack record is almost 4X the
+size of a non-KASAN one.
 
-Yes, I agree. But what if 256 active works can't finish because they are 
-waiting for a lock? the works at inactive list can never be executed.
-> (Remark: cgroup_destroy_wq has only max_active=1 but it apparently
-> doesn't stop progress should there be more items queued (when
-> when cgroup_mutex is not guarding losing references.))
-> 
-cgroup_destroy_wq is not stopped by cgroup_mutex, it has acquired 
-cgroup_mutex, but it was blocked cpu_hotplug_lock.read. 
-cpu_hotplug_lock.write is held by cpu offline process(step3).
-> ---
-> 
-> The change on its own (deferred cgroup bpf progs removal via
-> cgroup_destroy_wq instead of system_wq) is sensible by collecting
-> related objects removal together (at the same time it shouldn't cause
-> problems by sharing one cgroup_destroy_wq).
-> 
+When a wide variety of workloads are run on a debug kernel with KASAN
+enabled, the following warning may sometimes be printed.
 
-> But the reasoning in the commit message doesn't add up to me. There
-> isn't obvious deadlock, I'd say that system is overloaded with repeated
-> calls of __lockup_detector_reconfigure() and it is not in deadlock
-> state -- i.e. when you stop the test, it should eventually recover.
-> Given that, I'd neither put Fixes: 4bfc0bb2c60e there.
-> If I stop test, it can never recover. It does not need to be fixed if it 
-could recover.
-I have to admit, it is a complicated issue.
+ [ 6818.650674] Stack depot reached limit capacity
+ [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot_alloc_stack+0x39e/0x3d0
+   :
+ [ 6818.650907] Call Trace:
+ [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
+ [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
+ [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
+ [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
+ [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
+ [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
+ [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
+ [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
+ [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
+ [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
+ [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
+ [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
+ [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
+ [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
+ [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
+ [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
+ [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
+ [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
+ [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
+ [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 [xfs]
+ [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs]
+ [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
+ [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
+ [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
+ [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
+ [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
 
-System_wq was not overloaded with __lockup_detector_reconfigure, but 
-with cgroup_bpf_release_fn. A large number of cgroups were deleted. 
-There were 256 active works in system_wq that were 
-cgroup_bpf_release_fn, and they were all blocked by cgroup_mutex.
+With all the recent changes in stackdepot to support new KASAN features,
+it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
+enough when KASAN is enabled. Fix this stackdepot capability issue
+by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
+maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
 
-To make it simple, just imagine what if the max_active max_active of 
-system_wq is 1? Could it result in a deadlock? If it could be deadlock, 
-just imagine all works in system_wq are same.
+Also use the MIN() macro for defining DEPOT_MAX_POOLS to clarify the
+intention.
 
+Fixes: fc60e0caa94d ("lib/stackdepot: use fixed-sized slots for stack records")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ lib/stackdepot.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> (One could symetrically argue to move smp_call_on_cpu() away from
-> system_wq instead of cgroup_bpf_release_fn().)
-> 
-I also agree, why I move cgroup_bpf_release_fn away, cgroup has it own 
-queue. As TJ said "system wqs are for misc things which shouldn't create 
-a large number of concurrent work items. If something is going to 
-generate 256+ concurrent work items, it should use its own workqueue."
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index 5ed34cc963fc..beeb70b57710 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -36,11 +36,12 @@
+ #include <linux/memblock.h>
+ #include <linux/kasan-enabled.h>
+ 
+-#define DEPOT_POOLS_CAP 8192
++/* KASAN is a big user of stackdepot, double the cap if KASAN is enabled */
++#define DEPOT_POOLS_CAP (8192 * (IS_ENABLED(CONFIG_KASAN) ? 2 : 1))
++
+ /* The pool_index is offset by 1 so the first record does not have a 0 handle. */
+ #define DEPOT_MAX_POOLS \
+-	(((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
+-	 (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
++	MIN((1LL << (DEPOT_POOL_INDEX_BITS)) - 1, DEPOT_POOLS_CAP)
+ 
+ static bool stack_depot_disabled;
+ static bool __stack_depot_early_init_requested __initdata = IS_ENABLED(CONFIG_STACKDEPOT_ALWAYS_INIT);
+-- 
+2.43.5
 
-> Honestly, I'm not sure it's worth the effort if there's no deadlock.
-> 
-There is a deadlock, and i think it have to be fixed.
-> It's possible that I'm misunderstanding or I've missed a substantial
-> detail for why this could lead to a deadlock. It'd be best visible in a
-> sequence diagram with tasks/CPUs left-to-right and time top-down (in the
-> original scheme it looks like time goes right-to-left and there's the
-> unclear situation of the initial cgroup_mutex holder).
-> 
-> Thanks,
-> Michal
-
-I will modify the diagram.
-And I hope you can understand how it leads to deadlock.
-Thank you Michal for your reply.
-
-Thanks,
-Ridong
 
