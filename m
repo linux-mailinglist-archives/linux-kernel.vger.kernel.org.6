@@ -1,176 +1,121 @@
-Return-Path: <linux-kernel+bounces-280059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AD294C523
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:26:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B807994C527
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15FA91F23EC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:26:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 757D41F244F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBAE154C18;
-	Thu,  8 Aug 2024 19:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A4D156676;
+	Thu,  8 Aug 2024 19:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R3S41o6P"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MqaTnSNw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5693F433AD
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 19:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F032433AD
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 19:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723145153; cv=none; b=YYfGDWny0r/OyxE6RyEPv1gm4fdJj7YWOdVUSKI9SszR0dJlY+2q7XG2DjTKv3gSZiKatCwTzBrZ3Vy7/zChDDvhBKy8uyohFLNUrDze/slTSVKlQVRgcgJFJdIXhpNnBtjUG8R3945F14tjv/DNiTtU83mkwRokRu9SB8Mtj7Y=
+	t=1723145297; cv=none; b=a+cbAu1ZmwPs0itaklYbfFz50MV+0RYxM9DnDMEmaYDv223SSo2RxYmIUGt+S45B4scmZqwtjH6UMgPDAby2rrrlX9DIU/uWHfWBrAtX47B31ruuiXhYTqsjlKXnY4ivDn8DRtdiSdnRqKzOSnmw/NMTlKU/b2+gY7AAwmy5cys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723145153; c=relaxed/simple;
-	bh=yhjBUsERH/buoMtM1MBX1RqBd6mdeT670FJenkzsuLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wdywkrz+XWWVg8/7kRrxqAjyj2d5mwkCrYrzUfIMke3/Z31qoJVVtrg9yc3ssLEntRWL/TzGTtaAJcDgHndfpMKs0457rg3iMvoSdvGgUlqJcv7cMpen5hzbV5JBxKSuMKnpOsDm9fttcKJDSnf7r4YDbXdvHhfuzuMU5lGI4TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R3S41o6P; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723145150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JO/CAsOGsBonKN3LuFGb35noUOKvXjgOpPa41bSYgso=;
-	b=R3S41o6PnNrq0j38Qe0je+Rf0MIvPMIkyvJmd5n4tLIQO6jW3KE2Q+OJVc7lcy5VtAZGEq
-	G1cBw6YIjGoPH1D9DcyWOXHHDljahsyJIY3MbjRd/P8iy6zMNDOjaibiFfHyWCtuM5hzwt
-	DD2RVxhwDyH6BIOzl87P/v/F3Jy6EwE=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-524-UYNjZLMeO7Ohd6OgTjDC4Q-1; Thu,
- 08 Aug 2024 15:25:46 -0400
-X-MC-Unique: UYNjZLMeO7Ohd6OgTjDC4Q-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76AD919560A3;
-	Thu,  8 Aug 2024 19:25:45 +0000 (UTC)
-Received: from [10.2.16.232] (unknown [10.2.16.232])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CA1051956056;
-	Thu,  8 Aug 2024 19:25:43 +0000 (UTC)
-Message-ID: <0d2601c7-74ad-4c9a-bd7c-87563703135c@redhat.com>
-Date: Thu, 8 Aug 2024 15:25:42 -0400
+	s=arc-20240116; t=1723145297; c=relaxed/simple;
+	bh=n4jJYHx42+ihYMKvptonitRjvq/fNqpGn+fZGhpyzgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/p4z1413lxPv6uDQZ2gf5J1yUeqruOEpGSE64AYysZFQkndgq4eSsqJ7GhLhWKpwEUno9LVl5DPdKvjeJalWhs0hfMer3kw6IdbiIvX2sBrJIV4yZdNTpmVQLVvcEz0A/fRs6b9KWwbm4lxuFDCcmNxhG4mREvprcCkfmlvoQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MqaTnSNw; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723145296; x=1754681296;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=n4jJYHx42+ihYMKvptonitRjvq/fNqpGn+fZGhpyzgk=;
+  b=MqaTnSNw0E3GlWGyWF43AzH2FRJKUWyQSm3+w51NjHl0RgFjvPwxahmB
+   AqLnuZ3EeW9t/3PZR66w9zQ1nacgMNVLWmzWXw3avtAA7g0DIYUvREHWv
+   mrQc4n1IoRmTviI5ul6IUDagrCjk2rfgOKm4PXV3KfrAowXgmwucjuFcx
+   eELpP/wjaZec0ZqfNPdKvFMlxp+vdANoEQjKQD1mn7XmCD6mRWyGJ61Cz
+   6ewdq6nyi500LCssflhLVZSUb06pOInp1n60KwvKQckfiVbTTWybHJYW0
+   yhqDBlp5t5a0NacW0ophUiiHcHfCp/Toz0VVGLpiAvJQrvHvKbSqrUGcF
+   w==;
+X-CSE-ConnectionGUID: F5Qm+biqS0iASGIxtWyLfw==
+X-CSE-MsgGUID: Sz+OWTm8QjiqzWYmjBeaug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="31969522"
+X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
+   d="scan'208";a="31969522"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 12:28:15 -0700
+X-CSE-ConnectionGUID: BRNVP7mMQx2AZg9NEfyX1w==
+X-CSE-MsgGUID: 0RDtKjrPQuW2OSiKxd9Dyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
+   d="scan'208";a="62281684"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.12.215])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 12:28:14 -0700
+Date: Thu, 8 Aug 2024 12:28:10 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, hch@lst.de, ira.weiny@intel.com,
+	dlemoal@kernel.org, hare@suse.de, axboe@kernel.dk,
+	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvdimm/pmem: Set dax flag for all 'PFN_MAP' cases
+Message-ID: <ZrUcSihtUWO2FrI3@aschofie-mobl2>
+References: <20240731122530.3334451-1-chengzhihao1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is
- enabled
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, Marco Elver <elver@google.com>,
- Dmitry Vyukov <dvyukov@google.com>, linux-kernel@vger.kernel.org
-References: <20240808125430.1172152-1-longman@redhat.com>
- <CA+fCnZdWgAD1pu4yyjON0ph9ae1B6iaWas0CbET+MXLNNXt5Hg@mail.gmail.com>
- <f8c46f64-1ac3-4da3-87b5-ef7ec2e37fb8@redhat.com>
- <CA+fCnZdnFAvFYVN9Farmg1DKHy3ZmL3ZB0XqYUJVoETUpSpEiQ@mail.gmail.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <CA+fCnZdnFAvFYVN9Farmg1DKHy3ZmL3ZB0XqYUJVoETUpSpEiQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731122530.3334451-1-chengzhihao1@huawei.com>
 
-On 8/8/24 15:22, Andrey Konovalov wrote:
-> On Thu, Aug 8, 2024 at 8:32 PM Waiman Long <longman@redhat.com> wrote:
->>
->> On 8/8/24 12:12, Andrey Konovalov wrote:
->>> On Thu, Aug 8, 2024 at 2:54 PM Waiman Long <longman@redhat.com> wrote:
->>>> As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
->>>> capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
->>>> for all kmalloc/kfree calls. So stackdepot capacity was increased 8
->>>> times to accommodate KASAN usage even thought it was claimed 4X should
->>>> be enough at that time.
->>>>
->>>> With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
->>>> for stack records"), all stackdepot records uses a fixed size with
->>>> CONFIG_STACKDEPOT_MAX_FRAMES (default=64) entries. This is merged to
->>>> support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
->>>> use variable size records for non-evictable entries") re-enabled
->>>> the use of variable size records for non-KASAN use cases, but KASAN
->>>> (generic mode) still uses the large fixed size stack records.
->>> No, since commit 711d349174fd ("kasan: revert eviction of stack traces
->>> in generic mode") Generic KASAN doesn't use fixed-sized slots.
->>>
->>>> With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
->>>> stackdepot space had been more than double than before. Assuming an
->>>> average stack frame size of 16, a KASAN stack record is almost 4X the
->>>> size of a non-KASAN one.
->>> So this is not correct.
->> Yes, you are right. I missed the KASAN commit 711d349174fd in my
->> analysis. I will update the commit log in the next version.
->>>> When a wide variety of workloads are run on a debug kernel with KASAN
->>>> enabled, the following warning may sometimes be printed.
->>>>
->>>>    [ 6818.650674] Stack depot reached limit capacity
->>>>    [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot_alloc_stack+0x39e/0x3d0
->>>>      :
->>>>    [ 6818.650907] Call Trace:
->>>>    [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
->>>>    [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
->>>>    [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
->>>>    [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
->>>>    [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
->>>>    [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
->>>>    [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
->>>>    [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
->>>>    [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
->>>>    [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
->>>>    [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
->>>>    [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
->>>>    [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
->>>>    [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
->>>>    [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
->>>>    [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
->>>>    [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
->>>>    [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
->>>>    [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
->>>>    [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 [xfs]
->>>>    [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs]
->>>>    [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
->>>>    [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
->>>>    [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
->>>>    [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
->>>>    [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
->>>>
->>>> With all the recent changes in stackdepot to support new KASAN features,
->>>> it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
->>>> enough when KASAN is enabled. Fix this stackdepot capability issue
->>>> by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
->>>> maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
->>> It is possible that the stack depot runs out of space due to a truly
->>> large number of unique stack traces, but I would first make sure that
->>> is indeed the case. The one thing to check would be to dump all the
->>> stack traces from the stack depot when it overflows, and check whether
->>> they make sense. There have been cases in the past, when e.g. the task
->>> context part of a stack trace from an interrupt didn't get stripped
->>> properly, and thus almost each stack trace from an interrupt was
->>> considered unique by the stack depot. Perhaps, something similar
->>> started happening again.
->> It could be.
->>
->> Anyway, I got a bug report from our QE team and they have seen it once
->> so far. So it is not an easily reproducible problem. I need to do
->> further investigation first. Thanks for your quick response.
-> If you have access to the environment where the issue is happening,
-> you can just make the stack depot keep dumping all new stack traces
-> being saved and monitor them for some time. If there's a problem with
-> interrupt contexts, you should be able to see it even without waiting
-> for the stack depot to overflow.
+On Wed, Jul 31, 2024 at 08:25:30PM +0800, Zhihao Cheng wrote:
+> The dax is only supportted on pfn type pmem devices since commit
+> f467fee48da4 ("block: move the dax flag to queue_limits"), fix it
+> by adding dax flag setting for the missed case.
 
-I see. Thanks for the suggestion.
+s/supportted/supported
 
-Cheers,
-Longman
+How about adding failure messages like this:
 
+Trying to mount DAX filesystem fails with this error:
+mount: : wrong fs type, bad option, bad superblock on /dev/pmem7, missing codepage or helper program, or other error.
+       dmesg(1) may have more information after failed mount system call.
+
+dmesg: EXT4-fs (pmem7): DAX unsupported by block device.
+
+
+Tested-by: Alison Schofield <alison.schofield@intel.com>
+
+> 
+> Fixes: f467fee48da4 ("block: move the dax flag to queue_limits")
+> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> ---
+>  drivers/nvdimm/pmem.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 1ae8b2351654..210fb77f51ba 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -498,7 +498,7 @@ static int pmem_attach_disk(struct device *dev,
+>  	}
+>  	if (fua)
+>  		lim.features |= BLK_FEAT_FUA;
+> -	if (is_nd_pfn(dev))
+> +	if (is_nd_pfn(dev) || pmem_should_map_pages(dev))
+>  		lim.features |= BLK_FEAT_DAX;
+>  
+>  	if (!devm_request_mem_region(dev, res->start, resource_size(res),
+> -- 
+> 2.39.2
+> 
 
