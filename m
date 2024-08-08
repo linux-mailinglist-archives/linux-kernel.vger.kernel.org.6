@@ -1,171 +1,116 @@
-Return-Path: <linux-kernel+bounces-278758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99D894B463
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:04:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CBB594B464
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924D3283A17
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:04:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADAAC1C21776
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0509749A;
-	Thu,  8 Aug 2024 01:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876F4440C;
+	Thu,  8 Aug 2024 01:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U5Im2512"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCxUfXc2"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4415420E6;
-	Thu,  8 Aug 2024 01:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D904BA2D
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 01:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723079036; cv=none; b=b3Kjez8RuCvPtzP+rl4LJ9yWO8Gk84xKOnJwJ/uEevHkQXcCMjvky1cd6EQzPHo/5retAfLxmvysVQ8440VQRoBuHniqZU/BtItmBUGGkzZ1xVs2PgcTOPkiVHtsD97PvcBU4lQNYixvoBEkqexl+1aSSVqqIMv78Z8By0XyHws=
+	t=1723079115; cv=none; b=kVB/mKGGRW7+GYL5f65LSpIbekXk99wGcYAv35vclEe9UbEiGFUM8asH7zL9bPX4E2D+kplpycNp2UCIZi0SpQUY6MHf5JjGokqqg5tE2kfXMLL4eWeS1JXt56pcvkLWnqQlsY16X6bl8KFMVzcfb7F89VL9/7puSS0FKL6e1O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723079036; c=relaxed/simple;
-	bh=E4NjcBtFoKMULPq+m54nVSONliuUrMPReoZj/ltGKeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pXXgTP+OofoAOXuHmkgAniEOz6v184LS2uVw+7be+nAfFSCc3WIimH405bMrOPzeo5SsHFcvxdWQuOeBUd7gID0Q7zoWYe1mXZQS9amu83U1t8v5HwFg3jhO6baWgKnlulLciDlWGcPVfK8/Z9pSdPGt/a2kEWc67tvhHlz2ySU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U5Im2512; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477ID6VU012239;
-	Thu, 8 Aug 2024 01:03:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BiWDQGebIC+nZsacslE5RFhdstOKp1m7YUU31Ktsm98=; b=U5Im2512oxh0t/mX
-	m8ehDNj6pUvuH8BFFmSwYVf1M0ANJ2YAHuq98irB1tU4X944g5TH3AQsMWnAz/lo
-	jm09QErp62sCd27weApFMAxFd3k5ZNU8J9ldXcL1NKjGTECu0aV3mTUX7hQ4VBmq
-	LjhdozDpq/+Gmet5huIkKHPuimDLrsLqBQW9hKtjTflIp6EzJiW6dcJ6bejFXUAm
-	oq1YIeJIAZn+5VVhDPSMdOBJ8zXecL037To7o/mDRx4Iqa13yZnInVXN/WiJrOkP
-	FidwPtb9eV5Qnym3FxO948gAQmUUeo+ukSh6fdR9+6NwC5qZU5UL1Ibqou4CcBH/
-	0hbdug==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbj6v9wt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 01:03:30 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 47813Sgp025454
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 8 Aug 2024 01:03:28 GMT
-Received: from [10.71.113.127] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
- 18:03:27 -0700
-Message-ID: <e5fa1a3f-3fe2-40c5-9366-4d21221f9557@quicinc.com>
-Date: Wed, 7 Aug 2024 18:03:27 -0700
+	s=arc-20240116; t=1723079115; c=relaxed/simple;
+	bh=sQnO83QTUaxNhTlQAOCumY+VBUV0Knu/tdzdrShQmh4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lxvI906xLNBx0FyfaoRlFvaHIvweD/tzBxN6Yh6YKnttcdEK8rt9QW5FiUa4wElvHKVo1//L7MYFvmgRXPY8jhCWfycnejqU2H/jrv1hUdTqlvnGh0/PzFThk60Kh52rIYxufii7Xv1U2QovKqor2SkSbUwOy/Xq45+dfhD2yyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCxUfXc2; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2cb52e2cb33so387279a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 18:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723079114; x=1723683914; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W7idl2PPuazA+0y4Dl4vUOdnEHCofalPcpzFXjUMbIE=;
+        b=jCxUfXc2QO0jEh7DqrxT1Pi+S5Ol8n0ZaWwuS2rb6Txq3020yiUAY1iSrgXYkm/GZS
+         HTA6kBiCus1YPLMcSOM6ldH+0yfH+oVOQshfXqsc3rjLm3y9w7uLQg3G7MMf+oAiu9Os
+         bx6UZZwXRxYiP2pnjduhQ3lXCrGux44WCbEpEptEMiFOuAG9Ya3TjTWA9C76TsqP9BBm
+         oJrGTUib5A8rgRdzI9aEPoVoYs6mT9qk1NhIkGrsggjH3N87hzsfMkZQQSHuYVIg3RPV
+         0ZsWkOXi6/Bl1yhUaX/l9/9vLrONz4duYYhO+BxvA4WB7EPBI8ABPhCW01XrWTGlH5Ln
+         k/eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723079114; x=1723683914;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W7idl2PPuazA+0y4Dl4vUOdnEHCofalPcpzFXjUMbIE=;
+        b=b3HtKq/M9+VGqY00ZBhHrLPa+d4K+32e2MzlOc830kFo1EkvBUfEFpyEbqLy7ZaS9+
+         nrC2wHjQvIAPUCqlAkOorVjfYWhk4yinheq09k1cy4XacGzkEKLQ+CtNd4pRs3pnJl2/
+         CCQbbSoLw+xjbYZQH/tQgZP+aeQbaOY2J939ey5nAe+RnMYZ6jwKNvo+8R0yicH/Gvlk
+         aAdtKE5PFP1PjR6hRRU7MYkdBWNbrAVbLG3LapNWDsD0AdRwybEyQ90cF3lc1Z7+UNdB
+         OlKGEoXDDhNZ4Z2j8DGKlMOClQ5rSzB8K3blRzxLywE0ph+PPH+HF4ogJJaXo1wKU6p8
+         UXkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXk+9wQ6m7zC/oWu20EC1XLgk42O/RVQh+yFeDBpByDaJC3+LKRvE8opMM9lAhN1sO6amFj3FZNR8DugOpOayoap9Arw53pbecyxope
+X-Gm-Message-State: AOJu0Yx8ee0h7R5Bh0SzKGwxU4POKQZJhVB6NKo81i9CcjYtAz/iRvuy
+	DUozqTmcSRHxNEIt7acYcZSwgojab8vZS+Vatp5/wnVLfsJkWDl0
+X-Google-Smtp-Source: AGHT+IFjna2nEKbX3ibdhC4UcDbKiyJ05BBFYZxuZuyFYjcOihkGk7YiwG1Rb6CwBeMPV3wRKUDaYQ==
+X-Received: by 2002:a17:90a:4884:b0:2cd:3445:f87b with SMTP id 98e67ed59e1d1-2d1c347b36dmr380271a91.29.1723079113766;
+        Wed, 07 Aug 2024 18:05:13 -0700 (PDT)
+Received: from barry-desktop.hub ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b3a9cc5asm2234639a91.10.2024.08.07.18.05.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 18:05:13 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: chrisl@kernel.org,
+	david@redhat.com,
+	kaleshsingh@google.com,
+	kasong@tencent.com,
+	linux-kernel@vger.kernel.org,
+	ryan.roberts@arm.com,
+	ioworker0@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	ziy@nvidia.com,
+	hanchuanhua@oppo.com,
+	Barry Song <v-songbaohua@oppo.com>
+Subject: [PATCH RFC 0/2] mm: collect the number of anon mTHP
+Date: Thu,  8 Aug 2024 13:04:55 +1200
+Message-Id: <20240808010457.228753-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 26/34] ALSA: usb-audio: qcom: Don't allow USB offload
- path if PCM device is in use
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <gregkh@linuxfoundation.org>, <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-27-quic_wcheng@quicinc.com>
- <c2ab91ed-a2e5-437e-bbdb-84988a052778@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <c2ab91ed-a2e5-437e-bbdb-84988a052778@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4CidAKI3zPEyUNyBFmQX_dZ-DRpw6yXZ
-X-Proofpoint-GUID: 4CidAKI3zPEyUNyBFmQX_dZ-DRpw6yXZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_15,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
- phishscore=0 mlxlogscore=999 clxscore=1015 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408080005
 
+From: Barry Song <v-songbaohua@oppo.com>
 
-On 8/1/2024 1:57 AM, Pierre-Louis Bossart wrote:
->
-> On 8/1/24 03:17, Wesley Cheng wrote:
->> Add proper checks and updates to the USB substream once receiving a USB QMI
->> stream enable request.  If the substream is already in use from the non
->> offload path, reject the stream enable request.  In addition, update the
->> USB substream opened parameter when enabling the offload path, so the
->> non offload path can be blocked.
-> It's a bit weird that the mutual exclusion between the standard path and
-> the offloaded path is handled at the vendor level. I would think this
-> needs to be handled in the soc_usb framework, no?
->
-Hmm...I guess that make sense.  In the end, the mutual exclusion check would need to either be handled by the vendor USB offload driver, or the USB backend DAI link.  I could consider adding another SOC USB API to query for the USB PCM status.  If it is open/active, then just return with an error, or maybe just rename the snd_soc_usb_find_format() API to something more generic which checks for parameters and current status before allowing offloading to start (ie snd_soc_check_offload_available())
+Knowing the number of anon mTHPs in the system is crucial for performance
+analysis. It helps in understanding the ratio and distribution of
+mTHPs versus small folios throughout the system.
 
-Thanks
+Additionally, partial unmapping by userspace can lead to significant waste
+of mTHPs over time and increase memory reclamation pressure. We need this
+information for comprehensive system tuning.
 
-Wesley Cheng
+Barry Song (2):
+  mm: collect the number of anon large folios
+  mm: collect the number of anon large folios partially unmapped
 
->> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> ---
->>  sound/usb/qcom/qc_audio_offload.c | 15 ++++++++++++++-
->>  1 file changed, 14 insertions(+), 1 deletion(-)
->>
->> diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
->> index 8b0913b7256b..3b46d05f1421 100644
->> --- a/sound/usb/qcom/qc_audio_offload.c
->> +++ b/sound/usb/qcom/qc_audio_offload.c
->> @@ -1460,12 +1460,17 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
->>  		goto response;
->>  	}
->>  
->> +	mutex_lock(&chip->mutex);
->>  	if (req_msg->enable) {
->> -		if (info_idx < 0 || chip->system_suspend) {
->> +		if (info_idx < 0 || chip->system_suspend || subs->opened) {
->>  			ret = -EBUSY;
->> +			mutex_unlock(&chip->mutex);
->> +
->>  			goto response;
->>  		}
->> +		subs->opened = 1;
->>  	}
->> +	mutex_unlock(&chip->mutex);
->>  
->>  	if (req_msg->service_interval_valid) {
->>  		ret = get_data_interval_from_si(subs,
->> @@ -1487,6 +1492,11 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
->>  		if (!ret)
->>  			ret = prepare_qmi_response(subs, req_msg, &resp,
->>  					info_idx);
->> +		if (ret < 0) {
->> +			mutex_lock(&chip->mutex);
->> +			subs->opened = 0;
->> +			mutex_unlock(&chip->mutex);
->> +		}
->>  	} else {
->>  		info = &uadev[pcm_card_num].info[info_idx];
->>  		if (info->data_ep_pipe) {
->> @@ -1510,6 +1520,9 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
->>  		}
->>  
->>  		disable_audio_stream(subs);
->> +		mutex_lock(&chip->mutex);
->> +		subs->opened = 0;
->> +		mutex_unlock(&chip->mutex);
->>  	}
->>  
->>  response:
+ Documentation/admin-guide/mm/transhuge.rst | 10 ++++++++++
+ include/linux/huge_mm.h                    | 16 ++++++++++++++--
+ mm/huge_memory.c                           |  8 ++++++++
+ mm/rmap.c                                  |  3 +++
+ 4 files changed, 35 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
 
