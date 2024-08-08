@@ -1,104 +1,105 @@
-Return-Path: <linux-kernel+bounces-279240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263A694BADE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:25:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4174094BADF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B39282CAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:25:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B222B226F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2D318A94A;
-	Thu,  8 Aug 2024 10:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F7818A6A8;
+	Thu,  8 Aug 2024 10:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BnXv3khZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="knX2YFbF"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C423C189F56;
-	Thu,  8 Aug 2024 10:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3DF184526
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112725; cv=none; b=eo559+QwOHGN6BReJwykoq0HONiZrQSSJDT6mYJ976/UU5vLO16T7ELWeYiiWKHMGH32GcTQJK8l4feG4F3bBzKOrS8sMTrqjcQl/omDIWhbqsnuGdkT/lkrhkcZi3GxuklMSYhp8L26jru7l/D/66Kh1UCKoyOYkZIQuQ9FjLE=
+	t=1723112783; cv=none; b=hywRTg5E9N3mySg2flh5SyTtu25WYOfJBNFAttNpY2UNyv49T7SkEZRW3u9mmPts7/BKachW263LM5Sd0GKFIj7jKhs4FNnFQYLF+ad8JChamv7eafBIgQqXQC3e8ffyk5D+OAHL+c/e/OxZ/SMugs4thCw+tgVs8LRZWQHUrIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112725; c=relaxed/simple;
-	bh=fZP8HxgFzg8Q/VBokT/unDJoCN9dymrjvbxzxf0FNFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HA8PPVAsuYN87QCR2QWpKB08CVx0ptN/VJizBFs3YVZ+o8tLx8aksY0sHwO2zMu9PMpjdfLwbVX+JQoodGAoPD8QSpGUCXhBYtoVqX06I5LpLfrZurN3lBu/xrDmyOCe6rFIv5ECi2oAZ6lRx1fR7uMVJG+QFs7qm4glrhg4yrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BnXv3khZ; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723112724; x=1754648724;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fZP8HxgFzg8Q/VBokT/unDJoCN9dymrjvbxzxf0FNFY=;
-  b=BnXv3khZNeNfHNOiYhhhhBaO1g9TuXtaJjOAkyQT0b7uxvy01oqCh13Y
-   ru6n5ngeteZplVzAz7TooDeQBjteIceOGSpHFedy/Ox8wWHVdx387ZFI8
-   xU501ygVaKlgn1B8Y3WcRiRtpajrFT9xHVzmP0P8ArsxJhy2Bo6dlpiOB
-   OU2HYfXedFIkYYzKnZvm8R3DJ+RHyaWrGf7hSsdCbDCpBrQA2mbta8Wh9
-   tfWrlR9A0hRH2L8sOIW3e4bQeA4tOJPitL+H9qFyOo6C3jbHDpKXdNhBF
-   SBndLpha8uKCbtUvCKAp9r3BWo/GJ30yx6jkF9sgSWFZncYUnuqQZGCsR
-   Q==;
-X-CSE-ConnectionGUID: XeQABdknTEOk4j0Q/TmBmQ==
-X-CSE-MsgGUID: ewA+kMXNQwq3Xgbz3IMG4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="43749108"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="43749108"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 03:25:23 -0700
-X-CSE-ConnectionGUID: e7YznkWoQMuCjEYa1nZS7Q==
-X-CSE-MsgGUID: 1nbyhsx0QneJSAGsF9GiDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="57731589"
-Received: from dneilan-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.245.71])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 03:25:19 -0700
-Date: Thu, 8 Aug 2024 11:25:14 +0100
-From: Andi Shyti <andi.shyti@linux.intel.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] fbdev: omapfb: panel-sony-acx565akm: Simplify
- show_cabc_available_modes()
-Message-ID: <ZrSdCtS2okz9ivBW@ashyti-mobl2.lan>
-References: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1723112783; c=relaxed/simple;
+	bh=rflHku7qbVAbCcQdQgA7LvHtyIZj06d1LIF0k/gF8Kg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mjd41uktRji6rikcJwC3UkSXSvFVeEs8BhdZHp+mU4oIhwjXwFwlQIeSP6gGLMduiDAPNaV9GZV2fLCAxr9OJ2MHnN92pPYZKlhxfwmx8kej4RYo96+1lpvgpbD9t5NoJi/zYSvASWp8GT7jkYYyEj5dUq2+ivPJCgnmAz/8hz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=knX2YFbF; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 43328C0008;
+	Thu,  8 Aug 2024 10:26:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723112779;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VKqPc2zvztu8ZjTTtHQ7KbDNfyDn+rWRkCx6dA0D/as=;
+	b=knX2YFbF0IkUaVgtfA7NITlpMDxKAXD+0Dcpwpzg2lmoZi/VUqS8S0Ztg+y2bFoFdD3afk
+	6M2DoTG3UbOxyWDWB1uCT5iRJbjE6vl+iu97LAGIBVXACkdTWYXKWuBvu6vCABxP2FOfAW
+	2PiLr4QvfcpqPVxEQk6aCutL2z/FsBq1TM9jWpEKxRwrDnXqHBqQ71tpsMqAauWb34/CWd
+	6MEAXUmtvB20zo98owfxLdkyOAtV88a70kXSoMTY9gkLhmBVWPb4u3BH1DdL6ysMabIxLc
+	YPXHiCjU3Tj61gLaLU1DXVBqUzMqZ1bcZUFoZCOqokM72h2IVfq7oDUW3w7zEg==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Date: Thu, 08 Aug 2024 12:26:14 +0200
+Subject: [PATCH] drm/bridge: ti-sn65dsi83: use dev_err_probe when failing
+ to get panel bridge
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240808-ti-sn65dsi83-dev_err_probe-v1-1-72417aa275ab@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAEWdtGYC/x3MzQpAUBBA4VfRrE1dv11eRRJmMJtLM5KSd3ezO
+ fVtzgPGKmzQJg8oX2Kyh4gsTWDexrAyCkVD7vLSeefxFLRQV2TiCyS+BlYdDt0nxsbTuDiKmTK
+ Ig0N5kfufd/37ft+746tsAAAA
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.0
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Christophe,
+When devm_drm_of_get_bridge() fails, the probe fails silently. Use
+dev_err_probe() instead to log an error or report the deferral reason,
+whichever is applicable.
 
-On Thu, Aug 08, 2024 at 11:46:11AM +0200, Christophe JAILLET wrote:
-> Use sysfs_emit_at() instead of snprintf() + custom logic.
-> Using sysfs_emit_at() is much more simple.
-> 
-> Also, sysfs_emit() is already used in this function, so using
-> sysfs_emit_at() is more consistent.
-> 
-> Also simplify the logic:
->   - always add a space after an entry
->   - change the last space into a '\n'
-> 
-> Finally it is easy to see that, given the size of cabc_modes, PAGE_SIZE
-> can not be reached.
-> So better keep everything simple (and correct).
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-neat!
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+index 57a7ed13f996..60b9f14d769a 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+@@ -606,7 +606,7 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
+ 
+ 	panel_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 2, 0);
+ 	if (IS_ERR(panel_bridge))
+-		return PTR_ERR(panel_bridge);
++		return dev_err_probe(dev, PTR_ERR(panel_bridge), "Failed to get panel bridge\n");
+ 
+ 	ctx->panel_bridge = panel_bridge;
+ 
 
-Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240808-ti-sn65dsi83-dev_err_probe-98daf0ddafb1
 
-Andi
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
