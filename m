@@ -1,46 +1,62 @@
-Return-Path: <linux-kernel+bounces-278808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14CA94B51A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:36:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F6494B51B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1892C1C219FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:36:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25DB5282A65
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDB710A0D;
-	Thu,  8 Aug 2024 02:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92F410A0D;
+	Thu,  8 Aug 2024 02:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gR4k/6B2"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bMeHN4zB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671E66FD3
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 02:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD05D502
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 02:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723084591; cv=none; b=JWes92VztHBudm/6CLM+gmR9DbOqYd5F1YE+eGOnMZzkjJb3Ml0tZnf2uSbZ4laXcATDxE+qQVSM2k7weC3uUYQqpNavfepFwXMjbNxPaHl66vtE17HPxuNP/NbqJXhfd7nqhwlp1gOG3QnNhtk+Nn6h6105Q920eprIF4eG4Y0=
+	t=1723084673; cv=none; b=qcvlTLNL4QBqW/QB39xkhz3uugFiIHZxn9rWTE4Au1rGVDUVpaVwU/HjWtkuEiJi6hGiQaW8Cmc/TrmTmijsnHIzzYwBIpD+Foot1jKNpQA6AKSmZSrEgvHYPKr1Jk7o09DAKyCH4zsE4oasiPJtHZGf/HY2Bkx8zy6H27wp+Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723084591; c=relaxed/simple;
-	bh=LzDaylF58Y5zN7ATdNqsblRv3CaCo4hRcpqI3f1QiPI=;
+	s=arc-20240116; t=1723084673; c=relaxed/simple;
+	bh=NHuz0LxqLxfqHRGeVikNsdxdF/0SAsFXPzOaP999tkg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pRpBzAqF31xm8gmUQ2ZIFUzytc31bFf0nbtlY+zogKhK012f5HzZYi8AI8CXEjtmLoyGJD7S/a+fB4vFU2Jm/BmhPS/ThDToRgTNVici34plVNNtHMwqhlrcD99zndDBk3M9HgSU6mFf+xuz1tZouqLFwl7lUq7wComGHEtmmo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gR4k/6B2; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723084586; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=sHZf1TKI4hLp1MRx/aWYi50im0zJyFHjeew/2bwGL58=;
-	b=gR4k/6B2PncpDA61CpkDVjhib30iFxIA5YbnEMJ9D/xm6lTPdqsR/0OUfKCZdhiRz7oTKeCC8rFM+r7XP9XRBCkfraj1ELYEkV883pXDIz7xaUx4k+nG5lF1lvrpaddZqlQRswkq+8x1Q9WH0ZNfauoH4Y+0w8hFZlEzlCEOcqA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032019045;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0WCKj0tT_1723084583;
-Received: from 30.97.56.61(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCKj0tT_1723084583)
-          by smtp.aliyun-inc.com;
-          Thu, 08 Aug 2024 10:36:24 +0800
-Message-ID: <770190a2-3938-4ba9-9aaf-7320b34addf4@linux.alibaba.com>
-Date: Thu, 8 Aug 2024 10:36:23 +0800
+	 In-Reply-To:Content-Type; b=K2eGEojbya3O733XRGh15/iAyy1/exyMQkWy6N1AI9UfZSFAB+gxYxEzOPOfZ/7Hg4W1MnBJpi87AaDkbzo9YFL9QvrjoJfa/2LIvYrfAznbGllLIcsY1dN6NJHbhmFrVWZBWckydOfnQQJEIfN+QPhHkcQBS9gPbI3fULQVsxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bMeHN4zB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723084669;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ov1Gj0eKdYaIhoNdSV8zhiZQaoPDNY7WoFqG8FEKtsE=;
+	b=bMeHN4zB+BDx8I55Y5WVikKl0FVthiqYcoR+YoJ5mzPt6o/1CAVCl0lqVxUURIkEcJIWRW
+	5BA8cmDVsaMmRjAYMi1csAnLygZHMW7X2ro7QVPaDocYiF51jeElu+Bg06wE/zNbwZSgXv
+	jDEbkKbxpscQb+xy1aCSKKc1GFKsXQQ=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-103-qFViMMU8NDe5M2iz5Sj51g-1; Wed,
+ 07 Aug 2024 22:37:45 -0400
+X-MC-Unique: qFViMMU8NDe5M2iz5Sj51g-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EFA751955BC1;
+	Thu,  8 Aug 2024 02:37:43 +0000 (UTC)
+Received: from [10.2.16.123] (unknown [10.2.16.123])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 046A819560AA;
+	Thu,  8 Aug 2024 02:37:42 +0000 (UTC)
+Message-ID: <bb6ac53d-26e6-4e40-82c6-5b979b5dda1c@redhat.com>
+Date: Wed, 7 Aug 2024 22:37:41 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,119 +64,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/10] mm: vmscan: add validation before spliting shmem
- large folio
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, wangkefeng.wang@huawei.com, chrisl@kernel.org,
- ying.huang@intel.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
- shy828301@gmail.com, ziy@nvidia.com, ioworker0@gmail.com,
- da.gomez@samsung.com, p.raghav@samsung.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>
-References: <cover.1723012159.git.baolin.wang@linux.alibaba.com>
- <8a8c6dc9df0bc9f6f7f937bea446062be19611b3.1723012159.git.baolin.wang@linux.alibaba.com>
- <9b45a0dc-fa12-428a-8702-c7690c26aedc@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <9b45a0dc-fa12-428a-8702-c7690c26aedc@redhat.com>
+Subject: Re: [PATCH v2] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is
+ enabled
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20240808023215.1160684-1-longman@redhat.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240808023215.1160684-1-longman@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
 
+On 8/7/24 22:32, Waiman Long wrote:
+> As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
+> capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
+> for all kmalloc/kfree calls. So stackdepot capacity was increased 8
+> times to accommodate KASAN usage even thought it was claimed 4X should
+> be enough at that time.
+>
+> With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
+> for stack records"), all stackdepot records uses a fixed size with
+> CONFIG_STACKDEPOT_MAX_FRAMES (default=64) entries. This is merged to
+> support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
+> use variable size records for non-evictable entries") re-enabled
+> the use of variable size records for non-KASAN use cases, but KASAN
+> (generic mode) still uses the large fixed size stack records.
+>
+> With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
+> stackdepot space had been more than double than before. Assuming an
+> average stack frame size of 16, a KASAN stack record is almost 4X the
+> size of a non-KASAN one.
+>
+> When a wide variety of workloads are run on a debug kernel with KASAN
+> enabled, the following warning may sometimes be printed.
+>
+>   [ 6818.650674] Stack depot reached limit capacity
+>   [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot_alloc_stack+0x39e/0x3d0
+>     :
+>   [ 6818.650907] Call Trace:
+>   [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
+>   [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
+>   [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
+>   [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
+>   [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
+>   [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
+>   [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
+>   [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
+>   [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
+>   [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
+>   [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
+>   [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
+>   [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
+>   [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
+>   [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
+>   [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
+>   [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
+>   [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
+>   [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
+>   [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 [xfs]
+>   [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs]
+>   [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
+>   [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
+>   [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
+>   [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
+>   [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
+>
+> With all the recent changes in stackdepot to support new KASAN features,
+> it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
+> enough when KASAN is enabled. Fix this stackdepot capability issue
+> by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
+> maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
+>
+> Also use the MIN() macro for defining DEPOT_MAX_POOLS to clarify the
+> intention.
+>
+> Fixes: fc60e0caa94d ("lib/stackdepot: use fixed-sized slots for stack records")
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>   lib/stackdepot.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+> index 5ed34cc963fc..beeb70b57710 100644
+> --- a/lib/stackdepot.c
+> +++ b/lib/stackdepot.c
+> @@ -36,11 +36,12 @@
+>   #include <linux/memblock.h>
+>   #include <linux/kasan-enabled.h>
+>   
+> -#define DEPOT_POOLS_CAP 8192
+> +/* KASAN is a big user of stackdepot, double the cap if KASAN is enabled */
+> +#define DEPOT_POOLS_CAP (8192 * (IS_ENABLED(CONFIG_KASAN) ? 2 : 1))
+> +
+>   /* The pool_index is offset by 1 so the first record does not have a 0 handle. */
+>   #define DEPOT_MAX_POOLS \
+> -	(((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
+> -	 (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
+> +	MIN((1LL << (DEPOT_POOL_INDEX_BITS)) - 1, DEPOT_POOLS_CAP)
+>   
+>   static bool stack_depot_disabled;
+>   static bool __stack_depot_early_init_requested __initdata = IS_ENABLED(CONFIG_STACKDEPOT_ALWAYS_INIT);
 
-On 2024/8/7 23:53, David Hildenbrand wrote:
-> On 07.08.24 09:31, Baolin Wang wrote:
->> Page reclaim will not scan anon LRU if no swap space, however 
->> MADV_PAGEOUT
->> can still split shmem large folios even without a swap device. Thus add
->> swap available space validation before spliting shmem large folio to
->> avoid redundant split.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   mm/vmscan.c | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index 31d13462571e..796f65781f4f 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -1259,6 +1259,14 @@ static unsigned int shrink_folio_list(struct 
->> list_head *folio_list,
->>               }
->>           } else if (folio_test_swapbacked(folio) &&
->>                  folio_test_large(folio)) {
->> +
->> +            /*
->> +             * Do not split shmem folio if no swap memory
->> +             * available.
->> +             */
->> +            if (!total_swap_pages)
->> +                goto activate_locked;
->> +
->>               /* Split shmem folio */
->>               if (split_folio_to_list(folio, folio_list))
->>                   goto keep_locked;
-> 
-> Reminds me of
-> 
-> commit 9a976f0c847b67d22ed694556a3626ed92da0422
-> Author: Luis Chamberlain <mcgrof@kernel.org>
-> Date:   Thu Mar 9 15:05:43 2023 -0800
-> 
->      shmem: skip page split if we're not reclaiming
->      In theory when info->flags & VM_LOCKED we should not be getting
->      shem_writepage() called so we should be verifying this with a
->      WARN_ON_ONCE().  Since we should not be swapping then best to 
-> ensure we
->      also don't do the folio split earlier too.  So just move the check 
-> early
->      to avoid folio splits in case its a dubious call.
->      We also have a similar early bail when !total_swap_pages so just 
-> move that
->      earlier to avoid the possible folio split in the same situation.
-> 
-> 
-> But indeed, pageout() -> writepage() is called *after* the split in the 
-> vmscan path.
-> 
-> In that "noswap" context, I wonder if we also want to skip folios part 
-> of shmem
-> with disabled swapping?
+Sorry, I accidentally send it twice. Please ignore this version.
 
-Yes, I think so.
+BTW, the code change is the same as v1, but the description is updated 
+to reflect my investigation as why we need to double DEPOT_POOLS_CAP for 
+KASAN.
 
-> 
-> But now I am wondering under which circumstances we end up calling
-> shmem_writepage() with a large folio. And I think the answer is the 
-> comment of
-> folio_test_large(): via drivers/gpu/drm/i915/gem/i915_gem_shmem.c.
-> 
-> 
-> ... so if shmem_writepage() handles+checks that, could we do
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index a332cb80e928..7dfa3d6e8ba7 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1257,11 +1257,6 @@ static unsigned int shrink_folio_list(struct 
-> list_head *folio_list,
->                                                  goto 
-> activate_locked_split;
->                                  }
->                          }
-> -               } else if (folio_test_swapbacked(folio) &&
-> -                          folio_test_large(folio)) {
-> -                       /* Split shmem folio */
-> -                       if (split_folio_to_list(folio, folio_list))
-> -                               goto keep_locked;
->                  }
-> 
->                  /*
-> 
-> instead?
+Cheers,
+Longman
 
-Seems reasonable to me. But we should pass the 'folio_list' to 
-shmem_writepage() to list the subpages of the large folio. Let me try. 
-Thanks.
 
