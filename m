@@ -1,363 +1,113 @@
-Return-Path: <linux-kernel+bounces-280044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CDFB94C4FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:00:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9489594C504
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4770B1C20B5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:00:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4583F1F23899
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB4213E409;
-	Thu,  8 Aug 2024 19:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2064814E2E6;
+	Thu,  8 Aug 2024 19:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOrviBRd"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="nfTYu4hZ"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C54374C3
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 19:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BE23398E
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 19:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723143615; cv=none; b=fU/TjsaS8USB/xREiv2SWo1zuhdXaWGoyIlk4rtl0Fb5RNVB72Frmvb5/XXF9fWbbkMyGX4UuMqgvzvOaaLA3CYnPjmD++mZsx9IQagtj5qkwu8GQpd0WLtayXNWED20cQpke6oVtK1E9dsQPQYRniJxD03mOrPKxUQtH8cEU3s=
+	t=1723143746; cv=none; b=oj7vo0NPmDRgmaKdWO96VLCqTywlaPVzoT/KNB9Xr0hh2CeMFKVquY0X4iryVGoZS7ThGnbiSQCpx3HVWOhSYaxgimkJiTeFhKusXG8V72i2nTYZWB33rc34mCYkxvO8VJau8oawNCoUooq2zOKcmMT3y2sBQdPt/LA3t6G/yHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723143615; c=relaxed/simple;
-	bh=l/2ay84gjQ+lMkzytIQ5z26CeenYurtSiml/PX0Veoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KcaBGCuRKs6wD0W0b2GlzR7NRaILc8EbFDhqpFOmWbsJPVOy9CWceojnj8btnkOXzcN04ro8uINiXDNSJUOpHrGqC1ub0WPH/uDFlfptP/z6Gzfv77ohYkIK1mBmwxy8P2TUkJOgbCt3ajW6QaUo1QERuvjuv0tIzW8uHXUmVRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TOrviBRd; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so172578566b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 12:00:07 -0700 (PDT)
+	s=arc-20240116; t=1723143746; c=relaxed/simple;
+	bh=Y65uf6qqSRpIHJ9WMhbwfu83kOfz3UXQcvs4i5JT3n4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TXpxMBuvEjpORw3VTho81WG64NUhY+UawRCK08V0dHJ+IDc51Q/K8+PKK7JQT1jQrBtrDa7Zkcpl1jER0kaXQYFeoAwAs0Tgt47IU+gTcE37gR4B2Jekjie5BD8kjFNGdeMlA7Tgu5D3wDMr0czw5humruj19uCGuUkERHZTLCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=nfTYu4hZ; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-44fea2d40adso7367271cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 12:02:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723143606; x=1723748406; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M7J2unFknJRVaAPZnv6P83G7JcPOGmdhcXFSmISXSAk=;
-        b=TOrviBRdrUfZ1ObszMfw3M2vB3jeY2kd6bT/PrC4gLhWfT6Pqog4cgNErXvyjrOB6y
-         dVqSqAPCEOtlmKxHgrXFqBG0o7vvCZirgxNtdTvrMP+FvuPnu/P6iSqMPJThGKhtR/Db
-         xgSaIzcCQjnIdHNVZjM9/BmXmg68b9kPXn2fT00B+zofL2KOVlENQ7XvgYgvBNopGO+D
-         h5HqcaOdiawJfE+91Mg8zQot8KEQes0Jv/gF2zqlQKHrcKsIqL1K1Yw1ElpXR+zfI2Np
-         ik9Lou6xp16gXUuH0mQHCTO3VHrdX9g+A6vu9B1IB/BngaL6+9rMPOTKyZChtBFnV/Ae
-         XIcA==
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1723143744; x=1723748544; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y65uf6qqSRpIHJ9WMhbwfu83kOfz3UXQcvs4i5JT3n4=;
+        b=nfTYu4hZnfFfUGWky2YK78XbUXlSvJb/1z1AjDVDVh8s0rtD049OBx1WHvV6bF5NVf
+         B9VsJkcSob8UFSDdAGsq2H+0RgLPssBItONQN05gmtS+kcfoqtqgYHxKy9bY5d61H4uF
+         qPXDjnLT2jXsus2rV1Qs6kviDvE4qRCfQ9td9G9A6lmznqjZ+1QQnu8CgLfEXwL+A3U6
+         5bHzzlWOXOwRA1cN/WdXdIktAt+KJvrSQAoRrrVft/MqD3j10sRuWz0m2V+4m+xUmbzC
+         WxSbfhN25Umvnughuxfem/ur9qDHIXnTx7ioxvQWdI7a/z2g6P88RF6ZR56Hj1rDPq+P
+         onlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723143606; x=1723748406;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M7J2unFknJRVaAPZnv6P83G7JcPOGmdhcXFSmISXSAk=;
-        b=BRXTFdWiB+R/8k4PucemDe6KZd5sVAfFs/Eu0m6puUHwUAEVqnwmWxt28NSUvxyToy
-         XIIHWZeQQzwAAA++8F9Us5fuF+jVEvUCeMSSZ52nIlSJji8skf8X6FdJwYmk2ABgxARI
-         30cH8U8+tb470+6Ut0D4u8SLCMrTgcT7KBYkjyWdTB/AykJku8BVs3iToa9KEH3m3f2h
-         idnjZ6EEzQ2gyvmiV8ZDA6JX44felO/mpq7lPsm1GKAYKGu2l9RsQdeTXEA236WcTNxK
-         aSBZGxH0Tba8M7ZhHWQpJSthsSjpq1BLM0cyzzBd7EHrEvb4AP0m6UOlgCMRWRBvtnI1
-         Bwkg==
-X-Gm-Message-State: AOJu0YyIFYl6ea8GGZIjDGPWz+Uoaz9VLWzVYi1QvUlPm2WVAFfftL90
-	zaY7C3txOOCKjXpWWLaFhkTTvMmrxV7y9dPUvLgSlIBezPEatOr4
-X-Google-Smtp-Source: AGHT+IF3hl8d6AuywCjf1zHEmLj97N7p3hhhjrNyTjZJm3475UCyf+pIhGgiblWRA0cx6yNmWA5yCA==
-X-Received: by 2002:a17:907:f154:b0:a7a:97a9:ba28 with SMTP id a640c23a62f3a-a8090d796f8mr190544766b.26.1723143605640;
-        Thu, 08 Aug 2024 12:00:05 -0700 (PDT)
-Received: from f.. (cst-prg-72-52.cust.vodafone.cz. [46.135.72.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec7266sm772744066b.196.2024.08.08.12.00.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 12:00:04 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: surenb@google.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	lstoakes@gmail.com,
-	pedro.falcato@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [RFC PATCH] vm: align vma allocation and move the lock back into the struct
-Date: Thu,  8 Aug 2024 20:59:49 +0200
-Message-ID: <20240808185949.1094891-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1723143744; x=1723748544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y65uf6qqSRpIHJ9WMhbwfu83kOfz3UXQcvs4i5JT3n4=;
+        b=xJAam7gFfFlN3o5EmlvMp9XUyYzLfygcmbS+AYri7J4pmVHa2eB59Cx8WFeGh6XMyW
+         2AxpLihgkbyMm+Wykz0SofkEkSHdYjVQ8uKeOu0ABNPJx9oYuRkmJjGAftdkEEXbY0n1
+         HCWMuE1HvXpYCTnMifNuvd0VRC0uD5TJLjy1LueI6YyJo8z9y0+kz8XivK6FbKW/7k4W
+         hP96PyccSZRYnzD6a9YvxQ8Xm2ZhfKSEn4gYynYb1uy40sGF3hDkIUwT8cTnLK56gT63
+         RDr34j2fAWbgyWOQh0n3AeTDcXvk6u46AV28WTDQhowHbXmPuAuF1mlhlyqtZ8TbK7fP
+         z2CA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+z3u1ee5+GYecPlGG5L8MZOMmgvroSJwcHlw/8hWVG0IwVgcugYjBivVMXjI40aB6JEvSNyvrGSNf0Rsh4304GDIsjxiKqaVvFK86
+X-Gm-Message-State: AOJu0Yx5J1fXvXmlPDzyUvWCc2kY7yP4+bgVkDorfcoqhWH14KqmLaqz
+	+xiiRHWXbdZLRwmL93hvA3m15hojLIpWJYnduJTfOKV2obJbjIB1Fui6iB7XtpqJtHXaSE9SBgt
+	kudHPLHWsEtlACs+pyoWQmkbSMbzbsk0Tbf7fJg==
+X-Google-Smtp-Source: AGHT+IExI0OeHf48EBthOwkTI3aIjxBBaA3Ik679zCw1G8yDECFvltEArNPD+bABqbdLjI6o0QR2sTPYH07apAlR/WI=
+X-Received: by 2002:a05:622a:4a0d:b0:447:eb33:410d with SMTP id
+ d75a77b69052e-451d421cefcmr36717101cf.18.1723143743702; Thu, 08 Aug 2024
+ 12:02:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240808154237.220029-1-pasha.tatashin@soleen.com>
+ <20240808154237.220029-4-pasha.tatashin@soleen.com> <9cf6cbc1-67c0-4ae5-ae5e-5033631e61b6@redhat.com>
+In-Reply-To: <9cf6cbc1-67c0-4ae5-ae5e-5033631e61b6@redhat.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 8 Aug 2024 15:01:46 -0400
+Message-ID: <CA+CK2bD-8W7AP+Oedm0m9EROQZ4euLjZBhqaZJARLW02HWd6iw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] mm: add system wide stats items category
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-cxl@vger.kernel.org, cerasuolodomenico@gmail.com, 
+	hannes@cmpxchg.org, j.granados@samsung.com, lizhijian@fujitsu.com, 
+	muchun.song@linux.dev, nphamcs@gmail.com, rientjes@google.com, 
+	rppt@kernel.org, souravpanda@google.com, vbabka@suse.cz, willy@infradead.org, 
+	dan.j.williams@intel.com, yi.zhang@redhat.com, alison.schofield@intel.com, 
+	yosryahmed@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ACHTUNG: this is more of a request for benchmarking than a patch
-proposal at this stage
+On Thu, Aug 8, 2024 at 2:20=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 08.08.24 17:42, Pasha Tatashin wrote:
+> > /proc/vmstat contains events and stats, events can only grow, but stats
+> > can grow and srhink.
+>
+> s/shrink/
 
-I was pointed at your patch which moved the vma lock to a separate
-allocation [1]. The commit message does not say anything about making
-sure the object itself is allocated with proper alignment and I found
-that the cache creation lacks the HWCACHE_ALIGN flag, which may or may
-not be the problem.
+Thanks, fixed.
 
-I verified with a simple one-liner than on a stock kernel the vmas keep
-roaming around with a 16-byte alignment:
-# bpftrace -e 'kretprobe:vm_area_alloc  { @[retval & 0x3f] = count(); }'
-@[16]: 39
-@[0]: 46
-@[32]: 53
-@[48]: 56
+>
+> I think we discussed exposing this in /proc/meminfo. There, it would be
+> much easier to simply have a global variable, print it, and be done with
+> it. Like we do with TotalCma.
 
-Note the stock vma lock cache also lacks the alignment flag. While I
-have not verified experimentally, if they are also romaing it would mean
-that 2 unrelated vmas can false-share locks. If the patch below is a
-bust, the flag should probably be added to that one.
+Originally, Sourav had proposed adding per-page metadata stat to
+/proc/meminfo, but it was decided against, because all the other stats
+in /proc/meminfo are part of MemTotal, but memmap allocations are not
+always part of MemTotal which makes things confusing.
 
-The patch has slapped-around vma lock cache removal + HWALLOC for the
-vma cache. I left a pointer to not change relative offsets between
-current fields. I does compile without CONFIG_PER_VMA_LOCK.
-
-Vlastimil says you tested a case where the struct got bloated to 256
-bytes, but the lock remained separate. It is unclear to me if this
-happened with allocations made with the HWCACHE_ALIGN flag though.
-
-There is 0 urgency on my end, but it would be nice if you could try
-this out with your test rig.
-
-1: https://lore.kernel.org/all/20230227173632.3292573-34-surenb@google.com/T/#u
-
----
- include/linux/mm.h       | 18 +++++++--------
- include/linux/mm_types.h | 10 ++++-----
- kernel/fork.c            | 47 ++++------------------------------------
- mm/userfaultfd.c         |  6 ++---
- 4 files changed, 19 insertions(+), 62 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 43b40334e9b2..6d8b668d3deb 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -687,7 +687,7 @@ static inline bool vma_start_read(struct vm_area_struct *vma)
- 	if (READ_ONCE(vma->vm_lock_seq) == READ_ONCE(vma->vm_mm->mm_lock_seq))
- 		return false;
- 
--	if (unlikely(down_read_trylock(&vma->vm_lock->lock) == 0))
-+	if (unlikely(down_read_trylock(&vma->vm_lock) == 0))
- 		return false;
- 
- 	/*
-@@ -702,7 +702,7 @@ static inline bool vma_start_read(struct vm_area_struct *vma)
- 	 * This pairs with RELEASE semantics in vma_end_write_all().
- 	 */
- 	if (unlikely(vma->vm_lock_seq == smp_load_acquire(&vma->vm_mm->mm_lock_seq))) {
--		up_read(&vma->vm_lock->lock);
-+		up_read(&vma->vm_lock);
- 		return false;
- 	}
- 	return true;
-@@ -711,7 +711,7 @@ static inline bool vma_start_read(struct vm_area_struct *vma)
- static inline void vma_end_read(struct vm_area_struct *vma)
- {
- 	rcu_read_lock(); /* keeps vma alive till the end of up_read */
--	up_read(&vma->vm_lock->lock);
-+	up_read(&vma->vm_lock);
- 	rcu_read_unlock();
- }
- 
-@@ -740,7 +740,7 @@ static inline void vma_start_write(struct vm_area_struct *vma)
- 	if (__is_vma_write_locked(vma, &mm_lock_seq))
- 		return;
- 
--	down_write(&vma->vm_lock->lock);
-+	down_write(&vma->vm_lock);
- 	/*
- 	 * We should use WRITE_ONCE() here because we can have concurrent reads
- 	 * from the early lockless pessimistic check in vma_start_read().
-@@ -748,7 +748,7 @@ static inline void vma_start_write(struct vm_area_struct *vma)
- 	 * we should use WRITE_ONCE() for cleanliness and to keep KCSAN happy.
- 	 */
- 	WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
--	up_write(&vma->vm_lock->lock);
-+	up_write(&vma->vm_lock);
- }
- 
- static inline void vma_assert_write_locked(struct vm_area_struct *vma)
-@@ -760,7 +760,7 @@ static inline void vma_assert_write_locked(struct vm_area_struct *vma)
- 
- static inline void vma_assert_locked(struct vm_area_struct *vma)
- {
--	if (!rwsem_is_locked(&vma->vm_lock->lock))
-+	if (!rwsem_is_locked(&vma->vm_lock))
- 		vma_assert_write_locked(vma);
- }
- 
-@@ -827,10 +827,6 @@ static inline void assert_fault_locked(struct vm_fault *vmf)
- 
- extern const struct vm_operations_struct vma_dummy_vm_ops;
- 
--/*
-- * WARNING: vma_init does not initialize vma->vm_lock.
-- * Use vm_area_alloc()/vm_area_free() if vma needs locking.
-- */
- static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
- {
- 	memset(vma, 0, sizeof(*vma));
-@@ -839,6 +835,8 @@ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
- 	INIT_LIST_HEAD(&vma->anon_vma_chain);
- 	vma_mark_detached(vma, false);
- 	vma_numab_state_init(vma);
-+	init_rwsem(&vma->vm_lock);
-+	vma->vm_lock_seq = -1;
- }
- 
- /* Use when VMA is not part of the VMA tree and needs no locking */
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 003619fab20e..caffdb4eeb94 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -615,10 +615,6 @@ static inline struct anon_vma_name *anon_vma_name_alloc(const char *name)
- }
- #endif
- 
--struct vma_lock {
--	struct rw_semaphore lock;
--};
--
- struct vma_numab_state {
- 	/*
- 	 * Initialised as time in 'jiffies' after which VMA
-@@ -716,8 +712,7 @@ struct vm_area_struct {
- 	 * slowpath.
- 	 */
- 	int vm_lock_seq;
--	/* Unstable RCU readers are allowed to read this. */
--	struct vma_lock *vm_lock;
-+	void *vm_dummy;
- #endif
- 
- 	/*
-@@ -770,6 +765,9 @@ struct vm_area_struct {
- 	struct vma_numab_state *numab_state;	/* NUMA Balancing state */
- #endif
- 	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-+#ifdef CONFIG_PER_VMA_LOCK
-+	struct rw_semaphore vm_lock ____cacheline_aligned_in_smp;
-+#endif
- } __randomize_layout;
- 
- #ifdef CONFIG_NUMA
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 92bfe56c9fed..eab04a24d5f1 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -436,35 +436,6 @@ static struct kmem_cache *vm_area_cachep;
- /* SLAB cache for mm_struct structures (tsk->mm) */
- static struct kmem_cache *mm_cachep;
- 
--#ifdef CONFIG_PER_VMA_LOCK
--
--/* SLAB cache for vm_area_struct.lock */
--static struct kmem_cache *vma_lock_cachep;
--
--static bool vma_lock_alloc(struct vm_area_struct *vma)
--{
--	vma->vm_lock = kmem_cache_alloc(vma_lock_cachep, GFP_KERNEL);
--	if (!vma->vm_lock)
--		return false;
--
--	init_rwsem(&vma->vm_lock->lock);
--	vma->vm_lock_seq = -1;
--
--	return true;
--}
--
--static inline void vma_lock_free(struct vm_area_struct *vma)
--{
--	kmem_cache_free(vma_lock_cachep, vma->vm_lock);
--}
--
--#else /* CONFIG_PER_VMA_LOCK */
--
--static inline bool vma_lock_alloc(struct vm_area_struct *vma) { return true; }
--static inline void vma_lock_free(struct vm_area_struct *vma) {}
--
--#endif /* CONFIG_PER_VMA_LOCK */
--
- struct vm_area_struct *vm_area_alloc(struct mm_struct *mm)
- {
- 	struct vm_area_struct *vma;
-@@ -474,10 +445,6 @@ struct vm_area_struct *vm_area_alloc(struct mm_struct *mm)
- 		return NULL;
- 
- 	vma_init(vma, mm);
--	if (!vma_lock_alloc(vma)) {
--		kmem_cache_free(vm_area_cachep, vma);
--		return NULL;
--	}
- 
- 	return vma;
- }
-@@ -496,10 +463,8 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
- 	 * will be reinitialized.
- 	 */
- 	data_race(memcpy(new, orig, sizeof(*new)));
--	if (!vma_lock_alloc(new)) {
--		kmem_cache_free(vm_area_cachep, new);
--		return NULL;
--	}
-+	init_rwsem(&new->vm_lock);
-+	new->vm_lock_seq = -1;
- 	INIT_LIST_HEAD(&new->anon_vma_chain);
- 	vma_numab_state_init(new);
- 	dup_anon_vma_name(orig, new);
-@@ -511,7 +476,6 @@ void __vm_area_free(struct vm_area_struct *vma)
- {
- 	vma_numab_state_free(vma);
- 	free_anon_vma_name(vma);
--	vma_lock_free(vma);
- 	kmem_cache_free(vm_area_cachep, vma);
- }
- 
-@@ -522,7 +486,7 @@ static void vm_area_free_rcu_cb(struct rcu_head *head)
- 						  vm_rcu);
- 
- 	/* The vma should not be locked while being destroyed. */
--	VM_BUG_ON_VMA(rwsem_is_locked(&vma->vm_lock->lock), vma);
-+	VM_BUG_ON_VMA(rwsem_is_locked(&vma->vm_lock), vma);
- 	__vm_area_free(vma);
- }
- #endif
-@@ -3192,10 +3156,7 @@ void __init proc_caches_init(void)
- 			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
- 			NULL);
- 
--	vm_area_cachep = KMEM_CACHE(vm_area_struct, SLAB_PANIC|SLAB_ACCOUNT);
--#ifdef CONFIG_PER_VMA_LOCK
--	vma_lock_cachep = KMEM_CACHE(vma_lock, SLAB_PANIC|SLAB_ACCOUNT);
--#endif
-+	vm_area_cachep = KMEM_CACHE(vm_area_struct, SLAB_PANIC|SLAB_ACCOUNT|SLAB_HWCACHE_ALIGN);
- 	mmap_init();
- 	nsproxy_cache_init();
- }
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 3b7715ecf292..e95ecb2063d2 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -92,7 +92,7 @@ static struct vm_area_struct *uffd_lock_vma(struct mm_struct *mm,
- 		 * mmap_lock, which guarantees that nobody can lock the
- 		 * vma for write (vma_start_write()) under us.
- 		 */
--		down_read(&vma->vm_lock->lock);
-+		down_read(&vma->vm_lock);
- 	}
- 
- 	mmap_read_unlock(mm);
-@@ -1468,9 +1468,9 @@ static int uffd_move_lock(struct mm_struct *mm,
- 		 * See comment in uffd_lock_vma() as to why not using
- 		 * vma_start_read() here.
- 		 */
--		down_read(&(*dst_vmap)->vm_lock->lock);
-+		down_read(&(*dst_vmap)->vm_lock);
- 		if (*dst_vmap != *src_vmap)
--			down_read_nested(&(*src_vmap)->vm_lock->lock,
-+			down_read_nested(&(*src_vmap)->vm_lock,
- 					 SINGLE_DEPTH_NESTING);
- 	}
- 	mmap_read_unlock(mm);
--- 
-2.43.0
-
+This is why it makes sense to keep nr_memmap only in /proc/vmstat.
 
