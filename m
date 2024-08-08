@@ -1,70 +1,119 @@
-Return-Path: <linux-kernel+bounces-279680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3360F94C065
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:59:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074D794C068
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34BE51C20AC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3726A1C253EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C13918EFD7;
-	Thu,  8 Aug 2024 14:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD87B18EFE7;
+	Thu,  8 Aug 2024 14:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O0EVaw7S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="BAgGdpoI"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC90274055;
-	Thu,  8 Aug 2024 14:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287E518A6A0
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723129137; cv=none; b=DbQ8DgtH0BpOkm0ZBFsrZ7Ezuceeypy66kUSQxS90gxbJKWY8/bewU1B9X58xgtdxFEOmKayKWUk405sfNiSNJbIa0A/BEsuMlr5lVN/YGsvNGs3tYcrCQc24nZKhSoOnKuZp1COXG9p2acvu8YkSpvsMffGPAtPQ6CELtbAUyM=
+	t=1723129156; cv=none; b=gQB6eiP4nUbPX85MUiyhpGso6sAXe22SBTokP5jz7e1HMaX5BvKTyCYT39JCBbQ2fskoWVX3nOH0upIFuUeF8R4O24Ix6uiz/NGgC8sYoYZ7REfuZNz9N2t5Spzrzs+BhPEc7o4taaQUM48lEX21PxYAiJM1cuDrzt7vzuGTpwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723129137; c=relaxed/simple;
-	bh=1xFpFv0UaX4Qb7zkl3vemSFGJPHGy7R42GvMUgNq5to=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mkYLJ7Uq/C+Ukvy4sZ0+yU4Jvb1ye1PdeR+51JD9VqWFCi4GxxbMTmlBZIePoi4SjovRQkVe10q5M0smKumxac6wUzAq1CRZQTRKIOHeNMoG+jKRRUxdoJ1HqekDSyTwaRW0L6/BdnPJ1KssQiRJKZd8BuNO9MUD2G1Ia0Bt5HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O0EVaw7S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0669C32782;
-	Thu,  8 Aug 2024 14:58:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723129137;
-	bh=1xFpFv0UaX4Qb7zkl3vemSFGJPHGy7R42GvMUgNq5to=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=O0EVaw7S1mff7AkH0b+OOHP66PDBpU4gVBYrInsNtozHKeVHsxkdkdCpfxksIugEU
-	 TXCMmweBRAq7+EFynetCYN14LvflVcrZSMcSFU62u7nE4rG5Ti+pzFBIdt80JeLw1F
-	 vKbGY6QEH6QV0tEAzIDxE6QeoB6stgcC1Se+TEBCtx7gU3+ALGWWmTYicc7o2pVeX5
-	 HXJlamNGs2rFgR0TWPDE8WtnU8xVi4oHYXiwxMLVdJk4srRKM6dc3hK/0nUwS/LMGr
-	 zZbAJXS29MPlNDAWmeJMo3bEue+/izOOiV2KpMCah6uXy2BRuo8RN6/KYETWduYlLf
-	 BOWbCMuThbAEQ==
-Date: Thu, 8 Aug 2024 07:58:55 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, u.kleine-koenig@pengutronix.de,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: moxart_ether: use devm in probe
-Message-ID: <20240808075855.33efccbe@kernel.org>
-In-Reply-To: <20240808040425.5833-1-rosenp@gmail.com>
-References: <20240808040425.5833-1-rosenp@gmail.com>
+	s=arc-20240116; t=1723129156; c=relaxed/simple;
+	bh=gIrobRG6cp9epmRS0lXlVeQtskaNnwNFxb/z6eMhSqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFtfblbc1Bio/Bi++6tsyCLOLnVmuSgszcm0/nXyNkwi11wrpCPIWcIvQk8km1W7qN6qfKHXe+tUFtlC9zTA5jQV/DoT2EsMggznoZenfsGn0xMOjevsSVE9pJyeQKUfMnige04spnuwY0SU4FCkxpqlW7aX7JX3Imjs6oLr4/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=BAgGdpoI; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=gIro
+	bRG6cp9epmRS0lXlVeQtskaNnwNFxb/z6eMhSqc=; b=BAgGdpoISHuS0a7gwFNO
+	Xx+yqDEpNIRseTkSLLWB8W9kG5YCY3AAaSek3JQaN8YsqmOfP2BWQccslwhIje7e
+	Fan93urothc01k9DmGi+hTkWEynFN1xS+SRIGK5HCS1MhbO1YlnXeU+VC7TXxC2Z
+	Re1v5jLJEpvsDmsbv8ZG7/z+UVf+194uSNoQwyTuR673PxSUwNXTljAPchoiAjCJ
+	DgLEcd7eHiOCPsPEIViBeeM5ry1Eb9ZNCVAxJJj/VmYIKagymvHACQ0nVhunes2p
+	rsoUW11mm6sOkoXT43qDdK3s2bQt0l14dIb1M5cgw5lZvbLydcNkh+A/CG9hMeti
+	8A==
+Received: (qmail 348998 invoked from network); 8 Aug 2024 16:59:03 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Aug 2024 16:59:03 +0200
+X-UD-Smtp-Session: l3s3148p1@5/l1RC0fFCptKPBr
+Date: Thu, 8 Aug 2024 16:59:02 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+	magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 01/11] i2c: riic: Use temporary variable for struct
+ device
+Message-ID: <ZrTdNiFLYoZecmjX@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
+	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240711115207.2843133-2-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d06YuoTTMO2glfO+"
+Content-Disposition: inline
+In-Reply-To: <20240711115207.2843133-2-claudiu.beznea.uj@bp.renesas.com>
 
-On Wed,  7 Aug 2024 21:03:54 -0700 Rosen Penev wrote:
-> alloc_etherdev and kmalloc_array are called first and destroyed last.
-> Safe to use devm to remove frees.
 
-But why? Refactoring old drivers is often more risk than reward.
-How did you test this change?
--- 
-pw-bot: cr
+--d06YuoTTMO2glfO+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jul 11, 2024 at 02:51:57PM +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Use a temporary variable for the struct device pointers to avoid
+> dereferencing.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+Looks good, builds fine:
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--d06YuoTTMO2glfO+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma03TIACgkQFA3kzBSg
+Kbay/w//db6OvA9ALA6AXjG8d2g4xuBaL8F0n4jECB/2eNvFnl1qJImwbDvESf/y
+Eg2lJTu0Ut3eDdXyf69YElC9oi+zrMrxKaWNkYSPc8UgyNKr0gKyGyVK+GheqH5t
+1wyc3YFr7faAiDSl8zF8MILdqNdQNvtxsYzD4hr/lSLZnowBouseMFSIRNHHX8NE
+I9TPaB9w7M2a/VOcFPbjGWWsjgEfSmL27KMvLC0BSQU4wxr+cn1POMVkX4ajew82
+ZxLWEeC8xvgQTmm+EC2UZXMdtQQyilWlRz/Su7vuMVlgYd4beQhlzhOIbgr4n/Ww
+r6kzQ4LV6PFppuXkm/d1KHo1j2IsOclpJQru5Ax645/mVDAVUSg1npPq/iuLg8AZ
+1UhGCQ+tsOkna1whSCruH9yUMw9t9JNzSnw3TF9wmnI7KicqCFWZEnCTlni8Ua0M
+8YExrVfMTKFny4IeluPFhEccs7+yJ/o0ixgsdE2j1vOdGIux558iwLioSlKCApCr
+BV8izvVHxjyRGY3QcHqHfb7aay7YyuN23MetSI8Tuyd/7OoL5OpYEO8erpiT92jY
+IqoHTc2C+/K07EFxrZ3dlzICC4iSf0o/cvGBqymRcXhPpEbfqThBw6AzuAkQmvDd
+/YmwNKb/ApVTn/8cVs0+zt2ZQOWlpPrrCruEjYYKw6fUX8tXz+0=
+=b6nv
+-----END PGP SIGNATURE-----
+
+--d06YuoTTMO2glfO+--
 
