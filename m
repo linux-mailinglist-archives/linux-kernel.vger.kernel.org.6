@@ -1,146 +1,123 @@
-Return-Path: <linux-kernel+bounces-279964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB39A94C3EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:52:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AFBA94C3ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E670E1C22232
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:52:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D281C22377
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB0E145B35;
-	Thu,  8 Aug 2024 17:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168EC145B3F;
+	Thu,  8 Aug 2024 17:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZ502dM8"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="SUf2zPf8"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF9312FF71;
-	Thu,  8 Aug 2024 17:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723139534; cv=none; b=mLxLNwfnVVfubUFMe4fY86z84IXokqho+lyzfqjQV6Of9CmBUdzn6wn45iiZYmRHR/2uz4Cj4ztWiWYwT2bjEjA8jHp81F5oZjo/L7Zsh+fj6T5ccicPnm0vZa3rp0a+34fcFmCaBtX7GHV/R8E84QwF6W0qr8P3tV9UO4y2AMs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723139534; c=relaxed/simple;
-	bh=Jnlk1N7X0XteoCyN7m9BQmLde37/dNYFyBoHYFLOsnw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=toLAAx3Cpxre7zOSd7Qqy9pXt3mjgKYHajANYJd8qnXeZ5EY/UDc229bfMaRQsR0YPpMHY1W11zApkMoGcem0L682LDq2rNCWzdLiGnQDMxfp1TVx3kItLB7rY3K8OhkIaiYnf3aM0xidvi/74U4h9pE6Z6oTpTdmQ9NnH2Dtx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZ502dM8; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a83a968ddso131863666b.0;
-        Thu, 08 Aug 2024 10:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723139531; x=1723744331; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xijt6vLAJnukIsVHM/l1f1l8X3JScQRQxl4IE9/q69E=;
-        b=FZ502dM8GidWPQYd4UwMB4hF6paOMtdGye7IZMgpfqfslRCO0BYMX/8VMKazDON/gb
-         HYSMMHZfSGEf1jNk6SWZgothVwTl0zx2RB2wO+W+g+vXiECsZV8UajGyuDeKCi08cf3W
-         JdVprEBoKR43UqAsl3gR2Bj/baWtPGOE/9k4SNvU97EyqqqIFB6Q9yUHQKscUE/jYD9U
-         /m//EhVO3WvymEQaESjE6Yg7LYdbrN4R8pjZuIk4tA2lSo9m8c04XpzMP9+6eoXwDkVa
-         ssl7BgAfFu1aOcJjqdcQ5pKHUBraL9cdArnWcOocvA3oaCIgfUML+sBVppe1JXS+CHrS
-         sRPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723139531; x=1723744331;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xijt6vLAJnukIsVHM/l1f1l8X3JScQRQxl4IE9/q69E=;
-        b=BUf4dYNlMoA4ccw2gEArBdq4JCzoivNzGcZSbjq1iiyGj2/S252W2lLj7OGxgqPLKg
-         LhTH6u5QpZU/AIyACzDqCzH+AnMROJ23Ep0hznyIGa5/03+oJx0Vc/6WPjrCDl/6+vvP
-         qPXQTiZbbCmkHRz5XcUe2p9no/rBgHg/oHdJt/gBI93Ne2HldR7IWfqNF5F77Pzji1Ho
-         LSn4ur8jDj5cFbatlMaIua0Y63jiv9cpxTLA7K0HMoT+U7FaJRSOd933sqSh5WgwDirq
-         CEeak2OAoU8vorOXs9fqmqQHfZKdqlCGqofk5nGNeZXn7QUsId9sjES6dLYJmG7ElODF
-         g7sg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHv+OYUjZUeKtKfNbekaCdbW47pl8r9KwpIjDUm1/Qmzf8k2Dxv10SSUQKv8gW+yiVNCAjlyGbScpN5lWM9lOBwALTAW5EEy+1b2dLqQPLDVjCWI87iFN+ui6aUYmZFq0gxA3ty6TJWrAd+C3DV9yo99O0VjgUyagdqx8LtfiYG27f/6K3
-X-Gm-Message-State: AOJu0YzOJB7Aa6H9La67Cbqd3hC3xqlKzbcqMJc3MaJmlCeDGkyQqRSs
-	+b+9xkpcKNah/Iyo+CKeQHLia0CLMbCmxdqmoo8JysO+0AYCRA8H+OSqg0W7fPi3MFr1BdDkIhZ
-	WOxCCwALN6mfnlCDXVVEfc+5QoJs=
-X-Google-Smtp-Source: AGHT+IHQg7aeU24bFk+bHfC10KDD4guSeAI138ZvIMj94coNSlL4FHs+EpzkVqZBNKIxN61wSZof/4Aw8VaT0NMXPkc=
-X-Received: by 2002:a17:907:60d6:b0:a7a:8e0f:aaed with SMTP id
- a640c23a62f3a-a8090e9f919mr192445866b.50.1723139530241; Thu, 08 Aug 2024
- 10:52:10 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A989C12CDAE;
+	Thu,  8 Aug 2024 17:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723139549; cv=pass; b=anBePdCG7naHPHH4OutKUlVUfaJegeX/lkGR+xNY5EOluQt/e2Y+QpVugRDVbCgqECUskrQivnk3Q4AC3w0bNpEHkSb7PxaW7l5lK73L2X04+uwliSKboLjoOsh1qhkb5URHWp/IUEAHBFYyZwvXxvVfAJTZXe1z6RZA4k/yTxw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723139549; c=relaxed/simple;
+	bh=J+kCj9xB02trLEDSGjOa+PeGNVfgddKIWq+oSVKBPIQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oXepOc84lEDNM2gq0utbRlHLOveJJ7c1w/bEDsEmhP5246gYJbXN8+IMU3bpvhmUXiLRrfpj1zaS0YJ9cBSRgtbbrzMAPjRoV8+Y+CtR8+bsqixd9ZScupKx/lsYzsZO2Lrr8WwukGvVIsNVp0e6PTLhoswsp4pittbNil2qB7I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=SUf2zPf8; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723139524; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Z5RkGYweZDCj33L+9XVp7NUsy9qorTJumRZa1LgxuRjS80WUvyI0CLLtoi/YIn+y7pVZ8Q4wYe6/yIUvFdioWrfBZKhanGSSAOjDqOvP1Bh/CjXQTpRnJnLObqFyLsEgo/BG+d3YEHASnTjmU1AZ4c6oFG5ZtnPcmfdjDZ8uKA0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723139524; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZPWX9nQFc4zdu6yspZOvI5jMNY9Ewabr9vrBLea3YM4=; 
+	b=V1ep5TXuqay3hF4BdasanLQtOeW0lGjl02E0MCusyLESdyoUGbnEHRu6U3pwcWx76ZOAU3MbjAfz+5hpY9xH47RtRSqgGQ1qjy4UU/hlDS3RfkjHVTGU4U/B9wl3wc0VVIIruOhvIuxSPqkpdeiBrTrVxaq/R+vRntZ0Gue+Q34=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723139524;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=ZPWX9nQFc4zdu6yspZOvI5jMNY9Ewabr9vrBLea3YM4=;
+	b=SUf2zPf8ofT0XUr+yvKRzZjdSOZkiv/HcHz6jC112prhVEf3TDQ8+QJCqXXkrhb1
+	0LbtgkeoyybsSLxaRYrYYrGqTJt1wGXpS3lVq2RuAEnICwk2lkbGu8LlqjhQMBVrcti
+	IwJBAERJ4k3P7/WIzfHVKJa9VS9z7xWgKF6dLD+4=
+Received: by mx.zohomail.com with SMTPS id 1723139522203254.50577975633348;
+	Thu, 8 Aug 2024 10:52:02 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org,
+ Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Finley Xiao <finley.xiao@rock-chips.com>, Jagan Teki <jagan@edgeble.ai>,
+ Arnd Bergmann <arnd@arndb.de>, Elaine Zhang <zhangqing@rock-chips.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-pm@vger.kernel.org,
+ kernel@collabora.com
+Subject: Re: [PATCH v2 2/2] pmdomain: rockchip: Add support for rk3576 SoC
+Date: Thu, 08 Aug 2024 13:53:20 -0400
+Message-ID: <5805279.DvuYhMxLoT@trenzalore>
+In-Reply-To: <17766579.lhrHg4fidi@diego>
+References:
+ <20240808163451.80750-1-detlev.casanova@collabora.com>
+ <20240808163451.80750-3-detlev.casanova@collabora.com>
+ <17766579.lhrHg4fidi@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808002118.918105-1-andrii@kernel.org> <20240808002118.918105-3-andrii@kernel.org>
- <20240808102022.GB8020@redhat.com> <CAEf4BzbAGZ7k=tZercsasGhe8JiOhXnR4e9JbcCKwMCkCXA-UQ@mail.gmail.com>
-In-Reply-To: <CAEf4BzbAGZ7k=tZercsasGhe8JiOhXnR4e9JbcCKwMCkCXA-UQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 8 Aug 2024 10:51:55 -0700
-Message-ID: <CAEf4BzZNgnmTLa6rEL6_cdziLKURzotdU12i0Wif2R7S5JNk7w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] uprobes: protected uprobe lifetime with SRCU
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
-	paulmck@kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-On Thu, Aug 8, 2024 at 9:58=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Thu, Aug 8, 2024 at 3:20=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wr=
-ote:
-> >
-> > On 08/07, Andrii Nakryiko wrote:
-> > >
-> > >  struct uprobe {
-> > > -     struct rb_node          rb_node;        /* node in the rb tree =
-*/
-> > > +     union {
-> > > +             struct rb_node          rb_node;        /* node in the =
-rb tree */
-> > > +             struct rcu_head         rcu;            /* mutually exc=
-lusive with rb_node */
-> >
-> > Andrii, I am sorry.
-> >
-> > I suggested this in reply to 3/8 before I read
-> > [PATCH 7/8] uprobes: perform lockless SRCU-protected uprobes_tree looku=
-p
-> >
-> > I have no idea if rb_erase() is rcu-safe or not, but this union certain=
-ly
-> > doesn't look right if we use rb_find_rcu/etc.
-> >
->
-> Ah, because put_uprobe() might be fast enough to remove uprobe from
-> the tree, process delayed_uprobe_remove() and then enqueue
-> uprobe_free_rcu() callback (which would use rcu field here,
-> overwriting rb_node), while we are still doing a lockless lookup,
-> finding this overwritten rb_node . Good catch, if that's the case (and
-> I'm testing all this right now), then it's an easy fix.
->
-> It would also explain why I initially didn't get any crashes for
-> lockless RB-tree lookup with uprobe-stress (I was really surprised
-> that I "missed" the crash initially).
->
-> Thanks!
+Hi Heiko,
 
-I can confirm that the crash went away. Previously it was crashing
-after a few minutes, but now it's running for almost an hour with no
-problem. Phew, I was worried there for a bit, but it seems like we are
-back to the "everything is fine" state.
+On Thursday, 8 August 2024 12:41:05 EDT Heiko St=C3=BCbner wrote:
+> Hi Detlev,
+>=20
+> >=20
+> > @@ -552,7 +575,10 @@ static int rockchip_pd_power(struct
+> > rockchip_pm_domain *pd, bool power_on)>=20
+> >  			/* if powering up, leave idle mode */
+> >  			rockchip_pmu_set_idle_request(pd, false);
+> >=20
+> > -			rockchip_pmu_restore_qos(pd);
+> > +			if (pd->info->delay_us)
+> > +				udelay(pd->info->delay_us);
+> > +			else
+> > +				rockchip_pmu_restore_qos(pd);
+>=20
+> I still want this behaviour change in a separate patch with adequate
+> commit message please.
+>=20
+> Going from always handling qos to allowing to just wait a specific time
+> needs explanation and is not part of "just" adding rk3576 support.
 
-Okay, I'll incorporate this fix and synchronize_srcu() locally, will
-give it a few more days, maybe Peter will want to take another look.
-Will send a new revision early next week.
+You are right, I didn't takle this issue.
+This is actually a bug, the else is not supposed to be there, it should onl=
+y=20
+be an added delay for some PDs.
 
->
->
-> > Yes, this version doesn't include the SRCU-protected uprobes_tree chang=
-es,
-> > but still...
-> >
-> > Oleg.
-> >
+Unfortunately, I'm not sure why that delay is needed exactly, so I'm willin=
+g=20
+to remove it for now (only used by nputop and vop, both unsupported) and co=
+me=20
+back to it if needed when VOP/NPU support is added.
+
+Would that work for this upstream ?
+
+Detlev.
+
+
+
+
 
