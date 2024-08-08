@@ -1,248 +1,168 @@
-Return-Path: <linux-kernel+bounces-278871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3804B94B5DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:18:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C21E94B5DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C494B218A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:18:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD50F1C21AD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE9E81751;
-	Thu,  8 Aug 2024 04:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C415484A36;
+	Thu,  8 Aug 2024 04:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ALNBGK0K"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=soulik.info header.i=@soulik.info header.b="TTRdXr8/"
+Received: from kozue.soulik.info (kozue.soulik.info [108.61.200.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADBE9479
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 04:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395CE9479;
+	Thu,  8 Aug 2024 04:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.61.200.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723090685; cv=none; b=iSRzU9JgAVOJz/ao2sQvt1m0qakfEHDoj09gUhvUH0GZSjVKnCHue99JNYUZ+M9tZpRjQGqzKUEDOlGCvf+FkH3BxUXq/6trUa+3eu0iHZTnEkjKamS+qHdFnoaESb8DSXmC+9W2aO3JJBiRxUJUbVYhxqhcYCEQnLLAA6/3tvY=
+	t=1723090624; cv=none; b=Nq/z1HgdUYAAz6HXCPdy6+ZsNMCJy1vG0tXcY5PjJRGMd7szfS6K5R6KKvcZlf5ZQAczHh1yf8+HwDG6utjiievIKl31Tsvss6UtbiLzabE05pJyKc+YWLSCr6SQIbHnIQp8ciJ2dsG9luEK4t4fbQpczfkpuddi5FGCmV/1idU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723090685; c=relaxed/simple;
-	bh=XYNrI5AxGmpy2tc0T5LkPYR58qkpzGzLjLnZoKn6tuE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YVBIVWFC2kNzi/X3qhpgNJyJxVW2S3rT1d8rHBdZdrDbv6Ycdiy0OyTjwktKDtldrhL/CvVXETxzM7skx/v/YkXUxuv6qe8bTOwYzMBmYaVGShrRmKG/b+FryG8oCaGu5EaOlbMObT7q4gFZws5wwG76JHjbTUQjxeUl58ANBNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ALNBGK0K; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723090684; x=1754626684;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=XYNrI5AxGmpy2tc0T5LkPYR58qkpzGzLjLnZoKn6tuE=;
-  b=ALNBGK0KfChFpY1EHFo8ip1S5kfEJMmVHBoCNAIS9zoeDnwE9hwKjwjU
-   wUcZBPxBQbI3jvfpgpZkH8IEWyXIs1I1YOl2XLxjjfUa/6OW75i4gObXR
-   0JJwEVWylicEsTzU2hdSYPghn6zBNOfXXA+oDXKTPEhDFaH357fCFtgMl
-   RroaHEPMh8lnPJsL7tUwXr69rZG06Y9OdmKBbObVe6YpHWi77Oc/WQMoO
-   TVHI54yNdbbIBLBhICkDCe7EeXoQX0ihNuL/Y9PToDXdLYUwv21mxwzYL
-   E6xLvbOpEU66qdnWP1y+j27c4g/aYKCVJtiegCdNx4qx1tC/FabpVvy17
-   w==;
-X-CSE-ConnectionGUID: zER2KlRsRkuPxZvvWV6X3g==
-X-CSE-MsgGUID: +yZBAweJTw22nkmTCvwsMg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21317476"
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="21317476"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 21:18:03 -0700
-X-CSE-ConnectionGUID: svmWSV4MTXKm0371l3vpvQ==
-X-CSE-MsgGUID: Ercb4+sWRtSGlK6gpZ6qtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="87741073"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 21:18:00 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: <linux-mm@kvack.org>,  Andrew Morton <akpm@linux-foundation.org>,  David
- Hildenbrand <david@redhat.com>,  Baolin Wang
- <baolin.wang@linux.alibaba.com>,  Kefeng Wang
- <wangkefeng.wang@huawei.com>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm/migrate: move common code to numa_migrate_check
- (was numa_migrate_prep)
-In-Reply-To: <20240807184730.1266736-2-ziy@nvidia.com> (Zi Yan's message of
-	"Wed, 7 Aug 2024 14:47:30 -0400")
-References: <20240807184730.1266736-1-ziy@nvidia.com>
-	<20240807184730.1266736-2-ziy@nvidia.com>
-Date: Thu, 08 Aug 2024 12:14:26 +0800
-Message-ID: <8734nf1wil.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1723090624; c=relaxed/simple;
+	bh=0WNq99ZfluaYTPjXc7nR7wJqBcpbBEIkIYGyt86dLpw=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=HKvifwG/qzXU978+8+Bz7Q9hqsQf8jivTnti5zCpPFJCeqSRjcdlViBtTdAzaVoOGefIEj97wvMvA1ad6XNk/6tTM9wkgXBmq8XcMEsNHIPVYNjgcboP6melBnGyAx/0FDAfRoPP6OyaYrSMyD6rZe3LrcjyIZhZQhiR85qtwOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soulik.info; spf=pass smtp.mailfrom=soulik.info; dkim=pass (1024-bit key) header.d=soulik.info header.i=@soulik.info header.b=TTRdXr8/; arc=none smtp.client-ip=108.61.200.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soulik.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soulik.info
+Received: from smtpclient.apple (unknown [199.33.119.15])
+	by kozue.soulik.info (Postfix) with ESMTPSA id 6B0232FE480;
+	Thu,  8 Aug 2024 13:17:34 +0900 (JST)
+DMARC-Filter: OpenDMARC Filter v1.4.2 kozue.soulik.info 6B0232FE480
+Authentication-Results: kozue.soulik.info; dmarc=fail (p=reject dis=none) header.from=soulik.info
+Authentication-Results: kozue.soulik.info; spf=fail smtp.mailfrom=soulik.info
+DKIM-Filter: OpenDKIM Filter v2.11.0 kozue.soulik.info 6B0232FE480
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soulik.info; s=mail;
+	t=1723090654; bh=Mnh0ly5dKPF3Fv3lMn0gC47Yr+0psDOqag/mxp7ocS4=;
+	h=From:Subject:Date:References:Cc:In-Reply-To:To:From;
+	b=TTRdXr8/MM3EzFvktnfSRHB5fqvWfVKPp8Yv9CwOL1mK4rfCe9cCl5zxSchhToBGd
+	 0M6FaaGY5itao/iQFoVVStb/AHY3b68nNCbxlb1o1ePW/Vt4Ed19rCNGhRssrwtMS8
+	 QQRk7o+I3xSniL0vPzJp8OPvy7t308/78dJ8lzxw=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: ayaka <ayaka@soulik.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue index
+Date: Thu, 8 Aug 2024 12:16:46 +0800
+Message-Id: <6C9DA933-5EAA-4711-BF89-0B71834DA211@soulik.info>
+References: <CAF=yD-+2SnOzALmisVVBZAKNKrCMv07FdEDP1ov35APNMYOTew@mail.gmail.com>
+Cc: Jason Wang <jasowang@redhat.com>, netdev@vger.kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <CAF=yD-+2SnOzALmisVVBZAKNKrCMv07FdEDP1ov35APNMYOTew@mail.gmail.com>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+X-Mailer: iPad Mail (21A351)
 
-Zi Yan <ziy@nvidia.com> writes:
 
-> do_numa_page() and do_huge_pmd_numa_page() share a lot of common code. To
-> reduce redundancy, move common code to numa_migrate_prep() and rename
-> the function to numa_migrate_check() to reflect its functionality.
->
-> Now do_huge_pmd_numa_page() also checks shared folios to set TNF_SHARED
-> flag.
->
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
->  mm/huge_memory.c | 14 ++-------
->  mm/internal.h    |  5 ++--
->  mm/memory.c      | 76 ++++++++++++++++++++++++------------------------
->  3 files changed, 44 insertions(+), 51 deletions(-)
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index a3c018f2b554..9b312cae6775 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1699,18 +1699,10 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
->  	if (!folio)
->  		goto out_map;
->  
-> -	/* See similar comment in do_numa_page for explanation */
-> -	if (!writable)
-> -		flags |= TNF_NO_GROUP;
-> -
->  	nid = folio_nid(folio);
+Sent from my iPad
 
-NITPICK: It appears that we can remove "nid" local variable.
+> On Aug 8, 2024, at 11:13=E2=80=AFAM, Willem de Bruijn <willemdebruijn.kern=
+el@gmail.com> wrote:
+>=20
+> =EF=BB=BF
+>>=20
+>>> In that case, a tc egress tc_bpf program may be able to do both.
+>>> Again, by writing to __sk_buff queue_mapping. Instead of u32 +
+>>> skbedit.
+>>>=20
+>>> See also
+>>>=20
+>>> "
+>>> commit 74e31ca850c1cddeca03503171dd145b6ce293b6
+>>> Author: Jesper Dangaard Brouer <brouer@redhat.com>
+>>> Date:   Tue Feb 19 19:53:02 2019 +0100
+>>>=20
+>>>    bpf: add skb->queue_mapping write access from tc clsact
+>>> "
+>>>=20
+>>> But I suppose you could prefer u32 + skbedit.
+>>>=20
+>>> Either way, the pertinent point is that you want to map some flow
+>>> match to a specific queue id.
+>>>=20
+>>> This is straightforward if all queues are opened and none are closed.
+>>> But it is not if queues can get detached and attached dynamically.
+>>> Which I guess you encounter in practice?
+>>>=20
+>>> I'm actually not sure how the current `tfile->queue_index =3D
+>>> tun->numqueues;` works in that case. As __tun_detach will do decrement
+>>> `--tun->numqueues;`. So multiple tfiles could end up with the same
+>>> queue_index. Unless dynamic detach + attach is not possible.
+>>=20
+>> It is expected to work, otherwise there should be a bug.
+>>=20
+>>> But it
+>>> seems it is. Jason, if you're following, do you know this?
+>>=20
+>> __tun_detach() will move the last tfile in the tfiles[] array to the
+>> current tfile->queue_index, and modify its queue_index:
+>>=20
+>>        rcu_assign_pointer(tun->tfiles[index],
+>>                                   tun->tfiles[tun->numqueues - 1]);
+>>        ntfile =3D rtnl_dereference(tun->tfiles[index]);
+>>        ntfile->queue_index =3D index;
+>>        rcu_assign_pointer(tun->tfiles[tun->numqueues - 1],
+>>                                   NULL);
+>>=20
+>>        --tun->numqueues;
+>>=20
+>> tun_attach() will move the detached tfile to the end of the tfiles[]
+>> array and enable it:
+>>=20
+>>=20
+>>        tfile->queue_index =3D tun->numqueues;
+>>        ....
+>>        rcu_assign_pointer(tun->tfiles[tun->numqueues], tfile);
+>>        tun->numqueues++;
+>>=20
+>=20
+> Ah right. Thanks. I had forgotten about that.
+>=20
+> So I guess an application that owns all the queues could keep track of
+> the queue-id to FD mapping. But it is not trivial, nor defined ABI
+> behavior.
+>=20
+> Querying the queue_id as in the proposed patch might not solve the
+> challenge, though. Since an FD's queue-id may change simply because
+Yes, when I asked about those eBPF thing, I thought I don=E2=80=99t need the=
+ queue id in those ebpf. It turns out a misunderstanding.
+Do we all agree that no matter which filter or steering method we used here,=
+ we need a method to query queue index assigned with a fd?
+> another queue was detached. So this would have to be queried on each
+> detach.
+>=20
+Thank you Jason. That is why I mentioned I may need to submit another patch t=
+o bind the queue index with a flow.
 
-> -	/*
-> -	 * For memory tiering mode, cpupid of slow memory page is used
-> -	 * to record page access time.  So use default value.
-> -	 */
-> -	if (!folio_use_access_time(folio))
-> -		last_cpupid = folio_last_cpupid(folio);
-> -	target_nid = numa_migrate_prep(folio, vmf, haddr, nid, &flags);
-> +
-> +	target_nid = numa_migrate_check(folio, vmf, haddr, &flags, writable,
-> +					&last_cpupid);
->  	if (target_nid == NUMA_NO_NODE)
->  		goto out_map;
->  	if (migrate_misplaced_folio_prepare(folio, vma, target_nid)) {
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 52f7fc4e8ac3..fb16e18c9761 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -1191,8 +1191,9 @@ void vunmap_range_noflush(unsigned long start, unsigned long end);
->  
->  void __vunmap_range_noflush(unsigned long start, unsigned long end);
->  
-> -int numa_migrate_prep(struct folio *folio, struct vm_fault *vmf,
-> -		      unsigned long addr, int page_nid, int *flags);
-> +int numa_migrate_check(struct folio *folio, struct vm_fault *vmf,
-> +		      unsigned long addr, int *flags, bool writable,
-> +		      int *last_cpupid);
->  
->  void free_zone_device_folio(struct folio *folio);
->  int migrate_device_coherent_page(struct page *page);
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 503d493263df..b093df652c11 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5368,16 +5368,43 @@ static vm_fault_t do_fault(struct vm_fault *vmf)
->  	return ret;
->  }
->  
-> -int numa_migrate_prep(struct folio *folio, struct vm_fault *vmf,
-> -		      unsigned long addr, int page_nid, int *flags)
-> +int numa_migrate_check(struct folio *folio, struct vm_fault *vmf,
-> +		      unsigned long addr, int *flags,
-> +		      bool writable, int *last_cpupid)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
->  
-> +	/*
-> +	 * Avoid grouping on RO pages in general. RO pages shouldn't hurt as
-> +	 * much anyway since they can be in shared cache state. This misses
-> +	 * the case where a mapping is writable but the process never writes
-> +	 * to it but pte_write gets cleared during protection updates and
-> +	 * pte_dirty has unpredictable behaviour between PTE scan updates,
-> +	 * background writeback, dirty balancing and application behaviour.
-> +	 */
-> +	if (!writable)
-> +		*flags |= TNF_NO_GROUP;
-> +
-> +	/*
-> +	 * Flag if the folio is shared between multiple address spaces. This
-> +	 * is later used when determining whether to group tasks together
-> +	 */
-> +	if (folio_likely_mapped_shared(folio) && (vma->vm_flags & VM_SHARED))
-> +		*flags |= TNF_SHARED;
-> +	/*
-> +	 * For memory tiering mode, cpupid of slow memory page is used
-> +	 * to record page access time.  So use default value.
-> +	 */
-> +	if (folio_use_access_time(folio))
-> +		*last_cpupid = (-1 & LAST_CPUPID_MASK);
-> +	else
-> +		*last_cpupid = folio_last_cpupid(folio);
-> +
->  	/* Record the current PID acceesing VMA */
->  	vma_set_access_pid_bit(vma);
->  
->  	count_vm_numa_event(NUMA_HINT_FAULTS);
-> -	if (page_nid == numa_node_id()) {
-> +	if (folio_nid(folio) == numa_node_id()) {
->  		count_vm_numa_event(NUMA_HINT_FAULTS_LOCAL);
->  		*flags |= TNF_FAULT_LOCAL;
->  	}
-> @@ -5442,13 +5469,13 @@ static void numa_rebuild_large_mapping(struct vm_fault *vmf, struct vm_area_stru
->  static vm_fault_t do_numa_page(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
-> +	pte_t old_pte = vmf->orig_pte;
-
-The usage of old_pte is different from other use cases.  Where,
-
-old_pte = *pte;
-check old_pte and orig_pte
-generate new_pte from old_pte
-set new_pte
-
-We have used this before in do_numa_page(), but not do that now.  But I
-still think that it's better to follow the convention partly if
-possible.  This makes code easier to be read.  I notices that we don't
-follow it in do_huge_pmd_numa_page(), we may change that?
-
-> +	pte_t pte;
->  	struct folio *folio = NULL;
->  	int nid = NUMA_NO_NODE;
->  	bool writable = false, ignore_writable = false;
->  	bool pte_write_upgrade = vma_wants_manual_pte_write_upgrade(vma);
-> -	int last_cpupid;
-> -	int target_nid;
-> -	pte_t pte, old_pte;
-> +	int target_nid, last_cpupid = (-1 & LAST_CPUPID_MASK);
-
-Because we will initialize last_cpupid in numa_migrate_check(), we don't
-need to initialize it here?
-
->  	int flags = 0, nr_pages;
->  
->  	/*
-> @@ -5456,10 +5483,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->  	 * table lock, that its contents have not changed during fault handling.
->  	 */
->  	spin_lock(vmf->ptl);
-> -	/* Read the live PTE from the page tables: */
-> -	old_pte = ptep_get(vmf->pte);
-> -
-> -	if (unlikely(!pte_same(old_pte, vmf->orig_pte))) {
-> +	if (unlikely(!pte_same(old_pte, ptep_get(vmf->pte)))) {
->  		pte_unmap_unlock(vmf->pte, vmf->ptl);
->  		goto out;
->  	}
-
-[snip]
-
---
-Best Regards,
-Huang, Ying
+I think here is a good chance to discuss about this.
+I think from the design, the number of queue was a fixed number in those har=
+dware devices? Also for those remote processor type wireless device(I think t=
+hose are the modem devices).
+The way invoked with hash in every packet could consume lots of CPU times. A=
+nd it is not necessary to track every packet.
+Could I add another property in struct tun_file and steering program return w=
+anted value. Then it is application=E2=80=99s work to keep this new property=
+ unique.
+> I suppose one underlying question is how important is the mapping of
+> flows to specific queue-id's? Is it a problem if the destination queue
+> for a flow changes mid-stream?
+Yes, it matters. Or why I want to use this feature. =46rom all the open sour=
+ce VPN I know, neither enabled this multiqueu feature nor create more than o=
+ne queue for it.
+And virtual machine would use the tap at the most time(they want to emulate a=
+ real nic).
+So basically this multiple queue feature was kind of useless for the VPN usa=
+ge.
+If the filter can=E2=80=99t work atomically here, which would lead to unwant=
+ed packets transmitted to the wrong thread.=
 
