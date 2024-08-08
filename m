@@ -1,187 +1,192 @@
-Return-Path: <linux-kernel+bounces-279109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9193694B910
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:31:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E4394B920
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0474D280EF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:31:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E991C2338C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E3B14658D;
-	Thu,  8 Aug 2024 08:31:39 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713C81891C3;
+	Thu,  8 Aug 2024 08:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EA/YII6h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD52143C7D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44211465B3
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723105898; cv=none; b=K0hDyWnK1y5+7lud7W5mWXsOM0+kWY4JKtA0Du9vIZLIV6F8yJKHszfdWFXa1KuiF5bb3iYEw3d48v8ZOVlqN8lqAzN3Qrfv7KHjQK9JtJRWi6o8FyHFSmGbvEfBY2J22OHXHQWMR9cTbLSTF5lf++oA4n03L5A5LIrsSRXolZI=
+	t=1723106285; cv=none; b=apltTOI042+rX0W0iWhMmxF6efQWWAzCMJTF8Z/rC17sOJncEr0j+yVMez58039iUroNjzfKDlG5qdOxnb3KDfyC/vZl+g/ml/pq5Q9+yqPEey4S2is3M4YI4xy8BRmR7KQQV0vr0HIsyczATln638HpkMNFHFXVfLWcLBDx4rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723105898; c=relaxed/simple;
-	bh=J6eyOjQh9ePK+M4qnKZgmGARjVwWmTTUklInHlTCE0k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=D3gqKUfisoK5ro8+nTfv744d8Hy0y/sFh/ej4vhL+h/7i0bPg7AyFLlHFYAECiMIhrq/2vwx3JcpuYKNK5oBzcPAsnZxnXymZ9uz/ofIVUW3QCAUKArIE8mpVSddWAd7nNC1RrG2nUtpx1fWUW7dqHfFMElkNkAnJBM12sBwAQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WfgGN5FB6zpT2F;
-	Thu,  8 Aug 2024 16:30:20 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 371E71401E0;
-	Thu,  8 Aug 2024 16:31:32 +0800 (CST)
-Received: from [10.67.109.211] (10.67.109.211) by
- kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 8 Aug 2024 16:31:31 +0800
-Message-ID: <3ac296ea-7f9f-4df4-af3b-77d3d3cdcc73@huawei.com>
-Date: Thu, 8 Aug 2024 16:31:31 +0800
+	s=arc-20240116; t=1723106285; c=relaxed/simple;
+	bh=ez3phI6BBa0eNuW0PpXznPWLOTIj96ikhsWv7XGF8dI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WbtQpehRaPZFpBOXOT0mYdIWfeYuKLyKEH3Ys8dUJWV+NHzYBRs9Aylqfv2P5bY/gWOmMRR7jZ8CEporuIJJIirbXBOlayAGRUPJQCzJ6eQtCV6u7dWm+kx6CuP8fZocwOn+QQwanQB79E5zpFNnETHCwaR3Jek6zGiJzJEbv4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EA/YII6h; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723106284; x=1754642284;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=ez3phI6BBa0eNuW0PpXznPWLOTIj96ikhsWv7XGF8dI=;
+  b=EA/YII6hkFnqBly4Gt5NWpbNNuVya/oOgAoBXMN79dtqGz8G5om5XhQW
+   A4cNkL6zlAwWr+T7tcwYScWUsrGmcSah/bxZauGzN2w+8pAu5KSjKBe5f
+   slJLNyxN8T01wIpb1CK0ffpdyQkA6Q2nP5S8CV8lEDnii9L5m83pf6ogk
+   5XKhtUG7LQtEGD/hKS9m0jXvCeBw7qgU45AM9FrEFHIcBlLy6N4sZ8Mkq
+   s33iKw31ANSzS+hPCck3rSk1BxpEp2NGoPlpCdL9qrh2z9vs3zdk8vdFf
+   UhLpscQPyhde3XUqfo/AX4bvev4MIAQMWU3pOSwyNEk+BSZg5oMiglTRv
+   g==;
+X-CSE-ConnectionGUID: xEJ9XIHXRSqRlZPrO+IBPw==
+X-CSE-MsgGUID: 2PQCaPx1T/mnyBVlohSxQw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="24980099"
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="24980099"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 01:38:03 -0700
+X-CSE-ConnectionGUID: /Wyuo3tcSRK4+9UytqicGw==
+X-CSE-MsgGUID: 4Jx1yeNdRDurVQsKh8JbRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="61541546"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 01:38:00 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Kairui Song <kasong@tencent.com>,  Ryan
+ Roberts <ryan.roberts@arm.com>,  Kalesh Singh <kaleshsingh@google.com>,
+  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
+ <baohua@kernel.org>
+Subject: Re: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap
+ cluster order
+In-Reply-To: <CACePvbXH8b9SOePQ-Ld_UBbcAdJ3gdYtEkReMto5Hbq9WAL7JQ@mail.gmail.com>
+	(Chris Li's message of "Wed, 7 Aug 2024 13:42:20 -0700")
+References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
+	<87h6bw3gxl.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CACePvbXH8b9SOePQ-Ld_UBbcAdJ3gdYtEkReMto5Hbq9WAL7JQ@mail.gmail.com>
+Date: Thu, 08 Aug 2024 16:34:27 +0800
+Message-ID: <87sevfza3w.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [build fail] v6.11-rc2 from "ARM: 9404/1: arm32: enable
- HAVE_LD_DEAD_CODE_DATA_ELIMINATION"
-Content-Language: en-US
-To: Arnd Bergmann <arnd@arndb.de>, Harith George <mail2hgg@gmail.com>, Linus
- Walleij <linus.walleij@linaro.org>, Russell King
-	<rmk+kernel@armlinux.org.uk>, Ard Biesheuvel <ardb@kernel.org>,
-	<harith.g@alifsemi.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com>
- <c11ba413-89f6-46b4-8d59-96306c9f1f14@huawei.com>
- <52518ac5-53bb-4c70-ba99-4314593129dc@gmail.com>
- <2812367a-49ad-4c88-8844-8f8493b15bbd@huawei.com>
- <a65d0b09-466d-415f-9bd0-cbc5ff3539e7@gmail.com>
- <2083af75-e2d8-42b9-8fa6-f5b7496671bd@app.fastmail.com>
-From: "liuyuntao (F)" <liuyuntao12@huawei.com>
-In-Reply-To: <2083af75-e2d8-42b9-8fa6-f5b7496671bd@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Chris Li <chrisl@kernel.org> writes:
 
-
-On 2024/8/7 23:41, Arnd Bergmann wrote:
-> On Wed, Aug 7, 2024, at 17:36, Harith George wrote:
->> On 07-08-2024 20:52, liuyuntao (F) wrote:
->>> Thanks, I reproduce the link error with toolchain
->>> gcc version 9.3.0
->>> GNU ld (GNU Binutils) 2.33.1
->>>
->>> with same gcc version, just upgrading ld version to 2.36.1, it does not
->>> segfault and build completes. there should be bugs in low version of ld,
->>> and the ".reloc  .text, R_ARM_NONE, ." triggers that.
->>>
->> Thanks for confirming.
+> On Wed, Aug 7, 2024 at 12:59=E2=80=AFAM Huang, Ying <ying.huang@intel.com=
+> wrote:
 >>
->> I guess we need to add something like
->> #if !CONFIG_CC_IS_GCC || CONFIG_LD_VERSION >= 23600
->> around the entry-armv.S changes and maybe select
->> HAVE_LD_DEAD_CODE_DATA_ELIMINATION in arch/arm/Kconfig only if the same
->> conditions are met ??
-> 
-> I think it makes most sense to have a minimum LD
-> version as a dependency for HAVE_LD_DEAD_CODE_DATA_ELIMINATION.
-> Are you sure that 2.36 is the first one that works, and it's
-> not just 2.33 specifically that is broken?
-> 
-> If so, we could use
-> 
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -117,7 +117,7 @@ config ARM
->          select HAVE_KERNEL_XZ
->          select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M && !CPU_32v3
->          select HAVE_KRETPROBES if HAVE_KPROBES
-> -       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION
-> +       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if (LD_VERSION >= 23600 || LD_IS_LLD)
->          select HAVE_MOD_ARCH_SPECIFIC
->          select HAVE_NMI
->          select HAVE_OPTPROBES if !THUMB2_KERNEL
-> 
-> 
-> binutils only takes a few seconds to build from source, so
-> you could just try all version from 2.25 (the oldest supported)
-> to 2.36) to see which ones work.
+>> Hi, Chris,
+>>
+>> Chris Li <chrisl@kernel.org> writes:
+>>
+>> > This is the short term solutions "swap cluster order" listed
+>> > in my "Swap Abstraction" discussion slice 8 in the recent
+>> > LSF/MM conference.
+>> >
+>> > When commit 845982eb264bc "mm: swap: allow storage of all mTHP
+>> > orders" is introduced, it only allocates the mTHP swap entries
+>> > from the new empty cluster list.  It has a fragmentation issue
+>> > reported by Barry.
+>> >
+>> > https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp=
++Ah+NSgNQ@mail.gmail.com/
+>> >
+>> > The reason is that all the empty clusters have been exhausted while
+>> > there are plenty of free swap entries in the cluster that are
+>> > not 100% free.
+>> >
+>> > Remember the swap allocation order in the cluster.
+>> > Keep track of the per order non full cluster list for later allocation.
+>> >
+>> > This series gives the swap SSD allocation a new separate code path
+>> > from the HDD allocation. The new allocator use cluster list only
+>> > and do not global scan swap_map[] without lock any more.
+>>
+>> This sounds good.  Can we use SSD allocation method for HDD too?
+>> We may not need a swap entry allocator optimized for HDD.
+>
+> Yes, that is the plan as well. That way we can completely get rid of
+> the old scan_swap_map_slots() code.
 
-After testing, all version of ld with version earlier than 2.36 has a 
-build issue.
+Good!
 
-as Harith mentioned:
-> The select alone may not be enough. Wont the changes in arch/arm/kernel/entry-armv.S still result in LD Segfaults even if the HAVE_LD_DEAD_CODE_DATA_ELIMINATION flag is not set in .config for older toolchains? 
+> However, considering the size of the series, let's focus on the
+> cluster allocation path first, get it tested and reviewed.
 
-I think we could eliminate the impact of ".reloc  .text, R_ARM_NONE, ." 
-when CONFIG_LD_DEAD_CODE_DATA_ELIMINATION is not enabled.
+OK.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 54b2bb817a7f..173159e93c99 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -117,7 +117,7 @@ config ARM
-         select HAVE_KERNEL_XZ
-         select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M
-         select HAVE_KRETPROBES if HAVE_KPROBES
--       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION
-+       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if (LD_VERSION >= 
-23600 || LD_IS_LLD)
-         select HAVE_MOD_ARCH_SPECIFIC
-         select HAVE_NMI
-         select HAVE_OPTPROBES if !THUMB2_KERNEL
-diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
-index f01d23a220e6..cd443faf8645 100644
---- a/arch/arm/kernel/entry-armv.S
-+++ b/arch/arm/kernel/entry-armv.S
-@@ -29,6 +29,12 @@
-  #include "entry-header.S"
-  #include <asm/probes.h>
+> For HDD optimization, mostly just the new block allocations portion
+> need some separate code path from the new cluster allocator to not do
+> the per cpu allocation.  Allocating from the non free list doesn't
+> need to change too
 
-+#ifdef CONFIG_HAVE_LD_DEAD_CODE_DATA_ELIMINATION
-+#define RELOC_TEXT_NONE (.reloc  .text, R_ARM_NONE, .)
-+#else
-+#define RELOC_TEXT_NONE
-+#endif
-+
-  /*
-   * Interrupt handling.
-   */
-@@ -1065,7 +1071,7 @@ vector_addrexcptn:
-         .globl  vector_fiq
+I suggest not consider HDD optimization at all.  Just use SSD algorithm
+to simplify.
 
-         .section .vectors, "ax", %progbits
--       .reloc  .text, R_ARM_NONE, .
-+       RELOC_TEXT_NONE
-         W(b)    vector_rst
-         W(b)    vector_und
-  ARM(   .reloc  ., R_ARM_LDR_PC_G0, .L__vector_swi              )
-@@ -1079,7 +1085,7 @@ THUMB(    .reloc  ., R_ARM_THM_PC12, 
-.L__vector_swi               )
+>>
+>> Hi, Hugh,
+>>
+>> What do you think about this?
+>>
+>> > This streamline the swap allocation for SSD. The code matches the
+>> > execution flow much better.
+>> >
+>> > User impact: For users that allocate and free mix order mTHP swapping,
+>> > It greatly improves the success rate of the mTHP swap allocation after=
+ the
+>> > initial phase.
+>> >
+>> > It also performs faster when the swapfile is close to full, because the
+>> > allocator can get the non full cluster from a list rather than scanning
+>> > a lot of swap_map entries.
+>>
+>> Do you have some test results to prove this?  Or which test below can
+>> prove this?
+>
+> The two zram tests are already proving this. The system time
+> improvement is about 2% on my low CPU count machine.
+> Kairui has a higher core count machine and the difference is higher
+> there. The theory is that higher CPU count has higher contentions.
 
-  #ifdef CONFIG_HARDEN_BRANCH_HISTORY
-         .section .vectors.bhb.loop8, "ax", %progbits
--       .reloc  .text, R_ARM_NONE, .
-+       RELOC_TEXT_NONE
-         W(b)    vector_rst
-         W(b)    vector_bhb_loop8_und
-  ARM(   .reloc  ., R_ARM_LDR_PC_G0, .L__vector_bhb_loop8_swi    )
-@@ -1092,7 +1098,7 @@ THUMB(    .reloc  ., R_ARM_THM_PC12, 
-.L__vector_bhb_loop8_swi     )
-         W(b)    vector_bhb_loop8_fiq
+I will interpret this as the performance is better in theory.  But
+there's almost no measurable results so far.
 
-         .section .vectors.bhb.bpiall, "ax", %progbits
--       .reloc  .text, R_ARM_NONE, .
-+       RELOC_TEXT_NONE
-         W(b)    vector_rst
-         W(b)    vector_bhb_bpiall_und
-  ARM(   .reloc  ., R_ARM_LDR_PC_G0, .L__vector_bhb_bpiall_swi   )
+> The 2% system time number does not sound like much. But consider this
+> two factors:
+> 1) swap allocator only takes a small percentage of the overall workload.
+> 2) The new allocator does more work.
+> The old allocator has a time tick budget. It will abort and fail to
+> find an entry when it runs out of time budget, even though there are
+> still some free entries on the swapfile.
 
+What is the time tick budget you mentioned?
 
+> The new allocator can get to the last few free swap entries if it is
+> available. If not then, the new swap allocator will work harder on
+> swap cache reclaim.
+>
+> From the swap cache reclaim aspect, it is very hard to optimize the
+> swap cache reclaim in the old allocation path because the scan
+> position is randomized.
+> The full list and frag list both design to help reduce the repeat
+> reclaim attempt of the swap cache.
+
+[snip]
+
+--
+Best Regards,
+Huang, Ying
 
