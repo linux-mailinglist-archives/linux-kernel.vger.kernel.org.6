@@ -1,117 +1,104 @@
-Return-Path: <linux-kernel+bounces-279239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E1394BADA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263A694BADE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904501C20ADF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:25:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B39282CAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9980218A922;
-	Thu,  8 Aug 2024 10:25:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D1018A6C8;
-	Thu,  8 Aug 2024 10:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2D318A94A;
+	Thu,  8 Aug 2024 10:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BnXv3khZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C423C189F56;
+	Thu,  8 Aug 2024 10:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112720; cv=none; b=hFc9hk4kteDF+lEUf+9yXSfb7ClDq/q7K5qbgLvIYH1zGMmwWLR3aONHrW+ZH3XYKliElfIlqHZxKeKH/bBxTFnvYVmDwWr2rmhn1Hd+jg+66XZkDYUw9iScN4lzoWraE7yoUh88SUlviN6jeYN0YEdSyLILuHL/L3PsEJOGpsA=
+	t=1723112725; cv=none; b=eo559+QwOHGN6BReJwykoq0HONiZrQSSJDT6mYJ976/UU5vLO16T7ELWeYiiWKHMGH32GcTQJK8l4feG4F3bBzKOrS8sMTrqjcQl/omDIWhbqsnuGdkT/lkrhkcZi3GxuklMSYhp8L26jru7l/D/66Kh1UCKoyOYkZIQuQ9FjLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112720; c=relaxed/simple;
-	bh=HyjKYMIGAL4Z2kGzUdViDxY5IvayIFVXwuk8LcAI4YU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y6Kt61kJsdjeYToOJfYmKu8C1ap8NlUk68/Xnnd4QtQ24tCeUsCdM35prO3Z+FW+yG0XDjYiXNX3RcOwN9Qf498yliYBO5O7SSd4wNpksaUcvvEP6Geq3n8dVOgDheV2eP7dcCxpO32uA4b0HjJqlrpqJDwPDAXYG0vYC6gL4kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07D61FEC;
-	Thu,  8 Aug 2024 03:25:44 -0700 (PDT)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB1F13F766;
-	Thu,  8 Aug 2024 03:25:15 -0700 (PDT)
-Message-ID: <d72622bb-7dd8-4674-a2db-6c605e388ddb@arm.com>
+	s=arc-20240116; t=1723112725; c=relaxed/simple;
+	bh=fZP8HxgFzg8Q/VBokT/unDJoCN9dymrjvbxzxf0FNFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HA8PPVAsuYN87QCR2QWpKB08CVx0ptN/VJizBFs3YVZ+o8tLx8aksY0sHwO2zMu9PMpjdfLwbVX+JQoodGAoPD8QSpGUCXhBYtoVqX06I5LpLfrZurN3lBu/xrDmyOCe6rFIv5ECi2oAZ6lRx1fR7uMVJG+QFs7qm4glrhg4yrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BnXv3khZ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723112724; x=1754648724;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fZP8HxgFzg8Q/VBokT/unDJoCN9dymrjvbxzxf0FNFY=;
+  b=BnXv3khZNeNfHNOiYhhhhBaO1g9TuXtaJjOAkyQT0b7uxvy01oqCh13Y
+   ru6n5ngeteZplVzAz7TooDeQBjteIceOGSpHFedy/Ox8wWHVdx387ZFI8
+   xU501ygVaKlgn1B8Y3WcRiRtpajrFT9xHVzmP0P8ArsxJhy2Bo6dlpiOB
+   OU2HYfXedFIkYYzKnZvm8R3DJ+RHyaWrGf7hSsdCbDCpBrQA2mbta8Wh9
+   tfWrlR9A0hRH2L8sOIW3e4bQeA4tOJPitL+H9qFyOo6C3jbHDpKXdNhBF
+   SBndLpha8uKCbtUvCKAp9r3BWo/GJ30yx6jkF9sgSWFZncYUnuqQZGCsR
+   Q==;
+X-CSE-ConnectionGUID: XeQABdknTEOk4j0Q/TmBmQ==
+X-CSE-MsgGUID: ewA+kMXNQwq3Xgbz3IMG4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="43749108"
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="43749108"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 03:25:23 -0700
+X-CSE-ConnectionGUID: e7YznkWoQMuCjEYa1nZS7Q==
+X-CSE-MsgGUID: 1nbyhsx0QneJSAGsF9GiDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="57731589"
+Received: from dneilan-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.245.71])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 03:25:19 -0700
 Date: Thu, 8 Aug 2024 11:25:14 +0100
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] fbdev: omapfb: panel-sony-acx565akm: Simplify
+ show_cabc_available_modes()
+Message-ID: <ZrSdCtS2okz9ivBW@ashyti-mobl2.lan>
+References: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: Add qcom,inst-id for remote etm
-To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240807071054.12742-1-quic_jinlmao@quicinc.com>
- <20240807071054.12742-2-quic_jinlmao@quicinc.com>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20240807071054.12742-2-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
 
-On 07/08/2024 08:10, Mao Jinlong wrote:
-> qcom,inst-id is the instance id used by qmi API to communicate with
-> remote processor.
+Hi Christophe,
+
+On Thu, Aug 08, 2024 at 11:46:11AM +0200, Christophe JAILLET wrote:
+> Use sysfs_emit_at() instead of snprintf() + custom logic.
+> Using sysfs_emit_at() is much more simple.
 > 
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-> ---
->   .../bindings/arm/qcom,coresight-remote-etm.yaml        | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+> Also, sysfs_emit() is already used in this function, so using
+> sysfs_emit_at() is more consistent.
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> index 4fd5752978cd..a65121505c68 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> @@ -20,6 +20,13 @@ properties:
->     compatible:
->       const: qcom,coresight-remote-etm
+> Also simplify the logic:
+>   - always add a space after an entry
+>   - change the last space into a '\n'
+> 
+> Finally it is easy to see that, given the size of cabc_modes, PAGE_SIZE
+> can not be reached.
+> So better keep everything simple (and correct).
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-That is a generic name, without any clue of the QMI transport. Are there 
-other ways in which an ETM could be connected ? Given how this QMI 
-inst-id is added, I wonder if this is an after thought ? Why was the dt
-pushed without a proper driver for it ?
+neat!
 
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
 
-Suzuki
-
-
->   
-> +  qcom,inst-id:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      This id is used by qmi API to communicate with remote processor for
-> +      enabling and disabling remote etm. Each processor has its unique instance
-> +      id.
-> +
->     out-ports:
->       $ref: /schemas/graph.yaml#/properties/ports
->       additionalProperties: false
-> @@ -31,6 +38,7 @@ properties:
->   
->   required:
->     - compatible
-> +  - qcom,inst-id
->     - out-ports
->   
->   additionalProperties: false
-> @@ -40,6 +48,8 @@ examples:
->       etm {
->           compatible = "qcom,coresight-remote-etm";
->   
-> +        qcom,inst-id = <5>;
-> +
->           out-ports {
->               port {
->                   modem_etm0_out_funnel_modem: endpoint {
-
+Andi
 
