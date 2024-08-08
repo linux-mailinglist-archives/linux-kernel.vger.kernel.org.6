@@ -1,192 +1,198 @@
-Return-Path: <linux-kernel+bounces-279792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D903594C1F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:51:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0807294C1F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8736A289463
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:51:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DB501F231F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0738418FDBF;
-	Thu,  8 Aug 2024 15:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A647D190470;
+	Thu,  8 Aug 2024 15:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="il+KQlB7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4LdoeHW3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vae04t7d"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F0318FC8C;
-	Thu,  8 Aug 2024 15:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070C619006D
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723132158; cv=none; b=VjsEqdZYkf2UI+v4opgZo57w4UlLxTIK8v1eGHTBCcdtLNopvyF6F5YcOSlTIgCTNZt6Q/VeGtIs7N23EQ2dDPrQdU11GqiHXdaJD6QljqdUzpkgx56TjWWsUhXYZP1fCYavCtJk9E6caTzp+jTtdW7PnfTrekXsBOg9JHO7T0Y=
+	t=1723132184; cv=none; b=Fb2FvixMeKxAts/0HZNGxGcd+XT5rebFkZLmNNYucwk3gLEqfJ1NplCHKzE1zHfCdnLPf7bYv/tfjVyY/vWbTSSbEkCOz45CGziRrVoHYXpNoEWdA/NVExJ+L+AztmbS0uEItBaSgJEBvniQMZHl7hdc6ANybzShWBffVwagf/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723132158; c=relaxed/simple;
-	bh=Dkbmwww4C3M/JOucetcdJwFwwAlbPDAq4Q3mQpM6RWQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=p6oHsvqHjAJ6y/4JxFQz/NV+bjQxIzzNYZlaPpb/L8WI9HDzOv7N+frMJcZVp0HjqRKokjWnhMrHkOe/SKDZpg/jM0lRkIIIfV6Wa6QX2JhUiKCFAji1E7u8fwVEw4qCF8BoSL9vZb/5sU2b7nGvhc09kccQLEYbJ/OFZbO2Q0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=il+KQlB7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4LdoeHW3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 08 Aug 2024 15:49:14 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723132154;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1723132184; c=relaxed/simple;
+	bh=NChNezK7M1Rqd5zq6A3/MXQOAcQsuiYNlJbxN7iA4rI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uhdNtk2+nBZh6mJjOtn1d6+zlEiWPZ73q+4BCBnvwhcUDBbJMGPaWyBWakH0t79qDQgrdneN4o/GSILCMC0mTXoGt530DV7Mx3H1TMTPri6yDSeJDnQFeFYVqEZ4hp11GVdovyq++tF4O8s+cK04f+NcogH0uyOT7TAmKTOCTYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vae04t7d; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723132182;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0XMX7wdOqrwBo4zRK8fr6O7kgpPxnECYQBzcc6A7oeU=;
-	b=il+KQlB7oTAuqj1+GsYN5BKvG5DLKAd8602Pai+NhoUprskd1KHFrAfvqjccfaZOUtl5IX
-	17qumvDVZR4LINlPDUcvMZu3HwfmvOY284QgzlPg1YzJ1vrt7Nfko9EuMzTq/j4dW0VbiR
-	UEGiTtoFHmAppGC0HYsCRd+fTt94mnDIDUSsA3aetbIGNilKcF+0wE4/vjrRlzc0GAkebF
-	jwD2xUWEu58L9ZWUr++g454Fyt5dwCnob/rX3D0X/cubXp9ua6/YzzNJhMS5izFvHHdQU9
-	RxfGAWhWAe5M3MP6cG/JXOYrbNTMxhaKg3ww8p3VFX5VWuMxdSjA7tRq0K8gmg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723132154;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0XMX7wdOqrwBo4zRK8fr6O7kgpPxnECYQBzcc6A7oeU=;
-	b=4LdoeHW3YEI7kVQWsZhr11MWWRCmGIU4VnkFmKyZvWul2QGg9WiRtvKqGpdxFx3c4ENc5v
-	zUUr5WODgv7pzBDg==
-From: "tip-bot2 for Dmitry Vyukov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/build] kcov: Add interrupt handling self test
-Cc: Dmitry Vyukov <dvyukov@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <7662127c97e29da1a748ad1c1539dd7b65b737b2.1718092070.git.dvyukov@google.com>
-References:
- <7662127c97e29da1a748ad1c1539dd7b65b737b2.1718092070.git.dvyukov@google.com>
+	bh=c69S7nSyvekSR7azb7NgbUlVdfdg4AICMxtsy48mxj8=;
+	b=Vae04t7d78qvb9KHjvMvuypinrIqb0ofTEZVvurErtEpd7I1s2E/curEL4pREdpTDE1Y64
+	NwepxXFeJC4yZRtePdYvYTR4//lz+fzB0fP7SSszgApt8Gl3VDbXTwwOZX5K1+kXtRQvRS
+	Me8Q6MN8DYqn4mYNamTnjSdLaYGJI6c=
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
+ [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-183-WkBMs5r0M4SXWgGZZMo8-A-1; Thu, 08 Aug 2024 11:49:40 -0400
+X-MC-Unique: WkBMs5r0M4SXWgGZZMo8-A-1
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-70939f4bb1aso63367a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:49:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723132180; x=1723736980;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c69S7nSyvekSR7azb7NgbUlVdfdg4AICMxtsy48mxj8=;
+        b=u8Sn9FdMEl9yT2ctS9LahwlYhwUAbXjYNELUgvwc5eOnjNbxDz3bmkNo671XTVi4fY
+         fmBdzOkShIPpIveNSRt9a7hXuJtTUDVHu4zyLkEB1aLu//Ylu6SObdhe1iYIkFBzsRAK
+         fCUoOvWBjkptm2iU3Yapj+ipcuBovI/hT+vy1pMmYi+T68ARAqs5pN3e6wiQEs+U7ewj
+         J42Cs+/YRlU9d7TLfDjPQOs6QyGBuZokB2gddlJfNRgkN5kWhTu6A49CiNKcVHvp4Cbj
+         16HN91zh5dv98u4JwboSuV+/zzY2ByMAsGez1b+wMFbNd2yFv1YOJEEVMgnwtvlITVvN
+         LPpA==
+X-Gm-Message-State: AOJu0YyFLbblWkKqGNEdquohJ0c0TIohqWFPvyjA4iWXh7xbNjBoNyPX
+	LMwGtrfhERanQrEF+/DQaNNI5I+kS3egSu5m4bfTntN6inkMhk/fbqgeyYuK2hFzpp/GRjtLZGL
+	0hMJ8S0MK1RRB3z+boG3ehEPWLhm/UmnJ0P01/zMx0WkbFAZon6EC34/p0WuD7w==
+X-Received: by 2002:a05:6870:51c7:b0:260:ccfd:b270 with SMTP id 586e51a60fabf-26c58abb4bbmr2307fac.7.1723132180123;
+        Thu, 08 Aug 2024 08:49:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2v/RUodTRobMhQbY3FEHNXh4Gs9MwrhEqdXluF8KQ8hMZ3OnAtry4aRQGnOXF4AoW7eM3Og==
+X-Received: by 2002:a05:6870:51c7:b0:260:ccfd:b270 with SMTP id 586e51a60fabf-26c58abb4bbmr2291fac.7.1723132179728;
+        Thu, 08 Aug 2024 08:49:39 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785d0b3fsm171313085a.19.2024.08.08.08.49.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 08:49:39 -0700 (PDT)
+Date: Thu, 8 Aug 2024 11:49:35 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Oscar Salvador <osalvador@suse.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	James Houghton <jthoughton@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Rik van Riel <riel@surriel.com>, Dave Jiang <dave.jiang@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+	"Kirill A . Shutemov" <kirill@shutemov.name>,
+	linuxppc-dev@lists.ozlabs.org,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>,
+	David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Huang Ying <ying.huang@intel.com>
+Subject: Re: [PATCH v4 5/7] mm/x86: arch_check_zapped_pud()
+Message-ID: <ZrTpD0XOUsNMM9tP@x1n>
+References: <20240807194812.819412-1-peterx@redhat.com>
+ <20240807194812.819412-6-peterx@redhat.com>
+ <878qx80xy8.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172313215445.2215.13998287534078096064.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <878qx80xy8.ffs@tglx>
 
-The following commit has been merged into the x86/build branch of tip:
+On Thu, Aug 08, 2024 at 12:28:47AM +0200, Thomas Gleixner wrote:
+> On Wed, Aug 07 2024 at 15:48, Peter Xu wrote:
+> 
+> > Subject: mm/x86: arch_check_zapped_pud()
+> 
+> Is not a proper subject line. It clearly lacks a verb.
+> 
+>   Subject: mm/x86: Implement arch_check_zapped_pud()
+> 
+> 
+> > Introduce arch_check_zapped_pud() to sanity check shadow stack on PUD zaps.
+> > It has the same logic of the PMD helper.
+> 
+> s/of/as/
 
-Commit-ID:     6cd0dd934b03d4ee4094ac474108723e2f2ed7d6
-Gitweb:        https://git.kernel.org/tip/6cd0dd934b03d4ee4094ac474108723e2f2ed7d6
-Author:        Dmitry Vyukov <dvyukov@google.com>
-AuthorDate:    Tue, 11 Jun 2024 09:50:31 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 08 Aug 2024 17:36:35 +02:00
+Will fix above two.
 
-kcov: Add interrupt handling self test
+> 
+> > +
+> > +void arch_check_zapped_pud(struct vm_area_struct *vma, pud_t pud)
+> > +{
+> > +	/* See note in arch_check_zapped_pte() */
+> > +	VM_WARN_ON_ONCE(!(vma->vm_flags & VM_SHADOW_STACK) &&
+> > +			pud_shstk(pud));
+> 
+> Please get rid of the line break. You have 100 characters.
 
-Add a boot self test that can catch sprious coverage from interrupts.
-The coverage callback filters out interrupt code, but only after the
-handler updates preempt count. Some code periodically leaks out
-of that section and leads to spurious coverage.
-Add a best-effort (but simple) test that is likely to catch such bugs.
-If the test is enabled on CI systems that use KCOV, they should catch
-any issues fast.
+Coding-style.rst still tells me 80 here:
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Alexander Potapenko <glider@google.com>
-Reviewed-by: Marco Elver <elver@google.com>
-Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
-Link: https://lore.kernel.org/all/7662127c97e29da1a748ad1c1539dd7b65b737b2.1718092070.git.dvyukov@google.com
+        The preferred limit on the length of a single line is 80 columns.
 
+        Statements longer than 80 columns should be broken into sensible chunks,
+        unless exceeding 80 columns significantly increases readability and does
+        not hide information.
 
----
- kernel/kcov.c     | 31 +++++++++++++++++++++++++++++++
- lib/Kconfig.debug |  8 ++++++++
- 2 files changed, 39 insertions(+)
+Maybe this just changed very recently so even not in mm-unstable?
 
-diff --git a/kernel/kcov.c b/kernel/kcov.c
-index f0a69d4..d9d4a0c 100644
---- a/kernel/kcov.c
-+++ b/kernel/kcov.c
-@@ -11,6 +11,7 @@
- #include <linux/fs.h>
- #include <linux/hashtable.h>
- #include <linux/init.h>
-+#include <linux/jiffies.h>
- #include <linux/kmsan-checks.h>
- #include <linux/mm.h>
- #include <linux/preempt.h>
-@@ -1058,6 +1059,32 @@ u64 kcov_common_handle(void)
- }
- EXPORT_SYMBOL(kcov_common_handle);
- 
-+#ifdef CONFIG_KCOV_SELFTEST
-+static void __init selftest(void)
-+{
-+	unsigned long start;
-+
-+	pr_err("running self test\n");
-+	/*
-+	 * Test that interrupts don't produce spurious coverage.
-+	 * The coverage callback filters out interrupt code, but only
-+	 * after the handler updates preempt count. Some code periodically
-+	 * leaks out of that section and leads to spurious coverage.
-+	 * It's hard to call the actual interrupt handler directly,
-+	 * so we just loop here for a bit waiting for a timer interrupt.
-+	 * We set kcov_mode to enable tracing, but don't setup the area,
-+	 * so any attempt to trace will crash. Note: we must not call any
-+	 * potentially traced functions in this region.
-+	 */
-+	start = jiffies;
-+	current->kcov_mode = KCOV_MODE_TRACE_PC;
-+	while ((jiffies - start) * MSEC_PER_SEC / HZ < 300)
-+		;
-+	current->kcov_mode = 0;
-+	pr_err("done running self test\n");
-+}
-+#endif
-+
- static int __init kcov_init(void)
- {
- 	int cpu;
-@@ -1077,6 +1104,10 @@ static int __init kcov_init(void)
- 	 */
- 	debugfs_create_file_unsafe("kcov", 0600, NULL, NULL, &kcov_fops);
- 
-+#ifdef CONFIG_KCOV_SELFTEST
-+	selftest();
-+#endif
-+
- 	return 0;
- }
- 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index a30c03a..270e367 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2173,6 +2173,14 @@ config KCOV_IRQ_AREA_SIZE
- 	  soft interrupts. This specifies the size of those areas in the
- 	  number of unsigned long words.
- 
-+config KCOV_SELFTEST
-+	bool "Perform short selftests on boot"
-+	depends on KCOV
-+	help
-+	  Run short KCOV coverage collection selftests on boot.
-+	  On test failure, causes the kernel to panic. Recommended to be
-+	  enabled, ensuring critical functionality works as intended.
-+
- menuconfig RUNTIME_TESTING_MENU
- 	bool "Runtime Testing"
- 	default y
+I'll fix the two line-wrap in this patch anyway, as I figured these two
+cases even didn't hit 80..  probably because I used fill-column=75 locally..
+
+But still I'll probably need to figure it out for other spots.  Please help
+me to justify.
+
+> 
+> > +}
+> > diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> > index 2a6a3cccfc36..2289e9f7aa1b 100644
+> > --- a/include/linux/pgtable.h
+> > +++ b/include/linux/pgtable.h
+> > @@ -447,6 +447,13 @@ static inline void arch_check_zapped_pmd(struct vm_area_struct *vma,
+> >  }
+> >  #endif
+> >  
+> > +#ifndef arch_check_zapped_pud
+> > +static inline void arch_check_zapped_pud(struct vm_area_struct *vma,
+> > +					 pud_t pud)
+> > +{
+> 
+> Ditto..
+> 
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 0024266dea0a..81c5da0708ed 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> 
+> Why is a mm change burried in a patch which is named mm/x86?
+> 
+> It's clearly documented that core changes with the generic fallback come
+> in one patch and the architecture override in a separate one afterwards.
+> 
+> Do we write documentation just for the sake of writing it?
+
+Hmm if that's the rule, in practise I bet many patches are violating that
+rule that we merged and whatever patches I used to read.. but I see now,
+I'll break this patch into two.
+
+Personally I'd really still prefer it to be one patch especially when it's
+only implemented in x86, then I copy x86+mm maintainers all here and it
+explains why it's there.  So please let me know if you think it may still
+make sense to keep this patch as-is, or I'll split by default.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
