@@ -1,124 +1,133 @@
-Return-Path: <linux-kernel+bounces-279784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B882894C1CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:48:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4710F94C1EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D659288AD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:48:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E8B2B270A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02D4190667;
-	Thu,  8 Aug 2024 15:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90A9190041;
+	Thu,  8 Aug 2024 15:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FTcbuWxF"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ttoMxmHo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JoYelczR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F2818FDC5;
-	Thu,  8 Aug 2024 15:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E8A18FC86;
+	Thu,  8 Aug 2024 15:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723132068; cv=none; b=rRGV5oeXLOHzhXdJRwSn384snpIq5aaEoKPlEeVOFSrV/CPeXzUOvin+l+F1Dt1VAf4j2l3/WCRQTpfiCDq/sdHJtOTd8k1uhbjEFeRFJDMo2YuL3awARW3VmR7h8I/E4OkKpR4kms/VkHF59HL8lJW458w+4M24j5sVGqE6xRc=
+	t=1723132157; cv=none; b=ncb8FxfiNbKBQaQLHzWP6VFiMOJsGKPHf4C/YGjVtgzy6zcg0PdGn+CifV55tAFCZwm+Bvuva1goA3eEDx3Iur8yYMs87zOdVNT8VDEBP9CPlrJzpjNOl4QTCJoEb9GrN3kiDUQEPIMHtGLuGzMtsfCTGXz7Etd0Z5+289RT+Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723132068; c=relaxed/simple;
-	bh=A3wCMdYHNoumXNzbYsxpr8D8ELhXRhnFZU9NU1TgzT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vy4wpgzW9YmP+9youzDzDSpeZEg8Jk97oRntH/zslkDolT6sOTpJHOWtdYb2aUTkSubAGkYUHZWioQvvyHZraI7hqdonKzAhZTU2uu59MArfUX5Rnm5O2SgybfY6MaU5g01Q/acFlhMHufhPBFs+hc4B+HwJNt+FVUX1PjZHrgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FTcbuWxF; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id DF16920005;
-	Thu,  8 Aug 2024 15:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723132064;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1723132157; c=relaxed/simple;
+	bh=pDXHpiIZSHT2GeHSGB76DDJ5I/qjtZLZ1YQoN3xvYHM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NAkOa0yaVpxKDTH1jUzidy/0WsgbIcD0ACbBZ6iMoNRNyMOqKSUffwnbvCiv66BP0/3C49RgzHz/Z6+k/uWodA9TKIkeGweYZK+MySiiKDqNZi6z3+3WngYpkTMjUuCdKmXR5O61yMfMg1nc2oh/T8WRWxFwtP//KSb71znMhF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ttoMxmHo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JoYelczR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 08 Aug 2024 15:49:13 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723132154;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yVeQ7PlO4X+v9TEpBxk1CG/ZinM6HCdKh29wvuZH2Tk=;
-	b=FTcbuWxFusgrheVlDMoEMACUixHpdCsRJyishEUKw8xgblCZ9vgyqaRT2BRVLksUi9OcnJ
-	4QkWOarfhAkgfbcRntuVJYthY9XYpkcLVDWMuGAaJ0glsxNN5w6HRW3OEeVXkndqAgjOUu
-	QcwkFG1eP/jdxPj71z35zbOdRWddKecqnI72kjWAEvsgtHqYQCR1fdkK1MSJsL51MdloR1
-	nYeQRyCVHtVKxs1w4DNHuM4zUcNxdzr2IX/ppRh39SitDDcA9zL2x2qmCmoAL3YrNkSslt
-	6sym2fMpxQirze+Y8Qij4+tWHBxtOfV6edr9zSh+CZ+eJSWD136cy8ctPuPnyQ==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-Subject: [PATCH v5 8/8] reset: mchp: sparx5: set the dev member of the reset controller
-Date: Thu,  8 Aug 2024 17:46:57 +0200
-Message-ID: <20240808154658.247873-9-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240808154658.247873-1-herve.codina@bootlin.com>
-References: <20240808154658.247873-1-herve.codina@bootlin.com>
+	bh=46fjkmDd5kPFCZ0Yl2XBMT1VOdhgqgZ2YsfCzdfd4qw=;
+	b=ttoMxmHokc49R7goTRRU7cMDrwygnV39vMgWu/4q9BU9k6xSDd17osW09TB2yNRJRDH7u+
+	+vdnQSl9oKBS8Q5mKskFzpSIZogF2K3KzmyFtWXGVFr0tPsqofKVl98Ljh+EQtZa/sn3xi
+	wXw5Cboiumn+wd5rVEnvmFU3fqK/Sv600fVlTpqP5QwgNVf8nVkNDMkZqoD9aNqfy6k/9t
+	WpCGFVxVuMG9Lb2CJmHWXUI5ZRlZ2Pz6+gBZZ5tJ4iBjwiaRMebc5DqSlct9CPAvwqBzpv
+	UudvyTdTG3jZdeAvpeLzTFCHqxL5O3X/2Tb1fAmcU4KXmM0eQd4LzZ1a0Lsq2A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723132154;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=46fjkmDd5kPFCZ0Yl2XBMT1VOdhgqgZ2YsfCzdfd4qw=;
+	b=JoYelczRqU3xT7JNo88nv28zNww5lRpYxq1I/1rh4hfBpVZTRSzAlHD8Rx5tttn1TJD1JI
+	KfRb5x5H6FCKv6Aw==
+From: "tip-bot2 for Dmitry Vyukov" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/build] x86: Ignore stack unwinding in KCOV
+Cc: Dmitry Vyukov <dvyukov@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <eaf54b8634970b73552dcd38bf9be6ef55238c10.1718092070.git.dvyukov@google.com>
+References:
+ <eaf54b8634970b73552dcd38bf9be6ef55238c10.1718092070.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Message-ID: <172313215346.2215.17061867082349895480.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Clément Léger <clement.leger@bootlin.com>
+The following commit has been merged into the x86/build branch of tip:
 
-In order to guarantee the device will not be deleted by the reset
-controller consumer, set the dev member of the reset controller.
+Commit-ID:     ae94b263f5f69c180347e795fbefa051b65aacc3
+Gitweb:        https://git.kernel.org/tip/ae94b263f5f69c180347e795fbefa051b65aacc3
+Author:        Dmitry Vyukov <dvyukov@google.com>
+AuthorDate:    Tue, 11 Jun 2024 09:50:33 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 08 Aug 2024 17:36:35 +02:00
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+x86: Ignore stack unwinding in KCOV
+
+Stack unwinding produces large amounts of uninteresting coverage.
+It's called from KASAN kmalloc/kfree hooks, fault injection, etc.
+It's not particularly useful and is not a function of system call args.
+Ignore that code.
+
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Alexander Potapenko <glider@google.com>
+Reviewed-by: Marco Elver <elver@google.com>
+Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lore.kernel.org/all/eaf54b8634970b73552dcd38bf9be6ef55238c10.1718092070.git.dvyukov@google.com
+
 ---
- drivers/reset/reset-microchip-sparx5.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/Makefile | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset-microchip-sparx5.c
-index c4fe65291a43..1ef2aa1602e3 100644
---- a/drivers/reset/reset-microchip-sparx5.c
-+++ b/drivers/reset/reset-microchip-sparx5.c
-@@ -117,6 +117,7 @@ static int mchp_sparx5_reset_probe(struct platform_device *pdev)
- 		return err;
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index a847180..f791898 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -35,6 +35,14 @@ KMSAN_SANITIZE_nmi.o					:= n
+ # If instrumentation of the following files is enabled, boot hangs during
+ # first second.
+ KCOV_INSTRUMENT_head$(BITS).o				:= n
++# These are called from save_stack_trace() on debug paths,
++# and produce large amounts of uninteresting coverage.
++KCOV_INSTRUMENT_stacktrace.o				:= n
++KCOV_INSTRUMENT_dumpstack.o				:= n
++KCOV_INSTRUMENT_dumpstack_$(BITS).o			:= n
++KCOV_INSTRUMENT_unwind_orc.o				:= n
++KCOV_INSTRUMENT_unwind_frame.o				:= n
++KCOV_INSTRUMENT_unwind_guess.o				:= n
  
- 	ctx->rcdev.owner = THIS_MODULE;
-+	ctx->rcdev.dev = &pdev->dev;
- 	ctx->rcdev.nr_resets = 1;
- 	ctx->rcdev.ops = &sparx5_reset_ops;
- 	ctx->rcdev.of_node = dn;
--- 
-2.45.0
-
+ CFLAGS_irq.o := -I $(src)/../include/asm/trace
+ 
 
