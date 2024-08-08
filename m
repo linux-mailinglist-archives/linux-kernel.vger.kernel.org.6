@@ -1,147 +1,480 @@
-Return-Path: <linux-kernel+bounces-279795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F51394C1F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:52:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4517E94C1FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF851F232F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:52:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68B3D1C2222D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AF319066C;
-	Thu,  8 Aug 2024 15:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135D918FDDB;
+	Thu,  8 Aug 2024 15:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BPy6f5qM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="tQWdTW49"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E50CB674;
-	Thu,  8 Aug 2024 15:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E9518C935
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723132234; cv=none; b=SIibD3vIENGgwW7EDVNlEx55Jc15etju1zsSJwyoMoo6S9aN3tWhuvxdMT4XZrlEb5E67XKx2TI8aDq5DzfW5ZFS+qU1wCiGdT4rStvWNLvts5Z90KlswqSNMW5faNQW3g4pEiq4oqR9LPie5JBw167mhfhd4L+jXGjNkOBK1c0=
+	t=1723132297; cv=none; b=ZqGlQ3H4dmwU5AaejMqQRwW5L+GJWSJIQw8crwPYw5NJn1qMRItE+NW8pY3oS0L0u8QcrhztmHstJELQgzdY5r1xUYJcj2QZvzKBapxXb046Iq7QA45JZHhOO/YacaYq2VMDroa3gJOmnTzl8txI1uHTxAeADMd5NJrLlhLvQjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723132234; c=relaxed/simple;
-	bh=cF8lG+FljttAPs/y7T3E1OAF1orNiDt90PQJ2Ifk7jw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QH6Y1oZmgZwqRGIR8T1B5ZZAcnFgrH3yt9b9pqwHq+l44wqImHtBw/2tkrOC3hStrCWL6ek/+z78gu7dmiweptB+Ca0uTR+6xQsyIz03npzBzLzbuFaPkb49/P0//UF3F61krSlAS86uH/KdHn0iokR37w8gG9ohZr2OesXXuNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BPy6f5qM; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723132232; x=1754668232;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cF8lG+FljttAPs/y7T3E1OAF1orNiDt90PQJ2Ifk7jw=;
-  b=BPy6f5qMF3ww5cB2tD3M6iIAkMskD6pvp2uSn6UAvn3irbqFdzpOLqTn
-   PLeTU4K1bi30MnNxt1AEyirOm2W3DTxLijQvl0UHfV0HplVu+GLY7JgXI
-   2zqINjskm/PFuCg1FIRD6xMI1YRuj9gqO8hBtJU3+c4oSPWhYv7GSYYtf
-   /UUM7SzDZkmazZKypXvyrXRKygvEUv0pVPM843nHwIHjh99HsSww5x8q4
-   FLrcCmI4Z4OrUvj8Cre1Whm5mouhiv0/9Hk65krNHfEX4AwOa8X38dqgY
-   tH3XdfWek2ZeOp24rK80zwWUx7WiPDcW43sh0ZZQ0NZCIFzF5GSkddkj5
-   A==;
-X-CSE-ConnectionGUID: bPLUh+/ASfGPgZcx25lOaw==
-X-CSE-MsgGUID: 84Rm1WN4QNGvhuTPrYInVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="31896400"
-X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="31896400"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 08:50:30 -0700
-X-CSE-ConnectionGUID: nHltjxwwT4qi6FZJTYhgVA==
-X-CSE-MsgGUID: Kkdea4OwQsayntjDZLlq6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="57168146"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.150.149])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 08:50:24 -0700
-Message-ID: <8be2eeaf-9c85-4a77-b66d-53dd1b35bf91@intel.com>
-Date: Thu, 8 Aug 2024 18:50:16 +0300
+	s=arc-20240116; t=1723132297; c=relaxed/simple;
+	bh=IltF7IATghJwaQXpVHgEYprU2zZg0XnM92fZvG8KeZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IqDURRpLRKhd+3UBcr9eNfx4zZxIO4zH/GTFNWHmNwT6U79jt2wY0+O8O3Y5Hf992BTA8WVJ2zYtqEw35gxGLs5La2xGhbgLiGkCz/2jvnHTy8NXGpL8JA6mnGFePh1CN+QfyZQk9++QfNQdL4ewY08V1cQElUSHK0tX97lqFTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=tQWdTW49; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a156557029so1378005a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1723132294; x=1723737094; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=llL7APjaPMslsEgAnpwJGRd9iQrJJFrS2hzBip67FIA=;
+        b=tQWdTW49WFpZH47eIEUOQftX1JHKDroUl1bFwnNpsHT2FRU7nDg/re0sM86x/XDsTC
+         AyjDiiOb4FqlUv9x2zIz8LXzE7UQVqWoY4VHZhpq6vns+Ev30EPa4HswEDwIKo4b6qx2
+         R+/Ue2ARbJrZKQnN2SZqZjZ/zOiWt1U/S25d43sPTJh/oacUJjTUrsPoFAW0w9V93KvC
+         qroiWzPDhgQqPsfWkYnh1+boCpRy5ZSySCt3Tx0Aph8R4JMSIOHqnz6waJdc2JSu/Nji
+         7ixEDuROss7A4NYGEDo7byMQ1K/uQP+br7hgwqZsTOTF+OZtopC8+XeMLzcgMOYoen9g
+         asQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723132294; x=1723737094;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=llL7APjaPMslsEgAnpwJGRd9iQrJJFrS2hzBip67FIA=;
+        b=Fwqw5YGKHu7GaBxylcNA+K8jhh3ZZnSr6WUl6anbStsPm/Sh8TQEydxkfJgIk/rBPf
+         7AHGLf4DNTTFq//amHVCQbgnpglr4MbhaQaPsS9bq+ZKMquUbZ2UtZIVKz5TZQiNUkB8
+         7sNcpfpl9xy3qJCGmbKMFH6XRSZmAaQqnwuPNbbDgDGY1FEv+ifNqBkC4iPiaFzv2Gkp
+         S19172fqdcNs+r+PVTO4hdWRywV6rj5E8gDKiHFkafeq4VRM4VWFY4vd6EGEy7jPK/AK
+         rZKC/nl5fuOaWxTCp4MjM12PwDj+Be0ZyhY/S4Rzs6c6zIsrKH1Otxr7R4upGzRzmDFg
+         llkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUohVyDLDJ4cHomN6m1qbz8SDsJDkFCb9Eb/i6+MqqHbMfCUOwSzvYhF+JYQHdDv19/cra9ZbaAEybn8oKSaYcA+HNbeT5gv8ZEvo/
+X-Gm-Message-State: AOJu0Yz8k3Vqbrcdnm1yhno6t4+AdnDY4Thjq6XmEw7Pa9vkQcXK254d
+	MJgJhpj8O/FYAj9XeWTBqa86GNIGVNze6VEiRP+406TXuJYr7YcKNVLQrggIqno=
+X-Google-Smtp-Source: AGHT+IEv2In8TqzaJ0SPI4x9KZZDMKkmkeTP9Wekd3wyt3FsyjSp1iEjFi9PRk8LqGsB/9lKjMdIhQ==
+X-Received: by 2002:a05:6402:5204:b0:5a2:a808:a2e0 with SMTP id 4fb4d7f45d1cf-5bbb21f4142mr1768639a12.4.1723132293907;
+        Thu, 08 Aug 2024 08:51:33 -0700 (PDT)
+Received: from localhost ([213.235.133.38])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c41ec9sm786337a12.42.2024.08.08.08.51.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 08:51:33 -0700 (PDT)
+Date: Thu, 8 Aug 2024 17:51:31 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Geetha sowjanya <gakula@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
+	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
+Subject: Re: [net-next PATCH v10 03/11] octeontx2-pf: Create representor
+ netdev
+Message-ID: <ZrTpgw9tmQprbuNk@nanopsycho.orion>
+References: <20240805131815.7588-1-gakula@marvell.com>
+ <20240805131815.7588-4-gakula@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf script python: Add the ins_lat field to event
- handler
-To: Zixian Cai <fzczx123@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- James Clark <james.clark@linaro.org>, Paran Lee <p4ranlee@gmail.com>,
- Ben Gainey <ben.gainey@arm.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240808133208.3577910-1-fzczx123@gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240808133208.3577910-1-fzczx123@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805131815.7588-4-gakula@marvell.com>
 
-On 8/08/24 16:32, Zixian Cai wrote:
-> For example, when using the Alder Lake PMU memory load event, the instruction latency is stored in ins_lat, while the cache latency is stored in weight.
+Mon, Aug 05, 2024 at 03:18:07PM CEST, gakula@marvell.com wrote:
+>Adds initial devlink support to set/get the switchdev mode.
+>Representor netdevs are created for each rvu devices when
+>the switch mode is set to 'switchdev'. These netdevs are
+>be used to control and configure VFs.
+>
+>Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+>Reviewed-by: Simon Horman <horms@kernel.org>
+>---
+> .../ethernet/marvell/octeontx2.rst            |  85 +++++++++
+> .../marvell/octeontx2/nic/otx2_devlink.c      |  49 ++++++
+> .../net/ethernet/marvell/octeontx2/nic/rep.c  | 165 ++++++++++++++++++
+> .../net/ethernet/marvell/octeontx2/nic/rep.h  |   3 +
+> 4 files changed, 302 insertions(+)
+>
+>diff --git a/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst b/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
+>index 1e196cb9ce25..4eb4e6788ffc 100644
+>--- a/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
+>+++ b/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
+>@@ -14,6 +14,7 @@ Contents
+> - `Basic packet flow`_
+> - `Devlink health reporters`_
+> - `Quality of service`_
+>+- `RVU representors`_
 > 
-> This patch reports the ins_lat field for Python scripting.
+> Overview
+> ========
+>@@ -340,3 +341,87 @@ Setup HTB offload
+>         # tc class add dev <interface> parent 1: classid 1:2 htb rate 10Gbit prio 2 quantum 188416
 > 
-> Signed-off-by: Zixian Cai <fzczx123@gmail.com>
+>         # tc class add dev <interface> parent 1: classid 1:3 htb rate 10Gbit prio 2 quantum 32768
+>+
+>+
+>+RVU Representors
+>+================
+>+
+>+RVU representor driver adds support for creation of representor devices for
+>+RVU PFs' VFs in the system. Representor devices are created when user enables
+>+the switchdev mode.
+>+Switchdev mode can be enabled either before or after setting up SRIOV numVFs.
+>+All representor devices share a single NIXLF but each has a dedicated queue
+>+(ie RQ/SQ. RVU PF representor driver registers a separate netdev for each
+>+RQ/SQ queue pair.
+>+
+>+HW doesn't have a in-built switch which can do L2 learning and forward pkts
+>+between representee and representor. Hence packet patch between representee
+>+and it's representor is achieved by setting up appropriate NPC MCAM filters.
+>+Transmit packets matching these filters will be loopbacked through hardware
+>+loopback channel/interface (ie instead of sending them out of MAC interface).
+>+Which will again match the installed filters and will be forwarded.
+>+This way representee => representor and representor => representee packet
+>+path is achieved.These rules get installed when representors are created
+>+and gets active/deactivate based on the representor/representee interface state.
+>+
+>+Usage example:
+>+
+>+ - List of devices on the system before vfs are created::
+>+
+>+	# devlink dev
+>+	pci/0002:02:00.0
+>+	pci/0002:1c:00.0
+>+
+>+- Change device to switchdev mode::
+>+	# devlink dev eswitch set pci/0002:1c:00.0 mode switchdev
+>+
+>+ - List the devices on the system::
+>+
+>+	# ip link show
+>+
+>+Sample output::
+>+
+>+	# ip link show
+>+	eth0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000 link/ether 7e:58:2d:b6:97:51 brd ff:ff:ff:ff:ff:ff
+>+	r0p1v0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000 link/ether 7e:5a:66:ea:fe:d6 brd ff:ff:ff:ff:ff:ff
+>+	r1p1v1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000 link/ether de:29:be:10:9e:bf brd ff:ff:ff:ff:ff:ff
+>+	r2p1v2: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000 link/ether 4a:12:c7:a2:66:ad brd ff:ff:ff:ff:ff:ff
+>+	r3p1v3: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000 link/ether c2:b8:a8:0e:73:fd brd ff:ff:ff:ff:ff:ff
+>+
+>+
+>+RVU representors can be managed using devlink ports
+>+(see :ref:`Documentation/networking/devlink/devlink-port.rst <devlink_port>`) interface.
+>+
+>+ - Show devlink ports of representors::
+>+
+>+	# devlink port
+>+
+>+Sample output::
+>+
+>+	pci/0002:1c:00.0/0: type eth netdev r0p1v0 flavour pcipf controller 0 pfnum 1 vfnum 0 external false splittable false
+>+	pci/0002:1c:00.0/1: type eth netdev r1p1v1 flavour pcivf controller 0 pfnum 1 vfnum 1 external false splittable false
+>+	pci/0002:1c:00.0/2: type eth netdev r2p1v2 flavour pcivf controller 0 pfnum 1 vfnum 2 external false splittable false
+>+	pci/0002:1c:00.0/3: type eth netdev r3p1v3 flavour pcivf controller 0 pfnum 1 vfnum 3 external false splittable false
+>+
+>+Function attributes
+>+===================
+>+
+>+The RVU representor support function attributes for representors
+>+Port function configuration of the representors are supported through devlink eswitch port.
+>+
+>+MAC address setup
+>+-----------------
+>+
+>+RVU representor driver support devlink port function attr mechanism to setup MAC
+>+address. (refer to Documentation/networking/devlink/devlink-port.rst)
+>+
+>+ - To setup MAC address for port 2::
+>+
+>+	# devlink port function set  pci/0002:1c:00.0/2 hw_addr 5c:a1:1b:5e:43:11 state active
 
-Minor comments, otherwise:
+Why you pass "state active" here? That is no-op for VFs.
 
-Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-> ---
-> v2) rebase on top of perf-tools-next
+>+
+>+
+>+To remove the representors from the system. Change the device to legacy mode.
+>+
+>+ - Change device to legacy mode::
+>+
+>+	# devlink dev eswitch set pci/0002:1c:00.0 mode legacy
+>diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
+>index 53f14aa944bd..33ec9a7f7c03 100644
+>--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
+>+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
+>@@ -141,7 +141,56 @@ static const struct devlink_param otx2_dl_params[] = {
+> 			     otx2_dl_ucast_flt_cnt_validate),
+> };
 > 
->  tools/perf/util/scripting-engines/trace-event-python.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>+#ifdef CONFIG_RVU_ESWITCH
+>+static int otx2_devlink_eswitch_mode_get(struct devlink *devlink, u16 *mode)
+>+{
+>+	struct otx2_devlink *otx2_dl = devlink_priv(devlink);
+>+	struct otx2_nic *pfvf = otx2_dl->pfvf;
+>+
+>+	if (!otx2_rep_dev(pfvf->pdev))
+>+		return -EOPNOTSUPP;
+>+
+>+	*mode = pfvf->esw_mode;
+>+
+>+	return 0;
+>+}
+>+
+>+static int otx2_devlink_eswitch_mode_set(struct devlink *devlink, u16 mode,
+>+					 struct netlink_ext_ack *extack)
+>+{
+>+	struct otx2_devlink *otx2_dl = devlink_priv(devlink);
+>+	struct otx2_nic *pfvf = otx2_dl->pfvf;
+>+	int ret = 0;
+>+
+>+	if (!otx2_rep_dev(pfvf->pdev))
+>+		return -EOPNOTSUPP;
+>+
+>+	if (pfvf->esw_mode == mode)
+>+		return 0;
+>+
+>+	switch (mode) {
+>+	case DEVLINK_ESWITCH_MODE_LEGACY:
+>+		rvu_rep_destroy(pfvf);
+>+		break;
+>+	case DEVLINK_ESWITCH_MODE_SWITCHDEV:
+>+		ret = rvu_rep_create(pfvf, extack);
+>+		break;
+>+	default:
+>+		return -EINVAL;
+>+	}
+>+
+>+	if (!ret)
+>+		pfvf->esw_mode = mode;
+>+
+>+	return ret;
+>+}
+>+#endif
+>+
+> static const struct devlink_ops otx2_devlink_ops = {
+>+#ifdef CONFIG_RVU_ESWITCH
+>+	.eswitch_mode_get = otx2_devlink_eswitch_mode_get,
+>+	.eswitch_mode_set = otx2_devlink_eswitch_mode_set,
+>+#endif
+> };
 > 
-> diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
-> index fb00f3ad6815..c9e8dbd6feb5 100644
-> --- a/tools/perf/util/scripting-engines/trace-event-python.c
-> +++ b/tools/perf/util/scripting-engines/trace-event-python.c
-> @@ -888,6 +888,8 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
->  	set_sample_read_in_dict(dict_sample, sample, evsel);
->  	pydict_set_item_string_decref(dict_sample, "weight",
->  			PyLong_FromUnsignedLongLong(sample->weight));
-> +	pydict_set_item_string_decref(dict_sample, "ins_lat",
-> +			PyLong_FromUnsignedLongLong(sample->ins_lat));
+> int otx2_register_dl(struct otx2_nic *pfvf)
+>diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+>index b0a0080e50d7..6ea5b4904a7c 100644
+>--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+>+++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+>@@ -28,6 +28,164 @@ MODULE_DESCRIPTION(DRV_STRING);
+> MODULE_LICENSE("GPL");
+> MODULE_DEVICE_TABLE(pci, rvu_rep_id_table);
+> 
+>+static int rvu_rep_napi_init(struct otx2_nic *priv,
+>+			     struct netlink_ext_ack *extack)
+>+{
+>+	struct otx2_qset *qset = &priv->qset;
+>+	struct otx2_cq_poll *cq_poll = NULL;
+>+	struct otx2_hw *hw = &priv->hw;
+>+	int err = 0, qidx, vec;
+>+	char *irq_name;
+>+
+>+	qset->napi = kcalloc(hw->cint_cnt, sizeof(*cq_poll), GFP_KERNEL);
+>+	if (!qset->napi)
+>+		return -ENOMEM;
+>+
+>+	/* Register NAPI handler */
+>+	for (qidx = 0; qidx < hw->cint_cnt; qidx++) {
+>+		cq_poll = &qset->napi[qidx];
+>+		cq_poll->cint_idx = qidx;
+>+		cq_poll->cq_ids[CQ_RX] =
+>+			(qidx <  hw->rx_queues) ? qidx : CINT_INVALID_CQ;
+>+		cq_poll->cq_ids[CQ_TX] = (qidx < hw->tx_queues) ?
+>+					  qidx + hw->rx_queues :
+>+					  CINT_INVALID_CQ;
+>+		cq_poll->cq_ids[CQ_XDP] = CINT_INVALID_CQ;
+>+		cq_poll->cq_ids[CQ_QOS] = CINT_INVALID_CQ;
+>+
+>+		cq_poll->dev = (void *)priv;
+>+		netif_napi_add(priv->reps[qidx]->netdev, &cq_poll->napi,
+>+			       otx2_napi_handler);
+>+		napi_enable(&cq_poll->napi);
+>+	}
+>+	/* Register CQ IRQ handlers */
+>+	vec = hw->nix_msixoff + NIX_LF_CINT_VEC_START;
+>+	for (qidx = 0; qidx < hw->cint_cnt; qidx++) {
+>+		irq_name = &hw->irq_name[vec * NAME_SIZE];
+>+
+>+		snprintf(irq_name, NAME_SIZE, "rep%d-rxtx-%d", qidx, qidx);
+>+
+>+		err = request_irq(pci_irq_vector(priv->pdev, vec),
+>+				  otx2_cq_intr_handler, 0, irq_name,
+>+				  &qset->napi[qidx]);
+>+		if (err) {
+>+			NL_SET_ERR_MSG_FMT_MOD(extack,
+>+					       "RVU REP IRQ registration failed for CQ%d",
+>+					       qidx);
+>+			goto err_free_cints;
+>+		}
+>+		vec++;
+>+
+>+		/* Enable CQ IRQ */
+>+		otx2_write64(priv, NIX_LF_CINTX_INT(qidx), BIT_ULL(0));
+>+		otx2_write64(priv, NIX_LF_CINTX_ENA_W1S(qidx), BIT_ULL(0));
+>+	}
+>+	priv->flags &= ~OTX2_FLAG_INTF_DOWN;
+>+	return 0;
+>+
+>+err_free_cints:
+>+	otx2_free_cints(priv, qidx);
+>+	otx2_disable_napi(priv);
+>+	return err;
+>+}
+>+
+>+static void rvu_rep_free_cq_rsrc(struct otx2_nic *priv)
+>+{
+>+	struct otx2_qset *qset = &priv->qset;
+>+	struct otx2_cq_poll *cq_poll = NULL;
+>+	int qidx, vec;
+>+
+>+	/* Cleanup CQ NAPI and IRQ */
+>+	vec = priv->hw.nix_msixoff + NIX_LF_CINT_VEC_START;
+>+	for (qidx = 0; qidx < priv->hw.cint_cnt; qidx++) {
+>+		/* Disable interrupt */
+>+		otx2_write64(priv, NIX_LF_CINTX_ENA_W1C(qidx), BIT_ULL(0));
+>+
+>+		synchronize_irq(pci_irq_vector(priv->pdev, vec));
+>+
+>+		cq_poll = &qset->napi[qidx];
+>+		napi_synchronize(&cq_poll->napi);
+>+		vec++;
+>+	}
+>+	otx2_free_cints(priv, priv->hw.cint_cnt);
+>+	otx2_disable_napi(priv);
+>+}
+>+
+>+void rvu_rep_destroy(struct otx2_nic *priv)
+>+{
+>+	struct rep_dev *rep;
+>+	int rep_id;
+>+
+>+	priv->flags |= OTX2_FLAG_INTF_DOWN;
+>+	rvu_rep_free_cq_rsrc(priv);
+>+	for (rep_id = 0; rep_id < priv->rep_cnt; rep_id++) {
+>+		rep = priv->reps[rep_id];
+>+		unregister_netdev(rep->netdev);
+>+		free_netdev(rep->netdev);
+>+	}
+>+	kfree(priv->reps);
+>+}
+>+
+>+int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack)
+>+{
+>+	int rep_cnt = priv->rep_cnt;
+>+	struct net_device *ndev;
+>+	struct rep_dev *rep;
+>+	int rep_id, err;
+>+	u16 pcifunc;
+>+
+>+	priv->reps = kcalloc(rep_cnt, sizeof(struct rep_dev *), GFP_KERNEL);
+>+	if (!priv->reps)
+>+		return -ENOMEM;
+>+
+>+	for (rep_id = 0; rep_id < rep_cnt; rep_id++) {
+>+		ndev = alloc_etherdev(sizeof(*rep));
+>+		if (!ndev) {
+>+			NL_SET_ERR_MSG_FMT_MOD(extack,
+>+					       "PFVF representor:%d creation failed",
+>+					       rep_id);
+>+			err = -ENOMEM;
+>+			goto exit;
+>+		}
+>+
+>+		rep = netdev_priv(ndev);
+>+		priv->reps[rep_id] = rep;
+>+		rep->mdev = priv;
+>+		rep->netdev = ndev;
+>+		rep->rep_id = rep_id;
+>+
+>+		ndev->min_mtu = OTX2_MIN_MTU;
+>+		ndev->max_mtu = priv->hw.max_mtu;
+>+		pcifunc = priv->rep_pf_map[rep_id];
+>+		rep->pcifunc = pcifunc;
+>+
+>+		snprintf(ndev->name, sizeof(ndev->name), "r%dp%d", rep_id,
+>+			 rvu_get_pf(pcifunc));
+>+
+>+		eth_hw_addr_random(ndev);
+>+		err = register_netdev(ndev);
 
-ins_lat is u16 so it could be PyLong_FromUnsignedLong()
+I don't follow. You just create netdevices, no devlink ports. That is
+inconsistent with your documentation above.
 
->  	pydict_set_item_string_decref(dict_sample, "transaction",
->  			PyLong_FromUnsignedLongLong(sample->transaction));
->  	set_sample_datasrc_in_dict(dict_sample, sample);
-> @@ -1317,7 +1319,7 @@ static void python_export_sample_table(struct db_export *dbe,
->  	struct tables *tables = container_of(dbe, struct tables, dbe);
->  	PyObject *t;
-> 
-> -	t = tuple_new(27);
-> +	t = tuple_new(28);
-> 
->  	tuple_set_d64(t, 0, es->db_id);
->  	tuple_set_d64(t, 1, es->evsel->db_id);
-> @@ -1346,6 +1348,7 @@ static void python_export_sample_table(struct db_export *dbe,
->  	tuple_set_s32(t, 24, es->sample->flags);
->  	tuple_set_d64(t, 25, es->sample->id);
->  	tuple_set_d64(t, 26, es->sample->stream_id);
-> +	tuple_set_s32(t, 27, es->sample->ins_lat);
 
-ins_lat is u16 so it could be tuple_set_u32()
-
+>+		if (err) {
+>+			NL_SET_ERR_MSG_MOD(extack,
+>+					   "PFVF reprentator registration failed");
+>+			free_netdev(ndev);
+>+			goto exit;
+>+		}
+>+	}
+>+	err = rvu_rep_napi_init(priv, extack);
+>+	if (err)
+>+		goto exit;
+>+
+>+	return 0;
+>+exit:
+>+	while (--rep_id >= 0) {
+>+		rep = priv->reps[rep_id];
+>+		unregister_netdev(rep->netdev);
+>+		free_netdev(rep->netdev);
+>+	}
+>+	kfree(priv->reps);
+>+	return err;
+>+}
+>+
+> static void rvu_rep_rsrc_free(struct otx2_nic *priv)
+> {
+> 	struct otx2_qset *qset = &priv->qset;
+>@@ -167,6 +325,10 @@ static int rvu_rep_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> 	if (err)
+> 		goto err_detach_rsrc;
 > 
->  	call_object(tables->sample_handler, t, "sample_table");
+>+	err = otx2_register_dl(priv);
+>+	if (err)
+>+		goto err_detach_rsrc;
+>+
+> 	return 0;
 > 
-> --
-> 2.25.1
+> err_detach_rsrc:
+>@@ -188,6 +350,9 @@ static void rvu_rep_remove(struct pci_dev *pdev)
+> {
+> 	struct otx2_nic *priv = pci_get_drvdata(pdev);
 > 
-
+>+	otx2_unregister_dl(priv);
+>+	if (!(priv->flags & OTX2_FLAG_INTF_DOWN))
+>+		rvu_rep_destroy(priv);
+> 	rvu_rep_rsrc_free(priv);
+> 	otx2_detach_resources(&priv->mbox);
+> 	if (priv->hw.lmt_info)
+>diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+>index 565e75628df2..c04874c4d4c6 100644
+>--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+>+++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+>@@ -28,4 +28,7 @@ static inline bool otx2_rep_dev(struct pci_dev *pdev)
+> {
+> 	return pdev->device == PCI_DEVID_RVU_REP;
+> }
+>+
+>+int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack);
+>+void rvu_rep_destroy(struct otx2_nic *priv);
+> #endif /* REP_H */
+>-- 
+>2.25.1
+>
+>
 
