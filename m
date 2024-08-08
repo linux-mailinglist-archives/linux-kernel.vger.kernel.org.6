@@ -1,157 +1,122 @@
-Return-Path: <linux-kernel+bounces-279736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 573F894C10D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:24:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68B094C110
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D38C1F28736
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:24:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 730941F29866
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D9719307E;
-	Thu,  8 Aug 2024 15:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Uw9V5Rks";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="690/5mNq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C48F18F2DF;
+	Thu,  8 Aug 2024 15:23:07 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38736191F9D;
-	Thu,  8 Aug 2024 15:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BE118EFEC
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723130511; cv=none; b=jEelSieFeAFCX+8cmEWd62EOhO5rgPRyoV0gBKjNTD7Er6Wo7VgsuVYS6Mk4JNKLjQrVZK/jzkIQuxaAoNux+nLIfjFz72RWycZTbJ6OpCPbax4Ko4dchDXFcYpY8BG+PJwHaYyxJvYyXneFL94Dq9gkXc/wFl6/DEnzr8DFOqA=
+	t=1723130586; cv=none; b=dqxf7GY2nrVso1gaoaxGdf1t1fBCJxayoxhqoGwqxFZSiE35yWIComjkPdW9//+rQvSMZ5wKyox771Rdg1NBPdTtXjga1QZpCvaekDvqgsxBwFK8gP7wCGQhrMDSv94NvKPk4VP6r5OJA/AlDFf91JGUmnZET7pBDLKNRo3jRPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723130511; c=relaxed/simple;
-	bh=ZjKrxyOqozoGabv+vmtXQMi4QvO0qrFpgpNvqNi/dzQ=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=OapVr4i/JPTAMdfpewA477m63t6d/IqkLhzPgOR2AALTp2dHJflgwW1AvQa6zYp62oy95ddwhudGbWwg6eQPo3zdDZDGeePFgrXmmQq0ZwPUyI5pAZtYw6kKtIRnRzoA/ekzq8oFxkJ3PpfrRe4sA+NdP3mdH8HfyGy1Lf6OBys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Uw9V5Rks; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=690/5mNq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 08 Aug 2024 15:21:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723130507;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=RufXN+h3k32UhBLiBxP7Fq2VxEHTGofOtYYZC44mn98=;
-	b=Uw9V5Rks7Bsqu2pRjAeoR/LnpokiQ2A/oIHiIgC3g6c++A+IP9swa5EazpkO+oQ9Dq1RfP
-	wkiSVj+ImD9i2Ca6nZftvmvkNGFyqFZdzfl9jUvNKhuB3zv/DQ3iYlGR0bMSv3QigGit2h
-	f+Jwo28Ry4eSVcN2n0oiOJ8JTJ1dRFszKhdTc6aTP9XvZCvSVXu82MpFwz5bJYU7LHCngG
-	kG3g1jLSAsCfB3q2MATaJAFcn7sDTDjx9Y2Mh631lNglf5leLhS17Pq5ByasaOg7ql40sh
-	2KDNQMqdX8bK80+P/bewHiyFIfQEqapb7n8YoZReAPukQs9Bmud4h3L/4mQx9A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723130507;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=RufXN+h3k32UhBLiBxP7Fq2VxEHTGofOtYYZC44mn98=;
-	b=690/5mNqsgCgi5lzES4PG6mfE8Vkw22v0RJBf+rRAAvqSZNAyfuxHRVqATCCH6/exOksaw
-	7c1sOg9oG+Q6EqCg==
-From: tip-bot2 for Marek =?utf-8?q?Beh=C3=BAn?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/armada-370-xp: Drop IPI_DOORBELL_START and
- rename IPI_DOORBELL_END
-Cc: kabel@kernel.org, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
+	s=arc-20240116; t=1723130586; c=relaxed/simple;
+	bh=7SAacujhggrjPBtwCORSjOPvueoog2lNLmRVvAGCVx4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gT0YD5Xrrm3h59PETQelkwrD+mEugEUCGe/Sb55SiFW+DVP+0KfmYtI9jEueQoMpSiNeY3poOiSjkbQrcc3FdZCl+WhZhIMyWwIa+4l99cnIkR2KJXiizR+uxCFpy9QehNmTYfNCphQUEUs4mUR7Js+CC8glSIt5YGHk9J/xYM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39b3c9fdbb6so12280975ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:23:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723130584; x=1723735384;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NIqCPdy0DJClvcPKZ+cGoQ4/v++pwQRgmeU5SOemesU=;
+        b=MSne5fGvE4oY1kyBW5xCPArym5Fn3E0fg0LtVVY47+d/AxGFhWnzCgdtxZ6mw/jwax
+         +b8gTivR2k/iqQfk6dZwEgRLRPcaE4jt54Kj/i/GB2Uyhyjhc/5GuzyYRF3KkeAnmAbB
+         smceiYFQIBzpfy0XS8dQX162nyZkC7Zq1F1cBiy/IVIWe1Xm/5NdSthzTzt72Xleh6Na
+         nihR0UIcBlSvMAyRGuM7+HCfUtkyBiDwuijL1lVkbt1GWtm5WwftQ7KS4Ty0z9+fPVjB
+         Kdt6hBQ0D96MvyRWXhQjraDpJbb2UJOuEvZswyLFDtZFR5p9uUItIoqGOwspLx6C64Vz
+         UR0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUdM/rrlPYEdNETkedVV2x1jwGce5iPKAbzQ0zSNs7iwsrVN1nU6m5rEg2LStBTpmJlt3sR5ne8lI7Z8zLJCdAnya4ZmFT05BCT567z
+X-Gm-Message-State: AOJu0YzTkzRJPqm83r/TjiBWfP3m/fFLaSSkCO9RWm3QzgDQF3xMTTu7
+	xP2knvKgsIsVjKsw9gc8e86vySQ+prXv6rgbyteNkC/BImaz9/b61POb6gn61ycFkjbXIdpmmlN
+	YfVxebkcivCCKQgDuxQ6bTyI/agx/GlvrzfPE6um9QLktfd1MYf9857M=
+X-Google-Smtp-Source: AGHT+IGhdKynriJiJQbA2xk6ko6TkdGNlUQYBhv/JcQmLWaD2P5SJFq62r/iEFQmJ0B9F2ugsUv+OvHvtj5981uS6yptm9QiEAXS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172313050690.2215.69881915655707659.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1e0b:b0:380:f12f:30de with SMTP id
+ e9e14a558f8ab-39b5ec80112mr1806875ab.2.1723130584339; Thu, 08 Aug 2024
+ 08:23:04 -0700 (PDT)
+Date: Thu, 08 Aug 2024 08:23:04 -0700
+In-Reply-To: <tencent_1609A06ED7AEFD4C9827C7C6D352D4866106@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000061aafe061f2d9a4d@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the irq/core branch of tip:
+Hello,
 
-Commit-ID:     3431392d5e8a7d420c06048260d521c1dd08e931
-Gitweb:        https://git.kernel.org/tip/3431392d5e8a7d420c06048260d521c1dd0=
-8e931
-Author:        Marek Beh=C3=BAn <kabel@kernel.org>
-AuthorDate:    Wed, 07 Aug 2024 18:40:53 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 08 Aug 2024 17:15:00 +02:00
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in v9fs_begin_writeback
 
-irqchip/armada-370-xp: Drop IPI_DOORBELL_START and rename IPI_DOORBELL_END
+------------[ cut here ]------------
+folio expected an open fid inode->i_ino=1901336
+WARNING: CPU: 3 PID: 1109 at fs/9p/vfs_addr.c:40 v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
+Modules linked in:
+CPU: 3 UID: 0 PID: 1109 Comm: kworker/u32:8 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: writeback wb_workfn (flush-9p-18)
+RIP: 0010:v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
+Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7a 48 8b 73 40 48 c7 c7 a0 9b 8e 8b e8 35 4b 0d fe 90 <0f> 0b 90 90 eb 80 e8 19 2c a8 fe e9 6f ff ff ff e8 7f 2b a8 fe e9
+RSP: 0018:ffffc90005a9f480 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff8880327b26a0 RCX: ffffffff814cc379
+RDX: ffff88802291c880 RSI: ffffffff814cc386 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: ffff8880327b26a0
+R13: dffffc0000000000 R14: ffffc90005a9f840 R15: ffff88801bbdf358
+FS:  0000000000000000(0000) GS:ffff88806b300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020001000 CR3: 00000000247e0000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ netfs_writepages+0x656/0xde0 fs/netfs/write_issue.c:534
+ do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
+ __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
+ writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
+ wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
+ wb_do_writeback fs/fs-writeback.c:2274 [inline]
+ wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-Drop IPI_DOORBELL_START since it is not used and rename IPI_DOORBELL_END
-to IPI_DOORBELL_NR.
 
-Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested on:
 
----
- drivers/irqchip/irq-armada-370-xp.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=136a5b6d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=123eb723980000
 
-diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada=
--370-xp.c
-index b11612a..9a431d0 100644
---- a/drivers/irqchip/irq-armada-370-xp.c
-+++ b/drivers/irqchip/irq-armada-370-xp.c
-@@ -136,8 +136,7 @@
- #define MPIC_MAX_PER_CPU_IRQS			28
-=20
- /* IPI and MSI interrupt definitions for IPI platforms */
--#define IPI_DOORBELL_START			0
--#define IPI_DOORBELL_END			8
-+#define IPI_DOORBELL_NR				8
- #define IPI_DOORBELL_MASK			GENMASK(7, 0)
- #define PCI_MSI_DOORBELL_START			16
- #define PCI_MSI_DOORBELL_NR			16
-@@ -452,7 +451,7 @@ static const struct irq_domain_ops mpic_ipi_domain_ops =
-=3D {
-=20
- static void mpic_ipi_resume(void)
- {
--	for (irq_hw_number_t i =3D 0; i < IPI_DOORBELL_END; i++) {
-+	for (irq_hw_number_t i =3D 0; i < IPI_DOORBELL_NR; i++) {
- 		unsigned int virq =3D irq_find_mapping(mpic_ipi_domain, i);
- 		struct irq_data *d;
-=20
-@@ -468,17 +467,17 @@ static __init int mpic_ipi_init(struct device_node *nod=
-e)
- {
- 	int base_ipi;
-=20
--	mpic_ipi_domain =3D irq_domain_create_linear(of_node_to_fwnode(node), IPI_D=
-OORBELL_END,
-+	mpic_ipi_domain =3D irq_domain_create_linear(of_node_to_fwnode(node), IPI_D=
-OORBELL_NR,
- 						   &mpic_ipi_domain_ops, NULL);
- 	if (WARN_ON(!mpic_ipi_domain))
- 		return -ENOMEM;
-=20
- 	irq_domain_update_bus_token(mpic_ipi_domain, DOMAIN_BUS_IPI);
--	base_ipi =3D irq_domain_alloc_irqs(mpic_ipi_domain, IPI_DOORBELL_END, NUMA_=
-NO_NODE, NULL);
-+	base_ipi =3D irq_domain_alloc_irqs(mpic_ipi_domain, IPI_DOORBELL_NR, NUMA_N=
-O_NODE, NULL);
- 	if (WARN_ON(!base_ipi))
- 		return -ENOMEM;
-=20
--	set_smp_ipi_range(base_ipi, IPI_DOORBELL_END);
-+	set_smp_ipi_range(base_ipi, IPI_DOORBELL_NR);
-=20
- 	return 0;
- }
-@@ -627,7 +626,7 @@ static void mpic_handle_ipi_irq(void)
- 	cause =3D readl_relaxed(per_cpu_int_base + MPIC_IN_DRBEL_CAUSE);
- 	cause &=3D IPI_DOORBELL_MASK;
-=20
--	for_each_set_bit(i, &cause, IPI_DOORBELL_END)
-+	for_each_set_bit(i, &cause, IPI_DOORBELL_NR)
- 		generic_handle_domain_irq(mpic_ipi_domain, i);
- }
- #else
 
