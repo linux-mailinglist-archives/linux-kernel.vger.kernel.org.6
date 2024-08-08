@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-279790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4710F94C1EC
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A548094C1ED
 	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E8B2B270A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:51:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B4AD288C0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90A9190041;
-	Thu,  8 Aug 2024 15:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8C01917ED;
+	Thu,  8 Aug 2024 15:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ttoMxmHo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JoYelczR"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NTMLOTzz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5IxsyfeY"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E8A18FC86;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A17618FC99;
 	Thu,  8 Aug 2024 15:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723132157; cv=none; b=ncb8FxfiNbKBQaQLHzWP6VFiMOJsGKPHf4C/YGjVtgzy6zcg0PdGn+CifV55tAFCZwm+Bvuva1goA3eEDx3Iur8yYMs87zOdVNT8VDEBP9CPlrJzpjNOl4QTCJoEb9GrN3kiDUQEPIMHtGLuGzMtsfCTGXz7Etd0Z5+289RT+Xo=
+	t=1723132157; cv=none; b=mL2GhZaQroKEtH+j10sDNykRDdd64KMwahLBDUtWPTkETzfYf314sHx0jXUAJ2oD/H8G3NYHfkCt51oNY+TonJ1Kdrob5TN26e6H+bZ0cAxoG1N8SUtm4XiRaUV2H91agSi07RcqaOZPGC17lMAiaem9TC0i3TYnOdPvOlgfJ/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723132157; c=relaxed/simple;
-	bh=pDXHpiIZSHT2GeHSGB76DDJ5I/qjtZLZ1YQoN3xvYHM=;
+	bh=fkjY3LBNweGNGEY95xeYnpit0RWxJ317N6XetQDQmBs=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=NAkOa0yaVpxKDTH1jUzidy/0WsgbIcD0ACbBZ6iMoNRNyMOqKSUffwnbvCiv66BP0/3C49RgzHz/Z6+k/uWodA9TKIkeGweYZK+MySiiKDqNZi6z3+3WngYpkTMjUuCdKmXR5O61yMfMg1nc2oh/T8WRWxFwtP//KSb71znMhF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ttoMxmHo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JoYelczR; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=cvbqLZedf8EZSzH5Onl/00tmf7Djk0C45hxHDtNfKC64WVr7cl/eUJbEwCJedfS8dzfSGp8lTXtgCO8Wpgurtrq3X9EKbw4ep1EAGEmWO6wVshys4314UfanM1G13PKQ04FHEi6wUTyi7Qp+2Rl4kz4z6/Q82marPf/5VT1a/Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NTMLOTzz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5IxsyfeY; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 08 Aug 2024 15:49:13 -0000
+Date: Thu, 08 Aug 2024 15:49:14 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1723132154;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=46fjkmDd5kPFCZ0Yl2XBMT1VOdhgqgZ2YsfCzdfd4qw=;
-	b=ttoMxmHokc49R7goTRRU7cMDrwygnV39vMgWu/4q9BU9k6xSDd17osW09TB2yNRJRDH7u+
-	+vdnQSl9oKBS8Q5mKskFzpSIZogF2K3KzmyFtWXGVFr0tPsqofKVl98Ljh+EQtZa/sn3xi
-	wXw5Cboiumn+wd5rVEnvmFU3fqK/Sv600fVlTpqP5QwgNVf8nVkNDMkZqoD9aNqfy6k/9t
-	WpCGFVxVuMG9Lb2CJmHWXUI5ZRlZ2Pz6+gBZZ5tJ4iBjwiaRMebc5DqSlct9CPAvwqBzpv
-	UudvyTdTG3jZdeAvpeLzTFCHqxL5O3X/2Tb1fAmcU4KXmM0eQd4LzZ1a0Lsq2A==
+	bh=G6k7i/Y3LWtbpS6ERnU1JKVhQNbSPrtA3f0nnvlHY1k=;
+	b=NTMLOTzzyIYPz6iVukzXTDkZ7FW0pA8GKGPPgQDa14uhuMx1b5aK2dBXdZr1SSYzv9k0U3
+	qywNPopcThk1Chmkojev/dFD52EFF+GSi40G+QoZow8EI1veUoDTPtlYn/ahX0c6GmJlKQ
+	SCDBtK+aREna140YfQOlbjciljZUNgQ2CFrwJtLfBCj9Uy+mkpDPGrc3RWacnQOjS1O3MO
+	JH6obK+pAVO2TwDlsoPjev8xSM7XmXeUvJAV3mvMvEYxUoBfR0N1yMNEXqAj/s6/ajXFGJ
+	damflwcDxcabZlxdWkBGfCVMLmkFsR7IKHLDw9hUhRmisG4F0ZbQZoQRXWX2kQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1723132154;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,30 +52,29 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=46fjkmDd5kPFCZ0Yl2XBMT1VOdhgqgZ2YsfCzdfd4qw=;
-	b=JoYelczRqU3xT7JNo88nv28zNww5lRpYxq1I/1rh4hfBpVZTRSzAlHD8Rx5tttn1TJD1JI
-	KfRb5x5H6FCKv6Aw==
+	bh=G6k7i/Y3LWtbpS6ERnU1JKVhQNbSPrtA3f0nnvlHY1k=;
+	b=5IxsyfeYMZL3DIB5gfmPQkFnEVLB8PMA8IkfqnJbIasrPdxgoKYNQDkU0tUF/TgMyxTwKH
+	61Xaaou/lpstW9Bg==
 From: "tip-bot2 for Dmitry Vyukov" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/build] x86: Ignore stack unwinding in KCOV
+Subject: [tip: x86/build] module: Fix KCOV-ignored file name
 Cc: Dmitry Vyukov <dvyukov@google.com>, Thomas Gleixner <tglx@linutronix.de>,
  Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+ Andrey Konovalov <andreyknvl@gmail.com>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
 In-Reply-To:
- <eaf54b8634970b73552dcd38bf9be6ef55238c10.1718092070.git.dvyukov@google.com>
+ <bc0cf790b4839c5e38e2fafc64271f620568a39e.1718092070.git.dvyukov@google.com>
 References:
- <eaf54b8634970b73552dcd38bf9be6ef55238c10.1718092070.git.dvyukov@google.com>
+ <bc0cf790b4839c5e38e2fafc64271f620568a39e.1718092070.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172313215346.2215.17061867082349895480.tip-bot2@tip-bot2>
+Message-ID: <172313215400.2215.12012900541594209721.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -85,49 +84,42 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/build branch of tip:
 
-Commit-ID:     ae94b263f5f69c180347e795fbefa051b65aacc3
-Gitweb:        https://git.kernel.org/tip/ae94b263f5f69c180347e795fbefa051b65aacc3
+Commit-ID:     f34d086fb7102fec895fd58b9e816b981b284c17
+Gitweb:        https://git.kernel.org/tip/f34d086fb7102fec895fd58b9e816b981b284c17
 Author:        Dmitry Vyukov <dvyukov@google.com>
-AuthorDate:    Tue, 11 Jun 2024 09:50:33 +02:00
+AuthorDate:    Tue, 11 Jun 2024 09:50:32 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Thu, 08 Aug 2024 17:36:35 +02:00
 
-x86: Ignore stack unwinding in KCOV
+module: Fix KCOV-ignored file name
 
-Stack unwinding produces large amounts of uninteresting coverage.
-It's called from KASAN kmalloc/kfree hooks, fault injection, etc.
-It's not particularly useful and is not a function of system call args.
-Ignore that code.
+module.c was renamed to main.c, but the Makefile directive was copy-pasted
+verbatim with the old file name.  Fix up the file name.
 
+Fixes: cfc1d277891e ("module: Move all into module/")
 Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Alexander Potapenko <glider@google.com>
 Reviewed-by: Marco Elver <elver@google.com>
 Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/all/eaf54b8634970b73552dcd38bf9be6ef55238c10.1718092070.git.dvyukov@google.com
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/bc0cf790b4839c5e38e2fafc64271f620568a39e.1718092070.git.dvyukov@google.com
 
 ---
- arch/x86/kernel/Makefile | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ kernel/module/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index a847180..f791898 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -35,6 +35,14 @@ KMSAN_SANITIZE_nmi.o					:= n
- # If instrumentation of the following files is enabled, boot hangs during
- # first second.
- KCOV_INSTRUMENT_head$(BITS).o				:= n
-+# These are called from save_stack_trace() on debug paths,
-+# and produce large amounts of uninteresting coverage.
-+KCOV_INSTRUMENT_stacktrace.o				:= n
-+KCOV_INSTRUMENT_dumpstack.o				:= n
-+KCOV_INSTRUMENT_dumpstack_$(BITS).o			:= n
-+KCOV_INSTRUMENT_unwind_orc.o				:= n
-+KCOV_INSTRUMENT_unwind_frame.o				:= n
-+KCOV_INSTRUMENT_unwind_guess.o				:= n
+diff --git a/kernel/module/Makefile b/kernel/module/Makefile
+index a10b2b9..50ffcc4 100644
+--- a/kernel/module/Makefile
++++ b/kernel/module/Makefile
+@@ -5,7 +5,7 @@
  
- CFLAGS_irq.o := -I $(src)/../include/asm/trace
+ # These are called from save_stack_trace() on slub debug path,
+ # and produce insane amounts of uninteresting coverage.
+-KCOV_INSTRUMENT_module.o := n
++KCOV_INSTRUMENT_main.o := n
  
+ obj-y += main.o
+ obj-y += strict_rwx.o
 
