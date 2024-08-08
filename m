@@ -1,72 +1,52 @@
-Return-Path: <linux-kernel+bounces-280061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B807994C527
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:28:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B6D94C526
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 757D41F244F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:28:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1E531C21C79
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A4D156676;
-	Thu,  8 Aug 2024 19:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8DD155A5B;
+	Thu,  8 Aug 2024 19:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MqaTnSNw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dRd1aMA+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F032433AD
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 19:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEC41494CE;
+	Thu,  8 Aug 2024 19:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723145297; cv=none; b=a+cbAu1ZmwPs0itaklYbfFz50MV+0RYxM9DnDMEmaYDv223SSo2RxYmIUGt+S45B4scmZqwtjH6UMgPDAby2rrrlX9DIU/uWHfWBrAtX47B31ruuiXhYTqsjlKXnY4ivDn8DRtdiSdnRqKzOSnmw/NMTlKU/b2+gY7AAwmy5cys=
+	t=1723145295; cv=none; b=hYHaAj3zsPtvZ4tDkIcRwMsdiyypmO7a66avWodFFi1LgusZaz8aUKpY9P7lNT95eMRwOud+yIylQFq653NpTSNgPI66dWmQzY2J7+TL0+p8N2hf0ii+W7h+YH77qwP4gY1U3ZIR8ALH4lrzzqmXd8eRNhx1l5y12+qchjudo6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723145297; c=relaxed/simple;
-	bh=n4jJYHx42+ihYMKvptonitRjvq/fNqpGn+fZGhpyzgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u/p4z1413lxPv6uDQZ2gf5J1yUeqruOEpGSE64AYysZFQkndgq4eSsqJ7GhLhWKpwEUno9LVl5DPdKvjeJalWhs0hfMer3kw6IdbiIvX2sBrJIV4yZdNTpmVQLVvcEz0A/fRs6b9KWwbm4lxuFDCcmNxhG4mREvprcCkfmlvoQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MqaTnSNw; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723145296; x=1754681296;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=n4jJYHx42+ihYMKvptonitRjvq/fNqpGn+fZGhpyzgk=;
-  b=MqaTnSNw0E3GlWGyWF43AzH2FRJKUWyQSm3+w51NjHl0RgFjvPwxahmB
-   AqLnuZ3EeW9t/3PZR66w9zQ1nacgMNVLWmzWXw3avtAA7g0DIYUvREHWv
-   mrQc4n1IoRmTviI5ul6IUDagrCjk2rfgOKm4PXV3KfrAowXgmwucjuFcx
-   eELpP/wjaZec0ZqfNPdKvFMlxp+vdANoEQjKQD1mn7XmCD6mRWyGJ61Cz
-   6ewdq6nyi500LCssflhLVZSUb06pOInp1n60KwvKQckfiVbTTWybHJYW0
-   yhqDBlp5t5a0NacW0ophUiiHcHfCp/Toz0VVGLpiAvJQrvHvKbSqrUGcF
-   w==;
-X-CSE-ConnectionGUID: F5Qm+biqS0iASGIxtWyLfw==
-X-CSE-MsgGUID: Sz+OWTm8QjiqzWYmjBeaug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="31969522"
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="31969522"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 12:28:15 -0700
-X-CSE-ConnectionGUID: BRNVP7mMQx2AZg9NEfyX1w==
-X-CSE-MsgGUID: 0RDtKjrPQuW2OSiKxd9Dyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="62281684"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.12.215])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 12:28:14 -0700
-Date: Thu, 8 Aug 2024 12:28:10 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Zhihao Cheng <chengzhihao1@huawei.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, hch@lst.de, ira.weiny@intel.com,
-	dlemoal@kernel.org, hare@suse.de, axboe@kernel.dk,
-	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvdimm/pmem: Set dax flag for all 'PFN_MAP' cases
-Message-ID: <ZrUcSihtUWO2FrI3@aschofie-mobl2>
-References: <20240731122530.3334451-1-chengzhihao1@huawei.com>
+	s=arc-20240116; t=1723145295; c=relaxed/simple;
+	bh=J1B7g3T24s/rR+CifUK0LhP7Vcus+05wzBpgaieP7hQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LOYola5z1d556bU18d9SAMXUxixOxEOdyutEdtn9bs/o4w3F38IwOW0vFsphkfIGBOgrJXCnH71PPRgYPpRN6U7UF3x3orjNz1ZdCq7+dROYBjS4sqx89WZTdwXAbX6mQrSoMyWQNiTWHm7/14gToYebXoB9dhb77N3smVD7F4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dRd1aMA+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECA10C32782;
+	Thu,  8 Aug 2024 19:28:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723145295;
+	bh=J1B7g3T24s/rR+CifUK0LhP7Vcus+05wzBpgaieP7hQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=dRd1aMA+R4MqsgfY4XbOzavsetIvh2xH4lmu2ryXVujbt0Y68pmAqEmE5AAjX3CM1
+	 NV9wEJlrfxaN2NjmNM547oNynueCgwgWftgxKhZYqaNEPYgM/IVuofaS2BcMDwquoy
+	 uC2zhOxMSKsKdombT7Ta4fvGAtiBl+ug5GnnYD/aFHfu8TNqZxcNjn3Uh1khI6gnke
+	 uJgsrq0mbdulrh92kUsak9CQQy7K+D0xdizcc6HyCTQHIDPlbYr2r0cgMBh/ZSf6+n
+	 ipBvxX+OXIJJPG9AyLHYVSTqFEPM2jSllwwBmPU3dlYXTqbtypAAHbMxC5THb2l7/f
+	 5xAGpDW+jTDwg==
+Date: Thu, 8 Aug 2024 14:28:12 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Stewart Hildebrand <stewart.hildebrand@amd.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/8] PCI: Restore resource alignment
+Message-ID: <20240808192812.GA156171@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,47 +55,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240731122530.3334451-1-chengzhihao1@huawei.com>
+In-Reply-To: <20240807151723.613742-4-stewart.hildebrand@amd.com>
 
-On Wed, Jul 31, 2024 at 08:25:30PM +0800, Zhihao Cheng wrote:
-> The dax is only supportted on pfn type pmem devices since commit
-> f467fee48da4 ("block: move the dax flag to queue_limits"), fix it
-> by adding dax flag setting for the missed case.
+On Wed, Aug 07, 2024 at 11:17:12AM -0400, Stewart Hildebrand wrote:
+> Devices with alignment specified will lose their alignment in cases when
+> the bridge resources have been released, e.g. due to insufficient bridge
+> window size. Restore the alignment.
 
-s/supportted/supported
+I guess this fixes a problem when the user has specified
+"pci=resource_alignment=..." and we've decided to release and
+reallocate a bridge window?  Just looking for a bit more concrete
+description of what this problem would look like to a user.
 
-How about adding failure messages like this:
-
-Trying to mount DAX filesystem fails with this error:
-mount: : wrong fs type, bad option, bad superblock on /dev/pmem7, missing codepage or helper program, or other error.
-       dmesg(1) may have more information after failed mount system call.
-
-dmesg: EXT4-fs (pmem7): DAX unsupported by block device.
-
-
-Tested-by: Alison Schofield <alison.schofield@intel.com>
-
-> 
-> Fixes: f467fee48da4 ("block: move the dax flag to queue_limits")
-> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
 > ---
->  drivers/nvdimm/pmem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v2->v3:
+> * no change
 > 
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 1ae8b2351654..210fb77f51ba 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -498,7 +498,7 @@ static int pmem_attach_disk(struct device *dev,
+> v1->v2:
+> * capitalize subject text
+> ---
+>  drivers/pci/setup-bus.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index 23082bc0ca37..ab7510ce6917 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -1594,6 +1594,23 @@ static void __pci_bridge_assign_resources(const struct pci_dev *bridge,
 >  	}
->  	if (fua)
->  		lim.features |= BLK_FEAT_FUA;
-> -	if (is_nd_pfn(dev))
-> +	if (is_nd_pfn(dev) || pmem_should_map_pages(dev))
->  		lim.features |= BLK_FEAT_DAX;
+>  }
 >  
->  	if (!devm_request_mem_region(dev, res->start, resource_size(res),
+> +static void restore_child_resource_alignment(struct pci_bus *bus)
+> +{
+> +	struct pci_dev *dev;
+> +
+> +	list_for_each_entry(dev, &bus->devices, bus_list) {
+> +		struct pci_bus *b;
+> +
+> +		pci_reassigndev_resource_alignment(dev);
+> +
+> +		b = dev->subordinate;
+> +		if (!b)
+> +			continue;
+> +
+> +		restore_child_resource_alignment(b);
+> +	}
+> +}
+> +
+>  #define PCI_RES_TYPE_MASK \
+>  	(IORESOURCE_IO | IORESOURCE_MEM | IORESOURCE_PREFETCH |\
+>  	 IORESOURCE_MEM_64)
+> @@ -1648,6 +1665,8 @@ static void pci_bridge_release_resources(struct pci_bus *bus,
+>  		r->start = 0;
+>  		r->flags = 0;
+>  
+> +		restore_child_resource_alignment(bus);
+> +
+>  		/* Avoiding touch the one without PREF */
+>  		if (type & IORESOURCE_PREFETCH)
+>  			type = IORESOURCE_PREFETCH;
 > -- 
-> 2.39.2
+> 2.46.0
 > 
 
