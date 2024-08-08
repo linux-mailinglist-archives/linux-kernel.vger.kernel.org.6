@@ -1,126 +1,195 @@
-Return-Path: <linux-kernel+bounces-279094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB19D94B8DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:19:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1916A94B8EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 122EE1F20FE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01A728A4BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D89B189914;
-	Thu,  8 Aug 2024 08:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62F6189511;
+	Thu,  8 Aug 2024 08:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jc1TkavT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qZjuODV4"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C24E139CE9;
-	Thu,  8 Aug 2024 08:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEA2145336;
+	Thu,  8 Aug 2024 08:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723105122; cv=none; b=r2Sc1BAQ2sdfm7x56R3lZ8Pw18wV2ppOa+JJqx7Ix//YySXCHJT59Q48UUb4NaWMxJ6I73LevuKLLWDn+TYg8M8NtlGFLhgYRKfrwJ+wmDmYUpCmzCf1y/ccFe9nei2DkjqeLOIaAT6LiGDGvWY1ujL9xdPj9H60U+EZHCi/L4U=
+	t=1723105281; cv=none; b=aevliKjfuxhUhBCOZVPv+lSlr7hIXIaMJDYiFDnaeJG70/CBN+6xBLi88DCQwskoioB3kcDS3dIY7SLZs+dvLOYKhvJU497oltHdGJwiMRXrSEKOev7ySNDIutJWNnBtFFTe8XSyZlWp/iVV/v/SdZJOzIpEiWrHwdVVP9/g4Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723105122; c=relaxed/simple;
-	bh=BR4CYQvHKo7S4XehLC4CADBELA11Nm62X+WdUtFf9n4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/EXyhZHzeh//IruO0XLJOhbi0m6ubi7jjKjvbAuDmBSSnBkob5yVkc5fVLP14wz1b1pTm0maLxr9DSM+NXnYG9CW7H5yTAqvuBLCBgAuXyvXduq34bq6robDQT12j/6C9I1UsXFSTaKuF86p1Q/PGDfHeAiJR0mPL00eDKMd2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jc1TkavT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F67FC32782;
-	Thu,  8 Aug 2024 08:18:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723105122;
-	bh=BR4CYQvHKo7S4XehLC4CADBELA11Nm62X+WdUtFf9n4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jc1TkavT0yEwNQChojDNn6AzGcsiESQp68rBPCuDzS3h7cmm5mLAyY/voHLXit3ob
-	 YkYUfwcDxzH57mFobw6RuiTbcQDB7A/Dj18LPpDs/7TM+IzPBk1iMMJa8aGs8NIabQ
-	 rLTZBdmlTgnZinuKZ6W70lM90r+vHQruMzAhCDUOcQPyLqDx4HgggSMUhP/irHTGzK
-	 XLQkATMF3M9dx/Iw7RIjCYaaU8Opo84nZlHK4TCSxzmpVukJESm7/IP13d0V+6AyDb
-	 xJw618pEuua6MmBDeXs0tcK8qgBBc2CVlYuyDwUg1htX4TnGHXSl1aUscA1F2nWxgC
-	 BiJGXD7RqbUwQ==
-Date: Thu, 8 Aug 2024 09:18:37 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 38/40] kselftest/arm64: Add a GCS stress test
-Message-ID: <ZrR_XZ3JCCIrZUIo@finisterre.sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-38-699e2bd2190b@kernel.org>
- <877ccsdkjp.fsf@linaro.org>
- <ZrP-9gHsvVHr2Y5B@finisterre.sirena.org.uk>
- <87y157cz2h.fsf@linaro.org>
+	s=arc-20240116; t=1723105281; c=relaxed/simple;
+	bh=zW4gXRl9j7t4LD6ZiJAERuv8KT7u29VEcU2dhh5LRqY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NbTZu3HnCysoJAqq3+1gFNW/gkeW9TBaZYLycxji/s2LxHwyPNeC4xo0xLjVghBfTBALe01S2frK/nKUm06OpVAYUKhGP7TjMQHG+MAwuafpb1VvG5h6aXCenM4IDEhMuEsI/VAVJXrncRl+u9ycX2XqPWWwnDHbk21d7BfAyJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qZjuODV4; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4788KWe7060032;
+	Thu, 8 Aug 2024 03:20:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723105232;
+	bh=/1xyuDyfSwA12wuJAyb3Q+WDU/YmPBcJ/cd3RNWmHg8=;
+	h=From:To:CC:Subject:Date;
+	b=qZjuODV4MrPzS2PPjJ0bt++qQ4bBm5GcvnSEf28fwnJemnl2FLCXfXKrRJUNjZH8G
+	 z0hRlPUT70KVk0fkQjO/d05z3+aUIzfcKNDffQEYDklLgyrZWyDJZ5Y1khXL65eqP2
+	 xxw4jalbayABc0XlcugfKj9yaPVl8dZ9ifXZdomI=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4788KWqS113373
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 8 Aug 2024 03:20:32 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
+ Aug 2024 03:20:31 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 8 Aug 2024 03:20:31 -0500
+Received: from localhost (a0498981-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.216])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4788KVeP092084;
+	Thu, 8 Aug 2024 03:20:31 -0500
+From: Bhavya Kapoor <b-kapoor@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <b-kapoor@ti.com>, <jm@ti.com>, <vigneshr@ti.com>, <nm@ti.com>
+Subject: [RESEND PATCH] arm64: dts: ti: k3-j722s-evm: Add support for multiple CAN instances
+Date: Thu, 8 Aug 2024 13:50:30 +0530
+Message-ID: <20240808082030.2812216-1-b-kapoor@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2xjwlae8dVoFu1hA"
-Content-Disposition: inline
-In-Reply-To: <87y157cz2h.fsf@linaro.org>
-X-Cookie: Your love life will be... interesting.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+CAN instances 0 and 1 in the mcu domain and 0 in the main domain are
+brought on the evm through headers J5, J8 and J10 respectively. Thus,
+add their respective transceiver's 0, 1 and 2 dt nodes as well as
+add the required pinmux to add support for these CAN instances.
 
---2xjwlae8dVoFu1hA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+Reviewed-by: Judith Mendez <jm@ti.com>
+---
 
-On Thu, Aug 08, 2024 at 03:23:50AM -0300, Thiago Jung Bauermann wrote:
+Rebased to next-20240808
 
-> Thank you for the pointer. It turned out that I accidentally ran the
-> selftests binaries from the v9 version instead of the v10 version, and
-> the gcs-stress-thread binary failed because it was using the old value
-> for PR_SET_SHADOW_STACK_STATUS.
->=20
-> Using the v10 version of the selftests the gcs-stress test passes. Sorry
-> for the false alarm.
->=20
-> Tested-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+Resend of - https://lore.kernel.org/all/d1d7f693-1dd6-4aea-bdbd-4385dc35d462@ti.com/
 
-Ah, that's a relief thanks!
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 74 +++++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
---2xjwlae8dVoFu1hA
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+index dd3b5f7039d7..24e9f2ea509b 100644
+--- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+@@ -162,10 +162,39 @@ sound_master: simple-audio-card,codec {
+ 			clocks = <&audio_refclk1>;
+ 		};
+ 	};
++
++	transceiver0: can-phy0 {
++		compatible = "ti,tcan1042";
++		#phy-cells = <0>;
++		max-bitrate = <5000000>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&mcu_mcan0_gpio_pins_default>;
++		standby-gpios = <&mcu_gpio0 12 GPIO_ACTIVE_HIGH>;
++	};
++
++	transceiver1: can-phy1 {
++		compatible = "ti,tcan1042";
++		#phy-cells = <0>;
++		max-bitrate = <5000000>;
++	};
++
++	transceiver2: can-phy2 {
++		compatible = "ti,tcan1042";
++		#phy-cells = <0>;
++		max-bitrate = <5000000>;
++		standby-gpios = <&exp1 17 GPIO_ACTIVE_HIGH>;
++	};
+ };
+ 
+ &main_pmx0 {
+ 
++	main_mcan0_pins_default: main-mcan0-default-pins {
++		pinctrl-single,pins = <
++			J722S_IOPAD(0x1dc, PIN_INPUT, 0) /* (C22) MCAN0_RX */
++			J722S_IOPAD(0x1d8, PIN_OUTPUT, 0) /*(D22) MCAN0_TX */
++		>;
++	};
++
+ 	main_i2c0_pins_default: main-i2c0-default-pins {
+ 		pinctrl-single,pins = <
+ 			J722S_IOPAD(0x01e0, PIN_INPUT_PULLUP, 0) /* (D23) I2C0_SCL */
+@@ -303,6 +332,26 @@ &main_uart0 {
+ 
+ &mcu_pmx0 {
+ 
++	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
++		pinctrl-single,pins = <
++			J722S_MCU_IOPAD(0x038, PIN_INPUT, 0) /* (D8) MCU_MCAN0_RX */
++			J722S_MCU_IOPAD(0x034, PIN_OUTPUT, 0) /* (B2) MCU_MCAN0_TX */
++		>;
++	};
++
++	mcu_mcan1_pins_default: mcu-mcan1-default-pins {
++		pinctrl-single,pins = <
++			J722S_MCU_IOPAD(0x040, PIN_INPUT, 0) /* (B1) MCU_MCAN1_RX */
++			J722S_MCU_IOPAD(0x03C, PIN_OUTPUT, 0) /*(C1) MCU_MCAN1_TX */
++		>;
++	};
++
++	mcu_mcan0_gpio_pins_default: mcu-mcan0-gpio-default-pins {
++		pinctrl-single,pins = <
++			J722S_MCU_IOPAD(0x0030, PIN_OUTPUT, 7) /* (C3) MCU_GPIO0_12 */
++		>;
++	};
++
+ 	wkup_uart0_pins_default: wkup-uart0-default-pins {
+ 		pinctrl-single,pins = <
+ 			J722S_MCU_IOPAD(0x02c, PIN_INPUT, 0)	/* (C7) WKUP_UART0_CTSn */
+@@ -566,3 +615,28 @@ &mcasp1 {
+ 	       0 0 0 0
+ 	>;
+ };
++
++&mcu_mcan0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&mcu_mcan0_pins_default>;
++	phys = <&transceiver0>;
++};
++
++&mcu_mcan1 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&mcu_mcan1_pins_default>;
++	phys = <&transceiver1>;
++};
++
++&main_mcan0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&main_mcan0_pins_default>;
++	phys = <&transceiver2>;
++};
++
++&mcu_gpio0 {
++	status = "okay";
++};
+-- 
+2.34.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma0f1wACgkQJNaLcl1U
-h9AAlAf3QAXjvC2gygXbsaueHos4q0nKMAX2bdp+mK3zjoJgg9+GqHPoEFx3Efja
-cj5Ct4enLdN36SwqP5OU/agevzvPdKsT2CstNckW/VhAbkgbEi4F8w62q9q2NBO2
-gyXPx0aWtgmzptzEPgrEl8+PeL/kyPB9DVnbYGfMI5X2xeMgn4XRyZYjLYuuBWAR
-2BlS1DNybUyfO+005zhZnrjlbTN56woklGF9gOfbNT8HoKpWh/VcX9giGP9v/EFi
-e+Qpos4Bb9+b3JKeJo2EFjdgvborCnQQJxvGSEMp7QB9wrOs0QsrrhD+Jvs6rmcg
-J0pHE5R3OyGMXNNpg2MHtg9o1FPh
-=uK/+
------END PGP SIGNATURE-----
-
---2xjwlae8dVoFu1hA--
 
