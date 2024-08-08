@@ -1,125 +1,152 @@
-Return-Path: <linux-kernel+bounces-278744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE0194B437
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:28:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0166194B43C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0861C215A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:28:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64DF281224
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB6920E6;
-	Thu,  8 Aug 2024 00:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA5133EC;
+	Thu,  8 Aug 2024 00:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="GwmrmzP6"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VExDZ47h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340162114
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 00:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2A81373
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 00:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723076872; cv=none; b=l2kP0MwZmK/6eJYHXPm1oYlykDVqjDt150zqoahBl5nVO6f8Hsbgb1tpCFp9PdiPiWxm1Ay4o3XkNcOShCX0BI8ufl+srcbzF7wJvE4DazpEC/UJt3ltuuJTwHrWeB1u3tTSYGH/wnxSNW16agSDKpzHRRTx4kEK2zRVrMb1X4E=
+	t=1723077024; cv=none; b=Ci4pouusmDBjoisAZJEJgwVYgBFu5/6g+vJhdkLZAP1h0WdUiVu/NEvHqti+jfS7hk/rwDhZmBFVtrxPTs8UkosKJ7RB7uNeuMv/GOIxynHnLO0nLirQuCMFs380+OQr+sOaIANE+0xQD7Vsi8VRbQuNRcCBPLc+ITpC4ywN2ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723076872; c=relaxed/simple;
-	bh=DQwLqUHrTK1JlrmD8XgoTRvGDFVdZClo7VKPzlh1pR4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dMqhtCD2YDZFXqHOxOzFLnJH60C4zn4CYFL8MtFLeHBssdJe2tV9v5LTPfp4B9qvhvzOWX4NDGbQWGo1fZl/Bd6qfzwxw67V6bDlAv7Yj419yZsO2guqMa/j7b3l49jILA52wPXTXfAWg/GrvCqpToFTJcm9uU8nOEQo1w6OkAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=GwmrmzP6; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fc611a0f8cso4437495ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 17:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723076869; x=1723681669; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CMCnmdcZgvzSJd0o4YZGau9nL4J4n+yPR6pjHiIEuKs=;
-        b=GwmrmzP6UXGSLaB3jMnO5GqZrVpv0eThXUFsrvpuGV/1McqUQVB0VETd05WtdCFQeZ
-         Y+xN8lnCveomp4NyImWFG9UiUpCp0fJI7YPwg2+cbRiMWoqQ7xezBLUysBOKdSPdvR4o
-         swq2jtAdbtdJDvenHwZtrsMRMOcmQsAsq1EjDIjyPYebhHG34ZoYBJZoPGUvU43q6Y8X
-         7r9BLdBTMVXoUjpJoi2/DSsw5VWiWdQnM7et8EAnz8rcrWj+hTSEF15+93SJDVL4bijB
-         N/xL4uWVWs6NYoeTYijbqb3gHxUd64bUDhEd4j/7KHRyVwenc5b6YdmZdX3toA8fMeCI
-         urWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723076869; x=1723681669;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CMCnmdcZgvzSJd0o4YZGau9nL4J4n+yPR6pjHiIEuKs=;
-        b=wFYO/mC4DhoVn33zFiQExjweiyjr8rimzEGdOUy1YkO3/PkyjdBy8FCfJTZfV9r52O
-         F3FNr9Y0X0K29ywwUhNG9JULxp8XAK8WYOvGPvJ7AKc56X0q7LhdekVhY/vGwtHBd10z
-         jyCiLpRXYrAzf6+K9Y/s9tPbPrdPmS8UN5q20RMa3YfxQGGzVEVP7to2STaqiE4X+h8B
-         hf7V8HsXzmobrbVFtHEWiM75XLuuFRErbAVMB/v4Va51MVdQDI4lcuzEjZrST7wQnBO4
-         l5vsFAvX6umPdBiiQ1wOSnXz5gDLN0y3K/NmLkCDSHE9xWC3pQ03br38ADlLqPTzNy3m
-         aPxw==
-X-Forwarded-Encrypted: i=1; AJvYcCW753ppv4KkLkgQO9ibWHB8atqY0NCxFURSOzt4M5GPUilLltd+KVEqV8N3txvJwPsO2tz6x/v/kyWP1MJSggvfmtlFXlwqG5KrU5rW
-X-Gm-Message-State: AOJu0YwUquH4NN140I6oxfWjAV+bBbaz7o5fTUhT2DGFA+xhUpJC1ojC
-	3fjJ49UDjPDo759uO765hvTmq+aCGthhgYSQpHhfwXkay+lSzgjd5QHS2JnDruzdM87olzvcQNe
-	m
-X-Google-Smtp-Source: AGHT+IF6WhApaAmTvQg5R+K6rlrg18SJbE+TpPymw85NtHx9975p3ORyi+6PJGAGtq5rUai5pIM1Kw==
-X-Received: by 2002:a17:903:1c5:b0:1fb:3d7:1d01 with SMTP id d9443c01a7336-200952e51bdmr3299615ad.59.1723076868899;
-        Wed, 07 Aug 2024 17:27:48 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f2172esm112242445ad.5.2024.08.07.17.27.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 17:27:48 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Wed, 07 Aug 2024 17:27:42 -0700
-Subject: [PATCH] riscv: Make riscv_isa_vendor_ext_andes array static
+	s=arc-20240116; t=1723077024; c=relaxed/simple;
+	bh=iiCNY2QBUWUwSqZlkrQQ1HPqESG+wrg91n95gisc08w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gZ22CHmc7zzpgJk46kHJP/IS96SVKEJGyDgye19I7Fq0DQDwfJvbyC4iZMtMGPB+Q1V/nSUYO58gGEemf0oCyP2tVN5PQ11JL2w3qobB1+zk4VFqHrrAdCBBRN6EJrD4eja8E5Rywkkty26tKsbp2hhyMOBt/DFSmkghPt2CALQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VExDZ47h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94177C4AF15
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 00:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723077023;
+	bh=iiCNY2QBUWUwSqZlkrQQ1HPqESG+wrg91n95gisc08w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VExDZ47hQhy7R7P7NHkzyiRk5LjyI4T1ztsMW3eNX943dLAQs9i0xPvSOs72TIccz
+	 wxrKDVpCs9jw6fEDe3T0jdQhXR86M2827zTmuIUflTUUg+bA5AzfPQ+K9waua9/jS3
+	 J/sl3Cfp2mNaOK83rfxUjRgQ++aYYzbwvbHaxevaow0JsinihFBudy/r4sHrZPmSX/
+	 RC5cMPAdDIA+jHlcsj873wOrqCAd2CMFI+EUksCe9/5bZPllIVtdgcjD2HCIZKUiDm
+	 /4dNTMG2xknSVcHTZqZsYDME3OQ1oGRAvzRCY0x9GA156bfsytXnmft6POPoIE08M+
+	 bN8SWZeta1LQw==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5b7b6a30454so445253a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 17:30:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVJZQIe6sZJ33HwZlBcmwhJyKFGWron3Vh+r4MQ8ZxztSFzSiL3y88hsMsvnHN+xXTlYO5LAHgCV4CMYdxPetsqsDeDhS2toK7vCz7B
+X-Gm-Message-State: AOJu0YwiWL9q86owlln0mGLNH3bd+T2fncAKXVi66VjZU4gcbvED5znZ
+	Njr7EOOSywUiiS5xYnJ+ztHAatYCqyElAVucetwp0luNDdL/zzpIh9NKIzR/cYURqIaLcuVuZpV
+	Htov/J5XWYKm5NBVxRHbG0foPMavVFg6ktXY1
+X-Google-Smtp-Source: AGHT+IE9oiF0Bgy0abRiyRY2CsX584UeKCcOeO7D/xyuQQyxUaKmgd6Rn02WdW8/ZCgsxnPB7SY6DqtvfhDfy29ORdU=
+X-Received: by 2002:a05:6402:5cd:b0:5b6:d0f1:2947 with SMTP id
+ 4fb4d7f45d1cf-5bbb234cff9mr211960a12.34.1723077021999; Wed, 07 Aug 2024
+ 17:30:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240807-make_andes_static-v1-1-b64bf4c3d941@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIAP4QtGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCwNz3dzE7NT4xLyU1OL44pLEksxk3dRkUyOTpMRUI8M0IyWgvoKi1LT
- MCrCZ0bG1tQAwN9pGYwAAAA==
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>, kernel test robot <lkp@intel.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723076867; l=1059;
- i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
- bh=DQwLqUHrTK1JlrmD8XgoTRvGDFVdZClo7VKPzlh1pR4=;
- b=yjn0YLa8jHNQbhhGJyhPs89KWIRTKOoXHsaOaN6uGWpNTVy/6gA/3PERl6LtmukFHt+s7s/oh
- YZk4FVrOb9NAoxy5OF/zwR0agBR5GObQPGv9xdo0mIagRUDQhzBOlHU
-X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
- pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
+References: <20240801171747.3155893-1-kpsingh@kernel.org> <CAHC9VhRO-weTJPGcrkgntFLG3RPRCUvHh9m+uduDN+q4hzyhGg@mail.gmail.com>
+ <CACYkzJ6486mzW97LF+QrHhM9-pZt0QPWFH+oCrTmubGkJVvGhw@mail.gmail.com>
+ <20240806022002.GA1570554@thelio-3990X> <CAHC9VhTZPsgO=h-zutQ9_LuaAVKZDdE2SwECHt01QSkgB_qexQ@mail.gmail.com>
+ <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
+ <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com> <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Thu, 8 Aug 2024 02:30:11 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4PuOi+iUd-CO8LwwJ_RWGATo0bvZQZJwSGqyCcVqc6fw@mail.gmail.com>
+Message-ID: <CACYkzJ4PuOi+iUd-CO8LwwJ_RWGATo0bvZQZJwSGqyCcVqc6fw@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
+To: Paul Moore <paul@paul-moore.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
+	peterz@infradead.org, Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since this array is only used in this file, it should be static.
+On Thu, Aug 8, 2024 at 1:44=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Wed, Aug 7, 2024 at 6:45=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrot=
+e:
+> > On Wed, Aug 7, 2024 at 10:45=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > On Tue, Aug 6, 2024 at 5:41=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > > On Mon, Aug 5, 2024 at 10:20=E2=80=AFPM Nathan Chancellor <nathan@k=
+ernel.org> wrote:
+> > >
+> > > ...
+> > >
+> > > > > For what it's worth, I have not noticed any issues in my -next te=
+sting
+> > > > > with this patch applied but I only build architectures that build=
+ with
+> > > > > LLVM due to the nature of my work. If exposure to more architectu=
+res is
+> > > > > desirable, perhaps Guenter Roeck would not mind testing it with h=
+is
+> > > > > matrix?
+> > > >
+> > > > Thanks Nathan.
+> > > >
+> > > > I think the additional testing would be great, KP can you please wo=
+rk
+> > > > with Guenter to set this up?
+> > >
+> >
+> > Adding Guenter directly to this thread.
+> >
+> > > Is that something you can do KP?  I'm asking because I'm looking at
+> > > merging some other patches into lsm/dev and I need to make a decision
+> > > about the static call patches (hold off on merging the other patches
+> > > until the static call testing is complete, or yank the static call
+> > > patches until testing is complete and then re-merge).  Understanding
+> > > your ability to do the additional testing, and a rough idea of how
+> >
+> > I have done the best of the testing I could do here. I think we should
+> > let this run its normal course and see if this breaks anything. I am
+> > not sure how testing is done before patches are merged and what else
+> > you expect me to do?
+>
+> That is why I was asking you to get in touch with Guenter to try and
+> sort out what needs to be done to test this across different
+> architectures.
+>
+> With all due respect, this patchset has a history of not being as
+> tested as well as I would like; we had the compilation warning on gcc
+> and then the linux-next breakage.  The gcc problem wasn't a major
+> problem (although it was disappointing, especially considering the
+> context around it), but I consider the linux-next breakage fairly
+> serious and would like to have some assurance beyond your "it's okay,
+> trust me" this time around.  If there really is no way to practically
+> test this patchset across multiple arches prior to throwing it into
+> linux-next, so be it, but I want to see at least some effort towards
+> trying to make that happen.
+>
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407241530.ej5SVgX1-lkp@intel.com/
----
- arch/riscv/kernel/vendor_extensions/andes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I did add Guenter to the thread, but really, I cannot offer more
+testing than the configs we use in production. I don't use GCC as we
+mostly use clang, and we don't use early LSMs which is such a special
+case with two extra configs with lockdown. Calling it having a
+"history of not being tested is unfair".
 
-diff --git a/arch/riscv/kernel/vendor_extensions/andes.c b/arch/riscv/kernel/vendor_extensions/andes.c
-index ec688c88456a..51f302b6d503 100644
---- a/arch/riscv/kernel/vendor_extensions/andes.c
-+++ b/arch/riscv/kernel/vendor_extensions/andes.c
-@@ -8,7 +8,7 @@
- #include <linux/types.h>
- 
- /* All Andes vendor extensions supported in Linux */
--const struct riscv_isa_ext_data riscv_isa_vendor_ext_andes[] = {
-+static const struct riscv_isa_ext_data riscv_isa_vendor_ext_andes[] = {
- 	__RISCV_ISA_EXT_DATA(xandespmu, RISCV_ISA_VENDOR_EXT_XANDESPMU),
- };
- 
+If there is a general process / tests you follow before merging
+patches, I am happy to run them. In the absence of that, it's not easy
+to spot corner cases.
 
----
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-change-id: 20240807-make_andes_static-ec524bae21f2
--- 
-- Charlie
+- KP
 
+> --
+> paul-moore.com
 
