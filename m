@@ -1,167 +1,156 @@
-Return-Path: <linux-kernel+bounces-278859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB53894B5BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:04:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D7E94B5BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D305B22240
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:04:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3B631C21BA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E08083A18;
-	Thu,  8 Aug 2024 04:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6AD81AD2;
+	Thu,  8 Aug 2024 04:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqeT5Wvm"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="QpGbMDmX"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A73B11C83;
-	Thu,  8 Aug 2024 04:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C101D502
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 04:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723089869; cv=none; b=pSNES5ZbUB+6s0Wmo/SVFbTiCyvXcYd1Bi5h2G0IZ94LHOe/y65BUkLFclZ2Lj/qgefZrD/aFKp5OKK96EteAI+eELpg8fRCav5RFiOOhO3+/zxWxg4d9x2vKrm4bCY7dP4H6HRwsP+JzYRrFD+RaCEw7wmMv/D2+dfVe9Kcpjc=
+	t=1723089881; cv=none; b=q+l+tYpc8UFFVvVec1zinJiJbkqwxdEWDTEsF8KKw/wmQO5o8zaw0jPcy5cPzYmSgwKVksvzgXUWhhnnxDi0Z+FtomqnD4kLRS19y+ZKTfMmIavDe5D+ir99HomKRc3AGxTb1FivXY0raNNAvhrBAODW+ojbqcae69MZucwCYWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723089869; c=relaxed/simple;
-	bh=HxsNmQeveDje+k7GJ5p0ExaAXkD5Uz24koDvUfEl56g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J3zHaCGIy/gFtrgjCqZucn3FlAdpe7q75ldu1d+WDq+ps5n0FA5XMpkQsJV7r243UNdCHsXMn5dk+YYJiLDadzm1+DFCHMfOF70bJsUTSyoSS2vjaUbAXmM4Cq4xNutItyMf9ZTQ0M10f5XAMtU3UwlDyH1uo96+XTC0oryaT4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqeT5Wvm; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d1c655141so472865b3a.1;
-        Wed, 07 Aug 2024 21:04:28 -0700 (PDT)
+	s=arc-20240116; t=1723089881; c=relaxed/simple;
+	bh=5T4yliEUXD2GyWcO3gOirN1YwWDNHBcjUYPLz0YK+Pk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UbQg7v53MsXgYroRWLBzbZeOc78TII0oga0ruQXXvdnDRmW05hzDb45GGcCslexsZVrC02fwiKvvV/ebLcGvdDDuKuTTobj6gaGQt2lXHrs46JXrCr3Khttwcxm2VmDV8LnaZiqSxFt2lcoANhVGk0NLdwd/3yNGRy4903YDN94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=QpGbMDmX; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44ff7bdb5a6so3306601cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 21:04:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723089867; x=1723694667; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qB4AbGWugMyClxVBVAdAWXyEbSp0MuqOJuxSTPl9cMA=;
-        b=eqeT5WvmY+7F00UbbT00nxrL3GWHU+fgTxXIcmnKb9tcCnOiyv8ceayYseKVAznQ8A
-         O3qPFFfZO5RQh1zNLIKj7QoTW8bfcDJBXzL+ybvvu21oHY8aSfrbqKy/Zz2fFE/IOTS3
-         NTsjl2kdRgZVlRGfxCcxoQKJjvNUHP1ps3ldXXDih1/f5YRxKLFgIQfNrK8YvUJyZLuF
-         VkmHfXyCm7H7woBbuILhzZmrJyAJ3ZGFbqi04AGYxMuN6EuYhsM18x7qGM1SKWZjsi3D
-         bCJsk1UDMNR/2yQB1MXqRAFWGPkuM1kZzgkQEjv2y6q3m5FVfCz1fsnITEgEd5vX64FA
-         vNDQ==
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1723089878; x=1723694678; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pLWCB8OwsSfViIae6+JL4jzVA8gtPMCZnWmBMW4Tb+I=;
+        b=QpGbMDmXkGhcOLvB6S3jFVmiccu8Vo1muHPpmgQf1UNbPRdR5Q5fVILxW9SavKFUYF
+         iBQwNrpxN+CWq/j8mEBiak3T3ctMkM881lXQM6+Ctfq93oF618t3k4gj4KQ5wVvF2PJk
+         gGEqVQtfVgIZRVeAOoDIiPWhoRDGvdw8/+fwJNxkuu4hcBf3TOf0tGfW1XsbiRpjMf+s
+         koC7yvNjBNMFVLpj3zKXe1i3HUyxDyuHinSjfuKHmVUh2S6cxL/oPR4ApTSi92oD4mbD
+         rTA50m1onsFcbBi18cQqO4q4aJlhqEhA5RVfS4WOR7uCD+GVa6QF0ycdK/FqoXg9pwkY
+         fBbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723089867; x=1723694667;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qB4AbGWugMyClxVBVAdAWXyEbSp0MuqOJuxSTPl9cMA=;
-        b=gUNnggHkjfX38jqTm6nDyYFIajaBM95+kSzx0ef5pNe+PDmZpeY+0JYWwxDXGs8eUR
-         GSBvjLU4uR52CtojdLAlxeCneK+Cg86IuE8SI7E/LqJ8m9cj8p8NwmCz6xDaUExTt57i
-         ecZNVSsBbWDVM2Tob9sC8r6xb9XqCaEzXivXBL2yBJD/xaunnVlYoiF+U21ssn3GV20P
-         iawFO7Zw6bxnNbyGUxFkFXG0m0ZmgkCZ+mILF/AvJf64R4EZ1Q2mLNuCQL8CdiPiRbYg
-         2NLQfH3ZUFpX6LFwxxg8hnynsXdYs0o1Uu7GbcpXHVEj6dVkANp/f4jaieOfgOKOLaeF
-         JlHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXiw3xv4EI+39jcWGxvoGGwoflKv3iVe76eN7KxgwgJTz15TQiI0Q9jDqNDUHQG0YNmE88gPdHMFHwJ9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykqDs+KaD/g+aeP5cYAAg5LW68dJ8JacjOoWO35PxFlCo5Fndo
-	g0Wfx8UpuJSLdKw2TiwzqNhtqb1q2GSPLci3EwD+YgZLqeXyfyDgzzFn4uCQ
-X-Google-Smtp-Source: AGHT+IE9Ln7CAAMnFGaiJTlhxb+rKtE1cwgbtM0VGmLbzx+hc9LQk2kprlXX3MVoq/8wRBaDLvW5HA==
-X-Received: by 2002:a05:6a00:2d16:b0:706:6c38:31f3 with SMTP id d2e1a72fcca58-710cad6d366mr975637b3a.8.1723089867385;
-        Wed, 07 Aug 2024 21:04:27 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb20d602sm274767b3a.5.2024.08.07.21.04.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 21:04:26 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: u.kleine-koenig@pengutronix.de,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: moxart_ether: use devm in probe
-Date: Wed,  7 Aug 2024 21:03:54 -0700
-Message-ID: <20240808040425.5833-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1723089878; x=1723694678;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pLWCB8OwsSfViIae6+JL4jzVA8gtPMCZnWmBMW4Tb+I=;
+        b=QOhx0DP44RNPPowtzqyWzAPXpYLb1fn/K1BWUnxx/ZQYUBLRqg9Acy8fpI8EJGjZGw
+         G4OfuEk+z8FiztuJjV85oiROxaN1LZTQcmE3a5ZQGCCKpX70BfJVpI/Vd3T5SMn3+eeo
+         IbhFykCY/xaiRhFCrM/k2MBVeVmMCntjb0R2W1aajbdCbm9ERrNyNqda9A9A8MdW0yY/
+         7UtMkolQTi/zGnuJqAH7O26mkKQxQNhpzK6iwKVGWwmreTkSvS/nN//fzy/hf9w9IQvV
+         zXe/omQBHYSMl1aiTOneVXmVggVZuDifu6QAXn7oszf+oaw6901HVpNK+j4BABb4aXKW
+         F5/w==
+X-Forwarded-Encrypted: i=1; AJvYcCV8drANjq1m3UawiP+GM8VLKAQcDbC2c/qKh4mTFdxrmCf+jYamlvQRHwPBilenUppvcl1S5EJmkUUcQhE6XpeJXA3ljCrvJ/A/4wlX
+X-Gm-Message-State: AOJu0YxhQcOkAC3RWEdAeW5mORm4oAVWDK86O2pYiE4MGTvFNkmGbFnj
+	We8gZ15z1R5Kc9vxXBnPPVlHHBkx2yFZu25uMxqFsO7TlQ6B40kGo/hkJXwb0SJ0YpgDiIyP41w
+	3biuhvUMh3AbOc1Bxzk+cJRo6H7KFQ5W+ayAcQg==
+X-Google-Smtp-Source: AGHT+IG3rFoWDGrZWFr40yiagl0NYBAUuSGLIHHSR0Qq8SIRGT82Tmfyf9cpNzAf9Euu7zdl5Ocb94WVlep5eC+ie0w=
+X-Received: by 2002:a05:622a:510c:b0:447:e046:8482 with SMTP id
+ d75a77b69052e-451d421cb8dmr11194011cf.23.1723089878291; Wed, 07 Aug 2024
+ 21:04:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240807211929.3433304-1-pasha.tatashin@soleen.com>
+ <20240807211929.3433304-4-pasha.tatashin@soleen.com> <E5F2A1F6-DD29-4FD8-B4AA-2CA917F6E89F@linux.dev>
+In-Reply-To: <E5F2A1F6-DD29-4FD8-B4AA-2CA917F6E89F@linux.dev>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 8 Aug 2024 00:04:00 -0400
+Message-ID: <CA+CK2bCOYYkGK6yDm4NKto15TjgNGXrDDbhkx1=rGeyQ-ofv9w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] mm: don't account memmap per node
+To: Muchun Song <muchun.song@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Memory Management List <linux-mm@kvack.org>, cerasuolodomenico@gmail.com, 
+	Johannes Weiner <hannes@cmpxchg.org>, Joel Granados <j.granados@samsung.com>, lizhijian@fujitsu.com, 
+	Nhat Pham <nphamcs@gmail.com>, David Rientjes <rientjes@google.com>, Mike Rapoport <rppt@kernel.org>, 
+	Sourav Panda <souravpanda@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-alloc_etherdev and kmalloc_array are called first and destroyed last.
-Safe to use devm to remove frees.
+On Wed, Aug 7, 2024 at 10:59=E2=80=AFPM Muchun Song <muchun.song@linux.dev>=
+ wrote:
+>
+>
+>
+> > On Aug 8, 2024, at 05:19, Pasha Tatashin <pasha.tatashin@soleen.com> wr=
+ote:
+> >
+> > Currently, when memory is hot-plugged or hot-removed the accounting is
+> > done based on the assumption that memmap is allocated from the same nod=
+e
+> > as the hot-plugged/hot-removed memory, which is not always the case.
+> >
+> > In addition, there are challenges with keeping the node id of the memor=
+y
+> > that is being remove to the time when memmap accounting is actually
+> > performed: since this is done after remove_pfn_range_from_zone(), and
+> > also after remove_memory_block_devices(). Meaning that we cannot use
+> > pgdat nor walking though memblocks to get the nid.
+> >
+> > Given all of that, account the memmap overhead system wide instead.
+>
+> Hi Pasha,
+>
+> You've changed it to vm event mechanism. But I found a comment (below) sa=
+y
+> "CONFIG_VM_EVENT_COUNTERS". I do not know why it has such a rule
+> sice 2006. Now the rule should be changed, is there any effect to users o=
+f
+> /proc/vmstat?
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/moxa/moxart_ether.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+There should not be any effect on the users of the /proc/vmstat, the
+values for nr_memap and nr_memmap_boot before and after are still in
+/proc/vmstat under the same names.
 
-diff --git a/drivers/net/ethernet/moxa/moxart_ether.c b/drivers/net/ethernet/moxa/moxart_ether.c
-index 96dc69e7141f..06c632c90494 100644
---- a/drivers/net/ethernet/moxa/moxart_ether.c
-+++ b/drivers/net/ethernet/moxa/moxart_ether.c
-@@ -81,9 +81,6 @@ static void moxart_mac_free_memory(struct net_device *ndev)
- 		dma_free_coherent(&priv->pdev->dev,
- 				  RX_REG_DESC_SIZE * RX_DESC_NUM,
- 				  priv->rx_desc_base, priv->rx_base);
--
--	kfree(priv->tx_buf_base);
--	kfree(priv->rx_buf_base);
- }
- 
- static void moxart_mac_reset(struct net_device *ndev)
-@@ -461,15 +458,14 @@ static int moxart_mac_probe(struct platform_device *pdev)
- 	unsigned int irq;
- 	int ret;
- 
--	ndev = alloc_etherdev(sizeof(struct moxart_mac_priv_t));
-+	ndev = devm_alloc_etherdev(p_dev, sizeof(struct moxart_mac_priv_t));
- 	if (!ndev)
- 		return -ENOMEM;
- 
- 	irq = irq_of_parse_and_map(node, 0);
- 	if (irq <= 0) {
- 		netdev_err(ndev, "irq_of_parse_and_map failed\n");
--		ret = -EINVAL;
--		goto irq_map_fail;
-+		return -EINVAL;
- 	}
- 
- 	priv = netdev_priv(ndev);
-@@ -511,15 +507,15 @@ static int moxart_mac_probe(struct platform_device *pdev)
- 		goto init_fail;
- 	}
- 
--	priv->tx_buf_base = kmalloc_array(priv->tx_buf_size, TX_DESC_NUM,
--					  GFP_KERNEL);
-+	priv->tx_buf_base = devm_kmalloc_array(p_dev, priv->tx_buf_size,
-+					       TX_DESC_NUM, GFP_KERNEL);
- 	if (!priv->tx_buf_base) {
- 		ret = -ENOMEM;
- 		goto init_fail;
- 	}
- 
--	priv->rx_buf_base = kmalloc_array(priv->rx_buf_size, RX_DESC_NUM,
--					  GFP_KERNEL);
-+	priv->rx_buf_base = devm_kmalloc_array(p_dev, priv->rx_buf_size,
-+					       RX_DESC_NUM, GFP_KERNEL);
- 	if (!priv->rx_buf_base) {
- 		ret = -ENOMEM;
- 		goto init_fail;
-@@ -553,8 +549,6 @@ static int moxart_mac_probe(struct platform_device *pdev)
- init_fail:
- 	netdev_err(ndev, "init failed\n");
- 	moxart_mac_free_memory(ndev);
--irq_map_fail:
--	free_netdev(ndev);
- 	return ret;
- }
- 
-@@ -565,7 +559,6 @@ static void moxart_remove(struct platform_device *pdev)
- 	unregister_netdev(ndev);
- 	devm_free_irq(&pdev->dev, ndev->irq, ndev);
- 	moxart_mac_free_memory(ndev);
--	free_netdev(ndev);
- }
- 
- static const struct of_device_id moxart_mac_match[] = {
--- 
-2.45.2
+>
+> /*
+>  * Light weight per cpu counter implementation.
+>  *
+>  * Counters should only be incremented and no critical kernel component
+>  * should rely on the counter values.
+>  *
+>  * Counters are handled completely inline. On many platforms the code
+>  * generated will simply be the increment of a global address.
 
+Thank you for noticing this. Based on my digging, it looks like this
+comment means that the increment only produces the most efficient code
+on some architectures (i.e. i386, ia64):
+
+Here is the original commit message from 6/30/06:
+f8891e5e1f93a1 [PATCH] Lightweight event counters
+
+ Relevant information:
+  The implementation of these counters is through inline code that hopefull=
+y
+  results in only a single instruction increment instruction being emitted
+  (i386, x86_64) or in the increment being hidden though instruction
+  concurrency (EPIC architectures such as ia64 can get that done).
+
+My patch does not change anything in other places where vm_events are
+used, so it won't introduce performance regression anywhere. Memmap,
+increment and decrement can happen based on the value of delta. I have
+tested, and it works correctly. Perhaps we should update the comment.
+
+Pasha
 
