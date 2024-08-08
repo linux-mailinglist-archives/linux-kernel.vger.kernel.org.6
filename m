@@ -1,79 +1,119 @@
-Return-Path: <linux-kernel+bounces-278722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33EA94B40C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:16:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2F594B410
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 195CEB22869
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:16:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DB331F23A9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470C41854;
-	Thu,  8 Aug 2024 00:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F1B20E6;
+	Thu,  8 Aug 2024 00:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eozDLTcn"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VGW7l2S5"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A186946BA;
-	Thu,  8 Aug 2024 00:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B91633D5;
+	Thu,  8 Aug 2024 00:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723076202; cv=none; b=jwSh3heREJAZYisTJ8rc4I4XWJFWRhmj5wxSAYnaDugQz1BTeLMQviioliv2vLvc49ow+NxIa8jZAvUpPSnGs5DA6TeuW39foXypS5bZuexMmXWw1O0rWiFVZBHyV13rgqOvDfLp0J70K0E2VwMMwNV2Bib+eJBUTmzoHVrALAE=
+	t=1723076244; cv=none; b=oQQ/U4UkuWsGPdrFC9amXs/k4tx95SdBEHhnxGN5KR0Z1/HwVI7nNDzQarRsmQvcRXeNyMZWQ84cZviwoZr7FFQj0lj1g5skjAXGY+ghBv6LAwr7wJpSsEFsZoGhmPSxspaV5o1OyvpN2bAHabtxXaZ5BpE7OBadpaL5gGgmjd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723076202; c=relaxed/simple;
-	bh=w7lRKMOhlaX1Pyh0M8yoSPHLqeiiDlsoemP6Oy3/44s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T/LKcrkambB+jI+HeOSfS/dExbEMe7fN584ZxwbKHRX6QN0VYQV4B0Lm7NUjPBA0KsQuk4qk0iPItha+rZ1Hi+M1A0pOfjjRQeirIYNIEPrE8zhmuj8elStNvciggtw09gI74FycJceIsQ/+mLy0+Kz9MeU5sY8q7mJqLwYivG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eozDLTcn; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VHaz1v7hd5zC2ZCSk0tcw3zhcKO1ue+GQlxFf245itQ=; b=eozDLTcn1ba4jrnIppPH31OsnX
-	FIKHew9AY9xZmq6kHs3p3TaFDJNCZdRzRl318k1U0TYjtzuAjqLNTl3DWFOBWKTlfCT1bmi1HuiiG
-	Kyk925ZGOtvi/DnQyU48njgkxC+sDokbZStHIWVDE780MMPk0zzcuTfQ57ofr5ACprCrXk4ssr4Ub
-	pNQiXq77Eov7O0Ga2p4r7egC0mSxnVmR2hudXIoQhJm3vEE+06v7Kh6xP8MYaLh7ews68IO3TyhyV
-	lIf8X2Yr6/z/rDryNg+PklweE3LzhXxU16Vf6SLbqG0J79vJls6YrlMvtJqNU56OBClgTmgLtrbPI
-	6Z8SARVw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbqpV-000000087T4-42DS;
-	Thu, 08 Aug 2024 00:16:34 +0000
-Date: Thu, 8 Aug 2024 01:16:33 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the vfs-brauner
- tree
-Message-ID: <ZrQOYVldGlkymDrG@casper.infradead.org>
-References: <20240808082706.687536aa@canb.auug.org.au>
+	s=arc-20240116; t=1723076244; c=relaxed/simple;
+	bh=6YbU9hMbNaZvymkd3XCUiSbv+Z7i0Zpk+Fql9bVOppM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aYUJZZmFsHfA6DSXJjyXXOGbDFaIZ4tFGzReu3YLj9YUnuPfyIIG8UcoEDZahKsGOPzdtDvWg5PT5Uvlm9eAMlB0KEfPPAe4osJ2pgBZz3qIsC4VidWbkCXD9TY9qdeASuzvBsU0tAnSdMbWhMCV1I1uGZRbQJKrI7uu6w+1U9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VGW7l2S5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477K0WW3018981;
+	Thu, 8 Aug 2024 00:17:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Cr+3Y+YO9Zn/uOS+ypiYeC7bbRLQIrLN3WkyWVWHQo4=; b=VGW7l2S5aZIiDcEd
+	Vm6mh1Q5K2R6iCEPM5vUmuanBlum2F3ju8nn7zq1BRmRy7xLC2B7rk5pLDoLLXm7
+	ye5CUVmQ9IfD6fv8ddDk2zWxf4T1NVgZYWnOFmOodizuoMPtkFqnx3JpnSuFibyD
+	r45UxcHbesu5ZcQlxAVUg7TN3gRCYBzYETU5kJI352r22vO7xSbE8OhPP2+FB5TB
+	BvQIh0eY+fwhJ8V4+8/vAky78mNIkzu542pKJIoMSkGSXWb+BE9gimZjTAiiCaDp
+	TBPBUtzH7aDOTzekbY2VdEk3BUJp+mdBRs4SyIT6qSoA01+QhDJjGjrctWb7sb8W
+	1nXBrA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40u4cpq354-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 00:17:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4780HIwu014528
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 Aug 2024 00:17:18 GMT
+Received: from [10.71.112.173] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 17:17:17 -0700
+Message-ID: <32f201b8-c0c6-42cd-b9f7-8a8abb33eccc@quicinc.com>
+Date: Wed, 7 Aug 2024 17:17:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808082706.687536aa@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] rpmsg: glink: Introduce packet tracepoints
+To: Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240805-glink-tracepoints-v1-0-a5f3293fb09e@quicinc.com>
+ <20240805-glink-tracepoints-v1-3-a5f3293fb09e@quicinc.com>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20240805-glink-tracepoints-v1-3-a5f3293fb09e@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BuwhCGt_UMI4P4dY7Am2WOOxmidpt7wJ
+X-Proofpoint-GUID: BuwhCGt_UMI4P4dY7Am2WOOxmidpt7wJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_14,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0 spamscore=0
+ lowpriorityscore=0 mlxscore=0 clxscore=1015 adultscore=0
+ priorityscore=1501 mlxlogscore=962 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408080000
 
-On Thu, Aug 08, 2024 at 08:27:06AM +1000, Stephen Rothwell wrote:
-> Hi all,
+
+
+On 8/5/2024 8:56 PM, Bjorn Andersson wrote:
+> Introduce tracepoints to allow tracing the GLINK packets being exchanged
+> with other subsystems. This is useful for debugging both interaction
+> with remote processors and client driver issues, as well as tracking
+> latency through the communication stack.
 > 
-> Commit
+> Channel events are traced with both local and remote channel ids, as
+> well as the textual representation when possible. The channel ids are
+> useful when matching traces with traces from the firmware side logs,
+> while the textual representation is necessary to identify channels when
+> we're starting to trace an already running system.
 > 
->   a60b0e8f150f ("ufs: Convert ufs_check_page() to ufs_check_folio()")
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+>   drivers/rpmsg/Makefile            |   1 +
+>   drivers/rpmsg/qcom_glink_native.c |  96 ++++++++-
+>   drivers/rpmsg/qcom_glink_trace.h  | 406 ++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 501 insertions(+), 2 deletions(-)
 > 
-> is missing a Signed-off-by from its author.
 
-Indeed; my fault.  Guess I forgot to  add "-s" at some point.
-
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
 
