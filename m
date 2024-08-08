@@ -1,80 +1,94 @@
-Return-Path: <linux-kernel+bounces-279070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4264794B89B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:10:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B14D594B89F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A54BAB217F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:10:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D446E1C21E21
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE151891C3;
-	Thu,  8 Aug 2024 08:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF7D18950C;
+	Thu,  8 Aug 2024 08:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X/ef6wPm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iTP5pJGa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uMWvH9Pr";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iTP5pJGa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uMWvH9Pr"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A858013CA8A
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58151188CC8;
+	Thu,  8 Aug 2024 08:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723104633; cv=none; b=IV44hqLIj6Fe7463JKS+jU6BjhhUgbnYrkhEk5EZPnAnvDqSbe1aeGPCaIM7DpPIlCOjGYeoKK9zcwPxdzGVXaTHID8S1POUV5ZLGWH/IMlQYbMrDWBw4UrUVN9ZD3zXM4FQj4ZqSjXP/vpO+TE9etk+JxdJVXQoH84HGYvE8wY=
+	t=1723104658; cv=none; b=m0hYrfjcY4ULNhC2ZB1LImhv3MpomKGe50RW3TFD2j0+NwbJWSJnxyTy2KmTH6phLwXPKmO/Bmu7dsVNTgyPayoi4yXX7JNHWcKDyMvDDOffyV3H0++J7ZGIGL33EMLvB7marh4M1Pf3WrPLT0tD2JMKRf8gG+xxCh7g5hmUgI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723104633; c=relaxed/simple;
-	bh=gS03c8L4Br7kqJ0FBcylqY2gUGQivWm3ynHkwI3GMCY=;
+	s=arc-20240116; t=1723104658; c=relaxed/simple;
+	bh=nZb+v5iQAu5u13sDbZHZwQROvFaAhSpLjjl8IQURW54=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NBYEtIauTjuvzadi7uuaDwdq2GBwWe19dCEOlrSVeK2vB/J2lBfoH41SWlUDOJe2oJbRVapXpTiH9ExbqdGB3EDmrfHRFEHsOUtMRwL4bHOlehZ7wq3njr4prKcS0/ZWJixh/dZmQc/Yqetz3lGdBPzg3NOXrF6cpSXkBqOqlPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X/ef6wPm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723104630;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=tjLR+Vo38JgmVtxA4GnauoqSe+VXjSsdqj35iMcBN2B10ZmsO1aIHBvOT4kklCn5qzF8zvUw0fd8AZ5Dg0ekrHHr5eAlW4L9S6gcu9S5nMOQUaeJGwRldhwYJvySmkGum2Z2uicG+hKqfELaHANnpKSpnHhjX00Fe+aNOMsaSDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iTP5pJGa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uMWvH9Pr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iTP5pJGa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uMWvH9Pr; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5D71921A87;
+	Thu,  8 Aug 2024 08:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723104654; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=IZOKtfV/4youKQKE4PG+0p4dlew66jnamMTdwNpcUh4=;
-	b=X/ef6wPmymJ/oZ29iW9d6zFwtwHT9Ty13meQiE5Pt928rrw6YuYEnk9ooNk+UrEf949KSE
-	B/xlAk5zieGd09y6+ZU4uOKOV7u55tdXpfbA7V5En+aiQfGNq/VO2avn++19V5PwB8/DEX
-	GJJeBJM3Sze5ozlKZr79Vl6vQSlpOOw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-UFr8ovxXPFKm2Ba07fJt7Q-1; Thu, 08 Aug 2024 04:10:28 -0400
-X-MC-Unique: UFr8ovxXPFKm2Ba07fJt7Q-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-428e48612acso9084255e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 01:10:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723104627; x=1723709427;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IZOKtfV/4youKQKE4PG+0p4dlew66jnamMTdwNpcUh4=;
-        b=EDYYZJsr51NcUwd6och3DGUIykHVVRDHv26RleHl6ojO47jhKOuub3w0O0ZCqc9M3A
-         nB0pBoO0H7xE2hHS9B0KZf1O5ZfKFxSRioNNEQ/OJ+CY9nYVdzj1crdVbLUNtVgDL/Lv
-         iy+DC4NZXFInND//0is/yPCN5nO7mWADfEb9Qhr8v2sSTrymNx39xlmDyFdCoiGKHdHG
-         wnrNgNKqvAAsTTUbcD8TWzaCMyuwWap3TlBjvnOVA3wfzxJhiUDMc2Eo/Steh+1xCWKB
-         rhSHjyJb4dW+IDqKRFfmOOlR3i59MfvB0atWH0TFTDdrdwnzsWBvDTetZgAE8/vOBfz2
-         bRzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLxY7xktn7pjRORJuX9WtQ2/JUB39t84gdT+J+590YFWaCxa/SkIv2Mly8a2UwUcXgDds/s37n9GSUMGT9z5+qUlJzXs0pB0WyGFcP
-X-Gm-Message-State: AOJu0Yx0oyPgQ/j8LVH936h8F3v/7QNExS9yJ9a3e4MxnZo3H0K9qccd
-	q8Z9CbMEm8JqLsn/PHs9GxP8Y5JOjL3YEkHB16hwUiyFxKTaKNrwikujLLrnAXpObib2sfw8SoS
-	wUJ97l7YH26LamuryAD5ZohalyQBdFPqgMluydEOChJfkoBeSi7jNt+VmCo+Phw==
-X-Received: by 2002:a05:600c:45cb:b0:426:5e8e:aa48 with SMTP id 5b1f17b1804b1-4290af12dfdmr13366085e9.22.1723104627523;
-        Thu, 08 Aug 2024 01:10:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxN6qNl6UlFXvnE+K8ZEpnOSBzULcVL7ISHO1sfn2HUAE1cDsohRfMX5Atopuw8Q7heP2zaQ==
-X-Received: by 2002:a05:600c:45cb:b0:426:5e8e:aa48 with SMTP id 5b1f17b1804b1-4290af12dfdmr13365825e9.22.1723104627054;
-        Thu, 08 Aug 2024 01:10:27 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c713:2a00:f151:50f1:7164:32e6? (p200300cbc7132a00f15150f1716432e6.dip0.t-ipconnect.de. [2003:cb:c713:2a00:f151:50f1:7164:32e6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c7a357bsm9697425e9.43.2024.08.08.01.10.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 01:10:26 -0700 (PDT)
-Message-ID: <7d7dd1d2-0c5f-49d4-b3ca-39115f67d2d8@redhat.com>
-Date: Thu, 8 Aug 2024 10:10:25 +0200
+	bh=7ar+Qyb3sNz9btGz7e6XzjvxLxKENT5IcPn6MjtNJuE=;
+	b=iTP5pJGamI1KI1OZhVTQiCo1TQGQ2fk3+65YdELLoVBfLGsttFVEQEzBpc7IIvZRBMBIUW
+	+iJhdiGX30zWCzKGxetoX6pcFn1NY82pMCI2fRULe+FN796bGOozMwzKmIE3N0+vRcPCYB
+	ap4vvW26XjpBsj6/vkj73WxAxXVQevU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723104654;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7ar+Qyb3sNz9btGz7e6XzjvxLxKENT5IcPn6MjtNJuE=;
+	b=uMWvH9Prjv/lXfTtS5cABsnRh0QhtMU1PA0gZ1GtCHzJbwflh0lLvmNAgXYFsoAH6grHTm
+	XswF1KiT/zUyRwBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723104654; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7ar+Qyb3sNz9btGz7e6XzjvxLxKENT5IcPn6MjtNJuE=;
+	b=iTP5pJGamI1KI1OZhVTQiCo1TQGQ2fk3+65YdELLoVBfLGsttFVEQEzBpc7IIvZRBMBIUW
+	+iJhdiGX30zWCzKGxetoX6pcFn1NY82pMCI2fRULe+FN796bGOozMwzKmIE3N0+vRcPCYB
+	ap4vvW26XjpBsj6/vkj73WxAxXVQevU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723104654;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7ar+Qyb3sNz9btGz7e6XzjvxLxKENT5IcPn6MjtNJuE=;
+	b=uMWvH9Prjv/lXfTtS5cABsnRh0QhtMU1PA0gZ1GtCHzJbwflh0lLvmNAgXYFsoAH6grHTm
+	XswF1KiT/zUyRwBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 334CB13946;
+	Thu,  8 Aug 2024 08:10:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 39wTDI59tGYLCwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 08 Aug 2024 08:10:54 +0000
+Message-ID: <0a6afdd6-def0-4ecf-83a2-e9bb0f8cf663@suse.cz>
+Date: Thu, 8 Aug 2024 10:10:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,102 +96,174 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] mm: rename instances of swap_info_struct to
- meaningful 'si'
-To: Barry Song <21cnbao@gmail.com>, Chris Li <chrisl@kernel.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hughd@google.com,
- justinjiang@vivo.com, kaleshsingh@google.com, kasong@tencent.com,
- linux-kernel@vger.kernel.org, ryan.roberts@arm.com, v-songbaohua@oppo.com,
- ying.huang@intel.com
-References: <20240807215859.57491-1-21cnbao@gmail.com>
- <20240807215859.57491-2-21cnbao@gmail.com>
- <CACePvbV5nxGz=gPKZLzZ_nF-Wzxy_4bXFw-t40rsmA0zk=irCg@mail.gmail.com>
- <CAGsJ_4z=sCyYU9z-HGN=G3wDkoEFrXPXm9nwPnqJhjvjHjufTw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v4 1/7] userfaultfd: move core VMA manipulation logic to
+ mm/userfaultfd.c
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAGsJ_4z=sCyYU9z-HGN=G3wDkoEFrXPXm9nwPnqJhjvjHjufTw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Pengfei Xu <pengfei.xu@intel.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, SeongJae Park <sj@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, Brendan Higgins <brendanhiggins@google.com>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ syzkaller-bugs@googlegroups.com
+References: <cover.1722251717.git.lorenzo.stoakes@oracle.com>
+ <50c3ed995fd81c45876c86304c8a00bf3e396cfd.1722251717.git.lorenzo.stoakes@oracle.com>
+ <ZrLt9HIxV9QiZotn@xpf.sh.intel.com>
+ <3c947ddc-b804-49b7-8fe9-3ea3ca13def5@lucifer.local>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <3c947ddc-b804-49b7-8fe9-3ea3ca13def5@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.29
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 08.08.24 02:21, Barry Song wrote:
-> On Thu, Aug 8, 2024 at 12:01 PM Chris Li <chrisl@kernel.org> wrote:
+On 8/7/24 14:03, Lorenzo Stoakes wrote:
+> On Wed, Aug 07, 2024 at 11:45:56AM GMT, Pengfei Xu wrote:
+>> Hi Lorenzo Stoakes,
 >>
->> On Wed, Aug 7, 2024 at 2:59 PM Barry Song <21cnbao@gmail.com> wrote:
->>>
->>> From: Barry Song <v-songbaohua@oppo.com>
->>>
->>> "p" means "pointer to something", rename it to a more meaningful
->>> identifier - "si".
+>> Greetings!
 >>
->> Hi Berry,
+>> I used syzkaller and found
+>> KASAN: slab-use-after-free Read in userfaultfd_set_ctx in next-20240805.
 >>
->> I am fine with the reason for renaming it to something more
->> meaningful. On the other hand this will create a huge conflict on the
->> next iteration of the swap allocator series. There is not much urgency
->> in the renaming variable, right? Just try to figure out a way to
->> coordinate it better. As it is, I am not sure how to handle the next
->> refresh of swap allocator series, should I revert the rename or submit
->> a refresh of patches with rename conflict resolved, effectively foldin
->> the rename patch.
+>> Bisected the first bad commit:
+>> 4651ba8201cf userfaultfd: move core VMA manipulation logic to mm/userfaultfd.c
+>>
+>> All detailed info: https://github.com/xupengfe/syzkaller_logs/tree/main/240806_122723_userfaultfd_set_ct
 > 
-> right, it is not urgent. if you are going to make another iteration
-> for the swap allocation series. I am perfect fine that you can add
-> these two patches into your series? it should be fine as this patchset
-> obviously depends on Kairui's and Your work.
+> [snip]
+> 
+> Andrew - As this is so small, could you take this as a fix-patch? The fix
+> is enclosed below.
+> 
+> 
+> Pengfei - Sorry for the delay on getting this resolved, I was struggling to
+> repro with my usual dev setup, after trying a lot of things I ended up
+> using the supplied repro env and was able to do so there.
+> 
+> (I suspect that VMAs are laid out slightly differently in my usual arch base
+> image perhaps based on tunables, and this was the delta on that!)
+> 
+> Regardless, I was able to identify the cause - we incorrectly pass a stale
+> pointer to userfaultfd_reset_ctx() if a merge is performed in
+> userfaultfd_clear_vma().
+> 
+> This was a subtle mistake on my part, I don't see any other instances like
+> this in the patch.
+> 
+> Syzkaller managed to get this merge to happen and kasan picked up on it, so
+> thank you very much for supplying the infra!
+> 
+> The fix itself is very simple, a one-liner, enclosed below.
+> 
+> ----8<----
+> From 193abd1c3a51e6bf1d85ddfe01845e9713336970 Mon Sep 17 00:00:00 2001
+> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Date: Wed, 7 Aug 2024 12:44:27 +0100
+> Subject: [PATCH] mm: userfaultfd: fix user-after-free in
+>  userfaultfd_clear_vma()
+> 
+> After invoking vma_modify_flags_uffd() in userfaultfd_clear_vma(), we may
+> have merged the vma, and depending on the kind of merge, deleted the vma,
+> rendering the vma pointer invalid.
+> 
+> The code incorrectly referenced this now possibly invalid vma pointer when
+> invoking userfaultfd_reset_ctx().
+> 
+> If no merge is possible, vma_modify_flags_uffd() performs a split and
+> returns the original vma. Therefore the correct approach is to simply pass
+> the ret pointer to userfaultfd_ret_ctx().
+> 
+> Reported-by: Pengfei Xu <pengfei.xu@intel.com>
+> Fixes: e310f2b78a77 ("userfaultfd: move core VMA manipulation logic to mm/userfaultfd.c")
+> Closes: https://lore.kernel.org/all/ZrLt9HIxV9QiZotn@xpf.sh.intel.com/
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-If it can be resolved within 5min of merging I think we shouldn't bother 
-about delaying this.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-I assume it can be resolved within 5min of merging ;)
-
--- 
-Cheers,
-
-David / dhildenb
+> ---
+>  mm/userfaultfd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index 3b7715ecf292..966e6c81a685 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -1813,7 +1813,7 @@ struct vm_area_struct *userfaultfd_clear_vma(struct vma_iterator *vmi,
+>  	 * the current one has not been updated yet.
+>  	 */
+>  	if (!IS_ERR(ret))
+> -		userfaultfd_reset_ctx(vma);
+> +		userfaultfd_reset_ctx(ret);
+> 
+>  	return ret;
+>  }
+> --
+> 2.45.2
 
 
