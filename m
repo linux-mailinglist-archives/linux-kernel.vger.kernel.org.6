@@ -1,131 +1,83 @@
-Return-Path: <linux-kernel+bounces-280103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD1794C5B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:27:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065BF94C5B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996B12830EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:27:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC6E91F22B62
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E61158DB9;
-	Thu,  8 Aug 2024 20:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73FF158D8B;
+	Thu,  8 Aug 2024 20:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLNsTjOq"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q9dnm7KE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E406713D8A2;
-	Thu,  8 Aug 2024 20:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FCE13D8A2;
+	Thu,  8 Aug 2024 20:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723148856; cv=none; b=eX9aTdbHeICcItJ/u7oyzAcmN+YlaqW/jOXvI/H85oYjXggOVpKUdoKAUZWkliJznbSZCveGUteWjcPhG9wdoTX4EbDmdoNxQ7t4ePabDSviFxsgOKtWqEY3jWgZOsCqtWjmiKgzGcG10+8Wx65rgl+Ptb6zwlNJAdOp/c7L4U0=
+	t=1723148831; cv=none; b=J6uSZVE3+zj3lcwsyFogYAPxnUgCaa1HRig8IlpXynX4ZZlUf4xs8knLydX327+NBFBrPklAODOeEkuwQg+Pc70P5+zaLh3sxUZx8zRh9E0iGRJk2VN2y1KiUW5U0OkwEPUJofmeLoTtJOFXiWxmHtyrth79yQn5ocs2WVX54dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723148856; c=relaxed/simple;
-	bh=dSe/NQDOZybyAI/QEDENLBxxuP0YnOgfcnO74JQuNRw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cLctz5edLRu33Y2fR5P+wPvgUG7nfDHFFk2hcL7R1ut17NXIlcRjjWuuIZGpEvzKKTtWiP+C9KNugLOAI/piBJ58ZaGTHPF/afO3Yfah8liaw+U+In9BlCHvz0jhDS4L18cVQbYhED+AVnGATrZ/FmUwa2VvElV7ZCuKrvSqbsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gLNsTjOq; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-83120879efcso450185241.1;
-        Thu, 08 Aug 2024 13:27:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723148854; x=1723753654; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5gOD9qHt5HUAzpjDzA7tGTtcYiqR7JCDvKLS0bt8yaw=;
-        b=gLNsTjOqvBskOxWVm7pXTkYYtDb72Ldw760X57nSDjY6yROmZEp60ci+xTNLyp5zMS
-         VFV/mJC14i1fl7mOlMvPGAs1BZIRyKXNXzhjtQuF5+2ID3bDJ/cFp47W0zt4Jsseoq/j
-         4aVE/C9R2JB+eM278C8y51vxBQzcU5/U8Hxtr9GC3/GolSXP0ydC7/O10Zeoefe1cbL3
-         GtpQFouLu7t4tJ6zSBaK7gpQe9FAOnnSVOjwwaS3D1wSLTTZIht/d0tuMqr9mcZJosLm
-         Zq/nLkj19+htLnKWG8hHsYaoTLaWZ69eW/kCNfMApTJO+Sb9g/ie5uD9JwkwAhzPcwlE
-         h4Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723148854; x=1723753654;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5gOD9qHt5HUAzpjDzA7tGTtcYiqR7JCDvKLS0bt8yaw=;
-        b=wBNxsd0+/l4CFUFwaVNca/Z4ssHLnrd5rJu7iK6M1Nx8SZ8W9FP03MVUTvfRn0+egs
-         VEn4Weet3NQwIT/L0m68dnhk58IXeV1Wr93m5XCtTzmv3Wd90kh0cEPl37jSgmB3KRLO
-         25uVhgr/4aPGJIlpXK0mjPsZ3BySwB+PtrqGgfsocsQoVPBXSdxFnLG+RvIOH6e2Nv2M
-         t48opdkxvaT+L46KNxTbwgV0Xp8o9xXfXR0NG0vUL2EHOZnjI6A6ePyUICI3gWnuMotE
-         IarQNrBrKX0WNG1oi4D79OmPPlrRUHgMyQekJ5XsN9ab41jNDG980MVpQRm5ITx4TOIo
-         moMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUN6iJR7HxeVk/gfclf+dPGUn7X9t0VG7uSrSbp8Rf0yiiAHsvZOssm/hpLKkbQh+fq0bHJypHPytWeh2QEFRjE9SLSA06+ttbOL1N51+MHBPqN+ub+sMkoVeLK3w+0dnsfyfZnBCF/Tt5V8hDSRAf038x2w4m2HxHgvSrdunkO
-X-Gm-Message-State: AOJu0YwypKRI+BspLE2vskwNdEJzN2IISrb33eXN2xJJ3ov79l5QaUzj
-	ZAEFXVjMc1+V/H+FlggSnQmvsvJuIH5UydTPrvLjBa6n8mwyHdN8
-X-Google-Smtp-Source: AGHT+IGW2UA5p/eZkCZn8DEwKY8mnsYkSQuCjz251ezP2c+lz/BFeKpTNm8aOQnLxWNlMZckWfAOGw==
-X-Received: by 2002:a05:6102:2923:b0:493:e642:38b1 with SMTP id ada2fe7eead31-495c5c37076mr3749651137.25.1723148853569;
-        Thu, 08 Aug 2024 13:27:33 -0700 (PDT)
-Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-83c09925db4sm1946473241.36.2024.08.08.13.27.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 13:27:33 -0700 (PDT)
-From: David Hunter <david.hunter.linux@gmail.com>
-To: socketcan@hartkopp.net,
-	mkl@pengutronix.de,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com
-Subject: [PATCH 1/1] Net: bcm.c: Remove Subtree Instead of Entry
-Date: Thu,  8 Aug 2024 16:26:58 -0400
-Message-Id: <20240808202658.5933-1-david.hunter.linux@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723148831; c=relaxed/simple;
+	bh=SEETdzXsGLJjBMachZ8uZP2L2aFsUOCJw1Br58Y+dtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUcaf1lKTzyRGeot/JSjy28cVcEUndWUxfBP+p7gzwiohkz4RvoiffYa76d6KCHOyYDRTCSCDU8YfGolODiOrlrgGXUj1XVWdlwjKYor+h/5/cASZkXD/6tTIVQUeLO+3zB1x/+0WwBjXN7OTDgvGUi69qhdZLhiwww3r16bJpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q9dnm7KE; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723148830; x=1754684830;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SEETdzXsGLJjBMachZ8uZP2L2aFsUOCJw1Br58Y+dtU=;
+  b=Q9dnm7KEQjMxHt7SAExhfaIN77PR6TRV5jF1bKfNvoqz7IiheZPtSWYB
+   v93RdpvnLX9zb/jFiRjJhRNr23BJEGel4LKLhRvxZL+RbdHLWjL//yZjM
+   jNEl0148g0bijLB1wBK1zWJMjeRTHN9RBtZzF4nhB6Olx47laPPw/atcb
+   s+Z1SI9Git1Mln+WG5bWK3FqNJnYOOcmdN11Ruj7QOpTAdEIr6dpQtDzy
+   gB8r/EciQ4jxZQlvefrD2nctq2XhaED/TukpLGsx2Nz+8bQ4PWfrQBgti
+   w4EfYJee8AkmNYB8tVuQEcn9IFNuixuzz5ubMj0jNuuEERnHqT2fxjMVh
+   w==;
+X-CSE-ConnectionGUID: yrS834X9SdCW8qTNn5Kndg==
+X-CSE-MsgGUID: +8OxnxjzQYyBlh3LCQMAGA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="32448888"
+X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
+   d="scan'208";a="32448888"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 13:27:09 -0700
+X-CSE-ConnectionGUID: XaiJ0b99Sq2lAZZiX3khBg==
+X-CSE-MsgGUID: gZWBjUzcQBelj7nZaDyR8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
+   d="scan'208";a="57306104"
+Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 13:27:08 -0700
+Date: Thu, 8 Aug 2024 13:27:06 -0700
+From: Andi Kleen <ak@linux.intel.com>
+To: kan.liang@linux.intel.com
+Cc: acme@kernel.org, namhyung@kernel.org, irogers@google.com,
+	peterz@infradead.org, mingo@kernel.org,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	adrian.hunter@intel.com, eranian@google.com
+Subject: Re: [PATCH V2 0/9] Support branch counters in block annotation
+Message-ID: <ZrUqGkXkf7x1cCm-@tassilo>
+References: <20240808193324.2027665-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808193324.2027665-1-kan.liang@linux.intel.com>
 
-Fix a warning with bcm.c that is caused by removing an entry. If the
-entry had a process as a child, a warning is generated:
+For the series
 
-remove_proc_entry: removing non-empty directory 'net/can-bcm'...
-WARNING: CPU: 1 PID: 71 at fs/proc/generic.c:717 remove_proc_entry
-Call Trace:
-remove_proc_entry
-canbcm_pernet_exit
-ops_exit_list
-
-Instead of simply removing the entry, remove the entire subdirectory.
-The child process will still be removed, but without a warning occurring.
-
-This patch was compiled and the code traced with gdb to see that the
-tree  was removed. The code was run to see that the warning was removed. 
-In addition, the code was tested with the kselftest
-net subsystem. No regressions were detected.
-
-Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
----
- net/can/bcm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/can/bcm.c b/net/can/bcm.c
-index 27d5fcf0eac9..fea48fd793e5 100644
---- a/net/can/bcm.c
-+++ b/net/can/bcm.c
-@@ -1779,7 +1779,7 @@ static void canbcm_pernet_exit(struct net *net)
- #if IS_ENABLED(CONFIG_PROC_FS)
- 	/* remove /proc/net/can-bcm directory */
- 	if (net->can.bcmproc_dir)
--		remove_proc_entry("can-bcm", net->proc_net);
-+		remove_proc_subtree("can-bcm", net->proc_net);
- #endif /* CONFIG_PROC_FS */
- }
- 
--- 
-2.34.1
-
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
 
