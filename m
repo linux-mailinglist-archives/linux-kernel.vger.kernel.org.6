@@ -1,120 +1,142 @@
-Return-Path: <linux-kernel+bounces-279234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4C094BACC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:23:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 264DC94BAD0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850191F22A6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C67B61F218C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A46718A6D2;
-	Thu,  8 Aug 2024 10:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ScWaaUTz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V13EMX7a"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779DF189F3B;
-	Thu,  8 Aug 2024 10:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BB7189F3B;
+	Thu,  8 Aug 2024 10:23:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8FC13AA31
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112567; cv=none; b=PnHdoAcHthgv+9Lv1V0J3x4gYScqLGIvdRlDzfJL8TKbkh6LagPXuo/A3eeY36iEWc7oVJCIqaowYWO/Jvd4l7lyw4zHfZMIGoo2xAAxxsSfEna3fcozUD4GFMVE4uidv06xGJ3wflr9SqP98DEu2mv6x6lJILRF9ClnmrE1wyc=
+	t=1723112638; cv=none; b=PM2jeNDQm6m63e4uUcOfKyTw+7n3Xi8oBoeF7sOUK33d+Yu5rpd7XWv7dxmqkVDFx7VOx3fRZ6+m2Ae8rCUAAK77IeifPEXdLeWYvllr+q2mGZI/5gWJtJ+Rrfau5cEdU9iCDfQs0LItmX3yMqNF5+ztZIek6q4x9JP8/frtxUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112567; c=relaxed/simple;
-	bh=ay8fpRPUhdlevOPxpU142NF/MCGOF60r6TCTEfWRypI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=kOpwiThPDdvnldhi1K3wNMQ8Xcp9F8M7yDVzqSq0/kdnNRsz7ytm5v+Wqnsi9h5HUVzxOaV34o6iLjtK7MTYcvpA2Au9mnDsrjQQdq8RTZcySzNo93cGeAhuDyOv97TqI53uMzgkVdflSFTbi3kBhNgpKfJBEsOqsObVvYLhoa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ScWaaUTz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V13EMX7a; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 08 Aug 2024 10:22:42 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723112563;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=41r+CqkBJCQpEyu0WXdNc0nBJYU7r6CqKcANyHYGV7M=;
-	b=ScWaaUTz9/3rJBvKvBO9n3WRtOPWcb/VtfkLYtXnRfeytu50jZTB5cEjmZepa4jRq+p5R8
-	LJaKv/LEWuJM83QpBGDMQDOgCQ+z8Blye25+Z5JjSnwGPY+Mhx0fPMQ+n+RsDH9Lzbb0ak
-	n5quwogdSD0QRo1nMi1OYLkn5SGmZ0RB77jwwiTrJUQZi4os5GxIpzMryVkryDuhPkOOGi
-	ZJYFDpkKZDWHJe4y3MemufuSHkyb4X1RGmS3PTEGI6OSWjTDn8pZu/MB3d11fgMomoFDRG
-	2GUabkglXcuAm/aTDPhxdGVq6mIKcQ4nfJluGb5fWfPL43bOnlLb2ucIVmHmYQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723112563;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=41r+CqkBJCQpEyu0WXdNc0nBJYU7r6CqKcANyHYGV7M=;
-	b=V13EMX7aTs2XY7PVvPRpS1k0hnjCL8FrWXV2/isEqk6ngiPzKbgHUdiWxIT6GaS1F7zqmU
-	tCXE/5W6UjQvyVAA==
-From: "tip-bot2 for Thorsten Blum" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: locking/core] lockdep: Use str_plural() to fix Coccinelle warning
-Cc: Waiman Long <longman@redhat.com>, Thorsten Blum <thorsten.blum@toblux.com>,
- Boqun Feng <boqun.feng@gmail.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240528120008.403511-2-thorsten.blum@toblux.com>
-References: <20240528120008.403511-2-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1723112638; c=relaxed/simple;
+	bh=xB2gDO5J2QGucCuS7UUMMS3iMugWnsEeWiQyM+lBA6o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YGfb0Im2GHrra/VgnS3dEbWcUl/8B7YCmz/yqI7xQ2+4710IyfoPeOid7VFinQOJr6ytg05pDJx5OcpA1lZO5A4HdhpPPOHwNOrgxNn6td5/FJ6FuG035ucnuEFZGHf7e/KJMvu84wZ4hEq9wHFbCcE64R1PzadkMqREeRuNVRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2970EFEC;
+	Thu,  8 Aug 2024 03:24:22 -0700 (PDT)
+Received: from [10.1.26.21] (e122027.cambridge.arm.com [10.1.26.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19C913F766;
+	Thu,  8 Aug 2024 03:23:53 -0700 (PDT)
+Message-ID: <37be0bd0-219d-4e46-b17e-cde7f960becb@arm.com>
+Date: Thu, 8 Aug 2024 11:23:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172311256267.2215.17125576350674011686.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] drm/panfrost: Add SYSTEM_TIMESTAMP and
+ SYSTEM_TIMESTAMP_FREQUENCY parameters
+To: Mary Guillemard <mary.guillemard@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+References: <20240807160900.149154-1-mary.guillemard@collabora.com>
+ <20240807160900.149154-2-mary.guillemard@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240807160900.149154-2-mary.guillemard@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the locking/core branch of tip:
+On 07/08/2024 17:08, Mary Guillemard wrote:
+> Expose system timestamp and frequency supported by the GPU.
+> 
+> Mali uses the generic arch timer as GPU system time so we currently
+> wire cntvct_el0 and cntfrq_el0 respectively to those parameters.
+> We could have directly read those values from userland but handling
+> this here allows us to be future proof in case of errata related to
+> timers for example.
 
-Commit-ID:     13c267f0c27e35ee9372d3cf0dde1ea09db02f13
-Gitweb:        https://git.kernel.org/tip/13c267f0c27e35ee9372d3cf0dde1ea09db02f13
-Author:        Thorsten Blum <thorsten.blum@toblux.com>
-AuthorDate:    Tue, 28 May 2024 14:00:09 +02:00
-Committer:     Boqun Feng <boqun.feng@gmail.com>
-CommitterDate: Tue, 06 Aug 2024 10:46:42 -07:00
+I'm not sure what the benefit is for the kernel driver providing these
+(and only on some systems)? The user space driver is still going to need
+code to deal with the problematic systems.
 
-lockdep: Use str_plural() to fix Coccinelle warning
+> This new uAPI will be used in Mesa to implement timestamp queries and
+> VK_KHR_calibrated_timestamps.
 
-Fixes the following Coccinelle/coccicheck warning reported by
-string_choices.cocci:
+VK_KHR_calibrated_timestamps says it should query 'quasi simultaneously
+from two time domains' - but this is purely providing an interface to
+read a single counter at a time.
 
-	opportunity for str_plural(depth)
+It _may_ be useful to report the GPU's view of time and at the same time
+(or as near as possible) the architectural counters. That can be used to
+deal with drift between the GPU's counters and arch counters[1].
 
-Acked-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Link: https://lore.kernel.org/r/20240528120008.403511-2-thorsten.blum@toblux.com
----
- kernel/locking/lockdep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In general we try to avoid providing an interface to something which is
+unrelated to the GPU, especially when user space already has a mechanism.
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index fee21f3..266f57f 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -785,7 +785,7 @@ static void lockdep_print_held_locks(struct task_struct *p)
- 		printk("no locks held by %s/%d.\n", p->comm, task_pid_nr(p));
- 	else
- 		printk("%d lock%s held by %s/%d:\n", depth,
--		       depth > 1 ? "s" : "", p->comm, task_pid_nr(p));
-+		       str_plural(depth), p->comm, task_pid_nr(p));
- 	/*
- 	 * It's not reliable to print a task's held locks if it's not sleeping
- 	 * and it's not the current task.
+Steve
+
+[1] See Mihail's response to the panthor patches for details of
+differences that might occur.
+
+> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_drv.c | 17 +++++++++++++++++
+>  include/uapi/drm/panfrost_drm.h         |  2 ++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index 671eed4ad890..d94c9bf5a7f9 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -69,6 +69,23 @@ static int panfrost_ioctl_get_param(struct drm_device *ddev, void *data, struct
+>  		PANFROST_FEATURE_ARRAY(JS_FEATURES, js_features, 15);
+>  		PANFROST_FEATURE(NR_CORE_GROUPS, nr_core_groups);
+>  		PANFROST_FEATURE(THREAD_TLS_ALLOC, thread_tls_alloc);
+> +
+> +	case DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP:
+> +#ifdef CONFIG_ARM_ARCH_TIMER
+> +		param->value = __arch_counter_get_cntvct();
+> +#else
+> +		param->value = 0;
+> +#endif
+> +		break;
+> +
+> +	case DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP_FREQUENCY:
+> +#ifdef CONFIG_ARM_ARCH_TIMER
+> +		param->value = arch_timer_get_cntfrq();
+> +#else
+> +		param->value = 0;
+> +#endif
+> +		break;
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> diff --git a/include/uapi/drm/panfrost_drm.h b/include/uapi/drm/panfrost_drm.h
+> index 9f231d40a146..52b050e2b660 100644
+> --- a/include/uapi/drm/panfrost_drm.h
+> +++ b/include/uapi/drm/panfrost_drm.h
+> @@ -172,6 +172,8 @@ enum drm_panfrost_param {
+>  	DRM_PANFROST_PARAM_NR_CORE_GROUPS,
+>  	DRM_PANFROST_PARAM_THREAD_TLS_ALLOC,
+>  	DRM_PANFROST_PARAM_AFBC_FEATURES,
+> +	DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP,
+> +	DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP_FREQUENCY,
+>  };
+>  
+>  struct drm_panfrost_get_param {
+
 
