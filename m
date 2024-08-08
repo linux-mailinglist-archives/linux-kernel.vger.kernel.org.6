@@ -1,200 +1,274 @@
-Return-Path: <linux-kernel+bounces-280118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF9094C608
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:56:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 815DE94C613
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 362E7289586
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:56:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9D11F266EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C3215AAD6;
-	Thu,  8 Aug 2024 20:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F16F15ECC5;
+	Thu,  8 Aug 2024 20:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="db9daU0K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BVIfNLjD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C216B15A853;
-	Thu,  8 Aug 2024 20:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6560D15ADB2
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723150562; cv=none; b=B43k7nirmOkQbclf1jM5+FyQMW++xTpj9WkJdARHuKzeyxFs+gvCS+jQE8r3MZ8HuOOE6DWHSVp73Br1cS4nbmk7xPqy+CJ7qtZBa+H5AMPkeHXaaMcMQekzwj/B+wsnWGfEg6+srESlw4xWiBHDHn4aqXbjrKjBlVG9jsiSYAM=
+	t=1723150618; cv=none; b=mP1eWO2sjcU2UwViDq+P0nzLuI3B6JoKYaM+wZ+VWmRS/JKi6MkKrlT4CudimiXLUxbz7Si/z4zdbYFnfSJEnfKFUHSfkjFD9xKGiirdKMq8/vcoAxfKFOx8EKuGiNgaGww0c+IPrnU/70XO2i5tw0TelfqGGzf7tYELmnO/uKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723150562; c=relaxed/simple;
-	bh=6nRlq33BTnJbB7nmem2brqmpLIwZKd9C3mY2VE3o6Uw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=DQUkpnzm8JFVCCeGbuizA8oRaYESljELcqfHyo72vDpyDTwHCzMEcHSI8C/mJGcQAOcngiZcu9ycX7Otvt86ln5x17Qpn8JZJ8JPSa2jIVYEucLf68ZgT9Kt0x1oqgy9T/WKR5Rddmh84K6i/TbHEvsFnOWlMYsrcclksrr0kJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=db9daU0K; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723150561; x=1754686561;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=6nRlq33BTnJbB7nmem2brqmpLIwZKd9C3mY2VE3o6Uw=;
-  b=db9daU0KuzzgU04Nkhg5uOBZzdkzpcLLCeXQ2mxb9r8TEq9XGvwAtNh1
-   mRXHzhbzyGyxI8nZeGLQHxggIXA7f3PSWqTr7hIzrtZCLW3KOe04jlD2l
-   ijaCw7nlo9UFOD2MDB4NCU06i1PBNbYoJlmHv0bbP+NQxnfEInq/fJXhY
-   PFwB2gUhdHBggrbZKiv5MeFYn1CG3F9XQsa1pQiw/sHZbsnxBaxujHeOH
-   YkjFukQU3dcBdYhzLhGkj/CvddLPGDFxhw7XOJsFHs3n+Bbju+xmEztbp
-   /kY5NdVpm2ibxFniFJNDV9WKVo/jgVrKzp8T6rnjTBZjpyDREehOhy7kA
-   w==;
-X-CSE-ConnectionGUID: ILjKdG41TxitIh+WrCgd2g==
-X-CSE-MsgGUID: j7EcQZ85SnSMsn3Y/lha6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="20871824"
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="20871824"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 13:56:00 -0700
-X-CSE-ConnectionGUID: UV3ub9HrTOGi6PtvpcmvbQ==
-X-CSE-MsgGUID: TwkC6x/CQce4Xv314DDxcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="57423876"
-Received: from dgramcko-desk.amr.corp.intel.com (HELO xpardee-desk.intel.com) ([10.124.221.55])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 13:55:58 -0700
-From: Xi Pardee <xi.pardee@linux.intel.com>
-To: xi.pardee@linux.intel.com,
-	irenic.rajneesh@gmail.com,
-	david.e.box@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86:intel/pmc: Ignore all LTRs during suspend
-Date: Thu,  8 Aug 2024 13:55:38 -0700
-Message-ID: <20240808205551.403770-1-xi.pardee@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723150618; c=relaxed/simple;
+	bh=BsX2d0K1c9Iyqy3iXpPM98RHfwVeEE9Uo37kfylRXkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qp8/b15LXjvGnIPsRlPPYdq7n7W/K5ceqjJl4Jc9/eyUNh5THXlJjYN3djN4SsyDfENRLi10JfFUOKZ99S+7/hHxqoG1bMqhZyhbzx9BFx8S0SbBkY3IFl/2daZc9EXd9XdXTDDD31NT7tMxfOVpi74nkmraQUrpYaI6pzBu74s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BVIfNLjD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723150615;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AjSNUygXxj1UKmmvy/1DKIe1v5Iq+pAlfR8gntxMDUA=;
+	b=BVIfNLjDZvE+5vSGXBDc+ezeyWNELdUxeh9xalzuvCB7t/42KDFIB5Ruy+qJ152Dq7QSKQ
+	M5IQ+JxUfkAFzZC0SZajpuhhxkRkP5Ft1/16oZutd1nN/c9GYOK3awNgPlHcxOtbHCsY/d
+	TSq4Pek0VlZsFSdzonilKzFumNGc8wI=
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
+ [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-674-gaVCyWEVOaC2ynj65AYKrg-1; Thu, 08 Aug 2024 16:56:54 -0400
+X-MC-Unique: gaVCyWEVOaC2ynj65AYKrg-1
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-493f8e446deso642702137.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 13:56:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723150614; x=1723755414;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AjSNUygXxj1UKmmvy/1DKIe1v5Iq+pAlfR8gntxMDUA=;
+        b=mhoEtvJUet69O7dLieS0QK3Igt96GNpbQ7hh7tyJgVSJA7Jm1WGTWvU0Cl1Fo4qGK/
+         ISpbnuKa/fyKUHaBpipNApaNkH7lmvqM19sQnjg+cFJc439GSnQSqH44Ll4WHB/TL+XZ
+         BwgpSaVHAwo/5CU/6SVz0/pb2HXJh8+rYmNZd6mGiee4NPpRAD7wNJKh+lzdbay8xNJL
+         h0k3CswJJIhMrHmT92BgCtN3fFSSKoahQn9YGG72y6hTReLRyrxCGi99i/PP4RhlZQM3
+         kocC87V8YWU1I9NQxU+4YB9NkeQ1XkjEcFIm3sqscMbbndrpQ+rdBQjuUGyE6ieiR4eo
+         Z2bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVB2weEK9GVw8+09x4QzfLWeeA6JIAtbShoTMHkEW87TlqmmnMH00B7596NADdt1fZqYJXba2JN5nhOa2DWbSGk8Jt86unOUvod8Mf7
+X-Gm-Message-State: AOJu0YxIi0/yJL9/2GhJZmz0Q0BGGz2Ne7V9d0AdoO9JVck1LsnrW8C3
+	CYjPnf96MsC0YFsHO+fePZjyj6kU9HMnw2+smhXSrDJAtiGPQKk8o8Y0bdMu0ExFfVWj8haG7lH
+	+dIQEbg8ZhLSsv9RE6i/lgoVwoXuHgaIBHpsf88hmYRwsheQddyXBCwOHL7dWKA==
+X-Received: by 2002:a05:6102:6d0:b0:493:badb:74ef with SMTP id ada2fe7eead31-495c5bf9df6mr3267070137.26.1723150613551;
+        Thu, 08 Aug 2024 13:56:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKopPmF6amJedENwp5N1HJwLnev5fnpBwA+0PgZ0higtVR5UqfwM0fCb9gaFks6AjH2VLC/w==
+X-Received: by 2002:a05:6102:6d0:b0:493:badb:74ef with SMTP id ada2fe7eead31-495c5bf9df6mr3267048137.26.1723150613092;
+        Thu, 08 Aug 2024 13:56:53 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::13])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c84074esm69807896d6.80.2024.08.08.13.56.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 13:56:24 -0700 (PDT)
+Date: Thu, 8 Aug 2024 15:56:10 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Siddharth Vadapalli <s-vadapalli@ti.com>, bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	vigneshr@ti.com, kishon@kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org, 
+	srk@ti.com
+Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
+Message-ID: <wr2z74wsqhitisgp4qsfrmuvvhw3cpp3bdzkp5batawv6btfyd@xcyhug7jyfxg>
+References: <20240724065048.285838-1-s-vadapalli@ti.com>
+ <20240724161916.GG3349@thinkpad>
+ <20240725042001.GC2317@thinkpad>
+ <93e864fb-cf52-4cc0-84a0-d689dd829afb@ti.com>
+ <20240726115609.GF2628@thinkpad>
+ <CAL_JsqJ-mfU88E_Ri=BzH6nAFg405gkPPJTtjdp7UR2n96QMkw@mail.gmail.com>
+ <20240805164519.GF7274@thinkpad>
+ <CAL_JsqKxF6yYTWbmU8SRhxemNMwErNViHuk05sLyFjFzssh=Eg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqKxF6yYTWbmU8SRhxemNMwErNViHuk05sLyFjFzssh=Eg@mail.gmail.com>
 
-From: Xi Pardee <xi.pardee@intel.com>
+On Mon, Aug 05, 2024 at 01:05:14PM GMT, Rob Herring wrote:
+> On Mon, Aug 5, 2024 at 10:45 AM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > On Mon, Aug 05, 2024 at 10:01:37AM -0600, Rob Herring wrote:
+> > > On Fri, Jul 26, 2024 at 5:56 AM Manivannan Sadhasivam
+> > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > >
+> > > > On Thu, Jul 25, 2024 at 01:50:16PM +0530, Siddharth Vadapalli wrote:
+> > > > > On Thu, Jul 25, 2024 at 09:50:01AM +0530, Manivannan Sadhasivam wrote:
+> > > > > > On Wed, Jul 24, 2024 at 09:49:21PM +0530, Manivannan Sadhasivam wrote:
+> > > > > > > On Wed, Jul 24, 2024 at 12:20:48PM +0530, Siddharth Vadapalli wrote:
+> > > > > > > > Since the configuration of Legacy Interrupts (INTx) is not supported, set
+> > > > > > > > the .map_irq and .swizzle_irq callbacks to NULL. This fixes the error:
+> > > > > > > >   of_irq_parse_pci: failed with rc=-22
+> > > > > > > > due to the absence of Legacy Interrupts in the device-tree.
+> > > > > > > >
+> > > > > > >
+> > > > > > > Do you really need to set 'swizzle_irq' to NULL? pci_assign_irq() will bail out
+> > > > > > > if 'map_irq' is set to NULL.
+> > > > > > >
+> > > > > >
+> > > > > > Hold on. The errono of of_irq_parse_pci() is not -ENOENT. So the INTx interrupts
+> > > > > > are described in DT? Then why are they not supported?
+> > > > >
+> > > > > No, the INTx interrupts are not described in the DT. It is the pcieport
+> > > > > driver that is attempting to setup INTx via "of_irq_parse_and_map_pci()"
+> > > > > which is the .map_irq callback. The sequence of execution leading to the
+> > > > > error is as follows:
+> > > > >
+> > > > > pcie_port_probe_service()
+> > > > >   pci_device_probe()
+> > > > >     pci_assign_irq()
+> > > > >       hbrg->map_irq
+> > > > >         of_pciof_irq_parse_and_map_pci()
+> > > > >         of_irq_parse_pci()
+> > > > >           of_irq_parse_raw()
+> > > > >             rc = -EINVAL
+> > > > >             ...
+> > > > >             [DEBUG] OF: of_irq_parse_raw: ipar=/bus@100000/interrupt-controller@1800000, size=3
+> > > > >             if (out_irq->args_count != intsize)
+> > > > >               goto fail
+> > > > >                 return rc
+> > > > >
+> > > > > The call to of_irq_parse_raw() results in the Interrupt-Parent for the
+> > > > > PCIe node in the device-tree being found via of_irq_find_parent(). The
+> > > > > Interrupt-Parent for the PCIe node for MSI happens to be GIC_ITS:
+> > > > > msi-map = <0x0 &gic_its 0x0 0x10000>;
+> > > > > and the parent of GIC_ITS is:
+> > > > > gic500: interrupt-controller@1800000
+> > > > > which has the following:
+> > > > > #interrupt-cells = <3>;
+> > > > >
+> > > > > The "size=3" portion of the DEBUG print above corresponds to the
+> > > > > #interrupt-cells property above. Now, "out_irq->args_count" is set to 1
+> > > > > as __assumed__ by of_irq_parse_pci() and mentioned as a comment in that
+> > > > > function:
+> > > > >       /*
+> > > > >        * Ok, we don't, time to have fun. Let's start by building up an
+> > > > >        * interrupt spec.  we assume #interrupt-cells is 1, which is standard
+> > > > >        * for PCI. If you do different, then don't use that routine.
+> > > > >        */
+> > > > >
+> > > > > In of_irq_parse_pci(), since the PCIe-Port driver doesn't have a
+> > > > > device-tree node, the following doesn't apply:
+> > > > >   dn = pci_device_to_OF_node(pdev);
+> > > > > and we skip to the __assumption__ above and proceed as explained in the
+> > > > > execution sequence above.
+> > > > >
+> > > > > If the device-tree nodes for the INTx interrupts were present, the
+> > > > > "ipar" sequence to find the interrupt parent would be skipped and we
+> > > > > wouldn't end up with the -22 (-EINVAL) error code.
+> > > > >
+> > > > > I hope this clarifies the relation between the -22 error code and the
+> > > > > missing device-tree nodes for INTx.
+> > > > >
+> > > >
+> > > > Thanks for explaining the logic. Still I think the logic is flawed. Because the
+> > > > parent (host bridge) doesn't have 'interrupt-map', which means INTx is not
+> > > > supported. But parsing one level up to the GIC node and not returning -ENOENT
+> > > > doesn't make sense to me.
+> > > >
+> > > > Rob, what is your opinion on this behavior?
+> > >
+> > > Not sure I get the question. How should we handle/determine no INTx? I
+> > > suppose that's either based on the platform (as this patch did) or by
+> >
+> > Platform != driver. Here the driver is making the call, but the platform
+> > capability should come from DT, no? I don't like the idea of disabling INTx in
+> > the driver because, the driver may support multiple SoCs and these capability
+> > may differ between them. So the driver will end up just hardcoding the info
+> > which is already present in DT :/
+> 
+> Let me rephrase it to "a decision made within the driver" (vs.
+> globally decided). That could be hardcoded (for now) or as match data
+> based on compatible.
+> 
+> > Moreover, the issue I'm seeing is, even if the platform doesn't support INTx (as
+> > described by DT in this case), of_irq_parse_pci() doesn't report correct
+> > error/log. So of_irq_parse_pci() definitely needs a fixup.
+> 
+> Possibly. What's correct here?
+> 
+> There was some rework in 6.11 of the interrupt parsing. So it is
+> possible something changed here. There's also this issue still
+> pending:
+> 
+> https://lore.kernel.org/all/2046da39e53a8bbca5166e04dfe56bd5.squirrel@_/
+> 
+> > > or by
+> > > failing to parse the interrupts. The interrupt parsing code is pretty
+> > > tricky as it has to deal with some ancient DTs, so I'm a little
+> > > hesitant to rely on that failing. Certainly I wouldn't rely on a
+> > > specific errno value. The downside to doing that is also if someone
+> > > wants interrupts, but has an error in their DT, then all we can do is
+> > > print 'INTx not supported' or something. So we couldn't fail probe as
+> > > the common code wouldn't be able to distinguish. I suppose we could
+> > > just check for 'interrupt-map' present in the host bridge node or not.
+> >
+> > Yeah, as simple as that. But I don't know if that is globally applicable to
+> > all platforms.
+> 
+> There's a lot of history and the interrupt parsing is fragile due to
+> all the "interesting" DT interrupt hierarchies. So while I think it
+> would work, that's just a guess. I'm open to trying it and seeing.
 
-Add support to ignore all LTRs before suspend and restore the previous
-LTR values after suspend. This feature could be turned off with module
-parameter ltr_ignore_all_suspend.
+Would something like this be what you're imagining? If so I can post a
+patch if this patch is a dead end:
 
-Suggested-by: Rafael J. Wysocki<rafael.j.wysocki@intel.com>
-Signed-off-by: Xi Pardee <xi.pardee@intel.com>
----
- drivers/platform/x86/intel/pmc/core.c | 53 +++++++++++++++++++++++++++
- drivers/platform/x86/intel/pmc/core.h |  2 +
- 2 files changed, 55 insertions(+)
+    diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+    index dacea3fc5128..4e4ecaa95599 100644
+    --- a/drivers/pci/of.c
+    +++ b/drivers/pci/of.c
+    @@ -512,6 +512,10 @@ static int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *
+                            if (ppnode == NULL) {
+                                    rc = -EINVAL;
+                                    goto err;
+    +                       } else if (!of_get_property(ppnode, "interrupt-map", NULL)) {
+    +                               /* No interrupt-map on a host bridge means we're done here */
+    +                               rc = -ENOENT;
+    +                               goto err;
+                            }
+                    } else {
+                            /* We found a P2P bridge, check if it has a node */
 
-diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index 01ae71c6df59..f364a011721d 100644
---- a/drivers/platform/x86/intel/pmc/core.c
-+++ b/drivers/platform/x86/intel/pmc/core.c
-@@ -714,6 +714,49 @@ static int pmc_core_s0ix_blocker_show(struct seq_file *s, void *unused)
- }
- DEFINE_SHOW_ATTRIBUTE(pmc_core_s0ix_blocker);
- 
-+static void pmc_core_ltr_ignore_all(struct pmc_dev *pmcdev)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
-+		struct pmc *pmc;
-+		u32 ltr_ign;
-+
-+		pmc = pmcdev->pmcs[i];
-+		if (!pmc)
-+			continue;
-+
-+		guard(mutex)(&pmcdev->lock);
-+		pmc->ltr_ign = pmc_core_reg_read(pmc, pmc->map->ltr_ignore_offset);
-+
-+		/* ltr_ignore_max is the max index value for ltr ignore register */
-+		ltr_ign = pmc->ltr_ign | GENMASK(pmc->map->ltr_ignore_max, 0);
-+		pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, ltr_ign);
-+	}
-+
-+	/*
-+	 * Ignoring ME during suspend is blocking platforms with ADL PCH to get to
-+	 * deeper S0IX substate.
-+	 */
-+	pmc_core_send_ltr_ignore(pmcdev, 6, 0);
-+}
-+
-+static void pmc_core_ltr_restore_all(struct pmc_dev *pmcdev)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); i++) {
-+		struct pmc *pmc;
-+
-+		pmc = pmcdev->pmcs[i];
-+		if (!pmc)
-+			continue;
-+
-+		guard(mutex)(&pmcdev->lock);
-+		pmc_core_reg_write(pmc, pmc->map->ltr_ignore_offset, pmc->ltr_ign);
-+	}
-+}
-+
- static inline u64 adjust_lpm_residency(struct pmc *pmc, u32 offset,
- 				       const int lpm_adj_x2)
- {
-@@ -1479,6 +1522,10 @@ static bool warn_on_s0ix_failures;
- module_param(warn_on_s0ix_failures, bool, 0644);
- MODULE_PARM_DESC(warn_on_s0ix_failures, "Check and warn for S0ix failures");
- 
-+static bool ltr_ignore_all_suspend = true;
-+module_param(ltr_ignore_all_suspend, bool, 0644);
-+MODULE_PARM_DESC(ltr_ignore_all_suspend, "Ignore all LTRs during suspend");
-+
- static __maybe_unused int pmc_core_suspend(struct device *dev)
- {
- 	struct pmc_dev *pmcdev = dev_get_drvdata(dev);
-@@ -1488,6 +1535,9 @@ static __maybe_unused int pmc_core_suspend(struct device *dev)
- 	if (pmcdev->suspend)
- 		pmcdev->suspend(pmcdev);
- 
-+	if (ltr_ignore_all_suspend)
-+		pmc_core_ltr_ignore_all(pmcdev);
-+
- 	/* Check if the syspend will actually use S0ix */
- 	if (pm_suspend_via_firmware())
- 		return 0;
-@@ -1594,6 +1644,9 @@ static __maybe_unused int pmc_core_resume(struct device *dev)
- {
- 	struct pmc_dev *pmcdev = dev_get_drvdata(dev);
- 
-+	if (ltr_ignore_all_suspend)
-+		pmc_core_ltr_restore_all(pmcdev);
-+
- 	if (pmcdev->resume)
- 		return pmcdev->resume(pmcdev);
- 
-diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
-index ea04de7eb9e8..e862ea88b816 100644
---- a/drivers/platform/x86/intel/pmc/core.h
-+++ b/drivers/platform/x86/intel/pmc/core.h
-@@ -372,6 +372,7 @@ struct pmc_info {
-  * @map:		pointer to pmc_reg_map struct that contains platform
-  *			specific attributes
-  * @lpm_req_regs:	List of substate requirements
-+ * @ltr_ign:		Holds LTR ignore data while suspended
-  *
-  * pmc contains info about one power management controller device.
-  */
-@@ -380,6 +381,7 @@ struct pmc {
- 	void __iomem *regbase;
- 	const struct pmc_reg_map *map;
- 	u32 *lpm_req_regs;
-+	u32 ltr_ign;
- };
- 
- /**
--- 
-2.43.0
+I must admit that you being nervous has me being nervous since I'm not all
+that familiar with PCI... but if y'all think this is ok then I'm for it.
+I'm sure I'm not picturing all the cases here so would appreciate
+some scrutiny.
+
+You still end up with warnings, which kind of sucks, since as I
+understand it the lack of INTx interrupts on this platform is
+*intentional*:
+
+    [    3.342548] pci_bus 0000:00: 2-byte config write to 0000:00:00.0 offset 0x4 may corrupt adjacent RW1C bits
+    [    3.346716] pcieport 0000:00:00.0: of_irq_parse_pci: no interrupt-map found, INTx interrupts not available
+    [    3.346721] PCI: OF: of_irq_parse_pci: possibly some PCI slots don't have level triggered interrupts capability
+
+You could have a combo of both this patch (to indicate that a specific driver (even further
+limited to a match data based on compatible) doesn't support these) as well as
+the above diff (to improve the message printed in the situation where a driver
+*does* claim to support these interrupts but fails to describe them properly).
+
+Am I barking up the right tree? If so I'll submit a proper patch
+independent of this (and depending on your views we can continue with v2
+of this patch too, or not).
+
+Thanks,
+Andrew
 
 
