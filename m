@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-279119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA20C94B92B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:40:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CFF94B924
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6240D1F217C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:40:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A7D1F23406
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8552D1898F2;
-	Thu,  8 Aug 2024 08:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCE4189919;
+	Thu,  8 Aug 2024 08:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gTTS2QST"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="izdHQVC8"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3507718950C
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4796189908
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723106433; cv=none; b=iUgFUIlgpg3qVwfxCCrsA8LXOw7GQTrd7ocRs62x1vx1XG5qy8fnoZQW18KfzisB+Ec6rOdBsG5s4paHbgCMGOtCbH/6+/7bE5h1ecSNgKTsL5NQeyNYOcLJvfF2Uqm4KWtmFdkr1+fLT2CQ3Rxu7FTyRK66vv14+VajYSt2u9M=
+	t=1723106293; cv=none; b=ThEDq4tT+H4GiFdf80SuSWxMfo8h7VlrxVlKPKalcVzQ1jTfB3Ud2mHlWAUJqicmIsIHh+9LBmN4M4dweILr3pjTUOkVykXUxrAhM4iqr6B90MbfiOVWXapdvVQhxuc91jrTSRN8A4yVBMJmaqVV/0BA9BOy5fv31YcMWL8hcek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723106433; c=relaxed/simple;
-	bh=ILIVNd0d7PFN6eKtpQ0yw2fOb+XUxKGhOmkekcRWTIQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ngrkgOjJKHQ3yD2vv6dAZgmXfuLqJndKXg7dHvnDHR7PoKst4Y/Jn+btaybq+lMHX5nRLdgAQgGMDuGEUF6SV5CLl15FqlM7q0loSb1viXz/ZyQ6zbu14J8dyuh5ZlSokNcl7CAY8GRvZDtLwnAijjdnz8GcBz7yEPEaa+rfdIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gTTS2QST; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723106432; x=1754642432;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=ILIVNd0d7PFN6eKtpQ0yw2fOb+XUxKGhOmkekcRWTIQ=;
-  b=gTTS2QSTrqxygMP5NhWqdbx4Yb7Q/zXZn2fb8peU4LZQEx1Vz9iAux3A
-   tRvmtCQX/DZ5qXVgvTzMGzPshU4WZZ6LOyf7NBw9yW88xOWoCiGqJ1gt8
-   ovGjZUY5pBzsckGti5xmBp3tXMMIxmrKJznzMhalZUjKW6mhofl1Qk8/z
-   6RwOTna3fX9gukocqQgVhG0O9P3ab/gYWyd3Cu+vCVytLUZv0+3qalreQ
-   oQZFKuEVHqvsk+dPDSZuNhg7QlkVBbJBVX2fYG3q2+fZHMVPI2dMO5/BH
-   g/rIed/BJBGF9yPLQUhYvnsPYOi/jntxUcLGJThHCzJ2876+U43WYEb4w
-   w==;
-X-CSE-ConnectionGUID: R5SZPXpnQxOh88OrxM6hgQ==
-X-CSE-MsgGUID: fzJzeW7/Q9+g36RiZmLETQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="43739349"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="43739349"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 01:40:31 -0700
-X-CSE-ConnectionGUID: fSXnMxYVT3aUSeQ1rPE45A==
-X-CSE-MsgGUID: i6v3MAsxQSaGZJYlLO9FbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="61793401"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 01:40:29 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Chris Li <chrisl@kernel.org>,  Hugh Dickins
- <hughd@google.com>,  Ryan Roberts <ryan.roberts@arm.com>,  Kalesh Singh
- <kaleshsingh@google.com>,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org,  Barry Song <baohua@kernel.org>
-Subject: Re: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap
- cluster order
-In-Reply-To: <CAMgjq7CWwK75_2Zi5P40K08pk9iqOcuWKL6khu=x4Yg_nXaQag@mail.gmail.com>
-	(Kairui Song's message of "Thu, 1 Aug 2024 17:59:17 +0800")
-References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
-	<3c79021a-e9a0-4669-a4e7-7060edf12d58@redhat.com>
-	<CAMgjq7CWwK75_2Zi5P40K08pk9iqOcuWKL6khu=x4Yg_nXaQag@mail.gmail.com>
-Date: Thu, 08 Aug 2024 16:36:56 +0800
-Message-ID: <87le17z9zr.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1723106293; c=relaxed/simple;
+	bh=FTitw4ONbiIRDoZiBnYisEasbn/aK6qsD42rfDDtdiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VHPnmPgLDW3T1rHX5SDaBqiOuqn/g3jwbc3bJWzW/12K/iQZdnqwfGYr/VlrlOnmxjN7GZE5N6qRrj+BtnWXLHwRQYwQPPs4s6KKz7ZN3GsfnFqkWPEhoo+xtxlf0myJg+UT9LRw670FDHfTPe/sUk4cC5Qlwpe0chyQWUy3Ytw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=izdHQVC8; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=VVrH
+	gi6qcDf24C34jG9fj+F0XNS/hwimz0FduHhSN0o=; b=izdHQVC8/I306hJXFOtI
+	PPUpRFDRE7BRgYLSimvTVsDrt5OCJdyZpuvk6MzDdJAosCB7FkthvuLQu23R6IGP
+	XvrIEn0dW7ErzVKV/fM2CeP9K294xzF2+LVT5o836iN16prfeRLRo4lIq6gijyCm
+	Ar0MLQYLjU4G0TAzBvUN+qljrlH27K1qW+/s6FRqmOAPiP79mNsP1sMQH5TzAn7a
+	16Ymm7BqoBuIwCTcOtDwqIqzDz0k+zeK6CpTGtUbW5xz/MV1krGmbEcxjeCT9Oj7
+	lwrmn28fSapkl9xwZDLwC5EBCo4Y+TRoid6Z3BXqSBWZOtSMn0XTLIZJUCeBNN9h
+	oA==
+Received: (qmail 248714 invoked from network); 8 Aug 2024 10:38:05 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Aug 2024 10:38:05 +0200
+X-UD-Smtp-Session: l3s3148p1@FQ4S8icf4pcgAwDPXxLGAIH3oZkcU6AS
+Date: Thu, 8 Aug 2024 10:38:05 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+	magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 00/11] i2c: riic: Add support for Renesas RZ/G3S
+Message-ID: <ZrSD7ZCDAgvAu9EG@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
+	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YfZ954GBjdQLmkf8"
+Content-Disposition: inline
+In-Reply-To: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
 
-Kairui Song <ryncsn@gmail.com> writes:
 
-[snip]
+--YfZ954GBjdQLmkf8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -450,7 +450,10 @@ static void __free_cluster(struct swap_info_struct *si, struct swap_cluster_info
->  	lockdep_assert_held(&si->lock);
->  	lockdep_assert_held(&ci->lock);
->  
-> -	list_move_tail(&ci->list, &si->free_clusters);
-> +	if (ci->flags)
-> +		list_move_tail(&ci->list, &si->free_clusters);
-> +	else
-> +		list_add_tail(&ci->list, &si->free_clusters);
+Hi all,
 
-If we use list_del_init() to delete the cluster, we can always use
-list_move_tail()?  If so, the logic can be simplified.
+> Series adds I2C support for the Renesas RZ/G3S SoC.
 
->  	ci->flags = CLUSTER_FLAG_FREE;
->  	ci->order = 0;
->  }
-> @@ -474,7 +477,6 @@ static void swap_do_scheduled_discard(struct swap_info_struct *si)
->  				SWAPFILE_CLUSTER);
->  
->  		spin_lock(&si->lock);
-> -
->  		spin_lock(&ci->lock);
->  		__free_cluster(si, ci);
->  		memset(si->swap_map + idx * SWAPFILE_CLUSTER,
-> @@ -666,7 +668,7 @@ static void cluster_alloc_range(struct swap_info_struct *si, struct swap_cluster
->  		if (ci->flags & CLUSTER_FLAG_FRAG)
->  			si->frag_cluster_nr[ci->order]--;
->  		list_move_tail(&ci->list, &si->full_clusters);
-> -		ci->flags = 0;
-> +		ci->flags = CLUSTER_FLAG_FULL;
->  	}
->  }
+So, I will review this series today. I was hoping to also test it on a
+Genmai board (R7S72100) but I have issues with it. If I cannot boot from
+it until tomorrow, it will be review only from my side.
 
---
-Best Regards,
-Huang, Ying
+Happy hacking,
+
+   Wolfram
+
+
+--YfZ954GBjdQLmkf8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma0g+kACgkQFA3kzBSg
+KbYOzBAAh3nugwnzIf5z9qZk2CgkzEAghntACi0WA2kCs/FQyYDRe3XP6Zu8v9J8
+zALNXE04IuURGcwyN0Noc09ZbyADAIQUuf1hhm0yUCiud+eCnNs59HMl/I112Xai
+vP7IrVaEvqyHxPaz/1gLOKx1iqT02Lk9MdUeY2/HW9k8IgcIhIa57TpRhZdcdOOl
+Qm2OQTX3E0GxOpNZN3E2rL1ibxMYEuNoHCSJZuAYbMWQBKzb+k2d+/ebMuxALfhE
+vNzogZSNxiqlzI9wMKoYhyrUsIgp/7+j5RnGM0FpnQlV+u0ZzV3ogYldNNzhTpDr
+Q0BjroWFiBWOQ9f1zj8xjJjL9Ps/IHdMlWQaMAhnGTLmpQcfY8zclHAEPG/3k+kF
+8aU2jx2S7kXVSpZsieQFXOJXr32wAUNbO4lStc2QIFK6G+x96H3lx6F62ki9h5B6
+4eXPCKcuC7C+fvqnGPF2zT7IvWqCIeGYu3YYKu1BX4PF2emd/3W4Emc97OWLe5s1
+tUL3xRGqj+7NbWbLSR3NaiLYb+lmtBkxOIfVRmYCBeHa9CdD8I1ZDyqpwLsnhqyO
+KDRu4v9fMFMDcqygGFVOEPen2onvMkVxzhs7O7oxPetq9h/yN4cw4oD2MHeEFYWe
+tMlL/fvCglcGlBtiG56/PRyd2DTjht4E8MVpcn7KHZpjt18xqfA=
+=nBn0
+-----END PGP SIGNATURE-----
+
+--YfZ954GBjdQLmkf8--
 
