@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-279931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C864C94C38C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:20:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEBE394C38E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B47D281867
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B9F61C22E06
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E7F1917CB;
-	Thu,  8 Aug 2024 17:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACCC191F6C;
+	Thu,  8 Aug 2024 17:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ey+v+lk9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="i0RsvL3m"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E35189B8D;
-	Thu,  8 Aug 2024 17:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B58219149D;
+	Thu,  8 Aug 2024 17:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723137624; cv=none; b=t89v3MIgD+3/6ky7+LvR+V7GXqFP7h7OzNCW6Awwo6iJpH5oRMZf33sJvK3ll4t6ET/PW/415cYYORDKjMxM/TrpFmYV8sHBnJPsX2CLXMY4IWvDmRxkEM7Kh/MnZ9swfbZoD2vYM1Bf9bPeI87io7vG8GAv5/L89Fq9+Cb5VjA=
+	t=1723137640; cv=none; b=t/YmhZD2hDWLjQyUeN55uRJP2e1rT20ZII33nKjH4e6TWdd2ffjFQjQWO9loNWwxcQVYX4k08VPt3/DMlO5NseByhHBsRJvdP3apqpJucMjdUoLk6slRAVA/eba+orhfheHpNIjfNY2THNBw6QlDpIuuCVCH+s6lxLVu6ujNM08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723137624; c=relaxed/simple;
-	bh=frzQzsm5MhWF5+FE6An4jpHJdeMQiqPsmIBSe8G7fpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ehOe7TVaufUWa+IhbYRqYPx4iYIMdkE+sBKiroBIO53EolSuJGGDixNE//7DEyg9+mtpA31bcIuQ8BhPt193PCUF66fUccX1yL/smjtQpmeNO6ztBu09bgCMU+It4JRxD8V298jhvUqeYjqtfqGh+uEezDEz92DMUyq/0zSn5QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ey+v+lk9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0070C32782;
-	Thu,  8 Aug 2024 17:20:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723137623;
-	bh=frzQzsm5MhWF5+FE6An4jpHJdeMQiqPsmIBSe8G7fpk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ey+v+lk9EP6W3aoUZDhBmGDZyMbmIM18GngyiTsJCUngNzLwfFmsXXk3Zon5WYpGP
-	 ox2eISoqOjXLBfoCPNeJHpKONZ4kAQukctFbQ+eJkHyaHuD0JvNrr8ecvCpqsHsGlD
-	 Gz46x9Pt9qWI44mX0X6y1utaWMVrTbjP6NNps0U76SVsaV92gzvKUkGnhT8OVzvpDG
-	 V4U/P2iauL3uhkWZVVwClfQ+WFJPKEhiI8y94z6HzLmQvpdOf4KDAcJePQbeA2h4iX
-	 zdak0RxBJp59VhV8Zd3DP3lDWFySlhDG7HP6bxasISwAWCXpD2tNf8YbY0sXH4YM3q
-	 dzPWZCzZ0Tm8Q==
-Date: Thu, 8 Aug 2024 18:20:18 +0100
-From: Simon Horman <horms@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Kalle Valo <kvalo@kernel.org>,
-	Stanislav Yakovlev <stas.yakovlev@gmail.com>,
-	Ajay Singh <ajay.kathat@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	libertas-dev@lists.infradead.org, netdev@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] wifi: radiotap: Avoid
- -Wflex-array-member-not-at-end warnings
-Message-ID: <20240808172018.GC3075665@kernel.org>
-References: <ZrJmjM4izqDqwIrc@cute>
+	s=arc-20240116; t=1723137640; c=relaxed/simple;
+	bh=N0yRmV/6CdGXCtYec3fDqtYlHJ1n802DFUGTLoP+PHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aNhmJS2/Bji9qDXoj2otfa9/TvlMAAUkA/j5BKrHiWYGBrMftI9RvEDkMtBvVHhxoBWC0G1q8s1VDSSxkJAWhRJZE4TPXIIFZrli7A03cuhW382iLaVk3d/5Nc1Mfp8YHuiLsV53okxz2HMT8dJqIMkHfky7slNjI5Ynj5YFheg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=i0RsvL3m; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Wfv283PZsz6ClY8v;
+	Thu,  8 Aug 2024 17:20:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1723137629; x=1725729630; bh=ET8VdrzcM/WVtGZAl2LmiJ68
+	uMT9nlprmdxZKXq3dlo=; b=i0RsvL3mxMyCckfhgnkCxg1Q0juSkX5K21MxnU/P
+	036Tcxh9eO4fot9zEGM5VB7wW6Ws4/lGavWwzsYWUF6hFJXqKff3zrIVkOHEoAVh
+	aKgFNB9YH5D4q+41LNEbtWCx4mR35BX2ioDID3G4ku8ZUEBMElBk31hHohqEkBhJ
+	ikq0wOGqSQcBBpVwelj9d5KD47a058VSAFQOki2FOyDdX3FdPYB5QM3wS1++Ob6u
+	8SXWBxeOIibgikI/KmGJ1ebEZOshLK97TDKHBD41R3hY7K964Npnlhwx37ISAW7+
+	NrXGZcht5/4e1eMUJObEqC3HqzeO8Dx07KGEZgP451bndw==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id i5mRdFX6et78; Thu,  8 Aug 2024 17:20:29 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Wfv232wJGz6ClY8t;
+	Thu,  8 Aug 2024 17:20:27 +0000 (UTC)
+Message-ID: <17c0a914-9bd7-43ef-b739-d2105ec46567@acm.org>
+Date: Thu, 8 Aug 2024 10:20:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrJmjM4izqDqwIrc@cute>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: sd: Have scsi-ml retry START_STOP errors
+To: Yihang Li <liyihang9@huawei.com>, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ prime.zeng@huawei.com, linuxarm@huawei.com
+References: <20240808034619.768289-1-liyihang9@huawei.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240808034619.768289-1-liyihang9@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 12:08:12PM -0600, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> So, in order to avoid ending up with a flexible-array member in the
-> middle of multiple other structs, we use the `__struct_group()`
-> helper to create a new tagged `struct ieee80211_radiotap_header_hdr`.
-> This structure groups together all the members of the flexible
-> `struct ieee80211_radiotap_header` except the flexible array.
-> 
-> As a result, the array is effectively separated from the rest of the
-> members without modifying the memory layout of the flexible structure.
-> We then change the type of the middle struct members currently causing
-> trouble from `struct ieee80211_radiotap_header` to `struct
-> ieee80211_radiotap_header_hdr`.
-> 
-> We also want to ensure that in case new members need to be added to the
-> flexible structure, they are always included within the newly created
-> tagged struct. For this, we use `static_assert()`. This ensures that the
-> memory layout for both the flexible structure and the new tagged struct
-> is the same after any changes.
-> 
-> This approach avoids having to implement `struct ieee80211_radiotap_header_hdr`
-> as a completely separate structure, thus preventing having to maintain
-> two independent but basically identical structures, closing the door
-> to potential bugs in the future.
-> 
-> So, with these changes, fix the following warnings:
-> drivers/net/wireless/ath/wil6210/txrx.c:309:50: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/ipw2100.c:2521:50: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/ipw2200.h:1146:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/libipw.h:595:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/marvell/libertas/radiotap.h:34:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/marvell/libertas/radiotap.h:5:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/microchip/wilc1000/mon.c:10:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/microchip/wilc1000/mon.c:15:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/virtual/mac80211_hwsim.c:758:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/virtual/mac80211_hwsim.c:767:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+On 8/7/24 8:46 PM, Yihang Li wrote:
+> When sending START_STOP commands to resume scsi_device, it may be
+> interrupted by exception operations such as host reset or PCI FLR. Once
+> the command of START_STOP is failed, the runtime_status of scsi device
+> will be error and it is difficult for user to recover it.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+How is the PCI FLR sent to the device? Shouldn't PCI FLRs only be
+triggered by the SCSI LLD from inside an error handler callback? How can
+a PCI FLR be triggered while a START STOP UNIT command is being
+processed? Why can PCI FLRs only be triggered while a START STOP UNIT
+command is being processed and not while any other command is being
+processed?
 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index 5cd88a8eea73..29f30407d713 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -4088,9 +4088,20 @@ static int sd_start_stop_device(struct scsi_disk *sdkp, int start)
+>   {
+>   	unsigned char cmd[6] = { START_STOP };	/* START_VALID */
+>   	struct scsi_sense_hdr sshdr;
+> +	struct scsi_failure failure_defs[] = {
+> +		{
+> +			.allowed = 3,
+> +			.result = SCMD_FAILURE_RESULT_ANY,
+> +		},
+> +		{}
+> +	};
+> +	struct scsi_failures failures = {
+> +		.failure_definitions = failure_defs,
+> +	};
+>   	const struct scsi_exec_args exec_args = {
+>   		.sshdr = &sshdr,
+>   		.req_flags = BLK_MQ_REQ_PM,
+> +		.failures = &failures,
+>   	};
+>   	struct scsi_device *sdp = sdkp->device;
+>   	int res;
+
+The above change makes the START STOP UNIT command to be retried
+unconditionally. A START STOP UNIT command should not be retried
+unconditionally.
+
+Please take a look at the following patch series (posted yesterday):
+https://lore.kernel.org/linux-scsi/20240807203215.2439244-1-bvanassche@acm.org/
+
+Thanks,
+
+Bart.
 
