@@ -1,117 +1,143 @@
-Return-Path: <linux-kernel+bounces-279952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B5094C3CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:33:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9D794C3D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A20D41C22121
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:33:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 384BEB212D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E92191F65;
-	Thu,  8 Aug 2024 17:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19253190489;
+	Thu,  8 Aug 2024 17:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ae0qxf8S"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bn0+rqgC"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BA718B46F
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB7213D8A3
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723138370; cv=none; b=Jn8SJNsUp9z3eczUGd5Y7/1c2yh+t1IVWxyNSBOKD5y28ZEim7oBh5eib0eReqolKWCd5NcqenHnSeuhGqzGbZj1PWdvq6qg+WkRSSOzcxbuoPOZRFbtC25RCMgyzUOzinudCzIN68Azp6PfL7uZZQOiZJCK9nOC2mxNALmfpEg=
+	t=1723138505; cv=none; b=TGGXmOoOI3TjhEqxUZl2Muo9RFjc5z3SKUHy4NjCGiPO5zV0KsXELqUP1u/XpUSMPwPuIBgKewJ8wL9R4AZYB8xXShSSg8e64QHEj8wC5QWZgylzPwP4vHoYnx+3LHJzazj/+RzsCcZQggkKpvYX7NojPoRmsU1//0eWzn4lkaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723138370; c=relaxed/simple;
-	bh=ra9Tr8gTinwOfSl5zupa/2o60sqvU0CPOc2qEo8b/Nc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iflgsDVRGTuDf+v7tQv1YVAi7hGJx2eoGI8C4udJt9DR03eS4MsKMAMCLoPjL1cTs/H/vqXy9WtXQxeAv7se0qXdh+X2LvC2TwMdYfeJhrXdfM/NUt6r5Ya0I+NhpYqfZsgSMqRVL07BroMeZXCS4OF1EKBVusvIabx0HXP72ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ae0qxf8S; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-682ff2f0e67so12961147b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:32:49 -0700 (PDT)
+	s=arc-20240116; t=1723138505; c=relaxed/simple;
+	bh=8KYFidw8hrpQOyjPQf5i8Ok/To5dJrpwoNzBWE2dnNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4e6TZBB1TEP/m6vgw4hUjUK44gi/PNkrabeOFDXi5Hk8ezyhv6iZgxgfIU+RNtRuiQFAopSIYGL6u7H5FCgXbu+NqodpjcDdmA4nDy+5m34dUiC81KSMeqcIlj2tx/ciSpDmwqDOXBgtWhUe9UWDGP+Fdm1DCyiGm23fjcPHqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bn0+rqgC; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d2b921cdfso1083743b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:35:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723138368; x=1723743168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=snkmKAtsan0FJLgLs2dcvi/WMO4/avl1Z9NJwFjKlK4=;
-        b=ae0qxf8SpaYkuSbhmOZJKsxZg4LYbcm0aC6P7OPfsFcyS2qLEZ2UmQfXQysYWUxmkf
-         3WLdcVbu9PwirpvKj1mfSglTg1ULx7lzUy7QklTSu1TCYPMHuEApQGH3kA7PbGr9gheC
-         0lmX3yKQVGrc8mub21zu42CWv6xaYR+DAEsB0ymyPMYRs4O+YfYz3PpICnVmgXbzcNg7
-         VnNd5LHCoVZo7fOeGRzCyd5y1dQn8Dw9ByGqk8uzQLBtsgCJKMSYFxnmeN7Gl3swtLFs
-         Eqhf3FlZ2pGeZ4W6xKVBTgK73Af3rAM2Zl1DR6boGrczeVfteajN0sZRkjfIK4gYXQIg
-         57RA==
+        d=gmail.com; s=20230601; t=1723138503; x=1723743303; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=diwD1iCrpHXumZkgAMloBVGIf2kIwgitsF/BakIzCjE=;
+        b=Bn0+rqgCrMjEC+RMKKvyCzH4PHQGUyZ+wYJk0phqp5F/LCqb5sh1lJ015wdfC+uKi2
+         90HLohzrpRN2TvHuky40PylAIppOScgsjI3uJ6G5OOpD5AU7Dh3v6A34yImKR0S1tDFu
+         /HvsqogoBMmewykzdAbmoJZZZvXC71pOBhu7B/9g3CSNHvhaqbrZ3HyIVRkpbLY9ktfu
+         hKJXFkGjYDO39MCzmp/C9q6CrrAoqZUIL+X/Fp1iAEf8dXk6tqpnI3h3fYv6DJoo6oPP
+         Ce8rfYmTfalQd7t7m7iwDyq4UHTbq2Oadv7Rs/sCaRxc9nNRe+jfCQdb60v77uMbR58+
+         ilew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723138368; x=1723743168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=snkmKAtsan0FJLgLs2dcvi/WMO4/avl1Z9NJwFjKlK4=;
-        b=HaJGWOunBJ2sy2s9eHhQ0S1pb+Ko5Ffq/uiUA5m5w29XTxGcv/itb+tqvHiCAE/zKI
-         5REgxAW0fZR8MCbeQPNxjFG669kaw+XUIdyxzVlIHuxp2DE/rjBhX/4wRF8BHZRbZUNv
-         P5asY9vOniwjs5lJWCD61ZuFSbT3YKTcCKj/2oL/hWA7o2O88cGeMbbFGikgSXpU0iV0
-         uakNAvSm598AIEKDsZ5a7kZTB4soNd8W5lKhjkVqBE+D5Pw1EVnAlHapgNtTnIcTUT6x
-         lnmN7vERLfDcrAgt5sczSYTPZRIJ6YAX+q74NU0tpTVaV9czKYQmnmXz4rSCoe/9W00W
-         mbQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPVUDRjA/gPwBWcicZCH/oqogJIjbgas2Dzg1mNLti4WuZFGz54Q2Fo5GfbpavyEjn8oQtepEOKpuyps8yA/klMWUVpag8NkOtano7
-X-Gm-Message-State: AOJu0YxpiamUiMYeYPXJvBr49njmyjuZPw+Otv556awVnXyIHNsvhJOF
-	7flXht19CtAUSSUbJoKjqraqtcyngyrcOBe3V0so3LZZ1QCgekp7K8NGyGQ5zNaqdK1fh80lNHT
-	CBJjjUNiLNpW6CZB2d+eldRms1kEWNDALRebn
-X-Google-Smtp-Source: AGHT+IHgM3rguJYL14K9UckD4Em4UxPoS2Bfon3v0V4uVdTZxWcfMzLDpbZIRRdaN18as3F/6rOM4AHNH7Y+8kV5TfM=
-X-Received: by 2002:a05:690c:f81:b0:67a:f3d4:d9c1 with SMTP id
- 00721157ae682-69bf6f7f1abmr27499777b3.2.1723138368376; Thu, 08 Aug 2024
- 10:32:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723138503; x=1723743303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=diwD1iCrpHXumZkgAMloBVGIf2kIwgitsF/BakIzCjE=;
+        b=dMJrAChD9Vu3cB4GNpsDT1Ycihzi8KhAF38Xwb4vOneqU8BChXn0M1hoAxTp+MCbO1
+         7BaZbD7Da6cXQxUJD024JdKZHdkgrjTZqflVMB8wjtNlKEdMgJUdFdke0A5J8U7J6Uu3
+         JelxOQhg30UWLn9rUmGShEAXLAccvBYU6+1p4kVnowd5SWJrZrthKNlJsaGJ/Hs55WFR
+         tgSQl9wevCfzBWvCjrUka4kTUznWNJyBFXihmQXHTrJd5hMsr5DzjZOyS7ZVDoIsUsvO
+         1aMQrN0B1EQ76FNQZpxUZcZYOSKa7ylvYwaLmEIjIfx51sQOsAzVL0RDY6K656cbAVFm
+         jmhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWc8nKhAVA+lpN1y6iKmegGxFlhvVDn4ZEK4ZavuEX1yrUM0gXuAP+NjnELNrve7WP58KCuKTHHj3vqWSLg2graopswQj0msmtIFGWU
+X-Gm-Message-State: AOJu0YyRefHFjA829kw8Z5NXy63YceWZ+vdeU4H88KCYGcZ52vpRTd07
+	qLODIBx3ET0Zw+8Ot9uWPw5FAkG47nevE9p/n8pEetWqGPKsGUxT
+X-Google-Smtp-Source: AGHT+IE51YiR1kStYj12rpo+NUS09VqpSsVkvxnS3g7oMwKAgam1hLO0cnWbZ/U3GDmrQEv657ePjA==
+X-Received: by 2002:a05:6a00:2d95:b0:70b:cf1:8dc9 with SMTP id d2e1a72fcca58-710cae7174bmr3204310b3a.25.1723138503114;
+        Thu, 08 Aug 2024 10:35:03 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb22f29asm1363716b3a.63.2024.08.08.10.35.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 10:35:02 -0700 (PDT)
+Date: Thu, 8 Aug 2024 10:35:00 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Gavin Shan <gshan@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux@rasmusvillemoes.dk, Jonathan.Cameron@huawei.com,
+	salil.mehta@huawei.com, shan.gavin@gmail.com
+Subject: Re: [PATCH] cpumask: Fix crash on updating CPU enabled mask
+Message-ID: <ZrUBxOggWNlt6lP9@yury-ThinkPad>
+References: <20240808040808.647316-1-gshan@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801171747.3155893-1-kpsingh@kernel.org> <CAHC9VhRO-weTJPGcrkgntFLG3RPRCUvHh9m+uduDN+q4hzyhGg@mail.gmail.com>
- <CACYkzJ6486mzW97LF+QrHhM9-pZt0QPWFH+oCrTmubGkJVvGhw@mail.gmail.com>
- <20240806022002.GA1570554@thelio-3990X> <CAHC9VhTZPsgO=h-zutQ9_LuaAVKZDdE2SwECHt01QSkgB_qexQ@mail.gmail.com>
- <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
- <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com> <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net>
-In-Reply-To: <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 8 Aug 2024 13:32:37 -0400
-Message-ID: <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: KP Singh <kpsingh@kernel.org>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
-	peterz@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808040808.647316-1-gshan@redhat.com>
 
-On Thu, Aug 8, 2024 at 12:43=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
-wrote:
->
-> Also, there is a backtrace on ppc (also see below), but that is unrelated
-> to your patches and only seen now because I enabled the security modules
-> on that architecture. I'll bring that up with ppc maintainers.
+On Thu, Aug 08, 2024 at 02:08:08PM +1000, Gavin Shan wrote:
+> The CPU enabled mask instead of the CPU possible mask should be used
+> by set_cpu_enabled(). Otherwise, we run into crash due to write to
+> the read-only CPU possible mask when vCPU is hot added on ARM64.
+> 
+>   (qemu) device_add host-arm-cpu,id=cpu1,socket-id=1
+>   Unable to handle kernel write to read-only memory at virtual address ffff800080fa7190
+>     :
+>   Call trace:
+>     register_cpu+0x1a4/0x2e8
+>     arch_register_cpu+0x84/0xd8
+>     acpi_processor_add+0x480/0x5b0
+>     acpi_bus_attach+0x1c4/0x300
+>     acpi_dev_for_one_check+0x3c/0x50
+>     device_for_each_child+0x68/0xc8
+>     acpi_dev_for_each_child+0x48/0x80
+>     acpi_bus_attach+0x84/0x300
+>     acpi_bus_scan+0x74/0x220
+>     acpi_scan_rescan_bus+0x54/0x88
+>     acpi_device_hotplug+0x208/0x478
+>     acpi_hotplug_work_fn+0x2c/0x50
+>     process_one_work+0x15c/0x3c0
+>     worker_thread+0x2ec/0x400
+>     kthread+0x120/0x130
+>     ret_from_fork+0x10/0x20
+> 
+> Fix it by passing the CPU enabled mask instead of the CPU possible
+> mask to set_cpu_enabled().
+> 
+> Fixes: 51c4767503d5 ("Merge tag 'bitmap-6.11-rc1' of https://github.com:/norov/linux")
+> Signed-off-by: Gavin Shan <gshan@redhat.com>
+> ---
+>  include/linux/cpumask.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+> index 801a7e524113..53158de44b83 100644
+> --- a/include/linux/cpumask.h
+> +++ b/include/linux/cpumask.h
+> @@ -1037,7 +1037,7 @@ void init_cpu_online(const struct cpumask *src);
+>  	assign_bit(cpumask_check(cpu), cpumask_bits(mask), (val))
+>  
+>  #define set_cpu_possible(cpu, possible)	assign_cpu((cpu), &__cpu_possible_mask, (possible))
+> -#define set_cpu_enabled(cpu, enabled)	assign_cpu((cpu), &__cpu_possible_mask, (enabled))
+> +#define set_cpu_enabled(cpu, enabled)	assign_cpu((cpu), &__cpu_enabled_mask, (enabled))
+>  #define set_cpu_present(cpu, present)	assign_cpu((cpu), &__cpu_present_mask, (present))
+>  #define set_cpu_active(cpu, active)	assign_cpu((cpu), &__cpu_active_mask, (active))
+>  #define set_cpu_dying(cpu, dying)	assign_cpu((cpu), &__cpu_dying_mask, (dying))
+> -- 
+> 2.45.2
 
-Thanks for all your help testing this Guenter.  I see you've also
-already submitted an AppArmor fix for the endian issue, that's very
-helpful and I'm sure John will be happy to see it.
+Thanks Gavin. I'll send a pull request withing this week.
 
-Beyond this work testing the static call patches from KP, would you be
-willing to add a LSM configuration to your normal testing?  While most
-of the LSM subsystem should be architecture agnostic, there are
-definitely bits and pieces that can vary (as you've seen), and I think
-it would be great to get more testing across a broad range of
-supported arches, even if it is just some simple "does it boot" tests.
+Thanks,
+Yury
 
-Out of curiosity, do you have your test setup documented anywhere?  It
-sounds fairly impressive and I'd be curious to learn more about it.
-
---=20
-paul-moore.com
 
