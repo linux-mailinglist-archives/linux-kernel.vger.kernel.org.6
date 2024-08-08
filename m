@@ -1,93 +1,154 @@
-Return-Path: <linux-kernel+bounces-279138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E87394B974
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:03:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6537694B977
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F98A1C21146
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:03:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74BDC1C20DB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482A0189F3C;
-	Thu,  8 Aug 2024 09:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B3B18D63E;
+	Thu,  8 Aug 2024 09:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VyArdnMf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cpHKDo6+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="bqbP4YhC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="a7buNEdN"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0AC189BA0;
-	Thu,  8 Aug 2024 09:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E62D145FE0;
+	Thu,  8 Aug 2024 09:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723107803; cv=none; b=kmu5dC9kfAW15BJ6Jn1fHOT5aNsuT0+2qQHVB5hm4t7NcZxH3IMf/teau/a2YH2SEjaodWMJo6JKQtWTEmF0TuOuX7Fhc4vChu16duy/G1c3K8318BJFD0WF/+4gy2V2viW9K4YpuuJ9CJlmGiwDiz7QM776n/V/kGmKt4TgaF4=
+	t=1723107835; cv=none; b=fK6VhXEtEZWt+IokJmoN0KThfvp6GUDh6uU4k0ZZ49ybDy1q96Pk6RbP7it772rw7SJXyPoUQvHwbzEeRdcoNMmdek93lFUr4JKEJOQZLSD2pNv6vEbfZU0BjIx7omDXo03KYTAe2pfYqxNgToM6k+LH+W3m+Ee/ikRiU4NzVC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723107803; c=relaxed/simple;
-	bh=2ChP9h6uvmcLLnCbTjZZ0+YBvy42YPx8xhOigoYtrO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kpiDyN1b7cpbTgf8EC/PNGeyO165d43Q6DQCU2LkpR3/4ZG2x26uoeyE4rs0EWwfns16TuYCq0kUDl817ob1Fw0S1tt6tl6VfIUbCnxOyd4qArmQd2COmrWEq4eUk+PxrJFRywdQvCc11X3wwGX5OIpINPxCCppYJ0BuvNCpErQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VyArdnMf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cpHKDo6+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 8 Aug 2024 11:03:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723107800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9/1t1xXO8srYRXGtZtBYUSTKE21fIlSAdIBoEh9+Jk4=;
-	b=VyArdnMfM6Ft0V5xk7epE8/UB0F3FKEMT70DZTJHylxo6VX/VTC5lxOw9lSlC83Mxz29Ni
-	zJuW2+rb11RlCdasd/K5mnC0j56mZNgamBhlrh3xjC8NA9xTCDrMr7jkGqDNO+yQ3y6iwz
-	EQoXnPxMxPaNKHY4OSFe6r7jKtWp9hg761ZJ6Fm7D5uKVJZ0DFtQKSraqk1zt0eRkzNuaD
-	P2or1FxPG/HxRESGM9BPiBJZTWo3sC0+czBwlXyb6SwPmsjEcaaaZF12UxDjnoID/rbJNm
-	2Nb2gj7ZBkxzv1iFZG49Vhvxcd1MTVnRurRxcwVIEgEgwCh7v44dgSyae7l7Lw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723107800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9/1t1xXO8srYRXGtZtBYUSTKE21fIlSAdIBoEh9+Jk4=;
-	b=cpHKDo6+t2vQgs76o3VqWotu/aNi1haMWUtVYkgaX7EB1szHkh8YkjWZZITyff+gtx3jkc
-	1slHVbD2r/Jm6PDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, Mike Galbraith <umgwanakikbuti@gmail.com>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>
-Subject: Re: [PATCH v3 0/3] zram: Replace bit spinlocks with a spinlock_t.
-Message-ID: <20240808090318.OYWITKyu@linutronix.de>
-References: <20240705125058.1564001-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1723107835; c=relaxed/simple;
+	bh=3Nuh7Ymw4p9mmj/hmi80A9HOla1TJH0HdtM2MSn63Go=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kKoX4HTY68FHRMUultj2CI91L6l2YL+yfLZjpJB0htaqt47gjBd3Agjc6Cgsp06i32bEzbKN2Cay/hRAaHdPd2x6Y3y3zE7gv73o4AnjtkJEuxwtb8VlXwNfn04bIfWkdDkmD3FpW31yLfUU/hr0Te6ccSTTFiE5YtzUs8z00Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=bqbP4YhC; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=a7buNEdN reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1723107831; x=1754643831;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=e/440+A8dXK0xe7E7t1UQYOm04r40gqeXMmIrOnIwgE=;
+  b=bqbP4YhCss9U8dLmMZ7/ivVrRGfHBkvp69bkVShXKEp1dnfggqCLmsXP
+   KkJunVp2fldfdxJ8xGtyWJMIJR2e4+U6hnM+y1Znwa3xr8MkKjLERe9kT
+   TMiGK8NWYYkNVr+j18KdXoY/XZCeybHOQwdWVnHIgkMMlqbMcW4EjLB+u
+   QCoolS0d8s3dCrdIZ5Xqr16oQAUFIlTzAdbIb3i/pKl3Xeu2j5oMHedub
+   QCb3xDW0ATDPMED5ZooQkomyQzruS+p4SGmZhzMsQVUh/aOBvS/ykWIvf
+   opMNM6V2lV7scSoV9xiU4lHAFknJNWYs4s3sSAWMtSznwqfdax1F+FTgJ
+   Q==;
+X-CSE-ConnectionGUID: bgTlkpRNTKqBVidGHiHAMA==
+X-CSE-MsgGUID: KkxzrK0GSZO28hfEUSbJwA==
+X-IronPort-AV: E=Sophos;i="6.09,272,1716242400"; 
+   d="scan'208";a="38310522"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 08 Aug 2024 11:03:43 +0200
+X-CheckPoint: {66B489EF-1-CFE9415D-C7159436}
+X-MAIL-CPID: CD2309DF6539872ED09BA5D025073AB1_1
+X-Control-Analysis: str=0001.0A782F1E.66B489EF.0049,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8C5F6161356;
+	Thu,  8 Aug 2024 11:03:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1723107818; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=e/440+A8dXK0xe7E7t1UQYOm04r40gqeXMmIrOnIwgE=;
+	b=a7buNEdN+opiCalsy34kFxBfiwjK1gA2b6STxzvvF76LaIslywzc+N7Iun9tTUDkitLAIQ
+	FLa33GmNpJ+Qtj6kDU2rp30qyfUWubP3AxSLpSyruJKPcltQUXXs+cjLFk/jE4ALpBMOJn
+	6pTWrEMMhVOJTaRmQnPrP1ehK+hzWQtwiPRtXZ1pQo2onN6UVf4oFoq65S2Ih8oQeQGSBN
+	meazJRrIh44MCri4KZk0doMEEwnIx7V6D5GYY5DQDAQ1+WC8IohIO6N36G7yUw/s7PO4qj
+	EcXW3gRaVzdbd0mNqFvTuFvmp0Nx5oVelXhb1Pb98tM8Yn6gINrdUihVj0c69g==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] arm64: dts: imx8-ss-vpu: Fix imx8qm VPU IRQs
+Date: Thu,  8 Aug 2024 11:03:26 +0200
+Message-Id: <20240808090326.425296-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240705125058.1564001-1-bigeasy@linutronix.de>
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2024-07-05 14:49:13 [+0200], To linux-block@vger.kernel.org wrote:
-Hi,
+imx8-ss-vpu only contained imx8qxp IRQ numbers, only mu2_m0 uses the
+correct imx8qm IRQ number, as imx8qxp lacks this MU.
+Fix this by providing imx8qm IRQ numbers in the main imx8-ss-vpu.dtsi
+and override the IRQ numbers in SoC-specific imx8qxp-ss-vpu.dtsi, similar
+to reg property for VPU core devices.
 
-> this is follow up to the previous posting, making the lock
-> unconditionally. The original problem with bit spinlock is that it
-> disabled preemption and the following operations (within the atomic
-> section) perform operations that may sleep on PREEMPT_RT. Mike expressed
-> that he would like to keep using zram on PREEMPT_RT.
->=20
-> v2=E2=80=A6v3 https://lore.kernel.org/all/20240620153556.777272-1-bigeasy=
-@linutronix.de/
->   - Do "size_t index" within the for loop.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+I did not include a Fixes tag as adding support for imx8qxp and imx8qm
+is split into several commits. It's at lease the combination of the
+following commits:
 
-Can this be applied, please? Or v2 ;)
+0d9968d98467d ("arm64: dts: freescale: imx8q: add imx vpu codec entries")
+b4efce453f0ca ("arm64: dts: imx8qm: add vpu decoder and encoder")
 
-Sebastian
+ arch/arm64/boot/dts/freescale/imx8-ss-vpu.dtsi    | 4 ++--
+ arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi | 8 ++++++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8-ss-vpu.dtsi b/arch/arm64/boot/dts/freescale/imx8-ss-vpu.dtsi
+index c6540768bdb92..87211c18d65a9 100644
+--- a/arch/arm64/boot/dts/freescale/imx8-ss-vpu.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8-ss-vpu.dtsi
+@@ -15,7 +15,7 @@ vpu: vpu@2c000000 {
+ 	mu_m0: mailbox@2d000000 {
+ 		compatible = "fsl,imx6sx-mu";
+ 		reg = <0x2d000000 0x20000>;
+-		interrupts = <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>;
+ 		#mbox-cells = <2>;
+ 		power-domains = <&pd IMX_SC_R_VPU_MU_0>;
+ 		status = "disabled";
+@@ -24,7 +24,7 @@ mu_m0: mailbox@2d000000 {
+ 	mu1_m0: mailbox@2d020000 {
+ 		compatible = "fsl,imx6sx-mu";
+ 		reg = <0x2d020000 0x20000>;
+-		interrupts = <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>;
+ 		#mbox-cells = <2>;
+ 		power-domains = <&pd IMX_SC_R_VPU_MU_1>;
+ 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi
+index 7894a3ab26d6b..f81937b5fb720 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi
+@@ -5,6 +5,14 @@
+  * Author: Alexander Stein
+  */
+ 
++&mu_m0 {
++	interrupts = <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&mu1_m0 {
++	interrupts = <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>;
++};
++
+ &vpu_core0 {
+ 	reg = <0x2d040000 0x10000>;
+ };
+-- 
+2.34.1
+
 
