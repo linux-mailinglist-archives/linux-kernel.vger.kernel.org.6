@@ -1,342 +1,201 @@
-Return-Path: <linux-kernel+bounces-279942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFA494C3A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:25:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71B094C3A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFA291C20AF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:25:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10F62B25359
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D77193065;
-	Thu,  8 Aug 2024 17:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4612B1917C7;
+	Thu,  8 Aug 2024 17:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CFXkthuH"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EE4psJXK"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899B4192B7E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065F8190041
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723137840; cv=none; b=OziTljYmvWD0GelbvpnwyZLVXiKM6JuWtcpsr0xhrFBpDYi53Uxp/XIUAZ5jWD87I/YEkjVgF0bGP6DPeBtmU3392sZPD20LaN08/6swN1y8A4bOBV/c/CfYNaGZFW7FX5aW+vjUVLzeaWQm/v8BwvWbG0FyGyOFn4dQGk8FeUg=
+	t=1723137911; cv=none; b=qi2uybngSMEO9KWQUtZKtj4dXenioCxFrnX48gTEu5FbpU6l8gsD10Zel2aYX94rc9IIOXJL16DDnX3RsJbAhXfAgj4i9MlenXvyYOx2Ca47AKaxmVWpcKpwMtANwoUxKOG1539KIouLy+6v1C0UFSWt8BaZEayx2VX7wHQiTic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723137840; c=relaxed/simple;
-	bh=8HR7rHPbKBgLjaflFT5CEqKyANaJhZ2+rl+HT7rE2Yw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VNGCrR6ZX33hXDvMkv6XX0TquuEEh0J9oRxL3OhAeyOb+P0VW9uXKF+AcOw8K3suQMNZTbhcWxJ4WjSDyXQoxjN+rvr0xchKQrMLrZTEecxzrxjxSVjMX804zdFsVrPuTK82XnBfIpsEcO2a0ENTDAXuTJ8hbQ1ftoLFq5wUJm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CFXkthuH; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-650b621f4cdso25216037b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:23:58 -0700 (PDT)
+	s=arc-20240116; t=1723137911; c=relaxed/simple;
+	bh=LU2HCRxfulJFKotLuKd3nw6dTEyquXzploxE0EWamA4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rOUJ2kkN5dH8221akwMI+zL3I9loS5f1WWevOLFiMhtIh4rBW7f033B/vFImFaSUYcEgUJ9eWLqcmwb8GPECLAYp4CKl150gj65DklDp6m4qMtdPFyxyarVWOoG4A3Fn+GPg81Ge0+4GjcqajAFMDcLmyovH2fxu38ZN24NynMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EE4psJXK; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-710d1de6ee5so433825b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:25:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723137837; x=1723742637; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UKvx2G/xqxSl6cPgYJhgi3OiB0ngiC59Ryype63GHQE=;
-        b=CFXkthuHYgLH7AZ/d2np90x1wgctnGuc9i7JneYjqIVNVfsXz3HMAeQlhkPrW27MdE
-         ngkr3jomrZ+iH3vb9PnQENJEzV/QFX7/+h6ckvMaQgq4X47YQdMdCI3/TpfTIZmgcnBB
-         2UcHVr1aUmT9PfyCdslYAqQp8YdtKnzXUcgQOz8BcaD4ybs4S2idQnWbDEWyBPfRhnD6
-         2+H13UnLygaJ7MpqWG5ylUMu4vI0Fnyz+ZxlO0nsyjQ3FIbnE6Kknc84xJGOF/drxZ89
-         s7mdKywbtFQy8xb56P7sXBQA3//mmh8TBbdKY/xJAJkovHciUoi88LOd9PVSioiD7eee
-         2GoQ==
+        d=gmail.com; s=20230601; t=1723137909; x=1723742709; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R3iZ7fcb1MmjyjW9t+2rUZPHz66g5ifDib2eiW/PAao=;
+        b=EE4psJXKKA6S+udSkox1SRdqgC9IlLgkDI7HiWEuruxz88XeHZTfWZSwhE9oPH3qbu
+         APo9Pb8r1+HGGInNSj0Ii3INR8yS86J556lNM52z2e5qlEmTJtFvk4P30f3F5R+oVGRv
+         j8Gadv/ZgDwFQEjG44BNGb+JcNZ+4yKwxrHIUlhwPha7l4BJrnf7mzgR18igYlBUQ1IP
+         O54u81n2KtbJ0NIsIWgdzgnDZUFzy8Y88VEHC4r42ow9wVn80qppm6lux0DWPLPC5b9r
+         WamaryG0+ctJ4F3029ZEuMdPJRuRm9kdd6ulWZwSw9cScANwt85f+dwOKvR1IByV6IVF
+         Qzrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723137837; x=1723742637;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UKvx2G/xqxSl6cPgYJhgi3OiB0ngiC59Ryype63GHQE=;
-        b=J8oCm3UujR3ac9yN6O5VCkhSQK/o+qiV7xgEzHB6Nx51DbKulBb5R170F5HfQHW93c
-         3ZPv3br2c3x9xmE9fCBreF7MLpuFdZPFF43fQNsYI+vFTd0WJ8MgUKs8d9X+yIzhSLsD
-         zTHQksE1dCWN/IFftl/3pMMIU+7F7bHfMaSHAUVhZrRZM/jo+ECefoeX6aAk3js6jUGB
-         nvzR8utVw2jpdpLnpExI0fn9jTsnFqnKsP6HCyEtcFOqQob1kPZGS/azvX28MMt22h4a
-         maxYHlYs1unXivbcDm3xThu1Rpt46hUErHAtDjz3nJS5CLTY1xCGLj157xwnnEPgexgl
-         blZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6nd4z5WkVEbL5ZODyCPbDC9JAZB3N9C2fFFegghlnE1RZsAa7bp8MzA+zX7lW5verXfM8wlpd29IrterqsAJ3jUfw1WTut9KhQH9u
-X-Gm-Message-State: AOJu0YyXMEeif/FBAOBLnGNDz/0FezUWjCjgG77pvNXYWu3mDbmAJDuy
-	prBRpI/CsPuI3xcbV6vKADjpB4ajmyfJb/Sw5hEPo8SJL/ctetziklbrzM2gqSwvXl7daEwAvW0
-	pkU6McHKYnyTckQ==
-X-Google-Smtp-Source: AGHT+IEgzqTU/t14sWWaVE/IFHEsCHBUkasJCPj+gNG5VhTvgMkpbmuIw0faphhHRzrEN0qF51wzgBly43McB5E=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a0d:c1c4:0:b0:648:3f93:68e0 with SMTP id
- 00721157ae682-69bfbf94870mr842897b3.6.1723137837465; Thu, 08 Aug 2024
- 10:23:57 -0700 (PDT)
-Date: Thu, 08 Aug 2024 17:23:41 +0000
-In-Reply-To: <20240808-tracepoint-v6-0-a23f800f1189@google.com>
+        d=1e100.net; s=20230601; t=1723137909; x=1723742709;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R3iZ7fcb1MmjyjW9t+2rUZPHz66g5ifDib2eiW/PAao=;
+        b=rfV2OspIZ2D+CY4D1xAk5s79k3sNHu2yNzQ5+HLgNLuk8QTJsJNvpmcsG/H3aBMnA4
+         rlm6gdwwby3AQbJY1QVbiLqhbBo15GhreE6GojxXIkZX1dUwOl9XBM6UXJRCGBXT6NfM
+         FattmCTJ/z8yEkoxf8sXLN9DvXkIIZ26PzssigLbWXrTcXH7gKrPARLRzL3LbHIrvMtH
+         YJUhGAW03QJuZtepWPnS8DQlHN04HVLzyKqudSS6eSdPb6uXBam2Wz8onZne/GnMgk2f
+         /E8vvADYqR4ki00GiIVNF1IlDxgTdRdSVzWdTTS96huJKGQdB/UEB7eaTzpV4/0Vgu5I
+         3+Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwdgmiHVk4IUXLEGuYdIjCEQ1TM5OQFOy8r32wnfgHlLQwnnmeWaoLAlvWibCcxYgprumCjwb67IevmEIxLiM9j8GfCMd4+EUGlJ9u
+X-Gm-Message-State: AOJu0Yx8CDIGdOYfLRy/NeAfZE9YGrVWsGEXgUgcO5+sN723eSgtBuZr
+	RkJHfJcHRiRQUWvzJCKnhPTsO4Oby86o1+TVNp0v0kNH1sf5oMzMtxdfSXcofeuSaeUKAmrS3dV
+	GLHiH05G0hcinw5YAgmIZTlcTgSWWA13A
+X-Google-Smtp-Source: AGHT+IFK10v9qSl1uG5G5L2+ylqJz2dYSvp5UB5lkFU4pz5Lh0Xi9t+TEluxdykFf+f8QXkF5YuF/Eful1fKeNGkda0=
+X-Received: by 2002:a05:6a20:2450:b0:1c3:a760:9757 with SMTP id
+ adf61e73a8af0-1c6fcfb1aa2mr3203319637.49.1723137909222; Thu, 08 Aug 2024
+ 10:25:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240808-tracepoint-v6-0-a23f800f1189@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8284; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=8HR7rHPbKBgLjaflFT5CEqKyANaJhZ2+rl+HT7rE2Yw=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmtP8ddgVCGwKH7HJ5305eaMxT5Ki76ZkVrm4w7
- 9mw9UkaP3aJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZrT/HQAKCRAEWL7uWMY5
- RtgJD/9tPso/NH49qsdk3D++pbDifahzylC1HlJD+AqQTA73qwbRFTauQy4+XE/uOOz+s/H5eKn
- PuQvfsQQM4HS+KhxTqPQBmMug5JiZGjT8oQlB5dKTT74ikYQFn0fY9nh7bYc35CnOS0hkx4wbNY
- 0UPJdFoRP0Kh6qEnk2hXJQxRiOtVy53rBBfyRjViBSJAcokfuRn4GVw9GucefSaNCOI9sVQuFls
- eZEpd7e3vn498jd3YeiA9KwEPfVAvpJwAPF4bBYnb430iJ89UXf/5wcURDAWdbkWlqmy9XxNTHt
- JLF4LjEHXnSVDOlSqpCT2BeSzrphEhJWCi7qeG6WbakW1Fuzt/vMqDlbnYdosNSgJFbSSZwxh4r
- kh1h1H1MzdedNzHb8akd5CafxZT2MEE15Z0ICI/wPTIj0DL+1mwPC9Ac4DfhxzKFdu8Lg9+ABgd
- mrKohmtU9JSaCO4KQ8XSd39Jm0DRGQRmvFKMk+PmBJ57G4e2YGO6XJBekjtoHajTbyj2jjNk+O4
- vkxhxl21T2fxLxYC7GOAJ1wgI5UDd+WpWSDbKNAWxpL43kCMhTXA91GuzfwwXej3LjnPqeIETyp
- pMRoSjemfQPLbpBA52iPMDwiDSkQvoqi2mLuBYgrV4wYsi72aSj89J/4kkcY7Xk813NdcDlwjqB KWR6PQPqvuR4fcw==
-X-Mailer: b4 0.13.0
-Message-ID: <20240808-tracepoint-v6-5-a23f800f1189@google.com>
-Subject: [PATCH v6 5/5] rust: add arch_static_branch
-From: Alice Ryhl <aliceryhl@google.com>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>
-Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
-	linux-arm-kernel@lists.infradead.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240802071752.116541-1-yaolu@kylinos.cn> <20240808061538.502762-1-yaolu@kylinos.cn>
+ <CADnq5_NH9hB4v4iyU8r8WB_bDYJGdoeYK4K8gb8ukP-=votW-A@mail.gmail.com>
+In-Reply-To: <CADnq5_NH9hB4v4iyU8r8WB_bDYJGdoeYK4K8gb8ukP-=votW-A@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 8 Aug 2024 13:24:57 -0400
+Message-ID: <CADnq5_PDBZ9APfCpSMOSMPQWzcOeLqw_LngE2BBSOxv__7miGA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: add dce6 drm_panic support
+To: Lu Yao <yaolu@kylinos.cn>
+Cc: jfalempe@redhat.com, ckoenig.leichtzumerken@gmail.com, 
+	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	srinivasan.shanmugam@amd.com, sunil.khatri@amd.com, airlied@gmail.com, 
+	daniel@ffwll.ch, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To allow the Rust implementation of static_key_false to use runtime code
-patching instead of the generic implementation, pull in the relevant
-inline assembly from the jump_label.h header by running the C
-preprocessor on a .rs.S file. Build rules are added for .rs.S files.
+On Thu, Aug 8, 2024 at 12:43=E2=80=AFPM Alex Deucher <alexdeucher@gmail.com=
+> wrote:
+>
+> On Thu, Aug 8, 2024 at 2:35=E2=80=AFAM Lu Yao <yaolu@kylinos.cn> wrote:
+> >
+> > On 2024/8/5 17:25, Jocelyn Falempe wrote:
+> > >
+> > >
+> > > On 02/08/2024 11:39, Christian K=C3=B6nig wrote:
+> > >> Am 02.08.24 um 09:17 schrieb Lu Yao:
+> > >>> Add support for the drm_panic module, which displays a pretty user
+> > >>> friendly message on the screen when a Linux kernel panic occurs.
+> > >>>
+> > >>> Signed-off-by: Lu Yao <yaolu@kylinos.cn>
+> > >>> ---
+> > >>>   drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 32
+> > >>> +++++++++++++++++++++++++++
+> > >>>   1 file changed, 32 insertions(+)
+> > >>>
+> > >>> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> > >>> b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> > >>> index 05c0df97f01d..12c3801c264a 100644
+> > >>> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> > >>> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> > >>> @@ -28,6 +28,8 @@
+> > >>>   #include <drm/drm_modeset_helper.h>
+> > >>>   #include <drm/drm_modeset_helper_vtables.h>
+> > >>>   #include <drm/drm_vblank.h>
+> > >>> +#include <drm/drm_panic.h>
+> > >>
+> > >>> +#include "../../drm_internal.h"
+> > >>
+> > >> Well that this file is named "internal" and not in a common include
+> > >> directory is a strong indicator that you should absolutely *not*
+> > >> include it in a driver.
+> > >>
+> > >>>   #include "amdgpu.h"
+> > >>>   #include "amdgpu_pm.h"
+> > >>> @@ -2600,6 +2602,35 @@ static const struct drm_crtc_helper_funcs
+> > >>> dce_v6_0_crtc_helper_funcs =3D {
+> > >>>       .get_scanout_position =3D amdgpu_crtc_get_scanout_position,
+> > >>>   };
+> > >>> +static int dce_v6_0_drm_primary_plane_get_scanout_buffer(struct
+> > >>> drm_plane *plane,
+> > >>> +                             struct drm_scanout_buffer *sb)
+> > >>> +{
+> > >>> +    struct drm_framebuffer *fb;
+> > >>> +    struct drm_gem_object *obj;
+> > >>> +    struct amdgpu_bo *abo;
+> > >>> +    int ret =3D 0;
+> > >>> +
+> > >>> +    if (!plane->fb || plane->fb->modifier !=3D DRM_FORMAT_MOD_LINE=
+AR)
+> > >>> +        return -ENODEV;
+> > >>> +
+> > >>> +    fb =3D plane->fb;
+> > >>> +    sb->width =3D fb->width;
+> > >>> +    sb->height =3D fb->height;
+> > >>> +    sb->format =3D fb->format;
+> > >>> +    sb->pitch[0] =3D fb->pitches[0];
+> > >>> +
+> > >>> +    obj =3D fb->obj[0];
+> > >>> +    abo =3D gem_to_amdgpu_bo(obj);
+> > >>> +    if (!abo || abo->flags & AMDGPU_GEM_CREATE_NO_CPU_ACCESS)
+> > >>> +        return -EINVAL;
+> > >>> +
+> > >>> +    return drm_gem_vmap(obj, &sb->map[0]);
+> > >>
+> > >> Yeah that will almost always not work. Most display buffers are
+> > >> tilled and not CPU accessible.
+> > >
+> > > For the CPU accessible issue, Christian mentioned there was a debug
+> > > interface on AMD GPU that can be used, to work around this:
+> > >
+> > > https://lore.kernel.org/dri-devel/0baabe1f-8924-2c9a-5cd4-59084a37dbb=
+2@gmail.com/
+> > > and
+> > > https://lore.kernel.org/dri-devel/d233c376-ed07-2127-6084-8292d313dac=
+7@amd.com/
+> > >
+> > > And you will need to use the scanout_buffer->set_pixel() callback to
+> > > write the pixels one by one, similar to what I've tried for nouveau w=
+ith
+> > > https://patchwork.freedesktop.org/series/133963/
+> > >
+> > > For the tiling format, the problem is that it is internal to the GPU,
+> > > and currently the driver don't know which tiling format is being used=
+.
+> > >
+> > > It might be possible to disable tiling and compression, but it
+> > > requires some internal DC knowledge:
+> > > https://lore.kernel.org/dri-devel/f76a3297-7d63-8615-45c5-47f02b64a1d=
+5@amd.com/
+> > >
+> > >
+> > > Best regards,
+> >
+> > From the discussion provided, it is difficult to implement this feature=
+ without the relevant data book and knowledge.(Whether how tiled memory sto=
+rage, or how to disable tiling of DC)
+>
+> For DCE 6, the GRPH_ARRAY_MODE field in mmGRPH_CONTROL controls the
+> display tiling.  Set that field to GRPH_ARRAY_LINEAR_GENERAL (0) to
+> disable tiling.
 
-Since the relevant inline asm has been adjusted to export the inline asm
-via the ARCH_STATIC_BRANCH_ASM macro in a consistent way, the Rust side
-does not need architecture specific code to pull in the asm.
+For clarity that register is instanced so use mmGRPH_CONTROL +
+amdgpu_crtc->crtc_offset to get the right instance.
 
-It is not possible to use the existing C implementation of
-arch_static_branch via a Rust helper because it passes the argument
-`key` to inline assembly as an 'i' parameter. Any attempt to add a C
-helper for this function will fail to compile because the value of `key`
-must be known at compile-time.
+Alex
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/Makefile                           |  5 ++-
- rust/kernel/.gitignore                  |  3 ++
- rust/kernel/arch_static_branch_asm.rs.S |  7 ++++
- rust/kernel/jump_label.rs               | 64 ++++++++++++++++++++++++++++++++-
- rust/kernel/lib.rs                      | 30 ++++++++++++++++
- scripts/Makefile.build                  |  9 ++++-
- 6 files changed, 115 insertions(+), 3 deletions(-)
-
-diff --git a/rust/Makefile b/rust/Makefile
-index 199e0db67962..277fcef656b8 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -14,6 +14,8 @@ CFLAGS_REMOVE_helpers.o = -Wmissing-prototypes -Wmissing-declarations
- always-$(CONFIG_RUST) += libmacros.so
- no-clean-files += libmacros.so
- 
-+always-$(subst y,$(CONFIG_RUST),$(CONFIG_JUMP_LABEL)) += kernel/arch_static_branch_asm.rs
-+
- always-$(CONFIG_RUST) += bindings/bindings_generated.rs bindings/bindings_helpers_generated.rs
- obj-$(CONFIG_RUST) += alloc.o bindings.o kernel.o
- always-$(CONFIG_RUST) += exports_alloc_generated.h exports_bindings_generated.h \
-@@ -409,7 +411,8 @@ $(obj)/uapi.o: $(src)/uapi/lib.rs \
- $(obj)/kernel.o: private rustc_target_flags = --extern alloc \
-     --extern build_error --extern macros --extern bindings --extern uapi
- $(obj)/kernel.o: $(src)/kernel/lib.rs $(obj)/alloc.o $(obj)/build_error.o \
--    $(obj)/libmacros.so $(obj)/bindings.o $(obj)/uapi.o FORCE
-+    $(obj)/libmacros.so $(obj)/bindings.o $(obj)/uapi.o \
-+	$(obj)/kernel/arch_static_branch_asm.rs FORCE
- 	+$(call if_changed_rule,rustc_library)
- 
- endif # CONFIG_RUST
-diff --git a/rust/kernel/.gitignore b/rust/kernel/.gitignore
-new file mode 100644
-index 000000000000..d082731007c6
---- /dev/null
-+++ b/rust/kernel/.gitignore
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+/arch_static_branch_asm.rs
-diff --git a/rust/kernel/arch_static_branch_asm.rs.S b/rust/kernel/arch_static_branch_asm.rs.S
-new file mode 100644
-index 000000000000..9e373d4f7567
---- /dev/null
-+++ b/rust/kernel/arch_static_branch_asm.rs.S
-@@ -0,0 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/jump_label.h>
-+
-+// Cut here.
-+
-+::kernel::concat_literals!(ARCH_STATIC_BRANCH_ASM("{symb} + {off} + {branch}", "{l_yes}"))
-diff --git a/rust/kernel/jump_label.rs b/rust/kernel/jump_label.rs
-index 011e1fc1d19a..7757e4f8e85e 100644
---- a/rust/kernel/jump_label.rs
-+++ b/rust/kernel/jump_label.rs
-@@ -23,7 +23,69 @@ macro_rules! static_key_false {
-         let _key: *const $keytyp = ::core::ptr::addr_of!($key);
-         let _key: *const $crate::bindings::static_key = ::core::ptr::addr_of!((*_key).$field);
- 
--        $crate::bindings::static_key_count(_key.cast_mut()) > 0
-+        #[cfg(not(CONFIG_JUMP_LABEL))]
-+        {
-+            $crate::bindings::static_key_count(_key.cast_mut()) > 0
-+        }
-+
-+        #[cfg(CONFIG_JUMP_LABEL)]
-+        $crate::jump_label::arch_static_branch! { $key, $keytyp, $field, false }
-     }};
- }
- pub use static_key_false;
-+
-+/// Assert that the assembly block evaluates to a string literal.
-+#[cfg(CONFIG_JUMP_LABEL)]
-+const _: &str = include!("arch_static_branch_asm.rs");
-+
-+#[macro_export]
-+#[doc(hidden)]
-+#[cfg(CONFIG_JUMP_LABEL)]
-+#[cfg(not(CONFIG_HAVE_JUMP_LABEL_HACK))]
-+macro_rules! arch_static_branch {
-+    ($key:path, $keytyp:ty, $field:ident, $branch:expr) => {'my_label: {
-+        $crate::asm!(
-+            include!(concat!(env!("SRCTREE"), "/rust/kernel/arch_static_branch_asm.rs"));
-+            l_yes = label {
-+                break 'my_label true;
-+            },
-+            symb = sym $key,
-+            off = const ::core::mem::offset_of!($keytyp, $field),
-+            branch = const $crate::jump_label::bool_to_int($branch),
-+        );
-+
-+        break 'my_label false;
-+    }};
-+}
-+
-+#[macro_export]
-+#[doc(hidden)]
-+#[cfg(CONFIG_JUMP_LABEL)]
-+#[cfg(CONFIG_HAVE_JUMP_LABEL_HACK)]
-+macro_rules! arch_static_branch {
-+    ($key:path, $keytyp:ty, $field:ident, $branch:expr) => {'my_label: {
-+        $crate::asm!(
-+            include!(concat!(env!("SRCTREE"), "/rust/kernel/arch_static_branch_asm.rs"));
-+            l_yes = label {
-+                break 'my_label true;
-+            },
-+            symb = sym $key,
-+            off = const ::core::mem::offset_of!($keytyp, $field),
-+            branch = const 2 | $crate::jump_label::bool_to_int($branch),
-+        );
-+
-+        break 'my_label false;
-+    }};
-+}
-+
-+#[cfg(CONFIG_JUMP_LABEL)]
-+pub use arch_static_branch;
-+
-+/// A helper used by inline assembly to pass a boolean to as a `const` parameter.
-+///
-+/// Using this function instead of a cast lets you assert that the input is a boolean, and not some
-+/// other type that can also be cast to an integer.
-+#[doc(hidden)]
-+pub const fn bool_to_int(b: bool) -> i32 {
-+    b as i32
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index d00a44b000b6..9e9b95ab6966 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -145,3 +145,33 @@ macro_rules! container_of {
-         ptr.sub(offset) as *const $type
-     }}
- }
-+
-+/// Helper for `.rs.S` files.
-+#[doc(hidden)]
-+#[macro_export]
-+macro_rules! concat_literals {
-+    ($( $asm:literal )* ) => {
-+        ::core::concat!($($asm),*)
-+    };
-+}
-+
-+/// Wrapper around `asm!` that uses at&t syntax on x86.
-+// Uses a semicolon to avoid parsing ambiguities, even though this does not match native `asm!`
-+// syntax.
-+#[cfg(target_arch = "x86_64")]
-+#[macro_export]
-+macro_rules! asm {
-+    ($($asm:expr),* ; $($rest:tt)*) => {
-+        ::core::arch::asm!( $($asm)*, options(att_syntax), $($rest)* )
-+    };
-+}
-+
-+/// Wrapper around `asm!` that uses at&t syntax on x86.
-+// For non-x86 arches we just pass through to `asm!`.
-+#[cfg(not(target_arch = "x86_64"))]
-+#[macro_export]
-+macro_rules! asm {
-+    ($($asm:expr),* ; $($rest:tt)*) => {
-+        ::core::arch::asm!( $($asm)*, $($rest)* )
-+    };
-+}
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 72b1232b1f7d..59fe83fba647 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -263,12 +263,13 @@ $(obj)/%.lst: $(obj)/%.c FORCE
- # Compile Rust sources (.rs)
- # ---------------------------------------------------------------------------
- 
--rust_allowed_features := new_uninit
-+rust_allowed_features := asm_const,asm_goto,new_uninit
- 
- # `--out-dir` is required to avoid temporaries being created by `rustc` in the
- # current working directory, which may be not accessible in the out-of-tree
- # modules case.
- rust_common_cmd = \
-+	SRCTREE=$(abspath $(srctree)) \
- 	RUST_MODFILE=$(modfile) $(RUSTC_OR_CLIPPY) $(rust_flags) \
- 	-Zallow-features=$(rust_allowed_features) \
- 	-Zcrate-attr=no_std \
-@@ -318,6 +319,12 @@ quiet_cmd_rustc_ll_rs = $(RUSTC_OR_CLIPPY_QUIET) $(quiet_modtag) $@
- $(obj)/%.ll: $(obj)/%.rs FORCE
- 	+$(call if_changed_dep,rustc_ll_rs)
- 
-+quiet_cmd_rustc_rs_rs_S = RSCPP $(quiet_modtag) $@
-+      cmd_rustc_rs_rs_S = $(CPP) $(c_flags) -xc -C -P $< | sed '1,/^\/\/ Cut here.$$/d' >$@
-+
-+$(obj)/%.rs: $(obj)/%.rs.S FORCE
-+	+$(call if_changed_dep,rustc_rs_rs_S)
-+
- # Compile assembler sources (.S)
- # ---------------------------------------------------------------------------
- 
-
--- 
-2.46.0.76.ge559c4bf1a-goog
-
+>
+> Alex
 
