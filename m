@@ -1,126 +1,170 @@
-Return-Path: <linux-kernel+bounces-278863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF17194B5C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3F594B5C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FF59282DF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82853282E25
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3266680C13;
-	Thu,  8 Aug 2024 04:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E78684A36;
+	Thu,  8 Aug 2024 04:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jJPjsH/e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6sAmAq0"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC4E6E61B
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 04:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205F32E419;
+	Thu,  8 Aug 2024 04:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723090184; cv=none; b=TurMn3QpK3tBSUI7z7Qs+tQs/h0BasPwl6s7fOTn+e8fadw4kAhl++/x+a3kHu4ZVpzdenpVxhWl3J+OVIySpOOVAa2m2cHKfDYC1OAq76ML+wdcOnn9Hw8z3OQzFZSZf9/SdlxenVJJUS7NDGNa557VLYAjMc1qLYyV63/fyYU=
+	t=1723090274; cv=none; b=P6yr3e8WPnlQYpSyN8auPIhDT06Xf30Kmq6hJqVxOARau78e2E2SD5paN0p9aKpSsXRrSliwvP/mva7T7T2Y+R1D7dLGOHDuLxRLDfhoCkKCOr9HuZb8YA57QEK1POl2/8h0WInBGwxgkRzUfHEWx8sBL4fEsGu6B06dOM+qEso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723090184; c=relaxed/simple;
-	bh=dhuSugdtI57IIEkqYrZzbHxmi0y/832YL+0TlpkK0yc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VeiC55BgIA/HsORpoQLijF/fz93GkqwvU4pP8AuvxxzgbEj+p23xlr2ZKf9B7/8Nizs/I4nHiwo0+NYfPNohS0LShXxIVC5lOe/PbwqOSPRabwPBodgO/aDJ4VYPkpM1ncuxs6Zl9/cAeNLGIZbbuFKSom/pYkTx4W5tWLwePCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jJPjsH/e; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723090180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BuInqvPD+oWLYg4MqJMCVqaaQqCELRkqQQ4G5anOxEE=;
-	b=jJPjsH/epusCyxXzhUMQkxlP7zySOTUfAFaRxG1TMxh6lfoHPuN0C+v9mltdSocHhbhnEE
-	vhTGCSsHKF2dIL7fCEAeST2KhVsCRTOHNTe1oEQoc4QgWQkyheCzfqZQpHlqIJVhx/W72Z
-	+VYMkOIft7g9iP6ICaxAnS5E8HdOD7o=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-5hFFU7rxOzOYlixSoQRUfg-1; Thu,
- 08 Aug 2024 00:09:35 -0400
-X-MC-Unique: 5hFFU7rxOzOYlixSoQRUfg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E7131195608A;
-	Thu,  8 Aug 2024 04:09:33 +0000 (UTC)
-Received: from gshan-thinkpadx1nanogen2.remote.csb (unknown [10.64.136.133])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A8F9A1953BBB;
-	Thu,  8 Aug 2024 04:09:29 +0000 (UTC)
-From: Gavin Shan <gshan@redhat.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	yury.norov@gmail.com,
-	linux@rasmusvillemoes.dk,
-	Jonathan.Cameron@huawei.com,
-	salil.mehta@huawei.com,
-	shan.gavin@gmail.com
-Subject: [PATCH] cpumask: Fix crash on updating CPU enabled mask
-Date: Thu,  8 Aug 2024 14:08:08 +1000
-Message-ID: <20240808040808.647316-1-gshan@redhat.com>
+	s=arc-20240116; t=1723090274; c=relaxed/simple;
+	bh=g77BYHZuyQWUySSdMkKlIRORWX5DQEXVkxFlPBGewzo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UY6pgnphSEIKztmObtUYSQFBW0xMXE1A9QBpOqluy6FLEUZLfuFo9cnmmrht48JhzVCh8p89YI/2bqrWcqOpfLpShK/8uWbjmeygmYLfIEZuQUJiOFZb2HdvZUxR22WyWCOVco9yw3qxN3dONL64AG1J4OM6zUMBdMllTFkTgIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6sAmAq0; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso444877b3a.2;
+        Wed, 07 Aug 2024 21:11:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723090272; x=1723695072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nw80wNgwCOZs/0Sah8DGuFBIZj4cxP28UKSdbAt7aTM=;
+        b=J6sAmAq0qRDkNc0R7f0Zh3ntOgyM9JeWb9b/7PDpFqTqWXid9JP1CHtTouOzM5EbjG
+         T4XOegOm6a2RjlirFuqOdkHmtCJKFMos26JBzxzSEEbYh4KpHTH8OJ7KoMItpZcTGr4/
+         VgS/GxBAuUxYaF8jFy/66q9Y+2ae8gMY33JYdAdV//RS3ev7IukO9iKTlTOJP0DlV1H0
+         lN8iN/ludv5hZm80Nb9P48qebXMxC1x19Pht92fPFd24Odx5BDBeph2w9s07TUfbLHwT
+         uIZRorpk4ilOCppZQzu7ldOYSkEfAV+z5gJLRJACEbrqL1kplALJWzb+lXS+jM5Wsmkc
+         dq8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723090272; x=1723695072;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nw80wNgwCOZs/0Sah8DGuFBIZj4cxP28UKSdbAt7aTM=;
+        b=pv+zTixXe6J8RuV6wOyHri0jtkUPvWZAnIFSkgjAHLYNo2IoI9InWKUrLePvPZcxrL
+         12xUEO7LVI03pdrzC0L0rnHjSRL2FtyaHb4Drbu+c5f82Is7afLuuib1t+DOufg/soth
+         2s4h5zBzxxxOb+O19YlJ2lk1I12quQ+h5gtyGx9x1SmkIKhTosUr78vPTCXhqxsy23/i
+         8xeAVaW4pKanEV6olabDM4m5IMOqAU0djU1pM60u639iBSx0oGq6XIADDDGt35xC9qeu
+         w5y7iqiTPHJ/4Z1IPA24qcKxWjcsiM6Y5U9dUn159pGEh0O7TA7DXNHKTY0OKHxY7FW5
+         FQqA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/8ZZpWazml/Xrh+DmM0tViG/tpIn48AxLQA5/67hHjyhMdtSQ+AD6xjmJtFqImIcEZdVkNR2BjuoUjiq8fDel/1HGHb6ezKOXDLdY
+X-Gm-Message-State: AOJu0YyfgRxJDMCQ9Wt0M2LkqKtGb/BpanpaoBFB9RMZIKg3mK6/dpRi
+	B0z0oTHTWcsAidHRmlBde3tt7YV19RQy2EAxD1y5vR524ls9j5Yvh4vcFIOy
+X-Google-Smtp-Source: AGHT+IGTcAB6J6QaMmMT3mk3795KOh7FU7yH1hJPeO27BLyz6bv76XnXocRSDBwQAFD1qhMalczw4A==
+X-Received: by 2002:a05:6a20:7292:b0:1c2:956a:a909 with SMTP id adf61e73a8af0-1c6fcf18f56mr700742637.27.1723090271950;
+        Wed, 07 Aug 2024 21:11:11 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5927f40dsm114101505ad.229.2024.08.07.21.11.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 21:11:11 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: quic_jjohnson@quicinc.com,
+	horms@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: hplance: use devm in probe
+Date: Wed,  7 Aug 2024 21:10:55 -0700
+Message-ID: <20240808041109.6871-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-The CPU enabled mask instead of the CPU possible mask should be used
-by set_cpu_enabled(). Otherwise, we run into crash due to write to
-the read-only CPU possible mask when vCPU is hot added on ARM64.
+Allows removal of the remove function as devm can handle the freeing of
+these resources.
 
-  (qemu) device_add host-arm-cpu,id=cpu1,socket-id=1
-  Unable to handle kernel write to read-only memory at virtual address ffff800080fa7190
-    :
-  Call trace:
-    register_cpu+0x1a4/0x2e8
-    arch_register_cpu+0x84/0xd8
-    acpi_processor_add+0x480/0x5b0
-    acpi_bus_attach+0x1c4/0x300
-    acpi_dev_for_one_check+0x3c/0x50
-    device_for_each_child+0x68/0xc8
-    acpi_dev_for_each_child+0x48/0x80
-    acpi_bus_attach+0x84/0x300
-    acpi_bus_scan+0x74/0x220
-    acpi_scan_rescan_bus+0x54/0x88
-    acpi_device_hotplug+0x208/0x478
-    acpi_hotplug_work_fn+0x2c/0x50
-    process_one_work+0x15c/0x3c0
-    worker_thread+0x2ec/0x400
-    kthread+0x120/0x130
-    ret_from_fork+0x10/0x20
-
-Fix it by passing the CPU enabled mask instead of the CPU possible
-mask to set_cpu_enabled().
-
-Fixes: 51c4767503d5 ("Merge tag 'bitmap-6.11-rc1' of https://github.com:/norov/linux")
-Signed-off-by: Gavin Shan <gshan@redhat.com>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- include/linux/cpumask.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/amd/hplance.c | 33 +++++++-----------------------
+ 1 file changed, 7 insertions(+), 26 deletions(-)
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 801a7e524113..53158de44b83 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -1037,7 +1037,7 @@ void init_cpu_online(const struct cpumask *src);
- 	assign_bit(cpumask_check(cpu), cpumask_bits(mask), (val))
+diff --git a/drivers/net/ethernet/amd/hplance.c b/drivers/net/ethernet/amd/hplance.c
+index df42294530cb..2ebf7cc9ab21 100644
+--- a/drivers/net/ethernet/amd/hplance.c
++++ b/drivers/net/ethernet/amd/hplance.c
+@@ -49,7 +49,6 @@ struct hplance_private {
+  */
+ static int hplance_init_one(struct dio_dev *d, const struct dio_device_id *ent);
+ static void hplance_init(struct net_device *dev, struct dio_dev *d);
+-static void hplance_remove_one(struct dio_dev *d);
+ static void hplance_writerap(void *priv, unsigned short value);
+ static void hplance_writerdp(void *priv, unsigned short value);
+ static unsigned short hplance_readrdp(void *priv);
+@@ -65,7 +64,6 @@ static struct dio_driver hplance_driver = {
+ 	.name      = "hplance",
+ 	.id_table  = hplance_dio_tbl,
+ 	.probe     = hplance_init_one,
+-	.remove    = hplance_remove_one,
+ };
  
- #define set_cpu_possible(cpu, possible)	assign_cpu((cpu), &__cpu_possible_mask, (possible))
--#define set_cpu_enabled(cpu, enabled)	assign_cpu((cpu), &__cpu_possible_mask, (enabled))
-+#define set_cpu_enabled(cpu, enabled)	assign_cpu((cpu), &__cpu_enabled_mask, (enabled))
- #define set_cpu_present(cpu, present)	assign_cpu((cpu), &__cpu_present_mask, (present))
- #define set_cpu_active(cpu, active)	assign_cpu((cpu), &__cpu_active_mask, (active))
- #define set_cpu_dying(cpu, dying)	assign_cpu((cpu), &__cpu_dying_mask, (dying))
+ static const struct net_device_ops hplance_netdev_ops = {
+@@ -84,21 +82,20 @@ static const struct net_device_ops hplance_netdev_ops = {
+ static int hplance_init_one(struct dio_dev *d, const struct dio_device_id *ent)
+ {
+ 	struct net_device *dev;
+-	int err = -ENOMEM;
++	int err;
+ 
+-	dev = alloc_etherdev(sizeof(struct hplance_private));
++	dev = devm_alloc_etherdev(sizeof(&d->dev, struct hplance_private));
+ 	if (!dev)
+-		goto out;
++		return -ENOMEM;
+ 
+-	err = -EBUSY;
+-	if (!request_mem_region(dio_resource_start(d),
++	if (!devm_request_mem_region(&d->dev, dio_resource_start(d),
+ 				dio_resource_len(d), d->name))
+-		goto out_free_netdev;
++		return -EBUSY;
+ 
+ 	hplance_init(dev, d);
+-	err = register_netdev(dev);
++	err = devm_register_netdev(&d->dev, dev);
+ 	if (err)
+-		goto out_release_mem_region;
++		return err;
+ 
+ 	dio_set_drvdata(d, dev);
+ 
+@@ -106,22 +103,6 @@ static int hplance_init_one(struct dio_dev *d, const struct dio_device_id *ent)
+ 	       dev->name, d->name, d->scode, dev->dev_addr, d->ipl);
+ 
+ 	return 0;
+-
+- out_release_mem_region:
+-	release_mem_region(dio_resource_start(d), dio_resource_len(d));
+- out_free_netdev:
+-	free_netdev(dev);
+- out:
+-	return err;
+-}
+-
+-static void hplance_remove_one(struct dio_dev *d)
+-{
+-	struct net_device *dev = dio_get_drvdata(d);
+-
+-	unregister_netdev(dev);
+-	release_mem_region(dio_resource_start(d), dio_resource_len(d));
+-	free_netdev(dev);
+ }
+ 
+ /* Initialise a single lance board at the given DIO device */
 -- 
 2.45.2
 
