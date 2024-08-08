@@ -1,165 +1,124 @@
-Return-Path: <linux-kernel+bounces-279903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 770B094C334
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:00:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F59F94C337
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 304BE288B94
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:00:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B86B25592
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CC218FDC9;
-	Thu,  8 Aug 2024 17:00:13 +0000 (UTC)
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36231917CA;
+	Thu,  8 Aug 2024 17:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l1xzIK5C"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E921190480
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5D3190676;
+	Thu,  8 Aug 2024 17:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723136413; cv=none; b=Qu/w0vNCbC6YWZmTcYQj2rqiVkZYE127a8T3i5JLEwyrcEIFgxuciOeZKlEXT+zRJn+76eOjuioV88czB12StQedWwd0L0jcy4fppt7VErVEnLTto3nE3PJlsv4TUGIBqubt82kP+sB4C0R5W1t8uK1NkCl5r3cN+FJ9ly94HOA=
+	t=1723136427; cv=none; b=K1ydGzTrnMPN5yeS5nDBfF0jA0jmt2UavauYHrAJz1g4UXFvz5nKLNIUpNfVz2lp8js4PBb2XYVv4FHOYVpAxgaNWGknkwDzkzR8JLbTeQ7o6rjEc3XB8dJTe2251o1dgCPKj7DiG49q+Vv7+uT34qRrEeqrvdpMuLH1h25d93g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723136413; c=relaxed/simple;
-	bh=WLu/qunDEPYWVg+3QdtXvv+RxqjdfzKpgyThSz7PE1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WW+uolCqwxekEtha6fqOZnalzWug3R8qqSk1p+kCDuzHnMtwTjCqWGVTkaovNYDNq93u11JU0MCfgFZNpx2tulGZXfzhtBWh5p2uA+1bAZ3RVWVnl2pfZYEEWY7l2+x1pkuWy6kTOCJZ8kjGB5YpCpTPEoYqsiHTgjE9vXAo6fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+	s=arc-20240116; t=1723136427; c=relaxed/simple;
+	bh=79E3I9rnh6cuexV59Tr1qEKnDOCpKpgureeRzYsAf+k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n7QkLsFArbkzbF/+QTzoOmZ5Vjm/hOoKOnGNO2KAiDXILeIB8yQyHLCvxNm1SrYAlydw0m338/9RP2oxTEET2u86MVdwcj44bav2wPLG5UWKtF5DaMRqhNYO3Gks8+A5o3ZnKM8OoFvOw7SelhX1ZAHfXHWe9bE6gXTp56Osis4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l1xzIK5C; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b7a36f26f3so19888176d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:00:10 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb5789297eso960652a91.3;
+        Thu, 08 Aug 2024 10:00:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723136424; x=1723741224; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=79E3I9rnh6cuexV59Tr1qEKnDOCpKpgureeRzYsAf+k=;
+        b=l1xzIK5CfmtoUCLMnTLnxO6vSe3jc1dn8OWXYwj2yF93FmsRK0SFXdO0I6dJ1rYHDy
+         QVQcooks/GhXykh9GC/f9k9g1cWjDkUwOx2IT9Ow3t5rvsDikPf9ffcpfnY1kByZIoX4
+         wW7e8IpzEr+uCA5bvA4AN9QWP8qbCY3PmDunqMF1AuB7o6yydzuFNb77DMIiReTYNGxa
+         PORBblKEBGObIfkFwAtn0zVhuf3KUEnWzlMSikwrHz7T5SzMmsLh0uchJ4FgNg2vuXVw
+         Lf9xiIpEp6LJDDHL7I9WBxuu3zulY5RFrF0AGIhMblsKvJ5/kU2oiQUMDoJd3EiUaO5T
+         fxgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723136409; x=1723741209;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723136424; x=1723741224;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EGkLIhhwXdXteeSjY2/FlquAK3aLu21xD2MJxijmIdc=;
-        b=bZuQYBN+mbL43R5eQxsGrCEEUjfremXGagixmJDgEvnMaYD8kg1vJ4CYMgFkMQO9S2
-         ilphqWkmt1JjDT9XQsyJprjs0qR1iLvry8AMyop1ldXfr6X2n/FUIPhgnqmHbOGa4Twd
-         ZobicBeMohr/hEpfw+ryxQNy82sT9LgE62wtvUTmDAOfU92AoG7je0ZAGx1quaeS1z3R
-         oj2J+I4nSkjIGEXnQ9wJDNvY2oO03zRCXYQIU0OwzMTKStSFmd84W5VSGTwOzWuNZ4Jh
-         4aPpuVKbFPZet3bw8gLs1/cBZyc6fHqLCOFn1MCGbcBVT550qWvkY3mUvZa5AY4aOgzO
-         4Z5g==
-X-Forwarded-Encrypted: i=1; AJvYcCV7x/i5uASv1Jv21yA59WdA8bVPcVsqz5h9LkHlA2UNPTNGPhobeZVNpp0DEXDielZcu+Q7ARpR6VWgH3mW3chE83U+4g2X11XFJL5C
-X-Gm-Message-State: AOJu0YyCPwjyva2vkYTUMMy7BNW6ZwlNqacw9jGWUixHY5yPG2eE16MZ
-	LA81+vY4EMjESxGi/K9o8D049I2cxMJnzjSYpXYkaQ8DfIPC4hXV
-X-Google-Smtp-Source: AGHT+IH2oiVdwUKUUHhuebMGQN4cTWYz1FZhhjZM+b1GV9bLfRurjx1JVhpJUxaTAT0q1aDcgd25TA==
-X-Received: by 2002:a05:6214:29c9:b0:6b5:1584:62bf with SMTP id 6a1803df08f44-6bd6cacccd6mr41756186d6.6.1723136409210;
-        Thu, 08 Aug 2024 10:00:09 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c76f8ccsm68570876d6.4.2024.08.08.10.00.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 10:00:08 -0700 (PDT)
-Date: Thu, 8 Aug 2024 12:00:06 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Phil Auld <pauld@redhat.com>, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Improve logging around
- enable/disable
-Message-ID: <20240808170006.GB6223@maniforge>
-References: <ZrQW4gqIr_hTgp0z@slm.duckdns.org>
+        bh=79E3I9rnh6cuexV59Tr1qEKnDOCpKpgureeRzYsAf+k=;
+        b=a3FCH2dPdIjYQgdRvqhnvoPffBoPCJ1WuAo55Gx+joRPhdGzOJ6z+0i0dRQV/99xpG
+         phCQwf2U0SwseBGgd3293OSI/RDY/YFhCmN2iLwfn0hJXI0En9cufhk7zdeimJUeEIYn
+         750diUao6ZDVE1aX+elK6QThmju179rZnYuEoVXU4PYiAN7jiCJ8gzCwpCzUYaemDzHz
+         KnGqo0Z86xEiYoyLe/wV5jRT3FYwLxax7hs3oMiBi7eHO/bQ3qTaItiYRHnhpkPXA+xi
+         PCIAZc/qdGH7GQrCpf4gNIP4w1Lek6t0uflEYXakmr/+niuP9n3w46Pblivgt+l0AMu3
+         Hvrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDaF3Dat16tl+cdMZvRilXbfCqhHF8KNALDWsttISiUqCEUhAerQ8ykbGSYd34HA7O13OymvW9Zd3ViRyf3xOMP11QouYXKHp+0MSIAjpUSM5IDPl9UDN6mXJiU0yVAXuYhEgd1zhlcWrwRSnnn9VDOI/A0GETfLq6f4Zf5T5GpXu4mnCF
+X-Gm-Message-State: AOJu0YwNkCnSPV9nW9UL6mUL0fEHTxyyrkk39RdvBXY9pUnETzwXrZn2
+	ycpCe4NyHLv+AsHgzbaJcnjYZtcRjaoHCt8l/dhjnWU3ioC1K3TTWOZnu2qOD5sD9Oga8VqJ54T
+	ndwseoheVftFx6qbE4gX+ZD0Sdzc=
+X-Google-Smtp-Source: AGHT+IG4AjU8cd9c4BbwsbTHkh5tFspfHK00zOrkjggKt3MhV48RSKUD33NHjh4fqO9wSs2Puy2f8iyojyJtoPO/mFU=
+X-Received: by 2002:a17:90b:4c89:b0:2c9:9eb3:8477 with SMTP id
+ 98e67ed59e1d1-2d1c33c0974mr2743943a91.16.1723136423922; Thu, 08 Aug 2024
+ 10:00:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fdIb7HZuWu12nU98"
-Content-Disposition: inline
-In-Reply-To: <ZrQW4gqIr_hTgp0z@slm.duckdns.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
-
-
---fdIb7HZuWu12nU98
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240731214256.3588718-1-andrii@kernel.org> <20240731214256.3588718-8-andrii@kernel.org>
+ <CAEf4BzYbXzt7RXB962OLEd3xoQcPfT1MFw5JcHSmRzPx-Etm_A@mail.gmail.com> <20240808142916.GF8020@redhat.com>
+In-Reply-To: <20240808142916.GF8020@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 8 Aug 2024 10:00:12 -0700
+Message-ID: <CAEf4BzYzbwqPD=8S3Vgjfwyju2dCO-3aOK-vXvM_EwsV_6faJA@mail.gmail.com>
+Subject: Re: [PATCH 7/8] uprobes: perform lockless SRCU-protected uprobes_tree lookup
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
+	paulmck@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07, 2024 at 02:52:50PM -1000, Tejun Heo wrote:
+On Thu, Aug 8, 2024 at 7:29=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wrot=
+e:
+>
+> On 08/07, Andrii Nakryiko wrote:
+> >
+> > So, any ideas how we can end up with "corrupted" root on lockless
+> > lookup with rb_find_rcu()?
+>
+> I certainly can't help ;) I know ABSOLUTELY NOTHING about rb or any
+> other tree.
+>
+> But,
+>
+> > This seems to be the very first lockless
+> > RB-tree lookup use case in the tree,
+>
+> Well, latch_tree_find() is supposed to be rcu-safe afaics, and
+> __lt_erase() is just rb_erase(). So it is not the 1st use case.
+>
+> See also the "Notes on lockless lookups" comment in lib/rbtree.c.
+>
+> So it seems that rb_erase() is supposed to be rcu-safe. However
+> it uses __rb_change_child(), not __rb_change_child_rcu().
+>
 
-Hi Tejun,
+While trying to mitigate the crash locally I noticed
+__rb_change_child() and changed manually all the cases to
+__rb_change_child_rcu(). That didn't help :) But I think your guess
+about sharing rcu and rb_node is the right now, so hopefully that will
+solve the issue.
 
-> sched_ext currently doesn't generate messages when the BPF scheduler is
-> enabled and disabled unless there are errors. It is useful to have paper
-> trail. Improve logging around enable/disable:
->=20
-> - Generate info messages on enable and non-error disable.
->=20
-> - Update error exit message formatting so that it's consistent with
->   non-error message. Also, prefix ei->msg with the BPF scheduler's name to
->   make it clear where the message is coming from.
->=20
-> - Shorten scx_exit_reason() strings for SCX_EXIT_UNREG* for brevity and
->   consistency.
->=20
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Suggested-by: Phil Auld <pauld@redhat.com>
-> ---
->  kernel/sched/ext.c |   21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
->=20
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 60a7eb7d8a9e..eea2fda8e099 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -4004,11 +4004,11 @@ static const char *scx_exit_reason(enum scx_exit_=
-kind kind)
->  {
->  	switch (kind) {
->  	case SCX_EXIT_UNREG:
-> -		return "Scheduler unregistered from user space";
-> +		return "unregistered from user space";
->  	case SCX_EXIT_UNREG_BPF:
-> -		return "Scheduler unregistered from BPF";
-> +		return "unregistered from BPF";
->  	case SCX_EXIT_UNREG_KERN:
-> -		return "Scheduler unregistered from the main kernel";
-> +		return "unregistered from the main kernel";
->  	case SCX_EXIT_SYSRQ:
->  		return "disabled by sysrq-S";
->  	case SCX_EXIT_ERROR:
-> @@ -4126,14 +4126,17 @@ static void scx_ops_disable_workfn(struct kthread=
-_work *work)
->  	percpu_up_write(&scx_fork_rwsem);
-> =20
->  	if (ei->kind >=3D SCX_EXIT_ERROR) {
-> -		printk(KERN_ERR "sched_ext: BPF scheduler \"%s\" errored, disabling\n"=
-, scx_ops.name);
-> +		pr_err("sched_ext: BPF scheduler \"%s\" disabled (%s)\n",
-> +		       scx_ops.name, ei->reason);
-> =20
-> -		if (ei->msg[0] =3D=3D '\0')
-> -			printk(KERN_ERR "sched_ext: %s\n", ei->reason);
-> -		else
-> -			printk(KERN_ERR "sched_ext: %s (%s)\n", ei->reason, ei->msg);
-> +		if (ei->msg[0] !=3D '\0')
-> +			printk(KERN_ERR "sched_ext: %s: %s\n",
-> +			       scx_ops.name, ei->msg);
-
-Was it intentional to use pr_err() above, and printk() here? If not,
-let's make them consistent?
-
-Looks good otherwise.
-
-Acked-by: David Vernet <void@manifault.com>
-
-Thanks,
-David
-
---fdIb7HZuWu12nU98
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZrT5lgAKCRBZ5LhpZcTz
-ZA72AP9n6JROZdkWAgO5KHDX5TWkKWpMjGJqu9d+2nr0JlmYYQD/Wqis0DF/B70x
-zBJYaFNsMlY4t0eAqm6z9Uq6R2uhTgE=
-=tGJw
------END PGP SIGNATURE-----
-
---fdIb7HZuWu12nU98--
+> Not that I think this can explain the problem, and on x86
+> __smp_store_release() is just WRITE_ONCE, but looks confusing...
+>
+> Oleg.
+>
 
