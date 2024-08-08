@@ -1,187 +1,299 @@
-Return-Path: <linux-kernel+bounces-279978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC58794C415
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:08:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A5C94C41D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C726B22177
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EDAE285C9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFC3146A69;
-	Thu,  8 Aug 2024 18:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55AE146A73;
+	Thu,  8 Aug 2024 18:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WKK6O+gV"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011014.outbound.protection.outlook.com [52.101.70.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXocCki8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF2213DDAE;
-	Thu,  8 Aug 2024 18:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723140524; cv=fail; b=XmZVK/2REOPXLYy7iYzsqsVd5bl4TyXIXBWOecXyyUoiihogLvqXLboG/dnSgIWu3WyZq4BYeG0/sy3jtyf3mOe6HOicruJ4z7M/vkwtyusqIxg4PPZYCeOE2MfkhajjNvGUqjqbSFrx1bhEDnqD6JPGjiKd/0SIL8cZMyT7jyc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723140524; c=relaxed/simple;
-	bh=iicoeTZv4tCuVowuqs32aHk45LrOK9aR9LbCpd4Gb9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SH3qtKicFwUQcIoQ3QN9aRZR86vjkrc4XOrs6BLNJtIRjj8rxKcAFChH+gvloptVTHOCbhWCG+uAyTcSNHPwmOFFQLndUcB/39cdEDrPmxLYIEIwEC3mj9keZyNpwrDOTTYt2wwcLdWZM2eBtxamlCatXQ7rG0D7C54sBXNurBM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WKK6O+gV; arc=fail smtp.client-ip=52.101.70.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iZiHJfMuWGPjJHNxcNokaqyPFTO3CpQWctsGNpfPexwW46i8azPp1DrCiJe1TsLcTw8n00r49c86bO5+jBmOV7uBQ0MZwN5KVFQ146hL83rohkJNFAakhtseA5hXx1z5O4TnVbOkyhBNyfSZPhMzusw1h67W/UfG2ZpgIoF5aKEnn1xfjGqMtp1IC4pIZVQBsYeteqZY/qd98Qk+TxPw5kNhnXJHLxP2boZEAQVlUgHnTdp38Lmxl1XpZ3mA7iN1UNW/cTgmh07xJKR99AcAOHV9yhNQp6pB1rKtr+BxoZe7hAp75NO+kSsrFuNpKz7ND4bNGY8HW5muIc4k07hqSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jJKuQMZ5Sqbgs1mbQeIT8OVPFdvYANWFZc/i/WJEDHU=;
- b=tr38HeOKlBiSAezZY+1zqapOYsHzzMgWosOAKwP2W9v6NGaWIaSuARwWWcTfKqdTGJH0w8/jwE2BGMX25WlXB13wI0IR1AHxRy1lKZfV5xFAqC0tc27+lR5D3vW43kz8zApmP60zxcePBfjoyn6u1Gwf3olmfA6OmejkafZEbMiOzl7aSzv4lyHSQffi04JbLDY+QrCwieJV2ApLINMookp2a3Wc2ID6yiior91Rrp1gY2uR1EM4QN1IoWPVoSTRv8EW4qrO0B1rwvsZn5nHPOnQ7pp7+zV15cx/anNhAOLWnhpUhovYx9v5IKfJtdI4ntdUhadL3+Lpv5cHvrKEdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jJKuQMZ5Sqbgs1mbQeIT8OVPFdvYANWFZc/i/WJEDHU=;
- b=WKK6O+gVkMrwxRA/nMa209oVY5G8iHsSqR2Rovdh8UsK0GrQiKgnrYFXNNmnEYm4+fF4mq82twkpk5S8ZAJ7ScxgZMGXNEPZjcV9j8u3jAH7gTAdFwp50vadgl57DDKlXBQgwLSxpwdZkhP298qvqyPA82uKSKzGyiip3WadFkeLe4Tsrj3xvBbQChuqzRWccGLzut9iSnfp/+c8Ge9IfrC/A2mb5Co/zYEg+nA07qaJbqvIuF7pv718rk21BXRUFufKopCNuwKiQtk8z6ARq8FQQGFXbh1NUCYqTTR3BHKL2HiLwzMmximgHkjkVOXR0ElTiR24KoOqU8TD1oFd+g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DB9PR04MB9820.eurprd04.prod.outlook.com (2603:10a6:10:4c3::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Thu, 8 Aug
- 2024 18:08:39 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7828.023; Thu, 8 Aug 2024
- 18:08:39 +0000
-Date: Thu, 8 Aug 2024 14:08:31 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Zhiqiang.Hou@nxp.com,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH 3/4] PCI: mobiveil: Drop layerscape-gen4 support
-Message-ID: <ZrUJngABI8v3pN6o@lizhi-Precision-Tower-5810>
-References: <20240808-mobivel_cleanup-v1-3-f4f6ea5b16de@nxp.com>
- <20240808172644.GA151261@bhelgaas>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808172644.GA151261@bhelgaas>
-X-ClientProxiedBy: SJ0PR03CA0101.namprd03.prod.outlook.com
- (2603:10b6:a03:333::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A800455769;
+	Thu,  8 Aug 2024 18:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723140657; cv=none; b=Y0DddCONV4F//31d2MeifIkONL6tD/jD/noX9RaL6d/DWQn39MBs4DbAV2pysRMx/NFfaxx7752VbudOtdSTgviL0XLGRFPqtwjGHUUQXZmpb3rc78MjWzNFd38C1Rtoq4/LwQySzIUpGcWLjyS1HArOnq4H2orXivTmEdeFjFQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723140657; c=relaxed/simple;
+	bh=IzN+0IllBbe8cqENOEL8lICQYXZcmk8qn7cN8akcdRU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GbRCPMXhJ89qJ5qurFiTy0Ul8swx50G3jJ5KDrSjyHYSgQyKMwMNqs2P7x82LnHTPIXLzHwao8NBfyMK++ZhPeWaFKxDkPBGl7sasb++joXZObFZD/zK/vZkQsaJDmP2peLZRodDbLAsgvCZBR5Ua45E7YY7KiyjYbkzMUFdB5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXocCki8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33C28C4AF0E;
+	Thu,  8 Aug 2024 18:10:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723140657;
+	bh=IzN+0IllBbe8cqENOEL8lICQYXZcmk8qn7cN8akcdRU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tXocCki8oHoLLruHpGgEKljB/jBxRTPpzxTsiKp0ccvszSqsUDrHKpQKLwxm/26C8
+	 VsB//QmFJPlZFIHUrdDsS/hpZ2GmQjICpMfsXn92jRcosRLQZ3ey9IVVmSKNW8c0NK
+	 fCkggrY3AZVnr/c7Tm7aQ+9cbZsBWtPfw+jwHJoMr8iYxlPVNdZ/+6jjT6SgMV1iI6
+	 VWT4ud/EladOQl6HLsLcoMJu+m/bJYIh1uwGAmurJN5r9aQvNWZY1vu+kMyqq+cYVE
+	 NLJ4E/QvuB70pcLrLPEC9C8Ca83PPbtZmFX0vjiCKL9+DCgbr6uPVS5BZg4WmB6gUK
+	 9WukUjoDUx2OQ==
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e026a2238d8so1155586276.0;
+        Thu, 08 Aug 2024 11:10:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/lTDC50R2IIVI4H4h/DiHkbNBKJP1xkP/mIN8+SAlbH+pj/Wbo3O2oWXF9hPNtwkmaUnYHHxENYFJWnWEQvK7zJ0G8HxKvNrECWxKhxiWdVJYDsB/zuAlOWYRhKv/Pu4BoBM1x1LvpP4/HscIyjrkH7AhpsB+q39XGXXQJdg5nXwY/ThjxgVgM3KUa+yam8r80Ez3/cDZi4gwCi8AwA==
+X-Gm-Message-State: AOJu0YycuJ23YWBjHdXqguMLjCHKC2uJzszUHLQGUlhUZWXVhaxkDn63
+	BxzEYoeYpkA8NPUr++4pO0QnQCnWx0BBXjd8l4XoldDdwNI05DsPINef7D6hpqv4dFcyKFxkBME
+	htlZnrjw5jDR3FbiL+bvjZyGvLQ==
+X-Google-Smtp-Source: AGHT+IG6f1NrEBsWGrKI3cTAq+ObiGLjaOX692b54NH03/BssS5qOzyO2HKGBpDdEZhJIc/qfVg2dAYc9OkraoG11DU=
+X-Received: by 2002:a05:6902:e0b:b0:e0b:c16a:d0b1 with SMTP id
+ 3f1490d57ef6-e0e9dc8793emr3047061276.45.1723140656382; Thu, 08 Aug 2024
+ 11:10:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB9820:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54d5092b-39d7-4d75-609b-08dcb7d52123
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jidsBCTf4c2J+TywYuD5iY32V5fm8weYbSoheCNvY3NFSxmZNCyyaabe9pxY?=
- =?us-ascii?Q?ZPxX1QEATe+XKrj2MbLIEaP4HjGf++RKL1BPRwxfV7nn9+hglFrLZgJFQp+X?=
- =?us-ascii?Q?ufJmBcZ4PFVESWgOMEbIroajq7ZLYHMznj2n/ywvYPfwT9j8z+Jjutggtjv1?=
- =?us-ascii?Q?2D7joUVCwQGhCNBEjW0QT0y9fQPUBM2oRrziwoHDfA2xMSU8cocyVLColjck?=
- =?us-ascii?Q?lM6A9IyUERHTglu/T2urirQUJfS4aGH557RizDVUTVcdz4ggxVNiV1kiPADE?=
- =?us-ascii?Q?walCAibfwQJ3qEvOASqMC/aCGNfHzJKn5RwuueDtA1EAQ7pd2MVxBwbAiV5t?=
- =?us-ascii?Q?BTi+SDBh583AjGTjODWAg//T2B8y7Z4fjceeDfmiLF1OhrYoRgDI1sYuSYBB?=
- =?us-ascii?Q?7VsM2YL7DtpAYiGrIAixdLO39roM/wNFjGOZmEaHkUxD94f/+aeheSmQyx0K?=
- =?us-ascii?Q?s+v6c3u5KjoXthUBegDA8eREu1qXneejPY5kWweMLAxhs+O0dUAFMB5j2ObR?=
- =?us-ascii?Q?GEvRjvCO3upPNEsLfksz14tEfE6EVMMtVBbqqj94CuFx8p9HzWNBi+yxGMog?=
- =?us-ascii?Q?fiajPJCemgX3IqU96J5OZw19YV1aIzhX5afTTZb83nUm9APx8smwPI8Mv123?=
- =?us-ascii?Q?h08X0NCpYE4ohmQnyC1n5FrJk1V8HVMRIz68+v2koonJcxHLkGq9kwI1y7gb?=
- =?us-ascii?Q?g0eb35j6smlkS2SkRC2UEBOD1X32/fYgujx31jQOlUbC2+m4JhK9BzwQ3DFe?=
- =?us-ascii?Q?QK9p8ImaeGkr7RQsUDK0k0T7weSMlhDcECj8g1AkUBCEYgLpnNiX1g5KTLjQ?=
- =?us-ascii?Q?s7WSWYOhm2C3+d3Gi/8NbmTaFiJy/3HkeX8BQqSBIAh40NPqA+EzWBfO3zAy?=
- =?us-ascii?Q?zpNhJOX2L/gONEz6nywKwGA5sdjTpBfWCDs+M8++f/CILQqtYQ5pndXo/ihn?=
- =?us-ascii?Q?kQjW11XyJHkjoeombz56/y3BKHNoz6TaH0uvq0FVZTRqmTGfunPnne+qR1kP?=
- =?us-ascii?Q?FF+c1YN0feZvvBwzP0WfMqjpngWWc7yAkY3Ja3LIlAZ38W7zb7HV5YMNJgXA?=
- =?us-ascii?Q?Tdw81U1JxFH9+IQEWwv75KsfQiGI7Jukl6dXSGCvVopiA1InAF72TSHFocxf?=
- =?us-ascii?Q?VZUQ28ebSJYEjhVUPoY9S2HWg6lrzayIXngW5+oV+DNnA+HI4280KmjS0cLl?=
- =?us-ascii?Q?jY33rxNgDPSG23JbBOnBHFHZ6vqXgCIJb9qu+bzQQJ/x9wdsOQZv5M9sb35m?=
- =?us-ascii?Q?vuA2Tz8iikoXhsMEcKVpE1gqfBwCzkTfuWYZMK+YxszKp+ex88im3CXK2Tfp?=
- =?us-ascii?Q?w3sII3r7Ens9sabiip48+PUxpMIOz7oDTF0h0IBYzQCMcs90/pWV7lielZ/w?=
- =?us-ascii?Q?M//HLL6YISnVsEgHctGhid8MZ//wI2K+q4p90/7A6YU2jrMWYw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fisCn5qlOQKfX4JQkRftSU47skimreYi8v3oJiVw3Q1Yb/mXoNDIjehLKope?=
- =?us-ascii?Q?JWnBG6RFH42e2iWTaQXnDaoBscac2XJ5vTHbRbfPVZ9LNyA0Re/SyfobPlGD?=
- =?us-ascii?Q?1KIjJg3GvnLnwzmipWMv/eFOqM3LoqYVBYv/OiA+Yt8Pv2a1fWkZv5KEBFL4?=
- =?us-ascii?Q?t0r16Gb1W90UdRDWMVCLluqmpGBPKMeivt3Nh0MJzNXbFieg3l5N+TYDiHHQ?=
- =?us-ascii?Q?FNTd4g1JUM4+S4b0GW/mu+ZebqTEBJybX+EnosazE+MkirxPIDmJvihJpVon?=
- =?us-ascii?Q?jASc+RkJ2229hadUK5jtEmmZi/ibB/EIqMtUvJr2B+Yl8Xl4OxtaaDaLwtqr?=
- =?us-ascii?Q?66KkdJI25eNcYaFa5xiZtpHYO4ZBUUwJ7wSujwoOGrJbeSuSednDfQ2IIwyF?=
- =?us-ascii?Q?F1yfwiiY/k0Jyk2b5Y5zP5ne2lB5mqp2J0pFGoosTzOgrgOF/mag3v47pWLC?=
- =?us-ascii?Q?4dh2nI+hOKVgxHRLGREgAgS/dHYBpiR+l6kCH9z7EZphHsKFbnTO8SfhfnBT?=
- =?us-ascii?Q?1xpqaWxIAdkCfyrB7Iu51GZUOZsIOpnY4/oG8lyEinm3WEKxq4hF1v7ElaaZ?=
- =?us-ascii?Q?7PW1fIA8o+BUSdFeeBtoTxbfifGg7EeuQ3+SeipYbBW+atFSv7xwcknsSNxT?=
- =?us-ascii?Q?ETcJxiEbOsCpVUzXq+CAv2EZP8tFj33YjGZlW0gwR4mm2S9l2VcRjYGxoWE0?=
- =?us-ascii?Q?0db+Ap6xjnCJ0mcpUmF9AS4h9pus/hEDQPY0BO6Cqwoed38FYwL6ft6albZA?=
- =?us-ascii?Q?DZJvbgHjMGn5YaT/idYKGFTr3dM+tgko8ayGqDOEr5uHg6UDP8ZVz8yekv0s?=
- =?us-ascii?Q?3+OU5cl8VwZV5S+A0ErzmFVpcs5GFBKSkAltCc3D+Mkzqdxl1jSOt0IWUEpX?=
- =?us-ascii?Q?FPnz+e3J1kzKZ1fV0Tk/sg4S5NOZncQmcgXwum0bwEYmINPwlZ3BZaRjlZon?=
- =?us-ascii?Q?kDQDA0KGc1LbXCnOlhgUN5iZbAzRNNdhQdb8O4GRlPXhz59M5rvaAlw3QH97?=
- =?us-ascii?Q?j0NoaBC3piIoA6cyejejGEzR2Ij5Bt3bkvJTQbDjZaXIUgoFmSRoHv1vdERM?=
- =?us-ascii?Q?4mKQhwFRDuqpyD+ICbMfQY347+kYSc/f8/j7yvceWaulVd7qBiwfaNYJJvkf?=
- =?us-ascii?Q?S7MB1jGYrqs1uDSmI5N8vhAA/JBSQg0kd2FMG3/SVxL1jaJ9tBA0Lw5Qb6pv?=
- =?us-ascii?Q?+cMTSP+U5Vrn0M7/i/4aFj70ZtnmiXKchwuPkAH/zNDdQo/rNMPoppcBKilw?=
- =?us-ascii?Q?N0c/3ewTbKnH1Utmk6Fiq5jYkIS9qd2pZIMRgYtl7Nl1kSMbZZ7Pe3BhDm4g?=
- =?us-ascii?Q?N2IORfwv3saZK4u7aQ8bu/qvJSF5Xg3XgEnauGFTbxJWjnQq60phffUDA6zd?=
- =?us-ascii?Q?QhV553/md54yZNA6z4zZDLutmJ0xYSlBxpw4dqEgLf5ESf7Ta+qks7Gokys/?=
- =?us-ascii?Q?59xtG8573+tht2URlXgXgi51TwQHw8oP1U+B5iFIFkWvnR1DVwIxZszwdkPd?=
- =?us-ascii?Q?tshrvQo5p55bTGKoalXOMuVp0jvnKf2bof0sDDQQYdSZFwvFYRsGuRL3dqPd?=
- =?us-ascii?Q?nsoOVx1eVNjtpfGfBPo=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54d5092b-39d7-4d75-609b-08dcb7d52123
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 18:08:39.3219
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Q2YhKK8HsY4vlX3GoFQcCQMhF4L+YDsS9e65M2scXafiHQPo8mxQPqdiCBV60BFaotUFu3QX17onlEJ2M54ZXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9820
+References: <20240711-iio-adc-ad4695-v4-0-c31621113b57@baylibre.com> <20240711-iio-adc-ad4695-v4-1-c31621113b57@baylibre.com>
+In-Reply-To: <20240711-iio-adc-ad4695-v4-1-c31621113b57@baylibre.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 8 Aug 2024 12:10:41 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKaddw8FnPfdnhKhHUb8AcTxFadc_eZmxjX0QxFR80=mw@mail.gmail.com>
+Message-ID: <CAL_JsqKaddw8FnPfdnhKhHUb8AcTxFadc_eZmxjX0QxFR80=mw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: iio: adc: add AD4695 and similar ADCs
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2024 at 12:26:44PM -0500, Bjorn Helgaas wrote:
-> On Thu, Aug 08, 2024 at 12:02:16PM -0400, Frank Li wrote:
-> > Only lx2160 rev1 use mobiveil PCIe controller. Rev2 switch to designware
-> > PCIe controller. Rev2 is mass production chip and Rev1 will be not
-> > supported. So drop related code.
+On Thu, Jul 11, 2024 at 1:16=E2=80=AFPM David Lechner <dlechner@baylibre.co=
+m> wrote:
 >
-> I'd love to drop this, but only if you're confident that no Rev 1
-> controllers are in the field with people using them.  The explanation
-> above doesn't go quite that far.  It's not enough that Mobiveil
-> doesn't want to support Rev 1.  If we know that all Rev 1 controllers
-> have been destroyed, that would be perfect and useful to include here.
-
-I can't guarrantee all Rev1 have been destroyed because some may left on
-someone's drawer or lab. How about drop all document firstly,
-
-and set kConfig
-
-bool "Freescale Layerscape Gen4 PCIe controller (DEPRECATE)" if COMPILE_TEST
-
-So layerscape gen4 will not built. Sometime later, if no one complain, we
-can remove all safely.
-
-Frank
-
-
+> Add device tree bindings for AD4695 and similar ADCs.
 >
-> Bjorn
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>
+> Note, this may trigger a DT build warning "common-mode-channel: missing
+> type definition" if the builder doesn't include the recently added
+> common-mode-channel property [1]. This should be safe to ignore (passes
+> make dt_binding_check locally).
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/=
+?h=3Dtesting&id=3Dd86deaec1c5b0fb60c3619e8d2ae7a1d722fd2ad
+>
+> v4 changes:
+> * Picked up Conor's reviewed-by tag.
+>
+> v3 changes:
+> * Change interrupts to be per pin instead of per signal.
+> * Drop diff-channels and single-channel properties.
+> * Odd numbered pins added to common-mode-channel property enum.
+> * REFGND and COM values changes to avoid confusion with pin numbers.
+> * Add inX-supply properties for odd numbed input pins.
+>
+> v2 changes:
+> * Drop *-wlcsp compatible strings
+> * Don't use fallback compatible strings
+> * Reword supply descriptions
+> * Use standard channel properties instead of adi,pin-pairing
+> * Fix unnecessary | character
+> * Fix missing blank line
+> * Add header file with common mode channel macros
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad4695.yaml    | 256 +++++++++++++++=
+++++++
+>  MAINTAINERS                                        |  10 +
+>  include/dt-bindings/iio/adi,ad4695.h               |   9 +
+>  3 files changed, 275 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
+> new file mode 100644
+> index 000000000000..a2e824e26691
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
+> @@ -0,0 +1,256 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad4695.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices Easy Drive Multiplexed SAR Analog to Digital Conve=
+rters
+> +
+> +maintainers:
+> +  - Michael Hennerich <Michael.Hennerich@analog.com>
+> +  - Nuno S=C3=A1 <nuno.sa@analog.com>
+> +
+> +description: |
+> +  A family of similar multi-channel analog to digital converters with SP=
+I bus.
+> +
+> +  * https://www.analog.com/en/products/ad4695.html
+> +  * https://www.analog.com/en/products/ad4696.html
+> +  * https://www.analog.com/en/products/ad4697.html
+> +  * https://www.analog.com/en/products/ad4698.html
+> +
+> +$ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad4695
+> +      - adi,ad4696
+> +      - adi,ad4697
+> +      - adi,ad4698
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 80000000
+> +
+> +  spi-cpol: true
+> +  spi-cpha: true
+> +
+> +  spi-rx-bus-width:
+> +    minimum: 1
+> +    maximum: 4
+> +
+> +  avdd-supply:
+> +    description: Analog power supply.
+> +
+> +  vio-supply:
+> +    description: I/O pin power supply.
+> +
+> +  ldo-in-supply:
+> +    description: Internal LDO Input. Mutually exclusive with vdd-supply.
+> +
+> +  vdd-supply:
+> +    description: Core power supply. Mutually exclusive with ldo-in-suppl=
+y.
+> +
+> +  ref-supply:
+> +    description:
+> +      External reference voltage. Mutually exclusive with refin-supply.
+> +
+> +  refin-supply:
+> +    description:
+> +      Internal reference buffer input. Mutually exclusive with ref-suppl=
+y.
+> +
+> +  com-supply:
+> +    description: Common voltage supply for pseudo-differential analog in=
+puts.
+> +
+> +  adi,no-ref-current-limit:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      When this flag is present, the REF Overvoltage Reduced Current pro=
+tection
+> +      is disabled.
+> +
+> +  adi,no-ref-high-z:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Enable this flag if the ref-supply requires Reference Input High-Z=
+ Mode
+> +      to be disabled for proper operation.
+> +
+> +  cnv-gpios:
+> +    description: The Convert Input (CNV). If omitted, CNV is tied to SPI=
+ CS.
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    description: The Reset Input (RESET). Should be configured GPIO_ACTI=
+VE_LOW.
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    items:
+> +      - description: Signal coming from the BSY_ALT_GP0 pin (ALERT or BU=
+SY).
+> +      - description: Signal coming from the GP2 pin (ALERT).
+> +      - description: Signal coming from the GP3 pin (BUSY).
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    items:
+> +      - const: gp0
+> +      - const: gp2
+> +      - const: gp3
+> +
+> +  gpio-controller: true
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +    description: |
+> +      The first cell is the GPn number: 0 to 3.
+> +      The second cell takes standard GPIO flags.
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^in(?:[13579]|1[135])-supply$":
+> +    description:
+> +      Optional voltage supply for odd numbered channels when they are us=
+ed as
+> +      the negative input for a pseudo-differential channel.
+> +
+> +  "^channel@[0-9a-f]$":
+> +    type: object
+> +    $ref: adc.yaml
+> +    unevaluatedProperties: false
+> +    description:
+> +      Describes each individual channel. In addition the properties defi=
+ned
+> +      below, bipolar from adc.yaml is also supported.
+> +
+> +    properties:
+> +      reg:
+> +        maximum: 15
+> +
+> +      common-mode-channel:
+> +        description:
+> +          Describes the common mode channel for single channels. 0xFF is=
+ REFGND
+> +          and OxFE is COM. Macros are available for these values in
+> +          dt-bindings/iio/adi,ad4695.h. Values 1 to 15 correspond to INx=
+ inputs.
+> +          Only odd numbered INx inputs can be used as common mode channe=
+ls.
+> +        items:
+
+"items" is for arrays, but common-mode-channel is a uint32. Drop
+"items". Either Jonathan can fixup or you'll need to send a fix.
+
+It's now warning in linux-next (you need dtschema main branch):
+/builds/robherring/linux-dt/Documentation/devicetree/bindings/iio/adc/adi,a=
+d4695.example.dtb:
+adc@0: channel@1:common-mode-channel: 254 is not of type 'array'
+        from schema $id: http://devicetree.org/schemas/iio/adc/adi,ad4695.y=
+aml#
+/builds/robherring/linux-dt/Documentation/devicetree/bindings/iio/adc/adi,a=
+d4695.example.dtb:
+adc@0: channel@2:common-mode-channel: 3 is not of type 'array'
+        from schema $id: http://devicetree.org/schemas/iio/adc/adi,ad4695.y=
+aml#
+
+> +          enum: [1, 3, 5, 7, 9, 11, 13, 15, 0xFE, 0xFF]
+> +        default: 0xFF
+
+Rob
 
