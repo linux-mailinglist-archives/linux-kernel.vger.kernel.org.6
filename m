@@ -1,120 +1,140 @@
-Return-Path: <linux-kernel+bounces-280221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B9794C75D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:29:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A3F94C760
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48DE51C22841
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFEEB1F2372D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5599516130C;
-	Thu,  8 Aug 2024 23:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D236215F301;
+	Thu,  8 Aug 2024 23:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="THPdx+Jr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1oo1bUE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A964D15F3E6;
-	Thu,  8 Aug 2024 23:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C46E55769;
+	Thu,  8 Aug 2024 23:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723159733; cv=none; b=kDnHkaH4r9SjRF6nAST+WIBsd6OesWwBAaY6wWQjyzuzyoIHs+7j8Y2tq+M/rq0OadZWOD/VgT0eRvl9HVtm5MYy/1msv7/MnUNC+7iyTMAgyrhftivUNJxCh+mXSDY3d8mL7abO+/wOn/1Q5BsyK4Zn7yI2RhrPV3WD5D5pS4c=
+	t=1723159817; cv=none; b=OU7fJqcELmKziNYYChSjTFcaAFvjViE6Cc12ufTHuDI4AhLFbkML4pN4UR3pzrpulGOB4Gyo8E+qDWSG5BtuoOtGA12BXpbBNG0QUwdzmbapVK6Ce0+yZcERtwKRUshY4roTw+vOSoC6FG3SUsyzao0YNcS0BEg7VZWtnb6qmtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723159733; c=relaxed/simple;
-	bh=7T6z9rkm3U/1nCTIfjEAJ/4vtOZ5BhHQxzLT9IJc17w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZNCBPv6b0JqDly/RoZu/RWXGIkbQ8gkrrqhqUTyssBJ0LPRqUBjlBWSsgayQwoZ3E7OSLa9oHmljqUv/sDe6kEjDg+v63DWcVPRGn0UGgPtUIZif5z6CFmOwCLrTX2Af6TNjNSAAHs4ciH9SJJsrFwJFCyWdr/dN4C2G97yUZLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=THPdx+Jr; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723159732; x=1754695732;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7T6z9rkm3U/1nCTIfjEAJ/4vtOZ5BhHQxzLT9IJc17w=;
-  b=THPdx+JrPdzp9TfCQWpFkPHUMpOqO8ckdmDYMMOryyCx6Rzy/QqQKthR
-   /g2TNsCdqgg+dk/fU3QtIXjcmUm92dDDntfEQje92b928P08Z5WLluUqg
-   ZOdhuW6AR55RQjAdAjSw5Ikgj33xNoI9qqZZnodycwDxlROoU9veIyR5T
-   4LruTFLf2grKkSbqQOho5YpSx8pEeOpfaUnwM9JU9n/MsklXJtzZzlPjq
-   EPdrBj9vVIumG3k1dhNVaVPKEYWCPq/Z6rPA5NIad7vcVb0e/HNdvEwLw
-   XcH8xrWzK0g1H5kFiJ+I7tsHdHNkycHTP8Z7CA4BxoOHTHg220YKZydUA
-   g==;
-X-CSE-ConnectionGUID: l41sCSFRTnWhKcb8GUV/bg==
-X-CSE-MsgGUID: heP67PfmRMSpRu+chhDp8g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="38825987"
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="38825987"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 16:28:51 -0700
-X-CSE-ConnectionGUID: ymqTIQVcR/OjzQXhMSQm1A==
-X-CSE-MsgGUID: N+7qjUO6SA6E4bdt8nVHmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="57616008"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 08 Aug 2024 16:28:48 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scCYk-0006cU-1Y;
-	Thu, 08 Aug 2024 23:28:43 +0000
-Date: Fri, 9 Aug 2024 07:28:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 3/3] net: phy: dp83tg720: Add cable testing
- support
-Message-ID: <202408090754.e4G2nq88-lkp@intel.com>
-References: <20240808130833.2083875-3-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1723159817; c=relaxed/simple;
+	bh=rK4tB4WPJfLPrcZ+F5Fbbqix6Gv+OfmlxqJkua2A56E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eRONa2+ADb3mYL0FDfxaHZ4qurzvmw62bWgh7jnNf3c7O/AeFiXYd/biV9PrYT7B/B7KkjpSKeUbfNPUN9MhWPiW/7GlDGGHHLWpwyj3xA2xQsgJ5HWAU3gWSB56xBCEHpJFi4wyR+zDRCokrCKIHgRlY5k89rI165mVlisgxfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1oo1bUE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7CAC9C32782;
+	Thu,  8 Aug 2024 23:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723159816;
+	bh=rK4tB4WPJfLPrcZ+F5Fbbqix6Gv+OfmlxqJkua2A56E=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=k1oo1bUE2xX0PrC20hKap0i825/r4wc0SQTeDnfIvu2QBCWJIWNXlud7Ri8yOezFW
+	 8t4TRtWopwdF6heZ81JMKn5owSDSIQnytwzyw1bQhU23WxDUg3wdQplRLSsorJ3uuc
+	 vom0f8XL/6IgY64uQvd3I45P75INHY0lX6F7ocgeU/THFuBCV0E/ed3VMWitMt524Y
+	 AZHlgZ8TI1wU0Ozp5kZWd82HdGq5yrEe6KMyYutQj76GcG7U0m/TpI+Or+3kwh/CxP
+	 oWO+eRqvQbvTY43gCvR5DaoPcbUNiowTDPzrflUozA2WWsbtZ6PI6Ge4Gj2Pw1+vIR
+	 sO37x0woLt15g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C160C3DA4A;
+	Thu,  8 Aug 2024 23:30:16 +0000 (UTC)
+From: Mitchell Levy via B4 Relay <devnull+levymitchell0.gmail.com@kernel.org>
+Date: Thu, 08 Aug 2024 16:30:10 -0700
+Subject: [PATCH] x86/fpu: Avoid writing LBR bit to IA32_XSS unless
+ supported
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808130833.2083875-3-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240808-xsave-lbr-fix-v1-1-a223806c83e7@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAFVtWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCwNz3YrixLJU3ZykIt20zApdA6MUU6M0MxNDM1NjJaCegqJUoDDYvOj
+ Y2loA3RILWF8AAAA=
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc: stable@vger.kernel.org, Borislav Petkov <bp@suse.de>, 
+ linux-kernel@vger.kernel.org, Mitchell Levy <levymitchell0@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723159817; l=2576;
+ i=levymitchell0@gmail.com; s=20240719; h=from:subject:message-id;
+ bh=aD/HH3dzvhy4muD2Cy5M+AM0El/r97xW+eGKYw26zH0=;
+ b=8zO+Sr3nZNkO0VBtBSMe+DEVkhL/JnpFkIRgRz9xwiRA3wosgdPgOjDqT7Jax6ZpKs639xRMp
+ aN2VKMIWN6UDdqZWgjibE8iMOvub2REaomBJsAf1tRvpBT4MRsZaxem
+X-Developer-Key: i=levymitchell0@gmail.com; a=ed25519;
+ pk=n6kBmUnb+UNmjVkTnDwrLwTJAEKUfs2e8E+MFPZI93E=
+X-Endpoint-Received: by B4 Relay for levymitchell0@gmail.com/20240719 with
+ auth_id=188
+X-Original-From: Mitchell Levy <levymitchell0@gmail.com>
+Reply-To: levymitchell0@gmail.com
 
-Hi Oleksij,
+From: Mitchell Levy <levymitchell0@gmail.com>
 
-kernel test robot noticed the following build errors:
+When computing which xfeatures are available, make sure that LBR is only
+present if both LBR is supported in general, as well as by XSAVES.
 
-[auto build test ERROR on net-next/main]
+There are two distinct CPU features related to the use of XSAVES as it
+applies to LBR: whether LBR is itself supported (strictly speaking, I'm
+not sure that this is necessary to check though it's certainly a good
+sanity check), and whether XSAVES supports LBR (see sections 13.2 and
+13.5.12 of the Intel 64 and IA-32 Architectures Software Developer's
+Manual, Volume 1). Currently, the LBR subsystem correctly checks both
+(see intel_pmu_arch_lbr_init), however the xstate initialization
+subsystem does not.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/phy-Add-Open-Alliance-helpers-for-the-PHY-framework/20240808-211730
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240808130833.2083875-3-o.rempel%40pengutronix.de
-patch subject: [PATCH net-next v2 3/3] net: phy: dp83tg720: Add cable testing support
-config: i386-buildonly-randconfig-001-20240809 (https://download.01.org/0day-ci/archive/20240809/202408090754.e4G2nq88-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240809/202408090754.e4G2nq88-lkp@intel.com/reproduce)
+When calculating what value to place in the IA32_XSS MSR,
+xfeatures_mask_independent only checks whether LBR support is present,
+not whether XSAVES supports LBR. If XSAVES does not support LBR, this
+write causes #GP, leaving the state of IA32_XSS unchanged (i.e., set to
+zero, as its not written with other values, and its default value is
+zero out of RESET per section 13.3 of the arch manual).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408090754.e4G2nq88-lkp@intel.com/
+Then, the next time XRSTORS is used to restore supervisor state, it will
+fail with #GP (because the RFBM has zero for all supervisor features,
+which does not match the XCOMP_BV field). In particular,
+XFEATURE_MASK_FPSTATE includes supervisor features, so setting up the FPU
+will cause a #GP. This results in a call to fpu_reset_from_exception_fixup,
+which by the same process results in another #GP. Eventually this causes
+the kernel to run out of stack space and #DF.
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+Fixes: d72c87018d00 ("x86/fpu/xstate: Move remaining xfeature helpers to core")
+Cc: stable@vger.kernel.org
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-mgr-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-bridge-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-region-test.o
->> ERROR: modpost: "oa_1000bt1_get_ethtool_cable_result_code" [drivers/net/phy/dp83tg720.ko] undefined!
->> ERROR: modpost: "oa_1000bt1_get_tdr_distance" [drivers/net/phy/dp83tg720.ko] undefined!
+Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+---
+ arch/x86/kernel/fpu/xstate.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+index 2ee0b9c53dcc..574d2c2ea227 100644
+--- a/arch/x86/kernel/fpu/xstate.h
++++ b/arch/x86/kernel/fpu/xstate.h
+@@ -61,7 +61,8 @@ static inline u64 xfeatures_mask_supervisor(void)
+ 
+ static inline u64 xfeatures_mask_independent(void)
+ {
+-	if (!cpu_feature_enabled(X86_FEATURE_ARCH_LBR))
++	if (!cpu_feature_enabled(X86_FEATURE_ARCH_LBR) ||
++	    (fpu_kernel_cfg.max_features & XFEATURE_MASK_LBR) != XFEATURE_MASK_LBR)
+ 		return XFEATURE_MASK_INDEPENDENT & ~XFEATURE_MASK_LBR;
+ 
+ 	return XFEATURE_MASK_INDEPENDENT;
+
+---
+base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
+change-id: 20240807-xsave-lbr-fix-02d52f641653
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Mitchell Levy <levymitchell0@gmail.com>
+
+
 
