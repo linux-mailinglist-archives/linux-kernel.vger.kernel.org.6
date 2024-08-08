@@ -1,282 +1,190 @@
-Return-Path: <linux-kernel+bounces-279878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FB094C2F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:44:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBD994C2F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1A67B29C3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:43:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4E31C20E1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D43F190079;
-	Thu,  8 Aug 2024 16:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C768D190068;
+	Thu,  8 Aug 2024 16:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRTYrWN1"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OlaIm0za"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B29618FC9C;
-	Thu,  8 Aug 2024 16:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942BB18EFDC
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 16:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723135389; cv=none; b=EwxVhGxHFmdEzrszHy1Khuv0lBz9Yy9fVn9uK7MbiyBa/S1Iekgmyq+x4vGcr11KhQT6t0AdMWiT0tdiH4/d2aTyagISVEoN0AYX3++gDs9ILVabFOGF7PK8A6objpA2B4zw7uFYm6UotAc5R9bXfFrZh25D8gRX/PXHIfHOfQc=
+	t=1723135432; cv=none; b=tn7KIbpn03qIB1oJfX6J/c7BCbWp0s81lN7EkFBDQlrw6I9tZqkesw3jrS94SdVyYNlDh7Hvvmk5w+9FbxB7Z0xVtFHOtDgrb++kqyNBJ8jo6v3lZaKnNkwQvXYhXkhYMRb2QSKlmNNAgrzqYN9GAv2ffkzmJfZ1d/pVRWWCgUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723135389; c=relaxed/simple;
-	bh=dHtDfhOsvgIFvdZwp4aXWLwy4SEXbI2Im6ka0NpERbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lt0VXN/CcArBQkh+wow04MkW5atOt0EZo1EinrBUNO62C0eebt7V2PHkHPUZC0beurwiOJIIWTIK9TwEDI6a+7V8Dova3hMEndTJAXie5yqDN0rCUPiGXr0npcPRKf7mhtBUzMv7vQJFG3Ng3uc9+rc1ROnoA/sMCJDt8sdwsb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRTYrWN1; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1723135432; c=relaxed/simple;
+	bh=nMZ7h5kL/cQC3mNo2rYU7viihd77UbK6CxC44okxUU0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RlxQzK93CKfjgxSOPkFq9uY8KO9UrzZrM9AtJKJwQLw8nJyLiSY7Gsr/mtIEbc9WVVijO49LTCCz56/z5WpdX7n+iUEcEAeifH2yDcrS20ESyV9GMjry6LjwNz3X5yC9/V8nZbAb5LKHzorXmVMLwaCMHQfxg6FGUDd4cCUjm5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OlaIm0za; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc56fd4de1so8202555ad.0;
-        Thu, 08 Aug 2024 09:43:07 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7106e2d0ec1so1040930b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 09:43:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723135387; x=1723740187; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=eNrYT8Y4Gw2EVawrdifTxZqwo8X4GHazPDpumhz+hFI=;
-        b=bRTYrWN1/HTggECJOsIrLOt+LsMihX+AlNynD2zONUezsakhOv0tkCYTJKJ+wS0V6I
-         +y6+10dHEUKCx8V6B/aGV7JkhoS3qI5lXPmkr9LY7oGhQBUmwblq7gfiyffak0JShJxP
-         N3/e7i2AYgXo3lPkXsBq6eYiwucnLyVqcEMCvFGGR1N/MGebvDmRKkzTcqJy16sm+rFg
-         JB/WpD+CKuq8FcQaVOwHfThWJstt8BFx8AXJfjypHwPL9e1eoBoIAXqPDPcJZ/OXOpRG
-         mzpNg+G83ZG4/e59EoseDis5+1q1Kk3zqElo3OaEh+bLuH630S5m0ZM6WHjtXkZbqCGC
-         FyVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723135387; x=1723740187;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723135430; x=1723740230; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eNrYT8Y4Gw2EVawrdifTxZqwo8X4GHazPDpumhz+hFI=;
-        b=FQUucKsAGwMelzgvDWN1sON44rIPTNdK/FSCyJ91NIqvTRU6w4d2UkSre9bJaHCBqU
-         a0SCdeg/uMEgEEQhURDamg2DPzvb0t4/FHKM7z+7kZCNtOHqJS3nb5X1MYzq6gKyZDqk
-         5FKkZsVgCEr51oyyYma4kPtzfF/NAY97to1PWQGoZxE4b1fv1B1XyX8ALZgbI2obcrgi
-         6PapOK8A/9w975W3cfLiCf0vFa0cpCXgCuplBB5KWKHxy9PPvaeMyuKkA2h4Se/6/Izx
-         Xk9QOPHGEBJAl2Qr+ZHK2e96zQg7A1MyrvDQH1vqdbcGIo3Adsip/QbJlxUSktIw0sDx
-         b9Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/WJkoYBIcYbgli/A32V6p05mSK0gDPJhnU6CUJPxjNrV5kkk5GJbCo37bf/Mqqd4WRFY+rJmjMhaUQ8z70bYFksMsHeERMbg+K4dqqSh/vgmSslDnR+5iqVvd+CJ+xW1kOBygFxWzLvBKg1lHa+LiTcOB
-X-Gm-Message-State: AOJu0YzacZbLQLfaqtkZYXwlyHXns/1WrCfuWY5I5BDTmVRKUjWXp+DZ
-	KIEPcvxxcxa2f9X1S+6FN0bbErpVh+RimcTvV884MetccpUeWldRumNH2g==
-X-Google-Smtp-Source: AGHT+IGqd8MXoHFAwKBqFE7HYM2htnk6QT4veGS+QVbxdQ4qh3IjYCCkUTZVBa3rWVNW1OMUNG6bKA==
-X-Received: by 2002:a17:902:d48b:b0:1fb:9cbf:b4e3 with SMTP id d9443c01a7336-20096d2f0cfmr44175485ad.22.1723135386633;
-        Thu, 08 Aug 2024 09:43:06 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f19e8asm127380265ad.43.2024.08.08.09.43.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 09:43:05 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net>
-Date: Thu, 8 Aug 2024 09:43:04 -0700
+        bh=BncAidYttaXwWTJrXVRaT/JdaRkWy8ih2u+dDbnusos=;
+        b=OlaIm0zaP1oEYWRzZDI5psH/vIddpkRxiuXsjgtcxU2i2FgwlC9cbMI2tg0JiIWzFC
+         /FULkLNc10U3a1jTVQAdzZ6yGtYa8VJ4xNhSjy7SYYORKqlswfTfb4IsbXTvqh9Uka3p
+         fsB7p3xhvTx+q3086nB7+G0A3sdmlgQ5cm0PaAaiux/Mb2P3ZGAsgZ1fOsW39m/Sw72F
+         oJ95Ov/mXHzyLnQoIWTHhNi0yKig8jcClDosCevQ1HQ9FS6XUApNJOcFSBqde+6O7FX8
+         fPoYWVOj3Yh2XSUCKvIIHYkt4mUrdQdNfJcdSmllGI8bZZOgcLUuBSYHzQX4MIv/Bdf2
+         u31Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723135430; x=1723740230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BncAidYttaXwWTJrXVRaT/JdaRkWy8ih2u+dDbnusos=;
+        b=fXc6xs3IsrwNhewQrbkgVe27G3Lvpi56xQb7q1oWCgMrUaWG6UUnnnB9PkgBtIVsPj
+         YuNG9h20fLefhZN6YXNaFC6FZnpqDnVGUxNLqZkqHVJ8nnMn9EmwMsT2AP1/ALaBizVi
+         6q4vq66eGep8u3maPlfeQ0TB4u4vWFYGwWc2H/I9JZa0GPZ/qtvayfjPXr70x0rviSAG
+         UWHsb9IgC0gAcmu4vJeG3lmLbiKskxzSYIu1NKUyH81i9ginWXaCz7LcMt04VnjvWZv8
+         azjvGC1iQNSAFeq22tznv8iikOG2B1itZXRm5t7rYqdJQ8PTGdwZit92VZIuxS9mZUUp
+         ZvRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzmH8J7uQBmjR/DEX7IRSoBZPuvvXBZtzgXnuIK2sUqs0Ww2slFUYou9jvemgloSO97CO3RhrpdHBvCpCPTrh9xnsInudyvKQ0yX3p
+X-Gm-Message-State: AOJu0YwEwT/ln3XkxEmiuxaWKvUrmZ9sQpBMYbPPf+NBcMz35CMEX+au
+	N+Kw4cDjJEGIDakIN6jVyJUm1enesyLkiSk3XW9E12bfk6BzORG/dFsqHIszz3YSHp6tArHBY+X
+	LS+v/woujz+wxzjiw7yRFVH2EsAeKK/CH
+X-Google-Smtp-Source: AGHT+IHmwzgpU9ZIK7iJG45Xt+sTotIFrBcVrRJ/Q05dToUmheju3DBdj5rzaGq4Jys4eXNsEjDxlZf5yoTgyq8ffIQ=
+X-Received: by 2002:a05:6a20:a11b:b0:1c6:a825:8bc1 with SMTP id
+ adf61e73a8af0-1c6fcf623e8mr2951527637.29.1723135429712; Thu, 08 Aug 2024
+ 09:43:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: KP Singh <kpsingh@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, Nathan Chancellor <nathan@kernel.org>,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- bp@alien8.de, sfr@canb.auug.org.au, peterz@infradead.org
-References: <20240801171747.3155893-1-kpsingh@kernel.org>
- <CAHC9VhRO-weTJPGcrkgntFLG3RPRCUvHh9m+uduDN+q4hzyhGg@mail.gmail.com>
- <CACYkzJ6486mzW97LF+QrHhM9-pZt0QPWFH+oCrTmubGkJVvGhw@mail.gmail.com>
- <20240806022002.GA1570554@thelio-3990X>
- <CAHC9VhTZPsgO=h-zutQ9_LuaAVKZDdE2SwECHt01QSkgB_qexQ@mail.gmail.com>
- <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
- <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net>
- <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net>
- <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240802071752.116541-1-yaolu@kylinos.cn> <20240808061538.502762-1-yaolu@kylinos.cn>
+In-Reply-To: <20240808061538.502762-1-yaolu@kylinos.cn>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 8 Aug 2024 12:43:37 -0400
+Message-ID: <CADnq5_NH9hB4v4iyU8r8WB_bDYJGdoeYK4K8gb8ukP-=votW-A@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: add dce6 drm_panic support
+To: Lu Yao <yaolu@kylinos.cn>
+Cc: jfalempe@redhat.com, ckoenig.leichtzumerken@gmail.com, 
+	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	srinivasan.shanmugam@amd.com, sunil.khatri@amd.com, airlied@gmail.com, 
+	daniel@ffwll.ch, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/8/24 02:57, KP Singh wrote:
-> On Thu, Aug 8, 2024 at 6:07 AM Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> On 8/7/24 19:13, Guenter Roeck wrote:
->> ...
->>>
->>> I'll need to establish a baseline first to determine if the failures
->>> are caused by newly enabled configuration options or by this patch set.
->>> Below are just early test results.
->>>
->>> [ Though if those are all upstream there seems to be be something seriously
->>>     wrong with the lockdown lsm.
->>> ]
->>>
->>
->> Verdict is that all the messages below are from this patch set.
->>
->> On top of the reports below, alpha images fail completely, and the
->> backtraces are seen with several architectures. Please see the
->> "testing" column at https://kerneltests.org/builders for details.
->>
->> The only unrelated problems are the apparmor unit test failures;
->> those apparently fail on all big endian systems.
->>
->> Guenter
->>
->>> Guenter
->>>
->>> ----
->>> arm:
->>>
->>> [    0.000000] ------------[ cut here ]------------
->>> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/jump_label.c:199 static_key_enable_cpuslocked+0xb0/0xfc
->>> [    0.000000] static_key_enable_cpuslocked(): static key 'security_hook_active_locked_down_0+0x0/0x8' used before call to jump_label_init()
->>> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2-00134-g679d51771510 #1
->>> [    0.000000] Hardware name: Generic DT based system
->>> [    0.000000] Call trace:
->>> [    0.000000]  unwind_backtrace from show_stack+0x18/0x1c
->>> [    0.000000]  show_stack from dump_stack_lvl+0x48/0x74
->>> [    0.000000]  dump_stack_lvl from __warn+0x7c/0x134
->>> [    0.000000]  __warn from warn_slowpath_fmt+0x9c/0xdc
->>> [    0.000000]  warn_slowpath_fmt from static_key_enable_cpuslocked+0xb0/0xfc
->>> [    0.000000]  static_key_enable_cpuslocked from security_add_hooks+0xa0/0x104
->>> [    0.000000]  security_add_hooks from lockdown_lsm_init+0x1c/0x2c
->>> [    0.000000]  lockdown_lsm_init from initialize_lsm+0x44/0x84
->>> [    0.000000]  initialize_lsm from early_security_init+0x3c/0x58
->>> [    0.000000]  early_security_init from start_kernel+0x78/0x748
->>> [    0.000000]  start_kernel from 0x0
->>> [    0.000000] irq event stamp: 0
->>> [    0.000000] hardirqs last  enabled at (0): [<00000000>] 0x0
->>> [    0.000000] hardirqs last disabled at (0): [<00000000>] 0x0
->>> [    0.000000] softirqs last  enabled at (0): [<00000000>] 0x0
->>> [    0.000000] softirqs last disabled at (0): [<00000000>] 0x0
->>> [    0.000000] ---[ end trace 0000000000000000 ]---
->>>
-> 
-> This seems very odd for especially ARM as I don't see this error when
-> I do it on the next branch. Possibly something in setup_arch is
-> initializing jump_tables indirectly between v6.11-rc2 and linux-next
-> and/or this is a warning that does not immediately splash up on the
-> dmesg.
-> 
-> Both ARM64 and x86 (the architectures I really have access to)
-> initializes jump_tables and x86 is the only architecture that does an
-> explicit static_call_init is x86 and it's already in the setup_arch
-> code.
-> 
-> https://elixir.bootlin.com/linux/v6.11-rc2/source/arch/arm64/kernel/setup.c#L295
-> https://elixir.bootlin.com/linux/v6.11-rc2/source/arch/x86/kernel/setup.c#L783
-> 
-> Guenter, I have updated my tree, could you give it another run please?
-> 
+On Thu, Aug 8, 2024 at 2:35=E2=80=AFAM Lu Yao <yaolu@kylinos.cn> wrote:
+>
+> On 2024/8/5 17:25, Jocelyn Falempe wrote:
+> >
+> >
+> > On 02/08/2024 11:39, Christian K=C3=B6nig wrote:
+> >> Am 02.08.24 um 09:17 schrieb Lu Yao:
+> >>> Add support for the drm_panic module, which displays a pretty user
+> >>> friendly message on the screen when a Linux kernel panic occurs.
+> >>>
+> >>> Signed-off-by: Lu Yao <yaolu@kylinos.cn>
+> >>> ---
+> >>>   drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 32
+> >>> +++++++++++++++++++++++++++
+> >>>   1 file changed, 32 insertions(+)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> >>> b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> >>> index 05c0df97f01d..12c3801c264a 100644
+> >>> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> >>> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+> >>> @@ -28,6 +28,8 @@
+> >>>   #include <drm/drm_modeset_helper.h>
+> >>>   #include <drm/drm_modeset_helper_vtables.h>
+> >>>   #include <drm/drm_vblank.h>
+> >>> +#include <drm/drm_panic.h>
+> >>
+> >>> +#include "../../drm_internal.h"
+> >>
+> >> Well that this file is named "internal" and not in a common include
+> >> directory is a strong indicator that you should absolutely *not*
+> >> include it in a driver.
+> >>
+> >>>   #include "amdgpu.h"
+> >>>   #include "amdgpu_pm.h"
+> >>> @@ -2600,6 +2602,35 @@ static const struct drm_crtc_helper_funcs
+> >>> dce_v6_0_crtc_helper_funcs =3D {
+> >>>       .get_scanout_position =3D amdgpu_crtc_get_scanout_position,
+> >>>   };
+> >>> +static int dce_v6_0_drm_primary_plane_get_scanout_buffer(struct
+> >>> drm_plane *plane,
+> >>> +                             struct drm_scanout_buffer *sb)
+> >>> +{
+> >>> +    struct drm_framebuffer *fb;
+> >>> +    struct drm_gem_object *obj;
+> >>> +    struct amdgpu_bo *abo;
+> >>> +    int ret =3D 0;
+> >>> +
+> >>> +    if (!plane->fb || plane->fb->modifier !=3D DRM_FORMAT_MOD_LINEAR=
+)
+> >>> +        return -ENODEV;
+> >>> +
+> >>> +    fb =3D plane->fb;
+> >>> +    sb->width =3D fb->width;
+> >>> +    sb->height =3D fb->height;
+> >>> +    sb->format =3D fb->format;
+> >>> +    sb->pitch[0] =3D fb->pitches[0];
+> >>> +
+> >>> +    obj =3D fb->obj[0];
+> >>> +    abo =3D gem_to_amdgpu_bo(obj);
+> >>> +    if (!abo || abo->flags & AMDGPU_GEM_CREATE_NO_CPU_ACCESS)
+> >>> +        return -EINVAL;
+> >>> +
+> >>> +    return drm_gem_vmap(obj, &sb->map[0]);
+> >>
+> >> Yeah that will almost always not work. Most display buffers are
+> >> tilled and not CPU accessible.
+> >
+> > For the CPU accessible issue, Christian mentioned there was a debug
+> > interface on AMD GPU that can be used, to work around this:
+> >
+> > https://lore.kernel.org/dri-devel/0baabe1f-8924-2c9a-5cd4-59084a37dbb2@=
+gmail.com/
+> > and
+> > https://lore.kernel.org/dri-devel/d233c376-ed07-2127-6084-8292d313dac7@=
+amd.com/
+> >
+> > And you will need to use the scanout_buffer->set_pixel() callback to
+> > write the pixels one by one, similar to what I've tried for nouveau wit=
+h
+> > https://patchwork.freedesktop.org/series/133963/
+> >
+> > For the tiling format, the problem is that it is internal to the GPU,
+> > and currently the driver don't know which tiling format is being used.
+> >
+> > It might be possible to disable tiling and compression, but it
+> > requires some internal DC knowledge:
+> > https://lore.kernel.org/dri-devel/f76a3297-7d63-8615-45c5-47f02b64a1d5@=
+amd.com/
+> >
+> >
+> > Best regards,
+>
+> From the discussion provided, it is difficult to implement this feature w=
+ithout the relevant data book and knowledge.(Whether how tiled memory stora=
+ge, or how to disable tiling of DC)
 
-This version is much better, except for alpha which still crashes hard
-with no log output. It bisects to one of your patches (results below).
+For DCE 6, the GRPH_ARRAY_MODE field in mmGRPH_CONTROL controls the
+display tiling.  Set that field to GRPH_ARRAY_LINEAR_GENERAL (0) to
+disable tiling.
 
-Also, there is a backtrace on ppc (also see below), but that is unrelated
-to your patches and only seen now because I enabled the security modules
-on that architecture. I'll bring that up with ppc maintainers.
-
-Thanks,
-Guenter
-
----
-bisect:
-
-# bad: [b92c86ad4f4311706fe436a1545d9a97e6aebcf8] lsm: replace indirect LSM hook calls with static calls
-# good: [de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed] Linux 6.11-rc2
-git bisect start 'HEAD' 'v6.11-rc2'
-# good: [bd2c890317b2d60b4afd89a374a56a7c9a0275bd] kernel: Add helper macros for loop unrolling
-git bisect good bd2c890317b2d60b4afd89a374a56a7c9a0275bd
-# good: [6a1e94163fc53a4f1b47a8689f416a1a3d0a154a] lsm: count the LSMs enabled at compile time
-git bisect good 6a1e94163fc53a4f1b47a8689f416a1a3d0a154a
-# first bad commit: [b92c86ad4f4311706fe436a1545d9a97e6aebcf8] lsm: replace indirect LSM hook calls with static calls
-
----
-ppc backtrace:
-
-LSM: initializing lsm=lockdown,capability,landlock,yama,loadpin,safesetid
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at kernel/smp.c:779 smp_call_function_many_cond+0x518/0x9d4
-Modules linked in:
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.11.0-rc2-00127-g2e3e7093e9c8 #1
-Hardware name: MPC8544DS e500v2 0x80210030 MPC8544 DS
-NIP:  c0172ca8 LR: c01731b0 CTR: 00000000
-REGS: c2669d60 TRAP: 0700   Not tainted  (6.11.0-rc2-00127-g2e3e7093e9c8)
-MSR:  00021000 <CE,ME>  CR: 24004288  XER: 20000000
-GPR00: c002255c c2669e50 c253b5c0 c267b484 00000000 00000000 00000001 c2680000
-GPR08: 00000000 00000003 c2680000 00000000 44004288 020a1e18 00000000 00000000
-GPR16: 00000000 00000000 00000001 00000000 c0000000 c01731b0 00000000 c267b484
-GPR24: c00224fc c0773760 c0770b50 00000000 00000000 00029000 00000000 00000000
-NIP [c0172ca8] smp_call_function_many_cond+0x518/0x9d4
-LR [c01731b0] smp_call_function+0x3c/0x58
-Call Trace:
-[c2669eb0] [84000282] 0x84000282
-[c2669ec0] [c002255c] flush_tlb_kernel_range+0x2c/0x50
-[c2669ed0] [c0023b8c] patch_instruction+0x108/0x1b0
-[c2669ef0] [c00188a4] arch_static_call_transform+0x104/0x148
-[c2669f10] [c2033ebc] security_add_hooks+0x138/0x24c
-[c2669f40] [c2032e24] capability_init+0x24/0x38
-[c2669f50] [c203322c] initialize_lsm+0x48/0x90
-[c2669f70] [c2033b68] security_init+0x31c/0x538
-[c2669fa0] [c2001154] start_kernel+0x5d4/0x81c
-[c2669ff0] [c0000478] set_ivor+0x150/0x18c
-Code: 91220000 81620004 3d20c209 3929e478 556b103a 7c84582e 7c89202e 81220000 2c040000 3929ffff 91220000 40a2fbb8 <0fe00000> 4bfffbb0 80e20000 2c070000
-irq event stamp: 1204
-hardirqs last  enabled at (1203): [<c11d85f8>] _raw_spin_unlock_irqrestore+0x70/0xa8
-hardirqs last disabled at (1204): [<c0023bcc>] patch_instruction+0x148/0x1b0
-softirqs last  enabled at (50): [<c0064b4c>] handle_softirqs+0x348/0x508
-softirqs last disabled at (43): [<c0006fd0>] do_softirq_own_stack+0x34/0x4c
----[ end trace 0000000000000000 ]---
-landlock: Up and running.
-Yama: becoming mindful.
-LoadPin: ready to pin (currently not enforcing)
-
+Alex
 
