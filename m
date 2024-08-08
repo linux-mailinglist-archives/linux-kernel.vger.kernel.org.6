@@ -1,114 +1,211 @@
-Return-Path: <linux-kernel+bounces-279416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF3894BD0C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:11:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF98494BD13
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3554BB218D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:11:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7477828A173
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D4F18C357;
-	Thu,  8 Aug 2024 12:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDDA18CC16;
+	Thu,  8 Aug 2024 12:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nSgoy2Fa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eY5IkJAR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F6318C901
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C2B18CBE6
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723119077; cv=none; b=A0T4fR6PHCuSmkg4kjaJDLABX7NDwfvf7KUk8sPeZoRBlNETRkNOIScKn5dLT3wEGF2My2BSjKe9crAAlDBhZmLGb4oBUmOc5PObkJ5nPsjM4DwN7D6ymvYs5koMGyOuKACpTdQnNYq1YLjPI1J384nGke7Li7DwQyM9dkI7Wt4=
+	t=1723119081; cv=none; b=RZqR1JGxPUBpU+N8iv2uhYzAWo+ff3H4dW3Ne1Kaqr3XvyEGOgojO5R039qgNImcKzK7fxVWj7lllW+DFrVMAqMFDLY8m9tV9LFWpWy95XHuTH/949sjBh/NJcjTYSJGjhEZMIZVhrZzXjeD0o+gNR7fKdYN18yXmOLvl2OpoJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723119077; c=relaxed/simple;
-	bh=uBbGQMddf7yPjAGm8/+2FG7H+rzLcr5LybqGlSJ0B+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3zgP8bNDa/LjSB2mw2POtGzVCB6/fp79dKijyNlptXjRiA90TWMpkrMo7wybmJg6uOEWUnCf4mE2gw3sBsl+/ur7BFUvDshU6fXjTSncy/dtOfJUjjdrhej7zo5qokC47nash2IV7pQa6ISKcagsb9Ghvgda7Jx+joPpndGMsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nSgoy2Fa; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723119074; x=1754655074;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uBbGQMddf7yPjAGm8/+2FG7H+rzLcr5LybqGlSJ0B+I=;
-  b=nSgoy2FasVxBVSefhN5XMEhoJpWdpIRh3PR3WEoiHd+9vvLZtDKvrjZM
-   TTgx3sLJAmAjH8QO/DT7vuPI3IaA4oNz4kCQVsfqe925CnMWI1P+N3xjA
-   wqCq8V/CErMfqHDZpv/3n8ZnYho7a66HYSFrbjS9MWvZ+/5Jp0xg6JP6b
-   YtN52qTTL0/1p+eigRPqPJn4ZkV757nr3w05HivR0FH9ag1qahgwNcWOU
-   LQZXgLpNe/DGhfnRV9LKwJpeOFqx4T8Pf1HQXZEXxqBi/cVym6EG86XjL
-   Es+oojHaZr/ZIMFLGRUdno8Plom3geuQzI5E+g6jAhdY/Jvcp9J8huxDi
-   w==;
-X-CSE-ConnectionGUID: 3tjeGyzySOiNQj3cX0Lb7g==
-X-CSE-MsgGUID: 0BPsfejwScCY1l4wgqnQ2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="25031693"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="25031693"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 05:11:13 -0700
-X-CSE-ConnectionGUID: QW06WbOUTSWyvFyEGw1uKA==
-X-CSE-MsgGUID: y4r8n4hSQe+uN/lCHBEWVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="57159705"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 08 Aug 2024 05:11:11 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 073CA4C7; Thu, 08 Aug 2024 15:11:09 +0300 (EEST)
-Date: Thu, 8 Aug 2024 15:11:09 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Jiri Pirko <jiri@resnulli.us>, 
-	Hongyu Ning <hongyu.ning@linux.intel.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtio: Remove virtio devices on device_shutdown()
-Message-ID: <o7duejn6zoua2zu6ff5x4nn43bdbqllsmhqtc2i3dkqme5pmig@4nsfqi6wsjsd>
-References: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
- <ZrSuBlWkE-USicQw@nanopsycho.orion>
+	s=arc-20240116; t=1723119081; c=relaxed/simple;
+	bh=okDt0GF8kFCoft7LCpimb0DlLgYHkqdTo2/807i2Izk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TG7Wh143TLdk/24GE73chJFT6KiApWaNh75uNYiAqELeIb1NHLwt/wANDMYCm3jL6ALClXlOehvrmlgsNCJIpWUZtjWhF7KGmMWcRIpS3TcS03o+cfYfZOp6jNBrk9CtjeuZtbir3sdZH8kINyc+csJW5UJsJI0/jT8LXZO3fnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eY5IkJAR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76B0DC4AF10;
+	Thu,  8 Aug 2024 12:11:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723119080;
+	bh=okDt0GF8kFCoft7LCpimb0DlLgYHkqdTo2/807i2Izk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eY5IkJARG4aA/YFX2VkVMgRviMYbTYcnncqt4Al0e87J3bJPWSZCs+elDKgmYOAIC
+	 cdUXuDTislz46dDFhM4mOzRm74/CWxkVsuMLrTX9v1gTKXTDgMOonjjPaETlrooKK+
+	 E7Did2Cxy4wAQa9MaGwCujgwPVc8OugUizkFvZ8j3pRGF388GDiPGsiY0nk2a7vib5
+	 1H8DL2+zY1Iajvup3N+uT0GyQDDoASreEpRit4UrQt1l6QuDRbU046SXyg4D8oPC0k
+	 krIP9LyhZZu5PwpUcl9ECVpbieBU+iJZltj6ilOoSY0nbT+3CBRTNuLcXI6KSKhC66
+	 aYup7vo7S0EeA==
+Date: Thu, 8 Aug 2024 14:11:14 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 6/7] acpi/ghes: add support for generic error
+ injection via QAPI
+Message-ID: <20240808141114.3b021f80@foz.lan>
+In-Reply-To: <20240806163113.3bdc260a@imammedo.users.ipa.redhat.com>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<20c491e357340e0062b6ff09867c1661ed4d2479.1722634602.git.mchehab+huawei@kernel.org>
+	<20240806163113.3bdc260a@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrSuBlWkE-USicQw@nanopsycho.orion>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 08, 2024 at 01:37:42PM +0200, Jiri Pirko wrote:
-> Thu, Aug 08, 2024 at 09:51:41AM CEST, kirill.shutemov@linux.intel.com wrote:
-> >Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
-> >accesses during the hang.
-> >
-> >	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
-> >	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
-> >	...
-> >
-> >It was traced down to virtio-console. Kexec works fine if virtio-console
-> >is not in use.
-> >
-> >Looks like virtio-console continues to write to the MMIO even after
-> >underlying virtio-pci device is removed.
-> >
-> >The problem can be mitigated by removing all virtio devices on virtio
-> >bus shutdown.
-> >
-> >Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> >Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
+Em Tue, 6 Aug 2024 16:31:13 +0200
+Igor Mammedov <imammedo@redhat.com> escreveu:
+
+> > +    /* Could also be read back from the error_block_address register */
+> > +    *error_block_addr = base +
+> > +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
+> > +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
+> > +        error_source_to_index[notify] * ACPI_GHES_MAX_RAW_DATA_LENGTH;
+> > +
+> > +    return true;
+> > +}  
 > 
-> Could you provide a "Fixes:" tag pointing to the commit that introduced
-> the bug?
+> I don't like all this pointer math, which is basically a reverse engineered
+> QEMU actions on startup + guest provided etc/hardware_errors address.
+> 
+> For once, it assumes error_source_to_index[] matches order in which HEST
+> error sources were described, which is fragile.
+> 
+> 2nd: migration-wive it's disaster, since old/new HEST/hardware_errors tables
+> in RAM migrated from older version might not match above assumptions
+> of target QEMU. 
+> 
+> I see 2 ways to rectify it:
+>   1st: preferred/cleanest would be to tell QEMU (via fw_cfg) address of HEST table
+>        in guest RAM, like we do with etc/hardware_errors, see
+>             build_ghes_error_table()
+>                ...
+>                tell firmware to write hardware_errors GPA into
+>        and then fetch from HEST table in RAM, the guest patched error/ack addresses
+>        for given source_id
+> 
+>        code-wise: relatively simple once one wraps their own head over
+>                  how this whole APEI thing works in QEMU
+>                  workflow  is described in docs/specs/acpi_hest_ghes.rst
+>                  look to me as sufficient to grasp it.
+>                  (but my view is very biased given my prior knowledge,
+>                   aka: docs/comments/examples wrt acpi patching are good enough)
+>                  (if it's not clear how to do it, ask me for pointers)
 
-I am not sure if it is a regression. Maybe it was there forever.
+That sounds a better approach, however...
 
-Hongyu, could you please check with bisect if it is possible to point to a
-specific commit?
+>   2nd:  sort of hack based on build_ghes_v2() Error Status Address/Read Ack Register
+>         patching instructions
+>                bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,                
+>                    address_offset + GAS_ADDR_OFFSET, sizeof(uint64_t),                      
+>                    ACPI_GHES_ERRORS_FW_CFG_FILE, source_id * sizeof(uint64_t));
+>                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+>         during build_ghes_v2() also store on a side mapping
+>              source_id -> error address offset : read ack address
+> 
+>         so when you are injecting error, you'd at least use offsets
+>         used at start time, to get rid of risk where injection code
+>         diverge from HEST:etc/hardware_errors layout at start time.
+> 
+>         However to make migration safe, one would need to add a fat
+>         comment not to change order ghest error sources in HEST _and_
+>         a dedicated unit test to make sure we catch it when that happens.
+>         bios_tables_test should be able to catch the change, but it won't
+>         say what's wrong, hence a test case that explicitly checks order
+>         and loudly & clear complains when we will break order assumptions.
+> 
+>         downside:
+>            * we are are limiting ways HEST could be composed/reshuffled in future
+>            * consumption of extra CI resources
+>            * and well, it relies on above duct tape holding all pieces together
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+I ended opting to do approach (2) on this changeset, as the current code
+is already using bios_linker_loader_add_pointer() for ghes, being deeply 
+relying on the block address/ack and cper calculus.
+
+To avoid troubles on this duct tape, I opted to move all offset math
+to a single function at ghes.c:
+
+	/*
+	 * ID numbers used to fill HEST source ID field
+	 */
+	enum AcpiHestSourceId {
+	    ACPI_HEST_SRC_ID_SEA,
+	    ACPI_HEST_SRC_ID_GED,
+	
+	    /* Shall be the last one */
+	    ACPI_HEST_SRC_ID_COUNT
+	} AcpiHestSourceId;
+
+	...
+
+	static bool acpi_hest_address_offset(enum AcpiGhesNotifyType notify,
+        	                             uint64_t *error_block_offset,
+                	                     uint64_t *ack_offset,
+                        	             uint64_t *cper_offset,
+                                	     enum AcpiHestSourceId *source_id)
+	{
+	    enum AcpiHestSourceId source;
+	    uint64_t offset;
+
+	    switch (notify) {
+	    case ACPI_GHES_NOTIFY_SEA:      /* Only on ARMv8 */
+	        source = ACPI_HEST_SRC_ID_SEA;
+	        break;
+	    case ACPI_GHES_NOTIFY_GPIO:
+	        source = ACPI_HEST_SRC_ID_GED;
+	        break;
+	    default:
+	        return true;
+	    }
+
+	    if (source_id) {
+	        *source_id = source;
+	    }
+
+	    /*
+	     * Please see docs/specs/acpi_hest_ghes.rst for the memory layout.
+	     * In summary, memory starts with error addresses, then acks and
+	     * finally CPER blocks.
+	     */
+
+	    offset = source * sizeof(uint64_t);
+
+	    if (error_block_offset) {
+	        *error_block_offset = offset;
+	    }
+	    if (ack_offset) {
+	        *ack_offset = offset + ACPI_HEST_SRC_ID_COUNT * sizeof(uint64_t);
+	    }
+	    if (cper_offset) {
+	        *cper_offset = 2 * ACPI_HEST_SRC_ID_COUNT * sizeof(uint64_t) +
+	                       source * ACPI_GHES_MAX_RAW_DATA_LENGTH;
+	    }
+
+	    return false;
+	}
+
+I also removed the anonymous enum with SEA/GPIO source IDs, using
+only the ACPI notify type as arguments at the function calls.
+
+As there's now a single point where the offsets from
+docs/specs/acpi_hest_ghes.rst are enforced, this should be error
+prone.
+
+The code could later be changed to use approach (2), on a separate
+cleanup.
+
+Thanks,
+Mauro
 
