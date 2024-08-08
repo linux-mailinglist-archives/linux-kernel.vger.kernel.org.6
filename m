@@ -1,186 +1,175 @@
-Return-Path: <linux-kernel+bounces-280113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2867C94C5F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:51:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3839094C5FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7F301F25F9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:51:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 636ADB214A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFA615A4B5;
-	Thu,  8 Aug 2024 20:51:46 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421D4158D8B;
+	Thu,  8 Aug 2024 20:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ha8o9Euu"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00701442E8
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFBA1465AE;
+	Thu,  8 Aug 2024 20:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723150306; cv=none; b=VHdeHyyQF+nFdkZkBi6YUZ44VvT7XVMNiQb59UldJLg5wwvNnfT0RWngUID71LlBnUM6x3TDOVbMoVoJrB6NTS+/jW3eRR1RwLCeyMeGeuW45HFveuz/LrJ/77+EqI+nfyJJw5Q37ZCAZgkhzWE7qvqCEbA8qaVUk+om9P5Pays=
+	t=1723150327; cv=none; b=ElmfGc3g8eBzlIe7mr2qrraCM/f394LJ1ZuNZND+fOw+i2jPEZM2jNWzbNmP/wYN8b2yRhELTjeyTuy5mYsGNrrA1EACiAKR+tgfR5x0MwemFp9aqKVNX7DyGmP34dsLqEGtCt+RJZVw3pdeRwKM/Cv+X1kxenCqEJRWHDjNDHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723150306; c=relaxed/simple;
-	bh=llIU06gfKtRDoG9fpLNU1I/0OHT2gP9IjHJJSoxWUQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HP5gAzI9hzlEN+JOKOC+TH3swH88rEnnfj6eBzF3J0OSKn4tV55dTxn4j6eWifQ4apV+NB/bGLjYGEZP+k/4JHZXMOg6F8YwzK8WCqLxGrroKZ950Ung2aqJ84hSod0ELgLQSX64bHK+itex7JjUUc6CdqAAf5tOGgIrro+/XXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1scA6d-0005Hr-33; Thu, 08 Aug 2024 22:51:31 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1scA6c-005VXW-FQ; Thu, 08 Aug 2024 22:51:30 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1scA6c-008xqo-19;
-	Thu, 08 Aug 2024 22:51:30 +0200
-Date: Thu, 8 Aug 2024 22:51:30 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Abhishek Tamboli <abhishektamboli9@gmail.com>,
-	dan.scally@ideasonboard.com, gregkh@linuxfoundation.org,
-	skhan@linuxfoundation.org, dan.carpenter@linaro.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: uvc: Fix ERR_PTR dereference in uvc_v4l2.c
-Message-ID: <ZrUv0tX7r0RuWLW2@pengutronix.de>
-References: <20240802180247.519273-1-abhishektamboli9@gmail.com>
- <20240802181841.GA21917@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1723150327; c=relaxed/simple;
+	bh=2WqTfYgtqg/IrtYgirIFUWAJgGBTKyjVoxWvRqm4jJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bT+MDtjckBJTQ0nTxjvR4qbAb+PWza7q/9/JXwBTuW5VNlgu3UYpWovwNuddvxF+nwxGZnTo/Ttay0ctfAH/L14k6gilUAPEU2INBBOJVbcytjjSwoU5gOs1QK51bdQOwqTRgi03YQ/9BzC2Nnsac4zM8PSY/wQVEOx3Qoe6KV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ha8o9Euu; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d2b921cd1so1254729b3a.1;
+        Thu, 08 Aug 2024 13:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723150325; x=1723755125; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=02uNFwhuPgZjenk9oQkbg2yC/MXUO7mfxkpqubQaXFo=;
+        b=Ha8o9EuuJ0MPTjqjeLSp4zs+moONWgcp1HhnV2pVCaPsgcDQV1/J7W+usDLuJCyq5k
+         JvlRODGmkllBSMOkTHAfD3cxuxu5laUEMrJYq2ZNpWezK7ZtNUw9X0S27Dv6ELl1jcAg
+         oUythSBhX6aGezomhp9eyUVXH9AlRdzttHZaqy1Dp9ozA+5ACcQlb/Cczwb/nat81Xql
+         g9UNF63ymSEilS/EFH2mugWL3tYdCZ5m9xz7euCWPPp74J3uMyT+I5ynSfqrhyIqr479
+         oNa2ymffGbmrOrDtYV5il/O0RXvIghJSObQbPGhwMKLqmIXZQeVnRwf1k0rZ4xoJE//I
+         MXEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723150325; x=1723755125;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=02uNFwhuPgZjenk9oQkbg2yC/MXUO7mfxkpqubQaXFo=;
+        b=kgEJzjNkznJkC2QaFH47JuCt75Vc68hGLXf4Xro6+KOFD+U7+tO3iZw+XTMKb0aHfa
+         N2TSZz4Gy/gfmKomHi6OCyJV2yvBhIoPbMlbiZbtHiTyIRHGKmCmoQneeaUMKGywized
+         Ye2Oed8jufLJU/g7/LjXQA5G+VondYAOiE5XxeQLKEJ2YggDI+zxu65+gfbR3LPQIn+O
+         hKyTJLBpWvJlQnU3KjkvVD99OkexKWeQjIXf8pyWHtM2WNC3LQd1hEwGuzKFNHVZ2NF1
+         voucRT/R8VpkeSF0EDsywQVoS2HT//DqFNgjJDWZLD/RtXtNQqs5CukLD2AF/WwmcUTJ
+         Z6Og==
+X-Forwarded-Encrypted: i=1; AJvYcCUScnjBjtxg9ChcspyLHIaxrsrARnJcpRHK2i3Oa03ANQDW0ImvOaDfNJNI73UJQVqStfnYkQx29npga3u2U8p5hvfZZBP3H3iOUiwO2PFuOQsTLJXNTVm7O11reZB63n07UsCdEGRBNm3z
+X-Gm-Message-State: AOJu0YzARbohnsqxFIZG5rtOImcUA5EanDfvE11w0VG/B6clCeAZCXpL
+	NyHnYPox4ohXFR1bMMdwxSfuQKx9yq1CIWlvO26H48lFdIYJnx58
+X-Google-Smtp-Source: AGHT+IG/0VNuFpmraY/pOyDfh18OU8OuvwF2rFuurj/loCB0zd7iTQ+DCuagwYh0KkhZBsuFja7/tw==
+X-Received: by 2002:a05:6a21:7883:b0:1be:c5d9:5a19 with SMTP id adf61e73a8af0-1c6fcf18b85mr3579706637.24.1723150325076;
+        Thu, 08 Aug 2024 13:52:05 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b762e9f484sm10281019a12.5.2024.08.08.13.52.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 13:52:03 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <eba27c56-dc36-4410-bb6b-cbe8769b8a6d@roeck-us.net>
+Date: Thu, 8 Aug 2024 13:52:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xso69ZZn0vzq1Akv"
-Content-Disposition: inline
-In-Reply-To: <20240802181841.GA21917@pendragon.ideasonboard.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+ Linux-MM <linux-mm@kvack.org>, Helge Deller <deller@gmx.de>,
+ linux-parisc@vger.kernel.org,
+ Richard Henderson <richard.henderson@linaro.org>
+References: <20240731095022.970699670@linuxfoundation.org>
+ <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
+ <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
+ <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
+ <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net> <87plqjz6aa.ffs@tglx>
+ <CAHk-=wi_YCS9y=0VJ+Rs9dcY-hbt_qFdiV_6AJnnHN4QaXsbLg@mail.gmail.com>
+ <87a5hnyox6.ffs@tglx>
+ <CAHk-=wh4rxXPpYatnuXpu98KswLzg+u7Z9vYWJCLNHC_yXZtWw@mail.gmail.com>
+ <8734nezz0g.ffs@tglx>
+ <CAHk-=wiZUidi6Gm_6XFArT621H7vAzhDA63zn2pSGJHdnjRCMA@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAHk-=wiZUidi6Gm_6XFArT621H7vAzhDA63zn2pSGJHdnjRCMA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
---xso69ZZn0vzq1Akv
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Laurent,
-
-On Fri, Aug 02, 2024 at 09:18:41PM +0300, Laurent Pinchart wrote:
->Hi Abhishek,
->
->(CC'ing Michael Grzeschik)
->
->Thank you for the patch.
->
->On Fri, Aug 02, 2024 at 11:32:47PM +0530, Abhishek Tamboli wrote:
->> Fix potential dereferencing of ERR_PTR() in find_format_by_pix()
->> and uvc_v4l2_enum_format().
+On 8/8/24 11:19, Linus Torvalds wrote:
+> On Thu, 8 Aug 2024 at 10:48, Thomas Gleixner <tglx@linutronix.de> wrote:
 >>
->> Fix the following smatch errors:
->>
->> drivers/usb/gadget/function/uvc_v4l2.c:124 find_format_by_pix()
->> error: 'fmtdesc' dereferencing possible ERR_PTR()
->> drivers/usb/gadget/function/uvc_v4l2.c:392 uvc_v4l2_enum_format()
->> error: 'fmtdesc' dereferencing possible ERR_PTR()
->>
->> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
->> ---
->>  drivers/usb/gadget/function/uvc_v4l2.c | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget=
-/function/uvc_v4l2.c
->> index a024aecb76dc..9dd602a742c4 100644
->> --- a/drivers/usb/gadget/function/uvc_v4l2.c
->> +++ b/drivers/usb/gadget/function/uvc_v4l2.c
->> @@ -121,6 +121,9 @@ static struct uvcg_format *find_format_by_pix(struct=
- uvc_device *uvc,
->>  	list_for_each_entry(format, &uvc->header->formats, entry) {
->>  		const struct uvc_format_desc *fmtdesc =3D to_uvc_format(format->fmt);
->>
->> +		if (IS_ERR(fmtdesc))
->> +			continue;
->> +
->>  		if (fmtdesc->fcc =3D=3D pixelformat) {
->>  			uformat =3D format->fmt;
->>  			break;
->> @@ -389,6 +392,9 @@ uvc_v4l2_enum_format(struct file *file, void *fh, st=
-ruct v4l2_fmtdesc *f)
->>  		return -EINVAL;
->>
->>  	fmtdesc =3D to_uvc_format(uformat);
->> +	if (IS_ERR(fmtdesc))
->> +		return -EINVAL;
->> +
->>  	f->pixelformat =3D fmtdesc->fcc;
->>
->>  	return 0;
->
->Michael, you authored this, I'll let you review the patch and decide if
->this is a false positive.
+>> Here is the disassembly from my latest crashing debug kernel which
+>> shifts it up a couple of pages. Add 0x10 or sub 0x20 to make it work.
+> 
+> Looks like I was off by an instruction, it's the 28th divide-step (not
+> 29) that does the page crosser:
+> 
+>>      4121dffc:   0b 21 04 41     ds r1,r25,r1
+>>      4121e000:   0b bd 07 1d     add,c ret1,ret1,ret1
+> 
+> but my parisc knowledge is not good enough to even guess at what could go wrong.
+> 
+> And I have no actual reason to believe this has *anything* to do with
+> an itlb miss, except for that whole "exact placement seems to matter,
+> and it crosses a page boundary" detail.
+> 
+> None of this makes sense. I think we'll have to wait for Helge. It's
+> not like parisc is a huge concern, and for all we know this is all a
+> qemu bug to begin with.
+> 
 
-Since the following patch was applied,
+Copying Richard Henderson who recently made a number of changes to the
+parisc/hppa qemu implementation (which unfortunately didn't fix the problem).
 
-https://lore.kernel.org/all/20240221-uvc-gadget-configfs-guid-v1-1-f0678ca6=
-2ebb@pengutronix.de/
+Guenter
 
-the issue is technically impossible to happen.
-
-However the patch I mentioned was only applied recently and in all older
-kernels someone could add a format into configfs that is not part of
-uvc_format_desc from drivers/media/common/uvc.c and therefor can run
-into the issue.
-
-As this will also not hurt the current kernel I would like the patch
-to be applied with the Tag:
-
-Fixes: 588b9e8560 (usb: gadget: uvc: add v4l2 enumeration api calls)
-
-Thanks,
-Michael
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---xso69ZZn0vzq1Akv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAma1L88ACgkQC+njFXoe
-LGQvWxAAzqq9SXBuTDZV+u1WYwC2A4U48+AdS9D9DskUf5r1GRxNg2cH65cieEIa
-czj7t5zNQjjimIEbiltd8MHVgySPfmQZnbcLPk1XTG1g7Il7gco34zZnGVnj6lA6
-+A7+bm34yjYJ4hKkFzaao1r4Nlp1wDEGxH1vmFp9VRvoTp6eszXpluyHWccqOuVA
-2UvkBab1a6VUJ9Q2Wdf/7MzShrW2QfWoTAodUm9avrRHcHq8Tc1ia1WW5hyS++82
-BFE9AmCKNnc94N6aBodi2xSQbTAD8xgCa33kM5veHao2C3W+mc0nygVPF/D+UzER
-ZkQNY6+P3XTV7GoJv408W68marWmNunBxCgaRYgdafJNrUOBm7eI7CElSQzshcZH
-7wWlfji7W4cFyUheHimFCEuoAZzAgYJhr5GwaL9F0xNqHU7rI70eR2/iYYcyE29z
-SlLb1+VOXKiPBvgp4Musx2UL7qNL/XnhS8+0huPRPGq+WV4SZGeow2oPqxLYqnd1
-ArBX8WTR5+Q01FhHU7IG5KlO81UxgOmB5RwQEaOFrEK0TSW2qaM8mhVbU4PTcN5x
-IM/txaXUIy4wyA1ZpQTTCcthptKdudAwW/cLr1Xr9pFFO5qcvjRFZP24/fTNJr7G
-ElhgJETM1HeeItvGkk7mAi51W+yAIBGqu0KQi5B4qOLlqpJlsHo=
-=drdN
------END PGP SIGNATURE-----
-
---xso69ZZn0vzq1Akv--
 
