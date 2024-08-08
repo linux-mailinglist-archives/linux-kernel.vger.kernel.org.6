@@ -1,110 +1,174 @@
-Return-Path: <linux-kernel+bounces-279926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F73D94C37F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:19:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADEA94C320
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43891286AA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:19:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C341C21E2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D615D19149F;
-	Thu,  8 Aug 2024 17:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DB119049C;
+	Thu,  8 Aug 2024 16:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="NQWFVlzs"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QCd5/ijQ"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2062.outbound.protection.outlook.com [40.107.243.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DBC190489;
-	Thu,  8 Aug 2024 17:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723137534; cv=none; b=S/zl4/MW6ASdf/2h/aZOnVEMyQb9+2AakFNKNOK8g6UkwCXoBl5VwnFJ2VYTZWrHW9SxbDEtYJtkkPOuZqsxqTGRYAZ1CaA28nHshoRnbLeetnFzhg4FW1mLvo8PkyF5CRhtYSixnv8+tzfimAhyQ2t8S2oLwA6oMD7VHAvV2Pg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723137534; c=relaxed/simple;
-	bh=JrSXbW78BBvltW5zTtJmVM7MolzdgvsvqxQzyXZaNN0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J4vwqMqICac5MVNXhsoGaXVK17OwfdS1HQw06krnAvCGD9ZpX2hZctHzEJpBs7z3I5ANy1F7kU2iggoN+cWpfJoDzji5YUpdj9PzT5vTlo4jPkSGbArV8GrIvH0tp4zyvbC3FwanuvC9uacmEQP9MwYHwH7Bo5GEon74/JTaH9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=NQWFVlzs; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id EB2DA88AE8;
-	Thu,  8 Aug 2024 19:18:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1723137524;
-	bh=086U3Jb85dhQ8wqypwcThzdIbKqXbwFJ+apnXhRSD8Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NQWFVlzsCZ5+QebqY+rScFJvFNcYFKh0nAoKTXPMzI6Bp4AEUl+SA/UHLpxyKXZ10
-	 429uI3kZp+sAPIVKjkTIvffsiUJse5AvqjR2lt23EVHS7K5xWp1smWU2mjhuznuiiB
-	 uxbp6H1/I8YKd/C4sVGTe79ICxC+0+WvfazvNnrJVdrE6BYtW/Hd78oXLzkFa1vuj9
-	 T0bfBaAvTugasy9Ndw57HcxGQ7yreKg5MWrMdYz/FcqgNxBXyjQsakju0M40tS8Wwt
-	 U59XOPusddY7wxKTK/Et77UUOfCuFHF1adR+JxVLvjSSO/SmvBc4RUjsNifl7NtdMV
-	 5MdBfnFx4+N/g==
-Message-ID: <7fc515f8-a74b-44a1-9614-715f87034e05@denx.de>
-Date: Thu, 8 Aug 2024 18:57:40 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFD4190470;
+	Thu,  8 Aug 2024 16:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723136298; cv=fail; b=tcLjZ6DYSTN8NFz2wNzNw8KpzR+jzL8j+2xJuTZupcpYrE3MkK21O9fNec6coVDGvwhCqUlCHkDojx0F72C4MOUP1qjDuKfEyT4QJuLotEepVWtxLyCGzPfgztbuIJayl5UpJx6wz/0UHuBsUwXkOPm4F8U+oVwRAlZW8qI/9Vo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723136298; c=relaxed/simple;
+	bh=ex7B6V0lrijfFWFpq3gHEcX4n9dh9E3WIaSEXvhZuGQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ShVq0t8JeIiJhoNQpwJUQO54RJCDFQPh3TdLTHCXeN+5L/cZ9nJM+tTIrTjvvtoK/Y5L/41k3PKP8K7rmf+1xmVMc7ajmarammo52xw671LBtTtQys+gGlSZAHQKyLqHLXpt7rNgWQy9lYagreY/gxXLTtVUWiCeGlwt4DBe/uI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QCd5/ijQ; arc=fail smtp.client-ip=40.107.243.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pU5iNuFD6bUJtN912jpJFVIEyx33j2UADGLQHIgPWrdQYDdcJ3hqzj/g0rXOQg1qY76sMwLbRzahsZfWCOlPhG+41xeISbB7uaHn8pheej8ACftE14vk1WaS0qhM5r8mT/kbBHZXlocDccYx5Ik05WcpviVNMUKQIQ7HOb73eZvfEYBUPaGjy086rYFe8rQGDR2A/c/Dpdb5YuS7zq1E9yzXBhf7oec7SzMRB2PahgR+DzFUZzRv6CMslalWVzc5Xqvrc0nvV3SePLlAmTvjQACaDUw/cQqwnIvTDjb2MU4K9hLyRzNfVz8PCjSmidnY/BQeY00mqiNwGcYMGBGZ1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7qg3kiNEPQGX/I2YEZc5TuZUgdQu5BfCY0a/r75ORUM=;
+ b=IVF59zlh0NnWh54/ZRSmqDRMoP5QgImzMfqYeruv8ohqcaPgt3fQ4mkgSJvRIswfO2uwChai9zcQFDXqTkT82EPrfvNslVOlHMhtI4hPu4lpKwSRyfkp62pz48jwNFTq9aSttz7lzxVowC3fFdzHGNaWvQwV379Cw+61Hbl0BZN7H9mRe13menhDkBq/3Lrsgnnv5Prupd4XbKBHw5gyQHccQuA83R13eeRAxVymBRZyI9ageupE8n5ZS+CuTk6ScDTB4Z9QCZhzfkb0GX5pMdh/HYl1l4QoIOKkXtKrEc0zcXIRJyzy2HjUXoXdI/0yzgHSZfhBQFKQHPenubvPEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7qg3kiNEPQGX/I2YEZc5TuZUgdQu5BfCY0a/r75ORUM=;
+ b=QCd5/ijQKgA8ZUL0BrfhXTAei3pn4bplSYVsyLmbhqKPJflRwRoiUctWab+9nfZ2yn9XrdoDxELizgtQqBLGhQkFTitF93n1CFm839iIO2lnVE8vUfB/2Z9lWcBB+6wERAyJptKcJrp/G+PO4TgP+w8tVJvDR4ylzWGAMT/dshw=
+Received: from BN9PR03CA0186.namprd03.prod.outlook.com (2603:10b6:408:f9::11)
+ by PH8PR12MB6793.namprd12.prod.outlook.com (2603:10b6:510:1c4::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Thu, 8 Aug
+ 2024 16:58:12 +0000
+Received: from BL6PEPF0001AB57.namprd02.prod.outlook.com
+ (2603:10b6:408:f9:cafe::e) by BN9PR03CA0186.outlook.office365.com
+ (2603:10b6:408:f9::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.30 via Frontend
+ Transport; Thu, 8 Aug 2024 16:58:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF0001AB57.mail.protection.outlook.com (10.167.241.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Thu, 8 Aug 2024 16:58:11 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 8 Aug 2024 11:58:06 -0500
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <sound-open-firmware@alsa-project.org>,
+	<linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+	<pierre-louis.bossart@linux.intel.com>, <yung-chuan.liao@linux.intel.com>,
+	<ranjani.sridharan@linux.intel.com>, <perex@perex.cz>, <tiwai@suse.com>,
+	<lgirdwood@gmail.com>, <kai.vehmanen@linux.intel.com>,
+	<daniel.baluta@nxp.com>, <Basavaraj.Hiregoudar@amd.com>,
+	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>,
+	<cristian.ciocaltea@collabora.com>, Vijendar Mukunda
+	<Vijendar.Mukunda@amd.com>
+Subject: [PATCH RESEND 0/8] AMD SOF stack fixes and improvements
+Date: Thu, 8 Aug 2024 22:27:45 +0530
+Message-ID: <20240808165753.3414464-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] arm64: dts: imx8mp-data-modul-edm-sbc: remove
- #clock-cells for sai3
-To: Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-References: <20240807-fsl_dts_warning-v2-0-89e08c38831a@nxp.com>
- <20240807-fsl_dts_warning-v2-4-89e08c38831a@nxp.com>
- <CAOMZO5A3FKPurXZ6ZoUB7zzXBC5xRLEHPsTQ-hRyDs=g2ZaqUQ@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <CAOMZO5A3FKPurXZ6ZoUB7zzXBC5xRLEHPsTQ-hRyDs=g2ZaqUQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB57:EE_|PH8PR12MB6793:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f4a89c2-3e81-4b14-9a98-08dcb7cb493f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/bngjULU+sLDdgw+X39ORUlHcrJVAlDvj42f4U1lmeJMoWkjfNFLAkW/jYLL?=
+ =?us-ascii?Q?UhPiGSryNupTydp4oNu68DvoJdYAeymok5nIzNc5ZiDcP6PikiY9fcNJlNHj?=
+ =?us-ascii?Q?HzIGhA6GfN+o+uMSDIbuKdf88xtWOeyFtaDvH69HafICU7zO5XkY6dXH+s1O?=
+ =?us-ascii?Q?0Ln3OzoCdvoNc9uMF7H1GqxmFBKGnvTej+6w31ECEDGgdxsS2DUBorrpBSoP?=
+ =?us-ascii?Q?KugUjP5rhGsyh8FwI9BLKLsxCFl3lduu61meLJLWcr3ZU0V8RQ937OYMBqgA?=
+ =?us-ascii?Q?npD1oHynSVmri22M4E7wEf8BD5mGclB2I17+p9e3TJ56qW+wrCLgGQ6lC8Lu?=
+ =?us-ascii?Q?PCA7alFukkYRPEl5DB/Q1KfZyw6nCFHvxw1HMTEmxqqRMKb7Fdb8AMAT2IyE?=
+ =?us-ascii?Q?03Zi21Ki4iXFfa7eunc8NVVx7SrG5RGuumVmWLwGzvan5leefQrGqwNe+fhv?=
+ =?us-ascii?Q?zLOJBsE6QOH/TxraY2ErqfW5qkzLC+LKwrPMeliZ0vrusS03O7Gr8GhPwZGx?=
+ =?us-ascii?Q?FVJbeafXkseN/BxxbktI7+OZoPVc1I6CrkibHEUJsUfrmv2Bz4e5dZjDRbsi?=
+ =?us-ascii?Q?HGHMUEdyP096UqLbVjfh42Vg5/cdaC7ipgyB+NjK84xu0ncQxEEMtDZEazGw?=
+ =?us-ascii?Q?iZrEMpBXnZzIIVvX3n97BkCo2tFnKdPXH8lHOJ0tRPI4qasMs2ODanG3807W?=
+ =?us-ascii?Q?89cfuP6speMsOeEO5LYgPmDOL2DFkJ28n8ywTcT8JtIOAnBnGDh6eRCUHAyr?=
+ =?us-ascii?Q?ZtSQpQSzItz4U4mrflgBmnN1CaANyjVZNUyeZmwSIbb8e1Cf07vcnDqbY1kY?=
+ =?us-ascii?Q?dPmeDTDyO1QkUpxThpk5WpWEVIjM6dXgU7Y9wBd35SvTppbIGSUbMceP89pQ?=
+ =?us-ascii?Q?uPRuoOF6ZKuG9SGY9NKA6Ro/FLxBbyrHGPQjGBgwHSFzJ7+u5FCzwXhzvOyV?=
+ =?us-ascii?Q?61kn5beRMq7To2HP3OVl+DWOxHbbEctusYSA4WzMtrUtW3fMm3IXqqP+jJYD?=
+ =?us-ascii?Q?zkoWzbkEEyroD2jqLvmd32XvvXYHsze7810BWaPEyKA9Qbgl/PrTWdWVmPhb?=
+ =?us-ascii?Q?OG3ERfrGsrrQMPixsQmyZasqzOnpsA9MOw4y+GvGW4W0My8s15A55mYk9bia?=
+ =?us-ascii?Q?9DrrfajmSARjg5xFgBbjkr68IUEvzYIFbiP/vrnkrReG3mnGdrv9gUAHoXAg?=
+ =?us-ascii?Q?SWDFVBMAG5Uoy1KM9iERh2PYYSyGemU1m+V76XixyCQt/BhdyP9evKmF8mDf?=
+ =?us-ascii?Q?6IWKojgz2/ip+1P8UGg50N3rD0niHRWgUbRXp+THLNrmJSdfyJJlipxBUCWc?=
+ =?us-ascii?Q?at7FXi95F5Zg23n/zroC80Oao9450Ktnd22bdiSdub5uqnT5eqa34Bh8KhGK?=
+ =?us-ascii?Q?P3r9ttElyoHPdk48c+/0x3C5tyMA?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 16:58:11.4135
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f4a89c2-3e81-4b14-9a98-08dcb7cb493f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB57.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6793
 
-On 8/7/24 8:42 PM, Fabio Estevam wrote:
+This patch series consists of few fixes and improvments for AMD SOF
+stack.
 
-Hello everyone,
+Link: https://github.com/thesofproject/linux/pull/5103
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-> Adding Marek.
+Vijendar Mukunda (8):
+  ASoC: SOF: amd: Fix for incorrect acp error satus register offset
+  ASoC: SOF: amd: fix for acp error reason registers wrong offset
+  ASoC: SOF: amd: move iram-dram fence register programming sequence
+  ASoC: SOF: amd: fix for acp init sequence
+  ASoC: SOF: amd: update conditional check for cache register update
+  ASoC: SOF: amd: modify psp send command conditional checks
+  ASoC: SOF: amd: remove unused variable from sof_amd_acp_desc structure
+  ASoC: amd: acp: Convert comma to semicolon
 
-Thank you Fabio.
+ sound/soc/amd/acp/acp-sdw-sof-mach.c |  6 +--
+ sound/soc/sof/amd/acp-dsp-offset.h   |  6 ++-
+ sound/soc/sof/amd/acp-loader.c       |  2 +-
+ sound/soc/sof/amd/acp.c              | 59 ++++++++++++++++++----------
+ sound/soc/sof/amd/acp.h              | 10 +++--
+ sound/soc/sof/amd/pci-acp63.c        |  3 +-
+ sound/soc/sof/amd/pci-rmb.c          |  3 +-
+ sound/soc/sof/amd/pci-rn.c           |  3 +-
+ sound/soc/sof/amd/pci-vangogh.c      |  1 -
+ 9 files changed, 60 insertions(+), 33 deletions(-)
 
-> On Wed, Aug 7, 2024 at 11:52 AM Frank Li <Frank.Li@nxp.com> wrote:
->>
->> Remove #clock-cells for sai3 because sai3 is not clock controller to fix
->> below warning:
->> /arch/arm64/boot/dts/freescale/imx8mp-data-modul-edm-sbc.dtb: sai@30c30000: Unevaluated properties are not allowed ('#clock-cells' was unexpected)
->>
->> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->> ---
->>   arch/arm64/boot/dts/freescale/imx8mp-data-modul-edm-sbc.dts | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-data-modul-edm-sbc.dts b/arch/arm64/boot/dts/freescale/imx8mp-data-modul-edm-sbc.dts
->> index 7e1b58dbe23a7..837ea79741e8d 100644
->> --- a/arch/arm64/boot/dts/freescale/imx8mp-data-modul-edm-sbc.dts
->> +++ b/arch/arm64/boot/dts/freescale/imx8mp-data-modul-edm-sbc.dts
->> @@ -499,7 +499,6 @@ &pwm4 {
->>   };
->>
->>   &sai3 {
->> -       #clock-cells = <0>;
+-- 
+2.34.1
 
-The change is correct, thank you Frank.
-
-Reviewed-by: Marek Vasut <marex@denx.de>
 
