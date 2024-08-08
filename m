@@ -1,140 +1,229 @@
-Return-Path: <linux-kernel+bounces-279098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB1594B8EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:22:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C90494B8F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28FA928A7BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:22:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6BC1C245B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D3518953D;
-	Thu,  8 Aug 2024 08:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBEA189502;
+	Thu,  8 Aug 2024 08:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="OU6xRf2s"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fzjAR4zF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB11145336;
-	Thu,  8 Aug 2024 08:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC9614431C
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723105356; cv=none; b=QtsfFcwrsy0pLfFa2qmOZZcGcfQrZJdPWhaN9zGQ7cN+sHTw/FgCVAsdBM2wZ9GBc5T1B5kxuCyj6Ael2sAriqMH1IlFtxmtF9k54KtwcpZI2r+MT4T9lvduLwLlfplxYa7eIBSnM+idKf6HJ9Ne3ETkmNrmn/wf4mAN6XZMyAU=
+	t=1723105377; cv=none; b=Ey4FgX80yucv0RdwErwo+lxmO+yefdPXYG5/eRP7L7F9hoaX4uZhoS8gAwPucPHBCYkzVvsTIQBg9iFqPNVhMNFuo9ICDsfrVvj1Rh+NPa0BdC0GjEg3pAGrdO8Oh+HlH9y3j+59W223rntBav8iMiigROWxnQnRwbqe316CuzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723105356; c=relaxed/simple;
-	bh=2488M6qNYP0lwXNFrjsG9Nh3hWzY6hPo+i/FhLpDmgg=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=set2lDYWFBV8y9DBPENfSINRGJ3OCYH+khOCWw0bVR4DLb8AzIuZsY1ftHFxMzjg09Bnt5XP/h4jZ5DStSuc6a19UenOD4lqYU5lvcl3mK0nlYCo1HNhGWGFaDvlCLwNbbD7AP9sV/latrdvTUM51MsdeBNl/H7KxTbRxuiheuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=OU6xRf2s; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1723105354; x=1754641354;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=2488M6qNYP0lwXNFrjsG9Nh3hWzY6hPo+i/FhLpDmgg=;
-  b=OU6xRf2sycuTHp1a+aRayHftlnknPA/eb/ouu3vicxCGyMLSPQCaDt0R
-   H6wv2IDQx9Yzet5+gGrsrhIK8DSIavmmjNsfsEg9ZozUShAAjZ+EqRKeD
-   OzJ0MbCa4U3UBX0/tbdekzduigczpDKLLFKdQlG1wt6HuIsigIRSF3/yN
-   452pm4vXLgAzEyFBDlykEbehaVVL0t88xGCAI8MTkGYUMoY1sMJhsIIVI
-   5O1O7Bk76eCxM0qkNnPwwiQnVsOQtZp2vk3VJtLN5Nvn9r5REoLoyIwFO
-   Q/+gUO8BydMGJE1GXxhhqBU5mtCAkBPN2Wbefx8hgERncS1LWDqaIAvys
-   A==;
-X-CSE-ConnectionGUID: Je4g5QipTv6hZwyDxvIfog==
-X-CSE-MsgGUID: ztRBfumgSjOF5Sno8g7hyw==
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="30208235"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Aug 2024 01:22:33 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 8 Aug 2024 01:22:28 -0700
-Received: from DEN-DL-M31857.microsemi.net (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 8 Aug 2024 01:22:23 -0700
-Message-ID: <f97296c967211a6a8f6f40996e3ed74b76bad935.camel@microchip.com>
-Subject: Re: [PATCH v4 8/8] reset: mchp: sparx5: set the dev member of the
- reset controller
-From: Steen Hegelund <steen.hegelund@microchip.com>
-To: Herve Codina <herve.codina@bootlin.com>, Geert Uytterhoeven
-	<geert@linux-m68k.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, "Simon
- Horman" <horms@kernel.org>, Lee Jones <lee@kernel.org>, Arnd Bergmann
-	<arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
-	<dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>, Daniel Machon
-	<daniel.machon@microchip.com>, <UNGLinuxDriver@microchip.com>, Rob Herring
-	<robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, "Andrew
- Lunn" <andrew@lunn.ch>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>, "Allan
- Nielsen" <allan.nielsen@microchip.com>, Luca Ceresoli
-	<luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?ISO-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>
-Date: Thu, 8 Aug 2024 10:22:23 +0200
-In-Reply-To: <20240805101725.93947-9-herve.codina@bootlin.com>
-References: <20240805101725.93947-1-herve.codina@bootlin.com>
-	 <20240805101725.93947-9-herve.codina@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1723105377; c=relaxed/simple;
+	bh=sq65un/oxhnmyKHS8t6PfDmZu8oN7DJm2znS4qkay4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dtbfzLSlpyoO9U66RwbKPJ2qAtidvvfP27E6UShCDGH1MGn9xB1H1KhsQklbHxlXjzy0g13Au1XTff3QxRGK4xWAt4edeVsT3L7A/iHp+PBHj2fjTvO6dIG1yhL9225JjEaOXuQezSXtFwCXJvFJ+tV20fgXce7JXnGGIXV+i1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fzjAR4zF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723105375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QBOa+iBKOlZAR7CtrCD45hB+YFcxzO/ihnHiEvwPdKQ=;
+	b=fzjAR4zFpwQ7f/NEEADJ4+GWLTKCXueeonNzw7waW5SqtgPUTV30JAjykErv4g0q9CyZw+
+	CJXmLskDN97a4ubTez7RA/My1u2uS1NKKIpUOPcehRI2cO3RvsRhLUl4CrZpCDIwiUsRf5
+	uNgGVNh8s8O0Hpp/t07LQTfKBJx/d6E=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-209-tCXz6vFeP6mqZhQ8_BTTkQ-1; Thu, 08 Aug 2024 04:22:53 -0400
+X-MC-Unique: tCXz6vFeP6mqZhQ8_BTTkQ-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52efcb739adso722164e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 01:22:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723105372; x=1723710172;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QBOa+iBKOlZAR7CtrCD45hB+YFcxzO/ihnHiEvwPdKQ=;
+        b=mzUx4CgFSmQ3YlV3vllMeym/AAGUqNUuK70cYPmXqSHWMVaDUcCnuR7D77CmhEstcZ
+         a+NXQ1YXuL5Y8K+HEOVbYKQ2ILY0JcTLvy3zCUm7HRI1ZbJJGZ75eSTG3mG9XqfCda9I
+         yE5syDvQvRy774Pv9RAyWx1kpXe6KDdxvS0oPEjMy5VVhHes2isNzzJc8KVHENTen5te
+         O/WMg/05TzoQMhDhfGaQtd0oM1MPj83bkiiPpc3WyjWHTtYa6biCSZuFViKpD7dOVzBu
+         J82n3OZBEb3X65e6q66nCy6/BpJ4xUXNXmGAEqaD8UjDEOkd7CM0SmxdgaM/jg84zr+C
+         1E4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrDTJS203MCn2NbsHTzcEaEYukJncBiqGjfZFWiVEbZEXECa+NVgdfET4u/jLaBYItYUI3sZbm8OjMJeEkCIK4nFxR1h1xr/ljDs71
+X-Gm-Message-State: AOJu0YxwKrvXHdH8oE4J8PjIFk1X1ET81snvPGXFGnaA5vHCb9atgXZ/
+	4Y1qybdzOf3gwo7de3m8KPos2KYAWWEPuHe1L4NKLIlsGpwf4iB1+7w6z0QpcVMY+rMi1g3rb47
+	JWOauHqEr5siDnsGAHAiuDRJ+bJwV2Bpijm08qob9T7V6JMbjirQZwttiV5W7Lg==
+X-Received: by 2002:a05:6512:224a:b0:52c:d750:bd19 with SMTP id 2adb3069b0e04-530e5815811mr771787e87.8.1723105372080;
+        Thu, 08 Aug 2024 01:22:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpOQVfn+dhBFkGIFYzM9dXqBv/DIiWSOoMDaIlVKokm4AmIjr1t8Guo55YiOrpBwf+2i4xpA==
+X-Received: by 2002:a05:6512:224a:b0:52c:d750:bd19 with SMTP id 2adb3069b0e04-530e5815811mr771762e87.8.1723105371409;
+        Thu, 08 Aug 2024 01:22:51 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c713:2a00:f151:50f1:7164:32e6? (p200300cbc7132a00f15150f1716432e6.dip0.t-ipconnect.de. [2003:cb:c713:2a00:f151:50f1:7164:32e6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d272095c6sm1083008f8f.86.2024.08.08.01.22.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 01:22:51 -0700 (PDT)
+Message-ID: <1881267a-723d-4ba0-96d0-d863ae9345a4@redhat.com>
+Date: Thu, 8 Aug 2024 10:22:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm/numa: no task_numa_fault() call if page table is
+ changed
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>,
+ linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Huang, Ying" <ying.huang@intel.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20240807184730.1266736-1-ziy@nvidia.com>
+ <956553dc-587c-4a43-9877-7e8844f27f95@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <956553dc-587c-4a43-9877-7e8844f27f95@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Herve,
+On 08.08.24 05:19, Baolin Wang wrote:
+> 
+> 
+> On 2024/8/8 02:47, Zi Yan wrote:
+>> When handling a numa page fault, task_numa_fault() should be called by a
+>> process that restores the page table of the faulted folio to avoid
+>> duplicated stats counting. Commit b99a342d4f11 ("NUMA balancing: reduce
+>> TLB flush via delaying mapping on hint page fault") restructured
+>> do_numa_page() and do_huge_pmd_numa_page() and did not avoid
+>> task_numa_fault() call in the second page table check after a numa
+>> migration failure. Fix it by making all !pte_same()/!pmd_same() return
+>> immediately.
+>>
+>> This issue can cause task_numa_fault() being called more than necessary
+>> and lead to unexpected numa balancing results (It is hard to tell whether
+>> the issue will cause positive or negative performance impact due to
+>> duplicated numa fault counting).
+>>
+>> Reported-by: "Huang, Ying" <ying.huang@intel.com>
+>> Closes: https://lore.kernel.org/linux-mm/87zfqfw0yw.fsf@yhuang6-desk2.ccr.corp.intel.com/
+>> Fixes: b99a342d4f11 ("NUMA balancing: reduce TLB flush via delaying mapping on hint page fault")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> 
+> The fix looks reasonable to me. Feel free to add:
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> 
+> (Nit: These goto labels are a bit confusing and might need some cleanup
+> in the future.)
 
-On Mon, 2024-08-05 at 12:17 +0200, Herve Codina wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you
-> know the content is safe
->=20
-> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
->=20
-> In order to guarantee the device will not be deleted by the reset
-> controller consumer, set the dev member of the reset controller.
->=20
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
-> =C2=A0drivers/reset/reset-microchip-sparx5.c | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/reset/reset-microchip-sparx5.c
-> b/drivers/reset/reset-microchip-sparx5.c
-> index c4fe65291a43..1ef2aa1602e3 100644
-> --- a/drivers/reset/reset-microchip-sparx5.c
-> +++ b/drivers/reset/reset-microchip-sparx5.c
-> @@ -117,6 +117,7 @@ static int mchp_sparx5_reset_probe(struct
-> platform_device *pdev)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return err;
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ctx->rcdev.owner =3D THIS_MODU=
-LE;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ctx->rcdev.dev =3D &pdev->dev;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ctx->rcdev.nr_resets =3D 1;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ctx->rcdev.ops =3D &sparx5_res=
-et_ops;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ctx->rcdev.of_node =3D dn;
-> --
-> 2.45.0
->=20
+Agreed, maybe we should simply handle that right away and replace the "goto out;" users by "return 0;".
 
-Looks good to me.
+Then, just copy the 3 LOC.
 
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+For mm/memory.c that would be:
 
-BR
-Steen
+diff --git a/mm/memory.c b/mm/memory.c
+index 67496dc5064f..410ba50ca746 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5461,7 +5461,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+  
+         if (unlikely(!pte_same(old_pte, vmf->orig_pte))) {
+                 pte_unmap_unlock(vmf->pte, vmf->ptl);
+-               goto out;
++               return 0;
+         }
+  
+         pte = pte_modify(old_pte, vma->vm_page_prot);
+@@ -5528,15 +5528,14 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+                 vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+                                                vmf->address, &vmf->ptl);
+                 if (unlikely(!vmf->pte))
+-                       goto out;
++                       return 0;
+                 if (unlikely(!pte_same(ptep_get(vmf->pte), vmf->orig_pte))) {
+                         pte_unmap_unlock(vmf->pte, vmf->ptl);
+-                       goto out;
++                       return 0;
+                 }
+                 goto out_map;
+         }
+  
+-out:
+         if (nid != NUMA_NO_NODE)
+                 task_numa_fault(last_cpupid, nid, nr_pages, flags);
+         return 0;
+@@ -5552,7 +5551,9 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+                 numa_rebuild_single_mapping(vmf, vma, vmf->address, vmf->pte,
+                                             writable);
+         pte_unmap_unlock(vmf->pte, vmf->ptl);
+-       goto out;
++       if (nid != NUMA_NO_NODE)
++               task_numa_fault(last_cpupid, nid, nr_pages, flags);
++       return 0;
+  }
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
