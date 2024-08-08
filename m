@@ -1,112 +1,71 @@
-Return-Path: <linux-kernel+bounces-280029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D3C94C4CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:45:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423C394C4CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11923B25D4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C2D1C25F6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5557C1598EC;
-	Thu,  8 Aug 2024 18:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="noIGMSXT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C60215A849;
+	Thu,  8 Aug 2024 18:44:41 +0000 (UTC)
+Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83882156C5E;
-	Thu,  8 Aug 2024 18:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44AC158A26;
+	Thu,  8 Aug 2024 18:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723142667; cv=none; b=nQSs/BcAdgHKfwaK6C2HoZuG3+lvj3ZWCnAs7rygv76vYOrIDfbf9wkWfIQJIL2rsl4ZjaKb9jfYO2k6bpyQJQqkDAbPxFfwZpF3hUCTmMOLA1+iDgZZZA39/tcGiAOGKxX/XkqPlZvIrBkTlQTelWN2ZS5pMNo9m5NihVq4WKo=
+	t=1723142680; cv=none; b=WJj5rOUwe07o25OBMO/anl09tTcetCS57YZWXZ2ju+qQb0s8qPxhZdRWvCTm2vkoTwGkJ1MF+nJEXpPuK0LDrFMFOY0kyMbjHZIdfkBLmwEpMwU1yF6igIAAvRHNpmkGJtVa8ifHVovNiJHeDetx83S5ISCqS1gZIu14cHdaXqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723142667; c=relaxed/simple;
-	bh=yBncEqq2sXHui7DWw9Ittf1PXvuGN/iNU/JonnHljMk=;
+	s=arc-20240116; t=1723142680; c=relaxed/simple;
+	bh=BrG1hOrvpqVVINvq796fs69iI5xhqx+FVnRDbJIXpsE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Joy5v4T6P6jUkvxCG/7zjtK7MHdSHvLBXVWTnu7aro4hFQ7MThrienLJ8UhKhrWyb/TafLycJXRvbz9WWmx9stFBw+WfiP1V4y/9Zav0oBskXQun0sG32PXHbUpvzEtpRBSxfaRpagrZfuMUckbQxBOOl67Z2nvga+1ls4tBT0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=noIGMSXT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B939C32782;
-	Thu,  8 Aug 2024 18:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723142667;
-	bh=yBncEqq2sXHui7DWw9Ittf1PXvuGN/iNU/JonnHljMk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=noIGMSXT7Cvt5hAE7vaVJP0P1JaaPtBDQ+rGBNcM16SDg3OK3291zy0SG8KV8mw+t
-	 Acb3eIoVrJ1pshi2YtoOMIquTa6bARoB/vKi+1LNa+8OdcpY2I+zKFLt9VG21U0mqa
-	 tAYi0OQcKlcKbQyAQ9GoqPsov+PsJ4e0fKGCQ2Z4KItPyAtu6O8gj049NzMJFmwOhW
-	 EEYbZIOpaMmRy+9x7oz0fNdjiNtR9KL7LWoet3JWYXV4sjTlHSAE/tCKqqTQfoiND2
-	 TLXIzC4sfB8w1bW11sWeURtvmDu+daDOVDcr5fHsarjZ4pMF92CdZ0FqRneLIhfHO2
-	 eblAmXk0gRORA==
-Date: Thu, 8 Aug 2024 11:44:24 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users <linux-perf-users@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCHSET 00/10] perf tools: Sync tools and kernel headers for
- v6.11
-Message-ID: <ZrUSCFLWDg9iJ_23@google.com>
-References: <20240806225013.126130-1-namhyung@kernel.org>
- <ZrO5HR9x2xyPKttx@google.com>
- <F3C6DE61-8E10-4814-A6C0-C7569B3FD613@linux.vnet.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSmiRxYIzkJp/5CwpKvJss+zpY6nH0XXSHkUnjFUC6HFxiKgH1oYZYCXmSKSzHcePIZXv/lOsPysvotMBDu1O7d82GXAmKqbxn9NWh9RaesosptOaLx8c46/vh9z05ssMV14ZOZ4ykaGG7E8XIfVXbJEq22ormLl7bbOXF6ijAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu; spf=none smtp.mailfrom=freedom.csh.rit.edu; arc=none smtp.client-ip=129.21.49.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=freedom.csh.rit.edu
+Received: from localhost (localhost [127.0.0.1])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id A44AE457383A;
+	Thu,  8 Aug 2024 14:44:37 -0400 (EDT)
+X-Virus-Scanned: amavisd-new at csh.rit.edu
+Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
+ by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
+ with ESMTP id K5WNqbOHpoyn; Thu,  8 Aug 2024 14:44:37 -0400 (EDT)
+Received: from freedom.csh.rit.edu (freedom.csh.rit.edu [129.21.49.182])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id 17A1540E0F54;
+	Thu,  8 Aug 2024 14:44:37 -0400 (EDT)
+Date: Thu, 8 Aug 2024 14:44:36 -0400
+From: Mary Strodl <mstrodl@freedom.csh.rit.edu>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
+	linux-mm@kvack.org, lee@kernel.org, linux-i2c@vger.kernel.org,
+	s.hauer@pengutronix.de, christian.gmeiner@gmail.com
+Subject: Re: [PATCH v2 2/2] i2c: Add Congatec CGEB I2C driver
+Message-ID: <ZrUSFBFtTNP9iGs2@freedom.csh.rit.edu>
+References: <20240801160610.101859-1-mstrodl@csh.rit.edu>
+ <20240801160610.101859-3-mstrodl@csh.rit.edu>
+ <p3g2ikhn54roye5t7moatrqbaudl65jarpimhoguojz5f7gnz2@2i4npjg3jdrv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <F3C6DE61-8E10-4814-A6C0-C7569B3FD613@linux.vnet.ibm.com>
+In-Reply-To: <p3g2ikhn54roye5t7moatrqbaudl65jarpimhoguojz5f7gnz2@2i4npjg3jdrv>
 
-Hello,
+On Thu, Aug 08, 2024 at 12:21:24AM +0100, Andi Shyti wrote:
+> However, I'm going to ask to please run checkpatch.pl fix the
+> suggested output and resend it.
 
-On Thu, Aug 08, 2024 at 12:14:12PM +0530, Athira Rajeev wrote:
-> 
-> 
-> > On 7 Aug 2024, at 11:42 PM, Namhyung Kim <namhyung@kernel.org> wrote:
-> > 
-> > Hello folks,
-> > 
-> > On Tue, Aug 06, 2024 at 03:50:03PM -0700, Namhyung Kim wrote:
-> >> Hello,
-> >> 
-> >> This is the usual sync up in header files we keep in tools directory.
-> >> I put a file to give the reason of this work and not to repeat it in
-> >> every commit message.  The changes will be carried in the perf-tools
-> >> tree.
-> > 
-> > Could you please double check what's in the tmp.perf-tools branch at the
-> > perf-tools tree so I don't break build and perf trace for arm64, powerpc
-> > and s390?  It has this patchset + arm64 unistd header revert (according
-> > to the discussion on patch 6/10) on top of v6.11-rc2.
-> > 
-> > Thanks,
-> > Namhyung
-> Hi Namhyung,
-> 
-> Can you please point to the tree. I checked in https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git as well as https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git , but didn’t find the changes. May be I am missing something. I am trying to check the build in powerpc.
+Thanks for taking a look! I didn't know about checkpatch and
+sparse before now, so I appreciate the messages :)
 
-Oh, sorry about that.  It's in:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git
-
-(no -next at the end)
-
-Thanks,
-Namhyung
-
+I sent a new version (v3) that should address the feedback.
 
