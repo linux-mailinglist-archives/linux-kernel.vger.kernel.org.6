@@ -1,165 +1,204 @@
-Return-Path: <linux-kernel+bounces-278802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A16894B509
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D2094B50B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1B511C219E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:25:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A7411C213B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A7AD268;
-	Thu,  8 Aug 2024 02:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7740DF78;
+	Thu,  8 Aug 2024 02:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TooUNO6M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RV0fHHVh"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012038.outbound.protection.outlook.com [52.101.66.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF12C2C6
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 02:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723083901; cv=none; b=RocaB4u+SbXgRiNNEu9Eq2kfN8joHyps5DxOc7ecu/rn8xn93eOwSkh+QaRqFs0fnM4LILDCTADTyFudI6LVo0g2pQNSrdNKEEfiCotCZ1/yFnfdRmiP3kMJUs93wIe3ySfouMR3KxCuEOPMEmGTU4ZUM+kTxEsT4RKym7rA6G8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723083901; c=relaxed/simple;
-	bh=ssGG+CKUWsnuo7DJG4Us0vDPXriTTmU6BtXhSuzPDm8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p3GFgfemPyLFkCkfb97FbatxhtQuxV2VgQMYaTCJGJHYhC5yjI5bYjbjz+e1z9TMOV9VntEc/x+iBnayX8a82danJGlk61AIMcoB2hQKkogZGAFG6UPlTw9vCawzYGYld3VGNONnssCefV8YUmo5fbZ9r2YvVXzUjlEaXEXKbHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TooUNO6M; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723083897;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ndEu3RRqwHVmaDc3taG18G8e1bpdKYoIpCuypgGJMPA=;
-	b=TooUNO6MVkkO09h1zQbAKz6HENsOYqIEFlgam/Bc9hFv/OmBMlJB8zJ1+AvdIT53RwldyS
-	KWS1sh6AhD9OoTHiJjkfWZaXb+s/NqwuNAONFOYZjGto8qI4Fu/dRb076dkYKMJ892f+xg
-	98jrkoJ3RevmUkUTVjfM/bu9d4GAu6Q=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-85-OSscJpGhPtOQ2DSZM0Xzag-1; Wed,
- 07 Aug 2024 22:24:53 -0400
-X-MC-Unique: OSscJpGhPtOQ2DSZM0Xzag-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2A474195608D;
-	Thu,  8 Aug 2024 02:24:52 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.123])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C566630001A5;
-	Thu,  8 Aug 2024 02:24:50 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v2] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is enabled
-Date: Wed,  7 Aug 2024 22:24:41 -0400
-Message-ID: <20240808022441.1160346-1-longman@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A881C2C8;
+	Thu,  8 Aug 2024 02:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723084018; cv=fail; b=Wj1NBzNd6l5jr/XS9pRI8Nho7zsirumGervN18BjrtPkYSg7SgBuvGh2IjGwZNNReohNzapfkvoYdqJFRD8s5XbzLuAxbbDwjxutak7fGrpFOtOX24WA+1w3eqYxPLgCQFB0YSlTjcQrBiPpK/HHW8HYJO1ARhXeFCrQOSmj/jc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723084018; c=relaxed/simple;
+	bh=Vgn7uB1rv/Z/bHcLTIOw+llsdwb9qaKKO9PpXm97imU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HviFXIA2kq5hPRLB0vXMrc1Z+2bd0/rNwIPt1aboFlJ2PS/DXpSXrc/zN96i8Sh4Bv0fnSpwHIeA2CMDOIHbBleTW/ekcnq5AFFP8R8JQFUKYDCISaLdyqiX2KL1e9p5yXdWuprcJTu81vhtyN2XgVG5+FcIUioxCDhp0se8WfE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RV0fHHVh; arc=fail smtp.client-ip=52.101.66.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ic3oM7ImrfhUGkCs2YcY22PaqB//yY8fsWbyvch6hhkYroGJ8C71w8BoiwcZMfPq0xz/AlCDnkbyzokOUx93dXVzNsOzRT644J7lnGXYUnEjwzKXDn1F6B7eg5A9n6QX1dJijsrVJdUKUwr2oJM/YGO3jgkDojpCT64oChP/CPsICwinQPAd5MVqg9dUrqmdfeBNGKqvIBBFn60PG0bUNuICQZEZruXRCI9fCaB6987VYiRWlYm6duQ+wdpJTubN6PZUl+IG8V8lW70e4CnX82r8c/Dh5b481DdbSM5N1scUZ93ENDWgnBJE3DmJoPXsE46HfnsLyD6kYLIcQ5EF3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G5e/vLxlBIucmQr/fvLWskDVO7TULVk7Z2RfH/tYYLo=;
+ b=xl1ZZMFXAKbh0Rfn1scGWnMMIlwA6ts6VeW4MRXEXxAIFnibsmLvDvo5LbaQhEi1CJL3OkgizMS99I/ZAbt5+tK9D0ddMiLIHn6BWP6Orc0yrcs0MejeH6SpZx5nnosfzffN9oe8J+TaD/EXoLGf6mLQXrW043Ex55aMflx2zxKEbXK3bN8xTyCVnSkgJ2JAgMxJ/FHPhjetCu2J3oEZ0oIVsrMTfxMM/Qo+2tix4ZWgbFxMhoN+Rdq6OkBeM86FpmdeXoUAtIulwFCEMWZnCVUrTPnRN8y+SDGObKhnj/SOx6IFrN0sRtQhMCSBhou7Tgd5ERLKsRWZDBkEaE5Mdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G5e/vLxlBIucmQr/fvLWskDVO7TULVk7Z2RfH/tYYLo=;
+ b=RV0fHHVhnPcY7WbpXmspSb3KmPvaMYwMyy5n92b76BaNdfT/iFJNd4EYRc9liFqnEb1NIAjQh1Cc5vKKce+m/VftnvUe2NcoOl7qikBxUfoanIASsKSokcG6ULOSaEO1+KYjUjHCVHQkUqkIKOuJzWqnLWmoIyfCbSBKr8gzqOlotmw20A22+tgJrOVqTrzgbpwsOWd3Ky4osSKAYyXNS25c+hdp6OrDOYHRWUfG6pMlUgSiyZupFvfSJW5CiOCrjRdmFhD6W2atptE+OcSOib4BH2sRHDSvYh4RDlCs6mvFsrEtpExU//qpwsn2REZd8rpXjBMfyhdm6RYlSpSrKw==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM8PR04MB7858.eurprd04.prod.outlook.com (2603:10a6:20b:237::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14; Thu, 8 Aug
+ 2024 02:26:52 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7784.020; Thu, 8 Aug 2024
+ 02:26:52 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Benjamin Hahn <B.Hahn@phytec.de>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	"t.remmet@phytec.de" <T.remmet@phytec.de>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] arm64: dts: freescale: imx8mp-phyboard-pollux: Add and
+ enable TPM
+Thread-Topic: [PATCH v2] arm64: dts: freescale: imx8mp-phyboard-pollux: Add
+ and enable TPM
+Thread-Index: AQHa6N1qXqRNSouPLUGPDD56nNJnK7IcohRw
+Date: Thu, 8 Aug 2024 02:26:52 +0000
+Message-ID:
+ <PAXPR04MB84597C283ECCE79229DF61BC88B92@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240807-imx8mp-tpm-v2-1-d43f1e8f70ac@phytec.de>
+In-Reply-To: <20240807-imx8mp-tpm-v2-1-d43f1e8f70ac@phytec.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AM8PR04MB7858:EE_
+x-ms-office365-filtering-correlation-id: c16259e1-b359-4f0e-530c-08dcb751908c
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?Nl9F+dpuY4VPjYUgODheHz5ioZX+Ekban+OuPHQktR1xMZ/JnlY/OUTh4P6f?=
+ =?us-ascii?Q?ordBEVBgrYbe6OWmHMRlPiGheuwGg+rJ29MCcAKQtXnKe8FDkJ1kXBeOtvJh?=
+ =?us-ascii?Q?iscGThHry3GcDwoz7GxldfYWcyi46GCjkXLD4q1wAfJIHFuZGMABx0a+otVw?=
+ =?us-ascii?Q?RzqtyYO70u+C7ypJc2cNUUe0DNn5Hktej8nKV1YVfsyOjMd9HNIsEIy/pANd?=
+ =?us-ascii?Q?jcUlJMI3/3i5G9pVroTTzrcyc7Ws+SGqf5bJq0nLVd8nXdIfh2eqsn+vBl2O?=
+ =?us-ascii?Q?c2v0axvKM/i88ubCV6SJdOdjhZPOOiVAZ26RLzkeUkK0ategyiMGJCk0flHD?=
+ =?us-ascii?Q?QwwGJ5paK73zlaQMhtGZRmONxd5oxq3dU0FnGE9EF7hnxnHJJe1V8b75TGlK?=
+ =?us-ascii?Q?ZGInGEAGkj93LNIskJWm/2BO0Wmc+9pt13hmzqJI74/z5URu7nxRKBwdlxW6?=
+ =?us-ascii?Q?WyKx7t+mIgflVbqYQe5EZOOh9R+qOAxxRH7eWGRGhWuinPszvi3wzaLeYSHn?=
+ =?us-ascii?Q?iTVMnN8Fi9TNk1Fwjpq2OEIrAwQUAtMWgzkvzJyIc8/TaJAxhxRktpmsQm0E?=
+ =?us-ascii?Q?EdT4+5PqHh3PBwS7mau0zWZmWla4zCrOkqGuZpWtwZzdfAwvR6we+rl9pJkE?=
+ =?us-ascii?Q?gV00+WSlMtFQrSn2Dv60Mk0/PfuufrYQ3UetD9Q/WrAVI8vkJ+ghgyENGuY3?=
+ =?us-ascii?Q?nz98nuIliFhwKo6c54lwi4YbC+liIQQgkpum/oaV2XjIP2XkL5NwOlKMttvs?=
+ =?us-ascii?Q?Rbcoo8WOZe2Wk0jxsurVpfbpXn//mVv8tfr2snwlKTIs7jQlXBQhH1BYwJ1B?=
+ =?us-ascii?Q?Tdzl3frC8Ow+ql4Qvf9TIRcG037PtxRyryX6IPyuDwjouALybsDPGcHEkvAi?=
+ =?us-ascii?Q?f1ZFXMkEAQ6YY5lwu+suXjnCY69dUFEUBgtY7gffzOJbQHZwcICkVlseULfS?=
+ =?us-ascii?Q?njrKUVeZjhQJrn/HfqlBuMJU2CcTJ06fYy3FwpY3RNhRC8wk7GKLQxBenkKA?=
+ =?us-ascii?Q?Bet4qGji1hu+W/6COpEHN/mcPzE/fBMgO05Usa1yjy6m/uzsw2nAxFfqg5Mk?=
+ =?us-ascii?Q?wQfLm/z1qs0ySPdmnEde4intJWii1KavWF03UoiT6OOg212oIaxFIfJWAwux?=
+ =?us-ascii?Q?bdl9i3qmG6YzHgz3hfCvUdSzk++6A3qFprk728gl8K/rn0o3Q//uy5tI++oP?=
+ =?us-ascii?Q?MYQ/MlBDAMXOPq1Din5kNhpap1K+7Kkkxw+llosa2vBLWXvivVzpMV991T9/?=
+ =?us-ascii?Q?YWmwoqoS8cIeutl9V1nsjqRzqXH+Ancx1ksiSWdUXDI7h7zlYPppr+2pu6kT?=
+ =?us-ascii?Q?Isl+vxcH+hHkr3bXQuoRLV/G+hVc5mb5RD46qwByG8L5oWT0CRiFhaIr22JI?=
+ =?us-ascii?Q?AS9PneMkVMGSJV4nbhwWTRokYpMEu3UpvzPyfuBIEa/vhQjBrQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?y/3/T4dcFDRpW6ILeDsoXZRb0XqJj9JrXNC//w7BFl22UyNJtpzhNtq/S8Jm?=
+ =?us-ascii?Q?TdJbpKvxDN+pYca/7Q+RdQNNewxEL/WyQWJg2iiIt7VPZptZsJyrWTWAKxbI?=
+ =?us-ascii?Q?FDbOsBLxbA964iW+83ly5qML/W7W7YOOOkKFOqrGEV9EYAD2lSTD3gLumu7l?=
+ =?us-ascii?Q?cOsmeQ6ecPpiHxFa866WoDTTQMNR7hkoFRMHMTlUvchuzp1GH55KM8VALmj9?=
+ =?us-ascii?Q?eq/amADHWh3fgDrQgbcfnJlBuwF/yUUwcyAMidu/CR6q+ZncDasphohD8Ghw?=
+ =?us-ascii?Q?gaz1nm/yR3Icnc3xCjHiKbyJq8Jjj95YUae+NZsfCVbJ8hAzy/s6OZ22Q+SV?=
+ =?us-ascii?Q?HdHKCfDCzDGqEK/Ap5AFZd7iYEeWw5Lv2Y2rDetRL8iNqOZd5JsqigkiNryY?=
+ =?us-ascii?Q?CcPT8r/wDgz+4KmZ8kprPYTXpwOy8RtUkmu6jbz2nLdJCQtiKMDrQIZCpqx6?=
+ =?us-ascii?Q?fpyyWRJzkp+QPgrF8FAdiCLzoplsZPTmmYDvreqKf436agmye6k9H/q1ocv8?=
+ =?us-ascii?Q?aV12623JYPfSmgChOzuJKUxFEgrVN8V+0rczB9eU0XZ5F/95BE+MuGmdncRb?=
+ =?us-ascii?Q?vVfJIPMgz+9p9VpzFO4DYCEXzHNtVXAC0KgPz50QB7YKUU0TSsbOmqJkWKK1?=
+ =?us-ascii?Q?8eGwrWCEoHA88a9V/u61GEammN6earJS+yOh7TJD17CtlrvqjD3YtuvyBYzd?=
+ =?us-ascii?Q?x5RNOjNOymnvmbHXykobjsk4p7/PICkr0mCcZcCf9lFPrmdiO9cuAXpGeIeo?=
+ =?us-ascii?Q?4fNVuuVOQ1w48yU3RPjpZOlgIa9lLO/8/BwFbcwCN9tOoevttJlkCDQmb4/p?=
+ =?us-ascii?Q?sHr3PE3Cqx0zsVKFKhSxflUfeXkr6zGeZUqonyC86pa7kkC4P9JFY7hcD+rk?=
+ =?us-ascii?Q?3AWygxaqWjfOkD9VvWvg0X9YVGOZWJhUbmbwy8NygOg0swTyuMRjgMzqFXok?=
+ =?us-ascii?Q?zHuc1BPqumCvVjeZ50UBecEzyEifi6dlefWmLfRzWqRrot/1iyuRUxOWQVZg?=
+ =?us-ascii?Q?n4pxcNhDJbCnViugy5rzjL9zNi6Mp1l6MX+gDy+G9QmN4Mjj+Ti4FAgZ4rVz?=
+ =?us-ascii?Q?Ao/QBBeph3jD2AeMBX10kVvxN4+MvNUX8fbDmFrrZALxRxgeEmbzpxde0AL0?=
+ =?us-ascii?Q?IKtkeuIUFi4cXz8YpQhqvsn/5Zn1s16bCysW0zxuwoEDt/eRpF7sipgZO6CI?=
+ =?us-ascii?Q?aVVlfyjScVkdsd1gURSmRHz0GGHX0taHXV3FZ2WZEnwiyTDqL4+jOUwyUw5V?=
+ =?us-ascii?Q?Y5Y7aEUxAkYs88Kmj1fdrryLtSNZpWJXFH30aNbMGgoLAZbecBigIQ4qHZ66?=
+ =?us-ascii?Q?5VMhzORA1FZFXKFFqEfl847WUXB3vWuitCW+kwp1EAFQTn+DXlmazSQ0Bob8?=
+ =?us-ascii?Q?2PR1E00FitF6Zs8BLcGDBpCPzQ6ZRKJXYm4BCfaFumQ+klYV9vpICzGIIYPO?=
+ =?us-ascii?Q?li7lwiqb3ZYwp17AUKZPOnI7DzXW/19CEDUjb2v/LVKwUC8VjpYCaAztcvye?=
+ =?us-ascii?Q?LbXLMuYNpOxfkN9DRzCHKPRjhjqh2QJog8jIElTWwJl8PDT7uG0s3zW/LWG0?=
+ =?us-ascii?Q?QOrz8WnZd+5MK6cekz4=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c16259e1-b359-4f0e-530c-08dcb751908c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 02:26:52.4968
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Ff1BjBBWnsNyLttOhw/SFx8GRowvnlJc46bj7GV5sQwZTNphTBH6JzzyFI3WlUjIgo3VGxlGFWgKqFwJJ5cqlg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7858
 
-As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
-capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
-for all kmalloc/kfree calls. So stackdepot capacity was increased 8
-times to accommodate KASAN usage even thought it was claimed 4X should
-be enough at that time.
+> Subject: [PATCH v2] arm64: dts: freescale: imx8mp-phyboard-pollux:
+> Add and enable TPM
+>=20
+> Add support for TPM for phyBOARD Pollux.
+>=20
+> Signed-off-by: Benjamin Hahn <B.Hahn@phytec.de>
+> ---
+> Changes in v2:
+> - renamed tpm node to tpm@0
+> - removed num-cs
+> - cleanup pinctrl
+> - Link to v1:
+> ---
+>  .../dts/freescale/imx8mp-phyboard-pollux-rdk.dts   | 26
+> ++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-
+> rdk.dts b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-
+> rdk.dts
+> index 00a240484c25..0e8200413557 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
+> @@ -103,6 +103,23 @@ reg_vcc_3v3_sw: regulator-vcc-3v3-sw {
+>  	};
+>  };
+>=20
+> +/* TPM */
+> +&ecspi1 {
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
 
-With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
-for stack records"), all stackdepot records uses a fixed size with
-CONFIG_STACKDEPOT_MAX_FRAMES (default=64) entries. This is merged to
-support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
-use variable size records for non-evictable entries") re-enabled
-the use of variable size records for non-KASAN use cases, but KASAN
-(generic mode) still uses the large fixed size stack records.
+Duplicated with imx8mp.dtsi. Other than this:
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
-stackdepot space had been more than double than before. Assuming an
-average stack frame size of 16, a KASAN stack record is almost 4X the
-size of a non-KASAN one.
-
-When a wide variety of workloads are run on a debug kernel with KASAN
-enabled, the following warning may sometimes be printed.
-
- [ 6818.650674] Stack depot reached limit capacity
- [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot_alloc_stack+0x39e/0x3d0
-   :
- [ 6818.650907] Call Trace:
- [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
- [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
- [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
- [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
- [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
- [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
- [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
- [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
- [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
- [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
- [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
- [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
- [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
- [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
- [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
- [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
- [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
- [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
- [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
- [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 [xfs]
- [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs]
- [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
- [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
- [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
- [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
- [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
-
-With all the recent changes in stackdepot to support new KASAN features,
-it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
-enough when KASAN is enabled. Fix this stackdepot capability issue
-by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
-maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
-
-Also use the MIN() macro for defining DEPOT_MAX_POOLS to clarify the
-intention.
-
-Fixes: fc60e0caa94d ("lib/stackdepot: use fixed-sized slots for stack records")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- lib/stackdepot.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-index 5ed34cc963fc..beeb70b57710 100644
---- a/lib/stackdepot.c
-+++ b/lib/stackdepot.c
-@@ -36,11 +36,12 @@
- #include <linux/memblock.h>
- #include <linux/kasan-enabled.h>
- 
--#define DEPOT_POOLS_CAP 8192
-+/* KASAN is a big user of stackdepot, double the cap if KASAN is enabled */
-+#define DEPOT_POOLS_CAP (8192 * (IS_ENABLED(CONFIG_KASAN) ? 2 : 1))
-+
- /* The pool_index is offset by 1 so the first record does not have a 0 handle. */
- #define DEPOT_MAX_POOLS \
--	(((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
--	 (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
-+	MIN((1LL << (DEPOT_POOL_INDEX_BITS)) - 1, DEPOT_POOLS_CAP)
- 
- static bool stack_depot_disabled;
- static bool __stack_depot_early_init_requested __initdata = IS_ENABLED(CONFIG_STACKDEPOT_ALWAYS_INIT);
--- 
-2.43.5
-
+Regards,
+Peng.
 
