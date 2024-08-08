@@ -1,159 +1,194 @@
-Return-Path: <linux-kernel+bounces-278926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB0794B6B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:27:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E4D94B6B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C27BB21DAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C7F1C20F20
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606DF186E3A;
-	Thu,  8 Aug 2024 06:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B77118784F;
+	Thu,  8 Aug 2024 06:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Xv574nwx"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NSxokfdz"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2048.outbound.protection.outlook.com [40.107.102.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E283084A2F;
-	Thu,  8 Aug 2024 06:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723098428; cv=none; b=puZFpzN9S0X+iNCk/e9Q+o2C0BGfNrfJTL0NtxdZf9q9aMrTDJKRqwfD/xw2fbG+eLpTYqB9Zxkg70gOQbdztnvOFUXov2GstN7ftezhCwsck/7cS6q8ftA8EA1QFU4CEyNurcsPZguKGVvL274LVQNs8ahpq5kxbQFgFQzBT5E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723098428; c=relaxed/simple;
-	bh=/5ghKYAnuD2f/ZRj+gO+eDL9wrwWwC/i4Jgoorzf1oc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Z4QOCsMmkH3YNe+676SDENwKgrP+Kf9Iha2sOyigq8k6kSWcVWoDu+DXZrxMnmZ+anpWskY+5xJK4BN+LwFZVETyaddyCzKbyaz+zc+RcoYpmx+N5x2SPEUgbrUZtm83k59t7vmdDSD3Fwp4yqq6/mH1goiBGctxyxudNw0oDVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Xv574nwx; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723098422; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=/fo9cpeIWOQ19EM19iwanG0Lm/+5B2ETYCALn5KNnDc=;
-	b=Xv574nwxbK/zQyV4aurgj2eTW9thpc+gcdGTHfH6MX2G8EzZjTI0dN2WudvHZQj1QqPOnJcKhboq67pmlVKNQVnIOzgKSrido85Zo3sFET+bolXemEWOsn4XeyOwlmxn6rsd5lXnUe9U15LuTBg4f3H/JIcsnQTEmwjDRPiHLi4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=guangguan.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WCLS.DF_1723098420;
-Received: from 30.221.101.115(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WCLS.DF_1723098420)
-          by smtp.aliyun-inc.com;
-          Thu, 08 Aug 2024 14:27:01 +0800
-Message-ID: <faad0886-9ece-4a1c-a659-461b060ba70b@linux.alibaba.com>
-Date: Thu, 8 Aug 2024 14:26:59 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED1313D62E;
+	Thu,  8 Aug 2024 06:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723098658; cv=fail; b=EgW0oFdPCbCo8LwHVGeCs1naPf7zZolktJXG4eIIsL1ljWEKQCLjQDGWWcEtEGxLlwo6kRfFdKBE3UZhQkRjpPeswp+aNNt8pPLQD1PHrnSdplQnHoXLzrdE1TC7elwOi9K6c3XaDIBIVmdAko7J6RkhVsS3bWBUqVwOhO2z7rc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723098658; c=relaxed/simple;
+	bh=F6vcQJLAD4axfMvyW4ciqnsJnw5GbLWzaM0UUO7w4BE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S9LjLxmbQX/d4P2qNjZNFJWWhmBPnhojzFc92EZW32PYjBpf/y2/jHk3nRCYvXhJB7ZJX0fRcMoif8ymMS7ih7m5R5+sd9/1gmgGFnNLqECO/a85LrGJM4nsEIkzzhyXQTPRyfCdkuhJsJGtsakz79gmsSNB7KtKdG86YhUvLsE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NSxokfdz; arc=fail smtp.client-ip=40.107.102.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fAJytP6MuqNQS8dGeMgdX8WwFKX1z9k5YlaIpATQSCNRXzIy310Aa5Sva7Bi5wdx7FUBsKdnWqaSuKoeCecDtxeOmJWEtPs7Cc2yi/mY7EwLUJLl1ayC8LXWQIITMIYPo8BEmvGmFZT6D6RaqypYsj97bLx69IFG5ZwF31i5YjX1bTvJxf9oYSAa73iEyozGK9NX1HSQGXBrBPBZba6iX6zfS0401r1RjRG3aHExoWS64eLREPZy+4OkXN0maN8EW9dLk9KSB5BCrELqJCTJfbyVd0mEs3dVaHEWt52/ak4aK7o9ApQxjplbzM22Uf6UlkZI52S2Ci4gFzH1PhfO7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hX62E9rzMpmlIlxZXGiwyl8Jkj0aiOrBJyYLld3LTjk=;
+ b=IjHO9Cktv4It16tJORNMkRhn5okBLL6Ft6uOGyJXRQhzyZ5H0Vmbhd6O2IwnsC38JYOy/mnBrBA0fDDPn6gv9j4odlZihwJwp7fDVHCirzcPSLsGfqfjjj1YETCDqpfphuzmbkKm3N0iUDeVjWwKHWRvp2ZFOYjEU0d12g3JfgU2++Gnj9He0DICjND7WddVuitHDlp62W8yVS1GJr9UR1/I8cSS/pSXaGUTh03vNx//HTTVK4v0hV/ZY44gwnJ3VNa2waLmWD2eraoh8hLaUr6baeE5WBj56ddwXj47Y/7Oj7znitVPvKPJFPQwBKo3YbDwkuXMq9rC9RCEGIu1Dg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hX62E9rzMpmlIlxZXGiwyl8Jkj0aiOrBJyYLld3LTjk=;
+ b=NSxokfdzkseHTbbXtV2D9N6R/sDxwB6UDjPv5OyKPOX3GgKfRHgMHDHkuqKkNNZjSLyoVjTs1r6VruWvyhgP2vmRAIqduhtWKaXed1DtcXXKVhnmhGHQzqlos1JDssPlqPSjz2FmRyxnq2A4kiZaZztx1eXKI78cUek2MWPsA0Q=
+Received: from BN1PR10CA0028.namprd10.prod.outlook.com (2603:10b6:408:e0::33)
+ by CH2PR12MB4086.namprd12.prod.outlook.com (2603:10b6:610:7c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14; Thu, 8 Aug
+ 2024 06:30:53 +0000
+Received: from BN2PEPF0000449F.namprd02.prod.outlook.com
+ (2603:10b6:408:e0:cafe::d1) by BN1PR10CA0028.outlook.office365.com
+ (2603:10b6:408:e0::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14 via Frontend
+ Transport; Thu, 8 Aug 2024 06:30:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF0000449F.mail.protection.outlook.com (10.167.243.150) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Thu, 8 Aug 2024 06:30:53 +0000
+Received: from BLR-L-RBANGORI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 8 Aug
+ 2024 01:30:44 -0500
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<thomas.lendacky@amd.com>, <jmattson@google.com>
+CC: <ravi.bangoria@amd.com>, <hpa@zytor.com>, <rmk+kernel@armlinux.org.uk>,
+	<peterz@infradead.org>, <james.morse@arm.com>, <lukas.bulwahn@gmail.com>,
+	<arjan@linux.intel.com>, <j.granados@samsung.com>, <sibs@chinatelecom.cn>,
+	<nik.borisov@suse.com>, <michael.roth@amd.com>, <nikunj.dadhania@amd.com>,
+	<babu.moger@amd.com>, <x86@kernel.org>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <santosh.shukla@amd.com>,
+	<ananth.narayan@amd.com>, <sandipan.das@amd.com>, <manali.shukla@amd.com>
+Subject: [PATCH v4 0/4] x86/cpu: Add Bus Lock Detect support for AMD
+Date: Thu, 8 Aug 2024 06:29:33 +0000
+Message-ID: <20240808062937.1149-1-ravi.bangoria@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net/smc: introduce autosplit for smc
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-To: Wenjia Zhang <wenjia@linux.ibm.com>, jaka@linux.ibm.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- guwen@linux.alibaba.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240709160551.40595-1-guangguan.wang@linux.alibaba.com>
- <cf07ec76-9d48-4bff-99f6-0842b5127c81@linux.ibm.com>
- <63862dcc-33fd-4757-8daf-e0a018a1c7a3@linux.alibaba.com>
-Content-Language: en-US
-In-Reply-To: <63862dcc-33fd-4757-8daf-e0a018a1c7a3@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF0000449F:EE_|CH2PR12MB4086:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1356c174-a666-430a-98af-08dcb773a74d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?16wdQi/uZ+eYTZRA5k56nUfvCh9LPdztNL5C3czcbLZvlLOQI/ok0GUY6DN3?=
+ =?us-ascii?Q?ZsuPiTHOMGgi0FtCdJZc7dTKgalFuq+OyAMRt899P3PfPkQ69iKXTcj2H7PI?=
+ =?us-ascii?Q?sQM5K+245J6algm9d7F8/PaFW9az9mlxcnfHMVDTiLW/n4Wu+tgQi348Cm3v?=
+ =?us-ascii?Q?ViFhrVqkhC/vt3THgFYnrHbtw/n7QoDcQ6WyLiM8Qsirot8tmCwAEyQxWPvY?=
+ =?us-ascii?Q?foHQ3OBu3gRKmdFKWAEwJirXpYLgOb6BOu9HoXXbf3ttCZRv4VZkGOy3r5db?=
+ =?us-ascii?Q?knOyj0OkVIk4qoDrr6Qq4ctLHnjK1udTI83ERGjkiE8638MYYniw8WDVnvQa?=
+ =?us-ascii?Q?dIKoRNAFGaImV5BvYnu1aehOaap8snH0APqzcMB71RIiBtO3JztY/LGVhxTq?=
+ =?us-ascii?Q?q4016AhnSyxRMcdLoS19kKyPCIa/11nFo8QR54E7/7bPee2ON/Cd0krUf7Cs?=
+ =?us-ascii?Q?p9wo7oeWxKGZk+OTUeg6FCyWk2zlU15C5CMZuwlfBDueHzl8KOVF+CJoLStE?=
+ =?us-ascii?Q?wR24FOPphuOiq4PbzRud2RhX0q8gPUSNQnbR8w1rkL1oBRmnoouQxLqriA8G?=
+ =?us-ascii?Q?KExCUv1dve8a3qD7JAE9WcYDHw8TK/4SSO+t+RD53mZ6mStpl2odKit4slkJ?=
+ =?us-ascii?Q?zbnmmfjwsDIuFttpQPl/bz3qnUebgZzccqzpXzwN2xiCGoEm88xKIDW7cOJp?=
+ =?us-ascii?Q?JPkXnxdqtpDzc0wAMOBaruK+gqJ1KIN10E5Gg88TnccKcE0cri9esXQAHVTp?=
+ =?us-ascii?Q?ZQH2PH+5X+A3+C2uDiPZiaf/3HoN22kHwdgOvUzaa2DrN4fLYPkiprEQlqjw?=
+ =?us-ascii?Q?Acen2CjscYe47cAElK8dJFNA6/YMHhe/u8jh3jFXcymwhmgzeUTEAodnlpqE?=
+ =?us-ascii?Q?I5ggCj7BPqocNGHGNBQqBfOU8lnTDjNarubBs+EcRuioAVuhpcsJbBhz0jBD?=
+ =?us-ascii?Q?r+DlgSntOfyJqUQvM1Fv2scZJ93/bc9PhaZteuAnea0wPJkNgq5LVbHfHgag?=
+ =?us-ascii?Q?o97DxhUYLuUiAE5Z7Yq7G44gDHPYkVSqvwc2vitMn0gDlzg4jSEpkc7VQr4r?=
+ =?us-ascii?Q?kRaZYOiqBSEkSwZurloTYbCT2/6AeLscGjGBp8cSC6jeO4qIM2kZa7CRpjuL?=
+ =?us-ascii?Q?CwsneJGzMz0s+NZQQRZKaXGvaIecx2QUwBhQisEb627lsJUyUVwbhTM3+3gh?=
+ =?us-ascii?Q?87gu09aUJl7ISykQQjXPiU1fxwwuB1n+i2NgLSg34cZ2ND6sHK+2CigqbPuf?=
+ =?us-ascii?Q?EJLw3OQ+5Aa9FJscNnlY7DKrD5LGJu5Fpon9WS8qdgyCuvOSJaKqxadxb2yc?=
+ =?us-ascii?Q?lHVStD4xSSXSxYwfO/X51OXSKz9Goe2KesjSGGZ34Eo5IGmaTtQjQLVgk1z1?=
+ =?us-ascii?Q?lOWZwVA+fd69bkmioUi14hlJUDzzJ9zewQHAlFG0XRjmhRW2+Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 06:30:53.4989
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1356c174-a666-430a-98af-08dcb773a74d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF0000449F.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4086
 
-On 2024/7/15 10:53, Guangguan Wang wrote:
-> 
-> 
-> On 2024/7/11 23:57, Wenjia Zhang wrote:
->>
->>
->> On 09.07.24 18:05, Guangguan Wang wrote:
->>> When sending large size data in TCP, the data will be split into
->>> several segments(packets) to transfer due to MTU config. And in
->>> the receive side, application can be woken up to recv data every
->>> packet arrived, the data transmission and data recv copy are
->>> pipelined.
->>>
->>> But for SMC-R, it will transmit as many data as possible in one
->>> RDMA WRITE and a CDC msg follows the RDMA WRITE, in the receive
->>> size, the application only be woken up to recv data when all RDMA
->>> WRITE data and the followed CDC msg arrived. The data transmission
->>> and data recv copy are sequential.
->>>
->>> This patch introduce autosplit for SMC, which can automatic split
->>> data into several segments and every segment transmitted by one RDMA
->>> WRITE when sending large size data in SMC. Because of the split, the
->>> data transmission and data send copy can be pipelined in the send side,
->>> and the data transmission and data recv copy can be pipelined in the
->>> receive side. Thus autosplit helps improving latency performance when
->>> sending large size data. The autosplit also works for SMC-D.
->>>
->>> This patch also introduce a sysctl names autosplit_size for configure
->>> the max size of the split segment, whose default value is 128KiB
->>> (128KiB perform best in my environment).
->>>
->>> The sockperf benchmark shows 17%-28% latency improvement when msgsize
->>>> = 256KB for SMC-R, 15%-32% latency improvement when msgsize >= 256KB
->>> for SMC-D with smc-loopback.
->>>
->>> Test command:
->>> sockperf sr --tcp -m 1048575
->>> sockperf pp --tcp -i <server ip> -m <msgsize> -t 20
->>>
->>> Test config:
->>> sysctl -w net.smc.wmem=524288
->>> sysctl -w net.smc.rmem=524288
->>>
->>> Test results:
->>> SMC-R
->>> msgsize   noautosplit    autosplit
->>> 128KB       55.546 us     55.763 us
->>> 256KB       83.537 us     69.743 us (17% improve)
->>> 512KB      138.306 us    100.313 us (28% improve)
->>> 1MB        273.702 us    197.222 us (28% improve)
->>>
->>> SMC-D with smc-loopback
->>> msgsize   noautosplit    autosplit
->>> 128KB       14.672 us     14.690 us
->>> 256KB       28.277 us     23.958 us (15% improve)
->>> 512KB       63.047 us     45.339 us (28% improve)
->>> 1MB        129.306 us     87.278 us (32% improve)
->>>
->>> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
->>> ---
->>>   Documentation/networking/smc-sysctl.rst | 11 +++++++++++
->>>   include/net/netns/smc.h                 |  1 +
->>>   net/smc/smc_sysctl.c                    | 12 ++++++++++++
->>>   net/smc/smc_tx.c                        | 19 ++++++++++++++++++-
->>>   4 files changed, 42 insertions(+), 1 deletion(-)
->>>
->>
->> Hi Guangguan,
->>
->> If I remember correctly, the intention to use one RDMA-write for a possible large data is to reduce possible many partial stores. Since many year has gone, I'm not that sure if it would still be an issue. I need some time to check on it.
->>
-> 
-> Did you mean too many partial stores will result in some issue? What's the issue?
-> 
-> 
->> BTW, I don't really like the idea to use sysctl to set the autosplit_size in any value at will. That makes no sense to improve the performance.
-> 
-> Although 128KB autosplit_size have a good performance in most scenario, I still found some better autosplit_size for some specific network configurations.
-> For example, 128KB autosplit_size have a good performance whether the MTU is 1500 or 8500, but for 8500 MTU, 64KB autosplit_size performs better.
-> 
-> Maybe the sysctl is not the best way, but I think it should have a way to set the value of autosplit_size for possible performance tuning.
-> 
-> Thanks,
-> Guangguan Wang
-> 
+Add Bus Lock Detect (called Bus Lock Trap in AMD docs) support for AMD
+platforms. Bus Lock Detect is enumerated with CPUID Fn0000_0007_ECX_x0
+bit [24 / BUSLOCKTRAP]. It can be enabled through MSR_IA32_DEBUGCTLMSR.
+When enabled, hardware clears DR6[11] and raises a #DB exception on
+occurrence of Bus Lock if CPL > 0. More detail about the feature can be
+found in AMD APM:
 
-Hi Wenjia,
+  AMD64 Architecture Programmer's Manual Pub. 40332, Rev. 4.07 - June
+  2023, Vol 2, 13.1.3.6 Bus Lock Trap
+  https://bugzilla.kernel.org/attachment.cgi?id=304653
 
-Is there any update comment or information about this patch?
+Patches are prepared on tip/master (532361ba3a0e).
 
->>
->> Thanks,
->> Wenjia
+v3: https://lore.kernel.org/r/20240806125442.1603-1-ravi.bangoria@amd.com
+v3->v4:
+ - Introduce CONFIG_X86_BUS_LOCK_DETECT, make it dependent on
+   (CONFIG_CPU_SUP_INTEL || CONFIG_CPU_SUP_AMD). And make Bus Lock Detect
+   feature dependent on CONFIG_X86_BUS_LOCK_DETECT.
+ - Update documentation about Bus Lock Detect support on AMD.
+
+Note:
+A Qemu fix is also require to handle a corner case where a hardware
+instruction or data breakpoint is created by Qemu remote debugger (gdb)
+on the same instruction which also causes a Bus Lock. Qemu patch to
+handle it can be found at:
+https://lore.kernel.org/r/20240712095208.1553-1-ravi.bangoria@amd.com
+
+Ravi Bangoria (4):
+  x86/split_lock: Move Split and Bus lock code to a dedicated file
+  x86/bus_lock: Add support for AMD
+  KVM: SVM: Don't advertise Bus Lock Detect to guest if SVM support is
+    missing
+  KVM: SVM: Add Bus Lock Detect support
+
+ Documentation/arch/x86/buslock.rst |   3 +-
+ arch/x86/Kconfig                   |   8 +
+ arch/x86/include/asm/cpu.h         |  11 +-
+ arch/x86/kernel/cpu/Makefile       |   2 +
+ arch/x86/kernel/cpu/bus_lock.c     | 406 ++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/common.c       |   2 +
+ arch/x86/kernel/cpu/intel.c        | 407 -----------------------------
+ arch/x86/kvm/svm/nested.c          |   3 +-
+ arch/x86/kvm/svm/svm.c             |  16 +-
+ include/linux/sched.h              |   2 +-
+ kernel/fork.c                      |   2 +-
+ 11 files changed, 448 insertions(+), 414 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/bus_lock.c
+
+-- 
+2.34.1
+
 
