@@ -1,134 +1,86 @@
-Return-Path: <linux-kernel+bounces-279294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224DE94BB7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1DB94BB7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C25381F236DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:41:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C4BF1F23552
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1AAB18CBEB;
-	Thu,  8 Aug 2024 10:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B11218A6CC;
+	Thu,  8 Aug 2024 10:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MIK9K2KT"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiH/krAW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9D218B469
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BB718756D
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723113614; cv=none; b=YtI7QZGnlZjF5hLOwEp45z41OfM3SGgtSI5gbO5ucG6GuGx3otkt4+eOxTlmuL2YwcCBU5D3SqIm58oqDRn9RasV3kRNq15lRZEQ7KkaimfvdTFbj6JoMdA4scdUhsvagMzO5rQ4fjcW0xm+GV2+Lxv7g5L8mJ862KnFDz4Cz8w=
+	t=1723113681; cv=none; b=mGSYP9jjvAEQ1EZ+xVMgN4e9/A3/WSwCexihOGxiIjrPHDaollSxU1xnjIYJmZZNknAQ0goHgA52R4xRqSZ9S9uULX2fdy/g2l76HPGCd/ouPD2dTVUfk1X1W4CtWUCF8zyWKEs93zIXqMeD3IkszM3G0+Tr1wtZ5O5KsYO50sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723113614; c=relaxed/simple;
-	bh=93EvhuTl9ahqB5emxkAMtf9z0ofEgXEiFiod3siNX7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A3df49XfbSV4/rQKGXAynE3nLTu0AK4AagwwNz4GVbYsvTkJqwBYgFAgWtPIOqkigHNXriGcnz7m8sVUyR6uw0KmFLN+lSBZjf/xKYWDUur3EksKjU+2P1omXkHOPcUv/NmqlMdVRii275vTKFUq8iRGYjff0wj1oIvfBPWahes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MIK9K2KT; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42817f1eb1fso5343295e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 03:40:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723113611; x=1723718411; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3Vywnv2khWwNnQXbEb1k0L/IQrqUeraWcCrhITh2GYs=;
-        b=MIK9K2KT8LuLBxskCnDtBcQbyvCV33fYpsicldzOmBRoBfJkMrDJm0eAwESrD3Lme5
-         oFOPzOUkBAnEz7NtiUMyY2GKx/x0Sp6xoR60r13hH8VpceEk3rViglWH7Fyt+SZFdPco
-         wcg3ea0EPgj/mWKJhHhMr3zsUIi8LjwfPklpSobbVcghlw8SunHvJo2pC8CE32n0HAQj
-         3KBFYKE82mWwH6+5ND7fvDdXak+6RyXkrqvmdLDsdMlreKdkcCYmhcRtARojBGkLmwu9
-         rTdQkqSs8T5MsdRFdCLGbvRTBtG8TInLN9vUS8JqzuoslbTnaSI0ZaxA64XegpqDmWN3
-         /gbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723113611; x=1723718411;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Vywnv2khWwNnQXbEb1k0L/IQrqUeraWcCrhITh2GYs=;
-        b=dnindMq9hsjsCOmOxm0/cewZr9Wn/6jv5PRzi7sNQ57D3JSkWSAL2MsorXJflYyR8y
-         0kcGGbYH+OR4rdWWvo5ONlN0ubVNRhgcKmDnooF9lI70evFPAlOas3SkbFi3T1O5Xrx5
-         p/JvmX+W4F81xetNlaLkQez1RpIodFQbG+cerYZyzu6k4yT6mqlPiLnZFkNRQPMAs6xa
-         wxO6tUgOtsbTnF5/R6YocXXHbeu/n7kesxJH2x/ZPMtpEq3/1cu5JOU1MtwOjtziGcNH
-         dQ+5Y2azfLJoMv5okYwJCSSP3ZHhTaPfS4fZkCq34K6xgcLvuM1g1pDOq1k+OQ/XWzm+
-         MqzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnqTmgv2b6QL7WE64zmB+OYy6CIfJfbYO44Ot+gb7hODjpxZj1rNJFob1/26oIWf+pXf6s+A4+NqL0pkAZrAZqs9e8Vyxxvrr1Wi4Y
-X-Gm-Message-State: AOJu0YzKv6U71W3udPTEZe0lZoWVLfZC3eLOZ7t4nuzRvBrrlpIr9W1q
-	cr8KZSjOEVPud4frAkPUJ3iFrMkv8+/NZ/BE5F7/6O5jhFuDaFi0YwVr7+zHA7c=
-X-Google-Smtp-Source: AGHT+IEGxZsKPo0MfhXCCFxSfCW7K4JInkbw4e4NnCHx4wlQJHciyyD/pmRe1wNjUVMP3CXg9q2VBw==
-X-Received: by 2002:a05:6000:1007:b0:367:9614:fb99 with SMTP id ffacd0b85a97d-36d273bfaf4mr1044354f8f.10.1723113610569;
-        Thu, 08 Aug 2024 03:40:10 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d271569d1sm1459252f8f.18.2024.08.08.03.40.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 03:40:10 -0700 (PDT)
-Message-ID: <67ac1ce4-7d95-4215-ae49-c32869bfe6eb@linaro.org>
-Date: Thu, 8 Aug 2024 11:40:08 +0100
+	s=arc-20240116; t=1723113681; c=relaxed/simple;
+	bh=/mKn6DBIVkCOgDdC2lQ9Xnmw9VgNM2rmgsM6Q57B0u8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kRBBE67MqDzUokD570znTU3QfnBwUjlQ2OPfJOb0/hoHhzBAc0ynEEGN6R6ioUsMeC9F+s7SeENbR8coKxZS+am87rUJ+S7Gmm0aOacrG2uPEhsBTy0bELc2OKFVueKFWpPneErKZLW4j+yrq92p+WiS3vSrZbVN0rvZ5ArBDwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiH/krAW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB10C32782;
+	Thu,  8 Aug 2024 10:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723113681;
+	bh=/mKn6DBIVkCOgDdC2lQ9Xnmw9VgNM2rmgsM6Q57B0u8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BiH/krAW1x6AANXnAc2SNTCloZnQBdLqdThmbmjUt50sJn0+2ABPSwbXEaLX83EpV
+	 UTUZirOshk/YsnDjZpaXRlSWnZJQLGjp5e88nTC4+ggLTfeveXJ3FhrWtyptDZYZq3
+	 eBc2QMK1vjPEADbM1+HfrSO4gWe/XVkGPnxBot2BWSIU5lZ0XL4TUNDLteIy/6lpsp
+	 vobVWkQ8/nwRKrhFBI2apMvPe9at4TU/iPicDfmWPoeJHESQ7RMTu4SvsEPps0IHM2
+	 PwA9VGTRuCZCrEpTd+EwEQkLvTkVbalhkOf4j6cc6J0BW1sBY2EVbH7gnCaj5Sdm7A
+	 YP7lVX/CYpXPw==
+From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 1/3] genirq/irq_sim: Remove unused irq_sim_work_ctx::irq_base
+Date: Thu,  8 Aug 2024 12:41:16 +0200
+Message-ID: <20240808104118.430670-1-jirislaby@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] arm64: Add support for Armv9.4 PMU fixed
- instruction counter
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev,
- Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>
-References: <20240731-arm-pmu-3-9-icntr-v3-0-280a8d7ff465@kernel.org>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20240731-arm-pmu-3-9-icntr-v3-0-280a8d7ff465@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Since commit 337cbeb2c13e ("genirq/irq_sim: Simplify the API"),
+irq_sim_work_ctx::irq_base is unused. Drop it.
 
+Found by https://github.com/jirislaby/clang-struct.
 
-On 31/07/2024 5:51 pm, Rob Herring (Arm) wrote:
-> This series adds support for the optional fixed instruction counter
-> added in Armv9.4 PMU. Most of the series is a refactoring to remove the
-> index to counter number conversion which dates back to the Armv7 PMU
-> driver. Removing it is necessary in order to support more than 32
-> counters without a bunch of conditional code further complicating the
-> conversion.
-> 
-> Patch 1 changes struct arm_pmu.num_events to a bitmap of events, and
-> updates all the users. This removes the index to counter conversion
-> on the PMUv3 and Armv7 drivers.
-> 
-> Patch 2 updates various register accessors to use 64-bit values matching
-> the register size.
-> 
-> Patches 3-4 update KVM PMU register accesses to use shared accessors
-> from asm/arm_pmuv3.h.
-> 
-> Patches 5-6 rework KVM and perf PMU defines for counter indexes and
-> number of counters.
-> 
-> Patch 7 finally adds support for the fixed instruction counter.
-> 
-> I tested this on FVP with VHE host and a guest. Also ran kvm-unittests
-> in Arm's kernelCI.
-> 
+Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ kernel/irq/irq_sim.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I ran the Perf tests and poked around a bit with PMUs and chaining 
-events (on non-fixed instruction counter hardware):
+diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+index 3d4036db15ac..1a3d483548e2 100644
+--- a/kernel/irq/irq_sim.c
++++ b/kernel/irq/irq_sim.c
+@@ -13,7 +13,6 @@
+ 
+ struct irq_sim_work_ctx {
+ 	struct irq_work		work;
+-	int			irq_base;
+ 	unsigned int		irq_count;
+ 	unsigned long		*pending;
+ 	struct irq_domain	*domain;
+-- 
+2.46.0
 
-Tested-by: James Clark <james.clark@linaro.org>
 
