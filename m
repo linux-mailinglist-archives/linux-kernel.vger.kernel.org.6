@@ -1,154 +1,445 @@
-Return-Path: <linux-kernel+bounces-279700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A180494C0A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:13:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2AB94C0A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8566B25E59
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5142B28760C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5512F190049;
-	Thu,  8 Aug 2024 15:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0339818F2E0;
+	Thu,  8 Aug 2024 15:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScWH6O+L"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jigwbW6K"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2076.outbound.protection.outlook.com [40.107.236.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8DD18FDA0;
-	Thu,  8 Aug 2024 15:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723129977; cv=none; b=YEQyyXz6eYCLx5N4Qczs8nevrRi2q7JCxdwO3AKzeP1vXytFuCCxBwfihbTX3zx0m3TKFyULvipLmL4UiHu0GjyVYNG049a8QGYhKZG4/HR0vPXnZVymzl+gtBackyklZAyFCr70WiScXinB146vkmNHThr3/EROGFje2H5gJh0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723129977; c=relaxed/simple;
-	bh=nEcNIE1U7DZAocIwTQqOGm97es75K5AAksPENUTjEFw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q6FY4pUueSX9XdKfq7T8wX2/BbyLIBX8dc0/mwNEv96iqB1/5vMSXY5ycdUEmmH8kmSfX3yfRyYxJqdomC46zjhKPlHc1ZRVUEAvdj4riXJ6MSd4Mxf5Xl4aq4J1PCdI3QCYfliJhI+sIGfrNZRYOE3Ady7JCMZgvekkATiy3jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScWH6O+L; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-368380828d6so590247f8f.1;
-        Thu, 08 Aug 2024 08:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723129974; x=1723734774; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PZh6tA0jiESoXoOtY5qAvIE49vo04MTxnTUHVFSqNH4=;
-        b=ScWH6O+LzAyDokNzeXUQxwvD5uqOsOtWu5aw29m2KN+dIofjksNVksZ0IwFUnHCTPw
-         VxQplMMHkD+waBsU+D8ncIcC0mq9jI9Q4Wgzib5TXy6wqyCpxNqjTsGT2ZimtQ5XBCBT
-         Tzq/crS0vxAn0gCkEOe4Xt8gnG7x/s3kSUFFXUOw2q/s6oXvHn3xv+ZQlRRiha/Pt2Bz
-         ywrfoT7/f+6G2JrEvHyA1lVfLb2GwXskMuEAaRc5Hr3wDFqtXQs4H3fUnFmajQBsR9n9
-         UcJbnjgnzIi761fFgm3fJDR3WR/0aeS3sJu+LYSrarCg5TCBFkmNyhxEHG0uW8G3+kkF
-         /8oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723129974; x=1723734774;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PZh6tA0jiESoXoOtY5qAvIE49vo04MTxnTUHVFSqNH4=;
-        b=RUNSL9WjbSpVRekygDmqBt6XvLgl2p1wcfvC4kmPPExso27Ll471qs0vExYGLc9lS/
-         I6huE1Mmb+wZebiFiFFFogFvvzae2FYMvy5BkbcZAkEbd4JahE2NQtIP9J7ZoF2Ctoh8
-         TqFzPhMwGMD/h4+8K74Tg14lLU3E6Z1KKM/Z4KhdupVR2OIKBb88iAyYgEpvcIz3OGyG
-         OpPVU8xjDPevv0n+7gXhu1dpYxEi0cfkFze1NAdOSz7++VEaOMWXkLzMsnJfCWSR9GzV
-         2sypEuMTMzK2UH8Dtj/bU8EtofRRF2Zy1i1MyTHgM3q2pB2hgm7nvtu0jXARddGDw7zL
-         wfbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVj9OBhNCM2oFzaZfmD35wk4WQfwgzmUeLqLQxymbgYmpiNC9NEA+KnwgWRc20Eso3j0WKDnfvhuUHd2bk+dWDMgzKE6NxT+JcsMJuQCnIJh3zkIezOKSg4dri/VtQHl3uTpzhM175i1KEL7Pu/1nwNUTZRG9M5Qh0f2RcgOap+vwLlig==
-X-Gm-Message-State: AOJu0Yx7gL17+P4oZFrJCX62dv4CnxP8MxeaiutWul7NHZahnT4ZXH/5
-	Kz3yBUUm9/YZNSvo7wKW80kNph47GXgH7QpFwhtL8Y2jHyC1hZzBsIKty6gD
-X-Google-Smtp-Source: AGHT+IENRUZXk9+CpUdQ4r+iBA879/lG619Wzdm/977nxAbjK/6QNybTGmdaKvHJD6uVBnsY8QbpSQ==
-X-Received: by 2002:a5d:58f2:0:b0:368:714e:5a5e with SMTP id ffacd0b85a97d-36d273d0673mr1662793f8f.2.1723129973764;
-        Thu, 08 Aug 2024 08:12:53 -0700 (PDT)
-Received: from [127.0.1.1] ([213.208.157.67])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d27157145sm2179881f8f.12.2024.08.08.08.12.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 08:12:53 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 08 Aug 2024 17:12:39 +0200
-Subject: [PATCH v2 3/3] leds: as3645a: use device_* to iterate over device
- child nodes
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B6A18F2CF;
+	Thu,  8 Aug 2024 15:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723129984; cv=fail; b=rmBqU/LG5ngwL9rBI3USSdapK+CPYPIhiyAi9qC37LuFZtSnlPUjEvyyxGRz34dYSa0NyRcZCWGEPYSn39NZbuHkyrC22Y+txFz902A/mHXAIqs5dkmCT93je6edJqMzJPt7TTK+u5nXn/2L/R52xMKregSWVuTZIP5tw3ZlpCE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723129984; c=relaxed/simple;
+	bh=BkffYbMsaCOLZ/2v42jLYqo8dGGUAWTP0Q7bCbOrhzo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=L30lbSGLN4EKJ3IhA0MAkAwbtbwEUkaMfewRcw4Jvu0ks1RgpCK2x0s/BUuIL5q/6gDDDWhzR97E6UNM+GP0CdaL6/F+dayCp45bTHJ45z/xpT0pWL4CeBPC6BIOmczJhX8ZQQa7SSW0HgTGhEwxQgdr7Kgn0KIcvyzYsa429Xs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jigwbW6K; arc=fail smtp.client-ip=40.107.236.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h2PJxcPvbjEV07qKw/GrmX7b0NL/AvhyCIeGoA3hgFGourYlP/3Rsy1be8E+c/W4U9HH5hWVuw0a8r973IuCqbQ2L8Ujh4iuSzTCqoH/jz6ZgQLJsCNffyWARbmS2TAXKzDbGXEKZtS/htup16MskQVhjUMpZ17HS7dxpULz1+Gvv8uEYrr8DA6FShcxrhdrYWCsGIw96L2U+WAzFNsxKmDLCyvfmkq17W/ukfERfF1fCJyOCebtWz4d6t3VmvjZtGQ0kbBUxn2caQmW82Pu5bXWRtbApyLGn5shKycoNl4qHz6GRSrWCfGKNG464QrL4wL6DjKQgPKmcqjUdMVo6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5El8tZWDS8+eHzhb8zYbn0/0VsdhiDkl4YaMVVZ5/qc=;
+ b=pgDm1reKciqmt5ISv1JQTF5+1XqDifNEIhCnlp+Mshnm0iJbs0X9N+pPR2fLdIAA2vQZi7daoYyk8WoXkGxJ2lPBqIY5W/MP9eFcImr9OkKh0veWpcpTrleg/acmMvSrLfgllRDe6jfwzZovvmuntWCZwRzxaImaxHeZmVezYnw5NA7yy+wz3PlQsyYs5sXQy1jnvpIJcgDQnDoJW1ySqjZRDZxFmkG2b9d92aynyjIj0zvP2r6WJ+Y0s4b/Pbd/zkXJCtMAmuhyAGzsHooDCUqEVhTIbMlcPR21VnmYKTXC8Oxr3pFUrAJG/Ht/b1eWaDjhtp/UodUeQgVAM404DQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5El8tZWDS8+eHzhb8zYbn0/0VsdhiDkl4YaMVVZ5/qc=;
+ b=jigwbW6K3YGUG0FKYkYeJlP5x0vtt+bxkf4tDPyqfpJjReaXZmZzEyvcy3Ut8c53GHbmoHDra1VtLuScXBNVAZMlRf/L+3/nW16GvB5KUDCgW/TUOLCibkYzYk1e1MLI80KaRLO5gUsXn8fFHnjsOpBYjv/Xx37QACpxFDw2+H+TG7Fb6ObZYCIQpP0dhk3X6AFHtB/vZdXldfRSizulKNa5M4joG8CE5u0+UVnUuzO0cPJ7DrtbPQ+qPkIuWgP2pNVCtCglfM1DXq+GzYe/PQQ8OyRzooURvnz0gHbKZJaohhD1LzgJyAyvn2hyZk3b7ImNiUn0b0GAyE70qvIo2Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CYXPR12MB9320.namprd12.prod.outlook.com (2603:10b6:930:e6::9)
+ by SJ0PR12MB6990.namprd12.prod.outlook.com (2603:10b6:a03:449::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.33; Thu, 8 Aug
+ 2024 15:12:58 +0000
+Received: from CYXPR12MB9320.namprd12.prod.outlook.com
+ ([fe80::9347:9720:e1df:bb5f]) by CYXPR12MB9320.namprd12.prod.outlook.com
+ ([fe80::9347:9720:e1df:bb5f%3]) with mapi id 15.20.7828.023; Thu, 8 Aug 2024
+ 15:12:57 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
+ "Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm/numa: no task_numa_fault() call if page table is
+ changed
+Date: Thu, 08 Aug 2024 11:12:54 -0400
+X-Mailer: MailMate (1.14r6052)
+Message-ID: <819987AD-273B-4AFB-9447-39F32664EBDE@nvidia.com>
+In-Reply-To: <6447AB19-CC4D-40C2-94F5-C39DE132E1D6@nvidia.com>
+References: <20240807184730.1266736-1-ziy@nvidia.com>
+ <956553dc-587c-4a43-9877-7e8844f27f95@linux.alibaba.com>
+ <1881267a-723d-4ba0-96d0-d863ae9345a4@redhat.com>
+ <09AC6DFA-E50A-478D-A608-6EF08D8137E9@nvidia.com>
+ <052552f4-5a8d-4799-8f02-177585a1c8dd@redhat.com>
+ <8890DD6A-126A-406D-8AB9-97CF5A1F4DA4@nvidia.com>
+ <b0b94a65-51f1-459e-879f-696baba85399@huawei.com>
+ <6447AB19-CC4D-40C2-94F5-C39DE132E1D6@nvidia.com>
+Content-Type: multipart/signed;
+ boundary="=_MailMate_473F7B1E-360E-4679-9AD5-B602A0B9770C_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+X-ClientProxiedBy: MN2PR02CA0017.namprd02.prod.outlook.com
+ (2603:10b6:208:fc::30) To CYXPR12MB9320.namprd12.prod.outlook.com
+ (2603:10b6:930:e6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240808-device_child_node_access-v2-3-fc757cc76650@gmail.com>
-References: <20240808-device_child_node_access-v2-0-fc757cc76650@gmail.com>
-In-Reply-To: <20240808-device_child_node_access-v2-0-fc757cc76650@gmail.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, 
- Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, 
- Michal Simek <michal.simek@amd.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, 
- Lee Jones <lee@kernel.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
- linux-leds@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723129965; l=1681;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=nEcNIE1U7DZAocIwTQqOGm97es75K5AAksPENUTjEFw=;
- b=yK5A5zMeB7sJ1oAnNbYGRuh0S9Y0nLJS/9nl8xfh6aDTDvvJRaVGSdFyccjPSKkv0RBXsa9yn
- kTVocwI/IrBBGlgGPYpMb9nlcqZKE9bVZrGFgVSRkFl3eRsPBOtEwcU
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYXPR12MB9320:EE_|SJ0PR12MB6990:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5383aa71-2594-4121-4581-08dcb7bc95e4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?it0ELEpfDWV19URrERq/++U0y3MoofKY9cJPx9OnXQ9P7M04AEYQBiOHMpiU?=
+ =?us-ascii?Q?3lI9TZ8Vhc87KbIuEs3no+u+xTxkjA/IYLxTfiN1u2glgYtcrFP2+HXIlhj7?=
+ =?us-ascii?Q?I5/kuhWT83UEewiL7pJvNgdR22UaiGIbJzBLLtZwYtUWb/HbDvjcuFxgLRUq?=
+ =?us-ascii?Q?gtTk7JQTPkPmlb8YuxGH4nuAxofwM86R2UvtYaIt/uP8n3fod1BLDMY8LqEU?=
+ =?us-ascii?Q?b9dWryic6GevZf52TkTDXSXkqr0pNjFpn+rmj105sQOl7p4br43iaPvvIdu2?=
+ =?us-ascii?Q?8FOdOXk048Pqx2r/QnrSRFhskmq5M/JBCtKld5nnEk67JWI3Vs7uui+KIDs1?=
+ =?us-ascii?Q?9xVjPCicCBGadpyCGPuqrK/j9olspYK0TFRjdCESUXdFY8mPVk6wQyT5ueBT?=
+ =?us-ascii?Q?C126G3jSltGLG57ARKN6yt0HvR9CcBFtM+kTpT1YIdiZilHJ25RgsMCCtwj/?=
+ =?us-ascii?Q?2tTm6WSSnCGepozx2dtLKsnjItAv3zQOX3EVOIi7v1HkBW0ewZEI3RudUK6k?=
+ =?us-ascii?Q?rnwrTlYoBN83fTZl+RqAZTG7bOsuNralS3XA5GmbD3JcLDmYgVkZI0mLw4fP?=
+ =?us-ascii?Q?X9ajJuHQk9OMVo0CIZb0EdAbMKAbJ0RM86uveVUCuvstJA3AurqB6hIhgKvL?=
+ =?us-ascii?Q?b8acDHfJT4XR5//PtzYP5IjymFXamOGVvOHAYPbDBHd0dzla9M8cqZUOgTXv?=
+ =?us-ascii?Q?PS8L8S6Q2mp4PcxCpIzGOXYftJ/JzzPKLmlw97R2Izf+jct73yXiOyG1Mor9?=
+ =?us-ascii?Q?r/PHgeoiQSHQ/WhvKfOSH/uP3Z8cgJRtywAwB6yp70HjdBDrKc5X1Fhomdjk?=
+ =?us-ascii?Q?5TDAEDUdNE07ldi7nOErLdxO1FABtXKTjvyVWkW/l12sauqDe3kCT8/6QX2L?=
+ =?us-ascii?Q?qzXD6jhaM5Utf4VRSoQUoaeMnHW9VojslX7uBaDScuZ17/9u1dBr90ms5mbT?=
+ =?us-ascii?Q?rV4CwxXj44HZ7+70H45Ri+ZWyWcRjHbil8KUlytpSqzcMQRQflm7iP9BRyzt?=
+ =?us-ascii?Q?X6PhqeJy/GijRvAuCsaQ3oJpyD/FVkI4v0fWtWS+DWPwgMzSJZrxH1olrKd4?=
+ =?us-ascii?Q?TJYS+vDxcbeCp0oXKbPHJD6MoiCegodtdxuAQyN/12wzHo5DyD8TPrqb1Ofv?=
+ =?us-ascii?Q?vZqg4l4tVeN6pBwZNRFZqsrf4uZ9X4065/wtpOOOj9k0dGUtM0q61C6OdXvb?=
+ =?us-ascii?Q?iPy0GASRzDkq6Va7gkcmp2OFN5DLua8rhGr9Ruw8K5gTrkcUV2V0wHnZukzp?=
+ =?us-ascii?Q?Cpn/ubFE9EoncUl3BgNrbKjFk0sK2vIk+ejUKr1YqpK4IRyme2KH4tEyJEi0?=
+ =?us-ascii?Q?ETSZP5U21tVuIyiN7Kanr9RIjrCC2sCpwjkuipKDm5Ds3Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYXPR12MB9320.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QqS1HwKWE+R2Y7WWQjCpV3J9QyIhrdd2Pr8tdRQ7C1RD60Otva0AM0aJS+km?=
+ =?us-ascii?Q?2U1nocHloIpwzfDuMjDoiy+wkAn8He09g0I2aV/tfCXmh0a13r/skVUmAOFe?=
+ =?us-ascii?Q?SRfZi51eeNf/6E19paW4bZBJZh9U1N6aAjrPwQ3bUp4TKOXNMs13G3BVwh1T?=
+ =?us-ascii?Q?IKqQGK1lB3CpVwGqQNDJ5BwXuVzL+54bbwTXhEYvg4otw7fZllbAX+iTvyqj?=
+ =?us-ascii?Q?xv0VFgXN8AtCVhGCYOgLvR9VbL9nJ/72ivH99EhBCfyJwsoEl0dVUviKinDx?=
+ =?us-ascii?Q?5LKs+jfvNkq9l5iDHNkaMsJhBybWl4QumOA1PaBx+5MlTYUUiDJ8kEH+GxEL?=
+ =?us-ascii?Q?KVTN62TU4blXOQ0qy3FTrrdUp31z4DeflJ+chTIfxbv/PirJz0rReHfTcM4A?=
+ =?us-ascii?Q?Bc1BpQ6YX7wGjz0WtW3CuPH744oFdXhP6ZC/S75aQIwOjTPsoDLymU1qb9AG?=
+ =?us-ascii?Q?iCtKZB41RmWobGtZruncBo2X9jvBoNGVsGUZ1p2fzM2x7NSYdtwgulMmZ7NM?=
+ =?us-ascii?Q?9v0oJVKnnxUkuERzxKNKZ8pauabNyKfGW+rKH48AMRYFLj02ybrvvRWAs+u3?=
+ =?us-ascii?Q?0Lr+XwzoLGAMMm2br2Jr5ZKzg7urpTJqaR8Ea8Zwa5cLmbyXjSD1Pp5pVC0o?=
+ =?us-ascii?Q?77fFLsK4qMHQADLjRYchUYDVP+iM82z/j5nM1O1QReEwljuh2/0f10yJAfT1?=
+ =?us-ascii?Q?MT4aZJIvULftTdDOEXF/iZwOJwKPxGgcWXDuMptlQwQaJewPV59/dV3yu236?=
+ =?us-ascii?Q?ywgvzICzJzen+m1coMX2S9H4nIZQg4pshRwO7MjG0pD6eMwxRa5+nM+aXKQC?=
+ =?us-ascii?Q?AvnlJpkIFj2aWPOo2x2Xo/0yQ2h5e2IeqtWD93RSzgczB/nmgdJyWwdbJe3a?=
+ =?us-ascii?Q?YCFkksbYg5rfsYYONJ5uS9yt4xC23mN+sIcJw99GMF8U4q4N45Yj6dZWAQZv?=
+ =?us-ascii?Q?yQR5ir2k6QNtkTnQi6Cdlb+M6dCEbXcZQgiyLOdNmOZ9shNGFi2JEC+F/XmB?=
+ =?us-ascii?Q?lFz93ynIFeDplq3jnO2jU0aIIJswcxLLD/5FEwE4vKBB+1PVHmy6nj682jL8?=
+ =?us-ascii?Q?JONWsVc6p3fbBwLU58RB4RpkBRN4/Hx/Xr/iol4xpO5SRDBcI19eHdO8v1OS?=
+ =?us-ascii?Q?2k/BvpFSmOmAPdHgj3PoHaBt2GoW1PUaKChVV6nq/cjuyKwYgOOHWEAmhzYI?=
+ =?us-ascii?Q?WgpFsblNXBAFum6GIaCbuWYsXwO4eP8nAf0xbryZkyBi5wJPvP9zVcFjYJuI?=
+ =?us-ascii?Q?Iwv5C0irvyRUvug7E9CcSW9q9uT0ENu20ku6dJ3t+p/c5YD57JfhYHjt6fbE?=
+ =?us-ascii?Q?dwLgIczHvXBEt+Ou8cJizSPVXF8FUstCRg1iS6ZwuNAKgTrpt0N/K7nmVQDe?=
+ =?us-ascii?Q?OcyBfhpRWoxrx4+WEBK8kmqYLBs3pK3OSwVSiuBKGQv5Z2KkKVrFsa++fz46?=
+ =?us-ascii?Q?BfxSwNWq5xGhcDY0SvKIDYBTpq5KNgF0w6mP9c1JipVMY1UJ40/rLu/KuKn0?=
+ =?us-ascii?Q?IP3M/vJ57IEem/vv3q8KAk3PuVByAA52UCMcxvc8IJi5J2QV2fLjdh++eExC?=
+ =?us-ascii?Q?MtUC42H+phRiSo9GX17Mh3vS0NH1WxkFBAhm5cq4?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5383aa71-2594-4121-4581-08dcb7bc95e4
+X-MS-Exchange-CrossTenant-AuthSource: CYXPR12MB9320.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 15:12:57.7547
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eU/ryagp+BxWLQf73JYd3wQSwElDF8V3x/Koe+6AWQbFtNBAeGIIbyINroYFov1x
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6990
 
-Drop the manual access to the fwnode of the device to iterate over its
-child nodes. `device_for_each_child_node` macro provides direct access
-to the child nodes, and given that the `child` variable is only required
-within the loop, the scoped variant of the macro can be used.
+--=_MailMate_473F7B1E-360E-4679-9AD5-B602A0B9770C_=
+Content-Type: multipart/mixed;
+ boundary="=_MailMate_6830DC5F-D16D-4DF3-8B2A-B5AA7286B356_="
 
-Use the `device_for_each_child_node_scoped` macro to iterate over the
-direct child nodes of the device.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+--=_MailMate_6830DC5F-D16D-4DF3-8B2A-B5AA7286B356_=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+On 8 Aug 2024, at 10:57, Zi Yan wrote:
+
+> On 8 Aug 2024, at 10:36, Kefeng Wang wrote:
+>
+>> On 2024/8/8 22:21, Zi Yan wrote:
+>>> On 8 Aug 2024, at 10:14, David Hildenbrand wrote:
+>>>
+>>>> On 08.08.24 16:13, Zi Yan wrote:
+>>>>> On 8 Aug 2024, at 4:22, David Hildenbrand wrote:
+>>>>>
+>>>>>> On 08.08.24 05:19, Baolin Wang wrote:
+>>>>>>>
+>>>>>>>
+>> ...
+>>>>>> Agreed, maybe we should simply handle that right away and replace =
+the "goto out;" users by "return 0;".
+>>>>>>
+>>>>>> Then, just copy the 3 LOC.
+>>>>>>
+>>>>>> For mm/memory.c that would be:
+>>>>>>
+>>>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>>>> index 67496dc5064f..410ba50ca746 100644
+>>>>>> --- a/mm/memory.c
+>>>>>> +++ b/mm/memory.c
+>>>>>> @@ -5461,7 +5461,7 @@ static vm_fault_t do_numa_page(struct vm_fau=
+lt *vmf)
+>>>>>>            if (unlikely(!pte_same(old_pte, vmf->orig_pte))) {
+>>>>>>                   pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>>>>> -               goto out;
+>>>>>> +               return 0;
+>>>>>>           }
+>>>>>>            pte =3D pte_modify(old_pte, vma->vm_page_prot);
+>>>>>> @@ -5528,15 +5528,14 @@ static vm_fault_t do_numa_page(struct vm_f=
+ault *vmf)
+>>>>>>                   vmf->pte =3D pte_offset_map_lock(vma->vm_mm, vmf=
+->pmd,
+>>>>>>                                                  vmf->address, &vm=
+f->ptl);
+>>>>>>                   if (unlikely(!vmf->pte))
+>>>>>> -                       goto out;
+>>>>>> +                       return 0;
+>>>>>>                   if (unlikely(!pte_same(ptep_get(vmf->pte), vmf->=
+orig_pte))) {
+>>>>>>                           pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>>>>> -                       goto out;
+>>>>>> +                       return 0;
+>>>>>>                   }
+>>>>>>                   goto out_map;
+>>>>>>           }
+>>>>>>    -out:
+>>>>>>           if (nid !=3D NUMA_NO_NODE)
+>>>>>>                   task_numa_fault(last_cpupid, nid, nr_pages, flag=
+s);
+>>>>>>           return 0;
+>>
+>> Maybe drop this part too,
+>>
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 410ba50ca746..07343c1469e0 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -5523,6 +5523,7 @@ static vm_fault_t do_numa_page(struct vm_fault *=
+vmf)
+>>         if (!migrate_misplaced_folio(folio, vma, target_nid)) {
+>>                 nid =3D target_nid;
+>>                 flags |=3D TNF_MIGRATED;
+>> +               goto out;
+>>         } else {
+>>                 flags |=3D TNF_MIGRATE_FAIL;
+>>                 vmf->pte =3D pte_offset_map_lock(vma->vm_mm, vmf->pmd,=
+
+>> @@ -5533,12 +5534,8 @@ static vm_fault_t do_numa_page(struct vm_fault =
+*vmf)
+>>                         pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>                         return 0;
+>>                 }
+>> -               goto out_map;
+>>         }
+>>
+>> -       if (nid !=3D NUMA_NO_NODE)
+>> -               task_numa_fault(last_cpupid, nid, nr_pages, flags);
+>> -       return 0;
+>>  out_map:
+>>         /*
+>>          * Make it present again, depending on how arch implements
+>> @@ -5551,6 +5548,7 @@ static vm_fault_t do_numa_page(struct vm_fault *=
+vmf)
+>>                 numa_rebuild_single_mapping(vmf, vma, vmf->address, vm=
+f->pte,
+>>                                             writable);
+>>         pte_unmap_unlock(vmf->pte, vmf->ptl);
+>> +out:
+>>         if (nid !=3D NUMA_NO_NODE)
+>>                 task_numa_fault(last_cpupid, nid, nr_pages, flags);
+>>         return 0;
+>
+> Even better. Thanks. The updated fixup is attached.
+Update the fixup, if Andrew wants to fold it in instead of a resend, agai=
+n to fix a typo causing compilation failure.
+
+Best Regards,
+Yan, Zi
+
+--=_MailMate_6830DC5F-D16D-4DF3-8B2A-B5AA7286B356_=
+Content-Disposition: attachment;
+ filename=0001-fixup-mm-numa-no-task_numa_fault-call-if-page-table-.patch
+Content-ID: <0C90E745-3609-43D3-A8DE-6FB0760B4E56@nvidia.com>
+Content-Type: text/plain;
+ name=0001-fixup-mm-numa-no-task_numa_fault-call-if-page-table-.patch
+Content-Transfer-Encoding: quoted-printable
+
+=46rom b42f0e90ed0b4117139cf66de2d6f83e3d8bcf8d Mon Sep 17 00:00:00 2001
+From: Zi Yan <ziy@nvidia.com>
+Date: Thu, 8 Aug 2024 10:18:42 -0400
+Subject: [PATCH] fixup! mm/numa: no task_numa_fault() call if page table =
+is
+ changed
+
 ---
- drivers/leds/flash/leds-as3645a.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ mm/huge_memory.c | 18 +++++++-----------
+ mm/memory.c      | 19 ++++++++-----------
+ 2 files changed, 15 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/leds/flash/leds-as3645a.c b/drivers/leds/flash/leds-as3645a.c
-index 2c6ef321b7c8..8e6abedf6e00 100644
---- a/drivers/leds/flash/leds-as3645a.c
-+++ b/drivers/leds/flash/leds-as3645a.c
-@@ -478,14 +478,12 @@ static int as3645a_detect(struct as3645a *flash)
- 	return as3645a_write(flash, AS_BOOST_REG, AS_BOOST_CURRENT_DISABLE);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index a3c018f2b554..4e4364a17e6d 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1681,7 +1681,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *v=
+mf)
+ 	vmf->ptl =3D pmd_lock(vma->vm_mm, vmf->pmd);
+ 	if (unlikely(!pmd_same(oldpmd, *vmf->pmd))) {
+ 		spin_unlock(vmf->ptl);
+-		goto out;
++		return 0;
+ 	}
+ =
+
+ 	pmd =3D pmd_modify(oldpmd, vma->vm_page_prot);
+@@ -1724,23 +1724,16 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault =
+*vmf)
+ 	if (!migrate_misplaced_folio(folio, vma, target_nid)) {
+ 		flags |=3D TNF_MIGRATED;
+ 		nid =3D target_nid;
++		goto out;
+ 	} else {
+ 		flags |=3D TNF_MIGRATE_FAIL;
+ 		vmf->ptl =3D pmd_lock(vma->vm_mm, vmf->pmd);
+ 		if (unlikely(!pmd_same(oldpmd, *vmf->pmd))) {
+ 			spin_unlock(vmf->ptl);
+-			goto out;
++			return 0;
+ 		}
+-		goto out_map;
+ 	}
+ =
+
+-count_fault:
+-	if (nid !=3D NUMA_NO_NODE)
+-		task_numa_fault(last_cpupid, nid, HPAGE_PMD_NR, flags);
+-
+-out:
+-	return 0;
+-
+ out_map:
+ 	/* Restore the PMD */
+ 	pmd =3D pmd_modify(oldpmd, vma->vm_page_prot);
+@@ -1750,7 +1743,10 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *=
+vmf)
+ 	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, pmd);
+ 	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
+ 	spin_unlock(vmf->ptl);
+-	goto count_fault;
++out:
++	if (nid !=3D NUMA_NO_NODE)
++		task_numa_fault(last_cpupid, nid, HPAGE_PMD_NR, flags);
++	return 0;
  }
- 
--static int as3645a_parse_node(struct as3645a *flash,
--			      struct fwnode_handle *fwnode)
-+static int as3645a_parse_node(struct as3645a *flash, struct device *dev)
- {
- 	struct as3645a_config *cfg = &flash->cfg;
--	struct fwnode_handle *child;
- 	int rval;
- 
--	fwnode_for_each_child_node(fwnode, child) {
-+	device_for_each_child_node_scoped(dev, child) {
- 		u32 id = 0;
- 
- 		fwnode_property_read_u32(child, "reg", &id);
-@@ -686,7 +684,7 @@ static int as3645a_probe(struct i2c_client *client)
- 
- 	flash->client = client;
- 
--	rval = as3645a_parse_node(flash, dev_fwnode(&client->dev));
-+	rval = as3645a_parse_node(flash, &client->dev);
- 	if (rval < 0)
- 		return rval;
- 
+ =
 
--- 
+ /*
+diff --git a/mm/memory.c b/mm/memory.c
+index 503d493263df..d9b1dff9dc57 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5461,7 +5461,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf=
+)
+ =
+
+ 	if (unlikely(!pte_same(old_pte, vmf->orig_pte))) {
+ 		pte_unmap_unlock(vmf->pte, vmf->ptl);
+-		goto out;
++		return 0;
+ 	}
+ =
+
+ 	pte =3D pte_modify(old_pte, vma->vm_page_prot);
+@@ -5523,24 +5523,18 @@ static vm_fault_t do_numa_page(struct vm_fault *v=
+mf)
+ 	if (!migrate_misplaced_folio(folio, vma, target_nid)) {
+ 		nid =3D target_nid;
+ 		flags |=3D TNF_MIGRATED;
++		goto out;
+ 	} else {
+ 		flags |=3D TNF_MIGRATE_FAIL;
+ 		vmf->pte =3D pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+ 					       vmf->address, &vmf->ptl);
+ 		if (unlikely(!vmf->pte))
+-			goto out;
++			return 0;
+ 		if (unlikely(!pte_same(ptep_get(vmf->pte), vmf->orig_pte))) {
+ 			pte_unmap_unlock(vmf->pte, vmf->ptl);
+-			goto out;
++			return 0;
+ 		}
+-		goto out_map;
+ 	}
+-
+-count_fault:
+-	if (nid !=3D NUMA_NO_NODE)
+-		task_numa_fault(last_cpupid, nid, nr_pages, flags);
+-out:
+-	return 0;
+ out_map:
+ 	/*
+ 	 * Make it present again, depending on how arch implements
+@@ -5553,7 +5547,10 @@ static vm_fault_t do_numa_page(struct vm_fault *vm=
+f)
+ 		numa_rebuild_single_mapping(vmf, vma, vmf->address, vmf->pte,
+ 					    writable);
+ 	pte_unmap_unlock(vmf->pte, vmf->ptl);
+-	goto count_fault;
++out:
++	if (nid !=3D NUMA_NO_NODE)
++		task_numa_fault(last_cpupid, nid, nr_pages, flags);
++	return 0;
+ }
+ =
+
+ static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
+-- =
+
 2.43.0
 
+
+--=_MailMate_6830DC5F-D16D-4DF3-8B2A-B5AA7286B356_=--
+
+--=_MailMate_473F7B1E-360E-4679-9AD5-B602A0B9770C_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAma04HYPHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqKdEsP/Ag/5HtDcp/nHNcYmliTEMbAcfLoBKabL1x0
+BKucnT+XNDxiG/58u0s9+0cN0PJ8DD6EBV9b1cKPbtoBPMQHe0IX8G62MCJmhfdH
+GAAFWvm4aK+DowEabcjqAGnnPH683dQik3AJJG1RySwngWoTsBovYroXCHN+pv+a
+qFL+3zzXAyFDdhi9uuS/hKARTazBtqBqvDEmuDhJS6q6FSd8BvFjU0znzmC6cL+z
+Elkm492TqrLJecdaib8IkJaMV0vwq2r+RrKau3BRywYL5qKXdTF5+QOpc4KPqxwr
+m6LB7ksEYTwrWVgAQCw+U4nIQDpMxkc7fK21Pjg3/BXRWsjqSXXzpfgyRGJ2Q/Nc
+iQjEoOoNCnfpoVl/ocBkJ+jCo94UHI0aRG0nebKCjYno00MSmGF1GzNLbyWkZt0g
+aMnzkHBTcw/VyqiyT3wGIqCxes11Mfm3M1flGyxll/3iAQm2+fXquM5lrFx0AVQN
+wFapvt5evwczcx/QWoZ/1SU69uikGonncg1zkceo8yl2vKbr9Fad6mjUIM8+vhXT
+/jQ5fC1Gtck+7J48/PYiHNrBIk7yaRBjiLvnagac5piky3do13zd2dooHrNn3Xu6
+rNhYEWcHOUbSXvhjmOTbq4rveJ6iSotw5pa6P+Q0imOnDzt9c+m6NjINc/fcAdww
+nWxfaHBg
+=A2nN
+-----END PGP SIGNATURE-----
+
+--=_MailMate_473F7B1E-360E-4679-9AD5-B602A0B9770C_=--
 
