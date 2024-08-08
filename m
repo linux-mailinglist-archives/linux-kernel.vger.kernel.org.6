@@ -1,112 +1,206 @@
-Return-Path: <linux-kernel+bounces-278773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C5594B496
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:21:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A95994B49D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC99283575
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:21:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B32A51F22677
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D1679CC;
-	Thu,  8 Aug 2024 01:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED94DB66C;
+	Thu,  8 Aug 2024 01:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YV0oFUra"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WMyNtwaF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E651520ED
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 01:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9586553BE;
+	Thu,  8 Aug 2024 01:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723080062; cv=none; b=nClmKxK5BEe1Ub0w6vwy4SpgWbclGb/8Qj/Cv1JcMjvDXWdsGKxTbqn+k3/HrzNRD1nkn/DO4mjx4OIvLyFB+d6a3Z7j/XOZ7uDH+Wx0Le1vW3ud+yylsue2ekKP0a/maI219DRsqFuTDoEw38aa5WeWsIuDb5Kingz1kyT+COk=
+	t=1723080246; cv=none; b=o9KnrhsH6aJmHrWQQ5zgAXF7esHLo+S+QWvW5K4Pv6xupw+kQ9Y86dwssh6tz1iy8GdI6HLQXmRbfWc5T9J6n9n0rl/XtAnO/1ZSR4WapkSEpJ9v1UxQD/JO7qeTeoI2a26Tw6dG05e5no9LKru5+2KhNhE67bR1DLpfxR/o0aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723080062; c=relaxed/simple;
-	bh=ajeMim90UvalacYDca1a9fc0jeI9eLG6wQ634RMEP5o=;
-	h=From:Subject:To:Cc:In-Reply-To:References:MIME-Version:
-	 Content-Type:Date:Message-ID; b=aYhWKVZ/9msdbjktmA9S985FRj3GSHlUrqWfCnACHJqaGt7/9JJV9vamMisy5xujdI5oUUrXWbBhjM1qyKj2GMhUVs24P1eROv/sOpMcdix9Etbwp+ZAEKwIlzRUF2XAnTtRn2KmbfSttoY3qOF7fuQwq81QBXE7YXzEBaNsrNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YV0oFUra; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d316f0060so1053873b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 18:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723080060; x=1723684860; darn=vger.kernel.org;
-        h=message-id:date:content-id:mime-version:references:in-reply-to:cc
-         :to:subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sgrFpyqpMIIoSCjw4gHzwzuWC7LSft9+V2d21z+sLXw=;
-        b=YV0oFUra2BYQZezUn4T8oY6aLIhc/Wra5KjwIs1KDfj37iLjP/iGl/7P0Mijyl+ILH
-         htCl5V+eeFMJgTKV7jHmtJYHxZHoWOXZxTqzH1ggmr3mLo10ZlK5AGJEzGxToq/NmTPp
-         uU6+ReTzvkjUh7OtGGKYNf6ndXuwVpPaZv6GMZtXhIRSf8EvMZQey6hLrSy1qzxvoQyZ
-         oofjauNo9XGxtDu14g2Sltp/OlKBvVqWrnu4hqpoJO1TOKDRUOaSvLlLgzk+pPzQ5Du+
-         xePgcG36BwivJ/OsyoPMIxP2ALNOGWSEdjoTSjGpt0Q3mN8NTOB66Mm9bha+Wio6Z+ca
-         1LnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723080060; x=1723684860;
-        h=message-id:date:content-id:mime-version:references:in-reply-to:cc
-         :to:subject:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sgrFpyqpMIIoSCjw4gHzwzuWC7LSft9+V2d21z+sLXw=;
-        b=oRK7Uten19sm5kXs4jLBi/Km3AR5imSANU0VIjJg7YThAR+SLdcHbTQMy9Q1m6YtgP
-         xXFJ3KfXEvPZnEnS1OICwYgtK72teTvPVVkH5I80utdBqQR6gInvO1i6gYAWhzyBIz/9
-         IIz47TL2TSLeaQBBACQ+c4Vq+QrdH+PwWdgkn7k1MAzb0TtbxFZw2aZJnZZEIB2U4C0U
-         CmPg0vFW6A/MUH/XCAr/euOtu/zw+PMlqxjEFfHRa7O9FQ5928tepuJ9APN06Qo+4b9U
-         1fNsv6Xey2RSVBonghHvUuBZli9rUyYU5iphJEDs3VVCHJCPm7d+PB9oAzkwZ1qUDepl
-         qcMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVL0Kijf73OTxik897MwqZMc7XosWtQ5eUw3ulkYVp5/lf804K16b6yF93t7L5qkwi/402kjQASsOvniYeMfkjOTTzBPNou1Bz2fSH3
-X-Gm-Message-State: AOJu0YwvT2bhCPozIDUwpLsOm+V7FAXznbZIgGCxT+Of9EumR5wQ6r2E
-	xGZPdZlcu+Yrn1XFtywVwd0SFIobItQuQ1W78PePxdKWRVz4in2otbJDjg==
-X-Google-Smtp-Source: AGHT+IG3mrZOTPiOQK6HTGGGu81lQ9knbT5Iw3b2XivEv3jJH1Qf/Y7ZytHdxcF0nqD8lQiXI0LOkw==
-X-Received: by 2002:a05:6a20:734a:b0:1c0:f114:100c with SMTP id adf61e73a8af0-1c6fd687f7fmr308583637.17.1723080060078;
-        Wed, 07 Aug 2024 18:21:00 -0700 (PDT)
-Received: from jromail.nowhere (h219-110-241-048.catv02.itscom.jp. [219.110.241.48])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2fa3dasm122488b3a.193.2024.08.07.18.20.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 18:20:59 -0700 (PDT)
-Received: from jro by jrotkm2 id 1sbrpq-0000OH-0q ;
-	Thu, 08 Aug 2024 10:20:58 +0900
-From: "J. R. Okajima" <hooanon05g@gmail.com>
-Subject: Re: [PATCH v2 1/3] lockdep: fix upper limit for LOCKDEP_*_BITS configs
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-    linux-kernel@vger.kernel.org, kernel-team@android.com,
-    Peter Zijlstra <peterz@infradead.org>,
-    Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-    Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
-In-Reply-To: <20240807143922.919604-2-cmllamas@google.com>
-References: <20240807143922.919604-1-cmllamas@google.com> <20240807143922.919604-2-cmllamas@google.com>
+	s=arc-20240116; t=1723080246; c=relaxed/simple;
+	bh=Wq2V+URM8X6t0tiJlQDxKR2P6vbpnEkooM3I2HkeLKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tdOZysa+v9K6OycLcilOVVtDLkT9BkdwkJSaTV/wR9VWLKStO9Obv2mLGygM9+Jm5N4w+gFhdrxrMeRpbtFHqli71slrs46ZUQjGPRLWZMZXgFCNhjUGXF5/yUvZACRWjq4GhChhHzkurUoPMLmsGAUEVY3wmjIpbLebTu07l6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WMyNtwaF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477NdsFT011985;
+	Thu, 8 Aug 2024 01:23:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Wq2V+URM8X6t0tiJlQDxKR2P6vbpnEkooM3I2HkeLKQ=; b=WMyNtwaFmkf1Qp1o
+	VMNMKSxvx5Pzkx4zzziBDcrYNlA8vgB2dJ1VYTu47rACjwCrWflPxdSTsyQbmw4u
+	hB17KItl7QqtdKAz8HjAx2i8xSB09md713lEXXxLPiVS6TZOlNmlO0uNxoFQILm9
+	u5y+rzvG//mm9xHZ2PsCVNb6GvJ2PtQu5DVCUW8hf+yLrvCIOuJLY6KLVrV01etY
+	yzDZQi7RoYip1a4XuN1sd00KYh1vF1gE5JHAub2Mq5j6ANJrHYTjtLH6gLS7y9vZ
+	uL4My0ycD9CcWm0xdFQSnCfL2zLgwYVLeHkjBBg72R3jJDGeadIqNbJi5amkhi+p
+	zSGCSA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sa8f4crg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 01:23:47 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4781NkGD008725
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 Aug 2024 01:23:46 GMT
+Received: from [10.71.113.127] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 18:23:45 -0700
+Message-ID: <d2a7ea11-bff3-406e-945c-2edd427da234@quicinc.com>
+Date: Wed, 7 Aug 2024 18:23:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1502.1723080058.1@jrotkm2>
-Date: Thu, 08 Aug 2024 10:20:58 +0900
-Message-ID: <1503.1723080058@jrotkm2>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 12/34] ASoC: doc: Add documentation for SOC USB
+To: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+	<amadeuszx.slawinski@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-13-quic_wcheng@quicinc.com>
+ <1a93dbae-6fba-4f07-a732-51a4cd98ff2a@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <1a93dbae-6fba-4f07-a732-51a4cd98ff2a@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: V0cUcdzHelabXu5uAdaJg1g3v8T3tWBE
+X-Proofpoint-ORIG-GUID: V0cUcdzHelabXu5uAdaJg1g3v8T3tWBE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_15,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=970
+ impostorscore=0 lowpriorityscore=0 suspectscore=0 mlxscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408080008
 
-Carlos Llamas:
-> Adjust the upper limits to the maximum values that avoid these issues.
-> The need for anything more, likely points to a problem elsewhere. Note
-> that LOCKDEP_CHAINS_BITS was intentionally left out as its upper limit
-> had a different symptom and has already been fixed [1].
+Hi Amadeusz,
 
-I tried setting all these configs to maximum, but still I got the error.
-	ld: kernel image bigger than KERNEL_IMAGE_SIZE
+On 8/6/2024 7:51 AM, Amadeusz Sławiński wrote:
+> On 8/1/2024 3:17 AM, Wesley Cheng wrote:
+>> With the introduction of the soc-usb driver, add documentation highlighting
+>> details on how to utilize the new driver and how it interacts with
+>> different components in USB SND and ASoC.  It provides examples on how to
+>> implement the drivers that will need to be introduced in order to enable
+>> USB audio offloading.
+>>
+>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> ---
+>
+> (...)
+>
+>> +
+>> +One potential use case would be to support USB audio offloading, which is
+>> +an implementation that allows for an external DSP on the SoC to handle the
+>> +transfer of audio data over the USB bus.  This would let the main
+>> +processor to stay in lower power modes for longer durations.  The following
+>
+> *duration
+>
+> (...)
+>
+>> +
+>> +In order to account for conditions where driver or device existence is
+>> +not guaranteed, USB SND exposes snd_usb_rediscover_devices() to resend the
+>> +connect events for any identified USB audio interfaces.  Consider the
+>> +the following situtation:
+>
+> *situation
+>
+>> +USB Offload Related Kcontrols
+>> +=============================
+>> +Details
+>> +-------
+>> +A set of kcontrols can be utilized by applications to help select the proper sound
+>> +devices to enable USB audio offloading.  SOC USB exposes the get_offload_dev()
+>> +callback that designs can use to ensure that the proper indices are returned to the
+>> +application.
+>
+> At the moment I only see getter below, how does application set it?
+>
+>> +
+>> +Implementation
+>> +--------------
+>> +
+>> +**Example:**
+>> +
+>> +  **Sound Cards**:
+>> +
+>> +    ::
+>> +
+>> +      0 [SM8250MTPWCD938]: sm8250 - SM8250-MTP-WCD9380-WSA8810-VA-D
+>> +                        SM8250-MTP-WCD9380-WSA8810-VA-DMIC
+>> +      1 [Seri           ]: USB-Audio - Plantronics Blackwire 3225 Seri
+>> +                        Plantronics Plantronics Blackwire 3225 Seri at usb-xhci-hcd.1.auto-1.1, full sp
+>> +      2 [C320M          ]: USB-Audio - Plantronics C320-M
+>> +                      Plantronics Plantronics C320-M at usb-xhci-hcd.1.auto-1.2, full speed
+>> +
+>> +  **USB Sound Card** - card#1:
+>> +
+>> +    ::
+>> +
+>> +      USB Offload Playback Route PCM#0        -1, -1 (range -1->255)
+>> +
+>> +  **USB Sound Card** - card#2:
+>> +
+>> +    ::
+>> +
+>> +      USB Offload Playback Route PCM#0        0, 1 (range -1->255)
+>> +
+>> +The above example shows a scenario where the system has one ASoC platform card
+>> +(card#0) and two USB sound devices connected (card#1 and card#2).  When reading
+>> +the available kcontrols for each USB audio device, the following kcontrol lists
+>> +the mapped offload path for the specific device:
+>> +
+>> +    "USB Offload Playback Route#*"
+>> +
+>> +The kcontrol is indexed, because a USB audio device could potentially have
+>> +several PCM devices.  The above kcontrols are defined as:
+>> +
+>> +  - ``USB Offload Playback Route PCM`` **(R)**: Returns the ASoC platform sound
+>> +    card and PCM device index.  The output "0, 1" (card index, PCM device index)
+>> +    signifies that there is an available offload path for the USB SND device
+>> +    through card#0-PCM device#1.  If "-1, -1" is seen, then no offload path is
+>> +    available for the USB SND device.
+>> +
+>
+> That's better, although I'm still not convinced end users care where offload happens.
+>
+> Few questions though, so I'm sure I understand how it works:
+> Does "0, 1" in this case means that if you try to open device 1 on card 0, you won't be able to do it, because it is offloading USB?
+>
+No, it means that if you open device 1 on card 0, that will be the USB offload path to the USB audio device.
+> In case it is "-1, -1" is there a chance that it can change?
+>
+It can change to non-negative when the offload path is enabled for that device.  Currently, since we removed the device selection logic entirely (for now), if say you have 2 USB audio devices connected.  As mentioned previously, we will select the latest USB headset connected, and the other will have "-1, -1" as the output when reading its controls.  Now, if the last USB headset is unplugged, then there is still an available USB device that can be offloaded, so it will switch to allowing that device to be offloaded, and you should see that be a non-negative kcontrol.
 
-For me, these are the maximum.
-They are compilable, but could not boot due to "out of memory".
-Also I am not sure whether these values are meaningful.
+Thanks
 
-CONFIG_LOCKDEP_BITS=23
-(CONFIG_LOCKDEP_CHAINS_BITS=21)
-CONFIG_LOCKDEP_STACK_TRACE_BITS=25
-CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=24
-CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=22
+Wesley Cheng
 
-
-J. R. Okajima
 
