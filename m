@@ -1,152 +1,177 @@
-Return-Path: <linux-kernel+bounces-278788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3936694B4DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:11:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF2894B4E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB411C21814
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59481F2389F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4B6EAC7;
-	Thu,  8 Aug 2024 02:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C19C2C8;
+	Thu,  8 Aug 2024 02:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZG9T9rqF"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayltXs3f"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA8933E7;
-	Thu,  8 Aug 2024 02:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DCFD528;
+	Thu,  8 Aug 2024 02:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723083073; cv=none; b=aDxBGK/ny/rbcwEg77fShiBeV50MfQP345HYlh22GSx4OwqdxTEV30dvaMvcelAyWLDUlTqBWcKkDxUcostGT42vAR3GVav8u0EFUtbm5qodBXAElhdRD7fnW1D8htZ6oWTKLAZoYMrclUzByo8jtXyvvpwKOC/iD8DPJE5oRHo=
+	t=1723083099; cv=none; b=pgE03S4yUph/+byhPfPomMom4l6MJTntMUdFP/rf5D5rfFzWR6u9PkRKzOtQYFFBWKgzO7oX36EmTlPEMxRGHjPl7AtfBwNvjCAafWd/UEzHvNAWqqe8lDeZ/WUA8UcT0UAZbeLoKYJ6p40Zmypt4dqz36Isgp9hwyb+oB93wCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723083073; c=relaxed/simple;
-	bh=qq7Awa2XpNPG3HmL4hyJn4mPzzevuZMISdq2nOwB49E=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=kBJXWM3DP8NnDf8pBZTN9XbK8Qnac05ARh8WJkVSXM1jNM/1U8Qnb2/P83mCVcumBKz47HUIu4e6ZALxTu83vJYKrDHrPD4yoAULkwvyLddF0kcSyXjnbPUKOybvsdtMN7aqxDqAVc6stKyxzBhKcU4AtbczwXK6pErcU0c8BSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZG9T9rqF; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1723083099; c=relaxed/simple;
+	bh=z+EViZNV79VB4O8ziUlmq6Dl+gQYNPEHQDlMMj3Dcgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qKCDphxOhS57ja8f3Yv1XA9dzCFHGitkh+UHA9X+vAsLYmBCUCOKmzZgc1ojNk9NcRh5P6lxPcTqE+8fkEifR+jDI5VAJhSk9EcbK+mqrQZrZvgG6bn0W2lpDqlXyvniNfyGf3lNn0QKlO4QhhaOmUX//uVL3wOMIVXsDpj8eo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayltXs3f; arc=none smtp.client-ip=209.85.219.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc611a0f8cso4997585ad.2;
-        Wed, 07 Aug 2024 19:11:11 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0e86974172so395718276.2;
+        Wed, 07 Aug 2024 19:11:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723083071; x=1723687871; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rh2qAxeMIswpUVNbuNakpRNeB3Veim3jQR9iXS0wNkM=;
-        b=ZG9T9rqF10DIIWfyrv2g7vdEMD6rgz1gBVYcH3M7XQYdP1kRtIPTOSdP7zYC77Npd5
-         hFaUqRHaOiFtwBTMOVKPd465EcpUf6MeeZHqutzJh7AT7mTWqTpFhQFCX4nKOWafzFkK
-         vshiArDl0l/KHKsN35qjVY8tTUz5BOV0X1DRk0KrqpWwRqnE9xUAG4DmBMOUumPTxLkv
-         5ek2VyF4YodWGAsooS2EFSX18QIcagCzGWh731xmOasgdOoOFJ7AXDEnuKDNXnAsUIow
-         lZBltpKJbfDitO0zrJXq8CrSEito2/sDblawjaxi9APAW9WO4w3AWqnW9CaDOlvo6yol
-         hEzQ==
+        d=gmail.com; s=20230601; t=1723083097; x=1723687897; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6ayuCxxzou3rjkAIxd0SiAGa/p1U9ai3VeQLbkYZyQ0=;
+        b=ayltXs3fcOaL8uVqb3RMGdkERKLmwXlKRAz5j9Ux9UuMJbNc3JBMASpDsbCDO2XVcT
+         kjyn2TeUCuwkSLtDNdCo1hj7TxdNhFAFOpkUUIH8dF1UgCWCBsFVyUkp3HhWRjGDE5GC
+         hlrEwAiC7je4Z29tatsKtD6zwPrdLHD6CRf71pob2lwNjq35Fe62iXfZ1oVt9k2au43x
+         wGgSL/pOly30Pg8GkyUklDqrJKRtXCw98L2KCA0JH2cCF2l+0ctVsUDA5XDrh81j2vYJ
+         zkwsepeE9iqgqp1auolWbus3kmav61/OyAbQRC9FMtTsYAdu1NuMYe//Xs1/HN0OdSbW
+         nocw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723083071; x=1723687871;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rh2qAxeMIswpUVNbuNakpRNeB3Veim3jQR9iXS0wNkM=;
-        b=D+A0TmFtMmtoXi0JN1DMFL3+6R7PurrIPd1SlkgBAGNW/b6k0X6YQ7p+8g4GLyoTYd
-         fB28iiMEHBKxLzthe7OfTjVBA3551s/hsVLrfLIvTInQWsDUAKVs9Vq5C/00Gc3DZhBo
-         tZ69IlwxgrvcN4o9NE8Wse0pKjsgPNFT7cdLCx3Vm/7Sv7YCPx+k3e5LQVWMIYEy1g6T
-         9h2c4t9O/FVE7rRK/LehoJJp57/1zaKen5Fmb4io0NkAB94eCp/NAzHsgLsgRaRrjp2q
-         t7/ro6j/8Kx4xkriL2zu2CenDej/LQfAXtihtg3BCRNgdx5ecZ4gxgRtbrrpPAJ72oER
-         Xc4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUuR94uidKJnOAkEKwnxGUOKKzEKg1J1vZVA2MvCw6huzasJ9/4HNXhRRNmkWJ7qFieIQ0pUBOmYaSpKbvxOTg0N8yWqGzcaoKI2HEq3PslhOFabw8vkcIkc3GaVPQjls3mjr6KzWbOZ2bAWp/i4UUZ1JjrOucQFKj05HJs4kd9pg6sDTV3dHj4B7nFdx1zcg==
-X-Gm-Message-State: AOJu0YwPTZIriMOXJvJko+H53df7hpo+KpJOLmZuNem7cHBYf5+V4W35
-	m+KUEIWbPpFchawx8g6O6H7v6MMfZXt9ImNEnEYI0mDA/IISoo5k
-X-Google-Smtp-Source: AGHT+IEccN/3In/A/yvzAAHYBgExNt8p0GrOittDB7WrlvTOeGG15AWAaMHJHYacbPLd1/KvRB/yCQ==
-X-Received: by 2002:a17:902:d2cc:b0:1fd:6a00:582e with SMTP id d9443c01a7336-200952641bemr6352305ad.30.1723083070709;
-        Wed, 07 Aug 2024 19:11:10 -0700 (PDT)
-Received: from smtpclient.apple ([47.89.225.180])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59295294sm113086435ad.253.2024.08.07.19.11.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Aug 2024 19:11:10 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1723083097; x=1723687897;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6ayuCxxzou3rjkAIxd0SiAGa/p1U9ai3VeQLbkYZyQ0=;
+        b=UlLWoc017fbeQ7+d+NHdLsDZmJUj/2d9hDGoMwnM0PT3A0oiWjpMfwsTY48lXThHoM
+         rIBUgLrVTZZVyxax4Ewmk2zeL0wopSIOnqV/2FOvN9hPkU5JKeZ/5U2ZpCsXQLeT3jiK
+         T2gPiMtn/g28VBKKVnwvLP2iCectucwr2eThLZGpqALntNCZ246UTli+vjuAIo8AREfj
+         i5ZM5sCSqPfPWYMIfq0F5KjoSe3VE7qDbbJxfg+Bnq1URZ7LXpw5NKE369VymCb0rpcK
+         ySAk7riStfTJsancD14f0B9gwnIQ14oiIU5LH6cm7WS61BQXFffsS6T4+toafoIjiDRF
+         YnCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkt3ELPkvTTGWvj/WAOkhpu5IPehMmbv4ts+4nGLWNvaHOBbgMCp7gv+quZEUu/oXmgASy0PJpc+vFhB+X4O2SCll6vhSQm/ehppVl
+X-Gm-Message-State: AOJu0Ywm1PScGjGAzJT7G19CECXKOMjmpoq6GTDpaN86z3GxWjU7LzOZ
+	m3SRbXpMBlLJF7cS6S/hEx+t9+xaCb4OLTBsmY43dJF1x5rueuYGjxNBTKXTPvEbNOPperLlqEy
+	sAhEX/sHNO+ZUKaB1++/gWRazPyw=
+X-Google-Smtp-Source: AGHT+IFgyYRQZ0T+crlRbvXmISDuqo7qHyO7d2SIq+Im3nOTgzA7sQVUzIdByO5Rx+pb6VTN58XUXIo+sJjYZ8XC6yc=
+X-Received: by 2002:a05:6902:2b0c:b0:e0d:71a7:5973 with SMTP id
+ 3f1490d57ef6-e0e9dbf3dd2mr544251276.40.1723083096542; Wed, 07 Aug 2024
+ 19:11:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
- without .XXX suffix
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <22D3CE6E-945B-43C4-A3A2-C57588B12BD0@fb.com>
-Date: Thu, 8 Aug 2024 10:10:52 +0800
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Song Liu <song@kernel.org>,
- "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>,
- Miroslav Benes <mbenes@suse.cz>,
- Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>,
- Nathan Chancellor <nathan@kernel.org>,
- "morbo@google.com" <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- Leizhen <thunder.leizhen@huawei.com>,
- "kees@kernel.org" <kees@kernel.org>,
- Kernel Team <kernel-team@meta.com>,
- Matthew Maurer <mmaurer@google.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Masami Hiramatsu <mhiramat@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5271E070-362B-403D-A7EE-FB0855F31DB2@gmail.com>
-References: <20240802210836.2210140-1-song@kernel.org>
- <20240802210836.2210140-4-song@kernel.org>
- <20240806144426.00ed349f@gandalf.local.home>
- <B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
- <20240806160049.617500de@gandalf.local.home>
- <20240806160149.48606a0b@gandalf.local.home>
- <6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
- <87F7024C-9049-4573-829B-79261FC87984@gmail.com>
- <22D3CE6E-945B-43C4-A3A2-C57588B12BD0@fb.com>
-To: Song Liu <songliubraving@meta.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+References: <20240731111940.8383-1-ayaka@soulik.info> <66aa463e6bcdf_20b4e4294ea@willemb.c.googlers.com.notmuch>
+ <bd69202f-c0da-4f46-9a6c-2375d82a2579@soulik.info> <66aab3614bbab_21c08c29492@willemb.c.googlers.com.notmuch>
+ <3d8b1691-6be5-4fe5-aa3f-58fd3cfda80a@soulik.info> <66ab87ca67229_2441da294a5@willemb.c.googlers.com.notmuch>
+ <343bab39-65c5-4f02-934b-84b6ceed1c20@soulik.info> <66ab99162673_246b0d29496@willemb.c.googlers.com.notmuch>
+ <328c71e7-17c7-40f4-83b3-f0b8b40f4730@soulik.info> <66acf6cc551a0_2751b6294bf@willemb.c.googlers.com.notmuch>
+ <3a3695a1-367c-4868-b6e1-1190b927b8e7@soulik.info>
+In-Reply-To: <3a3695a1-367c-4868-b6e1-1190b927b8e7@soulik.info>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Wed, 7 Aug 2024 22:10:58 -0400
+Message-ID: <CAF=yD-+9HUkzDnfhOgpVkGyeMEJPhzabebt3bdzUHmpEPR1New@mail.gmail.com>
+Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue index
+To: Randy Li <ayaka@soulik.info>
+Cc: netdev@vger.kernel.org, jasowang@redhat.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+> >> I think this question is about why I do the filter in the kernel not the
+> >> userspace?
+> >>
+> >> It would be much more easy to the dispatch work in kernel, I only need
+> >> to watch the established peer with the help of epoll(). Kernel could
+> >> drop all the unwanted packets. Besides, if I do the filter/dispatcher
+> >> work in the userspace, it would need to copy the packet's data to the
+> >> userspace first, even decide its fate by reading a few bytes from its
+> >> beginning offset. I think we can avoid such a cost.
+> > A custom mapping function is exactly the purpose of TUNSETSTEERINGEBPF.
+> >
+> > Please take a look at that. It's a lot more elegant than going through
+> > userspace and then inserting individual tc skbedit filters.
+>
+> I checked how this socket filter works, I think we still need this
+> serial of patch.
+>
+> If I was right, this eBPF doesn't work like a regular socket filter. The
+> eBPF's return value here means the target queue index not the size of
+> the data that we want to keep from the sk_buf parameter's buf.
 
+TUNSETSTEERINGEBPF is a queue selection mechanism for multi-queue tun devices.
 
-> IIUC, constprop means const propagation. For example, function=20
-> "foo(int a, int b)" that is called as "foo(a, 10)" will be come=20
-> "foo(int a)" with a hard-coded b =3D 10 inside.=20
->=20
-> .part.0 is part of the function, as the other part is inlined in=20
-> the caller.=20
->=20
-> With binary-diff based toolchain (kpatch-build), I think these will be=20=
+It replaces the need to set skb->queue_mapping.
 
-> handled automatically.
->=20
-> Thanks,
-> Song
+See also
 
-Yep, Thanks for your explanation!
+"
+commit 96f84061620c6325a2ca9a9a05b410e6461d03c3
+Author: Jason Wang <jasowang@redhat.com>
+Date:   Mon Dec 4 17:31:23 2017 +0800
 
-I discuss here just for an interest.
+    tun: add eBPF based queue selection method
+"
 
-IMO, more people may use tools like 'kpatch-build' to build a livepatch =
-for it will be more easy. But I think such tools should also be =
-attention to such changes because when it trying to do section-level or =
-symbol-level operations. Otherwise it may cause problems :)
+> Besides, according to
+> https://ebpf-docs.dylanreimerink.nl/linux/program-type/BPF_PROG_TYPE_SOCKET_FILTER/
+>
+> I think the eBPF here can modify neither queue_mapping field nor hash
+> field here.
+>
+> > See SKF_AD_QUEUE for classic BPF and __sk_buff queue_mapping for eBPF.
+>
+> Is it a map type BPF_MAP_TYPE_QUEUE?
+>
+> Besides, I think the eBPF in TUNSETSTEERINGEBPF would NOT take
+> queue_mapping.
 
->  However, if we write the livepatch manually, we=20
-> need to understand these behavior with .constprop and .part.=20
+It obviates the need.
 
-Do you think it is wise to write a livepatch module manually? If we are =
-trying to write a module manually, we should also take care of the klp_* =
-function calling, while using a livepatch building tools will help =
-handle it :)
+It sounds like you want to both filter and steer to a specific queue. Why?
 
-Thanks.
-Wardenjohn=20
+In that case, a tc egress tc_bpf program may be able to do both.
+Again, by writing to __sk_buff queue_mapping. Instead of u32 +
+skbedit.
 
+See also
+
+"
+commit 74e31ca850c1cddeca03503171dd145b6ce293b6
+Author: Jesper Dangaard Brouer <brouer@redhat.com>
+Date:   Tue Feb 19 19:53:02 2019 +0100
+
+    bpf: add skb->queue_mapping write access from tc clsact
+"
+
+But I suppose you could prefer u32 + skbedit.
+
+Either way, the pertinent point is that you want to map some flow
+match to a specific queue id.
+
+This is straightforward if all queues are opened and none are closed.
+But it is not if queues can get detached and attached dynamically.
+Which I guess you encounter in practice?
+
+I'm actually not sure how the current `tfile->queue_index =
+tun->numqueues;` works in that case. As __tun_detach will do decrement
+`--tun->numqueues;`. So multiple tfiles could end up with the same
+queue_index. Unless dynamic detach + attach is not possible. But it
+seems it is. Jason, if you're following, do you know this?
+
+> If I want to drop packets for unwanted destination, I think
+> TUNSETFILTEREBPF is what I need?
+>
+> That would lead to lookup the same mapping table twice, is there a
+> better way for the CPU cache?
+
+I agree that two programs should not be needed.
 
