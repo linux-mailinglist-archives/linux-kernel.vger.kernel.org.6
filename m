@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-279712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405C694C0D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A8194C097
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F051A285A6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC6C285193
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B695618EFE8;
-	Thu,  8 Aug 2024 15:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B237E18F2C3;
+	Thu,  8 Aug 2024 15:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="2xhBvQ1B"
-Received: from mail.antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDP+oR4H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76815C8D1;
-	Thu,  8 Aug 2024 15:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F242B18C355;
+	Thu,  8 Aug 2024 15:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723130414; cv=none; b=D76ZOoDtiS9mRYFpglFYRcPhvmB839qQiYYJCw8/JJXOjVqYTlYXpQ0HIhbNMyBF39RHvUII28K7+AoBe5X1RfVn9JcLVpVFc2rcTGiqAL+Vd4wmLo6cX7vXGyxRWyKY6St4mAHBbhcPmXZqtSL4s+Zv8XMmMOlG2BqH7ez+IYA=
+	t=1723129856; cv=none; b=lXooYd3GOiqEFZGS+Nj4rmsytDZkKagroUVGaO3ZFZaXYgfj7/ioEQXa4LdyyBADUEHIB5ikKH7S9N+Etfh4+2VrExUb3+NafD2LLIb0PnYQ3dpnsaZjneLVqOnILSy3zb5wWWcgsVD6sIZcBKm/nWK2eSZPgehHjhW/XfNQb/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723130414; c=relaxed/simple;
-	bh=hNa4B/hL22QgWZp6hWQZ7Qe86Zu1q4zoaYB/hMOvkW0=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QAFRJUVSQfR4WwcZmUCxE+1fJKpzdV5ilALVWmW8uSyPEPTEJ2QwIB7EcNcnVNKuTDHsDu9egjshTXCahCMN5m8cGgaLKl8sl6Ck6Ecrtd1euXBwJJOVaP/Hpo+rFeT44kb8EnivfEkSBq4CVoSoBXCWOM6RZDfO0QEYggl54G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=2xhBvQ1B; arc=none smtp.client-ip=91.227.220.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
-Date: Thu, 8 Aug 2024 17:10:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
-	s=202107; t=1723129835;
-	bh=hNa4B/hL22QgWZp6hWQZ7Qe86Zu1q4zoaYB/hMOvkW0=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
-	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
-	 references:reply-to:Sender:Subject:Subject:To:To;
-	b=2xhBvQ1BwZuKJbjcS7yAHgtVVk+tC4bJ7ivp2HkG45C0ztgEdlMVTuexV/NuDds8i
-	 xAyD4fh5LyTo/lf7Ez3BTDjCPvKw8/YXI+ysRP+YoA1ZR2P3NCQIR224VAC5GJ8D0B
-	 b/nY7/TRfDav1gsv1LGyTDOGe61OA+J0JR1T1B+LuAbqxAdJYsDR29GdkjVAcN12/A
-	 kfLJL/Pm4ZLHwxSS6vJp2+X0oUczllhrRGaOK7FXIA8l0ecWJ899Uoj0oyL9Oy4OmP
-	 +egLhXP2uwR7gw+V3vZyFnAG4D3OsRACXVmW9q+oB7LfhgBUFb/wkKVMSvdjloCmkX
-	 NOqXoCtyx5W+g==
-From: Markus Reichelt <lkt+2023@mareichelt.com>
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.10 000/123] 6.10.4-rc1 review
-Message-ID: <20240808151034.GA2417@pc21.mareichelt.com>
-Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240807150020.790615758@linuxfoundation.org>
+	s=arc-20240116; t=1723129856; c=relaxed/simple;
+	bh=gUzCY93vOFCXuNB20coeGLxNXZ7HTb+v3XLDQ1zyD0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M2IHoW+hpMVIpddg/6hM48Z85ec3eEm+BGm/IPg/GP0XQS9sdByEXLvkKXG5Wu9gjSs4oi6G2PhBhTRdztYTHKseun9kDg/EeBm3/XNS8ADdwk1IVpxdktK4CDDqFAuKhM/LS4lUkhyVb2VDTZ9JWthvTEpG+67AQunjaENSDwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDP+oR4H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 146EAC32782;
+	Thu,  8 Aug 2024 15:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723129855;
+	bh=gUzCY93vOFCXuNB20coeGLxNXZ7HTb+v3XLDQ1zyD0o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jDP+oR4Hk4WBzRLmur3ZpCci/KgVKT6NeFFEYaU6+20S8VO40N2SyRlck8k68c67U
+	 m3XC0WtST3dRyxvEcOI8irmt2bJciXfiKCLq9RDCe4ZDmpNEnXGs6+3NH6do+LY1A1
+	 5+BzX5SnvhSMvIBmaqVC+skwqocY606xOOeHc11WAbpbrpMCECmWeODhSMk+a0117B
+	 IzWNKhjD7ANbmPHuiEUkMRGZG8BypPTt/S0KwcCGD6fGML/DQqvOj6R3scdooZxozy
+	 4YwKQUeQg5795pU7xMO9XVNRrVg4Y/ci+j8O7xE8eFnQbpWHmBAkpc/BowV2utKMmP
+	 DzHVFSs/eem1w==
+Date: Thu, 8 Aug 2024 08:10:54 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Johannes Berg
+ <johannes@sipsolutions.net>, Shigeru Yoshida <syoshida@redhat.com>, Simon
+ Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v4] net-sysfs: check device is present when showing
+ duplex
+Message-ID: <20240808081054.1291238d@kernel.org>
+In-Reply-To: <6c6b2fecaf381b25ec8d5ecc4e30ff2a186cad48.1722925756.git.jamie.bainbridge@gmail.com>
+References: <6c6b2fecaf381b25ec8d5ecc4e30ff2a186cad48.1722925756.git.jamie.bainbridge@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807150020.790615758@linuxfoundation.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On Tue,  6 Aug 2024 16:35:27 +1000 Jamie Bainbridge wrote:
+> A sysfs reader can race with a device reset or removal, attempting to
+> read device state when the device is not actually present.
 
-> This is the start of the stable review cycle for the 6.10.4 release.
-> There are 123 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 09 Aug 2024 14:59:54 +0000.
-> Anything received after that time might be too late.
+True, but..
 
-Hi Greg
+> -	if (netif_running(netdev)) {
+> +	if (netif_running(netdev) && netif_device_present(netdev)) {
+>  		struct ethtool_link_ksettings cmd;
+>  
+>  		if (!__ethtool_get_link_ksettings(netdev, &cmd)) {
 
-6.10.4-rc1 compiles, boots and runs here on x86_64
-(AMD Ryzen 5 PRO 4650G, Slackware64-15.0)
-
-Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
+..there are more callers of __ethtool_get_link_ksettings() and only 
+a fraction of them have something resembling a presence check in
+their path. Can we put the check inside __ethtool_get_link_ksettings()
+itself?
 
