@@ -1,246 +1,254 @@
-Return-Path: <linux-kernel+bounces-280219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0566994C759
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:26:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1894894C75B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8325E1F24820
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:26:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A167B235A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562D7160796;
-	Thu,  8 Aug 2024 23:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20A21607A1;
+	Thu,  8 Aug 2024 23:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v3sBiRu1"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="FOMp9dCn"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306B915FA92
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 23:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723159579; cv=none; b=eG+v97B0C2LL/trSEgiO7aERKEEzohP0PewPBXuekrIzTTrbb+6Zko88X35vqfuqHVMevkj8JSbArKOw4pa196EbIMyv/VUrLx0ee25DnS5emM3+xSogCGB8PmhGsC+pSm1LT2fNqI+Ms3o7MULMXldssfZXb+M1ElsQ+wwwP9g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723159579; c=relaxed/simple;
-	bh=hTOczmfkmfbd2Qji/V+C8NN0tzSDjEY6GPHucHSjG1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CuLMtkJNYptxfrH9DvybmU7AtTGRCHNKMBRUJaaO7CjAoOV46BfRS/2lRuHDJ/hOlkTSfMFXp6EWoOfGvNbXLZRstBWO0mYqR4NkJTkDWpiz/3wMw2UkPrBliM9AMwS34qoNo+Z/HwecKdKn4xPqi3Qpct6El/+5KglpilcW+o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v3sBiRu1; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-66108213e88so13981677b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:26:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723159576; x=1723764376; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hTOczmfkmfbd2Qji/V+C8NN0tzSDjEY6GPHucHSjG1A=;
-        b=v3sBiRu1aqOusYt0O/cfnSeroPKqCGdYVsIKMe0L1gRn0NqmXQ5/JlTa75zzr7bgAO
-         UqBL2DnIB0lAzqVdbqf2D1JPgvvpJ4NGYzlP+wU/OHkhIJEtMxGHTmqtdtx1wXFrIOaY
-         ovdNKIt0OgwBCq/znRH92q3tJv1cMvuHpdl50KgXrrVdvmDd2mC+EOGsGUMBxWsEJA1F
-         lEICDsMINxF0FnT8jA8pBdt+1WMfqE01cm1qY3gsav8MtgCWUo9ljYW+SovTKUbrqENQ
-         1cWJK4+Gww6PEpVm00e+TAob+ABMGtRpVQbz09vusBz555RkFgVLS9b9vf+N9Cv3JBAT
-         wesg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723159576; x=1723764376;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hTOczmfkmfbd2Qji/V+C8NN0tzSDjEY6GPHucHSjG1A=;
-        b=URI0N124uH5RBf/xaJbCTky9ENH3XTgo8CY5WaZBllHqfDgFLBQRGp68YoMaVlFCIX
-         2SZI6A2P6H2n+hXa9A7jbKp2uUlunI55yy/YjajnHdeyu8j5sbxgHYgUX+3pU9GfDCOl
-         C+n2E8ynFPO+2EyzMIEy3gJvqAwpLcgsrrDCbNL/ZPbsB7/b56CViScs8Jbrh7yZYlZp
-         E3Nr91/xrpwpjslRYzUdbzGm038ytoJACJsVjhuCzA0+Hb0Op5sfWk9rpdFVKTFdtP52
-         uOSL82FipCm/i8op7pJ9PEevNwMxicXJkX3gTq6xIntV2Xq9Dk5lXZ2oSz9D1vk0q9zG
-         Bchw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9jwN32hlOozKYQFQ542aYeXPRy1ws6MX/Tv8LCE4g0pH1Cd8onDtGV/lTh5+Z2wNWNXWo+UDIPmBZBAVS3Fu71MI9D4ri3mjcnBLt
-X-Gm-Message-State: AOJu0YyzG7NvTNHdihU6PxdWfbLq1AlDtcQiYTBx+KaJJakzuOmEbr61
-	Hl60lQkj2OkD4rCX8ISn8Ip0mNwOzW6SKppgh09Q6z1Qg7s7uNx6E02wE0DB+G8UlLOdnFZKuv5
-	FNpVZhPj0rmP5YXbvPhc57+P01LuGmAUkGFMl
-X-Google-Smtp-Source: AGHT+IHmhi740nEBn9y0GocruTloZ3uho06rlLESqotsWUBPQ6bSPEmzO3C/G2fKr5Vp+ESUvZNTRUSlGXUMszcttVk=
-X-Received: by 2002:a05:690c:f93:b0:649:8f00:5254 with SMTP id
- 00721157ae682-69bf7540e14mr42926727b3.1.1723159575709; Thu, 08 Aug 2024
- 16:26:15 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3080E13D8A2;
+	Thu,  8 Aug 2024 23:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723159663; cv=pass; b=Z0GUS72YZ+dQRH6CF8zvGVIQDGKDDeZIpb9pvakBFusP1/wSDtDSBbuYiSoPnEK/N/baBRNp+Ch+58qFuHXEPpBdEK/qFNq807Zp3jZT7b7ILehhYJsoD1jf2nYDjAeS7HsUbhsOcWr9CV7kzMhZ9yyPp2QaOeuXapQh8goOoTU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723159663; c=relaxed/simple;
+	bh=Fan+AeqgbP/KN/rKM/Y8yCR1HuR/6XwWRRubUw9eXEg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YL5qQ8WiKCyLJvfGw20PtnIvTcjAWjuuaudCa2RxeLh5np+3KN5m/mid6Tss90ipfuR4/ve4cuntcDSaSMFNEV+4h4VCxAZKpBNtSljjS5jeaK+pv6WzSFK8GFKN5WUpEVmN7cwqeJzUH+of5ajRBsq40WGlTx4y6DaaBTUV3qM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=FOMp9dCn; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723159648; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=n5KwzOmKYXYMQBN4FW0HFDpL6KqNWC3quxcOsviWFEgC3T3s2RStDRhLEDwyQpMpSN2rMwWuOk2l+51414qNnjCk4IUjc5SShezs5UgIVfVOseu01kMyFNQP1gBaI6oYEf8qAoPGEu1cJHu17537AxVhkJT+M26NUCtWnkOKX+Q=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723159648; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=VfUT4xTcC3SPu/QyTlrZ88bPNK/AOccXwvQbWbA5nC8=; 
+	b=cGFqaa3VhgDL3rxx1Vhy65Eq+/c/TlUdC8KqjsguYpJ7d4puoLFhlr4ydshPwNtjuyCafkDEinB55aeCO1yRA/M/8NbwZxi8EkGsmQDpJM+BRdR+Wbp+ILFfcezvmRIndfYUKYU9y3COS7YhIDEz2/OT3abwTR0AEd6auYpeIfg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
+	dmarc=pass header.from=<nfraprado@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723159648;
+	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=VfUT4xTcC3SPu/QyTlrZ88bPNK/AOccXwvQbWbA5nC8=;
+	b=FOMp9dCncPDoh7fkLBg9sw3kYawN2Ntq0BiqXPI/qTXi5RoHJ6scj2FUf2zMv6WE
+	jj23RrVhWT//SlCQJsXHWkxsapEtJUOIbznlLSd0A27e7yMqxsQMDSII5zd0KME7vZE
+	QS/4pZTiz/BKUJNGChx0qy2yL46KiPgrWVW6eR8c=
+Received: by mx.zohomail.com with SMTPS id 1723159646349956.1886049601594;
+	Thu, 8 Aug 2024 16:27:26 -0700 (PDT)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Thu, 08 Aug 2024 19:27:09 -0400
+Subject: [PATCH] pinctrl: mediatek: common-v2: Fix broken bias-disable for
+ PULL_PU_PD_RSEL_TYPE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807182325.2585582-1-surenb@google.com> <CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com>
- <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com>
- <CAEf4BzYqKAaGE6GEcMs9MTcrV4cA+i0M5pniqFTy1LQ+g0Yxkw@mail.gmail.com>
- <CAG48ez08f0GNfkqtKa3EV6-miRs3AbXej9WdVh4TvB8ErA6S3w@mail.gmail.com>
- <CAEf4BzZT+c3VHkGy2qtpsbrRVLQwE9ESTtvhJ3_xtJ9L=Hmi_g@mail.gmail.com>
- <CAG48ez1_xx=oVB=4Q3Ywf7UPyO3aWR+N=HwGE5SEuO9+Fgiw_g@mail.gmail.com> <CAEf4BzZQ3oXBUVJVBJJ2C49jWL0hMSSxZiCpbMeadof7Q-KPzw@mail.gmail.com>
-In-Reply-To: <CAEf4BzZQ3oXBUVJVBJJ2C49jWL0hMSSxZiCpbMeadof7Q-KPzw@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 8 Aug 2024 16:26:02 -0700
-Message-ID: <CAJuCfpFb+4PtZtTLFHjg4mfPU4=RaGDO87HkeB5vSV=D_fgVHw@mail.gmail.com>
-Subject: Re: [RFC 1/1] mm: introduce mmap_lock_speculation_{start|end}
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jann Horn <jannh@google.com>, akpm@linux-foundation.org, peterz@infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240808-mtk-rsel-bias-disable-fix-v1-1-1b4e85bf596c@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAExUtWYC/x2MSQqAMAwAvyI5G6hLi/gV8dDaqMGVRkQo/t3ic
+ QZmIggFJoE2ixDoZuFjT1DkGQyz3SdC9omhVGWtGtXgdi0YhFZ0bAU9i3Ur4cgPeqWNHmqqtHG
+ Q+jNQ0v+769/3AxUTspdrAAAA
+To: Sean Wang <sean.wang@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, linux-mediatek@lists.infradead.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.1
+X-ZohoMailClient: External
 
-On Thu, Aug 8, 2024 at 3:36=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Thu, Aug 8, 2024 at 3:16=E2=80=AFPM Jann Horn <jannh@google.com> wrote=
-:
-> >
-> > On Fri, Aug 9, 2024 at 12:05=E2=80=AFAM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > > On Thu, Aug 8, 2024 at 2:43=E2=80=AFPM Jann Horn <jannh@google.com> w=
-rote:
-> > > >
-> > > > On Thu, Aug 8, 2024 at 11:11=E2=80=AFPM Andrii Nakryiko
-> > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > On Thu, Aug 8, 2024 at 2:02=E2=80=AFPM Suren Baghdasaryan <surenb=
-@google.com> wrote:
-> > > > > >
-> > > > > > On Thu, Aug 8, 2024 at 8:19=E2=80=AFPM Andrii Nakryiko
-> > > > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Wed, Aug 7, 2024 at 11:23=E2=80=AFAM Suren Baghdasaryan <s=
-urenb@google.com> wrote:
-> > > > > > > >
-> > > > > > > > Add helper functions to speculatively perform operations wi=
-thout
-> > > > > > > > read-locking mmap_lock, expecting that mmap_lock will not b=
-e
-> > > > > > > > write-locked and mm is not modified from under us.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > > > > > Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> > > > > > > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > > > > > > ---
-> > > > > > >
-> > > > > > > This change makes sense and makes mm's seq a bit more useful =
-and
-> > > > > > > meaningful. I've also tested it locally with uprobe stress-te=
-st, and
-> > > > > > > it seems to work great, I haven't run into any problems with =
-a
-> > > > > > > multi-hour stress test run so far. Thanks!
-> > > > > >
-> > > > > > Thanks for testing and feel free to include this patch into you=
-r set.
-> > > > >
-> > > > > Will do!
-> > > > >
-> > > > > >
-> > > > > > I've been thinking about this some more and there is a very unl=
-ikely
-> > > > > > corner case if between mmap_lock_speculation_start() and
-> > > > > > mmap_lock_speculation_end() mmap_lock is write-locked/unlocked =
-so many
-> > > > > > times that mm->mm_lock_seq (int) overflows and just happen to r=
-each
-> > > > > > the same value as we recorded in mmap_lock_speculation_start().=
- This
-> > > > > > would generate a false positive, which would show up as if the
-> > > > > > mmap_lock was never touched. Such overflows are possible for vm=
-_lock
-> > > > > > as well (see: https://elixir.bootlin.com/linux/v6.10.3/source/i=
-nclude/linux/mm_types.h#L688)
-> > > > > > but they are not critical because a false result would simply l=
-ead to
-> > > > > > a retry under mmap_lock. However for your case this would be a
-> > > > > > critical issue. This is an extremely low probability scenario b=
-ut
-> > > > > > should we still try to handle it?
-> > > > > >
-> > > > >
-> > > > > No, I think it's fine.
-> > > >
-> > > > Modern computers don't take *that* long to count to 2^32, even when
-> > > > every step involves one or more syscalls. I've seen bugs where, for
-> > > > example, a 32-bit refcount is not decremented where it should, maki=
-ng
-> > > > it possible to overflow the refcount with 2^32 operations of some
-> > > > kind, and those have taken something like 3 hours to trigger in one
-> > > > case (https://bugs.chromium.org/p/project-zero/issues/detail?id=3D2=
-478),
-> > > > 14 hours in another case. Or even cases where, if you have enough R=
-AM,
-> > > > you can create 2^32 legitimate references to an object and overflow=
- a
-> > > > refcount that way
-> > > > (https://bugs.chromium.org/p/project-zero/issues/detail?id=3D809 if=
- you
-> > > > had more than 32 GiB of RAM, taking only 25 minutes to overflow the
-> > > > 32-bit counter - and that is with every step allocating memory).
-> > > > So I'd expect 2^32 simple operations that take the mmap lock for
-> > > > writing to be faster than 25 minutes on a modern desktop machine.
-> > > >
-> > > > So for a reader of some kinda 32-bit sequence count, if it is
-> > > > conceivably possible for the reader to take at least maybe a couple
-> > > > minutes or so between the sequence count reads (also counting time
-> > > > during which the reader is preempted or something like that), there
-> > > > could be a problem. At that point in the analysis, if you wanted to
-> > > > know whether it's actually exploitable, I guess you'd have to look =
-at
-> > > > what kinda context you're running in, and what kinda events can
-> > > > interrupt/preempt you (like whether someone can send a sufficiently
-> > > > dense flood of IPIs to completely prevent you making forward progre=
-ss,
-> > > > like in https://www.vusec.net/projects/ghostrace/), and for how lon=
-g
-> > > > those things can delay you (maybe including what the pessimal
-> > > > scheduler behavior looks like if you're in preemptible context, or =
-how
-> > > > long clock interrupts can take to execute when processing a giant p=
-ile
-> > > > of epoll watches), and so on...
-> > > >
-> > >
-> > > And here we are talking about *lockless* *speculative* VMA usage that
-> > > will last what, at most on the order of a few microseconds?
-> >
-> > Are you talking about time spent in task context, or time spent while
-> > the task is on the CPU (including time in interrupt context), or about
-> > wall clock time?
->
-> We are doing, roughly:
->
-> mmap_lock_speculation_start();
-> rcu_read_lock();
-> vma_lookup();
-> rb_find();
-> rcu_read_unlock();
-> mmap_lock_speculation_end();
->
->
-> On non-RT kernel this can be prolonged only by having an NMI somewhere
-> in the middle. On RT it can get preempted even within RCU locked
-> region, if I understand correctly. If you manage to make this part run
-> sufficiently long to overflow 31-bit counter, it's probably a bigger
-> problem than mmap's sequence wrapping over, no?
+Despite its name, commit fed74d75277d ("pinctrl: mediatek: common-v2:
+Fix bias-disable for PULL_PU_PD_RSEL_TYPE") actually broke bias-disable
+for PULL_PU_PD_RSEL_TYPE.
 
-I was also thinking that an easy way to strengthen the guarantee this
-overflow does not happen is to make mm->mm_lock_seq a 64-bit counter
-while keeping vma->vm_lock_seq as is. When comparing them we can use
-the lowest 32 bits of mm->mm_lock_seq without any loss of correctness.
-Seems easy enough (famous last words). If we decide to do that I will
-run performance tests to make sure performance does not suffer.
+mtk_pinconf_bias_set_combo() tries every bias method supported by the
+pin until one succeeds. For PULL_PU_PD_RSEL_TYPE pins, before the
+breaking commit, mtk_pinconf_bias_set_rsel() would be called first to
+try and set the RSEL value (as well as PU and PD), and if that failed,
+the only other valid option was that bias-disable was specified, which
+would then be handled by calling mtk_pinconf_bias_set_pu_pd() and
+disabling both PU and PD.
 
->
-> >
-> > https://www.vusec.net/projects/ghostrace/ is pretty amazing - when you
-> > look at the paper
-> > https://download.vusec.net/papers/ghostrace_sec24.pdf you can see in
-> > Figure 4 how they managed to turn a race window that's 8 instructions
-> > wide into a window they can stretch "indefinitely", and they didn't
-> > even have to reschedule to pull it off. If I understand correctly,
-> > they stretched the race window to something like 35 seconds and could
-> > have stretched it even wider if they had wanted to?
-> >
-> > (And yes, Linux fixed the specific trick they used for doing that, but
-> > it still shows that this kinda thing is possible in principle.)
+The breaking commit misunderstood this logic and added an early "return
+0" in mtk_pinconf_bias_set_rsel(). The result was that in the
+bias-disable case, the bias was left unchanged, since by returning
+success, mtk_pinconf_bias_set_combo() no longer tried calling
+mtk_pinconf_bias_set_pu_pd() to disable the bias.
+
+Since the logic for configuring bias-disable on PULL_PU_PD_RSEL_TYPE
+pins required mtk_pinconf_bias_set_rsel() to fail first, in that case,
+an error was printed to the log, eg:
+
+  mt8195-pinctrl 10005000.pinctrl: Not support rsel value 0 Ohm for pin = 29 (GPIO29)
+
+This is what the breaking commit actually got rid of, and likely part of
+the reason why that commit was thought to be fixing functionality, while
+in reality it was breaking it.
+
+Instead of simply reverting that commit, restore the functionality but
+in a way that avoids the error from being printed and makes the code
+less confusing:
+* Return 0 explicitly if a bias method was successful
+* Introduce an extra function mtk_pinconf_bias_set_pu_pd_rsel() that
+  calls both mtk_pinconf_bias_set_rsel() (only if needed) and
+  mtk_pinconf_bias_set_pu_pd()
+  * And analogously for the corresponding getters
+
+Fixes: fed74d75277d ("pinctrl: mediatek: common-v2: Fix bias-disable for PULL_PU_PD_RSEL_TYPE")
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 55 +++++++++++++-----------
+ 1 file changed, 29 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index b7921b59eb7b..54301fbba524 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -709,32 +709,35 @@ static int mtk_pinconf_bias_set_rsel(struct mtk_pinctrl *hw,
+ {
+ 	int err, rsel_val;
+ 
+-	if (!pullup && arg == MTK_DISABLE)
+-		return 0;
+-
+ 	if (hw->rsel_si_unit) {
+ 		/* find pin rsel_index from pin_rsel array*/
+ 		err = mtk_hw_pin_rsel_lookup(hw, desc, pullup, arg, &rsel_val);
+ 		if (err)
+-			goto out;
++			return err;
+ 	} else {
+-		if (arg < MTK_PULL_SET_RSEL_000 ||
+-		    arg > MTK_PULL_SET_RSEL_111) {
+-			err = -EINVAL;
+-			goto out;
+-		}
++		if (arg < MTK_PULL_SET_RSEL_000 || arg > MTK_PULL_SET_RSEL_111)
++			return -EINVAL;
+ 
+ 		rsel_val = arg - MTK_PULL_SET_RSEL_000;
+ 	}
+ 
+-	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_RSEL, rsel_val);
+-	if (err)
+-		goto out;
++	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_RSEL, rsel_val);
++}
+ 
+-	err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, MTK_ENABLE);
++static int mtk_pinconf_bias_set_pu_pd_rsel(struct mtk_pinctrl *hw,
++					   const struct mtk_pin_desc *desc,
++					   u32 pullup, u32 arg)
++{
++	u32 enable = arg == MTK_DISABLE ? MTK_DISABLE : MTK_ENABLE;
++	int err;
+ 
+-out:
+-	return err;
++	if (arg != MTK_DISABLE) {
++		err = mtk_pinconf_bias_set_rsel(hw, desc, pullup, arg);
++		if (err)
++			return err;
++	}
++
++	return mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, enable);
+ }
+ 
+ int mtk_pinconf_bias_set_combo(struct mtk_pinctrl *hw,
+@@ -750,22 +753,22 @@ int mtk_pinconf_bias_set_combo(struct mtk_pinctrl *hw,
+ 		try_all_type = MTK_PULL_TYPE_MASK;
+ 
+ 	if (try_all_type & MTK_PULL_RSEL_TYPE) {
+-		err = mtk_pinconf_bias_set_rsel(hw, desc, pullup, arg);
++		err = mtk_pinconf_bias_set_pu_pd_rsel(hw, desc, pullup, arg);
+ 		if (!err)
+-			return err;
++			return 0;
+ 	}
+ 
+ 	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
+ 		err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg);
+ 		if (!err)
+-			return err;
++			return 0;
+ 	}
+ 
+ 	if (try_all_type & MTK_PULL_PULLSEL_TYPE) {
+ 		err = mtk_pinconf_bias_set_pullsel_pullen(hw, desc,
+ 							  pullup, arg);
+ 		if (!err)
+-			return err;
++			return 0;
+ 	}
+ 
+ 	if (try_all_type & MTK_PULL_PUPD_R1R0_TYPE)
+@@ -803,9 +806,9 @@ static int mtk_rsel_get_si_unit(struct mtk_pinctrl *hw,
+ 	return 0;
+ }
+ 
+-static int mtk_pinconf_bias_get_rsel(struct mtk_pinctrl *hw,
+-				     const struct mtk_pin_desc *desc,
+-				     u32 *pullup, u32 *enable)
++static int mtk_pinconf_bias_get_pu_pd_rsel(struct mtk_pinctrl *hw,
++					   const struct mtk_pin_desc *desc,
++					   u32 *pullup, u32 *enable)
+ {
+ 	int pu, pd, rsel, err;
+ 
+@@ -939,22 +942,22 @@ int mtk_pinconf_bias_get_combo(struct mtk_pinctrl *hw,
+ 		try_all_type = MTK_PULL_TYPE_MASK;
+ 
+ 	if (try_all_type & MTK_PULL_RSEL_TYPE) {
+-		err = mtk_pinconf_bias_get_rsel(hw, desc, pullup, enable);
++		err = mtk_pinconf_bias_get_pu_pd_rsel(hw, desc, pullup, enable);
+ 		if (!err)
+-			return err;
++			return 0;
+ 	}
+ 
+ 	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
+ 		err = mtk_pinconf_bias_get_pu_pd(hw, desc, pullup, enable);
+ 		if (!err)
+-			return err;
++			return 0;
+ 	}
+ 
+ 	if (try_all_type & MTK_PULL_PULLSEL_TYPE) {
+ 		err = mtk_pinconf_bias_get_pullsel_pullen(hw, desc,
+ 							  pullup, enable);
+ 		if (!err)
+-			return err;
++			return 0;
+ 	}
+ 
+ 	if (try_all_type & MTK_PULL_PUPD_R1R0_TYPE)
+
+---
+base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
+change-id: 20240808-mtk-rsel-bias-disable-fix-d0565c4e356b
+
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
 
