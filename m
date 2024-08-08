@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-280178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF94594C6CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:11:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E925494C6D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ABC4B20BE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:11:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 272F71C21B2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6772E15ECC0;
-	Thu,  8 Aug 2024 22:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BB015ECC0;
+	Thu,  8 Aug 2024 22:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hX4NJJW1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAUQAX9m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A361555769;
-	Thu,  8 Aug 2024 22:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AAA15820F;
+	Thu,  8 Aug 2024 22:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723155078; cv=none; b=JrgVehyXAGC3sQqUSbxIoarwwTmRlHScM+KFaTifj3Npb4tO6E2/iK3T2EFJuiMpqjac4oYuseRcs0Tw7zkJID0hHdqAaPRJbzt2sgBEEpVHnWh0kNGdfn35X2551C9nKUWgcwKhJI9P2B4znJ81VJDjSUHoWmWfWkrI3YHpN0A=
+	t=1723155117; cv=none; b=HAa/ZhVRJvQrC59aeVGlRkfsIQX/1P3WeQpAYonaC2pZO/3A1geNYEwhQRXZq0OXRri4xjrBy1CvFBfxf0tHmPBfFTJH/HtQrJW/f638H5+zFiSqOz9viSRGuiG9Ki/2Zou05QSZdT0ZizU8X6ZoJ2ok4ZO80A7a96EarOEdGbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723155078; c=relaxed/simple;
-	bh=e/zB+LA0zHnznYATwpefdryXkaCV34ukyDo/MVUOmQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AawJchib25CBUWblze6uX0K0Tk5r57CvuVY1HSHdfIj4PnV0nVFfiZWyX0b0QXoWliiEh5e3BMd2X0HOBirMDc0M+y53S6v9+9xSYGppu0mVVwsw5v7lFIyqNOR8PmVED9Eg9D5AtBf7FPeQQXv3vPty0AN2aLIDqGT09Xy/2Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hX4NJJW1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA8DC4AF0C;
-	Thu,  8 Aug 2024 22:11:17 +0000 (UTC)
+	s=arc-20240116; t=1723155117; c=relaxed/simple;
+	bh=8cwTGDcOJUK8ayBA2CjvTAILOfKtt8rJkL2q5JOGIRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s8wuIYDyB2kns6Zp4g0MQBzrbhjj/lSD0iIDmhuo/imWuGftdO5v2Jdc1nNt9rpZLeuTiQYWnlhSQhOMQp8EFrLJ4TgEXfoi3tADR2+6Fi4djph0xYly61AMWOvxYE9o4MUQopjdDgKXkz9SvDdLcqz/YPU0Y2N1b3ronLKN7RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAUQAX9m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5C9BC32782;
+	Thu,  8 Aug 2024 22:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723155078;
-	bh=e/zB+LA0zHnznYATwpefdryXkaCV34ukyDo/MVUOmQw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=hX4NJJW1aRWhgoINveO9UKbxkL3kdDnaBXF1X8cxVAnBsW+CdrojX0ciMUjV0qRhS
-	 6z+Hi1iDIXwBP3dn95oFfGK3tgchLZ+mOmiTkI8/1luHpWvh/tSwQFy6Z734Ea3hCe
-	 iD4oJ6ksCoTArsuwa7jIGLLvZuv8qw48b979cJNk1nSPE5YsQPwP7zKZl5IsQs/rss
-	 1KOxwj9wAeYjwsmnx801l7NtmucULMwsP4xTGImbhZUmdrFp2IqAGHO9GqrTxh+P9Z
-	 BmR+XouxkwxEFc+VPinoL7o2gXZwntfGbrj/4t+BTfITtMKDYUwig1qb2i8GQj+vjD
-	 fY7LbFQF3+sIg==
-Date: Thu, 8 Aug 2024 16:11:15 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] wifi: mwl8k: Use static_assert() to check struct sizes
-Message-ID: <ZrVCg51Q9M2fTPaF@cute>
+	s=k20201202; t=1723155116;
+	bh=8cwTGDcOJUK8ayBA2CjvTAILOfKtt8rJkL2q5JOGIRY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eAUQAX9mI81rc0GGlJ9gUsCcOkRC+8zAd1hgNKn/0LYHf3Tp49SXM/EZyCxGE/s9G
+	 Ay3uMNf6Bk5kXIoKyOHiFF4A4hesGM5R6EzxR1XBAFDnSYY9JllmzEtc3ReS0peeO1
+	 aTFixnDdqqHr0M6SuCNihYAKrFbzNLYbJ0ezzklM26+HlwrpGpGFFYVGyvcf5GBobZ
+	 jAyx18wKxzzf/aqG+Gl6GKJOR7k8AZuIEOzuw41gEPYUo8lCXRh9/4osVdf5TSySbh
+	 KUdbjekrXSX1O7cQ4XVTnOu36CAqbW4t3/FHUvkaTp391WFMhLSsJn4pUZccqVVpTo
+	 h0giCSSq4SC8g==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH 0/6] kbuild: rust: add `RUSTC_VERSION` and reconfig/rebuild support
+Date: Fri,  9 Aug 2024 00:11:32 +0200
+Message-ID: <20240808221138.873750-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Commit 5c4250092fad ("wifi: mwl8k: Avoid -Wflex-array-member-not-at-end
-warnings") introduced tagged `struct mwl8k_cmd_pkt_hdr`. We want to
-ensure that when new members need to be added to the flexible structure,
-they are always included within this tagged struct.
+Hi all,
 
-We use `static_assert()` to ensure that the memory layout for both
-the flexible structure and the tagged struct is the same after any
-changes.
+This series introduces `RUSTC_VERSION` support, which is needed for
+several patch series getting upstreamed, and it will be increasingly
+useful as we now support several Rust compiler (and `bindgen`) versions.
+Later on, we will likely introduce other macros, such as
+`rustc-min-version`.
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/net/wireless/marvell/mwl8k.c | 3 +++
- 1 file changed, 3 insertions(+)
+In addition, the series introduces automatic reconfiguration and rebuild
+based on `RUSTC_VERSION_TEXT`, to mimic the C side, which is also good
+to have now that we support several versions.
 
-diff --git a/drivers/net/wireless/marvell/mwl8k.c b/drivers/net/wireless/marvell/mwl8k.c
-index b130e057370f..bab9ef37a1ab 100644
---- a/drivers/net/wireless/marvell/mwl8k.c
-+++ b/drivers/net/wireless/marvell/mwl8k.c
-@@ -587,6 +587,7 @@ static int mwl8k_request_firmware(struct mwl8k_priv *priv, char *fw_image,
- }
- 
- struct mwl8k_cmd_pkt {
-+	/* New members MUST be added within the __struct_group() macro below. */
- 	__struct_group(mwl8k_cmd_pkt_hdr, hdr, __packed,
- 		__le16	code;
- 		__le16	length;
-@@ -596,6 +597,8 @@ struct mwl8k_cmd_pkt {
- 	);
- 	char payload[];
- } __packed;
-+static_assert(offsetof(struct mwl8k_cmd_pkt, payload) == sizeof(struct mwl8k_cmd_pkt_hdr),
-+	      "struct member likely outside of __struct_group()");
- 
- /*
-  * Firmware loading.
--- 
-2.34.1
+It is based on top of the current `rust-fixes`, since there are a couple
+pending changes to the version text Kconfig symbols that will be sent to
+Linus soon for an -rc.
 
+Cheers,
+Miguel
+
+Miguel Ojeda (6):
+  kbuild: rust: add `CONFIG_RUSTC_VERSION`
+  kbuild: rust: make command for `RUSTC_VERSION_TEXT` closer to the `CC`
+    one
+  kbuild: rust: re-run Kconfig if the version text changes
+  kbuild: rust: rebuild if the version text changes
+  kbuild: rust: replace proc macros dependency on `core.o` with the
+    version text
+  docs: rust: include other expressions in conditional compilation
+    section
+
+ Documentation/rust/general-information.rst |  8 +++++++
+ Makefile                                   |  5 +++--
+ init/Kconfig                               | 11 ++++++++-
+ rust/Makefile                              |  8 +++----
+ scripts/rustc-version.sh                   | 26 ++++++++++++++++++++++
+ 5 files changed, 51 insertions(+), 7 deletions(-)
+ create mode 100755 scripts/rustc-version.sh
+
+
+base-commit: fe992163575b187405899c5abaad8ef6fb828ff6
+--
+2.46.0
 
