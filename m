@@ -1,66 +1,86 @@
-Return-Path: <linux-kernel+bounces-279678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3F294C060
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:58:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2811E94C05E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702E8287FAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1FE11F289AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C01218FC6B;
-	Thu,  8 Aug 2024 14:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B6E18EFF9;
+	Thu,  8 Aug 2024 14:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gY05UAfK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b5cMfwdw"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B1D18F2F8
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BD518EFC4;
+	Thu,  8 Aug 2024 14:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723129080; cv=none; b=Upq9qqq5dAzio5sXD+Av1ya7qD6pl6WJm4rxERCKhAslkDOvVsu5ailfX3HxDCDSfWNPGBVHOcOOy70TnIUI6MOohV9lh9Dww+zfpMPydz/SRbakZOCocuYJGqe4U5fPGDvBSd1df9xiessBKgMI+ryJNhCnpch/BcdyAxhctaI=
+	t=1723129076; cv=none; b=Nkn2mfoRa5fZjPYEzGHXksCsHtFNPbEPadasWTEIenX02PwC2NIc0BRgPI/SVcC5HhQOL2piyTuUQvekUbqznAqIo3iqaJ+AdGlzL/z9s4RpRl6xNRCKxX8/N3j3eMFaOKKE+DaaOyVug2gZ8Cd+/CalEzViEGqpxd4LKEDOO6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723129080; c=relaxed/simple;
-	bh=C1ZFQfUePYxAYCqmKVS0lTNEqCwkGb0ZLe5aWDLCXns=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NGR+qfVi9vTjdNx4rN45HuRns4fFliM0c+VjNeqZtlQFI2wmyDOeCeZ/ol7cgMtO6MYVT6VT3iupLVmIJfh+4FNNvSAR4/2Cm84KkiQIlAveHMzR1NLDz2poRNuoMwTSFEYAdnk+Y5fdIY/9PW7nzQFiNRnNxZtwH16RqYqTwVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gY05UAfK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723129077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=q1LD+duaEZT3r7HWPwHh97PcJWzAFfeNTcXbwr2Hx5I=;
-	b=gY05UAfKTOrmWxKU7Yd299buLdjx2wyyWACN20CThpHOBzr7IRq3y5SFGSdILozJ3oxsvN
-	9E7dnXGVUJrtPRiBtFBsmfoah8JEThV8vf63VsqJT7jWq/lu7Tit518swNZ20fS9cRyRpo
-	URl+aIkd083YYQFcAXcGk9EFwwiYnF8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-679-wueuZ8ndOi-seabHp9nYSg-1; Thu,
- 08 Aug 2024 10:57:54 -0400
-X-MC-Unique: wueuZ8ndOi-seabHp9nYSg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0AD47197700A;
-	Thu,  8 Aug 2024 14:57:53 +0000 (UTC)
-Received: from asgard.redhat.com (unknown [10.45.242.6])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DBADD3000197;
-	Thu,  8 Aug 2024 14:57:49 +0000 (UTC)
-Date: Thu, 8 Aug 2024 16:57:45 +0200
-From: Eugene Syromiatnikov <esyr@redhat.com>
-To: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Artem Savkov <asavkov@redhat.com>, linux-sound@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/alsa/Makefile: fix relative rpath usage
-Message-ID: <20240808145639.GA20510@asgard.redhat.com>
+	s=arc-20240116; t=1723129076; c=relaxed/simple;
+	bh=5xKyELSGhpDNrsQy8AFW/c1PT84yF84Q0ubf8w9Kek4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R9N3HVX9VoDy05eRfhOWJozfvOXSx+WYRzwdkokOcM+35/JhlwHiNZ4ng0nXITy1TYaW2mjYNXRT2bgK7ozm+/0MlM1nfXvXIBXkVeDXfXIoMFJhP8TdUDjz1jnGrFvodD6/FTD0BmFEqfPiOq6eWTj44h2HZ8704WQlmrML+Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b5cMfwdw; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f0277daa5so1471513e87.0;
+        Thu, 08 Aug 2024 07:57:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723129073; x=1723733873; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NRAXcnqJvd1Unv4TrFWZ76L2wyRT9GpRxYCN6xWJEOU=;
+        b=b5cMfwdwC6I50zzmchTwmNzgGHmvehaLQNPGOqr/FKIfiG5hQG9keIwzsslloJmlvo
+         nLb29OwGuLkOMKzcIKgc1+ijGk2hyt4crlOk73Ey5ZMdjB03pzUVaNyzu+qieVP4hJgU
+         +2NLuktCBkw97/LUxA+53aPnHc/rNKnjZ4y1fRKap4zRCr6N4C+fH/nWU2dEHn2SQVjQ
+         BWpPbrXSHvgQP3jlElVpx9D/A67Aw20pcG7CERICYa3uVosl7CkiAAU692GA3sSQxj/9
+         7YgF8SJZpLRNLdhR0wwYEiMvnzHqhjxSbeDfkEfn0EJdjouoETkn46LuwBG7s74HE/by
+         09rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723129073; x=1723733873;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NRAXcnqJvd1Unv4TrFWZ76L2wyRT9GpRxYCN6xWJEOU=;
+        b=G9+Vl0/2wZsgEa9vmS53FEcP9e3CAGenaRo4TqjVDoIHTEjUo/5D6UirFx72zHkCwy
+         mmXmhAImU9FMNTTHzdfaWeY52ydSf0mXoxHXioi4YirZ9EMp1xSLJ10Gn4gzFfNqKmhj
+         /wduQ6RcPnJBYgjsjP31Ad40PXjEwnooop6NRhjscOTpohMuD4QmkelrO0yi3c20qjGs
+         HHic2WYBEFxT7pDykWirHF/SWNv4lEkSYnq1BZDIuUGYBeAUsr4zGW/Xx1B7pPzr/y8w
+         D0dxxm0377YSopZMbibq24dbEbNXUpSlwlHqsggGuiRFKGtGMH7famYd4zaFBgUM0YO8
+         nWGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwmXoruRVwVXP0htwQRE4ZBqnhcHqvV/dqECvxmoCskyLzuzwN6HbHcVToCoC2XFfZQ2SdT62vKs8e0ds=@vger.kernel.org, AJvYcCXpCaWpSCDM8fqhLs+YKxdfL+dMFYbNdKrUQq7edRx0WEtF8qtvARiYaOzbeBdV9WA19N89K4wb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKVx8RA8XiSzsvkMN9+tpwtJ68zPJ/+uU6Nx9S1kGc1Uba+lVV
+	l9QFBUYBR6qs4OtpaNhqA4eZ+OAgZWc2QzqeYRAIFXTPQLpDz1+F
+X-Google-Smtp-Source: AGHT+IFCVvIDBofYk3clzOAIKSchxWfKCwsdWlbOmBBfYTqKyhO5fdJv5JzAnYDiUfd3VGx+2pr+aQ==
+X-Received: by 2002:a05:6512:31d6:b0:530:daaa:271c with SMTP id 2adb3069b0e04-530e5820097mr1851027e87.16.1723129072228;
+        Thu, 08 Aug 2024 07:57:52 -0700 (PDT)
+Received: from pc636 (host-90-235-1-92.mobileonline.telia.com. [90.235.1.92])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530de3f27ccsm668593e87.69.2024.08.08.07.57.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 07:57:51 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Thu, 8 Aug 2024 16:57:49 +0200
+To: Hailong Liu <hailong.liu@oppo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
+	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
+	Barry Song <21cnbao@gmail.com>, Baoquan He <bhe@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
+ vm_area_alloc_pages() with high order fallback to order 0
+Message-ID: <ZrTc7SLz-f5E2SS4@pc636>
+References: <20240808122019.3361-1-hailong.liu@oppo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,45 +89,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20240808122019.3361-1-hailong.liu@oppo.com>
 
-The relative RPATH ("./") supplied to linker options in CFLAGS is resolved
-relative to current working directory and not the executable directory,
-which will lead in incorrect resolution when the test executables are run
-from elsewhere.  Changing it to $ORIGIN makes it resolve relative
-to the directory in which the executables reside, which is supposedly
-the desired behaviour.
+On Thu, Aug 08, 2024 at 08:19:56PM +0800, Hailong Liu wrote:
+> The __vmap_pages_range_noflush() assumes its argument pages** contains
+> pages with the same page shift. However, since commit e9c3cda4d86e
+> ("mm, vmalloc: fix high order __GFP_NOFAIL allocations"), if gfp_flags
+> includes __GFP_NOFAIL with high order in vm_area_alloc_pages()
+> and page allocation failed for high order, the pages** may contain
+> two different page shifts (high order and order-0). This could
+> lead __vmap_pages_range_noflush() to perform incorrect mappings,
+> potentially resulting in memory corruption.
+> 
+> Users might encounter this as follows (vmap_allow_huge = true, 2M is for PMD_SIZE):
+> kvmalloc(2M, __GFP_NOFAIL|GFP_X)
+>     __vmalloc_node_range_noprof(vm_flags=VM_ALLOW_HUGE_VMAP)
+>         vm_area_alloc_pages(order=9) ---> order-9 allocation failed and fallback to order-0
+>             vmap_pages_range()
+>                 vmap_pages_range_noflush()
+>                     __vmap_pages_range_noflush(page_shift = 21) ----> wrong mapping happens
+> 
+> We can remove the fallback code because if a high-order
+> allocation fails, __vmalloc_node_range_noprof() will retry with
+> order-0. Therefore, it is unnecessary to fallback to order-0
+> here. Therefore, fix this by removing the fallback code.
+> 
+> Fixes: e9c3cda4d86e ("mm, vmalloc: fix high order __GFP_NOFAIL allocations")
+> Signed-off-by: Hailong Liu <hailong.liu@oppo.com>
+> Reported-by: Tangquan Zheng <zhengtangquan@oppo.com>
+> Cc: <stable@vger.kernel.org>
+> CC: Barry Song <21cnbao@gmail.com>
+> CC: Baoquan He <bhe@redhat.com>
+> CC: Matthew Wilcox <willy@infradead.org>
+> ---
+>  mm/vmalloc.c | 11 ++---------
+>  1 file changed, 2 insertions(+), 9 deletions(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 6b783baf12a1..af2de36549d6 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3584,15 +3584,8 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+>  			page = alloc_pages_noprof(alloc_gfp, order);
+>  		else
+>  			page = alloc_pages_node_noprof(nid, alloc_gfp, order);
+> -		if (unlikely(!page)) {
+> -			if (!nofail)
+> -				break;
+> -
+> -			/* fall back to the zero order allocations */
+> -			alloc_gfp |= __GFP_NOFAIL;
+> -			order = 0;
+> -			continue;
+> -		}
+> +		if (unlikely(!page))
+> +			break;
+> 
+>  		/*
+>  		 * Higher order allocations must be able to be treated as
+> ---
+> Sorry for fat fingers. with .rej file. resend this.
+> 
+> Baoquan suggests set page_shift to 0 if fallback in (2 and concern about
+> performance of retry with order-0. But IMO with retry,
+> - Save memory usage if high order allocation failed.
+> - Keep consistancy with align and page-shift.
+> - make use of bulk allocator with order-0
+> 
+> [2] https://lore.kernel.org/lkml/20240725035318.471-1-hailong.liu@oppo.com/
+> --
+> 2.30.0
+>
+Makes sense to me.
 
-Discovered by the check-rpaths script[1][2] that checks for insecure
-RPATH/RUNPATH[3], such as relative directories, during an attempt
-to package BPF selftests for later use in CI:
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
-    ERROR   0004: file '/usr/libexec/kselftests/bpf/urandom_read' contains an insecure runpath '.' in [.]
+Thank you!
 
-[1] https://github.com/rpm-software-management/rpm/blob/master/scripts/check-rpaths
-[2] https://github.com/rpm-software-management/rpm/blob/master/scripts/check-rpaths-worker
-[3] https://cwe.mitre.org/data/definitions/426.html
-
-Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
----
- tools/testing/selftests/alsa/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/alsa/Makefile b/tools/testing/selftests/alsa/Makefile
-index c1ce39874e2b..0f204da9ea8e 100644
---- a/tools/testing/selftests/alsa/Makefile
-+++ b/tools/testing/selftests/alsa/Makefile
-@@ -6,7 +6,7 @@ LDLIBS += $(shell pkg-config --libs alsa)
- ifeq ($(LDLIBS),)
- LDLIBS += -lasound
- endif
--CFLAGS += -L$(OUTPUT) -Wl,-rpath=./
-+CFLAGS += -L$(OUTPUT) -Wl,-rpath=\$$ORIGIN/
- 
- LDLIBS+=-lpthread
- 
--- 
-2.28.0
-
+--
+Uladzislau Rezki
 
