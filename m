@@ -1,52 +1,70 @@
-Return-Path: <linux-kernel+bounces-279814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001AA94C228
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:59:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5408A94C229
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A2928578B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017191F2A13E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B500E18FC93;
-	Thu,  8 Aug 2024 15:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4086B18FDC5;
+	Thu,  8 Aug 2024 15:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b="zXPoVCw4"
-Received: from cmx-torrgo001.bell.net (mta-tor-002.bell.net [209.71.212.29])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J+IS53tq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6342118FC8C;
-	Thu,  8 Aug 2024 15:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.71.212.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A0C18E056;
+	Thu,  8 Aug 2024 15:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723132752; cv=none; b=S7WJwCTCcdGMlsV9fUDZOkD2yGMZFw2WhnoTxm2RMsKzHebwZ/Uu9QbO56wqfWn7q79JhjRhVsS64ohANqLCBaUPVqcksrVx8UqR9/eUbRCfVzD+Bq8gDGizehiArfI3JpJLx09V1n1dGqNyMe/Fk10raAS5CjObgWteVh8ieCg=
+	t=1723132766; cv=none; b=fGbII4sUlH3xawVjObwfxdIMWlosxvw8Dbigpn8cip6ZkEOrF9hwfiFw7P4anuWHDQOY9wz//qOcwPiXsaNrNhpMe4RWFKjxad9luO2oFghKmnlOpOYBHf0UcvRP/IzotWxaUsd7xy88/YXWCMjBB/4YrP2Zh9fWmfIkwkvsx9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723132752; c=relaxed/simple;
-	bh=q9YxMKsVMGIyxrNQwiIfwExgAGd4hJ8yejMB+IKby1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jjsEpz+XnzzYrvC2ZjAJZpxU7C7m1qA0nYWNRs3r8qx01FwIks7YI1AUAivqEPwlzlw4IPxHhX50/i7gMVAAdMydNQpkYM8duev+8YjiWKvmgmKFwMhqywhK/5o3piFKo18nnaHRlBKMN87MrG9VAazwZ52cOu6HnMy/a9fyGMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net; spf=pass smtp.mailfrom=bell.net; dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b=zXPoVCw4; arc=none smtp.client-ip=209.71.212.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bell.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bell.net; s=selector1; t=1723132750; 
-        bh=TEqfNLWr3gKtd++74IirfwzKb3WiIcv1U/MdDPiyB48=;
-        h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type;
-        b=zXPoVCw4wY8sdh6dAcRmBbhnD16o2xEGzTusCTis5/0t7vzHNGa+M88tVFwTUVxS0fRNKo3tP5+ksKEE7Jp5t9bC+nRN2+Orbok3nl+1qX4ClC37CgGpunHOKqBO4u+bobWJsftlwsRFQaVskPELnibzFIxAtmlK4+l5QKfixpr+eg26hgYzcxQm/+1bL5c48y7AwOOZJmuihZ+ITrO6TDRYZPD6Op37YtlwL+E54or+WgNmewAYAuX7iQTJDnQ49Uui4/029Qzob3pXDwJFW+AO3ApFwv56aBtoOhHivhHySoTBIdAB0RCA3SgiACIHTODFG/QzD7DnNM5TovOMrw==
-X-RG-SOPHOS: Clean
-X-RG-VADE-SC: 0
-X-RG-VADE: Clean
-X-RG-Env-Sender: dave.anglin@bell.net
-X-RG-Rigid: 669E799D01F295D9
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgeeftddrledvgdelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceugffnnfdpqfgfvfenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeflohhhnhcuffgrvhhiugcutehnghhlihhnuceouggrvhgvrdgrnhhglhhinhessggvlhhlrdhnvghtqeenucggtffrrghtthgvrhhnpeejleffffejhefggfeuheelgeefgeeuieegtdekffegudeuteffgeffjedukefgueenucfkphepjeeirdejuddrudduhedrjeehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehhvghloheplgduledvrdduieekrddvrdeglegnpdhinhgvthepjeeirdejuddrudduhedrjeehpdhmrghilhhfrhhomhepuggrvhgvrdgrnhhglhhinhessggvlhhlrdhnvghtpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepuggrvhgvrdgrnhhglhhinhessggvlhhlrdhnvghtpdhrtghpthhtohepuggvlhhlvghrsehgmhigrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhprghrihhstgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigsehrohgvtghk
-	qdhushdrnhgvthdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-X-RazorGate-Vade-Verdict: clean 0
-X-RazorGate-Vade-Classification: clean
-Received: from [192.168.2.49] (76.71.115.75) by cmx-torrgo001.bell.net (authenticated as dave.anglin@bell.net)
-        id 669E799D01F295D9; Thu, 8 Aug 2024 11:58:37 -0400
-Message-ID: <9a9de074-372a-4688-ba49-49bae8701845@bell.net>
-Date: Thu, 8 Aug 2024 11:58:37 -0400
+	s=arc-20240116; t=1723132766; c=relaxed/simple;
+	bh=MEvxcBvLjv3BSWvOm4fkXUoZALp5jBl627u9jxglorQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=H+2Olb1LvIwIvPcSHrimyzKypc9xJ0FBT1oGqxyHx842z6YaN5MhuhJl4mfOo6lRBpX81xjAiwZ4C9uyyGULwg7HNpc44GN5uGIrj9Z1hLYYynO/2IXDkr6xm18P6JikTkSdbqxgdOW1uXB952Sie3F1VlbXnHJ58Qz78/JgRhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J+IS53tq; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723132765; x=1754668765;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=MEvxcBvLjv3BSWvOm4fkXUoZALp5jBl627u9jxglorQ=;
+  b=J+IS53tqwThMYeQ7o/xh06GGKABlqnkoSppOaPGxdXJnfoGJoASOfSIk
+   r/Lxymu/jm5x1mClEuQyQ14ZKWvo0onSd1MA77/cDhQW5C7TCOf42WV9t
+   0OXnfZODhDzjKPZgcozmU25B37wAUHTiE8A+sC/NVIjrpi9c71DGV+mPz
+   1U080oFsYWOdtxYjzzWWzyQ6WDJdhrEokFnFb+jAlmQwceFmj1yOD4s9A
+   uEInfQwX6pF+Y1ge+/v8CqgMd+KJWgGFu5v0rW9Q/tBUMZntMOzdltnIk
+   OfaZvjEJ+n9bPxp4Y8Kb4oEawCEoxZp7u4zaTQD5/GiCN8X5o9d9PZVD1
+   A==;
+X-CSE-ConnectionGUID: XbnD4gB3TE68IwXY/jU3nQ==
+X-CSE-MsgGUID: zVWstbgQSdCrvhbD+dOukw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="20837740"
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="20837740"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 08:59:24 -0700
+X-CSE-ConnectionGUID: C3J5hc+SSBet162iCN9lDA==
+X-CSE-MsgGUID: cuyZeT4sQxSSdUcerky64Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="57351337"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 08:59:23 -0700
+Received: from [10.212.64.50] (kliang2-mobl1.ccr.corp.intel.com [10.212.64.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id BB68920CFECD;
+	Thu,  8 Aug 2024 08:59:21 -0700 (PDT)
+Message-ID: <147d8178-70d6-42b8-b255-ee9e24774a61@linux.intel.com>
+Date: Thu, 8 Aug 2024 11:59:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,92 +72,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-To: Guenter Roeck <linux@roeck-us.net>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
- Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
-References: <20240731095022.970699670@linuxfoundation.org>
- <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
- <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
- <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
- <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net> <87plqjz6aa.ffs@tglx>
- <cffe30ed-43a3-46ac-ad03-afb7633f17e5@roeck-us.net>
+Subject: Re: [PATCH v1 1/2] perf callchain: Fix stitch LBR memory leaks
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Anne Macedo <retpolanne@posteo.net>, Changbin Du <changbin.du@huawei.com>,
+ Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20240808054644.1286065-1-irogers@google.com>
 Content-Language: en-US
-From: John David Anglin <dave.anglin@bell.net>
-Autocrypt: addr=dave.anglin@bell.net; keydata=
- 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
- T70V9SSrl2hiw38vRzsl
-In-Reply-To: <cffe30ed-43a3-46ac-ad03-afb7633f17e5@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240808054644.1286065-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-08-08 10:59 a.m., Guenter Roeck wrote:
->> Let's wait for PARISC people to run it on actual hardware.
->>
->
-> Agreed. I suspect that there is a carry or upper 32 bit of a register not
-> handled properly, but I have no idea where that might be or why that would
-> only be seen if the div functions are located in a certain address range.
-I'm doubtful there's a coding issue in $$divoI.  The routine was written by HP and
-it's used on both HP-UX and Linux.  The routine can be found in libgcc/config/pa/milli64.S
 
-The routine can trap:
-    Divide by zero is trapped.
-    Divide of -2**31 by -1 is trapped for $$divoI but not for $$divI.
 
-$$divoI is a millicode routine.  Not sure what calls it.  gcc doesn't call it.  gcc uses $$divI.
+On 2024-08-08 1:46 a.m., Ian Rogers wrote:
+> The callchain_cursor_node has a map_symbol whose maps and map
+> variables are reference counted. Ensure these values use a _get
+> routine to increment the refernece counts and use map_symbol__exit to
+> release the reference counts. Do similar for thread's prev_lbr_cursor,
+> but save the size of the prev_lbr_cursor array so that it may be
+> iterated.
+> 
+> Ensure that when stitch_nodes are placed on the free list the
+> map_symbols are exited. Fix resolve_lbr_callchain_sample by replacing
+> list_replace_init to list_splice_init, so the whole list is moved and
+> nodes aren't leaked.
+> 
+> A reproduction of the memory leaks is possible with a leak sanitizer
+> build in the perf report command of:
+> ```
+> $ perf record -e cycles --call-graph lbr perf test -w thloop
+> $ perf report --stitch-lbr
+> ```
+> 
+> Fixes: ff165628d726 ("perf callchain: Stitch LBR call stack")
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-It appears you are testing a 64-bit kernel.  There might be issues calling millicode routines
-when branch distance exceeds approximately 4 MB.  Millicode routines have a special
-calling sequence.  You could try building kernel with -mlong-calls. Kernel will get bugger
-and slower with this option.
+Thanks Ian.
 
-Dave
+Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
 
--- 
-John David Anglin  dave.anglin@bell.net
+Thanks,
+Kan
 
+> ---
+>  tools/perf/util/machine.c | 17 +++++++++++++++--
+>  tools/perf/util/thread.c  |  4 ++++
+>  tools/perf/util/thread.h  |  1 +
+>  3 files changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index 8477edefc299..706be5e4a076 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -2270,8 +2270,12 @@ static void save_lbr_cursor_node(struct thread *thread,
+>  		cursor->curr = cursor->first;
+>  	else
+>  		cursor->curr = cursor->curr->next;
+> +
+> +	map_symbol__exit(&lbr_stitch->prev_lbr_cursor[idx].ms);
+>  	memcpy(&lbr_stitch->prev_lbr_cursor[idx], cursor->curr,
+>  	       sizeof(struct callchain_cursor_node));
+> +	lbr_stitch->prev_lbr_cursor[idx].ms.maps = maps__get(cursor->curr->ms.maps);
+> +	lbr_stitch->prev_lbr_cursor[idx].ms.map = map__get(cursor->curr->ms.map);
+>  
+>  	lbr_stitch->prev_lbr_cursor[idx].valid = true;
+>  	cursor->pos++;
+> @@ -2482,6 +2486,9 @@ static bool has_stitched_lbr(struct thread *thread,
+>  		memcpy(&stitch_node->cursor, &lbr_stitch->prev_lbr_cursor[i],
+>  		       sizeof(struct callchain_cursor_node));
+>  
+> +		stitch_node->cursor.ms.maps = maps__get(lbr_stitch->prev_lbr_cursor[i].ms.maps);
+> +		stitch_node->cursor.ms.map = map__get(lbr_stitch->prev_lbr_cursor[i].ms.map);
+> +
+>  		if (callee)
+>  			list_add(&stitch_node->node, &lbr_stitch->lists);
+>  		else
+> @@ -2505,6 +2512,8 @@ static bool alloc_lbr_stitch(struct thread *thread, unsigned int max_lbr)
+>  	if (!thread__lbr_stitch(thread)->prev_lbr_cursor)
+>  		goto free_lbr_stitch;
+>  
+> +	thread__lbr_stitch(thread)->prev_lbr_cursor_size = max_lbr + 1;
+> +
+>  	INIT_LIST_HEAD(&thread__lbr_stitch(thread)->lists);
+>  	INIT_LIST_HEAD(&thread__lbr_stitch(thread)->free_lists);
+>  
+> @@ -2560,8 +2569,12 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
+>  						max_lbr, callee);
+>  
+>  		if (!stitched_lbr && !list_empty(&lbr_stitch->lists)) {
+> -			list_replace_init(&lbr_stitch->lists,
+> -					  &lbr_stitch->free_lists);
+> +			struct stitch_list *stitch_node;
+> +
+> +			list_for_each_entry(stitch_node, &lbr_stitch->lists, node)
+> +				map_symbol__exit(&stitch_node->cursor.ms);
+> +
+> +			list_splice_init(&lbr_stitch->lists, &lbr_stitch->free_lists);
+>  		}
+>  		memcpy(&lbr_stitch->prev_sample, sample, sizeof(*sample));
+>  	}
+> diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+> index 87c59aa9fe38..0ffdd52d86d7 100644
+> --- a/tools/perf/util/thread.c
+> +++ b/tools/perf/util/thread.c
+> @@ -476,6 +476,7 @@ void thread__free_stitch_list(struct thread *thread)
+>  		return;
+>  
+>  	list_for_each_entry_safe(pos, tmp, &lbr_stitch->lists, node) {
+> +		map_symbol__exit(&pos->cursor.ms);
+>  		list_del_init(&pos->node);
+>  		free(pos);
+>  	}
+> @@ -485,6 +486,9 @@ void thread__free_stitch_list(struct thread *thread)
+>  		free(pos);
+>  	}
+>  
+> +	for (unsigned int i = 0 ; i < lbr_stitch->prev_lbr_cursor_size; i++)
+> +		map_symbol__exit(&lbr_stitch->prev_lbr_cursor[i].ms);
+> +
+>  	zfree(&lbr_stitch->prev_lbr_cursor);
+>  	free(thread__lbr_stitch(thread));
+>  	thread__set_lbr_stitch(thread, NULL);
+> diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+> index 8b4a3c69bad1..6cbf6eb2812e 100644
+> --- a/tools/perf/util/thread.h
+> +++ b/tools/perf/util/thread.h
+> @@ -26,6 +26,7 @@ struct lbr_stitch {
+>  	struct list_head		free_lists;
+>  	struct perf_sample		prev_sample;
+>  	struct callchain_cursor_node	*prev_lbr_cursor;
+> +	unsigned int prev_lbr_cursor_size;
+>  };
+>  
+>  DECLARE_RC_STRUCT(thread) {
 
