@@ -1,192 +1,140 @@
-Return-Path: <linux-kernel+bounces-279115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E4394B920
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:38:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587DB94B914
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E991C2338C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:38:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4DE1F2351E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713C81891C3;
-	Thu,  8 Aug 2024 08:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EA/YII6h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F571891AB;
+	Thu,  8 Aug 2024 08:34:34 +0000 (UTC)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44211465B3
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D949101DE;
+	Thu,  8 Aug 2024 08:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723106285; cv=none; b=apltTOI042+rX0W0iWhMmxF6efQWWAzCMJTF8Z/rC17sOJncEr0j+yVMez58039iUroNjzfKDlG5qdOxnb3KDfyC/vZl+g/ml/pq5Q9+yqPEey4S2is3M4YI4xy8BRmR7KQQV0vr0HIsyczATln638HpkMNFHFXVfLWcLBDx4rA=
+	t=1723106074; cv=none; b=BtzBvUf2AFS97aFrmfuZCsERjfGOG9b94tFbwPVLN5YAe1cn52HAGHnqEqj0MOb8cx5yB4xVQ2uRoc8X95zNmFQONkh24CCjqWGYzew2ZvC/EDE3E1mhhlNc9LL/Clr0CHy1o09mwaIQKOttAbD5uh8xtbyuBmsSeX5XbX68frU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723106285; c=relaxed/simple;
-	bh=ez3phI6BBa0eNuW0PpXznPWLOTIj96ikhsWv7XGF8dI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WbtQpehRaPZFpBOXOT0mYdIWfeYuKLyKEH3Ys8dUJWV+NHzYBRs9Aylqfv2P5bY/gWOmMRR7jZ8CEporuIJJIirbXBOlayAGRUPJQCzJ6eQtCV6u7dWm+kx6CuP8fZocwOn+QQwanQB79E5zpFNnETHCwaR3Jek6zGiJzJEbv4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EA/YII6h; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723106284; x=1754642284;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=ez3phI6BBa0eNuW0PpXznPWLOTIj96ikhsWv7XGF8dI=;
-  b=EA/YII6hkFnqBly4Gt5NWpbNNuVya/oOgAoBXMN79dtqGz8G5om5XhQW
-   A4cNkL6zlAwWr+T7tcwYScWUsrGmcSah/bxZauGzN2w+8pAu5KSjKBe5f
-   slJLNyxN8T01wIpb1CK0ffpdyQkA6Q2nP5S8CV8lEDnii9L5m83pf6ogk
-   5XKhtUG7LQtEGD/hKS9m0jXvCeBw7qgU45AM9FrEFHIcBlLy6N4sZ8Mkq
-   s33iKw31ANSzS+hPCck3rSk1BxpEp2NGoPlpCdL9qrh2z9vs3zdk8vdFf
-   UhLpscQPyhde3XUqfo/AX4bvev4MIAQMWU3pOSwyNEk+BSZg5oMiglTRv
-   g==;
-X-CSE-ConnectionGUID: xEJ9XIHXRSqRlZPrO+IBPw==
-X-CSE-MsgGUID: 2PQCaPx1T/mnyBVlohSxQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="24980099"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="24980099"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 01:38:03 -0700
-X-CSE-ConnectionGUID: /Wyuo3tcSRK4+9UytqicGw==
-X-CSE-MsgGUID: 4Jx1yeNdRDurVQsKh8JbRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="61541546"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 01:38:00 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Kairui Song <kasong@tencent.com>,  Ryan
- Roberts <ryan.roberts@arm.com>,  Kalesh Singh <kaleshsingh@google.com>,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
- <baohua@kernel.org>
-Subject: Re: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap
- cluster order
-In-Reply-To: <CACePvbXH8b9SOePQ-Ld_UBbcAdJ3gdYtEkReMto5Hbq9WAL7JQ@mail.gmail.com>
-	(Chris Li's message of "Wed, 7 Aug 2024 13:42:20 -0700")
-References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
-	<87h6bw3gxl.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CACePvbXH8b9SOePQ-Ld_UBbcAdJ3gdYtEkReMto5Hbq9WAL7JQ@mail.gmail.com>
-Date: Thu, 08 Aug 2024 16:34:27 +0800
-Message-ID: <87sevfza3w.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1723106074; c=relaxed/simple;
+	bh=UIdUQwFoDfyAHpDPmasNQdPLo4k/OipcMMqyvOubLWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BAIAa6Quxpn7e/PPQRTdHAm60y1P2ufdYYD64FvfOCgWz4lvS1b/CcT+YRStYFc1KvrAJX2rAW2mPaXUitGtgXzgUh7siBguYzpsfcMorp6JMP938C8gyLkzpJcy/uZXT6ZUQs8R7nnzZ8l7c69+Y4DaO6sf0mr+qwcpWjAtKXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so2731122a12.0;
+        Thu, 08 Aug 2024 01:34:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723106071; x=1723710871;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=52QVSpFTr+c1Yj99JowRCyFO1YiJenE5u/kUGXk2t8o=;
+        b=t1bcQHf1wQquCmw0LwVFeuXvS88DRP/tr88CBwZ9tOo3YIxsiafp+llfGBF10IZRw0
+         WsJdm2ZNFuTgpxIUeKkSBiBuwWk1qjbWtHKUhRC4AwRU/BoL4m0KMnwQnNoh3KkI+6Ge
+         zIgtGC0Qzz++VrjVLTek+rz+/UQpx+8FD/Jkz/AR6rq4pIcjyadTl4CZIQLA+SOw06U2
+         0c8UvcgL1vN166GXX3ZMYvq61UBI669Un9PMkDHNVAacmh/wQnueKfSFchdbN7F4WcRI
+         fB0pfctX5ntkbKzUCIOYvgolDzo6zftNDt0Ex8QGTXTv3Ljsn5gZu7qsi02vZR++kIyk
+         Rkww==
+X-Forwarded-Encrypted: i=1; AJvYcCXXEproFullDK3zc4Q1BsnhMPmPuaFFfOBWmfJl+BASa37Heh2kOEZ/HcJ7yADWmp4IBsTfrlBFk2oI/dhnzeq7C10NMFCTZgyS1TMaZJnJbW+K95WHo+By/MKHtUHgNAkf86iPTlFASBamXjtCu6fdnXnLGThFD+Jq4aQ4VL7YDbvTPdu8VOmbzDNUGyE=
+X-Gm-Message-State: AOJu0Yz/UxYbVxnwMa63quA/KMAAWx4iQFc5zYAfr3Zu2mgBnz7PVXgs
+	TWGAvxVQdFOJ6/J/v0cu2Z8hqtTgXdpB94H25oNc7s1IArQokaPk
+X-Google-Smtp-Source: AGHT+IG4Am3i/X9+d18JcWuUEoYbCQYfq3RHu9i8q7Zo0wZxgf6i0QkVappTqMdQFcdX2zJsgEZ2Jg==
+X-Received: by 2002:a17:907:368c:b0:a7a:8dcd:ffb4 with SMTP id a640c23a62f3a-a8091f1998dmr76854066b.17.1723106070607;
+        Thu, 08 Aug 2024 01:34:30 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0cdddsm712408466b.81.2024.08.08.01.34.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 01:34:30 -0700 (PDT)
+Message-ID: <ca6853fb-91e8-4f0a-8cf5-349356b2c6f4@kernel.org>
+Date: Thu, 8 Aug 2024 10:34:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] tty: serial: samsung_tty: drop unused argument to
+ irq handlers
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20240808-samsung-tty-cleanup-v3-0-494412f49f4b@linaro.org>
+ <20240808-samsung-tty-cleanup-v3-1-494412f49f4b@linaro.org>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20240808-samsung-tty-cleanup-v3-1-494412f49f4b@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Chris Li <chrisl@kernel.org> writes:
+On 08. 08. 24, 10:11, André Draszik wrote:
+> The 'irq' argument is not used in any of the callees, we can just drop
+> it and simplify the code.
+> 
+> No functional changes.
 
-> On Wed, Aug 7, 2024 at 12:59=E2=80=AFAM Huang, Ying <ying.huang@intel.com=
-> wrote:
->>
->> Hi, Chris,
->>
->> Chris Li <chrisl@kernel.org> writes:
->>
->> > This is the short term solutions "swap cluster order" listed
->> > in my "Swap Abstraction" discussion slice 8 in the recent
->> > LSF/MM conference.
->> >
->> > When commit 845982eb264bc "mm: swap: allow storage of all mTHP
->> > orders" is introduced, it only allocates the mTHP swap entries
->> > from the new empty cluster list.  It has a fragmentation issue
->> > reported by Barry.
->> >
->> > https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp=
-+Ah+NSgNQ@mail.gmail.com/
->> >
->> > The reason is that all the empty clusters have been exhausted while
->> > there are plenty of free swap entries in the cluster that are
->> > not 100% free.
->> >
->> > Remember the swap allocation order in the cluster.
->> > Keep track of the per order non full cluster list for later allocation.
->> >
->> > This series gives the swap SSD allocation a new separate code path
->> > from the HDD allocation. The new allocator use cluster list only
->> > and do not global scan swap_map[] without lock any more.
->>
->> This sounds good.  Can we use SSD allocation method for HDD too?
->> We may not need a swap entry allocator optimized for HDD.
->
-> Yes, that is the plan as well. That way we can completely get rid of
-> the old scan_swap_map_slots() code.
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-Good!
+> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+thanks,
+-- 
+js
+suse labs
 
-> However, considering the size of the series, let's focus on the
-> cluster allocation path first, get it tested and reviewed.
-
-OK.
-
-> For HDD optimization, mostly just the new block allocations portion
-> need some separate code path from the new cluster allocator to not do
-> the per cpu allocation.  Allocating from the non free list doesn't
-> need to change too
-
-I suggest not consider HDD optimization at all.  Just use SSD algorithm
-to simplify.
-
->>
->> Hi, Hugh,
->>
->> What do you think about this?
->>
->> > This streamline the swap allocation for SSD. The code matches the
->> > execution flow much better.
->> >
->> > User impact: For users that allocate and free mix order mTHP swapping,
->> > It greatly improves the success rate of the mTHP swap allocation after=
- the
->> > initial phase.
->> >
->> > It also performs faster when the swapfile is close to full, because the
->> > allocator can get the non full cluster from a list rather than scanning
->> > a lot of swap_map entries.
->>
->> Do you have some test results to prove this?  Or which test below can
->> prove this?
->
-> The two zram tests are already proving this. The system time
-> improvement is about 2% on my low CPU count machine.
-> Kairui has a higher core count machine and the difference is higher
-> there. The theory is that higher CPU count has higher contentions.
-
-I will interpret this as the performance is better in theory.  But
-there's almost no measurable results so far.
-
-> The 2% system time number does not sound like much. But consider this
-> two factors:
-> 1) swap allocator only takes a small percentage of the overall workload.
-> 2) The new allocator does more work.
-> The old allocator has a time tick budget. It will abort and fail to
-> find an entry when it runs out of time budget, even though there are
-> still some free entries on the swapfile.
-
-What is the time tick budget you mentioned?
-
-> The new allocator can get to the last few free swap entries if it is
-> available. If not then, the new swap allocator will work harder on
-> swap cache reclaim.
->
-> From the swap cache reclaim aspect, it is very hard to optimize the
-> swap cache reclaim in the old allocation path because the scan
-> position is randomized.
-> The full list and frag list both design to help reduce the repeat
-> reclaim attempt of the swap cache.
-
-[snip]
-
---
-Best Regards,
-Huang, Ying
 
