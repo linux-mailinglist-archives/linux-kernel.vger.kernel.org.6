@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-279967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C17F94C3F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:54:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2196394C3F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 145941F25EDE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F73281C64
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE98146D6B;
-	Thu,  8 Aug 2024 17:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519C314600F;
+	Thu,  8 Aug 2024 17:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koz3p7Xm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekqd0hqv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C923E12CDAE;
-	Thu,  8 Aug 2024 17:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0C112CDAE;
+	Thu,  8 Aug 2024 17:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723139679; cv=none; b=H73VCxB2e04ir7Z6YOAGr3hJI2BrdJBsHge/ID4fTrJIyaUcIYMsuJxYfxoBKfzsNzmuDeI474CuQe+g1rWC8ajuw7PUK1DcAuowm6WsbMaBAPJXxWr0hbVral/y91dRVOEBzpsbt6uLXvGSM+/SXLVlTbuY95L6SX+9jcPtjK0=
+	t=1723139673; cv=none; b=X260RzfR3fMYVN93NDs4c/w+XkvXQpdJncYAcrcB9SHnkS9Ln3hFKZvyhO2P5671FG/al2Qi1w2WQxWorLIBCnUXRb3uJaFfbMXVIVOpV1aGgnsJrF76CtTibyt4WCpkxHk0kPPtS2HVESAeH7STwVptFakf3Sf6sABENlWtiH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723139679; c=relaxed/simple;
-	bh=XfKJm34ejhy7gyJBoH0L9ZTqoacWaLvJPTszpV01X9w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0xjNIVZeUo7TgdaWuD1BRQjuI+zVG2+tKuQCMSDqYly/A1Tf5pSgsxWTio2ZC7MfNDUA14AjBPPhDiqb686atspdfHBaEn71rCLxJ8t6Vw0MP+TBNpVzYj4WV9KXLINUAWF6saJFRpB+NXDiqBHLmWm7pSHrEPFAMOmRZ+Fr6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koz3p7Xm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CD4C32782;
-	Thu,  8 Aug 2024 17:54:29 +0000 (UTC)
+	s=arc-20240116; t=1723139673; c=relaxed/simple;
+	bh=J3H9kOyv2IqWJ6BxkDpHlkp1OGHMwH5Wxp6YCl7+Cqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iadxhltGFH7+BMbwUASSjucpQnEebvoQkKmJDEMteE8Gfrqf9aS8mLIDDUlkY7pZ4K0ZozY+Mx0WldU4PCsSUf5pwNvf9HgtaI0U0OMa/5IwudoSIJBYJVy5mS417bPrMISRW7ohFKMSGdTHG5rmDhLpmQIB2JxBFU8PjuSxTNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekqd0hqv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E899AC4AF09;
+	Thu,  8 Aug 2024 17:54:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723139679;
-	bh=XfKJm34ejhy7gyJBoH0L9ZTqoacWaLvJPTszpV01X9w=;
-	h=Date:Subject:List-Id:To:Cc:References:From:In-Reply-To:From;
-	b=koz3p7XmsiXX8vzeOkk5XRC4GEGuHNrMziQzzlW7vRl8zuybW5DacO33u4csq8RGS
-	 jNAWDzFY7qn6xOiNIB/4Z3lmX/XWXborSfTue9N92C34NAmIPxbMKCugGiFvvFxNWr
-	 T0+DFF6AxTZU3lQmXVXK3zDVTPayjiPhsErBIcDmg41kjKHFySXddrsEu2sijdBpUh
-	 V001jNX7U+7YLrc7D18taFbL8D1SapPFHFICJs9yfc4KvXcHDCJGHqqf39y2ssDyLf
-	 aO7Nff19+3YhJqj0xh1ZseBFTq9KGxDQxcnrj2ni6qJ3YsyVFhsYby3NstalAc3I+Z
-	 fFW72zpqW+g5A==
-Message-ID: <b23f6a36-df9e-4a70-9980-9bfe224868c3@kernel.org>
-Date: Thu, 8 Aug 2024 19:54:26 +0200
+	s=k20201202; t=1723139672;
+	bh=J3H9kOyv2IqWJ6BxkDpHlkp1OGHMwH5Wxp6YCl7+Cqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ekqd0hqv0LzONtXLHWyjhNvQhMVw6kw61Z1HTnfJJm8D+VOLzUjcK7euQYterAm+V
+	 6WyZWYRYPtICBYiWTje3Evi6FA9e4f/uEZO9kW66s8y/czmR1vjqG/mKFi6UbXupwu
+	 JNgA2nnN0nQJGaZN170lM8qwTvVKgih+PNwSsdripnzH+Ph+8du+yP7Q2Oo2Lh8T5V
+	 ZQMnEmuzABbR6HCo3Gmu1xLr6zC3SWCf5XlebM8BKLO7ng1Kww6RQf9mFQoEZyLdlA
+	 MX9tfcSMY+TxbFHZqqZRlINhp1z8esszCfDRUcUN/ItflR8HVvklxr5XpqlOlkMUr8
+	 1hPmX7jVN47Wg==
+Date: Thu, 8 Aug 2024 10:54:31 -0700
+From: Kees Cook <kees@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, jannh@google.com,
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH RFT v8 0/9] fork: Support shadow stacks in clone3()
+Message-ID: <202408081053.0EABACA@keescook>
+References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: Fix undocumented LM75 compatible nodes
-To: "Rob Herring (Arm)" <robh@kernel.org>, soc@kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Dinh Nguyen <dinguyen@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>,
- Mark Jackson <mpfj@newflow.co.uk>, Tony Lindgren <tony@atomide.com>,
- Michal Simek <michal.simek@amd.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- openbmc@lists.ozlabs.org, imx@lists.linux.dev, linux-omap@vger.kernel.org
-References: <20240808164941.1407327-1-robh@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240808164941.1407327-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
 
-On 08/08/2024 18:49, Rob Herring (Arm) wrote:
-> "lm75" without any vendor is undocumented. It works with the Linux
-> kernel since the I2C subsystem will do matches of the compatible string
-> without a vendor prefix to the i2c_device_id and/or driver name.
+On Thu, Aug 08, 2024 at 09:15:21AM +0100, Mark Brown wrote:
+> The kernel has recently added support for shadow stacks, currently
+> x86 only using their CET feature but both arm64 and RISC-V have
+> equivalent features (GCS and Zicfiss respectively), I am actively
+> working on GCS[1].  With shadow stacks the hardware maintains an
+> additional stack containing only the return addresses for branch
+> instructions which is not generally writeable by userspace and ensures
+> that any returns are to the recorded addresses.  This provides some
+> protection against ROP attacks and making it easier to collect call
+> stacks.  These shadow stacks are allocated in the address space of the
+> userspace process.
 > 
-> Mostly replace "lm75" with "national,lm75" as that's the original part
-> vendor and the compatible which matches what "lm75" matched with. In a
-> couple of cases the node name or compatible gives a clue to the actual
-> part and vendor and a more specific compatible can be used. In these
-> cases, it does change the variant the kernel picks.
+> Our API for shadow stacks does not currently offer userspace any
+> flexiblity for managing the allocation of shadow stacks for newly
+> created threads, instead the kernel allocates a new shadow stack with
+> the same size as the normal stack whenever a thread is created with the
+> feature enabled.  The stacks allocated in this way are freed by the
+> kernel when the thread exits or shadow stacks are disabled for the
+> thread.  This lack of flexibility and control isn't ideal, in the vast
+> majority of cases the shadow stack will be over allocated and the
+> implicit allocation and deallocation is not consistent with other
+> interfaces.  As far as I can tell the interface is done in this manner
+> mainly because the shadow stack patches were in development since before
+> clone3() was implemented.
 > 
-> "nct75" is an OnSemi part which is compatible with TI TMP75C based on
-> a comparison of the OnSemi NCT75 datasheet and configuration the Linux
-> driver uses. Adding an OnSemi compatible would be an ABI change.
+> Since clone3() is readily extensible let's add support for specifying a
+> shadow stack when creating a new thread or process in a similar manner
+> to how the normal stack is specified, keeping the current implicit
+> allocation behaviour if one is not specified either with clone3() or
+> through the use of clone().  The user must provide a shadow stack
+> address and size, this must point to memory mapped for use as a shadow
+> stackby map_shadow_stack() with a shadow stack token at the top of the
+> stack.
 > 
-> "nxp,lm75" is most likely an NXP part. NXP makes a LM75A and LM75B.
-> Both are 11-bit resolution and 100ms sample time, so "national,lm75b" is
-> the closest match.
+> Please note that the x86 portions of this code are build tested only, I
+> don't appear to have a system that can run CET avaible to me, I have
+> done testing with an integration into my pending work for GCS.  There is
+> some possibility that the arm64 implementation may require the use of
+> clone3() and explicit userspace allocation of shadow stacks, this is
+> still under discussion.
 > 
-> While we're here, fix the node names to use the generic name
-> "temperature-sensor".
+> Please further note that the token consumption done by clone3() is not
+> currently implemented in an atomic fashion, Rick indicated that he would
+> look into fixing this if people are OK with the implementation.
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> SoC maintainers, Please take this directly.
-> ---
+> A new architecture feature Kconfig option for shadow stacks is added as
+> here, this was suggested as part of the review comments for the arm64
+> GCS series and since we need to detect if shadow stacks are supported it
+> seemed sensible to roll it in here.
+> 
+> [1] https://lore.kernel.org/r/20231009-arm64-gcs-v6-0-78e55deaa4dd@kernel.org/
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Kees Cook <kees@kernel.org>
+Tested-by: Kees Cook <kees@kernel.org>
 
-Best regards,
-Krzysztof
+(Testing was done on CET hardware.)
 
+-- 
+Kees Cook
 
