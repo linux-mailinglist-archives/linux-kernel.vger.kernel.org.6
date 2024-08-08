@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-279850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D04194C28C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:21:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885D294C28E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643F4282DE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:21:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B99791C21C9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43931917C4;
-	Thu,  8 Aug 2024 16:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683E0191F60;
+	Thu,  8 Aug 2024 16:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJ5LQ4gS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EuHKWcp4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8ED18E02D;
-	Thu,  8 Aug 2024 16:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38B81917D9;
+	Thu,  8 Aug 2024 16:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723134043; cv=none; b=FXnXgGbdrm12ClAaSZiSd4RfgD4oiOuE+Vq6nyWQFVgJ5Nh/DYCp/0PjW+x0dr90rikf4KbBVTwTZF2PZbX9lWLmFWX/XpYpQo0Mnmw/eM79vovc4C9y84FlIOWm5JdskPyW71d2SxpW/PE2baoZNkHKvRBDpR961Be/bWAm+Fg=
+	t=1723134044; cv=none; b=KpyYsvlsUhzEVfslmFCE7scN7eaCjuz8HtdeI21UgDDZKTRS/XK4bnGpcJ7uaM++EI+mJHrudghsMgD8zd5Rs/1Ik0zA4d6WA0KyShJyllpn9vA2CWqD09t50cJarhJgRUHoHBtJ0B6fw+4Qd/fcOaA8ZE3FfSv79lWiaoa3s7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723134043; c=relaxed/simple;
-	bh=/ZsZ+Z7HYAE5RdzRe9M2LUYLZzaBzS3/nxnK6+ZBj6o=;
+	s=arc-20240116; t=1723134044; c=relaxed/simple;
+	bh=PLkT+hDPeySuV8G/5CLVB9oTnsFLOVJzYmUZMSzqqps=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=joXDquuDQ3sBZsZKK3cakA/NkrA3dutVViGyTHMPPRn5AeL88DjMdwIMeJzJPTNDixNesYBsEKLbKQqm63PsKQ9sm6kssfSWHJKTBPNhPYWexi2SRAF5lNc8yqZuS3hZhGlOy/pRDvCDi5qR0lXTSvuxu6+eFv0geeXKDV9ND8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJ5LQ4gS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94387C32782;
-	Thu,  8 Aug 2024 16:20:41 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=WyPuD1T6nuGFLnRod4OdoVITqaOCyhoWtS7DFJkLaB7ojgOyflLSfFa4oC2CN7lEly3m1i8cRe8aNQbn+LOiTtIpq7YAoSidAzWC622RLQwTgz+KYF2mLLzfwdkXdVYd6pD0IjafPMH8l8CcmeZMYQLEnBxIsin8jQFSstOX4nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EuHKWcp4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D51C32786;
+	Thu,  8 Aug 2024 16:20:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723134041;
-	bh=/ZsZ+Z7HYAE5RdzRe9M2LUYLZzaBzS3/nxnK6+ZBj6o=;
+	s=k20201202; t=1723134044;
+	bh=PLkT+hDPeySuV8G/5CLVB9oTnsFLOVJzYmUZMSzqqps=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rJ5LQ4gSxcZNVwl+VjmtYd9OsNvyCamK6wyCpWlQFhP9qArphzXEh7WjquJ2VkGW9
-	 XRTDnCjwtj8sMgFgLEk8F/gykhpPAm5dvb5YhSp4BKcBAC5QX9Wp+i8hnhgHRPRt3Y
-	 tUioyo7V2BgZD8rOmtR0QN3twEkKXO+nri4II8WaaKYUpkTO5xD2hOcogI0UdtXUIj
-	 wUuDdpYll7Ms0ImNblOts8p2QgyDbmdrX+m5nt9b9n10Wzr3XGzUKvomYp6/KOIxTM
-	 fSHiQgx4TR9Qt3CxKy+LcjQYg8dVn2u3QM9bZkD2OnDJ0ZSGInv1xiuVqrgyInwX4p
-	 tCoCLPcoYXjgQ==
+	b=EuHKWcp4TdEEDB+1g1dUtm/Dw9GWFSJ5Fo1Tsi3Um1jpGyJoEwckym5vcB93smE6U
+	 SPHVF+vQyH7GeUhnt30lby5/xmIOoys5ojjoNcRuxmytd2UGKbYxSpx3pr6a6szuv9
+	 Z8DCQKpqOUYSubthlrBmQ67/Y2O8BrBUvuNDRuqmKCzq4exhwZIA5WvfPnqvmgrCaS
+	 48Ky06T9AzSrapdQ/Jznc+u6TWT/GgQCzwbvfdIQ2CL7D90TugbztIsjKRwbHA8bZ6
+	 hn9kI6V1mCiI3YZwemm4lhnqULpdvmaIs8KjI61OWYK1dp2LIEG7zpjc9jn7Vza9TH
+	 VfAfWKC8wjy3Q==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE26382336A;
-	Thu,  8 Aug 2024 16:20:41 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 9927D382336A;
+	Thu,  8 Aug 2024 16:20:44 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH resubmit net] net: fec: Stop PPS on driver remove
+Subject: Re: [PATCH] net: pse-pd: tps23881: include missing bitfield.h header
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172313404024.3227143.9358152908749582476.git-patchwork-notify@kernel.org>
-Date: Thu, 08 Aug 2024 16:20:40 +0000
-References: <20240807080956.2556602-1-csokas.bence@prolan.hu>
-In-Reply-To: <20240807080956.2556602-1-csokas.bence@prolan.hu>
-To: =?utf-8?b?Q3PDs2vDoXMgQmVuY2UgPGNzb2thcy5iZW5jZUBwcm9sYW4uaHU+?=@codeaurora.org
-Cc: B38611@freescale.com, davem@davemloft.net, l.stach@pengutronix.de,
- imx@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- festevam@gmail.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
- xiaoning.wang@nxp.com, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, richardcochran@gmail.com
+ <172313404324.3227143.10060649623719044778.git-patchwork-notify@kernel.org>
+Date: Thu, 08 Aug 2024 16:20:43 +0000
+References: <20240807075455.2055224-1-arnd@kernel.org>
+In-Reply-To: <20240807075455.2055224-1-arnd@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: o.rempel@pengutronix.de, kory.maincent@bootlin.com, kuba@kernel.org,
+ kyle.swenson@est.tech, arnd@arndb.de, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, thomas.petazzoni@bootlin.com,
+ u.kleine-koenig@baylibre.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 7 Aug 2024 10:09:56 +0200 you wrote:
-> PPS was not stopped in `fec_ptp_stop()`, called when
-> the adapter was removed. Consequentially, you couldn't
-> safely reload the driver with the PPS signal on.
+On Wed,  7 Aug 2024 09:54:22 +0200 you wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Fixes: 32cba57ba74b ("net: fec: introduce fec_ptp_stop and use in probe fail path")
+> Using FIELD_GET() fails in configurations that don't already include
+> the header file indirectly:
 > 
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
-> Link: https://lore.kernel.org/netdev/CAOMZO5BzcZR8PwKKwBssQq_wAGzVgf1ffwe_nhpQJjviTdxy-w@mail.gmail.com/T/#m01dcb810bfc451a492140f6797ca77443d0cb79f
-> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+> drivers/net/pse-pd/tps23881.c: In function 'tps23881_i2c_probe':
+> drivers/net/pse-pd/tps23881.c:755:13: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
+>   755 |         if (FIELD_GET(TPS23881_REG_DEVID_MASK, ret) != TPS23881_DEVICE_ID) {
+>       |             ^~~~~~~~~
 > 
 > [...]
 
 Here is the summary with links:
-  - [resubmit,net] net: fec: Stop PPS on driver remove
-    https://git.kernel.org/netdev/net/c/8fee6d5ad5fa
+  - net: pse-pd: tps23881: include missing bitfield.h header
+    https://git.kernel.org/netdev/net/c/a70b637db15b
 
 You are awesome, thank you!
 -- 
