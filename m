@@ -1,250 +1,213 @@
-Return-Path: <linux-kernel+bounces-279686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53E794C07B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:02:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAB494C0B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 010DDB22B98
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD1D1F224A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE7518EFD7;
-	Thu,  8 Aug 2024 15:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0423918F2DB;
+	Thu,  8 Aug 2024 15:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NhHGFJ0V"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="EdC08DlP"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F3418C91F
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3CA18C355
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723129318; cv=none; b=B3bl7Ps7Q3HUKkV486eq2PAHhlO+ElrGhj1tjfbO8Sm8hmytYlyQkGckCfMteiybdj0Z0P/LeUgEm7d/H9SVkz4UG5eYEx2ch6tOir7FNuSDrjBUY7i6fHONYqZv2p4sWTF58hBdubGFaVJZE1wJ6TKchpwgMMeTF8OjHCl4mwc=
+	t=1723130092; cv=none; b=mdFqiSppsSp/Wf2iz8GfWjNbLXNqi1YXCYSR0R3BOgqCQ4lCM3POqu4mar8kLYv+DcVvhMf+Unc7r6mWMQTQjH25GJVFimiRJt6DpPzQsoj57+OOO+Qxa7oDgGDEzWQwz58Gz76s/ptDfKTBxb9pG7RLtfwXURqaLQh1nyJHqdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723129318; c=relaxed/simple;
-	bh=IGqyB60C15tCk8324fdrN8Jvjj2DF65eMV/HkMoY0b0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WokWIxUyny6NKTBMhxF2Iao579AVcbFPvjUZLAooEDiVCUZlyl21hbVBTpSdNiRZ8d+wDqiZcSqchuX1iWNBTe9v1Oj73gxFxjupj1Cqk4NaR5/66FiFizIT97RX742tjgAOE0sewrYlWeR6JbxUnLPVCCZIP2IH0GbmTgPV4pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NhHGFJ0V; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d2b921c48so881731b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723129316; x=1723734116; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m4j7WbEnJXtkxCdjwQUxYxy3v9OuIAKcYqpXlgnQ3Mk=;
-        b=NhHGFJ0VyAbESlKa/55r0gqR7yKcwFECc/2mwmt+tHAUv1/Q92g2ob7AbgEqERW8K+
-         hOtMchGbJRjnpChoj5teI8Udw60v3IFLY8gEArvaWqpYDRwVgi3FcoWXo6iX3Vzbr8mf
-         hKyA5lgWhuDaR1WtMfaLLzj6iEvtq1vWDI+ghIkMvoLyrQeTZOq/KKCoBrdZuyGVzWa7
-         iJesbwaly1wewJAiHyY4ghR0gPvgQhV75VYNZuIZrr2UR6SVhaiy/UnwcwnUmTMPg22V
-         gxjwcNxqa9fAjjSF6aq3jx82zXxhb+Sh4LTcOrHrNFPqcq6TUtpBzwPbXeErnlxXJMzg
-         zQiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723129316; x=1723734116;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m4j7WbEnJXtkxCdjwQUxYxy3v9OuIAKcYqpXlgnQ3Mk=;
-        b=YNjp3qcnOZIqrMXS+qFLjELSnUdb4iktesY2u4z1MAOQl5f8aTuedL9IisDc17ifPg
-         duMEnG7c6ISkj9izs7qpJlEZT4VzHZEXeupZV5tcfcA3egHiR8aUNfwg7/9HjjOlLmLg
-         LxAiP8m3AJ66xakWsLiXrF0RpmA0gJ+Vy24A//i2G9bDlUS3+2iCCwBsC5+Pa+N6i8tQ
-         mzHqbZMnSmiNsW5aY0LXGq+cCaF9alkzGZ1uZwo+KiQEfPmooXu3vswj4HhIvBBCQY40
-         zd4i9t/NGOQdJBlH4Hhk/+TAst4Pic0nYKMzusjJHVDfSY/mW0SGAee+K4WM4vjLUN4Q
-         AoSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvN1VZUisRf+O3Wn5xAaG6RlBN7yKWEC1SGhMTv1fxXThkcwjTToaXEndqpRLM0YO49x1nwE0aMf4kt/CC3FsAVQ4+0UdYshqe4B66
-X-Gm-Message-State: AOJu0Yz0VU0QiPRbIE+R58rI7rdWWawyiH47sf9scY/qLAq1xY2PfUpK
-	8lx5V0xhfkZhCMnwG+NAdObjgUEbsOzY7DXOrlhhJk6VOaWIwhLLxUn6rElDpc0jaOYZ5AtZnsE
-	hqv5oR0bsk+0k/wU/dueR9PhSPemTfuP1k5RbnA==
-X-Google-Smtp-Source: AGHT+IHr4bEVIEDUkrvrZVv4ShqUAVHohWrj2ykqtWfc46pt+bMEFoVPVlpyhTFlyOzFEsJU7XnWmwwmhalGu+1dwvs=
-X-Received: by 2002:a05:6a20:6a1a:b0:1c6:9f28:37b7 with SMTP id
- adf61e73a8af0-1c6fcee2554mr2585578637.27.1723129316064; Thu, 08 Aug 2024
- 08:01:56 -0700 (PDT)
+	s=arc-20240116; t=1723130092; c=relaxed/simple;
+	bh=KdQLsjzG1wkzomU//cbukGuZkB4zo7Q1VYeC2qHE2hs=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=YdpDUexHLC4CnfbmvOnE/W9bXVNm6My1o/5gTfVt2x9TkknSoX3q7d4NsLa4YfCTeBy5ixooqs9iuLNCo4VmvYM4k9y88l8kfIkvWtAG6trGlggTdsnWowgdI5WAxwZ+QOlltryrX9eNFxwmDfJvBwu2XdKc0Ga/UCs4Dno80jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=EdC08DlP; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723130084; bh=CpuzaSrDDLBS33V82twzhqpDZtSatD3oTui1fl6tZgY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=EdC08DlPb49zR6zvW5nAbMNwgr94Z4KO4jSP0uS8oEY10dIzXWD24Fs12TyHfV9Hc
+	 1mwQzYFgZk1dtQ/wmHPdWsoU03dj5Tj14kVkCi2vU1ReA3PY0lkjezbAmbIzl1q1Au
+	 29EeirxOCyb7/uXK9bI4tFV943l2xllyfqSPcUeE=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 9833843; Thu, 08 Aug 2024 23:02:24 +0800
+X-QQ-mid: xmsmtpt1723129344twgmkz6q9
+Message-ID: <tencent_1609A06ED7AEFD4C9827C7C6D352D4866106@qq.com>
+X-QQ-XMAILINFO: OKKHiI6c9SH3Hd9Afrt5jqDCczphILyRQAAge74n6JeL+P7SDL2hnp6KRW0aBm
+	 5t3w7YVinXTYaqbvkKvt1+3ctg3Hk9KSKKVef5iJ++vATrVVyvs2Xiw2ystNk6g/aC9cjVKvPAIg
+	 riaPRe/ShNvddxZoyGs3L5m2gYq1HAjXgCU7stqs0P3/Ny1Ft7RBiqBUUcvt9R1wFEy8zAgRoEV2
+	 +FEta3y+sNm8dawh79demu7gYp+LaNF/CzLAZ3DMIdec47/WgH5vT1wCpYQnpXz1IFCr2rdGl3cT
+	 D9GQAd5J4EkkXqjN45Tny8Lo88UXT57FG0q8+ahSArJLr0YE2FbdZAIoCrMVcJwmo/W54VZwCtKx
+	 2S/JNX3ebNujivGWWWsdCgRX4pqN8SkKy7+qoFGKkg4h4lpuaTivECKHpENF2PmUtnA9VXljKv0h
+	 lZ4YKYxy69ZsKLosy9cbuKyWbLwe6vIYfhR52Y1QQeodt7ZMg/br0gDXdd5ht8Q0d5ZrX/Gb7Ykg
+	 p+wG1o947yThe1F5J3vuYFT+UM/iJDoOx6T/gkYFqZ73GGeTZTD04SWWs7navKGtW5aGPQ19clbH
+	 XT1DMdgE0CgBS2pzGmNJSob+d8UXXTULxLQhTMnfjRtazAHA0+3hx0przRBxlRXM0rjKNCiROJXz
+	 /QAQX+/pVhI8iVbJurdTJK6DUa7nOYTA/opnROL4bTWfmZPKA+YqrRXznhHvknLDsxYPPkSWuaZl
+	 1Ha7sxdLU05rxpWhxFYwa7IypfAEdDxbf2zWOFKHv+a9uFMWoxCu8Xc6u8Ar9YPhodmIe9dw7RNh
+	 /X2dy8TzQuqJL1TiG8+BC8hWE9C7jjmeFpyNTcI/PoJmAlJXiNf5JeW/jWSuwMUTMYOGDw9q/TGs
+	 OC9mhtn/PmJrND2pVvZ1RVXSwbM4QXlsYqaVz3ufTvNKbemVy+9H8bsQYxpOE+TYQFlNHVc0b9
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Date: Thu,  8 Aug 2024 23:02:24 +0800
+X-OQ-MSGID: <20240808150223.1502852-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+References: <0000000000007ec511061f00a7b2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719092619.274730-1-gankulkarni@os.amperecomputing.com>
- <543813f6-cb1f-4759-b26f-75246750814d@linaro.org> <f72038a0-c6b5-4245-8515-3b735ca38cbb@linaro.org>
- <ae1b2d8c-588a-4f0a-b3c9-c869f8dd0f25@os.amperecomputing.com>
- <00fac24c-d664-4ebb-8c60-f4697b7f76c1@linaro.org> <8b53a424-19f7-4042-a2db-e1c5d051f9cc@os.amperecomputing.com>
- <6adf84fa-b755-4d7a-957a-9bf01e442238@linaro.org> <d71dff17-6f1e-4a67-89c6-7ecc86af0f3a@linaro.org>
- <6f535bb6-2cee-48e6-93f1-ea19887bae74@os.amperecomputing.com>
- <027c76a9-9bd4-43e9-a170-8391a0037291@linaro.org> <3d7a6f93-0555-48fa-99cb-bf26b53c2da5@os.amperecomputing.com>
- <d6170beb-754e-4be3-8ff7-18acddccf077@linaro.org> <4ba157c2-4a56-4d77-9a15-071e46adc33b@os.amperecomputing.com>
- <d3c86965-090b-41c5-85a9-187704754072@arm.com> <915fefb2-b0bc-4306-83ec-22570719e8e4@os.amperecomputing.com>
- <d34d402c-7765-41be-8a7c-b9d564c5bedb@arm.com> <2c0cd5b7-1ca6-4088-817c-209026266d58@linaro.org>
- <16ea091e-0f3b-44cf-b3b4-b07efabe9c02@linaro.org> <3ef38bf2-39df-47c6-aa6a-7e65d3909564@os.amperecomputing.com>
-In-Reply-To: <3ef38bf2-39df-47c6-aa6a-7e65d3909564@os.amperecomputing.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Thu, 8 Aug 2024 16:01:44 +0100
-Message-ID: <CAJ9a7VjspK8XuJfJyr_fNg6+pfnhxoLbQceDPWi9ACiCncbsEQ@mail.gmail.com>
-Subject: Re: [PATCH] perf scripts python arm-cs-trace-disasm.py: Skip disasm
- if address continuity is broken
-To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Cc: James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
-	scclevenger@os.amperecomputing.com, acme@redhat.com, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, darren@os.amperecomputing.com, 
-	james.clark@arm.com, suzuki.poulose@arm.com, Al.Grant@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 8 Aug 2024 at 12:15, Ganapatrao Kulkarni
-<gankulkarni@os.amperecomputing.com> wrote:
->
->
->
-> On 08-08-2024 04:21 pm, James Clark wrote:
-> >
-> >
-> > On 08/08/2024 10:21 am, James Clark wrote:
-> >>
-> >>
-> >> On 08/08/2024 8:42 am, Leo Yan wrote:
-> >>> On 8/8/2024 5:36 AM, Ganapatrao Kulkarni wrote:
-> >>>>
-> >>>> On 08-08-2024 12:50 am, Leo Yan wrote:
-> >>>>> On 8/7/2024 5:18 PM, Ganapatrao Kulkarni wrote:
-> >>>>>
-> >>>>>> Is below diff with force option looks good?
-> >>>>>>
-> >>>>>> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py
-> >>>>>> b/tools/perf/scripts/python/arm-cs-trace-disasm.py
-> >>>>>> index d973c2baed1c..efe34f308beb 100755
-> >>>>>> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
-> >>>>>> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
-> >>>>>> @@ -36,7 +36,10 @@ option_list = [
-> >>>>>>                       help="Set path to objdump executable file"),
-> >>>>>>           make_option("-v", "--verbose", dest="verbose",
-> >>>>>>                       action="store_true", default=False,
-> >>>>>> -                   help="Enable debugging log")
-> >>>>>> +                   help="Enable debugging log"),
-> >>>>>> +       make_option("-f", "--force", dest="force",
-> >>>>>> +                   action="store_true", default=False,
-> >>>>>> +                   help="Force decoder to continue")
-> >>>>>>    ]
-> >>>>>>
-> >>>>>>    parser = OptionParser(option_list=option_list)
-> >>>>>> @@ -257,6 +260,12 @@ def process_event(param_dict):
-> >>>>>>                   print("Stop address 0x%x is out of range [ 0x%x
-> >>>>>> .. 0x%x
-> >>>>>> ] for dso %s" % (stop_addr, int(dso_start), int(dso_end), dso))
-> >>>>>>                   return
-> >>>>>>
-> >>>>>> +       if (stop_addr < start_addr):
-> >>>>>> +               if (options.verbose == True or options.force):
-> >>>>>> +                       print("Packet Discontinuity detected
-> >>>>>> [stop_add:0x%x start_addr:0x%x ] for dso %s" % (stop_addr,
-> >>>>>> start_addr, dso))
-> >>
-> >> The options.force for the print should be "options.verbose or not
-> >> options.force" I think? You want to print the error until the user
-> >> adds -f, then hide it. Unless verbose is on.
-> >>
-> >>>>>> +               if (options.force):
-> >>>>>> +                       return
-> >>
-> >> Oops I had this one the wrong way around in my example. This way is
-> >> correct.
-> >>
-> >>>>>
-> >>>>> I struggled a bit for the code - it is confused that force mode
-> >>>>> bails out
-> >>>>> and the non-force mode continues to run. I prefer to always bail
-> >>>>> out for
-> >>>>> the discontinuity case, as it is pointless to continue in this case.
-> >>>>
-> >>>> Kept bail out with force option since I though it is not good to hide
-> >>>> the error in normal use, otherwise we never able to notice this
-> >>>> error in
-> >>>> the future and it becomes default hidden. Eventually this error should
-> >>>> be fixed.
-> >>>
-> >>> As James said, the issue should be fixed in OpenCSD or Perf decoding
-> >>> flow.
-> >>>
-> >>> Thus, perf tool should be tolerant errors - report warning and drop
-> >>> discontinuous samples. This would be easier for developers later if face
-> >>> the same issue, they don't need to spend time to locate issue and
-> >>> struggle
-> >>> for overriding the error.
-> >>>
-> >>> If you prefer to use force option, it might be better to give
-> >>> reasoning and
-> >>> *suggestion* in one go, something like:
-> >>>
-> >>>      if (stop_addr < start_addr):
-> >>>         print("Packet Discontinuity detected [stop_add:0x%x
-> >>> start_addr:0x%x ] for dso %s" % (stop_addr, start_addr, dso))
-> >>>         print("Use option '-f' following the script for force mode"
-> >>>         if (options.force)
-> >>>             return
-> >>>
-> >>> Either way is fine for me. Thanks a lot for taking time on the issue.
-> >>>
-> >>> Leo
-> >>
-> >> But your diff looks good Ganapat, I think send a patch with Leo's
-> >> extra help message added and the first force flipped.
-> >
-> > One other small detail about Leo's suggestion print out. Can you add an
-> > instruction of how to keep the warnings as well:
-> >
-> >    print("Use option '-f' following the script for force mode. Add '-v' \
-> >      to continue printing decode warnings.")
-> >
->
-> Thanks James and Leo for your comments.
-> I will send the V2 with the changes as discussed.
->
-> Thanks.
-> Ganapat
->
+debug
 
+#syz test: upstream c0ecd6388360
 
-Certainly any ARM trace decode is dependent on accurate program images
-being input to provide correct trace decode at the output.
+diff --git a/fs/file_table.c b/fs/file_table.c
+index ca7843dde56d..3d7a59961ff6 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -418,6 +418,7 @@ static void __fput(struct file *file)
+ 		if (file->f_op->fasync)
+ 			file->f_op->fasync(-1, file, 0);
+ 	}
++	printk("ino: %lx, %s\n", inode->i_ino, __func__);
+ 	if (file->f_op->release)
+ 		file->f_op->release(inode, file);
+ 	if (unlikely(S_ISCHR(inode->i_mode) && inode->i_cdev != NULL &&
+diff --git a/fs/9p/fid.c b/fs/9p/fid.c
+index de009a33e0e2..7a08750da902 100644
+--- a/fs/9p/fid.c
++++ b/fs/9p/fid.c
+@@ -67,6 +67,7 @@ struct p9_fid *v9fs_fid_find_inode(struct inode *inode, bool want_writeable,
+ 
+ 	spin_lock(&inode->i_lock);
+ 	h = (struct hlist_head *)&inode->i_private;
++	printk("ino: %p, inode fid list is empty: %d, %s\n", inode, hlist_empty(h), __func__);
+ 	hlist_for_each_entry(fid, h, ilist) {
+ 		if (any || uid_eq(fid->uid, uid)) {
+ 			if (want_writeable && !v9fs_is_writeable(fid->mode)) {
+@@ -132,8 +133,10 @@ static struct p9_fid *v9fs_fid_find(struct dentry *dentry, kuid_t uid, int any)
+ 		}
+ 		spin_unlock(&dentry->d_lock);
+ 	} else {
+-		if (dentry->d_inode)
++		if (dentry->d_inode) {
++			printk("ino: %lx, %s\n", dentry->d_inode->i_ino, __func__);
+ 			ret = v9fs_fid_find_inode(dentry->d_inode, false, uid, any);
++		}
+ 	}
+ 
+ 	return ret;
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index a97ceb105cd8..a022263265fd 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -34,6 +34,7 @@ static void v9fs_begin_writeback(struct netfs_io_request *wreq)
+ {
+ 	struct p9_fid *fid;
+ 
++	printk("ino: %lx, %s\n", wreq->inode->i_ino, __func__);
+ 	fid = v9fs_fid_find_inode(wreq->inode, true, INVALID_UID, true);
+ 	if (!fid) {
+ 		WARN_ONCE(1, "folio expected an open fid inode->i_ino=%lx\n",
+@@ -105,6 +106,7 @@ static int v9fs_init_request(struct netfs_io_request *rreq, struct file *file)
+ 			goto no_fid;
+ 		p9_fid_get(fid);
+ 	} else {
++		printk("ino: %lx, %s\n", rreq->inode->i_ino, __func__);
+ 		fid = v9fs_fid_find_inode(rreq->inode, writing, INVALID_UID, true);
+ 		if (!fid)
+ 			goto no_fid;
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index e0d34e4e9076..cf7200ed2553 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -218,6 +218,7 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 		if ((S_ISREG(inode->i_mode)) && (filp->f_mode & FMODE_WRITE))
+ 			retval = filemap_fdatawrite(inode->i_mapping);
+ 
++		printk("del, ind: %p, ino: %lu, %s\n", inode, inode->i_ino,  __func__);
+ 		spin_lock(&inode->i_lock);
+ 		hlist_del(&fid->ilist);
+ 		spin_unlock(&inode->i_lock);
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 348cc90bf9c5..abadf3b5fecb 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -44,6 +44,7 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 	struct p9_fid *fid;
+ 	int omode;
+ 
++	printk("1ind: %p, file: %p, %s\n", inode, file,  __func__);
+ 	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, file);
+ 	v9ses = v9fs_inode2v9ses(inode);
+ 	if (v9fs_proto_dotl(v9ses))
+@@ -54,8 +55,10 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 	fid = file->private_data;
+ 	if (!fid) {
+ 		fid = v9fs_fid_clone(file_dentry(file));
+-		if (IS_ERR(fid))
+-			return PTR_ERR(fid);
++		if (IS_ERR(fid)) {
++			err = PTR_ERR(fid);
++			goto error;
++		}
+ 
+ 		if ((v9ses->cache & CACHE_WRITEBACK) && (omode & P9_OWRITE)) {
+ 			int writeback_omode = (omode & ~P9_OWRITE) | P9_ORDWR;
+@@ -72,7 +75,7 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 		}
+ 		if (err < 0) {
+ 			p9_fid_put(fid);
+-			return err;
++			goto error;
+ 		}
+ 		if ((file->f_flags & O_APPEND) &&
+ 			(!v9fs_proto_dotu(v9ses) && !v9fs_proto_dotl(v9ses)))
+@@ -87,8 +90,13 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 				   file->f_mode & FMODE_WRITE);
+ #endif
+ 	v9fs_fid_add_modes(fid, v9ses->flags, v9ses->cache, file->f_flags);
++	printk("2ind: %p, ino: %lu, %s\n", inode, inode->i_ino,  __func__);
+ 	v9fs_open_fid_add(inode, &fid);
+ 	return 0;
++error:
++	printk("err: %d, ind: %p, %s\n", err, inode, __func__);
++	return err;
++
+ }
+ 
+ /**
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index c61b97bd13b9..085a788a3262 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -284,9 +284,11 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
+ 	}
+ #endif
+ 	v9fs_fid_add_modes(ofid, v9ses->flags, v9ses->cache, flags);
++	printk("2ind: %p, ino: %lu, %s\n", inode, inode->i_ino,  __func__);
+ 	v9fs_open_fid_add(inode, &ofid);
+ 	file->f_mode |= FMODE_CREATED;
+ out:
++	printk("err: %d, ind: %p, ino: %lu, %s\n", err, inode, inode->i_ino, __func__);
+ 	p9_fid_put(dfid);
+ 	p9_fid_put(ofid);
+ 	p9_fid_put(fid);
 
-So if an OpenCSD client does not provide accurate information then it
-should not really expect to get accurate trace as an output!
-
-That said there are certainly a couple of changes that can be made:-
-
-1) Clearly outputting a trace range with a finish address lower than
-the start address is incorrect. This can unconditionally output a hard
-error.
-
-2) Detection of non-cond not taken should be added as a configurable
-option.   - either all, or direct only. This can be achieved by adding
-flags to the library configuration API.
-For a client like perf - these could be controlled by the verbose
-level - which I believe is an int in the range 0-10 or something?
-
-
-However - when we do detect these errors, it is essential that the
-entire decoder is reset and tracing not restarted till the next sync
-point in the trace data.
-i.e. assuming that the next range that happens to be consecutive after
-a break, given a prior input of incorrect address data is simply
-invalid. There is no way of knowing if the branch taken / not taken
-sequence matches the addresses in the program image any more.
-
-The solution that James proposes above, needs to actually generate an
-error which will then automatically reset the decoder to an unsynced
-state.
-
-Regards
-
-Mike
-
-
---
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
 
