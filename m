@@ -1,61 +1,53 @@
-Return-Path: <linux-kernel+bounces-279972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C74B494C407
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:01:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 441B394C409
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787301F26112
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:01:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34A8282799
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AAB13DDAE;
-	Thu,  8 Aug 2024 18:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C210148318;
+	Thu,  8 Aug 2024 18:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDBJ1sfr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPNaWY2r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0120233F7;
-	Thu,  8 Aug 2024 18:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9F533F7;
+	Thu,  8 Aug 2024 18:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723140089; cv=none; b=LDXSrfdQq+2tdh5fJYnYjERk38xW7PWlDMNrC3/KvEywnqfxWz8PAxxNJQFen0J5UPs4hj7p+a2CaIk/3insVITfwWy15nE8Se1mJXPfPQPQRwJ/dNjmCKKhqzJH/9+zj0uSXyMD5B5jXtTSKdKqatGPSpsX66MRaNuOlNAqPc4=
+	t=1723140094; cv=none; b=S9vZPCRNu4zT3zeo8BMCQON+xWodQiXVN+G8wNR+m0v18eCUeiH9vGVkxAcAqhOfm+AXjOMvOAgMlqVemg0Bq0LESGYQjqO81rx3IyTinn+RP4VYpVKzKzSHy05udgR9H3jvY5GZf5PxkdQiiplIjBaxYTYQPTNMDud00rq3wNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723140089; c=relaxed/simple;
-	bh=CVp2GLuewmyFFc6NwbWeOoPtNl/w7OIBR0Cgbit0W2Y=;
+	s=arc-20240116; t=1723140094; c=relaxed/simple;
+	bh=/bwcVorn5wFQNYETzQE+54MvAhdIvZ1gVYmgP9MhQbc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vg1me+IKJhVdDmSyKeMsQgiWvfCN+HhsESW9aQkD0S7TfN/kxTet5i+K8yOod703eP9rIxx0qtisN/La5J1GbyiqYgFWArDtW4XUwoRe3hAVYCJ37Lz3MIylReOvSZEX/nUANUEK1mbGj+mub1MqCulhCS9QYVO2PvC8GvR6FXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDBJ1sfr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82347C32782;
-	Thu,  8 Aug 2024 18:01:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=J5tgi0Sqit5tZBBo6MJgB+/FIAaR0Ok4lsImo+PE8dOFjItMNwc086Xc7pxBbG9fsr+d1R2vvx6DATScLrTtEw2gZEDc8+LKP3c3FPfWJclfAfMFfn31ftrbrEa9/IRYUd1j3B8/06aOt96JKy5WHfHJ4347KSu2ZZmn8FJkP9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPNaWY2r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD831C32782;
+	Thu,  8 Aug 2024 18:01:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723140088;
-	bh=CVp2GLuewmyFFc6NwbWeOoPtNl/w7OIBR0Cgbit0W2Y=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=sDBJ1sfrjhefk3YF6t1zqBKAptt/vxIq4dByYx+HHER+0NfKNloS1b37cLsXmvek2
-	 ZkgMAy8IDeNBlZzTbyZBi+cxA7ZEtTs+gvyfE+U3omkcwBnHdwPHIZp3MXUaugIRDe
-	 ck6xsDWJfkJaqQ/Brl7QIVZy+XUg+aiTPZm4Wnu5Mh8XcrXrXCdDvWtG1bwg8AZtkq
-	 BbFvow7vzQwCO6TnLXHEtkoWRfY1ZTNfNa/ryxrRpKJDMWzAS/Nff7EDzrX0tD5srP
-	 tqXzsRLqTyoF1ObZr1USse3b0K6h5eLyJ8f2C0y0/Gyi0szTmjWR2oy0SVfdRUm8Mt
-	 B6iyR9XT/wEpw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 32E27CE09DB; Thu,  8 Aug 2024 11:01:28 -0700 (PDT)
-Date: Thu, 8 Aug 2024 11:01:28 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: neeraj.upadhyay@kernel.org
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joel@joelfernandes.org, frederic@kernel.org, boqun.feng@gmail.com,
-	urezki@gmail.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang1211@gmail.com, neeraj.iitr10@gmail.com
-Subject: Re: [PATCH 2/2] context_tracking: Invoke Tasks-RCU enter/exit for
- NMI context
-Message-ID: <8eac856d-0b09-4f5e-939d-b24d6fad8311@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240807163506.434885-1-neeraj.upadhyay@kernel.org>
- <20240807163506.434885-3-neeraj.upadhyay@kernel.org>
+	s=k20201202; t=1723140093;
+	bh=/bwcVorn5wFQNYETzQE+54MvAhdIvZ1gVYmgP9MhQbc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WPNaWY2ruEXk/tDSsOsHJgksGgbKrjClRsXJpEXuXRnlzWGvd0lI1/ipq33En8uzp
+	 8W/SS7uWZrHdOlBVdqVFtJqB+K0wjo/1aczQL8dJtO9ogQ8BBAp8QurcRt+va8h+CA
+	 CLjBc2T6MZMFSaZ4BNZkACKvdUYuk3fEsGUtlm4ZCYFwr+UimrxBloNQuYbz0xD/+0
+	 kjuDIHtizYaR6htqWY1iU/xrYuTOxa3DPmxqbfFzqG1vm1WT7MLh2nDlwPDkegWJgJ
+	 zsnCwo0QDgPemUV3K7flqkbS02tAImCVQ9hVxoP0RIdryvueSeBAAhF22VfT5yiNiq
+	 K0/g8TsZwbvIg==
+Date: Thu, 8 Aug 2024 11:01:33 -0700
+From: Kees Cook <kees@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/remove-stale-files: clean up stale
+ lib/test_fortify.log
+Message-ID: <202408081101.93071829AA@keescook>
+References: <20240808144328.807649-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,61 +56,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240807163506.434885-3-neeraj.upadhyay@kernel.org>
+In-Reply-To: <20240808144328.807649-1-masahiroy@kernel.org>
 
-On Wed, Aug 07, 2024 at 10:05:06PM +0530, neeraj.upadhyay@kernel.org wrote:
-> From: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+On Thu, Aug 08, 2024 at 11:42:36PM +0900, Masahiro Yamada wrote:
+> Commit 6eeccc5361e8 ("fortify: refactor test_fortify Makefile to fix some
+> build problems") moved test_fortify.log from lib/ to lib/test_fortify/.
 > 
-> rcu_task_enter() and rcu_task_exit() are not called on NMI
-> entry and exit. So, Tasks-RCU-Rude grace period wait is required to
-> ensure that NMI handlers have entered/exited into Tasks-RCU eqs.
-> For architectures which do not require Tasks-RCU-Rude (as the code
-> sections where RCU is not watching are marked as noinstr), when
-> those architectures switch to not using Tasks-RCU-Rude, NMI handlers
-> task exit to eqs will need to be handled correctly for Tasks-RCU holdout
-> tasks running on nohz_full CPUs. As it is safe to call these two
-> functions from NMI context, remove the in_nmi() check to ensure that
-> Tasks-RCU entry/exit is marked correctly for NMI handlers.
-
-This last sentence could be broken up.  ;-)
-
-Other than that, looks good!
-
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-
-> Reported-by: Frederic Weisbecker <frederic@kernel.org>
-> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
-> Suggested-by: "Paul E. McKenney" <paulmck@kernel.org>
-> Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+> If lib/test_fortify.log from previous builds remains, Git will show it as
+> an untracked file. Let's clean it up.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > ---
->  kernel/context_tracking.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
-> index 152b485a62db..626dd7a173a5 100644
-> --- a/kernel/context_tracking.c
-> +++ b/kernel/context_tracking.c
-> @@ -239,8 +239,7 @@ void noinstr ct_nmi_exit(void)
->  	ct_kernel_exit_state(CT_RCU_WATCHING);
->  	// ... but is no longer watching here.
+> Kees,
+> Please apply this to your tree.
+
+Ah, thanks! I didn't know about this script.
+
+> Or, if you can modify your branch, please squash this to 6eeccc5361e8
+
+Yes; I've squashed it now.
+
+-Kees
+
+> 
+>  scripts/remove-stale-files | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/scripts/remove-stale-files b/scripts/remove-stale-files
+> index f38d26b78c2a..8fc55a749ccc 100755
+> --- a/scripts/remove-stale-files
+> +++ b/scripts/remove-stale-files
+> @@ -21,3 +21,5 @@ set -e
+>  # then will be really dead and removed from the code base entirely.
 >  
-> -	if (!in_nmi())
-> -		rcu_task_exit();
-> +	rcu_task_exit();
->  }
->  
->  /**
-> @@ -273,8 +272,7 @@ void noinstr ct_nmi_enter(void)
->  	 */
->  	if (!rcu_is_watching_curr_cpu()) {
->  
-> -		if (!in_nmi())
-> -			rcu_task_enter();
-> +		rcu_task_enter();
->  
->  		// RCU is not watching here ...
->  		ct_kernel_enter_state(CT_RCU_WATCHING);
+>  rm -f *.spec
+> +
+> +rm -f lib/test_fortify.log
 > -- 
-> 2.40.1
+> 2.43.0
 > 
+
+-- 
+Kees Cook
 
