@@ -1,75 +1,46 @@
-Return-Path: <linux-kernel+bounces-278778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3F594B4B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:41:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE2794B4C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6560283CE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:41:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE77B283C0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BBC945A;
-	Thu,  8 Aug 2024 01:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538B58F40;
+	Thu,  8 Aug 2024 01:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DeD39hHi"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="B8Nvs/uJ"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E8C33E1;
-	Thu,  8 Aug 2024 01:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBC07464
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 01:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723081264; cv=none; b=DUmcDwSUkq7PGN6To4XHxJ0w2riDgm/uv8uCGy3I7NYBANbzD63o3r/765NYzcNUozXKzn3/hWywVqC2o/93p54tybuoZyvbvrjjv7YRcUP51WIyeon+pIZFRscAZTFhveW8dWeeTt3m3dQGRLFfzP/qjY+6VgXiBZ/DY8OpWMQ=
+	t=1723082184; cv=none; b=fph5Rg4P9ZH1VwYoFumC/dWaJukq7VFjwvoAIveuiKKrt4sqPSuxZRoZPfE02vIAqveHAMOK/RE9CCRvQ5CQ3QhDW8wkQLIZzEbbfdwQRN13cdj8OBUeqzMAjpGgJozHdNL4g/iDuwT7RSPLFUi9F+KCi+wMMOW9gNNvyrS0FAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723081264; c=relaxed/simple;
-	bh=IEAILzpzDQJbvJnA3zj3LZ+xLy+KZC9xEGdMZe9fyQQ=;
+	s=arc-20240116; t=1723082184; c=relaxed/simple;
+	bh=Jl5AE7eWHPNftDuDCdtI+HGv2YpbyomCA0oXwuOoC+U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OiogV+mJ2wg+Pz4n1FH/iiRgYN1KeS67k3NAjEO5nQYmFHM+FRenvi3evH3GsUjbqso3R0XU8kTbKWvc3Em3YjlOExf2vThD9en9dxmun92bs0/UVTo2qRCQHBVr9nqnCxF6STqIO+CVPqZF51ko2i+V/BgFGM4QTkCNXCBVzXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DeD39hHi; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso389076b3a.2;
-        Wed, 07 Aug 2024 18:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723081262; x=1723686062; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=nglXbj3cjozR0F0kRJiW+Gb9pKTJXi/g+vFQQRkFt/8=;
-        b=DeD39hHi+P85SHLzR+EmbGxNOu0f1uCIgDa6kIIrhzhs7qP4K538TLmv7aRnstTzBR
-         ulQx/FsoUSOO/Jy73tM60hm7rGN1CkqnWNVY346sG3WY4iGgoRlZotEplO1io2RB/Mng
-         +tkTr6HKAc1YMyGuuV4Pgvl36sD2K23Ze+aeTyuuYRh2+44liB9b6dyqMS8MaKZoWA/+
-         U/rbg84+TP0mXmxz7NeElK3yAyUzLxtyuljgmLU/q3uEozQ68Tc4WCW6WZM/Y3CZOnNs
-         OATngyODtvj/D8ns1V9tgCAaFmVo8weK8wdFxqVpMCSK0rirFpc1v+U2Ght93TP/djM3
-         syFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723081262; x=1723686062;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nglXbj3cjozR0F0kRJiW+Gb9pKTJXi/g+vFQQRkFt/8=;
-        b=oQnSkpRxKDATJC9nQUyBRy2hy0j9yE/GywaPX0QwTv12WEjopf0/hSEtIMb5T8NR6G
-         G5in8f8ybmzl0352J9w2VijnikajsUv73vs9d9Cpl18TLPtSCpiFN4L1YcwVxUOG7ZtK
-         +YHGVt6M5xITcw5Lx2CL2O8Ii9iuzjaVScJ2mwfKmTyaDAdBXKc7esihdIyrw9VVzBBP
-         YuPun/5E75cYHeM4GxFqpdjQK93LcjG0cvV3fIGjWSVc/AKPj8VehzTjdBsejR4CcrOt
-         ja4LIZlBMBjVj8fEAq2TTR47OJngdZ/Z+Fp50ZMHocy6Rw+jwPTEt9NAhJGB+n/U4+0I
-         6K8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUu+iQ7QmWUfoDkP0DR6TMFn1YimvxTX5Oz9JiqJRvaKSTUgXDgZa34ntd1xPj4zle09XsSZdaKwfi2egc=@vger.kernel.org, AJvYcCVxaHagwrW83XKl2RFIaLVkmb12G0PORvHqWF5Li+bp5YCpYt5udefIRn3EfBTUMTycVel//YQNwjxI844zd4LQ7itcKqcL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO8HHD86i+GlMmXz58Lj4TSN1wXTA5nUnWWHoLVndWhE7a28sC
-	8gbn0kOSWQHjq0rb6i2+qwmsETGQkOKcBUsWkuDXP0IrgKB9Yior
-X-Google-Smtp-Source: AGHT+IEbLVCrpMUHmSKmWF6wukXtGIGPDRB/vDQrnMvPyvbSDYUiu6cZrfHtkmt/b5CQMgCyEagylg==
-X-Received: by 2002:a05:6a20:a11c:b0:1c0:e8a3:dbfa with SMTP id adf61e73a8af0-1c6fce838f7mr414312637.2.1723081261630;
-        Wed, 07 Aug 2024 18:41:01 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb20a03csm144206b3a.35.2024.08.07.18.40.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 18:41:00 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9216940f-cee5-402e-a7f5-71e1df52f452@roeck-us.net>
-Date: Wed, 7 Aug 2024 18:40:59 -0700
+	 In-Reply-To:Content-Type; b=kiczdk4A/1aLhI0bcMxO/KXSdm1n2ZlGzQj/YEno17Eg/P6RXQtvfbWhkUojHwurz52T9IvRTLgLYXvHpKrliK4+idpCL+Pa+tTHxUBJAiIJLHgasOontWuoXbLC0SVSK3OOkjB7CMhiLX4quSghYGtU+TWjhpEyHHEEw5U2Jog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=B8Nvs/uJ; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723082173; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=oecPYL3fL7pp34DrAzQQyS0X+m+ukmlTCik5Pv4T+bM=;
+	b=B8Nvs/uJWEFA3LSI+NCRi8D8oX4zPZquriax1u9PdSlNGRuaVQRQBCQWD1Y/iJGF1ZF8PiCCMsVLNoDyYV6/FEmO5/kgH7uO5dKHRtH26o1YRy4FzesaYJL/rgDxb95iPztsbIcNkCAHDtc2hHz1h28V7I+JYGvqPb+J1WPwBN4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WCKWazT_1723082170;
+Received: from 30.97.56.61(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCKWazT_1723082170)
+          by smtp.aliyun-inc.com;
+          Thu, 08 Aug 2024 09:56:11 +0800
+Message-ID: <98cb8158-2087-4100-9789-1a45c0c04fc4@linux.alibaba.com>
+Date: Thu, 8 Aug 2024 09:56:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,160 +48,180 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: Paul Moore <paul@paul-moore.com>
-Cc: KP Singh <kpsingh@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- bp@alien8.de, sfr@canb.auug.org.au, peterz@infradead.org
-References: <20240801171747.3155893-1-kpsingh@kernel.org>
- <CAHC9VhRO-weTJPGcrkgntFLG3RPRCUvHh9m+uduDN+q4hzyhGg@mail.gmail.com>
- <CACYkzJ6486mzW97LF+QrHhM9-pZt0QPWFH+oCrTmubGkJVvGhw@mail.gmail.com>
- <20240806022002.GA1570554@thelio-3990X>
- <CAHC9VhTZPsgO=h-zutQ9_LuaAVKZDdE2SwECHt01QSkgB_qexQ@mail.gmail.com>
- <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
- <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net>
- <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] mm: shmem: add large folio support to the write
+ and fallocate paths
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "hughd@google.com" <hughd@google.com>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "david@redhat.com" <david@redhat.com>, "21cnbao@gmail.com"
+ <21cnbao@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "ziy@nvidia.com" <ziy@nvidia.com>, "ioworker0@gmail.com"
+ <ioworker0@gmail.com>, Pankaj Raghav <p.raghav@samsung.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1721720891.git.baolin.wang@linux.alibaba.com>
+ <CGME20240724070423eucas1p1c2a306d0b44f73476b83ede2bd05e57a@eucas1p1.samsung.com>
+ <05a31373ee1aa40a6a85d4897324a400686e2fb1.1721720891.git.baolin.wang@linux.alibaba.com>
+ <ur7tze5f7m3gfokrbux4iqlt3opbxaxtnimiqfwj7cvnppnepc@qisd76x2a5jh>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <ur7tze5f7m3gfokrbux4iqlt3opbxaxtnimiqfwj7cvnppnepc@qisd76x2a5jh>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 8/7/24 18:18, Paul Moore wrote:
-> On Wed, Aug 7, 2024 at 8:34 PM Guenter Roeck <linux@roeck-us.net> wrote:
->> On 8/7/24 16:43, Paul Moore wrote:
->>> On Wed, Aug 7, 2024 at 6:45 PM KP Singh <kpsingh@kernel.org> wrote:
->>>> On Wed, Aug 7, 2024 at 10:45 PM Paul Moore <paul@paul-moore.com> wrote:
->>>>> On Tue, Aug 6, 2024 at 5:41 PM Paul Moore <paul@paul-moore.com> wrote:
->>>>>> On Mon, Aug 5, 2024 at 10:20 PM Nathan Chancellor <nathan@kernel.org> wrote:
->>>>>
->>>>> ...
->>>>>
->>>>>>> For what it's worth, I have not noticed any issues in my -next testing
->>>>>>> with this patch applied but I only build architectures that build with
->>>>>>> LLVM due to the nature of my work. If exposure to more architectures is
->>>>>>> desirable, perhaps Guenter Roeck would not mind testing it with his
->>>>>>> matrix?
->>>>>>
->>>>>> Thanks Nathan.
->>>>>>
->>>>>> I think the additional testing would be great, KP can you please work
->>>>>> with Guenter to set this up?
->>>>>
->>>>
->>>> Adding Guenter directly to this thread.
->>>>
->>>>> Is that something you can do KP?  I'm asking because I'm looking at
->>>>> merging some other patches into lsm/dev and I need to make a decision
->>>>> about the static call patches (hold off on merging the other patches
->>>>> until the static call testing is complete, or yank the static call
->>>>> patches until testing is complete and then re-merge).  Understanding
->>>>> your ability to do the additional testing, and a rough idea of how
->>>>
->>>> I have done the best of the testing I could do here. I think we should
->>>> let this run its normal course and see if this breaks anything. I am
->>>> not sure how testing is done before patches are merged and what else
->>>> you expect me to do?
->>>
->>> That is why I was asking you to get in touch with Guenter to try and
->>> sort out what needs to be done to test this across different
->>> architectures.
->>>
->>> With all due respect, this patchset has a history of not being as
->>> tested as well as I would like; we had the compilation warning on gcc
->>> and then the linux-next breakage.  The gcc problem wasn't a major
->>> problem (although it was disappointing, especially considering the
->>> context around it), but I consider the linux-next breakage fairly
->>> serious and would like to have some assurance beyond your "it's okay,
->>> trust me" this time around.  If there really is no way to practically
->>> test this patchset across multiple arches prior to throwing it into
->>> linux-next, so be it, but I want to see at least some effort towards
->>> trying to make that happen.
->>>
+
+
+On 2024/8/5 02:46, Daniel Gomez wrote:
+> On Wed, Jul 24, 2024 at 03:03:59PM GMT, Baolin Wang wrote:
+>> From: Daniel Gomez <da.gomez@samsung.com>
 >>
->> Happy to run whatever patchset there is through my testbed. Just send me
->> a pointer to it.
+>> Add large folio support for shmem write and fallocate paths matching the
+>> same high order preference mechanism used in the iomap buffered IO path
+>> as used in __filemap_get_folio().
 >>
->> Note that it should be based on mainline; linux-next is typically too broken
->> to provide any useful signals. I can handle a patchset either on top of v6.10
->> or v6.11-rc2 (meaning 6.10 passes through all my tests, and I can apply and
->> revert patches to/from 6.11-rc2 to get it to pass).
+>> Add shmem_mapping_size_order() to get a hint for the order of the folio
+>> based on the file size which takes care of the mapping requirements.
+>>
+>> Swap does not support high order folios for now, so make it order-0 in
+>> case swap is enabled.
+>>
+>> If the top level huge page (controlled by '/sys/kernel/mm/transparent_hugepage/shmem_enabled')
+>> is enabled, we just allow PMD sized THP to keep interface backward
+>> compatibility.
+>>
+>> Co-developed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> ---
+>>   include/linux/shmem_fs.h |  4 +--
+>>   mm/huge_memory.c         |  2 +-
+>>   mm/shmem.c               | 57 ++++++++++++++++++++++++++++++++++++----
+>>   3 files changed, 55 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+>> index 34beaca2f853..fb0771218f1b 100644
+>> --- a/include/linux/shmem_fs.h
+>> +++ b/include/linux/shmem_fs.h
+>> @@ -113,11 +113,11 @@ int shmem_unuse(unsigned int type);
+>>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>   unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>>   				struct vm_area_struct *vma, pgoff_t index,
+>> -				bool shmem_huge_force);
+>> +				bool shmem_huge_force, size_t len);
+>>   #else
+>>   static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>>   				struct vm_area_struct *vma, pgoff_t index,
+>> -				bool shmem_huge_force)
+>> +				bool shmem_huge_force, size_t len)
+>>   {
+>>   	return 0;
+>>   }
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index e555fcdd19d4..a8fc3b9e4034 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -162,7 +162,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>>   	if (!in_pf && shmem_file(vma->vm_file))
+>>   		return shmem_allowable_huge_orders(file_inode(vma->vm_file),
+>>   						   vma, vma->vm_pgoff,
+>> -						   !enforce_sysfs);
+>> +						   !enforce_sysfs, PAGE_SIZE);
+>>   
+>>   	if (!vma_is_anonymous(vma)) {
+>>   		/*
+>> diff --git a/mm/shmem.c b/mm/shmem.c
+>> index 92ed09527682..cc0c1b790267 100644
+>> --- a/mm/shmem.c
+>> +++ b/mm/shmem.c
+>> @@ -1630,10 +1630,47 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
+>>   	return result;
+>>   }
+>>   
+>> +/**
+>> + * shmem_mapping_size_order - Get maximum folio order for the given file size.
+>> + * @mapping: Target address_space.
+>> + * @index: The page index.
+>> + * @size: The suggested size of the folio to create.
+>> + *
+>> + * This returns a high order for folios (when supported) based on the file size
+>> + * which the mapping currently allows at the given index. The index is relevant
+>> + * due to alignment considerations the mapping might have. The returned order
+>> + * may be less than the size passed.
+>> + *
+>> + * Like __filemap_get_folio order calculation.
+>> + *
+>> + * Return: The order.
+>> + */
+>> +static inline unsigned int
+>> +shmem_mapping_size_order(struct address_space *mapping, pgoff_t index,
+>> +			 size_t size, struct shmem_sb_info *sbinfo)
+>> +{
+>> +	unsigned int order = ilog2(size);
+>> +
+>> +	if ((order <= PAGE_SHIFT) ||
+>> +	    (!mapping_large_folio_support(mapping) || !sbinfo->noswap))
+>> +		return 0;
+>> +
+>> +	order -= PAGE_SHIFT;
+>> +
+>> +	/* If we're not aligned, allocate a smaller folio */
+>> +	if (index & ((1UL << order) - 1))
+>> +		order = __ffs(index);
+>> +
+>> +	order = min_t(size_t, order, MAX_PAGECACHE_ORDER);
+>> +
+>> +	/* Order-1 not supported due to THP dependency */
+>> +	return (order == 1) ? 0 : order;
+>> +}
 > 
-> Thanks Guenter, it looks like KP already make up a branch for you to
-> pull, but if you have any problems or need something different let us
-> know.
+> I have an updated version of shmem_mapping_size_order() that I didn't posted but
+> uses get_order() instead as suggested in [1]:
 > 
->> Question of course is if that really helps: I don't specifically test features
->> such as LSM or BPF.
+> [1] https://lore.kernel.org/all/ZT7rd3CSr+VnKj7v@casper.infradead.org/
 > 
-> In this particular case we are most interested in testing the LSM
-> initializing code so I don't believe you need to worry much about
-> LSM/BPF configuration, it's a matter of ensuring the different arches
-> are able to boot without any panics/warnings/etc.
+> /**
+>   * shmem_mapping_size_order - Get maximum folio order for the given file size.
+>   * @mapping: Target address_space.
+>   * @index: The page index.
+>   * @size: The suggested size of the folio to create.
+>   *
+>   * This returns a high order for folios (when supported) based on the file size
+>   * which the mapping currently allows at the given index. The index is relevant
+>   * due to alignment considerations the mapping might have. The returned order
+>   * may be less than the size passed.
+>   *
+>   * Like __filemap_get_folio order calculation.
+>   *
+>   * Return: The order.
+>   */
+> static inline unsigned int
+> shmem_mapping_size_order(struct address_space *mapping, pgoff_t index,
+>                          size_t size)
+>   * Return: The order.
+>   */
+> static inline unsigned int
+> shmem_mapping_size_order(struct address_space *mapping, pgoff_t index,
+>                          size_t size)
+> {
+>         unsigned int order = get_order(max_t(size_t, size, PAGE_SIZE));
 > 
-> There is some Kconfig needed, KP provided a good snippet earlier in
-> this thread, the relevant portion is copied below:
+>         if (!mapping_large_folio_support(mapping))
+>                 return 0;
 > 
-> % cat .config | grep -i LOCKDOWN
-> CONFIG_SECURITY_LOCKDOWN_LSM=y
-> CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=y
-> CONFIG_LSM="landlock,lockdown,yama,loadpin,safesetid,bpf"
+>         /* If we're not aligned, allocate a smaller folio */
+>         if (index & ((1UL << order) - 1))
+>                 order = __ffs(index);
 > 
+>         return min_t(size_t, order, MAX_PAGECACHE_ORDER);
+> }
+> 
+> order-1 is already supported by commit [2], so I've removed that condition as
+> well.
+> 
+> [2] 8897277acfef7f70fdecc054073bea2542fc7a1b ("mm: support order-1 folios in the
+> page cache").
 
-Ah, that might be a bit more challenging. I don't explicitly enable
-security LSMs, so just building and loading them on various architectures
-might be problematic even without the changes discussed here.
-
-I'll enable all security modules referenced above in my test builds.
-If we are lucky everything will pass; otherwise I may need a couple
-of runs to establish a baseline.
-
-Thanks,
-Guenter
-
+Great. Thanks Daniel.
+I will include your new version if there are no obvious objections to 
+this patchset.
 
