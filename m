@@ -1,169 +1,153 @@
-Return-Path: <linux-kernel+bounces-278893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9912094B641
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:27:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16CA94B643
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23F162818CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:27:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 300A31F21BF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C3C15B986;
-	Thu,  8 Aug 2024 05:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B84F166315;
+	Thu,  8 Aug 2024 05:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ByHcKVJC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nm7TNx6e"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF44215A868
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 05:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED201662F7;
+	Thu,  8 Aug 2024 05:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723094841; cv=none; b=mm3KioWjIMJUv6tcc8+ue1TMZ9Orx+lmNewXGq5302610KyxMKLspXv8F4MXyN+7e26caN52kkIZUJ57Jzaq+tUk3UOm/iWeegVCKLrCNI/BmyiE+Or/Vqb+mu9jKfcI0u4Ye1Xcyc7S19JGVvuBCWqmUJ4BCPNlwYJF4GEw4sA=
+	t=1723094901; cv=none; b=N39wznzFGINP+sUb5TGDj6X9XqwawRQesICZ+CkZUiyZfoR9GKB2sWKBJe2WtIMVxwGmtj1Xj73+5vqPtduce7QS+wvtoWppUQS0iRptV4jdssCzNDeRpS8h+Scsi2Nbe/MNFmzHwokbSn2TI8o/z/QMOEhev2xb3EIJboiwLNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723094841; c=relaxed/simple;
-	bh=kBRi4gpSlyjcXYiBHMX5gJMTKxwVFjKDnN2/DwuAYPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T4ymdYsfDljPvOqU6+DElxHbfBfdA1B5Y00ixkNNZZCWnGjg4wMDuZwOydtzkZiuqh1UKkMb6+bzZTZJxIoXtejANTE16sJRy2d94Qvf6H4zGRIEsuLWQDJQ8ISKu/tudUF6GJJL+gP8NSJXgfaz+jMrXxtTprJgYj8SwbXdNs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ByHcKVJC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723094838;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MoXDJcmwahQwk2XNAkzjBbC4Ch2PiqhVaEdN/JPLwgQ=;
-	b=ByHcKVJCmxrZ3ui7GKS3CCvC0WTsj3AsbAuVzhzu/rIj+nrNCzmkISCWQszfqfkpy947OD
-	eA6cfWuIE0ncz8HU59hWLmkxkTNokIldV/KhWe2qjiLcQiF6Y0Svz25XvN0srWuNkrLeRC
-	Xd100ysa9Dq7HFAU7waPORvdbI0gFWg=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-561-Q2ixB890NQ-YxhEHAlmKHQ-1; Thu,
- 08 Aug 2024 01:27:12 -0400
-X-MC-Unique: Q2ixB890NQ-YxhEHAlmKHQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 741021977003;
-	Thu,  8 Aug 2024 05:27:07 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.25])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CD6F61955F2E;
-	Thu,  8 Aug 2024 05:26:47 +0000 (UTC)
-Date: Thu, 8 Aug 2024 13:26:41 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Daniel Wagner <dwagner@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Christoph Hellwig <hch@lst.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	John Garry <john.g.garry@oracle.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Kashyap Desai <kashyap.desai@broadcom.com>,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
-	Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	Nilesh Javali <njavali@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	Jonathan Corbet <corbet@lwn.net>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>,
-	Sridhar Balaraman <sbalaraman@parallelwireless.com>,
-	"brookxu.cn" <brookxu.cn@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, virtualization@lists.linux.dev,
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
-	linux-doc@vger.kernel.org, ming.lei@redhat.com
-Subject: Re: [PATCH v3 15/15] blk-mq: use hk cpus only when isolcpus=io_queue
- is enabled
-Message-ID: <ZrRXEUko5EwKJaaP@fedora>
-References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
- <20240806-isolcpus-io-queues-v3-15-da0eecfeaf8b@suse.de>
- <ZrI5TcaAU82avPZn@fedora>
- <253ec223-98e1-4e7e-b138-0a83ea1a7b0e@flourine.local>
+	s=arc-20240116; t=1723094901; c=relaxed/simple;
+	bh=50u/PJJE2y6hWxNz/1Sj/FFVUMcYTZPke6+4D1/JDbs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rQqspuYzrvPpqhzvEOeUrhU77b4EWu0g6wHGHzJvbQmgj1iCG2fX5l88/coB+i+cJ8XoW+O5MLh4bC6IXxCcAKb2aACY06ad25muJ3VmsW4RCU/nvTLI/IdLAgzjb+mK9js5ebK05iZAnpBp4iGSpyPd24jsjAq2bw39+oVv0Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nm7TNx6e; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4785SDHH044012;
+	Thu, 8 Aug 2024 00:28:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723094893;
+	bh=DlSg9rO9sZgKzoNV1/QwBFYweIf7uvIJ3TG1yIbVKS0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=nm7TNx6esO5AKiqmaRLPrOoMTqw0Pch7uFKycT20snwQiaxS2bBXkLUj2xWHcltSr
+	 59kZrb9YfpnC8RWe5BydhDn/aGeoeMwu9HEb2B+iTBwBuNNlEOGzHoVL3BWD68WJBa
+	 5b/XgpyzKJgzRB+jp4k827gKbExAcu6TBLd4xgZo=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4785SDL8130379
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 8 Aug 2024 00:28:13 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
+ Aug 2024 00:28:12 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 8 Aug 2024 00:28:12 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4785SB2t066507;
+	Thu, 8 Aug 2024 00:28:12 -0500
+Date: Thu, 8 Aug 2024 10:58:11 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Manorit Chawdhry <m-chawdhry@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye
+	<a-limaye@ti.com>
+Subject: Re: [PATCH v3 4/9] arm64: dts: ti: Split
+ k3-j784s4-j742s2-main-common.dtsi
+Message-ID: <8cf2f7aa-1c57-40bd-80cc-14e5bd5623a8@ti.com>
+References: <20240731-b4-upstream-j742s2-v3-0-da7fe3aa9e90@ti.com>
+ <20240731-b4-upstream-j742s2-v3-4-da7fe3aa9e90@ti.com>
+ <20240807132054.jcz5fdokc5yk3mbo@entrust>
+ <20240808045227.apxwcpi5b3w6n4xo@uda0497581>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <253ec223-98e1-4e7e-b138-0a83ea1a7b0e@flourine.local>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <20240808045227.apxwcpi5b3w6n4xo@uda0497581>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Aug 07, 2024 at 02:40:11PM +0200, Daniel Wagner wrote:
-> On Tue, Aug 06, 2024 at 10:55:09PM GMT, Ming Lei wrote:
-> > On Tue, Aug 06, 2024 at 02:06:47PM +0200, Daniel Wagner wrote:
-> > > When isolcpus=io_queue is enabled all hardware queues should run on the
-> > > housekeeping CPUs only. Thus ignore the affinity mask provided by the
-> > > driver. Also we can't use blk_mq_map_queues because it will map all CPUs
-> > > to first hctx unless, the CPU is the same as the hctx has the affinity
-> > > set to, e.g. 8 CPUs with isolcpus=io_queue,2-3,6-7 config
+On Thu, Aug 08, 2024 at 10:22:27AM +0530, Manorit Chawdhry wrote:
+> Hi Nishanth,
+> 
+> > > diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> > > new file mode 100644
+> > > index 000000000000..2ea470d1206d
+> > > --- /dev/null
+> > > +++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> > > @@ -0,0 +1,21 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> > > +/*
+> > > + * Device Tree Source for J784S4 SoC Family Main Domain peripherals
+> > > + *
+> > > + * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
+> > > + */
+> > > +
+> > > +&cbass_main {
+> > > +	c71_3: dsp@67800000 {
+> > > +		compatible = "ti,j721s2-c71-dsp";
+> > > +		reg = <0x00 0x67800000 0x00 0x00080000>,
+> > > +		      <0x00 0x67e00000 0x00 0x0000c000>;
+> > > +		reg-names = "l2sram", "l1dram";
+> > > +		ti,sci = <&sms>;
+> > > +		ti,sci-dev-id = <40>;
+> > > +		ti,sci-proc-ids = <0x33 0xff>;
+> > > +		resets = <&k3_reset 40 1>;
+> > > +		firmware-name = "j784s4-c71_3-fw";
+> > > +		status = "disabled";
+> > > +	};
+> > > +};
 > > 
-> > What is the expected behavior if someone still tries to submit IO on isolated
-> > CPUs?
+> > I am looking at https://www.ti.com/lit/ug/spruje3/spruje3.pdf (page 26),
+> > Device Comparison:
+> > 
+> > CPSW/Serdes, PCIE is also different? Was that missed?
 > 
-> If a user thread is issuing an IO the IO is handled by the housekeeping
-> CPU, which will cause some noise on the submitting CPU. As far I was
-> told this is acceptable. Our customers really don't want to have any
-> IO not from their application ever hitting the isolcpus. When their
-> application is issuing an IO.
-> 
-> > BTW, I don't see any change in blk_mq_get_ctx()/blk_mq_map_queue() in this
-> > patchset,
-> 
-> I was trying to figure out what you tried to explain last time with
-> hangs, but didn't really understand what the conditions are for this
-> problem to occur.
+> I had talked to Siddharth in the past regarding that and he had
+> mentioned that no change would be required with the previous patchsets
+> that I had shared, adding him to the thread 
 
-Isolated CPUs are removed from queue mapping in this patchset, when someone
-submit IOs from the isolated CPU, what is the correct hctx used for handling
-these IOs?
+Manorit,
 
-From current implementation, it depends on implied zero filled
-tag_set->map[type].mq_map[isolated_cpu], so hctx 0 is used.
+Since J784S4-EVM enables only PCIe0 and PCIe1 which matches the
+instances enabled/supported on J742S2-EVM, I had informed you that for
+the purpose of validation, no changes will be required w.r.t. PCIe, if
+k3-j742s2-evm.dts is including k3-j784s4-evm.dts. However, considering
+that the device-tree should describe the hardware, when upstreaming the
+device-tree for J742S2, PCIe2 and PCIe3 should be deleted
+(if k3-j784s4-evm.dts is included by k3-j742s2-evm.dts) OR dropped
+(if there is a "common" file that is used to describe the peripherals
+common to J742S2 and J784S4 as done in the current series).
 
-During CPU offline, in blk_mq_hctx_notify_offline(),
-blk_mq_hctx_has_online_cpu() returns true even though the last cpu in
-hctx 0 is offline because isolated cpus join hctx 0 unexpectedly, so IOs in
-hctx 0 won't be drained.
+Also, SERDES2 is not present on J742S2 SoC while J784S4 has SERDES0,
+SERDES1, SERDES2 and SERDES4. There is no difference w.r.t. CPSW9G in
+terms of the CPSW9G instance itself, but the difference is that CPSW9G
+cannot use SERDES2. So CPSW9G can only be used with SERDES4 on J742S2
+SoC, but J742S2-EVM has the SERDES4 lines connected to Display Ports,
+due to which CPSW9G is essentially non-functional on J742S2-EVM.
 
-However managed irq core code still shutdowns the hw queue's irq because all
-CPUs in this hctx are offline now. Then IO hang is triggered, isn't it?
-
-The current blk-mq takes static & global queue/CPUs mapping, in which all CPUs
-are covered. This patchset removes isolated CPUs from the mapping, and the
-change is big from viewpoint of blk-mq queue mapping.
-
-> 
-> > that means one random hctx(or even NULL) may be used for submitting
-> > IO from isolated CPUs,
-> > then there can be io hang risk during cpu hotplug, or
-> > kernel panic when submitting bio.
-> 
-> Can you elaborate a bit more? I must miss something important here.
-> 
-> Anyway, my understanding is that when the last CPU of a hctx goes
-> offline the affinity is broken and assigned to an online HK CPU. And we
-> ensure all flight IO have finished and also ensure we don't submit any
-> new IO to a CPU which goes offline.
-> 
-> FWIW, I tried really hard to get an IO hang with cpu hotplug.
- 
-Please see above.
-
-
-thanks,
-Ming
-
+Regards,
+Siddharth.
 
