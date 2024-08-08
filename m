@@ -1,102 +1,112 @@
-Return-Path: <linux-kernel+bounces-278866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E3394B5CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:14:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA10594B5D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 161401C21B93
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:14:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F20031C21B01
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047C812CDB6;
-	Thu,  8 Aug 2024 04:14:23 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E40E84D34;
+	Thu,  8 Aug 2024 04:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="AR/nq4T3"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB78B9479;
-	Thu,  8 Aug 2024 04:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6567F484;
+	Thu,  8 Aug 2024 04:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723090462; cv=none; b=K6WuXRP2aHuTnOEXD/rR7UkLbalowcswpo1DcekU8sK+3xyfk67Q6FrX3/XsxAA2DgFiyfxK7AzvcSJmSsmkdFA6Ck8yEQWKEGswv1A0jzdLnSynw3Mm+720yvyJ2Oa5s3iihwHPm9KUrqHSZLBbxVIs9jZYcrKTBES3WRtLnj8=
+	t=1723090489; cv=none; b=HpFqpWa9+aRGylQEUclrDYx0ZqoG61vKAmyZxHB1Mz/I4ActyShpGO7dnnM1C+O77HyenSNWoO3y496fUg9aytems/Tdwv7Oa0TZU/QY60tMQqwt+D44HhY+msSl8JuLp+EpkHDd5i2raEEIk7e45lgu3NOvjZ5BmnZASP0BuAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723090462; c=relaxed/simple;
-	bh=glhbN7dVT4zQpN3na6hmnR2DxrICAvbg2AdlboJlrmM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qADS/PTHZEK8xogboMFHC7O/NIonjZpbL6Rh5SErd0yh1l3WGivQZyh1wpLBklx+iBwZOxRcX87Be5+7KgW/0pmlixT6aCqPmXB5JnRBwp9rJ/ylkzaGRFU73qA3wWokEnD2rNCyF9qs5oqxM9tzm9THPzuCrOSKQqOwj361DHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowAAXqxkERrRm_cNdBA--.22343S2;
-	Thu, 08 Aug 2024 12:14:04 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: tony@atomide.com,
-	haojian.zhuang@linaro.org,
-	linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] pinctrl: single: fix potential NULL dereference in pcs_get_function()
-Date: Thu,  8 Aug 2024 12:13:55 +0800
-Message-Id: <20240808041355.2766009-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723090489; c=relaxed/simple;
+	bh=gHPoEeufEVkudtSEDULOZsQrvCv8dq1jgF9iCMZPcjE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fIHtY6lFDn8LXuspvOkDTa+zEdzCJ/Rq/y3p70S5SOahuuEg+g5MjlkDD4tfyLst5Cj7xI/tz325dQLjYNgNgT4mtt+hAftJZcNGyofeSiabO6qCZ57bP5pzP1M10oBTZKhkDTEciaxpdrjH1t0ad1zD+BIxMq7hVRm8VRwNKOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=AR/nq4T3; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1723090486;
+	bh=n3sZ4FsOpgBw2cpkxzXazcULuROCyRckfFE8WrKc23c=;
+	h=From:Subject:Date:To:Cc;
+	b=AR/nq4T3O36j2aPSH1YxOzliZ0Qdgq9WcseuCgPmIupAGuOvs7srJsccs9k33u6Ie
+	 5vbN65GDaqWjfSoiCeNBdmbcRAT0wgJvHfYqonn6Dz1BPTsww7BuvDFEpMnwTmsth0
+	 od7cGfbOdG8EHRvatmlXdLtHFGHeAVERDJKHkVLti1A4oxCT29tNeBM0WfWJfUhX5L
+	 OPpJSqWN+dtEn15bpHag+HNMPW4rOkHyl9Y7SK2buA9CFAMyKJ7yyCCBXyEgFSr5Ih
+	 STAx3nryVgYzW2dnKMcCMNY72yisErw2BO/70gFlE63UU4PviL87REmXQjcKULHbg6
+	 VfcUOQdxSUKqQ==
+Received: from [127.0.1.1] (203-57-213-111.dyn.iinet.net.au [203.57.213.111])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 65FFE654E9;
+	Thu,  8 Aug 2024 12:14:45 +0800 (AWST)
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+Subject: [PATCH v2 0/2] dt-bindings: interrupt-controller: Convert Aspeed
+ (C)VIC to DT schema
+Date: Thu, 08 Aug 2024 13:44:23 +0930
+Message-Id: <20240808-dt-warnings-irq-aspeed-dt-schema-v2-0-c2531e02633d@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAXqxkERrRm_cNdBA--.22343S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrury8WFW5Xr4DZF4fCFW8tFb_yoWDZFg_CF
-	WxXryxJryUGF4DXw17K3yrZFy0ka1UZFW0vr4vg34akryUAw4q93ykG390kwn7Gr4fGrZa
-	yFy5Zr93J347AjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb38FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_
-	Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWI
-	evJa73UjIFyTuYvjfUOmhFUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB9GtGYC/5WNQQ6DIBAAv2I4dw1SNLan/qPxQNhV9yBYQNvG+
+ PeiP+hx5jCziUiBKYp7sYlAK0f2LoO6FMKOxg0EjJmFkkrLVirABG8THLshAocXmDgT4aGjHWk
+ yUPc19VijvlZG5MwcqOfPuXh2mUeOyYfveVyrw/4RXyuQ0FrUqmlQyZt+WI9kvYspLDaV1k+lW
+ US37/sPWyakwtsAAAA=
+To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+X-Mailer: b4 0.14.1
 
-pinmux_generic_get_function() can return NULL and the pointer 'function'
-was dereferenced without checking against NULL. Add checking of pointer
-'function' in pcs_get_function().
+Hello,
 
-Found by code review.
+This short series converts the Aspeed VIC and CVIC bindings over to DT
+schema. The CVIC has historically been documented under "misc" as it's
+the interrupt controller for the Coldfire co-processor embedded in the
+SoCs, and not for the main ARM core. Regardless, I've updated both in
+this series.
 
-Cc: stable@vger.kernel.org
-Fixes: 571aec4df5b7 ("pinctrl: single: Use generic pinmux helpers for managing functions")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+I tried to document the historical oddities and conversion quirks in the
+commit messages where appropriate.
+
+Please review!
+
+Andrew
+
 ---
- drivers/pinctrl/pinctrl-single.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v2:
+- Address feedback from Krzysztof
+  - https://lore.kernel.org/r/c51fb027-f8bd-4b10-b9c0-dbbe8e8cf4c1@kernel.org/
+  - https://lore.kernel.org/r/ec19fe07-84bd-4c32-a886-e6126af52f4c@kernel.org/
+- Address feedback from Rob
+  - https://lore.kernel.org/r/20240806172917.GA1836473-robh@kernel.org/
+- Link to v1: https://lore.kernel.org/r/20240802-dt-warnings-irq-aspeed-dt-schema-v1-0-8cd4266d2094@codeconstruct.com.au
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 4c6bfabb6bd7..4da3c3f422b6 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -345,6 +345,8 @@ static int pcs_get_function(struct pinctrl_dev *pctldev, unsigned pin,
- 		return -ENOTSUPP;
- 	fselector = setting->func;
- 	function = pinmux_generic_get_function(pctldev, fselector);
-+	if (!function)
-+		return -EINVAL;
- 	*func = function->data;
- 	if (!(*func)) {
- 		dev_err(pcs->dev, "%s could not find function%i\n",
+---
+Andrew Jeffery (2):
+      dt-bindings: interrupt-controller: aspeed,ast2400-vic: Convert to DT schema
+      dt-bindings: misc: aspeed,ast2400-cvic: Convert to DT schema
+
+ .../interrupt-controller/aspeed,ast2400-vic.txt    | 23 --------
+ .../interrupt-controller/aspeed,ast2400-vic.yaml   | 62 ++++++++++++++++++++++
+ .../bindings/misc/aspeed,ast2400-cvic.yaml         | 60 +++++++++++++++++++++
+ .../devicetree/bindings/misc/aspeed,cvic.txt       | 35 ------------
+ 4 files changed, 122 insertions(+), 58 deletions(-)
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240802-dt-warnings-irq-aspeed-dt-schema-5f5efd5d431a
+
+Best regards,
 -- 
-2.25.1
+Andrew Jeffery <andrew@codeconstruct.com.au>
 
 
