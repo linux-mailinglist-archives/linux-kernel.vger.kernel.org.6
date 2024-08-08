@@ -1,115 +1,83 @@
-Return-Path: <linux-kernel+bounces-279676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F330994C05C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81FFE94C062
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E14F1F28767
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:58:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07B041F28E64
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C3618DF75;
-	Thu,  8 Aug 2024 14:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCFF18F2C1;
+	Thu,  8 Aug 2024 14:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R/6v9ohB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1AcCE30f"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uceui2MV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F59318C346
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089EB18C346;
+	Thu,  8 Aug 2024 14:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723129073; cv=none; b=Ecytqd1p9ZPflwvlGsyUkh8xoYwtSNZZJzIYF33zSjxFcCGurjeV8x8U4JHk2PqbkS6+uYxk3TEVj2OVUqCjCX8F8a1VPjP3DHtr9zMd+zZpC3UjER1Fu92N9a7USPLU5X40IwVB18PsW09ywc0mKxKfU3leuHzK4Ww6HoNoZmo=
+	t=1723129097; cv=none; b=f1PLL/5X+F2CjIcRO8EQhGyL5eRtiAtPgpA4rb4EiBj/jjLhnfHj7LMcednE5ljfOUHbv0yTdk3ZU6PvERSWeIM+asp2tgxj/ETmHWyYmApWuaaZ9/kzoq32lLx23v6Ye0iePiuSDN9pdJlN5zF4AwIjAcf9EVpyabIqrpx2RpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723129073; c=relaxed/simple;
-	bh=4sHV/cuo1auDM5d3jkLz3V1UZdyzVmWHEZVYR1Jewt8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Np3YNGf/QihH+DbYReERAhCNTvzALI0BN/EQ+Xiufa7Sd+LPFbzIT/Rfndk7p0V3A0HGuB1PCe/5Asih1lRYH1rMX1G1/qmmvDMX5NqaqGIdpOiMOnWZVtyKkZ1LAgxAHWXMM3cHOzbIzkAqKE8rjp8iqpievSNK8uHHi6vsb80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R/6v9ohB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1AcCE30f; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723129070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rcU8jHNp+0iq+RbsEV6EN3ntmm5cSHAiATW/SrWGmEQ=;
-	b=R/6v9ohBbuRdP3zwMnO/cZvKQKW3izWBpmlfacSfMedeDL+wEXg57vlzsjn8AuiTGRQMIa
-	s7g/NNiArIJW5eMfLj3k75deqAdDi0dTzZjA5vH8JX3c0abT1ePEYcMFybS5v0WIS1Tnhn
-	pXysLIykRPCAo1ewNYnNZRV04rSxex1i7XQMjEpjTK8rZNLMbGspvkVwxzIr4EcnGKVmMl
-	CcYrQ27+4JgiI3+7WSpI+6JF4bcDNzddKQGgC9fArTSmTC5paeDuMMEAKkTPhgVWTy8JCY
-	YwTPqCKwY+QsbFeIcLT178daUHq/2vKxOszy1a5dwUQC4Z51hIqwOXCYDLnBIg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723129070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rcU8jHNp+0iq+RbsEV6EN3ntmm5cSHAiATW/SrWGmEQ=;
-	b=1AcCE30fL2txXoTbcNJs1x2KaLfEwHcspQcbNxVbz0BcdKOUdh78hrQxMFTwC25hz2aZk6
-	GsuzW+ATyahrKoDw==
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, michal.simek@amd.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- git@amd.com, Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Subject: Re: [PATCH] irqchip/xilinx: fix shift out of bounds warning
-In-Reply-To: <1723101895-3470952-1-git-send-email-radhey.shyam.pandey@amd.com>
-References: <1723101895-3470952-1-git-send-email-radhey.shyam.pandey@amd.com>
-Date: Thu, 08 Aug 2024 16:57:50 +0200
-Message-ID: <87frrfyscx.ffs@tglx>
+	s=arc-20240116; t=1723129097; c=relaxed/simple;
+	bh=NsNKDWui3rAIcAyqOlICEDrazl+1Yxm/DlMsdmERQ0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DAtmFQCJxe1HXgoKDAqxvlBKp412h475LznEmeGd1x4SFZGjE0Oxv9Uj9MhHwrxP2OjHpjH/pSHY4ISGyjE6LjqSTAKHjA93EWvQ++J+MMAN/+/7YcS+PovVwBDfYRMejJZ7u6oQqUMAu9Ifzv9XDm/H6NfdeYQ9sSaTn6WO4ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uceui2MV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80FA3C32782;
+	Thu,  8 Aug 2024 14:58:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723129096;
+	bh=NsNKDWui3rAIcAyqOlICEDrazl+1Yxm/DlMsdmERQ0w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uceui2MVGRgMVhWl/LMgqBHCLjWGIHkE1TSRnSt+VeAySe4tKyPTA0EcbNvVNvm9F
+	 FrV3U/MjcSdw9GkIbHZxQFPPKfYs8LpzAxuG0hpdzgO0Jo43KVDYZAEGcmqfYujWGt
+	 50bYf/8MYjkii4l4zYpJR0z1NHaKULE82/U+iOo6SVRMXAivsoumf7objyjQmmiPL6
+	 ztrnFoaYK7yOaW1KsFG52S76dyy4uf1hDhT9bSwxPRz/GVWcFG4QEfuwoml1x/i8oE
+	 cqVJ8NcNidaRb0d0GscVMgGKkywlASeV58CROLrj53Isfj9aAjeGVx3jBwYYDoDE8T
+	 fzoLQuwYUivaw==
+Date: Thu, 8 Aug 2024 16:58:12 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Morten Hein Tiljeset <morten@tiljeset.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Debugging stuck mount
+Message-ID: <20240808-kontinental-knauf-d119d211067e@brauner>
+References: <22578d44-b822-40ff-87fb-e50b961fab15@app.fastmail.com>
+ <20240808-hangar-jobverlust-2235f6ef0ccb@brauner>
+ <e244e74d-9e26-4d4e-a575-ea4908a8a893@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e244e74d-9e26-4d4e-a575-ea4908a8a893@app.fastmail.com>
 
-On Thu, Aug 08 2024 at 12:54, Radhey Shyam Pandey wrote:
+On Thu, Aug 08, 2024 at 04:20:43PM GMT, Morten Hein Tiljeset wrote:
+> > It's likely held alive by some random file descriptor someone has open.
+> > IOW, try and walk all /proc/<pid>/fd/<nr> in that case and see whether
+> > anything keeps it alive.
+> 
+> Thanks for the suggestion, but I've already tried the equivalent of that by
+> using a debugger to find the superblock in question and then walking all open
+> fds and comparing the superblock pointer. I've validated that this approach
+> works in a synthetic example where I create a new namespace, mount the
+> filesystem under /mnt, run a program to open /mnt/foo and lazy unmount /mnt.
+> 
+> Walking procfs seems less precise. I've tried iterating through /proc/*/fd/*
+> and comparing the Device entry of stat -L, also without luck.
 
- irqchip/xilinx: fix shift out of bounds warning
+The file descriptor could already be closed but the task could be stuck
+exiting and so queued task work including destroying files wouldn't be
+done yet. You could also try and see if you can figure out what tasks
+require your workload to do a lazy umount in the first place. That might
+bring you closer to the root cause.
 
-Please start the sentence after the colon with an upper case letter.
-
-Also you can't fix a out of bound warning. You can fix the code which
-causes the warning
-
-> In case num_irq is 32 there is shift out of bound and result in false
-
-What is num_irq? This is text and not subject to random acronyms.
-
-  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html
-
-> warning "irq-xilinx: mismatch in kind-of-intr param" . To fix it cast
-> intr_mask to u64. It also fixes below shift out of bound warning
-> reported by UBSAN.
->
-> UBSAN: shift-out-of-bounds in irq-xilinx-intc.c:332:22
-> shift exponent 32 is too large for 32-bit type 'unsigned int'
-
-Something like this:
-
-  irqchip/xilinx: Fix shift out of bounds
-
-  The device tree property 'xlnx,kind-of-intr' is sanity checked that
-  the bitmask contains only set bits which are in the range of the
-  number of interrupts supported by the controller.
-
-  The check is done by shifting the mask right by the number of
-  supported interrupts and checking the result for zero.
-
-  The data type of the mask is u32 and the number of supported
-  interrupts is up to 32. In case of 32 interrupt the shift is out of
-  bounds, resulting in a mismatch warning. The out of bounds condition
-  was also caught by UBSAN.
-
-  Fix it by promoting the mask to u64 for the test.
-
-Hmm?
-
-Thanks,
-
-        tglx
+What kernel version are you running anyway?
 
