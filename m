@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-279199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0AD94BA4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:00:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD80094BA5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00035B22535
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06DE1C20DC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C0718A940;
-	Thu,  8 Aug 2024 09:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD4718A95F;
+	Thu,  8 Aug 2024 10:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KcyJpvoI"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UXXhKrDg"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EF718A92A
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E0118A94A
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723111197; cv=none; b=eQGT75f+EYD2mUt+d3wNv9/Li2q8Fs8oLxvCXJ+KaT7B0pdAyc6yRWWDqAaEH4hi/f8+LGCLx+XbUcldBJfA5I7quitCp41uOwDa6mjAmLSZY9TOglOpHiG332Tm9bYVtHdYNayT4UVYGnPdv+Mgvb5O24HxB+2VNGWEmGWQAZk=
+	t=1723111200; cv=none; b=NQSuPPZ1AXUTz8nZWsmfLdwRQECn6QqEjlUqw1c1ljfhJ81ZM2ATil+a1N+tCZroRo51UfAc/8emLTI5dibtSyQHYBDsBqml1bSEoDRPeJ9zXCtUCCJdPFIDNG7JU9FZbE1zsrtUiuKUiT1DEcqYAOTycrri+U+dMi2XE8BBQMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723111197; c=relaxed/simple;
-	bh=py16IRx3ZkhAud/YioWOf8kFrqTw6bFMSUXkOiTxpPw=;
+	s=arc-20240116; t=1723111200; c=relaxed/simple;
+	bh=3PK3nldhA/CKj5NnjT2jjGHNA0GDUckfr9mIXzTKNgE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XR7++YbuKdYafDZzMGNOQ+crC7D2AJH7YD2rRIVWYZsNeU8oFgd6cfPPWmjjvKXlMjfo2PKtDs2ScceYbBIIbMgWGpJbO8YQ4axuSF4NmgVxZGnsOT2A89UOfnVtYI+NUPBqgZLD6nRf/jkvAvmjZ/HJBs1KZ7pfpxUNNl1bzis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KcyJpvoI; arc=none smtp.client-ip=209.85.214.169
+	 MIME-Version; b=RyIvAUNKrMTvFEUwRRg7JbE/3hPn4CC5iYyOnnuulWVDVOnh7MxxFVfb9kpyebMJerFnh8dUT0tQs2pyi3WNDkey6DRXqLFsiu1qwIZ8wRdHoFZLeR5lpU8KFoWEr02qWCAWb437hEnOpRcCfHn9Q77e3JQPmVXytryhc4r2g1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UXXhKrDg; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fee6435a34so7386225ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 02:59:55 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc5549788eso7849965ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 02:59:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723111195; x=1723715995; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1723111198; x=1723715998; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8qgCZ39zaMZ1pHgoNfFZBo55h8VlLpIWFFJKzWV3ijA=;
-        b=KcyJpvoILBTgeup5ng6u1qrB1vgIHMQWppO+zMx8HyQvsHqCPDeJJ3dAQ+rJLoErpU
-         lANO26nciRLAfJvLa1bNuwxENt0rye1Dyite/GJ61RtgKTMyt6Rq5r5XK9MG8zwiG2rk
-         gLKD0RZFmPfnPYsGqxLqStWKxDPMz6R/LBRUI=
+        bh=BMQzDBFwtvtL+uRpCqzQYWzmcXr00tCiZCE6wRprzyk=;
+        b=UXXhKrDgvAIjyY6mHenKM5Ptq/1RPbGEsj49clVysPZTYI4FqyxnbR4j1vW8s7ZzvJ
+         JgtBUCa9fzF/YhZ2RoBaXHeKPMSCnxkka/QCYnUId7+tUtew+sSeurMiRw63YbYtDPxb
+         erCeujaN4199Uimk8HCCKPFs3jtIbYGgc8Bw4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723111195; x=1723715995;
+        d=1e100.net; s=20230601; t=1723111198; x=1723715998;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8qgCZ39zaMZ1pHgoNfFZBo55h8VlLpIWFFJKzWV3ijA=;
-        b=PkBoZBCA5QYRrKdamz5aZPGEIE1lpDDew2PX4j87hbvw0yOS8xEXUwsNHwbglEPNKc
-         BUbtvSXBPyd7QtOCEKPb0NbxxC+pqN6hTFMUewDnhEzzethPThN4T/wc84qxEZUGexG5
-         MfLXlyYjmjY4sJUG3v2oSqOPa4dPi450QYMarv5yEcqid2X41lgfYMeWbj73JoEp2vkw
-         w1jiXG7VSnAQCfZdYPRyFB/QDflmKcNWo4Fk2+C2ekq89ghznrlwIbwYxOh9WGvWVDQS
-         IWOFAFAmIpHfOVcW+6ZI0Hkrn8GC73l3TVgR5ch13FHEyYZ4hWWtkHpCcJ17lwGwK+/r
-         BbOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuztiwlgmURqy+AGZK7dgrXkk5QoTo1fHjR3UzBFxKvGzb7JYwKzUGdgJZpk60z2un+gYHUiu6MLDr3SfVwcLNCeFec0GgR7kMSNWz
-X-Gm-Message-State: AOJu0YyMqEeF4oVdz9jCCGkvFRK9d7tZ/VXPNz9cvhIaJ6swllJvAMaG
-	6RNmL7Md9Ig8LaeVelVgkpJk2XEdS/jq3cTnBsWjmo90fT3QjI1ywEEku2e72g==
-X-Google-Smtp-Source: AGHT+IEKKGr+vmamMIgjjXNkXa4rHYEBsgcb5kjNPWWGBvxBXx4ElZWMNIirkJNIPkRsY8kGV6DcSg==
-X-Received: by 2002:a17:903:8ce:b0:1fb:7530:30be with SMTP id d9443c01a7336-2009527d432mr18198885ad.38.1723111194535;
-        Thu, 08 Aug 2024 02:59:54 -0700 (PDT)
+        bh=BMQzDBFwtvtL+uRpCqzQYWzmcXr00tCiZCE6wRprzyk=;
+        b=nqJxGj25JibXZVMigmRde4JgJBk0NyRFgEZhcXZSr5rGNSOjuQzdt2M77bAJs8d7QJ
+         TILDZ1a69INJoMJTJ6CA2lfbSSqQUaoGYWl2O2x8nXeJxoc9FIC4jLlVhkbdt8HVEG9K
+         xlAV6WzNbdvghCcvGvSUf0kG+7+8qubd26Bm5MknsCRGj/ucHhO/dKS2zf0re7Yx5LK9
+         uq+AhujBgMAcxnW0agMz5euVTe3ZW+4kw+nJrzQu4fec5+YT1RiTM4om6fv4BrqPpfAt
+         L/uhMROwXUr8ATYDelaMqasqs68QgUWN56S+6IxwI5yXCoNHJby+bIPjnGKtlQyEKmNj
+         D3jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjS73TnpeUowIJhW3SxlP03tPFPIAoGSrwaK7ckVzC7BHYP85UCdrSoy6oNN63ycQWb5TLWzEJE/3bt5aCNHddJ5btpvrlIUddZ7/p
+X-Gm-Message-State: AOJu0YzObhuxdCWfArCtwTT0nYf+d2+npGp2QdPmLDsLXA1fEenTN1jJ
+	fRGCYTxdT+4Jv4cS1ljtWpqtUtPv2NWVgScAAWT9zmWiIZX8L27ZpoKgD/qqpw==
+X-Google-Smtp-Source: AGHT+IFpIGcwhRChfmS6FgNQKtKkh03/uSPOBA07xstWnAMz5Rv8gBIXh5/7TokHUzCHGoOUlZXHWw==
+X-Received: by 2002:a17:903:2288:b0:1fa:2b89:f549 with SMTP id d9443c01a7336-20095224c09mr17452045ad.10.1723111198191;
+        Thu, 08 Aug 2024 02:59:58 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:8b53:87e6:914:a00d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59297707sm120784985ad.254.2024.08.08.02.59.51
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59297707sm120784985ad.254.2024.08.08.02.59.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 02:59:54 -0700 (PDT)
+        Thu, 08 Aug 2024 02:59:57 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Rob Herring <robh@kernel.org>,
 	Saravana Kannan <saravanak@google.com>,
@@ -84,9 +84,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	Jiri Kosina <jikos@kernel.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-i2c@vger.kernel.org
-Subject: [PATCH v4 3/6] i2c: Introduce OF component probe function
-Date: Thu,  8 Aug 2024 17:59:26 +0800
-Message-ID: <20240808095931.2649657-4-wenst@chromium.org>
+Subject: [PATCH v4 4/6] i2c: of-prober: Add GPIO and regulator support
+Date: Thu,  8 Aug 2024 17:59:27 +0800
+Message-ID: <20240808095931.2649657-5-wenst@chromium.org>
 X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
 In-Reply-To: <20240808095931.2649657-1-wenst@chromium.org>
 References: <20240808095931.2649657-1-wenst@chromium.org>
@@ -98,265 +98,376 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some devices are designed and manufactured with some components having
-multiple drop-in replacement options. These components are often
-connected to the mainboard via ribbon cables, having the same signals
-and pin assignments across all options. These may include the display
-panel and touchscreen on laptops and tablets, and the trackpad on
-laptops. Sometimes which component option is used in a particular device
-can be detected by some firmware provided identifier, other times that
-information is not available, and the kernel has to try to probe each
-device.
+This adds GPIO and regulator management to the I2C OF component prober.
+Components that the prober intends to probe likely require their
+regulator supplies be enabled, and GPIOs be toggled to enable them or
+bring them out of reset before they will respond to probe attempts.
 
-This change attempts to make the "probe each device" case cleaner. The
-current approach is to have all options added and enabled in the device
-tree. The kernel would then bind each device and run each driver's probe
-function. This works, but has been broken before due to the introduction
-of asynchronous probing, causing multiple instances requesting "shared"
-resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
-time, with only one instance succeeding. Work arounds for these include
-moving the pinmux to the parent I2C controller, using GPIO hogs or
-pinmux settings to keep the GPIO pins in some fixed configuration, and
-requesting the interrupt line very late. Such configurations can be seen
-on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
-Lenovo Thinkpad 13S.
+Without specific knowledge of each component's resource names or
+power sequencing requirements, the prober can only enable the
+regulator supplies all at once, and toggle the GPIOs all at once.
+Luckily, reset pins tend to be active low, while enable pins tend to
+be active high, so setting the raw status of all GPIO pins to high
+should work. The wait time before and after resources are enabled
+are collected from existing drivers and device trees.
 
-Instead of this delicate dance between drivers and device tree quirks,
-this change introduces a simple I2C component probe. function For a
-given class of devices on the same I2C bus, it will go through all of
-them, doing a simple I2C read transfer and see which one of them responds.
-It will then enable the device that responds.
+The prober collects resources from all possible components and enables
+them together, instead of enabling resources and probing each component
+one by one. The latter approach does not provide any boot time benefits
+over simply enabling each component and letting each driver probe
+sequentially.
 
-This requires some minor modifications in the existing device tree. The
-status for all the device nodes for the component options must be set
-to "failed-needs-probe". This makes it clear that some mechanism is
-needed to enable one of them, and also prevents the prober and device
-drivers running at the same time.
+The prober will also deduplicate the resources, since on a component
+swap out or co-layout design, the resources are always the same.
+While duplicate regulator supplies won't cause much issue, shared
+GPIOs don't work reliably, especially with other drivers. For the
+same reason, the prober will release the GPIOs before the successfully
+probed component is actually enabled.
 
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
 Changes since v3:
-- Complete kernel-doc
-- Return different error if I2C controller is disabled
-- Expand comment to explain assumptions and constraints
-- Split for-loop finding target node and operations on target node
-- Add missing i2c_put_adapter()
-- Move prober code to separate file
+- New patch
 
-Rob also asked why there was a limitation of "exactly one touchscreen
-will be enabled across the whole tree".
-
-The use case this prober currently targets is a component on consumer
-electronics (tablet or laptop) being swapped out due to cost or supply
-reasons. Designs with multiple components of the same type are pretty
-rare. The way the next patch is written also assumes this for efficiency
-reasons.
-
-Changes since v2:
-- New patch split out from "of: Introduce hardware prober driver"
-- Addressed Rob's comments
-  - Move i2c prober to i2c subsystem
-  - Use of_node_is_available() to check if node is enabled.
-  - Use OF changeset API to update status property
-- Addressed Andy's comments
-  - Probe function now accepts "struct device *dev" instead to reduce
-    line length and dereferences
-  - Move "ret = 0" to just before for_each_child_of_node(i2c_node, node)
+This change is kept as a separate patch for now since the changes are
+quite numerous.
 ---
- drivers/i2c/Makefile             |   1 +
- drivers/i2c/i2c-core-of-prober.c | 155 +++++++++++++++++++++++++++++++
- include/linux/i2c.h              |   4 +
- 3 files changed, 160 insertions(+)
- create mode 100644 drivers/i2c/i2c-core-of-prober.c
+ drivers/i2c/i2c-core-of-prober.c | 272 ++++++++++++++++++++++++++++++-
+ 1 file changed, 271 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/Makefile b/drivers/i2c/Makefile
-index 3f71ce4711e3..0c543c742895 100644
---- a/drivers/i2c/Makefile
-+++ b/drivers/i2c/Makefile
-@@ -9,6 +9,7 @@ i2c-core-objs 			:= i2c-core-base.o i2c-core-smbus.o
- i2c-core-$(CONFIG_ACPI)		+= i2c-core-acpi.o
- i2c-core-$(CONFIG_I2C_SLAVE) 	+= i2c-core-slave.o
- i2c-core-$(CONFIG_OF) 		+= i2c-core-of.o
-+i2c-core-$(CONFIG_OF_DYNAMIC) 	+= i2c-core-of-prober.o
- 
- obj-$(CONFIG_I2C_SMBUS)		+= i2c-smbus.o
- obj-$(CONFIG_I2C_CHARDEV)	+= i2c-dev.o
 diff --git a/drivers/i2c/i2c-core-of-prober.c b/drivers/i2c/i2c-core-of-prober.c
-new file mode 100644
-index 000000000000..08aa736cc7a9
---- /dev/null
+index 08aa736cc7a9..76d26768e12c 100644
+--- a/drivers/i2c/i2c-core-of-prober.c
 +++ b/drivers/i2c/i2c-core-of-prober.c
-@@ -0,0 +1,155 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
+@@ -5,11 +5,14 @@
+  * Copyright (C) 2024 Google LLC
+  */
+ 
++#include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ 
+ /*
+@@ -25,10 +28,242 @@
+  * address responds.
+  *
+  * TODO:
+- * - Support handling common regulators and GPIOs.
+  * - Support I2C muxes
+  */
+ 
 +/*
-+ * Linux I2C core OF component prober code
-+ *
-+ * Copyright (C) 2024 Google LLC
++ * While 8 seems like a small number, especially when probing many component
++ * options, in practice all the options will have the same resources. The
++ * code getting the resources below does deduplication to avoid conflicts.
 + */
++#define RESOURCE_MAX 8
 +
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/slab.h>
++struct i2c_of_probe_data {
++	struct of_phandle_args gpio_phandles[RESOURCE_MAX];
++	unsigned int gpio_phandles_num;
++	struct gpio_desc *gpiods[RESOURCE_MAX];
++	unsigned int gpiods_num;
++	struct regulator *regulators[RESOURCE_MAX];
++	unsigned int regulators_num;
++};
 +
-+/*
-+ * Some devices, such as Google Hana Chromebooks, are produced by multiple
-+ * vendors each using their preferred components. Such components are all
-+ * in the device tree. Instead of having all of them enabled and having each
-+ * driver separately try and probe its device while fighting over shared
-+ * resources, they can be marked as "fail-needs-probe" and have a prober
-+ * figure out which one is actually used beforehand.
-+ *
-+ * This prober assumes such drop-in parts are on the same I2C bus, have
-+ * non-conflicting addresses, and can be directly probed by seeing which
-+ * address responds.
-+ *
-+ * TODO:
-+ * - Support handling common regulators and GPIOs.
-+ * - Support I2C muxes
-+ */
++#define REGULATOR_SUFFIX "-supply"
 +
-+/**
-+ * i2c_of_probe_component() - probe for devices of "type" on the same i2c bus
-+ * @dev: &struct device of the caller, only used for dev_* printk messages
-+ * @type: a string to match the device node name prefix to probe for
-+ *
-+ * Probe for possible I2C components of the same "type" on the same I2C bus
-+ * that have their status marked as "fail".
-+ *
-+ * Assumes that across the entire device tree the only instances of nodes
-+ * prefixed with "type" are the ones that need handling for second source
-+ * components. In other words, if type is "touchscreen", then all device
-+ * nodes named "touchscreen*" are the ones that need probing. There cannot
-+ * be another "touchscreen" node that is already enabled.
-+ *
-+ * Assumes that for each "type" of component, only one actually exists. In
-+ * other words, only one matching and existing device will be enabled.
-+ *
-+ * Context: Process context only. Does non-atomic I2C transfers.
-+ *          Should only be used from a driver probe function, as the function
-+ *          can return -EPROBE_DEFER if the I2C adapter is unavailable.
-+ * Return: 0 on success or no-op, error code otherwise.
-+ *         A no-op can happen when it seems like the device tree already
-+ *         has components of the type to be probed already enabled. This
-+ *         can happen when the device tree had not been updated to mark
-+ *         the status of the to-be-probed components as "fail". Or this
-+ *         function was already run with the same parameters and succeeded
-+ *         in enabling a component. The latter could happen if the user
-+ *         had multiple types of components to probe, and one of them down
-+ *         the list caused a deferred probe. This is expected behavior.
-+ */
-+int i2c_of_probe_component(struct device *dev, const char *type)
++/* Returns 1 if regulator found for property, 0 if not, or error. */
++static int i2c_of_probe_get_regulator(struct device_node *node, struct property *prop,
++				      struct i2c_of_probe_data *data)
 +{
-+	struct device_node *node, *i2c_node;
-+	struct i2c_adapter *i2c;
-+	struct of_changeset *ocs = NULL;
++	struct regulator *regulator = NULL;
++	char con[32]; /* 32 is max size of property name */
++	char *p;
++
++	p = strstr(prop->name, REGULATOR_SUFFIX);
++	if (!p)
++		return 0;
++
++	if (strcmp(p, REGULATOR_SUFFIX))
++		return 0;
++
++	strscpy(con, prop->name, p - prop->name + 1);
++	regulator = regulator_of_get_optional(node, con);
++	/* DT lookup should never return -ENODEV */
++	if (IS_ERR(regulator))
++		return PTR_ERR(regulator);
++
++	for (int i = 0; i < data->regulators_num; i++)
++		if (regulator_is_equal(regulator, data->regulators[i])) {
++			regulator_put(regulator);
++			regulator = NULL;
++			break;
++		}
++
++	if (!regulator)
++		return 1;
++
++	if (data->regulators_num == ARRAY_SIZE(data->regulators)) {
++		regulator_put(regulator);
++		return -ENOMEM;
++	}
++
++	data->regulators[data->regulators_num++] = regulator;
++
++	return 1;
++}
++
++#define GPIO_SUFFIX "-gpio"
++
++/* Returns 1 if GPIO found for property, 0 if not, or error. */
++static int i2c_of_probe_get_gpiod(struct device_node *node, struct property *prop,
++				  struct i2c_of_probe_data *data)
++{
++	struct fwnode_handle *fwnode = of_fwnode_handle(node);
++	struct gpio_desc *gpiod = NULL;
++	char con[32]; /* 32 is max size of property name */
++	char *con_id = NULL;
++	char *p;
++	struct of_phandle_args phargs;
++	int ret;
++	bool duplicate_found;
++
++	p = strstr(prop->name, GPIO_SUFFIX);
++	if (p) {
++		strscpy(con, prop->name, p - prop->name + 1);
++		con_id = con;
++	} else if (strcmp(prop->name, "gpio") && strcmp(prop->name, "gpios")) {
++		return 0;
++	}
++
++	ret = of_parse_phandle_with_args_map(node, prop->name, "gpio", 0, &phargs);
++	if (ret)
++		return ret;
++
++	/*
++	 * GPIO descriptors are not reference counted. GPIOD_FLAGS_BIT_NONEXCLUSIVE
++	 * can't differentiate between GPIOs shared between devices to be probed and
++	 * other devices (which is incorrect). Instead we check the parsed phandle
++	 * for duplicates. Ignore the flags (the last arg) in this case.
++	 */
++	phargs.args[phargs.args_count - 1] = 0;
++	duplicate_found = false;
++	for (int i = 0; i < data->gpio_phandles_num; i++)
++		if (of_phandle_args_equal(&phargs, &data->gpio_phandles[i])) {
++			duplicate_found = true;
++			break;
++		}
++
++	if (duplicate_found) {
++		of_node_put(phargs.np);
++		return 1;
++	}
++
++	gpiod = fwnode_gpiod_get_index(fwnode, con_id, 0, GPIOD_ASIS, "i2c-of-prober");
++	if (IS_ERR(gpiod)) {
++		of_node_put(phargs.np);
++		return PTR_ERR(gpiod);
++	}
++
++	if (data->gpiods_num == ARRAY_SIZE(data->gpiods)) {
++		of_node_put(phargs.np);
++		gpiod_put(gpiod);
++		return -ENOMEM;
++	}
++
++	memcpy(&data->gpio_phandles[data->gpio_phandles_num++], &phargs, sizeof(phargs));
++	data->gpiods[data->gpiods_num++] = gpiod;
++
++	return 1;
++}
++
++/*
++ * This is split into two functions because in the normal flow the GPIOs
++ * have to be released before the actual driver probes so that the latter
++ * can acquire them.
++ */
++static void i2c_of_probe_free_gpios(struct i2c_of_probe_data *data)
++{
++	for (int i = data->gpio_phandles_num - 1; i >= 0; i--)
++		of_node_put(data->gpio_phandles[i].np);
++	data->gpio_phandles_num = 0;
++
++	for (int i = data->gpiods_num - 1; i >= 0; i--)
++		gpiod_put(data->gpiods[i]);
++	data->gpiods_num = 0;
++}
++
++static void i2c_of_probe_free_res(struct i2c_of_probe_data *data)
++{
++	i2c_of_probe_free_gpios(data);
++
++	for (int i = data->regulators_num; i >= 0; i--)
++		regulator_put(data->regulators[i]);
++	data->regulators_num = 0;
++}
++
++static int i2c_of_probe_get_res(struct device *dev, struct device_node *node,
++				struct i2c_of_probe_data *data)
++{
++	struct property *prop;
 +	int ret;
 +
-+	node = of_find_node_by_name(NULL, type);
-+	if (!node)
-+		return dev_err_probe(dev, -ENODEV, "Could not find %s device node\n", type);
++	for_each_property_of_node(node, prop) {
++		dev_dbg(dev, "Trying property %pOF/%s\n", node, prop->name);
 +
-+	i2c_node = of_get_next_parent(node);
-+	if (!of_node_name_eq(i2c_node, "i2c")) {
-+		of_node_put(i2c_node);
-+		return dev_err_probe(dev, -EINVAL, "%s device isn't on I2C bus\n", type);
-+	}
-+
-+	if (!of_device_is_available(i2c_node)) {
-+		of_node_put(i2c_node);
-+		return dev_err_probe(dev, -ENODEV, "I2C controller not available\n");
-+	}
-+
-+	for_each_child_of_node(i2c_node, node) {
-+		if (!of_node_name_prefix(node, type))
++		/* regulator supplies */
++		ret = i2c_of_probe_get_regulator(node, prop, data);
++		if (ret > 0)
 +			continue;
-+		if (of_device_is_available(node)) {
-+			/*
-+			 * Device tree has component already enabled. Either the
-+			 * device tree isn't supported or we already probed once.
-+			 */
-+			of_node_put(node);
-+			of_node_put(i2c_node);
-+			return 0;
++		if (ret < 0) {
++			dev_err_probe(dev, ret, "Failed to get regulator supply from %pOF/%s\n",
++				      node, prop->name);
++			goto err_cleanup;
++		}
++
++		/* GPIOs */
++		ret = i2c_of_probe_get_gpiod(node, prop, data);
++		if (ret < 0) {
++			dev_err_probe(dev, ret, "Failed to get GPIO from %pOF/%s\n",
++				      node, prop->name);
++			goto err_cleanup;
 +		}
 +	}
 +
-+	i2c = of_get_i2c_adapter_by_node(i2c_node);
-+	if (!i2c) {
-+		of_node_put(i2c_node);
-+		return dev_err_probe(dev, -EPROBE_DEFER, "Couldn't get I2C adapter\n");
++	return 0;
++
++err_cleanup:
++	i2c_of_probe_free_res(data);
++	return ret;
++}
++
++static int i2c_of_probe_enable_res(struct device *dev, struct i2c_of_probe_data *data)
++{
++	int ret = 0;
++	int reg_i, gpio_i;
++
++	dev_dbg(dev, "Enabling resources\n");
++
++	for (reg_i = 0; reg_i < data->regulators_num; reg_i++) {
++		dev_dbg(dev, "Enabling regulator %d\n", reg_i);
++		ret = regulator_enable(data->regulators[reg_i]);
++		if (ret)
++			goto disable_regulators;
 +	}
 +
-+	ret = 0;
-+	for_each_child_of_node(i2c_node, node) {
-+		union i2c_smbus_data data;
++	/* largest post-power-on pre-reset-deassert delay seen among drivers */
++	msleep(500);
++
++	for (gpio_i = 0; gpio_i < data->gpiods_num; gpio_i++) {
++		/*
++		 * reset GPIOs normally have opposite polarity compared to
++		 * enable GPIOs. Instead of parsing the flags again, simply
++		 * set the raw value to high.
++		 */
++		dev_dbg(dev, "Setting GPIO %d\n", gpio_i);
++		ret = gpiod_direction_output_raw(data->gpiods[gpio_i], 1);
++		if (ret)
++			goto disable_gpios;
++	}
++
++	/* largest post-reset-deassert delay seen in tree for Elan I2C HID */
++	msleep(300);
++
++	return 0;
++
++disable_gpios:
++	for (gpio_i--; gpio_i >= 0; gpio_i--)
++		gpiod_set_raw_value_cansleep(data->gpiods[gpio_i], 0);
++disable_regulators:
++	for (reg_i--; reg_i >= 0; reg_i--)
++		regulator_disable(data->regulators[reg_i]);
++
++	return ret;
++}
++
++static void i2c_of_probe_disable_regulators(struct i2c_of_probe_data *data)
++{
++	for (int i = data->regulators_num - 1; i >= 0; i--)
++		regulator_disable(data->regulators[i]);
++}
++
+ /**
+  * i2c_of_probe_component() - probe for devices of "type" on the same i2c bus
+  * @dev: &struct device of the caller, only used for dev_* printk messages
+@@ -64,6 +299,7 @@ int i2c_of_probe_component(struct device *dev, const char *type)
+ 	struct device_node *node, *i2c_node;
+ 	struct i2c_adapter *i2c;
+ 	struct of_changeset *ocs = NULL;
++	struct i2c_of_probe_data data = {0};
+ 	int ret;
+ 
+ 	node = of_find_node_by_name(NULL, type);
+@@ -101,6 +337,34 @@ int i2c_of_probe_component(struct device *dev, const char *type)
+ 		return dev_err_probe(dev, -EPROBE_DEFER, "Couldn't get I2C adapter\n");
+ 	}
+ 
++	/* Grab resources */
++	for_each_child_of_node_scoped(i2c_node, node) {
 +		u32 addr;
 +
 +		if (!of_node_name_prefix(node, type))
 +			continue;
 +		if (of_property_read_u32(node, "reg", &addr))
 +			continue;
-+		if (i2c_smbus_xfer(i2c, addr, 0, I2C_SMBUS_READ, 0, I2C_SMBUS_BYTE, &data) < 0)
-+			continue;
 +
-+		break;
-+	}
-+
-+	/* Found a device that is responding */
-+	if (node) {
-+		dev_info(dev, "Enabling %pOF\n", node);
-+
-+		ocs = kzalloc(sizeof(*ocs), GFP_KERNEL);
-+		if (!ocs) {
-+			ret = -ENOMEM;
-+			goto err_put_node;
++		dev_dbg(dev, "Requesting resources for %pOF\n", node);
++		ret = i2c_of_probe_get_res(dev, node, &data);
++		if (ret) {
++			of_node_put(i2c_node);
++			return ret;
 +		}
-+
-+		of_changeset_init(ocs);
-+		ret = of_changeset_update_prop_string(ocs, node, "status", "okay");
-+		if (ret)
-+			goto err_free_ocs;
-+		ret = of_changeset_apply(ocs);
-+		if (ret)
-+			goto err_destroy_ocs;
-+
-+		of_node_put(node);
 +	}
 +
-+	i2c_put_adapter(i2c);
-+	of_node_put(i2c_node);
++	dev_dbg(dev, "Resources: # of GPIOs = %d, # of regulator supplies = %d\n",
++		data.gpiods_num, data.regulators_num);
 +
-+	return 0;
++	/* Enable resources */
++	ret = i2c_of_probe_enable_res(dev, &data);
++	if (ret) {
++		i2c_of_probe_free_res(&data);
++		of_node_put(i2c_node);
++		return dev_err_probe(dev, ret, "Failed to enable resources\n");
++	}
 +
-+err_destroy_ocs:
-+	of_changeset_destroy(ocs);
-+err_free_ocs:
-+	kfree(ocs);
-+err_put_node:
-+	of_node_put(node);
-+	i2c_put_adapter(i2c);
-+	of_node_put(i2c_node);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(i2c_of_probe_component);
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 7eedd0c662da..0415d5d0f6ac 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -1030,6 +1030,10 @@ const struct of_device_id
- int of_i2c_get_board_info(struct device *dev, struct device_node *node,
- 			  struct i2c_board_info *info);
+ 	ret = 0;
+ 	for_each_child_of_node(i2c_node, node) {
+ 		union i2c_smbus_data data;
+@@ -116,6 +380,8 @@ int i2c_of_probe_component(struct device *dev, const char *type)
+ 		break;
+ 	}
  
-+#if IS_ENABLED(CONFIG_OF_DYNAMIC)
-+int i2c_of_probe_component(struct device *dev, const char *type);
-+#endif
++	i2c_of_probe_free_gpios(&data);
 +
- #else
+ 	/* Found a device that is responding */
+ 	if (node) {
+ 		dev_info(dev, "Enabling %pOF\n", node);
+@@ -137,6 +403,8 @@ int i2c_of_probe_component(struct device *dev, const char *type)
+ 		of_node_put(node);
+ 	}
  
- static inline struct i2c_client *of_find_i2c_device_by_node(struct device_node *node)
++	i2c_of_probe_disable_regulators(&data);
++	i2c_of_probe_free_res(&data);
+ 	i2c_put_adapter(i2c);
+ 	of_node_put(i2c_node);
+ 
+@@ -148,6 +416,8 @@ int i2c_of_probe_component(struct device *dev, const char *type)
+ 	kfree(ocs);
+ err_put_node:
+ 	of_node_put(node);
++	i2c_of_probe_disable_regulators(&data);
++	i2c_of_probe_free_res(&data);
+ 	i2c_put_adapter(i2c);
+ 	of_node_put(i2c_node);
+ 	return ret;
 -- 
 2.46.0.rc2.264.g509ed76dc8-goog
 
