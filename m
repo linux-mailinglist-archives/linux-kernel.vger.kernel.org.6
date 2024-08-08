@@ -1,161 +1,174 @@
-Return-Path: <linux-kernel+bounces-279383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3445194BC9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:55:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F5894BCA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55A851C2243E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B4C1F22F7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58E718C32F;
-	Thu,  8 Aug 2024 11:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A36418C32F;
+	Thu,  8 Aug 2024 11:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="FNSo6y73"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="r4Gd8RV2"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2052.outbound.protection.outlook.com [40.92.103.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC0618C327
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723118147; cv=none; b=Oxa3SQw1Y5rGancZINW8wO9N6pnY/BpzRXDwDC5rEzaAfL23aR7ygeNq8kJ3qv5PKIC4U97OmKQlcJ0dT+anXOT47F0+LiW3lx9FOQLXrOuVlGFlSdqAQshF4NUGpvf/5la0A3g1NoyAkhv3lEj77GZ9G8rAa9gY4LXTm5GQnBs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723118147; c=relaxed/simple;
-	bh=maJUu45KZlX7FeMIpGorIoOQMDIfA3yf1EfQUBBVNCw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rM1ik0RoP9ZifxmCAl+kNBGMnL8nChSEnptYIOCaZjdbJ+I1LYXF5xQ6ipIZxzXwjfBmppynAAGtL/rwFFY0dHjKDN0oLZKD0rSxGSMSf7WHK1+wt4LrI/s38QTQlckDyD7Mk4FZDhPIyFEZcSZmVcHQDrE4NNE6/VqcH7dgsFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=FNSo6y73; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6005a.ext.cloudfilter.net ([10.0.30.201])
-	by cmsmtp with ESMTPS
-	id bsikswLeYjnP5c1k3sgjM0; Thu, 08 Aug 2024 11:55:39 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id c1k1slvbyRBkMc1k2scr54; Thu, 08 Aug 2024 11:55:38 +0000
-X-Authority-Analysis: v=2.4 cv=CbPD56rl c=1 sm=1 tr=0 ts=66b4b23a
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=1GQxe75yrw9fIeUcjpcA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:
-	Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ZcW3HDl9lOrDODASspPnNrMUFSlpL6DN7JxGWATxdsM=; b=FNSo6y73QOcH0KRxzTpHWAfuDE
-	XjDpnN2zCFcXZXQh/ih/nF6xDYJP/gsJA4bxE9chfT5tIgr7NstxcXSmvDKq2W+GUzZqPcBxbr0hG
-	dYNLBX/OJ6ALdcMTsuqlXJtXAxzpWzoqc7m+rHlHhgyJOP2Q6ifZJYciXEuUNKRMEL5wsAuUW0OWk
-	O1fyLSOFTo+R5cx8Hfmhjcw9TIQ6da2Xl526dYEMYCK4+un29enuIXILA0G5YdHj7Se6705Ad/Qcr
-	TpSeeqggYFqY63oDV5wTt+ltuup5NIBRrR9jrFgYm7fqROfPAs1fhfwv0GC/wbBjtlckKfe5uHy7Z
-	HzlI9T4g==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:33410 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sc1jx-003iMd-15;
-	Thu, 08 Aug 2024 05:55:33 -0600
-Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240808091131.014292134@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <96b86f9b-c516-9742-5e33-e5cbfbed10b3@w6rz.net>
-Date: Thu, 8 Aug 2024 04:55:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9701F4A33;
+	Thu,  8 Aug 2024 11:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723118192; cv=fail; b=caxEd9iZLUAwFfyJyUIlgtO6fcjxUhnEFwGNF7Jlb+Fk3HFvvrWEreKsnh/Jjm2ZvKEUxFSz9maCqxSkX6edL57GTnJaW8b+3+t/WM0cCDepMB0JP81HiHuTTAUanDQ27I1fY+RhLF33nWyOrmXgFjOkWnVJ8o1zmDa7/7FgtPE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723118192; c=relaxed/simple;
+	bh=JSkjijAYgzH7WQ3jUUHmHMdD6vO8+MXa8Wh7CpofDLY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AEvZ7kS216OE1C8ANdtKM3u1e/jE71rigXfdBZ01I0euIBkn6MVtGbeusPJALliWLiUD6a6N8uR50r3r218WY0j6+UcTTr4nu66AfgqJFEjaCAYXp7vDIzr1csygdEizIEz7PRTP7QIW42Tl0V6T/9l9x0zr6tRAlOOlccdTMPs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=r4Gd8RV2; arc=fail smtp.client-ip=40.92.103.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PbkmeLgDB8j4gvmeSjSEU25acE/3EdrMqlm46YroseRar5gF6wk9g01HeLRaVzB2d0PEpAufj8leAb756/x3M2p2uSH8QtSJ2hetNVJBWTl8XP7O5EoYbL+wHza4I+j5U/LcNghkfVBTxXIDm81Hyki4ThMTf+I3ASU6i8wao8l8fZTSF+awL/J66i2zPsa8qCg8n7LaZ9FPr9ktmbgurluxdUmhBerR+iUZLgyUoN/YaIx1yKiwd8hMgKSIFzSqthJNVhyKiXwwoNzLQA86BZ7FJ9Q/LeBBQ0sg4mhCbEY5ySd8lu95gd/YJ0ITu/PYxrJoqnEYIi6w/hpiR0G0rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p4PHen4032PcthKi8HoFeGPNif8f7CRd94d/mUAn2RY=;
+ b=kQhQGCryoUWptdH6ZC3AjBOMhrFv+I2gZthuuy2GB6BWeI4Sj/vdTfobJHL42mBd3GfJ36ToGwg2oYbZA7RnVZ5bX6YesmtSB47d5kc4A1fsUfR3AVB3Vbfrktu1xsflCiVrRIyGqcD3D6DhjuoTdXVCShWQCq6JYlROkw/HJbWWXKwGPUIwM6lW3KoveuViIK9ePyMc7Abixc0PpstVQoRGcwZ/+eeZtbiFjFYGmflwtscKz/YyTcaoPfXQS+X+BpHYkmvaZ4Pc892X52aKuiIOKSTUz9aJ2pcqMODTWTZwWeoIX2voTMXk70FTaTiGygFccEvW0S5tP0cjHQoDTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p4PHen4032PcthKi8HoFeGPNif8f7CRd94d/mUAn2RY=;
+ b=r4Gd8RV2xWWNS90SF6UtKUSaRJm5mlvvPCPqev0aVXKj/aYL5/EHBq+7js2QZCo5/+OEo+mJtElToM0wZ90Dn8kmkCtKg2KO9rnClKhgqwU23/dJ0BUYE/jqk2I44PZPqtE28T3DyedrL1AwQlLCkOPh+qjcReg4s3GVAlB5eUyD5aEarQMwCZijlXLlK4c+EDPdw9M9bxebRkZBOiqUg64q1C8epdnv7yHdlXyroefRsDfL9JH27NjWXiqSP9qhNpolrz5++S9TTDxYmJhDLLu/tAguKHr4/0jlxjoPoHUNUazhzlFeVBPj7giRCx5wnxwLnSfPRPSIGsImMhoOHA==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ MA0P287MB0066.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:32::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.14; Thu, 8 Aug 2024 11:56:23 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
+ 11:56:23 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: [PATCH v3 3/9] HID: multitouch: support getting the contact ID from
+ HID_DG_TRANSDUCER_INDEX fields
+Thread-Topic: [PATCH v3 3/9] HID: multitouch: support getting the contact ID
+ from HID_DG_TRANSDUCER_INDEX fields
+Thread-Index: AQHa6Yn8D3YBQb5sakG9oCUs7mNuQQ==
+Date: Thu, 8 Aug 2024 11:56:22 +0000
+Message-ID: <D04D80A7-B4EA-4306-BEC3-FE1F9427E325@live.com>
+References: <9550ADFD-0534-471D-94B4-EF370943CF80@live.com>
+In-Reply-To: <9550ADFD-0534-471D-94B4-EF370943CF80@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [0UbDxD8hIPHAY4pNGspzs9VBZwvOi+FpGEbdVrNq9mVPYIMfQkFK+QRCrOJMEHqf9C45K3x3QPk=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB0066:EE_
+x-ms-office365-filtering-correlation-id: c6803158-2f89-4814-a495-08dcb7a11f61
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799003|19110799003|461199028|8060799006|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ VMOp02w+IkqN4chi91PxK26h7UPtDNZ386lI2i2pQ8g7LWyBwBn5jt9a+qyfqk11/fXBfT1XOaS+7KXrTAjycHZ0pYTTHr5JlI/gz9ldCBBzMIZufkOFG1Zl5XMrLuUeQLL7+dVUAQyrlgm+FxrCdMaXoAwz/0cyIm8bTHYFmFwee4eqC2vjDwYQY0z6DA15NVUaZLEQCkFeI+I3MjDJsrIKeHfu8ypE3vNMy12TekhhFA6UOh4dg4oRzUB2SIVGjBsaFRFHgsMCmOwC/QoNby1EWNLOfRsFNvihPFXGdfMc1TP4GHniBM/OjYunb36ZEI4M3wlzwRRn23V+ajCbJ+Yax+IE3QmEZobst2OVwpL2bWsiFVfWJfLVVqIbKkGdEyJj1QTnk0IwPxD9XsRjbDo8HwfJ4vNNNW3kpOFEoBxPUPyXqalN54pMEy4QUOiFYd36kRsQL8Hg6ywqhEqDPxYQHGyXQA/icfJwwfzJVr/DuSllZoEL2LiOpKHcH24dWPeJ9+rE4NSUazJ+0mxPovWCkrUzgUveE9WO0N0HZfshWulS3VIhX9X6Gv9YruhOV9yukvospg4QEkZmqZ5MtTKgcqSpb5px/X0jXbwzQDjt1ZEEI8IDOnWcR57CW+KMTFdXL/mOsH3UAw85Wk0PcG7qNSzOkLK3HdlCWY5zVyIsfjMJ1l0qZBPoYtSP7fBP
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?+1y36dnAh2URHdmp+Ej1MGXtDpVIeSoqjobcUbKQouWSTDOl4E+eIQ1IEQem?=
+ =?us-ascii?Q?cFDpG6uSZdG1Tw2DLzA2ED69bKlNgxNPr4AuGzFiSIT1vyDK6omy59HxSfXk?=
+ =?us-ascii?Q?Sitqb0ocbYQo/tAO8XTscPiHnvfYYR2WosYzWezJvgXZahZpI4zeqP9bWC1b?=
+ =?us-ascii?Q?nVjiXeK1WKpPnXIj65PdYm1636nSKt+EtSX+/GT/vrI54fNcNAKKW/Y2zRdL?=
+ =?us-ascii?Q?rc8vP4c2FW1lhuAWp2NeMUSYn0OUO2RyLKrrRzfpgf/CQEdhnyka8KaqfjBW?=
+ =?us-ascii?Q?9C6ExKJnoBHtYNlQtjZI1cFcyJWP+f4i24p4/UTNnM5qjIJrPADCajPjakZc?=
+ =?us-ascii?Q?1a1br1gngEE5UyAZSqlCcyBdsKKUqOwBNUgmGpNynN0JK6MG4N1+E43Bynld?=
+ =?us-ascii?Q?W1P/zlTYsQfTZ2QVH+EY8pzNTbBK6WC+z5Z0VuXQkVzx6QHREIwZr3PPDzO8?=
+ =?us-ascii?Q?UfICXezxtjqbRPzAxRMlPOoA5ak+lsWRd9q13W/nsNDJf+zZ/f6dHtZFRy6J?=
+ =?us-ascii?Q?KODCnjUqFzNk+Cld+3Un5kbWBxAMxriGxJXG5cIKFIv6agiIAbzAyDv+Rtrb?=
+ =?us-ascii?Q?b7tZQlVa3Af9UIGyUC6Nu/U6G3KBTzXtXmG6FPmAUfxJxWdo9sfx87ePn/DS?=
+ =?us-ascii?Q?fWbjriBZY9yCvtq0kFMGtq/UJ8SxR/p28ofs7Hhz0J3Ed3tWwv9eElnsmZuo?=
+ =?us-ascii?Q?YDtvtxrodlHE5pvkUw1TI3yjKPjv66SbVsBeA3iEZ6dkS0eq+09ZWMIBu0wl?=
+ =?us-ascii?Q?ueBjTxgfoUBiOXCW84cbAdTK9LU3UcHWyKrzVxoBNZgs75PNJvLUxoaVRr/H?=
+ =?us-ascii?Q?+Rd9hMUPeqcHClGOOucvgXbwrYcDByDYWTcNt8oaRSO8Yk83RPgqvWFZhKeU?=
+ =?us-ascii?Q?2F/cqg9rwbFQWaLC4SF/SLElYKUZwVw4gLzpPVi5t6ow9dkN8EruOADGGFRP?=
+ =?us-ascii?Q?xnNrU/5W8b75ptjCJJIbGZ3ZA6Nt6mCPRhp9hWFTwz5PtOByCsStXMQ6R6iX?=
+ =?us-ascii?Q?0w058k8yRgPViDQPA+TRrcJA3yDeyiv0A39mB+HFknjyCIsu6vAomxID/vQA?=
+ =?us-ascii?Q?H5NplCWGeCYuoNlSAVG2UZ18EF5pmWa2XMIVdB19khFc/1llOTdHi+c6WnHE?=
+ =?us-ascii?Q?yjDB7cFKrL5+8tWejvdoQCd/RKlWTAyNmD7w0Pi+j/RME1meJLJ1MvI/Dn1o?=
+ =?us-ascii?Q?LS9y+C1xWmp+Ik1ulPgS+g3YbHMFGZWuw8pUQ0WV+lke+bwYiSSr33d6dNgY?=
+ =?us-ascii?Q?yjnLeejO2Z83bq+RFaY535WJVuCZ5KGEwxR+X7hq/+IQiG+oCGNdtwRZtuic?=
+ =?us-ascii?Q?qaQRcJbLvF+ZZ8/QMbiVLf4q?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <51AD6AF97EE1EC45BE44B1C1DB7F0F3C@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240808091131.014292134@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sc1jx-003iMd-15
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:33410
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfIFX2O1E7EROrM0b1CtSuETvJ3F75YlXRPKkI935N7H+Z7IfuWFDxFi9FDAnbAtlUvTcxIsUqyvakjn0VQKs5CQNV8sJwXcW3pxkiJd3uDDmaHDXTCkM
- aY0ND0Gil8VJrwVVQfpxh5yMD0PZ1R9qOJ3L62+DSMU9QJ96hp4fUeyj1semBZStx7kZdCb9ccBZbqd7E5wrRErxjK34BDvVFgk=
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6803158-2f89-4814-a495-08dcb7a11f61
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 11:56:22.3273
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB0066
 
-On 8/8/24 2:11 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.104 release.
-> There are 86 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 10 Aug 2024 09:11:02 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.104-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
-I'm seeing a build failure.
+From: Kerem Karabay <kekrby@gmail.com>
 
-sound/pci/hda/patch_conexant.c:273:10: error: ‘const struct 
-hda_codec_ops’ has no member named ‘suspend’
-   273 |         .suspend = cx_auto_suspend,
-       |          ^~~~~~~
-sound/pci/hda/patch_conexant.c:273:20: error: initialization of ‘void 
-(*)(struct hda_codec *, hda_nid_t,  unsigned int)’ {aka ‘void (*)(struct 
-hda_codec *, short unsigned int,  unsigned int)’} from incompatible 
-pointer type ‘int (*)(struct hda_codec *)’ 
-[-Werror=incompatible-pointer-types]
-   273 |         .suspend = cx_auto_suspend,
-       |                    ^~~~~~~~~~~~~~~
-sound/pci/hda/patch_conexant.c:273:20: note: (near initialization for 
-‘cx_auto_patch_ops.set_power_state’)
-sound/pci/hda/patch_conexant.c:274:10: error: ‘const struct 
-hda_codec_ops’ has no member named ‘check_power_status’; did you mean 
-‘set_power_state’?
-   274 |         .check_power_status = snd_hda_gen_check_power_status,
-       |          ^~~~~~~~~~~~~~~~~~
-       |          set_power_state
-sound/pci/hda/patch_conexant.c:274:31: error: 
-‘snd_hda_gen_check_power_status’ undeclared here (not in a function); 
-did you mean ‘snd_hda_check_power_state’?
-   274 |         .check_power_status = snd_hda_gen_check_power_status,
-       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       |                               snd_hda_check_power_state
+This is needed to support Apple Touch Bars, where the contact ID is
+contained in fields with the HID_DG_TRANSDUCER_INDEX usage.
 
-This is triggered because my config does not include CONFIG_PM. But the 
-error is caused by upstream patch 
-9e993b3d722fb452e274e1f8694d8940db183323 "ALSA: hda: codec: Reduce 
-CONFIG_PM dependencies" being missing. This patch removes the #ifdef 
-CONFIG_PM in the hda_codec_ops structure. So if CONFIG_PM is not set, 
-some structure members are missing and the the build fails.
+Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ drivers/hid/hid-multitouch.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 56fc78841..3e92789ed 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -635,7 +635,9 @@ static struct mt_report_data *mt_allocate_report_data(s=
+truct mt_device *td,
+=20
+ 		if (field->logical =3D=3D HID_DG_FINGER || td->hdev->group !=3D HID_GROU=
+P_MULTITOUCH_WIN_8) {
+ 			for (n =3D 0; n < field->report_count; n++) {
+-				if (field->usage[n].hid =3D=3D HID_DG_CONTACTID) {
++				unsigned int hid =3D field->usage[n].hid;
++
++				if (hid =3D=3D HID_DG_CONTACTID || hid =3D=3D HID_DG_TRANSDUCER_INDEX)=
+ {
+ 					rdata->is_mt_collection =3D true;
+ 					break;
+ 				}
+@@ -814,6 +816,7 @@ static int mt_touch_input_mapping(struct hid_device *hd=
+ev, struct hid_input *hi,
+ 			MT_STORE_FIELD(tip_state);
+ 			return 1;
+ 		case HID_DG_CONTACTID:
++		case HID_DG_TRANSDUCER_INDEX:
+ 			MT_STORE_FIELD(contactid);
+ 			app->touches_by_report++;
+ 			return 1;
+--=20
+2.39.3 (Apple Git-146)
 
 
