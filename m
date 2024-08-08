@@ -1,131 +1,122 @@
-Return-Path: <linux-kernel+bounces-280042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3586094C4F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:55:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C95594C4F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A0F1C215E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8A471F247B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9197154C15;
-	Thu,  8 Aug 2024 18:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F40149C41;
+	Thu,  8 Aug 2024 18:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NAiMSbz3"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dLHhue2X"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDDB146D6F
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A47813F435;
+	Thu,  8 Aug 2024 18:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723143332; cv=none; b=Fqe68omVfFbgMopYNflb1dKwZNJUlrLEf+kno86hY5Y1kkegu89PEM9meJXekCWLfUYtkLyB0cxYxufBmzjdffOtUPGz2S7WtXVIRyz3/sM+r4QG3KC4ADVNkSA270jEPNvw4FdMRWfC14hCvfmv7NfFw+/deodm9mEYEjFTw9U=
+	t=1723143331; cv=none; b=K8jZ4L4od3V2aE2x7vroxxBtPmhQyZxvnObkpILTpIF3ikTf1uVWEGPC0xIjqRkbmtwkPmA7u+p9+nhkkc3Kyx2k0V8MC6Xo0J+MUOfC5ySJ0WFJ9MPnMKjsNR5rXFtCqiobE7A8J2hUJbZYW3fE0Dk/Ms2rTCtEZ0Vo6YhC5lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723143332; c=relaxed/simple;
-	bh=lNkDxEjqXY+lnTpLDK2Jg90TC5u4Y/9yANlHx6UZOwk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FQj2KeZBDdEjiykzu1lJdvWxMssfpWFXplZ4Y3AOw5CU59QdvDwzEIhN/24sfOrUdMIqyfMbXi3E7ZCmWe1c3XMeVHl2/FNsMvk0aFR2hs0kMVM1HtPTmcSKi+PWRTGw5HzlDlEpZ1LoaUPfAqctyjo4p1NqJPwfmS8XOf/drPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NAiMSbz3; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6b7a0ef0dfcso7188546d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723143329; x=1723748129; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ia3gn65ZzmXsv1RewV6q6A0e4ePY6aOjBbUhD4zPmes=;
-        b=NAiMSbz3vTvK/j53AkosOetDKK8JndADONPvZ7FDnrOZTCpYRN+pEsutuXpAnSuLes
-         KvlrpTX5DdEMP9Eu82OWrSczQYwBX5dvAR5m15+z3PsF2bONIZA4BlKoGZj3p8TeP0Id
-         ZQBB/vaLQeoxwaxW0Q6oizRvhFQIJl5eA2jkk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723143329; x=1723748129;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ia3gn65ZzmXsv1RewV6q6A0e4ePY6aOjBbUhD4zPmes=;
-        b=wDpkNAFPjdf7AQLdjHkTgWQi3N8oZgyWZ1Po7gdXwWABk98XDhG3uS5OMO7sCSO19s
-         GDfVYpIf2sQrX2I/x39W+TZ3+EaJ81TKfi83fapq4y/e2ZdsYD6IpOIHtrqf6NSR64R2
-         kC1OoNafmJsML8JcOpSUATRAa930Vj52XMCwEIWIzY1CzYh8JtfGEmqkIgwtPv0xOY1k
-         hDXMl7jZLVHiNXauC+yXzrw5ndZN28e2yftry6uhucmyVBeWhgG7cuJ95OdSXqtR9csr
-         ZQyIbgNilBQnHjbY9hpJ7iR1Lx5UxD6EUdLqKsZkD+5PgomzH5Wg3VlMnDbdTt0GT7Uu
-         y1Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbfQrsM1QWrbQDW0XLnsFy5t3hOBytoG/bc65bzvm61B4jCS8nPlMRJZ34j9GERt3Bb2Bajudt2aNR6GdWxBcCWeWzlaqRupGKUx2m
-X-Gm-Message-State: AOJu0YxW80aVZXrfeojpq8+l9ZbynEJEXnpCFzliNmxbg/MNuFA3S6Z2
-	NBTQOF/U+jtI1iEakwT9r4U6JB1uTWsuZZ8k9JcG2fjFSLXXrHIC/o+XvdMrq6uVwx7H24I9uie
-	3B0W9
-X-Google-Smtp-Source: AGHT+IH7X0TTGN9sCHrULkPhmn5/0af7Q3KC0MIa6xpD/zp1WZ4mHzOWzKLpo6JWJRGTEeQkrFZ14w==
-X-Received: by 2002:a05:6214:5b0d:b0:6b5:17a2:887c with SMTP id 6a1803df08f44-6bd6bcc329dmr38283256d6.10.1723143329145;
-        Thu, 08 Aug 2024 11:55:29 -0700 (PDT)
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com. [209.85.160.174])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c839fe5sm68873046d6.84.2024.08.08.11.55.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 11:55:28 -0700 (PDT)
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-45029af1408so26511cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:55:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX0K2iJ8I3j02qgdsZnjHbfVjX50pespzlXFT6AatwUfVEdYbpre1byib18cOYbcNwsK7YkQzoXqGZEBBNn0lfvrTSl3SzaRyToitmc
-X-Received: by 2002:a05:622a:5797:b0:447:eaaa:c852 with SMTP id
- d75a77b69052e-4530de62980mr344201cf.23.1723143320261; Thu, 08 Aug 2024
- 11:55:20 -0700 (PDT)
+	s=arc-20240116; t=1723143331; c=relaxed/simple;
+	bh=G32pgusq1KzhckqZqehp2esIUUvD3rdQptDyWQ9E8ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z1d9kJ6koa4tO9B4Cs3klo3Um4g8yLBZbHZPoRh2gH26zX3Mxm8szUQlw0p4u058GIK5T+/bSgSN2dmk33FabxwFIo68Eb0xRHuPvxr8syn0vJBwgA4GB+07xswv4LKz8eNBk7X7WYlEJnVk6IWIPLqQwkM7qeKf7qzRJBqXMQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dLHhue2X; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723143329; x=1754679329;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=G32pgusq1KzhckqZqehp2esIUUvD3rdQptDyWQ9E8ms=;
+  b=dLHhue2Xy/JyJgAJZDTE92alAfaI+ZwluuMwyXlrAubjHzolK+SbAKoO
+   A50Ua46WOvckJHR66OcZ69jw0rFn+kz0qdGAlb6Ra+FP7YZLD+weBUX9R
+   /SxzfsH2U+SlOL776kKKgLIcC8fL6A1hqcBSZX82GO6FVq46pjXCW8wdX
+   0vf0lzAh2WaXbfxffUS0I1zCpQzPhoAiNJFaaqxU0ZTFlvWUhezjiw8BL
+   7PacEhZquRjYP1YTVGGy17mD1qT1AxztuGaCrh8aFyb5rcbeNAkBbpP/K
+   vZu3bmf6NQkPdWyE3bFfTqrcjcvQ2jx5fM2O44pvNII9+scXC2VDvWiOV
+   w==;
+X-CSE-ConnectionGUID: f7o11Um3TUCR1/ny3nC7UQ==
+X-CSE-MsgGUID: rXvhgK1ORuGOtFiu7iu6Ng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="32699441"
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="32699441"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 11:55:28 -0700
+X-CSE-ConnectionGUID: sGyYPv3aTLaRDrK47+3Owg==
+X-CSE-MsgGUID: 989w6FVzSNG3acFu9LuX4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="94850394"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.12.215])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 11:55:28 -0700
+Date: Thu, 8 Aug 2024 11:55:26 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-cxl@vger.kernel.org,
+	cerasuolodomenico@gmail.com, hannes@cmpxchg.org,
+	j.granados@samsung.com, lizhijian@fujitsu.com,
+	muchun.song@linux.dev, nphamcs@gmail.com, rientjes@google.com,
+	rppt@kernel.org, souravpanda@google.com, vbabka@suse.cz,
+	willy@infradead.org, dan.j.williams@intel.com, yi.zhang@redhat.com,
+	david@redhat.com, yosryahmed@google.com
+Subject: Re: [PATCH v3 4/4] mm: don't account memmap per-node
+Message-ID: <ZrUUnm/pEpPS9ltC@aschofie-mobl2>
+References: <20240808154237.220029-1-pasha.tatashin@soleen.com>
+ <20240808154237.220029-5-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808114407.1.I099e8e9e36407a0785d846b953031d40ea71e559@changeid>
- <CAJs_Fx7GN1_2xAM0Qg8oezQ2Foxy2smOXb3zMhNiJxCDMPUNug@mail.gmail.com>
-In-Reply-To: <CAJs_Fx7GN1_2xAM0Qg8oezQ2Foxy2smOXb3zMhNiJxCDMPUNug@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 8 Aug 2024 11:55:08 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Xt0_yhVGDv3X+uZoVQ-_Wiwq4ENJUpi6__J6dN_aMm0g@mail.gmail.com>
-Message-ID: <CAD=FV=Xt0_yhVGDv3X+uZoVQ-_Wiwq4ENJUpi6__J6dN_aMm0g@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: display: panel: samsung,atna45dc02: Fix indentation
-To: Rob Clark <robdclark@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808154237.220029-5-pasha.tatashin@soleen.com>
 
-Hi,
+On Thu, Aug 08, 2024 at 03:42:37PM +0000, Pasha Tatashin wrote:
+> Currently, when memory is hot-plugged or hot-removed the accounting is
+> done based on the assumption that memmap is allocated from the same node
+> as the hot-plugged/hot-removed memory, which is not always the case.
+> 
+> In addition, there are challenges with keeping the node id of the memory
+> that is being remove to the time when memmap accounting is actually
+> performed: since this is done after remove_pfn_range_from_zone(), and
+> also after remove_memory_block_devices(). Meaning that we cannot use
+> pgdat nor walking though memblocks to get the nid.
+> 
 
-On Thu, Aug 8, 2024 at 11:47=E2=80=AFAM Rob Clark <robdclark@chromium.org> =
-wrote:
+How about directly include the failing cases and user visible impacts as
+reported in the Tags appended below.
+
+--Alison
+
+> Given all of that, account the memmap overhead system wide instead.
+> 
+> For this we are going to be using global atomic counters, but given that
+> memmap size is rarely modified, and normally is only modified either
+> during early boot when there is only one CPU, or under a hotplug global
+> mutex lock, therefore there is no need for per-cpu optimizations.
+> 
+> Reported-by: Yi Zhang <yi.zhang@redhat.com>
+> Closes: https://lore.kernel.org/linux-cxl/CAHj4cs9Ax1=CoJkgBGP_+sNu6-6=6v=_L-ZBZY0bVLD3wUWZQg@mail.gmail.com
+> Reported-by: Alison Schofield <alison.schofield@intel.com>
+> Closes: https://lore.kernel.org/linux-mm/Zq0tPd2h6alFz8XF@aschofie-mobl2/#t
+> 
+> Fixes: 15995a352474 ("mm: report per-page metadata information")
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> ---
+
+snip
+
 >
-> On Thu, Aug 8, 2024 at 11:44=E2=80=AFAM Douglas Anderson <dianders@chromi=
-um.org> wrote:
-> >
-> > The yaml had indentation errors:
-> >   ./Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.=
-yaml:21:9:
-> >   [warning] wrong indentation: expected 10 but found 8 (indentation)
-> >   ./Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.=
-yaml:23:11:
-> >   [warning] wrong indentation: expected 12 but found 10 (indentation)
-> >
-> > Fix them.
-> >
-> > Reported-by: Rob Herring <robh@kernel.org>
-> > Closes: https://lore.kernel.org/r/CAL_JsqLRTgQRPcfXy4G9hLoHMd-Uax4_C90B=
-V_OZn4mK+-82kw@mail.gmail.com
-> > Fixes: 1c4a057d01f4 ("dt-bindings: display: panel: samsung,atna45dc02: =
-Document ATNA45DC02")
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
->
-> Reviewed-by: Rob Clark <robdclark@gmail.com>
-> Thanked-by: Rob Clark <robdclark@gmail.com>
 
-Pushed to drm-misc-fixes.
-
-cd9aae921ab6 dt-bindings: display: panel: samsung,atna45dc02: Fix indentati=
-on
 
