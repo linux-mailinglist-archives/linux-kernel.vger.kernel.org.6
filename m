@@ -1,107 +1,235 @@
-Return-Path: <linux-kernel+bounces-279499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA4C94BE15
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:59:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B15094BE18
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E27B28A6B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90A251F23779
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA9118CBFE;
-	Thu,  8 Aug 2024 12:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C8518CBF7;
+	Thu,  8 Aug 2024 13:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IVdRY6C/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAEIB9GZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E983A18CBEE
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D5318A6B3;
+	Thu,  8 Aug 2024 13:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723121931; cv=none; b=NKIB8varUjwlXuu8d9U2bV74pMNQ9qq8+2EN2nggr1DFsWlqMfSgCY45EvHsDxrYpn6rtzr4S82X6DDDrPF4MQ8hAfSp8fOq31FahFWhr/1zHpRKTnB9XMAf91dYrNf4kkQg1I0fTqjRp5k6q7ZBtXAKSIAVwGr6C+kHN6GyXbo=
+	t=1723122088; cv=none; b=K+B6hfHkFyQO64lHnL0eF/gcG4TNeqtaBwenkznzTd9Ar+daNdOHloVetFJmv7iX5DTyW30uIkC2P93UA/sjGXTo2WnxwSEmAn6cm9xnl10+PUgybCrdHh7GgJdaRgkvSvlNXlfMT4QWy51XvQnfDwAEa/mU67QNJPIjrh6C+Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723121931; c=relaxed/simple;
-	bh=dIM5pe6dJVWepwtYqZwe6PPCHnYS8ixi+Xg2xmV2vWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=k7aUR4KvJs3iXM8QeoitBAIGWblPwxEGEAMI2JOu+ZqHsjwMemlRV1PTX3Z9b/WsC5VHesuwxdr5hUJXHRONAwNNzmkaQqjyq66PaQrFJI7C6zFYayuYOq+FozEWkrCgjmS5aW3STurNb61flCvk/W5ckrcNztQWx9UrwBiYwtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IVdRY6C/; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723121930; x=1754657930;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=dIM5pe6dJVWepwtYqZwe6PPCHnYS8ixi+Xg2xmV2vWE=;
-  b=IVdRY6C/oHYSD155SoCTr19zAwTrni5bkvIHkLCQ6Rh2MvNlkllTQtsx
-   p/y5Xcw/9e/YCKOOCWhcBzq+ZtqugaW00gfYqejsU/4Pegen5pjDjwIkS
-   RbBGjXHeg1ubJ4SHbTeBUBgKV+9+P+pL/PxFmUqNRTuJp0LAMy9Moc6WY
-   mNK5eEU0WJTu5v0ZTJEPvuhc1O//WZpeZFUOWJqadNP+nVCah1TpwD6pa
-   PxmzjFGXgFeOwHx1u7GDSuK7QqIV5GSRj2AnDTx6nUF3km69vboi9wcul
-   zkFt9yqKob0MHSFGK6GdAZivD2tfj6AhmuJT6FRCS6XigV7dVkuQ9wxmJ
-   A==;
-X-CSE-ConnectionGUID: EygwaOTQRvu19gorXUPLig==
-X-CSE-MsgGUID: MewLXnnpSOyACZgRnafcyg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21397023"
-X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="21397023"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 05:58:50 -0700
-X-CSE-ConnectionGUID: o/0DktMBTpGFNfilrohghg==
-X-CSE-MsgGUID: 8SAfMfDZTniD2qCKQDZlRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="57131628"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.150.149])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 05:58:45 -0700
-Message-ID: <1059261e-9d1c-472e-a211-f83c313eb5c2@intel.com>
-Date: Thu, 8 Aug 2024 15:58:37 +0300
+	s=arc-20240116; t=1723122088; c=relaxed/simple;
+	bh=T4RdaDLDFwBenuUKBcPyXWxSawbxj6a3jc5VnVJcxCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TrJqLpWZapiPfjCQUorywN6raUX2wkfBl/0owCZcccy/svQzVKZain1MDM9A5ctT52kOhq4NwIdufWT2UE9vYa557QJ3K/uLzF6GjWFF9v5gcs5YIiZuzYDC9Ca8BDQfU0+5xzTQena2H2bkW5nHXhPYwSNPFtxGGaZAMCL8jNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAEIB9GZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5523C32782;
+	Thu,  8 Aug 2024 13:01:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723122087;
+	bh=T4RdaDLDFwBenuUKBcPyXWxSawbxj6a3jc5VnVJcxCc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nAEIB9GZu5oEqYVhpiqpwjrH0SKc/tI1lqfWlF2PpGwHstQDzgz/qc7Xd5Yy1g5gO
+	 2HxTHOISWYBf7UxxHeoSIgFJ9Oyhenpd+T1//+d9gE9qt1S7QkwncpmL9wfBij+e4W
+	 svH9yOjwKVIxQtpsqTJ+KTZdF6VEJ/H4C+p6mUhwJNdCFkTg3PNXOSwsNdwwe5wfkD
+	 7SF5rl06emxK4rssCKuZBPDIsSm7Pa9cVNnJdpOo1/vvgJHJ5/thAJ1j2t1CyTsPLi
+	 mhO5D4P7LGwH8hOgpjexngGNEF6fc5eWOgUc6/8By2WDv10Kucixt0KZNsb5C+kKGh
+	 rkcRjUPKBDD4A==
+Date: Thu, 8 Aug 2024 10:01:23 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH] perf test: Add a new shell test for perf ftrace
+Message-ID: <ZrTBo7KACZeuCyLj@x1>
+References: <20240808044954.1775333-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/9] perf auxtrace: Refactor
- auxtrace__evsel_is_auxtrace()
-To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- James Clark <james.clark@linaro.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Liang, Kan" <kan.liang@linux.intel.com>
-References: <20240806204130.720977-1-leo.yan@arm.com>
- <20240806204130.720977-4-leo.yan@arm.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240806204130.720977-4-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808044954.1775333-1-namhyung@kernel.org>
 
-On 6/08/24 23:41, Leo Yan wrote:
-> The auxtrace__evsel_is_auxtrace() function invokes the callback
-> .evsel_is_auxtrace() to check if an event is an AUX trace. In the
-> low-level code, every AUX trace module provides its callback to
-> compare the PMU type.
+On Wed, Aug 07, 2024 at 09:49:54PM -0700, Namhyung Kim wrote:
+>   $ sudo ./perf test ftrace -vv
+>    86: perf ftrace tests:
+>   --- start ---
+>   test child forked, pid 1772223
+>   perf ftrace list test
+>   syscalls for sleep:
+>   __x64_sys_nanosleep
+>   __ia32_sys_nanosleep
+>   __x64_sys_clock_nanosleep
+>   __ia32_sys_clock_nanosleep
+>   perf ftrace list test  [Success]
+>   perf ftrace trace test
+>   # tracer: function_graph
+>   #
+>   # CPU  DURATION                  FUNCTION CALLS
+>   # |     |   |                     |   |   |   |
+>    0)               |  __x64_sys_clock_nanosleep() {
+>    0)               |    common_nsleep() {
+>    0)               |      hrtimer_nanosleep() {
+>    0)               |        do_nanosleep() {
+>   perf ftrace trace test  [Success]
+>   perf ftrace latency test
+>   target function: __x64_sys_clock_nanosleep
+>   #   DURATION     |      COUNT | GRAPH                                          |
+>       32 - 64   ms |          1 | ############################################## |
+>   perf ftrace latency test  [Success]
+>   perf ftrace profile test
+>   # Total (us)   Avg (us)   Max (us)      Count   Function
+>     100136.400 100136.400 100136.400          1   __x64_sys_clock_nanosleep
+>     100135.200 100135.200 100135.200          1   common_nsleep
+>     100134.700 100134.700 100134.700          1   hrtimer_nanosleep
+>     100133.700 100133.700 100133.700          1   do_nanosleep
+>     100130.600 100130.600 100130.600          1   schedule
+>        166.868     55.623     80.299          3   scheduler_tick
+>          5.926      5.926      5.926          1   native_smp_send_reschedule
+>        301.941    301.941    301.941          1   __x64_sys_execve
+>        295.786    295.786    295.786          1   do_execveat_common.isra.0
+>         71.397     35.699     46.403          2   bprm_execve
+>          2.519      1.260      1.547          2   sched_mm_cid_before_execve
+>          1.098      0.549      0.686          2   sched_mm_cid_after_execve
+>   perf ftrace profile test  [Success]
+>   ---- end(0) ----
+>    86: perf ftrace tests                                               : Ok
 > 
-> This commit refactors auxtrace__evsel_is_auxtrace() by simply
-> calling evsel__is_aux_event() rather than using the callback function.
-> As a result, the callback .evsel_is_auxtrace() is no longer needed, so
-> the definition and implementations are removed.
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/tests/shell/ftrace.sh | 84 ++++++++++++++++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+>  create mode 100755 tools/perf/tests/shell/ftrace.sh
+> 
+> diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
+> new file mode 100755
+> index 000000000000..b1c36d30559a
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/ftrace.sh
+> @@ -0,0 +1,84 @@
+> +#!/bin/sh
+> +# perf ftrace tests
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +set -e
+> +
+> +# perf ftrace commands only works for root
+> +if [ "$(id -u)" != 0 ]; then
+> +    echo "perf ftrace test  [Skipped: no permission]"
+> +    exit 2
+> +fi
+> +
+> +output=$(mktemp /tmp/__perf_test.ftrace.XXXXXX)
+> +
+> +cleanup() {
+> +  rm -f "${output}"
+> +
+> +  trap - EXIT TERM INT
+> +}
+> +
+> +trap_cleanup() {
+> +  cleanup
+> +  exit 1
+> +}
+> +trap trap_cleanup EXIT TERM INT
+> +
+> +# this will be set in test_ftrace_trace()
+> +target_function=
+> +
+> +test_ftrace_list() {
+> +    echo "perf ftrace list test"
+> +    perf ftrace -F > "${output}"
+> +    # this will be used in test_ftrace_trace()
+> +    sleep_functions=$(grep 'sys_.*sleep$' "${output}")
+> +    echo "syscalls for sleep:"
+> +    echo "${sleep_functions}"
+> +    echo "perf ftrace list test  [Success]"
+> +}
+> +
+> +test_ftrace_trace() {
+> +    echo "perf ftrace trace test"
+> +    perf ftrace trace --graph-opts depth=5 sleep 0.1 > "${output}"
+> +    # it should have some function name contains 'sleep'
+> +    grep "^#" "${output}"
+> +    grep -F 'sleep()' "${output}"
+> +    # find actual syscall function name
+> +    for FN in ${sleep_functions}; do
+> +	if grep -q "${FN}" "${output}"; then
+> +	    target_function="${FN}"
+> +	    echo "perf ftrace trace test  [Success]"
+> +	    return
+> +	fi
+> +    done
+> +
+> +    echo "perf ftrace trace test  [Failure: sleep syscall not found]"
+> +    exit 1
+> +}
+> +
+> +test_ftrace_latency() {
+> +    echo "perf ftrace latency test"
+> +    echo "target function: ${target_function}"
+> +    perf ftrace latency -T "${target_function}" sleep 0.1 > "${output}"
+> +    grep "^#" "${output}"
+> +    grep "###" "${output}"
+> +    echo "perf ftrace latency test  [Success]"
+> +}
+> +
+> +test_ftrace_profile() {
+> +    echo "perf ftrace profile test"
+> +    perf ftrace profile sleep 0.1 > "${output}"
+> +    grep ^# "${output}"
+> +    grep sleep "${output}"
+> +    grep schedule "${output}"
+> +    grep execve "${output}"
+> +    echo "perf ftrace profile test  [Success]"
+> +}
 
-evsel__is_aux_event() assumes it is on the target machine e.g.
-being called from perf record.  It indirectly reads from sysfs
-to find PMUs, which will not necessarily be the same a different
-machine.
+I think this will cover the problem I reported to you, i.e. strange
+times:
 
-For example, what happens if a perf data file from one arch is
-being processed on a machine from another arch.
+root@x1:~# perf ftrace profile sleep 1s > a
+root@x1:~# time_re="[[:space:]]+100[[:digit:]]{4}\.[[:digit:]]{3}"
+root@x1:~# grep -E "^${time_re}${time_re}${time_re}[[:space:]]+1[[:space:]]+.*clock_nanosleep" a
+ 1000171.000 1000171.000 1000171.000          1   __x64_sys_clock_nanosleep
+root@x1:~#
 
+I.e. we know that we will have just one call to *clock_nanosleep and
+that it will take a bit more than 1 second (100 followed by 4 digits to
+get to something like 1000171).
+
+So I cooked up the following patch, on top of yours, I tested it
+replacing the '10' in the time_re with 20 and it fails, with '10', as
+expected, it passes.
+
+- Arnaldo
+
+diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
+index b1c36d30559a900a..a6ee740f0d7eca07 100755
+--- a/tools/perf/tests/shell/ftrace.sh
++++ b/tools/perf/tests/shell/ftrace.sh
+@@ -72,6 +72,11 @@ test_ftrace_profile() {
+     grep sleep "${output}"
+     grep schedule "${output}"
+     grep execve "${output}"
++    time_re="[[:space:]]+10[[:digit:]]{4}\.[[:digit:]]{3}"
++    # 100283.000 100283.000 100283.000          1   __x64_sys_clock_nanosleep
++    # Check for one *clock_nanosleep line with a Count of just 1 that takes a bit more than 0.1 seconds
++    # Strip the _x64_sys part to work with other architectures
++    grep -E "^${time_re}${time_re}${time_re}[[:space:]]+1[[:space:]]+.*clock_nanosleep" "${output}"
+     echo "perf ftrace profile test  [Success]"
+ }
+ 
 
