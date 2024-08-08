@@ -1,149 +1,98 @@
-Return-Path: <linux-kernel+bounces-279117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B93D94B928
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:40:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FD994B92A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E580F1F21614
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:40:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 013731C24479
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F851898E1;
-	Thu,  8 Aug 2024 08:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A131898E4;
+	Thu,  8 Aug 2024 08:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YwrCK3Bi"
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="dUzQOAnb"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76766188017;
-	Thu,  8 Aug 2024 08:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674DB188017;
+	Thu,  8 Aug 2024 08:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723106395; cv=none; b=kY+y9qRFLCqjwS6fNLENlDwshyopgRxptcNGO1o+2hlmmtvFqw2R1IQ2IKM74ON0+dpZoZt1OW31q0Dxo5jJAlLEdt+U/KT6in2jhlH1jT2FeGXvdf6upa180KwIDvSVs9Xtze1ENeV4yqaSn9S8/DPkvb4ojS7Iy+pmHOER/8o=
+	t=1723106415; cv=none; b=Y97a6l6WXR/AltU4tewMkEEwMCbN1qUDs2MwWjpdtX/BboFqvkgBr31vpj/24/exTao73YHYAicoeQMKfmjErwQev+QMQKmd5KmeiHPlhHbpnVJ3qdDh7e0Awky6xo9ZkYKJOKPnfb0XXJJ5iKW+xFtKrMsF7XCiwqcdP1PNGjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723106395; c=relaxed/simple;
-	bh=TFrnilnjgD0a8YA9+CwPjBQv8dy23a/EUbo4mRdjaQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qnLzFlaBIlACnbrHw50x4R5GwrqMchKx9RqA0WWO2uTmR4UrDc6WyJe/8AIYC+kdq/A1Am06xwKeSlaUl5mnPNCqNpbNTAawGA58oFuXdo3LLVaX1Tno8hezkFqXNHTC11qOH/0zsYBOWHDh9fjzzjv7ayxPnH5CF1rdAjJSwR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YwrCK3Bi; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id bygMs1WA1j4pfbygMs0Sl1; Thu, 08 Aug 2024 10:39:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723106386;
-	bh=clc8+qLSQc4IJ8Eo2E+itAv4AyWz9hMSaxLRJC2XBVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=YwrCK3Bi5RAPUYYMryFqaR6gycvmvqQyJoABzpvaKJP9Alp4S7xH90da/Bl2/iSrd
-	 R7Znr7Lc7e+SMUj7mjTih3bx87fLwArT4ln67hCZSEzpgc5MmtL46H3ZCOnLKYteow
-	 UKLwavmCtKkQP8Z16FZGY3FtAB9n/uJHGYOLbFa/cisUoY/sV6Ed/U0mGH9AOY/Z6A
-	 ashps3bKtm+l9L2jYkxQaV42ItTccRHgb6fUpNcbh5UzbqAX8yX9AFgJTWuJO8rTC9
-	 rJPK1pucj0tKABXFwJdxnof2Co72wdFhisgiJsbPBRoRKjKivLbjEOq2byKOYviNqk
-	 4eS7rL/Xwdi7Q==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 08 Aug 2024 10:39:46 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <14ef9485-54ba-402b-9b90-5f10c1523d4e@wanadoo.fr>
-Date: Thu, 8 Aug 2024 10:39:38 +0200
+	s=arc-20240116; t=1723106415; c=relaxed/simple;
+	bh=FwhEe7tsk+lsulgTzfUjB7Gd6Z6YEX/oh/K8WN7S0k4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FdDSuvBUkd5sPRMWcBY7ihm0hFn4bYqR3sQq6IRQvUVz+s0cpglR4foG693BhU2H21UrfufDjvo1L7xpKcLJba1bvZOfzmdTS30GT4p6X6ZDPRmDkAs+4Nq5hxkF8yW8iPHpmrhgptZHyBCE7fLkZ9HYdloa3FoIx0xzNtEluoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=dUzQOAnb; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723106407; x=1723365607;
+	bh=JYVzY2/df0bR8l+qC5/ROuPxQ4v2pUIqeB6P/XtY5ac=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=dUzQOAnb+Ni76NXTJBdzxworfccAQsYOX8g9mqp4Y0Tk2sgeRIKZV4TsPDUPOtAJt
+	 8jxdiCYgu38goPcJ7FGM44YiHRm+aTVqejphsWqh+U1gSjh4ioChTd9Wh+G0gvPrN0
+	 bkPCtPDtGBYRDtTNbrAMl0fAgqUAePf9thNIvvQ0IDQoOAtQ5ySNTi3ZInCS31+Aqr
+	 X5FyK6cZsaLbgNKO2reSV5UQVKM7251rMrE04I8K+yPAKO3RqSCbTMstx5OYi6tOWO
+	 DJVf3GMoVDfeyI9x3iQ+eJHq9XlR6U0KBkgauqFa9HbK1aACJENuyftzHG/3ByxTEm
+	 TFIL55f+UWI2g==
+Date: Thu, 08 Aug 2024 08:40:01 +0000
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 20/28] rust: alloc: add `Vec` to prelude
+Message-ID: <ca0aa9a6-3adb-4b40-a0e4-96687e72fdf3@proton.me>
+In-Reply-To: <20240805152004.5039-21-dakr@kernel.org>
+References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-21-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 10c4b4ac3cd7900e2598201bb7685ad03b76fa5e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
- <20240808075937.2756733-4-ryan_chen@aspeedtech.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240808075937.2756733-4-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Le 08/08/2024 à 09:59, Ryan Chen a écrit :
-> Add dt bindings for AST2700 clock controller
-> 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+On 05.08.24 17:19, Danilo Krummrich wrote:
+> Now that we removed `VecExt` and the corresponding includes in
+> prelude.rs, add the new kernel `Vec` type instead.
+>=20
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > ---
->   .../dt-bindings/clock/aspeed,ast2700-clk.h    | 175 ++++++++++++++++++
->   1 file changed, 175 insertions(+)
->   create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
-> 
-> diff --git a/include/dt-bindings/clock/aspeed,ast2700-clk.h b/include/dt-bindings/clock/aspeed,ast2700-clk.h
-> new file mode 100644
-> index 000000000000..facf72352c3e
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/aspeed,ast2700-clk.h
-> @@ -0,0 +1,175 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Device Tree binding constants for AST2700 clock controller.
-> + *
-> + * Copyright (c) 2024 Aspeed Technology Inc.
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CLOCK_AST2700_H
-> +#define __DT_BINDINGS_CLOCK_AST2700_H
-> +
-> +/* SOC0 clk-gate */
-> +#define SCU0_CLK_GATE_MCLK	(0)
-> +#define SCU0_CLK_GATE_ECLK	(1)
-> +#define SCU0_CLK_GATE_2DCLK	(2)
-> +#define SCU0_CLK_GATE_VCLK	(3)
-> +#define SCU0_CLK_GATE_BCLK	(4)
-> +#define SCU0_CLK_GATE_VGA0CLK	(5)
-> +#define SCU0_CLK_GATE_REFCLK	(6)
-> +#define SCU0_CLK_GATE_PORTBUSB2CLK	(7)
-> +#define SCU0_CLK_GATE_RSV8	(8)
-> +#define SCU0_CLK_GATE_UHCICLK	(9)
-> +#define SCU0_CLK_GATE_VGA1CLK	(10)
-> +#define SCU0_CLK_GATE_DDRPHYCLK	(11)
-> +#define SCU0_CLK_GATE_E2M0CLK	(12)
-> +#define SCU0_CLK_GATE_HACCLK	(13)
-> +#define SCU0_CLK_GATE_PORTAUSB2CLK	(14)
-> +#define SCU0_CLK_GATE_UART4CLK	(15)
-> +#define SCU0_CLK_GATE_SLICLK	(16)
-> +#define SCU0_CLK_GATE_DACCLK	(17)
-> +#define SCU0_CLK_GATE_DP	(18)
-> +#define SCU0_CLK_GATE_E2M1CLK	(19)
-> +#define SCU0_CLK_GATE_CRT0CLK	(20)
-> +#define SCU0_CLK_GATE_CRT1CLK	(21)
-> +#define SCU0_CLK_GATE_VLCLK	(22)
-> +#define SCU0_CLK_GATE_ECDSACLK	(23)
-> +#define SCU0_CLK_GATE_RSACLK	(24)
-> +#define SCU0_CLK_GATE_RVAS0CLK	(25)
-> +#define SCU0_CLK_GATE_UFSCLK	(26)
-> +#define SCU0_CLK_GATE_EMMCCLK	(27)
-> +#define SCU0_CLK_GATE_RVAS1CLK	(28)
-> +/* reserved 29 ~ 31*/
-> +#define SCU0_CLK_GATE_NUM	(SCU0_CLK_GATE_RVAS1CLK + 1)
-> +
-> +/* SOC0 clk */
-> +#define SCU0_CLKIN		(SCU0_CLK_GATE_NUM + 0)
+>  rust/kernel/prelude.rs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-So SCU0_CLKIN is 28+1+0 = 29 which is said to be reserved in the comment 
-above.
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-> +#define SCU0_CLK_24M		(SCU0_CLK_GATE_NUM + 1)
-> +#define SCU0_CLK_192M		(SCU0_CLK_GATE_NUM + 2)
-> +#define SCU0_CLK_UART		(SCU0_CLK_GATE_NUM + 3)
-> +#define SCU0_CLK_PSP		(SCU0_CLK_GATE_NUM + 4)
-> +#define SCU0_CLK_HPLL		(SCU0_CLK_GATE_NUM + 5)
+---
+Cheers,
+Benno
 
-...
+> diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+> index fcc8656fdb51..b049ab96202e 100644
+> --- a/rust/kernel/prelude.rs
+> +++ b/rust/kernel/prelude.rs
+> @@ -14,7 +14,7 @@
+>  #[doc(no_inline)]
+>  pub use core::pin::Pin;
+>=20
+> -pub use crate::alloc::{flags::*, Box, KBox, KVBox, KVVec, KVec, VBox, VV=
+ec};
+> +pub use crate::alloc::{flags::*, Box, KBox, KVBox, KVVec, KVec, VBox, VV=
+ec, Vec};
+>=20
+>  #[doc(no_inline)]
+>  pub use macros::{module, pin_data, pinned_drop, vtable, Zeroable};
+> --
+> 2.45.2
+>=20
 
 
