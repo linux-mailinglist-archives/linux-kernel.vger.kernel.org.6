@@ -1,71 +1,55 @@
-Return-Path: <linux-kernel+bounces-279290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F2494BB70
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:40:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C6494BB73
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E455281028
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:40:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0670B22596
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE4F18A6A0;
-	Thu,  8 Aug 2024 10:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfPmCf9z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733D718C34D;
+	Thu,  8 Aug 2024 10:38:26 +0000 (UTC)
+Received: from smtp134-32.sina.com.cn (smtp134-32.sina.com.cn [180.149.134.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ECA18A6DF;
-	Thu,  8 Aug 2024 10:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD71D18A926
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723113453; cv=none; b=aRLKDAUfSKcZKImcWrekhfvvvfl4iRLgy5kqG46Rb/bynNj5KKSBTD4y6TJggoua4EHMbDEn26u5pu1J8Im/1CNY5THwAO1erEqU12aDS4lZu+PCGencpECsnImp0lftsNuatGWw5VPRyptVUZKIr9BsuUO0KDnnpEl6ml4peTU=
+	t=1723113506; cv=none; b=b7cOLBD0K842GhizCJ1SIoYFG0+BQLgSN4AO08ycZhjun5zUB3MyKr1cclyTQeIxQMD5D9NrKk6ldMgzTE6QWJgwZIvNCdOifvE8dUAukLY0Ex2JGUmrV8w7jYB3MIhXMAbh9j72TlVWdkYwXINqOlEq8eEzFjBQKL9v9WenpUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723113453; c=relaxed/simple;
-	bh=LkzIbKDJ/VzzDWsc37apyOD3Hdgy+syEuBhFPXlNn6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sS93Sd8/ymC4v9GsBLw2jwBEJ3CgMLDmxAoT6SBm0noeG3m+cbv5ARkrWfPZA8tZD+RqkxsI6wfIrUJSjH1OEVgZhFUgUzg1bKkoTYoFDXhpqICwFlDAjeo6FZGy2fZtkVq4hG3J9EEhzPZKQrpSEAPSKNWKkX2JFXaXqAduZgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfPmCf9z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E3C1C32782;
-	Thu,  8 Aug 2024 10:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723113453;
-	bh=LkzIbKDJ/VzzDWsc37apyOD3Hdgy+syEuBhFPXlNn6k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SfPmCf9zKzLliV9VzaDP6ENjOg9hss0mSWjPSpBcXDpXgjzpWB/ndaQvsg81avvOs
-	 oNDuyUTChTXFK1WuiXSsNDkEaf0U6Q6igkUKtg892kZAcm7NX/6SKEP6yf5oNIvUQJ
-	 Qw7wmcCkjRbumLvmcPqv9A8caVzFXzCx40ICvqPMQZsBVVxBQrQnlSrMwFvXtiiiUZ
-	 w55cvIMdWNSRS4neHIiZ22ll4xQJb/eibJiSQBnL2KY+xviNc4DwXJj5iMD3IE7SJ4
-	 iMGn1PfbZNKE8YaqUbOdvERhYp/rpaUvQ0JI0MGwXPEHgDv0GJqVs6uuv6ZucyCUNg
-	 +1LnfKeBmRnLw==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.6 000/121] 6.6.45-rc1 review
-Date: Thu,  8 Aug 2024 12:37:12 +0200
-Message-ID: <20240808103712.378589-1-ojeda@kernel.org>
-In-Reply-To: <20240807150019.412911622@linuxfoundation.org>
-References: <20240807150019.412911622@linuxfoundation.org>
+	s=arc-20240116; t=1723113506; c=relaxed/simple;
+	bh=kODzgVI1TluZZIddHpBvW0ElTZwEdXb/qgX3yNC7Awk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=NgrfFcOnKuD/pNB+b4oT59xc2syvHClSDgu430x7NOO5VYorR4UgGki46SvWaeJcXB1ng9BBFYfxTvzZ54sV1VTrcESGHtuS6QPqZuCzXOfZzejPd/qFmBArnWj87I4yFa7Rj7DUJA0Iw3+Zwp9StPW6+oj8P8MFAJHzpgI/TxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.66.75])
+	by sina.com (10.185.250.21) with ESMTP
+	id 66B4A00A000050AB; Thu, 8 Aug 2024 18:38:05 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8245633408333
+X-SMAIL-UIID: D51D29BBBD6740BABCD5E7D8CCCA9FD9-20240808-183805-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+27c3c57b78da2a0995d8@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [pm?] INFO: trying to register non-static key in netdev_unregister_kobject
+Date: Thu,  8 Aug 2024 18:37:54 +0800
+Message-Id: <20240808103754.2783-1-hdanton@sina.com>
+In-Reply-To: <000000000000795a2506196e7cd5@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,22 +58,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Wed, 07 Aug 2024 16:58:52 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.45 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 09 Aug 2024 14:59:53 +0000.
-> Anything received after that time might be too late.
+On Mon, 27 May 2024 05:16:25 -0700
+> syzbot found the following issue on:
+> 
+> HEAD commit:    e67572cd2204 Linux 6.9-rc6
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13274a87180000
 
-Boot-tested under QEMU for Rust x86_64:
+#syz test upstream  master
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
-
-Thanks!
-
-Cheers,
-Miguel
+--- x/net/bluetooth/hci_core.c
++++ y/net/bluetooth/hci_core.c
+@@ -2598,7 +2598,7 @@ int hci_register_dev(struct hci_dev *hde
+ 	if (!IS_ERR_OR_NULL(bt_debugfs))
+ 		hdev->debugfs = debugfs_create_dir(hdev->name, bt_debugfs);
+ 
+-	error = device_add(&hdev->dev);
++	error = device_register(&hdev->dev);
+ 	if (error < 0)
+ 		goto err_wqueue;
+ 
+--
 
