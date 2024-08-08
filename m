@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-280093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E6D94C592
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:20:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81FA94C595
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EED4D1F233DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:20:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53D55B25BC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32DD15665D;
-	Thu,  8 Aug 2024 20:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87471591F3;
+	Thu,  8 Aug 2024 20:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SzF8wMFQ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TxihxlB4"
 Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D4E155A25
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D54155A5B
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723148416; cv=none; b=D9R++EfrENeDtH4f/YCJi6CQUXPwDio9s0bL8K5qqtxXrjBk6+K/byEci1x96lOmV/BH/O9lu8fer/TYOvTB57hsdQJjPDf1R5XvzJld4v5M0y+TendZE9F110Uop8qgVOOX9zM6BFeDmW9nQ01OoaVZ+B4tuTPXoqlr8RsUJyA=
+	t=1723148418; cv=none; b=rNkIMyvUEzOFCdtIl2RWPCQUrVtQKwtfn/H8vURWWeBH3iVHBKg/K69Msvpc/FO0tu0UaXkESBcbCl0bSs04/W+Ip8dyNeXXHXcB+XAHsVJd7PDOsK9ATMTNbACmeBtv70aYzHj2vjf071oRdQBbMAV+170VcTWxHJUOklTpZwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723148416; c=relaxed/simple;
-	bh=gHdxTsBtC1FIJogjoVgR3K+UeVWvV8guUElH9Mm/MW4=;
+	s=arc-20240116; t=1723148418; c=relaxed/simple;
+	bh=YEe+bkGLX+HfQdKyFd4LwCdbYkyMOdOf27lhBP0tA+w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oF79fozCkMJ+zITRPAZiFCfugVhQ68M8XeOMmPQswvig6NDKSp/oleRkO/GzOjvBauAtjyBJ3SAjhzGpIoY1gS1lcyw7FDFh9oWXkdtqwTiRMdYzXpzeuVIb3TfWsO64+RKcExeqS9yx6mnUxXpwXqVcFRpVCkP1UqhtjHhobXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SzF8wMFQ; arc=none smtp.client-ip=209.85.166.173
+	 In-Reply-To:Content-Type; b=EK9XEELnR7BdGF3vy2miTVXwJhyLDCj1E6hr3pVHsB+sZL3H1KqryGZWXkihqssMaKyEQipZRcVCN7ICcYmazH+anrCPEZFk8gVwHujR0gFXBrp3X8cUZVcV/rGC/0YYUKkV4kLpGr5N983yp/whxWLZEGT1uLQE+GaljovNu5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TxihxlB4; arc=none smtp.client-ip=209.85.166.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-39b37b63810so888065ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 13:20:14 -0700 (PDT)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-39aeccc63deso700635ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 13:20:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723148413; x=1723753213; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1723148416; x=1723753216; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uodkGzl7xHW+w1GEEv07TFHRhIpJPmXbKVPEvtQ8oGg=;
-        b=SzF8wMFQ5x5a/ygUBZWwhwKoLXC4b/YGunQbxr/Uljsqyw5DyA/m8Yf7Un1BU6iDgu
-         ++/gW7YCIAsw4wfpLIUZc+qeLYqfG2YSWRgQ8Y/0VSOdGFOKbSdV4WytnW3OxBRn+UVb
-         mgaV1duLlpb3WG2rXqMOMce9VGyNWtp/ZPJYo=
+        bh=M2jsmgHrGbMb3u45pfIyI8LsvcVZ97iNNWQ7Q8ut6d0=;
+        b=TxihxlB4lPB1xcI+y5v8UA7U5zKaOyieQwtP2MkgGlQclImpnQ0CNP1gj+5i3ROY36
+         mM0KIFntrCIYqpE9QdpN/BnhxkNI0G8xNLvn5WGssDC86SRBMtQkN2/jOtY0I2+ImOdb
+         ksqWN/6tLs0E0FaKhFBU2kiD8vyZlcJ5DEBlA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723148413; x=1723753213;
+        d=1e100.net; s=20230601; t=1723148416; x=1723753216;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uodkGzl7xHW+w1GEEv07TFHRhIpJPmXbKVPEvtQ8oGg=;
-        b=fqEJaG9hHI7uPNn5Bw5VKu3sZv8SlyQBOyS9pjVbA68R2Qb6yoF3ZCEY8gZGwHp5hP
-         4ZSMXx5VPH65EfIhLvDjO9wdBj25j/a9Fvf0im3xARVE8Ppt6jNpwgzTkApmZMU7eNpB
-         JeVIOO0kn+TBTNzVqiNLjlyZAYnyof49EkDF1puRswNTwEP5sKfwDy8NrmHYXHB6EI9J
-         TtsweQatR8Ppypvifp6N7zjAzvc+R73/20GJfD5DFU8n8Eu4pj/aBLODZnqwYZrW7ZkI
-         mG1ZgxYy/B/nDsAuEXJa0OP8pTQs6Kc0Mz9P0+wxH9kBaxxfy6y2fe/iFKDKtCcfgQcv
-         hZHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFPcSxUQS4aFPXE7eX7H8ySQLkgs0SsXc4ROIP8CFhKhYnon3eW2Ikax7yl6xg6ehEMykE8+A34HgvIGXvvwPQrT4dzdiXuuwdeMx6
-X-Gm-Message-State: AOJu0YyigHRVhdQCl6106SiMhmxl5nAkCpdXTk9gxwGAm5KNoK3LsTrL
-	4X05YlXEoJVucxqRv3FS4Mkwz9K6RzlLhp182uMgrcwjEZfBrX26LaOW7v1wtrY=
-X-Google-Smtp-Source: AGHT+IGeZKWpSvKjenukKSxuGMC3BC23H76EZqgIHLKrtcd11bSET6k/4D2jaLgGi/w8x0PBwnl8uw==
-X-Received: by 2002:a05:6e02:1ca4:b0:39a:eba6:69f8 with SMTP id e9e14a558f8ab-39b5ed2e20dmr22609595ab.3.1723148413344;
-        Thu, 08 Aug 2024 13:20:13 -0700 (PDT)
+        bh=M2jsmgHrGbMb3u45pfIyI8LsvcVZ97iNNWQ7Q8ut6d0=;
+        b=WKkQJoTgdA8T0Aboq3Xh25P9VWwtqr70ka0+O+zEw//uzuzFlSwvrmcxShuNm12YQM
+         NZe4C3znqY5m8n1yBDuTa1LITSrld9nYjRKEybSse0zJDxoLPC/+9OODAKflA066IEEX
+         sbqXdY2T9REHg3oiDDypGoSJ022bIT9F3XYrZE0E4DHhnnw5N5J1+XyS4MtoiiC6pq2T
+         5pwXg5/lOU3ZFPqdcvzMn7Pe3KcBFwCDm14E1XJHVYKMdPfzVvuqCGRW9fyDVINljYJF
+         O/Cg69QPj886YiMYCFG62Huyua7ubOlkJu2erBeBBvAOXsfQA8DpgrJNgVUSIkpgvWFE
+         onFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtgCOsFDjbFhfN4YeMgX2oJjZYOCGgL5D9lQ+VweO1pg3IRyPPiedPOen55YtfzECXObj/Hjtv9SFj1pX7phcd1M+OAPUsJLB/NKgq
+X-Gm-Message-State: AOJu0YwbP7Ep8FlHSIMv7mOa/40peRBdcZHy81EVc5YGF9iv3q2Sn7lZ
+	UwK82ZIH8we2Rnue0N1PB4jliMhTut3/P0eWL6QkToTfY43jnQxwKvdj7IGLNkY=
+X-Google-Smtp-Source: AGHT+IHhQH08kFhjcWCEF7YIjkSd6iFv0aSWgPW3aIY3OlTKnEegVaGTebZ9Iyo16sQqzN46BjZEtQ==
+X-Received: by 2002:a05:6e02:1a07:b0:39a:ef62:4eb2 with SMTP id e9e14a558f8ab-39b5ed59648mr21755055ab.4.1723148415635;
+        Thu, 08 Aug 2024 13:20:15 -0700 (PDT)
 Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ca69620c69sm120466173.145.2024.08.08.13.20.12
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ca69620c69sm120466173.145.2024.08.08.13.20.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 13:20:12 -0700 (PDT)
-Message-ID: <3a10db7a-d276-42ce-b050-8867aa3dc69c@linuxfoundation.org>
-Date: Thu, 8 Aug 2024 14:20:12 -0600
+        Thu, 08 Aug 2024 13:20:15 -0700 (PDT)
+Message-ID: <ed248abf-4f75-431b-b061-3eab7024e0f4@linuxfoundation.org>
+Date: Thu, 8 Aug 2024 14:20:15 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,27 +72,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/rseq/Makefile: fix relative rpath usage
-To: Eugene Syromiatnikov <esyr@redhat.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Artem Savkov <asavkov@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+Subject: Re: [PATCH] selftests/sched/Makefile: remove relative rpath usage
+To: Eugene Syromiatnikov <esyr@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: Artem Savkov <asavkov@redhat.com>, Chris Hyser <chris.hyser@oracle.com>,
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
  Shuah Khan <skhan@linuxfoundation.org>
-References: <20240808151335.GA5495@asgard.redhat.com>
+References: <20240808151621.GA10025@asgard.redhat.com>
 Content-Language: en-US
 From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240808151335.GA5495@asgard.redhat.com>
+In-Reply-To: <20240808151621.GA10025@asgard.redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/8/24 09:13, Eugene Syromiatnikov wrote:
+On 8/8/24 09:16, Eugene Syromiatnikov wrote:
 > The relative RPATH ("./") supplied to linker options in CFLAGS is resolved
 > relative to current working directory and not the executable directory,
 > which will lead in incorrect resolution when the test executables are run
-> from elsewhere.  Changing it to $ORIGIN makes it resolve relative
-> to the directory in which the executables reside, which is supposedly
-> the desired behaviour.
+> from elsewhere.  However, the sole sched test (cs_prctl_test)
+> does not require any locally-built libraries to run, so the RPATH
+> directive can be removed.
 > 
 > Discovered by the /usr/lib/rpm/check-rpaths script[1][2] that checks
 > for insecure RPATH/RUNPATH[3], such as containing relative directories,
@@ -106,22 +104,23 @@ On 8/8/24 09:13, Eugene Syromiatnikov wrote:
 > 
 > Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
 > ---
->   tools/testing/selftests/rseq/Makefile | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   tools/testing/selftests/sched/Makefile | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-> index 5a3432fceb58..27544a67d6f0 100644
-> --- a/tools/testing/selftests/rseq/Makefile
-> +++ b/tools/testing/selftests/rseq/Makefile
-> @@ -6,7 +6,7 @@ endif
+> diff --git a/tools/testing/selftests/sched/Makefile b/tools/testing/selftests/sched/Makefile
+> index 099ee9213557..0e4581ded9d6 100644
+> --- a/tools/testing/selftests/sched/Makefile
+> +++ b/tools/testing/selftests/sched/Makefile
+> @@ -4,8 +4,7 @@ ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+>   CLANG_FLAGS += -no-integrated-as
+>   endif
 >   
->   top_srcdir = ../../../..
+> -CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) -Wl,-rpath=./ \
+> -	  $(CLANG_FLAGS)
+> +CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) $(CLANG_FLAGS)
+>   LDLIBS += -lpthread
 >   
-> -CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) -L$(OUTPUT) -Wl,-rpath=./ \
-> +CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) -L$(OUTPUT) -Wl,-rpath=\$$ORIGIN/ \
->   	  $(CLANG_FLAGS) -I$(top_srcdir)/tools/include
->   LDLIBS += -lpthread -ldl
->   
+>   TEST_GEN_FILES := cs_prctl_test
 
 Wouldn't make sense to fix fix this in selftests main Makefile
 instead of changing the all the test makefiles
