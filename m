@@ -1,295 +1,184 @@
-Return-Path: <linux-kernel+bounces-280012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B509B94C486
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:37:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1D894C48C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37BE21F272C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:37:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F32BD1F272B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802211552E7;
-	Thu,  8 Aug 2024 18:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23ED114F9E9;
+	Thu,  8 Aug 2024 18:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ue5ESW7a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gq3Fzz64";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e28Em4JD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HqW7DcPq"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n7z5RBhe"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5272B1514F8;
-	Thu,  8 Aug 2024 18:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E3913DDD9
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723142185; cv=none; b=Cv/E4XQDsZbJo5neRHQCRvoJQurkTn6b2FwxH2c4oClAUBeocr6OMYUwENeIOnK1xcsajruP++PGQ3jyDJ30xzWUdmpgzUx68lFpjR50bt5H8BBDd3W9X4EpA2AKlDkDsyYOdzB58P6CSN3DKDW30vN5asSk8jJMwlMmRQEnsvA=
+	t=1723142393; cv=none; b=lt2XiyPmip+R1OUit9sklNNOFsXndlmriDONA9QI6zzsTvYgD2Wlz3lXjwVAAEIrpu3CjltoMc6l0QeJ7LBhBf8TMGs90LoM0errW1SlLbjVASP/mVUz4jgfVI6y2s2NKhYlkDBqHkQakbxHbsyWNsGEGlR3dTEH4yBC19AAz68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723142185; c=relaxed/simple;
-	bh=CDAFOFt5DzJaMoWfO/l4Cfza08ShV3O7UQ08LmTdzog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JPyJA3qpcI/6jLzoW2WrV8kvDdLpYVZUj/Zfk6unTF4jh/RQv1pCicSie/+W2IIoOQ5Glo90OTw1Mvz648TKCPsd8XX89CWxFuQgyaqNQr0Vlkc88kQxggEpddDixIumfCDNozjps7J6M+nlLVU5lepYs/CqaD07C5CSPbaweTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ue5ESW7a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gq3Fzz64; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e28Em4JD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HqW7DcPq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1ECFF1F7A7;
-	Thu,  8 Aug 2024 18:36:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723142181; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/JaCNE0SPz0UELsNll2QC/drBtMQPxlZjo7hKdIw8oY=;
-	b=Ue5ESW7agT1P5AKmZqH+cGDxC/BueL3Q82ckrM1qLgJIGoQweRg9Ja3EqfKp/YtFLFsnna
-	H63vfE//9eV9OU7vSPM4r2vWlOsUDeCxLDZS3D/5GWgujK0Esap3GRhk5Nd8w78kOazB1l
-	HHXifFutNohdd1cAoykjKsCx0zgOVnw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723142181;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/JaCNE0SPz0UELsNll2QC/drBtMQPxlZjo7hKdIw8oY=;
-	b=Gq3Fzz646CBfudHE1pGYk8S/Yn/nt/ZT/Q2a1UrKq0kzaMqaQnO9/+Q7sFhtEBX+kHNBz6
-	dGe7luKEGlylrDCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=e28Em4JD;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=HqW7DcPq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723142180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/JaCNE0SPz0UELsNll2QC/drBtMQPxlZjo7hKdIw8oY=;
-	b=e28Em4JDMENPBg2he7R3xPqRU1XYtxFnzsmXJ8mQKf29AsdBSSfHfI9RjklulB6HDjoZim
-	CWuyKPXpTW/H5cwdND+HHdQRiUYzDMJt8urNWOqDXT/Dr+n4ZMlluhzvsBWthEGjMi2imM
-	uCC1yu2NZLNkBNPP1r4GzZJtP5TlB3k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723142180;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/JaCNE0SPz0UELsNll2QC/drBtMQPxlZjo7hKdIw8oY=;
-	b=HqW7DcPqKS68JFb/eDrYri+0k6zLt812S/TmsWqJ+CbhByfa/t/wnIfZZHkLUDHp6xU+3P
-	4iZvJkWIn0mzxqBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF81C13876;
-	Thu,  8 Aug 2024 18:36:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KJAuOiMQtWZdUgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 08 Aug 2024 18:36:19 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 99826A0851; Thu,  8 Aug 2024 20:36:19 +0200 (CEST)
-Date: Thu, 8 Aug 2024 20:36:19 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 06/10] ext4: update delalloc data reserve spcae in
- ext4_es_insert_extent()
-Message-ID: <20240808183619.vmxttspcs5ngm6g3@quack3>
-References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
- <20240802115120.362902-7-yi.zhang@huaweicloud.com>
- <20240807174108.l2bbbhlnpznztp34@quack3>
- <a23023f6-93cc-584d-c55a-9f8395e360ae@huaweicloud.com>
+	s=arc-20240116; t=1723142393; c=relaxed/simple;
+	bh=RwFJhJLgvF0/ZS2geOC+B9PruxoqhM8ayNYYcVVP5GI=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=KuKX6t7PqnKav4FMp2aFsU6V2DsnrSkNajlLrTKLeRspU6mDoAnpDJwJuYMgSuavOt8qKZRYY3ppZHnScjx3mYWQN13CyAOS0A/+VC31Pg9EykNm60fAipk8Fs1Ymfyai3YRA2ik/4IIht22nvCAYSPI6CjzXfQGtAaaQGR77IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n7z5RBhe; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1fd774c3b8eso19757295ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:39:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723142390; x=1723747190; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rGCKEHWds3nLjc1rwbe/3j/9p13PqyT95btT2PVEHJQ=;
+        b=n7z5RBheyozDL2PIH3VQaVWA1lBvvOfW4pcZEJGePnZpjQCiKrU3NxY3yMS/UrGEPp
+         Zjk8Vs1Smf76VZjamessf27kixf6PkKHcuFPS4TrCso7Z0zCJYmiHouiG3KF5GoO03M4
+         GwC1jgeSbwuOYgcOfa5Z3TCcqN0hLTWOmFgQOn201U8m3MywJ/+jQD6MR1vMH9q0/Pab
+         qanETUxtnylFaEMZr28s89ecx64kSD3mRRSpMF9nhJRu7+Bv0978+CANCs+lN3F8doN3
+         LFG+YXZsNg4Vu4rdW1U/ifhSoY/MQkZi5v8DAcZq4evleLOA76KIbpQ/pMe9h/NnKBmG
+         DCPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723142390; x=1723747190;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rGCKEHWds3nLjc1rwbe/3j/9p13PqyT95btT2PVEHJQ=;
+        b=Nzlv3sHQN3j/wyvCmWTjdQzUDYa8U1op2IeGzsKPepNzraAi7FZWmyLrrUTqp2pfdF
+         UZgxUgFp3e5cLJEEmWvAzjdW9OGEIxT/OTp2aqbCK+1OzLUbPl/xb5UZqyyVLl5ChvrC
+         odX1m8x2ccgxpv9lWAVf3FTxPQo/nDntovFfjSzjuCeo3k3eQ3B7smvEr4dgFlm3lIfD
+         JdyTvYCDghnae2U7DDPw7wKoCE4FmlFUR/WqC6bHXeGCE6gDOqLaJjLkthqMbOT2JNwF
+         9bYxBaS3VEdEzeYUxWXleC4zq0A1hicUWQiRSFLngCoCtIra/1fQpsubxFHeQT+JuWWa
+         ySPg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7ikBny7MM9Zu1S7Hsu3U7aFNFcvX9VNOh+7yhcx6a52WgWUmwLi0G8G7WIbrW5hjrPihVoQIhclMfUiyLKlSSWOVIi9X9Hqmlus/8
+X-Gm-Message-State: AOJu0YyOTImf5J4H5+mC+PmrLExONXU+VnNvtdJ/+scjFVbfunsVo9Z/
+	gdBgy+IXp8QnaRtx4gULDcXKRmrMQ8fSC+ecM9YIFmdpn7sgfPgQiSyXy/sbTkiJQWtAsJOGW8z
+	nswRAVzeZVvGzSQ1IvI5lNg==
+X-Google-Smtp-Source: AGHT+IFHR6HjyQprVWt7cfvq/+n/27mLEEJUa7fdG1j2U7c3HTuf0p1YaAhdrnA4goWQYkAB/MjKv4gqqjBOaHPwkQ==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a17:903:1105:b0:1fb:526a:5d60 with
+ SMTP id d9443c01a7336-20096d3b493mr1368265ad.4.1723142389804; Thu, 08 Aug
+ 2024 11:39:49 -0700 (PDT)
+Date: Thu, 08 Aug 2024 18:39:48 +0000
+In-Reply-To: <20240805-guest-memfd-lib-v1-1-e5a29a4ff5d7@quicinc.com> (message
+ from Elliot Berman on Mon, 5 Aug 2024 11:34:47 -0700)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a23023f6-93cc-584d-c55a-9f8395e360ae@huaweicloud.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [0.49 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	URIBL_BLOCKED(0.00)[suse.cz:dkim,huawei.com:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,huawei.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,huawei.com:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 1ECFF1F7A7
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: 0.49
+Mime-Version: 1.0
+Message-ID: <diqzttfun9jf.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [PATCH RFC 1/4] mm: Introduce guest_memfd
+From: Ackerley Tng <ackerleytng@google.com>
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: akpm@linux-foundation.org, pbonzini@redhat.com, seanjc@google.com, 
+	tabba@google.com, david@redhat.com, roypat@amazon.co.uk, qperret@google.com, 
+	linux-coco@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org, 
+	quic_eberman@quicinc.com, vannapurve@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu 08-08-24 19:18:30, Zhang Yi wrote:
-> On 2024/8/8 1:41, Jan Kara wrote:
-> > On Fri 02-08-24 19:51:16, Zhang Yi wrote:
-> >> From: Zhang Yi <yi.zhang@huawei.com>
-> >>
-> >> Now that we update data reserved space for delalloc after allocating
-> >> new blocks in ext4_{ind|ext}_map_blocks(), and if bigalloc feature is
-> >> enabled, we also need to query the extents_status tree to calculate the
-> >> exact reserved clusters. This is complicated now and it appears that
-> >> it's better to do this job in ext4_es_insert_extent(), because
-> >> __es_remove_extent() have already count delalloc blocks when removing
-> >> delalloc extents and __revise_pending() return new adding pending count,
-> >> we could update the reserved blocks easily in ext4_es_insert_extent().
-> >>
-> >> Thers is one special case needs to concern is the quota claiming, when
-> >> bigalloc is enabled, if the delayed cluster allocation has been raced
-> >> by another no-delayed allocation(e.g. from fallocate) which doesn't
-> >> cover the delayed blocks:
-> >>
-> >>   |<       one cluster       >|
-> >>   hhhhhhhhhhhhhhhhhhhdddddddddd
-> >>   ^            ^
-> >>   |<          >| < fallocate this range, don't claim quota again
-> >>
-> >> We can't claim quota as usual because the fallocate has already claimed
-> >> it in ext4_mb_new_blocks(), we could notice this case through the
-> >> removed delalloc blocks count.
-> >>
-> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> > ...
-> >> @@ -926,9 +928,27 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
-> >>  			__free_pending(pr);
-> >>  			pr = NULL;
-> >>  		}
-> >> +		pending = err3;
-> >>  	}
-> >>  error:
-> >>  	write_unlock(&EXT4_I(inode)->i_es_lock);
-> >> +	/*
-> >> +	 * Reduce the reserved cluster count to reflect successful deferred
-> >> +	 * allocation of delayed allocated clusters or direct allocation of
-> >> +	 * clusters discovered to be delayed allocated.  Once allocated, a
-> >> +	 * cluster is not included in the reserved count.
-> >> +	 *
-> >> +	 * When bigalloc is enabled, allocating non-delayed allocated blocks
-> >> +	 * which belong to delayed allocated clusters (from fallocate, filemap,
-> >> +	 * DIO, or clusters allocated when delalloc has been disabled by
-> >> +	 * ext4_nonda_switch()). Quota has been claimed by ext4_mb_new_blocks(),
-> >> +	 * so release the quota reservations made for any previously delayed
-> >> +	 * allocated clusters.
-> >> +	 */
-> >> +	resv_used = rinfo.delonly_cluster + pending;
-> >> +	if (resv_used)
-> >> +		ext4_da_update_reserve_space(inode, resv_used,
-> >> +					     rinfo.delonly_block);
-> > 
-> > I'm not sure I understand here. We are inserting extent into extent status
-> > tree. We are replacing resv_used clusters worth of space with delayed
-> > allocation reservation with normally allocated clusters so we need to
-> > release the reservation (mballoc already reduced freeclusters counter).
-> > That I understand. In normal case we should also claim quota because we are
-> > converting from reserved into allocated state. Now if we allocated blocks
-> > under this range (e.g. from fallocate()) without
-> > EXT4_GET_BLOCKS_DELALLOC_RESERVE, we need to release quota reservation here
-> > instead of claiming it. But I fail to see how rinfo.delonly_block > 0 is
-> > related to whether EXT4_GET_BLOCKS_DELALLOC_RESERVE was set when allocating
-> > blocks for this extent or not.
-> 
-> Oh, this is really complicated due to the bigalloc feature, please let me
-> explain it more clearly by listing all related situations.
-> 
-> There are 2 types of paths of allocating delayed/reserved cluster:
-> 1. Normal case, normally allocate delayed clusters from the write back path.
-> 2. Special case, allocate blocks under this delayed range, e.g. from
->    fallocate().
-> 
-> There are 4 situations below:
-> 
-> A. bigalloc is disabled. This case is simple, after path 2, we don't need
->    to distinguish path 1 and 2, when calling ext4_es_insert_extent(), we
->    set EXT4_GET_BLOCKS_DELALLOC_RESERVE after EXT4_MAP_DELAYED bit is
->    detected. If the flag is set, we must be replacing a delayed extent and
->    rinfo.delonly_block must be > 0. So rinfo.delonly_block > 0 is equal
->    to set EXT4_GET_BLOCKS_DELALLOC_RESERVE.
+Elliot Berman <quic_eberman@quicinc.com> writes:
 
-Right. So fallocate() will call ext4_map_blocks() and
-ext4_es_lookup_extent() will find delayed extent and set EXT4_MAP_DELAYED
-which you (due to patch 2 of this series) transform into
-EXT4_GET_BLOCKS_DELALLOC_RESERVE. We used to update the delalloc
-accounting through in ext4_ext_map_blocks() but this patch moved the update
-to ext4_es_insert_extent(). But there is one cornercase even here AFAICT:
+> In preparation for adding more features to KVM's guest_memfd, refactor
+> and introduce a library which abstracts some of the core-mm decisions
+> about managing folios associated with the file. The goal of the refactor
+> serves two purposes:
+>
+> Provide an easier way to reason about memory in guest_memfd. With KVM
+> supporting multiple confidentiality models (TDX, SEV-SNP, pKVM, ARM
+> CCA), and coming support for allowing kernel and userspace to access
+> this memory, it seems necessary to create a stronger abstraction between
+> core-mm concerns and hypervisor concerns.
+>
+> Provide a common implementation for other hypervisors (Gunyah) to use.
+>
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> ---
+>  include/linux/guest_memfd.h |  44 +++++++
+>  mm/Kconfig                  |   3 +
+>  mm/Makefile                 |   1 +
+>  mm/guest_memfd.c            | 285 ++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 333 insertions(+)
+>
+> diff --git a/include/linux/guest_memfd.h b/include/linux/guest_memfd.h
+> new file mode 100644
+> index 000000000000..be56d9d53067
+> --- /dev/null
+> +++ b/include/linux/guest_memfd.h
+> @@ -0,0 +1,44 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _LINUX_GUEST_MEMFD_H
+> +#define _LINUX_GUEST_MEMFD_H
+> +
+> +#include <linux/fs.h>
+> +
+> +/**
+> + * struct guest_memfd_operations - ops provided by owner to manage folios
+> + * @invalidate_begin: called when folios should be unmapped from guest.
+> + *                    May fail if folios couldn't be unmapped from guest.
+> + *                    Required.
+> + * @invalidate_end: called after invalidate_begin returns success. Optional.
+> + * @prepare: called before a folio is mapped into the guest address space.
+> + *           Optional.
+> + * @release: Called when releasing the guest_memfd file. Required.
+> + */
+> +struct guest_memfd_operations {
+> +	int (*invalidate_begin)(struct inode *inode, pgoff_t offset, unsigned long nr);
+> +	void (*invalidate_end)(struct inode *inode, pgoff_t offset, unsigned long nr);
+> +	int (*prepare)(struct inode *inode, pgoff_t offset, struct folio *folio);
+> +	int (*release)(struct inode *inode);
+> +};
+> +
+> +/**
+> + * @GUEST_MEMFD_GRAB_UPTODATE: Ensure pages are zeroed/up to date.
+> + *                             If trusted hyp will do it, can ommit this flag
+> + * @GUEST_MEMFD_PREPARE: Call the ->prepare() op, if present.
+> + */
+> +enum {
+> +	GUEST_MEMFD_GRAB_UPTODATE	= BIT(0),
+> +	GUEST_MEMFD_PREPARE		= BIT(1),
+> +};
 
-Suppose fallocate is called for range 0..16k, we have delalloc extent at
-8k..16k. In this case ext4_map_blocks() at block 0 will not find the
-delalloc extent but ext4_ext_map_blocks() will allocate 16k from mballoc
-without using delalloc reservation but then ext4_es_insert_extent() will
-still have rinfo.delonly_block > 0 so we claim the quota reservation
-instead of releasing it?
+I interpreted the current state of the code after patch [1] to mean that
+the definition of the uptodate flag means "prepared for guest use", so
+the two enum values here are probably actually the same thing.
 
-> B. bigalloc is enabled, there a 3 sub-cases of allocating a delayed
->    cluster:
-> B0.Allocating a whole delayed cluster, this case is the same to A.
-> 
->      |<         one cluster       >|
->      ddddddd+ddddddd+ddddddd+ddddddd
->      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ allocating the whole range
+For SEV, this means calling rmp_make_private(), so I guess when the page
+allowed to be faulted in to userspace, rmp_make_shared() would have to
+be called on the page.
 
-I agree. In this case there's no difference.
+Shall we continue to have the uptodate flag mean "prepared for guest
+use" (whether prepared for shared or private use)?
 
- 
-> B1.Allocating delayed blocks in a reserved cluster, this case is the same
->    to A, too.
-> 
->      |<         one cluster       >|
->      hhhhhhh+hhhhhhh+ddddddd+ddddddd
->                              ^^^^^^^
->                              allocating this range
+Then we can have another enum to request a zeroed page (which will have
+no accompanying page flag)? Or could we remove the zeroing feature,
+since it was meant to be handled by trusted hypervisor or hardware in
+the first place? It was listed as a TODO before being removed in [2].
 
-Yes, if the allocation starts within delalloc range, we will have
-EXT4_GET_BLOCKS_DELALLOC_RESERVE set and ndelonly_blocks will always be >
-0.
+I like the idea of having flags to control what is done to the page,
+perhaps removing the page from the direct map could be yet another enum.
 
-> B2.Allocating blocks which doesn't cover the delayed blocks in one reserved
->    cluster,
-> 
->      |<         one cluster       >|
->      hhhhhhh+hhhhhhh+hhhhhhh+ddddddd
->      ^^^^^^^
->      fallocating this range
-> 
->   This case must from path 2, which means allocating blocks without
->   EXT4_GET_BLOCKS_DELALLOC_RESERVE. In this case, rinfo.delonly_block must
->   be 0 since we are not replacing any delayed extents, so
->   rinfo.delonly_block == 0 means allocate blocks without EXT4_MAP_DELAYED
->   detected, which further means that EXT4_GET_BLOCKS_DELALLOC_RESERVE is
->   not set. So I think we could use rinfo.delonly_block to identify this
->   case.
+> +
+> +struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags);
+> +struct file *guest_memfd_alloc(const char *name,
+> +			       const struct guest_memfd_operations *ops,
+> +			       loff_t size, unsigned long flags);
+> +bool is_guest_memfd(struct file *file, const struct guest_memfd_operations *ops);
+> +
+> +#endif
 
-Well, this is similar to the non-bigalloc case I was asking about above.
-Why the allocated unwritten extent cannot extend past the start of delalloc
-extent? I didn't find anything that would disallow that...
+> <snip>
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[1] https://lore.kernel.org/all/20240726185157.72821-15-pbonzini@redhat.com/
+[2] https://lore.kernel.org/all/20240726185157.72821-8-pbonzini@redhat.com/
 
