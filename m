@@ -1,84 +1,54 @@
-Return-Path: <linux-kernel+bounces-279754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A715494C16C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:31:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2138D94C170
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE51289EA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C6711F2B9E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62713192B98;
-	Thu,  8 Aug 2024 15:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0042E18F2EE;
+	Thu,  8 Aug 2024 15:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="lvAVxog0"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDar5Y7M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1DA1922FC
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0785A18B475;
+	Thu,  8 Aug 2024 15:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723130938; cv=none; b=t25MELw5hQtXRYNM4YI7bIYCLCAY0TlwFc/2pXigdpk3uS7+BQ9SITQqIKL9IMwB5BozvwwfEZU+DmPzomKYhYH5SlwcOhqeUXumS5qXOFIKgnTVaiOf/JNCbVSliiBC23BYq8xYFAj97ljvKyRev/tpIdRAHHAESXCCeF+E/hI=
+	t=1723130995; cv=none; b=gUn0b1WR5BXp8rHVjwKEc+HB0bTE9BdbzG9z/7W48HeFjE65Q4qB/tur6yC0zRghlDPeUIshVpUcNN4ivLxrrBtov9OQXMtdy1G3Pypg7ESeD014yPDSkc8VretdOR2yW9QtQrlnPnoqGyVycDrEACZ7cMjuKMciCA+WBNZTbz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723130938; c=relaxed/simple;
-	bh=aw9Xng6hnlicSSBCNfgV3RC00vVWh3x9RqULWZidsCM=;
+	s=arc-20240116; t=1723130995; c=relaxed/simple;
+	bh=TPX+G8JITxkTTjZNjQof+SWjs40+x2T5lhRri0LekUA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6R/NZWRHcxfTqzTk08vpVGcJWdah65YC6DIV4kvLFLixNTuxB+Ge211XbcuI3EQdNA8bqAHXoeaX1k6cysOd30ucLC//eRDnpm4mg37gKSNi4smeBKaUszCqZg3dogY9ULlAcMoPPblaZE4zAOxtwGtnt+Z9EpOSCWo9ZJfWc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=lvAVxog0; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a1c49632deso1172046a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:28:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1723130934; x=1723735734; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jnhmQnmP7IyJNihYnngPeQZmYDUEfF0VywLMKOpnWZs=;
-        b=lvAVxog0g+k4md8CjZMhFCED4YaeiTYbhj8+zBcolZKPlDenQQ93kn3uqmetWmPQqa
-         p4LCmqGJuAtI+yPgwbZUOTu57VmFO/CcgE8J+EGNVGSBoxmG3L238adGGm9WK+cPGn53
-         sLdv8Inp9zw2YxGgAZ0GnXMarXOGrFrYHKrhHxchBqFa3oVL4cA+/Des28PJhH1wxPFA
-         XBTp/CmxjLoeJFKncc9mP2z+owhLzo2vx+F/d2bG8epajyMSJCxs9QjA8iCyiF4aJFB1
-         yybDDvKqZfNq9U5g/N3i84x30VzfqKLD89m+P/whBC1WqoX9wssZwHLKRChiCayQqzUh
-         gDqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723130934; x=1723735734;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jnhmQnmP7IyJNihYnngPeQZmYDUEfF0VywLMKOpnWZs=;
-        b=O7hDzjta8P80TWmvmRLTmXEDz5TaYA8mPLI2VJ9227bac4njRrkcLSr84xRv9cVyR/
-         syzYCIkJcXECPA0ERcsw/r+cA/tjjUaLIpTJ9elXLP/i+6551EHdKUouKAkwRPltUDjU
-         /BiC8bgYnzhSJrsqNvoAFUPkaewYfsXc83rWo3y+Aei00f8IRzH8Dek5wl+aftu/6PuS
-         4PRcP1fyxeOzZpoybqeo96oAnsyX/+iKOR18cDYpmiLCteseh1bd63nGfR5dVz7skccT
-         vyKnC9HjDp9upQB1f0p7tEYstpbW93olpOxTHqmyGjrWz7y/ldr4fdvoNbg/lV8Nh53O
-         NnVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQvm/WjHSQa9XZEGxOPlPe48a9n2iIb1VncAQagDoPR9LGG3CwXQzQksm4lRKa1sndPFUgm7xL3vJ84xlPtRuIuLQwryG0n33a7xRo
-X-Gm-Message-State: AOJu0Yx0wYpkY7VIbJLIVXqDwPB08TJeuqljKg9T8JQRSi/mj6FRFspa
-	nDHywZZ8dEB4hMo5drNx5AWgZ45nuxvhHji/aaB6vKyHXHXmj5i3jz22ztoVVEI=
-X-Google-Smtp-Source: AGHT+IFVkXIIsX8nA56eA8djSmI0KbyIntGTCsgK7o0p60nH7gDNab4XFcAqWv4Pl7Y+SKusOt+AyA==
-X-Received: by 2002:a05:6402:2549:b0:5a1:f680:5470 with SMTP id 4fb4d7f45d1cf-5bbb21ac2femr1931023a12.13.1723130934206;
-        Thu, 08 Aug 2024 08:28:54 -0700 (PDT)
-Received: from localhost ([213.235.133.38])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2d35172sm773074a12.71.2024.08.08.08.28.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 08:28:53 -0700 (PDT)
-Date: Thu, 8 Aug 2024 17:28:49 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Hongyu Ning <hongyu.ning@linux.intel.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtio: Remove virtio devices on device_shutdown()
-Message-ID: <ZrTkMVMS1WEglahx@nanopsycho.orion>
-References: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
- <ZrSuBlWkE-USicQw@nanopsycho.orion>
- <o7duejn6zoua2zu6ff5x4nn43bdbqllsmhqtc2i3dkqme5pmig@4nsfqi6wsjsd>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bx5D7Pgy4uiL3HyeNjdjIwoWkqobD8qS+Sg1IkWciCnuaUYU6Bh5ySKOTJcQj92kA3S/DBNbmj3q2UTXB5pQt6pxEcJJyRR7VR5zI60u7GCqo2Icth4E4a1sHOEtTTtOsLtWEBA0N66Jx9Hc07LP+LuCimITdhJV28dFYtpanRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDar5Y7M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 253BCC32782;
+	Thu,  8 Aug 2024 15:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723130994;
+	bh=TPX+G8JITxkTTjZNjQof+SWjs40+x2T5lhRri0LekUA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jDar5Y7Mq60Dr3Ugx19OHeKVlRRuXkTiEn9QSC31/QMmcIDb6L7BHT+TNMU8L4/xn
+	 9ZzodWWvDlF926yPAZt9d5J572829A+MWmOb6oMvbNCKO1w3eGO8E1tSEUyoJfU9Ph
+	 KJPuZFlOiGauZQnDmS0+gPBw2WSiSQ1CcV9T7vWjSSGQphnA4BZ3iiiQVxt8Gtu5Ry
+	 fBdkazM8qVKtqpcMtMRnt6kpt3dxN3qYJXK1QZ5Mhe7C1g/n5orBcqBl8p8GjX8fqY
+	 jxirHZuVzqpvKpM5Px3ry66Mvhk2gVzmRTFt4zjg/G4hr0kEXsBotdv24jrmYpifYB
+	 5LwqygFVHrdfQ==
+Date: Thu, 8 Aug 2024 17:29:48 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: Zizhi Wo <wozizhi@huawei.com>
+Cc: chandan.babu@oracle.com, djwong@kernel.org, dchinner@redhat.com, 
+	osandov@fb.com, john.g.garry@oracle.com, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yangerkun@huawei.com
+Subject: Re: [PATCH V2] xfs: Make the fsmap more precise
+Message-ID: <shrkrnnqecixpkosqk74mcazzrsjepwgv4oh6p3ywnb43x5nmy@6alfseq27vus>
+References: <20240808144759.1330237-1-wozizhi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,43 +57,216 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <o7duejn6zoua2zu6ff5x4nn43bdbqllsmhqtc2i3dkqme5pmig@4nsfqi6wsjsd>
+In-Reply-To: <20240808144759.1330237-1-wozizhi@huawei.com>
 
-Thu, Aug 08, 2024 at 02:11:09PM CEST, kirill.shutemov@linux.intel.com wrote:
->On Thu, Aug 08, 2024 at 01:37:42PM +0200, Jiri Pirko wrote:
->> Thu, Aug 08, 2024 at 09:51:41AM CEST, kirill.shutemov@linux.intel.com wrote:
->> >Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
->> >accesses during the hang.
->> >
->> >	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
->> >	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
->> >	...
->> >
->> >It was traced down to virtio-console. Kexec works fine if virtio-console
->> >is not in use.
->> >
->> >Looks like virtio-console continues to write to the MMIO even after
->> >underlying virtio-pci device is removed.
->> >
->> >The problem can be mitigated by removing all virtio devices on virtio
->> >bus shutdown.
->> >
->> >Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->> >Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
->> 
->> Could you provide a "Fixes:" tag pointing to the commit that introduced
->> the bug?
->
->I am not sure if it is a regression. Maybe it was there forever.
+On Thu, Aug 08, 2024 at 10:47:59PM GMT, Zizhi Wo wrote:
+> In commit 63ef7a35912d ("xfs: fix interval filtering in multi-step fsmap
+> queries"), Darrick has solved a fsmap bug about incorrect filter condition.
+> But I still notice two problems in fsmap:
 
-Does not have to be regression. You can blame the commit that added the
-code.
+What is different between this patch and the V1?
 
+Carlos
 
->
->Hongyu, could you please check with bisect if it is possible to point to a
->specific commit?
->
->-- 
->  Kiryl Shutsemau / Kirill A. Shutemov
+> 
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
+>  EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
+>    0: 253:32 [0..7]:               static fs metadata                  0  (0..7)                    8
+>    1: 253:32 [8..23]:              per-AG metadata                     0  (8..23)                  16
+>    2: 253:32 [24..39]:             inode btree                         0  (24..39)                 16
+>    ......
+> 
+> Bug 1:
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 3 7' /mnt
+> [root@fedora ~]#
+> Normally, we should be able to get [3, 7), but we got nothing.
+> 
+> Bug 2:
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 15 20' /mnt
+>  EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
+>    0: 253:32 [8..23]:         per-AG metadata                   0  (8..23)             16
+> Normally, we should be able to get [15, 20), but we obtained a whole
+> segment of extent.
+> 
+> The first problem is caused by shifting. When the query interval is before
+> the first extent which can be find in btree, no records can meet the
+> requirement. And the gap will be obtained in the last query. However,
+> rec_daddr is calculated based on the start_block recorded in key[1], which
+> is converted by calling XFS_BB_TO_FSBT. Then if rec_daddr does not exceed
+> info->next_daddr, which means keys[1].fmr_physical >> (mp)->m_blkbb_log
+> <= info->next_daddr, no records will be displayed. In the above example,
+> 3 >> (mp)->m_blkbb_log = 0 and 7 >> (mp)->m_blkbb_log = 0, so the two are
+> reduced to 0 and the gap is ignored:
+> 
+> before calculate ----------------> after shifting
+>  3(st)    7(ed)                       0(st/ed)
+>   |---------|                            |
+>   sector size                        block size
+> 
+> Resolve this issue by introducing the "tail_daddr" field in
+> xfs_getfsmap_info. This records |key[1].fmr_physical + key[1].length| at
+> the granularity of sector. If the current query is the last, the rec_daddr
+> is tail_daddr to prevent missing interval problems caused by shifting. We
+> only need to focus on the last query, because xfs disks are internally
+> aligned with disk blocksize that are powers of two and minimum 512, so
+> there is no problem with shifting in previous queries.
+> 
+> The second problem is that the resulting range is not truncated precisely
+> according to the boundary. Currently, the query display mechanism for owner
+> and missing_owner is different. The query of missing_owner (e.g. freespace
+> in rmapbt/ unknown space in bnobt) is obtained by subtraction (gap), which
+> can accurately lock the range. In the query of owner which almostly finded
+> by btree, as long as certain conditions met, the entire interval is
+> recorded, regardless of the starting address of the key[0] and key[1]
+> incoming from the user state. Focus on the following scenario:
+> 
+>                     a       b
+>                     |-------|
+> 	              query
+>                  c             d
+> |----------------|-------------|----------------|
+>   missing owner1      owner      missing owner2
+> 
+> Currently query is directly displayed as [c, d), the correct display should
+> be [a, b). This problem is solved by calculating max(a, c) and min(b, d) to
+> identify the head and tail of the range. To be able to determine the bounds
+> of the low key, "start_daddr" is introduced in xfs_getfsmap_info. Although
+> in some scenarios, similar results can be achieved without introducing
+> "start_daddr" and relying solely on info->next_daddr (e.g. in bnobt), it is
+> ineffective for overlapping scenarios in rmapbt.
+> 
+> After applying this patch, both of the above issues have been fixed (the
+> same applies to boundary queries for the log device and realtime device):
+> 1)
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 3 7' /mnt
+>  EXT: DEV    BLOCK-RANGE      OWNER              FILE-OFFSET      AG AG-OFFSET        TOTAL
+>    0: 253:32 [3..6]:          static fs metadata                  0  (3..6)               4
+> 2)
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 15 20' /mnt
+>  EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
+>    0: 253:32 [15..19]:        per-AG metadata                   0  (15..19)             5
+> 
+> Note that due to the current query range being more precise, high.rm_owner
+> needs to be handled carefully. When it is 0, set it to the maximum value to
+> prevent missing intervals in rmapbt.
+> 
+> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+> ---
+>  fs/xfs/xfs_fsmap.c | 42 ++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 40 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
+> index 85dbb46452ca..e7bb21497e5c 100644
+> --- a/fs/xfs/xfs_fsmap.c
+> +++ b/fs/xfs/xfs_fsmap.c
+> @@ -162,6 +162,8 @@ struct xfs_getfsmap_info {
+>  	xfs_daddr_t		next_daddr;	/* next daddr we expect */
+>  	/* daddr of low fsmap key when we're using the rtbitmap */
+>  	xfs_daddr_t		low_daddr;
+> +	xfs_daddr_t		start_daddr;	/* daddr of low fsmap key */
+> +	xfs_daddr_t		end_daddr;	/* daddr of high fsmap key */
+>  	u64			missing_owner;	/* owner of holes */
+>  	u32			dev;		/* device id */
+>  	/*
+> @@ -276,6 +278,7 @@ xfs_getfsmap_helper(
+>  	struct xfs_mount		*mp = tp->t_mountp;
+>  	bool				shared;
+>  	int				error;
+> +	int				trunc_len;
+>  
+>  	if (fatal_signal_pending(current))
+>  		return -EINTR;
+> @@ -283,6 +286,13 @@ xfs_getfsmap_helper(
+>  	if (len_daddr == 0)
+>  		len_daddr = XFS_FSB_TO_BB(mp, rec->rm_blockcount);
+>  
+> +	/*
+> +	 * Determine the maximum boundary of the query to prepare for
+> +	 * subsequent truncation.
+> +	 */
+> +	if (info->last && info->end_daddr)
+> +		rec_daddr = info->end_daddr;
+> +
+>  	/*
+>  	 * Filter out records that start before our startpoint, if the
+>  	 * caller requested that.
+> @@ -348,6 +358,21 @@ xfs_getfsmap_helper(
+>  		return error;
+>  	fmr.fmr_offset = XFS_FSB_TO_BB(mp, rec->rm_offset);
+>  	fmr.fmr_length = len_daddr;
+> +	/*  If the start address of the record is before the low key, truncate left. */
+> +	if (info->start_daddr > rec_daddr) {
+> +		trunc_len = info->start_daddr - rec_daddr;
+> +		fmr.fmr_physical += trunc_len;
+> +		fmr.fmr_length -= trunc_len;
+> +		/* need to update the offset in rmapbt. */
+> +		if (info->missing_owner == XFS_FMR_OWN_FREE)
+> +			fmr.fmr_offset += trunc_len;
+> +	}
+> +	/* If the end address of the record exceeds the high key, truncate right. */
+> +	if (info->end_daddr) {
+> +		fmr.fmr_length = umin(fmr.fmr_length, info->end_daddr - fmr.fmr_physical);
+> +		if (fmr.fmr_length == 0)
+> +			goto out;
+> +	}
+>  	if (rec->rm_flags & XFS_RMAP_UNWRITTEN)
+>  		fmr.fmr_flags |= FMR_OF_PREALLOC;
+>  	if (rec->rm_flags & XFS_RMAP_ATTR_FORK)
+> @@ -364,7 +389,7 @@ xfs_getfsmap_helper(
+>  
+>  	xfs_getfsmap_format(mp, &fmr, info);
+>  out:
+> -	rec_daddr += len_daddr;
+> +	rec_daddr = fmr.fmr_physical + fmr.fmr_length;
+>  	if (info->next_daddr < rec_daddr)
+>  		info->next_daddr = rec_daddr;
+>  	return 0;
+> @@ -655,6 +680,13 @@ __xfs_getfsmap_datadev(
+>  			error = xfs_fsmap_owner_to_rmap(&info->high, &keys[1]);
+>  			if (error)
+>  				break;
+> +			/*
+> +			 * Set the owner of high_key to the maximum again to
+> +			 * prevent missing intervals during the query.
+> +			 */
+> +			if (info->high.rm_owner == 0 &&
+> +			    info->missing_owner == XFS_FMR_OWN_FREE)
+> +			    info->high.rm_owner = ULLONG_MAX;
+>  			xfs_getfsmap_set_irec_flags(&info->high, &keys[1]);
+>  		}
+>  
+> @@ -946,6 +978,9 @@ xfs_getfsmap(
+>  
+>  	info.next_daddr = head->fmh_keys[0].fmr_physical +
+>  			  head->fmh_keys[0].fmr_length;
+> +	/* Assignment is performed only for the first time. */
+> +	if (head->fmh_keys[0].fmr_length == 0)
+> +		info.start_daddr = info.next_daddr;
+>  	info.fsmap_recs = fsmap_recs;
+>  	info.head = head;
+>  
+> @@ -966,8 +1001,10 @@ xfs_getfsmap(
+>  		 * low key, zero out the low key so that we get
+>  		 * everything from the beginning.
+>  		 */
+> -		if (handlers[i].dev == head->fmh_keys[1].fmr_device)
+> +		if (handlers[i].dev == head->fmh_keys[1].fmr_device) {
+>  			dkeys[1] = head->fmh_keys[1];
+> +			info.end_daddr = dkeys[1].fmr_physical + dkeys[1].fmr_length;
+> +		}
+>  		if (handlers[i].dev > head->fmh_keys[0].fmr_device)
+>  			memset(&dkeys[0], 0, sizeof(struct xfs_fsmap));
+>  
+> @@ -991,6 +1028,7 @@ xfs_getfsmap(
+>  		xfs_trans_cancel(tp);
+>  		tp = NULL;
+>  		info.next_daddr = 0;
+> +		info.start_daddr = 0;
+>  	}
+>  
+>  	if (tp)
+> -- 
+> 2.39.2
+> 
+> 
 
