@@ -1,185 +1,186 @@
-Return-Path: <linux-kernel+bounces-280150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA74994C660
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:41:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552BE94C667
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92B241C22032
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:41:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7EB1F2530C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CF615B561;
-	Thu,  8 Aug 2024 21:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E5C15D5DE;
+	Thu,  8 Aug 2024 21:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VCMc1MOo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TBwZsufc"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2578C13DDC0;
-	Thu,  8 Aug 2024 21:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BFC158D8F
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723153301; cv=none; b=EL08tR2l1zTZ+mPSC3yiPZyP65IEvwAuevttB8ouzdrCMVAq/sEx8Vq5EvCnnapHFUu8Li103rq+IuAAYdd1KQ9N77DxyaLBlutnXuXzFQ+P21un1j3nUfbDBqjOInQ7IbcCVtz1d7PEdONwwqnup3DJLD+pkK2P1g6GdhuHR40=
+	t=1723153395; cv=none; b=Qv8qv0T+ygfG1yfvRrUo5FH+6GfinVf1sPuURT+3ujmPiQrx88bA8Av2Um6yHf1RiPnjz9OXXEhyXIACPDeJfq+8kaVU4ezNkcHeXLNnpNQ2p/rxP9ZLFirGSEqT3Pa5hBonl9hjQcdbdCNO8ZfxB7b031GEm0eNUsW9StyZbbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723153301; c=relaxed/simple;
-	bh=xhr9p7JdqgcOa7fpmW6RYHZNQ3ZvuZwb/QBQWdIHuCE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IG58ykzKzrCnSbz82p5p1XUsLcxMj70SwBK9woMOjMrp0uvwf9LnzMTdJenycx4FoTOorKbWzoCswfVXbmMe7gdmD9iybeJXfBtWSmUPvGPt8BwlhCbDCSo7ZZ+XYwDDWzMPjJIHov/YIs800PqS1dEqTDRV038LUIn5/9UyMWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VCMc1MOo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4789kCvp015673;
-	Thu, 8 Aug 2024 21:41:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=yzRuJMoAZ9lO0AnlBJXQ65P+
-	OT5URHclW0jsSuS9+i0=; b=VCMc1MOorbejCZcF06LV/yx91VH22tyBOpaxi878
-	wb7rJY4hwJy3OMIaX7AMdXup4sWzmfxfOBYg75RRJL/tIhtfXSBMcJKS4Kin1ZOG
-	7wgPEyQgqiX/GfaCOq7l1ebg0f2SsyBxH0oC7hVikWn5Is1ec5iqqdTLdMX6t/Lx
-	z7qwFv2j/m343JUQP4BmE0M9RUVTyjUy2edxFady5VBFcWX77RtjqI8c6IdQ/Dfj
-	OK6n/wQEBYoHAvupdDeJ2fXVFgVKJmt0OvhsD3lrLkDzgp1c8CUIjwoK9OYWwUkK
-	GLo3ym+SPPszt5ihilkTc0Y2Z7nwn7bZPkwWb3hM6AIyvQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sc4yf3s2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 21:41:28 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 478LfRdV013151
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 8 Aug 2024 21:41:27 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 8 Aug 2024 14:41:26 -0700
-Date: Thu, 8 Aug 2024 14:41:26 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: David Hildenbrand <david@redhat.com>
-CC: Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini
-	<pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Fuad Tabba
-	<tabba@google.com>, Patrick Roy <roypat@amazon.co.uk>,
-        <qperret@google.com>, Ackerley Tng <ackerleytng@google.com>,
-        <linux-coco@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <kvm@vger.kernel.org>
-Subject: Re: [PATCH RFC 4/4] mm: guest_memfd: Add ability for mmap'ing pages
-Message-ID: <20240808101944778-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
- <20240805-guest-memfd-lib-v1-4-e5a29a4ff5d7@quicinc.com>
- <4cdd93ba-9019-4c12-a0e6-07b430980278@redhat.com>
- <20240806093625007-0700.eberman@hu-eberman-lv.qualcomm.com>
- <a7c5bfc0-1648-4ae1-ba08-e706596e014b@redhat.com>
+	s=arc-20240116; t=1723153395; c=relaxed/simple;
+	bh=F3HAG9cERt0HZrldBR6qvUxJ0ROrnb/caFVAXJMZG9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ptR3Oxpc9UYAs0ozB3fRo+MeyKOk22uH9JkC01tcU/g8dobJFcHQNzN1x309R/yfsJc69t2YXtowBgWhMqLcwINsF/4MUkKy5DYZUHjna/+g4ypIb/sdXFZJO4ZHSK79v300pmkS/e2CF/VzP+TffyDf8EvmdlBV++tdpCTGgGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TBwZsufc; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so624a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:43:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723153391; x=1723758191; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F3HAG9cERt0HZrldBR6qvUxJ0ROrnb/caFVAXJMZG9w=;
+        b=TBwZsufcW8bQPI1pZRqOZJrIoRNdrlIpPfJfPoRCd0I0+ltY370IlpL4WiLzYtdw+a
+         udJykwL++144sim/JbPRfarSD06bQbNkr+yjgbGtbcukMf0Dnetix8b4h1Wv7tCi8EOr
+         x8N/iX4d+oBQi0Q2NM4I2Huu8HKcbPLcmerhXuk08sQArZXW/OC3keSrVgh4UGUVxwoK
+         rshy9GzFOb3iDuuVpqAT1EsR18SLonzwBaPdpA3z9QDlE8R1Fk6v5l+GulsSi28RmPUq
+         tvYwwP7rfntUUoI5NPI8SXQ9n7XZLQ7nDG1rLdoN3X9eghsZv86hK9HspOlwS8yg0N6J
+         e9hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723153391; x=1723758191;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F3HAG9cERt0HZrldBR6qvUxJ0ROrnb/caFVAXJMZG9w=;
+        b=DjySpLgIDTLoR69UZj66pHs6FJWBXqDiCVohJRHVCZpefWNWTtL9kyqrHf2W1hEHlG
+         yABRd5A1r2leLMigdvHApNqj0vvEBCK5Kt2KfFq5zVWX31JqFkN6C8tHfNTVWKrYH3gG
+         1GYnjwwebVz+yWiWb4FZmo6ep3XWV+U/ppnN6wjbfp94GRZIDF4PewhvPFe547hwkOTd
+         FzJiNdR0PSCCO9Vxt3OIyjItYBDGynvpAtD8XC6quoEYGHPe295LLdv/AIi8ptfgbd9T
+         XiskzkDc4aHik9S3oKJzR1FN/rlxSyst0ZEaTLrZx7R2tpA0bGyZVchzCJZeEOOoULSo
+         DLmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwMkAMHlMd2MfkxRJsLMbiYAkvk/exhwsKsT0hr+Ud4EsGCzwkpxdIeo4wrMhZ3TfdUcqHf4cBCPnCIMpdi/Ql66nDtDB2geDoIhpn
+X-Gm-Message-State: AOJu0Yz6DdKbQzmDB8XSQSfurO/QBTro9xKcDWHwr0p0stQEyXR6IHy1
+	bi7T9bsI2ev4zL7FW10qsg1mJOmuM2DAs3FR4vFMBkU8YChxqHL3vM/NYVx0I5287WV5Op3/lsr
+	YHB6KFBy2rGDd6KmslRXiklcrxByL6DXv8xGd
+X-Google-Smtp-Source: AGHT+IEH1V3AUKZFLyjOwF0Qksh4Jg69gvv/7gEV5z4JKgxe7+5RAl2VUU75yiE7fK1wQur24yXm5KzLy8M6xQfmK9Y=
+X-Received: by 2002:a05:6402:350b:b0:58b:90c6:c59e with SMTP id
+ 4fb4d7f45d1cf-5bc4b4363f2mr17670a12.7.1723153390883; Thu, 08 Aug 2024
+ 14:43:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <a7c5bfc0-1648-4ae1-ba08-e706596e014b@redhat.com>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: yIMS181wrrjh2V_923pIGptH-dEIuvfy
-X-Proofpoint-GUID: yIMS181wrrjh2V_923pIGptH-dEIuvfy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_21,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0
- suspectscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408080155
+References: <20240807182325.2585582-1-surenb@google.com> <CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com>
+ <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com> <CAEf4BzYqKAaGE6GEcMs9MTcrV4cA+i0M5pniqFTy1LQ+g0Yxkw@mail.gmail.com>
+In-Reply-To: <CAEf4BzYqKAaGE6GEcMs9MTcrV4cA+i0M5pniqFTy1LQ+g0Yxkw@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 8 Aug 2024 23:42:33 +0200
+Message-ID: <CAG48ez08f0GNfkqtKa3EV6-miRs3AbXej9WdVh4TvB8ErA6S3w@mail.gmail.com>
+Subject: Re: [RFC 1/1] mm: introduce mmap_lock_speculation_{start|end}
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, peterz@infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07, 2024 at 06:12:00PM +0200, David Hildenbrand wrote:
-> On 06.08.24 19:14, Elliot Berman wrote:
-> > On Tue, Aug 06, 2024 at 03:51:22PM +0200, David Hildenbrand wrote:
-> > > > -	if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
-> > > > +	if (!ops->accessible && (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP)) {
-> > > >    		r = guest_memfd_folio_private(folio);
-> > > >    		if (r)
-> > > >    			goto out_err;
-> > > > @@ -107,6 +109,82 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
-> > > >    }
-> > > >    EXPORT_SYMBOL_GPL(guest_memfd_grab_folio);
-> > > > +int guest_memfd_make_inaccessible(struct file *file, struct folio *folio)
-> > > > +{
-> > > > +	unsigned long gmem_flags = (unsigned long)file->private_data;
-> > > > +	unsigned long i;
-> > > > +	int r;
-> > > > +
-> > > > +	unmap_mapping_folio(folio);
-> > > > +
-> > > > +	/**
-> > > > +	 * We can't use the refcount. It might be elevated due to
-> > > > +	 * guest/vcpu trying to access same folio as another vcpu
-> > > > +	 * or because userspace is trying to access folio for same reason
-> > > 
-> > > As discussed, that's insufficient. We really have to drive the refcount to 1
-> > > -- the single reference we expect.
-> > > 
-> > > What is the exact problem you are running into here? Who can just grab a
-> > > reference and maybe do nasty things with it?
-> > > 
-> > 
-> > Right, I remember we had discussed it. The problem I faced was if 2
-> > vcpus fault on same page, they would race to look up the folio in
-> > filemap, increment refcount, then try to lock the folio. One of the
-> > vcpus wins the lock, while the other waits. The vcpu that gets the
-> > lock vcpu will see the elevated refcount.
-> > 
-> > I was in middle of writing an explanation why I think this is best
-> > approach and realized I think it should be possible to do
-> > shared->private conversion and actually have single reference. There
-> > would be some cost to walk through the allocated folios and convert them
-> > to private before any vcpu runs. The approach I had gone with was to
-> > do conversions as late as possible.
-> 
-> We certainly have to support conversion while the VCPUs are running.
-> 
-> The VCPUs might be able to avoid grabbing a folio reference for the
-> conversion and only do the folio_lock(): as long as we have a guarantee that
-> we will disallow freeing the folio in gmem, for example, by syncing against
-> FALLOC_FL_PUNCH_HOLE.
-> 
-> So if we can rely on the "gmem" reference to the folio that cannot go away
-> while we do what we do, we should be fine.
-> 
-> <random though>
-> 
-> Meanwhile, I was thinking if we would want to track the references we
-> hand out to "safe" users differently.
-> 
-> Safe references would only be references that would survive a
-> private<->shared conversion, like KVM MMU mappings maybe?
-> 
-> KVM would then have to be thought to return these gmem references
-> differently.
-> 
-> The idea would be to track these "safe" references differently
-> (page->private?) and only allow dropping *our* guest_memfd reference if all
-> these "safe" references are gone. That is, FALLOC_FL_PUNCH_HOLE would also
-> fail if there are any "safe" reference remaining.
-> 
-> <\random though>
-> 
+On Thu, Aug 8, 2024 at 11:11=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> On Thu, Aug 8, 2024 at 2:02=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+> >
+> > On Thu, Aug 8, 2024 at 8:19=E2=80=AFPM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > On Wed, Aug 7, 2024 at 11:23=E2=80=AFAM Suren Baghdasaryan <surenb@go=
+ogle.com> wrote:
+> > > >
+> > > > Add helper functions to speculatively perform operations without
+> > > > read-locking mmap_lock, expecting that mmap_lock will not be
+> > > > write-locked and mm is not modified from under us.
+> > > >
+> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > > Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> > > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > > > ---
+> > >
+> > > This change makes sense and makes mm's seq a bit more useful and
+> > > meaningful. I've also tested it locally with uprobe stress-test, and
+> > > it seems to work great, I haven't run into any problems with a
+> > > multi-hour stress test run so far. Thanks!
+> >
+> > Thanks for testing and feel free to include this patch into your set.
+>
+> Will do!
+>
+> >
+> > I've been thinking about this some more and there is a very unlikely
+> > corner case if between mmap_lock_speculation_start() and
+> > mmap_lock_speculation_end() mmap_lock is write-locked/unlocked so many
+> > times that mm->mm_lock_seq (int) overflows and just happen to reach
+> > the same value as we recorded in mmap_lock_speculation_start(). This
+> > would generate a false positive, which would show up as if the
+> > mmap_lock was never touched. Such overflows are possible for vm_lock
+> > as well (see: https://elixir.bootlin.com/linux/v6.10.3/source/include/l=
+inux/mm_types.h#L688)
+> > but they are not critical because a false result would simply lead to
+> > a retry under mmap_lock. However for your case this would be a
+> > critical issue. This is an extremely low probability scenario but
+> > should we still try to handle it?
+> >
+>
+> No, I think it's fine.
 
-I didn't find a path in filemap where we can grab folio without
-increasing its refcount. I liked the idea of keeping track of a "safe"
-refcount, but I believe there is a small window to race comparing the
-main folio refcount and the "safe" refcount. A vcpu could have
-incremented the main folio refcount and on the way to increment the safe
-refcount. Before that happens, another thread does the comparison and
-sees a mismatch.
+Modern computers don't take *that* long to count to 2^32, even when
+every step involves one or more syscalls. I've seen bugs where, for
+example, a 32-bit refcount is not decremented where it should, making
+it possible to overflow the refcount with 2^32 operations of some
+kind, and those have taken something like 3 hours to trigger in one
+case (https://bugs.chromium.org/p/project-zero/issues/detail?id=3D2478),
+14 hours in another case. Or even cases where, if you have enough RAM,
+you can create 2^32 legitimate references to an object and overflow a
+refcount that way
+(https://bugs.chromium.org/p/project-zero/issues/detail?id=3D809 if you
+had more than 32 GiB of RAM, taking only 25 minutes to overflow the
+32-bit counter - and that is with every step allocating memory).
+So I'd expect 2^32 simple operations that take the mmap lock for
+writing to be faster than 25 minutes on a modern desktop machine.
 
-Thanks,
-Elliot
+So for a reader of some kinda 32-bit sequence count, if it is
+conceivably possible for the reader to take at least maybe a couple
+minutes or so between the sequence count reads (also counting time
+during which the reader is preempted or something like that), there
+could be a problem. At that point in the analysis, if you wanted to
+know whether it's actually exploitable, I guess you'd have to look at
+what kinda context you're running in, and what kinda events can
+interrupt/preempt you (like whether someone can send a sufficiently
+dense flood of IPIs to completely prevent you making forward progress,
+like in https://www.vusec.net/projects/ghostrace/), and for how long
+those things can delay you (maybe including what the pessimal
+scheduler behavior looks like if you're in preemptible context, or how
+long clock interrupts can take to execute when processing a giant pile
+of epoll watches), and so on...
 
+> Similar problems could happen with refcount_t,
+> for instance (it has a logic to have a sticky "has overflown" state,
+> which I believe relies on the fact that we'll never be able to
+> increment refcount 2bln+ times in between some resetting logic).
+> Anyways, I think it's utterly unrealistic and should be considered
+> impossible.
+
+IIRC refcount_t protects against this even in theoretical, fairly
+pessimal scenarios, because the maximum number of tasks you can have
+on Linux is smaller than the number of refcount decrements you'd have
+to do in parallel to bring a pinned refcount back down to 0.
+
+I know this is a weakness of seqcount_t (though last time I checked I
+couldn't find any examples where it seemed like you could actually
+abuse this).
+
+But if you want a counter, and something bad would happen if the
+counter wraps, and you don't have a really strong guarantee that the
+counter won't wrap, I think it's more robust to make it 64-bit. (Or an
+unsigned long and hope there aren't too many people who still run
+32-bit kernels on anything important... though that's not very
+pretty.)
 
