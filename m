@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-279723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5943994C0F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2AFD94C101
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0CC286B54
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:22:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E992893BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FAB190664;
-	Thu,  8 Aug 2024 15:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78441922E2;
+	Thu,  8 Aug 2024 15:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R0GRoiaU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GVzcayA8"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vND9eaTt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NhPF3c/h"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755CA18F2CA;
-	Thu,  8 Aug 2024 15:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF4190682;
+	Thu,  8 Aug 2024 15:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723130505; cv=none; b=RHc5FI1VsJHdQbTaD2lR/20pIfe0cWsfojMTwsvAVjqRXBEj6xFBzGYbGb/bP6Rn+VExckXpce/LedT3Yc9Tt3CVUH3pX+YnMT1v1xD6LuVHLsBUUZfFC9BQ3HkaJfKe+7T82tJ1+bb5nzHtgXTGvXHM90KVPvBV5hLQ6Mw9Ttc=
+	t=1723130509; cv=none; b=bl4BJEfPFVR8a2EC2BrOFQ1UCn3flSjH2dvZyL2ikYoI8UiieUsPq4EbapOTJtq5CwVuOvH3FIFNUoYkwmLCFDAnrlxhPKF5cwpHtczI+hYT/ZGH1Ro2hPRmz5ewY1qGEv5+ey6HzTrADxJhDxoL+t91uQnw1kHnjzmr3UKcUfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723130505; c=relaxed/simple;
-	bh=BjLsQ3L8rwBn8oLeiQjZquKDX2PcqXZcRVPTW1eFqc4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=tkqCgl8CrfMKzpSThZ5uaxADhWHCONOHSeWq8sm5z9AI5sEz42epPf5bKe2/Xr5kQV900vSnQ67UK7HiW7uIaZH68VFQ6ViStJeysNObULTi0GZnLEvjpOrlwRkTHKo9rYDZQ5E8K4SW5ByxlGL9AGcXO95DOYJ/+l7TpbqLS9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R0GRoiaU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GVzcayA8; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1723130509; c=relaxed/simple;
+	bh=txPxRG8pshwfthYCJ5ss03RBcnPbjOJlU2BgGoG2Jn0=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=ZVv96/Z8vv1Ytd1+Et+p338zjqxrrcmR1HK35nHk0+R4tQQyMUKh+PTKKrxdUJ5nFLRsowQX7rVfmBuLD9av+AgWZzHXjMdZkvqkRk7l8Y4nUlaSjsIZJwNU+KtOGEpEmqtwiXr3tmlGeUg/kcX99yyy7GT3IFXXsTNI87ITbR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vND9eaTt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NhPF3c/h; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 08 Aug 2024 15:21:41 -0000
+Date: Thu, 08 Aug 2024 15:21:42 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723130501;
+	s=2020; t=1723130503;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uULYZBwlNQSpLxzA0VrkJtgb8xF2tMjnj2r9LV3xpIk=;
-	b=R0GRoiaUrCycu30PyXHHqmtFZB9KlrTvyWvtok6kdai5ik7zjYfqcED8qx37y1oi9H29Vf
-	WcnOgMzMeKgb5XlxxapvnMLmCymSXHxqnsHIRqC0t8hOvGe1y8x3gKuKl7/04O1IgzKqJo
-	GJPkrlJ4tqeXV+UOdZ8W5TIbrCzREfHq5yZgLz7jfC6Vkxo06jFJdNGRhqx5ecyyjuV7D2
-	Jd2RYBrXqh0ln7FyB/gy7RTiAFs7+nTW4uzNHSXCMaCiTvRtH9xCLaWrdTRFPaWx3xNM0N
-	mpdqtLiKw2Gia3Z+lL3jedxFlgsTRJmyA/yLXXeMSU8Tw6aSPpEcFFFIIZNLvQ==
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=Ey93xj+iwHN45GZtCWrsxQ3ITjCEVkrMGZATONTaLIo=;
+	b=vND9eaTt5UYF5FMwS+9YWR4wb93fQq6phk2GHvjVCyIoynr34oDdaQjX0LcYpkFbtJ0Z0R
+	UArg1I0q8oePAFyKF4CkKus+rDdROGxbutJkQRs8CHsBOnrRWoUHBZIXpqrP2binOPLYxC
+	Iuess8PI+jlmpKKC3zdVsGfT0hM6pIt2PRf2Ftog6V80GJcfxDA35Nb9bO1ZUG+89Srvmh
+	KN5iRT9K3HZwg/sRP1z+aogyDaOkx8oBpYUpKl1LHw5uxmerQlzX4g+G2hu9a9aSsI8VXC
+	Fq5sfF0i+OjpD2RertTEf643epNHGaAAxMsHUwZH9K9LlAEqIamY0TVVG/mhtw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723130501;
+	s=2020e; t=1723130503;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uULYZBwlNQSpLxzA0VrkJtgb8xF2tMjnj2r9LV3xpIk=;
-	b=GVzcayA8pCZjDy0yKxJSbOTlxfBZwSJfJ8hyXpUvvq+JAwootk0uGep+I4CJaa/6n2aKdk
-	uIRi4XMvu9fKi+BQ==
-From: "tip-bot2 for Jiri Slaby (SUSE)" <tip-bot2@linutronix.de>
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=Ey93xj+iwHN45GZtCWrsxQ3ITjCEVkrMGZATONTaLIo=;
+	b=NhPF3c/hI1lllzpiFGZ77SVRIj+G9VWvki39LFgUkPwkU+JCYPJeGMOE/xM+mbrK8QFG4j
+	hwUNSQ4tV+pLzHBA==
+From: tip-bot2 for Marek =?utf-8?q?Beh=C3=BAn?= <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
 Subject:
- [tip: irq/core] genirq/irq_sim: Remove unused irq_sim_work_ctx:: Irq_base
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, x86@kernel.org,
+ [tip: irq/core] irqchip/armada-370-xp: Allow mapping only per-CPU interrupts
+Cc: kabel@kernel.org, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240808104118.430670-1-jirislaby@kernel.org>
-References: <20240808104118.430670-1-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172313050140.2215.11113404153225912181.tip-bot2@tip-bot2>
+Message-ID: <172313050281.2215.6323633711908113154.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     15e46124ec937bb0ab530634dce4550947f53133
-Gitweb:        https://git.kernel.org/tip/15e46124ec937bb0ab530634dce4550947f53133
-Author:        Jiri Slaby (SUSE) <jirislaby@kernel.org>
-AuthorDate:    Thu, 08 Aug 2024 12:41:16 +02:00
+Commit-ID:     d6ca3f440239fb4fa85228ead4c5e8b286645b7e
+Gitweb:        https://git.kernel.org/tip/d6ca3f440239fb4fa85228ead4c5e8b2866=
+45b7e
+Author:        Marek Beh=C3=BAn <kabel@kernel.org>
+AuthorDate:    Wed, 07 Aug 2024 18:41:03 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Thu, 08 Aug 2024 17:15:01 +02:00
 
-genirq/irq_sim: Remove unused irq_sim_work_ctx:: Irq_base
+irqchip/armada-370-xp: Allow mapping only per-CPU interrupts
 
-Since commit 337cbeb2c13e ("genirq/irq_sim: Simplify the API"),
-irq_sim_work_ctx::irq_base is unused. Drop it.
+On platforms where MPIC is not the top-level interrupt controller the
+driver currently only supports handling of the per-CPU interrupts (the
+first 29 interrupts). This is obvious from the code of
+mpic_handle_cascade_irq(), which reads only one cause register.
 
-Found by https://github.com/jirislaby/clang-struct.
+Bound the number of available interrupts in the interrupt domain to 29 for
+these platforms.
 
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+The corresponding device-trees refer only to per-CPU interrupts via MPIC,
+the other interrupts are referred to via GIC.
+
+Signed-off-by: Marek Beh=C3=BAn <kabel@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Link: https://lore.kernel.org/all/20240808104118.430670-1-jirislaby@kernel.org
 
 ---
- kernel/irq/irq_sim.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/irqchip/irq-armada-370-xp.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-index 3d4036d..1a3d483 100644
---- a/kernel/irq/irq_sim.c
-+++ b/kernel/irq/irq_sim.c
-@@ -13,7 +13,6 @@
- 
- struct irq_sim_work_ctx {
- 	struct irq_work		work;
--	int			irq_base;
- 	unsigned int		irq_count;
- 	unsigned long		*pending;
- 	struct irq_domain	*domain;
+diff --git a/drivers/irqchip/irq-armada-370-xp.c b/drivers/irqchip/irq-armada=
+-370-xp.c
+index 36d1bac..4f3f99a 100644
+--- a/drivers/irqchip/irq-armada-370-xp.c
++++ b/drivers/irqchip/irq-armada-370-xp.c
+@@ -848,6 +848,19 @@ static int __init mpic_of_init(struct device_node *node,=
+ struct device_node *par
+ 	for (irq_hw_number_t i =3D 0; i < nr_irqs; i++)
+ 		writel(i, mpic->base + MPIC_INT_CLEAR_ENABLE);
+=20
++	/*
++	 * Initialize mpic->parent_irq before calling any other functions, since
++	 * it is used to distinguish between IPI and non-IPI platforms.
++	 */
++	mpic->parent_irq =3D irq_of_parse_and_map(node, 0);
++
++	/*
++	 * On non-IPI platforms the driver currently supports only the per-CPU
++	 * interrupts (the first 29 interrupts). See mpic_handle_cascade_irq().
++	 */
++	if (!mpic_is_ipi_available(mpic))
++		nr_irqs =3D MPIC_PER_CPU_IRQS_NR;
++
+ 	mpic->domain =3D irq_domain_add_linear(node, nr_irqs, &mpic_irq_ops, mpic);
+ 	if (!mpic->domain) {
+ 		pr_err("%pOF: Unable to add IRQ domain\n", node);
+@@ -856,12 +869,6 @@ static int __init mpic_of_init(struct device_node *node,=
+ struct device_node *par
+=20
+ 	irq_domain_update_bus_token(mpic->domain, DOMAIN_BUS_WIRED);
+=20
+-	/*
+-	 * Initialize mpic->parent_irq before calling any other functions, since
+-	 * it is used to distinguish between IPI and non-IPI platforms.
+-	 */
+-	mpic->parent_irq =3D irq_of_parse_and_map(node, 0);
+-
+ 	/* Setup for the boot CPU */
+ 	mpic_perf_init(mpic);
+ 	mpic_smp_cpu_init(mpic);
 
