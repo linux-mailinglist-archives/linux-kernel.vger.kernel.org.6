@@ -1,118 +1,104 @@
-Return-Path: <linux-kernel+bounces-279883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F4894C2FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:46:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F64D94C303
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38A1E1F212FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:46:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 613361C21D3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9173F190475;
-	Thu,  8 Aug 2024 16:46:25 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E6C19047E;
+	Thu,  8 Aug 2024 16:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="fhNcmvx8"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594E0190067;
-	Thu,  8 Aug 2024 16:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723135585; cv=none; b=WVzJCuI7SaRheQG1DbDVL7MI8nOa437YW2cGVw9d1lwWcZMfPIelqRnfqXW/6YbSFqpPIl+wBeuDa32878U+bNatcbiD8N7T0yEj6zg2hs011zuH78o/R+Zp3buY0J1/nwf3+QnGyDX5S9wR48+vNh/dl4DsMxdo+aZXVX3xgVo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723135585; c=relaxed/simple;
-	bh=07F8n5MvsCYMmCPHHwaeA3RHn8tt9n6stIA7mFgipy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BUULnYR0hOBuI37Ec1iQ/T+NMQ05drKEQ4QFXpsMLGNAImqZzOQv7zAk7+7Lfx9FpfXsv1bjG1jejz3J71xJ39QpHGzqCUjYMFL5XfKXf3Z0rGFUt/454PI1ZwG0UrpETAlN5IVm9Ub89lomvS0jQNmKFORJnThwhnVAGGM5+ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sc6HF-0004jv-7w; Thu, 08 Aug 2024 18:46:13 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Finley Xiao <finley.xiao@rock-chips.com>, Jagan Teki <jagan@edgeble.ai>,
- Elaine Zhang <zhangqing@rock-chips.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: Add power-domain header for RK3576 SoCs
-Date: Thu, 08 Aug 2024 18:46:12 +0200
-Message-ID: <3030655.BQQF58Tnoo@diego>
-In-Reply-To: <0c66dbf97fc5a5adc3831b1ed01e1188@manjaro.org>
-References:
- <20240802151647.294307-1-detlev.casanova@collabora.com>
- <10908017.3WhfQktd6Z@diego> <0c66dbf97fc5a5adc3831b1ed01e1188@manjaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9650518EFD6;
+	Thu,  8 Aug 2024 16:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723135681; cv=pass; b=gv8qipXd/7eE17GxmLbP4gm7o84W4WAH4LzMEEsAf9Stx5dXjhs6OjSQMV9eVBw4brnQUpOHUahqs7Dd8bGjO7it7i4ZSWPCQ+SrhFPLZrg3FV4VmIqa6Npy2/GyQNeu7Zt45+av0aotkuN4XTV+VEo4AlbmbdI2AGD61eSONK8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723135681; c=relaxed/simple;
+	bh=frUZPk+B2vgCA2rLrhBB2n8oaGmWQIXH0lILLOdcisQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i5pLzfVkiEppzrUYU4YPhLgBpwcVLJs/puRMCaO+tGnJt5ze8eZoFLwF9hIGLTpbsRetQtmLR8MoC0HfliVo6HaNBefrT1R5M66U5b/bNr6iXbxdDYlvEoU/thbiEsH862gvt5KQOZyord+0670RzuJ722klMyCND8BzQc63cqQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=fhNcmvx8; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723135666; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=T4CheQP98x1J/GRIK4TVxWW7ISh+nqFhR5HbccTenGP+4+gxyzk5x509DIoaZGG4p39rkYWggev+8ljv8FP32JMKycTH8qX8Xe2IWA6tcyvliu6BEnIEoe4j5Iy3zDTAP4TaT/jsP7S8fEHyrkvuuQo+pmDzf8U8MK6UhVeFJ5g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723135666; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZwmA6pYY7lb1UZC0zMf+XG75uOTiFKSeg5YeTK0yBSM=; 
+	b=IIcJUgHqx2e53e5wNkzRlSRN9aksWSaxYCLNJ+RzorbWmlNrPHk1PEC0ppCFzXc3piX6Hm6xF7doUXgGrg5r6qTJijTIUQM1PpBQYag+lWbMHKuIiAWVF2Nr749CXpnG5qgeBOW6wfZy45f8XQJuTOG/7XHeOX8GbT4XnFoUCwg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723135666;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=ZwmA6pYY7lb1UZC0zMf+XG75uOTiFKSeg5YeTK0yBSM=;
+	b=fhNcmvx8xApl/RsaHpwA5L2ZzJjDfOX2FWVSwJtmUBNipDR5hV0uEHgKq05kTsdb
+	+91n2EmJvHxloxwaKw/1tblAYwiVomzzgV4SD0B/YQAPeSfH50di4LkR3OMRm4jpoCb
+	Lj0Ct9rx6NvILd13gNjRg5wBpRg0cQVNv+b75If4=
+Received: by mx.zohomail.com with SMTPS id 1723135664294528.0946501054501;
+	Thu, 8 Aug 2024 09:47:44 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH v2 0/3] Add dw_mmc support for rk3576
+Date: Thu,  8 Aug 2024 12:47:14 -0400
+Message-ID: <20240808164900.81871-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Am Donnerstag, 8. August 2024, 18:43:42 CEST schrieb Dragan Simic:
-> Hello Heiko,
->=20
-> On 2024-08-08 09:54, Heiko St=FCbner wrote:
-> > Am Dienstag, 6. August 2024, 18:34:41 CEST schrieb Detlev Casanova:
-> >> On Sunday, 4 August 2024 05:56:39 EDT Krzysztof Kozlowski wrote:
-> >> > On 02/08/2024 17:14, Detlev Casanova wrote:
-> >> > > From: Finley Xiao <finley.xiao@rock-chips.com>
-> >> > >
-> >> > > Define power domain IDs as described in the TRM.
-> >> >
-> >> > Please use subject prefixes matching the subsystem. You can get them=
- for
-> >> > example with `git log --oneline -- DIRECTORY_OR_FILE` on the directo=
-ry
-> >> > your patch is touching. For bindings, the preferred subjects are
-> >> > explained here:
-> >> > https://www.kernel.org/doc/html/latest/devicetree/bindings/submittin=
-g-patche
-> >> > s.html#i-for-patch-submitters
-> >> > > Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> >> > > [reword]
-> >> > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> >> > > ---
-> >> > >
-> >> > >  include/dt-bindings/power/rk3576-power.h | 30 +++++++++++++++++++=
-+++++
-> >> > >  1 file changed, 30 insertions(+)
-> >> > >  create mode 100644 include/dt-bindings/power/rk3576-power.h
-> >> >
-> >> > This is part of bindings.
-> >> >
-> >> > > diff --git a/include/dt-bindings/power/rk3576-power.h
-> >> > > b/include/dt-bindings/power/rk3576-power.h
-> >> > Missing vendor prefix. This should be named after compatible.
-> >>=20
-> >> Looks like all other rockchip power bindings use the=20
-> >> include/dt-bindings/
-> >> power/rkXXXX.h format. Should I keep that way ?
-> >=20
-> > there is also rockchip,rv1126-power.h , so please follow Krzysztof's
-> > suggestion. Older header namings need to stay the same of course
-> > but that shouldn't keep us from updating naming schemes to better
-> > work in new additions.
->=20
-> Actually, why don't we rename the old headers to follow the new naming=20
-> rules?
-> Is there something preventing us from doing that, which I'm missing?
+The SD card controller on the rk3576 SoC uses a new tuning version that is
+capable of using pre-boot tuning information.
 
-yes, the headers are _part_ of the actual devicetree-binding.
-So you have out of tree users in the BSDs or whereever else.
+Also, it stores the phase settings into the dw_mmc controller, so the code
+has to be adapted to implement that.
 
+Changes since v1:
+- Renamed use-v2-tuning to v2-tuning
+- Rewrite v2-tuning description as the hardware feature
 
+Detlev Casanova (1):
+  dt-bindings: mmc: Add support for rk3576 dw-mshc
+
+Shawn Lin (2):
+  mmc: dw_mmc-rockchip: Add v2 tuning support
+  mmc: dw_mmc-rockchip: Add internal phase support
+
+ .../bindings/mmc/rockchip-dw-mshc.yaml        |   7 +
+ drivers/mmc/host/dw_mmc-rockchip.c            | 223 +++++++++++++++++-
+ 2 files changed, 221 insertions(+), 9 deletions(-)
+
+-- 
+2.46.0
 
 
