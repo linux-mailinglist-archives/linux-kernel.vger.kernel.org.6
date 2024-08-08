@@ -1,189 +1,125 @@
-Return-Path: <linux-kernel+bounces-279411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A23E994BCFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:09:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5CE894BCFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4871F22FCC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:09:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07541F22470
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C7A18C32B;
-	Thu,  8 Aug 2024 12:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="josGdWAy"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2064.outbound.protection.outlook.com [40.92.103.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C200818C33F;
+	Thu,  8 Aug 2024 12:10:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D563E18C32C;
-	Thu,  8 Aug 2024 12:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723118990; cv=fail; b=YkrnA0RM5wIerrB1M7PNtktk/f2uyRcFfLCEmuIviMikKtiKan8L3KXNRT/3HVGucfjdQDMhvAng7Dorgo0yb2A64O0ESQVAIN9Xpfqwn2BoErXHRMKnj3QJt9s0E4TxXFhFx9YOfh5gznlZ27IMpiAzyRjNBReOTuYysHEcOTY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723118990; c=relaxed/simple;
-	bh=q2zbI6iA4WSAgEi8Mnhut1ZJDb4ZdB1DAdsFrr6ISB8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EOhqE+YSJs+atvuVNLvJ6h0IK77rVIN3d9s6uEo/lJuVYWqW96GMbdhEo8BVxFquxIJMx2wNjCp3HcYrpSX1RuqU5B5pEiog8I/bG3zGHwOks6fTlkPeqNPNYK2zM3PKKqX1BGxFvTAFcjADx8eIRkK5qvq3EcfEtP0gnm+kENI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=josGdWAy; arc=fail smtp.client-ip=40.92.103.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LK1Ee+mWv2GxyaB6mwFQU54L/Gv88ZP1I0Cc+fwWoxsRdQ57/yKSVXBhRWnu1Dlt2iawWnXc9vUs+TFO+uLNj5fjOQ7c561W2T3zKieBSQipbfUD3hIfDdUb78zgcyJDHzcqh2DtM5A+Qm33iSTPfjrJCsr0nJOjzpRUwXYVVarVaAzGN8ETl9xBnyIYGjtWDKqSEDFIedqc10Eo8kawG+7YMQK/65wH6Ys+XybEPIvaj7HfRjoluMRCHpG9fnjHgA17J+/1AGKIHkuIKMlAn8888usyK6juC1qThvdEvoRwBQ1z3l9zJ+kwIYqlZ/Jf9K5UeS5/nJwdtnqwpVMNXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XbtXp3cnpQpbYNXYGShy2lxXGof4j5KkulzUYghWbSI=;
- b=dAuNqWXFVl7EPcdWYiFBIR1fDwa8dbil8aw7IKtC3TTcxFOUVlKDthLyo0eq3C4VjIXw22p1rDT15AzUIKHSfqade1cF7Pse5EIK8CO1wkWT+/8sBqxruXBjAt+g2RK5IskfDeVVDA0ICbKsSPjEvt+npY85v9WMNNrL7JaDX5+jtVZ2FQJWWZiiooLx0V9cTj2eaZ/6lUGhUFxcf5+whk9PYTpVb/dJF1pP6zQ8GzF1JmhPdJA2fyrnduOCzgTCRNDyeyAn/ZhAo12j/1IGUQroSFTPWTyFA/5BSnQ6LBSLIA41xBIX/7GLJRtnAKrsw4TMQ9CZVk9XTEZxcPl/Yg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XbtXp3cnpQpbYNXYGShy2lxXGof4j5KkulzUYghWbSI=;
- b=josGdWAy9ICYh7zH8d6RhQbRrzn4wY17xC9apMT+njbVEnReqDlF3n4/qAHubEIi3taBZmC/a1KFI+b8fPX1XY6HNWDxlb2Uc5kEBaR2JcNRxyDik37ZnHv4NpXbg+jqI1VvdUyGC0clsGtPWy6+tKxPILm3ezhiUZdT/cv/B6qeFZ+bOG19gZy9mnGyUbkryo5RNyqIfQU34xdZv6CD9y2Yc+mHw3of/mmb2A+ZTkWV1HrGHIN62ewWNj5EFNkOjSArDS5HlNGzQJzgJV0IijqhXrksXI/HsM1puI8Rk8YoFol/vmbFlU+Z39UvW2c/o6Xj8T2DjfsZnydtlxip/w==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN2P287MB0723.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:fe::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.13; Thu, 8 Aug 2024 12:09:42 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
- 12:09:42 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
-CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: [PATCH RESEND v2 4/9] HID: multitouch: support getting the tip state
- from HID_DG_TOUCH fields 
-Thread-Topic: [PATCH RESEND v2 4/9] HID: multitouch: support getting the tip
- state from HID_DG_TOUCH fields 
-Thread-Index: AQHa6YvZBfM0fkvEq0WSGasDv2LTRQ==
-Date: Thu, 8 Aug 2024 12:09:42 +0000
-Message-ID: <8495C8A9-5B99-45A8-95CB-623682BF8982@live.com>
-References: <752D8EEA-EE3B-4854-9B5E-F412AFA20048@live.com>
-In-Reply-To: <752D8EEA-EE3B-4854-9B5E-F412AFA20048@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn: [PrMlMro3hKQmDV4s6o8FXUQDPyBCKyPtFZ1HHhXgtv1hZ5zHdroVD2s07llcxw4t]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN2P287MB0723:EE_
-x-ms-office365-filtering-correlation-id: 505764c8-5f3e-443f-f2cb-08dcb7a2fc67
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|15080799003|8060799006|19110799003|102099032|3412199025|440099028;
-x-microsoft-antispam-message-info:
- noS7ZKZ/xI+7pPG/RL+UUgygnnrmF+odQqqX5boOyxcyZM0CwAVeODtAPwSXdl4tho+hM17Tj5KRaOv1pU+Pn3t0yHT7/mHug6+9YfgzNTthF0Z48Jm3l2qNnDxIFCfK/C2QFph3IbgjPhAuQLV3Z+DLEeU4NFYxxAtiXN0gnGsm6cz04fCDKE6L5ONWpk7CjyG3KmLfI0DYENROjLyWPKgwMTr/E3GTpvfJubzhSxkCJrMJrqXkqWMsHcauBGVSzAPBbjTbZFtz1k/ovLpfUmxt9+quZK76xPtSX7D6TfdtfDD/UQxkbL6HDGAogGU9Fr27Q6jqK12X2mNDlccael00ODjBoTzLl6ulXv7MIHcTI4MZbMbKtb6PVx+Wi7NnJX/N1YmBcfZyvqAQGIHGguf1Q7yqNfUiCpV9d9CsNZjwk17ls2fv+j9LzknEqXkxSe+Fhao/tXzdpcKwBqkM7lfQVu2wbcfQ1txnKfbI+7Jc+OD1TmGhPRJkJAGhV2tANuUPT3Tj6m+eLDkNnLF98hNLKw8rEzT01gLbjsLHNVMQwciXph31M0C5rIn6disHJPaOz6x9oTRQm411AjD9O51MxXbTtvHw9VqQAdI9a/jg/YZLxGLXkWtwjBL6ZyqMWOdviEJ2F++2/6gUxgfVt40qUwLfFHNsuzkzN61Djl94XJrhUri9RgxYV9Fxoqcg
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?ReV8GGuSSob3x5HTe4f++FkfTzZy9HrfHNO00Lb5swHNgrXu3MiB61i+KILx?=
- =?us-ascii?Q?hQQ2qllBiLU3LgwkYF8FMw6BcbnZUjJ2mzGQZwetQNx5+w+TNgrw6Z6oUcyv?=
- =?us-ascii?Q?sS4bXBaYUU41pcIGDAy0BUgaIkk7SAuD96Q1ZafF1La1F74HlW8mDrDBu89r?=
- =?us-ascii?Q?ATi22vkP7L4gvGgOhH68vCWuuIW71yoODToIs6zkIbPgOfqt7W6f/ylqdErz?=
- =?us-ascii?Q?6Ihh50VnLs7NCy4YT07qIFvXhnn5XJUcIbO3vuqmL8Todn7TwGOk6xFtJdn3?=
- =?us-ascii?Q?4btKNCceXOL3pLW2WbtVfzZLzKKu0sZfAYYNOwnRSfgkYBr+mGS8YYqTUuK/?=
- =?us-ascii?Q?sKuI3OLym+bL5HPDahJqKS80GrebckM7FH1V1Nf52jVWG3Kqpp/o21BgbQWK?=
- =?us-ascii?Q?3LRJEnGfG/UTS4kyGCnq9MR/6a4+g6wKtuKFy2zjzY7dsr9bFYACGB2AiNNY?=
- =?us-ascii?Q?aCBgKDW+Z4JzXMHyUrUnUOp0L6ikpuXRAbU3OA9TfNAYEeOLvkHdw6wvy3IZ?=
- =?us-ascii?Q?9RdmbVUkN3ks4EZQ8h86dVERlh8Qkfl5x3uEAENP7eIPPlL+zUQqZF0uVvwN?=
- =?us-ascii?Q?KdQcHb6JkiiT1CgFQjoUBuAFfZQ6FUwhIQLo7Eb5+DJ90DvLsJLOCAW7JW7E?=
- =?us-ascii?Q?HPqUV+6uT3/y4vRYtkuFv0+QfPkwXgX5aXSiSV3dLMIInqanasxMS3c9A6xE?=
- =?us-ascii?Q?8llZRySy+Jrtk2k6+KIExfBH2O7CpHohGxt0Oo56YXg0VBNce3/4OW2Reafx?=
- =?us-ascii?Q?oAls0cnIRXbRIsjmSKNibGDJMSLUG5LKtP6iNOG3BOCXs/XS0lnbuZYED+2l?=
- =?us-ascii?Q?wQCw3zBMtd3WBzTrGlqMOGKuXPt+p6RlT6gMpSmx+J1GMY6HHQM0W/gRcLs6?=
- =?us-ascii?Q?5NhZ4ejMpxF37BH/zvbjhjt/+MiVIzJ+GWfbFZdKsCPlTDRx2zEMzJKntHwx?=
- =?us-ascii?Q?NEBtAHK6P3n7e8T4fG/MEubUXJGOuvcfdwCD7jVs/+I47Yi9FtxeuwFJPFCw?=
- =?us-ascii?Q?8tJQnk+yPlo7TORZ2YlHeEwYukeIxD8qxko0GpxZavwxavYD8ksNKxNOxjcn?=
- =?us-ascii?Q?9LX6oOJFGl8UOuXNN9upVI9nv/MY+I653SYbs/0Sn0pvKR9W0h7uVrpZbktG?=
- =?us-ascii?Q?9PIdPTj+CTYpSGW5lwM/U1kjFPkpkdqysoxYeoOwQQXGLs7RB60heAn4FY+k?=
- =?us-ascii?Q?KGtJTHgrheaLMlo+wk90pNqQLnSsJoafSZSLUkE+NMNxjbIpd/UHy2BLoO7x?=
- =?us-ascii?Q?oAuJIZFLkenQ8zA3lBSFEn9DcMfwd7vHX0/dNdG/QowlG+ajxbjRTvBGic9i?=
- =?us-ascii?Q?4yScCCMo+mlS001EsmhJaiuE?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <90666BC1D9A8D24FA162A5B3F4554219@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C281487C8
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723119005; cv=none; b=h7bAhctZdScE1TPQLDmK3T5ectdEjWxb+6AhWrZF1TNZ/o91i+j/C1nXZHux6tgy2FZShT3rFi74T8NGmnkZjuNFR8zqKZOrHDmB+ErHS9WFEYV2dBioLLVaZdcal1Nd/vZqRbYyGlb3AB384U4/MDmxcq+zzMrfU+XszODxF4Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723119005; c=relaxed/simple;
+	bh=JkQOm0qGoBj3Z+AvWG7mexIBAE86z1648rdwuuetY30=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=J1f7zIrI55c2wgZ6L14Cnb8x3h1akZjvNrhAcQEh9FRN+4u+pG2PnsOHTciEAxeRo+xAEx7cVcx7G8G1J9loWTSJJmqsZDQSaJxjKqe7faXwJkPKGvYOnEbTi1kYMymvcLZArXYYq3ZAHPcDI1iT2HDSdp6s/coZS8qSfx4tDQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39b2938b171so11118935ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 05:10:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723119003; x=1723723803;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kgqbS8G8qpIT6NUN+dcieZdDFQf9OYrbQahCCrsc0bA=;
+        b=wEq/IxUhN+cTXPvur3mh1Mvrt3U5rWmzX3/B9YFyfH46/2MhZtxWRhEX5d0xYdKAq4
+         zjYE2UdTI0xabXUBYtpq8f5nUzkc6NzAghaS3GYGN5O1yAVUFSZSVzt+gGpn1JRCk8+l
+         ujKTUES2cJelRfMlf1t+4ABQR4NLFWGJT4O6OQL7yDlC7j4MyfJXhAiqPqfoTUgLIbE1
+         6JsRw12Bgzyou2uKksxIur2r7pGm6CIHzWYv99fCJcPytq7KZTTYnl7KwAFdP5T599rl
+         NzWDyE6mk/z4yDPp2DFZgA2SQua0TlTZNhhMyZhPDltYm+sDPebzOVReInp+Gw8F9pCY
+         P/Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIn2aPFmEKZqOTdRVrkc2mGpEz1n65B+/V4wfpVOp54KBxPDxl/S1TUqDJ9iSRxQbppWRa5D45AGHAWbytHg+D87D7x3d5Nn1VozGh
+X-Gm-Message-State: AOJu0YwYO2mYcGOeM4f1kq0rybMoLwp6Zd/6s0tYSTlKVY015bttmr2V
+	tCGeWXZGiaSYKAgEo067GHlJs0zqztr4xc+UW+uShNlPigK3L2fXllSf+6nljE/kaXAfs1jN27I
+	IXDwUGCxoclTtuFhvHD4YvQSIfYZyOKGn+dJ5m9vTnDTARJmsG6FfNrY=
+X-Google-Smtp-Source: AGHT+IGv36BPv4s2C9acpU+RW23Juan+WqKVb7K5/43l4JOcRouBUubaj464GZ1N9L6VKEys9R2Ia2gdvVZp9koZj2BZJM0sf78r
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 505764c8-5f3e-443f-f2cb-08dcb7a2fc67
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 12:09:42.7005
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0723
+X-Received: by 2002:a05:6e02:1aa2:b0:376:44f6:a998 with SMTP id
+ e9e14a558f8ab-39b5ed7488fmr1344245ab.5.1723119002904; Thu, 08 Aug 2024
+ 05:10:02 -0700 (PDT)
+Date: Thu, 08 Aug 2024 05:10:02 -0700
+In-Reply-To: <tencent_F967B76846D6B362E37D496623ACA4433705@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000012f9fd061f2ae8d9@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Kerem Karabay <kekrby@gmail.com>
+Hello,
 
-This is necessary on Apple Touch Bars, where the tip state is contained
-in fields with the HID_DG_TOUCH usage. This feature is gated by a quirk
-in order to prevent breaking other devices, see commit c2ef8f21ea8f
-("HID: multitouch: add support for trackpads").
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in v9fs_begin_writeback
 
-Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/hid-multitouch.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ino: ffff888032f426a0, inode fid list is empty: 1, v9fs_fid_find_inode
+------------[ cut here ]------------
+folio expected an open fid inode->i_ino=1901337
+WARNING: CPU: 0 PID: 65 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
+WARNING: CPU: 0 PID: 65 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
+Modules linked in:
+CPU: 0 UID: 0 PID: 65 Comm: kworker/u32:3 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: writeback wb_workfn (flush-9p-76)
+RIP: 0010:v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
+RIP: 0010:v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
+Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 66 48 8b 73 40 48 c7 c7 20 9c 8e 8b e8 f1 49 0d fe 90 <0f> 0b 90 90 e9 62 ff ff ff e8 d2 2a a8 fe e9 51 ff ff ff e8 38 2a
+RSP: 0018:ffffc90000d27480 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff888032f426a0 RCX: ffffffff814cc379
+RDX: ffff88801b4d2440 RSI: ffffffff814cc386 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888030038048
+R13: dffffc0000000000 R14: ffffc90000d27840 R15: ffff888030038298
+FS:  0000000000000000(0000) GS:ffff88806b000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020001000 CR3: 000000002aaca000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ netfs_writepages+0x656/0xde0 fs/netfs/write_issue.c:534
+ do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
+ __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
+ writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
+ wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
+ wb_do_writeback fs/fs-writeback.c:2274 [inline]
+ wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 3e92789ed..571435da5 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -72,6 +72,7 @@ MODULE_LICENSE("GPL");
- #define MT_QUIRK_FORCE_MULTI_INPUT	BIT(20)
- #define MT_QUIRK_DISABLE_WAKEUP		BIT(21)
- #define MT_QUIRK_ORIENTATION_INVERT	BIT(22)
-+#define MT_QUIRK_TOUCH_IS_TIPSTATE	BIT(23)
-=20
- #define MT_INPUTMODE_TOUCHSCREEN	0x02
- #define MT_INPUTMODE_TOUCHPAD		0x03
-@@ -809,6 +810,15 @@ static int mt_touch_input_mapping(struct hid_device *h=
-dev, struct hid_input *hi,
-=20
- 			MT_STORE_FIELD(confidence_state);
- 			return 1;
-+		case HID_DG_TOUCH:
-+			/*
-+			 * Legacy devices use TIPSWITCH and not TOUCH.
-+			 * Let's just ignore this field unless the quirk is set.
-+			 */
-+			if (!(cls->quirks & MT_QUIRK_TOUCH_IS_TIPSTATE))
-+				return -1;
-+
-+			fallthrough;
- 		case HID_DG_TIPSWITCH:
- 			if (field->application !=3D HID_GD_SYSTEM_MULTIAXIS)
- 				input_set_capability(hi->input,
-@@ -872,10 +882,6 @@ static int mt_touch_input_mapping(struct hid_device *h=
-dev, struct hid_input *hi,
- 		case HID_DG_CONTACTMAX:
- 			/* contact max are global to the report */
- 			return -1;
--		case HID_DG_TOUCH:
--			/* Legacy devices use TIPSWITCH and not TOUCH.
--			 * Let's just ignore this field. */
--			return -1;
- 		}
- 		/* let hid-input decide for the others */
- 		return 0;
---=20
-2.39.3 (Apple Git-146)
+
+Tested on:
+
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=161d9755980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11272e5d980000
 
 
