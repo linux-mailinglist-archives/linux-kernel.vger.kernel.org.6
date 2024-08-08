@@ -1,221 +1,515 @@
-Return-Path: <linux-kernel+bounces-279379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74D394BC90
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:53:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6627294BC94
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6917AB2161A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:53:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B51542865F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA46D18C327;
-	Thu,  8 Aug 2024 11:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0DA18C33B;
+	Thu,  8 Aug 2024 11:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="sqWnBlK6"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2025.outbound.protection.outlook.com [40.92.103.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="ovBnGy4Q"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5634E189BB3;
-	Thu,  8 Aug 2024 11:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723118023; cv=fail; b=DsQUBLaSAOG4+/NFVSLnw3W5ry7dI12uzRcKjz5uBQ7N+yxbb1jl9IZOUIgnzbUuzt+v5i/5KZrqk4BudRc4iJwE4rkw7czgST8/rBQzvwot3aCgf8k9UIirr/sYf6qyWkXuDs/9z6Qda4WrCzaL/ZAXmi++wqRNqsAxendswYg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723118023; c=relaxed/simple;
-	bh=F+AkPGqEPP23gsq8Usgg7+g6TTGut752b7lb2nqj/sw=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=K7j7dG1+F3UbaZxYROwxeQkqzGKThntF47QZ5M2XT+xM8e34StNJmMr2gdr4/P4gh3wX+7M4bZ2XDPqwwEwO1mBOEQtfJBf93UrawZ9ZPqSD+hg+zGFj5CXFAF5uvO8CzPAQY8EopzU9hzRfeR06yTd2kkUnRgNyY/5z6yuqY44=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=sqWnBlK6; arc=fail smtp.client-ip=40.92.103.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UGLWCezbyoWvll4X5yAZO6Hli4Y4R+Ja7galbyjlf9ewTMwMweq6N1b+4RYGB+A7jURqATtsHyAj2nDEpet+0HL4oSIjcrl0g23/h9qVv/fBX+5OtKW1KP7mbwVJaEYCPVnPdz7EahqR+WmUolq/C1OuExueWTmyD6O3BTzRI+r94/YKm53LMvdYR9gbHTNJxwqIxDdyCjUZfSoLbar0t74CRb+kWlOJ87bPuxmZFb9JKtXW8OHn4M78VgyMViWMd+xB714m5ILrJG9lDckUi4JycwtNOSJtTZrgXeXsC4rN2k4NheyFYu368sYfL842aZtMMAUwwfClBf5B1W89tg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dOUbGrF+b2BonyYuam42yF6r12JT1Gq3gTCmyY1qiE0=;
- b=nsNerIN2xlxanNe2Liziig3iHVzvbEafCgeu+TsJ+HSN8X1aD3wZqQfe86K5ijoZbYiPwGqSds8dX3vXNKribRICELehogmzWvlNhBTD/EwFGmEHobKocR0rrhHwPxnrJrZPiBeipuiZa9cJSd7kPqNhf2vm/pMAYMNtb5/1jT1wAcbSzYlpLn6wehzLJugs1L5SQ9QUAinJM3biKlx2BPrbURmAtKZHeH3psesw+BFYdYuniVxeSWpT1DESqABAl+sJ/e3R/TjxWEPjUwVde/iAIqfV2hJ99ltaVs1AOGrV3jTALL+MCd/afJTMG2yOAFTatAyHwV8KL2nY4w0E4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dOUbGrF+b2BonyYuam42yF6r12JT1Gq3gTCmyY1qiE0=;
- b=sqWnBlK6GI7hjOMr94SrvzP7TRPSYcuJhaQbkKhkGpsv7v01rXmdC99BHJ+IkO+jC9BX3g0vT/B2AhoswwYlfqD6s+sYALcVhcfeBlU3TYCxcaybDVKh6VxI8QFx9RiRTeldLGbIOrhJ4Gc+mtPJpeVe+a6C46pl8WtksJwRkW89HJ5alqMUGPDTDH0p+Z3Gj7sHgTN4OYLn0yo9369OWSJzT0u3u1CqWF2OL3lD3LRGK+42rF0EYvtEt872PNsVafZ6J5X5O2YqDXnz0Opp2exWT+hiL2OMjNgxPIwryoZj+fKCgt0/HIQbBo7RLUnLF0vtc8eIti/O7aWUHA18Eg==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- MA0P287MB0680.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:11b::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.14; Thu, 8 Aug 2024 11:53:35 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
- 11:53:35 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
-CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: [PATCH v2 0/9] Touch Bar support for T2 Macs
-Thread-Topic: [PATCH v2 0/9] Touch Bar support for T2 Macs
-Thread-Index: AQHa6YmZuOYCRPgde0qoHgv/QhoGCA==
-Date: Thu, 8 Aug 2024 11:53:34 +0000
-Message-ID: <9550ADFD-0534-471D-94B4-EF370943CF80@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [4LmLyMJE2utlNXPODHR4wESMg47r1GDc5m8jSgx3HZWKZprDYULfwU5fHC9alg6feNFRl0eoJLI=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB0680:EE_
-x-ms-office365-filtering-correlation-id: 43b747ca-43a5-4e70-5e15-08dcb7a0bb94
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799003|19110799003|8060799006|461199028|1602099012|440099028|3412199025|4302099013|102099032;
-x-microsoft-antispam-message-info:
- /kHZ83a8q7L1gao5i0qdL/wVzpt85IXZwb5JAEzscdDBePei+3suWI8G+QwJ5dG0l76ok1UlsxOWP5yJy2sbE481MhlAyE1f9zcPUS359CURk9vqoPJh0N0KxtscZNqv+t3ZKDzX87uBHfEJaT1dl3YGY1Xf9JyzIGi2KVsBtKhBPCthGmiHpjuRgz1EIkdWHKfYhQMsRSFzoPWtclahY4ZonIy4XUJkDeqa8msC9cOpND6OO/aVex3ncWv4oxD8F1qnford7skozgobV5HKaLbZwzzISjxmkpDvybkMOIIUn0zuTFfNZyiEeGajgzHOn8Er4tFCDOGRMkfJYkflSFN3aJ0VGXgV9Oy/WEuJ0+nW5j3UpRekrVK9AR3WNWZbxE3WzZbAih6Y6wgtTize2Snz5tQ8ddJK046+3U2qdWyeD6sIVmmR2/L8QI7RsOHRQfsmbPjc1RZiBQJI13kFj6UeiRTyKHBzvD3cDLPaizlgYyTTAojEIh5emP7RsqP/w/LFOTg0fYwAgc3MUEUhb/D5PKFLfJzHWqblQY5sa1tJmCyFLHGAwFx62rn0jSyhzy61o2zlVXy/lLe772DXuKtDXNfRqgB2m4j1z2m1IX0RlLEUnyJoYZl+tCncAuSmGngPJ09KMabri2U1qkpA+Q4W/gksPX1vo7aRUPARJVKgtStOtyiEfHp83Xm5qHRasgQnWdoZlYOUmBcoHt1CtjvgMvPlfSiT2tiTaOZTQN9uWA94njyabMj0YBfPYMXlYdvi+j9aUiIa3A+n9ZPuCvoh1Jdk5R6w4KSBdFVQIuk=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?P1EBYnHYHIyZo0BL4/EYtV9y0dsBXXlZP1gnmiFhh4QsilY1Wlhir7S8jRgV?=
- =?us-ascii?Q?InA/JmSno1JaEUaG0SSMzaicKJimiFnPWXyL4l0iNK1406Dx05Yq48tprv3Y?=
- =?us-ascii?Q?XMae2L9BqdJ/U8tjM0q0xTgKi2IlqK8CSVWBoWisl4fdc7OFKpuI5kCc742W?=
- =?us-ascii?Q?0mXMhtofsjfe0X3+PvUhb+2tFKv0OfyDoosVStDWV74nOT/dPWYD+e78W5QJ?=
- =?us-ascii?Q?Inlnhg/+0/0g7/e5wQ3AGnML1aCwzMxxdkIK3AcbHi0m+4LY+WLTr2OtNoHV?=
- =?us-ascii?Q?X4/aodXIFONlOXt8TDzHO8oUqGZjCA+KIO8Eyg/QVUd1sNCQxuFfc/9+o1Dq?=
- =?us-ascii?Q?gAWnTR4jsZBv3AKNicd2bT3w92SksGIBZVNSUoRe6cl8cwXrEaFZskSy+qfT?=
- =?us-ascii?Q?ifyaXptrbefPkyeAgBsPDrDWl1Njl2F5UqcWkL1so6AMCWqxXBEGS7G6ZwuX?=
- =?us-ascii?Q?gWhKttRFgIaAAG0IBKUfJ3vri4ToD8KoU341PuSjt45jOSVj0B08Qry4xQYU?=
- =?us-ascii?Q?zUGGNViCjXkTitOpYRMxd9p5YjJqLJf7sOs7DMqHZ9O1tky7xzc6zDcNrI/O?=
- =?us-ascii?Q?y3H1s8RRkFYzOy26SKNOuG5VDxmtqVcDImTCfBwSf4/3LlmSLCHXhoDYT8cw?=
- =?us-ascii?Q?gjV0YnOB+oY1JcZlegYFsd9kGqw/SbXh+a3B6UzOHjSbc2OXnR/G9VbtogNb?=
- =?us-ascii?Q?0OMj7cnkQWNJY+8GOrii9dILGiAHDxPZHXWdIm6FqkfmcGUeZmw/PJxXicNf?=
- =?us-ascii?Q?d3HK0ZllahpxsbH+/fnglx7E00TLcrpdRmxHcd9e6quZ3x1UJk8g9M5qbG7E?=
- =?us-ascii?Q?RjNxEXDmJi72vB3vU4oZlngdUZyQBAAPy9MY6f6yzDUxKva+FbQ7kCAtbuGh?=
- =?us-ascii?Q?BpooDbjm36z/Tmc/5NrpVJVb4pM7ZVWEcYLdy0cd7lqalVFwvOKX6SJN2Q2h?=
- =?us-ascii?Q?rTWnDvR8MOXTZfV+vOlfKzCsxnFOa3X5uPAH4Fv8ku3T92D4it1tMyE6xyfV?=
- =?us-ascii?Q?Xj6DZL9zH/fO6X+Izi8ThmbshQBiwpiu3n12FFNL0IlQKqi1lkKvc27366bj?=
- =?us-ascii?Q?h3s6THKAvTQPih1DNNGIno89GOQCGbOWaw6UhdHcydZCHkM3tHssQct1ReIu?=
- =?us-ascii?Q?rZO1dV6tuKsdUwN3PZwzWqDbrftXZwI3bdt1hMPuaULjmOQMTd44t1b4iyum?=
- =?us-ascii?Q?fIYYUNCYr5Fp/W9XdA8rTL3X/KhSGkGfoX2tx/3Y9SqEaztH3dVLSrWfvFqp?=
- =?us-ascii?Q?L38q+ZvuLg5UK++/AzsMkG8Zll75+v3ygwcPz9wgpjWlfSIgmgqZKvH0ECBw?=
- =?us-ascii?Q?6nZlv//zX6VdyzId2kIm4bn1?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C7747DA70498114FAB273C69809F953F@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66CD189BB6
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723118045; cv=none; b=n6+ERS3RAtsZE1TNvAfmUPV1FSgrTZ/Phv+AbxkQNSHU3qI9QaFIZVHFoP9Z/zAlqspn4hDbItKo26OLfm1pkh1a9Y9o2vILmVChLcwJ2Buagyee964cNDwu0o7wksbje3iMo3PwESBh+h1oZivAS0shmwmCiBVuBL5sd/ITnCY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723118045; c=relaxed/simple;
+	bh=qORwyzZNVy+LEfLQUhKyUT6dDm8Pd+lt5k8zjI+Wak0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=shzuVbhZGFOoWTykPOnGDhpuwzIPeuFPfoWBXfYUc3tFPVTwing3TlWVl5gBLBwWrgTg9FYS+DueUOMToj/uQIcA+1UImlNisZOvHA2Mlp2EXhRUezVUCQDZthbfipllHFauoHk2kJNpPXtOnzoRVybqIC1MopD++Dex8wsHtOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=ovBnGy4Q; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-368380828d6so471654f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 04:54:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1723118041; x=1723722841; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cWpv6IdB+ZSBfOKheCIDI4o/Rhh1iSvNP7j21IpVm2Y=;
+        b=ovBnGy4QfvxjOSGjItaR+QtNT+VMNsDk93owP/b/KxRxIklaImK2lzC62Gsa7PbK6j
+         SCugvA4h+3cuqFSRKCP6sSKSyijXm9FfArVQfGWdJaW0BWOm2yUMNhrl/wzJbX2Z7ajB
+         zd162fFirG9k/2nFj2fbOcAwPOXiLQZn+7bhJip1vEi5sBRkZ9XX8p6cgebhtjdkDjL1
+         AcMB4CHc2+hYfAAI/vnw43NpsvsUnuwxr6+hySR4WkaCaoi5EVMRY4dDYIRREywICYlS
+         Ozktk5qvP7Ghxe7s5Zjmig4Y7tzdYP58Vf3JbtDmt4SMBXMkgsNRWIWzX7+o9lEWbXVb
+         mLxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723118041; x=1723722841;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cWpv6IdB+ZSBfOKheCIDI4o/Rhh1iSvNP7j21IpVm2Y=;
+        b=jBR4rgz665UzBxMTthBhqpTfYPBzGJCliwnS8+yybxiQm40ep6gWL8N4bnlu1Ror/l
+         bOYHXKrc2yOLPPAclPcuWqfew/C+IzktrGJtII4n36wcPQ9W+hvcH5MYduNk57BtTXyh
+         lkS53XG3Uf1Meczco8SW07E3/YQQcp+dNsKpsXTgudoQxjZj9ZzH61hxVmc1lThbWgtm
+         mo7C6JErCuRNvXbrx6DLImXT6eU2tRRrQ7aJQkDi/LSWZqIHJkgWH4cYNvahyVjS7Tge
+         PXXic9sJLGYZ4KbdjXxE/AbMEjBunlg9wEjSLMLnDb4DJ1Kan7BF6bSj75xln9WNZmUZ
+         f5hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX88pwdaZPZwLmCFWNxHqxaHqNcu7b33pfnh+OrfDO9neQgnhMpyQtehm1akaq5tZo4JlwcqThxUkNzn9QEL4IWOit+lfHVCum7Bl7A
+X-Gm-Message-State: AOJu0YxXN4MEkYm2PG5C7p1fWaC+Hy8/HylPca3zw0oOmOWXzqnbicR1
+	vOG49yNUYJ8vKS1ZwxeBDrskseP2nw1ZljRilSgKQ7HYBlo8hKXuhtARih1An6M=
+X-Google-Smtp-Source: AGHT+IFbwV1ZgK3TfeFhHW45tmFI2J0yflhWdJBEw/KQZN0Y2AF+Ufz9gZ31TJyAL/7pee3t219e8g==
+X-Received: by 2002:a5d:4f11:0:b0:367:96a0:c4b7 with SMTP id ffacd0b85a97d-36d27582bf5mr1231300f8f.62.1723118035463;
+        Thu, 08 Aug 2024 04:53:55 -0700 (PDT)
+Received: from localhost ([213.235.133.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2718bfb9sm1676883f8f.54.2024.08.08.04.53.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 04:53:54 -0700 (PDT)
+Date: Thu, 8 Aug 2024 13:53:53 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Cc: netdev@vger.kernel.org, vadim.fedorenko@linux.dev, corbet@lwn.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, donald.hunter@gmail.com,
+	anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	intel-wired-lan@lists.osuosl.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Subject: Re: [PATCH net-next v1 1/2] dpll: add Embedded SYNC feature for a pin
+Message-ID: <ZrSx0QRXUXB53UFr@nanopsycho.orion>
+References: <20240808112013.166621-1-arkadiusz.kubalewski@intel.com>
+ <20240808112013.166621-2-arkadiusz.kubalewski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43b747ca-43a5-4e70-5e15-08dcb7a0bb94
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 11:53:34.9416
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB0680
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808112013.166621-2-arkadiusz.kubalewski@intel.com>
 
-Hi Maintainers
+Thu, Aug 08, 2024 at 01:20:12PM CEST, arkadiusz.kubalewski@intel.com wrote:
+>Implement and document new pin attributes for providing Embedded SYNC
+>capabilities to the DPLL subsystem users through a netlink pin-get
+>do/dump messages. Allow the user to set Embedded SYNC frequency with
+>pin-set do netlink message.
+>
+>Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+>Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+>---
+> Documentation/driver-api/dpll.rst     |  21 +++++
+> Documentation/netlink/specs/dpll.yaml |  41 +++++++++
+> drivers/dpll/dpll_netlink.c           | 127 ++++++++++++++++++++++++++
+> drivers/dpll/dpll_nl.c                |   5 +-
+> include/linux/dpll.h                  |  10 ++
+> include/uapi/linux/dpll.h             |  23 +++++
+> 6 files changed, 225 insertions(+), 2 deletions(-)
+>
+>diff --git a/Documentation/driver-api/dpll.rst b/Documentation/driver-api/dpll.rst
+>index ea8d16600e16..d7d091d268a1 100644
+>--- a/Documentation/driver-api/dpll.rst
+>+++ b/Documentation/driver-api/dpll.rst
+>@@ -214,6 +214,27 @@ offset values are fractional with 3-digit decimal places and shell be
+> divided with ``DPLL_PIN_PHASE_OFFSET_DIVIDER`` to get integer part and
+> modulo divided to get fractional part.
+> 
+>+Embedded SYNC
+>+=============
+>+
+>+Device may provide ability to use Embedded SYNC feature. It allows
+>+to embed additional SYNC signal into the base frequency of a pin - a one
+>+special pulse of base frequency signal every time SYNC signal pulse
+>+happens. The user can configure the frequency of Embedded SYNC.
+>+The Embedded SYNC capability is always related to a given base frequency
+>+and HW capabilities. The user is provided a range of embedded sync
+>+frequencies supported, depending on current base frequency configured for
+>+the pin.
+>+
+>+  ========================================= =================================
+>+  ``DPLL_A_PIN_E_SYNC_FREQUENCY``           current embedded SYNC frequency
+>+  ``DPLL_A_PIN_E_SYNC_FREQUENCY_SUPPORTED`` nest available embedded SYNC
+>+                                            frequency ranges
+>+    ``DPLL_A_PIN_FREQUENCY_MIN``            attr minimum value of frequency
+>+    ``DPLL_A_PIN_FREQUENCY_MAX``            attr maximum value of frequency
+>+  ``DPLL_A_PIN_E_SYNC_PULSE``               pulse type of embedded SYNC
+>+  ========================================= =================================
+>+
+> Configuration commands group
+> ============================
+> 
+>diff --git a/Documentation/netlink/specs/dpll.yaml b/Documentation/netlink/specs/dpll.yaml
+>index 94132d30e0e0..0aabf6f1fc2f 100644
+>--- a/Documentation/netlink/specs/dpll.yaml
+>+++ b/Documentation/netlink/specs/dpll.yaml
+>@@ -210,6 +210,25 @@ definitions:
+>       integer part of a measured phase offset value.
+>       Value of (DPLL_A_PHASE_OFFSET % DPLL_PHASE_OFFSET_DIVIDER) is a
+>       fractional part of a measured phase offset value.
+>+  -
+>+    type: enum
+>+    name: pin-e-sync-pulse
+>+    doc: |
+>+      defines possible pulse length ratio between high and low state when
+>+      embedded sync signal occurs on base clock signal frequency
+>+    entries:
+>+      -
+>+        name: none
+>+        doc: embedded sync not enabled
+>+      -
+>+        name: 25-75
+>+        doc: when embedded sync signal occurs 25% of signal's period is in
+>+          high state, 75% of signal's period is in low state
+>+      -
+>+        name: 75-25
 
-The Touch Bars found on x86 Macs support two USB configurations: one
-where the device presents itself as a HID keyboard and can display
-predefined sets of keys, and one where the operating system has full
-control over what is displayed.
+It is very odd to name enums like this.
+Why can't this be:
 
-This patch series adds support for both the configurations.
+    name: e-sync-pulse-ratio
+    type: u32
+    doc: Embedded sync signal ratio. Value of 0 to 100. Defines the high
+    state percentage.
 
-The hid-appletb-bl driver adds support for the backlight of the Touch Bar.
-This enables the user to control the brightness of the Touch Bar from
-userspace. The Touch Bar supports 3 modes here: Max brightness, Dim and Off=
-.
-So, daemons, used to manage Touch Bar can easily manage these modes by writ=
-ing
-to /sys/class/backlight/appletb_backlight/brightness. It is needed by both =
-the
-configurations of the Touch Bar.
+?
 
-The hid-appletb-kbd adds support for the first (predefined keys) configurat=
-ion.
-There are 4 modes here: Esc key only, Fn mode, Media keys and No keys.
-Mode can be changed by writing to /sys/bus/hid/drivers/hid-appletb-kbd/<dev=
->/mode
-This configuration is what Windows uses with the official Apple Bootcamp dr=
-ivers.
 
-Rest patches support the second configuration, where the OS has full contro=
-l
-on what's displayed on the Touch Bar. It is achieved by the patching the
-hid-multitouch driver to add support for touch feedback from the Touch Bar
-and the appletbdrm driver, that displays what we want to on the Touch Bar.
-This configuration is what macOS uses.
+>+        doc: when embedded sync signal occurs 75% of signal's period is in
+>+          high state, 25% of signal's period is in low state
+>+    render-max: true
+> 
+> attribute-sets:
+>   -
+>@@ -345,6 +364,24 @@ attribute-sets:
+>           Value is in PPM (parts per million).
+>           This may be implemented for example for pin of type
+>           PIN_TYPE_SYNCE_ETH_PORT.
+>+      -
+>+        name: e-sync-frequency
+>+        type: u64
+>+        doc: |
+>+          Embedded Sync frequency. If provided a non-zero value, the pin is
 
-The appletbdrm driver is based on the similar driver made for Windows by
-imbushuo [1].
+Why non-zero? Why the attr cannot be omitted instead?
 
-Currently, a daemon named tiny-dfr [2] is being used to display function ke=
-ys
-and media controls using the second configuration for both Apple Silicon an=
-d
-T2 Macs.
 
-A daemon for the first configuration is being developed, but that's a users=
-pace
-thing.
+>+          configured with an embedded sync signal into its base frequency.
+>+      -
+>+        name: e-sync-frequency-supported
+>+        type: nest
+>+        nested-attributes: frequency-range
+>+        doc: |
+>+          If provided a pin is capable of enabling embedded sync frequency
+>+          into it's base frequency signal.
+>+      -
+>+        name: e-sync-pulse
+>+        type: u32
+>+        enum: pin-e-sync-pulse
+>+        doc: Embedded sync signal ratio.
+>   -
+>     name: pin-parent-device
+>     subset-of: pin
+>@@ -510,6 +547,9 @@ operations:
+>             - phase-adjust-max
+>             - phase-adjust
+>             - fractional-frequency-offset
+>+            - e-sync-frequency
+>+            - e-sync-frequency-supported
+>+            - e-sync-pulse
+> 
+>       dump:
+>         request:
+>@@ -536,6 +576,7 @@ operations:
+>             - parent-device
+>             - parent-pin
+>             - phase-adjust
+>+            - e-sync-frequency
+>     -
+>       name: pin-create-ntf
+>       doc: Notification about pin appearing
+>diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
+>index 98e6ad8528d3..5ae2c0adb98e 100644
+>--- a/drivers/dpll/dpll_netlink.c
+>+++ b/drivers/dpll/dpll_netlink.c
+>@@ -342,6 +342,50 @@ dpll_msg_add_pin_freq(struct sk_buff *msg, struct dpll_pin *pin,
+> 	return 0;
+> }
+> 
+>+static int
+>+dpll_msg_add_pin_esync(struct sk_buff *msg, struct dpll_pin *pin,
 
-[1]: https://github.com/imbushuo/DFRDisplayKm
-[2]: https://github.com/WhatAmISupposedToPutHere/tiny-dfr
+This is "esync", attributes are "E_SYNC". Why can't they be named
+"ESYNC" too? Same comment to another "e_sync" names (vars, ops, etc).
 
-v2:
-  1. Cleaned up some code in the hid-appletb-kbd driver.
-  2. Fixed wrong subject in drm/format-helper patch.
-  3. Fixed Co-developed-by wrongly added to hid-multitouch patch.
 
-Kerem Karabay (9):
-  HID: hid-appletb-bl: add driver for the backlight of Apple Touch Bars
-  HID: hid-appletb-kbd: add driver for the keyboard mode of Apple Touch
-    Bars
-  HID: multitouch: support getting the contact ID from
-    HID_DG_TRANSDUCER_INDEX fields
-  HID: multitouch: support getting the tip state from HID_DG_TOUCH
-    fields
-  HID: multitouch: take cls->maxcontacts into account for devices
-    without a HID_DG_CONTACTMAX field too
-  HID: multitouch: allow specifying if a device is direct in a class
-  HID: multitouch: add device ID for Apple Touch Bars
-  drm/format-helper: Add conversion from XRGB8888 to BGR888
-  drm/tiny: add driver for Apple Touch Bars in x86 Macs
+>+		       struct dpll_pin_ref *ref, struct netlink_ext_ack *extack)
+>+{
+>+	const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
+>+	struct dpll_device *dpll = ref->dpll;
+>+	enum dpll_pin_e_sync_pulse pulse;
+>+	struct dpll_pin_frequency range;
+>+	struct nlattr *nest;
+>+	u64 esync;
+>+	int ret;
+>+
+>+	if (!ops->e_sync_get)
+>+		return 0;
+>+	ret = ops->e_sync_get(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
+>+			      dpll_priv(dpll), &esync, &range, &pulse, extack);
+>+	if (ret == -EOPNOTSUPP)
+>+		return 0;
+>+	else if (ret)
+>+		return ret;
+>+	if (nla_put_64bit(msg, DPLL_A_PIN_E_SYNC_FREQUENCY, sizeof(esync),
+>+			  &esync, DPLL_A_PIN_PAD))
+>+		return -EMSGSIZE;
+>+	if (nla_put_u32(msg, DPLL_A_PIN_E_SYNC_PULSE, pulse))
+>+		return -EMSGSIZE;
+>+
+>+	nest = nla_nest_start(msg, DPLL_A_PIN_E_SYNC_FREQUENCY_SUPPORTED);
+>+	if (!nest)
+>+		return -EMSGSIZE;
+>+	if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY_MIN, sizeof(range.min),
+>+			  &range.min, DPLL_A_PIN_PAD)) {
+>+		nla_nest_cancel(msg, nest);
+>+		return -EMSGSIZE;
+>+	}
+>+	if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY_MAX, sizeof(range.max),
+>+			  &range.max, DPLL_A_PIN_PAD)) {
 
- .../ABI/testing/sysfs-driver-hid-appletb-kbd  |  13 +
- MAINTAINERS                                   |  12 +
- drivers/gpu/drm/drm_format_helper.c           |  54 ++
- .../gpu/drm/tests/drm_format_helper_test.c    |  81 +++
- drivers/gpu/drm/tiny/Kconfig                  |  12 +
- drivers/gpu/drm/tiny/Makefile                 |   1 +
- drivers/gpu/drm/tiny/appletbdrm.c             | 624 ++++++++++++++++++
- drivers/hid/Kconfig                           |  22 +
- drivers/hid/Makefile                          |   2 +
- drivers/hid/hid-appletb-bl.c                  | 206 ++++++
- drivers/hid/hid-appletb-kbd.c                 | 303 +++++++++
- drivers/hid/hid-multitouch.c                  |  60 +-
- drivers/hid/hid-quirks.c                      |   8 +-
- include/drm/drm_format_helper.h               |   3 +
- 14 files changed, 1385 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
- create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
- create mode 100644 drivers/hid/hid-appletb-bl.c
- create mode 100644 drivers/hid/hid-appletb-kbd.c
+Don't you want to have the MIN-MAX here multiple times. I mean, in
+theory, can the device support 2 fixed frequencies for example?
+Have it at least for UAPI so this is easily extendable.
 
---=20
-2.39.3 (Apple Git-146)
 
+
+>+		nla_nest_cancel(msg, nest);
+>+		return -EMSGSIZE;
+>+	}
+>+	nla_nest_end(msg, nest);
+>+
+>+	return 0;
+>+}
+>+
+> static bool dpll_pin_is_freq_supported(struct dpll_pin *pin, u32 freq)
+> {
+> 	int fs;
+>@@ -481,6 +525,9 @@ dpll_cmd_pin_get_one(struct sk_buff *msg, struct dpll_pin *pin,
+> 	if (ret)
+> 		return ret;
+> 	ret = dpll_msg_add_ffo(msg, pin, ref, extack);
+>+	if (ret)
+>+		return ret;
+>+	ret = dpll_msg_add_pin_esync(msg, pin, ref, extack);
+> 	if (ret)
+> 		return ret;
+> 	if (xa_empty(&pin->parent_refs))
+>@@ -738,6 +785,81 @@ dpll_pin_freq_set(struct dpll_pin *pin, struct nlattr *a,
+> 	return ret;
+> }
+> 
+>+static int
+>+dpll_pin_e_sync_set(struct dpll_pin *pin, struct nlattr *a,
+>+		    struct netlink_ext_ack *extack)
+>+{
+>+	u64 esync = nla_get_u64(a), old_esync;
+
+"freq"/"old_freq". That aligns with the existing code.
+
+
+>+	struct dpll_pin_ref *ref, *failed;
+>+	enum dpll_pin_e_sync_pulse pulse;
+>+	struct dpll_pin_frequency range;
+>+	const struct dpll_pin_ops *ops;
+>+	struct dpll_device *dpll;
+>+	unsigned long i;
+>+	int ret;
+>+
+>+	xa_for_each(&pin->dpll_refs, i, ref) {
+>+		ops = dpll_pin_ops(ref);
+>+		if (!ops->e_sync_set ||
+
+No need for line break.
+
+
+>+		    !ops->e_sync_get) {
+>+			NL_SET_ERR_MSG(extack,
+>+				       "embedded sync feature is not supported by this device");
+>+			return -EOPNOTSUPP;
+>+		}
+>+	}
+>+	ref = dpll_xa_ref_dpll_first(&pin->dpll_refs);
+>+	ops = dpll_pin_ops(ref);
+>+	dpll = ref->dpll;
+>+	ret = ops->e_sync_get(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
+>+			      dpll_priv(dpll), &old_esync, &range, &pulse, extack);
+
+Line over 80cols? Didn't checkpatch warn you?
+
+
+>+	if (ret) {
+>+		NL_SET_ERR_MSG(extack, "unable to get current embedded sync frequency value");
+>+		return ret;
+>+	}
+>+	if (esync == old_esync)
+>+		return 0;
+>+	if (esync > range.max || esync < range.min) {
+>+		NL_SET_ERR_MSG_ATTR(extack, a,
+>+				    "requested embedded sync frequency value is not supported by this device");
+>+		return -EINVAL;
+>+	}
+>+
+>+	xa_for_each(&pin->dpll_refs, i, ref) {
+>+		void *pin_dpll_priv;
+>+
+>+		ops = dpll_pin_ops(ref);
+>+		dpll = ref->dpll;
+>+		pin_dpll_priv = dpll_pin_on_dpll_priv(dpll, pin);
+>+		ret = ops->e_sync_set(pin, pin_dpll_priv, dpll, dpll_priv(dpll),
+>+				      esync, extack);
+>+		if (ret) {
+>+			failed = ref;
+>+			NL_SET_ERR_MSG_FMT(extack,
+>+					   "embedded sync frequency set failed for dpll_id:%u",
+>+					   dpll->id);
+>+			goto rollback;
+>+		}
+>+	}
+>+	__dpll_pin_change_ntf(pin);
+>+
+>+	return 0;
+>+
+>+rollback:
+>+	xa_for_each(&pin->dpll_refs, i, ref) {
+>+		void *pin_dpll_priv;
+>+
+>+		if (ref == failed)
+>+			break;
+>+		ops = dpll_pin_ops(ref);
+>+		dpll = ref->dpll;
+>+		pin_dpll_priv = dpll_pin_on_dpll_priv(dpll, pin);
+>+		if (ops->e_sync_set(pin, pin_dpll_priv, dpll, dpll_priv(dpll),
+>+				    old_esync, extack))
+>+			NL_SET_ERR_MSG(extack, "set embedded sync frequency rollback failed");
+>+	}
+>+	return ret;
+>+}
+>+
+> static int
+> dpll_pin_on_pin_state_set(struct dpll_pin *pin, u32 parent_idx,
+> 			  enum dpll_pin_state state,
+>@@ -1039,6 +1161,11 @@ dpll_pin_set_from_nlattr(struct dpll_pin *pin, struct genl_info *info)
+> 			if (ret)
+> 				return ret;
+> 			break;
+>+		case DPLL_A_PIN_E_SYNC_FREQUENCY:
+>+			ret = dpll_pin_e_sync_set(pin, a, info->extack);
+>+			if (ret)
+>+				return ret;
+>+			break;
+> 		}
+> 	}
+> 
+>diff --git a/drivers/dpll/dpll_nl.c b/drivers/dpll/dpll_nl.c
+>index 1e95f5397cfc..ba79a47f3a17 100644
+>--- a/drivers/dpll/dpll_nl.c
+>+++ b/drivers/dpll/dpll_nl.c
+>@@ -62,7 +62,7 @@ static const struct nla_policy dpll_pin_get_dump_nl_policy[DPLL_A_PIN_ID + 1] =
+> };
+> 
+> /* DPLL_CMD_PIN_SET - do */
+>-static const struct nla_policy dpll_pin_set_nl_policy[DPLL_A_PIN_PHASE_ADJUST + 1] = {
+>+static const struct nla_policy dpll_pin_set_nl_policy[DPLL_A_PIN_E_SYNC_FREQUENCY + 1] = {
+> 	[DPLL_A_PIN_ID] = { .type = NLA_U32, },
+> 	[DPLL_A_PIN_FREQUENCY] = { .type = NLA_U64, },
+> 	[DPLL_A_PIN_DIRECTION] = NLA_POLICY_RANGE(NLA_U32, 1, 2),
+>@@ -71,6 +71,7 @@ static const struct nla_policy dpll_pin_set_nl_policy[DPLL_A_PIN_PHASE_ADJUST +
+> 	[DPLL_A_PIN_PARENT_DEVICE] = NLA_POLICY_NESTED(dpll_pin_parent_device_nl_policy),
+> 	[DPLL_A_PIN_PARENT_PIN] = NLA_POLICY_NESTED(dpll_pin_parent_pin_nl_policy),
+> 	[DPLL_A_PIN_PHASE_ADJUST] = { .type = NLA_S32, },
+>+	[DPLL_A_PIN_E_SYNC_FREQUENCY] = { .type = NLA_U64, },
+> };
+> 
+> /* Ops table for dpll */
+>@@ -138,7 +139,7 @@ static const struct genl_split_ops dpll_nl_ops[] = {
+> 		.doit		= dpll_nl_pin_set_doit,
+> 		.post_doit	= dpll_pin_post_doit,
+> 		.policy		= dpll_pin_set_nl_policy,
+>-		.maxattr	= DPLL_A_PIN_PHASE_ADJUST,
+>+		.maxattr	= DPLL_A_PIN_E_SYNC_FREQUENCY,
+> 		.flags		= GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
+> 	},
+> };
+>diff --git a/include/linux/dpll.h b/include/linux/dpll.h
+>index d275736230b3..137ab4bcb60e 100644
+>--- a/include/linux/dpll.h
+>+++ b/include/linux/dpll.h
+>@@ -15,6 +15,7 @@
+> 
+> struct dpll_device;
+> struct dpll_pin;
+>+struct dpll_pin_frequency;
+> 
+> struct dpll_device_ops {
+> 	int (*mode_get)(const struct dpll_device *dpll, void *dpll_priv,
+>@@ -83,6 +84,15 @@ struct dpll_pin_ops {
+> 	int (*ffo_get)(const struct dpll_pin *pin, void *pin_priv,
+> 		       const struct dpll_device *dpll, void *dpll_priv,
+> 		       s64 *ffo, struct netlink_ext_ack *extack);
+>+	int (*e_sync_set)(const struct dpll_pin *pin, void *pin_priv,
+>+			  const struct dpll_device *dpll, void *dpll_priv,
+>+			  u64 e_sync_freq, struct netlink_ext_ack *extack);
+>+	int (*e_sync_get)(const struct dpll_pin *pin, void *pin_priv,
+>+			  const struct dpll_device *dpll, void *dpll_priv,
+>+			  u64 *e_sync_freq,
+>+			  struct dpll_pin_frequency *e_sync_range,
+>+			  enum dpll_pin_e_sync_pulse *pulse,
+>+			  struct netlink_ext_ack *extack);
+> };
+> 
+> struct dpll_pin_frequency {
+>diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
+>index 0c13d7f1a1bc..2a80a6fb0d1d 100644
+>--- a/include/uapi/linux/dpll.h
+>+++ b/include/uapi/linux/dpll.h
+>@@ -169,6 +169,26 @@ enum dpll_pin_capabilities {
+> 
+> #define DPLL_PHASE_OFFSET_DIVIDER	1000
+> 
+>+/**
+>+ * enum dpll_pin_e_sync_pulse - defines possible pulse length ratio between
+>+ *   high and low state when embedded sync signal occurs on base clock signal
+>+ *   frequency
+>+ * @DPLL_PIN_E_SYNC_PULSE_NONE: embedded sync not enabled
+>+ * @DPLL_PIN_E_SYNC_PULSE_25_75: when embedded sync signal occurs 25% of
+>+ *   signal's period is in high state, 75% of signal's period is in low state
+>+ * @DPLL_PIN_E_SYNC_PULSE_75_25: when embedded sync signal occurs 75% of
+>+ *   signal's period is in high state, 25% of signal's period is in low state
+>+ */
+>+enum dpll_pin_e_sync_pulse {
+>+	DPLL_PIN_E_SYNC_PULSE_NONE,
+>+	DPLL_PIN_E_SYNC_PULSE_25_75,
+>+	DPLL_PIN_E_SYNC_PULSE_75_25,
+>+
+>+	/* private: */
+>+	__DPLL_PIN_E_SYNC_PULSE_MAX,
+>+	DPLL_PIN_E_SYNC_PULSE_MAX = (__DPLL_PIN_E_SYNC_PULSE_MAX - 1)
+>+};
+>+
+> enum dpll_a {
+> 	DPLL_A_ID = 1,
+> 	DPLL_A_MODULE_NAME,
+>@@ -210,6 +230,9 @@ enum dpll_a_pin {
+> 	DPLL_A_PIN_PHASE_ADJUST,
+> 	DPLL_A_PIN_PHASE_OFFSET,
+> 	DPLL_A_PIN_FRACTIONAL_FREQUENCY_OFFSET,
+>+	DPLL_A_PIN_E_SYNC_FREQUENCY,
+>+	DPLL_A_PIN_E_SYNC_FREQUENCY_SUPPORTED,
+>+	DPLL_A_PIN_E_SYNC_PULSE,
+> 
+> 	__DPLL_A_PIN_MAX,
+> 	DPLL_A_PIN_MAX = (__DPLL_A_PIN_MAX - 1)
+>-- 
+>2.38.1
+>
 
