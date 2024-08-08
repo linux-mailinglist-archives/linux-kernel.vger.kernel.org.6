@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-279529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7281594BE8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C37C94BE8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0340FB23E3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:30:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E20FB243CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2519B18E742;
-	Thu,  8 Aug 2024 13:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FD918E020;
+	Thu,  8 Aug 2024 13:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uUnTul+5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8CKfZTK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF6B18E04A;
-	Thu,  8 Aug 2024 13:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5D3EADA;
+	Thu,  8 Aug 2024 13:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723123810; cv=none; b=Fd8p+sRSfXCtA7Xa1BWW52Q09OgTsPneUfZHaEZMMAnkF+LYnTdJ1jFKCr0+nDQkdUnG8YJcfP/YfkBsuJTtsS267JRrXVAqLXaaLmdcqHG8n1iGITaCMbUohViAIIjZnrdNjp6OzZwgZvIFVqdKF/3uzv+hlHNA94sNYwceD28=
+	t=1723123899; cv=none; b=pRvny1OM2mqwIBJykHY2lzUnb5A814Gd5vlY2SU4yB7Ygfbe5+95JKZv3HP9p0lqfsgHARRBDeQooenIHx7htSrnG+woOAW7NSoOrYJbcbh+ADuU0vh35SpETOJ98VNTRfbsvDVEvFUi72rzWjPCKKrYs0GiaA/zFHcGid8FU/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723123810; c=relaxed/simple;
-	bh=DlP0zX3eBjD2w3vvB5KSjQBTWHK/NSxJgNxSmFXeafs=;
+	s=arc-20240116; t=1723123899; c=relaxed/simple;
+	bh=MTORAOFceoQ2MYt5Z2kuRm/1RLgpHkS7KNInhvKlds4=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hhtTGcEf55OJ9SShYf210E9/tRL/Nz5BiWzIR2A9MljWEfIeUps98Xw5qGN4xA0v13oSOcjHxT6ksnZBt28aoWHfQB6x7IpoisHQVOZLKdFziZ1BBBdTnMkvlyhTf4GrSINY+AteVk0L3NIPeBCingb5L2ygrtVsJ2URqB9BAVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uUnTul+5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 666FFC32782;
-	Thu,  8 Aug 2024 13:30:09 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Kw81+K1X58Sbgq6JES4LsUtuzETVLzg7HX72gKzfT7ZjaI5kTOjCqV2GVqa1ROIFQHl7Yi9Ed+wfcqdhQZXhX9O/DmPBstH+M8e6HoYxL4HYhkO4QAIMrXSRbehVnBhdfg8qopsRsCHcmf6PQW0UTPGgEBu7tciwl3GjmMRe3TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8CKfZTK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21A13C32782;
+	Thu,  8 Aug 2024 13:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723123809;
-	bh=DlP0zX3eBjD2w3vvB5KSjQBTWHK/NSxJgNxSmFXeafs=;
+	s=k20201202; t=1723123898;
+	bh=MTORAOFceoQ2MYt5Z2kuRm/1RLgpHkS7KNInhvKlds4=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uUnTul+5LO3hEZu4GmsiOxTvMojWVRD41pJpnNiZSVNSrFqBcVFfI20U9s75KlFGb
-	 fG/vt0815niVIHfs3exCPPbCJj7Hh+WaZoT7E5DnemGDR4Be0UsLaEbCJ+vxOFiDkh
-	 8uhyN/jEStXlYYjYldEeKJACAzZvwh1GgIfwLWEi9Wpg6UzKeOjk95rpOSdDo5dQDC
-	 iV6rTkhDiSfTw2w+A4/L0ooei6hRFCfasHnJyvDg6wbEvSBES87WUnnnuUPm+S1+x8
-	 6JSsbE0sln1jn1Bh9d8i1zJrXbH27Ox2VnrTH8HQWwXNwes7maTubPAFNjC6gJyJIk
-	 c3sXvh256FXeQ==
-Date: Thu, 8 Aug 2024 06:30:08 -0700
+	b=d8CKfZTKudC3lypC1fHfHnKex/7dGzvrII/w2cLL2Ly4s+94Nf5EC9qkzUC1JrfrI
+	 PnrMEDE4/suyeM3WMO5LK3nmpdUV07sjKo38gG9G1tM4ZfK7USi/tNI+gK/5bsI662
+	 4Xns3Zte8zFJJR1qOaP8VeR+Glv47+OV0cxGFucT/6TM52cgx+w7A5QpKE6Ktoh5f8
+	 wdZ7V0dZ8XTU90if6CsU1ilpcpXU59c+jwuYjBnntMYlKT1TGv9QgpHfIEpeCGLu/j
+	 ZfBrshu9cTEK7sMAfJumm7d19ZqKyEywOd1MqYB/JwKEmv5MmEvaLSXeRQH8NBiPIM
+	 LB+7U7UXMpEoQ==
+Date: Thu, 8 Aug 2024 06:31:37 -0700
 From: Jakub Kicinski <kuba@kernel.org>
-To: Divya Koppera <Divya.Koppera@microchip.com>
-Cc: <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
- <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
- <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: phy: microchip_t1: Adds support for
- LAN887x phy
-Message-ID: <20240808063008.6cce71f5@kernel.org>
-In-Reply-To: <20240808145916.26006-1-Divya.Koppera@microchip.com>
-References: <20240808145916.26006-1-Divya.Koppera@microchip.com>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com,
+ javier.carrasco.cruz@gmail.com, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ shuah@kernel.org, skhan@linuxfoundation.org
+Subject: Re: [PATCH v4 1/2] selftests: net: Create veth pair for testing in
+ networkless kernel
+Message-ID: <20240808063137.73427d0f@kernel.org>
+In-Reply-To: <20240808122847.25721-1-jain.abhinav177@gmail.com>
+References: <20240807182834.25b8df00@kernel.org>
+	<20240808122847.25721-1-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,11 +62,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 8 Aug 2024 20:29:16 +0530 Divya Koppera wrote:
-> Date: Thu, 8 Aug 2024 20:29:16 +0530
+On Thu,  8 Aug 2024 12:28:47 +0000 Abhinav Jain wrote:
+> On Wed, 7 Aug 2024 18:28:34 -0700 Jakub Kicinski wrote:
+> > That's not the right syntax..  
+> 
+> Thanks for the feedback Jakub. I have rectified this and while at it,
+> I tested using vng on a network based kernel and found another issue in
+> veth removal logic. I have fixed that as well.
+> 
+> Please kindly check the v5 series here
 
-Please fix the date on your system, I'm replying to you an hour and 
-a half before you supposedly sent this, according to this date.
--- 
-pw-bot: cr
+I'll take a look, but please try to follow the guidance in our process
+doc: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
 
