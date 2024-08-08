@@ -1,127 +1,151 @@
-Return-Path: <linux-kernel+bounces-279255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06E294BAFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC12094BB03
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3352BB20D46
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:30:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E99FB21D89
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB37618A930;
-	Thu,  8 Aug 2024 10:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C9B/f+W0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C2418C324;
+	Thu,  8 Aug 2024 10:29:25 +0000 (UTC)
+Received: from out198-19.us.a.mail.aliyun.com (out198-19.us.a.mail.aliyun.com [47.90.198.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43FF18A6B8
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD35A18B491;
+	Thu,  8 Aug 2024 10:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112938; cv=none; b=KmJa2gjj6hXhPUMaHm0Yu6q1XLsy55cdE8WhlEYYyBpEF9nEn4+vEuRJkTswB+HEHYoPWSIP1jqNdCfobOwQkwt3YU2h40hDh+ZkdG9YjYnIxTddg+h1OcGdfpgDaUh/x9IqJXOQkBeVJWhQPgp+ndc+gkmwK5A2IpRAaP1okAc=
+	t=1723112965; cv=none; b=cTNteuEilS8RgkxScPqW1AKIv3FaMLtNCGmtpdH83FSA7os0S8nP1JfMq94HYWhGDt9rJw4bZr7clB79JFdJiPHcx7VjVPD0KXkVWazUwKlFygqsdLPa6iSTBpW9uArGG0qldKskzQLpTPnKsn5/vctuGz43xDCErfPHorfY2Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112938; c=relaxed/simple;
-	bh=4uEa+812lSqYwj5RnyAM0Mq1iA1qCM9VCy3pwBVz9n4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mTBQ1EZly4a6f1Y3nFu1Aq6Gc2wX4kFZxJ6gpgb8Z8JMglRaTSx42ttTgbawAE0efB6mlpTv3sozqa5F2X7irB41K4kngKeWl+Cz2zkhOsUU80kOMZ/8c50/PB327YkTt1t1V5LyDZ+uecHpAWKt8KsqcEdU91POAzMQ9ByZqM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C9B/f+W0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723112934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zqff808lcKfY5U/qgJUHTq9+9GeyxDW5MWmHOf7xqPA=;
-	b=C9B/f+W0XD1Zq1yxn8ghWWAa8O56j2IJV5a6TbX4Ih2s3gB/DdZ3naIClRO5h7H5SFUShk
-	Gcdc06ibY5bpJ/CIQc01Hv3F5WcLlUDRWMJB0I55OKx2kYF0/YFq1Cp76KGlZAWbhmB80z
-	qNEIC4BvYxQazN5kCsYE2BbvVmrgm68=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-340-U8GN3sdtPmeuyYsLfHUaXQ-1; Thu,
- 08 Aug 2024 06:28:49 -0400
-X-MC-Unique: U8GN3sdtPmeuyYsLfHUaXQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 40A371944A97;
-	Thu,  8 Aug 2024 10:28:46 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.189])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D0A761956052;
-	Thu,  8 Aug 2024 10:28:40 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  8 Aug 2024 12:28:44 +0200 (CEST)
-Date: Thu, 8 Aug 2024 12:28:37 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] uprobes: Improve scalability by reducing the contention
- on siglock
-Message-ID: <20240808102837.GC8020@redhat.com>
-References: <20240801082407.1618451-1-liaochang1@huawei.com>
- <20240801140639.GE4038@redhat.com>
- <51a756b7-3c2f-9aeb-1418-b38b74108ee6@huawei.com>
- <20240802092406.GC12343@redhat.com>
- <0c69ef28-26d8-4b6e-fa78-2211a7b84eca@huawei.com>
- <20240806172529.GC20881@redhat.com>
- <20240807101746.GA27715@redhat.com>
- <3bb87fb4-c32e-0a35-0e93-5e1971fe8268@huawei.com>
+	s=arc-20240116; t=1723112965; c=relaxed/simple;
+	bh=KtgGdJ8vrLeHFc2F3n5IvsT/QPfBnUUD6jiL7mEkelQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Os8xoUslas2tIqWHsxdeV4aZzZ55u2lm0NhSnH+Y5gZ6DrHBJ8oHQ2jamyyjmQ+I0cixIQsxYSgy55uOc+0XZOnBmUUm2D+R4of5K6alZqSijaO1RYxKAaaKmIyKRSlFQfN9kYk2ZiO8f8pzh/Aml3pKSek0Ug19CVOmh2PJIoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=47.90.198.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.0747498|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0273787-0.0022905-0.970331;FP=7876838320615572631|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033037088118;MF=wangshuaijie@awinic.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.YlkvBzD_1723112934;
+Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.YlkvBzD_1723112934)
+          by smtp.aliyun-inc.com;
+          Thu, 08 Aug 2024 18:29:01 +0800
+From: wangshuaijie@awinic.com
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	kees@kernel.org,
+	gustavoars@kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Cc: wangshuaijie@awinic.com,
+	liweilei@awinic.com,
+	kangjiajun@awinic.com
+Subject: [PATCH V6 0/2] Add support for aw96103/aw96105 proximity sensor
+Date: Thu,  8 Aug 2024 10:28:49 +0000
+Message-ID: <20240808102851.4024025-1-wangshuaijie@awinic.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3bb87fb4-c32e-0a35-0e93-5e1971fe8268@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 8bit
 
-On 08/08, Liao, Chang wrote:
->
->   - pre_ssout() resets the deny signal flag
->
->   - uprobe_deny_signal() sets the deny signal flag when TIF_SIGPENDING is cleared.
->
->   - handle_singlestep() check the deny signal flag and restore TIF_SIGPENDING if necessary.
->
-> Does this approach look correct to you,do do you have any other way to implement the "flag"?
+From: shuaijie wang <wangshuaijie@awinic.com>
 
-Yes. But I don't think pre_ssout() needs to clear this flag. handle_singlestep() resets/clears
-state, active_uprobe, frees insn slot. So I guess we only need
+Add drivers that support Awinic aw96103/aw96105 proximity sensors.
 
+The aw9610x series are high-sensitivity capacitive proximity detection
+sensors. This device detects human proximity and assists electronic devices
+in reducing specific absorption rate (SAR) to pass SAR related certifications.
+The device reduces RF power and reduces harm when detecting human proximity. 
+Increase power and improve signal quality when the human body is far away.
 
---- x/kernel/events/uprobes.c
-+++ x/kernel/events/uprobes.c
-@@ -2308,9 +2308,10 @@ static void handle_singlestep(struct upr
- 	utask->state = UTASK_RUNNING;
- 	xol_free_insn_slot(current);
+The specific absorption rate (SAR) is a metric that measures the degree of
+absorption of electromagnetic radiation emitted by wireless devices,
+such as mobile phones and tablets, by human tissue.
+
+This patch implements device initialization, registration,
+I/O operation handling and interrupt handling, and passed basic testing.
+
+v1->v2:
+-------
+ - Remove unnecessary log printing.
+ - Optimize comment style.
+ - Issues with modifying the device tree.
+ - Optimize code style.
+
+v2->v3:
+-------
+ - Add a description about the hardware device.
+ - Remove inappropriate configuration items.
+ - Modify the formatting issues.
+ - Modify the structure of the driver.
+ - Change the style of the driver's comments.
+ - Remove unnecessary log printing.
+ - Modify the function used for memory allocation.
+ - Modify the driver registration process.
+ - Remove the functionality related to updating firmware.
+ - Change the input subsystem in the driver to the iio subsystem.
+ - Modify the usage of the interrupt pin.
  
--	spin_lock_irq(&current->sighand->siglock);
--	recalc_sigpending(); /* see uprobe_deny_signal() */
--	spin_unlock_irq(&current->sighand->siglock);
-+	if (utask->xxx) {
-+		set_thread_flag(TIF_SIGPENDING);
-+		utask->xxx = 0;
-+	}
- 
- 	if (unlikely(err)) {
- 		uprobe_warn(current, "execute the probed insn, sending SIGILL.");
+v3->v4:
+-------
+The changes in this patch version are quite significant, and I concur
+with Krzysztof's viewpoint that this driver is indeed overly complex for
+the proximity sensor. Therefore, I have removed the compatibility for the
+aw963xx series, and the driver will now exclusively support the aw9610x series.
 
-and that is all.
+ - Modify the software architecture to remove compatibility for
+   the aw963xx series.
+ - Optimize the parsing of register configuration files (.bin).
+ - Remove unnecessary log printing.
+ - Delete redefinition of true and false.
+ - Remove unnecessary interfaces.
+ - Optimize regulator usage.
+ - Convert the I2C communication interface to regmap.
 
-Oleg.
+v4->v5:
+-------
+ - Solve errors that occur when executing the make dt_binding_check DT_SCHEMA_FILES.
+
+v5->v6:
+-------
+ - Rename AW9610X to aw96103.
+ - Remove the encapsulation of the i2c communication interface.
+ - Delete the update node.
+ - Modify the usage of regulator.
+ - Delete the remove and shutdown interfaces.
+ - Add iio's event-related interfaces.
+ - Modify the initialization process of iio.
+ - Delete power_supply-related operations.
+ - Modify the register names.
+
+shuaijie wang (2):
+  dt-bindings: iio: aw96103: Add bindings for aw96103/aw96105 sensor
+  iio: proximity: aw96103: Add support for aw96103/aw96105 proximity
+    sensor
+
+ .../iio/proximity/awinic,aw96103.yaml         |  63 ++
+ drivers/iio/proximity/Kconfig                 |  11 +
+ drivers/iio/proximity/Makefile                |   1 +
+ drivers/iio/proximity/aw96103.c               | 833 ++++++++++++++++++
+ drivers/iio/proximity/aw96103.h               | 116 +++
+ 5 files changed, 1024 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw96103.yaml
+ create mode 100644 drivers/iio/proximity/aw96103.c
+ create mode 100644 drivers/iio/proximity/aw96103.h
+
+
+base-commit: 6a0e38264012809afa24113ee2162dc07f4ed22b
+-- 
+2.45.1
 
 
