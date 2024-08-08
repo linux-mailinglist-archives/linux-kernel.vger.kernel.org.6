@@ -1,195 +1,223 @@
-Return-Path: <linux-kernel+bounces-278856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB8294B5B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:59:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA62E94B5B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A069F1C21441
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:59:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB12E28430F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239CA13B78F;
-	Thu,  8 Aug 2024 03:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97FA80038;
+	Thu,  8 Aug 2024 04:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="e0SpYyyc"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVKD0ww5"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EFB7D3F1;
-	Thu,  8 Aug 2024 03:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E4511C83;
+	Thu,  8 Aug 2024 04:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723089522; cv=none; b=W3WEIg/zVoZJwjUPTXxjnh/Fmt+IWZoWKh00BMcbOeOMM0+3KbGyIQdkLjqDnk0Ob6XKoPlnBH3yA6NLRHtF3eM3SzfphEB12pQyZn6V39zzeqzZ6nIE7XU8tbyLaQBKGlY0Vff2dUWWzMXWoyZm75OVSeYmpWld7QAxGkc2rFw=
+	t=1723089702; cv=none; b=S2ZNq65miqvDL9PJjtcPCMgxqfvvZS6m+5491f4oUHKFfoBrgiGTp1pQjOtuqKT9/JQvfTpw2EWyh1v7HkA2mkVxXP7J4abs9y6q6clTaQupwFVe82vhDV3ytlVaaWQOTnDnr4Jo+v5pm46Xj3jXG9vokfjXlh95wQ4NLaOnp9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723089522; c=relaxed/simple;
-	bh=vJY59zBCJw3KDsmjm4CdnwtPss4yedSaqTtaW4O6nvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Mhz2PQd68yUIJvkIWnufLOdpFqMn+i4CHMmH+uqezYukK6TZPxEarr2Lo7qQVCffdod31GeznPwh9ymSJIYoAQzMQTF0ZZ4o7u/qNXQ0DSyGqQX5l6rr69FadM8YvUYUZTBhfhlnlKXJKz7v2meeVzXu+rX/wbNG4QmQifGCUCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=e0SpYyyc; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723089517;
-	bh=wGIGZ80trm6iOZCYJunvn40iI28sdFGMuWXzI4QjzJ0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=e0SpYyycTIaSYQLTxiD5RVxOsdEq/UWlQmn3t0GLvvwcWx1LqRi3gWvAjvCSPWC79
-	 Dx+K/4p6yHvnWWlUWROcqtdnGIgOVBpMHQpQvNAi9/DUoOObzhMdkHbreqN6HNtpoq
-	 Oa0VFvX9iFatoUr1QyfR4i1mh3U+/dSBmS4IN7ikyO3jbJBA6vlhs0afbBg3N9QNkV
-	 lAKuILMSuDYp/vT+xRznMxE/SrMJ5kxbPECyLi7SeJ/xHpczG5YDpvxFnsr1+A92zK
-	 K8KtT+RDi6fmhUVJtCAUBQqRrIls1R2BpLShzuGfzfensJgJv+3V71YCuSJXlbDd2o
-	 awcQulz4mP47A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WfYDs2HN9z4wc3;
-	Thu,  8 Aug 2024 13:58:37 +1000 (AEST)
-Date: Thu, 8 Aug 2024 13:58:36 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@de.ibm.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the s390 tree
-Message-ID: <20240808135836.740effac@canb.auug.org.au>
+	s=arc-20240116; t=1723089702; c=relaxed/simple;
+	bh=soBJ2nd2MTISL5ysYCgSFPOeQSxTVU/1vjGXsiZVKrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F0ZVqq2I57FimGlDp9amSHzaz32YH1RODs8idZGmeH+Ip9NmTWnqtx8Vjbe67yDUCDq3OxF26LrK8aTEFLqDnZifGE2tzOwr1j2oC1OvWpd8OUknMbTpaSA7XCGxlz8WAQf3uMl249QzBrMxIKY6T8bgkY9w4IVJ//1r6S8zWn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVKD0ww5; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e0ea24477f0so58051276.2;
+        Wed, 07 Aug 2024 21:01:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723089700; x=1723694500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rEcurEw+W3Hs5LT2+2YRDTBDXRPvHW6k7rbHq/j8KGo=;
+        b=MVKD0ww5NRB1kcpeBS6rzVwkoWJoXaLobZTXrMfKJeLh2z185trKEduL49y3HJx0tR
+         x1krDi4IhOadA1nTlrY2dOl5OfQpQfHm8/r7PKlH7YLYuX4Q7Ni9uEInq/7R5Ye3p7ZT
+         uuyxVUdq8Ovp/JOv5um/eGdoW2CO8qgmA6hbB0uVPUG/GaozknC2YRNpsIrWg2scWsF+
+         5IMSAhbAaTyYq0BXjr3B8HoFW+uxEfEx7Iu2guP38mghvBxXjUSyZgsRMLi+ghADx9Qc
+         lyZIb8RT3pb3fbbiZGe1j5MtfXmfJCtcQYBU9p2qCfU+i9YJQ8oipTwVWs6omvnIBeLj
+         9H4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723089700; x=1723694500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rEcurEw+W3Hs5LT2+2YRDTBDXRPvHW6k7rbHq/j8KGo=;
+        b=gFShUrXHAJ/fliGnR/WzqEcX2u+KOI3NHVrLY7JgOzu092/kH66JmrmxC8fnwmbyRd
+         Ey6+N4oaYBN0ijD+Cm3hyaFN2BfKglTWekm90H+SrxiaLJAjuQKtYaCE1QmWbdpvyf3m
+         rhHV4ZzjU/xN5T+vJ/MJsgzochOeSC2K0ODCu6ZcMK/fj5Dz7J4QkCePRMxR4V1gwtVK
+         gxcszlMtsKL6espu8HTX0dL6s8lFgB7GNLn+uyxMvl+7zUoX6piT46m3FoQNWqM4buCG
+         GVuuYLgFbolrv78MLL6pMCUI0ug1N6GGjJ51hBtJ2Z3iT30AWiPc55wM+xdH2DDvDazi
+         dWwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsl1AAa0SpV8ADEtYsfBIBuagm1QxvetXKmXZhbGGlEIqjk7mitPP7JXO0484TPfZGrdEOhRywnd8US24FI3NpxG//YpIRYFdq8pB0qFF6q3Yk+rIAWjLcYJ6Rh2ps7uyIGZ+CQ/RBJB4pQ/fV7Q==
+X-Gm-Message-State: AOJu0YxyQD6ktijomGEVit6sVdHDngb6BBgFQ+N+a2iZ7v0Rm1fEqyCu
+	Z/A04SrTOPf6RPvDo7eC0oqrbfmm4UP5f4FLrTybx9DmYAtEwzZLYfWciqi6NzHBeoiXmv3Iwgr
+	uQ90NEf8SQHPEmB/8KxEkjHw3yiY=
+X-Google-Smtp-Source: AGHT+IEssCyu+Xbpaj6PQnk9jDryOpE5jmQJ3NU7yvzMFdJ6D677l/y6xz4cmO7mGEQ+/72qBTy/1+AvWDEkMigz8wA=
+X-Received: by 2002:a05:6902:2b0c:b0:e0e:88fc:edd5 with SMTP id
+ 3f1490d57ef6-e0e9dbf590bmr755786276.52.1723089700292; Wed, 07 Aug 2024
+ 21:01:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/OJOy.6CHNQZrdZKVIj_1pSu";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/OJOy.6CHNQZrdZKVIj_1pSu
-Content-Type: text/plain; charset=US-ASCII
+References: <20240807153843.3231451-1-howardchu95@gmail.com>
+ <20240807153843.3231451-3-howardchu95@gmail.com> <ZrQBsmfS-RcXmncw@google.com>
+In-Reply-To: <ZrQBsmfS-RcXmncw@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Thu, 8 Aug 2024 12:01:29 +0800
+Message-ID: <CAH0uvoghMwhokAro0ouqfBG6ccbGxjEKodU+GCnj7XLHhkxWRg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/9] perf record --off-cpu: Add --off-cpu-thresh
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: irogers@google.com, acme@kernel.org, adrian.hunter@intel.com, 
+	jolsa@kernel.org, kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Aug 8, 2024 at 7:22=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> On Wed, Aug 07, 2024 at 11:38:36PM +0800, Howard Chu wrote:
+> > Add the --off-cpu-thresh argument to specify the off-cpu time threshold=
+.
+> > If the off-cpu time exceeds this threshold, dump the off-cpu data
+> > directly.
+> >
+> > Suggested-by: Ian Rogers <irogers@google.com>
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > ---
+> >  tools/perf/builtin-record.c            | 26 ++++++++++++++++++++++++++
+> >  tools/perf/util/bpf_off_cpu.c          |  2 ++
+> >  tools/perf/util/bpf_skel/off_cpu.bpf.c |  2 ++
+> >  tools/perf/util/record.h               |  1 +
+> >  4 files changed, 31 insertions(+)
+> >
+> > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> > index 72345d1e54b0..60c6fe7b4804 100644
+> > --- a/tools/perf/builtin-record.c
+> > +++ b/tools/perf/builtin-record.c
+> > @@ -3133,6 +3133,28 @@ static int record__parse_mmap_pages(const struct=
+ option *opt,
+> >       return ret;
+> >  }
+> >
+> > +static int record__parse_off_cpu_thresh(const struct option *opt,
+> > +                                     const char *str,
+> > +                                     int unset __maybe_unused)
+> > +{
+> > +     struct record_opts *opts =3D opt->value;
+> > +     char *endptr;
+> > +     u64 off_cpu_thresh;
+> > +
+> > +     if (!str)
+> > +             return -EINVAL;
+> > +
+> > +     off_cpu_thresh =3D strtoul(str, &endptr, 10);
+> > +
+> > +     /* threshold isn't string "0", yet strtoull() returns 0, parsing =
+failed. */
+> > +     if (*endptr || (off_cpu_thresh =3D=3D 0 && strcmp(str, "0")))
+> > +             return -EINVAL;
+> > +     else
+> > +             opts->off_cpu_thresh =3D off_cpu_thresh;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> >  void __weak arch__add_leaf_frame_record_opts(struct record_opts *opts =
+__maybe_unused)
+> >  {
+> >  }
+> > @@ -3326,6 +3348,7 @@ static struct record record =3D {
+> >               .ctl_fd              =3D -1,
+> >               .ctl_fd_ack          =3D -1,
+> >               .synth               =3D PERF_SYNTH_ALL,
+> > +             .off_cpu_thresh      =3D OFF_CPU_THRESH_DEFAULT,
+>
+> Where is it defined?
 
-After merging the s390 tree, today's linux-next build (s390 defconfig)
-failed like this:
+Poor formatting, sorry.
 
-In file included from include/linux/percpu.h:5,
-                 from include/linux/percpu_counter.h:14,
-                 from include/linux/mm_types.h:21,
-                 from include/linux/ptdump.h:6,
-                 from arch/s390/mm/dump_pagetables.c:3:
-arch/s390/mm/dump_pagetables.c: In function 'add_marker':
-include/linux/slab.h:848:61: error: too many arguments to function 'kvreall=
-oc_noprof'
-  848 | #define kvrealloc(...)                          alloc_hooks(kvreall=
-oc_noprof(__VA_ARGS__))
-      |                                                             ^~~~~~~=
-~~~~~~~~~
-include/linux/alloc_tag.h:206:16: note: in definition of macro 'alloc_hooks=
-_tag'
-  206 |         typeof(_do_alloc) _res =3D _do_alloc;                      =
-       \
-      |                ^~~~~~~~~
-include/linux/slab.h:848:49: note: in expansion of macro 'alloc_hooks'
-  848 | #define kvrealloc(...)                          alloc_hooks(kvreall=
-oc_noprof(__VA_ARGS__))
-      |                                                 ^~~~~~~~~~~
-arch/s390/mm/dump_pagetables.c:259:27: note: in expansion of macro 'kvreall=
-oc'
-  259 |                 markers =3D kvrealloc(markers, oldsize, newsize, GF=
-P_KERNEL);
-      |                           ^~~~~~~~~
-In file included from include/linux/fs.h:45,
-                 from include/linux/seq_file.h:11,
-                 from arch/s390/mm/dump_pagetables.c:4:
-include/linux/slab.h:846:7: note: declared here
-  846 | void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
-      |       ^~~~~~~~~~~~~~~~
-include/linux/slab.h:848:61: error: too many arguments to function 'kvreall=
-oc_noprof'
-  848 | #define kvrealloc(...)                          alloc_hooks(kvreall=
-oc_noprof(__VA_ARGS__))
-      |                                                             ^~~~~~~=
-~~~~~~~~~
-include/linux/alloc_tag.h:206:34: note: in definition of macro 'alloc_hooks=
-_tag'
-  206 |         typeof(_do_alloc) _res =3D _do_alloc;                      =
-       \
-      |                                  ^~~~~~~~~
-include/linux/slab.h:848:49: note: in expansion of macro 'alloc_hooks'
-  848 | #define kvrealloc(...)                          alloc_hooks(kvreall=
-oc_noprof(__VA_ARGS__))
-      |                                                 ^~~~~~~~~~~
-arch/s390/mm/dump_pagetables.c:259:27: note: in expansion of macro 'kvreall=
-oc'
-  259 |                 markers =3D kvrealloc(markers, oldsize, newsize, GF=
-P_KERNEL);
-      |                           ^~~~~~~~~
-include/linux/slab.h:846:7: note: declared here
-  846 | void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
-      |       ^~~~~~~~~~~~~~~~
+It's in [PATCH v4 5/9] perf record --off-cpu: Dump total off-cpu time at th=
+e end
 
-Caused by commit
++#define OFF_CPU_THRESH_DEFAULT 500000ull
 
-  d0e7915d2ad3 ("s390/mm/ptdump: Generate address marker array dynamically")
-
-interacting with commit
-
-  d4a913add37d ("mm: kvmalloc: align kvrealloc() with krealloc()")
-
-from the mm-unstable branch of the mm tree.
-
-I have applied the following merge fix patch.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 8 Aug 2024 13:50:39 +1000
-Subject: [PATCH] fixup for "s390/mm/ptdump: Generate address marker array d=
-ynamically"
-
-interacting with "mm: kvmalloc: align kvrealloc() with krealloc()"
-from the mm tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/s390/mm/dump_pagetables.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/s390/mm/dump_pagetables.c b/arch/s390/mm/dump_pagetables.c
-index 9e2dc42143b3..fa54f3bc0c8d 100644
---- a/arch/s390/mm/dump_pagetables.c
-+++ b/arch/s390/mm/dump_pagetables.c
-@@ -256,7 +256,7 @@ static int add_marker(unsigned long start, unsigned lon=
-g end, const char *name)
- 	if (!oldsize)
- 		markers =3D kvmalloc(newsize, GFP_KERNEL);
- 	else
--		markers =3D kvrealloc(markers, oldsize, newsize, GFP_KERNEL);
-+		markers =3D kvrealloc(markers, newsize, GFP_KERNEL);
- 	if (!markers)
- 		goto error;
- 	markers[markers_cnt].is_start =3D 1;
---=20
-2.43.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/OJOy.6CHNQZrdZKVIj_1pSu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma0QmwACgkQAVBC80lX
-0GyeNwgAjGlH1excgkJqP1BVOOLHMEVQQ3N4iTO8tDtET7c2GXx9QTFSwider85+
-DbMamh+oyhkx65MSkMki59Noga+flc61khSgCjjs0Itsa9vkIprv6YmyNhHP3FCj
-4QI1t6EPr082JEKLKomvrRJu4PkgtbPbGIV232c/YP5j7+h3aYdlP+zagOgkagG9
-sX8icBH1rBi+JkoFwm5a1czCaoxcHbzUuEs4VJWQNXeNipyWR5a6vAK3zrDoEUTg
-zonBcqeoLjYtDCUq0SoOnjlmz+ZbD474wvSpzd8S3FxNbLEtYb1S/ZQNmFTqaN4x
-TlPK/DqYSiVaUsk+cjxC+ABchFtyrA==
-=GlRW
------END PGP SIGNATURE-----
-
---Sig_/OJOy.6CHNQZrdZKVIj_1pSu--
+Thanks,
+Howard
+>
+> Thanks,
+> Namhyung
+>
+>
+> >       },
+> >       .tool =3D {
+> >               .sample         =3D process_sample_event,
+> > @@ -3560,6 +3583,9 @@ static struct option __record_options[] =3D {
+> >       OPT_BOOLEAN(0, "off-cpu", &record.off_cpu, "Enable off-cpu analys=
+is"),
+> >       OPT_STRING(0, "setup-filter", &record.filter_action, "pin|unpin",
+> >                  "BPF filter action"),
+> > +     OPT_CALLBACK(0, "off-cpu-thresh", &record.opts, "us",
+> > +                  "Dump off-cpu samples if off-cpu time reaches this t=
+hreshold. The unit is microseconds. (default: 500000)",
+> > +                  record__parse_off_cpu_thresh),
+> >       OPT_END()
+> >  };
+> >
+> > diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cp=
+u.c
+> > index 6af36142dc5a..1e0e454bfb5e 100644
+> > --- a/tools/perf/util/bpf_off_cpu.c
+> > +++ b/tools/perf/util/bpf_off_cpu.c
+> > @@ -272,6 +272,8 @@ int off_cpu_prepare(struct evlist *evlist, struct t=
+arget *target,
+> >               }
+> >       }
+> >
+> > +     skel->bss->offcpu_thresh =3D opts->off_cpu_thresh * 1000ull;
+> > +
+> >       err =3D off_cpu_bpf__attach(skel);
+> >       if (err) {
+> >               pr_err("Failed to attach off-cpu BPF skeleton\n");
+> > diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/b=
+pf_skel/off_cpu.bpf.c
+> > index d877a0a9731f..cca1b6990a57 100644
+> > --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> > +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> > @@ -96,6 +96,8 @@ const volatile bool uses_cgroup_v1 =3D false;
+> >
+> >  int perf_subsys_id =3D -1;
+> >
+> > +__u64 sample_id, sample_type, offcpu_thresh;
+> > +
+> >  /*
+> >   * Old kernel used to call it task_struct->state and now it's '__state=
+'.
+> >   * Use BPF CO-RE "ignored suffix rule" to deal with it like below:
+> > diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
+> > index a6566134e09e..3c11416e6627 100644
+> > --- a/tools/perf/util/record.h
+> > +++ b/tools/perf/util/record.h
+> > @@ -79,6 +79,7 @@ struct record_opts {
+> >       int           synth;
+> >       int           threads_spec;
+> >       const char    *threads_user_spec;
+> > +     u64           off_cpu_thresh;
+> >  };
+> >
+> >  extern const char * const *record_usage;
+> > --
+> > 2.45.2
+> >
 
