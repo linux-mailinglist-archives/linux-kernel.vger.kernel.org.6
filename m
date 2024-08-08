@@ -1,131 +1,230 @@
-Return-Path: <linux-kernel+bounces-279220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F162A94BAA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:16:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B076994BAAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A5A5B215BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:16:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D38201C21B39
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7289E189F48;
-	Thu,  8 Aug 2024 10:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fp6HRaaz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AB6146A7B;
-	Thu,  8 Aug 2024 10:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11881189F41;
+	Thu,  8 Aug 2024 10:17:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B68B12F5B1
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112194; cv=none; b=u/kunp2Bspa8ksYwJfjCyTIlyWjb6yqEyj/9GFQmfOO5dguAA7nAwY+pzDpqBYL5Twvbg7DbHptt2Uk2mMIiiNxsSeFC2JQn2YBvta2EnN8IVOHuntKfIokyIKWQ6mTf8dlrNj2kkZb9Z4w9MLbDKgiJHqV9wOn9pW884HzFZdQ=
+	t=1723112231; cv=none; b=XglyY5jrf/FsoN7cyVcXPZ9NkydoEE/Fhre1m88Z4jrrZawNkMwVPyAcJ5meJAa7OCJsukIML6Cq5GAGuvxWr1TwYp1npLpVl8phbrxlwG4mdjrPzepzKjPTmuNIppZBtGBl5xnYHEZDcoHbzv40uxt8z9/OLMu7u1i95DXBCGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112194; c=relaxed/simple;
-	bh=hTCk4wpPzNUni6maFCT90aDu+9oeYO7rJkKxJ0gCKaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Fk7tkW1sk3FY8LgkP1goa0VTLs/9bOm6ftY/wwF6/2TQuqYt2whKBcjYkJ7NIAM8ah+CxW8QVhmR6EtjFUUDw8RVrq3/OkZyxgJLOphy53yji3AAze2w9hcv+niFV6gufruIZ7ejpVOommSR+YhO5S6JowPW0919ZKHGYaIZ/H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fp6HRaaz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1B6C4AF10;
-	Thu,  8 Aug 2024 10:16:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723112194;
-	bh=hTCk4wpPzNUni6maFCT90aDu+9oeYO7rJkKxJ0gCKaY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=fp6HRaazTuZz4DwS2+M+WZXJp/6qPoCJM5AygmmHTNVJ2Gnb+JTNPRNz4DhFH5V9B
-	 ZRNj2wER0OMXRYYSTTUPb9ZmbslYitcAyNCX3EF2CLcokTDcMABHyGl3FHmTIC9P/A
-	 ys3iSIZrO4dGEwznuV9ZDRudghuXbiT13x5qsh3tVWk22jL22YhbjYbCUb+BfGTmpy
-	 BOFjl33m2hIDxdP/qCcurhBFdmRt1ZaXJ1btXzfovJMGyDY8kq005PdH5kdUdDFFbb
-	 aUvHODvDxlL23++F3gxF+2wMal6s7aBvAYoBUdglcrviRGTz0CZezfrfESqs7p0FdC
-	 Ye/jJ2f2gueYQ==
-Message-ID: <f12dd5c4-3b0f-4997-8368-1eef919d0cb0@kernel.org>
-Date: Thu, 8 Aug 2024 12:16:26 +0200
+	s=arc-20240116; t=1723112231; c=relaxed/simple;
+	bh=eKlxAn3MykGZ1MtaksQ5eHbuEVwkUA+gtiqS1gNeapc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MH2fgX/SiwWIO5sVjzR9dyKgZQvMsbsyAlg5SvE8fEWggbuCVweucO0L4LktIvsfhYSJIuGCVg+y0CriEZ+DV3u6no+Mj+khnYCVDS0mxMNsqu00uRe98i6ZyXp4Z6TO4W0q2aXbw+ZT0ngSWXaEPdQIu7hq0zbKhtTwMgromOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0443FEC;
+	Thu,  8 Aug 2024 03:17:34 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA0EF3F766;
+	Thu,  8 Aug 2024 03:17:07 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Lance Yang <ioworker0@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH v2] mm: Override mTHP "enabled" defaults at kernel cmdline
+Date: Thu,  8 Aug 2024 11:16:59 +0100
+Message-ID: <20240808101700.571701-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: reset Add AST2700 reset bindings
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
- <20240808075937.2756733-3-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240808075937.2756733-3-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08/08/2024 09:59, Ryan Chen wrote:
-> Add dt bindings for AST2700 reset driver.
-> 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+Add thp_anon= cmdline parameter to allow specifying the default
+enablement of each supported anon THP size. The parameter accepts the
+following format and can be provided multiple times to configure each
+size:
+
+thp_anon=<size>[KMG]:<value>
+
+See Documentation/admin-guide/mm/transhuge.rst for more details.
+
+Configuring the defaults at boot time is useful to allow early user
+space to take advantage of mTHP before its been configured through
+sysfs.
+
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+---
+
+Hi All,
+
+I've split this off from my RFC at [1] because Barry highlighted that he would
+benefit from it immediately [2]. There are no changes vs the version in that
+series.
+
+It applies against today's mm-unstable (275d686abcb59). (although I had to fix a
+minor build bug in stackdepot.c due to MIN() not being defined in this tree).
+
+Thanks,
+Ryan
 
 
-No, that's not how it works. Aspeed already sent it and recieved
-feedback. Do not send duplicated patches, without history/changelog. You
-keep avoiding discussion, do not reply and then send something again
-without changes.
+ .../admin-guide/kernel-parameters.txt         |  8 +++
+ Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
+ mm/huge_memory.c                              | 55 ++++++++++++++++++-
+ 3 files changed, 82 insertions(+), 7 deletions(-)
 
-Respond to feedback you got and implement it.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index bcdee8984e1f0..5c79b58c108ec 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6631,6 +6631,14 @@
+ 			<deci-seconds>: poll all this frequency
+ 			0: no polling (default)
 
-NAK
++	thp_anon=	[KNL]
++			Format: <size>[KMG]:always|madvise|never|inherit
++			Can be used to control the default behavior of the
++			system with respect to anonymous transparent hugepages.
++			Can be used multiple times for multiple anon THP sizes.
++			See Documentation/admin-guide/mm/transhuge.rst for more
++			details.
++
+ 	threadirqs	[KNL,EARLY]
+ 			Force threading of all interrupt handlers except those
+ 			marked explicitly IRQF_NO_THREAD.
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index 24eec1c03ad88..f63b0717366c6 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -284,13 +284,27 @@ that THP is shared. Exceeding the number would block the collapse::
 
-Best regards,
-Krzysztof
+ A higher value may increase memory footprint for some workloads.
+
+-Boot parameter
+-==============
++Boot parameters
++===============
+
+-You can change the sysfs boot time defaults of Transparent Hugepage
+-Support by passing the parameter ``transparent_hugepage=always`` or
+-``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
+-to the kernel command line.
++You can change the sysfs boot time default for the top-level "enabled"
++control by passing the parameter ``transparent_hugepage=always`` or
++``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
++kernel command line.
++
++Alternatively, each supported anonymous THP size can be controlled by
++passing ``thp_anon=<size>[KMG]:<state>``, where ``<size>`` is the THP size
++and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
++``inherit``.
++
++For example, the following will set 64K THP to ``always``::
++
++	thp_anon=64K:always
++
++``thp_anon=`` may be specified multiple times to configure all THP sizes as
++required. If ``thp_anon=`` is specified at least once, any anon THP sizes
++not explicitly configured on the command line are implicitly set to
++``never``.
+
+ Hugepages in tmpfs/shmem
+ ========================
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 0c3075ee00012..c2c0da1eb94e6 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -82,6 +82,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
+ unsigned long huge_anon_orders_always __read_mostly;
+ unsigned long huge_anon_orders_madvise __read_mostly;
+ unsigned long huge_anon_orders_inherit __read_mostly;
++static bool anon_orders_configured;
+
+ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 					 unsigned long vm_flags,
+@@ -672,7 +673,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
+ 	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
+ 	 * constant so we have to do this here.
+ 	 */
+-	huge_anon_orders_inherit = BIT(PMD_ORDER);
++	if (!anon_orders_configured) {
++		huge_anon_orders_inherit = BIT(PMD_ORDER);
++		anon_orders_configured = true;
++	}
+
+ 	*hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
+ 	if (unlikely(!*hugepage_kobj)) {
+@@ -857,6 +861,55 @@ static int __init setup_transparent_hugepage(char *str)
+ }
+ __setup("transparent_hugepage=", setup_transparent_hugepage);
+
++static int __init setup_thp_anon(char *str)
++{
++	unsigned long size;
++	char *state;
++	int order;
++	int ret = 0;
++
++	if (!str)
++		goto out;
++
++	size = (unsigned long)memparse(str, &state);
++	order = ilog2(size >> PAGE_SHIFT);
++	if (*state != ':' || !is_power_of_2(size) || size <= PAGE_SIZE ||
++	    !(BIT(order) & THP_ORDERS_ALL_ANON))
++		goto out;
++
++	state++;
++
++	if (!strcmp(state, "always")) {
++		clear_bit(order, &huge_anon_orders_inherit);
++		clear_bit(order, &huge_anon_orders_madvise);
++		set_bit(order, &huge_anon_orders_always);
++		ret = 1;
++	} else if (!strcmp(state, "inherit")) {
++		clear_bit(order, &huge_anon_orders_always);
++		clear_bit(order, &huge_anon_orders_madvise);
++		set_bit(order, &huge_anon_orders_inherit);
++		ret = 1;
++	} else if (!strcmp(state, "madvise")) {
++		clear_bit(order, &huge_anon_orders_always);
++		clear_bit(order, &huge_anon_orders_inherit);
++		set_bit(order, &huge_anon_orders_madvise);
++		ret = 1;
++	} else if (!strcmp(state, "never")) {
++		clear_bit(order, &huge_anon_orders_always);
++		clear_bit(order, &huge_anon_orders_inherit);
++		clear_bit(order, &huge_anon_orders_madvise);
++		ret = 1;
++	}
++
++	if (ret)
++		anon_orders_configured = true;
++out:
++	if (!ret)
++		pr_warn("thp_anon=%s: cannot parse, ignored\n", str);
++	return ret;
++}
++__setup("thp_anon=", setup_thp_anon);
++
+ pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+ {
+ 	if (likely(vma->vm_flags & VM_WRITE))
+--
+2.43.0
 
 
