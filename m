@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-279236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802F294BAD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:24:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A686094BAD2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261D41F219B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:24:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 312FCB21E3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED8818A6CD;
-	Thu,  8 Aug 2024 10:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FAF18A934;
+	Thu,  8 Aug 2024 10:24:03 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6730C189F59
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D90718A6D3
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112640; cv=none; b=StODCZuwHNyMFxpSZ6Yu/ZN8ngD37oqNZNHkaKxfyWb6a9k2+GO9QXTFrfpuYnBgXNsVblvfwmSXcGkOQ8b6s7C3Rjl8iSe3l13mI71k5FzjO6dJ5KF2CbetC5uiCdtSMRD8UefALPKHluKrxBl2YiL2D1fEKj7uFmA+X11QH4Q=
+	t=1723112643; cv=none; b=GG4oPNsYJwoq8A2mC6nfAbEZGlw9Mbjo9lHDR5z/pPfkS3Kf4vs1UpdCo2DoZpdA2AiTLyHlOTJxs7Zw+kZrGVGyiSULbUcFg5sIpXfZxkk/GfSonsUZk9+3QY1cNQ3zKr/LZSTur2EAEZnMgfuGLmxoL1sOu4Eco3AYfXYJUgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112640; c=relaxed/simple;
-	bh=NRpjefoAf0si/NCj5HpnS6xtFy0CHPE/B/N8eLe3Xy0=;
+	s=arc-20240116; t=1723112643; c=relaxed/simple;
+	bh=7GeHYng0gGy2Zq3qvCzuRAaZrbvhnB8ww0VJ2ScHhQs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qgjtj41xfBp6rQnG+z3SCyrDR9A3AIRE2E0MBR+yV8PinDfpCDtTKMaVt+2yQccMoI4W/g6vrU0xFdH+poSheXUPYgEZhr6L6z5+lJfj+6oLkQo0FZXMgFaAK8F2AFJQumlWOMq0aA//rYqcJdLhT7s36DlOVdROepT2qMTHJGQ=
+	 In-Reply-To:Content-Type; b=ktVTMCgf8jwK2IXpVLB6XKa+8jLBNamAaR1CjrdONot9aBWyBAT/g5fD5FMGLPfCCG5CxSAfI2KqwV8a1896hcOWK2okqqx+yERbH9PyKZnU3YLHW8/aQKMzBWJ5kapmGlZlPP5OmFOvpJ69xMMVgV1beCf1PLXOTY3JzTWW1vA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B243E1042;
-	Thu,  8 Aug 2024 03:24:24 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0CE3FEC;
+	Thu,  8 Aug 2024 03:24:26 -0700 (PDT)
 Received: from [10.1.26.21] (e122027.cambridge.arm.com [10.1.26.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF2323F766;
-	Thu,  8 Aug 2024 03:23:56 -0700 (PDT)
-Message-ID: <455c684c-7ec2-4588-b028-f59c144c9348@arm.com>
-Date: Thu, 8 Aug 2024 11:23:53 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 415603F766;
+	Thu,  8 Aug 2024 03:23:59 -0700 (PDT)
+Message-ID: <97edac2e-3a4c-477f-aaa7-9ac66f1f4434@arm.com>
+Date: Thu, 8 Aug 2024 11:23:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,58 +41,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drm/panfrost: Add cycle counter job requirement
+Subject: Re: [PATCH 3/3] drm/panfrost: Handle JD_REQ_CYCLE_COUNT
 To: Mary Guillemard <mary.guillemard@collabora.com>,
  linux-kernel@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com,
  Boris Brezillon <boris.brezillon@collabora.com>,
- Rob Herring <robh@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
 References: <20240807160900.149154-1-mary.guillemard@collabora.com>
- <20240807160900.149154-3-mary.guillemard@collabora.com>
+ <20240807160900.149154-4-mary.guillemard@collabora.com>
 From: Steven Price <steven.price@arm.com>
 Content-Language: en-GB
-In-Reply-To: <20240807160900.149154-3-mary.guillemard@collabora.com>
+In-Reply-To: <20240807160900.149154-4-mary.guillemard@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 07/08/2024 17:08, Mary Guillemard wrote:
-> Extend the uAPI with a new job requirement flag for cycle
-> counters. This requirement is used by userland to indicate that a job
-> requires cycle counters or system timestamp to be propagated. (for use
-> with write value timestamp jobs)
+> If a job requires cycle counters or system timestamps propagation, we
+> must enable cycle counting before issuing a job and disable it right
+> after the job completes.
 > 
-> We cannot enable cycle counters unconditionally as this would result in
-> an increase of GPU power consumption. As a result, they should be left
-> off unless required by the application.
-> 
-> This new uAPI will be used in Mesa to implement timestamp queries and
-> VK_KHR_shader_clock.
+> Since this extends the uAPI and because userland needs a way to advertise
+> features like VK_KHR_shader_clock conditionally, we bumps the driver
+> minor version.
 > 
 > Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_drv.c |  8 ++++++--
+>  drivers/gpu/drm/panfrost/panfrost_job.c | 10 ++++++++++
+>  2 files changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index d94c9bf5a7f9..fe983defdfdf 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -21,6 +21,8 @@
+>  #include "panfrost_gpu.h"
+>  #include "panfrost_perfcnt.h"
+>  
+> +#define JOB_REQUIREMENTS (PANFROST_JD_REQ_FS | PANFROST_JD_REQ_CYCLE_COUNT)
+> +
+>  static bool unstable_ioctls;
+>  module_param_unsafe(unstable_ioctls, bool, 0600);
+>  
+> @@ -262,7 +264,7 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
+>  	if (!args->jc)
+>  		return -EINVAL;
+>  
+> -	if (args->requirements && args->requirements != PANFROST_JD_REQ_FS)
+> +	if (args->requirements && args->requirements & ~JOB_REQUIREMENTS)
 
-Makes sense, but I'm not sure why this needs to be it's own patch - I'd
-squash this with the next one where it actually gets used.
+I think this can be simplified to just:
+if (args->requirements & ~JOB_REQUIREMENTS)
+
+>  		return -EINVAL;
+>  
+>  	if (args->out_sync > 0) {
+> @@ -601,6 +603,8 @@ static const struct file_operations panfrost_drm_driver_fops = {
+>   * - 1.0 - initial interface
+>   * - 1.1 - adds HEAP and NOEXEC flags for CREATE_BO
+>   * - 1.2 - adds AFBC_FEATURES query
+> + * - 1.3 - adds JD_REQ_CYCLE_COUNT job requirement for SUBMIT
+> + *       - adds SYSTEM_TIMESTAMP and SYSTEM_TIMESTAMP_FREQUENCY queries
+
+Obviously needs updating if the first patch is dropped.
+
+>   */
+>  static const struct drm_driver panfrost_drm_driver = {
+>  	.driver_features	= DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ,
+> @@ -614,7 +618,7 @@ static const struct drm_driver panfrost_drm_driver = {
+>  	.desc			= "panfrost DRM",
+>  	.date			= "20180908",
+>  	.major			= 1,
+> -	.minor			= 2,
+> +	.minor			= 3,
+>  
+>  	.gem_create_object	= panfrost_gem_create_object,
+>  	.gem_prime_import_sg_table = panfrost_gem_prime_import_sg_table,
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+> index df49d37d0e7e..d8c215c0c672 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -159,6 +159,9 @@ panfrost_dequeue_job(struct panfrost_device *pfdev, int slot)
+>  	struct panfrost_job *job = pfdev->jobs[slot][0];
+>  
+>  	WARN_ON(!job);
+> +	if (job->requirements & PANFROST_JD_REQ_CYCLE_COUNT)
+> +		panfrost_cycle_counter_put(pfdev);
+> +
+>  	if (job->is_profiled) {
+>  		if (job->engine_usage) {
+>  			job->engine_usage->elapsed_ns[slot] +=
+> @@ -219,6 +222,9 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  
+>  	panfrost_job_write_affinity(pfdev, job->requirements, js);
+>  
+> +	if (job->requirements & PANFROST_JD_REQ_CYCLE_COUNT)
+> +		panfrost_cycle_counter_get(pfdev);
+> +
+>  	/* start MMU, medium priority, cache clean/flush on end, clean/flush on
+>  	 * start */
+>  	cfg |= JS_CONFIG_THREAD_PRI(8) |
+> @@ -693,8 +699,12 @@ panfrost_reset(struct panfrost_device *pfdev,
+>  	spin_lock(&pfdev->js->job_lock);
+>  	for (i = 0; i < NUM_JOB_SLOTS; i++) {
+>  		for (j = 0; j < ARRAY_SIZE(pfdev->jobs[0]) && pfdev->jobs[i][j]; j++) {
+> +			if (pfdev->jobs[i][j]->requirements & PANFROST_JD_REQ_CYCLE_COUNT)
+> +				panfrost_cycle_counter_put(pfdev);
+> +
+>  			if (pfdev->jobs[i][j]->is_profiled)
+>  				panfrost_cycle_counter_put(pfdev->jobs[i][j]->pfdev);
+> +
+>  			pm_runtime_put_noidle(pfdev->dev);
+>  			panfrost_devfreq_record_idle(&pfdev->pfdevfreq);
+>  		}
+
+This looks correct, but it would be nice to combine the is_profiled and
+REQ_CYCLE_COUNT paths. We end up with the odd situation of taking two
+reference counts (per job) if global profiling is enabled and the flag
+is specified.
+
+To be honest it looks as if there could be a bit of a cleanup by
+changing panfrost_reset() to use panfrost_dequeue_job(). I'm not sure
+why it was written that way.
 
 Steve
-
-> ---
->  include/uapi/drm/panfrost_drm.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/uapi/drm/panfrost_drm.h b/include/uapi/drm/panfrost_drm.h
-> index 52b050e2b660..568724be6628 100644
-> --- a/include/uapi/drm/panfrost_drm.h
-> +++ b/include/uapi/drm/panfrost_drm.h
-> @@ -40,6 +40,7 @@ extern "C" {
->  #define DRM_IOCTL_PANFROST_PERFCNT_DUMP		DRM_IOW(DRM_COMMAND_BASE + DRM_PANFROST_PERFCNT_DUMP, struct drm_panfrost_perfcnt_dump)
->  
->  #define PANFROST_JD_REQ_FS (1 << 0)
-> +#define PANFROST_JD_REQ_CYCLE_COUNT (1 << 1)
->  /**
->   * struct drm_panfrost_submit - ioctl argument for submitting commands to the 3D
->   * engine.
 
 
