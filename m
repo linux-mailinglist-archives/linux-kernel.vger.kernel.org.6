@@ -1,155 +1,234 @@
-Return-Path: <linux-kernel+bounces-279744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D8594C14B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:29:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 302DD94C15C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3211F2B7AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:29:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52211F2B967
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB0218FDB4;
-	Thu,  8 Aug 2024 15:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2EE19149B;
+	Thu,  8 Aug 2024 15:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="B+w6oTaR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="aj8lF0Qk"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JVIRpwYC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB3D18FC8F;
-	Thu,  8 Aug 2024 15:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B62190674;
+	Thu,  8 Aug 2024 15:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723130871; cv=none; b=RsMOuh1huSQkVowuh3xLpXIw7I91MesmuYU8v4Ve+ScLCASGvS8XcjOG6UUZ2D0Mf1ciUxp5CbaCkjiQ5KWnX04rZU55cgtmom9EwFpPv+1ID8b0P1e1H2Oc0pWmIMLDNpiR9/pXGM3IbNSRPS+hJgVl+GOsPOUH7vPEaL0Ugmk=
+	t=1723130918; cv=none; b=sv/diop01z/AKDf/Zc1j8IETGzhjX9RDeXw9vM14bsT2/ME8LT6A5kKvA7uB5I4XjoPWuvnmIJB8cpealoL8QvFQywEpadNrZnr5G2i82RLc309hZoFWYKOIT68M/vnm+eXJ3x/EV82+TE3tlirytQcmipwFvltdvz/mKxUAvXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723130871; c=relaxed/simple;
-	bh=pVXT/WpO/Vd+dSlyATMq7jQ1Q/Ms9tqOBgO9J2528xU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FEBESiNipDgP5SROq6sH1QXkbA5IIAdoa+ylbDh5IHb/CdGmZoroZNpzu9Ad0ucQEe2QTcwS6WiL4vgqRE4CjZcp5cmgGiPe3es3+Phj5LQtrzA01dYv5ERaOeKVZkS+GyAKWK4eEDDIToKGaRtdhsmGy35i78vtXaHTh0dyWvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=B+w6oTaR; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=aj8lF0Qk reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723130866; x=1754666866;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=O3S37yAL7py1iqZdhmEM/jnGQrTXFEljfmn4dyezkII=;
-  b=B+w6oTaRhDuMKbTFBk0vX1WS22Fm20j7bpG0ENkrhK8KqGqSJSyQrug2
-   L6Og/VRCQYD/Kb97QtxGmS0jcoUpHytrB4CzuzvjXLnoc2Xz2XRwQdxPM
-   53NRCAOL4FApyNNeHWdxru3YUPRzZ9pcCjBqgPF+D/qFcNWjtSzvz45Cy
-   X73NuZ1bEcuGwo0kzU9SjtSojh46TwR1Rz+0R3KrEuFR1ILs3coG5Flh7
-   atK5UPOs5qWlROtAMKJYhofk7LMscndDauXYqbhIpL43TH5V1WUO2YzRr
-   J6RLIJ6GYXlQYHPbvq3FKfM0WQkenL0mTqUdAvjCTPhsz7tzA9CGegn83
-   A==;
-X-CSE-ConnectionGUID: 0wLTaXIwTD2fd/4FQ+5ajw==
-X-CSE-MsgGUID: 28+Zl++PSV69A5l8RYZXrQ==
-X-IronPort-AV: E=Sophos;i="6.09,273,1716242400"; 
-   d="scan'208";a="38319885"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 08 Aug 2024 17:27:43 +0200
-X-CheckPoint: {66B4E3EF-12-DD19D171-FBE73682}
-X-MAIL-CPID: 763AB2045628BCB4D3D087BA8D28C6F6_5
-X-Control-Analysis: str=0001.0A782F1D.66B4E3EF.012A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F2149160A0C;
-	Thu,  8 Aug 2024 17:27:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723130859;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=O3S37yAL7py1iqZdhmEM/jnGQrTXFEljfmn4dyezkII=;
-	b=aj8lF0QkVhsxHv10leLLBYcFFhyNrnFMHCxdO+qRBHqCXF3X9nXJw5yzfJeHI9OTDj+lDF
-	hMxfll7WJabig2mxinq/cY/IPnr8/MYfWNOL5UTLY7mkdzkjkVUM3/cN3kVybuGuvuIiY9
-	GF2UZq2gj55H+GUVwyxaaYd0USFUyCwUrImQRMm6abDkwjBMLc6/vUWFZ1GJctI/Hd2+TD
-	OgJMQ6k6gdwN+WMU1dJ889UL1r29pBntowJbSR3J44ECJKpu1A7qouUFdEx3iMfjGllpeX
-	FbY3yVYBHFLPuKuNzzbTfJGFBCJWSFh09FnHLRkxm1oyADOULe9JP1ebjoNtAA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org, u.kleine-koenig@pengutronix.de, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: sherry.sun@nxp.com, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH] tty: serial: fsl_lpuart: mark last busy before uart_add_one_port
-Date: Thu, 08 Aug 2024 17:27:40 +0200
-Message-ID: <3306657.aeNJFYEL58@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240808140325.580105-1-peng.fan@oss.nxp.com>
-References: <20240808140325.580105-1-peng.fan@oss.nxp.com>
+	s=arc-20240116; t=1723130918; c=relaxed/simple;
+	bh=a4ZQWJYo9ZNciGpk/WyCAzPwTKaWvtz2Ab/rgUpDlBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kk45qn3OK9R6+NWNpTT3Dm4pSMGYP8vbaZirKgfYaDMYe4wtHvp4LcUBlq9c/LXNaJgaM7XodQCm/44IYdoaZ9wH2ctXiBKh68wGsEw2c79bf4ePLI7CX7Ui4hH2fDRVHgSVIdCVkJ7XHMEb9PYEh0XIyN4mbNBMKBQQPyHbBvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JVIRpwYC; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723130917; x=1754666917;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=a4ZQWJYo9ZNciGpk/WyCAzPwTKaWvtz2Ab/rgUpDlBM=;
+  b=JVIRpwYCAQENhDRFWD1zc9cUc/1D9dGGFwciXBtKwwINt3itg//sf4ou
+   k9zQz4Ww0BhP3NTFIIks6JrzdnLA4slQXewgXjohWS6JdkXoYuJmK+BmC
+   giTdy85V5mIgPKoE/AlWBx0DhW6JaprvBVHWK7i7ixCJL+49ACjJdiuas
+   yDrpKEoX6n0sJh417GswqPW+f83F+gstGw6xt8QD44EyvuvXvw6Rz5ixH
+   UIY85StQVRp5SDHHts7sB36Y8ek0CkGlF0GViB+kBwJJKNPXQgw7A9Yqf
+   yg4c2JmcnXxlSetZJBcYvPntZhVfFsqffMWh0c7TmTxEvyV/y2WDU2wbW
+   w==;
+X-CSE-ConnectionGUID: 8MX/4npgRfmZL236sEzdRw==
+X-CSE-MsgGUID: I9d/UyooSjGVbINL/5dJ/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25025919"
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="25025919"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 08:28:36 -0700
+X-CSE-ConnectionGUID: 01ILxNxUSkGak4UXTNkL4g==
+X-CSE-MsgGUID: Axuy5MwnTBCad6/1AJ5Cqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="57162743"
+Received: from newjersey.igk.intel.com ([10.102.20.203])
+  by orviesa009.jf.intel.com with ESMTP; 08 Aug 2024 08:28:33 -0700
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	David Ahern <dsahern@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3 0/6] netdev_features: start cleaning netdev_features_t up
+Date: Thu,  8 Aug 2024 17:27:51 +0200
+Message-ID: <20240808152757.2016725-1-aleksander.lobakin@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-Am Donnerstag, 8. August 2024, 16:03:25 CEST schrieb Peng Fan (OSS):
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> With "earlycon initcall_debug=3D1 loglevel=3D8" in bootargs, kernel
-> sometimes boot hang. It is because normal console still is not ready,
-> but runtime suspend is called, so early console putchar will hang
-> in waiting TRDE set in UARTSTAT.
->=20
-> The lpuart driver has auto suspend delay set to 3000ms, but during
-> uart_add_one_port, a child device serial ctrl will added and probed with
-> its pm runtime enabled(see serial_ctrl.c).
-> The runtime suspend call path is:
-> device_add
->      |-> bus_probe_device
->            |->device_initial_probe
-> 	           |->__device_attach
->                          |-> pm_runtime_get_sync(dev->parent);
-> 			 |-> pm_request_idle(dev);
-> 			 |-> pm_runtime_put(dev->parent);
->=20
-> So in the end, before normal console ready, the lpuart get runtime
-> suspended. And earlycon putchar will hang.
->=20
-> To address the issue, mark last busy just after pm_runtime_enable,
-> three seconds is long enough to switch from bootconsole to normal
-> console.
->=20
-> Fixes: 43543e6f539b ("tty: serial: fsl_lpuart: Add runtime pm support")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/tty/serial/fsl_lpuart.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpu=
-art.c
-> index 615291ea9b5e..77efa7ee6eda 100644
-> --- a/drivers/tty/serial/fsl_lpuart.c
-> +++ b/drivers/tty/serial/fsl_lpuart.c
-> @@ -2923,6 +2923,7 @@ static int lpuart_probe(struct platform_device *pde=
-v)
->  	pm_runtime_set_autosuspend_delay(&pdev->dev, UART_AUTOSUSPEND_TIMEOUT);
->  	pm_runtime_set_active(&pdev->dev);
->  	pm_runtime_enable(&pdev->dev);
-> +	pm_runtime_mark_last_busy(&pdev->dev);
+NETDEV_FEATURE_COUNT is currently 64, which means we can't add any new
+features as netdev_features_t is u64.
+As per several discussions, instead of converting netdev_features_t to
+a bitmap, which would mean A LOT of changes, we can try cleaning up
+netdev feature bits.
+There's a bunch of bits which don't really mean features, rather device
+attributes/properties that can't be changed via Ethtool in any of the
+drivers. Such attributes can be moved to netdev private flags without
+losing any functionality.
 
-This change looks sensible to me. Is maybe [1] addressing the same issue at=
- a
-different level?
+Start converting some read-only netdev features to private flags from
+the ones that are most obvious, like lockless Tx, inability to change
+network namespace etc. I was able to reduce NETDEV_FEATURE_COUNT from
+64 to 60, which mean 4 free slots for new features. There are obviously
+more read-only features to convert, such as highDMA, "challenged VLAN",
+HSR (4 bits) - this will be done in subsequent series.
+Please note that netdev features are not uAPI/ABI by any means. Ethtool
+passes their names and bits to the userspace separately and there are no
+hardcoded names/bits in the userspace, so that new Ethtool could work
+on older kernels and vice versa. Even shell scripts won't most likely
+break since the removed bits were always read-only, meaning nobody would
+try touching them from a script.
 
-Best regards,
-Alexander
+Alexander Lobakin (6):
+  netdevice: convert private flags > BIT(31) to bitfields
+  netdev_features: remove unused __UNUSED_NETIF_F_1
+  netdev_features: convert NETIF_F_LLTX to dev->lltx
+  netdev_features: convert NETIF_F_NETNS_LOCAL to dev->netns_local
+  netdev_features: convert NETIF_F_FCOE_MTU to dev->fcoe_mtu
+  net: netdev_features: remove NETIF_F_ALL_FCOE
 
-[1] https://lore.kernel.org/all/20240808-gs101-non-essential-clocks-2-v6-0-=
-e91c537acedc@linaro.org/
+ .../networking/net_cachelines/net_device.rst  |  7 ++-
+ Documentation/networking/netdev-features.rst  | 15 -------
+ Documentation/networking/netdevices.rst       |  4 +-
+ Documentation/networking/switchdev.rst        |  4 +-
+ drivers/net/ethernet/tehuti/tehuti.h          |  2 +-
+ include/linux/netdev_features.h               | 14 +-----
+ include/linux/netdevice.h                     | 44 +++++++++++++------
+ drivers/net/amt.c                             |  4 +-
+ drivers/net/bareudp.c                         |  2 +-
+ drivers/net/bonding/bond_main.c               |  8 ++--
+ drivers/net/dummy.c                           |  3 +-
+ drivers/net/ethernet/adi/adin1110.c           |  2 +-
+ drivers/net/ethernet/chelsio/cxgb/cxgb2.c     |  3 +-
+ .../net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c   |  6 +--
+ .../net/ethernet/freescale/dpaa/dpaa_eth.c    |  3 +-
+ .../net/ethernet/freescale/dpaa2/dpaa2-eth.c  |  3 +-
+ .../net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c   |  2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c |  4 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c  |  2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 11 ++---
+ .../net/ethernet/intel/ixgbe/ixgbe_sriov.c    |  4 +-
+ .../ethernet/marvell/prestera/prestera_main.c |  3 +-
+ .../net/ethernet/mellanox/mlx5/core/en_main.c |  4 +-
+ .../net/ethernet/mellanox/mlx5/core/en_rep.c  |  3 +-
+ .../net/ethernet/mellanox/mlxsw/spectrum.c    |  6 ++-
+ .../ethernet/microchip/lan966x/lan966x_main.c |  2 +-
+ .../net/ethernet/netronome/nfp/nfp_net_repr.c |  3 +-
+ drivers/net/ethernet/pasemi/pasemi_mac.c      |  5 ++-
+ .../net/ethernet/qualcomm/rmnet/rmnet_vnd.c   |  2 +-
+ drivers/net/ethernet/rocker/rocker_main.c     |  3 +-
+ drivers/net/ethernet/sfc/ef100_rep.c          |  4 +-
+ drivers/net/ethernet/tehuti/tehuti.c          |  4 +-
+ drivers/net/ethernet/ti/cpsw_new.c            |  3 +-
+ drivers/net/ethernet/toshiba/spider_net.c     |  3 +-
+ drivers/net/geneve.c                          |  2 +-
+ drivers/net/gtp.c                             |  2 +-
+ drivers/net/hamradio/bpqether.c               |  2 +-
+ drivers/net/ipvlan/ipvlan_main.c              |  3 +-
+ drivers/net/loopback.c                        |  4 +-
+ drivers/net/macsec.c                          |  4 +-
+ drivers/net/macvlan.c                         |  6 ++-
+ drivers/net/net_failover.c                    |  4 +-
+ drivers/net/netkit.c                          |  3 +-
+ drivers/net/nlmon.c                           |  4 +-
+ drivers/net/ppp/ppp_generic.c                 |  2 +-
+ drivers/net/rionet.c                          |  2 +-
+ drivers/net/team/team_core.c                  |  8 ++--
+ drivers/net/tun.c                             |  5 ++-
+ drivers/net/veth.c                            |  2 +-
+ drivers/net/vrf.c                             |  4 +-
+ drivers/net/vsockmon.c                        |  4 +-
+ drivers/net/vxlan/vxlan_core.c                |  5 ++-
+ drivers/net/wireguard/device.c                |  2 +-
+ drivers/scsi/fcoe/fcoe.c                      |  4 +-
+ drivers/staging/octeon/ethernet.c             |  2 +-
+ lib/test_bpf.c                                |  3 +-
+ net/8021q/vlan_dev.c                          | 10 +++--
+ net/8021q/vlanproc.c                          |  4 +-
+ net/batman-adv/soft-interface.c               |  5 ++-
+ net/bridge/br_device.c                        |  6 ++-
+ net/core/dev.c                                |  8 ++--
+ net/core/dev_ioctl.c                          |  9 ++--
+ net/core/net-sysfs.c                          |  3 +-
+ net/core/rtnetlink.c                          |  2 +-
+ net/dsa/user.c                                |  3 +-
+ net/ethtool/common.c                          |  3 --
+ net/hsr/hsr_device.c                          | 12 ++---
+ net/ieee802154/6lowpan/core.c                 |  2 +-
+ net/ieee802154/core.c                         | 10 ++---
+ net/ipv4/ip_gre.c                             |  4 +-
+ net/ipv4/ip_tunnel.c                          |  2 +-
+ net/ipv4/ip_vti.c                             |  2 +-
+ net/ipv4/ipip.c                               |  2 +-
+ net/ipv4/ipmr.c                               |  2 +-
+ net/ipv6/ip6_gre.c                            |  7 +--
+ net/ipv6/ip6_tunnel.c                         |  4 +-
+ net/ipv6/ip6mr.c                              |  2 +-
+ net/ipv6/sit.c                                |  4 +-
+ net/l2tp/l2tp_eth.c                           |  2 +-
+ net/openvswitch/vport-internal_dev.c          | 11 ++---
+ net/wireless/core.c                           | 10 ++---
+ net/xfrm/xfrm_interface_core.c                |  2 +-
+ tools/testing/selftests/net/forwarding/README |  2 +-
+ 83 files changed, 207 insertions(+), 195 deletions(-)
 
-> =20
->  	ret =3D lpuart_global_reset(sport);
->  	if (ret)
->=20
+---
+From v2[0]:
+* rebase on top of the latest net-next;
+* 0003: don't remove the paragraph saying "LLTX is deprecated for real
+  HW drivers" (Willem);
+* 0006: new, remove %NETIF_F_ALL_FCOE used only 2 times in 1 file
+  (Jakub);
+* no functional changes.
 
+From v1[1]:
+* split bitfield priv flags into "hot" and "cold", leave the first
+  placed where the old ::priv_flags is and move the rest down next
+  to ::threaded (Jakub);
+* document all the changes in Documentation/networking/net_cachelines/
+  net_device.rst;
+* #3: remove the "-1 cacheline on Tx" paragraph, not really true (Eric).
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+From RFC[2]:
+* drop:
+  * IFF_LOGICAL (as (LLTX | IFF_NO_QUEUE)) - will be discussed later;
+  * NETIF_F_HIGHDMA conversion - requires priv flags inheriting etc.,
+    maybe later;
+  * NETIF_F_VLAN_CHALLENGED conversion - same as above;
+* convert existing priv_flags > BIT(31) to bitfield booleans and define
+  new flags the same way (Jakub);
+* mention a couple times that netdev features are not uAPI/ABI by any
+  means (Andrew).
 
+[0] https://lore.kernel.org/netdev/20240703150342.1435976-1-aleksander.lobakin@intel.com
+[1] https://lore.kernel.org/netdev/20240625114432.1398320-1-aleksander.lobakin@intel.com
+[2] https://lore.kernel.org/netdev/20240405133731.1010128-1-aleksander.lobakin@intel.com
+-- 
+2.45.2
 
 
