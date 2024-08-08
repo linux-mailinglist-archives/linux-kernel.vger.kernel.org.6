@@ -1,307 +1,209 @@
-Return-Path: <linux-kernel+bounces-280133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F1394C62E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:12:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F50994C632
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62BEF283DE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:12:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2672C281F66
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DB8156C40;
-	Thu,  8 Aug 2024 21:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488BB15B992;
+	Thu,  8 Aug 2024 21:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cYN1vycW"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="f18Au8cH"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873D11487FE
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B481315B103
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723151519; cv=none; b=YrS13+R7H82/qkE4CnuHyD/c8GUw7WLOURaWhRGdnpwq+xJ25HI+1jPU8ZvPgEUwkQ/ChKWEPC9vcl74nSFcHtkdM0guZHoXgwqG5OtSNP86tgdXcXw4w95//9HFhhGkbavja1pnaHKIT256CPNRflC8+8SzScR9AN/K8nxFzYE=
+	t=1723151539; cv=none; b=nM4616vjCXxhLMzuJiWVycpYn3lX1ccTKepLu40Wv4tAw7Iw/VNYj4Ybe6q97mIqzCR6jOPCX1oyWtZWsge8+dStiWkl+Tmn1W9FKYaZgQVlf2uXrmsINJTATR8CB9fuscBpOYLPkGTjYdNiXLm6WtJrkSkUb56WXe79tIjEXFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723151519; c=relaxed/simple;
-	bh=k6iJ5yBjYG1uDxzIHGXkucPmnu4WitUh8rq829qarNE=;
+	s=arc-20240116; t=1723151539; c=relaxed/simple;
+	bh=O+UVqcoHQqk/v26aJQY7cg5NLBWtOU+yxnENsZBLbBw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XdN1l9xsun7pzdr204+xSY9Z3vzYyfhwOp0mm/COMeJiPYxIJywbvy7seAgyVLd+cLcX0+qclQjwTDnI/WK/D1CHWLCVM8EurzKTcw/pY/C5Bxyi4DikeVUz56JiUNg8fcr0AZAWP0t4SuL/JDyMz1cdBpFtm+iNg0wHXwtVhx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cYN1vycW; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso2515051e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:11:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=athKg8GwlMvyZ/m0aylbrnZVhk/tIdyNahEvH2kUqMFQJB3OXKlPM5XeRIvM7xKt0GyLL7egLDJZL9m74rjiMR5Xm424AUspm21BvUHoIA9w3MdhbNTP7waUZkUfPwXTIz0prc2odwKoHlWTJQcM51DbdqdMqhgcYx3M2BXXNCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=f18Au8cH; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-68d30057ae9so13205277b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:12:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723151515; x=1723756315; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1723151537; x=1723756337; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8evJkR69sPV/KRCSOPqEBKgOd9wCQjS5v2YcO5rlL1g=;
-        b=cYN1vycWDwmlgWAZpwSuMzL6a8b2nh1BNiZYgMzo+NG75TUETA0c1gG+En3NlxLJcI
-         3T7DmV2AxC3pRf61ZAF0xuwG1yg4T7CK13nSxZpkMY/4p2k0tv8deSLFoNHqMD2BPrwq
-         XxjGw8QCNkusDvq++vWdHkvK7CQa3Ve6YA+EvqHlU8W4AI4HLsE5pf1F9LkKmARdniVg
-         g/bNghYiVYJAIrtBv0NTUQq21ecCrufcvjJxiqJhNhvfuahcJXorO8RUHngxjwNuV8uK
-         z4sy/n0CAb9OJrpYtiuDWTAvcSCp6qkiEx76/+8E6T2VKUuX8cqmXqD9Klnsg8DghcLd
-         biZg==
+        bh=5TVmurDZ09S8wToJn0zhvU/nJNzMoT0MyGdFWp7IEvY=;
+        b=f18Au8cHK8vkuvyT4vO3CU3J4H0e6dbg0zv4QxSfl17uRKXJNyXteoWTRjgetkpXTK
+         a8e9Y68XOE86ar2hY+MUEKCKibSUbMXHsA8sYcy7U7dIdIr2PhhqbGr2TjyhJ1vgCcec
+         SwOdO1Lhkq49LrMANzJcYaQj1f/sm3svBi8YXKw94wGq8Z331hxSsJLLzw+o1NWpbTtb
+         bmNhOi2Ct/E31GEB5CFJ4dXbqAjUuDGQutDYFoqXZ4O1i4GZXh0pFU5ONq7ku9rS0ly1
+         Qd+1/F6H5Gk1JkCHbpow25PBymD/Cg7Cq1YLySMM/YAyQChL8e7tQJlGShMxsR1kQ1Ez
+         U46g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723151515; x=1723756315;
+        d=1e100.net; s=20230601; t=1723151537; x=1723756337;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8evJkR69sPV/KRCSOPqEBKgOd9wCQjS5v2YcO5rlL1g=;
-        b=Zuo8W2nGJPE2Lx0eHduLSusLEuoJdV/SriiA0NavkzvcI66Y1lUzx0Id6zQPwMBFRQ
-         P4Na2ZTQhrkeRmnGDU4XJ+QlehHbleC6AyU5F9oITH/kCoR7JlG0sud0DfUsJYLArBtM
-         ZjutM4ElH/x1mO7GXHPfZYX6KRp/c2nhnD6KwhtZTC7FP7cZbZanlSU3wbrJJOJDMoOm
-         v8m2JoHAw31qAdm66nUxeyBZC8CQC9l/gA3rkElQX7+Upci+Zy8gk0w+SxcQFGT/z3GI
-         etcwRXsJ+z5IqDWNWFjq+Q/xArTYiFmfLMypv5DSBdVdBdXxaB8Z1FAoLi6XlFf+qLHY
-         JgOg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2RzJHDVVUsOgB4tW1/xr+WqnZaMM8h0a3vP3+hirz2D+8Tb5J9d9xrjfVqXu7qOSRs18bUN4jWpA/2Tk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR8FQHioZxATIs9Urv04GxjFh3busPvRu/j2UiGbPk+TXQ5O2w
-	vWx89PoNwBbp7E/3w9+Y+U4O9WusE1rI2kMK40H830ZbzNmBgHaRj9Jc+PpHUd3s+i83/QEIQzz
-	LIAqaZYb3tmuCWxcmGxtqVL3S0dw=
-X-Google-Smtp-Source: AGHT+IGC7XvQ9WqG1TKyA8QJMF9wu8iQyRy1rsF4xmNcCm6iwESG4HbLGhx0u1eJxtkBZFWajniUuy9uvkXNPzKeNSI=
-X-Received: by 2002:a05:6512:b9b:b0:52c:e05f:9052 with SMTP id
- 2adb3069b0e04-530e5876975mr2886465e87.47.1723151515133; Thu, 08 Aug 2024
- 14:11:55 -0700 (PDT)
+        bh=5TVmurDZ09S8wToJn0zhvU/nJNzMoT0MyGdFWp7IEvY=;
+        b=cvD700JWNTXbHL+4Q/k2hYArcHppWnfxps3DyQgSD5NNf7Hs+Jef++srAvYPFKt6dp
+         PWc61yCBSojlcIvqBVt0vRIKemAsqtHKsO8OlLiwKu8rvWGy+gB+V/09KA7VQXaICqtu
+         qufqNEqFFjmQhxenvaOQpLuDzXmZA44STPVaZ01fzxMZwHOxN4rEeLtynIW4RCtp6E/A
+         Ug5bNv0ELToRt2kKyhBeSaLyHLyL296FuCujGsG0fz8lXqMfgbBVkhEl/coBpN7X/UVt
+         UzTyWoaTikHFaby1btmfZgaRvTlcIa5EhgU1+hsoWEsSH+4ie26w4zqcP3gt+DknIUBW
+         O0nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTOBdJLINX1Hyz2KoGjwRZJIkaizIev+fdrgJS6b+m8tgjqreKVvBrmHulFf93ZE65QQ71jpxo7oSWf8Y/mtzzTj02O+KbmcaL4add
+X-Gm-Message-State: AOJu0YyOYtkcOHLw9Z6DV3ymxZyfiylTYWDwg/CVe+H7m4AFYU8cBs7y
+	1U6Q+KcPDVGt0gh+WyieVfTUgVaaFoKFXVKQpsIlnvXjGOzkcIZiVK9uzBUpDJ4nIOIB+4m6wS6
+	7AT1qWbPN5BNM1u8/gJckuwgt1/PZKIu6fCskTuQ5aEQ/we0=
+X-Google-Smtp-Source: AGHT+IFTPM6nWSmvE7FKoGAYxO2XaBlQV5+bjiWpCo8wSNYJn5sGxam/KrmJza+vfkACVNFh7nxdYhVFruYr16TUWgs=
+X-Received: by 2002:a05:690c:668e:b0:65c:2536:bea2 with SMTP id
+ 00721157ae682-69bf81dda1amr37402877b3.19.1723151536654; Thu, 08 Aug 2024
+ 14:12:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807182325.2585582-1-surenb@google.com> <CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com>
- <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com>
-In-Reply-To: <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 8 Aug 2024 14:11:37 -0700
-Message-ID: <CAEf4BzYqKAaGE6GEcMs9MTcrV4cA+i0M5pniqFTy1LQ+g0Yxkw@mail.gmail.com>
-Subject: Re: [RFC 1/1] mm: introduce mmap_lock_speculation_{start|end}
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, peterz@infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Jann Horn <jannh@google.com>, Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Michal Hocko <mhocko@suse.com>
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+ <20240807-erledigen-antworten-6219caebedc0@brauner> <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
+ <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner> <20240808171130.5alxaa5qz3br6cde@quack3>
+In-Reply-To: <20240808171130.5alxaa5qz3br6cde@quack3>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 8 Aug 2024 17:12:05 -0400
+Message-ID: <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, audit@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 8, 2024 at 2:02=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
-m> wrote:
->
-> On Thu, Aug 8, 2024 at 8:19=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
+On Thu, Aug 8, 2024 at 1:11=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> On Thu 08-08-24 12:36:07, Christian Brauner wrote:
+> > On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
+> > > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
+> > > > > +static struct dentry *lookup_fast_for_open(struct nameidata *nd,=
+ int open_flag)
+> > > > > +{
+> > > > > +       struct dentry *dentry;
+> > > > > +
+> > > > > +       if (open_flag & O_CREAT) {
+> > > > > +               /* Don't bother on an O_EXCL create */
+> > > > > +               if (open_flag & O_EXCL)
+> > > > > +                       return NULL;
+> > > > > +
+> > > > > +               /*
+> > > > > +                * FIXME: If auditing is enabled, then we'll have=
+ to unlazy to
+> > > > > +                * use the dentry. For now, don't do this, since =
+it shifts
+> > > > > +                * contention from parent's i_rwsem to its d_lock=
+ref spinlock.
+> > > > > +                * Reconsider this once dentry refcounting handle=
+s heavy
+> > > > > +                * contention better.
+> > > > > +                */
+> > > > > +               if ((nd->flags & LOOKUP_RCU) && !audit_dummy_cont=
+ext())
+> > > > > +                       return NULL;
+> > > >
+> > > > Hm, the audit_inode() on the parent is done independent of whether =
+the
+> > > > file was actually created or not. But the audit_inode() on the file
+> > > > itself is only done when it was actually created. Imho, there's no =
+need
+> > > > to do audit_inode() on the parent when we immediately find that fil=
+e
+> > > > already existed. If we accept that then this makes the change a lot
+> > > > simpler.
+> > > >
+> > > > The inconsistency would partially remain though. When the file does=
+n't
+> > > > exist audit_inode() on the parent is called but by the time we've
+> > > > grabbed the inode lock someone else might already have created the =
+file
+> > > > and then again we wouldn't audit_inode() on the file but we would h=
+ave
+> > > > on the parent.
+> > > >
+> > > > I think that's fine. But if that's bothersome the more aggressive t=
+hing
+> > > > to do would be to pull that audit_inode() on the parent further dow=
+n
+> > > > after we created the file. Imho, that should be fine?...
+> > > >
+> > > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/?ref_t=
+ype=3Dheads
+> > > > for a completely untested draft of what I mean.
+> > >
+> > > Yeah, that's a lot simpler. That said, my experience when I've worked
+> > > with audit in the past is that people who are using it are _very_
+> > > sensitive to changes of when records get emitted or not. I don't like
+> > > this, because I think the rules here are ad-hoc and somewhat arbitrar=
+y,
+> > > but keeping everything working exactly the same has been my MO whenev=
+er
+> > > I have to work in there.
+> > >
+> > > If a certain access pattern suddenly generates a different set of
+> > > records (or some are missing, as would be in this case), we might get
+> > > bug reports about this. I'm ok with simplifying this code in the way
+> > > you suggest, but we may want to do it in a patch on top of mine, to
+> > > make it simple to revert later if that becomes necessary.
 > >
-> > On Wed, Aug 7, 2024 at 11:23=E2=80=AFAM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > >
-> > > Add helper functions to speculatively perform operations without
-> > > read-locking mmap_lock, expecting that mmap_lock will not be
-> > > write-locked and mm is not modified from under us.
-> > >
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > ---
+> > Fwiw, even with the rearranged checks in v3 of the patch audit records
+> > will be dropped because we may find a positive dentry but the path may
+> > have trailing slashes. At that point we just return without audit
+> > whereas before we always would've done that audit.
 > >
-> > This change makes sense and makes mm's seq a bit more useful and
-> > meaningful. I've also tested it locally with uprobe stress-test, and
-> > it seems to work great, I haven't run into any problems with a
-> > multi-hour stress test run so far. Thanks!
->
-> Thanks for testing and feel free to include this patch into your set.
-
-Will do!
-
->
-> I've been thinking about this some more and there is a very unlikely
-> corner case if between mmap_lock_speculation_start() and
-> mmap_lock_speculation_end() mmap_lock is write-locked/unlocked so many
-> times that mm->mm_lock_seq (int) overflows and just happen to reach
-> the same value as we recorded in mmap_lock_speculation_start(). This
-> would generate a false positive, which would show up as if the
-> mmap_lock was never touched. Such overflows are possible for vm_lock
-> as well (see: https://elixir.bootlin.com/linux/v6.10.3/source/include/lin=
-ux/mm_types.h#L688)
-> but they are not critical because a false result would simply lead to
-> a retry under mmap_lock. However for your case this would be a
-> critical issue. This is an extremely low probability scenario but
-> should we still try to handle it?
->
-
-No, I think it's fine. Similar problems could happen with refcount_t,
-for instance (it has a logic to have a sticky "has overflown" state,
-which I believe relies on the fact that we'll never be able to
-increment refcount 2bln+ times in between some resetting logic).
-Anyways, I think it's utterly unrealistic and should be considered
-impossible.
-
-
-
-> I'm CC'ing several mm folks and Jann Horn to chime in.
->
+> > Honestly, we should move that audit event as right now it's just really
+> > weird and see if that works. Otherwise the change is somewhat horrible
+> > complicating the already convoluted logic even more.
 > >
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> >
-> > > Discussion [1] follow-up. If proves to be useful can be included in t=
-hat
-> > > patchset. Based on mm-unstable.
-> > >
-> > > [1] https://lore.kernel.org/all/20240730134605.GO33588@noisy.programm=
-ing.kicks-ass.net/
-> > >
-> > >  include/linux/mm_types.h  |  3 +++
-> > >  include/linux/mmap_lock.h | 53 +++++++++++++++++++++++++++++++------=
---
-> > >  kernel/fork.c             |  3 ---
-> > >  3 files changed, 46 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > > index 003619fab20e..a426e6ced604 100644
-> > > --- a/include/linux/mm_types.h
-> > > +++ b/include/linux/mm_types.h
-> > > @@ -887,6 +887,9 @@ struct mm_struct {
-> > >                  * Roughly speaking, incrementing the sequence number=
- is
-> > >                  * equivalent to releasing locks on VMAs; reading the=
- sequence
-> > >                  * number can be part of taking a read lock on a VMA.
-> > > +                * Incremented every time mmap_lock is write-locked/u=
-nlocked.
-> > > +                * Initialized to 0, therefore odd values indicate mm=
-ap_lock
-> > > +                * is write-locked and even values that it's released=
-.
-> > >                  *
-> > >                  * Can be modified under write mmap_lock using RELEAS=
-E
-> > >                  * semantics.
-> > > diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
-> > > index de9dc20b01ba..5410ce741d75 100644
-> > > --- a/include/linux/mmap_lock.h
-> > > +++ b/include/linux/mmap_lock.h
-> > > @@ -71,15 +71,12 @@ static inline void mmap_assert_write_locked(const=
- struct mm_struct *mm)
-> > >  }
-> > >
-> > >  #ifdef CONFIG_PER_VMA_LOCK
-> > > -/*
-> > > - * Drop all currently-held per-VMA locks.
-> > > - * This is called from the mmap_lock implementation directly before =
-releasing
-> > > - * a write-locked mmap_lock (or downgrading it to read-locked).
-> > > - * This should normally NOT be called manually from other places.
-> > > - * If you want to call this manually anyway, keep in mind that this =
-will release
-> > > - * *all* VMA write locks, including ones from further up the stack.
-> > > - */
-> > > -static inline void vma_end_write_all(struct mm_struct *mm)
-> > > +static inline void init_mm_lock_seq(struct mm_struct *mm)
-> > > +{
-> > > +       mm->mm_lock_seq =3D 0;
-> > > +}
-> > > +
-> > > +static inline void inc_mm_lock_seq(struct mm_struct *mm)
-> > >  {
-> > >         mmap_assert_write_locked(mm);
-> > >         /*
-> > > @@ -91,19 +88,52 @@ static inline void vma_end_write_all(struct mm_st=
-ruct *mm)
-> > >          */
-> > >         smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1);
-> > >  }
-> > > +
-> > > +static inline bool mmap_lock_speculation_start(struct mm_struct *mm,=
- int *seq)
-> > > +{
-> > > +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
-> > > +       *seq =3D smp_load_acquire(&mm->mm_lock_seq);
-> > > +       /* Allow speculation if mmap_lock is not write-locked */
-> > > +       return (*seq & 1) =3D=3D 0;
-> > > +}
-> > > +
-> > > +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, i=
-nt seq)
-> > > +{
-> > > +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
-> > > +       return seq =3D=3D smp_load_acquire(&mm->mm_lock_seq);
-> > > +}
-> > > +
-> > >  #else
-> > > -static inline void vma_end_write_all(struct mm_struct *mm) {}
-> > > +static inline void init_mm_lock_seq(struct mm_struct *mm) {}
-> > > +static inline void inc_mm_lock_seq(struct mm_struct *mm) {}
-> > > +static inline bool mmap_lock_speculation_start(struct mm_struct *mm,=
- int *seq) { return false; }
-> > > +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, i=
-nt seq) { return false; }
-> > >  #endif
-> > >
-> > > +/*
-> > > + * Drop all currently-held per-VMA locks.
-> > > + * This is called from the mmap_lock implementation directly before =
-releasing
-> > > + * a write-locked mmap_lock (or downgrading it to read-locked).
-> > > + * This should normally NOT be called manually from other places.
-> > > + * If you want to call this manually anyway, keep in mind that this =
-will release
-> > > + * *all* VMA write locks, including ones from further up the stack.
-> > > + */
-> > > +static inline void vma_end_write_all(struct mm_struct *mm)
-> > > +{
-> > > +       inc_mm_lock_seq(mm);
-> > > +}
-> > > +
-> > >  static inline void mmap_init_lock(struct mm_struct *mm)
-> > >  {
-> > >         init_rwsem(&mm->mmap_lock);
-> > > +       init_mm_lock_seq(mm);
-> > >  }
-> > >
-> > >  static inline void mmap_write_lock(struct mm_struct *mm)
-> > >  {
-> > >         __mmap_lock_trace_start_locking(mm, true);
-> > >         down_write(&mm->mmap_lock);
-> > > +       inc_mm_lock_seq(mm);
-> > >         __mmap_lock_trace_acquire_returned(mm, true, true);
-> > >  }
-> > >
-> > > @@ -111,6 +141,7 @@ static inline void mmap_write_lock_nested(struct =
-mm_struct *mm, int subclass)
-> > >  {
-> > >         __mmap_lock_trace_start_locking(mm, true);
-> > >         down_write_nested(&mm->mmap_lock, subclass);
-> > > +       inc_mm_lock_seq(mm);
-> > >         __mmap_lock_trace_acquire_returned(mm, true, true);
-> > >  }
-> > >
-> > > @@ -120,6 +151,8 @@ static inline int mmap_write_lock_killable(struct=
- mm_struct *mm)
-> > >
-> > >         __mmap_lock_trace_start_locking(mm, true);
-> > >         ret =3D down_write_killable(&mm->mmap_lock);
-> > > +       if (!ret)
-> > > +               inc_mm_lock_seq(mm);
-> > >         __mmap_lock_trace_acquire_returned(mm, true, ret =3D=3D 0);
-> > >         return ret;
-> > >  }
-> > > diff --git a/kernel/fork.c b/kernel/fork.c
-> > > index 3d590e51ce84..73e37af8a24d 100644
-> > > --- a/kernel/fork.c
-> > > +++ b/kernel/fork.c
-> > > @@ -1259,9 +1259,6 @@ static struct mm_struct *mm_init(struct mm_stru=
-ct *mm, struct task_struct *p,
-> > >         seqcount_init(&mm->write_protect_seq);
-> > >         mmap_init_lock(mm);
-> > >         INIT_LIST_HEAD(&mm->mmlist);
-> > > -#ifdef CONFIG_PER_VMA_LOCK
-> > > -       mm->mm_lock_seq =3D 0;
-> > > -#endif
-> > >         mm_pgtables_bytes_init(mm);
-> > >         mm->map_count =3D 0;
-> > >         mm->locked_vm =3D 0;
-> > >
-> > > base-commit: 98808d08fc0f78ee638e0c0a88020fbbaf581ec6
-> > > --
-> > > 2.46.0.rc2.264.g509ed76dc8-goog
-> > >
+> > So I'm appending the patches that I have on top of your patch in
+> > vfs.misc. Can you (other as well ofc) take a look and tell me whether
+> > that's not breaking anything completely other than later audit events?
+>
+> The changes look good as far as I'm concerned but let me CC audit guys if
+> they have some thoughts regarding the change in generating audit event fo=
+r
+> the parent. Paul, does it matter if open(O_CREAT) doesn't generate audit
+> event for the parent when we are failing open due to trailing slashes in
+> the pathname? Essentially we are speaking about moving:
+>
+>         audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
+>
+> from open_last_lookups() into lookup_open().
+
+Thanks for adding the audit mailing list to the CC, Jan.  I would ask
+for others to do the same when discussing changes that could impact
+audit (similar requests for the LSM framework, SELinux, etc.).
+
+The inode/path logging in audit is ... something.  I have a
+longstanding todo item to go revisit the audit inode logging, both to
+fix some known bugs, and see what we can improve (I'm guessing quite a
+bit).  Unfortunately, there is always something else which is burning
+a little bit hotter and I haven't been able to get to it yet.
+
+The general idea with audit is that you want to record the information
+both on success and failure.  It's easy to understand the success
+case, as it is a record of what actually happened on the system, but
+you also want to record the failure case as it can provide some
+insight on what a process/user is attempting to do, and that can be
+very important for certain classes of users.  I haven't dug into the
+patches in Christian's tree, but in general I think Jeff's guidance
+about not changing what is recorded in the audit log is probably good
+advice (there will surely be exceptions to that, but it's still good
+guidance).
+
+--=20
+paul-moore.com
 
