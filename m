@@ -1,116 +1,149 @@
-Return-Path: <linux-kernel+bounces-279116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CFF94B924
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B93D94B928
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A7D1F23406
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E580F1F21614
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCE4189919;
-	Thu,  8 Aug 2024 08:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F851898E1;
+	Thu,  8 Aug 2024 08:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="izdHQVC8"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YwrCK3Bi"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4796189908
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76766188017;
+	Thu,  8 Aug 2024 08:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723106293; cv=none; b=ThEDq4tT+H4GiFdf80SuSWxMfo8h7VlrxVlKPKalcVzQ1jTfB3Ud2mHlWAUJqicmIsIHh+9LBmN4M4dweILr3pjTUOkVykXUxrAhM4iqr6B90MbfiOVWXapdvVQhxuc91jrTSRN8A4yVBMJmaqVV/0BA9BOy5fv31YcMWL8hcek=
+	t=1723106395; cv=none; b=kY+y9qRFLCqjwS6fNLENlDwshyopgRxptcNGO1o+2hlmmtvFqw2R1IQ2IKM74ON0+dpZoZt1OW31q0Dxo5jJAlLEdt+U/KT6in2jhlH1jT2FeGXvdf6upa180KwIDvSVs9Xtze1ENeV4yqaSn9S8/DPkvb4ojS7Iy+pmHOER/8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723106293; c=relaxed/simple;
-	bh=FTitw4ONbiIRDoZiBnYisEasbn/aK6qsD42rfDDtdiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VHPnmPgLDW3T1rHX5SDaBqiOuqn/g3jwbc3bJWzW/12K/iQZdnqwfGYr/VlrlOnmxjN7GZE5N6qRrj+BtnWXLHwRQYwQPPs4s6KKz7ZN3GsfnFqkWPEhoo+xtxlf0myJg+UT9LRw670FDHfTPe/sUk4cC5Qlwpe0chyQWUy3Ytw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=izdHQVC8; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=VVrH
-	gi6qcDf24C34jG9fj+F0XNS/hwimz0FduHhSN0o=; b=izdHQVC8/I306hJXFOtI
-	PPUpRFDRE7BRgYLSimvTVsDrt5OCJdyZpuvk6MzDdJAosCB7FkthvuLQu23R6IGP
-	XvrIEn0dW7ErzVKV/fM2CeP9K294xzF2+LVT5o836iN16prfeRLRo4lIq6gijyCm
-	Ar0MLQYLjU4G0TAzBvUN+qljrlH27K1qW+/s6FRqmOAPiP79mNsP1sMQH5TzAn7a
-	16Ymm7BqoBuIwCTcOtDwqIqzDz0k+zeK6CpTGtUbW5xz/MV1krGmbEcxjeCT9Oj7
-	lwrmn28fSapkl9xwZDLwC5EBCo4Y+TRoid6Z3BXqSBWZOtSMn0XTLIZJUCeBNN9h
-	oA==
-Received: (qmail 248714 invoked from network); 8 Aug 2024 10:38:05 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Aug 2024 10:38:05 +0200
-X-UD-Smtp-Session: l3s3148p1@FQ4S8icf4pcgAwDPXxLGAIH3oZkcU6AS
-Date: Thu, 8 Aug 2024 10:38:05 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 00/11] i2c: riic: Add support for Renesas RZ/G3S
-Message-ID: <ZrSD7ZCDAgvAu9EG@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1723106395; c=relaxed/simple;
+	bh=TFrnilnjgD0a8YA9+CwPjBQv8dy23a/EUbo4mRdjaQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qnLzFlaBIlACnbrHw50x4R5GwrqMchKx9RqA0WWO2uTmR4UrDc6WyJe/8AIYC+kdq/A1Am06xwKeSlaUl5mnPNCqNpbNTAawGA58oFuXdo3LLVaX1Tno8hezkFqXNHTC11qOH/0zsYBOWHDh9fjzzjv7ayxPnH5CF1rdAjJSwR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YwrCK3Bi; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id bygMs1WA1j4pfbygMs0Sl1; Thu, 08 Aug 2024 10:39:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723106386;
+	bh=clc8+qLSQc4IJ8Eo2E+itAv4AyWz9hMSaxLRJC2XBVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=YwrCK3Bi5RAPUYYMryFqaR6gycvmvqQyJoABzpvaKJP9Alp4S7xH90da/Bl2/iSrd
+	 R7Znr7Lc7e+SMUj7mjTih3bx87fLwArT4ln67hCZSEzpgc5MmtL46H3ZCOnLKYteow
+	 UKLwavmCtKkQP8Z16FZGY3FtAB9n/uJHGYOLbFa/cisUoY/sV6Ed/U0mGH9AOY/Z6A
+	 ashps3bKtm+l9L2jYkxQaV42ItTccRHgb6fUpNcbh5UzbqAX8yX9AFgJTWuJO8rTC9
+	 rJPK1pucj0tKABXFwJdxnof2Co72wdFhisgiJsbPBRoRKjKivLbjEOq2byKOYviNqk
+	 4eS7rL/Xwdi7Q==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 08 Aug 2024 10:39:46 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <14ef9485-54ba-402b-9b90-5f10c1523d4e@wanadoo.fr>
+Date: Thu, 8 Aug 2024 10:39:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YfZ954GBjdQLmkf8"
-Content-Disposition: inline
-In-Reply-To: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+ <20240808075937.2756733-4-ryan_chen@aspeedtech.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240808075937.2756733-4-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Le 08/08/2024 à 09:59, Ryan Chen a écrit :
+> Add dt bindings for AST2700 clock controller
+> 
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>   .../dt-bindings/clock/aspeed,ast2700-clk.h    | 175 ++++++++++++++++++
+>   1 file changed, 175 insertions(+)
+>   create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
+> 
+> diff --git a/include/dt-bindings/clock/aspeed,ast2700-clk.h b/include/dt-bindings/clock/aspeed,ast2700-clk.h
+> new file mode 100644
+> index 000000000000..facf72352c3e
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/aspeed,ast2700-clk.h
+> @@ -0,0 +1,175 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Device Tree binding constants for AST2700 clock controller.
+> + *
+> + * Copyright (c) 2024 Aspeed Technology Inc.
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_AST2700_H
+> +#define __DT_BINDINGS_CLOCK_AST2700_H
+> +
+> +/* SOC0 clk-gate */
+> +#define SCU0_CLK_GATE_MCLK	(0)
+> +#define SCU0_CLK_GATE_ECLK	(1)
+> +#define SCU0_CLK_GATE_2DCLK	(2)
+> +#define SCU0_CLK_GATE_VCLK	(3)
+> +#define SCU0_CLK_GATE_BCLK	(4)
+> +#define SCU0_CLK_GATE_VGA0CLK	(5)
+> +#define SCU0_CLK_GATE_REFCLK	(6)
+> +#define SCU0_CLK_GATE_PORTBUSB2CLK	(7)
+> +#define SCU0_CLK_GATE_RSV8	(8)
+> +#define SCU0_CLK_GATE_UHCICLK	(9)
+> +#define SCU0_CLK_GATE_VGA1CLK	(10)
+> +#define SCU0_CLK_GATE_DDRPHYCLK	(11)
+> +#define SCU0_CLK_GATE_E2M0CLK	(12)
+> +#define SCU0_CLK_GATE_HACCLK	(13)
+> +#define SCU0_CLK_GATE_PORTAUSB2CLK	(14)
+> +#define SCU0_CLK_GATE_UART4CLK	(15)
+> +#define SCU0_CLK_GATE_SLICLK	(16)
+> +#define SCU0_CLK_GATE_DACCLK	(17)
+> +#define SCU0_CLK_GATE_DP	(18)
+> +#define SCU0_CLK_GATE_E2M1CLK	(19)
+> +#define SCU0_CLK_GATE_CRT0CLK	(20)
+> +#define SCU0_CLK_GATE_CRT1CLK	(21)
+> +#define SCU0_CLK_GATE_VLCLK	(22)
+> +#define SCU0_CLK_GATE_ECDSACLK	(23)
+> +#define SCU0_CLK_GATE_RSACLK	(24)
+> +#define SCU0_CLK_GATE_RVAS0CLK	(25)
+> +#define SCU0_CLK_GATE_UFSCLK	(26)
+> +#define SCU0_CLK_GATE_EMMCCLK	(27)
+> +#define SCU0_CLK_GATE_RVAS1CLK	(28)
+> +/* reserved 29 ~ 31*/
+> +#define SCU0_CLK_GATE_NUM	(SCU0_CLK_GATE_RVAS1CLK + 1)
+> +
+> +/* SOC0 clk */
+> +#define SCU0_CLKIN		(SCU0_CLK_GATE_NUM + 0)
 
---YfZ954GBjdQLmkf8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+So SCU0_CLKIN is 28+1+0 = 29 which is said to be reserved in the comment 
+above.
 
-Hi all,
+> +#define SCU0_CLK_24M		(SCU0_CLK_GATE_NUM + 1)
+> +#define SCU0_CLK_192M		(SCU0_CLK_GATE_NUM + 2)
+> +#define SCU0_CLK_UART		(SCU0_CLK_GATE_NUM + 3)
+> +#define SCU0_CLK_PSP		(SCU0_CLK_GATE_NUM + 4)
+> +#define SCU0_CLK_HPLL		(SCU0_CLK_GATE_NUM + 5)
 
-> Series adds I2C support for the Renesas RZ/G3S SoC.
+...
 
-So, I will review this series today. I was hoping to also test it on a
-Genmai board (R7S72100) but I have issues with it. If I cannot boot from
-it until tomorrow, it will be review only from my side.
-
-Happy hacking,
-
-   Wolfram
-
-
---YfZ954GBjdQLmkf8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma0g+kACgkQFA3kzBSg
-KbYOzBAAh3nugwnzIf5z9qZk2CgkzEAghntACi0WA2kCs/FQyYDRe3XP6Zu8v9J8
-zALNXE04IuURGcwyN0Noc09ZbyADAIQUuf1hhm0yUCiud+eCnNs59HMl/I112Xai
-vP7IrVaEvqyHxPaz/1gLOKx1iqT02Lk9MdUeY2/HW9k8IgcIhIa57TpRhZdcdOOl
-Qm2OQTX3E0GxOpNZN3E2rL1ibxMYEuNoHCSJZuAYbMWQBKzb+k2d+/ebMuxALfhE
-vNzogZSNxiqlzI9wMKoYhyrUsIgp/7+j5RnGM0FpnQlV+u0ZzV3ogYldNNzhTpDr
-Q0BjroWFiBWOQ9f1zj8xjJjL9Ps/IHdMlWQaMAhnGTLmpQcfY8zclHAEPG/3k+kF
-8aU2jx2S7kXVSpZsieQFXOJXr32wAUNbO4lStc2QIFK6G+x96H3lx6F62ki9h5B6
-4eXPCKcuC7C+fvqnGPF2zT7IvWqCIeGYu3YYKu1BX4PF2emd/3W4Emc97OWLe5s1
-tUL3xRGqj+7NbWbLSR3NaiLYb+lmtBkxOIfVRmYCBeHa9CdD8I1ZDyqpwLsnhqyO
-KDRu4v9fMFMDcqygGFVOEPen2onvMkVxzhs7O7oxPetq9h/yN4cw4oD2MHeEFYWe
-tMlL/fvCglcGlBtiG56/PRyd2DTjht4E8MVpcn7KHZpjt18xqfA=
-=nBn0
------END PGP SIGNATURE-----
-
---YfZ954GBjdQLmkf8--
 
