@@ -1,92 +1,135 @@
-Return-Path: <linux-kernel+bounces-278889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E3994B632
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9763B94B634
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7F51F247BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:20:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EFD21F24AE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F84313E41F;
-	Thu,  8 Aug 2024 05:20:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2EF13DDD9;
+	Thu,  8 Aug 2024 05:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rVwfLYpb"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AB113C814
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 05:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF5013C814;
+	Thu,  8 Aug 2024 05:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723094406; cv=none; b=ri0+9aVLTjoOSOAWFYZPlTeU2xk5rh+45nRfWb71cE0JrWf0Yac/0x9HGAR5lt9KB1u6OjmcRhQhj1o+x1cNHYKiPfduCPo87os63iw+tqEane8XJxx+dJLbcaxfpX8m148Ee6x+A9TEmRW2h2uHGACyOm4OtVe/HUXHJu1WlRg=
+	t=1723094446; cv=none; b=JC0QrElH78THEUXHr+wO/XtgsvWnx4ZtEV7I58Yey00yRyz485J9QF1oQgQadUnuxig3xb8G/eJj5Q/F4kbnbo9QANCKUxdnDT0RIm7LFob6O+Gd/cO427GXYC2mHJWXouXFV9CzFr9adH7Cyp9sy3/8/728RF+X1SAG18Y9e4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723094406; c=relaxed/simple;
-	bh=5fs52SLgd/Wa9Qk6AnGY2MINv0qRxrKfG2vAjMob6wo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rH7nfgFpidzt4HScX/Qgz4V2N8xpKBPv6jYkNUoGoQ1irSfQ/rB1uWHkj0U2wBa2j5z3N+M02j8DWHGvspin9UGSicpHAB+5SYe3OXXSWfW4yjH0AwXhxiApW38+e/zYlBTmFj4fNjSodUuijjecQobENvGY/1tDlISH7hs4PTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81d1b92b559so75382639f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 22:20:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723094404; x=1723699204;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n/8Sl/8wtZuOpXGHi6WNR/MUTmmUjWmBACkoHV+PUDs=;
-        b=LGwwfVbU0AC+jrPeRCBPPomIcwgWFsOEh43Fv+2Jlki4O7iewQLTu5n2wY+UZ2swBt
-         t55Bc6s7/zUKQhx85qjpifZOyUOPB8VD5Vcli+BtL/sjkzLfJqK64S7nCyJtid1DhvOg
-         wQ2M85AVgua6EfdTj+hAl4urDMGkp4v33q6bdTlLzX7yRnifzRedZhZYRrcTNw/HQ6nY
-         iyG1gyRL7i/ICb2lNYgPvHNNkCfvt2+GF7k4HOqUFgxSlVPBvb5w2E5iu3gxWT6guhOE
-         nkbxo8KFWNheqq/yxN/Ac13wNAWaYRZYlyjD6Y89rxj3Ds5D2eLy8yUTz/NCWkJTWo/Z
-         30Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV6zBP9ZwJWxbZMnlQBVbGHTU+qlEWqQ9ARrfGsXXMDpo1hnDxSi1zI0iqaC/4MYi578nJ4CQSgtzar2W4xUKVtxscduEYx6knsYaZ
-X-Gm-Message-State: AOJu0YwEEfex7iqY08gbzrPeytObX4G40TtIdGEs2xtBHLzkV/zarE5f
-	KAOCHUHZus7zZQZDYLayjqoGUyoIFZS2VsjwQmN8QrIffBaF7fv8uDyJq/BTob4SHpS+D48fwky
-	gpSFm8h7rm4/VRJHBtCPnRtjJRJmV+0vwxmO878loHm2QS+P52lvSVZs=
-X-Google-Smtp-Source: AGHT+IF7GD4v7lHspJC+Jfs24j4tamRlFwZl1OSJoLkUDwS5Ibf9MNjk30+Z0IWeFZHASh3iI8qbJOSsalcz40AT5pDGZk+0wk7E
+	s=arc-20240116; t=1723094446; c=relaxed/simple;
+	bh=hMPG68e6k3OpSOOimZthJaI9R7KPj52PD1QIznQJBk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Q1EtqmNfVPIPR/5N3Tvh1Ecd3b7GzTNZbG3KW9WbE/oSr1KWfsIQeN3kTaoF1CpFzeTbHLq2wU3VmJZOdJMzXXAOMSVWNSlZ5tfcT00pOWwTiV2lkmkdUSiFT2YUHttZj9ozsL4446g/12s4jbmlf4+ve7kUgFzGMVG94GdCg+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rVwfLYpb; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4785KeVt090430;
+	Thu, 8 Aug 2024 00:20:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723094440;
+	bh=euq7HWPdWrs6GO5Xe2C3wf9o77aPHduNiu8luvY+WQs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=rVwfLYpbazojIYviqR2+dtDLm8V1vpa7DcIXpz0Ma3h//qjESCO8HL5bVMK3KE/R+
+	 BanbQBg1Z0BqJYzVPjmvhCAydp2Q7WGmOGVFPnLDF36+UP3jgqJSlYU0AkZ9ol8bN4
+	 iLxd2oeX5mn94h+ftKO3e3ETZqAo6o31BTP/vHeE=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4785KeRU011666
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 8 Aug 2024 00:20:40 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
+ Aug 2024 00:20:39 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 8 Aug 2024 00:20:39 -0500
+Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4785KabX072198;
+	Thu, 8 Aug 2024 00:20:37 -0500
+Message-ID: <00311e5c-a8d4-46dd-9f59-f7fea5ae4104@ti.com>
+Date: Thu, 8 Aug 2024 10:50:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:130b:b0:4c2:7a26:278b with SMTP id
- 8926c6da1cb9f-4ca5e153b10mr47876173.5.1723094403922; Wed, 07 Aug 2024
- 22:20:03 -0700 (PDT)
-Date: Wed, 07 Aug 2024 22:20:03 -0700
-In-Reply-To: <000000000000f52642060d4e3750@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dc521a061f252d4c@google.com>
-Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
- dereference in do_pagemap_scan
-From: syzbot <syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, seanjc@google.com, 
-	syzkaller-bugs@googlegroups.com, usama.anjum@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] remoteproc: k3-dsp: Acquire mailbox handle during
+ probe routine
+To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-anna@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240807062256.1721682-1-b-padhi@ti.com>
+ <20240807062256.1721682-4-b-padhi@ti.com>
+ <1d434d6c-42ba-4142-a701-032cf674c50c@ti.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <1d434d6c-42ba-4142-a701-032cf674c50c@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-syzbot suspects this issue was fixed by commit:
 
-commit 4cccb6221cae6d020270606b9e52b1678fc8b71a
-Author: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Date:   Tue Jan 9 11:24:42 2024 +0000
+On 07/08/24 19:21, Andrew Davis wrote:
+> On 8/7/24 1:22 AM, Beleswar Padhi wrote:
+>> Acquire the mailbox handle during device probe and do not release handle
+>> in stop/detach routine or error paths. This removes the redundant
+>> requests for mbox handle later during rproc start/attach. This also
+>> allows to defer remoteproc driver's probe if mailbox is not probed yet.
+>>
+>> Fixes: b8431920391d ("remoteproc: k3-dsp: Add support for IPC-only 
+>> mode for all K3 DSPs")
+>
+> Not sure this patch counts as a "fix". There was a bug yes, and this 
+> certainly
+> is an improvment that solves the issue, but I like to reserve "Fixes" 
+> tags
+> for more serious issues. Otherwise this patch will be backported to 
+> "stable"
+> versions where it might cause things to be *less stable* given the 
+> size of
 
-    fs/proc/task_mmu: move mmu notification mechanism inside mm lock
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=141753f9980000
-start commit:   fbafc3e621c3 Merge tag 'for_linus' of git://git.kernel.org..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=298e57794135adf0
-dashboard link: https://syzkaller.appspot.com/bug?extid=f9238a0a31f9b5603fef
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1108a595e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16777bbee80000
+Understood. Will remove Fixes tag in revision.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> the "fix". Also, the commit you selected isn't the source of the issue,
+> it only adds another instance of it, getting the mailbox after probe has
+> been the case since the first version of this driver.
 
-#syz fix: fs/proc/task_mmu: move mmu notification mechanism inside mm lock
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Correct. My idea was, since we are also making k3_attach()/detach() 
+functions NOP, select the later commit because that was where the 
+k3_attach()/detach() functions were introduced as well as the "mailbox 
+after probe" issue was present.
+
+>
+> Rest of the patch LGTM,
+>
+> Acked-by: Andrew Davis <afd@ti.com>
+>
+> BTW, I've folded this change (getting mbox in probe) into the new
+> K3 M4 driver[0] I just posted, so we should be aligned here accross
+> all K3 rproc drivers.
+
+
+Thanks for this!
+
+>
+>
+> Andrew
+>
+> [0] 
+> https://lore.kernel.org/linux-arm-kernel/20240802152109.137243-4-afd@ti.com/
+[...]
 
