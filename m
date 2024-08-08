@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-279771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DA594C1AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE92394C1AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17BD1B25D7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:43:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7411C21CAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E374B19007B;
-	Thu,  8 Aug 2024 15:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA395190668;
+	Thu,  8 Aug 2024 15:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="LdGvJKYu"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="I3DvwFD1"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5846018FC71
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9203E190054
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723131764; cv=none; b=F468CALGEEY0V7R0bPJIy6gCGCWfjUT2hykSVhPxr8oJIbUkqP0k+D8d7xSU/ofyJa9N2KtwOzDh77fPYSihZzyZ75OuRNqFJyEGtrXa89JSZ+7ERuzeaXF6uV7eee6p/tdwOa//SDb07mRdG45wuiYsdSsJlvZtPvs5tb6spHs=
+	t=1723131765; cv=none; b=qT9yErX7EtTLF03nUMv73SaHufirInJgwMa2jHePz+a6RkxIoLEB5tjfBagG1e7PKnfIsyn6sKQ+gkMPSVnb1I+m2LtZ/cobrVvT9Dg48w0a0hraGCKB7VLMhnookh64mKSyYX+EOzIOGciNpgYUm+GKxPwECFNb/QeLAO8p190=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723131764; c=relaxed/simple;
-	bh=mXuho5qRbcIktuppWuhYAb1FR0k6aVabcnCwkyhGc3A=;
+	s=arc-20240116; t=1723131765; c=relaxed/simple;
+	bh=8rI7joosp8awa/gMykJMhXumICc/dwUYMwOKiBmRUD4=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pi4GEmVbx3X0HUDSX4Nu9dlCQyGrfp995DZiQC0lwwpfpaIXnGQz1aFFv9s212nn+EiHF2iSVlDl7kxP7p9M/KodXBjTkRE1aX7t78PpSoIbGArgBGU37RiyCwU0rmR4F/Nr4p/Gx+G9Vxo+5huiw+uY9CdkQrqe1bcuv3zkCYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=LdGvJKYu; arc=none smtp.client-ip=209.85.219.51
+	 MIME-Version; b=lSWMi1IYenJ8Nidm/O759UC+aaNhvgD9ddMnzeYdJxijshNCg3ySfN7gI8vRfPb5oOL9x/5WL52YngoNowYVNzfjo+4QC2tdJuHBfAatd1pjnxBrhUcr2jBw/QW5Y0CZS25zD7ZQPxcbqblTKl3bwcd6BN3H2lzJmjWmYOg///0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=I3DvwFD1; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6bb96ef0e96so5964186d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:42:42 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-44ff398cefcso6442391cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1723131761; x=1723736561; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1723131762; x=1723736562; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oRSFFXDfNtNVk7lGVeoRIubNta7FSFGwpVVL6fGvxf0=;
-        b=LdGvJKYuAiuXr1Pgwa8qR0Tm1+o6wENHB9veXPs+HxeigAnOegl1HiFAsIovDIUBgp
-         h+Ii9Wi5D8YgTZWvgIcVZRxfYPMkHYkDpaLRGBrsXHzCT4CFCQFLIBhBb7R5BvuSB8cY
-         7AxsT+FjjLsEZwtwoCTptYwdW7lt/s7oJYIWK+CfmK5VgkzR1UaZIxyAo9xI1xhgcKlk
-         Rr80o39Z7jQ+/2tVRCmLdSVX6BaaOfHg8YlFtL1uQ2dw3rDllnVrefMmz0fAV5S/lrQA
-         U7rkln/Xpw8xfffF8w3ySuB+ZA/XATZDxc9FQTBmYuPuUpy1Uubiu7910pMSDZnJFrjK
-         ocHQ==
+        bh=y3neo5ZpPv5S0nCnjgNJX6IioRmVVyTly9egBg9Jmdk=;
+        b=I3DvwFD1yhMhHA27hYSf3nIl/t5ZOozebJXKpgalRDOdU9Qu00yO9H8ytGey8tlumc
+         jOh5vejH/4EFFp54iHDfGExLyL/rlWj3dMxal74NrMcyIrkNfIzXXLYvuL37OautftRr
+         Ee7xb5IwGhaBUH4CSmSFzzi19U+viFrk3e9HzIcvGnkpldmFEqKoKTzdEeBUGXtFZKPq
+         Htw4dOxPDuFXEEGTPjmNb+diCNQowH5pDTULCMMtX1SO6OkMLpSAhG3WG49pLICF3Z7o
+         kNmNr/jBSuq+h+AVfpHzz7Fk3cEV/+wzAXfGpeFtg1wg2clPA8632We/y5ecED111U9N
+         7jwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723131761; x=1723736561;
+        d=1e100.net; s=20230601; t=1723131762; x=1723736562;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oRSFFXDfNtNVk7lGVeoRIubNta7FSFGwpVVL6fGvxf0=;
-        b=nQi7tZY26IC2QrwO6FQZH9C1EE7zDDypbvxk4bLDO34oSzflZJz/JdG7WwipYv9JnZ
-         c8SvFk5ukN0c4q6wM8WufxSYHbLIR85rz743PmBT0j1A6OzgDnvqDaWfmLbXjEKDYaXL
-         5fzgi4J5fCDdwcuIYVd6Cxtttn7C8KLXptxf0L+twbTWFaeJJZTCsoZFykS8rcVkcB0P
-         14Z1Km4X5DSRNjY+6UHxsm0ztJaEj3k/pZiv5J3znPc4f98pmGp3GgHAYX1rBnCVtqjp
-         PFqSFUMXwtvUw3Fm1RHtaB3HpKFimIdWLEsrqu/8CMfhD87C6T9ENTmrNgwuDrgTpHFv
-         IPgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWg65yB1REQeEeliNgkLw6ecg9lnODK5Lal0K4KHciVY0wn1ufPDKfs/Oh4SebByAdzB84fzCK6975jQu19aHg7koIQFAaebkOxBseC
-X-Gm-Message-State: AOJu0YyizXVB9POk2VBA0xvYZQV32EVkfDP2Yvz9xoYyD2IiT0XyhyuX
-	K321/ycPkgNb60FuurkcW+mv7idgoS+aNgcQ6t7tDQzb8sYlewEcB4px3MwcKi4=
-X-Google-Smtp-Source: AGHT+IEedYPnvL6gKHQRQr0wt7cczChz5kQMKQlE59fzWebBtyv5plUCNw68Wg5Sa6xCxlvPXi39qw==
-X-Received: by 2002:a05:6214:4604:b0:6b9:607e:275e with SMTP id 6a1803df08f44-6bd6bd3263bmr24643256d6.34.1723131761187;
-        Thu, 08 Aug 2024 08:42:41 -0700 (PDT)
+        bh=y3neo5ZpPv5S0nCnjgNJX6IioRmVVyTly9egBg9Jmdk=;
+        b=A8nHRW6O7OK9Fp6Esq2JdXlUuc07f/hsTx6w4tuzIeM+fpDNI2pqdmncBTiyGxodmH
+         b2bItPjlcapbypZyn2+M7Ol/v007+Sj3bIY2Wz0km7RiydhQ9ss5wEndpQrLtidTOnoQ
+         qYjip/dhgwHc6+w7+piKyyNPVQXoqaFp57b/A4zsSnUGCJd8vde5zmiF6Wia6RVQRoju
+         65cVEiHFGFZuLgWfyOp0c9jlXZt5v90SRWT5RVpRfdOjz8PFRmfE74kwwGMHztxnHi9E
+         laYviHISUgN+aTylTEhaHEFqvZXeZrd/i45rX4qotZEfRX+hmeg6kM+EqNCVyGbT/y1R
+         CgSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVDwUs2lY7sN402Yd/zK61OHwAwW+dT1bB+O5QiZvUYwgMwNOm5g9zTq5b+xizsTv6lVpHw6BwO21/Md+WjdaA5xo8zTMZya+2/Qed
+X-Gm-Message-State: AOJu0YwRckwj6DskU/ApOWfmmIwG1+mpNbmZBDzKxVNx8cEwUfSvWgS1
+	3RZlCscmWyrtRo3uFEVtTs1jqMvCUgCNC/YCGCXWTJef7RPS69pAWL2FLbTeNz4=
+X-Google-Smtp-Source: AGHT+IESGfyB5HtXu4zt+BcOgb/gdPZpAEI0Yo2J7Xp64aGcrd7WAVMlzlbxNtl0uyZb/RHkn8qBZg==
+X-Received: by 2002:a05:6214:3bc5:b0:6b4:4470:81a5 with SMTP id 6a1803df08f44-6bd6bcbb55fmr34927436d6.2.1723131762416;
+        Thu, 08 Aug 2024 08:42:42 -0700 (PDT)
 Received: from soleen.c.googlers.com.com (118.239.150.34.bc.googleusercontent.com. [34.150.239.118])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c7b72d9sm67160936d6.60.2024.08.08.08.42.40
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c7b72d9sm67160936d6.60.2024.08.08.08.42.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 08:42:40 -0700 (PDT)
+        Thu, 08 Aug 2024 08:42:41 -0700 (PDT)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: akpm@linux-foundation.org,
 	linux-kernel@vger.kernel.org,
@@ -88,9 +88,9 @@ To: akpm@linux-foundation.org,
 	alison.schofield@intel.com,
 	david@redhat.com,
 	yosryahmed@google.com
-Subject: [PATCH v3 1/4] mm: update the memmap stat before page is freed
-Date: Thu,  8 Aug 2024 15:42:34 +0000
-Message-ID: <20240808154237.220029-2-pasha.tatashin@soleen.com>
+Subject: [PATCH v3 2/4] mm: don't account memmap on failure
+Date: Thu,  8 Aug 2024 15:42:35 +0000
+Message-ID: <20240808154237.220029-3-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 In-Reply-To: <20240808154237.220029-1-pasha.tatashin@soleen.com>
 References: <20240808154237.220029-1-pasha.tatashin@soleen.com>
@@ -102,62 +102,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It is more logical to update the stat before the page is freed, to avoid
-use after free scenarios.
+When in alloc_vmemmap_page_list() memmap is failed to allocate, do
+not account, the memory is going to be release at the function exit.
 
 Fixes: 15995a352474 ("mm: report per-page metadata information")
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
 ---
- mm/hugetlb_vmemmap.c | 4 ++--
- mm/page_ext.c        | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ mm/hugetlb_vmemmap.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-index 829112b0a914..fa83a7b38199 100644
+index fa83a7b38199..70027869d844 100644
 --- a/mm/hugetlb_vmemmap.c
 +++ b/mm/hugetlb_vmemmap.c
-@@ -185,11 +185,11 @@ static int vmemmap_remap_range(unsigned long start, unsigned long end,
- static inline void free_vmemmap_page(struct page *page)
- {
- 	if (PageReserved(page)) {
--		free_bootmem_page(page);
- 		mod_node_page_state(page_pgdat(page), NR_MEMMAP_BOOT, -1);
-+		free_bootmem_page(page);
- 	} else {
--		__free_page(page);
- 		mod_node_page_state(page_pgdat(page), NR_MEMMAP, -1);
-+		__free_page(page);
- 	}
- }
+@@ -392,13 +392,10 @@ static int alloc_vmemmap_page_list(unsigned long start, unsigned long end,
  
-diff --git a/mm/page_ext.c b/mm/page_ext.c
-index c191e490c401..962d45eee1f8 100644
---- a/mm/page_ext.c
-+++ b/mm/page_ext.c
-@@ -330,18 +330,18 @@ static void free_page_ext(void *addr)
- 	if (is_vmalloc_addr(addr)) {
- 		page = vmalloc_to_page(addr);
- 		pgdat = page_pgdat(page);
-+		mod_node_page_state(pgdat, NR_MEMMAP,
-+				    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
- 		vfree(addr);
- 	} else {
- 		page = virt_to_page(addr);
- 		pgdat = page_pgdat(page);
-+		mod_node_page_state(pgdat, NR_MEMMAP,
-+				    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
- 		BUG_ON(PageReserved(page));
- 		kmemleak_free(addr);
- 		free_pages_exact(addr, table_size);
+ 	for (i = 0; i < nr_pages; i++) {
+ 		page = alloc_pages_node(nid, gfp_mask, 0);
+-		if (!page) {
+-			mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, i);
++		if (!page)
+ 			goto out;
+-		}
+ 		list_add(&page->lru, list);
  	}
 -
--	mod_node_page_state(pgdat, NR_MEMMAP,
--			    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
--
- }
+ 	mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, nr_pages);
  
- static void __free_page_ext(unsigned long pfn)
+ 	return 0;
 -- 
 2.46.0.76.ge559c4bf1a-goog
 
