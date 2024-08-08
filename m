@@ -1,163 +1,408 @@
-Return-Path: <linux-kernel+bounces-279386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E2194BCA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:57:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5122794BCA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D71E51C21225
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:57:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7EDF1F22FE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6799218C90C;
-	Thu,  8 Aug 2024 11:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4541718C345;
+	Thu,  8 Aug 2024 11:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OD2KqsSo"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="n7JrJJVq"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F37318B46F
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3114118B498
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723118216; cv=none; b=qlZk8/MEEd65IiEl3lu9tPmOBkBLALbP0QGX9caKxNjbA/jc8tPtFu+/WZ+eevwyFABU6oei9tjCekZ9swdTjTwUm4Ar9+dINZdM4k7abrANwj6Ldpf7L7EwmsIuId7db6KxSPw11lwCgn/jtF65JALF9Jvnh0PW72BCzWkNvLM=
+	t=1723118212; cv=none; b=VZpHD3fE15oPgh0/BrsoiyCDfXVp9vnJmw1pRWJfUpYkXvsJAQTn0l06OwU5GbH/44jvcGzUMly9zSTT955wYuNDqhqsaUF8P/DFKJYQjqBeV6skTB/f/5StVkNNk1jNRItNONJ7LcDLJJohk+BCXlN92qCBol+4t0ehRlhmA2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723118216; c=relaxed/simple;
-	bh=sx7dP48UjDLxyhgueGYP9tnRIrOV1SkXmYbgIa729vU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DjtLE7erjruOcARPTNbi1G/WQHCVBAIHVOUle0lueKtvtiXGW5GHvVhB4S2+Gwd/TwS/YCkzvnlO9XHWK3xw8dVxodzN9PcoGUbrFDvCrwPuVNzxBMrQjA2sdj2MgK4QmSVhaD1Wthp+LHnI1k+IWtL9SqUilYr12kXpMsnwFLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OD2KqsSo; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-	Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=jyCt1vzIevcMKcC9EK3oKpArhE0T8e9Q2oxyABzLcR0=; b=OD2KqsSoLIrl+OktYcWpAD+hn4
-	4LbdVJhTOCGW8rhZQYP/UamkDNUeIvx/hGNogF7rIix5kvqj9qDx85WLF9sw5QOy72fpYWNuyZSZ0
-	FP8kjFjsa/KEwuBLdMcZgA+k5MZhwOAFXAexwjDDfW32ar4W7sEjPsQzQF91nHOIjOdXmPI+eyV3P
-	7F3WXYIlX92aDay5Rf0uft0mV5WUK+YN5Ow+4q9/Hu3jS41y5hy2S16znTGpjFIgh+03OHYfdOI1D
-	IIK34mJ0UbaItAjeR4y0TqIieZ8gjpRCy+FXEltTEdUcgmXdNosJ4AUywXKNG4fSQrF2Ao9jIktW0
-	GoX3Ek/w==;
-Received: from [84.69.19.168] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sc1l7-009Lvu-Dw; Thu, 08 Aug 2024 13:56:45 +0200
-Message-ID: <54b357b2-2132-4fd6-89db-7a60617dc859@igalia.com>
-Date: Thu, 8 Aug 2024 12:56:44 +0100
+	s=arc-20240116; t=1723118212; c=relaxed/simple;
+	bh=ilNmvTDZQ1EoYBMOGdOW2S15HgIwHt1jm+DZM6JPQs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PPRBVDSKPPHysJI6bxwXYT/Dts76SKpkJR7Bv5WkbX/tt4NJ7iMsk8L+w4JGb+hSsVN3CH+9RzAabm+Vec6MIOZ6zeBN4OnW15PlsaWX4Abhp8Ek59uVyGqNzcSFiBX4Zads8/T+eBZSK5cLinM6ErCcP38bYOBUf9OZt3AqaC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=n7JrJJVq; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3686b554cfcso415341f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 04:56:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1723118208; x=1723723008; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fw/aykIl4BLuTIpDTGcYiu6jAZpQ1T5paa6TP3fg26c=;
+        b=n7JrJJVqrVlCA3UVvlMqUKsI15C8kRXHOibkvCXAOVpxX9jUf1iyos8kWYXLJ/lrRV
+         bB033Kd6TigB0C3mpPi2/R35tICMqg6OTNWAGCDwSvbvA40X4EYcMse9ld9w2NTfYKv2
+         nXssxNS4fELzB2wuEdBLh1L6CXIExbc90AHaaK+dHTmPa34YWzoD7shXxtG2471DNn/f
+         ThQPm0xG2PXg4K9o1oPjXf7GN1mCNKm8xs++IF097Vt93Y9udxGDPOqD3XR3e3Tx3zLr
+         9Ie+wM13akcxeeWzep8pNGGcjEBeG/LA/Nhhbe6H/c+PZyNQFAK+V2RSuNTQnMHlpU7h
+         lnIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723118208; x=1723723008;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fw/aykIl4BLuTIpDTGcYiu6jAZpQ1T5paa6TP3fg26c=;
+        b=bJV7qVCYLuKzn5hFFkm9eglObG5dsdGYeRk5sJrxq1SPDEm9y49XRcDEyEuOwdqZUQ
+         NC5YrWj7mymyabeGDnv2CVT6iluzzAl539gaR03oW1YOTl7KnT2WQ28LetPEawi3Xvku
+         8LVsgWu0soGWNWvO4eT1f+lD+JLfvBXYLFNamGZq1fp1ATAYDHQ53g1kr77F2WF1G9PP
+         +EjNMXPpVtz98blQf3pTC6svQFx7y/h/RpzUTY3nD46gCIXFS6r8EEyOcrWc5Gskya0U
+         BXZCjq1Esb2qg8A8XbW1ocVArdRsqEuXH/VmlUgXyxt7EgKXsyBjhtT8Ce4FSMtwAwhi
+         arVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWX4XpKgAUOTQnRv/fXkwUu7q69yxEipY5HFMTZ1aQEvxLD/Duy+nbvhZQWPSccZQVb9KdyEPlAoqrdVrNrVJ9XsD4t1CsRjBG61Occ
+X-Gm-Message-State: AOJu0YzwQigvDqKqDqiYdQAowyu4Sjz8FVUaVKqkYQ8QG+6bLhXsNzzS
+	pATTBwd7LYGoJufvEEMQH3gPXQ1WXahietLiuNyljJsH8Ddt9Fp7wrH8HSKsyJU=
+X-Google-Smtp-Source: AGHT+IFW0UfAtsFgpD8Bt2sTIzz83ftbnXaKa1ZD9m/W7UsLKpZkqaokLX0Iy4D0V+ir7sylTQ1vNA==
+X-Received: by 2002:a5d:4105:0:b0:36b:c66a:b9fd with SMTP id ffacd0b85a97d-36d273c787amr1487787f8f.6.1723118208195;
+        Thu, 08 Aug 2024 04:56:48 -0700 (PDT)
+Received: from localhost ([213.235.133.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2718a4a6sm1690659f8f.58.2024.08.08.04.56.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 04:56:47 -0700 (PDT)
+Date: Thu, 8 Aug 2024 13:56:46 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Cc: netdev@vger.kernel.org, vadim.fedorenko@linux.dev, corbet@lwn.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, donald.hunter@gmail.com,
+	anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	intel-wired-lan@lists.osuosl.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Subject: Re: [PATCH net-next v1 2/2] ice: add callbacks for Embedded SYNC
+ enablement on dpll pins
+Message-ID: <ZrSyfgv5jHCUAYku@nanopsycho.orion>
+References: <20240808112013.166621-1-arkadiusz.kubalewski@intel.com>
+ <20240808112013.166621-3-arkadiusz.kubalewski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Subject: Re: [PATCH 1/2] numa: Add simple generic NUMA emulation
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Tvrtko Ursulin <tursulin@igalia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com, =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-References: <20240625125803.38038-1-tursulin@igalia.com>
- <20240625125803.38038-2-tursulin@igalia.com>
- <2024062627-curler-unlucky-51e0@gregkh>
- <679a9dda-8e8a-4428-8d57-30b0c60f28ce@igalia.com>
-Content-Language: en-GB
-In-Reply-To: <679a9dda-8e8a-4428-8d57-30b0c60f28ce@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808112013.166621-3-arkadiusz.kubalewski@intel.com>
 
-
-[Please excuse the re-send, but as I heard nothing concern is it did not 
-get lost in your busy mailbox.]
-
-Hi Greg,
-
-Gentle reminder on the opens from this thread. Let me re-summarise the 
-question below:
-
-On 26/06/2024 12:47, Tvrtko Ursulin wrote:
+Thu, Aug 08, 2024 at 01:20:13PM CEST, arkadiusz.kubalewski@intel.com wrote:
+>Allow the user to get and set configuration of Embedded SYNC feature
+>on the ice driver dpll pins.
+>
+>Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+>Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+>---
+> drivers/net/ethernet/intel/ice/ice_dpll.c | 241 +++++++++++++++++++++-
+> drivers/net/ethernet/intel/ice/ice_dpll.h |   1 +
+> 2 files changed, 239 insertions(+), 3 deletions(-)
+>
+>diff --git a/drivers/net/ethernet/intel/ice/ice_dpll.c b/drivers/net/ethernet/intel/ice/ice_dpll.c
+>index e92be6f130a3..0664bbe98769 100644
+>--- a/drivers/net/ethernet/intel/ice/ice_dpll.c
+>+++ b/drivers/net/ethernet/intel/ice/ice_dpll.c
+>@@ -394,8 +394,8 @@ ice_dpll_pin_state_update(struct ice_pf *pf, struct ice_dpll_pin *pin,
 > 
-> Hi Greg,
+> 	switch (pin_type) {
+> 	case ICE_DPLL_PIN_TYPE_INPUT:
+>-		ret = ice_aq_get_input_pin_cfg(&pf->hw, pin->idx, NULL, NULL,
+>-					       NULL, &pin->flags[0],
+>+		ret = ice_aq_get_input_pin_cfg(&pf->hw, pin->idx, &pin->status,
+>+					       NULL, NULL, &pin->flags[0],
+> 					       &pin->freq, &pin->phase_adjust);
+> 		if (ret)
+> 			goto err;
+>@@ -430,7 +430,7 @@ ice_dpll_pin_state_update(struct ice_pf *pf, struct ice_dpll_pin *pin,
+> 			goto err;
 > 
-> On 26/06/2024 08:38, Greg Kroah-Hartman wrote:
->> On Tue, Jun 25, 2024 at 01:58:02PM +0100, Tvrtko Ursulin wrote:
->>> From: Maíra Canal <mcanal@igalia.com>
->>>
->>> Add some common code for splitting the memory into N emulated NUMA 
->>> memory
->>> nodes.
->>>
->>> Individual architecture can then enable selecting this option and use 
->>> the
->>> existing numa=fake=<N> kernel argument to enable it.
->>>
->>> Memory is always split into equally sized chunks.
->>>
->>> Signed-off-by: Maíra Canal <mcanal@igalia.com>
->>> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->>> Co-developed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will@kernel.org>
->>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>> Cc: “Rafael J. Wysocki" <rafael@kernel.org>
->>> ---
->>>   drivers/base/Kconfig          |  7 ++++
->>>   drivers/base/Makefile         |  1 +
->>>   drivers/base/arch_numa.c      |  6 ++++
->>>   drivers/base/numa_emulation.c | 67 +++++++++++++++++++++++++++++++++++
->>>   drivers/base/numa_emulation.h | 21 +++++++++++
->>
->> Why not just properly describe the numa topology in your bootloader or
->> device tree and not need any such "fake" stuff at all?
->>
->> Also, you are now asking me to maintain these new files, not something
->> I'm comfortable doing at all sorry.
+> 		parent &= ICE_AQC_GET_CGU_OUT_CFG_DPLL_SRC_SEL;
+>-		if (ICE_AQC_SET_CGU_OUT_CFG_OUT_EN & pin->flags[0]) {
+>+		if (ICE_AQC_GET_CGU_OUT_CFG_OUT_EN & pin->flags[0]) {
+> 			pin->state[pf->dplls.eec.dpll_idx] =
+> 				parent == pf->dplls.eec.dpll_idx ?
+> 				DPLL_PIN_STATE_CONNECTED :
+>@@ -1098,6 +1098,237 @@ ice_dpll_phase_offset_get(const struct dpll_pin *pin, void *pin_priv,
+> 	return 0;
+> }
 > 
-> Mostly because ae3c107cd8be ("numa: Move numa implementation to common 
-> code") and existing common code in drivers/base/arch_numa.c it appeared 
-> it could be acceptable to add the simple NUMA emulation into the common 
-> code too. Then building upon the same concept as on x86 where no need 
-> for firmware changes is needed for experimenting with different 
-> configurations.
+>+/**
+>+ * ice_dpll_output_e_sync_set - callback for setting embedded sync
+>+ * @pin: pointer to a pin
+>+ * @pin_priv: private data pointer passed on pin registration
+>+ * @dpll: registered dpll pointer
+>+ * @dpll_priv: private data pointer passed on dpll registration
+>+ * @e_sync_freq: requested embedded sync frequency
+>+ * @extack: error reporting
+>+ *
+>+ * Dpll subsystem callback. Handler for setting embedded sync frequency value
+>+ * on output pin.
+>+ *
+>+ * Context: Acquires pf->dplls.lock
+>+ * Return:
+>+ * * 0 - success
+>+ * * negative - error
+>+ */
+>+static int
+>+ice_dpll_output_e_sync_set(const struct dpll_pin *pin, void *pin_priv,
+>+			   const struct dpll_device *dpll, void *dpll_priv,
+>+			   u64 e_sync_freq, struct netlink_ext_ack *extack)
+>+{
+>+	struct ice_dpll_pin *p = pin_priv;
+>+	struct ice_dpll *d = dpll_priv;
+>+	struct ice_pf *pf = d->pf;
+>+	u8 flags = 0;
+>+	int ret;
+>+
+>+	if (ice_dpll_is_reset(pf, extack))
+>+		return -EBUSY;
+>+	mutex_lock(&pf->dplls.lock);
+>+	if (p->flags[0] & ICE_AQC_GET_CGU_OUT_CFG_OUT_EN)
+>+		flags = ICE_AQC_SET_CGU_OUT_CFG_OUT_EN;
+>+	if (e_sync_freq == DPLL_PIN_FREQUENCY_1_HZ) {
+>+		if (p->flags[0] & ICE_AQC_GET_CGU_OUT_CFG_ESYNC_EN) {
+>+			ret = 0;
+>+		} else {
+>+			flags |= ICE_AQC_SET_CGU_OUT_CFG_ESYNC_EN;
+>+			ret = ice_aq_set_output_pin_cfg(&pf->hw, p->idx, flags,
+>+							0, 0, 0);
+>+		}
+>+	} else {
+>+		if (!(p->flags[0] & ICE_AQC_GET_CGU_OUT_CFG_ESYNC_EN)) {
+>+			ret = 0;
+>+		} else {
+>+			flags &= ~ICE_AQC_SET_CGU_OUT_CFG_ESYNC_EN;
+>+			ret = ice_aq_set_output_pin_cfg(&pf->hw, p->idx, flags,
+>+							0, 0, 0);
+>+		}
+>+	}
+>+	mutex_unlock(&pf->dplls.lock);
+>+	if (ret)
+>+		NL_SET_ERR_MSG_FMT(extack,
+>+				   "err:%d %s failed to set e-sync freq\n",
+
+Odd. Ret is pass all the way up to the userspace. Putting it to message
+does not make any sense to me.
+
+
+>+				   ret,
+>+				   ice_aq_str(pf->hw.adminq.sq_last_status));
+>+	return ret;
+>+}
+>+
+>+/**
+>+ * ice_dpll_output_e_sync_get - callback for getting embedded sync config
+>+ * @pin: pointer to a pin
+>+ * @pin_priv: private data pointer passed on pin registration
+>+ * @dpll: registered dpll pointer
+>+ * @dpll_priv: private data pointer passed on dpll registration
+>+ * @e_sync_freq: on success holds embedded sync frequency of a pin
+>+ * @e_sync_range: on success holds embedded sync frequency range for a pin
+>+ * @pulse: on success holds embedded sync pulse type
+>+ * @extack: error reporting
+>+ *
+>+ * Dpll subsystem callback. Handler for getting embedded sync frequency value
+>+ * and capabilities on output pin.
+>+ *
+>+ * Context: Acquires pf->dplls.lock
+>+ * Return:
+>+ * * 0 - success
+>+ * * negative - error
+>+ */
+>+static int
+>+ice_dpll_output_e_sync_get(const struct dpll_pin *pin, void *pin_priv,
+>+			   const struct dpll_device *dpll, void *dpll_priv,
+>+			   u64 *e_sync_freq,
+>+			   struct dpll_pin_frequency *e_sync_range,
+>+			   enum dpll_pin_e_sync_pulse *pulse,
+>+			   struct netlink_ext_ack *extack)
+>+{
+>+	struct ice_dpll_pin *p = pin_priv;
+>+	struct ice_dpll *d = dpll_priv;
+>+	struct ice_pf *pf = d->pf;
+>+
+>+	if (ice_dpll_is_reset(pf, extack))
+>+		return -EBUSY;
+>+	mutex_lock(&pf->dplls.lock);
+>+	if (!(p->flags[0] & ICE_AQC_GET_CGU_OUT_CFG_ESYNC_ABILITY)) {
+>+		mutex_unlock(&pf->dplls.lock);
+>+		return -EOPNOTSUPP;
+>+	}
+>+	*pulse = DPLL_PIN_E_SYNC_PULSE_NONE;
+>+	e_sync_range->min = 0;
+>+	if (p->freq == DPLL_PIN_FREQUENCY_10_MHZ) {
+>+		e_sync_range->max = DPLL_PIN_FREQUENCY_1_HZ;
+>+		if (p->flags[0] & ICE_AQC_GET_CGU_OUT_CFG_ESYNC_EN) {
+>+			*e_sync_freq = DPLL_PIN_FREQUENCY_1_HZ;
+>+			*pulse = DPLL_PIN_E_SYNC_PULSE_25_75;
+>+		} else {
+>+			*e_sync_freq = 0;
+>+		}
+>+	} else {
+>+		e_sync_range->max = 0;
+>+		*e_sync_freq = 0;
+>+	}
+>+	mutex_unlock(&pf->dplls.lock);
+>+	return 0;
+>+}
+>+
+>+/**
+>+ * ice_dpll_input_e_sync_set - callback for setting embedded sync
+>+ * @pin: pointer to a pin
+>+ * @pin_priv: private data pointer passed on pin registration
+>+ * @dpll: registered dpll pointer
+>+ * @dpll_priv: private data pointer passed on dpll registration
+>+ * @e_sync_freq: requested embedded sync frequency
+>+ * @extack: error reporting
+>+ *
+>+ * Dpll subsystem callback. Handler for setting embedded sync frequency value
+>+ * on input pin.
+>+ *
+>+ * Context: Acquires pf->dplls.lock
+>+ * Return:
+>+ * * 0 - success
+>+ * * negative - error
+>+ */
+>+static int
+>+ice_dpll_input_e_sync_set(const struct dpll_pin *pin, void *pin_priv,
+>+			  const struct dpll_device *dpll, void *dpll_priv,
+>+			  u64 e_sync_freq, struct netlink_ext_ack *extack)
+>+{
+>+	struct ice_dpll_pin *p = pin_priv;
+>+	struct ice_dpll *d = dpll_priv;
+>+	struct ice_pf *pf = d->pf;
+>+	u8 flags_en = 0;
+>+	int ret;
+>+
+>+	if (ice_dpll_is_reset(pf, extack))
+>+		return -EBUSY;
+>+	mutex_lock(&pf->dplls.lock);
+>+	if (p->flags[0] & ICE_AQC_GET_CGU_IN_CFG_FLG2_INPUT_EN)
+>+		flags_en = ICE_AQC_SET_CGU_IN_CFG_FLG2_INPUT_EN;
+>+	if (e_sync_freq == DPLL_PIN_FREQUENCY_1_HZ) {
+>+		if (p->flags[0] & ICE_AQC_GET_CGU_IN_CFG_FLG2_ESYNC_EN) {
+>+			ret = 0;
+>+		} else {
+>+			flags_en |= ICE_AQC_SET_CGU_IN_CFG_FLG2_ESYNC_EN;
+>+			ret = ice_aq_set_input_pin_cfg(&pf->hw, p->idx, 0,
+>+						       flags_en, 0, 0);
+>+		}
+>+	} else {
+>+		if (!(p->flags[0] & ICE_AQC_GET_CGU_IN_CFG_FLG2_ESYNC_EN)) {
+>+			ret = 0;
+>+		} else {
+>+			flags_en &= ~ICE_AQC_SET_CGU_IN_CFG_FLG2_ESYNC_EN;
+>+			ret = ice_aq_set_input_pin_cfg(&pf->hw, p->idx, 0,
+>+						       flags_en, 0, 0);
+>+		}
+>+	}
+>+	mutex_unlock(&pf->dplls.lock);
+>+	if (ret)
+>+		NL_SET_ERR_MSG_FMT(extack,
+>+				   "err:%d %s failed to set e-sync freq\n",
+
+Same here.
+
+
+>+				   ret,
+>+				   ice_aq_str(pf->hw.adminq.sq_last_status));
+>+
+>+	return ret;
+>+}
+>+
+>+/**
+>+ * ice_dpll_input_e_sync_get - callback for getting embedded sync config
+>+ * @pin: pointer to a pin
+>+ * @pin_priv: private data pointer passed on pin registration
+>+ * @dpll: registered dpll pointer
+>+ * @dpll_priv: private data pointer passed on dpll registration
+>+ * @e_sync_freq: on success holds embedded sync frequency of a pin
+>+ * @e_sync_range: on success holds embedded sync frequency range for a pin
+>+ * @pulse: on success holds embedded sync pulse type
+>+ * @extack: error reporting
+>+ *
+>+ * Dpll subsystem callback. Handler for getting embedded sync frequency value
+>+ * and capabilities on input pin.
+>+ *
+>+ * Context: Acquires pf->dplls.lock
+>+ * Return:
+>+ * * 0 - success
+>+ * * negative - error
+>+ */
+>+static int
+>+ice_dpll_input_e_sync_get(const struct dpll_pin *pin, void *pin_priv,
+>+			  const struct dpll_device *dpll, void *dpll_priv,
+>+			  u64 *e_sync_freq,
+>+			  struct dpll_pin_frequency *e_sync_range,
+>+			  enum dpll_pin_e_sync_pulse *pulse,
+>+			  struct netlink_ext_ack *extack)
+>+{
+>+	struct ice_dpll_pin *p = pin_priv;
+>+	struct ice_dpll *d = dpll_priv;
+>+	struct ice_pf *pf = d->pf;
+>+
+>+	if (ice_dpll_is_reset(pf, extack))
+>+		return -EBUSY;
+>+	mutex_lock(&pf->dplls.lock);
+>+	if (!(p->status & ICE_AQC_GET_CGU_IN_CFG_STATUS_ESYNC_CAP)) {
+>+		mutex_unlock(&pf->dplls.lock);
+>+		return -EOPNOTSUPP;
+>+	}
+>+	*pulse = DPLL_PIN_E_SYNC_PULSE_NONE;
+>+	e_sync_range->min = 0;
+>+	if (p->freq == DPLL_PIN_FREQUENCY_10_MHZ) {
+>+		e_sync_range->max = DPLL_PIN_FREQUENCY_1_HZ;
+>+		if (p->flags[0] & ICE_AQC_GET_CGU_IN_CFG_FLG2_ESYNC_EN) {
+>+			*e_sync_freq = DPLL_PIN_FREQUENCY_1_HZ;
+>+			*pulse = DPLL_PIN_E_SYNC_PULSE_25_75;
+>+		} else {
+>+			*e_sync_freq = 0;
+>+		}
+>+	} else {
+>+		e_sync_range->max = 0;
+>+		*e_sync_freq = 0;
+>+	}
+>+	mutex_unlock(&pf->dplls.lock);
+>+	return 0;
+>+}
+>+
+> /**
+>  * ice_dpll_rclk_state_on_pin_set - set a state on rclk pin
+>  * @pin: pointer to a pin
+>@@ -1222,6 +1453,8 @@ static const struct dpll_pin_ops ice_dpll_input_ops = {
+> 	.phase_adjust_get = ice_dpll_pin_phase_adjust_get,
+> 	.phase_adjust_set = ice_dpll_input_phase_adjust_set,
+> 	.phase_offset_get = ice_dpll_phase_offset_get,
+>+	.e_sync_set = ice_dpll_input_e_sync_set,
+>+	.e_sync_get = ice_dpll_input_e_sync_get,
+> };
 > 
-> Would folding into arch_numa.c so no new files are added address your 
-> concern, or your main issue is the emulation in general?
-
-Re-iterating and slightly re-formulating this question I see three options:
-
-a)
-Fold the new simple generic code into the existing arch_numa.c, 
-addressing the "no new files" objection, if that was the main objection.
-
-b)
-Move completely into arch code - aka you don't want to see it under 
-drivers/base at all, ever, regardless of how simple the new code is, or 
-that common NUMA code is already there.
-
-c)
-Strong nack for either a) or b) - so "do it in the firmware" comment.
-
-Trying to understand your position so we can progress this.
-
-Thanks,
-
-Tvrtko
-
+> static const struct dpll_pin_ops ice_dpll_output_ops = {
+>@@ -1232,6 +1465,8 @@ static const struct dpll_pin_ops ice_dpll_output_ops = {
+> 	.direction_get = ice_dpll_output_direction,
+> 	.phase_adjust_get = ice_dpll_pin_phase_adjust_get,
+> 	.phase_adjust_set = ice_dpll_output_phase_adjust_set,
+>+	.e_sync_set = ice_dpll_output_e_sync_set,
+>+	.e_sync_get = ice_dpll_output_e_sync_get,
+> };
 > 
->  >> +    if (str_has_prefix(opt, "fake="))
->  >> +        return numa_emu_cmdline(opt + 5);
->  >
->  > You did not document this at all :(
+> static const struct dpll_device_ops ice_dpll_ops = {
+>diff --git a/drivers/net/ethernet/intel/ice/ice_dpll.h b/drivers/net/ethernet/intel/ice/ice_dpll.h
+>index 93172e93995b..c320f1bf7d6d 100644
+>--- a/drivers/net/ethernet/intel/ice/ice_dpll.h
+>+++ b/drivers/net/ethernet/intel/ice/ice_dpll.h
+>@@ -31,6 +31,7 @@ struct ice_dpll_pin {
+> 	struct dpll_pin_properties prop;
+> 	u32 freq;
+> 	s32 phase_adjust;
+>+	u8 status;
+> };
 > 
-> That was indeed an oversight. Just need to "copy with edits" some stuff 
-> from Documentation/arch/x86/x86_64/boot-options.rst.
-> 
-> Regards,
-> 
-> Tvrtko
+> /** ice_dpll - store info required for DPLL control
+>-- 
+>2.38.1
+>
 
