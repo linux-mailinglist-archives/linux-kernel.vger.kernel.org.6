@@ -1,152 +1,188 @@
-Return-Path: <linux-kernel+bounces-279370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA4E94BC60
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:38:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5078294BC65
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FBE71F21CBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06BC9285D35
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9978218C34C;
-	Thu,  8 Aug 2024 11:38:21 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582A018C32A;
-	Thu,  8 Aug 2024 11:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9734718C327;
+	Thu,  8 Aug 2024 11:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="Rf8WmADm"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFA218B46F;
+	Thu,  8 Aug 2024 11:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723117101; cv=none; b=p+JSud2Q7UxR84WBusdiBD5PWVWNpBaUJKgdCgMeVo84RW81cHhzvPJBYQbZOtauhXtbBapSBcJdgXjJPYYcazDk77MMhWASozBpFtff6G9qUjdUvM8Ld7b6XVdFkkO4rMmoMwi/CoYov89CEkEbh7FqUdBeAHVJjT6UC5nyCvc=
+	t=1723117122; cv=none; b=dzzuyEzF4nUZ77o5QzvsCsjO8MdWrvg5kOEG8LUuncQgyp3EKtCJBFy5TiMbw6jiYWZ5KL01zRO6WGk9rt8511mRxm4r7sRRq18/iLqvsa5LKcWCOHnftJTHW5qCDN/6frWUsh/fQujHFFMaXATgu4mN32Ls2K+xxYnphswAdG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723117101; c=relaxed/simple;
-	bh=fHaBzS2wDuNOzCPXi9gb65z7kShhgEjKyN/BRQR7/p0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cVGFiRzeDlAzHeIIZ+Od6z3NtGvCJCU4jyxbkJCVzJmYRA+3zd8RS3e8TxClOv8ZvJByeg0PEqnKNkyDghLYqYYi2T9wyxyJ38NRZsFTwuZ3M+Jj4jZfFV9D0vjVtg4Dym6vMmOC8ZHliPYGddmrcvYepKMiKVzdGTAQT3hhpDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxXZskrrRmjcMLAA--.8909S3;
-	Thu, 08 Aug 2024 19:38:12 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMDxkeEgrrRmtq8JAA--.48118S3;
-	Thu, 08 Aug 2024 19:38:09 +0800 (CST)
-Subject: Re: [PATCH v12 64/84] KVM: LoongArch: Mark "struct page" pfns dirty
- only in "slow" page fault path
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
- David Stevens <stevensd@chromium.org>
-References: <20240726235234.228822-1-seanjc@google.com>
- <20240726235234.228822-65-seanjc@google.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <b54357a9-6146-603b-45cd-e8ee0db4a709@loongson.cn>
-Date: Thu, 8 Aug 2024 19:38:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1723117122; c=relaxed/simple;
+	bh=0QhIHepQ4W5RWZkKNBeD1mFueKO6/2K0r+4hkW97G38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IEzEk+OYrAuBl36oJf8yGUjWoNWUFaqVepTKgbkcGKjyji5txJ8HOZKFMucinApXhm6cw+Zon0FBkm4/vU0saDfy075/SRPOhM7vHRwFN/BfxZr69Bc3T7q1+RWchjcLnfNIO28t7nPH7tDqv/Y1G8FlZ8ejRJT09EDL1q8eRQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=Rf8WmADm; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=acqOcHsGUtxrd17wuEdfjC1lIs0K5TQddeGAbJ4eZlc=; t=1723117120;
+	x=1723549120; b=Rf8WmADmnVDoAMuj8NxNIX6yDHRoZDdPvbTYUrb19pMZN23crfmtRcBERJnsS
+	Py/gJsPLm+/jfo+Gs952+9JnL7bVN/2mgGFc/H8yzQfUvGYnm63zWtmnqMXTpnzt+9Blne+1+K5Tv
+	1bJAHMR25ZWfjNgUYoE7E2a7aqkr5xidJAcmvSXH0nC0/d5OdA37aCMmQ4C6Id2n33rnz+RQoeNBu
+	IWBSgcu6am5wOFozkfxpu3ZguJycMwXx+gefymKE6NnciIlsDkEBz5BkCfXaQu+67DOjKdZqQF712
+	qiCAooQ9kP/jvM+wX5tO8DXBQ53UGAzp5FLT+28OcnTnHC8pIQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sc1TR-0004Yy-2b; Thu, 08 Aug 2024 13:38:29 +0200
+Message-ID: <7a153163-e9d8-4e0f-95cb-7688f3425a68@leemhuis.info>
+Date: Thu, 8 Aug 2024 13:38:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240726235234.228822-65-seanjc@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxkeEgrrRmtq8JAA--.48118S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7WFW8JryfWw13KFy5Xw4kKrX_yoW8CFWkpF
-	W7CrZrGrWrtrnavrZrt3sF9rs0yrs8Kr1xXa4xG34rGF1qqryYq3W0grZ7WF1fJ3s3AFWS
-	qF1rKFnFgFs5JwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUA529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUShiSDU
-	UUU
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] crypto: arm64/poly1305 - move data to rodata section
+To: Daniel Gomez <da.gomez@samsung.com>, Jia He <justin.he@arm.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+ Andy Polyakov <appro@cryptogams.org>, "David S. Miller"
+ <davem@davemloft.net>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240806055444.528932-1-justin.he@arm.com>
+ <CGME20240806125547eucas1p2016c788b38c2bc55e6b7614c3b0cf381@eucas1p2.samsung.com>
+ <qd2jxjle5zf6u4vyu5x32wjhzj4t5cxrc7dbi46inhlhjxhw4s@llhfvho4l2e6>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <qd2jxjle5zf6u4vyu5x32wjhzj4t5cxrc7dbi46inhlhjxhw4s@llhfvho4l2e6>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1723117120;e55b1f0c;
+X-HE-SMSGID: 1sc1TR-0004Yy-2b
 
+On 06.08.24 14:55, Daniel Gomez wrote:
+> On Tue, Aug 06, 2024 at 05:54:44AM GMT, Jia He wrote:
+>> When objtool gains support for ARM in the future, it may encounter issues
+>> disassembling the following data in the .text section:
+>>> .Lzeros:
+>>> .long   0,0,0,0,0,0,0,0
+>>> .asciz  "Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
+>>> .align  2
+>>
+>> Move it to .rodata which is a more appropriate section for read-only data.
+>>
+>> There is a limit on how far the label can be from the instruction, hence
+>> use "adrp" and low 12bits offset of the label to avoid the compilation
+>> error.
+> [...]
+> 
+> I'm getting the following error with next-20240806
+> 
+> make LLVM=1 ARCH=arm64 allyesconfig
+> make LLVM=1 ARCH=arm64 -j$(nproc)
+> 
+> ld.lld: error: vmlinux.a(arch/arm64/crypto/poly1305-core.o):(function poly1305_blocks_neon: .text+0x3d4): relocation R_AARCH64_ADR_PREL_LO21 out of range: 269166444 is not in [-1048576, 1048575]
 
+Hmmm, I ran into build problems with -next today for arm64 and x86-64
+(ppc64le failed at a later stage for a different reason) on all current
+Fedora releases (yesterday everything worked fine). The error looks
+different, but mentions R_AARCH64_ADR_PREL_LO21 as well on arm64.
 
-On 2024/7/27 上午7:52, Sean Christopherson wrote:
-> Mark pages/folios dirty only the slow page fault path, i.e. only when
-> mmu_lock is held and the operation is mmu_notifier-protected, as marking a
-> page/folio dirty after it has been written back can make some filesystems
-> unhappy (backing KVM guests will such filesystem files is uncommon, and
-> the race is minuscule, hence the lack of complaints).
-> 
-> See the link below for details.
-> 
-> Link: https://lore.kernel.org/all/cover.1683044162.git.lstoakes@gmail.com
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/loongarch/kvm/mmu.c | 18 ++++++++++--------
->   1 file changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
-> index 2634a9e8d82c..364dd35e0557 100644
-> --- a/arch/loongarch/kvm/mmu.c
-> +++ b/arch/loongarch/kvm/mmu.c
-> @@ -608,13 +608,13 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool writ
->   		if (kvm_pte_young(changed))
->   			kvm_set_pfn_accessed(pfn);
->   
-> -		if (kvm_pte_dirty(changed)) {
-> -			mark_page_dirty(kvm, gfn);
-> -			kvm_set_pfn_dirty(pfn);
-> -		}
->   		if (page)
->   			put_page(page);
->   	}
-> +
-> +	if (kvm_pte_dirty(changed))
-> +		mark_page_dirty(kvm, gfn);
-> +
->   	return ret;
->   out:
->   	spin_unlock(&kvm->mmu_lock);
-> @@ -915,12 +915,14 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
->   	else
->   		++kvm->stat.pages;
->   	kvm_set_pte(ptep, new_pte);
-> -	spin_unlock(&kvm->mmu_lock);
->   
-> -	if (prot_bits & _PAGE_DIRTY) {
-> -		mark_page_dirty_in_slot(kvm, memslot, gfn);
-> +	if (writeable)
->   		kvm_set_pfn_dirty(pfn);
-> -	}
-> +
-> +	spin_unlock(&kvm->mmu_lock);
-> +
-> +	if (prot_bits & _PAGE_DIRTY)
-> +		mark_page_dirty_in_slot(kvm, memslot, gfn);
->   
->   	kvm_release_pfn_clean(pfn);
->   out:
-> 
-Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+/usr/bin/ld: /tmp/ccgC3toO.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `stderr@@GLIBC_2.17' which may bind externally can not be used when making a shared object; recompile with -fPIC
+/usr/bin/ld: /tmp/ccgC3toO.o(.text+0x8): unresolvable R_AARCH64_ADR_PREL_PG_HI21 relocation against symbol `stderr@@GLIBC_2.17'
+/usr/bin/ld: final link failed: bad value
 
+That's what brought be here, so allow me to ask: might that be related
+somehow or is that likely a different problem?
+
+arm64: https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-39-aarch64/07889669-next-next-all/builder-live.log.gz
+"""
+> + /usr/bin/make -s 'HOSTCFLAGS=-O2  -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -mbranch-protection=standard -fasynchronous-unwind-tables -fstack-clash-protection   ' 'HOSTLDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes ' ARCH=arm64 'KCFLAGS= ' WITH_GCOV=0 -j4 vmlinuz.efi
+> /usr/bin/ld: /tmp/ccgC3toO.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `stderr@@GLIBC_2.17' which may bind externally can not be used when making a shared object; recompile with -fPIC
+> /usr/bin/ld: /tmp/ccgC3toO.o(.text+0x8): unresolvable R_AARCH64_ADR_PREL_PG_HI21 relocation against symbol `stderr@@GLIBC_2.17'
+> /usr/bin/ld: final link failed: bad value
+> collect2: error: ld returned 1 exit status
+> make[4]: *** [Makefile:47: /builddir/build/BUILD/kernel-next-20240808/linux-6.11.0-0.0.next.20240808.225.vanilla.fc39.aarch64/tools/bpf/resolve_btfids/fixdep] Error 1
+> make[3]: *** [/builddir/build/BUILD/kernel-next-20240808/linux-6.11.0-0.0.next.20240808.225.vanilla.fc39.aarch64/tools/build/Makefile.include:15: fixdep] Error 2
+> make[2]: *** [Makefile:76: bpf/resolve_btfids] Error 2
+> make[1]: *** [/builddir/build/BUILD/kernel-next-20240808/linux-6.11.0-0.0.next.20240808.225.vanilla.fc39.aarch64/Makefile:1362: tools/bpf/resolve_btfids] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+> make: *** [Makefile:226: __sub-make] Error 2
+> error: Bad exit status from /var/tmp/rpm-tmp.iEcjn7 (%build)
+"""
+
+x86_64
+https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-39-x86_64/07889669-next-next-all/builder-live.log.gz
+"""
+> + /usr/bin/make -s 'HOSTCFLAGS=-O2  -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64   -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection   ' 'HOSTLDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes ' ARCH=x86_64 'KCFLAGS= ' WITH_GCOV=0 -j2 bzImage
+> /usr/bin/ld: /tmp/ccSPE2cG.o: relocation R_X86_64_32 against `.rodata' can not be used when making a PIE object; recompile with -fPIE
+> /usr/bin/ld: failed to set dynamic section sizes: bad value
+> collect2: error: ld returned 1 exit status
+> make[4]: *** [Makefile:47: /builddir/build/BUILD/kernel-next-20240808/linux-6.11.0-0.0.next.20240808.225.vanilla.fc39.x86_64/tools/objtool/fixdep] Error 1
+> make[3]: *** [/builddir/build/BUILD/kernel-next-20240808/linux-6.11.0-0.0.next.20240808.225.vanilla.fc39.x86_64/tools/build/Makefile.include:15: fixdep] Error 2
+> make[2]: *** [Makefile:73: objtool] Error 2
+> make[1]: *** [/builddir/build/BUILD/kernel-next-20240808/linux-6.11.0-0.0.next.20240808.225.vanilla.fc39.x86_64/Makefile:1362: tools/objtool] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+> make: *** [Makefile:226: __sub-make] Error 2
+> error: Bad exit status from /var/tmp/rpm-tmp.MPS2x4 (%build)
+"""
+
+Ciao, Thorsten
 
