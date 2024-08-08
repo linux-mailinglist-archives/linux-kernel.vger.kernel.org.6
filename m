@@ -1,149 +1,177 @@
-Return-Path: <linux-kernel+bounces-279882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F8194C2F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:46:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B85094C300
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE8C11C21D1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:46:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 688C0B247E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EEA18FDD1;
-	Thu,  8 Aug 2024 16:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DE919004E;
+	Thu,  8 Aug 2024 16:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxCPXSj5"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="TDR04Xer"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA1118E764
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 16:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4D61474B5
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 16:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723135559; cv=none; b=QksxgaX0zPbYQilv9C/jO2EUbx/VUr5CRN9gWr/0UsNB/eRnknFaMvBJhNFcyXxwWswfNSyv4Bd+8toKyAGWAMeKfXEQRg35HKupFc9rUC0bYwBhCNIoJup6Itvs6omq6shDuFjkHJ3Gyiy9H4iyQXDokoMg0FsSvhsohzK+MfM=
+	t=1723135668; cv=none; b=fwNZivW8alLGwDdHbx3cGLj+qIIGPeG1W/r18B+3Rd77AUBT6M1ChV5UmF2Q38O8Euh50TlmQGiEfYs95661Swl7vqP2w5SZilgYVdNq0zU/eivYNG5iX31nNMT6ncenVuBlno2gA32dOOK8dlY83CVrWmOW8xNH/SNDiCCAupM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723135559; c=relaxed/simple;
-	bh=kHu5rUKPLyX/YM6NaEw7wFu32zR+5JVICXfDH4msB0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pPhc01hc9kswnm5FYkHxn2yDLLea6F6DTVFeOnIb86B9dbZybYAeu2NLkZrTelGjPfd95rqu9I8/ROj2wc91DWWdnOWtVaYGakfRyz7NPsWzJdB4kWezyFOryzurO4ASVuE1bV7ZvwdhGc4UCfoR4LOwtvrZ3Kg7ZdTPSYWojL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxCPXSj5; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc5296e214so12512215ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 09:45:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723135557; x=1723740357; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=iS4FMchnREFWPCXR0AfnXAqNGlHQ0vvYX58exUAZSyo=;
-        b=JxCPXSj5vSE1EOjCPEKSX1O49BIEI709bdaKHA8bb7hznjTT6bb3UORTsZDNf81+g4
-         COsq4wmKrQH2OLxEgYC5L6GvRfN8D4/fejqaLScl8aCQQYNhVqoxE7PwkSq6oVFOn3xT
-         0L6/zQNt26KAD0IURFeGxgfjhQNTuVioykA66WFR4YG2Y+ipBirPrSs1VZmOR5jko6T6
-         UbiTLA8n6KQFftYdza3/KumUnhDQxb4IwNAbL7cCSOMkx9qw3o8UXzq3Nkw7Lf92VNsU
-         0OYpJ8FrTLcnKjblybei9Z6agJXIXTeqOg7fj2LDssNd+DZPos6NfE6mQhXe0StdDjkh
-         LgLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723135557; x=1723740357;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iS4FMchnREFWPCXR0AfnXAqNGlHQ0vvYX58exUAZSyo=;
-        b=HY/VOvLtQ1BuyhO2Tl67oypfGj5IeQyU4H1gOJBPAo/asbyGbGpLK7gvpYb9RzTLz+
-         +t2exte1ZDLvL/z4Q7s1ofXMxm9d7qfc1A1O4r0yQ+yUcTAbxlflor3rC61rI2VpWBX1
-         GKdPEwdhpvA9SpBju+t0CB8q8ckaRKk0xUaQu540gdXHvlnEMrsMELIvXXIDiqDOuRHe
-         SrPzXQB4EFdkh9gUN8vDVhjDGcDY4KaHBwHWonon+ulfxVidAH3oHG0+MGeIpN6RTTV4
-         /bQQnFYF1hdJG3XAtqBei62PU+ubbY3CFbPiSFujI/LEOC8v1sa4w65DTUWVYnXtncr/
-         j6Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCWdvztwDGwNtGNjI6HWGJIznZBjdxh6lSQJrv1x0f4w/TP0tAIYim/yVxzygAox7NHuVbhLiyCID5vYDal/KnwQMbH7/f6bw+NiIa5r
-X-Gm-Message-State: AOJu0YzoY5zU05YHJXEzxfrqdlWAoOeS8YQDDK5NqtD3H+Q4Ne0OQonw
-	g/qVuxlcFSgykVYaFO/Wra0r2KVqEL04DDta9keU98xyL9Lo3Zgd2j/m3A==
-X-Google-Smtp-Source: AGHT+IHI1dkfiHvwjRjvRVTgtFNrN4Mxb1bCTsgW5AxeEL0/shuTRi5+0pgviMfnnLQwQwhw83rMuQ==
-X-Received: by 2002:a17:902:db0d:b0:1fc:3daf:8a0f with SMTP id d9443c01a7336-200952274a5mr28788425ad.7.1723135556500;
-        Thu, 08 Aug 2024 09:45:56 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59179793sm126793415ad.200.2024.08.08.09.45.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 09:45:56 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 8 Aug 2024 09:45:55 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Backtrace in ppc SMP code after enabling security modules
-Message-ID: <506a1b59-8680-44ae-9cc5-e2cccb32da78@roeck-us.net>
+	s=arc-20240116; t=1723135668; c=relaxed/simple;
+	bh=RajS3Iv3t7XxfZVVa/qqKpOf5NV/TKtvi18u1+/kUNo=;
+	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=VEbY6y0hK6KjoXmLPAW/Nj7vXaeV4bSWWTyTfU75iQPzHs7JVTX1V+3cm/CfiZ50YnD4mmHPf9WcJ3cpTMG7h8MDw57u4ATKM4usVt0vpwkWzc9gzxt9in2n4nM0g+RS+Igw3JwzevzL3dtH6Cy4ZL7AZmxpYs1sXSnz+NbhQag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=TDR04Xer; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id ba7dsFf3UnNFGc6HAsTOSp; Thu, 08 Aug 2024 16:46:08 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id c6H9sg0AV0K4nc6H9sRl81; Thu, 08 Aug 2024 16:46:08 +0000
+X-Authority-Analysis: v=2.4 cv=RsjDLjmK c=1 sm=1 tr=0 ts=66b4f650
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=s2I88z9o6i3GcfhhhlwA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:
+	Date:Message-ID:References:Cc:To:From:Subject:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=LSgTUSHkIv7hXmHEcrbfOGnyRbNeawZhTZ0yhaq4pDg=; b=TDR04Xer/BoIPT/JyZo7g6PH/D
+	VabLFL+AaG1SIxKwtR+6lhw/UzXGD5J5DByg0pPBXQh51rF8CNVbigE/6X/nknW7CMslpQnwFVyTt
+	7hs6kRpPGjmenXm32aRVPaeQ6G8wtRlSXUo9FxrLiRUpwXWwQDN1sut+IyfOJ8x/uyadNktzsZ2nb
+	dcIu6TpYMhLqUD+uEr/2mkZDccr+clCdfRK8TFhS/EDyFsFD+nwB/+weC7B0Le0bWV34r2e9t5lqB
+	sGsqkSWQM+LrGxhv/lu67e6dAStisnDkDJawD+noDeTBc1jJ+vuyl9QwDPEmao1prVs/gfSXhAVCw
+	0YOPIaYg==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:33544 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sc6H4-0016rU-2L;
+	Thu, 08 Aug 2024 10:46:02 -0600
+Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc2 review
+From: Ron Economos <re@w6rz.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240808091131.014292134@linuxfoundation.org>
+ <96b86f9b-c516-9742-5e33-e5cbfbed10b3@w6rz.net>
+ <c4b1489f-42b8-8c16-f487-93b0dd8cd8c4@w6rz.net>
+Message-ID: <b6caeb4b-116e-068c-440d-7489ce7e8af3@w6rz.net>
+Date: Thu, 8 Aug 2024 09:45:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <c4b1489f-42b8-8c16-f487-93b0dd8cd8c4@w6rz.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sc6H4-0016rU-2L
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:33544
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 4
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfAt6XccMINh+TAaWsiTQojSLR7MJ0zXiHJJ8GKEe6bH8Xv0c936NhKmsp5fAeQ7VGzQs/+fLCHqeV1NQExy+BE7U4vVMZFFBbN7mpjJ4SUHHPmHsOm4Z
+ +bTeedOtDPV4ZD3HzBW9yomRXWcWvvZMrTrz4v9SyQTTKovw+SFzMRd33oqokK21+/4PbK/UMARDZ/I3AM33gi5bZo/iwLAa+rY=
 
-Hi,
+On 8/8/24 7:43 AM, Ron Economos wrote:
+> On 8/8/24 4:55 AM, Ron Economos wrote:
+>> On 8/8/24 2:11 AM, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 6.1.104 release.
+>>> There are 86 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Sat, 10 Aug 2024 09:11:02 +0000.
+>>> Anything received after that time might be too late.
+>>>
+>>> The whole patch series can be found in one patch at:
+>>>     https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.104-rc2.gz 
+>>>
+>>> or in the git tree and branch at:
+>>>     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git 
+>>> linux-6.1.y
+>>> and the diffstat can be found below.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>>
+>> I'm seeing a build failure.
+>>
+>> sound/pci/hda/patch_conexant.c:273:10: error: ‘const struct 
+>> hda_codec_ops’ has no member named ‘suspend’
+>>   273 |         .suspend = cx_auto_suspend,
+>>       |          ^~~~~~~
+>> sound/pci/hda/patch_conexant.c:273:20: error: initialization of ‘void 
+>> (*)(struct hda_codec *, hda_nid_t,  unsigned int)’ {aka ‘void 
+>> (*)(struct hda_codec *, short unsigned int,  unsigned int)’} from 
+>> incompatible pointer type ‘int (*)(struct hda_codec *)’ 
+>> [-Werror=incompatible-pointer-types]
+>>   273 |         .suspend = cx_auto_suspend,
+>>       |                    ^~~~~~~~~~~~~~~
+>> sound/pci/hda/patch_conexant.c:273:20: note: (near initialization for 
+>> ‘cx_auto_patch_ops.set_power_state’)
+>> sound/pci/hda/patch_conexant.c:274:10: error: ‘const struct 
+>> hda_codec_ops’ has no member named ‘check_power_status’; did you mean 
+>> ‘set_power_state’?
+>>   274 |         .check_power_status = snd_hda_gen_check_power_status,
+>>       |          ^~~~~~~~~~~~~~~~~~
+>>       |          set_power_state
+>> sound/pci/hda/patch_conexant.c:274:31: error: 
+>> ‘snd_hda_gen_check_power_status’ undeclared here (not in a function); 
+>> did you mean ‘snd_hda_check_power_state’?
+>>   274 |         .check_power_status = snd_hda_gen_check_power_status,
+>>       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>       |                               snd_hda_check_power_state
+>>
+>> This is triggered because my config does not include CONFIG_PM. But 
+>> the error is caused by upstream patch 
+>> 9e993b3d722fb452e274e1f8694d8940db183323 "ALSA: hda: codec: Reduce 
+>> CONFIG_PM dependencies" being missing. This patch removes the #ifdef 
+>> CONFIG_PM in the hda_codec_ops structure. So if CONFIG_PM is not set, 
+>> some structure members are missing and the the build fails.
+>>
+>>
+> Same failure occurs in 6.6.45-rc1 if CONFIG_PM is not set.
+>
+>
+Note: Both upstream 9e993b3d722fb452e274e1f8694d8940db183323 "ALSA: hda: 
+codec: Reduce CONFIG_PM dependencies" and 
+6c8fd3499423fc3ebb735f32d4a52bc5825f6301 "ALSA: hda: generic: Reduce 
+CONFIG_PM dependencies" are required to fix the build if CONFIG_PM is 
+not set.
 
-I recently enabled several security module options in my test system.
-
-CONFIG_SECURITY=y
-CONFIG_SECURITY_APPARMOR=y
-CONFIG_SECURITY_APPARMOR_KUNIT_TEST=y
-CONFIG_SECURITY_LANDLOCK=y
-CONFIG_SECURITY_LANDLOCK_KUNIT_TEST=y
-CONFIG_SECURITY_LOCKDOWN_LSM=y
-CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=y
-CONFIG_SECURITY_YAMA=y
-CONFIG_SECURITY_LOADPIN=y
-CONFIG_SECURITY_SAFESETID=y
-CONFIG_BPF_LSM=y
-CONFIG_LSM="landlock,lockdown,yama,loadpin,safesetid,bpf"
-
-When running ppc tests in qemu with the above enabled on top of SMP
-configuratins such as corenet32_smp_defconfig or mpc85xx_smp_defconfig,
-I get the following runtime warning.
-
-...
-LSM: initializing lsm=lockdown,capability,landlock,yama,loadpin,safesetid
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at kernel/smp.c:779 smp_call_function_many_cond+0x518/0x9d4
-Modules linked in:
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.11.0-rc2-00127-g2e3e7093e9c8 #1
-Hardware name: MPC8544DS e500v2 0x80210030 MPC8544 DS
-NIP:  c0172ca8 LR: c01731b0 CTR: 00000000
-REGS: c2669d60 TRAP: 0700   Not tainted  (6.11.0-rc2-00127-g2e3e7093e9c8)
-MSR:  00021000 <CE,ME>  CR: 24004288  XER: 20000000
-GPR00: c002255c c2669e50 c253b5c0 c267b484 00000000 00000000 00000001 c2680000
-GPR08: 00000000 00000003 c2680000 00000000 44004288 020a1e18 00000000 00000000
-GPR16: 00000000 00000000 00000001 00000000 c0000000 c01731b0 00000000 c267b484
-GPR24: c00224fc c0773760 c0770b50 00000000 00000000 00029000 00000000 00000000
-NIP [c0172ca8] smp_call_function_many_cond+0x518/0x9d4
-LR [c01731b0] smp_call_function+0x3c/0x58
-Call Trace:
-[c2669eb0] [84000282] 0x84000282
-[c2669ec0] [c002255c] flush_tlb_kernel_range+0x2c/0x50
-[c2669ed0] [c0023b8c] patch_instruction+0x108/0x1b0
-[c2669ef0] [c00188a4] arch_static_call_transform+0x104/0x148
-[c2669f10] [c2033ebc] security_add_hooks+0x138/0x24c
-[c2669f40] [c2032e24] capability_init+0x24/0x38
-[c2669f50] [c203322c] initialize_lsm+0x48/0x90
-[c2669f70] [c2033b68] security_init+0x31c/0x538
-[c2669fa0] [c2001154] start_kernel+0x5d4/0x81c
-[c2669ff0] [c0000478] set_ivor+0x150/0x18c
-Code: 91220000 81620004 3d20c209 3929e478 556b103a 7c84582e 7c89202e 81220000 2c040000 3929ffff 91220000 40a2fbb8 <0fe00000> 4bfffbb0 80e20000 2c070000
-irq event stamp: 1204
-hardirqs last  enabled at (1203): [<c11d85f8>] _raw_spin_unlock_irqrestore+0x70/0xa8
-hardirqs last disabled at (1204): [<c0023bcc>] patch_instruction+0x148/0x1b0
-softirqs last  enabled at (50): [<c0064b4c>] handle_softirqs+0x348/0x508
-softirqs last disabled at (43): [<c0006fd0>] do_softirq_own_stack+0x34/0x4c
----[ end trace 0000000000000000 ]---
-landlock: Up and running.
-Yama: becoming mindful.
-LoadPin: ready to pin (currently not enforcing)
-...
-
-Any idea how that can be fixed ?
-
-Thanks,
-Guenter
 
