@@ -1,161 +1,128 @@
-Return-Path: <linux-kernel+bounces-278931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D0494B6BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:31:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F2A94B6C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB073283E49
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:31:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10A031C20C66
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C2A18786E;
-	Thu,  8 Aug 2024 06:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD84A18787F;
+	Thu,  8 Aug 2024 06:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EFRtuBlf"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tKFv5GZ9"
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054CC187560
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 06:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE61D18785B;
+	Thu,  8 Aug 2024 06:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723098670; cv=none; b=WC2Rfq/8maqeq5dAHeP4wIbkPoYw+IHf9NKIx21mghDahmujGWvsBfq0QbgDHNtRfXdMvcUpFRa5wPr53pMqeCQfS0Y7jS7zfUDOheztQqfsggzVq5JRondKBDHa9LqGwjZBZp1pAYU7bAW1VyZc7UCi4Ai1MVh2q1/c2RQXtmg=
+	t=1723098758; cv=none; b=W5ANI5oYW4qRX1DCSkOPIKQ6wlau99zhG2YwcwCbr2m2JjnyhOLrkfIpzhVP92qeB0mjHRgDxp/iz3elxwVfnf7Un2TzdFGhBfTG/ilcPDmWS0rCEsjdeqynju56ty53hcvFYXNlyG8FGR8LFlUOyMkUpVgJgszxZQZYmyMTXtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723098670; c=relaxed/simple;
-	bh=8tcV6h51qTImYpVkN/XYbqQUsKUdeQdzBSWpJGgvF2I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OdHhh0v+vT3iYduhW0PSYJaPkqVBZODDGzf0e4rCMqFF1t3Xj8Z2753IvR+gocVW+I/DO4Z5sSQXCsoZJCBHCkGRcUO7L0eM8RWbidQpvqcntIUH4eKolpI1Gq+V1KnCN/xAW/D7/oBhBx3RIL8mKyKNN6z+zB0Tg0uYS+Qvjpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EFRtuBlf; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1ff1cd07f56so5849255ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 23:31:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723098668; x=1723703468; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uL02WkDHX6MB6U3tlx7TFw4sDSoGDOr7FVNC/xGND0g=;
-        b=EFRtuBlfxR6nc4Hg3OD7yMr7IwCyft5fiUEENZvPoCJeGsEJHr7SbT6taKPblynriB
-         ldBAmtanuIfDs3sKyDeYZmFK5U+DLQ/yjnfYCYfmp6XYMaqP4oYa6SgA4RsrMCoOA1oO
-         uvnQZiMO8ltU5j2XoEhlH0LIe+0jQCHkYnNs3uaTh7Cb2JVPU02SwUOy1lAeASTdRg9X
-         kUGu6RfpHMGAZFrDg9W9GCnxfz0p5HfJCGcmF2Z6GQ6W3SYuT8Nvlo7grFhrqQDpia9L
-         nApdLqIuKrCR3NLax1S0MOkJbuGNngZb2g4k3IuVuqOlF5O1kBEllh6eeZgnfwTAWNgg
-         kAIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723098668; x=1723703468;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uL02WkDHX6MB6U3tlx7TFw4sDSoGDOr7FVNC/xGND0g=;
-        b=PUb2LDRsEUv9wkRIjR4ZYRNVjf9y8WV6INKBn9XEKx/B/emQmUubgDfOlp3vusJryM
-         MXAH+uVIwnSO4lGpDdVRzmB4mzhttjv+M0cveJVeyd5zJH7xLlp0HzXbKjNXLAVOjqH1
-         2hquQjvjdMu3PiQuPS3p6WOd4qxnVmT+yzbU1xSob75F0usF2rAsumhRHpVej3sdcpsv
-         GuPDdBv5q5z2c8sieeAOgT+NGJRtvZ8CF81+gzURjy0PZKeQC0YS5nrMl9zzquc/lDLF
-         m7j2dEW0w2iMU06MY9Y1L6/rpA5SQkd5MsGRoTCeHrBKafUdfsf5oyqhwDnalKT+QIK5
-         JfWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVg4zSHm+2pWs5HA2e3HuKGIj9Frj3nk0VAvN8vhCuqX5FS2gy+v5n7EoXOWlCVqkaCAcrbVoYkW20JRsDlzFlabeyAOwSChWy51OWx
-X-Gm-Message-State: AOJu0YwKOUVZLubrhO8hlvCGEFKvKwqTkSV+KWXJEmXOaf4Sn3EcjbcI
-	L3jUKpCm/Lkp1lEKp/gLp0xAd19kUYQV1pSjh5U+dgC8bTA0jfawWQm2cX3hBA==
-X-Google-Smtp-Source: AGHT+IGQt0i5NhwN7Ci91sWmaz9DV0yumS/TmjkZMx5oG6iE3KgHew5o9t+jkvkw0fUPz38IFnljNw==
-X-Received: by 2002:a17:903:120b:b0:1fc:3daa:52 with SMTP id d9443c01a7336-20095224ad2mr14708325ad.11.1723098668125;
-        Wed, 07 Aug 2024 23:31:08 -0700 (PDT)
-Received: from localhost.localdomain ([120.60.136.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5929ad84sm116520415ad.270.2024.08.07.23.31.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 23:31:07 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: lpieralisi@kernel.org,
-	kw@linux.com
-Cc: robh@kernel.org,
-	bhelgaas@google.com,
-	linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH] PCI: qcom-ep: Disable MHI RAM data parity error interrupt for SA8775P SoC
-Date: Thu,  8 Aug 2024 12:00:57 +0530
-Message-Id: <20240808063057.7394-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723098758; c=relaxed/simple;
+	bh=33jPo4vhPLqsyySaNcevP8gg0qfJrI7Z546GA/oleCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hivNTXgxC3d/kwaE/jQmoYen18w67SnykTR71YtdQRMv6ZtyCcH6l3JVhP/jcZcGkxBcvtRt5gxZsRJkQoghTzHkXi0BRi3lGq1YFdd5q43+km+WspseUHqRSozM9wGCg2J5ys4vxAC4KHVMqYKNpqZn9zc7PHE7uXoe+BQ3we4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tKFv5GZ9; arc=none smtp.client-ip=80.12.242.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id bwhJsmEy4IDadbwhJsi83k; Thu, 08 Aug 2024 08:32:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723098752;
+	bh=9n2P6IRzAGh+cFhbPIBM2pmgk2vAQEV42VzZZngjGKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=tKFv5GZ9se01NVzobXg1CwuAfRk9fH18mUG17VqbjiuKidda2BJLc6Y3ap6VAw4hI
+	 zlltn8hguaRyrMEyThFHbFjqFulRaTXhG1lrEM3+/oimhD2tl24WwZ5rn+dnn0BIkW
+	 yMuXJfsTNQjilOhdVkenTm4PEy77Jt6JCCf0EQYdTYFpGTPpG8uEOcYGdOR8+oT8EK
+	 4apQoVvl3saELTcYAKs+Nl00vgcId9t+xuZ9sQ0OTJtip2AOThmmn4Ets0psM9nS0I
+	 DpiL+9imtzqXyYP30X3AzBW83LByx0D0UnZjWyjOZbpKamCgPX6zoO67CamoIxIMbl
+	 QgWv66utheizg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 08 Aug 2024 08:32:32 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <733a8111-5e7a-41fe-b01b-75d8190fa752@wanadoo.fr>
+Date: Thu, 8 Aug 2024 08:32:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: ibm/emac: Constify struct mii_phy_def
+To: kernel test robot <lkp@intel.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <dfc7876d660d700a840e64c35de0a6519e117539.1723031352.git.christophe.jaillet@wanadoo.fr>
+ <202408080631.rKnoa41D-lkp@intel.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <202408080631.rKnoa41D-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-SA8775P SoC has support for the hardware parity check feature on the MHI
-RAM (entity that holds MHI registers etc...). But due to a hardware bug in
-the parity check logic, the data parity error interrupt is getting
-generated all the time when using MHI. So the hardware team has suggested
-disabling the parity check error to workaround the hardware bug.
+Le 08/08/2024 à 01:00, kernel test robot a écrit :
+> Hi Christophe,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on net-next/main]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/net-ibm-emac-Constify-struct-mii_phy_def/20240807-195146
+> base:   net-next/main
+> patch link:    https://lore.kernel.org/r/dfc7876d660d700a840e64c35de0a6519e117539.1723031352.git.christophe.jaillet%40wanadoo.fr
+> patch subject: [PATCH net-next] net: ibm/emac: Constify struct mii_phy_def
+> config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20240808/202408080631.rKnoa41D-lkp@intel.com/config)
+> compiler: powerpc64-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240808/202408080631.rKnoa41D-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408080631.rKnoa41D-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>     drivers/net/ethernet/ibm/emac/core.c: In function 'emac_dt_phy_connect':
+>>> drivers/net/ethernet/ibm/emac/core.c:2648:30: error: assignment of member 'phy_id' in read-only object
+>      2648 |         dev->phy.def->phy_id = dev->phy_dev->drv->phy_id;
+>           |                              ^
+>>> drivers/net/ethernet/ibm/emac/core.c:2649:35: error: assignment of member 'phy_id_mask' in read-only object
+>      2649 |         dev->phy.def->phy_id_mask = dev->phy_dev->drv->phy_id_mask;
+>           |                                   ^
+>>> drivers/net/ethernet/ibm/emac/core.c:2650:28: error: assignment of member 'name' in read-only object
+>      2650 |         dev->phy.def->name = dev->phy_dev->drv->name;
+>           |                            ^
+>>> drivers/net/ethernet/ibm/emac/core.c:2651:27: error: assignment of member 'ops' in read-only object
+>      2651 |         dev->phy.def->ops = &emac_dt_mdio_phy_ops;
+>           |                           ^
+>     drivers/net/ethernet/ibm/emac/core.c: In function 'emac_init_phy':
+>>> drivers/net/ethernet/ibm/emac/core.c:2818:32: error: assignment of member 'features' in read-only object
+>      2818 |         dev->phy.def->features &= ~dev->phy_feat_exc;
+>           |                                ^~
+> 
+> 
 
-So let's mask the parity error interrupt in PARF_INT_ALL_5_MASK register.
+Ouch,
 
-Fixes: 58d0d3e032b3 ("PCI: qcom-ep: Add support for SA8775P SOC")
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/pci/controller/dwc/pcie-qcom-ep.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+I missed the depends on PPC_DCR.
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-index 236229f66c80..a9b263f749b6 100644
---- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-@@ -58,6 +58,7 @@
- #define PARF_DEBUG_CNT_AUX_CLK_IN_L1SUB_L2	0xc88
- #define PARF_DEVICE_TYPE			0x1000
- #define PARF_BDF_TO_SID_CFG			0x2c00
-+#define PARF_INT_ALL_5_MASK			0x2dcc
- 
- /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
- #define PARF_INT_ALL_LINK_DOWN			BIT(1)
-@@ -127,6 +128,9 @@
- /* PARF_CFG_BITS register fields */
- #define PARF_CFG_BITS_REQ_EXIT_L1SS_MSI_LTR_EN	BIT(1)
- 
-+/* PARF_INT_ALL_5_MASK fields */
-+#define PARF_INT_ALL_5_MHI_RAM_DATA_PARITY_ERR	BIT(0)
-+
- /* ELBI registers */
- #define ELBI_SYS_STTS				0x08
- #define ELBI_CS2_ENABLE				0xa4
-@@ -158,10 +162,12 @@ enum qcom_pcie_ep_link_status {
-  * struct qcom_pcie_ep_cfg - Per SoC config struct
-  * @hdma_support: HDMA support on this SoC
-  * @override_no_snoop: Override NO_SNOOP attribute in TLP to enable cache snooping
-+ * @disable_mhi_ram_parity_check: Disable MHI RAM data parity error check
-  */
- struct qcom_pcie_ep_cfg {
- 	bool hdma_support;
- 	bool override_no_snoop;
-+	bool disable_mhi_ram_parity_check;
- };
- 
- /**
-@@ -480,6 +486,12 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
- 	      PARF_INT_ALL_LINK_UP | PARF_INT_ALL_EDMA;
- 	writel_relaxed(val, pcie_ep->parf + PARF_INT_ALL_MASK);
- 
-+	if (pcie_ep->cfg && pcie_ep->cfg->disable_mhi_ram_parity_check) {
-+		val = readl_relaxed(pcie_ep->parf + PARF_INT_ALL_5_MASK);
-+		val &= ~PARF_INT_ALL_5_MHI_RAM_DATA_PARITY_ERR;
-+		writel_relaxed(val, pcie_ep->parf + PARF_INT_ALL_5_MASK);
-+	}
-+
- 	ret = dw_pcie_ep_init_registers(&pcie_ep->pci.ep);
- 	if (ret) {
- 		dev_err(dev, "Failed to complete initialization: %d\n", ret);
-@@ -901,6 +913,7 @@ static void qcom_pcie_ep_remove(struct platform_device *pdev)
- static const struct qcom_pcie_ep_cfg cfg_1_34_0 = {
- 	.hdma_support = true,
- 	.override_no_snoop = true,
-+	.disable_mhi_ram_parity_check = true,
- };
- 
- static const struct of_device_id qcom_pcie_ep_match[] = {
--- 
-2.25.1
+I did:
+    - make -j8 drivers/net/ethernet/ibm/emac/phy.o
+then
+    - make -j8 drivers/net/ethernet/ibm/emac/
+
+but the later does not build anything on x86, and I missed that.
+
+CJ
 
 
