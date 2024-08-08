@@ -1,140 +1,98 @@
-Return-Path: <linux-kernel+bounces-278887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6825594B619
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:10:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB12794B61D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AEB32856EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:10:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC8C21C21E48
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D333136E0E;
-	Thu,  8 Aug 2024 05:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961D113AA38;
+	Thu,  8 Aug 2024 05:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FR0bBEb1"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+w0BUko"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFFB2F50;
-	Thu,  8 Aug 2024 05:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDCD12E1EE;
+	Thu,  8 Aug 2024 05:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723093844; cv=none; b=HXDcEjHzMnvGFnvtBUkJgwWcYyjchnEkV6jQgZ0SH31BkdEMZzUITYst7w8Nrz0M/xNcnMCpcCXANs1tgcYLVhh2Fn6KTwXXp57sD0ZxWuIrVdhdslvPl6vjjnHL9WDAjTNruSNripvECC1E8nxBFz3CMsRw02rlnDN1wpa2OM4=
+	t=1723094020; cv=none; b=V0JW/7Pqo2YoyCKfLBOPnGdbcJ8edUfQnSHNxcAqBV9+cPzhXqGfiPX/2M1OJLDpyqtRZVe24GYUWH5ys2MqbwShtQyI7wFXqzfRC4XqgsE/qN9azr4t3HG1wMJ3pWkKBC6X3G3xw8jtX4KGVa/WaKndiTe3s8yA4KbVc1JpRYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723093844; c=relaxed/simple;
-	bh=GEBUNzKqeGAOq3KLlqNx4q1RtbETlHljI0lC3/qcXKY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Up8nChGVJoAshEs3wwg4lGd1Qn/VuKfSlE6dsfJj5bZj9TzycRKFxTmLFZIfc1uevtsBmo0jkK4/BDnO8dzE2KTeI0kyxqvfZN253j7AKM2PophR7xwHRKDluxkbls4EOewrpx0pnFCYw9AKpAOpYaubq9eqYJdJB/sBigJjuNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FR0bBEb1; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4785AcI3080354;
-	Thu, 8 Aug 2024 00:10:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723093838;
-	bh=HymC+3OI2VIgi/7rto3aB7hoHHD2MD+8NAq3AuO8yWM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=FR0bBEb15Py0vwuNnNZXligpx9lnVp6DmIUVmpdpsRfEyuMjuINKGNcmvCj04YY8a
-	 vZX2DUHUG3zQYjd3B3wVeR3AFJwDXtRyQvgTkCfMAIG8L4tcMyNyo52w4Up0JCewC5
-	 usVxHcMUVgP2Y4thiXBK3s73iKBNMzYrFaHz0W0M=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4785AccS121641
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 Aug 2024 00:10:38 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- Aug 2024 00:10:38 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 Aug 2024 00:10:38 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4785AZRM040275;
-	Thu, 8 Aug 2024 00:10:36 -0500
-Message-ID: <b4c405a0-bb35-4408-a356-9e26c6f1d19e@ti.com>
-Date: Thu, 8 Aug 2024 10:40:35 +0530
+	s=arc-20240116; t=1723094020; c=relaxed/simple;
+	bh=XDWKiKw680UJ/nB02bQsAOwQGdekxTDwsxI6MBT1WIA=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=oUpcVM50QoAE/G/kOUrP7GILwztfm5+M4bnD82fpXeZshjLahWorofcJvzbT3U8BARHO1enWu8mHDYqM4hmBVw3R28ON1ugQeYF5YoK6nR/Di/nupRxf2r9E0horzi5N7wtMkEF/VOHYfHiZGatmvo8gh899TGATLMmeC3ffWC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+w0BUko; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76EECC32782;
+	Thu,  8 Aug 2024 05:13:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723094020;
+	bh=XDWKiKw680UJ/nB02bQsAOwQGdekxTDwsxI6MBT1WIA=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=f+w0BUkorOcoarbcE49MOwrzjLqg8bVbdLmVjcf9DbsEuXXmQYQ596Gt/m8HL2i8T
+	 PmCxFA1q6z5fu4/bD7nm85uZLtLs/AhoHvaAhqE8hYwJL+RBVG8dJTWNI+bdJue2zs
+	 DWBoBSOOGQW1pJU6OVCUcg07Kf5fL5ChfPGEsE2q7G3RS+e+cC4LymSBDRVna6Yjx2
+	 q/p7dbdKRQAJv630LpjdLPlYbIt3b+PKVNfUh7GCrhzIdE6X3a1F52nGG1tVvTdZra
+	 BVxjwZgTCRYtCnUKR+Mu0j3kzBPXlQ9mXLOJ8xRNZ0Db/NgJYKhkO7Wt9jgkhiw9CX
+	 KbuXZOfwwIF8g==
+From: Kalle Valo <kvalo@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeff Johnson <jjohnson@kernel.org>,  Ath10k List
+ <ath10k@lists.infradead.org>,  Aditya Kumar Singh
+ <quic_adisi@quicinc.com>,  Baochen Qiang <quic_bqiang@quicinc.com>,  Kalle
+ Valo <quic_kvalo@quicinc.com>,  Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,  Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the ath-next tree with the ath tree
+References: <20240808104348.6846e064@canb.auug.org.au>
+Date: Thu, 08 Aug 2024 08:13:36 +0300
+In-Reply-To: <20240808104348.6846e064@canb.auug.org.au> (Stephen Rothwell's
+	message of "Thu, 8 Aug 2024 10:43:48 +1000")
+Message-ID: <87bk234mwv.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] remoteproc: k3-r5: Use devm_rproc_alloc() helper
-To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-anna@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240807062256.1721682-1-b-padhi@ti.com>
- <20240807062256.1721682-2-b-padhi@ti.com>
- <0bba5293-a55d-4f13-887c-272a54d6e1ca@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <0bba5293-a55d-4f13-887c-272a54d6e1ca@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 
-Hi Andrew,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-On 07/08/24 19:07, Andrew Davis wrote:
-> On 8/7/24 1:22 AM, Beleswar Padhi wrote:
->> Use the device lifecycle managed allocation function. This helps prevent
->> mistakes like freeing out of order in cleanup functions and forgetting
->> to free on error paths.
->>
->> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->> ---
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 6 ++----
->>   1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
->> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index 39a47540c590..dbcd8840ae8d 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -1259,8 +1259,8 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>               goto out;
->>           }
->>   -        rproc = rproc_alloc(cdev, dev_name(cdev), &k3_r5_rproc_ops,
->> -                    fw_name, sizeof(*kproc));
->> +        rproc = devm_rproc_alloc(cdev, dev_name(cdev), 
->> &k3_r5_rproc_ops,
->> +                     fw_name, sizeof(*kproc));
->>           if (!rproc) {
->>               ret = -ENOMEM;
->>               goto out;
->> @@ -1352,7 +1352,6 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>   err_add:
->>       k3_r5_reserved_mem_exit(kproc);
->>   err_config:
->> -    rproc_free(rproc);
->>       core->rproc = NULL;
+> Hi all,
 >
-> I'd remove this line too, we don't check for NULL later, we check
-> core->rproc->status, which will cause a nullptr dereference error
-> instead of correctly detecting that the core is "offline".
-
-
-Thanks for catching this! Will post revision with this change.
-
+> Today's linux-next merge of the ath-next tree got a conflict in:
 >
-> Same below.
+>   drivers/net/wireless/ath/ath12k/hw.c
 >
-> Andrew
+> between commit:
 >
->>   out:
->>       /* undo core0 upon any failures on core1 in split-mode */
->> @@ -1399,7 +1398,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
->>             k3_r5_reserved_mem_exit(kproc);
->>   -        rproc_free(rproc);
->>           core->rproc = NULL;
->>       }
->>   }
+>   38055789d151 ("wifi: ath12k: use 128 bytes aligned iova in transmit
+> path for WCN7850")
+>
+> from the ath tree and commit:
+>
+>   8be12629b428 ("wifi: ath12k: restore ASPM for supported hardwares only")
+>
+> from the ath-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+Thanks, the fix looks correct to me.
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
