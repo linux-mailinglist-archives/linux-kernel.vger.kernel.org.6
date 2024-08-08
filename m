@@ -1,91 +1,117 @@
-Return-Path: <linux-kernel+bounces-279829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EEC94C250
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:10:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CC294C25C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E5461C22369
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:10:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1E7B1C21D48
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE9718FC93;
-	Thu,  8 Aug 2024 16:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D15018FC8C;
+	Thu,  8 Aug 2024 16:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AaZ8lDqW"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dy/eunAM"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3959584A36;
-	Thu,  8 Aug 2024 16:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E6A8003F;
+	Thu,  8 Aug 2024 16:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723133451; cv=none; b=gtujtyHUrskVPKZ32ceAKIh7KYmS2Eza7G5Nhp7caLzVk2vN+9js5InLP27iDgKgUZhj9jP5XvJGXDuMAackWGeQ8R4CDBxbX8JFIZgKwquG54zFDLS4cTwN+RzsYlDL4o9jRWGwbi/WImuAfOXkrCbyMTnxvHFS0Xj4BUycuvw=
+	t=1723133544; cv=none; b=Pc/jmjt1YAFoqvs72OBBIabzN0P4QaKXKQBY+IhXXLjIomBpib11BRW/2DTDFq2YN3F4FoGjoCqR1OST5MLi2pd8dtseo1PqeESz03bYx4rUwTxclOSMQ35Xtms+gTBg5o4PBo+sjnjZbhS3xvduG+ztUZc52UcZg9h7XCSjSVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723133451; c=relaxed/simple;
-	bh=t3Eh3P81p7u2J1jD19hGT51qcAJhVxSMOMR3RVzxMmU=;
+	s=arc-20240116; t=1723133544; c=relaxed/simple;
+	bh=NPcCWE9JDf1UNWxBSJvokap4mHWY+/gUsMv0AVn6jrA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n4JW0oK5Raqk66vSs8X5KoJnngb+2OFNmVK4RkObCcOLnkj6aV0XNg+kcDMtbNZJQJ3UbrWOkUCGN2ueVR67iw6xUedZA+Kx5TTFPCfuL2W0upPG7GZAlmguQgDWGIaAZKmrS0aMWCLptEXUbiR8R2y69x4E87puEcdJCZcQxzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AaZ8lDqW; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478CaIS9024933;
-	Thu, 8 Aug 2024 16:10:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=zIwRR2ClsX9LOSQZIlPTXaUS9gt
-	aMzoDoSdw+VJqN/s=; b=AaZ8lDqWuPeVYa6azYSmbUt5+KRlb4WhBdVixNZlws+
-	dbTNwPqKVCy3OsMqreBMGhIdL8hAl5PQPX9oSZHsirKcNk5okVxTGJAsK66j6/1G
-	SpcOWYNq8adxKwfclQmzxXQ8qvjUkEJWxRktwaYanndZDEw8zLyw/p0RpAzbQC2j
-	vAomBwfWkGCSxO35HD1P2wMFHXMWudSnpPFSB03NBd3Qb275mEyfygrON14hvxsS
-	JEscr/ydOSS95X8ZKWeyxIm7uapKPCrfgkI31IZKLzEX9ZlNs1kM+dGTKQNXcSWB
-	v7DkZZJsCxhmV0dz54cdbPU3gU/i+sPDBxckpYj7yKw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkbrm4f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 16:10:34 +0000 (GMT)
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 478GAXLX012271;
-	Thu, 8 Aug 2024 16:10:33 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkbrm4b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 16:10:33 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 478EQlMp024322;
-	Thu, 8 Aug 2024 16:10:32 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy90yaab-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 16:10:32 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 478GAQrx40829282
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 8 Aug 2024 16:10:28 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4942F20040;
-	Thu,  8 Aug 2024 16:10:26 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 07EF920067;
-	Thu,  8 Aug 2024 16:10:26 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  8 Aug 2024 16:10:25 +0000 (GMT)
-Date: Thu, 8 Aug 2024 18:10:24 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, rppt@kernel.org,
-        akpm@linux-foundation.org, brauner@kernel.org, oleg@redhat.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH v6 1/3] mm/memblock: introduce a new helper
- memblock_estimated_nr_free_pages()
-Message-ID: <ZrTt8NLqaPpKBZKr@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20240808001415.6298-1-richard.weiyang@gmail.com>
- <ZrSYruB/Aa8+oBoZ@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <20240808142405.ttlcfkximywtde6i@master>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mkycZOw9B5fMqe1tcmF2l8WDaGH9MEAbZ2OGFP+3jzsC1x+r/pn0Cu39L5qoLeFUuXhGEWDWoQ5fia6CGfHbYQSyco0fR2AVAzZXg7M3r/2ER4/KVqLd+dd1H8f/Sfo39X0xivnhFA+t7tI3ifXUXcSZt5HZ7IoiuSwtk8tq+pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dy/eunAM; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-26106ec9336so546435fac.2;
+        Thu, 08 Aug 2024 09:12:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723133542; x=1723738342; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CwjAxdVOY0pC/qoBsDNK4asfEsMb6nFG73VzDaJ5Xes=;
+        b=dy/eunAMiQh7CP8p2nIVnQQ9g7QN7CsaLztW4Buad1bbD9VGe2tEXsZN09LpxyA/Ci
+         BawCXjd0it+9fsMWUaYWe7elJrfiy0KkNesnEwMQHZCXKuLbEXTL4p93ERVa37+DIfVz
+         dTg5ibPVPvfmLcG9GmDTGDY/rsJfYnF7qBORg8DfOJKEwFaLF7V+BvpDs4GdXjQtu13U
+         dqCUWdzzdqIBAd6G0NzCECrYjQZ3OTemNHhn0qx/5RMxoCFcMee1VQk8viP/AUEW0CND
+         qkoRT11RG7HwgRhtJM+N9wHIONOzfANKzv62cUVOeczX+JIpwgzo3uWX7yK/1WknW18u
+         KLEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723133542; x=1723738342;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CwjAxdVOY0pC/qoBsDNK4asfEsMb6nFG73VzDaJ5Xes=;
+        b=gtMI5GQs4ZMoez5gilc1fsrPqgocouCmb0N1dBP3JywtEpCj78nqEjtmdsUAGsK0O8
+         dkWr2XUD8ZL+OIgQfjYOLPvPvtbdQpmjKJAWoe1kcXhfiOjxJO5HllQZ1/z4CWrSAtyV
+         AEE7QTdvuFUl0W7Czk+j1IQjbO5Qp7z0PsovL29Qv4JK0p3LrYV0bsWGVPpKlmKSn7LK
+         CeTWL0v+YvgFBZrGANqJGRc+sSIbggjKy4jS098wRh8N1oGp7A7wMrbeN+IjtboAznHW
+         ClNMxMt7opojvWjV85uMIisuZTowuHSi/SE79WthrSJVx56O077TK+gmqnd7VcQrSkkE
+         Kx2g==
+X-Forwarded-Encrypted: i=1; AJvYcCV1ks31KWhIb92NHWWx/izGzfPewrKo06o9GCbEvk1SseFdfnvgIzPd0PJX1muHJUQDsI2qmHIIWdtPHjMym6f8otbON1I7SZEGykNiFMHLCsILjhIA7lHwX72YA+mwTMkA
+X-Gm-Message-State: AOJu0YzrkR0tUy0RjqdvMpbUUcth+ObJAeJ6K1JJw1YkskSA5wt/TPzq
+	wJiAbzpX/GGNw3g4wlAg7rW6PSNax8YSWSBk8KcR9Ryka4xcGY6+vwPx3A==
+X-Google-Smtp-Source: AGHT+IGrBMRECOobD5lzJn86Kl6mqTTovGDMo+mfEWyVCm52JzFNgCvXhD/7xWC0tENc9UzLDdGEoA==
+X-Received: by 2002:a05:6870:2105:b0:260:f244:a0ce with SMTP id 586e51a60fabf-2692b218157mr3032944fac.0.1723133542326;
+        Thu, 08 Aug 2024 09:12:22 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785d2a8dsm173956385a.10.2024.08.08.09.12.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 09:12:21 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 79251120006A;
+	Thu,  8 Aug 2024 12:12:21 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 08 Aug 2024 12:12:21 -0400
+X-ME-Sender: <xms:Ze60ZjBnModWA-A8GcPnlapQCNIO_2rYkFbs479ZbcoGZN37SozOzA>
+    <xme:Ze60ZpgrYeFgPRBNDAJmTkJhywye432W0bQdc2UCWGjw2RZ8emVboPk5Z9NYrJ61c
+    0MK5el91YtXUMUEtg>
+X-ME-Received: <xmr:Ze60Zul3CjswJ2Ts5na5CYeDb5BEIxeOMOnOPPGQceGXAq78Z5Kimc-n8as>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledvgdeljecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
+    hfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtg
+    homheqnecuggftrfgrthhtvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdethedu
+    udejvdektdekfeegvddvhedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhm
+    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekhe
+    ehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghm
+    vgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehr
+    vgguhhgrthdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglh
+    igsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepphgruhhlmhgtkheskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhg
+X-ME-Proxy: <xmx:Ze60ZlzQ32i2OOocdnvCyM8b2MTDtB0qOEMB2-gttMI22qapQogG8Q>
+    <xmx:Ze60ZoQjktV9IjL4dU4bp_Ib2yg0y7VnX7FiKagPa4BJi2YdDHw6og>
+    <xmx:Ze60ZoZTuPHkdvs9BKwYpbo3vshEFvyFErEFu28-oXNZhSTXq1zt9g>
+    <xmx:Ze60ZpSFqyx6hoTIW4MhYKE-J4Vso77gqLYZljnxBy-KaOSfnPPTtQ>
+    <xmx:Ze60ZuCkK6QpEtJR7m4SbMlfcWSMofU_Nlvxq8O_yjacexDp0U9BxLfK>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 8 Aug 2024 12:12:21 -0400 (EDT)
+Date: Thu, 8 Aug 2024 09:11:12 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, will@kernel.org, longman@redhat.com,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de,
+	paulmck@kernel.org, frederic@kernel.org, josh@joshtriplett.org,
+	neeraj.iitr10@gmail.com, urezki@gmail.com, rcu@vger.kernel.org
+Subject: Re: [GIT PULL] LOCKDEP changes for v6.12
+Message-ID: <ZrTuINZIQhWuB7s7@boqun-archlinux>
+References: <ZrQ97Zz27Tzmr0Zi@tardis>
+ <20240808101939.GG31338@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,55 +120,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240808142405.ttlcfkximywtde6i@master>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: I88Rgv0M3bv42Qfs8v2efCUYJ-hx4yuQ
-X-Proofpoint-ORIG-GUID: lyNApa4Ov3JeXE1Hu1WbH0xjvn8aptV0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_16,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 mlxlogscore=862 spamscore=0 clxscore=1015 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408080114
+In-Reply-To: <20240808101939.GG31338@noisy.programming.kicks-ass.net>
 
-On Thu, Aug 08, 2024 at 02:24:05PM +0000, Wei Yang wrote:
-> >> + * An estimated number of free pages from memblock point of view.
-> >> + */
-> >> +unsigned long __init memblock_estimated_nr_free_pages(void)
-> >> +{
-> >> +	return PHYS_PFN(memblock_phys_mem_size() - memblock_reserved_size());
-> >> +}
-> >
-> >This could possibly be short on up to two pages due to lack of alignment.
-> >The current uses are okay, but since you make it generic it probably matters.
-> >
+On Thu, Aug 08, 2024 at 12:19:39PM +0200, Peter Zijlstra wrote:
+> On Wed, Aug 07, 2024 at 08:39:25PM -0700, Boqun Feng wrote:
+> > Hi Peter & Ingo,
+> > 
+> > Per discussion:
+> > 
+> > 	https://lore.kernel.org/lkml/20240802151619.GN39708@noisy.programming.kicks-ass.net/
+> > 
+> > I'm sending a PR with some lockdep changes to tip.
+> > 
+> > 
+> > The following changes since commit d5934e76316e84eced836b6b2bafae1837d1cd58:
+> > 
+> >   cleanup: Add usage and style documentation (2024-08-05 16:54:41 +0200)
+> > 
+> > are available in the Git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux tags/lockdep-for-tip.20240806
+> > 
 > 
-> I don't follow, would you mind giving more detail?
-
-memblock_estimated_nr_free_pages() returns number of pages, not bytes.
-Yet, both memblock_phys_mem_size() and memblock_reserved_size() return
-a value which is not aligned on PAGE_SIZE. Therefore, the result of
-PHYS_PFN() applied to the difference between the two functions might
-be short on one (two?) page(s).
-
-> >Also, the returned value is not an estimation. Meaning the function name
-> >is rather unfortunate AFAICT.
+> Right, so a few things for next time, could you read
+> Documentation/process/maintainer-tip.rst and make sure patches more or
+> less adhere to the things outlined there.
 > 
-> From my point of view, this is an estimation for two reasons:
+
+My bad! I will definitely do a better job next time.
+
+> Things I noticed in the few seconds I looked at things:
 > 
-> * value from memblock_xxx is not page size aligned
-> * reserved memory maybe released during boot stage
+> Subjects don't start with a capital letter after the ':'
 > 
-> It is not that easy to get the exact number of free pages here. Do I miss
-> something?
+> The Changelog for the lockdep-vs-rcu thing can be much condensed by not
+> including full stack dumps but only the relevant information.
+> 
+> If you don't want to edit patches by hand, you're free to push back and
+> get the submitter to do things before applying them.
+> 
 
-No, with this reasoning it makes sense to me.
+Got it.
 
-> -- 
-> Wei Yang
-> Help you, Help me
+> Anyway, since I'm about to head out to the beach, I'm pulling this. Also
+> I need to figure out how git works with remotes and tags... stupid
+> things :-)
+>   
 
-Thank you for the clarification!
+Enjoy the beach ;-)
+
+Regards,
+Boqun
 
