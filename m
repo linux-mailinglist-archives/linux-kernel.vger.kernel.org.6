@@ -1,61 +1,71 @@
-Return-Path: <linux-kernel+bounces-279227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BEB94BAB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:20:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E8F94BAC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88B63287F94
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:19:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A48A8B21769
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710DE189F55;
-	Thu,  8 Aug 2024 10:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872A5189F5B;
+	Thu,  8 Aug 2024 10:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dr++cboO"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iyEiuTHl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74500189F37;
-	Thu,  8 Aug 2024 10:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD58146A7B
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112393; cv=none; b=s0HdMFQeHEcjxUkumtH863HegfJHCwqJDBc2Vkyl190AhqnvDt75lVsUOmT/Rew+2V4UgNJToQKL0kXtEoZ4aNOBRsOt9oqOYs9Q47tt+385ee0b7xYeWdIoodm5C0gQUp8dFzHzMrCN7pXhLsnPYU13ExoeVnTqu57teMf0dAw=
+	t=1723112438; cv=none; b=pTb/zbpP1frgzcwAmVyC0YQnn8VzEKyH1illeojO3vPbaMVGf/1zLeT36NPCbxON07l2zlNiUrkSvlg+KXpKziBWfQYIjNuuavVxY3IVHRegsbISiWv9SK9CTdAvbiP9ujpJ2MlyTq/Rtrprs9KVygFa2XYUnk5eUnbOrY7W9Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112393; c=relaxed/simple;
-	bh=6bAfnf6c5/iHXILqD7RD8kITTLL773Gz8gUZuAp/Mb8=;
+	s=arc-20240116; t=1723112438; c=relaxed/simple;
+	bh=XA6msLAalFDG53O7VycsxBNdgxojM6SoSZHKhFY5HAE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvItxdGJ5aL176fzuNNwd9qewAciBLTapwTuZxpRz7WRkUQI/7gdigVlXjU+a1Vx6JV8YYidGP96+UtaCohtWUJD6IrJ4ETPCzNszfQ9JViPk9KmCTK7FsrRViECGPlhA+En85/pvuYPqhaHISeXPNisaVt1u8SRAFM/D2k9bX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dr++cboO; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=726C+QRC6Qs6UtBdbsmcHzJuYMppoxzGiaRG2rouZgI=; b=dr++cboOGpaZMNlAFrAB9Jnk58
-	si42z9wP0GYJncD7sIp8bJvB1yYbuZFeFOu0QzZYqkqs+vWFAgYXsPRj1PVhWGrDO0fkkp31qpetX
-	5UKYZxASYj4W9ES8PBa0t4WELvTuuknnBMVKxa4MZwct7RXyouzWZLDULYCeWd+f/WlLxU3s1g88x
-	MPBGxwPZvhY2toKbez83EJML1t6GhIGcLoY7Nz08xz2l343pj6JhEeZ9vWek7YrA3D+haGezVqGD+
-	wix09MzsywcHSaPkyZDibf2te3XdSc7hrSW8NldttRmuweRWFk6M/Bj+fiz4npZ15QUo/irKmMGs8
-	Ow8V4Gdg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sc0FA-00000008kAE-1oVU;
-	Thu, 08 Aug 2024 10:19:40 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 590FB300392; Thu,  8 Aug 2024 12:19:39 +0200 (CEST)
-Date: Thu, 8 Aug 2024 12:19:39 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: mingo@redhat.com, will@kernel.org, longman@redhat.com,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	paulmck@kernel.org, frederic@kernel.org, josh@joshtriplett.org,
-	neeraj.iitr10@gmail.com, urezki@gmail.com, rcu@vger.kernel.org
-Subject: Re: [GIT PULL] LOCKDEP changes for v6.12
-Message-ID: <20240808101939.GG31338@noisy.programming.kicks-ass.net>
-References: <ZrQ97Zz27Tzmr0Zi@tardis>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KI2djrlm667iaDtuRXPWjh87LNuY9cvQzMGg5KIBJ0WL3jhwdTqK/Yhz4SqEV/3GXlfNc03/1SojDd/6dgHdwhNb/qHLfyGe5363mEXL77Nryhe45eLKGzCx0v3xLGEnpamWOFUQk+hpf4OK4bn0u2DsI8L+XWWkVXwufT6rfJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iyEiuTHl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723112436;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kz5tvfbuJug1Gjwv0g51A2yt8RkgSDubr+mCOYre+M8=;
+	b=iyEiuTHllyEmo8md25L6sWl9ZAHKuSopGVA0ioXfYP4L/1W5M0yadn81qv10GD4UP0c3h/
+	VEMvg+E0QJy5Pjpwhz5a+2rZLcVfG2avts2/mLsjPphMqYSZL5CDfls9lgh1jb6S8+gnCg
+	yvUk8xmLs6MZ736daQpTAkWGMypYeb0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-453-wU_2d9EXOpubd-dTS5uibw-1; Thu,
+ 08 Aug 2024 06:20:31 -0400
+X-MC-Unique: wU_2d9EXOpubd-dTS5uibw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B2D75195608B;
+	Thu,  8 Aug 2024 10:20:29 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.189])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1BF951955F35;
+	Thu,  8 Aug 2024 10:20:25 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  8 Aug 2024 12:20:28 +0200 (CEST)
+Date: Thu, 8 Aug 2024 12:20:23 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org
+Subject: Re: [PATCH v2 2/6] uprobes: protected uprobe lifetime with SRCU
+Message-ID: <20240808102022.GB8020@redhat.com>
+References: <20240808002118.918105-1-andrii@kernel.org>
+ <20240808002118.918105-3-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,43 +74,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZrQ97Zz27Tzmr0Zi@tardis>
+In-Reply-To: <20240808002118.918105-3-andrii@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Aug 07, 2024 at 08:39:25PM -0700, Boqun Feng wrote:
-> Hi Peter & Ingo,
-> 
-> Per discussion:
-> 
-> 	https://lore.kernel.org/lkml/20240802151619.GN39708@noisy.programming.kicks-ass.net/
-> 
-> I'm sending a PR with some lockdep changes to tip.
-> 
-> 
-> The following changes since commit d5934e76316e84eced836b6b2bafae1837d1cd58:
-> 
->   cleanup: Add usage and style documentation (2024-08-05 16:54:41 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux tags/lockdep-for-tip.20240806
-> 
+On 08/07, Andrii Nakryiko wrote:
+>
+>  struct uprobe {
+> -	struct rb_node		rb_node;	/* node in the rb tree */
+> +	union {
+> +		struct rb_node		rb_node;	/* node in the rb tree */
+> +		struct rcu_head		rcu;		/* mutually exclusive with rb_node */
 
-Right, so a few things for next time, could you read
-Documentation/process/maintainer-tip.rst and make sure patches more or
-less adhere to the things outlined there.
+Andrii, I am sorry.
 
-Things I noticed in the few seconds I looked at things:
+I suggested this in reply to 3/8 before I read
+[PATCH 7/8] uprobes: perform lockless SRCU-protected uprobes_tree lookup
 
-Subjects don't start with a capital letter after the ':'
+I have no idea if rb_erase() is rcu-safe or not, but this union certainly
+doesn't look right if we use rb_find_rcu/etc.
 
-The Changelog for the lockdep-vs-rcu thing can be much condensed by not
-including full stack dumps but only the relevant information.
+Yes, this version doesn't include the SRCU-protected uprobes_tree changes,
+but still...
 
-If you don't want to edit patches by hand, you're free to push back and
-get the submitter to do things before applying them.
+Oleg.
 
-Anyway, since I'm about to head out to the beach, I'm pulling this. Also
-I need to figure out how git works with remotes and tags... stupid
-things :-)
-  
 
