@@ -1,154 +1,147 @@
-Return-Path: <linux-kernel+bounces-280039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9407B94C4E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:52:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7079794C4F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C86CB25693
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:52:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E441F23E57
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45C914830A;
-	Thu,  8 Aug 2024 18:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119FE147C86;
+	Thu,  8 Aug 2024 18:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GSxuQbLn"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="lzBJnmo5"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FE913774A
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1749132121
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723143168; cv=none; b=sijBAIe2L2/1BT+dpL6RvrYFRVrJuUDEjAX3Okv9gEjW149fLSkvxLMqpS+b7VHh7zAwj/vPMLSBxqnF5//GTTaPwVeZWosdb5meE9pgxxaFnVX7TNgXKTHoaRkvJV5gVFQpkU0wioiEoQE5QQNgmj6SYajHjfdf0DtLBaZNVqo=
+	t=1723143316; cv=none; b=DDb+CFTOLr5B62/zWX34tNxP7aty+PfT31ps5FP9ahFK4CMB4c9OXmJTZBLz1gCV1a1wdcmK4nkWpBPF5fAPA+laOAEjIJJiM/QaClX0xfCoYE9tOd13CeCkivyBf0xpYWmnUiwRhhTL+gSjTn7xkA4dTedoYdB1+5UD82BW2YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723143168; c=relaxed/simple;
-	bh=FN36uBbCXXGcwL7Wz/H4LuG1T8k/XyGLhMYn63AOXnw=;
+	s=arc-20240116; t=1723143316; c=relaxed/simple;
+	bh=lfFCBH9xl2pbQz5/RgTr95SckKR16ouqjSGMkA/j2uw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=HQYTEgH+AlWcb5yrlINHsMB6WPZmkIrTsSWNcCTdOIftUeOQc7AR1Ar1hUa5SVg4PZrsiLAaNsXW+2EvsoFPPiTXdiPf1hjQsmrOoTzAMcuU7TNU4OMkVqtbBDh0um9aHso5r/ofZc92XtRl5lrDwcgei4qKaxWX5lWoGlIGd98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GSxuQbLn; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so311a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:52:47 -0700 (PDT)
+	 To:Cc:Content-Type; b=RPoMeSd/sgg2ZNuv3V0NiKDo6MjtEUzGHAzrx7Nr8aWVMzzIVPF9KJI+Ba8x0/hURLJlO5isE2HLngeeQ52VVfNF6OTjFiF0D1SH08u0lg/OECpiMa+sow4VyfO7fn2gJt7JAN6cXi1aIeDZqRuZizU9UN338gnbVh22kFRVPDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=lzBJnmo5; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44fe58fcf2bso7947161cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:55:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723143165; x=1723747965; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1723143314; x=1723748114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DTr7QPxZOv6ZANTvHJnD7itspZcoPGqbySruN9g+g4c=;
-        b=GSxuQbLnIOgcxXFsqlgSoLA0HaZVnd2Hq+OdmfCgHwjEIu2MYew9tW5PTTvTMWZLMp
-         iITmF2RCUsp2eD93UpZOwbgdbQWTKEJmtLJMZ30lnWpO62btbAaW0CqRd0U9B6jzJyBl
-         66pWgrLL/shyAD6LePQ07vG7CBbo4qSXCgZnXSD5rwA+8Nmlj2l6jXA6q9XmhaW0O5Td
-         h3gvf2WPDsM6AtoS/yJdqKVwRVmL+XIshaJfq6fqnWfEtwATOUy87yJhzKFqO+3FsCf+
-         sDUIMw9U3PE+t1gKnIvfYpJcnP8Ky63bbYj1qyKqFuzhwh8OYm+p/N3pY+/6vvI2IG9/
-         ttfw==
+        bh=DO/Z3SbablodSUL+R3JeSvJ8+7bDWABWfQskJp837f0=;
+        b=lzBJnmo58WX+zWJhg0ZW48pMzEE1o2F5s36NqfXgMtyCvtriXcDcnw13xw0/QDnP0M
+         thehAZnwpnkiMCjUr3sDXOTi9jrELI5l8xuEGfZoJYn/i3rsUe87GpT1gYanruKtToKb
+         /r/kF1LG9ull8LuJhTsT3Mii0QswVdQH6l7jy0m7wuQw51vUuo4j4NiZdg+BHO7pqGK4
+         7jlSsy/tdPWPnPec7KJuHQFD/Ph6hHL8ZeRsO+MDHEP/oM8I5k1vZEboXF6U+BeY0UYi
+         AQByG+YdAqLfjrc18v1GHR6jWSEF673zMfJCSUk3Sk6k8CLKgojPKghUVFnxn0HinK54
+         FvbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723143165; x=1723747965;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1723143314; x=1723748114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DTr7QPxZOv6ZANTvHJnD7itspZcoPGqbySruN9g+g4c=;
-        b=wUDKknbFncAHBxf0OPfbP2x2K4msjVdjS+LMOcnf7rHjra706dZ6wW9lwa0GU2MTSN
-         ZHPL6Om4P9jjz1JbKtRdNybf8D71B1qULBsfZnIT+7JiLsSUqbMnB8k1NIM6R/BeAN10
-         2ygkbYZsHrr6rxylPCznA7isQ5nITxpckdmP+XiWlyqmTySIv/hHrHguncr/p7jpKiZ4
-         X8acovkpETvfSBUp8/W0BYA4xbYmVozXJuZR8jVyEZGEJ4Cf0U1M7UHv7lezpluy4tSq
-         l9ejRaxsvTTIJQ45eLTyAzIoe7u2JzZnNSRV25LsLDo/S5uO0lNPw26mIy+a3ZfvjM7p
-         fKvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQNQrsM36lVfx9SP3Wv3spRuc4/JysxhECP++CMVzKX2I4yYN9G79XYN7f905hJLcQldGWEBETfs71igc90acxoymHhVWgV30eB7dV
-X-Gm-Message-State: AOJu0YyZtbRoV8tuN0yEZaZoUfSG6L+XK9r1YUVBN9ApsupKl/jXzsk8
-	azDK+vfrtLWpmHjJnvn3cnPc3+Xplq0ZRrrGYsnERnynEeT9bGfFsvbDPtqvQVkC/abAFPyiqxa
-	Jw+5B0lYW6d0TIswsglTz3D/O+eqOl6DGKhXX
-X-Google-Smtp-Source: AGHT+IFCgJzX0rsSfextMUWKoTY+8ON0bM39EuVj+wqU5VsofAbRLMRUfcqJbeBCecOmrdKT/V+64+NhNCnphbPoezs=
-X-Received: by 2002:a05:6402:268f:b0:58b:93:b624 with SMTP id
- 4fb4d7f45d1cf-5bbbc7c62c2mr22073a12.1.1723143165252; Thu, 08 Aug 2024
- 11:52:45 -0700 (PDT)
+        bh=DO/Z3SbablodSUL+R3JeSvJ8+7bDWABWfQskJp837f0=;
+        b=IMB4bH+5lce9xk/ouahVtbOounKFNwk1KpNAO70wAN/j+kEhHlAKmEOe9zPCice4+g
+         QIZ4w119GyU2Qn7aZgIJL+6c0PFKi6C5SZ0coAlWlATW5e/08JqS1WHqplbzn6GvSVwA
+         9V5iOo2xOLDIryEofUmbKE65bLJxNB+26BSXkQ62EyAdPA3xnRWKv0p/vTkHA2Y8LX/V
+         xS5H9I0GvBGYd3BlGf7y/EkwK3MAGq9jLLycCtrP8QzERqMzacNXFfAoFYF6SvfquZ2B
+         eCOqQV2EPmhuduCVOp6yfk9ZwZparPGlOiXaHDJAWq2Flb5y4i2wgh2i7AhpH8Yxvjx6
+         b1lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpauAKYeCTnRMPIYgY+RwTvpAqidbjVY3d9SXocM7/qhfUk7b+6xeW/Yt1jp9JnJNB6dt4LYHap58O23buNZauJmDlOXc/VCw1Pzx9
+X-Gm-Message-State: AOJu0YyCvTiL8S+gu+0JNDEPV/cXZ6JOmA2C2tL2hc+K4Lf4SIWMfsK7
+	zshG0POdis2azFoq8eoYKSWpJlu6m9kk1cf6JPwdNnbXCqeWtVK23MTns98zR51MbUrsHK/D9EA
+	vvfLtn8Pmjv8Gv+JLH/63nLv+Mwa2P25vudqw/Q==
+X-Google-Smtp-Source: AGHT+IGCSGjuz41NNdGhYP00jq6qPDxX9zDID06r1oWKzkL+fM3fiKkjBrJ2CXqN+zVBtulvpbY7hra6xTPzoF1wD6c=
+X-Received: by 2002:a05:622a:4ac9:b0:44f:dd52:8aee with SMTP id
+ d75a77b69052e-451d430ab3fmr39557171cf.46.1723143313673; Thu, 08 Aug 2024
+ 11:55:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALmYWFsCrMxkA1v58fJxtyGR15ZGxmSP8x7QC=oeKwzcwGL76A@mail.gmail.com>
- <gtz7s4eyzydaomh2msvfhpemhiruexy53nutd3fwumqfpos7v5@4fnqun2olore>
- <CALmYWFvqoxyBf4iP7WPTU_Oxq_zpRzvaBOWoHc4n4EwQTYhyBA@mail.gmail.com>
- <babup6k7qh5ii5avcvtz2rqo4n2mzh2wjbbgk5xeuivfypqnuc@2gydsfao3w7b>
- <CALmYWFsAT+Cb37-cSTykc_P7bJDHmFa7mWD5+B1pEz73thchcQ@mail.gmail.com>
- <lhe2mky6ahlk2jzvvfjyongqiseelyx2uy7sbyuso6jcy3b2dq@7ju6cea62jgk>
- <CAHk-=wgTXVMBRuya5J0peujSrtunehRtzk=WVrm6njPhHrpTJw@mail.gmail.com>
- <CALmYWFtAenAQmUCSrW8Pu6eNYMcfDe9R4f87XgUxaO4gsfzVQg@mail.gmail.com>
- <6i3f5bvcppm4bkpphcb7sxsopmeani5mg5irytc3nr464p24ka@jpno77j7cgyd>
- <CALmYWFvXKdfyvZTfu9D4GdBgeVHzLR2rXshqZMFPjU+FuAHJkQ@mail.gmail.com> <mayqavxl6vpod2tcgb6f727dqcbifaubfgeiiy2sdfsqhwrgej@tbm72lvz2lof>
-In-Reply-To: <mayqavxl6vpod2tcgb6f727dqcbifaubfgeiiy2sdfsqhwrgej@tbm72lvz2lof>
-From: Jeff Xu <jeffxu@google.com>
-Date: Thu, 8 Aug 2024 11:52:07 -0700
-Message-ID: <CALmYWFux0UbdX2WObsy5kiEMvgKThoKrShpCVpC6CVa2PuNSnA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] powerpc/mm: Handle VDSO unmapping via close() rather
- than arch_unmap()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jeff Xu <jeffxu@google.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org, 
-	linuxppc-dev@lists.ozlabs.org, akpm@linux-foundation.org, 
-	christophe.leroy@csgroup.eu, jeffxu@chromium.org, 
-	linux-kernel@vger.kernel.org, npiggin@gmail.com, oliver.sang@intel.com, 
-	pedro.falcato@gmail.com, Kees Cook <keescook@chromium.org>
+References: <20240808154237.220029-1-pasha.tatashin@soleen.com>
+ <20240808154237.220029-3-pasha.tatashin@soleen.com> <24003526-ba18-42fb-b5c0-7b89872eb61e@redhat.com>
+In-Reply-To: <24003526-ba18-42fb-b5c0-7b89872eb61e@redhat.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 8 Aug 2024 14:54:35 -0400
+Message-ID: <CA+CK2bDvmSq1Wg92TVi6A5jVwxn5Xeo5aTf3sfUafCkiWPPZUw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] mm: don't account memmap on failure
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-cxl@vger.kernel.org, cerasuolodomenico@gmail.com, 
+	hannes@cmpxchg.org, j.granados@samsung.com, lizhijian@fujitsu.com, 
+	muchun.song@linux.dev, nphamcs@gmail.com, rientjes@google.com, 
+	rppt@kernel.org, souravpanda@google.com, vbabka@suse.cz, willy@infradead.org, 
+	dan.j.williams@intel.com, yi.zhang@redhat.com, alison.schofield@intel.com, 
+	yosryahmed@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 8, 2024 at 11:46=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
+On Thu, Aug 8, 2024 at 2:12=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
 >
-> * Jeff Xu <jeffxu@google.com> [240808 14:37]:
-> > On Thu, Aug 8, 2024 at 11:08=E2=80=AFAM Liam R. Howlett <Liam.Howlett@o=
-racle.com> wrote:
-> > >
-> > > * Jeff Xu <jeffxu@google.com> [240807 23:37]:
-> > > > On Wed, Aug 7, 2024 at 8:21=E2=80=AFPM Linus Torvalds
-> > > > <torvalds@linux-foundation.org> wrote:
-> > > > >
-> > > > > On Wed, 7 Aug 2024 at 16:20, Liam R. Howlett <Liam.Howlett@oracle=
-.com> wrote:
-> > > > > >
-> > > > > > Okay, I'm going to try one more time here.  You are suggesting =
-to have a
-> > > > > > conf flag to leave the vdso pointer unchanged when it is unmapp=
-ed.
-> > > > > > Having the close behind the conf option will not prevent it fro=
-m being
-> > > > > > unmapped or mapped over, so what you are suggesting is have a
-> > > > > > configuration option that leaves a pointer, mm->context.vdso, t=
-o be
-> > > > > > unsafe if it is unmapped if you disable checkpoint restore.
-> > > > >
-> > > > This is a new point that I didn't realize before, if we are going t=
-o handle
-> > > > unmap vdso safely, yes, this is a bugfix that should be applied eve=
-rywhere
-> > > > for all arch, without CHECKPOINT_RESTORE config.
-> > > >
-> > > > Do we need to worry about mmap(fixed) ? which can have the same eff=
-ect
-> > > > as mremap.
-> > >
-> > > Yes, but it should be handled by vm_ops->close() when MAP_FIXED unmap=
-s
-> > > the vdso.  Note that you cannot MAP_FIXED over half of the vma as the
-> > > vm_ops->may_split() is special_mapping_split(), which just returns
-> > > -EINVAL.
-> > >
-> > The may_split() failure logic is specific to vm_special_mapping, right =
-?
+> On 08.08.24 17:42, Pasha Tatashin wrote:
+> > When in alloc_vmemmap_page_list() memmap is failed to allocate, do
+> > not account, the memory is going to be release at the function exit.
 >
-> Not really, it's just what exists for these vmas vm_ops struct.  It's
-> called on every vma for every split in __split_vma().
+> I would write it as
+>
+> "When we fail to allocate the mmemmap in alloc_vmemmap_page_list(), do
+> not account any already-allocated pages: we're going to free all them
+> before we return from the function."
+>
+
+Will change.
+
+> Acked-by: David Hildenbrand <david@redhat.com>
+
+Thank you,
+Pasha
+
 >
 > >
-> > Do we still need to keep vm_special_mapping struct , if we are going to
-> > treat  special vma as normal vma ?
+> > Fixes: 15995a352474 ("mm: report per-page metadata information")
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > ---
+> >   mm/hugetlb_vmemmap.c | 5 +----
+> >   1 file changed, 1 insertion(+), 4 deletions(-)
+> >
+> > diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> > index fa83a7b38199..70027869d844 100644
+> > --- a/mm/hugetlb_vmemmap.c
+> > +++ b/mm/hugetlb_vmemmap.c
+> > @@ -392,13 +392,10 @@ static int alloc_vmemmap_page_list(unsigned long =
+start, unsigned long end,
+> >
+> >       for (i =3D 0; i < nr_pages; i++) {
+> >               page =3D alloc_pages_node(nid, gfp_mask, 0);
+> > -             if (!page) {
+> > -                     mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, i)=
+;
+> > +             if (!page)
+> >                       goto out;
+> > -             }
+> >               list_add(&page->lru, list);
+> >       }
+> > -
+> >       mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, nr_pages);
+> >
+> >       return 0;
 >
-> No, just set the vm_ops may_split to something that returns -EINVAL.
+> --
+> Cheers,
 >
-OK, that makes sense.
-
-Thanks
+> David / dhildenb
+>
 
