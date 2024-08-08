@@ -1,175 +1,165 @@
-Return-Path: <linux-kernel+bounces-278800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D6D94B504
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:20:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEAE94B508
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AECFB21CB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:20:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D131C2182A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BD1D268;
-	Thu,  8 Aug 2024 02:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DoUQMJkd"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010067.outbound.protection.outlook.com [52.101.69.67])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EF710A0D;
+	Thu,  8 Aug 2024 02:22:29 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743D2C2C6;
-	Thu,  8 Aug 2024 02:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723083635; cv=fail; b=TMNm43ZmjZ4C6m0dHtbgUykO18De4CX/kUoQkZkKu6r/SrgQp2Mwc+z8WdyfFUufzIxWLsDm7w9Wy76HNnKYwHzxU9GO6oNAUwsQ54f1xNOsLXT4j44PPTHzhKd926yGxJfu/lyZA4BLICv2AnbXcwHFw0nSORXCByQtcR8ozDI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723083635; c=relaxed/simple;
-	bh=aNLtX1v9wiIQjx89ngvw3nC/GP9K7PZZ4DsW45ODE0c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PCYhL6AcbD6T9Flc1dCvu7GzhIdX7hKqCHL4/ro9fi2vIZp7u+29+cuSHgaUjvfW4m75biCC2Y/OgkFwYzea/UArMlHXomPWJIgpMS0ZZDvd7wXBw2mVx8Q9hnpjgf1aRBTyLeV6lAZ9f+WX6vQ8BUHhpT78WopGYnyPebqWLIY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DoUQMJkd; arc=fail smtp.client-ip=52.101.69.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tWYO9+aikjEIsVYATNtS71nUcVdztWC7bWaoB96r2vJyv0/odjz9HHiSnm5t/v4OW47CUXcdWagyHdYyKsn4mhBcfPaSSpkJjMotxGjAst3X/b/61HRMYxfohHy35Bn80QkuqfD4YuO4wxqMH/1PGjDkSv3uKOVPPPjyOw3zsITeRs2n32L+E4V69Ia03rgXpzeFxaiucUkz7AMzcM0M9y2xJPwEnjcmLEhzo4v/ubBb0KlU4cWdK1ngHhJy8Cp8toHrRS9ayvIM8E5DLOd3MvW8Av9WQN+bHzwG5th7GTMB1rBjBl5O575ERTIeped1RjJPzQEkpqWz5gbp7Wv3Cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aNLtX1v9wiIQjx89ngvw3nC/GP9K7PZZ4DsW45ODE0c=;
- b=CLQcjs7FQCMEw97pzGckEJeSwuGPloMSkpBVme36PGxPy0sZF6XarUerlR4BOH3eCCvXGZ6dbF4j6EC3d4GWeRVSUpyxKGKCusU2jVafX8WaBsvmO7cPAI3Eg8NDjzD3urdTyvcLdOqodh9PI3/g4yIEd9SwIABP8ha/MEXrwbTWdQCMbOv3v3Hpzm5Wf/XPXXIZNDlSQpC08LeCAcVZpW4KAPJhEY3PQNByBfFE8X8TCfTxalBIJk5++rZUnc45nNII70HcvE7h/NHpihQ2vQ468GSOFfbFO/tnnpQ9FMa2xYsO1OIdKS9Z4cgMReAlU5wEBEqNML/mfohmbPpZEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aNLtX1v9wiIQjx89ngvw3nC/GP9K7PZZ4DsW45ODE0c=;
- b=DoUQMJkdJEJ+5gp3cw3GrxKs+Tkj41pOuSPzW/1RYr6tWiWWaa6uIspADSnbb9/BGykkhK9z29NyiHEMJh9LFdosfP5i4sGQwb3IoLD5jGZKKrRd5r6pwHnbvHYSkjo6kvYxj9ojspJErk/pjQDq96wEm6MC+Fr1HTc6Mjn4UTIvULT5nPiL/3Vi7i2aWOCFcpWMRzI88mSN0uLNMMISNYUY1xwgxrkMweOc6uo1xocvW8s8qywfU2jQN8rWrkvtW+KNIrl7/92qF3e+oPQLF1dNWCainMoWtUr7WbcTTBc9p9YJRVYNyP42gdaZjxvqKx122WVucLgrQhUvpFhTPA==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AM7PR04MB6934.eurprd04.prod.outlook.com (2603:10a6:20b:10a::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14; Thu, 8 Aug
- 2024 02:20:29 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7784.020; Thu, 8 Aug 2024
- 02:20:29 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH] dt-bindings: memory-controllers: fsl,imx-weim: Fix
- "fsl,weim-cs-timing" schema
-Thread-Topic: [PATCH] dt-bindings: memory-controllers: fsl,imx-weim: Fix
- "fsl,weim-cs-timing" schema
-Thread-Index: AQHa6R2UyoXyAUgFpUCeTPSlyIXD77IcoK9A
-Date: Thu, 8 Aug 2024 02:20:29 +0000
-Message-ID:
- <PAXPR04MB8459DC3C8D1030FD216756CA88B92@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20240807225959.3343093-1-robh@kernel.org>
-In-Reply-To: <20240807225959.3343093-1-robh@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AM7PR04MB6934:EE_
-x-ms-office365-filtering-correlation-id: fc968a83-7bf8-43ab-1fc0-08dcb750ac3b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|1800799024|7416014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?wUWYibcxR7RxBh4iwbn3Ie4CrJHoIsf8SnBcsmc6c8IzgxSp1xrDs+/FHRvS?=
- =?us-ascii?Q?/kyAibBGbQrN2IfqL34d1okFnH67f4JSXe85yUP9Caco8o3eSFoCjQSfnsNS?=
- =?us-ascii?Q?ZoMzNyYTwPr5OxMKGEnNqD/UgUutUSZyPYyD5Bt9nqAuzXIugMu9YBO16PZD?=
- =?us-ascii?Q?Uz5A2592PUIZjerbIiFhp3BP7Zc3HiZCOfRyzD6bEtURkmvo0O06neMr4cFS?=
- =?us-ascii?Q?uF+jk8Yh+Gs8sHUZpqRpgyOxIWZmPxjCpUgTJKCeOt1iCtGF+33x3yaQxPcq?=
- =?us-ascii?Q?VDAcRr5c6HUP0Svu9YhqHpFPwihZpjqVUvN0u5fBgJll/oC5XlGq/qPAU0dE?=
- =?us-ascii?Q?DiLv+dOj6C/GpQcH6VQglyIPoCl3N+b5HM5evKiNbiMaC71FZTDDGviI5OPX?=
- =?us-ascii?Q?BSoX6bJO3HBEvJO+S5ghudjQ6gxVNo5A3H7Ar2tAhot+ShkiqTUuN787jPN1?=
- =?us-ascii?Q?jd+c6xTbsMFu4zHFTwVzPJqVXSBXfwl5GiEDfAN5wVcXUsCwoSIxC5E1SbGI?=
- =?us-ascii?Q?p3MsMUeuXqNZFttGTFijebJ5RoONVINzWDOfeRVQ3jdCa6nV5rK7KiaPxlAQ?=
- =?us-ascii?Q?xDkDhdBg5df62gN6zDfIVWne+0LOeQ1I7BGg8P2AIx7Ve/t/nMRTTbfSbeNd?=
- =?us-ascii?Q?TItMgezJbmK9djFgHf4K6S2N3fwEwKNKTT+pEww20yOO0NBdE4lHxin5JCnG?=
- =?us-ascii?Q?K7r4Av42N4yd7jS6NFtILSAK+r5+3WypRoHj2MrTmSFKtg6J9NPRNtz3ne+3?=
- =?us-ascii?Q?RPO+vdX/UNsEmCArOseY+hcWCpjt28nLyDuI7L24syIuDtawWzfPOm6/RlOy?=
- =?us-ascii?Q?Gkmfs41qD5Y1Nkma1I+Y/zFL6jF666oQfciabeOjDJEUABIrKqQhgcIuNxg/?=
- =?us-ascii?Q?HF+3RdMcAFqlK9gi/EyzWl3NP2DpJN3BELRqcua+rEJYY/NBGeOeZJsmHWl9?=
- =?us-ascii?Q?FlQSY9hAjhlhAH+DGP8FFsg6Y84kNl3cMEZSqNV8CcxZ6MsFT/SsKItMcAAR?=
- =?us-ascii?Q?xs7LRxtVZmbWZZ4aV+v+y0BBZoVycUVY9u9yV+1OEjLPe+PVrNj8UVQ1qTwN?=
- =?us-ascii?Q?lWSwrKsEVYYoCszExFAi726ipENq5eFwK3uEpjR2EZ34Lle0I8/iCLfeODEy?=
- =?us-ascii?Q?sSNcfnesRmfBe5NKe1mJfaI9bQ+wa48HJLjORTRB5aRfnAYTdk9+R7qO8gq4?=
- =?us-ascii?Q?A/8RnFWRor5y3HRLJ6kT1M73ZNaI9mTnFT+bzPDUNflNybkYjkQyVx8I9CFx?=
- =?us-ascii?Q?QMiZEudGFAIFJUm2Ff1VECsed0+XkMdempS9WqgI8yXOE5Q29Zs0iupAtAuB?=
- =?us-ascii?Q?MeAKaUiAWtiF+7KbyPZWMbrWZvQ9aTrRcuLKSe605wY8+vx45GrjF0rCQDlG?=
- =?us-ascii?Q?3aQhWio9MTXAy7rhkFsIMsFS3Ls9xtiy3TAX9fX1TtXTexQ/JQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?sPPFHN4PAUVObuUtFDxGy9NG7qMq8p+669U6uDFCqhMWDMizzaZ++PPgGxyB?=
- =?us-ascii?Q?OJIGyFRqLcWmDGXgWd0RfysiPs3aDQhH0tkb3K8nE6377bAG0lurvtg3YWtZ?=
- =?us-ascii?Q?lhMDcY9kv9V0nNbKcZ9VsJcrbAN9xHSFbYa5KzoD2P+bKYwEkG1KhHH8LyCO?=
- =?us-ascii?Q?TD6ekN4y6L3yREO2nkJvm4qjvNH+y/j0QgGsecJrMNC9loRrlkNWPg43YCLr?=
- =?us-ascii?Q?1zar9qwkYHlMnToLqp1VIGyYlhg3DH74CL4dBLGi8In27DeVBukoY4/jLIKT?=
- =?us-ascii?Q?66sgkPPIQ+nkoT5LsLaSOvr4fLoPPgKk5hPHLy6tCFm0bvYk6BNYmXHrtOFR?=
- =?us-ascii?Q?ypy0GCRovfP5qssKbvtI5iTzRlujVmCq0lfPmBT+qG7BH9/aWCtlVqlpJ2rX?=
- =?us-ascii?Q?SlnFVgYWuQZkCdpoc7xtcsBl96x8jwHlqVCFRrP06nwGtJKxzSz3RKJ9gOM1?=
- =?us-ascii?Q?r699Mq/FnjEzAAqk8RRtwv0WRvNk1Aqf9pPcgl52UazJizcUF2RDSaDTyaSp?=
- =?us-ascii?Q?WaHWFymHzOLTjuzRS7OIvTEUb4fU5nLDpe9eUVa6lJomSHvtYvMchOwqPtI+?=
- =?us-ascii?Q?yfAARi+urophVHj3ILKILDmrTqjJIb6xq4zh9b/0GonAl0hjyYGN1nzsSomL?=
- =?us-ascii?Q?35CACu/EmBBWD/ek4Eo+8wbgFtS5dd2PN1XuBNKHqbOHWFCW2NlWmm+DtCKx?=
- =?us-ascii?Q?qj+O4cC4GCEzef11I1t2EqKyM3jFfQscjUXdwTUj4L+zeRMymObgtBEmpCdp?=
- =?us-ascii?Q?2lAOmEyF0dRvuOjIH4+hXqygae8gexjfLjrg4p+qGWrKyePFC2BlNi8JVUiA?=
- =?us-ascii?Q?b/81vK7SvgQBmwL/QvJAklisnIFj0XrsZbPfhyjymbtCEPdLbQmGAqOPTA05?=
- =?us-ascii?Q?MSEfevllpJCcIW6xA4Zy8UdlG3EVKTPg6ZxAT5uNMt+/EdpfybjpXQMbNO+j?=
- =?us-ascii?Q?mJuSaNJre9zfozPeqIoCWHIYrVSKMYCucN62Z76wy1K58tixUyfTB4Cmlu3V?=
- =?us-ascii?Q?hJYz7qKbe0YWaNgMfWLDJJRe1stnJefr1+qi7ndI2eMoKXJZ4LVw9e0d9VDo?=
- =?us-ascii?Q?S0+egqwwj3yiUFPJAF1ls64PoGluf+OFuQI+6uOSVRdNnr0zsgdUCnYzI14l?=
- =?us-ascii?Q?n+2pdB/dCO/ScYBXJuGLKf613xQxBcRYwEwgu1KaInRAup8MU2jD74nPcKwq?=
- =?us-ascii?Q?PfxQwDZCyonIfeYTjNkh3snCojS3IlVSONXT/bLxnKbuOGUowzz1cr2HKCAk?=
- =?us-ascii?Q?xyPn2VYTmhVxK/+z+QHXJYYcP/fU9YIQYo6Yrev2eSjjXtGTS/OFkiKg7zeA?=
- =?us-ascii?Q?eRs0KJifbt8krAsDmn/nqxGDwGTEVa7UMdKqGxvObkap9N0p0U24f7pRwtjz?=
- =?us-ascii?Q?0QljI7zWYKrFfF6tQdqN8+FJGeU9xC830oT6zlcCGxHwD62U5NpIZB8k7his?=
- =?us-ascii?Q?x9c7RGrRQ3fbRn2QK2p9HOmmEyfngJlA5S5BWJ8xO3tNHeKXvm2uhMLRkib+?=
- =?us-ascii?Q?mNCUE+tObfYR6nuJoN8gGZKrbphi0bnttO1p3GH6zZupYK19Dyri6xo0Yhyt?=
- =?us-ascii?Q?+KQEVm85Tomg7PCXiyk=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0436C8F7D;
+	Thu,  8 Aug 2024 02:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723083749; cv=none; b=UTsESXguPgcbqSMV2lCQZAwIt/NXGmnbR9dZgSrGI1YEV6wdkcI6m06l/jm+XuHUNI1f9ODQ5oH0E+2mnY54KbCZij/6qpsNBADvLkpzGguaKxx+u0pTvnPi0s8qkUwVrfcsHHhnAKtlt3BiQt3I+esJBdE8g/I7ak79RME38xM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723083749; c=relaxed/simple;
+	bh=hNYNxJn1Gu4e4cnU+3Ow8D4IXYCa7RwMSJ3ds/xAtQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WH/fpv8ZUoDGuRSB08/mVP4LAJfaFgb8o3jfNLdzA2CYz6GsCLRrNcdF9O2cn1Q6Qtt8VQfhY9stX87gkpr05aBr4DBH5SdcxpfSWUIOoDqla9FxLn9o9BXJdQEsAsHzaA4jVmcy0DwZPMJWfvPv3QWNT3QTDprJLa8nJzj6bqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WfW5g1JDMzcdQY;
+	Thu,  8 Aug 2024 10:22:15 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 24BA714041A;
+	Thu,  8 Aug 2024 10:22:23 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 8 Aug
+ 2024 10:22:22 +0800
+Message-ID: <8be4c357-a111-4134-b7de-ffa6f769c9e4@huawei.com>
+Date: Thu, 8 Aug 2024 10:22:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc968a83-7bf8-43ab-1fc0-08dcb750ac3b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 02:20:29.4424
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wBq9Zy5BugaVHIsXVSJMGPJGJq+2f5Xb4SFipgCVFIG5UIuEItFm3v1SR1ARfI4k/mxkMseF3QIUpAkIo6MY5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6934
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -v2] cgroup: fix deadlock caused by cgroup_mutex and
+ cpu_hotplug_lock
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+CC: Hillf Danton <hdanton@sina.com>, Roman Gushchin
+	<roman.gushchin@linux.dev>, <tj@kernel.org>, <bpf@vger.kernel.org>,
+	<cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240724110834.2010-1-hdanton@sina.com>
+ <53ed023b-c86c-498a-b1fc-2b442059f6af@huawei.com>
+ <ohqau62jzer57mypyoiic4zwhz2zxwk5rsni4softabxyybgke@nnsqdj2dbvkl>
+ <e7d4e1ce-7c12-4a06-ad03-1291dc6f22b5@huawei.com>
+ <mxyismki3ln2pvrbhd36japfffpfcwgyvgmy5him3n746w6wd6@24zlflalef6x>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <mxyismki3ln2pvrbhd36japfffpfcwgyvgmy5him3n746w6wd6@24zlflalef6x>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-> Subject: [PATCH] dt-bindings: memory-controllers: fsl,imx-weim: Fix
-> "fsl,weim-cs-timing" schema
->=20
-> The "fsl,weim-cs-timing" property is an array, but the constraints in the
-> if/then schema are for a matrix. That worked fine when all properties
-> were decoded into a matrix, but now dtschema decodes properties into
-> scalars and arrays based on their type.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Acked-by: Peng Fan <peng.fan@nxp.com>
+
+On 2024/8/7 21:32, Michal Koutný wrote:
+> Hello.
+> 
+> On Sat, Jul 27, 2024 at 06:21:55PM GMT, chenridong <chenridong@huawei.com> wrote:
+>> Yes, I have offered the scripts in Link(V1).
+> 
+> Thanks (and thanks for patience).
+> There is no lockdep complain about a deadlock (i.e. some circular
+> locking dependencies). (I admit the multiple holders of cgroup_mutex
+> reported there confuse me, I guess that's an artifact of this lockdep
+> report and they could be also waiters.)
+> 
+>>> Who'd be the holder of cgroup_mutex preventing cgroup_bpf_release from
+>>> progress? (That's not clear to me from your diagram.)
+>>>
+>> This is a cumulative process. The stress testing deletes a large member of
+>> cgroups, and cgroup_bpf_release is asynchronous, competing with cgroup
+>> release works.
+> 
+> Those are different situations:
+> - waiting for one holder that's stuck for some reason (that's what we're
+>    after),
+> - waiting because the mutex is contended (that's slow but progresses
+>    eventually).
+> 
+>> You know, cgroup_mutex is used in many places. Finally, the number of
+>> `cgroup_bpf_release` instances in system_wq accumulates up to 256, and
+>> it leads to this issue.
+> 
+> Reaching max_active doesn't mean that queue_work() would block or the
+> items were lost. They are only queued onto inactive_works list.
+
+Yes, I agree. But what if 256 active works can't finish because they are 
+waiting for a lock? the works at inactive list can never be executed.
+> (Remark: cgroup_destroy_wq has only max_active=1 but it apparently
+> doesn't stop progress should there be more items queued (when
+> when cgroup_mutex is not guarding losing references.))
+> 
+cgroup_destroy_wq is not stopped by cgroup_mutex, it has acquired 
+cgroup_mutex, but it was blocked cpu_hotplug_lock.read. 
+cpu_hotplug_lock.write is held by cpu offline process(step3).
+> ---
+> 
+> The change on its own (deferred cgroup bpf progs removal via
+> cgroup_destroy_wq instead of system_wq) is sensible by collecting
+> related objects removal together (at the same time it shouldn't cause
+> problems by sharing one cgroup_destroy_wq).
+> 
+
+> But the reasoning in the commit message doesn't add up to me. There
+> isn't obvious deadlock, I'd say that system is overloaded with repeated
+> calls of __lockup_detector_reconfigure() and it is not in deadlock
+> state -- i.e. when you stop the test, it should eventually recover.
+> Given that, I'd neither put Fixes: 4bfc0bb2c60e there.
+> If I stop test, it can never recover. It does not need to be fixed if it 
+could recover.
+I have to admit, it is a complicated issue.
+
+System_wq was not overloaded with __lockup_detector_reconfigure, but 
+with cgroup_bpf_release_fn. A large number of cgroups were deleted. 
+There were 256 active works in system_wq that were 
+cgroup_bpf_release_fn, and they were all blocked by cgroup_mutex.
+
+To make it simple, just imagine what if the max_active max_active of 
+system_wq is 1? Could it result in a deadlock? If it could be deadlock, 
+just imagine all works in system_wq are same.
+
+
+> (One could symetrically argue to move smp_call_on_cpu() away from
+> system_wq instead of cgroup_bpf_release_fn().)
+> 
+I also agree, why I move cgroup_bpf_release_fn away, cgroup has it own 
+queue. As TJ said "system wqs are for misc things which shouldn't create 
+a large number of concurrent work items. If something is going to 
+generate 256+ concurrent work items, it should use its own workqueue."
+
+> Honestly, I'm not sure it's worth the effort if there's no deadlock.
+> 
+There is a deadlock, and i think it have to be fixed.
+> It's possible that I'm misunderstanding or I've missed a substantial
+> detail for why this could lead to a deadlock. It'd be best visible in a
+> sequence diagram with tasks/CPUs left-to-right and time top-down (in the
+> original scheme it looks like time goes right-to-left and there's the
+> unclear situation of the initial cgroup_mutex holder).
+> 
+> Thanks,
+> Michal
+
+I will modify the diagram.
+And I hope you can understand how it leads to deadlock.
+Thank you Michal for your reply.
+
+Thanks,
+Ridong
 
