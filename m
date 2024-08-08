@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-279105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9EB94B902
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:28:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5BC94B904
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8EE2285A0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:28:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517031F20F9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41732189517;
-	Thu,  8 Aug 2024 08:28:34 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB5B18953B;
+	Thu,  8 Aug 2024 08:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="YqT6ZUeR"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF19188CB7
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1723D188004;
+	Thu,  8 Aug 2024 08:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723105713; cv=none; b=Un85QwlyX9fKg2Xu19npSbEV941m0aBqURczjvqqxCtnULY6FxNIdDhUcgsaP2LYe0ZyjAVrarniMgcqoxYCM6nfnIjiFVQO6+WdjvdNFCuZQ8eDfSs38lmH0N+a6h/BQW4gG2NMBwL2UsXM7VqfmpJaT5G6/x5EZmu9P8NDklA=
+	t=1723105755; cv=none; b=suRvjdmigJMIYo0UWQsZWuqDKUqKNId9y2mZoRrgLEjBUlEEsP7erX8tE4lCaNyequN3X7ue6sqQ+Uf4iGGs31c9WZjNjN5NeogtlwPHmvcjlgPrWqzaprQrmzGMbNEDVTvx/lQbRDOebb02aYAH3GWucDq+4tPLnGJ70QSEeWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723105713; c=relaxed/simple;
-	bh=cDhUQnmiXgVL32gOpLfHKL/ggvs7gQw1IlKuvNg33F0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T5Ipl4NeXhMbFZG0SdWXGbZ0BalKfYqERsx5HybNv+ROgORmdcHjqK7Bu2QposHke9D16oSnk9aLWvKfVNovt39Ki7P5avMimWlv1ZZ4IeVbDlVQiaVNokb3aTNU1uE5XbBVdG50JXtQ3xdQLpr2c9vH+zFJ9zQQq3t+VeRzmP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5B30521B5D;
-	Thu,  8 Aug 2024 08:28:30 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3EDBF13946;
-	Thu,  8 Aug 2024 08:28:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id S6P9Dq6BtGZ7EAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 08 Aug 2024 08:28:30 +0000
-Message-ID: <0fc80187-a6a1-424f-b36e-8a67889cbd0a@suse.cz>
-Date: Thu, 8 Aug 2024 10:28:30 +0200
+	s=arc-20240116; t=1723105755; c=relaxed/simple;
+	bh=nAnlA9rlnS1tfbtXhBkYA2+p8QW//F4bJ7ddH/ivoZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jDfwVGVmT+5H2HJ3qP/D8zFB1prPoRxwoYPl+a1Qw0gZ7CCvOdOOgH/frYJRG2MilJoLk773O2jSEbM8mmZf5cH7C1kZ8IJIEMaG3odi/kYa5P3eMeRl5SXVG0DCMaRQ7oKSGpmxEVT5Mf++PQAlgc5nlRjrA4XIGXonJndIXGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=YqT6ZUeR; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1723105745; bh=nAnlA9rlnS1tfbtXhBkYA2+p8QW//F4bJ7ddH/ivoZc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YqT6ZUeR7tLJfBaJjKOvGqiqViHTCOaNVcQrVceqtaBWLELYmrxcEcub9fb5oRTMw
+	 7NahLxbLRaI5YU4zckYxYCDD46UsSQ11PRGCOYr3o+CRK4ETQlzAx7tMSlnzNaYgQz
+	 IM2gaVWYSnqnNTYc9g2lLCvFxmYfMRLwHeJs8N5ZYNpQZcUwXeVQJsS2BLr6/dbzWf
+	 8R2K1d9C1CXv32iz+SF8dEu+5pLYtNDn5Sbv7MnlMeDJF+TKhFKe1mbJsVKgvy0UJe
+	 pmptdxGko6og2OpjgPjr3DjvxTA56s9oteuZYSnDS5ANcsy87C5x49ZErZQpiATtGs
+	 uEwEvNJTOJZPw==
+Received: by gofer.mess.org (Postfix, from userid 1000)
+	id 413941000C2; Thu,  8 Aug 2024 09:29:05 +0100 (BST)
+Date: Thu, 8 Aug 2024 09:29:05 +0100
+From: Sean Young <sean@mess.org>
+To: Stefan Lippers-Hollmann <s.l-h@gmx.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, Zheng Yejian <zhengyejian1@huawei.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-kernel@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 6.10 288/809] media: dvb-usb: Fix unexpected infinite
+ loop in dvb_usb_read_remote_control()
+Message-ID: <ZrSB0dco8KlKphU0@gofer.mess.org>
+References: <20240730151724.637682316@linuxfoundation.org>
+ <20240730151735.968317438@linuxfoundation.org>
+ <20240801165146.38991f60@mir>
+ <Zq5KcGd8g4t2d11x@gofer.mess.org>
+ <20240803180852.6eb5f0cb@mir>
+ <ZrJD_gHZCsphqT-U@gofer.mess.org>
+ <20240807032152.493b037c@mir>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] slab: Warn on duplicate cache names when DEBUG_VM=y
-Content-Language: en-US
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
- Pedro Falcato <pedro.falcato@gmail.com>
-Cc: Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>
-References: <20240807090746.2146479-1-pedro.falcato@gmail.com>
- <ad85f6ee-28a9-b558-2219-5a6e49e17b75@gentwo.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <ad85f6ee-28a9-b558-2219-5a6e49e17b75@gentwo.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	TAGGED_RCPT(0.00)[]
-X-Rspamd-Queue-Id: 5B30521B5D
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Score: -4.00
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807032152.493b037c@mir>
 
-On 8/7/24 19:32, Christoph Lameter (Ampere) wrote:
-> On Wed, 7 Aug 2024, Pedro Falcato wrote:
+On Wed, Aug 07, 2024 at 03:21:52AM +0200, Stefan Lippers-Hollmann wrote:
+> On 2024-08-06, Sean Young wrote:
+> > On Sat, Aug 03, 2024 at 06:08:52PM +0200, Stefan Lippers-Hollmann wrote:
+> > > On 2024-08-03, Sean Young wrote:
+> > > > On Thu, Aug 01, 2024 at 04:51:46PM +0200, Stefan Lippers-Hollmann wrote:
+> > > > > On 2024-07-30, Greg Kroah-Hartman wrote:
+> > > > > > 6.10-stable review patch.  If anyone has any objections, please let me know.
+> [...]
+> > > > > > Infinite log printing occurs during fuzz test:
+> > > > > >
+> > > > > >   rc rc1: DViCO FusionHDTV DVB-T USB (LGZ201) as ...
+> > > > > >   ...
+> > > > > >   dvb-usb: schedule remote query interval to 100 msecs.
+> > > > > >   dvb-usb: DViCO FusionHDTV DVB-T USB (LGZ201) successfully initialized ...
+> > > > > >   dvb-usb: bulk message failed: -22 (1/0)
+> > > > > >   dvb-usb: bulk message failed: -22 (1/0)
+> > > > > >   dvb-usb: bulk message failed: -22 (1/0)
+> > > > > >   ...
+> > > > > >   dvb-usb: bulk message failed: -22 (1/0)
+> > > > > >
+> > > > > > Looking into the codes, there is a loop in dvb_usb_read_remote_control(),
+> > > > > > that is in rc_core_dvb_usb_remote_init() create a work that will call
+> > > > > > dvb_usb_read_remote_control(), and this work will reschedule itself at
+> > > > > > 'rc_interval' intervals to recursively call dvb_usb_read_remote_control(),
+> > > > > > see following code snippet:
+> [...]
+> > I don't think this drivers uses the bulk endpoint, and it is missing the
+> > corresponding out bulk endpoint.
+> >
+> > Please could you test the patch below please - that would be very helpful in
+> > narrowing down this issue.
+> [...]
 > 
->> Duplicate slab cache names can create havoc for userspace tooling that
->> expects slab cache names to be unique. This is a reasonable expectation.
+> After applying this patch, the TeVii s480 works again on both of my
+> systems, but there seems to be a new error message in the log
 > 
-> Yes that is reasonable. This is done during slab creation and so is not a 
-> performance sensitive operation. The sanity check could be done even 
-> without CONFIG_DEBUG_VM
+> ds3000_writereg: writereg error(err == -11, reg == 0xa2, value == 0xb7)
+> ds3000_writereg: writereg error(err == -11, reg == 0x03, value == 0x12)
+> ds3000_writereg: writereg error(err == -11, reg == 0x03, value == 0x12)
+> ds3000_writereg: writereg error(err == -11, reg == 0x03, value == 0x02)
+> ds3000_writereg: writereg error(err == -11, reg == 0x03, value == 0x02)
 
-We can perhaps move it outside CONFIG_DEBUG_VM in few cycles.
+I've spent of a lot time reading various code paths, and I don't understand
+where this is coming from, which also makes it difficult to add debug printks
+too. Without the hardware to debug this, I think we have to revert the commit.
 
-> Acked-by: Christoph Lameter <cl@linux.com>
+The only idea I've had so far is that we are no longer clearing a halt on
+the bulk endpoint, but that seems pretty unlikely for a device that has just
+been plugged in.
 
-Added to slab/for-next, thanks!
+Stefan, thank you for reporting the issue and testing my patch.
+
+
+Sean
 
