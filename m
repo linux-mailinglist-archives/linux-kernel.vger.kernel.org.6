@@ -1,82 +1,171 @@
-Return-Path: <linux-kernel+bounces-278756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C741F94B45C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:59:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99D894B463
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7432528388A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:59:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924D3283A17
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6DF33E8;
-	Thu,  8 Aug 2024 00:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0509749A;
+	Thu,  8 Aug 2024 01:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1wqw3MW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U5Im2512"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCB820E6;
-	Thu,  8 Aug 2024 00:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4415420E6;
+	Thu,  8 Aug 2024 01:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723078766; cv=none; b=Y4QkH/X9V2IOofJ0TFp0BNbgU0YRsMaQpZG+Pw5dMNnnvlimBh0VjyGB5IBCYTyJmmzynSe+ewHNiu57+NTFjeQfDY1a46yulhi2KFb7Npwxz5OVBbm7bR1R0bWz6XMg05BmVLbSIJB322N57N13sGl1jOIOmS9Eh6AY50yf5QI=
+	t=1723079036; cv=none; b=b3Kjez8RuCvPtzP+rl4LJ9yWO8Gk84xKOnJwJ/uEevHkQXcCMjvky1cd6EQzPHo/5retAfLxmvysVQ8440VQRoBuHniqZU/BtItmBUGGkzZ1xVs2PgcTOPkiVHtsD97PvcBU4lQNYixvoBEkqexl+1aSSVqqIMv78Z8By0XyHws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723078766; c=relaxed/simple;
-	bh=IvJYIBE3hjcBepXyYa5KPKw5I13hnxhgH0Nqj0N0pSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jx6w9l6ICE/wldtCXn7I+7pf5uvDYNGOrOiUkBdriPLuzUdXKWtObJb25h1aXQgGTNQK9I0TrCz8MTH1u6UgPieCY6NROHzIHDa+/hTgDIrsdGpnS4a6BOAkgCgBEvt/nKZrQr2zR19UjE1CubI1aGq/sg+02ygKrOiMuMNbm+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1wqw3MW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17182C32781;
-	Thu,  8 Aug 2024 00:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723078766;
-	bh=IvJYIBE3hjcBepXyYa5KPKw5I13hnxhgH0Nqj0N0pSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O1wqw3MWxce4y0N9F/vXM5IiHBxaugOvUdrISTvX2o8cp4J3TLRuqs4bcDEA5Y/DC
-	 AIxD8YH2MBvLNzh2omDH8MYWjmO4gSPdgoqeiMbXxVOA2ftuy6v1LGXfHKbC2ticIl
-	 /LQ4fCq+PB2XqLPGAYv0cF/x0EnauyxnaA/tO8gyYGGOrSC1PfSH5T7BMJCcX9r0zn
-	 +KuNoi+7a0pGa9K6kj0IXTNHcb5IA9Ija2XB7ZVYJTh5DTNJ/b/dWQniwJJwTKK3FJ
-	 DtmAEZFymqgLaZO+sZkbX5FIVY9gmFifrZ2EEdB3OuWBzMtSAJEi739mb6GF+TrlrI
-	 8Hagh7WAQ5ZBA==
-Date: Wed, 7 Aug 2024 20:59:24 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: gregkh@linuxfoundation.org, yangge1116@126.com, hch@infradead.org,
-	david@redhat.com, peterx@redhat.com, akpm@linux-foundation.org,
-	linux-mm@kvack.org, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [v6.6-stable PATCH] mm: gup: stop abusing try_grab_folio
-Message-ID: <ZrQYbLGWVf9zOT1p@sashalap>
-References: <20240806193037.1826490-1-yang@os.amperecomputing.com>
+	s=arc-20240116; t=1723079036; c=relaxed/simple;
+	bh=E4NjcBtFoKMULPq+m54nVSONliuUrMPReoZj/ltGKeg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pXXgTP+OofoAOXuHmkgAniEOz6v184LS2uVw+7be+nAfFSCc3WIimH405bMrOPzeo5SsHFcvxdWQuOeBUd7gID0Q7zoWYe1mXZQS9amu83U1t8v5HwFg3jhO6baWgKnlulLciDlWGcPVfK8/Z9pSdPGt/a2kEWc67tvhHlz2ySU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U5Im2512; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477ID6VU012239;
+	Thu, 8 Aug 2024 01:03:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BiWDQGebIC+nZsacslE5RFhdstOKp1m7YUU31Ktsm98=; b=U5Im2512oxh0t/mX
+	m8ehDNj6pUvuH8BFFmSwYVf1M0ANJ2YAHuq98irB1tU4X944g5TH3AQsMWnAz/lo
+	jm09QErp62sCd27weApFMAxFd3k5ZNU8J9ldXcL1NKjGTECu0aV3mTUX7hQ4VBmq
+	LjhdozDpq/+Gmet5huIkKHPuimDLrsLqBQW9hKtjTflIp6EzJiW6dcJ6bejFXUAm
+	oq1YIeJIAZn+5VVhDPSMdOBJ8zXecL037To7o/mDRx4Iqa13yZnInVXN/WiJrOkP
+	FidwPtb9eV5Qnym3FxO948gAQmUUeo+ukSh6fdR9+6NwC5qZU5UL1Ibqou4CcBH/
+	0hbdug==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbj6v9wt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 01:03:30 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 47813Sgp025454
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 Aug 2024 01:03:28 GMT
+Received: from [10.71.113.127] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 18:03:27 -0700
+Message-ID: <e5fa1a3f-3fe2-40c5-9366-4d21221f9557@quicinc.com>
+Date: Wed, 7 Aug 2024 18:03:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240806193037.1826490-1-yang@os.amperecomputing.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 26/34] ALSA: usb-audio: qcom: Don't allow USB offload
+ path if PCM device is in use
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-27-quic_wcheng@quicinc.com>
+ <c2ab91ed-a2e5-437e-bbdb-84988a052778@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <c2ab91ed-a2e5-437e-bbdb-84988a052778@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4CidAKI3zPEyUNyBFmQX_dZ-DRpw6yXZ
+X-Proofpoint-GUID: 4CidAKI3zPEyUNyBFmQX_dZ-DRpw6yXZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_15,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=999 clxscore=1015 malwarescore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408080005
 
-On Tue, Aug 06, 2024 at 12:30:36PM -0700, Yang Shi wrote:
->commit f442fa6141379a20b48ae3efabee827a3d260787 upstream
+
+On 8/1/2024 1:57 AM, Pierre-Louis Bossart wrote:
 >
->A kernel warning was reported when pinning folio in CMA memory when
->launching SEV virtual machine.  The splat looks like:
+> On 8/1/24 03:17, Wesley Cheng wrote:
+>> Add proper checks and updates to the USB substream once receiving a USB QMI
+>> stream enable request.  If the substream is already in use from the non
+>> offload path, reject the stream enable request.  In addition, update the
+>> USB substream opened parameter when enabling the offload path, so the
+>> non offload path can be blocked.
+> It's a bit weird that the mutual exclusion between the standard path and
+> the offloaded path is handled at the vendor level. I would think this
+> needs to be handled in the soc_usb framework, no?
+>
+Hmm...I guess that make sense.  In the end, the mutual exclusion check would need to either be handled by the vendor USB offload driver, or the USB backend DAI link.  I could consider adding another SOC USB API to query for the USB PCM status.  If it is open/active, then just return with an error, or maybe just rename the snd_soc_usb_find_format() API to something more generic which checks for parameters and current status before allowing offloading to start (ie snd_soc_check_offload_available())
 
-[snip]
+Thanks
 
-This doesn't compile on 6.6...
+Wesley Cheng
 
-mm/huge_memory.c: In function 'follow_devmap_pud':
-mm/huge_memory.c:1213:8: error: implicit declaration of function 'try_grab_page'; did you mean 'try_get_page'? [-Werror=implicit-function-declaration]
-  1213 |  ret = try_grab_page(page, flags);
-       |        ^~~~~~~~~~~~~
-       |        try_get_page
-
--- 
-Thanks,
-Sasha
+>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> ---
+>>  sound/usb/qcom/qc_audio_offload.c | 15 ++++++++++++++-
+>>  1 file changed, 14 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
+>> index 8b0913b7256b..3b46d05f1421 100644
+>> --- a/sound/usb/qcom/qc_audio_offload.c
+>> +++ b/sound/usb/qcom/qc_audio_offload.c
+>> @@ -1460,12 +1460,17 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
+>>  		goto response;
+>>  	}
+>>  
+>> +	mutex_lock(&chip->mutex);
+>>  	if (req_msg->enable) {
+>> -		if (info_idx < 0 || chip->system_suspend) {
+>> +		if (info_idx < 0 || chip->system_suspend || subs->opened) {
+>>  			ret = -EBUSY;
+>> +			mutex_unlock(&chip->mutex);
+>> +
+>>  			goto response;
+>>  		}
+>> +		subs->opened = 1;
+>>  	}
+>> +	mutex_unlock(&chip->mutex);
+>>  
+>>  	if (req_msg->service_interval_valid) {
+>>  		ret = get_data_interval_from_si(subs,
+>> @@ -1487,6 +1492,11 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
+>>  		if (!ret)
+>>  			ret = prepare_qmi_response(subs, req_msg, &resp,
+>>  					info_idx);
+>> +		if (ret < 0) {
+>> +			mutex_lock(&chip->mutex);
+>> +			subs->opened = 0;
+>> +			mutex_unlock(&chip->mutex);
+>> +		}
+>>  	} else {
+>>  		info = &uadev[pcm_card_num].info[info_idx];
+>>  		if (info->data_ep_pipe) {
+>> @@ -1510,6 +1520,9 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
+>>  		}
+>>  
+>>  		disable_audio_stream(subs);
+>> +		mutex_lock(&chip->mutex);
+>> +		subs->opened = 0;
+>> +		mutex_unlock(&chip->mutex);
+>>  	}
+>>  
+>>  response:
 
