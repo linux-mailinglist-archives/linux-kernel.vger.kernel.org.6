@@ -1,130 +1,159 @@
-Return-Path: <linux-kernel+bounces-278925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293EB94B6AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:26:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB0794B6B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12F5285602
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:26:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C27BB21DAE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D45186E38;
-	Thu,  8 Aug 2024 06:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606DF186E3A;
+	Thu,  8 Aug 2024 06:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="US9W8N3V"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Xv574nwx"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B134F183063;
-	Thu,  8 Aug 2024 06:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E283084A2F;
+	Thu,  8 Aug 2024 06:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723098396; cv=none; b=LvhPXbk7TLv6WuU+xI91EFAPRJaUcma84gEOMuNFVSwgS2bYoW6f6bI557KeKJpf4CxyArQoOHDqwjaMwQQ08Lq7p4X5V98IbGhES04B6tWpDKhRZk1ejSlb9icrTf4H3q99Lhp3YWzT/BtSZuiqwm2Gqdz3ODafCcc4mgXBVr8=
+	t=1723098428; cv=none; b=puZFpzN9S0X+iNCk/e9Q+o2C0BGfNrfJTL0NtxdZf9q9aMrTDJKRqwfD/xw2fbG+eLpTYqB9Zxkg70gOQbdztnvOFUXov2GstN7ftezhCwsck/7cS6q8ftA8EA1QFU4CEyNurcsPZguKGVvL274LVQNs8ahpq5kxbQFgFQzBT5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723098396; c=relaxed/simple;
-	bh=TPBmz90yWIPzk3xwAlW0IMWNrhiACBTJH786GobJbHo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SHlsywZ5SyJaF7NBxgOvzKEs6I6A81XSoR6iG2Hah2LC7mgBCOQMGxLc8fXr4wmapzePqa4VWPc1vDilpAKQCHWZuwTn0vNYRsyklUg0XF4RrjSEHT3Cq4rjESxv6gGw/8Qhw5GyBzjwn/b+Eg02tYKeVWG0Lqix2bSiQd4eMDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=US9W8N3V; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7aa086b077so54113166b.0;
-        Wed, 07 Aug 2024 23:26:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723098393; x=1723703193; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dakk67C20xjrlywmpktHOBSXYaOk12CuQplEuJCCIvE=;
-        b=US9W8N3VBFGuW9622CNx2omXJZibnD1k8vpUVZtKA4iSkQZL1UlLcbENcb4FqyQ0J0
-         2r+uxz2RzJORaCpQXSYNelOjczW07dYN4acjxm1MWsadfROYIxezbX9zdfdtvhBkmbLi
-         yPhWJR/LrToUXk3MwhQWC6yekgFc7Ey6x5/4At8wyu5RZJFjZnaINpyF20mJxZnHHtxh
-         vkKE+M7ADSpxLS5CLIxLXrDRnsJ/e3zVT+SmMLhH+WHXeCwDlPs9+o2zuvcLR55193nt
-         C6KzjpTALffQ7Gv/WUgElIEfU1Ce9/6OEcnxeXzmPP3P3m/lUy3zMKgcCTJhv3FjjdPV
-         DwEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723098393; x=1723703193;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dakk67C20xjrlywmpktHOBSXYaOk12CuQplEuJCCIvE=;
-        b=DQYWregvbGHIDoK8dnRWxv7h7tE3js6rRdCO6hEL++qH+j7h8axr3LOKAXNlg6ObPa
-         jYkBTItEceJRpzVei+b2bJkbNaQS4klsnVxWjeit79FLcjIOYCYTdjPXaLirGKx7d9Ss
-         XuSu7dgkT+Dn7jVcxRifeu7xp+NKZThG6yJguH2zrTBnxt1pg4DOAegsrwYHDiT33GKQ
-         XICPzQgG21Xk38q/S+3mqCA3N/2UzLhwr5dlEyKqUr6fHBGLMMX7SjnPOh+g4LesmOTz
-         pMMo7kYenZu49Bhl1JaP9iLUgYCK5/K5r6EJrJhcJsWU4LMh9v2Jy9eCIbU54Ry6UjCP
-         hHLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZWV3icEmBFEPyjL5t7PLq21K9jTNvA9qQoUEJJf6O2htsi+f4vgQcTgfg6tSYTZuCNQ3UUe2xFlPxhilc@vger.kernel.org, AJvYcCWbiFunocaHmBaOjQvpG5WrR1c7ndeLt0OH1pzAw7pA8sat483cnuXT3DPFibXthcIcUcToOTekyKHbR0Li@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCEF1mqVvxnqLYG2PMxcClNalyIyjyCWFm4dBGqk0pqAplJSQ0
-	M0xcF2onsxgMzmLdZGmzY8F+Wo0LcBKYa/FXHYdLVVipuPNDIBGk41kSSlwbLFz5nzTScUKrWi9
-	KTUDHDv5St1d8HUqc5YpXoWytlVRxUg==
-X-Google-Smtp-Source: AGHT+IF+St6RBJ9YRxVeG2pzYGu4pBlYPOKZhHH+liTd0RSoIdF+j+MyA/kWfSK6RxbAIlPIOU0t7fiRTlKswGPdcJc=
-X-Received: by 2002:a17:907:e92:b0:a7a:b070:92c6 with SMTP id
- a640c23a62f3a-a8090e41f3bmr58294166b.50.1723098392472; Wed, 07 Aug 2024
- 23:26:32 -0700 (PDT)
+	s=arc-20240116; t=1723098428; c=relaxed/simple;
+	bh=/5ghKYAnuD2f/ZRj+gO+eDL9wrwWwC/i4Jgoorzf1oc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Z4QOCsMmkH3YNe+676SDENwKgrP+Kf9Iha2sOyigq8k6kSWcVWoDu+DXZrxMnmZ+anpWskY+5xJK4BN+LwFZVETyaddyCzKbyaz+zc+RcoYpmx+N5x2SPEUgbrUZtm83k59t7vmdDSD3Fwp4yqq6/mH1goiBGctxyxudNw0oDVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Xv574nwx; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723098422; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=/fo9cpeIWOQ19EM19iwanG0Lm/+5B2ETYCALn5KNnDc=;
+	b=Xv574nwxbK/zQyV4aurgj2eTW9thpc+gcdGTHfH6MX2G8EzZjTI0dN2WudvHZQj1QqPOnJcKhboq67pmlVKNQVnIOzgKSrido85Zo3sFET+bolXemEWOsn4XeyOwlmxn6rsd5lXnUe9U15LuTBg4f3H/JIcsnQTEmwjDRPiHLi4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=guangguan.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WCLS.DF_1723098420;
+Received: from 30.221.101.115(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WCLS.DF_1723098420)
+          by smtp.aliyun-inc.com;
+          Thu, 08 Aug 2024 14:27:01 +0800
+Message-ID: <faad0886-9ece-4a1c-a659-461b060ba70b@linux.alibaba.com>
+Date: Thu, 8 Aug 2024 14:26:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807033820.GS5334@ZenIV> <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
- <20240807062300.GU5334@ZenIV> <20240807063350.GV5334@ZenIV>
- <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
- <20240807070552.GW5334@ZenIV> <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
- <20240807075218.GX5334@ZenIV> <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
- <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com> <20240807124348.GY5334@ZenIV>
-In-Reply-To: <20240807124348.GY5334@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 8 Aug 2024 08:26:20 +0200
-Message-ID: <CAGudoHE=fu2B+MNdnzOafr0Mg8D3bDmsKyMPTOZS2LeUFv53Gw@mail.gmail.com>
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net/smc: introduce autosplit for smc
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+To: Wenjia Zhang <wenjia@linux.ibm.com>, jaka@linux.ibm.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+ guwen@linux.alibaba.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709160551.40595-1-guangguan.wang@linux.alibaba.com>
+ <cf07ec76-9d48-4bff-99f6-0842b5127c81@linux.ibm.com>
+ <63862dcc-33fd-4757-8daf-e0a018a1c7a3@linux.alibaba.com>
+Content-Language: en-US
+In-Reply-To: <63862dcc-33fd-4757-8daf-e0a018a1c7a3@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 7, 2024 at 2:43=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Wed, Aug 07, 2024 at 11:50:50AM +0200, Mateusz Guzik wrote:
->
-> > tripping ip:
-> > vfs_tmpfile+0x162/0x230:
-> > fsnotify_parent at include/linux/fsnotify.h:81
-> > (inlined by) fsnotify_file at include/linux/fsnotify.h:131
-> > (inlined by) fsnotify_open at include/linux/fsnotify.h:401
-> > (inlined by) vfs_tmpfile at fs/namei.c:3781
->
-> Try this for incremental; missed the fact that finish_open() is
-> used by ->tmpfile() instances, not just ->atomic_open().
->
-> Al, crawling back to sleep...
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 95345a5beb3a..0536907e8e79 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3776,7 +3776,10 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
->         file->f_path.dentry =3D child;
->         mode =3D vfs_prepare_mode(idmap, dir, mode, mode, mode);
->         error =3D dir->i_op->tmpfile(idmap, dir, file, mode);
-> -       dput(child);
-> +       if (file->f_mode & FMODE_OPENED)
-> +               mntget(parentpath->mnt);
-> +       else
-> +               dput(child);
->         if (file->f_mode & FMODE_OPENED)
->                 fsnotify_open(file);
->         if (error)
+On 2024/7/15 10:53, Guangguan Wang wrote:
+> 
+> 
+> On 2024/7/11 23:57, Wenjia Zhang wrote:
+>>
+>>
+>> On 09.07.24 18:05, Guangguan Wang wrote:
+>>> When sending large size data in TCP, the data will be split into
+>>> several segments(packets) to transfer due to MTU config. And in
+>>> the receive side, application can be woken up to recv data every
+>>> packet arrived, the data transmission and data recv copy are
+>>> pipelined.
+>>>
+>>> But for SMC-R, it will transmit as many data as possible in one
+>>> RDMA WRITE and a CDC msg follows the RDMA WRITE, in the receive
+>>> size, the application only be woken up to recv data when all RDMA
+>>> WRITE data and the followed CDC msg arrived. The data transmission
+>>> and data recv copy are sequential.
+>>>
+>>> This patch introduce autosplit for SMC, which can automatic split
+>>> data into several segments and every segment transmitted by one RDMA
+>>> WRITE when sending large size data in SMC. Because of the split, the
+>>> data transmission and data send copy can be pipelined in the send side,
+>>> and the data transmission and data recv copy can be pipelined in the
+>>> receive side. Thus autosplit helps improving latency performance when
+>>> sending large size data. The autosplit also works for SMC-D.
+>>>
+>>> This patch also introduce a sysctl names autosplit_size for configure
+>>> the max size of the split segment, whose default value is 128KiB
+>>> (128KiB perform best in my environment).
+>>>
+>>> The sockperf benchmark shows 17%-28% latency improvement when msgsize
+>>>> = 256KB for SMC-R, 15%-32% latency improvement when msgsize >= 256KB
+>>> for SMC-D with smc-loopback.
+>>>
+>>> Test command:
+>>> sockperf sr --tcp -m 1048575
+>>> sockperf pp --tcp -i <server ip> -m <msgsize> -t 20
+>>>
+>>> Test config:
+>>> sysctl -w net.smc.wmem=524288
+>>> sysctl -w net.smc.rmem=524288
+>>>
+>>> Test results:
+>>> SMC-R
+>>> msgsize   noautosplit    autosplit
+>>> 128KB       55.546 us     55.763 us
+>>> 256KB       83.537 us     69.743 us (17% improve)
+>>> 512KB      138.306 us    100.313 us (28% improve)
+>>> 1MB        273.702 us    197.222 us (28% improve)
+>>>
+>>> SMC-D with smc-loopback
+>>> msgsize   noautosplit    autosplit
+>>> 128KB       14.672 us     14.690 us
+>>> 256KB       28.277 us     23.958 us (15% improve)
+>>> 512KB       63.047 us     45.339 us (28% improve)
+>>> 1MB        129.306 us     87.278 us (32% improve)
+>>>
+>>> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+>>> ---
+>>>   Documentation/networking/smc-sysctl.rst | 11 +++++++++++
+>>>   include/net/netns/smc.h                 |  1 +
+>>>   net/smc/smc_sysctl.c                    | 12 ++++++++++++
+>>>   net/smc/smc_tx.c                        | 19 ++++++++++++++++++-
+>>>   4 files changed, 42 insertions(+), 1 deletion(-)
+>>>
+>>
+>> Hi Guangguan,
+>>
+>> If I remember correctly, the intention to use one RDMA-write for a possible large data is to reduce possible many partial stores. Since many year has gone, I'm not that sure if it would still be an issue. I need some time to check on it.
+>>
+> 
+> Did you mean too many partial stores will result in some issue? What's the issue?
+> 
+> 
+>> BTW, I don't really like the idea to use sysctl to set the autosplit_size in any value at will. That makes no sense to improve the performance.
+> 
+> Although 128KB autosplit_size have a good performance in most scenario, I still found some better autosplit_size for some specific network configurations.
+> For example, 128KB autosplit_size have a good performance whether the MTU is 1500 or 8500, but for 8500 MTU, 64KB autosplit_size performs better.
+> 
+> Maybe the sysctl is not the best way, but I think it should have a way to set the value of autosplit_size for possible performance tuning.
+> 
+> Thanks,
+> Guangguan Wang
+> 
 
-That seems to have worked, but my test rig went down due to surprise
-PDU maintenance (and it is still down) and I was unable to give the
-patch a more serious beating.
+Hi Wenjia,
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Is there any update comment or information about this patch?
+
+>>
+>> Thanks,
+>> Wenjia
 
