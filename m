@@ -1,102 +1,227 @@
-Return-Path: <linux-kernel+bounces-278917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1939294B697
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:20:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EEA94B69A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C959D2854ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:20:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87F1B2854CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6A9186E21;
-	Thu,  8 Aug 2024 06:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66778186E21;
+	Thu,  8 Aug 2024 06:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFDQbhkL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NyZlJegG"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5587C4A1E;
-	Thu,  8 Aug 2024 06:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C689157A46
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 06:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723098019; cv=none; b=etmgsbsNE1F1EfHas3V2X+aYo/+GA7ItVp0gC8Lq4HSbG9mHnUK72tSbVlZxYrwaSg6/HOIt/jsR49Sjl0OubF9Y/wCRCoM5O2T4OoovnycWikH+vWUSkP58Uy9YWVVLb1S0YsmF1E6voowyf7yiusujXF0X6DtFLi70G3srKNk=
+	t=1723098077; cv=none; b=H8M2YLV+WdCvn+V4a4lPqAHBi7iRmt2i0ZqWwhHK4feuru7v3RBuhoMuGrMMNYaeaZfQj4RHoHJecG6HNgvTOJU8DAW+aXE0o39xLR2cw2+P7rdPn/qkEhIBiWD53HFj98sfIkOdLx7ijnnTtnGMrf0SEiJuqO28h2ANra+KmKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723098019; c=relaxed/simple;
-	bh=X9NY6xCSLD4ufw4GmHD6bL7PfZlnwn442WiojDh1QoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WEahqyYWxiwVAUCkgY3+Lx/dzUwPdn8L3cxyjjBofQ+wgR99n/pmSCAwDjIeT1i7gAXAwAz0atFE2Z6ZlhsbP/WIRbAAA6pVI0pAP3F56Kn3wZcdVmAJKhNc0A/JJW9Uywbi4rB87pfurpK3b7ddkWjk6hMZhKMhdiUUpVOBHwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFDQbhkL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C02DC32782;
-	Thu,  8 Aug 2024 06:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723098019;
-	bh=X9NY6xCSLD4ufw4GmHD6bL7PfZlnwn442WiojDh1QoM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lFDQbhkLAPVrpBzMivRB3q1DQzO9myhdCHwfR5uOB2+84aQTZxFi1chGA60bZieRS
-	 DaYksPM+Svo/5N6Nua0yXep112L3A/LQ4qVYn4+FjociZac/Ztb6is8UnjlvQV9LD1
-	 Xiasj2u8DB2UO7dteo58gW47cMwLORmnEpRLYs/4Ro/+AHBWBM3N2uLFJxRitvocDn
-	 AIams1FJMakx6yCSugubObtItgQ/3pLduNfsgeP/H3Ze5pm/owGXzSisZK1RDnkZuV
-	 1teqHp6wzmwn0GbsnkEoR0jUNSK8rkNvRl8N0Qb5iuJrK/5J+4aSwCVFKWUxKZB9gB
-	 x7v51oLnA+TDg==
-Date: Thu, 8 Aug 2024 09:18:07 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
-	linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] pstore/ramoops: Fix typo as there is no "reserver"
-Message-ID: <ZrRi7fdYo3yVPr1G@kernel.org>
-References: <20240807170029.3c1ff651@gandalf.local.home>
+	s=arc-20240116; t=1723098077; c=relaxed/simple;
+	bh=V7Nu2/ZOQOgFQOgbJi83OYAm3jyTziBatBEifZmB0Yc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EzW4fKeLcYiRM6hmn9toMC/kq1quLlUr+3jmIjSust129EpD+GHSU4I+XtsWhpCHO1Ri1vciji72wNt5sCExutcgBEPzwd0cMoZr9CAlFzvJV84oCr7movifNN+TupoKsiufZdWnhSyXU0BkNCzNTOz//M2FkoY3sHVztj//fuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NyZlJegG; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6b7a4668f1fso4076176d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 23:21:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723098074; x=1723702874; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=l5AswontD5tk+EsapM0JEEIt5oaBQZ21TTd0t8hYM3s=;
+        b=NyZlJegGnSvPLJGFtKOMV6TFtQrIoFOC4h4nianm1cZ/Rvju61/9AtiRiPU2/Xn3BR
+         iDHPOU6/WW+ugw09NMH3Rt3VxS/n5BJLclEg5cwyDTDNgnVzm69CybKx0xRY5Ak1OauO
+         JK5FL3FonKzFFYXxT9bTaXWRo/5L9vhLxnKWv9TT6Pp3JZ/BDstPpOQEqXhj5PYRclX+
+         qdxVIM5GOwZs6aMaX90VLQAdj7Tyw+9hKhNNuqmwwMrYKgha3TDmpTLuhs5J6YbsiEdy
+         8HMMFPscq/Ni6E9dfcxRuVzIt4l4t17QDqE1RTZWjMco+T5tT41EKi7mtx2TltaW9wXy
+         8bHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723098074; x=1723702874;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l5AswontD5tk+EsapM0JEEIt5oaBQZ21TTd0t8hYM3s=;
+        b=hNGMt/86U1AVVGB6tI+kXhB9C6g33A+Yg/cS2ydb5nhRslwcsAiGUURdI3HVcWL4pW
+         /f4J4BYX5Xvpv+MRlJXANVlLU176idey8uvcUfzNFspIlIa3JuESHziGQPaO+ueypRy1
+         IcFta+GtaS9Ya4vfgplHrSSLNvjyg2jMKuaGYnECcgWWGBhYHsgqTWBNRpbXxebyGCyE
+         VP4ZlDWoTrxuoXJprqF78PCORKOxTp47qZE1z11ENSnl84UQK3TxM4tmG3YJoKfKS8f9
+         MBekTiSwqXJk6B1koDncEelAMNv5hQJSBM+SjR2m+bpaAPdajayFmDFExT0Q9ktmvPrf
+         KzVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMhUwwtMihFr1Y2bscgqe/VQIMMODcmhdMNDM87MHrNDrPTWx7NmDCMypJa/Xa+vsyHpRi29UTZBzBecPAUvw/RpL+XnLDr4FXulbc
+X-Gm-Message-State: AOJu0YzRQspoNuoTBvqmxN8EqRELll82+rBw3zCCnzQ7Qz0VgxJ5+KeA
+	eep8suHeWephjebwwL4v4enoCdKLmwfwVjSeqkQOVmoSnPu3858ch6Cs9cyPycvGlR4EmoFcISY
+	PntoVR0DqN8bUcmXImHM3Cs8+rra6zvIo/JYEcw==
+X-Google-Smtp-Source: AGHT+IEZklhFPOddni0uWN5gwDIhwP5DBZkY/OQVLihWg66EVGvODni6waZMR/SeojT4IYuqP35xq7zDik4puesJWU0=
+X-Received: by 2002:a05:6214:598a:b0:6bb:b4c1:646c with SMTP id
+ 6a1803df08f44-6bd6bcc6cddmr13156246d6.22.1723098074051; Wed, 07 Aug 2024
+ 23:21:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807170029.3c1ff651@gandalf.local.home>
+References: <20240807150019.412911622@linuxfoundation.org>
+In-Reply-To: <20240807150019.412911622@linuxfoundation.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Thu, 8 Aug 2024 08:21:03 +0200
+Message-ID: <CADYN=9LVRXcvLU5nHcK5sw5_uHok41X3-HPznaetV4cE-SrkJQ@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/121] 6.6.45-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 07, 2024 at 05:00:29PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> For some reason my finger always hits the 'r' after typing "reserve".
-> Fix the typo in the Documentation example.
-> 
-> Fixes: d9d814eebb1ae ("pstore/ramoops: Add ramoops.mem_name= command line option")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+On Wed, 7 Aug 2024 at 17:07, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.45 release.
+> There are 121 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 09 Aug 2024 14:59:53 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.45-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Results from Linaro's test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-> ---
-> Note, I did have this fixed, but the previous version was pulled:
->   https://lore.kernel.org/linux-trace-kernel/20240613233446.283241953@goodmis.org/
-> 
->  Documentation/admin-guide/ramoops.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/ramoops.rst b/Documentation/admin-guide/ramoops.rst
-> index 6f534a707b2a..2eabef31220d 100644
-> --- a/Documentation/admin-guide/ramoops.rst
-> +++ b/Documentation/admin-guide/ramoops.rst
-> @@ -129,7 +129,7 @@ Setting the ramoops parameters can be done in several different manners:
->      takes a size, alignment and name as arguments. The name is used
->      to map the memory to a label that can be retrieved by ramoops.
->  
-> -	reserver_mem=2M:4096:oops  ramoops.mem_name=oops
-> +	reserve_mem=2M:4096:oops  ramoops.mem_name=oops
->  
->  You can specify either RAM memory or peripheral devices' memory. However, when
->  specifying RAM, be sure to reserve the memory by issuing memblock_reserve()
-> -- 
-> 2.43.0
-> 
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
--- 
-Sincerely yours,
-Mike.
+## Build
+* kernel: 6.6.45-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* git commit: 272b28faf61f0b80e9d6f92cbcfa32817f9ece7b
+* git describe: v6.6.44-122-g272b28faf61f
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.44-122-g272b28faf61f
+
+## Test Regressions (compared to v6.6.43-569-g7d0be44d622f)
+
+## Metric Regressions (compared to v6.6.43-569-g7d0be44d622f)
+
+## Test Fixes (compared to v6.6.43-569-g7d0be44d622f)
+
+## Metric Fixes (compared to v6.6.43-569-g7d0be44d622f)
+
+## Test result summary
+total: 238058, pass: 205175, fail: 4074, skip: 28347, xfail: 462
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 127 total, 127 passed, 0 failed
+* arm64: 36 total, 36 passed, 0 failed
+* i386: 27 total, 27 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 34 total, 34 passed, 0 failed
+* riscv: 17 total, 17 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 31 total, 31 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
