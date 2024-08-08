@@ -1,136 +1,307 @@
-Return-Path: <linux-kernel+bounces-280132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F290E94C62D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:07:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F1394C62E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD7F28692A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62BEF283DE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F17915920B;
-	Thu,  8 Aug 2024 21:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DB8156C40;
+	Thu,  8 Aug 2024 21:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="O9aoaGt7"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cYN1vycW"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997FA7E1;
-	Thu,  8 Aug 2024 21:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873D11487FE
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723151270; cv=none; b=FkvzgKx8Mm5w6v7ZSFPfqpZYxayBT5vK06pvZJSagINGevF/X2IHiNkv5YVWeoCbmNuFwwWmin22Rb/+PBB+oNXBOdiLtDiQ76zVm0vujk/Kf/YllcASTT2Klwu3LFhbI19ECLCqX29U80xWaL2t/ku4ZeNETck/+N65xufdKDU=
+	t=1723151519; cv=none; b=YrS13+R7H82/qkE4CnuHyD/c8GUw7WLOURaWhRGdnpwq+xJ25HI+1jPU8ZvPgEUwkQ/ChKWEPC9vcl74nSFcHtkdM0guZHoXgwqG5OtSNP86tgdXcXw4w95//9HFhhGkbavja1pnaHKIT256CPNRflC8+8SzScR9AN/K8nxFzYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723151270; c=relaxed/simple;
-	bh=xqLHqzCU8aBwJ4Ej4AWOUupcbrGKDQvGQ1ZmHf24Hi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gyU0GUcZ5wZieaZwA7RVxSC9jsMAjpBAuVegZ2w0Av04czKd8xZMXsaeM6lkwDiqjHE7CV0IzSV8HtQCDbPBX5ZR+MvWbGFpbLYYlSQLt4tr2KBmYaZfHaLZ7GQqt9ZnHczh+tC4uHDRNXN0EhbHjC8mTUJslg4pLMYO8y9EAvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=O9aoaGt7; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VKo4u86uyyjeRTMM8OxzJuJakbhFM7FDGSWLAQkAuzw=; b=O9aoaGt7bBjOloxTMezHLsO49Q
-	qNPk2NUOUmbPhmnLfseSuylMGmgiIFwKkT5KBni+UV46bQeCkWqZ56PagNl7jtQ2SejklUFQczOGc
-	1PbJyVK8vc+eodC03/6gjqj2LJZz3Dk+SI3KeKpxJ7PMIFYGGlBbCv7MF9IzAtFbuz5xFZfV2rJfp
-	tGcxgHKNYYea1NKy3ZzVveOypiAL6uvEAtwlqmYfUY1hbOUUyM0yk4HG/Hi0uEm78HkiIHDjAab8P
-	J1NJjZsJpY6GHbdtAi/JVIS+2dRfDPCIBDmn5IXElriLG11xCbAXoKfX1jCufF8TXiR3/c1fE2YEY
-	Xk9t9YqQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53462)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1scAM2-0002YX-2x;
-	Thu, 08 Aug 2024 22:07:26 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1scAM4-0005UN-G8; Thu, 08 Aug 2024 22:07:28 +0100
-Date: Thu, 8 Aug 2024 22:07:28 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Ronnie.Kunin@microchip.com
-Cc: Raju.Lakkaraju@microchip.com, netdev@vger.kernel.org,
-	davem@davemloft.net, kuba@kernel.org, andrew@lunn.ch,
-	horms@kernel.org, hkallweit1@gmail.com, richardcochran@gmail.com,
-	rdunlap@infradead.org, Bryan.Whitehead@microchip.com,
-	edumazet@google.com, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next V3 3/4] net: lan743x: Migrate phylib to phylink
-Message-ID: <ZrUzkF8jj50ZgGhk@shell.armlinux.org.uk>
-References: <20240730140619.80650-1-Raju.Lakkaraju@microchip.com>
- <20240730140619.80650-4-Raju.Lakkaraju@microchip.com>
- <Zqj/Mdoy5rhD2YXx@shell.armlinux.org.uk>
- <ZqtrcRfRVBR6H9Ri@HYD-DK-UNGSW21.microchip.com>
- <Zqu3aHJzAnb3KDvz@shell.armlinux.org.uk>
- <PH8PR11MB79655D0005E227742CBA1A8A95B22@PH8PR11MB7965.namprd11.prod.outlook.com>
- <Zqyau+JjwQdzBNaI@shell.armlinux.org.uk>
- <PH8PR11MB796562D6C8964A6B6A1CC7E595B92@PH8PR11MB7965.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1723151519; c=relaxed/simple;
+	bh=k6iJ5yBjYG1uDxzIHGXkucPmnu4WitUh8rq829qarNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XdN1l9xsun7pzdr204+xSY9Z3vzYyfhwOp0mm/COMeJiPYxIJywbvy7seAgyVLd+cLcX0+qclQjwTDnI/WK/D1CHWLCVM8EurzKTcw/pY/C5Bxyi4DikeVUz56JiUNg8fcr0AZAWP0t4SuL/JDyMz1cdBpFtm+iNg0wHXwtVhx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cYN1vycW; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso2515051e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:11:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723151515; x=1723756315; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8evJkR69sPV/KRCSOPqEBKgOd9wCQjS5v2YcO5rlL1g=;
+        b=cYN1vycWDwmlgWAZpwSuMzL6a8b2nh1BNiZYgMzo+NG75TUETA0c1gG+En3NlxLJcI
+         3T7DmV2AxC3pRf61ZAF0xuwG1yg4T7CK13nSxZpkMY/4p2k0tv8deSLFoNHqMD2BPrwq
+         XxjGw8QCNkusDvq++vWdHkvK7CQa3Ve6YA+EvqHlU8W4AI4HLsE5pf1F9LkKmARdniVg
+         g/bNghYiVYJAIrtBv0NTUQq21ecCrufcvjJxiqJhNhvfuahcJXorO8RUHngxjwNuV8uK
+         z4sy/n0CAb9OJrpYtiuDWTAvcSCp6qkiEx76/+8E6T2VKUuX8cqmXqD9Klnsg8DghcLd
+         biZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723151515; x=1723756315;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8evJkR69sPV/KRCSOPqEBKgOd9wCQjS5v2YcO5rlL1g=;
+        b=Zuo8W2nGJPE2Lx0eHduLSusLEuoJdV/SriiA0NavkzvcI66Y1lUzx0Id6zQPwMBFRQ
+         P4Na2ZTQhrkeRmnGDU4XJ+QlehHbleC6AyU5F9oITH/kCoR7JlG0sud0DfUsJYLArBtM
+         ZjutM4ElH/x1mO7GXHPfZYX6KRp/c2nhnD6KwhtZTC7FP7cZbZanlSU3wbrJJOJDMoOm
+         v8m2JoHAw31qAdm66nUxeyBZC8CQC9l/gA3rkElQX7+Upci+Zy8gk0w+SxcQFGT/z3GI
+         etcwRXsJ+z5IqDWNWFjq+Q/xArTYiFmfLMypv5DSBdVdBdXxaB8Z1FAoLi6XlFf+qLHY
+         JgOg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2RzJHDVVUsOgB4tW1/xr+WqnZaMM8h0a3vP3+hirz2D+8Tb5J9d9xrjfVqXu7qOSRs18bUN4jWpA/2Tk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR8FQHioZxATIs9Urv04GxjFh3busPvRu/j2UiGbPk+TXQ5O2w
+	vWx89PoNwBbp7E/3w9+Y+U4O9WusE1rI2kMK40H830ZbzNmBgHaRj9Jc+PpHUd3s+i83/QEIQzz
+	LIAqaZYb3tmuCWxcmGxtqVL3S0dw=
+X-Google-Smtp-Source: AGHT+IGC7XvQ9WqG1TKyA8QJMF9wu8iQyRy1rsF4xmNcCm6iwESG4HbLGhx0u1eJxtkBZFWajniUuy9uvkXNPzKeNSI=
+X-Received: by 2002:a05:6512:b9b:b0:52c:e05f:9052 with SMTP id
+ 2adb3069b0e04-530e5876975mr2886465e87.47.1723151515133; Thu, 08 Aug 2024
+ 14:11:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH8PR11MB796562D6C8964A6B6A1CC7E595B92@PH8PR11MB7965.namprd11.prod.outlook.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240807182325.2585582-1-surenb@google.com> <CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com>
+ <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com>
+In-Reply-To: <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 8 Aug 2024 14:11:37 -0700
+Message-ID: <CAEf4BzYqKAaGE6GEcMs9MTcrV4cA+i0M5pniqFTy1LQ+g0Yxkw@mail.gmail.com>
+Subject: Re: [RFC 1/1] mm: introduce mmap_lock_speculation_{start|end}
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, peterz@infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Jann Horn <jannh@google.com>, Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2024 at 08:23:38PM +0000, Ronnie.Kunin@microchip.com wrote:
-> We looked into an alternate way to migrate our lan743x driver from phylib to phylink continuing to support our existing hardware out in the field, without using the phylib's fixed-phy approach that you opposed to, but without modifying the phylib framework either. 
-> While investigating how to implement it we came across this which Raju borrowed ideas from: https://lore.kernel.org/linux-arm-kernel/YtGPO5SkMZfN8b%2Fs@shell.armlinux.org.uk/ . He is in the process of testing/cleaning it up and expects to submit it early next week.
+On Thu, Aug 8, 2024 at 2:02=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Thu, Aug 8, 2024 at 8:19=E2=80=AFPM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Wed, Aug 7, 2024 at 11:23=E2=80=AFAM Suren Baghdasaryan <surenb@goog=
+le.com> wrote:
+> > >
+> > > Add helper functions to speculatively perform operations without
+> > > read-locking mmap_lock, expecting that mmap_lock will not be
+> > > write-locked and mm is not modified from under us.
+> > >
+> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > > ---
+> >
+> > This change makes sense and makes mm's seq a bit more useful and
+> > meaningful. I've also tested it locally with uprobe stress-test, and
+> > it seems to work great, I haven't run into any problems with a
+> > multi-hour stress test run so far. Thanks!
+>
+> Thanks for testing and feel free to include this patch into your set.
 
-That series died a death because it wasn't acceptable to the swnode
-folk. In any case, that's clearly an over-complex solution for what is
-a simple problem here.
+Will do!
 
-The simplest solution would be for phylink to provide a new function,
-e.g.
+>
+> I've been thinking about this some more and there is a very unlikely
+> corner case if between mmap_lock_speculation_start() and
+> mmap_lock_speculation_end() mmap_lock is write-locked/unlocked so many
+> times that mm->mm_lock_seq (int) overflows and just happen to reach
+> the same value as we recorded in mmap_lock_speculation_start(). This
+> would generate a false positive, which would show up as if the
+> mmap_lock was never touched. Such overflows are possible for vm_lock
+> as well (see: https://elixir.bootlin.com/linux/v6.10.3/source/include/lin=
+ux/mm_types.h#L688)
+> but they are not critical because a false result would simply lead to
+> a retry under mmap_lock. However for your case this would be a
+> critical issue. This is an extremely low probability scenario but
+> should we still try to handle it?
+>
 
-int phylink_set_fixed_link(struct phylink *pl,
-			   const struct phylink_state *state)
-{
-	const struct phy_setting *s;
-	unsigned long *adv;
+No, I think it's fine. Similar problems could happen with refcount_t,
+for instance (it has a logic to have a sticky "has overflown" state,
+which I believe relies on the fact that we'll never be able to
+increment refcount 2bln+ times in between some resetting logic).
+Anyways, I think it's utterly unrealistic and should be considered
+impossible.
 
-	if (pl->cfg_link_an_mode != MLO_AN_PHY || !state ||
-	    !test_bit(PHYLINK_DISABLE_STOPPED, &pl->phylink_disable_state))
-		return -EINVAL;
 
-	s = phy_lookup_setting(state->speed, state->duplex,
-			       pl->supported, true);
-	if (!s)
-		return -EINVAL;
 
-	adv = pl->link_config.advertising;
-	linkmode_zero(adv);
-	linkmode_set_bit(s->bit, adv);
-	linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, adv);
-
-	pl->link_config.speed = state->speed;
-	pl->link_config.duplex = state->duplex;
-	pl->link_config.link = 1;
-	pl->link_config.an_complete = 1;
-
-	pl->cfg_link_an_mode = MLO_AN_FIXED;
-	pl->cur_link_an_mode = pl->cfg_link_an_mode;
-
-	return 0;
-}
-
-You can then call this _instead_ of attaching a PHY to switch phylink
-into fixed-link mode with the specified speed and duplex (assuming
-they are supported by the MAC.)
-
-Isn't this going to be simpler than trying to use swnodes that need
-to be setup before phylink_create() gets called?
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> I'm CC'ing several mm folks and Jann Horn to chime in.
+>
+> >
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> >
+> > > Discussion [1] follow-up. If proves to be useful can be included in t=
+hat
+> > > patchset. Based on mm-unstable.
+> > >
+> > > [1] https://lore.kernel.org/all/20240730134605.GO33588@noisy.programm=
+ing.kicks-ass.net/
+> > >
+> > >  include/linux/mm_types.h  |  3 +++
+> > >  include/linux/mmap_lock.h | 53 +++++++++++++++++++++++++++++++------=
+--
+> > >  kernel/fork.c             |  3 ---
+> > >  3 files changed, 46 insertions(+), 13 deletions(-)
+> > >
+> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > > index 003619fab20e..a426e6ced604 100644
+> > > --- a/include/linux/mm_types.h
+> > > +++ b/include/linux/mm_types.h
+> > > @@ -887,6 +887,9 @@ struct mm_struct {
+> > >                  * Roughly speaking, incrementing the sequence number=
+ is
+> > >                  * equivalent to releasing locks on VMAs; reading the=
+ sequence
+> > >                  * number can be part of taking a read lock on a VMA.
+> > > +                * Incremented every time mmap_lock is write-locked/u=
+nlocked.
+> > > +                * Initialized to 0, therefore odd values indicate mm=
+ap_lock
+> > > +                * is write-locked and even values that it's released=
+.
+> > >                  *
+> > >                  * Can be modified under write mmap_lock using RELEAS=
+E
+> > >                  * semantics.
+> > > diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+> > > index de9dc20b01ba..5410ce741d75 100644
+> > > --- a/include/linux/mmap_lock.h
+> > > +++ b/include/linux/mmap_lock.h
+> > > @@ -71,15 +71,12 @@ static inline void mmap_assert_write_locked(const=
+ struct mm_struct *mm)
+> > >  }
+> > >
+> > >  #ifdef CONFIG_PER_VMA_LOCK
+> > > -/*
+> > > - * Drop all currently-held per-VMA locks.
+> > > - * This is called from the mmap_lock implementation directly before =
+releasing
+> > > - * a write-locked mmap_lock (or downgrading it to read-locked).
+> > > - * This should normally NOT be called manually from other places.
+> > > - * If you want to call this manually anyway, keep in mind that this =
+will release
+> > > - * *all* VMA write locks, including ones from further up the stack.
+> > > - */
+> > > -static inline void vma_end_write_all(struct mm_struct *mm)
+> > > +static inline void init_mm_lock_seq(struct mm_struct *mm)
+> > > +{
+> > > +       mm->mm_lock_seq =3D 0;
+> > > +}
+> > > +
+> > > +static inline void inc_mm_lock_seq(struct mm_struct *mm)
+> > >  {
+> > >         mmap_assert_write_locked(mm);
+> > >         /*
+> > > @@ -91,19 +88,52 @@ static inline void vma_end_write_all(struct mm_st=
+ruct *mm)
+> > >          */
+> > >         smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1);
+> > >  }
+> > > +
+> > > +static inline bool mmap_lock_speculation_start(struct mm_struct *mm,=
+ int *seq)
+> > > +{
+> > > +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
+> > > +       *seq =3D smp_load_acquire(&mm->mm_lock_seq);
+> > > +       /* Allow speculation if mmap_lock is not write-locked */
+> > > +       return (*seq & 1) =3D=3D 0;
+> > > +}
+> > > +
+> > > +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, i=
+nt seq)
+> > > +{
+> > > +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
+> > > +       return seq =3D=3D smp_load_acquire(&mm->mm_lock_seq);
+> > > +}
+> > > +
+> > >  #else
+> > > -static inline void vma_end_write_all(struct mm_struct *mm) {}
+> > > +static inline void init_mm_lock_seq(struct mm_struct *mm) {}
+> > > +static inline void inc_mm_lock_seq(struct mm_struct *mm) {}
+> > > +static inline bool mmap_lock_speculation_start(struct mm_struct *mm,=
+ int *seq) { return false; }
+> > > +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, i=
+nt seq) { return false; }
+> > >  #endif
+> > >
+> > > +/*
+> > > + * Drop all currently-held per-VMA locks.
+> > > + * This is called from the mmap_lock implementation directly before =
+releasing
+> > > + * a write-locked mmap_lock (or downgrading it to read-locked).
+> > > + * This should normally NOT be called manually from other places.
+> > > + * If you want to call this manually anyway, keep in mind that this =
+will release
+> > > + * *all* VMA write locks, including ones from further up the stack.
+> > > + */
+> > > +static inline void vma_end_write_all(struct mm_struct *mm)
+> > > +{
+> > > +       inc_mm_lock_seq(mm);
+> > > +}
+> > > +
+> > >  static inline void mmap_init_lock(struct mm_struct *mm)
+> > >  {
+> > >         init_rwsem(&mm->mmap_lock);
+> > > +       init_mm_lock_seq(mm);
+> > >  }
+> > >
+> > >  static inline void mmap_write_lock(struct mm_struct *mm)
+> > >  {
+> > >         __mmap_lock_trace_start_locking(mm, true);
+> > >         down_write(&mm->mmap_lock);
+> > > +       inc_mm_lock_seq(mm);
+> > >         __mmap_lock_trace_acquire_returned(mm, true, true);
+> > >  }
+> > >
+> > > @@ -111,6 +141,7 @@ static inline void mmap_write_lock_nested(struct =
+mm_struct *mm, int subclass)
+> > >  {
+> > >         __mmap_lock_trace_start_locking(mm, true);
+> > >         down_write_nested(&mm->mmap_lock, subclass);
+> > > +       inc_mm_lock_seq(mm);
+> > >         __mmap_lock_trace_acquire_returned(mm, true, true);
+> > >  }
+> > >
+> > > @@ -120,6 +151,8 @@ static inline int mmap_write_lock_killable(struct=
+ mm_struct *mm)
+> > >
+> > >         __mmap_lock_trace_start_locking(mm, true);
+> > >         ret =3D down_write_killable(&mm->mmap_lock);
+> > > +       if (!ret)
+> > > +               inc_mm_lock_seq(mm);
+> > >         __mmap_lock_trace_acquire_returned(mm, true, ret =3D=3D 0);
+> > >         return ret;
+> > >  }
+> > > diff --git a/kernel/fork.c b/kernel/fork.c
+> > > index 3d590e51ce84..73e37af8a24d 100644
+> > > --- a/kernel/fork.c
+> > > +++ b/kernel/fork.c
+> > > @@ -1259,9 +1259,6 @@ static struct mm_struct *mm_init(struct mm_stru=
+ct *mm, struct task_struct *p,
+> > >         seqcount_init(&mm->write_protect_seq);
+> > >         mmap_init_lock(mm);
+> > >         INIT_LIST_HEAD(&mm->mmlist);
+> > > -#ifdef CONFIG_PER_VMA_LOCK
+> > > -       mm->mm_lock_seq =3D 0;
+> > > -#endif
+> > >         mm_pgtables_bytes_init(mm);
+> > >         mm->map_count =3D 0;
+> > >         mm->locked_vm =3D 0;
+> > >
+> > > base-commit: 98808d08fc0f78ee638e0c0a88020fbbaf581ec6
+> > > --
+> > > 2.46.0.rc2.264.g509ed76dc8-goog
+> > >
 
