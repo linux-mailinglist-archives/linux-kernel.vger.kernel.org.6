@@ -1,116 +1,118 @@
-Return-Path: <linux-kernel+bounces-279921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11BD694C374
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:16:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F0794C37A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB9301F25AB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7465A1C2221E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC6C19148D;
-	Thu,  8 Aug 2024 17:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C2D189B8D;
+	Thu,  8 Aug 2024 17:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="BkRSzsC3"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLECvuLD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E57137776;
-	Thu,  8 Aug 2024 17:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C16190489;
+	Thu,  8 Aug 2024 17:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723137398; cv=none; b=GLt3vLhzgoN104PaRjgQI4YwMdLd0btITf7iyu4HJIIn4VpdiubUdT0WvmgCV17ZQTFdccNyQMR4zdqF8B7GXnn8NSSux6lTlZzKTUbJs7U1rSSHzcZFJ8i+blqffhTMMAj5cR+2P4DMpj9vYvyYeM/UIkDBwnu4ScXH7Vc0wvk=
+	t=1723137452; cv=none; b=TpP0OZlUA6nOMBtPwcxJ8quyP6KWxPCnlq/kJsrW09M03FuTlNY2S/c4XUkZjzJCpyGi6MLuus9MVESmQUNNP2U7daplENcs+t31sz0YZx3CCLXyFNFqL6PcrWWsCXYmDLLOzVVDzxQCwnZVWdQxDtZMLuCOfKmJk48PqpSmi2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723137398; c=relaxed/simple;
-	bh=YCEks2jSYE+Y+beWjU9A08zC4ZKnR2oVQuBWf9QRUP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nF/gXAXMh9Z4h8uCxwPpRG31G3QbxMGP2qLx3re7KMA/F+ZgcKtjjU31i4Bv/phh5dpc5XZQwZuA/H63Gw1vMELgoCnRt/NDiRQ/NWiPF+MMbSDNTslcBY4IdXeB2ZaVhe9k4FrahYjYgQ995nx5CU9/j/rs2mVbM98kYZ6R/yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=BkRSzsC3; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Wftxc1BMyzlgVnF;
-	Thu,  8 Aug 2024 17:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1723137391; x=1725729392; bh=5z/+6d3TBHzOihEc5ritmsUc
-	TMc3HUf7Lt4I6AXLv3s=; b=BkRSzsC3cp/phSg9k67c1unrgu9Eq93H/A1dtoHD
-	xMOXI8XXRcSqG6pXMjPty3huhvIu1uJ5HQSLK7pjPh3bN+LO7APeT9pCo8Eaoegf
-	MVI4SfIIc52Zl+LVbyyK1vV2X23Av5Q1GyqvNb9hMS5aRhR88hOy4lBCObDt55Q2
-	l4Xrpwat0+14A4H0FODlgVrYSuZ7YXTgASMJCzUSxGgHtm6Sh0FngCMc0TehXsta
-	Yk5K3E5u8D6MSQtLv/N1+niDv0hyMkIEGHkN203sfPEHMvbdJ3MH1+oW+5TPeTCf
-	cNbbsdA7qhKqQkhaOJPJJJSBik9rtp7DpcYXTv4ICkl/Mg==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id WfVJzHCZUj_l; Thu,  8 Aug 2024 17:16:31 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WftxR2LMLzlgTGW;
-	Thu,  8 Aug 2024 17:16:27 +0000 (UTC)
-Message-ID: <1ab182e1-775e-4f44-85f2-6262530c99b9@acm.org>
-Date: Thu, 8 Aug 2024 10:16:25 -0700
+	s=arc-20240116; t=1723137452; c=relaxed/simple;
+	bh=+A2ABjowY1uwCXufdD4VYUuq2E3xVfwjhSzZriEGmTk=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=KPszIQYxUuv5jTlMKwyFKtOrNUe4b0SSJT0bxVmmCMIR0Fu5ufiC1l3ZQkWDXDKAH9+HwjM5VAjZ7aU26wb662UcP7or6PaQMuUypD/pAGo3NOcfNXRWZkC0cHtdJzsj1CBA/n9nIz1E9IyGXNSDKUIWTEFYEG4duI7icS+ce9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLECvuLD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 724B8C32782;
+	Thu,  8 Aug 2024 17:17:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723137450;
+	bh=+A2ABjowY1uwCXufdD4VYUuq2E3xVfwjhSzZriEGmTk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=iLECvuLD2ett8jb54Hpj+bA3hMmCpX512SPRuoJwNpMU0EwfjdgHxc8I9LkcYJnMa
+	 /16hh6Dq5TkhW4DColyYB/N3DUhQu1WfY9kHyLyzGuclkyg3b2VX77D0KEUB/Nf6ZT
+	 xf/8+S71gI9NiaKop7J4Z1FGtB0qINt6tss+bbs6GmUVpMHuU4IyS+EQMG7T84yGoi
+	 6Py0QyweroVTrYqQFYfk6EzHwSnFrfE61//DL+PjvxykO9pUfHL4bgdJ5cK1Z5V+Xs
+	 xzOU03y5M9HM3z9qWR+D5VAdUD9jyA297KR+Gh0yE576P4l07ynZVwoGtEkXvD3+lr
+	 US8cOqlhms30w==
+Date: Thu, 08 Aug 2024 11:17:29 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: Add missing check for alloc_ordered_workqueue
-To: Ma Ke <make24@iscas.ac.cn>, alim.akhtar@samsung.com, avri.altman@wdc.com,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- peter.wang@mediatek.com, manivannan.sadhasivam@linaro.org,
- ahalaney@redhat.com, beanhuo@micron.com, subhashj@codeaurora.org,
- quic_asutoshd@quicinc.com, vviswana@codeaurora.org, quic_cang@quicinc.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240808055400.2784028-1-make24@iscas.ac.cn>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240808055400.2784028-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-rockchip@lists.infradead.org, 
+ Elaine Zhang <zhangqing@rock-chips.com>, linux-kernel@vger.kernel.org, 
+ kernel@collabora.com, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20240808162258.79271-3-detlev.casanova@collabora.com>
+References: <20240808162258.79271-1-detlev.casanova@collabora.com>
+ <20240808162258.79271-3-detlev.casanova@collabora.com>
+Message-Id: <172313744929.1529145.2568982422354325643.robh@kernel.org>
+Subject: Re: [PATCH v3 2/3] dt-bindings: clock: Add rk3576 clock
+ definitions and documentation
 
-On 8/7/24 10:54 PM, Ma Ke wrote:
-> As it may return NULL pointer and cause NULL pointer dereference. Add check
-> for the return value of alloc_ordered_workqueue.
+
+On Thu, 08 Aug 2024 12:20:57 -0400, Detlev Casanova wrote:
+> Add clock ID defines for rk3576.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 10e5e37581fc ("scsi: ufs: Add clock ungating to a separate workqueue")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> Compared to the downstream bindings written by Elaine, this uses
+> continous gapless clock IDs starting at 1. Thus all numbers are
+> different between downstream and upstream, but names are kept
+> exactly the same.
+> 
+> Also add documentation for the rk3576 CRU core.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 > ---
->   drivers/ufs/core/ufshcd.c | 2 ++
->   1 file changed, 2 insertions(+)
+>  .../bindings/clock/rockchip,rk3576-cru.yaml   |  83 +++
+>  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 592 ++++++++++++++++++
+>  2 files changed, 675 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
 > 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 5e3c67e96956..41842f2cd454 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -2139,6 +2139,8 @@ static void ufshcd_init_clk_gating(struct ufs_hba *hba)
->   		 hba->host->host_no);
->   	hba->clk_gating.clk_gating_workq = alloc_ordered_workqueue(wq_name,
->   					WQ_MEM_RECLAIM | WQ_HIGHPRI);
-> +	if (!hba->clk_gating.clk_gating_workq)
-> +		return;
->   
->   	ufshcd_init_clk_gating_sysfs(hba);
 
-This patch doesn't solve anything since hba->clk_gating.clk_gating_workq
-is not used in ufshcd_init_clk_gating() after that workqueue has been
-created. Additionally, this patch doesn't prevent that the UFS driver
-will attempt to queue work on hba->clk_gating.clk_gating_workq if
-allocation of that workqueue fails. If it would be possible to vote on
-Linux kernel patches, my vote would be -2.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Bart.
+yamllint warnings/errors:
 
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.example.dts:24.19-20 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240808162258.79271-3-detlev.casanova@collabora.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
