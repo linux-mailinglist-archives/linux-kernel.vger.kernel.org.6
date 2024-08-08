@@ -1,174 +1,181 @@
-Return-Path: <linux-kernel+bounces-279131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E4394B963
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:55:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF4794B965
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D09ABB21C0C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:55:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAAD51C20971
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FA4189B9F;
-	Thu,  8 Aug 2024 08:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C39189BA7;
+	Thu,  8 Aug 2024 08:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="afIirFEc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Z/mk2TOG"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BE414658D;
-	Thu,  8 Aug 2024 08:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C39114658D;
+	Thu,  8 Aug 2024 08:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723107312; cv=none; b=omUrUSlW14NI2yZG+oKYW/LuOUglHRmdYnnbwUtwZVWgxzHYvd0tfSLUi3gAzmqEIa3kTaq3zNtQ9dxaKoIC8PGl0/ZXNkKZ+xL4sDT/g3myGvg+r91g0Rm/kOAeTm333h87YH+Fjn8ZK7gmi0AvCxKBRu2uAEP/rsa5eBFqaS0=
+	t=1723107337; cv=none; b=fk52LsOtPXEz6RBFogg478k6qyq+Ff1YQgGIknfL9ESGGCiCnlvEya+4OXxEYZmFDMAdnr0vgIVGyGOBkr9tPlStRvVqGZvLxZoPWXEOCWpqqy4TuQlCdxTWfeUKK1QQ0XVaUqT453lMAgmIfprIuv7tXCOigjolhVG2xyCt8bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723107312; c=relaxed/simple;
-	bh=g6FtHJgHkAm3PxT6vF/il9Y2fSwq6sL3vWGAaharZLA=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eYJxCc9WcylmEiT+7j6F5LoKEnU6B3ydArDwupssqTSVwKGqOhdxjgUpT0mUklPGMRQVJ9FiHzz8t1w2eXdU7Pdivy5bYP5CrZ1j1XUrfVsGRB0kCVPEySveGL0QVt73S7B9gW8UYNlWL2mN98Y2aHZmM+PS4LfbsrUnWstkFmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=afIirFEc; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723107311; x=1754643311;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=g6FtHJgHkAm3PxT6vF/il9Y2fSwq6sL3vWGAaharZLA=;
-  b=afIirFEctYFC4crLdb/5iAT8KFuNN23Qao4oI86Z4vkMtFZpLjkaWfD6
-   6x2vo0cemwiH9JGdyb0nzYMzor/Yo/ufbqdE9rzymm/ttVge6ya+3PTW3
-   YzTrZTpmZgaAQk5Dt+72KsVWQvZAw9D4mcrG67e4Trlhm9CryNnf67Im6
-   2cZV6x4+EZzp1RRHzmw/meawPN2Zh72k//Sa5ieLsJiOv11y0VGyAIrwh
-   Z+HncHQnQaqO6l/ksXbxqrcXXD0DzFousLtTjqy22wgdlFnNehaI55kqo
-   2I9iEQt7m2aPBnvAsoFwT7i1H4PgEBB+TQJpbandLrnZ2yUiQjEsg+FUL
-   A==;
-X-CSE-ConnectionGUID: OGLC+Bh0TJCjAxSih/IPMw==
-X-CSE-MsgGUID: nHmeRqrjRC2/WZ2SqumcDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21078460"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="21078460"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 01:55:10 -0700
-X-CSE-ConnectionGUID: uTQBL5jHSVq5H/8JAJO4aA==
-X-CSE-MsgGUID: 8Q8gZlhLTkyKA0PL/xJMmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="88058615"
-Received: from ldmartin-desk2.corp.intel.com (HELO localhost) ([10.125.108.108])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 01:55:06 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 8 Aug 2024 11:55:02 +0300 (EEST)
-To: Stewart Hildebrand <stewart.hildebrand@amd.com>
-cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, 
-    "H. Peter Anvin" <hpa@zytor.com>, Philipp Stanner <pstanner@redhat.com>, 
-    x86@kernel.org, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/8] x86/PCI: Improve code readability
-In-Reply-To: <20240807151723.613742-2-stewart.hildebrand@amd.com>
-Message-ID: <971d8fda-5317-7481-d435-35bf1faae115@linux.intel.com>
-References: <20240807151723.613742-1-stewart.hildebrand@amd.com> <20240807151723.613742-2-stewart.hildebrand@amd.com>
+	s=arc-20240116; t=1723107337; c=relaxed/simple;
+	bh=dipW0hAO1cmggCsC6AnWetuslUxQqg2fKB9dwryeTCU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V29VGTtQbIpwJSnzXbdFVo05TbiZmKzTuIFdF8/gycQJuILec0zZGFIjZsRIjJXya2mCmJELP/FDyTiWsQc4ZJeSAG4yd+nOsLq0TNlC2DWE0tIhZfHyso7FJGxYaq1ZV2ccdQlBj2RrnGGOmrw14oF0F6t89Kwu3vZBiyol8k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Z/mk2TOG; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723107333; x=1723366533;
+	bh=wkJEAdDhl6yHFGILgjqVF0fRuiGpIv73wXmrWkNdHzk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Z/mk2TOGozrUpa2k7RU9Ww0mf3nQwyIhjUBXFiAlVijcafxN08Q1SdYYtCQOMNVyP
+	 hQwmBs7oj7RuLG/OmEiVmeL0ZAH/Yq6dlFI62Q9Y6L9OHIBh5JPCEn3FkehxUEMgrn
+	 sL/JB45+MZ2pV1BUr7eH6I5iH9QKMEtUbDXEOWKWp/lFGjtexHYvCnqHjF0Ad2PGSq
+	 PCKeWjiGOcjE2SnLTODo0eUCiU/TSrNoYbTOi3W3oy81DupnTIppfRAmrsPRlBGwDV
+	 6Ou+7NGvZJr8wZGhZQV9Uyif02EWalQPrzxR6TBPKHtHhYh9Pw7QSIfu+CQT9BeqbV
+	 5T9nHv3BlLV8Q==
+Date: Thu, 08 Aug 2024 08:55:29 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 04/28] rust: alloc: implement `Allocator` for `Kmalloc`
+Message-ID: <d005fe7e-74a8-4609-92e0-5dd3743ca060@proton.me>
+In-Reply-To: <ZrP90NR1lOpDrQ0X@pollux>
+References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-5-dakr@kernel.org> <fe982cb6-4910-4ba2-ae4d-892514c9e7f7@proton.me> <ZrJxkwF2Y59xln1e@pollux.localdomain> <8ab83e4b-9c72-4a5d-974a-7f123753e7fe@proton.me> <ZrNIaAcGkGU0d8I3@pollux> <9e22d4ab-eff2-4c69-8a2f-f55a8eaeb892@proton.me> <ZrP90NR1lOpDrQ0X@pollux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: f8f2ac30aed48680ece9b5b1e3e92bc7a6c94097
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1864664292-1723107302=:1044"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-1864664292-1723107302=:1044
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Wed, 7 Aug 2024, Stewart Hildebrand wrote:
-
-> The indentation in pcibios_allocate_dev_resources() is unusually deep.
-> Improve that by moving some of its code to a new function,
-> alloc_resource().
+On 08.08.24 01:05, Danilo Krummrich wrote:
+> On Wed, Aug 07, 2024 at 08:15:41PM +0000, Benno Lossin wrote:
+>>> So, that's not permitted. `free` can't be called with a dangling pointe=
+r. The
+>>> kernel free functions (*1) can't handle it, and I can't detect it, sinc=
+e a
+>>> dangling pointer does not have a descrete value.
+>>
+>> That is true, but only if we do not have access to the old layout of the
+>> allocation. If we add `old_layout` as a parameter, then we can handle
+>> dangling pointers.
 >=20
-> Take the opportunity to remove redundant information from dev_dbg().
->=20
-> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
-> ---
-> v2->v3:
-> * new subject (was: "x86/PCI: Move some logic to new function")
-> * reword commit message (thanks Philipp)
->=20
-> v1->v2:
-> * new patch
-> ---
->  arch/x86/pci/i386.c | 38 +++++++++++++++++++++-----------------
->  1 file changed, 21 insertions(+), 17 deletions(-)
->=20
-> diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
-> index f2f4a5d50b27..3abd55902dbc 100644
-> --- a/arch/x86/pci/i386.c
-> +++ b/arch/x86/pci/i386.c
-> @@ -246,6 +246,25 @@ struct pci_check_idx_range {
->  =09int end;
->  };
-> =20
-> +static void alloc_resource(struct pci_dev *dev, int idx, int pass)
-> +{
-> +=09struct resource *r =3D &dev->resource[idx];
-> +
-> +=09dev_dbg(&dev->dev, "BAR %d: reserving %pr (p=3D%d)\n", idx, r, pass);
-> +
-> +=09if (pci_claim_resource(dev, idx) < 0) {
-> +=09=09if (r->flags & IORESOURCE_PCI_FIXED) {
-> +=09=09=09dev_info(&dev->dev, "BAR %d %pR is immovable\n",
-> +=09=09=09=09 idx, r);
-> +=09=09} else {
-> +=09=09=09/* We'll assign a new address later */
-> +=09=09=09pcibios_save_fw_addr(dev, idx, r->start);
-> +=09=09=09r->end -=3D r->start;
-> +=09=09=09r->start =3D 0;
-> +=09=09}
-> +=09}
-> +}
-> +
->  static void pcibios_allocate_dev_resources(struct pci_dev *dev, int pass=
-)
->  {
->  =09int idx, disabled, i;
-> @@ -271,23 +290,8 @@ static void pcibios_allocate_dev_resources(struct pc=
-i_dev *dev, int pass)
->  =09=09=09=09disabled =3D !(command & PCI_COMMAND_IO);
->  =09=09=09else
->  =09=09=09=09disabled =3D !(command & PCI_COMMAND_MEMORY);
-> -=09=09=09if (pass =3D=3D disabled) {
-> -=09=09=09=09dev_dbg(&dev->dev,
-> -=09=09=09=09=09"BAR %d: reserving %pr (d=3D%d, p=3D%d)\n",
-> -=09=09=09=09=09idx, r, disabled, pass);
-> -=09=09=09=09if (pci_claim_resource(dev, idx) < 0) {
-> -=09=09=09=09=09if (r->flags & IORESOURCE_PCI_FIXED) {
-> -=09=09=09=09=09=09dev_info(&dev->dev, "BAR %d %pR is immovable\n",
-> -=09=09=09=09=09=09=09 idx, r);
-> -=09=09=09=09=09} else {
-> -=09=09=09=09=09=09/* We'll assign a new address later */
-> -=09=09=09=09=09=09pcibios_save_fw_addr(dev,
-> -=09=09=09=09=09=09=09=09idx, r->start);
-> -=09=09=09=09=09=09r->end -=3D r->start;
-> -=09=09=09=09=09=09r->start =3D 0;
-> -=09=09=09=09=09}
-> -=09=09=09=09}
-> -=09=09=09}
-> +=09=09=09if (pass =3D=3D disabled)
-> +=09=09=09=09alloc_resource(dev, idx, pass);
->  =09=09}
->  =09if (!pass) {
->  =09=09r =3D &dev->resource[PCI_ROM_RESOURCE];
->=20
+> Then we'd need `free` to be `fn free(ptr: NonNull<u8>, layout: Layout)` j=
+ust to
+> compare whether `ptr.as_ptr() =3D=3D layout.align() as _`. Same for `real=
+loc`, but
+> that's less weird.
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+I don't think that's a problem (though we would check against the size
+and not compare the address!). `Allocator` from stdlib also has the
+extra argument.
 
---=20
- i.
+> It's also not that we safe code with that. `Box`, `Vec`, any other user, =
+still
+> would have to create the `Layout` before they call `A::free`.
 
---8323328-1864664292-1723107302=:1044--
+But for `Box` it would just be `Layout::<T>::new()` and `Vec` needs
+`Layout::<T>::new().repeat(self.cap)`.
+
+Though for `repeat` we need the `alloc_layout_extra` feature, which is
+an argument against doing this.
+
+>>> Surely, we could also let the caller pass the old alignment, but this a=
+ll sounds
+>>> complicated for something that is very trivial for the caller to take c=
+are of,
+>>> i.e. just don't try to free something that was never actually allocated=
+.
+>>>
+>>> It can also lead to subtle bugs, e.g. what if someone calls `Box::from_=
+raw` for
+>>> a ZST with some other random pointer? Currently, that doesn't hurt us, =
+which for
+>>> robustness, seems to be a good thing.
+>>
+>> I think we should forbid that. To me it's just plain wrong to take a
+>> random integer literal and cast it to a ZST. IIRC it even is UB if that
+>> points to a previously allocated object that has been freed (but I don't
+>> remember where I read it...).
+>=20
+> I think my argument about robustness still holds even if we forbid it.
+>=20
+> The documentation says "For operations of size zero, every pointer is val=
+id,
+> including the null pointer." [1]
+
+How does this increase robustness? I am not allowed to call `free` with
+a random pointer, only pointers returned by that allocator. The same
+should also be true for `Box::from_raw`. That way the ZST dangling
+pointer stuff leaks into that API.
+
+> [1] https://doc.rust-lang.org/std/ptr/index.html
+>=20
+>>
+>> Also if we use the size of the old layout instead of comparing alignment
+>> with the address of the pointer, then we avoid this issue.
+>=20
+> That is just another problem when passing the old `Layout` (or maybe just=
+ the
+> old size as usize). Neither do we need the old size, nor do we honor it w=
+ith any
+> kernel allocator. This has the following implications:
+>=20
+> (1) We never see any error if the old size that is passed is garbage (unl=
+ess
+>     it's non-zero, when it should be zero and vice versa), which is bad.
+
+We could add debug support for that though?
+
+> (2) We'd need `free` to be `fn free(ptr: NonNull<u8>, size: usize)`, whic=
+h is
+>     confusing, because it implies that an actual free relies on this size=
+ for
+>     freeing the memory.
+
+I don't think that it is confusing to ask for the old layout.
+
+> If we want to avoid (1) and (2), we'd need to make it
+> `fn free(ptr: NonNull<u8>, zero: bool)` instead, but then also the caller=
+ can
+> just check this boolean and conditionally call `free`.
+
+Yeah having `free` with a `zero: bool` sounds like a bad idea.
+
+> I don't really see why it's better to let `free` do the `if !zero` check.
+
+You did not reply to my last argument:
+
+>> I think it's better to just let `Box` and `Vec` figure out if calling `f=
+ree` is
+>> the right thing to do. The code for that is simple and obvious, i.e. che=
+ck if
+>> `T` is a ZST.
+>
+> I don't think that it is as simple as you make it out to be. To me this
+> is functionality that we can move into one place and never have to think
+> about again.
+> Also if we at some point decide to add some sort of debugging allocator
+> (am I right in assuming that such a thing already exists for C?) then we
+> might want to tag on extra data in the allocation, in that case it would
+> be very useful if the allocator also saw zero-sized allocations, since
+> we should check all allocations.
+
+---
+Cheers,
+Benno
+
 
