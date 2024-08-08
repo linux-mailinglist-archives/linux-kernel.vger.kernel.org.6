@@ -1,162 +1,166 @@
-Return-Path: <linux-kernel+bounces-278717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C236294B400
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:14:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B43194B403
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B970A1C213FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:14:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC0981C21237
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E47184E;
-	Thu,  8 Aug 2024 00:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8D97E1;
+	Thu,  8 Aug 2024 00:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="b08Es367"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVOMm0MQ"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFA039B;
-	Thu,  8 Aug 2024 00:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6BF3D66;
+	Thu,  8 Aug 2024 00:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723076057; cv=none; b=AEz4iIEqqZQF6LsSa1SRVkSIRYQMugiIRkWjzWopSEuS6gdj9vgNqlHaWZ84GETRcj2msrfwOXI9PBw4BiGTaxue1WcuQ2Kc0mhI5Lzo3GEPUjR+Rj8pcxJR5AwzxYBcRtcdEtprW7LfOMOSfj4LUMAyF3raGUq4W/5Kd057V1A=
+	t=1723076073; cv=none; b=Qo0vYdD6a2GMVUKxPxEJGjU9tj5TAvuHmou36EvaO64gaZZA849GKtpv1KSF/07ubGyX8rfz+qeMSMO6DimJLd0gQ3e3EIYSnTFFrB6C29s0gFt9RAbXBobKYJFW7awa0eJ9ON7GuaLJKlHqabftN4DAF6Btj0zv64yoWDpd3oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723076057; c=relaxed/simple;
-	bh=rnk6NOm5/KnK6BxpfKd8TEgRBafhnCiGpVfQ3d/QHPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=duj4DYvWsulcw4C0oD8OxpZF78mGVPAqBlFi0fuirRYErXYLYab5td7M0ZjX1rG7wsQbzAHy10II60sOiLSpdzXpHpRCIjZAS5FaiCYfYbe2P9c8n+DnRUiMToKkKRLdTOBHtxg4QVgxn6kgfMXLxArugXZOeQOvIkhKzJ4a5xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=b08Es367; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1723076073; c=relaxed/simple;
+	bh=0wSU1bafZB97QK2b7Ea/j7tsbaen9+hz1Ts3shuE31w=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ggj940VjyqvK5mgovhe88rIZmDKXTjOLUZzwOvhR5qE3Q2mdTKdLN2QOh2XhT/IDByYPHpyLwvgMkIVUUEt1puVI7c2qCRGbyd0soaZ4YI4cOkP/epJC3EHu2YykZFq9D8XaNN3omuGtpz2SvzFHPC0rSZecwnilApZUhP3O5D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVOMm0MQ; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7d89bb07e7so47894966b.3;
+        Wed, 07 Aug 2024 17:14:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1723076056; x=1754612056;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rnk6NOm5/KnK6BxpfKd8TEgRBafhnCiGpVfQ3d/QHPs=;
-  b=b08Es367ayKGpfJBmbsQt752c9CsU1NGxj4dtSubTJ2XjniSWPn1d9na
-   ulFkCn5p7vxuqhBIcvtEe8NrMDq+ipGjrDX+UlcagGbjJR+ov+xYydtdT
-   dKnvbPQUiktSJD7yjtFkUekXYosc2axAJImqykomu4VjGw/Tt/KgbFeiu
-   Q=;
-X-IronPort-AV: E=Sophos;i="6.09,271,1716249600"; 
-   d="scan'208";a="672677906"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 00:14:14 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:52573]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.48.252:2525] with esmtp (Farcaster)
- id 95d0d38e-fff9-4f42-8e2e-4808f7d9cca0; Thu, 8 Aug 2024 00:14:13 +0000 (UTC)
-X-Farcaster-Flow-ID: 95d0d38e-fff9-4f42-8e2e-4808f7d9cca0
-Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 8 Aug 2024 00:14:10 +0000
-Received: from [192.168.198.222] (10.106.100.47) by
- EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 8 Aug 2024 00:14:09 +0000
-Message-ID: <396fb134-f43e-4263-99a8-cfcef82bfd99@amazon.com>
-Date: Wed, 7 Aug 2024 17:14:07 -0700
+        d=gmail.com; s=20230601; t=1723076070; x=1723680870; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g1quz4+XXJaWh3wMTjkQHoxnVA0f2NXUhht29C+e6hY=;
+        b=MVOMm0MQBRmlWuK6RWuVbsGYYjJ/q4IlwnVm8k7Ijgy4SyWSqwSqsv38Rck5Gn5VYM
+         Q9Ip4nOMvnAG+95M9km9P0D+OtyMlGaiRlp228X5Bo49+wc09b0FrhwAVkppJZEi+PAg
+         13AB4cNXbTUeNRVHYo0S3oiyQBmvOytIiOnT4pkbMoyOmebgkZoobDqW8FhuS1mFqEev
+         b2FAjpDsPwjJu8t3sKx5kPIBsZMPuu6PZ4VhCXmUxBaYkmJttIrpEgqBs62Yd9s/X/Zw
+         gpWH3+V5SZhOY2zNCDePHvg3hd9Mspwwu+swhjls10H+V2I5G2eumtJU6D3/yZN4hUM4
+         FBEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723076070; x=1723680870;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g1quz4+XXJaWh3wMTjkQHoxnVA0f2NXUhht29C+e6hY=;
+        b=tFfnw/vNWfIZoyU6YoLmbIQAO+hnMrhHiRPcfjiBLyxcZAw2hqTIY6I5p0Y4WTdhjI
+         eTAzEmIBFnPhvGVws5dUxIr0oRr1T3UbX49PsCPy1t4fXrbGnSdftDkMjgPJWSXqSODk
+         TEEbuL4zxisX3hle7YZ8srxdDV7G4CsOybtkafDU3UbIu8zJrMUR5B8dcKufNEza/iEr
+         8gGciDHDs3cOkP1GQh5m4DzWuB20mZLBKLqchVn+IqHvM0IVM7N1lz+C4ickraXl5y//
+         qBwcEdZbeaoqNGzc8hUVVlLenfEiiidGEsx0WEJxQJGfJBVCWh4ufxRpvHb+Tywnm6/6
+         oeMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiTvoPY5kireA+UcNsJOsOAXHYEYFlwgiLJ0eRxYnEdgJa/QEu8MLHwtNsfcZERHvbdKBvnbXEatE+n0JlBNBTG5W9r+EmLXa4y/cZ
+X-Gm-Message-State: AOJu0YxzBtESWKOe1HRW0tvmDJ8W3/j4kugax2VOSWE4aA/tMlG2jDuL
+	bmkGH7IpK/ichQRYEhQwfu1yV2gIA92DtZlHMiVs+aGIq9i6Cidy
+X-Google-Smtp-Source: AGHT+IEe1yNGN5PUCQJfhsmlB50nSXvNQ25O0Lop6u6OHJWSvcy1isrWBOSiRn+Uxt9f6VekPZLh8A==
+X-Received: by 2002:a17:907:809:b0:a77:cacf:58b5 with SMTP id a640c23a62f3a-a8090c25770mr10159966b.1.1723076069042;
+        Wed, 07 Aug 2024 17:14:29 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e7eee0sm694579966b.149.2024.08.07.17.14.28
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Aug 2024 17:14:28 -0700 (PDT)
+From: Wei Yang <richard.weiyang@gmail.com>
+To: agordeev@linux.ibm.com,
+	gerald.schaefer@linux.ibm.com,
+	hca@linux.ibm.com,
+	rppt@kernel.org,
+	akpm@linux-foundation.org,
+	brauner@kernel.org,
+	oleg@redhat.com
+Cc: linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Wei Yang <richard.weiyang@gmail.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: [PATCH v6 1/3] mm/memblock: introduce a new helper memblock_estimated_nr_free_pages()
+Date: Thu,  8 Aug 2024 00:14:13 +0000
+Message-Id: <20240808001415.6298-1-richard.weiyang@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/4] mm: guest_memfd: Add option to remove guest
- private memory from direct map
-To: David Hildenbrand <david@redhat.com>, Elliot Berman
-	<quic_eberman@quicinc.com>, Andrew Morton <akpm@linux-foundation.org>, "Paolo
- Bonzini" <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>,
-	"Fuad Tabba" <tabba@google.com>, Patrick Roy <roypat@amazon.co.uk>,
-	<qperret@google.com>, Ackerley Tng <ackerleytng@google.com>
-CC: <linux-coco@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <kvm@vger.kernel.org>,
-	Alexander Graf <graf@amazon.de>, Moritz Lipp <mlipp@amazon.at>, "Claudio
- Canella" <canellac@amazon.at>
-References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
- <20240805-guest-memfd-lib-v1-3-e5a29a4ff5d7@quicinc.com>
- <c55fc93d-270b-4b11-9b38-b54f350ea6c9@redhat.com>
-Content-Language: en-US
-From: "Manwaring, Derek" <derekmn@amazon.com>
-In-Reply-To: <c55fc93d-270b-4b11-9b38-b54f350ea6c9@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D036UWC004.ant.amazon.com (10.13.139.205) To
- EX19D003UWC002.ant.amazon.com (10.13.138.169)
 
-On 2024-08-06 07:10-0700 David Hildenbrand wrote:
-> > While guest_memfd is not available to be mapped by userspace, it is
-> > still accessible through the kernel's direct map. This means that in
-> > scenarios where guest-private memory is not hardware protected, it can
-> > be speculatively read and its contents potentially leaked through
-> > hardware side-channels. Removing guest-private memory from the direct
-> > map, thus mitigates a large class of speculative execution issues
-> > [1, Table 1].
->
-> I think you have to point out here that the speculative execution issues
-> are primarily only an issue when guest_memfd private memory is used
-> without TDX and friends where the memory would be encrypted either way.
->
-> Or am I wrong?
+During bootup, system may need the number of free pages in the whole system
+to do some calculation before all pages are freed to buddy system. Usually
+this number is get from totalram_pages(). Since we plan to move the free
+pages accounting in __free_pages_core(), this value may not represent
+total free pages at the early stage, especially when
+CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled.
 
-Actually, I'm not sure how much protection CoCo solutions offer in this
-regard. I'd love to hear more from Intel and AMD on this, but it looks
-like they are not targeting full coverage for these types of attacks
-(beyond protecting guest mitigation settings from manipulation by the
-host).  For example, see this selection from AMD's 2020 whitepaper [1]
-on SEV-SNP:
+Instead of using raw memblock api, let's introduce a new helper for user
+to get the estimated number of free pages from memblock point of view.
 
-"There are certain classes of attacks that are not in scope for any of
-these three features. Architectural side channel attacks on CPU data
-structures are not specifically prevented by any hardware means. As with
-standard software security practices, code which is sensitive to such
-side channel attacks (e.g., cryptographic libraries) should be written
-in a way which helps prevent such attacks."
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+CC: David Hildenbrand <david@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-And:
+---
+v6: fix memblock test
+v5: cleanup the stale name
+v4: adjust comment per david's suggestion
+---
+ include/linux/memblock.h  |  1 +
+ mm/memblock.c             | 17 +++++++++++++++++
+ tools/include/linux/pfn.h |  1 +
+ 3 files changed, 19 insertions(+)
 
-"While SEV-SNP offers guests several options when it comes to protection
-from speculative side channel attacks and SMT, it is not able to protect
-against all possible side channel attacks. For example, traditional side
-channel attacks on software such as PRIME+PROBE are not protected by
-SEV-SNP."
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index fc4d75c6cec3..673d5cae7c81 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -467,6 +467,7 @@ static inline __init_memblock bool memblock_bottom_up(void)
+ 
+ phys_addr_t memblock_phys_mem_size(void);
+ phys_addr_t memblock_reserved_size(void);
++unsigned long memblock_estimated_nr_free_pages(void);
+ phys_addr_t memblock_start_of_DRAM(void);
+ phys_addr_t memblock_end_of_DRAM(void);
+ void memblock_enforce_memory_limit(phys_addr_t memory_limit);
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 3b9dc2d89b8a..213057603b65 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1731,6 +1731,23 @@ phys_addr_t __init_memblock memblock_reserved_size(void)
+ 	return memblock.reserved.total_size;
+ }
+ 
++/**
++ * memblock_estimated_nr_free_pages - return estimated number of free pages
++ * from memblock point of view
++ *
++ * During bootup, subsystems might need a rough estimate of the number of free
++ * pages in the whole system, before precise numbers are available from the
++ * buddy. Especially with CONFIG_DEFERRED_STRUCT_PAGE_INIT, the numbers
++ * obtained from the buddy might be very imprecise during bootup.
++ *
++ * Return:
++ * An estimated number of free pages from memblock point of view.
++ */
++unsigned long __init memblock_estimated_nr_free_pages(void)
++{
++	return PHYS_PFN(memblock_phys_mem_size() - memblock_reserved_size());
++}
++
+ /* lowest address */
+ phys_addr_t __init_memblock memblock_start_of_DRAM(void)
+ {
+diff --git a/tools/include/linux/pfn.h b/tools/include/linux/pfn.h
+index 7512a58189eb..f77a30d70152 100644
+--- a/tools/include/linux/pfn.h
++++ b/tools/include/linux/pfn.h
+@@ -7,4 +7,5 @@
+ #define PFN_UP(x)	(((x) + PAGE_SIZE - 1) >> PAGE_SHIFT)
+ #define PFN_DOWN(x)	((x) >> PAGE_SHIFT)
+ #define PFN_PHYS(x)	((phys_addr_t)(x) << PAGE_SHIFT)
++#define PHYS_PFN(x)	((unsigned long)((x) >> PAGE_SHIFT))
+ #endif
+-- 
+2.34.1
 
-Intel's docs also indicate guests need to protect themselves in some
-cases saying, "TD software should be aware that potentially untrusted
-software running outside a TD may be able to influence conditional
-branch predictions of software running in a TD" [2] and "a TDX guest VM
-is no different from a legacy guest VM in terms of protecting this
-userspace <-> OS kernel boundary" [3]. But these focus on hardening
-kernel & software within the guest.
-
-What's not clear to me is what happens during transient execution when
-the host kernel attempts to access a page in physical memory that
-belongs to a guest. I assume if it only happens transiently, it will not
-result in a machine check like it would if the instructions were
-actually retired. As far as I can tell encryption happens between the
-CPU & main memory, so cache contents will be plaintext. This seems to
-leave open the possibility of the host kernel retrieving the plaintext
-cache contents with a transient execution attack. I assume vendors have
-controls in place to stop this, but Foreshadow/L1TF is a good example of
-one place this fell apart for SGX [4].
-
-All that said, we're also dependent on hardware not being subject to
-L1TF-style issues for the currently proposed non-CoCo method to be
-effective.  We're simply clearing the Present bit while the physmap PTE
-still points to the guest physical page. This was found to be
-exploitable across OS & VMM boundaries on Intel server parts before
-Cascade Lake [5] (thanks to Claudio for highlighting this). So that's a
-long way of saying TDX may offer similar protection, but not because of
-encryption.
-
-Derek
-
-[1] https://www.amd.com/content/dam/amd/en/documents/epyc-business-docs/white-papers/SEV-SNP-strengthening-vm-isolation-with-integrity-protection-and-more.pdf#page=19
-[2] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/best-practices/trusted-domain-security-guidance-for-developers.html
-[3] https://intel.github.io/ccc-linux-guest-hardening-docs/security-spec.html#transient-execution-attacks-and-their-mitigation
-[4] https://foreshadowattack.eu/foreshadow.pdf
-[5] https://foreshadowattack.eu/foreshadow-NG.pdf
 
