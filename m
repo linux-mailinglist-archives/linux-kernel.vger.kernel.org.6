@@ -1,130 +1,165 @@
-Return-Path: <linux-kernel+bounces-279902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4DAE94C332
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:00:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 770B094C334
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01CB31C232A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 304BE288B94
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26631192B74;
-	Thu,  8 Aug 2024 16:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSi5xAjS"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CC218FDC9;
+	Thu,  8 Aug 2024 17:00:13 +0000 (UTC)
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D9F190664;
-	Thu,  8 Aug 2024 16:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E921190480
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723136353; cv=none; b=qQ4543aAEMdwtgPTThHhMrlCPXqcKcwBLsiW/xBQnLjUzond4yJ6+f0AYIpqIyg/Jj1aMfkD6l0z79vNI9KvFSVL0pJhn2XfCceHVt6OHsi9iBKHNNaFQuD2tSy+Od5gboHzUA/JTU3n5gQ+ijyFN2FYChTKHVm0P7bemHcGvkI=
+	t=1723136413; cv=none; b=Qu/w0vNCbC6YWZmTcYQj2rqiVkZYE127a8T3i5JLEwyrcEIFgxuciOeZKlEXT+zRJn+76eOjuioV88czB12StQedWwd0L0jcy4fppt7VErVEnLTto3nE3PJlsv4TUGIBqubt82kP+sB4C0R5W1t8uK1NkCl5r3cN+FJ9ly94HOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723136353; c=relaxed/simple;
-	bh=ZEcRu9M0U8lrF6sjh10MGY1LZtxhAqyZouAeKbbk2Fk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SE5MRiecRySTRWidT0AVHu32/HizTnLiLo4RsaGLr6fWZpLeEbSFDUr21nwzmwYLWMpgK4MEjbPpS6eqA1kLQUkPy3i4UDug/qu9TjEOFniqEgOMYeHsv+Q0Bgv4+V0M4emhB4IYUuxJqJRkrJ1JX8GNhUwdZqYQfiKeQw9Jo38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KSi5xAjS; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1723136413; c=relaxed/simple;
+	bh=WLu/qunDEPYWVg+3QdtXvv+RxqjdfzKpgyThSz7PE1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WW+uolCqwxekEtha6fqOZnalzWug3R8qqSk1p+kCDuzHnMtwTjCqWGVTkaovNYDNq93u11JU0MCfgFZNpx2tulGZXfzhtBWh5p2uA+1bAZ3RVWVnl2pfZYEEWY7l2+x1pkuWy6kTOCJZ8kjGB5YpCpTPEoYqsiHTgjE9vXAo6fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7aa7703cf08so907010a12.2;
-        Thu, 08 Aug 2024 09:59:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723136351; x=1723741151; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5mLqZaHcqDdDn/XL9UZelYCNnkfC2PKNs3rbN3Rlu+s=;
-        b=KSi5xAjSpOmkGioO4SDhfo1/csmUgxUjGps/co9mkrVfLOV1y9s5RAv01rsN16r4OU
-         lXuiqARnFKcCeNypCNqz2nSU63MQgwxEmBM89m33jmMQw8F5ItZzSfSJ8sV87UdGaVWJ
-         JDt6MHvSs+JsaaJKXsiKHqnbNHuOebR6NXNzNFYRqWv6jQZMHUogRs1gdmyQD1iQdkeM
-         w4J1oa97974RRf+2jbLuiBggLdZ/6KM7T7sVzMLPwjcaWLEGaW64f9nRk7OflvejMTpy
-         g+TtIk29OATo0U6BDdFAtAPz3RMUvUVYRQ3KXowiNZH0UI5apmAvZ2u6P7f8wfOvKLHR
-         uRqQ==
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b7a36f26f3so19888176d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:00:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723136351; x=1723741151;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723136409; x=1723741209;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5mLqZaHcqDdDn/XL9UZelYCNnkfC2PKNs3rbN3Rlu+s=;
-        b=SjFjmcNzlWadfhlNYaSSX0CY3kflQ37T9rfNjGZFlHyWVYikxkMKac3LTEMH4PEnff
-         7+dAJ8glNMG45rCzLv2t8atesOnkXWljnAgFvmfNJT/YwW/vUf2pd5yO5pEQ6fNqpVQZ
-         gTYXBHrAHFlsTh23qUD5aYzIIIJ87iSBYsmanxw85gQef/VzVf8kEqml/gVPGiaaymew
-         sw+BaI213UE7ENA3+NR17fS+3x5zX2+TP/HxbY75iPqJUgnsvmWOvuVq5t+JM+bagC3s
-         qs+g5ZoHsXi9vNmZ8Is6CIy8oBlPqVkEPwhsaXAxH5SX9zmbDhQPQs2vDqigqfLT2iZ9
-         oVoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSTmvafydRPAFNB/dCGzxUH3Ztf1UdKCzTOasV5FfBUPBReq6eCjC5X6wU1qaTdfhJGeRS3djyGAhqe+ZKW/J4ErLh7T8CXdqiRbbkttMLnIwQssoBmg4cIDyYR2htI9UYLYMvG7bCvSQ7W1UetCR+3LqfgJhsoYvKoFINo5ThbbeSO1Uo
-X-Gm-Message-State: AOJu0YykZxghveV9IKaiJ2csxtl/GGI2TpNR6vCNNeG6dzdTgJjmkSyn
-	WifIdM5m6MCEone/Tkr2S5YZ1QnWfSBqxcL949MNUH2J/rP+dXNdXvY4nS1WCbdw5XCAEfRSEhm
-	YuHTs3xZDjGU88/7nBH4RCQfBTS0=
-X-Google-Smtp-Source: AGHT+IGCpqc2a/tno3I0zEBBlKhTkWOcYinjgc1/TOSQ8bvmnEM78//GUBDS2+UDaVvSBpXab+dnz0agW2rMFNSUAGI=
-X-Received: by 2002:a17:90a:a407:b0:2d1:530:ba47 with SMTP id
- 98e67ed59e1d1-2d1c3465ce5mr2895558a91.32.1723136351299; Thu, 08 Aug 2024
- 09:59:11 -0700 (PDT)
+        bh=EGkLIhhwXdXteeSjY2/FlquAK3aLu21xD2MJxijmIdc=;
+        b=bZuQYBN+mbL43R5eQxsGrCEEUjfremXGagixmJDgEvnMaYD8kg1vJ4CYMgFkMQO9S2
+         ilphqWkmt1JjDT9XQsyJprjs0qR1iLvry8AMyop1ldXfr6X2n/FUIPhgnqmHbOGa4Twd
+         ZobicBeMohr/hEpfw+ryxQNy82sT9LgE62wtvUTmDAOfU92AoG7je0ZAGx1quaeS1z3R
+         oj2J+I4nSkjIGEXnQ9wJDNvY2oO03zRCXYQIU0OwzMTKStSFmd84W5VSGTwOzWuNZ4Jh
+         4aPpuVKbFPZet3bw8gLs1/cBZyc6fHqLCOFn1MCGbcBVT550qWvkY3mUvZa5AY4aOgzO
+         4Z5g==
+X-Forwarded-Encrypted: i=1; AJvYcCV7x/i5uASv1Jv21yA59WdA8bVPcVsqz5h9LkHlA2UNPTNGPhobeZVNpp0DEXDielZcu+Q7ARpR6VWgH3mW3chE83U+4g2X11XFJL5C
+X-Gm-Message-State: AOJu0YyCPwjyva2vkYTUMMy7BNW6ZwlNqacw9jGWUixHY5yPG2eE16MZ
+	LA81+vY4EMjESxGi/K9o8D049I2cxMJnzjSYpXYkaQ8DfIPC4hXV
+X-Google-Smtp-Source: AGHT+IH2oiVdwUKUUHhuebMGQN4cTWYz1FZhhjZM+b1GV9bLfRurjx1JVhpJUxaTAT0q1aDcgd25TA==
+X-Received: by 2002:a05:6214:29c9:b0:6b5:1584:62bf with SMTP id 6a1803df08f44-6bd6cacccd6mr41756186d6.6.1723136409210;
+        Thu, 08 Aug 2024 10:00:09 -0700 (PDT)
+Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c76f8ccsm68570876d6.4.2024.08.08.10.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 10:00:08 -0700 (PDT)
+Date: Thu, 8 Aug 2024 12:00:06 -0500
+From: David Vernet <void@manifault.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Phil Auld <pauld@redhat.com>, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Improve logging around
+ enable/disable
+Message-ID: <20240808170006.GB6223@maniforge>
+References: <ZrQW4gqIr_hTgp0z@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808002118.918105-1-andrii@kernel.org> <20240808002118.918105-3-andrii@kernel.org>
- <20240808102022.GB8020@redhat.com>
-In-Reply-To: <20240808102022.GB8020@redhat.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 8 Aug 2024 09:58:59 -0700
-Message-ID: <CAEf4BzbAGZ7k=tZercsasGhe8JiOhXnR4e9JbcCKwMCkCXA-UQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] uprobes: protected uprobe lifetime with SRCU
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
-	paulmck@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fdIb7HZuWu12nU98"
+Content-Disposition: inline
+In-Reply-To: <ZrQW4gqIr_hTgp0z@slm.duckdns.org>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+
+
+--fdIb7HZuWu12nU98
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 8, 2024 at 3:20=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wrot=
-e:
->
-> On 08/07, Andrii Nakryiko wrote:
-> >
-> >  struct uprobe {
-> > -     struct rb_node          rb_node;        /* node in the rb tree */
-> > +     union {
-> > +             struct rb_node          rb_node;        /* node in the rb=
- tree */
-> > +             struct rcu_head         rcu;            /* mutually exclu=
-sive with rb_node */
->
-> Andrii, I am sorry.
->
-> I suggested this in reply to 3/8 before I read
-> [PATCH 7/8] uprobes: perform lockless SRCU-protected uprobes_tree lookup
->
-> I have no idea if rb_erase() is rcu-safe or not, but this union certainly
-> doesn't look right if we use rb_find_rcu/etc.
->
+On Wed, Aug 07, 2024 at 02:52:50PM -1000, Tejun Heo wrote:
 
-Ah, because put_uprobe() might be fast enough to remove uprobe from
-the tree, process delayed_uprobe_remove() and then enqueue
-uprobe_free_rcu() callback (which would use rcu field here,
-overwriting rb_node), while we are still doing a lockless lookup,
-finding this overwritten rb_node . Good catch, if that's the case (and
-I'm testing all this right now), then it's an easy fix.
+Hi Tejun,
 
-It would also explain why I initially didn't get any crashes for
-lockless RB-tree lookup with uprobe-stress (I was really surprised
-that I "missed" the crash initially).
+> sched_ext currently doesn't generate messages when the BPF scheduler is
+> enabled and disabled unless there are errors. It is useful to have paper
+> trail. Improve logging around enable/disable:
+>=20
+> - Generate info messages on enable and non-error disable.
+>=20
+> - Update error exit message formatting so that it's consistent with
+>   non-error message. Also, prefix ei->msg with the BPF scheduler's name to
+>   make it clear where the message is coming from.
+>=20
+> - Shorten scx_exit_reason() strings for SCX_EXIT_UNREG* for brevity and
+>   consistency.
+>=20
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Suggested-by: Phil Auld <pauld@redhat.com>
+> ---
+>  kernel/sched/ext.c |   21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 60a7eb7d8a9e..eea2fda8e099 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -4004,11 +4004,11 @@ static const char *scx_exit_reason(enum scx_exit_=
+kind kind)
+>  {
+>  	switch (kind) {
+>  	case SCX_EXIT_UNREG:
+> -		return "Scheduler unregistered from user space";
+> +		return "unregistered from user space";
+>  	case SCX_EXIT_UNREG_BPF:
+> -		return "Scheduler unregistered from BPF";
+> +		return "unregistered from BPF";
+>  	case SCX_EXIT_UNREG_KERN:
+> -		return "Scheduler unregistered from the main kernel";
+> +		return "unregistered from the main kernel";
+>  	case SCX_EXIT_SYSRQ:
+>  		return "disabled by sysrq-S";
+>  	case SCX_EXIT_ERROR:
+> @@ -4126,14 +4126,17 @@ static void scx_ops_disable_workfn(struct kthread=
+_work *work)
+>  	percpu_up_write(&scx_fork_rwsem);
+> =20
+>  	if (ei->kind >=3D SCX_EXIT_ERROR) {
+> -		printk(KERN_ERR "sched_ext: BPF scheduler \"%s\" errored, disabling\n"=
+, scx_ops.name);
+> +		pr_err("sched_ext: BPF scheduler \"%s\" disabled (%s)\n",
+> +		       scx_ops.name, ei->reason);
+> =20
+> -		if (ei->msg[0] =3D=3D '\0')
+> -			printk(KERN_ERR "sched_ext: %s\n", ei->reason);
+> -		else
+> -			printk(KERN_ERR "sched_ext: %s (%s)\n", ei->reason, ei->msg);
+> +		if (ei->msg[0] !=3D '\0')
+> +			printk(KERN_ERR "sched_ext: %s: %s\n",
+> +			       scx_ops.name, ei->msg);
 
-Thanks!
+Was it intentional to use pr_err() above, and printk() here? If not,
+let's make them consistent?
 
+Looks good otherwise.
 
-> Yes, this version doesn't include the SRCU-protected uprobes_tree changes=
-,
-> but still...
->
-> Oleg.
->
+Acked-by: David Vernet <void@manifault.com>
+
+Thanks,
+David
+
+--fdIb7HZuWu12nU98
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZrT5lgAKCRBZ5LhpZcTz
+ZA72AP9n6JROZdkWAgO5KHDX5TWkKWpMjGJqu9d+2nr0JlmYYQD/Wqis0DF/B70x
+zBJYaFNsMlY4t0eAqm6z9Uq6R2uhTgE=
+=tGJw
+-----END PGP SIGNATURE-----
+
+--fdIb7HZuWu12nU98--
 
