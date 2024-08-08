@@ -1,216 +1,177 @@
-Return-Path: <linux-kernel+bounces-279496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F0794BDFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:54:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C531294BDFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADFE31F21917
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:54:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868F01F219C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C16918C93B;
-	Thu,  8 Aug 2024 12:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5458818C925;
+	Thu,  8 Aug 2024 12:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FoX53nRn"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h3SM1eXl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA4B149DFA;
-	Thu,  8 Aug 2024 12:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619D1149DFA
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723121655; cv=none; b=XPWKcogpVLEznQuuxLCZEQF1X9zsfeZxebGEjfgRFmffOozWjDVbXt8nGZaYuSEmEKVIBtuUJz2BEfP5yUpcq0wRYQsHUoorY6Y2RbbuLrDM43H0M4QRE1UvZYrzCYxsEwBqutlVWW5Q479HoEj8QAxqYnVrHTZtNEbkL3LqC0Y=
+	t=1723121693; cv=none; b=loK0ABtUvnx3NWANuEZPPkWXQvuvQ4F9/93Ypf7f89oRicaY49JCNcxRS+sztkCTydEvIbW9+zNXVankDT3ls5jF/80JcsO0qqH5H8neJgkKFbhKxz9Pw9TifjH1iXZUZ3ihllmSHYn07NxJF3EabANAFauWoHW7D5M6Pr10blE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723121655; c=relaxed/simple;
-	bh=CEyhPGSkXrl72ZDwTH2u/j1kNow6Xs5EFtfn4KS/qHs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Z1CVeQG0+ecZiPgri5s6c1/v1HuJNO8wPPzg3/9JuZO8qGOSBS2KUc1NcSiMslqNsXK0xYmgUtUNC3aTxWnd9EmEgjj2L06C3JsQfBcA/U1v06LI+ymDHTgQ6qfmUSIXN2vBeLsp2B6rhj8+oPIr+CYTaQ4ysUAbnjww8Xbu7dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FoX53nRn; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 17761124E;
-	Thu,  8 Aug 2024 14:53:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1723121598;
-	bh=CEyhPGSkXrl72ZDwTH2u/j1kNow6Xs5EFtfn4KS/qHs=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=FoX53nRnOS71ENjY0hXdwC1hxQ3n2cru453tGxW1xwdDMxtjnKrjrHoRQVtvYlECM
-	 r7KUmItIBAUbiS2w2m44AQQn4GisPNGBpDb/ZGty3DGX6dRjDkDz67rGeLqD7INCDv
-	 Lpq7HGSHR7q81lwOq0vj+nFCroBI9d/lzFe05DLA=
-Message-ID: <d32d9229-9b40-4ebd-adf3-9ae9ef75b58b@ideasonboard.com>
-Date: Thu, 8 Aug 2024 15:54:07 +0300
+	s=arc-20240116; t=1723121693; c=relaxed/simple;
+	bh=5uetXJ3+L+RhLKV5z8c9WyUlwsJduAkEGBQHl3zElLk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=icukFHNreMQM8Od3q0AoyPqc8QUDwF/tEXe4L12VzCMdoeCPgTBvnlnvphOaeJmK3QTVAxEUfDtbX/9LAveFqOPpyWTjMxgzAS6k+7srOvv4OBeM9EOTX+jDiCiKllydI5serjW1JLLWLOsZf7a1flxWo2q7VhXOdAVqgE4dsyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h3SM1eXl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723121690;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kkdFm8UYhX2wGq7WQBwF6R5jAWfsgP28pH4c5ptM2vc=;
+	b=h3SM1eXlCrbC/oR+V8fYSS+pe+t0kPgZp9hL6udOUsiWK7bSFNZNycwkG4WBcWfvzsy6NT
+	3ZpetGYRi8d5TCjeihEx3zq+qkGETQihqCPYT5a2HSaQl/YFS7uavnaKnislwnoqKRvj7e
+	6/3ejfpvj/IfAasBdFh1v8Y/DXoytNw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-572-QOiLiR0UNkmfzYsQ4Yd9pw-1; Thu,
+ 08 Aug 2024 08:54:46 -0400
+X-MC-Unique: QOiLiR0UNkmfzYsQ4Yd9pw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B07C1944AA4;
+	Thu,  8 Aug 2024 12:54:45 +0000 (UTC)
+Received: from llong.com (unknown [10.2.16.72])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A4FD719560A3;
+	Thu,  8 Aug 2024 12:54:43 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Marco Elver <elver@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v3] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is enabled
+Date: Thu,  8 Aug 2024 08:54:30 -0400
+Message-ID: <20240808125430.1172152-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: display/xlnx/zynqmp-dpsub: Add audio
- DMAs
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Vishal Sagar <vishal.sagar@amd.com>,
- Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
- =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-References: <20240319-xilinx-dp-audio-v2-0-92d6d3a7ca7e@ideasonboard.com>
- <20240319-xilinx-dp-audio-v2-2-92d6d3a7ca7e@ideasonboard.com>
- <20240320153725.GA1771730-robh@kernel.org>
- <4073c6b5-629e-4e9c-86c2-a4b476fe775e@ideasonboard.com>
-Content-Language: en-US
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <4073c6b5-629e-4e9c-86c2-a4b476fe775e@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi Rob,
+As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
+capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
+for all kmalloc/kfree calls. So stackdepot capacity was increased 8
+times to accommodate KASAN usage even thought it was claimed 4X should
+be enough at that time.
 
-On 21/03/2024 07:52, Tomi Valkeinen wrote:
-> On 20/03/2024 17:37, Rob Herring wrote:
->> On Tue, Mar 19, 2024 at 10:22:37AM +0200, Tomi Valkeinen wrote:
->>> The DP subsystem for ZynqMP support audio via two channels, and the DP
->>> DMA has dma-engines for those channels. For some reason the DT binding
->>> has not specified those channels, even if the picture included in
->>> xlnx,zynqmp-dpsub.yaml shows "2 x aud" DMAs.
->>
->> New required entries is an ABI change. This message kind of indicates it
->> was a mistake, but should be a lot more explicit. Are things broken
->> without the entries? Need 'Fixes'?
-> 
-> I'll improve the desc for the next version.
-> 
-> So, yes, it's an ABI change, and as far as I can guess (I can't figure 
-> out any other reason), the audio DMAs were left out by mistake or 
-> misunderstanding. The Linux driver has not supported audio, so this has 
-> not been an issue and nothing is broken.
-> 
-> Now that this series adds the audio support, I had to add the audio 
-> DMAs. I considered making the DMAs optional in the DT, but that doesn't 
-> sound right, even if that would keep the ABI compatibility (wouldn't 
-> it?). The driver I add in this series does consider the audio DMAs as 
-> optional, though. If they're not present, the driver will continue 
-> without audio support.
-> 
-> So, strictly speaking I think this is a fix to the original commit that 
-> adds the DT node, but as the driver using the audio DMAs comes in only 
-> now, I think there's no need for the 'Fixes' and backporting.
-> 
-> I'm happy to change the approach if you think some other way is better.
+With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
+for stack records"), all stackdepot records uses a fixed size with
+CONFIG_STACKDEPOT_MAX_FRAMES (default=64) entries. This is merged to
+support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
+use variable size records for non-evictable entries") re-enabled
+the use of variable size records for non-KASAN use cases, but KASAN
+(generic mode) still uses the large fixed size stack records.
 
-Do you have any feedback on the above? Should I mark the audio DMAs as 
-optional in the binding?
+With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
+stackdepot space had been more than double than before. Assuming an
+average stack frame size of 16, a KASAN stack record is almost 4X the
+size of a non-KASAN one.
 
-  Tomi
+When a wide variety of workloads are run on a debug kernel with KASAN
+enabled, the following warning may sometimes be printed.
 
->   Tomi
-> 
->>>
->>> Add the two audio DMAs to the binding.
->>>
->>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->>> ---
->>>   .../devicetree/bindings/display/xlnx/xlnx,zynqmp-dpsub.yaml    | 10 
->>> ++++++++--
->>>   1 file changed, 8 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/xlnx/ 
->>> xlnx,zynqmp-dpsub.yaml b/Documentation/devicetree/bindings/display/ 
->>> xlnx/xlnx,zynqmp-dpsub.yaml
->>> index 554f9d5809d4..6b754d4f260e 100644
->>> --- a/Documentation/devicetree/bindings/display/xlnx/xlnx,zynqmp- 
->>> dpsub.yaml
->>> +++ b/Documentation/devicetree/bindings/display/xlnx/xlnx,zynqmp- 
->>> dpsub.yaml
->>> @@ -100,12 +100,16 @@ properties:
->>>         - description: Video layer, plane 1 (U/V or U)
->>>         - description: Video layer, plane 2 (V)
->>>         - description: Graphics layer
->>> +      - description: Audio channel 0
->>> +      - description: Audio channel 1
->>>     dma-names:
->>>       items:
->>>         - const: vid0
->>>         - const: vid1
->>>         - const: vid2
->>>         - const: gfx0
->>> +      - const: aud0
->>> +      - const: aud1
->>>     phys:
->>>       description: PHYs for the DP data lanes
->>> @@ -194,11 +198,13 @@ examples:
->>>           power-domains = <&pd_dp>;
->>>           resets = <&reset ZYNQMP_RESET_DP>;
->>> -        dma-names = "vid0", "vid1", "vid2", "gfx0";
->>> +        dma-names = "vid0", "vid1", "vid2", "gfx0", "aud0", "aud1";
->>>           dmas = <&xlnx_dpdma 0>,
->>>                  <&xlnx_dpdma 1>,
->>>                  <&xlnx_dpdma 2>,
->>> -               <&xlnx_dpdma 3>;
->>> +               <&xlnx_dpdma 3>,
->>> +               <&xlnx_dpdma 4>,
->>> +               <&xlnx_dpdma 5>;
->>>           phys = <&psgtr 1 PHY_TYPE_DP 0 3>,
->>>                  <&psgtr 0 PHY_TYPE_DP 1 3>;
->>>
->>> -- 
->>> 2.34.1
->>>
-> 
+ [ 6818.650674] Stack depot reached limit capacity
+ [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot_alloc_stack+0x39e/0x3d0
+   :
+ [ 6818.650907] Call Trace:
+ [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
+ [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
+ [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
+ [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
+ [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
+ [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
+ [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
+ [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
+ [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
+ [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
+ [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
+ [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
+ [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
+ [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
+ [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
+ [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
+ [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
+ [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
+ [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
+ [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 [xfs]
+ [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs]
+ [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
+ [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
+ [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
+ [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
+ [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
+
+With all the recent changes in stackdepot to support new KASAN features,
+it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
+enough when KASAN is enabled. Fix this stackdepot capability issue
+by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
+maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
+
+Also use the MIN() macro for defining DEPOT_MAX_POOLS to clarify the
+intention.
+
+Fixes: fc60e0caa94d ("lib/stackdepot: use fixed-sized slots for stack records")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ lib/stackdepot.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+ [v3] Include <linux/minmax.h"> to avoid potential undefined macro problem.
+
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index 5ed34cc963fc..1f1673b357b5 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -20,6 +20,7 @@
+ #include <linux/kernel.h>
+ #include <linux/kmsan.h>
+ #include <linux/list.h>
++#include <linux/minmax.h>
+ #include <linux/mm.h>
+ #include <linux/mutex.h>
+ #include <linux/poison.h>
+@@ -36,11 +37,12 @@
+ #include <linux/memblock.h>
+ #include <linux/kasan-enabled.h>
+ 
+-#define DEPOT_POOLS_CAP 8192
++/* KASAN is a big user of stackdepot, double the cap if KASAN is enabled */
++#define DEPOT_POOLS_CAP (8192 * (IS_ENABLED(CONFIG_KASAN) ? 2 : 1))
++
+ /* The pool_index is offset by 1 so the first record does not have a 0 handle. */
+ #define DEPOT_MAX_POOLS \
+-	(((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
+-	 (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
++	MIN((1LL << (DEPOT_POOL_INDEX_BITS)) - 1, DEPOT_POOLS_CAP)
+ 
+ static bool stack_depot_disabled;
+ static bool __stack_depot_early_init_requested __initdata = IS_ENABLED(CONFIG_STACKDEPOT_ALWAYS_INIT);
+-- 
+2.43.5
 
 
