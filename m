@@ -1,310 +1,173 @@
-Return-Path: <linux-kernel+bounces-280230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C5294C76D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:43:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF2294C770
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4368A1C21E99
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:43:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0343E1F24312
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D1B1667C2;
-	Thu,  8 Aug 2024 23:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0B1161321;
+	Thu,  8 Aug 2024 23:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBoAAJtm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="QLuaar3r"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216B4166314;
-	Thu,  8 Aug 2024 23:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCAD15A851
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 23:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723160609; cv=none; b=Jv9FkwWhFIerHt1FiyPox1Tv86ujuEfWuOhdhpJwYmbOthpXWHFVml9ib7NJB13HyiuJItT1FAzToWbbFhLolyHeLkcJKcb2ntTxtSZ9sO4ElkFHKHHYp2S8AbpOj+EQRMgPqRgNBPf5KM1/mF7SewCesepI5jSO2eHsarUxncg=
+	t=1723160663; cv=none; b=OS4caFMlIw85rNCWgey5v+EByiOyGstgxcMcVQqynOf4BqUR1pCJKhU6dO6UBX3KpEQd8nwqHVaIRb5XTK9FFqwte98eIWItvpi/MIsBFeWephc3lcuCZoqkibuxdFdTPRoPy63s3N0vVEUzSazvS2CgHodyXQNcosb2VOslb/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723160609; c=relaxed/simple;
-	bh=D0nZdzoiJnGLrGHXx+vX60YdnArnxjQB/HltQXsiEAo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bHXnVbBPXWxV3flAcIFFEN3a/PdzLeCtTiorIfjCfuFX8FmBi0L2dAiUBqUFU+aVzJbv3UP5x7NPrzxzWSfQgSldtgA0/SzjwiYz3930/f5aX7R/AXys2KbW/Pjh7FXnioOszvnd91mDKa8v2yJh3RzOQdDma9i6mks60XGPuZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBoAAJtm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB0FC32782;
-	Thu,  8 Aug 2024 23:43:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723160608;
-	bh=D0nZdzoiJnGLrGHXx+vX60YdnArnxjQB/HltQXsiEAo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=rBoAAJtmx+jLN0E7BUSujTsNdDuEdUti7AvjHAXQkh5pnk6h2fXip4VxdjUYbM8dH
-	 Epm+Iped9l/uijtzh1zAs78PEJFwTOkZqw7maB269106FQNhyj34UIwDy1Vb8GgDiL
-	 H+e53tazwedjj0xIyw6tFRdFl2FIpfVc4hLjQ4O9nUjuS+O56aPuuUgj51KfO0UIaK
-	 DcdH7kbGJ2vdBxKnoW0I0NI+0mCofBkkYtbi65Cyatp+c4ccsc5tEXRbR5kGFxllSy
-	 B0aIHlPmOhNCMHsvDZeuZNIgjUn0rvKe3qhB29kupltbC1qSoHRe7wBvQJu6ZPC+D3
-	 a+tmp9ubK1lFw==
-Message-ID: <d0677c60eb1f47eb186f3e5493ba5aa7e0eaa445.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-From: Jeff Layton <jlayton@kernel.org>
-To: Paul Moore <paul@paul-moore.com>, Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
- Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
- audit@vger.kernel.org
-Date: Thu, 08 Aug 2024 19:43:26 -0400
-In-Reply-To: <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
-	 <20240807-erledigen-antworten-6219caebedc0@brauner>
-	 <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
-	 <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner>
-	 <20240808171130.5alxaa5qz3br6cde@quack3>
-	 <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
+	s=arc-20240116; t=1723160663; c=relaxed/simple;
+	bh=o/NeEUEEPbRHH+4cOkUfuiP/C6hPXj0NMTmrXdr/eys=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=db/JvZN1uPONP+6rMMF6IOoFJxAONR5tLSfQTVWHjtCXHjUYsLak0X+9MNSG6IlCuSpTnNemVN/ngDo6PG6BYQ210sZvM8PSUlFG1VcSYAuSnTYp8IHJIRjOu4R2EaeB9Y+NZzDJ8SoUQGgw588sJ2rktLjr3lDIhG9RB9xWeH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=QLuaar3r; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3685b3dbcdcso847169f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:44:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1723160659; x=1723765459; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wpIOIz+eJ2EDI15m0KcmC252UQEoCmNdQr22+6Ldus8=;
+        b=QLuaar3rZ6cn30lmRVm4ZsQctLTiuwn98gsqwH9tE2fdJ5E6y1lXo5HphgW+4YPqzk
+         6NpqQTlFnVV4SXHZ4W/37PDZpt3IusSkhnagExHbs+CU106KMiq25lq40ZuBSLLceWPt
+         K2jxahP1LiED3ftAiuegtOFtR4AJJmZtjU23U+JYn2cTUGmM8X/7jRKdAe2CwdFIT0Pa
+         kPjccgVqq5qdf69ATqL6gc6+PrCuNvUhArq23LXup+lnS6J2UqqXoYVUeHucXu91g95H
+         5TBoVuBre87d0PLFVwr3TXjUqxI/ezNPDJIyRCpDNMJVl15HnegBkc30kzIwHQQ0ODtg
+         7vnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723160659; x=1723765459;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wpIOIz+eJ2EDI15m0KcmC252UQEoCmNdQr22+6Ldus8=;
+        b=GRIxdcE3m4JBZIbI3l2EtlXkXbRd5XDqVquO3M9nHwjzK8rtm+AyI/zZiK5tkkpN00
+         oLYnXLeL00uRuSW+/Q8rqesU4yHxwimx6y3MvwBNFfnjBc/dYInGwn3fUUw9w6DdFDrI
+         22vPHTTvlmD5MRuvi5Yel3i70K3CcHSALkFtNVLuizqz/4yZhlzkekb34fBWBVJzmvZ8
+         PO1BG7fcZnZZInKkfwD00sExfcG2u1hDMjg3zZe1WZUPJpcbbw+j+gWoLD2QhcWM6aK6
+         268bcYbQ0S5dWsAnLsP9VM1oyKPwO7mVmvRT56++2hX0omB5fEQ7kPhMsfMCsIejai0M
+         Y0hA==
+X-Gm-Message-State: AOJu0YzucHadb64Gb9JuWjBKkWLdqY96U1ahutNV5ytppbhCaZF7CZTT
+	6LCH1HGG7l6/7RDUBZMDXjgzYI3sPBv9HPqczsKXFaSiMx0NEnnHirC/sNNcwI4=
+X-Google-Smtp-Source: AGHT+IF5WGofAa3s9FWKI8I6nuBJ247zT4E/5cpCXyN76sgpTHR9BEpdZYWFSSOGbuONhaebr4+sFw==
+X-Received: by 2002:a5d:6e48:0:b0:35f:1cc9:1d1d with SMTP id ffacd0b85a97d-36d27561030mr2592313f8f.38.1723160659259;
+        Thu, 08 Aug 2024 16:44:19 -0700 (PDT)
+Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d27193339sm3466071f8f.63.2024.08.08.16.44.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 16:44:18 -0700 (PDT)
+From: Qais Yousef <qyousef@layalina.io>
+To: Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Qais Yousef <qyousef@layalina.io>
+Subject: [PATCH v3] sched: cpufreq: Rename map_util_perf to sugov_apply_dvfs_headroom
+Date: Fri,  9 Aug 2024 00:44:15 +0100
+Message-Id: <20240808234415.554937-1-qyousef@layalina.io>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2024-08-08 at 17:12 -0400, Paul Moore wrote:
-> On Thu, Aug 8, 2024 at 1:11=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > On Thu 08-08-24 12:36:07, Christian Brauner wrote:
-> > > On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
-> > > > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
-> > > > > > +static struct dentry *lookup_fast_for_open(struct nameidata *n=
-d, int open_flag)
-> > > > > > +{
-> > > > > > +       struct dentry *dentry;
-> > > > > > +
-> > > > > > +       if (open_flag & O_CREAT) {
-> > > > > > +               /* Don't bother on an O_EXCL create */
-> > > > > > +               if (open_flag & O_EXCL)
-> > > > > > +                       return NULL;
-> > > > > > +
-> > > > > > +               /*
-> > > > > > +                * FIXME: If auditing is enabled, then we'll ha=
-ve to unlazy to
-> > > > > > +                * use the dentry. For now, don't do this, sinc=
-e it shifts
-> > > > > > +                * contention from parent's i_rwsem to its d_lo=
-ckref spinlock.
-> > > > > > +                * Reconsider this once dentry refcounting hand=
-les heavy
-> > > > > > +                * contention better.
-> > > > > > +                */
-> > > > > > +               if ((nd->flags & LOOKUP_RCU) && !audit_dummy_co=
-ntext())
-> > > > > > +                       return NULL;
-> > > > >=20
-> > > > > Hm, the audit_inode() on the parent is done independent of whethe=
-r the
-> > > > > file was actually created or not. But the audit_inode() on the fi=
-le
-> > > > > itself is only done when it was actually created. Imho, there's n=
-o need
-> > > > > to do audit_inode() on the parent when we immediately find that f=
-ile
-> > > > > already existed. If we accept that then this makes the change a l=
-ot
-> > > > > simpler.
-> > > > >=20
-> > > > > The inconsistency would partially remain though. When the file do=
-esn't
-> > > > > exist audit_inode() on the parent is called but by the time we've
-> > > > > grabbed the inode lock someone else might already have created th=
-e file
-> > > > > and then again we wouldn't audit_inode() on the file but we would=
- have
-> > > > > on the parent.
-> > > > >=20
-> > > > > I think that's fine. But if that's bothersome the more aggressive=
- thing
-> > > > > to do would be to pull that audit_inode() on the parent further d=
-own
-> > > > > after we created the file. Imho, that should be fine?...
-> > > > >=20
-> > > > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/?ref=
-_type=3Dheads
-> > > > > for a completely untested draft of what I mean.
-> > > >=20
-> > > > Yeah, that's a lot simpler. That said, my experience when I've work=
-ed
-> > > > with audit in the past is that people who are using it are _very_
-> > > > sensitive to changes of when records get emitted or not. I don't li=
-ke
-> > > > this, because I think the rules here are ad-hoc and somewhat arbitr=
-ary,
-> > > > but keeping everything working exactly the same has been my MO when=
-ever
-> > > > I have to work in there.
-> > > >=20
-> > > > If a certain access pattern suddenly generates a different set of
-> > > > records (or some are missing, as would be in this case), we might g=
-et
-> > > > bug reports about this. I'm ok with simplifying this code in the wa=
-y
-> > > > you suggest, but we may want to do it in a patch on top of mine, to
-> > > > make it simple to revert later if that becomes necessary.
-> > >=20
-> > > Fwiw, even with the rearranged checks in v3 of the patch audit record=
-s
-> > > will be dropped because we may find a positive dentry but the path ma=
-y
-> > > have trailing slashes. At that point we just return without audit
-> > > whereas before we always would've done that audit.
-> > >=20
-> > > Honestly, we should move that audit event as right now it's just real=
-ly
-> > > weird and see if that works. Otherwise the change is somewhat horribl=
-e
-> > > complicating the already convoluted logic even more.
-> > >=20
-> > > So I'm appending the patches that I have on top of your patch in
-> > > vfs.misc. Can you (other as well ofc) take a look and tell me whether
-> > > that's not breaking anything completely other than later audit events=
-?
-> >=20
-> > The changes look good as far as I'm concerned but let me CC audit guys =
-if
-> > they have some thoughts regarding the change in generating audit event =
-for
-> > the parent. Paul, does it matter if open(O_CREAT) doesn't generate audi=
-t
-> > event for the parent when we are failing open due to trailing slashes i=
-n
-> > the pathname? Essentially we are speaking about moving:
-> >=20
-> >         audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-> >=20
-> > from open_last_lookups() into lookup_open().
->=20
-> Thanks for adding the audit mailing list to the CC, Jan.  I would ask
-> for others to do the same when discussing changes that could impact
-> audit (similar requests for the LSM framework, SELinux, etc.).
->=20
-> The inode/path logging in audit is ... something.  I have a
-> longstanding todo item to go revisit the audit inode logging, both to
-> fix some known bugs, and see what we can improve (I'm guessing quite a
-> bit).  Unfortunately, there is always something else which is burning
-> a little bit hotter and I haven't been able to get to it yet.
->=20
+We are providing headroom for the utilization to grow until the next
+decision point to pick the next frequency. Give the function a better
+name and give it some documentation. It is not really mapping anything.
 
-It is "something" alright. The audit logging just happens at strange
-and inconvenient times vs. what else we're trying to do wrt pathwalking
-and such. In particular here, the fact __audit_inode can block is what
-really sucks.
+Also move it to cpufreq_schedutil.c. This function relies on updating
+util signal appropriately to give a headroom to grow. This is tied to
+schedutil and scheduler and not something that can be shared with other
+governors.
 
-Since we're discussing it...
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Qais Yousef <qyousef@layalina.io>
+---
 
-ISTM that the inode/path logging here is something like a tracepoint.
-In particular, we're looking to record a specific set of information at
-specific points in the code. One of the big differences between them
-however is that tracepoints don't block.  The catch is that we can't
-just drop messages if we run out of audit logging space, so that would
-have to be handled reasonably.
+Changes in v3:
 
-I wonder if we could leverage the tracepoint infrastructure to help us
-record the necessary info somehow? Copy the records into a specific
-ring buffer, and then copy them out to the audit infrastructure in
-task_work?
+	1. Add Reviewed-by from Vincent
 
-I don't have any concrete ideas here, but the path/inode audit code has
-been a burden for a while now and it'd be good to think about how we
-could do this better.
+Changes in v2:
 
-> The general idea with audit is that you want to record the information
-> both on success and failure.  It's easy to understand the success
-> case, as it is a record of what actually happened on the system, but
-> you also want to record the failure case as it can provide some
-> insight on what a process/user is attempting to do, and that can be
-> very important for certain classes of users.  I haven't dug into the
-> patches in Christian's tree, but in general I think Jeff's guidance
-> about not changing what is recorded in the audit log is probably good
-> advice (there will surely be exceptions to that, but it's still good
-> guidance).
->=20
+	1. Add Acked-by from Viresh and Raphael (Thanks!)
+	2. Move the function to cpufreq_schedutil.c instead of sched.h
+	3. Name space the function with sugov_ to indicate it is special to
+	   this governor only and not generic.
 
-In this particular case, the question is:
+ include/linux/sched/cpufreq.h    |  5 -----
+ kernel/sched/cpufreq_schedutil.c | 20 +++++++++++++++++++-
+ 2 files changed, 19 insertions(+), 6 deletions(-)
 
-Do we need to emit a AUDIT_INODE_PARENT record when opening an existing
-file, just because O_CREAT was set? We don't emit such a record when
-opening without O_CREAT set.
+diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
+index bdd31ab93bc5..d01755d3142f 100644
+--- a/include/linux/sched/cpufreq.h
++++ b/include/linux/sched/cpufreq.h
+@@ -28,11 +28,6 @@ static inline unsigned long map_util_freq(unsigned long util,
+ {
+ 	return freq * util / cap;
+ }
+-
+-static inline unsigned long map_util_perf(unsigned long util)
+-{
+-	return util + (util >> 2);
+-}
+ #endif /* CONFIG_CPU_FREQ */
+ 
+ #endif /* _LINUX_SCHED_CPUFREQ_H */
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index eece6244f9d2..575df3599813 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -178,12 +178,30 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
+ 	return cpufreq_driver_resolve_freq(policy, freq);
+ }
+ 
++/*
++ * DVFS decision are made at discrete points. If CPU stays busy, the util will
++ * continue to grow, which means it could need to run at a higher frequency
++ * before the next decision point was reached. IOW, we can't follow the util as
++ * it grows immediately, but there's a delay before we issue a request to go to
++ * higher frequency. The headroom caters for this delay so the system continues
++ * to run at adequate performance point.
++ *
++ * This function provides enough headroom to provide adequate performance
++ * assuming the CPU continues to be busy.
++ *
++ * At the moment it is a constant multiplication with 1.25.
++ */
++static inline unsigned long sugov_apply_dvfs_headroom(unsigned long util)
++{
++	return util + (util >> 2);
++}
++
+ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
+ 				 unsigned long min,
+ 				 unsigned long max)
+ {
+ 	/* Add dvfs headroom to actual utilization */
+-	actual = map_util_perf(actual);
++	actual = sugov_apply_dvfs_headroom(actual);
+ 	/* Actually we don't need to target the max performance */
+ 	if (actual < max)
+ 		max = actual;
+-- 
+2.34.1
 
---=20
-Jeff Layton <jlayton@kernel.org>
 
