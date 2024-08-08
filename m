@@ -1,136 +1,162 @@
-Return-Path: <linux-kernel+bounces-279243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1DB94BAE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:27:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFEF94BAE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 296A8283509
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:27:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3CD3B22823
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3557718A6AE;
-	Thu,  8 Aug 2024 10:27:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E5F189F5F
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8994918A6CC;
+	Thu,  8 Aug 2024 10:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2Jvz5Ldy"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE22188006
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112845; cv=none; b=rf0lf207JZhbg3sS6lbzBCtWQ8jrTdIdLtFkzOquid8duLseNt4IAOXs/irJjWmkVUAKmOW02N1cSqwH02uIrSZPtncNXEv/nN2cDeZGeImqsOwGIqVrO68a3HjFNoBmQXWfgQF3ch9197gJerqOF4bAt5/IpoEfpi/tuB2HegQ=
+	t=1723112885; cv=none; b=DwXicC9t2TPWKnLHExGKP263c5NbeF9pQPFrHe84NNFMFOHzAODtSmngvsfUgBHLSyMESC3pPlFk1GCNVLyYIwyIMkoUw0R2MjQvo7drFHeKh5jaMqaSOsxFVymnzTH9e1P2l9B/7bpzerMgMywk+JTGlTWgBrKc8I4GrL6luCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112845; c=relaxed/simple;
-	bh=9Eyt5RtSL9JcSPyyrvm3iRw/8tMnC8nZJ6I+tUj691Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KyCh2oIN1JpWiLCjd2iv2MiOqLmS8HauuMI8+DteJmYd1vW486KvtBq/jaL5dSYIzx4u/zUY2H4pAxF1e1LHoASbKsRNV8I0hp1HeJQuUy2HyMDuFde/TNfnU9WXaUrVJVb/blWPZbV6aeiw9SVgc0TPK2BkTrvOMfxao9gYX2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E422FEC;
-	Thu,  8 Aug 2024 03:27:49 -0700 (PDT)
-Received: from [10.1.27.165] (XHFQ2J9959.cambridge.arm.com [10.1.27.165])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C7CBF3F766;
-	Thu,  8 Aug 2024 03:27:21 -0700 (PDT)
-Message-ID: <480f34d0-a943-40da-9c69-2353fe311cf7@arm.com>
-Date: Thu, 8 Aug 2024 11:27:20 +0100
+	s=arc-20240116; t=1723112885; c=relaxed/simple;
+	bh=RjKRijCG2ufoLvhnl64EG+OgM1h0OplxHuh1Hk2SVQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lg3J2ubGzG02QjHumvwT6hMv88JbcjUzffoNa3yjklKwx6eQUD+0vfgjnuFtNlh97XgWx/Jw1mWshJRHBWeqvwaFzGEgCkFPmsgjwisfhhNCp5Lt8jUQpIkcl+oaulQJQYC62P6HUnUw10vaj3U+PwPwkHacISz5o5RyagBW0m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2Jvz5Ldy; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3687f8fcab5so386021f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 03:28:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723112882; x=1723717682; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ZND/cy3Z516ACCTnpV9ofYo6+loCngOYmYnistIhps=;
+        b=2Jvz5Ldy4QvL8rMY3UJ3Wk/jjwZ9CDwhFZZrMI73AzTfS8XjnBO9GgnUyBrZNA+r37
+         mnOJoW4Vw0mEpfdUmVJ6v9sK8RvVWZIgJhCMrfLsYn1+Lc5MjCNApG19Fa9UkJB7Ld9d
+         l6a4BV5966nSgiMTfVyoqICxYhQJfnRGvOo1cUYXmed0wsusKgzYJOhkF33YCicowZsB
+         owHezrz11MM3FRqT4TG9x3DbxpZketh21xqy5EiVWTddCXNRlpi00Y0aa2KDkrrm7Jnb
+         rCUMQSTKz9QOBUInCC9OuVG3qFXeH5q7edKzTXUBmdfgFxoqg8HFltAF1yco4af/7/Db
+         3gHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723112882; x=1723717682;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+ZND/cy3Z516ACCTnpV9ofYo6+loCngOYmYnistIhps=;
+        b=C817wsYshSVN/BhYQCb3xVPgiGOSQHMQRBvajz4CLnaXNjl6rxqaLMJCxL1KeUZnR9
+         svZQRdPPqOkb1XGZxQvcJnRXukHhP0tVoisSNEOqi2UFIgTOLbnpaVxJS7wUQhjKpYfF
+         4fTBoGpgpWvL1NrFs29H6o3nIXcAnvly1HcCoXKD3zRslPU7BqBqEOOsvk9lx9a3v1bw
+         Dgo1CQnQ4nLWPEku7gnS+vF8+YYGvXYv/icE3tnzZncJKtiWaGS7dsDOfWtPURPKvkEN
+         jM25lG6t3XYEay/ifwFEa/9DJYgrtOQwo3SONKfI3ir0aibFqYFYj/2u+8ztkDKj0tWf
+         Z1Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsIj9BnzaBugvQdCEti9TqZdubtgUHMLzHvr6oQLQpd1f8vriGKe7SZaJ4uyA+Ulk2Oy5BDFohH88AMknwEQ0Tcse4v/edzC6Wp95r
+X-Gm-Message-State: AOJu0YwT24o6p2I6D7SALXbQ4uKAzV9dZg621Cym51bjPfjhtpqIZtTS
+	qMAHgSPf+BE/l2ASUj6HOwMMRSnoT8ksdGwrdGV1tcl8qE8ktW5ok9lkpNpqvvw=
+X-Google-Smtp-Source: AGHT+IFYU2RQPPg/KjZXn7ZtFuIvQu6nUFhl4ghGOJZsi+bsUJSY3bvLQMS3+wd7ad+9LDIv7FuIKA==
+X-Received: by 2002:a5d:550f:0:b0:367:4383:d9b4 with SMTP id ffacd0b85a97d-36d2757674emr1085501f8f.56.1723112881342;
+        Thu, 08 Aug 2024 03:28:01 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:ae7:4e79:8821:15db])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36d27208c98sm1454596f8f.75.2024.08.08.03.28.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 03:28:00 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v3 0/9] reset: amlogic: move audio reset drivers out of CCF
+Date: Thu,  8 Aug 2024 12:27:30 +0200
+Message-ID: <20240808102742.4095904-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/4] Control folio sizes used for page cache memory
-Content-Language: en-GB
-To: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <ioworker0@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
- Pankaj Raghav <kernel@pankajraghav.com>, Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240717071257.4141363-1-ryan.roberts@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240717071257.4141363-1-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 
-On 17/07/2024 08:12, Ryan Roberts wrote:
-> Hi All,
-> 
-> This series is an RFC that adds sysfs and kernel cmdline controls to configure
-> the set of allowed large folio sizes that can be used when allocating
-> file-memory for the page cache. As part of the control mechanism, it provides
-> for a special-case "preferred folio size for executable mappings" marker.
-> 
-> I'm trying to solve 2 separate problems with this series:
-> 
-> 1. Reduce pressure in iTLB and improve performance on arm64: This is a modified
-> approach for the change at [1]. Instead of hardcoding the preferred executable
-> folio size into the arch, user space can now select it. This decouples the arch
-> code and also makes the mechanism more generic; it can be bypassed (the default)
-> or any folio size can be set. For my use case, 64K is preferred, but I've also
-> heard from Willy of a use case where putting all text into 2M PMD-sized folios
-> is preferred. This approach avoids the need for synchonous MADV_COLLAPSE (and
-> therefore faulting in all text ahead of time) to achieve that.
+This patchset follows the discussion about having reset driver in the
+clock tree [1]. Ideally those should reside in the reset part of tree.
 
-Just a polite bump on this; I'd really like to get something like this merged to
-help reduce iTLB pressure. We had a discussion at the THP Cabal meeting a few
-weeks back without solid conclusion. I haven't heard any concrete objections
-yet, but also only a luke-warm reception. How can I move this forwards?
+Also the code of the amlogic reset driver is very similar between the 2
+trees and could use the same driver code.
 
-Thanks,
-Ryan
+This patcheset alignes the reset drivers present in the reset and clock
+then adds support for the reset driver of audio clock controller found in
+the g12 and sm1 SoC family to the reset tree, using the auxiliary bus.
 
+The infrastructure put in place is meant to be generic enough so we may
+eventually also move the reset drivers in the meson8b and aoclk clock
+controllers.
 
-> 
-> 2. Reduce memory fragmentation in systems under high memory pressure (e.g.
-> Android): The theory goes that if all folios are 64K, then failure to allocate a
-> 64K folio should become unlikely. But if the page cache is allocating lots of
-> different orders, with most allocations having an order below 64K (as is the
-> case today) then ability to allocate 64K folios diminishes. By providing control
-> over the allowed set of folio sizes, we can tune to avoid crucial 64K folio
-> allocation failure. Additionally I've heard (second hand) of the need to disable
-> large folios in the page cache entirely due to latency concerns in some
-> settings. These controls allow all of this without kernel changes.
-> 
-> The value of (1) is clear and the performance improvements are documented in
-> patch 2. I don't yet have any data demonstrating the theory for (2) since I
-> can't reproduce the setup that Barry had at [2]. But my view is that by adding
-> these controls we will enable the community to explore further, in the same way
-> that the anon mTHP controls helped harden the understanding for anonymous
-> memory.
-> 
-> ---
-> This series depends on the "mTHP allocation stats for file-backed memory" series
-> at [3], which itself applies on top of yesterday's mm-unstable (650b6752c8a3). All
-> mm selftests have been run; no regressions were observed.
-> 
-> [1] https://lore.kernel.org/linux-mm/20240215154059.2863126-1-ryan.roberts@arm.com/
-> [2] https://www.youtube.com/watch?v=ht7eGWqwmNs&list=PLbzoR-pLrL6oj1rVTXLnV7cOuetvjKn9q&index=4
-> [3] https://lore.kernel.org/linux-mm/20240716135907.4047689-1-ryan.roberts@arm.com/
-> 
-> Thanks,
-> Ryan
-> 
-> Ryan Roberts (4):
->   mm: mTHP user controls to configure pagecache large folio sizes
->   mm: Introduce "always+exec" for mTHP file_enabled control
->   mm: Override mTHP "enabled" defaults at kernel cmdline
->   mm: Override mTHP "file_enabled" defaults at kernel cmdline
-> 
->  .../admin-guide/kernel-parameters.txt         |  16 ++
->  Documentation/admin-guide/mm/transhuge.rst    |  66 +++++++-
->  include/linux/huge_mm.h                       |  61 ++++---
->  mm/filemap.c                                  |  26 ++-
->  mm/huge_memory.c                              | 158 +++++++++++++++++-
->  mm/readahead.c                                |  43 ++++-
->  6 files changed, 329 insertions(+), 41 deletions(-)
-> 
-> --
-> 2.43.0
-> 
+This was tested on sm1 vim3l and gxl aml-s905x-cc.
+
+Changes since v2 [4]:
+ * Fix undefined read access of the reset register
+ * Fix Kconfig symbol description
+
+Changes since v1 [3]:
+ * Fixes formatting errors reported by Stephen.
+ * Changed parameters type to unsigned
+ * Fix usage of ops passed as parameters, previously ignored.
+ * Return 0 instead of an error if reset support is absent
+   to properly decouple from the clock and have a weak
+   dependency
+ * Split the platform and auxiliary modules in 2 distinct modules
+   to fix the COMPILE_TEST error reported by ktest robot.
+
+Change since RFC [2]:
+ * Move the aux registration helper out of clock too.
+
+[1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
+[2] https://lore.kernel.org/linux-clk/20240516150842.705844-1-jbrunet@baylibre.com
+[3] https://lore.kernel.org/linux-clk/20240710162526.2341399-1-jbrunet@baylibre.com
+[4] https://lore.kernel.org/linux-clk/20240718095755.3511992-1-jbrunet@baylibre.com
+
+Jerome Brunet (9):
+  reset: amlogic: convert driver to regmap
+  reset: amlogic: use generic data matching function
+  reset: amlogic: make parameters unsigned
+  reset: amlogic: add driver parameters
+  reset: amlogic: use reset number instead of register count
+  reset: amlogic: add reset status support
+  reset: amlogic: move drivers to a dedicated directory
+  reset: amlogic: split the device core and platform probe
+  reset: amlogic: add auxiliary reset driver support
+
+ drivers/reset/Kconfig                         |  15 +-
+ drivers/reset/Makefile                        |   3 +-
+ drivers/reset/amlogic/Kconfig                 |  27 ++++
+ drivers/reset/amlogic/Makefile                |   4 +
+ .../{ => amlogic}/reset-meson-audio-arb.c     |   0
+ drivers/reset/amlogic/reset-meson-aux.c       | 136 ++++++++++++++++
+ drivers/reset/amlogic/reset-meson-core.c      | 139 ++++++++++++++++
+ drivers/reset/amlogic/reset-meson-pltf.c      |  95 +++++++++++
+ drivers/reset/amlogic/reset-meson.h           |  28 ++++
+ drivers/reset/reset-meson.c                   | 153 ------------------
+ include/soc/amlogic/meson-auxiliary-reset.h   |  23 +++
+ 11 files changed, 454 insertions(+), 169 deletions(-)
+ create mode 100644 drivers/reset/amlogic/Kconfig
+ create mode 100644 drivers/reset/amlogic/Makefile
+ rename drivers/reset/{ => amlogic}/reset-meson-audio-arb.c (100%)
+ create mode 100644 drivers/reset/amlogic/reset-meson-aux.c
+ create mode 100644 drivers/reset/amlogic/reset-meson-core.c
+ create mode 100644 drivers/reset/amlogic/reset-meson-pltf.c
+ create mode 100644 drivers/reset/amlogic/reset-meson.h
+ delete mode 100644 drivers/reset/reset-meson.c
+ create mode 100644 include/soc/amlogic/meson-auxiliary-reset.h
+
+-- 
+2.43.0
 
 
