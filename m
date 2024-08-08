@@ -1,87 +1,83 @@
-Return-Path: <linux-kernel+bounces-279134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2367994B969
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:57:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EF894B96D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B12FAB20E9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:57:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 963361F21E6E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF85189BA3;
-	Thu,  8 Aug 2024 08:57:14 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B45E189517;
+	Thu,  8 Aug 2024 09:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="MmWwrHEB"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4115A188CC8;
-	Thu,  8 Aug 2024 08:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728321422AD
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723107434; cv=none; b=KBDTWXgENLA6kfm+HaUHV5JNGpre4+50fUKIPxuETd+6XUY1nlSIA5afnS0/vj61bqcZ8zCOZS/qF98JHVccbJoFt+G2QiTuKD39j/4EbxdOraW5dulStj4zkBldmphrKsbV53izcdxKfvq/pu5Q+yeIC9shE/LZjuBxBWW6GYg=
+	t=1723107737; cv=none; b=V0BvdhwaK0+beVaNX/2GmUJ/0vN5c1z3hJCWmH1K9PnaMAq9eQjYx20zS4JHeTmq8pVkjMGb12FKhKR4YAWE74zkc34rfYW3yHVXYoPZbnjNrJ6gXenwkvxUNL6e2l+O5TBj055gdWBWDbODcaFG7g7+10ztP38oMRameQ+Bf/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723107434; c=relaxed/simple;
-	bh=VYBBPZ7lM3ShgYEXJ3xnjAE/HlqU0FLWWd8odj3TVRQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=joj4F2xLLD/8BeF/lqMqjRFJw8rpWvrsaPuMR2KY2dcQFEsAGzJRM4iYPYuwO4gmDK1giatN1Qab+eO2falpu6ruD+dbHgIXYJwMUxbQ4N8p0AfDD89Xf1DMCVmQuxrWTAHu0WomdKEa3MfZDl7PjVmT0JTModz1+6ES1AmNmH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wfgqx265LzpTCZ;
-	Thu,  8 Aug 2024 16:55:57 +0800 (CST)
-Received: from kwepemf500010.china.huawei.com (unknown [7.202.181.248])
-	by mail.maildlp.com (Postfix) with ESMTPS id C7879140604;
-	Thu,  8 Aug 2024 16:57:08 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by kwepemf500010.china.huawei.com
- (7.202.181.248) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 8 Aug
- 2024 16:57:08 +0800
-From: Guo Xuenan <guoxuenan@huawei.com>
-To: <corbet@lwn.net>, <linux-doc@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <guoxuenan@huawei.com>,
-	<guoxuenan@huaweicloud.com>, <jack.qiu@huawei.com>, <ganjie5@huawei.com>
-Subject: [PATCH] Documentation: dontdiff: remove 'utf8data.h'
-Date: Thu, 8 Aug 2024 16:57:07 +0800
-Message-ID: <20240808085707.3235019-1-guoxuenan@huawei.com>
-X-Mailer: git-send-email 2.34.3
+	s=arc-20240116; t=1723107737; c=relaxed/simple;
+	bh=iP//oevBEAxtIOncAnpKXE2CeY4AlOAC1pNg0K0Cf9w=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UDKP3Iuzz6HSqOFqW0zRHSxknmuHFMN3hMOkOdOVlGPqTLQcPhJDRuzIpGrXLNELWn7Nyg1ROdc8/C9qghapXeRej5RPx1m9UMtXKApNwsFlPD2gim5znzPCl75G9KmUrJp5DjrDiLyZE/fN6EcfKBX52AGJe4TFx3KVUL2Dm9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=MmWwrHEB; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723107732; x=1723366932;
+	bh=iP//oevBEAxtIOncAnpKXE2CeY4AlOAC1pNg0K0Cf9w=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=MmWwrHEBiCGg7C+K2Xlv4TiE9PM8an5znwPnOnjGqcqG/+bg/fgULxnoRwmOG0qis
+	 Tnd5OkkFtthP9aWPjPQMWwZOlupwcMOQEnY/vG4v0W9X132z08yXNmO+ENdscJTC/N
+	 2NuxdvKITrJeyFznBhTuMo85lXQQ95spAzWHQhNEfOq8nNwDlyDNyFk5VFql8QP6ye
+	 jNfSSolVuSnObOeoWRxl8zJIecax03w5fm3ogEK+VKTN5v64ysNjZFebjwA6I3d529
+	 hXsnb5JPEZYAKGZ1LO7vFU1sP6SwzQeBdxR2gXnb/n4L1cBhyCSznb+q13ZbC6S8wZ
+	 aqX2Xzp5QGY5A==
+Date: Thu, 08 Aug 2024 09:02:06 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 04/28] rust: alloc: implement `Allocator` for `Kmalloc`
+Message-ID: <7b97e646-2d8d-4947-9313-b828b8f773c2@proton.me>
+In-Reply-To: <d005fe7e-74a8-4609-92e0-5dd3743ca060@proton.me>
+References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-5-dakr@kernel.org> <fe982cb6-4910-4ba2-ae4d-892514c9e7f7@proton.me> <ZrJxkwF2Y59xln1e@pollux.localdomain> <8ab83e4b-9c72-4a5d-974a-7f123753e7fe@proton.me> <ZrNIaAcGkGU0d8I3@pollux> <9e22d4ab-eff2-4c69-8a2f-f55a8eaeb892@proton.me> <ZrP90NR1lOpDrQ0X@pollux> <d005fe7e-74a8-4609-92e0-5dd3743ca060@proton.me>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: ce737a7277b35ef8b58768657532d95832eec3be
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf500010.china.huawei.com (7.202.181.248)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: ganjie <ganjie5@huawei.com>
+On 08.08.24 10:55, Benno Lossin wrote:
+> On 08.08.24 01:05, Danilo Krummrich wrote:
+>> It's also not that we safe code with that. `Box`, `Vec`, any other user,=
+ still
+>> would have to create the `Layout` before they call `A::free`.
+>=20
+> But for `Box` it would just be `Layout::<T>::new()` and `Vec` needs
+> `Layout::<T>::new().repeat(self.cap)`.
+>=20
+> Though for `repeat` we need the `alloc_layout_extra` feature, which is
+> an argument against doing this.
 
-Commit 2b3d04787012 ("unicode: Add utf8-data module") changed the
-database file from 'utf8data.h' to 'utf8data.c' to build separate
-module, but it seems forgot to update Documentation/dontdiff. Remove
-'utf8data.h' and add 'utf8data.c'.
+Oops, I overlooked the `Layout::array` function, so this is not a
+problem. Instead it just is `Layout::<T>::array(self.cap).unwrap()`.
 
-Signed-off-by: ganjie <ganjie5@huawei.com>
 ---
- Documentation/dontdiff | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/dontdiff b/Documentation/dontdiff
-index 3c399f132e2d..94b3492dc301 100644
---- a/Documentation/dontdiff
-+++ b/Documentation/dontdiff
-@@ -262,7 +262,7 @@ vsyscall_32.lds
- wanxlfw.inc
- uImage
- unifdef
--utf8data.h
-+utf8data.c
- wakeup.bin
- wakeup.elf
- wakeup.lds
--- 
-2.34.3
+Cheers,
+Benno
 
 
