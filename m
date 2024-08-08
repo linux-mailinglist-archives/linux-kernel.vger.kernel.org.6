@@ -1,272 +1,152 @@
-Return-Path: <linux-kernel+bounces-280141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83E894C648
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD9694C64A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F6E1C21F6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFE731F24FFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EB015AD86;
-	Thu,  8 Aug 2024 21:27:22 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538F415AAD6;
+	Thu,  8 Aug 2024 21:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fKU4CAtu"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E051E145B26
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299372575F
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723152441; cv=none; b=KwLeMOxBZVgyRfl9kmEq69pB6KOD4ke6odfWBCHNSkrPYKbenVOMikB9EfSs9uczi4OuJiZUtd4K906m3JJA9y8b2KCcz+68Fp7d2y4ytyYRqIjQluazdBIC0JecLxbpJK867PSmaeCdA9oNfVt73C6rrbsHOck9UwBrPgDwJe0=
+	t=1723152683; cv=none; b=Wa1uzm+GR2pzo7rHxhQ9fhv8/YFiv4y7WGjWfOUiUAGKh+Aa5kNlzHKmCxgXtVVrqa41MtjWJvOokBcbKAKRS4emi28x2JCb+AU4HMG1OtAoIXtMG5u4MmsXVeiAziBRaCF30cTcLl4MyKib47MyzS0VtLUYLIHvwmIqr6WV+Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723152441; c=relaxed/simple;
-	bh=esTsMZH/9LTxlDA6EfUCPLlaoA+PCJ3wujUfPX8GBZ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TfczxtoAbOHvkcrETky7ESZZ7/FUYhCwFeqnb8PAdIfLSqOZpuZlDjOf/VTKdZwbT/p0kDSjFXoTORUaGHmLhVcRzosISYuLvlJze3PC0zo2NN7zfKx+qWFxCtvXThgHszisxmUiX1ww5o+qgmwnlTCEjmfJ2FArqYf9qtUlo9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4f6e36ea1ebso516891e0c.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:27:19 -0700 (PDT)
+	s=arc-20240116; t=1723152683; c=relaxed/simple;
+	bh=3XZtyGNlZXDt7eNoA4oyrfYWL2zKbyb0O6wqXlfUMFs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EQ57ilBFxhK/YnppmRB9SyPlzGiF82aMuEbhXyJZePCPLCQv95f6KXJI0W4AQch1ZMRp1HI0Gc7t19BgbwzBFXLb7V6wI7XTHXf51pvh5E/Y4IhFyXXKbsrNBs48y/AJK7L2z3sQQIpWJial+INdHMDMkSF3mpzoqAnPz/H/QS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fKU4CAtu; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-5e4df21f22dso1238270a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723152681; x=1723757481; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YuGkjDtUlaXTtwi32m/glrLrjhcbyitEhoCA9sFmL3A=;
+        b=fKU4CAtu65pXgGmld0UGr1lx8mu1vEmCvuUnLMwbed035yM7u+oE4XWo4e9smQZ1Ye
+         ZYssDDXKDV3ygbTtxPBavcst+sMDNJWoA/b13ucQvaEJxe/2GU16kvxeEWBrlVsTR8pB
+         mdBV2McPrOQfak4gu9tV2VU6tVA55U/72or0Gj+TGt6ZFtQ9XGuu34Q8xaCh98IBBBQG
+         AxYL9l6Z++aQvbt4Zkn/Pu0qnTUSo6I+uFeGvt3nG8IWMPg02Dh8XZa9fsioom9nPFl5
+         gaX8n3bBlPdBHXgHSaBdWhVLTuQU2seYFmkKuB9I9+2Xi3Fo98vIWmKlt44lfs+odlLq
+         RGgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723152439; x=1723757239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lEM57bMsGd2LiGZ0cIQMWRGCVKM7YmCar5qKtXQlN9k=;
-        b=fGa9Ra+1X82V+L4bYbnUWDxnzPgch1XnQOIHp+ChP23t8zMgIXr8l1yzOoygAwykW3
-         ChMcOhDQJQQ5NWn6K5EBS5Hm3jArhVr+zIYolfs05isuLv7YoxbStfn8pBoLYqSiA0jg
-         9F++rmevVoQoUcabKr/6Sn00cTcqDCXJCXsZbgGo8qC2l3hF1aoELzssBgax5XJ1gMnq
-         ZY1/av6T/V8GtxBCAcdQgWs5WN+jefocBrSP/90qUjIimZhSnRw7W/bYOejRE7PG3u07
-         TF0G0C4CdyR41zC/TuneAnHxUd0fYNoUK+aoJZS02xRiFX/s937HUAn2DeC+277iZmUZ
-         j3JA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0lJarTJE9bwDibxmu/PAcd1rdIVDEoJmaf79TkG2lwfXXH1wnagQCGK4WDRsFqz/HbO4nSRW6Ift2h0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlt9ptMmcsFpAT2ybfEI8VLOtlFe3dPNKX17N36FmFmC78lSUj
-	q8Dc2FIvFJpXqvUm05so1p2yovidNvnp01Gdl9T5BV0IQ9nzVwr5h4GyAQZ2Ll1ezTXpAX7ZPXS
-	GMP3/zeHYcKW5kbC33XamZPYrCcc=
-X-Google-Smtp-Source: AGHT+IGvb9pCgRYsaz2IEjIApJeKm08lIzCGEkMhAVgb0cxFbJ9uUz9M9p+UragOiOloOJ8i4KCrmsIlJAi9ti4hdI0=
-X-Received: by 2002:a05:6122:3bce:b0:4f2:ffa9:78b5 with SMTP id
- 71dfb90a1353d-4f9027b9526mr3945389e0c.11.1723152438543; Thu, 08 Aug 2024
- 14:27:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723152681; x=1723757481;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YuGkjDtUlaXTtwi32m/glrLrjhcbyitEhoCA9sFmL3A=;
+        b=gh79up04Iy7v66Mj0CAmfjX/uiNv4aUlqMfPTtP6F1P1X/rGWq9ZvcitPCrv7YoEgH
+         CBACPynu0IItjQC1vP175kRpftFZnuDXmPA0UIPQ3qd0xpFQ3iD2QoJgNo9zbwceSqKn
+         Ksj2Nkyh5IyutizJo3fENu3OvsdQDNPT7OQjE9RchbBU7DR1TUX4A6UHhkxGra7QgQaq
+         V8fA0+3c2sJoT8SNKl5kGhQDDo3+5Fn/oXFx67t52lnj1SjmZ5c5dzRiMSeWJNUZ25NZ
+         ZMvbHtsdAVm0QvTAJUU47SxtLbof3YynBGKuxXt1t4lRMKEXOx4+hZ4WjlFxI2Wk1k0m
+         9k/g==
+X-Gm-Message-State: AOJu0YwRMX6KHBcJ0uaRNWgIV1bCzWAi+HTvlXT+sARygAfI3QUUGMV5
+	u+puBRt2xplObHCVe13423XUnOEy+iQqq6Oz9yWPy1Bi9LPMbxL/IuOeWtTLS5F+OtnmNcJ5dAq
+	8PQ==
+X-Google-Smtp-Source: AGHT+IEP73Lm+ojwFY0B1vludlYBr1Am2NVgxUI9/0Rde9EmSF7EgK1uLnCg73xCWYIY67KH9l4Ygd6Hklk=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a63:6685:0:b0:7a1:1b9f:2b16 with SMTP id
+ 41be03b00d2f7-7c268c1d3d2mr6887a12.2.1723152681108; Thu, 08 Aug 2024 14:31:21
+ -0700 (PDT)
+Date: Thu, 8 Aug 2024 14:31:19 -0700
+In-Reply-To: <ZrU20AqADICwwmCy@x1n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240424135148.30422-1-ioworker0@gmail.com> <20240424135148.30422-2-ioworker0@gmail.com>
- <a0f57d90-a556-4b19-a925-a82a81fbb067@arm.com> <CAGsJ_4xSKWXGY9TPS_kvhp7FALH16cyVnZu5FkHy3nN_hsZ_kQ@mail.gmail.com>
- <CAK1f24=rC+iEHkwAHmPBk=SUQ9HRHLA+Q7aKcADdO3uQSs9pnA@mail.gmail.com> <71fdab06-0442-4c55-811b-b38d3b024c85@arm.com>
-In-Reply-To: <71fdab06-0442-4c55-811b-b38d3b024c85@arm.com>
-From: Barry Song <baohua@kernel.org>
-Date: Fri, 9 Aug 2024 09:27:07 +1200
-Message-ID: <CAGsJ_4zO52_xGpbJ5MrJLqoxbGShgrwLChWCcr8O6Q6oHzceDw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm: add per-order mTHP split counters
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org, david@redhat.com, 
-	baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240807194812.819412-1-peterx@redhat.com> <20240807194812.819412-3-peterx@redhat.com>
+ <ZrTlZ4vZ74sK8Ydd@google.com> <ZrU20AqADICwwmCy@x1n>
+Message-ID: <ZrU5JyjIa1CwZ_KD@google.com>
+Subject: Re: [PATCH v4 2/7] mm/mprotect: Push mmu notifier to PUDs
+From: Sean Christopherson <seanjc@google.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Oscar Salvador <osalvador@suse.de>, Dan Williams <dan.j.williams@intel.com>, 
+	James Houghton <jthoughton@google.com>, Matthew Wilcox <willy@infradead.org>, 
+	Nicholas Piggin <npiggin@gmail.com>, Rik van Riel <riel@surriel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, "Kirill A . Shutemov" <kirill@shutemov.name>, 
+	linuxppc-dev@lists.ozlabs.org, Mel Gorman <mgorman@techsingularity.net>, 
+	Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>, David Hildenbrand <david@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Huang Ying <ying.huang@intel.com>, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Jul 1, 2024 at 8:16=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com> =
-wrote:
->
-> On 30/06/2024 12:34, Lance Yang wrote:
-> > Hi Barry,
-> >
-> > Thanks for following up!
-> >
-> > On Sun, Jun 30, 2024 at 5:48=E2=80=AFPM Barry Song <baohua@kernel.org> =
-wrote:
-> >>
-> >> On Thu, Apr 25, 2024 at 3:41=E2=80=AFAM Ryan Roberts <ryan.roberts@arm=
-.com> wrote:
-> >>>
-> >>> + Barry
-> >>>
-> >>> On 24/04/2024 14:51, Lance Yang wrote:
-> >>>> At present, the split counters in THP statistics no longer include
-> >>>> PTE-mapped mTHP. Therefore, this commit introduces per-order mTHP sp=
-lit
-> >>>> counters to monitor the frequency of mTHP splits. This will assist
-> >>>> developers in better analyzing and optimizing system performance.
-> >>>>
-> >>>> /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats
-> >>>>         split_page
-> >>>>         split_page_failed
-> >>>>         deferred_split_page
-> >>>>
-> >>>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> >>>> ---
-> >>>>  include/linux/huge_mm.h |  3 +++
-> >>>>  mm/huge_memory.c        | 14 ++++++++++++--
-> >>>>  2 files changed, 15 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> >>>> index 56c7ea73090b..7b9c6590e1f7 100644
-> >>>> --- a/include/linux/huge_mm.h
-> >>>> +++ b/include/linux/huge_mm.h
-> >>>> @@ -272,6 +272,9 @@ enum mthp_stat_item {
-> >>>>       MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
-> >>>>       MTHP_STAT_ANON_SWPOUT,
-> >>>>       MTHP_STAT_ANON_SWPOUT_FALLBACK,
-> >>>> +     MTHP_STAT_SPLIT_PAGE,
-> >>>> +     MTHP_STAT_SPLIT_PAGE_FAILED,
-> >>>> +     MTHP_STAT_DEFERRED_SPLIT_PAGE,
-> >>>>       __MTHP_STAT_COUNT
-> >>>>  };
-> >>>>
-> >>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >>>> index 055df5aac7c3..52db888e47a6 100644
-> >>>> --- a/mm/huge_memory.c
-> >>>> +++ b/mm/huge_memory.c
-> >>>> @@ -557,6 +557,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_=
-STAT_ANON_FAULT_FALLBACK);
-> >>>>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FA=
-ULT_FALLBACK_CHARGE);
-> >>>>  DEFINE_MTHP_STAT_ATTR(anon_swpout, MTHP_STAT_ANON_SWPOUT);
-> >>>>  DEFINE_MTHP_STAT_ATTR(anon_swpout_fallback, MTHP_STAT_ANON_SWPOUT_F=
-ALLBACK);
-> >>>> +DEFINE_MTHP_STAT_ATTR(split_page, MTHP_STAT_SPLIT_PAGE);
-> >>>> +DEFINE_MTHP_STAT_ATTR(split_page_failed, MTHP_STAT_SPLIT_PAGE_FAILE=
-D);
-> >>>> +DEFINE_MTHP_STAT_ATTR(deferred_split_page, MTHP_STAT_DEFERRED_SPLIT=
-_PAGE);
-> >>>>
-> >>>>  static struct attribute *stats_attrs[] =3D {
-> >>>>       &anon_fault_alloc_attr.attr,
-> >>>> @@ -564,6 +567,9 @@ static struct attribute *stats_attrs[] =3D {
-> >>>>       &anon_fault_fallback_charge_attr.attr,
-> >>>>       &anon_swpout_attr.attr,
-> >>>>       &anon_swpout_fallback_attr.attr,
-> >>>> +     &split_page_attr.attr,
-> >>>> +     &split_page_failed_attr.attr,
-> >>>> +     &deferred_split_page_attr.attr,
-> >>>>       NULL,
-> >>>>  };
-> >>>>
-> >>>> @@ -3083,7 +3089,7 @@ int split_huge_page_to_list_to_order(struct pa=
-ge *page, struct list_head *list,
-> >>>>       XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, ne=
-w_order);
-> >>>>       struct anon_vma *anon_vma =3D NULL;
-> >>>>       struct address_space *mapping =3D NULL;
-> >>>> -     bool is_thp =3D folio_test_pmd_mappable(folio);
-> >>>> +     int order =3D folio_order(folio);
-> >>>>       int extra_pins, ret;
-> >>>>       pgoff_t end;
-> >>>>       bool is_hzp;
-> >>>> @@ -3262,8 +3268,10 @@ int split_huge_page_to_list_to_order(struct p=
-age *page, struct list_head *list,
-> >>>>               i_mmap_unlock_read(mapping);
-> >>>>  out:
-> >>>>       xas_destroy(&xas);
-> >>>> -     if (is_thp)
-> >>>> +     if (order >=3D HPAGE_PMD_ORDER)
-> >>>>               count_vm_event(!ret ? THP_SPLIT_PAGE : THP_SPLIT_PAGE_=
-FAILED);
-> >>>> +     count_mthp_stat(order, !ret ? MTHP_STAT_SPLIT_PAGE :
-> >>>> +                                   MTHP_STAT_SPLIT_PAGE_FAILED);
-> >>>>       return ret;
-> >>>>  }
-> >>>>
-> >>>> @@ -3327,6 +3335,8 @@ void deferred_split_folio(struct folio *folio)
-> >>>>       if (list_empty(&folio->_deferred_list)) {
-> >>>>               if (folio_test_pmd_mappable(folio))
-> >>>>                       count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-> >>>> +             count_mthp_stat(folio_order(folio),
-> >>>> +                             MTHP_STAT_DEFERRED_SPLIT_PAGE);
-> >>>
-> >>> There is a very long conversation with Barry about adding a 'global "=
-mTHP became
-> >>> partially mapped 1 or more processes" counter (inc only)', which term=
-inates at
-> >>> [1]. There is a lot of discussion about the required semantics around=
- the need
-> >>> for partial map to cover alignment and contiguity as well as whether =
-all pages
-> >>> are mapped, and to trigger once it becomes partial in at least 1 proc=
-ess.
-> >>>
-> >>> MTHP_STAT_DEFERRED_SPLIT_PAGE is giving much simpler semantics, but l=
-ess
-> >>> information as a result. Barry, what's your view here? I'm guessing t=
-his doesn't
-> >>> quite solve what you are looking for?
-> >>
-> >> This doesn't quite solve what I am looking for but I still think the
-> >> patch has its value.
-> >>
-> >> I'm looking for a solution that can:
-> >>
-> >>   *  Count the amount of memory in the system for each mTHP size.
-> >>   *  Determine how much memory for each mTHP size is partially unmappe=
-d.
-> >>
-> >> For example, in a system with 16GB of memory, we might find that we ha=
-ve 3GB
-> >> of 64KB mTHP, and within that, 512MB is partially unmapped, potentiall=
-y wasting
-> >> memory at this moment.  I'm uncertain whether Lance is interested in
-> >> this job :-)
-> >
-> > Nice, that's an interesting/valuable job for me ;)
-> >
-> > Let's do it separately, as 'split' and friends probably can=E2=80=99t b=
-e the
-> > solution you
-> > mentioned above, IMHO.
-> >
-> > Hmm... I don't have a good idea about the solution for now, but will
-> > think it over
-> > and come back to discuss it here.
->
-> I have a grad starting in a couple of weeks and I had been planning to in=
-itially
-> ask him to look at this to help him get up to speed on mTHP/mm stuff. But=
- I have
-> plenty of other things for him to do if Lance wants to take this :)
+On Thu, Aug 08, 2024, Peter Xu wrote:
+> Hi, Sean,
+> 
+> On Thu, Aug 08, 2024 at 08:33:59AM -0700, Sean Christopherson wrote:
+> > On Wed, Aug 07, 2024, Peter Xu wrote:
+> > > mprotect() does mmu notifiers in PMD levels.  It's there since 2014 of
+> > > commit a5338093bfb4 ("mm: move mmu notifier call from change_protection to
+> > > change_pmd_range").
+> > > 
+> > > At that time, the issue was that NUMA balancing can be applied on a huge
+> > > range of VM memory, even if nothing was populated.  The notification can be
+> > > avoided in this case if no valid pmd detected, which includes either THP or
+> > > a PTE pgtable page.
+> > > 
+> > > Now to pave way for PUD handling, this isn't enough.  We need to generate
+> > > mmu notifications even on PUD entries properly.  mprotect() is currently
+> > > broken on PUD (e.g., one can easily trigger kernel error with dax 1G
+> > > mappings already), this is the start to fix it.
+> > > 
+> > > To fix that, this patch proposes to push such notifications to the PUD
+> > > layers.
+> > > 
+> > > There is risk on regressing the problem Rik wanted to resolve before, but I
+> > > think it shouldn't really happen, and I still chose this solution because
+> > > of a few reasons:
+> > > 
+> > >   1) Consider a large VM that should definitely contain more than GBs of
+> > >   memory, it's highly likely that PUDs are also none.  In this case there
+> > 
+> > I don't follow this.  Did you mean to say it's highly likely that PUDs are *NOT*
+> > none?
+> 
+> I did mean the original wordings.
+> 
+> Note that in the previous case Rik worked on, it's about a mostly empty VM
+> got NUMA hint applied.  So I did mean "PUDs are also none" here, with the
+> hope that when the numa hint applies on any part of the unpopulated guest
+> memory, it'll find nothing in PUDs. Here it's mostly not about a huge PUD
+> mapping as long as the guest memory is not backed by DAX (since only DAX
+> supports 1G huge pud so far, while hugetlb has its own path here in
+> mprotect, so it must be things like anon or shmem), but a PUD entry that
+> contains pmd pgtables.  For that part, I was trying to justify "no pmd
+> pgtable installed" with the fact that "a large VM that should definitely
+> contain more than GBs of memory", it means the PUD range should hopefully
+> never been accessed, so even the pmd pgtable entry should be missing.
 
-Hi Ryan, Lance,
+Ah, now I get what you were saying.
 
-My performance profiling is pending on the mTHP size and partially
-unmapped mTHP size issues (understanding the distribution of folio
-sizes within the system), so I'm not waiting for either Ryan's grad
-or Lance. I've sent an RFC for this, and both of you are CC'd:
+Problem is, walking the rmaps for the shadow MMU doesn't benefit (much) from
+empty PUDs, because KVM needs to blindly walk the rmaps for every gfn covered by
+the PUD to see if there are any SPTEs in any shadow MMUs mapping that gfn.  And
+that walk is done without ever yielding, which I suspect is the source of the
+soft lockups of yore.
 
-https://lore.kernel.org/all/20240808010457.228753-1-21cnbao@gmail.com/
-
-Apologies for not waiting.  You are still warmly welcomed to participate
-in the discussion and review.
-
->
-> >
-> >>
-> >> Counting deferred_split remains valuable as it can signal whether the =
-system is
-> >> experiencing significant partial unmapping.
-> >
-> > Have a nice weekend!
-> > Lance
-> >
-> >>
-> >>>
-> >>> [1] https://lore.kernel.org/linux-mm/6cc7d781-884f-4d8f-a175-8609732b=
-87eb@arm.com/
-> >>>
-> >>> Thanks,
-> >>> Ryan
-> >>>
-> >>>>               list_add_tail(&folio->_deferred_list, &ds_queue->split=
-_queue);
-> >>>>               ds_queue->split_queue_len++;
-> >>>>  #ifdef CONFIG_MEMCG
-> >>>
-> >>
-
-Thanks
-Barry
+And there's no way around that conundrum (walking rmaps), at least not without a
+major rewrite in KVM.  In a nested TDP scenario, KVM's stage-2 page tables (for
+L2) key off of L2 gfns, not L1 gfns, and so the only way to find mappings is
+through the rmaps.
 
