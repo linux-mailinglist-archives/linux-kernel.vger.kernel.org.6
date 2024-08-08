@@ -1,224 +1,393 @@
-Return-Path: <linux-kernel+bounces-279546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8DDB94BEC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:49:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE0994BEC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB19287638
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:49:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B03F283B1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF1D18E034;
-	Thu,  8 Aug 2024 13:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41C918E03C;
+	Thu,  8 Aug 2024 13:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="pmkiImQq"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2027.outbound.protection.outlook.com [40.92.103.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pOxJnrCc"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C43018E03F;
-	Thu,  8 Aug 2024 13:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723124978; cv=fail; b=RnSHDiG+7CBisgtPYfHSsqxiYpw7knK/4amqgnPuuyxffgYdHE78esOx2SejDS1sRSeU5cH9X01SvXc5vCOwvuFdJFWjDhYxQCW8tEncQtZmBcIRwCroNFUbx+RCt1Ij3Iv5YVwqciy4gLPJEnjTcXRSx27denV4ck8/hUuIb8Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723124978; c=relaxed/simple;
-	bh=v5b0AfKZy+LVcQjjaiBnPa4rwdGFt8wfHub5Cw2Bd4c=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=lRPE5KICa6/h2I0lBtXWeszDkcXdjGzDfotAMp65GkawtZ+vgXqkFv+klFuPra28ttBR4kht1UE4Is+GZAr1oVLMSYhjpNyzWnJffoYuAQq+sNv+FwhuSpWgwGIt1UlnKPcc0UdE3/7sQgsx1WQMYwgp2WwP/3kCwlisL8i/Ukc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=pmkiImQq; arc=fail smtp.client-ip=40.92.103.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wTResfPG9FU80HDw2VevsOhHTREq5RZZpFmJFK8hicz48QcEcYdSR41xtjMJAQobsI3rGePiPqhw9/SzoBeHHaPomRU61eiIsBuLXwdEfH1Jq3bzDDaIYcbVELG+F1Z0C31PUsDncrTI+ccUFXpHnsDf677PpGADcH1wGv87a9/OnXVTf0K6+4478QOvoKl4jfIsqepq/d4aHZqjbcO523WWRxFiPYEboAG/2SYTrmsOqA33Jv4nzWkCdrpPe1A0myRFkFqJUaYoeQc2AI9y9JyBvK8W+fYGv0LE5Nuy7tszkPEZ1VR9Rn0MWnrSQHq1dX1oZ+OSaupBc0lZUtIzig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YS99RU97RhcjFMoR07SwFd+TcQZhf83d3HAXg0N8tF8=;
- b=CnhI597kSkeuR2/plxEcSuXy7pi7fCmUpKtSqT/nJxR5gs+hN4PiaObDcSJCAvUc9HUE/CGvCrJ3zGvOSYDJlMn36V46U6NUNvQ4/2wAcER0hTHNblRD3GxOnV20TrZqGovGfhUohT1eYVxc12H/oqAXyZRGON5yv8aLo3aWHS1bB0V7aHOOseJmwIUgq7hQTXJJrZNXfi0sHFCNkeYTnqFNJ2e3sVXexz4qKsZ1tmp7OjzYUHlcA4pUqUfttejS5XMjsIO8HZQ6pC15nVbUMAcEicN0mCjKaTeEHEdgQWAFZ5bPxOapVvQDIzeB4CPb06pSlnOlr1zIWbhyasolyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YS99RU97RhcjFMoR07SwFd+TcQZhf83d3HAXg0N8tF8=;
- b=pmkiImQqoj064dzTGBcBQvjzoSUf9eIwiu5UAC9SdcX2LlvhIT3GzKgaalbC7KtapxiyI5pMQVu+MEcfmZ6dh/wUA6Mbi1ImEH5K55AhUjFr5EVGKWGfxKUQSKjZG0f63rBne0yVIKEq1XKlbt7Taqssc2PNtBIxu2QeuC9WQkWCgddONPtcBrTQFFXmroCWlSF0xtxIfg8ezmd4gXNXblQbSNZ2D6zfFKvMao4jXaJMgMnEZ8owdzLghQTG9d5Gj8eP2x0LtdDDpc3UGw2hnahNjfollW39OljLxMvsMvJeEyCQuLL/DjNbY8DypYh7QKvO7rJ3jfa7nKVbV7Fc0g==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- MA0P287MB1976.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:11f::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.13; Thu, 8 Aug 2024 13:49:27 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
- 13:49:27 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
-CC: Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay
-	<kekrby@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: [PATCH v3 0/9] Touch Bar support for T2 Macs
-Thread-Topic: [PATCH v3 0/9] Touch Bar support for T2 Macs
-Thread-Index: AQHa6ZnJ5S1PtCl9AEC7pS90dp+vTQ==
-Date: Thu, 8 Aug 2024 13:49:27 +0000
-Message-ID: <1368FEE8-58BB-41C9-B9AD-7F2F68FF1D53@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [V2lnGgel1H7iyyD2cC99WsxSmnDSpyK05xdDhpOCrqO+IGQ0Bq6s7SM3iKUCHYO6rB+eZKExDUw=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB1976:EE_
-x-ms-office365-filtering-correlation-id: 442b4050-e362-464c-bd31-08dcb7b0eb84
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|15080799003|8060799006|19110799003|102099032|4302099013|3412199025|440099028|1602099012;
-x-microsoft-antispam-message-info:
- GnzAPRVSJ8UCi3fW5IoZ/GDP4KMX4VV4xHl81hNKj7aQMQt6a6Vw6dj2nUQtR3KXz5l0LB4ggQjs05Z9cvq2J3oY4YCUjtvB8BM4ESgn3XRrMsdZBhp+0TVb3E04/NpudfZtwtCpi7BESGgF9U/CLsYqb9y8sIRj+Rc107h32dZbDEVylvfA6zU3FvC6LVnF+Ys41SAK3GFWjWxcm6BAwpQW4JZtb33VfmJfe3o8mOq5DLkEsm3a0cX5pEyc1QqI/E06yrP766iJ9sbHTQHoKv5US95jhUkZ33NR0K0mhEAZsrIoIZyYGFnfwTFKPRIyZPBw+JEk9uReclGBpFBkBF5LjsVCUhHtiK+ypOixmVlz7da9UaRkaDHZVdF9HhcrZ7fBoPCim5zCepXdP2YGYRz1JSNx3LLDk5/+1bCF7ODs/Q3XBol9x5PXWEcz+UHBm7m6W4ZEjx7OPMAmb9K68Y6/Kf8jwzNBnxg2NMIHYzOC3slkb+THKKUdTSpP4rzoiBrvVADU1yFCEQAIPBq+Nk9HaEgcelvtMLA5vF3o7rQa+GdDc4fS7XzppIf7HwW2tVlbCnvsDWqEAJm03jU93bvWoZqmWE5jUkJgcXgNEPAfN00xB8sdxzPDl3buWdo9djv6vOYFtYO1ac9jgjN282cbt18R0ZDta4sH/BzVTVIhiLTC2f5N7p3KaBFDmxqgyz4nVK8A3KXxCcMbDjW740it9+Yw1d4Q1XBXcRCs4uH3I+/ijb4VVPIdsDfTBgxpA5c+LXA2tHuOGTmopdt1N7/8qkUV9UZOYKZbWvE3Las=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?b/UQrGvP+HXqATW6pgqbhjQWf77fJu5G3YwyVOr6YIAYMs142qngaU6jQO+V?=
- =?us-ascii?Q?j1MMI4sCbemRaqNEDUrg0Td7yUmAx9RykJrVGBjCqAsunxrZ2ppD+E/qfilx?=
- =?us-ascii?Q?GIGltDm9sNlOvAx61DEna1h90ZM9pkZNXMpV603LEFwpi4OL6uryIgVg/ipv?=
- =?us-ascii?Q?tyUy7v4LtZjlwQTsPEFX97374rdIQFvtIGN+YwA7n5p5O5JZLqyNWRmMXhJB?=
- =?us-ascii?Q?c8JQntWvE1C+lBS8P9pbTNNaDIL8B+xXTwUFu5mlacGrCZLLpF3+6h1xApmJ?=
- =?us-ascii?Q?Jh+z1bt/5UI8md8yhxp+o+BLBIuciHvpnzjt/a5alhpiNY1gbX3ZR5V0PYSL?=
- =?us-ascii?Q?HiFc/adoJx232UGyTWk6DSi3W4aYZe0Y06LNQVw0pwrP/JGJacm790TJnrlF?=
- =?us-ascii?Q?tSTDRJcgABbanf1XLJTFq5KEj6MZ8nyFlqlqSzNvBaORx/DkI1j2L/S5rOBm?=
- =?us-ascii?Q?RQlb2QKs6XxlAfsY/tfgfm5OiJHCXWbBXlcngIZvuDAcdRpTfuDvLtdWksg0?=
- =?us-ascii?Q?qEpmNUmzWrhJw36DfYr1D/9S0jkOW8UE+SrVmAh64qwMjForU8fi5ZNSoC9J?=
- =?us-ascii?Q?cfX5Dh/lu4wjELsX7idFqprSVjsUmtLcYnQxcLUSvIRlsbEVEY3i6fp+wic2?=
- =?us-ascii?Q?XIH2ydoOoKTWAjdGw07gsJIo5OzHIWp7fF5hV8yRZVoR8v7eEF550iyHsH7M?=
- =?us-ascii?Q?03S3kebWUKhhFag8ZoeriNiecgfYQ6vBlUZ7+OMLFME/ZBajR8VV9hQds+yt?=
- =?us-ascii?Q?2i743fYrNJE4IpTjdVDhTEnCgHoWReagq9Xlk+M/Yrcue7DUz40/8N7I9DtD?=
- =?us-ascii?Q?qo1WSU7YRXYsZWSJTopT6iU0NbN+BNpnpBRED93F2dqNDKCQGLypIKRuHvkY?=
- =?us-ascii?Q?YJvF1ZE9Rx7MPec+uLno4waMsxFtYNTNAyP10ueaKjJz7q2HRDii569YZ1EC?=
- =?us-ascii?Q?1HRXvP9Q/N3mfjkUMwO+UJWnTopRcgc3j6sGqz/V9phSUwlcAf5dv1pHMX7+?=
- =?us-ascii?Q?mQ78tIsZNE3E7UbPGA+NYFMjc5vTWsWJvzwtrcm1F+etn7hOqov7g7tJjEP2?=
- =?us-ascii?Q?9ECEWzbh2mk7AGY/r5L642IoIIhvGiMGJMVLXbHOJEG+kXxI7EJ6fC7m1uLk?=
- =?us-ascii?Q?uRuM5HQVApz68MvPojVMGzVgMw5dqLrpEvbyLuabgOI8NDHEZXBm8hjFzlGb?=
- =?us-ascii?Q?ldJdovmb7CO2KxWFugYjgUA1Ut7quY6KuNsir00vh1ZnD4KBsaeg11GXBrXp?=
- =?us-ascii?Q?aopdaoubZYIt6sbkhNo56YXqEYNlHEffRWBJSLRr3wtPDA/hVGXmKkmhIwAx?=
- =?us-ascii?Q?oeBTkuspHhLTjgdh1hcgI7TJ?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <71EA9C36F916B14C9AF0CED28F541476@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DA81DA21
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 13:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723125033; cv=none; b=DaAHucdQUQW9xEJZlV4qh686cTs96VFRqMLP5Fpbmh8xFj3TXK+wtoyLtlVwMboTy6cEbJ7YcelVlkKn6N5FMPhKWeZiUQTPdOz67ob07+/t/QfXtvZ0DGFJacLRZ94iNsnLxnI527ZjmhhVWppeXaGGZK97Y/ndq0NN8TOf1lk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723125033; c=relaxed/simple;
+	bh=PEQ3r/uIovshsLCposkpKs/y0ZXKOlxl+JM5bswhi2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hPQh+/W49cEaIe5QcpgY3NDOhR137nXZ83n4dzDnfdvdZMNI4jGNfkyjIAjw1A186Jj4pQu3sv1l9MJN0Qs7DTV7vQ86QdcFacsnRv8Zahj2bAcayvX/Wc9QWP/9CEXUBREEVx3p3AUMbSp9tgIw/kvHcbFquAWUH/fHLr/1K5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pOxJnrCc; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fd7509397bso198755ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 06:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723125030; x=1723729830; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0znSNwkhUMT9PQBUqs58RCLUinqyfQNAcZNdc4Xnim0=;
+        b=pOxJnrCcHPEFuBcJTuCEhfp88NJyqMVvROZuHYr3uJ802kXgE0xXPBvEHMbbwf3NJ8
+         oSfhfzpYtzfnXTKvU/X1pBDwQcJS2Lxe79el454hAN8MXybmIgw6hUcF4esCXjSKk6XS
+         LwJIlaBrR4n9X+8GtUmyB20OGhcQUn7bhrMwJXguG8eQeFmr1LWzrb6PY7OXo+rsvHZP
+         sAwBR2s2i0efUyXeMbaXvR621Ol697mmcP8gvNv2UX4govuwQVoieEFsgS7rljHXSEHv
+         2q1//wSlOKlc5SAzC7RPuC1FvZyHLsnYTHRmOmjjYjYiZgzQ5DhVwq1YZGh/o+6L4CKc
+         la2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723125030; x=1723729830;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0znSNwkhUMT9PQBUqs58RCLUinqyfQNAcZNdc4Xnim0=;
+        b=RDHuuxY1icPooeh/EQZb/94AiN/AicsxR2VkrSvUDfCDhbR0QcnFmzRx3RCibH3fbf
+         e7rnIJzx+DwaHwhGTKdDkHzeaSzAghTUlzrE1/KRtegxp3nrEkPYpyKUSaTMmnQzlleW
+         3GwYYiXjWasJMGmId27S9HhZrlHcUy66qN9TjUY5vKc6clbOWTdDiow0P+G0UAHvc5WF
+         72UF/W8ONBnUTRe1X26LxH8PioErwLr1PmY+3Jul3JLbYZtyngd6rgopF5iYQHFeOD3U
+         cZ7PZ4ueEUwIj7UqBKiAtt6fFL/baKfEHb3G9gXezudhPt/HefwTB1bCXCJxlfW8w2y9
+         bZaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyA7ufjCcFSU7DufnnoQ9Hf8LNYzl+bivmMmuNTXoyzjpOFtaDUOVxx1y4fa/S4PSBG4bxN804/d8yujk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbhsUW0k8R/oQ10Ag+XM7+23dcLITbIgG44HsIim8b68jaENXg
+	cw2n9TnKtpt8PLfRCcsp5yE+DwttByQNyo+Fa4QWW0zJ6vax+cVr2mE08MyRYKGpUJwdR9Rkyz5
+	eLv8K
+X-Google-Smtp-Source: AGHT+IG7VQqD7cJBbHCXGULkx3FoICliQ4nYzASUZRwawtCQWrj15ZdkQeMWjWzClvQ919z+3EwfvQ==
+X-Received: by 2002:a17:902:d4cf:b0:1f3:61f1:e340 with SMTP id d9443c01a7336-20094884a90mr2615635ad.13.1723125027627;
+        Thu, 08 Aug 2024 06:50:27 -0700 (PDT)
+Received: from google.com (255.248.124.34.bc.googleusercontent.com. [34.124.248.255])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905f85csm125051815ad.160.2024.08.08.06.50.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 06:50:27 -0700 (PDT)
+Date: Thu, 8 Aug 2024 13:50:17 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Will Deacon <will@kernel.org>,
+	Kunkun Jiang <jiangkunkun@huawei.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Michael Shavit <mshavit@google.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	wanghaibin.wang@huawei.com, yuzenghui@huawei.com,
+	tangnianyao@huawei.com
+Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
+ scenarios
+Message-ID: <ZrTNGepJXbmfuKBK@google.com>
+References: <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
+ <20240724102417.GA27376@willie-the-truck>
+ <c2f6163e-47f0-4dce-b077-7751816be62f@linux.intel.com>
+ <CAN6iL-QvE29-t4B+Ucg+AYMPhr9cqDa8xGj9oz_MAO5uyZyX2g@mail.gmail.com>
+ <5e8e6857-44c9-40a1-f86a-b8b5aae65bfb@huawei.com>
+ <20240805123001.GB9326@willie-the-truck>
+ <ZrDwolC6oXN44coq@google.com>
+ <20240806124943.GF676757@ziepe.ca>
+ <ZrJIM8-pS31grIVR@google.com>
+ <315e95d4-064d-4322-a9d3-97e96c013b4d@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 442b4050-e362-464c-bd31-08dcb7b0eb84
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 13:49:27.3180
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1976
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <315e95d4-064d-4322-a9d3-97e96c013b4d@linux.intel.com>
 
-Hi Maintainers
+On Wed, Aug 07, 2024 at 01:35:03PM +0800, Baolu Lu wrote:
+> On 2024/8/6 23:58, Pranjal Shrivastava wrote:
+> > On Tue, Aug 06, 2024 at 09:49:43AM -0300, Jason Gunthorpe wrote:
+> > > On Mon, Aug 05, 2024 at 03:32:50PM +0000, Pranjal Shrivastava wrote:
+> > > > Here's the updated diff:
+> > > > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > > > index a31460f9f3d4..ed2b106e02dd 100644
+> > > > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > > > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > > > @@ -1777,7 +1777,7 @@ static int arm_smmu_handle_evt(struct arm_smmu_device *smmu, u64 *evt)
+> > > >   		goto out_unlock;
+> > > >   	}
+> > > > -	iommu_report_device_fault(master->dev, &fault_evt);
+> > > > +	ret = iommu_report_device_fault(master->dev, &fault_evt);
+> > > >   out_unlock:
+> > > >   	mutex_unlock(&smmu->streams_mutex);
+> > > >   	return ret;
+> > > > diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
+> > > > index 0e3a9b38bef2..7684e7562584 100644
+> > > > --- a/drivers/iommu/intel/svm.c
+> > > > +++ b/drivers/iommu/intel/svm.c
+> > > > @@ -532,6 +532,9 @@ void intel_svm_page_response(struct device *dev, struct iopf_fault *evt,
+> > > >   	bool last_page;
+> > > >   	u16 sid;
+> > > > +	if (!evt)
+> > > > +		return;
+> > > > +
+> > > I'm not sure this make sense??
+> > > 
+> > > The point of this path is for the driver to retire the fault with a
+> > > failure. This prevents that from happing on Intel and we are back to
+> > > loosing track of a fault.
+> > > 
+> > > All calls to iommu_report_device_fault() must result in
+> > > page_response() properly retiring whatever the event was.
+> > > 
+> > > > +static void iopf_error_response(struct device *dev, struct iommu_fault *fault)
+> > > > +{
+> > > > +	const struct iommu_ops *ops = dev_iommu_ops(dev);
+> > > > +	struct iommu_page_response resp = {
+> > > > +		.pasid = fault->prm.pasid,
+> > > > +		.grpid = fault->prm.grpid,
+> > > > +		.code = IOMMU_PAGE_RESP_INVALID
+> > > > +	};
+> > > > +
+> > > > +	ops->page_response(dev, NULL, &resp);
+> > > > +}
+> > > The issue originates here, why is this NULL?
+> > > 
+> > > void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
+> > > {
+> > > 
+> > > The caller has an evt? I think we should pass it down.
+> > Hmm, I agree, I don't see `iommu_report_device_fault` be called anywhere
+> > with a NULL evt. Hence, it does make sense to pass the evt down and
+> > ensure we don't lose track of the event.
+> > 
+> > I'm assuming that we retired the if (!evt) check from intel->page
+> > response since we didn't have any callers of intel->page_response
+> > with a NULL evt. (Atleast, for now, I don't see that happen).
+> > 
+> > Lu, Will -- Any additional comments/suggestions for this?
+> 
+> No. If evt is passed down in the above code, there is no need to add
+> such check anymore.
+>
 
-The Touch Bars found on x86 Macs support two USB configurations: one
-where the device presents itself as a HID keyboard and can display
-predefined sets of keys, and one where the operating system has full
-control over what is displayed.
+Ack. I've addressed the review comments.
+Jason -- I hope this addresses the report_partial_fault()'s -ENOMEM
+return as per your liking?
 
-This patch series adds support for both the configurations.
+Kunkun -- Please try this diff and check if it fixes the problem?
 
-The hid-appletb-bl driver adds support for the backlight of the Touch Bar.
-This enables the user to control the brightness of the Touch Bar from
-userspace. The Touch Bar supports 3 modes here: Max brightness, Dim and Off=
-.
-So, daemons, used to manage Touch Bar can easily manage these modes by writ=
-ing
-to /sys/class/backlight/appletb_backlight/brightness. It is needed by both =
-the
-configurations of the Touch Bar.
+> Thanks,
+> baolu
 
-The hid-appletb-kbd adds support for the first (predefined keys) configurat=
-ion.
-There are 4 modes here: Esc key only, Fn mode, Media keys and No keys.
-Mode can be changed by writing to /sys/bus/hid/drivers/hid-appletb-kbd/<dev=
->/mode
-This configuration is what Windows uses with the official Apple Bootcamp dr=
-ivers.
+Thanks,
+Pranjal
 
-Rest patches support the second configuration, where the OS has full contro=
-l
-on what's displayed on the Touch Bar. It is achieved by the patching the
-hid-multitouch driver to add support for touch feedback from the Touch Bar
-and the appletbdrm driver, that displays what we want to on the Touch Bar.
-This configuration is what macOS uses.
-
-The appletbdrm driver is based on the similar driver made for Windows by
-imbushuo [1].
-
-Currently, a daemon named tiny-dfr [2] is being used to display function ke=
-ys
-and media controls using the second configuration for both Apple Silicon an=
-d
-T2 Macs.
-
-A daemon for the first configuration is being developed, but that's a users=
-pace
-thing.
-
-[1]: https://github.com/imbushuo/DFRDisplayKm
-[2]: https://github.com/WhatAmISupposedToPutHere/tiny-dfr
-
-v2:
-  1. Cleaned up some code in the hid-appletb-kbd driver.
-  2. Fixed wrong subject in drm/format-helper patch.
-  3. Fixed Co-developed-by wrongly added to hid-multitouch patch.
-
-v3:
-  1. Fixed key mapping for Function keys in hid-appletb-kbd driver.
-
-Kerem Karabay (9):
-  HID: hid-appletb-bl: add driver for the backlight of Apple Touch Bars
-  HID: hid-appletb-kbd: add driver for the keyboard mode of Apple Touch
-    Bars
-  HID: multitouch: support getting the contact ID from
-    HID_DG_TRANSDUCER_INDEX fields
-  HID: multitouch: support getting the tip state from HID_DG_TOUCH
-    fields
-  HID: multitouch: take cls->maxcontacts into account for devices
-    without a HID_DG_CONTACTMAX field too
-  HID: multitouch: allow specifying if a device is direct in a class
-  HID: multitouch: add device ID for Apple Touch Bars
-  drm/format-helper: Add conversion from XRGB8888 to BGR888
-  drm/tiny: add driver for Apple Touch Bars in x86 Macs
-
- .../ABI/testing/sysfs-driver-hid-appletb-kbd  |  13 +
- MAINTAINERS                                   |  12 +
- drivers/gpu/drm/drm_format_helper.c           |  54 ++
- .../gpu/drm/tests/drm_format_helper_test.c    |  81 +++
- drivers/gpu/drm/tiny/Kconfig                  |  12 +
- drivers/gpu/drm/tiny/Makefile                 |   1 +
- drivers/gpu/drm/tiny/appletbdrm.c             | 624 ++++++++++++++++++
- drivers/hid/Kconfig                           |  22 +
- drivers/hid/Makefile                          |   2 +
- drivers/hid/hid-appletb-bl.c                  | 206 ++++++
- drivers/hid/hid-appletb-kbd.c                 | 304 +++++++++
- drivers/hid/hid-multitouch.c                  |  60 +-
- drivers/hid/hid-quirks.c                      |   8 +-
- include/drm/drm_format_helper.h               |   3 +
- 14 files changed, 1386 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
- create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
- create mode 100644 drivers/hid/hid-appletb-bl.c
- create mode 100644 drivers/hid/hid-appletb-kbd.c
-
---=20
-2.43.0
-
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index a31460f9f3d4..ed2b106e02dd 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -1777,7 +1777,7 @@ static int arm_smmu_handle_evt(struct arm_smmu_device *smmu, u64 *evt)
+ 		goto out_unlock;
+ 	}
+ 
+-	iommu_report_device_fault(master->dev, &fault_evt);
++	ret = iommu_report_device_fault(master->dev, &fault_evt);
+ out_unlock:
+ 	mutex_unlock(&smmu->streams_mutex);
+ 	return ret;
+diff --git a/drivers/iommu/io-pgfault.c b/drivers/iommu/io-pgfault.c
+index 7c9011992d3f..4c56da1373cc 100644
+--- a/drivers/iommu/io-pgfault.c
++++ b/drivers/iommu/io-pgfault.c
+@@ -113,6 +113,59 @@ static struct iopf_group *iopf_group_alloc(struct iommu_fault_param *iopf_param,
+ 	return group;
+ }
+ 
++static struct iommu_attach_handle *find_fault_handler(struct device *dev,
++						     struct iopf_fault *evt)
++{
++	struct iommu_fault *fault = &evt->fault;
++	struct iommu_attach_handle *attach_handle;
++
++	if (fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID) {
++		attach_handle = iommu_attach_handle_get(dev->iommu_group,
++				fault->prm.pasid, 0);
++		if (IS_ERR(attach_handle)) {
++			const struct iommu_ops *ops = dev_iommu_ops(dev);
++
++			if (!ops->user_pasid_table)
++				return NULL;
++			/*
++			 * The iommu driver for this device supports user-
++			 * managed PASID table. Therefore page faults for
++			 * any PASID should go through the NESTING domain
++			 * attached to the device RID.
++			 */
++			attach_handle = iommu_attach_handle_get(
++					dev->iommu_group, IOMMU_NO_PASID,
++					IOMMU_DOMAIN_NESTED);
++			if (IS_ERR(attach_handle))
++				return NULL;
++		}
++	} else {
++		attach_handle = iommu_attach_handle_get(dev->iommu_group,
++				IOMMU_NO_PASID, 0);
++
++		if (IS_ERR(attach_handle))
++			return NULL;
++	}
++
++	if (!attach_handle->domain->iopf_handler)
++		return NULL;
++
++	return attach_handle;
++}
++
++static void iopf_error_response(struct device *dev, struct iopf_fault *evt)
++{
++	const struct iommu_ops *ops = dev_iommu_ops(dev);
++	struct iommu_fault *fault = &evt->fault;
++	struct iommu_page_response resp = {
++		.pasid = fault->prm.pasid,
++		.grpid = fault->prm.grpid,
++		.code = IOMMU_PAGE_RESP_INVALID
++	};
++
++	ops->page_response(dev, evt, &resp);
++}
++
+ /**
+  * iommu_report_device_fault() - Report fault event to device driver
+  * @dev: the device
+@@ -153,21 +206,38 @@ static struct iopf_group *iopf_group_alloc(struct iommu_fault_param *iopf_param,
+  * hardware has been set to block the page faults) and the pending page faults
+  * have been flushed.
+  */
+-void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
++int iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
+ {
++	struct iommu_attach_handle *attach_handle;
+ 	struct iommu_fault *fault = &evt->fault;
+ 	struct iommu_fault_param *iopf_param;
+ 	struct iopf_group abort_group = {};
+ 	struct iopf_group *group;
++	int ret = 0;
+ 
++	attach_handle = find_fault_handler(dev, evt);
++	if (!attach_handle) {
++		ret = -EINVAL;
++		goto err_bad_iopf;
++	}
++
++	/*
++	 * Something has gone wrong if a fault capable domain is attached but no
++	 * iopf_param is setup
++	 */
+ 	iopf_param = iopf_get_dev_fault_param(dev);
+-	if (WARN_ON(!iopf_param))
+-		return;
++	if (WARN_ON(!iopf_param)) {
++		ret = -EINVAL;
++		goto err_bad_iopf;
++	}
+ 
+ 	if (!(fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE)) {
+-		report_partial_fault(iopf_param, fault);
++		ret = report_partial_fault(iopf_param, fault);
+ 		iopf_put_dev_fault_param(iopf_param);
+ 		/* A request that is not the last does not need to be ack'd */
++
++		if (ret)
++			goto err_bad_iopf;
+ 	}
+ 
+ 	/*
+@@ -182,38 +252,7 @@ void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
+ 	if (group == &abort_group)
+ 		goto err_abort;
+ 
+-	if (fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID) {
+-		group->attach_handle = iommu_attach_handle_get(dev->iommu_group,
+-							       fault->prm.pasid,
+-							       0);
+-		if (IS_ERR(group->attach_handle)) {
+-			const struct iommu_ops *ops = dev_iommu_ops(dev);
+-
+-			if (!ops->user_pasid_table)
+-				goto err_abort;
+-
+-			/*
+-			 * The iommu driver for this device supports user-
+-			 * managed PASID table. Therefore page faults for
+-			 * any PASID should go through the NESTING domain
+-			 * attached to the device RID.
+-			 */
+-			group->attach_handle =
+-				iommu_attach_handle_get(dev->iommu_group,
+-							IOMMU_NO_PASID,
+-							IOMMU_DOMAIN_NESTED);
+-			if (IS_ERR(group->attach_handle))
+-				goto err_abort;
+-		}
+-	} else {
+-		group->attach_handle =
+-			iommu_attach_handle_get(dev->iommu_group, IOMMU_NO_PASID, 0);
+-		if (IS_ERR(group->attach_handle))
+-			goto err_abort;
+-	}
+-
+-	if (!group->attach_handle->domain->iopf_handler)
+-		goto err_abort;
++	group->attach_handle = attach_handle;
+ 
+ 	/*
+ 	 * On success iopf_handler must call iopf_group_response() and
+@@ -222,7 +261,7 @@ void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
+ 	if (group->attach_handle->domain->iopf_handler(group))
+ 		goto err_abort;
+ 
+-	return;
++	return 0;
+ 
+ err_abort:
+ 	dev_warn_ratelimited(dev, "iopf with pasid %d aborted\n",
+@@ -232,6 +271,14 @@ void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
+ 		__iopf_free_group(group);
+ 	else
+ 		iopf_free_group(group);
++
++	return 0;
++
++err_bad_iopf:
++	if (fault->type == IOMMU_FAULT_PAGE_REQ)
++		iopf_error_response(dev, evt);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(iommu_report_device_fault);
+ 
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index d87f9cbfc01e..062156a8d87b 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -1561,7 +1561,7 @@ struct iopf_queue *iopf_queue_alloc(const char *name);
+ void iopf_queue_free(struct iopf_queue *queue);
+ int iopf_queue_discard_partial(struct iopf_queue *queue);
+ void iopf_free_group(struct iopf_group *group);
+-void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt);
++int iommu_report_device_fault(struct device *dev, struct iopf_fault *evt);
+ void iopf_group_response(struct iopf_group *group,
+ 			 enum iommu_page_response_code status);
+ #else
+@@ -1599,9 +1599,10 @@ static inline void iopf_free_group(struct iopf_group *group)
+ {
+ }
+ 
+-static inline void
++static inline int
+ iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
+ {
++	return -ENODEV;
+ }
+ 
+ static inline void iopf_group_response(struct iopf_group *group,
 
