@@ -1,177 +1,132 @@
-Return-Path: <linux-kernel+bounces-279025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720A494B80A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:41:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0133194B80D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A383B1C24257
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:41:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD317285C65
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B13188CCD;
-	Thu,  8 Aug 2024 07:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD28A187FFE;
+	Thu,  8 Aug 2024 07:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V63Vty4h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GAxUusqc"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F60512E1C7;
-	Thu,  8 Aug 2024 07:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5295A187322;
+	Thu,  8 Aug 2024 07:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723102887; cv=none; b=s2kvMFf45ZNtvKt3BYOlwhDukwIqCx4kYH9EiYKYKIm20DKk5ZFqqW5lHvmfyWORiyRvcDH47APCeIRyCRwlC1JOAuWJFIHLXPjbwv1A4iNihIMCYtGCfUR3Pq3+TwAe992LDmPcYxNTswPzgP3zu1ESpxKr9FDCg+yyqQwSPWA=
+	t=1723102897; cv=none; b=AW/qBumrzFJjzQUd81YXjMxLDFlZ05jJgy70SW12TDlU2Pyx4RZ7q7cXRDxVhW2OiSrECcQtTEFX4zEYKR26Ucnl92bv7xMuUmMyjutgPjL2E2tMkMxS6mvXVci55YTq5bjuUl8zql7Tmj4+HXk6LfJsDnWyqpLO/jCkq0MPN7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723102887; c=relaxed/simple;
-	bh=lajLtdSPaYb3RZF6tZ1cHdAvL4k1IFEHMhUa4dUnK/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gog+LbJR1rBW1ubw0GYBpoiRrODKI8vGEJcOYGhKrwVclL1aYQfBoYLN+ebNWh3UdXixzZFYRLSTMU2M9oaLgEOKy+Pt/DmyI/YB7slA+VhJ5zk3jWeCR2Yl7kD0cZxsXJMfnNSk2xvGGLUeSO1aQHfxz0CnunI/nYxQAZB5uFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V63Vty4h; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723102886; x=1754638886;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lajLtdSPaYb3RZF6tZ1cHdAvL4k1IFEHMhUa4dUnK/o=;
-  b=V63Vty4hwd34DI5mEOqcgBepWOHcDxMN3gz91OP783AeEqqb+XMjhMbv
-   Y0I99bTgrMQ1dYW9CNVV2NJAvVdtMLLDuZyxxrdwtEZUpWxSR5CQK+Tuf
-   lbpTdZYlT6tagUf2/IEEYK1MHE4hUy/s6ckSEATQGEV0AQPxcUqBk2eiO
-   X5XRnd4JGavUEtC1xWJPV9+JQrqyz5G2MeIojNoS6uMTxhJxmSSC6irV8
-   Xgn/ilfDZS43VnJls31xAD1TMZ9k2gdZGd04ul//LCvhaqPHCqpQI25kx
-   tnbWb8Hu5u8VCBf3OkMSUfgv6ZoMmYq3BZt6WFf11DrWKhtFXvhhVxz4y
-   w==;
-X-CSE-ConnectionGUID: 0w8VEGc1TGOazHtr0bM1Zw==
-X-CSE-MsgGUID: Vhgi9eeAT5WekRfeFYuH+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21380452"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="21380452"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 00:41:25 -0700
-X-CSE-ConnectionGUID: NiEX1bqeSsKhqlfYvJwbgQ==
-X-CSE-MsgGUID: 0grGwWvHSaeSoFbut2ZJ/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="88043110"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.228.22]) ([10.124.228.22])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 00:41:24 -0700
-Message-ID: <0a8fea1b-955e-4a34-91ac-79870c3989d8@intel.com>
-Date: Thu, 8 Aug 2024 15:41:21 +0800
+	s=arc-20240116; t=1723102897; c=relaxed/simple;
+	bh=qMhepFYwz1ECVfZUTwMQStPIOCqfrzgPSLuuFOmDH5Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J+qX3flStAdI5vr3XoAEu//X1WRFP56HwS2zkSAbinZbpkmqqwBATkJlYalFeKPL4n1IbKRgHVQLl49LFYOQFUpsYqPP4JDB2bJgQG0voKbywcQgEQlpW5vrXvLNya3dAOLAaYTvIsWBoHihN/oZCnD5JQlbwTYZ/MGFhoi4FIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GAxUusqc; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4787fVDQ127512;
+	Thu, 8 Aug 2024 02:41:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723102891;
+	bh=eicows78LRobN5BEPLvbUgPocoApdpNS0Y/ZlM9iDPU=;
+	h=From:To:CC:Subject:Date;
+	b=GAxUusqc/LlSCKM4iPg4Pr3oirdt64HZQMh5tBtTJqL3m/DBTvNTb14VdbHwikof4
+	 GIQgWsa5LR36jahcUtZizU6ETOV8qxCSLKrWuJNOCuKjbDSsgG133Y7bdrOrmHVT0o
+	 I4gFxxkYUF5LXxal6BXDYRqrBgjVfdDYgoX82nbc=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4787fVxa071124
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 8 Aug 2024 02:41:31 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
+ Aug 2024 02:41:30 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 8 Aug 2024 02:41:30 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4787fRZN020900;
+	Thu, 8 Aug 2024 02:41:28 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <afd@ti.com>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-anna@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/3] Defer TI's Remoteproc's Probe until Mailbox is Probed
+Date: Thu, 8 Aug 2024 13:11:24 +0530
+Message-ID: <20240808074127.2688131-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] KVM: Move flags check for user memory regions to the
- ioctl() specific API
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240802205003.353672-1-seanjc@google.com>
- <20240802205003.353672-7-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240802205003.353672-7-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 8/3/2024 4:50 AM, Sean Christopherson wrote:
-> Move the check on memory region flags to kvm_vm_ioctl_set_memory_region()
-> now that the internal API, kvm_set_internal_memslot(), disallows any and
-> all flags.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   virt/kvm/kvm_main.c | 54 ++++++++++++++++++---------------------------
->   1 file changed, 22 insertions(+), 32 deletions(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 84fcb20e3e1c..09cc261b080a 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -1566,34 +1566,6 @@ static void kvm_replace_memslot(struct kvm *kvm,
->   #define KVM_SET_USER_MEMORY_REGION_V1_FLAGS \
->   	(KVM_MEM_LOG_DIRTY_PAGES | KVM_MEM_READONLY)
->   
-> -static int check_memory_region_flags(struct kvm *kvm,
-> -				     const struct kvm_userspace_memory_region2 *mem)
-> -{
-> -	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
-> -
-> -	if (kvm_arch_has_private_mem(kvm))
-> -		valid_flags |= KVM_MEM_GUEST_MEMFD;
-> -
-> -	/* Dirty logging private memory is not currently supported. */
-> -	if (mem->flags & KVM_MEM_GUEST_MEMFD)
-> -		valid_flags &= ~KVM_MEM_LOG_DIRTY_PAGES;
-> -
-> -#ifdef CONFIG_HAVE_KVM_READONLY_MEM
-> -	/*
-> -	 * GUEST_MEMFD is incompatible with read-only memslots, as writes to
-> -	 * read-only memslots have emulated MMIO, not page fault, semantics,
-> -	 * and KVM doesn't allow emulated MMIO for private memory.
-> -	 */
-> -	if (!(mem->flags & KVM_MEM_GUEST_MEMFD))
-> -		valid_flags |= KVM_MEM_READONLY;
-> -#endif
-> -
-> -	if (mem->flags & ~valid_flags)
-> -		return -EINVAL;
-> -
-> -	return 0;
-> -}
+Hello All,
 
-I would vote for keeping it instead of open coding it.
+This series adds deferred probe functionality in the TI's Remoteproc
+drivers. The remoteproc drivers are dependent on the omap-mailbox driver
+for mbox functionalities. Sometimes, the remoteproc driver could be
+probed before the mailbox driver leading to rproc boot failures. Thus,
+defer the probe routine of remoteproc drivers until mailbox driver is
+probed by checking the mbox_request_channel handle in probe. 
 
-> -
->   static void kvm_swap_active_memslots(struct kvm *kvm, int as_id)
->   {
->   	struct kvm_memslots *slots = kvm_get_inactive_memslots(kvm, as_id);
-> @@ -1986,10 +1958,6 @@ static int kvm_set_memory_region(struct kvm *kvm,
->   
->   	lockdep_assert_held(&kvm->slots_lock);
->   
-> -	r = check_memory_region_flags(kvm, mem);
-> -	if (r)
-> -		return r;
-> -
->   	as_id = mem->slot >> 16;
->   	id = (u16)mem->slot;
->   
-> @@ -2114,6 +2082,28 @@ EXPORT_SYMBOL_GPL(kvm_set_internal_memslot);
->   static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
->   					  struct kvm_userspace_memory_region2 *mem)
->   {
-> +	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
-> +
-> +	if (kvm_arch_has_private_mem(kvm))
-> +		valid_flags |= KVM_MEM_GUEST_MEMFD;
-> +
-> +	/* Dirty logging private memory is not currently supported. */
-> +	if (mem->flags & KVM_MEM_GUEST_MEMFD)
-> +		valid_flags &= ~KVM_MEM_LOG_DIRTY_PAGES;
-> +
-> +#ifdef CONFIG_HAVE_KVM_READONLY_MEM
-> +	/*
-> +	 * GUEST_MEMFD is incompatible with read-only memslots, as writes to
-> +	 * read-only memslots have emulated MMIO, not page fault, semantics,
-> +	 * and KVM doesn't allow emulated MMIO for private memory.
-> +	 */
-> +	if (!(mem->flags & KVM_MEM_GUEST_MEMFD))
-> +		valid_flags |= KVM_MEM_READONLY;
-> +#endif
-> +
-> +	if (mem->flags & ~valid_flags)
-> +		return -EINVAL;
-> +
->   	if ((u16)mem->slot >= KVM_USER_MEM_SLOTS)
->   		return -EINVAL;
->   
+Also, use the acquired mbox handle in probe during rproc start/attach
+routine instead of re-requesting. Do not free mbox handle during
+stop/detach routine or error paths. This makes our k3_rproc_attach() &
+k3_rproc_detach() functions NOP.
+
+Also, use the devm_rproc_alloc() helper to automatically free created
+rprocs incase of a probe defer.
+
+v4: Changelog:
+* Andrew
+1) Removed "Fixes:" tag in PATCH 01 and PATCH 02 of series as these are
+improvements.
+2) Removed NULL assignment to core->rproc to avoid possible nullptr
+dereference while checking core state at a later stage.
+
+Link to v3:
+https://lore.kernel.org/all/20240807062256.1721682-1-b-padhi@ti.com/
+
+v3: Changelog:
+1) Added a check in k3_mbox_kick() to prevent sending messages to a
+detached core.
+2) Added "Fixes:" tag in PATCH 01 and PATCH 02 of series.
+
+Link to v2:
+https://lore.kernel.org/all/20240604051722.3608750-1-b-padhi@ti.com/
+
+v2: Changelog:
+1) Added a check in k3_mbox_callback() to prevent forwarding messages
+from a detached core.
+2) Addressed Andrew's comments in v1 regarding some cleanup (Using
+dev_err_probe, removing unused labels, adding matching mbox_free_channel
+call during device removal).
+
+Link to v1:
+https://lore.kernel.org/all/20240530090737.655054-1-b-padhi@ti.com/
+
+Beleswar Padhi (3):
+  remoteproc: k3-r5: Use devm_rproc_alloc() helper
+  remoteproc: k3-r5: Acquire mailbox handle during probe routine
+  remoteproc: k3-dsp: Acquire mailbox handle during probe routine
+
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 80 ++++++++-----------
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 94 +++++++++--------------
+ 2 files changed, 65 insertions(+), 109 deletions(-)
+
+-- 
+2.34.1
 
 
