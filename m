@@ -1,106 +1,82 @@
-Return-Path: <linux-kernel+bounces-278950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A72694B6FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:55:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34FB194B6FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABFFD1C22D6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D627E1F24D66
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92679187FEC;
-	Thu,  8 Aug 2024 06:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B19187FF0;
+	Thu,  8 Aug 2024 06:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=uter.be header.i=@uter.be header.b="S0ZvMeNn"
-Received: from lounge.grep.be (lounge.grep.be [144.76.219.42])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="OMFJ79j4"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E945228;
-	Thu,  8 Aug 2024 06:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DBE18454F;
+	Thu,  8 Aug 2024 06:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723100134; cv=none; b=dvRPRWOPT3gSvvFVRFbfJYDdywRHbrjO+DNpV3h9aKW30go0p+yaL18h5VNn14gb1rN7EfnQLD0JBkdMIjZMuNtvAfGdmkV6HGDlp5RwokyFE/+8ShyiLhe4g3Rr0WEiBS/6zWVvjqusT4FXw23ybbKsKr9aYTwKfXD9nmGLsbM=
+	t=1723100333; cv=none; b=FbmJ8NmfAnykc95dKDDe4FwnR6wvlnz8+yOThL+Dndu2Hj1QpIRcyA5shtlX5aDd3Jpm1Vmzj4fcrh7Z0YZIDrfEhKbiXlM6DAKGcpAC1bnorheW5JQFNhcCj+fMi9uIhLIUqos1i6DXcEJY1mPvJ/5n3zAoOZ1uXFWvxI6J/dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723100134; c=relaxed/simple;
-	bh=NnzCTWKFk4fMDzybs5ufDvwnluiHHkvq8tShRnEldW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEhVkAYaYmRM0Q185w+xgdWs2SCz56387aW518ld/SMSHRIZZQVmVHEtWoKArRXxreiRnBljLcYoQnqLN579meTEYQwwYgmEYL5U/bs/ODArlbsz/3JHY53L+T1kS3YBcL5+eLeY9mn1wt6zmSwE9DEljOonM8Fd7fW6NEAdN8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be; spf=pass smtp.mailfrom=uter.be; dkim=pass (2048-bit key) header.d=uter.be header.i=@uter.be header.b=S0ZvMeNn; arc=none smtp.client-ip=144.76.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uter.be
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=uter.be;
-	s=2021.lounge; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=CkNQ++hXOcHLfwKCSMCwfF8NRO3P+JNlXngejOjZghQ=; b=S0ZvMeNnnjtmOJADtybifiI/sS
-	NcmG5eoqDLvMYm8Pve9jqUor6pEvq+5JApd46AyrJ6ugV/RT0O9HNmSsrbJWbyhog3RKe/G0GZS1S
-	+WsS6u3Hr5pt/u6w7tvFDkrTLY8ZhefawnhsWZJxN0Mk1vIRcVxdoTe3/RPPALZdjOf5MgGKby+p0
-	dXb0w2soa8Icto3I4Nuao+PRKGrrttX/HW2OMFCE0a7cdpAGBo066Xo6P+0RuIs3H7HoebMbeU+UD
-	o7fO3YVdH2NTOABarSM/MZt8O8c7cHExrdWpT+tYIXdEl9BvWmeoD8fSd2LZDZU2hVDXH3oqo5fao
-	iNqIIKJg==;
-Received: from [102.39.154.62] (helo=pc220518)
-	by lounge.grep.be with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <w@uter.be>)
-	id 1sbx3N-002Rr1-0o;
-	Thu, 08 Aug 2024 08:55:17 +0200
-Received: from wouter by pc220518 with local (Exim 4.98)
-	(envelope-from <w@uter.be>)
-	id 1sbx3F-000000001HC-21dN;
-	Thu, 08 Aug 2024 08:55:09 +0200
-Date: Thu, 8 Aug 2024 08:55:09 +0200
-From: Wouter Verhelst <w@uter.be>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	nbd@other.debian.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] nbd: correct the maximum value for discard sectors
-Message-ID: <ZrRrzTKiAVXNItFo@pc220518.home.grep.be>
-References: <20240803130432.5952-1-w@uter.be>
- <20240806133058.268058-1-w@uter.be>
- <20240806133058.268058-3-w@uter.be>
- <20240807135625.GA242945@perftesting>
+	s=arc-20240116; t=1723100333; c=relaxed/simple;
+	bh=16rmbYO3s2QKoxYmTWLhZZOEa339Tp3SddTmwpRS7NY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V/oy9ckJusLiphcCYbB5e9yIewpNs35NNqxcybiEMouIisBILzbdcrAVN1bwhE3HKcz9Y9LryKyR4sRR/LvCwkVzIYYAu8YAKR1SLFR1vrEcB71TRCdQN5P7FYXlZ48QnsCysXvs+ANqgZUhj6j1+3tWh9Mwmcfw/FGb7JcA/DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=OMFJ79j4; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=4j5sgbw6zranvjeyxaiukd6oqy.protonmail; t=1723100328; x=1723359528;
+	bh=Pt9CkHZPaha/LAPnzz7aO/OUrpV2czpkgZBZ/H3KaUs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=OMFJ79j4+/s/X2WDIO+2lf9tDbepuwrVvV5Yd9zUo1tSr+/RBdSfdzcuW3qQC4pux
+	 OEeLnv/C4sJwqxyrS7HBs9i+TmueT5cxb2AaNo2I7DHW+HO3KbyJmS76I4fWPsTtVd
+	 6vfrlZT4pSXrXUpoz0wcH3Fc8NFB3QtWGwlX8rDLxR7qrxdI7KGmdcurbF+kAPZefL
+	 I/BMhPqhAE6ov5KkSNAXgr2wndRebYndNVSczIuxUQrYVTibTrpSQqaYf6rcRy5iKz
+	 fus8TSJKleXB0q1t+ktfu4A4KjUyyYBnddMkb/4UQaBXcl55NJOUE5HembZw3+cRRH
+	 V2fwozrJ7txBA==
+Date: Thu, 08 Aug 2024 06:58:26 +0000
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 28/28] kbuild: rust: remove the `alloc` crate
+Message-ID: <45621f42-80a8-4361-8eb6-3e6294819978@proton.me>
+In-Reply-To: <20240805152004.5039-29-dakr@kernel.org>
+References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-29-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 9a0ba4d0fbf6ba155982593b22c74a8671a9da45
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807135625.GA242945@perftesting>
-X-Speed: Gates' Law: Every 18 months, the speed of software halves.
-Organization: none
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Josef,
+On 05.08.24 17:19, Danilo Krummrich wrote:
+> Now that we have our own `Allocator`, `Box` and `Vec` types we can remove
+> Rust's `alloc` crate and the corresponding unstable features.
 
-On Wed, Aug 07, 2024 at 09:56:25AM -0400, Josef Bacik wrote:
-> We use 512 as the "sectors" measurement throughout the block layer, so our limit
-> is actually
-> 
-> UINT32_MAX >> 9
-> 
-> since we can only send at most UINT32_MAX as our length.  Fix it to be that for
-> both patches and you should be good.  Thanks,
+Would be great if you could include the list of unstable features that
+are now no longer needed here.
 
-My first stab actually used UINT32_MAX, but that didn't compile.
+---
+Cheers,
+Benno
 
-I investigated and found that for the kernel, UINT32_MAX and UINT_MAX
-are actually the same, but in order for me to be able to use UINT32_MAX
-(or U32_MAX, which is also defined to the same value), I would need
-extra includes.
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/Makefile          | 44 ++++++++++--------------------------------
+>  rust/exports.c         |  1 -
+>  scripts/Makefile.build |  7 +------
+>  3 files changed, 11 insertions(+), 41 deletions(-)
 
-So I'll stick with the UINT_MAX >> SECTOR_SHIFT definition that Damien
-suggested.
-
-Thanks,
-
--- 
-     w@uter.{be,co.za}
-wouter@{grep.be,fosdem.org,debian.org}
-
-I will have a Tin-Actinium-Potassium mixture, thanks.
 
