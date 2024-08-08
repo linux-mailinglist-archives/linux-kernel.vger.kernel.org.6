@@ -1,192 +1,98 @@
-Return-Path: <linux-kernel+bounces-279206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0469E94BA6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 048D194BA74
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 647AE1F22845
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:03:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5C921F217BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CCD189F41;
-	Thu,  8 Aug 2024 10:01:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B9881751;
-	Thu,  8 Aug 2024 10:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DF0189F52;
+	Thu,  8 Aug 2024 10:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BGNOci3S"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF9D189F3B
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723111317; cv=none; b=K5GKVc5Gh1hKDY4QGgXTiAuQiOA/9obLzdQnQNztt5SWiy0IScxsCIdo4+k53Kh4qgYRgpAma4ZGBg7lgWcvQHOnb0da/hzcHmv5g9MZ57n+mRVDkM8AnOEKQj/u540vLnw+/5NaNFXOq38ngTcIW9KFEfmPfHXz4h0hp1Pko88=
+	t=1723111495; cv=none; b=MG5CkBWrCBym5xVT+9mCbjJ2h42uomC0JODViThUfnr0MHdZ2JscNjXUK4lDSm0P+1cD8l+vP4Gdx4zQJDku1OD+nUM3UI4dBDSvty5QtqMLei9m0JOfu2EGm5AQRjukG0WWuNVU3koyrOrMIoGbsI5A0tKS9RXdDdF9+IUVEPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723111317; c=relaxed/simple;
-	bh=u0V4rojaf1olpTRsylY1jFpw8o8H0mjn/ZzL2wkLuHo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k/3AWicFGLERiaF/9jxbWCB/MFWUsb+2lKFOpXMuXi26Xm53e46Qg9aIrv8x/bJ7KGyutMFE/ceq4Lz7H9ptr8ykLAO+oBmger48MTwy3eU1153gVUrLpAAXagBNtWjdu2k2TetoJjRDrDWJbfp9KfkgglWZdi/hriU0mT/HQgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8944F139F;
-	Thu,  8 Aug 2024 03:02:20 -0700 (PDT)
-Received: from [10.57.48.153] (unknown [10.57.48.153])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 340AF3F6A8;
-	Thu,  8 Aug 2024 03:01:50 -0700 (PDT)
-Message-ID: <18166885-127d-492d-8b9f-cc70a7ad2562@arm.com>
-Date: Thu, 8 Aug 2024 11:01:45 +0100
+	s=arc-20240116; t=1723111495; c=relaxed/simple;
+	bh=o0/CJsAYa37DbqjLPygfmosP/qEF/V5TS9+ofW5zJbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nojO5nP0q6kZT31XoZThVasPfYVqFiACW+5tXsIvMvZz7vhpEd+pEMUtZMoy24TGqL0/yO2go59DnNYyUAS/3Ai6fc8vkwplMPCMd1Aoc2PV5FuR/CsKiks48s6zF2Llo9q2ihtOQEtUEADQmCi0L/v4P1PgT4/nchM+52BoITU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BGNOci3S; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723111492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o0/CJsAYa37DbqjLPygfmosP/qEF/V5TS9+ofW5zJbo=;
+	b=BGNOci3SmnR90dPT7c38BCAWjw9NXwqx0MmbD2fBv57eAhDl5LZGmufqICONSgrn+39DhF
+	v/zD5j43Hncb9JzDEy2l3jZfi4D/cqi55cWJQjFDFAz8uQAjo8kvK5NLDD+m3xgFgQUriz
+	dvc+WgoNq1aUVH6hBZpJt8Ge3OAhPcs=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-248-lJcWYmbyOvqVRxuWgvtQOw-1; Thu,
+ 08 Aug 2024 06:04:47 -0400
+X-MC-Unique: lJcWYmbyOvqVRxuWgvtQOw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D1D91944D39;
+	Thu,  8 Aug 2024 10:04:45 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.189])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 718431956052;
+	Thu,  8 Aug 2024 10:04:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  8 Aug 2024 12:04:43 +0200 (CEST)
+Date: Thu, 8 Aug 2024 12:04:38 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+	paulmck@kernel.org
+Subject: Re: [PATCH 7/8] uprobes: perform lockless SRCU-protected
+ uprobes_tree lookup
+Message-ID: <20240808100438.GA8020@redhat.com>
+References: <20240731214256.3588718-1-andrii@kernel.org>
+ <20240731214256.3588718-8-andrii@kernel.org>
+ <CAEf4BzYbXzt7RXB962OLEd3xoQcPfT1MFw5JcHSmRzPx-Etm_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] dma: replace zone_dma_bits by zone_dma_limit
-To: =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: Baruch Siach <baruch@tkos.co.il>, Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Will Deacon <will@kernel.org>,
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, Ramon Fried <ramon@neureality.ai>,
- Elad Nachman <enachman@marvell.com>
-References: <cover.1722578375.git.baruch@tkos.co.il>
- <5821a1b2eb82847ccbac0945da040518d6f6f16b.1722578375.git.baruch@tkos.co.il>
- <Zqyo4qjPRHUeUfS5@arm.com> <20240807161938.5729b656@mordecai.tesarici.cz>
- <ZrO5okGUljTc9E7N@arm.com> <20240808113501.4fde4cb0@mordecai.tesarici.cz>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240808113501.4fde4cb0@mordecai.tesarici.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzYbXzt7RXB962OLEd3xoQcPfT1MFw5JcHSmRzPx-Etm_A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 2024-08-08 10:35 am, Petr Tesařík wrote:
-> On Wed, 7 Aug 2024 19:14:58 +0100
-> Catalin Marinas <catalin.marinas@arm.com> wrote:
-> 
->> On Wed, Aug 07, 2024 at 04:19:38PM +0200, Petr Tesařík wrote:
->>> On Fri, 2 Aug 2024 10:37:38 +0100
->>> Catalin Marinas <catalin.marinas@arm.com> wrote:
->>>> On Fri, Aug 02, 2024 at 09:03:47AM +0300, Baruch Siach wrote:
->>>>> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
->>>>> index 3b4be4ca3b08..62b36fda44c9 100644
->>>>> --- a/kernel/dma/direct.c
->>>>> +++ b/kernel/dma/direct.c
->>>>> @@ -20,7 +20,7 @@
->>>>>    * it for entirely different regions. In that case the arch code needs to
->>>>>    * override the variable below for dma-direct to work properly.
->>>>>    */
->>>>> -unsigned int zone_dma_bits __ro_after_init = 24;
->>>>> +u64 zone_dma_limit __ro_after_init = DMA_BIT_MASK(24);
->>>>
->>>> u64 here makes sense even if it may be larger than phys_addr_t. It
->>>> matches the phys_limit type in the swiotlb code. The compilers should no
->>>> longer complain.
->>>
->>> FTR I have never quite understood why phys_limit is u64, but u64 was
->>> already used all around the place when I first looked into swiotlb.
->>>    
->>>>> diff --git a/kernel/dma/pool.c b/kernel/dma/pool.c
->>>>> index d10613eb0f63..7b04f7575796 100644
->>>>> --- a/kernel/dma/pool.c
->>>>> +++ b/kernel/dma/pool.c
->>>>> @@ -70,9 +70,9 @@ static bool cma_in_zone(gfp_t gfp)
->>>>>   	/* CMA can't cross zone boundaries, see cma_activate_area() */
->>>>>   	end = cma_get_base(cma) + size - 1;
->>>>>   	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp & GFP_DMA))
->>>>> -		return end <= DMA_BIT_MASK(zone_dma_bits);
->>>>> +		return end <= zone_dma_limit;
->>>>>   	if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp & GFP_DMA32))
->>>>> -		return end <= DMA_BIT_MASK(32);
->>>>> +		return end <= max(DMA_BIT_MASK(32), zone_dma_limit);
->>>>>   	return true;
->>>>>   }
->>>>>   
->>>>> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
->>>>> index 043b0ecd3e8d..bb51bd5335ad 100644
->>>>> --- a/kernel/dma/swiotlb.c
->>>>> +++ b/kernel/dma/swiotlb.c
->>>>> @@ -450,9 +450,9 @@ int swiotlb_init_late(size_t size, gfp_t gfp_mask,
->>>>>   	if (!remap)
->>>>>   		io_tlb_default_mem.can_grow = true;
->>>>>   	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp_mhttps://lpc.events/event/18/contributions/1776/ask & __GFP_DMA))
->>>>> -		io_tlb_default_mem.phys_limit = DMA_BIT_MASK(zone_dma_bits);
->>>>> +		io_tlb_default_mem.phys_limit = zone_dma_limit;
->>>>>   	else if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp_mask & __GFP_DMA32))
->>>>> -		io_tlb_default_mem.phys_limit = DMA_BIT_MASK(32);
->>>>> +		io_tlb_default_mem.phys_limit = max(DMA_BIT_MASK(32), zone_dma_limit);
->>>>>   	else
->>>>>   		io_tlb_default_mem.phys_limit = virt_to_phys(high_memory - 1);
->>>>>   #endif
->>>>
->>>> These two look correct to me now and it's the least intrusive (the
->>>> alternative would have been a zone_dma32_limit). The arch code, however,
->>>> needs to ensure that zone_dma_limit can always support 32-bit devices
->>>> even if it is above 4GB (with the relevant dma offsets in place for such
->>>> devices).
->>>
->>> Just to make sure, the DMA zone (if present) must map to at most 32-bit
->>> bus address space (possibly behind a bridge). Is that what you're
->>> saying?
->>
->> No exactly. What I'm trying to say is that on arm64 zone_dma_limit can
->> go beyond DMA_BIT_MASK(32) when the latter is treated as a CPU address.
->> In such cases, ZONE_DMA32 is empty.
->>
->> TBH, this code is confusing and not entirely suitable for a system where
->> the CPU address offsets are not 0. The device::dma_coherent_mask is
->> about the bus address range and phys_limit is calculated correctly in
->> functions like dma_direct_optimal_gfp_mask(). But that's about it w.r.t.
->> DMA bit masks because zone_dma_bits and DMA_BIT_MASK(32) are assumed to
->> be about the CPU address ranges in some cases (in other cases
->> DMA_BIT_MASK() is used to initialise dma_coherent_mask, so more of a bus
->> address).
-> 
-> Yes, I know.
-> 
->> On the platform Baruch is trying to fix, RAM starts at 32GB and ZONE_DMA
->> should end at 33GB. That's 30-bit mask in bus address terms but
->> something not a power of two for the CPU address, hence the
->> zone_dma_limit introduced here.
-> 
-> Yes, I was watching the discussion.
-> 
->> With ZONE_DMA32, since all the DMA code assumes that ZONE_DMA32 ends at
->> 4GB CPU address, it doesn't really work for such platforms. If there are
->> 32-bit devices with a corresponding CPU address offset, ZONE_DMA32
->> should end at 36GB on Baruch's platform. But to simplify things, we just
->> ignore this on arm64 and make ZONE_DMA32 empty.
-> 
-> Ah. That makes sense. It also seems to support my theory that Linux
-> memory zones are an obsolete concept and should be replaced by a
-> different mechanism.
-> 
->> In some cases where we have the device structure we could instead do a
->> dma_to_phys(DMA_BIT_MASK(32)) but not in the two cases above. I guess if
->> we really want to address this properly, we'd need to introduce a
->> zone_dma32_limit that's initialised by the arch code. For arm64, I'm
->> happy with just having an empty ZONE_DMA32 on such platforms.
-> 
-> The obvious caveat is that zone boundaries are system-wide, but the
-> mapping between bus addresses and CPU addresses depends on the device
-> structure. After all, that's why dma_to_phys takes the device as a
-> parameter... In fact, a system may have multiple busses behind
-> different bridges with a different offset applied by each.
+On 08/07, Andrii Nakryiko wrote:
+>
+> Ok, so it seems like rb_find_rcu() and rb_find_add_rcu() are not
+> enough or are buggy. I managed to more or less reliably start
+> reproducing a crash, which was bisected to exactly this change. My
+> wild guess is that we'd need an rb_erase_rcu() variant or something,
 
-Right, that's why the *_dma_get_max_cpu_address() functions already walk 
-all known bus translations backwards to find the lowest common 
-denominator in the CPU address space. In principle we could also 
-calculate the lowest translated 32-bit DMA address from every >32-bit 
-range in the same way, however that represents enough extra complexity 
-that it doesn't seem worth trying to implement unless and until someone 
-actually has a clear need for it.
+And then I think it is not safe to put uprobe->rb_node and uprobe->rcu
+in the union, sorry...
 
-Thanks,
-Robin.
+Did you get the crash with this change?
 
-> 
-> FYI I want to make more people aware of these issues at this year's
-> Plumbers, see https://lpc.events/event/18/contributions/1776/
-> 
-> Petr T
+Oleg.
+
 
