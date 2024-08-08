@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-279607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE73094BF87
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:21:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C28194BF97
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93BB31F23089
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:21:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F1CBB26A8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88B418E75C;
-	Thu,  8 Aug 2024 14:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tiljeset.com header.i=@tiljeset.com header.b="Ko+NputL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Joz9183O"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9C218FDB7;
+	Thu,  8 Aug 2024 14:21:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7AF148316;
-	Thu,  8 Aug 2024 14:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E8518EFD0;
+	Thu,  8 Aug 2024 14:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723126867; cv=none; b=i8Eqs2gqiLFGQYOZUx8fjH414CV4N28n+DAFLOnjoGYamWyLfOYN1pArgaZJwjQ1ZavrRz5vSZKSMOaa00mQ8I2YzWtROZbMO2Pq1s+YnjiKWJ09SQE/GrD3o+at7uj2u8yi6qk6saMsyxlbvHPuYoT6gER7NRWkW6bHnRUiO5w=
+	t=1723126883; cv=none; b=RGwjXX3IfOWsd64Noy/bqwyxu6pa19WZKS9VePP6uHaavsMeMgDoiDY+IUvHO+1oTpjoLRM5gTgkL7Y/iajUikSuTEHgk/ZzWrnLmRgiCgWW/kgtdyUBOc5h7bIePdwjx+VhJiq9j/FC/dSVTPmmNZZvF0d8huzk5mVFEg9kKdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723126867; c=relaxed/simple;
-	bh=LjjvsxwbQX5iOYSkl2oHHUIvKoA55ZfBqzcqBqBcrDg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=X3hrM8eOxK76Ire0kIdqMnK6GYvvIGDXEPQbMIin/xpLSxHqDtfiEZqjVBWbKtaVEcRk5T6mbKnjFInz1kkkknkjSEOU77H5z6UzgiV5pa+0dgxQpBEdob0sA94rnZtlNi/7OFbnKsZtwsPPl0bBa2dkxosqDLEVfgHCYNIvA/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tiljeset.com; spf=pass smtp.mailfrom=tiljeset.com; dkim=pass (2048-bit key) header.d=tiljeset.com header.i=@tiljeset.com header.b=Ko+NputL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Joz9183O; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tiljeset.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tiljeset.com
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 7A98C1151ADF;
-	Thu,  8 Aug 2024 10:21:04 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Thu, 08 Aug 2024 10:21:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tiljeset.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723126864;
-	 x=1723213264; bh=LjjvsxwbQX5iOYSkl2oHHUIvKoA55ZfBqzcqBqBcrDg=; b=
-	Ko+NputLDGloI+FKutuwImwIhohyVfL3RoS19N0ZFEsG349+3XFcmxou+tR4vMke
-	beNEWHn6BLNnyVvOZEYCECjA4fpbamX1ftiGkNKb6SajxTjEGGdSBAW4yCqPIthi
-	623cDS7fQ6EHqCI8NYAK7PRCBENabJAI+sOR1YJjO68bcKgqWrhcxGvdLwB67ylC
-	CJ7Am586RZtNs81K2B9Yzg6zL3nQ+gyd8XpYQX6CwSfL8mln0IW4Px1mLKEbHpg8
-	yWX0m4uBhiebRs5OC0/9rjuelxhr8YGLOHJeG8qRAGqfA6lKxTChsNsK17K5uChX
-	bGofQVuvdLgBx3COkMRkOw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723126864; x=
-	1723213264; bh=LjjvsxwbQX5iOYSkl2oHHUIvKoA55ZfBqzcqBqBcrDg=; b=J
-	oz9183O8sHGn1S0bep1sxSnNVxjNUZsw8kemdlbooYAJSJG8/DC6PVITJaM1N7sR
-	J5drWFsb/B/wHerbTFR3oi2fwEepgXJX/OQN6YXSneWqFKI10xU+WLJembiQpp0d
-	Ulm/b8JT2sa3Lhj4fMbDr0XL4aOKEH0FaaOqBfTexPZOBITABHtJxBTS69yfBlqe
-	Lck8A0D6ffSHiUYdjELhSY6Yz9WgsQ8QvVKE3v5saSD1mrGkrGUzbETPdyax1SfJ
-	2RaD9T5y70U7czIBppidnOiV8K52UPiZKBHZvkrD6Pmdx5EBSENnJf3mBwoUQnuc
-	6sqFhHZfTiPavCuQjKICA==
-X-ME-Sender: <xms:UNS0Zsi8C6yTe_cNr9OQOIDnbD0B0l7GZ0kZ9o967ueORqErwa37Zg>
-    <xme:UNS0ZlAt8YyjYsjyvAo7UBNNAJlUszsnpvEuaRFwWlhP_te9W6cer7Bs5N8ztXsCe
-    MspyFSl5-WYGNJVjA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledvgdejhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdfoohhrthgvnhcujfgvihhnucfvihhljhgvshgvthdfuceomhhorhhtvg
-    hnsehtihhljhgvshgvthdrtghomheqnecuggftrfgrthhtvghrnhepfeffheegkeeifeej
-    vdeijedtfeetlefhtdekudefgfeihfejueejtdegvddtieevnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhorhhtvghnsehtihhljhgvshgv
-    thdrtghomhdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    fhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:UNS0ZkGDhs67U3YlZnz6oz13417tj66z2Uoz34-x-tZZCGOnjUAheQ>
-    <xmx:UNS0ZtS0AWyPf8p908NfzLSjwLLCkxcGbIkg8eEuur7G4G4KoFdVSg>
-    <xmx:UNS0Zpw65EzW4b_xNC9Y1mprt5mRNrRiM8w1IjysSeelIbLoAH9R_g>
-    <xmx:UNS0Zr64i5pfiGz7HXTKdmOnxTpBiw4zk5UASi8I0lnjj5tadk8g3w>
-    <xmx:UNS0Zk9_KcOlYjcKfJMHkEActaOMjKrFu8PIttA05ykFO1BsfhiWrk94>
-Feedback-ID: i7bd0432c:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 3F7C1B6008D; Thu,  8 Aug 2024 10:21:04 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723126883; c=relaxed/simple;
+	bh=6CF9RCJDSG9WwrjbP/VpGfJzbbGCBQl6aRvx0RgXNkA=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=MtkL5OXLW5N3Kt2F2Deucd9v3uOirBjzQ7fx7khZ4gGpzqe/8umLCWHQ+VbtC6JTCdNJNfwACje7S16CMjT7T/pmUhz6XV01mmk5gp8eOocgK/atcdZp1aXEmd2VednMbK5GweZOsa4floByGorDyVEDBMAusCTTHkV80bos94o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4CE3C4AF10;
+	Thu,  8 Aug 2024 14:21:23 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sc416-00000000BSz-2rFy;
+	Thu, 08 Aug 2024 10:21:24 -0400
+Message-ID: <20240808142124.542872106@goodmis.org>
+User-Agent: quilt/0.68
+Date: Thu, 08 Aug 2024 10:20:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ stable@vger.kernel.org,
+ Cheng-Jui Wang <cheng-jui.wang@mediatek.com>,
+ Tze-nan Wu <Tze-nan.Wu@mediatek.com>
+Subject: [for-linus][PATCH 7/9] tracing: Fix overflow in get_free_elt()
+References: <20240808142037.495820579@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 08 Aug 2024 16:20:43 +0200
-From: "Morten Hein Tiljeset" <morten@tiljeset.com>
-To: "Christian Brauner" <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <e244e74d-9e26-4d4e-a575-ea4908a8a893@app.fastmail.com>
-In-Reply-To: <20240808-hangar-jobverlust-2235f6ef0ccb@brauner>
-References: <22578d44-b822-40ff-87fb-e50b961fab15@app.fastmail.com>
- <20240808-hangar-jobverlust-2235f6ef0ccb@brauner>
-Subject: Re: Debugging stuck mount
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 
-> It's likely held alive by some random file descriptor someone has open.
-> IOW, try and walk all /proc/<pid>/fd/<nr> in that case and see whether
-> anything keeps it alive.
+From: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
 
-Thanks for the suggestion, but I've already tried the equivalent of that by
-using a debugger to find the superblock in question and then walking all open
-fds and comparing the superblock pointer. I've validated that this approach
-works in a synthetic example where I create a new namespace, mount the
-filesystem under /mnt, run a program to open /mnt/foo and lazy unmount /mnt.
+"tracing_map->next_elt" in get_free_elt() is at risk of overflowing.
 
-Walking procfs seems less precise. I've tried iterating through /proc/*/fd/*
-and comparing the Device entry of stat -L, also without luck.
+Once it overflows, new elements can still be inserted into the tracing_map
+even though the maximum number of elements (`max_elts`) has been reached.
+Continuing to insert elements after the overflow could result in the
+tracing_map containing "tracing_map->max_size" elements, leaving no empty
+entries.
+If any attempt is made to insert an element into a full tracing_map using
+`__tracing_map_insert()`, it will cause an infinite loop with preemption
+disabled, leading to a CPU hang problem.
+
+Fix this by preventing any further increments to "tracing_map->next_elt"
+once it reaches "tracing_map->max_elt".
+
+Cc: stable@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 08d43a5fa063e ("tracing: Add lock-free tracing_map")
+Co-developed-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
+Link: https://lore.kernel.org/20240805055922.6277-1-Tze-nan.Wu@mediatek.com
+Signed-off-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
+Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/tracing_map.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/trace/tracing_map.c b/kernel/trace/tracing_map.c
+index a4dcf0f24352..3a56e7c8aa4f 100644
+--- a/kernel/trace/tracing_map.c
++++ b/kernel/trace/tracing_map.c
+@@ -454,7 +454,7 @@ static struct tracing_map_elt *get_free_elt(struct tracing_map *map)
+ 	struct tracing_map_elt *elt = NULL;
+ 	int idx;
+ 
+-	idx = atomic_inc_return(&map->next_elt);
++	idx = atomic_fetch_add_unless(&map->next_elt, 1, map->max_elts);
+ 	if (idx < map->max_elts) {
+ 		elt = *(TRACING_MAP_ELT(map->elts, idx));
+ 		if (map->ops && map->ops->elt_init)
+@@ -699,7 +699,7 @@ void tracing_map_clear(struct tracing_map *map)
+ {
+ 	unsigned int i;
+ 
+-	atomic_set(&map->next_elt, -1);
++	atomic_set(&map->next_elt, 0);
+ 	atomic64_set(&map->hits, 0);
+ 	atomic64_set(&map->drops, 0);
+ 
+@@ -783,7 +783,7 @@ struct tracing_map *tracing_map_create(unsigned int map_bits,
+ 
+ 	map->map_bits = map_bits;
+ 	map->max_elts = (1 << map_bits);
+-	atomic_set(&map->next_elt, -1);
++	atomic_set(&map->next_elt, 0);
+ 
+ 	map->map_size = (1 << (map_bits + 1));
+ 	map->ops = ops;
+-- 
+2.43.0
+
+
 
