@@ -1,128 +1,130 @@
-Return-Path: <linux-kernel+bounces-278924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECACF94B6AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:25:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293EB94B6AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55291F22D56
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:25:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12F5285602
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E34187327;
-	Thu,  8 Aug 2024 06:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D45186E38;
+	Thu,  8 Aug 2024 06:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WmGLmIUu"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="US9W8N3V"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27752186E3E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 06:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B134F183063;
+	Thu,  8 Aug 2024 06:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723098328; cv=none; b=kcJLAsMaVPJbxpm8AX9+RozC7x1AQ9Vd5NI2zqJZkDgJvwsCrXp5sJz5G7ES3Z9DZo4XeMMEewbD9ETBgVYjzD8D3r4tPOLBN6w+Ij93K3siZ0y67lEOcb9BYRcO7+LJyS8n6bdS4hWbFpVPYbiv4mJhS1nA7NpOpS+suRRPNyI=
+	t=1723098396; cv=none; b=LvhPXbk7TLv6WuU+xI91EFAPRJaUcma84gEOMuNFVSwgS2bYoW6f6bI557KeKJpf4CxyArQoOHDqwjaMwQQ08Lq7p4X5V98IbGhES04B6tWpDKhRZk1ejSlb9icrTf4H3q99Lhp3YWzT/BtSZuiqwm2Gqdz3ODafCcc4mgXBVr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723098328; c=relaxed/simple;
-	bh=vLLuKNqR9XU5O+YIcehGr09FLrfxLy2W9TjakvRNxc4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=f5FY8zA7X5TjyyaNkaWcqIiSuZefGHxgV3IlApMgGpiw6XLjsgecT8eGlBg3NwwE3W+hMcY2lKxI4N4tSfMmLoYYCAR4W/7my2oD7Q7tKqnQ49nFPFoUjY5RsPT0wEvLN99xsRnm1Ic46ECl63Gvq18fWp/wH0ILAJRKtN0Nmvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WmGLmIUu; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d1bb65e906so496868a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 23:25:27 -0700 (PDT)
+	s=arc-20240116; t=1723098396; c=relaxed/simple;
+	bh=TPBmz90yWIPzk3xwAlW0IMWNrhiACBTJH786GobJbHo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SHlsywZ5SyJaF7NBxgOvzKEs6I6A81XSoR6iG2Hah2LC7mgBCOQMGxLc8fXr4wmapzePqa4VWPc1vDilpAKQCHWZuwTn0vNYRsyklUg0XF4RrjSEHT3Cq4rjESxv6gGw/8Qhw5GyBzjwn/b+Eg02tYKeVWG0Lqix2bSiQd4eMDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=US9W8N3V; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7aa086b077so54113166b.0;
+        Wed, 07 Aug 2024 23:26:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723098326; x=1723703126; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sJzbBpFNwwY6e+GIMU5iIyI4LLoSSqWXmhkhActO1pM=;
-        b=WmGLmIUuyf/l/oP5Hc2I25c7ckQjT7UoU3H/6dcJrZmI2maX7Bev/9eznq4a+khWXP
-         /LC+JVPWu2e/M62gXdMw7ykdMV+5da8AdUr6dfQVlmsGBVWAKThLy4+iUS5xcdCD/7Ku
-         lBZ79qs1pffGXIkx0MrEe2vV2LdTkbTQ6ZT1rgWfPeYiYyyGFimBWirEeqrIXoabg3Ou
-         RgsGIFLJWbNHCyOHAJdJTXQFuur9jj0EXzMYoYz0wWmFGl/mXEoLzC/E6Fso2p/ImABX
-         GL4pI9+q5ClclOpBH85/56Fa1uZRD1ciupe8PIaiAtVUyvLQD2KKJe//G0DKddq5+al4
-         J0kA==
+        d=gmail.com; s=20230601; t=1723098393; x=1723703193; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dakk67C20xjrlywmpktHOBSXYaOk12CuQplEuJCCIvE=;
+        b=US9W8N3VBFGuW9622CNx2omXJZibnD1k8vpUVZtKA4iSkQZL1UlLcbENcb4FqyQ0J0
+         2r+uxz2RzJORaCpQXSYNelOjczW07dYN4acjxm1MWsadfROYIxezbX9zdfdtvhBkmbLi
+         yPhWJR/LrToUXk3MwhQWC6yekgFc7Ey6x5/4At8wyu5RZJFjZnaINpyF20mJxZnHHtxh
+         vkKE+M7ADSpxLS5CLIxLXrDRnsJ/e3zVT+SmMLhH+WHXeCwDlPs9+o2zuvcLR55193nt
+         C6KzjpTALffQ7Gv/WUgElIEfU1Ce9/6OEcnxeXzmPP3P3m/lUy3zMKgcCTJhv3FjjdPV
+         DwEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723098326; x=1723703126;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sJzbBpFNwwY6e+GIMU5iIyI4LLoSSqWXmhkhActO1pM=;
-        b=YmFPXzmRxvOGCtNm93RVl7lJ2+0P+Fnw7GEzQm8rB3TyuMIXCygenGGeiwMqUAutff
-         8znpIHAWzSO4No20H4K9ihrJQYhMXy6NGjUvz5L/2nK8FyCxwYGWwsVVj/VXAs+EhctC
-         g3K4fbQyEnjZLMw/JXjudrc06M1IyUvYZ/3aMtmZASv4UWM1fqlPKncEnqezoZRSkJwB
-         eM51Fas4bv3A6q+4CoqjuTRHfM6a8Uu9H1OrfkimbaEWHLvZADtjCTPnCbJjdajvZXtF
-         HaLsPKXkO0nCCM8h5ec0qjKG+FMo3GBUymsHPqPJ6KaKGo+fAUzZ7kJ3YaW7rWdbPnlZ
-         0zfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtc/vOarFbiTiTqtk/uNVwWBI1dvpD5LPtmhR3NII0L/2+y5Girvhr7my76HBr4xhevy7PR9ErHz69ZlOVAmj5YlNWcIWU3p4gJanH
-X-Gm-Message-State: AOJu0YyrUkIfRhOYANjsY2bAr2HSwMgDvvL6+aP+gD/W6BDNt+IP+d0V
-	cgyUVHcRsJplm2lNFRdOXkbcRgp6OBOrCBrU+d/9XAWaWPeJqFe/BlSkIrRKmcY=
-X-Google-Smtp-Source: AGHT+IG5Sh4RPZDFGIdFKwM0iRTPb/2nHrMhAgBHSqeUq3wn62Dbr5Jen5m7Eo7OeNMhWJA7SfHwfg==
-X-Received: by 2002:a17:90b:4ac9:b0:2c4:dc63:96d7 with SMTP id 98e67ed59e1d1-2d1c349446emr921727a91.41.1723098326578;
-        Wed, 07 Aug 2024 23:25:26 -0700 (PDT)
-Received: from localhost ([2804:14c:87d5:5261:ed46:7c69:6cee:3c20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9db74a0sm328001a91.47.2024.08.07.23.25.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 23:25:26 -0700 (PDT)
-From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
- <will@kernel.org>,  Jonathan Corbet <corbet@lwn.net>,  Andrew Morton
- <akpm@linux-foundation.org>,  Marc Zyngier <maz@kernel.org>,  Oliver Upton
- <oliver.upton@linux.dev>,  James Morse <james.morse@arm.com>,  Suzuki K
- Poulose <suzuki.poulose@arm.com>,  Arnd Bergmann <arnd@arndb.de>,  Oleg
- Nesterov <oleg@redhat.com>,  Eric Biederman <ebiederm@xmission.com>,
-  Shuah Khan <shuah@kernel.org>,  "Rick P. Edgecombe"
- <rick.p.edgecombe@intel.com>,  Deepak Gupta <debug@rivosinc.com>,  Ard
- Biesheuvel <ardb@kernel.org>,  Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-  Kees Cook <kees@kernel.org>,  "H.J. Lu" <hjl.tools@gmail.com>,  Paul
- Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>,
-  Albert Ou <aou@eecs.berkeley.edu>,  Florian Weimer <fweimer@redhat.com>,
-  Christian Brauner <brauner@kernel.org>,  Ross Burton
- <ross.burton@arm.com>,  linux-arm-kernel@lists.infradead.org,
-  linux-doc@vger.kernel.org,  kvmarm@lists.linux.dev,
-  linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
-  linux-mm@kvack.org,  linux-kselftest@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 39/40] kselftest/arm64: Enable GCS for the FP stress
- tests
-In-Reply-To: <20240801-arm64-gcs-v10-39-699e2bd2190b@kernel.org> (Mark Brown's
-	message of "Thu, 01 Aug 2024 13:07:06 +0100")
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
-	<20240801-arm64-gcs-v10-39-699e2bd2190b@kernel.org>
-Date: Thu, 08 Aug 2024 03:25:23 -0300
-Message-ID: <87v80bcyzw.fsf@linaro.org>
+        d=1e100.net; s=20230601; t=1723098393; x=1723703193;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dakk67C20xjrlywmpktHOBSXYaOk12CuQplEuJCCIvE=;
+        b=DQYWregvbGHIDoK8dnRWxv7h7tE3js6rRdCO6hEL++qH+j7h8axr3LOKAXNlg6ObPa
+         jYkBTItEceJRpzVei+b2bJkbNaQS4klsnVxWjeit79FLcjIOYCYTdjPXaLirGKx7d9Ss
+         XuSu7dgkT+Dn7jVcxRifeu7xp+NKZThG6yJguH2zrTBnxt1pg4DOAegsrwYHDiT33GKQ
+         XICPzQgG21Xk38q/S+3mqCA3N/2UzLhwr5dlEyKqUr6fHBGLMMX7SjnPOh+g4LesmOTz
+         pMMo7kYenZu49Bhl1JaP9iLUgYCK5/K5r6EJrJhcJsWU4LMh9v2Jy9eCIbU54Ry6UjCP
+         hHLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZWV3icEmBFEPyjL5t7PLq21K9jTNvA9qQoUEJJf6O2htsi+f4vgQcTgfg6tSYTZuCNQ3UUe2xFlPxhilc@vger.kernel.org, AJvYcCWbiFunocaHmBaOjQvpG5WrR1c7ndeLt0OH1pzAw7pA8sat483cnuXT3DPFibXthcIcUcToOTekyKHbR0Li@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCEF1mqVvxnqLYG2PMxcClNalyIyjyCWFm4dBGqk0pqAplJSQ0
+	M0xcF2onsxgMzmLdZGmzY8F+Wo0LcBKYa/FXHYdLVVipuPNDIBGk41kSSlwbLFz5nzTScUKrWi9
+	KTUDHDv5St1d8HUqc5YpXoWytlVRxUg==
+X-Google-Smtp-Source: AGHT+IF+St6RBJ9YRxVeG2pzYGu4pBlYPOKZhHH+liTd0RSoIdF+j+MyA/kWfSK6RxbAIlPIOU0t7fiRTlKswGPdcJc=
+X-Received: by 2002:a17:907:e92:b0:a7a:b070:92c6 with SMTP id
+ a640c23a62f3a-a8090e41f3bmr58294166b.50.1723098392472; Wed, 07 Aug 2024
+ 23:26:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240807033820.GS5334@ZenIV> <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
+ <20240807062300.GU5334@ZenIV> <20240807063350.GV5334@ZenIV>
+ <CAGudoHH29otD9u8Eaxhmc19xuTK2yBdQH4jW11BoS4BzGqkvOw@mail.gmail.com>
+ <20240807070552.GW5334@ZenIV> <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
+ <20240807075218.GX5334@ZenIV> <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
+ <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com> <20240807124348.GY5334@ZenIV>
+In-Reply-To: <20240807124348.GY5334@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 8 Aug 2024 08:26:20 +0200
+Message-ID: <CAGudoHE=fu2B+MNdnzOafr0Mg8D3bDmsKyMPTOZS2LeUFv53Gw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Mark Brown <broonie@kernel.org> writes:
-
-> While it's a bit off topic for them the floating point stress tests do give
-> us some coverage of context thrashing cases, and also of active signal
-> delivery separate to the relatively complicated framework in the actual
-> signals tests. Have the tests enable GCS on startup, ignoring failures so
-> they continue to work as before on systems without GCS.
+On Wed, Aug 7, 2024 at 2:43=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
 >
-> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  tools/testing/selftests/arm64/fp/assembler.h   | 15 +++++++++++++++
->  tools/testing/selftests/arm64/fp/fpsimd-test.S |  2 ++
->  tools/testing/selftests/arm64/fp/sve-test.S    |  2 ++
->  tools/testing/selftests/arm64/fp/za-test.S     |  2 ++
->  tools/testing/selftests/arm64/fp/zt-test.S     |  2 ++
->  5 files changed, 23 insertions(+)
+> On Wed, Aug 07, 2024 at 11:50:50AM +0200, Mateusz Guzik wrote:
+>
+> > tripping ip:
+> > vfs_tmpfile+0x162/0x230:
+> > fsnotify_parent at include/linux/fsnotify.h:81
+> > (inlined by) fsnotify_file at include/linux/fsnotify.h:131
+> > (inlined by) fsnotify_open at include/linux/fsnotify.h:401
+> > (inlined by) vfs_tmpfile at fs/namei.c:3781
+>
+> Try this for incremental; missed the fact that finish_open() is
+> used by ->tmpfile() instances, not just ->atomic_open().
+>
+> Al, crawling back to sleep...
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 95345a5beb3a..0536907e8e79 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3776,7 +3776,10 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
+>         file->f_path.dentry =3D child;
+>         mode =3D vfs_prepare_mode(idmap, dir, mode, mode, mode);
+>         error =3D dir->i_op->tmpfile(idmap, dir, file, mode);
+> -       dput(child);
+> +       if (file->f_mode & FMODE_OPENED)
+> +               mntget(parentpath->mnt);
+> +       else
+> +               dput(child);
+>         if (file->f_mode & FMODE_OPENED)
+>                 fsnotify_open(file);
+>         if (error)
 
-The fpsimd, sve, za and zt tests don't find any errors on my FVP setup
-when left running for a while:
+That seems to have worked, but my test rig went down due to surprise
+PDU maintenance (and it is still down) and I was unable to give the
+patch a more serious beating.
 
-Tested-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-
--- 
-Thiago
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
