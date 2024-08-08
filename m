@@ -1,114 +1,80 @@
-Return-Path: <linux-kernel+bounces-279717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0EE94C0E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:21:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2E294C0E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADAD428650B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 124CF1F227DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AAF18EFF1;
-	Thu,  8 Aug 2024 15:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DCF18FDBF;
+	Thu,  8 Aug 2024 15:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fxLpjck8"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTJRrEXe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21AA18DF99
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E11F18DF99;
+	Thu,  8 Aug 2024 15:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723130475; cv=none; b=MVOiy89HQYeaakx3amqg6gtS4FyHgpzvtnhrPz4VXxg2SD8UYUt+V9zFxWHGc9cXNtyuBLkBPqJgPdjuzaYM0bvhWFltYY+xm+ZABUkPKaSAb/LGnGJCe4jLXf6nVYfp2NEXDFnXwEvu/9FdF5Rzp75KTReS53DTKdh9VJPA8yk=
+	t=1723130479; cv=none; b=gUmUAnP9EmOolcYyn4Xk6rtWNRsQLUJzuXLN2AV5OxOc+xuLd0tovwG/4vFccfGPP5obyLbOd99Fnfvk+Y6d9+tY1pOXE0aU7FTl48FVXwnjN49HV1QS1ODEv40NUu9REB1jyn2esUIwSirICFi5MnsCfihiDbDnj5DkY/JQjIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723130475; c=relaxed/simple;
-	bh=Ov7Fqd0mS9ahFAup2iztfvF0GpMTqVzHVCCfN9ngwGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JR/s9fLGKCcK8ObHr/W/FAJpLqkxWJCZVE3bmj5KQKoHixAAzCZaR1XsrF0ucrvpC0IXgL2zYaFDs24sXA6GabR257WUIj2V4LrfAP+igOiaMbm4gcq7j8mps1/0mfsh8YP+w7w45+SdHM2bH1Jd9znSG4rMqO+cnwal7NSkkUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fxLpjck8; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=LD/s
-	gseAClYXyBndeJbn6ysTy+uaUxkOkF5tuweLCO4=; b=fxLpjck8+7Hcm5HuW/na
-	tgblRwgSzNJ7VzmYSwRaeTJ9JbpACbX7V8IPHnsi+FkPTe7xgNzXQyf6jj3w2btS
-	wr5GK9JMkff6HXeE2ieh9qTSfngl4ZyemBA3STtqtX3sK498rYO6I9DMLEsy1OtS
-	GHwChDLuKrqPJbIfmrrLc/ildeonBqE5QhMv2j4ePeVpTrjK4cVTBAQLNKfFKCSR
-	3sB6NUXCEhJhzdmIOOLN+EqLdK6g3Wf5DiYQI2taa853Bl5QdefQFRsbL8koMOS3
-	AmTJFWAaVEwvwRy4kat74wBWnAwJJdPfUqLq4/Dt6CXQl7rGkh+RNIgYrVSyvgGh
-	TQ==
-Received: (qmail 355118 invoked from network); 8 Aug 2024 17:21:11 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Aug 2024 17:21:11 +0200
-X-UD-Smtp-Session: l3s3148p1@9V2gky0fyhptKPBr
-Date: Thu, 8 Aug 2024 17:21:10 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 07/11] dt-bindings: i2c: renesas,riic: Document the
- R9A08G045 support
-Message-ID: <ZrTiZtD9U4I2LYZj@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
- <20240711115207.2843133-8-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1723130479; c=relaxed/simple;
+	bh=hd4IgJX5oZYn+oeDdDWKM6rrCjGHM4yWKE+GqL04nLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G73BZkXe6IgzkLFvuqj7LVbEBcWb5Hj5CKeM8hvzS5tMIXGM9t//dMul0x7cmjqTrfL+C2hOnRPZQIiQIvnjgIUzbrer1R94iNnXYXZwX3TASEC+kFB5DhwF8f/jZnd2Uot+563VgFbuRsrOsfapYeCcWlhyigk7STtP2w8pid4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTJRrEXe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE24C4AF0D;
+	Thu,  8 Aug 2024 15:21:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723130479;
+	bh=hd4IgJX5oZYn+oeDdDWKM6rrCjGHM4yWKE+GqL04nLg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CTJRrEXeaC8mgCTRUSjFCNRpgiE3nFgDz3Bz9edG2GocCNrQGcUrqVKhAOQgTDUaf
+	 6YF19qKQUouBEukfPIbKQhxvchhZtVSSPWS7WKAAuxlnPwaY4f4yHFtu1y5i0ri7LC
+	 vjYwrQQpyZ8N0rLhqCB8AHxaD4WTtF2uZEtbNuCqufMBFZ+/gj/TVfCSqhfEWW62UR
+	 2vZIcjaa3o0w5TNKzC+gjLrUg3KQ/JIYNkLU9Hd18PoFlzDj5ySbyxTHWFYWTGzfHN
+	 BK6aYK4atPvcKLNjTNuhOLYDoxZy3YTH/yohMLpgQWc7g9vUISE3O/HYKODNlosZ42
+	 ofz4RUsA/5mTA==
+Date: Thu, 8 Aug 2024 08:21:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bharat Bhushan <bbhushan2@marvell.com>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
+ <hkelam@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
+ <pabeni@redhat.com>, <jerinj@marvell.com>, <lcherian@marvell.com>,
+ <ndabilpuram@marvell.com>
+Subject: Re: [PATCH] octeontx2-af: Fix CPT AF register offset calculation
+Message-ID: <20240808082117.3c0be819@kernel.org>
+In-Reply-To: <20240806070239.1541623-1-bbhushan2@marvell.com>
+References: <20240806070239.1541623-1-bbhushan2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6V+kovb3+CQbdwxA"
-Content-Disposition: inline
-In-Reply-To: <20240711115207.2843133-8-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 6 Aug 2024 12:32:39 +0530 Bharat Bhushan wrote:
+> Some CPT AF registers are per LF and others are global.
+> Translation of PF/VF local LF slot number to actual LF slot
+> number is required only for accessing perf LF registers.
+> CPT AF global registers access does not requires any LF
+> slot number.
 
---6V+kovb3+CQbdwxA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+s/does/do/ s/requires/require/
 
+Does it mean something will not work without this patch?
+Or it's just a cleanup of unnecessary code?
 
-> +          - const: renesas,riic-r9a08g045   # RZ/G3S
-> +          - const: renesas,riic-r9a09g057
-
-Why no comment after the latter one?
-
-
---6V+kovb3+CQbdwxA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma04mYACgkQFA3kzBSg
-KbaHNA//VlRwPnhnEU/HD1UwyZLn7B/GQc4GIgy4g785jDsvDAY0xbxWqnQWwrjX
-MAQYSJYnsTj5jfUYwKNKLtFzpnGtOAVdDYD6H7bLW8GAl/0APnJnEefUuLr5g9QL
-eP1IpWGxeaUJlYrk29R8JZ0DGtyKP6jZ4WUGtsx0bAgYu9UKpKI0rV0lEjHNueVQ
-NQQSr++8CH34WiJz68reZYuSr+0geW8q+ibd1xBay1dXF9vVTufTizDisEbmEYDR
-Pc0eio8fVixDlhwCB87qHbj9QeJnz7vuPOjUTHmP0bQOwYA9OPfTbzox/7luo2w+
-ktZiGb9t29KgYinTPpP0fnmcjCy+769D6jZiTZvWF6zo0MO/bSPZu4Apo6qLtwL3
-7gUXAqTwAoOlDvNamhiHoJYFlIHd5VQ+ga5D0Dgwhe8ImxhFTy7btyieF7dE5Ns5
-mwddFzQtQMkwMJlQUqx1dZaWwpi4klaNT/LxNPW4GPezjfchfnEz6jVk6YvtJ3VC
-h1PWSmuROWiOfqjebcC8ERU9SqpbN3Fh6wZedB3EqQJxdcuyXNo6UEMEnbYIV+su
-nUnc1eACemMkHL6SXikYQosMEoA8ivja8Cwpt5mE6uIrPU2KuPVwKnWCoTxSpjgz
-3r5Fbkx97OO3ipatKyykJjbmgcdfFYuIiwVt4iQ+l5qdtkEMZUw=
-=JfKY
------END PGP SIGNATURE-----
-
---6V+kovb3+CQbdwxA--
+> Also there is no reason CPT PF/VF to know actual lf's register
+> offset.
+-- 
+pw-bot: cr
 
