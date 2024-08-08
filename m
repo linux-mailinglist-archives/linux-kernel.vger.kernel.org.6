@@ -1,159 +1,193 @@
-Return-Path: <linux-kernel+bounces-279471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2588A94BDA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:38:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E119494BDAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56AA41C22C09
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873CB2840B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7775718C914;
-	Thu,  8 Aug 2024 12:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XidQiGbk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB2C63D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B265A18C911;
+	Thu,  8 Aug 2024 12:38:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF8B18C910;
+	Thu,  8 Aug 2024 12:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723120710; cv=none; b=SVWczBeQNsguM2Ijc61XrMo7wPqtNjZOGCcYBHrAQ5i63A77cn1zmABhB10f5xTyAMPTfEw4q8SCm/GGU1OTe+hriBYCCYY1jb84XJIDIgAIC55ASMGTAxwQozjZrwkTfXzRuzD1C2yShDH0a3gPAJW+0CYgqFIVgOvzeElUW4g=
+	t=1723120733; cv=none; b=q8yeH86BAM810YEVC8Fdsd28XwDV3QsUwnH7D4Ic4AMzrJZY9/Ps03jvmmwe0EOwD9eYjIoBTa09fe5EKSUHJBK6WIEoBwF/8cLKrqGWspwgG1h59fX3N98uBjBZBT3nXwluuTA0XnF7o1qNBmQ/JY9Af3T1GJzJwfDqw9ILM9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723120710; c=relaxed/simple;
-	bh=tbqlXNcU54JKvWg9fRG86InMvI8uZs1eqaXYU+sxBMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fpyeZc2YY8Z94e2ZnulM1PaL2N3obGMagWu5YcKiwiWRzJHqdSQnQAUi2EwqTFBTRdj0B3IxVxoxyw64RGtBoBk53Ne8sDIkJjeToskOvMYnvIZWvfidxqiyNbnWSZ7tvQpJg9D03zjnKulkaYM5G/aIh0rCKA2dad+mmx4UjkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XidQiGbk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723120708;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UoevIv2ikjCnuBMBRnEjGc1ljajZSFHLBZXm9sJUNDQ=;
-	b=XidQiGbk95wCND8Cs2syYBnqbKzOgQoRqFDHTihfvVrnxEfbTLFRQjnAMZTZc2TD2pavTq
-	dA+meJqVW0oaUp9ozlxxKd7nZLFlWFRubvZ3L1+h2cd8zBWmXMprSOBOKZamLqEnwtwnmO
-	Vo+jNzc5i12znza4xbSMuXtMemSA6Qs=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-471-s2hL3aR7NR-IvI_HVC6abA-1; Thu,
- 08 Aug 2024 08:38:22 -0400
-X-MC-Unique: s2hL3aR7NR-IvI_HVC6abA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A6FC919541B4;
-	Thu,  8 Aug 2024 12:38:21 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.9.21])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2F79019560A3;
-	Thu,  8 Aug 2024 12:38:19 +0000 (UTC)
-Date: Thu, 8 Aug 2024 08:38:17 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Improve logging around
- enable/disable
-Message-ID: <20240808123817.GA89141@pauld.westford.csb>
-References: <ZrQW4gqIr_hTgp0z@slm.duckdns.org>
+	s=arc-20240116; t=1723120733; c=relaxed/simple;
+	bh=GcvSFJMKHLhNFNdb66dJFFYuo+iitWi4Lo3O6EpjwWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BUdvVZ94+OFYXsIU386WYWzle4UU8XzAQuQEZ9lkSPZYrkGeIoihCJ2rCcJjc8KKrHv6HLT5wxAQmkOQlQ/w3GACoRvWBNpeARWEzMV9wJBCSvO/ZtG3q5m0K5h5VrcZ6MKiFbFXAgGCju6zSkYuao1fFQVo3K9hMpNP833aTbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E407FEC;
+	Thu,  8 Aug 2024 05:39:16 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50E703F766;
+	Thu,  8 Aug 2024 05:38:49 -0700 (PDT)
+Message-ID: <6da4f216-594b-4c51-848c-86e281402820@arm.com>
+Date: Thu, 8 Aug 2024 13:38:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrQW4gqIr_hTgp0z@slm.duckdns.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] iommu/dma: Support MSIs through nested domains
+To: "Tian, Kevin" <kevin.tian@intel.com>, Nicolin Chen <nicolinc@nvidia.com>,
+ "jgg@nvidia.com" <jgg@nvidia.com>
+Cc: "joro@8bytes.org" <joro@8bytes.org>, "will@kernel.org" <will@kernel.org>,
+ "shuah@kernel.org" <shuah@kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+References: <cover.1722644866.git.nicolinc@nvidia.com>
+ <b1b8ff9c716f22f524be0313ad12e5c6d10f5bd4.1722644866.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276E59FBD67B1119B3E2A858CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <BN9PR11MB5276E59FBD67B1119B3E2A858CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 07, 2024 at 02:52:50PM -1000 Tejun Heo wrote:
-> sched_ext currently doesn't generate messages when the BPF scheduler is
-> enabled and disabled unless there are errors. It is useful to have paper
-> trail. Improve logging around enable/disable:
+On 06/08/2024 9:25 am, Tian, Kevin wrote:
+>> From: Nicolin Chen <nicolinc@nvidia.com>
+>> Sent: Saturday, August 3, 2024 8:32 AM
+>>
+>> From: Robin Murphy <robin.murphy@arm.com>
+>>
+>> Currently, iommu-dma is the only place outside of IOMMUFD and drivers
+>> which might need to be aware of the stage 2 domain encapsulated within
+>> a nested domain. This would be in the legacy-VFIO-style case where we're
 > 
-> - Generate info messages on enable and non-error disable.
+> why is it a legacy-VFIO-style? We only support nested in IOMMUFD.
+
+Because with proper nesting we ideally shouldn't need the host-managed 
+MSI mess at all, which all stems from the old VFIO paradigm of 
+completely abstracting interrupts from userspace. I'm still hoping 
+IOMMUFD can grow its own interface for efficient MSI passthrough, where 
+the VMM can simply map the physical MSI doorbell into whatever IPA (GPA) 
+it wants it to appear at in the S2 domain, then whatever the guest does 
+with S1 it can program the MSI address into the endpoint accordingly 
+without us having to fiddle with it.
+
+FWIW, apart from IOMMUFD, we may also end up wanting something along 
+those lines for Arm CCA (if non-Secure proxying of T=1 MSIs becomes an 
+unavoidable thing).
+
+>> using host-managed MSIs with an identity mapping at stage 1, where it is
+>> the underlying stage 2 domain which owns an MSI cookie and holds the
+>> corresponding dynamic mappings. Hook up the new op to resolve what we
+>> need from a nested domain.
+>>
+>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+>> ---
+>>   drivers/iommu/dma-iommu.c | 18 ++++++++++++++++--
+>>   include/linux/iommu.h     |  4 ++++
+>>   2 files changed, 20 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+>> index 7b1dfa0665df6..05e04934a5f81 100644
+>> --- a/drivers/iommu/dma-iommu.c
+>> +++ b/drivers/iommu/dma-iommu.c
+>> @@ -1799,6 +1799,20 @@ static struct iommu_dma_msi_page
+>> *iommu_dma_get_msi_page(struct device *dev,
+>>   	return NULL;
+>>   }
+>>
+>> +/*
+>> + * Nested domains may not have an MSI cookie or accept mappings, but
+>> they may
+>> + * be related to a domain which does, so we let them tell us what they need.
+>> + */
+>> +static struct iommu_domain
+>> *iommu_dma_get_msi_mapping_domain(struct device *dev)
+>> +{
+>> +	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
+>> +
+>> +	if (domain && domain->type == IOMMU_DOMAIN_NESTED &&
+>> +	    domain->ops->get_msi_mapping_domain)
 > 
-> - Update error exit message formatting so that it's consistent with
->   non-error message. Also, prefix ei->msg with the BPF scheduler's name to
->   make it clear where the message is coming from.
+> I'm not sure the core should restrict it to the NESTED type. Given
+> there is a new domain ops any type restriction can be handled
+> inside the callback. Anyway the driver should register the op
+> for a domain only when there is a need.
+
+Nested should remain the only case where domains are chained together 
+such that the VFIO MSI cookie may be hiding somewhere else. This is 
+effectively documenting that implementing the callback for any other 
+domain type would be a bad smell. Much like how the mapping-related ops 
+are explicitly short-circuited for non-paging domain types.
+
+Thanks,
+Robin.
+
+>> +		domain = domain->ops->get_msi_mapping_domain(domain);
+>> +	return domain;
+>> +}
+>> +
+>>   /**
+>>    * iommu_dma_prepare_msi() - Map the MSI page in the IOMMU domain
+>>    * @desc: MSI descriptor, will store the MSI page
+>> @@ -1809,7 +1823,7 @@ static struct iommu_dma_msi_page
+>> *iommu_dma_get_msi_page(struct device *dev,
+>>   int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr)
+>>   {
+>>   	struct device *dev = msi_desc_to_dev(desc);
+>> -	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
+>> +	struct iommu_domain *domain =
+>> iommu_dma_get_msi_mapping_domain(dev);
+>>   	struct iommu_dma_msi_page *msi_page;
+>>   	static DEFINE_MUTEX(msi_prepare_lock); /* see below */
+>>
+>> @@ -1842,7 +1856,7 @@ int iommu_dma_prepare_msi(struct msi_desc
+>> *desc, phys_addr_t msi_addr)
+>>   void iommu_dma_compose_msi_msg(struct msi_desc *desc, struct msi_msg
+>> *msg)
+>>   {
+>>   	struct device *dev = msi_desc_to_dev(desc);
+>> -	const struct iommu_domain *domain =
+>> iommu_get_domain_for_dev(dev);
+>> +	const struct iommu_domain *domain =
+>> iommu_dma_get_msi_mapping_domain(dev);
+>>   	const struct iommu_dma_msi_page *msi_page;
+>>
+>>   	msi_page = msi_desc_get_iommu_cookie(desc);
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index 4d47f2c333118..69ed76f9c3ec4 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -638,6 +638,8 @@ struct iommu_ops {
+>>    * @enable_nesting: Enable nesting
+>>    * @set_pgtable_quirks: Set io page table quirks (IO_PGTABLE_QUIRK_*)
+>>    * @free: Release the domain after use.
+>> + * @get_msi_mapping_domain: Return the related iommu_domain that
+>> should hold the
+>> + *                          MSI cookie and accept mapping(s).
+>>    */
+>>   struct iommu_domain_ops {
+>>   	int (*attach_dev)(struct iommu_domain *domain, struct device *dev);
+>> @@ -668,6 +670,8 @@ struct iommu_domain_ops {
+>>   				  unsigned long quirks);
+>>
+>>   	void (*free)(struct iommu_domain *domain);
+>> +	struct iommu_domain *
+>> +		(*get_msi_mapping_domain)(struct iommu_domain
+>> *domain);
+>>   };
+>>
+>>   /**
+>> --
+>> 2.43.0
+>>
 > 
-> - Shorten scx_exit_reason() strings for SCX_EXIT_UNREG* for brevity and
->   consistency.
->
-
-Thanks! That looks very helpful.
-
-
-Reviewed-by: Phil Auld <pauld@redhat.com>
-
-
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Suggested-by: Phil Auld <pauld@redhat.com>
-> ---
->  kernel/sched/ext.c |   21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 60a7eb7d8a9e..eea2fda8e099 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -4004,11 +4004,11 @@ static const char *scx_exit_reason(enum scx_exit_kind kind)
->  {
->  	switch (kind) {
->  	case SCX_EXIT_UNREG:
-> -		return "Scheduler unregistered from user space";
-> +		return "unregistered from user space";
->  	case SCX_EXIT_UNREG_BPF:
-> -		return "Scheduler unregistered from BPF";
-> +		return "unregistered from BPF";
->  	case SCX_EXIT_UNREG_KERN:
-> -		return "Scheduler unregistered from the main kernel";
-> +		return "unregistered from the main kernel";
->  	case SCX_EXIT_SYSRQ:
->  		return "disabled by sysrq-S";
->  	case SCX_EXIT_ERROR:
-> @@ -4126,14 +4126,17 @@ static void scx_ops_disable_workfn(struct kthread_work *work)
->  	percpu_up_write(&scx_fork_rwsem);
->  
->  	if (ei->kind >= SCX_EXIT_ERROR) {
-> -		printk(KERN_ERR "sched_ext: BPF scheduler \"%s\" errored, disabling\n", scx_ops.name);
-> +		pr_err("sched_ext: BPF scheduler \"%s\" disabled (%s)\n",
-> +		       scx_ops.name, ei->reason);
->  
-> -		if (ei->msg[0] == '\0')
-> -			printk(KERN_ERR "sched_ext: %s\n", ei->reason);
-> -		else
-> -			printk(KERN_ERR "sched_ext: %s (%s)\n", ei->reason, ei->msg);
-> +		if (ei->msg[0] != '\0')
-> +			printk(KERN_ERR "sched_ext: %s: %s\n",
-> +			       scx_ops.name, ei->msg);
->  
->  		stack_trace_print(ei->bt, ei->bt_len, 2);
-> +	} else {
-> +		pr_info("sched_ext: BPF scheduler \"%s\" disabled (%s)\n",
-> +			scx_ops.name, ei->reason);
->  	}
->  
->  	if (scx_ops.exit)
-> @@ -4808,6 +4811,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
->  	if (!(ops->flags & SCX_OPS_SWITCH_PARTIAL))
->  		static_branch_enable(&__scx_switched_all);
->  
-> +	pr_info("sched_ext: BPF scheduler \"%s\" enabled%s\n",
-> +		scx_ops.name, scx_switched_all() ? "" : " (partial)");
->  	kobject_uevent(scx_root_kobj, KOBJ_ADD);
->  	mutex_unlock(&scx_ops_enable_mutex);
->  
-> 
-
--- 
-
 
