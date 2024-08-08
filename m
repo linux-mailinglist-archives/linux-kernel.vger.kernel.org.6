@@ -1,101 +1,159 @@
-Return-Path: <linux-kernel+bounces-279493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596B494BDF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:48:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2588A94BDA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C6D5B25C47
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:47:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56AA41C22C09
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED18C1917CB;
-	Thu,  8 Aug 2024 12:43:42 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7775718C914;
+	Thu,  8 Aug 2024 12:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XidQiGbk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C452719149B;
-	Thu,  8 Aug 2024 12:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB2C63D
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723121022; cv=none; b=t0IAnqpn1Uws7Vyj1+4bIU+w2k90GjyJldigYQY+WEpoMKK2lzw1AWhxH/Pe6UBWDLX6E80QVbp+UP9Tb5UVy5QP5w08qchKhtOUfWO9iY/SwQRVXjsXvsflWv/un5dkaRHvjhZyh4dfq59VgyT92oaT2CXiDN1evPc+qz/XYAM=
+	t=1723120710; cv=none; b=SVWczBeQNsguM2Ijc61XrMo7wPqtNjZOGCcYBHrAQ5i63A77cn1zmABhB10f5xTyAMPTfEw4q8SCm/GGU1OTe+hriBYCCYY1jb84XJIDIgAIC55ASMGTAxwQozjZrwkTfXzRuzD1C2yShDH0a3gPAJW+0CYgqFIVgOvzeElUW4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723121022; c=relaxed/simple;
-	bh=PHlS5yqsVRDNm+1fM04/zjECXsQk9glXiiO8tzG6A2c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GXE6yCsaJrqdwns6CJmrWZWjMgFQDhjn5YmLAb3lFHV2uzy8q0+WevPrtL3OjkuBZtHRleDZsPklNMt9Njk2s3vXsi5Sy8BvHjUFvgwnSnpaUdFhy2iP8VN2VreDORRQ80NoHK4qp4lep/3HVhlOAmkGmqqlL1iaqg2uP9ZzK6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WfmnN34cdzQpB4;
-	Thu,  8 Aug 2024 20:39:04 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 53BF9140604;
-	Thu,  8 Aug 2024 20:43:32 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 8 Aug 2024 20:43:32 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>
-Subject: [PATCH net-next v13 14/14] mm: page_frag: add an entry in MAINTAINERS for page_frag
-Date: Thu, 8 Aug 2024 20:37:14 +0800
-Message-ID: <20240808123714.462740-15-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240808123714.462740-1-linyunsheng@huawei.com>
-References: <20240808123714.462740-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1723120710; c=relaxed/simple;
+	bh=tbqlXNcU54JKvWg9fRG86InMvI8uZs1eqaXYU+sxBMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fpyeZc2YY8Z94e2ZnulM1PaL2N3obGMagWu5YcKiwiWRzJHqdSQnQAUi2EwqTFBTRdj0B3IxVxoxyw64RGtBoBk53Ne8sDIkJjeToskOvMYnvIZWvfidxqiyNbnWSZ7tvQpJg9D03zjnKulkaYM5G/aIh0rCKA2dad+mmx4UjkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XidQiGbk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723120708;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UoevIv2ikjCnuBMBRnEjGc1ljajZSFHLBZXm9sJUNDQ=;
+	b=XidQiGbk95wCND8Cs2syYBnqbKzOgQoRqFDHTihfvVrnxEfbTLFRQjnAMZTZc2TD2pavTq
+	dA+meJqVW0oaUp9ozlxxKd7nZLFlWFRubvZ3L1+h2cd8zBWmXMprSOBOKZamLqEnwtwnmO
+	Vo+jNzc5i12znza4xbSMuXtMemSA6Qs=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-471-s2hL3aR7NR-IvI_HVC6abA-1; Thu,
+ 08 Aug 2024 08:38:22 -0400
+X-MC-Unique: s2hL3aR7NR-IvI_HVC6abA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A6FC919541B4;
+	Thu,  8 Aug 2024 12:38:21 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.9.21])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2F79019560A3;
+	Thu,  8 Aug 2024 12:38:19 +0000 (UTC)
+Date: Thu, 8 Aug 2024 08:38:17 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH sched_ext/for-6.12] sched_ext: Improve logging around
+ enable/disable
+Message-ID: <20240808123817.GA89141@pauld.westford.csb>
+References: <ZrQW4gqIr_hTgp0z@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrQW4gqIr_hTgp0z@slm.duckdns.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-After this patchset, page_frag is a small subsystem/library
-on its own, so add an entry in MAINTAINERS to indicate the
-new subsystem/library's maintainer, maillist, status and file
-lists of page_frag.
+On Wed, Aug 07, 2024 at 02:52:50PM -1000 Tejun Heo wrote:
+> sched_ext currently doesn't generate messages when the BPF scheduler is
+> enabled and disabled unless there are errors. It is useful to have paper
+> trail. Improve logging around enable/disable:
+> 
+> - Generate info messages on enable and non-error disable.
+> 
+> - Update error exit message formatting so that it's consistent with
+>   non-error message. Also, prefix ei->msg with the BPF scheduler's name to
+>   make it clear where the message is coming from.
+> 
+> - Shorten scx_exit_reason() strings for SCX_EXIT_UNREG* for brevity and
+>   consistency.
+>
 
-Alexander is the original author of page_frag, add him in the
-MAINTAINERS too.
+Thanks! That looks very helpful.
 
-CC: Alexander Duyck <alexander.duyck@gmail.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a9dace908305..4ad9a53a4faf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17235,6 +17235,17 @@ F:	mm/page-writeback.c
- F:	mm/readahead.c
- F:	mm/truncate.c
- 
-+PAGE FRAG
-+M:	Alexander Duyck <alexander.duyck@gmail.com>
-+M:	Yunsheng Lin <linyunsheng@huawei.com>
-+L:	linux-mm@kvack.org
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/mm/page_frags.rst
-+F:	include/linux/page_frag_cache.h
-+F:	mm/page_frag_cache.c
-+F:	tools/testing/selftests/mm/page_frag
-+
- PAGE POOL
- M:	Jesper Dangaard Brouer <hawk@kernel.org>
- M:	Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Reviewed-by: Phil Auld <pauld@redhat.com>
+
+
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Suggested-by: Phil Auld <pauld@redhat.com>
+> ---
+>  kernel/sched/ext.c |   21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 60a7eb7d8a9e..eea2fda8e099 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -4004,11 +4004,11 @@ static const char *scx_exit_reason(enum scx_exit_kind kind)
+>  {
+>  	switch (kind) {
+>  	case SCX_EXIT_UNREG:
+> -		return "Scheduler unregistered from user space";
+> +		return "unregistered from user space";
+>  	case SCX_EXIT_UNREG_BPF:
+> -		return "Scheduler unregistered from BPF";
+> +		return "unregistered from BPF";
+>  	case SCX_EXIT_UNREG_KERN:
+> -		return "Scheduler unregistered from the main kernel";
+> +		return "unregistered from the main kernel";
+>  	case SCX_EXIT_SYSRQ:
+>  		return "disabled by sysrq-S";
+>  	case SCX_EXIT_ERROR:
+> @@ -4126,14 +4126,17 @@ static void scx_ops_disable_workfn(struct kthread_work *work)
+>  	percpu_up_write(&scx_fork_rwsem);
+>  
+>  	if (ei->kind >= SCX_EXIT_ERROR) {
+> -		printk(KERN_ERR "sched_ext: BPF scheduler \"%s\" errored, disabling\n", scx_ops.name);
+> +		pr_err("sched_ext: BPF scheduler \"%s\" disabled (%s)\n",
+> +		       scx_ops.name, ei->reason);
+>  
+> -		if (ei->msg[0] == '\0')
+> -			printk(KERN_ERR "sched_ext: %s\n", ei->reason);
+> -		else
+> -			printk(KERN_ERR "sched_ext: %s (%s)\n", ei->reason, ei->msg);
+> +		if (ei->msg[0] != '\0')
+> +			printk(KERN_ERR "sched_ext: %s: %s\n",
+> +			       scx_ops.name, ei->msg);
+>  
+>  		stack_trace_print(ei->bt, ei->bt_len, 2);
+> +	} else {
+> +		pr_info("sched_ext: BPF scheduler \"%s\" disabled (%s)\n",
+> +			scx_ops.name, ei->reason);
+>  	}
+>  
+>  	if (scx_ops.exit)
+> @@ -4808,6 +4811,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+>  	if (!(ops->flags & SCX_OPS_SWITCH_PARTIAL))
+>  		static_branch_enable(&__scx_switched_all);
+>  
+> +	pr_info("sched_ext: BPF scheduler \"%s\" enabled%s\n",
+> +		scx_ops.name, scx_switched_all() ? "" : " (partial)");
+>  	kobject_uevent(scx_root_kobj, KOBJ_ADD);
+>  	mutex_unlock(&scx_ops_enable_mutex);
+>  
+> 
+
 -- 
-2.33.0
 
 
