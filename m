@@ -1,179 +1,181 @@
-Return-Path: <linux-kernel+bounces-280200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9149294C70F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:41:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB7394C715
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C261B1C212C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A8FFB234DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB05C15B103;
-	Thu,  8 Aug 2024 22:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2327F15ECF7;
+	Thu,  8 Aug 2024 22:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dG8N9ntD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="csGvELGG"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC5110A1E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 22:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D2D12F5B1
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 22:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723156903; cv=none; b=EV8VzOrz/dLCSnajlmnq/51fmLPVKo+F19Du1GvM6OVLkhEJVhtysy/k1XvZlRUFlERvB0tIFIcX+1iUqjk0PYrWEKJSdnUYxUMtjMpoqngfmAy5p8zkMMhRCZREMaCvkew/jx1eoL4qR6x2oWimFyXKb1FjXt3+dblMGDtn/bo=
+	t=1723157153; cv=none; b=WmX0H0DCgHmeNMr5Y+CZaRMMqtZr6bPDQ64ra5Geke0tGssIasgiski1C298CS/Vv5YSixdEX9ObvuFe91DDpYb9kw1Y15qJfS1zYcAB28uPerFvCPFczUF9o0gR9+kU8TInO7wV0dyHtq/kD9GAqwpl1uzRcuYykOliLj0RNlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723156903; c=relaxed/simple;
-	bh=Z9NhZiXiygl+fXMUeW+48aSDSda1CR5oQvoBUfV+O6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jj7/c6elOtPMpMJ5GHU+/AaNINwGz7R1HXxyvjk+bQQEmz3Kmu0TeUpxo8AnqnjC5ZKg/TR2pvjTDZzQ7i9OWLYt/PrcW8l1IMIArqXpJW/BYoBrXieigRBUj4FNaeApSdFrchH5/vTEdtBFLGLmHqFt+w5/pYsXpyEmJ2OEiJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dG8N9ntD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DAA8C32782;
-	Thu,  8 Aug 2024 22:41:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723156902;
-	bh=Z9NhZiXiygl+fXMUeW+48aSDSda1CR5oQvoBUfV+O6s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dG8N9ntDuCt3daKtFqY8qdKCSGa90NdFDgMZqg6RLGQOVQghLcWwbkh7Z/nftw5LI
-	 A3lnNxKLafkD8s1hvgga3m5Gx1far4Df3TQlmDa6im83UHDMpM8EZIgE6kyAczMfb+
-	 MjSi4d+FagJX88B1tp9GrtCajPvAYfUDLByNBv99/zAjY5vbslV28C4i4+5T8j2xxO
-	 Lrtj6L71k5SUhsefA2P6fTHniQj8FDftM4moszW8ZuEyrgG3Kl/+EY6FfmnG8rgjIE
-	 x2Hax+AQO4VPTkH1vKKamMED+vAS3ogJ4P5mERl1q5QGIk0qhc3bKhh3cbRKUQqB2r
-	 mX89pmbDJRw2w==
-Date: Fri, 9 Aug 2024 00:41:37 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: John Snow <jsnow@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, Cleber Rosa <crosa@redhat.com>,
- linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v5 7/7] scripts/ghes_inject: add a script to generate
- GHES error inject
-Message-ID: <20240809004137.01f97da2@foz.lan>
-In-Reply-To: <CAFn=p-Y27zap1P5G3NibdZS26iGwCqh8U0vgW0Vw31f53+oU1w@mail.gmail.com>
-References: <cover.1722634602.git.mchehab+huawei@kernel.org>
-	<0654a89fe24f4343016b9cecc0752594ad1cd49f.1722634602.git.mchehab+huawei@kernel.org>
-	<CAFn=p-Y27zap1P5G3NibdZS26iGwCqh8U0vgW0Vw31f53+oU1w@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1723157153; c=relaxed/simple;
+	bh=NuRvK7tHeF/VaYkrRFz1WItqpmKnBbpdbZIjayxYJC4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=szYOHz1BnGxvgpQxPZqL9x+S8SIADnHh3G4o5ota1rO2XT/i+MtjetrKJp4+sXQp9ErX60lh8jGDCs6jbE2rp1+nXtkX0uKzXErgBv1Nf1WzXPTjfKf3XJG8Me86cXQ/FBwlvpxvk14zNFQasOSDUoY/tSM+L+ZBTsjZL6ONTYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=csGvELGG; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7a994e332a8so1308182a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 15:45:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723157151; x=1723761951; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zNoZqlzt9ZBl78Ypw3YUgXOuKREj1jjRu4BYW9vQ8bI=;
+        b=csGvELGGfDXSAuUsOgrCrrv3EchPNfXAoLuyjsUczCTD4yrGdcG5h+mOcI17JINe6R
+         Uj6naOIySRaR7YkU5dVMwAXOtBf1yOj3Xh70naNLsNgXv3NBKl7MP2oXP4ZwrkxIVbP5
+         /VXoU5E8APZo58MRH88V0EXZjKBA1nOiM1RjF7l6PK9cXhGyRUpPfbomIMIB+/4d3A9h
+         Ln2AvnepxF5ehcJSAp/5CBCmDQRl/Q7uPRa1xkCOK1BkoXnvHNKJQmiEHDV9/R8IGS+Q
+         4iV7vddG279BED+E4AA7fpsuWIOnPUw3oO1rv/ukCjfjTeztlMH0NHl/GrBHIDHJiveS
+         Bs6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723157151; x=1723761951;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zNoZqlzt9ZBl78Ypw3YUgXOuKREj1jjRu4BYW9vQ8bI=;
+        b=gh6YktGA2xZQ4DelWpfquVYkBL27839vtiNU+Q+jfBaHMrV4cukVM8K4rpDlgCm/uz
+         GvovNLto4w0d6u/pxdubIQwVb41UWohgP3Ik0AlX+JV8bKEaamJdMPR3XzQJ2ymcsg+3
+         YJnEVVdtWvoeLr+hpQUrTNqFDbkbVycuE8On8WyXuBHG3+leA9/nk2HkDRSq1HrKdl/E
+         xMwBTxN3iJUsyXMmWLTRaVAWIEzyKapFAP8qwV1Fr5YqocGQhgofvjOo8NmzpvxZfMZE
+         1pbNZP0UGXwH6AvrCWUqJ102Yzhgd6FMaUh0bHqgkrDFWsGR56DyfhfKoahjn976wuFe
+         bXAQ==
+X-Gm-Message-State: AOJu0YxDHljEfYiViot+b5hHfbOB0RWjjsoSryhJEnnlNmPxBobVZ/BZ
+	MZTlYpLg9XtNeoNPz6mQOYyIXfWe26ViY+4o8YrpyaLCTuo8NOZ0+TGH8Auyfwl+gDxEO6HTO3l
+	Xzw==
+X-Google-Smtp-Source: AGHT+IEPJ08ELA+TzWWFCZw07FCvVi/TuALPCbLFSyKyDr+wDhcDE59d0hzyaFMhbl9jQNfxVlpU+d7vYMQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a63:b242:0:b0:6e7:95d3:b35c with SMTP id
+ 41be03b00d2f7-7c2684072femr6690a12.5.1723157150809; Thu, 08 Aug 2024 15:45:50
+ -0700 (PDT)
+Date: Thu, 8 Aug 2024 15:45:49 -0700
+In-Reply-To: <ZrU9AJi7-pHT_UWS@x1n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240807194812.819412-1-peterx@redhat.com> <20240807194812.819412-3-peterx@redhat.com>
+ <ZrTlZ4vZ74sK8Ydd@google.com> <ZrU20AqADICwwmCy@x1n> <ZrU5JyjIa1CwZ_KD@google.com>
+ <ZrU9AJi7-pHT_UWS@x1n>
+Message-ID: <ZrVKndceu5gZT-j5@google.com>
+Subject: Re: [PATCH v4 2/7] mm/mprotect: Push mmu notifier to PUDs
+From: Sean Christopherson <seanjc@google.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Oscar Salvador <osalvador@suse.de>, Dan Williams <dan.j.williams@intel.com>, 
+	James Houghton <jthoughton@google.com>, Matthew Wilcox <willy@infradead.org>, 
+	Nicholas Piggin <npiggin@gmail.com>, Rik van Riel <riel@surriel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, "Kirill A . Shutemov" <kirill@shutemov.name>, 
+	linuxppc-dev@lists.ozlabs.org, Mel Gorman <mgorman@techsingularity.net>, 
+	Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>, David Hildenbrand <david@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Huang Ying <ying.huang@intel.com>, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Em Thu, 8 Aug 2024 17:21:33 -0400
-John Snow <jsnow@redhat.com> escreveu:
+On Thu, Aug 08, 2024, Peter Xu wrote:
+> On Thu, Aug 08, 2024 at 02:31:19PM -0700, Sean Christopherson wrote:
+> > On Thu, Aug 08, 2024, Peter Xu wrote:
+> > > Hi, Sean,
+> > > 
+> > > On Thu, Aug 08, 2024 at 08:33:59AM -0700, Sean Christopherson wrote:
+> > > > On Wed, Aug 07, 2024, Peter Xu wrote:
+> > > > > mprotect() does mmu notifiers in PMD levels.  It's there since 2014 of
+> > > > > commit a5338093bfb4 ("mm: move mmu notifier call from change_protection to
+> > > > > change_pmd_range").
+> > > > > 
+> > > > > At that time, the issue was that NUMA balancing can be applied on a huge
+> > > > > range of VM memory, even if nothing was populated.  The notification can be
+> > > > > avoided in this case if no valid pmd detected, which includes either THP or
+> > > > > a PTE pgtable page.
+> > > > > 
+> > > > > Now to pave way for PUD handling, this isn't enough.  We need to generate
+> > > > > mmu notifications even on PUD entries properly.  mprotect() is currently
+> > > > > broken on PUD (e.g., one can easily trigger kernel error with dax 1G
+> > > > > mappings already), this is the start to fix it.
+> > > > > 
+> > > > > To fix that, this patch proposes to push such notifications to the PUD
+> > > > > layers.
+> > > > > 
+> > > > > There is risk on regressing the problem Rik wanted to resolve before, but I
+> > > > > think it shouldn't really happen, and I still chose this solution because
+> > > > > of a few reasons:
+> > > > > 
+> > > > >   1) Consider a large VM that should definitely contain more than GBs of
+> > > > >   memory, it's highly likely that PUDs are also none.  In this case there
+> > > > 
+> > > > I don't follow this.  Did you mean to say it's highly likely that PUDs are *NOT*
+> > > > none?
+> > > 
+> > > I did mean the original wordings.
+> > > 
+> > > Note that in the previous case Rik worked on, it's about a mostly empty VM
+> > > got NUMA hint applied.  So I did mean "PUDs are also none" here, with the
+> > > hope that when the numa hint applies on any part of the unpopulated guest
+> > > memory, it'll find nothing in PUDs. Here it's mostly not about a huge PUD
+> > > mapping as long as the guest memory is not backed by DAX (since only DAX
+> > > supports 1G huge pud so far, while hugetlb has its own path here in
+> > > mprotect, so it must be things like anon or shmem), but a PUD entry that
+> > > contains pmd pgtables.  For that part, I was trying to justify "no pmd
+> > > pgtable installed" with the fact that "a large VM that should definitely
+> > > contain more than GBs of memory", it means the PUD range should hopefully
+> > > never been accessed, so even the pmd pgtable entry should be missing.
+> > 
+> > Ah, now I get what you were saying.
+> > 
+> > Problem is, walking the rmaps for the shadow MMU doesn't benefit (much) from
+> > empty PUDs, because KVM needs to blindly walk the rmaps for every gfn covered by
+> > the PUD to see if there are any SPTEs in any shadow MMUs mapping that gfn.  And
+> > that walk is done without ever yielding, which I suspect is the source of the
+> > soft lockups of yore.
+> > 
+> > And there's no way around that conundrum (walking rmaps), at least not without a
+> > major rewrite in KVM.  In a nested TDP scenario, KVM's stage-2 page tables (for
+> > L2) key off of L2 gfns, not L1 gfns, and so the only way to find mappings is
+> > through the rmaps.
+> 
+> I think the hope here is when the whole PUDs being hinted are empty without
+> pgtable installed, there'll be no mmu notifier to be kicked off at all.
+> 
+> To be explicit, I meant after this patch applied, the pud loop for numa
+> hints look like this:
+> 
+>         FOR_EACH_PUD() {
+>                 ...
+>                 if (pud_none(pud))
+>                         continue;
+> 
+>                 if (!range.start) {
+>                         mmu_notifier_range_init(&range,
+>                                                 MMU_NOTIFY_PROTECTION_VMA, 0,
+>                                                 vma->vm_mm, addr, end);
+>                         mmu_notifier_invalidate_range_start(&range);
+>                 }
+>                 ...
+>         }
+> 
+> So the hope is that pud_none() is always true for the hinted area (just
+> like it used to be when pmd_none() can be hopefully true always), then we
+> skip the mmu notifier as a whole (including KVM's)!
 
-> On Fri, Aug 2, 2024 at 5:44=E2=80=AFPM Mauro Carvalho Chehab <
-> mchehab+huawei@kernel.org> wrote: =20
->=20
-
-> > diff --git a/scripts/qmp_helper.py b/scripts/qmp_helper.py
-> > new file mode 100644
-> > index 000000000000..13fae7a7af0e
-> > --- /dev/null
-> > +++ b/scripts/qmp_helper.py
-> > =20
->=20
-> I'm going to admit I only glanced at this very briefly, but -- is there a
-> chance you could use qemu.git/python/qemu/qmp instead of writing your own
-> helpers here?
->=20
-> If *NOT*, is there something that I need to add to our QMP library to
-> facilitate your script?
-
-I started writing this script to be hosted outside qemu tree, when
-we had a very different API.
-
-I noticed later about the QMP, and even tried to write a patch for it,
-but I gave up due to asyncio complexity...
-
-Please notice that, on this file, I actually placed three classes:
-
-- qmp
-- util
-- cper_guid
-
-I could probably make the first one to be an override of QEMUMonitorProtoco=
-l=20
-(besides normal open/close/cmd communication, it also contains some
-methods that are specific to error inject use case:
-
-- to generate a CPER record;
-- to search for data via qom-get.
-
-The other two classes are just common code used by ghes_inject commands.
-My idea is to have multiple commands to do different kinds of GHES
-error injection, each command on a different file/class.
-
-> > +    s =3D socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-> > +    try:
-> > +        s.connect((host, port))
-> > +    except ConnectionRefusedError:
-> > +        sys.exit(f"Can't connect to QMP host {host}:{port}")
-> > =20
->=20
-> You should be able to use e.g.
->=20
-> legacy.py's QEMUMonitorProtocol class for synchronous connections, e.g.
->=20
-> from qemu.qmp.legacy import QEMUMonitorProtocol
->=20
-> qmp =3D QEMUMonitorProtocol((host, port))
-> qmp.connect(negotiate=3DTrue)
-
-That sounds interesting! I give it a try.
-
-> If you want to run the script w/o setting up a virtual environment or
-> installing the package, take a look at the hacks in scripts/qmp/ for how I
-> support e.g. qom-get directly from the source tree.
-
-Yeah, I saw that already. Doing:=20
-
-	sys.path.append(path.join(qemu_dir, 'python'))
-
-the same way qom-get does should do the trick.
-
-> > +
-> > +    data =3D s.recv(1024)
-> > +    try:
-> > +        obj =3D json.loads(data.decode("utf-8"))
-> > +    except json.JSONDecodeError as e:
-> > +        print(f"Invalid QMP answer: {e}")
-> > +        s.close()
-> > +        return
-> > +
-> > +    if "QMP" not in obj:
-> > +        print(f"Invalid QMP answer: {data.decode("utf-8")}")
-> > +        s.close()
-> > +        return
-> > +
-> > +    for i, command in enumerate(commands):
-> > =20
->=20
-> Then here you'd use qmp.cmd (raises exception on QMPError) or qmp.cmd_raw
-> or qmp.cmd_obj (returns the QMP response as the return value even if it w=
-as
-> an error.)
-
-Good to know, I'll try and see what fits best.
-
-> More details:
-> https://qemu.readthedocs.io/projects/python-qemu-qmp/en/latest/qemu.qmp.l=
-egacy.html
-
-I'll take a look. The name "legacy" is a little scary, as it might
-imply that this has been deprecated. If there's no plans to deprecate,
-then it would be great to use it and simplify the code a little bit.
-
-> There's also an async version, but it doesn't look like you require that
-> complexity, so you can ignore it.
-
-Yes, that's the case: a serialized sync send/response logic works perfectly
-for this script. No need to be burden with asyncio complexity.
-
-Thanks,
-Mauro
+Gotcha, that makes sense.  Too many page tables flying around :-)
 
