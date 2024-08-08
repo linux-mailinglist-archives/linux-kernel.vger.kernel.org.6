@@ -1,228 +1,176 @@
-Return-Path: <linux-kernel+bounces-280058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C939294C522
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:24:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AD294C523
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25976B242A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:24:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15FA91F23EC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1F3154C18;
-	Thu,  8 Aug 2024 19:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBAE154C18;
+	Thu,  8 Aug 2024 19:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TSrRCArL";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="j/JZnMB8"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R3S41o6P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591CF433AD
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 19:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723145062; cv=fail; b=V/1O7cYcHNSPn0c/Hts/ZwJiuaj5a2KRc3DkxChy34MEN1IcdLjQkOGlozxiDbf0TtF6NYf35WDgEV8GZet7UIR/dLvcCzNOiC45aSFEWjUd+WZ2+bKDMLXEgmxKsntVKYAw+lib7B/+TldhHqUrc7acJTD96FmdDvdK/XodhvU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723145062; c=relaxed/simple;
-	bh=AkJaNgO4ZiN/6tLzRQlCRkAxLXx3few8/+8KqkjEYEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KijmDE9NnFc2o/WARnAHEaFo+lrY7pACQplZefYC0Gqv226wx1Nw6gyORGM2gWPTJxkmyCTa7MNeJDEa0SEq0OTbPSUNa267e+bEYQDNtIkHw4A6GvhbuOBPG0JYYTFLV571HKLTYNdOzDd9V8U0tXQJPZ+IjJTiZF4ON+l7DEk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TSrRCArL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=j/JZnMB8; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478HfXcn003024;
-	Thu, 8 Aug 2024 19:24:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=hygLTtXtiCfa3Rm
-	ggsgewwCM8H6WdEMDOolwUDoGleo=; b=TSrRCArL7UWwiSLkXgqNITf9IAFISPS
-	dIkgTwtM3H1Kxd1M51aPpzNHm8/JxQ1VSYPLgTXBcsjWgbz0MZIi5bCAXKBGi25W
-	x9tdfO9vk979cXow4YXDqcgFJiBivLvsja+lG8xNPRt6nc9777USNITzNDsDc12l
-	BsQ1Qdw2kFjSzVkONGPRWdWTi3wuG1EzQYd1Ds8wA9g8ikbCodCjXdQSMOoIlU/J
-	rGuPcV9kqG9dhRFIbpDSO4JXHi/Pn6RtOocI0Z8F6umXyV/RneCUoAS5VQeGRitX
-	t3J8e9YQMt/tXkzU70ke2WGFuu5+WezYgGa8yCDdGffLaEQs8R5nLbw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40sce9agqd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 08 Aug 2024 19:24:11 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 478IsrqW040732;
-	Thu, 8 Aug 2024 19:24:10 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40sb0c4xsp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 08 Aug 2024 19:24:10 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jLTwOCaHYXzzNVXQ6z6lgvU5cEmEeQfUhkjxctMO6i+wjCNWzKXtV4JVyTvAdDc0T3UcvL3NUFfkXqeXvkD76ea4a5jJ8WMyYrdYaMeWgVloyoAi6dJAk5/a3TLsQGJm1ph+Th79aVdgKWZf1doqz3i7efd6Yb+8anB/vjwgYUMMjbJUwLBwejel6GlXuNAFM1G3UqxYsKY6CQuwm8Auv/FS2jgJvCwWijbsUsmQDgQFcYbqn05RZhzPSSb/r1Nn3hGDAkmMUPl0GPVr4iMjYZQoBEdqmgkcTP35LB3VlEeQa9yRGmWWdKBStH04ojZ2ioiDZkXWmNAXTLBGpAOs1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hygLTtXtiCfa3RmggsgewwCM8H6WdEMDOolwUDoGleo=;
- b=w0Me/wRRW+pj1SRdFWf0ezepy0i+C9xKUnFD//Zj17FUVvRnabiUgqBCuuOZwYbsutBkYoU+4RLOuU2ro7riQ4l/VNybTrLhkjMP/CfRb62zMPUdFiNl+6lqPwDUfjJdmTw3LbPuUtSdX70PHt/l+qvLGzcncEUru0no6viIwozB+ExlOdjBLqBHczhyKvRz1Mk/a5Q0MqZ32Z+9Z8IwX9C1oOSZi+FqiYUXfw5R5UoNpoKS5Gg+FfCF3cuZ21TyH5eR/YKGX2nS4aXxcAei2HGEiWVZxIntWRSdopTU2sOJ+Sf4wyUUjlaHQLcmbMN6WDIWZx14oKO4SDrMY+gX0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hygLTtXtiCfa3RmggsgewwCM8H6WdEMDOolwUDoGleo=;
- b=j/JZnMB8F8fhEUvw7mNbLvOS0LnAn8eQ3l0m0906PWtHa9VenhbIov+NYn/kL7M9Jn92EmGJK3OiYqGr5Ir6iZCw5hDjfjkeWnmFbjhH+YysMGLJ1BoshFr0gYHxjpBn9XXepvF1TQsa04QSR9rTI3QdjTDub0B8WLmQb2kkq4k=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by DS0PR10MB8175.namprd10.prod.outlook.com (2603:10b6:8:1f7::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.8; Thu, 8 Aug
- 2024 19:24:08 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7849.008; Thu, 8 Aug 2024
- 19:24:08 +0000
-Date: Thu, 8 Aug 2024 15:24:05 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-kernel@vger.kernel.org,
-        maple-tree@lists.infradead.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH 1/2] maple_tree: add test to replicate low memory race
- conditions
-Message-ID: <oqan7j6nqyu4aej2crmio4uvukmrohinbnsnwcemk3l3z76z5w@kva7whwrns3m>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, Sidhartha Kumar <sidhartha.kumar@oracle.com>, 
-	linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, linux-mm@kvack.org, 
-	akpm@linux-foundation.org
-References: <20240808163000.25053-1-sidhartha.kumar@oracle.com>
- <ZrUZPWZVbA-2OBaV@casper.infradead.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrUZPWZVbA-2OBaV@casper.infradead.org>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT3PR01CA0085.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:84::16) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5693F433AD
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 19:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723145153; cv=none; b=YYfGDWny0r/OyxE6RyEPv1gm4fdJj7YWOdVUSKI9SszR0dJlY+2q7XG2DjTKv3gSZiKatCwTzBrZ3Vy7/zChDDvhBKy8uyohFLNUrDze/slTSVKlQVRgcgJFJdIXhpNnBtjUG8R3945F14tjv/DNiTtU83mkwRokRu9SB8Mtj7Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723145153; c=relaxed/simple;
+	bh=yhjBUsERH/buoMtM1MBX1RqBd6mdeT670FJenkzsuLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wdywkrz+XWWVg8/7kRrxqAjyj2d5mwkCrYrzUfIMke3/Z31qoJVVtrg9yc3ssLEntRWL/TzGTtaAJcDgHndfpMKs0457rg3iMvoSdvGgUlqJcv7cMpen5hzbV5JBxKSuMKnpOsDm9fttcKJDSnf7r4YDbXdvHhfuzuMU5lGI4TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R3S41o6P; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723145150;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JO/CAsOGsBonKN3LuFGb35noUOKvXjgOpPa41bSYgso=;
+	b=R3S41o6PnNrq0j38Qe0je+Rf0MIvPMIkyvJmd5n4tLIQO6jW3KE2Q+OJVc7lcy5VtAZGEq
+	G1cBw6YIjGoPH1D9DcyWOXHHDljahsyJIY3MbjRd/P8iy6zMNDOjaibiFfHyWCtuM5hzwt
+	DD2RVxhwDyH6BIOzl87P/v/F3Jy6EwE=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-524-UYNjZLMeO7Ohd6OgTjDC4Q-1; Thu,
+ 08 Aug 2024 15:25:46 -0400
+X-MC-Unique: UYNjZLMeO7Ohd6OgTjDC4Q-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76AD919560A3;
+	Thu,  8 Aug 2024 19:25:45 +0000 (UTC)
+Received: from [10.2.16.232] (unknown [10.2.16.232])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CA1051956056;
+	Thu,  8 Aug 2024 19:25:43 +0000 (UTC)
+Message-ID: <0d2601c7-74ad-4c9a-bd7c-87563703135c@redhat.com>
+Date: Thu, 8 Aug 2024 15:25:42 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|DS0PR10MB8175:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b99c799-e8bf-4d4d-0c5f-08dcb7dfac88
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?f7jHO+GFcotHrtu9ogsmivEnpWaFuzCebADBGE5w+PiH2aDMxLB+PN4eP372?=
- =?us-ascii?Q?LSINTXUV06UiKyZD61G17YxoYH0P1oy4u619sF6SnVRPlmWXWVVN5JoT+xNu?=
- =?us-ascii?Q?yMkk50BooY5E7pfUqkXMFpN4oi8VYXshv3uRP+MJkrFTrPWtkibVMwgINQCt?=
- =?us-ascii?Q?MkIzlbgv10GiLxun7sKxf59LS//nJ/Q9PIGK4rOA4bVzO0FXKqkk9+2wb6Ed?=
- =?us-ascii?Q?7kOU9Ir2bkZCk9zwQqvJd8Y8Dc86JKZAZZvPmli7AnKIWECw4KD/MgbqqSZ0?=
- =?us-ascii?Q?uT9SilcT5T5yRnA3NzUw5XbXLBNhaELkKBmJC7sr4r9dgLRgQruvIRDuYcT3?=
- =?us-ascii?Q?D1haozbrdZ3Jm5Ir3Nm900iPoqE71P/fbTPD5hZQ5CcICxSy6Nh4y+FlPQMi?=
- =?us-ascii?Q?Ym5CGjd88YYZJANAT8WIHvoY1uUBXE6UPIa5nnslpHnGnakGiN+MGzTkcXHh?=
- =?us-ascii?Q?QcaH6Kc/+ZcekLXkiZfqMgEKCs/48WbUChJihT4uSAF4DHKbHkN4Brz2N0B5?=
- =?us-ascii?Q?gm882cVxlChrVKd9oKxCs49bq4DHiPxnNMz+X3w8XnRq79dG3D2buYif893S?=
- =?us-ascii?Q?5kCCXHYzgcz2JdKc4lW0kgnGVCvr1qhMBEdeWTZEpTKCgkC2URoZO2ySkgtj?=
- =?us-ascii?Q?1O6Ih6/loNXifEcaReQ7uVFjSPMP+YksuWBz5zHOCMuhLSHnS6xgU6I91jAf?=
- =?us-ascii?Q?U7tlS5dfs3bR1CML/0hfSCYkZt9lA8FyvFCX1LWYT9lTuCfsD8ZJkt2S99d5?=
- =?us-ascii?Q?qrTWh2JLDdbItQOVOewvv0xkCy+OmHKJv4AlciPuZdKkq5A1wZdOzzM1etdH?=
- =?us-ascii?Q?SuObO9QNvY+nhXht9xDiyXvPsXLaZ1vKMwjdxRfA+mqlIMh5cbEGxLILGMxP?=
- =?us-ascii?Q?lTGLd1tSJwu582R+/RkVakvV9qIQ4J/ayHg+01DP8R8S2AZPTOypdfeUvgzb?=
- =?us-ascii?Q?ly0A1MaP3JyUDLJRNu08HQA021ErjwDaHNdaKC13tzhrN4Twek2w8sMi7Ugp?=
- =?us-ascii?Q?6Aqun7O2FrRPbEyA+fi/ky2ZcUCu9mYrsvCBCquPLerg0touM57eSRKMZ8jA?=
- =?us-ascii?Q?OsXMXw6rcqmUXuGvxorJfC22TSfdyoOhesb4hLAUypBql5KZB3952DJxRr8v?=
- =?us-ascii?Q?pRwaVkhYDGzr8FZTm0oBXUnK+5KaNyZ7F/3ZVOCBAhe9kdXjLu2lMLVxigO2?=
- =?us-ascii?Q?dyeuJmk7o+OMowuWd3WP/mRvmvgTxaTdORhlV46yhoehURa/nG2ECugbXx6N?=
- =?us-ascii?Q?oDv0yfiYZzbJtGftHeXIkNvoy25Lq45kr8cJVLQHCbnzM2T7M9jjM/WTDPqa?=
- =?us-ascii?Q?sQV86vNSAuu91AQ/ZReTEwZpMcNsXRB+q4vxOVVWEyhHxA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rVbA6aPwFtIpcBYFNbHLx1X+jdIXPN7ZmAyPW/XSx2M/JV8Huknz3ZC+e988?=
- =?us-ascii?Q?MjZAdNEnjfEVd29Z2jRf7y1kJklyjUNhAFnZY3qYg7OsAAoRtW4XLFEQr+Nt?=
- =?us-ascii?Q?KA+rToxbt3383XryOAduEfzcCWxCW1y0Tkst36WFqwAEzkXw15HwTNbBgaRA?=
- =?us-ascii?Q?EMV39f5B6xvAIV7uH8KATLSGP7XR6XR11DiwN6fiGNzjQJpqnKf5Z9tcc6Nu?=
- =?us-ascii?Q?srB2NhUoz9QSzCVnZVHHCRnNjPJ6SbzEPd/v3Pt4RCAF4otLOkUfKR6QwaV2?=
- =?us-ascii?Q?RyihELL87KsIPjzRAKxAPjcomZBHa8OTZ9UBFHG650FE0tCjCWFHYGHlO177?=
- =?us-ascii?Q?bQlNXQBTgjfLmnGL8rOMfiksS2LNk2aT3gRP04KBlQdHmUP6Q9nnnmqDaYlf?=
- =?us-ascii?Q?RKo1Lj16TLtPyNENUb1BG7F9habeYYODKKv+P5NHodw29ihH3E84qfsGz1NG?=
- =?us-ascii?Q?fo8VLS3ce+o1GlmomJk8cgDW6cuAr5Hnt6VFsQZOIMutM6ihVnUtzdipf1WU?=
- =?us-ascii?Q?e4LhtD3xvfvV/ph82sUs83wFBdj09DIEv5urndKESMFFh3mI6fCOELKUdwA3?=
- =?us-ascii?Q?cMytBN0oANx40oOBgdn4Imu9VEqlrKPNVj8NCrcD5gLEljhyq0sO9eylcvG8?=
- =?us-ascii?Q?v/q60XR921C6eZiV+ilvNCA/g14GCdz+edO8aGolA33XToOfvgKkT71Lzkih?=
- =?us-ascii?Q?vb/PQnXQdUtm4Ai7WuuRSlAcJ63aFI3W/AFd42x8V+M9xBIC4XL1XAzZA/kT?=
- =?us-ascii?Q?GCmQrn02ECH77eDYUrNGMjJhge0v8E/g8B5ZiIdqdLnwIl858ujX2G8iW2lc?=
- =?us-ascii?Q?OX0KmJqMO3AtmyTqD9NqFjV26GIqFXmjk5+ZTlEx8wfJWDjUd7iIy8mahAtT?=
- =?us-ascii?Q?/YXqqhAWZqOnNtkrnHUT6vLWDYA0oxPw1RDKbvOM/ZObd0CFwma+qtzgefLg?=
- =?us-ascii?Q?yWTFkpe7ZYGGRiTCmV60iKXwLGULpkTlTEx029spg3wQ5wggswy/GnJQEHab?=
- =?us-ascii?Q?OndA3taEfYiSZWK4+Q3YDn4uIvBha6OHIilbWmGMVwztrvQbFSmT0SX5BaKr?=
- =?us-ascii?Q?ABfZMID4lVhXyVnYAr3E7OjLqO3OJh7tBZDd0Ua/hOvR801YrEKlln+3tUum?=
- =?us-ascii?Q?mlCu4k+h8sp6Fkfq0F3NGwr2yMbnRSndkg5i9gdYoQm/TTb8f743Iff9d3o8?=
- =?us-ascii?Q?x2lQsB9H1WfYXWkmdaTaNjNi9nHs3wHjZ1XBACFHQTc3cN7V9IHEGTowQQv9?=
- =?us-ascii?Q?tN5EnT1x56Jvvt8YiEtfTD3xZuZnES7xhN19GsP28vjZGWPti4AWCPbldm8C?=
- =?us-ascii?Q?HjjtVsUVlnNrtFtCj9eUPiUqe0lNqUW0br4wbFUf8yHAoZlJBangyfZNUxWU?=
- =?us-ascii?Q?84kZTF3gxfqNwcG7vm2V5rgpqmMxcnBY5MLIr+fIsPDE264UG75g8YG9m8Zn?=
- =?us-ascii?Q?fVumQJ2t31Ps/IOxJpRcE/C6R0KnqiMCAJfJv+vJyTsATCCJKSze1D7B7Y7+?=
- =?us-ascii?Q?SolgiYZcWQd37CMXuxgsW/n7qhZd+js7jMEiV+JfXCyA+JChKz7nt4HIkC8S?=
- =?us-ascii?Q?qHKk1ei1v1v3WER1k+i7OQJ51zul4qyYIldh3VNQcrTE7A7wUdL9xjx+u6PH?=
- =?us-ascii?Q?pA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	nYeCXIZ1vWpOwGjZlpzeukWesaXLKpZGfqcFcXwsvdlMRX+vr141HSIxmNTxnCMhJe8tWveC63iKlGDYuACl83b765Vo2RKLexlsYaUVJ/RCoXDqsnEiJeWdKwLV/DGL75RoCJcrThmEbLXCV6DggabP+lZZ2Nj5bCVJPTKV8wjzgETqGdi/EHnfzzLiR4d6wNecb2etNcxsp7qbQ5gmfxZsp+ulHo4q+n+LOh/SYa0X3E+0Yg4COqT/meGEJrsreNjhOsm+n4+3o3M9lcAHw/hm9imWqkeIsBrwPoKyCPGRLaBUWH8ot/Bsb9wDvsphysjCtt0+4jDhEcEXD3FA/EUTLMoaf0wLrnPrxCoSVtmh58+yRYDlD18XFz74aVzo2w9udStfwnxyVLOL4r9f58vuHyRGQAx5KiC6paew5vGgvbJBFoTm5M4BjdLqLKjO4qTk84ik1USFTonbKPSmR5cF7IykVuLGaEurK/A2mO5vj7522OysCtqaMHcZrqlheX0bvFqV+h8gRVFtkQsw+EJ8VqyjLP6zQXKT+714nmYa6eizdpSQmrtmnJT4mi1VYQYxlwanrLmLmrxHw2SCjSdHvuzIcEHytNaDEo/FsCQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b99c799-e8bf-4d4d-0c5f-08dcb7dfac88
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 19:24:08.1104
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jzpV0WCJu6XhTKqDc9BQwGAK9KIyhOgO5q3Mub7veWf+FRvjvu4BEx5qn1PI+x+jxrohPQCbBHxvHxSZL4iStw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB8175
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_19,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 adultscore=0 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408080139
-X-Proofpoint-GUID: zqqN-IFrQ-NCWAIoD0xZ9nW6SGF7uS2i
-X-Proofpoint-ORIG-GUID: zqqN-IFrQ-NCWAIoD0xZ9nW6SGF7uS2i
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is
+ enabled
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, linux-kernel@vger.kernel.org
+References: <20240808125430.1172152-1-longman@redhat.com>
+ <CA+fCnZdWgAD1pu4yyjON0ph9ae1B6iaWas0CbET+MXLNNXt5Hg@mail.gmail.com>
+ <f8c46f64-1ac3-4da3-87b5-ef7ec2e37fb8@redhat.com>
+ <CA+fCnZdnFAvFYVN9Farmg1DKHy3ZmL3ZB0XqYUJVoETUpSpEiQ@mail.gmail.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <CA+fCnZdnFAvFYVN9Farmg1DKHy3ZmL3ZB0XqYUJVoETUpSpEiQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-* Matthew Wilcox <willy@infradead.org> [240808 15:15]:
-> On Thu, Aug 08, 2024 at 12:29:59PM -0400, Sidhartha Kumar wrote:
-> > diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> > index aa3a5df15b8e..65fba37ef999 100644
-> > --- a/lib/maple_tree.c
-> > +++ b/lib/maple_tree.c
-> > @@ -6997,6 +6997,18 @@ void mt_set_non_kernel(unsigned int val)
-> >  	kmem_cache_set_non_kernel(maple_node_cache, val);
-> >  }
-> >  
-> > +extern void kmem_cache_set_callback(struct kmem_cache *cachep, void (*callback)(void *));
-> > +void mt_set_callback(void (*callback)(void *))
-> > +{
-> > +	kmem_cache_set_callback(maple_node_cache, callback);
-> > +}
-> > +
-> > +extern void kmem_cache_set_private(struct kmem_cache *cachep, void *private);
-> > +void mt_set_private(void *private)
-> > +{
-> > +	kmem_cache_set_private(maple_node_cache, private);
-> > +}
-> > +
-> >  extern unsigned long kmem_cache_get_alloc(struct kmem_cache *);
-> >  unsigned long mt_get_alloc_size(void)
-> >  {
-> 
-> This should surely not be in lib/maple_tree.c ...
-> 
+On 8/8/24 15:22, Andrey Konovalov wrote:
+> On Thu, Aug 8, 2024 at 8:32 PM Waiman Long <longman@redhat.com> wrote:
+>>
+>> On 8/8/24 12:12, Andrey Konovalov wrote:
+>>> On Thu, Aug 8, 2024 at 2:54 PM Waiman Long <longman@redhat.com> wrote:
+>>>> As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
+>>>> capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
+>>>> for all kmalloc/kfree calls. So stackdepot capacity was increased 8
+>>>> times to accommodate KASAN usage even thought it was claimed 4X should
+>>>> be enough at that time.
+>>>>
+>>>> With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
+>>>> for stack records"), all stackdepot records uses a fixed size with
+>>>> CONFIG_STACKDEPOT_MAX_FRAMES (default=64) entries. This is merged to
+>>>> support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
+>>>> use variable size records for non-evictable entries") re-enabled
+>>>> the use of variable size records for non-KASAN use cases, but KASAN
+>>>> (generic mode) still uses the large fixed size stack records.
+>>> No, since commit 711d349174fd ("kasan: revert eviction of stack traces
+>>> in generic mode") Generic KASAN doesn't use fixed-sized slots.
+>>>
+>>>> With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
+>>>> stackdepot space had been more than double than before. Assuming an
+>>>> average stack frame size of 16, a KASAN stack record is almost 4X the
+>>>> size of a non-KASAN one.
+>>> So this is not correct.
+>> Yes, you are right. I missed the KASAN commit 711d349174fd in my
+>> analysis. I will update the commit log in the next version.
+>>>> When a wide variety of workloads are run on a debug kernel with KASAN
+>>>> enabled, the following warning may sometimes be printed.
+>>>>
+>>>>    [ 6818.650674] Stack depot reached limit capacity
+>>>>    [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot_alloc_stack+0x39e/0x3d0
+>>>>      :
+>>>>    [ 6818.650907] Call Trace:
+>>>>    [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
+>>>>    [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
+>>>>    [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
+>>>>    [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
+>>>>    [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
+>>>>    [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
+>>>>    [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
+>>>>    [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
+>>>>    [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
+>>>>    [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
+>>>>    [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
+>>>>    [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
+>>>>    [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
+>>>>    [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
+>>>>    [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
+>>>>    [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
+>>>>    [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
+>>>>    [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
+>>>>    [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
+>>>>    [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 [xfs]
+>>>>    [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs]
+>>>>    [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
+>>>>    [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
+>>>>    [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
+>>>>    [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
+>>>>    [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
+>>>>
+>>>> With all the recent changes in stackdepot to support new KASAN features,
+>>>> it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
+>>>> enough when KASAN is enabled. Fix this stackdepot capability issue
+>>>> by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
+>>>> maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
+>>> It is possible that the stack depot runs out of space due to a truly
+>>> large number of unique stack traces, but I would first make sure that
+>>> is indeed the case. The one thing to check would be to dump all the
+>>> stack traces from the stack depot when it overflows, and check whether
+>>> they make sense. There have been cases in the past, when e.g. the task
+>>> context part of a stack trace from an interrupt didn't get stripped
+>>> properly, and thus almost each stack trace from an interrupt was
+>>> considered unique by the stack depot. Perhaps, something similar
+>>> started happening again.
+>> It could be.
+>>
+>> Anyway, I got a bug report from our QE team and they have seen it once
+>> so far. So it is not an easily reproducible problem. I need to do
+>> further investigation first. Thanks for your quick response.
+> If you have access to the environment where the issue is happening,
+> you can just make the stack depot keep dumping all new stack traces
+> being saved and monitor them for some time. If there's a problem with
+> interrupt contexts, you should be able to see it even without waiting
+> for the stack depot to overflow.
 
-It has to be as it uses the kmem_cache maple_node_cache reference.
+I see. Thanks for the suggestion.
 
-It is located in an ifndef __KERNEL__ and an ifdef
-CONFIG_DEBUG_MAPLE_TREE, so it won't be in any kernel builds.
+Cheers,
+Longman
+
 
