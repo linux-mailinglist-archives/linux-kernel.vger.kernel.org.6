@@ -1,199 +1,146 @@
-Return-Path: <linux-kernel+bounces-279505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5364194BE2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:07:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8664B94BE31
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1312F28D165
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:07:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70E01C24F49
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E76F18DF6C;
-	Thu,  8 Aug 2024 13:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D5618CC01;
+	Thu,  8 Aug 2024 13:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WG7lZJrj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e7jDBb0G"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A9E18B475;
-	Thu,  8 Aug 2024 13:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA14D18B462;
+	Thu,  8 Aug 2024 13:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723122398; cv=none; b=G6eCqdVFks+ZZF+h6l/Tdo+pOCqy19pvwOybCWWbVIO6YiEjbnnXhjQGwbAJGGthsuW32CrDOmx20r081QRdnG8pDqbZ/+jMVs9utTvrH90zFybUn1sPIaFG4fsShcXajiOOXK5ZBCgFMsyfign2g8CqpLavsOsTxg8VSurTLoc=
+	t=1723122492; cv=none; b=ou706FB4/Bbu5a2e/KwsQu2y6AP6lEHPR+WTXJsbpcHDCaCRVWqtZ3t9f4U9WWqB05dPGfIe8DOgL0gR7PKB9s476ql5VU+0xklzsDuO1SCWdiic5eR8TlNHqFh5uaU68MDlZzi3czftb3wd5tXSBySybjVLjglWSczFiBYh8Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723122398; c=relaxed/simple;
-	bh=ZqpWpKeoYw3z5/g9D07lnMbhlNCiNncYIDU/W4Qsl8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBNvznL37A0xV3pyC6E2J5FHkcXcdY8KMFOswoRafYPXtk8BuO3oXVKyL4c1NlOcCYwmGoAqXCItpxrEWaZwwiUrQMuhEkMZUepdjU5GLARQXvKOUckfnRD0uuZZtczRq2TWcqeGpgMpTzYTVAmusnLl+xHwP+1jVHnprQA1V9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WG7lZJrj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6068BC32782;
-	Thu,  8 Aug 2024 13:06:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723122397;
-	bh=ZqpWpKeoYw3z5/g9D07lnMbhlNCiNncYIDU/W4Qsl8g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WG7lZJrjZ1oiY2BSfhSL7SKCzXyvDX5g6G+rlX0pELAD9UkeUzPIYUtsREvxLnmxV
-	 cfcMXfwISJMIuXGzcDqi426Fu90WV8hJMwE4X2gAp8tgFmBxO+UuaM5K7rLWByxrCn
-	 f2rkKzJPyO1ISo5B6rkEKt8Wd7ybBW8715H4jAhAWxNCGY07fvZ1uWYs4m2NzMymQV
-	 WPPjJtp32mcftqe4+6uRprI7Ng0NARteJBhDNYfpx6etLkGpdU7EA2MjebldbpNbIY
-	 bbK8X6s8o/ogiwi2zYeejnKFMhawdYZrixxKqplp4kSx3hfc9frzu9NIArwgPVDqAc
-	 8jvc5fX6cpTYg==
-Message-ID: <c5bae58c-4200-40d3-94c6-669d2ee131d4@kernel.org>
-Date: Thu, 8 Aug 2024 15:06:28 +0200
+	s=arc-20240116; t=1723122492; c=relaxed/simple;
+	bh=5K2F4rsZYfk3sYfK5CndNYcC/zss3mQ4xvZ/Gur/9EE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/Cf/pYyWda3LLzWCGVh5wavzxrxkSyVwlXcQAyy2i3e11LiyK4m8lGgRSy1sgW2/OzCvV1uBM453/ktb3tghpgiAgV9+C89Hz0OS1GGnwR+SPyeaLIfOZDDXkPsW/6uO3gPF5AQbKoj6v/VceBsqP3B1281x45bUr0KQiirxm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e7jDBb0G; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723122491; x=1754658491;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5K2F4rsZYfk3sYfK5CndNYcC/zss3mQ4xvZ/Gur/9EE=;
+  b=e7jDBb0G/AjOoHWDKt73PFh78cXhN2+SmyjwnTstd7f9QzbiUmWTKIEL
+   XM048FxEJpnWvgHglsiL1yAk9zATb+JQ2e3G9wGeemaYbjzuibtgWDN7B
+   jtFve0DdxiPjjFINt2Yr6Gdkn5kt4YaPZ5wxLqEk4plluvvaR8uEze8jl
+   R35ldQBQyloofDYm0CdTJGc/eEtZys9RX78Vh7lFvaWl22I8uscVm+bWT
+   R6zSDPuXVqr7VdiCOxJjSlIxjwQeZG6ZfmJCK9UZuTNx0m7qOwBWwb0Jv
+   G6JhVnqLlaqDYJL1ZOgbsgDe0XCjRyHtwoXJvGhGv1LZhnEETYebO8KXI
+   Q==;
+X-CSE-ConnectionGUID: IJ/TDQvSR8eJth3wMqyF6Q==
+X-CSE-MsgGUID: 7Ho2MKmJTEud+/fuwVfk/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21387378"
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="21387378"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 06:08:09 -0700
+X-CSE-ConnectionGUID: 921N21g3Qb+uU0QMl5ztPg==
+X-CSE-MsgGUID: nyDTDXpWRXeoeiBgufgoPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="57921909"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 08 Aug 2024 06:08:06 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sc2ry-0006C4-12;
+	Thu, 08 Aug 2024 13:07:55 +0000
+Date: Thu, 8 Aug 2024 21:06:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marco Felsch <m.felsch@pengutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthias Kaehlcke <mka@chromium.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, kernel@pengutronix.de,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>
+Subject: Re: [PATCH 1/3] usb: hub: add infrastructure to pass onboard_dev
+ port features
+Message-ID: <202408082050.BjhmZIt6-lkp@intel.com>
+References: <20240807-b4-v6-10-topic-usb-onboard-dev-v1-1-f33ce21353c9@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Andersson <quic_bjorande@quicinc.com>,
- Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- cros-qcom-dts-watchers@chromium.org, Bartosz Golaszewski <brgl@bgdev.pl>,
- Jingoo Han <jingoohan1@gmail.com>, andersson@kernel.org,
- quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
- <5f65905c-f1e4-4f52-ba7c-10c1a4892e30@kernel.org>
- <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
- <ZrEGypbL85buXEsO@hu-bjorande-lv.qualcomm.com>
- <90582c92-ca50-4776-918d-b7486cf942b0@kernel.org>
- <20240808120109.GA18983@thinkpad>
- <cb69c01b-08d0-40a1-9ea2-215979fb98c8@kernel.org>
- <20240808124121.GB18983@thinkpad>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240808124121.GB18983@thinkpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807-b4-v6-10-topic-usb-onboard-dev-v1-1-f33ce21353c9@pengutronix.de>
 
-On 08/08/2024 14:41, Manivannan Sadhasivam wrote:
-> On Thu, Aug 08, 2024 at 02:13:01PM +0200, Krzysztof Kozlowski wrote:
->> On 08/08/2024 14:01, Manivannan Sadhasivam wrote:
->>> On Mon, Aug 05, 2024 at 07:18:04PM +0200, Krzysztof Kozlowski wrote:
->>>> On 05/08/2024 19:07, Bjorn Andersson wrote:
->>>>> On Mon, Aug 05, 2024 at 09:41:26AM +0530, Krishna Chaitanya Chundru wrote:
->>>>>> On 8/4/2024 2:23 PM, Krzysztof Kozlowski wrote:
->>>>>>> On 03/08/2024 05:22, Krishna chaitanya chundru wrote:
->>>>>>>> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
->>>>> [..]
->>>>>>>> +  qps615,axi-clk-freq-hz:
->>>>>>>> +    description:
->>>>>>>> +      AXI clock which internal bus of the switch.
->>>>>>>
->>>>>>> No need, use CCF.
->>>>>>>
->>>>>> ack
->>>>>
->>>>> This is a clock that's internal to the QPS615, so there's no clock
->>>>> controller involved and hence I don't think CCF is applicable.
->>>>
->>>> AXI does not sound that internal.
->>>
->>> Well, AXI is applicable to whatever entity that implements it. We mostly seen it
->>> in ARM SoCs (host), but in this case the PCIe switch also has a microcontroller
->>> /processor of some sort, so AXI is indeed relevant for it. The naming actually
->>> comes from the switch's i2c register name that is being configured in the driver
->>> based on this property value.
->>>
->>>> DT rarely needs to specify internal
->>>> clock rates. What if you want to define rates for 20 clocks? Even
->>>> clock-frequency is deprecated, so why this would be allowed?
->>>> bus-frequency is allowed for buses, but that's not the case here, I guess?
->>>>
->>>
->>> This clock frequency is for the switch's internal AXI bus that runs at default
->>> 200MHz. And this property is used to specify a frequency that is configured over
->>> the i2c interface so that the switch's AXI bus can operate in a low frequency
->>> there by reducing the power consumption of the switch.
->>>
->>> It is not strictly needed for the switch operation, but for power optimization.
->>> So this property can also be dropped for the initial submission and added later
->>> if you prefer.
->>
->> So if the clock rate can change, why this is static in DTB? Or why this
->> is configurable per-board?
->>
-> 
-> Because, board manufacturers can change the frequency depending on the switch
-> configuration (enablement of DSP's etc...)
-> 
->> There is a reason why clock-frequency property is not welcomed and you
->> are re-implementing it.
->>
-> 
-> Hmm, I'm not aware that 'clock-frequency' is not encouraged these days. So you
-> are suggesting to change the rate in the driver itself based on the switch
-> configuration? If so, what difference does it make?
+Hi Marco,
 
-Based on the switch, other clocks, votes etc. whatever is reasonable
-there. In most cases, not sure if this one here as well, devices can
-operate on different clock frequencies thus specifying fixed frequency
-in the DTS is simplification and lack of flexibility. It is chosen by
-people only because it is easier for them but then they come back with
-ABI issues when it turns out they need to switch to some dynamic control.
+kernel test robot noticed the following build errors:
 
-> 
-> And no more *-freq properties are allowed?
+[auto build test ERROR on 0c3836482481200ead7b416ca80c68a29cfdaabd]
 
-bus-frequency is allowed for busses.
+url:    https://github.com/intel-lab-lkp/linux/commits/Marco-Felsch/usb-hub-add-infrastructure-to-pass-onboard_dev-port-features/20240807-224100
+base:   0c3836482481200ead7b416ca80c68a29cfdaabd
+patch link:    https://lore.kernel.org/r/20240807-b4-v6-10-topic-usb-onboard-dev-v1-1-f33ce21353c9%40pengutronix.de
+patch subject: [PATCH 1/3] usb: hub: add infrastructure to pass onboard_dev port features
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240808/202408082050.BjhmZIt6-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240808/202408082050.BjhmZIt6-lkp@intel.com/reproduce)
 
-Best regards,
-Krzysztof
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408082050.BjhmZIt6-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
+   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
+   aarch64-linux-ld: drivers/usb/core/hub.o: in function `set_port_feature':
+>> drivers/usb/core/hub.c:481:(.text+0x121c): undefined reference to `onboard_dev_port_feature'
+   aarch64-linux-ld: drivers/usb/core/hub.o: in function `usb_clear_port_feature':
+   drivers/usb/core/hub.c:462:(.text+0x23b0): undefined reference to `onboard_dev_port_feature'
+
+
+vim +481 drivers/usb/core/hub.c
+
+   466	
+   467	/*
+   468	 * USB 2.0 spec Section 11.24.2.13
+   469	 */
+   470	static int set_port_feature(struct usb_device *hdev, int port1, int feature)
+   471	{
+   472		int ret;
+   473	
+   474		ret = usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
+   475			USB_REQ_SET_FEATURE, USB_RT_PORT, feature, port1,
+   476			NULL, 0, 1000);
+   477		if (ret)
+   478			return ret;
+   479	
+   480		if (!is_root_hub(hdev))
+ > 481			ret = onboard_dev_port_feature(hdev, true, feature, port1);
+   482	
+   483		return ret;
+   484	}
+   485	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
