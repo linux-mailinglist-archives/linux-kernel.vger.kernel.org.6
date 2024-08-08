@@ -1,80 +1,66 @@
-Return-Path: <linux-kernel+bounces-279768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01D194C1A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D5C794C1A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA801F216FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:41:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 199181F21B0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F2418FC6E;
-	Thu,  8 Aug 2024 15:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243DC18FC9A;
+	Thu,  8 Aug 2024 15:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="GWvqPz4o"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p49wBAKa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1F618F2E2
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A9918F2EB;
+	Thu,  8 Aug 2024 15:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723131713; cv=none; b=B0/7KaGMRB4tfaWxWtZd5MNwgl5VfLBjSwbzZ6xgp1kvJX+i7DXJNyrnHku0La6yft90jPgjfSV6dbPYe/f0BdEjCPNWpE1bTMJ6EuHyFk5Ffcgl5dtrvg+h1wnpnsxGEjJrbQKwQQ4UW86SiH81sOs4ws7lxUYnq6JiEQeUbQ4=
+	t=1723131740; cv=none; b=nEKuRwU3SUYtndTNyemfY4+HMp1a6X1Kc43qcCbsg15IHlS+2zE2NUQ8LVTa4feN3OQZgs2Ht7Tn7oWGtYM2P8TID2MlNsHDLi3CwQihBizVyKDteZWH9LwvASvq3gk0Lv/tikjQloRphLIFz5mzZZ8QlKRR6hRPK0nukM8SGoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723131713; c=relaxed/simple;
-	bh=rtTExVLo+hS1OIsTwFv1tJj9WvfWJPNeZdFtX0fWwiE=;
+	s=arc-20240116; t=1723131740; c=relaxed/simple;
+	bh=iGOWxslDOYwaCmhmtIbAhEOD1V9AF1eqxV6Sq0Bxj5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E8iE1FHVmS4wR9iD6PjrJQ7VjYdvv/YF2UlZfCQPXzuE9fiCIMBQ1Zbwz1pY8a/5OqAysI9tRUDBNU0+gJoh6NwohJjfdrQJY3cwWb7TIEfLbPfBaRCZkilzuTohj7TbWf7LlEDZf8AzRJN03g2RWX1CLnjzAJGNrBM0KmQP5XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=GWvqPz4o; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so1786028a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:41:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1723131710; x=1723736510; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=23S22PmsuwkhNMTYFfJHzLRvP5wA2dHLTYMLULxZMKw=;
-        b=GWvqPz4oWtT3iUuZt5zk/Ks8QgK7DDy9u0xxE1jypDqs3FtTN39Z35jf7R7a0vxo7j
-         1wrFWfoBL1uJDVTlnQ9VwLFCQF4+g17vUtQeb0Mjc3S8cshkL0CRVEWg0WkIa5jOL9Ov
-         K8xzV55sKmDw3udJqiij3Hhko8Ku9mbz3pW72uQ/Tn5OFOUc2K426l4ljcozqbHYd+kj
-         O1/zuCO5v+dxAAYT5Cuko/McywdLDd5qn9UYe/UnZcd41EjrJzIFZPCTGiFF2IEBK8oQ
-         +yBGBciPAJUXJAI3SFejONqIJ6Q6GB8ppgtHhXtEJwwxouDIB995JS6ayHVUHfviwhoz
-         xx9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723131710; x=1723736510;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=23S22PmsuwkhNMTYFfJHzLRvP5wA2dHLTYMLULxZMKw=;
-        b=XONz+u1AVuEiEatFgGtkujFYxZykavo+OVT0lbnYc3PR3QbxV+U941ZHRSd7iNopJA
-         xpkMF4LhX5opitStNYYK6U9lfLI50Crlne0uC6qZNcCir6Qh6ZmnoZXFOpF2yxUgY/5J
-         e+X654bpbFKK/ogqD5vkbhB5k2ZTtct4CMEczlALLKjSKzvGyKrbp1pMYJImwFUu6Jx9
-         weADfh76gUKnQskzUdih3SfTG6yvgAWJehWeC0wuiC5yHC7M/95vzeGiN4yF1Nyh6KxR
-         IB4w6cjq92gb9zb/TIwFNNPx3Tdi5JHKJCNSF7IJJpsDNEsyAoXVXc2aGn0ykaOan03U
-         pDqw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6+Ze/k+VVtLo/yPPwYJbTRHOd7t2n8JvzTbkUHVb5lzALj9B1qyITLk2GF76TBHnjne11KTfnX5DYHf8ljDBllVS45/2CvBP0QZj5
-X-Gm-Message-State: AOJu0YxqehkuYMdtZPrMYY84MMhViw2bg7McNXqBZAhxtaO5F6zYOcyH
-	nrw2vqW12BrVA/Pv+AxGYeTkeXPvi0HCS3+CultbyuiMq6OxHLKnez/Atj6Glts=
-X-Google-Smtp-Source: AGHT+IHWpAvpASeq/K/z3dnXxa1G0aOGOC0Q73UdhcllZot9CEE7t1yteFz5RcP3R3SA5p8jx/ojsg==
-X-Received: by 2002:a05:6402:1cc1:b0:5a0:d5f2:1be with SMTP id 4fb4d7f45d1cf-5bbb3c109f6mr1665835a12.8.1723131709692;
-        Thu, 08 Aug 2024 08:41:49 -0700 (PDT)
-Received: from localhost ([213.235.133.38])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf8e52sm740454a12.4.2024.08.08.08.41.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 08:41:48 -0700 (PDT)
-Date: Thu, 8 Aug 2024 17:41:31 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Subject: Re: [net-next PATCH v10 01/11] octeontx2-pf: Refactoring RVU driver
-Message-ID: <ZrTnK78ITIGU-7qj@nanopsycho.orion>
-References: <20240805131815.7588-1-gakula@marvell.com>
- <20240805131815.7588-2-gakula@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CXRblYOiqI6hfKWW2X8UcUTHpO5bJNae5SfSvAeTokUfxhk1q7QIVWZUJJ6G3dVBiVV9fp4S5UN0LrImBcwodgBLEDB0RPB/SMCYZmyHnDHGPCgVq7vlwVozip08tUY+fwMmbKB7iM0Y8RzJUErRIOA0SGau1GKayXjavZVpoS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p49wBAKa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E484C32786;
+	Thu,  8 Aug 2024 15:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723131740;
+	bh=iGOWxslDOYwaCmhmtIbAhEOD1V9AF1eqxV6Sq0Bxj5c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p49wBAKa1gMaZurx2j3KpNgBTO5avr1MBdMQyGSk8xdELcEMq50dLunRR1Z0Rx6Ck
+	 OoLwQp5RU7iMc7OT5gw/md7OOK72gtHeRbHEoNG0AzpbqeZfYVcnQBBLP7x0NysyAW
+	 an5a6xhqAbrt8bK7Icjh620LZ4Zdf94UxA8oL0OME5Qi8UDdwuiAWclhnmalQqZuZo
+	 /G6pIhy2Lb1RjPFLxriXs5tgDkuDTYcH8xvLI/8CWDz0Hu8OI+o4HAQb0IZXcciaOz
+	 yvOiSy0hCjOG5XKvt9gCg1qiuldEw9uoBwEDK4mXY+CIEuENApOW55VZbRsB8wM1LC
+	 vW6eCjJLkGm7A==
+Date: Thu, 8 Aug 2024 17:42:12 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yuan Yao <yuan.yao@intel.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>,
+	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>,
+	cho@microsoft.com, decui@microsoft.com, John.Starks@microsoft.com
+Subject: Re: [PATCH v2 5/5] x86/tdx: Implement movs for MMIO
+Message-ID: <ZrTnVLdkG1RFr4jK@example.org>
+References: <cover.1722356794.git.legion@kernel.org>
+ <cover.1722862355.git.legion@kernel.org>
+ <83aa03c8f95ef00a6cf2fd6fa768c4b13e533d1c.1722862355.git.legion@kernel.org>
+ <bb34abeb-c26e-7f72-2e3f-1c189c1ed871@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,37 +69,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240805131815.7588-2-gakula@marvell.com>
+In-Reply-To: <bb34abeb-c26e-7f72-2e3f-1c189c1ed871@amd.com>
 
-Mon, Aug 05, 2024 at 03:18:05PM CEST, gakula@marvell.com wrote:
->Refactoring and export list of shared functions such that
->they can be used by both RVU NIC and representor driver.
->
->Signed-off-by: Geetha sowjanya <gakula@marvell.com>
->Reviewed-by: Simon Horman <horms@kernel.org>
->---
-> .../ethernet/marvell/octeontx2/af/common.h    |   2 +
-> .../net/ethernet/marvell/octeontx2/af/mbox.h  |   2 +
-> .../net/ethernet/marvell/octeontx2/af/npc.h   |   1 +
-> .../net/ethernet/marvell/octeontx2/af/rvu.c   |  11 +
-> .../net/ethernet/marvell/octeontx2/af/rvu.h   |   1 +
-> .../marvell/octeontx2/af/rvu_debugfs.c        |  27 --
-> .../ethernet/marvell/octeontx2/af/rvu_nix.c   |  47 ++--
-> .../marvell/octeontx2/af/rvu_npc_fs.c         |   5 +
-> .../ethernet/marvell/octeontx2/af/rvu_reg.h   |   4 +
-> .../marvell/octeontx2/af/rvu_struct.h         |  26 ++
-> .../marvell/octeontx2/af/rvu_switch.c         |   2 +-
-> .../marvell/octeontx2/nic/otx2_common.c       |   6 +-
-> .../marvell/octeontx2/nic/otx2_common.h       |  43 ++--
-> .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 240 +++++++++++-------
-> .../marvell/octeontx2/nic/otx2_txrx.c         |  17 +-
-> .../marvell/octeontx2/nic/otx2_txrx.h         |   3 +-
-> .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |   7 +-
-> 17 files changed, 266 insertions(+), 178 deletions(-)
+On Thu, Aug 08, 2024 at 08:48:26AM -0500, Tom Lendacky wrote:
+> On 8/5/24 08:29, Alexey Gladkov (Intel) wrote:
+> > Add emulation of the MOVS instruction on MMIO regions. MOVS emulation
+> > consists of dividing it into a series of read and write operations,
+> > which in turn will be validated separately.
+> > 
+> > Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
+> > ---
+> >  arch/x86/coco/tdx/tdx.c | 57 ++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 53 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+> > index 4e2fb9bf83a1..8573cb23837e 100644
+> > --- a/arch/x86/coco/tdx/tdx.c
+> > +++ b/arch/x86/coco/tdx/tdx.c
+> > @@ -509,6 +509,54 @@ static int decode_insn_struct(struct insn *insn, struct pt_regs *regs)
+> >  	return 0;
+> >  }
+> >  
+> > +static int handle_mmio_movs(struct insn *insn, struct pt_regs *regs, int size, struct ve_info *ve)
+> > +{
+> > +	unsigned long ds_base, es_base;
+> > +	unsigned char *src, *dst;
+> > +	unsigned char buffer[8];
+> > +	int off, ret;
+> > +	bool rep;
+> > +
+> > +	/*
+> > +	 * The in-kernel code must use a special API that does not use MOVS.
+> > +	 * If the MOVS instruction is received from in-kernel, then something
+> > +	 * is broken.
+> > +	 */
+> > +	if (WARN_ON_ONCE(!user_mode(regs)))
+> > +		return -EFAULT;
+> > +
+> > +	ds_base = insn_get_seg_base(regs, INAT_SEG_REG_DS);
+> > +	es_base = insn_get_seg_base(regs, INAT_SEG_REG_ES);
+> > +
+> > +	if (ds_base == -1L || es_base == -1L)
+> > +		return -EINVAL;
+> > +
+> > +	rep = insn_has_rep_prefix(insn);
+> > +
+> > +	do {
+> > +		src = ds_base + (unsigned char *) regs->si;
+> > +		dst = es_base + (unsigned char *) regs->di;
+> > +
+> > +		ret = __get_iomem(src, buffer, size);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		ret = __put_iomem(dst, buffer, size);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		off = (regs->flags & X86_EFLAGS_DF) ? -size : size;
+> > +
+> > +		regs->si += off;
+> > +		regs->di += off;
+> > +
+> > +		if (rep)
+> > +			regs->cx -= 1;
+> > +	} while (rep || regs->cx > 0);
+> > +
+> > +	return insn->length;
+> > +}
+> > +
+> >  static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int size,
+> >  			     struct pt_regs *regs, struct ve_info *ve)
+> >  {
+> > @@ -530,9 +578,8 @@ static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int si
+> >  		return insn->length;
+> >  	case INSN_MMIO_MOVS:
+> >  		/*
+> > -		 * MMIO was accessed with an instruction that could not be
+> > -		 * decoded or handled properly. It was likely not using io.h
+> > -		 * helpers or accessed MMIO accidentally.
+> > +		 * MOVS is processed through higher level emulation which breaks
+> > +		 * this instruction into a sequence of reads and writes.
+> >  		 */
+> >  		return -EINVAL;
+> >  	default:
+> > @@ -602,6 +649,9 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+> >  	if (WARN_ON_ONCE(mmio == INSN_MMIO_DECODE_FAILED))
+> >  		return -EINVAL;
+> >  
+> > +	if (mmio == INSN_MMIO_MOVS)
+> > +		return handle_mmio_movs(&insn, regs, size, ve);
+> 
+> You check the address in the non-MOVS case using valid_vaddr(), but you
+> don't seem to be doing that in the MOVS case, was that intentional?
 
-How can anyone review this?
+The MOVS instruction is allowed only in userspace. The MOVS instruction
+is emulated through separate read and write operations, which are in turn
+checked by valid_vaddr(). 
 
-If you need to refactor the code in preparation for a feature, you can
-do in in a separate patchset sent before the feature appears. This patch
-should be split into X patches. One logical change per patch.
+> Thanks,
+> Tom
+> 
+> > +
+> >  	vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
+> >  
+> >  	if (user_mode(regs)) {
+> > @@ -630,7 +680,6 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+> >  	switch (mmio) {
+> >  	case INSN_MMIO_WRITE:
+> >  	case INSN_MMIO_WRITE_IMM:
+> > -	case INSN_MMIO_MOVS:
+> >  		ret = handle_mmio_write(&insn, mmio, size, regs, ve);
+> >  		break;
+> >  	case INSN_MMIO_READ:
+> 
+
+-- 
+Rgrds, legion
+
 
