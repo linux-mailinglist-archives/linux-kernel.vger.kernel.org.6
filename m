@@ -1,124 +1,108 @@
-Return-Path: <linux-kernel+bounces-279366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F92294BC58
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:37:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2A394BC5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1EB1F220A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:37:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29186B215C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53D918B475;
-	Thu,  8 Aug 2024 11:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180B818C322;
+	Thu,  8 Aug 2024 11:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kxbvQtag"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bn21DPX4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7935418D651;
-	Thu,  8 Aug 2024 11:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558A518A93E;
+	Thu,  8 Aug 2024 11:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723117029; cv=none; b=gBnqKYImpl3YR5uS84Ttaw307dyD6HcX5ORi6QTpMaPU9WPgCHaGpXHo8hr0Tg3N++5LOb8j6PRC0pk+25RaJ4h9lj9zgcjRBUhpkB8ISMheZRt0+/i97/yEATSYVaJ6jzZC2tSoiqtTOFb1VAF9E47DkDaR+qfBaQ+7KWeuDRI=
+	t=1723117067; cv=none; b=X91nt1VLCmJmtf+yxbiTzdfznUjYSptVRkSfSgFr2KJiii5vaYiDT42AQsXOUt5QSrfgVAB7Gt1bvuWR8zSshptBZ9W21sxp2tlckvIdXQxzZqySso3r6EsewaqPReN/RAH95MliX0PGkyYuUsl//DObtYfxyGWys02h5b24bZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723117029; c=relaxed/simple;
-	bh=bO5swzgkf7BckfI2iGviGyssNIRJ3wpEQFJjpxjBahQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ETcHwBWJWoDCQs8ObEDTP4GvqLCLZWOZzfYyCPXDh1Y5LNjh82OyYmAyJ4AUwNxFEbQ73PhnP1eUK1a3IWDxJieuuieqJJn04Ng3YBchL2/klmO5T+Yeun7LWVgpIEVcitlxULEJ5L9n4rQzi/REvlDRfcubCOs8UHrB5B5W8dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kxbvQtag; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 478Bb3dQ127276;
-	Thu, 8 Aug 2024 06:37:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723117023;
-	bh=geRGxm1lVEOqMNAkF5Fs7S5VI6oFCb+FwYpG/B7OhR4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=kxbvQtagwoOjh8BAAMkw1gWhdmxPWajkDybHW0/bR9gq1n8zHfDmf6TsxtaIHXu6m
-	 JO1s6P2mJXDbGKwYMD4AG7U5AmHlOGis0pG2SQxYMUKD2aM0KacxX9O//gcAigX3nG
-	 B7WRhLhLVf2GWec3TVBIvVoTEr9OIf84rfBJS66s=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 478Bb3XQ077835
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 Aug 2024 06:37:03 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- Aug 2024 06:37:03 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 Aug 2024 06:37:03 -0500
-Received: from [10.250.38.65] ([10.250.38.65])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 478Bb1mq127226;
-	Thu, 8 Aug 2024 06:37:02 -0500
-Message-ID: <86b3466d-c1e7-fe47-8f0f-af7dcb011149@ti.com>
-Date: Thu, 8 Aug 2024 06:37:01 -0500
+	s=arc-20240116; t=1723117067; c=relaxed/simple;
+	bh=FrQApXPVmrdPa5fVSbNwQe+t8ZUO+Ix0gSxKCqrXorM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FuQMl2g+vTcDMoEu6cJtZaPvviEiuuPsamnu41JQSw9egWjyRpMscsuKoeYFFEfQTZEg45HuGvI57FPf6KZZz1VwjJ+SJy0id2lOSyU2/83qZMCm1UXUTRdfUQWQKex1FLPqLTgLMo32LL6D3qkaNYOTNxbHwt7w+HEEuUiIrTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bn21DPX4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD2F7C32782;
+	Thu,  8 Aug 2024 11:37:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723117066;
+	bh=FrQApXPVmrdPa5fVSbNwQe+t8ZUO+Ix0gSxKCqrXorM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bn21DPX40uXcqizPqNw2FpJ7A0FclBqYBPLlgy6RwEOhGx1VbqwDNPtKHLY8QjdSM
+	 jodX1UQvjfKHXXYPHBT7Q6qDHQAO+dpqzGsUjEdIpJbWVqlLUO1hTm78OHm7vPre6t
+	 XWr0AFb9LT2FZgfyFbxnRzcIrTC9oIDGQbGVn+Cd5OwaUWSPBNe5t/DBDBQrdjxeZz
+	 SFrxjzOVCP9kbpLg/GL0HMjwgoFwRHE8YA4fUAi2b3+R+WNzeZBPv2juScpg5mWu++
+	 cBO91Ts+zVy1YlKDHvdKyWuGVsQ7F/himMQPznF9zcbWKqBxvTOoC0zpu3Fg0NslS9
+	 pLtxHI3Ql1MfA==
+Date: Thu, 8 Aug 2024 12:37:41 +0100
+From: Simon Horman <horms@kernel.org>
+To: =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	imx@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Frank Li <Frank.li@nxp.com>,
+	Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>
+Subject: Re: [PATCH resubmit net 1/2] net: fec: Forward-declare
+ `fec_ptp_read()`
+Message-ID: <20240808113741.GH3006561@kernel.org>
+References: <20240807082918.2558282-1-csokas.bence@prolan.hu>
+ <1d87cbd1-846c-4a43-9dd3-2238670d650e@lunn.ch>
+ <20240808094116.GG3006561@kernel.org>
+ <449a855a-e3e2-4eed-b8bd-ce64d6f66788@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] rpmsg: char: Export alias for RPMSG ID rpmsg-raw from
- table
-Content-Language: en-US
-To: Andrew Davis <afd@ti.com>, Bjorn Andersson <andersson@kernel.org>,
-        Mathieu
- Poirier <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240729164527.340590-1-afd@ti.com>
-From: Hari Nagalla <hnagalla@ti.com>
-In-Reply-To: <20240729164527.340590-1-afd@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <449a855a-e3e2-4eed-b8bd-ce64d6f66788@prolan.hu>
 
-On 7/29/24 11:45, Andrew Davis wrote:
-> Module aliases are used by userspace to identify the correct module to
-> load for a detected hardware. The currently supported RPMSG device IDs for
-> this module include "rpmsg-raw", but the module alias is "rpmsg_chrdev".
+On Thu, Aug 08, 2024 at 11:49:29AM +0200, Csókás Bence wrote:
+> On 8/8/24 11:41, Simon Horman wrote:
+> > On Wed, Aug 07, 2024 at 03:53:17PM +0200, Andrew Lunn wrote:
+> > > On Wed, Aug 07, 2024 at 10:29:17AM +0200, Csókás, Bence wrote:
+> > > > This function is used in `fec_ptp_enable_pps()` through
+> > > > struct cyclecounter read(). Forward declarations make
+> > > > it clearer, what's happening.
+> > > 
+> > > In general, forward declarations are not liked. It is better to move
+> > > the code to before it is used.
+> > > 
+> > > Since this is a minimal fix for stable, lets allow it. But please wait
+> > > for net to be merged into net-next, and submit a cleanup patch which
+> > > does move fec_ptp_read() earlier and remove the forward declaration.
+> > 
+> > That makes sense.
+> > 
+> > However, is this a fix?
+> > It's not clear to me that it is.
 > 
-> Use the helper macro MODULE_DEVICE_TABLE(rpmsg) to export the correct
-> supported IDs. And while here, to keep backwards compatibility we also add
-> the other ID "rpmsg_chrdev" so that it is also still exported as an alias.
-> 
-> This has the side benefit of adding support for some legacy firmware
-> which still uses the original "rpmsg_chrdev" ID. This was the ID used for
-> this driver before it was upstreamed (as reflected by the module alias).
-> 
-> Signed-off-by: Andrew Davis <afd@ti.com>
-Acked/Tested-by: Hari Nagalla <hnagalla@ti.com>
-> ---
->   drivers/rpmsg/rpmsg_char.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index eec7642d26863..96fcdd2d7093c 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -522,8 +522,10 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
->   
->   static struct rpmsg_device_id rpmsg_chrdev_id_table[] = {
->   	{ .name	= "rpmsg-raw" },
-> +	{ .name	= "rpmsg_chrdev" },
->   	{ },
->   };
-> +MODULE_DEVICE_TABLE(rpmsg, rpmsg_chrdev_id_table);
->   
->   static struct rpmsg_driver rpmsg_chrdev_driver = {
->   	.probe = rpmsg_chrdev_probe,
-> @@ -565,6 +567,5 @@ static void rpmsg_chrdev_exit(void)
->   }
->   module_exit(rpmsg_chrdev_exit);
->   
-> -MODULE_ALIAS("rpmsg:rpmsg_chrdev");
->   MODULE_DESCRIPTION("RPMSG device interface");
->   MODULE_LICENSE("GPL v2");
+> Well, it's not clear to me either what constitutes as a "fix" versus "just a
+> cleanup". But, whatever floats Andrew's boat...
 
+Let me state my rule of thumb: a fix addresses a user-visible bug.
+
+> > And if it is a pre-requisite for patch 2/2,
+> > well that doesn't seem to be a fix.
+> 
+> It indeed is.
+> 
+> > So in all, I'm somewhat confused.
+> > And wonder if all changes can go via net-next.
+> 
+> That's probably what will be happening.
+
+It does seem like the cleanest, and coincidently easiest, path.
 
