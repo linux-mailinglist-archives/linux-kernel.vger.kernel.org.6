@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-279757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 139B594C178
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:33:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65B094C179
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 564C51F2B9F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:33:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77446287D26
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9F019047F;
-	Thu,  8 Aug 2024 15:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC54618FDBF;
+	Thu,  8 Aug 2024 15:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ETl95Bee"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VNWfpw/8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vJTXkqMc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A6F190461
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E6F18F2D6;
+	Thu,  8 Aug 2024 15:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723131110; cv=none; b=BhmHlOmpdeL8uxscUo6rx7yBzas2Fgt4QmjwXhKpu1r40XuWkP6oAXGc75Vr2e16SYJ6nzUfMZsAWuk583zGmukWQ3GUePfWiNgkUIINigQac/JsibRgvOJlP1QB2Lo+wlov98ZXoKGX35lBW9GOY/lRL000X9nDzh3bbw5pwO4=
+	t=1723131150; cv=none; b=aFPUEG//WP0+OWQstrgtjRNJV43qpwzFWSRI2C9hlS0CH9tquv1G48QjlK2jD83/gs7+/NexDl/FqAE0LIAqoAGU7bZie7TIobS/GwRew0Cjij6PANkfyOP6lYjCRhsmnEIMsm/7ercsZZBiaAuIXhdmYFuaOHu5eIrZo0xNRec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723131110; c=relaxed/simple;
-	bh=ptVFr46xmXiBuy5zjVBGgin/uqh4pe4wAYi7ZKMHMBc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RBL+vn5FIm/ejn0SVtMIO3I2XzeM9/KhdcavDuwKz+MtSlZ6FODYfFgd4D+48exusYab96jxTimsx9OaPy/1NzFedbPo1HkuDB95nCaDMRTbk4A8X55s14BFWqRUISojLNv4FfiJK3It9CYg+X0WfP1vAY3BDoIlFyFeRaRyMVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ETl95Bee; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fc5e1ab396so12043685ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723131108; x=1723735908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jc21vP9HtcAG8Jx0fCnF54KV0nEotJ+OQOgwzr/gmUk=;
-        b=ETl95BeeLMkyE81u1igwT+2k9jOUwTWW1Rw/n2LeN/s8Lusdr/19eTO0VZMxnDL84t
-         N5MYVcaiYQkhgQvgjsbxOcFeXAvC9wPE7oC/UvDUQjwW7lGTmo9kOe0ThKvhabZ5osg3
-         F1kCfqrHLZKN2xb5VIOJJRLtyOaKP79uaz60fWuWyh3HqPcJj15jByKfW5fAgCipFnGf
-         /JsUfy4lnPiI19g6C7J8yhBcB8Fb+/0XQOspA/ddJY7C/CWyiD99RLTpEbmYB8EdhLWw
-         qa0CSMH77OX7ad+f8HPYjI/cffkaAvDqBS8N8pyGBXuFhcti6RsqwJr36kdVxMyLFwOY
-         DLCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723131108; x=1723735908;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jc21vP9HtcAG8Jx0fCnF54KV0nEotJ+OQOgwzr/gmUk=;
-        b=NqMWDkILjd3xLEH9vducMw+14WpxPiNeuQUdN8T5CKS7ikEKtx7OkEkwtTMzDR9fdz
-         i2KLpOpuoiB/lZyFUg0XovgIubbSUQyqnX1Ga7trpV4RS9elHoLhat8QiFGTiwRAB5jg
-         b9u/rdtsW3E05Qv8FRH2BLgFLVoM7UgfIsey/B2JulMTQ9sAJfhDXEe9Rhdkc5pq0t36
-         DIm3P6EpwltRZU36Mn9g/y8p9mTS8r6cn+D7Bx8TRkbMKHlINj4TKvXyF49lA4xa7zSu
-         QR3o2uzc6IL5H7Odc9uCRerzwhnA6zG0BzkkUFLjBaRcPwlXW/uQtDxAgJSqERmOgryd
-         q8PA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuA7f+4OZHArYN/wkFkcbF4fyfu9npylJICC1sFM/rkQMZRAaLPRJlWI1LwlUCaclEK5j3QMs3UZfS5M6ceXtOWFOyFBDgIPwh084v
-X-Gm-Message-State: AOJu0YycKN1ZrocW9f5Wt1EGkA1uGnfmTdERt1PQ8WLKkOX7UlOEafRs
-	9mSWqO1iurQFja7VpCT433mo9IkfGFw8enL03M+jf8Zi49RqeOVWwOxlUlg+yU9X/8OsxO7AvCP
-	dzQ==
-X-Google-Smtp-Source: AGHT+IGhpuWFvPPS56LNIyARU7ozQJQwYhKu/y/lvyly0zz2F1cJP6/aGqiYnrRnxhwS3wYjMw23Fn2sh0c=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:2445:b0:1fb:7978:6cc with SMTP id
- d9443c01a7336-20095249cc8mr361865ad.5.1723131108261; Thu, 08 Aug 2024
- 08:31:48 -0700 (PDT)
-Date: Thu, 8 Aug 2024 08:31:46 -0700
-In-Reply-To: <877ccrqc06.fsf@draig.linaro.org>
+	s=arc-20240116; t=1723131150; c=relaxed/simple;
+	bh=Sjzq6+JOVvcy+fpe61lsvDx1mzbU5Wg/OLPWO8z93Kc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Kazm05ouUo7rlkcSgByf8Ue+H8nVmJXQkxCaCylwq+b0e/0M6uML2Y1UU3kBAeH8ZR2NSiZCA8H0OvWUXK8ya9hyE6QXET969kitcPMRMXn9RXKtNI4aUJ1phGoIJ0B3u2KdHBBDcUpYMDdF+pvJbe4rIIcE6B/XtUToicrwl1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VNWfpw/8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vJTXkqMc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 08 Aug 2024 15:32:26 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723131147;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QOHNFV5sBHJdGtUesrN2xQFLTvZVCLxkMk8vu/3eHds=;
+	b=VNWfpw/8OESrfQb7zu+cHkNPkxjt156YwDByiFCrhtxF3BAviqHR/iuvBrllUdJ/ah9Xnq
+	F6QqpiNO0V8cTJ73DcPTRTcrYp0EQYVLa1jH7hqazQW7j/vesrYA2h/x5XwdlMd1p63hy+
+	bu2oT3v5UtJRyl0f80yf9E7pZAdqEc2LuuuQL7aRlzppJvArvBQhJiaLMvH2RZ7JYKOqkj
+	EVcAKEmg6qr9EdwZ9rddp+mJS8b4p2FVzHJNKCut1pdPzbR/49eFjosFfkNDINmyDDBtTr
+	X6gfm59eFMrZB/BFGD/jUjE42Q3XT21i/JT5P6fw2loAdzPeBbu7P6Ry5gyznA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723131147;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QOHNFV5sBHJdGtUesrN2xQFLTvZVCLxkMk8vu/3eHds=;
+	b=vJTXkqMcH1SYieuKCbh+Q623wVpSvocdD2d2zSPtxrZj47jfEkxsMIHrFsyTBTTWOwesC5
+	Q6zCfVD8yAxS/2BQ==
+From: "tip-bot2 for Li RongQing" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/mm] x86/mm: Don't print out SRAT table information
+Cc: Li RongQing <lirongqing@baidu.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240806120823.17111-1-lirongqing@baidu.com>
+References: <20240806120823.17111-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-14-seanjc@google.com>
- <87bk23ql6n.fsf@draig.linaro.org> <ZrTFPhy0e1fFb9vA@google.com> <877ccrqc06.fsf@draig.linaro.org>
-Message-ID: <ZrTk4sQS8k1-GBb3@google.com>
-Subject: Re: [PATCH v12 13/84] KVM: Annotate that all paths in hva_to_pfn()
- might sleep
-From: Sean Christopherson <seanjc@google.com>
-To: "Alex =?utf-8?Q?Benn=C3=A9e?=" <alex.bennee@linaro.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
+MIME-Version: 1.0
+Message-ID: <172313114640.2215.16753789471531681179.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 08, 2024, Alex Benn=C3=A9e wrote:
-> Sean Christopherson <seanjc@google.com> writes:
->=20
-> > On Thu, Aug 08, 2024, Alex Benn=C3=A9e wrote:
-> >> Sean Christopherson <seanjc@google.com> writes:
-> >>=20
-> >> > Now that hva_to_pfn() no longer supports being called in atomic cont=
-ext,
-> >> > move the might_sleep() annotation from hva_to_pfn_slow() to
-> >> > hva_to_pfn().
-> >>=20
-> >> The commentary for hva_to_pfn_fast disagrees.
-> >>=20
-> >>   /*
-> >>    * The fast path to get the writable pfn which will be stored in @pf=
-n,
-> >>    * true indicates success, otherwise false is returned.  It's also t=
-he
-> >>    * only part that runs if we can in atomic context.
-> >>    */
-> >>   static bool hva_to_pfn_fast(struct kvm_follow_pfn *kfp, kvm_pfn_t *p=
-fn)
-> >>=20
-> >> At which point did it loose the ability to run in the atomic context? =
-I
-> >> couldn't work it out from the commits.
-> >
-> > It didn't lose the ability per se (calling hva_to_pfn_fast() in atomic =
-context
-> > would still be functionally ok), rather the previous patch
-> >
-> >   KVM: Drop @atomic param from gfn=3D>pfn and hva=3D>pfn APIs
-> >
-> > removed support for doing so in order to simplify hva_to_pfn() as a who=
-le.
->=20
-> It still sticks out given the only caller no longer enforces this.=20
+The following commit has been merged into the x86/mm branch of tip:
 
-Oh, sorry, I should have been more explicit.  I'll fix the comment, I simpl=
-y
-missed it.
+Commit-ID:     830a0d12943f53077b235f2a3caa8ab2b36475a3
+Gitweb:        https://git.kernel.org/tip/830a0d12943f53077b235f2a3caa8ab2b36475a3
+Author:        Li RongQing <lirongqing@baidu.com>
+AuthorDate:    Tue, 06 Aug 2024 20:08:23 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 08 Aug 2024 17:23:40 +02:00
+
+x86/mm: Don't print out SRAT table information
+
+This per CPU log is becoming longer with more and more CPUs in system,
+which slows down the boot process due to the serializing nature of
+printk().
+
+The value of this information is dubious and it can be retrieved by lscpu
+from user space if required..
+
+Downgrade the printk() to pr_debug() so it is still accessible for debug
+purposes.
+
+[ tglx: Massaged changelog ]
+
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240806120823.17111-1-lirongqing@baidu.com
+
+---
+ arch/x86/mm/srat.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/mm/srat.c b/arch/x86/mm/srat.c
+index 9c52a95..6f8e0f2 100644
+--- a/arch/x86/mm/srat.c
++++ b/arch/x86/mm/srat.c
+@@ -57,8 +57,7 @@ acpi_numa_x2apic_affinity_init(struct acpi_srat_x2apic_cpu_affinity *pa)
+ 	}
+ 	set_apicid_to_node(apic_id, node);
+ 	node_set(node, numa_nodes_parsed);
+-	printk(KERN_INFO "SRAT: PXM %u -> APIC 0x%04x -> Node %u\n",
+-	       pxm, apic_id, node);
++	pr_debug("SRAT: PXM %u -> APIC 0x%04x -> Node %u\n", pxm, apic_id, node);
+ }
+ 
+ /* Callback for Proximity Domain -> LAPIC mapping */
+@@ -98,8 +97,7 @@ acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
+ 
+ 	set_apicid_to_node(apic_id, node);
+ 	node_set(node, numa_nodes_parsed);
+-	printk(KERN_INFO "SRAT: PXM %u -> APIC 0x%02x -> Node %u\n",
+-	       pxm, apic_id, node);
++	pr_debug("SRAT: PXM %u -> APIC 0x%02x -> Node %u\n", pxm, apic_id, node);
+ }
+ 
+ int __init x86_acpi_numa_init(void)
 
