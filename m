@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-280157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B31494C66F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:47:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5069A94C672
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0718D284E84
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:47:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D02A9B23882
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B6815ADB1;
-	Thu,  8 Aug 2024 21:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E3E15F3EF;
+	Thu,  8 Aug 2024 21:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GB7iBy2z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XnDsAlGR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A708215A85F;
-	Thu,  8 Aug 2024 21:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA82A15B561;
+	Thu,  8 Aug 2024 21:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723153615; cv=none; b=CTOC5hWE5tJmZK/X1Qns9HGDjcZP5Z997nCMfKLE7cE3qYKlIy+9HGpOFWCGRTRxCcOtT49A0cwNW06t1zu2qj6RAe6XMdgHYPbgBIguUxP0Uom64miaxbySiXGr7CNJfCk2Qxz8SRqlmC88kb1hIylQt5okercvBnATR5Wz3Es=
+	t=1723153622; cv=none; b=iwtkWG3rmCo1gz4FkUSMOehKQnSzvkv11M9qRDWiffnZlN9ZtQKUan22e/CZFc14/dJ3TzSAt/XgnqgKGJYTkZrpPvDFbk1sZf5xRvc6mQhopUsxAMKO0SwRgG+/gM8KKFaK7mOl/y3Cu1tXh4gohtGxHogFh8pHZIQHFvz+lFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723153615; c=relaxed/simple;
-	bh=qtAK0UeXQRcCnP7Y+pZwRW9Qdm29Lj43pKM6k3a4U4I=;
+	s=arc-20240116; t=1723153622; c=relaxed/simple;
+	bh=4qDVAjJfZJck66hTltxpHpYd6rfa84s00JWu0atPoDU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DXbhTzW2NPjhSekLtcnVmVAeIXOo9jF6wuf5+B2035CZNBO5hznsHa3MUVubQJT7jQl0S8YAqs5S/+V0iYJPHHKAITwltlX7YR9AUCn3GIRWKNuY/bToL3quTrOHWnlnxaNLPUngNXpdZV1DvMvuk8redHgYStdBMYn7v6kFmHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GB7iBy2z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3CBAC4AF0C;
-	Thu,  8 Aug 2024 21:46:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=GE8EnyG3T+rgSwL4IwuqLYvXPqxaPr0ygygZilpYte6CVkXbYRUF9uJ2OWPbMPyguFPkCkMNkAsYn9Y6WjF+PIvBcq/rh9bZP4hsipx9Y9rQvTyPTp35P/P/higzOmO9IhdhckRrBav/TnRlTbYBjyJQwt8t0vbBMEBwlXc6Lcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XnDsAlGR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B62D5C4AF0C;
+	Thu,  8 Aug 2024 21:46:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723153615;
-	bh=qtAK0UeXQRcCnP7Y+pZwRW9Qdm29Lj43pKM6k3a4U4I=;
+	s=k20201202; t=1723153621;
+	bh=4qDVAjJfZJck66hTltxpHpYd6rfa84s00JWu0atPoDU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=GB7iBy2zOeWDJaLuvF3/XzjgSBufy8srdgMk7h+UCiYbiGidb8LtqyFWVikrd2AAA
-	 4DehsFUaMiOS+XE2iIKdMzJlQCpszYg29ZvL7bYlPL+yg60MayHfVaP5+CUrfotPKy
-	 17fXirqE5RtqZ9kJ3SBgYP8YHxZqGDarp5fbh96B+7miSyNiALUNG4oYrNZzH/aEw8
-	 CNM2M1Lcta0NGOQ2PxMSPsOX6qiti92Usx4mRsf+6+xWmxEtEHyVJrsJkKOxUX5/ln
-	 J6N79l2h0fueSsEmkv34gxldPIeqbv9McxUZw+UuhlyLV5NFsX0PFBx4CjGqdD8+Dq
-	 VBTlcWCqmbtUw==
+	b=XnDsAlGRPM/2ZTTer/eUU69MDS2XWj6RVEI/S2Q5jVPCjGHSADI7izX3KPyJrLWPf
+	 nd5QNC2584o8dsyCcGgRkam5I67qT6G2zO4qE4BwNfa1/lyeGvA+jz14R2QGR/GTaJ
+	 M0GoOrne1v5aDNz3YZzz8tKt9MOyBQ+HxhUKcI1cbwIG3jxQfZmVfVZhe4pk+zGcGj
+	 Et88J0b1EsujTi4sDFvKoLWV+1UaV7LLKrz3qvHuZckWLGKKH8mGerXntDmbUhxRVT
+	 nGsCbGcI8ENlfRl2bx0l64ZtJVad85d2R8SvT6EBqvM0TdU2zGyh3fdyws44iHV7OC
+	 /9+0fKuTDjpkA==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>, 
- Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Shenghao Ding <13916275206@139.com>, alsa-devel@alsa-project.org
-In-Reply-To: <20240807-asoc-tas-gpios-v2-0-bd0f2705d58b@linaro.org>
-References: <20240807-asoc-tas-gpios-v2-0-bd0f2705d58b@linaro.org>
-Subject: Re: [PATCH v2 0/3] ASoC: tas*: Fix up GPIO usage
-Message-Id: <172315361213.480667.14057947911720144793.b4-ty@kernel.org>
-Date: Thu, 08 Aug 2024 22:46:52 +0100
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alexey Klimov <alexey.klimov@linaro.org>
+In-Reply-To: <20240806114931.40090-1-krzysztof.kozlowski@linaro.org>
+References: <20240806114931.40090-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/4] ASoC: dt-bindings: qcom,wcd937x: Correct reset
+ GPIO polarity in example
+Message-Id: <172315361817.480667.1573735001583504478.b4-ty@kernel.org>
+Date: Thu, 08 Aug 2024 22:46:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,17 +65,12 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Wed, 07 Aug 2024 17:02:31 +0200, Linus Walleij wrote:
-> The TI TAS drivers use some legacy GPIO code and headers,
-> this series fixes it up.
+On Tue, 06 Aug 2024 13:49:28 +0200, Krzysztof Kozlowski wrote:
+> The reset GPIO of WCD9370/WCD9375 is active low and that's how it is
+> routed on typical boards, so correct the example DTS to use expected
+> polarity.
 > 
-> The TAS2781 is a special case since it adds a handful of
-> lines of deviating code to reconfigure a GPIO line for
-> IRQ mode and then never actually use the IRQ obtained in
-> the code. Is the line used by autonomous hardware? I'm
-> puzzled by this.
 > 
-> [...]
 
 Applied to
 
@@ -80,12 +78,14 @@ Applied to
 
 Thanks!
 
-[1/3] ASoC: tas2781-i2c: Drop weird GPIO code
-      commit: c2c0b67dca3cb3b3cea0dd60075a1c5ba77e2fcd
-[2/3] ASoC: tas2781-i2c: Get the right GPIO line
-      commit: 1c4b509edad15192bfb64c81d3c305bbae8070db
-[3/3] ASoC: tas*: Drop unused GPIO includes
-      commit: caab9a1cbb9a9fca24ceabeef57b3764d861ad32
+[1/4] ASoC: dt-bindings: qcom,wcd937x: Correct reset GPIO polarity in example
+      commit: 2f3e2c9eaafc272266344d777f8de44f8632e247
+[2/4] ASoC: dt-bindings: qcom,wcd934x: Correct reset GPIO polarity in example
+      commit: 55922275702e112652d314a9b6a6ca31d4b7252e
+[3/4] ASoC: dt-bindings: qcom,wcd938x: Correct reset GPIO polarity in example
+      commit: 871f1a16fa3506487de24b05d68be45e9185e77a
+[4/4] ASoC: dt-bindings: qcom,wcd939x: Correct reset GPIO polarity in example
+      commit: 81f88fddef9cddae6b4e5d9359022c7a2a3e3b6a
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
