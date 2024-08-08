@@ -1,165 +1,187 @@
-Return-Path: <linux-kernel+bounces-279539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA6C94BEB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:44:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D1CE94BEB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50BB61C22350
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0534B1F22859
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510AD18E03F;
-	Thu,  8 Aug 2024 13:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C720318E033;
+	Thu,  8 Aug 2024 13:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x/E+KQ7w"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="U0GNrD6p"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2DE18E023
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 13:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F14718E029
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 13:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723124650; cv=none; b=MXPiy3cQ3gmGo098pbvVzFyucAQPj8GWR3zhhK0s60BznQbH8C1N0PcHv6/NCr5Ic+aW3+9JFinJDkZNtbQOi+x4hSAyPRaMa6MH1c8FB+Lkdx7YLZD10Lu5lgBP6vCl07z0agqiNunM+YjsQFyku8x5/c1DbB/ylpipQkcv4qk=
+	t=1723124696; cv=none; b=fNHjB4+MBKn1jTs9SgVITLGvnEHOHclN7wCRT2ixq0iaLoZkH+W3p6GR07GHXKrzmsyXQkktX5jeq2tTwKY3wt71guNmwl/02hfDRTO2bnNpZ4pfXMQUw0wqMaofKFF2saZQFHng0uOtCmnUsRnB7KBUqQ3LWqEhI+z3ITMW47w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723124650; c=relaxed/simple;
-	bh=R7/BLh/7AgTftmRpxzhos6wh2yaWPPjP6+1XVFhcN3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N1QUoaGhSz+MvnmelvQJYDMyVRVvyb9vn13pru3czsUWfvuB1UjleaIY5DEmxhsDho6VIrco/f7dZja6Ez+yXUtrTBYvdwJ3d9yf4xLuCgXUzoK0GenyOjquMHi7abtl66ALsMBFUnmF+58d8nljeKzE04m9PjPGp/j34jJbDls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x/E+KQ7w; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f183f4fa63so8485331fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 06:44:08 -0700 (PDT)
+	s=arc-20240116; t=1723124696; c=relaxed/simple;
+	bh=v4z/T2QMQWRkZbfhTp7wy+humaxZM4Ysj28SZ3O15Ek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SjgvyV1GbKySuvEYQ3tnDvAmeRfS0I1BFyIsZShN8HIQkhhAdLrklRcb9QCpiLxL/uqu6WHrTDxWNvDoXzg4XSldzH7T3UL2B/pqbn+wcR20jaYLqpAIL4pflEOkXB0maSPRnvIR1u89v4PeZCqzpNp3hOCAUi0TN6DLmHoxozk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=U0GNrD6p; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e0e86974172so832979276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 06:44:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723124647; x=1723729447; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=R7/BLh/7AgTftmRpxzhos6wh2yaWPPjP6+1XVFhcN3I=;
-        b=x/E+KQ7wyRL2KJ+1CMPhCagmNPE12YdDh2DvBHADbFKufbDvehpWCiIKatFLzTpXei
-         hrqlYu1lrE5j6LmcfXHknW0Z20ZzeZQB4eLezUX+DTYVmxT/X5uriUQ5S88eZ47lxkaC
-         Noy1ugV9PT7xFVKc2ZtTqxe86kOfy6lA0iKSkgGIT3vT1sUI0WfGuJQ/UkTu2t/AAJAd
-         4/TVDoa48Vm+zqoJHGca80UH4C0wML/tQvGJOAf0tIErAGau1oqGTPKmQAx9GQOVX9Z/
-         8n0iHt39pzbIyvZ9jdhB3Fy5uO70bSy1xFFg3iYDFFdix+/k4fkE6GE2fzMmzqGSY0JW
-         GIXw==
+        d=ziepe.ca; s=google; t=1723124693; x=1723729493; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lf+LaXbOqHU1zf4xD79bBxN+yUqIFJd0X9fwfr61rGQ=;
+        b=U0GNrD6pRhmLDwQ+z8x+RGZxy3VRtmZ9mlLcc2S5P99XyxH6QrBbXiiDmV7Z70Twd4
+         U01KUD466KKh2YrWVYkfXAGGFCJWzc/HD8HCmiYL43GULBy4hFVy/TFnYPEgeKMKuO5O
+         6/UXa+rHetPIHcSKNmoY3GPKLcvcDvKvkNVEoi/tx1dxPr7K7t30SAY4+cuyNwxyF4km
+         eANNs3Q4IMj0dY4sKWytzLdPLOKLVvbiEfvVS5NwEfPwqfNF8qinb89/LmPm44qJGVBW
+         x2JB1L1NrFcJW+sJu/cbmQan7gKRkHSYFzlvQ0gUfb/9A4KrrUpZVj4VhJCfwFQ9eiEi
+         uGQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723124647; x=1723729447;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1723124693; x=1723729493;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R7/BLh/7AgTftmRpxzhos6wh2yaWPPjP6+1XVFhcN3I=;
-        b=HMA7uOuLxRAmBdpPAuyzd43xSGaYuRqGb8AIK5eEcSNA/YV6hEYowbBqAO0jH3kxhf
-         KULJoIsZGnFoP45iYdbDk5MPf8ZpndrX2TVuw8KxSggZ4CuULeKAhIXTK51vFjFrag6F
-         Ii5EYE2OxSIunbd30C3BHIww49foOFEimoi0PUK0thGTEyptVGuuh12ll2uhRnW62Fj4
-         C74rhnNJRBhAzdd2xbdH8B7PK3EsR/U0dDaVmDLeYPJ5WyIako2Y5h2kDUyNSxVvf11R
-         JaJX0JR+9Ok7FRPxHZ46hFux1LfXmmYlCGdWn7G8DsKKOEz4EKtFoIpbzQ34xiQ0OyLU
-         rbpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEtF+0JnT7pp6d0f7Cd3qvbLge8rUyDI/rQpFKQdlaVKT+NJabR8iX2518E0YE5seuT+EsohYBMPqFWKPZm2s5n/tlQVquIl5m49Ix
-X-Gm-Message-State: AOJu0YzhB7GmT3RAhD6eosf5arL5zRxpr2i0jiXT9p90bJjGk5e2Ti1d
-	b6xwJfAsbgCllPrIZYBmu6y++8JY6zLlx0Zp4fjP92Zd7y6VVuhETASL2FZ/6Sc=
-X-Google-Smtp-Source: AGHT+IF1bqM/ENSyQ49Vxrn4iUGMS0ZtWbHAka03fObxFD2QtSz7p+m2mIvkQhkl5RberooJQ5RZ/w==
-X-Received: by 2002:a2e:5159:0:b0:2ef:28f2:66ee with SMTP id 38308e7fff4ca-2f19e3ccc3amr4335031fa.21.1723124646622;
-        Thu, 08 Aug 2024 06:44:06 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e1ac61bsm22334221fa.30.2024.08.08.06.44.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 06:44:06 -0700 (PDT)
-Message-ID: <ae828d2b-8288-48f8-8714-8b6de6ceee03@linaro.org>
-Date: Thu, 8 Aug 2024 15:44:03 +0200
+        bh=lf+LaXbOqHU1zf4xD79bBxN+yUqIFJd0X9fwfr61rGQ=;
+        b=bnw2meU/aA+hr6DTZTXuLxFDVzQfxDwHngCbONOwRqljxNfmR37POjQhozeDR0IO/s
+         k7YJCQBaECw0drGg/bUm7Y1NE/uJfviD9KOOOT1I3ZOf1wfjvuXwCXKQS30p6PNUAMqk
+         F4z9P8XdkYgIMsUFKaeln5sCnSfncuHiOCT4iVofmMJolCSV7HzhSqPFRpK1phpQatFY
+         K71jsMfmc14+eWPPbrOx/t46WtJWiiIl31Iq/bP76+MHG22UMFhszfBHXcRfdOw4EFL1
+         ULhgB3fNQgdftccoH37s8+X6xg3ssnwDqJEyA95gqZIZjf+leXXihfbFi5gzJJlUE1tT
+         acbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXw1AKpxuHTElx87guV+UWggemSnxlNFdlRa3kEAyzWpwJ3zjyj4lEPws7tVpxmeljFFMCvxhv0THyMkFMEgJM/ua9HDtlUYLLOsuh6
+X-Gm-Message-State: AOJu0YyUxwWHVMUc9e823exoOtAihJMLMunU2ifXksuqrUqRUHdzS/nX
+	U0ePZu5znGRNw/tutU/6gckKnK7Sra/PI+lh70gxyUcH45RonObP9TcgYyQldhI=
+X-Google-Smtp-Source: AGHT+IFkk1wcTebhQWnEQD8v7UnnmwSVZFNhMGrZ+kfAFqxL6cjXwd838hwbGHYCXjCUBuvserTTnA==
+X-Received: by 2002:a05:6902:1b92:b0:e05:fdbe:bbf7 with SMTP id 3f1490d57ef6-e0e9dbf3af4mr2040319276.42.1723124693271;
+        Thu, 08 Aug 2024 06:44:53 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785f0b5dsm159678085a.58.2024.08.08.06.44.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 06:44:52 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sc3Rj-0093Vj-0x;
+	Thu, 08 Aug 2024 10:44:51 -0300
+Date: Thu, 8 Aug 2024 10:44:51 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Gerd Bayer <gbayer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Joerg Roedel <jroedel@suse.de>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Subject: Re: [PATCH] iommu/s390: Implement blocking domain
+Message-ID: <20240808134451.GC1985367@ziepe.ca>
+References: <20240806-blocking_domain-v1-1-8abc18e37e52@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt
- binding
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: m.szyprowski@samsung.com, hverkuil-cisco@xs4all.nl, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
- aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-References: <CGME20240808083027epcas5p153e64139a5e71448b1ea3f04af1df2bd@epcas5p1.samsung.com>
- <20240808081815.88711-1-aakarsh.jain@samsung.com>
- <4230387d-0413-4da8-b55a-ac708af05e34@linaro.org>
- <04fb01dae97b$52f88980$f8e99c80$@samsung.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <04fb01dae97b$52f88980$f8e99c80$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806-blocking_domain-v1-1-8abc18e37e52@linux.ibm.com>
 
-On 08/08/2024 12:11, Aakarsh Jain wrote:
->>> Fixes: 538af6e5856b ("dt-bindings: media: s5p-mfc: convert bindings to
->>> json-schema")
->>> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
->>> changelog:
->>> v1->v2
->>> Add Fixes tag suggested by Krzysztof
->>> v2->v3
->>> Aligned Fixes tag in oneline and corrected commit message
->>> Link:
->>> https://patchwork.kernel.org/project/linux-media/patch/20240213045733.
->>> 63876-1-aakarsh.jain@samsung.com/
->>
->> Something got corrupted in your changelog.
->>
-> I just realized that it would go as part of commit message.
-> Do you want me to respin this patch or you will take care while applying?
+On Tue, Aug 06, 2024 at 03:45:15PM +0200, Niklas Schnelle wrote:
+> This fixes a crash when surprise hot-unplugging a PCI device. This crash
+> happens because during hot-unplug __iommu_group_set_domain_nofail()
+> attaching the default domain fails when the platform no longer
+> recognizes the device as it has already been removed and we end up with
+> a NULL domain pointer and UAF.
 
-Please send a new version. This won't be going through me.
+Huh?
 
-Best regards,
-Krzysztof
+A device can't be removed before telling the iommu subsystem about
+it. How did the domain become NULL asynchronously while the iommu side
+thought it was still alive?? That seems like the main bug here..
 
+> Note: I somewhat suspect this to be related to the following discussion
+> or at least we have seen the same backtraces in reports that we suspect
+> to be caused by the issue fixed with this patch.
+
+No, it shouldn't be. That bug is because the netstack is continuing to
+use a struct device with the DMA API after the device driver has been
+removed. That is just illegal.
+
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index ed6c5cb60c5a..91b3b23bf55c 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -119,8 +119,11 @@ static int __iommu_group_set_domain(struct iommu_group *group,
+>  static void __iommu_group_set_domain_nofail(struct iommu_group *group,
+>  					    struct iommu_domain *new_domain)
+>  {
+> -	WARN_ON(__iommu_group_set_domain_internal(
+> -		group, new_domain, IOMMU_SET_DOMAIN_MUST_SUCCEED));
+> +	int ret = __iommu_group_set_domain_internal(
+> +		group, new_domain, IOMMU_SET_DOMAIN_MUST_SUCCEED);
+> +
+> +	/* Allow attach to fail when the device is gone */
+> +	WARN_ON(ret && ret != -ENODEV);
+>  }
+
+Like this doesn't really make sense. Until the iommu subystem removes
+the device from the group it really cannot be "gone".
+
+The hypervisor could fail attachment because the hypervisor has
+already fenced the device. Sure, that make sense, but it is not really
+that the device is gone from a Linux perspective, it is just now in a
+forced-blocked state.
+
+Like Lu says, if we need to add a new flow for devices that are now
+force-blocking and cannot be changed then it will need its own error
+code.
+
+But what is the backtrace that runs into this warn on? VFIO exiting
+and trying to put the device back to the DMA API?
+
+Though I feel like more is needed here if you expect to allow the
+nofail version of this to actually fail.. For instance a force-blocked
+device should block driver binding through the dma_owner APIs.
+
+> +static int blocking_domain_attach_device(struct iommu_domain *domain,
+> +					 struct device *dev)
+> +{
+> +	struct s390_domain *s390_domain = to_s390_domain(domain);
+> +	struct zpci_dev *zdev = to_zpci_dev(dev);
+> +	unsigned long flags;
+> +
+> +	if (!zdev)
+> +		return 0;
+> +
+> +	/* Detach sets the blocking domain */
+> +	if (zdev->s390_domain)
+> +		s390_iommu_detach_device(&zdev->s390_domain->domain, dev);
+
+When I've done these conversions on other drivers it was the case that
+zdev->s390_domain is never NULL. Instead probe_device immediately
+starts it as a blocking_domain or fails to probe.
+
+This way we don't ever have the ill defined notion of NULL here.
+
+> @@ -777,6 +812,8 @@ static int __init s390_iommu_init(void)
+>  subsys_initcall(s390_iommu_init);
+>  
+>  static const struct iommu_ops s390_iommu_ops = {
+> +	.blocked_domain		= &s390_blocking_domain.domain,
+> +	.release_domain		= &s390_blocking_domain.domain,
+
+If you set release_domain then remove s390_iommu_release_device(), it
+is the same code.
+
+Jason
 
