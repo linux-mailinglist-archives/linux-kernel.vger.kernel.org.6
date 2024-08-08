@@ -1,172 +1,208 @@
-Return-Path: <linux-kernel+bounces-278879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C0694B5F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:43:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C7094B600
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04163B2135B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:43:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6819DB2205D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E7012C473;
-	Thu,  8 Aug 2024 04:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3E812C475;
+	Thu,  8 Aug 2024 04:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HVNK57JB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+9zquKl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A6917FD;
-	Thu,  8 Aug 2024 04:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957EC2E400;
+	Thu,  8 Aug 2024 04:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723092180; cv=none; b=reP5JXobh+KRgmCxGZkk5ijM/dEAPw//Tw8pLyuH68IhkewGjxzcd7wqeiuvXAd+h8BBq3m5SO4xKScAzzxVRduY6wLa0yJIU+1mBpDaK7ux33jejgXK8Gi1ci7HMaLzLV2I8b9Z/rWgsPuTEocmgUE69+fFGiGCZs65JOSicu4=
+	t=1723092596; cv=none; b=GeymqBjVkXYrXHlcsSFEYjMB/qneFX038vqO3Ws7Z3rQ19Lq7ARWDFmmw83FevPwtB9ODfkNu8J2OEE5//QI1/HmVTsyW+5s/KOKRgm86yD2X6wYr/HYHQONt/0VWQp0W1o8g6ZaaplW4dAzVH3jdTew8lGbDy9jFrqwTrlgeu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723092180; c=relaxed/simple;
-	bh=4syzyV6hdGjV22Hiflj6sEtCj534I2q+jdzZRjAGewU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMRrhgnX6CXe9bDjpXRm2QSsTAPYf0ifwLPgyaTHYfquZi1mnjQhV4+V6KrNBbY20TNtVkzOh1JdQ4lH6uYg54d+g0pML/BQ6F6rBW/Yzmrb1UyV5B7M/Trc6+iB2Ebyp+bdJVphZzJpV8KZFJwX/VZLbKRI7IvJOMzJjQUBUlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HVNK57JB; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723092178; x=1754628178;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4syzyV6hdGjV22Hiflj6sEtCj534I2q+jdzZRjAGewU=;
-  b=HVNK57JBPlBfiL10Rpkc4qIFGthSYTsVc1llWCnzczgO3BpaEz3Hg/4X
-   PY7AOZMNbXscZtWfbRde1VIv5V0mLR9alpeoGjlRbXBegxizzcqZ6ODpC
-   rCJZTd+T3podJniQIb51lqHpah8m3h++ILAqdxB8x3t0jKh+cQxAmkxlA
-   yBR3clQTP4d4Mk5GKtQxhQ8qtYBLj8gexgEwOPWzlxH0Z/06ueue2TIiC
-   8RljDesUDYEU8KE0fiZ7ThvpaRrcKa9MRlQxO72HX27B2jJ8Qp7EPrrfw
-   PuSRStb3rhCFxxZPdgnpmzFsDoXDeH37M5LIrPEwraWhqnbZJXgFN9hGj
-   w==;
-X-CSE-ConnectionGUID: 08Nz32qWQyS8Rml9j/0voQ==
-X-CSE-MsgGUID: wmEdLxsOQwSeFoRR3sPn8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="31867206"
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="31867206"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 21:42:57 -0700
-X-CSE-ConnectionGUID: KXtIwPg7SaG4OrINrtmQ+Q==
-X-CSE-MsgGUID: BT2jfhRmQaSIW27BmDM3lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="61203255"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 21:42:54 -0700
-Date: Thu, 8 Aug 2024 07:42:51 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andi Shyti <andi.shyti@linux.intel.com>
-Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
-	daniel@ffwll.ch, linux@roeck-us.net,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anshuman.gupta@intel.com, badal.nilawar@intel.com,
-	riana.tauro@intel.com, ashutosh.dixit@intel.com,
-	karthik.poosa@intel.com, andriy.shevchenko@linux.intel.com
-Subject: Re: [PATCH v3] drm/i915/hwmon: expose fan speed
-Message-ID: <ZrRMyzUfNdjyL1y6@black.fi.intel.com>
-References: <20240807123018.827506-1-raag.jadav@intel.com>
- <ZrN1i2snlz8tSA1M@ashyti-mobl2.lan>
+	s=arc-20240116; t=1723092596; c=relaxed/simple;
+	bh=O+vnFHy5XvcbxYXq88CWEnm0lAC3QOOB4d3H/ZTGUvQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UQP3txW69nHTgZsHwmTOlyWZkU2hVTh9Wv5FuHRwtf6AS9W0/TADShF0G2V7vSpGhc94UP7BAm7MTo1S/uwmJ3JJTqCmmNeIVbYv2LvQT2a37OX/XlnOOlT3YvdgJR6w7mp7gdFnHf0jrRTvJ/WbgFs2hQefJ2tsbQiYeGtmg0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+9zquKl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3268C32782;
+	Thu,  8 Aug 2024 04:49:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723092596;
+	bh=O+vnFHy5XvcbxYXq88CWEnm0lAC3QOOB4d3H/ZTGUvQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=R+9zquKlwpyaOwrsPmyICBbW5BMNZ+8Iw6V2HlTJJs3AOoQ2gGc8cAJKOX05ADNA4
+	 JfADQE/YS9MbJ4RjCDSbsKyA4twApYBxEv028KzI5/TJXUH6a68RZiI6NsIOw0X00c
+	 r9BxvgDIEgQd3+/DjOc07/nhW2tC8uEeodLp3TwWIIFgeXH5jWQ9U9T1QrtB7wr3Ld
+	 iQqeaVrjstDjT8BDGKLwaecHAWRLNC95Y6n0FDsf3O/nG1mNxFhXkgG37ReUFVibRb
+	 gpjTGAWw8pFHIK1AIOCFfiVlowb32bF1z2houNOs0Tz9p2SxT9GYz9WHlLIkF0338h
+	 ZVxxUR6ttMbYQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH] perf test: Add a new shell test for perf ftrace
+Date: Wed,  7 Aug 2024 21:49:54 -0700
+Message-ID: <20240808044954.1775333-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrN1i2snlz8tSA1M@ashyti-mobl2.lan>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 07, 2024 at 02:24:27PM +0100, Andi Shyti wrote:
-> Hi Raag,
-> 
-> > +static umode_t
-> > +hwm_fan_is_visible(const struct hwm_drvdata *ddat, u32 attr)
-> > +{
-> > +	struct i915_hwmon *hwmon = ddat->hwmon;
-> > +
-> > +	switch (attr) {
-> > +	case hwmon_fan_input:
-> > +		return i915_mmio_reg_valid(hwmon->rg.fan_speed) ? 0444 : 0;
-> > +	default:
-> > +		return 0;
-> > +	}
-> 
-> Why do we need switch case here?
+  $ sudo ./perf test ftrace -vv
+   86: perf ftrace tests:
+  --- start ---
+  test child forked, pid 1772223
+  perf ftrace list test
+  syscalls for sleep:
+  __x64_sys_nanosleep
+  __ia32_sys_nanosleep
+  __x64_sys_clock_nanosleep
+  __ia32_sys_clock_nanosleep
+  perf ftrace list test  [Success]
+  perf ftrace trace test
+  # tracer: function_graph
+  #
+  # CPU  DURATION                  FUNCTION CALLS
+  # |     |   |                     |   |   |   |
+   0)               |  __x64_sys_clock_nanosleep() {
+   0)               |    common_nsleep() {
+   0)               |      hrtimer_nanosleep() {
+   0)               |        do_nanosleep() {
+  perf ftrace trace test  [Success]
+  perf ftrace latency test
+  target function: __x64_sys_clock_nanosleep
+  #   DURATION     |      COUNT | GRAPH                                          |
+      32 - 64   ms |          1 | ############################################## |
+  perf ftrace latency test  [Success]
+  perf ftrace profile test
+  # Total (us)   Avg (us)   Max (us)      Count   Function
+    100136.400 100136.400 100136.400          1   __x64_sys_clock_nanosleep
+    100135.200 100135.200 100135.200          1   common_nsleep
+    100134.700 100134.700 100134.700          1   hrtimer_nanosleep
+    100133.700 100133.700 100133.700          1   do_nanosleep
+    100130.600 100130.600 100130.600          1   schedule
+       166.868     55.623     80.299          3   scheduler_tick
+         5.926      5.926      5.926          1   native_smp_send_reschedule
+       301.941    301.941    301.941          1   __x64_sys_execve
+       295.786    295.786    295.786          1   do_execveat_common.isra.0
+        71.397     35.699     46.403          2   bprm_execve
+         2.519      1.260      1.547          2   sched_mm_cid_before_execve
+         1.098      0.549      0.686          2   sched_mm_cid_after_execve
+  perf ftrace profile test  [Success]
+  ---- end(0) ----
+   86: perf ftrace tests                                               : Ok
 
-Just following the file conventions.
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/tests/shell/ftrace.sh | 84 ++++++++++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+ create mode 100755 tools/perf/tests/shell/ftrace.sh
 
-> Why can't this function become a single "return " line?
-> 
-> > +}
-> > +
-> > +static int
-> > +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
-> > +{
-> > +	struct i915_hwmon *hwmon = ddat->hwmon;
-> > +	struct hwm_fan_info *fi = &ddat->fi;
-> > +	u32 reg_val, pulses, time, time_now;
-> > +	intel_wakeref_t wakeref;
-> > +	long rotations;
-> > +	int ret = 0;
-> > +
-> > +	switch (attr) {
-> > +	case hwmon_fan_input:
-> > +		with_intel_runtime_pm(ddat->uncore->rpm, wakeref) {
-> > +			mutex_lock(&hwmon->hwmon_lock);
-> > +
-> > +			reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
-> > +			time_now = jiffies_to_msecs(jiffies);
-> > +
-> > +			/* Handle overflow */
-> > +			if (reg_val >= fi->reg_val_prev)
-> > +				pulses = reg_val - fi->reg_val_prev;
-> > +			else
-> > +				pulses = UINT_MAX - fi->reg_val_prev + reg_val;
-> > +
-> > +			/*
-> > +			 * HW register value is accumulated count of pulses from
-> > +			 * PWM fan with the scale of 2 pulses per rotation.
-> > +			 */
-> > +			rotations = pulses >> 1;
-> > +			time = time_now - fi->time_prev;
-> > +
-> > +			if (unlikely(!time)) {
-> > +				ret = -EAGAIN;
-> > +				mutex_unlock(&hwmon->hwmon_lock);
-> > +				break;
-> > +			}
-> > +
-> > +			/* Convert to minutes for calculating RPM */
-> > +			*val = DIV_ROUND_UP(rotations * (60 * MSEC_PER_SEC), time);
-> > +
-> > +			fi->reg_val_prev = reg_val;
-> > +			fi->time_prev = time_now;
-> > +
-> > +			mutex_unlock(&hwmon->hwmon_lock);
-> > +		}
-> > +		return ret;
-> > +	default:
-> > +		return -EOPNOTSUPP;
-> > +	}
-> 
-> same here, can we make this function:
-> 
-> if (attr != hwmon_fan_input)
-> 	return -EOPNOTSUPP;
-> 
-> and then save all the indentation.
+diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
+new file mode 100755
+index 000000000000..b1c36d30559a
+--- /dev/null
++++ b/tools/perf/tests/shell/ftrace.sh
+@@ -0,0 +1,84 @@
++#!/bin/sh
++# perf ftrace tests
++# SPDX-License-Identifier: GPL-2.0
++
++set -e
++
++# perf ftrace commands only works for root
++if [ "$(id -u)" != 0 ]; then
++    echo "perf ftrace test  [Skipped: no permission]"
++    exit 2
++fi
++
++output=$(mktemp /tmp/__perf_test.ftrace.XXXXXX)
++
++cleanup() {
++  rm -f "${output}"
++
++  trap - EXIT TERM INT
++}
++
++trap_cleanup() {
++  cleanup
++  exit 1
++}
++trap trap_cleanup EXIT TERM INT
++
++# this will be set in test_ftrace_trace()
++target_function=
++
++test_ftrace_list() {
++    echo "perf ftrace list test"
++    perf ftrace -F > "${output}"
++    # this will be used in test_ftrace_trace()
++    sleep_functions=$(grep 'sys_.*sleep$' "${output}")
++    echo "syscalls for sleep:"
++    echo "${sleep_functions}"
++    echo "perf ftrace list test  [Success]"
++}
++
++test_ftrace_trace() {
++    echo "perf ftrace trace test"
++    perf ftrace trace --graph-opts depth=5 sleep 0.1 > "${output}"
++    # it should have some function name contains 'sleep'
++    grep "^#" "${output}"
++    grep -F 'sleep()' "${output}"
++    # find actual syscall function name
++    for FN in ${sleep_functions}; do
++	if grep -q "${FN}" "${output}"; then
++	    target_function="${FN}"
++	    echo "perf ftrace trace test  [Success]"
++	    return
++	fi
++    done
++
++    echo "perf ftrace trace test  [Failure: sleep syscall not found]"
++    exit 1
++}
++
++test_ftrace_latency() {
++    echo "perf ftrace latency test"
++    echo "target function: ${target_function}"
++    perf ftrace latency -T "${target_function}" sleep 0.1 > "${output}"
++    grep "^#" "${output}"
++    grep "###" "${output}"
++    echo "perf ftrace latency test  [Success]"
++}
++
++test_ftrace_profile() {
++    echo "perf ftrace profile test"
++    perf ftrace profile sleep 0.1 > "${output}"
++    grep ^# "${output}"
++    grep sleep "${output}"
++    grep schedule "${output}"
++    grep execve "${output}"
++    echo "perf ftrace profile test  [Success]"
++}
++
++test_ftrace_list
++test_ftrace_trace
++test_ftrace_latency
++test_ftrace_profile
++
++cleanup
++exit 0
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
-Makes sense for hwm_fan_read(). Let me try this.
-
-> Are we expecting more cases here?
-
-Not for now.
-
-Raag
 
