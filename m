@@ -1,78 +1,300 @@
-Return-Path: <linux-kernel+bounces-280127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA41694C61F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:00:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA7794C623
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70FF31F2728B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:00:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7507E28417C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C26115E5CD;
-	Thu,  8 Aug 2024 20:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2921F15820F;
+	Thu,  8 Aug 2024 21:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RfI52fgv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OcIMbpzg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAFB15CD42;
-	Thu,  8 Aug 2024 20:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4D77E1
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723150793; cv=none; b=bax/C4dXn4HKf6MI0SEz81Dq1W+wJLNJyyeVhV/poq/x09czL82xPj/00Cu1trusGq8T/gOgLFPKoyGsvmoRx71Q6vDhC1gW+82398bWDnogA7kokQQlNRw+PR5QuaZj44bL98bX760v9f+vLBDggHqqhKhzEd8Uj17x/5afxpc=
+	t=1723150954; cv=none; b=VBWz3Pvm3nP0yBrhNfkAa2WD/Gpr1mdsY8R6YuWQnDXT/sMJgzFTbbxfse/ztQ2T3dlwRrG4jiWdodlhsO6Ye7FFDkeli4fHMmkdU6hE0FZPGk+mcsJdSCZ7mWrvW0q5dGVWR/NmWPh5VmXieeehET5NTJwlg2p4IMsl1GIgQIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723150793; c=relaxed/simple;
-	bh=+t/NENyUIfnrnclvQQHiuOgfSa4fYHh4IlL9MG62GO4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UeZG2MV7aNwJWBf0twnb0RslNFZ019MNZdBT3cSsVClLIBPTQGxEnZy0RagpgoHpq/VxhWM/LphtXQw/8rm8MKV5Oa98slJeWXzPTMQywD+zg1SnheR4JXgBNLiqIQInYGHbfKCDYH9nRDRnP8zQnWdsrVL3psMYeFyDQ8BcN4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RfI52fgv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC66C4AF0D;
-	Thu,  8 Aug 2024 20:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723150793;
-	bh=+t/NENyUIfnrnclvQQHiuOgfSa4fYHh4IlL9MG62GO4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=RfI52fgvELH5rprmu4jjCoXt2RPEALE00kJSw7UFdKr18+S0au3NoYXQks2MBhXCh
-	 ZW1M/v8T+8OU+oFqPlRZiqCrxjx406Fo0FVjaNvOJt8AsCqPXSkp1aN1zd0/BMXtrr
-	 sX2fgZbCW63LuOMr2jl7MnAcIRjWr1bYP0+gJlaS3MPXf7q5Wq+jD/wBcvGUrtoEOM
-	 s7ZRhehYAJjkHZb4Hxzk8gjiZrv6+68ish8H4Yw6g5xI71yAZf19T7Ch+teMVUGCOc
-	 eeeXKQUX2rolAj1IxKQAL63u6JAt9VQ6gtXZhQZmkS3/8F7GGRPkV+U7cQy4UkfR4k
-	 g791ziCApLJNA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE4593810938;
-	Thu,  8 Aug 2024 20:59:53 +0000 (UTC)
-Subject: Re: [GIT PULL] Networking for v6.11-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240808170148.3629934-1-kuba@kernel.org>
-References: <20240808170148.3629934-1-kuba@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240808170148.3629934-1-kuba@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.11-rc3
-X-PR-Tracked-Commit-Id: 2ff4ceb0309abb3cd1843189e99e4cc479ec5b92
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ee9a43b7cfe2d8a3520335fea7d8ce71b8cabd9d
-Message-Id: <172315079215.3297575.14894632820956357203.pr-tracker-bot@kernel.org>
-Date: Thu, 08 Aug 2024 20:59:52 +0000
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
+	s=arc-20240116; t=1723150954; c=relaxed/simple;
+	bh=52F+XlV5CWDZYPxEUr2Pg3UT6rlpCxe/oZjyFFNJGVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mbhbI1L+7gEyYbz0TGYap21Ciyq1hnEDIWdszxyjf0zaXRbihPJ06N9fKFlukCtdplrDfr5ivaBf7Pkr7xB+7fKXUz103YSyOx2oKQGKut8gzP5uT1gCWodZC8p448HNCFFEkxRA+pLWbI+412azDgoWb/8nhhB7U+m46/KZn28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OcIMbpzg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478A1H0T006798;
+	Thu, 8 Aug 2024 21:02:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5aOhLNTr+v8KDwgXDHnpZ05L7XflBzEt1eInRR5Otls=; b=OcIMbpzgVvCHmZ7G
+	ipWsG3KOH09aj6EKwhc01dgwFc2COYc1NW9dBeBI5ovjOZFuUYzdtPFtXB3JEfgt
+	W1/0gwwVAQGoprhTtKl2iMPXHyJfJbyFfbAQhycJnb1ANv7inIS2fhVSYPQQClDu
+	0L1eoXFBaD1ektozRM1P1Sa+KqhfF3rCWzaBFRxnh6QN8PB8uErrHeQWmqV2pTYr
+	JG7NsRgjYzjM6LXSiYn3Crc1UNO44n0Oln+w9WAkW2mMIZnltHor7iqEFtsrDgCH
+	ncgeRCmw38TKV9BMAtp0gRSOqI6KaxnyXgp+ky30DhAlellBBQ5+GTi0p2zkCp+s
+	+CDHSw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vuwaspvh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 21:02:19 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 478L2Hat025557
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 Aug 2024 21:02:17 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 8 Aug 2024
+ 14:02:17 -0700
+Message-ID: <61da2ecf-88c1-4d03-afb0-98f0395ad229@quicinc.com>
+Date: Thu, 8 Aug 2024 14:02:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] drm/panel: startek-kd070fhfid015: transition to
+ mipi_dsi wrapped functions
+To: Tejas Vipin <tejasvipin76@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>,
+        <neil.armstrong@linaro.org>
+CC: <dianders@chromium.org>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240806135949.468636-1-tejasvipin76@gmail.com>
+ <20240806135949.468636-3-tejasvipin76@gmail.com>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240806135949.468636-3-tejasvipin76@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fr2CZduB7f0PHyj3X8kXqm-06tJOrOWZ
+X-Proofpoint-GUID: fr2CZduB7f0PHyj3X8kXqm-06tJOrOWZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-08_21,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ mlxscore=0 phishscore=0 adultscore=0 bulkscore=0 impostorscore=0
+ mlxlogscore=999 suspectscore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408080149
 
-The pull request you sent on Thu,  8 Aug 2024 10:01:48 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.11-rc3
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ee9a43b7cfe2d8a3520335fea7d8ce71b8cabd9d
+On 8/6/2024 6:59 AM, Tejas Vipin wrote:
+> Use multi style wrapped functions for mipi_dsi in the
+> startek-kd070fhfid015 panel.
+> 
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
 
-Thank you!
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> ---
+>   .../drm/panel/panel-startek-kd070fhfid015.c   | 115 ++++++------------
+>   1 file changed, 35 insertions(+), 80 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+> index 0156689f41cd..c0c95355b743 100644
+> --- a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+> +++ b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+> @@ -24,10 +24,10 @@
+>   #include <drm/drm_modes.h>
+>   #include <drm/drm_panel.h>
+>   
+> -#define DSI_REG_MCAP	0xB0
+> -#define DSI_REG_IS	0xB3 /* Interface Setting */
+> -#define DSI_REG_IIS	0xB4 /* Interface ID Setting */
+> -#define DSI_REG_CTRL	0xB6
+> +#define DSI_REG_MCAP	0xb0
+> +#define DSI_REG_IS	0xb3 /* Interface Setting */
+> +#define DSI_REG_IIS	0xb4 /* Interface ID Setting */
+> +#define DSI_REG_CTRL	0xb6
+>   
+>   enum {
+>   	IOVCC = 0,
+> @@ -52,92 +52,55 @@ static inline struct stk_panel *to_stk_panel(struct drm_panel *panel)
+>   static int stk_panel_init(struct stk_panel *stk)
+>   {
+>   	struct mipi_dsi_device *dsi = stk->dsi;
+> -	struct device *dev = &stk->dsi->dev;
+> -	int ret;
+> -
+> -	ret = mipi_dsi_dcs_soft_reset(dsi);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to mipi_dsi_dcs_soft_reset: %d\n", ret);
+> -		return ret;
+> -	}
+> -	mdelay(5);
+> +	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+>   
+> -	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to set exit sleep mode: %d\n", ret);
+> -		return ret;
+> -	}
+> -	msleep(120);
+> +	mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
+> +	mipi_dsi_msleep(&dsi_ctx, 5);
+> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+> +	mipi_dsi_msleep(&dsi_ctx, 120);
+>   
+> -	mipi_dsi_generic_write_seq(dsi, DSI_REG_MCAP, 0x04);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_MCAP, 0x04);
+>   
+>   	/* Interface setting, video mode */
+> -	mipi_dsi_generic_write_seq(dsi, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
+> -	mipi_dsi_generic_write_seq(dsi, DSI_REG_IIS, 0x0C, 0x00);
+> -	mipi_dsi_generic_write_seq(dsi, DSI_REG_CTRL, 0x3A, 0xD3);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IIS, 0x0c, 0x00);
+> +	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_CTRL, 0x3a, 0xd3);
+>   
+> -	ret = mipi_dsi_dcs_set_display_brightness(dsi, 0x77);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to write display brightness: %d\n", ret);
+> -		return ret;
+> -	}
+> +	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x77);
+>   
+> -	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY,
+> -			       MIPI_DCS_WRITE_MEMORY_START);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY,
+> +				     MIPI_DCS_WRITE_MEMORY_START);
+>   
+> -	ret = mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to set pixel format: %d\n", ret);
+> -		return ret;
+> -	}
+> +	mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
+> +	mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0, stk->mode->hdisplay - 1);
+> +	mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0, stk->mode->vdisplay - 1);
+>   
+> -	ret = mipi_dsi_dcs_set_column_address(dsi, 0, stk->mode->hdisplay - 1);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to set column address: %d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	ret = mipi_dsi_dcs_set_page_address(dsi, 0, stk->mode->vdisplay - 1);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to set page address: %d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	return 0;
+> +	return dsi_ctx.accum_err;
+>   }
+>   
+>   static int stk_panel_on(struct stk_panel *stk)
+>   {
+>   	struct mipi_dsi_device *dsi = stk->dsi;
+> -	struct device *dev = &stk->dsi->dev;
+> -	int ret;
+> +	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+>   
+> -	ret = mipi_dsi_dcs_set_display_on(dsi);
+> -	if (ret < 0)
+> -		dev_err(dev, "failed to set display on: %d\n", ret);
+> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+>   
+> -	mdelay(20);
+> +	mipi_dsi_msleep(&dsi_ctx, 20);
+>   
+> -	return ret;
+> +	return dsi_ctx.accum_err;
+>   }
+>   
+>   static void stk_panel_off(struct stk_panel *stk)
+>   {
+>   	struct mipi_dsi_device *dsi = stk->dsi;
+> -	struct device *dev = &stk->dsi->dev;
+> -	int ret;
+> +	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+>   
+>   	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+>   
+> -	ret = mipi_dsi_dcs_set_display_off(dsi);
+> -	if (ret < 0)
+> -		dev_err(dev, "failed to set display off: %d\n", ret);
+> +	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+> +	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+>   
+> -	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+> -	if (ret < 0)
+> -		dev_err(dev, "failed to enter sleep mode: %d\n", ret);
+> -
+> -	msleep(100);
+> +	mipi_dsi_msleep(&dsi_ctx, 100);
+>   }
+>   
+>   static int stk_panel_unprepare(struct drm_panel *panel)
+> @@ -155,7 +118,6 @@ static int stk_panel_unprepare(struct drm_panel *panel)
+>   static int stk_panel_prepare(struct drm_panel *panel)
+>   {
+>   	struct stk_panel *stk = to_stk_panel(panel);
+> -	struct device *dev = &stk->dsi->dev;
+>   	int ret;
+>   
+>   	gpiod_set_value(stk->reset_gpio, 0);
+> @@ -175,16 +137,12 @@ static int stk_panel_prepare(struct drm_panel *panel)
+>   	gpiod_set_value(stk->reset_gpio, 1);
+>   	mdelay(10);
+>   	ret = stk_panel_init(stk);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to init panel: %d\n", ret);
+> +	if (ret < 0)
+>   		goto poweroff;
+> -	}
+>   
+>   	ret = stk_panel_on(stk);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to set panel on: %d\n", ret);
+> +	if (ret < 0)
+>   		goto poweroff;
+> -	}
+>   
+>   	return 0;
+>   
+> @@ -250,18 +208,15 @@ static int dsi_dcs_bl_get_brightness(struct backlight_device *bl)
+>   static int dsi_dcs_bl_update_status(struct backlight_device *bl)
+>   {
+>   	struct mipi_dsi_device *dsi = bl_get_data(bl);
+> -	struct device *dev = &dsi->dev;
+> -	int ret;
+> +	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+>   
+>   	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+> -	ret = mipi_dsi_dcs_set_display_brightness(dsi, bl->props.brightness);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to set DSI control: %d\n", ret);
+> -		return ret;
+> -	}
+> +	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, bl->props.brightness);
+> +	if (dsi_ctx.accum_err)
+> +		return dsi_ctx.accum_err;
+>   
+>   	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+> -	return 0;
+> +	return dsi_ctx.accum_err;
+>   }
+>   
+>   static const struct backlight_ops dsi_bl_ops = {
+> -- 
+> 2.46.0
+> 
 
