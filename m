@@ -1,161 +1,373 @@
-Return-Path: <linux-kernel+bounces-279192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32F794BA34
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:57:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE5E94BA3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131E21C20F42
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97DB428186A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E1818A6D1;
-	Thu,  8 Aug 2024 09:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103E918A6AE;
+	Thu,  8 Aug 2024 09:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PA9KRask"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLcCQR0i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691B1189F48
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8331891DA
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723111028; cv=none; b=sHON4pSHZ//3XJ+zsb8RMVdxz8V+2gdMm38AOuOYya5MWEwcuOhRCgnuJYSYtjmaMfQ8MwSPufdVIf/ef15sgdVHVXur3hnBDNeNTqib6nrFJS0vWgI7vDCEK8epeuuAkCtwa4uzLDrXKjn90VemV3ng3ULKwvTPRkAE7fJm8dY=
+	t=1723111042; cv=none; b=b2xrcU0DudaS4MoN3Zc7dPI+oKvBxqC99RJRzkRTXGRAZnq407oOAvo0BXUd35QXJqcDIBT7DtCqJSaySD/SOwgVmxD3KOTvSf2s1kRXF9Keq86itNZ+zir77wBSuRiQwBg5QKzM86K9iX52HJZljPDR6EzkZHZzpxvFYWUhhCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723111028; c=relaxed/simple;
-	bh=BCc3JMeiVU/pbaDkOckj9tlDKP3uaM6hbtGH0PHfALk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T8m1HVoz9Tyhlq/mppnxTPwbnuB2VyHlGTRSXpcjLzMz7/PhDymKndj6dW2M6AVU+LieQ+oSzluS4Pry+LPp2WR+vui2LtjxIABc3vB7irb1dJblxsf8wnL/15zlcShD4piCzOzlq0O+JOib1lCvMrsw1dlI0QHWB9U/wwXFcj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PA9KRask; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a611adso989884a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 02:57:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723111025; x=1723715825; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wGmpPT++dxS0VwVrHHvITcmSKbRjA6D6vdhXmz2ZdyI=;
-        b=PA9KRaskFT/E3zHE3icU9Ueh/Am7h3ywvXbUpwEDlsHvLWHOYlebcFw46IvCkHP2oT
-         wKqOa7xucEy9b47+3BJSxrhWVn8iCWFSSSOYM/XdILfVCnkt/WuUutfcK8SPjTg5l0LE
-         PoLny+iqGLv66Qfk4un5cW83nNMAlxb4CxtUbdlFqfep4XxtST5BnLKaG9zoGflgAvxN
-         ArWHXKhD9w6ELV9k6r+voHLA1gd2pxMqRlhuAVRsVkgR0H6y2KGD2Do/IB+QoYyyVVL7
-         nrZvW38TEI0x2DkMghXzMkSKnlzIhEXLRPtwcrjefxznwNdN9vkBT83IKpfs0hY+B8/e
-         o9mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723111025; x=1723715825;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wGmpPT++dxS0VwVrHHvITcmSKbRjA6D6vdhXmz2ZdyI=;
-        b=LfmxOqvLb2qy+QTJ5B/vfzJ6usiJtm3MHCva9agupca/M9nlhS5W+SMIx/BBJm10qG
-         Bxnvp86/0lgztfZhg6ihKggTt/OKqCceI25gCesXftMVzPyKPwniV5WS8H36FbENkmlY
-         95lwnHUEY5reD8p8ajPVS81Kp98o1Pp6RC3z4OmFZvlmUU1d84U+VAqH/LjplFR9E+D3
-         kSTKRVb+CbORm2x7sA3nvRAR11//C6Ewh1Hl/lW7CN1v2iTNZIhiyM7uiaQWC5s/HRCP
-         gsimF4c6FXT8stNbyfi2yussoIzbN2OdNam6VUIGeQNYTgEUD72dq6zlOTHxmW8BeQN7
-         C5rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZfiwJJMQ2fzT7AxGi8O+Tvb2HQRCVtjj5yNeEuRpoDZV8r8/9hJe4NUSLKFWmaBgLMI0XmTdwiAe0H+zeVvMJ7akP0v3caStvrWvy
-X-Gm-Message-State: AOJu0YzE7c4rAfuHzoVoagx2GbyToLZF4EfSCLvPmFNmAeJ77J0aubRL
-	jYZ237LOk53j5RZqYdfsiNQnK5Kxh02rPngys/o4OxFxlrwydjlW+jThcklCHVM=
-X-Google-Smtp-Source: AGHT+IFe3lArDXHLFN9+vIQ2xudce7dStaP5T9pFhGDsyWTJCn+t8VuWCIKjDVbHkGDtMuboeY5P9g==
-X-Received: by 2002:a05:6402:35ce:b0:58c:2a57:b1e7 with SMTP id 4fb4d7f45d1cf-5bbb218daadmr1093950a12.8.1723111024719;
-        Thu, 08 Aug 2024 02:57:04 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c41ec9sm490339a12.42.2024.08.08.02.57.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 02:57:04 -0700 (PDT)
-Message-ID: <4230387d-0413-4da8-b55a-ac708af05e34@linaro.org>
-Date: Thu, 8 Aug 2024 11:57:02 +0200
+	s=arc-20240116; t=1723111042; c=relaxed/simple;
+	bh=u177nhYLIu3Nax7qYSEq2sI2wQoIWJKdFtYmZZ/neoo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iECkHdZmM/fxJ18dRNZ+IVXMjRW9K3goEC2B+LcWZXieYadGfBxqdcAZlX9XB4T6WmY5V3GWw0xIR6AQQVQonyXiRSE0tfTnRpRPDag8y6awbiz4aXgZpGt0BTPC0rTFQXc2JTTOp528Df/aPlwg8A5u7OO4LScqrTwE+yZ5/lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLcCQR0i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C58C4AF12
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:57:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723111040;
+	bh=u177nhYLIu3Nax7qYSEq2sI2wQoIWJKdFtYmZZ/neoo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bLcCQR0iTFhNhHOTZ0E0knJ1J5wbLo2ucmIB8wwuOkxZT2h+Zf59lydAgOumjEBX+
+	 fU5dNUR+JOJpDOmSjDKd8oZBGo6dsGOO78l0d3pH775YjZH3/ifxzHuNtYp9v6F7sC
+	 9Nm9Ije/scUDGrX13xOJFDehxuhgRhiHUmShaNNdYp3nvM9kYCTQO0Uk3KQoxrjSva
+	 pVUvt8Tv6d93tC7/Y0szQ/Xmy0p7UMzKfH5Owm8yb+Z1qt/Gdp3IidrT4km9KdnwDF
+	 MmErJz4e1Q1ihdLfh90J2+qUqXHRS5154bxHHDVgo/UG44DSSEHuAmyXdCz7iBetmt
+	 ZX8kSGWZLvKpQ==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a1c496335aso284663a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 02:57:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDtzrR8MWnOFZ89sbHPvYvdlFEQlh0f/yJmS0QOKEVDRxBXwMNBVx/FvObYjmVCiENBoUPKHodjEVkFl1LeHojyqbFapClCZnBQCJN
+X-Gm-Message-State: AOJu0YxjgShoq/UGqrQ1xqTyorVQ+cM0MMGO9oTh7dyGktIumFW6I0Ah
+	LH5q3V/ACcmoLhPfGT8hxPv2KhGCWV1tJi3uJo485RYHpFNq9GbyaWBewXYrmc24BnNg1uBRQh5
+	ZKde/W9dMDrXWxp6t1c+WP7c3tx4FwyC/vAMu
+X-Google-Smtp-Source: AGHT+IERDWOqOazZm2yzAO4Ur+305d9i1Y7BIeJPcI41VKREQadNM47jdcRYaVfL+JxfMjr/LEJY9Zjrzsmxqj0yjJg=
+X-Received: by 2002:a05:6402:5308:b0:5a2:2b56:e06e with SMTP id
+ 4fb4d7f45d1cf-5bbb24be6d4mr1069377a12.36.1723111038763; Thu, 08 Aug 2024
+ 02:57:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt
- binding
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: m.szyprowski@samsung.com, hverkuil-cisco@xs4all.nl, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
- aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-References: <CGME20240808083027epcas5p153e64139a5e71448b1ea3f04af1df2bd@epcas5p1.samsung.com>
- <20240808081815.88711-1-aakarsh.jain@samsung.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240808081815.88711-1-aakarsh.jain@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240801171747.3155893-1-kpsingh@kernel.org> <CAHC9VhRO-weTJPGcrkgntFLG3RPRCUvHh9m+uduDN+q4hzyhGg@mail.gmail.com>
+ <CACYkzJ6486mzW97LF+QrHhM9-pZt0QPWFH+oCrTmubGkJVvGhw@mail.gmail.com>
+ <20240806022002.GA1570554@thelio-3990X> <CAHC9VhTZPsgO=h-zutQ9_LuaAVKZDdE2SwECHt01QSkgB_qexQ@mail.gmail.com>
+ <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
+ <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
+ <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
+ <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
+ <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
+In-Reply-To: <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
+From: KP Singh <kpsingh@kernel.org>
+Date: Thu, 8 Aug 2024 11:57:07 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
+Message-ID: <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Paul Moore <paul@paul-moore.com>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
+	peterz@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/08/2024 10:18, Aakarsh Jain wrote:
-> s5p-mfc bindings to json-schema is already merged with
-> this commit 538af6e5856b ("dt-bindings: media: s5p-mfc:
-> convert bindings to json-schema"). Remove s5p-mfc.txt
-> file.
-> 
-> Fixes: 538af6e5856b ("dt-bindings: media: s5p-mfc: convert bindings to json-schema")
-> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
-> changelog:
-> v1->v2
-> Add Fixes tag suggested by Krzysztof
-> v2->v3
-> Aligned Fixes tag in oneline and corrected commit message
-> Link: https://patchwork.kernel.org/project/linux-media/patch/20240213045733.63876-1-aakarsh.jain@samsung.com/
+On Thu, Aug 8, 2024 at 6:07=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> w=
+rote:
+>
+> On 8/7/24 19:13, Guenter Roeck wrote:
+> ...
+> >
+> > I'll need to establish a baseline first to determine if the failures
+> > are caused by newly enabled configuration options or by this patch set.
+> > Below are just early test results.
+> >
+> > [ Though if those are all upstream there seems to be be something serio=
+usly
+> >    wrong with the lockdown lsm.
+> > ]
+> >
+>
+> Verdict is that all the messages below are from this patch set.
+>
+> On top of the reports below, alpha images fail completely, and the
+> backtraces are seen with several architectures. Please see the
+> "testing" column at https://kerneltests.org/builders for details.
+>
+> The only unrelated problems are the apparmor unit test failures;
+> those apparently fail on all big endian systems.
+>
+> Guenter
+>
+> > Guenter
+> >
+> > ----
+> > arm:
+> >
+> > [    0.000000] ------------[ cut here ]------------
+> > [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/jump_label.c:199 static=
+_key_enable_cpuslocked+0xb0/0xfc
+> > [    0.000000] static_key_enable_cpuslocked(): static key 'security_hoo=
+k_active_locked_down_0+0x0/0x8' used before call to jump_label_init()
+> > [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc=
+2-00134-g679d51771510 #1
+> > [    0.000000] Hardware name: Generic DT based system
+> > [    0.000000] Call trace:
+> > [    0.000000]  unwind_backtrace from show_stack+0x18/0x1c
+> > [    0.000000]  show_stack from dump_stack_lvl+0x48/0x74
+> > [    0.000000]  dump_stack_lvl from __warn+0x7c/0x134
+> > [    0.000000]  __warn from warn_slowpath_fmt+0x9c/0xdc
+> > [    0.000000]  warn_slowpath_fmt from static_key_enable_cpuslocked+0xb=
+0/0xfc
+> > [    0.000000]  static_key_enable_cpuslocked from security_add_hooks+0x=
+a0/0x104
+> > [    0.000000]  security_add_hooks from lockdown_lsm_init+0x1c/0x2c
+> > [    0.000000]  lockdown_lsm_init from initialize_lsm+0x44/0x84
+> > [    0.000000]  initialize_lsm from early_security_init+0x3c/0x58
+> > [    0.000000]  early_security_init from start_kernel+0x78/0x748
+> > [    0.000000]  start_kernel from 0x0
+> > [    0.000000] irq event stamp: 0
+> > [    0.000000] hardirqs last  enabled at (0): [<00000000>] 0x0
+> > [    0.000000] hardirqs last disabled at (0): [<00000000>] 0x0
+> > [    0.000000] softirqs last  enabled at (0): [<00000000>] 0x0
+> > [    0.000000] softirqs last disabled at (0): [<00000000>] 0x0
+> > [    0.000000] ---[ end trace 0000000000000000 ]---
+> >
 
-Something got corrupted in your changelog.
+This seems very odd for especially ARM as I don't see this error when
+I do it on the next branch. Possibly something in setup_arch is
+initializing jump_tables indirectly between v6.11-rc2 and linux-next
+and/or this is a warning that does not immediately splash up on the
+dmesg.
 
+Both ARM64 and x86 (the architectures I really have access to)
+initializes jump_tables and x86 is the only architecture that does an
+explicit static_call_init is x86 and it's already in the setup_arch
+code.
 
-Best regards,
-Krzysztof
+https://elixir.bootlin.com/linux/v6.11-rc2/source/arch/arm64/kernel/setup.c=
+#L295
+https://elixir.bootlin.com/linux/v6.11-rc2/source/arch/x86/kernel/setup.c#L=
+783
 
+Guenter, I have updated my tree, could you give it another run please?
+
+Thanks!
+- KP
+
+> > m68k:
+> >
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 0 at include/linux/jump_label.h:322 security_add_h=
+ooks+0xc4/0x12c
+> > static_key_enable(): static key '0x6e5860' used before call to jump_lab=
+el_init()
+> > Modules linked in:
+> > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2-mac-00134-g67=
+9d51771510 #1
+> > Stack from 0065df00:
+> >          0065df00 005ff98d 005ff98d 00000000 00000009 00000009 004aa710=
+ 005ff98d
+> >          0049f87a 005c9849 00000142 0063f5ec 004cbd3e 0049f8f8 005c9849=
+ 00000142
+> >          0075ac3e 00000009 00000000 0065df60 00000000 00000040 00000000=
+ 00000000
+> >          005c980c 0065df7c 0075ac3e 005c9849 00000142 00000009 005c980c=
+ 004c9f98
+> >          006e5860 00000000 00782b50 00000000 00000000 0075b7ba 0063f5ec=
+ 00000001
+> >          004cbd3e 0075a62e 00782b50 0075a79e 00782b50 00782b50 0049feb6=
+ 00749d4c
+> > Call Trace: [<004aa710>] dump_stack+0xc/0x10
+> >   [<0049f87a>] __warn+0x7e/0xb4
+> >   [<0049f8f8>] warn_slowpath_fmt+0x48/0x66
+> >   [<0075ac3e>] security_add_hooks+0xc4/0x12c
+> >   [<0075ac3e>] security_add_hooks+0xc4/0x12c
+> >   [<0075b7ba>] lockdown_lsm_init+0x16/0x1e
+> >   [<0075a62e>] initialize_lsm+0x32/0x5c
+> >   [<0075a79e>] early_security_init+0x30/0x38
+> >   [<0049feb6>] _printk+0x0/0x18
+> >   [<00749d4c>] start_kernel+0x60/0x600
+> >   [<00748414>] _sinittext+0x414/0xae0
+> > ---[ end trace 0000000000000000 ]---
+> >
+> > Microblaze:
+> >
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 0 at include/linux/jump_label.h:322 security_add_h=
+ooks+0x124/0x21c
+> > static_key_enable(): static key 'security_hook_active_locked_down_0+0x0=
+/0x4' used before call to jump_label_init()
+> > Modules linked in:
+> > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2-00134-g679d51=
+771510 #1
+> > Kernel Stack:
+> > (ptrval): c0999390 c0f4c9ec 00000000 00000000 ffffffff a589f3a9 c0984c2=
+0 00000000
+> > (ptrval): c0c51ef8 00000009 c0984c30 00000000 00000000 c0c51ef8 0000000=
+0 c0c51ef8
+> > (ptrval): 00000009 c0984cf8 c09bad94 00000000 00000000 c0a30c10 0000014=
+2 c0d19e10
+> > (ptrval): c0a30bd0 c0a30c10 00000000 c0d19e10 c09bade4 00000142 0000000=
+9 c0a30bd0
+> > (ptrval): c0a30ca0 c0f58820 c0a30bd0 c0c51f28 00000142 00000009 c0d19e1=
+0 c0a37340
+> > (ptrval): c0c190c0 c0d1b1d0 00000000 00000000 00000000 c0a30bd0 c0a30ca=
+0 c0f58820
+> > (ptrval): c0d42b20 c0d35464 c0d42b38 00000000 00000000 00000000 0000000=
+0 00000000
+> > (ptrval): 00100000 00000280 c0d196e8 c0d04ed0 00000000 c098465c 0000000=
+0 00000000
+> > (ptrval): c0d19778 c0d19784 00000000 00000000 c0d0488c c09b8e40 c09b9b2=
+4 c0d42b20
+> > (ptrval): c0d42b38 c0d00898 4883e4b3 00000000 c0d0088c 00000280 0000000=
+0 00000000
+> > (ptrval): 00000000 00000000 00000000 c0984194 c09b7208 c0b125f8 c0f5d59=
+c 00000000
+> > (ptrval): 00000002 00000000 c00002e0 91a86e08 c0d33f7c 00000000 0000000=
+0 00000000
+> > (ptrval): 00000000 00000000 00000000 00000000
+> > Call Trace:
+> > [<c0003168>] microblaze_unwind+0x64/0x80
+> > [<c0984548>] show_stack+0x128/0x180
+> > [<c0999330>] dump_stack_lvl+0x44/0x94
+> > [<c099938c>] dump_stack+0xc/0x24
+> > [<c0984c2c>] __warn+0xac/0xfc
+> > [<c0984cf4>] warn_slowpath_fmt+0x78/0x98
+> > [<c0d19e0c>] security_add_hooks+0x120/0x21c
+> > [<c0d1b1cc>] lockdown_lsm_init+0x18/0x34
+> > [<c0d196e4>] initialize_lsm+0x44/0x94
+> > [<c0d19780>] early_security_init+0x4c/0x74
+> > [<c0d00894>] start_kernel+0x90/0x8ac
+> > [<c0984190>] machine_shutdown+0x1c/0x20
+> > no locks held by swapper/0.
+> > ---[ end trace 0000000000000000 ]---
+> >
+> > mips:
+> >
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 0 at include/linux/jump_label.h:322 security_add_h=
+ooks+0xf8/0x1bc
+> > static_key_enable(): static key 'security_hook_active_locked_down_0+0x0=
+/0x4' used before call to jump_label_init()
+> > Modules linked in:
+> > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2-00134-g679d51=
+771510 #1
+> > Hardware name: mti,malta
+> > Stack : 00000000 811eedd8 00000000 00000000 00000000 00000000 00000000 =
+00000000
+> >          00000000 00000000 00000000 00000000 00000000 00000001 81257cd8=
+ 00000000
+> >          81257d70 00000000 00000000 00000000 00000038 80e549c4 00000000=
+ ffffffff
+> >          00000000 00000000 00000000 00040000 00000000 00000000 81174584=
+ 81280000
+> >          00000000 00000142 00000000 00000000 00000000 00000000 0a0a0b0b=
+ bbe00cfc
+> >          ...
+> > Call Trace:
+> > [<8010a0a8>] show_stack+0x60/0x154
+> > [<80e731d8>] dump_stack_lvl+0xbc/0x138
+> > [<8012f908>] __warn+0x9c/0x1f8
+> > [<8012fc20>] warn_slowpath_fmt+0x1bc/0x1cc
+> > [<8138a184>] security_add_hooks+0xf8/0x1bc
+> > [<8138a5fc>] lockdown_lsm_init+0x20/0x30
+> > [<813899e8>] initialize_lsm+0x44/0x80
+> > [<81389be0>] early_security_init+0x50/0x6c
+> > [<8136c82c>] start_kernel+0xa8/0x7dc
+> > irq event stamp: 0
+> > hardirqs last  enabled at (0): [<00000000>] 0x0
+> > hardirqs last disabled at (0): [<00000000>] 0x0
+> > softirqs last  enabled at (0): [<00000000>] 0x0
+> > softirqs last disabled at (0): [<00000000>] 0x0
+> > ---[ end trace 0000000000000000 ]---
+> >
+> > Loongarch (crash):
+> >
+> > [    0.000000] ------------[ cut here ]------------
+> > [    0.000000] static_key_enable_cpuslocked(): static key 'security_hoo=
+k_active_locked_down_0+0x0/0x10' used before call to jump_label_init()
+> > [    0.000000] ------------[ cut here ]------------
+> > [    0.000000] DEBUG_LOCKS_WARN_ON(early_boot_irqs_disabled)
+> > [    0.000000] Caught reserved exception 12 on pid:0 [swapper] - should=
+ not happen
+> > [    0.000000] do_reserved exception[#1]:
+> > [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc=
+2+ #1
+> > [    0.000000] Hardware name: QEMU QEMU Virtual Machine, BIOS 0.0.0 02/=
+06/2015
+> > [    0.000000] pc 9000000004cf9334 ra 9000000004cf9334 tp 9000000006cc8=
+000 sp 9000000006ccbc10
+> > [    0.000000] a0 000000000000002d a1 9000000006df7830 a2 0000000000000=
+000 a3 9000000006ccba28
+> > [    0.000000] a4 0000000000000001 a5 0000000000000000 a6 9000000006175=
+570 a7 0000000000000005
+> > [    0.000000] t0 0000000000000000 t1 0000000000000000 t2 0000000000000=
+001 t3 0000000000000001
+> > [    0.000000] t4 0000000000000004 t5 0000000000000094 t6 0000000000000=
+023 t7 0000000000000030
+> > [    0.000000] t8 ffffffff8dcb3998 u0 9000000006a45388 s9 000000000f5ea=
+330 s0 9000000006230788
+> > [    0.000000] s1 9000000006265c70 s2 0000000000000001 s3 0000000000000=
+001 s4 9000000006cfaa80
+> > [    0.000000] s5 000000000f75dad8 s6 000000000a5b0000 s7 000000000f75d=
+b30 s8 000000000eee5b18
+> > [    0.000000]    ra: 9000000004cf9334 lockdep_hardirqs_on_prepare+0x20=
+0/0x208
+> > [    0.000000]   ERA: 9000000004cf9334 lockdep_hardirqs_on_prepare+0x20=
+0/0x208
+> > [    0.000000]  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=3DCC DACM=3DCC -W=
+E)
+> > [    0.000000]  PRMD: 00000000 (PPLV0 -PIE -PWE)
+> > [    0.000000]  EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
+> > [    0.000000]  ECFG: 00070800 (LIE=3D11 VS=3D7)
+> > [    0.000000] ESTAT: 000c0000 [BRK] (IS=3D ECode=3D12 EsubCode=3D0)
+> > [    0.000000]  PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
+> > [    0.000000] Modules linked in:
+> > [    0.000000] Process swapper (pid: 0, threadinfo=3D(____ptrval____), =
+task=3D(____ptrval____))
+> > [    0.000000] Stack : 0000000000000001 9000000006265c70 9000000006169c=
+58 9000000004dd9ba8
+> > [    0.000000]         9000000006ccbc70 0000000000000000 9000000006ccbc=
+70 9000000006169c58
+> > [    0.000000]         00000000000000b0 90000000074f08b8 90000000086164=
+78 9000000007ad1924
+> > [    0.000000]         0000000000000000 9000000004e95fa8 9000000006cc80=
+00 9000000006ccbdb0
+> > [    0.000000]         000000000000007e 9000000006df7830 00000000000000=
+00 9000000006ccbbc8
+> > [    0.000000]         0000000000000001 0000000000000001 90000000073f6e=
+58 9000000006175570
+> > [    0.000000]         0000000000000000 0000000000000000 00000000000000=
+01 0000000000000001
+> > [    0.000000]         0000000000000000 0000000000000092 00000000000000=
+01 0000000000006000
+> > [    0.000000]         ffffffff8dcb3998 9000000006a6bed8 000000000f5ea3=
+30 9000000008616478
+> > [    0.000000]         90000000074f08b8 0000000000000001 00000000000000=
+01 9000000006cfaa80
+> > [    0.000000]         ...
+> > [    0.000000] Call Trace:
+> > [    0.000000] [<9000000004cf9334>] lockdep_hardirqs_on_prepare+0x200/0=
+x208
+> > [    0.000000] [<9000000004dd9ba4>] trace_hardirqs_on+0x54/0x70
+> > [    0.000000] [<9000000006169c54>] do_reserved+0x1c/0xcc
+> > [    0.000000] [<9000000004c52560>] handle_bp+0x120/0x1c0
+> > [    0.000000] [<9000000004e95fa8>] static_key_enable_cpuslocked+0xdc/0=
+xec
+> > [    0.000000] [<9000000004e960b8>] static_key_enable+0x18/0x2c
+> > [    0.000000] [<90000000061a9154>] security_add_hooks+0xbc/0x12c
+> > [    0.000000] [<90000000061aa880>] lockdown_lsm_init+0x20/0x34
+> > [    0.000000] [<90000000061a8a80>] initialize_lsm+0x3c/0x6c
+> > [    0.000000] [<90000000061a8c34>] early_security_init+0x44/0x68
+> > [    0.000000] [<9000000006180830>] start_kernel+0xa0/0x84c
+> > [    0.000000] [<900000000616d0f0>] kernel_entry+0xf0/0xf8
+> >
+> >
+>
 
