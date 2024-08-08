@@ -1,79 +1,75 @@
-Return-Path: <linux-kernel+bounces-280110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C82194C5EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:45:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C570F94C5F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CE21F25F08
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:45:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F7D6B21316
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2A61465AE;
-	Thu,  8 Aug 2024 20:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED036156968;
+	Thu,  8 Aug 2024 20:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBeOAPSU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQFRtLkC"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0E48827
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829318827;
+	Thu,  8 Aug 2024 20:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723149920; cv=none; b=TaINN3bgMOUX6/+3ghfeUkYMLz6C8RzVTqW8CbwSBtbjjYBTcEkjD/bfqv7wYa/ipTPjKQptu57QAgtNNpL5TsdIRqqBYwiuWaIVOfCGHikdaSHFnA/A/1EEHK7SevhjnYtkuIyF0RUp1DRRWfMCXRuGPaSqxZxXd/xK6ZNZVwE=
+	t=1723150154; cv=none; b=bTYA9T3uQlMIbl/z80Wrj5IAdmXe9GsVYv4samIWojf+SJ5hYwxkEh2QHpW3B/wVTv20SPPP4X22IruA9ou/Oz2mTtlXJcx77cNegjREWdiyD7ScyE+pSwY+wdxIdKocw5hkNHhS71T98xrnuf4sWt2OtZ3VFLlXDJiSORKIFas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723149920; c=relaxed/simple;
-	bh=M1QDpSlOxRliBliupZF5vI/lAcRaVIg3yMzLuTIzBTY=;
+	s=arc-20240116; t=1723150154; c=relaxed/simple;
+	bh=G6C/2q8CWsnkA3j5YjLGRlJUp+4sMXIA/FsCPxeWjHY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MuMkZFYFuqQwaUTAL8xb2niIsoc6FnLf7jNJcyU2T3sIuHDf6XfQ6OoPJ+nmml9xhprEVpwqXz1GjXu+KUMCTtUoJohNoJBzxEJfuFF+P5QfswFn4DoXP+iIJOqnWZc/vMyfDxHNoN815GKT7in7G+B47hpbX2WDC6J6RD7mKzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CBeOAPSU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723149917;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=18Rl4NkZJ/Sn5IqfxlHmzBxDnMO4mtO2wKlwMeZkH2Q=;
-	b=CBeOAPSUBsW8WqErbY+KIJKqKvgE+yXfrp4PWjoHW4jHS4seZBs5c16X+PfqbnwRdMdShh
-	OIZQwW3sBE4Vwa9/YjVcWN1BpfrhQmioav+UW8UIDZOkJADRV4QrhEugd1h/RYNeFOanyR
-	18C3qrPAIxk0zB8l7YZg6A2Kty40aGY=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-617-YB3vp8aFMWKba5Ch-DJwGg-1; Thu, 08 Aug 2024 16:45:15 -0400
-X-MC-Unique: YB3vp8aFMWKba5Ch-DJwGg-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3687529b63fso748105f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 13:45:15 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=CPjYmPPS2uvj+vRgS20XD+GwjAtfjuEv/XjZMV+RqJh+2w7azkEvKpvj8lOaXzynZknh9lriMst2tOTz4cNYD702F9RFTHBdqUdLg/ggBnt7F0XS1sHPtog17zxurLOTaBOot/kt2DXgwrb6zYxFOy3/0Py3ELgcaZTRTXYcbmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WQFRtLkC; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fec34f94abso13746485ad.2;
+        Thu, 08 Aug 2024 13:49:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723150152; x=1723754952; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=sOMDPIeCc+zLFkzUCpyj2Gt2XUIxX7hIehtjUvY5qN4=;
+        b=WQFRtLkCWVRO4QemhorlRjYSsLzkXfXaY21JgGO2szpjnnvMM1IaVXGK4ncIuvjbz1
+         uo7X2u/wgp4xrJoaYrrTh/a4skET5etC/baYMyDk5u/lr/tCUXEFBmvq11rB8uk6lbVA
+         RPJNpB+qsHte9yCM8hIyZASoPJ3PgubduhFndyAN8X/uPK0oNPAtnKyW68UKbUjlLUCU
+         U1MPc7arnNvt3+KalOMNhjQBZcMsbckuBQMTS69QqGaY7ibmscjQX0QGC5ltNSdXsTK3
+         MRNeba5QDuIGifZCVgJFy7rThcRLlsQgPcFLVfZXMCjvsuKFXniqDZZMyAr8tYpqRHnG
+         8miw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723149915; x=1723754715;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=18Rl4NkZJ/Sn5IqfxlHmzBxDnMO4mtO2wKlwMeZkH2Q=;
-        b=hySQoRiJcmwbgmiHYPpUIt5SC5WnoqTVHWsvjYYRQYScZj0ywVkz7HKVcg+pAi4Gg3
-         6bb6qHswgXIbhB7H+UB4O1Uzv7Cmuhzvzh76j+GiRTVpQM3f2A9+s4uHy4ikZwvJVsnV
-         Gw3i+Mx/gaaOz5a8lwHQCkZ2c776X8v+wRrE0Ks7I1QKrVn0rZFcKzQ6ic2ggjqQ25K4
-         wRCn+OdMRhhro/HHW/PPEtyA7iLxt8KzK7H+nOOk+pWxbpaPYr25Z6ReAobu7t9eTEsS
-         orDel5xfudSyyO3RS3OwAUMiavTk+mSBgJspk8qjo2bwoxOf0JmkhucRQ7Ac0Dl7E7oO
-         Tu2g==
-X-Gm-Message-State: AOJu0Yz4uMaAOTs7eofKkIrQRDIATzjwX3lU5LfOVHFr9u+iXXpXra9S
-	ny7JEvCxxyX0NBGbyxQ/sVR5iHYtPOyhsiaJCi+hUsa6QmKjK4EAMOatX1c/HSbcrqMFlQdKGqu
-	RsOJfXBtgOQPszdeA86XMAdkWoFoy3QIG5mDANAoX2KAXnb+ovrscsbChx7mO0w==
-X-Received: by 2002:a05:6000:1843:b0:360:791c:aff2 with SMTP id ffacd0b85a97d-36d275663acmr2629356f8f.47.1723149914611;
-        Thu, 08 Aug 2024 13:45:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHSNcY6csiIyW/jq0jTa3ofS8OTkmMsPtIX7Q3oQh+KW6006/qHEu9nQT+rhEGN3BsWo3C6pQ==
-X-Received: by 2002:a05:6000:1843:b0:360:791c:aff2 with SMTP id ffacd0b85a97d-36d275663acmr2629345f8f.47.1723149914075;
-        Thu, 08 Aug 2024 13:45:14 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c713:2a00:f151:50f1:7164:32e6? (p200300cbc7132a00f15150f1716432e6.dip0.t-ipconnect.de. [2003:cb:c713:2a00:f151:50f1:7164:32e6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2716cb01sm3050623f8f.36.2024.08.08.13.45.12
+        d=1e100.net; s=20230601; t=1723150152; x=1723754952;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sOMDPIeCc+zLFkzUCpyj2Gt2XUIxX7hIehtjUvY5qN4=;
+        b=VRup+R8d+GjAHWybQQtAI7f6hnE68LnQBaSWWvEuqRMBJd47w448uN0EkLkny5W4Kk
+         D+7WwmOg22/xvjfk+dGtUeUD3+A8kbGXqODtlrqNCpEIeIKevkDJnYKoAv1dAm6VD1BU
+         yxVN/UtcinKxH7epuR++0D92KM1p8t+CsZ5VFslPMRq62zOWUzkycA2Vch2ksIf24sku
+         7lhgcQL7k2OD4IcFrW722O54kU7kY9/5GyN5XfAAN5a5ke4DQclyKdHbskHE0AGWIDOr
+         67/TshPofkH97Z2FRSy5uw14dqN29N2A/dhlnvuHe0W09qKdhoBemOu1w8Sl9QmQFp2b
+         8NKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBbIi3d5ACxAItwJ3Dlc2/RVVG8O4Tfd6oy1XWvFArx0ZfrI+y56nUuePu4e2mLMfIG1T0xkdWS1TZTeNEQoM=@vger.kernel.org, AJvYcCUFBacg0tBkqsC79vDCI2wNIJFOjJyLyxzLKAYL/NY8Z9EiU1Hq7RkEER8xqMNYP6kmrZYxWao3K5F6A8aK@vger.kernel.org, AJvYcCXxVAesczmQ9IdQHVIV6QsP52ZagmHn+LTQsjvHuztCEYC9jhaOZWiu9Ur1XSEeHmYCOVBEdeuIVzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKL3l8Lrac0tkqUgX2YUlQqNUEGOMv9ukkCwzgDPNKIbnugb0P
+	lHXJBF4ANJPjgx7hRFdgSh6eVvdtt/cg1x0m/gsvBARI6B1QVjVHwpDBPg==
+X-Google-Smtp-Source: AGHT+IEbKUiENmIxquqpdyXTNyUXlfvxD3yYoD8wIjln5qOQnc9ynveYbwPU5tNSzi9A1RNvRK0+xQ==
+X-Received: by 2002:a17:902:e746:b0:1ff:4fa9:1435 with SMTP id d9443c01a7336-2009526df12mr33951295ad.31.1723150151653;
+        Thu, 08 Aug 2024 13:49:11 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59058d03sm129434025ad.179.2024.08.08.13.49.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 13:45:13 -0700 (PDT)
-Message-ID: <93cbdc09-8c21-483f-a6a0-f70ed676ec2a@redhat.com>
-Date: Thu, 8 Aug 2024 22:45:11 +0200
+        Thu, 08 Aug 2024 13:49:10 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <474dde6f-5c31-4bf5-a13f-d10b8460c4cb@roeck-us.net>
+Date: Thu, 8 Aug 2024 13:49:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,118 +77,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/7] mm/x86: arch_check_zapped_pud()
-To: Peter Xu <peterx@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Oscar Salvador <osalvador@suse.de>,
- Dan Williams <dan.j.williams@intel.com>,
- James Houghton <jthoughton@google.com>, Matthew Wilcox
- <willy@infradead.org>, Nicholas Piggin <npiggin@gmail.com>,
- Rik van Riel <riel@surriel.com>, Dave Jiang <dave.jiang@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
- Ingo Molnar <mingo@redhat.com>, Rick P Edgecombe
- <rick.p.edgecombe@intel.com>, "Kirill A . Shutemov" <kirill@shutemov.name>,
- linuxppc-dev@lists.ozlabs.org, Mel Gorman <mgorman@techsingularity.net>,
- Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>,
- Vlastimil Babka <vbabka@suse.cz>, Dave Hansen <dave.hansen@linux.intel.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Huang Ying <ying.huang@intel.com>
-References: <20240807194812.819412-1-peterx@redhat.com>
- <20240807194812.819412-6-peterx@redhat.com> <878qx80xy8.ffs@tglx>
- <ZrTpD0XOUsNMM9tP@x1n>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v3] Documentation: Capitalize Fahrenheit in
+ watchdog-api.rst
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: corbet@lwn.net, javier.carrasco.cruz@gmail.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, skhan@linuxfoundation.org,
+ wim@linux-watchdog.org
+References: <20240723131849.264939-1-david.hunter.linux@gmail.com>
+ <20240807185332.61624-1-david.hunter.linux@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZrTpD0XOUsNMM9tP@x1n>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240807185332.61624-1-david.hunter.linux@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
->>> +void arch_check_zapped_pud(struct vm_area_struct *vma, pud_t pud)
->>> +{
->>> +	/* See note in arch_check_zapped_pte() */
->>> +	VM_WARN_ON_ONCE(!(vma->vm_flags & VM_SHADOW_STACK) &&
->>> +			pud_shstk(pud));
->>
->> Please get rid of the line break. You have 100 characters.
+On 8/7/24 11:53, David Hunter wrote:
+> Capitalize "fahrenheit," a spelling mistake.
 > 
-> Coding-style.rst still tells me 80 here:
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+> V2 -> V3:
+>   - Fixed misspelling of "Capitalize" in commit message.
+>   - Put Tags and Kernel Subsystem in subject
+>   - Put changelog after commit message
 > 
->          The preferred limit on the length of a single line is 80 columns.
+> V1 -> V2:
+>   - Fixed imperative mood
+>   - Fixed misspelling of "Fahrenheit" in Subject
 > 
->          Statements longer than 80 columns should be broken into sensible chunks,
->          unless exceeding 80 columns significantly increases readability and does
->          not hide information.
+> V2: https://lore.kernel.org/lkml/7b7ca7e0-6bd2-45ab-bd9b-40331a8e6fdd@roeck-us.net/
 > 
-> Maybe this just changed very recently so even not in mm-unstable?
+> V1: https://lore.kernel.org/lkml/20240723131849.264939-1-david.hunter.linux@gmail.com/
 > 
-> I'll fix the two line-wrap in this patch anyway, as I figured these two
-> cases even didn't hit 80..  probably because I used fill-column=75 locally..
-> 
-> But still I'll probably need to figure it out for other spots.  Please help
-> me to justify.
-
-My interpretation is (the doc is not completely clear to me as well, but 
-checkpatch.pl hardcodes the max_line_length=100) that we can happily use 
-up to 100 chars.
-
-I also tend to stay within 80 chars, unless really reasonable. Years of 
-Linux kernel hacking really taught my inner self to not do it.
-
-Here I would agree that having the VM_WARN_ON_ONCE in a single would aid 
-readability.
-
-An example where 100 chars are likely a bad idea would be when nesting 
-that deeply such that most lines start exceeding 80 chars. We should 
-rather fix the code then -- like the coding style spells out :)
-
--- 
-Cheers,
-
-David / dhildenb
+>   Documentation/watchdog/watchdog-api.rst | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+> diff --git a/Documentation/watchdog/watchdog-api.rst b/Documentation/watchdog/watchdog-api.rst
+> index 800dcd7586f2..78e228c272cf 100644
+> --- a/Documentation/watchdog/watchdog-api.rst
+> +++ b/Documentation/watchdog/watchdog-api.rst
+> @@ -249,7 +249,7 @@ Note that not all devices support these two calls, and some only
+>   support the GETBOOTSTATUS call.
+>   
+>   Some drivers can measure the temperature using the GETTEMP ioctl.  The
+> -returned value is the temperature in degrees fahrenheit::
+> +returned value is the temperature in degrees Fahrenheit::
+>   
+>       int temperature;
+>       ioctl(fd, WDIOC_GETTEMP, &temperature);
 
 
