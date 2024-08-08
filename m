@@ -1,126 +1,286 @@
-Return-Path: <linux-kernel+bounces-280088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91A794C586
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:11:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7056C94C58A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0912825E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:10:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6ECAB22516
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47711156872;
-	Thu,  8 Aug 2024 20:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30301157A46;
+	Thu,  8 Aug 2024 20:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7g3CyU9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0Th6AFl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E754A1E;
-	Thu,  8 Aug 2024 20:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366734A1E;
+	Thu,  8 Aug 2024 20:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723147851; cv=none; b=ST/ZyVVmRLXJWb1hCv/aUDUvlVZ8EwaJYQonTKCY3XODLqBN6Cx/Phsa+6kKGBzS3ENM1FGztC2W33vaYugqJ8tfyZu7le1fPw4FYmuGea9mWLanZ9S9s/SSkDYcDcBHH1I8pG91rGLrH0WbNT/9LBRV7vH4DNnHe3It4EXHS8E=
+	t=1723148062; cv=none; b=iQVaLf5Wdl08CgWMo7Ya9uvBvH4j5Oe0cF8m3wla4Q0q1C8Yrh5AlTRjUbySwxGHIG72Hwc1HLQgltCYWfMnDuRks+MSWoIX9e9YZkCAOJwJpeZFkpasqrkutqxZdmcU9y7fozfpE7t2Io0TFCqByArBHNAGcZNbv1FKVqtm+i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723147851; c=relaxed/simple;
-	bh=fZ+glFhG10pq+CGs532gxBEKs+f6eJvEdJZOh66ZT0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZBzxCwm/h2bAw4Yd7ATqYN3c4q2D4C7ooPp0S7Fu+6ri/APhlNPzOJvSxqpry1DXUnI5QsusSLrI1crPtJ6cAw8HmLjBKLRDx4qo5Tu7aU9efH8aMfQXcU4WPYbnmkkfw58EZ32IonRKzdvHwN5/+WHNwpyECuNb5VTQly78DPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7g3CyU9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1B3AC32782;
-	Thu,  8 Aug 2024 20:10:50 +0000 (UTC)
+	s=arc-20240116; t=1723148062; c=relaxed/simple;
+	bh=hgURdvoV2LeV7xOJOhcOMVxZqCvVA2gvwLntm/DYCjI=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Kwa2/6RFd47/cO6eiM0AWxHT3N9NjxmJhWpLuz0dKiscu/3x09H2NQOMRH1nm+axXIPvXD+4yy0BeGEH3YGYmbhOlFr8Ctm8WF9aIZeVKUdJaWg+lAGxAZwtYwWBvLf92J4cVfdYJklP/yKzGiPCBNAjT9egx9RTQEDbl+b0cgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0Th6AFl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 712A4C32782;
+	Thu,  8 Aug 2024 20:14:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723147851;
-	bh=fZ+glFhG10pq+CGs532gxBEKs+f6eJvEdJZOh66ZT0M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=V7g3CyU9Nbmo5hcYkSP+f2WHIKpc/fTejVt1hGda6kEuxlZsPmMXntmoH8dj/kpbX
-	 dCm4iXPi79xIX6wDX/heIItcUZGEb58escG76upaWXM11/Qbjq2axEI/RP0zzMZzmD
-	 GQNQPjgqHWAq6LXEmFjSQIK4yAsyRfaStnEZ1sTcG9Xbb+HX21ULbfq4qKlM7rFOdm
-	 709Fm7snksjKEtkA7IiUhqqO8C+20s9zw/qRDV0KoQCimauCwd9ilq0KJ3jQOk2Wmh
-	 Y9rb/Ax74BLU5RcMGQc9SOvOMQj+RQz45sYHySj+8/NNHGnWC5L16zVzQx6xVrtoa0
-	 R4+VCOAFNIaoQ==
-Date: Thu, 8 Aug 2024 15:10:48 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Stewart Hildebrand <stewart.hildebrand@amd.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Yongji Xie <elohimes@gmail.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	x86@kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] x86/PCI: Preserve IORESOURCE_STARTALIGN alignment
-Message-ID: <20240808201048.GA157414@bhelgaas>
+	s=k20201202; t=1723148061;
+	bh=hgURdvoV2LeV7xOJOhcOMVxZqCvVA2gvwLntm/DYCjI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=d0Th6AFlewoGY+Bylt133GKr0MOdYKL4lmngVznZKKhj4h/QFSqkP62DUK5z3DSVC
+	 NXAJ6pjnyWnuiw2MQpb5aMrVan9kkOCPXC6+WEU5II9OvN623fHkDh+T69wYt69cfa
+	 he68f5JcHB6g7i/nwV+OVZAWajuWEHlv7sHISQxf92zlU2qxjTuqIjSqxwUHn11ROI
+	 ZkvtHGlWBjAQezR4XrNFRgZ9nj+/gwhTYDfeT09sE6udYFvCQItcyLEGSnuy9Azn+Q
+	 mQZmCcf5YoMUgZuwG5n8Wh9Dz0fnksqTnJSXfnXFAwTo03Czze3jMYSlmWBms2Z2tl
+	 kKeL5FtPgQXuA==
+Message-ID: <7fc258e4208a01748ef024f286a85ca0.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807151723.613742-6-stewart.hildebrand@amd.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240808-gs101-non-essential-clocks-2-v6-1-e91c537acedc@linaro.org>
+References: <20240808-gs101-non-essential-clocks-2-v6-0-e91c537acedc@linaro.org> <20240808-gs101-non-essential-clocks-2-v6-1-e91c537acedc@linaro.org>
+Subject: Re: [PATCH v6 01/20] clk: bump stdout clock usage for earlycon
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>
+To: Abel Vesa <abelvesa@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>
+Date: Thu, 08 Aug 2024 13:14:19 -0700
+User-Agent: alot/0.10
 
-On Wed, Aug 07, 2024 at 11:17:14AM -0400, Stewart Hildebrand wrote:
-> There is a corner case in pcibios_allocate_dev_resources() where the
-> IORESOURCE_STARTALIGN alignment of memory BAR resources gets
-> overwritten. This does not affect bridge resources. The corner case is
-> not yet possible to trigger on x86, but it will be possible once the
-> default resource alignment changes, and memory BAR resources will start
-> to use IORESOURCE_STARTALIGN. 
-
-I see from [8/8] that "Changing pcibios_default_alignment() results in
-the second method of alignment with IORESOURCE_STARTALIGN", but that
-connection is not at all obvious, and there's no patch in this series
-that sets IORESOURCE_STARTALIGN, so it's kind of hard to connect all
-the dots here.
-
-The only caller of pcibios_default_alignment() is
-pci_specified_resource_alignment(), and that doesn't mention
-IORESOURCE_STARTALIGN either.
-
-Neither does pcibios_allocate_dev_resources().
-
-I feel like we've had this conversation before; apologies if so.  But
-we need to figure out to make this more explicit and less magic.
-
-> Account for IORESOURCE_STARTALIGN in
-> preparation for changing the default resource alignment.
-> 
-> Skip the pcibios_save_fw_addr() call since the resource doesn't contain
-> a valid address when alignment has been requested. The impact of this is
-> that we won't be able to restore the firmware allocated BAR, which does
-> not meet alignment requirements anyway.
-> 
-> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
+Quoting Andr=C3=A9 Draszik (2024-08-08 07:42:42)
+> On some platforms, earlycon depends on the bootloader setup stdout
+> clocks being retained. In some cases stdout UART clocks (or their
+> parents) can get disabled during loading of other drivers (e.g. i2c)
+> causing earlycon to stop to work sometime into the boot, halting the
+> whole system.
+>=20
+> Since there are at least two platforms where that is the case, i.MX and
+> the Exynos-derivative gs101, this patch adds some logic to the clk core
+> to detect these clocks if earlycon is enabled, to bump their usage
+> count as part of of_clk_add_hw_provider() and of_clk_add_provider(),
+> and to release them again at the end of init.
+>=20
+> This way code duplication in affected platforms can be avoided.
+>=20
+> The general idea is based on similar code in the i.MX clock driver, but
+> this here is a bit more generic as in general (e.g. on gs101) clocks
+> can come from various different clock units (driver instances) and
+> therefore it can be necessary to run this code multiple times until all
+> required stdout clocks have probed.
+>=20
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>=20
 > ---
-> v2->v3:
-> * no change
-> 
-> v1->v2:
-> * capitalize subject text
-> * clarify commit message
-> * skip pcibios_save_fw_addr() call
-> ---
->  arch/x86/pci/i386.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
-> index 3abd55902dbc..13d7f7ac3bde 100644
-> --- a/arch/x86/pci/i386.c
-> +++ b/arch/x86/pci/i386.c
-> @@ -256,7 +256,7 @@ static void alloc_resource(struct pci_dev *dev, int idx, int pass)
->  		if (r->flags & IORESOURCE_PCI_FIXED) {
->  			dev_info(&dev->dev, "BAR %d %pR is immovable\n",
->  				 idx, r);
-> -		} else {
-> +		} else if (!(r->flags & IORESOURCE_STARTALIGN)) {
->  			/* We'll assign a new address later */
->  			pcibios_save_fw_addr(dev, idx, r->start);
->  			r->end -= r->start;
-> -- 
-> 2.46.0
-> 
+
+Thanks for doing this!
+
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 7264cf6165ce..03c5d80e833c 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -4923,6 +4923,131 @@ static void clk_core_reparent_orphans(void)
+>         clk_prepare_unlock();
+>  }
+> =20
+> +/**
+> + * struct of_clk_stdout_clks - holds data that is required for handling =
+extra
+> + * references to stdout clocks during early boot.
+> + *
+> + * On some platforms, earlycon depends on the bootloader setup stdout cl=
+ocks
+> + * being retained. In some cases stdout UART clocks (or their parents) c=
+an get
+> + * disabled during loading of other drivers (e.g. i2c) causing earlycon =
+to stop
+> + * to work sometime into the boot, halting the system.
+> + *
+> + * Having logic to detect these clocks if earlycon is enabled helps with=
+ those
+> + * cases by bumping their usage count during init. The extra usage count=
+ is
+> + * later dropped at the end of init.
+> + *
+> + * @bump_refs: whether or not to add the extra stdout clock references
+> + * @lock: mutex protecting access
+> + * @have_all: whether or not we have acquired all clocks, to handle case=
+s of
+> + *            clocks coming from different drivers / instances
+> + * @clks: clocks associated with stdout
+> + * @n_clks: number of clocks associated with stdout
+> + */
+> +static struct of_clk_stdout_clks {
+> +       bool bump_refs;
+> +
+> +       struct mutex lock;
+> +       bool have_all;
+> +       struct clk **clks;
+> +       size_t n_clks;
+> +} of_clk_stdout_clks =3D {
+
+This can be initdata?
+
+> +       .lock =3D __MUTEX_INITIALIZER(of_clk_stdout_clks.lock),
+> +};
+> +
+> +static int __init of_clk_bump_stdout_clocks_param(char *str)
+> +{
+> +       of_clk_stdout_clks.bump_refs =3D true;
+> +       return 0;
+> +}
+> +__setup("earlycon", of_clk_bump_stdout_clocks_param);
+> +__setup_param("earlyprintk", of_clk_keep_stdout_clocks_earlyprintk,
+> +             of_clk_bump_stdout_clocks_param, 0);
+> +
+> +static void of_clk_bump_stdout_clocks(void)
+
+This can be __init?
+
+> +{
+> +       size_t n_clks;
+> +
+> +       /*
+> +        * We only need to run this code if required to do so and only ev=
+er
+> +        * before late initcalls have run. Otherwise it'd be impossible t=
+o know
+> +        * when to drop the extra clock references again.
+> +        *
+> +        * This generally means that this only works if on affected platf=
+orms
+> +        * the clock drivers have been built-in (as opposed to being modu=
+les).
+> +        */
+> +       if (!of_clk_stdout_clks.bump_refs)
+> +               return;
+> +
+> +       n_clks =3D of_clk_get_parent_count(of_stdout);
+> +       if (!n_clks || !of_stdout)
+> +               return;
+> +
+> +       mutex_lock(&of_clk_stdout_clks.lock);
+> +
+> +       /*
+> +        * We only need to keep trying if we have not succeeded previousl=
+y,
+> +        * i.e. if not all required clocks were ready during previous att=
+empts.
+> +        */
+> +       if (of_clk_stdout_clks.have_all)
+> +               goto out_unlock;
+> +
+> +       if (!of_clk_stdout_clks.clks) {
+> +               of_clk_stdout_clks.n_clks =3D n_clks;
+> +
+> +               of_clk_stdout_clks.clks =3D kcalloc(of_clk_stdout_clks.n_=
+clks,
+> +                                             sizeof(*of_clk_stdout_clks.=
+clks),
+> +                                             GFP_KERNEL);
+> +               if (!of_clk_stdout_clks.clks)
+> +                       goto out_unlock;
+> +       }
+> +
+> +       /* assume that this time we'll be able to grab all required clock=
+s */
+> +       of_clk_stdout_clks.have_all =3D true;
+> +       for (size_t i =3D 0; i < n_clks; ++i) {
+> +               struct clk *clk;
+> +
+> +               /* we might have grabbed this clock in a previous attempt=
+ */
+> +               if (of_clk_stdout_clks.clks[i])
+> +                       continue;
+> +
+> +               clk =3D of_clk_get(of_stdout, i);
+> +               if (IS_ERR(clk)) {
+> +                       /* retry next time if clock has not probed yet */
+> +                       of_clk_stdout_clks.have_all =3D false;
+> +                       continue;
+> +               }
+> +
+> +               if (clk_prepare_enable(clk)) {
+> +                       clk_put(clk);
+> +                       continue;
+> +               }
+> +               of_clk_stdout_clks.clks[i] =3D clk;
+> +       }
+> +
+> +out_unlock:
+> +       mutex_unlock(&of_clk_stdout_clks.lock);
+> +}
+> +
+> +static int __init of_clk_drop_stdout_clocks(void)
+> +{
+> +       for (size_t i =3D 0; i < of_clk_stdout_clks.n_clks; ++i) {
+> +               clk_disable_unprepare(of_clk_stdout_clks.clks[i]);
+> +               clk_put(of_clk_stdout_clks.clks[i]);
+> +       }
+> +
+> +       kfree(of_clk_stdout_clks.clks);
+> +
+> +       /*
+> +        * Do not try to acquire stdout clocks after late initcalls, e.g.
+> +        * during further module loading, as we then wouldn't have a way =
+to
+> +        * drop the references (and associated allocations) ever again.
+> +        */
+> +       of_clk_stdout_clks.bump_refs =3D false;
+> +
+> +       return 0;
+> +}
+> +late_initcall_sync(of_clk_drop_stdout_clocks);
+> +
+>  /**
+>   * struct of_clk_provider - Clock provider registration structure
+>   * @link: Entry in global list of clock providers
+> @@ -5031,6 +5156,8 @@ int of_clk_add_provider(struct device_node *np,
+> =20
+>         fwnode_dev_initialized(&np->fwnode, true);
+> =20
+> +       of_clk_bump_stdout_clocks();
+
+This can be a wrapper function that isn't marked __init but which calls
+the init function with __ref. That lets us free up as much code as
+possible. We need to set a bool in of_clk_drop_stdout_clocks() that when
+false doesn't call the __init functions that are wrapped though, i.e.
+'bump_refs'. Here's the structure:
+
+	static bool bump_stdout_clks __ro_after_init =3D true;
+
+	static int __init _of_clk_bump_stdout_clks(void)
+	{
+		...
+	}
+
+	static int __ref of_clk_bump_stdout_clks(void)
+	{
+		if (bump_stdout_clks)
+			return _of_clk_bump_stdout_clks();
+
+		return 0;
+	}
+
+	static int __init of_clk_drop_stdout_clks(void)
+	{
+		bump_stdout_clks =3D false;
+		...
+	}
+	late_initcall_sync(of_clk_drop_stdout_clks);
+
+> +
+>         return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(of_clk_add_provider);
 
