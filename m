@@ -1,165 +1,103 @@
-Return-Path: <linux-kernel+bounces-278806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C1294B514
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C600B94B516
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA1F2820E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:32:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8649C282F1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD0DD502;
-	Thu,  8 Aug 2024 02:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C3710A1E;
+	Thu,  8 Aug 2024 02:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JRL5q1bn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB755C96
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 02:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="H6v6Glzx"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0910E2A1C7;
+	Thu,  8 Aug 2024 02:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723084359; cv=none; b=XM1PeBTRXT+YarjN/LdNGBIzoF75WlJ7aKUUDV2kvyISXz46QGHzu/VGJpmVMOUyyyXyTmoQYZb5rhVpgA+u59tsqe4wups7szYnLOvYjMjO8LnbbobTOKryQ3IJoceOZ/TggkXdRJN9j+y3VwAkhdZEQYXtfw2qzoMVpRJfEDY=
+	t=1723084371; cv=none; b=DnKH4hGyEB2JgU32+sOOBGDQMeUwyL1qPZ2rmgYdp4+y+gTSbOrvFsoZ7jC8Nk+gn6GZ2ugE5ldhnx8fXMd807QIEm/Xz9C7g7Crd3uufvZwU23vFg0RBC6BncF9MuUaqSQS5UEO0OUkdRJTLoe/99MKdSdnCa9A52OFPeEbSrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723084359; c=relaxed/simple;
-	bh=ssGG+CKUWsnuo7DJG4Us0vDPXriTTmU6BtXhSuzPDm8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pj1lDxWH5qM/870z/CoKhEKa1EaqLIaE6Qun4trsmLY7ZgsnzHbOE+YUi1c7ly5z5h2eSMJY4JN+WDjWAUp4Hwty/Uh1Ur84pyrDCr1w2tmm4pxXpr3/thujVe91nHBL5RIyFklL4udrZWjTm0JebNgVfqKZaCDGj+LED+USmNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JRL5q1bn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723084355;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ndEu3RRqwHVmaDc3taG18G8e1bpdKYoIpCuypgGJMPA=;
-	b=JRL5q1bnnkN2wQceXCcuHmsrZDpNcQi3x7F8UT5WuJ3oHidH6vxGK6V3Jg2CF+GDS1J35l
-	3eZYHYjv6Ixo+soNRdDJJaCCLHOqlTYHjpzeyl0zPL6cyvgsmzB4PsaThlv6PVS0hxJOJz
-	G94lnNI9jcSrPihxPK9f2mxAgFjpAuU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-621-9NMt4xi9MReo56A-K5wqTg-1; Wed,
- 07 Aug 2024 22:32:32 -0400
-X-MC-Unique: 9NMt4xi9MReo56A-K5wqTg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4BC031945CAA;
-	Thu,  8 Aug 2024 02:32:31 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.123])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EE0C01955F30;
-	Thu,  8 Aug 2024 02:32:29 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v2] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is enabled
-Date: Wed,  7 Aug 2024 22:32:15 -0400
-Message-ID: <20240808023215.1160684-1-longman@redhat.com>
+	s=arc-20240116; t=1723084371; c=relaxed/simple;
+	bh=jdULBYPjo3z/xu+OPeGcPx0L0vn0k5DgGnj155pa/hk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HSNOQw49HbX7W4Vi5ffKw2T+qtjHOh3Em3AYzwDM7qga9McrkB1w7pLVTpVExX/FinaoWAoDvPDqh9sRheiYm/omArjOC8pDxHxMBRk163RpsocXxagOi3PgyeapqiOWNo4+M++pDMavoIFIJAon8coS42U071q9B1PO8mn80Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=H6v6Glzx; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=vgv2QECi/fHr16QDLzIQTR8lb9Mi+UvA/Ge68OotDjA=;
+	b=H6v6GlzxXUgh6DDgyeN7AsjOdao8aAiwQ/UCBC6G+CNsoTO/XPRAjSVeuFTaRZ
+	VcCz7yjs1/Fosf79t3nrCunDTmc0at0FKBqfqMLrqfhT53vfkQ4+oVXzKlkw1QOw
+	edtIBT8xie7omh5GSgSiESyNAP0b704+5NpxdWRiaVY60=
+Received: from localhost.localdomain (unknown [111.48.58.13])
+	by gzga-smtp-mta-g2-4 (Coremail) with SMTP id _____wDnN+sxLrRmReqHAQ--.38948S2;
+	Thu, 08 Aug 2024 10:32:18 +0800 (CST)
+From: 412574090@163.com
+To: ilpo.jarvinen@linux.intel.com
+Cc: bhelgaas@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	xiongxin@kylinos.cn
+Subject: Re: [PATCH] PCI: Add PCI_EXT_CAP_ID_PL_64GT define
+Date: Thu,  8 Aug 2024 10:32:17 +0800
+Message-Id: <20240808023217.25673-1-412574090@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <04db5243-f522-00b4-ae12-991da3e67513@linux.intel.com>
+References: <04db5243-f522-00b4-ae12-991da3e67513@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-CM-TRANSID:_____wDnN+sxLrRmReqHAQ--.38948S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWrKr4UJr47Xr48ZF18Kw47XFb_yoW8JrWDpr
+	n3Xa13Cr47XF1q93Z7AwnxKryUX3WIqF1I93y2g3s3JFy3Gw1xKF1q93yaya43XrWktFWY
+	vr9Fqw1rCayqvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRSJmbUUUUU=
+X-CM-SenderInfo: yursklauqziqqrwthudrp/1tbivh01AGV4Kc49GwABsL
 
-As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
-capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
-for all kmalloc/kfree calls. So stackdepot capacity was increased 8
-times to accommodate KASAN usage even thought it was claimed 4X should
-be enough at that time.
+> On Tue, 6 Aug 2024, 412574090@163.com wrote:
+>
+> > From: weiyufeng <weiyufeng@kylinos.cn>
+> 
+> > PCIe r6.0, sec 7.7.7.1, defines a new 64.0 GT/s PCIe Extended Capability
+> > ID,Add the define for PCI_EXT_CAP_ID_PL_64GT for drivers that will want
+> > this whilst doing Gen6 accesses.
+> > 
+> > Signed-off-by: weiyufeng <weiyufeng@kylinos.cn>
+> > ---
+> >  include/uapi/linux/pci_regs.h | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> > index 94c00996e633..cc875534dae1 100644
+> > --- a/include/uapi/linux/pci_regs.h
+> > +++ b/include/uapi/linux/pci_regs.h
+> > @@ -741,6 +741,7 @@
+> >  #define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
+> >  #define PCI_EXT_CAP_ID_PL_16GT	0x26	/* Physical Layer 16.0 GT/s */
+> >  #define PCI_EXT_CAP_ID_PL_32GT  0x2A    /* Physical Layer 32.0 GT/s */
+> > +#define PCI_EXT_CAP_ID_PL_64GT  0x31    /* Physical Layer 64.0 GT/s */
+> >  #define PCI_EXT_CAP_ID_DOE	0x2E	/* Data Object Exchange */
 
-With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
-for stack records"), all stackdepot records uses a fixed size with
-CONFIG_STACKDEPOT_MAX_FRAMES (default=64) entries. This is merged to
-support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
-use variable size records for non-evictable entries") re-enabled
-the use of variable size records for non-KASAN use cases, but KASAN
-(generic mode) still uses the large fixed size stack records.
+> These should be in numerical order.
+In PCIe r6.0, PCI_EXT_CAP_ID_PL_64GT value is 0x31.
 
-With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
-stackdepot space had been more than double than before. Assuming an
-average stack frame size of 16, a KASAN stack record is almost 4X the
-size of a non-KASAN one.
+> >  #define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_DOE
 
-When a wide variety of workloads are run on a debug kernel with KASAN
-enabled, the following warning may sometimes be printed.
+> This was not adapted??
+PCIe r6.0, sec 7.7.7.1 have this definition。
+--
+Thanks,
 
- [ 6818.650674] Stack depot reached limit capacity
- [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot_alloc_stack+0x39e/0x3d0
-   :
- [ 6818.650907] Call Trace:
- [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
- [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
- [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
- [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
- [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
- [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
- [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
- [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
- [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
- [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
- [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
- [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
- [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
- [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
- [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
- [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
- [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
- [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
- [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
- [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 [xfs]
- [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs]
- [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
- [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
- [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
- [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
- [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
-
-With all the recent changes in stackdepot to support new KASAN features,
-it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
-enough when KASAN is enabled. Fix this stackdepot capability issue
-by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
-maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
-
-Also use the MIN() macro for defining DEPOT_MAX_POOLS to clarify the
-intention.
-
-Fixes: fc60e0caa94d ("lib/stackdepot: use fixed-sized slots for stack records")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- lib/stackdepot.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-index 5ed34cc963fc..beeb70b57710 100644
---- a/lib/stackdepot.c
-+++ b/lib/stackdepot.c
-@@ -36,11 +36,12 @@
- #include <linux/memblock.h>
- #include <linux/kasan-enabled.h>
- 
--#define DEPOT_POOLS_CAP 8192
-+/* KASAN is a big user of stackdepot, double the cap if KASAN is enabled */
-+#define DEPOT_POOLS_CAP (8192 * (IS_ENABLED(CONFIG_KASAN) ? 2 : 1))
-+
- /* The pool_index is offset by 1 so the first record does not have a 0 handle. */
- #define DEPOT_MAX_POOLS \
--	(((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
--	 (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
-+	MIN((1LL << (DEPOT_POOL_INDEX_BITS)) - 1, DEPOT_POOLS_CAP)
- 
- static bool stack_depot_disabled;
- static bool __stack_depot_early_init_requested __initdata = IS_ENABLED(CONFIG_STACKDEPOT_ALWAYS_INIT);
--- 
-2.43.5
+weiyufeng
 
 
