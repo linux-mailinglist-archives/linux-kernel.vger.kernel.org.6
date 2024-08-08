@@ -1,330 +1,138 @@
-Return-Path: <linux-kernel+bounces-280010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48AF94C480
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:36:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6924B94C487
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28EAD2898A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:36:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186561F27247
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C99156F20;
-	Thu,  8 Aug 2024 18:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0E414D6EB;
+	Thu,  8 Aug 2024 18:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="Xn7E7UcE"
-Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Co8/ikxR"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD08D155301;
-	Thu,  8 Aug 2024 18:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08BE13D63E
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723142170; cv=none; b=EMO5j7H8CR2L/xf1QUlLb8cikMZjxeTmEG0199eu5KURIqeRk8wwZkAdQTCGIsWZSlKRMBroRUTsuIgJQs1AhMs/xl+7HCyRYkzwdzymTqfPZiqMj9KnVGXf3GSicqDDD28tW/FWP1yExXnac3NSuM33c5GYyZ4rx1QiuDf/i3c=
+	t=1723142218; cv=none; b=Fgls0nX7P5p4RvDdYA1Bnwes0ZlxmvbqEnF7jXqsJHd4mWYQB1ARl+HqOJ/cIzDUKbY4lNe/Rz6hKnRIuaGQQ6MPhhUITMlEiOkEEMI6RKwC72fxjM/P32/4EIo9bMjqO7JUkG4MYkmjObShHgJyDtQWgTSRdVzzK9lRs8vyhFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723142170; c=relaxed/simple;
-	bh=d35Z1ZJLNZsjqRNLG/h2LEXIWzUn4xuN6K7xgHXBkFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fThrGEmtEO2Jm8HAzzJlcNOFlHdOYEPY8+UBcpnWJqhTCKdj0sdr6MX4/dAtJ117MTNfdYRn2F5P3KbsSUeIxOUx+4FW6PaP4PXoPaSp+zdjFS1Eer7JEAWuBbMT61u+02iaajBCOsU9413DcxQc312RBeDzpb7M3V2hN4upE1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=Xn7E7UcE; arc=none smtp.client-ip=129.21.49.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
-Received: from localhost (localhost [127.0.0.1])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id D7752456D91E;
-	Thu,  8 Aug 2024 14:36:01 -0400 (EDT)
-Authentication-Results: mail.csh.rit.edu (amavisd-new);
- dkim=pass (1024-bit key) reason="pass (just generated, assumed good)"
- header.d=csh.rit.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
-	content-transfer-encoding:mime-version:references:in-reply-to
-	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mail; t=1723142161; x=1724956562; bh=d35Z1
-	ZJLNZsjqRNLG/h2LEXIWzUn4xuN6K7xgHXBkFI=; b=Xn7E7UcEH+7x0Uliq1Kdd
-	0vzrQ2mfI/rTnLueyzsjR0yemUhpLOL2jBPbANgHgTIJ2X3g0m6LmK09K7uzRGPr
-	2l39qIQHtLasigRyVb/Fl0bNhpzCPr0Olq75k2ji9sPL40DwgFaiw2T7pr0xOKnV
-	5EqieAks+8m4LlOIb4lfeE=
-X-Virus-Scanned: amavisd-new at csh.rit.edu
-Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
- by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id CUu_JpEwKeQw; Thu,  8 Aug 2024 14:36:01 -0400 (EDT)
-Received: from freedom.csh.rit.edu (freedom.csh.rit.edu [129.21.49.182])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id ACEA74140103;
-	Thu,  8 Aug 2024 14:36:00 -0400 (EDT)
-From: Mary Strodl <mstrodl@csh.rit.edu>
-To: linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org,
-	urezki@gmail.com,
-	hch@infradead.org,
-	linux-mm@kvack.org,
-	lee@kernel.org,
-	andi.shyti@kernel.org,
-	linux-i2c@vger.kernel.org,
-	s.hauer@pengutronix.de,
-	christian.gmeiner@gmail.com,
-	Mary Strodl <mstrodl@csh.rit.edu>
-Subject: [PATCH v3 2/2] i2c: Add Congatec CGEB I2C driver
-Date: Thu,  8 Aug 2024 14:35:26 -0400
-Message-ID: <20240808183527.3950120-3-mstrodl@csh.rit.edu>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240808183527.3950120-1-mstrodl@csh.rit.edu>
-References: <20240808183527.3950120-1-mstrodl@csh.rit.edu>
+	s=arc-20240116; t=1723142218; c=relaxed/simple;
+	bh=VlLUMqsPKHjYynux8QgqXV76m4Utqoi7re4SUALKn4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=t2xipKpx0LdF/ZZvbxfmASUrW17R+eB57uIxwZL9mSnKI6yJ+qCMDPWOSFf89wgzP/tjIzkPGgkvVvCP4cmdbMSUpoRG8dOxmybsQiU6V8hQvHJUwxzS/sjIkTucwwxlkbKcgbVpF8xfq8EEPZSNja6I7vhTj70l5H1ENQXdFak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Co8/ikxR; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso469a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:36:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723142215; x=1723747015; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AUiHQdGUYRTRZksaVvFbHULoWNzG0269iJwVT5/7aW0=;
+        b=Co8/ikxRIqCN925u7WE9vm1inqQy2VGZVmNrW7mzTFeVeANP/P2qZbVzIDlxlrYwfV
+         7Va7dtI0CaJntR3w2yJlN9BTfBczQkJHjAZJvLUxm0IHZZgT62wpNW6RfBkzQ/GQz6Sl
+         l/DRzytDv956doMC1FPozPkOD8hfXGB0uKP6xrizBoEdzv/igtOl6F5wQCJ5aKgcj90y
+         DmL5HLsRk6aqeZNqb5bIS0jUJHirGT5tRJqKfW4oFWdUjUBCA7CN3bIrfKnkFXDb1HwP
+         DWGA4RREpywbKB/hHnY/hZ7dQq2ySUwf45/e2VxvyoFpyZhxseGYY6cchRjyUfE+dCHj
+         YFuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723142215; x=1723747015;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AUiHQdGUYRTRZksaVvFbHULoWNzG0269iJwVT5/7aW0=;
+        b=t2rcLtoT5oxIrWgZLqJRKGnR7k7jCA81NSy4n6gT3MHvsAjRxX/rbsMvjVA0eRR8yW
+         dqnWNhkzXELA4Nj832BDUOWj9y+wgKme3mEahf4QHnPzGbWncH2UsdMjMLY/DrtYI4qd
+         fLvupBS6P32Ot9i6vbXMLAjrI7tzY2eUOdJLttUBPPhcGGyV4/9o4KPN5wnmeJMa1KDk
+         d9d5n6vLJEosV9hZq+lAtfC5OAH+1gbHpmPMlk19K1FvS6X9vh+9RkgFbYvDZDn8bKPx
+         DKr3JccGKLT+yBwRR5axUHinScgePI7pdQ/R4PODrmcQDmsiJfS9VvxVS5z4+6TXgNt/
+         XqqA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9aGuP/h5BHMoGpia+Ehe3iICfaFnen1Z+OdkwrbeyJDV/vxpBWuzq56MW3DPKCZ4m2ErF+sSRckwDv0J4Xjdo6rauXD/JuthSe9xB
+X-Gm-Message-State: AOJu0Yz6907DYL268kGC+zySFPjyy1wMyfjNolzidNfXNLkgMQmpsUjU
+	APPe/Imf09B2V469uvwYp3X5aG9pqSyNhSMPZ59a7XuNOfGUXnA1IVQT1Z803Feewdb6Gal4yoM
+	9M+HW0r8bP8XvZ0jnOItG8ggTFeafmqi+CFrr
+X-Google-Smtp-Source: AGHT+IF76YCRlol+VaBff83BpYeNuFvu+aIiNuVvaKlOiVPlqg9lL9OA9dYb+7cLVxCzSEDJLygo9YoZhUgovQLCQ1E=
+X-Received: by 2002:a05:6402:27d4:b0:57d:436b:68d6 with SMTP id
+ 4fb4d7f45d1cf-5bbbc8a8c0dmr16476a12.7.1723142214918; Thu, 08 Aug 2024
+ 11:36:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240807124103.85644-1-mpe@ellerman.id.au> <20240807124103.85644-2-mpe@ellerman.id.au>
+ <CALmYWFsCrMxkA1v58fJxtyGR15ZGxmSP8x7QC=oeKwzcwGL76A@mail.gmail.com>
+ <gtz7s4eyzydaomh2msvfhpemhiruexy53nutd3fwumqfpos7v5@4fnqun2olore>
+ <CALmYWFvqoxyBf4iP7WPTU_Oxq_zpRzvaBOWoHc4n4EwQTYhyBA@mail.gmail.com>
+ <babup6k7qh5ii5avcvtz2rqo4n2mzh2wjbbgk5xeuivfypqnuc@2gydsfao3w7b>
+ <CALmYWFsAT+Cb37-cSTykc_P7bJDHmFa7mWD5+B1pEz73thchcQ@mail.gmail.com>
+ <lhe2mky6ahlk2jzvvfjyongqiseelyx2uy7sbyuso6jcy3b2dq@7ju6cea62jgk>
+ <CAHk-=wgTXVMBRuya5J0peujSrtunehRtzk=WVrm6njPhHrpTJw@mail.gmail.com>
+ <CALmYWFtAenAQmUCSrW8Pu6eNYMcfDe9R4f87XgUxaO4gsfzVQg@mail.gmail.com> <6i3f5bvcppm4bkpphcb7sxsopmeani5mg5irytc3nr464p24ka@jpno77j7cgyd>
+In-Reply-To: <6i3f5bvcppm4bkpphcb7sxsopmeani5mg5irytc3nr464p24ka@jpno77j7cgyd>
+From: Jeff Xu <jeffxu@google.com>
+Date: Thu, 8 Aug 2024 11:36:16 -0700
+Message-ID: <CALmYWFvXKdfyvZTfu9D4GdBgeVHzLR2rXshqZMFPjU+FuAHJkQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] powerpc/mm: Handle VDSO unmapping via close() rather
+ than arch_unmap()
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jeff Xu <jeffxu@google.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org, 
+	linuxppc-dev@lists.ozlabs.org, akpm@linux-foundation.org, 
+	christophe.leroy@csgroup.eu, jeffxu@chromium.org, 
+	linux-kernel@vger.kernel.org, npiggin@gmail.com, oliver.sang@intel.com, 
+	pedro.falcato@gmail.com, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-From: Sascha Hauer <s.hauer@pengutronix.de>
+On Thu, Aug 8, 2024 at 11:08=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Jeff Xu <jeffxu@google.com> [240807 23:37]:
+> > On Wed, Aug 7, 2024 at 8:21=E2=80=AFPM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > >
+> > > On Wed, 7 Aug 2024 at 16:20, Liam R. Howlett <Liam.Howlett@oracle.com=
+> wrote:
+> > > >
+> > > > Okay, I'm going to try one more time here.  You are suggesting to h=
+ave a
+> > > > conf flag to leave the vdso pointer unchanged when it is unmapped.
+> > > > Having the close behind the conf option will not prevent it from be=
+ing
+> > > > unmapped or mapped over, so what you are suggesting is have a
+> > > > configuration option that leaves a pointer, mm->context.vdso, to be
+> > > > unsafe if it is unmapped if you disable checkpoint restore.
+> > >
+> > This is a new point that I didn't realize before, if we are going to ha=
+ndle
+> > unmap vdso safely, yes, this is a bugfix that should be applied everywh=
+ere
+> > for all arch, without CHECKPOINT_RESTORE config.
+> >
+> > Do we need to worry about mmap(fixed) ? which can have the same effect
+> > as mremap.
+>
+> Yes, but it should be handled by vm_ops->close() when MAP_FIXED unmaps
+> the vdso.  Note that you cannot MAP_FIXED over half of the vma as the
+> vm_ops->may_split() is special_mapping_split(), which just returns
+> -EINVAL.
+>
+The may_split() failure logic is specific to vm_special_mapping, right ?
 
-This driver provides a I2C bus driver for the CGEB interface
-found on some Congatec x86 modules. No devices are registered
-on the bus, the user has to do this via the i2c device /sys
-interface.
+Do we still need to keep vm_special_mapping struct , if we are going to
+treat  special vma as normal vma ?
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
-Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
----
- drivers/i2c/busses/Kconfig             |  10 ++
- drivers/i2c/busses/Makefile            |   1 +
- drivers/i2c/busses/i2c-congatec-cgeb.c | 190 +++++++++++++++++++++++++
- 3 files changed, 201 insertions(+)
- create mode 100644 drivers/i2c/busses/i2c-congatec-cgeb.c
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index fe6e8a1bb607..0a5d348c4664 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -1261,6 +1261,16 @@ config I2C_RCAR
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-rcar.
-=20
-+config I2C_CONGATEC_CGEB
-+	tristate "Congatec CGEB I2C driver"
-+	depends on MFD_CONGATEC_CGEB
-+	help
-+	  If you say yes to this option, support will be included for the
-+	  Congatec CGEB I2C controller.
-+
-+	  This driver can also be built as a module.  If so, the module
-+	  will be called i2c-congatec-cgeb.
-+
- comment "External I2C/SMBus adapter drivers"
-=20
- config I2C_DIOLAN_U2C
-diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index 78d0561339e5..f4e9fa7542be 100644
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@ -128,6 +128,7 @@ obj-$(CONFIG_I2C_XILINX)	+=3D i2c-xiic.o
- obj-$(CONFIG_I2C_XLP9XX)	+=3D i2c-xlp9xx.o
- obj-$(CONFIG_I2C_RCAR)		+=3D i2c-rcar.o
- obj-$(CONFIG_I2C_GXP)		+=3D i2c-gxp.o
-+obj-$(CONFIG_I2C_CONGATEC_CGEB)	+=3D i2c-congatec-cgeb.o
-=20
- # External I2C/SMBus adapter drivers
- obj-$(CONFIG_I2C_DIOLAN_U2C)	+=3D i2c-diolan-u2c.o
-diff --git a/drivers/i2c/busses/i2c-congatec-cgeb.c b/drivers/i2c/busses/=
-i2c-congatec-cgeb.c
-new file mode 100644
-index 000000000000..2a2ebd57285d
---- /dev/null
-+++ b/drivers/i2c/busses/i2c-congatec-cgeb.c
-@@ -0,0 +1,190 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * CGEB i2c driver
-+ *
-+ * (c) 2011 Sascha Hauer, Pengutronix
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#include <linux/i2c.h>
-+#include <linux/mfd/congatec-cgeb.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#define CG_I2C_FLAG_START   0x00080    /* send START condition */
-+#define CG_I2C_FLAG_STOP    0x00040    /* send STOP condition */
-+#define CG_I2C_FLAG_ALL_ACK 0x08000    /* send ACK on all read bytes */
-+#define CG_I2C_FLAG_ALL_NAK 0x04000    /* send NAK on all read bytes */
-+
-+struct cgeb_i2c_priv {
-+	struct cgeb_board_data *board;
-+	struct i2c_adapter adapter;
-+	int unit;
-+};
-+
-+static u32 cgeb_i2c_func(struct i2c_adapter *adapter)
-+{
-+	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-+}
-+
-+static int cgeb_i2c_set_speed(struct cgeb_i2c_priv *priv, int speed)
-+{
-+	struct cgeb_function_parameters fps;
-+
-+	memset(&fps, 0, sizeof(fps));
-+
-+	fps.unit =3D priv->unit;
-+	fps.pars[0] =3D speed;
-+
-+	return cgeb_call(priv->board, &fps, CgebI2CSetFrequency);
-+}
-+
-+static int cgeb_i2c_xfer(struct i2c_adapter *adapter,
-+		struct i2c_msg *msgs, int num)
-+{
-+	struct cgeb_function_parameters fps;
-+	int i, ret;
-+	unsigned long flags =3D CG_I2C_FLAG_START;
-+	struct cgeb_i2c_priv *priv =3D i2c_get_adapdata(adapter);
-+	unsigned long rdlen, wrlen;
-+	unsigned char *rdbuf, *wrbuf, *raw_wrbuf;
-+	unsigned short lmax =3D 0;
-+
-+	/*
-+	 * With cgeb the I2C address is part of the write data
-+	 * buffer, so allocate a buffer with the length of the
-+	 * longest write buffer + 1
-+	 */
-+	for (i =3D 0; i < num; i++)
-+		if (!(msgs[i].flags & I2C_M_RD))
-+			lmax =3D max(lmax, msgs[i].len);
-+
-+	raw_wrbuf =3D kmalloc(lmax + 1, GFP_KERNEL);
-+	if (!raw_wrbuf)
-+		return -ENOMEM;
-+
-+	for (i =3D 0; i < num; i++) {
-+		if (msgs[i].flags & I2C_M_RD) {
-+			rdbuf =3D msgs[i].buf;
-+			rdlen =3D msgs[i].len;
-+			wrbuf =3D NULL;
-+			wrlen =3D 0;
-+		} else {
-+			rdbuf =3D NULL;
-+			rdlen =3D 0;
-+			wrbuf =3D msgs[i].buf;
-+			wrlen =3D msgs[i].len;
-+		}
-+
-+		raw_wrbuf[0] =3D msgs[i].addr << 1;
-+		if (wrlen)
-+			memcpy(&raw_wrbuf[1], wrbuf, wrlen);
-+
-+		if (msgs[i].flags & I2C_M_RD)
-+			raw_wrbuf[0] |=3D 1;
-+
-+		if (i =3D=3D num - 1)
-+			flags |=3D CG_I2C_FLAG_STOP;
-+
-+		dev_dbg(&adapter->dev,
-+				"%s: rd: %p/%ld wr: %p/%ld flags: 0x%08lx %s\n",
-+				__func__, rdbuf, rdlen, raw_wrbuf, wrlen + 1,
-+				flags,
-+				msgs[i].flags & I2C_M_RD ? "READ" : "WRITE");
-+
-+		memset(&fps, 0, sizeof(fps));
-+
-+		fps.unit =3D priv->unit;
-+		fps.pars[0] =3D wrlen + 1;
-+		fps.pars[1] =3D rdlen;
-+		fps.pars[2] =3D flags;
-+		fps.iptr =3D raw_wrbuf;
-+		fps.optr =3D rdbuf;
-+		fps.optr_size =3D sizeof(*rdbuf) * rdlen;
-+		fps.iptr_size =3D (wrlen + 1) * sizeof(*raw_wrbuf);
-+
-+		ret =3D cgeb_call(priv->board, &fps, CgebI2CTransfer);
-+		if (ret) {
-+			ret =3D -EREMOTEIO;
-+			goto out;
-+		}
-+	}
-+
-+	ret =3D num;
-+
-+out:
-+	kfree(raw_wrbuf);
-+
-+	return ret;
-+}
-+
-+static struct i2c_algorithm cgeb_i2c_algo =3D {
-+	.master_xfer    =3D cgeb_i2c_xfer,
-+	.functionality  =3D cgeb_i2c_func,
-+};
-+
-+static int cgeb_i2c_probe(struct platform_device *pdev)
-+{
-+	struct cgeb_i2c_priv *priv;
-+	struct cgeb_pdata *pdata =3D pdev->dev.platform_data;
-+	int ret;
-+
-+	priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	strscpy(priv->adapter.name, pdev->name);
-+	priv->adapter.owner             =3D THIS_MODULE;
-+	priv->adapter.algo              =3D &cgeb_i2c_algo;
-+	priv->adapter.dev.parent        =3D &pdev->dev;
-+	priv->unit =3D pdata->unit;
-+	priv->board =3D pdata->board;
-+	i2c_set_adapdata(&priv->adapter, priv);
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	ret =3D cgeb_i2c_set_speed(priv, 400000);
-+	if (ret)
-+		/* not a critical error, we can continue with the default speed. */
-+		dev_warn(&pdev->dev, "Could not set speed to 400KHz\n");
-+
-+	ret =3D i2c_add_adapter(&priv->adapter);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "registration failed\n");
-+		return ret;
-+	}
-+
-+	dev_info(&pdev->dev, "registered\n");
-+
-+	return 0;
-+};
-+
-+static int cgeb_i2c_remove(struct platform_device *pdev)
-+{
-+	struct cgeb_i2c_priv *priv =3D platform_get_drvdata(pdev);
-+
-+	i2c_del_adapter(&priv->adapter);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver cgeb_i2c_driver =3D {
-+	.probe          =3D cgeb_i2c_probe,
-+	.remove         =3D cgeb_i2c_remove,
-+	.driver =3D {
-+		.name   =3D "cgeb-i2c",
-+	},
-+};
-+module_platform_driver(cgeb_i2c_driver);
-+
-+MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
-+MODULE_DESCRIPTION("cgeb i2c driver");
-+MODULE_LICENSE("GPL");
---=20
-2.45.2
-
+> Thanks,
+> Liam
 
