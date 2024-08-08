@@ -1,92 +1,163 @@
-Return-Path: <linux-kernel+bounces-279599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D31C94BF71
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:16:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A66894BF6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 773511C26037
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:16:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D72ADB2770A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F90B18F2C1;
-	Thu,  8 Aug 2024 14:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664FF18E776;
+	Thu,  8 Aug 2024 14:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iB42YO84"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgSsRyDF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4BA18DF6E;
-	Thu,  8 Aug 2024 14:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A929818DF6E
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723126313; cv=none; b=Pcq8uMSGsgGAMkOuXP6PQfFdIhJKIikasaS5s5yOUbYjB5T29uofmukHuiqO3HJAh+f3Rqkv4Z+BxTRJH1X7VTlOtnqgOzILbFQsFWkpGjtUuHbX9ScMG5zC17JXQFteowTRvqHapTkew9uuFa2x7ymFgzaoTd6sSq7AyWqaYqo=
+	t=1723126307; cv=none; b=h8f+eWI6OVj/ZWLSwFdNE+vKOHdAqLRs+cUgnoE1V5/UB8C2CsdQgYzTNbQtUi8sBE57PxU5r9npWcdKscZGvH90ceC3cW1f3BvWnYGvRObgks7m6zaQB9qo1SRhMhPCEDV81HmhmCgiH/ZuYEpFl4Ws9qiqe9kJ9oZtfYn1Ojs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723126313; c=relaxed/simple;
-	bh=vgXT7m8NH3XZxE/FG7b0Er74vsRoh+dJVgOe3aYqbL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCbzcJP4PIjfBq1AOoAe/I+4pJXm6z1Kv6Ibxe1k3xp+PhhijQ+8s1SdR+dco8e0wAYrGZBgcUkOyUZ3/3dQ/bL085FADt9F4IZRye80NKKMAruMO330BIlFbPmSvAJtAOB3xZBqcTwmd9+dErMtu/BCCAW03292aIlBdGg2XPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=iB42YO84; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=vmM6B6En+4wgIlMqg7/+TTbOvDNuGuDEOy3rxQ01D1A=; b=iB42YO84SFBbC5y44z3qI9MDTP
-	VbI2K0KEbHvDRftgSugK2HxW845rFB9cGe20qmkv0lYaF8bADNtYp7jggUhyaHAePGJAJ60F2pdxr
-	FUkF14CUfSC7Z+O9K5LHWhdFmkwEB2sJYLSTQtTBhavhSfEPA4hMmeEw6QYYVyobTtXA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sc3rg-004IGv-6l; Thu, 08 Aug 2024 16:11:40 +0200
-Date: Thu, 8 Aug 2024 16:11:40 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Divya Koppera <Divya.Koppera@microchip.com>
-Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
-	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: microchip_t1: Adds support for
- LAN887x phy
-Message-ID: <e9fdc9f6-8c89-4c2a-ba38-d927d0a52d78@lunn.ch>
-References: <20240808145916.26006-1-Divya.Koppera@microchip.com>
+	s=arc-20240116; t=1723126307; c=relaxed/simple;
+	bh=+8KhZkMTI5fRZGMzqJiKMgxHC07OvLU1UljF56wsFDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y8JOTKaIjjxPXIx6rRykA8VzoD9a/fo5fP/1vAxORk9i9J/gSUjrzTz0aaEpogEvgNmOOOSm+aye61GWEBFGuZkEoMfGDyuW/e+JfuuXa1KleP10xH72nmPa6JyIMWCwoea1VnTxb5tybUn5af4YE3Pi8yex3d50XmI0vBAvsoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgSsRyDF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30833C32782;
+	Thu,  8 Aug 2024 14:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723126307;
+	bh=+8KhZkMTI5fRZGMzqJiKMgxHC07OvLU1UljF56wsFDI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sgSsRyDFt7OAwOaW34uDzSl+7WLoS2aAgUs/xckW5EK/4cWOfyAlSYT64mTCgLcJb
+	 s1aexZW+xsPXBmmUNg33vx5AuKwMuALesWFRK/zxpFRo1ewo/4o2uqlaij7JIctLCz
+	 +5UVeyBMbJQf57ushrLmciG8wwZI0zDiDBddOs9BlQKMnjpb7u0t4V99NmUUYVt9Fr
+	 q7zEICRDImzWheYij9Vg3Jaa4MnvH9Xf5Z1AWHWBn2MSfb8m6zcATy0NSl5mR9LY++
+	 KV/zbZ0q413U4IzKvvL7Xz25IMG/FY+u9CpsCyyhFIQMJkO+70iSB1rzBm7r8m67BU
+	 gG8d9zKVBxbUg==
+Date: Thu, 8 Aug 2024 16:11:41 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Markus Armbruster <armbru@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Eric Blake
+ <eblake@redhat.com>, Igor Mammedov <imammedo@redhat.com>, Michael Roth
+ <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, Peter Maydell
+ <peter.maydell@linaro.org>, linux-kernel@vger.kernel.org,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 5/7] qapi/ghes-cper: add an interface to do generic
+ CPER error injection
+Message-ID: <20240808161141.5ffe730e@foz.lan>
+In-Reply-To: <87v80b1jqe.fsf@pond.sub.org>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<51cbdc8a53e58c69ee17b15c398feeeeeeb64f34.1722634602.git.mchehab+huawei@kernel.org>
+	<87v80b1jqe.fsf@pond.sub.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808145916.26006-1-Divya.Koppera@microchip.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> +	if (!IS_ENABLED(CONFIG_OF_MDIO)) {
-> +		/* Configure default behavior of led to link and activity for any
-> +		 * speed
-> +		 */
-> +		ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1,
-> +				     LAN887X_COMMON_LED3_LED2,
-> +				     LAN887X_COMMON_LED2_MODE_SEL_MASK,
-> +				     LAN887X_LED_LINK_ACT_ANY_SPEED);
+Em Thu, 08 Aug 2024 10:50:33 +0200
+Markus Armbruster <armbru@redhat.com> escreveu:
 
-This is unusual. What has OF_MDIO got to do with LEDs?
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Since this is a new driver, you can default the LEDs to anything you
-want. You however cannot change the default once merged. Ideally you
-will follow up with some patches to add support for controlling the
-LEDs via /sys/class/leds.
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 98eddf7ae155..655edcb6688c 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -2075,6 +2075,13 @@ F: hw/acpi/ghes.c
+> >  F: include/hw/acpi/ghes.h
+> >  F: docs/specs/acpi_hest_ghes.rst
+> >  
+> > +ACPI/HEST/GHES/ARM processor CPER
+> > +R: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > +S: Maintained
+> > +F: hw/arm/ghes_cper.c
+> > +F: hw/acpi/ghes_cper_stub.c
+> > +F: qapi/ghes-cper.json
+> > +  
+> 
+> Here's the reason for creating a new QAPI module instead of adding to
+> existing module acpi.json: different maintainers.
+> 
+> Hypothetical question: if we didn't care for that, would this go into
+> qapi/acpi.json?
 
-> +static void lan887x_get_strings(struct phy_device *phydev, u8 *data)
-> +{
-> +	for (int i = 0; i < ARRAY_SIZE(lan887x_hw_stats); i++) {
-> +		strscpy(data + i * ETH_GSTRING_LEN,
-> +			lan887x_hw_stats[i].string, ETH_GSTRING_LEN);
-> +	}
+Independently of maintainers, GHES is part of ACPI APEI HEST, meaning
+to report hardware errors. Such hardware errors are typically handled by 
+the host OS, so quest doesn't need to be aware of that[1].
 
-There has been a general trend of replacing code like this with
-ethtool_puts().
+So, IMO the best would be to keep APEI/HEST/GHES in a separate file.
 
-	Andrew
+[1] still, I can foresee some scenarios were passing some errors to the
+    guest could make sense.
+
+> 
+> If yes, then should we call it acpi-ghes-cper.json or acpi-ghes.json
+> instead?
+
+Naming it as acpi-ghes,acpi-hest or acpi-ghes-cper would equally work
+from my side.
+
+> 
+> >  ppc4xx
+> >  L: qemu-ppc@nongnu.org
+> >  S: Orphan  
+> 
+> [...]
+> 
+> > diff --git a/qapi/ghes-cper.json b/qapi/ghes-cper.json
+> > new file mode 100644
+> > index 000000000000..3cc4f9f2aaa9
+> > --- /dev/null
+> > +++ b/qapi/ghes-cper.json
+> > @@ -0,0 +1,55 @@
+> > +# -*- Mode: Python -*-
+> > +# vim: filetype=python
+> > +
+> > +##
+> > +# = GHESv2 CPER Error Injection
+> > +#
+> > +# These are defined at
+> > +# ACPI 6.2: 18.3.2.8 Generic Hardware Error Source version 2
+> > +# (GHESv2 - Type 10)
+> > +##  
+> 
+> Feels a bit terse.  These what?
+> 
+> The reference could be clearer: "defined in the ACPI Specification 6.2,
+> section 18.3.2.8 Generic Hardware Error Source version 2".  A link would
+> be nice, if it's stable.
+
+I can add a link, but only newer ACPI versions are hosted in html format
+(e. g. only versions 6.4 and 6.5 are available as html at uefi.org).
+
+Can I place something like:
+
+	Defined since ACPI Specification 6.2,
+	section 18.3.2.8 Generic Hardware Error Source version 2. See:
+
+	https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#generic-hardware-error-source-version-2-ghesv2-type-10
+
+e. g. having the link pointing to ACPI 6.4 or 6.5, instead of 6.2?
+
+>   # @raw-data: payload of the CPER encoded in base64
+> 
+> Have you considered naming this @payload instead?
+
+Works for me.
+
+Thanks,
+Mauro
 
