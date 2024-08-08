@@ -1,58 +1,74 @@
-Return-Path: <linux-kernel+bounces-279500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B15094BE18
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:01:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F309294BE1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90A251F23779
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:01:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E7F41C22FDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C8518CBF7;
-	Thu,  8 Aug 2024 13:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DD418CBF7;
+	Thu,  8 Aug 2024 13:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAEIB9GZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dp8sugLq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D5318A6B3;
-	Thu,  8 Aug 2024 13:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C521EEA9
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 13:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723122088; cv=none; b=K+B6hfHkFyQO64lHnL0eF/gcG4TNeqtaBwenkznzTd9Ar+daNdOHloVetFJmv7iX5DTyW30uIkC2P93UA/sjGXTo2WnxwSEmAn6cm9xnl10+PUgybCrdHh7GgJdaRgkvSvlNXlfMT4QWy51XvQnfDwAEa/mU67QNJPIjrh6C+Hc=
+	t=1723122103; cv=none; b=nz/uC9/bMmNN9ZzoMsQGjrNB8VtU/xJoJHuwNylNNsmp6McrZwjXL6UmnCNlFKlt/sMSLRh5euP/QrH+XQVmsYLbazc/nyft4xnVl6HClwvG3pfzm5IscNmpWNZwvFFdToQIRtnE/Vam/wyHZ8fkTmsS0Fgq1638BAlPN33uNTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723122088; c=relaxed/simple;
-	bh=T4RdaDLDFwBenuUKBcPyXWxSawbxj6a3jc5VnVJcxCc=;
+	s=arc-20240116; t=1723122103; c=relaxed/simple;
+	bh=WJy6riYAQprnZmd05jyphtNgpH79mGG9qZWdFFY2/ZQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrJqLpWZapiPfjCQUorywN6raUX2wkfBl/0owCZcccy/svQzVKZain1MDM9A5ctT52kOhq4NwIdufWT2UE9vYa557QJ3K/uLzF6GjWFF9v5gcs5YIiZuzYDC9Ca8BDQfU0+5xzTQena2H2bkW5nHXhPYwSNPFtxGGaZAMCL8jNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAEIB9GZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5523C32782;
-	Thu,  8 Aug 2024 13:01:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723122087;
-	bh=T4RdaDLDFwBenuUKBcPyXWxSawbxj6a3jc5VnVJcxCc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nAEIB9GZu5oEqYVhpiqpwjrH0SKc/tI1lqfWlF2PpGwHstQDzgz/qc7Xd5Yy1g5gO
-	 2HxTHOISWYBf7UxxHeoSIgFJ9Oyhenpd+T1//+d9gE9qt1S7QkwncpmL9wfBij+e4W
-	 svH9yOjwKVIxQtpsqTJ+KTZdF6VEJ/H4C+p6mUhwJNdCFkTg3PNXOSwsNdwwe5wfkD
-	 7SF5rl06emxK4rssCKuZBPDIsSm7Pa9cVNnJdpOo1/vvgJHJ5/thAJ1j2t1CyTsPLi
-	 mhO5D4P7LGwH8hOgpjexngGNEF6fc5eWOgUc6/8By2WDv10Kucixt0KZNsb5C+kKGh
-	 rkcRjUPKBDD4A==
-Date: Thu, 8 Aug 2024 10:01:23 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] perf test: Add a new shell test for perf ftrace
-Message-ID: <ZrTBo7KACZeuCyLj@x1>
-References: <20240808044954.1775333-1-namhyung@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RDsSEpJjvuoV4sLocDe9dNNV3mHn/Yv3PEyBIrRSo5QSYCFDsx5+u0vPT8sKrbXXsWvxFCsj/X3yu5pQNdDZ+d48708aPN6hoemToafJUOhMmr7JQWHNLdIJ7qoLzkzLYS8K2aze5JhM0890IsUv0UVD2q2kiNJMIGPSoPMDiaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dp8sugLq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723122100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+3VVVcICw5YU8pAW4Og/Up208pv4Neli8fjInWAkHzw=;
+	b=dp8sugLqFesgYnbkVioH7wfQKG5rcvkWzTGs7Bmv7D5jpHmdScVpvzds0YNvkKMuEsRRXM
+	uCoOfP6EGRGThpSLjWkg1JBfnzi7zOy76uK3YfeaDIdBsqMLR7WGumu5JlTxaq/6EXbrfP
+	dPFDp8yduxBIw97h6HjWG3jccx6dhDU=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-332-GwE64XWmM2KMGDVLNsI64g-1; Thu,
+ 08 Aug 2024 09:01:35 -0400
+X-MC-Unique: GwE64XWmM2KMGDVLNsI64g-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 160401955F4B;
+	Thu,  8 Aug 2024 13:01:33 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.129])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B3CA3300018D;
+	Thu,  8 Aug 2024 13:01:29 +0000 (UTC)
+Date: Thu, 8 Aug 2024 21:01:25 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Hailong Liu <hailong.liu@oppo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>,
+	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
+	Barry Song <21cnbao@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
+ vm_area_alloc_pages() with high order fallback to order 0
+Message-ID: <ZrTBpUyNRzFrAXpf@MiWiFi-R3L-srv>
+References: <20240808122019.3361-1-hailong.liu@oppo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,175 +77,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240808044954.1775333-1-namhyung@kernel.org>
+In-Reply-To: <20240808122019.3361-1-hailong.liu@oppo.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Aug 07, 2024 at 09:49:54PM -0700, Namhyung Kim wrote:
->   $ sudo ./perf test ftrace -vv
->    86: perf ftrace tests:
->   --- start ---
->   test child forked, pid 1772223
->   perf ftrace list test
->   syscalls for sleep:
->   __x64_sys_nanosleep
->   __ia32_sys_nanosleep
->   __x64_sys_clock_nanosleep
->   __ia32_sys_clock_nanosleep
->   perf ftrace list test  [Success]
->   perf ftrace trace test
->   # tracer: function_graph
->   #
->   # CPU  DURATION                  FUNCTION CALLS
->   # |     |   |                     |   |   |   |
->    0)               |  __x64_sys_clock_nanosleep() {
->    0)               |    common_nsleep() {
->    0)               |      hrtimer_nanosleep() {
->    0)               |        do_nanosleep() {
->   perf ftrace trace test  [Success]
->   perf ftrace latency test
->   target function: __x64_sys_clock_nanosleep
->   #   DURATION     |      COUNT | GRAPH                                          |
->       32 - 64   ms |          1 | ############################################## |
->   perf ftrace latency test  [Success]
->   perf ftrace profile test
->   # Total (us)   Avg (us)   Max (us)      Count   Function
->     100136.400 100136.400 100136.400          1   __x64_sys_clock_nanosleep
->     100135.200 100135.200 100135.200          1   common_nsleep
->     100134.700 100134.700 100134.700          1   hrtimer_nanosleep
->     100133.700 100133.700 100133.700          1   do_nanosleep
->     100130.600 100130.600 100130.600          1   schedule
->        166.868     55.623     80.299          3   scheduler_tick
->          5.926      5.926      5.926          1   native_smp_send_reschedule
->        301.941    301.941    301.941          1   __x64_sys_execve
->        295.786    295.786    295.786          1   do_execveat_common.isra.0
->         71.397     35.699     46.403          2   bprm_execve
->          2.519      1.260      1.547          2   sched_mm_cid_before_execve
->          1.098      0.549      0.686          2   sched_mm_cid_after_execve
->   perf ftrace profile test  [Success]
->   ---- end(0) ----
->    86: perf ftrace tests                                               : Ok
+On 08/08/24 at 08:19pm, Hailong Liu wrote:
+> The __vmap_pages_range_noflush() assumes its argument pages** contains
+> pages with the same page shift. However, since commit e9c3cda4d86e
+> ("mm, vmalloc: fix high order __GFP_NOFAIL allocations"), if gfp_flags
+> includes __GFP_NOFAIL with high order in vm_area_alloc_pages()
+> and page allocation failed for high order, the pages** may contain
+> two different page shifts (high order and order-0). This could
+> lead __vmap_pages_range_noflush() to perform incorrect mappings,
+> potentially resulting in memory corruption.
 > 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> Users might encounter this as follows (vmap_allow_huge = true, 2M is for PMD_SIZE):
+> kvmalloc(2M, __GFP_NOFAIL|GFP_X)
+>     __vmalloc_node_range_noprof(vm_flags=VM_ALLOW_HUGE_VMAP)
+>         vm_area_alloc_pages(order=9) ---> order-9 allocation failed and fallback to order-0
+>             vmap_pages_range()
+>                 vmap_pages_range_noflush()
+>                     __vmap_pages_range_noflush(page_shift = 21) ----> wrong mapping happens
+> 
+> We can remove the fallback code because if a high-order
+> allocation fails, __vmalloc_node_range_noprof() will retry with
+> order-0. Therefore, it is unnecessary to fallback to order-0
+> here. Therefore, fix this by removing the fallback code.
+> 
+> Fixes: e9c3cda4d86e ("mm, vmalloc: fix high order __GFP_NOFAIL allocations")
+> Signed-off-by: Hailong Liu <hailong.liu@oppo.com>
+> Reported-by: Tangquan Zheng <zhengtangquan@oppo.com>
+> Cc: <stable@vger.kernel.org>
+> CC: Barry Song <21cnbao@gmail.com>
+> CC: Baoquan He <bhe@redhat.com>
+> CC: Matthew Wilcox <willy@infradead.org>
 > ---
->  tools/perf/tests/shell/ftrace.sh | 84 ++++++++++++++++++++++++++++++++
->  1 file changed, 84 insertions(+)
->  create mode 100755 tools/perf/tests/shell/ftrace.sh
+>  mm/vmalloc.c | 11 ++---------
+>  1 file changed, 2 insertions(+), 9 deletions(-)
 > 
-> diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
-> new file mode 100755
-> index 000000000000..b1c36d30559a
-> --- /dev/null
-> +++ b/tools/perf/tests/shell/ftrace.sh
-> @@ -0,0 +1,84 @@
-> +#!/bin/sh
-> +# perf ftrace tests
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +set -e
-> +
-> +# perf ftrace commands only works for root
-> +if [ "$(id -u)" != 0 ]; then
-> +    echo "perf ftrace test  [Skipped: no permission]"
-> +    exit 2
-> +fi
-> +
-> +output=$(mktemp /tmp/__perf_test.ftrace.XXXXXX)
-> +
-> +cleanup() {
-> +  rm -f "${output}"
-> +
-> +  trap - EXIT TERM INT
-> +}
-> +
-> +trap_cleanup() {
-> +  cleanup
-> +  exit 1
-> +}
-> +trap trap_cleanup EXIT TERM INT
-> +
-> +# this will be set in test_ftrace_trace()
-> +target_function=
-> +
-> +test_ftrace_list() {
-> +    echo "perf ftrace list test"
-> +    perf ftrace -F > "${output}"
-> +    # this will be used in test_ftrace_trace()
-> +    sleep_functions=$(grep 'sys_.*sleep$' "${output}")
-> +    echo "syscalls for sleep:"
-> +    echo "${sleep_functions}"
-> +    echo "perf ftrace list test  [Success]"
-> +}
-> +
-> +test_ftrace_trace() {
-> +    echo "perf ftrace trace test"
-> +    perf ftrace trace --graph-opts depth=5 sleep 0.1 > "${output}"
-> +    # it should have some function name contains 'sleep'
-> +    grep "^#" "${output}"
-> +    grep -F 'sleep()' "${output}"
-> +    # find actual syscall function name
-> +    for FN in ${sleep_functions}; do
-> +	if grep -q "${FN}" "${output}"; then
-> +	    target_function="${FN}"
-> +	    echo "perf ftrace trace test  [Success]"
-> +	    return
-> +	fi
-> +    done
-> +
-> +    echo "perf ftrace trace test  [Failure: sleep syscall not found]"
-> +    exit 1
-> +}
-> +
-> +test_ftrace_latency() {
-> +    echo "perf ftrace latency test"
-> +    echo "target function: ${target_function}"
-> +    perf ftrace latency -T "${target_function}" sleep 0.1 > "${output}"
-> +    grep "^#" "${output}"
-> +    grep "###" "${output}"
-> +    echo "perf ftrace latency test  [Success]"
-> +}
-> +
-> +test_ftrace_profile() {
-> +    echo "perf ftrace profile test"
-> +    perf ftrace profile sleep 0.1 > "${output}"
-> +    grep ^# "${output}"
-> +    grep sleep "${output}"
-> +    grep schedule "${output}"
-> +    grep execve "${output}"
-> +    echo "perf ftrace profile test  [Success]"
-> +}
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 6b783baf12a1..af2de36549d6 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3584,15 +3584,8 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+>  			page = alloc_pages_noprof(alloc_gfp, order);
+>  		else
+>  			page = alloc_pages_node_noprof(nid, alloc_gfp, order);
+> -		if (unlikely(!page)) {
+> -			if (!nofail)
+> -				break;
+> -
+> -			/* fall back to the zero order allocations */
+> -			alloc_gfp |= __GFP_NOFAIL;
+> -			order = 0;
+> -			continue;
+> -		}
+> +		if (unlikely(!page))
+> +			break;
 
-I think this will cover the problem I reported to you, i.e. strange
-times:
+This looks great, thanks.
 
-root@x1:~# perf ftrace profile sleep 1s > a
-root@x1:~# time_re="[[:space:]]+100[[:digit:]]{4}\.[[:digit:]]{3}"
-root@x1:~# grep -E "^${time_re}${time_re}${time_re}[[:space:]]+1[[:space:]]+.*clock_nanosleep" a
- 1000171.000 1000171.000 1000171.000          1   __x64_sys_clock_nanosleep
-root@x1:~#
+Reviewed-by: Baoquan He <bhe@redhat.com>
 
-I.e. we know that we will have just one call to *clock_nanosleep and
-that it will take a bit more than 1 second (100 followed by 4 digits to
-get to something like 1000171).
-
-So I cooked up the following patch, on top of yours, I tested it
-replacing the '10' in the time_re with 20 and it fails, with '10', as
-expected, it passes.
-
-- Arnaldo
-
-diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
-index b1c36d30559a900a..a6ee740f0d7eca07 100755
---- a/tools/perf/tests/shell/ftrace.sh
-+++ b/tools/perf/tests/shell/ftrace.sh
-@@ -72,6 +72,11 @@ test_ftrace_profile() {
-     grep sleep "${output}"
-     grep schedule "${output}"
-     grep execve "${output}"
-+    time_re="[[:space:]]+10[[:digit:]]{4}\.[[:digit:]]{3}"
-+    # 100283.000 100283.000 100283.000          1   __x64_sys_clock_nanosleep
-+    # Check for one *clock_nanosleep line with a Count of just 1 that takes a bit more than 0.1 seconds
-+    # Strip the _x64_sys part to work with other architectures
-+    grep -E "^${time_re}${time_re}${time_re}[[:space:]]+1[[:space:]]+.*clock_nanosleep" "${output}"
-     echo "perf ftrace profile test  [Success]"
- }
- 
 
