@@ -1,322 +1,301 @@
-Return-Path: <linux-kernel+bounces-279779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E6394C1B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:46:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4726A94C1DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 643701C2224D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:46:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE76B289EEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1D918CC0C;
-	Thu,  8 Aug 2024 15:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477DD19048D;
+	Thu,  8 Aug 2024 15:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dQ8p1LC2";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lB/a01y4"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lNs5drP3"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C961DA21
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723131974; cv=fail; b=MPws3x7WxZDXO9rKTYfME01GaiK9mGudMEEsMEIt63LKs605WO922YnNXZNfZiaq6QpVL0/y8ev5THk+Bt+Y4WYooWJXmwN8hDWmL8pLFdklP6WXkm8ghIjYlL8tg+S4hnTB2V5mrl66Zrcq4k6SZkzIs8VS5qZ8lfav78N3KQE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723131974; c=relaxed/simple;
-	bh=Q1h503LBfE+sbHWTH3x3djTAQgl2rvKc3Nf2m7mjP7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WsyJadWgRP0eXl0Izqu/sqS+sEitr8hxv/z4B3itPlyKs2N7WC269MiW3zalwBpFD3tCES+CicjLLZ60mA3VDeeOx3lLxLj7GOXt21MN9+KEdp69GuLPkEtDeaiZ0zJu8uYDjRih2TSx8VKtGK/4Ij9C0mIMmO/lKwdBpJeInFI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dQ8p1LC2; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lB/a01y4; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478AMfWf001725;
-	Thu, 8 Aug 2024 15:46:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=nvkyl0+jQPJaOtH
-	THmV47fnHjH4AELOWKpatwltpbQc=; b=dQ8p1LC2RpOPj/fmVz3oxrg21Wjz2uG
-	jxHkhspT2s98vi/UNY4XdmS/BmOm5zKCFSLjBWSHObHJ5o2jCR69NCpdwJyBZFXH
-	WpPNOYfpvQkO72isTf5PHL4Qm/wQkOgzKlMyaI9ztetgiLw+yZMMw5l7cNBCBYg2
-	lZUO6EUhnMh7GBmyGgW4s2bBmqhdOXzlvyIR5DrQj7WLXQ2wpKrEWsYiJMl3Y7L1
-	OXNhWr1WjSPiFrjIEv4UCPtURmJZJ/169V3ZL5tGYKYW2LRRUocmn737JK4BgNSv
-	4mI4KMw42gMT13a0bfQ0NYaabrfnPgVv/Pa2vVmHPpLkYpBdXj/yuSA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40sb51j6ke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 08 Aug 2024 15:46:02 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 478FRTQj040696;
-	Thu, 8 Aug 2024 15:46:02 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40sb0bvm88-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 08 Aug 2024 15:46:02 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Jqku8VfAQS9RTcczBR7zm0z1vZD62Jr6vAlJP32AVCh5emcugDyMCx6tNnNqolBOKoRliidA4gEiLQZkggICBeMOp6RxHJ++03cCRg1nW3n31seFygUR6ginX9ibuOQUe4zG/LvCwU84hgNNL71FtKNOKegXAf+iEdzOGgjED3DPPRXgxsivLzSKUNv65UmuVbfjCPC1HR2H6TACGK5ncpjp20rPZUHLD6MKxkas9neweQVpGlTi2+aHQUkzq0ojMiPCCh8oxdWvtgHlryYlg3fhe6XK8PtSN5GBQTFRUkHGYg7+AEMqRTjS4pSqNLvbeikqXTp4YNYvVxIreN1r2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nvkyl0+jQPJaOtHTHmV47fnHjH4AELOWKpatwltpbQc=;
- b=m/aR3h2rH25I2FGk5WmQQF4ggS/ihannQJOMixMdpqeUlVhlFcwj+e7hFhwayoGPpf4VSAuMXu2alAXrwKN3qN23GwrrMfaE51id42/faVoT/vwWO97iDyOngLicZzE9Y0u7jVUyUIxg/zg8Rsgcp/KInEF0cX163j57HnrOC0qVFs01kzGBc+zqhSzVyOn15n+stOEyVwmUQNSj+1odTCTtn1d7sJuo/xEkju0C6XX1phdsllRlAxJ7M3WaxmqyPI8Ix5qdU49QFdl8kpnHI/M7StS0Kwc+SAA67Li6v8ih2okff6wflh9maVkbu/we2lB8LKHUmTI4nUy8V8cZIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nvkyl0+jQPJaOtHTHmV47fnHjH4AELOWKpatwltpbQc=;
- b=lB/a01y4tq0b1/gaOoR9cJkt2k1F0LLeMr1YU8Y+tTwYdZCpR/dHWYCiBzdFodP7Y22csZdIE7u8Z2iB9b4Bw2HdiBUWZ+tG23p+0xfdSIrcXqzM0ludCnwy+Lc73oF0ooOPxxvT+1qnWWJ8EmtVFzYTpInY4gj41KYfFOcMMHY=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by BL3PR10MB6140.namprd10.prod.outlook.com (2603:10b6:208:3bb::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14; Thu, 8 Aug
- 2024 15:45:58 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7828.023; Thu, 8 Aug 2024
- 15:45:57 +0000
-Date: Thu, 8 Aug 2024 16:45:53 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>
-Subject: Re: [PATCH 04/10] mm: abstract parameters for vma_expand/shrink()
-Message-ID: <2d85f8a8-6937-499c-91fd-7dc5deced71f@lucifer.local>
-References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
- <95292b1d1215f49bd895f1aa38f54a8274c350af.1722849859.git.lorenzo.stoakes@oracle.com>
- <f12608ec-9c40-4977-a5a6-479f86b44e80@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f12608ec-9c40-4977-a5a6-479f86b44e80@kernel.org>
-X-ClientProxiedBy: LO4P123CA0308.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:197::7) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A6F18B475;
+	Thu,  8 Aug 2024 15:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723132131; cv=none; b=f9U4JKXxvAXI09tgl/iHZs4ahGw4yRCLmKbX9OsxaHjcy6G/n3B0+3Y2uoXRuf+LoL3/rC9CG2o4J9i7RCrE8RWZFsas2ZgddMUSnP47awsJNHGE5eykaRnp+qKfGL7fCqFhMC9SaBnqnoXAs9DyGgT+tUenke4Y7T4ECLZJWCU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723132131; c=relaxed/simple;
+	bh=8amnAIQvrAmtGLiSLYh5ew/M/mrExMmsWac507zvq1g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RQMr8trD1q1HDdVr8yo2AFPsAKl9vRQYmFhY1pxuq4kaMKbwLzF9WxtjBFzC1UZegFWK2PFvSHkDSc/tT0IrGDj2ZNTixmy3mykcIbYx1ghUrz5KiE5AtNrgOmjIXTQKePI7lJ6uMq6AVWAoUUWLlq6oN638uACCb7Pv4B+kXgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lNs5drP3; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay7-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::227])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id F3346C00B9;
+	Thu,  8 Aug 2024 15:47:38 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 5DF8B20002;
+	Thu,  8 Aug 2024 15:47:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723132050;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=i4wABtpkSzc5tFb+lJXKOeY3r/pTQyr6215hlMiVe/E=;
+	b=lNs5drP3kU2uEgXOItXmEdki87IDpRCpol9zcLiWBOIe9hN/m1kap//X+1cV/8qCYoaUq7
+	SUJatnWjbwIDryzIzsDKqzi0oiptwit65qGDSE4Jbojf1OLfCnEfuczOikF+t6GA0JTIaj
+	FveWLEoV1oYreyOvejxbj8cWOZgyeQmKAqY/geBMoe8sx82dnwT8tTEknZf1XtrIu9Vf5f
+	tj8jOjMx8TK3iTO2vb1fMPTod29ok1cnuararGgsqfdezdwvgNSWpA6g1Ocf3mdrb9dcjZ
+	OEF2e3JXsVRxWohxX0xk1EnyzNaGefMGamD/CHnY218Mg7NuNmLdEQkEcnHNwA==
+From: Herve Codina <herve.codina@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v5 0/8] Add support for the LAN966x PCI device using a DT overlay
+Date: Thu,  8 Aug 2024 17:46:49 +0200
+Message-ID: <20240808154658.247873-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|BL3PR10MB6140:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16e942b2-81f9-4c9d-b054-08dcb7c1322d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bckAwCDgTpOLEMxfwQVpM/35UMjzweNifp6WzlVXdCYg+H1KnZVLkBiXBya7?=
- =?us-ascii?Q?i3tx6n4TQZv6dcGDd45ni7tiUin2L5UkqoXFvEC9alMeeJH4CJAzZic+RBdR?=
- =?us-ascii?Q?h+Wx5zMuZb6j+yBolXvMJ0LVm/5Du9P6pc/2aacBJYk2CCEWrl2c68NEvfJI?=
- =?us-ascii?Q?asgpsTTerys45rQAgs5ekeB8n0k9e8Ap+v5doQ1M5rRos6plNIxLQb5CUOVB?=
- =?us-ascii?Q?6VCEhrb7MNAl+gVHZEa+56h6tQJWNwt6H5sJvkoLmnbnx38RbWfTp6A5pM/E?=
- =?us-ascii?Q?pC8tl6jcbSVgigXU9pakx6c1FvJxO1aDlsK8YXMhMK7accfj8aJYNcqfOhoN?=
- =?us-ascii?Q?XOU4RoP2xysTpwRFY40EkI0FyyUxeihsY6iviw5tybHPHaxkPaF49QUtHo6V?=
- =?us-ascii?Q?WnL1Rds3AyUCLekJERUYepCK+puWC4xUtU9sw3ZEz5j+dr6MJ5FrnGByjlJk?=
- =?us-ascii?Q?OvNDYFU+D+bLMoVmr8hEGiAG75ylF6tP67CViwztk7sgNUp5CfYd1bBp78Nq?=
- =?us-ascii?Q?q5JQnL1CwoWW1q/FUGwLAnl4DfwUG1adg5zhl0Tq1Vu3ViKopfYtV3EhWnWE?=
- =?us-ascii?Q?XTARt9gAk8bPSiaV5PVIb6HeQYU2A2oQSkjpZT+OJba1aVh4WvGxEb+HRLbB?=
- =?us-ascii?Q?0ZSY4TcHZtxjIAEtWEZsz1reBn99z/AUb2G8kogPFxuTK4WKjoq7a/K9BR1z?=
- =?us-ascii?Q?D237uy7fi+FX7aeAEYFqk9OwNoBaLHacf18oLp/O/GySHfc/W7zClZ269JmN?=
- =?us-ascii?Q?TdcPS1sMyXPt6GOjQz79cWtVT/GZNPlWKigm9IKHzM4Qs+6APtHpb4A8ezf2?=
- =?us-ascii?Q?PIy8KA/CuAniyhfbyvOMgK3DfO5W6rwZsE9gSjyqelYRuPh+xotzpCQBCr5A?=
- =?us-ascii?Q?KtD3KDnqj+lvSgh4yEq1Rbszdb/ij2lo1hCUAbfFqUqfi2jSLuCuiMkJuRuQ?=
- =?us-ascii?Q?hOF8GrJX/s+NqvXYfjsIqx08paIvISdl/ywV4rpa4RJuVHfYAQ0sCr9+Q0L9?=
- =?us-ascii?Q?2jzKGXqYD5XNwh7kaG2D67Z7hofncAufwNDVQufn2sUCu7CZgSnHkW9jf2Ee?=
- =?us-ascii?Q?dlkENRJFI6VSfqInknsadmSZK+bV7N86Fk4jaP458WMvZ7pcT4rw7MXsYfxw?=
- =?us-ascii?Q?CzZAEeLSAxRJAEfnK0qVIAjKgsCqRQwkqlhj1GYDhXlFmqR6+dbZyjiypik+?=
- =?us-ascii?Q?KeItx60vbh5I2AIuMuAbRvsxaFzcbnfmN8y2OzNhM7IeAcsLpQvRjDzCByxg?=
- =?us-ascii?Q?1llfxtqeeHU4zDqUsuv8Ku8XvbqEqSEQYRsEqkOgznxlNffIQVn99qycHtO4?=
- =?us-ascii?Q?nlR90QijyffXCb8PRdYnuOXax9ysoqoW9VmUIo06JnBtaw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tMwLHCgNdyHUeQ9i0MgJnaW4DV3PX3CfY7VHzC2jhQe3sih6hU5gxVioo4hg?=
- =?us-ascii?Q?0bJZqvUrM36bfbWHCR+9ih6+JwNkbeFxD03PxYo+VRhDHGF6y7+SLO+b0bcA?=
- =?us-ascii?Q?MP1J601p/7c51G5tgVX16zF2vkMn7yCJfz9/MGPWVqkf+Zihj8dRCK5Ih7UW?=
- =?us-ascii?Q?XaXqsoKHJa4cgcHSbydO+8Td0++OounWi1qL0UBMxzy5hb2JMmiPEvFSDY0g?=
- =?us-ascii?Q?57d6X5o/2jh46KnxK017vm3JxhNs5WZ/GT4hdGJGAU0iyHjGcTZjzVRQIjAT?=
- =?us-ascii?Q?4pLZAyMQgXx6/1+ePU2zurlvQ+9S0D+AhtSH3AstKY8Cr6eYAmV6a/cAFEsO?=
- =?us-ascii?Q?Y9rFRDMyQEKnE/hbgX7hyiF2u6n582+EwkhUSwItwI5+GNAwrxa8oOfAYFox?=
- =?us-ascii?Q?hL8zx2oyf3i1bUUF8Be71sQMuV1zEt/xKP+MokO0n50HNOYGSWFvO4U7qCRc?=
- =?us-ascii?Q?W0XzrfpR7o7qxtptClUFKsy/lcJKPadeBEfwtgw80wwSOGu70y3gZQpboiAz?=
- =?us-ascii?Q?6+h3KgbMVeFDlR7wauveVTGK7d7670m4chGKys5+LDBmbEwmZUAAkXDJg+2p?=
- =?us-ascii?Q?HBhto5WHD4u2+2JuTB+r3tNmYOEIpLVtbxhKpqMqTQ5ZqmaEc4mFYsDzkDZb?=
- =?us-ascii?Q?yJ8kmvXvtAhMMvMc6grSzJMw1Oiyr5ClzmW0k89Z4WHVE2elrHFug6L8Yf8b?=
- =?us-ascii?Q?U9ze2vCLhdjXl4dL8+O+nVswSHaA5QyuwrKeriCwDfUjVunmwzaBzLvs40XP?=
- =?us-ascii?Q?OW3wWJLqJ84FAi0I5A3+Qg6tyYh23AGz2Dm0sUi1uFevKL0vH77h9rnHIXk9?=
- =?us-ascii?Q?e/Ma5P3JRYoTy/6+dxEwwwcSjPZTb1l7k+zVo3pi428lMJWoIchFcoGByYUZ?=
- =?us-ascii?Q?KsxwU3a22FFZS6s0vuoV1q3ozZuHW0aVu+h6+o6U2ucV4gvgrDn9R736lq+S?=
- =?us-ascii?Q?Ntj43RdHEn0CUut7Wc8fzXfnHMHSETumLmXQoMyIKQBvwk9MUa945M0+jeYF?=
- =?us-ascii?Q?IYA/1ag6zssvACte7D2Ax9BBlNs5jJaz2pLUerJN7JdGPHKT6YCyq8vu6V3Z?=
- =?us-ascii?Q?oOqEXiWI+KpEW7xJ8o78gAuCYh8lMW/EkNMnFEkF6ue0mgsKqc7f2X0HFoJK?=
- =?us-ascii?Q?oemhy5SCdcsqPdE06C2hkywpojBtJAb2McNJSrnKojiZbM8IDs85O5TtyQgv?=
- =?us-ascii?Q?QIXHj6eWpWw7p8EC3+8fBERybIAAYiDskpUvGitzKw2xpt/iEOv4uIf7Tq/s?=
- =?us-ascii?Q?Ldx2yBKIxyVK4u8L+rnj0/3fLEBj+y6nazpPb3Gq0l8D4Lff9l7dNBCiTCHk?=
- =?us-ascii?Q?+JpndpGmMJxbiCKom8MIKXZ0O6XlRVMlk9FPLkbhdTYdA3+57XK8omGgRMYq?=
- =?us-ascii?Q?X5DUy6uBZkbKqnc8WJTLb0EPWtLgxCSEFGZOSDxHqdbOcejrHTjjKbqBl9hJ?=
- =?us-ascii?Q?XB39CUxPQQ7oLArghpsmt2hZBkRnF65OPirO/wpx0YRKFY5fYPIAK8ZIqBHu?=
- =?us-ascii?Q?L//0ZUkMa9fGh4Kx8vPD9V++cRO5Q5OQBi6NyPIJBc7bp4sKS4VOYt1RdMNF?=
- =?us-ascii?Q?YBIplTX9IdQHCLWwY4NDYvV56w2WYO0SAPyStjEusMxmGyueD75XSIKuCFdq?=
- =?us-ascii?Q?p2PofPwEL3PudVWmJDBR6eaGNkuOjwB8ErBhTuBxLKDryJuyyul/Arh7aadG?=
- =?us-ascii?Q?jxyFtg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	u4zL+85VwmSa/z2AbHJFjxnW+nQdbZXLIb73fd2PBlzT8gBjQwX/KR1fiEE6VoIfZI5DCE2S2NZTSemNelqQxrN+voRfaEtgZE8LXdJQJtn2vgJbagvs5r3YacAssoBbIqw2ieYII8ml8YcWwOtRehMdr/JW+Gf2CiEdAT5Sn1u/gA2Jy7rVEnM/TRdinUS9n7ycgSMucaz+IgKDdvwLUdx1o8l8h/hvXmpQj9Iw8NxaXJVbVGK/ozy+a/mvqmljbFPk23e0MJs4TbpEDZJ0jYqMrZgJc97Q9M4NxTTEP6JZvWPGeWVVQSYXlZIjIk3XRIG/bJkgvoFzCBVyptKUMC5L7XHunNaW7whdbjmK8xySqInrynr+rxSRXRGvOcOly5rXqigGsXpyldGIHE5hHepzz8Qq3Yb+roxx+ZTwokghF713RmwHTyOCBcGyuRYyJczcep2BmKlsL7LZMv0EYAzAC9afJw7CxHa1yKM9a0I52gSj0twVKKVEPfX+17Lx87pVuQAbHWe63hE3irMGbRe1JTzPxC6NFGQeWUYOe2nGJMulj1NWBYNrdOS+fmShU0QAOuUbDYVCyvRHpDTo1mtdC7hWgKLM8Yj4y283yrQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16e942b2-81f9-4c9d-b054-08dcb7c1322d
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 15:45:57.9215
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sWeuG5X+UPugUhAKKqWWkfXQdNa3RYszsGJhMA2NmFLyTgl7bcUQoKQqxzcTsfl/3Q8tRrzb4B/FfT3cfLWpFurR9B9n4ePwZAg9T1zh7gk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR10MB6140
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_16,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 adultscore=0 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408080111
-X-Proofpoint-ORIG-GUID: ApJucozDOaYPQkP926uAq3zCSEVAv0RV
-X-Proofpoint-GUID: ApJucozDOaYPQkP926uAq3zCSEVAv0RV
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Thu, Aug 08, 2024 at 04:20:26PM GMT, Vlastimil Babka (SUSE) wrote:
-> On 8/5/24 14:13, Lorenzo Stoakes wrote:
-> > Equally use struct vma_merge_struct to abstract parameters for VMA
-> > expansion and shrinking.
-> >
-> > This leads the way to further refactoring and de-duplication by
-> > standardising the interface.
-> >
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > ---
-> >  mm/mmap.c               | 30 +++++++++++--------
-> >  mm/vma.c                | 66 ++++++++++++++++++-----------------------
-> >  mm/vma.h                |  8 ++---
-> >  tools/testing/vma/vma.c | 18 +++++++++--
-> >  4 files changed, 65 insertions(+), 57 deletions(-)
-> >
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index 721ced6e37b0..04145347c245 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -1367,7 +1367,6 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
-> >  	pgoff_t pglen = len >> PAGE_SHIFT;
-> >  	unsigned long charged = 0;
-> >  	unsigned long end = addr + len;
-> > -	unsigned long merge_start = addr, merge_end = end;
-> >  	bool writable_file_mapping = false;
-> >  	int error;
-> >  	VMA_ITERATOR(vmi, mm, addr);
-> > @@ -1423,28 +1422,26 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
-> >  	/* Attempt to expand an old mapping */
-> >  	/* Check next */
-> >  	if (next && next->vm_start == end && can_vma_merge_before(&vmg)) {
-> > -		merge_end = next->vm_end;
-> > -		vma = next;
-> > +		/* We can adjust this as can_vma_merge_after() doesn't touch */
-> > +		vmg.end = next->vm_end;
->
-> Ugh, ok but wonder how fragile that is.
+Hi,
 
-Yeah you're right this is a bit horrid, I'll find a way to make this less
-brittle.
+This series adds support for the LAN966x chip when used as a PCI
+device.
 
->
-> > +		vma = vmg.vma = next;
-> >  		vmg.pgoff = next->vm_pgoff - pglen;
-> > -	}
-> >
-> > -	if (vma) {
-> > +		/* We may merge our NULL anon_vma with non-NULL in next. */
->
-> Hm now I realize the if (vma) block probably didn't need to be added in
-> patch 2 only to removed here, it could have been part of the if (next &&
-> ...) block above already? Which is not that important, but...
+For reference, the LAN996x chip is a System-on-chip that integrates an
+Ethernet switch and a number of other traditional hardware blocks such
+as a GPIO controller, I2C controllers, SPI controllers, etc. The
+LAN996x can be used in two different modes:
 
-You're right, will fix.
+- With Linux running on its Linux built-in ARM cores.
+  This mode is already supported by the upstream Linux kernel, with the
+  LAN996x described as a standard ARM Device Tree in
+  arch/arm/boot/dts/microchip/lan966x.dtsi. Thanks to this support,
+  all hardware blocks in the LAN996x already have drivers in the
+  upstream Linux kernel.
 
->
-> >  		vmg.anon_vma = vma->anon_vma;
-> > -		vmg.uffd_ctx = vma->vm_userfaultfd_ctx;
->
-> I don't see why it's now ok to remove this line? Was it intended? In patch 2
-> it made sense to me to add it so the can_vma_merge_after() still has the
-> right ctx for comparing, and this didn't change?
+- As a PCI device, thanks to its built-in PCI endpoint controller.
+  In this case, the LAN996x ARM cores are not used, but all peripherals
+  of the LAN996x can be accessed by the PCI host using memory-mapped
+  I/O through the PCI BARs.
 
-Yeah, yikes, I think I was lost in the maelstrom of considering edge cases,
-and now this is broken for the whole prev vs. next uffd thing.
+This series aims at supporting this second use-case. As all peripherals
+of the LAN996x already have drivers in the Linux kernel, our goal is to
+re-use them as-is to support this second use-case.
 
-The fact the mmap stuff is not directly testable is a factor here.
+Therefore, this patch series introduces a PCI driver that binds on the
+LAN996x PCI VID/PID, and when probed, instantiates all devices that are
+accessible through the PCI BAR. As the list and characteristics of such
+devices are non-discoverable, this PCI driver loads a Device Tree
+overlay that allows to teach the kernel about which devices are
+available, and allows to probe the relevant drivers in kernel, re-using
+all existing drivers with no change.
 
-TL;DR: I'll fix this, you're right.
+This patch series for now adds a Device Tree overlay that describes an
+initial subset of the devices available over PCI in the LAN996x, and
+follow-up patch series will add support for more once this initial
+support has landed.
 
->
-> >  	}
-> >
-> >  	/* Check prev */
-> >  	if (prev && prev->vm_end == addr && can_vma_merge_after(&vmg)) {
-> > -		merge_start = prev->vm_start;
-> > -		vma = prev;
-> > +		vmg.start = prev->vm_start;
-> > +		vma = vmg.vma = prev;
-> >  		vmg.pgoff = prev->vm_pgoff;
-> >  	} else if (prev) {
-> >  		vma_iter_next_range(&vmi);
-> >  	}
-> >
-> >  	/* Actually expand, if possible */
-> > -	if (vma &&
-> > -	    !vma_expand(&vmi, vma, merge_start, merge_end, vmg.pgoff, next)) {
-> > +	if (vma && !vma_expand(&vmg)) {
-> >  		khugepaged_enter_vma(vma, vm_flags);
-> >  		goto expanded;
-> >  	}
-> > @@ -2359,6 +2356,13 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
-> >  	VMA_ITERATOR(vmi, mm, new_start);
-> >  	struct vm_area_struct *next;
-> >  	struct mmu_gather tlb;
-> > +	struct vma_merge_struct vmg = {
-> > +		.vmi = &vmi,
-> > +		.vma = vma,
-> > +		.start = new_start,
-> > +		.end = old_end,
-> > +		.pgoff = vma->vm_pgoff,
-> > +	};
-> >
-> >  	BUG_ON(new_start > new_end);
-> >
-> > @@ -2373,7 +2377,7 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
-> >  	/*
-> >  	 * cover the whole range: [new_start, old_end)
-> >  	 */
-> > -	if (vma_expand(&vmi, vma, new_start, old_end, vma->vm_pgoff, NULL))
-> > +	if (vma_expand(&vmg))
-> >  		return -ENOMEM;
-> >
-> >  	/*
-> > @@ -2406,6 +2410,8 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
-> >  	tlb_finish_mmu(&tlb);
-> >
-> >  	vma_prev(&vmi);
-> > +	vmg.end = new_end;
-> > +
-> >  	/* Shrink the vma to just the new range */
-> > -	return vma_shrink(&vmi, vma, new_start, new_end, vma->vm_pgoff);
-> > +	return vma_shrink(&vmg);
->
-> The vma_shrink() doesn't seem to benefit that much from vmg conversion but I
-> guess why not. Maybe this will further change anyway...
->
+In order to add this PCI driver, a number of preparation changes are
+needed:
+ - Patches 1, 2 introduce the LAN996x PCI driver itself, together with
+   its DT overlay and the related MAINTAINTER entry.
 
-No it doesn't, but it's more about being consistent with vma_expand(). We
-maybe want to find a way to unite them possibly.
+ - Patches 3 to 8 allow the reset driver used for the LAN996x to be
+   built as a module. Indeed, in the case where Linux runs on the ARM
+   cores, it is common to have the reset driver built-in. However, when
+   the LAN996x is used as a PCI device, it makes sense that all its
+   drivers can be loaded as modules.
+
+Compare to the previous iteration:
+  https://lore.kernel.org/lkml/20240805101725.93947-1-herve.codina@bootlin.com/
+this v5 series mainly:
+  - Do improvements in LAN966x PCI driver
+  - Add some 'Reviewed-by'
+
+Best regards,
+Hervé
+
+Changes v4 -> v4
+  - Patch 1
+    Add missing include files and keep pci_ids.h.
+    Remove IRQ_RETVAL() usage.
+    Use __free().
+    Remove the pdev->irq check.
+    Avoid local variables in devm_pci_dev_remove_intr_ctrl() and
+    lan966x_pci_load_overlay().
+    Use dev_err_probe().
+    Sort header includes in alphabetical order in dtbs file.
+
+  - Patch 3
+    Fix a typo in commit log.
+    Simplify modification done in device_node_get_syscon().
+    Use devm_add_action_or_reset().
+
+  - Patches 4, 5, 6 and 8
+    Add 'Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>'
+
+Changes v3 -> v4
+  - Patch 1 and 2 (v3 patch 6 and 7)
+    Move the driver from drivers/mfd to drivers/misc.
+
+  - Patch 4 and 5 (v3 patch 2)
+    Rework reset driver dependencies and module building support.
+    Split v3 patch into two distinct patches:
+      - patch 4, as suggested by Geert, add a dependency on the
+        LAN966x PCI device
+      - patch 5, allows to build the reset controller driver as a module
+
+  - Other patches
+    Except reordering, no changes
+
+Changes v2 -> v3
+  - Patches 1 and 5
+    No changes
+
+  - Patch 6 (v2 patch 18)
+    Add a blank line in the commit log to split paragraphs
+    Remove unneeded header file inclusion
+    Use IRQ_RETVAL()
+    Remove blank line
+    Use dev_of_node()
+    Use pci_{set,get}_drvdata()
+    Remove unneeded pci_clear_master() call
+    Move { 0, } to { }
+    Remove the unneeded pci_dev member from the lan966x_pci structure
+    Use PCI_VENDOR_ID_EFAR instead of the hardcoded 0x1055 PCI Vendor ID
+    Add a comment related to the of_node check.
+
+  - Patch 7 (v2 patch 19)
+    No changes
+
+  Patches removed in v3
+    - Patches 6 and 7
+      Extracted and sent separately
+      https://lore.kernel.org/lkml/20240620120126.412323-1-herve.codina@bootlin.com/
+
+    - Patches 9
+      Already applied
+
+    - Patches 8, 10 to 12
+      Extracted, reworked and sent separately
+      https://lore.kernel.org/lkml/20240614173232.1184015-1-herve.codina@bootlin.com/
+
+    - Patches 13 to 14
+      Already applied
+
+Changes v1 -> v2
+  - Patch 1
+    Fix a typo in syscon.h (s/intline/inline/)
+
+  - Patches 2..5
+    No changes
+
+  - Patch 6
+    Improve the reset property description
+
+  - Patch 7
+    Fix a wrong reverse x-mass tree declaration
+
+  - Patch 8 removed (sent alone to net)
+    https://lore.kernel.org/lkml/20240513111853.58668-1-herve.codina@bootlin.com/
+
+  - Patch 8 (v1 patch 9)
+    Add 'Reviewed-by: Rob Herring (Arm) <robh@kernel.org>'
+
+  - Patch 9 (v1 patch 10)
+    Rephrase and ident parameters descriptions
+
+  - Patch 10 (v1 patch 11)
+    No changes
+
+  - Patch 11 (v1 patch 12)
+    Fix a missing ret value assignment before a goto in .probe()
+    Limit lines to 80 columns
+    Use indices in register offset definitions
+
+  - Patch 13 and 14 (new patches in v2)
+    Add new test cases for existing of_changeset_add_prop_*()
+
+  - Patch 15 (v1 patch 14)
+    No changes
+
+  - Patch 16 (new patches in v2)
+    Add tests for of_changeset_add_prop_bool()
+
+  - Patch 17 (v1 patch 15)
+    Update commit subject
+    Rewrap a paragraph in commit log
+
+  - Patch 18 (v1 patch 16)
+    Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
+
+  - Patch 19 (v1 patch 17)
+    No changes
+
+Clément Léger (5):
+  mfd: syscon: Add reference counting and device managed support
+  reset: mchp: sparx5: Allow building as a module
+  reset: mchp: sparx5: Release syscon when not use anymore
+  reset: core: add get_device()/put_device on rcdev
+  reset: mchp: sparx5: set the dev member of the reset controller
+
+Herve Codina (3):
+  misc: Add support for LAN966x PCI device
+  MAINTAINERS: Add the Microchip LAN966x PCI driver entry
+  reset: mchp: sparx5: Add MCHP_LAN966X_PCI dependency
+
+ MAINTAINERS                            |   6 +
+ drivers/mfd/syscon.c                   | 138 ++++++++++++++--
+ drivers/misc/Kconfig                   |  24 +++
+ drivers/misc/Makefile                  |   3 +
+ drivers/misc/lan966x_pci.c             | 215 +++++++++++++++++++++++++
+ drivers/misc/lan966x_pci.dtso          | 167 +++++++++++++++++++
+ drivers/pci/quirks.c                   |   1 +
+ drivers/reset/Kconfig                  |   4 +-
+ drivers/reset/core.c                   |   2 +
+ drivers/reset/reset-microchip-sparx5.c |  11 +-
+ include/linux/mfd/syscon.h             |  16 ++
+ 11 files changed, 569 insertions(+), 18 deletions(-)
+ create mode 100644 drivers/misc/lan966x_pci.c
+ create mode 100644 drivers/misc/lan966x_pci.dtso
+
+-- 
+2.45.0
+
 
