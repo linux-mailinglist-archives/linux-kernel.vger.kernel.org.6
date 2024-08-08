@@ -1,133 +1,199 @@
-Return-Path: <linux-kernel+bounces-279432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F4094BD42
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:19:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D72494BD43
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60FB8B22C32
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36671286F9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8903D18C331;
-	Thu,  8 Aug 2024 12:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF77918C33A;
+	Thu,  8 Aug 2024 12:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="kfGJwGS6"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2105.outbound.protection.outlook.com [40.92.102.105])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JbE/cZW6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B431487C1;
-	Thu,  8 Aug 2024 12:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723119586; cv=fail; b=jsDrCSf5aAeNG2urjS3J3Zv+WsB7tjAy4lkjM5xRZVpsWuIvb+xblRQ5fugSewN42z3/QGxsYoevGRd0HV9/a7npa3nACEPtbpHvZRC+xAN2tX0p1Hfv7PEKBkYhegasoo9RN9z85ZqBd4CCYpBmvHWsHVOeAvWBY6DoEAaCcE4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723119586; c=relaxed/simple;
-	bh=tvL36kUzJINyTUexTS/OE4MHvnNDxVVMa7QpbQbDLnE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kxSk51Vg4nY+XiddlMS6UwPoD3TsvyooDU7ZWIK9RZoUqRtpb5pURs/uq9MuimxWeXJA02qumi3WcXF7m2UeQqOqYiZ/GDpy9JprBbPH76DrCJoR8A/2YSHAQ2zShuWfTLW2YgXaf/9bCVF3nblb/+pWpcZP1df2BeCBSvvA1dk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=kfGJwGS6; arc=fail smtp.client-ip=40.92.102.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hhij9ym5elw+Zws/PTJaese6SHYltcVXPMraC5UsY1YLTturqZha3b8sonXLBacSrJakfzjKwmKy7m5ugGtOLWQiOecHyAzfXttwMMflTH53QKqb9JlZXE82Z7Y7rNdvogDFIgeKF57M23QOuezROYiaNEef/lz85cDWOFliH2Kv4yEeVRlUJNzhsIMMro+WWHgYiMFFwIrNtdsddlVwI0LCwNyxyBaQzCHrotoBnsbFwIQywQ3Dlk1aYpsMHBArv21czeoTjcsnl8c27zjynqnOkGIBkJSYRJ55/xiMrPpDSITtkEebLoBGanQUnp89RLuRUUu6fVod3zCSTG7zJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tvL36kUzJINyTUexTS/OE4MHvnNDxVVMa7QpbQbDLnE=;
- b=OcO6i2CgIME1I85CzBlbcb6hvwjDxVirE1Sa8a2oEa/qOSf0qlPQGf2xtx+P6vf6ty5owjyuJrUmZw/N0vE5X8SqqIajRobsvn61tHNDxbQtyYH90Vro04lD7vyc1GEjFQAILvQ6ya+/o9T0M9nK+L0pAPatoLZvZRolUcLNAW/uDjK62v5/PWDHuahme32dL+1iVma1tof2MdTRWVbjvTb05RUes64TvAioCC82LYK0jwTUl//3daeZynfdcHOkoQQW6C+d6lH2KXvHYRnIvoKgIAWlEqNQkNFNQS/XiSR7ToXBIWFY4Zho8Lwp3wVoPZjblMs3kvc/yxQPK+MBgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tvL36kUzJINyTUexTS/OE4MHvnNDxVVMa7QpbQbDLnE=;
- b=kfGJwGS645o295Lw4TgWQJ7Y7ZxTuqhZnRR0rhXLxm+Iw8AdTLZFY4mRM6JX7SMXXydRlfZi0kFzlCY5+e7Wt38mHw4DN7xUnWVu7srP6yi89YqZWmsk9Ix5OrnNaPV5yy3khFAnV+tgs1Qj+A0neM4livz1SDiTsmAji4JvUr10T/GydoHcExEKGaSF2di/CWbnmKkhZGBdDVNdxFWV30wuyvHzK/c6yW84PXqhs3yIn0xrgHkUjYTiSzNF0ZkRXvr32xA57TB8fLR6eWndyzSKePiPnRoJAnj97n8/QVpbmwLJBoD2pNHTG65OkLGvoFt/0dI3QVwUCof5p3pJtQ==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- MA0P287MB0936.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:e0::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.14; Thu, 8 Aug 2024 12:19:38 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
- 12:19:38 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
-CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: Re: [PATCH 0/9] Touch Bar support for T2 Macs
-Thread-Topic: [PATCH 0/9] Touch Bar support for T2 Macs
-Thread-Index: AQHa6AcVDkG9cKryKEG7+2pjFRiDnLIdSluA
-Date: Thu, 8 Aug 2024 12:19:38 +0000
-Message-ID: <FE390780-D2AA-48D3-9836-9F33D56B22FC@live.com>
-References: <021EE0BF-93CA-4A37-863F-851078A0EFB7@live.com>
-In-Reply-To: <021EE0BF-93CA-4A37-863F-851078A0EFB7@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [F1mvpj4uq9VT+IFIX7WC43hgyM0e14m5KW7IwsFbWwkS9G47gcO59OMtjrd16OTHouMHjWmZJIk=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB0936:EE_
-x-ms-office365-filtering-correlation-id: b1d0e486-b3b7-4c4d-9ffa-08dcb7a45f9c
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799003|19110799003|8060799006|461199028|1602099012|4302099013|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- /obuF4JAfBDwHQvW6dNkEX5d2kKVMJnemr71bjFWTBuMzVIDLuBbLAhicf7WNpF4C9lj/0uph/LkA/JFIOwvndrMJE+zE9sNFjCMj6eUHwPlWXLPqOB6OJVFWUP+HPeSV1ftWgs7OtlT7JNFNZRvxjoskxuZol3WnMyEFYLUWLf48tXsWwUxJjHLvTyn9KmdifnPGEVN/4aCPgwvKh4bd0rLBSdQHpPMQtbaFVzrtMetkB2BO091xZGdjOVfaKsUniuRtsUT1Nuv2NoO5OHYLFNIBXM6BEmIpOMgnIf/ldDKid3/PIrLn0EzQX+/dsunS/bK6twfI/Bst79s9c0vHU0QIkzZ3WKf1aJWLcAT5+tBWk1Swmy9BakjQ5xOk1DrYKLFh+JN5ReRkhR4P57tkCe7RWHiPPDO54DZTH0pf/mlL5k0tsn6hjWLsmpzSaYjLNil/kxTg/DcST/70qWfaHA8sv+X6+/wPZMc3HzVwshUXyGzvN/Nv0+bd5ahWyYFiejKDujKTnsIqHM29c7JOlxAYUdCEtKpQNuM85VqcPOHqYDjnIH3lNPl0zRvsSI+mxfBjRe/q/QxUaaGr3nGJSGK6CJEw5k4IJDdh/V7fpW+dguRzrVHvQS/fFZ9NFBydElbE8le5X8Xxbiv2XMrFGThHNTtl1mNghidmSdqGooyOFSob0MxHtIbJjLwHJLaqydvnUbd5TaDtT+nqDm0J95YyQGz2OTGZsTjEPnKvak+jVD6mxBCI9oug/00hZ4yc5ypiQn564XFO73kgpL5BYoXNG287bZjwaLRfdmUiQo=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?E0ZceOuco4v4e0bll5TaMy73L0rzuew1IJ8jIYVVMH3JRFBRmQDEiXMaEdHW?=
- =?us-ascii?Q?nsw1Vuba5kEFktoiVNGTMK7nAYx1tRDwZfuUU1hvImwf4fdGXWl3DbkpUpu+?=
- =?us-ascii?Q?YsgFC0urEuwCdPgEHq6odSgRV0oclwbC49KNIx6k++ddJaofX4rKmJuQKok0?=
- =?us-ascii?Q?v1nKZHaTShEQ+DmC5Csja9k7UX+fcTq43VjmR6vBJMMep+JFh/nx/tOHNIlz?=
- =?us-ascii?Q?QIiX0rdKg9eJvlSZyihUyRoV3M4coaL6gz00/uBY26MVuRNmKgiKxPfFQLDd?=
- =?us-ascii?Q?eN/7roT9WKDb0ia4FfZuvi690/zxzsv5VHNeKu84hnvB6DsFi86F7kbq+SeG?=
- =?us-ascii?Q?j8gIGQVsxcRZjiUIrdCWAk8wUYkMq3mcQD0cMqVKp14GkIHf2Yc89S8JOONK?=
- =?us-ascii?Q?4JH+szUCDLdI2OiU5MjVwqXgxnjqbY7gezsgZwwzlcKJydG2xLz/MeNO1tR1?=
- =?us-ascii?Q?kJ4UP9hgdHBfnFQtipxBkGxEdAbt3B4aZB32LDP2NKIAkhSiYojxWag9pZ83?=
- =?us-ascii?Q?3Gv0O+4fjzvgt9ewNLZA9Ed/bVmhI+S+KUMiZXmObzjtr+HFSHfDDtQ82BC7?=
- =?us-ascii?Q?9t3Q/2TJj3MKERwG7LKPr3oE29LytI6UzxwJ4MYW6Tqy9YSW71rrYs4I0dib?=
- =?us-ascii?Q?WMdfh9iMuzfhlPeRdKpF4Zczr+EbTTgpkWYmkkS6NLvu2pPru8ZfhAqnkOvw?=
- =?us-ascii?Q?GPZeUN/trdXk4DdlqVATFtdr1GC2/7DjcWaTFuv/uhB06ncyYnQrzhv3l98Y?=
- =?us-ascii?Q?1f2vE/GcfJEduZfc+BQ61hMIX+kf0YHvbJPF1bQejUkgPL0vUdA7lKFMvM7V?=
- =?us-ascii?Q?JJPn3kdiUXbSsq5ErpZhfKCrH6QMWfVy4pqc3JaiQWERmZE+d8KdxaeQS/1h?=
- =?us-ascii?Q?BVwjKlCGl0tIYMDWy9hxRT4c7DryHgDMCYwU7oBlRfVvdyUnRu0G1ugSz2XP?=
- =?us-ascii?Q?b/1UY6AFphuaI9qVmmaWLNdNZ5EjUyf+O7E7WR6BAw0WiXknkzqcqQEaS7IF?=
- =?us-ascii?Q?tqLl0qLXsmJh166C5JuMtvEWrxZifrSMmtxDJXxfcnmmWgyBvNiIjQ3xxqsH?=
- =?us-ascii?Q?xYxEeL4/wjFWWrR63Q7JmekxNuq/58JqGQNB7wYwhGNWOThfiPCmPkyXZMUo?=
- =?us-ascii?Q?Wfz4E79rEFzCZrULZy0MEc1msDyskFp+5iF2c1cR5BRb/YuHyZ1/eTQ24oqe?=
- =?us-ascii?Q?q5e+9PitegSCTapHiAxstmONLj1gOyu94lC5hxgD2ZYR8wetbdeh0SDq1fVU?=
- =?us-ascii?Q?uCDd2LQL9Vnz06qVgr9yNKxrkL22Fmmbq30LjHFu5Mq+ZeovpImQ+xGchK5p?=
- =?us-ascii?Q?hiI9uKCogpAenPv6kFxXJyu6?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <80B93C1F46CDE3459A7914AFD0EE681F@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7150918C352;
+	Thu,  8 Aug 2024 12:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723119588; cv=none; b=Dwe3BC6QpgBNVq4IFjskIBRLyNIo3tciHeUGaJrzYo3cBsDpTLzL8NHsPXQJMxMyFmQehTS7BClE/a2LRSt8W7bxVXCor8mq6+chkRApfmJ64BD3HSd21caRoEw5/JqUo6YZSB5a1wjoh2YsBdy598L/vhqWC5qPRvHD0u8f948=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723119588; c=relaxed/simple;
+	bh=Xljr1/yImIwhvpLum0DZInmLBuHQBsAlpx6pOkwH+MQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tjGpXWfDsvc7iZZp4KJIYDLzXmvfMTlF4r3uO65Xeca51ySbrchQeqqQlPTIZXHBLNNU6LBboBdvGZ9+G8ceEkDz7o8cTdyFDBdcIP8rsKwZtoXl0NTB+ttyR6Nqf1bxMQ3+WnpZzjh+j9SwjPhPG6rS7XEuPaW2q/3ICcxnnyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JbE/cZW6; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723119588; x=1754655588;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Xljr1/yImIwhvpLum0DZInmLBuHQBsAlpx6pOkwH+MQ=;
+  b=JbE/cZW6oBiVGfVju1HrC+f/igx5XgnHEoUhrVTP3ZnFJXV1Ee0MuyY0
+   u+W+XL7r+L0PReVyeVsd8nLt5b4/RSviMZEOUczYA1lMOQ1uVESc7eRb6
+   /6iI+VcI0KeuizgoNKeZItuSAPmjjXMrYOek4LKceceCX8G69NzJV4hyS
+   wG1lOZo5jTedseRATgYlhAlaYaXZPpVF9XXLZvRrjukc+foBUYZNPWTHQ
+   uTdCstf8bQ4U1lma1ctY6mxzWTVAuHNWbs+HOVy/8U/A9UQpMh3oNo3Sy
+   LqmOITix+JJuYQ0gdKMxmsK/bvXiEHh7OVnhdTGbVejj+qfc5zkfBLD6E
+   w==;
+X-CSE-ConnectionGUID: IBLLYP06Rf68hgax8cpSXQ==
+X-CSE-MsgGUID: LKleDPIZSqWvt0VDoc5UTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21211069"
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="21211069"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 05:19:47 -0700
+X-CSE-ConnectionGUID: Lc3kUjvGS4O6ti6CxYqRAg==
+X-CSE-MsgGUID: jAJZWV/mQoSDOKO9l/WVxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
+   d="scan'208";a="57122886"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO [10.245.246.169]) ([10.245.246.169])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 05:19:43 -0700
+Message-ID: <930bb152-860a-4ec5-9ef0-1c96f554f365@linux.intel.com>
+Date: Thu, 8 Aug 2024 14:19:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1d0e486-b3b7-4c4d-9ffa-08dcb7a45f9c
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 12:19:38.5861
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB0936
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/6] ALSA: compress: add Sample Rate Converter codec
+ support
+To: Jaroslav Kysela <perex@perex.cz>, Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, tiwai@suse.com,
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+References: <1722940003-20126-1-git-send-email-shengjiu.wang@nxp.com>
+ <1722940003-20126-2-git-send-email-shengjiu.wang@nxp.com>
+ <e89a56bf-c377-43d8-bba8-6a09e571ed64@linux.intel.com>
+ <CAA+D8AN9JXJr-BZf8aY7d4rB6M60pXS_DG=qv=P6=2r1A18ATA@mail.gmail.com>
+ <ffa85004-8d86-4168-b278-afd24d79f9d8@linux.intel.com>
+ <116041ee-7139-4b77-89be-3a68f699c01b@perex.cz>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <116041ee-7139-4b77-89be-3a68f699c01b@perex.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-v2 of the patches sent here:
-https://lore.kernel.org/all/752D8EEA-EE3B-4854-9B5E-F412AFA20048@live.com/
+ files changed, 10 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/include/uapi/sound/compress_offload.h b/include/uapi/
+>>>>> sound/compress_offload.h
+>>>>> index 98772b0cbcb7..8b2b72f94e26 100644
+>>>>> --- a/include/uapi/sound/compress_offload.h
+>>>>> +++ b/include/uapi/sound/compress_offload.h
+>>>>> @@ -112,10 +112,12 @@ struct snd_compr_codec_caps {
+>>>>>    * end of the track
+>>>>>    * @SNDRV_COMPRESS_ENCODER_DELAY: no of samples inserted by the
+>>>>> encoder at the
+>>>>>    * beginning of the track
+>>>>> + * @SNDRV_COMPRESS_SRC_RATIO_MOD: Resampling Ratio Modifier for
+>>>>> sample rate converter
+>>>>>    */
+>>>>>   enum sndrv_compress_encoder {
+>>>>>        SNDRV_COMPRESS_ENCODER_PADDING = 1,
+>>>>>        SNDRV_COMPRESS_ENCODER_DELAY = 2,
+>>>>> +     SNDRV_COMPRESS_SRC_RATIO_MOD = 3,
+>>>>>   };
+>>>>
+>>>> this sounds wrong to me. The sample rate converter is not an "encoder",
+>>>> and the properties for padding/delay are totally specific to an encoder
+>>>> function.
+>>>
+>>> There is only decoder and encoder definition for compress,  I know
+>>> it is difficult to add SRC to encoder or decoder classification,
+>>> SRC is a Post Processing.  I hope you can have a recommandation
+>>
+>> I don't. I think we're blurring layers in a really odd way.
+>>
+>> The main reason why the compress API was added is to remove the
+>> byte-to-time conversions. But that's clearly not useful for a
+>> post-processing of PCM data, where the bitrate is constant. It really
+>> feels like we're adding this memory-to-memory API to the compress
+>> framework because we don't have anything else available, not because it
+>> makes sense to do so.
+> 
+> It makes sense to offload decoder/encoder tasks as batch processing for
+> standard compress stream and return back result (PCM stream or encoded
+> stream) to user space. So it makes sense to use the compress interface
+> (parameters handshake) for it. Let's talk about the proper SRC extension.
+> 
+> For SRC and dynamic rate modification. I would just create an ALSA
+> control for this. We are already using the "PCM Rate Shift 100000"
+> control in the sound/drivers/aloop.c for this purpose (something like
+> pitch in MIDI) for example. There is no requirement to add this function
+> through metadata ioctls. As bonus, this control can be monitored with
+> multiple tasks.
+
+this wouldn't work when the rate is estimated in firmware/hardware,
+which is precisely what the 'asynchronous' part of ASRC does.
+
+
+>> Then there's the issue of parameters, we chose to only add parameters
+>> for standard encoders/decoders. Post-processing is highly specific and
+>> the parameter definitions varies from one implementation to another -
+>> and usually parameters are handled in an opaque way with binary
+>> controls. This is best handled with a UUID that needs to be known only
+>> to applications and low-level firmware/hardware, the kernel code should
+>> not have to be modified for each and every processing and to add new
+>> parameters. It just does not scale and it's unmaintainable.
+>>
+>> At the very least if you really want to use this compress API, extend it
+>> to use a non-descript "UUID-defined" type and an opaque set of
+>> parameters with this UUID passed in a header.
+> 
+> We don't need to use UUID-defined scheme for simple (A)SRC
+> implementation. As I noted, the specific runtime controls may use
+> existing ALSA control API.
+
+"Simple (A)SRC" is an oxymoron. There are multiple ways to define the
+performance, and how the drift estimator is handled. There's nothing
+simple if you look under the hood. The SOF implementation has for
+example those parameters:
+
+uint32_t source_rate;           /**< Define fixed source rate or */
+				/**< use 0 to indicate need to get */
+				/**< the rate from stream */
+uint32_t sink_rate;             /**< Define fixed sink rate or */
+				/**< use 0 to indicate need to get */
+				/**< the rate from stream */
+uint32_t asynchronous_mode;     /**< synchronous 0, asynchronous 1 */
+				/**< When 1 the ASRC tracks and */
+				/**< compensates for drift. */
+uint32_t operation_mode;        /**< push 0, pull 1, In push mode the */
+				/**< ASRC consumes a defined number */
+				/**< of frames at input, with varying */
+				/**< number of frames at output. */
+				/**< In pull mode the ASRC outputs */
+				/**< a defined number of frames while */
+				/**< number of input frames varies. */
+
+They are clearly different from what is suggested above with a 'ratio-mod'.
+
+Same if you have a 'simple EQ'. there are dozens of ways to implement
+the functionality with FIR, IIR or a combination of the two, and
+multiple bands.
+
+The point is that you have to think upfront about a generic way to pass
+parameters. We didn't have to do it for encoders/decoders because we
+only catered to well-documented standard solutions only. By choosing to
+support PCM processing, a new can of worms is now open.
+
+I repeat: please do not make the mistake of listing all processing with
+an enum and a new structure for parameters every time someone needs a
+specific transform in their pipeline. We made that mistake with SOF and
+had to backtrack rather quickly. The only way to scale is an identifier
+that is NOT included in the kernel code but is known to higher and
+lower-levels only.
 
