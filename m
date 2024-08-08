@@ -1,286 +1,95 @@
-Return-Path: <linux-kernel+bounces-280089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7056C94C58A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:14:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7AF94C58E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6ECAB22516
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A05A286BFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30301157A46;
-	Thu,  8 Aug 2024 20:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF66155A5B;
+	Thu,  8 Aug 2024 20:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0Th6AFl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZNsz+9ci";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GmNbjIY7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366734A1E;
-	Thu,  8 Aug 2024 20:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F75BE40
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723148062; cv=none; b=iQVaLf5Wdl08CgWMo7Ya9uvBvH4j5Oe0cF8m3wla4Q0q1C8Yrh5AlTRjUbySwxGHIG72Hwc1HLQgltCYWfMnDuRks+MSWoIX9e9YZkCAOJwJpeZFkpasqrkutqxZdmcU9y7fozfpE7t2Io0TFCqByArBHNAGcZNbv1FKVqtm+i8=
+	t=1723148241; cv=none; b=TQ3wlsOm/4CfvrcW59gw2L+88kMRMO2jFfHiqzyhFIGqZ0iDiOs7UDnoPT+9Xq+sHj5hLVjEQ1IfwsfK4WvnlyXZ8NAU/e6DSZG4cnb+Agid6dG5kxtpMj1i+yndA2+zLxpBPMjdR6qn2LMujJ4pRPWcXRk7W2w4JB2suPQjvgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723148062; c=relaxed/simple;
-	bh=hgURdvoV2LeV7xOJOhcOMVxZqCvVA2gvwLntm/DYCjI=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Kwa2/6RFd47/cO6eiM0AWxHT3N9NjxmJhWpLuz0dKiscu/3x09H2NQOMRH1nm+axXIPvXD+4yy0BeGEH3YGYmbhOlFr8Ctm8WF9aIZeVKUdJaWg+lAGxAZwtYwWBvLf92J4cVfdYJklP/yKzGiPCBNAjT9egx9RTQEDbl+b0cgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0Th6AFl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 712A4C32782;
-	Thu,  8 Aug 2024 20:14:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723148061;
-	bh=hgURdvoV2LeV7xOJOhcOMVxZqCvVA2gvwLntm/DYCjI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=d0Th6AFlewoGY+Bylt133GKr0MOdYKL4lmngVznZKKhj4h/QFSqkP62DUK5z3DSVC
-	 NXAJ6pjnyWnuiw2MQpb5aMrVan9kkOCPXC6+WEU5II9OvN623fHkDh+T69wYt69cfa
-	 he68f5JcHB6g7i/nwV+OVZAWajuWEHlv7sHISQxf92zlU2qxjTuqIjSqxwUHn11ROI
-	 ZkvtHGlWBjAQezR4XrNFRgZ9nj+/gwhTYDfeT09sE6udYFvCQItcyLEGSnuy9Azn+Q
-	 mQZmCcf5YoMUgZuwG5n8Wh9Dz0fnksqTnJSXfnXFAwTo03Czze3jMYSlmWBms2Z2tl
-	 kKeL5FtPgQXuA==
-Message-ID: <7fc258e4208a01748ef024f286a85ca0.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723148241; c=relaxed/simple;
+	bh=14OY1ypVBgTqOcpMBqdvyUUvbZxh28F7lZ5QrnHMcow=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gvFmzJ5UX1BcuTEDuZzGugHFBNR2yTk+26gb2xoSRetU2jKOCWH3EZuV5wnfR0bp6u62SBFRjTFtdEPry1BQgqEPxTuOovA1xAuLo+PG3Ee1Y4h1ecmVHf2eJ8FiUgUWA4FIyKDsS+3U0VI54nGGSLDGiarZ9No94YP39aqxp9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZNsz+9ci; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GmNbjIY7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723148237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=So4w+kZMOXOH/iE7MMpjSgVya3hbi+bnHZNcOVYuXJE=;
+	b=ZNsz+9ciEAjcnVK9mNPSgd4p5LNPMQwcuIPhTjw7kMLs2l2CfBxAoIb/SiCNOGuoNQSxWZ
+	rmeD5cQ4WPR2htQo/NHRaVQp40BvsBlqmw3s8UjhcC9NNg3FyvDjqAOEm4hPT2SEwoZ86b
+	c+e5idVR1kfxTsIP6jEuZopEhSDaokngT287hAmjdV/sp6vaFbDBo9Nv0ODcPJHfMb3rgf
+	0xSEDSGMnnGVxux2OLWWSOoq3y1osul6S91zs2yZB9n2s1DvIsZ7fnMso2ZMTU7nfuQr5D
+	LCKEcjCrb2cHHhrfp8qdkc9Dfc0GimMQAxyKIaDz3xcQxOkXIxtIzVsIK1LWsQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723148237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=So4w+kZMOXOH/iE7MMpjSgVya3hbi+bnHZNcOVYuXJE=;
+	b=GmNbjIY7sqcRiNLXuM6oqEuV83tLNIKSVn2rj4qFKAplpwTK/FScTAlMfWLRg1h7bWlNHe
+	v1nRlVxFATzqhGCw==
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>
+Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] irqdomain: Allow giving name suffix for domain
+In-Reply-To: <7a048c0139e79beb46d887b0cd5a620963ff8ef8.1723120028.git.mazziesaccount@gmail.com>
+References: <cover.1723120028.git.mazziesaccount@gmail.com>
+ <7a048c0139e79beb46d887b0cd5a620963ff8ef8.1723120028.git.mazziesaccount@gmail.com>
+Date: Thu, 08 Aug 2024 22:17:17 +0200
+Message-ID: <877ccqvkfm.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240808-gs101-non-essential-clocks-2-v6-1-e91c537acedc@linaro.org>
-References: <20240808-gs101-non-essential-clocks-2-v6-0-e91c537acedc@linaro.org> <20240808-gs101-non-essential-clocks-2-v6-1-e91c537acedc@linaro.org>
-Subject: Re: [PATCH v6 01/20] clk: bump stdout clock usage for earlycon
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>
-To: Abel Vesa <abelvesa@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>, Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Thu, 08 Aug 2024 13:14:19 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain
 
-Quoting Andr=C3=A9 Draszik (2024-08-08 07:42:42)
-> On some platforms, earlycon depends on the bootloader setup stdout
-> clocks being retained. In some cases stdout UART clocks (or their
-> parents) can get disabled during loading of other drivers (e.g. i2c)
-> causing earlycon to stop to work sometime into the boot, halting the
-> whole system.
->=20
-> Since there are at least two platforms where that is the case, i.MX and
-> the Exynos-derivative gs101, this patch adds some logic to the clk core
-> to detect these clocks if earlycon is enabled, to bump their usage
-> count as part of of_clk_add_hw_provider() and of_clk_add_provider(),
-> and to release them again at the end of init.
->=20
-> This way code duplication in affected platforms can be avoided.
->=20
-> The general idea is based on similar code in the i.MX clock driver, but
-> this here is a bit more generic as in general (e.g. on gs101) clocks
-> can come from various different clock units (driver instances) and
-> therefore it can be necessary to run this code multiple times until all
-> required stdout clocks have probed.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->=20
-> ---
+On Thu, Aug 08 2024 at 15:35, Matti Vaittinen wrote:
+>  
+> +		if (info->name_suffix)
+> +			name = bus_token ?
+> +				kasprintf(GFP_KERNEL, "%pfw-%s-%d", fwnode,
+> +					  info->name_suffix, bus_token) :
+> +				kasprintf(GFP_KERNEL, "%pfw-%s", fwnode, info->name_suffix);
+> +		else
+> +			name = bus_token ?
+> +				kasprintf(GFP_KERNEL, "%pfw-%d", fwnode, bus_token) :
+> +				kasprintf(GFP_KERNEL, "%pfw", fwnode);
 
-Thanks for doing this!
+This really makes my eyes bleed. I know you copied the existing mess,
+but that does not make it less tasteless.
 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 7264cf6165ce..03c5d80e833c 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -4923,6 +4923,131 @@ static void clk_core_reparent_orphans(void)
->         clk_prepare_unlock();
->  }
-> =20
-> +/**
-> + * struct of_clk_stdout_clks - holds data that is required for handling =
-extra
-> + * references to stdout clocks during early boot.
-> + *
-> + * On some platforms, earlycon depends on the bootloader setup stdout cl=
-ocks
-> + * being retained. In some cases stdout UART clocks (or their parents) c=
-an get
-> + * disabled during loading of other drivers (e.g. i2c) causing earlycon =
-to stop
-> + * to work sometime into the boot, halting the system.
-> + *
-> + * Having logic to detect these clocks if earlycon is enabled helps with=
- those
-> + * cases by bumping their usage count during init. The extra usage count=
- is
-> + * later dropped at the end of init.
-> + *
-> + * @bump_refs: whether or not to add the extra stdout clock references
-> + * @lock: mutex protecting access
-> + * @have_all: whether or not we have acquired all clocks, to handle case=
-s of
-> + *            clocks coming from different drivers / instances
-> + * @clks: clocks associated with stdout
-> + * @n_clks: number of clocks associated with stdout
-> + */
-> +static struct of_clk_stdout_clks {
-> +       bool bump_refs;
-> +
-> +       struct mutex lock;
-> +       bool have_all;
-> +       struct clk **clks;
-> +       size_t n_clks;
-> +} of_clk_stdout_clks =3D {
+I'll send out a cleanup for this horrorshow in a few.
 
-This can be initdata?
+Thanks,
 
-> +       .lock =3D __MUTEX_INITIALIZER(of_clk_stdout_clks.lock),
-> +};
-> +
-> +static int __init of_clk_bump_stdout_clocks_param(char *str)
-> +{
-> +       of_clk_stdout_clks.bump_refs =3D true;
-> +       return 0;
-> +}
-> +__setup("earlycon", of_clk_bump_stdout_clocks_param);
-> +__setup_param("earlyprintk", of_clk_keep_stdout_clocks_earlyprintk,
-> +             of_clk_bump_stdout_clocks_param, 0);
-> +
-> +static void of_clk_bump_stdout_clocks(void)
+        tglx
 
-This can be __init?
-
-> +{
-> +       size_t n_clks;
-> +
-> +       /*
-> +        * We only need to run this code if required to do so and only ev=
-er
-> +        * before late initcalls have run. Otherwise it'd be impossible t=
-o know
-> +        * when to drop the extra clock references again.
-> +        *
-> +        * This generally means that this only works if on affected platf=
-orms
-> +        * the clock drivers have been built-in (as opposed to being modu=
-les).
-> +        */
-> +       if (!of_clk_stdout_clks.bump_refs)
-> +               return;
-> +
-> +       n_clks =3D of_clk_get_parent_count(of_stdout);
-> +       if (!n_clks || !of_stdout)
-> +               return;
-> +
-> +       mutex_lock(&of_clk_stdout_clks.lock);
-> +
-> +       /*
-> +        * We only need to keep trying if we have not succeeded previousl=
-y,
-> +        * i.e. if not all required clocks were ready during previous att=
-empts.
-> +        */
-> +       if (of_clk_stdout_clks.have_all)
-> +               goto out_unlock;
-> +
-> +       if (!of_clk_stdout_clks.clks) {
-> +               of_clk_stdout_clks.n_clks =3D n_clks;
-> +
-> +               of_clk_stdout_clks.clks =3D kcalloc(of_clk_stdout_clks.n_=
-clks,
-> +                                             sizeof(*of_clk_stdout_clks.=
-clks),
-> +                                             GFP_KERNEL);
-> +               if (!of_clk_stdout_clks.clks)
-> +                       goto out_unlock;
-> +       }
-> +
-> +       /* assume that this time we'll be able to grab all required clock=
-s */
-> +       of_clk_stdout_clks.have_all =3D true;
-> +       for (size_t i =3D 0; i < n_clks; ++i) {
-> +               struct clk *clk;
-> +
-> +               /* we might have grabbed this clock in a previous attempt=
- */
-> +               if (of_clk_stdout_clks.clks[i])
-> +                       continue;
-> +
-> +               clk =3D of_clk_get(of_stdout, i);
-> +               if (IS_ERR(clk)) {
-> +                       /* retry next time if clock has not probed yet */
-> +                       of_clk_stdout_clks.have_all =3D false;
-> +                       continue;
-> +               }
-> +
-> +               if (clk_prepare_enable(clk)) {
-> +                       clk_put(clk);
-> +                       continue;
-> +               }
-> +               of_clk_stdout_clks.clks[i] =3D clk;
-> +       }
-> +
-> +out_unlock:
-> +       mutex_unlock(&of_clk_stdout_clks.lock);
-> +}
-> +
-> +static int __init of_clk_drop_stdout_clocks(void)
-> +{
-> +       for (size_t i =3D 0; i < of_clk_stdout_clks.n_clks; ++i) {
-> +               clk_disable_unprepare(of_clk_stdout_clks.clks[i]);
-> +               clk_put(of_clk_stdout_clks.clks[i]);
-> +       }
-> +
-> +       kfree(of_clk_stdout_clks.clks);
-> +
-> +       /*
-> +        * Do not try to acquire stdout clocks after late initcalls, e.g.
-> +        * during further module loading, as we then wouldn't have a way =
-to
-> +        * drop the references (and associated allocations) ever again.
-> +        */
-> +       of_clk_stdout_clks.bump_refs =3D false;
-> +
-> +       return 0;
-> +}
-> +late_initcall_sync(of_clk_drop_stdout_clocks);
-> +
->  /**
->   * struct of_clk_provider - Clock provider registration structure
->   * @link: Entry in global list of clock providers
-> @@ -5031,6 +5156,8 @@ int of_clk_add_provider(struct device_node *np,
-> =20
->         fwnode_dev_initialized(&np->fwnode, true);
-> =20
-> +       of_clk_bump_stdout_clocks();
-
-This can be a wrapper function that isn't marked __init but which calls
-the init function with __ref. That lets us free up as much code as
-possible. We need to set a bool in of_clk_drop_stdout_clocks() that when
-false doesn't call the __init functions that are wrapped though, i.e.
-'bump_refs'. Here's the structure:
-
-	static bool bump_stdout_clks __ro_after_init =3D true;
-
-	static int __init _of_clk_bump_stdout_clks(void)
-	{
-		...
-	}
-
-	static int __ref of_clk_bump_stdout_clks(void)
-	{
-		if (bump_stdout_clks)
-			return _of_clk_bump_stdout_clks();
-
-		return 0;
-	}
-
-	static int __init of_clk_drop_stdout_clks(void)
-	{
-		bump_stdout_clks =3D false;
-		...
-	}
-	late_initcall_sync(of_clk_drop_stdout_clks);
-
-> +
->         return ret;
->  }
->  EXPORT_SYMBOL_GPL(of_clk_add_provider);
 
