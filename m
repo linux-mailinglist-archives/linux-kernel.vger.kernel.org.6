@@ -1,167 +1,243 @@
-Return-Path: <linux-kernel+bounces-280001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D75F94C45F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:32:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E072C94C464
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0FD1F26677
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:32:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 975FF288074
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A3E1474B2;
-	Thu,  8 Aug 2024 18:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D14E148308;
+	Thu,  8 Aug 2024 18:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hc09FZTP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=eideticcom.onmicrosoft.com header.i=@eideticcom.onmicrosoft.com header.b="JHudj9wi"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2119.outbound.protection.outlook.com [40.107.95.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A9280C13
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723141964; cv=none; b=Cz+3s5ebTY1BMjBMSk+o1Gbs/LI/l64YVgI1lLNHvObthM0VtUSVBjubsKFzLOzzxrkMxKbYoAchxhVftqffSEtGx2puzdRvPzA0yCYazPFR/MkFYEyFoyVAsOqbytW3JgYvhRqK6+C0YlRwvROEU1HlbknnWB3L6mmhw3VZ3w0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723141964; c=relaxed/simple;
-	bh=m4Ld8dHbB+JXQotUzhSuM6EmaklWFfNmYOEsUH6d9Pg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SXR/DhQcaqstTzvhnuMfShpyZZDveB8IW80QQbROQPZlw47ZMi1tS6Whx21MjuMp27vJP7aUjqAcBzI16VBYaqGZL7UphGokMS+pferDFBxug3nTkDxm3j3cnNe1pMmXmApKqN4KeB2MYdeDTxebvIcDttWe7g03flJLDEvGDuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hc09FZTP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723141960;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=smsHi6xEMXRFi8V3HreFHnPllEpbGv3MaP8Bg03pLpM=;
-	b=hc09FZTPPAPQj8AChOdn0erSw0b2owbMQxiOgK4kb2A/k9S7qlavDCKcAlIkOrz5NNrpzn
-	jdZzOtU+Kopk9Nyz8pdgIPQnnEm6gMrSxvcA544XAABbS7mK4XwWD6SY/fIORJJR3cVaqm
-	hpI7H04DK9F99b0NDo4Gbupc7Jn9qlU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-616-qTL7JnWaOM6bx3Z9eRmUZw-1; Thu,
- 08 Aug 2024 14:32:35 -0400
-X-MC-Unique: qTL7JnWaOM6bx3Z9eRmUZw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CCB381944A86;
-	Thu,  8 Aug 2024 18:32:33 +0000 (UTC)
-Received: from [10.2.16.232] (unknown [10.2.16.232])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 64E8719560AA;
-	Thu,  8 Aug 2024 18:32:32 +0000 (UTC)
-Message-ID: <f8c46f64-1ac3-4da3-87b5-ef7ec2e37fb8@redhat.com>
-Date: Thu, 8 Aug 2024 14:32:31 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4238B13AD13;
+	Thu,  8 Aug 2024 18:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.119
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723142034; cv=fail; b=KIB9KiHWZwC/nQMa+QC3deQOcN7pfz7kjAieR5FIzr6FZKt3EvJOw0uMpOu9anmfbtcOKXp5mpzua94C2nnY6npmw34Rsk4R94XA3ntaII3hEAlmn2Y3b8p40wSq3FrcH/wNVVFJfNbLRG2QyY1BU++1W1axV/Jl31Zaao5ez7E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723142034; c=relaxed/simple;
+	bh=3XgpaDPLKKbYXLcaoXhriyWFux29zPoqI4H1FfG+Z7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gofLo6O4XL4xX7ks+U4wTKemoS1awqnSv8MYHYw++H9DrYN4HKVolowou8CWMjlD3edLflZvaf7XFdR8FY4nrhwY5nBj8VIJSxRKvOZxYdLN+5Jd8fQx6QJxaEVp5wDo2jO4AAv4XqW9PLOPQBcxUyY0GnWsqO0WIZA/sXX/9cI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eideticom.com; spf=pass smtp.mailfrom=eideticom.com; dkim=pass (1024-bit key) header.d=eideticcom.onmicrosoft.com header.i=@eideticcom.onmicrosoft.com header.b=JHudj9wi; arc=fail smtp.client-ip=40.107.95.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eideticom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eideticom.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sxsKhHpuDY4YwDQ6o2dVIzJtQB6YaIjZwfoaQgj7MrFAa8OBtebDoe45MGwju8GdlRclnoefq+Ga5FKaFvTcQUBXyTJGTgmh5RFPMvrdg3460BzI4mi09SK7+jWqdMR9jblA4qlxk5OBmj45bnwDu6qysG18g9W+d3TCE6U9aqI/kvTrGycPkTsLNOYko8lFk9q/bp+bECEh08u9iAMJY5hBs6MPOpC6BXp15Q4FuhH+spE2ZIrAwHPOAsOw8pRrEwkuXfMO9Sa3P2z7LFZuj+4MDqyZph7rbjmcc3rTjM0OdIIEzKpNb8AdHRFrGbsaDwcvG28vmilsfIm2iwiiMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E21BUy7gHwyM6Sc7f4tV0vSARFCIgfl8bfMG0roKu0c=;
+ b=jDvWz2hgHG3gZ9TEIq1Uag3RISDWJPT+Ds/+OBkBmeoDaCfmUhEGKWK+BnLNlTQgQ/B7K9MoUt0fANPupFJ8VMgO7rtW3bBZLJ/hJ8EeMU+Mzie00Vw0cpkwJyFqNDqOswRAgqOQ5/VF3rZicbsUtx+STQyjOt9Wv/mn2YnTiFP9tgVLlmYXT8/lAhzwjPdgKguKU7wPy8nvARvssuTdPZD7gx9PJdQVqyJgzRr3NxB42LJg9kb6wnbOrofeZRL+lK7ZrAerQggUxVgflRovlWWFJp8J3l0Odc/2q+2GYvROQXC46qr8o0E4UdVGCZ41MXtlseGie9Xal+BeKLMP0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=eideticom.com; dmarc=pass action=none
+ header.from=eideticom.com; dkim=pass header.d=eideticom.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=eideticcom.onmicrosoft.com; s=selector2-eideticcom-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E21BUy7gHwyM6Sc7f4tV0vSARFCIgfl8bfMG0roKu0c=;
+ b=JHudj9wiAqGJdIbklR9vy7ilyM1a7cOqEt+7bcQNTGitosO6TCaC83IsKrVppNQKDg2jZ4nLHkTkmkPj6jsqDkQblXK9KxSk1sf1bkAJHirAZZ48R7BwpZOCz+pu5Qj/5xpT042NLYkgHDki2dR6LIoNeDUltD/SotmF7ZeEP0A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=eideticom.com;
+Received: from PH7PR19MB6828.namprd19.prod.outlook.com (2603:10b6:510:1ba::20)
+ by PH0PR19MB5049.namprd19.prod.outlook.com (2603:10b6:510:79::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Thu, 8 Aug
+ 2024 18:33:50 +0000
+Received: from PH7PR19MB6828.namprd19.prod.outlook.com
+ ([fe80::69c8:bdb9:b882:b849]) by PH7PR19MB6828.namprd19.prod.outlook.com
+ ([fe80::69c8:bdb9:b882:b849%3]) with mapi id 15.20.7828.023; Thu, 8 Aug 2024
+ 18:33:50 +0000
+From: Martin Oliveira <martin.oliveira@eideticom.com>
+To: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Artemy Kovalyov <artemyko@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>,
+	Tejun Heo <tj@kernel.org>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Sloan <david.sloan@eideticom.com>,
+	Martin Oliveira <martin.oliveira@eideticom.com>
+Subject: [PATCH v5 0/4] Enable P2PDMA in Userspace RDMA
+Date: Thu,  8 Aug 2024 12:33:36 -0600
+Message-ID: <20240808183340.483468-1-martin.oliveira@eideticom.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR04CA0072.namprd04.prod.outlook.com
+ (2603:10b6:303:6b::17) To PH7PR19MB6828.namprd19.prod.outlook.com
+ (2603:10b6:510:1ba::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is
- enabled
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, Marco Elver <elver@google.com>,
- Dmitry Vyukov <dvyukov@google.com>, linux-kernel@vger.kernel.org
-References: <20240808125430.1172152-1-longman@redhat.com>
- <CA+fCnZdWgAD1pu4yyjON0ph9ae1B6iaWas0CbET+MXLNNXt5Hg@mail.gmail.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <CA+fCnZdWgAD1pu4yyjON0ph9ae1B6iaWas0CbET+MXLNNXt5Hg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR19MB6828:EE_|PH0PR19MB5049:EE_
+X-MS-Office365-Filtering-Correlation-Id: ff354e5f-c5fb-4be3-714e-08dcb7d8a5a2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2BuRgK+Ojocjm86OlCW9Ei/9gQXsI1wmmAh2CABhEjYfIzrT0Bw5bWRaj5tU?=
+ =?us-ascii?Q?31SPl07GxW/E1BdiZRzK++ADRdmTrM+McXydGa9cZcvguQO3loOW9oY8YJu7?=
+ =?us-ascii?Q?nvM4vBq6rnOJc3rHBk1/arCOyWiHs0UIsPehkXQ5lrdFK6bLIQPSGb9+CeCd?=
+ =?us-ascii?Q?J4pmUR9BiOxy+X9mxc7eU1sCnUmsCFevNMRHmGuRfYbr73CpZCsxvJOs4TZQ?=
+ =?us-ascii?Q?g+YEq7HDRXC+Nv2/2hQpvlf2MxKzRo8e4yfO8wwPqxZ9MKuYdoOkqVNvYt75?=
+ =?us-ascii?Q?IchOopXfmF+PyOtH4iwqsIK5xpzLMT2oQkpKnOgTZNNQFWTL3bQSBkqQaQzx?=
+ =?us-ascii?Q?1rUwKqnyDi77qpl4dIdU/lxaeW2RS/hROIXMm3d3SP1pV9gqqI5eE9z2Vfow?=
+ =?us-ascii?Q?mcub8HvvSYoIZ7GLqx6orzXAXfx5SR08jYVJRtoKQC1Gib3wsO7gmzaWJXhi?=
+ =?us-ascii?Q?CaRbnGmU7WwADD3LM7SoDcU5OxHElDvHUgObYSn0q/jKJLwivF9zZbU//Mio?=
+ =?us-ascii?Q?obNonVpcKD0G7oqTyhOQmpB99nUKTBDvXfdh8sU9kfhGIP7qhGOGkvDnrb+t?=
+ =?us-ascii?Q?uE9aF9H1QJUyzI59P6WkOgB2kI/RvjpdOvfk7ioPuAhZtp5WEbceSMfb5TbN?=
+ =?us-ascii?Q?QKOw9BcncXBI77QNrc8NDmDu4f+bMUu70KEkpON+zt6bmUYlqPBrzXIDsMGf?=
+ =?us-ascii?Q?0dnKH2k4v7OLoraxxBmwJB88v+2laRsJqsRAb4NUAxlJdKKKr7xwMnAuCh6b?=
+ =?us-ascii?Q?I/YH1oDERiKTAgJnxL9TAxbPhknheoct9mEHQhU/9h/iUtWldDF7PFCgfxV1?=
+ =?us-ascii?Q?CJ3i/2RKnE6A8NCaUCqaRqUlDrjbN3yKXirEgsJpLM4gqRggYNauUt52b4+o?=
+ =?us-ascii?Q?NiOz5IicfM79K57CxX544AUXoPUiFUp5GXDjFtwF++UrsOl/7OsiD/B88uSj?=
+ =?us-ascii?Q?HANRzN0DRYjmlHlz/HrdUd4FWEmDO9bl+CZmREHAPf2F1ncIyXDjJYY0jOM9?=
+ =?us-ascii?Q?olqNDJI+RhxGYi+IwOxCD4ZF+LfrQrsCYoOsVnQkCIBJntLHrVIuf14zoveF?=
+ =?us-ascii?Q?IC7sbKtPmKTmGYVNRh6EczPcn2sA4O5g/DpcUKnIv+Ux4ccogu9+TEy0aG7j?=
+ =?us-ascii?Q?M2Q7ldiid94dtKSpw3fPhIdEMdaKeNuKwbjqKKAHaiApdqtnkDXy+nOZZN9H?=
+ =?us-ascii?Q?leU4q10sDfeaE3IM+YHu7xioxDzX9m5PVOc/+wnH+oKKM5bK0tXXCMIRbg5U?=
+ =?us-ascii?Q?xTJ4/qN/ClcsYfjSkO+jQPCUxxBusKMZ7HV3lHiv2/8xu61VB86ym6yGJPZN?=
+ =?us-ascii?Q?HS+Wo+pd6pu5jVrmVRQf6zVMUkfrZ64ThJaF0bPeHVp5co1rOEA+EhVrGGbs?=
+ =?us-ascii?Q?HiL4pc0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR19MB6828.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bOq7j0K8dPZAXX7WsTq+0h70Oj+621GFAdj65tTL6dsClaiwt2e5pO692FrB?=
+ =?us-ascii?Q?H+yFaVzUDHsTVdMVlEXSlPd0WD01b7hZ9pjEs2PG5qyuqFRC7MUHd8Bqn+jH?=
+ =?us-ascii?Q?N6Sg9fyTsvUGdEeAHqbBTLVoZngJzJykqmrUKDzlhLSFjPLGJs25iisJx+AN?=
+ =?us-ascii?Q?TE7NgLCScLxWCdn9RWwTzyjrrpMJjkVRKg2aVANSXItNBrwVI/cmjTsr4X95?=
+ =?us-ascii?Q?XDVEnGuXvAG7/w6mk6oGEeo+am2Goj1GdHkc5izvfaC7sozgVymnAsO/M1mS?=
+ =?us-ascii?Q?v35CNwQMhAldKqomHanlHc3eNvEmtnfdBbuzA0kloo2I4sIN8lp7nJxauJeJ?=
+ =?us-ascii?Q?JzLF8nu0cxXcjzgv5KggF+tAkYV5Ggxlf2aLh2Hrna+qonJkutdO0shq37yf?=
+ =?us-ascii?Q?zn24LQSv/xBQzb2TU3pCdTIOuIID16ihxKgmRACkIQ0Iau/dY2VkaX0xFe+V?=
+ =?us-ascii?Q?9aJtRs/IFMum0wLzMrLleaVo7bonHP5wE8qsVNhfzBkt944PJrAvJOG7Uxkx?=
+ =?us-ascii?Q?OP19THVHNQ2pctLIIOFOlwXef+mrmXdUkMSOsfeHHm4vEo/WsaIu92MUGNXw?=
+ =?us-ascii?Q?tot11T1yKEvBfvXorUZURn+LRDf9vWhqVFHUu5Awr+MxN4uBeT+37pUZej2e?=
+ =?us-ascii?Q?6Pi7J4PZETi9qWvZKIF4vAYOsa/sHsActTN+CPDs4oXSGVBuCYwSxe3OrnvT?=
+ =?us-ascii?Q?wru1jgcrp9RhWRC7v0gzdQlTpJcAm+FaNVu9qt5EHtpzcbfIsH1raBW0HEgm?=
+ =?us-ascii?Q?Uw45x3OEoBn+3qmRMj5ycbYFedUN+6KbnN7YuFj2kE3RInAzW9TOxltonWmC?=
+ =?us-ascii?Q?oYAdpwWWrUtC0NnChJFXDj6/qmiqbD0eDenNzc34pxbniT7wOlMmumvmN8Ob?=
+ =?us-ascii?Q?zJ1mivAmUubzjRLYsf84M81UulpOB+4XFfH/8j8Ad28XyytYwg7zi0gEw76B?=
+ =?us-ascii?Q?lDHFMG59Yp2KPbPum5ly4lvWFVXbMbhF0McAy4O48F17Eiq2Z57KblCS4dpv?=
+ =?us-ascii?Q?NrZ379jS6GsIglopVyW/uzP2dUlRJzgAFxkzn+G0gvrMAg89IIgD1NfXZNkc?=
+ =?us-ascii?Q?HQtmjb3basCrScXjCtDIS6x6GazYQ+FQi8RvPlT/D/MFCPbaQksZ6RWJksKH?=
+ =?us-ascii?Q?vn+rIh3rJJUpiRk5BvNvB/VAbQgz6/Fz1Ebudu3EchDHE8zCyNb1r0fGYePs?=
+ =?us-ascii?Q?zu+qQwBHfnhkcliMWhmSm8zwXE3Sy7xDRMN4sV7dYNVQVX7OL4A+sA12dIUf?=
+ =?us-ascii?Q?pWosAcirXGkk71YmwBIi6CqsHmd1T/+h2yfTdrspLPAvxu1K703Ky8ipdh+8?=
+ =?us-ascii?Q?VBzY0B4F/gZydN3P4fA24EDN1jj/ypxL2LL0OuKThRZKUPr4ac+LS/pBUExn?=
+ =?us-ascii?Q?O/xHvHmg6ECeF90Czp5yQ5SCGFb8v6YzSbMm44ZuPV8dGIkTRuZM3XSeAazR?=
+ =?us-ascii?Q?YmVswrUVOgmpbe6tMItIPvyr0od3D8Yi2SJOdfxG5upTMgy8PKrz8WK+CSq9?=
+ =?us-ascii?Q?7bydbY09XPl28lWJR/0a60LXBIC5XenEv787hJlcANaP+CXY0qBQPqQwPkgs?=
+ =?us-ascii?Q?z9my6w1T0qeBCRZ+K99l2mQQY08Acus0z5QDJaPaAhzosZWKeoYJjlSRooW3?=
+ =?us-ascii?Q?IBViV4lbeE8/wEfRbG/Rp2w=3D?=
+X-OriginatorOrg: eideticom.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff354e5f-c5fb-4be3-714e-08dcb7d8a5a2
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR19MB6828.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 18:33:50.0851
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3490cd4b-0360-4377-abb1-15f8c5af8fc2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: efgq6txvKBCYq+Q0+xkLNkvvccB6KSx9cu3EMwaeKadJr/qAF/NwBP4YlJHCvBoyULjcWoMct2ik9rAXHxF/50MqJ4XuiU4gilYxSCjUwFU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR19MB5049
+
+In the last version of this series, there was a discrepancy on how
+->close() and ->page_mkwrite() were handled, as just the latter had a
+WARN. Matthew requested that they be the same, so this version adds an
+extra patch to add a WARN to the ->close() handling. Everything else
+remains the same.
+
+On a different note, I was wondering which tree should take this series.
+
+Thanks to everyone who has provided feedback!
+
+Thanks,
+Martin
+
+Original cover letter:
+
+This patch series enables P2PDMA memory to be used in userspace RDMA
+transfers. With this series, P2PDMA memory mmaped into userspace (ie.
+only NVMe CMBs, at the moment) can then be used with ibv_reg_mr() (or
+similar) interfaces. This can be tested by passing a sysfs p2pmem
+allocator to the --mmap flag of the perftest tools.
+
+This requires addressing two issues:
+
+* Stop exporting kernfs VMAs with page_mkwrite, which is incompatible
+with FOLL_LONGTERM and is redudant since the default fault code has the
+same behavior as kernfs_vma_page_mkwrite() (i.e., call
+file_update_time()).
+
+* Remove the restriction on FOLL_LONGTREM with FOLL_PCI_P2PDMA which was
+initially put in place due to excessive caution with assuming P2PDMA
+would have similar problems to fsdax with unmap_mapping_range(). Seeing
+P2PDMA only uses unmap_mapping_range() on device unbind and immediately
+waits for all page reference counts to go to zero after calling it, it
+is actually believed to be safe from reuse and user access faults. See
+[1] for more discussion.
+
+This was tested using a Mellanox ConnectX-6 SmartNIC (MT28908 Family),
+using the mlx5_core driver, as well as an NVMe CMB.
+
+Thanks,
+Martin
+
+[1]: https://lore.kernel.org/linux-mm/87cypuvh2i.fsf@nvdebian.thelocal/T/
+
+--
+
+Changes in v5:
+  - Add a WARN in the ->close() handling (per Matthew)
+
+Changes in v4:
+  - Actually handle the WARN if someone sets ->page_mkwrite
+
+Changes in v3:
+  - Change to WARN_ON() if an implementaion of kernfs sets
+    .page_mkwrite() (Suggested by Christoph)
+  - Removed fast-gup patch
+
+Changes in v2:
+  - Remove page_mkwrite() for all kernfs, instead of creating a
+    different vm_ops for p2pdma.
 
 
-On 8/8/24 12:12, Andrey Konovalov wrote:
-> On Thu, Aug 8, 2024 at 2:54 PM Waiman Long <longman@redhat.com> wrote:
->> As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
->> capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
->> for all kmalloc/kfree calls. So stackdepot capacity was increased 8
->> times to accommodate KASAN usage even thought it was claimed 4X should
->> be enough at that time.
->>
->> With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
->> for stack records"), all stackdepot records uses a fixed size with
->> CONFIG_STACKDEPOT_MAX_FRAMES (default=64) entries. This is merged to
->> support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
->> use variable size records for non-evictable entries") re-enabled
->> the use of variable size records for non-KASAN use cases, but KASAN
->> (generic mode) still uses the large fixed size stack records.
-> No, since commit 711d349174fd ("kasan: revert eviction of stack traces
-> in generic mode") Generic KASAN doesn't use fixed-sized slots.
->
->> With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
->> stackdepot space had been more than double than before. Assuming an
->> average stack frame size of 16, a KASAN stack record is almost 4X the
->> size of a non-KASAN one.
-> So this is not correct.
-Yes, you are right. I missed the KASAN commit 711d349174fd in my 
-analysis. I will update the commit log in the next version.
->> When a wide variety of workloads are run on a debug kernel with KASAN
->> enabled, the following warning may sometimes be printed.
->>
->>   [ 6818.650674] Stack depot reached limit capacity
->>   [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot_alloc_stack+0x39e/0x3d0
->>     :
->>   [ 6818.650907] Call Trace:
->>   [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
->>   [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
->>   [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
->>   [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
->>   [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
->>   [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
->>   [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
->>   [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
->>   [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
->>   [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
->>   [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
->>   [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
->>   [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
->>   [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
->>   [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
->>   [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
->>   [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
->>   [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
->>   [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
->>   [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 [xfs]
->>   [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs]
->>   [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
->>   [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
->>   [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
->>   [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
->>   [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
->>
->> With all the recent changes in stackdepot to support new KASAN features,
->> it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
->> enough when KASAN is enabled. Fix this stackdepot capability issue
->> by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
->> maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
-> It is possible that the stack depot runs out of space due to a truly
-> large number of unique stack traces, but I would first make sure that
-> is indeed the case. The one thing to check would be to dump all the
-> stack traces from the stack depot when it overflows, and check whether
-> they make sense. There have been cases in the past, when e.g. the task
-> context part of a stack trace from an interrupt didn't get stripped
-> properly, and thus almost each stack trace from an interrupt was
-> considered unique by the stack depot. Perhaps, something similar
-> started happening again.
+Martin Oliveira (4):
+  kernfs: upgrade ->close check on mmap to WARN
+  kernfs: remove page_mkwrite() from vm_operations_struct
+  mm/gup: allow FOLL_LONGTERM & FOLL_PCI_P2PDMA
+  RDMA/umem: add support for P2P RDMA
 
-It could be.
+ drivers/infiniband/core/umem.c |  3 +++
+ fs/kernfs/file.c               | 40 ++++++++++------------------------
+ mm/gup.c                       |  5 -----
+ 3 files changed, 14 insertions(+), 34 deletions(-)
 
-Anyway, I got a bug report from our QE team and they have seen it once 
-so far. So it is not an easily reproducible problem. I need to do 
-further investigation first. Thanks for your quick response.
-
-Cheers,
-Longman
-
+-- 
+2.43.0
 
 
