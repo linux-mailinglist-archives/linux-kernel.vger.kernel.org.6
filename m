@@ -1,309 +1,192 @@
-Return-Path: <linux-kernel+bounces-278822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A2094B551
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:06:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018A694B556
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 608D7B23AA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:06:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CA81C21AD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CAF3EA72;
-	Thu,  8 Aug 2024 03:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390224317B;
+	Thu,  8 Aug 2024 03:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4egLMh6"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fPe3SvtU"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013048.outbound.protection.outlook.com [52.101.67.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35861A291;
-	Thu,  8 Aug 2024 03:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723086365; cv=none; b=e1DbMZxbolr7ObZ/dB3/CPAp93os0PihQ5cOMEoG0QF1jFfLfWE2Qg1B8e4yNOJGrMtk4/LqZvNmBJRSZAKzigMabTgYzrxJblENllbGTKc0ttQZZb5rTDmZQSjsn1jvjaBWYMCO/CfxpktBXLwR1ZP0aVuYiO/NXCsJUfudmbc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723086365; c=relaxed/simple;
-	bh=NTVg4k52Ld7Qb5fRMa1cOVh7BXz9c+aNB4LooZF0n7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GXM0CaR2BtANm1l7MDYW21s6V8h2lzM7wboWjKJ1twi7sz7yFPxall7qs7Yuo3pLfJ9m8hbFLEkJx1q9NtvFOsMqqMiznuhiNC3KVjeCusHlY0to7bwJcAz8x4QAHiYgls5efZjLajJ9qeRgQXHn9dXHjfgS9Ihdgcr72widwv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G4egLMh6; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44ff50affc5so3078561cf.1;
-        Wed, 07 Aug 2024 20:06:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723086362; x=1723691162; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N+aurtEh+//psw1dedoJ0a/PdwxNeh43gUGAszzKC0k=;
-        b=G4egLMh6QtTcZelco+k9fon0JX0UPgmcyYPOrUfzZKDpn48I5ZtfddHx3k95jagPhS
-         YEcJVWpXGedQAcrVleDV8uGtnmB6Zjm/2UkyocCA7x9Fq2pPm3PkrXA+lZX5wG3+w+FU
-         Mh0npSi+BGlrJkOT5zg/9U3vaeZGa4iTJTfu/inJdSdSd5SCmzSHN4UV7AbP0oI4k0Cr
-         yP7JH5e616h11gzSbf38PSUp/splnq0oHVpeZypHbedkdBdGuEHy+Dfe47+yVZMxZifD
-         OajZXTeAsUIVzzkFJvBvD6ctUBQIVkn3lbnTj4rnyksNGyPFPxPCxlCiff7ul+VSI1+S
-         CcAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723086362; x=1723691162;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N+aurtEh+//psw1dedoJ0a/PdwxNeh43gUGAszzKC0k=;
-        b=F+rKMMomcw0kp2XT3V5MivvbX+s4xuUMKy4Pc2yC4zhum5yB5lGYz06XFVNc1FYXm2
-         BbkYv2lAzecYvdTn7xB31NYokNZ6N9AOTNTeuzGu9DTaIpit9JXEC0iZb+jlmEW1Xq2D
-         lxl6ikQ+Bl41iJ5jfPvi3QOSe5GjEFg3g3agay10drwu9uqCkiK35RvjFmSFSfKOwACo
-         AiQ7eYUUYXS+/hgPuiRgXUHcBiLiIVdvZ+soD6fggZkDQmQLkVf+2jw3jSB+3SiP4nY/
-         iaMfWZ7AM0FRlhTaU9zhq0qPlLlykRq6u47yYsyEIQ8D8XmaxK7OEf0AQCDph99Twl5H
-         NJIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvoj4gcgSaa9LKGg55ftrJYbDB3z4tkEU4kUygiXmPwCv8wdYDzHPyElCggkvGOL7YNJSJmA29VrwpzPJW2T6TPuGFyAh5CbuzmoWEc2Imirg40rczB9xeh9nCHF3WmQuPnm0feojHTQ==
-X-Gm-Message-State: AOJu0YywNVnMwqyxcSP5A+iV4XNTjwvOdRJjL/aWQ1aceGlVOn39olek
-	WwMuCmEwdXR9NuobKBzB4xFUrhtvEp9eQB37iOiIEwA4MqDurrd57Wmk+tGrFg+PpI1DuTHZDwa
-	G0XzlP4iXwgnRakrZI+A65SFIGfg=
-X-Google-Smtp-Source: AGHT+IGbxRYYeWrxFBirDQVYm9kGQ0jwT983PaKpIulhAXv0XPmXZ+4rOojNGMeQENWtEnQdEC/abcfiU0jcEfW7n8Q=
-X-Received: by 2002:a05:622a:598c:b0:447:e6d8:57a4 with SMTP id
- d75a77b69052e-451d430b037mr5885061cf.62.1723086362395; Wed, 07 Aug 2024
- 20:06:02 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2F226AF7;
+	Thu,  8 Aug 2024 03:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723086528; cv=fail; b=H30+/9G8BzbYltqudUE6hvaWKVlMuDzHzKjXCXSo4hg6H2Myad7gl+j63FUSOpABHLCeBLOidVWTqodgxj4dwvdXpi7P/orY61iNMeAnN4bLuhFo4B+7MZBKSfAf6jTmHWrafJGgZgTuUQU53ECjXBVMatDJz80UT1bd1NKMF98=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723086528; c=relaxed/simple;
+	bh=IjsV/iPh9WaPCaHKt4+36IGaGIF9GLvDPbpma9rMqdM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=deH/glHMBWBJJnap0ZSwVvvtEq+YYXDBkrMrA9fHlxO+JIk17+DXWYrQBqPIK8IPWJc8C5YtOBo9UPOZXuvfbdV1VFFALR/l1ge4ldAPUi0UybS+Dcc5IVaZM6QQDjxfZ9o+5opZDpnCDmfzVP3L2evUc7zz1FZ7YGzuwd056Ts=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fPe3SvtU; arc=fail smtp.client-ip=52.101.67.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DWRuoDd3U/nruZrsl738U6DhHogquJQktKrnytTrhLhuYU7xXNwoIVPqk94kaWZlp75dnuF1mp5vUqNgdR+CPZOKAUwqPd/fbFB6pfA1ts8HwvZmHk+Ia9oyjTiTc6YzaqkIVBYIC1eGWUFAXmvqH9kiOVJVyq8AJMiPI8KwTJXt2pk3v+DrO1lt0c6w5+q9PxoiF92VIWa6w4Rw6oz2aSya+2hFGbOZkEcMKiuRr+u7Wfkj4SMzd+qKhWin21MvDmT4VNv73DXHJunBGvyDJmEUU9+C0AtAIxi0Msa/IdV8TheFH2T+J/fjl54nPqwIeGW87cUMJGKjMX1bpuEcOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IjsV/iPh9WaPCaHKt4+36IGaGIF9GLvDPbpma9rMqdM=;
+ b=SFlptgvfsO4hd2/qra2LH8WBbuBgfniKSum1WK89bsF8kfE5o7Xt2PlBjgBdMIcX3gJMLSbFE4mVAojAHM/ecmGYXfr2mMb2AQnbx7SPOv3h+KyZarH1WjR3eVO9iyhmu7S86nD2oxsED1lX8dUbSE+k2BFA9foV9oxyUJTX4zt+r/0I35MrgeeaWh5Nyy/bMTaVDAGoUOdkS8a+TqipBLFc/89bCWZVosw4MJ2KHE4l0K2UsoYYPzdAWfu7dcgfpg7WsB34/wgKFGYWKieJAu4nSc6lwORwcNWlkrua/t/Lv2JKwP1ryRak17D+UURxM8vppsT9ROw5vjZVmPVQUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IjsV/iPh9WaPCaHKt4+36IGaGIF9GLvDPbpma9rMqdM=;
+ b=fPe3SvtUD3JXzDomymKo8RiNlxqjBhRa/jhcnV0E1gz+Nxvz+akPYsRp/16XjyZLmB/Bja+5ywnhyOrxZilX7ep1XuHz/sh8TdWnxTGZNfppuyf+x4H0iPmsUbRYie41BiC0yOPtaAcm1gNaCeiKtmLNlERfGEMTzyKGlYW24A1S5cZwFzWuCHIggIwSk3cw7/xBPTVjX+e0q3we2kxlfW20jN4nmmcxDgyw346weg/e95bI+1tJItrPT3XfUnJDdKxn3wVg67plDctY9M/gVLkSA+kzJvHKZXzyY5ZmwXMIZugcMkPyRRlv0DGdA8fzo+9Up0ST/m7Heyd04xAVUg==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by GVXPR04MB10994.eurprd04.prod.outlook.com (2603:10a6:150:224::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14; Thu, 8 Aug
+ 2024 03:08:41 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7784.020; Thu, 8 Aug 2024
+ 03:08:41 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: "Ciprian Marian Costea (OSS)" <ciprianmarian.costea@oss.nxp.com>, Chester
+ Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, "Ghennadi
+ Procopciuc (OSS)" <ghennadi.procopciuc@oss.nxp.com>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, dl-S32 <S32@nxp.com>, "Ciprian Marian Costea
+ (OSS)" <ciprianmarian.costea@oss.nxp.com>
+Subject: RE: [PATCH v2 RESEND] arm64: dts: s32g: Disable usdhc write-protect
+Thread-Topic: [PATCH v2 RESEND] arm64: dts: s32g: Disable usdhc write-protect
+Thread-Index: AQHa5x3aHX1oA5y+sEGsIYpUXutNo7Icsbng
+Date: Thu, 8 Aug 2024 03:08:41 +0000
+Message-ID:
+ <PAXPR04MB84591D018FDFE0BA1902213488B92@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240805095642.91606-1-ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <20240805095642.91606-1-ciprianmarian.costea@oss.nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|GVXPR04MB10994:EE_
+x-ms-office365-filtering-correlation-id: 3884c563-39a0-4922-584a-08dcb75767fa
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|1800799024|366016|376014|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?cDBOcjFibGQ2Ym5XSVNpZnNyVzgvcmxDd01RV1c3VFNRZnQrUnFJdjB4ZUx1?=
+ =?utf-8?B?UmsvOW1sOUlKWkc1SmtZaVJFYitKY3FYTVpVRUJhRStQY0tkR0FpMVhIMXdJ?=
+ =?utf-8?B?TjBFby8waW02c0J6Skp2RUtVcDZNVkRrLzYyOFBrbG9DSnE1RnB2TzdyYkND?=
+ =?utf-8?B?UXFOYlU2Y1JqOVFGUEtOUEF2RDEwT1U1OFZIcGNCVVJmcDhlZjBZN0RTWXls?=
+ =?utf-8?B?RjQwSU1kUFJlUkNYcExOSFlteDVqeFZ1aG43bXl5bUpQRE5DMlR1U08zWTVt?=
+ =?utf-8?B?S3BXb21MVkg4TG9zZzYwNVFqUUN4U1NxcXp0MTgxMW8ydTFtNE5YaUxRZ0Nl?=
+ =?utf-8?B?OEFUVGJOTjB5OTd5T1l0NzZrUCtXR05ZWmdya28xUklVUUNocU9OMGtSV2Jw?=
+ =?utf-8?B?RnUrMFRETHFJWW4vMUJpYytDYncyYTR2VzhFLy9wOFpjT1RReFZjNzZZYU5N?=
+ =?utf-8?B?dlV5b002dHl2d1BOL0t1bnRlOFZrWnE5eHhxbHVTWHdmV2xtKzQ2ekdhV0Ew?=
+ =?utf-8?B?MFNGcFFET0s4YURNd09nZWc5VEhuQnRJZ3daRFNJR1RONGZpVXJFNmxta1Qx?=
+ =?utf-8?B?bVppWHZMN2p6eGN3WXhKaGdDdElnSnBPTzljUTF3NiszQnFqdTNLNldRZ3Fr?=
+ =?utf-8?B?aW93MXRnWTZSZytDNkszbWZ5VjFEMmxFSy9mbFJxem5hSytoL0JGWW9MYVdM?=
+ =?utf-8?B?T00yRjV6bnRRNGhaVVMwSnJnU04xWGJUMmhLd25NcVFpT0FjMURUTEdVU2xT?=
+ =?utf-8?B?c2FEMEVlWDI5UHBRU0hRZWwwNnpRTkR0d2NaRGJoRTNVK3RkU0VXaTFueUQ5?=
+ =?utf-8?B?SVAvZ1ZqaExqeXNqcE9WM2VLMVNoTU96c2JTbkJqUUI2R1hFTW5pYTlNQ0Jk?=
+ =?utf-8?B?eTZHT295a0liTFRuMFpEbHdWVms1ZW1hclBTR3dYQTFncGJzQzRBUkZ1ZG83?=
+ =?utf-8?B?Tzg5L2xlTU5zaG80VjY4dEhLVVFOckZNUUg3OTVKMUdYdjZvaWsyNVZLdVJ3?=
+ =?utf-8?B?bVJJZjY2aWRqeWFuakRMSEgxWklxajhkMlJuTWlibUJmK1NzZTk2WGZQMTN6?=
+ =?utf-8?B?Ym1lTmJYRFJua0pJV0RQQm9uUk1sSnBWcFU0c3ZoQ3dqTlJ1Qm1PMVF2Rjlv?=
+ =?utf-8?B?YWpLT2JaQ3VWWFRpRjFscWZRTTNuUHpZRVpNeDJyMGdvYzNjVkRVbjRrWUlH?=
+ =?utf-8?B?cXgyZytvNEV2VTl5U2NtQUlwQnVCWm8vVHZXN3BRTDdwZTRQMXRucXdOWFhP?=
+ =?utf-8?B?RDBEb3BDeFl1SHkwN2lRSTcvRHVUUENnUHFPMVFxd3ZnZ2xkSUNoUElqQnk0?=
+ =?utf-8?B?dVFwME50ajZ6RnZrTzRzV2VBWW13UDVDWTJ3NndMalgyL0pVcXZaVVhOQU1T?=
+ =?utf-8?B?eUlnaXpBUktRQlNSeXNGYlVXRjdzUUZiOGM5azlRcXluUUVITk01bTFFU2tp?=
+ =?utf-8?B?dW50am9wcmltSlc2NDJ6NjdvSVFBVmJ5WENjMkVJbWpDRnlKekRuZENBVTlY?=
+ =?utf-8?B?TUZBcm1ZZUNzMWRDTWp3cTc0TGlmYi95WGdnSkRIWTRaV2hia2FhSnh1Nkdi?=
+ =?utf-8?B?M3BKRlYwTHJjb3FJbE5tRElhdFR1WlVqblVLdDJ3QUU5U3BQdGhtcWxWQ1ZC?=
+ =?utf-8?B?K0o3aDhCdFlyMXFwSGxLUlE2QjNCTkdpMnhheS9tME04Z1ZUSzBlRzhmVlVi?=
+ =?utf-8?B?MTBkMmVtUnBRMUlMbjM3Vy9mWWJWdjFseTRPM1NKdVBWOXhCSUlUeitCZDdL?=
+ =?utf-8?B?SG5CeGxWak53d0lHYkpHMW9RZ2l0SStuQ0lJend3Qk8zYWkwUlJVUVV3Z0Rn?=
+ =?utf-8?B?bWs3WFFNalFReVdGek1XUXJlTE1sczk3NjlBb3JJcUo4ZDlxbG5Kb0U3Y3I3?=
+ =?utf-8?B?S2w5YXRvWEdwb2VKbTVxb0VXY2NwS2psMVlPWUFkOGN6WHNHWW5rRzg4Si9O?=
+ =?utf-8?Q?2o2V88bq9AY=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?L3NENzR0R2xYQmlOTzA2eGNkWk8vQVo0WC9sWEFzejd0ZU12SDVROFk1MzVC?=
+ =?utf-8?B?c28vQmxIR2xnNFpxRDhFSThMcjd5OXk3NC9KdkdST0h6aTl5R0YxNG0xVjBp?=
+ =?utf-8?B?Znp4NXAzS29OTnlVYU1LZDFYcE1VYmtVbTY4NytDU2V3eWp1cU45OSt1QUp6?=
+ =?utf-8?B?VFhDbUhTNzJWSDBtL2FUeWh3Mk9vanhERGdVcG81ZjRYNHQvUXFKaUQ5ZHgy?=
+ =?utf-8?B?eHI0amNHeitiQ21hbTJ1b3NYOUxEWG1MNVMvYW1CYzVPUXhkQ082MVN5WWZl?=
+ =?utf-8?B?T3RZWTB5THYwTjlYb01TL1RFTnFFWmFxZVZiUTg5SFROUFBteGQ1empyYjlS?=
+ =?utf-8?B?QkNFcEpwRHJ6MmpSSTBTUzgwejh2d3g1NkRreVpITk42MG9BbXd5UU5uTWRk?=
+ =?utf-8?B?YXZwaTBVaDY0bTJLaFc4bDFLSGhoZlFYaG1FV3g1blExRFFoRVJSQWdCeTJK?=
+ =?utf-8?B?YjZLY29FV0ZYVTFWR1BpVWc4eFhrV2I3Ky9lVjVHRkgyNlhBbEZOOE5NTDdP?=
+ =?utf-8?B?OVdqR0RzT0tyZzFudjhZcnZucEgySU9tTTJNZzBIeFcyK3FkM040VzBHMllU?=
+ =?utf-8?B?MnRidU9ENWM2TXVPaC9JK2xLa096SWdoWlJCZ25zcDdWZFlTa2wraFp6RmRi?=
+ =?utf-8?B?VkhaNzN5dmpvUWlpekZHQXFKdnY1QVVnbVRBM25lSkZDc3lzQTE5Nk8vZzVB?=
+ =?utf-8?B?dkN0RFFsNngwTDMxQjQvTjIxU1lZbHVjNXp2WXN4bnVHbFVHRWsvTXRDb0RV?=
+ =?utf-8?B?L2g4UkxXeGhwczVSWWtTb01jamNyTnhSays0NFdBL3JNT051YmlkNkxRWFpC?=
+ =?utf-8?B?bk0yM3RKY0NOT0NDTWJlRlZ4ZE92Z0lQWUxKUTFyME5SVWRWc1R3R2FQQnly?=
+ =?utf-8?B?SUFQQ1FzcU1PaExhTVRHSjNFWmFkOUZmMENUZzlWUkN5dFg0Z2RSdlFKNHdl?=
+ =?utf-8?B?bVNCYWV2TDl1Y0V3RVZmN3RtN1ZkdEtpNC9VdGdUblRKNm9ZU09RVHQrVGc2?=
+ =?utf-8?B?T1NUZ3VJREtBWDFJUXp1RW5VRU9rR29obmNkSm42bEE4RW5jd2VEU0Z3ZGox?=
+ =?utf-8?B?REFnei90RGlraW5XRDhXSFlKVTE1R09POHloK0s5Ymd4MlRIWVhPSFRjTWhx?=
+ =?utf-8?B?bWFLdnJPNTB5SjdSejlwZk4xMjhrYW1nYjBqaUpwMFV5akwxMEcxeWlkcnly?=
+ =?utf-8?B?Vk9xZ0dERlkxSkJWQVp3Ylp6VDRZQ2RSaEVLTHdYSGtnWUNMMDBhSTZGU0d5?=
+ =?utf-8?B?QzVreGxpRFN3bTNJbXFnRHRkTjR6bThtbkhxQ3NtNUoyZjA2SjNPa2FrT3JK?=
+ =?utf-8?B?OE5KaThxaVJZelcxcHNjYkFlNGE1bVVadkZHUTdzajZuY0tlUFE2K202L3B0?=
+ =?utf-8?B?THFRWjNpZm1USGRFRG8rbGovbVpFbFlmdjNadWdKcWFuNWcrWXh0SUMvK3hV?=
+ =?utf-8?B?VDJORGVOYmdSem9aMnlXSkFNK3M0SzV4WU1mMS8yeU9OTUl6Yk14NmtVL0Fa?=
+ =?utf-8?B?dzRjdDdCaUQxZ1h6SWNqMVRUb3ZLUVlrWkV0Tkd6d3RLUEtNNjhpT3dUODVR?=
+ =?utf-8?B?aFVLMk1oSGUvcjlLUTV3TTBRUisvazV5bEZQNHAyS1NlZ1d2bkxEK0RvQVZy?=
+ =?utf-8?B?bGN6SDdqTHYrQTh1Sk1lTEsyckl1Vk5OcE5jNHZkT1hpOEhsYmlQTmgrMjYv?=
+ =?utf-8?B?Z0IwdGliaVpqWFFFUm9SMXNCQnJaZmlHdFU3UUNUeXBQK2xicVdTeFc0L0dx?=
+ =?utf-8?B?S1NvVFB4WXlkVlBoMHJXSEc4b2EzRUQ0MTVDNHBGTXFaTzhjK3ZGbVRLYmhn?=
+ =?utf-8?B?M3hnZXFMcldwWEZraUtDSVp3YlU5QnhpWmVEa1hCSUNGZWRISnpiYWxVT1NI?=
+ =?utf-8?B?elFTZ2JYOG9VOG9sa1JVY2tJTHVlMUM5YmZ6SWZnUnhEUmJYK21sL1pncEND?=
+ =?utf-8?B?bGVRRWR0eUlLcG1Sa2dPVnZsbWRnZCtyNVY4aUdvaGpGR281UnJVUU9BWC96?=
+ =?utf-8?B?MlMwekdFMW15dkNmNzlsSWc0YVNTeGpnSGZxUGQrem82V29jNVc5ZnI0bHRU?=
+ =?utf-8?B?QWdnbHdrdTZXOVJrVGFablJhSUhPS1ZiOE0zc21uTDVDSDhmMXhEWnpaYWpG?=
+ =?utf-8?Q?XA90=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240720062356.2522658-1-zhangshida@kylinos.cn>
- <20240806134023.rm2ggd7swopryqci@quack3> <CANubcdV32L71ARCznZgKdrt0BmSyOYwW50L17zP=TG4PO2MH4Q@mail.gmail.com>
- <20240807120659.y6cpxas5g3mze2rr@quack3>
-In-Reply-To: <20240807120659.y6cpxas5g3mze2rr@quack3>
-From: Stephen Zhang <starzhangzsd@gmail.com>
-Date: Thu, 8 Aug 2024 11:05:26 +0800
-Message-ID: <CANubcdVHbbq=WsTXU4EWAUPUby5--CLe5rf1GPzNPv+Y0a9VzQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] jbd2: fix a potential assertion failure due to
- improperly dirtied buffer
-To: Jan Kara <jack@suse.cz>
-Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn, 
-	Baolin Liu <liubaolin@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3884c563-39a0-4922-584a-08dcb75767fa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 03:08:41.3705
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3hqeUlXuqtjh9F4y6FsYiUTdQPOh0wfhR1qV/qVqB1pU5IuVGrqAbMjIuTZUodlHb7um/pqdccTpWggINqfgJw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10994
 
-Jan Kara <jack@suse.cz> =E4=BA=8E2024=E5=B9=B48=E6=9C=887=E6=97=A5=E5=91=A8=
-=E4=B8=89 20:07=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed 07-08-24 16:10:50, Stephen Zhang wrote:
-> > Jan Kara <jack@suse.cz> =E4=BA=8E2024=E5=B9=B48=E6=9C=886=E6=97=A5=E5=
-=91=A8=E4=BA=8C 21:40=E5=86=99=E9=81=93=EF=BC=9A
-> > > On Sat 20-07-24 14:23:56, zhangshida wrote:
-> > > > From: Shida Zhang <zhangshida@kylinos.cn>
-> > > >
-> > > > On an old kernel version(4.19, ext3, journal=3Ddata, pagesize=3D64k=
-),
-> > > > an assertion failure will occasionally be triggered by the line bel=
-ow:
-> > >
-> > > OK, just out of curiosity, why are you using data=3Djournal mode? It =
-doesn't
-> > > really get that much testing and the performance is quite bad...
-> > >
-> >
-> > It is used by one of our customers. It's more like a historical issue:
-> > About 12 years ago, they used data=3Djournal mode for the benefit of us=
-er
-> > data consistency brought by the mode.
-> > Time goes by, they attempted to change, say, maybe change it to ext4
-> > at least, but found it is no more stable than it was under ext3...
-> > And yeah, they decided to just leave the thing as it was and keep the s=
-ystem
-> > under that state until now...
->
-> I see, thanks for sharing. I was asking because we are mostly trying to
-> steer away people from using data=3Djournal mode and deprecate it because=
- it
-> adds a lot of complexity into the code without significant benefit.
->
-
-Yeah. Though I am not an experienced file system developer, I was thinking
-the philosophy behind the data=3Djournal design sometimes.
-
-In essence, unlike the metadata, the user data could be dirtied in an unexp=
-ected
-and uncontrollable way.
-
-For example, calls like __block_write_begin() is a function that could dirt=
-y
-the user data, but __block_write_begin() is beyond ext4 maintainer's contro=
-l.
-We cannot tell the block layer maintainer, =E2=80=98Hey, we want to trace t=
-he dirty user
-data in ext4, can we add some special code for ext4 in __block_write_begin?=
-=E2=80=99:P
-
-Whilst for metadata, each time the dirting of each piece of metadata is man=
-aged
-by ext4's internal code logic.
-
-The uncontrollable dirting of user data is the root cause of all problems.
-
-> > > > jbd2_journal_commit_transaction
-> > > > {
-> > > > ...
-> > > > J_ASSERT_BH(bh, !buffer_dirty(bh));
-> > > > /*
-> > > > * The buffer on BJ_Forget list and not jbddirty means
-> > > > ...
-> > > > }
-> > > >
-> > > > AFAIC, that's how the problem works:
-> > > > --------
-> > > > journal_unmap_buffer
-> > > > jbd2_journal_invalidatepage
-> > > > __ext4_journalled_invalidatepage
-> > > > ext4_journalled_invalidatepage
-> > > > do_invalidatepage
-> > > > truncate_inode_pages_range
-> > > > truncate_inode_pages
-> > > > truncate_pagecache
-> > > > ext4_setattr
-> > > > --------
-> > > >
-> > > > First try to truncate and invalidate the page.
-> > > > Sometimes the buffer and the page won't be freed immediately.
-> > > > the buffer will be sent to the BJ_Forget list of the currently
-> > > > committing transaction. Maybe the transaction knows when and how
-> > > > to free the buffer better.
-> > > > The buffer's states now: !jbd_dirty !mapped !dirty
-> > > >
-> > > > Then jbd2_journal_commit_transaction(=EF=BC=89will try to iterate o=
-ver the
-> > > > BJ_Forget list:
-> > > > --------
-> > > > jbd2_journal_commit_transaction()
-> > > >       while (commit_transaction->t_forget) {
-> > > >       ...
-> > > >       }
-> > > > --------
-> > > >
-> > > > At this exact moment, another write comes:
-> > > > --------
-> > > > mark_buffer_dirty
-> > > > __block_write_begin_int
-> > > > __block_write_begin
-> > > > ext4_write_begin
-> > > > --------
-> > > > it sees a unmapped new buffer, and marks it as dirty.
-> > >
-> > > This should not happen. When ext4_setattr() truncates the file, we do=
- not
-> > > allow reallocating these blocks for other purposes until the transact=
-ion
-> >
-> > ext4_setattr() will try to free it by adding it to the BJ_Forget list
-> > for further processing.
-> > Put it more clearly,
-> > when ext4_setattr() truncates the file, the buffer is not fully freed
-> > yet. It's half-freed.
-> > Furthermore,
-> > Because the buffer is half-freed, the reallocating thing won't need to =
-happen.
-> > Now,
-> > under that scenario, can we redirty the half-freed buffer on the BJ_For=
-get list?
-> > The answer may be 'yes'.
-> >
-> > redirty it by the following code:
-> > ext4_block_write_begin
-> >     if (!buffer_mapped(bh)) { // check 1
-> >          _ext4_get_block(inode, block, bh, 1);
-> >         (buffer_new(bh)) { // check 2
-> >              if (folio_test_uptodate(folio)) { // check 3
-> >                  mark_buffer_dirty(bh);
->
-> <snip>
->
-> I see, right. It is not that the block would get reused. It is just that
-> the buffer_head on the file's tail page gets reused and this causes issue=
-s.
-> In fact, the problem is with ext4_block_write_begin() (and
-> __block_write_begin_int()) that they call mark_buffer_dirty() on a
-> journalled buffer before calling jbd2_journal_get_write_access() (which
-> would remove the buffer from BJ_Forget list). This is what ultimately
-> confuses the commit code.
->
-> > For another proof, there is indeed a small window where the buffer coul=
-d be
-> > seen dirty.
-> > Have a look at the code and comment in do_journal_get_write_access:
-> > ----------------
-> > int do_journal_get_write_access(handle_t *handle, struct inode *inode,
-> > struct buffer_head *bh)
-> > {
-> > ...
-> > /*
-> > * __block_write_begin() could have dirtied some buffers. Clean
-> > * the dirty bit as jbd2_journal_get_write_access() could complain
-> > * otherwise about fs integrity issues. Setting of the dirty bit
-> > * by __block_write_begin() isn't a real problem here as we clear
-> > * the bit before releasing a page lock and thus writeback cannot
-> > * ever write the buffer.
-> > */
-> > if (dirty)
-> > clear_buffer_dirty(bh); // clear the dirty immdiately in case some bad
-> > things happen
->
-> OK, it was even me adding that comment 14 years ago ;) I already forgot
-> about this nuance.
->
-
-That's quite a long time. Jan, you are a great developer. Cheers for you.:P
-
-> So I agree with your analysis now. But still don't like adding hacks to
-> jbd2 to acommodate for this oddity of data=3Djournal mode. Since we alrea=
-dy
-> have ext4_block_write_begin() implementation anyway, we should be able to
-> tweak it to do the right thing for data=3Djournal mode inodes...
->
-> So we could replace uses of __block_write_begin() with
-> ext4_block_write_begin() and then call do_journal_get_write_access() in
-> ext4_block_write_begin() for inodes with journalled data after the buffer
-> is mapped with get_block().
->
-> From the part:
->                                 if (folio_test_uptodate(folio)) {
->                                         clear_buffer_new(bh);
->                                         set_buffer_uptodate(bh);
->                                         mark_buffer_dirty(bh);
->                                         continue;
->                                 }
->
-> we can actually remove the clear_buffer_new() and mark_buffer_dirty() bit=
-s
-> because they will be done by block_commit_write() or
-> folio_zero_new_buffers() and they are superfluous and somewhat odd here
-> anyway.
->
-> And the call to folio_zero_new_buffers() from ext4_block_write_begin()
-> needs to call ext4_journalled_zero_new_buffers() for inodes where data is
-> journalled.
->
-> Will you try to implement this or should I look into it?
->
-
-Yeah, Thank you for giving me the opportunity to work on something truly
-meaningful. All I can do until now is some small cleanups. And doing cleanu=
-ps
-all the time is annoyable to the maintainers and frustrating to me. I
-will try my best.
-
-So basically, we should:
-1.Trace the user data dirting in ext4_block_write_begin().
-2.Replace the uncontrollable __block_write_begin with ext4_block_write_begi=
-n().
-3.Remove some superfluous things.
-
-Cheers,
-Stephen.
-
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+PiBTdWJqZWN0OiBbUEFUQ0ggdjIgUkVTRU5EXSBhcm02NDogZHRzOiBzMzJnOiBEaXNhYmxlIHVz
+ZGhjIHdyaXRlLQ0KPiBwcm90ZWN0DQo+IA0KPiBTREhDSSBjb250cm9sbGVyIGZvdW5kIG9uIE5Y
+UCBTMzJHIGJhc2VkIHBsYXRmb3JtcyBkbyBub3QgZGVmaW5lIGENCj4gcGluIGZvciBTRC1DYXJk
+IHdyaXRlIHByb3RlY3Rpb24uDQo+IA0KPiBSZXZpZXdlZC1ieTogTWF0dGhpYXMgQnJ1Z2dlciA8
+bWJydWdnZXJAc3VzZS5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IENpcHJpYW4gQ29zdGVhIDxjaXBy
+aWFubWFyaWFuLmNvc3RlYUBvc3MubnhwLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IFBlbmcgRmFuIDxw
+ZW5nLmZhbkBueHAuY29tPg0K
 
