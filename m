@@ -1,184 +1,221 @@
-Return-Path: <linux-kernel+bounces-279407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC91D94BCF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:07:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF39E94BCE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0DEE1C22356
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:07:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 673702808DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53A718C901;
-	Thu,  8 Aug 2024 12:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C924818C351;
+	Thu,  8 Aug 2024 12:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IeD2TShI"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="FHHIkrdH"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2016.outbound.protection.outlook.com [40.92.102.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4F318C331
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723118854; cv=none; b=Rh7NyLm2SySK8ZdRP82mPFWVzmaXbkDBOozGX5+N7gxQa6omp1XuHLIj1T8gpgIF5br9+Zkztglgj/QP7ZE5X82nJVrb2tH3lstkhceqcLZnbHMkfHKhRIS+ziFqz4GiNajwZXZGmkEDIZmD5UdjkAMTjsGPKx4UIJOMYKtKrn8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723118854; c=relaxed/simple;
-	bh=GPoH9DrEvJJkBRbLypO1BoTrLkYATwtK4lkVCAmHKao=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=A7hHWZKb8a0mx4KS1qkf2/dLwR2LRzIHlXIPcJHkYExhhnAn+n9ewEnDR2iwIxYawsBSusNWzqFovkFlRNJEpsXM/PXLuQOjD57aXzqHzz9Rvj6eMREkp6t2nNglLXUGBDNMY0hw3DXlQ+oRMkPbuz8qC99/GEolxr0mojN02m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IeD2TShI; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240808120730epoutp040089b2338f9668784eb9defc82bb29b0~pv3b8nn3I0528105281epoutp04C
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:07:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240808120730epoutp040089b2338f9668784eb9defc82bb29b0~pv3b8nn3I0528105281epoutp04C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723118850;
-	bh=MtXYPI4mQZd1Tp5Ox2GWQR/JnFmzvS/8G1dBgDJiNRM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=IeD2TShI1PdtpwNNzbmPK6yZuEUXMnmEWlmTDZg3G8DtEyRmPhhFfMzI9MwXjXfBN
-	 u9ssRIpp9pdFteRKVOj9yv8TujjU7uk98c/k/YsYWLOV2kj4RuBHaQZ9OSVNdrhW+c
-	 ZBX93XVPOSsYTtE/Oyxt7bH3h5Ml2jnPo9RUIAYg=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240808120729epcas5p2bc47b38e3d698813aae29128a2e23cee~pv3bDj9cY2058320583epcas5p2I;
-	Thu,  8 Aug 2024 12:07:29 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Wfm4v4vQrz4x9Py; Thu,  8 Aug
-	2024 12:07:27 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	27.E4.09743.FF4B4B66; Thu,  8 Aug 2024 21:07:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240808120605epcas5p2c9164533413706da5f7fa2ed624318cd~pv2M3n2iV0648506485epcas5p2q;
-	Thu,  8 Aug 2024 12:06:05 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240808120605epsmtrp2d0d5372bfa76ca40110967dfd4a74035~pv2MwvB4-1966219662epsmtrp2Y;
-	Thu,  8 Aug 2024 12:06:05 +0000 (GMT)
-X-AuditID: b6c32a4a-3b1fa7000000260f-4b-66b4b4ff3edb
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	39.89.07567.DA4B4B66; Thu,  8 Aug 2024 21:06:05 +0900 (KST)
-Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240808120602epsmtip18cad4a34d2aa2ad385f9caed9c4185a4~pv2KrfUlE0969009690epsmtip1g;
-	Thu,  8 Aug 2024 12:06:02 +0000 (GMT)
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
-	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
-	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
-	Selvarasu Ganesan <selvarasu.g@samsung.com>, stable@vger.kernel.org
-Subject: [PATCH v2] usb: dwc3: core: Prevent USB core invalid event buffer
- address access
-Date: Thu,  8 Aug 2024 17:35:04 +0530
-Message-ID: <20240808120507.1464-1-selvarasu.g@samsung.com>
-X-Mailer: git-send-email 2.46.0.windows.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8601126F1E;
+	Thu,  8 Aug 2024 12:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723118787; cv=fail; b=bX2CkYzPk00l7SM+ddr/uB84ohQaMm+Hkyzp7VhVu71+r4f5n7mWOT/BCXB5vfjLCsFGY+j+Xo1SDqtAmfV9PO5ojR+XFQCu5TTrkEOc2fgdr3esG5ZVW8gbDL/fd94aHlm7PHAdUa7f+2LGRnM4jmKQ+6KYKWCjjzN6gZRAbLM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723118787; c=relaxed/simple;
+	bh=F+AkPGqEPP23gsq8Usgg7+g6TTGut752b7lb2nqj/sw=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=czD9Y1PDWGbwdkQJr/fd4RtugfOAOhJICtdhgGos2Gv4sssTcBZ5f/s+r3DpX6h6+lpcIoH+QMD+2FgbzHSKiLeH4ph195IER8M0EBd33cjLMBYIiWFyeEjQPUlYxZ7xhVVYt8wBFwblTcTkjRuI+nNl8X8B4LBMdGME4tPkWjc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=FHHIkrdH; arc=fail smtp.client-ip=40.92.102.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aUOlNQUAMdCw0Br+NyZfxW7uKL9k4RCkHuMT+D5V8HDqjTp1KC9eOXd5E5nz9Q8Uow7Z/VUsL0YrmJ3lxoOul7J35rEVH75UVRvuM3M1WMsTY2ZMsFdnsZZMqZOqsUhxQdQNxYDqtIlHAkTFfCMySj3EOjjz87HtbzIOlfcJNwDF4Yc6QQQkwRP9B9+SePXZJBkiCL1HTvs13tFqkHCSKX4sn7JA7otkE1tAUgTf1yaQQHX8eJL9T67lYkaCnlQgyjDj8WDZXGlVWqS1OhLGIAsp8rVi/MriA58QxntblcDAza2lBAMkGpjjy1aQIYXJCPawk6uRrnc48Z6P6d4Eaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dOUbGrF+b2BonyYuam42yF6r12JT1Gq3gTCmyY1qiE0=;
+ b=j911Ne2Mx1uYQBZUxcYVnxdrWffOWYCDpB9Eku01Gr1CSdkkxVjAJY23RaMTbyCi4kAGsO+7HvTkkm2j3mFozrPvgGWtHoVBP7YlnMYhbEkDmQPQRYtqwskLYN82/jW05jzpN3Ulqvcn6khR9Plv+7XqcA7S3UJvFoxVanv0UsPozaADd4/CG5V6pv5y0YuA7cL115bXR9WpL766CWyxzVHQCr2j0C+fdbsPkZ1DqePHrD7x+eyxxR6w18V1i3kxpMa2txdlq12MV/8/HMyaL2iKuIA5kxAEzUv/rKLFv/1cZm6Z5QngRyN6y+EC+W4qmRkOrg4DfXzBxOgDBgBNVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dOUbGrF+b2BonyYuam42yF6r12JT1Gq3gTCmyY1qiE0=;
+ b=FHHIkrdHe67LcbUGloJdcUwDJ+Pf/t4GBu7rXN3dmB7ESSh1jeYaY2sCj6v6oYq7fWyBFql3pvzG3tJ9OMKY7LG3ytJ5EhPQHt7kRqXr6+dnK6WGfKrjMUXZEsvSEX7eBcW+IEjoS74TEu/CmieiVmvJswmOlt71PngRAO9loKBZU/G0e/xo0g1BJmuvo7EdgdAsmDblfk/lxJlR48Zt/X+P1LEXBHXvSBRKBvI1foeb5TRcGfiz0RHWYZ/LRCA1aF/iJbH/qoOxrNFb89098sd8xUoA4O+5r3hpjmyT2vssxEDTMyqHqlffRBDahRglNOmOeJJeA/Y6O9l9OFaiBQ==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN3P287MB1977.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1d1::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.14; Thu, 8 Aug 2024 12:06:15 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
+ 12:06:14 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: [PATCH RESEND v2 0/9] Touch Bar support for T2 Macs
+Thread-Topic: [PATCH RESEND v2 0/9] Touch Bar support for T2 Macs
+Thread-Index: AQHa6YtdumX412t+T0eZdbiMYDzhUQ==
+Date: Thu, 8 Aug 2024 12:06:14 +0000
+Message-ID: <752D8EEA-EE3B-4854-9B5E-F412AFA20048@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [0QfNuKxjC2bdCo5GfvijRgsEGwCPPYBotvabNFPhxT+7sdM1fP94haxG5WQIqghLN9NE3GjZrlI=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN3P287MB1977:EE_
+x-ms-office365-filtering-correlation-id: 9e563a3c-a593-4784-a5d3-08dcb7a2801e
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8060799006|19110799003|15080799003|461199028|1602099012|4302099013|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ 6wHWtCLhCA9lccSRuFIXW+xntbMDZ5/9aloCht33BI6QyvEVmKMmbe0en2e6UN5wxsIfUxiModZj0r7tlHrj2c6aSbl0XSH1nBktwu/c+Fg7dCsFuh9GYEdtXnKVObODOWh8DxMZKwBjKVUITczy1VTebNM+XaTK2nGPAqod5YWt/tMAZI3kVLGR+bcuXpez9M72yiMev+2kw8DHKzPiB6y1dK2tssbCT+nbGtZxfeRQFnnPhiTiV3LXL5XcWcR7x20Zs9Rdyn797fwyuTluuNB6Yifvh2K3aLlZGCW6X09XfrmPVzP+eJ1vJDs09lKq5Zn47AiDqqSI1oI9EdDZyBmMss1CtUWWdLs5dBUgDeaa/0y6kJJJNALpoGi8mCxEucESMczcrsXqF+ThQadynzN3V9RVWqqUAOO8h520Lj6SyjiCHh/5w/GB+QJPqvLl9KRbWgSw+JMP3AGtahxangO243nR53viURse1Z3cc+/JwGgsKlrAKQpmLsPU6aiaw1AhIQJjiZwWb5Kqbm5wnysJxnazY5rZvWUcSDxNxaaZ+P0KbFJIqzEBhSAULGLJL3lR6r1y2I8M6Sr3bU+fL1teQDGTnPaO/LS021dAte29sih7Utw8cPuxpAGYNisrK2Niv1DxWg1N/8ebC3gCbjxH6q7M11qYmiyQt7HD6ySzZoSPuIEWfbbWIEfFojo2JzXdEAbVqM8VB7BQIShcucpUnZxKNDezjdVzYo5LBXiGXo3fvPjTcbXt9g59IPdQQVQ+fNrMdxY6Vj+Zld2tmWll3y3stINDjFVHPjTyoWk=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?E3Od+8/ZjOntSeNjKlUidBTddP6KEzelp/dKZkR3WDA19ORD++IYEvDSqPNV?=
+ =?us-ascii?Q?8AbVgzofYmIBuc3YMo5GJFxBHM9a1sKK64iMidqPak7RpR/+FzUvjRtcROIr?=
+ =?us-ascii?Q?sc96CsVH+/+HzHPILbiNAS9d/6qxWvu1c7WNw+FfxbLa+0t5lsRbLs9W6ceX?=
+ =?us-ascii?Q?ULcnAGsnGqHqAQWvRF6pMSE/gfxcgnYLYnmyE0AMgOVysDE7o2yk2hm9FXnu?=
+ =?us-ascii?Q?ZJBarVvBA3SMrrDvDcRr16sd0Kg4FDQcU4U/VnM8dqxCTXgRhNQpxZ2NxuMX?=
+ =?us-ascii?Q?lvtMIpdE1wb9pYX/Ci2HPsF3fMv2jQLEiqp4zz0XbTe0Aq6jUUXtvEJ9M5B4?=
+ =?us-ascii?Q?QGe1TuKNk+tYZM0LghL7Mk2moeaFcVNa6mBXxEz+xbtLMQi2SPBxM71x7QFD?=
+ =?us-ascii?Q?oU9AkmpXHcHKrHLELMx8Ge4ZHO1LHZ/BK7PqbiCoHplg6Z7YVeaspWu/DDGQ?=
+ =?us-ascii?Q?TFclx2UWuKYfaApiQbNZKXuqF12UISoC6OvW02JgYV8n4oQx/JNWT7vUzm5U?=
+ =?us-ascii?Q?OL+H9jiAUVtKz7ONhUJRSoseP6tUN6PQgQSdmXH8yzClti6Qsv4uS7yiQz3j?=
+ =?us-ascii?Q?WgdFm9TtgbuEZ8FZa7VymDcJttjlLAqNo91WW5I0iAshIbzeH+fyMlL+YRlb?=
+ =?us-ascii?Q?6raBWd9cpCjIAO1lFzN13NyfomWl5ZgV6eP/H1Nr97EZhwhmH80H/nHqkyAR?=
+ =?us-ascii?Q?QCimWy3NTvvMYwFDPfjYQidUm4UM+C+FLNNt6L9x1PMrGsqR27KJTr2yTIbJ?=
+ =?us-ascii?Q?7RtbjuD3lsfZ4B5oSOmWJOkzosu4gS0dafVNw/GFoUdeK3WCvsSNyEteD+bP?=
+ =?us-ascii?Q?r5geJ3U1yYdPi4F3XwWIPVnqtnw4XRyxhvrRERUOhLkNPdH71T+OZBJe9FMu?=
+ =?us-ascii?Q?0bbfYefYX9WRbkm3SAgElFpQkYI6jmM+pgdGTjPjB0ASFMD3GyYd0RfDkOxk?=
+ =?us-ascii?Q?4/uQ/gfp0tVYP33tOPzoUCfuoYHt6VCMihAN5CJtQMpNtcF0rixoiTAgVKa2?=
+ =?us-ascii?Q?DognChC78zdg6RNE9GcvVEX/HqknwoNQrFgIXhb/hz1KGP7vOumj+mlss5Xn?=
+ =?us-ascii?Q?sDVDMJsXVfjs0FSMvLQK5MHcVCSY1HZgMYPrXIj2nLF9oan2NDHom+drY4h4?=
+ =?us-ascii?Q?CxpcT+OzEeemYdmwJGnsHeRsRpmT1BhRW9xwtP+9Y3n0q3gBD3YheHaUtITz?=
+ =?us-ascii?Q?1VyQVtGtDJXITJroYAz1le5SYQrOzUqWGQz502fx3hWDKbyXzpEZH/YErl0O?=
+ =?us-ascii?Q?v5Gb6O1tDiqiXk7G6rgChg8yvMw2S1TE9yPhpUHjI3O+kVcaV9veDt0glcyy?=
+ =?us-ascii?Q?ENiKnjtWo/y6q/WJznGqIhxM?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1924A9511EDECC449272213F23A99E59@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmpu7/LVvSDBrvK1q8ubqK1eLOgmlM
-	FqeWL2SyaF68ns1i0p6tLBZ3H/5gsbi8aw6bxaJlrcwWn47+Z7VY1TmHxeLI8o9MFpe/72S2
-	WLDxEaPFpIOiFqsWHGB34PfYP3cNu0ffllWMHlv2f2b0+LxJLoAlKtsmIzUxJbVIITUvOT8l
-	My/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+hQJYWyxJxSoFBAYnGxkr6dTVF+
-	aUmqQkZ+cYmtUmpBSk6BSYFecWJucWleul5eaomVoYGBkSlQYUJ2xuTtL9kL9vJVzJ+0mK2B
-	8TB3FyMHh4SAicTDWf5djJwcQgK7GSU+LODoYuQCsj8xSrw6f5UJwvnGKNHRcY0RpAqkYd/C
-	6cwQib2MEuc/n2SBaP/OKNF/pQRkKpuAocSzEzYgYRGBEolLbzcygdjMAguYJFpna4PYwgLR
-	Es/ObGMDsVkEVCWamyaB1fAKWEs8+3+MGWKXpsTavXug4oISJ2c+YYGYIy/RvHU22A0SAo0c
-	Eh/mTYVqcJG4ufo8lC0s8er4FnYIW0ri87u9bBB2tcTqOx/ZIJpbGCUOP/kGVWQv8fjoI2aQ
-	B5iBNq/fpQ8RlpWYemod1AN8Er2/nzBBxHkldsyDsVUlTjVehpovLXFvyTVWSOh6SOxb7A5i
-	CgnESrxd4zeBUX4Wkm9mIflmFsLeBYzMqxglUwuKc9NTi00LjPJSy+GRmpyfu4kRnFa1vHYw
-	PnzwQe8QIxMH4yFGCQ5mJRHe5vBNaUK8KYmVValF+fFFpTmpxYcYTYFBPJFZSjQ5H5jY80ri
-	DU0sDUzMzMxMLI3NDJXEeV+3zk0REkhPLEnNTk0tSC2C6WPi4JRqYLLbcnin8LUVDy94/rfM
-	cf3mkxAjv2jqWsvmPcmF24LC4/2sW6Zlhm/MusnwWy959x+pdvuj4jeSApSsBA503zy0Ii4u
-	PcHh/o8bjo1BeqzhH/e9uMP67dnipeukZ0VKRvysS1T1OXB63zv/dVJcjb/7+j7YSe9dJR25
-	831KmeqTsJ0/D+RzOGkzvM09z/E5gGX/IakTwUb2i1dfEqt7dUnrPcuTO13v9AqV1txZ+sni
-	IF/fpOfflRwDzt1/0qW8ZOeip3zBW/1btjoKcZtyyyVJ/Ds3zXDW3P+3b0yUVVHbtKb90sfy
-	K1vEM01k1RMOlhsm8cobWd9YK+CVY/PH+E2KUJDygdDDx777fvE/ba7EUpyRaKjFXFScCABG
-	a4bbNAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsWy7bCSnO7aLVvSDH42slm8ubqK1eLOgmlM
-	FqeWL2SyaF68ns1i0p6tLBZ3H/5gsbi8aw6bxaJlrcwWn47+Z7VY1TmHxeLI8o9MFpe/72S2
-	WLDxEaPFpIOiFqsWHGB34PfYP3cNu0ffllWMHlv2f2b0+LxJLoAlissmJTUnsyy1SN8ugStj
-	8vaX7AV7+SrmT1rM1sB4mLuLkZNDQsBEYt/C6cxdjFwcQgK7GSX2f5zGCJGQlng9qwvKFpZY
-	+e85O0TRV0aJmQu3AjkcHGwChhLPTtiA1IgIVEg8XjiDBaSGWWAdk8Ts40+YQRLCApES93/f
-	YAKxWQRUJZqbJoHZvALWEs/+H2OGWKApsXbvHqi4oMTJmU9YQGxmAXmJ5q2zmScw8s1CkpqF
-	JLWAkWkVo2RqQXFuem6yYYFhXmq5XnFibnFpXrpecn7uJkZwqGtp7GC8N/+f3iFGJg7GQ4wS
-	HMxKIrzN4ZvShHhTEiurUovy44tKc1KLDzFKc7AoifMazpidIiSQnliSmp2aWpBaBJNl4uCU
-	amAKvNfy6flj7mO9wtpsJZf8Y2N8ly+WNmiJXiazXVZy7Tfv19FvMxf4Jm5XdMvfJxb0zD77
-	9YOEnTN1+6/LLev8Gvt41jkvGb/Fzf6LrktqZt/fsNfgn3Pi9vUzDe2s5LrilLKuLXDOnbzy
-	s2nDbEf9H/6fTA/Muma4voP39wHf37+UbZiuuTAuCIhXz5HcVbTlwanN8eZWl+YaLjobVlD+
-	U/DJlJK6M3ENtowZBVN4I03sEt0V3HkulDBaNAvdO7en/MKkqosyok8jzvnv9isUq0oyflE5
-	vfjTMQ2NqlyBgqhHE3kay1X5k8JazH7mXhazE2OomfL/bPCjrF19tnZHq2wyLr7r5G/kf/rl
-	nBJLcUaioRZzUXEiAMqZOcrkAgAA
-X-CMS-MailID: 20240808120605epcas5p2c9164533413706da5f7fa2ed624318cd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240808120605epcas5p2c9164533413706da5f7fa2ed624318cd
-References: <CGME20240808120605epcas5p2c9164533413706da5f7fa2ed624318cd@epcas5p2.samsung.com>
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e563a3c-a593-4784-a5d3-08dcb7a2801e
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 12:06:14.1402
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1977
 
-This commit addresses an issue where the USB core could access an
-invalid event buffer address during runtime suspend, potentially causing
-SMMU faults and other memory issues. The problem arises from the
-following sequence.
-        1. In dwc3_gadget_suspend, there is a chance of a timeout when
-        moving the USB core to the halt state after clearing the
-        run/stop bit by software.
-        2. In dwc3_core_exit, the event buffer is cleared regardless of
-        the USB core's status, which may lead to an SMMU faults and
-        other memory issues. if the USB core tries to access the event
-        buffer address.
+Hi Maintainers
 
-To prevent this issue, this commit ensures that the event buffer address
-is not cleared by software  when the USB core is active during runtime
-suspend by checking its status before clearing the buffer address.
+The Touch Bars found on x86 Macs support two USB configurations: one
+where the device presents itself as a HID keyboard and can display
+predefined sets of keys, and one where the operating system has full
+control over what is displayed.
 
-Cc: stable@vger.kernel.org
-Fixes: 89d7f9629946 ("usb: dwc3: core: Skip setting event buffers for host only controllers")
-Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
----
+This patch series adds support for both the configurations.
 
-Changes in v2:
-- Added separate check for USB controller status before cleaning the
-  event buffer.
-- Link to v1: https://lore.kernel.org/lkml/20240722145617.537-1-selvarasu.g@samsung.com/
----
- drivers/usb/dwc3/core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+The hid-appletb-bl driver adds support for the backlight of the Touch Bar.
+This enables the user to control the brightness of the Touch Bar from
+userspace. The Touch Bar supports 3 modes here: Max brightness, Dim and Off=
+.
+So, daemons, used to manage Touch Bar can easily manage these modes by writ=
+ing
+to /sys/class/backlight/appletb_backlight/brightness. It is needed by both =
+the
+configurations of the Touch Bar.
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 734de2a8bd21..5b67d9bca71b 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -564,10 +564,15 @@ int dwc3_event_buffers_setup(struct dwc3 *dwc)
- void dwc3_event_buffers_cleanup(struct dwc3 *dwc)
- {
- 	struct dwc3_event_buffer	*evt;
-+	u32				reg;
- 
- 	if (!dwc->ev_buf)
- 		return;
- 
-+	reg = dwc3_readl(dwc->regs, DWC3_DSTS);
-+	if (!(reg & DWC3_DSTS_DEVCTRLHLT))
-+		return;
-+
- 	evt = dwc->ev_buf;
- 
- 	evt->lpos = 0;
--- 
-2.17.1
+The hid-appletb-kbd adds support for the first (predefined keys) configurat=
+ion.
+There are 4 modes here: Esc key only, Fn mode, Media keys and No keys.
+Mode can be changed by writing to /sys/bus/hid/drivers/hid-appletb-kbd/<dev=
+>/mode
+This configuration is what Windows uses with the official Apple Bootcamp dr=
+ivers.
+
+Rest patches support the second configuration, where the OS has full contro=
+l
+on what's displayed on the Touch Bar. It is achieved by the patching the
+hid-multitouch driver to add support for touch feedback from the Touch Bar
+and the appletbdrm driver, that displays what we want to on the Touch Bar.
+This configuration is what macOS uses.
+
+The appletbdrm driver is based on the similar driver made for Windows by
+imbushuo [1].
+
+Currently, a daemon named tiny-dfr [2] is being used to display function ke=
+ys
+and media controls using the second configuration for both Apple Silicon an=
+d
+T2 Macs.
+
+A daemon for the first configuration is being developed, but that's a users=
+pace
+thing.
+
+[1]: https://github.com/imbushuo/DFRDisplayKm
+[2]: https://github.com/WhatAmISupposedToPutHere/tiny-dfr
+
+v2:
+  1. Cleaned up some code in the hid-appletb-kbd driver.
+  2. Fixed wrong subject in drm/format-helper patch.
+  3. Fixed Co-developed-by wrongly added to hid-multitouch patch.
+
+Kerem Karabay (9):
+  HID: hid-appletb-bl: add driver for the backlight of Apple Touch Bars
+  HID: hid-appletb-kbd: add driver for the keyboard mode of Apple Touch
+    Bars
+  HID: multitouch: support getting the contact ID from
+    HID_DG_TRANSDUCER_INDEX fields
+  HID: multitouch: support getting the tip state from HID_DG_TOUCH
+    fields
+  HID: multitouch: take cls->maxcontacts into account for devices
+    without a HID_DG_CONTACTMAX field too
+  HID: multitouch: allow specifying if a device is direct in a class
+  HID: multitouch: add device ID for Apple Touch Bars
+  drm/format-helper: Add conversion from XRGB8888 to BGR888
+  drm/tiny: add driver for Apple Touch Bars in x86 Macs
+
+ .../ABI/testing/sysfs-driver-hid-appletb-kbd  |  13 +
+ MAINTAINERS                                   |  12 +
+ drivers/gpu/drm/drm_format_helper.c           |  54 ++
+ .../gpu/drm/tests/drm_format_helper_test.c    |  81 +++
+ drivers/gpu/drm/tiny/Kconfig                  |  12 +
+ drivers/gpu/drm/tiny/Makefile                 |   1 +
+ drivers/gpu/drm/tiny/appletbdrm.c             | 624 ++++++++++++++++++
+ drivers/hid/Kconfig                           |  22 +
+ drivers/hid/Makefile                          |   2 +
+ drivers/hid/hid-appletb-bl.c                  | 206 ++++++
+ drivers/hid/hid-appletb-kbd.c                 | 303 +++++++++
+ drivers/hid/hid-multitouch.c                  |  60 +-
+ drivers/hid/hid-quirks.c                      |   8 +-
+ include/drm/drm_format_helper.h               |   3 +
+ 14 files changed, 1385 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
+ create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
+ create mode 100644 drivers/hid/hid-appletb-bl.c
+ create mode 100644 drivers/hid/hid-appletb-kbd.c
+
+--=20
+2.39.3 (Apple Git-146)
 
 
