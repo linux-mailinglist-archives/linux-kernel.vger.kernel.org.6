@@ -1,192 +1,92 @@
-Return-Path: <linux-kernel+bounces-280078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0578E94C566
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2583A94C56B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 292481C21F0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 571021C21F7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625A7155C8E;
-	Thu,  8 Aug 2024 19:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD3A15666B;
+	Thu,  8 Aug 2024 19:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dUtyubKe"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZPVQA27"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1273398E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 19:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827B384A2F;
+	Thu,  8 Aug 2024 19:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723146121; cv=none; b=rxsUWFASxtoK/T4LVFVfzURc8/AjpNavnmmLc4H6qCb+WL6hnR/PEOUvPeBPXkDnUFzAIx2fY5Ui6je71xGxQtDc37ZehBeVlUudGFzbWWWMbd79WIiY3I9lFof4dsokGNaeCHO+16k4CJKgjy8MIcEfSXJbQJYh5/LOWUN6sKA=
+	t=1723146183; cv=none; b=dTc5NeNkcSoVF+2TZXEeW13znAeECWdlgv0cdUB25brJA7nJlOXQgp5NTKRAF8PygxxVV74kiN+gPzQhn7fqhq13kzI44IMnZ7inJG8eJ0fTAFEtRlVKIrSsDP6NsXAD81yQ18Zl4zl1XWpp+p+sPuEFabJW50jDRgkDFO0zP/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723146121; c=relaxed/simple;
-	bh=tfohJsfe91Cq8eQD/ZDuC0uUPLKbEmFWl0olIpR+tUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A08iV+K9M5Ed0eeofZ2gcQLHL3fSxcNADVyo99IK3Daz1myfiT6oK8HK0+HkKjCl3gqM6hgqrNva9pfFe/4Fr7vtG7/cF5ugW4L+obuuc+hetLOuf5hcuoIBDLTDutEs50UEI8PR5XE3oaNW7/wpXSvuU1v6dl000+AgPRueIzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=dUtyubKe; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-44ff6dd158cso7802921cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 12:41:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1723146118; x=1723750918; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oKlfsJF0CD5HfJ7xy5871QLT9TMYxhiJPetjQ2Zc8oM=;
-        b=dUtyubKeRbRWUvQUrV/afeHB2Q3T+6h+eCWWK5v9ZJTV4EcyJelXCcav5Bv5L9fR1o
-         lBurXWp6RIHc7Imk7My7It52vQp4UMFSTlyfDp1P5Upuy4iT3oOaNRpodc5w5nPP44in
-         fTtWAzXnssxGwSa6zubxMbqC9s0xRUyitA79shb22I/UNLunUorla0+JZFJBfqF6qXEX
-         2Rq0txIdl5CfwEZWcBn1I/dno2hQhp0TKYTo0xNxGdmaDuqrlPu3A2KgDngfCVdXpQTn
-         NNgYWq65ZCS0mepbJXKxnrJalbDznMD0wEU4sZ2o/q6Czf+lrsZtXL/AYovPXzBH+PYt
-         P6eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723146118; x=1723750918;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oKlfsJF0CD5HfJ7xy5871QLT9TMYxhiJPetjQ2Zc8oM=;
-        b=CzNJtFAQV1lBy8Nen5yK1tWfzDBq3HTxf4n9HdkpdsaPMZY0QVPg6+55Qs4gU1zUb2
-         HNtNxAKmb7pBWS252zLCdAFUGeWQuPD9tvl5UC+vzU0N0LhPpHZegZemQyk4JB7jCfko
-         YqkwE+hIFsFmSzDM13YwdkrHLFaauSOwEa2wkSSX8jWFvt/f2QyamD9VxeTUeCZZPZX1
-         vYUdql0fU50I+YNjqGA6ymZUNp3M8reiAVv0NNF8haf8Vbl/cX9tKRbGGCZNXMAzh8ID
-         9i+7AzS87Kd6ZwtDzNZwuHKX/c5JGIap2lGWauJWHr9nagWr3uf6naUdkGIVYwj8JfkO
-         bxnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2/dE4h9qkf31F3sgZ7I8hI7pxnxe+1qDGYvr82t2bHTn55t7J9wa/QMVZx1NxDzgOEiC617Tal5esiUBUwqjMPZ+tzDrtMs0Errvn
-X-Gm-Message-State: AOJu0YznGH8veJoteNCRfPa56kMe6IPpAomORJqMvvsxAADpF00ypzRO
-	rYSsuYgzyML7ZElIzRXBj2hpe3LUa00PZlucPizVO8Bo6al22ZkuM4aghMnwShI=
-X-Google-Smtp-Source: AGHT+IHeLz+52p3YFQ1GzW+PZ1L4qdGCbBqLPLxf3eHvw9bY0A30iXZCHlJ8zQlSzy7jCcRCtrr3rw==
-X-Received: by 2002:a05:622a:1e09:b0:44f:ff90:b153 with SMTP id d75a77b69052e-451d4275f68mr29137941cf.38.1723146118315;
-        Thu, 08 Aug 2024 12:41:58 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451c86fe411sm15618681cf.18.2024.08.08.12.41.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 12:41:57 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sc91H-00Axc5-S1;
-	Thu, 08 Aug 2024 16:41:55 -0300
-Date: Thu, 8 Aug 2024 16:41:55 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Matthew Rosato <mjrosato@linux.ibm.com>
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Gerd Bayer <gbayer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Joerg Roedel <jroedel@suse.de>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH] iommu/s390: Implement blocking domain
-Message-ID: <20240808194155.GD1985367@ziepe.ca>
-References: <20240806-blocking_domain-v1-1-8abc18e37e52@linux.ibm.com>
- <20240808134451.GC1985367@ziepe.ca>
- <0abe7286-ae33-4637-b0ea-f1f2e352eb21@linux.ibm.com>
+	s=arc-20240116; t=1723146183; c=relaxed/simple;
+	bh=9kBylOwsE2XpqPwZpP7UXxRgnK2QCC3mH5zU/bOhA/8=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=rVIXVGAOs/eY3zNy1D4YOgmC91qnOxfoBfozE81gBUfxL3o/dVHXSx6rt9CjPMUvdlU3CQOHEwFptRwEiQSVfaXJ/CAuGyuEpI7YL0UJ/rlQgRYNrLuFq1fBKxKVGgWhfj+v3IrMg168ppNmDKTZoCL5UB38CO+c6xSE/CtHgLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZPVQA27; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E84DDC32782;
+	Thu,  8 Aug 2024 19:43:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723146183;
+	bh=9kBylOwsE2XpqPwZpP7UXxRgnK2QCC3mH5zU/bOhA/8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=pZPVQA27VDNEzHvMGARIHNp8+XE0tf7oYIqC4lgEYl0MZwQtOuvmA66RFi9+0+Z2m
+	 Dxg9PyukCu/cWm1BjI+XUsS+70iRmwQKp8jMdBZbtBEEoIiIx8Ydsn169kRdag4D4R
+	 eKo7Gvc4ao4zE2Q5jVlILriuqI2n7w+0lz9TB1QOi6SregXTrzkdBWj0NJxPIoybcP
+	 ZQYbCUwc2/Ewzbadnj38bu3spDZTwRlUAktQ4oreQ96R+iSrU8vFjPxRaMsIKU4dlV
+	 HJljFaJ8WPMkV3C/DxWBx2o4PaV7KFx2hx1QxsUxgIGczyS1pkZC60/+A2c5K2gOGp
+	 bRQbRJmStJ8QA==
+Message-ID: <a7607f45e26c79f13b846fd0d8284bcf.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0abe7286-ae33-4637-b0ea-f1f2e352eb21@linux.ibm.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240808-clk-rpmh-bcm-vote-fix-v1-1-109bd1d76189@quicinc.com>
+References: <20240808-clk-rpmh-bcm-vote-fix-v1-1-109bd1d76189@quicinc.com>
+Subject: Re: [PATCH] clk: qcom: clk-rpmh: Fix overflow in BCM vote
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Mike Tipton <quic_mdtipton@quicinc.com>, stable@vger.kernel.org
+To: Bjorn Andersson <andersson@kernel.org>, David Dai <daidavid1@codeaurora.org>, Imran Shaik <quic_imrashai@quicinc.com>, Michael Turquette <mturquette@baylibre.com>
+Date: Thu, 08 Aug 2024 12:43:00 -0700
+User-Agent: alot/0.10
 
-On Thu, Aug 08, 2024 at 01:05:36PM -0400, Matthew Rosato wrote:
+Quoting Imran Shaik (2024-08-08 00:05:02)
+> From: Mike Tipton <quic_mdtipton@quicinc.com>
+>=20
+> Valid frequencies may result in BCM votes that exceed the max HW value.
+> Set vote ceiling to BCM_TCS_CMD_VOTE_MASK to ensure the votes aren't
+> truncated, which can result in lower frequencies than desired.
+>=20
+> Fixes: 04053f4d23a4 ("clk: qcom: clk-rpmh: Add IPA clock support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+>  drivers/clk/qcom/clk-rpmh.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index bb82abeed88f..233ccd365a37 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -263,6 +263,9 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, =
+bool enable)
+>                 cmd_state =3D 0;
+>         }
+> =20
+> +       if (cmd_state > BCM_TCS_CMD_VOTE_MASK)
+> +               cmd_state =3D BCM_TCS_CMD_VOTE_MASK;
+> +
 
-> Since c76c067e488c ("s390/pci: Use dma-iommu layer"), we stopped
-> checking for a NULL zdev->s390_domain during
-> s390_iommu_release_device.  This causes a crash specifically if the
-> last attach_device call failed (we exit on -EIO with a NULL
-> zdev->s390_domain).  I suppose we could also fix the specific crash
-> by restoring the NULL check in s390_iommu_release_device, but this
-> seems like a band-aid and I'm concerned that there's more lurking
-> here when get to this state...
+This is
 
-Implementing the static blocking domain and using release_domain
-should fix all these crashes, I think. The core code will sequence
-everything and zdev->s390_domain should never be NULL. You'll get
-trapped in a blocking domain and can't exit which will trigger
-WARN_ON, but at least for the first step of this problem it should be
-enough.
-
-> > But what is the backtrace that runs into this warn on? VFIO exiting
-> > and trying to put the device back to the DMA API?
-> 
-> Yes, exactly
-> 
-> [  198.067373] ------------[ cut here ]------------
-> [  198.067377] WARNING: CPU: 44 PID: 394 at drivers/iommu/iommu.c:122 __iommu_release_dma_ownership+0x72/0x80
-> [  198.067386] Modules linked in: macvtap macvlan tap vfio_pci vfio_pci_core irqbypass kvm sunrpc s390_trng eadm_sch tape_34xx tape tape_class vfio_ccw mdev vfio_iommu_type1 vfio zcrypt_cex4 sch_fq_codel loop configfs nfnetlink lcs ctcm fsm ghash_s390 prng chacha_s390 libchacha aes_s390 des_s390 libdes sha3_512_s390 sha3_256_s390 nvme sha512_s390 sha256_s390 nvme_core sha1_s390 sha_common zfcp scsi_transport_fc 8021q garp pkey zcrypt rng_core autofs4
-> [  198.067424] CPU: 44 UID: 0 PID: 394 Comm: kmcheck Not tainted 6.11.0-rc2 #111
-> [  198.067427] Hardware name: IBM 3906 M05 780 (LPAR)
-> [  198.067429] Krnl PSW : 0704c00180000000 000002bbfc744576 (__iommu_release_dma_ownership+0x76/0x80)
-> [  198.067433]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
-> [  198.067437] Krnl GPRS: 0000000000000290 0000000000000000 fffffffffffffffb 000001b386842098
-> [  198.067439]            0000000000000000 000001b3865b5c00 000000000000255b 000002bb7c586068
-> [  198.067442]            000001b3ab82a018 000001b7ff0af6c0 000001b5d0e4af68 000001b5d0e4af00
-> [  198.067444]            000001b389772300 0000023bffe33e28 000002bbfc744560 0000023bffe339d0
-> [  198.067452] Krnl Code: 000002bbfc744568: f0a0000407fe	srp	4(11,%r0),2046,0
->                           000002bbfc74456e: 47000700		bc	0,1792
->                          #000002bbfc744572: af000000		mc	0,0
->                          >000002bbfc744576: a7f4fff8		brc	15,000002bbfc744566
->                           000002bbfc74457a: 0707		bcr	0,%r7
->                           000002bbfc74457c: 0707		bcr	0,%r7
->                           000002bbfc74457e: 0707		bcr	0,%r7
->                           000002bbfc744580: c0040025f71c	brcl	0,000002bbfcc033b8
-> [  198.067468] Call Trace:
-> [  198.067482]  [<000002bbfc744576>] __iommu_release_dma_ownership+0x76/0x80 
-> [  198.067486] ([<000002bbfc744560>] __iommu_release_dma_ownership+0x60/0x80)
-> [  198.067488]  [<000002bbfc7445b8>] iommu_group_release_dma_owner+0x38/0x50 
-> [  198.067491]  [<000002bb7c2a1e24>] vfio_group_detach_container+0x154/0x180 [vfio] 
-> [  198.067500]  [<000002bb7c2a0d88>] vfio_device_remove_group+0xd8/0x140 [vfio] 
-> [  198.067505]  [<000002bb7c5648b4>] vfio_pci_core_unregister_device+0x34/0x80 [vfio_pci_core] 
-> [  198.067513]  [<000002bb7c5841cc>] vfio_pci_remove+0x2c/0x40 [vfio_pci] 
-> [  198.067517]  [<000002bbfc6ec7bc>] pci_device_remove+0x3c/0x90 
-> [  198.067520]  [<000002bbfc75dda4>] device_release_driver_internal+0x1b4/0x260 
-> [  198.067527]  [<000002bbfc6e2844>] pci_stop_bus_device+0x94/0xc0 
-> [  198.067531]  [<000002bbfc6e2b66>] pci_stop_and_remove_bus_device+0x26/0x40 
-> [  198.067534]  [<000002bbfc6e2bb0>] pci_stop_and_remove_bus_device_locked+0x30/0x40 
-> [  198.067537]  [<000002bbfbde2838>] zpci_bus_remove_device+0x68/0xb0 
-> [  198.067541]  [<000002bbfbde0780>] __zpci_event_availability+0x250/0x3a0 
-> [  198.067543]  [<000002bbfc7e4528>] chsc_process_crw+0x2a8/0x2c0 
-> [  198.067548]  [<000002bbfc7ec690>] crw_collect_info+0x2e0/0x360 
-> [  198.067550]  [<000002bbfbe15bde>] kthread+0x11e/0x130 
-> [  198.067556]  [<000002bbfbd930ec>] __ret_from_fork+0x3c/0x60 
-> [  198.067558]  [<000002bbfcb233aa>] ret_from_fork+0xa/0x38 
-> [  198.067564] Last Breaking-Event-Address:
-> [  198.067565]  [<000002bbfc744560>] __iommu_release_dma_ownership+0x60/0x80
-> [  198.067569] ---[ end trace 0000000000000000 ]---
-> 
-> > Though I feel like more is needed here if you expect to allow the
-> > nofail version of this to actually fail.. For instance a force-blocked
-> > device should block driver binding through the dma_owner APIs.
-> 
-> Yeah, that makes sense too. 
-
-And I think fixing this should be another patch, though I'm not
-entirely sure what the best approach will be.
-
-One thought is that, presumably, when the hypervisor fences the device
-it asynchronously makes it blocking, which is another way of saying it
-has halted all DMA from that device.
-
-So, even if we could attach a domain, it would never be used since
-there is no possible DMA.
-
-Thus, why fail the attach? There is no way for anyone to tell the
-difference between an attached translation and not attached because
-the DMA has been halted at the device.
-
-If you can tell in the s390 driver that the hypervisor has fenced the
-device then maybe just reporting success to the upper layer is the
-right answer here.
-
-Jason
+	cmd_state =3D min(cmd_state, BCM_TCS_CMD_VOTE_MASK);
 
