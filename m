@@ -1,136 +1,202 @@
-Return-Path: <linux-kernel+bounces-279753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8D694C16B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AEDE94C14D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ABF01F2B98E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:31:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB3911F2B883
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DD418FC90;
-	Thu,  8 Aug 2024 15:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1B3190055;
+	Thu,  8 Aug 2024 15:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KJxS3d8O"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WD7K9CCd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F0F192B69;
-	Thu,  8 Aug 2024 15:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A9518FDD2
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723130938; cv=none; b=alperNG+tRkYY4pgs94/DOgI7lvvCMfV9VrbFP8PxCECdYqf9piFPou3cCJ8FkgkCzpGRkGRtNCdcuRY3Cn1TyVMMdTUOECDQX//NaBYSuOh57zb1pweDIfxvEfInQ888muLKGZIQjqY863Oef2MiBMt/4cgL6IoPiA5h45jVss=
+	t=1723130889; cv=none; b=GM3plzT3pCeql/u41EzMDCZfDrSKlboo/F8MYqylDAQEqWv8JnQuWGd2rxNDiKLo1tOi3I2Ndiqw6QQQu2Qt+o54boM0hq6CcMOxQGDxCuj97Rr1TlE2MHfeWaKznvzCnjIVFWhEod5jMpgPydJWbHmyVl9w3eJRhZv+MmlyKzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723130938; c=relaxed/simple;
-	bh=1ByWN//vxwzQp1zeAY4VDNzEuKxwPun8DERkhqw2wZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sGShGCW271GPbf99xakyjsTuxpKBQmjSCImlGw+xlKKj5tk42wdavFQ1eTmKoAs4uH/tlUbloLWn8gBL5AUc79RCzRGsp4LHu7lZUCigl22AiBs8QjtW0tMe6IP95V5ed0Z0mzw65IuqwwJiHIm1gLQ2cgAYDutwFdyLcO3Q0Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KJxS3d8O; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1723130889; c=relaxed/simple;
+	bh=hqVVdHyP0GO0EWVvV1Fu13sGpUa11Nqx0KTkMaqHaZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ECZqGTac7KCHfh3K8I6GecOSZykUz4JU7ItOdTBW9DUhX6x3zlk+Z8vJdPRwAiFM45SHv/7LutKLzPoU+mqaZmapG0PmjJ2q6+gbqMK9X27NCknYpnT47aIcQmvkeQxlJ6EBywmjWEUgQDqE4P7kiO4Gp7hstCwcRQwu2P4oTmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WD7K9CCd; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723130937; x=1754666937;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=1ByWN//vxwzQp1zeAY4VDNzEuKxwPun8DERkhqw2wZw=;
-  b=KJxS3d8OpltMu8pp6T0wCURCXCoSMqV3I8ox3RjyIJjJzKqmnqMHfn0e
-   D8qpZSFmuKBmlbYKwa4teuujN4QvQKaWrkUkFMVOll7/vxndCY60y3UXY
-   M3k61uyNg9XZg2fAN8jN9bp6WzEFUWHTLC8xYfjZoYGvX0txDCVrG+pVT
-   CAzbKtgieb9OE6SIkXCe9zRA9c5aMUr+Y4acZoXYVlY9pSPoYcaZOt9af
-   t6QMO5QHUje7nZ95KN9xThY/OywKRRhROwNldNJ1JO/rGX9f+jEpV50Cd
-   mz9/7HdF7ibZMshS2efthKRK8qlOY2SOlo9ut1HwUcf2wwojzBr7pG1dU
-   Q==;
-X-CSE-ConnectionGUID: +ZAaWVqTRieGtbcj3ycdlw==
-X-CSE-MsgGUID: moUrHLseTnGrH0wA+IeCXw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25026019"
+  t=1723130887; x=1754666887;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hqVVdHyP0GO0EWVvV1Fu13sGpUa11Nqx0KTkMaqHaZI=;
+  b=WD7K9CCdl1hlDMAqni3vBa+0mAy1BPG+BSa/0KEAXFO0fxcZZ+ea59l9
+   OcEsNm6KBwakwWKEdyockbi6C1iNkts6iTcmMB/dUzm15IDoEN+s9fRbn
+   C3aSpykwY0iDuctkKfBrPUzgjPTevT63MqBwfX4zb6qw/5r/HfMP1KGlX
+   Z8LN+7ozNSqTb4ro9Of+mftRq46BJrmTh1i31a02xygsl7xSYV4LLU7bU
+   RAhHzvam76mf++LJuREdiI13lk56qAkInh/YXT0lbawn6oWDGy+ePJigN
+   sLAT3bYMv5w4hrniLvCR+EuM/r4KrB+3NwgVnWTg11HTOBpO+kmgTf/Cj
+   g==;
+X-CSE-ConnectionGUID: gqkzg7puSiSbN5QLI1V61w==
+X-CSE-MsgGUID: c9VfZcrATZ2eqnIOqRPSoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21122336"
 X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="25026019"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 08:28:57 -0700
-X-CSE-ConnectionGUID: ZTvO872OQICTSM3RldUgWg==
-X-CSE-MsgGUID: /9/VbftkQseQ67sOnqDVrg==
+   d="scan'208";a="21122336"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 08:28:06 -0700
+X-CSE-ConnectionGUID: kK/XGJ65Sbib/+B2ukQc8w==
+X-CSE-MsgGUID: FNopWHpHS9e2KN76mn+Evg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="57162827"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by orviesa009.jf.intel.com with ESMTP; 08 Aug 2024 08:28:53 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	David Ahern <dsahern@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 6/6] net: netdev_features: remove NETIF_F_ALL_FCOE
-Date: Thu,  8 Aug 2024 17:27:57 +0200
-Message-ID: <20240808152757.2016725-7-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240808152757.2016725-1-aleksander.lobakin@intel.com>
-References: <20240808152757.2016725-1-aleksander.lobakin@intel.com>
+   d="scan'208";a="62105608"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 08 Aug 2024 08:28:04 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id DC67B3BA; Thu, 08 Aug 2024 18:28:02 +0300 (EEST)
+Date: Thu, 8 Aug 2024 18:28:02 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Hongyu Ning <hongyu.ning@linux.intel.com>
+Subject: Re: [PATCH] virtio: Remove virtio devices on device_shutdown()
+Message-ID: <lszslulefumddbqnhni55sgdfddptw3yb5vfavgnlyiv6wi3vn@44e4tttbvwaz>
+References: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
+ <20240808075701-mutt-send-email-mst@kernel.org>
+ <yknu4iege3drk6t2x7pvm2l2cocg4r5qk5jzmboej6dqk5ym2z@g4clogtuuibe>
+ <20240808105006-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808105006-mutt-send-email-mst@kernel.org>
 
-NETIF_F_ALL_FCOE is used only in vlan_dev.c, 2 times. Now that it's only
-2 bits, open-code it and remove the definition from netdev_features.h.
+On Thu, Aug 08, 2024 at 11:03:30AM -0400, Michael S. Tsirkin wrote:
+> On Thu, Aug 08, 2024 at 04:15:25PM +0300, Kirill A. Shutemov wrote:
+> > On Thu, Aug 08, 2024 at 08:10:34AM -0400, Michael S. Tsirkin wrote:
+> > > On Thu, Aug 08, 2024 at 10:51:41AM +0300, Kirill A. Shutemov wrote:
+> > > > Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
+> > > > accesses during the hang.
+> > > > 
+> > > > 	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
+> > > > 	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
+> > > > 	...
+> > > > 
+> > > > It was traced down to virtio-console. Kexec works fine if virtio-console
+> > > > is not in use.
+> > > 
+> > > virtio is not doing a lot of 16 bit reads.
+> > > Are these the reads:
+> > > 
+> > >                 virtio_cread(vdev, struct virtio_console_config, cols, &cols);
+> > >                 virtio_cread(vdev, struct virtio_console_config, rows, &rows);
+> > > 
+> > > ?
+> > > 
+> > > write is a bit puzzling too. This one?
+> > > 
+> > > bool vp_notify(struct virtqueue *vq)
+> > > {       
+> > >         /* we write the queue's selector into the notification register to
+> > >          * signal the other end */
+> > >         iowrite16(vq->index, (void __iomem *)vq->priv);
+> > >         return true;
+> > > }
+> > 
+> > Given that we are talking about console issue, any suggestion on how to
+> > check?
+> 
+> 
+> If you do lspci -v on the device, we'll know where the BARs are,
+> and can compare to 0x102877002, 0x102877A44.
 
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- include/linux/netdev_features.h | 2 --
- net/8021q/vlan_dev.c            | 5 +++--
- 2 files changed, 3 insertions(+), 4 deletions(-)
+00:01.0 Ethernet controller: Red Hat, Inc. Virtio 1.0 network device (rev 01)
+	Subsystem: Red Hat, Inc. Device 1100
+	Flags: bus master, fast devsel, latency 0, IRQ 21
+	Memory at 80005000 (32-bit, non-prefetchable) [size=4K]
+	Memory at 380000000000 (64-bit, prefetchable) [size=16K]
+	Capabilities: [98] MSI-X: Enable+ Count=4 Masked-
+	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
+	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
+	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
+	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
+	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
+	Kernel driver in use: virtio-pci
 
-diff --git a/include/linux/netdev_features.h b/include/linux/netdev_features.h
-index 1e9c4da181af..e41cd8af2a72 100644
---- a/include/linux/netdev_features.h
-+++ b/include/linux/netdev_features.h
-@@ -205,8 +205,6 @@ static inline int find_next_netdev_feature(u64 feature, unsigned long start)
- #define NETIF_F_ALL_TSO 	(NETIF_F_TSO | NETIF_F_TSO6 | \
- 				 NETIF_F_TSO_ECN | NETIF_F_TSO_MANGLEID)
- 
--#define NETIF_F_ALL_FCOE	(NETIF_F_FCOE_CRC | NETIF_F_FSO)
--
- /* List of features with software fallbacks. */
- #define NETIF_F_GSO_SOFTWARE	(NETIF_F_ALL_TSO | NETIF_F_GSO_SCTP |	     \
- 				 NETIF_F_GSO_UDP_L4 | NETIF_F_GSO_FRAGLIST)
-diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
-index 09b46b057ab2..458040e8a0e0 100644
---- a/net/8021q/vlan_dev.c
-+++ b/net/8021q/vlan_dev.c
-@@ -564,7 +564,7 @@ static int vlan_dev_init(struct net_device *dev)
- 			   NETIF_F_FRAGLIST | NETIF_F_GSO_SOFTWARE |
- 			   NETIF_F_GSO_ENCAP_ALL |
- 			   NETIF_F_HIGHDMA | NETIF_F_SCTP_CRC |
--			   NETIF_F_ALL_FCOE;
-+			   NETIF_F_FCOE_CRC | NETIF_F_FSO;
- 
- 	if (real_dev->vlan_features & NETIF_F_HW_MACSEC)
- 		dev->hw_features |= NETIF_F_HW_MACSEC;
-@@ -576,7 +576,8 @@ static int vlan_dev_init(struct net_device *dev)
- 	if (dev->features & NETIF_F_VLAN_FEATURES)
- 		netdev_warn(real_dev, "VLAN features are set incorrectly.  Q-in-Q configurations may not work correctly.\n");
- 
--	dev->vlan_features = real_dev->vlan_features & ~NETIF_F_ALL_FCOE;
-+	dev->vlan_features = real_dev->vlan_features &
-+			     ~(NETIF_F_FCOE_CRC | NETIF_F_FSO);
- 	dev->hw_enc_features = vlan_tnl_features(real_dev);
- 	dev->mpls_features = real_dev->mpls_features;
- 
+00:02.0 Communication controller: Red Hat, Inc. Virtio 1.0 socket (rev 01)
+	Subsystem: Red Hat, Inc. Device 1100
+	Flags: bus master, fast devsel, latency 0, IRQ 22
+	Memory at 80004000 (32-bit, non-prefetchable) [size=4K]
+	Memory at 380000004000 (64-bit, prefetchable) [size=16K]
+	Capabilities: [98] MSI-X: Enable- Count=3 Masked-
+	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
+	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
+	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
+	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
+	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
+	Kernel driver in use: virtio-pci
+
+00:03.0 Communication controller: Red Hat, Inc. Virtio 1.0 console (rev 01)
+	Subsystem: Red Hat, Inc. Device 1100
+	Flags: bus master, fast devsel, latency 0, IRQ 23
+	Memory at 80003000 (32-bit, non-prefetchable) [size=4K]
+	Memory at 380000008000 (64-bit, prefetchable) [size=16K]
+	Capabilities: [98] MSI-X: Enable+ Count=2 Masked-
+	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
+	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
+	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
+	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
+	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
+	Kernel driver in use: virtio-pci
+
+00:04.0 SCSI storage controller: Red Hat, Inc. Virtio 1.0 block device (rev 01)
+	Subsystem: Red Hat, Inc. Device 1100
+	Flags: bus master, fast devsel, latency 0, IRQ 20
+	Memory at 80002000 (32-bit, non-prefetchable) [size=4K]
+	Memory at 38000000c000 (64-bit, prefetchable) [size=16K]
+	Capabilities: [98] MSI-X: Enable+ Count=17 Masked-
+	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
+	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
+	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
+	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
+	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
+	Kernel driver in use: virtio-pci
+
+00:05.0 SCSI storage controller: Red Hat, Inc. Virtio 1.0 block device (rev 01)
+	Subsystem: Red Hat, Inc. Device 1100
+	Flags: bus master, fast devsel, latency 0, IRQ 21
+	Memory at 80001000 (32-bit, non-prefetchable) [size=4K]
+	Memory at 380000010000 (64-bit, prefetchable) [size=16K]
+	Capabilities: [98] MSI-X: Enable+ Count=17 Masked-
+	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
+	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
+	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
+	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
+	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
+	Kernel driver in use: virtio-pci
+....
+Invalid read at addr 0x100C37904, size 2, region '(null)', reason: rejected
+Invalid read at addr 0x1036F9002, size 2, region '(null)', reason: rejected
+Invalid read at addr 0x1036F9002, size 2, region '(null)', reason: rejected
+Invalid write at addr 0x1036F9A44, size 2, region '(null)', reason: rejected
+Invalid read at addr 0x1036F7002, size 2, region '(null)', reason: rejected
+Invalid read at addr 0x1036F7002, size 2, region '(null)', reason: rejected
+Invalid write at addr 0x1036F7A44, size 2, region '(null)', reason: rejected
+....
+
+Yeah, looks like it is not BARs.
+
 -- 
-2.45.2
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
