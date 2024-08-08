@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-279888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3C294C30B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:49:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E38DA94C30F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F3CB1F263F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92DDB282464
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87495190664;
-	Thu,  8 Aug 2024 16:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D589190489;
+	Thu,  8 Aug 2024 16:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="IuKmvg3j"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQUmqMJy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B252219047C;
-	Thu,  8 Aug 2024 16:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723135694; cv=pass; b=ZETEeKVcOpWs8BEfnuM4D+wqewdzjm52nXqDpWQ/WtDn/74BLPgchHCeeHjuTWf5Q5zuNEeR9kKwp3LWEGARdYqEu+k3XhsJbjlw8Fzm9fynFQXRsUGbHKU+tvbJaIU9ThGPwoHhCiHzx5z1AXdkyCK/gKl88ntXTfW0VK38rUE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723135694; c=relaxed/simple;
-	bh=9DAx7bChqIIK6X7/Iv2tJxhcp1oTuZ8bl2xjzrRPiCA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oQQqbHluC5xItnUV344vmVH7HvQZ4LUUXYGccVPEWq1grmWoEZwWQWqpI5ejja4Qob0F2+qcUrP8AP1tygLDt+fgJ1Me2h0JlNW/qATEmI7UITYzfh8fpY55LRiTVslyIaxjbGfC9GzRK+kZf2XvW9+lsXGvZAFt333KC8ggR6E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=IuKmvg3j; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723135670; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Q2f8+kq84rWJh2D3HefhcG9uGuuwohkm6QyBnUc6PkLz+WzKGmNfAxRLhW10J/TDS8onmrTi9A/jDApcfVXg6kCvdNDTCoeCZ/re5RMr84ubEG2RdlXBdI9y9iPr13Gl6HjMKCUePK6RXRGhrLiXCV/8u+U0sJnD5RWAO+MVnDc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723135670; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=aXt8DW2JUD9bIKgV9lF6ZQt+rFVAXi+kPSk4FyLw7Lw=; 
-	b=VG0hnoj3MHzlkfWLeJm3FZmMIzP3w6qx+EulnzPCzkHTTdqXqEyce5LQgffeYeHY41/+DKN9t9yihbxvCpRmGELbeRZI1Vtp99H4XBhZzHZGFiA6vXDVrjiviaKPDyUl0cHArCwRLuxw21TFHR7WtsGM4RhmcTeTZ5hjcZ5zqhM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723135670;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=aXt8DW2JUD9bIKgV9lF6ZQt+rFVAXi+kPSk4FyLw7Lw=;
-	b=IuKmvg3jx1Z+d/MdDHyozUexLygmc2GLi07vndy+x0lf6FYIvoPMpQ3CzO4/zt8o
-	437j8NPt+8Cjn0kaAZ8QIhB8oirkgxu+skKuOuXcmj36efPm3n3UtIh1p0CPdLx+opq
-	YyNlsRzZYHE90CxBFh17KrFz+HnItEXaE8XUdJDE=
-Received: by mx.zohomail.com with SMTPS id 172313566925236.90630355739677;
-	Thu, 8 Aug 2024 09:47:49 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A2B18EFD6;
+	Thu,  8 Aug 2024 16:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723135790; cv=none; b=cYnrPswY5ZW4zgFEmPaRrZ5HOmOqwpAHTMM0woPfHQzezvTm1E1K965cxjcXI0K2F2sTOdJrMPOFzfYFa934hluPX01B98Bq7mKmA+FtFANCNSWI8tsCXAjHjQOzVSbvmpTIbxHk3C1gzDh49jmrAtYK/HQORwLKOdjLS8bsSzQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723135790; c=relaxed/simple;
+	bh=XTwEvmp5OlD/iluIen7qkHkb3qmv9F4vq/Wk3TaBQLE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AJIsWlAgUISODpPIfArz+eJ8YPb1YDHOrmbtBJHTrjKOwCLtMoOeOSr7xK0mgV+M0zgZzSB0XtOCV8FvfVxlFM8P69ZOB9UJvFfR4FbLS8wWz31R0tsMJzNexuRz9lJGZCf8qtoDKJ8M4veW0xV7NWF0qDyq/YjWyMT7JCUnCFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQUmqMJy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D86C32782;
+	Thu,  8 Aug 2024 16:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723135789;
+	bh=XTwEvmp5OlD/iluIen7qkHkb3qmv9F4vq/Wk3TaBQLE=;
+	h=From:List-Id:To:Cc:Subject:Date:From;
+	b=YQUmqMJyqdU4oeEzrlYd2G6SWv53HZ2MNeqqm+529DVoYhZma7BOnqdeO+undARkA
+	 tLe18k5cKOl87nbLPQj7lWqVZbmdsohCCXrhwpSFzmjHCEgNMJL8z4ptE3+Qww00lJ
+	 I68OcY2eRcX+9jfgONKofteISCVinfkzpTjiaDu/oV2TmAt/HEbRHy62b2ku4ru1TE
+	 isN9kHOSM8E2fuWsXi0db+gAsb7P3bw74ueRbInjtXL6CGN8WZWI/Rpp77/jUamawL
+	 rbPVK65DaCoN4543jRvqInPDWVHQ6agGVGStBHPrfRDHtGFXc6cUr+gze/rTGg2j4m
+	 g01K8W2U3137w==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: soc@kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Mark Jackson <mpfj@newflow.co.uk>,
+	Tony Lindgren <tony@atomide.com>,
+	Michal Simek <michal.simek@amd.com>
+Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>
-Subject: [PATCH v2 3/3] mmc: dw_mmc-rockchip: Add internal phase support
-Date: Thu,  8 Aug 2024 12:47:17 -0400
-Message-ID: <20240808164900.81871-4-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240808164900.81871-1-detlev.casanova@collabora.com>
-References: <20240808164900.81871-1-detlev.casanova@collabora.com>
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org,
+	imx@lists.linux.dev,
+	linux-omap@vger.kernel.org
+Subject: [PATCH] ARM: dts: Fix undocumented LM75 compatible nodes
+Date: Thu,  8 Aug 2024 10:49:38 -0600
+Message-ID: <20240808164941.1407327-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,286 +81,300 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+"lm75" without any vendor is undocumented. It works with the Linux
+kernel since the I2C subsystem will do matches of the compatible string
+without a vendor prefix to the i2c_device_id and/or driver name.
 
-Some Rockchip devices put the phase settings into the dw_mmc controller.
+Mostly replace "lm75" with "national,lm75" as that's the original part
+vendor and the compatible which matches what "lm75" matched with. In a
+couple of cases the node name or compatible gives a clue to the actual
+part and vendor and a more specific compatible can be used. In these
+cases, it does change the variant the kernel picks.
 
-The feature is implemented in devices where the USRID register contains
-0x20230002.
+"nct75" is an OnSemi part which is compatible with TI TMP75C based on
+a comparison of the OnSemi NCT75 datasheet and configuration the Linux
+driver uses. Adding an OnSemi compatible would be an ABI change.
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+"nxp,lm75" is most likely an NXP part. NXP makes a LM75A and LM75B.
+Both are 11-bit resolution and 100ms sample time, so "national,lm75b" is
+the closest match.
+
+While we're here, fix the node names to use the generic name
+"temperature-sensor".
+
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/mmc/host/dw_mmc-rockchip.c | 180 +++++++++++++++++++++++++++--
- 1 file changed, 169 insertions(+), 11 deletions(-)
+SoC maintainers, Please take this directly.
+---
+ .../aspeed/aspeed-bmc-facebook-greatlakes.dts |  2 +-
+ .../socfpga/socfpga_cyclone5_vining_fpga.dts  |  4 +--
+ .../dts/marvell/armada-385-clearfog-gtr.dtsi  |  8 ++---
+ .../boot/dts/nuvoton/nuvoton-npcm730-kudo.dts | 32 +++++++++----------
+ .../boot/dts/nuvoton/nuvoton-npcm750-evb.dts  |  6 ++--
+ arch/arm/boot/dts/nxp/imx/imx53-mba53.dts     |  4 +--
+ arch/arm/boot/dts/nxp/imx/imx53-tqma53.dtsi   |  4 +--
+ .../dts/nxp/lpc/lpc4357-ea4357-devkit.dts     |  4 +--
+ .../boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts  |  2 +-
+ arch/arm/boot/dts/ti/omap/am335x-nano.dts     |  2 +-
+ .../boot/dts/xilinx/zynq-zturn-common.dtsi    |  4 +--
+ 11 files changed, 36 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-index b1b437ea878ae..4652691eb19f9 100644
---- a/drivers/mmc/host/dw_mmc-rockchip.c
-+++ b/drivers/mmc/host/dw_mmc-rockchip.c
-@@ -16,6 +16,17 @@
- #include "dw_mmc-pltfm.h"
- 
- #define RK3288_CLKGEN_DIV	2
-+#define USRID_INTER_PHASE	0x20230001
-+#define SDMMC_TIMING_CON0	0x130
-+#define SDMMC_TIMING_CON1	0x134
-+#define ROCKCHIP_MMC_DELAY_SEL BIT(10)
-+#define ROCKCHIP_MMC_DEGREE_MASK 0x3
-+#define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
-+#define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
-+#define PSECS_PER_SEC 1000000000000LL
-+#define ROCKCHIP_MMC_DELAY_ELEMENT_PSEC 60
-+#define HIWORD_UPDATE(val, mask, shift) \
-+		((val) << (shift) | (mask) << ((shift) + 16))
- 
- static const unsigned int freqs[] = { 100000, 200000, 300000, 400000 };
- 
-@@ -25,9 +36,121 @@ struct dw_mci_rockchip_priv_data {
- 	int			default_sample_phase;
- 	int			num_phases;
- 	bool			use_v2_tuning;
-+	int			usrid;
- 	int			last_degree;
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dts
+index 998598c15fd0..49914a4a179f 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dts
+@@ -201,7 +201,7 @@ eeprom@54 {
+ &i2c12 {
+ 	status = "okay";
+ 	temperature-sensor@4f {
+-		compatible = "lm75";
++		compatible = "national,lm75";
+ 		reg = <0x4f>;
+ 	};
  };
+diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_vining_fpga.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_vining_fpga.dts
+index 65f390bf8975..84f39dec3c42 100644
+--- a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_vining_fpga.dts
++++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_vining_fpga.dts
+@@ -130,8 +130,8 @@ gpio: pca9557@1f {
+ 		#gpio-cells = <2>;
+ 	};
  
-+/*
-+ * Each fine delay is between 44ps-77ps. Assume each fine delay is 60ps to
-+ * simplify calculations. So 45degs could be anywhere between 33deg and 57.8deg.
-+ */
-+static int rockchip_mmc_get_phase(struct dw_mci *host, bool sample)
-+{
-+	unsigned long rate = clk_get_rate(host->ciu_clk);
-+	u32 raw_value;
-+	u16 degrees;
-+	u32 delay_num = 0;
-+
-+	/* Constant signal, no measurable phase shift */
-+	if (!rate)
-+		return 0;
-+
-+	if (sample)
-+		raw_value = mci_readl(host, TIMING_CON1) >> 1;
-+	else
-+		raw_value = mci_readl(host, TIMING_CON0) >> 1;
-+
-+	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
-+
-+	if (raw_value & ROCKCHIP_MMC_DELAY_SEL) {
-+		/* degrees/delaynum * 1000000 */
-+		unsigned long factor = (ROCKCHIP_MMC_DELAY_ELEMENT_PSEC / 10) *
-+					36 * (rate / 10000);
-+
-+		delay_num = (raw_value & ROCKCHIP_MMC_DELAYNUM_MASK);
-+		delay_num >>= ROCKCHIP_MMC_DELAYNUM_OFFSET;
-+		degrees += DIV_ROUND_CLOSEST(delay_num * factor, 1000000);
-+	}
-+
-+	return degrees % 360;
-+}
-+
-+static int rockchip_mmc_set_phase(struct dw_mci *host, bool sample, int degrees)
-+{
-+	unsigned long rate = clk_get_rate(host->ciu_clk);
-+	u8 nineties, remainder;
-+	u8 delay_num;
-+	u32 raw_value;
-+	u32 delay;
-+
-+	/*
-+	 * The below calculation is based on the output clock from
-+	 * MMC host to the card, which expects the phase clock inherits
-+	 * the clock rate from its parent, namely the output clock
-+	 * provider of MMC host. However, things may go wrong if
-+	 * (1) It is orphan.
-+	 * (2) It is assigned to the wrong parent.
-+	 *
-+	 * This check help debug the case (1), which seems to be the
-+	 * most likely problem we often face and which makes it difficult
-+	 * for people to debug unstable mmc tuning results.
-+	 */
-+	if (!rate) {
-+		dev_err(host->dev, "%s: invalid clk rate\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	nineties = degrees / 90;
-+	remainder = (degrees % 90);
-+
-+	/*
-+	 * Due to the inexact nature of the "fine" delay, we might
-+	 * actually go non-monotonic.  We don't go _too_ monotonic
-+	 * though, so we should be OK.  Here are options of how we may
-+	 * work:
-+	 *
-+	 * Ideally we end up with:
-+	 *   1.0, 2.0, ..., 69.0, 70.0, ...,  89.0, 90.0
-+	 *
-+	 * On one extreme (if delay is actually 44ps):
-+	 *   .73, 1.5, ..., 50.6, 51.3, ...,  65.3, 90.0
-+	 * The other (if delay is actually 77ps):
-+	 *   1.3, 2.6, ..., 88.6. 89.8, ..., 114.0, 90
-+	 *
-+	 * It's possible we might make a delay that is up to 25
-+	 * degrees off from what we think we're making.  That's OK
-+	 * though because we should be REALLY far from any bad range.
-+	 */
-+
-+	/*
-+	 * Convert to delay; do a little extra work to make sure we
-+	 * don't overflow 32-bit / 64-bit numbers.
-+	 */
-+	delay = 10000000; /* PSECS_PER_SEC / 10000 / 10 */
-+	delay *= remainder;
-+	delay = DIV_ROUND_CLOSEST(delay,
-+			(rate / 1000) * 36 *
-+				(ROCKCHIP_MMC_DELAY_ELEMENT_PSEC / 10));
-+
-+	delay_num = (u8) min_t(u32, delay, 255);
-+
-+	raw_value = delay_num ? ROCKCHIP_MMC_DELAY_SEL : 0;
-+	raw_value |= delay_num << ROCKCHIP_MMC_DELAYNUM_OFFSET;
-+	raw_value |= nineties;
-+
-+	if (sample)
-+		mci_writel(host, TIMING_CON1, HIWORD_UPDATE(raw_value, 0x07ff, 1));
-+	else
-+		mci_writel(host, TIMING_CON0, HIWORD_UPDATE(raw_value, 0x07ff, 1));
-+
-+	dev_dbg(host->dev, "set %s_phase(%d) delay_nums=%u actual_degrees=%d\n",
-+		sample ? "sample" : "drv", degrees, delay_num,
-+		rockchip_mmc_get_phase(host, sample)
-+	);
-+
-+	return 0;
-+}
-+
- static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
- {
- 	struct dw_mci_rockchip_priv_data *priv = host->priv;
-@@ -65,8 +188,12 @@ static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
- 	}
+-	temp: lm75@48 {
+-		compatible = "lm75";
++	temp: temperature-sensor@48 {
++		compatible = "national,lm75";
+ 		reg = <0x48>;
+ 	};
  
- 	/* Make sure we use phases which we can enumerate with */
--	if (!IS_ERR(priv->sample_clk) && ios->timing <= MMC_TIMING_SD_HS)
--		clk_set_phase(priv->sample_clk, priv->default_sample_phase);
-+	if (!IS_ERR(priv->sample_clk) && ios->timing <= MMC_TIMING_SD_HS) {
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			rockchip_mmc_set_phase(host, true, priv->default_sample_phase);
-+		else
-+			clk_set_phase(priv->sample_clk, priv->default_sample_phase);
-+	}
+diff --git a/arch/arm/boot/dts/marvell/armada-385-clearfog-gtr.dtsi b/arch/arm/boot/dts/marvell/armada-385-clearfog-gtr.dtsi
+index f3a3cb6ac311..8208c6a9627a 100644
+--- a/arch/arm/boot/dts/marvell/armada-385-clearfog-gtr.dtsi
++++ b/arch/arm/boot/dts/marvell/armada-385-clearfog-gtr.dtsi
+@@ -423,14 +423,14 @@ &i2c0 {
+ 	status = "okay";
  
- 	/*
- 	 * Set the drive phase offset based on speed mode to achieve hold times.
-@@ -129,7 +256,10 @@ static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
- 			break;
- 		}
+ 	/* U26 temperature sensor placed near SoC */
+-	temp1: nct75@4c {
+-		compatible = "lm75";
++	temp1: temperature-sensor@4c {
++		compatible = "ti,tmp75c";
+ 		reg = <0x4c>;
+ 	};
  
--		clk_set_phase(priv->drv_clk, phase);
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			rockchip_mmc_set_phase(host, false, phase);
-+		else
-+			clk_set_phase(priv->drv_clk, phase);
- 	}
- }
+ 	/* U27 temperature sensor placed near RTC battery */
+-	temp2: nct75@4d {
+-		compatible = "lm75";
++	temp2: temperature-sensor@4d {
++		compatible = "ti,tmp75c";
+ 		reg = <0x4d>;
+ 	};
  
-@@ -147,7 +277,10 @@ static int dw_mci_v2_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-npcm730-kudo.dts b/arch/arm/boot/dts/nuvoton/nuvoton-npcm730-kudo.dts
+index 1f07ba382910..886a87dfcd0d 100644
+--- a/arch/arm/boot/dts/nuvoton/nuvoton-npcm730-kudo.dts
++++ b/arch/arm/boot/dts/nuvoton/nuvoton-npcm730-kudo.dts
+@@ -531,8 +531,8 @@ i2c@4 {
+ 			reg = <4>;
  
- 	if (inherit) {
- 		inherit = false;
--		i = clk_get_phase(priv->sample_clk) / 90 - 1;
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			i = rockchip_mmc_get_phase(host, true) / 90;
-+		else
-+			i = clk_get_phase(priv->sample_clk) / 90 - 1;
- 		goto done;
- 	}
+ 			// INLET1_T
+-			lm75@5c {
+-				compatible = "ti,lm75";
++			temperature-sensor@5c {
++				compatible = "national,lm75";
+ 				reg = <0x5c>;
+ 			};
+ 		};
+@@ -543,8 +543,8 @@ i2c@5 {
+ 			reg = <5>;
  
-@@ -156,7 +289,12 @@ static int dw_mci_v2_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 		if (degrees[i] == priv->last_degree)
- 			continue;
+ 			// OUTLET1_T
+-			lm75@5c {
+-				compatible = "ti,lm75";
++			temperature-sensor@5c {
++				compatible = "national,lm75";
+ 				reg = <0x5c>;
+ 			};
+ 		};
+@@ -555,8 +555,8 @@ i2c@6 {
+ 			reg = <6>;
  
--		clk_set_phase(priv->sample_clk, degrees[i]);
-+		u32 degree = degrees[i] + priv->last_degree + 90;
-+		degree = degree % 360;
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			rockchip_mmc_set_phase(host, true, degree);
-+		else
-+			clk_set_phase(priv->sample_clk, degree);
- 		if (!mmc_send_tuning(mmc, opcode, NULL))
- 			break;
- 	}
-@@ -209,8 +347,15 @@ static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+ 			// OUTLET2_T
+-			lm75@5c {
+-				compatible = "ti,lm75";
++			temperature-sensor@5c {
++				compatible = "national,lm75";
+ 				reg = <0x5c>;
+ 			};
+ 		};
+@@ -567,8 +567,8 @@ i2c@7 {
+ 			reg = <7>;
  
- 	/* Try each phase and extract good ranges */
- 	for (i = 0; i < priv->num_phases; ) {
--		clk_set_phase(priv->sample_clk,
--			      TUNING_ITERATION_TO_PHASE(i, priv->num_phases));
-+		/* Cannot guarantee any phases larger than 270 would work well */
-+		if (TUNING_ITERATION_TO_PHASE(i, priv->num_phases) > 270)
-+			break;
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			rockchip_mmc_set_phase(host, true,
-+				TUNING_ITERATION_TO_PHASE(i, priv->num_phases));
-+		else
-+			clk_set_phase(priv->sample_clk,
-+				TUNING_ITERATION_TO_PHASE(i, priv->num_phases));
+ 			// OUTLET3_T
+-			lm75@5c {
+-				compatible = "ti,lm75";
++			temperature-sensor@5c {
++				compatible = "national,lm75";
+ 				reg = <0x5c>;
+ 			};
+ 		};
+@@ -697,8 +697,8 @@ i2c@3 {
+ 			reg = <3>;
  
- 		v = !mmc_send_tuning(mmc, opcode, NULL);
+ 			// M2_ZONE_T
+-			lm75@28 {
+-				compatible = "ti,lm75";
++			temperature-sensor@28 {
++				compatible = "national,lm75";
+ 				reg = <0x28>;
+ 			};
+ 		};
+@@ -709,8 +709,8 @@ i2c@4 {
+ 			reg = <4>;
  
-@@ -256,7 +401,10 @@ static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 	}
+ 			// BATT_ZONE_T
+-			lm75@29 {
+-				compatible = "ti,lm75";
++			temperature-sensor@29 {
++				compatible = "national,lm75";
+ 				reg = <0x29>;
+ 			};
+ 		};
+@@ -721,8 +721,8 @@ i2c@5 {
+ 			reg = <5>;
  
- 	if (ranges[0].start == 0 && ranges[0].end == priv->num_phases - 1) {
--		clk_set_phase(priv->sample_clk, priv->default_sample_phase);
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			rockchip_mmc_set_phase(host, true, priv->default_sample_phase);
-+		else
-+			clk_set_phase(priv->sample_clk, priv->default_sample_phase);
- 		dev_info(host->dev, "All phases work, using default phase %d.",
- 			 priv->default_sample_phase);
- 		goto free;
-@@ -296,9 +444,12 @@ static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 	dev_info(host->dev, "Successfully tuned phase to %d\n",
- 		 TUNING_ITERATION_TO_PHASE(middle_phase, priv->num_phases));
+ 			// NBM1_ZONE_T
+-			lm75@28 {
+-				compatible = "ti,lm75";
++			temperature-sensor@28 {
++				compatible = "national,lm75";
+ 				reg = <0x28>;
+ 			};
+ 		};
+@@ -732,8 +732,8 @@ i2c@6 {
+ 			reg = <6>;
  
--	clk_set_phase(priv->sample_clk,
--		      TUNING_ITERATION_TO_PHASE(middle_phase,
--						priv->num_phases));
-+	if (priv->usrid == USRID_INTER_PHASE)
-+		rockchip_mmc_set_phase(host, true, TUNING_ITERATION_TO_PHASE(middle_phase,
-+                                                priv->num_phases));
-+	else
-+		clk_set_phase(priv->sample_clk, TUNING_ITERATION_TO_PHASE(middle_phase,
-+                                                priv->num_phases));
+ 			// NBM2_ZONE_T
+-			lm75@29 {
+-				compatible = "ti,lm75";
++			temperature-sensor@29 {
++				compatible = "national,lm75";
+ 				reg = <0x29>;
+ 			};
+ 		};
+diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-npcm750-evb.dts b/arch/arm/boot/dts/nuvoton/nuvoton-npcm750-evb.dts
+index f53d45fa1de8..bcdcb30c7bf6 100644
+--- a/arch/arm/boot/dts/nuvoton/nuvoton-npcm750-evb.dts
++++ b/arch/arm/boot/dts/nuvoton/nuvoton-npcm750-evb.dts
+@@ -198,7 +198,7 @@ &i2c0 {
+ 	clock-frequency = <100000>;
+ 	status = "okay";
+ 	lm75@48 {
+-		compatible = "lm75";
++		compatible = "national,lm75";
+ 		reg = <0x48>;
+ 		status = "okay";
+ 	};
+@@ -208,8 +208,8 @@ lm75@48 {
+ &i2c1 {
+ 	clock-frequency = <100000>;
+ 	status = "okay";
+-	lm75@48 {
+-		compatible = "lm75";
++	temperature-sensor@48 {
++		compatible = "national,lm75";
+ 		reg = <0x48>;
+ 		status = "okay";
+ 	};
+diff --git a/arch/arm/boot/dts/nxp/imx/imx53-mba53.dts b/arch/arm/boot/dts/nxp/imx/imx53-mba53.dts
+index 2117de872703..d155b3ec22ef 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx53-mba53.dts
++++ b/arch/arm/boot/dts/nxp/imx/imx53-mba53.dts
+@@ -175,8 +175,8 @@ expander: pca9554@20 {
+ 		gpio-controller;
+ 	};
  
- free:
- 	kfree(ranges);
-@@ -340,6 +491,7 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
- static int dw_mci_rockchip_init(struct dw_mci *host)
- {
- 	int ret, i;
-+	struct dw_mci_rockchip_priv_data *priv = host->priv;
+-	sensor2: lm75@49 {
+-		compatible = "lm75";
++	sensor2: temperature-sensor@49 {
++		compatible = "national,lm75";
+ 		reg = <0x49>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/nxp/imx/imx53-tqma53.dtsi b/arch/arm/boot/dts/nxp/imx/imx53-tqma53.dtsi
+index b2d7271d1d24..d01c3aee0272 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx53-tqma53.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx53-tqma53.dtsi
+@@ -254,8 +254,8 @@ pmic: mc34708@8 {
+ 		interrupts = <6 4>; /* PATA_DATA6, active high */
+ 	};
  
- 	/* It is slot 8 on Rockchip SoCs */
- 	host->sdio_id0 = 8;
-@@ -363,6 +515,12 @@ static int dw_mci_rockchip_init(struct dw_mci *host)
- 			dev_warn(host->dev, "no valid minimum freq: %d\n", ret);
- 	}
+-	sensor1: lm75@48 {
+-		compatible = "lm75";
++	sensor1: temperature-sensor@48 {
++		compatible = "national,lm75";
+ 		reg = <0x48>;
+ 	};
  
-+	priv->usrid = mci_readl(host, USRID);
-+	if (priv->usrid == USRID_INTER_PHASE) {
-+		priv->sample_clk = NULL;
-+		priv->drv_clk = NULL;
-+	}
-+
- 	return 0;
- }
+diff --git a/arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dts b/arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dts
+index 224f80a4a31d..4aefbc01dfc0 100644
+--- a/arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dts
++++ b/arch/arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dts
+@@ -482,8 +482,8 @@ mma7455@1d {
+ 		reg = <0x1d>;
+ 	};
+ 
+-	lm75@48 {
+-		compatible = "nxp,lm75";
++	temperature-sensor@48 {
++		compatible = "national,lm75b";
+ 		reg = <0x48>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts b/arch/arm/boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts
+index 1f84654df50c..846afb8ccbf1 100644
+--- a/arch/arm/boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts
++++ b/arch/arm/boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts
+@@ -511,7 +511,7 @@ &i2c1 {
+ 	clock-frequency = <400000>;
+ 
+ 	sensor@49 {
+-		compatible = "lm75";
++		compatible = "national,lm75";
+ 		reg = <0x49>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/ti/omap/am335x-nano.dts b/arch/arm/boot/dts/ti/omap/am335x-nano.dts
+index 26b5510cb3d1..56929059f5af 100644
+--- a/arch/arm/boot/dts/ti/omap/am335x-nano.dts
++++ b/arch/arm/boot/dts/ti/omap/am335x-nano.dts
+@@ -231,7 +231,7 @@ tps: tps@24 {
+ 	};
+ 
+ 	temperature-sensor@48 {
+-		compatible = "lm75";
++		compatible = "national,lm75";
+ 		reg = <0x48>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/xilinx/zynq-zturn-common.dtsi b/arch/arm/boot/dts/xilinx/zynq-zturn-common.dtsi
+index dfb1fbafe3aa..33b02e05ce82 100644
+--- a/arch/arm/boot/dts/xilinx/zynq-zturn-common.dtsi
++++ b/arch/arm/boot/dts/xilinx/zynq-zturn-common.dtsi
+@@ -97,9 +97,9 @@ &i2c0 {
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+ 
+-	stlm75@49 {
++	temperature-sensor@49 {
+ 		status = "okay";
+-		compatible = "lm75";
++		compatible = "st,stlm75";
+ 		reg = <0x49>;
+ 	};
  
 -- 
-2.46.0
+2.43.0
 
 
