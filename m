@@ -1,191 +1,232 @@
-Return-Path: <linux-kernel+bounces-278766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C558294B47F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:11:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBE894B47C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E5F1F23559
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:11:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA9E1C2125A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAE39460;
-	Thu,  8 Aug 2024 01:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F08B4C97;
+	Thu,  8 Aug 2024 01:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bH0nRt2+"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGYB0TYo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E46F8F6E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 01:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9356FB0;
+	Thu,  8 Aug 2024 01:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723079495; cv=none; b=YMb9ee7fVyLGIWBSEyeZtNeL4ZATQDq639TCRTbeXiFOvsVj2w4OG8cihB6SUcnFssKRzK7/xPOhhf+Oi8IPO6ySj/lJYMeRlfLwokmMkVw3BK1eWa74DClrdjx1dg+fbO+RM8wY79cnsp66ixzj3hqBfdJzEQLeX1WB7VmhBek=
+	t=1723079483; cv=none; b=TPVdrycHu9ZwBCpDUDzZ7YV3WTPpFYfBp7T+ivEk4ELy9zn8PPwvqjCqcaqIbihCeQjoyaVpgUon8LQygub0bnNPhmc11lFgfQuHW2Y2fwu657fwAOThnHJQtUkffVL+mTgYCzhSqhCwpg9GprxXF5/DD0FWgv5rYyZejDqZwpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723079495; c=relaxed/simple;
-	bh=iMeBsXr0Kfh01/tBUecXD3Sn6ad+m6SdJ/phGyaDRgs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jHKSJQtTm4IRddiSLvLlF8/x//7q4x0DgNBrypJWkakn5Eu7KWUx4LEjYSg78Zk8kuOx4BUMkDeSjb6QlPSZ8Xnz1gwGgHZD6PdTiSTU/tmQLWPrGEvzgJ7iBJYMHnlAxNFN0IHyiA40A7dyGpUdSzscaNEjekONl7xus3iq5uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bH0nRt2+; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so4401a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 18:11:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723079491; x=1723684291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xW+hk7BnX0mviU1OSor8umk+3J3UK7ghMIw7kikOTh8=;
-        b=bH0nRt2+v/MTuZ3/zevOuZwtQ2vLm07r0/OLsPpIGMfdBOwSNMnUYCO0BZpf9xiuAg
-         FJxl3L9UaO4IqdMNIp959K1RH1++ohoAws1vVKv7q1VVtK2j67FgE5di7DHUcm6XbkXb
-         OuMFP8eCNqXwR8btt8GlKMW+rg5TRizjo/eMK/SR80l7iM85gwUGbSSlKlW4ja+ne7fJ
-         cMnyRtsKtkm+OW8TeQgWmIJZi21dXFjPKUvUiNZMcmzhdVjoD7yZOJF4cBob+VqYJlSQ
-         MIfpEBHlHivTHLtnscUW1R6SaAu0OfdGkaKLrwFkClUandLrQgzWJG6zTpag8yWkl2p+
-         Os9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723079491; x=1723684291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xW+hk7BnX0mviU1OSor8umk+3J3UK7ghMIw7kikOTh8=;
-        b=qhaLqXoPVRilIPXU6Jd+zQWrxMCkyO4d37mNvNqSFRZRfIcdEIX32RadrU7a/jk+AK
-         qpKozzpzqJzKWRpdG7ArHVWi4X0JBMMPqryAD3cRABvdIxYvrgrNaNJhLJkw6ReLNxlC
-         7l5EuucqtpRLoIq599v7Rtf/8iFQD7kAJA1DQfNw01JflowleYbSgbj2Fymx0JqtmEQV
-         NoP6YjMG05++NyhALUTFxFBWwJ1T6pf5SgFOWhCxPe3tYJJGptgYXO96yQJCsYn8bnLc
-         lHaYGGbTILB1x5NRku1G5pm/qjr6GMWP3zgSibyItE1PaFta0dFHkGtVpCjsLVxRdKeg
-         NFGA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4Xof8dcElsU512/6AVpiZx2y0naO8CaetrlQYx5Svv8eVGrk/h7MhO/TYJU0ZdD7JcUgcQEVzakA5kI3HlqQc7+kiWZdVg5N0rj69
-X-Gm-Message-State: AOJu0YxEpcNjQp1Jtf2abMdEt2sXQNySspthY3PGmUaFayifg4qGxr7n
-	zdjv1BvvJYb4FwML+Wp6iaNPOm2zvhoAFGXXeJ13V54ygXUotgYLhr2jAMpUqGq6SDm72qXLTy+
-	TNsF+mujvd8EAKHeFq5oltCpskoB+V4qnmzL8
-X-Google-Smtp-Source: AGHT+IEJCnzs5/WRwGZRVK9UyW0fQT3xQ8Bs3ROpO7dzhDkETpP4CcGPK/5gf3OtbpGIMWRZlIoHeayZv1sFiACC5gk=
-X-Received: by 2002:a05:6402:3587:b0:5aa:19b1:ffc7 with SMTP id
- 4fb4d7f45d1cf-5bbaff2fa9fmr108946a12.2.1723079490726; Wed, 07 Aug 2024
- 18:11:30 -0700 (PDT)
+	s=arc-20240116; t=1723079483; c=relaxed/simple;
+	bh=9cwcJwD2oFV3GuhOKOZnwg10DfpgHVH065g5lC627eQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amUM35zecOwNa7pEizK5myhti8AOG61k2YC7rhcqDE8gU0B+6am2NB2HwIUPw7Snw49VRKgzkiqk9hteb8PIMBCqG1smyM+k3IAabS6ZMGi54Jx/fmoKhGns1ogV3sTBbN9PyUmyW9cFDOotEmqjVqsSCaxY0ejCMk0QDgUrdeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGYB0TYo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E037C32781;
+	Thu,  8 Aug 2024 01:11:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723079482;
+	bh=9cwcJwD2oFV3GuhOKOZnwg10DfpgHVH065g5lC627eQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nGYB0TYobLTgZx1Wq2FRNVa3VDlbvtXC04RbIYk9iWFGDDkdgF/q/bWv6WjPnaFk5
+	 SACL172kz5LTd6R153Mbh8c0qAC/llSV5sKFNMRaEH3Y9TX05jQpexPX4GW1/Omz1p
+	 +4rSU7vN2MVgf+XFzugWsj0WYJwe4hwGkxWpiNF1WeInM6WV9L/QeEeZcQHmnAPw5P
+	 qkx0cB2O2ZGKaiDARQZdTXHRF25YlOgQBzWChujPnB4Q7o60ZnkNC516Z29cpX9gE+
+	 pBg2aAwgKAhTrKzI5LZ7ku4eoqahr+rp/rve0xrdHqqjevfNnOe1ATA5fCJjfagvc8
+	 GoOCiUV/3/dMA==
+Date: Wed, 7 Aug 2024 22:11:18 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Leo Yan <leo.yan@arm.com>, James Clark <james.clark@linaro.org>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCHSET 00/10] perf tools: Sync tools and kernel headers for
+ v6.11
+Message-ID: <ZrQbNtK3LSpyXpMu@x1>
+References: <20240806225013.126130-1-namhyung@kernel.org>
+ <ZrO5HR9x2xyPKttx@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1722966592.git.fahimitahera@gmail.com> <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net> <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
-In-Reply-To: <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 8 Aug 2024 03:10:54 +0200
-Message-ID: <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrO5HR9x2xyPKttx@google.com>
 
-On Thu, Aug 8, 2024 at 1:36=E2=80=AFAM Tahera Fahimi <fahimitahera@gmail.co=
-m> wrote:
-> On Wed, Aug 07, 2024 at 08:16:47PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> > On Tue, Aug 06, 2024 at 11:55:27PM +0200, Jann Horn wrote:
-> > > On Tue, Aug 6, 2024 at 8:56=E2=80=AFPM Jann Horn <jannh@google.com> w=
-rote:
-> > > > On Tue, Aug 6, 2024 at 8:11=E2=80=AFPM Tahera Fahimi <fahimitahera@=
-gmail.com> wrote:
-> > > > > Currently, a sandbox process is not restricted to send a signal
-> > > > > (e.g. SIGKILL) to a process outside of the sandbox environment.
-> > > > > Ability to sending a signal for a sandboxed process should be
-> > > > > scoped the same way abstract unix sockets are scoped. Therefore,
-> > > > > we extend "scoped" field in a ruleset with
-> > > > > "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset will deny
-> > > > > sending any signal from within a sandbox process to its
-> > > > > parent(i.e. any parent sandbox or non-sandboxed procsses).
-> > > [...]
-> > > > > +       if (is_scoped)
-> > > > > +               return 0;
-> > > > > +
-> > > > > +       return -EPERM;
-> > > > > +}
-> > > > > +
-> > > > > +static int hook_file_send_sigiotask(struct task_struct *tsk,
-> > > > > +                                   struct fown_struct *fown, int=
- signum)
-> >
-> > I was wondering if we should handle this case, but I guess it makes
-> > sense to have a consistent policy for all kind of user-triggerable
-> > signals.
-> >
-> > > > > +{
-> > > > > +       bool is_scoped;
-> > > > > +       const struct landlock_ruleset *dom, *target_dom;
-> > > > > +       struct task_struct *result =3D get_pid_task(fown->pid, fo=
-wn->pid_type);
-> > > >
-> > > > I'm not an expert on how the fowner stuff works, but I think this w=
-ill
-> > > > probably give you "result =3D NULL" if the file owner PID has alrea=
-dy
-> > > > exited, and then the following landlock_get_task_domain() would
-> > > > probably crash? But I'm not entirely sure about how this works.
-> > > >
-> > > > I think the intended way to use this hook would be to instead use t=
-he
-> > > > "file_set_fowner" hook to record the owning domain (though the setu=
-p
-> > > > for that is going to be kind of a pain...), see the Smack and SELin=
-ux
-> > > > definitions of that hook. Or alternatively maybe it would be even
-> > > > nicer to change the fown_struct to record a cred* instead of a uid =
-and
-> > > > euid and then use the domain from those credentials for this hook..=
-.
-> > > > I'm not sure which of those would be easier.
-> > >
-> > > (For what it's worth, I think the first option would probably be
-> > > easier to implement and ship for now, since you can basically copy
-> > > what Smack and SELinux are already doing in their implementations of
-> > > these hooks. I think the second option would theoretically result in
-> > > nicer code, but it might require a bit more work, and you'd have to
-> > > include the maintainers of the file locking code in the review of suc=
-h
-> > > refactoring and have them approve those changes. So if you want to ge=
-t
-> > > this patchset into the kernel quickly, the first option might be
-> > > better for now?)
-> > >
-> >
-> > I agree, let's extend landlock_file_security with a new "fown" pointer
-> > to a Landlock domain. We'll need to call landlock_get_ruleset() in
-> > hook_file_send_sigiotask(), and landlock_put_ruleset() in a new
-> > hook_file_free_security().
-> I think we should add a new hook (hook_file_set_owner()) to initialize
-> the "fown" pointer and call landlock_get_ruleset() in that?
+On Wed, Aug 07, 2024 at 11:12:45AM -0700, Namhyung Kim wrote:
+> On Tue, Aug 06, 2024 at 03:50:03PM -0700, Namhyung Kim wrote:
+> > This is the usual sync up in header files we keep in tools directory.
+> > I put a file to give the reason of this work and not to repeat it in
+> > every commit message.  The changes will be carried in the perf-tools
+> > tree.
 
-Yeah. Initialize the pointer in the file_set_fowner hook, and read the
-pointer in the file_send_sigiotask hook.
+> Could you please double check what's in the tmp.perf-tools branch at the
+> perf-tools tree so I don't break build and perf trace for arm64, powerpc
+> and s390?  It has this patchset + arm64 unistd header revert (according
+> to the discussion on patch 6/10) on top of v6.11-rc2.
 
-Note that in the file_set_fowner hook, you'll probably need to use
-both landlock_get_ruleset() (to take a reference on the ruleset you're
-storing in the fown pointer) and landlock_put_ruleset() (to drop the
-reference to the ruleset that the fown pointer was pointing to
-before). And you'll need to use some kind of lock to protect the fown
-pointer - either by adding an appropriate lock next to your fown
-pointer or by using some appropriate existing lock in "struct file".
-Probably it's cleanest to have your own lock for this? (This lock will
-have to be something like a spinlock, not a mutex, since you need to
-be able to acquire it in the file_set_fowner hook, which runs inside
-an RCU read-side critical section, where sleeping is forbidden -
-acquiring a mutex can sleep and therefore is forbidden in this
-context, acquiring a spinlock can't sleep.)
+On arm64:
 
-> If we do not
-> have hook_file_set_owner to store domain in "fown", can you please give
-> me a hint on where to do that?
-> Thanks
-> > I would be nice to to replace the redundant informations in fown_struct
-> > but that can wait.
+acme@roc-rk3399-pc:~/git/perf-tools$ git log --oneline -10
+d5b854893d27 (HEAD -> perf-tools, perf-tools/tmp.perf-tools) tools/include: Sync arm64 headers with the kernel sources
+f6d9883f8e68 tools/include: Sync x86 headers with the kernel sources
+845295f4004c tools/include: Sync filesystem headers with the kernel sources
+ed86525f1f4b tools/include: Sync network socket headers with the kernel sources
+568901e709d7 tools/include: Sync uapi/asm-generic/unistd.h with the kernel sources
+b97350067626 tools/include: Sync uapi/sound/asound.h with the kernel sources
+8ec9497d3ef3 tools/include: Sync uapi/linux/perf.h with the kernel sources
+a625df3995c3 tools/include: Sync uapi/linux/kvm.h with the kernel sources
+aef21f6b6a4a tools/include: Sync uapi/drm/i915_drm.h with the kernel sources
+fbc05142ccdd perf tools: Add tools/include/uapi/README
+acme@roc-rk3399-pc:~/git/perf-tools$
+acme@roc-rk3399-pc:~/git/perf-tools$ sudo su -
+[sudo] password for acme: 
+root@roc-rk3399-pc:~# perf -vv
+perf version 6.11.rc2.gd5b854893d27
+                 dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+    dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+         syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
+                libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT
+            debuginfod: [ OFF ]  # HAVE_DEBUGINFOD_SUPPORT
+                libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+               libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+               libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+             libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+             libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+             libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+    libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+           libcapstone: [ OFF ]  # HAVE_LIBCAPSTONE_SUPPORT
+                  zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+                  lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+             get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+                   bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+                   aio: [ on  ]  # HAVE_AIO_SUPPORT
+                  zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
+               libpfm4: [ on  ]  # HAVE_LIBPFM
+         libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
+         bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
+  dwarf-unwind-support: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
+            libopencsd: [ on  ]  # HAVE_CSTRACE_SUPPORT
+root@roc-rk3399-pc:~# perf trace -e *sleep sleep 1.2345678
+     0.000 (1235.340 ms): sleep/8628 clock_nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 234567800 }, rmtp: 0xfffff4ae40d8) = 0
+root@roc-rk3399-pc:~# strace -e bpf perf trace -e *sleep sleep 1.2345678 |& head
+bpf(0x24 /* BPF_??? */, 0xffffc86fb670, 8) = -1 EINVAL (Invalid argument)
+bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_SOCKET_FILTER, insn_cnt=2, insns=0xffffc86fb420, license="GPL", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(0, 0, 0), prog_flags=0, prog_name="", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS, prog_btf_fd=0, func_info_rec_size=0, func_info=NULL, func_info_cnt=0, line_info_rec_size=0, line_info=NULL, line_info_cnt=0, attach_btf_id=0, attach_prog_fd=0, fd_array=NULL}, 148) = 8
+bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_SOCKET_FILTER, insn_cnt=2, insns=0xffffc86fb6b8, license="GPL", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(0, 0, 0), prog_flags=0, prog_name="", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS, prog_btf_fd=0, func_info_rec_size=0, func_info=NULL, func_info_cnt=0, line_info_rec_size=0, line_info=NULL, line_info_cnt=0, attach_btf_id=0, attach_prog_fd=0, fd_array=NULL}, 148) = 8
+bpf(BPF_BTF_LOAD, {btf="\237\353\1\0\30\0\0\0\0\0\0\0000\0\0\0000\0\0\0\t\0\0\0\1\0\0\0\0\0\0\1"..., btf_log_buf=NULL, btf_size=81, btf_log_size=0, btf_log_level=0}, 40) = 8
+bpf(BPF_BTF_LOAD, {btf="\237\353\1\0\30\0\0\0\0\0\0\0000\0\0\0000\0\0\0\5\0\0\0\0\0\0\0\0\0\0\1"..., btf_log_buf=NULL, btf_size=77, btf_log_size=0, btf_log_level=0}, 40) = 8
+bpf(BPF_BTF_LOAD, {btf="\237\353\1\0\30\0\0\0\0\0\0\0l\0\0\0l\0\0\0\16\0\0\0\1\0\0\0\0\0\0\1"..., btf_log_buf=NULL, btf_size=146, btf_log_size=0, btf_log_level=0}, 40) = 8
+bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_SOCKET_FILTER, insn_cnt=2, insns=0xffffc86fb150, license="GPL", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(0, 0, 0), prog_flags=0, prog_name="libbpf_nametest", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS, prog_btf_fd=0, func_info_rec_size=0, func_info=NULL, func_info_cnt=0, line_info_rec_size=0, line_info=NULL, line_info_cnt=0, attach_btf_id=0, attach_prog_fd=0, fd_array=NULL}, 148) = 9
+bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_KPROBE, insn_cnt=4, insns=0xffffc86fb4f8, license="GPL", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(0, 0, 0), prog_flags=0, prog_name="det_arg_ctx", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS, prog_btf_fd=8, func_info_rec_size=8, func_info=0xffffc86fb4e8, func_info_cnt=2, line_info_rec_size=0, line_info=NULL, line_info_cnt=0, attach_btf_id=0, attach_prog_fd=0, fd_array=NULL}, 148) = -1 EINVAL (Invalid argument)
+bpf(BPF_BTF_LOAD, {btf="\237\353\1\0\30\0\0\0\0\0\0\0\20\0\0\0\20\0\0\0\5\0\0\0\1\0\0\0\0\0\0\1"..., btf_log_buf=NULL, btf_size=45, btf_log_size=0, btf_log_level=0}, 40) = 8
+bpf(BPF_BTF_LOAD, {btf="\237\353\1\0\30\0\0\0\0\0\0\0000\0\0\0000\0\0\0\t\0\0\0\1\0\0\0\0\0\0\1"..., btf_log_buf=NULL, btf_size=81, btf_log_size=0, btf_log_level=0}, 40) = 8
+root@roc-rk3399-pc:~# perf trace -e open* sleep 1
+     0.000 ( 0.078 ms): sleep/8635 openat(dfd: CWD, filename: "/etc/ld.so.cache", flags: RDONLY|CLOEXEC) = 3
+     0.162 ( 0.031 ms): sleep/8635 openat(dfd: CWD, filename: "/lib/aarch64-linux-gnu/libc.so.6", flags: RDONLY|CLOEXEC) = 3
+     1.279 ( 0.043 ms): sleep/8635 openat(dfd: CWD, filename: "", flags: RDONLY|CLOEXEC)                 = -1 ENOENT (No such file or directory)
+     1.371 ( 0.031 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/share/locale/locale.alias", flags: RDONLY|CLOEXEC) = 3
+     1.542 ( 0.020 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_IDENTIFICATION", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     1.573 ( 0.024 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_IDENTIFICATION", flags: RDONLY|CLOEXEC) = 3
+     1.664 ( 0.025 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/aarch64-linux-gnu/gconv/gconv-modules.cache") = 3
+     1.782 ( 0.020 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_MEASUREMENT", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     1.821 ( 0.021 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_MEASUREMENT", flags: RDONLY|CLOEXEC) = 3
+     1.909 ( 0.018 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_TELEPHONE", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     1.938 ( 0.019 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_TELEPHONE", flags: RDONLY|CLOEXEC) = 3
+     2.023 ( 0.024 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_ADDRESS", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     2.059 ( 0.020 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_ADDRESS", flags: RDONLY|CLOEXEC) = 3
+     2.151 ( 0.019 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_NAME", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     2.180 ( 0.020 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_NAME", flags: RDONLY|CLOEXEC) = 3
+     2.279 ( 0.017 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_PAPER", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     2.311 ( 0.023 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_PAPER", flags: RDONLY|CLOEXEC) = 3
+     2.420 ( 0.027 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_MESSAGES", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     2.460 ( 0.025 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_MESSAGES", flags: RDONLY|CLOEXEC) = 3
+     2.514 ( 0.021 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_MESSAGES/SYS_LC_MESSAGES", flags: RDONLY|CLOEXEC) = 3
+     2.609 ( 0.025 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_MONETARY", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     2.646 ( 0.022 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_MONETARY", flags: RDONLY|CLOEXEC) = 3
+     2.741 ( 0.024 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_COLLATE", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     2.778 ( 0.020 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_COLLATE", flags: RDONLY|CLOEXEC) = 3
+     2.881 ( 0.024 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_TIME", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     2.917 ( 0.020 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_TIME", flags: RDONLY|CLOEXEC) = 3
+     3.013 ( 0.025 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_NUMERIC", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     3.050 ( 0.021 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_NUMERIC", flags: RDONLY|CLOEXEC) = 3
+     3.138 ( 0.024 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.UTF-8/LC_CTYPE", flags: RDONLY|CLOEXEC) = -1 ENOENT (No such file or directory)
+     3.174 ( 0.021 ms): sleep/8635 openat(dfd: CWD, filename: "/usr/lib/locale/C.utf8/LC_CTYPE", flags: RDONLY|CLOEXEC) = 3
+root@roc-rk3399-pc:~#
+
+The only problem that is outstanding is that one I need to send a patch
+for, 32-bit build is broken due to some trivial stuff:
+
+  18    79.36 debian:experimental           : Ok   gcc (Debian 14.1.0-5) 14.1.0 , Debian clang version 16.0.6 (27+b1) flex 2.6.4
+  19     3.96 debian:experimental-x-arm64   : FAIL gcc version 14.1.0 (Debian 14.1.0-5) 
+                     from libbpf.c:36:
+    /git/perf-6.11.0-rc2/tools/include/uapi/asm/bpf_perf_event.h:2:10: fatal error: ../../arch/arm64/include/uapi/asm/bpf_perf_event.h: No such file or directory
+        2 | #include "../../arch/arm64/include/uapi/asm/bpf_perf_event.h"
+          |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    compilation terminated.
+      CC      /tmp/build/perf/libbpf/staticobjs/btf_iter.o
+      CC      /tmp/build/perf/libbpf/staticobjs/btf_relocate.o
+      LD      /tmp/build/perf/libapi/fs/libapi-in.o
+      LD      /tmp/build/perf/libapi/libapi-in.o
+    In file included from /git/perf-6.11.0-rc2/tools/include/uapi/linux/bpf_perf_event.h:11,
+                     from libbpf.c:36:
+    /git/perf-6.11.0-rc2/tools/include/uapi/asm/bpf_perf_event.h:2:10: fatal error: ../../arch/arm64/include/uapi/asm/bpf_perf_event.h: No such file or directory
+        2 | #include "../../arch/arm64/include/uapi/asm/bpf_perf_event.h"
+          |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    compilation terminated.
+      LD      /tmp/build/perf/libperf/libperf-in.o
+    make[4]: *** [/git/perf-6.11.0-rc2/tools/build/Makefile.build:105: /tmp/build/perf/libbpf/staticobjs/libbpf.o] Error 1
+    make[4]: *** Waiting for unfinished jobs....
+      AR      /tmp/build/perf/libperf/libperf.a
+      AR      /tmp/build/perf/libapi/libapi.a
+
+Also works on x86_64:
+
+root@number:~# perf -v
+perf version 6.11.rc2.gd5b854893d27
+root@number:~# 
+root@number:~# 
+root@number:~# perf trace -e *sleep sleep 1.92837465
+     0.000 (1928.436 ms): sleep/158555 clock_nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 928374651 }, rmtp: 0x7ffd188426d0) = 0
+root@number:~# perf trace -e *mmsg --max-events 5
+     0.000 ( 0.017 ms): NetworkManager/1322 recvmmsg(fd: 22, mmsg: 0x7ffe36cb6380, vlen: 8)                       = 1
+     0.048 ( 0.010 ms): NetworkManager/1322 recvmmsg(fd: 26, mmsg: 0x7ffe36cb6380, vlen: 8)                       = 1
+  1012.269 ( 0.018 ms): NetworkManager/1322 recvmmsg(fd: 22, mmsg: 0x7ffe36cb6380, vlen: 8)                       = 1
+  1012.321 ( 0.005 ms): NetworkManager/1322 recvmmsg(fd: 26, mmsg: 0x7ffe36cb6380, vlen: 8)                       = 1
+  2393.486 ( 0.029 ms): dbus-broker/2438 sendmmsg(fd: 31, mmsg: 0x7ffca4625ba0, vlen: 1, flags: DONTWAIT|NOSIGNAL) = 1
+root@number:~# perf trace -e *nnect* --max-events 5
+     0.000 ( 0.047 ms): pool/3064 connect(fd: 7, uservaddr: { .family: LOCAL, path: /var/run/.heim_org.h5l.kcm-socket }, addrlen: 110) = 0
+  2694.480 ( 0.021 ms): DNS Res~ver #4/2450896 connect(fd: 242, uservaddr: { .family: LOCAL, path: /run/systemd/resolve/io.systemd.Resolve }, addrlen: 42) = 0
+  2694.906 ( 0.015 ms): systemd-resolv/1185 connect(fd: 25, uservaddr: { .family: INET6, port: 53, addr: fe80::1ae8:29ff:fe4c:90b0, scope_id: 3 }, addrlen: 28) = 0
+  2694.969 ( 0.005 ms): systemd-resolv/1185 connect(fd: 26, uservaddr: { .family: INET6, port: 53, addr: fe80::1ae8:29ff:fe4c:90b0, scope_id: 6 }, addrlen: 28) = 0
+  2696.329 ( 0.014 ms): DNS Res~ver #4/2450896 connect(fd: 242, uservaddr: { .family: INET6, port: 0, addr: 2800:3f0:4004:803::200e }, addrlen: 28) = 0
+root@number:~# uname -a
+Linux number 6.9.10-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Jul 18 21:39:30 UTC 2024 x86_64 GNU/Linux
+root@number:~#
+
+All the other container builds didn't regress.
+
+Thanks,
+
+- Arnaldo
+
+
 
