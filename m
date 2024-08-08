@@ -1,100 +1,97 @@
-Return-Path: <linux-kernel+bounces-278998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E8894B781
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:18:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A642D94B78A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F7E1F247AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9251F2560F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3935E190462;
-	Thu,  8 Aug 2024 07:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027101891B9;
+	Thu,  8 Aug 2024 07:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YXV9Ky2G"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsHyLPLe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BC318FDAD;
-	Thu,  8 Aug 2024 07:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2151A186294;
+	Thu,  8 Aug 2024 07:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723101129; cv=none; b=mWTsexFwZ6D2rl/54Iq6QBpaRxWlVCkad3BcnZPAgcEFUHxFEqJf7lzdjW7Tq5twTXIjUWII5vayCYaGC/fPrzzl3ZP/Svc7iYsia1++1WDwVjMytLVZhLrh1Rg084ra8Q4B9feZixHYnA+s/xRtt2G8Igb91vs+ef+FelUD+SA=
+	t=1723101219; cv=none; b=b1ve1okvM9vzeUL3jGqsDPWdBSOwwj8msqbCo+ABCV6fjNDzqlpneMETA8SDCKygpNz9hDk5BgByBH1uPx6cdZLf301Kwava80mi8fvenaTdUof5e+DMMeiCULo967/WQgP9DDkUPU8BvtLfhzFhNC9TWmCESSbhLEaxXHLEokg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723101129; c=relaxed/simple;
-	bh=/LCxw3wWVE6p9YheOsyvaxcJuRl64jBMckhlFs50MK4=;
+	s=arc-20240116; t=1723101219; c=relaxed/simple;
+	bh=0g9XRgxfeMZc9/uVHfto4j4RtP6dqmPPmizw0m2bd6g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qf7l9ziKeVxBUJsWxgatxyQKQ83YYUzWlpP/El0JRyHTcIw3Z4jkV/zA1oG0kcM8tUZ3bJqUbW33SlCVa1QsNGrW9wd6j+WurjbPMAGxNQfAqApWPtjYu2zAcGrnz4pgFZLMkzNGTqaEnu7y1rhWdMzQbMou8dPVfyWnKM2g/nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YXV9Ky2G; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id A8986C0013;
-	Thu,  8 Aug 2024 07:12:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723101126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxhVI5cINOPlLM9ZHr8aejS0o32n/nWcepwPUyLTegw=;
-	b=YXV9Ky2Gyww2NMCQI07ysxQ5mmIF9Ws8qRDdaJu32NJ7e66r4CjEgO2zbcBLfjTg78pLXr
-	2R7yX9YRYuq9plVEcXz3/NuxbRbvhNQYd97DyfqWkiBYdnaXOglrjVG45oS9zl/Z1we2jO
-	W2XF5Y4v2gQMzSoUPvbvOFZnwVEZmn2LOPp2828DrJ7mcx0qzxEFXOeGfJoufaQLeu0LJ/
-	9e40sBf9Uxr74genQSnrvGBGfWilkUiXF3Z4kXKyAMHFzQcayU3lZ/RXPbhFc+f83/MnoA
-	2GhKOh3iIejJ8fNPUtWF7N+4U3v5sG+bYUJGxawP78CrDrML5hSgqUIzPbEDGQ==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Li Yang <leoyang.li@nxp.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 36/36] MAINTAINERS: Add QE files related to the Freescale QMC controller
-Date: Thu,  8 Aug 2024 09:11:29 +0200
-Message-ID: <20240808071132.149251-37-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240808071132.149251-1-herve.codina@bootlin.com>
-References: <20240808071132.149251-1-herve.codina@bootlin.com>
+	 MIME-Version:Content-Type; b=Mmj8ETtRBXRtNDhuTQ54dvMf7TAlD/6dSNSO8yzZjV+ZdtWcyGVZT4cuTAeyOortdSZv2OsYMF6afq+Bhrv1v6earOliE9YrZ5lQ7o3tSAsrl2num2hKaVrHH3nBa5Lw94M3mtIrK/hDMwP7/k72/7nHoI6Q9Xpx8Wdhw2anSuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsHyLPLe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D572FC4AF09;
+	Thu,  8 Aug 2024 07:13:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723101218;
+	bh=0g9XRgxfeMZc9/uVHfto4j4RtP6dqmPPmizw0m2bd6g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FsHyLPLefdQdvQC+jQGRnXZVwnSjt7F3ggBBoZL/I0bL6nAjbVdkePPxZv+aHPTeF
+	 WiywH3KMXzzxx/upp6GV14gSZ8JeW66TVawsFgZS0b1bAIGsaKdAe01jnCNKUx3Q2R
+	 uydw63ZfXUrkzhFR7Zvk9qIl9+oYHx41Psd4Nb2Di9438tvjQtLePmZOxuym6niaPI
+	 NGcL67xBk0hKa2hue4EAiE1lCKEDxlwePef+t7D9evgmFd2KPVby0xVOEw3iWcfsDt
+	 yrvHlFsMiApjDeagf6EdReWd5f7IuuBQYBOaMsOkLU8Xmk4X+nzA9YXG277WHy5JOd
+	 e+qK7vu5psi+Q==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Joe Damato <jdamato@fastly.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	netdev@vger.kernel.org,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	stable@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH net] eventpoll: Annotate data-race of busy_poll_usecs
+Date: Thu,  8 Aug 2024 09:13:26 +0200
+Message-ID: <20240808-geteert-skala-44fb9303360b@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240806123301.167557-1-jdamato@fastly.com>
+References: <20240806123301.167557-1-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=981; i=brauner@kernel.org; h=from:subject:message-id; bh=0g9XRgxfeMZc9/uVHfto4j4RtP6dqmPPmizw0m2bd6g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRtKZCcru3wjZH7y1Tr4lcXYtY4z7+z+9E80/z5CgeOb 9ylNonhe0cpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE5ixg+F+ScbQ3kHVFkbb0 4iNbX5QEufRwPrpmNLXIYMbWcK2PK60Z/ld6l/85uiprkdKjvJDvJdy3rJ63cJXq2AmZnoxSCSj /zwEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
 
-The Freescale QMC controller driver supports both QE and CPM1.
+On Tue, 06 Aug 2024 12:33:01 +0000, Joe Damato wrote:
+> A struct eventpoll's busy_poll_usecs field can be modified via a user
+> ioctl at any time. All reads of this field should be annotated with
+> READ_ONCE.
+> 
+> 
 
-Add the newly introduced QE files to the existing entry.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1d32d38f2247..1331bdeb7386 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8996,6 +8996,7 @@ M:	Herve Codina <herve.codina@bootlin.com>
- L:	linuxppc-dev@lists.ozlabs.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.yaml
-+F:	Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml
- F:	drivers/soc/fsl/qe/qmc.c
- F:	include/soc/fsl/qe/qmc.h
- 
--- 
-2.45.0
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] eventpoll: Annotate data-race of busy_poll_usecs
+      https://git.kernel.org/vfs/vfs/c/b4988e3bd1f0
 
