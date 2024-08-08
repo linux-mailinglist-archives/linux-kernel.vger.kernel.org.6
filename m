@@ -1,186 +1,142 @@
-Return-Path: <linux-kernel+bounces-278735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A4D94B426
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:23:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5734F94B428
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0202A1F210E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 853981C215A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036762107;
-	Thu,  8 Aug 2024 00:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FAB23C9;
+	Thu,  8 Aug 2024 00:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="izlFPlTF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IlR4pESD"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C83E10F9
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 00:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372AE10E9;
+	Thu,  8 Aug 2024 00:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723076547; cv=none; b=JvvqqUaeeW/HeojikiQyATzpj91pyOhJUgAgw2uC1ydz9pHaGwg3BK5n+/3gJizS8eY57nCmmfLGfxT45Vg8VlkOp6clY78zneBDeNObiyo/5PUZPePgQ/6/KUOyVv3Nh8PivfmeVkGu1VzvECcp5oVp+M6Dcr9/+s+XlCeyyI8=
+	t=1723076755; cv=none; b=XHTvvQtQYRlAUHrHSX5Fj3Ofpl79BSx2voyyaR7drkTMT7wkaQAXegHUm6g9FiagR0pLiP6fvt0vi4/bojbgwTaM8V4p4Is5lqt542mAA8/RxOCMjQSunTlAulh7IFgaGF6lWHIHV+/JNIKoZgUFiBV5Krwc5ujdD5lqbEph5zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723076547; c=relaxed/simple;
-	bh=H3cogk1LM4kF5xYVlMitUd2erx2BYREQYLxXVEuGTT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OTT94D8qEz7MYVJ9T+4/n1UccIGpgY42ynSQeRoeFcmHnpBN63wiMXjDwgd78zMrCaCYzE39tQDHKl66KYZI0Jdvp2kl8vrbRUh1RERPcwmMNrE4CFm7HI6jsKr8NuL549TWNvXQ5cZ3Lc2PWQ+fAjurQrCsNdQJvuqo3eAVUBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=izlFPlTF; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723076546; x=1754612546;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=H3cogk1LM4kF5xYVlMitUd2erx2BYREQYLxXVEuGTT8=;
-  b=izlFPlTFRaQqtwq+XtWKkhKriKpQR6/ACdo7g/SCTHllh+U0Cs1dO7aI
-   6D6eaGUkV6kSaTRBCI1U6HHnCSCSm91RKzSMvQs65eONCk2V+fsKcU4bH
-   PcQr68aJISteFu4f2h3pAnpe4I/SxP564cL0jwl+nQ6fcJ5SPocA8E4aF
-   nh7QbKL929wy93e7AB/iTN7gCk1/o6X7Qj8vsYCGL9b4THu16rkTYY4eu
-   fWh3xOeDh0UWa3kYdMINswpygt9rLMyn3OPlEqXYa26EYNfpSmX53spdR
-   bDVfMSLByP1Ah/Zzs056Fgu5NoCY++Tt6cI0dTPRlVIghPEeM6IiN/d3S
-   g==;
-X-CSE-ConnectionGUID: I+phBL5CQqO+iQQuB2x8pA==
-X-CSE-MsgGUID: 2qCmObXVQbSpROzfOMgTgw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="31753917"
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="31753917"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 17:22:25 -0700
-X-CSE-ConnectionGUID: USfg1PVLQqmuuG9rHXKSGg==
-X-CSE-MsgGUID: hAOLV4npQ/yooi7pH0+10g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,271,1716274800"; 
-   d="scan'208";a="87947289"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 07 Aug 2024 17:22:22 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sbqv6-0005oW-1M;
-	Thu, 08 Aug 2024 00:22:20 +0000
-Date: Thu, 8 Aug 2024 08:21:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: ERROR: modpost: "__popcountsi2"
- [drivers/comedi/drivers/cb_pcidas.ko] undefined!
-Message-ID: <202408080822.j66QlMph-lkp@intel.com>
+	s=arc-20240116; t=1723076755; c=relaxed/simple;
+	bh=XwCuLJz2vRSgxBmOmVVSur+GWsOD6GC1ABmAoFsj120=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ld3RMypiQMjGHIxwzj0Nr6MWDMk5wdcCvafrW3YEDde/av6Qr1/kr5bcm1bIHvPDTq2hHnK/fsDrlPw7frrK6BMq3DTTXNqTkbFmYAJ8JvbaILsyoHeZmSSxebtB0P/iLOgTkb2kVfdlEdoniU85WESn9mG822rW5c0C4VtOM3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IlR4pESD; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-70b2421471aso301251a12.0;
+        Wed, 07 Aug 2024 17:25:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723076753; x=1723681553; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=3yyY5bnbVvqx7w3VIsJ5OcVXtAol8Ykco4UAozb63Ek=;
+        b=IlR4pESDnppphBHolialWnVo4b+PkgzsHU3nYFoLOdtr2AgTfqbxpqIYsVVF2ii0PA
+         viOWa4hD3n6hebLRGqzaRU2SLI9gMA4wc+WOE8o27pMuChtmUs40zyMtwz0HpkaTGvH3
+         0DAsXfDqzJm4jfa14xEks5BtGKH71mTrWV4RO4Z56dOTEQ3rDs5OSCPxsh/Sq0OFVsmi
+         THNqzskggTYL+GOaCyUH2pvQnf1pN/Zx32iHAESNbyRJjxkOu9v5tWk718tSTDo5ZzX5
+         ZdyRdRp4VkdhfCSibcdayd6ZNqJ5nqHigmo8EjxUjWi9YW3U0h6vKfSPKnS6Y2yE8Kyu
+         yo7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723076753; x=1723681553;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3yyY5bnbVvqx7w3VIsJ5OcVXtAol8Ykco4UAozb63Ek=;
+        b=RUWVm8lGJ5sf42YYRly+DhgfQ+QTBLPxb1UhOWdr7hFG9jg7j+jDPH7kXaxYb8vJ8m
+         PiYJBseqyzPVRDElQZFjMwcL8OCStkPkgqVELwgXF4GY/2vvMFmqpYyh7PBD5PrYhflb
+         vNBvxFruFo6FFXqIwosnQvnfX1qDEaAUz/hhDEEMeBL4Rg4BU4bJPakVYCRagy3+gOja
+         KlbmuuFy/s3SPxBnochT2Pl/LhRy/wbMkdeVRLO1xYL7SvU5BMbM8VB9v4mwjBEC/Dlo
+         25ECviJ6b/hhB7zWNhAkwK3qrau1TA8kW8ftYP7cJR1SfIhBOxtA1L2YRbRfxkZuyPmU
+         w/cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuE9GUODS/KgZK56nFTZ19HifV4tIpxTFqaVhSvEPFARvoqBTNEnndAL59s7ffYC0M7cjfk62eTQFS8ZADlXwZrEf3+OVtWtqKdm4/
+X-Gm-Message-State: AOJu0YzF+gcEm8UX/q4ZH7A3PpOWkrDwvMIth2Uaxgwjw6/eXlmuIQWK
+	JbTl4oBAuXUSf+hLpZSKaOImlmxM4AQLP76j8IzelSIASsP2Txm0
+X-Google-Smtp-Source: AGHT+IGq3qvakJLFvMy/DvMMNihQC6H/6515cbo1GCxQVfsz6OfgcDvN7tjlyOh0OOdJ4/AU0mRa3A==
+X-Received: by 2002:a17:903:2288:b0:1fb:8e00:e5e8 with SMTP id d9443c01a7336-2009521fa28mr4220105ad.10.1723076753251;
+        Wed, 07 Aug 2024 17:25:53 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5927efe8sm111866785ad.224.2024.08.07.17.25.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 17:25:52 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+From: Tejun Heo <tj@kernel.org>
+To: void@manifault.com,
+	peterz@infradead.org,
+	mingo@redhat.com
+Cc: cgroups@vger.kernel.org,
+	lizefan.x@bytedance.com,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHSET sched_ext/for-6.12] sched_ext: Add cgroup support
+Date: Wed,  7 Aug 2024 14:25:22 -1000
+Message-ID: <20240808002550.731248-1-tj@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Alison,
+This patchset is the cgroup integration part of the sched_ext v6 patchset:
 
-First bad commit (maybe != root cause):
+  http://lkml.kernel.org/r/20240501151312.635565-1-tj@kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6a0e38264012809afa24113ee2162dc07f4ed22b
-commit: 86954ff5032d9d60a5458334001ab3ae3b2c45e8 cxl/region: Move cxl_trace_hpa() work to the region driver
-date:   3 months ago
-config: arm-randconfig-r133-20240807 (https://download.01.org/0day-ci/archive/20240808/202408080822.j66QlMph-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
-reproduce: (https://download.01.org/0day-ci/archive/20240808/202408080822.j66QlMph-lkp@intel.com/reproduce)
+This patchset is on top of sched_ext/for-6.12 (2c390dda9e03 ("sched_ext:
+Make task_can_run_on_remote_rq() use common task_allowed_on_cpu()")) and
+contains the following patches:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408080822.j66QlMph-lkp@intel.com/
+ 0001-cgroup-Implement-cgroup_show_cftypes.patch
+ 0002-sched-Expose-css_tg.patch
+ 0003-sched-Enumerate-CPU-cgroup-file-types.patch
+ 0004-sched-Make-cpu_shares_read_u64-use-tg_weight.patch
+ 0005-sched-Introduce-CONFIG_GROUP_SCHED_WEIGHT.patch
+ 0006-sched_ext-Add-cgroup-support.patch
+ 0007-sched_ext-Add-a-cgroup-scheduler-which-uses-flattene.patch
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+ 0001 implements cgroup_show_cftype() so that SCX schedulers can only show
+ cgroup knobs that it implements.
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/refscale.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/trace/preemptirq_delay_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/torture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kfence/kfence_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp850.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp855.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp863.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp865.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp866.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp874.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp950.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp1251.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-6.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp1255.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-14.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-15.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-celtic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-croatian.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-cyrillic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-gaelic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-romanian.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-turkish.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/binfmt_script.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/ecc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/curve25519-generic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-example-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/math/prime_numbers.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_spi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-generic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/pci-stub.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/versatile/clk-vexpress-osc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk-gate_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk-fractional-divider_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/rt4831-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/reset/hisilicon/hi6220_reset.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-sccb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/open-dice.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/line-display.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-ccgx-ucsi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/radio/si470x/radio-si470x-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/of_mmc_spi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/flash/leds-rt4505.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_u-boot-env.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_util.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/maps/map_funcs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/pcmcia_rsrc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/yenta_socket.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/i82092.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
-ERROR: modpost: "__popcountsi2" [drivers/hwmon/adt7462.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/addi_apci_2032.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/addi_apci_3120.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/addi_apci_3xxx.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/adl_pci9111.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/adl_pci9118.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/adv_pci1710.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/amplc_pci224.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/cb_pcidas64.ko] undefined!
->> ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/cb_pcidas.ko] undefined!
-WARNING: modpost: suppressed 12 unresolved symbol warnings because there were too many)
+ 0002-0005 are sched core preparations. Should be pretty straightforward. No
+ functional changes.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ 0006 adds cgroup support to sched_ext.
+
+ 0007 implements an example scheduler which uses the cgroup support.
+
+The patchset is also available in the following git branch:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-cgroup
+
+diffstat follows. Thanks.
+
+ include/linux/cgroup-defs.h                     |    8
+ include/linux/cgroup.h                          |    1
+ include/linux/sched/ext.h                       |    3
+ init/Kconfig                                    |   10
+ kernel/cgroup/cgroup.c                          |   97 ++++
+ kernel/sched/core.c                             |  115 +++--
+ kernel/sched/ext.c                              |  522 ++++++++++++++++++++++++-
+ kernel/sched/ext.h                              |   20
+ kernel/sched/sched.h                            |   35 +
+ tools/sched_ext/Makefile                        |    2
+ tools/sched_ext/README.md                       |   12
+ tools/sched_ext/include/scx/common.bpf.h        |    1
+ tools/sched_ext/scx_flatcg.bpf.c                |  949 ++++++++++++++++++++++++++++++++++++++++++++++
+ tools/sched_ext/scx_flatcg.c                    |  233 +++++++++++
+ tools/sched_ext/scx_flatcg.h                    |   51 ++
+ tools/testing/selftests/sched_ext/maximal.bpf.c |   32 +
+ 16 files changed, 2035 insertions(+), 56 deletions(-)
+
+--
+tejun
 
