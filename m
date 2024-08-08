@@ -1,135 +1,144 @@
-Return-Path: <linux-kernel+bounces-278890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9763B94B634
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:20:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF9C94B637
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EFD21F24AE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 715CD1F24CDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2EF13DDD9;
-	Thu,  8 Aug 2024 05:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9C513E409;
+	Thu,  8 Aug 2024 05:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rVwfLYpb"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eMlLmrLE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF5013C814;
-	Thu,  8 Aug 2024 05:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BC612C81F;
+	Thu,  8 Aug 2024 05:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723094446; cv=none; b=JC0QrElH78THEUXHr+wO/XtgsvWnx4ZtEV7I58Yey00yRyz485J9QF1oQgQadUnuxig3xb8G/eJj5Q/F4kbnbo9QANCKUxdnDT0RIm7LFob6O+Gd/cO427GXYC2mHJWXouXFV9CzFr9adH7Cyp9sy3/8/728RF+X1SAG18Y9e4A=
+	t=1723094560; cv=none; b=Bke7iVnZKFl6G1E9ZtJ08/s39XfL0TduhTTcqff81mAf5NKDBW10SxbJyFtqV2+OLDZjCmkgFqYsMdMSKIDpffTdGIL8yqn5ufMfAceP1MLFgXmXB06GEJ1zkI8isjfsUHB5OGtNzBNOOLAXF7ly//b5maE9/DxZaMIGQz0vG90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723094446; c=relaxed/simple;
-	bh=hMPG68e6k3OpSOOimZthJaI9R7KPj52PD1QIznQJBk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q1EtqmNfVPIPR/5N3Tvh1Ecd3b7GzTNZbG3KW9WbE/oSr1KWfsIQeN3kTaoF1CpFzeTbHLq2wU3VmJZOdJMzXXAOMSVWNSlZ5tfcT00pOWwTiV2lkmkdUSiFT2YUHttZj9ozsL4446g/12s4jbmlf4+ve7kUgFzGMVG94GdCg+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rVwfLYpb; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4785KeVt090430;
-	Thu, 8 Aug 2024 00:20:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723094440;
-	bh=euq7HWPdWrs6GO5Xe2C3wf9o77aPHduNiu8luvY+WQs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=rVwfLYpbazojIYviqR2+dtDLm8V1vpa7DcIXpz0Ma3h//qjESCO8HL5bVMK3KE/R+
-	 BanbQBg1Z0BqJYzVPjmvhCAydp2Q7WGmOGVFPnLDF36+UP3jgqJSlYU0AkZ9ol8bN4
-	 iLxd2oeX5mn94h+ftKO3e3ETZqAo6o31BTP/vHeE=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4785KeRU011666
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 Aug 2024 00:20:40 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- Aug 2024 00:20:39 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 Aug 2024 00:20:39 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4785KabX072198;
-	Thu, 8 Aug 2024 00:20:37 -0500
-Message-ID: <00311e5c-a8d4-46dd-9f59-f7fea5ae4104@ti.com>
-Date: Thu, 8 Aug 2024 10:50:36 +0530
+	s=arc-20240116; t=1723094560; c=relaxed/simple;
+	bh=OR9sMnXhltK5Nzt6J/HOUDA9VXJNDusH9+iC2H7NInU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JC9ZK/J/YEojTfDXowsjAbTBbCfzAhqzBzCYi5vzkYT6xDpfrtvpK+KrRsBBx27CyoLG5zukU8vjYrZJ01OiCB8yJB7OJbwVsLjUcsoBOivN++3f+wibJ63PEPSXVAUFiwT1d+suJzkoAusFguOIqEAZBBllAN5SCznmjVbJr50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eMlLmrLE; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723094559; x=1754630559;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OR9sMnXhltK5Nzt6J/HOUDA9VXJNDusH9+iC2H7NInU=;
+  b=eMlLmrLEItC5/vQaeAgjYxySCDeByTs7R1g2udQVuBRd6sZ1EI82r7s9
+   eQYKoSsiWxal+XlCG4RbiF6v+Ew8YmrooNGGJ2s3xSbQIkVcnI7uO3z1q
+   WCaTIoCKBJdm/0ZGWu1E4bFlKKhu0CP98QnUm7qkmooulEhQ3i9vq+17E
+   e1UUc1D9zEyeFlFivIRpPKmBowl9TrGZfcTBVd/SD84fgb57YzgBojs+O
+   ENZSnprchs3w4YMiyXrDvlbE42bnAujqFkV5sfudgxhn4KhyeOFBeZ3D8
+   DJpFkbrOkIBWJ3XSHVRpKiP6h34VAXWK1VYl8ThdlJXvDFqy1Y+vJQvZn
+   g==;
+X-CSE-ConnectionGUID: dO/0CJYJR0Kd0xkQoaOQvQ==
+X-CSE-MsgGUID: AIjFWZ0VTHeK9HyxzRJG4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="31774401"
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="31774401"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2024 22:22:38 -0700
+X-CSE-ConnectionGUID: /dCktr84QOuGGRQWTzad4w==
+X-CSE-MsgGUID: z6tVcbHdSi2+cVnKK5TcLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="80328287"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP; 07 Aug 2024 22:22:35 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id E81BF206; Thu, 08 Aug 2024 08:22:33 +0300 (EEST)
+Date: Thu, 8 Aug 2024 08:22:33 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Esther Shimanovich <eshimanovich@chromium.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rajat Jain <rajatja@google.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Detect and trust built-in TBT chips
+Message-ID: <20240808052233.GI1532424@black.fi.intel.com>
+References: <20240806-trust-tbt-fix-v1-1-73ae5f446d5a@chromium.org>
+ <20240806220406.GA80520@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] remoteproc: k3-dsp: Acquire mailbox handle during
- probe routine
-To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <s-anna@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240807062256.1721682-1-b-padhi@ti.com>
- <20240807062256.1721682-4-b-padhi@ti.com>
- <1d434d6c-42ba-4142-a701-032cf674c50c@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <1d434d6c-42ba-4142-a701-032cf674c50c@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240806220406.GA80520@bhelgaas>
 
+On Tue, Aug 06, 2024 at 05:04:06PM -0500, Bjorn Helgaas wrote:
+> > +static bool pcie_is_tunneled(struct pci_dev *pdev)
+> > +{
+> > +	struct pci_dev *parent, *root;
+> > +
+> > +	parent = pci_upstream_bridge(pdev);
+> > +	/* If pdev doesn't have a parent, then there's no way it is tunneled.*/
+> > +	if (!parent)
+> > +		return false;
+> > +
+> > +	root = pcie_find_root_port(pdev);
+> > +	/* If pdev doesn't have a root, then there's no way it is tunneled.*/
+> > +	if (!root)
+> > +		return false;
+> > +
+> > +	/* Internal PCIe devices are not tunneled. */
+> > +	if (!root->external_facing)
+> > +		return false;
+> > +
+> > +	/* Anything directly behind a "usb4-host-interface" is tunneled. */
+> > +	if (pcie_has_usb4_host_interface(parent))
+> > +		return true;
+> > +
+> > +	/*
+> > +	 * Check if this is a discrete Thunderbolt/USB4 controller that is
+> > +	 * directly behind the non-USB4 PCIe Root Port marked as
+> > +	 * "ExternalFacingPort". These PCIe devices are used to add Thunderbolt
+> > +	 * capabilities to CPUs that lack integrated Thunderbolt.
+> > +	 * These are not behind a PCIe tunnel.
+> 
+> I need more context to be convinced that this is a reliable heuristic.
+> What keeps somebody from plugging a discrete Thunderbolt/USB4
+> controller into an external port?
 
-On 07/08/24 19:21, Andrew Davis wrote:
-> On 8/7/24 1:22 AM, Beleswar Padhi wrote:
->> Acquire the mailbox handle during device probe and do not release handle
->> in stop/detach routine or error paths. This removes the redundant
->> requests for mbox handle later during rproc start/attach. This also
->> allows to defer remoteproc driver's probe if mailbox is not probed yet.
->>
->> Fixes: b8431920391d ("remoteproc: k3-dsp: Add support for IPC-only 
->> mode for all K3 DSPs")
->
-> Not sure this patch counts as a "fix". There was a bug yes, and this 
-> certainly
-> is an improvment that solves the issue, but I like to reserve "Fixes" 
-> tags
-> for more serious issues. Otherwise this patch will be backported to 
-> "stable"
-> versions where it might cause things to be *less stable* given the 
-> size of
+In case of integrated host controller the above function returns true for
+anything connected behind its tunneled PCIe root ports so if you plug in
+a discrete controller into that it will be treated as tunneled and gets
+full IOMMU mappings.
 
+In case of discrete host controller there are two ways. With USB4 the above
+function finds "usb4-host-interface" firmware description and returns
+true the discrete controller you plug in will be treated as tunneled and
+gets full IOMMU mappings.
 
-Understood. Will remove Fixes tag in revision.
+With non-USB4 (that's Thunderbolt 3 and below) discrete host controller we
+have root->external_facing true (it is marked with "ExternalFacingPort"
+firmware property) the check below fails because the discrete controller
+you plug in is not directly under that so it will be treated as tunneled
+and gets full IOMMU mappings.
 
-> the "fix". Also, the commit you selected isn't the source of the issue,
-> it only adds another instance of it, getting the mailbox after probe has
-> been the case since the first version of this driver.
-
-
-Correct. My idea was, since we are also making k3_attach()/detach() 
-functions NOP, select the later commit because that was where the 
-k3_attach()/detach() functions were introduced as well as the "mailbox 
-after probe" issue was present.
-
->
-> Rest of the patch LGTM,
->
-> Acked-by: Andrew Davis <afd@ti.com>
->
-> BTW, I've folded this change (getting mbox in probe) into the new
-> K3 M4 driver[0] I just posted, so we should be aligned here accross
-> all K3 rproc drivers.
-
-
-Thanks for this!
-
->
->
-> Andrew
->
-> [0] 
-> https://lore.kernel.org/linux-arm-kernel/20240802152109.137243-4-afd@ti.com/
-[...]
+>  Maybe this just needs a sentence or
+> two from Lukas's (?) helpful intro to tunneling?
+> 
+> > +	if (pcie_switch_directly_under(root, pdev))
+> > +		return false;
+> > +
+> > +	/* PCIe devices after the discrete chip are tunneled. */
+> > +	return true;
+> > +}
 
