@@ -1,153 +1,135 @@
-Return-Path: <linux-kernel+bounces-280027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153DC94C4C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:45:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E004D94C4D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44E2F1C260B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:45:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1287DB26058
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9070155725;
-	Thu,  8 Aug 2024 18:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AA115B103;
+	Thu,  8 Aug 2024 18:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Tn9KEsLy"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hDMvy1ob"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4477E153801;
-	Thu,  8 Aug 2024 18:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72402150994
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723142595; cv=none; b=ky1282Wf0vzaCszqaN9YWuZs7snQYYwYdlUbDtj2EOy0B8aQ074/uSHL4Z6PUWihf/j6vajG22grAEYDTDiEXdYyKPky2zrsoKDO56S7g0Y61SyF/GNQYcjt2/E6IO/NyR9lP5CfOoAtJ01oqTpjlzRin/YzVedXkRPfsLPXtUY=
+	t=1723142688; cv=none; b=OG/JXzUjskV+EAeZB8GH+EuUjC+fUjW7Cz6CrhNFBWgVZrhCuj18K8xlXbYvyGQwIx/DSPzxSNBwaT/hhVShqJ3EyhjEEyklZt5UuxYxACSUdSAKiD3TRYPO7nPja86/mPLcpBhtvXqsGG0qr2xbKlPM5OjOh3NeQfsVwHxGuKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723142595; c=relaxed/simple;
-	bh=E6Djr46GF6cVfafEHE5SLoRKFMU6caCDTSU1c4Z7bZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=Cu8yoUB16e4sdiN94GJpfI8VdW7JYe3+bLUzOkPPmeLlcCFZN1bxnPm5Q/Wbd8IYxkGn3cvKqD02LAWJKn8Epz20JKNzcOc57q/8xZxSox7qe/DSs6bCtkBarDxzHf5spLpyBORfecWc9638L+CfOwVBBuIzcV4QZCVcrjwyW94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Tn9KEsLy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478Calw5013384;
-	Thu, 8 Aug 2024 18:42:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:references:cc:reply-to
-	:from:in-reply-to:content-type:content-transfer-encoding; s=pp1;
-	 bh=z9l3LKla3wlPReP8nb5ggl/k0yC+mQ+dFrNHuzrH9PA=; b=Tn9KEsLyY+eT
-	TSvfXb2OhiTGlDDDzCH6eSNXsSFh9M1nIKfZGGIf22+I53DQYddtsQuppZpto9d9
-	e/gESDXNYecTMtYH0AAl2fKhNnubqQCFqo3lCaBmUUjycr0YdcTg0wKQvQWIi/EW
-	n9/ZHQqxjNantXL3h8rwE8BlXqn/niZcYybUlb2Hfonpr6kzRAcfRGajm6PvhuOU
-	/bD/QcU4YiHgi0UHkNuTMm9uhiUMg8JD3nDz/Ix63IQ5O6Rxl77pt3fHcyhXhq9M
-	BtHXr7KqtkXOKsEbW3p/rVovMCRUyHW8wNCz7xaijd4tdspywZTTlxnx5ePu8DpF
-	ddvABAvn8w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkcgxr4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 18:42:44 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 478IghiC005697;
-	Thu, 8 Aug 2024 18:42:43 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkcgxr1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 18:42:43 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 478IECL2024361;
-	Thu, 8 Aug 2024 18:42:42 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy90yycq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 18:42:42 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 478IgeUX38077170
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 8 Aug 2024 18:42:42 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7FF115805F;
-	Thu,  8 Aug 2024 18:42:40 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2323E58045;
-	Thu,  8 Aug 2024 18:42:32 +0000 (GMT)
-Received: from [9.43.58.141] (unknown [9.43.58.141])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  8 Aug 2024 18:42:31 +0000 (GMT)
-Message-ID: <3f4a68aa-8a74-4698-bf90-d69c315d5ffd@linux.ibm.com>
-Date: Fri, 9 Aug 2024 00:12:28 +0530
+	s=arc-20240116; t=1723142688; c=relaxed/simple;
+	bh=NbdLMTWfLXl/wJipk+LdtD2moPrB8cy99z3WZQooviE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uyeb+0N9hxQN1B5e+oOMKtaEdtwbdbLYGwJPthRXhHdYJHbPD45VbsVgJmu4u9BQNdVyu/g+18QC9FuH4RV2dJJDSuPmxvezvdn4fe0VUVayIZENFhbT2trXj2TTB/l0tytxvV6/ZfGt/orBcdN1Io7pTkDCwbZe+NhcZVZup1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hDMvy1ob; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-710d1de6e79so442330b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:44:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723142687; x=1723747487; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+FZjS9lLhm8Ss5ACYK4UD0eLeWkBZ4V5hozi46AMmMQ=;
+        b=hDMvy1obe44ZOmZy9Fdk47AOApAFFH0Y2Bu1fTdcC/JVIDrMfym+e7ADvxBOAJIxE1
+         mJcAKyfjsnOFiW4Z2P0vyK+Lf+RqjmZ1+seO7U4FLARaB7K1+gGq4FKBLUF1n4W82u6K
+         arOjGPo3TZCF8ink+Qs/Zbv4p0IFPBXQGljcc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723142687; x=1723747487;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+FZjS9lLhm8Ss5ACYK4UD0eLeWkBZ4V5hozi46AMmMQ=;
+        b=mumGx+/GAJRAAa3OihLHSNjM5J3JlJJkSljW2NKIUN+LXiBiq5l/U6iitt8883A5an
+         biPl3at6eNRxy9eN+3gp/xSPyu1xtx7qYAeN9uS+zYnl1n2lEupFXGGDZwxRi9A7YZNX
+         pNBTQZhlmJR4Rhl8bPgrsFwutilmO4wmB7ngphRZmeP+qCqSaZpJyTgTj2I2Az3e0EdX
+         ZxYKqfFFnMUhQU6Am4xjTN3oqJ8kYgGfDZ9tAkporkvDQXIA9Y/sWeIp07BHYytfD+Ys
+         FJkstNQ4CfQ5HRm8suP5bGRhkbuwQu5F9zLZS45lLyn5Q2H9u1jlRhQ8ybNvsxou0Caf
+         zHCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXch4Kzch6fSyJniT9ZzlEX3G/HtGkIi2l5Ta4vY44J7ppWZ7XQxomvnJ+h3wpSvMSIZG1jQtXjTvbApyNdHkz+iW5TbFHq2YaA98Wx
+X-Gm-Message-State: AOJu0Yz6yOoKA8YBU0482n0J/6MgfWqF1MBGhDIbVQzF3smJwKemW+hB
+	o7pvjF4cb3cV0lb6Dstyt5Eeh1qu8SL/yKDGqsLNFnK5CNgni77oFQeswxobSw==
+X-Google-Smtp-Source: AGHT+IHmMuhdk1NaYfmjsh5fG9/wnslwqUeMbA6OPtLJlYkM8QY7GVj2DKaKMTuWDb1cv34MVl+iAA==
+X-Received: by 2002:a05:6a20:3509:b0:1c8:92ed:7c5e with SMTP id adf61e73a8af0-1c892ed7db8mr748828637.23.1723142686764;
+        Thu, 08 Aug 2024 11:44:46 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:66d6:d51f:d7f1:36c4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2d50cesm1416640b3a.109.2024.08.08.11.44.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 11:44:46 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Clark <robdclark@chromium.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: display: panel: samsung,atna45dc02: Fix indentation
+Date: Thu,  8 Aug 2024 11:44:07 -0700
+Message-ID: <20240808114407.1.I099e8e9e36407a0785d846b953031d40ea71e559@changeid>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] perf sched timehist: Add --show-prio option
-To: Yang Jihong <yangjihong@bytedance.com>
-References: <20240806015701.1309833-1-yangjihong@bytedance.com>
- <20240806015701.1309833-2-yangjihong@bytedance.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Reply-To: 20240806015701.1309833-2-yangjihong@bytedance.com
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <20240806015701.1309833-2-yangjihong@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ACXG_cngKuc1EmumUnhToJQSSCZvgll1
-X-Proofpoint-GUID: BoGMd55NVsSjms1xHTEgqJ8BZ65xtK1J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_18,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- bulkscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 adultscore=0 clxscore=1011 malwarescore=0
- impostorscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408080133
+Content-Transfer-Encoding: 8bit
 
-Hi Yang Jihong,
+The yaml had indentation errors:
+  ./Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml:21:9:
+  [warning] wrong indentation: expected 10 but found 8 (indentation)
+  ./Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml:23:11:
+  [warning] wrong indentation: expected 12 but found 10 (indentation)
 
-On 06/08/24 07:27, Yang Jihong wrote:
-> The --show-prio option is used to display the priority of task.
-> It is disabled by default, which is consistent with original behavior.
-> 
-> The display format is xxx (priority does not change during task running)
-> or xxx->yyy (priority changes during task running)
-> 
+Fix them.
 
-I had done the following steps.
-1) Ran 'perf sched record stress-ng --cpu 32 -l 50 --timeout 40s'
-2) Changed the nice value of stress-ng while the record was going on.
-ps -C stress-ng -o pid=
-64195
+Reported-by: Rob Herring <robh@kernel.org>
+Closes: https://lore.kernel.org/r/CAL_JsqLRTgQRPcfXy4G9hLoHMd-Uax4_C90BV_OZn4mK+-82kw@mail.gmail.com
+Fixes: 1c4a057d01f4 ("dt-bindings: display: panel: samsung,atna45dc02: Document ATNA45DC02")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-renice -n 10 -p 64195
+ .../bindings/display/panel/samsung,atna33xc20.yaml   | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-3) Then ran 'perf sched timehist --show-prio'
-
-343918.720052 [0015]  stress-ng[64195]    120  0.013      0.013   21.719
-.
-.
-343958.797257 [0009]  stress-ng[64195]    130  40076.812  0.007   0.393
-
-The output shows the final priority change of stress-ng from 120 to 130,
-but the transition format xxx->yyy is not displayed.
-
-Am I missing something?
-
-Thanks and Regards
-Madadi Vineeth Reddy
-
-> Testcase:
-> 
->   # perf sched record nice -n 9 true
->   [ perf record: Woken up 0 times to write data ]
->   [ perf record: Captured and wrote 0.497 MB perf.data ]
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
+index 87c601bcf20a..032f783eefc4 100644
+--- a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
++++ b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
+@@ -18,12 +18,12 @@ properties:
+       # Samsung 13.3" FHD (1920x1080 pixels) eDP AMOLED panel
+       - const: samsung,atna33xc20
+       - items:
+-        - enum:
+-          # Samsung 14.5" WQXGA+ (2880x1800 pixels) eDP AMOLED panel
+-          - samsung,atna45af01
+-          # Samsung 14.5" 3K (2944x1840 pixels) eDP AMOLED panel
+-          - samsung,atna45dc02
+-        - const: samsung,atna33xc20
++          - enum:
++              # Samsung 14.5" WQXGA+ (2880x1800 pixels) eDP AMOLED panel
++              - samsung,atna45af01
++              # Samsung 14.5" 3K (2944x1840 pixels) eDP AMOLED panel
++              - samsung,atna45dc02
++          - const: samsung,atna33xc20
+ 
+   enable-gpios: true
+   port: true
+-- 
+2.46.0.76.ge559c4bf1a-goog
 
 
