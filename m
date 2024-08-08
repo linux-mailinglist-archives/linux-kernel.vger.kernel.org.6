@@ -1,55 +1,87 @@
-Return-Path: <linux-kernel+bounces-279060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A20F94B876
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:01:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4407794B878
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98741F26472
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:01:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 799E0B26D57
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A808B189F2F;
-	Thu,  8 Aug 2024 08:00:06 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637361891B7;
+	Thu,  8 Aug 2024 08:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arZPw9gk"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F835189917;
-	Thu,  8 Aug 2024 08:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440F4188CD8;
+	Thu,  8 Aug 2024 08:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723104004; cv=none; b=MmbbcSn3YIkJ28fIhOh1V5HjPMJ5M5fJLCpm4YXk++I+UaTsk0FDxUc7ystBi7yDpNPDguQ+8atJxbeMBk5G2LCVGHMGW573tjsI+QTEHV7DA4iNULzOZFjhdUr9b7OT5hWRhdKEVIAvaeuaWwa+BBCCFjXZAwGqEEc0Z6DVSnI=
+	t=1723104063; cv=none; b=hAoELl7ejYqiHHo0RyQ0Y4jnEIzmN2yGSGeGJPtGaMiiNTbXvApuC8EGFetJ/weL3BYh9IZdNK+rtbf8RtESv99ZwjymvknXTPIkx/05T+f93Gl0FtFsV+J7hwMaXr1gHExw5bu9DgTfhFCORsmSh02eKIwhv8n1PzJvfjKverA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723104004; c=relaxed/simple;
-	bh=Ru0NpqBUL4GjNtKvnOOh7XRBnggWkBsNt5ohRkEBJEI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HtWctzBiP+KdB/ZgFaQ9/R/zUefFsi27BbXSk2D2LnK3KVbTl7BZglC8P5oAG3pTX1m1HMxZPGViHAKwZQJ6Qw1ck752kB8kYc7h4Euox6ca6yuCS1Uyd+CFX54QWdeFOwZYhT2G/d440D+4IXIdCGtT4LY2y1RwXTDLotKMr5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Thu, 8 Aug
- 2024 15:59:38 +0800
-Received: from twmbx02.aspeed.com (192.168.10.152) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Thu, 8 Aug 2024 15:59:37 +0800
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
-	<andrew@codeconstruct.com.au>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: [PATCH 4/4] dt-bindings: clock: Add AST2700 clock bindings
-Date: Thu, 8 Aug 2024 15:59:37 +0800
-Message-ID: <20240808075937.2756733-5-ryan_chen@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
-References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1723104063; c=relaxed/simple;
+	bh=d107dxSOJy/IsdkIlMvwvuyrtRAfJyvlUkR1dmmmQiw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r08B+2BYhWK0TtqbUPCqy2Hc22IBqft4vHxCgyzs2oFUwpn90RhFBQWjDdCxIcoz9yhj+wOWOFkk5rGwaI43xk5EthRrQmYDWDUMb3mOeYS+lE0raPsrxsfI4IuMjP5jVsAXQSNHAhDmuPVcWXh4ZD0/E5UyolyZhR3ggWQ5wys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=arZPw9gk; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2cb566d528aso612199a91.1;
+        Thu, 08 Aug 2024 01:01:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723104061; x=1723708861; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wqs6KdMLbgfGmk1QaXPQfVur5UUnGXn6qzNoZ4u3hZE=;
+        b=arZPw9gk2JYPNVgvLUiBS2BOQkxSN82dRaC8ec2xGegE/0bSNdWXmW2jFEs04VhTIe
+         VgEM0EQt2IBB6G/KBSZtyj9FPKrIFGx93dK+FYE40kL2wvHdV6kx4AhbH90ZwbbmLgr4
+         yaoc1vhAlBpspk5DeIUmAPb+aBvKtKoFPJk6oDjrq/YUcTRTExLAwCyVvN3F97MIZ3GN
+         FjbMLSy8N+isujJhTimXeowb1vi2h7hCapiwuZ5qlRCdMilTn5geEfyB393T3jUHDVxq
+         yTwJHdvvY4Xtp4d+v/sZ6sACaSX36yZW8DKSwSu7F78VibY9NQL4Dpq65MosnjvjeEkY
+         fqYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723104061; x=1723708861;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wqs6KdMLbgfGmk1QaXPQfVur5UUnGXn6qzNoZ4u3hZE=;
+        b=BhP7wZdTfvoaMZSWsmSU1SUUEtqeKz/YH8oIR0hUrBPidffqjC8E2bnM1zh0Psd0l/
+         geIrBZZVDuPOvA8OnxcDmBbCTurCooZtdk00BCCEytzojWbU8ZJgV4A9NCB3xJpGs1do
+         5If44yDyBujAPCEozlvMRXLqzN2/9I51MMJuCq2aGQi/HsFCjGrA0YAI1lKzumk08RgP
+         kROGchdWog9JT5CS4G+ISur+X67ablrheKbdHf3gMp9MGbhVwvja53FPYH2ekmn/qJaD
+         MEjwKIyD7fb74YTFV4fODWSeiUat8wN4TPWNr6PLyzKbAxX1VZ9Y9nuyLCjlcuYkjtoF
+         hFsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTZfN0z2n+bFbC2UC+lzy/jHmXTWuv7LZEDJCXBIlBHujxFjQ6R0jGhrjOyecOmTovxPcRzfLbv1191FR0ld0+12gGEfabqlz7+RuPpIq7P39wwKmj61fWgitVEnhHXR8qla3FNULRY03RQ5AZcQ==
+X-Gm-Message-State: AOJu0YzUFB3t7hM9E8RVwgU8+QKtfvfDTua7a0wy0BkFv9UByRcE+pYS
+	Dr94ajYLtSuxwW57Mo7j9GPEWXwbfK+mG3UkdzmHLuiPpjYTxv6/
+X-Google-Smtp-Source: AGHT+IEKKxAsa5qR0ckGD76B5i/PDlzs6pb8uGNHqjubWiSAL350IWQX1YGY4rvg1lwMLmPMuINM9A==
+X-Received: by 2002:a17:90a:de83:b0:2cb:3748:f5ce with SMTP id 98e67ed59e1d1-2d1c339f4d4mr1392884a91.10.1723104061381;
+        Thu, 08 Aug 2024 01:01:01 -0700 (PDT)
+Received: from alveo.moma (bullfrog.anu.edu.au. [150.203.163.126])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9c9cd66sm511366a91.24.2024.08.08.01.00.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 01:01:01 -0700 (PDT)
+From: Zixian Cai <fzczx123@gmail.com>
+To: 
+Cc: fzczx123@gmail.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf script python: Add the ins_lat field to event handler
+Date: Thu,  8 Aug 2024 08:00:26 +0000
+Message-Id: <20240808080027.3559776-1-fzczx123@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,1127 +89,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add dt bindings for AST2700 clock controller
+For example, when using the Alder Lake PMU memory load event, the
+instruction latency is stored in ins_lat, while the cache latency is
+stored in weight.
 
-Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+This patch reports the ins_lat field for Python scripting.
+
+Signed-off-by: Zixian Cai <fzczx123@gmail.com>
 ---
- drivers/clk/Makefile      |    1 +
- drivers/clk/clk-ast2700.c | 1091 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 1092 insertions(+)
- create mode 100644 drivers/clk/clk-ast2700.c
+ tools/perf/util/scripting-engines/trace-event-python.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f793a16cad40..0d5992ea0fa4 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -38,6 +38,7 @@ obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+= clk-fsl-sai.o
- obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
- obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
- obj-$(CONFIG_MACH_ASPEED_G6)		+= clk-ast2600.o
-+obj-$(CONFIG_MACH_ASPEED_G7)		+= clk-ast2700.o
- obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
- obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
- obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
-diff --git a/drivers/clk/clk-ast2700.c b/drivers/clk/clk-ast2700.c
-new file mode 100644
-index 000000000000..59c5df822de3
---- /dev/null
-+++ b/drivers/clk/clk-ast2700.c
-@@ -0,0 +1,1091 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2024 ASPEED Technology Inc.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/aspeed,ast2700-clk.h>
-+#include <dt-bindings/reset/aspeed,ast2700-reset.h>
-+
-+#define SCU_CLK_24MHZ 24000000
-+#define SCU_CLK_25MHZ 25000000
-+#define SCU_CLK_192MHZ 192000000
-+/* SOC0 USB2 PHY CLK*/
-+#define SCU_CLK_12MHZ 12000000
-+/* SOC0 */
-+#define SCU0_HWSTRAP1 0x010
-+#define SCU0_CLK_STOP 0x240
-+#define SCU0_CLK_SEL1 0x280
-+#define SCU0_CLK_SEL2 0x284
-+#define GET_USB_REFCLK_DIV(x) ((GENMASK(23, 20) & (x)) >> 20)
-+#define UART_DIV13_EN BIT(30)
-+#define SCU0_HPLL_PARAM 0x300
-+#define SCU0_DPLL_PARAM 0x308
-+#define SCU0_MPLL_PARAM 0x310
-+#define SCU0_D1CLK_PARAM 0x320
-+#define SCU0_D2CLK_PARAM 0x330
-+#define SCU0_CRT1CLK_PARAM 0x340
-+#define SCU0_CRT2CLK_PARAM 0x350
-+#define SCU0_MPHYCLK_PARAM 0x360
-+
-+/* SOC1 */
-+#define SCU1_CLK_STOP 0x240
-+#define SCU1_CLK_STOP2 0x260
-+#define SCU1_CLK_SEL1 0x280
-+#define SCU1_CLK_SEL2 0x284
-+#define UXCLK_MASK GENMASK(1, 0)
-+#define HUXCLK_MASK GENMASK(4, 3)
-+#define SCU1_HPLL_PARAM 0x300
-+#define SCU1_APLL_PARAM 0x310
-+#define SCU1_DPLL_PARAM 0x320
-+#define SCU1_UXCLK_CTRL 0x330
-+#define SCU1_HUXCLK_CTRL 0x334
-+#define SCU1_MAC12_CLK_DLY 0x390
-+#define SCU1_MAC12_CLK_DLY_100M 0x394
-+#define SCU1_MAC12_CLK_DLY_10M 0x398
-+
-+/* Globally visible clocks */
-+static DEFINE_SPINLOCK(ast2700_clk_lock);
-+
-+/* Division of RGMII Clock */
-+static const struct clk_div_table ast2700_rgmii_div_table[] = {
-+	{ 0x0, 4 },
-+	{ 0x1, 4 },
-+	{ 0x2, 6 },
-+	{ 0x3, 8 },
-+	{ 0x4, 10 },
-+	{ 0x5, 12 },
-+	{ 0x6, 14 },
-+	{ 0x7, 16 },
-+	{ 0 }
-+};
-+
-+/* Division of RMII Clock */
-+static const struct clk_div_table ast2700_rmii_div_table[] = {
-+	{ 0x0, 8 },
-+	{ 0x1, 8 },
-+	{ 0x2, 12 },
-+	{ 0x3, 16 },
-+	{ 0x4, 20 },
-+	{ 0x5, 24 },
-+	{ 0x6, 28 },
-+	{ 0x7, 32 },
-+	{ 0 }
-+};
-+
-+/* Division of HCLK/SDIO/MAC/apll_divn CLK */
-+static const struct clk_div_table ast2700_clk_div_table[] = {
-+	{ 0x0, 2 },
-+	{ 0x1, 2 },
-+	{ 0x2, 3 },
-+	{ 0x3, 4 },
-+	{ 0x4, 5 },
-+	{ 0x5, 6 },
-+	{ 0x6, 7 },
-+	{ 0x7, 8 },
-+	{ 0 }
-+};
-+
-+/* Division of PCLK/EMMC CLK */
-+static const struct clk_div_table ast2700_clk_div_table2[] = {
-+	{ 0x0, 2 },
-+	{ 0x1, 4 },
-+	{ 0x2, 6 },
-+	{ 0x3, 8 },
-+	{ 0x4, 10 },
-+	{ 0x5, 12 },
-+	{ 0x6, 14 },
-+	{ 0x7, 16 },
-+	{ 0 }
-+};
-+
-+/* HPLL/DPLL: 2000Mhz(default) */
-+static struct clk_hw *ast2700_soc0_hw_pll(const char *name, const char *parent_name, u32 val)
-+{
-+	unsigned int mult, div;
-+
-+	if (val & BIT(24)) {
-+		/* Pass through mode */
-+		mult = 1;
-+		div = 1;
-+	} else {
-+		/* F = CLKIN(25MHz) * [(M+1) / 2(N+1)] / (P+1) */
-+		u32 m = val & 0x1fff;
-+		u32 n = (val >> 13) & 0x3f;
-+		u32 p = (val >> 19) & 0xf;
-+
-+		mult = (m + 1) / (2 * (n + 1));
-+		div = (p + 1);
-+	}
-+
-+	return clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mult, div);
-+};
-+
-+/* MPLL 1600Mhz(default) */
-+static struct clk_hw *ast2700_calc_mpll(const char *name, const char *parent_name, u32 val)
-+{
-+	unsigned int mult, div;
-+
-+	if (val & BIT(24)) {
-+		/* Pass through mode */
-+		mult = 1;
-+		div = 1;
-+	} else {
-+		/* F = CLKIN(25MHz) * [CLKF/(CLKR+1)] /(CLKOD+1) */
-+		u32 m = val & 0x1fff;
-+		u32 n = (val >> 13) & 0x3f;
-+		u32 p = (val >> 19) & 0xf;
-+
-+		mult = m / (n + 1);
-+		div = (p + 1);
-+	}
-+	return clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mult, div);
-+};
-+
-+static struct clk_hw *ast2700_calc_uclk(const char *name, u32 val)
-+{
-+	unsigned int mult, div;
-+
-+	/* UARTCLK = UXCLK * R / (N * 2) */
-+	u32 r = val & 0xff;
-+	u32 n = (val >> 8) & 0x3ff;
-+
-+	mult = r;
-+	div = n * 2;
-+
-+	return clk_hw_register_fixed_factor(NULL, name, "uxclk", 0, mult, div);
-+};
-+
-+static struct clk_hw *ast2700_calc_huclk(const char *name, u32 val)
-+{
-+	unsigned int mult, div;
-+
-+	/* UARTCLK = UXCLK * R / (N * 2) */
-+	u32 r = val & 0xff;
-+	u32 n = (val >> 8) & 0x3ff;
-+
-+	mult = r;
-+	div = n * 2;
-+
-+	return clk_hw_register_fixed_factor(NULL, name, "huxclk", 0, mult, div);
-+};
-+
-+static struct clk_hw *ast2700_calc_soc1_pll(const char *name, const char *parent_name, u32 val)
-+{
-+	unsigned int mult, div;
-+
-+	if (val & BIT(24)) {
-+		/* Pass through mode */
-+		mult = 1;
-+		div = 1;
-+	} else {
-+		/* F = 25Mhz * [(M + 1) / (n + 1)] / (p + 1) */
-+		u32 m = val & 0x1fff;
-+		u32 n = (val >> 13) & 0x3f;
-+		u32 p = (val >> 19) & 0xf;
-+
-+		mult = (m + 1) / (n + 1);
-+		div = (p + 1);
-+	}
-+	return clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mult, div);
-+};
-+
-+static int ast2700_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+	u32 clk = BIT(gate->bit_idx);
-+	u32 reg;
-+
-+	reg = readl(gate->reg);
-+
-+	return !(reg & clk);
-+}
-+
-+static int ast2700_clk_enable(struct clk_hw *hw)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+	u32 clk = BIT(gate->bit_idx);
-+
-+	if (readl(gate->reg) & clk)
-+		writel(clk, gate->reg + 0x04);
-+
-+	return 0;
-+}
-+
-+static void ast2700_clk_disable(struct clk_hw *hw)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+	u32 clk = BIT(gate->bit_idx);
-+
-+	/* Clock is set to enable, so use write to set register */
-+	writel(clk, gate->reg);
-+}
-+
-+static const struct clk_ops ast2700_clk_gate_ops = {
-+	.enable = ast2700_clk_enable,
-+	.disable = ast2700_clk_disable,
-+	.is_enabled = ast2700_clk_is_enabled,
-+};
-+
-+static struct clk_hw *ast2700_clk_hw_register_gate(struct device *dev, const char *name,
-+						   const char *parent_name, unsigned long flags,
-+						   void __iomem *reg, u8 clock_idx,
-+						   u8 clk_gate_flags, spinlock_t *lock)
-+{
-+	struct clk_gate *gate;
-+	struct clk_hw *hw;
-+	struct clk_init_data init;
-+	int ret = -EINVAL;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &ast2700_clk_gate_ops;
-+	init.flags = flags;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+
-+	gate->reg = reg;
-+	gate->bit_idx = clock_idx;
-+	gate->flags = clk_gate_flags;
-+	gate->lock = lock;
-+	gate->hw.init = &init;
-+
-+	hw = &gate->hw;
-+	ret = clk_hw_register(dev, hw);
-+	if (ret) {
-+		kfree(gate);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-+
-+struct ast2700_reset {
-+	void __iomem *base;
-+	struct reset_controller_dev rcdev;
-+};
-+
-+#define to_rc_data(p) container_of(p, struct ast2700_reset, rcdev)
-+
-+static int ast2700_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct ast2700_reset *rc = to_rc_data(rcdev);
-+	u32 rst = BIT(id % 32);
-+	u32 reg = id >= 32 ? 0x220 : 0x200;
-+
-+	if (id == SCU1_RESET_PCIE2RST)
-+		writel(readl(rc->base + 0x908) & ~BIT(0), rc->base + 0x908);
-+	else
-+		writel(rst, rc->base + reg);
-+	return 0;
-+}
-+
-+static int ast2700_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct ast2700_reset *rc = to_rc_data(rcdev);
-+	u32 rst = BIT(id % 32);
-+	u32 reg = id >= 32 ? 0x220 : 0x200;
-+
-+	if (id == SCU1_RESET_PCIE2RST)
-+		writel(readl(rc->base + 0x908) | BIT(0), rc->base + 0x908);
-+	else
-+		/* Use set to clear register */
-+		writel(rst, rc->base + reg + 0x04);
-+	return 0;
-+}
-+
-+static int ast2700_reset_status(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct ast2700_reset *rc = to_rc_data(rcdev);
-+	u32 rst = BIT(id % 32);
-+	u32 reg = id >= 32 ? 0x220 : 0x200;
-+
-+	return (readl(rc->base + reg) & rst);
-+}
-+
-+static const struct reset_control_ops ast2700_reset_ops = {
-+	.assert = ast2700_reset_assert,
-+	.deassert = ast2700_reset_deassert,
-+	.status = ast2700_reset_status,
-+};
-+
-+static const char *const sdclk_sel[] = {
-+	"soc1-hpll",
-+	"soc1-apll",
-+};
-+
-+static const char *const uartclk_sel[] = {
-+	"uartxclk",
-+	"huartxclk",
-+};
-+
-+static const char *const uxclk_sel[] = {
-+	"soc1-apll_div4",
-+	"soc1-apll_div2",
-+	"soc1-apll",
-+	"soc1-hpll",
-+};
-+
-+static int ast2700_soc1_clk_init(struct device_node *soc1_node)
-+{
-+	struct clk_hw_onecell_data *clk_data;
-+	struct ast2700_reset *reset;
-+	u32 uart_clk_source = 0;
-+	void __iomem *clk_base;
-+	struct clk_hw **clks;
-+	u32 val, id;
-+	int ret;
-+
-+	clk_base = of_iomap(soc1_node, 0);
-+	WARN_ON(!clk_base);
-+
-+	clk_data = kzalloc(struct_size(clk_data, hws, SCU1_NUM_CLKS), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num = SCU1_NUM_CLKS;
-+	clks = clk_data->hws;
-+
-+	reset = kzalloc(sizeof(*reset), GFP_KERNEL);
-+	if (!reset)
-+		return -ENOMEM;
-+
-+	reset->base = clk_base;
-+
-+	reset->rcdev.owner = THIS_MODULE;
-+	reset->rcdev.nr_resets = SCU1_RESET_NUMS;
-+	reset->rcdev.ops = &ast2700_reset_ops;
-+	reset->rcdev.of_node = soc1_node;
-+
-+	ret = reset_controller_register(&reset->rcdev);
-+	if (ret) {
-+		pr_err("soc1 failed to register reset controller\n");
-+		return ret;
-+	}
-+	/*
-+	 * Ast2700 A0 workaround:
-+	 * I3C reset should assert all of the I3C controllers simultaneously.
-+	 * Otherwise, it may lead to failure in accessing I3C registers.
-+	 */
-+	for (id = SCU1_RESET_I3C0; id <= SCU1_RESET_I3C15; id++)
-+		ast2700_reset_assert(&reset->rcdev, id);
-+
-+	clks[SCU1_CLKIN] =
-+		clk_hw_register_fixed_rate(NULL, "soc1-clkin", NULL, 0, SCU_CLK_25MHZ);
-+
-+	/* HPLL 1000Mhz */
-+	val = readl(clk_base + SCU1_HPLL_PARAM);
-+	clks[SCU1_CLK_HPLL] = ast2700_calc_soc1_pll("soc1-hpll", "soc1-clkin", val);
-+
-+	/* HPLL 800Mhz */
-+	val = readl(clk_base + SCU1_APLL_PARAM);
-+	clks[SCU1_CLK_APLL] = ast2700_calc_soc1_pll("soc1-apll", "soc1-clkin", val);
-+
-+	clks[SCU1_CLK_APLL_DIV2] =
-+		clk_hw_register_fixed_factor(NULL, "soc1-apll_div2", "soc1-apll", 0, 1, 2);
-+
-+	clks[SCU1_CLK_APLL_DIV4] =
-+		clk_hw_register_fixed_factor(NULL, "soc1-apll_div4", "soc1-apll", 0, 1, 4);
-+
-+	val = readl(clk_base + SCU1_DPLL_PARAM);
-+	clks[SCU1_CLK_DPLL] = ast2700_calc_soc1_pll("dpll", "soc1-clkin", val);
-+
-+	/* uxclk mux selection */
-+	clks[SCU1_CLK_UXCLK] =
-+		clk_hw_register_mux(NULL, "uxclk", uxclk_sel, ARRAY_SIZE(uxclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL2,
-+				    0, 2, 0, &ast2700_clk_lock);
-+
-+	val = readl(clk_base + SCU1_UXCLK_CTRL);
-+	clks[SCU1_CLK_UARTX] = ast2700_calc_uclk("uartxclk", val);
-+
-+	/* huxclk mux selection */
-+	clks[SCU1_CLK_HUXCLK] =
-+		clk_hw_register_mux(NULL, "huxclk", uxclk_sel, ARRAY_SIZE(uxclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL2,
-+				    3, 2, 0, &ast2700_clk_lock);
-+
-+	val = readl(clk_base + SCU1_HUXCLK_CTRL);
-+	clks[SCU1_CLK_HUARTX] = ast2700_calc_huclk("huartxclk", val);
-+
-+	/* AHB CLK = 200Mhz */
-+	clks[SCU1_CLK_AHB] =
-+		clk_hw_register_divider_table(NULL, "soc1-ahb", "soc1-hpll",
-+					      0, clk_base + SCU1_CLK_SEL2,
-+					      20, 3, 0, ast2700_clk_div_table, &ast2700_clk_lock);
-+
-+	/* APB CLK = 100Mhz */
-+	clks[SCU1_CLK_APB] =
-+		clk_hw_register_divider_table(NULL, "soc1-apb", "soc1-hpll",
-+					      0, clk_base + SCU1_CLK_SEL1,
-+					      18, 3, 0, ast2700_clk_div_table2, &ast2700_clk_lock);
-+
-+	/* RMII */
-+	clks[SCU1_CLK_RMII] =
-+		clk_hw_register_divider_table(NULL, "rmii", "soc1-hpll",
-+					      0, clk_base + SCU1_CLK_SEL1,
-+					      21, 3, 0, ast2700_rmii_div_table, &ast2700_clk_lock);
-+
-+	/* RMII0 50MHz (RCLK) output enable */
-+	clks[SCU1_CLK_MAC0RCLK] =
-+		clk_hw_register_gate(NULL, "mac0rclk", "rmii", 0,
-+				     clk_base + SCU1_MAC12_CLK_DLY, 29,
-+				     0, &ast2700_clk_lock);
-+
-+	/* RMII1 50MHz (RCLK) output enable */
-+	clks[SCU1_CLK_MAC1RCLK] =
-+		clk_hw_register_gate(NULL, "mac1rclk", "rmii", 0,
-+				     clk_base + SCU1_MAC12_CLK_DLY, 30,
-+				     0, &ast2700_clk_lock);
-+
-+	/* RGMII */
-+	clks[SCU1_CLK_RGMII] =
-+		clk_hw_register_divider_table(NULL, "rgmii", "soc1-hpll",
-+					      0, clk_base + SCU1_CLK_SEL1,
-+					      25, 3, 0, ast2700_rgmii_div_table, &ast2700_clk_lock);
-+
-+	/* MAC HCLK */
-+	clks[SCU1_CLK_MACHCLK] =
-+		clk_hw_register_divider_table(NULL, "machclk", "soc1-hpll",
-+					      0, clk_base + SCU1_CLK_SEL1,
-+					      29, 3, 0, ast2700_clk_div_table, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_LCLK0] =
-+		ast2700_clk_hw_register_gate(NULL, "lclk0-gate", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP,
-+					     0, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_LCLK0] =
-+		ast2700_clk_hw_register_gate(NULL, "lclk1-gate", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP,
-+					     1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_ESPI0CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "espi0clk-gate", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP,
-+					     2, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_ESPI1CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "espi1clk-gate", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP,
-+					     3, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_APLL_DIVN] =
-+		clk_hw_register_divider_table(NULL, "soc1-apll_divn", "soc1-apll",
-+					      0, clk_base + SCU1_CLK_SEL2,
-+					      8, 3, 0, ast2700_clk_div_table, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_SDMUX] =
-+		clk_hw_register_mux(NULL, "sdclk-mux", sdclk_sel, ARRAY_SIZE(sdclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    13, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_SDCLK] =
-+		clk_hw_register_divider_table(NULL, "sdclk", "sdclk-mux",
-+					      0, clk_base + SCU1_CLK_SEL1,
-+					      14, 3, 0, ast2700_clk_div_table, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_SDCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "sdclk-gate", "sdclk",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     4, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_IPEREFCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "soc1-refclk-gate", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP,
-+					     6, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_LPCHCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "lpchclk-gate", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP,
-+					     7, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_MAC0CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "mac0clk-gate", NULL,
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     8, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_MAC1CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "mac1clk-gate", NULL,
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     9, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_MAC2CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "mac2clk-gate", NULL,
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     10, 0, &ast2700_clk_lock);
-+
-+	of_property_read_u32(soc1_node, "uart-clk-source", &uart_clk_source);
-+	if (uart_clk_source) {
-+		val = readl(clk_base + SCU1_CLK_SEL1) & ~GENMASK(12, 0);
-+		uart_clk_source &= GENMASK(12, 0);
-+		writel(val | uart_clk_source, clk_base + SCU1_CLK_SEL1);
-+	}
-+
-+	//UART0
-+	clks[SCU1_CLK_UART0] =
-+		clk_hw_register_mux(NULL, "uart0clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    0, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART0CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart0clk-gate", "uart0clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP,
-+					     11, 0, &ast2700_clk_lock);
-+
-+	//UART1
-+	clks[SCU1_CLK_UART1] =
-+		clk_hw_register_mux(NULL, "uart1clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    1, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART1CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart1clk-gate", "uart1clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP,
-+					     12, 0, &ast2700_clk_lock);
-+
-+	//UART2
-+	clks[SCU1_CLK_UART2] =
-+		clk_hw_register_mux(NULL, "uart2clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    2, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART2CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart2clk-gate", "uart2clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP,
-+					     13, 0, &ast2700_clk_lock);
-+
-+	//UART3
-+	clks[SCU1_CLK_UART3] =
-+		clk_hw_register_mux(NULL, "uart3clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    3, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART3CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart3clk-gate", "uart3clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP,
-+					     14, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C0CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c0clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     16, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C1CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c1clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     17, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C2CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c2clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     18, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C3CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c3clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     19, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C4CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c4clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     20, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C5CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c5clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     21, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C6CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c6clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     22, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C7CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c7clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     23, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C8CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c8clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     24, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C9CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c9clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     25, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C10CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c10clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     26, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C11CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c11clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     27, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C12CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c12clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     28, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C13CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c13clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     29, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C14CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c14clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     30, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_I3C15CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "i3c15clk-gate", "soc1-ahb",
-+					     0, clk_base + SCU1_CLK_STOP,
-+					     31, 0, &ast2700_clk_lock);
-+
-+	/*clk stop 2 */
-+	//UART5
-+	clks[SCU1_CLK_UART5] =
-+		clk_hw_register_mux(NULL, "uart5clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    5, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART5CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart5clk-gate", "uart5clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP2,
-+					     0, 0, &ast2700_clk_lock);
-+
-+	//UART6
-+	clks[SCU1_CLK_UART6] =
-+		clk_hw_register_mux(NULL, "uart6clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    6, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART6CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart6clk-gate", "uart6clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP2,
-+					     1, 0, &ast2700_clk_lock);
-+
-+	//UART7
-+	clks[SCU1_CLK_UART7] =
-+		clk_hw_register_mux(NULL, "uart7clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    7, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART7CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart7clk-gate", "uart7clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP2,
-+					     2, 0, &ast2700_clk_lock);
-+
-+	//UART8
-+	clks[SCU1_CLK_UART8] =
-+		clk_hw_register_mux(NULL, "uart8clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    8, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART8CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart8clk-gate", "uart8clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP2,
-+					     3, 0, &ast2700_clk_lock);
-+
-+	//UART9
-+	clks[SCU1_CLK_UART9] =
-+		clk_hw_register_mux(NULL, "uart9clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    9, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART9CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart9clk-gate", "uart9clk",
-+					     0, clk_base + SCU1_CLK_STOP2,
-+					     4, 0, &ast2700_clk_lock);
-+
-+	//UART10
-+	clks[SCU1_CLK_UART10] =
-+		clk_hw_register_mux(NULL, "uart10clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    10, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART10CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart10clk-gate", "uart10clk",
-+					     0, clk_base + SCU1_CLK_STOP2,
-+					     5, 0, &ast2700_clk_lock);
-+
-+	//UART11
-+	clks[SCU1_CLK_UART11] =
-+		clk_hw_register_mux(NULL, "uart11clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    11, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART11CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart11clk-gate", "uart11clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP2,
-+					     6, 0, &ast2700_clk_lock);
-+
-+	//uart12: call bmc uart
-+	clks[SCU1_CLK_UART12] =
-+		clk_hw_register_mux(NULL, "uart12clk", uartclk_sel, ARRAY_SIZE(uartclk_sel),
-+				    0, clk_base + SCU1_CLK_SEL1,
-+				    12, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_UART12CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart12clk-gate", "uart12clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP2,
-+					     7, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_FSICLK] =
-+		ast2700_clk_hw_register_gate(NULL, "fsiclk-gate", NULL,
-+					     0, clk_base + SCU1_CLK_STOP2,
-+					     8, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_LTPIPHYCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "ltpiphyclk-gate", NULL,
-+					     0, clk_base + SCU1_CLK_STOP2,
-+					     9, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_LTPICLK] =
-+		ast2700_clk_hw_register_gate(NULL, "ltpiclk-gate", NULL,
-+					     0, clk_base + SCU1_CLK_STOP2,
-+					     10, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_VGALCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "vgalclk-gate", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP2,
-+					     11, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_USBUARTCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "usbuartclk-gate", NULL,
-+					     0, clk_base + SCU1_CLK_STOP2,
-+					     12, 0, &ast2700_clk_lock);
-+
-+	clk_hw_register_fixed_factor(NULL, "canclk", "soc1-apll", 0, 1, 10);
-+
-+	clks[SCU1_CLK_GATE_CANCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "canclk-gate", "canclk",
-+					     0, clk_base + SCU1_CLK_STOP2,
-+					     13, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_PCICLK] =
-+		ast2700_clk_hw_register_gate(NULL, "pciclk-gate", NULL,
-+					     0, clk_base + SCU1_CLK_STOP2,
-+					     14, 0, &ast2700_clk_lock);
-+
-+	clks[SCU1_CLK_GATE_SLICLK] =
-+		ast2700_clk_hw_register_gate(NULL, "sliclk-gate", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU1_CLK_STOP2,
-+					     15, 0, &ast2700_clk_lock);
-+
-+	of_clk_add_hw_provider(soc1_node, of_clk_hw_onecell_get, clk_data);
-+
-+	return 0;
-+};
-+
-+static const char *const pspclk_sel[] = {
-+	"soc0-mpll",
-+	"soc0-hpll",
-+};
-+
-+static const char *const soc0_uartclk_sel[] = {
-+	"soc0-clk24Mhz",
-+	"soc0-clk192Mhz",
-+};
-+
-+static const char *const emmcclk_sel[] = {
-+	"soc0-mpll_div4",
-+	"soc0-hpll_div4",
-+};
-+
-+static int ast2700_soc0_clk_init(struct device_node *soc0_node)
-+{
-+	struct clk_hw_onecell_data *clk_data;
-+	void __iomem *clk_base;
-+	struct ast2700_reset *reset;
-+	struct clk_hw **clks;
-+	int div;
-+	u32 val;
-+	int ret;
-+
-+	clk_data = kzalloc(struct_size(clk_data, hws, SCU0_NUM_CLKS), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num = SCU0_NUM_CLKS;
-+	clks = clk_data->hws;
-+
-+	clk_base = of_iomap(soc0_node, 0);
-+	if (WARN_ON(IS_ERR(clk_base)))
-+		return PTR_ERR(clk_base);
-+
-+	reset = kzalloc(sizeof(*reset), GFP_KERNEL);
-+	if (!reset)
-+		return -ENOMEM;
-+
-+	reset->base = clk_base;
-+
-+	reset->rcdev.owner = THIS_MODULE;
-+	reset->rcdev.nr_resets = SCU0_RESET_NUMS;
-+	reset->rcdev.ops = &ast2700_reset_ops;
-+	reset->rcdev.of_node = soc0_node;
-+
-+	ret = reset_controller_register(&reset->rcdev);
-+	if (ret) {
-+		pr_err("soc0 failed to register reset controller\n");
-+		return ret;
-+	}
-+
-+	//refclk
-+	clks[SCU0_CLKIN] =
-+		clk_hw_register_fixed_rate(NULL, "soc0-clkin", NULL, 0, SCU_CLK_25MHZ);
-+
-+	clks[SCU0_CLK_24M] =
-+		clk_hw_register_fixed_rate(NULL, "soc0-clk24Mhz", NULL, 0, SCU_CLK_24MHZ);
-+
-+	clks[SCU0_CLK_192M] =
-+		clk_hw_register_fixed_rate(NULL, "soc0-clk192Mhz", NULL, 0, SCU_CLK_192MHZ);
-+
-+	//hpll
-+	val = readl(clk_base + SCU0_HWSTRAP1);
-+	if ((val & GENMASK(3, 2)) != 0) {
-+		switch ((val & GENMASK(3, 2)) >> 2) {
-+		case 1:
-+			clks[SCU0_CLK_HPLL] =
-+				clk_hw_register_fixed_rate(NULL, "soc0-hpll", NULL, 0, 1900000000);
-+			break;
-+		case 2:
-+			clks[SCU0_CLK_HPLL] =
-+				clk_hw_register_fixed_rate(NULL, "soc0-hpll", NULL, 0, 1800000000);
-+			break;
-+		case 3:
-+			clks[SCU0_CLK_HPLL] =
-+				clk_hw_register_fixed_rate(NULL, "soc0-hpll", NULL, 0, 1700000000);
-+			break;
-+		}
-+	} else {
-+		val = readl(clk_base + SCU0_HPLL_PARAM);
-+		clks[SCU0_CLK_HPLL] = ast2700_soc0_hw_pll("soc0-hpll", "soc0-clkin", val);
-+	}
-+	clks[SCU0_CLK_HPLL_DIV2] =
-+			clk_hw_register_fixed_factor(NULL, "soc0-hpll_div2", "soc0-hpll", 0, 1, 2);
-+	clks[SCU0_CLK_HPLL_DIV4] =
-+			clk_hw_register_fixed_factor(NULL, "soc0-hpll_div4", "soc0-hpll", 0, 1, 4);
-+
-+	//dpll
-+	val = readl(clk_base + SCU0_DPLL_PARAM);
-+	clks[SCU0_CLK_DPLL] = ast2700_soc0_hw_pll("dpll", "soc0-clkin", val);
-+
-+	//mpll
-+	val = readl(clk_base + SCU0_MPLL_PARAM);
-+	clks[SCU0_CLK_MPLL] = ast2700_calc_mpll("soc0-mpll", "soc0-clkin", val);
-+	clks[SCU0_CLK_MPLL_DIV2] =
-+			clk_hw_register_fixed_factor(NULL, "soc0-mpll_div2", "soc0-mpll", 0, 1, 2);
-+	clks[SCU0_CLK_MPLL_DIV4] =
-+			clk_hw_register_fixed_factor(NULL, "soc0-mpll_div4", "soc0-mpll", 0, 1, 4);
-+	clks[SCU0_CLK_MPLL_DIV8] =
-+			clk_hw_register_fixed_factor(NULL, "soc0-mpll_div8", "soc0-mpll", 0, 1, 8);
-+
-+	val = readl(clk_base + SCU0_D1CLK_PARAM);
-+	clks[SCU0_CLK_VGA0] = ast2700_soc0_hw_pll("d1clk", "soc0-clkin", val);
-+
-+	val = readl(clk_base + SCU0_D2CLK_PARAM);
-+	clks[SCU0_CLK_VGA1] = ast2700_soc0_hw_pll("d2clk", "soc0-clkin", val);
-+
-+	val = readl(clk_base + SCU0_CRT1CLK_PARAM);
-+	clks[SCU0_CLK_CRT0] = ast2700_soc0_hw_pll("crt0clk", "soc0-clkin", val);
-+
-+	val = readl(clk_base + SCU0_CRT2CLK_PARAM);
-+	clks[SCU0_CLK_CRT1] = ast2700_soc0_hw_pll("crt1clk", "soc0-clkin", val);
-+
-+	val = readl(clk_base + SCU0_MPHYCLK_PARAM);
-+	clks[SCU0_CLK_MPHY] =
-+		clk_hw_register_fixed_factor(NULL, "mphyclk", "soc0-hpll", 0, 1, val + 1);
-+
-+	clks[SCU0_CLK_PSP] =
-+		clk_hw_register_mux(NULL, "pspclk", pspclk_sel, ARRAY_SIZE(pspclk_sel),
-+				    0, clk_base + SCU0_HWSTRAP1,
-+				    4, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_AXI0] =
-+		clk_hw_register_fixed_factor(NULL, "axi0clk", "pspclk", 0, 1, 2);
-+
-+	val = readl(clk_base + SCU0_HWSTRAP1);
-+	if (val & BIT(7)) {
-+		clks[SCU0_CLK_AHB] =
-+			clk_hw_register_divider_table(NULL, "soc0-ahb", "soc0-hpll",
-+						      0, clk_base + SCU0_HWSTRAP1,
-+						      5, 2, 0, ast2700_clk_div_table,
-+						      &ast2700_clk_lock);
-+	} else {
-+		clks[SCU0_CLK_AHB] =
-+			clk_hw_register_divider_table(NULL, "soc0-ahb", "soc0-mpll",
-+						      0, clk_base + SCU0_HWSTRAP1,
-+						      5, 2, 0, ast2700_clk_div_table,
-+						      &ast2700_clk_lock);
-+	}
-+
-+	clks[SCU0_CLK_AXI1] =
-+		clk_hw_register_fixed_factor(NULL, "axi1clk", "soc0-ahb", 0, 1, 2);
-+
-+	clks[SCU0_CLK_APB] =
-+		clk_hw_register_divider_table(NULL, "soc0-apb", "axi0clk",
-+					      0, clk_base + SCU0_CLK_SEL1,
-+					      23, 3, 0, ast2700_clk_div_table2, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_MCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "mclk", "soc0-mpll",
-+					     CLK_IS_CRITICAL, clk_base + SCU0_CLK_STOP,
-+					     0, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_ECLK] =
-+		ast2700_clk_hw_register_gate(NULL, "eclk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_2DCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "gclk", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU0_CLK_STOP,
-+					     2, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_VCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "vclk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     3, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_BCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "bclk", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU0_CLK_STOP,
-+					     4, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_VGA0CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "d1clk-gate", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU0_CLK_STOP,
-+					     5, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_REFCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "soc0-refclk-gate", "soc0-clkin",
-+					     CLK_IS_CRITICAL, clk_base + SCU0_CLK_STOP,
-+					     6, 0, &ast2700_clk_lock);
-+
-+	div = (GET_USB_REFCLK_DIV(readl(clk_base + SCU0_CLK_SEL2)) + 1) * 2;
-+	clks[SCU0_CLK_U2PHY_REFCLK] =
-+		clk_hw_register_fixed_factor(NULL, "xhci_ref_clk", "soc0-mpll_div8", 0, 1, div);
-+
-+	clks[SCU0_CLK_U2PHY_CLK12M] =
-+		clk_hw_register_fixed_rate(NULL, "xhci_suspend_clk", NULL, 0, SCU_CLK_12MHZ);
-+
-+	clks[SCU0_CLK_GATE_PORTBUSB2CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "portb-usb2clk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     7, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_UHCICLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uhciclk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     9, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_VGA1CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "d2clk-gate", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU0_CLK_STOP,
-+					     10, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_HACCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "hac-clk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     13, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_PORTAUSB2CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "porta-usb2clk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     14, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_UART] =
-+		clk_hw_register_mux(NULL, "soc0-uartclk", soc0_uartclk_sel,
-+				    ARRAY_SIZE(soc0_uartclk_sel),
-+				    0, clk_base + SCU0_CLK_SEL2,
-+				    14, 1, 0, &ast2700_clk_lock);
-+
-+	if (readl(clk_base + SCU0_CLK_SEL2) & UART_DIV13_EN)
-+		div = 13;
-+	else
-+		div = 1;
-+
-+	clks[SCU0_CLK_UART4] =
-+		clk_hw_register_fixed_factor(NULL, "uart4clk", "soc0-uartclk", 0, 1, div);
-+
-+	clks[SCU0_CLK_GATE_UART4CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "uart4clk-gate", "uart4clk",
-+					     CLK_IS_CRITICAL, clk_base + SCU0_CLK_STOP,
-+					     15, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_DACCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "dacclk", NULL,
-+					     CLK_IS_CRITICAL, clk_base + SCU0_CLK_STOP,
-+					     17, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_CRT0CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "crt0clk-gate", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     20, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_CRT1CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "crt1clk-gate", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     21, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_ECDSACLK] =
-+		ast2700_clk_hw_register_gate(NULL, "eccclk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     23, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_RSACLK] =
-+		ast2700_clk_hw_register_gate(NULL, "rsaclk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     24, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_RVAS0CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "rvasclk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     25, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_UFSCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "ufsclk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     26, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_EMMCMUX] =
-+		clk_hw_register_mux(NULL, "emmcsrc-mux", emmcclk_sel, ARRAY_SIZE(emmcclk_sel),
-+				    0, clk_base + SCU0_CLK_SEL1,
-+				    11, 1, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_EMMC] =
-+		clk_hw_register_divider_table(NULL, "emmcclk", "emmcsrc-mux",
-+					      0, clk_base + SCU0_CLK_SEL1,
-+					      12, 3, 0, ast2700_clk_div_table2,
-+					      &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_EMMCCLK] =
-+		ast2700_clk_hw_register_gate(NULL, "emmcclk-gate", "emmcclk",
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     27, 0, &ast2700_clk_lock);
-+
-+	clks[SCU0_CLK_GATE_RVAS1CLK] =
-+		ast2700_clk_hw_register_gate(NULL, "rvas2clk", NULL,
-+					     0, clk_base + SCU0_CLK_STOP,
-+					     28, 0, &ast2700_clk_lock);
-+
-+	of_clk_add_hw_provider(soc0_node, of_clk_hw_onecell_get, clk_data);
-+
-+	return 0;
-+};
-+
-+CLK_OF_DECLARE_DRIVER(ast2700_soc0, "aspeed,ast2700-scu0", ast2700_soc0_clk_init);
-+CLK_OF_DECLARE_DRIVER(ast2700_soc1, "aspeed,ast2700-scu1", ast2700_soc1_clk_init);
--- 
-2.34.1
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index 41d4f9e6a..68eb0586c 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -861,6 +861,8 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
+ 	set_sample_read_in_dict(dict_sample, sample, evsel);
+ 	pydict_set_item_string_decref(dict_sample, "weight",
+ 			PyLong_FromUnsignedLongLong(sample->weight));
++	pydict_set_item_string_decref(dict_sample, "ins_lat",
++			PyLong_FromUnsignedLongLong(sample->ins_lat));
+ 	pydict_set_item_string_decref(dict_sample, "transaction",
+ 			PyLong_FromUnsignedLongLong(sample->transaction));
+ 	set_sample_datasrc_in_dict(dict_sample, sample);
+@@ -1286,7 +1288,7 @@ static void python_export_sample_table(struct db_export *dbe,
+ 	struct tables *tables = container_of(dbe, struct tables, dbe);
+ 	PyObject *t;
+
+-	t = tuple_new(25);
++	t = tuple_new(26);
+
+ 	tuple_set_d64(t, 0, es->db_id);
+ 	tuple_set_d64(t, 1, es->evsel->db_id);
+@@ -1313,6 +1315,7 @@ static void python_export_sample_table(struct db_export *dbe,
+ 	tuple_set_d64(t, 22, es->sample->insn_cnt);
+ 	tuple_set_d64(t, 23, es->sample->cyc_cnt);
+ 	tuple_set_s32(t, 24, es->sample->flags);
++	tuple_set_s32(t, 25, es->sample->ins_lat);
+
+ 	call_object(tables->sample_handler, t, "sample_table");
+
+--
+2.25.1
 
 
