@@ -1,64 +1,72 @@
-Return-Path: <linux-kernel+bounces-279004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A4994B7A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA98D94B7A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23ADDB256DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 681E41F252A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A87189F45;
-	Thu,  8 Aug 2024 07:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9BA189F58;
+	Thu,  8 Aug 2024 07:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dK8luZ64"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jSVJD0Z1"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183D5188CA5;
-	Thu,  8 Aug 2024 07:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96B8189F2C
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 07:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723101538; cv=none; b=kM+57KqdbtNK0hp6auNhb6Fa/JnnqYY8ohL3wSn4Dsn7TZqDdaWI49RlVjq7/WsjS61X2+9fXML2K4s4h7Nsx3cBI8uC046S8DY399SE8fFqIUgiImuo3Ik7AnFRw8oJfKDTgj64i3kMM4gp/TCJspWj26gB2hRvK8TnuCzQVMY=
+	t=1723101539; cv=none; b=VxIbfyo/A0F5faK8MbQ5aX+s1QCXd5nxA60aSBOez4o/XC5OTnJZxBdlOJckl3bAjZYbmsOsyuJ1Jfoovr7TLsbVpCl1Xoen7bVCisWRsRSnR8Pc5Yj+/H0UYxW0znX/yKAaySvECpmz3N/jY9afIumk4/a96WA6DgUWf8YyUEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723101538; c=relaxed/simple;
-	bh=O9EZaWrR7lNuaqrZDuypfiO/KHWaclbwiwKXa26AQEs=;
+	s=arc-20240116; t=1723101539; c=relaxed/simple;
+	bh=xZ1q4iVftMneU5Db6AJ5bSjJJcMNwwGD9VWVr/mp2no=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kl4xoleYmc87zggqy/+s0sNK8Ithn3WdErVcXO1euSNQaF/tDwEPXDZ4tFubB1jDT+Iw8g9VlREBtPLv31CbSEbkMggq4IUx51WBSOGK+S9RcRyM+Ky3i6gczRIYMrcwcSI58dFsrom4TT3Sff8rtsuibGvraUwtha/lsUOlvPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dK8luZ64; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723101538; x=1754637538;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=O9EZaWrR7lNuaqrZDuypfiO/KHWaclbwiwKXa26AQEs=;
-  b=dK8luZ64b2543lp+uJJX7mq4r7sno8SGgPmkCsLt4psVke1wZ4w2cEnh
-   CIRE7F+C4ZtNtjkLwTTAgifgIjaNilDsf3y+tgpstAM0ZAhGeZqIS4yoR
-   zBRN5P3hgzNH+8DeqG9/tsbCLMtmpuwojBJujASbVT34M7cPsW4cmyPg/
-   npd1x/h/TZPQsa+RAYciduE/mkfHrau5cpRpBXLdEMahllG6gQow1e9gH
-   Kg67Z9dWfwI3nFpZCHvEFftB3XkAHrMfmuQ/R4vJQbrIbXvtCRTSZxYqP
-   n9J8CHFVXHSEUsZTtXDDcGVK5ZxK3XjFEulY39WdufdNBGPY8fTjLlM7b
-   Q==;
-X-CSE-ConnectionGUID: kWVBN2h6TjGFvD0zRdIu9w==
-X-CSE-MsgGUID: hRm594DOQGykDMrry/Rt2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21352183"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="21352183"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 00:18:57 -0700
-X-CSE-ConnectionGUID: 0qYkdXa/TDaj7eKCGJDHow==
-X-CSE-MsgGUID: ipnaZQBPQ26KZpo/IBK4DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="80357202"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.150.149])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 00:18:48 -0700
-Message-ID: <bb92e3b0-302f-4e43-9905-2d9fa709ab25@intel.com>
-Date: Thu, 8 Aug 2024 10:18:42 +0300
+	 In-Reply-To:Content-Type; b=T38eb87+NjcySQlIDnX3mBOvDHlZ2f89S9+dAQY145RUuaP2AR9h+esLz17l7fwwTfcL22t4HmrBx9/bvQa0nhKsfdb1EMWdsaEGM8POEDHkodqCheFgp/npsgOs7rWFPS+Frli/h0KBYURtRHkmi7bthV6CxEhsZ42sPCM2ipI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jSVJD0Z1; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-367990aaef3so376846f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 00:18:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723101536; x=1723706336; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tpfTqck61BGRbHI1Fw35d7IcXYkb1l4PlQZzOETiKiI=;
+        b=jSVJD0Z1BCLoc2iLc7vPWBi/94ndVCU2WtgORW6orBLx+I3BW90l/IL7gt9HWA63iV
+         y4yGrQSKwHchJ7ECskdkPdOhoB9fYXehVtMMVsO10DzcHExAj/97+EyhZ2CJ/CgSoGHQ
+         n8pC3/QdY0FO/N+j4JojRL7LGTzMPS9903d7SJd7p++7+Hb6yVbU13bhcCMHM1GScuZe
+         Z/9402nHWnCyYikImypCRcIVo1XYrvJvI1B5QdlgLJyLSYR99AZCZwFAZt7mvzs+Pci+
+         wGRAI7MuHN0kL+CsHU5rjIcwjvlGt742ynQXJTOUdecjDrr2AaWIT6rLIQB/0Tm5hV6b
+         ZVyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723101536; x=1723706336;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tpfTqck61BGRbHI1Fw35d7IcXYkb1l4PlQZzOETiKiI=;
+        b=Sa1dlVA6f/twaWJv+zyaEbmSzElUF0Xkm8hOQZo89Xb6ZrOVv+/8daYTQHzBmITTZf
+         2nLs+6lvPv1QM0xYeZOhrxr2eFCNMQJhgguV+tpNK5Xbkx7nSaauCz6GB9lGMnNUHq2V
+         UQ3QoE3UTCmcxIA43R2SVYdmBoT4ip9yRx9Zr6oomh5zbgT2HK512wvqSo7a2gGFwJF9
+         PHwoXXX/rQmgyS1TwCWbG9osv8zYjpO7c+QQ19tr5lAPZLSdcNYAvYR6UbSaidnGgudJ
+         ZuNg75Zng/AzR+ezBffeOpMU/x0AxUdrpRz42vaqgYCAWdhLngu8Zx0Y+/iHJhOO4ssv
+         uuGQ==
+X-Gm-Message-State: AOJu0YwMDh0aptAq931Q+P1TCYXaFeQG+vu8zdRQ8U8aRXOezP3bf3RI
+	tPedq8PvTx6gwIEyKJaWHXQrdu7A4M5EbYEyb9lR5D8Ng1P3/qt4NNiZAkVOV0M=
+X-Google-Smtp-Source: AGHT+IEUsmzG7aAGK8BFT1xvxz1HGxw5dkKdO58vFHbRRQ1ZiuhGafVQcf8akV4ZJaVgKL/qH15ndw==
+X-Received: by 2002:a5d:4490:0:b0:368:74a8:6c34 with SMTP id ffacd0b85a97d-36d27503a4emr608230f8f.36.1723101536141;
+        Thu, 08 Aug 2024 00:18:56 -0700 (PDT)
+Received: from [192.168.68.116] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36d2718d7ccsm915909f8f.51.2024.08.08.00.18.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 00:18:55 -0700 (PDT)
+Message-ID: <aef4aad3-ea26-4ad9-ac86-f0906a0524c3@linaro.org>
+Date: Thu, 8 Aug 2024 08:18:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,114 +74,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/8] mmc: sdhci-of-dwcmshc: factor out code for
- th1520_init()
-To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
- conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com,
- jszhang@kernel.org, krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
- chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
- tingzhu.wang@sophgo.com
-Cc: Chen Wang <unicorn_wang@outlook.com>, Drew Fustini <drew@pdp7.com>
-References: <cover.1722847198.git.unicorn_wang@outlook.com>
- <23c6a81052a6dd3660d60348731229d60a209b32.1722847198.git.unicorn_wang@outlook.com>
+Subject: Re: linux-next: Fixes tag needs some work in the nvmem tree
+To: Michal Simek <michal.simek@amd.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240808083050.6ac578f9@canb.auug.org.au>
+ <e8688839-7686-47e9-a497-31b57abd46e2@amd.com>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <23c6a81052a6dd3660d60348731229d60a209b32.1722847198.git.unicorn_wang@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <e8688839-7686-47e9-a497-31b57abd46e2@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 5/08/24 12:17, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
-> 
-> Different socs have initialization operations in
-> the probe process, which are summarized as functions.
-> 
-> This patch first factor out init function for th1520.
-> 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> Reviewed-by: Drew Fustini <drew@pdp7.com>
-> Tested-by: Drew Fustini <drew@pdp7.com> # TH1520
-> Tested-by: Inochi Amaoto <inochiama@outlook.com> # Duo and Huashan Pi
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-> ---
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 51 +++++++++++++++++------------
->  1 file changed, 30 insertions(+), 21 deletions(-)
+On 08/08/2024 07:00, Michal Simek wrote:
+> Hi Stephen,
 > 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index a002636d51fd..b272ec2ab232 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -830,6 +830,35 @@ static void th1520_sdhci_reset(struct sdhci_host *host, u8 mask)
->  	}
->  }
->  
-> +static int th1520_init(struct device *dev,
-> +		       struct sdhci_host *host,
-> +		       struct dwcmshc_priv *dwc_priv)
-> +{
-> +	dwc_priv->delay_line = PHY_SDCLKDL_DC_DEFAULT;
-> +
-> +	if (device_property_read_bool(dev, "mmc-ddr-1_8v") ||
-> +	    device_property_read_bool(dev, "mmc-hs200-1_8v") ||
-> +	    device_property_read_bool(dev, "mmc-hs400-1_8v"))
-> +		dwc_priv->flags |= FLAG_IO_FIXED_1V8;
-> +	else
-> +		dwc_priv->flags &= ~FLAG_IO_FIXED_1V8;
-> +
-> +	/*
-> +	 * start_signal_voltage_switch() will try 3.3V first
-> +	 * then 1.8V. Use SDHCI_SIGNALING_180 rather than
-> +	 * SDHCI_SIGNALING_330 to avoid setting voltage to 3.3V
-> +	 * in sdhci_start_signal_voltage_switch().
-> +	 */
-> +	if (dwc_priv->flags & FLAG_IO_FIXED_1V8) {
-> +		host->flags &= ~SDHCI_SIGNALING_330;
-> +		host->flags |=  SDHCI_SIGNALING_180;
-> +	}
-> +
-> +	sdhci_enable_v4_mode(host);
-> +
-> +	return 0;
-> +}
-> +
->  static void cv18xx_sdhci_reset(struct sdhci_host *host, u8 mask)
->  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -1231,27 +1260,7 @@ static int dwcmshc_probe(struct platform_device *pdev)
->  	}
->  
->  	if (pltfm_data == &sdhci_dwcmshc_th1520_pdata) {
-> -		priv->delay_line = PHY_SDCLKDL_DC_DEFAULT;
-> -
-> -		if (device_property_read_bool(dev, "mmc-ddr-1_8v") ||
-> -		    device_property_read_bool(dev, "mmc-hs200-1_8v") ||
-> -		    device_property_read_bool(dev, "mmc-hs400-1_8v"))
-> -			priv->flags |= FLAG_IO_FIXED_1V8;
-> -		else
-> -			priv->flags &= ~FLAG_IO_FIXED_1V8;
-> -
-> -		/*
-> -		 * start_signal_voltage_switch() will try 3.3V first
-> -		 * then 1.8V. Use SDHCI_SIGNALING_180 rather than
-> -		 * SDHCI_SIGNALING_330 to avoid setting voltage to 3.3V
-> -		 * in sdhci_start_signal_voltage_switch().
-> -		 */
-> -		if (priv->flags & FLAG_IO_FIXED_1V8) {
-> -			host->flags &= ~SDHCI_SIGNALING_330;
-> -			host->flags |=  SDHCI_SIGNALING_180;
-> -		}
-> -
-> -		sdhci_enable_v4_mode(host);
-> +		th1520_init(dev, host, priv);
->  	}
->  
->  #ifdef CONFIG_ACPI
+> On 8/8/24 00:30, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> In commit
+>>
+>>    c258adca4fb4 ("dt-bindings: nvmem: Use soc-nvmem node name instead 
+>> of nvmem")
+>>
+>> Fixes tag
+>>
+>>    Fixes: a0cfd5e99782 ("dt-bindings: nvmem: Convert 
+>> xlnx,zynqmp-nvmem.txt to yaml")
+>>
+>> has these problem(s):
+>>
+>>    - Target SHA1 does not exist
+>>
+>> Maybe you meant
+>>
+>> Fixes: c7f99cd8fb6b ("dt-bindings: nvmem: Convert 
+>> xlnx,zynqmp-nvmem.txt to yaml")
+> 
+> thanks for reporting. You are right and I have no idea where 
+> a0cfd5e99782 is coming from because I even don't have this sha1 in my tree.
+> 
+> Anyway that's my patch and issue on my side and I am sorry for it.
+> 
+> Srinivas: What do you want me to do? Send updated one or are you able to 
+> update the patch itself? Please let me know what you want me to do.
 
+Please send me a new version with fix.
+
+--srini
+> 
+> Thanks,
+> Michal
 
