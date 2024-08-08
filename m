@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-280066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952CB94C552
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:33:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B8094C555
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5AC21C222E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:33:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7A6E1C21836
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FF4154C18;
-	Thu,  8 Aug 2024 19:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34F815746E;
+	Thu,  8 Aug 2024 19:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R6aCJgv1"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mTGfAEkK"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E28433AD;
-	Thu,  8 Aug 2024 19:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6886F13E032;
+	Thu,  8 Aug 2024 19:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723145573; cv=none; b=Pw4a7wC9lYbfaRhW5BL+AI79g7oIwnZpyXyWppyRvNn7hTsWJGGezxjAMawIe5UB9X4jCjVwKeS/YAUBpgkNO5zYzUUmTe6oTDIu529UYmDm5YNgJRsUDFsOKXpB1ToJ1BRPhRt/PTpojHyB7o5R8ei2BcLuRZKzdqVIN8vRIXc=
+	t=1723145574; cv=none; b=Oo2q6DSEbwR9PZ1AxevpTsHUkHq7YfP4jW0ThScpIujvsBxBj1/fHH+seSyOFB0EXgC8WJZ4zCB5E4Kh1wOSzOBlqE5pfGmXE5XwN78fr9VUnb3mCyOnGAxAKjIlKb6Pv+zGFJFljTnnqEAHWkEdhVUhhIxGnQYhKA7dQm98hYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723145573; c=relaxed/simple;
-	bh=M8Vdlx5v0f5GYQrlo4Op0nn8DVxOwbbRblzNGEktKEI=;
+	s=arc-20240116; t=1723145574; c=relaxed/simple;
+	bh=7pLKnvHMK8oM3IFZf3l13sipR+dirpfsjlql8/Wn4yY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TyLVhCCgiBawtH6n1jb0Pty+0TSV0XF7NJ/59hU28RK7U5+2bN+OsUDyRljro/KcjyozFW6CbAQ+nZgmgXeIp19q7BEQnXX64bgoZQ1jvUjDNblcW93/lchjeKHw0sUZRCzoaDPsJu4G8pX9MYOVx0yxYkHs3sWA10PWRegTQVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R6aCJgv1; arc=none smtp.client-ip=198.175.65.14
+	 MIME-Version; b=WO12u6abuBHRwEoyIcKVf8juihKI1/Pse3lj/kbNY9AS4s+79IXQWn4eA9R//VJ3CxG42joQ5pM8RHU9845Zdnm9Bo14FaoRk452Ppyj8aZtDK/tTAPzJ5YZXZTZKjMZnGlD/ffBslpekXXHTZoY3u916a8jp+wjFF4r+RkcS6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mTGfAEkK; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723145571; x=1754681571;
+  t=1723145574; x=1754681574;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=M8Vdlx5v0f5GYQrlo4Op0nn8DVxOwbbRblzNGEktKEI=;
-  b=R6aCJgv1KnPZH5d3X/DZGR2svFqd0ZQdiOuByJAhSt4ORrIef1hHU0sS
-   F/qlZySEEfebR6O5x3SC1iBy733iEsizUfTAbcoh78ByBp9ucSiUxOp8m
-   IeNaX31xKTEGI86wGwiF/o4nnrXKXwaxcYrC7prb6LX1R8aHcoIIFmvfV
-   Q+64vGF2QZ7/ARn+sHl9HnR2kx7mEz1b2RUHaiXcBsZ0YIgo9AdodYHbs
-   mOdoLTehO93VSI64Qgj65qLLwdz04yDHoNLCuHXv6C2Nn3Ir/XKl8W7Lf
-   ZYNYDKW8nErSwcmgecqXB9UEvqd3G0FRnKSJo5JG0RiB22w9retCwjLhW
-   w==;
-X-CSE-ConnectionGUID: jflJORPWR6urotAVy1hO8g==
-X-CSE-MsgGUID: KUYr0sgJSeKn4Pmw2whKLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25091691"
+  bh=7pLKnvHMK8oM3IFZf3l13sipR+dirpfsjlql8/Wn4yY=;
+  b=mTGfAEkKfLvfN5O+39Vu2iRXqFaw6s7bXwQOSfMobzN278vOZId+bRfJ
+   eRLTYVMeOAkzKXYu64H7HKYIyzerqrs/aJpELWFYxvaNZekzYMAk39tZa
+   uLS+xOpWWe6qlkhdpxdN0yPp8FZSoPFsN54s0eAv779n67ssL9rE6Ffj/
+   WkyBHea6gJjH2QglREq34xkO+6MJrimSqvzCzAqLriwQW8R+UDs1Lhf5/
+   vnlFpvRnSb4qzmPlk+W9WSoRrpq2Gyn2hqUoR3l7kpLWXtuGiuVim/AgR
+   6h95azCa9UD3HKrXBBf2o75WIhqmfcnkHXYWn8WG5nSTwkgcp+6zPDljT
+   Q==;
+X-CSE-ConnectionGUID: 2AVDn2nCR8m0d1zRkqd9uA==
+X-CSE-MsgGUID: MQwiHj5NQgarAptoiWNdSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25091695"
 X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="25091691"
+   d="scan'208";a="25091695"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
   by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 12:32:51 -0700
-X-CSE-ConnectionGUID: C5hUPoGETKeTrk2+DrZrLw==
-X-CSE-MsgGUID: jjja2Mt/QOqwnkbycOdGzA==
+X-CSE-ConnectionGUID: 0P5NfmMhQOy42S/V4Ee93w==
+X-CSE-MsgGUID: 92jxCo34S6e1OcKVzLO5NQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="57402577"
+   d="scan'208";a="57402581"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa010.fm.intel.com with ESMTP; 08 Aug 2024 12:32:50 -0700
+  by fmviesa010.fm.intel.com with ESMTP; 08 Aug 2024 12:32:51 -0700
 From: kan.liang@linux.intel.com
 To: acme@kernel.org,
 	namhyung@kernel.org,
@@ -69,9 +69,9 @@ Cc: adrian.hunter@intel.com,
 	ak@linux.intel.com,
 	eranian@google.com,
 	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V2 1/9] perf report: Fix --total-cycles --stdio output error
-Date: Thu,  8 Aug 2024 12:33:16 -0700
-Message-Id: <20240808193324.2027665-2-kan.liang@linux.intel.com>
+Subject: [PATCH V2 2/9] perf report: Remove the first overflow check for branch counters
+Date: Thu,  8 Aug 2024 12:33:17 -0700
+Message-Id: <20240808193324.2027665-3-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20240808193324.2027665-1-kan.liang@linux.intel.com>
 References: <20240808193324.2027665-1-kan.liang@linux.intel.com>
@@ -85,96 +85,38 @@ Content-Transfer-Encoding: 8bit
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-The --total-cycles may output wrong information with the --stdio.
+A false overflow warning is triggered if a sample doesn't have any LBRs
+recorded and the branch counters feature is enabled.
 
-For example,
-  perf record -e "{cycles,instructions}",cache-misses -b sleep 1
-  perf report --total-cycles --stdio
+The current code does OVERFLOW_CHECK_u64() at the very beginning when
+reading the information of branch counters. It assumes that there is at
+least one LBR in the PEBS record. But it is a valid case that 0 LBR is
+recorded especially in a high context switch.
 
-The total cycles output of {cycles,instructions} and cache-misses are
-almost the same.
+Remove the OVERFLOW_CHECK_u64(). The later OVERFLOW_CHECK() should be
+good enough to check the overflow when reading the information of the
+branch counters.
 
- # Samples: 938  of events 'anon group { cycles, instructions }'
- # Event count (approx.): 938
- #
- # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles
- # ...............  ..............  ...........  ..........
-  ..................................................>
- #
-           11.19%            2.6K        0.10%          21
-                          [perf_iterate_ctx+48 -> >
-            5.79%            1.4K        0.45%          97
-            [__intel_pmu_enable_all.constprop.0+80 -> __intel_>
-            5.11%            1.2K        0.33%          71
-                             [native_write_msr+0 ->>
-
- # Samples: 293  of event 'cache-misses'
- # Event count (approx.): 293
- #
- # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles
-                                                  [>
- # ...............  ..............  ...........  ..........
-   ..................................................>
- #
-           11.19%            2.6K        0.13%          21
-                          [perf_iterate_ctx+48 -> >
-            5.79%            1.4K        0.59%          97
-[__intel_pmu_enable_all.constprop.0+80 -> __intel_>
-            5.11%            1.2K        0.43%          71
-                             [native_write_msr+0 ->>
-
-With the symbol_conf.event_group, the perf report should only report the
-block information of the leader event in a group.
-However, the current implementation retrieves the next event's block
-information, rather than the next group leader's block information.
-
-Make sure the index is updated even if the event is skipped.
-
-With the patch,
-
- # Samples: 293  of event 'cache-misses'
- # Event count (approx.): 293
- #
- # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles
-                                                  [>
- # ...............  ..............  ...........  ..........
-   ..................................................>
- #
-           37.98%            9.0K        4.05%         299
-   [perf_event_addr_filters_exec+0 -> perf_event_a>
-           11.19%            2.6K        0.28%          21
-                          [perf_iterate_ctx+48 -> >
-            5.79%            1.4K        1.32%          97
-[__intel_pmu_enable_all.constprop.0+80 -> __intel_>
-
-Fixes: 6f7164fa231a ("perf report: Sort by sampled cycles percent per block for stdio")
+Fixes: 9fbb4b02302b ("perf tools: Add branch counter knob")
 Acked-by: Namhyung Kim <namhyung@kernel.org>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- tools/perf/builtin-report.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/util/evsel.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 930052961c1a..312396b52468 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -565,6 +565,7 @@ static int evlist__tty_browse_hists(struct evlist *evlist, struct report *rep, c
- 		struct hists *hists = evsel__hists(pos);
- 		const char *evname = evsel__name(pos);
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index d607056b73c9..f22f402d54cc 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2884,8 +2884,6 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
+ 		array = (void *)array + sz;
  
-+		i++;
- 		if (symbol_conf.event_group && !evsel__is_group_leader(pos))
- 			continue;
+ 		if (evsel__has_branch_counters(evsel)) {
+-			OVERFLOW_CHECK_u64(array);
+-
+ 			data->branch_stack_cntr = (u64 *)array;
+ 			sz = data->branch_stack->nr * sizeof(u64);
  
-@@ -574,7 +575,7 @@ static int evlist__tty_browse_hists(struct evlist *evlist, struct report *rep, c
- 		hists__fprintf_nr_sample_events(hists, rep, evname, stdout);
- 
- 		if (rep->total_cycles_mode) {
--			report__browse_block_hists(&rep->block_reports[i++].hist,
-+			report__browse_block_hists(&rep->block_reports[i - 1].hist,
- 						   rep->min_percent, pos, NULL);
- 			continue;
- 		}
 -- 
 2.38.1
 
