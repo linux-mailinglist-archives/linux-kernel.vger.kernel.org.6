@@ -1,144 +1,195 @@
-Return-Path: <linux-kernel+bounces-278855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 821EC94B5B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:58:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB8294B5B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14C02B24130
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:58:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A069F1C21441
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A4F824AF;
-	Thu,  8 Aug 2024 03:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239CA13B78F;
+	Thu,  8 Aug 2024 03:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TlGAPmfU"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="e0SpYyyc"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB815FB9C;
-	Thu,  8 Aug 2024 03:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EFB7D3F1;
+	Thu,  8 Aug 2024 03:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723089519; cv=none; b=SyleEVp6rdqSmOJhPEXfFFDe49wZmzokE0Q6KYC0HL8gxaIpK1tiNt/gKzkY+1+X3On3LrNYpMGpndbkumDJ7ZuPah0PhbFD/g6fygNNIvsV8vts6arcf7WYplKog0BfVEIFmcS5/1xaWkkowes4XzFMQYNH6HPNjRMkUAVCO38=
+	t=1723089522; cv=none; b=W3WEIg/zVoZJwjUPTXxjnh/Fmt+IWZoWKh00BMcbOeOMM0+3KbGyIQdkLjqDnk0Ob6XKoPlnBH3yA6NLRHtF3eM3SzfphEB12pQyZn6V39zzeqzZ6nIE7XU8tbyLaQBKGlY0Vff2dUWWzMXWoyZm75OVSeYmpWld7QAxGkc2rFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723089519; c=relaxed/simple;
-	bh=Ko4WY2u2LKJaZw4KMHOzOZ0DLZctoeMfEWI4iTxs8Xc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=emojo+MHl80ciPCfWVDjWcmtIoOMoWpbwO2PSvhOnSpPYBR+xeBeGkDSnBkO1QsRl8vMLu39e+UMUD65f+2lf/PiP1CmkjEx9d93UonZisUjicVcg6sc6TXmhLdr2OHr6WBE39YCO7p7yfODPSn4tihcu44G53fCcxI4vBsAnmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TlGAPmfU; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dff17fd97b3so503768276.2;
-        Wed, 07 Aug 2024 20:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723089517; x=1723694317; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b6H+J7gyW248YbZemlc+1uERhUVoaYKarFsZhFfXjhg=;
-        b=TlGAPmfUvKiQ+sClgwv1TrxO8Jv9O4DTTal4lbn1lXN1mRsPClqa249FMygZSC/s9c
-         byCQzoQ9tzcpfMK3I7h9kbtXyBUYa5X4K6SvWN6v8YqjeW7pgvs+xC2jP2rm3Sozy1Kw
-         w7moQpkUXYn92bebc/gLyffSToztZzUv2C8Oor7kn5xmLVmow0kQTV6nH0danBSISifG
-         VCd7+cVW94ppoxUiWUGr8JO5p5mYgXb6eP1tWH7JGbj4Whh4Z334zQ0wTLM/0AZdw4Sy
-         q0Pfl711yDPImm/PPLoaCD0sfEMIAB18mpbWgV1cdKtps4RiazD64sO+DkWp8IhMiN95
-         zsPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723089517; x=1723694317;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b6H+J7gyW248YbZemlc+1uERhUVoaYKarFsZhFfXjhg=;
-        b=onRPBBxhZLNVRHDg3oAyJJNfc7wbZ7LlNOZg/DCIdhkTe9G5C3z1Y2j85ga9u3Surx
-         DxWc5MVOb0obpd1buOvZXeA330U4mDOebNXDMhgu3kSUbNHI7YK0QnMJ7UXTzV3PQUKC
-         PL+9kkCPl/Ttdo65xjbFn2XY6ZHJzdsVhhOPLi1BfBxjvbxm8ZZ9iXYTvj5plLMJBOSm
-         C+GJLXoh6SuPbjaEBvMiz5q/3ImsudH/flf14PnBhjFdldIuEJpF1NU6gEPFmNV56hh4
-         KFFMg/RFDWFug7mSmXW/7M9DYz89Xf2+P6iIZ+2hUMwbyH8hprpbXfeDmSr78HnwqYiK
-         2RvA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7V4HFSIK2odxF3g0cIPkZDyswjEB7fkitOrymmgeESIO7UeESs83rfBjSpoaOpOoWoSEmfCSypPkMTPn/PGd4qmakS0/CtG735Uc6/f/VBFSl28uYLlogMS8eOcoOnTFWe5bOUCapiEK3z5Ge1Q==
-X-Gm-Message-State: AOJu0YzuRw3zbCS+AkcDsCytDL3SqEiB4s0YbtTp5r0aM/h8LfpnpXu/
-	rniAXnWNweHuPEFFAQAj3yIUPKFwn5RTy6xiZ3i1RR99SGZnK4cnTSvuDYPXIVM1hp9Eq7QGeeR
-	/rlkT9633iXbe7zTWbUz8r8cWA8Y=
-X-Google-Smtp-Source: AGHT+IFtX/TH+DhR5ZlVXkh35kFjDykqjTAVEcs0mIVtd1h8WlOvpjmXonMige64j7m6yUfqbXVLw/0q23IYe7UEKuo=
-X-Received: by 2002:a05:6902:2b0c:b0:e0b:f0cf:5ef2 with SMTP id
- 3f1490d57ef6-e0e9dbc2040mr874481276.47.1723089516728; Wed, 07 Aug 2024
- 20:58:36 -0700 (PDT)
+	s=arc-20240116; t=1723089522; c=relaxed/simple;
+	bh=vJY59zBCJw3KDsmjm4CdnwtPss4yedSaqTtaW4O6nvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Mhz2PQd68yUIJvkIWnufLOdpFqMn+i4CHMmH+uqezYukK6TZPxEarr2Lo7qQVCffdod31GeznPwh9ymSJIYoAQzMQTF0ZZ4o7u/qNXQ0DSyGqQX5l6rr69FadM8YvUYUZTBhfhlnlKXJKz7v2meeVzXu+rX/wbNG4QmQifGCUCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=e0SpYyyc; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723089517;
+	bh=wGIGZ80trm6iOZCYJunvn40iI28sdFGMuWXzI4QjzJ0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=e0SpYyycTIaSYQLTxiD5RVxOsdEq/UWlQmn3t0GLvvwcWx1LqRi3gWvAjvCSPWC79
+	 Dx+K/4p6yHvnWWlUWROcqtdnGIgOVBpMHQpQvNAi9/DUoOObzhMdkHbreqN6HNtpoq
+	 Oa0VFvX9iFatoUr1QyfR4i1mh3U+/dSBmS4IN7ikyO3jbJBA6vlhs0afbBg3N9QNkV
+	 lAKuILMSuDYp/vT+xRznMxE/SrMJ5kxbPECyLi7SeJ/xHpczG5YDpvxFnsr1+A92zK
+	 K8KtT+RDi6fmhUVJtCAUBQqRrIls1R2BpLShzuGfzfensJgJv+3V71YCuSJXlbDd2o
+	 awcQulz4mP47A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WfYDs2HN9z4wc3;
+	Thu,  8 Aug 2024 13:58:37 +1000 (AEST)
+Date: Thu, 8 Aug 2024 13:58:36 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@de.ibm.com>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the s390 tree
+Message-ID: <20240808135836.740effac@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807153843.3231451-1-howardchu95@gmail.com>
- <20240807153843.3231451-2-howardchu95@gmail.com> <ZrQBbMiIt1NCvxbY@google.com>
-In-Reply-To: <ZrQBbMiIt1NCvxbY@google.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Thu, 8 Aug 2024 11:58:26 +0800
-Message-ID: <CAH0uvojQORE2WJziQ4Ru8vsZzr6OLsnn3HOVRkWHW4VFzpKkEg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/9] perf evsel: Set BPF output to system-wide
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: irogers@google.com, acme@kernel.org, adrian.hunter@intel.com, 
-	jolsa@kernel.org, kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/OJOy.6CHNQZrdZKVIj_1pSu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/OJOy.6CHNQZrdZKVIj_1pSu
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi all,
 
-The event does open, but bpf_perf_event_output() in BPF will return
--95(-EOPNOTSUPP), so no output. I think this EOPNOTSUPP is not in
-bpf_trace.c's __bpf_perf_event_output(), but in perf_event's
-perf_event_output() called by BPF.
+After merging the s390 tree, today's linux-next build (s390 defconfig)
+failed like this:
 
-          <idle>-0       [001] d..4. 154921.079230: bpf_trace_printk: err -=
-95
+In file included from include/linux/percpu.h:5,
+                 from include/linux/percpu_counter.h:14,
+                 from include/linux/mm_types.h:21,
+                 from include/linux/ptdump.h:6,
+                 from arch/s390/mm/dump_pagetables.c:3:
+arch/s390/mm/dump_pagetables.c: In function 'add_marker':
+include/linux/slab.h:848:61: error: too many arguments to function 'kvreall=
+oc_noprof'
+  848 | #define kvrealloc(...)                          alloc_hooks(kvreall=
+oc_noprof(__VA_ARGS__))
+      |                                                             ^~~~~~~=
+~~~~~~~~~
+include/linux/alloc_tag.h:206:16: note: in definition of macro 'alloc_hooks=
+_tag'
+  206 |         typeof(_do_alloc) _res =3D _do_alloc;                      =
+       \
+      |                ^~~~~~~~~
+include/linux/slab.h:848:49: note: in expansion of macro 'alloc_hooks'
+  848 | #define kvrealloc(...)                          alloc_hooks(kvreall=
+oc_noprof(__VA_ARGS__))
+      |                                                 ^~~~~~~~~~~
+arch/s390/mm/dump_pagetables.c:259:27: note: in expansion of macro 'kvreall=
+oc'
+  259 |                 markers =3D kvrealloc(markers, oldsize, newsize, GF=
+P_KERNEL);
+      |                           ^~~~~~~~~
+In file included from include/linux/fs.h:45,
+                 from include/linux/seq_file.h:11,
+                 from arch/s390/mm/dump_pagetables.c:4:
+include/linux/slab.h:846:7: note: declared here
+  846 | void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+      |       ^~~~~~~~~~~~~~~~
+include/linux/slab.h:848:61: error: too many arguments to function 'kvreall=
+oc_noprof'
+  848 | #define kvrealloc(...)                          alloc_hooks(kvreall=
+oc_noprof(__VA_ARGS__))
+      |                                                             ^~~~~~~=
+~~~~~~~~~
+include/linux/alloc_tag.h:206:34: note: in definition of macro 'alloc_hooks=
+_tag'
+  206 |         typeof(_do_alloc) _res =3D _do_alloc;                      =
+       \
+      |                                  ^~~~~~~~~
+include/linux/slab.h:848:49: note: in expansion of macro 'alloc_hooks'
+  848 | #define kvrealloc(...)                          alloc_hooks(kvreall=
+oc_noprof(__VA_ARGS__))
+      |                                                 ^~~~~~~~~~~
+arch/s390/mm/dump_pagetables.c:259:27: note: in expansion of macro 'kvreall=
+oc'
+  259 |                 markers =3D kvrealloc(markers, oldsize, newsize, GF=
+P_KERNEL);
+      |                           ^~~~~~~~~
+include/linux/slab.h:846:7: note: declared here
+  846 | void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
+      |       ^~~~~~~~~~~~~~~~
 
-This is also a bug in perf trace -p <PID>.
+Caused by commit
 
-Thanks,
-Howard
+  d0e7915d2ad3 ("s390/mm/ptdump: Generate address marker array dynamically")
 
-On Thu, Aug 8, 2024 at 7:21=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->
-> On Wed, Aug 07, 2024 at 11:38:35PM +0800, Howard Chu wrote:
-> > pid =3D -1 for bpf-output event.
-> >
-> > This makes perf record -p <PID> --off-cpu work. Otherwise bpf-output
-> > cannot be collected.
->
-> I don't understand why it's necessary.  Why isn't it collected?
-> Is it the kernel to reject the BPF output event to open?
->
-> Thanks,
-> Namhyung
->
-> >
-> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> > ---
-> >  tools/perf/util/evsel.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> > index bc603193c477..b961467133cf 100644
-> > --- a/tools/perf/util/evsel.c
-> > +++ b/tools/perf/util/evsel.c
-> > @@ -2282,6 +2282,10 @@ static int evsel__open_cpu(struct evsel *evsel, =
-struct perf_cpu_map *cpus,
-> >
-> >                       test_attr__ready();
-> >
-> > +                     /* BPF output event can only be system-wide */
-> > +                     if (evsel__is_bpf_output(evsel))
-> > +                             pid =3D -1;
-> > +
-> >                       /* Debug message used by test scripts */
-> >                       pr_debug2_peo("sys_perf_event_open: pid %d  cpu %=
-d  group_fd %d  flags %#lx",
-> >                               pid, perf_cpu_map__cpu(cpus, idx).cpu, gr=
-oup_fd, evsel->open_flags);
-> > --
-> > 2.45.2
-> >
+interacting with commit
+
+  d4a913add37d ("mm: kvmalloc: align kvrealloc() with krealloc()")
+
+from the mm-unstable branch of the mm tree.
+
+I have applied the following merge fix patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 8 Aug 2024 13:50:39 +1000
+Subject: [PATCH] fixup for "s390/mm/ptdump: Generate address marker array d=
+ynamically"
+
+interacting with "mm: kvmalloc: align kvrealloc() with krealloc()"
+from the mm tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/s390/mm/dump_pagetables.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/s390/mm/dump_pagetables.c b/arch/s390/mm/dump_pagetables.c
+index 9e2dc42143b3..fa54f3bc0c8d 100644
+--- a/arch/s390/mm/dump_pagetables.c
++++ b/arch/s390/mm/dump_pagetables.c
+@@ -256,7 +256,7 @@ static int add_marker(unsigned long start, unsigned lon=
+g end, const char *name)
+ 	if (!oldsize)
+ 		markers =3D kvmalloc(newsize, GFP_KERNEL);
+ 	else
+-		markers =3D kvrealloc(markers, oldsize, newsize, GFP_KERNEL);
++		markers =3D kvrealloc(markers, newsize, GFP_KERNEL);
+ 	if (!markers)
+ 		goto error;
+ 	markers[markers_cnt].is_start =3D 1;
+--=20
+2.43.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/OJOy.6CHNQZrdZKVIj_1pSu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma0QmwACgkQAVBC80lX
+0GyeNwgAjGlH1excgkJqP1BVOOLHMEVQQ3N4iTO8tDtET7c2GXx9QTFSwider85+
+DbMamh+oyhkx65MSkMki59Noga+flc61khSgCjjs0Itsa9vkIprv6YmyNhHP3FCj
+4QI1t6EPr082JEKLKomvrRJu4PkgtbPbGIV232c/YP5j7+h3aYdlP+zagOgkagG9
+sX8icBH1rBi+JkoFwm5a1czCaoxcHbzUuEs4VJWQNXeNipyWR5a6vAK3zrDoEUTg
+zonBcqeoLjYtDCUq0SoOnjlmz+ZbD474wvSpzd8S3FxNbLEtYb1S/ZQNmFTqaN4x
+TlPK/DqYSiVaUsk+cjxC+ABchFtyrA==
+=GlRW
+-----END PGP SIGNATURE-----
+
+--Sig_/OJOy.6CHNQZrdZKVIj_1pSu--
 
