@@ -1,228 +1,192 @@
-Return-Path: <linux-kernel+bounces-279337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5417494BC02
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:10:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005FE94BC0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B917FB24D81
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CF51F220D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3924518B47A;
-	Thu,  8 Aug 2024 11:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B40C187872;
+	Thu,  8 Aug 2024 11:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="XVN2urqM"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KuKBFgO0"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A7E18B469
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F7510F9
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723115381; cv=none; b=hzpRF4zLcWUuqErssDPiwf4kq6TQxJLVVtLptNvAoC4WN0a4ielIiNm6LW2YdxIU1lEPRw3MXZZ5NPkkIftyFG5intqCItX1hbAboBrwNd4zxmHwixvcroaJ77W/xZV+WqtXoHzjN/sVtUl+LF36prBYyV2GP+w4U20wLDBzxEE=
+	t=1723115713; cv=none; b=c+VNyLL61ORyongYYJlAvGwRaLpFOf1C+36dmvmpkl45xp/xQ/lY/HsUS1fBoo+O5nsb3Z1DpmwL3EPlkAuODLzMkn8Bxg7PT4vcvaC/3AwYFXXBCNvt0t23nhn92VmPzShvhu4K18WAbDO8nTWXgNuSIgyVkRPePWVF8eSLMo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723115381; c=relaxed/simple;
-	bh=IqREpNz2czTLdFvatHVsNu8CiTFdhUryn9i0FvgsMqU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G8pmfpDMJ3tEfINbGHNPUHpPnJC6D6nuB3uaOxgXimrsrzwlh2qFiOHXIm5lxNhdyf/dmTJ/z9OIICitEj2TlwChki0bCAlUaAcuJNIc7jJH+w5kz+4DhUtUnLTxBn82XVyuRHXbq5kiKmTzuvIpHxT2h0f/jp1/F7sz8nU/HcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=XVN2urqM; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2cf98ba0559so665860a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 04:09:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723115379; x=1723720179; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IqREpNz2czTLdFvatHVsNu8CiTFdhUryn9i0FvgsMqU=;
-        b=XVN2urqM/vESzPVyQYcyqCw6zupfXkM4bYVK7YV7fLr913xem+S5XgMUj6ydAX3eBe
-         NlNi61YjOP+pfbFW0egIvH7Bs6120QJFXk4dyXnfHuZql+VBMX9UBFUACG0SbPrtQMh+
-         tbh7WQpOZRAAXxtzUfB38wZk+5LrjKUvJnAGo/JoTaYV3HXVRwfLEV+6bD71MZd36F7k
-         N6oKxE/WOtWE5XUdaFzWx+fLHOq4gkjlAHJbwCyt3pMGMybejdXwf1FowoUZhG8iVsrS
-         tXE612PJH3bZd7YKCU5WZwliMHIVDpSZHRBJlRfWcmn8WNdQa6a9VkizcdwI8i1tqwVU
-         Mpaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723115379; x=1723720179;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IqREpNz2czTLdFvatHVsNu8CiTFdhUryn9i0FvgsMqU=;
-        b=oDzJUSfI4By6XRAy0oOMzqSkXpOpM1D0muERWBLKVLOY5d4MpjcgoJjUkpp8sH4Vur
-         xzd6K0rSXiyDyPZQm7sS6YiNs8Jmqut3RAOvDdAhJyVKzI5C3Bp5iVpzqWRX1HVEssmp
-         B+Ze05oIEGsFHBNVnF+qnvZfJehvW3Ln+Qeco6nKIylQ0nu7l3ytH6oVWQeLUnTSgPBY
-         snnUDFJ0nuplLnoMiTB2i3Z+8l2mui7EX5W2TZI9zxwlQcBAtshJrl3qbi+QXDAUGZqO
-         SGLHTbBgbcEdSs+6lShHP2CEKIW5SjglzyKrSn8YS5TEMMN+MUPCNRU2gXspFonOZRrE
-         CC7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVq1E8sVnhyYRiHCkAdKafycFr+izeEjFxl0w0jZUo0MGrR/r7AHq1M1l0a9wD/iuPncdVC+FCwBT/d6sU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx/hZBnVxB2zH63oFAZoMX1+QiHcz+j6gYrf5c5VS9G80o3ZYN
-	3tkifbesW+hW5PMmYBkW+wZY2MQ/3/fzLZqfDiWoG3pBBM0A7QZdoViSPMfPTu4ChxWFgNR9A9O
-	lno15D85vg55CzxRKnzJDEiO36J6TjgIjPDcv
-X-Google-Smtp-Source: AGHT+IF1qBmPDPJg8OZVzV3ty1jXdjjg3Q9zRacN4Dxr2BvK/Rx+IyX9zIk1QFp239xb0EcMSZr9bHA2Raf4mQJz6hY=
-X-Received: by 2002:a17:90a:ce02:b0:2c8:946f:5fe7 with SMTP id
- 98e67ed59e1d1-2d1c33b63c1mr1551127a91.17.1723115378810; Thu, 08 Aug 2024
- 04:09:38 -0700 (PDT)
+	s=arc-20240116; t=1723115713; c=relaxed/simple;
+	bh=VlLbHnoBUvgzo0/4b+vT8l9eZEtlypj9cjmzCtOIy6w=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=m1lEJHy0yfe8yJ42cOCTXUsR3TlMTRRcfATEBLJcZx+W/3+OW7X8Zpn07eolvb7CpEE8N3kQBT4COrMM5kpLkhQL87acs2mY0SBq0pXpYL2CLFuMRf7Jx6CtAa26MoDQeCys6jdxfAwONQOHjYOO+Fp8g0oT0gQLI11FviSUHGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KuKBFgO0; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723115406; bh=COkWnKsPsilMoDYNZxGcD82fAVOaCJ/rNNrMju4jH9s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=KuKBFgO0lz09+ZNKoFz1xMinQgLsS8qLTjdz1xUfcXK7TzN/JpTCurqrE1ebE5w/R
+	 gKLdKdM1nEbgAJms1VLZAfbbbjRPGVQcRWO26ffdGkjfggzrnT6tN7hJF3g/Cj/CYF
+	 4bQSWQYd6+ErjxQd7GqZXbegnQZgJt/loZVP84Ok=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 2821B01A; Thu, 08 Aug 2024 19:10:02 +0800
+X-QQ-mid: xmsmtpt1723115402tlik6e18k
+Message-ID: <tencent_1E27F746D652D8C64C49BE6EDBAEEF4CA506@qq.com>
+X-QQ-XMAILINFO: MXHIEC8P0R7hR8hvDqbuOHIfCJ9VhHV3iFRHCsmtFCeSb5i5zuCVOjgr2nO2jN
+	 RgGI3Hy3Y+XTm6AgfuUjkziyCwUnKxq0MB3/rDek+GyjxTeDob/EFXLvtAchKqeqJYsc94ENoG02
+	 aEmQV12oRvKC9JHK4hEhuRv3c1AmXrstuuF6N/7JviudyzC/Bu6zrntPVfYU/ET3JM4r31bIu2nl
+	 XyNjGFuF6HSQFQDpHKgy/8fqBSw899nPDE6oVqQh6NRBgrdxh3lFNDfsYQ+OEx5qYVa3XtGxMLLH
+	 Dw7miaQy7mmI65rI5wYtTW+Fpzp5iL1T7rPh7z2Sw6pw7vZFg8d8LqGMoaybD85r7Pt9T8zMUXa6
+	 rN8aO+rSwSLDRYM64jR0QIapgCdwmw89jqKvJgiACLbUW04yX52VR+pvJAub8dMRT7LDtaVUbpYP
+	 gra6lIWnCYJzVz6ePpUZa8eOt5ywOhJUfBWlDOZY+n4GkMtzhwy1Y5Bo6D04xX9SRVJA2bSm3rr8
+	 HI8PCK831jmD6IZfT4Kjzh+1f96PAUHHoJ+naZdpJecO8Y4REBnV5/sfOg7Xgf/dI408SlSddooQ
+	 0a1WFEyq5WzNJHATHM2P4X0/5JCiBbeya3FaZcQzPt33a90kjdXMPP/LwOEoI2nKNfTSaRit+60F
+	 Iiy1zOFmNM+xjVGX1ejuCLT9TI0XgjKAOJSS1/aOR7ITg4NzDMKJ6yK904aqfuejP4jf5xbsmagn
+	 DOtPgaKVK6bnZ2M8ou7UyJuInZswFx1W6B5IGKDINh8bu46MB+8LY8RhDFlFdVEfwbHeSjJ6ik7M
+	 nfJmz3JjvnXzMu6zH7SwIZxhGdp/u/7jQMa90JC1MA+/X+OZnJwD1Rz9czi0IG0L4VS1lR2HzCLp
+	 7lbKoxsjmM0XDMIHenJr+WoaMC2yQdTW+bmq0js6iOav/g2CWWw8RMNsdBdFuZTg==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Date: Thu,  8 Aug 2024 19:10:02 +0800
+X-OQ-MSGID: <20240808111001.1278041-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+References: <0000000000007ec511061f00a7b2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805082106.65847-1-jasowang@redhat.com> <CACGkMEvNyB_+fHV5aAeCQhebA8aF8+9hnjkjeEzt5bgrVgqw5Q@mail.gmail.com>
- <CACycT3sz-OOKKcmH=FgD7gp_Bhi9=nwnkTn0VgRhQBxS2Dp4qw@mail.gmail.com>
- <CACGkMEs4YWr5zu0_nVCvqLSFBG9U_A_mw+7AdkMwrPo_6X-gOA@mail.gmail.com>
- <CACycT3vYF3nwZ3k5_8G=Zok9c4qRjCcGLVQ7+RfSpK=5PToMuA@mail.gmail.com>
- <CACGkMEue9RU+MMgOC0t4Yuk5wRHfTdnJeZZs38g2h+gyZv+3VQ@mail.gmail.com>
- <CACycT3sHT-izwAKzxAWPbqGFgyf82WxkHHOrp1SjWa+HE01mCg@mail.gmail.com>
- <CACGkMEvsMQS-5Oy7rTyA5a2u1xYRf0beBHbZ16geHJCZTE0jLw@mail.gmail.com>
- <CACycT3sfUhz1PjK3Q=pA7GEm7=fsL0XT16ccwCQ2m2LF+TTD7Q@mail.gmail.com> <CACGkMEu+RrD2JdO=F9BySwhVY5uPr6kKWWdkcdG4XX6GN5b=Bg@mail.gmail.com>
-In-Reply-To: <CACGkMEu+RrD2JdO=F9BySwhVY5uPr6kKWWdkcdG4XX6GN5b=Bg@mail.gmail.com>
-From: Yongji Xie <xieyongji@bytedance.com>
-Date: Thu, 8 Aug 2024 19:09:26 +0800
-Message-ID: <CACycT3u-v+XkWzSPq39Mk9sdQftuNZvZqZyzDvhTecH3uyuk8w@mail.gmail.com>
-Subject: Re: Re: [PATCH] vduse: avoid using __GFP_NOFAIL
-To: Jason Wang <jasowang@redhat.com>
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Eugenio Perez Martin <eperezma@redhat.com>, virtualization@lists.linux.dev, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 21cnbao@gmail.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 8, 2024 at 1:50=E2=80=AFPM Jason Wang <jasowang@redhat.com> wro=
-te:
->
-> On Wed, Aug 7, 2024 at 2:54=E2=80=AFPM Yongji Xie <xieyongji@bytedance.co=
-m> wrote:
-> >
-> > On Wed, Aug 7, 2024 at 12:38=E2=80=AFPM Jason Wang <jasowang@redhat.com=
-> wrote:
-> > >
-> > > On Wed, Aug 7, 2024 at 11:13=E2=80=AFAM Yongji Xie <xieyongji@bytedan=
-ce.com> wrote:
-> > > >
-> > > > On Wed, Aug 7, 2024 at 10:39=E2=80=AFAM Jason Wang <jasowang@redhat=
-.com> wrote:
-> > > > >
-> > > > > On Tue, Aug 6, 2024 at 11:10=E2=80=AFAM Yongji Xie <xieyongji@byt=
-edance.com> wrote:
-> > > > > >
-> > > > > > On Tue, Aug 6, 2024 at 10:28=E2=80=AFAM Jason Wang <jasowang@re=
-dhat.com> wrote:
-> > > > > > >
-> > > > > > > On Mon, Aug 5, 2024 at 6:42=E2=80=AFPM Yongji Xie <xieyongji@=
-bytedance.com> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Aug 5, 2024 at 4:24=E2=80=AFPM Jason Wang <jasowang=
-@redhat.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Mon, Aug 5, 2024 at 4:21=E2=80=AFPM Jason Wang <jasowa=
-ng@redhat.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > Barry said [1]:
-> > > > > > > > > >
-> > > > > > > > > > """
-> > > > > > > > > > mm doesn't support non-blockable __GFP_NOFAIL allocatio=
-n. Because
-> > > > > > > > > > __GFP_NOFAIL without direct reclamation may just result=
- in a busy
-> > > > > > > > > > loop within non-sleepable contexts.
-> > > > > > > > > > ""=E2=80=9C
-> > > > > > > > > >
-> > > > > > > > > > Unfortuantely, we do that under read lock. A possible w=
-ay to fix that
-> > > > > > > > > > is to move the pages allocation out of the lock into th=
-e caller, but
-> > > > > > > > > > having to allocate a huge number of pages and auxiliary=
- page array
-> > > > > > > > > > seems to be problematic as well per Tetsuon [2]:
-> > > > > > > > > >
-> > > > > > > > > > """
-> > > > > > > > > > You should implement proper error handling instead of u=
-sing
-> > > > > > > > > > __GFP_NOFAIL if count can become large.
-> > > > > > > > > > """
-> > > > > > > > > >
-> > > > > > > >
-> > > > > > > > I think the problem is it's hard to do the error handling i=
-n
-> > > > > > > > fops->release() currently.
-> > > > > > >
-> > > > > > > vduse_dev_dereg_umem() should be the same, it's very hard to =
-allow it to fail.
-> > > > > > >
-> > > > > > > >
-> > > > > > > > So can we temporarily hold the user page refcount, and rele=
-ase it when
-> > > > > > > > vduse_dev_open()/vduse_domain_release() is executed. The ke=
-rnel page
-> > > > > > > > allocation and memcpy can be done in vduse_dev_open() which=
- allows
-> > > > > > > > some error handling.
-> > > > > > >
-> > > > > > > Just to make sure I understand this, the free is probably not=
- the big
-> > > > > > > issue but the allocation itself.
-> > > > > > >
-> > > > > >
-> > > > > > Yes, so defer the allocation might be a solution.
-> > > > >
-> > > > > Would you mind posting a patch for this?
-> > > > >
-> > > > > >
-> > > > > > > And if we do the memcpy() in open(), it seems to be a subtle =
-userspace
-> > > > > > > noticeable change? (Or I don't get how copying in vduse_dev_o=
-pen() can
-> > > > > > > help here).
-> > > > > > >
-> > > > > >
-> > > > > > Maybe we don't need to do the copy in open(). We can hold the u=
-ser
-> > > > > > page refcount until the inflight I/O is completed. That means t=
-he
-> > > > > > allocation of new kernel pages can be done in
-> > > > > > vduse_domain_map_bounce_page() and the release of old user page=
-s can
-> > > > > > be done in vduse_domain_unmap_bounce_page().
-> > > > >
-> > > > > This seems to be a subtle userspace noticeable behaviour?
-> > > > >
-> > > >
-> > > > Yes, userspace needs to ensure that it does not reuse the old user
-> > > > pages for other purposes before vduse_dev_dereg_umem() returns
-> > > > successfully. The vduse_dev_dereg_umem() will only return successfu=
-lly
-> > > > when there is no inflight I/O which means we don't need to allocate
-> > > > extra kernel pages to store data. If we can't accept this, then you=
-r
-> > > > current patch might be the most suitable.
-> > >
-> > > It might be better to not break.
-> > >
-> > > Actually during my testing, the read_lock in the do_bounce path slows
-> > > down the performance. Remove read_lock or use rcu_read_lock() to give
-> > > 20% improvement of PPS.
-> > >
-> >
-> > Looks like rcu_read_lock() should be OK here.
->
-> The tricky part is that we may still end up behaviour changes (or lose
-> some of the synchronization between kernel and bounce pages):
->
-> RCU allows the read to be executed in parallel with the writer. So
-> bouncing could be done in parallel with
-> vduse_domain_add_user_bounce_pages(), there would be a race in two
-> memcpy.
->
+debug
 
-Hmm...this is a problem. We may still need some userspace noticeable
-behaviour, e.g. only allowing reg_umem/dereg_umem when the device is
-not started.
+#syz test: upstream c0ecd6388360
 
-Thanks,
-Yongji
+diff --git a/fs/9p/fid.c b/fs/9p/fid.c
+index de009a33e0e2..a5b716b716d4 100644
+--- a/fs/9p/fid.c
++++ b/fs/9p/fid.c
+@@ -67,6 +67,7 @@ struct p9_fid *v9fs_fid_find_inode(struct inode *inode, bool want_writeable,
+ 
+ 	spin_lock(&inode->i_lock);
+ 	h = (struct hlist_head *)&inode->i_private;
++	printk("ino: %p, inode fid list is empty: %d, %s\n", inode, hlist_empty(h), __func__);
+ 	hlist_for_each_entry(fid, h, ilist) {
+ 		if (any || uid_eq(fid->uid, uid)) {
+ 			if (want_writeable && !v9fs_is_writeable(fid->mode)) {
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 348cc90bf9c5..0da8ff7f38fb 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -44,6 +44,7 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 	struct p9_fid *fid;
+ 	int omode;
+ 
++	printk("1ind: %p, %s\n", inode, __func__);
+ 	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, file);
+ 	v9ses = v9fs_inode2v9ses(inode);
+ 	if (v9fs_proto_dotl(v9ses))
+@@ -54,8 +55,10 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 	fid = file->private_data;
+ 	if (!fid) {
+ 		fid = v9fs_fid_clone(file_dentry(file));
+-		if (IS_ERR(fid))
+-			return PTR_ERR(fid);
++		if (IS_ERR(fid)) {
++			err = PTR_ERR(fid);
++			goto error;
++		}
+ 
+ 		if ((v9ses->cache & CACHE_WRITEBACK) && (omode & P9_OWRITE)) {
+ 			int writeback_omode = (omode & ~P9_OWRITE) | P9_ORDWR;
+@@ -72,7 +75,7 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 		}
+ 		if (err < 0) {
+ 			p9_fid_put(fid);
+-			return err;
++			goto error;
+ 		}
+ 		if ((file->f_flags & O_APPEND) &&
+ 			(!v9fs_proto_dotu(v9ses) && !v9fs_proto_dotl(v9ses)))
+@@ -87,8 +90,12 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 				   file->f_mode & FMODE_WRITE);
+ #endif
+ 	v9fs_fid_add_modes(fid, v9ses->flags, v9ses->cache, file->f_flags);
++	printk("2ind: %p, %s\n", inode, __func__);
+ 	v9fs_open_fid_add(inode, &fid);
+ 	return 0;
++error:
++	printk("err: %d, ind: %p, %s\n", err, inode, __func__);
++
+ }
+ 
+ /**
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index fd72fc38c8f5..29a055f2fe7b 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -738,6 +738,7 @@ v9fs_vfs_atomic_open(struct inode *dir, struct dentry *dentry,
+ 	struct inode *inode;
+ 	int p9_omode;
+ 
++	printk("1ind: %p, %s\n", inode, __func__);
+ 	if (d_in_lookup(dentry)) {
+ 		res = v9fs_vfs_lookup(dir, dentry, 0);
+ 		if (IS_ERR(res))
+@@ -781,6 +782,7 @@ v9fs_vfs_atomic_open(struct inode *dir, struct dentry *dentry,
+ #endif
+ 
+ 	v9fs_fid_add_modes(fid, v9ses->flags, v9ses->cache, file->f_flags);
++	printk("2ind: %p, %s\n", inode, __func__);
+ 	v9fs_open_fid_add(inode, &fid);
+ 
+ 	file->f_mode |= FMODE_CREATED;
+@@ -789,6 +791,7 @@ v9fs_vfs_atomic_open(struct inode *dir, struct dentry *dentry,
+ 	return err;
+ 
+ error:
++	printk("err: %d, ind: %p, %s\n", err, inode, __func__);
+ 	p9_fid_put(fid);
+ 	goto out;
+ }
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index c61b97bd13b9..3c4c744af0e8 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -194,6 +194,7 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
+ 	struct posix_acl *pacl = NULL, *dacl = NULL;
+ 	struct dentry *res = NULL;
+ 
++	printk("1ind: %p, %s\n", inode, __func__);
+ 	if (d_in_lookup(dentry)) {
+ 		res = v9fs_vfs_lookup(dir, dentry, 0);
+ 		if (IS_ERR(res))
+@@ -284,9 +285,11 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
+ 	}
+ #endif
+ 	v9fs_fid_add_modes(ofid, v9ses->flags, v9ses->cache, flags);
++	printk("2ind: %p, %s\n", inode, __func__);
+ 	v9fs_open_fid_add(inode, &ofid);
+ 	file->f_mode |= FMODE_CREATED;
+ out:
++	printk("err: %d, ind: %p, %s\n", err, inode, __func__);
+ 	p9_fid_put(dfid);
+ 	p9_fid_put(ofid);
+ 	p9_fid_put(fid);
+
 
