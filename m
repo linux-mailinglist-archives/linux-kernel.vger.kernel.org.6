@@ -1,77 +1,141 @@
-Return-Path: <linux-kernel+bounces-279530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C37C94BE8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:31:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8D594BE90
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E20FB243CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83C21F23929
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FD918E020;
-	Thu,  8 Aug 2024 13:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF0318DF7D;
+	Thu,  8 Aug 2024 13:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8CKfZTK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlXTUXBb"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5D3EADA;
-	Thu,  8 Aug 2024 13:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95899EADA;
+	Thu,  8 Aug 2024 13:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723123899; cv=none; b=pRvny1OM2mqwIBJykHY2lzUnb5A814Gd5vlY2SU4yB7Ygfbe5+95JKZv3HP9p0lqfsgHARRBDeQooenIHx7htSrnG+woOAW7NSoOrYJbcbh+ADuU0vh35SpETOJ98VNTRfbsvDVEvFUi72rzWjPCKKrYs0GiaA/zFHcGid8FU/M=
+	t=1723123948; cv=none; b=flqqGb9FdOyiMCNs0z2M+7G7h2OEmv3YnKJQec2juplixcfRzpCwTkdZAUqXCHh5dsK9vnnQyfM+R4Ieki1O/25OkbCg5k+r7MKdD/FCdYZnNa+NEFXiZbhXEU6QbodV4ry2IIro6RMVmv8DNP8Fx+16WMK4aV2suCwtvrdT05E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723123899; c=relaxed/simple;
-	bh=MTORAOFceoQ2MYt5Z2kuRm/1RLgpHkS7KNInhvKlds4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kw81+K1X58Sbgq6JES4LsUtuzETVLzg7HX72gKzfT7ZjaI5kTOjCqV2GVqa1ROIFQHl7Yi9Ed+wfcqdhQZXhX9O/DmPBstH+M8e6HoYxL4HYhkO4QAIMrXSRbehVnBhdfg8qopsRsCHcmf6PQW0UTPGgEBu7tciwl3GjmMRe3TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8CKfZTK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21A13C32782;
-	Thu,  8 Aug 2024 13:31:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723123898;
-	bh=MTORAOFceoQ2MYt5Z2kuRm/1RLgpHkS7KNInhvKlds4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=d8CKfZTKudC3lypC1fHfHnKex/7dGzvrII/w2cLL2Ly4s+94Nf5EC9qkzUC1JrfrI
-	 PnrMEDE4/suyeM3WMO5LK3nmpdUV07sjKo38gG9G1tM4ZfK7USi/tNI+gK/5bsI662
-	 4Xns3Zte8zFJJR1qOaP8VeR+Glv47+OV0cxGFucT/6TM52cgx+w7A5QpKE6Ktoh5f8
-	 wdZ7V0dZ8XTU90if6CsU1ilpcpXU59c+jwuYjBnntMYlKT1TGv9QgpHfIEpeCGLu/j
-	 ZfBrshu9cTEK7sMAfJumm7d19ZqKyEywOd1MqYB/JwKEmv5MmEvaLSXeRQH8NBiPIM
-	 LB+7U7UXMpEoQ==
-Date: Thu, 8 Aug 2024 06:31:37 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Abhinav Jain <jain.abhinav177@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com,
- javier.carrasco.cruz@gmail.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- shuah@kernel.org, skhan@linuxfoundation.org
-Subject: Re: [PATCH v4 1/2] selftests: net: Create veth pair for testing in
- networkless kernel
-Message-ID: <20240808063137.73427d0f@kernel.org>
-In-Reply-To: <20240808122847.25721-1-jain.abhinav177@gmail.com>
-References: <20240807182834.25b8df00@kernel.org>
-	<20240808122847.25721-1-jain.abhinav177@gmail.com>
+	s=arc-20240116; t=1723123948; c=relaxed/simple;
+	bh=PY69VKc0O3FGKqim7+fFbR195skWqhuZpW3Ef61ULVE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LYMGGCMQ8NKzbrFySxwXN+jM+ljTnmY6RWGAIOEidAHRLhElPhsEeQpr1HrJLyy3ji7z1CLw8NzpBX7euZHXW9PGauO3Jxeh88+gFbP0Ml3V8icajq70rVKE+yddFDh6SLjfil6IVj62FzxDtNkVkf3U7i1oyVMKNqtA8xDTYjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlXTUXBb; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc49c0aaffso8965785ad.3;
+        Thu, 08 Aug 2024 06:32:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723123946; x=1723728746; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fAKXh2R2AFOAbLJH/+A+18aqMNWogzmzZjhkD45bQP0=;
+        b=nlXTUXBb8DRVXz9UNIU6jkGNj9OYPn0qYmnNQlnO1MFLtgC/pO+dpw6MAFjUDMFF33
+         UYqdTbctsANGAc5jcagl0hN0Jg/BS+Ul5+vT5BeJtSBelDOOGdZjPxiI2nTU4PF6+Dx0
+         j5MsfjhMd2LGON8/ePzlDdqE8iilOnJ16aHUYBkNAmgpR/RK0BH4tRIWv0TVdZqX4LCj
+         XmsNiFDLfEAm3NU2fadkRDU5dAQ2Vy1npvbWj9Kho3ftonR09wCl20lXsHkj1DY2ftaf
+         +T0SgWAQ+p8aF69ZhDxt6p8sds5M+jTyXfBaReXFXwGkKsgQU5iGgv3OA0s0kfSgSIzv
+         jz2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723123946; x=1723728746;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fAKXh2R2AFOAbLJH/+A+18aqMNWogzmzZjhkD45bQP0=;
+        b=rKMUZ36WYFOEQMV4yOztbksl7mrcmHjzzPfoYFQ5o4WqK5c5v4dBBR/SGnA9nWs1bZ
+         hZuBDUuP45OUv4DMObzSDH/rnZpZlWpb7npBne2YpQRuE5B4wtYV8s5I7eY80etSZEMw
+         w0OvooJNl1AO8G2kKCEXRWKB6GAaYTdIP3/ZTgwy6E2Msu+WRvqvFVQlv+BihROTWF+Q
+         s7p9hJ56pkDGH5W1by2kO9QB9jJOVyxMea+Q39sNwpWTnjMaL4xoW1/h4zyAAuJxGg2O
+         M3Tp9WQ3AiLnc0MglFLNzPUxBVLupK0qVs810vMNXlv7Gq7DIMWIGBA3Y+jBhbnN6ply
+         yQXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWfU+7YygeGtVOZKaQIDtDn5M/3wRhlEPQUdkWTI/hO4pLLvrMtckzWmGm5liSaAj5YAzcqlsiIdRGig/WdgXwrhbdc32A/5rq3Huj8F+NTltQAiEA8SCY5JTpmFZ1FkvYBYyzVmxnZzLo5pSViw==
+X-Gm-Message-State: AOJu0YzwfQiT84Eging6FDrnytKQFXkh+CTD4Ls5yPMdQvKoaxqrTP0r
+	C9HwumDX9p9qrxf2oIqeOFCXzaurt1BpHrOxNanEkQDDaX89fx2V
+X-Google-Smtp-Source: AGHT+IG7f6HOQ4hgxFfNXUzJqxHSDJxtwa+R+2ZGiznZtFKXCUtpBKg1LDWxyfy2yRG6NPaUTvWYDw==
+X-Received: by 2002:a17:902:ce87:b0:1fd:d6d8:1355 with SMTP id d9443c01a7336-200952487afmr19714395ad.17.1723123945832;
+        Thu, 08 Aug 2024 06:32:25 -0700 (PDT)
+Received: from alveo.moma (bullfrog.anu.edu.au. [150.203.163.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f6d80csm124458395ad.119.2024.08.08.06.32.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 06:32:25 -0700 (PDT)
+From: Zixian Cai <fzczx123@gmail.com>
+To: 
+Cc: Zixian Cai <fzczx123@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Paran Lee <p4ranlee@gmail.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] perf script python: Add the ins_lat field to event handler
+Date: Thu,  8 Aug 2024 13:32:07 +0000
+Message-Id: <20240808133208.3577910-1-fzczx123@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu,  8 Aug 2024 12:28:47 +0000 Abhinav Jain wrote:
-> On Wed, 7 Aug 2024 18:28:34 -0700 Jakub Kicinski wrote:
-> > That's not the right syntax..  
-> 
-> Thanks for the feedback Jakub. I have rectified this and while at it,
-> I tested using vng on a network based kernel and found another issue in
-> veth removal logic. I have fixed that as well.
-> 
-> Please kindly check the v5 series here
+For example, when using the Alder Lake PMU memory load event, the instruction latency is stored in ins_lat, while the cache latency is stored in weight.
 
-I'll take a look, but please try to follow the guidance in our process
-doc: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
+This patch reports the ins_lat field for Python scripting.
+
+Signed-off-by: Zixian Cai <fzczx123@gmail.com>
+---
+v2) rebase on top of perf-tools-next
+
+ tools/perf/util/scripting-engines/trace-event-python.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index fb00f3ad6815..c9e8dbd6feb5 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -888,6 +888,8 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
+ 	set_sample_read_in_dict(dict_sample, sample, evsel);
+ 	pydict_set_item_string_decref(dict_sample, "weight",
+ 			PyLong_FromUnsignedLongLong(sample->weight));
++	pydict_set_item_string_decref(dict_sample, "ins_lat",
++			PyLong_FromUnsignedLongLong(sample->ins_lat));
+ 	pydict_set_item_string_decref(dict_sample, "transaction",
+ 			PyLong_FromUnsignedLongLong(sample->transaction));
+ 	set_sample_datasrc_in_dict(dict_sample, sample);
+@@ -1317,7 +1319,7 @@ static void python_export_sample_table(struct db_export *dbe,
+ 	struct tables *tables = container_of(dbe, struct tables, dbe);
+ 	PyObject *t;
+
+-	t = tuple_new(27);
++	t = tuple_new(28);
+
+ 	tuple_set_d64(t, 0, es->db_id);
+ 	tuple_set_d64(t, 1, es->evsel->db_id);
+@@ -1346,6 +1348,7 @@ static void python_export_sample_table(struct db_export *dbe,
+ 	tuple_set_s32(t, 24, es->sample->flags);
+ 	tuple_set_d64(t, 25, es->sample->id);
+ 	tuple_set_d64(t, 26, es->sample->stream_id);
++	tuple_set_s32(t, 27, es->sample->ins_lat);
+
+ 	call_object(tables->sample_handler, t, "sample_table");
+
+--
+2.25.1
+
 
