@@ -1,103 +1,143 @@
-Return-Path: <linux-kernel+bounces-279168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A007A94B9DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:41:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5882994B9DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BF4D28296A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:41:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 717431C21C0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570F4189F43;
-	Thu,  8 Aug 2024 09:40:42 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9D1189B9F;
+	Thu,  8 Aug 2024 09:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tiljeset.com header.i=@tiljeset.com header.b="oxWJLtkR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OtySI8uu"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8F5183CCB;
-	Thu,  8 Aug 2024 09:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCA7183CCB;
+	Thu,  8 Aug 2024 09:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723110041; cv=none; b=shqu06kY3vCt+paEMybUeGJqE5bg3FgFVWeNEDG3ylhpw408MHeg47bUDovAYKauGyBlJBroTl0F+xQcaPbnJLSKmTfqUgJj189nYHPIqFgYht1xGfC7y49x2vJjzpAoAJcfURchGQZA1sO4a2dpE/mTsUduVObmMntp6IC4D9c=
+	t=1723110031; cv=none; b=bQOSM5isF6nosgdInvkPpRLcHqOgHhAJ26Xx/J0A/y6/boihWcetDUM9Zhbr9MGkoQtdHuC/mOlRlTXuTOu/BvgEFatfC+9wH09sZ8hGYzOpQkAhtwyUifmwlZXvAotN7N1JlhnVNDxR0kHr34XjWcQQJyWodCCMHwYW9eL6KkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723110041; c=relaxed/simple;
-	bh=DnD+bf00OH0YLBL5a97bzqdxIHbvB01ieBaBHoYDaDs=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=pFu8wYsV8Ntca4BHtxbJm38wGLtw0BDcXW+tV2r5QTCB7D//MnfPD7J639UTi6F9LBgpVqUZb/aeRckgvSoLurJ1Lc2uCFr78T/DlFLCE+5cMVrySmJd/6dMVVw8jp2u88vVMk3P7FEplgKsZFNdn1muRgHSeIfNIuPkceu7F18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 400ec0cc556a11efa216b1d71e6e1362-20240808
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:934d2e13-3322-467b-8e92-d9d2f04e3270,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:d28ba388d435b4aa5ab101143f72f30a,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:0
-	,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:
-	NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 400ec0cc556a11efa216b1d71e6e1362-20240808
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <zhangxiangqian@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 358713568; Thu, 08 Aug 2024 17:40:30 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id F24EC16002084;
-	Thu,  8 Aug 2024 17:40:29 +0800 (CST)
-X-ns-mid: postfix-66B4928C-8721841160
-Received: from localhost.localdomain (unknown [172.25.83.26])
-	by node4.com.cn (NSMail) with ESMTPA id B59D116002084;
-	Thu,  8 Aug 2024 09:40:27 +0000 (UTC)
-From: zhangxiangqian <zhangxiangqian@kylinos.cn>
-To: oliver@neukum.org
-Cc: davem@davemloft.net,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhangxiangqian <zhangxiangqian@kylinos.cn>
-Subject: [PATCH] net: usb: cdc_ether: don't spew notifications
-Date: Thu,  8 Aug 2024 17:39:45 +0800
-Message-Id: <1723109985-11996-1-git-send-email-zhangxiangqian@kylinos.cn>
-X-Mailer: git-send-email 2.7.4
+	s=arc-20240116; t=1723110031; c=relaxed/simple;
+	bh=X+KquVa3koj2ADVtTCLhQoWxbvl7I7D0BeTiP6jqaik=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=rWepnJzeT7QX0fRXYs58RQoREW/37VydqI53q/2iu4woMaBvvFpcaBVozoyY87C/1J2JoMheoWbxbX2vJZLAgi0aLPIgodSoaBug6b0zLV8jQu6jCNYVxF21K12qsY7YTXIABbcbSbcJS3kgUolSGBm8lytpgMBkjbx1t5RVor4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tiljeset.com; spf=pass smtp.mailfrom=tiljeset.com; dkim=pass (2048-bit key) header.d=tiljeset.com header.i=@tiljeset.com header.b=oxWJLtkR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OtySI8uu; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tiljeset.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tiljeset.com
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id A13AE1151BFF;
+	Thu,  8 Aug 2024 05:40:27 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Thu, 08 Aug 2024 05:40:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tiljeset.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1723110027; x=1723196427; bh=2m
+	ktVrb4AtcSCveP2iOMkVACkQE2zZ9TugZEJjftHjI=; b=oxWJLtkRmSg446oa0M
+	JjwHIV6y3MxdI+3lnY2nLld5rx9mytCfCFWwhZwnvyHYyrcYuTtoI3hy5Er77H1d
+	6yS47iqhgK+nUX/piMykx6k8nLxsF749G8hFQDJcHiqfEHcpoZjfjh8u5Ou6Ruwy
+	F5aE73R/Vf56DSelVlA5TEhUTiJNisGc+0psf1+2L+liocWptjW3J5ZFTL1L1536
+	I09EmjDI5UmXbRTmKg2fFts4nXnx2OEgmUxKKGlSLRSlSCiefDzAr+JWJvecERmP
+	gNq1ol1F9eNCu/uIruPk4nrX+wkZq3P+6oz265EeWb2EAVQeYIPLGGVGOXdqUhTP
+	b6iw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1723110027; x=1723196427; bh=2mktVrb4AtcSC
+	veP2iOMkVACkQE2zZ9TugZEJjftHjI=; b=OtySI8uuBDkEnc9jHkh5liGmbu2UL
+	39GBDNtpHYlRmpZlg3RYAbEvPpwWPn+DI5tESDkWV2ZTKLE8a1cWRiScLqELvd7H
+	XBmOCPwx7le/nh/fP4H08d5M/MwUgwH/Za5Eb5sKr0cQVTVTQbqQpYc9XclLXXX7
+	6KBBlwQretDg9JfkdG3uMaIJCfWNT7ABeil7D3bVW8MFlmSEB0R3+Nae7D10pF2x
+	+iz+0GcUsrNuXm5JrANaHYOYM4G5tVKrz8NVY08kvmrxNK0EK+NVVFz3jyX1cpZR
+	I6Deh5eB+jB2d6BVXDAYtRyoOEauHXyWH3dmgXACdCYuHuOlw/Ng8fHHw==
+X-ME-Sender: <xms:i5K0Zh9nCahYBNTUrSBHjOV5n2z9w2yoCS4MHmzJK8s5TNz0TTJbHQ>
+    <xme:i5K0ZlveMDnz5iJm1VkFe8v68zbC-AW4PSifmFyixg-GHaRzYvEJmq9glpVN4Lumh
+    jlPF9MTP11c7mGZ3g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledvgddulecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepofggfffhvf
+    evkffutgfgsehtjeertdertddtnecuhfhrohhmpedfofhorhhtvghnucfjvghinhcuvfhi
+    lhhjvghsvghtfdcuoehmohhrthgvnhesthhilhhjvghsvghtrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeduuedvjeduhfefueejudeuleejheetgfeihfffveffheetuefhveefgfdt
+    veekheenucffohhmrghinheprhgvrgguthhhvgguohgtshdrihhonecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhorhhtvghnsehtihhljhgv
+    shgvthdrtghomhdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:i5K0ZvDG2B5BGR6G7q7GNFW_mZ6igF6cCVkXHnKnmLZl3809zHOy2Q>
+    <xmx:i5K0ZlfAK6_66zJ-gZti6iPEV4OCC5RUx3zKlh9OiHqn5Sjqc4KnCQ>
+    <xmx:i5K0ZmPT5uLWANHulyT-MMc6n3uCjpRElE6qnHQHFKxXk7XtQZ8U8g>
+    <xmx:i5K0ZnmPXTg-ndfEGShe6iWJZ8bvoBL-2k-WFO0RkuM-CYCgg0caRw>
+    <xmx:i5K0Zo3fA7IY4vJaQKmSM3hI13bQpDRIlnJxM5WirLeqMB__Yu-Y_g7w>
+Feedback-ID: i7bd0432c:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 78DF1B6008D; Thu,  8 Aug 2024 05:40:27 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Date: Thu, 08 Aug 2024 11:40:07 +0200
+From: "Morten Hein Tiljeset" <morten@tiljeset.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Message-Id: <22578d44-b822-40ff-87fb-e50b961fab15@app.fastmail.com>
+Subject: Debugging stuck mount
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The usbnet_link_change function is not called, if the link has not changed.
+Hi folks,
 
-...
-[16913.807393][ 3] cdc_ether 1-2:2.0 enx00e0995fd1ac: kevent 12 may have been dropped
-[16913.822266][ 2] cdc_ether 1-2:2.0 enx00e0995fd1ac: kevent 12 may have been dropped
-[16913.826296][ 2] cdc_ether 1-2:2.0 enx00e0995fd1ac: kevent 11 may have been dropped
-...
+I'm trying to debug an issue that occurs sporadically in production where the
+ext4 filesystem on a device, say dm-1, is never fully closed. This is visible
+from userspace only via the existence of /sys/fs/ext4/dm-1 which cryptsetup
+uses to determine that the device is still mounted.
 
-kevent 11 is scheduled too frequently and may affect other event schedules.
+My initial thought was that it was mounted in some mount namespace, but this is
+not the case. I've used a debugger (drgn) on /proc/kcore to find the
+superblock. I can see that this is kept alive by a single mount which looks
+like this (leaving out all fields that are NULL/empty lists):
 
-Signed-off-by: zhangxiangqian <zhangxiangqian@kylinos.cn>
----
- drivers/net/usb/cdc_ether.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+*(struct mount *)0xffff888af92c5cc0 = {
+	.mnt_parent = (struct mount *)0xffff888af92c5cc0,
+	.mnt_mountpoint = (struct dentry *)0xffff888850331980,  // an application defined path
+	.mnt = (struct vfsmount){
+		.mnt_root = (struct dentry *)0xffff888850331980,    // note: same path as path as mnt_mountpoint
+		.mnt_sb = (struct super_block *)0xffff88a89f7bc800, // points to the superblock I want cleaned up
+		.mnt_flags = (int)134217760,                        // 0x8000020 = MNT_UMOUNT | MNT_RELATIME
+		.mnt_userns = (struct user_namespace *)init_user_ns+0x0 = 0xffffffffb384b400,
+	},
+	.mnt_pcp = (struct mnt_pcp *)0x37dfbfa2c338,
+	.mnt_instance = (struct list_head){
+		.next = (struct list_head *)0xffff88a89f7bc8d0,
+		.prev = (struct list_head *)0xffff88a89f7bc8d0,
+	},
+	.mnt_devname = (const char *)0xffff88a7d0fe7cc0 = "/dev/mapper/<my device>_crypt", // maps to /dev/dm-1
+	.mnt_id = (int)3605,
+}
 
-diff --git a/drivers/net/usb/cdc_ether.c b/drivers/net/usb/cdc_ether.c
-index 6d61052..a646923 100644
---- a/drivers/net/usb/cdc_ether.c
-+++ b/drivers/net/usb/cdc_ether.c
-@@ -418,7 +418,8 @@ void usbnet_cdc_status(struct usbnet *dev, struct urb *urb)
- 	case USB_CDC_NOTIFY_NETWORK_CONNECTION:
- 		netif_dbg(dev, timer, dev->net, "CDC: carrier %s\n",
- 			  event->wValue ? "on" : "off");
--		usbnet_link_change(dev, !!event->wValue, 0);
-+		if (netif_carrier_ok(dev->net) != !!event->wValue)
-+			usbnet_link_change(dev, !!event->wValue, 0);
- 		break;
- 	case USB_CDC_NOTIFY_SPEED_CHANGE:	/* tx/rx rates */
- 		netif_dbg(dev, timer, dev->net, "CDC: speed change (len %d)\n",
--- 
-2.7.4
+In particular I notice that the mount namespace is NULL. As far as I understand
+the only way to get this state is through a lazy unmount (MNT_DETACH). I can at
+least manage to create a similar state by lazily unmounting but keeping the
+mount alive with a shell with CWD inside the mountpoint.
 
+I've tried to search for the superblock pointer on cwd/root of all tasks, which
+works in my synthetic example but not for the real case. I've had similar
+results searching for the superblock pointer using drgn's fsrefs.py script[1]
+which has support for searching additional kernel data structures.
+
+Is there any good way of detecting why this mount is kept alive? Where am I not
+looking? Any pointers would be greatly appreciated!
+
+[1] https://drgn.readthedocs.io/en/latest/release_highlights/0.0.26.html
 
