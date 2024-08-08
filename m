@@ -1,209 +1,131 @@
-Return-Path: <linux-kernel+bounces-280135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F50994C632
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:12:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC40B94C631
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2672C281F66
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:12:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54536B232B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488BB15B992;
-	Thu,  8 Aug 2024 21:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720C115A87B;
+	Thu,  8 Aug 2024 21:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="f18Au8cH"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EeyQJAZi"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B481315B103
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819DF1487FE
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723151539; cv=none; b=nM4616vjCXxhLMzuJiWVycpYn3lX1ccTKepLu40Wv4tAw7Iw/VNYj4Ybe6q97mIqzCR6jOPCX1oyWtZWsge8+dStiWkl+Tmn1W9FKYaZgQVlf2uXrmsINJTATR8CB9fuscBpOYLPkGTjYdNiXLm6WtJrkSkUb56WXe79tIjEXFE=
+	t=1723151535; cv=none; b=fixgWL/64T9C94Iw/elc2JhBqtwPgu/FTeeDR/ahCHk8dv0P6MKBxiC74L0sVN+q6VVr2YElZOK4XnopOLSUt0SBHUgbOKRG+LOItlviEOPwzBi0OqQglzAfXVYhM51QRWksZHIearx9HqOBopB1ze7VtSH5EQoA63yrcQ/X3qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723151539; c=relaxed/simple;
-	bh=O+UVqcoHQqk/v26aJQY7cg5NLBWtOU+yxnENsZBLbBw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=athKg8GwlMvyZ/m0aylbrnZVhk/tIdyNahEvH2kUqMFQJB3OXKlPM5XeRIvM7xKt0GyLL7egLDJZL9m74rjiMR5Xm424AUspm21BvUHoIA9w3MdhbNTP7waUZkUfPwXTIz0prc2odwKoHlWTJQcM51DbdqdMqhgcYx3M2BXXNCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=f18Au8cH; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-68d30057ae9so13205277b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:12:17 -0700 (PDT)
+	s=arc-20240116; t=1723151535; c=relaxed/simple;
+	bh=BXCnPubHWZHh8bqWj73fx8w+O7f72GJPlz6ECgIDpj4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s7efLZAJbK3rXWOFfY+w4FcyDCP7RL6RY4YP+bP38RKUmuhgfDAijh9IU+CvoQKlqQ034jiuroRmm1VRmMHkCoIIQGd/7sNZBuIev0+P/lUBL9aLhMrc9pk3mBAW9Cp3RkDJ8hSyma73ZnYbCehdpO5PWnI3jBvhi/mTR1CGjnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EeyQJAZi; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5d5c324267aso791715eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723151537; x=1723756337; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5TVmurDZ09S8wToJn0zhvU/nJNzMoT0MyGdFWp7IEvY=;
-        b=f18Au8cHK8vkuvyT4vO3CU3J4H0e6dbg0zv4QxSfl17uRKXJNyXteoWTRjgetkpXTK
-         a8e9Y68XOE86ar2hY+MUEKCKibSUbMXHsA8sYcy7U7dIdIr2PhhqbGr2TjyhJ1vgCcec
-         SwOdO1Lhkq49LrMANzJcYaQj1f/sm3svBi8YXKw94wGq8Z331hxSsJLLzw+o1NWpbTtb
-         bmNhOi2Ct/E31GEB5CFJ4dXbqAjUuDGQutDYFoqXZ4O1i4GZXh0pFU5ONq7ku9rS0ly1
-         Qd+1/F6H5Gk1JkCHbpow25PBymD/Cg7Cq1YLySMM/YAyQChL8e7tQJlGShMxsR1kQ1Ez
-         U46g==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723151532; x=1723756332; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iYsdvDV2WF5FlF8GKdTNudC9k0UxewQK/gFCEgnC2i0=;
+        b=EeyQJAZiWfxSPr9y5sxKO4Tu+enGGBCdnWObC9Cnx63WCKfPirBwRgGvi8vlq20w+S
+         AGL8Goh4JVHZgmT5JiGRoJZsVnde50XZhZIZa429Fe93btG35XIN5i6Egx93xCYJoH+B
+         iD8k840dokW7th4J8cqTxY1dZKTsVKn91N93Hohi2vw8EQgqr4zaGDYEZFYuzkfUDs3v
+         7zVU30I3tvoUTd7Soh5ZXzTm7bvhfzNAuvVe5XVsO4E+bJ03HlYV8j0UVfPUZ1iNrIc0
+         2Ov/Pgok+NkBKIV4o7lAwkes339VeDebekEu8xglLePB44TxRnoMSRhgmzbDKsQsXjY2
+         CKdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723151537; x=1723756337;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5TVmurDZ09S8wToJn0zhvU/nJNzMoT0MyGdFWp7IEvY=;
-        b=cvD700JWNTXbHL+4Q/k2hYArcHppWnfxps3DyQgSD5NNf7Hs+Jef++srAvYPFKt6dp
-         PWc61yCBSojlcIvqBVt0vRIKemAsqtHKsO8OlLiwKu8rvWGy+gB+V/09KA7VQXaICqtu
-         qufqNEqFFjmQhxenvaOQpLuDzXmZA44STPVaZ01fzxMZwHOxN4rEeLtynIW4RCtp6E/A
-         Ug5bNv0ELToRt2kKyhBeSaLyHLyL296FuCujGsG0fz8lXqMfgbBVkhEl/coBpN7X/UVt
-         UzTyWoaTikHFaby1btmfZgaRvTlcIa5EhgU1+hsoWEsSH+4ie26w4zqcP3gt+DknIUBW
-         O0nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTOBdJLINX1Hyz2KoGjwRZJIkaizIev+fdrgJS6b+m8tgjqreKVvBrmHulFf93ZE65QQ71jpxo7oSWf8Y/mtzzTj02O+KbmcaL4add
-X-Gm-Message-State: AOJu0YyOYtkcOHLw9Z6DV3ymxZyfiylTYWDwg/CVe+H7m4AFYU8cBs7y
-	1U6Q+KcPDVGt0gh+WyieVfTUgVaaFoKFXVKQpsIlnvXjGOzkcIZiVK9uzBUpDJ4nIOIB+4m6wS6
-	7AT1qWbPN5BNM1u8/gJckuwgt1/PZKIu6fCskTuQ5aEQ/we0=
-X-Google-Smtp-Source: AGHT+IFTPM6nWSmvE7FKoGAYxO2XaBlQV5+bjiWpCo8wSNYJn5sGxam/KrmJza+vfkACVNFh7nxdYhVFruYr16TUWgs=
-X-Received: by 2002:a05:690c:668e:b0:65c:2536:bea2 with SMTP id
- 00721157ae682-69bf81dda1amr37402877b3.19.1723151536654; Thu, 08 Aug 2024
- 14:12:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723151532; x=1723756332;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iYsdvDV2WF5FlF8GKdTNudC9k0UxewQK/gFCEgnC2i0=;
+        b=Z6HTBNsnreMJRcmLH3vdehIdcwjlmQMV9NPdBxcXBw1pg0m2+ydgGs/k7DPLZ/njpe
+         kkourzdcclB3W1lTQt8Q7mIRlBzJOl8Pws2uRTckludaXD8Dyz13F5S7aOIpCETOZzml
+         Fr9jNSumQqg2zyXwZe77qXFpa1SCZGPzuV3ikHKPGQvxZm53ruenQckRO1ua8ApTQCXP
+         RVNMck4hib9k7kXYcNZHSiG0ESVpG93BLeM2KdXpn2223zfKofik2ZNGaUs+ZSDAidW2
+         rykRtsdXm8suzvCDzvc5/X3QiyJCquU8jaIaNKggvu3FO1gfFir6bFbzJvJZrjO7A3dV
+         bY7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ5ruUgNnEn3VuzI/gF8yADej5g/JR3gKxuIAig+w/h8+sZnkzIkvEY5j+0nWKih3AgrmdXN7G0LwoM0AnksLN6rn9N5Qjva7Spk4Y
+X-Gm-Message-State: AOJu0YxGMRVV1LFoo/d2ZgO1fr2P3rOPGbveDMayW/tiPz6+fVR5d+dE
+	Lfh8mynVhE2GNQUCfRUeWz8Y8uutOX3DZsYwHR1MHvhbWFt0S/ty9KGeja7dKdY=
+X-Google-Smtp-Source: AGHT+IF/7lNrPD7DeC4xdkrtYHEkdNoglsIWOfvBsfOx/jqlrW9GV+eLobq26DnYJ0NDU4qYjb0GTg==
+X-Received: by 2002:a05:6820:178a:b0:5d6:1082:4f4e with SMTP id 006d021491bc7-5d855b50576mr4577013eaf.4.1723151532516;
+        Thu, 08 Aug 2024 14:12:12 -0700 (PDT)
+Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d757179759sm3851188eaf.8.2024.08.08.14.12.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 14:12:12 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: iio: ad4695: fix common-mode-channel
+Date: Thu,  8 Aug 2024 16:12:08 -0500
+Message-ID: <20240808-iio-adc-ad4695-fix-dt-bindings-v1-1-5cf37b9547b0@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
- <20240807-erledigen-antworten-6219caebedc0@brauner> <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
- <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner> <20240808171130.5alxaa5qz3br6cde@quack3>
-In-Reply-To: <20240808171130.5alxaa5qz3br6cde@quack3>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 8 Aug 2024 17:12:05 -0400
-Message-ID: <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, audit@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.14.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 8, 2024 at 1:11=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> On Thu 08-08-24 12:36:07, Christian Brauner wrote:
-> > On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
-> > > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
-> > > > > +static struct dentry *lookup_fast_for_open(struct nameidata *nd,=
- int open_flag)
-> > > > > +{
-> > > > > +       struct dentry *dentry;
-> > > > > +
-> > > > > +       if (open_flag & O_CREAT) {
-> > > > > +               /* Don't bother on an O_EXCL create */
-> > > > > +               if (open_flag & O_EXCL)
-> > > > > +                       return NULL;
-> > > > > +
-> > > > > +               /*
-> > > > > +                * FIXME: If auditing is enabled, then we'll have=
- to unlazy to
-> > > > > +                * use the dentry. For now, don't do this, since =
-it shifts
-> > > > > +                * contention from parent's i_rwsem to its d_lock=
-ref spinlock.
-> > > > > +                * Reconsider this once dentry refcounting handle=
-s heavy
-> > > > > +                * contention better.
-> > > > > +                */
-> > > > > +               if ((nd->flags & LOOKUP_RCU) && !audit_dummy_cont=
-ext())
-> > > > > +                       return NULL;
-> > > >
-> > > > Hm, the audit_inode() on the parent is done independent of whether =
-the
-> > > > file was actually created or not. But the audit_inode() on the file
-> > > > itself is only done when it was actually created. Imho, there's no =
-need
-> > > > to do audit_inode() on the parent when we immediately find that fil=
-e
-> > > > already existed. If we accept that then this makes the change a lot
-> > > > simpler.
-> > > >
-> > > > The inconsistency would partially remain though. When the file does=
-n't
-> > > > exist audit_inode() on the parent is called but by the time we've
-> > > > grabbed the inode lock someone else might already have created the =
-file
-> > > > and then again we wouldn't audit_inode() on the file but we would h=
-ave
-> > > > on the parent.
-> > > >
-> > > > I think that's fine. But if that's bothersome the more aggressive t=
-hing
-> > > > to do would be to pull that audit_inode() on the parent further dow=
-n
-> > > > after we created the file. Imho, that should be fine?...
-> > > >
-> > > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/?ref_t=
-ype=3Dheads
-> > > > for a completely untested draft of what I mean.
-> > >
-> > > Yeah, that's a lot simpler. That said, my experience when I've worked
-> > > with audit in the past is that people who are using it are _very_
-> > > sensitive to changes of when records get emitted or not. I don't like
-> > > this, because I think the rules here are ad-hoc and somewhat arbitrar=
-y,
-> > > but keeping everything working exactly the same has been my MO whenev=
-er
-> > > I have to work in there.
-> > >
-> > > If a certain access pattern suddenly generates a different set of
-> > > records (or some are missing, as would be in this case), we might get
-> > > bug reports about this. I'm ok with simplifying this code in the way
-> > > you suggest, but we may want to do it in a patch on top of mine, to
-> > > make it simple to revert later if that becomes necessary.
-> >
-> > Fwiw, even with the rearranged checks in v3 of the patch audit records
-> > will be dropped because we may find a positive dentry but the path may
-> > have trailing slashes. At that point we just return without audit
-> > whereas before we always would've done that audit.
-> >
-> > Honestly, we should move that audit event as right now it's just really
-> > weird and see if that works. Otherwise the change is somewhat horrible
-> > complicating the already convoluted logic even more.
-> >
-> > So I'm appending the patches that I have on top of your patch in
-> > vfs.misc. Can you (other as well ofc) take a look and tell me whether
-> > that's not breaking anything completely other than later audit events?
->
-> The changes look good as far as I'm concerned but let me CC audit guys if
-> they have some thoughts regarding the change in generating audit event fo=
-r
-> the parent. Paul, does it matter if open(O_CREAT) doesn't generate audit
-> event for the parent when we are failing open due to trailing slashes in
-> the pathname? Essentially we are speaking about moving:
->
->         audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
->
-> from open_last_lookups() into lookup_open().
+The common-mode-channel property is a scalar, not an array, so we should
+not be using items: in the schema when specifying allowable values.
 
-Thanks for adding the audit mailing list to the CC, Jan.  I would ask
-for others to do the same when discussing changes that could impact
-audit (similar requests for the LSM framework, SELinux, etc.).
+Reported-by: Rob Herring <robh@kernel.org>
+Closes: https://lore.kernel.org/linux-iio/CAL_JsqKaddw8FnPfdnhKhHUb8AcTxFadc_eZmxjX0QxFR80=mw@mail.gmail.com/
+Fixes: b40cafc11436 ("dt-bindings: iio: adc: add AD4695 and similar ADCs")
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-The inode/path logging in audit is ... something.  I have a
-longstanding todo item to go revisit the audit inode logging, both to
-fix some known bugs, and see what we can improve (I'm guessing quite a
-bit).  Unfortunately, there is always something else which is burning
-a little bit hotter and I haven't been able to get to it yet.
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
+index a2e824e26691..310f046e139f 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
+@@ -136,8 +136,7 @@ patternProperties:
+           and OxFE is COM. Macros are available for these values in
+           dt-bindings/iio/adi,ad4695.h. Values 1 to 15 correspond to INx inputs.
+           Only odd numbered INx inputs can be used as common mode channels.
+-        items:
+-          enum: [1, 3, 5, 7, 9, 11, 13, 15, 0xFE, 0xFF]
++        enum: [1, 3, 5, 7, 9, 11, 13, 15, 0xFE, 0xFF]
+         default: 0xFF
+ 
+       adi,no-high-z:
+@@ -202,8 +201,7 @@ allOf:
+             reg:
+               maximum: 7
+             common-mode-channel:
+-              items:
+-                enum: [1, 3, 5, 7, 0xFE, 0xFF]
++              enum: [1, 3, 5, 7, 0xFE, 0xFF]
+         "^channel@[8-9a-f]$": false
+ 
+ unevaluatedProperties: false
 
-The general idea with audit is that you want to record the information
-both on success and failure.  It's easy to understand the success
-case, as it is a record of what actually happened on the system, but
-you also want to record the failure case as it can provide some
-insight on what a process/user is attempting to do, and that can be
-very important for certain classes of users.  I haven't dug into the
-patches in Christian's tree, but in general I think Jeff's guidance
-about not changing what is recorded in the audit log is probably good
-advice (there will surely be exceptions to that, but it's still good
-guidance).
-
---=20
-paul-moore.com
+---
+base-commit: 7cad163c39cb642ed587d3eeb37a5637ee02740f
+change-id: 20240808-iio-adc-ad4695-fix-dt-bindings-520ade561235
 
