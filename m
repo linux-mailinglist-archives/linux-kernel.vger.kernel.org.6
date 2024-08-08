@@ -1,142 +1,295 @@
-Return-Path: <linux-kernel+bounces-279338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09BE494BC04
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:12:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB8594BC06
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31BD21C212D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:12:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7D2282B48
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C1418B477;
-	Thu,  8 Aug 2024 11:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED0918B479;
+	Thu,  8 Aug 2024 11:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RAvjiZe3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="dACJTqeo";
+	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="HqR7/wZP";
+	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="BG0muSlj"
+Received: from e3i64.smtp2go.com (e3i64.smtp2go.com [158.120.84.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A22C17FD;
-	Thu,  8 Aug 2024 11:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAFE146584
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723115569; cv=none; b=hsxUepD6ssvdzzmgYeNUcjfBLz3gEwepkLtkfQYL2EWs+Lt0UIFdy84eEBlwMXNPHfzmlOtaCX5ztiaALLDCSQAcSwvVAmv5xYKopmAL6Z2dRC4Hg+aBa28frDDsicgipqWNRQoHBgq5k6dKWBFWSUQEKZmRbowKmNy65tEf7pk=
+	t=1723115619; cv=none; b=nIOwD/au1L3DQ1OBUkgCBCQaK09VHBKpCxelRIVHzwn3X7We9n5SGA9Pj5r6/VHydvTRDkh1kDDzpb5phGm4zkmaJkT3FoCwmiuxKGZHwg7PjnZsKG7U7YCsP2qM/amDi6Cf+BoKfcQO4DnFySy8dfTFXpkLwiEcosW2bol6DN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723115569; c=relaxed/simple;
-	bh=hve/sLIedZ/7OwEbxUW7nOAwAuDnbF9YZxcJcFWT4Gs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XWx1WfR36y6QHepWaWl0LWGhvXwHHTsEes/F9GrkmXW2ka1T4oilOa8CAyHBh5a3eSMmKSLuEGjidZ5SlTuE/JxLUtkuwimLmay9PgYZ7IznkslS42WLZVUioP2XtgXmV8tORQsTHAKhGelibCCzK8hql5njSd5qEfhujJYEDF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RAvjiZe3; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723115568; x=1754651568;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hve/sLIedZ/7OwEbxUW7nOAwAuDnbF9YZxcJcFWT4Gs=;
-  b=RAvjiZe3ZKZfodXUilFqsr0n+dKoG/XZT0luFZtL8k4Eo65nP+YgT7j4
-   rOFbxSwbLfHzhVU3ZIDcva+JrKNV3euS2X7x4aQ/Z2SMNUf8d8JTT/Gf3
-   OM0JEtOtEB7ovcms4IGIty+NlYg4sNwi1KS/Ifr6kC/o7Lvbp2bqpZD3X
-   jv+6dDjFHWDG9LEDBLO1E8x9bWXvZseWSvAdIrpNzoLP4tBxXPbpDK6BD
-   2DrGWMFYO1qJ2LNlf3qvJu+RMREm4sm2695F4KmlKCsLg2ewvkbjqu/ak
-   wZqYhBiZfb6VBLQDmBvmoMwM5RZSe9q+rNoUyBWf8puLCA0HAo68x0iIU
-   A==;
-X-CSE-ConnectionGUID: sEir1PfcT+elR5vfuLDPCg==
-X-CSE-MsgGUID: 2FH5wNWRT/SOXIXzDTpEyA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21091977"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="21091977"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 04:12:47 -0700
-X-CSE-ConnectionGUID: eRQQvbl2QU2UaOfjSf/lFw==
-X-CSE-MsgGUID: bCj3M3+SSKGCr9oXhgM0kA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="57054756"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.150.149])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 04:12:43 -0700
-Message-ID: <95455271-83dc-4765-b5b8-0851a75b9164@intel.com>
-Date: Thu, 8 Aug 2024 14:12:35 +0300
+	s=arc-20240116; t=1723115619; c=relaxed/simple;
+	bh=o7bhdwNQ62EoS95sx84tEhwI9oeEmv+6fwfOAXB/f5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GQTbYW6TJONicq1wgchz5Zx4kuiJRqibJ7M76C5Al5rTFZScrn27m+p2+tx7CpV8VeD4dFaBNH438dD8LQzcjKns7gWxUs+Pop83LDbAjBb9FyAo6etWO8s1i5tIk/JXYuWAi1GrIZqFftObtZVSERnuiSDCd2rKpUrVjW1VCaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=dACJTqeo; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=HqR7/wZP; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=BG0muSlj; arc=none smtp.client-ip=158.120.84.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1723115607; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=DWvwT7MwWty/w8bZJf5PhzT0d4KUoUgQ/VKY8SN+v/4=;
+ b=dACJTqeo6r/hML/KqVggjCSff2DEhFydGiHQwKNDUkwY52cghRrlfbvrHOk0xRZ0N9YRC
+ oA+i0r2RED5cRMX3UBInlXn0pOWWnsU04pk0xv2sugceMb0RqwoH2q0+B3G5z/88+w4Hfmo
+ +NwEpMcAUainsgpnxfWrVh5/7dOtqVXfYHEvdkqUF2utu1czJ1Szbcas22vad+b2KnkaS+e
+ I3yd9sC3dMSxbrJdTMviHhwrhkILrGEyEHl8RQ0j0Wr84HaTRZAYKRa1fSBOLCfbXo/nQ3X
+ YdRH0W8qbd8TTgA2XvoIz9ciEc0mZYRUVMM6yi+3l9sPfvmhHL2YpCkFP4YQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
+ i=@fjasle.eu; q=dns/txt; s=s1174286; t=1723115607; h=from : subject :
+ to : message-id : date;
+ bh=DWvwT7MwWty/w8bZJf5PhzT0d4KUoUgQ/VKY8SN+v/4=;
+ b=HqR7/wZPlfbhs7MYcrRREJ3P/BEBy3z8mOMqsDtHpd+NCL/2Q9VX7XEJS+pXHzpIXuYIN
+ JC3buPFIkH+E9DrMMKGkaWPJX/o89AqXvmykK+AAZmIcnrxFwTlLeMHuvd/U4G2Ip8TbeP6
+ z1bbdSPGyCJCKhVyQvHN8/NmG3if+/3u1dXLHCyqKuwX5G336IEMBWJPXKaJD8ltJ+KZh4L
+ w5oRrZQjRH9h9ZbsemWuQ5SyMDssrYaQfhm17XnbklYE/OFi5GYacH6QpPLZ0nZGqykLX1b
+ OGB6YoKR4bbBMiZ833XE6WuCS4ATsV+tOOu4Pchijth0D7bbYzdP+MefEscQ==
+Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97.1-S2G)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sc14u-FnQW0hPl8lT-kBTA;
+	Thu, 08 Aug 2024 11:13:08 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
+	t=1723115576; bh=o7bhdwNQ62EoS95sx84tEhwI9oeEmv+6fwfOAXB/f5s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BG0muSlj6GOKpUkPtJ0qd52efWk+CoW4jZdWTKnne+jdIvvJKqC3ltvtnGmjhM6mI
+	 ntIjsexl1m6K1i0KpZ0pMoOd7MLa/iz7heBW4/RbRrqhv+BTvbijSHbfD0DPQ3Cb8B
+	 WgqVLiFWs+fL3QDohjEbAtCBnj/mEdqJorCqp/58=
+Received: by leknes.fjasle.eu (Postfix, from userid 1000)
+	id 82E5742DD9; Thu,  8 Aug 2024 13:12:56 +0200 (CEST)
+Date: Thu, 8 Aug 2024 13:12:56 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	William Hubbs <w.d.hubbs@gmail.com>,
+	Chris Brannon <chris@the-brannons.com>,
+	Kirk Reiser <kirk@reisers.ca>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"speakup@linux-speakup.org" <speakup@linux-speakup.org>,
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+	Finn Behrens <me@kloenk.dev>,
+	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
+	"gost.dev@samsung.com" <gost.dev@samsung.com>
+Subject: Re: [PATCH 06/12] selinux/genheaders: include bitsperlong and
+ posix_types headers
+Message-ID: <ZrSoOM9z4VnqhOf2@fjasle.eu>
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+ <20240807-macos-build-support-v1-6-4cd1ded85694@samsung.com>
+ <CGME20240807153904eucas1p2264f7363ae2474c20c6dc1b84a232815@eucas1p2.samsung.com>
+ <20240807-outgoing-charcoal-collie-0ee37e@lindesnes>
+ <sbj3c3tlafewy2n4pylbnpb4gwylpnyxovdykfy3dhk2wqmpry@ekhhe3mgqnd6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf script python: Add the ins_lat field to event
- handler
-To: Zixian Cai <fzczx123@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240808080027.3559776-1-fzczx123@gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240808080027.3559776-1-fzczx123@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="VxNEXc5Vg6IlyTm+"
+Content-Disposition: inline
+In-Reply-To: <sbj3c3tlafewy2n4pylbnpb4gwylpnyxovdykfy3dhk2wqmpry@ekhhe3mgqnd6>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1174286m:1174286a9YXZ7r:1174286stAICZmwpS
+X-smtpcorp-track: j4c9o_mi68Ag.MacNHjSOTxY0.0GQgPAaqBkR
 
-On 8/08/24 11:00, Zixian Cai wrote:
-> For example, when using the Alder Lake PMU memory load event, the
-> instruction latency is stored in ins_lat, while the cache latency is
-> stored in weight.
-> 
-> This patch reports the ins_lat field for Python scripting.
 
-Patch does not apply.
+--VxNEXc5Vg6IlyTm+
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Needs to be based on upstream kernel.  Latest perf tools kernel
-tree and branch is:
+Am Wed, Aug 07, 2024 at 09:41:00PM +0000 schrieb Daniel Gomez:
+> Date: Wed, 7 Aug 2024 21:41:00 +0000
+> From: Daniel Gomez <da.gomez@samsung.com>
+> To: Nicolas Schier <nicolas@fjasle.eu>
+> CC: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+>  <nathan@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>, Thomas
+>  Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi
+>  <rodrigo.vivi@intel.com>, Maarten Lankhorst
+>  <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+>  Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com=
+>,
+>  Daniel Vetter <daniel@ffwll.ch>, William Hubbs <w.d.hubbs@gmail.com>,
+>  Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>,
+>  Samuel Thibault <samuel.thibault@ens-lyon.org>, Paul Moore
+>  <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>,
+>  Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas
+>  <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier
+>  <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James Morse
+>  <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui
+>  Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman
+>  <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Nick
+>  Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+>  Justin Stitt <justinstitt@google.com>, "linux-kernel@vger.kernel.org"
+>  <linux-kernel@vger.kernel.org>, "linux-kbuild@vger.kernel.org"
+>  <linux-kbuild@vger.kernel.org>, "intel-xe@lists.freedesktop.org"
+>  <intel-xe@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+>  <dri-devel@lists.freedesktop.org>, "speakup@linux-speakup.org"
+>  <speakup@linux-speakup.org>, "selinux@vger.kernel.org"
+>  <selinux@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+>  <linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+>  <kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
+>  <linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
+>  <llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
+>  (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
+>  <gost.dev@samsung.com>
+> Subject: Re: [PATCH 06/12] selinux/genheaders: include bitsperlong and
+>  posix_types headers
+> Message-ID: <sbj3c3tlafewy2n4pylbnpb4gwylpnyxovdykfy3dhk2wqmpry@ekhhe3mgq=
+nd6>
+>=20
+> On Wed, Aug 07, 2024 at 05:38:28PM GMT, Nicolas Schier wrote:
+> > On Wed, Aug 07, 2024 at 01:09:20AM +0200, Daniel Gomez via B4 Relay wro=
+te:
+> > > From: Daniel Gomez <da.gomez@samsung.com>
+> > >=20
+> > > The genheaders requires the bitsperlong.h and posix_types.h headers.
+> > > To ensure these headers are found during compilation on macOS hosts,
+> > > add usr/include to HOST_EXTRACFLAGS in the genheaders Makefile. This
+> > > adjustment allows the compiler to locate all necessary headers when t=
+hey
+> > > are not available by default on macOS.
+> > >=20
+> > > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> > > ---
+> > >  scripts/selinux/genheaders/Makefile | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/scripts/selinux/genheaders/Makefile b/scripts/selinux/ge=
+nheaders/Makefile
+> > > index 1faf7f07e8db..017149c90f8e 100644
+> > > --- a/scripts/selinux/genheaders/Makefile
+> > > +++ b/scripts/selinux/genheaders/Makefile
+> > > @@ -2,4 +2,5 @@
+> > >  hostprogs-always-y +=3D genheaders
+> > >  HOST_EXTRACFLAGS +=3D \
+> > >  	-I$(srctree)/include/uapi -I$(srctree)/include \
+> > > -	-I$(srctree)/security/selinux/include
+> > > +	-I$(srctree)/security/selinux/include \
+> > > +	-I$(srctree)/usr/include
+> >=20
+> > 'make headers' composes the UAPI header tree in $(objtree)/usr/include.
+> > So, if you build out-of-source, -I$(srctree)/usr/include will not match.
+> > Just remove the '$(srctree)/' prefix as '$(objtree)/' is always '.'.
+>=20
+> The 'headers' target also deploys installs the headers in arch/$(SRCARCH)/
+> include/uapi, so I've updated selinux/genheaders/Makefile to the followin=
+g:
+>=20
+> diff --git a/scripts/selinux/genheaders/Makefile b/scripts/selinux/genhea=
+ders/Makefile
+> index 1faf7f07e8db..ae1f195b6f67 100644
+> --- a/scripts/selinux/genheaders/Makefile
+> +++ b/scripts/selinux/genheaders/Makefile
+> @@ -2,4 +2,6 @@
+>  hostprogs-always-y +=3D genheaders
+>  HOST_EXTRACFLAGS +=3D \
+>         -I$(srctree)/include/uapi -I$(srctree)/include \
+> -       -I$(srctree)/security/selinux/include
+> +       -I$(srctree)/security/selinux/include \
+> +       -I$(objtree)/arch/$(SRCARCH)/include/generated/uapi \
+> +       -I$(objtree)/arch/$(SRCARCH)/include/uapi
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git	perf-tools-next
+SRCARCH is not derived from the host but from $(ARCH) (cp. top-level
+Makefile), thus you must not use arch/$(SRCARCH)/include/* for building
+host progs as this breaks cross-building (e.g. consider build Linux for
+32bit m68k on a arm64 host).
 
-> 
-> Signed-off-by: Zixian Cai <fzczx123@gmail.com>
-> ---
->  tools/perf/util/scripting-engines/trace-event-python.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
-> index 41d4f9e6a..68eb0586c 100644
-> --- a/tools/perf/util/scripting-engines/trace-event-python.c
-> +++ b/tools/perf/util/scripting-engines/trace-event-python.c
-> @@ -861,6 +861,8 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
->  	set_sample_read_in_dict(dict_sample, sample, evsel);
->  	pydict_set_item_string_decref(dict_sample, "weight",
->  			PyLong_FromUnsignedLongLong(sample->weight));
-> +	pydict_set_item_string_decref(dict_sample, "ins_lat",
-> +			PyLong_FromUnsignedLongLong(sample->ins_lat));
->  	pydict_set_item_string_decref(dict_sample, "transaction",
->  			PyLong_FromUnsignedLongLong(sample->transaction));
->  	set_sample_datasrc_in_dict(dict_sample, sample);
-> @@ -1286,7 +1288,7 @@ static void python_export_sample_table(struct db_export *dbe,
->  	struct tables *tables = container_of(dbe, struct tables, dbe);
->  	PyObject *t;
-> 
-> -	t = tuple_new(25);
-> +	t = tuple_new(26);
-> 
->  	tuple_set_d64(t, 0, es->db_id);
->  	tuple_set_d64(t, 1, es->evsel->db_id);
-> @@ -1313,6 +1315,7 @@ static void python_export_sample_table(struct db_export *dbe,
->  	tuple_set_d64(t, 22, es->sample->insn_cnt);
->  	tuple_set_d64(t, 23, es->sample->cyc_cnt);
->  	tuple_set_s32(t, 24, es->sample->flags);
-> +	tuple_set_s32(t, 25, es->sample->ins_lat);
-> 
->  	call_object(tables->sample_handler, t, "sample_table");
-> 
-> --
-> 2.25.1
-> 
+>=20
+> The include path -I$(objtree)/arch/$(SRCARCH)/include/generated/uapi
+> enables locating the asm/types.h.
+>=20
+> The include path -I$(objtree)/arch/$(SRCARCH)/include/uapi enables
+> locating the asm/bitsperlong.h and asm/posix_types.h.
+>=20
+> >=20
+> > But I am suspecting that this break cross-building.
+>=20
+> I=E2=80=99ve tested this change on macOS with ARCH=3Darm64, as well as on=
+ Debian with
+> ARCH=3Darm64 and ARCH=3Dx86_64. Is it enough to just confirm that cross-b=
+uilding
+> still works after this change?
 
+No, it isn't.  asm/bitsperlong.h is probably similar (enough) for current
+64-bit systems, but 32-bit platforms will have different versions.
+Anyway, we must not use target arch/platform-specific header files for
+host progs.  If we do, it will break.
+
+You want to use arm64 specific header files for building your arm64 host
+progs, as MacOS does not provide these (thus, it's a missing build
+dependency).  As this is not common (yet), such a build hack should be limi=
+ted
+to MacOS/Darwin only to not accidentally break other platforms.  (Do you al=
+so
+have MacOS/amd64 in mind?)
+
+As written elsewhere, another approach could be to create and maintain a Li=
+nux
+kernel dev kit for MacOS, that delivers (fetches, downloads, generates) all
+missing header files.
+
+Kind regards,
+Nicolas
+
+
+--VxNEXc5Vg6IlyTm+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAma0qC4ACgkQB1IKcBYm
+EmlXFA//QK4VblCu85gKzeuSZduI65fyEghlP3E7HDD3wm89ScPK97QA6E3/18Eq
+KBbtW4cg56lb2YdCbv9kuIbh4xGhW9+w8lOMrTBK2CKHtVT83hO+Oyd2ZYN1F6W/
+9dBu+x09VAhWc01GPCM+1518klpvgEM9E6nmTh1xRSLaIjtlGPsiNXGaUcpMO4w2
+TEAs9SSczQa/vazzKdd71q3e2eTpLEYOuIi6+07Iny4nWjWFPwK60OxmeDfXe0un
+zZyapckz2FVMcAujnUVd8yxoaIrhlZ5K2e9GSk9BpH3LKpoTTqIhQUYFoI9Y7tHL
+RSZA5igzUTBAcSIIegyBGa5D2NzkfiNSI+MxN5hqRbZclmll5fEyvu0ej+ZJTmLC
+jDATEufQxckE3a1Q1qxxuoM3keRi7LUWPu/RZnU09BNIQFZGlOquPOmIGHyR6Vux
+wfCr4WHohktugmKMwhLf4g6nxrdOy5H4Rd3RskWyBz2xkYSFKnm2zoaJZCBq8D2/
+v/fWGHeswRzLjWqxbPsMdFfd8QuuaYYXf4wBrG9k02eAXH1Q+dOu/MZJ4Do4mCp+
+O/+FGuyln0lUjxwG80YQslhSRNjov6VlrHSXTGNHNhcUffJYXAcBABbSYg2+NCYW
+4AVxeP5dRxvjQYDCraWpTSnPOvQGnKo3Jy7++TppRl4ra4DxfC0=
+=UoyI
+-----END PGP SIGNATURE-----
+
+--VxNEXc5Vg6IlyTm+--
 
