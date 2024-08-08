@@ -1,211 +1,189 @@
-Return-Path: <linux-kernel+bounces-279418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF98494BD13
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:12:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC69E94BD15
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7477828A173
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:12:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EDDA28A5ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDDA18CC16;
-	Thu,  8 Aug 2024 12:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216F018C915;
+	Thu,  8 Aug 2024 12:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eY5IkJAR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="UQvV6TfI"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2104.outbound.protection.outlook.com [40.92.103.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C2B18CBE6
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723119081; cv=none; b=RZqR1JGxPUBpU+N8iv2uhYzAWo+ff3H4dW3Ne1Kaqr3XvyEGOgojO5R039qgNImcKzK7fxVWj7lllW+DFrVMAqMFDLY8m9tV9LFWpWy95XHuTH/949sjBh/NJcjTYSJGjhEZMIZVhrZzXjeD0o+gNR7fKdYN18yXmOLvl2OpoJo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723119081; c=relaxed/simple;
-	bh=okDt0GF8kFCoft7LCpimb0DlLgYHkqdTo2/807i2Izk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TG7Wh143TLdk/24GE73chJFT6KiApWaNh75uNYiAqELeIb1NHLwt/wANDMYCm3jL6ALClXlOehvrmlgsNCJIpWUZtjWhF7KGmMWcRIpS3TcS03o+cfYfZOp6jNBrk9CtjeuZtbir3sdZH8kINyc+csJW5UJsJI0/jT8LXZO3fnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eY5IkJAR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76B0DC4AF10;
-	Thu,  8 Aug 2024 12:11:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723119080;
-	bh=okDt0GF8kFCoft7LCpimb0DlLgYHkqdTo2/807i2Izk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eY5IkJARG4aA/YFX2VkVMgRviMYbTYcnncqt4Al0e87J3bJPWSZCs+elDKgmYOAIC
-	 cdUXuDTislz46dDFhM4mOzRm74/CWxkVsuMLrTX9v1gTKXTDgMOonjjPaETlrooKK+
-	 E7Did2Cxy4wAQa9MaGwCujgwPVc8OugUizkFvZ8j3pRGF388GDiPGsiY0nk2a7vib5
-	 1H8DL2+zY1Iajvup3N+uT0GyQDDoASreEpRit4UrQt1l6QuDRbU046SXyg4D8oPC0k
-	 krIP9LyhZZu5PwpUcl9ECVpbieBU+iJZltj6ilOoSY0nbT+3CBRTNuLcXI6KSKhC66
-	 aYup7vo7S0EeA==
-Date: Thu, 8 Aug 2024 14:11:14 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v5 6/7] acpi/ghes: add support for generic error
- injection via QAPI
-Message-ID: <20240808141114.3b021f80@foz.lan>
-In-Reply-To: <20240806163113.3bdc260a@imammedo.users.ipa.redhat.com>
-References: <cover.1722634602.git.mchehab+huawei@kernel.org>
-	<20c491e357340e0062b6ff09867c1661ed4d2479.1722634602.git.mchehab+huawei@kernel.org>
-	<20240806163113.3bdc260a@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788EB18A956;
+	Thu,  8 Aug 2024 12:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.104
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723119109; cv=fail; b=BJPYgMNVDVbSWX31eNc0CxhOLJHoeG3KjNc/DtOLVCUkk+Y1fId9Im+aTpi3Xfu8gGf2XPvZdD+CG1v6herZ2fZbAV6R9YPenAvoSJLuZAf//gp8J1FKFc9aUTOcVPYzzWni/0VqVaEV3xgQY3bdaFYs9EiyFj356wX2l9PR/ZY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723119109; c=relaxed/simple;
+	bh=CG+RvCJbU5YuQi5CqKwWSCmUDgAhpUXoQBcqo8GokC4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=k+x4ATyJUYtVDhuvZB2pNLLnTSllHITrJiu8k9LGSSrHhqVyTK+S+2xmVkyvfjOV6fQzb8Ktf12em3EhPwowEgRGWIoZ7YIiSUvRvDL0ApzIxZUCxLAv2qLi28ohjIDcVLrrr+0f0Gfb5xcT7qsQW1WT1eeIyqXNhFP+ePCIJNw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=UQvV6TfI; arc=fail smtp.client-ip=40.92.103.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Pc0zRDuy0jkOHT5+dfJ6FsApGnvup/p6WVhoEtzueUPRk1WLDBmpf83XmuslLTDXMIDRIUSeHO84mrjKy8h37+bmovm/TjU5uJBgNhNmKj93enYRTWq+TWZyRm8edaRTxOHaktGHjHDOfJR6WT+1rCQXPVQvb5ul66ppvOdKyDvuRzun6u8ZUuovudTl7W3YOh4GNHjMEXquXJCjpNJD3+ssrBcekSZrPBxQ0Yk3PsTFuhqLlUq+y6E3wSyvCK3Sy8ldhRPPIVyFs4j5sIRWY572UkAcYLzxGUAexmJNxN7dm1lXMcPRAaCTXt6HFlJnWhe4M30uyYHEbYxJMAHnpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oXj5HFioyjIOLcAdy/oXSpQUwhLoR7Iglk2c3NpVYu8=;
+ b=lW20K36umvydOG3eRNZVbPUpTmjhxuVMJe0IqLS077SlZtJ1Ff9zsTX2xi/UDTAXLMAYaigYTYRw5RyFjmxivIckLVJjYq/DJTTBiinXGkY03oYalt/9+LWmWov24wMeX9moTRjO6hDwJ5/DH8RexPDwyo3Y2fReh1NjtVxoDJOGb/8HNTB9+7ACX+3R7bcvUz2nBuAId3zQpg8bLUep96x6X8JP3wFlTOci3o0wOK2Wvjc9BeLh34+HqbEHkDfIBnJVp56ZBahma1YPTVIJJ4f+017QeW7eOIg+5e2YlBHyAisV9+hiaeXHQFCRmfvVhGNCOomM3IscWCCA9BltaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oXj5HFioyjIOLcAdy/oXSpQUwhLoR7Iglk2c3NpVYu8=;
+ b=UQvV6TfI3tTC4Gc6OW7a3RzR8twOikLnCPlM15axNT4xP9elECOiarK1GQd9JVP9CmD1xp/A6QVZbU8uRUMMltoo5qoUDa7o6MhAZGFabjThiyyDCO9g8edefl3JPE/J+Be0xioPqnM8uAmBk5sGmBCK9YGvlgw2IaOe3mT3Ws0ViZFd8lunJoppGqLV48436ciPb9C6HNlLVCPPqXFbLrP6s1RMXbx5VN0H8uYuISDfDSUH7gXX0sIWVigSGd3NdcdPoY8yWpZ1jVQf9BEEY6LNVD/gEWeowyjylGRcBYKbAl073He2KU1wyrJSw9ifh/SvFGf881Ai1E8aMaa0wg==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN2P287MB0723.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:fe::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.13; Thu, 8 Aug 2024 12:11:41 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
+ 12:11:41 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: [PATCH RESEND v2 6/9] HID: multitouch: allow specifying if a device
+ is direct in a class
+Thread-Topic: [PATCH RESEND v2 6/9] HID: multitouch: allow specifying if a
+ device is direct in a class
+Thread-Index: AQHa6YwgQh8KY2FzhEu4GvVwCf7kzQ==
+Date: Thu, 8 Aug 2024 12:11:40 +0000
+Message-ID: <69728A02-3A4B-430B-9DAA-CCD6EAE82F45@live.com>
+References: <752D8EEA-EE3B-4854-9B5E-F412AFA20048@live.com>
+In-Reply-To: <752D8EEA-EE3B-4854-9B5E-F412AFA20048@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [Vt8IURprjHQ1NpaHMEtMQlccoR6TICAPrFFQv3MyQtGJ4rg50sFdgv2NAyaZzEUSlpKNKoloreM=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN2P287MB0723:EE_
+x-ms-office365-filtering-correlation-id: ef3b2292-7db3-452e-a2e6-08dcb7a342ef
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|15080799003|8060799006|19110799003|102099032|3412199025|440099028;
+x-microsoft-antispam-message-info:
+ Ai7EcZHaUlQrta1587kK3oHevRemUronuDch+K/1NVswWJp5prRbQkKSzU0Q5qLulqJWVreaEzKqmBzDICtEUQYNShIbEry+574+vwTvkuSRjAVCeUoN7IhOyhy8AV/uHOrHTNfDVq60birfIc9k64iNa1hHQbzNfMEZCbTbMg8TtaWZhs1Uj9DlCAGx2KDFy1Mf+0f92zbVad7U778c/9WImeEF2atE2u8dlCgqbnsrA8C1zNOU6tfAZvmMWlb3YSgCGYBpwrawOoxLNqQHjKImIgK/CLpj5uUULY0iizoXsgn9W6NVSEG7JWQFrit7qYxz/n3qTIoyMbTJmvHNXsCIsVuhMaHL7DFf3u2aOQ21kILt6LjGjch6UFXRMBDWlSvXHyUUlvGshY/9CvNL+IKTaMNrB+OAjmYsYgOVJUz0zAGxQq32E9UNCcL+X5Wv+nA3MgHMpCvhwk/fxjYbt/dWx0VDhFBOLZ3RHppAwktKkPMmSOLFRpDbwWAZFzWvfYhXPOxqEqJ9XQw6U1RzR8r3uKSQCJihT/4C4gL8zYn+xNcSuiBaOrGQ+TPs1OZg97EczUnolNFYDI2lJ4sCzHqbZxAEpu27GGaBASBGuqWuVOp/00OyS7mMWyhusciH4N2iz3m/1mTyaWJAjvf3xmNi0YsPKwCuYa5IPdM3iSBGf79IhVq1mpaFNJMXjFLa
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?9GadjDa9OnE1xE0KsHLpaIHEGcivbOIYjcKY4ODun7MlPPKu2VgqKwgu2sJd?=
+ =?us-ascii?Q?DgrFoOyN8g1ernJNkOQs2uDT3ZSXRjGUK3k1K3yzXLx2qZEyNvAY3fWftpyJ?=
+ =?us-ascii?Q?9kBZMde02D8hQAH4rgRFGy0hpCfp+bGVV51amDtyWNT7yxXuKgcOp2FOJGH3?=
+ =?us-ascii?Q?HRYbw7pLCWepQWTiukbfkpu+b5K7ZlAd2YmcZHqRL/o1vmcduJaDqBMQy2vf?=
+ =?us-ascii?Q?3Z+ikBj3+GGQREenrL8jiHA3+QPVT+nMmLFQjj/FDuSa3mIz7uN7Qo9onjuA?=
+ =?us-ascii?Q?FPFXZ0D+k4QMu3oCxWmCg5YjfzirgrCttlt3Kl8O9AsoFAcx+cGSGF1Z2/ML?=
+ =?us-ascii?Q?HICelJ+FOT7icPG1RIHEsSqJM/Uw35BnMM6QI+aIlvAWqp3zfQVX5F/qzhfO?=
+ =?us-ascii?Q?sXcUjSbEoW7GgIxYwLGERTNBz6iN/WxKmgTXIdwDvxFiZfeUCTE7MNM7solp?=
+ =?us-ascii?Q?G2Jzd2dxXMwfSSSsrhPpkmWz2yqYgL78F0bnjbvNPigOT2E4MPrFv+IPeKq5?=
+ =?us-ascii?Q?CqMf4CxiyWLXuiS63Ext0qtEjFY+dXvxafldVYq5Br53ZvkzGHlbzAkukYM5?=
+ =?us-ascii?Q?eDfv330zeaTDLuJLA9Jp3pofQmK5MPhDMgDIoN6PUG7lJC/6hQ1Bj2rUxWLO?=
+ =?us-ascii?Q?L6XEJ+QNPtuOc4nPKe+ukLecqyKlQdzTmB/fn+getZJCIJzTZoooDZvDoWmr?=
+ =?us-ascii?Q?a8zGq9Ycbyv2R2ZM8cEYsvRWb2Q6NasBLbIII1eA7zO9iVIsyDAShHxZ6oB1?=
+ =?us-ascii?Q?R8eS3C46Gg7wFoj+PXzBpFaeY1mqIyK3S8g4nCyyPN3XG6WB3C/3dEDe7SLH?=
+ =?us-ascii?Q?NxLvmFSl98Pz11L/XBDoheaOQbiK2fy8Blz9rhJU5bILrY+e9sn9txwSpXyt?=
+ =?us-ascii?Q?WblrxXsj4VMLgVWCQlQsZQcj8pkWPy2ZYbRu7FF0pGQi8Ju7v+CnDzNOyXnl?=
+ =?us-ascii?Q?i4MlsYxb7ZrGq30H9aeBdujx8b+FGoZ27BC0bbgJV2Fc0Yg9ZzMsGX4vMmNh?=
+ =?us-ascii?Q?3Taisa/3AdqxRydbp78ixQKHpbkmQIx8gPmumW3nTfrlFTS0qPl0wpZGv77Z?=
+ =?us-ascii?Q?pzmbxjaywZFR7mrfg50Ng3hzuaTw4nzF/JgqidnLRkHaO1Y/gHdj5y/SV/wW?=
+ =?us-ascii?Q?1YNwJdlIEcjcuxIXbypP7tsyszqDVgel7nnsXVXKcgT+6R4+6oZw6ZIWJrXj?=
+ =?us-ascii?Q?r+HDnKbbpcAb7WRw+/If6nvSvQOfwDK0FIwNInleInUUW4EBWb79XyThByLv?=
+ =?us-ascii?Q?pUnBFOx3otfImMWqNg+y6g8jJkbLjYPYkTlGg8vhQm2FeIl5NoM8968sDbG0?=
+ =?us-ascii?Q?pU+OZIleGryL/hoqLG1ZgeQR?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <416F035C40A49447B895812C86A7AD5D@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef3b2292-7db3-452e-a2e6-08dcb7a342ef
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 12:11:40.9761
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0723
 
-Em Tue, 6 Aug 2024 16:31:13 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
+From: Kerem Karabay <kekrby@gmail.com>
 
-> > +    /* Could also be read back from the error_block_address register */
-> > +    *error_block_addr = base +
-> > +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
-> > +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
-> > +        error_source_to_index[notify] * ACPI_GHES_MAX_RAW_DATA_LENGTH;
-> > +
-> > +    return true;
-> > +}  
-> 
-> I don't like all this pointer math, which is basically a reverse engineered
-> QEMU actions on startup + guest provided etc/hardware_errors address.
-> 
-> For once, it assumes error_source_to_index[] matches order in which HEST
-> error sources were described, which is fragile.
-> 
-> 2nd: migration-wive it's disaster, since old/new HEST/hardware_errors tables
-> in RAM migrated from older version might not match above assumptions
-> of target QEMU. 
-> 
-> I see 2 ways to rectify it:
->   1st: preferred/cleanest would be to tell QEMU (via fw_cfg) address of HEST table
->        in guest RAM, like we do with etc/hardware_errors, see
->             build_ghes_error_table()
->                ...
->                tell firmware to write hardware_errors GPA into
->        and then fetch from HEST table in RAM, the guest patched error/ack addresses
->        for given source_id
-> 
->        code-wise: relatively simple once one wraps their own head over
->                  how this whole APEI thing works in QEMU
->                  workflow  is described in docs/specs/acpi_hest_ghes.rst
->                  look to me as sufficient to grasp it.
->                  (but my view is very biased given my prior knowledge,
->                   aka: docs/comments/examples wrt acpi patching are good enough)
->                  (if it's not clear how to do it, ask me for pointers)
+Currently the driver determines the device type based on the
+application, but this value is not reliable on Apple Touch Bars, where
+the application is HID_DG_TOUCHPAD even though the devices are direct,
+so allow setting it in classes.
 
-That sounds a better approach, however...
+Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ drivers/hid/hid-multitouch.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
->   2nd:  sort of hack based on build_ghes_v2() Error Status Address/Read Ack Register
->         patching instructions
->                bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,                
->                    address_offset + GAS_ADDR_OFFSET, sizeof(uint64_t),                      
->                    ACPI_GHES_ERRORS_FW_CFG_FILE, source_id * sizeof(uint64_t));
->                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^
->         during build_ghes_v2() also store on a side mapping
->              source_id -> error address offset : read ack address
-> 
->         so when you are injecting error, you'd at least use offsets
->         used at start time, to get rid of risk where injection code
->         diverge from HEST:etc/hardware_errors layout at start time.
-> 
->         However to make migration safe, one would need to add a fat
->         comment not to change order ghest error sources in HEST _and_
->         a dedicated unit test to make sure we catch it when that happens.
->         bios_tables_test should be able to catch the change, but it won't
->         say what's wrong, hence a test case that explicitly checks order
->         and loudly & clear complains when we will break order assumptions.
-> 
->         downside:
->            * we are are limiting ways HEST could be composed/reshuffled in future
->            * consumption of extra CI resources
->            * and well, it relies on above duct tape holding all pieces together
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 60b675cd1..2948fbcbc 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -146,6 +146,7 @@ struct mt_class {
+ 	__s32 sn_height;	/* Signal/noise ratio for height events */
+ 	__s32 sn_pressure;	/* Signal/noise ratio for pressure events */
+ 	__u8 maxcontacts;
++	bool is_direct;	/* true for touchscreens */
+ 	bool is_indirect;	/* true for touchpads */
+ 	bool export_all_inputs;	/* do not ignore mouse, keyboards, etc... */
+ };
+@@ -563,13 +564,13 @@ static struct mt_application *mt_allocate_application=
+(struct mt_device *td,
+ 	mt_application->application =3D application;
+ 	INIT_LIST_HEAD(&mt_application->mt_usages);
+=20
+-	if (application =3D=3D HID_DG_TOUCHSCREEN)
++	if (application =3D=3D HID_DG_TOUCHSCREEN && !td->mtclass.is_indirect)
+ 		mt_application->mt_flags |=3D INPUT_MT_DIRECT;
+=20
+ 	/*
+ 	 * Model touchscreens providing buttons as touchpads.
+ 	 */
+-	if (application =3D=3D HID_DG_TOUCHPAD) {
++	if (application =3D=3D HID_DG_TOUCHPAD && !td->mtclass.is_direct) {
+ 		mt_application->mt_flags |=3D INPUT_MT_POINTER;
+ 		td->inputmode_value =3D MT_INPUTMODE_TOUCHPAD;
+ 	}
+@@ -1317,6 +1318,9 @@ static int mt_touch_input_configured(struct hid_devic=
+e *hdev,
+ 	if (td->serial_maybe)
+ 		mt_post_parse_default_settings(td, app);
+=20
++	if (cls->is_direct)
++		app->mt_flags |=3D INPUT_MT_DIRECT;
++
+ 	if (cls->is_indirect)
+ 		app->mt_flags |=3D INPUT_MT_POINTER;
+=20
+--=20
+2.39.3 (Apple Git-146)
 
-I ended opting to do approach (2) on this changeset, as the current code
-is already using bios_linker_loader_add_pointer() for ghes, being deeply 
-relying on the block address/ack and cper calculus.
-
-To avoid troubles on this duct tape, I opted to move all offset math
-to a single function at ghes.c:
-
-	/*
-	 * ID numbers used to fill HEST source ID field
-	 */
-	enum AcpiHestSourceId {
-	    ACPI_HEST_SRC_ID_SEA,
-	    ACPI_HEST_SRC_ID_GED,
-	
-	    /* Shall be the last one */
-	    ACPI_HEST_SRC_ID_COUNT
-	} AcpiHestSourceId;
-
-	...
-
-	static bool acpi_hest_address_offset(enum AcpiGhesNotifyType notify,
-        	                             uint64_t *error_block_offset,
-                	                     uint64_t *ack_offset,
-                        	             uint64_t *cper_offset,
-                                	     enum AcpiHestSourceId *source_id)
-	{
-	    enum AcpiHestSourceId source;
-	    uint64_t offset;
-
-	    switch (notify) {
-	    case ACPI_GHES_NOTIFY_SEA:      /* Only on ARMv8 */
-	        source = ACPI_HEST_SRC_ID_SEA;
-	        break;
-	    case ACPI_GHES_NOTIFY_GPIO:
-	        source = ACPI_HEST_SRC_ID_GED;
-	        break;
-	    default:
-	        return true;
-	    }
-
-	    if (source_id) {
-	        *source_id = source;
-	    }
-
-	    /*
-	     * Please see docs/specs/acpi_hest_ghes.rst for the memory layout.
-	     * In summary, memory starts with error addresses, then acks and
-	     * finally CPER blocks.
-	     */
-
-	    offset = source * sizeof(uint64_t);
-
-	    if (error_block_offset) {
-	        *error_block_offset = offset;
-	    }
-	    if (ack_offset) {
-	        *ack_offset = offset + ACPI_HEST_SRC_ID_COUNT * sizeof(uint64_t);
-	    }
-	    if (cper_offset) {
-	        *cper_offset = 2 * ACPI_HEST_SRC_ID_COUNT * sizeof(uint64_t) +
-	                       source * ACPI_GHES_MAX_RAW_DATA_LENGTH;
-	    }
-
-	    return false;
-	}
-
-I also removed the anonymous enum with SEA/GPIO source IDs, using
-only the ACPI notify type as arguments at the function calls.
-
-As there's now a single point where the offsets from
-docs/specs/acpi_hest_ghes.rst are enforced, this should be error
-prone.
-
-The code could later be changed to use approach (2), on a separate
-cleanup.
-
-Thanks,
-Mauro
 
