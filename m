@@ -1,168 +1,185 @@
-Return-Path: <linux-kernel+bounces-279659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6051F94C025
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B912394C02A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 836911C22334
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4CC1C22C78
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B5018FC79;
-	Thu,  8 Aug 2024 14:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AED118FC86;
+	Thu,  8 Aug 2024 14:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="Z6Z1AO3x"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dj9xXbkP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F782770E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAAD18EFDC
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723128216; cv=none; b=nNIXYklNZwkDUbs4rMXXVmRcWbDlL4PKVMAsyhYQaKxiV5iSfq8DFq4rL+lRhe3acWMvwEUomqed+vCtfcma4cZY1txSmVv+CVOtfYCUQl+3Olpum1l0J8mRjqbz5OH7wdEu7GFfzQ4Prb7XrfjueyHACFssC8eG/ZAsV/XOlvk=
+	t=1723128263; cv=none; b=a1RYVEsajAb3Ptxvby5AqyGt1NWoOeum+KnR67AU7BYBZOvg6yfIMKHxM5Dzx9QSiTyt4P4MYcMlsyO1vpIAZh5+7S8/xe1p+ofgjccfarzTGnyZKyJts819l93yJoMEpSN9YIoxlmTU3XRNtIcD+v1hQ27Iw27yJCMux++lYBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723128216; c=relaxed/simple;
-	bh=gxUG3otazyRmWtgtSd/bddgJMTeONC2VbsWENIfBB5Q=;
-	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=tNWzx1cXvMCx8WCS8zh8SFhbhbVEdlVYAxF+cC7mtV6bzW6IDbNDMKt1G5S08GuOJUyvlDiHXY/Jf5TeGVuTNBMKiNvBmCnAlkAdgUO4noD8cv2nYBbSWf8Cz3umi0oSg4iEap42upkfvir4AjFqfveLVKYYHZCZi84vsfAxbLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=Z6Z1AO3x; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
-	by cmsmtp with ESMTPS
-	id c1zDstz4WvH7lc4MSsYqCh; Thu, 08 Aug 2024 14:43:28 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id c4MRsGSrpks1Pc4MSsvVa8; Thu, 08 Aug 2024 14:43:28 +0000
-X-Authority-Analysis: v=2.4 cv=Ud+aS7SN c=1 sm=1 tr=0 ts=66b4d990
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=nePSiPpqfSlj2YhcidoA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:
-	Date:Message-ID:References:Cc:To:From:Subject:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=YvH0f9/zTah/x6FI6Uo6PpueB5FzaxCQ/9Pzsx8uzqY=; b=Z6Z1AO3xIs+UBYjZcLsI8+4lNa
-	rPmwnp13qZfnhIyn2pN+rC6E9AV+D+FNbxt138rAft+yrmJs/XvlXIZsBBQ6nlIkmKHLdBTsG70JO
-	BUABhh7sJqGQ/y7lz9S2ElSOknGgWMrozsoqpIPkrN3ulrCsg07xpKCiGI4dtUY/RtyE0Eo5GNSf/
-	Nb5fOgVbP3Ckvp7lF8kA324SjiHjXcBi1gefAg4WgoJwu7B4/jvEEOeaS5evfWoQWcF9PDEH+f9G6
-	AwhZFyHl17280XsG4N+bGIvqgVj4GVwan95jYcGgDsnLzZiEn4GJSwywX2bLzPdItoKOZgTV5XdcA
-	pQCA+zrQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:33482 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sc4MN-000NZn-02;
-	Thu, 08 Aug 2024 08:43:23 -0600
-Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc2 review
-From: Ron Economos <re@w6rz.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240808091131.014292134@linuxfoundation.org>
- <96b86f9b-c516-9742-5e33-e5cbfbed10b3@w6rz.net>
-Message-ID: <c4b1489f-42b8-8c16-f487-93b0dd8cd8c4@w6rz.net>
-Date: Thu, 8 Aug 2024 07:43:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1723128263; c=relaxed/simple;
+	bh=PJMk6Uqzz5UNIds09MxiiNBipTUv59eDmu0eBQ7jh18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxQEdmPOSz6of83qL+6Sd4+mbVGD4l8Vi96H2q/Ib++JiiNlJd9AL9Vqk0UMqFY2QHcN8uo0NYBqc8hHYpnJVuAdG7DZHXpwFg8HwxAHSGpC5Ydndmdz3IsNhVvCAKYuQBpAJrWgfVipnihOhSwrmTKMrYThUnAZ5GdqjcA0Qdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dj9xXbkP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723128260;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2yHWhOGhXoiaID94xq0Obn8IF6l9bmHYEIpGRlWg4Yk=;
+	b=dj9xXbkPPUVgxS3J9df12ZRP4qZLiM+OITIMzWQe0FxQTQXGfWaU4ccrN1rx+pNdXGgTLp
+	+geIlBjbnhmx2it2IZ1SFkQ03stbLbgKvm6SJaYHp134Ugfd8gP3qPn13xGLAt/NXzmn5D
+	5tCwSZ74HxJRgLSSepo52fZaZMxnta8=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-102-zWl_l8BEN4-VdGbwtCOing-1; Thu, 08 Aug 2024 10:44:19 -0400
+X-MC-Unique: zWl_l8BEN4-VdGbwtCOing-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52f00bde210so1278195e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 07:44:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723128258; x=1723733058;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2yHWhOGhXoiaID94xq0Obn8IF6l9bmHYEIpGRlWg4Yk=;
+        b=aTPGphWy0DYH+VKoJ3HEmzzNgTCyglqB6vQpzQM5tQKwzKRwYPETTQa9FRN63mU4QB
+         xErYPCnwPZEvIGPIfJyPPaUWfhJCnewrv0Y+T8bAHREbB7t+ViELbKZoXTHmC3O2Uj2A
+         djJ8dLO8fGlnNLyGig/jeFVCQbIXOnnVapUC2R7lhcZ5FeiMyPQ3ECqo6E2j8DKgxDCa
+         jl+7xrZKoG1bzTkOnfiW3IIUr6qY10KdYv576LYT4PZbtGDqNUYozjVsERBmQS5K7x7n
+         YYUZmU50K+WX1JICZ4f2JzfMj6rlrE/y7pCYdotvv6XMKcsHi8h8aDa6HQDtka8yOSy9
+         VnRA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+3f5aP+HD7PQE8QY3vGHSKiwgFhKlB7+bEJLpFPwI7RpJDmE5J/6yWkfK/gq+Y/SgxugHmMVAT1valZvEAsvWa6jmScwW44oJZh/C
+X-Gm-Message-State: AOJu0Yz71cZw4V8Fa8hIL2eFxBdWF85w8m8mRjTyLQR8C1jXFHibpd6x
+	L9QYQj9kcaHZjTwmmde5yYGPSIW2jmnK1NMiQeMAVONLasVEwNee9tShSpS2B4/Sw+UR4IgQyUt
+	srmn5yAL8p7ml/eMvDXksSv2406m+rGx/kT5jYv1g+76L5D4Ju7CKAIGlePV7zA==
+X-Received: by 2002:a05:6512:3f2a:b0:52c:deba:7e6e with SMTP id 2adb3069b0e04-530e583dbd1mr1838870e87.29.1723128257877;
+        Thu, 08 Aug 2024 07:44:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyh0BU4hkdxFulosZVyBK7BJraF3bjcMfeyi8ouHjXm8HPCLcpB/V7MWfZ+ttDa5YmHQVeiw==
+X-Received: by 2002:a05:6512:3f2a:b0:52c:deba:7e6e with SMTP id 2adb3069b0e04-530e583dbd1mr1838822e87.29.1723128256896;
+        Thu, 08 Aug 2024 07:44:16 -0700 (PDT)
+Received: from redhat.com ([2.55.34.111])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e8676fsm742332666b.164.2024.08.08.07.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 07:44:16 -0700 (PDT)
+Date: Thu, 8 Aug 2024 10:43:58 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Peter Maydell <peter.maydell@linaro.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>, Ani Sinha <anisinha@redhat.com>,
+	Igor Mammedov <imammedo@redhat.com>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	linux-kernel@vger.kernel.org, qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org
+Subject: Re: [PATCH] arm/virt: place power button pin number on a define
+Message-ID: <20240808104308-mutt-send-email-mst@kernel.org>
+References: <ef0e7f5fca6cd94eda415ecee670c3028c671b74.1723121692.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <96b86f9b-c516-9742-5e33-e5cbfbed10b3@w6rz.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sc4MN-000NZn-02
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:33482
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfBTCjICN/2PU75zS9kRmztPrvwT/GOZzvYgfwMQiXuAor+iiLAUKJ/iWCwvbkK9RhYRn3tfcVownidEjmrU1U+kJI2S/s89yGfF3XmfRQLviLRM4xcpB
- ADdPLeBdBRoyjFvdU5511WddTkeNrnsj891VdHCLBBu+QaANCV8y/g5UIxkhlHAKPZnsHbokxF/CgAQC2qMtsN+FQkU3tuDbX84=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef0e7f5fca6cd94eda415ecee670c3028c671b74.1723121692.git.mchehab+huawei@kernel.org>
 
-On 8/8/24 4:55 AM, Ron Economos wrote:
-> On 8/8/24 2:11 AM, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 6.1.104 release.
->> There are 86 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Sat, 10 Aug 2024 09:11:02 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->>     https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.104-rc2.gz 
->>
->> or in the git tree and branch at:
->>     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git 
->> linux-6.1.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
->>
-> I'm seeing a build failure.
->
-> sound/pci/hda/patch_conexant.c:273:10: error: ‘const struct 
-> hda_codec_ops’ has no member named ‘suspend’
->   273 |         .suspend = cx_auto_suspend,
->       |          ^~~~~~~
-> sound/pci/hda/patch_conexant.c:273:20: error: initialization of ‘void 
-> (*)(struct hda_codec *, hda_nid_t,  unsigned int)’ {aka ‘void 
-> (*)(struct hda_codec *, short unsigned int,  unsigned int)’} from 
-> incompatible pointer type ‘int (*)(struct hda_codec *)’ 
-> [-Werror=incompatible-pointer-types]
->   273 |         .suspend = cx_auto_suspend,
->       |                    ^~~~~~~~~~~~~~~
-> sound/pci/hda/patch_conexant.c:273:20: note: (near initialization for 
-> ‘cx_auto_patch_ops.set_power_state’)
-> sound/pci/hda/patch_conexant.c:274:10: error: ‘const struct 
-> hda_codec_ops’ has no member named ‘check_power_status’; did you mean 
-> ‘set_power_state’?
->   274 |         .check_power_status = snd_hda_gen_check_power_status,
->       |          ^~~~~~~~~~~~~~~~~~
->       |          set_power_state
-> sound/pci/hda/patch_conexant.c:274:31: error: 
-> ‘snd_hda_gen_check_power_status’ undeclared here (not in a function); 
-> did you mean ‘snd_hda_check_power_state’?
->   274 |         .check_power_status = snd_hda_gen_check_power_status,
->       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |                               snd_hda_check_power_state
->
-> This is triggered because my config does not include CONFIG_PM. But 
-> the error is caused by upstream patch 
-> 9e993b3d722fb452e274e1f8694d8940db183323 "ALSA: hda: codec: Reduce 
-> CONFIG_PM dependencies" being missing. This patch removes the #ifdef 
-> CONFIG_PM in the hda_codec_ops structure. So if CONFIG_PM is not set, 
-> some structure members are missing and the the build fails.
->
->
-Same failure occurs in 6.6.45-rc1 if CONFIG_PM is not set.
+On Thu, Aug 08, 2024 at 02:54:52PM +0200, Mauro Carvalho Chehab wrote:
+> Having magic numbers inside the code is not a good idea, as it
+> is error-prone. So, instead, create a macro with the number
+> definition.
+> 
+> Link: https://lore.kernel.org/qemu-devel/CAFEAcA-PYnZ-32MRX+PgvzhnoAV80zBKMYg61j2f=oHaGfwSsg@mail.gmail.com/
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Suggested-by: Peter Maydell <peter.maydell@linaro.org>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+
+ack, but note we do things like that only if something
+is repeated.
+
+> ---
+>  hw/arm/virt-acpi-build.c | 6 +++---
+>  hw/arm/virt.c            | 7 ++++---
+>  include/hw/arm/virt.h    | 3 +++
+>  3 files changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+> index e10cad86dd73..f76fb117adff 100644
+> --- a/hw/arm/virt-acpi-build.c
+> +++ b/hw/arm/virt-acpi-build.c
+> @@ -154,10 +154,10 @@ static void acpi_dsdt_add_gpio(Aml *scope, const MemMapEntry *gpio_memmap,
+>      aml_append(dev, aml_name_decl("_CRS", crs));
+>  
+>      Aml *aei = aml_resource_template();
+> -    /* Pin 3 for power button */
+> -    const uint32_t pin_list[1] = {3};
+> +
+> +    const uint32_t pin = GPIO_PIN_POWER_BUTTON;
+>      aml_append(aei, aml_gpio_int(AML_CONSUMER, AML_EDGE, AML_ACTIVE_HIGH,
+> -                                 AML_EXCLUSIVE, AML_PULL_UP, 0, pin_list, 1,
+> +                                 AML_EXCLUSIVE, AML_PULL_UP, 0, &pin, 1,
+>                                   "GPO0", NULL, 0));
+>      aml_append(dev, aml_name_decl("_AEI", aei));
+>  
+> diff --git a/hw/arm/virt.c b/hw/arm/virt.c
+> index 719e83e6a1e7..687fe0bb8bc9 100644
+> --- a/hw/arm/virt.c
+> +++ b/hw/arm/virt.c
+> @@ -1004,7 +1004,7 @@ static void virt_powerdown_req(Notifier *n, void *opaque)
+>      if (s->acpi_dev) {
+>          acpi_send_event(s->acpi_dev, ACPI_POWER_DOWN_STATUS);
+>      } else {
+> -        /* use gpio Pin 3 for power button event */
+> +        /* use gpio Pin for power button event */
+>          qemu_set_irq(qdev_get_gpio_in(gpio_key_dev, 0), 1);
+>      }
+>  }
+> @@ -1013,7 +1013,8 @@ static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
+>                               uint32_t phandle)
+>  {
+>      gpio_key_dev = sysbus_create_simple("gpio-key", -1,
+> -                                        qdev_get_gpio_in(pl061_dev, 3));
+> +                                        qdev_get_gpio_in(pl061_dev,
+> +                                                         GPIO_PIN_POWER_BUTTON));
+>  
+>      qemu_fdt_add_subnode(fdt, "/gpio-keys");
+>      qemu_fdt_setprop_string(fdt, "/gpio-keys", "compatible", "gpio-keys");
+> @@ -1024,7 +1025,7 @@ static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
+>      qemu_fdt_setprop_cell(fdt, "/gpio-keys/poweroff", "linux,code",
+>                            KEY_POWER);
+>      qemu_fdt_setprop_cells(fdt, "/gpio-keys/poweroff",
+> -                           "gpios", phandle, 3, 0);
+> +                           "gpios", phandle, GPIO_PIN_POWER_BUTTON, 0);
+>  }
+>  
+>  #define SECURE_GPIO_POWEROFF 0
+> diff --git a/include/hw/arm/virt.h b/include/hw/arm/virt.h
+> index ab961bb6a9b8..a4d937ed45ac 100644
+> --- a/include/hw/arm/virt.h
+> +++ b/include/hw/arm/virt.h
+> @@ -47,6 +47,9 @@
+>  /* See Linux kernel arch/arm64/include/asm/pvclock-abi.h */
+>  #define PVTIME_SIZE_PER_CPU 64
+>  
+> +/* GPIO pins */
+> +#define GPIO_PIN_POWER_BUTTON  3
+> +
+>  enum {
+>      VIRT_FLASH,
+>      VIRT_MEM,
+> -- 
+> 2.45.2
 
 
