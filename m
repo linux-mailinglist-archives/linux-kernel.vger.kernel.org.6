@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-280031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E004D94C4D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:46:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1189594C4CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1287DB26058
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:46:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424771C260A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AA115B103;
-	Thu,  8 Aug 2024 18:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF8E14F9FB;
+	Thu,  8 Aug 2024 18:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hDMvy1ob"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c+YWnb8t";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FCozqKQj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72402150994
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA81148FF6
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723142688; cv=none; b=OG/JXzUjskV+EAeZB8GH+EuUjC+fUjW7Cz6CrhNFBWgVZrhCuj18K8xlXbYvyGQwIx/DSPzxSNBwaT/hhVShqJ3EyhjEEyklZt5UuxYxACSUdSAKiD3TRYPO7nPja86/mPLcpBhtvXqsGG0qr2xbKlPM5OjOh3NeQfsVwHxGuKw=
+	t=1723142652; cv=none; b=OU4ly0Dn7+w1gjX6+dHotwgNEgt+NGnIDFEPLz0KsuHhn4TTvy+ufWlCpBU2DvkQwh5L1S6bYj4/uHnPrKOdNl10f7GTzTmMOKgmSPTPZO6O+UQaGtV3wRo3/pSpj/AXiJVXz4RJ4MiH43j13zWGzE+BjPT+t3EsTMpu377pvQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723142688; c=relaxed/simple;
-	bh=NbdLMTWfLXl/wJipk+LdtD2moPrB8cy99z3WZQooviE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uyeb+0N9hxQN1B5e+oOMKtaEdtwbdbLYGwJPthRXhHdYJHbPD45VbsVgJmu4u9BQNdVyu/g+18QC9FuH4RV2dJJDSuPmxvezvdn4fe0VUVayIZENFhbT2trXj2TTB/l0tytxvV6/ZfGt/orBcdN1Io7pTkDCwbZe+NhcZVZup1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hDMvy1ob; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-710d1de6e79so442330b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 11:44:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723142687; x=1723747487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+FZjS9lLhm8Ss5ACYK4UD0eLeWkBZ4V5hozi46AMmMQ=;
-        b=hDMvy1obe44ZOmZy9Fdk47AOApAFFH0Y2Bu1fTdcC/JVIDrMfym+e7ADvxBOAJIxE1
-         mJcAKyfjsnOFiW4Z2P0vyK+Lf+RqjmZ1+seO7U4FLARaB7K1+gGq4FKBLUF1n4W82u6K
-         arOjGPo3TZCF8ink+Qs/Zbv4p0IFPBXQGljcc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723142687; x=1723747487;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+FZjS9lLhm8Ss5ACYK4UD0eLeWkBZ4V5hozi46AMmMQ=;
-        b=mumGx+/GAJRAAa3OihLHSNjM5J3JlJJkSljW2NKIUN+LXiBiq5l/U6iitt8883A5an
-         biPl3at6eNRxy9eN+3gp/xSPyu1xtx7qYAeN9uS+zYnl1n2lEupFXGGDZwxRi9A7YZNX
-         pNBTQZhlmJR4Rhl8bPgrsFwutilmO4wmB7ngphRZmeP+qCqSaZpJyTgTj2I2Az3e0EdX
-         ZxYKqfFFnMUhQU6Am4xjTN3oqJ8kYgGfDZ9tAkporkvDQXIA9Y/sWeIp07BHYytfD+Ys
-         FJkstNQ4CfQ5HRm8suP5bGRhkbuwQu5F9zLZS45lLyn5Q2H9u1jlRhQ8ybNvsxou0Caf
-         zHCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXch4Kzch6fSyJniT9ZzlEX3G/HtGkIi2l5Ta4vY44J7ppWZ7XQxomvnJ+h3wpSvMSIZG1jQtXjTvbApyNdHkz+iW5TbFHq2YaA98Wx
-X-Gm-Message-State: AOJu0Yz6yOoKA8YBU0482n0J/6MgfWqF1MBGhDIbVQzF3smJwKemW+hB
-	o7pvjF4cb3cV0lb6Dstyt5Eeh1qu8SL/yKDGqsLNFnK5CNgni77oFQeswxobSw==
-X-Google-Smtp-Source: AGHT+IHmMuhdk1NaYfmjsh5fG9/wnslwqUeMbA6OPtLJlYkM8QY7GVj2DKaKMTuWDb1cv34MVl+iAA==
-X-Received: by 2002:a05:6a20:3509:b0:1c8:92ed:7c5e with SMTP id adf61e73a8af0-1c892ed7db8mr748828637.23.1723142686764;
-        Thu, 08 Aug 2024 11:44:46 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:66d6:d51f:d7f1:36c4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2d50cesm1416640b3a.109.2024.08.08.11.44.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 11:44:46 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rob Clark <robdclark@chromium.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: display: panel: samsung,atna45dc02: Fix indentation
-Date: Thu,  8 Aug 2024 11:44:07 -0700
-Message-ID: <20240808114407.1.I099e8e9e36407a0785d846b953031d40ea71e559@changeid>
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+	s=arc-20240116; t=1723142652; c=relaxed/simple;
+	bh=RgvLTjtsXqvx1dljrlnmlzlUHVbk42kAkn8cMGh+aAA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HjSE7hFV9MhUfHHxbc92AN7BEC1bt9hlxk5u9TUsdbL8XNES58UdyOscOWjYDdCNG5vEfELgGNeUiMZErvTG9ILzRip+U8FTg6Y/eb14wi8tC+u/kN2UXa43GTVP6g6h+yomY05Rdrms2Wrmtx6I7kXdT79DtgGAUZ6fQzHnwh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c+YWnb8t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FCozqKQj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723142649;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7lFQ9qbgGkQHynofX0hc8YhiCkhKls2r3nBy42ncXMI=;
+	b=c+YWnb8t/2+gNPAI1lkGBnN3oT1HREArLLtnnTDT1x8rHMvPbEhhX9QEfPUP4bdzsDVua3
+	2k5YhUWaB7vbcWEo3SbnoHy2JP4NliuduQaedZgytDpr9yqjK11g2QOj3nL+NwgfkVPwlV
+	Xh1h1Pnw2vHQsJddpg5ExwUZl1NIuQf5OL29Y5AgmHTPNO+XIN9POLvx2dNTpas/eT/U6k
+	OR8oV4PrBrtOLu4uEoXomldzu4XguKcs6Khtij3Hp0O83h4SRr0JWZVdvdPj3Xygy2xfOg
+	pTLBQeOb3JryNxUAvKsnZX6hvE0khfhuJbcVmwTQUkKLyjbWDPBWixcxvSnRew==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723142649;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7lFQ9qbgGkQHynofX0hc8YhiCkhKls2r3nBy42ncXMI=;
+	b=FCozqKQjeKHGZj3Fa0b6j6gA7KQZEHT0J6VzWWcyswp+x8R2W4u4zpTdfs/qTwTOtdIVX6
+	KCX9psOVfmn0OHAQ==
+To: Dan Williams <dan.j.williams@intel.com>, Dan Williams
+ <dan.j.williams@intel.com>, Max Ramanouski <max8rr8@gmail.com>,
+ dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org
+Cc: max8rr8@gmail.com, linux-kernel@vger.kernel.org, x86@kernel.org, Dan
+ Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 1/1] x86/ioremap: Use is_vmalloc_addr in iounmap
+In-Reply-To: <66b4f4a522508_c1448294f2@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20230810100011.14552-1-max8rr8@gmail.com> <87le17yu5y.ffs@tglx>
+ <66b4eb2a62f6_c1448294b0@dwillia2-xfh.jf.intel.com.notmuch>
+ <877ccryor7.ffs@tglx>
+ <66b4f305eb227_c144829443@dwillia2-xfh.jf.intel.com.notmuch>
+ <66b4f4a522508_c1448294f2@dwillia2-xfh.jf.intel.com.notmuch>
+Date: Thu, 08 Aug 2024 20:44:08 +0200
+Message-ID: <87zfpmyhvr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The yaml had indentation errors:
-  ./Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml:21:9:
-  [warning] wrong indentation: expected 10 but found 8 (indentation)
-  ./Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml:23:11:
-  [warning] wrong indentation: expected 12 but found 10 (indentation)
+On Thu, Aug 08 2024 at 09:39, Dan Williams wrote:
+> Dan Williams wrote:
+>> Apologies was trying to quickly reverse engineer how private memory
+>> might be different than typical memremap_pages(), but it is indeed the
+>> same in this aspect.
+>> 
+>> So the real difference is that the private memory case tries to
+>> allocate physical memory by searching for holes in the iomem_resource
+>> starting from U64_MAX. That might explain why only the private memory
+>> case is violating assumptions with respect to high_memory spilling into
+>> vmalloc space.
+>
+> Not U64_MAX, but it starts searching for free physical address space
+> starting at MAX_PHYSMEM_BITS, see gfr_start().
 
-Fix them.
+Wait. MAX_PHYSMEM_BITS is either 46 (4-level) or 52 (5-level), which is
+fully covered by the identity map space.
 
-Reported-by: Rob Herring <robh@kernel.org>
-Closes: https://lore.kernel.org/r/CAL_JsqLRTgQRPcfXy4G9hLoHMd-Uax4_C90BV_OZn4mK+-82kw@mail.gmail.com
-Fixes: 1c4a057d01f4 ("dt-bindings: display: panel: samsung,atna45dc02: Document ATNA45DC02")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+So even if the search starts from top of that space, how do we end up
+with high_memory > VMALLOC_START?
 
- .../bindings/display/panel/samsung,atna33xc20.yaml   | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+That does not make any sense at all.
 
-diff --git a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
-index 87c601bcf20a..032f783eefc4 100644
---- a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
-@@ -18,12 +18,12 @@ properties:
-       # Samsung 13.3" FHD (1920x1080 pixels) eDP AMOLED panel
-       - const: samsung,atna33xc20
-       - items:
--        - enum:
--          # Samsung 14.5" WQXGA+ (2880x1800 pixels) eDP AMOLED panel
--          - samsung,atna45af01
--          # Samsung 14.5" 3K (2944x1840 pixels) eDP AMOLED panel
--          - samsung,atna45dc02
--        - const: samsung,atna33xc20
-+          - enum:
-+              # Samsung 14.5" WQXGA+ (2880x1800 pixels) eDP AMOLED panel
-+              - samsung,atna45af01
-+              # Samsung 14.5" 3K (2944x1840 pixels) eDP AMOLED panel
-+              - samsung,atna45dc02
-+          - const: samsung,atna33xc20
- 
-   enable-gpios: true
-   port: true
--- 
-2.46.0.76.ge559c4bf1a-goog
+> That aspect of private memory has always bothered me, but I am not
+> sure that is the historical assumption violation you are referring to
+> above.
 
+The historical assumption about max_pfn and high_memory is that this is
+the end of the actual memory space.
+
+Thanks,
+
+        tglx
 
