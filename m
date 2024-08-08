@@ -1,276 +1,184 @@
-Return-Path: <linux-kernel+bounces-279803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0481794C20A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:54:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB6E094C204
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD63283930
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:54:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73D441F22F68
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8763E18B489;
-	Thu,  8 Aug 2024 15:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B11B18FDDB;
+	Thu,  8 Aug 2024 15:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=camlingroup.com header.i=@camlingroup.com header.b="iAmNBB92"
-Received: from eu-smtp-delivery-197.mimecast.com (eu-smtp-delivery-197.mimecast.com [185.58.86.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAqFMnrR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1373B18E746
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE2F18CC0C;
+	Thu,  8 Aug 2024 15:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723132444; cv=none; b=mLAo0M+tnvCDsq7LdO1SXCChwFObm37vI3JzQL5w9dLulRA1RQpratG/b7q5DnYf8Y6m9EgncBjda3QocWKeQ34vEIpG8kndAEdcPOog698g5PIlaPgmtUhMQcvLYLZ5sRg0ynF9Yogk+vDm7gC9F/1JshKwXjhMgmfr4SXo7Ik=
+	t=1723132355; cv=none; b=ug+AU+BapxOVePYtnPH/fSszA0QaMSOuihxbIkr8eHiLZ4apzuteOv9oqDEbmvpbKhy2psqViopsk4QgfFoPWQpfqflSylD0BOZumkod3Cl7XGrlU73R3zTJdrXiSKvWcXuHcBFQ4LBCYiuDpiuFwOcdWyZkUkpKl1afK53yp6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723132444; c=relaxed/simple;
-	bh=yrez5Jn9TkgNLr+MSp7JM/iqz72RX/+SNmnTugHUQ2w=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=N9mPb2ThQYE7tF9H30YwqfouznJf97pfIYdxPG/UXlYkI6u6f2Nz1T6uA/3Lru2Awa6Aa5Buu2sE4Ft2bhKbjT/VResTVEj3uSWkcffnxQCL3N83pwj0uGx9yMV7bxInMJpdWwvEYzok+FHbq/whVaJoqDsVrfjpwbd0/pCdy7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=camlingroup.com; spf=pass smtp.mailfrom=camlingroup.com; dkim=pass (1024-bit key) header.d=camlingroup.com header.i=@camlingroup.com header.b=iAmNBB92; arc=none smtp.client-ip=185.58.86.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=camlingroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=camlingroup.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=camlingroup.com;
-	s=mimecast20210310; t=1723132440;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rAsU/Q6PICalD5a+ibimkhqrflVdpOCuRlhVoc17I9Y=;
-	b=iAmNBB92ZYQn10qEp2769sT6PK0j+EpFBkd3ptqBU0sl4tcjeEUvuwtE7aQNQEjFVBE8X3
-	MD3O2W0Ot0wAW52AgRMgzmxqDahPP1TNaNNsDJcJyuLUgqCUaIQNC4icerssTdLwoI3qmY
-	LWHPquiqVE+eJ84+DwYz4thKOchi4wM=
-Received: from GBR01-CWX-obe.outbound.protection.outlook.com
- (mail-cwxgbr01lp2040.outbound.protection.outlook.com [104.47.85.40]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- uk-mta-187-ESJF4yYMPh-U1gugQje0KQ-1; Thu, 08 Aug 2024 16:52:28 +0100
-X-MC-Unique: ESJF4yYMPh-U1gugQje0KQ-1
-Received: from CWLP123MB4178.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:bd::12)
- by LO0P123MB7861.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:429::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14; Thu, 8 Aug
- 2024 15:52:26 +0000
-Received: from CWLP123MB4178.GBRP123.PROD.OUTLOOK.COM
- ([fe80::c521:bbd7:6726:1147]) by CWLP123MB4178.GBRP123.PROD.OUTLOOK.COM
- ([fe80::c521:bbd7:6726:1147%4]) with mapi id 15.20.7849.014; Thu, 8 Aug 2024
- 15:52:26 +0000
-Message-ID: <19c5442b-984e-4758-ad50-34392c0ae79f@camlingroup.com>
-Date: Thu, 8 Aug 2024 17:52:23 +0200
-User-Agent: Mozilla Thunderbird
-From: Kirill Yatsenko <kirill.yatsenko@camlingroup.com>
-Subject: Re: [PATCH v2] spi: imx: fix use-after-free during driver removal
-To: Frank Li <Frank.li@nxp.com>
-Cc: broonie@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, lech.perczak@camlingroup.com,
- krzysztof.drobinski@camlingroup.com, pawel.lenkow@camlingroup.com,
- linux-spi@vger.kernel.org, imx@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <d5aeab83-347c-48c5-9482-b01ef73baf97@camlingroup.com>
- <ZrTRW7Y/vUN0wGx+@lizhi-Precision-Tower-5810>
-In-Reply-To: <ZrTRW7Y/vUN0wGx+@lizhi-Precision-Tower-5810>
-X-ClientProxiedBy: BE1P281CA0296.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:8a::19) To CWLP123MB4178.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:bd::12)
+	s=arc-20240116; t=1723132355; c=relaxed/simple;
+	bh=MA4u5QG0JWizBNPse3ag1v+wZ1LBB64y0nsxcrcwrUE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BNlNheGPqbeJwdPN6GhAKJTPkSfs0gjEEzDsK96aI06WN7rRmayvbXZ5d6X7wpFXIQKfCcbBoPYApW2TDFj3QhNTpWJdWrycUkwnwI0Ix31SKZnIV0USPaZCwc9DosCzCA1nAneBjd/hSCIPjUIxAd6cCEIGCGjVBP+hE1N2eXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAqFMnrR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B1EC32786;
+	Thu,  8 Aug 2024 15:52:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723132354;
+	bh=MA4u5QG0JWizBNPse3ag1v+wZ1LBB64y0nsxcrcwrUE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vAqFMnrR8sj7HPQkCaZS/kG+otY1sqXMMCDLasHIl8fmyTbo4YgD8UVUwbNWfAfW4
+	 4lm22vVQKfheEBRBQQ5/r3eBnB0FZZJj5sajoGJz0gbULl73B7ZOMKYIOCVNzU7fTD
+	 /kwb4TIfYwkZxkt1Lkl2unmR+q/z0JJ30Ol2Qvr0KyodAsMR87mahVepyTAkbMlDji
+	 OO3062ngXGHCbCUkdUxB6pD3XZVYA2u9Cl/zbMMlcuiVWN8POZq8NzezDKqTI6tRge
+	 jioPA8hXytrHJGd4uH0vafwJCAB5bErMwt4n8DBixnI0yYzGFjXW5bEgVAsEH2QCxd
+	 ajpQ/aUNK0+EQ==
+Date: Fri, 9 Aug 2024 00:52:27 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Song Liu <songliubraving@meta.com>, Sami Tolvanen
+ <samitolvanen@google.com>, Masami Hiramatsu <mhiramat@kernel.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Song Liu <song@kernel.org>,
+ "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
+ <linux-trace-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Joe
+ Lawrence <joe.lawrence@redhat.com>, Nathan Chancellor <nathan@kernel.org>,
+ "morbo@google.com" <morbo@google.com>, Justin Stitt
+ <justinstitt@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Leizhen
+ <thunder.leizhen@huawei.com>, "kees@kernel.org" <kees@kernel.org>, Kernel
+ Team <kernel-team@meta.com>, Matthew Maurer <mmaurer@google.com>,
+ "Alessandro Carminati (Red Hat)" <alessandro.carminati@gmail.com>
+Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
+ without .XXX suffix
+Message-Id: <20240809005227.d5219493cb181243376db4be@kernel.org>
+In-Reply-To: <ZrSW5KgFMjlB1Rn2@pathway.suse.cz>
+References: <20240806144426.00ed349f@gandalf.local.home>
+	<B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
+	<20240806160049.617500de@gandalf.local.home>
+	<20240806160149.48606a0b@gandalf.local.home>
+	<6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
+	<20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
+	<BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
+	<20240807190809.cd316e7f813400a209aae72a@kernel.org>
+	<CABCJKucdMS1hkWjHWty8JyACjZy2R9juusABcbsMYzNej=pB2Q@mail.gmail.com>
+	<09ED7762-A464-45FF-9062-9560C59F304E@fb.com>
+	<ZrSW5KgFMjlB1Rn2@pathway.suse.cz>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB4178:EE_|LO0P123MB7861:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1bd76fd7-bbe8-4b6c-56b1-08dcb7c21978
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?cGZPcnVyU0Q2NUpZYXl2YnF2M2VsQ0d2ZVNjbnpxY3oxQkdSbDc3S3l3elh2?=
- =?utf-8?B?bDdkd1dCd0RnaTRoMmxHTXRBbExCdysvaTQwVWdtRmY0ZU51Ti9Xczlyem5X?=
- =?utf-8?B?cTFWSUZ1UE5STGlvaHFmSFlwWHBKMUo2d1JFZjRPN1p0eVhVUmw5NmYra1k0?=
- =?utf-8?B?dkQ1N1AyTjlQb3BrNUtLSXg3YUdaWkRoeExNNVR2c3BqRU1wT3pzMmx4VDVX?=
- =?utf-8?B?T2liWGs4RUorUENqK2JKWWxEWWtKMkZ0dituWjdtVlNvbDR6Y2J0R2VVSmFX?=
- =?utf-8?B?NXhFTTZXUzQrRjFUSC9ERlNLc21jQmVwOEVDY0EwMG1IQkFqSTNpRkU3QjNt?=
- =?utf-8?B?NnJzRy9DMG9qSklQL1RGdm1WQnVkcmRaU1JsTkd5KzlzWVFIRHkxYTlIZEcz?=
- =?utf-8?B?cFhFeCttUVlwaitOTEk4Y3JONzNhNHkycHFlOW00cStzSjdlU1B2eVFSQWZC?=
- =?utf-8?B?ekkrY1Fia042dzZPU01uV3phTG5TaHdWQkhwTUdHdDJaaXk4UE54SDdGY3hJ?=
- =?utf-8?B?aG4wZ0hqQmVpOVFTNkVJVUhJRzRSMGRROHkwVTNCWFdZcWRyNmtmRXVIUWx1?=
- =?utf-8?B?V3c2NGhSVHVwVkl5bHF4RzFQRGIweHdBN3VSdHJvVG1sRExQOTdQOEY2eUs1?=
- =?utf-8?B?cXl1WjhSV3YwVFVVYVdKempaVjVWWHZwZXYvWTc2M2ZwcjF5RTh2VlRYVCtX?=
- =?utf-8?B?YXY2Q1lzRUxKUDB4VVZmMnR0TlQ1SjFVaGxVYS9DSUtEUEY2YUJYRklROFo4?=
- =?utf-8?B?UXQxVlZYZHZ3Y3hqVWtBRVVudXZhblhqMnU3ZGJCdmlwenlaRXRTOHdoSVRD?=
- =?utf-8?B?eis0RDhxVlU5c0pkMC9lamFrMVRNUEJia09GVHAyK1ZNUE5YbVJhdUpZSG9P?=
- =?utf-8?B?Q3hIZHhPd05SaTFYYkZqenB0elF2cW12Y1c5R3J1OUVCRzltTmo3UFBaYk9I?=
- =?utf-8?B?b3RXa1N5V2VmdXg3MWhZYnp3RFJlc2RaTFB2enFDbG1RbHYwOGdEMERYdUx4?=
- =?utf-8?B?QkNaM2gzejdTTGFtcCtXQ1YrNFJnUmhweXkzOHo0QzJXWWZQUWJ5UGFiYmZw?=
- =?utf-8?B?RjJXSmtQcTNJa1F0b2JqTVBySHd3NlZlT0ZoODZXWXFoR2RFSXJGMHQrNmU4?=
- =?utf-8?B?ZmJUaHpzMEJYM0ZoVGU0T3YwV2NFaXZnVmZCOHpma3VVV2ZXTjVKb3Y4bFpI?=
- =?utf-8?B?czhNTzFnWHJOd2t5emJSZG41cE96R2pxZm94OWUvK2ZCMEVRbmlFTTIzQ1NI?=
- =?utf-8?B?SXdMRjBkMlhUVUhQZXNtTVJwR3QrQXdoanhpcGxJODNzNTQrZE8xL052YzJY?=
- =?utf-8?B?Ung5QW83UUM0R1Nod0NxQmJPMHJiQnBraE53WEpqLzhBV3dTZ3pOVGNjaVpy?=
- =?utf-8?B?R2hCQVdtSGg5QVd3NmxtcHNhamFoL0s1NjBqNkw1RldDMWl1TGFZeXVkRG41?=
- =?utf-8?B?b1NNay9GclZNN3ordUlYNHhyNlF3RzRJNkhLVFZVc1JmM2xjN3kxUWNOeXJh?=
- =?utf-8?B?Y0VvMW5qZEpGNE8zcFRHUm5XaGxXSisvNGlWN1M4eVhiNC9RcWVFbXBXSm4z?=
- =?utf-8?B?K2VnUHg5c0t1cUpvS0pETmgxNENqR0dwZ0luZXRHOCtKZWJzQWdVbHV6WUZE?=
- =?utf-8?B?WnRQYng0SXpzZlRxR1F2UXFsWUVLZ2NwNjlnRFo1Tk5iV28wZDBWRmxKWHl0?=
- =?utf-8?B?dUZ0L051MGhYTklNYjdVcFU3cm0xSy9najFEWlg2VC82SFBmRDJHNWN3UWxM?=
- =?utf-8?B?SVJtOFhxZnZjcS9HUFZjWEQySDFxVEJUVVdGZW1nWERFNEljY20ycEZBQkQr?=
- =?utf-8?B?b1JXTUFnZW1salY2dkVjdz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB4178.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VG41aGh2MXBKdVZLZzVBTS9NQy9hWEdWclVKRUprL0p1TDJpdzVFMGptbnIw?=
- =?utf-8?B?aFlkd1dNdzZwY1NvWFBWeGw3Zm9XMnY1VnN1V0IwTi9mZTYzR2xjOGloU2Rw?=
- =?utf-8?B?ZExhQnU2UVl5aGozTlZ0dllCZmVHSEN2UVZQLzhkVzM1UzhGZHFnaGp0REw4?=
- =?utf-8?B?Qnc0UjlJZGRlelZHblg5NW52bUplTFB5MnVjWnBsT3RFLzJIT0Rac0U1OTMz?=
- =?utf-8?B?QlRxNG1KZnl1TDJuZnhsVkFoQWJpMjhzSzlTRG10V0haMGFMVGJpdE5xZlNQ?=
- =?utf-8?B?dHFRbjBSSUNKNEswblJqd0xhTWZGc1g0UmFSK3dKRC8yYncyMFpuMGkxbWJj?=
- =?utf-8?B?ZkEweGZSNU4yT3J6VkxZdDVkbFA4MHBDVkQvaEY2KzNXdlA3bUlFbUR3bjdi?=
- =?utf-8?B?YTBuSFNnWldmU3A4WHB5WXFPOVM1aklxclFuMnBBWEF6WGkway9jeng4Wkh4?=
- =?utf-8?B?OTg1Vk9GL2JKcE96LzFGZ1hDb3M3eVlMRzhDeitxRXdRT3FyY2JCZURVN3Ny?=
- =?utf-8?B?dmpER29BdmM2NHZ6Z0FVL01aejZ0MGVsUHFqUjl3SjUrL3paVmlqejhrTit3?=
- =?utf-8?B?Sjlud3J4NjNYN25HS0h2ZUtXVmVSaHRoMDFPanY4L1ZSbXpCMU5pVTJqNkxn?=
- =?utf-8?B?Mm9ESitlWGErUFNKbWtHN1JCV04yNVFGZGM2T3p6K0lKajd3bDZVa2ptUTNm?=
- =?utf-8?B?ZXc3ZjBvdlJidTd2anB6VC9pQkpDRDFyTUp0TGNvQzFSbm56MU8xNldzN1hW?=
- =?utf-8?B?MFppc0JoSEFRWERnTHEzUWczWXlMZk1lZzV6RGl1bFlDTHM5L1RuUC9OQm0w?=
- =?utf-8?B?NmsrY3IxalZnWnFmS3dQSXFnczdUd3RSbkgra0FIWG85aGdoYlh2YWVIY1c1?=
- =?utf-8?B?cjUrQzBSOWNXK1p3dWF5WVlqUksreUcycy9zcW1scHYzS0I2RmtmdzQ4NUlW?=
- =?utf-8?B?NmxYZGR5Y3Q2QU9lSVNibDBucVd6djdCRUdWVVg1NHpJelU5SVV0Qkd5U0VB?=
- =?utf-8?B?bmpXQjRYaU5NZmMrWVM5MGRubGV0M0k3TVhqY292enJ4aTBNY3RJcnRqOVpz?=
- =?utf-8?B?QTM3ajFIUVlWS2JaaDJOaGQvU2EyZDVBYmx1NFJpekx6ZkE3WGxiQUdtUjhy?=
- =?utf-8?B?K0I2RE1STmFOL1NSUzZwV2xZQ2VGdU1rT1BDWGlkaUFLbVNpeDZOQ2QySmxC?=
- =?utf-8?B?c1hyU0tqV1FyU2xOVW1sYmNlamlDeHJnb015anJrVHNlaVRZdFJwU2NTK2dO?=
- =?utf-8?B?TnN0Q1ZacXVDRlRJRDVGc0hBYStFSUNvbWZBYTFUUXJsNTZXTVlyczNJbjR0?=
- =?utf-8?B?Nm5Yb0pKdTlKak1GbThiTWNLNkRRWUJ3ZzgzbG5TWnZ3Qml4THBTZDE5c3Bi?=
- =?utf-8?B?aUlrUG5qbmNraEpoZnVINmFsNWhEeWRBTGZHWkhMYm11VHYwVnVHNFk1WHhl?=
- =?utf-8?B?enpHUnp4ZUMveVZpOTdPZGh1TkFVVjQwSWxtWTBocjNjbUJMR2Y1NVlpd05q?=
- =?utf-8?B?VFdYd3VJWUQ1MDZQT1NSbFRBUEhPd2N3L21NalNiVlBEb3pVWmVZcC9jWUp5?=
- =?utf-8?B?TmQxbFZDcm5EOVdMOGgvVW8wTmtKYjJDUWJlTmRMZnUrTk1TNnRKeTJCV1Ri?=
- =?utf-8?B?ZlcyM0JuQUo5S2p2OU00VmhSSGFHWjlNaUdvVEVCNThSMFE3VE1RZWZIUDUv?=
- =?utf-8?B?anZJY0Z5bXlFVzJXL0dnQ2VBMG9qVXRXUXVDYTZSOTkrdnIzYzNRUUU2cjMy?=
- =?utf-8?B?NGtNVjZnZGVEeFlONXVZWVJ0RVpYWEZwRk0xRVJYKy9rYTJYbnZlYi84OEFu?=
- =?utf-8?B?RGh3U2x4dTlxeUpiQ1hkNFFpVk5abENtMWplZS9rY1QzenVqY3BjRWJ1SG9S?=
- =?utf-8?B?WGljcjZIME1pY2ZBN0F5L1N4ZDdBS2swSHgzYldPRnkwR0xtc1gvamhLU0Rt?=
- =?utf-8?B?OEhpb0sxU1FvL0g5bTJJN29pWnM1N3hudEE4T2FQcnpiRlN5emI4OThQbk5T?=
- =?utf-8?B?aGVTcDUvZW5lSUlpNFZGRS90TEZPUFBvYUxWdWNaTmlKL0dqRmZ4NHBMRmRR?=
- =?utf-8?B?SUNQclVhUjNodFA3cW1vbFZCY1FBcFBRZWhXbUU4aTBTa3JBU2phRUNvbFRM?=
- =?utf-8?B?VENscXZReTAvWGVYWGRYY0I0UndGL1hURmxqemhFeG45MHVxNWpMcEhjMXZx?=
- =?utf-8?Q?+DV3n8JL6IlujvsD4GHu27Q=3D?=
-X-OriginatorOrg: camlingroup.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1bd76fd7-bbe8-4b6c-56b1-08dcb7c21978
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB4178.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 15:52:26.0447
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fd4b1729-b18d-46d2-9ba0-2717b852b252
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q/kQ/OSpToi4xiFxZKAWGadcmgbccz5mAbf/qEfvRisGkopji2ZwO3hgb2hO1hFz0u9C1qsLnunCc0tXgiLzeZXj3WDWfvos3qbpGzEoV28=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P123MB7861
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: camlingroup.com
-Content-Language: en-US
+Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-With the CONFIG_SLUB_DEBUG_ON enabled the unhandled fault error appears
-when unbinding the driver.
+On Thu, 8 Aug 2024 11:59:00 +0200
+Petr Mladek <pmladek@suse.com> wrote:
 
-The spi controller driver memory is freed inside the spi_imx_remove prior
-to executing PM callbacks thus leading to use-after-free.
+> On Wed 2024-08-07 20:48:48, Song Liu wrote:
+> > 
+> > 
+> > > On Aug 7, 2024, at 8:33 AM, Sami Tolvanen <samitolvanen@google.com> wrote:
+> > > 
+> > > Hi,
+> > > 
+> > > On Wed, Aug 7, 2024 at 3:08 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > >> 
+> > >> On Wed, 7 Aug 2024 00:19:20 +0000
+> > >> Song Liu <songliubraving@meta.com> wrote:
+> > >> 
+> > >>> Do you mean we do not want patch 3/3, but would like to keep 1/3 and part
+> > >>> of 2/3 (remove the _without_suffix APIs)? If this is the case, we are
+> > >>> undoing the change by Sami in [1], and thus may break some tracing tools.
+> > >> 
+> > >> What tracing tools may be broke and why?
+> > > 
+> > > This was a few years ago when we were first adding LTO support, but
+> > > the unexpected suffixes in tracing output broke systrace in Android,
+> > > presumably because the tools expected to find specific function names
+> > > without suffixes. I'm not sure if systrace would still be a problem
+> > > today, but other tools might still make assumptions about the function
+> > > name format. At the time, we decided to filter out the suffixes in all
+> > > user space visible output to avoid these issues.
+> > > 
+> > >> For this suffix problem, I would like to add another patch to allow probing on
+> > >> suffixed symbols. (It seems suffixed symbols are not available at this point)
+> > >> 
+> > >> The problem is that the suffixed symbols maybe a "part" of the original function,
+> > >> thus user has to carefully use it.
+> > >> 
+> > >>> 
+> > >>> Sami, could you please share your thoughts on this?
+> > >> 
+> > >> Sami, I would like to know what problem you have on kprobes.
+> > > 
+> > > The reports we received back then were about registering kprobes for
+> > > static functions, which obviously failed if the compiler added a
+> > > suffix to the function name. This was more of a problem with ThinLTO
+> > > and Clang CFI at the time because the compiler used to rename _all_
+> > > static functions, but one can obviously run into the same issue with
+> > > just LTO.
+> > 
+> > I think newer LLVM/clang no longer add suffixes to all static functions
+> > with LTO and CFI. So this may not be a real issue any more?
+> > 
+> > If we still need to allow tracing without suffix, I think the approach
+> > in this patch set is correct (sort syms based on full name,
+> 
+> Yes, we should allow to find the symbols via the full name, definitely.
+> 
+> > remove suffixes in special APIs during lookup).
+> 
+> Just an idea. Alternative solution would be to make make an alias
+> without the suffix when there is only one symbol with the same
+> name.
+> 
+> It would be complementary with the patch adding aliases for symbols
+> with the same name, see
+> https://lore.kernel.org/r/20231204214635.2916691-1-alessandro.carminati@gmail.com
 
-Fix it by switching to the devm version of spi_register_controller.
+I think this is the best idea what we can do for tracing/stacktrace with
+same-name symbols. But the root cause here is a bit different, that's why
+I rejected the last patch.
 
-Unhandled fault: alignment exception (0x001) at 0x6b6b6c53
-[6b6b6c53] *pgd=3D00000000
-Internal error: : 1 [#1] PREEMPT SMP ARM
-Modules linked in:
-CPU: 2 PID: 1241 Comm: rebind.sh Not tainted 6.10.0-dnm3pv2-dnm3pv2-ga03695=
-deba11 #1
-Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-PC is at __pm_runtime_resume+0x58/0x6c
-LR is at spi_imx_remove+0x1c/0xa8
-pc : [<80632438>]    lr : [<806ebefc>]    psr: 20010013
-sp : f1d81e88  ip : 83c0e204  fp : 00000000
-r10: 00000000  r9 : 00000000  r8 : 82dd9454
-r7 : 82dda054  r6 : 810f82f0  r5 : 00000004  r4 : 6b6b6b6b
-r3 : 6b6b6c53  r2 : 85321240  r1 : 00000004  r0 : 6b6b6b6b
-Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-Control: 10c5387d  Table: 1687c04a  DAC: 00000051
+With compiler suffixes, the source line aliases should remove those
+suffixes and add new suffix like below.
 
-Register r12 information: slab kmalloc-64 start 83c0e180 data offset 64 poi=
-nter offset 68 size 64 allocated at kobject_set_name_vargs+0x2c/0xa0
-    kmalloc_node_track_caller_noprof+0x14c/0x37c
-    kvasprintf+0x5c/0xcc
-    kobject_set_name_vargs+0x2c/0xa0
-    dev_set_name+0x2c/0x58
-    spi_register_controller+0xcc/0xc48
-    spi_imx_probe+0x41c/0x694
-    platform_probe+0x5c/0xb0
-    really_probe+0xe0/0x3cc
-    __driver_probe_device+0x9c/0x1e0
-    driver_probe_device+0x30/0xc0
-    __driver_attach+0x11c/0x1cc
-    bus_for_each_dev+0x7c/0xcc
-    bus_add_driver+0xe0/0x220
-    driver_register+0x7c/0x114
-    do_one_initcall+0x58/0x240
-    kernel_init_freeable+0x198/0x1f4
- Free path:
-    kobject_put+0xd0/0x29c
-    spi_imx_remove+0x10/0xa8
-    platform_remove+0x20/0x5c
-    device_release_driver_internal+0x184/0x1f0
-    unbind_store+0x54/0x90
-    kernfs_fop_write_iter+0xfc/0x1e8
-    vfs_write+0x25c/0x450
-    ksys_write+0x70/0xf0
-    ret_fast_syscall+0x0/0x54
+1234 t name_show.llvm.12345678
+1234 t name_show@kernel_irq_irqdesc_c_264
 
-Call trace:
- __pm_runtime_resume from spi_imx_remove+0x1c/0xa8
- spi_imx_remove from platform_remove+0x20/0x5c
- platform_remove from device_release_driver_internal+0x184/0x1f0
- device_release_driver_internal from unbind_store+0x54/0x90
- unbind_store from kernfs_fop_write_iter+0xfc/0x1e8
- kernfs_fop_write_iter from vfs_write+0x25c/0x450
- vfs_write from ksys_write+0x70/0xf0
- ksys_write from ret_fast_syscall+0x0/0x54
+> I would allow to find the symbols with and without the suffix using
+> a single API.
 
-Fixes: 307c897db762 ("spi: spi-imx: replace struct spi_imx_data::bitbang by=
- pointer to struct spi_controller")
-Signed-off-by: Kirill Yatsenko <kirill.yatsenko@camlingroup.com>
----
-Changes in v2:
-            Shorter Kernel oops message
----
- drivers/spi/spi-imx.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I wonder why we need it? for ftrace filter?
 
-diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
-index 4a56a5b16e12..14834c4e839a 100644
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -1854,7 +1854,7 @@ static int spi_imx_probe(struct platform_device *pdev=
-)
- =09spi_imx->devtype_data->intctrl(spi_imx, 0);
-=20
- =09controller->dev.of_node =3D pdev->dev.of_node;
--=09ret =3D spi_register_controller(controller);
-+=09ret =3D devm_spi_register_controller(&pdev->dev, controller);
- =09if (ret) {
- =09=09dev_err_probe(&pdev->dev, ret, "register controller failed\n");
- =09=09goto out_register_controller;
-@@ -1900,8 +1900,6 @@ static void spi_imx_remove(struct platform_device *pd=
-ev)
- =09struct spi_imx_data *spi_imx =3D spi_controller_get_devdata(controller)=
-;
- =09int ret;
-=20
--=09spi_unregister_controller(controller);
--
- =09ret =3D pm_runtime_get_sync(spi_imx->dev);
- =09if (ret >=3D 0)
- =09=09writel(0, spi_imx->base + MXC_CSPICTRL);
---=20
-2.34.1
+The same symbol name does not mean the same function prototype.
+For the kprobes (and fprobes, ftraces too) user must specify which
+actual symbol is what you want to probe.
 
+Of course if user can say "hey kprobe, probe name_show", but that is
+unclear (not unique symbol) so kprobe will reject it. If there is
+.llvm suffix, user can specify one of them. But it is still unclear
+to user where in the source code the symbol is actually defined.
+So eventually, we need the debuginfo or this @suffix.
+
+Thank you,
+
+
+> 
+> Best Regards,
+> Petr
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
