@@ -1,186 +1,285 @@
-Return-Path: <linux-kernel+bounces-280152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 552BE94C667
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0789094C665
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7EB1F2530C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8C31F26B3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E5C15D5DE;
-	Thu,  8 Aug 2024 21:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5CA15B980;
+	Thu,  8 Aug 2024 21:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TBwZsufc"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eEVhIfjZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BFC158D8F
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 21:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEF5145324;
+	Thu,  8 Aug 2024 21:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723153395; cv=none; b=Qv8qv0T+ygfG1yfvRrUo5FH+6GfinVf1sPuURT+3ujmPiQrx88bA8Av2Um6yHf1RiPnjz9OXXEhyXIACPDeJfq+8kaVU4ezNkcHeXLNnpNQ2p/rxP9ZLFirGSEqT3Pa5hBonl9hjQcdbdCNO8ZfxB7b031GEm0eNUsW9StyZbbw=
+	t=1723153393; cv=none; b=QLwyfnXE3m5SfMVuXGA8AKZo+vcDtGKyqlgz2y8rJ3iHc5XIH3fMNyG0jmn9/U2MCNSI1e+8zstdxkkMPpShFUp2bKLcO0VcOGJygJtiND02FTC84NEBCyUiDjSg+BvkxgHPa4n43IYkvmdtTFLPURFIP9nCuatQwrVOzZL6snY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723153395; c=relaxed/simple;
-	bh=F3HAG9cERt0HZrldBR6qvUxJ0ROrnb/caFVAXJMZG9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ptR3Oxpc9UYAs0ozB3fRo+MeyKOk22uH9JkC01tcU/g8dobJFcHQNzN1x309R/yfsJc69t2YXtowBgWhMqLcwINsF/4MUkKy5DYZUHjna/+g4ypIb/sdXFZJO4ZHSK79v300pmkS/e2CF/VzP+TffyDf8EvmdlBV++tdpCTGgGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TBwZsufc; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so624a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 14:43:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723153391; x=1723758191; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F3HAG9cERt0HZrldBR6qvUxJ0ROrnb/caFVAXJMZG9w=;
-        b=TBwZsufcW8bQPI1pZRqOZJrIoRNdrlIpPfJfPoRCd0I0+ltY370IlpL4WiLzYtdw+a
-         udJykwL++144sim/JbPRfarSD06bQbNkr+yjgbGtbcukMf0Dnetix8b4h1Wv7tCi8EOr
-         x8N/iX4d+oBQi0Q2NM4I2Huu8HKcbPLcmerhXuk08sQArZXW/OC3keSrVgh4UGUVxwoK
-         rshy9GzFOb3iDuuVpqAT1EsR18SLonzwBaPdpA3z9QDlE8R1Fk6v5l+GulsSi28RmPUq
-         tvYwwP7rfntUUoI5NPI8SXQ9n7XZLQ7nDG1rLdoN3X9eghsZv86hK9HspOlwS8yg0N6J
-         e9hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723153391; x=1723758191;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F3HAG9cERt0HZrldBR6qvUxJ0ROrnb/caFVAXJMZG9w=;
-        b=DjySpLgIDTLoR69UZj66pHs6FJWBXqDiCVohJRHVCZpefWNWTtL9kyqrHf2W1hEHlG
-         yABRd5A1r2leLMigdvHApNqj0vvEBCK5Kt2KfFq5zVWX31JqFkN6C8tHfNTVWKrYH3gG
-         1GYnjwwebVz+yWiWb4FZmo6ep3XWV+U/ppnN6wjbfp94GRZIDF4PewhvPFe547hwkOTd
-         FzJiNdR0PSCCO9Vxt3OIyjItYBDGynvpAtD8XC6quoEYGHPe295LLdv/AIi8ptfgbd9T
-         XiskzkDc4aHik9S3oKJzR1FN/rlxSyst0ZEaTLrZx7R2tpA0bGyZVchzCJZeEOOoULSo
-         DLmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwMkAMHlMd2MfkxRJsLMbiYAkvk/exhwsKsT0hr+Ud4EsGCzwkpxdIeo4wrMhZ3TfdUcqHf4cBCPnCIMpdi/Ql66nDtDB2geDoIhpn
-X-Gm-Message-State: AOJu0Yz6DdKbQzmDB8XSQSfurO/QBTro9xKcDWHwr0p0stQEyXR6IHy1
-	bi7T9bsI2ev4zL7FW10qsg1mJOmuM2DAs3FR4vFMBkU8YChxqHL3vM/NYVx0I5287WV5Op3/lsr
-	YHB6KFBy2rGDd6KmslRXiklcrxByL6DXv8xGd
-X-Google-Smtp-Source: AGHT+IEH1V3AUKZFLyjOwF0Qksh4Jg69gvv/7gEV5z4JKgxe7+5RAl2VUU75yiE7fK1wQur24yXm5KzLy8M6xQfmK9Y=
-X-Received: by 2002:a05:6402:350b:b0:58b:90c6:c59e with SMTP id
- 4fb4d7f45d1cf-5bc4b4363f2mr17670a12.7.1723153390883; Thu, 08 Aug 2024
- 14:43:10 -0700 (PDT)
+	s=arc-20240116; t=1723153393; c=relaxed/simple;
+	bh=iiVOkB4xyNGt5Ji9BBZS0LrYXkdJzAuatNcxlThBVP8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GseZ8qyRnYek2pZeC3sGyZNxPUp0oaELpJ/6xtOEJDYcQu4VOuS98MqgmIxWfdZwJbxppl48sF9NtDxjFVJFXIZ/bC+ygEDOjdaosBCvgfXbX/y+3tmJK2wOGjK25rCJzcppl1qKYSPg7XwzZRA1EKvnW424/UpzvV58M+RiFPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eEVhIfjZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478AgTUL018279;
+	Thu, 8 Aug 2024 21:43:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=/w4EXjUZu5VjQ6P9pS53rZX6
+	79O69cN7CRSEqBYc/6o=; b=eEVhIfjZ+Jko3gqbT23mzlDSqmOt4qv5TjmNpLb9
+	79vj8+wqQjZ4EMaBCrNanYXEBrXj/cpEn/Et3wNWH/tpHE/XYSBSBNlZzuYK3zTo
+	7Ov9ATuBKsAczdv6tJbBa6c2DU9efWF6tnM3rSCRxf4LH/nF16DuAXOgj927q68d
+	kOL/ycSNxKB/zQQnvLF9mnzf7VMqkCBR+P+LAj41DD9d05/GQXCKKEuhPUZUFJ6Q
+	2fb/FacrdG+6FNiZGpL6CNRla7BJZ7dHj3je7OHiNio4m8RL7tLK6JqktAcrpF2A
+	3koSy9sLnEUrTC1YinovWehFgCGHdp1hl0lCVCUXwShXMQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vvgm1n2d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 21:43:00 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 478Lgwtf010204
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 Aug 2024 21:42:58 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 8 Aug 2024 14:42:58 -0700
+Date: Thu, 8 Aug 2024 14:42:57 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Ackerley Tng <ackerleytng@google.com>
+CC: <akpm@linux-foundation.org>, <pbonzini@redhat.com>, <seanjc@google.com>,
+        <tabba@google.com>, <david@redhat.com>, <roypat@amazon.co.uk>,
+        <qperret@google.com>, <linux-coco@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <kvm@vger.kernel.org>
+Subject: Re: [PATCH RFC 4/4] mm: guest_memfd: Add ability for mmap'ing pages
+Message-ID: <20240808132450196-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240805-guest-memfd-lib-v1-4-e5a29a4ff5d7@quicinc.com>
+ <diqzr0ayn90d.fsf@ackerleytng-ctop.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807182325.2585582-1-surenb@google.com> <CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com>
- <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com> <CAEf4BzYqKAaGE6GEcMs9MTcrV4cA+i0M5pniqFTy1LQ+g0Yxkw@mail.gmail.com>
-In-Reply-To: <CAEf4BzYqKAaGE6GEcMs9MTcrV4cA+i0M5pniqFTy1LQ+g0Yxkw@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 8 Aug 2024 23:42:33 +0200
-Message-ID: <CAG48ez08f0GNfkqtKa3EV6-miRs3AbXej9WdVh4TvB8ErA6S3w@mail.gmail.com>
-Subject: Re: [RFC 1/1] mm: introduce mmap_lock_speculation_{start|end}
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, peterz@infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <diqzr0ayn90d.fsf@ackerleytng-ctop.c.googlers.com>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: wKWq1rQBhn0g9QePO9TgwnTys_nyqsBy
+X-Proofpoint-GUID: wKWq1rQBhn0g9QePO9TgwnTys_nyqsBy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-08_21,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 mlxscore=0 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 mlxlogscore=999 bulkscore=0
+ phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408080155
 
-On Thu, Aug 8, 2024 at 11:11=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
-> On Thu, Aug 8, 2024 at 2:02=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
-com> wrote:
+On Thu, Aug 08, 2024 at 06:51:14PM +0000, Ackerley Tng wrote:
+> Elliot Berman <quic_eberman@quicinc.com> writes:
+> 
+> > Confidential/protected guest virtual machines want to share some memory
+> > back with the host Linux. For example, virtqueues allow host and
+> > protected guest to exchange data. In MMU-only isolation of protected
+> > guest virtual machines, the transition between "shared" and "private"
+> > can be done in-place without a trusted hypervisor copying pages.
 > >
-> > On Thu, Aug 8, 2024 at 8:19=E2=80=AFPM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > >
-> > > On Wed, Aug 7, 2024 at 11:23=E2=80=AFAM Suren Baghdasaryan <surenb@go=
-ogle.com> wrote:
-> > > >
-> > > > Add helper functions to speculatively perform operations without
-> > > > read-locking mmap_lock, expecting that mmap_lock will not be
-> > > > write-locked and mm is not modified from under us.
-> > > >
-> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> > > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > > ---
-> > >
-> > > This change makes sense and makes mm's seq a bit more useful and
-> > > meaningful. I've also tested it locally with uprobe stress-test, and
-> > > it seems to work great, I haven't run into any problems with a
-> > > multi-hour stress test run so far. Thanks!
+> > Add support for this feature and allow Linux to mmap host-accessible
+> > pages. When the owner provides an ->accessible() callback in the
+> > struct guest_memfd_operations, guest_memfd allows folios to be mapped
+> > when the ->accessible() callback returns 0.
 > >
-> > Thanks for testing and feel free to include this patch into your set.
->
-> Will do!
->
+> > To safely make inaccessible:
 > >
-> > I've been thinking about this some more and there is a very unlikely
-> > corner case if between mmap_lock_speculation_start() and
-> > mmap_lock_speculation_end() mmap_lock is write-locked/unlocked so many
-> > times that mm->mm_lock_seq (int) overflows and just happen to reach
-> > the same value as we recorded in mmap_lock_speculation_start(). This
-> > would generate a false positive, which would show up as if the
-> > mmap_lock was never touched. Such overflows are possible for vm_lock
-> > as well (see: https://elixir.bootlin.com/linux/v6.10.3/source/include/l=
-inux/mm_types.h#L688)
-> > but they are not critical because a false result would simply lead to
-> > a retry under mmap_lock. However for your case this would be a
-> > critical issue. This is an extremely low probability scenario but
-> > should we still try to handle it?
+> > ```
+> > folio = guest_memfd_grab_folio(inode, index, flags);
+> > r = guest_memfd_make_inaccessible(inode, folio);
+> > if (r)
+> >         goto err;
 > >
->
-> No, I think it's fine.
+> > hypervisor_does_guest_mapping(folio);
+> >
+> > folio_unlock(folio);
+> > ```
+> >
+> > hypervisor_does_s2_mapping(folio) should make it so
+> > ops->accessible(...) on those folios fails.
+> >
+> > The folio lock ensures atomicity.
+> 
+> I am also working on determining faultability not based on the
+> private-ness of the page but based on permission given by the
+> guest. I'd like to learn from what you've discovered here.
+> 
+> Could you please elaborate on this? What races is the folio_lock
+> intended to prevent, what operations are we ensuring atomicity of?
 
-Modern computers don't take *that* long to count to 2^32, even when
-every step involves one or more syscalls. I've seen bugs where, for
-example, a 32-bit refcount is not decremented where it should, making
-it possible to overflow the refcount with 2^32 operations of some
-kind, and those have taken something like 3 hours to trigger in one
-case (https://bugs.chromium.org/p/project-zero/issues/detail?id=3D2478),
-14 hours in another case. Or even cases where, if you have enough RAM,
-you can create 2^32 legitimate references to an object and overflow a
-refcount that way
-(https://bugs.chromium.org/p/project-zero/issues/detail?id=3D809 if you
-had more than 32 GiB of RAM, taking only 25 minutes to overflow the
-32-bit counter - and that is with every step allocating memory).
-So I'd expect 2^32 simple operations that take the mmap lock for
-writing to be faster than 25 minutes on a modern desktop machine.
+The contention I've been paying most attention to are racing userspace
+and vcpu faults where guest needs the page to be private. There could
+also be multiple vcpus demanding same page.
 
-So for a reader of some kinda 32-bit sequence count, if it is
-conceivably possible for the reader to take at least maybe a couple
-minutes or so between the sequence count reads (also counting time
-during which the reader is preempted or something like that), there
-could be a problem. At that point in the analysis, if you wanted to
-know whether it's actually exploitable, I guess you'd have to look at
-what kinda context you're running in, and what kinda events can
-interrupt/preempt you (like whether someone can send a sufficiently
-dense flood of IPIs to completely prevent you making forward progress,
-like in https://www.vusec.net/projects/ghostrace/), and for how long
-those things can delay you (maybe including what the pessimal
-scheduler behavior looks like if you're in preemptible context, or how
-long clock interrupts can take to execute when processing a giant pile
-of epoll watches), and so on...
+We had some chatter about doing the private->shared conversion via
+separate ioctl (mem attributes). I think the same race can happen with
+userspace whether it's vcpu fault or ioctl making the folio "finally
+guest-private".
 
-> Similar problems could happen with refcount_t,
-> for instance (it has a logic to have a sticky "has overflown" state,
-> which I believe relies on the fact that we'll never be able to
-> increment refcount 2bln+ times in between some resetting logic).
-> Anyways, I think it's utterly unrealistic and should be considered
-> impossible.
+Also, in non-CoCo KVM private guest_memfd, KVM or userspace could also
+convert private->shared and need to make sure that all the tracking for
+the current state is consistent.
 
-IIRC refcount_t protects against this even in theoretical, fairly
-pessimal scenarios, because the maximum number of tasks you can have
-on Linux is smaller than the number of refcount decrements you'd have
-to do in parallel to bring a pinned refcount back down to 0.
+> Is this why you did a guest_memfd_grab_folio() before checking
+> ->accessible(), and then doing folio_unlock() if the page is
+> inaccessible?
+> 
 
-I know this is a weakness of seqcount_t (though last time I checked I
-couldn't find any examples where it seemed like you could actually
-abuse this).
+Right, I want to guard against userspace being able to fault in a page
+concurrently with that same page doing a shared->private conversion. The
+folio_lock seems like the best fine-grained lock to grab.
 
-But if you want a counter, and something bad would happen if the
-counter wraps, and you don't have a really strong guarantee that the
-counter won't wrap, I think it's more robust to make it 64-bit. (Or an
-unsigned long and hope there aren't too many people who still run
-32-bit kernels on anything important... though that's not very
-pretty.)
+If the shared->private converter wins the folio_lock first, then the
+userspace fault waits and will see ->accessible() == false as desired. 
+
+If userspace fault wins the folio_lock first, it relinquishes the lock
+only after installing the folio in page tables[*]. When the
+shared->private converter finally gets the lock,
+guest_memfd_make_inaccessible() will be able to unmap the folio from any
+userspace page tables (and direct map, if applicable).
+
+[*]: I'm not mm expert, but that was what I could find when I went
+digging.
+
+Thanks,
+Elliot
+
+> >
+> > Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> > ---
+> >  include/linux/guest_memfd.h |  7 ++++
+> >  mm/guest_memfd.c            | 81 ++++++++++++++++++++++++++++++++++++++++++++-
+> >  2 files changed, 87 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/guest_memfd.h b/include/linux/guest_memfd.h
+> > index f9e4a27aed67..edcb4ba60cb0 100644
+> > --- a/include/linux/guest_memfd.h
+> > +++ b/include/linux/guest_memfd.h
+> > @@ -16,12 +16,18 @@
+> >   * @invalidate_end: called after invalidate_begin returns success. Optional.
+> >   * @prepare: called before a folio is mapped into the guest address space.
+> >   *           Optional.
+> > + * @accessible: called after prepare returns success and before it's mapped
+> > + *              into the guest address space. Returns 0 if the folio can be
+> > + *              accessed.
+> > + *              Optional. If not present, assumes folios are never accessible.
+> >   * @release: Called when releasing the guest_memfd file. Required.
+> >   */
+> >  struct guest_memfd_operations {
+> >  	int (*invalidate_begin)(struct inode *inode, pgoff_t offset, unsigned long nr);
+> >  	void (*invalidate_end)(struct inode *inode, pgoff_t offset, unsigned long nr);
+> >  	int (*prepare)(struct inode *inode, pgoff_t offset, struct folio *folio);
+> > +	int (*accessible)(struct inode *inode, struct folio *folio,
+> > +			  pgoff_t offset, unsigned long nr);
+> >  	int (*release)(struct inode *inode);
+> >  };
+> >  
+> > @@ -48,5 +54,6 @@ struct file *guest_memfd_alloc(const char *name,
+> >  			       const struct guest_memfd_operations *ops,
+> >  			       loff_t size, unsigned long flags);
+> >  bool is_guest_memfd(struct file *file, const struct guest_memfd_operations *ops);
+> > +int guest_memfd_make_inaccessible(struct file *file, struct folio *folio);
+> >  
+> >  #endif
+> > diff --git a/mm/guest_memfd.c b/mm/guest_memfd.c
+> > index e9d8cab72b28..6b5609932ca5 100644
+> > --- a/mm/guest_memfd.c
+> > +++ b/mm/guest_memfd.c
+> > @@ -9,6 +9,8 @@
+> >  #include <linux/pagemap.h>
+> >  #include <linux/set_memory.h>
+> >  
+> > +#include "internal.h"
+> > +
+> >  static inline int guest_memfd_folio_private(struct folio *folio)
+> >  {
+> >  	unsigned long nr_pages = folio_nr_pages(folio);
+> > @@ -89,7 +91,7 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
+> >  			goto out_err;
+> >  	}
+> >  
+> > -	if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
+> > +	if (!ops->accessible && (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP)) {
+> >  		r = guest_memfd_folio_private(folio);
+> >  		if (r)
+> >  			goto out_err;
+> > @@ -107,6 +109,82 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
+> >  }
+> >  EXPORT_SYMBOL_GPL(guest_memfd_grab_folio);
+> >  
+> > +int guest_memfd_make_inaccessible(struct file *file, struct folio *folio)
+> > +{
+> > +	unsigned long gmem_flags = (unsigned long)file->private_data;
+> > +	unsigned long i;
+> > +	int r;
+> > +
+> > +	unmap_mapping_folio(folio);
+> > +
+> > +	/**
+> > +	 * We can't use the refcount. It might be elevated due to
+> > +	 * guest/vcpu trying to access same folio as another vcpu
+> > +	 * or because userspace is trying to access folio for same reason
+> > +	 *
+> > +	 * folio_lock serializes the transitions between (in)accessible
+> > +	 */
+> > +	if (folio_maybe_dma_pinned(folio))
+> > +		return -EBUSY;
+> > +
+> > +	if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
+> > +		r = guest_memfd_folio_private(folio);
+> > +		if (r)
+> > +			return r;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static vm_fault_t gmem_fault(struct vm_fault *vmf)
+> > +{
+> > +	struct file *file = vmf->vma->vm_file;
+> > +	struct inode *inode = file_inode(file);
+> > +	const struct guest_memfd_operations *ops = inode->i_private;
+> > +	struct folio *folio;
+> > +	pgoff_t off;
+> > +	int r;
+> > +
+> > +	folio = guest_memfd_grab_folio(file, vmf->pgoff, GUEST_MEMFD_GRAB_UPTODATE);
+> 
+> Could grabbing the folio with GUEST_MEMFD_GRAB_UPTODATE cause unintended
+> zeroing of the page if the page turns out to be inaccessible?
+> 
+
+I assume that if page is inaccessible, it would already have been marked
+up to date and we wouldn't try to zero the page.
+
+I'm thinking that if hypervisor zeroes the page when making the page
+private, it would not give the GUEST_MEMFD_GRAB_UPTODATE flag when
+grabbing the folio. I believe the hypervisor should know when grabbing
+the folio if it's about to donate to the guest.
+
+Thanks,
+Elliot
+
 
