@@ -1,219 +1,167 @@
-Return-Path: <linux-kernel+bounces-279320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6136794BBD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0439894BBD7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF538B231D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:59:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5424EB2373E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC5818B474;
-	Thu,  8 Aug 2024 10:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D8518B473;
+	Thu,  8 Aug 2024 11:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fa114U1f"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6552913A257;
-	Thu,  8 Aug 2024 10:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fJhunPSN"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34774286A6;
+	Thu,  8 Aug 2024 11:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723114774; cv=none; b=YpS7AzQRn13gIFT2j3SOjjxj6YKd3AjBAWdKTZH/BV/LiPGwUXgx8kRmQvkU763EfQtr9PdyySuK1xFnTOufI2fB0cG49BlWWq+HPz+jrhssnDuDlrbDI+qTnfz7wa8EtgDr9vM3bpVRKJL0impYYcq9kXLkdfabpVG+/yZtpFw=
+	t=1723114828; cv=none; b=L1kvwwvJwhrLPp4vxlr/Pamk+ALnq//UmlDAaIfUF4/Vg3wfwGle7XyhU/UFZ1Zh0RjKqNhwPAt5nPy8RYQ/Iav4XK2k+GvOCyMwph3KibmO7fhGChjnzi8lqR/S6w+npOWSs6ZOY6HNhvEjhGIRhB/CVc7hJ5Q4+zRcwYVITao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723114774; c=relaxed/simple;
-	bh=R5TNXeD48PvUfshipVRWL4upqGUc5BydTmkZw2rz/oc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=LR2kXgFulwWAZ16oQDnDiO06zmuijeXBskW5Q56mHeGDWLbSCe+xfMzI+Gj3HJsEnOpMP5gOF8OnRrFw3OPFjx5STAm+5Ms7xcAMILc7bE8k7VUadwCGckOsgm9UiAbbGk24dyVGGZNslwWLGajKcd1WudSeNlaL0CvgrVVtCLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fa114U1f; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4789ELvc001391;
-	Thu, 8 Aug 2024 10:59:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GTm6wDOh5PG9DO8gyAtzsm7P814EPpllB7djhy0IFZQ=; b=fa114U1fXnMynfFU
-	WgSZWpDNaaJI0gdvLh1v0H60V20lSrpucyc/AoxdNBhLvQ29eTz/OVQ5ifOdNKN+
-	ZbcNVxG4p9O2O9CpHZFok5g49wVOUYfDVA/Hd5x9foU9gPMKV19XvYVqeu0WyLyR
-	jqxlcBYHE1cGtOI4xHOMpo4nIzkCoRskudorqli50e2iVxdGAfXaRZVUKCLc3D3U
-	eDkhgVW3ofWG80JVLF8wgs6+8FHsArEf6EPgoDEJMwWOuWhsqTZOuwEAiPimjs9M
-	KcFjWbnHIJCzSwAM+0tWtj+8rwDL+m2IEmncLGekBxK7DLaPIsrgzePtUMPgO0rr
-	L+BnNQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vfav1uhq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 10:59:21 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 478AxKd8031027
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 8 Aug 2024 10:59:20 GMT
-Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 8 Aug 2024
- 03:59:15 -0700
-Message-ID: <9b852bed-0daf-634c-13c9-00c6b8dd327a@quicinc.com>
-Date: Thu, 8 Aug 2024 16:29:12 +0530
+	s=arc-20240116; t=1723114828; c=relaxed/simple;
+	bh=OR+VhU9mhCyJce7HDHe1Uv/U/dBXIye6qP8H9dbJTn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YxPByh0zUidFyjfqLrWj6Q7claLOKE01kRABTCHbTSrcFxneJ4qcFvDMSF2wWJE+24ZIF3LhdxTlWTR2smo2WMcfzfKZiGS8tu0EXESiSdWsQKeWjjmMHdj0VCDdh52/IdV08wKIpau2K3m2QSqklGqa75SVpt+OaJLofmY/dFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fJhunPSN; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id BAA1A20B7165; Thu,  8 Aug 2024 04:00:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BAA1A20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1723114826;
+	bh=Q9TBJrSTIxZWyLx3nUhN0aGNn1LRkcSdO2AwzlYwPoo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fJhunPSNNqAjK+gCkGDTz7UrVynoxZHaHyzpVKaKYe8kN/R8J55Hn/2Y7l7EDut16
+	 tFrSjzR3zJrHEWxZFrkjO8foCUQ6La6A5Qtq7kNjWoQUxyM2aytL/81WYZEPKlBfdf
+	 g1++8zHNCjFRKBE7DIjJRivbLmouRz52GgjFQDtM=
+Date: Thu, 8 Aug 2024 04:00:26 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: longli@microsoft.com
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 net] net: mana: Fix doorbell out of order violation
+ and avoid unnecessary doorbell rings
+Message-ID: <20240808110026.GA25550@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1723072626-32221-1-git-send-email-longli@linuxonhyperv.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 1/2] PM: domains: add device managed version of
- dev_pm_domain_attach|detach_list()
-Content-Language: en-US
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-To: Dhruva Gole <d-gole@ti.com>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        "Len
- Brown" <len.brown@intel.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio"
-	<konrad.dybcio@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf
- Hansson <ulf.hansson@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <1723014947-15571-1-git-send-email-quic_dikshita@quicinc.com>
- <1723014947-15571-2-git-send-email-quic_dikshita@quicinc.com>
- <20240808104130.3lehlvkcprag2md6@lcpd911>
- <36de7f9c-701f-6650-468b-bf07453e2e21@quicinc.com>
-In-Reply-To: <36de7f9c-701f-6650-468b-bf07453e2e21@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DHr2f4l3sVMyUkum1ugwaGnhgBpv6kml
-X-Proofpoint-GUID: DHr2f4l3sVMyUkum1ugwaGnhgBpv6kml
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_11,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- lowpriorityscore=0 mlxscore=0 bulkscore=0 phishscore=0 suspectscore=0
- impostorscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408080078
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1723072626-32221-1-git-send-email-longli@linuxonhyperv.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-
-
-On 8/8/2024 4:25 PM, Dikshita Agarwal wrote:
+On Wed, Aug 07, 2024 at 04:17:06PM -0700, longli@linuxonhyperv.com wrote:
+> From: Long Li <longli@microsoft.com>
 > 
+> After napi_complete_done() is called when NAPI is polling in the current
+> process context, another NAPI may be scheduled and start running in
+> softirq on another CPU and may ring the doorbell before the current CPU
+> does. When combined with unnecessary rings when there is no need to arm
+> the CQ, it triggers error paths in the hardware.
 > 
-> On 8/8/2024 4:11 PM, Dhruva Gole wrote:
->> On Aug 07, 2024 at 12:45:46 +0530, Dikshita Agarwal wrote:
->>> Add the devres-enabled version of dev_pm_domain_attach|detach_list.
->>> If client drivers use devm_pm_domain_attach_list() to attach the
->>> PM domains, devm_pm_domain_detach_list() will be invoked implicitly
->>> during remove phase.
->>>
->>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->>> ---
->>>  drivers/base/power/common.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
->>>  include/linux/pm_domain.h   | 13 +++++++++++++
->>>  2 files changed, 57 insertions(+)
->>>
->>> diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
->>> index 327d168..729d6c2 100644
->>> --- a/drivers/base/power/common.c
->>> +++ b/drivers/base/power/common.c
->>> @@ -277,6 +277,50 @@ int dev_pm_domain_attach_list(struct device *dev,
->>>  EXPORT_SYMBOL_GPL(dev_pm_domain_attach_list);
->>>  
->>>  /**
->>> + * devm_pm_domain_detach_list - devres-enabled version of dev_pm_domain_detach_list.
->>> + * @_list: The list of PM domains to detach.
->>> + *
->>> + * This function reverse the actions from devm_pm_domain_attach_list().
->>> + * it will be invoked during the remove phase from drivers implicitly if driver
->>> + * uses devm_pm_domain_attach_list() to attach the PM domains.
->>> + */
->>> +void devm_pm_domain_detach_list(void *_list)
->>> +{
->>> +	struct dev_pm_domain_list *list = _list;
->>> +
->>> +	dev_pm_domain_detach_list(list);
->>> +}
->>> +EXPORT_SYMBOL_GPL(devm_pm_domain_detach_list);
->>> +
->>> +/**
->>> + * devm_pm_domain_attach_list - devres-enabled version of dev_pm_domain_attach_list
->>> + * @dev: The device used to lookup the PM domains for.
->>> + * @data: The data used for attaching to the PM domains.
->>> + * @list: An out-parameter with an allocated list of attached PM domains.
->>> + *
->>> + * NOTE: this will also handle calling devm_pm_domain_detach_list() for
->>> + * you during remove phase.
->>> + *
->>> + * Returns the number of attached PM domains or a negative error code in case of
->>> + * a failure.
->>> + */
->>> +int devm_pm_domain_attach_list(struct device *dev,
->>> +			       const struct dev_pm_domain_attach_data *data,
->>> +			       struct dev_pm_domain_list **list)
->>> +{
->>> +	int ret, num_pds = 0;
->>
->> Do we require this =0? In the very next line you're initing this anyway.
->>
-> That's correct, will fix this. Thanks.
->>> +
->>> +	num_pds = dev_pm_domain_attach_list(dev, data, list);
->>> +
->>> +	ret = devm_add_action_or_reset(dev, devm_pm_domain_detach_list, *list);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	return num_pds;
->>> +}
->>> +EXPORT_SYMBOL_GPL(devm_pm_domain_attach_list);
->>> +
->>> +/**
->>>   * dev_pm_domain_detach - Detach a device from its PM domain.
->>>   * @dev: Device to detach.
->>>   * @power_off: Used to indicate whether we should power off the device.
->>> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
->>> index 772d328..efd517017 100644
->>> --- a/include/linux/pm_domain.h
->>> +++ b/include/linux/pm_domain.h
->>> @@ -450,8 +450,12 @@ struct device *dev_pm_domain_attach_by_name(struct device *dev,
->>>  int dev_pm_domain_attach_list(struct device *dev,
->>>  			      const struct dev_pm_domain_attach_data *data,
->>>  			      struct dev_pm_domain_list **list);
->>> +int devm_pm_domain_attach_list(struct device *dev,
->>> +			       const struct dev_pm_domain_attach_data *data,
->>> +			       struct dev_pm_domain_list **list);
->>>  void dev_pm_domain_detach(struct device *dev, bool power_off);
->>>  void dev_pm_domain_detach_list(struct dev_pm_domain_list *list);
->>> +void devm_pm_domain_detach_list(void *list);
->>
->> Why not just call it dev_pm_domain_list *list? Why make it void? I am a
->> bit confused.
->>
-> This comment is not clear to me, could you pls elaborate?
-Ah! Sorry, pls ignore my below comment. But can you still explain the
-concern here?
+> This patch fixes this by calling napi_complete_done() after doorbell
+> rings. It limits the number of unnecessary rings when there is
+> no need to arm. MANA hardware specifies that there must be one doorbell
+> ring every 8 CQ wraparounds. This driver guarantees one doorbell ring as
+> soon as the number of consumed CQEs exceeds 4 CQ wraparounds. In pratical
+> workloads, the 4 CQ wraparounds proves to be big enough that it rarely
+> exceeds this limit before all the napi weight is consumed.
+> 
+> To implement this, add a per-CQ counter cq->work_done_since_doorbell,
+> and make sure the CQ is armed as soon as passing 4 wraparounds of the CQ.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: e1b5683ff62e ("net: mana: Move NAPI from EQ to CQ")
+> 
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
+> 
+> change in v2:
+> Added more details to comments to explain the patch
+> 
+>  drivers/net/ethernet/microsoft/mana/mana_en.c | 24 ++++++++++++-------
+>  include/net/mana/mana.h                       |  1 +
+>  2 files changed, 16 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> index d2f07e179e86..f83211f9e737 100644
+> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
+> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> @@ -1788,7 +1788,6 @@ static void mana_poll_rx_cq(struct mana_cq *cq)
+>  static int mana_cq_handler(void *context, struct gdma_queue *gdma_queue)
+>  {
+>  	struct mana_cq *cq = context;
+> -	u8 arm_bit;
+>  	int w;
+>  
+>  	WARN_ON_ONCE(cq->gdma_cq != gdma_queue);
+> @@ -1799,16 +1798,23 @@ static int mana_cq_handler(void *context, struct gdma_queue *gdma_queue)
+>  		mana_poll_tx_cq(cq);
+>  
+>  	w = cq->work_done;
+> -
+> -	if (w < cq->budget &&
+> -	    napi_complete_done(&cq->napi, w)) {
+> -		arm_bit = SET_ARM_BIT;
+> -	} else {
+> -		arm_bit = 0;
+> +	cq->work_done_since_doorbell += w;
+> +
+> +	if (w < cq->budget) {
+> +		mana_gd_ring_cq(gdma_queue, SET_ARM_BIT);
+> +		cq->work_done_since_doorbell = 0;
+> +		napi_complete_done(&cq->napi, w);
+> +	} else if (cq->work_done_since_doorbell >
+> +		   cq->gdma_cq->queue_size / COMP_ENTRY_SIZE * 4) {
 
-> This is just a stub API like others in this file for !CONFIG_PM case.
+should we define a macro for 4? may be 'CQ_WRAPAROUND_LIMIT'
 
-> 
-> Thanks,
-> Dikshita
->>
-> 
+> +		/* MANA hardware requires at least one doorbell ring every 8
+> +		 * wraparounds of CQ even if there is no need to arm the CQ.
+> +		 * This driver rings the doorbell as soon as we have exceeded
+> +		 * 4 wraparounds.
+> +		 */
+> +		mana_gd_ring_cq(gdma_queue, 0);
+> +		cq->work_done_since_doorbell = 0;
+>  	}
+>  
+> -	mana_gd_ring_cq(gdma_queue, arm_bit);
+> -
+>  	return w;
+>  }
+>  
+> diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+> index 6439fd8b437b..7caa334f4888 100644
+> --- a/include/net/mana/mana.h
+> +++ b/include/net/mana/mana.h
+> @@ -275,6 +275,7 @@ struct mana_cq {
+>  	/* NAPI data */
+>  	struct napi_struct napi;
+>  	int work_done;
+> +	int work_done_since_doorbell;
+>  	int budget;
+>  };
+>  
+> -- 
+> 2.17.1
 
