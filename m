@@ -1,190 +1,231 @@
-Return-Path: <linux-kernel+bounces-278899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC8294B64C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:36:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900F394B652
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF9741C2194C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E89B284429
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209661822DA;
-	Thu,  8 Aug 2024 05:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F86A183092;
+	Thu,  8 Aug 2024 05:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GQntNZ5Y"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DkEmupsW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCD8181B88
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 05:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B30A183063
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 05:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723095400; cv=none; b=ZtnJKEAEc4R9thmrFCjJm6a+JXM9enej9uvdY35+yXw1lsYtNWXwFsec+IAoPxbHiOOeyEaWUm872wZivD6COdw7oMJxn7kyYzD4DD84uQ0tydm5lENbBOqEhVKrIwKDuHrGZIwyayZASDBudIz/GlJmh5Zfzao+9dOHVF4a8VQ=
+	t=1723095821; cv=none; b=i2Du7yc/DEM6XyKTYGWGmFMls2iCQd5bvj0wdJ6FmxtXA1lT3rBdGvlRKIuYYT0WQ8qjIrJk/+n/d6TP7Qnma8EfLFzuYpZt19rPrqaS0QHNP9VvbWFtfnI4IqBjcDfaiAMDK7XQcTa+EhGiDEgKTLNYioc1vJvaCiEnD2KrAJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723095400; c=relaxed/simple;
-	bh=4YK/r6DRSUZqHJN1/1rCT/zNhMb+E7NERu7a7jBl5mk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AnJtuWRock08Wn+JR420y9ZkTzMqZTBcHJMB3OrKHnxBUX9PEY0M9/an5vgjiqnZWXw5EfbQnbnhbWAqp+fW05WvhWRT9Oa0MZjxyhZ3A6+HoAyyYmXCs2WudaaQS9irl2Dyw8bu61TTBcYvwPhkNZv0LxatqDmAdkyf51SrO2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GQntNZ5Y; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so524859a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 22:36:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723095397; x=1723700197; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m2bYV8yuUe3ADBH7qqTaNKMMTmxTnCLFADBvEorq2rg=;
-        b=GQntNZ5YLjNpKqOO0ALum/CcPQV3xYItZWFfmi85aHdnTVrtxfaLG7IYGRMKDTZ+ps
-         m59EjuvMcN+ogp3bEK1f2Bm11XEX9CQl9R9aOT+qDisuE/3qmTOKBayLtv856EXQBle/
-         Zwc+52+uLdurtDRATfeIfABCcAFjOw7vEEZjCKt24ff6cYK6Ao0t5LC2L/+K1zMSmKAk
-         9mHV9mJKCFHyR5vwAO+fvmnfi6Lr3YP8M8I1zmYcUIXcqJwTFzOQeJ3lB4ZycGMIh/mJ
-         gFNktOO4c6DuODjdufcEOpmfDAgk/V7b0y6yyOkTOcFSGvefIWk2JInrRZPqVO1nfkKm
-         sQbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723095397; x=1723700197;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m2bYV8yuUe3ADBH7qqTaNKMMTmxTnCLFADBvEorq2rg=;
-        b=KgXcQc0QGPQKlOvd3y+m9aUN8TjBQbNjQjiEtMpPhB5GXU+g0q1iPHqJ+jTCFxx/gt
-         mkdxynrqjcCJg0iPYjSfRelvDSjE2hrivRxzWSvTVBDXJVUAT9ao/P8Tx5BN2tXkRX75
-         rTCVRrib4q27knAgzqCT5exbldxcI+zRyGMkltSpNzdY/Enrjl/URpYT51K1EKqtEdrg
-         S6zffXL4JNdwXo8sXQO09zWzmzA6A5xo/8EthZR3szpmbJoCt0rDCoB0xBGAjyS4Jswx
-         cordvaK/tqFfRXCTIFLaIqK63PmA0RTK82ZNbGnXygCXDxN1eT+4c0NAUvz7Is7/e/wM
-         qtvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHojCpTaS/JRY9m/SOO2XMIszwGWcB/OzPz6I3ItbhRRrg+OsBC7B60y4urPnJamW5voUuniPmRwIItZO6TIyWQLr3kE5xoBHWSn6y
-X-Gm-Message-State: AOJu0YyBi5ZU6sLxYhVqbLLvRIjhXpYEGrqX/gSNLapQmrZ1v8F/gkVN
-	nIgWufCCvwg1ug6v38oEdrTvP/iIvR2HqcafF1BpKtcQDkJruZ+/IjITHpwf4V0pRjjldNPWHyl
-	jf68wxq+mpK6stQ/2PtrDjMYbZgAMvGxRoDhi
-X-Google-Smtp-Source: AGHT+IF5udCs3TsHHqF5Sev1ErsNKEVv5sjR1M+FSt5Pr4THpCz1+i6NjCR/IEqeWonkW0rpnd/Bt/rkfXDjkzoC+1Y=
-X-Received: by 2002:a17:907:efd1:b0:a7a:8bcf:ac64 with SMTP id
- a640c23a62f3a-a8090db1e2amr54882466b.36.1723095396219; Wed, 07 Aug 2024
- 22:36:36 -0700 (PDT)
+	s=arc-20240116; t=1723095821; c=relaxed/simple;
+	bh=Td3Qt+02+frocPvVrit8EHuAtzKrHvkt3Rze4g2oy9s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cOjo0qh9eV0gFnNJOcV7rO/mzBzQyoF1IKwmKcIUjXxRhNMg87DmfW8EHN+iypqHCO1cYK2845GdTbgCVSpsfQZ+NgvvN03vONI2TG9L/TKu5QT4+dkQ1vT/LsMXQpneA9JHyTcXWqaGgkuTB//RaG5uI/FBNxkGGim8M8uKrA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DkEmupsW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723095818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/mZbYDO1Ex7c0f6PetoijrkxUL0pCY6E2YxfayltoBE=;
+	b=DkEmupsWPjEHr/7lEZqMfoCypbIWQ5ry1p5gr2j8XmWCXnF99zhfGG05Ap+T8vQ9cXgL7q
+	GXK+xIBdulcAJ7Hl8M5/+/7SxWpWJmgxo+e/PBgjzu/Ak0Gz4wYfRTLgNSxSB60JvKfG/H
+	JLoushjb+ou9ScSVgsvkqzl//OxZ8GI=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-532-OXGivJ_lOw63AypQMctqdA-1; Thu,
+ 08 Aug 2024 01:43:33 -0400
+X-MC-Unique: OXGivJ_lOw63AypQMctqdA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F74E1955D5D;
+	Thu,  8 Aug 2024 05:43:31 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.23])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0E00019560A3;
+	Thu,  8 Aug 2024 05:43:23 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com
+Cc: maxime.coquelin@redhat.com,
+	xieyongji@bytedance.com,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	21cnbao@gmail.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org
+Subject: [PATCH v2] vduse: avoid using __GFP_NOFAIL
+Date: Thu,  8 Aug 2024 13:43:19 +0800
+Message-ID: <20240808054320.10017-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807211929.3433304-1-pasha.tatashin@soleen.com>
- <20240807211929.3433304-4-pasha.tatashin@soleen.com> <E5F2A1F6-DD29-4FD8-B4AA-2CA917F6E89F@linux.dev>
- <CA+CK2bCOYYkGK6yDm4NKto15TjgNGXrDDbhkx1=rGeyQ-ofv9w@mail.gmail.com>
-In-Reply-To: <CA+CK2bCOYYkGK6yDm4NKto15TjgNGXrDDbhkx1=rGeyQ-ofv9w@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 7 Aug 2024 22:35:59 -0700
-Message-ID: <CAJD7tkZK_9+mHupROfWomxXm=br0vvu_aJc2dyEOye2fhgk+eQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] mm: don't account memmap per node
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, cerasuolodomenico@gmail.com, 
-	Johannes Weiner <hannes@cmpxchg.org>, Joel Granados <j.granados@samsung.com>, lizhijian@fujitsu.com, 
-	Nhat Pham <nphamcs@gmail.com>, David Rientjes <rientjes@google.com>, Mike Rapoport <rppt@kernel.org>, 
-	Sourav Panda <souravpanda@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Aug 7, 2024 at 9:04=E2=80=AFPM Pasha Tatashin <pasha.tatashin@solee=
-n.com> wrote:
->
-> On Wed, Aug 7, 2024 at 10:59=E2=80=AFPM Muchun Song <muchun.song@linux.de=
-v> wrote:
-> >
-> >
-> >
-> > > On Aug 8, 2024, at 05:19, Pasha Tatashin <pasha.tatashin@soleen.com> =
-wrote:
-> > >
-> > > Currently, when memory is hot-plugged or hot-removed the accounting i=
-s
-> > > done based on the assumption that memmap is allocated from the same n=
-ode
-> > > as the hot-plugged/hot-removed memory, which is not always the case.
-> > >
-> > > In addition, there are challenges with keeping the node id of the mem=
-ory
-> > > that is being remove to the time when memmap accounting is actually
-> > > performed: since this is done after remove_pfn_range_from_zone(), and
-> > > also after remove_memory_block_devices(). Meaning that we cannot use
-> > > pgdat nor walking though memblocks to get the nid.
-> > >
-> > > Given all of that, account the memmap overhead system wide instead.
-> >
-> > Hi Pasha,
-> >
-> > You've changed it to vm event mechanism. But I found a comment (below) =
-say
-> > "CONFIG_VM_EVENT_COUNTERS". I do not know why it has such a rule
-> > sice 2006. Now the rule should be changed, is there any effect to users=
- of
-> > /proc/vmstat?
->
-> There should not be any effect on the users of the /proc/vmstat, the
-> values for nr_memap and nr_memmap_boot before and after are still in
-> /proc/vmstat under the same names.
->
-> >
-> > /*
-> >  * Light weight per cpu counter implementation.
-> >  *
-> >  * Counters should only be incremented and no critical kernel component
-> >  * should rely on the counter values.
-> >  *
-> >  * Counters are handled completely inline. On many platforms the code
-> >  * generated will simply be the increment of a global address.
->
-> Thank you for noticing this. Based on my digging, it looks like this
-> comment means that the increment only produces the most efficient code
-> on some architectures (i.e. i386, ia64):
->
-> Here is the original commit message from 6/30/06:
-> f8891e5e1f93a1 [PATCH] Lightweight event counters
->
->  Relevant information:
->   The implementation of these counters is through inline code that hopefu=
-lly
->   results in only a single instruction increment instruction being emitte=
-d
->   (i386, x86_64) or in the increment being hidden though instruction
->   concurrency (EPIC architectures such as ia64 can get that done).
->
-> My patch does not change anything in other places where vm_events are
-> used, so it won't introduce performance regression anywhere. Memmap,
-> increment and decrement can happen based on the value of delta. I have
-> tested, and it works correctly. Perhaps we should update the comment.
+Barry said [1]:
 
-I think there may be a semantic inconsistency here.
+"""
+mm doesn't support non-blockable __GFP_NOFAIL allocation. Because
+__GFP_NOFAIL without direct reclamation may just result in a busy
+loop within non-sleepable contexts.
 
-I am not so sure about this code, but for memcg stats, there is a
-semantic distinction between stat (or state) and event.
+The current code will result in returning a NULL pointer but
+not a busy-loop.
 
-Per-memcg events (which are a subset of NR_VM_EVENT_ITEMS) are
-basically counting the number of times a certain event happened (e.g.
-PGFAULT). This naturally cannot be decremented because the number of
-page faults that happened cannot decrease.
+static inline struct page *
+__alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+                                                struct alloc_context *ac)
+{
+        ...
+        /*
+         * Make sure that __GFP_NOFAIL request doesn't leak out and make sure
+         * we always retry
+         */
+        if (gfp_mask & __GFP_NOFAIL) {
+                /*
+                 * All existing users of the __GFP_NOFAIL are blockable, so warn
+                 * of any new users that actually require GFP_NOWAIT
+                 */
+                if (WARN_ON_ONCE_GFP(!can_direct_reclaim, gfp_mask))
+                        goto fail;
+                ...
+        }
+        ...
+fail:
+        warn_alloc(gfp_mask, ac->nodemask,
+                        "page allocation failure: order:%u", order);
+got_pg:
+        return page;
+}
 
-Per-memcg state are things that represent the current state of the
-system (e.g. NR_SWAPCACHE). This can naturally go up or down.
+We have two choices to address the issue:
+1. busy-loop
+2. BUG_ON
 
-It seems like the code here follows the same semantics, and this
-change breaks that. Also, now these stats depend on
-CONFIG_VM_EVENT_COUNTERS .
+the below patch chose 2:
+https://lore.kernel.org/linux-mm/20240731000155.109583-5-21cnbao@gmail.com/
+""“
 
-Looking at NR_VMSTAT_ITEMS, it looks like it's composed of:
-NR_VM_ZONE_STAT_ITEMS,
-NR_VM_NUMA_EVENT_ITEMS,
-NR_VM_NODE_STAT_ITEMS,
-NR_VM_WRITEBACK_STAT_ITEMS,
-NR_VM_EVENT_ITEMS (with CONFIG_VM_EVENT_COUNTERS)
+Unfortuantely, we do that under read lock. A possible way to fix that
+is to move the pages allocation out of the lock into the caller, but
+having to allocate a huge number of pages and auxiliary page array
+seems to be problematic as well per Tetsuon [2]:
 
-Semantically, the memmap stats do not fit into any of the above
-categories if we do not want them to be per-node. Maybe they should
-have their own category like NR_VM_WRITEBACK_STAT_ITEMS, or maybe we
-should consolidate both of them into a global stat items category
-(e.g. NR_VM_STAT_ITEMS)?
+"""
+You should implement proper error handling instead of using
+__GFP_NOFAIL if count can become large.
+"""
+
+So I choose another way, which does not release kernel bounce pages
+when user tries to register usersapce bounce pages. Then we don't need
+to do allocation in the path which is not expected to be fail (e.g in
+the release). We pay this for more memory usage as we don't release
+kernel bounce pages but further optimizations could be done on top.
+
+[1] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8ZQ2saLnUdfOGOLg@mail.gmail.com/T/#m3caef86a66ea6318ef94f9976ddb3a0ccfe6fcf8
+[2] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8ZQ2saLnUdfOGOLg@mail.gmail.com/T/#m7ad10eaba48ade5abf2d572f24e185d9fb146480
+
+Fixes: 6c77ed22880d ("vduse: Support using userspace pages as bounce buffer")
+Reviewed-by: Xie Yongji <xieyongji@bytedance.com>
+Tested-by: Xie Yongji <xieyongji@bytedance.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+Changes since V1:
+- Tweak the commit log
+- Assign map->user_bounce_page to NULL for safety
+---
+ drivers/vdpa/vdpa_user/iova_domain.c | 19 +++++++++++--------
+ drivers/vdpa/vdpa_user/iova_domain.h |  1 +
+ 2 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
+index 791d38d6284c..58116f89d8da 100644
+--- a/drivers/vdpa/vdpa_user/iova_domain.c
++++ b/drivers/vdpa/vdpa_user/iova_domain.c
+@@ -162,6 +162,7 @@ static void vduse_domain_bounce(struct vduse_iova_domain *domain,
+ 				enum dma_data_direction dir)
+ {
+ 	struct vduse_bounce_map *map;
++	struct page *page;
+ 	unsigned int offset;
+ 	void *addr;
+ 	size_t sz;
+@@ -178,7 +179,10 @@ static void vduse_domain_bounce(struct vduse_iova_domain *domain,
+ 			    map->orig_phys == INVALID_PHYS_ADDR))
+ 			return;
+ 
+-		addr = kmap_local_page(map->bounce_page);
++		page = domain->user_bounce_pages ?
++		       map->user_bounce_page : map->bounce_page;
++
++		addr = kmap_local_page(page);
+ 		do_bounce(map->orig_phys + offset, addr + offset, sz, dir);
+ 		kunmap_local(addr);
+ 		size -= sz;
+@@ -270,9 +274,8 @@ int vduse_domain_add_user_bounce_pages(struct vduse_iova_domain *domain,
+ 				memcpy_to_page(pages[i], 0,
+ 					       page_address(map->bounce_page),
+ 					       PAGE_SIZE);
+-			__free_page(map->bounce_page);
+ 		}
+-		map->bounce_page = pages[i];
++		map->user_bounce_page = pages[i];
+ 		get_page(pages[i]);
+ 	}
+ 	domain->user_bounce_pages = true;
+@@ -297,17 +300,17 @@ void vduse_domain_remove_user_bounce_pages(struct vduse_iova_domain *domain)
+ 		struct page *page = NULL;
+ 
+ 		map = &domain->bounce_maps[i];
+-		if (WARN_ON(!map->bounce_page))
++		if (WARN_ON(!map->user_bounce_page))
+ 			continue;
+ 
+ 		/* Copy user page to kernel page if it's in use */
+ 		if (map->orig_phys != INVALID_PHYS_ADDR) {
+-			page = alloc_page(GFP_ATOMIC | __GFP_NOFAIL);
++			page = map->bounce_page;
+ 			memcpy_from_page(page_address(page),
+-					 map->bounce_page, 0, PAGE_SIZE);
++					 map->user_bounce_page, 0, PAGE_SIZE);
+ 		}
+-		put_page(map->bounce_page);
+-		map->bounce_page = page;
++		put_page(map->user_bounce_page);
++		map->user_bounce_page = NULL;
+ 	}
+ 	domain->user_bounce_pages = false;
+ out:
+diff --git a/drivers/vdpa/vdpa_user/iova_domain.h b/drivers/vdpa/vdpa_user/iova_domain.h
+index f92f22a7267d..7f3f0928ec78 100644
+--- a/drivers/vdpa/vdpa_user/iova_domain.h
++++ b/drivers/vdpa/vdpa_user/iova_domain.h
+@@ -21,6 +21,7 @@
+ 
+ struct vduse_bounce_map {
+ 	struct page *bounce_page;
++	struct page *user_bounce_page;
+ 	u64 orig_phys;
+ };
+ 
+-- 
+2.31.1
+
 
