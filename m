@@ -1,93 +1,101 @@
-Return-Path: <linux-kernel+bounces-280172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B31394C6B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:05:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD6194C6C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A14B20F9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:05:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EC1C287102
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF86615ECD0;
-	Thu,  8 Aug 2024 22:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7E615F316;
+	Thu,  8 Aug 2024 22:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frCzq9Wr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOS4VRg+"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D60615ADA4;
-	Thu,  8 Aug 2024 22:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE38A15ECE6;
+	Thu,  8 Aug 2024 22:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723154729; cv=none; b=mMawbaiCoN7wzzKLmiA7Q41o4kUsPKQeuCu6qvSZD/yKMOISCcNBuD1zFEQXkWKop+yEK3qG6fLh+GE/LyBa0dER/y3h6CDQX36+lwtNvVyV9OR4EqAjDbKwx5qKUfERGtBYEHNFPbiaoPVWSeNgHS9PHRuWROCPUbLdbjCzrOk=
+	t=1723154881; cv=none; b=CrRv1yHevKn+Z3lT3HO/pbSqVgA01UcpEag92WjV5/sqQz/W5x3m8SCsyAW2gMVaZISX3BYL97BuN/XTX507mJ/5gJsiVl+HGsDZgfMzVUFEpc1T63ByTd47ECBiOszZ42yPsHosPp4Bzcl9CD/ROt+3T9TdR45ZIYXJtwpYpm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723154729; c=relaxed/simple;
-	bh=XltQHJ1O4DYcU49OJPdFCg+IJTmIZaV8GlT/lyMKprQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HafqbqRlMU8Oum7UDxflYN+4uf/LGQ35HLi+0iieXThJ5WX7a9qhISwRSUJFapL1rHPvH+qrSHZ/sKusrhfnWDfSw8pDh2rgdqcPNWaKbr75fXKELBKuty4vAftaHMf4LrUp9WLaCMmYEYQfV2Fp00IaG1sUeZx4Rfd9PP4AUVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frCzq9Wr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3201BC32782;
-	Thu,  8 Aug 2024 22:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723154728;
-	bh=XltQHJ1O4DYcU49OJPdFCg+IJTmIZaV8GlT/lyMKprQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=frCzq9WruCNbsC020l9lleSjLy1gS3TjCq3RSgJqC+hWLEyaoJoD5SpuFGHZsbPYm
-	 2VQxz0xMFOseVsRhKKYWSeFYpWpt0pPbCaA24N7Op03YfTbDK99H/hBr7qHUbg7PKj
-	 WDRVYaqvaJBwRdgu3T8VjONFNK69n3SXV9lsbV9z8jWf845mESRJXAbRG2ZnrwLBKI
-	 erG99aHK4Zz2+4Kx8A1KznDRGUjg5gdAKqKVSV5l5BdbB7OMKF4xMYc1KAQUQ7cofo
-	 5lGVmg+G1d/v++LPjmgCGAuK7MC2vgIigqKIE4qUHaqgxOuiOgibIpkd6R8+LkbpM/
-	 k5l/dpAGNp2lg==
-Date: Thu, 8 Aug 2024 16:05:26 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: qat-linux@intel.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] crypto: qat - Use static_assert() to check struct sizes
-Message-ID: <ZrVBJqdL1q3X3Dg/@cute>
+	s=arc-20240116; t=1723154881; c=relaxed/simple;
+	bh=zuZUfAgXy1giOe2syrZyYDHp33Vb4HgiSve2hu4KyEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gEezAoXSzZs1aPTpjkn6smu5PbJPivD9y3wQrXJbMLgsvEBqDumGL1+JgmAVQ4U6ae5TXNfwMYOciOV3JsC1xspX9bmJ+DLsZ0VQj4R9kcEXHwLbvcba1OYWvie1Vdt364VznJstxiuXj3Gk33mdAnBhPOt8B7LIPXU6opr0GAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOS4VRg+; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so236259366b.0;
+        Thu, 08 Aug 2024 15:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723154878; x=1723759678; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zuZUfAgXy1giOe2syrZyYDHp33Vb4HgiSve2hu4KyEA=;
+        b=eOS4VRg+el8EmxGOQYdBSFan1qE3r3EIJfMotnTgYp3VLE1h8t43s2MgSojK8+6bSH
+         5w9wdDZgU5vZp9mDijC3CP4jpaeWfcJw4Vrq8lzfRwcf0lAV156D88cy5P9QFDeDsWq4
+         0JDEvGh6kFkYc44JX2e9xFmdc9ITcZ8VZySpLScFlz4wpaUKnhAHe7GZnlYxrsKfvd1y
+         pusRv/+BnLyocUnivVLFDF9Gr9zi5i0tUes7qsVAW5bdet+iLtEzY7ITBZRsduHe2ZRw
+         SU3T5AFUXYdvwUNM6GpDYIXGqZBo/0pZDEJqlvseAA8YJ2GzAocQnleAYxCuVdXVoKsm
+         Q1EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723154878; x=1723759678;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zuZUfAgXy1giOe2syrZyYDHp33Vb4HgiSve2hu4KyEA=;
+        b=MNnolHSR+tKgh3ecdv2nuyz+Umd4lVkq2J+LaeMnRJYvVg/oBosDhH8aJ3LvB8EIT8
+         pRCnrEmwJTiHhL4U208+5VgEwjlt5259oO4mCUcEE5hKi0c20JB56KUbUb2v1ACRvOgK
+         THBr2uuEXImh7ttShkXFZ4711arH0wIW8EOotFYk2RGXCpFAY+E+6XGKzGt0bcvh5GuJ
+         Pzdtst0Wi0dAw18xWEGmthw+OyzWGF8QEidQ2KuhoAG9AxcrL0V5OGdEiaigLp1rI/oJ
+         jyPlS5WK7mg30wA7p2eq76+BxUej2bApYP+s64tNvCbnhV6qls2MQmx4bmcG2d4YOfK5
+         e4vw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhZS3zGkcbClTybD/drpRWvImpK+uF8B4AtBCrXHKoeWWGT9RYrd+G5hvrMYAhD8axoZUrWQt21sy022Mz+YTU+DdZS5GwZoy5myrY3yUftZc49E2VQjzZokYISf40gyYcxusIM/09RhPngHNQ
+X-Gm-Message-State: AOJu0YxnOdS4D/NqWo1H/0ije2A8tRphgneaOK42df8g+wpsjLdHjORu
+	5vLWVzBktC62yCN3e3GSpEgvKn0lnlRuh+u3lILH/+fCMW7Nt6fFZWZcRvaMXknnkwOrmp+k6wc
+	Q9PIhC+0IPLRPJbK0o5Yi/zTBaDU=
+X-Google-Smtp-Source: AGHT+IFE3FZDjSdFf+PDPA/Q7mk5gm3rHBt75WCvB4gV1MjfIlTPDW7WWr5hVhhGW+I6nWV+yhtV39S0xwASAdcqWnE=
+X-Received: by 2002:a17:907:1c08:b0:a77:ce4c:8c9c with SMTP id
+ a640c23a62f3a-a8091ef3797mr302416166b.8.1723154877844; Thu, 08 Aug 2024
+ 15:07:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240808-b4-string_helpers_caa133-v1-1-686a455167c4@google.com>
+In-Reply-To: <20240808-b4-string_helpers_caa133-v1-1-686a455167c4@google.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 9 Aug 2024 01:07:21 +0300
+Message-ID: <CAHp75VfBjKLf3LqDXvAehW5sxGzYnU4sS3fr=JoaM-6p_gR34w@mail.gmail.com>
+Subject: Re: [PATCH] lib/string_helpers: rework overflow-dependent code
+To: Justin Stitt <justinstitt@google.com>
+Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 140e4c85d540 ("crypto: qat - Avoid -Wflex-array-member-not-at-end
-warnings") introduced tagged `struct qat_alg_buf_list_hdr`. We want to
-ensure that when new members need to be added to the flexible structure,
-they are always included within this tagged struct.
+On Fri, Aug 9, 2024 at 12:44=E2=80=AFAM Justin Stitt <justinstitt@google.co=
+m> wrote:
+>
+> When @size is 0, the desired behavior is to allow unlimited bytes to be
+> parsed. Currently, this relies on some intentional arithmetic overflow
+> where --size gives us SIZE_MAX when size is 0.
+>
+> Explicitly spell out the desired behavior without relying on intentional
+> overflow/underflow.
 
-So, we use `static_assert()` to ensure that the memory layout for
-both the flexible structure and the tagged struct is the same after
-any changes.
+Hmm... but why? Overflow for the _unsigned_ types is okay. No?
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/crypto/intel/qat/qat_common/qat_bl.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/crypto/intel/qat/qat_common/qat_bl.h b/drivers/crypto/intel/qat/qat_common/qat_bl.h
-index 85bc32a9ec0e..3f5b79015400 100644
---- a/drivers/crypto/intel/qat/qat_common/qat_bl.h
-+++ b/drivers/crypto/intel/qat/qat_common/qat_bl.h
-@@ -23,6 +23,8 @@ struct qat_alg_buf_list {
- 	);
- 	struct qat_alg_buf buffers[];
- } __packed;
-+static_assert(offsetof(struct qat_alg_buf_list, buffers) == sizeof(struct qat_alg_buf_list_hdr),
-+	      "struct member likely outside of __struct_group()");
- 
- struct qat_alg_fixed_buf_list {
- 	struct qat_alg_buf_list_hdr sgl_hdr;
--- 
-2.34.1
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
