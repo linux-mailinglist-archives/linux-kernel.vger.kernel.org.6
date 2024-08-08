@@ -1,274 +1,99 @@
-Return-Path: <linux-kernel+bounces-280123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815DE94C613
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:57:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDE294C60A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9D11F266EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:57:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 859F71F267D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F16F15ECC5;
-	Thu,  8 Aug 2024 20:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0E17E1;
+	Thu,  8 Aug 2024 20:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BVIfNLjD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahluw+tY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6560D15ADB2
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0792615920B;
+	Thu,  8 Aug 2024 20:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723150618; cv=none; b=mP1eWO2sjcU2UwViDq+P0nzLuI3B6JoKYaM+wZ+VWmRS/JKi6MkKrlT4CudimiXLUxbz7Si/z4zdbYFnfSJEnfKFUHSfkjFD9xKGiirdKMq8/vcoAxfKFOx8EKuGiNgaGww0c+IPrnU/70XO2i5tw0TelfqGGzf7tYELmnO/uKU=
+	t=1723150577; cv=none; b=gnaTgAFJXcYKlWCnM4Ay7f6TkSWleQt18SOdCZLnT3S+aSyVhKF6w+HJ4hUu9WWNvtflYOpaAksPtMeDdKWmOnmxoycoR3BMt4cewLP6SdBuhdK83XY5c2KKnMSVfu5YTQhX0d4YTV17QfimRtL813fSuKzAXjZsA+qUueElKe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723150618; c=relaxed/simple;
-	bh=BsX2d0K1c9Iyqy3iXpPM98RHfwVeEE9Uo37kfylRXkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qp8/b15LXjvGnIPsRlPPYdq7n7W/K5ceqjJl4Jc9/eyUNh5THXlJjYN3djN4SsyDfENRLi10JfFUOKZ99S+7/hHxqoG1bMqhZyhbzx9BFx8S0SbBkY3IFl/2daZc9EXd9XdXTDDD31NT7tMxfOVpi74nkmraQUrpYaI6pzBu74s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BVIfNLjD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723150615;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AjSNUygXxj1UKmmvy/1DKIe1v5Iq+pAlfR8gntxMDUA=;
-	b=BVIfNLjDZvE+5vSGXBDc+ezeyWNELdUxeh9xalzuvCB7t/42KDFIB5Ruy+qJ152Dq7QSKQ
-	M5IQ+JxUfkAFzZC0SZajpuhhxkRkP5Ft1/16oZutd1nN/c9GYOK3awNgPlHcxOtbHCsY/d
-	TSq4Pek0VlZsFSdzonilKzFumNGc8wI=
-Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
- [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-674-gaVCyWEVOaC2ynj65AYKrg-1; Thu, 08 Aug 2024 16:56:54 -0400
-X-MC-Unique: gaVCyWEVOaC2ynj65AYKrg-1
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-493f8e446deso642702137.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 13:56:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723150614; x=1723755414;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AjSNUygXxj1UKmmvy/1DKIe1v5Iq+pAlfR8gntxMDUA=;
-        b=mhoEtvJUet69O7dLieS0QK3Igt96GNpbQ7hh7tyJgVSJA7Jm1WGTWvU0Cl1Fo4qGK/
-         ISpbnuKa/fyKUHaBpipNApaNkH7lmvqM19sQnjg+cFJc439GSnQSqH44Ll4WHB/TL+XZ
-         BwgpSaVHAwo/5CU/6SVz0/pb2HXJh8+rYmNZd6mGiee4NPpRAD7wNJKh+lzdbay8xNJL
-         h0k3CswJJIhMrHmT92BgCtN3fFSSKoahQn9YGG72y6hTReLRyrxCGi99i/PP4RhlZQM3
-         kocC87V8YWU1I9NQxU+4YB9NkeQ1XkjEcFIm3sqscMbbndrpQ+rdBQjuUGyE6ieiR4eo
-         Z2bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVB2weEK9GVw8+09x4QzfLWeeA6JIAtbShoTMHkEW87TlqmmnMH00B7596NADdt1fZqYJXba2JN5nhOa2DWbSGk8Jt86unOUvod8Mf7
-X-Gm-Message-State: AOJu0YxIi0/yJL9/2GhJZmz0Q0BGGz2Ne7V9d0AdoO9JVck1LsnrW8C3
-	CYjPnf96MsC0YFsHO+fePZjyj6kU9HMnw2+smhXSrDJAtiGPQKk8o8Y0bdMu0ExFfVWj8haG7lH
-	+dIQEbg8ZhLSsv9RE6i/lgoVwoXuHgaIBHpsf88hmYRwsheQddyXBCwOHL7dWKA==
-X-Received: by 2002:a05:6102:6d0:b0:493:badb:74ef with SMTP id ada2fe7eead31-495c5bf9df6mr3267070137.26.1723150613551;
-        Thu, 08 Aug 2024 13:56:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKopPmF6amJedENwp5N1HJwLnev5fnpBwA+0PgZ0higtVR5UqfwM0fCb9gaFks6AjH2VLC/w==
-X-Received: by 2002:a05:6102:6d0:b0:493:badb:74ef with SMTP id ada2fe7eead31-495c5bf9df6mr3267048137.26.1723150613092;
-        Thu, 08 Aug 2024 13:56:53 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::13])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c84074esm69807896d6.80.2024.08.08.13.56.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 13:56:24 -0700 (PDT)
-Date: Thu, 8 Aug 2024 15:56:10 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	vigneshr@ti.com, kishon@kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org, 
-	srk@ti.com
-Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
-Message-ID: <wr2z74wsqhitisgp4qsfrmuvvhw3cpp3bdzkp5batawv6btfyd@xcyhug7jyfxg>
-References: <20240724065048.285838-1-s-vadapalli@ti.com>
- <20240724161916.GG3349@thinkpad>
- <20240725042001.GC2317@thinkpad>
- <93e864fb-cf52-4cc0-84a0-d689dd829afb@ti.com>
- <20240726115609.GF2628@thinkpad>
- <CAL_JsqJ-mfU88E_Ri=BzH6nAFg405gkPPJTtjdp7UR2n96QMkw@mail.gmail.com>
- <20240805164519.GF7274@thinkpad>
- <CAL_JsqKxF6yYTWbmU8SRhxemNMwErNViHuk05sLyFjFzssh=Eg@mail.gmail.com>
+	s=arc-20240116; t=1723150577; c=relaxed/simple;
+	bh=gQskhYCKBZdV2vBrToJVCxHeRpxoUra58siSeAn2qU0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tOOpc/99wHFqU7dZ08c39q007yckJeLG8K7H5SAUxQw6Pc352N8/y6lJPg6Glqoiol8gBEW86+toDz0U9Y3GJzEf6bL5P56Gq7+GRkLE4JXx25QKp04jUlN/Oz4VC8W2iumwH1o9SBuZQ8qunqnnq4uoFYn6EGly9DutKe3GTUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahluw+tY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 736B7C32782;
+	Thu,  8 Aug 2024 20:56:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723150576;
+	bh=gQskhYCKBZdV2vBrToJVCxHeRpxoUra58siSeAn2qU0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ahluw+tYv3l2devjutWVZeKXGZcIuB5VgXGMlqLxCix9bk5cDGID7DpAQro0YMafp
+	 JQ7qJ8HLoW6eSzBGN+KqW7TfTemdkgHpzP0WStcpoBARGvwzUPYx92UcdV1cv5NPIj
+	 ptK6YvYvEzfRW0M1hUhKvZtCnuzscZc1jlZNXLHkmNpK9oNZIja3kW7YhDAffyuXhc
+	 0mQZjzX1xecJkWnCf5+k6jRUwKjxYlEGUTnd5oMq9EGCKO5ICPp0veE2a9lK4sW/2u
+	 T7u0hiTAMAUEmDVlCjO6iLOTkIIotLrrsu0NLnLq+j3q/ywv9VJOGbNTSjJr7H+PQo
+	 G6ZOdvao1yKXA==
+From: Mark Brown <broonie@kernel.org>
+To: Simon Trimmer <simont@opensource.cirrus.com>
+Cc: linux-sound@vger.kernel.org, alsa-devel@alsa-project.org, 
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+In-Reply-To: <20240807142715.47077-1-simont@opensource.cirrus.com>
+References: <20240807142715.47077-1-simont@opensource.cirrus.com>
+Subject: Re: [PATCH] ASoC: cs35l56: Use regmap_read_bypassed() to wake the
+ device
+Message-Id: <172315057505.475406.7320183180625957298.b4-ty@kernel.org>
+Date: Thu, 08 Aug 2024 21:56:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqKxF6yYTWbmU8SRhxemNMwErNViHuk05sLyFjFzssh=Eg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Mon, Aug 05, 2024 at 01:05:14PM GMT, Rob Herring wrote:
-> On Mon, Aug 5, 2024 at 10:45 AM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Mon, Aug 05, 2024 at 10:01:37AM -0600, Rob Herring wrote:
-> > > On Fri, Jul 26, 2024 at 5:56 AM Manivannan Sadhasivam
-> > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > >
-> > > > On Thu, Jul 25, 2024 at 01:50:16PM +0530, Siddharth Vadapalli wrote:
-> > > > > On Thu, Jul 25, 2024 at 09:50:01AM +0530, Manivannan Sadhasivam wrote:
-> > > > > > On Wed, Jul 24, 2024 at 09:49:21PM +0530, Manivannan Sadhasivam wrote:
-> > > > > > > On Wed, Jul 24, 2024 at 12:20:48PM +0530, Siddharth Vadapalli wrote:
-> > > > > > > > Since the configuration of Legacy Interrupts (INTx) is not supported, set
-> > > > > > > > the .map_irq and .swizzle_irq callbacks to NULL. This fixes the error:
-> > > > > > > >   of_irq_parse_pci: failed with rc=-22
-> > > > > > > > due to the absence of Legacy Interrupts in the device-tree.
-> > > > > > > >
-> > > > > > >
-> > > > > > > Do you really need to set 'swizzle_irq' to NULL? pci_assign_irq() will bail out
-> > > > > > > if 'map_irq' is set to NULL.
-> > > > > > >
-> > > > > >
-> > > > > > Hold on. The errono of of_irq_parse_pci() is not -ENOENT. So the INTx interrupts
-> > > > > > are described in DT? Then why are they not supported?
-> > > > >
-> > > > > No, the INTx interrupts are not described in the DT. It is the pcieport
-> > > > > driver that is attempting to setup INTx via "of_irq_parse_and_map_pci()"
-> > > > > which is the .map_irq callback. The sequence of execution leading to the
-> > > > > error is as follows:
-> > > > >
-> > > > > pcie_port_probe_service()
-> > > > >   pci_device_probe()
-> > > > >     pci_assign_irq()
-> > > > >       hbrg->map_irq
-> > > > >         of_pciof_irq_parse_and_map_pci()
-> > > > >         of_irq_parse_pci()
-> > > > >           of_irq_parse_raw()
-> > > > >             rc = -EINVAL
-> > > > >             ...
-> > > > >             [DEBUG] OF: of_irq_parse_raw: ipar=/bus@100000/interrupt-controller@1800000, size=3
-> > > > >             if (out_irq->args_count != intsize)
-> > > > >               goto fail
-> > > > >                 return rc
-> > > > >
-> > > > > The call to of_irq_parse_raw() results in the Interrupt-Parent for the
-> > > > > PCIe node in the device-tree being found via of_irq_find_parent(). The
-> > > > > Interrupt-Parent for the PCIe node for MSI happens to be GIC_ITS:
-> > > > > msi-map = <0x0 &gic_its 0x0 0x10000>;
-> > > > > and the parent of GIC_ITS is:
-> > > > > gic500: interrupt-controller@1800000
-> > > > > which has the following:
-> > > > > #interrupt-cells = <3>;
-> > > > >
-> > > > > The "size=3" portion of the DEBUG print above corresponds to the
-> > > > > #interrupt-cells property above. Now, "out_irq->args_count" is set to 1
-> > > > > as __assumed__ by of_irq_parse_pci() and mentioned as a comment in that
-> > > > > function:
-> > > > >       /*
-> > > > >        * Ok, we don't, time to have fun. Let's start by building up an
-> > > > >        * interrupt spec.  we assume #interrupt-cells is 1, which is standard
-> > > > >        * for PCI. If you do different, then don't use that routine.
-> > > > >        */
-> > > > >
-> > > > > In of_irq_parse_pci(), since the PCIe-Port driver doesn't have a
-> > > > > device-tree node, the following doesn't apply:
-> > > > >   dn = pci_device_to_OF_node(pdev);
-> > > > > and we skip to the __assumption__ above and proceed as explained in the
-> > > > > execution sequence above.
-> > > > >
-> > > > > If the device-tree nodes for the INTx interrupts were present, the
-> > > > > "ipar" sequence to find the interrupt parent would be skipped and we
-> > > > > wouldn't end up with the -22 (-EINVAL) error code.
-> > > > >
-> > > > > I hope this clarifies the relation between the -22 error code and the
-> > > > > missing device-tree nodes for INTx.
-> > > > >
-> > > >
-> > > > Thanks for explaining the logic. Still I think the logic is flawed. Because the
-> > > > parent (host bridge) doesn't have 'interrupt-map', which means INTx is not
-> > > > supported. But parsing one level up to the GIC node and not returning -ENOENT
-> > > > doesn't make sense to me.
-> > > >
-> > > > Rob, what is your opinion on this behavior?
-> > >
-> > > Not sure I get the question. How should we handle/determine no INTx? I
-> > > suppose that's either based on the platform (as this patch did) or by
-> >
-> > Platform != driver. Here the driver is making the call, but the platform
-> > capability should come from DT, no? I don't like the idea of disabling INTx in
-> > the driver because, the driver may support multiple SoCs and these capability
-> > may differ between them. So the driver will end up just hardcoding the info
-> > which is already present in DT :/
+On Wed, 07 Aug 2024 14:27:15 +0000, Simon Trimmer wrote:
+> Now that regmap_read_bypassed() has been added to the kernel it is
+> preferable to wake the device with a read rather than a write as the
+> utility function can be called at a time before the device has been
+> identified.
 > 
-> Let me rephrase it to "a decision made within the driver" (vs.
-> globally decided). That could be hardcoded (for now) or as match data
-> based on compatible.
 > 
-> > Moreover, the issue I'm seeing is, even if the platform doesn't support INTx (as
-> > described by DT in this case), of_irq_parse_pci() doesn't report correct
-> > error/log. So of_irq_parse_pci() definitely needs a fixup.
-> 
-> Possibly. What's correct here?
-> 
-> There was some rework in 6.11 of the interrupt parsing. So it is
-> possible something changed here. There's also this issue still
-> pending:
-> 
-> https://lore.kernel.org/all/2046da39e53a8bbca5166e04dfe56bd5.squirrel@_/
-> 
-> > > or by
-> > > failing to parse the interrupts. The interrupt parsing code is pretty
-> > > tricky as it has to deal with some ancient DTs, so I'm a little
-> > > hesitant to rely on that failing. Certainly I wouldn't rely on a
-> > > specific errno value. The downside to doing that is also if someone
-> > > wants interrupts, but has an error in their DT, then all we can do is
-> > > print 'INTx not supported' or something. So we couldn't fail probe as
-> > > the common code wouldn't be able to distinguish. I suppose we could
-> > > just check for 'interrupt-map' present in the host bridge node or not.
-> >
-> > Yeah, as simple as that. But I don't know if that is globally applicable to
-> > all platforms.
-> 
-> There's a lot of history and the interrupt parsing is fragile due to
-> all the "interesting" DT interrupt hierarchies. So while I think it
-> would work, that's just a guess. I'm open to trying it and seeing.
 
-Would something like this be what you're imagining? If so I can post a
-patch if this patch is a dead end:
+Applied to
 
-    diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-    index dacea3fc5128..4e4ecaa95599 100644
-    --- a/drivers/pci/of.c
-    +++ b/drivers/pci/of.c
-    @@ -512,6 +512,10 @@ static int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *
-                            if (ppnode == NULL) {
-                                    rc = -EINVAL;
-                                    goto err;
-    +                       } else if (!of_get_property(ppnode, "interrupt-map", NULL)) {
-    +                               /* No interrupt-map on a host bridge means we're done here */
-    +                               rc = -ENOENT;
-    +                               goto err;
-                            }
-                    } else {
-                            /* We found a P2P bridge, check if it has a node */
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-I must admit that you being nervous has me being nervous since I'm not all
-that familiar with PCI... but if y'all think this is ok then I'm for it.
-I'm sure I'm not picturing all the cases here so would appreciate
-some scrutiny.
+Thanks!
 
-You still end up with warnings, which kind of sucks, since as I
-understand it the lack of INTx interrupts on this platform is
-*intentional*:
+[1/1] ASoC: cs35l56: Use regmap_read_bypassed() to wake the device
+      commit: 7063a710830a09b01734be7f4ffd23f0ef72a57e
 
-    [    3.342548] pci_bus 0000:00: 2-byte config write to 0000:00:00.0 offset 0x4 may corrupt adjacent RW1C bits
-    [    3.346716] pcieport 0000:00:00.0: of_irq_parse_pci: no interrupt-map found, INTx interrupts not available
-    [    3.346721] PCI: OF: of_irq_parse_pci: possibly some PCI slots don't have level triggered interrupts capability
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-You could have a combo of both this patch (to indicate that a specific driver (even further
-limited to a match data based on compatible) doesn't support these) as well as
-the above diff (to improve the message printed in the situation where a driver
-*does* claim to support these interrupts but fails to describe them properly).
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Am I barking up the right tree? If so I'll submit a proper patch
-independent of this (and depending on your views we can continue with v2
-of this patch too, or not).
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Andrew
+Mark
 
 
