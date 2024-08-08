@@ -1,138 +1,107 @@
-Return-Path: <linux-kernel+bounces-279459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00BE94BD8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:33:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C392394BD90
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BB172822B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:32:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5E11F22458
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2C418C91E;
-	Thu,  8 Aug 2024 12:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3311318CC00;
+	Thu,  8 Aug 2024 12:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PowFAQPT"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0Am9fW9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD8F18A937;
-	Thu,  8 Aug 2024 12:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7680118CBE3;
+	Thu,  8 Aug 2024 12:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723120368; cv=none; b=NGcB4LXB/Wp98jyerC7SZcXRELBYi/lmiKDR2r47Xab1K8TRoMkPm1DG08SC9p3M4a4KvNIU6Akp0EsnQW705dPHp+RmYqSw5yDdYf1vD9LKhNRN7sqi3lwVC5093Eau+feRf/ktsJCfESlJqXOpvgE6k0jHaYiK4kDmIdslzi0=
+	t=1723120370; cv=none; b=ueMcEJq0nbnajun32CSwlXUQ+2ieTTJdyVeyOBTLdOiFUhd5D9NQ0g9mD55ex3jzuGSPukdWfeDUEa5wy6CBmEHdF72YAcUep7lAQ3DHu7R6ONZIc8aG0aY2cFEoVbi9ZcN0fgki3uPn8sgLiqENkoQ5ZHW8DYHskZ98vR9iqNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723120368; c=relaxed/simple;
-	bh=nTalzfrNCjKlLWKsns4urkDENdMZzxYdv7NUi8Kvc44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RpqPdAVL6wxvNiXtiHXIxPLWCLB+TRGUXpWj0NFjQ5wVfdYC1RA6HqDEB8VvDd4ggOrsyFTLiLIV8OPuvgaKGP0n/pbrpyvTyYCMaUzzj8ZKSWUSqm0TZZS/+vfqK92voZcf6UFrTpwjA8FwKr8OKGYkxhFhmoyM3kUA7dLS1l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PowFAQPT; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7ab76558a9so135751866b.1;
-        Thu, 08 Aug 2024 05:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723120365; x=1723725165; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4VV1dTykEhoT9nZ9CwTmUeuc8Dm5mUMbxnCuJKvSQ9M=;
-        b=PowFAQPTSvAo8ZIZLmJrS81YbkAw5dOH3HcnYHUwdvh/HdVzMUI4np9voemjs3OVN8
-         +r+29aWlyTzMptJ7L/2fYqZoNo0w3tkGfkTaoZ5UuyMhxiPcJQEgWbgJQcYKAqRqLL24
-         ReNzvFVUPDdJYcrY7IjUUtXmd6vK7QPmZoYV5igzFJDj6eCwrRdbA40lgiluiGxRrmSw
-         vFI6D6yusp3vjSb8Ih/SHpVOGvhvcgYPiGXHrXuZJpzGvduX+8VtE/OskzCawE3aEBBY
-         LDqMFEo3jaC8BW5eV6zX2r4fTIbFPjy1a1TZBWwCZSTpbZPgPK5FpGIgpSHksH7I3ErZ
-         RShQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723120365; x=1723725165;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4VV1dTykEhoT9nZ9CwTmUeuc8Dm5mUMbxnCuJKvSQ9M=;
-        b=bgT43rji0zjvaix7IksgytcxsY9uJKBhjewFD+Bu7pFhmlr58fZMotfAVwhL6uXfeU
-         s4cWCRVUUGM96nLXfWIQ6YMBIMIM1EKCouHk6ca4i7+hRuHF8m/HwW+OwC7G6G3vKmh8
-         LL4SM8n7tN0nlCefTJxXL6HrFu7CGV8PuIgfpMG/ZZdyU61gVvZIfB3v4FltFasRO1Jx
-         muenoAOBL573+njhemnXk9V3dWoJMZxuvc7x0Sgytltaeze3JBLYXYLW7mimJO7PDyQV
-         tBz24hlQqp0d528xqN3QeVHiHdSpkZC35VQ79eDfqmuCImlz3ak4FvH/Q7vTDj6+eeeX
-         nRQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjnBfAUWJDEimTka8baJRt9XMIXkb9e4Vp0s4caRemyVT6BzQuFxfhUzJoBqf3v6oc+3tUOgJYLOo6@vger.kernel.org, AJvYcCWZChc3AXZXNr2RK/PgbNVyK3lABBus+TbbY34vB157VKlVAvA16hX6oAdcbL8mBLY0G0EFBieU@vger.kernel.org, AJvYcCWxIUwOeyQAWbmvoKdif+1gl4wCqROg/R3Vzu5mqOkYeGqC/AHf0L9Uv21giZti0ezyV7+vqBn/NbAkMVbF@vger.kernel.org, AJvYcCXnnkOvM5B7NWlU8Eeknl0JaSJhMqbGlU5GWWTIl5sVXCawXAwFc9kvyi2iMG207r9PuRQR6r70n6rx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq5FGYZV4RAtco7vxDFoX6zZLRVnpfJSacXJPvRHPVKzyrRYfE
-	UN35iS5p0wGw1cvemw+rsobIMpDVFIFqXB/rsmeqtI+xCuLALpJstBuRWBPWUCY8fLzQBpCiN+B
-	6QmB5/DiytDTSqLCfsjwu9xa6kb4=
-X-Google-Smtp-Source: AGHT+IFUNX1ekCclzfjH7BCH130vbtHkmXnzNDQGQNHgUQtZNFLCYl0pxpBbwHki1DFA7Qhthd0swzZQZh7Gam147QY=
-X-Received: by 2002:a17:907:7f9f:b0:a77:cdae:6a59 with SMTP id
- a640c23a62f3a-a8092016903mr164012466b.21.1723120364320; Thu, 08 Aug 2024
- 05:32:44 -0700 (PDT)
+	s=arc-20240116; t=1723120370; c=relaxed/simple;
+	bh=I1y7ApPC+6Lm0KO1l7URJvxaoS1M7Wfxhu5/fFgqq9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=omaRWCDtf69h6U6EScegvF9XTDf4ib8JoZlEe46h4Pja1g3/JetQZL8kwo8yvoB0eVf79iKYRl3khgiHstoRG4qBX0/9yOVUOuom7Jbd8fV/xAh6PRKWxUM8FM1LJhTR0O0Hft4woZTSFEm1KYE5YfueiWdXAjIWAZxtyDDMWfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0Am9fW9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7DD9C4AF1B;
+	Thu,  8 Aug 2024 12:32:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723120369;
+	bh=I1y7ApPC+6Lm0KO1l7URJvxaoS1M7Wfxhu5/fFgqq9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f0Am9fW9KndUrYNnmwQ+jyH5ShhDnBrk0XSMzScqGKWBj0/AnJTiklKfrzjqU1vgT
+	 ZcVsIVPT4rtL1luv+VtLxHKIim/nRxQ1f0KV3gmn1nADjztDBz8nw5zFoHCq8/Lc1e
+	 vwb9mtbFcrY0frDdslNf5T56T/5Wg93kmt/xVEW/8izynsq0t8WRyKCmPGPwuYjgqK
+	 wjHS3B022qXwepNy36bga1xjMX6KNqtjDf+cAfXZbGfuHC0YSyG8S3BTgoXc1N6NmA
+	 bgyx+8D/+dctJ2XdmO/d5WfybJ5mp+kEC26Ebqjx28eYSf+I5pT5oOX9MQK0lYyn66
+	 0VwsPvGgJ4uNw==
+Date: Thu, 8 Aug 2024 14:32:45 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Morten Hein Tiljeset <morten@tiljeset.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Debugging stuck mount
+Message-ID: <20240808-hangar-jobverlust-2235f6ef0ccb@brauner>
+References: <22578d44-b822-40ff-87fb-e50b961fab15@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805101725.93947-1-herve.codina@bootlin.com>
- <20240805101725.93947-2-herve.codina@bootlin.com> <CAHp75VdtFET87R9DZbz27vEeyv4K5bn7mxDCnBVdpFVJ=j6qtg@mail.gmail.com>
- <20240807120956.30c8264e@bootlin.com>
-In-Reply-To: <20240807120956.30c8264e@bootlin.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 8 Aug 2024 15:32:07 +0300
-Message-ID: <CAHp75Ve0SVSzM36srTY7DwqY5_T9Bkqa0_xyDC2RzU=D1nsTwg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/8] misc: Add support for LAN966x PCI device
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Simon Horman <horms@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <22578d44-b822-40ff-87fb-e50b961fab15@app.fastmail.com>
 
-On Wed, Aug 7, 2024 at 1:10=E2=80=AFPM Herve Codina <herve.codina@bootlin.c=
-om> wrote:
-> On Mon, 5 Aug 2024 22:13:38 +0200
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > On Mon, Aug 5, 2024 at 12:19=E2=80=AFPM Herve Codina <herve.codina@boot=
-lin.com> wrote:
+On Thu, Aug 08, 2024 at 11:40:07AM GMT, Morten Hein Tiljeset wrote:
+> Hi folks,
+> 
+> I'm trying to debug an issue that occurs sporadically in production where the
+> ext4 filesystem on a device, say dm-1, is never fully closed. This is visible
+> from userspace only via the existence of /sys/fs/ext4/dm-1 which cryptsetup
+> uses to determine that the device is still mounted.
+> 
+> My initial thought was that it was mounted in some mount namespace, but this is
+> not the case. I've used a debugger (drgn) on /proc/kcore to find the
+> superblock. I can see that this is kept alive by a single mount which looks
+> like this (leaving out all fields that are NULL/empty lists):
+> 
+> *(struct mount *)0xffff888af92c5cc0 = {
+> 	.mnt_parent = (struct mount *)0xffff888af92c5cc0,
+> 	.mnt_mountpoint = (struct dentry *)0xffff888850331980,  // an application defined path
+> 	.mnt = (struct vfsmount){
+> 		.mnt_root = (struct dentry *)0xffff888850331980,    // note: same path as path as mnt_mountpoint
+> 		.mnt_sb = (struct super_block *)0xffff88a89f7bc800, // points to the superblock I want cleaned up
+> 		.mnt_flags = (int)134217760,                        // 0x8000020 = MNT_UMOUNT | MNT_RELATIME
+> 		.mnt_userns = (struct user_namespace *)init_user_ns+0x0 = 0xffffffffb384b400,
+> 	},
+> 	.mnt_pcp = (struct mnt_pcp *)0x37dfbfa2c338,
+> 	.mnt_instance = (struct list_head){
+> 		.next = (struct list_head *)0xffff88a89f7bc8d0,
+> 		.prev = (struct list_head *)0xffff88a89f7bc8d0,
+> 	},
+> 	.mnt_devname = (const char *)0xffff88a7d0fe7cc0 = "/dev/mapper/<my device>_crypt", // maps to /dev/dm-1
+> 	.mnt_id = (int)3605,
+> }
 
-...
+That's the root mount of the filesystem here.
 
-> > > +       if (!pdev->irq)
-> > > +               return ERR_PTR(-EOPNOTSUPP);
-> >
-> > Before even trying to get it via APIs? (see below as well)
-> > Also, when is it possible to have 0 here?
->
-> pdev->irq can be 0 if the PCI device did not request any IRQ
-> (i.e. PCI_INTERRUPT_PIN in PCI config header is 0).
+> 
+> In particular I notice that the mount namespace is NULL. As far as I understand
+> the only way to get this state is through a lazy unmount (MNT_DETACH). I can at
+> least manage to create a similar state by lazily unmounting but keeping the
+> mount alive with a shell with CWD inside the mountpoint.
+> 
+> I've tried to search for the superblock pointer on cwd/root of all tasks, which
+> works in my synthetic example but not for the real case. I've had similar
+> results searching for the superblock pointer using drgn's fsrefs.py script[1]
+> which has support for searching additional kernel data structures.
 
-> I use that to check whether or not INTx is supported.
-
-But why do you need that? What happens if you get a new device that
-supports let's say MSI?
-
-> Even if this code is present in the LAN966x PCI driver, it can be use as =
-a
-> starting point for other drivers and may be moved to a common part in the
-> future.
->
-> Do you think I should remove it ?
-
-I think pci_alloc_vectors() should be enough. Make it to be the first
-call, if you think it's better.
-
-> If keeping it is fine, I will add a comment.
-
-
---=20
-With Best Regards,
-Andy Shevchenko
+It's likely held alive by some random file descriptor someone has open.
+IOW, try and walk all /proc/<pid>/fd/<nr> in that case and see whether
+anything keeps it alive.
 
