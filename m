@@ -1,199 +1,205 @@
-Return-Path: <linux-kernel+bounces-278761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89FB894B466
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:05:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD46C94B468
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06FE51F23360
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:05:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E60D1F22A7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EB54A21;
-	Thu,  8 Aug 2024 01:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1582A4A2D;
+	Thu,  8 Aug 2024 01:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="km8bwIiO"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSC0Ucer"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C52BA2D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 01:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A9020E6;
+	Thu,  8 Aug 2024 01:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723079126; cv=none; b=aJiPAfnONxGMqWhkaYeyDmLoGrIyPVRZAU+2ZEEIGmPciI1pHeExm6HKNXdIiEk8d9fnOj0PdXEP/VT6xvnNf7nxDfNLEczbxfQynPHVIF1h7LxtRUucmO8ZLA7g1GOl+fLrggWuTJveehd9R3alJOl9bm62z1/eWyp4/45R0F0=
+	t=1723079252; cv=none; b=Al2DfsRtgcn0OsoNm4EnjrewZkLiBpo6d3oOcuqSYFDj1/UB+WtCnrOVqA7Ou6zMGdja4Gw7oGgRyMoH5ynHEyiCVyM/IeymqX15+M5FozZiv4Cqj8vl+NblUM6o3RDDXKc+npG0pa5cEBgwuhRCxStiREhmlDzFc88QWxaNdJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723079126; c=relaxed/simple;
-	bh=JIzhvwMJBIYK3CP+zdMzwZBNdK7DsqW3+kdNtzGfN0M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qietKTMgOdO8mNsRPIu8l8Kb7GwMNYY9Rc0CsdpbqdpkLr2YU9ncWQz7wKu0mykEwC2fevIYEL+mRrFqeqqpRq9bq+5lzBGrLMXRdmTWH5O/F71MpmflWRT47epaQh9n5aHGdidpTPxQbBwU+hI2pny7I3H4ur7Hqofim0wj4m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=km8bwIiO; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1723079252; c=relaxed/simple;
+	bh=LdL/hDIIb7dQfh4Ko6DZ9omFSOdwFjIwomx0PFhqbQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OW38jE22q2IL7ta9CKgjacyXNIsjV/7qfOLQxu9oHVLZN9xqb0nydK2KufBtImWqwrBoLFX4+UlE+AKhtbVYgJOL2gpOKhzFoUHXm+04c7J/jUKG8pQoWjSzreSsZ4LEjzaOZSdOfqzSmaVNn5MUwJAFkROMI3JVkh/MyYaobK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KSC0Ucer; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cb4c584029so396391a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 18:05:24 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7a103ac7be3so306656a12.3;
+        Wed, 07 Aug 2024 18:07:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723079124; x=1723683924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uGt+WO+BgfCM6JRIz2Vp6XstPIQFh7sJFzxCx1ifVF8=;
-        b=km8bwIiOnoVpoQ2G7FwrtOWsQSbBaMQ6PrcZGo0oLwRbp4HZnGOzg/jCWfU/mgMyZ+
-         G7wu/7lIUFwowH3kARz76cb0hZIm+FJo89Z1LkwcKzbBc+HqddXDjW0obG1yaNcpHRUc
-         SvYsl9Ixq6XBg4NwPQKF76UyQGSqQhAUZfpbYHNbVggdZ8/vP9Uoa0mVioAcBSOcTyee
-         c30/BD5fmKbGSTLvv0KBCzEC11yETl8PTL/pKHpD5q6DWi5V/Wq9rKlpOTS8jG+ZiCqr
-         1/Ug1kRuz1OvKc1RTCyxtOfTf9R4rEUrHvRnEyryxyZF08djxCQKiJYLzHPmd0CL47ml
-         3jMQ==
+        d=gmail.com; s=20230601; t=1723079249; x=1723684049; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=xe6bIqlnRissxAc0QQf03njofG5ELO2QawM43kqHGSU=;
+        b=KSC0UcervAkE6v9+60znD9jtN6t0K3ToZK9onKEAvsDfOLRPhO+f7+5g7GmZ8tFExW
+         WF+8J+YqkiaxJpuP60RjxX4f4TSb15woQoOhIT+xJWMdualIBB1wUJ98xBPV7vyH0X4U
+         JjpBmD/mH6Gebvk1u+WfgpRo5AWi5CTpPrQNo2pjheHRF/f1AiLBC2Kw/yj5cwNq6zbt
+         PGYIsWx7S0La6PdEyI4lcYfbHgvM5rAxAYDvpBf9k+FDOtEQWwKE4awoYnCCGEytn5fj
+         sViP7+CWKrH7VH3UPZ6SCcqBGEk7b9dnDBpi7KdpPrpsyYU1RDCuY/0PUWMwzWAIupyQ
+         NT+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723079124; x=1723683924;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uGt+WO+BgfCM6JRIz2Vp6XstPIQFh7sJFzxCx1ifVF8=;
-        b=DMM4bO+wgHhYNSpiBcid9wNnhTC3yuXPRUzbGlC/m1Xa/wfiU03zBnPkegocCOTr9L
-         hxvaWJaHC/MLZgfejBBaMGI/OI7zmAJu4AWlTWbDGG8KgH5yMNQT+CAheP8xwffbIdKO
-         cwT3VJBQTd3vPPfVUpC6bovZgZTNSm4PeivKMe2viahbAN/grFQGqgN41MldflZfdO4z
-         ceXYTi/Iy0JrfcQp9+kBkm6e21UzuVh5dhHK8O6xufnpIG3Qw+7f9wUBFZR9fnTpciGA
-         fvUAgwnNT2fWNgUgZ+Klfzl4cJzsQLWAOEdYM753gAK0xn3wQ3jTdLlM09zBQAHLbkl6
-         SpUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlw10npRYEpFf2pfn17phZPjvq4muFgjg1eFjnGnJDp6bvS5EGJLqCncpdHwepFcL8+vW3jWE48d2b7cx3fPFSrKFvxGr1t3Ip58J2
-X-Gm-Message-State: AOJu0Yz1aH1Fj2EsXEZGHXBLuwHvh2fZrk9SA8mwpQlA1ECX7WNa4Nly
-	UmSbEgFbUtVp5pPY3JCBpafMfHKNolb+QoFQ+f9VZb/8ZoZAwkvi
-X-Google-Smtp-Source: AGHT+IFNZ3LEVTvWBsb2U6K2+uOj6TPv2ISJ5ATjnSCBem9MDAfR1DacVCd8nZBhcpt0/t+voUop0Q==
-X-Received: by 2002:a17:90b:3886:b0:2ca:8a93:a40b with SMTP id 98e67ed59e1d1-2d1c3450a5fmr378381a91.31.1723079124116;
-        Wed, 07 Aug 2024 18:05:24 -0700 (PDT)
-Received: from barry-desktop.hub ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b3a9cc5asm2234639a91.10.2024.08.07.18.05.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 18:05:23 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: chrisl@kernel.org,
-	david@redhat.com,
-	kaleshsingh@google.com,
-	kasong@tencent.com,
-	linux-kernel@vger.kernel.org,
-	ryan.roberts@arm.com,
-	ioworker0@gmail.com,
-	baolin.wang@linux.alibaba.com,
-	ziy@nvidia.com,
-	hanchuanhua@oppo.com,
-	Barry Song <v-songbaohua@oppo.com>
-Subject: [PATCH RFC 2/2] mm: collect the number of anon large folios partially unmapped
-Date: Thu,  8 Aug 2024 13:04:57 +1200
-Message-Id: <20240808010457.228753-3-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240808010457.228753-1-21cnbao@gmail.com>
-References: <20240808010457.228753-1-21cnbao@gmail.com>
+        d=1e100.net; s=20230601; t=1723079249; x=1723684049;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xe6bIqlnRissxAc0QQf03njofG5ELO2QawM43kqHGSU=;
+        b=JYkJlOZlLNaTKWT2q6wHjqsL7KdwCUKfR0PGEXxQVx1ZRyEH2xsIaBFn7/HAu0n01q
+         Jlyxxz/ZnMjeXIzJ/CqH2USKvnAK7OwimiT8GdioIfIhLMMLfKOnpZAKiYhfBDUjQ5a7
+         hHE0Whg7eCm9Xkc6qZA9jokKpHjWTRCpfPobUjwDUhQOWuO5rArjwrRTRk6bSo6tB88z
+         U7j6BadOp9fqD3I9ucYO4tMcndNk8WW/+DFcx+mb3CswJ74vzW4CptkHTmGAW1tZ9TFr
+         3wYLRMAthxwAFJuw3Gf5CoBKyP63mPRGFKYpyZPBKi16OsqpGoiwkoX/v8JYpGG3VPDn
+         2oaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOy+YXVYlxM2zMwaAZn4dBVm4EbD4uNYuRscuaazTRyebn6rA/NAvuocoFbN9gFAgOYDdJBGYNANOJr+xa87MTr2GewMK2vTc5IEuj
+X-Gm-Message-State: AOJu0Yz+gXeAjOvK4FgMxfJ4tGnX4TZo5DoyU1Tc1fLJBXFtotAbuyxH
+	kwblbeWpqXF5WJGenH4Jfw27jRjE9/UN+kYA0ZNpOI6hSCGk19HD
+X-Google-Smtp-Source: AGHT+IFTeMnxuvqptJw+GyDeR4/vlSyUN/k/RyKrPTCZ736yAnYaqtZMG9eELn+gCdAH+s3MSe+vmA==
+X-Received: by 2002:a17:902:f54b:b0:1fb:81ec:26e5 with SMTP id d9443c01a7336-2009526cdd0mr4597165ad.28.1723079248794;
+        Wed, 07 Aug 2024 18:07:28 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f60abesm112666425ad.113.2024.08.07.18.07.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 18:07:27 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net>
+Date: Wed, 7 Aug 2024 18:07:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+To: Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+ Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
+References: <20240731095022.970699670@linuxfoundation.org>
+ <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
+ <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
+ <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <87frrh44mf.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Barry Song <v-songbaohua@oppo.com>
+On 8/6/24 16:24, Thomas Gleixner wrote:
+> Cc+: Helge, parisc ML
+> 
+> We're chasing a weird failure which has been tracked down to the
+> placement of the division library functions (I assume they are imported
+> from libgcc).
+> 
+> See the thread starting at:
+> 
+>    https://lore.kernel.org/all/718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net
+> 
+> On Tue, Aug 06 2024 at 21:25, Vlastimil Babka wrote:
+>> On 8/6/24 19:33, Thomas Gleixner wrote:
+>>>
+>>> So this change adds 16 bytes to __softirq() which moves the division
+>>> functions up by 16 bytes. That's all it takes to make the stupid go
+>>> away....
+>>
+>> Heh I was actually wondering if the division is somhow messed up because
+>> maxobj = order_objects() and order_objects() does a division. Now I suspect
+>> it even more.
+> 
+> check_slab() calls into that muck, but I checked the disassembly of a
+> working and a broken kernel and the only difference there is the
+> displacement offset when the code calculates the call address, but
+> that's as expected a difference of 16 bytes.
+> 
+> Now it becomes interesting.
+> 
+> I added a unused function after __do_softirq() into the softirq text
+> section and filled it with ASM nonsense so that it occupies exactly one
+> page. That moves $$divoI, which is what check_slab() calls, exactly one
+> page forward:
+> 
 
-When an mTHP is added to the deferred_list, its partial pages
-are unused, leading to wasted memory and potentially increasing
-memory reclamation pressure. Tracking this number indicates
-the extent to which userspace is partially unmapping mTHPs.
+With the above added to my tree, I can also play around with the code.
+Here is the next weird one:
 
-Detailing the specifics of how unmapping occurs is quite difficult
-and not that useful, so we adopt a simple approach: each time an
-mTHP enters the deferred_list, we increment the count by 1; whenever
-it leaves for any reason, we decrement the count by 1.
+diff --git a/mm/slub.c b/mm/slub.c
+index 4927edec6a8c..b8a33966d858 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1385,6 +1385,9 @@ static int check_slab(struct kmem_cache *s, struct slab *slab)
+         }
 
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
----
- Documentation/admin-guide/mm/transhuge.rst | 5 +++++
- include/linux/huge_mm.h                    | 1 +
- mm/huge_memory.c                           | 6 ++++++
- 3 files changed, 12 insertions(+)
-
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 715f181543f6..5028d61cbe0c 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -532,6 +532,11 @@ anon_num
-        These huge pages could be still entirely mapped and have partially
-        unmapped and unused subpages.
- 
-+anon_num_partial_unused
-+       the number of anon huge pages which have been partially unmapped
-+       we have in the whole system. These unmapped subpages are also
-+       unused and temporarily wasting memory.
+         maxobj = order_objects(slab_order(slab), s->size);
 +
- As the system ages, allocating huge pages may be expensive as the
- system uses memory compaction to copy data around memory to free a
- huge page for use. There are some counters in ``/proc/vmstat`` to help
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 294c348fe3cc..4b27a9797150 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -282,6 +282,7 @@ enum mthp_stat_item {
- 	MTHP_STAT_SPLIT_FAILED,
- 	MTHP_STAT_SPLIT_DEFERRED,
- 	MTHP_STAT_NR_ANON,
-+	MTHP_STAT_NR_ANON_SPLIT_DEFERRED,
- 	__MTHP_STAT_COUNT
- };
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index b6bc2a3791e3..6083144f9fa0 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -579,6 +579,7 @@ DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
- DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
- DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
- DEFINE_MTHP_STAT_ATTR(anon_num, MTHP_STAT_NR_ANON);
-+DEFINE_MTHP_STAT_ATTR(anon_num_partial_unused, MTHP_STAT_NR_ANON_SPLIT_DEFERRED);
- 
- static struct attribute *stats_attrs[] = {
- 	&anon_fault_alloc_attr.attr,
-@@ -593,6 +594,7 @@ static struct attribute *stats_attrs[] = {
- 	&split_failed_attr.attr,
- 	&split_deferred_attr.attr,
- 	&anon_num_attr.attr,
-+	&anon_num_partial_unused_attr.attr,
- 	NULL,
- };
- 
-@@ -3229,6 +3231,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		if (folio_order(folio) > 1 &&
- 		    !list_empty(&folio->_deferred_list)) {
- 			ds_queue->split_queue_len--;
-+			mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON_SPLIT_DEFERRED, -1);
- 			/*
- 			 * Reinitialize page_deferred_list after removing the
- 			 * page from the split_queue, otherwise a subsequent
-@@ -3291,6 +3294,7 @@ void __folio_undo_large_rmappable(struct folio *folio)
- 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
- 	if (!list_empty(&folio->_deferred_list)) {
- 		ds_queue->split_queue_len--;
-+		mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON_SPLIT_DEFERRED, -1);
- 		list_del_init(&folio->_deferred_list);
- 	}
- 	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
-@@ -3332,6 +3336,7 @@ void deferred_split_folio(struct folio *folio)
- 		if (folio_test_pmd_mappable(folio))
- 			count_vm_event(THP_DEFERRED_SPLIT_PAGE);
- 		count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFERRED);
-+		mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON_SPLIT_DEFERRED, 1);
- 		list_add_tail(&folio->_deferred_list, &ds_queue->split_queue);
- 		ds_queue->split_queue_len++;
- #ifdef CONFIG_MEMCG
-@@ -3379,6 +3384,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 			list_move(&folio->_deferred_list, &list);
- 		} else {
- 			/* We lost race with folio_put() */
-+			mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON_SPLIT_DEFERRED, -1);
- 			list_del_init(&folio->_deferred_list);
- 			ds_queue->split_queue_len--;
- 		}
--- 
-2.34.1
++       pr_info_once("##### slab->objects=%u maxobj=%u\n", slab->objects, maxobj);
++
+         if (slab->objects > maxobj) {
+                 slab_err(s, slab, "objects %u > max %u",
+                         slab->objects, maxobj);
+
+results in:
+
+##### slab->objects=21 maxobj=21
+=============================================================================
+BUG kmem_cache_node (Not tainted): objects 21 > max 16
+
+As Thomas noticed, this only happens if the divide assembler code is within a certain
+address range.
+
+Ok, now I am really lost.
+
+Guenter
 
 
