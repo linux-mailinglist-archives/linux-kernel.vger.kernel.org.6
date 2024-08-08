@@ -1,239 +1,106 @@
-Return-Path: <linux-kernel+bounces-279225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2A394BAB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:19:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6BEB94BAB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10FF0B21390
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:19:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88B63287F94
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100F0189F41;
-	Thu,  8 Aug 2024 10:19:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945A913AA31
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710DE189F55;
+	Thu,  8 Aug 2024 10:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dr++cboO"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74500189F37;
+	Thu,  8 Aug 2024 10:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112342; cv=none; b=mX+NygR8yh1AvPG3RFKxJ9wQvA10JZGuO8xDvVPyKsYg2FqAw796NL1KMlZ/rTCbWsjHiGvvbaU+zAUUKITf9ZH5ulNgpiL0Yy49Mu7telVlama4xvLLKMEp24OWmO9cDGNYuty2er8RDxWOkt36D+9qdsxNbRf1LOO8V75gDfA=
+	t=1723112393; cv=none; b=s0HdMFQeHEcjxUkumtH863HegfJHCwqJDBc2Vkyl190AhqnvDt75lVsUOmT/Rew+2V4UgNJToQKL0kXtEoZ4aNOBRsOt9oqOYs9Q47tt+385ee0b7xYeWdIoodm5C0gQUp8dFzHzMrCN7pXhLsnPYU13ExoeVnTqu57teMf0dAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112342; c=relaxed/simple;
-	bh=2P2PwMs03Nwt3zk1UN06J+SqeoDdJchWI0AHop0SgGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DbNKcQLbxCphyMtemRRgmOHFRX7WosiNi+HZJ7MhpAwQtwxOM6XyG1ezI8/oK84TaIEwLZIWvAKjsdIo2AUorAGBq9N3WYiArsb96/AifnwcnxmvSNG17Z1z5YmA1GoQ7MdQd2tkNbxiERh4dYLt0FrVARpV4KfSmjNeYj+zc4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D72A1FEC;
-	Thu,  8 Aug 2024 03:19:25 -0700 (PDT)
-Received: from [10.1.27.165] (XHFQ2J9959.cambridge.arm.com [10.1.27.165])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC8D73F766;
-	Thu,  8 Aug 2024 03:18:58 -0700 (PDT)
-Message-ID: <2585dbf3-9546-4696-abba-955efd0e1bb4@arm.com>
-Date: Thu, 8 Aug 2024 11:18:57 +0100
+	s=arc-20240116; t=1723112393; c=relaxed/simple;
+	bh=6bAfnf6c5/iHXILqD7RD8kITTLL773Gz8gUZuAp/Mb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvItxdGJ5aL176fzuNNwd9qewAciBLTapwTuZxpRz7WRkUQI/7gdigVlXjU+a1Vx6JV8YYidGP96+UtaCohtWUJD6IrJ4ETPCzNszfQ9JViPk9KmCTK7FsrRViECGPlhA+En85/pvuYPqhaHISeXPNisaVt1u8SRAFM/D2k9bX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dr++cboO; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=726C+QRC6Qs6UtBdbsmcHzJuYMppoxzGiaRG2rouZgI=; b=dr++cboOGpaZMNlAFrAB9Jnk58
+	si42z9wP0GYJncD7sIp8bJvB1yYbuZFeFOu0QzZYqkqs+vWFAgYXsPRj1PVhWGrDO0fkkp31qpetX
+	5UKYZxASYj4W9ES8PBa0t4WELvTuuknnBMVKxa4MZwct7RXyouzWZLDULYCeWd+f/WlLxU3s1g88x
+	MPBGxwPZvhY2toKbez83EJML1t6GhIGcLoY7Nz08xz2l343pj6JhEeZ9vWek7YrA3D+haGezVqGD+
+	wix09MzsywcHSaPkyZDibf2te3XdSc7hrSW8NldttRmuweRWFk6M/Bj+fiz4npZ15QUo/irKmMGs8
+	Ow8V4Gdg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sc0FA-00000008kAE-1oVU;
+	Thu, 08 Aug 2024 10:19:40 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 590FB300392; Thu,  8 Aug 2024 12:19:39 +0200 (CEST)
+Date: Thu, 8 Aug 2024 12:19:39 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: mingo@redhat.com, will@kernel.org, longman@redhat.com,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de,
+	paulmck@kernel.org, frederic@kernel.org, josh@joshtriplett.org,
+	neeraj.iitr10@gmail.com, urezki@gmail.com, rcu@vger.kernel.org
+Subject: Re: [GIT PULL] LOCKDEP changes for v6.12
+Message-ID: <20240808101939.GG31338@noisy.programming.kicks-ass.net>
+References: <ZrQ97Zz27Tzmr0Zi@tardis>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: Override mTHP "enabled" defaults at kernel cmdline
-Content-Language: en-GB
-To: Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <ioworker0@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240808101700.571701-1-ryan.roberts@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240808101700.571701-1-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrQ97Zz27Tzmr0Zi@tardis>
 
-On 08/08/2024 11:16, Ryan Roberts wrote:
-> Add thp_anon= cmdline parameter to allow specifying the default
-> enablement of each supported anon THP size. The parameter accepts the
-> following format and can be provided multiple times to configure each
-> size:
+On Wed, Aug 07, 2024 at 08:39:25PM -0700, Boqun Feng wrote:
+> Hi Peter & Ingo,
 > 
-> thp_anon=<size>[KMG]:<value>
+> Per discussion:
 > 
-> See Documentation/admin-guide/mm/transhuge.rst for more details.
+> 	https://lore.kernel.org/lkml/20240802151619.GN39708@noisy.programming.kicks-ass.net/
 > 
-> Configuring the defaults at boot time is useful to allow early user
-> space to take advantage of mTHP before its been configured through
-> sysfs.
-> 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
-> 
-> Hi All,
-> 
-> I've split this off from my RFC at [1] because Barry highlighted that he would
-> benefit from it immediately [2]. There are no changes vs the version in that
-> series.
-
-Forgot to link the references, oops:
-
-[1] https://lore.kernel.org/linux-mm/20240717071257.4141363-1-ryan.roberts@arm.com/
-[2] https://lore.kernel.org/linux-mm/CAGsJ_4wiZRP9siEk9WpAYRjj-gehxptGY9XWC8k3N4QHBppAhQ@mail.gmail.com/
-
-> 
-> It applies against today's mm-unstable (275d686abcb59). (although I had to fix a
-> minor build bug in stackdepot.c due to MIN() not being defined in this tree).
-> 
-> Thanks,
-> Ryan
+> I'm sending a PR with some lockdep changes to tip.
 > 
 > 
->  .../admin-guide/kernel-parameters.txt         |  8 +++
->  Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
->  mm/huge_memory.c                              | 55 ++++++++++++++++++-
->  3 files changed, 82 insertions(+), 7 deletions(-)
+> The following changes since commit d5934e76316e84eced836b6b2bafae1837d1cd58:
 > 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index bcdee8984e1f0..5c79b58c108ec 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6631,6 +6631,14 @@
->  			<deci-seconds>: poll all this frequency
->  			0: no polling (default)
+>   cleanup: Add usage and style documentation (2024-08-05 16:54:41 +0200)
 > 
-> +	thp_anon=	[KNL]
-> +			Format: <size>[KMG]:always|madvise|never|inherit
-> +			Can be used to control the default behavior of the
-> +			system with respect to anonymous transparent hugepages.
-> +			Can be used multiple times for multiple anon THP sizes.
-> +			See Documentation/admin-guide/mm/transhuge.rst for more
-> +			details.
-> +
->  	threadirqs	[KNL,EARLY]
->  			Force threading of all interrupt handlers except those
->  			marked explicitly IRQF_NO_THREAD.
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-> index 24eec1c03ad88..f63b0717366c6 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -284,13 +284,27 @@ that THP is shared. Exceeding the number would block the collapse::
+> are available in the Git repository at:
 > 
->  A higher value may increase memory footprint for some workloads.
-> 
-> -Boot parameter
-> -==============
-> +Boot parameters
-> +===============
-> 
-> -You can change the sysfs boot time defaults of Transparent Hugepage
-> -Support by passing the parameter ``transparent_hugepage=always`` or
-> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
-> -to the kernel command line.
-> +You can change the sysfs boot time default for the top-level "enabled"
-> +control by passing the parameter ``transparent_hugepage=always`` or
-> +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
-> +kernel command line.
-> +
-> +Alternatively, each supported anonymous THP size can be controlled by
-> +passing ``thp_anon=<size>[KMG]:<state>``, where ``<size>`` is the THP size
-> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
-> +``inherit``.
-> +
-> +For example, the following will set 64K THP to ``always``::
-> +
-> +	thp_anon=64K:always
-> +
-> +``thp_anon=`` may be specified multiple times to configure all THP sizes as
-> +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
-> +not explicitly configured on the command line are implicitly set to
-> +``never``.
-> 
->  Hugepages in tmpfs/shmem
->  ========================
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 0c3075ee00012..c2c0da1eb94e6 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -82,6 +82,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
->  unsigned long huge_anon_orders_always __read_mostly;
->  unsigned long huge_anon_orders_madvise __read_mostly;
->  unsigned long huge_anon_orders_inherit __read_mostly;
-> +static bool anon_orders_configured;
-> 
->  unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->  					 unsigned long vm_flags,
-> @@ -672,7 +673,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
->  	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
->  	 * constant so we have to do this here.
->  	 */
-> -	huge_anon_orders_inherit = BIT(PMD_ORDER);
-> +	if (!anon_orders_configured) {
-> +		huge_anon_orders_inherit = BIT(PMD_ORDER);
-> +		anon_orders_configured = true;
-> +	}
-> 
->  	*hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
->  	if (unlikely(!*hugepage_kobj)) {
-> @@ -857,6 +861,55 @@ static int __init setup_transparent_hugepage(char *str)
->  }
->  __setup("transparent_hugepage=", setup_transparent_hugepage);
-> 
-> +static int __init setup_thp_anon(char *str)
-> +{
-> +	unsigned long size;
-> +	char *state;
-> +	int order;
-> +	int ret = 0;
-> +
-> +	if (!str)
-> +		goto out;
-> +
-> +	size = (unsigned long)memparse(str, &state);
-> +	order = ilog2(size >> PAGE_SHIFT);
-> +	if (*state != ':' || !is_power_of_2(size) || size <= PAGE_SIZE ||
-> +	    !(BIT(order) & THP_ORDERS_ALL_ANON))
-> +		goto out;
-> +
-> +	state++;
-> +
-> +	if (!strcmp(state, "always")) {
-> +		clear_bit(order, &huge_anon_orders_inherit);
-> +		clear_bit(order, &huge_anon_orders_madvise);
-> +		set_bit(order, &huge_anon_orders_always);
-> +		ret = 1;
-> +	} else if (!strcmp(state, "inherit")) {
-> +		clear_bit(order, &huge_anon_orders_always);
-> +		clear_bit(order, &huge_anon_orders_madvise);
-> +		set_bit(order, &huge_anon_orders_inherit);
-> +		ret = 1;
-> +	} else if (!strcmp(state, "madvise")) {
-> +		clear_bit(order, &huge_anon_orders_always);
-> +		clear_bit(order, &huge_anon_orders_inherit);
-> +		set_bit(order, &huge_anon_orders_madvise);
-> +		ret = 1;
-> +	} else if (!strcmp(state, "never")) {
-> +		clear_bit(order, &huge_anon_orders_always);
-> +		clear_bit(order, &huge_anon_orders_inherit);
-> +		clear_bit(order, &huge_anon_orders_madvise);
-> +		ret = 1;
-> +	}
-> +
-> +	if (ret)
-> +		anon_orders_configured = true;
-> +out:
-> +	if (!ret)
-> +		pr_warn("thp_anon=%s: cannot parse, ignored\n", str);
-> +	return ret;
-> +}
-> +__setup("thp_anon=", setup_thp_anon);
-> +
->  pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
->  {
->  	if (likely(vma->vm_flags & VM_WRITE))
-> --
-> 2.43.0
+>   git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux tags/lockdep-for-tip.20240806
 > 
 
+Right, so a few things for next time, could you read
+Documentation/process/maintainer-tip.rst and make sure patches more or
+less adhere to the things outlined there.
+
+Things I noticed in the few seconds I looked at things:
+
+Subjects don't start with a capital letter after the ':'
+
+The Changelog for the lockdep-vs-rcu thing can be much condensed by not
+including full stack dumps but only the relevant information.
+
+If you don't want to edit patches by hand, you're free to push back and
+get the submitter to do things before applying them.
+
+Anyway, since I'm about to head out to the beach, I'm pulling this. Also
+I need to figure out how git works with remotes and tags... stupid
+things :-)
+  
 
