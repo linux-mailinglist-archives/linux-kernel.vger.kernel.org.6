@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-278867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA10594B5D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:15:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60EDF94B5D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F20031C21B01
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:14:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48874B20F7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E40E84D34;
-	Thu,  8 Aug 2024 04:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198B013AD13;
+	Thu,  8 Aug 2024 04:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="AR/nq4T3"
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="OQgBPHo/"
 Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6567F484;
-	Thu,  8 Aug 2024 04:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF3D9479;
+	Thu,  8 Aug 2024 04:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723090489; cv=none; b=HpFqpWa9+aRGylQEUclrDYx0ZqoG61vKAmyZxHB1Mz/I4ActyShpGO7dnnM1C+O77HyenSNWoO3y496fUg9aytems/Tdwv7Oa0TZU/QY60tMQqwt+D44HhY+msSl8JuLp+EpkHDd5i2raEEIk7e45lgu3NOvjZ5BmnZASP0BuAY=
+	t=1723090490; cv=none; b=pGar3Uc+SX9uFIm3FhaMk20wSg10FqP3/o7dHiyxVMmH780cz/H2p3PwAoOcg6p67IzFrrSYreELsIaUs8tjMIu93Rl2HhArZQqDHr5JOlCThjm/HHnJa8x+MgzYIiQIk0knsErgacWtYiC02Wy+wj3a5KieGE5WjO2eI6IwgS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723090489; c=relaxed/simple;
-	bh=gHPoEeufEVkudtSEDULOZsQrvCv8dq1jgF9iCMZPcjE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fIHtY6lFDn8LXuspvOkDTa+zEdzCJ/Rq/y3p70S5SOahuuEg+g5MjlkDD4tfyLst5Cj7xI/tz325dQLjYNgNgT4mtt+hAftJZcNGyofeSiabO6qCZ57bP5pzP1M10oBTZKhkDTEciaxpdrjH1t0ad1zD+BIxMq7hVRm8VRwNKOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=AR/nq4T3; arc=none smtp.client-ip=203.29.241.158
+	s=arc-20240116; t=1723090490; c=relaxed/simple;
+	bh=CqnZOTH+umhn8OVccPsARByDkCZQTZkoHkal8t0kf/8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=MfrE9vSTpfAElGttt+QX47TR++PEMrJV4Q8yLlLW2tI6Drr2qp428NEEjb+NbOh7cr7WJ1HBc7+4VD/MfIpRAdzcB4kGpOd7wdBgxUSGl8gWsDCeR6kT5+hHjVsIWGXllNd7f/lO0pTUHNCNE+u4KA+e5tB9qu11nCbcsfIYVMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=OQgBPHo/; arc=none smtp.client-ip=203.29.241.158
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=codeconstruct.com.au; s=2022a; t=1723090486;
-	bh=n3sZ4FsOpgBw2cpkxzXazcULuROCyRckfFE8WrKc23c=;
-	h=From:Subject:Date:To:Cc;
-	b=AR/nq4T3O36j2aPSH1YxOzliZ0Qdgq9WcseuCgPmIupAGuOvs7srJsccs9k33u6Ie
-	 5vbN65GDaqWjfSoiCeNBdmbcRAT0wgJvHfYqonn6Dz1BPTsww7BuvDFEpMnwTmsth0
-	 od7cGfbOdG8EHRvatmlXdLtHFGHeAVERDJKHkVLti1A4oxCT29tNeBM0WfWJfUhX5L
-	 OPpJSqWN+dtEn15bpHag+HNMPW4rOkHyl9Y7SK2buA9CFAMyKJ7yyCCBXyEgFSr5Ih
-	 STAx3nryVgYzW2dnKMcCMNY72yisErw2BO/70gFlE63UU4PviL87REmXQjcKULHbg6
-	 VfcUOQdxSUKqQ==
+	bh=23GaKS6//FPaeCfJCFK5J8Hh9VT+4RbnnIKhMh21S2Y=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=OQgBPHo/0PAsTi4H8cunz4fH0ZbDXf6x6L9eQzhNL83JeMc4cdwHDeh8/H9j8YeJq
+	 UgEEayrSidrpxlEMgkkaPBwqeQoeNZVS+xAmagloYiPtCXEc44SKBGodA/s46us5mY
+	 b4yJw8lYOnc2jSYEKuGPcxISpws2qzP2bJHGh2RIAmkqRER/gFPZOK+FM8r0fWbvR8
+	 2omK/1ixK9pkEtTPHMOn6HoNtVhxqhMSuDsC2svpG1jfZoO9nyy7/JXJ5IxQX8KUc1
+	 qTeQK+HtKphrlqgsLaFC8iFDIlNVYkJiUCNdXTrqmZztZ7x0GrVEopOPGmQu7kVbCF
+	 l2K8IuPvO+/7Q==
 Received: from [127.0.1.1] (203-57-213-111.dyn.iinet.net.au [203.57.213.111])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 65FFE654E9;
-	Thu,  8 Aug 2024 12:14:45 +0800 (AWST)
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 2A20466F95;
+	Thu,  8 Aug 2024 12:14:46 +0800 (AWST)
 From: Andrew Jeffery <andrew@codeconstruct.com.au>
-Subject: [PATCH v2 0/2] dt-bindings: interrupt-controller: Convert Aspeed
- (C)VIC to DT schema
-Date: Thu, 08 Aug 2024 13:44:23 +0930
-Message-Id: <20240808-dt-warnings-irq-aspeed-dt-schema-v2-0-c2531e02633d@codeconstruct.com.au>
+Date: Thu, 08 Aug 2024 13:44:24 +0930
+Subject: [PATCH v2 1/2] dt-bindings: interrupt-controller:
+ aspeed,ast2400-vic: Convert to DT schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,10 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAB9GtGYC/5WNQQ6DIBAAv2I4dw1SNLan/qPxQNhV9yBYQNvG+
- PeiP+hx5jCziUiBKYp7sYlAK0f2LoO6FMKOxg0EjJmFkkrLVirABG8THLshAocXmDgT4aGjHWk
- yUPc19VijvlZG5MwcqOfPuXh2mUeOyYfveVyrw/4RXyuQ0FrUqmlQyZt+WI9kvYspLDaV1k+lW
- US37/sPWyakwtsAAAA=
+Message-Id: <20240808-dt-warnings-irq-aspeed-dt-schema-v2-1-c2531e02633d@codeconstruct.com.au>
+References: <20240808-dt-warnings-irq-aspeed-dt-schema-v2-0-c2531e02633d@codeconstruct.com.au>
+In-Reply-To: <20240808-dt-warnings-irq-aspeed-dt-schema-v2-0-c2531e02633d@codeconstruct.com.au>
 To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
@@ -67,46 +66,121 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
 X-Mailer: b4 0.14.1
 
-Hello,
+Squash warnings such as:
 
-This short series converts the Aspeed VIC and CVIC bindings over to DT
-schema. The CVIC has historically been documented under "misc" as it's
-the interrupt controller for the Coldfire co-processor embedded in the
-SoCs, and not for the main ARM core. Regardless, I've updated both in
-this series.
+    arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dtb: /ahb/interrupt-controller@1e6c0080: failed to match any schema with compatible: ['aspeed,ast2400-vic']
 
-I tried to document the historical oddities and conversion quirks in the
-commit messages where appropriate.
+The YAML DT schema defines an optional property, valid-sources, which
+was not previously described in the prose binding. It is added to
+document existing practice in the Aspeed devicetrees. Unfortunately
+the property seems to predate the requirement that vendor-specific
+properties be prefixed.
 
-Please review!
-
-Andrew
-
+Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 ---
-Changes in v2:
-- Address feedback from Krzysztof
-  - https://lore.kernel.org/r/c51fb027-f8bd-4b10-b9c0-dbbe8e8cf4c1@kernel.org/
-  - https://lore.kernel.org/r/ec19fe07-84bd-4c32-a886-e6126af52f4c@kernel.org/
-- Address feedback from Rob
-  - https://lore.kernel.org/r/20240806172917.GA1836473-robh@kernel.org/
-- Link to v1: https://lore.kernel.org/r/20240802-dt-warnings-irq-aspeed-dt-schema-v1-0-8cd4266d2094@codeconstruct.com.au
-
----
-Andrew Jeffery (2):
-      dt-bindings: interrupt-controller: aspeed,ast2400-vic: Convert to DT schema
-      dt-bindings: misc: aspeed,ast2400-cvic: Convert to DT schema
-
  .../interrupt-controller/aspeed,ast2400-vic.txt    | 23 --------
  .../interrupt-controller/aspeed,ast2400-vic.yaml   | 62 ++++++++++++++++++++++
- .../bindings/misc/aspeed,ast2400-cvic.yaml         | 60 +++++++++++++++++++++
- .../devicetree/bindings/misc/aspeed,cvic.txt       | 35 ------------
- 4 files changed, 122 insertions(+), 58 deletions(-)
----
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-change-id: 20240802-dt-warnings-irq-aspeed-dt-schema-5f5efd5d431a
+ 2 files changed, 62 insertions(+), 23 deletions(-)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2400-vic.txt b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2400-vic.txt
+deleted file mode 100644
+index e3fea0758d25..000000000000
+--- a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2400-vic.txt
++++ /dev/null
+@@ -1,23 +0,0 @@
+-Aspeed Vectored Interrupt Controller
+-
+-These bindings are for the Aspeed interrupt controller. The AST2400 and
+-AST2500 SoC families include a legacy register layout before a re-designed
+-layout, but the bindings do not prescribe the use of one or the other.
+-
+-Required properties:
+-
+-- compatible : "aspeed,ast2400-vic"
+-               "aspeed,ast2500-vic"
+-
+-- interrupt-controller : Identifies the node as an interrupt controller
+-- #interrupt-cells : Specifies the number of cells needed to encode an
+-  interrupt source. The value shall be 1.
+-
+-Example:
+-
+- vic: interrupt-controller@1e6c0080 {
+-      compatible = "aspeed,ast2400-vic";
+-      interrupt-controller;
+-      #interrupt-cells = <1>;
+-      reg = <0x1e6c0080 0x80>;
+- };
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2400-vic.yaml b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2400-vic.yaml
+new file mode 100644
+index 000000000000..73e8b9a39bd7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2400-vic.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2400-vic.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Aspeed Vectored Interrupt Controller
++
++maintainers:
++  - Andrew Jeffery <andrew@codeconstruct.com.au>
++
++description:
++  The AST2400 and AST2500 SoC families include a legacy register layout before
++  a redesigned layout, but the bindings do not prescribe the use of one or the
++  other.
++
++properties:
++  compatible:
++    enum:
++      - aspeed,ast2400-vic
++      - aspeed,ast2500-vic
++
++  reg:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 1
++    description:
++      Specifies the number of cells needed to encode an interrupt source. It
++      must be 1 as the VIC has no configuration options for interrupt sources.
++      The single cell defines the interrupt number.
++
++  valid-sources:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    maxItems: 2
++    description:
++      A bitmap of supported sources for the implementation.
++
++required:
++  - compatible
++  - reg
++  - interrupt-controller
++  - "#interrupt-cells"
++
++allOf:
++  - $ref: /schemas/interrupt-controller.yaml
++
++additionalProperties: false
++
++examples:
++  - |
++    interrupt-controller@1e6c0080 {
++         compatible = "aspeed,ast2400-vic";
++         reg = <0x1e6c0080 0x80>;
++         interrupt-controller;
++         #interrupt-cells = <1>;
++         valid-sources = <0xffffffff 0x0007ffff>;
++    };
++
++...
+
 -- 
-Andrew Jeffery <andrew@codeconstruct.com.au>
+2.39.2
 
 
