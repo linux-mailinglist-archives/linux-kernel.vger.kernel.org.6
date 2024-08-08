@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-278991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A3E94B772
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 094B394B776
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8739A1C235EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:17:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE1D1C20A23
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610C418F2E3;
-	Thu,  8 Aug 2024 07:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C4518FC87;
+	Thu,  8 Aug 2024 07:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HhHKjZTN"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="F2HfDV1a"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F5E18E740;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F30F188CA5;
 	Thu,  8 Aug 2024 07:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723101124; cv=none; b=lGMJF6l2sXLS2jDYrGF89uiYoA/7zdrV02jdxIhGx2p/iZ/yKedXpFtEXy79Zk8cYgvXwv+a5jIVD06GBexQpaYEpodu605iTzSosZQCfbjEa4X9qEdZ9jmYhAV9V4ckA0J7AQNBkwZffh0ii/ijH4yRczQi7858GQKb5JASVRQ=
+	t=1723101126; cv=none; b=aegiPpW1LtzR/sB2AhIOg01pPS3a50Xkab+TEzTZ7n4ZV8pbAVIvSwIS4RihdrcNgCvVzdjzx0YZnfEVTiewFcwcia2JjmOgg6smqmGI4bvBCUW/Cgq+9TErPKzkwjFlSy1mAQhgrrwm0pyy0CLj81XZzlOyI/NhEbzgZA18esk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723101124; c=relaxed/simple;
-	bh=r1/o0ZpD2s4W36oH1G6fvDGnRurZP3VHkF0V9MGkaAU=;
+	s=arc-20240116; t=1723101126; c=relaxed/simple;
+	bh=8ksQKBK3nAiioJdXAHF0iPGZ2MhIMi5zRV7/4DTbtl8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OoHmaZEIai+NBQ4Xo7kFCOdIkSP6CMIbrEhKh3147cqRNZm7X1mlmXYzIsiREt/ei082B1HQANbIxyxfdUAvWO331RdM4JMoZv1x6Hf/y9yXqn/+rn88njA/bS24LOafmhV60pfmCGarp2yDh4rXE2r8V7YKKYnxgWNItGxXEds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HhHKjZTN; arc=none smtp.client-ip=217.70.183.198
+	 MIME-Version; b=Iq5DG/OSem4sqKJfIYnHoKZ5U5hX5O2uJpdkUFGt18MXkNXi8m1nefNssMqHNs7ZwHFdIcwVWN7iAeWRM0oPULrEuG7+mHj0HYf8QHoFaKPOb0AOY3c/qBZundtoEpTVhW2T1Y3KbhtvDOKwGp2pwedJcS7ZeoXcp56ao8j3d1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=F2HfDV1a; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 51B8AC000B;
-	Thu,  8 Aug 2024 07:12:00 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 12F83C000F;
+	Thu,  8 Aug 2024 07:12:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723101120;
+	t=1723101121;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ns1shNAo8zEhYUmPszlirWDSVtM9okYPzpFYT+pVz24=;
-	b=HhHKjZTN3TIWxgS9BA+NzIJH9M0Nw1IJKYJ3QvoNPHSduDj0Na/SmlST0OLz7qYRiuX2PD
-	3HOyFQiPPMnFnEufReTfQuPQ2U/CuW6FKWjpxr8SwTjljWAWRjqzP3yuuuft75lyzgTQK7
-	zKGxCjYi09J7rP3bG2Vv3HE8xqzOzdHIYPz6okN6VIqVj6bJvoXu1eb4OHekfsSOBO7tY1
-	idbrXx8U7sQGpegZ7pmXz9h+CR/E9IkkqTjoD4bhjQgAqgZnJJ3Qv8PApwBMa/VrkfuSYC
-	6OU/Sn737ElhQ8S8GKpYkimjX3CJCf2fHuQKpgZM8vl+MO6sJT6wG0sr8wJCjQ==
+	bh=bhHLsIpdGYfQTXJIMda4RgH3fpRoHJARlbP68m37GfE=;
+	b=F2HfDV1aMLgVp9USrt4xyRvAxNi+WmT/GCYwPZKFa5IXuICsmo7yX1sOzAY5UStRRUn8Qe
+	A7xgey18Ja9dy+uKjjMolLUFGL0ZuYCnEayVv+qj0j7h5YTOiMV0ppqGxhvfFNkWo2rERk
+	3jXOhY5yZN3WSWcb7qnItecJItOl3UKXK+mUkQQaVP4jOVY0BZShg+PkyD6LRSidyfyHbV
+	S3XuQLGvaR3GHofAs+nFsOz5JCLS9o00O9XJLRE5DJmClXNUSepG0og53NTGICiNmdSoD3
+	t1LMbZNBcwsr+v810M6inH+qWothRuxeDqWoiIdANkgWzeAgnY149LEhRUM3oA==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
@@ -58,9 +58,9 @@ Cc: linuxppc-dev@lists.ozlabs.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 29/36] soc: fsl: cpm1: qmc: Handle RPACK initialization
-Date: Thu,  8 Aug 2024 09:11:22 +0200
-Message-ID: <20240808071132.149251-30-herve.codina@bootlin.com>
+Subject: [PATCH v2 30/36] soc: fsl: cpm1: qmc: Rename SCC_GSMRL_MODE_QMC
+Date: Thu,  8 Aug 2024 09:11:23 +0200
+Message-ID: <20240808071132.149251-31-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240808071132.149251-1-herve.codina@bootlin.com>
 References: <20240808071132.149251-1-herve.codina@bootlin.com>
@@ -73,73 +73,42 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-Current code handles the CPM1 version of QMC, RPACK does not need to
-be initialized. This is not the case in the QUICC Engine (QE) version.
+Current code handles CPM1 version of QMC. Even if GSMRL is specific to
+the CPM1 version, the exact same purpose and format register (GUMRL) is
+present in the QUICC Engine (QE) version of QMC. Compared to the QE
+version, the values defined for the mode bitfield are different and the
+0x0A value defined for the QMC mode is CPM1 specific.
 
-In preparation of the support for QE, initialize the RPACK register
-when the receiver is initialized and each time it is restarted.
-
-This additional RPACK initialization has no impact in the CPM1 version
-of QMC.
+In order to prepare the support for the QE version, rename this bitfield
+value to clearly identify it as CPM1 specific.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/soc/fsl/qe/qmc.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/soc/fsl/qe/qmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 272da250a763..63af2608c3cd 100644
+index 63af2608c3cd..062477b7426e 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -221,6 +221,7 @@ struct qmc_data {
- 	u32 zistate; /* Initial ZISTATE value */
- 	u32 zdstate_hdlc; /* Initial ZDSTATE value (HDLC mode) */
- 	u32 zdstate_transp; /* Initial ZDSTATE value (Transparent mode) */
-+	u32 rpack; /* Initial RPACK value */
- };
+@@ -27,7 +27,7 @@
+ #define SCC_GSMRL_ENR		BIT(5)
+ #define SCC_GSMRL_ENT		BIT(4)
+ #define SCC_GSMRL_MODE_MASK	GENMASK(3, 0)
+-#define SCC_GSMRL_MODE_QMC	FIELD_PREP_CONST(SCC_GSMRL_MODE_MASK, 0x0A)
++#define SCC_CPM1_GSMRL_MODE_QMC	FIELD_PREP_CONST(SCC_GSMRL_MODE_MASK, 0x0A)
  
- struct qmc {
-@@ -552,6 +553,7 @@ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
- 	/* Restart receiver if needed */
- 	if (chan->is_rx_halted && !chan->is_rx_stopped) {
- 		/* Restart receiver */
-+		qmc_write32(chan->s_param + QMC_SPE_RPACK, chan->qmc->data->rpack);
- 		qmc_write32(chan->s_param + QMC_SPE_ZDSTATE,
- 			    chan->mode == QMC_TRANSPARENT ?
- 				chan->qmc->data->zdstate_transp :
-@@ -980,6 +982,7 @@ static int qmc_chan_start_rx(struct qmc_chan *chan)
- 	}
+ /* SCC general mode register low (32 bits) */
+ #define SCC_GSMRH	0x04
+@@ -1642,7 +1642,7 @@ static int qmc_cpm1_init_scc(struct qmc *qmc)
+ 	qmc_write32(qmc->scc_regs + SCC_GSMRH, val);
  
- 	/* Restart the receiver */
-+	qmc_write32(chan->s_param + QMC_SPE_RPACK, chan->qmc->data->rpack);
- 	qmc_write32(chan->s_param + QMC_SPE_ZDSTATE,
- 		    chan->mode == QMC_TRANSPARENT ?
- 			chan->qmc->data->zdstate_transp :
-@@ -1405,6 +1408,7 @@ static int qmc_setup_chan(struct qmc *qmc, struct qmc_chan *chan)
- 	qmc_write32(chan->s_param + QMC_SPE_TSTATE, chan->qmc->data->tstate);
- 	qmc_write32(chan->s_param + QMC_SPE_RSTATE, chan->qmc->data->rstate);
- 	qmc_write32(chan->s_param + QMC_SPE_ZISTATE, chan->qmc->data->zistate);
-+	qmc_write32(chan->s_param + QMC_SPE_RPACK, chan->qmc->data->rpack);
- 	if (chan->mode == QMC_TRANSPARENT) {
- 		qmc_write32(chan->s_param + QMC_SPE_ZDSTATE, chan->qmc->data->zdstate_transp);
- 		qmc_write16(chan->s_param + QMC_SPE_TMRBLR, 60);
-@@ -1544,6 +1548,8 @@ static void qmc_irq_gint(struct qmc *qmc)
- 			/* Restart the receiver if needed */
- 			spin_lock_irqsave(&chan->rx_lock, flags);
- 			if (chan->rx_pending && !chan->is_rx_stopped) {
-+				qmc_write32(chan->s_param + QMC_SPE_RPACK,
-+					    chan->qmc->data->rpack);
- 				qmc_write32(chan->s_param + QMC_SPE_ZDSTATE,
- 					    chan->mode == QMC_TRANSPARENT ?
- 						chan->qmc->data->zdstate_transp :
-@@ -1810,6 +1816,7 @@ static const struct qmc_data qmc_data_cpm1 = {
- 	.zistate = 0x00000100,
- 	.zdstate_hdlc = 0x00000080,
- 	.zdstate_transp = 0x18000080,
-+	.rpack = 0x00000000,
- };
+ 	/* enable QMC mode */
+-	qmc_write32(qmc->scc_regs + SCC_GSMRL, SCC_GSMRL_MODE_QMC);
++	qmc_write32(qmc->scc_regs + SCC_GSMRL, SCC_CPM1_GSMRL_MODE_QMC);
  
- static const struct of_device_id qmc_id_table[] = {
+ 	/* Disable and clear interrupts */
+ 	qmc_write16(qmc->scc_regs + SCC_SCCM, 0x0000);
 -- 
 2.45.0
 
