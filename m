@@ -1,177 +1,138 @@
-Return-Path: <linux-kernel+bounces-280048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052F194C50B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:04:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E6E94C511
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 21:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CF501F262B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:04:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62CE1F27AF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85F6153801;
-	Thu,  8 Aug 2024 19:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE4E1552E0;
+	Thu,  8 Aug 2024 19:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAYaY87c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XRAqXoow"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11BB1474BC;
-	Thu,  8 Aug 2024 19:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EF514D6EB
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 19:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723143872; cv=none; b=V+93bUvX9RbJt70yfUVo3Wrce0K6xq6D0qULrXGbhjhsDKMWncWEvvcmCOWbeS7L0UmitsgMCDzx0+5UVPzxh4DafXMbDLLZdsESZvGLGCTR4fKR8CsxUmNpd+txpLE81C8tQxG6laSrF58H6uJGTPo+mvhhUW4nVMDGHkwOYjI=
+	t=1723143914; cv=none; b=bbpVkMVdSn2QBZWXpmHHjV881VayEhOwko4uHjiZKVwcQ5LK1f7H++4uGFewuNeUVQDDA0SBu8DjkrruF51Amguh0aCI4jbA5M5SvvTNP+il19ADlVcI9IWq29nGWJWKvBuCquIzj4pyA5jNdPVc3ces1AaVGyAUp2acW3ZNrGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723143872; c=relaxed/simple;
-	bh=Df0DqA3BeFidtihY6E7YNpp0BlLbUYNUcr7YKd6GsUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=VHM70o41hrKGRzozfE5c+sso1vlaqCYAmR8WaxaQ90pQCNEqWarf5srSQhPkSLEkLLId7a5Kt4vNdJ36YDJI4lfUCqVIgBPWNSi4D5LyFQTka7V7YU75H4VrXUA7RD/4LILRnJvDcFbckTC6ANhnmSVu1U3jKx9DDa/z/JoHJ9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAYaY87c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1625EC32782;
-	Thu,  8 Aug 2024 19:04:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723143871;
-	bh=Df0DqA3BeFidtihY6E7YNpp0BlLbUYNUcr7YKd6GsUI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=SAYaY87cDAam5jm3mz4D5ZLYRjTg8swamWbTJIGyrC59jjVWfZ47SsonbrDL6aAGQ
-	 zOJQhXIv4NQEoQakoZgDmo3aZp5Wm3KVIt02/i3vI6xPd+4vRFFhCm9rTNb6iZJ7S+
-	 NChLgc4W+3TWFg7+Vah1ak0NSzReU4SH4AzM1Qmqm2+syAUiBDJ4jD8GzYZDcz9ivK
-	 CA+L5WxYKwkGYgj3wPSYQBzb67DMDoanWrNYBrbXf1SWlwGphkbmVsBCnBZunwQ1f8
-	 xJRt2VP2nX16PF+iPJHDkXoZ5EuLn+aAPd35qZUu1d+Wp86NasKhm3qgQLE+TJZu9e
-	 qp50T2nYUM5Vg==
-Date: Thu, 8 Aug 2024 14:04:29 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-Cc: Serge Semin <fancer.lancer@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	jingoohan1@gmail.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	quic_mrana@quicinc.com
-Subject: Re: [PATCH v3 1/2] PCI: dwc: Add dbi_phys_addr and atu_phys_addr to
- struct dw_pcie
-Message-ID: <20240808190429.GA154915@bhelgaas>
+	s=arc-20240116; t=1723143914; c=relaxed/simple;
+	bh=2JvB8KiY+PuqAF0GhkTY8OddkOOK+xHWu3DUoPWQw7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=klwSkX8OG2nH/ko/qExBXnqhzEIYywi/rYK4k1E9O8eU+w2JaHWlV5QZ1WXCPyTKIGQSc4DPH8dzzlnuNTdcUW8YJBfuQPax3Ge995c6ln3aykLmVBPSatKAVn/xgiCeEj6RXJDEi3m/r3zwQpkH5FyPeP8DJwARYJYuwGdjGXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XRAqXoow; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4518d9fa2f4so26231cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 12:05:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723143912; x=1723748712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2JvB8KiY+PuqAF0GhkTY8OddkOOK+xHWu3DUoPWQw7k=;
+        b=XRAqXoowBsE2LCCY5DWtw8eJ/mutgjZhFUUnePPPTKrMlAP1iY2mRGBhryxbjnVZsj
+         fAjqpjOdGg8P+8k0QjNPyh6SQxcJWguzjFvQxaRm95Q5gbjdn4WxjPmZI1Pov7tupJIF
+         VGkTg17xNlY8PRfjkRqjxY/5WpFOZzHMJlr0W0LBBxLQHPFzDfxJb2QJ04+c7hgqveyT
+         Ni2AU71nX57tnjta77RPXYqs7UV9SpxbhoQfhkzEJIxLEi+P+N8e8soqZdccEE+GaSu1
+         e5+UXb09sXKmaI7eNzMXkdLJc02izd5rb+zXalz5BK7mdK3qBlj7e2Z+FaPU7zSZ0jsv
+         aLPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723143912; x=1723748712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2JvB8KiY+PuqAF0GhkTY8OddkOOK+xHWu3DUoPWQw7k=;
+        b=cmamtWYFiL7APC6mXNyoTOHgMjso5IXjZ9eT5GwSerOh2dVKHD8ZnNkRIy99nhaHYP
+         efdljj8RIrzzp1a1Olqr9EJX2Q/1s0HbYhFe9J1gPiufZq0y9cA334CmZ/0xCqt+ri0c
+         ArM95ednzt+Plg/XPy+NthyOp7RsU5EaGsbjVCoZ7kOB5SwWk5yLZqLqRJEkMrpU4C7D
+         U0hHicg8itE5hjKysxIT2+t9F2DAPnvA0qoPRh8hBeE3AyVgp7MZC1ee2pu0fbEJalck
+         RDPmN2zLrIgvvajjQpyNdaDtNxn0FJwc6NZDhNvYlQUUfsRTsujX4Y1AY1BHct3wcOWS
+         g48A==
+X-Forwarded-Encrypted: i=1; AJvYcCXETOfdXhHDX5raVsBUSp0PCzs/7FjStkYy6pEu38m16laticUwsmc34YyqMzcLvox+o6MRISmbFrjmbNIi6QWs774V5mHn8cg2opFT
+X-Gm-Message-State: AOJu0YzFU9GpWuKY9K6QczvMylje0SqudjCl1jaIrN+zxJ3i3Sa6qwlL
+	OipXz46Davo0Njz51Kd+sds47HIF8pI2M5cOYmcZoOeqhzwMe0RkQkWsW6lEStm4JPiiDvJVgxb
+	Yp6t1doL+4gfznF4ciyzKNU5T/HabaT2hOt0VSNpwYj9CY00CEw==
+X-Google-Smtp-Source: AGHT+IFIlgJQdU3HoiHXPbkIB4GKly6SE8zVkLmKYy0KXL7tnF5o/COzyvy6qpBzkurJ0OWbYZqnlwn3gVNXK6B4bgA=
+X-Received: by 2002:a05:622a:1786:b0:44b:74aa:1838 with SMTP id
+ d75a77b69052e-4530de641aamr415531cf.5.1723143911952; Thu, 08 Aug 2024
+ 12:05:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81f9a907-8010-4c13-970f-d216dd54b1f1@quicinc.com>
+References: <20240801224349.25325-1-seanjc@google.com> <CADrL8HXVNcbcuu9qF3wtkccpW6_QEnXQ1ViWEceeS9QGdQUTiw@mail.gmail.com>
+ <DS0PR11MB63733F7AEC9B2E80A52C33D4DCB92@DS0PR11MB6373.namprd11.prod.outlook.com>
+In-Reply-To: <DS0PR11MB63733F7AEC9B2E80A52C33D4DCB92@DS0PR11MB6373.namprd11.prod.outlook.com>
+From: James Houghton <jthoughton@google.com>
+Date: Thu, 8 Aug 2024 12:04:35 -0700
+Message-ID: <CADrL8HWH3d2r12xWv+fYM5mfUnnavLBhHDhof0MwGKeroJHWHA@mail.gmail.com>
+Subject: Re: [ANNOUNCE] PUCK Agenda - 2024.08.07 - KVM userfault
+ (guest_memfd/HugeTLB postcopy)
+To: "Wang, Wei W" <wei.w.wang@intel.com>
+Cc: Sean Christopherson <seanjc@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Xu <peterx@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Axel Rasmussen <axelrasmussen@google.com>, David Matlack <dmatlack@google.com>, 
+	Anish Moorthy <amoorthy@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2024 at 11:30:52AM -0700, Prudhvi Yarlagadda wrote:
-> On 8/2/2024 2:22 AM, Serge Semin wrote:
-> > On Fri, Aug 02, 2024 at 10:52:06AM +0530, Manivannan Sadhasivam wrote:
-> >> On Fri, Aug 02, 2024 at 12:59:57AM +0300, Serge Semin wrote:
-> >>> On Thu, Aug 01, 2024 at 02:29:49PM -0700, Prudhvi Yarlagadda wrote:
-> >>>> Hi Serge,
-> >>>>
-> >>>> Thanks for the review comment.
-> >>>>
-> >>>> On 8/1/2024 12:25 PM, Serge Semin wrote:
-> >>>>> On Tue, Jul 23, 2024 at 07:27:18PM -0700, Prudhvi Yarlagadda wrote:
-> >>>>>> Both DBI and ATU physical base addresses are needed by pcie_qcom.c
-> >>>>>> driver to program the location of DBI and ATU blocks in Qualcomm
-> >>>>>> PCIe Controller specific PARF hardware block.
-> >>>>>>
-> >>>>>> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-> >>>>>> Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
-> >>>>>> ---
-> >>>>>>  drivers/pci/controller/dwc/pcie-designware.c | 2 ++
-> >>>>>>  drivers/pci/controller/dwc/pcie-designware.h | 2 ++
-> >>>>>>  2 files changed, 4 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> >>>>>> index 1b5aba1f0c92..bc3a5d6b0177 100644
-> >>>>>> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> >>>>>> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> >>>>>> @@ -112,6 +112,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
-> >>>>>>  		pci->dbi_base = devm_pci_remap_cfg_resource(pci->dev, res);
-> >>>>>>  		if (IS_ERR(pci->dbi_base))
-> >>>>>>  			return PTR_ERR(pci->dbi_base);
-> >>>>>> +		pci->dbi_phys_addr = res->start;
-> >>>>>>  	}
-> >>>>>>  
-> >>>>>>  	/* DBI2 is mainly useful for the endpoint controller */
-> >>>>>> @@ -134,6 +135,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
-> >>>>>>  			pci->atu_base = devm_ioremap_resource(pci->dev, res);
-> >>>>>>  			if (IS_ERR(pci->atu_base))
-> >>>>>>  				return PTR_ERR(pci->atu_base);
-> >>>>>> +			pci->atu_phys_addr = res->start;
-> >>>>>>  		} else {
-> >>>>>>  			pci->atu_base = pci->dbi_base + DEFAULT_DBI_ATU_OFFSET;
-> >>>>>>  		}
-> >>>>>> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> >>>>>> index 53c4c8f399c8..efc72989330c 100644
-> >>>>>> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> >>>>>> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> >>>>>> @@ -407,8 +407,10 @@ struct dw_pcie_ops {
-> >>>>>>  struct dw_pcie {
-> >>>>>>  	struct device		*dev;
-> >>>>>>  	void __iomem		*dbi_base;
-> >>>>>
-> >>>>>> +	phys_addr_t		dbi_phys_addr;
-> >>>>>>  	void __iomem		*dbi_base2;
-> >>>>>>  	void __iomem		*atu_base;
-> >>>>>> +	phys_addr_t		atu_phys_addr;
-> >>>>>
-> >>>>> What's the point in adding these fields to the generic DW PCIe private
-> >>>>> data if they are going to be used in the Qcom glue driver only?
-> >>>>>
-> >>>>> What about moving them to the qcom_pcie structure and initializing the
-> >>>>> fields in some place of the pcie-qcom.c driver?
-> >>>>>
-> >>>>> -Serge(y)
-> >>>>>
-> >>>>
-> >>>
-> >>>> These fields were in pcie-qcom.c driver in the v1 patch[1] and
-> >>>> Manivannan suggested to move these fields to 'struct dw_pcie' so that duplication
-> >>>> of resource fetching code 'platform_get_resource_byname()' can be avoided.
-> >>>>
-> >>>> [1] https://lore.kernel.org/linux-pci/a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com/T/#mf9843386d57e9003de983e24e17de4d54314ff73
-> >>>
-> >>> Em, polluting the core driver structure with data not being used by
-> >>> the core driver but by the glue-code doesn't seem like a better
-> >>> alternative to additional platform_get_resource_byname() call in the
-> >>> glue-driver. I would have got back v1 version so to keep the core
-> >>> driver simpler. Bjorn?
-> >>>
-> >>
-> >> IDK how adding two fields which is very related to DWC code *pollutes* it. Since
-> >> there is already 'dbi_base', adding 'dbi_phys_addr' made sense to me even though
-> >> only glue drivers are using it. Otherwise, glue drivers have to duplicate the
-> >> platform_get_resource_byname() code which I find annoying.
-> > 
-> > I just explained why it was redundant:
-> > 1. adding the fields expands the core private data size for _all_
-> > platforms for no reason. (a few bytes but still)
-> > 2. the new fields aren't utilized by the core driver, but still
-> > defined in the core private data which is first confusing and
-> > second implicitly encourages the kernel developers to add another
-> > unused or even weakly-related fields in there.
-> > 3. the new fields utilized in a single glue-driver and there is a small
-> > chance they will be used in another ones. Another story would have
-> > been if we had them used in more than one glue-driver...
-> > 
-> > So from that perspective I find adding these fields to the driver core
-> > data less appropriate than duplicating the
-> > platform_get_resource_byname() call in a _single_ glue driver. It
-> > seems more reasonable to have them defined and utilized in the code
-> > that actually needs them, but not in the place that doesn't annoy you.)
-> > 
-> > Anyway I read your v1 command and did understand your point in the
-> > first place. That's why my question was addressed to Bjorn.
-> > 
-> > Please also note the resource::start field is of the resource_size_t
-> > type. So wherever the fields are added, it's better to have them
-> > defined of that type instead.
-> 
-> Gentle ping for your feedback on the above discussed two approaches.
+On Thu, Aug 8, 2024 at 5:15=E2=80=AFAM Wang, Wei W <wei.w.wang@intel.com> w=
+rote:
+>
+> On Thursday, August 8, 2024 1:22 AM, James Houghton wrote:
+> > 1. For guest_memfd, stage 2 mapping installation will never go through =
+GUP /
+> > virtual addresses to do the GFN --> PFN translation, including when it =
+supports
+> > non-private memory.
+> > 2. Something like KVM Userfault is indeed necessary to handle post-copy=
+ for
+> > guest_memfd VMs, especially when guest_memfd supports non-private
+> > memory.
+> > 3. We should not hook into the overall GFN --> HVA translation, we shou=
+ld
+> > only be hooking the GFN --> PFN translation steps to figure out how to =
+create
+> > stage 2 mappings. That is, KVM's own accesses to guest memory should ju=
+st go
+> > through mm/userfaultfd.
+>
+> Sorry.. still a bit confused about this one: will gmem finally support GU=
+P and VMA?
+> For 1. above, seems no, but for 3. here, KVM's own accesses to gmem will =
+go
+> through userfaultfd via GUP?
+> Also, how would vhost's access to gmem get faulted to userspace?
 
-I don't really care one way or the other.  Jingoo and Mani can sort it
-out.
+Hi Wei,
+
+From what we discussed in the meeting, guest_memfd will be mappable
+into userspace (so VMAs can be created for it), and so GUP will be
+able to work on it. However, KVM will *not* use GUP for doing gfn ->
+pfn translations for installing stage 2 mappings. (For guest-private
+memory, GUP cannot be used, but the claim is that GUP will never be
+used, no matter if it's guest-private or guest-shared.)
+
+KVM's own accesses to guest memory (i.e., places where it does
+copy_to/from_user) will go through GUP. By default, that's just how it
+would work. What I'm saying is that we aren't going to add anything
+extra to have "KVM Userfault" prevent KVM from doing a
+copy_to/from_user (like how I had it in the RFC, where KVM Userfault
+can block the translation of gfn -> hva).
+
+vhost's accesses to guest memory will be the same as KVM's: it will go
+through copy_to/from_user.
+
+Hopefully that's a little clearer. :)
 
