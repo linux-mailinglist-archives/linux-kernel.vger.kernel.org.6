@@ -1,148 +1,145 @@
-Return-Path: <linux-kernel+bounces-279305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFD794BB95
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:47:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDF494BB9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07F1E280E49
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D06571C2190C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3F718A92A;
-	Thu,  8 Aug 2024 10:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC63C18A95B;
+	Thu,  8 Aug 2024 10:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZJRqzNtz"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Y/esBD0z"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFF118A925;
-	Thu,  8 Aug 2024 10:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524A81119A;
+	Thu,  8 Aug 2024 10:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723114040; cv=none; b=NmAwUQ6tcDArjjvA00iiMfKUgg8ruFlaPnkk6xB/joPdN8vozBNL5DPC7tQmwFP1SG5cde932zcdUcJj3n1S/pMh4B71Fu9DvaUmUlgPQnU46uMHieqS7rjIHJmg+DrZjn+1I62RODe7OVOLkOE9FjeOg6PXXDkXmtgvA/xBvt4=
+	t=1723114116; cv=none; b=BWYvk1mAXotAdY/i5nGQth7cf4FSGQUSYGBcilRSKfAZhAixRvoO0/8w6+yHBXfEJGfUGO7//YXmwLsgsenh92xMPslTmw8EJvkyJggR0vZGlraqY0zSCf7NUY2hDINTcvn++vYEn6bOInCW7BuKHxzHunRhdL9MG1/UW8jhsNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723114040; c=relaxed/simple;
-	bh=6J7iUTSqUnagTCsbz80DBqXWM+nKMfWg0brM0KqfaHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ui5kcuwxzob7j3+Z8O6iRb/hG5LFssyWewKW/XXSaoaW2c5DqGhPuyUSsnRFqS9fhJMkk8KcSUHBUopv5LMacjjykCgcdY9K/Wt3jBkuKzJfDsHL+3oC1iwlL1FuoS6CGOB4+0gYhUpKyb0UQrqhTw3RBuR7xXgOwEMk4zjPbtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZJRqzNtz; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5368B8D0;
-	Thu,  8 Aug 2024 12:46:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1723113982;
-	bh=6J7iUTSqUnagTCsbz80DBqXWM+nKMfWg0brM0KqfaHc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZJRqzNtzg+d6fDcQqmAyOEbfNyr93GitWKJIJzWiHt7ccoh59MULtccuxDwgBejd9
-	 1yrhZs2VgUCCXi0q2XmIFsuylen6edeHHUxw2Gs+g6VE4ggFA9eaGRh1w150w+36h5
-	 IfAUacmfqyEfBqeWERIN6pYkNjNvBRMkqabzxUJU=
-Message-ID: <2d87f6dc-41c4-4642-a672-2fd5ab7927c6@ideasonboard.com>
-Date: Thu, 8 Aug 2024 13:47:13 +0300
+	s=arc-20240116; t=1723114116; c=relaxed/simple;
+	bh=rT4GoBskL5bnanqSJ3JyerWyQmnvyOyVDfnADfOSjgo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DX650W7+qyzh05VXdZpIQGT9BUFgNAqozGJY93gK4eO7degujkZ4uoWGh2wFzOss4zDj5ZIUUk51sQMP64Ajwxj4qo6Q+ZaTOr40//E+xFhP2qHkZ0NiwZl3M+jA2HQPrjF5/djAUrATDQlU/svijebkMwzXUWjj2w3Q9Oce2As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Y/esBD0z; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 478AmTh9124093;
+	Thu, 8 Aug 2024 05:48:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723114109;
+	bh=NcE50/a1GJ2r8dKBhg2uwwyaUpU4LVH533Cgj3IbqSI=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Y/esBD0zLaz6ZWG3AfPtzssSbpVKiYnV/MXf5k6qPu+NprXkIRREcqoejumZIVTAZ
+	 VsEIYmZaFmx4jac4F4/6dnsCBtJtwsOTd0RSL24HxRzZRe3Ifl7AXFu7FaB9ROa5Uc
+	 HceW7d5pEX6/sh7uqPr2FwQBCyQd0QGnNnqBc4Tk=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 478AmTo0053727
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 8 Aug 2024 05:48:29 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
+ Aug 2024 05:48:28 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 8 Aug 2024 05:48:28 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 478AmSUs041031;
+	Thu, 8 Aug 2024 05:48:28 -0500
+Date: Thu, 8 Aug 2024 05:48:28 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Manorit Chawdhry <m-chawdhry@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye
+	<a-limaye@ti.com>
+Subject: Re: [PATCH v3 4/9] arm64: dts: ti: Split
+ k3-j784s4-j742s2-main-common.dtsi
+Message-ID: <20240808104828.hm2dgrb6tnkdu3se@renewed>
+References: <20240731-b4-upstream-j742s2-v3-0-da7fe3aa9e90@ti.com>
+ <20240731-b4-upstream-j742s2-v3-4-da7fe3aa9e90@ti.com>
+ <20240807132054.jcz5fdokc5yk3mbo@entrust>
+ <20240808045616.xpgs6ayzpzcpevdp@uda0497581>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: omapdrm: Add missing check for
- alloc_ordered_workqueue
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- laurent.pinchart@ideasonboard.com
-References: <20240808061336.2796729-1-make24@iscas.ac.cn>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20240808061336.2796729-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240808045616.xpgs6ayzpzcpevdp@uda0497581>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 08/08/2024 09:13, Ma Ke wrote:
-> As it may return NULL pointer and cause NULL pointer dereference. Add check
-> for the return value of alloc_ordered_workqueue.
+On 10:26-20240808, Manorit Chawdhry wrote:
+> Hi Nishanth,
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 2f95bc6d324a ("drm: omapdrm: Perform initialization/cleanup at probe/remove time")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->   drivers/gpu/drm/omapdrm/omap_drv.c | 5 +++++
->   1 file changed, 5 insertions(+)
+> On 08:20-20240807, Nishanth Menon wrote:
+> > On 22:40-20240731, Manorit Chawdhry wrote:
+> > > k3-j784s4-j742s2-main-common.dtsi will be included in k3-j742s2-main.dtsi at a
+> > > later point so move j784s4 related stuff to k3-j784s4-main.dtsi
+> > > 
+> > > Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+> > > ---
+> > >  .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi   | 13 -------------
+> > >  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi          | 21 +++++++++++++++++++++
+> > >  arch/arm64/boot/dts/ti/k3-j784s4.dtsi               |  2 ++
+> > >  3 files changed, 23 insertions(+), 13 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> > > index 17abd0f1560a..91352b1f63d2 100644
+> > > --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> > > +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+> > > @@ -2405,19 +2405,6 @@ c71_2: dsp@66800000 {
+> > >  		status = "disabled";
+> > >  	};
+> > >  
+> > > -	c71_3: dsp@67800000 {
+> > > -		compatible = "ti,j721s2-c71-dsp";
+> > > -		reg = <0x00 0x67800000 0x00 0x00080000>,
+> > > -		      <0x00 0x67e00000 0x00 0x0000c000>;
+> > > -		reg-names = "l2sram", "l1dram";
+> > > -		ti,sci = <&sms>;
+> > > -		ti,sci-dev-id = <40>;
+> > > -		ti,sci-proc-ids = <0x33 0xff>;
+> > > -		resets = <&k3_reset 40 1>;
+> > > -		firmware-name = "j784s4-c71_3-fw";
+> > > -		status = "disabled";
+> > > -	};
+> > > -
+> > 
+> > This patch can be squashed in.
+> > 
 > 
-> diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
-> index 6598c9c08ba1..94a57f0d1c08 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_drv.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
-> @@ -695,6 +695,10 @@ static int omapdrm_init(struct omap_drm_private *priv, struct device *dev)
->   	soc = soc_device_match(omapdrm_soc_devices);
->   	priv->omaprev = soc ? (uintptr_t)soc->data : 0;
->   	priv->wq = alloc_ordered_workqueue("omapdrm", 0);
-> +	if (!priv->wq) {
-> +		ret = -ENOMEM;
-> +		goto err_alloc_workqueue;
-> +	}
->   
->   	mutex_init(&priv->list_lock);
->   	INIT_LIST_HEAD(&priv->obj_list);
-> @@ -753,6 +757,7 @@ static int omapdrm_init(struct omap_drm_private *priv, struct device *dev)
->   	drm_mode_config_cleanup(ddev);
->   	omap_gem_deinit(ddev);
->   	destroy_workqueue(priv->wq);
-> +err_alloc_workqueue:
->   	omap_disconnect_pipelines(ddev);
->   	drm_dev_put(ddev);
->   	return ret;
+> The idea was that we can see what changes are happening and where are
+> things getting moved and hence had kept the patch like this, would be
+> easier to review I believe, do you want it squashed right now or should
+> I be doing it later once you are fine with all the changes and all the
+> reviews are done?
+> 
 
-Thanks, I'll pick this up to drm-misc.
+No. Please squash as suggested in my response to your cover-letter for
+the next iteration - please use git format-patch -C -M to generate
+patches (I understand you have some limitations with using b4) to
+make reviews easier to do.
 
-  Tomi
-
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
