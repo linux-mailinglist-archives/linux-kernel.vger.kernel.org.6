@@ -1,133 +1,202 @@
-Return-Path: <linux-kernel+bounces-279301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB9394BB8A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:45:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4268B94BB8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E420B238B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:45:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F9F1B23BCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E513318A925;
-	Thu,  8 Aug 2024 10:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2745218A92C;
+	Thu,  8 Aug 2024 10:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="bsYr7oDx"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNyK+biA"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAB31448D7;
-	Thu,  8 Aug 2024 10:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723113931; cv=pass; b=OQd0exsgMaZ0Rmd6beogfXZfxunCcxPICJcvRqKwnpVKn2J5ryxpthU5qDoaKVOJFM+GRrfWHEBeCm6umy8VtBBuEwWL3eIykVbIsFXA3A2YqepkzLhdoi0yrod9yrK4GWittdVUglj/WMObXGYpQE/XQeptuZ0z0dLDq4xm2ks=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723113931; c=relaxed/simple;
-	bh=tzJh6V8U7ktztmiZcXG8TGGcEmA14cBAyKDC7eoUwF0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bRTOEb1yAki/aHsgflgEYJM15E3+lrt3bNPANCgkaKq2JZzZhFx4dWeeJfLIy7JgPy3tnVmJlFW0iugkXPJJKLQtAzXB8dvLjhtqFQ/v8T1LGZO1JINN9TR6fu7DSaIO1l5uM7S9yrPzR49w7gKv/vALmByP9qMVKBgC6yQxR0s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=bsYr7oDx; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: laura.nao@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723113914; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZX1Z0U/wKaZUi7Y9bO5bcYwzwqlhDF+96UwSRew6a9QsWL3HdrpzoudPDqRnVB0iTXjW5egvkzudmiEhHreDSksTblurcOSxfKrIgdGWdym6/g3VJCZkx/ZSUtBNIIgXqQfyCnb6MKGej7FviVNnsbkOc+2TzK6c0shxp3qIyR0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723113914; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ImzYMPWJt3gp3X9eDVJ3gAtm0zj1XfKecGOdA3mAkyU=; 
-	b=UoB4saxU8ZctYOkVaCKqR1TWv37NvtfMudWx+B3RHLTR573cdtGYEu3027XfmIjy0NilVTaXdIcE6pe0HrKLKzHFU//gqpHVH8tn66FxSi9cV70/o8DnIefOGLp76HGYCXxIN2cCFBtv2GOyl/KkB75wa7T0n9xBh+QXNru8UN4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
-	dmarc=pass header.from=<laura.nao@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723113914;
-	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=ImzYMPWJt3gp3X9eDVJ3gAtm0zj1XfKecGOdA3mAkyU=;
-	b=bsYr7oDxQwjcpF2H7RWcGpq6vtXStk3iZq8FhnaxtUY5YHKVINr4CvvBMTjJw5C4
-	LNBJkP11kU6BLp5NDhex0lCtLDlr+dgHWuRvtMCiFEdB6+NJdiXyBYeaUGd1yMaOUVG
-	QhRjpir1jEF+mml+8y4CQL1webh64uBT1zjFj1+E=
-Received: by mx.zohomail.com with SMTPS id 172311391141613.748118648028026;
-	Thu, 8 Aug 2024 03:45:11 -0700 (PDT)
-From: Laura Nao <laura.nao@collabora.com>
-To: laura.nao@collabora.com
-Cc: kernel@collabora.com,
-	kernelci@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	mhiramat@kernel.org,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org,
-	tim.bird@sony.com,
-	todd.e.brandt@linux.intel.com
-Subject: Re: [RFC PATCH 1/1] kselftests: Add test to detect boot event slowdowns
-Date: Thu,  8 Aug 2024 12:45:34 +0200
-Message-Id: <20240808104534.17994-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240731092534.16213-1-laura.nao@collabora.com>
-References: <20240731092534.16213-1-laura.nao@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53657489;
+	Thu,  8 Aug 2024 10:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723113974; cv=none; b=ZGJ8gitz23ckAHKFPUVdlNolnXOxtYVW2FI+GXCoL0Cb64SKJKvEXo+S8gRBo7AikShYbk8P8nJJQRwcxoHUfjvPtH+flTTQTc4CaQxz37q8VFn5Rc5uTNjoWoNoHsuM/13tV9XWlqFrEYG+0CPOetDOQXMJlIoNHXZFn3Pr5Fs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723113974; c=relaxed/simple;
+	bh=mtPWdaeQ0bQhe3SB1Eeh+IeYnHIKJ7H7jdPYy47irvo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HumfQfB2+9UTE49pZyAIXoKdiEIzQYxrWcCa9C4L/EaI4zBtsxYtn9jnWWzH8x30PmS4yYBNsIPHLumytuJfvRA4MMnlRR2++3OQvP/iNRIIbIjW6pDIn7KmVDuySX+8VbnrPonmFWg6apyiLJUpEdf32bLDHE5d9+htEvfZR+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QNyK+biA; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bb477e3a6dso789470a12.0;
+        Thu, 08 Aug 2024 03:46:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723113971; x=1723718771; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IHKi9ykob8PgDZOZwwLhrIOPSlG3JYxeUgugXLSxsbs=;
+        b=QNyK+biAnhYAQSUshe2FApjgp1FvKk++oKK405kzeqfuBgv7fGVfEuhtuliN4NEJmS
+         yUB1BShXHItkT3Smp3rGx/tJ+3ZHnynfTlz/SWQ9YRJiMI62InywOWgSq1fHEsVeIByk
+         gpPnSbvDmVdbrpBsmrwXU2nE8t8rOeX/8PklpcHdxE7vLdWuRcg5+8X6rCY7gKaSS+UG
+         7UeV92l5Re00KeKcVcM8T/RoBNviKZDvE/tapZBrzgOO1wbfrqVJNgw/8ZAaQTvSXSqn
+         kBmXM69aLRjmKP/sAoqXW9wsBM+ISmv+KWwD+1IkTw+nSbP14bY1wi436crsapTdqXC6
+         1F+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723113971; x=1723718771;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IHKi9ykob8PgDZOZwwLhrIOPSlG3JYxeUgugXLSxsbs=;
+        b=LmLlsQq5X+5+r1ejgO381w8lVK+RqSsF1greZ90b5997I+3jac0va2WszGCATDwQ6y
+         xO+vSzOfjGAEx/REZ9WKsHU+vjvMguBaJ8PikxEMcpDs4PgvqVAWvkPNBp4BK42seVb9
+         JvlMV8BQ+unGSkZevS4OJAgBPXFXyBBifpfpCi+fiuuve9a3Grcxou0P25WbDkjDSFfY
+         amJF5exZ9nCx7zVyW1Bu2GLvU+OLkIBmSiSe2bVAQQc3IKrmht6paTBMsQnu+Y/4TmEh
+         UZhsxG2by7Xyq4zYP/32HgipC0+OVVzLL3x4V6AZ6/lbwHjIqo/tg27bae7rU4HQUZzi
+         7tdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNiZ5XpWVGHah9NrJfSbWVITgdpHKZpcwkjiqpGcnherQftc6uKOEr9nTETUax3YkHP0PzsBLsf840fb7iYiuhSnScoL97joJkElKaq6kiJoGfYay8KVoZLIMoRObosKVG
+X-Gm-Message-State: AOJu0YzAGkQq+qnU8dF7Zxq9Tbkfoy7FxRj1pu6xBigY0KMIdyKjMS8m
+	kwlIaiEds5Z7qzYNI5vo1LD7kF00J5Dix7K2iWVaPBZsHsooSRja
+X-Google-Smtp-Source: AGHT+IFRoXbTHp8kxNWqUxzdJ7TjIrYaauE7JYMyv6BlWpx8THWcPrznEMWjs6KZu1qW2slwMINqew==
+X-Received: by 2002:a17:907:da0:b0:a7a:c106:3647 with SMTP id a640c23a62f3a-a8090f04205mr139163666b.58.1723113970508;
+        Thu, 08 Aug 2024 03:46:10 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec755bsm728987766b.200.2024.08.08.03.46.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 03:46:10 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 8 Aug 2024 12:46:08 +0200
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Artem Savkov <asavkov@redhat.com>
+Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
+Message-ID: <ZrSh8AuV21AKHfNg@krava>
+References: <ZrCZS6nisraEqehw@jlelli-thinkpadt14gen4.remote.csb>
+ <ZrECsnSJWDS7jFUu@krava>
+ <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
+ <ZrIj9jkXqpKXRuS7@krava>
+ <CAADnVQ+NpPtFOrvD0o2F8npCpZwPrLf4dX8h8Rt96uwM+crQcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+In-Reply-To: <CAADnVQ+NpPtFOrvD0o2F8npCpZwPrLf4dX8h8Rt96uwM+crQcQ@mail.gmail.com>
 
-On 7/31/24 11:25, Laura Nao wrote:
+On Tue, Aug 06, 2024 at 11:44:52AM -0700, Alexei Starovoitov wrote:
+> On Tue, Aug 6, 2024 at 6:24 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > > Jiri,
+> > >
+> > > the verifier removes the check because it assumes that pointers
+> > > passed by the kernel into tracepoint are valid and trusted.
+> > > In this case:
+> > >         trace_sched_pi_setprio(p, pi_task);
+> > >
+> > > pi_task can be NULL.
+> > >
+> > > We cannot make all tracepoint pointers to be PTR_TRUSTED | PTR_MAYBE_NULL
+> > > by default, since it will break a bunch of progs.
+> > > Instead we can annotate this tracepoint arg as __nullable and
+> > > teach the verifier to recognize such special arguments of tracepoints.
+> >
+> > ok, so you mean to be able to mark it in event header like:
+> >
+> >   TRACE_EVENT(sched_pi_setprio,
+> >         TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task __nullable),
+> >
+> > I guess we could make pahole to emit DECL_TAG for that argument,
+> > but I'm not sure how to propagate that __nullable info to pahole
+> >
+> > while wondering about that, I tried the direct fix below ;-)
 > 
-> It looks like sleepgraph.py is more focused on analyzing suspend/resume
-> timings, while bootgraph.py measures boot time using the kernel log and
-> ftrace. The latter might indeed come in handy.
-> As far as I can see, the script doesn't support automatic detection of
-> boot slowdowns, and the output is in HTML format, which is meant for
-> human analysis. However, I can look into adding support for a more
-> machine-readable output format too. The test proposed in this patch could
-> then use bootgraph.py to generate the reference file and measure current
-> boot timings.
+> We don't need to rush such a hack below.
+> No need to add decl_tag and change pahole either.
+> The arg name is already vmlinux BTF:
+> [51371] FUNC_PROTO '(anon)' ret_type_id=0 vlen=3
+>         '__data' type_id=61
+>         'tsk' type_id=77
+>         'pi_task' type_id=77
+> [51372] FUNC '__bpf_trace_sched_pi_setprio' type_id=51371 linkage=static
 > 
-> I'll look into this and report back.
+> just need to rename "pi_task" to "pi_task__nullable"
+> and teach the verifier.
+
+the problem is that btf_trace_<xxx> is typedef 
+
+  typedef void (*btf_trace_##call)(void *__data, proto);
+
+and dwarf does not store argument names for subroutine type entry,
+so it's not in BTF's TYPEDEF either
+
+it's the btf_trace_##call typedef ID that verifier has to work with,
+I wonder we could somehow associate that ID with __bpf_trace_##call
+subroutine entry which has the argument names
+
+we could store __bpf_trace_##call's BTF_ID in __bpf_raw_tp_map record,
+but we'd need to do the lookup based on the tracepoint name when loading
+the program .. ATM we do the lookup __bpf_raw_tp_map record only when
+doing attach, so we would need to move it to program load time
+
+or we could 'fix' the argument names in pahole, but that'd probably
+mean extra setup and hash lookup, so also not great
+
+jirka
+
+
 > 
-
-After examining the bootgraph.py script, it seems feasible to add
-support for generating the output in a machine-readable format 
-(e.g., JSON) for automated analysis. Todd, I've CC'd you on this 
-discussion in case you have feedback on possibly using bootgraph.py in 
-an automated test to detect slowdowns.
-
-Some points to consider:
-
-- The bootgraph.py script supports ftrace through the -fstat and -ftrace
-  options, and it parses the kernel log to get initcall timings. To use
-  this in an automated test, we need a way to provide the necessary 
-  command line options. One approach is to include these options in a 
-  bootconfig file embedded in the kernel image (as per proposal in this 
-  RFC). Shuah, do you think this is acceptable? I haven't seen other 
-  tests doing this, so I'm unsure if this is a proper way to handle 
-  required command line options in a selftest.
-
-- The bootgraph.py script tracks timings for all init calls, which might
-  be excessive and generate too much output when integrated in an 
-  automated test. We might need to limit the test output to report only 
-  significant slowdowns to make it manageable.
-
-- I'd like to get some feedback on which key boot process events are
-  more relevant to track; depending on this, we could use the 
-  bootgraph.py script to monitor initcalls and possibly other events 
-  tracked via ftrace. The script currently uses the function_graph 
-  tracer, and its parser is designed for this tracer's output. If we need 
-  to track other events (e.g., kprobe events), the parser might need some 
-  adjustments.
-
-I'll be discussing this at LPC in September
-(https://lpc.events/event/18/contributions/1700/) and look forward to
-exploring more details and alternative approaches for an automated boot
-time test.
-
-Best,
-
-Laura
+> 
+> > jirka
+> >
+> >
+> > ---
+> > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> > index 95426d5b634e..1a20bbdead64 100644
+> > --- a/kernel/bpf/btf.c
+> > +++ b/kernel/bpf/btf.c
+> > @@ -6377,6 +6377,25 @@ int btf_ctx_arg_offset(const struct btf *btf, const struct btf_type *func_proto,
+> >         return off;
+> >  }
+> >
+> > +static bool is_tracing_prog_raw_tp(const struct bpf_prog *prog, const char *name)
+> > +{
+> > +       struct btf *btf = prog->aux->attach_btf;
+> > +       const struct btf_type *t;
+> > +       const char *tname;
+> > +
+> > +       if (prog->expected_attach_type != BPF_TRACE_RAW_TP)
+> > +               return false;
+> > +
+> > +       t = btf_type_by_id(btf, prog->aux->attach_btf_id);
+> > +       if (!t)
+> > +               return false;
+> > +
+> > +       tname = btf_name_by_offset(btf, t->name_off);
+> > +       if (!tname)
+> > +               return false;
+> > +       return !strcmp(tname, name);
+> > +}
+> > +
+> >  bool btf_ctx_access(int off, int size, enum bpf_access_type type,
+> >                     const struct bpf_prog *prog,
+> >                     struct bpf_insn_access_aux *info)
+> > @@ -6544,6 +6563,10 @@ bool btf_ctx_access(int off, int size, enum bpf_access_type type,
+> >                 }
+> >         }
+> >
+> > +       /* Second argument of sched_pi_setprio tracepoint can be null */
+> > +       if (is_tracing_prog_raw_tp(prog, "btf_trace_sched_pi_setprio") && arg == 1)
+> > +               info->reg_type |= PTR_MAYBE_NULL;
+> > +
+> >         info->btf = btf;
+> >         info->btf_id = t->type;
+> >         t = btf_type_by_id(btf, t->type);
 
