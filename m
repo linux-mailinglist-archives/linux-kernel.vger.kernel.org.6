@@ -1,124 +1,202 @@
-Return-Path: <linux-kernel+bounces-280228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 595EA94C76A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:43:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F199194C76C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2B61F21A95
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:43:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66CD61F21A43
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94524160796;
-	Thu,  8 Aug 2024 23:43:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D7E161902;
+	Thu,  8 Aug 2024 23:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S03zNtKc"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7E255769
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 23:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B220955769;
+	Thu,  8 Aug 2024 23:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723160585; cv=none; b=BwGz89VMmRZtFmG8nWQQYOSFdQrX0SKeUI45SKxAlesyByFXY8PyFj0Z9HiaBmihw8lLRVjSFR/PhvaS4p2yQC9jl3KbbyELf7naiK1F2b7NgXtvK/yP3QnA4kes3b1lpygD7nXAF7gGMBlOunrldHA1igJarT+yUwP5w2PdZWg=
+	t=1723160603; cv=none; b=tdgxyfTJBgs8GlqzBEme6x7evnZgA6YfxMOCv/hW3HEOlNhJh74Zvs+zm0lz9iQZBWAyMVXOk91WnjIsGb1yr8AeY69xocs3RfZK3C441ps7imt6dtASFhCveBPGJr1LuJ2MiupzHZ2uYyXFePf2xnGP3GQ/vnWyvZXO5oTkgkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723160585; c=relaxed/simple;
-	bh=7xRm3aIMs2pTIPb7GXBHV+8NVqHYEL9XUm9HH8t2Bvo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=plw3EH1NpYsbNYBPsRLo+xrrCkKsrk0etLetw2TVRXOYbLwyBShJgjVD9KGlmLQl+01dP3L8eTTniAR29fq32c9iMVFIndrEE1VAWMkrEHjtjpYY12guddvi70Q2B8Dca7WzKCNC/kWipGSKg/uJNAGLQl9JvuIWdtb1A9VOfPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f9504974dso162996739f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:43:03 -0700 (PDT)
+	s=arc-20240116; t=1723160603; c=relaxed/simple;
+	bh=szmQ5vC7k46sTule7+HKD0Xf4MQ4QMeqmvqTX/s0s2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YcxC2rOQLJ8ha8NUo3+z4Rv0TslCzIOq08GDMLNf8ESm7ri5v8vrf1eqJZQ3uM/2L+Elv6EX/NEFufu7m3UAnrA9yvEie6hD6kc76HP5cFvRcNj9FcFCmMFVRxU6S2ZXcNeuicpxA78k7ltfHY4rjYD+s2JFKva55vKCUvGETX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S03zNtKc; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f149845d81so17036061fa.0;
+        Thu, 08 Aug 2024 16:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723160600; x=1723765400; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0exwGleVPp3zy85HvQnGK2Nbqg6sOajMWkZ3IiJ6ZC4=;
+        b=S03zNtKcFT7ZiDen7Z6J+htISI+JIPF6pR8oKt+FYBaCFqNM1AJAt6Aa/OPHA7Ux5h
+         9u6MNNKY9XgnBUlumQXuYYfMTzG0fukD41JvySdG79RC7Cs9fobieD9WQZoPb6xu98hu
+         S4wlmNT5LXNgMvfsoo3sq9s9o0S3PkrleNyFyLxlhfGFtynmnti4ydUweYQEF6qnZ2CR
+         ygCWfslnosJWkMp8RPGmQuMjZxbe8GsZsqpRQB/QMABc8OzXd2q/BTBZYjQm1pYGDDHA
+         L7U5JhdAWhhqCK/ObG7oFfC87gVKCxfU5AXbdbwJNpRbJcZl99tg3EpWA9aEwF97cnts
+         xmiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723160583; x=1723765383;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+k5w6rLZqKiWxf7CsxaxPeSbSkyvmBWZDNvQfcY6hgc=;
-        b=bsRhNnHTQ7cNd745QbVsq+7wpfdTgUXcUjTEa7OdNXBd005r4Ax58NM13u4lYJkwSJ
-         ulCKHYg4CcmjD1kC2Bg97Akuj90QrRRggSCa6GnairswliXMVELCp+WXScGYvW1/7XNE
-         TediR7ygqBuCpB3cGJJ5pY2X3tuJIeDgNL1SBgL/5+D1GJFXXypDWyNe2MJkjta7y5vP
-         zZX8iDbWcVQ62ZAVpbrpMvDv5WrA+ZQCBNT/2XfURPaF+w4Hz8p/2z5DX+HypQMsZopJ
-         DpjYpIMuaG9gB1SG6KWLb1SALwr5qxjLRUNG8zxd//Mps4YccvDAlJ9DK94BNT2R0ONh
-         ucOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPPz2fGArFU8m/Ew71ja4T4MfQGVC6cG86LrQBmD45oU7dC/sL8hv7NvOS1lc8vCaM4lhiPP12OKRQlJv0/OQQ7b6+9D6Pd+PseA0k
-X-Gm-Message-State: AOJu0Yz7EkjBbXAolD8Jy7tLyC5g2i5afsuf8Q+b/i7yOtrKvX+qqWEy
-	veuViMq6eHq5+8EyT7XcrjAj94ozBO420lvRqOPWWOan/Pd7JjUSEuG9YTEWmc1sscIjxxMnNiP
-	2QHzal8c5o7wBl/ctzYbPys13TTB34kkbto/xbuNj3OcLLzh1ZSXJiHw=
-X-Google-Smtp-Source: AGHT+IH2kw9uOmBpGPrr+owvRVXLEigB0gAlclKH58CEIjRAmA+WYicbGb1YNxgK3mK7KmAAZt+BeOBxAIcWhyy1nw3I/cKmUJcm
+        d=1e100.net; s=20230601; t=1723160600; x=1723765400;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0exwGleVPp3zy85HvQnGK2Nbqg6sOajMWkZ3IiJ6ZC4=;
+        b=CVU6Z20JvEcYwWGWNMUroPq49bGsmf25aEuO4tioXeDBfi2kBuEaKJPOpC1oHneRH4
+         5aT813BJ8HCxzxZZVRnYG62NvMudARn72Zt65Cerz+VQoecyEPlW9V1csJE3sZjz7kBY
+         +qC78Fm49zhOm6A3lMnpJElXYAt+jZaJm0Y7J5Iv7Xk0gvNXTHv3Qvsj6eHLgoq+jFaq
+         t6PvsVP3nlcNCH9ubi3ob42RHtaO2rNgzPZ9Eu9ZBVxJ+iE6k052GAb+iw8Gn2oGezyC
+         F1yI1XCgdovgmFmWMUCIFKFCDvtiHrfsL6u4LBCKUhBWcMN4gQa3efErpQ0fLhow5BlH
+         7ifQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUY0XbXGakkathXIoEeyWAxGTHuf1DxVAAQjTMmBu4vvytg0ornp6EgERPFGIZZBlfR1RDyeo5e+kTSscl8qhD7vLZn9xe2cSD2ftirrpq1HM0U645TEUdQTUoSzJBnNvwOd9V64ccpZsrvYg==
+X-Gm-Message-State: AOJu0Yzt1CCphKcU11Jo1xRAUODYKaPeyVh+0RPZK4wmNiKmvpHRA5uy
+	1RZApEbM4ld46mysjMUw9wnFRcIzgZheJQ02GltREvwXeQnGSZBWh9fppNCO
+X-Google-Smtp-Source: AGHT+IFm2KwNt1XdAOxj6J6+SLvha9c9io6RUmi5g+NE7UvuIoWK8uAgiE0x5+gZd+rbtgmdWfZU/g==
+X-Received: by 2002:a2e:7a04:0:b0:2ef:22ad:77b8 with SMTP id 38308e7fff4ca-2f19de3b0femr24202371fa.23.1723160599385;
+        Thu, 08 Aug 2024 16:43:19 -0700 (PDT)
+Received: from f (cst-prg-72-52.cust.vodafone.cz. [46.135.72.52])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2e5f857sm1049242a12.88.2024.08.08.16.43.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 16:43:18 -0700 (PDT)
+Date: Fri, 9 Aug 2024 01:43:03 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/9] fs: add infrastructure for multigrain timestamps
+Message-ID: <gcn5kkrc2eeger6uzwqe5iinxtevhrgi3qz6ru3th3bkt4nrfd@ldkkwu4ndpnn>
+References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
+ <20240715-mgtime-v6-1-48e5d34bd2ba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4107:b0:4c2:7f96:6f4 with SMTP id
- 8926c6da1cb9f-4ca5e0fba64mr163300173.4.1723160582829; Thu, 08 Aug 2024
- 16:43:02 -0700 (PDT)
-Date: Thu, 08 Aug 2024 16:43:02 -0700
-In-Reply-To: <tencent_1252C8C67A098E6ECCAED4CC9927E8C6C406@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006e4e51061f3496f4@google.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240715-mgtime-v6-1-48e5d34bd2ba@kernel.org>
 
-Hello,
+On Mon, Jul 15, 2024 at 08:48:52AM -0400, Jeff Layton wrote:
+>  /**
+>   * inode_set_ctime_current - set the ctime to current_time
+>   * @inode: inode
+>   *
+> - * Set the inode->i_ctime to the current value for the inode. Returns
+> - * the current value that was assigned to i_ctime.
+> + * Set the inode's ctime to the current value for the inode. Returns the
+> + * current value that was assigned. If this is not a multigrain inode, then we
+> + * just set it to whatever the coarse_ctime is.
+> + *
+> + * If it is multigrain, then we first see if the coarse-grained timestamp is
+> + * distinct from what we have. If so, then we'll just use that. If we have to
+> + * get a fine-grained timestamp, then do so, and try to swap it into the floor.
+> + * We accept the new floor value regardless of the outcome of the cmpxchg.
+> + * After that, we try to swap the new value into i_ctime_nsec. Again, we take
+> + * the resulting ctime, regardless of the outcome of the swap.
+>   */
+>  struct timespec64 inode_set_ctime_current(struct inode *inode)
+>  {
+> -	struct timespec64 now = current_time(inode);
+> +	ktime_t now, floor = atomic64_read(&ctime_floor);
+> +	struct timespec64 now_ts;
+> +	u32 cns, cur;
+> +
+> +	now = coarse_ctime(floor);
+> +
+> +	/* Just return that if this is not a multigrain fs */
+> +	if (!is_mgtime(inode)) {
+> +		now_ts = timestamp_truncate(ktime_to_timespec64(now), inode);
+> +		inode_set_ctime_to_ts(inode, now_ts);
+> +		goto out;
+> +	}
+> +
+> +	/*
+> +	 * We only need a fine-grained time if someone has queried it,
+> +	 * and the current coarse grained time isn't later than what's
+> +	 * already there.
+> +	 */
+> +	cns = smp_load_acquire(&inode->i_ctime_nsec);
+> +	if (cns & I_CTIME_QUERIED) {
+> +		ktime_t ctime = ktime_set(inode->i_ctime_sec, cns & ~I_CTIME_QUERIED);
+> +
+> +		if (!ktime_after(now, ctime)) {
+> +			ktime_t old, fine;
+> +
+> +			/* Get a fine-grained time */
+> +			fine = ktime_get();
+>  
+> -	inode_set_ctime_to_ts(inode, now);
+> -	return now;
+> +			/*
+> +			 * If the cmpxchg works, we take the new floor value. If
+> +			 * not, then that means that someone else changed it after we
+> +			 * fetched it but before we got here. That value is just
+> +			 * as good, so keep it.
+> +			 */
+> +			old = floor;
+> +			if (!atomic64_try_cmpxchg(&ctime_floor, &old, fine))
+> +				fine = old;
+> +			now = ktime_mono_to_real(fine);
+> +		}
+> +	}
+> +	now_ts = timestamp_truncate(ktime_to_timespec64(now), inode);
+> +	cur = cns;
+> +
+> +	/* No need to cmpxchg if it's exactly the same */
+> +	if (cns == now_ts.tv_nsec && inode->i_ctime_sec == now_ts.tv_sec)
+> +		goto out;
+> +retry:
+> +	/* Try to swap the nsec value into place. */
+> +	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now_ts.tv_nsec)) {
+> +		/* If swap occurred, then we're (mostly) done */
+> +		inode->i_ctime_sec = now_ts.tv_sec;
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in v9fs_begin_writeback
 
-ino: 1901336, v9fs_begin_writeback
-ino: 1901336, inode fid list is empty: 1, v9fs_fid_find_inode
-------------[ cut here ]------------
-folio expected an open fid inode->i_ino=1901336
-WARNING: CPU: 2 PID: 46 at fs/9p/vfs_addr.c:40 v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
-Modules linked in:
-CPU: 2 UID: 0 PID: 46 Comm: kworker/u32:3 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: writeback wb_workfn (flush-9p-17)
-RIP: 0010:v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
-Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7a 48 8b 73 40 48 c7 c7 60 9a 8e 8b e8 05 4c 0d fe 90 <0f> 0b 90 90 eb 80 e8 e9 2c a8 fe e9 6f ff ff ff e8 4f 2c a8 fe e9
-RSP: 0018:ffffc900009e7480 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff88803249cd40 RCX: ffffffff814cc379
-RDX: ffff888018ef0000 RSI: ffffffff814cc386 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff88803249cd40
-R13: dffffc0000000000 R14: ffffc900009e7840 R15: ffff88802791d958
-FS:  0000000000000000(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffec1874f78 CR3: 000000002a43c000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netfs_writepages+0x656/0xde0 fs/netfs/write_issue.c:534
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
- __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
- writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
- wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
- wb_do_writeback fs/fs-writeback.c:2274 [inline]
- wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Linux always had rather lax approach to consistency of getattr results
+and I wonder if with this patchset it is no longer viable.
 
+Ignoring the flag, suppose ctime on the inode is { nsec = 12, sec = 1 },
+while the new timestamp is { nsec = 1, sec = 2 }
 
-Tested on:
+The current update method results in a transient state where { nsec = 1,
+sec = 1 }. But this represents an earlier point in time.
 
-commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=11331ed3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1236fc5d980000
+Thus a thread which observed the first state and spotted the transient
+value in the second one is going to conclude time went backwards. Is
+this considered fine given what the multigrain stuff is trying to
+accomplish?
 
+As for fixing this, off hand I note there is a 4-byte hole in struct
+inode, just enough to store a sequence counter which fill_mg_cmtime
+could use to safely read the sec/nsec pair. The write side would take
+the inode spinlock.
+
+> +	} else {
+> +		/*
+> +		 * Was the change due to someone marking the old ctime QUERIED?
+> +		 * If so then retry the swap. This can only happen once since
+> +		 * the only way to clear I_CTIME_QUERIED is to stamp the inode
+> +		 * with a new ctime.
+> +		 */
+> +		if (!(cns & I_CTIME_QUERIED) && (cns | I_CTIME_QUERIED) == cur) {
+> +			cns = cur;
+> +			goto retry;
+> +		}
+> +		/* Otherwise, keep the existing ctime */
+> +		now_ts.tv_sec = inode->i_ctime_sec;
+> +		now_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
+> +	}
+> +out:
+> +	return now_ts;
+>  }
+>  EXPORT_SYMBOL(inode_set_ctime_current);
 
