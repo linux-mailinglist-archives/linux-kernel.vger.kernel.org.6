@@ -1,263 +1,350 @@
-Return-Path: <linux-kernel+bounces-279908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7329F94C343
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:02:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4960194C347
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99B341C22664
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:02:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C16283194
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F5F190668;
-	Thu,  8 Aug 2024 17:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A12190663;
+	Thu,  8 Aug 2024 17:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8H9RLaE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hUbxCA2q"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9988018E740;
-	Thu,  8 Aug 2024 17:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7C618E036
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723136509; cv=none; b=jRa0nIlBW362o9nQ4BTgZ0FCQLVAdVPviR2UbXf8pfoGeibzBJ2NFU302jMfy/MFFdlGV86FUh0wOmiM2teBUejeC2xy9mLW27KqLDSXkYJ4JO2EaE1OneSx6jSWAGuqK3tmcQ0mKEdosWsuUoeHz1MMSFHDNXlxKVVy1gHSgt8=
+	t=1723136571; cv=none; b=YzOqGlQWLfdQ0WLPqsCHgB5Jsy7k6eF56H7aAeMmo0WSaZbmY8WuWTp5lhW5KExsLzNJLANhg+JrdluY+MbtDeIMadTjCWB4lF9SAwyTGjeOWgU00GpeopPYlRDRoLKdQxu4SIVIEFKHZZtIO1WbxD7K9Gw+L3xNDHjEWI7pxGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723136509; c=relaxed/simple;
-	bh=+wBfE+kitxneWQlu3bzEy3GY/tPjoRmi4VJlsfIqxAM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NL87gm4EwRtpm8Uzr4jWCbVoYu3K5F8AvzGV7NL+UV4Tf+7XReTlzRtKrXPqKa/RNv4F/y9vkz77o255NDOVZLsZD/B34D3B3Nn8dDPtyfuYCjZtV5YVsguV3GcruWXcT691MFbkWE6hiINpZ4Sw65+2T2RtybFSE8PubZvO6Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8H9RLaE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03639C32782;
-	Thu,  8 Aug 2024 17:01:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723136509;
-	bh=+wBfE+kitxneWQlu3bzEy3GY/tPjoRmi4VJlsfIqxAM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=O8H9RLaExZAb5KfgQ16wwIYFNRRdIRWwxmCe1rpYJAeCC+2MMcSA3UoZKV7O3SG+E
-	 LRak7IFCSi7eF9xYVpEkk+qCS2DVvUnStPij3pXl+xzGRaXxY4t2arQwENdwZSwWSf
-	 XwZ4SZM2ym550F6Vj2MXPj0ASny0hfbxt/fQLqX9vN92t+9Gvhh9x+PfI1A6zjMIvP
-	 xJKmXnhS82UVJkzlDwtYoFvv50qpqJzV/G1AlzX6SviQn0jhFjoIL31b2oIE0U4GWx
-	 R2dn/urJyIUdRuBTS+NdlbtDpEWja7GitZ28chG5UkoH+CB9zJLySPRHgFbc+Th4uu
-	 jPBhbtAH6jIiA==
-From: Jakub Kicinski <kuba@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com
-Subject: [GIT PULL] Networking for v6.11-rc3
-Date: Thu,  8 Aug 2024 10:01:48 -0700
-Message-ID: <20240808170148.3629934-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1723136571; c=relaxed/simple;
+	bh=Qie1VXxEbR6wPvVHaQ4xDFbr377DcfR014QfK2iKOJ8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Qteq/JwwgjAozKeury+zCwc89eoaYLDgZ+k2T0SW3OntE3yqhQI32LF1/kvZrjIj1yiNPplDL0ulFcnifRccfjbmG5NcOLzx0t4Tqym3rv7BvGGSJvCQPMnsD988mARJi3m+gqrxI7QZqUQQgN1gpksH7Ur9UUDJWc/t53tyR1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hUbxCA2q; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3db1d0fca58so796508b6e.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:02:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723136569; x=1723741369; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tnm4IZp9BOFX/7ai0UmZ2uPZFN91S/3iwZ4ZNMA3KWI=;
+        b=hUbxCA2qn0wBGHdQ1yrHaYtOrA6nC87o4WkDnPYJCpcipZRrCdopNwOLcN7T2GO/4N
+         NTUcLZfrBap3+y5VKch5ZBmUGdgUMdnEoKEb2PxKBY9CJxcZbDNZM+RrzWK1Pd0eQ/Mq
+         grQZiJeDab8pfHTSfKXk2ccSOJQdO0wvGufO8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723136569; x=1723741369;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tnm4IZp9BOFX/7ai0UmZ2uPZFN91S/3iwZ4ZNMA3KWI=;
+        b=BWVKhKUsgYAsHgrFa/DloGldP3pTxz9C8eqLBQrIPukp76T9/sadtlLnAghuSnXXi3
+         mU5uhEmBTwMaxSuIiUX2C8FaflrQ9aK+QDU1j5Yvwb7YqVx8Ih2XNn8lYB/M/hFJp6oz
+         8wb99D1a8iVOfV1bWlDX1jXx9I4QQVjJSEyR1VhozS9z7lBGfnTPAa/sBiIRz+DlYiGb
+         Tc8ziwmLKA1uw6tTgOnCtetH4g1vc+A7YecthokKNsQEC0UZfjfq5ypTyxuG7NqlygBk
+         FMeE9nrPBGa7N4nmjpllW8aUjysQ6xjh/MX6fY2ggA5MN8NzqyA1Zbha6lOGp7+W4X9u
+         JLLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNnJ5C71c1HZXD4kzqPMZ1Rphodhn3pCLrYPmfHZ7skn4De1qQiTTZW0yEyFvlFJuJBryHDR4zVfo6XqZtbGe20njRsZ8tZU8/w722
+X-Gm-Message-State: AOJu0YyqItlGMP+LBJ84u+INwxuIIMVhFwNma5pKeHz4ExIGNFf0muvv
+	LadiYt4Iij1+SJfDc+csU36Yi4NWKzG3GRYIPGWKtHTyHxMB12kkuujAMhwbxA==
+X-Google-Smtp-Source: AGHT+IF9PaStG81fRUHBiHKskkVjyHYOtTPaUZ1Nb+A26EGvcb+VOEkXPa7I47PHEDnAspxrFwoZRA==
+X-Received: by 2002:a05:6808:2185:b0:3d9:2b45:1585 with SMTP id 5614622812f47-3dc3b42dea6mr2373864b6e.22.1723136562244;
+        Thu, 08 Aug 2024 10:02:42 -0700 (PDT)
+Received: from spinny.c.googlers.com (39.119.74.34.bc.googleusercontent.com. [34.74.119.39])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-83c07df5517sm1867706241.14.2024.08.08.10.02.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 10:02:41 -0700 (PDT)
+From: Esther Shimanovich <eshimanovich@chromium.org>
+Date: Thu, 08 Aug 2024 17:02:16 +0000
+Subject: [PATCH v2] PCI: Detect and trust built-in Thunderbolt chips
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240808-trust-tbt-fix-v2-1-2e34a05a9186@chromium.org>
+X-B4-Tracking: v=1; b=H4sIABf6tGYC/3WMyw6CMBAAf4Xs2TVQykNP/ofhUMsW9gAl20I0h
+ H+3cvc4k8zsEEiYAtyzHYQ2DuznBOqSgR3NPBBynxhUrnTe5jVGWUPE+Iro+I2VK8vG9TeyrYH
+ ULEJJn79nl3jkEL18zv1W/Oy/01ZggU1pqHJa131lHnYUP/E6Xb0M0B3H8QViBaZrrQAAAA==
+To: Bjorn Helgaas <bhelgaas@google.com>, Rajat Jain <rajatja@google.com>, 
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, iommu@lists.linux.dev, 
+ Lukas Wunner <lukas@wunner.de>, 
+ Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Esther Shimanovich <eshimanovich@chromium.org>
+X-Mailer: b4 0.13.0
 
-Hi Linus!
+Some computers with CPUs that lack Thunderbolt features use discrete
+Thunderbolt chips to add Thunderbolt functionality. These Thunderbolt
+chips are located within the chassis; between the root port labeled
+ExternalFacingPort and the USB-C port.
 
-The following changes since commit 183d46ff422ef9f3d755b6808ef3faa6d009ba3a:
+These Thunderbolt PCIe devices should be labeled as fixed and trusted,
+as they are built into the computer. Otherwise, security policies that
+rely on those flags may have unintended results, such as preventing
+USB-C ports from enumerating.
 
-  Merge tag 'net-6.11-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-08-01 09:42:09 -0700)
+Detect the above scenario through the process of elimination.
 
-are available in the Git repository at:
+1) Integrated Thunderbolt host controllers already have Thunderbolt
+   implemented, so anything outside their external facing root port is
+   removable and untrusted.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.11-rc3
+   Detect them using the following properties:
 
-for you to fetch changes up to 2ff4ceb0309abb3cd1843189e99e4cc479ec5b92:
+     - Most integrated host controllers have the usb4-host-interface
+       ACPI property, as described here:
+Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#mapping-native-protocols-pcie-displayport-tunneled-through-usb4-to-usb4-host-routers
 
-  Merge branch '100GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue (2024-08-08 09:02:25 -0700)
+     - Integrated Thunderbolt PCIe root ports before Alder Lake do not
+       have the usb4-host-interface ACPI property. Identify those with
+       their PCI IDs instead.
 
-----------------------------------------------------------------
-Including fixes from bluetooth.
+2) If a root port does not have integrated Thunderbolt capabilities, but
+   has the ExternalFacingPort ACPI property, that means the manufacturer
+   has opted to use a discrete Thunderbolt host controller that is
+   built into the computer.
 
-Current release - regressions:
+   This host controller can be identified by virtue of being located
+   directly below an external-facing root port that lacks integrated
+   Thunderbolt. Label it as trusted and fixed.
 
- - eth: bnxt_en: fix memory out-of-bounds in bnxt_fill_hw_rss_tbl()
-   on older chips
+   Everything downstream from it is untrusted and removable.
 
-Current release - new code bugs:
+The ExternalFacingPort ACPI property is described here:
+Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#identifying-externally-exposed-pcie-root-ports
 
- - ethtool: fix off-by-one error / kdoc contradicting the code
-   for max RSS context IDs
+Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Esther Shimanovich <eshimanovich@chromium.org>
+---
+While working with devices that have discrete Thunderbolt chips, I
+noticed that their internal TBT chips are inaccurately labeled as
+untrusted and removable.
 
- - Bluetooth: hci_qca:
-    - QCA6390: fix support on non-DT platforms
-    - QCA6390: don't call pwrseq_power_off() twice
-    - fix a NULL-pointer derefence at shutdown
+I've observed that this issue impacts all computers with internal,
+discrete Intel JHL Thunderbolt chips, such as JHL6240, JHL6340, JHL6540,
+and JHL7540, across multiple device manufacturers such as Lenovo, Dell,
+and HP.
 
- - eth: ice: fix incorrect assigns of FEC counters
+This affects the execution of any downstream security policy that
+relies on the "untrusted" or "removable" flags.
 
-Previous releases - regressions:
+I initially submitted a quirk to resolve this, which was too small in
+scope, and after some discussion, Mika proposed a more thorough fix:
+https://lore.kernel.org/lkml/20240510052616.GC4162345@black.fi.intel.com/#r
+I refactored it and am submitting as a new patch.
+---
+Changes in v2:
+- I clarified some comments, and made minor fixins
+- I also added a more detailed description of implementation into the
+  commit message
+- Added Cc recipients Mike recommended
+- Link to v1: https://lore.kernel.org/r/20240806-trust-tbt-fix-v1-1-73ae5f446d5a@chromium.org
+---
+ drivers/pci/probe.c | 151 +++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 144 insertions(+), 7 deletions(-)
 
- - mptcp: fix handling endpoints with both 'signal' and 'subflow'
-   flags set
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index b14b9876c030..8a98c4ef5511 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1629,16 +1629,149 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
+ 		dev->is_thunderbolt = 1;
+ }
+ 
++/*
++ * Checks if pdev is part of a PCIe switch that is directly below the
++ * specified bridge.
++ */
++static bool pcie_switch_directly_under(struct pci_dev *bridge,
++				       struct pci_dev *pdev)
++{
++	struct pci_dev *parent = pci_upstream_bridge(pdev);
++
++	/* If the device doesn't have a parent, it's not under anything.*/
++	if (!parent)
++		return false;
++
++	/*
++	 * If the device has a PCIe type, check if it is below the
++	 * corresponding PCIe switch components (if applicable). Then check
++	 * if its upstream port is directly beneath the specified bridge.
++	 */
++	switch (pci_pcie_type(pdev)) {
++	case PCI_EXP_TYPE_UPSTREAM:
++		if (parent == bridge)
++			return true;
++		break;
++
++	case PCI_EXP_TYPE_DOWNSTREAM:
++		if (pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
++			parent = pci_upstream_bridge(parent);
++			if (parent == bridge)
++				return true;
++		}
++		break;
++
++	case PCI_EXP_TYPE_ENDPOINT:
++		if (pci_pcie_type(parent) == PCI_EXP_TYPE_DOWNSTREAM) {
++			parent = pci_upstream_bridge(parent);
++			if (parent && pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
++				parent = pci_upstream_bridge(parent);
++				if (parent == bridge)
++					return true;
++			}
++		}
++		break;
++	}
++
++	return false;
++}
++
++static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
++{
++	struct fwnode_handle *fwnode;
++
++	/*
++	 * For USB4, the tunneled PCIe root or downstream ports are marked
++	 * with the "usb4-host-interface" ACPI property, so we look for
++	 * that first. This should cover most cases.
++	 */
++	fwnode = fwnode_find_reference(dev_fwnode(&pdev->dev),
++				       "usb4-host-interface", 0);
++	if (!IS_ERR(fwnode)) {
++		fwnode_handle_put(fwnode);
++		return true;
++	}
++
++	/*
++	 * Any integrated Thunderbolt 3/4 PCIe root ports from Intel
++	 * before Alder Lake do not have the "usb4-host-interface"
++	 * property so we use their PCI IDs instead. All these are
++	 * tunneled. This list is not expected to grow.
++	 */
++	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
++		switch (pdev->device) {
++		/* Ice Lake Thunderbolt 3 PCIe Root Ports */
++		case 0x8a1d:
++		case 0x8a1f:
++		case 0x8a21:
++		case 0x8a23:
++		/* Tiger Lake-LP Thunderbolt 4 PCIe Root Ports */
++		case 0x9a23:
++		case 0x9a25:
++		case 0x9a27:
++		case 0x9a29:
++		/* Tiger Lake-H Thunderbolt 4 PCIe Root Ports */
++		case 0x9a2b:
++		case 0x9a2d:
++		case 0x9a2f:
++		case 0x9a31:
++			return true;
++		}
++	}
++
++	return false;
++}
++
++static bool pcie_is_tunneled(struct pci_dev *pdev)
++{
++	struct pci_dev *parent, *root;
++
++	parent = pci_upstream_bridge(pdev);
++	/* If pdev doesn't have a parent, then there's no way it is tunneled.*/
++	if (!parent)
++		return false;
++
++	root = pcie_find_root_port(pdev);
++	/* If pdev doesn't have a root, then there's no way it is tunneled.*/
++	if (!root)
++		return false;
++
++	/* Internal PCIe devices are not tunneled. */
++	if (!root->external_facing)
++		return false;
++
++	/* Anything directly behind a "usb4-host-interface" is tunneled. */
++	if (pcie_has_usb4_host_interface(parent))
++		return true;
++
++	/*
++	 * Check if this is a discrete Thunderbolt/USB4 controller that is
++	 * directly behind the non-USB4 PCIe Root Port marked as
++	 * "ExternalFacingPort". These PCIe devices are used to add Thunderbolt
++	 * capabilities to CPUs that lack integrated Thunderbolt.
++	 * These are not behind a PCIe tunnel.
++	 */
++	if (pcie_switch_directly_under(root, pdev))
++		return false;
++
++	/* PCIe devices after the discrete chip are tunneled. */
++	return true;
++}
++
+ static void set_pcie_untrusted(struct pci_dev *dev)
+ {
+-	struct pci_dev *parent;
++	struct pci_dev *parent = pci_upstream_bridge(dev);
+ 
++	if (!parent)
++		return;
+ 	/*
+-	 * If the upstream bridge is untrusted we treat this device
++	 * If the upstream bridge is untrusted we treat this device as
+ 	 * untrusted as well.
+ 	 */
+-	parent = pci_upstream_bridge(dev);
+-	if (parent && (parent->untrusted || parent->external_facing))
++	if (parent->untrusted)
++		dev->untrusted = true;
++
++	if (pcie_is_tunneled(dev))
+ 		dev->untrusted = true;
+ }
+ 
+@@ -1646,8 +1779,10 @@ static void pci_set_removable(struct pci_dev *dev)
+ {
+ 	struct pci_dev *parent = pci_upstream_bridge(dev);
+ 
++	if (!parent)
++		return;
+ 	/*
+-	 * We (only) consider everything downstream from an external_facing
++	 * We (only) consider everything tunneled below an external_facing
+ 	 * device to be removable by the user. We're mainly concerned with
+ 	 * consumer platforms with user accessible thunderbolt ports that are
+ 	 * vulnerable to DMA attacks, and we expect those ports to be marked by
+@@ -1657,8 +1792,10 @@ static void pci_set_removable(struct pci_dev *dev)
+ 	 * accessible to user / may not be removed by end user, and thus not
+ 	 * exposed as "removable" to userspace.
+ 	 */
+-	if (parent &&
+-	    (parent->external_facing || dev_is_removable(&parent->dev)))
++	if (dev_is_removable(&parent->dev))
++		dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
++
++	if (pcie_is_tunneled(dev))
+ 		dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
+ }
+ 
 
- - virtio-net: fix changing ring count when vq IRQ coalescing not
-   supported
+---
+base-commit: 3f386cb8ee9f04ff4be164ca7a1d0ef3f81f7374
+change-id: 20240806-trust-tbt-fix-5f337fd9ec8a
 
- - eth: gve: fix use of netif_carrier_ok() during reconfig / reset
+Best regards,
+-- 
+Esther Shimanovich <eshimanovich@chromium.org>
 
-Previous releases - always broken:
-
- - eth: idpf: fix bugs in queue re-allocation on reconfig / reset
-
- - ethtool: fix context creation with no parameters
-
-Misc:
-
- - linkwatch: use system_unbound_wq to ease RTNL contention
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-
-----------------------------------------------------------------
-Alexander Lobakin (2):
-      idpf: fix memory leaks and crashes while performing a soft reset
-      idpf: fix UAFs when destroying the queues
-
-Anton Khirnov (1):
-      Bluetooth: hci_sync: avoid dup filtering when passive scanning with adv monitor
-
-Arnd Bergmann (1):
-      net: pse-pd: tps23881: include missing bitfield.h header
-
-Bartosz Golaszewski (3):
-      Bluetooth: hci_qca: don't call pwrseq_power_off() twice for QCA6390
-      Bluetooth: hci_qca: fix QCA6390 support on non-DT platforms
-      Bluetooth: hci_qca: fix a NULL-pointer derefence at shutdown
-
-Csókás, Bence (1):
-      net: fec: Stop PPS on driver remove
-
-Daniele Palmas (1):
-      net: usb: qmi_wwan: fix memory leak for not ip packets
-
-David S. Miller (1):
-      Merge branch 'virtio-net-rq-coalescing' into main
-
-Dmitry Antipov (1):
-      Bluetooth: l2cap: always unlock channel in l2cap_conless_channel()
-
-Dmitry Safonov (1):
-      net/tcp: Disable TCP-AO static key after RCU grace period
-
-Edward Cree (1):
-      net: ethtool: fix off-by-one error in max RSS context IDs
-
-Eric Dumazet (1):
-      net: linkwatch: use system_unbound_wq
-
-Florian Fainelli (1):
-      net: bcmgenet: Properly overlay PHY and MAC Wake-on-LAN capabilities
-
-Gal Pressman (1):
-      ethtool: Fix context creation with no parameters
-
-Grzegorz Nitka (2):
-      ice: Fix reset handler
-      ice: Skip PTP HW writes during PTP reset procedure
-
-Heng Qi (2):
-      virtio-net: check feature before configuring the vq coalescing command
-      virtio-net: unbreak vq resizing when coalescing is not negotiated
-
-Jakub Kicinski (4):
-      Merge branch 'mptcp-fix-endpoints-with-signal-and-subflow-flags'
-      Merge branch 'idpf-fix-3-bugs-revealed-by-the-chapter-i'
-      Merge tag 'for-net-2024-08-07' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
-      Merge branch '100GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
-
-James Chapman (1):
-      l2tp: fix lockdep splat
-
-Joe Hattori (1):
-      net: dsa: bcm_sf2: Fix a possible memory leak in bcm_sf2_mdio_register()
-
-Kuniyuki Iwashima (1):
-      sctp: Fix null-ptr-deref in reuseport_add_sock().
-
-Kyle Swenson (1):
-      net: pse-pd: tps23881: Fix the device ID check
-
-Martin Whitaker (1):
-      net: dsa: microchip: disable EEE for KSZ8567/KSZ9567/KSZ9896/KSZ9897.
-
-Mateusz Polchlopek (1):
-      ice: Fix incorrect assigns of FEC counts
-
-Matthieu Baerts (NGI0) (7):
-      mptcp: fully established after ADD_ADDR echo on MPJ
-      mptcp: pm: deny endp with signal + subflow + port
-      mptcp: pm: reduce indentation blocks
-      mptcp: pm: don't try to create sf if alloc failed
-      mptcp: pm: do not ignore 'subflow' if 'signal' flag is also set
-      selftests: mptcp: join: ability to invert ADD_ADDR check
-      selftests: mptcp: join: test both signal & subflow
-
-Michael Chan (1):
-      bnxt_en : Fix memory out-of-bounds in bnxt_fill_hw_rss_tbl()
-
-Michal Kubiak (1):
-      idpf: fix memleak in vport interrupt configuration
-
-Nikolay Aleksandrov (1):
-      net: bridge: mcast: wait for previous gc cycles when removing port
-
-Praveen Kaligineedi (1):
-      gve: Fix use of netif_carrier_ok()
-
-Russell King (Oracle) (1):
-      net: stmmac: dwmac4: fix PCS duplex mode decode
-
-Stephen Hemminger (1):
-      MAINTAINERS: update status of sky2 and skge drivers
-
-Tristram Ha (1):
-      net: dsa: microchip: Fix Wake-on-LAN check to not return an error
-
-ZHANG Yuntian (1):
-      net: usb: qmi_wwan: add MeiG Smart SRM825L
-
-Zhengchao Shao (1):
-      net/smc: add the max value of fallback reason count
-
- MAINTAINERS                                        |  2 +-
- drivers/bluetooth/hci_qca.c                        | 19 ++++----
- drivers/net/dsa/bcm_sf2.c                          |  4 +-
- drivers/net/dsa/microchip/ksz_common.c             | 16 +++++++
- drivers/net/ethernet/broadcom/bnxt/bnxt.c          | 13 ++---
- drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c  |  2 +-
- drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c | 14 ++----
- drivers/net/ethernet/freescale/fec_ptp.c           |  3 ++
- drivers/net/ethernet/google/gve/gve_ethtool.c      |  2 +-
- drivers/net/ethernet/google/gve/gve_main.c         | 12 ++---
- drivers/net/ethernet/intel/ice/ice_ethtool.c       |  8 ++--
- drivers/net/ethernet/intel/ice/ice_main.c          |  2 +
- drivers/net/ethernet/intel/ice/ice_ptp.c           |  4 ++
- drivers/net/ethernet/intel/idpf/idpf_lib.c         | 48 +++++++++----------
- drivers/net/ethernet/intel/idpf/idpf_txrx.c        | 43 ++++-------------
- drivers/net/ethernet/stmicro/stmmac/dwmac4.h       |  2 -
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  2 +-
- drivers/net/pse-pd/tps23881.c                      |  5 +-
- drivers/net/usb/qmi_wwan.c                         |  2 +
- drivers/net/virtio_net.c                           | 14 +++++-
- include/linux/ethtool.h                            | 10 ++--
- net/bluetooth/hci_sync.c                           | 14 ++++++
- net/bluetooth/l2cap_core.c                         |  1 +
- net/bridge/br_multicast.c                          |  4 +-
- net/core/link_watch.c                              |  4 +-
- net/ethtool/ioctl.c                                | 18 ++++---
- net/ipv4/tcp_ao.c                                  | 43 ++++++++++++-----
- net/l2tp/l2tp_core.c                               | 15 +++++-
- net/mptcp/options.c                                |  3 +-
- net/mptcp/pm_netlink.c                             | 47 +++++++++++-------
- net/sctp/input.c                                   | 19 ++++----
- net/smc/smc_stats.h                                |  2 +-
- tools/testing/selftests/net/mptcp/mptcp_join.sh    | 55 ++++++++++++++++------
- 33 files changed, 276 insertions(+), 176 deletions(-)
 
