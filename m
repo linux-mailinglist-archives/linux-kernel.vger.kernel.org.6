@@ -1,115 +1,145 @@
-Return-Path: <linux-kernel+bounces-279553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BAD94BEDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:54:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D2E94BEDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7D1D1C23143
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:54:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54DB1C23030
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CED218E033;
-	Thu,  8 Aug 2024 13:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5835118E77C;
+	Thu,  8 Aug 2024 13:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4OS2izXV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFk2Ttr9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7839118C33B;
-	Thu,  8 Aug 2024 13:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09E618E76C
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 13:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723125257; cv=none; b=b5cJLVfU3ryjXvbAh0GWLXom4wFAmbcJoxwvKgrV4CA/3WeTxy2PqTWmYtcjyj/oAEsEKuD6cq2kdw2fgWIvYoN7wd2bqQ2UGTGZmMP3Dx+/4Ryt7WbKvSX2oE4LQKmVFwnwQEDLMT+K0zs+9f4BwRYl1dU+QnANCznKSILd/jo=
+	t=1723125259; cv=none; b=f4u3cQls0T6K4Uom2icHW+VflxKFNdZX8oOwyCaI7/aA2phyNG3EzU47b+8TMSVxkUhcuPXk/2QXVhS8FWBfQ4vlTb4AB5DBkvjJmIuXePFBTXmo27Zl9uLBQ5/h2W6lCiSnUYBI7C/YBisxqtHkyZR+OLFQVI2Mg75H7Hm0ku4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723125257; c=relaxed/simple;
-	bh=GBv+W7DAAm8Buil6jNH7Qw4hgUZ1tJDOjBhJRBpxU84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7IH4gSiBbHx4uocG3rw+Lv6FyylXXRw+m6EP2772jPBxwquW/iLlydaH9qYdkZdPsZcvrk8nKycN3hpr/O89SuIcY5sFihkuhBywmxlt/MN/mAAVRP03TqtWQRwFoSlL82wuNG15gPzMUn0+yPPWUSRUY1Uj9DQiH8dCGayWn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4OS2izXV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=58zN4ftIxRNizhrHrvEhTFzHNJy4lJZ8+V2vqdEUlIQ=; b=4OS2izXVHrJYIiUEUbwfrHUQrq
-	/LS1cpO8mZGTk+ZgINWM4JhQzv8iTVnKDSkOl2Oh86hR6NZv65i6gvQOP1VObBP8bJq8IJbbQpWYd
-	RRdtAAOi4Z2lxKk2PCnvQOCaCbgbm+UnYrU4TJm7MdtomXBUfFCfeepQOhNgOZkJoOtQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sc3ag-004ICJ-Do; Thu, 08 Aug 2024 15:54:06 +0200
-Date: Thu, 8 Aug 2024 15:54:06 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/3] phy: Add Open Alliance helpers for the
- PHY framework
-Message-ID: <eab136c5-ef49-4d4e-860c-c56840747199@lunn.ch>
-References: <20240808130833.2083875-1-o.rempel@pengutronix.de>
- <20240808130833.2083875-2-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1723125259; c=relaxed/simple;
+	bh=E3mylxwK2j9dSfCDY8AmWwN5N773xPCqpltI8MuPpEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ki1ailf9mRlX6xIs4OmNYHVFq7ShEQs/ByDNw/WojWqx/fCGaLCPFFZoSg13tBxhBZME2HPhqbAhZIxqnvjHAFpW8dA1UZNxRTLZmUxQtogefk1yh0opYtFICFXaJQ285iYVNZ8n7bXi7vq8ZbLMS9ByGO1Dym3kJUUK7pDm1sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFk2Ttr9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2299FC32782;
+	Thu,  8 Aug 2024 13:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723125259;
+	bh=E3mylxwK2j9dSfCDY8AmWwN5N773xPCqpltI8MuPpEI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uFk2Ttr9mb4WqqTaJmJBHVaswmH4ItcuY9NBFZZH6xzpuTIHzwXIG6JSZT6qAkSED
+	 pYyTzZT2+edUKxvuyxRuM++V67zX/sGOSfM2p/g9YohlIGCkGYeq2ph9kRLgcqSnO+
+	 Pen9tcTEf6KIkQBYwXSs+GlmeCc1cAR7ydnN+69/hY+ff+QjFoC77MohJYkGQLBI2F
+	 vvsdFfzP/b6VhleaQ1cFbLlSVSVPSIh0upCAfWOTi1ZmzZMjVe81E41PWegvMo2HSk
+	 fV4oCBYJ6rmEVZ+v+IAaGBoMEPeGk8p7hCSl+HesioXY4h4zNGtnDBjnnpK/0zDEWx
+	 U0ZwAyzOIJcpQ==
+Message-ID: <8afd879e-aa31-40ef-bc8e-1de4c9bd2e7e@kernel.org>
+Date: Thu, 8 Aug 2024 15:54:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808130833.2083875-2-o.rempel@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/10] mm: abstract duplicated policy comparison
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>
+References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
+ <bf56244f473e6ac9378cfce420b51c4dac7783a7.1722849859.git.lorenzo.stoakes@oracle.com>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+In-Reply-To: <bf56244f473e6ac9378cfce420b51c4dac7783a7.1722849859.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 08, 2024 at 03:08:32PM +0200, Oleksij Rempel wrote:
-> Introduce helper functions specific to Open Alliance diagnostics,
-> integrating them into the PHY framework. Currently, these helpers
-> are limited to 1000BaseT1 specific TDR functionality.
+On 8/5/24 14:13, Lorenzo Stoakes wrote:
+> Both can_vma_merge_before() and can_vma_merge_after() are invoked after
+> checking for compatible VMA NUMA policy, we can simply move this to
+> is_mergeable_vma() and abstract this altogether.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Thanks for generalising this code.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
->  drivers/net/phy/Makefile                |  2 +-
->  drivers/net/phy/open_alliance_helpers.c | 70 +++++++++++++++++++++++++
->  include/linux/open_alliance_helpers.h   | 47 +++++++++++++++++
+>  mm/mmap.c | 8 +++-----
+>  mm/vma.c  | 9 ++++-----
+>  2 files changed, 7 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index f931000c561f..721ced6e37b0 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1422,8 +1422,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  
+>  	/* Attempt to expand an old mapping */
+>  	/* Check next */
+> -	if (next && next->vm_start == end && !vma_policy(next) &&
+> -	    can_vma_merge_before(&vmg)) {
+> +	if (next && next->vm_start == end && can_vma_merge_before(&vmg)) {
+>  		merge_end = next->vm_end;
+>  		vma = next;
+>  		vmg.pgoff = next->vm_pgoff - pglen;
+> @@ -1435,8 +1434,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  	}
+>  
+>  	/* Check prev */
+> -	if (prev && prev->vm_end == addr && !vma_policy(prev) &&
+> -	    can_vma_merge_after(&vmg)) {
+> +	if (prev && prev->vm_end == addr && can_vma_merge_after(&vmg)) {
+>  		merge_start = prev->vm_start;
+>  		vma = prev;
+>  		vmg.pgoff = prev->vm_pgoff;
+> @@ -1798,7 +1796,7 @@ static int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>  	 * Expand the existing vma if possible; Note that singular lists do not
+>  	 * occur after forking, so the expand will only happen on new VMAs.
+>  	 */
+> -	if (vma && vma->vm_end == addr && !vma_policy(vma)) {
+> +	if (vma && vma->vm_end == addr) {
+>  		struct vma_merge_struct vmg = {
+>  			.prev = vma,
+>  			.flags = flags,
+> diff --git a/mm/vma.c b/mm/vma.c
+> index 20c4ce7712c0..b452b472a085 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -19,6 +19,8 @@ static inline bool is_mergeable_vma(struct vma_merge_struct *vmg, bool merge_nex
+>  	 */
+>  	bool may_remove_vma = merge_next;
+>  
+> +	if (!mpol_equal(vmg->policy, vma_policy(vma)))
+> +		return false;
+>  	/*
+>  	 * VM_SOFTDIRTY should not prevent from VMA merging, if we
+>  	 * match the flags but dirty bit -- the caller should mark
+> @@ -971,17 +973,14 @@ static struct vm_area_struct *vma_merge(struct vma_merge_struct *vmg)
+>  		vma_pgoff = prev->vm_pgoff;
+>  
+>  		/* Can we merge the predecessor? */
+> -		if (addr == prev->vm_end && mpol_equal(vma_policy(prev), vmg->policy)
+> -		    && can_vma_merge_after(vmg)) {
+> -
+> +		if (addr == prev->vm_end && can_vma_merge_after(vmg)) {
+>  			merge_prev = true;
+>  			vma_prev(vmg->vmi);
+>  		}
+>  	}
+>  
+>  	/* Can we merge the successor? */
+> -	if (next && mpol_equal(vmg->policy, vma_policy(next)) &&
+> -	    can_vma_merge_before(vmg)) {
+> +	if (next && can_vma_merge_before(vmg)) {
+>  		merge_next = true;
+>  	}
+>  
 
-We don't have any PHY drivers outside of drivers/net/phy, and i don't
-see any reason why we should allow them anywhere else. So please
-consider moving the header file into that directory, rather than
-having it global.
-
->  ifdef CONFIG_MDIO_DEVICE
-> diff --git a/drivers/net/phy/open_alliance_helpers.c b/drivers/net/phy/open_alliance_helpers.c
-> new file mode 100644
-> index 0000000000000..eac1004c065ae
-> --- /dev/null
-> +++ b/drivers/net/phy/open_alliance_helpers.c
-> @@ -0,0 +1,70 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * open_alliance_helpers.c - OPEN Alliance specific PHY diagnostic helpers
-> + *
-> + * This file contains helper functions for implementing advanced diagnostic
-> + * features as specified by the OPEN Alliance for automotive Ethernet PHYs.
-> + * These helpers include functionality for Time Delay Reflection (TDR), dynamic
-> + * channel quality assessment, and other PHY diagnostics.
-> + *
-> + * For more information on the specifications, refer to the OPEN Alliance
-> + * documentation: https://opensig.org/automotive-ethernet-specifications/
-
-Please could you give a reference to the exact standard. I think this
-is "Advanced diagnostic features for 1000BASE-T1 automotive Ethernet
-PHYs TC12 - advanced PHY features" ?
-
-The standard seem open, so you could include a URL:
-
-https://opensig.org/wp-content/uploads/2024/03/Advanced_PHY_features_for_automotive_Ethernet_v2.0_fin.pdf
-
-	Andrew
 
