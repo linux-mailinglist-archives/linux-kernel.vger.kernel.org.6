@@ -1,130 +1,143 @@
-Return-Path: <linux-kernel+bounces-279021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6241494B7FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:39:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ACF894B802
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B6DF1C24493
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:39:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61EB1F21E27
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F83518757F;
-	Thu,  8 Aug 2024 07:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4229B188010;
+	Thu,  8 Aug 2024 07:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zRbIfqE2"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TxN9ND4U"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB3812E1C7;
-	Thu,  8 Aug 2024 07:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3507464;
+	Thu,  8 Aug 2024 07:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723102734; cv=none; b=QZR+ahvEk0leKZ10l/hCtT20jg02PAy0b4GBBUFKTy7TEqL0O+sigGU4nkIH75VHzeWS/zyypYGRkOcBXSsCWvubjLLZFrBqiuN4wpXGof8fOW5zEh83OMU87zUnmchMjkt8aHpMwTO0yqfwt8xsDN/YCYbQY5oz3E+9la9aNZo=
+	t=1723102778; cv=none; b=EKaS4j06KAbDmdMHDZv8p5QUJwiscrPCuonpGzxPhqWKIq8UhPx3gE3dyf+9My/YjYn7yN/3P8YjTmD3KY07daj3Jp6WlAjDU1u4bx9O3RIy8D1tPGKV6c5s5U6xb3zuEpvMoJPjHSJJf4Aukac/KHdZAhcunegu5UujRo4JCLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723102734; c=relaxed/simple;
-	bh=gwt2cHVb2K3mN/MfPH0++Ud16j32XeWRTc5IPmipN1g=;
+	s=arc-20240116; t=1723102778; c=relaxed/simple;
+	bh=0JaITmplsX++4cDReVkvZhDyM9fdYBeRW8cET75NUdw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hs40vQMt2v/7X0z4cZYp/vpWC4J7lxReCwgRvHHz49XpYYyWDZI5CdSBO0mawU9B2Vctupz/fTPfjxYLN3Ws0oi0MJ9Ema31ovlaUAde91LoobLLfi+bM2eRhhd+gJzybHGZdyASqBSKL9XL7znUxyL3A1+ZxxjEc/EG7kYRZkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=zRbIfqE2; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4787ck67125647;
-	Thu, 8 Aug 2024 02:38:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723102726;
-	bh=lyT4LPycbQhR91Srg9X3tvzfQSxZ58CaFb8fLF9nTlk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=zRbIfqE2pNcWN5kZ6J2+3MOOSjAnFc1/ok77tdzb3M4TLuihzq/0663vBKLUutTOf
-	 sZQWUAecROPdx0CPzHDgiwN54dOlExUgNgKjE3RozebovxLOBty3+KwGLyOm3g0WMo
-	 /dewr5d0hP0DJuf12qTJJbKxWLIDr/gDjdWHtEcw=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4787ckip008043
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 Aug 2024 02:38:46 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- Aug 2024 02:38:46 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 Aug 2024 02:38:45 -0500
-Received: from [10.24.68.216] (a0498981-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.216])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4787cgrG016932;
-	Thu, 8 Aug 2024 02:38:42 -0500
-Message-ID: <1319a6ac-6784-45d6-8a0e-170e40d3aa18@ti.com>
-Date: Thu, 8 Aug 2024 13:08:41 +0530
+	 In-Reply-To:Content-Type; b=BRWtVmGD/V7rdPAsCVowJ7RdntTlwkna+K8By7GStCFLycbLG4rciKKDsGWay8go7eAtDN6m4OmQjbhG3IpsechCOn/MAk2PTd55sZECU0G0Sqiss5o/abgLF2rEkol/rJGa0CwNguglMe63aWu/21bFOmkMbCJnXtInub6Skec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TxN9ND4U; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477Icj6C020412;
+	Thu, 8 Aug 2024 07:39:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2d+qD9QbIkh/LhY9twFqPwccmJs0i4VuP7i4E69Oh/A=; b=TxN9ND4Uf3AwSy2O
+	EC/D78CPtObL/KmhHbQhRRO4E3rE0RCJXJ/DOnV7a4pRzZewnFa8AnXcKQEv0W9C
+	D5YshYFs5hHjC1/rXsDRXZL96j7y/kH2bgApmmr2TJRY226XjUtwQy9B9qqlFlU2
+	Xpi7F9bzb04SVfrwLz6X+3y3oQMNim0HK2nhuGNX3VL3WRxpyFUAQ1xkStlDYVJA
+	gsroGVHSb0PGTHmeXb0zrHgR0n7y3nrYcv1W58nObyDt/knHhnce8BuSBZpcdCaw
+	Vou4YLez65IeHkgAuCLiu5DlSluaTBdaF0/rtG4tGi3a4ItLW9wisU3IEoEvBldu
+	aG95gA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scmu53jp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 07:39:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4787dV9H025346
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 Aug 2024 07:39:31 GMT
+Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 8 Aug 2024
+ 00:39:27 -0700
+Message-ID: <ec678a40-d7eb-61eb-947b-e264cf8bac49@quicinc.com>
+Date: Thu, 8 Aug 2024 13:09:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: ti: k3-am68-sk-base-board: Add clklb pin mux
- for mmc1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 1/2] media: venus: hfi_cmds: struct
+ hfi_session_release_buffer_pkt: Replace 1-element array with flexible array
 Content-Language: en-US
-To: Neha Malcom Francis <n-francis@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
-        <m-chawdhry@ti.com>, <vigneshr@ti.com>, <nm@ti.com>,
-        <sinthu.raja@ti.com>
-References: <20240807101624.2713490-1-b-kapoor@ti.com>
- <8fa39624-9a92-404d-8651-9ade5700a7d3@ti.com>
-From: Bhavya Kapoor <b-kapoor@ti.com>
-In-Reply-To: <8fa39624-9a92-404d-8651-9ade5700a7d3@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+To: Kees Cook <kees@kernel.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>
+CC: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240710230728.work.977-kees@kernel.org>
+ <20240710230914.3156277-1-kees@kernel.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <20240710230914.3156277-1-kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YA62WyI3jnZv4guu_lXXpdNWI0OtkzK5
+X-Proofpoint-GUID: YA62WyI3jnZv4guu_lXXpdNWI0OtkzK5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-08_07,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ clxscore=1011 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408080054
 
-Hi Neha,
 
-On 08/08/24 11:51 am, Neha Malcom Francis wrote:
-> Hi Bhavya
->
-> On 07/08/24 15:46, Bhavya Kapoor wrote:
->> mmc1 was not functional since pin mux for clklb was not present.
->> Thus, add clklb pin mux to get MMC working.
->>
->> Fixes: a266c180b398 ("arm64: dts: ti: k3-am68-sk: Add support for 
->> AM68 SK base board")
->> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
->> ---
->>
->> rebased to next-20240807
->>
->>   arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts 
->> b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
->> index 90dbe31c5b81..d5ceab79536c 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
->> +++ b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
->> @@ -204,6 +204,7 @@ main_mmc1_pins_default: main-mmc1-default-pins {
->>           pinctrl-single,pins = <
->>               J721S2_IOPAD(0x104, PIN_INPUT, 0) /* (P23) MMC1_CLK */
->>               J721S2_IOPAD(0x108, PIN_INPUT, 0) /* (N24) MMC1_CMD */
->> +            J721S2_IOPAD(0x100, PIN_INPUT, 0) /* (###) MMC1_CLKLB */
->>               J721S2_IOPAD(0x0fc, PIN_INPUT, 0) /* (M23) MMC1_DAT0 */
->>               J721S2_IOPAD(0x0f8, PIN_INPUT, 0) /* (P24) MMC1_DAT1 */
->>               J721S2_IOPAD(0x0f4, PIN_INPUT, 0) /* (R24) MMC1_DAT2 */
->
-> How is this different from the P23 pinmux for MMC1_CLK? Could you 
-> explain what CLKLB is, since it doesn't have a ball number I'm finding 
-> it difficult to understand what it is?
->
-This pin needs to be setup so that MMC_CLK is looped back at pad level 
-for highspeed SDIO operations (has been same across K3 family). MMC0/1 
-has this pin configured as INPUT by reset default as these have boot media
 
-  These pinmuxes are derived from pinmux file shared by EVM team during 
-wakeup/board bringup.
+On 7/11/2024 4:39 AM, Kees Cook wrote:
+> Replace the deprecated[1] use of a 1-element array in
+> struct hfi_session_release_buffer_pkt with a modern flexible array.
+> 
+> No binary differences are present after this conversion.
+> 
+> Link: https://github.com/KSPP/linux/issues/79 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+> Cc: Vikash Garodia <quic_vgarodia@quicinc.com>
+> Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-hardening@vger.kernel.org
+> ---
+>  drivers/media/platform/qcom/venus/hfi_cmds.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
+> index 20acd412ee7b..42825f07939d 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_cmds.h
+> +++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
+> @@ -227,7 +227,7 @@ struct hfi_session_release_buffer_pkt {
+>  	u32 extradata_size;
+>  	u32 response_req;
+>  	u32 num_buffers;
+> -	u32 buffer_info[1];
+> +	u32 buffer_info[];
+>  };
+>  
+>  struct hfi_session_release_resources_pkt {
 
-Regards
+Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
 
+Thanks,
+Dikshita
 
