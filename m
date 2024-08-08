@@ -1,151 +1,227 @@
-Return-Path: <linux-kernel+bounces-279396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C566794BCCD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:01:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D7894BCCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93198289619
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:01:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 664A1B22C8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD77418C34A;
-	Thu,  8 Aug 2024 12:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D5A18C329;
+	Thu,  8 Aug 2024 12:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oG4ktlny"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="prBxQf+E"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2060.outbound.protection.outlook.com [40.92.103.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C8514A4DB
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723118484; cv=none; b=VdqKRwF/AHeizgDPAmfW6KWe5e4Hg2cYs0J34nJD5+ql599CgSMJJXnW+yXpln1Krdguy/DXnPY3dRNT+w4CNSUQ5JwcUDtYKYbfQw9D9YwNXEjPTikpWzn5o8RVWHbuUqQsacScZ5zMC+ttjauuVnFk8S7bAz3ToV8FpDVGUXQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723118484; c=relaxed/simple;
-	bh=v1/ezKij1Xb1/LM0FzxebKnX6GG097BFMwzk7oYzp/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gCdQxiCtGcj9QG6H+yQjZqCsAi4HXd4HGtTEP7hk6Mie/5s1D2EHbru3y4uR1RWoN2z48rbQzHKlv8EhrqXCS12D/Zk50QKPiuppUYtp/R/3scvX3yg+5vKHv49bq45TT6TUGuyvZQDlmuHxhCLxYxFNVJqd+t4sw6I7wzTXEDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oG4ktlny; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd78c165eeso7408345ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 05:01:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723118481; x=1723723281; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=x56HaYfAguqXwkXH/W0VkzCpF6NMLJ6hsKX1WsF80Hc=;
-        b=oG4ktlnyivgSythmARtVDS0DcvSmdkuwukckwShy20aF0fGS76+jy5OpA7uJUrvy3e
-         KhpCdWg+kvqulKeRS+twAoDDrSROJmn2/5WiCavoXJRPi6C+RYPH3kdZocKInrIwp0/S
-         clGJ9jZeHMXfCAriAE+sgRdN2+PQJM+NV+/brsYNT+RpoGQh8/isJ9cu/a1k/Pcn2Flf
-         vVR1Yqf8as1rbta0++So2bXS1QGup015HSyXHzYKRDAS6gYs0GrXQ1fnVJ3AqAiy2iV1
-         qTK4bZrmRoBASnuNCzjluyuEHIIyd0WfD6gLyxsZ3orAKczP4jpx1Qe1Rdhp2FZ4kkMf
-         RiFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723118481; x=1723723281;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x56HaYfAguqXwkXH/W0VkzCpF6NMLJ6hsKX1WsF80Hc=;
-        b=hn7AcD9UE9Lx7DeOPisbT0ChmFr6kGGoKdQx4CDGiG0GgCG3BKFB5erZwigRHROYa3
-         knrmnZ8ie92Yd9adD7k3/stpr7BTMnWj0WOU7yFOOs82I7X5n+EsL2KOREPdVG3J9Jhd
-         gAcQY8dkbDHfOl4CrPpl7c9kvHJohbUXItJW0gmqRDh+cQlXBgsnMIrQH2a5hCtXOpnO
-         D3n3JY5Ncogi8gzrfsV0+pGG9yUPlaTO2OPavErpV67hTb1Vg6ymJ+qOV7JD4jwlZgE+
-         3EW5XGNYnrJgoW0Mo65pmRm4+R0WrnThpGFNSay9ie0J5aRogaeR94VCwBNKksDUSFB+
-         alCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXF1kHZh3m8zJktiaIWojUOwelCPRNU9L5RUAUJEMYu35ezQv6IdwHRbswjpM9r9TpCbZ5i+xuvGnhmsJyX3byof+ybWksHAzRLXNLa
-X-Gm-Message-State: AOJu0Yz3KTZ7Md8RYmanqAPgZQvCi4itQDdd8hg5izIkugKujcu8qmIm
-	Gf9KbvoWexa6/lQa9IvSJH7E2JEQcG2OTsbJQWavBvecu7nzBOxb0kHOtbzOeg==
-X-Google-Smtp-Source: AGHT+IHer9Cx3RKHDR+QrEa4bUNXipYY8dzX3QCoI0MnxJJA0/SxKpWCbY7pKxl6gWV8lep00FD9dg==
-X-Received: by 2002:a17:902:f605:b0:1fd:6766:6877 with SMTP id d9443c01a7336-20095224b8dmr25116925ad.2.1723118480848;
-        Thu, 08 Aug 2024 05:01:20 -0700 (PDT)
-Received: from thinkpad ([120.60.136.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b3ad01d4sm3285656a91.23.2024.08.08.05.01.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 05:01:20 -0700 (PDT)
-Date: Thu, 8 Aug 2024 17:31:09 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jingoo Han <jingoohan1@gmail.com>, andersson@kernel.org,
-	quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
-Message-ID: <20240808120109.GA18983@thinkpad>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
- <5f65905c-f1e4-4f52-ba7c-10c1a4892e30@kernel.org>
- <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
- <ZrEGypbL85buXEsO@hu-bjorande-lv.qualcomm.com>
- <90582c92-ca50-4776-918d-b7486cf942b0@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BD7126F1E;
+	Thu,  8 Aug 2024 12:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723118490; cv=fail; b=IpINjAH+kyurh9R5BtBxhhtKrjC6BJSjHOuD9IgCXGQeuQKYj+PqLxwCheSGISz+QxB2G9U5P5YJbcMx0ZnnwN8CWH4EqQ5OHvh4khrS1dIRd1yW4n2fw2QrHubZp25BX+HAN1oSUmCnyPWGdm0oEb9LZ+TUJT8PN7rN92Doqig=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723118490; c=relaxed/simple;
+	bh=Epig5QAHDBVwrNvDZkDXr7kWymX9dQP5FAfFEisSWhU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BpEhJ1Fi4Rtmsxtu1C0n7ZZdkm7hkftKWpAG4dyUZfkEfmFVpCXw+O9gW0+ibBIml8PxjFV3HsQCa29eMw6LTTsr/t2pqzb3ac62Y/PFvDfWrVR6GezOVmAKVkiEuubY9LWfSpFOg+NYvRTX1VWZ6Lx3FvHCa9lZoKT+2WX5vRk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=prBxQf+E; arc=fail smtp.client-ip=40.92.103.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eXYvwCX86pkoFz4bY1LvYkwclunn84+yLwMWtvIG74pYKuL9CDRA52evxAeFEvlEDj+V3vSE6ojShcOEDIKNQ3awUhmS6cAMsklQTIfujWdl1L0zwexS44YDBl5Z0KQkkPqT/OjpiWsPbXlPGg7DwCfMvyCOumR4xCdrQ4yq90Lwal5zuKWzwRQR0FtDTdNEeLmZYS6KNcnZFBee2i74KLtcXUdHxSbS979vcFb5QcLgdQkBk2GRWWvFnOeDM9nHw2opzZE0uDp2xlCqMEGYWF7eRgkO/zr2ljbA/vTVrh9g4uLO4SmBBKrzerWGx7YTkpscUIrwKstZmWCUr0PkFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iRg9eJxDc4ARlekO+g7uV6lPG0TkCEJFMy6dAol1E7M=;
+ b=ehR6lkiQ4oykOwGz6gGKZKr8f3exF3faceqQnMfCSHQ7PmB8z5dYkHZGFY/BZGosSqFvVB5VwcdU37tJnkR8qEpp+u27VFL0NTHMUq1lQtFN+bDhG8vIuuv7ypOQmtejvzpyJxwmGF7JymXepEUJ5Gz/oBZfd2TZRDdlidATue99eAF7Ltx4VuC//UU5EvUQ8zB7VF7S60ilsC/3krglZBY0WKgi7Qp6Yn1/x4d9iREgFSAhXf6hSZRLoFuXi7smh+7byupDN158BWPEgjS00RI7hdFxz2bAv/5usyBTwrQZJ5v6XSFM/yzYIg9F0PizEBGSGGwKzwYoZxozTmEfkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iRg9eJxDc4ARlekO+g7uV6lPG0TkCEJFMy6dAol1E7M=;
+ b=prBxQf+Ee/7Cg8EORrhO9E108okFu8dOhJNLuwCj1zFvZecZgKACTTl6lXaBmxpmB1IrtQIc0YPQr94kj8Pugb4hwgyl2sGsZt7NP1oI6S94OiqAXUrQNKjJ9sZ2gRYJK9HVYXwZKzpBDUP1Fk9b+QQzA4+34qQjDSXZdymr4kpnKdleUf/XQRpuyUwPxt+GQm7dpATKynQzffqbs6vGycgOM90jEuROxL3lu7xwkpnXBmbwVLP7SCD4T3CxwsrCv1M9u8v40yUjHpqBpgywkyfLfTTbU7JJWVjhwuXJiAd8hNOEZ9beG3IePpo8zhklZ1w7LXLpKIahhj203TVHMw==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN3P287MB0339.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:d0::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.14; Thu, 8 Aug 2024 12:01:22 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
+ 12:01:22 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: [PATCH v2 7/9] HID: multitouch: add device ID for Apple Touch Bars
+Thread-Topic: [PATCH v2 7/9] HID: multitouch: add device ID for Apple Touch
+ Bars
+Thread-Index: AQHa6YqvzOez1ap2/U+g7ZZ+h/G4ow==
+Date: Thu, 8 Aug 2024 12:01:22 +0000
+Message-ID: <6AB25F04-EA02-4737-B5FD-77BAAEFA9DC7@live.com>
+References: <9550ADFD-0534-471D-94B4-EF370943CF80@live.com>
+In-Reply-To: <9550ADFD-0534-471D-94B4-EF370943CF80@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [TE0ZrEGgc/1+pS77m/Wjrt74y0yWy2FUAeTYdjUY9yu5UE/ij0wPUXUaM+8Mn4LDaE798j6EIVU=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN3P287MB0339:EE_
+x-ms-office365-filtering-correlation-id: 3f263054-759b-4420-894e-08dcb7a1d214
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|19110799003|461199028|8060799006|15080799003|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ mUfGQz7HYqFw2nSy/OVvOzWJEPoYbi9OaSo1Kf+yNcDeFitTwAeZkPMSbXqKexwNCJMzsKqJtlmzzJds5/70lPuo7Yamqbqq5ktu10i4U3F4Yp3iixn0OZ7h47m1EjxPsW2I131wYjL5V7B0T6DCKUw0KCF8w/qBX1lQkQppXttjB3FC08pPgIsgy9694wlWX0voDPgVeHOTuNnfF2qCwWzX3TyzkCi1yACcI5TzKi+FQpDPVSR6Jpk0m3qqzZSxJYAAV78s0OUnypUNA+O+liw3JsFBrTGUU0PsN1g36OZrYi2EtmNXVCZ1Q6GYF7xkHXjXhBXSnsmNKLdHXtISuGDrQ5iQtZU5bmfaDeV+8ELjvVdvschssgCohRC+N3y28C5eyZ6HpwxA5S39gNaxTU817WyvNpPK2k2WAzN6sLOcpJWugl/JJgWR0R6UsWaswT7e0oeURM4YRuKRVNcMF0/Gcz+ZDDi+HxGH8l61G3Tl2lNRZupHaKbvtGOxmyPHZtx/jS8MMfLxzTK7BH3YJwh6B1AHJeVf8KsocopAIpVsG6PN2GhRdhSwAHZC1+oue4o91sbCYyCRUF1ijqD2O2zyG+hdP980G+dQ/rtziI/SiW83yhe7gYEm06YnLFC6BFYdREPxrK9Pq6WBthpiydgaL7pRKg0xwKNsIRKty8EEqY+CEIQtCFGsMYPTdCmz
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?XY4qMeanqyQDILrA3IMiqebs0wv0dJ9/wwbRMsrP+B5ofxG6afa70GAm0wqD?=
+ =?us-ascii?Q?T6eNah+yiLyuwj5Hu0VUbLSoPzBeEtFcl0nstUDVkFTbNVaSUy3ftQKFHqDJ?=
+ =?us-ascii?Q?RPk5pxDSpZsClRjKkbPKBXEFc4zBQy+G4IX0nTwxBHFQ59YgMb2xTR/cAxit?=
+ =?us-ascii?Q?T4oc0sjLcS4mvi/MkXsUTXL/jex/azOcKPvRpPHtwnXRITcn1j2YM9NRo+PP?=
+ =?us-ascii?Q?Rul6Lp2cVVmWaGY4uibNMrtBNj3BQCzenKRmy05WDx4lHc8GR7o7JHslq9Od?=
+ =?us-ascii?Q?xRQXQIHs1GGIAqs0PQ9lonKJQtqjAPOh+odps0inaF37zwx7bD6owsbtabva?=
+ =?us-ascii?Q?+u/3sG5Lh8nMdB6PhSW4iO9tChW7MuxLY6Wlo90ZQO3Ddh4I7Ia8SdNDAl3y?=
+ =?us-ascii?Q?gnFxztowbspsLKPLAw+w7ZN5I8/6O6nEC98O41UYf4wDP7/IK06LEJ5lufA9?=
+ =?us-ascii?Q?FJuWM4IidXI7DPZlHwbWhZm0Qks+OJ7D8/GHP5fkOJlLnt59yDxs65b+1p7o?=
+ =?us-ascii?Q?ai3q/0sUJBFf3G33a/9geLT1wCU4YrIaQHRnGFwlQBAHGFZcyFIVErt2j31s?=
+ =?us-ascii?Q?QBCkWkh1A9qiNi1sJ9Qpvwx8u1U+OrMcNgQJ4AwWyf8AaigmOAngfM1kLI41?=
+ =?us-ascii?Q?fR0gkxdap1JdkOLI8viV/U9EniMpER+wEui6TD2dTI6vhYdsi+PD3Beb2/f6?=
+ =?us-ascii?Q?OcsvgtOODqciCazkl7kkBD98gIVsvn/lKtrbB+xdlj8W5VgcJwwuom8bSGAd?=
+ =?us-ascii?Q?KN6nnf19ek9S8Ea5kzBygmx8RM7UGO1IB7+wVFymW8zacZFDWUjbuDND2cdY?=
+ =?us-ascii?Q?U+V1hTx0W9n1LzvrbpqjCcufQdZAa3JYNA/OXsDeQ88j5KLPiDVGiX+b8irv?=
+ =?us-ascii?Q?KY6N9x+wjREohaohK1NtD+T4xeZj+rm96gQCBLx4V7hMM4XWI9YBUO7Yxk31?=
+ =?us-ascii?Q?Au3rxTzwM9GK1aWH6pdzs/wM/PCGkmTNzKDqGwb94c9bAYbFFnJ3F8DWEvZJ?=
+ =?us-ascii?Q?nv6PzFp8X5XYk/uoLU7qyPeYSNcdkqmUOypLkoIS0QCByav4QC06j4PDQdCy?=
+ =?us-ascii?Q?9s5PNposrS20GzYMnhR4R3yMvpdA5v7AEtLtvrJTISa+48ODN4LitjKBqkpz?=
+ =?us-ascii?Q?ZgM57CQYErCJKjD/G3MwJrmq9gmftianTOANaO5shTMpEa4DAqbHbKz9K7Xc?=
+ =?us-ascii?Q?pOhoXl/qQeWaK0BR/UgvBfbyc7ZWoaaedOXIUJw81JKuB47bE6UdJVvIDHy0?=
+ =?us-ascii?Q?6eM26xr7NE5/SOuWnhR92vU+1eL6tqe1NXZLZlhoMWJXdM/yHKVu4pC/Q2qD?=
+ =?us-ascii?Q?rrTnrwN2Md+k3ZwLFtOdAMBp?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <83B75ECA2854B541BA20B45AF5B694BF@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <90582c92-ca50-4776-918d-b7486cf942b0@kernel.org>
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f263054-759b-4420-894e-08dcb7a1d214
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 12:01:22.1641
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB0339
 
-On Mon, Aug 05, 2024 at 07:18:04PM +0200, Krzysztof Kozlowski wrote:
-> On 05/08/2024 19:07, Bjorn Andersson wrote:
-> > On Mon, Aug 05, 2024 at 09:41:26AM +0530, Krishna Chaitanya Chundru wrote:
-> >> On 8/4/2024 2:23 PM, Krzysztof Kozlowski wrote:
-> >>> On 03/08/2024 05:22, Krishna chaitanya chundru wrote:
-> >>>> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
-> > [..]
-> >>>> +  qps615,axi-clk-freq-hz:
-> >>>> +    description:
-> >>>> +      AXI clock which internal bus of the switch.
-> >>>
-> >>> No need, use CCF.
-> >>>
-> >> ack
-> > 
-> > This is a clock that's internal to the QPS615, so there's no clock
-> > controller involved and hence I don't think CCF is applicable.
-> 
-> AXI does not sound that internal.
+From: Kerem Karabay <kekrby@gmail.com>
 
-Well, AXI is applicable to whatever entity that implements it. We mostly seen it
-in ARM SoCs (host), but in this case the PCIe switch also has a microcontroller
-/processor of some sort, so AXI is indeed relevant for it. The naming actually
-comes from the switch's i2c register name that is being configured in the driver
-based on this property value.
+Note that this is device ID is for T2 Macs. Testing on T1 Macs would be
+appreciated.
 
-> DT rarely needs to specify internal
-> clock rates. What if you want to define rates for 20 clocks? Even
-> clock-frequency is deprecated, so why this would be allowed?
-> bus-frequency is allowed for buses, but that's not the case here, I guess?
-> 
+Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ drivers/hid/Kconfig          |  1 +
+ drivers/hid/hid-multitouch.c | 26 ++++++++++++++++++++++----
+ 2 files changed, 23 insertions(+), 4 deletions(-)
 
-This clock frequency is for the switch's internal AXI bus that runs at default
-200MHz. And this property is used to specify a frequency that is configured over
-the i2c interface so that the switch's AXI bus can operate in a low frequency
-there by reducing the power consumption of the switch.
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index 72b665eda..35ef5d4ef 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -744,6 +744,7 @@ config HID_MULTITOUCH
+ 	  Say Y here if you have one of the following devices:
+ 	  - 3M PCT touch screens
+ 	  - ActionStar dual touch panels
++	  - Touch Bars on x86 MacBook Pros
+ 	  - Atmel panels
+ 	  - Cando dual touch panels
+ 	  - Chunghwa panels
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 2948fbcbc..0fed95536 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -214,6 +214,7 @@ static void mt_post_parse(struct mt_device *td, struct =
+mt_application *app);
+ #define MT_CLS_GOOGLE				0x0111
+ #define MT_CLS_RAZER_BLADE_STEALTH		0x0112
+ #define MT_CLS_SMART_TECH			0x0113
++#define MT_CLS_APPLE_TOUCHBAR			0x0114
+=20
+ #define MT_DEFAULT_MAXCONTACT	10
+ #define MT_MAX_MAXCONTACT	250
+@@ -398,6 +399,13 @@ static const struct mt_class mt_classes[] =3D {
+ 			MT_QUIRK_CONTACT_CNT_ACCURATE |
+ 			MT_QUIRK_SEPARATE_APP_REPORT,
+ 	},
++	{ .name =3D MT_CLS_APPLE_TOUCHBAR,
++		.quirks =3D MT_QUIRK_HOVERING |
++			MT_QUIRK_TOUCH_IS_TIPSTATE |
++			MT_QUIRK_SLOT_IS_CONTACTID_MINUS_ONE,
++		.is_direct =3D true,
++		.maxcontacts =3D 11,
++	},
+ 	{ }
+ };
+=20
+@@ -1747,6 +1755,15 @@ static int mt_probe(struct hid_device *hdev, const s=
+truct hid_device_id *id)
+ 		}
+ 	}
+=20
++	ret =3D hid_parse(hdev);
++	if (ret !=3D 0)
++		return ret;
++
++	if (mtclass->name =3D=3D MT_CLS_APPLE_TOUCHBAR &&
++	    !hid_find_field(hdev, HID_INPUT_REPORT,
++			    HID_DG_TOUCHPAD, HID_DG_TRANSDUCER_INDEX))
++		return -ENODEV;
++
+ 	td =3D devm_kzalloc(&hdev->dev, sizeof(struct mt_device), GFP_KERNEL);
+ 	if (!td) {
+ 		dev_err(&hdev->dev, "cannot allocate multitouch data\n");
+@@ -1794,10 +1811,6 @@ static int mt_probe(struct hid_device *hdev, const s=
+truct hid_device_id *id)
+=20
+ 	timer_setup(&td->release_timer, mt_expired_timeout, 0);
+=20
+-	ret =3D hid_parse(hdev);
+-	if (ret !=3D 0)
+-		return ret;
+-
+ 	if (mtclass->quirks & MT_QUIRK_FIX_CONST_CONTACT_ID)
+ 		mt_fix_const_fields(hdev, HID_DG_CONTACTID);
+=20
+@@ -2249,6 +2262,11 @@ static const struct hid_device_id mt_devices[] =3D {
+ 		MT_USB_DEVICE(USB_VENDOR_ID_XIROKU,
+ 			USB_DEVICE_ID_XIROKU_CSR2) },
+=20
++	/* Apple Touch Bars */
++	{ .driver_data =3D MT_CLS_APPLE_TOUCHBAR,
++		HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
++			       USB_DEVICE_ID_APPLE_TOUCHBAR_DISPLAY) },
++
+ 	/* Google MT devices */
+ 	{ .driver_data =3D MT_CLS_GOOGLE,
+ 		HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, USB_VENDOR_ID_GOOGLE,
+--=20
+2.39.3 (Apple Git-146)
 
-It is not strictly needed for the switch operation, but for power optimization.
-So this property can also be dropped for the initial submission and added later
-if you prefer.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
