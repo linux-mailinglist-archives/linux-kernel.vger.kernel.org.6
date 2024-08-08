@@ -1,148 +1,158 @@
-Return-Path: <linux-kernel+bounces-279019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE8494B7FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:37:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A35494B7FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88FA628751D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:36:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F36582865D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616D418757F;
-	Thu,  8 Aug 2024 07:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTVCyNuh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1624D18757F;
+	Thu,  8 Aug 2024 07:38:29 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921127464;
-	Thu,  8 Aug 2024 07:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D2E7464;
+	Thu,  8 Aug 2024 07:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723102613; cv=none; b=leJ4TovJPOgHOEEtIWSVVvZswPavlpHlp5Jp/s/Z50W55vIA4nNOeFpQmkt7fCWuyYNzhkmN1oRIiuGBvvHw6qwgJzAUDNQR/nW1vQr5XM9uWROAwalGSqieJ8rW8KFsgbgOCpsOjZUsYcODkUiilq+VSCemh8cbKBS0bagM4V8=
+	t=1723102708; cv=none; b=AV0JzyvT5Dw/sqor09+ngIzihiVJILWMj/t+DLJhUfw1b8DGylcjB5XV4KNa3uu1RLJZnzvkrDfCn+zPDMNTnaIRPVtoAa0/HTyXdFAuFvQ3ddYlz/TJfXFtsLIn+cCEEr6UDmkqGZ1JNZRBMXoK5HZdsj2pZUJ0ZAkbCLBAxxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723102613; c=relaxed/simple;
-	bh=IArkuA/rezyzXAsivv8x1VsmdgMdM4imAqtpxCdcriw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ocufZ4//ToLQOxHBDhbVBblnMwUXjERdlxTZZtoAnUuUd7SoKNhQg+kkh0IKAGgVAgGLRWbgzOZBtVJ60GNo86ND5BN6HvYdaAfUmacAe0a+4iQVD0PusGg5G2oIh7PIuBT2yaLupQWMMo1K8lQV5PdbcAwlKeyrqvt9Kk59YK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JTVCyNuh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49728C32782;
-	Thu,  8 Aug 2024 07:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723102613;
-	bh=IArkuA/rezyzXAsivv8x1VsmdgMdM4imAqtpxCdcriw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JTVCyNuhgnNMF7vhdRXASkM9KJ/pQJ4jCEovor5D/krRQBnIbil3TbCzJAyjwYry2
-	 HN0NbcKtZ2V76VSOjXDMZ3qZjuWSj0MVhrs6dGPMj98o20Eowwgp0Zrr0qjOLpKWI7
-	 J6X5b7nI4w+VuFTCbbBwcaUsL9nrdjkzFv91n60OO4agNMLIVIBdy/HyiogyFhHI0l
-	 8V0Z6Vz4FRtsrCFnntI4iMwIvFF2Sd/59AwHPW+AG15SwqRPFWYxoQFq/4NpSFy3Tq
-	 YuVKpHE2xhfr8AQCQhk8A/Mu874FQlrJovXF09pyz0C30ZdiwkNUCt6dLyBwTg2+dU
-	 qYmHCy8LYuI0A==
-Message-ID: <efaf459f-dd22-4200-9ad5-76a90d8038d2@kernel.org>
-Date: Thu, 8 Aug 2024 09:36:46 +0200
+	s=arc-20240116; t=1723102708; c=relaxed/simple;
+	bh=hc5j+myHdlqI4TvbsXgmby9c342TeQNxoIXR9MdPZt8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AJ1UZYVh1M5qm9h7UeeoOsHjXY7PbCHmIgvwaZCWL78f8ykT+rJQ5f2JaHvmqfYV2Cf6AsBm0PQ16WCAXRi2XCYwkAfpoe4zpuLUdQRGjn7brhXPPmu3ZLVQLMLPEbKcm9B8ZnXgyki39dxlGMVFr2Ntt1PTlpWTNvlnH0JjRlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so86543066b.2;
+        Thu, 08 Aug 2024 00:38:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723102704; x=1723707504;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4HBmbqk9ms7in+UR7tka+4chrV1ZmoOVr9gG0UPaa1E=;
+        b=okir+Z8AAOXSZdRWvK7oUgbeepJcRdbPmjgQZLavd6ReM2nIiIC8WReCwZpgqPoA05
+         KbDj7jqpD08HM4AakoSoR/cgF39qWPURiOSDjoyd7cerpZKZhV1CugTB6C+PzTHqvx0d
+         zEyh397122RNpQQ01S88Np4KShRPCs/u/dNzOFkgh3Q9h3NlLuj2ssonwSp4Bx3z0El1
+         2BIa1bwmKOAdo3cWVf24YD7yrxKpZ8/weSjH52qoF2zPtxForo37//jA/OeYcozxI+Qw
+         k1ikZt0lFp3nocoJIj22t1E5bsiTQ5erJjwmToSziP6CgARiZcyYuT7B1WtLqDEQmcUe
+         dnCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWm6byVQbeRA1LPNJJkPKeG6QlImqnDFs1KzHkQ8SRk7gIZygK9Jro1cpRRPqrJdiwApt8z1/Jq5D+Lq/OESupqlYarK4fBnROCKuACkVRwDlLkeBXYP6nY5FlXUYG1svKPEYMhQnCC1AVGt5Y=
+X-Gm-Message-State: AOJu0YwptXA+lRat8R9peb9woPn+N+gFawIu+MnsjBU0JpYViFvszLZj
+	ks8EWhkyKb0AHGVPz5c1adVhAikvh1+byf7SaKNYR8oUxwObrpjKYUYbM/UbMa0=
+X-Google-Smtp-Source: AGHT+IFMncklZr3LZ6mN1e6VkBP5kQa42R44Fjt8A27gX936k/QTk8MZsfc8W5yLM7AvA2S+Frzrbw==
+X-Received: by 2002:a17:906:6a05:b0:a7a:a138:dbd2 with SMTP id a640c23a62f3a-a8090e6304amr65770466b.50.1723102704133;
+        Thu, 08 Aug 2024 00:38:24 -0700 (PDT)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0cae0sm708145366b.56.2024.08.08.00.38.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 00:38:24 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7d2a9a23d9so73172866b.3;
+        Thu, 08 Aug 2024 00:38:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUzy2wf4OyCA8l87Dxf2e4T4Iau2hby85SnTt8j9SPKl6zYZmvI8zo8jBgQLAR11XHu5hVxcsfJ6fkkFGi8FVSYzB2IvDt3P92tc1RP5670FP+PhR1eSsqZ60CA2mHoPogZXVs930gb3jNTos=
+X-Received: by 2002:a17:907:c7e0:b0:a7a:8876:4427 with SMTP id
+ a640c23a62f3a-a8090c835d0mr65204466b.25.1723102703653; Thu, 08 Aug 2024
+ 00:38:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/2] dt-bindings: net: dsa: Add KSZ8895/KSZ8864
- switch support
-To: Tristram.Ha@microchip.com, Andrew Lunn <andrew@lunn.ch>,
- Vivien Didelot <vivien.didelot@gmail.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240807232023.1373779-1-Tristram.Ha@microchip.com>
- <20240807232023.1373779-3-Tristram.Ha@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240807232023.1373779-3-Tristram.Ha@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240731134346.10630-1-zehuixu@whu.edu.cn> <3695674.9o76ZdvQCi@skuld-framework>
+In-Reply-To: <3695674.9o76ZdvQCi@skuld-framework>
+From: Neal Gompa <neal@gompa.dev>
+Date: Thu, 8 Aug 2024 03:37:46 -0400
+X-Gmail-Original-Message-ID: <CAEg-Je9gyR2xKF8Ky8eWTR=6odZbgCRCM6DhYPVTAJTDPDxakg@mail.gmail.com>
+Message-ID: <CAEg-Je9gyR2xKF8Ky8eWTR=6odZbgCRCM6DhYPVTAJTDPDxakg@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: Kbuild: Skip -fmin-function-alignment in bindgen flags
+To: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	Zehui Xu <zehuixu@whu.edu.cn>
+Cc: boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/08/2024 01:20, Tristram.Ha@microchip.com wrote:
-> From: Tristram Ha <tristram.ha@microchip.com>
-> 
-> KSZ8895/KSZ8864 is a switch family developed before KSZ8795 and after
-> KSZ8863, so it shares some registers and functions in those switches.
-> KSZ8895 has 5 ports and so is more similar to KSZ8795.
-> 
-> KSZ8864 is a 4-port version of KSZ8895.  The first port is removed
-> while port 5 remains as a host port.
+On Wed, Aug 7, 2024 at 3:52=E2=80=AFAM Neal Gompa <neal@gompa.dev> wrote:
+>
+> On Wednesday, July 31, 2024 9:43:46=E2=80=AFAM EDT Zehui Xu wrote:
+> > GCC 14 recently added -fmin-function-alignment option and the
+> > root Makefile uses it to replace -falign-functions when available.
+> > However, this flag can cause issues when passed to the Rust
+> > Makefile and affect the bindgen process. Bindgen relies on
+> > libclang to parse C code, and currently does not support the
+> > -fmin-function-alignment flag, leading to compilation failures
+> > when GCC 14 is used.
+> >
+> > This patch addresses the issue by adding -fmin-function-alignment
+> > to the bindgen_skip_c_flags in rust/Makefile. This prevents the
+> > flag from causing compilation issues.
+> >
+> > Link:
+> > https://lore.kernel.org/linux-kbuild/20240222133500.16991-1-petr.pavlu@=
+suse
+> > .com/ Signed-off-by: Zehui Xu <zehuixu@whu.edu.cn>
+> > ---
+> > Since -falign-functions does not affect bindgen output, we do not
+> > need logic to add it back to the flags. Thanks to the community's
+> > help, especially Miguel Ojeda. Hope this patch is free of problems
+> > and can be submitted smoothly : )
+> >
+> > v1:
+> > * https://lore.kernel.org/all/20240730222053.37066-1-zehuixu@whu.edu.cn=
+/
+> >
+> > v2:
+> > * Added -falign-functions to bindgen_extra_c_flags when skipping
+> >   -fmin-function-alignment to maintain function alignment settings in G=
+CC 14
+> > * Used reasonable length and moved email content out of the commit mess=
+age
+> > * Used "Link" tag instead of "Reference:" and removed empty lines betwe=
+en
+> > tags * Specified the base commit
+> > * https://lore.kernel.org/all/20240731034112.6060-1-zehuixu@whu.edu.cn/
+> >
+> > v3:
+> > * Removed logic from patch v2 which adds -falign-functions
+> >
+> >  rust/Makefile | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/rust/Makefile b/rust/Makefile
+> > index 1f10f92737f2..0c8736cce64f 100644
+> > --- a/rust/Makefile
+> > +++ b/rust/Makefile
+> > @@ -227,7 +227,7 @@ bindgen_skip_c_flags :=3D -mno-fp-ret-in-387
+> > -mpreferred-stack-boundary=3D% \ -fno-reorder-blocks
+> > -fno-allow-store-data-races -fasan-shadow-offset=3D% \
+> > -fzero-call-used-regs=3D% -fno-stack-clash-protection \
+> >       -fno-inline-functions-called-once -fsanitize=3Dbounds-strict \
+> > -     -fstrict-flex-arrays=3D% \
+> > +     -fstrict-flex-arrays=3D% -fmin-function-alignment=3D% \
+> >       --param=3D% --param asan-%
+> >
+> >  # Derived from `scripts/Makefile.clang`.
+> >
+> > base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+>
+> Looks good to me.
+>
+> Reviewed-by: Neal Gompa <neal@gompa.dev>
+>
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+To add, can we get this in as a fix for Linux 6.11? I can't build
+Fedora kernels with Rust stuff enabled without it since GCC 14 is
+shipped in Fedora Linux 40+.
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-Also, bindings come before users.
-
-Best regards,
-Krzysztof
-
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
