@@ -1,86 +1,126 @@
-Return-Path: <linux-kernel+bounces-278874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F1994B5E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:29:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D6194B5DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C474283700
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:29:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43AE31F230F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B3D84A36;
-	Thu,  8 Aug 2024 04:29:14 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BAC81751;
+	Thu,  8 Aug 2024 04:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XNgUgQbI"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711D89479;
-	Thu,  8 Aug 2024 04:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DB99479
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 04:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723091354; cv=none; b=Tyeegthvwliy6ah48qWlYF/k+Ny8cBsMth2/L1fcTOpNaEyITqREmnDjAchfL+esxzq18ya6W/OLa3J4pU8Dbkfe48BnoHtkYEbDufBP261Oz+F/qYJIHKNpDqc0xFaVm+B95uGhvlHW3csy45uzwYRNCHVPm7GLi7n37YbY9yk=
+	t=1723091026; cv=none; b=cBAYVVjqfTA6AmiiVSwLolJsNoFt4ERnrpR5YELN4mhVuCkIN8LDNW/tODC4WNli9RWr2CKcEJcAie/mK7KVGhH6OI+Burd1/679/qX6s9YCv36Y+kwH55EhErk6h7luiPjvrGaqX9pp8sOdyEIJG3vY77SccJ2aazbs0DMZNek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723091354; c=relaxed/simple;
-	bh=VZnbU1tr7vApzjtodZLzpnObpxoYTlBfeyJBNiFxUOs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NVyQWHWEvwl7mo90UAL7+rjYBxP4O08PSitS/M7HmN4L5W9kBu5arYz/k2D+gH05CeoPvUMQTVA0PXAOI/DSINPuPtDr+Ksy+gkfIY321iMiibKBpj/XLa4RpKG3DIuVO4O3+xk5+qLOWVD+IlQUmt2F4Nq5gstzgkAy8P6/ORU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 1521E1206A4;
-	Thu,  8 Aug 2024 04:04:26 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf04.hostedemail.com (Postfix) with ESMTPA id B6AA920027;
-	Thu,  8 Aug 2024 04:04:23 +0000 (UTC)
-Message-ID: <f537155e5a296fea11920cdf2de67a105dcc8e7b.camel@perches.com>
-Subject: Re: [PATCH 0/2] HID: samsung: Object code size reduction and
- neatening
-From: Joe Perches <joe@perches.com>
-To: linux-input@vger.kernel.org
-Cc: Sandeep C S <sandeep.cs@samsung.com>, Junwan Cho
- <junwan.cho@samsung.com>,  Jitender Sajwan <jitender.s21@samsung.com>, Jiri
- Kosina <jikos@kernel.org>, Benjamin Tissoires
- <benjamin.tissoires@redhat.com>, linux-kernel@vger.kernel.org
-Date: Wed, 07 Aug 2024 21:04:22 -0700
-In-Reply-To: <0cfbea8be50a1f3da6ab748d463fe29d1e515cb8.camel@perches.com>
-References: <cover.1706732238.git.joe@perches.com>
-	 <deebac6b6d06a6cd49ac09606a07576b84e35894.camel@perches.com>
-	 <0cfbea8be50a1f3da6ab748d463fe29d1e515cb8.camel@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1723091026; c=relaxed/simple;
+	bh=SWfYIM3OIuhRhP+HQWluSdhILpZhBQenaM/ijW1wCm8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N6UVPwChcC0IkcI9j0MRu0TpCBnI6i8WUAvXHfniz9omXARsDsWo0OZCdInuMr9Yl5/komC0QZDqq2eVS0BwdkgQZTGy1943PXIu564s2yX/VlX+Wj4Z0DRGXA/IpdrVFDkV40SgYEwLcZDf+ub2ys9h/K6oh5fs2zp8okzDe5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XNgUgQbI; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cf11b91813so463217a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 21:23:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723091024; x=1723695824; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=It0jnQvSTnsNl9m1sw0iiNcmUDMRTYEU99kRgSwwlW4=;
+        b=XNgUgQbIUQCz1zt7D7PpPHijypUTS1niVuBIYOUO/L6mlG6MpUhmKaZsYIxnjdR7vp
+         sZK5IAlpo7a32xQC/ZzpG9NZmxoHHchKl9v85MSbjC2fUgPU0m6zGCKBbSDmHLW/VXep
+         T0s62YM3elw/cx0fBXtgAq7nK2qr8VUpyxpdlLZV5PkwJHjwbUfBhDFdJq4T64+qg6rU
+         V37Mh3AXPH5mofEVF/Lpqa2x5gFhLV2jNslWTB6Tn/fbNeUcANVIRiyD25a1EQGuHTZo
+         tP8DwelJodNpWBc63dPCTsGNT0pb05/hf9WmJZzLdQbMxV5HXYbQ2X9AMNL7RjMsQHFL
+         ph1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723091024; x=1723695824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=It0jnQvSTnsNl9m1sw0iiNcmUDMRTYEU99kRgSwwlW4=;
+        b=VBr+bkscVFH2+QZDif5mvgUSS7sWc5SI0W6EOSJI41t0/tHdFWZZx/Pg4Zg2Iao3GM
+         D6qA9NdkzA/98Jr50FkcGj98Xwg21FI7yudJYieuvMYB+amxIsH3R2kJT4Qwq57UpfPh
+         iDPcgC2ndyx8YiYalngKBqbcxjXYIOGLKghugq4Vc/1GtXpi/OjQ4LkEg3xYYXGwYgct
+         vfIra9NMcTzFJ+qnIHPdYewm7K7stTlC9my72up5Wzy804T1kkQbXiRI7RTPG9AALpac
+         4LKn7Y68eTuERJyTLIdSGyruECqV3W1YJDqMwqSwIbiqwYMBOrIIatMFHYl9ieUFQl0m
+         2VUQ==
+X-Gm-Message-State: AOJu0YzGL8xLP3nXnQGvy4yUcLHbFVtIhZpgwtsqC5blx2AFOlzkRJrI
+	cjIf3k+zZlVXaSNU73pvHxQ/gCb6QjhyAlWexSThsoBFj6yTiCd7CEfYvsDcq1BNksuGH4pVT0v
+	P5o7xKHJGRDcgMkCC9tC3qwJq6Bg=
+X-Google-Smtp-Source: AGHT+IFAhAAzjU4QhlzFjI5wM2xeNDvAvz1TlNmrkToL+qqYYLdk3jc4X+HkPZDquAJxEEqNSsU07UEVDRx26b8Qsxo=
+X-Received: by 2002:a17:90b:38ca:b0:2c9:a3d4:f044 with SMTP id
+ 98e67ed59e1d1-2d1c33b5ce2mr744052a91.11.1723091023969; Wed, 07 Aug 2024
+ 21:23:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: B6AA920027
-X-Rspamd-Server: rspamout07
-X-Stat-Signature: 8984qa468ogmmx8z7o67c164xma73u9b
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+zoEoKGBV00oAYPKiXO8xc1zBHws4Xc0Q=
-X-HE-Tag: 1723089863-728521
-X-HE-Meta: U2FsdGVkX19LZ6xPNhzyJNhPbW2rQ3hnngp8E+XC1jwk5IFXuZs7d5DolJngpLCR8rQaTwpczN+Y1E7aqqLiiu8wenVij0cuqU1KjSntF/5Fy3U8XJLFm1QqONd7/RzTGE9HOkPJGTNtEPLnQAcaUjm6o2Y8XMksyduEBVnJNevx/gIWD0ofnsBmgt5e1OwtdbO9O66X+1EUEEGFKYIPoif7x1kxvjMsPqjPVfCbFe1JfxxHjrSQ1fB0VV5SXI45fWI5RA6flANBMzH0yd6COg1RW/X5u1SD1RlkjB6Y0s3zMzYsfNcULyMt0ZhL0053
+References: <20240802211850.1211737-1-tj@kernel.org> <20240802211850.1211737-2-tj@kernel.org>
+In-Reply-To: <20240802211850.1211737-2-tj@kernel.org>
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+Date: Thu, 8 Aug 2024 12:23:32 +0800
+Message-ID: <CAJhGHyAv_jwMxFoU6Wa2epfCQK_0LsAkBhFwkGX-ZT-9tAdwYg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] workqueue: Make wq_affn_dfl_set() use wq_online_cpumask
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-03-08 at 23:02 -0800, Joe Perches wrote:
-> On Mon, 2024-02-12 at 10:09 -0800, Joe Perches wrote:
-> > On Wed, 2024-01-31 at 12:21 -0800, Joe Perches wrote:
-> > > Reduce object size and neatening
-> > >=20
-> > > Joe Perches (2):
-> > >   HID: samsung: Reduce code size
-> > >   HID: samsung: Object size reduction and neatening
-> > >=20
-> > >  drivers/hid/hid-samsung.c | 652 +++++++++++++++++-------------------=
---
-> > >  1 file changed, 283 insertions(+), 369 deletions(-)
-> >=20
-> > Any comment from the samsung folk on these?
->=20
-> Ping?
+Hello
 
-Are samsung folk actually looking at patches?
+On Sat, Aug 3, 2024 at 5:18=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
+>
+> Other unbound pwq update paths are already using wq_online_cpumask which =
+is
+> protected by wq_pool_mutex. Make wq_affn_dfl_set() to use wq_online_cpuma=
+sk
+> too for synchronization and consistency.
+>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> ---
+>  kernel/workqueue.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+> index d56bd2277e58..6571e1f3c835 100644
+> --- a/kernel/workqueue.c
+> +++ b/kernel/workqueue.c
+> @@ -6909,18 +6909,16 @@ static int wq_affn_dfl_set(const char *val, const=
+ struct kernel_param *kp)
+>         if (affn =3D=3D WQ_AFFN_DFL)
+>                 return -EINVAL;
+>
+> -       cpus_read_lock();
+>         mutex_lock(&wq_pool_mutex);
+>
+>         wq_affn_dfl =3D affn;
+>
+>         list_for_each_entry(wq, &workqueues, list) {
+> -               for_each_online_cpu(cpu)
+> +               for_each_cpu(cpu, wq_online_cpumask)
+>                         unbound_wq_update_pwq(wq, cpu);
+>         }
 
+I think it should be for_each_possible_cpu() for updating the pwqs.
+
+For all the 4 patches:
+
+Reviewed-by: Lai Jiangshan <jiangshanlai@gmail.com>
+
+Thanks
+Lai
 
