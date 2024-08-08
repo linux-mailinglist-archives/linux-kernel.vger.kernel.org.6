@@ -1,172 +1,127 @@
-Return-Path: <linux-kernel+bounces-279254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3846094BAFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:30:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B06E294BAFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1B3D283FA3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:30:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3352BB20D46
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D816818CC11;
-	Thu,  8 Aug 2024 10:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB37618A930;
+	Thu,  8 Aug 2024 10:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjNgDEl4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C9B/f+W0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC5618A6C2;
-	Thu,  8 Aug 2024 10:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43FF18A6B8
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112900; cv=none; b=Gcl2pi/FrlxcXmxJpDxUUc3en8wPfiZ32nPY6662XRZxBSFbv1QQ13PLgbKJarNqMuS6Gq7sjBA9pTwxb+0k4Bqdi4Cd+lBx2PVaR8S0MX593MDe5SeZ/RwCM1EFUwhyw7B/Qum+GgF6B6IPNraSB9jekUEW4zBVmT6PRJWsVDU=
+	t=1723112938; cv=none; b=KmJa2gjj6hXhPUMaHm0Yu6q1XLsy55cdE8WhlEYYyBpEF9nEn4+vEuRJkTswB+HEHYoPWSIP1jqNdCfobOwQkwt3YU2h40hDh+ZkdG9YjYnIxTddg+h1OcGdfpgDaUh/x9IqJXOQkBeVJWhQPgp+ndc+gkmwK5A2IpRAaP1okAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112900; c=relaxed/simple;
-	bh=intYcQDbZsn2duAHXMXmHdLSGdw1MRwxV58NXdIotYQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JffDRVJwZDpY6od+epbfGd5w/if0qViGI85wjhdztMPiDCSEO25yJApNeY7Fy/u8eg4A/0vtQWHPoG19tIiX+6PltA5JQo+uth1fDYuyYpT1OfVrV9NxKWlY8Medf6qwsDxF18bJdqncM+dRcob8FxBaPvwS7GPkGSzlvJY01ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjNgDEl4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E4BC32782;
-	Thu,  8 Aug 2024 10:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723112899;
-	bh=intYcQDbZsn2duAHXMXmHdLSGdw1MRwxV58NXdIotYQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PjNgDEl4VsgNp09L6gVKrUAccTmXQpKIs3m6TAgrqoQTxj+2iqlQdf6AuxfJsEiPC
-	 hPE5nkoHs8iOvRk02r+AAu91mz80+2arhy5ca76muzSwF6hs70XJcfuSLM56TgTTW+
-	 kdKs8HsYfqNXdfq0EhAs2vGzYCMoWw5pO77FhWYiWc6Sx4z4OsoqYqWSpe7+SimLVZ
-	 lPKvNGdpX1sDzs6UOAjZdSzgu8UDl2fnBo6GrIdPDQH4PfgwYa8mR/Wk5AjbXrKp/n
-	 NM8iFftJrzM70Z1PaR1qf2qXgg5OpvTbeDkf9oCu7tOsiGZJVsSzLOVYPG6BMlbZHH
-	 pbhoObXLFrRMQ==
-Message-ID: <2975fb46-6145-4da3-8d8a-41f5d35db90c@kernel.org>
-Date: Thu, 8 Aug 2024 12:28:13 +0200
+	s=arc-20240116; t=1723112938; c=relaxed/simple;
+	bh=4uEa+812lSqYwj5RnyAM0Mq1iA1qCM9VCy3pwBVz9n4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mTBQ1EZly4a6f1Y3nFu1Aq6Gc2wX4kFZxJ6gpgb8Z8JMglRaTSx42ttTgbawAE0efB6mlpTv3sozqa5F2X7irB41K4kngKeWl+Cz2zkhOsUU80kOMZ/8c50/PB327YkTt1t1V5LyDZ+uecHpAWKt8KsqcEdU91POAzMQ9ByZqM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C9B/f+W0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723112934;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zqff808lcKfY5U/qgJUHTq9+9GeyxDW5MWmHOf7xqPA=;
+	b=C9B/f+W0XD1Zq1yxn8ghWWAa8O56j2IJV5a6TbX4Ih2s3gB/DdZ3naIClRO5h7H5SFUShk
+	Gcdc06ibY5bpJ/CIQc01Hv3F5WcLlUDRWMJB0I55OKx2kYF0/YFq1Cp76KGlZAWbhmB80z
+	qNEIC4BvYxQazN5kCsYE2BbvVmrgm68=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-340-U8GN3sdtPmeuyYsLfHUaXQ-1; Thu,
+ 08 Aug 2024 06:28:49 -0400
+X-MC-Unique: U8GN3sdtPmeuyYsLfHUaXQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 40A371944A97;
+	Thu,  8 Aug 2024 10:28:46 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.189])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D0A761956052;
+	Thu,  8 Aug 2024 10:28:40 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  8 Aug 2024 12:28:44 +0200 (CEST)
+Date: Thu, 8 Aug 2024 12:28:37 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] uprobes: Improve scalability by reducing the contention
+ on siglock
+Message-ID: <20240808102837.GC8020@redhat.com>
+References: <20240801082407.1618451-1-liaochang1@huawei.com>
+ <20240801140639.GE4038@redhat.com>
+ <51a756b7-3c2f-9aeb-1418-b38b74108ee6@huawei.com>
+ <20240802092406.GC12343@redhat.com>
+ <0c69ef28-26d8-4b6e-fa78-2211a7b84eca@huawei.com>
+ <20240806172529.GC20881@redhat.com>
+ <20240807101746.GA27715@redhat.com>
+ <3bb87fb4-c32e-0a35-0e93-5e1971fe8268@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: ufs: Document Rockchip UFS host
- controller
-To: Shawn Lin <shawn.lin@rock-chips.com>, "Rob Herring (Arm)"
- <robh@kernel.org>
-Cc: linux-rockchip@lists.infradead.org, Liang Chen <cl@rock-chips.com>,
- Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Conor Dooley <conor+dt@kernel.org>, Bart Van Assche <bvanassche@acm.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- YiFeng Zhao <zyf@rock-chips.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- devicetree@vger.kernel.org,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Heiko Stuebner <heiko@sntech.de>, Avri Altman <avri.altman@wdc.com>,
- linux-scsi@vger.kernel.org
-References: <1723089163-28983-1-git-send-email-shawn.lin@rock-chips.com>
- <1723089163-28983-3-git-send-email-shawn.lin@rock-chips.com>
- <172309498853.3975217.8775988957925335272.robh@kernel.org>
- <659b9e09-b98d-48e0-ad0f-bfb2fe2148bc@rock-chips.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <659b9e09-b98d-48e0-ad0f-bfb2fe2148bc@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3bb87fb4-c32e-0a35-0e93-5e1971fe8268@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 08/08/2024 08:10, Shawn Lin wrote:
-> Hi Rob
-> 
-> 在 2024/8/8 13:29, Rob Herring (Arm) 写道:
->>
->> On Thu, 08 Aug 2024 11:52:42 +0800, Shawn Lin wrote:
->>> Document Rockchip UFS host controller for RK3576 SoC.
->>>
->>> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->>>
->>> ---
->>>
->>> Changes in v2:
->>> - renmae file name
->>> - fix all errors and pass the dt_binding_check:
->>>    make dt_binding_check DT_SCHEMA_FILES=rockchip,rk3576-ufs.yaml
->>>
->>>   .../bindings/ufs/rockchip,rk3576-ufs.yaml          | 96 ++++++++++++++++++++++
->>>   1 file changed, 96 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/ufs/rockchip,rk3576-ufs.yaml
->>>
->>
->> My bot found errors running 'make dt_binding_check' on your patch:
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/ufs/rockchip,rk3576-ufs.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
->>   	 $id: http://devicetree.org/schemas/ufs/rockchip,ufs.yaml
->>   	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/ufs/rockchip,rk3576-ufs.yaml
-> 
-> This is already fixed by a resend v2 2/3 patch, a moment ago. Sorry for 
-> that.
+On 08/08, Liao, Chang wrote:
+>
+>   - pre_ssout() resets the deny signal flag
+>
+>   - uprobe_deny_signal() sets the deny signal flag when TIF_SIGPENDING is cleared.
+>
+>   - handle_singlestep() check the deny signal flag and restore TIF_SIGPENDING if necessary.
+>
+> Does this approach look correct to you,do do you have any other way to implement the "flag"?
 
-If you change patches, it is not a resend. Send a proper new version
-with proper changelog.
+Yes. But I don't think pre_ssout() needs to clear this flag. handle_singlestep() resets/clears
+state, active_uprobe, frees insn slot. So I guess we only need
 
-> 
->> Documentation/devicetree/bindings/ufs/rockchip,rk3576-ufs.example.dts:24:18: fatal error: dt-bindings/clock/rockchip,rk3576-cru.h: No such file or directory
->>     24 |         #include <dt-bindings/clock/rockchip,rk3576-cru.h>
->>        |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> compilation terminated.
-> 
-> There are still pending patches from Rockchip in queue for review. This
-> patchset is based on them. I will wait for more comments and update them
-> after all under-review patches got merged.
 
-You need to document dependencies in changelog (---).
+--- x/kernel/events/uprobes.c
++++ x/kernel/events/uprobes.c
+@@ -2308,9 +2308,10 @@ static void handle_singlestep(struct upr
+ 	utask->state = UTASK_RUNNING;
+ 	xol_free_insn_slot(current);
+ 
+-	spin_lock_irq(&current->sighand->siglock);
+-	recalc_sigpending(); /* see uprobe_deny_signal() */
+-	spin_unlock_irq(&current->sighand->siglock);
++	if (utask->xxx) {
++		set_thread_flag(TIF_SIGPENDING);
++		utask->xxx = 0;
++	}
+ 
+ 	if (unlikely(err)) {
+ 		uprobe_warn(current, "execute the probed insn, sending SIGILL.");
 
-Best regards,
-Krzysztof
+and that is all.
+
+Oleg.
 
 
