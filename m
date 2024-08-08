@@ -1,308 +1,750 @@
-Return-Path: <linux-kernel+bounces-279406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3CB94BCEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:07:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FBB94BCD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36552281CE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:07:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F1B289F19
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB8718C333;
-	Thu,  8 Aug 2024 12:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C7718C91B;
+	Thu,  8 Aug 2024 12:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="sSexBAJ7"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2029.outbound.protection.outlook.com [40.92.102.29])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="0mc3O91G"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C985418C32B;
-	Thu,  8 Aug 2024 12:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723118854; cv=fail; b=cHYN7cFPhFUboA6xINbukWeIpJ817klZ6JjJyFa8wWZ7bLsY6dbDtOiHWgS0mW4FIZsSEPtE2jgWFblZ9FAWcaqnBJq35cV41J4FggC3FGbDeY+zCr3rQItwRam2p3UfdwAKVAZzS51KNp2CRN9dvjKZ+dZdgJeq93M+so5MD1Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723118854; c=relaxed/simple;
-	bh=Akx0MrXpd+JVj1ZDV4IdDdBaVXlyzdtgQ3clE80/1X4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bB0juI1maysrdlZ2b8O7D4e10agsc5ReFZ39iZTU9ejqzZb//p2bokce4sjKGayK3LBSNk0ihNiHChrtbU/YLeCD3UPGdzNeRseihXoNdI7H9iCdoFBnzW7naHx2B2jnYzo7rtEVdKU0n4a2fS0MAPb72xSxHYFCK+hATkf8tC8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=sSexBAJ7; arc=fail smtp.client-ip=40.92.102.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JN5hBrVwrBGNUKqhu7vqTNmZ4sRWxH49ATp31uw6hiSYHocJBlFGl5QzS2clijqrlDigtqGEf6I6VUDgxhvAaw3MF2Jt8OK1Wv6SH7WzAtwxAXIASCncN9Hi/vw1Sw70wrhftkACNVk1dMTTEqq8/wB/opPnQh7EL2pcvzLFiDxM6DrscVbFwsWv4olA4Q/Fqs1LQarexWzLQX7WX++PFq+TR0KmVjK03hNACarhfDVkU8jW9a0izjh4yVB9blmntBXOn3xTjsSEsB68YDl9bgzEZpjqFkbCFi7ccrDZUZdwOnGsFaVqytZ0mLsNTsD2FXaBNd39a4Rcw2WkclC+Ng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Akx0MrXpd+JVj1ZDV4IdDdBaVXlyzdtgQ3clE80/1X4=;
- b=hW69tmMsmxl41Y893qghhIsWKIKSeAhb+4qDTH4BZWaI121I1oIBFYx2EAhaINIH3bnYfBWWSBg1rF2MeN8tY/EI2DcqfblML8j5AlWFLHQmFz4ha1at+5jKNqiJoBL0G3W3/lcB405MjPKr/+l/isp5bezJlpk5dUbpDQNfcqtawW6Bw9kKTjTgv1U+INmFNvIOkbiuyjMrkcbHBFOZOsdFIRL4B3Awq5Ss4KgFAE9FmSNrTlscMAfNQ5tS3c6ZxGaVU3DwsVpI5OywVPWyU4/iHxndFWky66qsvYaPZ3bKbf7zsgHFlumGL7FEb0tY3xoXwmJgONkDUAd9+aiv5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Akx0MrXpd+JVj1ZDV4IdDdBaVXlyzdtgQ3clE80/1X4=;
- b=sSexBAJ7nyyUfEFM6L32I6Uvke7ddP7M9vJPJEK2Euh9TVnNbVjJxXKv1jQfI6WmBjUrSrtdil0fPIblXtqvWSGY4G+4ZEg09xovPx6vJWLeUaZ5u/bSUcc8gcaoOoQXsC3jGQgLrEDHQ703CuDwxyUoUfqRps4CF9RKhlW/y1xZFlI/qMskxNuLzHOgJvhhTyBiXxF69AV6/PGhAZr5If5CauKArFmhRJg8DdA/06kNZbHVG9P2CBldt2bWG2fCDoiejSbyUAl+vVEbSkeewbfYAUyi4AhAH9c9VK9QHprFp+KlP8r0F7s6qgokyhT09B1GEqbq/1XmavlvMez4tQ==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN0P287MB1715.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:18a::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.14; Thu, 8 Aug 2024 12:07:16 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
- 12:07:16 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
-CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: [PATCH RESEND v2 1/9] HID: hid-appletb-bl: add driver for the
- backlight of Apple Touch Bars
-Thread-Topic: [PATCH RESEND v2 1/9] HID: hid-appletb-bl: add driver for the
- backlight of Apple Touch Bars
-Thread-Index: AQHa6YuC5IPUsnXZekKbwyV8lGjPIQ==
-Date: Thu, 8 Aug 2024 12:07:16 +0000
-Message-ID: <609161BA-599E-4645-80E5-C698C17CD646@live.com>
-References: <752D8EEA-EE3B-4854-9B5E-F412AFA20048@live.com>
-In-Reply-To: <752D8EEA-EE3B-4854-9B5E-F412AFA20048@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [A7If//+lIjMaR4xDVvuUYc/d/yD2GhnHS3h+YFjW0AM2apUsNy4KjRrt6D/zOxxTTSMKuINyRDU=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN0P287MB1715:EE_
-x-ms-office365-filtering-correlation-id: f1d50f99-6e69-4087-c116-08dcb7a2a55a
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799003|461199028|8060799006|19110799003|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- B+fzerewJsnAam07YMzvdUVsJ3GBZMo4ms9OAftkuqOKf+Aa+Pv10P78f9zXf+q5s/dM6wAkv7zQDpfLQuVlQ4wL0Ltkdwri4THrpzq7u3YJaHPerJe3I2zG9RTznn9WVL636vmdW20NEC4KVrsvcpXjJ4+Am4i/nbzfbGSf4xSoxEHXtsG8GQTf0YuO99ilrY/tb8sB7cejEWUDzZbJd4NdQb5pCU16fsEbYlDUPJUTaQYf+GWhiQU0t4G3KC5+tCcHzaYy7nEoncT0xBde1++oEvWXJKoEOHUJYanuEKrp878e0GJqsOryL8xBe4X9B41lGA7hWYs/UhJNiF6fz5t0P1AxEd3KMmljLqhqWItRPdKgRAY4UeCwavHvCw/L00vXsBJsVj/QCwSLMrejadqjo8+iMWukSjTbjDxhYBDtq6TU6BEA9Awq6tjiUAO9kro7mCe7qLp1oYrTfUGGiURQ44sNw5L7cNI9O28LMMINRHSj0Kfan/033lNG4IgXX+JkArAW9co77HtPivdIKoWDb3xq+Nb4m81LlpMyDOtQ4l2BBdDGX3je+DeoxHoR8YJd/12UA+mcSW00quNgtSnGbKxJzXGl9tcs5kXuhoHtZ50zDcvOX+qrFSMlq1oFaEcHAZlIMeka0AarIP6Zoh7wZVa+8XhRFgTz9Im0tg//vUB+fRSKKrM6AVOJ2z+Q
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OUp6eDY5OTREbllOM3BsaDJHTHdZbmVFNjdvclg0bEJKL1p4MDd4NUN6VVhu?=
- =?utf-8?B?K05LdGZlV0RXRSt4S1FmbWZvQ0NHQTY0R0hSQndDckpFYmhxaitSazg0WGZv?=
- =?utf-8?B?NjV0OUF0RUx0bEcyMXBEclZJS0Zha0RxT3RtaTRGMGNHZndURTNLZHExWmtC?=
- =?utf-8?B?djNzL0FDYW4vV1hEMVJEWjJrUDZLTlM4dExpNElkcnlDRGlPd2orTmpUUTh4?=
- =?utf-8?B?a2pUT0pxOUxDRDZLV2pZbGd1dG5tMGpGYzI2RkVlQ3VvcjBnc2ZYVy80akhp?=
- =?utf-8?B?Rzcwd3BmVEZZaVBQRFpaSU93UXFCQlFONnh5NFJkOXF0WnZYVjdPdmJQK084?=
- =?utf-8?B?d3lWZHJBMWx6bS92QmNVVHlqMVZqQTlsWDBMS2MzWUdtZ3k3WHd3amZXZ0hY?=
- =?utf-8?B?T3pZaUJ5ZXFDUUh5WFdOSmdIQmVLb2RRd3VOa3l6Zk04aG9JZVZjNlB6cEtX?=
- =?utf-8?B?dWxnVWIyZCtTUTVBclpYNHV3b2F6ak42VWRUZGJUVDJ0bmlabU8xN0VNdjRG?=
- =?utf-8?B?UURhV21Mem40QkpJUGk5cENmRlhZaWZkaGtQRjFDVUNUa3liRW5haTBLYmRU?=
- =?utf-8?B?NkRsWm9tTWp3VGZ3MGtUQnljay9FWmU0ZVdPNW81UHlwaXA4cHpyenY2VW9o?=
- =?utf-8?B?dXN1Q3MxNFRqejlnbGNUaUNiMGczTFBwTHcrb09HeHVpUFZnRVZSVE1PbjlL?=
- =?utf-8?B?UzV0VUpsdjNUUFd0N2c1ZFQvRG9sVDVLeXhWN1J5Rmp4bk1TdzM4bGFjVFJo?=
- =?utf-8?B?RWltT3huNlNTOEFSVlUxVWxKUE83ME5RcGlVZ3ZtVzRUMEZISFJXZno0UXFa?=
- =?utf-8?B?c1ZVWFpFVjlEaDRyWkQ1UGd5by9KeS9aeVNjd2taUjlwT2dKclZDdFFhSGx1?=
- =?utf-8?B?Q1cxRjNFQWZRLzk5Y2QzL3hFSk9IeTh5azVSaWpZRlQzM0dHK0FlajZXZUxD?=
- =?utf-8?B?d25QQ2hHS1lwa0ZCZHE3eGJjNk1qVkZMSHBDNU1JeHJ4MFYrMjU4bktCWWFQ?=
- =?utf-8?B?UEVaZis3QjBrUUU1VHljL0xIZVBmd2ZKZVNteGhNemt0R2g1RncvWnVRZnV6?=
- =?utf-8?B?VG9UU2podlIyYnhYTWtVRU9Fb3VYUDZ2L3VNcDlDZnkrVU1RTVVieTNsK3J1?=
- =?utf-8?B?MFBSTnA0SDRVZkRoblQ4YmNHYUJ4WER5S1REVTdxUjF1UzJNUnp3V3E2U0wx?=
- =?utf-8?B?VG9zOW5pRzZMREtuMXRhVkw2c0paTzRJeDZvT0xjcHRCOVFMNU1YZVpoOGFZ?=
- =?utf-8?B?ZGNyL2g4RzVnWWZCaXpSbkdnVTVFNFRkTmJmUjNLSzR6NSt3dGp1NnJkdUM1?=
- =?utf-8?B?cnFOaXBvcXc4eU9NT1JLMHNCbURBek9pNVdBMS9tYzREWmpYOUlIL1RQQ0Jl?=
- =?utf-8?B?Q1l5SXFLQ2JISXgrRkxZb1RjT3J2M2JHM1dqNi9TS1dIbFhGSXZtYTdEUTZ3?=
- =?utf-8?B?U1RieFZXZG9hMUplNmdQWlBXN3F3dVduaEtsaXB3N3VZa0Erb2F6QWprUzR5?=
- =?utf-8?B?MFlFUUNYQWZKQk9rV3VtSkcwTm1qSkpCRktlSzNXQlBTR1IvbDB0RGlOcXhR?=
- =?utf-8?B?YWd0OFRxUWorWFN4eTRqRmg3Ym9JUzlEYkpuckpuTW5DNzFqK1hDSU5uTFpP?=
- =?utf-8?B?WG1WMXVuM0d1ZE1WUFRGTFBqdm9OKzhnRmNTeFhBWTJRRnd2YUZTd2JSN1Fl?=
- =?utf-8?B?TEZKNnVPcDVFNHA2bnhjekhnZlJaWUpUN3JpSVRwZ1lxYzEvaEFGMkdSOThp?=
- =?utf-8?Q?Pe81H6x2tj2US0QPWg30nGth5eR4DivCJ/5xJ05?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EF989EA51BAC7644B4FFB2D6CCA05F9E@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995B1156220;
+	Thu,  8 Aug 2024 12:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723118523; cv=none; b=ol1rSKD0MKCp+xqLCgZLRhunOTR/oiJugsPh5ft729IS4428eu47dvrExg/BmUvrbjTjGOOqMq5YnP/TI7AYfL+rtqOXtX+ACeV+dnUhS2/DmmunAiZzGskz+0MBQLsX1CgNBQ5AFl9GZ7qaAnvy7BL+cJ5rJog2LAZ84qCK8YU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723118523; c=relaxed/simple;
+	bh=eK6BCimUxGSjBUAcuOV56n+pMU89/rpF5f4QEreOJAw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HosytF+Fcje2fvtDkLpnKxCEAC4IiBRsmzy1FoRGXuQ7k02W+LBC1STPF3INDs2T3K9aJkRYVaU9Ql2X8VnZw8qN5Sa5rCjZg89YAZKWCSQWpDSsPTKIg729Wz6q+zcR+oxTwNNUPyW+cvrB55wB4k63I+QuadkADye58uYkHik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=0mc3O91G; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1723118520; x=1754654520;
+  h=from:to:subject:date:message-id:mime-version;
+  bh=eK6BCimUxGSjBUAcuOV56n+pMU89/rpF5f4QEreOJAw=;
+  b=0mc3O91GLeIYJ6xfj/miBjlrwgmYvBw6BAaStv4jwtmCaOZisTcf9Pj3
+   RQtDWjTjkSQT5jptFncTfxfdNwiW+wSKuP1Qq5DO6KfAihsix8P9gueCI
+   Cz8eQnFuZUxQU7RHeUfLKImvKzf7x0VmtMRInM/icoP4VmsH4BN7VeRei
+   T/wWeEW1+Ih/0PnFwG0+UzecB06OZGxeqXcDwmu1nYifX9PM8wPVoyx7n
+   ZpGuR3cU9MjMnG37z4SvLsljSBxAh/eUxxFEbSkkGg1TByc1wCQchLMwa
+   vx+dci53qpB3qG3idYViqm4vgdgRM6kXkHWn8nHLELa+aLpTNNxboOVIE
+   g==;
+X-CSE-ConnectionGUID: u6StLbFVQVqs04c8KP+nTQ==
+X-CSE-MsgGUID: vNey0uziQL6PdUZGJJIpNg==
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="197672361"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Aug 2024 05:01:53 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 8 Aug 2024 05:01:28 -0700
+Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 8 Aug 2024 05:01:24 -0700
+From: Divya Koppera <Divya.Koppera@microchip.com>
+To: <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next] net: phy: microchip_t1: Adds support for LAN887x phy
+Date: Thu, 8 Aug 2024 20:29:16 +0530
+Message-ID: <20240808145916.26006-1-Divya.Koppera@microchip.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1d50f99-6e69-4087-c116-08dcb7a2a55a
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 12:07:16.6160
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1715
+Content-Type: text/plain
 
-RnJvbTogS2VyZW0gS2FyYWJheSA8a2VrcmJ5QGdtYWlsLmNvbT4NCg0KVGhpcyBjb21taXQgYWRk
-cyBhIGRyaXZlciBmb3IgdGhlIGJhY2tsaWdodCBvZiBBcHBsZSBUb3VjaCBCYXJzIG9uIHg4Ng0K
-TWFjcy4gTm90ZSB0aGF0IGN1cnJlbnRseSBvbmx5IFQyIE1hY3MgYXJlIHN1cHBvcnRlZC4NCg0K
-VGhpcyBkcml2ZXIgaXMgYmFzZWQgb24gcHJldmlvdXMgd29yayBkb25lIGJ5IFJvbmFsZCBUc2No
-YWzDpHINCjxyb25hbGRAaW5ub3ZhdGlvbi5jaD4uDQoNClNpZ25lZC1vZmYtYnk6IEtlcmVtIEth
-cmFiYXkgPGtla3JieUBnbWFpbC5jb20+DQpDby1kZXZlbG9wZWQtYnk6IEFkaXR5YSBHYXJnIDxn
-YXJnYWRpdHlhMDhAbGl2ZS5jb20+DQpTaWduZWQtb2ZmLWJ5OiBBZGl0eWEgR2FyZyA8Z2FyZ2Fk
-aXR5YTA4QGxpdmUuY29tPg0KLS0tDQogTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICB8ICAg
-NiArDQogZHJpdmVycy9oaWQvS2NvbmZpZyAgICAgICAgICB8ICAxMCArKw0KIGRyaXZlcnMvaGlk
-L01ha2VmaWxlICAgICAgICAgfCAgIDEgKw0KIGRyaXZlcnMvaGlkL2hpZC1hcHBsZXRiLWJsLmMg
-fCAyMDYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCiBkcml2ZXJzL2hpZC9o
-aWQtcXVpcmtzLmMgICAgIHwgICA0ICstDQogNSBmaWxlcyBjaGFuZ2VkLCAyMjYgaW5zZXJ0aW9u
-cygrKSwgMSBkZWxldGlvbigtKQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2hpZC9oaWQt
-YXBwbGV0Yi1ibC5jDQoNCmRpZmYgLS1naXQgYS9NQUlOVEFJTkVSUyBiL01BSU5UQUlORVJTDQpp
-bmRleCA4NzY2ZjNlNWUuLmFjMjdmNDFkNCAxMDA2NDQNCi0tLSBhL01BSU5UQUlORVJTDQorKysg
-Yi9NQUlOVEFJTkVSUw0KQEAgLTk5MzEsNiArOTkzMSwxMiBAQCBGOglpbmNsdWRlL2xpbnV4L3Bt
-LmgNCiBGOglpbmNsdWRlL2xpbnV4L3N1c3BlbmQuaA0KIEY6CWtlcm5lbC9wb3dlci8NCiANCitI
-SUQgQVBQTEUgVE9VQ0ggQkFSIERSSVZFUlMNCitNOglLZXJlbSBLYXJhYmF5IDxrZWtyYnlAZ21h
-aWwuY29tPg0KK0w6CWxpbnV4LWlucHV0QHZnZXIua2VybmVsLm9yZw0KK1M6CU1haW50YWluZWQN
-CitGOglkcml2ZXJzL2hpZC9oaWQtYXBwbGV0Yi0qDQorDQogSElEIENPUkUgTEFZRVINCiBNOglK
-aXJpIEtvc2luYSA8amlrb3NAa2VybmVsLm9yZz4NCiBNOglCZW5qYW1pbiBUaXNzb2lyZXMgPGJl
-bnRpc3NAa2VybmVsLm9yZz4NCmRpZmYgLS1naXQgYS9kcml2ZXJzL2hpZC9LY29uZmlnIGIvZHJp
-dmVycy9oaWQvS2NvbmZpZw0KaW5kZXggMDg0NDZjODllLi40OTg4YzFmYjIgMTAwNjQ0DQotLS0g
-YS9kcml2ZXJzL2hpZC9LY29uZmlnDQorKysgYi9kcml2ZXJzL2hpZC9LY29uZmlnDQpAQCAtMTQ4
-LDYgKzE0OCwxNiBAQCBjb25maWcgSElEX0FQUExFSVINCiANCiAJU2F5IFkgaGVyZSBpZiB5b3Ug
-d2FudCBzdXBwb3J0IGZvciBBcHBsZSBpbmZyYXJlZCByZW1vdGUgY29udHJvbC4NCiANCitjb25m
-aWcgSElEX0FQUExFVEJfQkwNCisJdHJpc3RhdGUgIkFwcGxlIFRvdWNoIEJhciBCYWNrbGlnaHQi
-DQorCWRlcGVuZHMgb24gQkFDS0xJR0hUX0NMQVNTX0RFVklDRQ0KKwloZWxwDQorCSAgU2F5IFkg
-aGVyZSBpZiB5b3Ugd2FudCBzdXBwb3J0IGZvciB0aGUgYmFja2xpZ2h0IG9mIFRvdWNoIEJhcnMg
-b24geDg2DQorCSAgTWFjQm9vayBQcm9zLg0KKw0KKwkgIFRvIGNvbXBpbGUgdGhpcyBkcml2ZXIg
-YXMgYSBtb2R1bGUsIGNob29zZSBNIGhlcmU6IHRoZQ0KKwkgIG1vZHVsZSB3aWxsIGJlIGNhbGxl
-ZCBoaWQtYXBwbGV0Yi1ibC4NCisNCiBjb25maWcgSElEX0FTVVMNCiAJdHJpc3RhdGUgIkFzdXMi
-DQogCWRlcGVuZHMgb24gVVNCX0hJRA0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlkL01ha2VmaWxl
-IGIvZHJpdmVycy9oaWQvTWFrZWZpbGUNCmluZGV4IGU0MGYxZGRlYi4uMWQ4MjVhNDc0IDEwMDY0
-NA0KLS0tIGEvZHJpdmVycy9oaWQvTWFrZWZpbGUNCisrKyBiL2RyaXZlcnMvaGlkL01ha2VmaWxl
-DQpAQCAtMjksNiArMjksNyBAQCBvYmotJChDT05GSUdfSElEX0FMUFMpCQkrPSBoaWQtYWxwcy5v
-DQogb2JqLSQoQ09ORklHX0hJRF9BQ1JVWCkJCSs9IGhpZC1heGZmLm8NCiBvYmotJChDT05GSUdf
-SElEX0FQUExFKQkJKz0gaGlkLWFwcGxlLm8NCiBvYmotJChDT05GSUdfSElEX0FQUExFSVIpCSs9
-IGhpZC1hcHBsZWlyLm8NCitvYmotJChDT05GSUdfSElEX0FQUExFVEJfQkwpCSs9IGhpZC1hcHBs
-ZXRiLWJsLm8NCiBvYmotJChDT05GSUdfSElEX0NSRUFUSVZFX1NCMDU0MCkJKz0gaGlkLWNyZWF0
-aXZlLXNiMDU0MC5vDQogb2JqLSQoQ09ORklHX0hJRF9BU1VTKQkJKz0gaGlkLWFzdXMubw0KIG9i
-ai0kKENPTkZJR19ISURfQVVSRUFMKQkrPSBoaWQtYXVyZWFsLm8NCmRpZmYgLS1naXQgYS9kcml2
-ZXJzL2hpZC9oaWQtYXBwbGV0Yi1ibC5jIGIvZHJpdmVycy9oaWQvaGlkLWFwcGxldGItYmwuYw0K
-bmV3IGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDAwMDAwMDAwMC4uMDBiYmU0NWRmDQotLS0gL2Rl
-di9udWxsDQorKysgYi9kcml2ZXJzL2hpZC9oaWQtYXBwbGV0Yi1ibC5jDQpAQCAtMCwwICsxLDIw
-NiBAQA0KKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wDQorLyoNCisgKiBBcHBs
-ZSBUb3VjaCBCYXIgQmFja2xpZ2h0IERyaXZlcg0KKyAqDQorICogQ29weXJpZ2h0IChjKSAyMDE3
-LTIwMTggUm9uYWxkIFRzY2hhbMOkcg0KKyAqIENvcHlyaWdodCAoYykgMjAyMi0yMDIzIEtlcmVt
-IEthcmFiYXkgPGtla3JieUBnbWFpbC5jb20+DQorICovDQorDQorI2RlZmluZSBwcl9mbXQoZm10
-KSBLQlVJTERfTU9ETkFNRSAiOiAiIGZtdA0KKw0KKyNpbmNsdWRlIDxsaW51eC9oaWQuaD4NCisj
-aW5jbHVkZSA8bGludXgvYmFja2xpZ2h0Lmg+DQorDQorI2luY2x1ZGUgImhpZC1pZHMuaCINCisN
-CisjZGVmaW5lIEFQUExFVEJfQkxfT04JCQkxDQorI2RlZmluZSBBUFBMRVRCX0JMX0RJTQkJCTMN
-CisjZGVmaW5lIEFQUExFVEJfQkxfT0ZGCQkJNA0KKw0KKyNkZWZpbmUgSElEX1VQX0FQUExFVkVO
-RE9SX1RCX0JMCTB4ZmYxMjAwMDANCisNCisjZGVmaW5lIEhJRF9WRF9BUFBMRV9UQl9CUklHSFRO
-RVNTCTB4ZmYxMjAwMDENCisjZGVmaW5lIEhJRF9VU0FHRV9BVVgxCQkJMHhmZjEyMDAyMA0KKyNk
-ZWZpbmUgSElEX1VTQUdFX0JSSUdIVE5FU1MJCTB4ZmYxMjAwMjENCisNCitzdGF0aWMgaW50IGFw
-cGxldGJfYmxfZGVmX2JyaWdodG5lc3MgPSAyOw0KK21vZHVsZV9wYXJhbV9uYW1lZChicmlnaHRu
-ZXNzLCBhcHBsZXRiX2JsX2RlZl9icmlnaHRuZXNzLCBpbnQsIDA0NDQpOw0KK01PRFVMRV9QQVJN
-X0RFU0MoYnJpZ2h0bmVzcywgIkRlZmF1bHQgYnJpZ2h0bmVzczpcbiINCisJCQkgIiAgICAwIC0g
-VG91Y2hiYXIgaXMgb2ZmXG4iDQorCQkJICIgICAgMSAtIERpbSBicmlnaHRuZXNzXG4iDQorCQkJ
-ICIgICAgWzJdIC0gRnVsbCBicmlnaHRuZXNzIik7DQorDQorc3RydWN0IGFwcGxldGJfYmwgew0K
-KwlzdHJ1Y3QgaGlkX2ZpZWxkICphdXgxX2ZpZWxkLCAqYnJpZ2h0bmVzc19maWVsZDsNCisJc3Ry
-dWN0IGJhY2tsaWdodF9kZXZpY2UgKmJkZXY7DQorDQorCWJvb2wgZnVsbF9vbjsNCit9Ow0KKw0K
-K2NvbnN0IHU4IGFwcGxldGJfYmxfYnJpZ2h0bmVzc19tYXBbXSA9IHsNCisJQVBQTEVUQl9CTF9P
-RkYsDQorCUFQUExFVEJfQkxfRElNLA0KKwlBUFBMRVRCX0JMX09ODQorfTsNCisNCitzdGF0aWMg
-aW50IGFwcGxldGJfYmxfc2V0X2JyaWdodG5lc3Moc3RydWN0IGFwcGxldGJfYmwgKmJsLCB1OCBi
-cmlnaHRuZXNzKQ0KK3sNCisJc3RydWN0IGhpZF9yZXBvcnQgKnJlcG9ydCA9IGJsLT5icmlnaHRu
-ZXNzX2ZpZWxkLT5yZXBvcnQ7DQorCXN0cnVjdCBoaWRfZGV2aWNlICpoZGV2ID0gcmVwb3J0LT5k
-ZXZpY2U7DQorCWludCByZXQ7DQorDQorCXJldCA9IGhpZF9zZXRfZmllbGQoYmwtPmF1eDFfZmll
-bGQsIDAsIDEpOw0KKwlpZiAocmV0KSB7DQorCQloaWRfZXJyKGhkZXYsICJGYWlsZWQgdG8gc2V0
-IGF1eGlsaWFyeSBmaWVsZCAoJXBlKVxuIiwgRVJSX1BUUihyZXQpKTsNCisJCXJldHVybiByZXQ7
-DQorCX0NCisNCisJcmV0ID0gaGlkX3NldF9maWVsZChibC0+YnJpZ2h0bmVzc19maWVsZCwgMCwg
-YnJpZ2h0bmVzcyk7DQorCWlmIChyZXQpIHsNCisJCWhpZF9lcnIoaGRldiwgIkZhaWxlZCB0byBz
-ZXQgYnJpZ2h0bmVzcyBmaWVsZCAoJXBlKVxuIiwgRVJSX1BUUihyZXQpKTsNCisJCXJldHVybiBy
-ZXQ7DQorCX0NCisNCisJaWYgKCFibC0+ZnVsbF9vbikgew0KKwkJcmV0ID0gaGlkX2h3X3Bvd2Vy
-KGhkZXYsIFBNX0hJTlRfRlVMTE9OKTsNCisJCWlmIChyZXQgPCAwKSB7DQorCQkJaGlkX2Vyciho
-ZGV2LCAiRGV2aWNlIGRpZG4ndCBwb3dlciBvbiAoJXBlKVxuIiwgRVJSX1BUUihyZXQpKTsNCisJ
-CQlyZXR1cm4gcmV0Ow0KKwkJfQ0KKw0KKwkJYmwtPmZ1bGxfb24gPSB0cnVlOw0KKwl9DQorDQor
-CWhpZF9od19yZXF1ZXN0KGhkZXYsIHJlcG9ydCwgSElEX1JFUV9TRVRfUkVQT1JUKTsNCisNCisJ
-aWYgKGJyaWdodG5lc3MgPT0gQVBQTEVUQl9CTF9PRkYpIHsNCisJCWhpZF9od19wb3dlcihoZGV2
-LCBQTV9ISU5UX05PUk1BTCk7DQorCQlibC0+ZnVsbF9vbiA9IGZhbHNlOw0KKwl9DQorDQorCXJl
-dHVybiAwOw0KK30NCisNCitzdGF0aWMgaW50IGFwcGxldGJfYmxfdXBkYXRlX3N0YXR1cyhzdHJ1
-Y3QgYmFja2xpZ2h0X2RldmljZSAqYmRldikNCit7DQorCXN0cnVjdCBhcHBsZXRiX2JsICpibCA9
-IGJsX2dldF9kYXRhKGJkZXYpOw0KKwl1MTYgYnJpZ2h0bmVzczsNCisNCisJaWYgKGJkZXYtPnBy
-b3BzLnN0YXRlICYgQkxfQ09SRV9TVVNQRU5ERUQpDQorCQlicmlnaHRuZXNzID0gMDsNCisJZWxz
-ZQ0KKwkJYnJpZ2h0bmVzcyA9IGJhY2tsaWdodF9nZXRfYnJpZ2h0bmVzcyhiZGV2KTsNCisNCisJ
-cmV0dXJuIGFwcGxldGJfYmxfc2V0X2JyaWdodG5lc3MoYmwsIGFwcGxldGJfYmxfYnJpZ2h0bmVz
-c19tYXBbYnJpZ2h0bmVzc10pOw0KK30NCisNCitzdGF0aWMgY29uc3Qgc3RydWN0IGJhY2tsaWdo
-dF9vcHMgYXBwbGV0Yl9ibF9iYWNrbGlnaHRfb3BzID0gew0KKwkub3B0aW9ucyA9IEJMX0NPUkVf
-U1VTUEVORFJFU1VNRSwNCisJLnVwZGF0ZV9zdGF0dXMgPSBhcHBsZXRiX2JsX3VwZGF0ZV9zdGF0
-dXMsDQorfTsNCisNCitzdGF0aWMgaW50IGFwcGxldGJfYmxfcHJvYmUoc3RydWN0IGhpZF9kZXZp
-Y2UgKmhkZXYsIGNvbnN0IHN0cnVjdCBoaWRfZGV2aWNlX2lkICppZCkNCit7DQorCXN0cnVjdCBo
-aWRfZmllbGQgKmF1eDFfZmllbGQsICpicmlnaHRuZXNzX2ZpZWxkOw0KKwlzdHJ1Y3QgYmFja2xp
-Z2h0X3Byb3BlcnRpZXMgYmxfcHJvcHMgPSB7IDAgfTsNCisJc3RydWN0IGRldmljZSAqZGV2ID0g
-JmhkZXYtPmRldjsNCisJc3RydWN0IGFwcGxldGJfYmwgKmJsOw0KKwlpbnQgcmV0Ow0KKw0KKwly
-ZXQgPSBoaWRfcGFyc2UoaGRldik7DQorCWlmIChyZXQpDQorCQlyZXR1cm4gZGV2X2Vycl9wcm9i
-ZShkZXYsIHJldCwgIkhJRCBwYXJzZSBmYWlsZWRcbiIpOw0KKw0KKwlhdXgxX2ZpZWxkID0gaGlk
-X2ZpbmRfZmllbGQoaGRldiwgSElEX0ZFQVRVUkVfUkVQT1JULA0KKwkJCQkgICAgSElEX1ZEX0FQ
-UExFX1RCX0JSSUdIVE5FU1MsIEhJRF9VU0FHRV9BVVgxKTsNCisNCisJYnJpZ2h0bmVzc19maWVs
-ZCA9IGhpZF9maW5kX2ZpZWxkKGhkZXYsIEhJRF9GRUFUVVJFX1JFUE9SVCwNCisJCQkJCSAgSElE
-X1ZEX0FQUExFX1RCX0JSSUdIVE5FU1MsIEhJRF9VU0FHRV9CUklHSFRORVNTKTsNCisNCisJaWYg
-KCFhdXgxX2ZpZWxkIHx8ICFicmlnaHRuZXNzX2ZpZWxkKQ0KKwkJcmV0dXJuIC1FTk9ERVY7DQor
-DQorCWlmIChhdXgxX2ZpZWxkLT5yZXBvcnQgIT0gYnJpZ2h0bmVzc19maWVsZC0+cmVwb3J0KQ0K
-KwkJcmV0dXJuIGRldl9lcnJfcHJvYmUoZGV2LCAtRU5PREVWLCAiRW5jb3VudGVyZWQgdW5leHBl
-Y3RlZCByZXBvcnQgc3RydWN0dXJlXG4iKTsNCisNCisJYmwgPSBkZXZtX2t6YWxsb2MoZGV2LCBz
-aXplb2YoKmJsKSwgR0ZQX0tFUk5FTCk7DQorCWlmICghYmwpDQorCQlyZXR1cm4gLUVOT01FTTsN
-CisNCisJcmV0ID0gaGlkX2h3X3N0YXJ0KGhkZXYsIEhJRF9DT05ORUNUX0RSSVZFUik7DQorCWlm
-IChyZXQpDQorCQlyZXR1cm4gZGV2X2Vycl9wcm9iZShkZXYsIHJldCwgIkhJRCBoYXJkd2FyZSBz
-dGFydCBmYWlsZWRcbiIpOw0KKw0KKwlyZXQgPSBoaWRfaHdfb3BlbihoZGV2KTsNCisJaWYgKHJl
-dCkgew0KKwkJZGV2X2Vycl9wcm9iZShkZXYsIHJldCwgIkhJRCBoYXJkd2FyZSBvcGVuIGZhaWxl
-ZFxuIik7DQorCQlnb3RvIHN0b3BfaHc7DQorCX0NCisNCisJYmwtPmF1eDFfZmllbGQgPSBhdXgx
-X2ZpZWxkOw0KKwlibC0+YnJpZ2h0bmVzc19maWVsZCA9IGJyaWdodG5lc3NfZmllbGQ7DQorDQor
-CWlmIChhcHBsZXRiX2JsX2RlZl9icmlnaHRuZXNzID09IDApDQorCQlyZXQgPSBhcHBsZXRiX2Js
-X3NldF9icmlnaHRuZXNzKGJsLCBBUFBMRVRCX0JMX09GRik7DQorCWVsc2UgaWYgKGFwcGxldGJf
-YmxfZGVmX2JyaWdodG5lc3MgPT0gMSkNCisJCXJldCA9IGFwcGxldGJfYmxfc2V0X2JyaWdodG5l
-c3MoYmwsIEFQUExFVEJfQkxfRElNKTsNCisJZWxzZQ0KKwkJcmV0ID0gYXBwbGV0Yl9ibF9zZXRf
-YnJpZ2h0bmVzcyhibCwgQVBQTEVUQl9CTF9PTik7DQorDQorCWlmIChyZXQpIHsNCisJCWRldl9l
-cnJfcHJvYmUoZGV2LCByZXQsICJGYWlsZWQgdG8gc2V0IHRvdWNoIGJhciBicmlnaHRuZXNzIHRv
-IG9mZlxuIik7DQorCQlnb3RvIGNsb3NlX2h3Ow0KKwl9DQorDQorCWJsX3Byb3BzLnR5cGUgPSBC
-QUNLTElHSFRfUkFXOw0KKwlibF9wcm9wcy5tYXhfYnJpZ2h0bmVzcyA9IEFSUkFZX1NJWkUoYXBw
-bGV0Yl9ibF9icmlnaHRuZXNzX21hcCkgLSAxOw0KKw0KKwlibC0+YmRldiA9IGRldm1fYmFja2xp
-Z2h0X2RldmljZV9yZWdpc3RlcihkZXYsICJhcHBsZXRiX2JhY2tsaWdodCIsIGRldiwgYmwsDQor
-CQkJCQkJICAmYXBwbGV0Yl9ibF9iYWNrbGlnaHRfb3BzLCAmYmxfcHJvcHMpOw0KKwlpZiAoSVNf
-RVJSKGJsLT5iZGV2KSkgew0KKwkJcmV0ID0gUFRSX0VSUihibC0+YmRldik7DQorCQlkZXZfZXJy
-X3Byb2JlKGRldiwgcmV0LCAiRmFpbGVkIHRvIHJlZ2lzdGVyIGJhY2tsaWdodCBkZXZpY2VcbiIp
-Ow0KKwkJZ290byBjbG9zZV9odzsNCisJfQ0KKw0KKwloaWRfc2V0X2RydmRhdGEoaGRldiwgYmwp
-Ow0KKw0KKwlyZXR1cm4gMDsNCisNCitjbG9zZV9odzoNCisJaGlkX2h3X2Nsb3NlKGhkZXYpOw0K
-K3N0b3BfaHc6DQorCWhpZF9od19zdG9wKGhkZXYpOw0KKw0KKwlyZXR1cm4gcmV0Ow0KK30NCisN
-CitzdGF0aWMgdm9pZCBhcHBsZXRiX2JsX3JlbW92ZShzdHJ1Y3QgaGlkX2RldmljZSAqaGRldikN
-Cit7DQorCXN0cnVjdCBhcHBsZXRiX2JsICpibCA9IGhpZF9nZXRfZHJ2ZGF0YShoZGV2KTsNCisN
-CisJYXBwbGV0Yl9ibF9zZXRfYnJpZ2h0bmVzcyhibCwgQVBQTEVUQl9CTF9PRkYpOw0KKw0KKwlo
-aWRfaHdfY2xvc2UoaGRldik7DQorCWhpZF9od19zdG9wKGhkZXYpOw0KK30NCisNCitzdGF0aWMg
-Y29uc3Qgc3RydWN0IGhpZF9kZXZpY2VfaWQgYXBwbGV0Yl9ibF9oaWRfaWRzW10gPSB7DQorCS8q
-IE1hY0Jvb2sgUHJvJ3MgMjAxOCwgMjAxOSwgd2l0aCBUMiBjaGlwOiBpQnJpZGdlIERGUiBCcmln
-aHRuZXNzICovDQorCXsgSElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9BUFBMRSwgVVNCX0RF
-VklDRV9JRF9BUFBMRV9UT1VDSEJBUl9CQUNLTElHSFQpIH0sDQorCXsgfQ0KK307DQorTU9EVUxF
-X0RFVklDRV9UQUJMRShoaWQsIGFwcGxldGJfYmxfaGlkX2lkcyk7DQorDQorc3RhdGljIHN0cnVj
-dCBoaWRfZHJpdmVyIGFwcGxldGJfYmxfaGlkX2RyaXZlciA9IHsNCisJLm5hbWUgPSAiaGlkLWFw
-cGxldGItYmwiLA0KKwkuaWRfdGFibGUgPSBhcHBsZXRiX2JsX2hpZF9pZHMsDQorCS5wcm9iZSA9
-IGFwcGxldGJfYmxfcHJvYmUsDQorCS5yZW1vdmUgPSBhcHBsZXRiX2JsX3JlbW92ZSwNCit9Ow0K
-K21vZHVsZV9oaWRfZHJpdmVyKGFwcGxldGJfYmxfaGlkX2RyaXZlcik7DQorDQorTU9EVUxFX0FV
-VEhPUigiUm9uYWxkIFRzY2hhbMOkciIpOw0KK01PRFVMRV9BVVRIT1IoIktlcmVtIEthcmFiYXkg
-PGtla3JieUBnbWFpbC5jb20+Iik7DQorTU9EVUxFX0RFU0NSSVBUSU9OKCJNYWNCb29rUHJvIFRv
-dWNoIEJhciBCYWNrbGlnaHQgRHJpdmVyIik7DQorTU9EVUxFX0xJQ0VOU0UoIkdQTCIpOw0KZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2hpZC1xdWlya3MuYyBiL2RyaXZlcnMvaGlkL2hpZC1xdWly
-a3MuYw0KaW5kZXggZTBiYmYwYzYzLi44MThkNDFhMzUgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2hp
-ZC9oaWQtcXVpcmtzLmMNCisrKyBiL2RyaXZlcnMvaGlkL2hpZC1xdWlya3MuYw0KQEAgLTMyOCw3
-ICszMjgsNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGhpZF9kZXZpY2VfaWQgaGlkX2hhdmVfc3Bl
-Y2lhbF9kcml2ZXJbXSA9IHsNCiAJeyBISURfVVNCX0RFVklDRShVU0JfVkVORE9SX0lEX0FQUExF
-LCBVU0JfREVWSUNFX0lEX0FQUExFX0dFWVNFUjFfVFBfT05MWSkgfSwNCiAJeyBISURfVVNCX0RF
-VklDRShVU0JfVkVORE9SX0lEX0FQUExFLCBVU0JfREVWSUNFX0lEX0FQUExFX01BR0lDX0tFWUJP
-QVJEXzIwMjEpIH0sDQogCXsgSElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9BUFBMRSwgVVNC
-X0RFVklDRV9JRF9BUFBMRV9NQUdJQ19LRVlCT0FSRF9GSU5HRVJQUklOVF8yMDIxKSB9LA0KLQl7
-IEhJRF9VU0JfREVWSUNFKFVTQl9WRU5ET1JfSURfQVBQTEUsIFVTQl9ERVZJQ0VfSURfQVBQTEVf
-VE9VQ0hCQVJfQkFDS0xJR0hUKSB9LA0KIAl7IEhJRF9VU0JfREVWSUNFKFVTQl9WRU5ET1JfSURf
-QVBQTEUsIFVTQl9ERVZJQ0VfSURfQVBQTEVfVE9VQ0hCQVJfRElTUExBWSkgfSwNCiAjZW5kaWYN
-CiAjaWYgSVNfRU5BQkxFRChDT05GSUdfSElEX0FQUExFSVIpDQpAQCAtMzM4LDYgKzMzNyw5IEBA
-IHN0YXRpYyBjb25zdCBzdHJ1Y3QgaGlkX2RldmljZV9pZCBoaWRfaGF2ZV9zcGVjaWFsX2RyaXZl
-cltdID0gew0KIAl7IEhJRF9VU0JfREVWSUNFKFVTQl9WRU5ET1JfSURfQVBQTEUsIFVTQl9ERVZJ
-Q0VfSURfQVBQTEVfSVJDT05UUk9MNCkgfSwNCiAJeyBISURfVVNCX0RFVklDRShVU0JfVkVORE9S
-X0lEX0FQUExFLCBVU0JfREVWSUNFX0lEX0FQUExFX0lSQ09OVFJPTDUpIH0sDQogI2VuZGlmDQor
-I2lmIElTX0VOQUJMRUQoQ09ORklHX0hJRF9BUFBMRVRCX0JMKQ0KKwl7IEhJRF9VU0JfREVWSUNF
-KFVTQl9WRU5ET1JfSURfQVBQTEUsIFVTQl9ERVZJQ0VfSURfQVBQTEVfVE9VQ0hCQVJfQkFDS0xJ
-R0hUKSB9LA0KKyNlbmRpZg0KICNpZiBJU19FTkFCTEVEKENPTkZJR19ISURfQVNVUykNCiAJeyBI
-SURfSTJDX0RFVklDRShVU0JfVkVORE9SX0lEX0FTVVNURUssIFVTQl9ERVZJQ0VfSURfQVNVU1RF
-S19JMkNfS0VZQk9BUkQpIH0sDQogCXsgSElEX0kyQ19ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9BU1VT
-VEVLLCBVU0JfREVWSUNFX0lEX0FTVVNURUtfSTJDX1RPVUNIUEFEKSB9LA0KLS0gDQoyLjM5LjMg
-KEFwcGxlIEdpdC0xNDYpDQoNCg==
+From: divya.koppera <divya.koppera@microchip.com>
+
+The LAN887x is a Single-Port Ethernet Physical Layer Transceiver compliant
+with the IEEE 802.3bw (100BASE-T1) and IEEE 802.3bp (1000BASE-T1)
+specifications. The device provides 100/1000 Mbit/s transmit and receive
+capability over a single Unshielded Twisted Pair (UTP) cable. It supports
+communication with an Ethernet MAC via standard RGMII/SGMII interfaces.
+
+LAN887x supports following features,
+- Events/Interrupts
+- LED/GPIO Operation
+- IEEE 1588 (PTP)
+- SQI
+- Sleep and Wakeup (TC10)
+- Cable Diagnostics
+
+First patch only supports 100Mbps and 1000Mbps force-mode.
+
+Signed-off-by: divya.koppera <divya.koppera@microchip.com>
+---
+ drivers/net/phy/microchip_t1.c | 602 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 601 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
+index a35528497a57..01f131ae3dc2 100644
+--- a/drivers/net/phy/microchip_t1.c
++++ b/drivers/net/phy/microchip_t1.c
+@@ -12,6 +12,7 @@
+ 
+ #define PHY_ID_LAN87XX				0x0007c150
+ #define PHY_ID_LAN937X				0x0007c180
++#define PHY_ID_LAN887X				0x0007c1f0
+ 
+ /* External Register Control Register */
+ #define LAN87XX_EXT_REG_CTL                     (0x14)
+@@ -94,8 +95,101 @@
+ /* SQI defines */
+ #define LAN87XX_MAX_SQI			0x07
+ 
++/* Chiptop registers */
++#define LAN887X_PMA_EXT_ABILITY_2		0x12
++#define LAN887X_PMA_EXT_ABILITY_2_1000T1	BIT(1)
++#define LAN887X_PMA_EXT_ABILITY_2_100T1		BIT(0)
++
++/* DSP 100M registers */
++#define LAN887x_CDR_CONFIG1_100			0x0405
++#define LAN887x_LOCK1_EQLSR_CONFIG_100		0x0411
++#define LAN887x_SLV_HD_MUFAC_CONFIG_100		0x0417
++#define LAN887x_PLOCK_MUFAC_CONFIG_100		0x041c
++#define LAN887x_PROT_DISABLE_100		0x0425
++#define LAN887x_KF_LOOP_SAT_CONFIG_100		0x0454
++
++/* DSP 1000M registers */
++#define LAN887X_LOCK1_EQLSR_CONFIG		0x0811
++#define LAN887X_LOCK3_EQLSR_CONFIG		0x0813
++#define LAN887X_PROT_DISABLE			0x0825
++#define LAN887X_FFE_GAIN6			0x0843
++#define LAN887X_FFE_GAIN7			0x0844
++#define LAN887X_FFE_GAIN8			0x0845
++#define LAN887X_FFE_GAIN9			0x0846
++#define LAN887X_ECHO_DELAY_CONFIG		0x08ec
++#define LAN887X_FFE_MAX_CONFIG			0x08ee
++
++/* PCS 1000M registers */
++#define LAN887X_SCR_CONFIG_3			0x8043
++#define LAN887X_INFO_FLD_CONFIG_5		0x8048
++
++/* T1 afe registers */
++#define LAN887X_ZQCAL_CONTROL_1			0x8080
++#define LAN887X_AFE_PORT_TESTBUS_CTRL2		0x8089
++#define LAN887X_AFE_PORT_TESTBUS_CTRL4		0x808b
++#define LAN887X_AFE_PORT_TESTBUS_CTRL6		0x808d
++#define LAN887X_TX_AMPLT_1000T1_REG		0x80b0
++#define LAN887X_INIT_COEFF_DFE1_100		0x0422
++
++/* PMA registers */
++#define LAN887X_DSP_PMA_CONTROL			0x810e
++#define LAN887X_DSP_PMA_CONTROL_LNK_SYNC	BIT(4)
++
++/* PCS 100M registers */
++#define LAN887X_IDLE_ERR_TIMER_WIN		0x8204
++#define LAN887X_IDLE_ERR_CNT_THRESH		0x8213
++
++/* Misc registers */
++#define LAN887X_REG_REG26			0x001a
++#define LAN887X_REG_REG26_HW_INIT_SEQ_EN	BIT(8)
++
++/* Mis registers */
++#define LAN887X_MIS_CFG_REG0			0xa00
++#define LAN887X_MIS_CFG_REG0_RCLKOUT_DIS	BIT(5)
++#define LAN887X_MIS_CFG_REG0_MAC_MODE_SEL	GENMASK(1, 0)
++
++#define LAN887X_MAC_MODE_RGMII			0x01
++#define LAN887X_MAC_MODE_SGMII			0x03
++
++#define LAN887X_MIS_DLL_CFG_REG0		0xa01
++#define LAN887X_MIS_DLL_CFG_REG1		0xa02
++
++#define LAN887X_MIS_DLL_DELAY_EN		BIT(15)
++#define LAN887X_MIS_DLL_EN			BIT(0)
++#define LAN887X_MIS_DLL_CONF	(LAN887X_MIS_DLL_DELAY_EN |\
++				 LAN887X_MIS_DLL_EN)
++
++#define LAN887X_MIS_CFG_REG2			0xa03
++#define LAN887X_MIS_CFG_REG2_FE_LPBK_EN		BIT(2)
++
++#define LAN887X_MIS_PKT_STAT_REG0		0xa06
++#define LAN887X_MIS_PKT_STAT_REG1		0xa07
++#define LAN887X_MIS_PKT_STAT_REG3		0xa09
++#define LAN887X_MIS_PKT_STAT_REG4		0xa0a
++#define LAN887X_MIS_PKT_STAT_REG5		0xa0b
++#define LAN887X_MIS_PKT_STAT_REG6		0xa0c
++
++/* Chiptop common registers */
++#define LAN887X_COMMON_LED3_LED2		0xc05
++#define LAN887X_COMMON_LED2_MODE_SEL_MASK	GENMASK(4, 0)
++#define LAN887X_LED_LINK_ACT_ANY_SPEED		0x0
++
++/* MX chip top registers */
++#define LAN887X_CHIP_SOFT_RST			0xf03f
++#define LAN887X_CHIP_SOFT_RST_RESET		BIT(0)
++
++#define LAN887X_SGMII_CTL			0xf01a
++#define LAN887X_SGMII_CTL_SGMII_MUX_EN		BIT(0)
++
++#define LAN887X_SGMII_PCS_CFG			0xf034
++#define LAN887X_SGMII_PCS_CFG_PCS_ENA		BIT(9)
++
++#define LAN887X_EFUSE_READ_DAT9			0xf209
++#define LAN887X_EFUSE_READ_DAT9_SGMII_DIS	BIT(9)
++#define LAN887X_EFUSE_READ_DAT9_MAC_MODE	GENMASK(1, 0)
++
+ #define DRIVER_AUTHOR	"Nisar Sayed <nisar.sayed@microchip.com>"
+-#define DRIVER_DESC	"Microchip LAN87XX/LAN937x T1 PHY driver"
++#define DRIVER_DESC	"Microchip LAN87XX/LAN937x/LAN887x T1 PHY driver"
+ 
+ struct access_ereg_val {
+ 	u8  mode;
+@@ -105,6 +199,32 @@ struct access_ereg_val {
+ 	u16 mask;
+ };
+ 
++struct lan887x_hw_stat {
++	const char *string;
++	u8 mmd;
++	u16 reg;
++	u8 bits;
++};
++
++static const struct lan887x_hw_stat lan887x_hw_stats[] = {
++	{ "TX Good Count",                      MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG0, 14},
++	{ "RX Good Count",                      MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG1, 14},
++	{ "RX ERR Count detected by PCS",       MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG3, 16},
++	{ "TX CRC ERR Count",                   MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG4, 8},
++	{ "RX CRC ERR Count",                   MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG5, 8},
++	{ "RX ERR Count for SGMII MII2GMII",    MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG6, 8},
++};
++
++struct lan887x_regwr_map {
++	u8  mmd;
++	u16 reg;
++	u16 val;
++};
++
++struct lan887x_priv {
++	u64 stats[ARRAY_SIZE(lan887x_hw_stats)];
++};
++
+ static int lan937x_dsp_workaround(struct phy_device *phydev, u16 ereg, u8 bank)
+ {
+ 	u8 prev_bank;
+@@ -860,6 +980,471 @@ static int lan87xx_get_sqi_max(struct phy_device *phydev)
+ 	return LAN87XX_MAX_SQI;
+ }
+ 
++static int lan887x_rgmii_init(struct phy_device *phydev)
++{
++	int ret;
++
++	/* SGMII mux disable */
++	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
++				 LAN887X_SGMII_CTL,
++				 LAN887X_SGMII_CTL_SGMII_MUX_EN);
++	if (ret < 0)
++		return ret;
++
++	/* Select MAC_MODE as RGMII */
++	ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_CFG_REG0,
++			     LAN887X_MIS_CFG_REG0_MAC_MODE_SEL,
++			     LAN887X_MAC_MODE_RGMII);
++	if (ret < 0)
++		return ret;
++
++	/* Disable PCS */
++	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
++				 LAN887X_SGMII_PCS_CFG,
++				 LAN887X_SGMII_PCS_CFG_PCS_ENA);
++	if (ret < 0)
++		return ret;
++
++	/* LAN887x Errata: RGMII rx clock active in SGMII mode
++	 * Disabled it for SGMII mode
++	 * Re-enabling it for RGMII mode
++	 */
++	return phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
++				  LAN887X_MIS_CFG_REG0,
++				  LAN887X_MIS_CFG_REG0_RCLKOUT_DIS);
++}
++
++static int lan887x_sgmii_init(struct phy_device *phydev)
++{
++	int ret;
++
++	/* SGMII mux enable */
++	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1,
++			       LAN887X_SGMII_CTL,
++			       LAN887X_SGMII_CTL_SGMII_MUX_EN);
++	if (ret < 0)
++		return ret;
++
++	/* Select MAC_MODE as SGMII */
++	ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_CFG_REG0,
++			     LAN887X_MIS_CFG_REG0_MAC_MODE_SEL,
++			     LAN887X_MAC_MODE_SGMII);
++	if (ret < 0)
++		return ret;
++
++	/* LAN887x Errata: RGMII rx clock active in SGMII mode.
++	 * So disabling it for SGMII mode
++	 */
++	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_CFG_REG0,
++			       LAN887X_MIS_CFG_REG0_RCLKOUT_DIS);
++	if (ret < 0)
++		return ret;
++
++	/* Enable PCS */
++	return phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, LAN887X_SGMII_PCS_CFG,
++				LAN887X_SGMII_PCS_CFG_PCS_ENA);
++}
++
++static int lan887x_config_rgmii_en(struct phy_device *phydev)
++{
++	int txc;
++	int rxc;
++	int ret;
++
++	ret = lan887x_rgmii_init(phydev);
++	if (ret < 0)
++		return ret;
++
++	/* Control bit to enable/disable TX DLL delay line in signal path */
++	txc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_DLL_CFG_REG0);
++	if (txc < 0)
++		return txc;
++
++	/* Control bit to enable/disable RX DLL delay line in signal path */
++	rxc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_DLL_CFG_REG1);
++	if (rxc < 0)
++		return rxc;
++
++	/* Configures the phy to enable RX/TX delay
++	 * RGMII        - TX & RX delays are either added by MAC or not needed,
++	 *                phy should not add
++	 * RGMII_ID     - Configures phy to enable TX & RX delays, MAC shouldn't add
++	 * RGMII_RX_ID  - Configures the PHY to enable the RX delay.
++	 *                The MAC shouldn't add the RX delay
++	 * RGMII_TX_ID  - Configures the PHY to enable the TX delay.
++	 *                The MAC shouldn't add the TX delay in this case
++	 */
++	switch (phydev->interface) {
++	case PHY_INTERFACE_MODE_RGMII:
++		txc &= ~LAN887X_MIS_DLL_CONF;
++		rxc &= ~LAN887X_MIS_DLL_CONF;
++		break;
++	case PHY_INTERFACE_MODE_RGMII_ID:
++		txc |= LAN887X_MIS_DLL_CONF;
++		rxc |= LAN887X_MIS_DLL_CONF;
++		break;
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++		txc &= ~LAN887X_MIS_DLL_CONF;
++		rxc |= LAN887X_MIS_DLL_CONF;
++		break;
++	case PHY_INTERFACE_MODE_RGMII_TXID:
++		txc |= LAN887X_MIS_DLL_CONF;
++		rxc &= ~LAN887X_MIS_DLL_CONF;
++		break;
++	default:
++		WARN_ONCE(1, "Invalid phydev interface %d\n", phydev->interface);
++		return 0;
++	}
++
++	/* Configures the PHY to enable/disable RX delay in signal path */
++	ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_DLL_CFG_REG1,
++			     LAN887X_MIS_DLL_CONF, rxc);
++	if (ret < 0)
++		return ret;
++
++	/* Configures the PHY to enable/disable the TX delay in signal path */
++	return phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_DLL_CFG_REG0,
++			      LAN887X_MIS_DLL_CONF, txc);
++}
++
++static int lan887x_config_phy_interface(struct phy_device *phydev)
++{
++	int interface_mode;
++	int sgmii_dis;
++	int ret;
++
++	/* Read sku efuse data for interfaces supported by sku */
++	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_EFUSE_READ_DAT9);
++	if (ret < 0)
++		return ret;
++
++	/* If interface_mode is 1 then efuse sets RGMII operations.
++	 * If interface mode is 3 then efuse sets SGMII operations.
++	 */
++	interface_mode = ret & LAN887X_EFUSE_READ_DAT9_MAC_MODE;
++	/* SGMII disable is set for RGMII operations */
++	sgmii_dis = ret & LAN887X_EFUSE_READ_DAT9_SGMII_DIS;
++
++	switch (phydev->interface) {
++	case PHY_INTERFACE_MODE_RGMII:
++	case PHY_INTERFACE_MODE_RGMII_ID:
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++	case PHY_INTERFACE_MODE_RGMII_TXID:
++		/* Reject RGMII settings for SGMII only sku */
++		ret = -EOPNOTSUPP;
++
++		if (!((interface_mode & LAN887X_MAC_MODE_SGMII) ==
++		    LAN887X_MAC_MODE_SGMII))
++			ret = lan887x_config_rgmii_en(phydev);
++		break;
++	case PHY_INTERFACE_MODE_SGMII:
++		/* Reject SGMII setting for RGMII only sku */
++		ret = -EOPNOTSUPP;
++
++		if (!sgmii_dis)
++			ret = lan887x_sgmii_init(phydev);
++		break;
++	default:
++		/* Reject setting for unsupported interfaces */
++		ret = -EOPNOTSUPP;
++	}
++
++	return ret;
++}
++
++static int lan887x_get_features(struct phy_device *phydev)
++{
++	int ret;
++
++	ret = genphy_c45_pma_read_abilities(phydev);
++	if (ret < 0)
++		return ret;
++
++	/* Enable twisted pair */
++	linkmode_set_bit(ETHTOOL_LINK_MODE_TP_BIT, phydev->supported);
++
++	/* First patch only supports 100Mbps and 1000Mbps force-mode.
++	 * T1 Auto-Negotiation (Clause 98 of IEEE 802.3) will be added later.
++	 */
++	linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, phydev->supported);
++
++	return 0;
++}
++
++static int lan887x_phy_init(struct phy_device *phydev)
++{
++	int ret;
++
++	/* Clear loopback */
++	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
++				 LAN887X_MIS_CFG_REG2,
++				 LAN887X_MIS_CFG_REG2_FE_LPBK_EN);
++	if (ret < 0)
++		return ret;
++
++	if (!IS_ENABLED(CONFIG_OF_MDIO)) {
++		/* Configure default behavior of led to link and activity for any
++		 * speed
++		 */
++		ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1,
++				     LAN887X_COMMON_LED3_LED2,
++				     LAN887X_COMMON_LED2_MODE_SEL_MASK,
++				     LAN887X_LED_LINK_ACT_ANY_SPEED);
++		if (ret < 0)
++			return ret;
++	}
++
++	/* PHY interface setup */
++	return lan887x_config_phy_interface(phydev);
++}
++
++static int lan887x_config_init(struct phy_device *phydev)
++{
++	/* Disable pause frames */
++	linkmode_clear_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev->supported);
++	/* Disable asym pause */
++	linkmode_clear_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, phydev->supported);
++
++	return lan887x_phy_init(phydev);
++}
++
++static int lan887x_phy_config(struct phy_device *phydev,
++			      const struct lan887x_regwr_map *reg_map, int cnt)
++{
++	int ret;
++
++	for (int i = 0; i < cnt; i++) {
++		ret = phy_write_mmd(phydev, reg_map[i].mmd,
++				    reg_map[i].reg, reg_map[i].val);
++		if (ret < 0)
++			return ret;
++	}
++
++	return 0;
++}
++
++static int lan887x_phy_setup(struct phy_device *phydev)
++{
++	static const struct lan887x_regwr_map phy_cfg[] = {
++		/* PORT_AFE writes */
++		{MDIO_MMD_PMAPMD, LAN887X_ZQCAL_CONTROL_1, 0x4008},
++		{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL2, 0x0000},
++		{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL6, 0x0040},
++		/* 100T1_PCS_VENDOR writes */
++		{MDIO_MMD_PCS,	  LAN887X_IDLE_ERR_CNT_THRESH, 0x0008},
++		{MDIO_MMD_PCS,	  LAN887X_IDLE_ERR_TIMER_WIN, 0x800d},
++		/* 100T1 DSP writes */
++		{MDIO_MMD_VEND1,  LAN887x_CDR_CONFIG1_100, 0x0ab1},
++		{MDIO_MMD_VEND1,  LAN887x_LOCK1_EQLSR_CONFIG_100, 0x5274},
++		{MDIO_MMD_VEND1,  LAN887x_SLV_HD_MUFAC_CONFIG_100, 0x0d74},
++		{MDIO_MMD_VEND1,  LAN887x_PLOCK_MUFAC_CONFIG_100, 0x0aea},
++		{MDIO_MMD_VEND1,  LAN887x_PROT_DISABLE_100, 0x0360},
++		{MDIO_MMD_VEND1,  LAN887x_KF_LOOP_SAT_CONFIG_100, 0x0c30},
++		/* 1000T1 DSP writes */
++		{MDIO_MMD_VEND1,  LAN887X_LOCK1_EQLSR_CONFIG, 0x2a78},
++		{MDIO_MMD_VEND1,  LAN887X_LOCK3_EQLSR_CONFIG, 0x1368},
++		{MDIO_MMD_VEND1,  LAN887X_PROT_DISABLE, 0x1354},
++		{MDIO_MMD_VEND1,  LAN887X_FFE_GAIN6, 0x3C84},
++		{MDIO_MMD_VEND1,  LAN887X_FFE_GAIN7, 0x3ca5},
++		{MDIO_MMD_VEND1,  LAN887X_FFE_GAIN8, 0x3ca5},
++		{MDIO_MMD_VEND1,  LAN887X_FFE_GAIN9, 0x3ca5},
++		{MDIO_MMD_VEND1,  LAN887X_ECHO_DELAY_CONFIG, 0x0024},
++		{MDIO_MMD_VEND1,  LAN887X_FFE_MAX_CONFIG, 0x227f},
++		/* 1000T1 PCS writes */
++		{MDIO_MMD_PCS,    LAN887X_SCR_CONFIG_3, 0x1e00},
++		{MDIO_MMD_PCS,    LAN887X_INFO_FLD_CONFIG_5, 0x0fa1},
++	};
++
++	return lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
++}
++
++static int lan887x_100M_setup(struct phy_device *phydev)
++{
++	int ret;
++
++	/* (Re)configure the speed/mode dependent T1 settings */
++	if (phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_FORCE ||
++	    phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_PREFERRED){
++		static const struct lan887x_regwr_map phy_cfg[] = {
++			{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x00b8},
++			{MDIO_MMD_PMAPMD, LAN887X_TX_AMPLT_1000T1_REG, 0x0038},
++			{MDIO_MMD_VEND1,  LAN887X_INIT_COEFF_DFE1_100, 0x000f},
++		};
++
++		ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
++	} else {
++		static const struct lan887x_regwr_map phy_cfg[] = {
++			{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x0038},
++			{MDIO_MMD_VEND1, LAN887X_INIT_COEFF_DFE1_100, 0x0014},
++		};
++
++		ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
++	}
++	if (ret < 0)
++		return ret;
++
++	return phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, LAN887X_REG_REG26,
++				LAN887X_REG_REG26_HW_INIT_SEQ_EN);
++}
++
++static int lan887x_1000M_setup(struct phy_device *phydev)
++{
++	static const struct lan887x_regwr_map phy_cfg[] = {
++		{MDIO_MMD_PMAPMD, LAN887X_TX_AMPLT_1000T1_REG, 0x003f},
++		{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x00b8},
++	};
++	int ret;
++
++	/* (Re)configure the speed/mode dependent T1 settings */
++	ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
++	if (ret < 0)
++		return ret;
++
++	return phy_set_bits_mmd(phydev, MDIO_MMD_PMAPMD, LAN887X_DSP_PMA_CONTROL,
++				LAN887X_DSP_PMA_CONTROL_LNK_SYNC);
++}
++
++static int lan887x_link_setup(struct phy_device *phydev)
++{
++	int ret = -EINVAL;
++
++	if (phydev->speed == SPEED_1000)
++		ret = lan887x_1000M_setup(phydev);
++	else if (phydev->speed == SPEED_100)
++		ret = lan887x_100M_setup(phydev);
++
++	return ret;
++}
++
++/* LAN887x Errata: speed configuration changes require soft reset
++ * and chip soft reset
++ */
++static int lan887x_phy_reset(struct phy_device *phydev)
++{
++	int ret, val;
++
++	/* Clear 1000M link sync */
++	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_PMAPMD, LAN887X_DSP_PMA_CONTROL,
++				 LAN887X_DSP_PMA_CONTROL_LNK_SYNC);
++	if (ret < 0)
++		return ret;
++
++	/* Clear 100M link sync */
++	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1, LAN887X_REG_REG26,
++				 LAN887X_REG_REG26_HW_INIT_SEQ_EN);
++	if (ret < 0)
++		return ret;
++
++	/* Chiptop soft-reset to allow the speed/mode change */
++	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_CHIP_SOFT_RST,
++			    LAN887X_CHIP_SOFT_RST_RESET);
++	if (ret < 0)
++		return ret;
++
++	/* CL22 soft-reset to let the link re-train */
++	ret = phy_modify(phydev, MII_BMCR, BMCR_RESET, BMCR_RESET);
++	if (ret < 0)
++		return ret;
++
++	/* Wait for reset complete or timeout if > 10ms */
++	return phy_read_poll_timeout(phydev, MII_BMCR, val, !(val & BMCR_RESET),
++				    5000, 10000, true);
++}
++
++static int lan887x_phy_reconfig(struct phy_device *phydev)
++{
++	int ret;
++
++	linkmode_zero(phydev->advertising);
++
++	ret = genphy_c45_pma_setup_forced(phydev);
++	if (ret < 0)
++		return ret;
++
++	return lan887x_link_setup(phydev);
++}
++
++static int lan887x_config_aneg(struct phy_device *phydev)
++{
++	int ret;
++
++	/* First patch only supports 100Mbps and 1000Mbps force-mode.
++	 * T1 Auto-Negotiation (Clause 98 of IEEE 802.3) will be added later.
++	 */
++	if (phydev->autoneg != AUTONEG_DISABLE) {
++		/* PHY state is inconsistent due to ANEG Enable set
++		 * so we need to assign ANEG Disable for consistent behavior
++		 */
++		phydev->autoneg = AUTONEG_DISABLE;
++		return 0;
++	}
++
++	/* LAN887x Errata: speed configuration changes require soft reset
++	 * and chip soft reset
++	 */
++	ret = lan887x_phy_reset(phydev);
++	if (ret < 0)
++		return ret;
++
++	return lan887x_phy_reconfig(phydev);
++}
++
++static int lan887x_probe(struct phy_device *phydev)
++{
++	struct lan887x_priv *priv;
++
++	priv = devm_kzalloc(&phydev->mdio.dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	phydev->priv = priv;
++
++	return lan887x_phy_setup(phydev);
++}
++
++static u64 lan887x_get_stat(struct phy_device *phydev, int i)
++{
++	struct lan887x_hw_stat stat = lan887x_hw_stats[i];
++	struct lan887x_priv *priv = phydev->priv;
++	int val;
++	u64 ret;
++
++	if (stat.mmd)
++		val = phy_read_mmd(phydev, stat.mmd, stat.reg);
++	else
++		val = phy_read(phydev, stat.reg);
++
++	if (val < 0) {
++		ret = U64_MAX;
++	} else {
++		val = val & ((1 << stat.bits) - 1);
++		priv->stats[i] += val;
++		ret = priv->stats[i];
++	}
++
++	return ret;
++}
++
++static void lan887x_get_stats(struct phy_device *phydev,
++			      struct ethtool_stats *stats, u64 *data)
++{
++	for (int i = 0; i < ARRAY_SIZE(lan887x_hw_stats); i++)
++		data[i] = lan887x_get_stat(phydev, i);
++}
++
++static int lan887x_get_sset_count(struct phy_device *phydev)
++{
++	return ARRAY_SIZE(lan887x_hw_stats);
++}
++
++static void lan887x_get_strings(struct phy_device *phydev, u8 *data)
++{
++	for (int i = 0; i < ARRAY_SIZE(lan887x_hw_stats); i++) {
++		strscpy(data + i * ETH_GSTRING_LEN,
++			lan887x_hw_stats[i].string, ETH_GSTRING_LEN);
++	}
++}
++
+ static struct phy_driver microchip_t1_phy_driver[] = {
+ 	{
+ 		PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX),
+@@ -894,6 +1479,20 @@ static struct phy_driver microchip_t1_phy_driver[] = {
+ 		.get_sqi_max	= lan87xx_get_sqi_max,
+ 		.cable_test_start = lan87xx_cable_test_start,
+ 		.cable_test_get_status = lan87xx_cable_test_get_status,
++	},
++	{
++		PHY_ID_MATCH_MODEL(PHY_ID_LAN887X),
++		.name		= "Microchip LAN887x T1 PHY",
++		.probe		= lan887x_probe,
++		.get_features	= lan887x_get_features,
++		.config_init    = lan887x_config_init,
++		.config_aneg    = lan887x_config_aneg,
++		.get_stats      = lan887x_get_stats,
++		.get_sset_count = lan887x_get_sset_count,
++		.get_strings    = lan887x_get_strings,
++		.suspend	= genphy_suspend,
++		.resume		= genphy_resume,
++		.read_status	= genphy_c45_read_status,
+ 	}
+ };
+ 
+@@ -902,6 +1501,7 @@ module_phy_driver(microchip_t1_phy_driver);
+ static struct mdio_device_id __maybe_unused microchip_t1_tbl[] = {
+ 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX) },
+ 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN937X) },
++	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN887X) },
+ 	{ }
+ };
+ 
+-- 
+2.17.1
+
 
