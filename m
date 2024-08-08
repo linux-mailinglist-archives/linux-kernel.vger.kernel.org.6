@@ -1,84 +1,130 @@
-Return-Path: <linux-kernel+bounces-279574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0600194BF23
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:08:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E58D94BF20
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A340A1F2257F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10B4F288723
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF2C18E756;
-	Thu,  8 Aug 2024 14:08:34 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F09418E761;
+	Thu,  8 Aug 2024 14:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="D6uE+mMv"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E9B18C90C
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656F118E740;
+	Thu,  8 Aug 2024 14:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723126113; cv=none; b=aUo3FaGe4JaYzo+P8AoiXeayKZhKWd8kyk7F1u7l/7ZkKP9mla0cmo5mRkN3VufojaCgXpd67qvg+0NOoLhKgN4vquOZVrNhzcij7PUHyJZaEaxqh3IsuFhxD1cI5yCYOXlatrMMDxX5p0INipYOFG+jo5lUkum4vbfZD8r3vv4=
+	t=1723126065; cv=none; b=C1oR3diMD7map2E4IUsLkXHNYxiln5Z7/oDKxuSftjGEGcUMCNjusCHjE3WVfkMfcesVpiZiwJWpY1YKYwPic9HT+CR5T2bUIc6ulT1gjLuP8RlhAtf2vqSjmXEoxkvSkhihThwSY71zQSYPNtuy90dzzMnjCx4WnJ+BIpkgZAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723126113; c=relaxed/simple;
-	bh=ftysCDxdrnWKxwFrSTDJOz3hoaatgTbR/7+r+kDiN+g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D7+NK7OQJ6x8/cYHT95e6bsByiI2KqdXSU8TTLdR2spV4oOayBTsT8cOOxX3Teg1knmDTP414PIA6VQ+rv9tILth0dFXYxJLNFxMvIVjR7zDNfowYxC1qJpQAdr3lWHOg+hVk08cQ+Hn3XknVOoteSCPEszDkQBUSSS2/rqNabc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WfpkT1Vhgz1xv13;
-	Thu,  8 Aug 2024 22:06:41 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 06C481A016C;
-	Thu,  8 Aug 2024 22:08:30 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 8 Aug
- 2024 22:08:29 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
-	<jgg@ziepe.ca>, <baolu.lu@linux.intel.com>
-CC: <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH -next] iommu: Remove unused declaration iommu_sva_unbind_gpasid()
-Date: Thu, 8 Aug 2024 22:06:19 +0800
-Message-ID: <20240808140619.2498535-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723126065; c=relaxed/simple;
+	bh=2eFUcF4Ok8H/r5DzQ956VAy5kWMYpZXm6mNcox2QdPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n3qkO6wNrqy4H9TtD0BtbAtJWxKLjBQ0BNCTAOqW9twIBESDZqvT64Ji2cqLGCXAc92qqRa4A+pNJbqyPUkSiJCAPn4SQENiWEmX6UPQCD+G3fFogKqSzeatoxJJldlTpgj1MTgRRt1lzeiTk2uMXDDg1PvwBKarrY6Z9oNJDzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=D6uE+mMv; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CF814E0005;
+	Thu,  8 Aug 2024 14:07:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723126060;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kSHBR50la6iokVWygP7kM2FMcIflEjS6RBzmmxnEkQw=;
+	b=D6uE+mMvqw6FhVXuMMxS/wRCXEj95rNeYf2PE5mBLmG/2wWNrcjPIvN1OBHXC0TJSKbA1J
+	DTqOLD3CzBr3c2kcjAJSdw4gQ5kXZ/1eftc4QYDXcyG0lM/wQXfIREbNEdw6FZH0lEoXPp
+	kaq1mliaOqvtQgzBlXPN9r5/vM+XvcTdj/9sBCRommwRQq2W54tBIR3CQ0JCkhCOwOBlRB
+	hqEVCKArZitC2HnLPdD6KN5Y7D+CWwXFAIPkV3g/f7JZoODSB01zyVW8+SP5Kg5UUWW7iT
+	7dMdfE6LimW9RuptcqfsvYFl1pyts57y2OdsYVorSp/tCiT5rF/fSu9JBBTlHA==
+Date: Thu, 8 Aug 2024 16:07:37 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Simon Horman
+ <horms@kernel.org>, Lee Jones <lee@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>, Steen
+ Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring
+ <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 1/8] misc: Add support for LAN966x PCI device
+Message-ID: <20240808160737.4d8806ee@bootlin.com>
+In-Reply-To: <CAHp75Ve0SVSzM36srTY7DwqY5_T9Bkqa0_xyDC2RzU=D1nsTwg@mail.gmail.com>
+References: <20240805101725.93947-1-herve.codina@bootlin.com>
+	<20240805101725.93947-2-herve.codina@bootlin.com>
+	<CAHp75VdtFET87R9DZbz27vEeyv4K5bn7mxDCnBVdpFVJ=j6qtg@mail.gmail.com>
+	<20240807120956.30c8264e@bootlin.com>
+	<CAHp75Ve0SVSzM36srTY7DwqY5_T9Bkqa0_xyDC2RzU=D1nsTwg@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-GND-Sasl: herve.codina@bootlin.com
 
-Commit 0c9f17877891 ("iommu: Remove guest pasid related interfaces and definitions")
-removed the implementation but leave declaration.
+Hi Andy,
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- include/linux/iommu.h | 2 --
- 1 file changed, 2 deletions(-)
+On Thu, 8 Aug 2024 15:32:07 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 4d47f2c33311..04cbdae0052e 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -795,8 +795,6 @@ extern int iommu_attach_device(struct iommu_domain *domain,
- 			       struct device *dev);
- extern void iommu_detach_device(struct iommu_domain *domain,
- 				struct device *dev);
--extern int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
--				   struct device *dev, ioasid_t pasid);
- extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
- extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
- extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
--- 
-2.34.1
+> On Wed, Aug 7, 2024 at 1:10 PM Herve Codina <herve.codina@bootlin.com> wrote:
+> > On Mon, 5 Aug 2024 22:13:38 +0200
+> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:  
+> > > On Mon, Aug 5, 2024 at 12:19 PM Herve Codina <herve.codina@bootlin.com> wrote:  
+> 
+> ...
+> 
+> > > > +       if (!pdev->irq)
+> > > > +               return ERR_PTR(-EOPNOTSUPP);  
+> > >
+> > > Before even trying to get it via APIs? (see below as well)
+> > > Also, when is it possible to have 0 here?  
+> >
+> > pdev->irq can be 0 if the PCI device did not request any IRQ
+> > (i.e. PCI_INTERRUPT_PIN in PCI config header is 0).  
+> 
+> > I use that to check whether or not INTx is supported.  
+> 
+> But why do you need that? What happens if you get a new device that
+> supports let's say MSI?
+> 
+> > Even if this code is present in the LAN966x PCI driver, it can be use as a
+> > starting point for other drivers and may be moved to a common part in the
+> > future.
+> >
+> > Do you think I should remove it ?  
+> 
+> I think pci_alloc_vectors() should be enough. Make it to be the first
+> call, if you think it's better.
+> 
 
+Thanks for your answer.
+
+I will remove the pdev->irq check an rely pci_alloc_vectors().
+Not sure that I will move the call to the first call.
+
+Best regards.
+Hervé
 
