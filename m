@@ -1,130 +1,134 @@
-Return-Path: <linux-kernel+bounces-279009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 228D094B7C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:23:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9007294B7C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB031F21A87
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:23:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B8BA1F24AAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4FD188006;
-	Thu,  8 Aug 2024 07:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB9718800D;
+	Thu,  8 Aug 2024 07:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="lZuqVuBA"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPruvz2R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A514443D
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 07:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBAB184101;
+	Thu,  8 Aug 2024 07:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723101825; cv=none; b=D8sGrURqxbaw+VpgdNm4/uR/9by8AqmXT1vFS2OD2a0cgRtbjXtkGxCwsAC2ZywMHoL+cr/XL1Th0V+AxJ2iAPdOOJ2sBTz6xC2VZ9VSVEUeyEXXsoFrE5h09+yxQt8ey3eiZGsBAf+yz+0vu91YTlTMhxbvNeAnWBuemKBCwyE=
+	t=1723101844; cv=none; b=IRSf8Y/CkOMWyiI51nHjdvGc+aTIXm1+oVYRLBhGhXkdarRZ+OsFmuybiZcj3aAphRjxXmWQwm0TBGnjR+D8yElxLsEer706QWb/KQ9EQBhNgqn/Ama3ZDK85D9FWG1GfewTM8KUZZf/BCckvBgTgp9JVgrOw57fhI5bEKhxNIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723101825; c=relaxed/simple;
-	bh=D6RiyQPc6iIE+hdVJNJNeUNwAVhfVqgT+Pe+C9Y1kmk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=upzoYnJCHMeWkiCpY6CHNBpdo1nwkrSHy8Ydj9ZbQ5aNw0TL3SlwB6ioirOh1vandx4OA/Z0fzrA+FzJ8C24943dpmUmxAonJ7oCCDuxc0frYbsbDWYMifEXa8q7rOjV0wn8ZFtYkFoY+ZY+ZEgmHN8ef008VEkynqe4ByEeXuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=lZuqVuBA; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723101816; x=1723361016;
-	bh=VDBYMTYmF1oXsP8HDVQe5zY6DMj6ZP0pIwM8+fNBqu0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=lZuqVuBAlvTTtYmY28LYemK0HAMsVfDzFKp8f7Q9WapEZ9ANpdXXTjB+k+fVNE9gR
-	 ceCbdKh2+Ymuji6sqBryLB0x7zLqitrp7qHOCVzxVcbs7OeH+iWkWhGdYIKNHe+mTJ
-	 LD+p6edh5Se02bSAi2fk0zzgqZZ2i4p/jaqliAXBclCtv2UMa6g71nCeuRm6Vdp2Km
-	 xD4Esi0N2U6YRud2mblDCfAZMf00U53u7yfdeEZdW1ZRa9/cjRnDMnxPvNgH3HzNmN
-	 KvJYcbOd2ytlR1/5ZwVpqlnoVclKh3ya/3eqdt0kQhhlElb/NdhXBkDxYn9RMZCrM7
-	 JlBWoP2RaOpiA==
-Date: Thu, 08 Aug 2024 07:22:48 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4 26/28] rust: str: test: replace `alloc::format`
-Message-ID: <51d38447-9906-42fd-9e5e-b43983d3a366@proton.me>
-In-Reply-To: <20240805152004.5039-27-dakr@kernel.org>
-References: <20240805152004.5039-1-dakr@kernel.org> <20240805152004.5039-27-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: fbf5fad7a5e932020ec3969eec09c8bfb6ad1b62
+	s=arc-20240116; t=1723101844; c=relaxed/simple;
+	bh=PJXUR1X97gr/ZryqJBp43/1AgA4kgN3qWCxWeyj5I3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OzHwV4Da4KX7N9WqVSQqIeqXcDXVtQCfU69HQlYMQF7iVj8SFhrU3jqDe/YTefjMOeDUsyXgOMl8QUBUnoMf9giJ66C1enIk6wtvAmJtTpPDVpqXsK1NO3jZYlyaKA9BMvzN1tbNHhcHIrU161QyiS3IAxRoHi0uXvmD15kU5nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPruvz2R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4DBDC32782;
+	Thu,  8 Aug 2024 07:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723101844;
+	bh=PJXUR1X97gr/ZryqJBp43/1AgA4kgN3qWCxWeyj5I3s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rPruvz2RzFgEHCd3QCVVttNjVUhUEoXVbidjNohJ+jKzN03rcE5BHbHXoXdBlRZHa
+	 NgtN+p+5leIL7UMAwycOrJEIikNYxMLGiE8Ss1ffWEcnG8Sji5hDD/XlJxlB6WLcg2
+	 KTahPObWrQzBc2ZLpSqM4N0ZErdUHzFUi/DWFYxJxe9t+XQAISDHlBoS82iCY5plBh
+	 uNvnFtVoNHRRWXnhBN45N+b9zMTPvRjoFgkNxxbjpaU1FhkJmgxhcMjE3hOG+TcSBN
+	 0ga280OOOCS0j54/BMw3KyvnMpWC8/PF5fLPE1rrIbkftDm/WOBVQz3lamiFXKbG2Z
+	 9qTDgsWX9Nk9Q==
+Message-ID: <10ec9c87-5b31-4a1c-83aa-bc0ef548c1e0@kernel.org>
+Date: Thu, 8 Aug 2024 09:23:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] tty: serial: samsung_tty: simple cleanups
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Jiri Slaby <jirislaby@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org>
+ <2024080714-spongy-wannabe-7a9e@gregkh>
+ <5e73f1b405e06f9ee796d3b7002933f75613728a.camel@linaro.org>
+ <cef7b260-7f47-4acd-9d6c-d26b7f8cc7bf@linaro.org>
+ <62c027a1692c1b80652b58147d4ff215a0ada88b.camel@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <62c027a1692c1b80652b58147d4ff215a0ada88b.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 05.08.24 17:19, Danilo Krummrich wrote:
-> The current implementation of tests in str.rs use `format!` to format
-> strings for comparison, which, internally, creates a new `String`.
->=20
-> In order to prepare for getting rid of Rust's alloc crate, we have to
-> cut this dependency. Instead, implement `format!` for `CString`.
->=20
-> Note that for userspace tests, `Kmalloc`, which is backing `CString`'s
-> memory, is just a type alias to `Cmalloc`.
->=20
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/str.rs | 23 ++++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
->=20
-> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> index 0b6ffbade521..8f234224cbf5 100644
-> --- a/rust/kernel/str.rs
-> +++ b/rust/kernel/str.rs
-> @@ -523,7 +523,28 @@ macro_rules! c_str {
->  #[cfg(test)]
->  mod tests {
->      use super::*;
-> -    use alloc::format;
-> +
-> +    struct String(CString);
-> +
-> +    impl String {
-> +        fn from_fmt(args: fmt::Arguments<'_>) -> Self {
-> +            String(CString::try_from_fmt(args).unwrap())
-> +        }
-> +    }
-> +
-> +    impl Deref for String {
-> +        type Target =3D str;
-> +
-> +        fn deref(&self) -> &str {
-> +            self.0.to_str().unwrap()
-> +        }
-> +    }
+On 07/08/2024 15:58, André Draszik wrote:
+> On Wed, 2024-08-07 at 14:53 +0100, Tudor Ambarus wrote:
+>> Same on my side. Any idea why CONFIG_WERROR is not enabled by more
+>> archs? I see just the two:
+>> arch/x86/configs/i386_defconfig:CONFIG_WERROR=y
+>> arch/x86/configs/x86_64_defconfig:CONFIG_WERROR=y
+> 
+> I can't answer that, but it's an opt-in these days, see
+> b339ec9c229a ("kbuild: Only default to -Werror if COMPILE_TEST").
+> Surely if the concern at the time was runtime testing, then that
+> runtime testing CI infra could have disabled CONFIG_WERROR instead of
+> globally disabling it for everybody.
 
-Don't actually think we need this newtype.
+You are supposed to look for warnings not rely on errors. The same for
+building with W=1...
 
-> +
-> +    macro_rules! format {
-> +        ($($f:tt)*) =3D> ({
-> +            &*String::from_fmt(kernel::fmt!($($f)*))
-
-We could just do this:
-
-    CString::try_from_fmt(kernel::fmt!($(f)*)).unwrap().to_str().unwrap()
-
----
-Cheers,
-Benno
-
-> +        })
-> +    }
->=20
->      const ALL_ASCII_CHARS: &'static str =3D
->          "\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x0a\\x0b\\x0c\\x=
-0d\\x0e\\x0f\
-> --
-> 2.45.2
->=20
+Best regards,
+Krzysztof
 
 
