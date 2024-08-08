@@ -1,144 +1,113 @@
-Return-Path: <linux-kernel+bounces-279430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C595394BD39
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:17:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E1F94BD3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E36FB21F07
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:17:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 501A3B22CF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DE818C341;
-	Thu,  8 Aug 2024 12:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4905118C344;
+	Thu,  8 Aug 2024 12:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hQKYKd+I"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qLTBy5YY"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CDD63D;
-	Thu,  8 Aug 2024 12:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E1A63D;
+	Thu,  8 Aug 2024 12:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723119443; cv=none; b=sIlALtaFhVq+ySmbZdoaiy5/qrOGO3fZyyPmVcQ3Vno7HGFKq2J16HeT+idB5soqT1oMSJVBdwS8n9DVYhKWMaLriVWLL58XLnWUgK3KEZZo4/o3AQsd8WjPvaUuTIhGPJUJ23Mg0+vECNKC0bF1JaDZnugDi+1TMh7/J1E43WU=
+	t=1723119529; cv=none; b=ncx3PEnQx/B4XuKqorjen24iO+eRa6w0+wucxP/Obhb4Vmali/gqEbJNprBAUvRNZhboxPct5ngO8o2SSuwNQ9tG/bFtknNIv9/QTbsfnB5oZAwhOy5HorR+tzh0ZjxfJZHGQ4G3Tj/yCG4VooHq9xeKbfuo5GIeOGO4Jg+XAz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723119443; c=relaxed/simple;
-	bh=jxdAQwclMC1Qk5rFWcQxmVDsNJV1MmvKrCcqjq3ELws=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hCiX3Um6vYt4j5K3ua/Jf3wzkMsB1qONN7D0TC/VLZK4ha4LfiNFFDfplQBU9do81kMfPwZjQkirpuVx2mMEPLrfjHiYDdPltyZnupxe3vCRv83Da/iZBOrIpZPRnLY3gaRDdEhejaq1U32NweDnIjRok3sMciHOvn01+Wm2g4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hQKYKd+I; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723119442; x=1754655442;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=jxdAQwclMC1Qk5rFWcQxmVDsNJV1MmvKrCcqjq3ELws=;
-  b=hQKYKd+IZV9IJyHU2upq/rBsPm2WDJ1BkpyrpC5BFzUVb22ccIKJG3Pc
-   FywjlV67g1VEijGZrVk8czm7DYnIf4XsKmf4aa1DIJ77FcFwJELnBYEC9
-   laZu4ZWlNdnBZUnf60LNAYFuGYHMzEyrGrnRzlbYWrLDvvES+wHnzTLCV
-   Ss7edZJCu9112wJHQAZ6P8fuMRkYsn5k2xic9uBW8Af/+IGHQ0pcln961
-   VYSk6H1cI9TtSpnhmjJ1e6X18PCIqqt45nEXRzdOg8BijiqhIA2p6FpLZ
-   Otcr0NteWoP1E5roTWsJMma/++KxzkwiDPvTmtbh982oiWj0E3569tAPW
-   g==;
-X-CSE-ConnectionGUID: Seoy7kw4RUuZI94YE9FnHA==
-X-CSE-MsgGUID: N490G7OLSG2InIZhnsOczw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21408504"
-X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="21408504"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 05:17:21 -0700
-X-CSE-ConnectionGUID: YkPvuPKuTIaXeB3gNntgwA==
-X-CSE-MsgGUID: Yn66PLr4S1CmEN3SAPnU3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="80433578"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.125.108.108])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 05:17:19 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: "David E . Box" <david.e.box@linux.intel.com>,
-	Jian-Hong Pan <jhp@endlessos.org>,
-	Lukas Wunner <lukas@wunner.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 1/1] PCI: Wait for Link before restoring Downstream Buses
-Date: Thu,  8 Aug 2024 15:17:07 +0300
-Message-Id: <20240808121708.2523-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1723119529; c=relaxed/simple;
+	bh=xqf+ucHFCRsY9GOgBmSDtZG3SPFyMuBOCNXBlB7fkxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LkkxYxSwGwaHRS+Ks/C6lb9Pe2aXGqez0/c0jK6E3ohScf9qvFTCk27VT/8O1mWNqzB7kan0AEpfUvZGeoXHAOrDtHeuzDieBqzclpBZt0/hPCKVsFiKZwDa2kxrVhZiKDTljA6MREqGi525kFybQ+TvETKgYAIRKyYraiDZd4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qLTBy5YY; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Wk/tay5FPiKm1Bv9xRpAxS4yJmNfkcDJKHrdilGeuSA=; b=qLTBy5YYvG2DBz1kt9RNRLy1gk
+	eJi9ZpbOSczsREwajfRAwMhCP/jYjoOlpvS3CoZAtMN62OkDMZszqsLl7wGg+Xg0eJ5L3hHfddIlA
+	9J+sGbc2PopCJB0L9dVQuEm8iOU5GBZipR+ReMebKAphUDZ45wF3g7hN1Y3eRI7/R9MijjoSHxJn8
+	5y4+FWbwPRbYeM9u12dVH4kDC8R6Uyy6XvEVq1QTo3Lx0BmFH1FnB8BXCjr7Kpr/jkY2M8Jn7HWtd
+	PYkM/m1XDq0yE7UoY5ZTo0gkuF/NsT1lWieDCioD6WGqGkYIA0DuxURy9f8ZYqwXLRx91k7DbvR1j
+	WdxiJI8g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56144)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sc26C-0001Ea-0H;
+	Thu, 08 Aug 2024 13:18:32 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sc26G-0005Ch-3a; Thu, 08 Aug 2024 13:18:36 +0100
+Date: Thu, 8 Aug 2024 13:18:35 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Divya Koppera <Divya.Koppera@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: microchip_t1: Adds support for
+ LAN887x phy
+Message-ID: <ZrS3m/Ah8Rx7tT6H@shell.armlinux.org.uk>
+References: <20240808145916.26006-1-Divya.Koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808145916.26006-1-Divya.Koppera@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-__pci_reset_bus() calls pci_bridge_secondary_bus_reset() to perform the
-reset and also waits for the Secondary Bus to become again accessible.
-__pci_reset_bus() then calls pci_bus_restore_locked() that restores the
-PCI devices connected to the bus, and if necessary, recursively restores
-also the subordinate buses and their devices.
+On Thu, Aug 08, 2024 at 08:29:16PM +0530, Divya Koppera wrote:
+> +static int lan887x_config_init(struct phy_device *phydev)
+> +{
+> +	/* Disable pause frames */
+> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev->supported);
+> +	/* Disable asym pause */
+> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, phydev->supported);
 
-The logic in pci_bus_restore_locked() does not take into account that
-after restoring a device on one level, there might be another Link
-Downstream that can only start to come up after restore has been
-performed for its Downstream Port device. That is, the Link may
-require additional wait until it becomes accessible.
+Why is this here? Pause frames are just like normal ethernet frames,
+they only have meaning to the MAC, not to the PHY.
 
-Similarly, pci_slot_restore_locked() lacks wait.
+In any case, by the time the config_init() method has been called,
+the higher levels have already looked at phydev->supported and made
+decisions on what's there.
 
-Amend pci_bus_restore_locked() and pci_slot_restore_locked() to wait
-for the Secondary Bus before recursively performing the restore of that
-bus.
+> +static int lan887x_config_aneg(struct phy_device *phydev)
+> +{
+> +	int ret;
+> +
+> +	/* First patch only supports 100Mbps and 1000Mbps force-mode.
+> +	 * T1 Auto-Negotiation (Clause 98 of IEEE 802.3) will be added later.
+> +	 */
+> +	if (phydev->autoneg != AUTONEG_DISABLE) {
+> +		/* PHY state is inconsistent due to ANEG Enable set
+> +		 * so we need to assign ANEG Disable for consistent behavior
+> +		 */
+> +		phydev->autoneg = AUTONEG_DISABLE;
 
-Fixes: 090a3c5322e9 ("PCI: Add pci_reset_slot() and pci_reset_bus()")
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
+If you clear phydev->supported's autoneg bit, then phylib ought to
+enforce this for you. Please check this rather than adding code to
+drivers.
 
-NOTE TO MAINTAINER: I've not seen anything to actually trigger this issue
-but only realized this problem exist while looking into the other issues
-related to bus reset/restore. The fix regardless seems to make sense so
-sending it out.
+Thanks.
 
- drivers/pci/pci.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index e3a49f66982d..98c7b732998a 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5671,8 +5671,10 @@ static void pci_bus_restore_locked(struct pci_bus *bus)
- 
- 	list_for_each_entry(dev, &bus->devices, bus_list) {
- 		pci_dev_restore(dev);
--		if (dev->subordinate)
-+		if (dev->subordinate) {
-+			pci_bridge_wait_for_secondary_bus(dev, "bus reset");
- 			pci_bus_restore_locked(dev->subordinate);
-+		}
- 	}
- }
- 
-@@ -5706,8 +5708,10 @@ static void pci_slot_restore_locked(struct pci_slot *slot)
- 		if (!dev->slot || dev->slot != slot)
- 			continue;
- 		pci_dev_restore(dev);
--		if (dev->subordinate)
-+		if (dev->subordinate) {
-+			pci_bridge_wait_for_secondary_bus(dev, "slot reset");
- 			pci_bus_restore_locked(dev->subordinate);
-+		}
- 	}
- }
- 
 -- 
-2.39.2
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
