@@ -1,214 +1,150 @@
-Return-Path: <linux-kernel+bounces-279815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5408A94C229
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:59:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F4F94C22B
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017191F2A13E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:59:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41AC51F2A3EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4086B18FDC5;
-	Thu,  8 Aug 2024 15:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB35F18FC99;
+	Thu,  8 Aug 2024 15:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J+IS53tq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YTWth43g"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A0C18E056;
-	Thu,  8 Aug 2024 15:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710C118E056;
+	Thu,  8 Aug 2024 15:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723132766; cv=none; b=fGbII4sUlH3xawVjObwfxdIMWlosxvw8Dbigpn8cip6ZkEOrF9hwfiFw7P4anuWHDQOY9wz//qOcwPiXsaNrNhpMe4RWFKjxad9luO2oFghKmnlOpOYBHf0UcvRP/IzotWxaUsd7xy88/YXWCMjBB/4YrP2Zh9fWmfIkwkvsx9g=
+	t=1723132777; cv=none; b=MC9aBcbLrJB84JexcUPi/8zJYNU/xRUNgdVrwfMk8SwgXt2yidBbekBE9ZcCL4zornztvgM5CZxbxbynphsMWkckTX5ZBzUG7fcFtysiAHISG8lMVkZRDZz6RTB3bZfVOeTVdWDHnuVWdjuRVATsTK7SIsLAij6Rofc39j91u8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723132766; c=relaxed/simple;
-	bh=MEvxcBvLjv3BSWvOm4fkXUoZALp5jBl627u9jxglorQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=H+2Olb1LvIwIvPcSHrimyzKypc9xJ0FBT1oGqxyHx842z6YaN5MhuhJl4mfOo6lRBpX81xjAiwZ4C9uyyGULwg7HNpc44GN5uGIrj9Z1hLYYynO/2IXDkr6xm18P6JikTkSdbqxgdOW1uXB952Sie3F1VlbXnHJ58Qz78/JgRhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J+IS53tq; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723132765; x=1754668765;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=MEvxcBvLjv3BSWvOm4fkXUoZALp5jBl627u9jxglorQ=;
-  b=J+IS53tqwThMYeQ7o/xh06GGKABlqnkoSppOaPGxdXJnfoGJoASOfSIk
-   r/Lxymu/jm5x1mClEuQyQ14ZKWvo0onSd1MA77/cDhQW5C7TCOf42WV9t
-   0OXnfZODhDzjKPZgcozmU25B37wAUHTiE8A+sC/NVIjrpi9c71DGV+mPz
-   1U080oFsYWOdtxYjzzWWzyQ6WDJdhrEokFnFb+jAlmQwceFmj1yOD4s9A
-   uEInfQwX6pF+Y1ge+/v8CqgMd+KJWgGFu5v0rW9Q/tBUMZntMOzdltnIk
-   OfaZvjEJ+n9bPxp4Y8Kb4oEawCEoxZp7u4zaTQD5/GiCN8X5o9d9PZVD1
-   A==;
-X-CSE-ConnectionGUID: XbnD4gB3TE68IwXY/jU3nQ==
-X-CSE-MsgGUID: zVWstbgQSdCrvhbD+dOukw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="20837740"
-X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="20837740"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 08:59:24 -0700
-X-CSE-ConnectionGUID: C3J5hc+SSBet162iCN9lDA==
-X-CSE-MsgGUID: cuyZeT4sQxSSdUcerky64Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="57351337"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 08:59:23 -0700
-Received: from [10.212.64.50] (kliang2-mobl1.ccr.corp.intel.com [10.212.64.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id BB68920CFECD;
-	Thu,  8 Aug 2024 08:59:21 -0700 (PDT)
-Message-ID: <147d8178-70d6-42b8-b255-ee9e24774a61@linux.intel.com>
-Date: Thu, 8 Aug 2024 11:59:20 -0400
+	s=arc-20240116; t=1723132777; c=relaxed/simple;
+	bh=qt2t5pX4tolQSOlVhWdQbwDyBRC9NG8bRoVDbqSaJaE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RjYjchXoojZH0ukLKpe7N96jXeHUgn+a9mxFlmVX2sNW64dZM5IGY/VCudNfgTGQtqd6BMkPwHBqpwCw+06E8U+5uwTpXLJMmIf30S5PS4TEGTsMn2yqDcLY9RXxJ2JE307MchCvFHWfuvOlxuL29hdxuARDubajgGK+38nP/FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YTWth43g; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-710bdddb95cso787283b3a.3;
+        Thu, 08 Aug 2024 08:59:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723132775; x=1723737575; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=2kUjHTbBqy9ZeAxHJojWr0iq+a17EATMPja0/Lfx1fo=;
+        b=YTWth43g9Oy0VkuBvkSf1ic5xN/Q28z1HuA1Xw2s092R2YQTLIweOypmUtsyHz7bGv
+         xkp5DoAI6Oo7MYjmU3VrG9K0gVuB20JC2UyDIx/5eoUJ0BobpssTcPGjkGdjtL0duxpw
+         uwK6kA0sXacaYHVtPYo+6yQvZdzaVkg/HAtusmRaR/VL3vjcEzuVYUIzBduQNCc9mJUw
+         /lWExDiH6x6fb3WIss+xdfM0Pjag8mxtIV4WpWiwR+4FPl3qdcvD/+4bnDJbjlaF8pZW
+         wTlDf7yNumhVmJFnOkxTZWmZKsUFQG5uZnKhtwhVIxnJzTLmeX/dqhE5NeHC1h5vK3Uv
+         /ipQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723132775; x=1723737575;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2kUjHTbBqy9ZeAxHJojWr0iq+a17EATMPja0/Lfx1fo=;
+        b=KrSbQk1iT4n3WHhDF3PegJQIWejnyItYi/+OTjou8JToBwTA2hwSqSlTs2qQq3ZKZu
+         D88TeGUcPrhJUI6oP5qCiOhs+NVFdfbInEWSwU9V5hYXy15x4C8BQc+pXpkB8R35Gz2m
+         DJVJ8WjU0vfhYIMq50GrlvzqisGupA/AknU+8OZuAysZIEV2s2Y6i5GRBKsMajb+hG9A
+         xLPJr5s76+5Cr8WTlNObXckyHx4Q2Lu41mNBJ6JL51Zt2Jh3CAhWFAvRi4GTeArn0b+F
+         Gh+mSAYXP3WzmK+sqemVuGW/wG68g99rd5dnfYud70JQeM7Pig0CycKIrKebWSV0PFhs
+         GjaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0uROrXP6tjX1NjwkhoBeW+9mr5cVBIGO7nWemVUhbDI3jNCQYROIX8pIi/Z9vYbpbRP/n5/Pz5SvyCJHv1IxnTiSzw7subIdOsmrm39bA4tz71N990Bs13S0VEoNroTG7M6PjheTpX4sk9DLt1d6a9G5A
+X-Gm-Message-State: AOJu0YyIa7hDORU3WtJbd+uyvnW/IUIuGPeWSAioGWSrFgLmHIX0yG3t
+	NbtLpFU79jQyhv4mwPXuQd5Ai3KtQNsPgcldsk8awK9j0ISfxCuc
+X-Google-Smtp-Source: AGHT+IF26TxdY5EP8WiP7V6kZ8hbYlBiQ0hXvxyoqIa69Gvjfa7kAqBGwR4qbH+/xobCbCcK2vXOew==
+X-Received: by 2002:a05:6a21:6da8:b0:1c4:87b9:7ef9 with SMTP id adf61e73a8af0-1c6fcfec8a4mr2814985637.42.1723132774440;
+        Thu, 08 Aug 2024 08:59:34 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b3a9e308sm3619406a91.9.2024.08.08.08.59.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 08:59:33 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH] apparmor: fix policy_unpack_test on big endian systems
+Date: Thu,  8 Aug 2024 08:59:31 -0700
+Message-ID: <20240808155931.1290349-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] perf callchain: Fix stitch LBR memory leaks
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Anne Macedo <retpolanne@posteo.net>, Changbin Du <changbin.du@huawei.com>,
- Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <20240808054644.1286065-1-irogers@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240808054644.1286065-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+policy_unpack_test fails on big endian systems because data byte order
+is expected to be little endian but is generated in host byte order.
+This results in test failures such as:
 
+ # policy_unpack_test_unpack_array_with_null_name: EXPECTATION FAILED at security/apparmor/policy_unpack_test.c:150
+    Expected array_size == (u16)16, but
+        array_size == 4096 (0x1000)
+        (u16)16 == 16 (0x10)
+    # policy_unpack_test_unpack_array_with_null_name: pass:0 fail:1 skip:0 total:1
+    not ok 3 policy_unpack_test_unpack_array_with_null_name
+    # policy_unpack_test_unpack_array_with_name: EXPECTATION FAILED at security/apparmor/policy_unpack_test.c:164
+    Expected array_size == (u16)16, but
+        array_size == 4096 (0x1000)
+        (u16)16 == 16 (0x10)
+    # policy_unpack_test_unpack_array_with_name: pass:0 fail:1 skip:0 total:1
 
-On 2024-08-08 1:46 a.m., Ian Rogers wrote:
-> The callchain_cursor_node has a map_symbol whose maps and map
-> variables are reference counted. Ensure these values use a _get
-> routine to increment the refernece counts and use map_symbol__exit to
-> release the reference counts. Do similar for thread's prev_lbr_cursor,
-> but save the size of the prev_lbr_cursor array so that it may be
-> iterated.
-> 
-> Ensure that when stitch_nodes are placed on the free list the
-> map_symbols are exited. Fix resolve_lbr_callchain_sample by replacing
-> list_replace_init to list_splice_init, so the whole list is moved and
-> nodes aren't leaked.
-> 
-> A reproduction of the memory leaks is possible with a leak sanitizer
-> build in the perf report command of:
-> ```
-> $ perf record -e cycles --call-graph lbr perf test -w thloop
-> $ perf report --stitch-lbr
-> ```
-> 
-> Fixes: ff165628d726 ("perf callchain: Stitch LBR call stack")
-> Signed-off-by: Ian Rogers <irogers@google.com>
+Add the missing endianness conversions when generating test data.
 
-Thanks Ian.
+Fixes: 4d944bcd4e73 ("apparmor: add AppArmor KUnit tests for policy unpack")
+Cc: Brendan Higgins <brendanhiggins@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ security/apparmor/policy_unpack_test.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+index 874fcf97794e..c64733d6c98f 100644
+--- a/security/apparmor/policy_unpack_test.c
++++ b/security/apparmor/policy_unpack_test.c
+@@ -80,14 +80,14 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
+ 	*(buf + 1) = strlen(TEST_U32_NAME) + 1;
+ 	strscpy(buf + 3, TEST_U32_NAME, e->end - (void *)(buf + 3));
+ 	*(buf + 3 + strlen(TEST_U32_NAME) + 1) = AA_U32;
+-	*((u32 *)(buf + 3 + strlen(TEST_U32_NAME) + 2)) = TEST_U32_DATA;
++	*((__le32 *)(buf + 3 + strlen(TEST_U32_NAME) + 2)) = cpu_to_le32(TEST_U32_DATA);
+ 
+ 	buf = e->start + TEST_NAMED_U64_BUF_OFFSET;
+ 	*buf = AA_NAME;
+ 	*(buf + 1) = strlen(TEST_U64_NAME) + 1;
+ 	strscpy(buf + 3, TEST_U64_NAME, e->end - (void *)(buf + 3));
+ 	*(buf + 3 + strlen(TEST_U64_NAME) + 1) = AA_U64;
+-	*((u64 *)(buf + 3 + strlen(TEST_U64_NAME) + 2)) = TEST_U64_DATA;
++	*((__le64 *)(buf + 3 + strlen(TEST_U64_NAME) + 2)) = cpu_to_le64(TEST_U64_DATA);
+ 
+ 	buf = e->start + TEST_NAMED_BLOB_BUF_OFFSET;
+ 	*buf = AA_NAME;
+@@ -103,7 +103,7 @@ static struct aa_ext *build_aa_ext_struct(struct policy_unpack_fixture *puf,
+ 	*(buf + 1) = strlen(TEST_ARRAY_NAME) + 1;
+ 	strscpy(buf + 3, TEST_ARRAY_NAME, e->end - (void *)(buf + 3));
+ 	*(buf + 3 + strlen(TEST_ARRAY_NAME) + 1) = AA_ARRAY;
+-	*((u16 *)(buf + 3 + strlen(TEST_ARRAY_NAME) + 2)) = TEST_ARRAY_SIZE;
++	*((__le16 *)(buf + 3 + strlen(TEST_ARRAY_NAME) + 2)) = cpu_to_le16(TEST_ARRAY_SIZE);
+ 
+ 	return e;
+ }
+-- 
+2.45.2
 
-Thanks,
-Kan
-
-> ---
->  tools/perf/util/machine.c | 17 +++++++++++++++--
->  tools/perf/util/thread.c  |  4 ++++
->  tools/perf/util/thread.h  |  1 +
->  3 files changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 8477edefc299..706be5e4a076 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -2270,8 +2270,12 @@ static void save_lbr_cursor_node(struct thread *thread,
->  		cursor->curr = cursor->first;
->  	else
->  		cursor->curr = cursor->curr->next;
-> +
-> +	map_symbol__exit(&lbr_stitch->prev_lbr_cursor[idx].ms);
->  	memcpy(&lbr_stitch->prev_lbr_cursor[idx], cursor->curr,
->  	       sizeof(struct callchain_cursor_node));
-> +	lbr_stitch->prev_lbr_cursor[idx].ms.maps = maps__get(cursor->curr->ms.maps);
-> +	lbr_stitch->prev_lbr_cursor[idx].ms.map = map__get(cursor->curr->ms.map);
->  
->  	lbr_stitch->prev_lbr_cursor[idx].valid = true;
->  	cursor->pos++;
-> @@ -2482,6 +2486,9 @@ static bool has_stitched_lbr(struct thread *thread,
->  		memcpy(&stitch_node->cursor, &lbr_stitch->prev_lbr_cursor[i],
->  		       sizeof(struct callchain_cursor_node));
->  
-> +		stitch_node->cursor.ms.maps = maps__get(lbr_stitch->prev_lbr_cursor[i].ms.maps);
-> +		stitch_node->cursor.ms.map = map__get(lbr_stitch->prev_lbr_cursor[i].ms.map);
-> +
->  		if (callee)
->  			list_add(&stitch_node->node, &lbr_stitch->lists);
->  		else
-> @@ -2505,6 +2512,8 @@ static bool alloc_lbr_stitch(struct thread *thread, unsigned int max_lbr)
->  	if (!thread__lbr_stitch(thread)->prev_lbr_cursor)
->  		goto free_lbr_stitch;
->  
-> +	thread__lbr_stitch(thread)->prev_lbr_cursor_size = max_lbr + 1;
-> +
->  	INIT_LIST_HEAD(&thread__lbr_stitch(thread)->lists);
->  	INIT_LIST_HEAD(&thread__lbr_stitch(thread)->free_lists);
->  
-> @@ -2560,8 +2569,12 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
->  						max_lbr, callee);
->  
->  		if (!stitched_lbr && !list_empty(&lbr_stitch->lists)) {
-> -			list_replace_init(&lbr_stitch->lists,
-> -					  &lbr_stitch->free_lists);
-> +			struct stitch_list *stitch_node;
-> +
-> +			list_for_each_entry(stitch_node, &lbr_stitch->lists, node)
-> +				map_symbol__exit(&stitch_node->cursor.ms);
-> +
-> +			list_splice_init(&lbr_stitch->lists, &lbr_stitch->free_lists);
->  		}
->  		memcpy(&lbr_stitch->prev_sample, sample, sizeof(*sample));
->  	}
-> diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-> index 87c59aa9fe38..0ffdd52d86d7 100644
-> --- a/tools/perf/util/thread.c
-> +++ b/tools/perf/util/thread.c
-> @@ -476,6 +476,7 @@ void thread__free_stitch_list(struct thread *thread)
->  		return;
->  
->  	list_for_each_entry_safe(pos, tmp, &lbr_stitch->lists, node) {
-> +		map_symbol__exit(&pos->cursor.ms);
->  		list_del_init(&pos->node);
->  		free(pos);
->  	}
-> @@ -485,6 +486,9 @@ void thread__free_stitch_list(struct thread *thread)
->  		free(pos);
->  	}
->  
-> +	for (unsigned int i = 0 ; i < lbr_stitch->prev_lbr_cursor_size; i++)
-> +		map_symbol__exit(&lbr_stitch->prev_lbr_cursor[i].ms);
-> +
->  	zfree(&lbr_stitch->prev_lbr_cursor);
->  	free(thread__lbr_stitch(thread));
->  	thread__set_lbr_stitch(thread, NULL);
-> diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-> index 8b4a3c69bad1..6cbf6eb2812e 100644
-> --- a/tools/perf/util/thread.h
-> +++ b/tools/perf/util/thread.h
-> @@ -26,6 +26,7 @@ struct lbr_stitch {
->  	struct list_head		free_lists;
->  	struct perf_sample		prev_sample;
->  	struct callchain_cursor_node	*prev_lbr_cursor;
-> +	unsigned int prev_lbr_cursor_size;
->  };
->  
->  DECLARE_RC_STRUCT(thread) {
 
