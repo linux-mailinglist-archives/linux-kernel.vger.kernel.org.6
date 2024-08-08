@@ -1,185 +1,149 @@
-Return-Path: <linux-kernel+bounces-279661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B912394C02A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:49:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F9794C02E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4CC1C22C78
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:49:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A4481C222CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AED118FC86;
-	Thu,  8 Aug 2024 14:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D0818A6A0;
+	Thu,  8 Aug 2024 14:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dj9xXbkP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PSfaEOiR"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAAD18EFDC
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A650BBE5D
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 14:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723128263; cv=none; b=a1RYVEsajAb3Ptxvby5AqyGt1NWoOeum+KnR67AU7BYBZOvg6yfIMKHxM5Dzx9QSiTyt4P4MYcMlsyO1vpIAZh5+7S8/xe1p+ofgjccfarzTGnyZKyJts819l93yJoMEpSN9YIoxlmTU3XRNtIcD+v1hQ27Iw27yJCMux++lYBg=
+	t=1723128315; cv=none; b=PIuxF32C6pZPL0J4uRT/RpwiFBP6/XCnf9aPf8b/KBNgdLogIa0+eDw6o/aKbTrAnRVwVw452qudRmoDFnJhhm7Dgfhtei9fpcERqlkxcXjQriGfPdl/bAxMzGhyL4a0oH+gpkHn2Wi1Rx/bWBbP5ggVuMw42AakJffpkOhOFqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723128263; c=relaxed/simple;
-	bh=PJMk6Uqzz5UNIds09MxiiNBipTUv59eDmu0eBQ7jh18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TxQEdmPOSz6of83qL+6Sd4+mbVGD4l8Vi96H2q/Ib++JiiNlJd9AL9Vqk0UMqFY2QHcN8uo0NYBqc8hHYpnJVuAdG7DZHXpwFg8HwxAHSGpC5Ydndmdz3IsNhVvCAKYuQBpAJrWgfVipnihOhSwrmTKMrYThUnAZ5GdqjcA0Qdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dj9xXbkP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723128260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2yHWhOGhXoiaID94xq0Obn8IF6l9bmHYEIpGRlWg4Yk=;
-	b=dj9xXbkPPUVgxS3J9df12ZRP4qZLiM+OITIMzWQe0FxQTQXGfWaU4ccrN1rx+pNdXGgTLp
-	+geIlBjbnhmx2it2IZ1SFkQ03stbLbgKvm6SJaYHp134Ugfd8gP3qPn13xGLAt/NXzmn5D
-	5tCwSZ74HxJRgLSSepo52fZaZMxnta8=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-102-zWl_l8BEN4-VdGbwtCOing-1; Thu, 08 Aug 2024 10:44:19 -0400
-X-MC-Unique: zWl_l8BEN4-VdGbwtCOing-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52f00bde210so1278195e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 07:44:19 -0700 (PDT)
+	s=arc-20240116; t=1723128315; c=relaxed/simple;
+	bh=KpALEWerRE9Ihb8BvAaMPRncWWeI5MDABubpleySyrw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MLclr+TrWpGAJEtiKR4u77kqXv+dRjC8REzixoMbLu5DYGN8pfjhvIP5um69ectCRacSKoz+LLx8MB+XbYINuYiXhe7C537LBSU06tk0OgIhqvgpx0h1c+fZThx8f2qPHEvkDYRL/UQ5WONJWAqDmqRGqrsKxJW24mCW8M/0wPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PSfaEOiR; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-39aeccc63deso454865ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 07:45:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1723128313; x=1723733113; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LOyLR96pj1FmhAY2pd0AwP2D0CmcEpgxNczBjEIKOY0=;
+        b=PSfaEOiRNDENzNOnamXI+Y6NZ7G7stq2VJ2o4v/STs52q0P/vftCTQyhlTctHnRtT1
+         dxhgfGMn2ARloF4Cq/bLgwxLGpN/ApzX3ZeBP0SoRWg/xfgO4r4qit9uJs1Rdcs4lVfR
+         YlarhRnMYVH8wpYirpvOaizMBOuodGuT/Jihg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723128258; x=1723733058;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2yHWhOGhXoiaID94xq0Obn8IF6l9bmHYEIpGRlWg4Yk=;
-        b=aTPGphWy0DYH+VKoJ3HEmzzNgTCyglqB6vQpzQM5tQKwzKRwYPETTQa9FRN63mU4QB
-         xErYPCnwPZEvIGPIfJyPPaUWfhJCnewrv0Y+T8bAHREbB7t+ViELbKZoXTHmC3O2Uj2A
-         djJ8dLO8fGlnNLyGig/jeFVCQbIXOnnVapUC2R7lhcZ5FeiMyPQ3ECqo6E2j8DKgxDCa
-         jl+7xrZKoG1bzTkOnfiW3IIUr6qY10KdYv576LYT4PZbtGDqNUYozjVsERBmQS5K7x7n
-         YYUZmU50K+WX1JICZ4f2JzfMj6rlrE/y7pCYdotvv6XMKcsHi8h8aDa6HQDtka8yOSy9
-         VnRA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+3f5aP+HD7PQE8QY3vGHSKiwgFhKlB7+bEJLpFPwI7RpJDmE5J/6yWkfK/gq+Y/SgxugHmMVAT1valZvEAsvWa6jmScwW44oJZh/C
-X-Gm-Message-State: AOJu0Yz71cZw4V8Fa8hIL2eFxBdWF85w8m8mRjTyLQR8C1jXFHibpd6x
-	L9QYQj9kcaHZjTwmmde5yYGPSIW2jmnK1NMiQeMAVONLasVEwNee9tShSpS2B4/Sw+UR4IgQyUt
-	srmn5yAL8p7ml/eMvDXksSv2406m+rGx/kT5jYv1g+76L5D4Ju7CKAIGlePV7zA==
-X-Received: by 2002:a05:6512:3f2a:b0:52c:deba:7e6e with SMTP id 2adb3069b0e04-530e583dbd1mr1838870e87.29.1723128257877;
-        Thu, 08 Aug 2024 07:44:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFyh0BU4hkdxFulosZVyBK7BJraF3bjcMfeyi8ouHjXm8HPCLcpB/V7MWfZ+ttDa5YmHQVeiw==
-X-Received: by 2002:a05:6512:3f2a:b0:52c:deba:7e6e with SMTP id 2adb3069b0e04-530e583dbd1mr1838822e87.29.1723128256896;
-        Thu, 08 Aug 2024 07:44:16 -0700 (PDT)
-Received: from redhat.com ([2.55.34.111])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e8676fsm742332666b.164.2024.08.08.07.44.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 07:44:16 -0700 (PDT)
-Date: Thu, 8 Aug 2024 10:43:58 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Peter Maydell <peter.maydell@linaro.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>, Ani Sinha <anisinha@redhat.com>,
-	Igor Mammedov <imammedo@redhat.com>,
-	Shannon Zhao <shannon.zhaosl@gmail.com>,
-	linux-kernel@vger.kernel.org, qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org
-Subject: Re: [PATCH] arm/virt: place power button pin number on a define
-Message-ID: <20240808104308-mutt-send-email-mst@kernel.org>
-References: <ef0e7f5fca6cd94eda415ecee670c3028c671b74.1723121692.git.mchehab+huawei@kernel.org>
+        d=1e100.net; s=20230601; t=1723128313; x=1723733113;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LOyLR96pj1FmhAY2pd0AwP2D0CmcEpgxNczBjEIKOY0=;
+        b=DgDcxETi9WC1UeTkdb3NYMS5EwtBB/Y6fH5dF4wC2ixgUn7RqO9MPFKkt6CXggCGpa
+         /5u/TNCB2CtFsSN2+XZukFjQarWanUu6TScBmkFv/BAjyso2XbMX+absaw+az/WD+m3t
+         ce4/RH1GhlwE4kfKqzXdL1dTtf4R8mbsl0xN4wDlbT9pGjEgtr5miKQkBZoW8JpRxFGs
+         HWdqQy6leFg7GN1yIfAkJkCY19juoJFdnF6gGhJ27ObX9H4J1WthbI5EhAEC0HWhmxt3
+         NS4GY5r9X6hKxfDEUgjMhbqlUezkEy5x7/xPLZDmkjYn2639AKi8jYTAl4yWXiv6mfHw
+         zdjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtxdRePfOALLnM8gNnXShWGs8Lttli8cWearecBQwVOjBKhFKK1qjvO+AKI0x2xSQFsvuCbqqj/shzmxShHQyhxr1gdhHPLsLh2e2x
+X-Gm-Message-State: AOJu0YwiQhgLusfqocEvCxswe+Ws+5zqE2QO9lfItKxZFUX64hcQ/Nyi
+	uUnGm/lly5sHMahYhIB1b4RzhIdTMOiuEEEXcesWYI83btLMAjvlAw7BoEEdV9Y=
+X-Google-Smtp-Source: AGHT+IGIrmSZpTANKFadpi4Xa8lpeuWa1JDx7izZT0ePNLlGrzbH9rBwlgoGg+JdS+CnC09zUSfpqg==
+X-Received: by 2002:a5d:9317:0:b0:821:dad2:cc0 with SMTP id ca18e2360f4ac-82253773b3bmr160018039f.0.1723128312636;
+        Thu, 08 Aug 2024 07:45:12 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ca6300b223sm240120173.131.2024.08.08.07.45.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 07:45:12 -0700 (PDT)
+Message-ID: <86c0af63-d5b6-4076-ac50-36ac4334c8b0@linuxfoundation.org>
+Date: Thu, 8 Aug 2024 08:45:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef0e7f5fca6cd94eda415ecee670c3028c671b74.1723121692.git.mchehab+huawei@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kerneldoc: Fix two missing newlines in drm_connector.c
+To: Daniel Yang <danielyangkang@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240808084058.223770-1-danielyangkang@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240808084058.223770-1-danielyangkang@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 08, 2024 at 02:54:52PM +0200, Mauro Carvalho Chehab wrote:
-> Having magic numbers inside the code is not a good idea, as it
-> is error-prone. So, instead, create a macro with the number
-> definition.
+On 8/8/24 02:40, Daniel Yang wrote:
+> drm_connector.c has two kerneldoc comments that were missing newlines.
+> This results in the following warnings when running make htmldocs:
 > 
-> Link: https://lore.kernel.org/qemu-devel/CAFEAcA-PYnZ-32MRX+PgvzhnoAV80zBKMYg61j2f=oHaGfwSsg@mail.gmail.com/
+> ./Documentation/gpu/drm-kms:538: ./drivers/gpu/drm/drm_connector.c:2344:
+> WARNING: Definition list ends without a blank line; unexpected unindent.
+> [docutils] ./Documentation/gpu/drm-kms:538:
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Suggested-by: Peter Maydell <peter.maydell@linaro.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+> ./drivers/gpu/drm/drm_connector.c:2346: ERROR: Unexpected indentation.
+> [docutils] ./Documentation/gpu/drm-kms:538:
+> 
+> ./drivers/gpu/drm/drm_connector.c:2368: WARNING: Block quote ends without a
+> blank line; unexpected unindent. [docutils] ./Documentation/gpu/drm-kms:538:
+> 
+> ./drivers/gpu/drm/drm_connector.c:2381: ERROR: Unexpected indentation.
+> [docutils]
 
-ack, but note we do things like that only if something
-is repeated.
+Add a line to say "Fix the unexpected indentation errors"
 
+drm maintainers will have a final say on this. :)
+
+> 
+> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
 > ---
->  hw/arm/virt-acpi-build.c | 6 +++---
->  hw/arm/virt.c            | 7 ++++---
->  include/hw/arm/virt.h    | 3 +++
->  3 files changed, 10 insertions(+), 6 deletions(-)
+>   drivers/gpu/drm/drm_connector.c | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
-> diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
-> index e10cad86dd73..f76fb117adff 100644
-> --- a/hw/arm/virt-acpi-build.c
-> +++ b/hw/arm/virt-acpi-build.c
-> @@ -154,10 +154,10 @@ static void acpi_dsdt_add_gpio(Aml *scope, const MemMapEntry *gpio_memmap,
->      aml_append(dev, aml_name_decl("_CRS", crs));
->  
->      Aml *aei = aml_resource_template();
-> -    /* Pin 3 for power button */
-> -    const uint32_t pin_list[1] = {3};
-> +
-> +    const uint32_t pin = GPIO_PIN_POWER_BUTTON;
->      aml_append(aei, aml_gpio_int(AML_CONSUMER, AML_EDGE, AML_ACTIVE_HIGH,
-> -                                 AML_EXCLUSIVE, AML_PULL_UP, 0, pin_list, 1,
-> +                                 AML_EXCLUSIVE, AML_PULL_UP, 0, &pin, 1,
->                                   "GPO0", NULL, 0));
->      aml_append(dev, aml_name_decl("_AEI", aei));
->  
-> diff --git a/hw/arm/virt.c b/hw/arm/virt.c
-> index 719e83e6a1e7..687fe0bb8bc9 100644
-> --- a/hw/arm/virt.c
-> +++ b/hw/arm/virt.c
-> @@ -1004,7 +1004,7 @@ static void virt_powerdown_req(Notifier *n, void *opaque)
->      if (s->acpi_dev) {
->          acpi_send_event(s->acpi_dev, ACPI_POWER_DOWN_STATUS);
->      } else {
-> -        /* use gpio Pin 3 for power button event */
-> +        /* use gpio Pin for power button event */
->          qemu_set_irq(qdev_get_gpio_in(gpio_key_dev, 0), 1);
->      }
->  }
-> @@ -1013,7 +1013,8 @@ static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
->                               uint32_t phandle)
->  {
->      gpio_key_dev = sysbus_create_simple("gpio-key", -1,
-> -                                        qdev_get_gpio_in(pl061_dev, 3));
-> +                                        qdev_get_gpio_in(pl061_dev,
-> +                                                         GPIO_PIN_POWER_BUTTON));
->  
->      qemu_fdt_add_subnode(fdt, "/gpio-keys");
->      qemu_fdt_setprop_string(fdt, "/gpio-keys", "compatible", "gpio-keys");
-> @@ -1024,7 +1025,7 @@ static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
->      qemu_fdt_setprop_cell(fdt, "/gpio-keys/poweroff", "linux,code",
->                            KEY_POWER);
->      qemu_fdt_setprop_cells(fdt, "/gpio-keys/poweroff",
-> -                           "gpios", phandle, 3, 0);
-> +                           "gpios", phandle, GPIO_PIN_POWER_BUTTON, 0);
->  }
->  
->  #define SECURE_GPIO_POWEROFF 0
-> diff --git a/include/hw/arm/virt.h b/include/hw/arm/virt.h
-> index ab961bb6a9b8..a4d937ed45ac 100644
-> --- a/include/hw/arm/virt.h
-> +++ b/include/hw/arm/virt.h
-> @@ -47,6 +47,9 @@
->  /* See Linux kernel arch/arm64/include/asm/pvclock-abi.h */
->  #define PVTIME_SIZE_PER_CPU 64
->  
-> +/* GPIO pins */
-> +#define GPIO_PIN_POWER_BUTTON  3
-> +
->  enum {
->      VIRT_FLASH,
->      VIRT_MEM,
-> -- 
-> 2.45.2
+> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+> index 80e239a6493..fc35f47e284 100644
+> --- a/drivers/gpu/drm/drm_connector.c
+> +++ b/drivers/gpu/drm/drm_connector.c
+> @@ -2342,7 +2342,9 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
+>    *
+>    *	Default:
+>    *		The behavior is driver-specific.
+> + *
+>    *	BT2020_RGB:
+> + *
+>    *	BT2020_YCC:
+>    *		User space configures the pixel operation properties to produce
+>    *		RGB content with Rec. ITU-R BT.2020 colorimetry, Rec.
+> @@ -2366,6 +2368,7 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
+>    *		range.
+>    *		The variants BT2020_RGB and BT2020_YCC are equivalent and the
+>    *		driver chooses between RGB and YCbCr on its own.
+> + *
+>    *	SMPTE_170M_YCC:
+>    *	BT709_YCC:
+>    *	XVYCC_601:
+> @@ -2378,6 +2381,7 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
+>    *	DCI-P3_RGB_Theater:
+>    *	RGB_WIDE_FIXED:
+>    *	RGB_WIDE_FLOAT:
+> + *
+>    *	BT601_YCC:
+>    *		The behavior is undefined.
+>    *
 
+thanks,
+-- Shuah
 
