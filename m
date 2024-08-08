@@ -1,127 +1,319 @@
-Return-Path: <linux-kernel+bounces-279159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460EB94B9BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 241BA94B9BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38E8281166
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:35:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DACE42823E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5153D1898E1;
-	Thu,  8 Aug 2024 09:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00866146019;
+	Thu,  8 Aug 2024 09:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="T3Qqp8+q"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="r+ZfxkTD"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB48584A51
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEDC189534
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723109700; cv=none; b=r2lG73XzuEE1nTuNCGFvDEcGXJPZ1L8tiBa/qxO7VzB29J+MgLqluZiNPq57aW3Y0AzK+1n//eCaLREjeJoflEce57ZZk8fDYG+QwEa5dlp22gOg0olbCUag0UoBwsjHSeLHpROd8NArAm79LHOELN7tNxfbkfGsyD2G6JBUqCQ=
+	t=1723109704; cv=none; b=ZEA5qePJX159FhB04VZi53bUQGjJrYgNFayntZCLnYmgvAEmWOC6dF1MkdVgnGpC3QKgw7CDRqOydeWptT2yI2IOMySM8cBFbbYUrL685Vy43lK+agUA7JrBe3oJmkRYnGd8AqGFd8prxcQPlWuA1M5l0avFKvjavBGSXafVeh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723109700; c=relaxed/simple;
-	bh=dw0hDc4N+New1YNkCHwaTg6SvF73/Z+JYHmdWlzrch4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ssnAWauxA9BWwNILhbng/1Qv76c8oo56xbcBib8pRsbGQ3OtG8e2wyIeP/FKpnZdOeKNukQPcSvDv3CmapaL9IseOa+bXKhYs3hO3kOKVzOpmcd8HcuNslA9sK94HaYvTsbcnj//EU7xr6dSa/PzGucXrHuoKo/zY0xhcm6SA+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=T3Qqp8+q; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1723109695; x=1725701695;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dw0hDc4N+New1YNkCHwaTg6SvF73/Z+JYHmdWlzrch4=;
-	b=T3Qqp8+qDQafcon5AQkU2eNNw7G3N572fFXiUFm3BPem8HLw9HEUfJsj+T8PT7z4
-	3Snc6P2qAlcV7GYO4EGECa63kODKb8buNtk21sGOZtKjKK7QKxpu7mA/H4O92c6k
-	NoqeLOgqwT8AINXHEL2bl7ZUamycL5LkTCLLZ9bIbBc=;
-X-AuditID: ac14000a-03251700000021bc-a5-66b4913fd30a
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 81.3B.08636.F3194B66; Thu,  8 Aug 2024 11:34:55 +0200 (CEST)
-Received: from llp-hahn.phytec.de (172.25.0.11) by Berlix.phytec.de
- (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Thu, 8 Aug 2024
- 11:34:54 +0200
-From: Benjamin Hahn <B.Hahn@phytec.de>
-Date: Thu, 8 Aug 2024 11:34:49 +0200
-Subject: [PATCH] dts: freescale: imx8mp-phyboard-pollux-rdk: Add console
- UART bootargs
+	s=arc-20240116; t=1723109704; c=relaxed/simple;
+	bh=jWAk9dnimi9lsaUFu6QbWN6ydvn7QxSgIgZBX3RdvRA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lYdwDQK7sH8UzchWZylDOCg5v8MWsjebldSjx7lBHpbUAFBfdFIku805897KJgY7Hh+mYif70DxskZfJx25mC1MJSLG8zqE167SAOwDFSIOREOTu/FAILStkuu1et1Sre9KeB/O8pxvj7isBYs91lclhiUv92VjkCRcK7rtjImo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=r+ZfxkTD; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723109693; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=CYZUkN6Dk5FACgRDchc3nuHoz3YHR1Byzw4EmSPjYDE=;
+	b=r+ZfxkTDJxFq7B8hbwDwP1+i8Y4IACzki7obO1Bkm30dvQ78X/KO+b2OYzjHu/ufWR9yVlTq4eEzUmNEdWQv3eQwYjgADjriHTsbbYtwG2OvsnDsAtQFRfMPwfbb7pO9OpS+aAgLGrUrQjMXE2Vby5TC4oFGgNXqbnZXmCPJJts=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R601e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0WCM4TAX_1723109690;
+Received: from 30.97.56.61(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCM4TAX_1723109690)
+          by smtp.aliyun-inc.com;
+          Thu, 08 Aug 2024 17:34:51 +0800
+Message-ID: <1c4e67f1-caf5-4913-857d-b9cfbc30321e@linux.alibaba.com>
+Date: Thu, 8 Aug 2024 17:34:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240808-add_bootargs_to_devicetree-v1-1-79f7ba50b174@phytec.de>
-X-B4-Tracking: v=1; b=H4sIADiRtGYC/x3MMQqAMAxA0atIZgtRRKxXESm1iZrFSlpEEO9uc
- XzD/w8kVuEEY/WA8iVJ4lHQ1BWE3R8bG6FiaLHtcMDBeCK3xJi9bsnl6KhEgbMym94ikrWLX/s
- AZXAqr3L/82l+3w/z6RcnbAAAAA==
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Teresa Remmet
-	<t.remmet@phytec.de>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<upstream@lists.phytec.de>, Benjamin Hahn <B.Hahn@phytec.de>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723109694; l=908;
- i=B.Hahn@phytec.de; s=20240126; h=from:subject:message-id;
- bh=dw0hDc4N+New1YNkCHwaTg6SvF73/Z+JYHmdWlzrch4=;
- b=zHbYCNKN6V6oVjk8YRE4jWVidcoXg+5EeelHNDOy2Sr6nb7KcKqfYg5x3Bi6xMZyKQnwZ9khf
- aAFarcE98nEBDMmtWxlFGniDZKMVKAGAlqGQ2LXUF9LHuaZ5oGHos0S
-X-Developer-Key: i=B.Hahn@phytec.de; a=ed25519;
- pk=r04clMulHz6S6js6elPBA+U+zVdDAqJyEyoNd8I3pSw=
-X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42JZI8nAo2s/cUuaQf9zDos1e88xWcw/co7V
-	4uFVf4uZ91rZLFZN3cli8XLWPTaLTY+vsVpc3jWHzeL/nh3sFn+3b2KxeLFF3KL7nboDj8fO
-	WXfZPTat6mTz2Lyk3uPF5pmMHv3dLawe/X8NPD5vkgtgj+KySUnNySxLLdK3S+DK+PRvBnNB
-	H3vFss/7mBsYJ7F1MXJySAiYSHzq6WTtYuTiEBJYwiSx4+J8dgjnAaPEmc+vmUGq2ATUJHa9
-	ec0KYrMIqEhsPfYOLC4sECGx8/ZfdhCbV0BQ4uTMJyxdjBwczAKaEut36YOEmQXkJba/ncMM
-	UeIr0b72Mdh8CYEdjBKbFuwFu0JEYAeTxON+Q5AEs8BBRon153cyQ5wnLPF59xo2iI5dTBLd
-	v+8wg2yQEEiU2PlaDqRGSEBW4ub5LVDvyEtMO/caqjdUYuuX7UwTGIVnIblvFsJ9s5Dct4CR
-	eRWjUG5mcnZqUWa2XkFGZUlqsl5K6iZGUJSJMHDtYOyb43GIkYmD8RCjBAezkghvc/imNCHe
-	lMTKqtSi/Pii0pzU4kOM0hwsSuK8qzuCU4UE0hNLUrNTUwtSi2CyTBycUg2MG488v1L4Vevo
-	o2+1U4ujj39/xXzr1e+1XzqCwssE2eJF/7dqZTxz+Ken9er4zyhe9xmHFHqTdk6endOyb/t8
-	y2kZitN55lx4fnZn0q7qXyb58lUq/xlYZQ49fTA7dsrvexniavJObdflOK+sD6zqCf/w+fr1
-	mtxiJUmGlVel+zjj5n/9yXxkiRJLcUaioRZzUXEiAO21qEugAgAA
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/10] mm: vmscan: add validation before spliting shmem
+ large folio
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, wangkefeng.wang@huawei.com, chrisl@kernel.org,
+ ying.huang@intel.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
+ shy828301@gmail.com, ziy@nvidia.com, ioworker0@gmail.com,
+ da.gomez@samsung.com, p.raghav@samsung.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>
+References: <cover.1723012159.git.baolin.wang@linux.alibaba.com>
+ <8a8c6dc9df0bc9f6f7f937bea446062be19611b3.1723012159.git.baolin.wang@linux.alibaba.com>
+ <9b45a0dc-fa12-428a-8702-c7690c26aedc@redhat.com>
+ <770190a2-3938-4ba9-9aaf-7320b34addf4@linux.alibaba.com>
+ <03a7c798-7a0d-4873-8fcb-8940d8dadc00@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <03a7c798-7a0d-4873-8fcb-8940d8dadc00@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Pass the console UART bootargs parameter via the devicetree for booting
-EFI binaries.
 
-Signed-off-by: Benjamin Hahn <B.Hahn@phytec.de>
----
- arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-index 00a240484c25..552b528fb663 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-@@ -16,6 +16,7 @@ / {
- 		     "phytec,imx8mp-phycore-som", "fsl,imx8mp";
- 
- 	chosen {
-+		bootargs = "console=ttymxc0,115200";
- 		stdout-path = &uart1;
- 	};
- 
+On 2024/8/8 16:51, David Hildenbrand wrote:
+> On 08.08.24 04:36, Baolin Wang wrote:
+>>
+>>
+>> On 2024/8/7 23:53, David Hildenbrand wrote:
+>>> On 07.08.24 09:31, Baolin Wang wrote:
+>>>> Page reclaim will not scan anon LRU if no swap space, however
+>>>> MADV_PAGEOUT
+>>>> can still split shmem large folios even without a swap device. Thus add
+>>>> swap available space validation before spliting shmem large folio to
+>>>> avoid redundant split.
+>>>>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> ---
+>>>>    mm/vmscan.c | 8 ++++++++
+>>>>    1 file changed, 8 insertions(+)
+>>>>
+>>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>>>> index 31d13462571e..796f65781f4f 100644
+>>>> --- a/mm/vmscan.c
+>>>> +++ b/mm/vmscan.c
+>>>> @@ -1259,6 +1259,14 @@ static unsigned int shrink_folio_list(struct
+>>>> list_head *folio_list,
+>>>>                }
+>>>>            } else if (folio_test_swapbacked(folio) &&
+>>>>                   folio_test_large(folio)) {
+>>>> +
+>>>> +            /*
+>>>> +             * Do not split shmem folio if no swap memory
+>>>> +             * available.
+>>>> +             */
+>>>> +            if (!total_swap_pages)
+>>>> +                goto activate_locked;
+>>>> +
+>>>>                /* Split shmem folio */
+>>>>                if (split_folio_to_list(folio, folio_list))
+>>>>                    goto keep_locked;
+>>>
+>>> Reminds me of
+>>>
+>>> commit 9a976f0c847b67d22ed694556a3626ed92da0422
+>>> Author: Luis Chamberlain <mcgrof@kernel.org>
+>>> Date:   Thu Mar 9 15:05:43 2023 -0800
+>>>
+>>>       shmem: skip page split if we're not reclaiming
+>>>       In theory when info->flags & VM_LOCKED we should not be getting
+>>>       shem_writepage() called so we should be verifying this with a
+>>>       WARN_ON_ONCE().  Since we should not be swapping then best to
+>>> ensure we
+>>>       also don't do the folio split earlier too.  So just move the check
+>>> early
+>>>       to avoid folio splits in case its a dubious call.
+>>>       We also have a similar early bail when !total_swap_pages so just
+>>> move that
+>>>       earlier to avoid the possible folio split in the same situation.
+>>>
+>>>
+>>> But indeed, pageout() -> writepage() is called *after* the split in the
+>>> vmscan path.
+>>>
+>>> In that "noswap" context, I wonder if we also want to skip folios part
+>>> of shmem
+>>> with disabled swapping?
+>>
+>> Yes, I think so.
+>>
+>>>
+>>> But now I am wondering under which circumstances we end up calling
+>>> shmem_writepage() with a large folio. And I think the answer is the
+>>> comment of
+>>> folio_test_large(): via drivers/gpu/drm/i915/gem/i915_gem_shmem.c.
+>>>
+>>>
+>>> ... so if shmem_writepage() handles+checks that, could we do
+>>>
+>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>>> index a332cb80e928..7dfa3d6e8ba7 100644
+>>> --- a/mm/vmscan.c
+>>> +++ b/mm/vmscan.c
+>>> @@ -1257,11 +1257,6 @@ static unsigned int shrink_folio_list(struct
+>>> list_head *folio_list,
+>>>                                                   goto
+>>> activate_locked_split;
+>>>                                   }
+>>>                           }
+>>> -               } else if (folio_test_swapbacked(folio) &&
+>>> -                          folio_test_large(folio)) {
+>>> -                       /* Split shmem folio */
+>>> -                       if (split_folio_to_list(folio, folio_list))
+>>> -                               goto keep_locked;
+>>>                   }
+>>>
+>>>                   /*
+>>>
+>>> instead?
+>>
+>> Seems reasonable to me. But we should pass the 'folio_list' to
+>> shmem_writepage() to list the subpages of the large folio. Let me try.
+> 
+> Ah, yes, good point. Alternatively, we'd have to split and try writing 
+> all subpages in there. I wonder what to do if we fail to write some, and 
+> if we could handle that transparently, without the folio_list.
 
----
-base-commit: 17712b7ea0756799635ba159cc773082230ed028
-change-id: 20240808-add_bootargs_to_devicetree-6900d99baf6c
+After some investigation, I prefer to pass 'folio_list' to 
+shmem_writepage() via 'struct writeback_control', which could simplify 
+the logic a lot. Otherwise, we need to handle each subpage's 
+writeback/reclaim/dirty state, as well as tracking each subpage's write 
+result, which seems more complicated.
 
-Best regards,
--- 
-Benjamin Hahn <B.Hahn@phytec.de>
+I made a quick change by passing 'folio_list', and it looks simple and 
+works as expected.
 
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index 75196b0f894f..10100e22d5c6 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -80,6 +80,9 @@ struct writeback_control {
+          */
+         struct swap_iocb **swap_plug;
+
++       /* Target list for splitting a large folio */
++       struct list_head *list;
++
+         /* internal fields used by the ->writepages implementation: */
+         struct folio_batch fbatch;
+         pgoff_t index;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 05525e9e7423..0a5a68f7d0a0 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1496,9 +1496,10 @@ static int shmem_writepage(struct page *page, 
+struct writeback_control *wbc)
+          * and its shmem_writeback() needs them to be split when swapping.
+          */
+         if (wbc->split_large_folio && folio_test_large(folio)) {
++try_split:
+                 /* Ensure the subpages are still dirty */
+                 folio_test_set_dirty(folio);
+-               if (split_huge_page(page) < 0)
++               if (split_huge_page_to_list_to_order(page, wbc->list, 0))
+                         goto redirty;
+                 folio = page_folio(page);
+                 folio_clear_dirty(folio);
+@@ -1540,8 +1541,12 @@ static int shmem_writepage(struct page *page, 
+struct writeback_control *wbc)
+         }
+
+         swap = folio_alloc_swap(folio);
+-       if (!swap.val)
++       if (!swap.val) {
++               if (nr_pages > 1)
++                       goto try_split;
++
+                 goto redirty;
++       }
+
+         /*
+          * Add inode to shmem_unuse()'s list of swapped-out inodes,
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 277571815789..cf982cf2454f 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -628,7 +628,7 @@ typedef enum {
+   * Calls ->writepage().
+   */
+  static pageout_t pageout(struct folio *folio, struct address_space 
+*mapping,
+-                        struct swap_iocb **plug)
++                        struct swap_iocb **plug, struct list_head 
+*folio_list)
+  {
+         /*
+          * If the folio is dirty, only perform writeback if that write
+@@ -676,6 +676,11 @@ static pageout_t pageout(struct folio *folio, 
+struct address_space *mapping,
+                         .swap_plug = plug,
+                 };
+
++               if (shmem_mapping(mapping)) {
++                       wbc.list = folio_list;
++                       wbc.split_large_folio = 
+!IS_ENABLED(CONFIG_THP_SWAP);
++               }
++
+                 folio_set_reclaim(folio);
+                 res = mapping->a_ops->writepage(&folio->page, &wbc);
+                 if (res < 0)
+@@ -1259,23 +1264,6 @@ static unsigned int shrink_folio_list(struct 
+list_head *folio_list,
+                                                 goto activate_locked_split;
+                                 }
+                         }
+-               } else if (folio_test_swapbacked(folio) &&
+-                          folio_test_large(folio)) {
+-
+-                       /*
+-                        * Do not split shmem folio if no swap memory
+-                        * available.
+-                        */
+-                       if (!total_swap_pages)
+-                               goto activate_locked;
+-
+-                       /*
+-                        * Only split shmem folio when CONFIG_THP_SWAP
+-                        * is not enabled.
+-                        */
+-                       if (!IS_ENABLED(CONFIG_THP_SWAP) &&
+-                           split_folio_to_list(folio, folio_list))
+-                               goto keep_locked;
+                 }
+
+                 /*
+@@ -1377,18 +1365,21 @@ static unsigned int shrink_folio_list(struct 
+list_head *folio_list,
+                          * starts and then write it out here.
+                          */
+                         try_to_unmap_flush_dirty();
+-try_pageout:
+-                       switch (pageout(folio, mapping, &plug)) {
++                       switch (pageout(folio, mapping, &plug, 
+folio_list)) {
+                         case PAGE_KEEP:
+                                 goto keep_locked;
+                         case PAGE_ACTIVATE:
+-                               if (shmem_mapping(mapping) && 
+folio_test_large(folio) &&
+-                                   !split_folio_to_list(folio, 
+folio_list)) {
++                               /* Shmem can be split when writeback to 
+swap */
++                               if ((nr_pages > 1) && 
+!folio_test_large(folio)) {
++                                       sc->nr_scanned -= (nr_pages - 1);
+                                         nr_pages = 1;
+-                                       goto try_pageout;
+                                 }
+                                 goto activate_locked;
+                         case PAGE_SUCCESS:
++                               if ((nr_pages > 1) && 
+!folio_test_large(folio)) {
++                                       sc->nr_scanned -= (nr_pages - 1);
++                                       nr_pages = 1;
++                               }
+                                 stat->nr_pageout += nr_pages;
+
+                                 if (folio_test_writeback(folio)) {
 
