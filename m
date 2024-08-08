@@ -1,123 +1,153 @@
-Return-Path: <linux-kernel+bounces-279965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AFBA94C3ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:52:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C17F94C3F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D281C22377
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:52:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 145941F25EDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168EC145B3F;
-	Thu,  8 Aug 2024 17:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE98146D6B;
+	Thu,  8 Aug 2024 17:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="SUf2zPf8"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koz3p7Xm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A989C12CDAE;
-	Thu,  8 Aug 2024 17:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723139549; cv=pass; b=anBePdCG7naHPHH4OutKUlVUfaJegeX/lkGR+xNY5EOluQt/e2Y+QpVugRDVbCgqECUskrQivnk3Q4AC3w0bNpEHkSb7PxaW7l5lK73L2X04+uwliSKboLjoOsh1qhkb5URHWp/IUEAHBFYyZwvXxvVfAJTZXe1z6RZA4k/yTxw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723139549; c=relaxed/simple;
-	bh=J+kCj9xB02trLEDSGjOa+PeGNVfgddKIWq+oSVKBPIQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oXepOc84lEDNM2gq0utbRlHLOveJJ7c1w/bEDsEmhP5246gYJbXN8+IMU3bpvhmUXiLRrfpj1zaS0YJ9cBSRgtbbrzMAPjRoV8+Y+CtR8+bsqixd9ZScupKx/lsYzsZO2Lrr8WwukGvVIsNVp0e6PTLhoswsp4pittbNil2qB7I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=SUf2zPf8; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723139524; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Z5RkGYweZDCj33L+9XVp7NUsy9qorTJumRZa1LgxuRjS80WUvyI0CLLtoi/YIn+y7pVZ8Q4wYe6/yIUvFdioWrfBZKhanGSSAOjDqOvP1Bh/CjXQTpRnJnLObqFyLsEgo/BG+d3YEHASnTjmU1AZ4c6oFG5ZtnPcmfdjDZ8uKA0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723139524; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ZPWX9nQFc4zdu6yspZOvI5jMNY9Ewabr9vrBLea3YM4=; 
-	b=V1ep5TXuqay3hF4BdasanLQtOeW0lGjl02E0MCusyLESdyoUGbnEHRu6U3pwcWx76ZOAU3MbjAfz+5hpY9xH47RtRSqgGQ1qjy4UU/hlDS3RfkjHVTGU4U/B9wl3wc0VVIIruOhvIuxSPqkpdeiBrTrVxaq/R+vRntZ0Gue+Q34=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723139524;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=ZPWX9nQFc4zdu6yspZOvI5jMNY9Ewabr9vrBLea3YM4=;
-	b=SUf2zPf8ofT0XUr+yvKRzZjdSOZkiv/HcHz6jC112prhVEf3TDQ8+QJCqXXkrhb1
-	0LbtgkeoyybsSLxaRYrYYrGqTJt1wGXpS3lVq2RuAEnICwk2lkbGu8LlqjhQMBVrcti
-	IwJBAERJ4k3P7/WIzfHVKJa9VS9z7xWgKF6dLD+4=
-Received: by mx.zohomail.com with SMTPS id 1723139522203254.50577975633348;
-	Thu, 8 Aug 2024 10:52:02 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org,
- Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Finley Xiao <finley.xiao@rock-chips.com>, Jagan Teki <jagan@edgeble.ai>,
- Arnd Bergmann <arnd@arndb.de>, Elaine Zhang <zhangqing@rock-chips.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-pm@vger.kernel.org,
- kernel@collabora.com
-Subject: Re: [PATCH v2 2/2] pmdomain: rockchip: Add support for rk3576 SoC
-Date: Thu, 08 Aug 2024 13:53:20 -0400
-Message-ID: <5805279.DvuYhMxLoT@trenzalore>
-In-Reply-To: <17766579.lhrHg4fidi@diego>
-References:
- <20240808163451.80750-1-detlev.casanova@collabora.com>
- <20240808163451.80750-3-detlev.casanova@collabora.com>
- <17766579.lhrHg4fidi@diego>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C923E12CDAE;
+	Thu,  8 Aug 2024 17:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723139679; cv=none; b=H73VCxB2e04ir7Z6YOAGr3hJI2BrdJBsHge/ID4fTrJIyaUcIYMsuJxYfxoBKfzsNzmuDeI474CuQe+g1rWC8ajuw7PUK1DcAuowm6WsbMaBAPJXxWr0hbVral/y91dRVOEBzpsbt6uLXvGSM+/SXLVlTbuY95L6SX+9jcPtjK0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723139679; c=relaxed/simple;
+	bh=XfKJm34ejhy7gyJBoH0L9ZTqoacWaLvJPTszpV01X9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V0xjNIVZeUo7TgdaWuD1BRQjuI+zVG2+tKuQCMSDqYly/A1Tf5pSgsxWTio2ZC7MfNDUA14AjBPPhDiqb686atspdfHBaEn71rCLxJ8t6Vw0MP+TBNpVzYj4WV9KXLINUAWF6saJFRpB+NXDiqBHLmWm7pSHrEPFAMOmRZ+Fr6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koz3p7Xm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CD4C32782;
+	Thu,  8 Aug 2024 17:54:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723139679;
+	bh=XfKJm34ejhy7gyJBoH0L9ZTqoacWaLvJPTszpV01X9w=;
+	h=Date:Subject:List-Id:To:Cc:References:From:In-Reply-To:From;
+	b=koz3p7XmsiXX8vzeOkk5XRC4GEGuHNrMziQzzlW7vRl8zuybW5DacO33u4csq8RGS
+	 jNAWDzFY7qn6xOiNIB/4Z3lmX/XWXborSfTue9N92C34NAmIPxbMKCugGiFvvFxNWr
+	 T0+DFF6AxTZU3lQmXVXK3zDVTPayjiPhsErBIcDmg41kjKHFySXddrsEu2sijdBpUh
+	 V001jNX7U+7YLrc7D18taFbL8D1SapPFHFICJs9yfc4KvXcHDCJGHqqf39y2ssDyLf
+	 aO7Nff19+3YhJqj0xh1ZseBFTq9KGxDQxcnrj2ni6qJ3YsyVFhsYby3NstalAc3I+Z
+	 fFW72zpqW+g5A==
+Message-ID: <b23f6a36-df9e-4a70-9980-9bfe224868c3@kernel.org>
+Date: Thu, 8 Aug 2024 19:54:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: Fix undocumented LM75 compatible nodes
+To: "Rob Herring (Arm)" <robh@kernel.org>, soc@kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Dinh Nguyen <dinguyen@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
+ Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
+ Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>,
+ Mark Jackson <mpfj@newflow.co.uk>, Tony Lindgren <tony@atomide.com>,
+ Michal Simek <michal.simek@amd.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ openbmc@lists.ozlabs.org, imx@lists.linux.dev, linux-omap@vger.kernel.org
+References: <20240808164941.1407327-1-robh@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240808164941.1407327-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Heiko,
+On 08/08/2024 18:49, Rob Herring (Arm) wrote:
+> "lm75" without any vendor is undocumented. It works with the Linux
+> kernel since the I2C subsystem will do matches of the compatible string
+> without a vendor prefix to the i2c_device_id and/or driver name.
+> 
+> Mostly replace "lm75" with "national,lm75" as that's the original part
+> vendor and the compatible which matches what "lm75" matched with. In a
+> couple of cases the node name or compatible gives a clue to the actual
+> part and vendor and a more specific compatible can be used. In these
+> cases, it does change the variant the kernel picks.
+> 
+> "nct75" is an OnSemi part which is compatible with TI TMP75C based on
+> a comparison of the OnSemi NCT75 datasheet and configuration the Linux
+> driver uses. Adding an OnSemi compatible would be an ABI change.
+> 
+> "nxp,lm75" is most likely an NXP part. NXP makes a LM75A and LM75B.
+> Both are 11-bit resolution and 100ms sample time, so "national,lm75b" is
+> the closest match.
+> 
+> While we're here, fix the node names to use the generic name
+> "temperature-sensor".
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> SoC maintainers, Please take this directly.
+> ---
 
-On Thursday, 8 August 2024 12:41:05 EDT Heiko St=C3=BCbner wrote:
-> Hi Detlev,
->=20
-> >=20
-> > @@ -552,7 +575,10 @@ static int rockchip_pd_power(struct
-> > rockchip_pm_domain *pd, bool power_on)>=20
-> >  			/* if powering up, leave idle mode */
-> >  			rockchip_pmu_set_idle_request(pd, false);
-> >=20
-> > -			rockchip_pmu_restore_qos(pd);
-> > +			if (pd->info->delay_us)
-> > +				udelay(pd->info->delay_us);
-> > +			else
-> > +				rockchip_pmu_restore_qos(pd);
->=20
-> I still want this behaviour change in a separate patch with adequate
-> commit message please.
->=20
-> Going from always handling qos to allowing to just wait a specific time
-> needs explanation and is not part of "just" adding rk3576 support.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-You are right, I didn't takle this issue.
-This is actually a bug, the else is not supposed to be there, it should onl=
-y=20
-be an added delay for some PDs.
-
-Unfortunately, I'm not sure why that delay is needed exactly, so I'm willin=
-g=20
-to remove it for now (only used by nputop and vop, both unsupported) and co=
-me=20
-back to it if needed when VOP/NPU support is added.
-
-Would that work for this upstream ?
-
-Detlev.
-
-
-
+Best regards,
+Krzysztof
 
 
