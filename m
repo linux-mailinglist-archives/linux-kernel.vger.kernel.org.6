@@ -1,89 +1,64 @@
-Return-Path: <linux-kernel+bounces-279209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E6894BA80
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:06:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D5194BA83
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617F91F222AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:06:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55574B2161E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152BC189F33;
-	Thu,  8 Aug 2024 10:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7993E189F4B;
+	Thu,  8 Aug 2024 10:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CZm4wM8v"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwmJ5Eqx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4853A1482E9;
-	Thu,  8 Aug 2024 10:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AF913D61D;
+	Thu,  8 Aug 2024 10:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723111611; cv=none; b=toGCai4yeilgibImvYD8fBwkURcAEhtl8t58+NfdQSSPv5lIDToKE546cr5f4OWns8sjwRRvhp5jl+fo7F9P4EJTBRhCs3hv2e3lI3fV5eW8pemsiPmZEgbzio6sV//H3SSSblaX/5Z8PrldSgazmXhWUEuAEil9XeCHmdcTh1M=
+	t=1723111676; cv=none; b=clEmT31ogbP5t2K+0bVLU3a/Vu8/lSjU6GjQNnA6NCBOJpbfwtmvoyozkiyu/7sPjoZSfcDCdiqeR3JtB31N+/FTH4s59rmkrOB7J/eQOM4/sXKchKjPX4FKwvH6vmEq34LmIIDapBBmjLfgfLBETD3Z3nvcJn3UcH1mc2pZ6xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723111611; c=relaxed/simple;
-	bh=uKQ3e+rRipbc52EZ9/3ubN4gDzaoIHsFcfDD6xQ/S1I=;
+	s=arc-20240116; t=1723111676; c=relaxed/simple;
+	bh=Z+730wdykgDL37zu2DW7NoDiCuHq6W2AiZCHoRLEZqY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eAJh5lm9SwAU3Hzjdu5QxQjv9nFpUg/pyOI5zu5vfZYe4sbSGRhdbWBatYTgwjLCxahA1TR5wEVYf1Mh+nqQYJ5qc2kX7QNbsy8zGqgq9CBIULRevqsJGxyuy7djaLwwsT6h3LTehvECOaCsEsZwZoASznLqh1K3CV4GF4omux8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CZm4wM8v; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4782fNrJ016194;
-	Thu, 8 Aug 2024 10:06:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=y1zPW2qtS6K8ZiAt0cYh2AtCXW5
-	MiQGck8fcLF0AWPA=; b=CZm4wM8vF+vLu4UtHmjXu6YNx85wgWZEKd4uT49Ml2n
-	SEuEXU6P12/t76ra+zQxaf6Nn8XPStg1Lx9dlYZPba2o0YbnsjXHg4dCdvdemPuL
-	zCLZ8xO0UbIUPqhYvytuaM1x3q8ybitpGTbs2hISicAjpPLqHau1AFyGBNY62jj4
-	WQKEG2NVcG2EHb+PfuYT9t1FIpm6c3T3QLoFtaoOcS2f9KcLtuS98IVHLDi/iUF9
-	FuDr7A3k3wfFkepqzULb+yCemqYeNV11i7LEXJc++OoOpjmw23BiB+TuxJt+4cAI
-	qldimK8ki5k4cocyMiptyFpd6F9viZrrbIdebnmXWhg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40uqcmvrta-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 10:06:47 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 478A6kWL017511;
-	Thu, 8 Aug 2024 10:06:46 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40uqcmvrt8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 10:06:46 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4789IVg3030238;
-	Thu, 8 Aug 2024 10:06:45 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40t1k3d9sf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 10:06:45 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 478A6flS51904982
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 8 Aug 2024 10:06:44 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DD28520074;
-	Thu,  8 Aug 2024 10:06:41 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A90A520067;
-	Thu,  8 Aug 2024 10:06:40 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.56.231])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  8 Aug 2024 10:06:40 +0000 (GMT)
-Date: Thu, 8 Aug 2024 12:06:38 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, rppt@kernel.org,
-        akpm@linux-foundation.org, brauner@kernel.org, oleg@redhat.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH v6 1/3] mm/memblock: introduce a new helper
- memblock_estimated_nr_free_pages()
-Message-ID: <ZrSYruB/Aa8+oBoZ@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20240808001415.6298-1-richard.weiyang@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQk0l62Srv7LGl3VAupqMG1TUdWSExHhR+mV3SZtMaBJ1EhvKm7Mm2NvwyNL4qayU09+rx4u8jEGJdp4DRU5A9PssDQ9aZ0h+6zBfKLMQaEPZB0/V2z91IwqEjkLwqGm3xqr8d04C50PxVfl/rS/0ANc6SI9CSZTEhK7SBuubls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwmJ5Eqx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C160C32782;
+	Thu,  8 Aug 2024 10:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723111676;
+	bh=Z+730wdykgDL37zu2DW7NoDiCuHq6W2AiZCHoRLEZqY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JwmJ5EqxR2+5nZsc8J2ITqAp+c84P9wmWOqHbtVQmXYDpigys7RJu0fprpFnekTIk
+	 I2hOtXdwcZIL/MHEFL3sep8UIdvmN4kVgALNiOpd2rrPrBYvpSGe2nnXz8jzuwz2Y1
+	 HjEMZXCIHCS4dyHi5qfRW3YqhbV3OOrWCzzgtz9+pYeVb/ykj4Xv4eJROFQAI5rbTI
+	 kBgggxRh33MSFiyxwQEEr1Rqs1/ntBQbnSoNPQRUdc2CN7RWUsUFXNonm7Rg4ZZGe5
+	 zFjso8EH7LUwCRRmv7XG5MXmWfqhKqjytATHP4RBBW8FR+tb+UdsLlxge0ml+jWBFW
+	 A2AB2+RBtsxGw==
+Date: Thu, 8 Aug 2024 12:07:48 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
+	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v4 25/28] rust: alloc: implement `Cmalloc` in module
+ allocator_test
+Message-ID: <ZrSY9DZuDu7lY-1Q@pollux>
+References: <20240805152004.5039-1-dakr@kernel.org>
+ <20240805152004.5039-26-dakr@kernel.org>
+ <dcf75b19-9900-4aaa-8ff7-36b08baa18f2@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,39 +67,188 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240808001415.6298-1-richard.weiyang@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: QoRIWgoznaqXPJrGrCf_ad_2IXqdjEgp
-X-Proofpoint-ORIG-GUID: D-c-bENEGnZt3vXfddoTRXf4D97jZCS0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_10,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0 spamscore=0
- suspectscore=0 mlxlogscore=910 bulkscore=0 adultscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408080072
+In-Reply-To: <dcf75b19-9900-4aaa-8ff7-36b08baa18f2@proton.me>
 
-On Thu, Aug 08, 2024 at 12:14:13AM +0000, Wei Yang wrote:
+On Thu, Aug 08, 2024 at 09:35:47AM +0000, Benno Lossin wrote:
+> On 05.08.24 17:19, Danilo Krummrich wrote:
+> > So far the kernel's `Box` and `Vec` types can't be used by userspace
+> > test cases, since all users of those types (e.g. `CString`) use kernel
+> > allocators for instantiation.
+> > 
+> > In order to allow userspace test cases to make use of such types as
+> > well, implement the `Cmalloc` allocator within the allocator_test module
+> > and type alias all kernel allocators to `Cmalloc`. The `Cmalloc`
+> > allocator uses libc's realloc() function as allocator backend.
+> > 
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> > I know, having an `old_size` parameter would indeed help implementing `Cmalloc`.
+> > 
+> > However, I really don't want test infrastructure to influence the design of
+> > kernel internal APIs.
+> > 
+> > Besides that, adding the `old_size` parameter would have the consequence that
+> > we'd either need to honor it for kernel allocators too (which adds another
+> > source of potential failure) or ignore it for all kernel allocators (which
+> > potentially tricks people into taking wrong assumptions on how the API works).
+> > ---
+> >  rust/kernel/alloc/allocator_test.rs | 91 ++++++++++++++++++++++++++---
+> >  1 file changed, 84 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+> > index 1b2642c547ec..05fd75b89238 100644
+> > --- a/rust/kernel/alloc/allocator_test.rs
+> > +++ b/rust/kernel/alloc/allocator_test.rs
+> > @@ -2,20 +2,97 @@
+> > 
+> >  #![allow(missing_docs)]
+> > 
+> > -use super::{AllocError, Allocator, Flags};
+> > +use super::{flags::*, AllocError, Allocator, Flags};
+> >  use core::alloc::Layout;
+> > +use core::ptr;
+> >  use core::ptr::NonNull;
+> > 
+> > -pub struct Kmalloc;
+> > +pub struct Cmalloc;
+> > +pub type Kmalloc = Cmalloc;
+> >  pub type Vmalloc = Kmalloc;
+> >  pub type KVmalloc = Kmalloc;
+> > 
+> > -unsafe impl Allocator for Kmalloc {
+> > +extern "C" {
+> > +    #[link_name = "aligned_alloc"]
+> > +    fn libc_aligned_alloc(align: usize, size: usize) -> *mut core::ffi::c_void;
+> > +
+> > +    #[link_name = "free"]
+> > +    fn libc_free(ptr: *mut core::ffi::c_void);
+> > +
+> > +    // Do not use this function for production code! For test cases only it's
+> > +    // probably fine if used with care.
+> > +    #[link_name = "malloc_usable_size"]
+> > +    fn libc_malloc_usable_size(ptr: *mut core::ffi::c_void) -> usize;
+> > +}
+> > +
+> > +unsafe impl Allocator for Cmalloc {
+> > +    fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
+> > +        let layout = layout.pad_to_align();
+> > +
+> > +        // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
+> > +        // exceeds the given size and alignment requirements.
+> > +        let raw_ptr = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
+> > +
+> > +        if flags.contains(__GFP_ZERO) && !raw_ptr.is_null() {
+> > +            // SAFETY: `raw_ptr` points to memory successfully allocated with `libc_aligned_alloc`.
+> > +            let size = unsafe { libc_malloc_usable_size(raw_ptr.cast()) };
+> > +
+> > +            // SAFETY: `raw_ptr` points to memory successfully allocated with `libc_aligned_alloc`
+> > +            // of at least `size` bytes.
+> > +            unsafe { core::ptr::write_bytes(raw_ptr, 0, size) };
+> > +        }
+> > +
+> > +        let ptr = if layout.size() == 0 {
+> > +            NonNull::dangling()
+> 
+> Why do you call `libc_aligned_alloc` when you return `dangling()`
+> anyways when size is zero? I would move this check upwards.
+> 
+> > +        } else {
+> > +            NonNull::new(raw_ptr).ok_or(AllocError)?
+> 
+> Would also make sense to do this above the null check.
+> 
+> > +        };
+> > +
+> > +        Ok(NonNull::slice_from_raw_parts(ptr, layout.size()))
+> > +    }
+> > +
+> >      unsafe fn realloc(
+> > -        _ptr: Option<NonNull<u8>>,
+> > -        _layout: Layout,
+> > -        _flags: Flags,
+> > +        ptr: Option<NonNull<u8>>,
+> > +        layout: Layout,
+> > +        flags: Flags,
+> >      ) -> Result<NonNull<[u8]>, AllocError> {
+> > -        panic!();
+> > +        let layout = layout.pad_to_align();
+> > +        let src: *mut u8 = if let Some(src) = ptr {
+> > +            src.as_ptr().cast()
+> > +        } else {
+> > +            ptr::null_mut()
+> > +        };
+> > +
+> > +        if layout.size() == 0 {
+> > +            // SAFETY: `src` is either NULL or has previously been allocatored with this
+> > +            // `Allocator`.
+> > +            unsafe { libc_free(src.cast()) };
+> > +
+> > +            return Ok(NonNull::slice_from_raw_parts(NonNull::dangling(), 0));
+> > +        }
+> > +
+> > +        let dst = Self::alloc(layout, flags)?;
+> > +
+> > +        if src.is_null() {
+> > +            return Ok(dst);
+> > +        }
+> > +
+> > +        // SAFETY: `src` is either NULL or has previously been allocatored with this `Allocator`.
+> > +        let old_size = unsafe { libc_malloc_usable_size(src.cast()) };
+> 
+> Citing man malloc_usable_size(3):
+> 
+>     CAVEATS
+>         The value returned by malloc_usable_size() may be greater than
+>         the requested size of the allocation because of various internal
+>         implementation details, none of which the programmer should rely
+>         on.  This function is intended to only be used for diagnostics
+>         and statistics; writing to the excess memory without first
+>         calling realloc(3) to resize the allocation is not supported.
+>         The returned value is only valid at the time of the call.
+> 
+> While you don't write, you might read below, which might not be OK?
 
-Hi Wei,
+That is very interesting, the man page entry I looked at said:
 
-...
-> + * Return:
-> + * An estimated number of free pages from memblock point of view.
-> + */
-> +unsigned long __init memblock_estimated_nr_free_pages(void)
-> +{
-> +	return PHYS_PFN(memblock_phys_mem_size() - memblock_reserved_size());
-> +}
+       The  value  returned by malloc_usable_size() may be greater than the requested size of the
+       allocation because of alignment and minimum size constraints.  Although the  excess  bytes
+       can  be  overwritten  by the application without ill effects, this is not good programming
+       practice: the  number  of  excess  bytes  in  an  allocation  depends  on  the  underlying
+       implementation.
 
-This could possibly be short on up to two pages due to lack of alignment.
-The current uses are okay, but since you make it generic it probably matters.
+This was changed in [1] and it looks like "can be overwritten by the application
+without ill effects" just isn't true any more, too bad.
 
-Also, the returned value is not an estimation. Meaning the function name
-is rather unfortunate AFAICT.
+I have to think about it a bit, what we could do instead. I also don't really
+want to have an old size parameter for `realloc` only because it's needed by
+test infrastructure.
 
-> +#define PHYS_PFN(x)	((unsigned long)((x) >> PAGE_SHIFT))
+[1] https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=015464751006a964ff401f1eb5945ca28c4448a7
 
-Thanks!
+> 
+> ---
+> Cheers,
+> Benno
+> 
+> > +
+> > +        // SAFETY: `src` has previously been allocated with this `Allocator`; `dst` has just been
+> > +        // newly allocated. Taking the minimum of their sizes guarantees that we do not exceed
+> > +        // either bounds.
+> > +        unsafe {
+> > +            // Always copy -- do not rely on potential spare memory reported by
+> > +            // malloc_usable_size() which technically may still be sufficient.
+> > +            ptr::copy_nonoverlapping(
+> > +                src,
+> > +                dst.as_ptr().cast(),
+> > +                core::cmp::min(layout.size(), old_size),
+> > +            )
+> > +        };
+> > +
+> > +        Ok(dst)
+> >      }
+> >  }
+> > --
+> > 2.45.2
+> > 
+> 
 
