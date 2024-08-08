@@ -1,212 +1,136 @@
-Return-Path: <linux-kernel+bounces-280092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9887D94C591
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:20:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E6D94C592
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D510D1C22194
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:19:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EED4D1F233DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A890156237;
-	Thu,  8 Aug 2024 20:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32DD15665D;
+	Thu,  8 Aug 2024 20:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e3P8Pokg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HJ9JYQEt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SzF8wMFQ"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763EDBE40
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D4E155A25
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723148385; cv=none; b=M+DbEFzhgNCuCMuTB1pV8qKeiXVSAAvR6DyB5oNz8ztL+nfAU9OgmOm6269atbSmR7nfW9J95FrSRSQfNXDE7cWsHtkTXx7WLwPtUyi4C8Cs6SF5emA5AP9ut/3tu+vrIni30O+Y4Nj85h4vY7HDTud5mi89eEMD28HEpQO9Jxw=
+	t=1723148416; cv=none; b=D9R++EfrENeDtH4f/YCJi6CQUXPwDio9s0bL8K5qqtxXrjBk6+K/byEci1x96lOmV/BH/O9lu8fer/TYOvTB57hsdQJjPDf1R5XvzJld4v5M0y+TendZE9F110Uop8qgVOOX9zM6BFeDmW9nQ01OoaVZ+B4tuTPXoqlr8RsUJyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723148385; c=relaxed/simple;
-	bh=woPtMvfToWMXknsIxkiOjol1fuKH2pf+S82Wq4ai6Ok=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sLt6g2v5cDxTXwWcqkicCig/cD/6hnSpqJFCbPE+r7qRtJMjEebAoISccbq2/WmJ0ReOkX062QPAFI/njUDVr7goJ/NikIbLqB5F/MJb8mDMl1ehOiJxTjA9pDq/L1vC7wjkd2FLehky5W0fpxsJUrI5YGsTaOR+6ecGBRp0fvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e3P8Pokg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HJ9JYQEt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723148381;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ou5DKJ0eAop5una4YZqzZQBmZpyN0erdOFwGZF2IoUU=;
-	b=e3P8PokghEtki3W5VgBkde1OsYDJjbeId+prGsqt73kvOjF1aSm8Idi4Qd8UGAfhJXdxP6
-	OpzGGW+Xg2iFhlaAyjWub6mrOcp6WT2RF8jBswVaQj9LCLrRYltFjuqSkMh6e5AX+BAwsk
-	6esjDdiXiCy/wUotApYCdIcmQUb5EbFVYI7g3eQJS7AhsaFKeRA9NnH7SlXCyBVpoZBWEX
-	PFCouqwca2KdlqcyH99IYYIPQx4xqD7TIJFJuGhFl1Bx453bdkxEzq2Xv7wX4Hc7e6+aKy
-	D/+uMOq/iR6jZ/PdfUiD1q//cOpmo4eYFKPv8LftuhHjrMAAMUHOvDg8u0dC7Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723148381;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ou5DKJ0eAop5una4YZqzZQBmZpyN0erdOFwGZF2IoUU=;
-	b=HJ9JYQEtZyA1tJTShFLTrPILB42A3K5CWg07zBrjf5amvHDJ3LcDCzdyEYi9+JvYK6lypr
-	OLkyo8E4q2oe3JDQ==
-To: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Matti Vaittinen
- <matti.vaittinen@fi.rohmeurope.com>
-Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: [PATCH] irqdomain: Cleanup domain name allocation
-In-Reply-To: <877ccqvkfm.ffs@tglx>
-References: <cover.1723120028.git.mazziesaccount@gmail.com>
- <7a048c0139e79beb46d887b0cd5a620963ff8ef8.1723120028.git.mazziesaccount@gmail.com>
- <877ccqvkfm.ffs@tglx>
-Date: Thu, 08 Aug 2024 22:19:41 +0200
-Message-ID: <874j7uvkbm.ffs@tglx>
+	s=arc-20240116; t=1723148416; c=relaxed/simple;
+	bh=gHdxTsBtC1FIJogjoVgR3K+UeVWvV8guUElH9Mm/MW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oF79fozCkMJ+zITRPAZiFCfugVhQ68M8XeOMmPQswvig6NDKSp/oleRkO/GzOjvBauAtjyBJ3SAjhzGpIoY1gS1lcyw7FDFh9oWXkdtqwTiRMdYzXpzeuVIb3TfWsO64+RKcExeqS9yx6mnUxXpwXqVcFRpVCkP1UqhtjHhobXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SzF8wMFQ; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-39b37b63810so888065ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 13:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1723148413; x=1723753213; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uodkGzl7xHW+w1GEEv07TFHRhIpJPmXbKVPEvtQ8oGg=;
+        b=SzF8wMFQ5x5a/ygUBZWwhwKoLXC4b/YGunQbxr/Uljsqyw5DyA/m8Yf7Un1BU6iDgu
+         ++/gW7YCIAsw4wfpLIUZc+qeLYqfG2YSWRgQ8Y/0VSOdGFOKbSdV4WytnW3OxBRn+UVb
+         mgaV1duLlpb3WG2rXqMOMce9VGyNWtp/ZPJYo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723148413; x=1723753213;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uodkGzl7xHW+w1GEEv07TFHRhIpJPmXbKVPEvtQ8oGg=;
+        b=fqEJaG9hHI7uPNn5Bw5VKu3sZv8SlyQBOyS9pjVbA68R2Qb6yoF3ZCEY8gZGwHp5hP
+         4ZSMXx5VPH65EfIhLvDjO9wdBj25j/a9Fvf0im3xARVE8Ppt6jNpwgzTkApmZMU7eNpB
+         JeVIOO0kn+TBTNzVqiNLjlyZAYnyof49EkDF1puRswNTwEP5sKfwDy8NrmHYXHB6EI9J
+         TtsweQatR8Ppypvifp6N7zjAzvc+R73/20GJfD5DFU8n8Eu4pj/aBLODZnqwYZrW7ZkI
+         mG1ZgxYy/B/nDsAuEXJa0OP8pTQs6Kc0Mz9P0+wxH9kBaxxfy6y2fe/iFKDKtCcfgQcv
+         hZHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFPcSxUQS4aFPXE7eX7H8ySQLkgs0SsXc4ROIP8CFhKhYnon3eW2Ikax7yl6xg6ehEMykE8+A34HgvIGXvvwPQrT4dzdiXuuwdeMx6
+X-Gm-Message-State: AOJu0YyigHRVhdQCl6106SiMhmxl5nAkCpdXTk9gxwGAm5KNoK3LsTrL
+	4X05YlXEoJVucxqRv3FS4Mkwz9K6RzlLhp182uMgrcwjEZfBrX26LaOW7v1wtrY=
+X-Google-Smtp-Source: AGHT+IGeZKWpSvKjenukKSxuGMC3BC23H76EZqgIHLKrtcd11bSET6k/4D2jaLgGi/w8x0PBwnl8uw==
+X-Received: by 2002:a05:6e02:1ca4:b0:39a:eba6:69f8 with SMTP id e9e14a558f8ab-39b5ed2e20dmr22609595ab.3.1723148413344;
+        Thu, 08 Aug 2024 13:20:13 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ca69620c69sm120466173.145.2024.08.08.13.20.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 13:20:12 -0700 (PDT)
+Message-ID: <3a10db7a-d276-42ce-b050-8867aa3dc69c@linuxfoundation.org>
+Date: Thu, 8 Aug 2024 14:20:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/rseq/Makefile: fix relative rpath usage
+To: Eugene Syromiatnikov <esyr@redhat.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Artem Savkov <asavkov@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240808151335.GA5495@asgard.redhat.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240808151335.GA5495@asgard.redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-irq_domain_set_name() is truly unreadable gunk. Clean it up before adding
-more.
+On 8/8/24 09:13, Eugene Syromiatnikov wrote:
+> The relative RPATH ("./") supplied to linker options in CFLAGS is resolved
+> relative to current working directory and not the executable directory,
+> which will lead in incorrect resolution when the test executables are run
+> from elsewhere.  Changing it to $ORIGIN makes it resolve relative
+> to the directory in which the executables reside, which is supposedly
+> the desired behaviour.
+> 
+> Discovered by the /usr/lib/rpm/check-rpaths script[1][2] that checks
+> for insecure RPATH/RUNPATH[3], such as containing relative directories,
+> during an attempt to package BPF selftests for later use in CI:
+> 
+>      ERROR   0004: file '/usr/libexec/kselftests/bpf/urandom_read' contains an insecure runpath '.' in [.]
+> 
+> [1] https://github.com/rpm-software-management/rpm/blob/master/scripts/check-rpaths
+> [2] https://github.com/rpm-software-management/rpm/blob/master/scripts/check-rpaths-worker
+> [3] https://cwe.mitre.org/data/definitions/426.html
+> 
+> Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+> ---
+>   tools/testing/selftests/rseq/Makefile | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
+> index 5a3432fceb58..27544a67d6f0 100644
+> --- a/tools/testing/selftests/rseq/Makefile
+> +++ b/tools/testing/selftests/rseq/Makefile
+> @@ -6,7 +6,7 @@ endif
+>   
+>   top_srcdir = ../../../..
+>   
+> -CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) -L$(OUTPUT) -Wl,-rpath=./ \
+> +CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) -L$(OUTPUT) -Wl,-rpath=\$$ORIGIN/ \
+>   	  $(CLANG_FLAGS) -I$(top_srcdir)/tools/include
+>   LDLIBS += -lpthread -ldl
+>   
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- kernel/irq/irqdomain.c |  104 +++++++++++++++++++++++++------------------------
- 1 file changed, 55 insertions(+), 49 deletions(-)
+Wouldn't make sense to fix fix this in selftests main Makefile
+instead of changing the all the test makefiles
 
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -128,11 +128,53 @@ void irq_domain_free_fwnode(struct fwnod
- }
- EXPORT_SYMBOL_GPL(irq_domain_free_fwnode);
- 
--static int irq_domain_set_name(struct irq_domain *domain,
--			       const struct fwnode_handle *fwnode,
--			       enum irq_domain_bus_token bus_token)
-+static int alloc_name(struct irq_domain *domain, char *base, enum irq_domain_bus_token bus_token)
-+{
-+	domain->name = bus_token ? kasprintf(GFP_KERNEL, "%s-%d", base, bus_token) :
-+				   kasprintf(GFP_KERNEL, "%s", base);
-+	if (!domain->name)
-+		return -ENOMEM;
-+
-+	domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
-+	return 0;
-+}
-+
-+static int alloc_fwnode_name(struct irq_domain *domain, const struct fwnode_handle *fwnode,
-+			     enum irq_domain_bus_token bus_token)
-+{
-+	char *name = bus_token ? kasprintf(GFP_KERNEL, "%pfw-%d", fwnode, bus_token) :
-+				 kasprintf(GFP_KERNEL, "%pfw", fwnode);
-+
-+	if (!name)
-+		return -ENOMEM;
-+
-+	/*
-+	 * fwnode paths contain '/', which debugfs is legitimately unhappy
-+	 * about. Replace them with ':', which does the trick and is not as
-+	 * offensive as '\'...
-+	 */
-+	domain->name = strreplace(name, '/', ':');
-+	domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
-+	return 0;
-+}
-+
-+static int alloc_unknown_name(struct irq_domain *domain, enum irq_domain_bus_token bus_token)
- {
- 	static atomic_t unknown_domains;
-+	int id = atomic_inc_return(&unknown_domains);
-+
-+	domain->name = bus_token ? kasprintf(GFP_KERNEL, "unknown-%d-%d", id, bus_token) :
-+				   kasprintf(GFP_KERNEL, "unknown-%d", id);
-+
-+	if (!domain->name)
-+		return -ENOMEM;
-+	domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
-+	return 0;
-+}
-+
-+static int irq_domain_set_name(struct irq_domain *domain, const struct fwnode_handle *fwnode,
-+			       enum irq_domain_bus_token bus_token)
-+{
- 	struct irqchip_fwid *fwid;
- 
- 	if (is_fwnode_irqchip(fwnode)) {
-@@ -141,59 +183,23 @@ static int irq_domain_set_name(struct ir
- 		switch (fwid->type) {
- 		case IRQCHIP_FWNODE_NAMED:
- 		case IRQCHIP_FWNODE_NAMED_ID:
--			domain->name = bus_token ?
--					kasprintf(GFP_KERNEL, "%s-%d",
--						  fwid->name, bus_token) :
--					kstrdup(fwid->name, GFP_KERNEL);
--			if (!domain->name)
--				return -ENOMEM;
--			domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
--			break;
-+			return alloc_name(domain, fwid->name, bus_token);
- 		default:
- 			domain->name = fwid->name;
--			if (bus_token) {
--				domain->name = kasprintf(GFP_KERNEL, "%s-%d",
--							 fwid->name, bus_token);
--				if (!domain->name)
--					return -ENOMEM;
--				domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
--			}
--			break;
-+			if (bus_token)
-+				return alloc_name(domain, fwid->name, bus_token);
- 		}
--	} else if (is_of_node(fwnode) || is_acpi_device_node(fwnode) ||
--		   is_software_node(fwnode)) {
--		char *name;
--
--		/*
--		 * fwnode paths contain '/', which debugfs is legitimately
--		 * unhappy about. Replace them with ':', which does
--		 * the trick and is not as offensive as '\'...
--		 */
--		name = bus_token ?
--			kasprintf(GFP_KERNEL, "%pfw-%d", fwnode, bus_token) :
--			kasprintf(GFP_KERNEL, "%pfw", fwnode);
--		if (!name)
--			return -ENOMEM;
- 
--		domain->name = strreplace(name, '/', ':');
--		domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
-+	} else if (is_of_node(fwnode) || is_acpi_device_node(fwnode) || is_software_node(fwnode)) {
-+		return alloc_fwnode_name(domain, fwnode, bus_token);
- 	}
- 
--	if (!domain->name) {
--		if (fwnode)
--			pr_err("Invalid fwnode type for irqdomain\n");
--		domain->name = bus_token ?
--				kasprintf(GFP_KERNEL, "unknown-%d-%d",
--					  atomic_inc_return(&unknown_domains),
--					  bus_token) :
--				kasprintf(GFP_KERNEL, "unknown-%d",
--					  atomic_inc_return(&unknown_domains));
--		if (!domain->name)
--			return -ENOMEM;
--		domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
--	}
-+	if (domain->name)
-+		return 0;
- 
--	return 0;
-+	if (fwnode)
-+		pr_err("Invalid fwnode type for irqdomain\n");
-+	return alloc_unknown_name(domain, bus_token);
- }
- 
- static struct irq_domain *__irq_domain_create(const struct irq_domain_info *info)
+Same comment on all other files. It would be easier to send
+these as series - please mentioned the tests run as well
+after this change.
+
+thanks,
+-- Shuah
+
 
