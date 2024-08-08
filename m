@@ -1,194 +1,148 @@
-Return-Path: <linux-kernel+bounces-279018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D504A94B7F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE8494B7FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 966A02858CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:36:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88FA628751D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB321891A9;
-	Thu,  8 Aug 2024 07:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616D418757F;
+	Thu,  8 Aug 2024 07:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="hVx2Exae";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RC+EEX+O"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTVCyNuh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E27C188CB0;
-	Thu,  8 Aug 2024 07:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921127464;
+	Thu,  8 Aug 2024 07:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723102559; cv=none; b=c3IrqTifhdcW57Sio08H1Rxp0SrfLFgS5VJNDvehgPEK/d/hAMp027mYQZismkvfFoBITSsAqYxncHYD2jZ53877zaKNEr1UbhHpajCgcouu7miIkZtsaLdp3ObhC2nLWTtaUgY/xDRsTDkM6rjCIf37Rr3/GmjZ5nF2ylBdKOY=
+	t=1723102613; cv=none; b=leJ4TovJPOgHOEEtIWSVVvZswPavlpHlp5Jp/s/Z50W55vIA4nNOeFpQmkt7fCWuyYNzhkmN1oRIiuGBvvHw6qwgJzAUDNQR/nW1vQr5XM9uWROAwalGSqieJ8rW8KFsgbgOCpsOjZUsYcODkUiilq+VSCemh8cbKBS0bagM4V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723102559; c=relaxed/simple;
-	bh=L6+YeIn/Vp1pbx3yet9x4syQyFrDr8NrjU/GSzGYsuc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bsTSnHdfVH07t9cwuILM/8xXRZKrIEmc5UglJS6S0IdnJhex82WwWUGvTq9L19LqGQ3LmHjTK5OLj8zHusu+HI0lfCn6cEMIUV0ZMowTUvkPs7Es/cvfbm5c2szGO/mLRFjkKoTRogRDut5RVsJLs/fuojhRT8ktKHNuXHLHEzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=hVx2Exae; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RC+EEX+O; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 84E171151BEF;
-	Thu,  8 Aug 2024 03:35:56 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by compute5.internal (MEProxy); Thu, 08 Aug 2024 03:35:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1723102556;
-	 x=1723188956; bh=fMFJm5IlFxBmEa62YMJEhbiKsIZQqiP31Px8V8AfdNY=; b=
-	hVx2ExaejuSrIfGHB0X94CrBVfdkmsna7NDUz0c/QmuxRhZRxcHT2G54tYhw8XwD
-	DAozKrOTgwEwcuiDp6xOUonyCN87fG2/itoNWCFmstTy1g0JTZoBEDXRUE8JYS7c
-	SRVInd1ZbKwfPjHkxlIRr863cZuwDfgfqF+jXmbuOrgF74KAn8Gx+IBTgdzwN8+V
-	prDWnEUskXOcmWcbJRH8nRFHPCX/higE9lFraUxHPbNEECZX2Rtp9ISiW5G2kCVA
-	9aSBWmqtit3131ogn6s8wr9QDlSQBmFRkMs9nnu/Sht8StIKfkNllPFqsOD+LVUc
-	BvfQ17hMlLTjOmiv30Hz1A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723102556; x=
-	1723188956; bh=fMFJm5IlFxBmEa62YMJEhbiKsIZQqiP31Px8V8AfdNY=; b=R
-	C+EEX+OBxAIDeqhr/KFfs+qCOQ23Q26BLOtA9xOS7swUsL33Db10vcgrKpg7mjk4
-	4a40Li1H/CuYw5kCPnhI3aZSknYCgDBlTOaOL7lgupzAKz+uXuGJV3E+q+U2sVJ9
-	7qMR5po+Sx3da4bd0W923GPoJ8qxgOJT4E7jTN9YWgss2KIz40eDKrwqhFLI5pLL
-	wl42zqfFM16SW5LWvsgoiCutIPIzKGmcpDlW+E3EpDQ4PNOsPrr9a5gh26jD0uFT
-	RtU9DS8Glt+h24t17/+FRHPcVgDG1tY2S3VOAvBI3kuR8Pc2A1yBz9gNfJNdUXkt
-	KS43A0svI2/1TV4/np4Cw==
-X-ME-Sender: <xms:W3W0ZkAQ_ohYCHduJH5FpYMFViVW5NfzXx68QX427308HoZgQHIi5Q>
-    <xme:W3W0ZmiHvFnA4z-yDWSsVMJN16n1wKNFqNEflIPWK31ztvPodgglsbQRyeEOHPmq2
-    Nd_iF0ElrVaPeBesjs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledugdduvddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepfeeuueehudffkeeihefhgeeh
-    veefffdugefhffeuffdvheeggeefkeefffeivdegnecuffhomhgrihhnpehkvghrnhgvlh
-    htvghsthhsrdhorhhgpdhrohgvtghkqdhushdrnhgvthenucevlhhushhtvghrufhiiigv
-    pedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihgh
-    horghtrdgtohhmpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpth
-    htohepfhgrnhgtvghrrdhlrghntggvrhesghhmrghilhdrtghomhdprhgtphhtthhopegu
-    rghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtohepthhglh
-    igsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoheprhgvghhrvghsshhiohhnshes
-    lhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehmrggtrhhosehorhgtrghmrd
-    hmvgdruhhkpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhnvghtpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:W3W0ZnlvLZIrKzF05cUbaXeRQUIpRV0_hRv6olwl7l6eEpnKf8jA1A>
-    <xmx:W3W0ZqyY7gUxPb1YXZULdV-vUPwAqAbEjQq9MSHyZ4keb6-67k3Y_Q>
-    <xmx:W3W0ZpRNlQaKNW4285SaRxbCxoy5r2NL21aWOkh1kstto4oVJYs6uQ>
-    <xmx:W3W0Zlacm04dElUYnSJknRTeBMXNN65OKEzKSK9AuHdiK0NQfHOvxA>
-    <xmx:XHW0ZkEo65KxlfY4YidS9vjfsDBWqWJ-m6NkB9UCHgwcBt2Sk2OFvulw>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id B8A5619C0079; Thu,  8 Aug 2024 03:35:55 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723102613; c=relaxed/simple;
+	bh=IArkuA/rezyzXAsivv8x1VsmdgMdM4imAqtpxCdcriw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ocufZ4//ToLQOxHBDhbVBblnMwUXjERdlxTZZtoAnUuUd7SoKNhQg+kkh0IKAGgVAgGLRWbgzOZBtVJ60GNo86ND5BN6HvYdaAfUmacAe0a+4iQVD0PusGg5G2oIh7PIuBT2yaLupQWMMo1K8lQV5PdbcAwlKeyrqvt9Kk59YK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JTVCyNuh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49728C32782;
+	Thu,  8 Aug 2024 07:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723102613;
+	bh=IArkuA/rezyzXAsivv8x1VsmdgMdM4imAqtpxCdcriw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JTVCyNuhgnNMF7vhdRXASkM9KJ/pQJ4jCEovor5D/krRQBnIbil3TbCzJAyjwYry2
+	 HN0NbcKtZ2V76VSOjXDMZ3qZjuWSj0MVhrs6dGPMj98o20Eowwgp0Zrr0qjOLpKWI7
+	 J6X5b7nI4w+VuFTCbbBwcaUsL9nrdjkzFv91n60OO4agNMLIVIBdy/HyiogyFhHI0l
+	 8V0Z6Vz4FRtsrCFnntI4iMwIvFF2Sd/59AwHPW+AG15SwqRPFWYxoQFq/4NpSFy3Tq
+	 YuVKpHE2xhfr8AQCQhk8A/Mu874FQlrJovXF09pyz0C30ZdiwkNUCt6dLyBwTg2+dU
+	 qYmHCy8LYuI0A==
+Message-ID: <efaf459f-dd22-4200-9ad5-76a90d8038d2@kernel.org>
+Date: Thu, 8 Aug 2024 09:36:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 08 Aug 2024 08:35:35 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Guenter Roeck" <linux@roeck-us.net>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Serge Semin" <fancer.lancer@gmail.com>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Maciej W. Rozycki" <macro@orcam.me.uk>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Message-Id: <8d3abbdb-7574-486f-82dd-4213b806a6d8@app.fastmail.com>
-In-Reply-To: <900ae60e-84f8-4300-87e7-7f35d16ad439@roeck-us.net>
-References: <20240612-mips-clks-v2-0-a57e6f49f3db@flygoat.com>
- <20240612-mips-clks-v2-2-a57e6f49f3db@flygoat.com>
- <fbe92f1c-3c08-4b46-9d7a-e098ac1656a8@roeck-us.net>
- <97ad6c99-ca4e-463b-aee0-9a7e9455fea3@app.fastmail.com>
- <62e8056b-6a6c-42d1-89f6-7306bb2a528b@roeck-us.net>
- <900ae60e-84f8-4300-87e7-7f35d16ad439@roeck-us.net>
-Subject: Re: [PATCH v2 2/7] MIPS: csrc-r4k: Apply verification clocksource flags
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/2] dt-bindings: net: dsa: Add KSZ8895/KSZ8864
+ switch support
+To: Tristram.Ha@microchip.com, Andrew Lunn <andrew@lunn.ch>,
+ Vivien Didelot <vivien.didelot@gmail.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240807232023.1373779-1-Tristram.Ha@microchip.com>
+ <20240807232023.1373779-3-Tristram.Ha@microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240807232023.1373779-3-Tristram.Ha@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 08/08/2024 01:20, Tristram.Ha@microchip.com wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
+> 
+> KSZ8895/KSZ8864 is a switch family developed before KSZ8795 and after
+> KSZ8863, so it shares some registers and functions in those switches.
+> KSZ8895 has 5 ports and so is more similar to KSZ8795.
+> 
+> KSZ8864 is a 4-port version of KSZ8895.  The first port is removed
+> while port 5 remains as a host port.
 
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-=E5=9C=A82024=E5=B9=B48=E6=9C=886=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
-=8D=884:06=EF=BC=8CGuenter Roeck=E5=86=99=E9=81=93=EF=BC=9A
-> On 8/5/24 22:13, Guenter Roeck wrote:
->> On 8/5/24 22:06, Jiaxun Yang wrote:
->>>
->>>
->>> =E5=9C=A82024=E5=B9=B48=E6=9C=886=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=
-=E5=8D=8812:09=EF=BC=8CGuenter Roeck=E5=86=99=E9=81=93=EF=BC=9A
->>>> Hi,
->>>>
->>>> On Wed, Jun 12, 2024 at 09:54:29AM +0100, Jiaxun Yang wrote:
->>>>> CP0 counter suffers from various problems like SMP sync,
->>>>> behaviour on wait.
->>>>>
->>>>> Set CLOCK_SOURCE_MUST_VERIFY and CLOCK_SOURCE_VERIFY_PERCPU,
->>>>> as what x86 did to TSC, to let kernel test it before use.
->>>>>
->>>>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->>>
->>> Hi Guenter,
->>>
->>> Thanks for the report, it makes no sense to me though....
->>>
->>> I can't reproduce it with QEMU git master, do you mind specifying yo=
-ur QEMU
->>> version for me? Also is it possible to have a copy of dmesg when fai=
-lure happens.
->>>
->>=20
->> I currently use v9.0.2. I'll try with some other versions tomorrow.
->> A complete log is at
->> https://kerneltests.org/builders/qemu-mips64-master/builds/241/steps/=
-qemubuildcommand/logs/stdio
->>=20
->> Are you trying to instantiate an e1000 (or a variant of it) ? So far
->> I have only seen the problem with that controller. There is no specif=
-ic
->> error message, the network interface just doesn't get an IP address.
->>=20
->
-> I am able to reproduce the problem with qemu 6.2.0 (Debian build).
-> http://server.roeck-us.net/qemu/mips64/ should have everything needed =
-to
-> reproduce it. "repeat.sh" repeats the test until it fails.
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
 
-Thanks for the info, I'm able to reproduce that. It can be reproduced fa=
-ster
-on system with lower CPU performance.
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
 
-So the actual failure is:
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
 
-clocksource: timekeeping watchdog on CPU0: Marking clocksource 'MIPS' as=
- unstable because the skew is too large:
-clocksource:                       'jiffies' wd_nsec: 500000000 wd_now: =
-ffff8bde wd_last: ffff8bac mask: ffffffff
-clocksource:                       'MIPS' cs_nsec: 940634468 cs_now: 310=
-181c4 cs_last: 28090a09 mask: ffffffff
-clocksource:                       Clocksource 'MIPS' skewed 440634468 n=
-s (440 ms) over watchdog 'jiffies' interval of 500000000 ns (500 ms)
-clocksource:                       'MIPS' is current clocksource.
+Also, bindings come before users.
 
-Jiffies is not an ideal clocksource as watchdog base, really....
-I guess clocksource selection process needs to be improved, let me think=
- about it.
+Best regards,
+Krzysztof
 
->
-> Hope this helps,
-> Guenter
-
---=20
-- Jiaxun
 
