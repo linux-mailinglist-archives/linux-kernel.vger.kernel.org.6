@@ -1,173 +1,102 @@
-Return-Path: <linux-kernel+bounces-278936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF35F94B6CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:33:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1939294B697
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F45D1C21EB8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C959D2854ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B51E18786D;
-	Thu,  8 Aug 2024 06:32:54 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6A9186E21;
+	Thu,  8 Aug 2024 06:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFDQbhkL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524BD187876
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 06:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5587C4A1E;
+	Thu,  8 Aug 2024 06:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723098773; cv=none; b=pe6nwVyBaYyo7xJxSUP9YKXRIcV3lE7li2rax6nwtrp9gCblpTRZ6OQn86RaC7jCys5mXcjmg9ie8zVCMXEZ1NVRDbLcGLGgkO5Aa/7BkQ82k3hyqo5sKbz7Yj64k3TJFRCfqWSXV8V5ytJNHTO8d8snyDKAeMu7rMFZZdEDunc=
+	t=1723098019; cv=none; b=etmgsbsNE1F1EfHas3V2X+aYo/+GA7ItVp0gC8Lq4HSbG9mHnUK72tSbVlZxYrwaSg6/HOIt/jsR49Sjl0OubF9Y/wCRCoM5O2T4OoovnycWikH+vWUSkP58Uy9YWVVLb1S0YsmF1E6voowyf7yiusujXF0X6DtFLi70G3srKNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723098773; c=relaxed/simple;
-	bh=LHbk3NmxZdKJKb8c4pSedW8OZ1Rfr6jLIW2z61ntyqs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H2mrzosA7EnOR9mBEq9/VnRA2+EKaW5C2yzkTyUFCn6KCi61txVQmc04Aw3OVq8kDlZTRutRyc0KmubfpXUcKB96G/bs5w3GJ0OebThxLkZzJ75i4nHjF1wRNFeBf/00Ktra7hnGKpm79ogq9lnDXckwK5RX9SXNqqHHv7r0fWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: bbb3698e554d11efa216b1d71e6e1362-20240808
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:af8ba63f-d4de-4483-ba89-a97f9bb2342b,IP:5,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:0
-X-CID-INFO: VERSION:1.1.38,REQID:af8ba63f-d4de-4483-ba89-a97f9bb2342b,IP:5,URL
-	:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:776c521adf725efa32729930ce14164b,BulkI
-	D:240802173947ECFW744W,BulkQuantity:3,Recheck:0,SF:66|38|25|17|19|43|74|64
-	|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BE
-	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
-	TF_CID_SPAM_ULS
-X-UUID: bbb3698e554d11efa216b1d71e6e1362-20240808
-X-User: yaolu@kylinos.cn
-Received: from localhost.localdomain [(111.48.58.10)] by mailgw.kylinos.cn
-	(envelope-from <yaolu@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1112590683; Thu, 08 Aug 2024 14:16:22 +0800
-From: Lu Yao <yaolu@kylinos.cn>
-To: jfalempe@redhat.com,
-	ckoenig.leichtzumerken@gmail.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	srinivasan.shanmugam@amd.com,
-	sunil.khatri@amd.com
-Cc: airlied@gmail.com,
-	daniel@ffwll.ch,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/amdgpu: add dce6 drm_panic support
-Date: Thu,  8 Aug 2024 14:15:38 +0800
-Message-Id: <20240808061538.502762-1-yaolu@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240802071752.116541-1-yaolu@kylinos.cn>
-References: <20240802071752.116541-1-yaolu@kylinos.cn>
+	s=arc-20240116; t=1723098019; c=relaxed/simple;
+	bh=X9NY6xCSLD4ufw4GmHD6bL7PfZlnwn442WiojDh1QoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WEahqyYWxiwVAUCkgY3+Lx/dzUwPdn8L3cxyjjBofQ+wgR99n/pmSCAwDjIeT1i7gAXAwAz0atFE2Z6ZlhsbP/WIRbAAA6pVI0pAP3F56Kn3wZcdVmAJKhNc0A/JJW9Uywbi4rB87pfurpK3b7ddkWjk6hMZhKMhdiUUpVOBHwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFDQbhkL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C02DC32782;
+	Thu,  8 Aug 2024 06:20:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723098019;
+	bh=X9NY6xCSLD4ufw4GmHD6bL7PfZlnwn442WiojDh1QoM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lFDQbhkLAPVrpBzMivRB3q1DQzO9myhdCHwfR5uOB2+84aQTZxFi1chGA60bZieRS
+	 DaYksPM+Svo/5N6Nua0yXep112L3A/LQ4qVYn4+FjociZac/Ztb6is8UnjlvQV9LD1
+	 Xiasj2u8DB2UO7dteo58gW47cMwLORmnEpRLYs/4Ro/+AHBWBM3N2uLFJxRitvocDn
+	 AIams1FJMakx6yCSugubObtItgQ/3pLduNfsgeP/H3Ze5pm/owGXzSisZK1RDnkZuV
+	 1teqHp6wzmwn0GbsnkEoR0jUNSK8rkNvRl8N0Qb5iuJrK/5J+4aSwCVFKWUxKZB9gB
+	 x7v51oLnA+TDg==
+Date: Thu, 8 Aug 2024 09:18:07 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] pstore/ramoops: Fix typo as there is no "reserver"
+Message-ID: <ZrRi7fdYo3yVPr1G@kernel.org>
+References: <20240807170029.3c1ff651@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807170029.3c1ff651@gandalf.local.home>
 
-On 2024/8/5 17:25, Jocelyn Falempe wrote:
->
->
-> On 02/08/2024 11:39, Christian König wrote:
->> Am 02.08.24 um 09:17 schrieb Lu Yao:
->>> Add support for the drm_panic module, which displays a pretty user
->>> friendly message on the screen when a Linux kernel panic occurs.
->>>
->>> Signed-off-by: Lu Yao <yaolu@kylinos.cn>
->>> ---
->>>   drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 32 
->>> +++++++++++++++++++++++++++
->>>   1 file changed, 32 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c 
->>> b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
->>> index 05c0df97f01d..12c3801c264a 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
->>> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
->>> @@ -28,6 +28,8 @@
->>>   #include <drm/drm_modeset_helper.h>
->>>   #include <drm/drm_modeset_helper_vtables.h>
->>>   #include <drm/drm_vblank.h>
->>> +#include <drm/drm_panic.h>
->>
->>> +#include "../../drm_internal.h"
->>
->> Well that this file is named "internal" and not in a common include 
->> directory is a strong indicator that you should absolutely *not* 
->> include it in a driver.
->>
->>>   #include "amdgpu.h"
->>>   #include "amdgpu_pm.h"
->>> @@ -2600,6 +2602,35 @@ static const struct drm_crtc_helper_funcs 
->>> dce_v6_0_crtc_helper_funcs = {
->>>       .get_scanout_position = amdgpu_crtc_get_scanout_position,
->>>   };
->>> +static int dce_v6_0_drm_primary_plane_get_scanout_buffer(struct 
->>> drm_plane *plane,
->>> +                             struct drm_scanout_buffer *sb)
->>> +{
->>> +    struct drm_framebuffer *fb;
->>> +    struct drm_gem_object *obj;
->>> +    struct amdgpu_bo *abo;
->>> +    int ret = 0;
->>> +
->>> +    if (!plane->fb || plane->fb->modifier != DRM_FORMAT_MOD_LINEAR)
->>> +        return -ENODEV;
->>> +
->>> +    fb = plane->fb;
->>> +    sb->width = fb->width;
->>> +    sb->height = fb->height;
->>> +    sb->format = fb->format;
->>> +    sb->pitch[0] = fb->pitches[0];
->>> +
->>> +    obj = fb->obj[0];
->>> +    abo = gem_to_amdgpu_bo(obj);
->>> +    if (!abo || abo->flags & AMDGPU_GEM_CREATE_NO_CPU_ACCESS)
->>> +        return -EINVAL;
->>> +
->>> +    return drm_gem_vmap(obj, &sb->map[0]);
->>
->> Yeah that will almost always not work. Most display buffers are 
->> tilled and not CPU accessible.
->
-> For the CPU accessible issue, Christian mentioned there was a debug 
-> interface on AMD GPU that can be used, to work around this:
->
-> https://lore.kernel.org/dri-devel/0baabe1f-8924-2c9a-5cd4-59084a37dbb2@gmail.com/ 
-> and 
-> https://lore.kernel.org/dri-devel/d233c376-ed07-2127-6084-8292d313dac7@amd.com/
->
-> And you will need to use the scanout_buffer->set_pixel() callback to 
-> write the pixels one by one, similar to what I've tried for nouveau with
-> https://patchwork.freedesktop.org/series/133963/
->
-> For the tiling format, the problem is that it is internal to the GPU, 
-> and currently the driver don't know which tiling format is being used.
->
-> It might be possible to disable tiling and compression, but it 
-> requires some internal DC knowledge:
-> https://lore.kernel.org/dri-devel/f76a3297-7d63-8615-45c5-47f02b64a1d5@amd.com/ 
->
->
-> Best regards,
+On Wed, Aug 07, 2024 at 05:00:29PM -0400, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> For some reason my finger always hits the 'r' after typing "reserve".
+> Fix the typo in the Documentation example.
+> 
+> Fixes: d9d814eebb1ae ("pstore/ramoops: Add ramoops.mem_name= command line option")
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-From the discussion provided, it is difficult to implement this feature without the relevant data book and knowledge.(Whether how tiled memory storage, or how to disable tiling of DC)
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-It looks like I'll just have to wait for AMD engineers to implement this.
+> ---
+> Note, I did have this fixed, but the previous version was pulled:
+>   https://lore.kernel.org/linux-trace-kernel/20240613233446.283241953@goodmis.org/
+> 
+>  Documentation/admin-guide/ramoops.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/ramoops.rst b/Documentation/admin-guide/ramoops.rst
+> index 6f534a707b2a..2eabef31220d 100644
+> --- a/Documentation/admin-guide/ramoops.rst
+> +++ b/Documentation/admin-guide/ramoops.rst
+> @@ -129,7 +129,7 @@ Setting the ramoops parameters can be done in several different manners:
+>      takes a size, alignment and name as arguments. The name is used
+>      to map the memory to a label that can be retrieved by ramoops.
+>  
+> -	reserver_mem=2M:4096:oops  ramoops.mem_name=oops
+> +	reserve_mem=2M:4096:oops  ramoops.mem_name=oops
+>  
+>  You can specify either RAM memory or peripheral devices' memory. However, when
+>  specifying RAM, be sure to reserve the memory by issuing memblock_reserve()
+> -- 
+> 2.43.0
+> 
 
-Thanks a lot,
-Lu Yao
+-- 
+Sincerely yours,
+Mike.
 
