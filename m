@@ -1,52 +1,62 @@
-Return-Path: <linux-kernel+bounces-280194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B9E994C6FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:30:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8033394C6FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02AF287882
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:30:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF091C22073
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F09E15ECEA;
-	Thu,  8 Aug 2024 22:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD6215920B;
+	Thu,  8 Aug 2024 22:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b="bgh1g56Z"
-Received: from cmx-mtlrgo002.bell.net (mta-mtl-005.bell.net [209.71.208.25])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bo3S0mOp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8265515A85E;
-	Thu,  8 Aug 2024 22:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.71.208.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9020212E1EE
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 22:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723156206; cv=none; b=NMNuvW6qdhH0zvLdtlVXv1Xxxsk07At+4C+xwKWfYCl9qYFqUIiK/eBK5txnQFUuaMlRWvqbKt6quPGjH4DfgLnyBnOQTV/cTlOETdxwXawaTq8HKQBdAtE1bAA/PTDpClvvpd6N3H+z/oCzhhNqwLhwLdbnsWyX43sS3Fn4zH0=
+	t=1723156250; cv=none; b=rDQpgjq52NOqGFWrNaKnqIdtOGJdNpB46hilZLtBK/Pb8Qf7H0ALZ/6DgWuvVWLcCbIv8lP79z8Ac1GQxvAChp0fRHWkaam0nFJlHUqyNUasz8YgWOmS3Ri0jCR5iL5LieNscyncJZofuDMKJusUoJF+RZz9Sqvw5jN11er7eiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723156206; c=relaxed/simple;
-	bh=X2N84UJQ5Eyq3V3kjH2uenx0Eqy16NMBsbbtYZQ4wTs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RZbaSoDbLkeAZW/diWPEWywjnnhoGUp4cPbBc4Qygv5vKReHPCEnk5dM43NjcIfaaUPpxbIFw3SuCousMrCBh+eJEIeqnPwV3wl6ioj5dNV8HC8kgaOX20b7FpptZIr+SWZtt7b9/w/dV39gB1d0WaXv5STLD93eq2EqrPCIOHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net; spf=pass smtp.mailfrom=bell.net; dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b=bgh1g56Z; arc=none smtp.client-ip=209.71.208.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bell.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bell.net; s=selector1; t=1723156204; 
-        bh=LgxfzUZVpycHSaGHDE/lQUlboZeRrF+ub5S85Pnl0GA=;
-        h=Message-ID:Date:MIME-Version:Subject:From:To:References:In-Reply-To:Content-Type;
-        b=bgh1g56Zr8uFq2Wmcmb08i6456kFXqd0zSKuc3MqwVAE53WBIzT75cHDaGr9LMat/HdrNZKHS0JIHUdVJ67GMVO/kihO3rajB4xbiIG9wIvs5AuJGtgy18DXoepR9Vf9EC7cHrzy4YF5KjGhioO/varlJGVDk49GpsE8WPn8ldZ4A2NfM8PWmwy1GXNHjffZs89/d5oGRZshyl2q3+vm9yKXs1WjsEwLCEp6h5O40DKBxoHx1fccjHC7BX4JSCwn7YsgsyV+PP07t7gAMqvMYv1TUehVQZWsNkUlEqec1Ng7KtzuXKnCITFcHoq4lRQqjZAKChhNlAAKTWbznAVIPQ==
-X-RG-SOPHOS: Clean
-X-RG-VADE-SC: 0
-X-RG-VADE: Clean
-X-RG-Env-Sender: dave.anglin@bell.net
-X-RG-Rigid: 6698E80E02170004
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgeeftddrleefgddtlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceugffnnfdpqfgfvfenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtkeertddtvdejnecuhfhrohhmpeflohhhnhcuffgrvhhiugcutehnghhlihhnuceouggrvhgvrdgrnhhglhhinhessggvlhhlrdhnvghtqeenucggtffrrghtthgvrhhnpedtkeeihfeivdevgeefuefgfeffiedvgeetieffuefgfefhfffgieehfeeugfehhfenucffohhmrghinhepvghnthhrhidrshgsnecukfhppeejiedrjedurdduudehrdejheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhephhgvlhhopegludelvddrudeikedrvddrgeelngdpihhnvghtpeejiedrjedurdduudehrdejhedpmhgrihhlfhhrohhmpegurghvvgdrrghnghhlihhnsegsvghllhdrnhgvthdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepuggrvhgvrdgrnhhglhhinhessggvlhhlrdhnvghtpdhrtghpthhtohepuggvlhhlvghrsehgmhigrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhprghrihhstgesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-	rhgtphhtthhopehlihhnuhigsehrohgvtghkqdhushdrnhgvthdprhgtphhtthhopehrihgthhgrrhgurdhhvghnuggvrhhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-X-RazorGate-Vade-Verdict: clean 0
-X-RazorGate-Vade-Classification: clean
-Received: from [192.168.2.49] (76.71.115.75) by cmx-mtlrgo002.bell.net (authenticated as dave.anglin@bell.net)
-        id 6698E80E02170004; Thu, 8 Aug 2024 18:29:47 -0400
-Message-ID: <37f94771-4ebc-46d2-ad10-f145d139dd9d@bell.net>
-Date: Thu, 8 Aug 2024 18:29:47 -0400
+	s=arc-20240116; t=1723156250; c=relaxed/simple;
+	bh=5cvTk7OSZdWFv2m6aXDVUzd7Si3gK5sHnZ0kyPQ3eEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qH2qojwA78565zC58eYDiQf3nxHSGkId6EI+tzNW8iopZ86aZBQJIGEB/xJXON8uZGEB5XwT3WUDXi9dJRANxrbatGuQgCe5bKwoIOzASNItzOnPHY8exsK2/Suzk00HUNh8cMASPCz6VQO0h42rLHKVZ+B6We/g0vesVHxzauQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bo3S0mOp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723156247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jJPpVbRb3vA9iw576GQV1x7rzrCD2W3lXbZauRBdVG4=;
+	b=bo3S0mOp6UQuquTlt2JifoVrIuw2Jhhqh4DO5ys6eUh6qsIScNdXwMD0vTEul3g1mcnX0x
+	nFuKCGdXB59k8MC11Y/Q9pjzH0X338a/fplwIG9CzNJ9A4rHNLkbWZgfP0OOGTVGcIr5RI
+	s2nnyOIRzx+u56DQAzm+SSo538wADUA=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-pxehHEVxMPSTE7hFpSjTrQ-1; Thu,
+ 08 Aug 2024 18:30:43 -0400
+X-MC-Unique: pxehHEVxMPSTE7hFpSjTrQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA50E1955D5C;
+	Thu,  8 Aug 2024 22:30:41 +0000 (UTC)
+Received: from [10.2.16.232] (unknown [10.2.16.232])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 69F8919560AA;
+	Thu,  8 Aug 2024 22:30:40 +0000 (UTC)
+Message-ID: <44140c34-e2bd-4f6e-892c-51469edc8dfb@redhat.com>
+Date: Thu, 8 Aug 2024 18:30:39 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,118 +64,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-From: John David Anglin <dave.anglin@bell.net>
-To: Guenter Roeck <linux@roeck-us.net>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
- Linux-MM <linux-mm@kvack.org>, Helge Deller <deller@gmx.de>,
- linux-parisc@vger.kernel.org,
- Richard Henderson <richard.henderson@linaro.org>
-References: <20240731095022.970699670@linuxfoundation.org>
- <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
- <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
- <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
- <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net> <87plqjz6aa.ffs@tglx>
- <CAHk-=wi_YCS9y=0VJ+Rs9dcY-hbt_qFdiV_6AJnnHN4QaXsbLg@mail.gmail.com>
- <87a5hnyox6.ffs@tglx>
- <CAHk-=wh4rxXPpYatnuXpu98KswLzg+u7Z9vYWJCLNHC_yXZtWw@mail.gmail.com>
- <8734nezz0g.ffs@tglx>
- <CAHk-=wiZUidi6Gm_6XFArT621H7vAzhDA63zn2pSGJHdnjRCMA@mail.gmail.com>
- <eba27c56-dc36-4410-bb6b-cbe8769b8a6d@roeck-us.net>
- <ac7284f9-ba29-4068-ab00-82ddc839afaf@bell.net>
+Subject: Re: [PATCH v3] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is
+ enabled
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, linux-kernel@vger.kernel.org
+References: <20240808125430.1172152-1-longman@redhat.com>
+ <CA+fCnZdWgAD1pu4yyjON0ph9ae1B6iaWas0CbET+MXLNNXt5Hg@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=dave.anglin@bell.net; keydata=
- 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
- T70V9SSrl2hiw38vRzsl
-In-Reply-To: <ac7284f9-ba29-4068-ab00-82ddc839afaf@bell.net>
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <CA+fCnZdWgAD1pu4yyjON0ph9ae1B6iaWas0CbET+MXLNNXt5Hg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 2024-08-08 5:50 p.m., John David Anglin wrote:
-> The mode likely problem is the shladd instruction in the following macro in entry.S:
->
->         .macro          L2_ptep pmd,pte,index,va,fault
-> #if CONFIG_PGTABLE_LEVELS == 3
->         extru_safe      \va,31-ASM_PMD_SHIFT,ASM_BITS_PER_PMD,\index
-> #else
->         extru_safe \va,31-ASM_PGDIR_SHIFT,ASM_BITS_PER_PGD,\index
-> #endif
->         dep             %r0,31,PAGE_SHIFT,\pmd  /* clear offset */
-> #if CONFIG_PGTABLE_LEVELS < 3
->         copy            %r0,\pte
-> #endif
->         ldw,s           \index(\pmd),\pmd
->         bb,>=,n         \pmd,_PxD_PRESENT_BIT,\fault
->         dep             %r0,31,PxD_FLAG_SHIFT,\pmd /* clear flags */
->         SHLREG          \pmd,PxD_VALUE_SHIFT,\pmd
->         extru_safe      \va,31-PAGE_SHIFT,ASM_BITS_PER_PTE,\index
->         dep             %r0,31,PAGE_SHIFT,\pmd  /* clear offset */
->         shladd          \index,BITS_PER_PTE_ENTRY,\pmd,\pmd /* pmd is now pte */
->         .endm
->
-> I believe the shladd instruction should be changed to shladd,l (shift left and add logical).
-diff --git a/arch/parisc/kernel/entry.S b/arch/parisc/kernel/entry.S
-index ab23e61a6f01..1ec60406f841 100644
---- a/arch/parisc/kernel/entry.S
-+++ b/arch/parisc/kernel/entry.S
-@@ -399,7 +399,7 @@
-      SHLREG        \pmd,PxD_VALUE_SHIFT,\pmd
-      extru_safe    \va,31-PAGE_SHIFT,ASM_BITS_PER_PTE,\index
-      dep        %r0,31,PAGE_SHIFT,\pmd  /* clear offset */
--    shladd        \index,BITS_PER_PTE_ENTRY,\pmd,\pmd /* pmd is now pte */
-+    shladd,l    \index,BITS_PER_PTE_ENTRY,\pmd,\pmd /* pmd is now pte */
-      .endm
 
-      /* Look up PTE in a 3-Level scheme. */
+On 8/8/24 12:12, Andrey Konovalov wrote:
+>> When a wide variety of workloads are run on a debug kernel with KASAN
+>> enabled, the following warning may sometimes be printed.
+>>
+>>   [ 6818.650674] Stack depot reached limit capacity
+>>   [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot_alloc_stack+0x39e/0x3d0
+>>     :
+>>   [ 6818.650907] Call Trace:
+>>   [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
+>>   [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
+>>   [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
+>>   [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
+>>   [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
+>>   [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
+>>   [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
+>>   [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
+>>   [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
+>>   [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
+>>   [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
+>>   [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
+>>   [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
+>>   [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
+>>   [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
+>>   [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
+>>   [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
+>>   [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
+>>   [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
+>>   [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 [xfs]
+>>   [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs]
+>>   [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
+>>   [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
+>>   [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
+>>   [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
+>>   [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
+>>
+>> With all the recent changes in stackdepot to support new KASAN features,
+>> it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
+>> enough when KASAN is enabled. Fix this stackdepot capability issue
+>> by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
+>> maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
+> It is possible that the stack depot runs out of space due to a truly
+> large number of unique stack traces, but I would first make sure that
+> is indeed the case. The one thing to check would be to dump all the
+> stack traces from the stack depot when it overflows, and check whether
+> they make sense. There have been cases in the past, when e.g. the task
+> context part of a stack trace from an interrupt didn't get stripped
+> properly, and thus almost each stack trace from an interrupt was
+> considered unique by the stack depot. Perhaps, something similar
+> started happening again.
 
-Boots okay.  Fixing the addi instruction is harder and it would take some time to test.
+You are right. Indeed this problem is caused by mixing the task and 
+interrupt stack traces and treating them as unique traces causing a lot 
+more partially duplicated stack traces to be stored and thus overflowing 
+the current stackdepot capacity.
 
-Dave
+This problem happens in a s390 machine and it looks like 
+__irqentry_text_start and __irqentry_text_end aren't properly set up 
+causing filter_irq_stacks() to fail in identifying the proper interrupt 
+boundary.
 
--- 
-John David Anglin  dave.anglin@bell.net
+It may be a defect in the s390 architectural code or something is wrong 
+in the way the s390 kernel is being built. I am not proficient in the 
+s390 arch. So I will ask our s390 experts to take a further look at this.
+
+Thanks a lot for the helping me to figure this out. I am going to drop 
+this patch.
+
+Cheers,
+Longman
+
 
 
