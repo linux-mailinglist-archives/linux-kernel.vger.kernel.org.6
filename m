@@ -1,60 +1,76 @@
-Return-Path: <linux-kernel+bounces-279520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE64394BE6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:17:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDAAC94BE77
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8104D2827D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:17:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CF5F282633
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F02318CBF5;
-	Thu,  8 Aug 2024 13:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8535D18CC1E;
+	Thu,  8 Aug 2024 13:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qi2pkW44"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RP8CF4m3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297E5188012;
-	Thu,  8 Aug 2024 13:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B13818B475
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 13:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723123058; cv=none; b=pXKVaRfG2muKT8/F2dQIb+oS1ao/5k9Ih6Mw33HsAekKF52lW7LArZicuA9rmBREda37qHZ21arq+pBAHefocYa+fY8D+GpZfi2va1cwkyN0p+kqjHBxWwjyoJqKNi1BzaBszWDFIaJvlnfYE9hX4Yt2y3C6FCzxfHYUwsxPZeo=
+	t=1723123291; cv=none; b=Uj9NXHg+w7LHoBveMdaCTcOGhFoy+5TwnCXFjjx0StiwC+WWm9xbnIldGGU1JuigpU3gbjHlQAnGcdfE74fZYKejdsGmWYjkCTw9FnkkGAyrWQ/Y1m8IA97uiwpm8BTMyTinFOb4pBq499COqH92PulN24sm2665ki7Rf6mhWkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723123058; c=relaxed/simple;
-	bh=tAkUM349MBB9ygWpP0YmVSM14pjf3ShEmbYr/yOgm4I=;
+	s=arc-20240116; t=1723123291; c=relaxed/simple;
+	bh=voxIidc+bu09SL1fdDxa9CxG6oZNDwShZXW+6MTh88s=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oqD8CuhB6LJtjL3iHP7G/xuRhIS+YnfiJObCniYwKoVz5D2uoC4hOun0qJy7BDJx/UlUZkcFP3T0eROgrJyhXeMXbE/lW6eo180bvgRogqM839av2GC8HY9sqQvs/KDB58j5rT6gbvy2OLHCkOXY7yfhnuSkT6qE8YwENEnR/wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qi2pkW44; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3A0F2418AF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1723123056; bh=C+/tNLsG2YZ2hXnH2YATaWHxkruINKGFqJVnuP6i+Js=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=qi2pkW44noL9wwPrgrbLQoiXjSRg1BFOzIJt0h8L+3w9U+mXItfuTknhA2riWxtjL
-	 L3JQkmlcDX197hL0QrRjvH7+pGAeJrTnsQDACqrpCjRwPdrLU8TrrkSMv0X/OwLk6U
-	 ZtYjfpmtll+DCZ8Ws/WZ5hWrY+kF6CYVHCSUkVY3ycYXZMF4kHBlY+1i/KoW23Sryl
-	 x+TcplP13rYr9HKtNBOFWONmS55oY1/VQm0ylSv2hkiFiIdlit8FPy+QqAwzKiu9Ji
-	 IgPv7DBU8fDk4nFc/GIGeOtekhMZlss3zTbK2rELVf69W1n6UiGGnry9OBr+HYpfWu
-	 wn7QfXVbncyWw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	 MIME-Version:Content-Type; b=Ez/ntXNfB2DYVXkWSf9V6di4NmT0e05wPzWf4c9A6kw+XaUOSxhtTqXypPZGa0NtWbWCLVyYYekP2MYbX/3xp0pbeX4wG0iImGC05PyTGpQ4fO/CJx/xPLC3xRkO9kAzoEcHkzAtYM+SFbP4rxwAu1MiOTD0YQWIWAaTaE5x/zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RP8CF4m3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723123289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hoD6+q9lWBYV5Y2sZnVNVJtxg5xTJA0wa/FmI0JBJo8=;
+	b=RP8CF4m3Ny8FjxoT2inA33f408qY32htcFZJ9XGZDkyjWCE19gtU4KQ2n8ysq48LK++Jrn
+	en6pmljJyvTUTG/nZoY0UtUCm4DzxuZkjIOIjU3xrC1OOgAyl3KB3k/zwz97XeUX5HG2Z/
+	wAKSKS2hQIxldyV+pvwCzLF8IFB1rK0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-20-XZO5YEC7O8eFwtnt1lRJag-1; Thu,
+ 08 Aug 2024 09:21:26 -0400
+X-MC-Unique: XZO5YEC7O8eFwtnt1lRJag-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 3A0F2418AF;
-	Thu,  8 Aug 2024 13:17:36 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Guo Xuenan <guoxuenan@huawei.com>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, guoxuenan@huawei.com,
- guoxuenan@huaweicloud.com, jack.qiu@huawei.com, ganjie5@huawei.com
-Subject: Re: [PATCH] Documentation: dontdiff: remove 'utf8data.h'
-In-Reply-To: <20240808085707.3235019-1-guoxuenan@huawei.com>
-References: <20240808085707.3235019-1-guoxuenan@huawei.com>
-Date: Thu, 08 Aug 2024 07:17:35 -0600
-Message-ID: <87sevfp30w.fsf@trenco.lwn.net>
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D5CA19775FB;
+	Thu,  8 Aug 2024 13:21:24 +0000 (UTC)
+Received: from blackfin.pond.sub.org (unknown [10.39.193.245])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B1BF1955F38;
+	Thu,  8 Aug 2024 13:21:23 +0000 (UTC)
+Received: by blackfin.pond.sub.org (Postfix, from userid 1000)
+	id 3E48B21E5E6E; Thu,  8 Aug 2024 15:21:21 +0200 (CEST)
+From: Markus Armbruster <armbru@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,  Shiju Jose
+ <shiju.jose@huawei.com>,  Cleber Rosa <crosa@redhat.com>,  Eric Blake
+ <eblake@redhat.com>,  John Snow <jsnow@redhat.com>,
+  linux-kernel@vger.kernel.org,  qemu-devel@nongnu.org
+Subject: Re: [PATCH v6 08/10] scripts/ghes_inject: add a script to generate
+ GHES error inject
+In-Reply-To: <e9f2011095facb566815ccac13c9c87be710fa5e.1723119423.git.mchehab+huawei@kernel.org>
+	(Mauro Carvalho Chehab's message of "Thu, 8 Aug 2024 14:26:34 +0200")
+References: <cover.1723119423.git.mchehab+huawei@kernel.org>
+	<e9f2011095facb566815ccac13c9c87be710fa5e.1723119423.git.mchehab+huawei@kernel.org>
+Date: Thu, 08 Aug 2024 15:21:21 +0200
+Message-ID: <87ed6zup4e.fsf@pond.sub.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,43 +78,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Guo Xuenan <guoxuenan@huawei.com> writes:
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-> From: ganjie <ganjie5@huawei.com>
+> Using the QMP GHESv2 API requires preparing a raw data array
+> containing a CPER record.
 >
-> Commit 2b3d04787012 ("unicode: Add utf8-data module") changed the
-> database file from 'utf8data.h' to 'utf8data.c' to build separate
-> module, but it seems forgot to update Documentation/dontdiff. Remove
-> 'utf8data.h' and add 'utf8data.c'.
+> Add a helper script with subcommands to prepare such data.
 >
-> Signed-off-by: ganjie <ganjie5@huawei.com>
-> ---
->  Documentation/dontdiff | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Currently, only ARM Processor error CPER record is supported.
 >
-> diff --git a/Documentation/dontdiff b/Documentation/dontdiff
-> index 3c399f132e2d..94b3492dc301 100644
-> --- a/Documentation/dontdiff
-> +++ b/Documentation/dontdiff
-> @@ -262,7 +262,7 @@ vsyscall_32.lds
->  wanxlfw.inc
->  uImage
->  unifdef
-> -utf8data.h
-> +utf8data.c
->  wakeup.bin
->  wakeup.elf
->  wakeup.lds
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-I'll apply this, but does anybody actually use the dontdiff file
-anymore?  I think it's old and, if being used, actively harmful; for
-example, it masks changes to "parse.c", an instance of which was added
-to git in January.
+[...]
 
-Is there a reason to not just remove this file?
+> diff --git a/qapi/ghes-cper.json b/qapi/ghes-cper.json
+> index 3cc4f9f2aaa9..d650996a7150 100644
+> --- a/qapi/ghes-cper.json
+> +++ b/qapi/ghes-cper.json
+> @@ -36,8 +36,8 @@
+>  ##
+>  # @ghes-cper:
+>  #
+> -# Inject ARM Processor error with data to be filled according with
+> -# ACPI 6.2 GHESv2 spec.
+> +# Inject a CPER error data to be filled according with ACPI 6.2
+> +# spec via GHESv2.
+>  #
+>  # @cper: a single CPER record to be sent to the guest OS.
+>  #
 
-Thanks,
+Accident?  Drop, or squash into PATCH 04 instead?
 
-jon
+[...]
+
 
