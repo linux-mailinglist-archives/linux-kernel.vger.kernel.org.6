@@ -1,141 +1,252 @@
-Return-Path: <linux-kernel+bounces-279136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9D094B971
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:03:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552F394B972
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC502845E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9BF1F220B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6D7189917;
-	Thu,  8 Aug 2024 09:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8834145B0B;
+	Thu,  8 Aug 2024 09:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MKyXfAJp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ITFIw3ds"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1C318D63E;
-	Thu,  8 Aug 2024 09:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A0018D63E
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723107784; cv=none; b=nhOP9QFu7cJ4ohi6IPhOwVwmqEE+NMHLj95cmnIG02Z6tsLpfzsTsF4zOwo/HiBcgIfv00luh1Tg84PGkvUXC+8fRRygqtJdh4gf7rMOc8V1Ttzpzj6sp6QgE3bDRenZ5H+/5W+tGKM6xBmVCnhBe52085nj5HJJbECuYvIsp2g=
+	t=1723107800; cv=none; b=RTPeC7mWFUPWlp12ycD0NMAI1yc8DSA2mNFM3mtihao/39XwbdPJN0yT//Ki8TGMXhmoFP2nPNnXJHDoOInBYdiOKGZWz52umHRa3waM4qY9OzJl9hXaWvRQeo683TT5eu5WpgQ89Iif6t9yxCHeGzTBH0u7V2Jrw8kz5+PhLtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723107784; c=relaxed/simple;
-	bh=/AWqpolpgqyfgf35iEEQKqgmGWgN/S+xvUFXlCHA35w=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DvXrtUmISBimbnGcBJIV/JzWC7154UVyJs124TjvZvCeIGN7Q4jGL2meHnpr7gmQCgGjzU1ktgtP0i4Hq5UCFQs/dzIWxnE/YR0/YQrIeVPW9Pfi4lAM/FuN84umY/U6zDeZZXjERdvjroKeytprCqkheM/cAPu+9oXkRgDz9C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MKyXfAJp; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723107783; x=1754643783;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=/AWqpolpgqyfgf35iEEQKqgmGWgN/S+xvUFXlCHA35w=;
-  b=MKyXfAJp2CVoXrYJJdhooj3kF5l/bLyAXy6sZtV9U3Wa+yB+AuCDoex9
-   vMV2DGo8w6n78vq2+ThHkYM1mn7PSpTfHFOFmY6imdy7EF6MTYJHI909u
-   7ugElqQdJRP+IQJKmMZuVKkNN/96I0v3x+3lLPoYx1Y9vbppapWo+RF1U
-   9uO7EGhk6M7ksJKP+IwwwCOBGRo7L0BNDPyBCaNHBhBoufhCUskhbKq59
-   z5hbySSKH8v2aF8rVIqSA4hIW0ebx6nUf7RLaYvNzb3N+NdbYNKvBUpXd
-   dFrkBpyfnbKh0S3H4QGaHgQ+QhVLpiv3ubPm59QqxzgR3z6y5aFUBxTW8
-   w==;
-X-CSE-ConnectionGUID: AvDZmiUkQRiKQA8Jp1nLAg==
-X-CSE-MsgGUID: IfaciyGzSKWWG5fRBLRIig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="21388436"
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="21388436"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 02:03:02 -0700
-X-CSE-ConnectionGUID: yCnD/tp4SGaQMdUPh2+4uw==
-X-CSE-MsgGUID: xNQqgQJbS8y8BW1e7Nst5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
-   d="scan'208";a="94701705"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.125.108.108])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 02:02:59 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 8 Aug 2024 12:02:54 +0300 (EEST)
-To: Alistair Francis <alistair23@gmail.com>
-cc: bhelgaas@google.com, linux-pci@vger.kernel.org, 
-    Jonathan.Cameron@huawei.com, Lukas Wunner <lukas@wunner.de>, 
-    alex.williamson@redhat.com, christian.koenig@amd.com, kch@nvidia.com, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, logang@deltatee.com, 
-    LKML <linux-kernel@vger.kernel.org>, chaitanyak@nvidia.com, 
-    rdunlap@infradead.org, Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v15 2/4] PCI/DOE: Rename Discovery Response Data Object
- Contents to type
-In-Reply-To: <CAKmqyKNiT=yDw0ScwAxODpaQ-0fJRM5eEBxGTpbTe22N-UAfNQ@mail.gmail.com>
-Message-ID: <ef1cc514-bf44-13b6-da86-2e442fdb6df7@linux.intel.com>
-References: <20240806230118.1332763-1-alistair.francis@wdc.com> <20240806230118.1332763-2-alistair.francis@wdc.com> <cbc54dfb-6699-ae15-f40e-d3b5969fc806@linux.intel.com> <CAKmqyKNiT=yDw0ScwAxODpaQ-0fJRM5eEBxGTpbTe22N-UAfNQ@mail.gmail.com>
+	s=arc-20240116; t=1723107800; c=relaxed/simple;
+	bh=LS5yC8MsSS7JkREGLQWh4WM3H03iTTG/lvsTevXlqKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jwoVVDLSkBVH3AvdPoNwyz+tdJAiF7wtYTES5ij3cnopihMQoxz8nmSc3YpqfXh0XkT5cZTbtqlm86WNzqhXptrYFFRbUJkv7EV07B1vNG3Hi23Cf3xnK7zSjqOgLWGYGOU6oLCQZPm+E9GNSGYDr6FubLH78eu2jLbGzazV4Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ITFIw3ds; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f01ec08d6so897333e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 02:03:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723107796; x=1723712596; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z+Xfgb6CbYkBG+g9RAQcMkwLNARHOZtDTn1E+4GyCUM=;
+        b=ITFIw3dsXN7CTkljd7ydD6rivKKqZkc3oz269Vv/nqiX4Ov4R6H8DEqghXbQjekfm1
+         /abV6aUXiw3wRX9fiTSmiEAiNs8e18At/aiqB5FCuHMre45NwGZsrenVnKIkUAyxzoUr
+         e5EOaB5Z3D61bkji5i8d2VicomjWCsajzLH2eRPjsUvC8lDeR1azyuQzjdXzW08sffw9
+         WImRG8QxhiD8INW5n7t0JSpfryWGOqDd7UfZ/WsRFjs4kx2haD6f/E2M9zQu/3vAIuB7
+         ira2SQ8MeARJJedlbhIisVKNNaYE4xX6TTsrWnnIA/o9tO1wvJDOGyc4HIsqMJuhD7iG
+         agwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723107796; x=1723712596;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z+Xfgb6CbYkBG+g9RAQcMkwLNARHOZtDTn1E+4GyCUM=;
+        b=QcWPnkl2nb/obcK2vMJCPucTWhZRb2CMk0mCEGjVJwEPsS+tzMybhwu1Pc9w5v4cHz
+         eo99fZrikE5BYGphFAumIzrPD5Z+e/6QZYVndM2sA8C+wsHJffKhdy9supqaa30yyUVn
+         G+4lrRT4H0DflpXHu6/R6S+jtJauxoJ12QafdWhcpqQwRjWFTRSAt9IqXYwky8xx9ATo
+         tDxe0Ek/x5RDie3RHz8NvmvOlgeauqVKAkcTD1T2YriZ2RlwIZ8tYqvFTPqsP2j8YFTi
+         FuS5P1Ml0BuliTzn9+qT9g02/OSWvkAUdv6KfmDaBXkz5LiQDhjf9LgZuPdltWnRN+IS
+         /P9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW8hnceVUSfcVEDOpkZDNKyr8X93EU0LAhk4AfHO8783ewih5GkZ5uv14w1S8dB/BugOW8RdTChbM2SQ+1hW+lhsSKIqjRd9f+Z6yH/
+X-Gm-Message-State: AOJu0YwtLiD0AYuhfpf7ToLAT3qxAqqlqM+lLeDrk9bmdTsZrYCXRik8
+	KFnpreZ0xp+cTk3CqpjvGa5yity+YjEVgfJ4TMv/jZnj/ON2xY9aWPLknhCSXsQQwJMpvd4tIZs
+	A
+X-Google-Smtp-Source: AGHT+IEwBHvo3+7PIWlvlbShaKapE6NJIIKG1uQdJowY3MznjiGIW19mzjkspv3qN5+XTu/TNTIU1Q==
+X-Received: by 2002:a05:6512:230a:b0:530:c3e9:5bcf with SMTP id 2adb3069b0e04-530e588c483mr720036e87.60.1723107795391;
+        Thu, 08 Aug 2024 02:03:15 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf9b02sm430297a12.6.2024.08.08.02.03.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 02:03:14 -0700 (PDT)
+Date: Thu, 8 Aug 2024 11:03:12 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v7 30/35] printk: Add helper for flush type logic
+Message-ID: <ZrSJ0Dkno1y6BAAU@pathway.suse.cz>
+References: <20240804005138.3722656-1-john.ogness@linutronix.de>
+ <20240804005138.3722656-31-john.ogness@linutronix.de>
+ <ZrNcr5-uZoQnSHii@pathway.suse.cz>
+ <87zfpozal4.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-72770772-1723107774=:1044"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zfpozal4.fsf@jogness.linutronix.de>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed 2024-08-07 16:17:51, John Ogness wrote:
+> On 2024-08-07, Petr Mladek <pmladek@suse.com> wrote:
+> > I would suggest to change the semantic and set the _preferred_
+> > flush method instead of an _available_ one.
+> 
+> I will need to evaluate this closely. I worry that the caller needs to
+> understands how the helper function is choosing the preference. For
+> example, at the end you make a suggestion that is broken with this
+> suggested change.
 
---8323328-72770772-1723107774=:1044
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+I see. Well, console_flush_on_panic() is special. It is the last
+resort. It actually ignores even the "what is available/allowed"
+semantic.
 
-On Thu, 8 Aug 2024, Alistair Francis wrote:
-
-> On Wed, Aug 7, 2024 at 6:03=E2=80=AFPM Ilpo J=C3=A4rvinen
-> <ilpo.jarvinen@linux.intel.com> wrote:
+> >> +		if (ft.nbcon_atomic) {
+> >> +			stop_seq = prb_next_reserve_seq(prb);
+> >> +			goto again;
+> >> +		}
 > >
-> > On Wed, 7 Aug 2024, Alistair Francis wrote:
-> >
-> > > PCIe r6.1 (which was published July 24) describes a "Vendor ID", a
-> > > "Data Object Type" and "Next Index" as the fields in the DOE
-> > > Discovery Response Data Object. The DOE driver currently uses
-> > > both the terms type and prot for the second element.
-> > >
-> > > This patch renames all uses of the DOE Discovery Response Data Object
-> > > to use type as the second element of the object header, instead of
-> > > type/prot as it currently is.
-> > >
-> > > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > ---
-> >
-> > > diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_r=
-egs.h
-> > > index 94c00996e633..795e49304ae4 100644
-> > > --- a/include/uapi/linux/pci_regs.h
-> > > +++ b/include/uapi/linux/pci_regs.h
-> > > @@ -1146,9 +1146,12 @@
-> > >  #define PCI_DOE_DATA_OBJECT_DISC_REQ_3_INDEX         0x000000ff
-> > >  #define PCI_DOE_DATA_OBJECT_DISC_REQ_3_VER           0x0000ff00
-> > >  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_VID           0x0000ffff
-> > > -#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL              0x00ff0=
-000
-> > > +#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE          0x00ff0000
-> >
-> > This change (removal of the old define) is inside UAPI header, so it do=
-es
-> > seem something that is not allowed.
-> >
-> > >  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_NEXT_INDEX    0xff000000
-> > >
-> > > +/* Deprecated old name, replaced with PCI_DOE_DATA_OBJECT_DISC_RSP_3=
-_TYPE */
-> > > +#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL              PCI_DOE=
-_DATA_OBJECT_DISC_RSP_3_TYPE
->=20
-> The old define is kept here though
+> > BTW: I wonder how this code would look like after adding the printk
+> >      threads. We should do "goto again" only when ft.nbcon_atomic
+> >      is the preferred (only available) flush type for nbcon consoles.
+> 
+> 	if (ft.nbcon_offload) {
+> 		...
+> 	} else if (ft.nbcon_atomic) {
+> 		...
+> 	}
+> 
+> >      IMHO, it is another reason to change the semantic.
+> 
+> The caller does not need to rely on the helper "choosing" the right
+> one. I understand your point that: It is easier for the caller when we
+> can blindly rely on the helper to choose for us. But I worry that if we
+> ever adjust the helper, we might break various call sites that blindly
+> rely on the helper making a certain choice. If the helper's job is only
+> to say what is possible, then I would worry less for the future when we
+> may need to adjust the helper.
 
-Ah sorry, I didn't realize it despite the comment...
+In the ideal world, the helper should tell the caller what has to be
+done to flush pending messages on all consoles. The helper makes
+the decision using the global variables where the variables define:
 
---=20
- i.
+   + type of registered consoles
+   + NBCON_PRIO
+   + deferred context
+   + possible or forced offload to kthreads
 
---8323328-72770772-1723107774=:1044--
+IMHO, it depends on how many callers are happy with the proposed
+solution.
+
+> >> +	printk_get_console_flush_type(&ft);
+> >
+> > It is a nice trick to call printk_get_console_flush_type() this early.
+> > I allows to hack the result when processing the hacky LOGLEVEL_SCHED ;-)
+> >
+> >> +
+> >>  	/* If called from the scheduler, we can not call up(). */
+> >>  	if (level == LOGLEVEL_SCHED) {
+> >>  		level = LOGLEVEL_DEFAULT;
+> >>  		do_trylock_unlock = false;
+> >> -		defer_legacy = true;
+> >> +	} else {
+> >> +		do_trylock_unlock = ft.legacy_direct;
+> >>  	}
+> >
+> > We could hack the @ft structure directly here:
+> >
+> > 	if (level == LOGLEVEL_SCHED) {
+> > 		level = LOGLEVEL_DEFAULT;
+> > 		ft.legacy_offload |= ft.legacy_direct;
+> > 		ft.legacy_direct = false;
+> > 	}
+> 
+> The hack seems a bit complicated to me. Especially when the helper is
+> choosing preferred methods. I will think about it.
+
+The hack converts legacy_direct -> legacy_offload.
+
+> >> +	if (!cpuhp_tasks_frozen) {
+> >> +		printk_get_console_flush_type(&ft);
+> >> +		if (ft.legacy_direct) {
+> >> +			if (console_trylock())
+> >> +				console_unlock();
+> >
+> > Why do we actually call only the legacy loop here?
+> > IMHO, we should also do
+> >
+> > 	if (ft.nbcon_atomic)
+> >  		nbcon_atomic_flush_pending();
+> 
+> Atomic consoles do not care if a CPU was online or not. I can add this,
+> but I expect there is nothing for the atomic console to flush.
+
+console_cpu_notify() has been added by the commit 034260d6779087431
+("printk: fix delayed messages from CPU hotplug events"). It
+is related to the check
+
+    cpu_online(smp_processor_id()) == 0
+
+which is still called in console_is_usable() even for nbcon consoles.
+
+IMHO, it means that nbcon_atomic_flush_pending() might not be able
+to flush the messages when called from vprintk_emit() on CPU which
+is just being hot-plugged.
+
+
+> And when
+> threading is added, we would need the extra code to avoid atomic
+> flushing:
+> 
+> 	if (!ft.nbcon_offload && ft.nbcon_atomic)                
+> 		nbcon_atomic_flush_pending();
+
+This extra change won't be needed when printk_get_console_flush_type(&ft)
+uses the "set the preferred flush type" semantic ;-)
+
+
+> >> @@ -3327,7 +3316,8 @@ void console_flush_on_panic(enum con_flush_mode mode)
+> >>  	if (mode == CONSOLE_REPLAY_ALL)
+> >>  		__console_rewind_all();
+> >>  
+> >> -	if (!have_boot_console)
+> >> +	printk_get_console_flush_type(&ft);
+> >> +	if (ft.nbcon_atomic)
+> >>  		nbcon_atomic_flush_pending();
+> >
+> > I would use "ft.legacy_direct" also below for the decision about
+> > the legacy loop:
+> >
+> > -	if (legacy_allow_panic_sync)
+> > +	if (ft.legacy_direct)
+> > 		console_flush_all(false, &next_seq, &handover);
+> 
+> No, because it would mean the console is not flushed if the CPU is in
+> the deferred state. That is why I added an extra comment in the helper
+> saying that console_flush_on_panic() will _always_ flush directly.
+> 
+> I thought about adding that extra logic into the helper, but it really
+> isn't possible. @legacy_allow_panic_sync does not matter if there are no
+> nbcon consoles. So somehow the helper would need to know that CPU is in
+> the deferred state, but now it is allowed to do direct printing.
+> 
+> So it seemed more straight forward to have console_flush_on_panic() not
+> care about what is allowed (for legacy). It is going to flush directly
+> no matter what.
+
+Makes sense. console_flush_on_panic() is special. It is the last
+resort. And it does things which are not safe/allowed.
+
+> I will reconsider your suggestions about the helper and also compare the
+> end result at the call sites (also with threading changes applied) to
+> see what looks simpler to maintain.
+
+Sigh, this is a kind of "bike shedding" discussion. It makes some
+sense as long as it helps to find bugs and simplify the logic.
+Feel free to stop it when you think that it is not longer worth
+the effort.
+
+Best Regards,
+Petr
 
