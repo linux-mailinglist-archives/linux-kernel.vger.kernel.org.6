@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-279462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB95594BD92
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D7994BD96
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E9E61F2137D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00461F2134C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08E118B481;
-	Thu,  8 Aug 2024 12:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A36518C357;
+	Thu,  8 Aug 2024 12:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lzZJZsoq"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+UyBtf8"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDE51E511
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D371E511
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723120453; cv=none; b=gS3DRbJWi4t8oeaacXAjJuSptuP61ws7B2e+IEJgNGTEaZ757TYvDDkFOPaku4dlisITmqglBz7aZCxdRCyFhf695XC76psjI8mTbGp+x08rDsnS+T8dfp0Mble4WD4l1eB+1fQAWCrqwwWYYTVk/RZkBE/8yfu+ctjX6bsLD8M=
+	t=1723120509; cv=none; b=tjhTVacfUo25RhDCRMswg7NXQfDRoVcdkQSPSeUsCvW3/ti1atj7qMx0CaM23COIOT+FzUETGAbjSykSy7QrQaKehaaZYX3D7LhLvbA/8zl+kS5tFWIMxyVKmIFVFmOcb0VAVckLYUwnUIGlxoRUUNnptRGTfmspMiF7Ap8+q3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723120453; c=relaxed/simple;
-	bh=tz036277a8bDgHHfC2OQToU+PhUGD6SliTzSnU1sy3w=;
+	s=arc-20240116; t=1723120509; c=relaxed/simple;
+	bh=T09VfP/9+XczLP9nOtI6WsyNARFndysB7hs+8/KBoDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kW+PEImCU4Bbt72PniCo7wP65QNvHmwR867hSD1QHJ8QFqEQkCinFwzgO9anyMlcr7yIuygPCsNnkLC+0DAA/36UYlwY5wwFexhqCp5KbAVAD2iSZwz2PMoH/Yb2tugQzfKaXQijGA4zG1cwtmX5QJw9Tettcl6zaEmsxaJf590=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lzZJZsoq; arc=none smtp.client-ip=209.85.208.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=VeQ46W9gb1N9InveWSzsEmdJBjYWSZWSYXOxSMALwBGXy9auRzXf8qy4vA+zcOEcHhBlBnUOCupfKWoq5PVr05yqZrzsm5gSMCbvJHYxKH3AEEnRJ+c7LLdIHuRT93FSkjdOpErJibF160eBxgP3qHoRI58o1su/Tg2IW/gxCYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+UyBtf8; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f040733086so9207151fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 05:34:09 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efbb55d24so1588593e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 05:35:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723120448; x=1723725248; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723120506; x=1723725306; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KZHpAiTIt/O6A6h71tyCVcy7V+/AGzg65920gUuJPt8=;
-        b=lzZJZsoq2n4VZqDIaVWh8fg7C32GmbyOrjPyMBLboT0wSX+m7ZWh56zJDg5MrdaKyP
-         IcGWc/LFpBeG+k21vfuyfEnlVV1aN1lYEsUjv1PIfDTURm+nB82Wo2+sPpbuJKq0134V
-         WOtafpy/oPPFl7/RUc42CWYW83cfKCskVz4oMxTK0OCnciSHH2O/E2IIbSjV9UnZrpm2
-         bh+dU9P7zATShWNEEoEoxlikHQ23u3jNbZwCkrAAy7S7hqbbDA9UIDdIMvcybF3o0+7Z
-         o8VHhDYPiE7afTPsJXucxxXRPhcUh8lhOVOdnjWUdptROEHB/QdO9vnd8yFys+SQS1bQ
-         dx5Q==
+        bh=oNhAwsrhIdal4pwoMXUZpj+EEHqYsqeqWIBG0u/1A6w=;
+        b=S+UyBtf8Ym2or0L5EOOtL9whky+mmyyeLXOl1GQUihV1JKlLHK/E0Z00yZtl0tJ17G
+         M92lqMMiZLxZKl2e6RnIrdThIMeJUrm5DHuKUmJQOeEtH0kdWJVQJHC90RohMIy3etqv
+         j9DCLTmTfGt5AXzA1WeUtB7VouNVU/CXXEldnptLdM02Bciivpme7CkIZcPtLPhQnL1s
+         Ull1p4OWeXVua8GWzcoQOoEaxJqGJkNlCHQgKRRJVsffJHJxz6PK6Odv6VhPnImPnYdX
+         VrOJ63jXBWIPhHDuNSwOAGGmL7rCEJy35ONsV3htNE3jf4+ZQi3c6C+Lu1pvqB2EgKpL
+         7T4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723120448; x=1723725248;
+        d=1e100.net; s=20230601; t=1723120506; x=1723725306;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KZHpAiTIt/O6A6h71tyCVcy7V+/AGzg65920gUuJPt8=;
-        b=LiT8VMvQgQnZZkm3FR97S7LRpTsQYlEUcINRN2kE2FnVuL32NMJJw3R7iIMiGsoLwR
-         LUMKTqrcnLC5WfsX7dlVnnVv3+jI3lC07bspOjJGV8JtV43McxzW8o5pChEDLiQjZD1E
-         96cO2DqL9tI59bK69Qifvc3ZwHaxppIVWQC4FaXwyduPTZ5flCU1Zx/W2r762DmQfhRQ
-         La+Ky9mdlosWknx9WfD1OgRxWHLtI7wcTfGI4rZb5+KsTzvoZB+b3AQSLNgJzhbhmDou
-         lWp/vAd7C91Zyn1gHv/IqnHwy0dEKHjx7laNlBJoTcxSE5zJ2gbol1RQPhN0sJWtjGjz
-         +XHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4W7XZziTlulJwtvYQSZI2Rjz9lDNhCAL9SpDPsyTQWDas0fuSRxuB28Dt/serDZLxnB38J5PQrunySkAb8HBKQTVAHkEmJR4o2Lgs
-X-Gm-Message-State: AOJu0YxQAD93q7oyXtiyZmsJbAJLjysPihi6Rw7ksTeJpBWNld26eOrJ
-	PWS534corntXDKSduvOLio6edgEtc1svZwzA/zjzGyMEqX1v05ht
-X-Google-Smtp-Source: AGHT+IFkK9jWZi5v/SIXXRg2uAZefOiiOn0ABaCFkDJ23LcwIstpIIeF9NOudvlzsUppbihD39iG4Q==
-X-Received: by 2002:a2e:bc25:0:b0:2ef:2e3f:35d2 with SMTP id 38308e7fff4ca-2f19de1f942mr14767341fa.5.1723120447508;
-        Thu, 08 Aug 2024 05:34:07 -0700 (PDT)
+        bh=oNhAwsrhIdal4pwoMXUZpj+EEHqYsqeqWIBG0u/1A6w=;
+        b=YGc6+cNty8bliP9UErMhqrPlBXfOA+yAe3uvsnh6rfg6CpPNo2uXwxfl92LedS58b/
+         wRv6LHvkoKgcA7EOAiARP6NU5L7keirFUB1WpzJifVI8SKN8qZ53LSkRkL3FPZb/xBPv
+         85Jd26bkBer2Shrw1FO/exqPKioZcdTvszd/j6NlqszTg1keOBfyJOVUPf7unEwoE5o9
+         Ih+7iJSdnlx0aE1tJ0dotYwKPLPlqxQn1kE0CItjzhJOrD8XfkJHRr+hlEA8HsgNKkZD
+         DeuKjATGniz9csApPlIQsfiIQHU9nX4ItPHqU5PcoYA2XkYdUIn3H3Uelei8ptmo/UuH
+         b5fA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWXzmtEvKQPRgbD98+f2w7nhvQfByqUYQAHyr/0jmsQAAdgoVq0cAmGsEBkAhlj/UIsy5EDNxXKoQ+c1lsMVfyZwHu4ShjKQiulwUU
+X-Gm-Message-State: AOJu0YwUPeBplpUkoH41zPIQFHIy3I7NQhmjfsio4eLybUHv8Oxx8ewM
+	HECGTPv8387hONzi3qg9J3oLF0pvMVI9lKGBNStPDrCIgRiPWS4R
+X-Google-Smtp-Source: AGHT+IFfMaExb9vVqzZw910hOxowlTD8DLm91DGq3oOd/1yT7ytbJKNfZVXKN8Em1P2PAGCb3408iw==
+X-Received: by 2002:a05:6512:220a:b0:52e:73f5:b7c4 with SMTP id 2adb3069b0e04-530e5876b25mr1758069e87.37.1723120505273;
+        Thu, 08 Aug 2024 05:35:05 -0700 (PDT)
 Received: from fedora ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e1aea5bsm20824591fa.44.2024.08.08.05.34.06
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530de47c422sm622767e87.264.2024.08.08.05.35.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 05:34:06 -0700 (PDT)
-Date: Thu, 8 Aug 2024 15:34:02 +0300
+        Thu, 08 Aug 2024 05:35:04 -0700 (PDT)
+Date: Thu, 8 Aug 2024 15:35:00 +0300
 From: Matti Vaittinen <mazziesaccount@gmail.com>
 To: Matti Vaittinen <mazziesaccount@gmail.com>,
 	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
@@ -73,8 +73,8 @@ Cc: Mark Brown <broonie@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] irqdomain: simplify simple and legacy domain creation
-Message-ID: <32d07bd79eb2b5416e24da9e9e8fe5955423dcf9.1723120028.git.mazziesaccount@gmail.com>
+Subject: [PATCH v2 2/3] irqdomain: Allow giving name suffix for domain
+Message-ID: <7a048c0139e79beb46d887b0cd5a620963ff8ef8.1723120028.git.mazziesaccount@gmail.com>
 References: <cover.1723120028.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -83,198 +83,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5Fv/FwShYrc/riQJ"
+	protocol="application/pgp-signature"; boundary="852xrl80h3Srxl19"
 Content-Disposition: inline
 In-Reply-To: <cover.1723120028.git.mazziesaccount@gmail.com>
 
 
---5Fv/FwShYrc/riQJ
+--852xrl80h3Srxl19
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Move a bit more logic in the generic __irq_domain_instantiate() from the
-irq_domain_create_simple() and the irq_domain_create_legacy(). This does
-simplify the irq_domain_create_simple() and irq_domain_create_legacy().
-It will also ease the use of irq_domain_instantiate() instead of the
-irq_domain_create_simple() or irq_domain_create_legacy() by allowing the
-callers of irq_domain_instantiate() to omit the IRQ association and
-irq_desc allocation code.
+Devices can provide multiple interrupt lines. One reason for this is that
+a device has multiple subfunctions, each providing its own interrupt line.
+Another reason is that a device can be designed to be used (also) on a
+system where some of the interrupts can be routed to another processor.
 
-Reduce code duplication by introducing the hwirq_base and virq_base
-members in the irq_domain_info structure, creating helper function
-for allocating irq_descs, and moving logic from the .._legacy() and
-the .._simple() to the more generic irq_domain_instantiate().
+A line often further acts as a demultiplex for specific interrupts
+and has it's respective set of interrupt (status, mask, ack, ...)
+registers.
+
+Regmap supports the handling of these registers and demultiplexing
+interrupts, but interrupt domain code ends up assigning the same name for
+the per interrupt line domains. This will cause a naming collision in the
+debugFS code and can also lead to confusion, as /proc/interrupts would
+show two separate interrupts with the same domain name and hardware
+interrupt number.
+
+Instead of adding a workaround in regmap or driver code, allow giving a
+name suffix for the domain name when the domain is created.
+
+Add a name_suffix field in the irq_domain_info structure and make the
+irq_domain_instantiate() to use this suffix if it is given when a domain
+is created.
 
 Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 
 ---
 Revision history:
 v1 =3D> v2:
- - New patch
-
-Please note that this patch has received only limited testing. Any and
-all testing with devices using the legacy domains is greatly appreciated
-:)
+ - typofix in comment. 'collison' to 'collision'.
 ---
- include/linux/irqdomain.h |  5 +++
- kernel/irq/irqdomain.c    | 73 +++++++++++++++++++++------------------
- 2 files changed, 45 insertions(+), 33 deletions(-)
+ include/linux/irqdomain.h |  3 +++
+ kernel/irq/irqdomain.c    | 36 +++++++++++++++++++++++++++---------
+ 2 files changed, 30 insertions(+), 9 deletions(-)
 
 diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index de6105f68fec..bfcffa2c7047 100644
+index bfcffa2c7047..e432b6a12a32 100644
 --- a/include/linux/irqdomain.h
 +++ b/include/linux/irqdomain.h
-@@ -291,6 +291,9 @@ struct irq_domain_chip_generic_info;
-  * @hwirq_max:		Maximum number of interrupts supported by controller
-  * @direct_max:		Maximum value of direct maps;
-  *			Use ~0 for no limit; 0 for no direct mapping
-+ * @hwirq_base:		The first hardware interrupt number (legacy domains only)
-+ * @virq_base:		The first Linux interrupt number for legacy domains to
-+ *			immediately associate the interrupts after domain creation
+@@ -295,6 +295,8 @@ struct irq_domain_chip_generic_info;
+  * @virq_base:		The first Linux interrupt number for legacy domains to
+  *			immediately associate the interrupts after domain creation
   * @bus_token:		Domain bus token
++ * @name_suffix:	Optional name suffix to avoid collisions when multiple
++ *			domains are added using same fwnode
   * @ops:		Domain operation callbacks
   * @host_data:		Controller private data pointer
-@@ -307,6 +310,8 @@ struct irq_domain_info {
- 	unsigned int				size;
- 	irq_hw_number_t				hwirq_max;
- 	int					direct_max;
-+	unsigned int				hwirq_base;
-+	unsigned int				virq_base;
+  * @dgc_info:		Geneneric chip information structure pointer used to
+@@ -313,6 +315,7 @@ struct irq_domain_info {
+ 	unsigned int				hwirq_base;
+ 	unsigned int				virq_base;
  	enum irq_domain_bus_token		bus_token;
++	const char				*name_suffix;
  	const struct irq_domain_ops		*ops;
  	void					*host_data;
+ #ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
 diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index cea8f6874b1f..5af5e4028de2 100644
+index 5af5e4028de2..376bcfb45aff 100644
 --- a/kernel/irq/irqdomain.c
 +++ b/kernel/irq/irqdomain.c
-@@ -267,13 +267,20 @@ static void irq_domain_free(struct irq_domain *domain)
- 	kfree(domain);
- }
+@@ -129,13 +129,25 @@ void irq_domain_free_fwnode(struct fwnode_handle *fwn=
+ode)
+ EXPORT_SYMBOL_GPL(irq_domain_free_fwnode);
 =20
--/**
-- * irq_domain_instantiate() - Instantiate a new irq domain data structure
-- * @info: Domain information pointer pointing to the information for this =
-domain
-- *
-- * Return: A pointer to the instantiated irq domain or an ERR_PTR value.
-- */
--struct irq_domain *irq_domain_instantiate(const struct irq_domain_info *in=
-fo)
-+static void irq_domain_instantiate_descs(const struct irq_domain_info *inf=
-o)
-+{
-+	if (!IS_ENABLED(CONFIG_SPARSE_IRQ))
-+		return;
-+
-+	if (irq_alloc_descs(info->virq_base, info->virq_base, info->size,
-+			    of_node_to_nid(to_of_node(info->fwnode))) < 0) {
-+		pr_info("Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n",
-+			info->virq_base);
-+	}
-+}
-+
-+static struct irq_domain *__irq_domain_instantiate(const struct irq_domain=
-_info *info,
-+						   bool cond_alloc_descs)
+ static int irq_domain_set_name(struct irq_domain *domain,
+-			       const struct fwnode_handle *fwnode,
+-			       enum irq_domain_bus_token bus_token)
++			       const struct irq_domain_info *info)
  {
- 	struct irq_domain *domain;
- 	int err;
-@@ -306,6 +313,14 @@ struct irq_domain *irq_domain_instantiate(const struct=
- irq_domain_info *info)
++	const struct fwnode_handle *fwnode =3D info->fwnode;
++	enum irq_domain_bus_token bus_token =3D info->bus_token;
+ 	static atomic_t unknown_domains;
+ 	struct irqchip_fwid *fwid;
 =20
- 	__irq_domain_publish(domain);
-=20
-+	if (cond_alloc_descs && info->virq_base > 0)
-+		irq_domain_instantiate_descs(info);
+ 	if (is_fwnode_irqchip(fwnode)) {
++		/*
++		 * The name_suffix is only intended to be used to avoid a name
++		 * collision, when multiple domains are created for a single
++		 * device and the name is picked using a real device node.
++		 * (Typical use-case is regmap-IRQ controllers for devices
++		 * providing more than one physical IRQ.) There should be no
++		 * need to use name_suffix with irqchip-fwnode.
++		 */
++		if (info->name_suffix)
++			return NULL;
 +
-+	/* Legacy interrupt domains have a fixed Linux interrupt number */
-+	if (info->virq_base > 0)
-+		irq_domain_associate_many(domain, info->virq_base, info->hwirq_base,
-+					  info->size - info->hwirq_base);
+ 		fwid =3D container_of(fwnode, struct irqchip_fwid, fwnode);
+=20
+ 		switch (fwid->type) {
+@@ -164,17 +176,23 @@ static int irq_domain_set_name(struct irq_domain *dom=
+ain,
+ 		   is_software_node(fwnode)) {
+ 		char *name;
+=20
++		if (info->name_suffix)
++			name =3D bus_token ?
++				kasprintf(GFP_KERNEL, "%pfw-%s-%d", fwnode,
++					  info->name_suffix, bus_token) :
++				kasprintf(GFP_KERNEL, "%pfw-%s", fwnode, info->name_suffix);
++		else
++			name =3D bus_token ?
++				kasprintf(GFP_KERNEL, "%pfw-%d", fwnode, bus_token) :
++				kasprintf(GFP_KERNEL, "%pfw", fwnode);
++		if (!name)
++			return -ENOMEM;
 +
- 	return domain;
-=20
- err_domain_gc_remove:
-@@ -315,6 +330,17 @@ struct irq_domain *irq_domain_instantiate(const struct=
- irq_domain_info *info)
- 	irq_domain_free(domain);
- 	return ERR_PTR(err);
- }
-+
-+/**
-+ * irq_domain_instantiate() - Instantiate a new irq domain data structure
-+ * @info: Domain information pointer pointing to the information for this =
-domain
-+ *
-+ * Return: A pointer to the instantiated irq domain or an ERR_PTR value.
-+ */
-+struct irq_domain *irq_domain_instantiate(const struct irq_domain_info *in=
-fo)
-+{
-+	return __irq_domain_instantiate(info, false);
-+}
- EXPORT_SYMBOL_GPL(irq_domain_instantiate);
-=20
- /**
-@@ -413,28 +439,13 @@ struct irq_domain *irq_domain_create_simple(struct fw=
-node_handle *fwnode,
- 		.fwnode		=3D fwnode,
- 		.size		=3D size,
- 		.hwirq_max	=3D size,
-+		.virq_base	=3D first_irq,
- 		.ops		=3D ops,
- 		.host_data	=3D host_data,
- 	};
--	struct irq_domain *domain;
-+	struct irq_domain *domain =3D __irq_domain_instantiate(&info, true);
-=20
--	domain =3D irq_domain_instantiate(&info);
--	if (IS_ERR(domain))
--		return NULL;
+ 		/*
+ 		 * fwnode paths contain '/', which debugfs is legitimately
+ 		 * unhappy about. Replace them with ':', which does
+ 		 * the trick and is not as offensive as '\'...
+ 		 */
+-		name =3D bus_token ?
+-			kasprintf(GFP_KERNEL, "%pfw-%d", fwnode, bus_token) :
+-			kasprintf(GFP_KERNEL, "%pfw", fwnode);
+-		if (!name)
+-			return -ENOMEM;
 -
--	if (first_irq > 0) {
--		if (IS_ENABLED(CONFIG_SPARSE_IRQ)) {
--			/* attempt to allocated irq_descs */
--			int rc =3D irq_alloc_descs(first_irq, first_irq, size,
--						 of_node_to_nid(to_of_node(fwnode)));
--			if (rc < 0)
--				pr_info("Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n",
--					first_irq);
--		}
--		irq_domain_associate_many(domain, first_irq, 0, size);
--	}
--
--	return domain;
-+	return IS_ERR(domain) ? NULL : domain;
- }
- EXPORT_SYMBOL_GPL(irq_domain_create_simple);
+ 		domain->name =3D strreplace(name, '/', ':');
+ 		domain->flags |=3D IRQ_DOMAIN_NAME_ALLOCATED;
+ 	}
+@@ -211,7 +229,7 @@ static struct irq_domain *__irq_domain_create(const str=
+uct irq_domain_info *info
+ 	if (!domain)
+ 		return ERR_PTR(-ENOMEM);
 =20
-@@ -476,18 +487,14 @@ struct irq_domain *irq_domain_create_legacy(struct fw=
-node_handle *fwnode,
- 		.fwnode		=3D fwnode,
- 		.size		=3D first_hwirq + size,
- 		.hwirq_max	=3D first_hwirq + size,
-+		.hwirq_base	=3D first_hwirq,
-+		.virq_base	=3D first_irq,
- 		.ops		=3D ops,
- 		.host_data	=3D host_data,
- 	};
--	struct irq_domain *domain;
-+	struct irq_domain *domain =3D irq_domain_instantiate(&info);
-=20
--	domain =3D irq_domain_instantiate(&info);
--	if (IS_ERR(domain))
--		return NULL;
--
--	irq_domain_associate_many(domain, first_irq, first_hwirq, size);
--
--	return domain;
-+	return IS_ERR(domain) ? NULL : domain;
- }
- EXPORT_SYMBOL_GPL(irq_domain_create_legacy);
-=20
+-	err =3D irq_domain_set_name(domain, info->fwnode, info->bus_token);
++	err =3D irq_domain_set_name(domain, info);
+ 	if (err) {
+ 		kfree(domain);
+ 		return ERR_PTR(err);
 --=20
 2.45.2
 
@@ -291,20 +238,20 @@ Simon says - in Latin please.
 ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
 Thanks to Simon Glass for the translation =3D]=20
 
---5Fv/FwShYrc/riQJ
+--852xrl80h3Srxl19
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAma0uzoACgkQeFA3/03a
-ocU7xwf/Ry2+yDlU8WksjmhM776lg0t0qfi5ccanvmy6JGdoRuVzbB0PF7Zc/KcM
-esRQ9M8i98poZyyECawaHVVVupetNmaD1aiwS6VCI3/4Aj38zakZrGXq5YuawYIo
-Utzdg9kIzShOmlbJnltJ8Gv+I81iscXIBQZ7DOEATJ/a4YhfbZgenzOpvE7q7AB5
-0HbDFowzkN9YNcxwo7WEU1t0/+di+jwMCDWeM+bHnxaGn+DPF6/FWy92/ntqM0fO
-SWnCV3Le+U/vIUI3aB4g06bwsI8X3fD0sKcHMjkppZWiJ8ztIoGBuR6Q133H7leN
-dSZCf85ZLMG+gsWFvo8IXM+kbuMzxw==
-=hMYv
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAma0u3QACgkQeFA3/03a
+ocWAwwgAzppK0On7q4laV4iAk+32+A2lEkVlQgr3GcmzSpWu8xxKp4D7YBcnhBoD
+JNrI8cjoXNsKpKtTmkypUPB7jSt4umbZpDL7cP1eCIFyW/NVaa6ZZOKaBPJuX2i0
+Dm+EwHj0RZxlI+dCJ1rGYwaeu9akQI0qrTpvCdIh+WUTlyi5bQbChGt5e10XmSnV
+zE4yZvkEAjavluDst0eKSJ86Eui894ZvaJFuwJKMvkdGu3D2HVLGZKsfFKQSkWkq
+fGO1pTchuDF9uJe/F1TwGpsgz3KhanY/yJOSeInWb3z5wct+S2+FsxEe2SR6XOcy
+Bl+OBlh9Vne0ULOC1VmO1zwJk3wrkQ==
+=XLyQ
 -----END PGP SIGNATURE-----
 
---5Fv/FwShYrc/riQJ--
+--852xrl80h3Srxl19--
 
