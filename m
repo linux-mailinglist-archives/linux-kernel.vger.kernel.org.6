@@ -1,257 +1,306 @@
-Return-Path: <linux-kernel+bounces-279126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47F094B94E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:51:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7821B94B957
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719E5282BE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:51:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0890E1F21AE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7A025634;
-	Thu,  8 Aug 2024 08:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F54D189B9A;
+	Thu,  8 Aug 2024 08:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QWYTstgS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HayDAs1J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF3B189914
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8757D189914;
+	Thu,  8 Aug 2024 08:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723107100; cv=none; b=gYSaEMSJtsBFgMm5b5LhwEmWbFrEDEQFuQUhn1y6kD6tB+pkR/Zsav4t2pXB2ZNJJZbUgm+WsOgP4Luchd9VlvJzAtw6nQSjMmTj3GY9psSuB+/Pth526kggLCN+NYxOS8tnQr3TezfdWJg8x8I6xowzNaXf1Bwp4L+UPc7LXbY=
+	t=1723107203; cv=none; b=pn4o8qJkA/KdK4+CZ1n9F13xn9ip0TY47HJJJy+08YqNPYpu5cF9IIUH42xzUIV0w5LiknalQBkkIh+uRLgGDwuIQby9hg6X3Go4VD4cHnYr4RB0Q8Skdp4fySJK/HrinWAialt7LfyKSkvMrp6EAAQYG5miMLjgeu+R0GPVpbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723107100; c=relaxed/simple;
-	bh=1zw+5wWQhwx+BWY8E+VvCuxkWmQcRz908khXTloPilM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WY1rgRhcRdEJhpdBN9+HUV43SrmMlmnLDgr59A4KMIBXdOhrXtQw0l2TiuivkqItaqyBpm7YMNuT4tu4MFQbz7z/zb4Hkrmucn4BmhtNEwvNWUfvWwq2B2sQmOpW2UFC8gKN/zhKl+zbOBFx/GBntSW/6b9TnSFmapKEgPwDkYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QWYTstgS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723107097;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UU51/do9q+biyEPO3ksSs6vrqWpDyn4FMNd42FDXge4=;
-	b=QWYTstgSrhPd1RuVHFU76PPTZA2JB/ur682p1j45KHme20xK+0N0NBSsJl/k/WLWz0yBbk
-	yGyWJPgARF4T6r7OOtIgt3TNwhucgCn1r1Yef4PNrlg/cgP4xLMaL9OKHPwA5M6QbY+v9s
-	Q/8T8l9htwTZEA5tJXHjxp4fbRgzj+8=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-299-J2mnWMzmMnis4hQVZ8DuAA-1; Thu, 08 Aug 2024 04:51:35 -0400
-X-MC-Unique: J2mnWMzmMnis4hQVZ8DuAA-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42816aacabcso5073025e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 01:51:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723107095; x=1723711895;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UU51/do9q+biyEPO3ksSs6vrqWpDyn4FMNd42FDXge4=;
-        b=erubUcnvLOOs7huuJUej6V0LdoXw5JoxoT9xtd6zMwBwWWyarZDUX+eYjDtv7pjoy8
-         B0RyRsjWKfcb+ZZtB5uiZooiUSumfrKcTtyOuDpTlCvwdP4ZM0bf0eV2xWHkGEdmMFS9
-         /SDtxbw7ETbySv2HkpysMASm/rttS1YRaeaJv8aySHUP4LoGlsokdsgp6kSt6bE00my2
-         8MkaLHiVUzsOZZPaiEO9dahdBtbgnwB8zbBdmX3jcwb8xxZQUuY7H1DzuFdqOOiKnN+h
-         00aPTO1x8Yn9QEq8GRSq2tx9fIKDA5/9QcNa94opGQzt/vBPRUt4qzKejVhwKyA8YMDL
-         8tKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyeyRvJPRbfyhaib7Zoi6amYp/ivEpQDwM/2cvSzdjKaEHwnMIUAmb7HsyiSfefdbAtKyL8EyKIG3/dCyp5AlC89hAl1nm+kmQmN6q
-X-Gm-Message-State: AOJu0Yy4uCWk/6CeT4rQwWanC8uQFgy72QOhResajUip008OVyvH9Mfr
-	bGycLx0bAXSWS68aMwHUg/HNec6XbI9dEeQIPfSPXb3IYzKm1SbArB14nqv7FsMTLglqHpvNMSK
-	cUPcYih4VtUBU5Vq+gn7W7yZ7NvrebXcC91nYLmxkP5RmTGhlZsTB/3P6CYU6KQ==
-X-Received: by 2002:a5d:6a91:0:b0:35e:6472:4390 with SMTP id ffacd0b85a97d-36d274ecf97mr768259f8f.27.1723107094602;
-        Thu, 08 Aug 2024 01:51:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGbvJxmAlyaSCNVtcKnFrlRpcmvOwRuuK1t8+jV64BRG57MtXDKYZpKJvSvUJaz5xdRbDVzw==
-X-Received: by 2002:a5d:6a91:0:b0:35e:6472:4390 with SMTP id ffacd0b85a97d-36d274ecf97mr768230f8f.27.1723107093985;
-        Thu, 08 Aug 2024 01:51:33 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c713:2a00:f151:50f1:7164:32e6? (p200300cbc7132a00f15150f1716432e6.dip0.t-ipconnect.de. [2003:cb:c713:2a00:f151:50f1:7164:32e6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2716caadsm1171764f8f.39.2024.08.08.01.51.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 01:51:33 -0700 (PDT)
-Message-ID: <03a7c798-7a0d-4873-8fcb-8940d8dadc00@redhat.com>
-Date: Thu, 8 Aug 2024 10:51:31 +0200
+	s=arc-20240116; t=1723107203; c=relaxed/simple;
+	bh=gQ1tJG9N6SvPT5+hu2o4fz+MI6OXlvuYXLedjN+ULio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKrkQdMFj7mLHngMXlBd/48+5EUkdvsx0AGIBa1Q70ab8SiDYW/uB3QRzn7EDFO+/jdyiZORVz3QnvW87Ib2Ew/3wr/ECjLq2GBEZK2c4DP/9adkN2M4iG76ZOoSLp/v5BtxL+7fPZu6Ho8MP4gYdiWzlYGTBSnf4ioqN0eFE60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HayDAs1J; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723107201; x=1754643201;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gQ1tJG9N6SvPT5+hu2o4fz+MI6OXlvuYXLedjN+ULio=;
+  b=HayDAs1J22ups1xivwEVSufYN9embfSuepnwfYz4Qi8Vj52+GToBn97W
+   Mk8KCpt1J+UjdzhmzbD6hgz0dNYhzb4mKhGLrKWAUOFN1QwcPDnHTMbLQ
+   uxzrn6YoyjiAB6j1lvEzUuqKWdMJA+KPHeVdEaJIGCZUpAPyvInab9mrh
+   J/bYe6rF953MUf/AFPDI0PNP6pT8Vjp9KAn0SqNZE+l5B7Jo32dgJUT2R
+   0FMxm08Tj9SwXOKvd/XrIqMKkM7N4ZEhiV+/z8lUedCldIk/FsL40XvKR
+   z6VpnDVXRYKSTJg+oTXLo09dhq8Ul9IfmcvriSXk3mFHu3ART07dz7tdm
+   A==;
+X-CSE-ConnectionGUID: XWzo/u/fRNmnFY3sT2TbtA==
+X-CSE-MsgGUID: MS+sLhYOQCCuJoyOSKymMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11157"; a="32610876"
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="32610876"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 01:53:21 -0700
+X-CSE-ConnectionGUID: GzCMqjNDT/Odyx2wNMB5QA==
+X-CSE-MsgGUID: kjhLbdQFSwSXwsFjXeNwww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,272,1716274800"; 
+   d="scan'208";a="56836211"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 08 Aug 2024 01:53:18 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sbytF-000641-2C;
+	Thu, 08 Aug 2024 08:53:05 +0000
+Date: Thu, 8 Aug 2024 16:52:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: adc: ad4695: implement triggered buffer
+Message-ID: <202408081623.ua9EBfoZ-lkp@intel.com>
+References: <20240807-iio-adc-ad4695-buffered-read-v1-1-bdafc39b2283@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/10] mm: vmscan: add validation before spliting shmem
- large folio
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, wangkefeng.wang@huawei.com, chrisl@kernel.org,
- ying.huang@intel.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
- shy828301@gmail.com, ziy@nvidia.com, ioworker0@gmail.com,
- da.gomez@samsung.com, p.raghav@samsung.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>
-References: <cover.1723012159.git.baolin.wang@linux.alibaba.com>
- <8a8c6dc9df0bc9f6f7f937bea446062be19611b3.1723012159.git.baolin.wang@linux.alibaba.com>
- <9b45a0dc-fa12-428a-8702-c7690c26aedc@redhat.com>
- <770190a2-3938-4ba9-9aaf-7320b34addf4@linux.alibaba.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <770190a2-3938-4ba9-9aaf-7320b34addf4@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807-iio-adc-ad4695-buffered-read-v1-1-bdafc39b2283@baylibre.com>
 
-On 08.08.24 04:36, Baolin Wang wrote:
-> 
-> 
-> On 2024/8/7 23:53, David Hildenbrand wrote:
->> On 07.08.24 09:31, Baolin Wang wrote:
->>> Page reclaim will not scan anon LRU if no swap space, however
->>> MADV_PAGEOUT
->>> can still split shmem large folios even without a swap device. Thus add
->>> swap available space validation before spliting shmem large folio to
->>> avoid redundant split.
->>>
->>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> ---
->>>    mm/vmscan.c | 8 ++++++++
->>>    1 file changed, 8 insertions(+)
->>>
->>> diff --git a/mm/vmscan.c b/mm/vmscan.c
->>> index 31d13462571e..796f65781f4f 100644
->>> --- a/mm/vmscan.c
->>> +++ b/mm/vmscan.c
->>> @@ -1259,6 +1259,14 @@ static unsigned int shrink_folio_list(struct
->>> list_head *folio_list,
->>>                }
->>>            } else if (folio_test_swapbacked(folio) &&
->>>                   folio_test_large(folio)) {
->>> +
->>> +            /*
->>> +             * Do not split shmem folio if no swap memory
->>> +             * available.
->>> +             */
->>> +            if (!total_swap_pages)
->>> +                goto activate_locked;
->>> +
->>>                /* Split shmem folio */
->>>                if (split_folio_to_list(folio, folio_list))
->>>                    goto keep_locked;
->>
->> Reminds me of
->>
->> commit 9a976f0c847b67d22ed694556a3626ed92da0422
->> Author: Luis Chamberlain <mcgrof@kernel.org>
->> Date:   Thu Mar 9 15:05:43 2023 -0800
->>
->>       shmem: skip page split if we're not reclaiming
->>       In theory when info->flags & VM_LOCKED we should not be getting
->>       shem_writepage() called so we should be verifying this with a
->>       WARN_ON_ONCE().  Since we should not be swapping then best to
->> ensure we
->>       also don't do the folio split earlier too.  So just move the check
->> early
->>       to avoid folio splits in case its a dubious call.
->>       We also have a similar early bail when !total_swap_pages so just
->> move that
->>       earlier to avoid the possible folio split in the same situation.
->>
->>
->> But indeed, pageout() -> writepage() is called *after* the split in the
->> vmscan path.
->>
->> In that "noswap" context, I wonder if we also want to skip folios part
->> of shmem
->> with disabled swapping?
-> 
-> Yes, I think so.
-> 
->>
->> But now I am wondering under which circumstances we end up calling
->> shmem_writepage() with a large folio. And I think the answer is the
->> comment of
->> folio_test_large(): via drivers/gpu/drm/i915/gem/i915_gem_shmem.c.
->>
->>
->> ... so if shmem_writepage() handles+checks that, could we do
->>
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index a332cb80e928..7dfa3d6e8ba7 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -1257,11 +1257,6 @@ static unsigned int shrink_folio_list(struct
->> list_head *folio_list,
->>                                                   goto
->> activate_locked_split;
->>                                   }
->>                           }
->> -               } else if (folio_test_swapbacked(folio) &&
->> -                          folio_test_large(folio)) {
->> -                       /* Split shmem folio */
->> -                       if (split_folio_to_list(folio, folio_list))
->> -                               goto keep_locked;
->>                   }
->>
->>                   /*
->>
->> instead?
-> 
-> Seems reasonable to me. But we should pass the 'folio_list' to
-> shmem_writepage() to list the subpages of the large folio. Let me try.
+Hi David,
 
-Ah, yes, good point. Alternatively, we'd have to split and try writing 
-all subpages in there. I wonder what to do if we fail to write some, and 
-if we could handle that transparently, without the folio_list.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 7cad163c39cb642ed587d3eeb37a5637ee02740f]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad4695-implement-triggered-buffer/20240808-063333
+base:   7cad163c39cb642ed587d3eeb37a5637ee02740f
+patch link:    https://lore.kernel.org/r/20240807-iio-adc-ad4695-buffered-read-v1-1-bdafc39b2283%40baylibre.com
+patch subject: [PATCH 1/2] iio: adc: ad4695: implement triggered buffer
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240808/202408081623.ua9EBfoZ-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 408d82d352eb98e2d0a804c66d359cd7a49228fe)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240808/202408081623.ua9EBfoZ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408081623.ua9EBfoZ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/iio/adc/ad4695.c:24:
+   In file included from include/linux/iio/triggered_buffer.h:6:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/iio/adc/ad4695.c:24:
+   In file included from include/linux/iio/triggered_buffer.h:6:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/iio/adc/ad4695.c:24:
+   In file included from include/linux/iio/triggered_buffer.h:6:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   In file included from drivers/iio/adc/ad4695.c:28:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/iio/adc/ad4695.c:454:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+     454 |         val = FIELD_PREP(mask, temp_chan_en ? 1 : 0);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:510:22: note: expanded from macro 'compiletime_assert'
+     510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:498:23: note: expanded from macro '_compiletime_assert'
+     498 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:490:9: note: expanded from macro '__compiletime_assert'
+     490 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   8 warnings generated.
+
+
+vim +454 drivers/iio/adc/ad4695.c
+
+   373	
+   374	static int ad4695_buffer_preenable(struct iio_dev *indio_dev)
+   375	{
+   376		struct ad4695_state *st = iio_priv(indio_dev);
+   377		struct spi_transfer *xfer;
+   378		u8 temp_chan_bit = st->chip_info->num_voltage_inputs;
+   379		bool temp_chan_en = false;
+   380		u32 reg, mask, val, bit, num_xfer, num_slots;
+   381		int ret;
+   382	
+   383		/*
+   384		 * We are using the advanced sequencer since it is the only way to read
+   385		 * multiple channels that allows individual configuration of each
+   386		 * voltage input channel. Slot 0 in the advanced sequencer is used to
+   387		 * account for the gap between trigger polls - we don't read data from
+   388		 * this slot. Each enabled voltage channel is assigned a slot starting
+   389		 * with slot 1.
+   390		 */
+   391		num_slots = 1;
+   392	
+   393		memset(st->buf_read_xfer, 0, sizeof(st->buf_read_xfer));
+   394	
+   395		/* First xfer is only to trigger conversion of slot 1, so no rx. */
+   396		xfer = &st->buf_read_xfer[0];
+   397		xfer->cs_change = 1;
+   398		xfer->delay.value = AD4695_T_CNVL_NS;
+   399		xfer->delay.unit = SPI_DELAY_UNIT_NSECS;
+   400		xfer->cs_change_delay.value = AD4695_T_CONVERT_NS;
+   401		xfer->cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+   402		num_xfer = 1;
+   403	
+   404		iio_for_each_active_channel(indio_dev, bit) {
+   405			xfer = &st->buf_read_xfer[num_xfer];
+   406			xfer->bits_per_word = 16;
+   407			xfer->rx_buf = &st->buf[(num_xfer - 1) * 2];
+   408			xfer->len = 2;
+   409			xfer->cs_change = 1;
+   410			xfer->cs_change_delay.value = AD4695_T_CONVERT_NS;
+   411			xfer->cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+   412	
+   413			if (bit == temp_chan_bit) {
+   414				temp_chan_en = true;
+   415			} else {
+   416				reg = AD4695_REG_AS_SLOT(num_slots);
+   417				val = FIELD_PREP(AD4695_REG_AS_SLOT_INX, bit);
+   418	
+   419				ret = regmap_write(st->regmap, reg, val);
+   420				if (ret)
+   421					return ret;
+   422	
+   423				num_slots++;
+   424			}
+   425	
+   426			num_xfer++;
+   427		}
+   428	
+   429		/*
+   430		 * Don't keep CS asserted after last xfer. Also triggers conversion of
+   431		 * slot 0.
+   432		 */
+   433		xfer->cs_change = 0;
+   434	
+   435		/**
+   436		 * The advanced sequencer requires that at least 2 slots are enabled.
+   437		 * Since slot 0 is always used for other purposes, we need only 1
+   438		 * enabled voltage channel to meet this requirement. This error will
+   439		 * only happen if only the temperature channel is enabled.
+   440		 */
+   441		if (num_slots < 2) {
+   442			dev_err_ratelimited(&indio_dev->dev,
+   443				"Buffered read requires at least 1 voltage channel enabled\n");
+   444			return -EINVAL;
+   445		}
+   446	
+   447		/*
+   448		 * Temperature channel isn't included in the sequence, but rather
+   449		 * controlled by setting a bit in the TEMP_CTRL register.
+   450		 */
+   451	
+   452		reg = AD4695_REG_TEMP_CTRL;
+   453		mask = AD4695_REG_TEMP_CTRL_TEMP_EN;
+ > 454		val = FIELD_PREP(mask, temp_chan_en ? 1 : 0);
+   455	
+   456		ret = regmap_update_bits(st->regmap, reg, mask, val);
+   457		if (ret)
+   458			return ret;
+   459	
+   460		spi_message_init_with_transfers(&st->buf_read_msg, st->buf_read_xfer,
+   461						num_xfer);
+   462	
+   463		ret = spi_optimize_message(st->spi, &st->buf_read_msg);
+   464		if (ret)
+   465			return ret;
+   466	
+   467		/* This triggers conversion of slot 0. */
+   468		ret = ad4695_enter_advanced_sequencer_mode(st, num_slots);
+   469		if (ret) {
+   470			spi_unoptimize_message(&st->buf_read_msg);
+   471			return ret;
+   472		}
+   473	
+   474		return 0;
+   475	}
+   476	
 
 -- 
-Cheers,
-
-David / dhildenb
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
