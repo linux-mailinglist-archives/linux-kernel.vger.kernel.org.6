@@ -1,167 +1,153 @@
-Return-Path: <linux-kernel+bounces-279321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0439894BBD7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:00:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFE494BBDA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5424EB2373E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:00:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD2D1C2241A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D8518B473;
-	Thu,  8 Aug 2024 11:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4EF18B478;
+	Thu,  8 Aug 2024 11:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fJhunPSN"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34774286A6;
-	Thu,  8 Aug 2024 11:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gd/gDLN2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641FE184101;
+	Thu,  8 Aug 2024 11:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723114828; cv=none; b=L1kvwwvJwhrLPp4vxlr/Pamk+ALnq//UmlDAaIfUF4/Vg3wfwGle7XyhU/UFZ1Zh0RjKqNhwPAt5nPy8RYQ/Iav4XK2k+GvOCyMwph3KibmO7fhGChjnzi8lqR/S6w+npOWSs6ZOY6HNhvEjhGIRhB/CVc7hJ5Q4+zRcwYVITao=
+	t=1723114856; cv=none; b=qgY99OGTndnouDgeolLf6UWtBLWpCe39OnYSaDc5hsOsOGf5FPdn2+NRjWOtpJobUw9dq6heAyGJT/jBSbL8ZL/QqPn1+zol94mMH1rFaLRJ0EgxHisY+TDGR78OkPUbonArilH7Wz8V0bgArA+82Iqfu4yoO+NgoN4RBeB0OJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723114828; c=relaxed/simple;
-	bh=OR+VhU9mhCyJce7HDHe1Uv/U/dBXIye6qP8H9dbJTn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YxPByh0zUidFyjfqLrWj6Q7claLOKE01kRABTCHbTSrcFxneJ4qcFvDMSF2wWJE+24ZIF3LhdxTlWTR2smo2WMcfzfKZiGS8tu0EXESiSdWsQKeWjjmMHdj0VCDdh52/IdV08wKIpau2K3m2QSqklGqa75SVpt+OaJLofmY/dFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fJhunPSN; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id BAA1A20B7165; Thu,  8 Aug 2024 04:00:26 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BAA1A20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1723114826;
-	bh=Q9TBJrSTIxZWyLx3nUhN0aGNn1LRkcSdO2AwzlYwPoo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fJhunPSNNqAjK+gCkGDTz7UrVynoxZHaHyzpVKaKYe8kN/R8J55Hn/2Y7l7EDut16
-	 tFrSjzR3zJrHEWxZFrkjO8foCUQ6La6A5Qtq7kNjWoQUxyM2aytL/81WYZEPKlBfdf
-	 g1++8zHNCjFRKBE7DIjJRivbLmouRz52GgjFQDtM=
-Date: Thu, 8 Aug 2024 04:00:26 -0700
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: longli@microsoft.com
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 net] net: mana: Fix doorbell out of order violation
- and avoid unnecessary doorbell rings
-Message-ID: <20240808110026.GA25550@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1723072626-32221-1-git-send-email-longli@linuxonhyperv.com>
+	s=arc-20240116; t=1723114856; c=relaxed/simple;
+	bh=5USObAvXtuPCQ+JBHlK2fVtTqulpzIRS5fvm/dhv0fg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dfg9wV8W01022TQjm9rNQqBg4ikWLajgV/463ZgQPDYTLtJ1vGpbj2AGQ1WQ9yBW2DDjzEL7MFuiyuskVgOxkGUhV+X6OXatXmcyr0SJlxM/RWSagubpL3j4ZowzOST7hFMwFFlZDR5XPVIJpI06P0moKtA7FKHh7vrANobyBDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gd/gDLN2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5189C32782;
+	Thu,  8 Aug 2024 11:00:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723114855;
+	bh=5USObAvXtuPCQ+JBHlK2fVtTqulpzIRS5fvm/dhv0fg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gd/gDLN2bQH7gzBibdUSbjxJFa9vNWz+Wg+lFghgP8F+9qz6iQs2ZDRf5ucJDKunI
+	 JQ9ZtMG7Cs9tnTToZ4eKoZC66tfeF1fOacRRuObreo3X+B/Iso/i7m4fspLD4ZaH+8
+	 n25KS7VfJsJqZmESaRrJpRTzGuGsSn+dPPl/2lp1c9CNTzYM1DfY0uq4iW5kQnLRDn
+	 +AT8ICZE4ZRti+WXzJEm4lsF+d+mfyRNjvQ6EVkd7qZHffKjfzZ4R0ygmWJpQgiIHy
+	 orARbc+oUXrUc2grjQWAuwPiNe8AMRtejh99paYSL/rIUKUxyYmtAcBDsW1eRmO7T7
+	 ZcgwvQL9Z75nQ==
+Message-ID: <dfb1ac84-f011-45ea-9fb1-b8c6bc36cabc@kernel.org>
+Date: Thu, 8 Aug 2024 13:00:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1723072626-32221-1-git-send-email-longli@linuxonhyperv.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: soc: qcom: eud: Update compatible
+ strings for eud
+To: Melody Olvera <quic_molvera@quicinc.com>,
+ Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Trilok Soni <quic_tsoni@quicinc.com>,
+ Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+ Elson Serrao <quic_eserrao@quicinc.com>
+Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20240807183205.803847-1-quic_molvera@quicinc.com>
+ <20240807183205.803847-2-quic_molvera@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240807183205.803847-2-quic_molvera@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 07, 2024 at 04:17:06PM -0700, longli@linuxonhyperv.com wrote:
-> From: Long Li <longli@microsoft.com>
+On 07/08/2024 20:32, Melody Olvera wrote:
+> The EUD can more accurately be divided into two types; a secure type
+> which requires that certain registers be updated via scm call and a
+> nonsecure type which must access registers nonsecurely. Thus, change
+> the compatible strings to reflect secure and nonsecure eud usage.
 > 
-> After napi_complete_done() is called when NAPI is polling in the current
-> process context, another NAPI may be scheduled and start running in
-> softirq on another CPU and may ring the doorbell before the current CPU
-> does. When combined with unnecessary rings when there is no need to arm
-> the CQ, it triggers error paths in the hardware.
-> 
-> This patch fixes this by calling napi_complete_done() after doorbell
-> rings. It limits the number of unnecessary rings when there is
-> no need to arm. MANA hardware specifies that there must be one doorbell
-> ring every 8 CQ wraparounds. This driver guarantees one doorbell ring as
-> soon as the number of consumed CQEs exceeds 4 CQ wraparounds. In pratical
-> workloads, the 4 CQ wraparounds proves to be big enough that it rarely
-> exceeds this limit before all the napi weight is consumed.
-> 
-> To implement this, add a per-CQ counter cq->work_done_since_doorbell,
-> and make sure the CQ is armed as soon as passing 4 wraparounds of the CQ.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: e1b5683ff62e ("net: mana: Move NAPI from EQ to CQ")
-> 
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-> Signed-off-by: Long Li <longli@microsoft.com>
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 > ---
+>  Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> change in v2:
-> Added more details to comments to explain the patch
-> 
->  drivers/net/ethernet/microsoft/mana/mana_en.c | 24 ++++++++++++-------
->  include/net/mana/mana.h                       |  1 +
->  2 files changed, 16 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> index d2f07e179e86..f83211f9e737 100644
-> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> @@ -1788,7 +1788,6 @@ static void mana_poll_rx_cq(struct mana_cq *cq)
->  static int mana_cq_handler(void *context, struct gdma_queue *gdma_queue)
->  {
->  	struct mana_cq *cq = context;
-> -	u8 arm_bit;
->  	int w;
->  
->  	WARN_ON_ONCE(cq->gdma_cq != gdma_queue);
-> @@ -1799,16 +1798,23 @@ static int mana_cq_handler(void *context, struct gdma_queue *gdma_queue)
->  		mana_poll_tx_cq(cq);
->  
->  	w = cq->work_done;
-> -
-> -	if (w < cq->budget &&
-> -	    napi_complete_done(&cq->napi, w)) {
-> -		arm_bit = SET_ARM_BIT;
-> -	} else {
-> -		arm_bit = 0;
-> +	cq->work_done_since_doorbell += w;
-> +
-> +	if (w < cq->budget) {
-> +		mana_gd_ring_cq(gdma_queue, SET_ARM_BIT);
-> +		cq->work_done_since_doorbell = 0;
-> +		napi_complete_done(&cq->napi, w);
-> +	} else if (cq->work_done_since_doorbell >
-> +		   cq->gdma_cq->queue_size / COMP_ENTRY_SIZE * 4) {
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+> index f2c5ec7e6437..476f92768610 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+> @@ -17,8 +17,8 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> -          - qcom,sc7280-eud
+> -      - const: qcom,eud
+> +          - qcom,secure-eud
+> +          - qcom,eud
 
-should we define a macro for 4? may be 'CQ_WRAPAROUND_LIMIT'
+Commit msg did not explain me why DT bindings rules are avoided here and
+you drop existing SoC specific compatible.
 
-> +		/* MANA hardware requires at least one doorbell ring every 8
-> +		 * wraparounds of CQ even if there is no need to arm the CQ.
-> +		 * This driver rings the doorbell as soon as we have exceeded
-> +		 * 4 wraparounds.
-> +		 */
-> +		mana_gd_ring_cq(gdma_queue, 0);
-> +		cq->work_done_since_doorbell = 0;
->  	}
->  
-> -	mana_gd_ring_cq(gdma_queue, arm_bit);
-> -
->  	return w;
->  }
->  
-> diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-> index 6439fd8b437b..7caa334f4888 100644
-> --- a/include/net/mana/mana.h
-> +++ b/include/net/mana/mana.h
-> @@ -275,6 +275,7 @@ struct mana_cq {
->  	/* NAPI data */
->  	struct napi_struct napi;
->  	int work_done;
-> +	int work_done_since_doorbell;
->  	int budget;
->  };
->  
-> -- 
-> 2.17.1
+This really does not look like having any sense at all, I cannot come up
+with logic behind dropping existing users. You could deprecate it, but
+then why exactly this device should have exception from generic bindings
+rule?
+
+
+Best regards,
+Krzysztof
+
 
