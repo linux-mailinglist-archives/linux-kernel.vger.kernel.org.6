@@ -1,223 +1,167 @@
-Return-Path: <linux-kernel+bounces-278858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA62E94B5B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:02:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB53894B5BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 06:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB12E28430F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:01:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D305B22240
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97FA80038;
-	Thu,  8 Aug 2024 04:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E08083A18;
+	Thu,  8 Aug 2024 04:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVKD0ww5"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqeT5Wvm"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E4511C83;
-	Thu,  8 Aug 2024 04:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A73B11C83;
+	Thu,  8 Aug 2024 04:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723089702; cv=none; b=S2ZNq65miqvDL9PJjtcPCMgxqfvvZS6m+5491f4oUHKFfoBrgiGTp1pQjOtuqKT9/JQvfTpw2EWyh1v7HkA2mkVxXP7J4abs9y6q6clTaQupwFVe82vhDV3ytlVaaWQOTnDnr4Jo+v5pm46Xj3jXG9vokfjXlh95wQ4NLaOnp9U=
+	t=1723089869; cv=none; b=pSNES5ZbUB+6s0Wmo/SVFbTiCyvXcYd1Bi5h2G0IZ94LHOe/y65BUkLFclZ2Lj/qgefZrD/aFKp5OKK96EteAI+eELpg8fRCav5RFiOOhO3+/zxWxg4d9x2vKrm4bCY7dP4H6HRwsP+JzYRrFD+RaCEw7wmMv/D2+dfVe9Kcpjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723089702; c=relaxed/simple;
-	bh=soBJ2nd2MTISL5ysYCgSFPOeQSxTVU/1vjGXsiZVKrs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F0ZVqq2I57FimGlDp9amSHzaz32YH1RODs8idZGmeH+Ip9NmTWnqtx8Vjbe67yDUCDq3OxF26LrK8aTEFLqDnZifGE2tzOwr1j2oC1OvWpd8OUknMbTpaSA7XCGxlz8WAQf3uMl249QzBrMxIKY6T8bgkY9w4IVJ//1r6S8zWn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVKD0ww5; arc=none smtp.client-ip=209.85.219.173
+	s=arc-20240116; t=1723089869; c=relaxed/simple;
+	bh=HxsNmQeveDje+k7GJ5p0ExaAXkD5Uz24koDvUfEl56g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J3zHaCGIy/gFtrgjCqZucn3FlAdpe7q75ldu1d+WDq+ps5n0FA5XMpkQsJV7r243UNdCHsXMn5dk+YYJiLDadzm1+DFCHMfOF70bJsUTSyoSS2vjaUbAXmM4Cq4xNutItyMf9ZTQ0M10f5XAMtU3UwlDyH1uo96+XTC0oryaT4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqeT5Wvm; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e0ea24477f0so58051276.2;
-        Wed, 07 Aug 2024 21:01:41 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d1c655141so472865b3a.1;
+        Wed, 07 Aug 2024 21:04:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723089700; x=1723694500; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rEcurEw+W3Hs5LT2+2YRDTBDXRPvHW6k7rbHq/j8KGo=;
-        b=MVKD0ww5NRB1kcpeBS6rzVwkoWJoXaLobZTXrMfKJeLh2z185trKEduL49y3HJx0tR
-         x1krDi4IhOadA1nTlrY2dOl5OfQpQfHm8/r7PKlH7YLYuX4Q7Ni9uEInq/7R5Ye3p7ZT
-         uuyxVUdq8Ovp/JOv5um/eGdoW2CO8qgmA6hbB0uVPUG/GaozknC2YRNpsIrWg2scWsF+
-         5IMSAhbAaTyYq0BXjr3B8HoFW+uxEfEx7Iu2guP38mghvBxXjUSyZgsRMLi+ghADx9Qc
-         lyZIb8RT3pb3fbbiZGe1j5MtfXmfJCtcQYBU9p2qCfU+i9YJQ8oipTwVWs6omvnIBeLj
-         9H4A==
+        d=gmail.com; s=20230601; t=1723089867; x=1723694667; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qB4AbGWugMyClxVBVAdAWXyEbSp0MuqOJuxSTPl9cMA=;
+        b=eqeT5WvmY+7F00UbbT00nxrL3GWHU+fgTxXIcmnKb9tcCnOiyv8ceayYseKVAznQ8A
+         O3qPFFfZO5RQh1zNLIKj7QoTW8bfcDJBXzL+ybvvu21oHY8aSfrbqKy/Zz2fFE/IOTS3
+         NTsjl2kdRgZVlRGfxCcxoQKJjvNUHP1ps3ldXXDih1/f5YRxKLFgIQfNrK8YvUJyZLuF
+         VkmHfXyCm7H7woBbuILhzZmrJyAJ3ZGFbqi04AGYxMuN6EuYhsM18x7qGM1SKWZjsi3D
+         bCJsk1UDMNR/2yQB1MXqRAFWGPkuM1kZzgkQEjv2y6q3m5FVfCz1fsnITEgEd5vX64FA
+         vNDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723089700; x=1723694500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rEcurEw+W3Hs5LT2+2YRDTBDXRPvHW6k7rbHq/j8KGo=;
-        b=gFShUrXHAJ/fliGnR/WzqEcX2u+KOI3NHVrLY7JgOzu092/kH66JmrmxC8fnwmbyRd
-         Ey6+N4oaYBN0ijD+Cm3hyaFN2BfKglTWekm90H+SrxiaLJAjuQKtYaCE1QmWbdpvyf3m
-         rhHV4ZzjU/xN5T+vJ/MJsgzochOeSC2K0ODCu6ZcMK/fj5Dz7J4QkCePRMxR4V1gwtVK
-         gxcszlMtsKL6espu8HTX0dL6s8lFgB7GNLn+uyxMvl+7zUoX6piT46m3FoQNWqM4buCG
-         GVuuYLgFbolrv78MLL6pMCUI0ug1N6GGjJ51hBtJ2Z3iT30AWiPc55wM+xdH2DDvDazi
-         dWwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsl1AAa0SpV8ADEtYsfBIBuagm1QxvetXKmXZhbGGlEIqjk7mitPP7JXO0484TPfZGrdEOhRywnd8US24FI3NpxG//YpIRYFdq8pB0qFF6q3Yk+rIAWjLcYJ6Rh2ps7uyIGZ+CQ/RBJB4pQ/fV7Q==
-X-Gm-Message-State: AOJu0YxyQD6ktijomGEVit6sVdHDngb6BBgFQ+N+a2iZ7v0Rm1fEqyCu
-	Z/A04SrTOPf6RPvDo7eC0oqrbfmm4UP5f4FLrTybx9DmYAtEwzZLYfWciqi6NzHBeoiXmv3Iwgr
-	uQ90NEf8SQHPEmB/8KxEkjHw3yiY=
-X-Google-Smtp-Source: AGHT+IEssCyu+Xbpaj6PQnk9jDryOpE5jmQJ3NU7yvzMFdJ6D677l/y6xz4cmO7mGEQ+/72qBTy/1+AvWDEkMigz8wA=
-X-Received: by 2002:a05:6902:2b0c:b0:e0e:88fc:edd5 with SMTP id
- 3f1490d57ef6-e0e9dbf590bmr755786276.52.1723089700292; Wed, 07 Aug 2024
- 21:01:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723089867; x=1723694667;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qB4AbGWugMyClxVBVAdAWXyEbSp0MuqOJuxSTPl9cMA=;
+        b=gUNnggHkjfX38jqTm6nDyYFIajaBM95+kSzx0ef5pNe+PDmZpeY+0JYWwxDXGs8eUR
+         GSBvjLU4uR52CtojdLAlxeCneK+Cg86IuE8SI7E/LqJ8m9cj8p8NwmCz6xDaUExTt57i
+         ecZNVSsBbWDVM2Tob9sC8r6xb9XqCaEzXivXBL2yBJD/xaunnVlYoiF+U21ssn3GV20P
+         iawFO7Zw6bxnNbyGUxFkFXG0m0ZmgkCZ+mILF/AvJf64R4EZ1Q2mLNuCQL8CdiPiRbYg
+         2NLQfH3ZUFpX6LFwxxg8hnynsXdYs0o1Uu7GbcpXHVEj6dVkANp/f4jaieOfgOKOLaeF
+         JlHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXiw3xv4EI+39jcWGxvoGGwoflKv3iVe76eN7KxgwgJTz15TQiI0Q9jDqNDUHQG0YNmE88gPdHMFHwJ9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykqDs+KaD/g+aeP5cYAAg5LW68dJ8JacjOoWO35PxFlCo5Fndo
+	g0Wfx8UpuJSLdKw2TiwzqNhtqb1q2GSPLci3EwD+YgZLqeXyfyDgzzFn4uCQ
+X-Google-Smtp-Source: AGHT+IE9Ln7CAAMnFGaiJTlhxb+rKtE1cwgbtM0VGmLbzx+hc9LQk2kprlXX3MVoq/8wRBaDLvW5HA==
+X-Received: by 2002:a05:6a00:2d16:b0:706:6c38:31f3 with SMTP id d2e1a72fcca58-710cad6d366mr975637b3a.8.1723089867385;
+        Wed, 07 Aug 2024 21:04:27 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb20d602sm274767b3a.5.2024.08.07.21.04.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 21:04:26 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: u.kleine-koenig@pengutronix.de,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: moxart_ether: use devm in probe
+Date: Wed,  7 Aug 2024 21:03:54 -0700
+Message-ID: <20240808040425.5833-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807153843.3231451-1-howardchu95@gmail.com>
- <20240807153843.3231451-3-howardchu95@gmail.com> <ZrQBsmfS-RcXmncw@google.com>
-In-Reply-To: <ZrQBsmfS-RcXmncw@google.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Thu, 8 Aug 2024 12:01:29 +0800
-Message-ID: <CAH0uvoghMwhokAro0ouqfBG6ccbGxjEKodU+GCnj7XLHhkxWRg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/9] perf record --off-cpu: Add --off-cpu-thresh
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: irogers@google.com, acme@kernel.org, adrian.hunter@intel.com, 
-	jolsa@kernel.org, kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 8, 2024 at 7:22=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->
-> On Wed, Aug 07, 2024 at 11:38:36PM +0800, Howard Chu wrote:
-> > Add the --off-cpu-thresh argument to specify the off-cpu time threshold=
-.
-> > If the off-cpu time exceeds this threshold, dump the off-cpu data
-> > directly.
-> >
-> > Suggested-by: Ian Rogers <irogers@google.com>
-> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> > ---
-> >  tools/perf/builtin-record.c            | 26 ++++++++++++++++++++++++++
-> >  tools/perf/util/bpf_off_cpu.c          |  2 ++
-> >  tools/perf/util/bpf_skel/off_cpu.bpf.c |  2 ++
-> >  tools/perf/util/record.h               |  1 +
-> >  4 files changed, 31 insertions(+)
-> >
-> > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> > index 72345d1e54b0..60c6fe7b4804 100644
-> > --- a/tools/perf/builtin-record.c
-> > +++ b/tools/perf/builtin-record.c
-> > @@ -3133,6 +3133,28 @@ static int record__parse_mmap_pages(const struct=
- option *opt,
-> >       return ret;
-> >  }
-> >
-> > +static int record__parse_off_cpu_thresh(const struct option *opt,
-> > +                                     const char *str,
-> > +                                     int unset __maybe_unused)
-> > +{
-> > +     struct record_opts *opts =3D opt->value;
-> > +     char *endptr;
-> > +     u64 off_cpu_thresh;
-> > +
-> > +     if (!str)
-> > +             return -EINVAL;
-> > +
-> > +     off_cpu_thresh =3D strtoul(str, &endptr, 10);
-> > +
-> > +     /* threshold isn't string "0", yet strtoull() returns 0, parsing =
-failed. */
-> > +     if (*endptr || (off_cpu_thresh =3D=3D 0 && strcmp(str, "0")))
-> > +             return -EINVAL;
-> > +     else
-> > +             opts->off_cpu_thresh =3D off_cpu_thresh;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  void __weak arch__add_leaf_frame_record_opts(struct record_opts *opts =
-__maybe_unused)
-> >  {
-> >  }
-> > @@ -3326,6 +3348,7 @@ static struct record record =3D {
-> >               .ctl_fd              =3D -1,
-> >               .ctl_fd_ack          =3D -1,
-> >               .synth               =3D PERF_SYNTH_ALL,
-> > +             .off_cpu_thresh      =3D OFF_CPU_THRESH_DEFAULT,
->
-> Where is it defined?
+alloc_etherdev and kmalloc_array are called first and destroyed last.
+Safe to use devm to remove frees.
 
-Poor formatting, sorry.
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/net/ethernet/moxa/moxart_ether.c | 19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
 
-It's in [PATCH v4 5/9] perf record --off-cpu: Dump total off-cpu time at th=
-e end
+diff --git a/drivers/net/ethernet/moxa/moxart_ether.c b/drivers/net/ethernet/moxa/moxart_ether.c
+index 96dc69e7141f..06c632c90494 100644
+--- a/drivers/net/ethernet/moxa/moxart_ether.c
++++ b/drivers/net/ethernet/moxa/moxart_ether.c
+@@ -81,9 +81,6 @@ static void moxart_mac_free_memory(struct net_device *ndev)
+ 		dma_free_coherent(&priv->pdev->dev,
+ 				  RX_REG_DESC_SIZE * RX_DESC_NUM,
+ 				  priv->rx_desc_base, priv->rx_base);
+-
+-	kfree(priv->tx_buf_base);
+-	kfree(priv->rx_buf_base);
+ }
+ 
+ static void moxart_mac_reset(struct net_device *ndev)
+@@ -461,15 +458,14 @@ static int moxart_mac_probe(struct platform_device *pdev)
+ 	unsigned int irq;
+ 	int ret;
+ 
+-	ndev = alloc_etherdev(sizeof(struct moxart_mac_priv_t));
++	ndev = devm_alloc_etherdev(p_dev, sizeof(struct moxart_mac_priv_t));
+ 	if (!ndev)
+ 		return -ENOMEM;
+ 
+ 	irq = irq_of_parse_and_map(node, 0);
+ 	if (irq <= 0) {
+ 		netdev_err(ndev, "irq_of_parse_and_map failed\n");
+-		ret = -EINVAL;
+-		goto irq_map_fail;
++		return -EINVAL;
+ 	}
+ 
+ 	priv = netdev_priv(ndev);
+@@ -511,15 +507,15 @@ static int moxart_mac_probe(struct platform_device *pdev)
+ 		goto init_fail;
+ 	}
+ 
+-	priv->tx_buf_base = kmalloc_array(priv->tx_buf_size, TX_DESC_NUM,
+-					  GFP_KERNEL);
++	priv->tx_buf_base = devm_kmalloc_array(p_dev, priv->tx_buf_size,
++					       TX_DESC_NUM, GFP_KERNEL);
+ 	if (!priv->tx_buf_base) {
+ 		ret = -ENOMEM;
+ 		goto init_fail;
+ 	}
+ 
+-	priv->rx_buf_base = kmalloc_array(priv->rx_buf_size, RX_DESC_NUM,
+-					  GFP_KERNEL);
++	priv->rx_buf_base = devm_kmalloc_array(p_dev, priv->rx_buf_size,
++					       RX_DESC_NUM, GFP_KERNEL);
+ 	if (!priv->rx_buf_base) {
+ 		ret = -ENOMEM;
+ 		goto init_fail;
+@@ -553,8 +549,6 @@ static int moxart_mac_probe(struct platform_device *pdev)
+ init_fail:
+ 	netdev_err(ndev, "init failed\n");
+ 	moxart_mac_free_memory(ndev);
+-irq_map_fail:
+-	free_netdev(ndev);
+ 	return ret;
+ }
+ 
+@@ -565,7 +559,6 @@ static void moxart_remove(struct platform_device *pdev)
+ 	unregister_netdev(ndev);
+ 	devm_free_irq(&pdev->dev, ndev->irq, ndev);
+ 	moxart_mac_free_memory(ndev);
+-	free_netdev(ndev);
+ }
+ 
+ static const struct of_device_id moxart_mac_match[] = {
+-- 
+2.45.2
 
-+#define OFF_CPU_THRESH_DEFAULT 500000ull
-
-Thanks,
-Howard
->
-> Thanks,
-> Namhyung
->
->
-> >       },
-> >       .tool =3D {
-> >               .sample         =3D process_sample_event,
-> > @@ -3560,6 +3583,9 @@ static struct option __record_options[] =3D {
-> >       OPT_BOOLEAN(0, "off-cpu", &record.off_cpu, "Enable off-cpu analys=
-is"),
-> >       OPT_STRING(0, "setup-filter", &record.filter_action, "pin|unpin",
-> >                  "BPF filter action"),
-> > +     OPT_CALLBACK(0, "off-cpu-thresh", &record.opts, "us",
-> > +                  "Dump off-cpu samples if off-cpu time reaches this t=
-hreshold. The unit is microseconds. (default: 500000)",
-> > +                  record__parse_off_cpu_thresh),
-> >       OPT_END()
-> >  };
-> >
-> > diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cp=
-u.c
-> > index 6af36142dc5a..1e0e454bfb5e 100644
-> > --- a/tools/perf/util/bpf_off_cpu.c
-> > +++ b/tools/perf/util/bpf_off_cpu.c
-> > @@ -272,6 +272,8 @@ int off_cpu_prepare(struct evlist *evlist, struct t=
-arget *target,
-> >               }
-> >       }
-> >
-> > +     skel->bss->offcpu_thresh =3D opts->off_cpu_thresh * 1000ull;
-> > +
-> >       err =3D off_cpu_bpf__attach(skel);
-> >       if (err) {
-> >               pr_err("Failed to attach off-cpu BPF skeleton\n");
-> > diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/b=
-pf_skel/off_cpu.bpf.c
-> > index d877a0a9731f..cca1b6990a57 100644
-> > --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> > +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> > @@ -96,6 +96,8 @@ const volatile bool uses_cgroup_v1 =3D false;
-> >
-> >  int perf_subsys_id =3D -1;
-> >
-> > +__u64 sample_id, sample_type, offcpu_thresh;
-> > +
-> >  /*
-> >   * Old kernel used to call it task_struct->state and now it's '__state=
-'.
-> >   * Use BPF CO-RE "ignored suffix rule" to deal with it like below:
-> > diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
-> > index a6566134e09e..3c11416e6627 100644
-> > --- a/tools/perf/util/record.h
-> > +++ b/tools/perf/util/record.h
-> > @@ -79,6 +79,7 @@ struct record_opts {
-> >       int           synth;
-> >       int           threads_spec;
-> >       const char    *threads_user_spec;
-> > +     u64           off_cpu_thresh;
-> >  };
-> >
-> >  extern const char * const *record_usage;
-> > --
-> > 2.45.2
-> >
 
