@@ -1,160 +1,187 @@
-Return-Path: <linux-kernel+bounces-278896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCC994B647
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:30:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3D294B649
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB081F21C37
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:30:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDFE8B21327
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E47176FA1;
-	Thu,  8 Aug 2024 05:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OICjT0aq"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13445181B82;
+	Thu,  8 Aug 2024 05:31:14 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866A017625B
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 05:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7488D7E1;
+	Thu,  8 Aug 2024 05:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723095009; cv=none; b=dpjRDj8tr0NN1zqVdbTOaHU5Zjubz1wVdwyzN1d8YfbDxquTnKRdjZR7T5y5+hyLwLm2x45yy55Nyv7c6iyiD0+eO3vnKDz7ceZImyud9YUqVktbSuuqWTexMQGB1qc+RwmgWvi7huMr99xkT844BaR/IngpVTT8d4VmmNEqH/c=
+	t=1723095073; cv=none; b=VQrAiNmfB3vYF6aqL0aDOOCboGAZ8HsqZh0ilLCaiub7c6MtD+Uq588evE9yeghzrfDfPQ6PgbdS0wKZP9OoQeMSjw7uzWSEORSCel9AJo6WlpVWkyS3/Imw0HZEz98Qzzu9EEcuPbq3aJMT54DZmClBfDPbNX74wnJRTKfyDkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723095009; c=relaxed/simple;
-	bh=KN0cY/a9FX3IDvhE0fyWohVFNPIypbPP5KjmORMXHOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z/uDb1x2HAPDE+8x8F7qVodRw9+gA1NOtFiwgJlZIhWBYcv9yQZdj1bObjICj5LnzSV4r6zjS3MhVkImoAbZO5ehe/mEa4QkRseAOPW4HAMatDMim2dbMG1PM5Gj+4c9Xc0xFi/iuAOpRYcHSPxnaTtNob3x96H8TNLd5T0KOt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OICjT0aq; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52fc4388a64so790875e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 22:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723095006; x=1723699806; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nad1XTaxK3UKHHR8/8Fx3UaYoxu11FGqjPFBkHuQWQo=;
-        b=OICjT0aq4480KDF0+R/QMCZYsfQ6lkCxMin7DoN2Pjy3mZaOGijIrSwJTluPKv0wwx
-         +Ho0jnDt3nL5Q2WjZn7ZDhy4P+/qbma0jiSydBGadrDVJYjEG2q0zTtz7E/XQf3PCbLV
-         KSmBDyapAihJUEnrqQ6zAaPuyl1vwC4HNJufTNeBohgNPB4w7mqU4vRCmFxgc9TJJMjd
-         rrHqPMeL3QJnr0vHMoN45pRJN9VaT6V4h4NgeEZtdYPTpRCf0qdx9cJ0stG4PIkr3CxN
-         Ea79kVH2fUiHrcrwycyq2dtReaXPr5JxNPLrktp/yqZelLKmBzKhJLcJ3almmHTsUkje
-         D/PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723095006; x=1723699806;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nad1XTaxK3UKHHR8/8Fx3UaYoxu11FGqjPFBkHuQWQo=;
-        b=MsbrNWjdC6+FeitiYtNPVzWyUIgdyWGgOxUSwYJeIhkiXmDelrHGqgYvae/5b4fFyI
-         c77+lVjUW63BwDE87XWEdX6yPnnuBYvJ/vl+2sXXkC8VC3aQtSOTKnaccEVUXMlW6wlH
-         bZfz7YxUyH6tFDKNYPECQMWkoxaUMW60eOL9BffdA4KsnOK4FR5S79IXXcjabGHf4Too
-         b3vDXwOpY3utIiaHjLagFQ9ZbdT4t/Q/fwCm75Mwt7yweLu5V4+73GxdSGUOX9259TUU
-         7tLa5KsGDGLqKqlkcb31Jt9bFxDiSOQQZJJt/kQ5M7tgUN2s1JarkhUhl2+C74mz+5di
-         wHMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeeQmsi91cOc5hc6OfcNd96rtYg6/K0PrHd5eQeJS+J/Wlogize6Wu+QKDglX86mNqFh0OuMRS4Gn0ZaxczYRBoXb7Dw1sFASsa1tz
-X-Gm-Message-State: AOJu0Yxr8BBFGs3x6Zp5XFD/AhxyEwujyuCo7hVLnxLLTOjeaL0on+vw
-	XY3eGqLqilqrBS8LwueEmJ85sflJ55ne6Pfrca4TsQXEtDn3CidxAND95g==
-X-Google-Smtp-Source: AGHT+IHbgKvTbc7S21df5W+RMuxCzjxTqAL1QaOGQ8KbKYMbaFrp3gZKq3sDo6vQc2Za9oZRJA0X1g==
-X-Received: by 2002:a05:6512:318d:b0:52f:c2fa:b213 with SMTP id 2adb3069b0e04-530e588b99emr508158e87.55.1723095004778;
-        Wed, 07 Aug 2024 22:30:04 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530de481efesm482037e87.286.2024.08.07.22.30.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Aug 2024 22:30:04 -0700 (PDT)
-Message-ID: <3bb91178-bc0a-4c93-a6f5-a685ff9a667c@gmail.com>
-Date: Thu, 8 Aug 2024 08:30:03 +0300
+	s=arc-20240116; t=1723095073; c=relaxed/simple;
+	bh=mEqa4IkpK4JJIL78XPPwu/dN09TjXlEr0XzBqsNe6E0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=lGkNVy4vPyTPe/rQcx2YYUVoASw+BarQ+HQkLJ/16Oc0AAYsoF3WDYoCX/dW8bKVh6Tuy8m+dpw2pLko/7Epq2mDnnVxmqf+m/8OzHmCROGEmgeHamHLDxHTiYBgRQFWqx1q5rkUeixU8UYMZ7xIA3HJOyIGAKG8U3q30gl1Iao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WfbHB2kmVz4f3kvf;
+	Thu,  8 Aug 2024 13:30:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id BB18C1A111E;
+	Thu,  8 Aug 2024 13:31:00 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP4 (Coremail) with SMTP id gCh0CgCH_IITWLRm4A9dBA--.39061S2;
+	Thu, 08 Aug 2024 13:31:00 +0800 (CST)
+Subject: Re: [PATCH v3 6/8] ext4: move escape handle to futher improve
+ jbd2_journal_write_metadata_buffer
+To: "wangjianjian (C)" <wangjianjian3@huawei.com>, tytso@mit.edu,
+ jack@suse.com
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240731092910.2383048-1-shikemeng@huaweicloud.com>
+ <20240731092910.2383048-7-shikemeng@huaweicloud.com>
+ <2eb72bf1-8c15-40f7-98fe-156c91ab9191@huawei.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <7ba5654e-96d4-8dea-c82d-952bd11fe825@huaweicloud.com>
+Date: Thu, 8 Aug 2024 13:30:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] regmap: Allow setting IRQ domain name suffix
-To: Thomas Gleixner <tglx@linutronix.de>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org
-References: <cover.1719830185.git.mazziesaccount@gmail.com>
- <fd13fcc9dd785d69b8450c8e9c26d860fcab7da8.1719830185.git.mazziesaccount@gmail.com>
- <87plrpvzmg.ffs@tglx> <12228ec5-cf2f-47b2-842d-ce336d921260@gmail.com>
- <87jzhpscql.ffs@tglx> <2eb39a8f-cc58-4774-836c-e6293300a4d9@gmail.com>
- <87a5ho4hb6.ffs@tglx> <87r0b02umj.ffs@tglx>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <87r0b02umj.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <2eb72bf1-8c15-40f7-98fe-156c91ab9191@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCH_IITWLRm4A9dBA--.39061S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuF1UXr45uryfCF1UCFWktFb_yoWruFy5pr
+	95Kry5Jry0qrn7tr18Wr1UAryUKrWUX3WUtr18WFy7JrWUCr1qgr4UZr1vgr1UArWkJr48
+	Xr1UXr9ruFnxtr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkCb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v2
+	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7IJmUU
+	UUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On 8/7/24 18:57, Thomas Gleixner wrote:
-> Matti!
+
+
+on 8/7/2024 3:41 PM, wangjianjian (C) wrote:
+> On 2024/7/31 17:29, Kemeng Shi wrote:
+>> Move escape handle to futher improve code readability and remove some
+>> repeat check.
+> Should subject prefix "ext4" be "jbd2" ?
+Hello, I have updated this in v4 series. Thanks!
+Kemeng
 > 
-> On Wed, Aug 07 2024 at 15:02, Thomas Gleixner wrote:
->> On Tue, Aug 06 2024 at 14:51, Matti Vaittinen wrote:
->>> Hence I'd rather learn from a small explanation (what is the
->>> expected .size) than by fixing this after I see regression reports from
->>> real users of the irq_domain_create_legacy() :)
 >>
->> So the size of the domain is sum of the parameters @size and
->> @first_hwirq. That's so that the hardware interrupt is zero indexed for
->> an array based lookup.
-
-Ah, thanks. This was what I expected, but wasn't really sure. Makes sense.
-
->> The association obviously wants only the @size parameter because that's
->> what the caller wants interrupts for as it obviously can't provide
->> interrupts below @first_hwirq.
-
-Still makes sense :) I'll fix my patches based on this, thanks :)
-
-> For more background.
-> 
-> The legacy domain is for configurations which have fixed interrupt
-> numbers either in general or for parts of the interrupt space.
-> 
-> The trivial case is that there is a single interrupt domain with
-> interrupt numbers from 0 to $MAX.
-> 
-> But there are cases which have the interrupt space devided into chunks:
-> 
-> hwirq	virq        domain
-> 0-15    0-15        A
-> 16-31   16-31       B
-> ...
-> 
-> To support such configurations in the irq domain world, the legacy
-> domain was added. Similar to that is the simple domain which allows the
-> caller to specify a linux interrupt number from which the domain should
-> start. See
-> 
-> 1bc04f2cf8c2 ("irq_domain: Add support for base irq and hwirq in legacy mappings")
-> 781d0f46d81e ("irq_domain: Standardise legacy/linear domain selection")
-> 
-> for further enlightment.
-
-Thomas - Thank You. I appreciate the time you took to explain this 
-further. I didn't really expect it :) I was more afraid of getting a 
-reply: "Please, go read the code and don't expect others to do your 
-work." :) This explanation and the pointers to commits are very much 
-appreciated!
-
-I think I've seen code where some drivers used fixed IRQs - but this was 
-a long long time ago in a galaxy far far away :)
-
-Yours,
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+>> ---
+>>   fs/jbd2/journal.c | 49 +++++++++++++++++++++++------------------------
+>>   1 file changed, 24 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+>> index f17d05bc61df..85273fb1accb 100644
+>> --- a/fs/jbd2/journal.c
+>> +++ b/fs/jbd2/journal.c
+>> @@ -281,6 +281,16 @@ static void journal_kill_thread(journal_t *journal)
+>>       write_unlock(&journal->j_state_lock);
+>>   }
+>>   +static inline bool jbd2_data_needs_escaping(char *data)
+>> +{
+>> +    return *((__be32 *)data) == cpu_to_be32(JBD2_MAGIC_NUMBER);
+>> +}
+>> +
+>> +static inline void jbd2_data_do_escape(char *data)
+>> +{
+>> +    *((unsigned int *)data) = 0;
+>> +}
+>> +
+>>   /*
+>>    * jbd2_journal_write_metadata_buffer: write a metadata buffer to the journal.
+>>    *
+>> @@ -319,7 +329,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>                     sector_t blocknr)
+>>   {
+>>       int do_escape = 0;
+>> -    char *mapped_data;
+>>       struct buffer_head *new_bh;
+>>       struct folio *new_folio;
+>>       unsigned int new_offset;
+>> @@ -350,8 +359,13 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>       if (jh_in->b_frozen_data) {
+>>           new_folio = virt_to_folio(jh_in->b_frozen_data);
+>>           new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
+>> -        mapped_data = jh_in->b_frozen_data;
+>> +        do_escape = jbd2_data_needs_escaping(jh_in->b_frozen_data);
+>> +        if (do_escape)
+>> +            jbd2_data_do_escape(jh_in->b_frozen_data);
+>>       } else {
+>> +        char *tmp;
+>> +        char *mapped_data;
+>> +
+>>           new_folio = bh_in->b_folio;
+>>           new_offset = offset_in_folio(new_folio, bh_in->b_data);
+>>           mapped_data = kmap_local_folio(new_folio, new_offset);
+>> @@ -363,21 +377,13 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>            */
+>>           jbd2_buffer_frozen_trigger(jh_in, mapped_data,
+>>                          jh_in->b_triggers);
+>> -    }
+>> -
+>> -    /*
+>> -     * Check for escaping
+>> -     */
+>> -    if (*((__be32 *)mapped_data) == cpu_to_be32(JBD2_MAGIC_NUMBER))
+>> -        do_escape = 1;
+>> -    if (!jh_in->b_frozen_data)
+>> +        do_escape = jbd2_data_needs_escaping(mapped_data);
+>>           kunmap_local(mapped_data);
+>> -
+>> -    /*
+>> -     * Do we need to do a data copy?
+>> -     */
+>> -    if (do_escape && !jh_in->b_frozen_data) {
+>> -        char *tmp;
+>> +        /*
+>> +         * Do we need to do a data copy?
+>> +         */
+>> +        if (!do_escape)
+>> +            goto escape_done;
+>>             spin_unlock(&jh_in->b_state_lock);
+>>           tmp = jbd2_alloc(bh_in->b_size, GFP_NOFS);
+>> @@ -404,17 +410,10 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>   copy_done:
+>>           new_folio = virt_to_folio(jh_in->b_frozen_data);
+>>           new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
+>> +        jbd2_data_do_escape(jh_in->b_frozen_data);
+>>       }
+>>   -    /*
+>> -     * Did we need to do an escaping?  Now we've done all the
+>> -     * copying, we can finally do so.
+>> -     * b_frozen_data is from jbd2_alloc() which always provides an
+>> -     * address from the direct kernels mapping.
+>> -     */
+>> -    if (do_escape)
+>> -        *((unsigned int *)jh_in->b_frozen_data) = 0;
+>> -
+>> +escape_done:
+>>       folio_set_bh(new_bh, new_folio, new_offset);
+>>       new_bh->b_size = bh_in->b_size;
+>>       new_bh->b_bdev = journal->j_dev;
 
 
