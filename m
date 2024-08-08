@@ -1,73 +1,59 @@
-Return-Path: <linux-kernel+bounces-279966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2196394C3F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:54:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86EAD94C3FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F73281C64
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:54:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333E61F224F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519C314600F;
-	Thu,  8 Aug 2024 17:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6454A14659D;
+	Thu,  8 Aug 2024 17:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekqd0hqv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lHymnHH+"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0C112CDAE;
-	Thu,  8 Aug 2024 17:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AB8145B24
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723139673; cv=none; b=X260RzfR3fMYVN93NDs4c/w+XkvXQpdJncYAcrcB9SHnkS9Ln3hFKZvyhO2P5671FG/al2Qi1w2WQxWorLIBCnUXRb3uJaFfbMXVIVOpV1aGgnsJrF76CtTibyt4WCpkxHk0kPPtS2HVESAeH7STwVptFakf3Sf6sABENlWtiH8=
+	t=1723139758; cv=none; b=XgnNq0AHX23XT1vJfY0JlRmrJNbGTuztfCB7Lo38Bmp/WG3pIhvmD58DoJ1jE1YaRrm4UMFlUMd5CRpdqlnb1pnXyvieQ+PBgZEHf7wT3BGbtGJhCsFGmHQOEVy5E2d60CY7Qd3zuUD/n7cI3eFVsoQipnoq6u3YRBRy/xmuef4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723139673; c=relaxed/simple;
-	bh=J3H9kOyv2IqWJ6BxkDpHlkp1OGHMwH5Wxp6YCl7+Cqc=;
+	s=arc-20240116; t=1723139758; c=relaxed/simple;
+	bh=8cBJ/OUasyDlaDm+uV6M4jjd+cY/+LKS0yu/8qagYyg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iadxhltGFH7+BMbwUASSjucpQnEebvoQkKmJDEMteE8Gfrqf9aS8mLIDDUlkY7pZ4K0ZozY+Mx0WldU4PCsSUf5pwNvf9HgtaI0U0OMa/5IwudoSIJBYJVy5mS417bPrMISRW7ohFKMSGdTHG5rmDhLpmQIB2JxBFU8PjuSxTNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekqd0hqv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E899AC4AF09;
-	Thu,  8 Aug 2024 17:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723139672;
-	bh=J3H9kOyv2IqWJ6BxkDpHlkp1OGHMwH5Wxp6YCl7+Cqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ekqd0hqv0LzONtXLHWyjhNvQhMVw6kw61Z1HTnfJJm8D+VOLzUjcK7euQYterAm+V
-	 6WyZWYRYPtICBYiWTje3Evi6FA9e4f/uEZO9kW66s8y/czmR1vjqG/mKFi6UbXupwu
-	 JNgA2nnN0nQJGaZN170lM8qwTvVKgih+PNwSsdripnzH+Ph+8du+yP7Q2Oo2Lh8T5V
-	 ZQMnEmuzABbR6HCo3Gmu1xLr6zC3SWCf5XlebM8BKLO7ng1Kww6RQf9mFQoEZyLdlA
-	 MX9tfcSMY+TxbFHZqqZRlINhp1z8esszCfDRUcUN/ItflR8HVvklxr5XpqlOlkMUr8
-	 1hPmX7jVN47Wg==
-Date: Thu, 8 Aug 2024 10:54:31 -0700
-From: Kees Cook <kees@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=WM0Io9M/OvAY9b3N0+5h2uhN4SSnwo1q41ISZ/sjsSEsgLSoNDjvXgf8K5AFpmxpiE+Af1lUbbwhQjv6v6cG3WgL5K8mPo5gf41NagXbWrIGhI9C+D+BsLSWriYLccuNAeJ+I1jwwOBgVWZfv0p7ajkAjarnUTb1rWP9dxmNolM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lHymnHH+; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 8 Aug 2024 17:55:49 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723139754;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DHyamLELFxFvqyuXfn2/colLtUh6a7qi/U4t10FKUEY=;
+	b=lHymnHH+dqyrt+owmksdWDKCRhPs0AE+y6sFwQXdVtonO8WOAhxZzK5l2z3DN5R5n7UC37
+	k/ISQkrwhrvMooAe4gpq4IR3bmVLYto3Klkn80e7zjgbAdbsHSa9dY7mA4NQAnLYt8VmFd
+	l1eSM9M6ectq/stI5676oH8yYrIhk8s=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+	Ricardo Koller <ricarkol@google.com>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH RFT v8 0/9] fork: Support shadow stacks in clone3()
-Message-ID: <202408081053.0EABACA@keescook>
-References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] KVM: arm64: Move data barrier to end of split walk
+Message-ID: <ZrUGpZVnUN1NaVga@linux.dev>
+References: <20240808174243.2836363-1-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,67 +62,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
+In-Reply-To: <20240808174243.2836363-1-coltonlewis@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 08, 2024 at 09:15:21AM +0100, Mark Brown wrote:
-> The kernel has recently added support for shadow stacks, currently
-> x86 only using their CET feature but both arm64 and RISC-V have
-> equivalent features (GCS and Zicfiss respectively), I am actively
-> working on GCS[1].  With shadow stacks the hardware maintains an
-> additional stack containing only the return addresses for branch
-> instructions which is not generally writeable by userspace and ensures
-> that any returns are to the recorded addresses.  This provides some
-> protection against ROP attacks and making it easier to collect call
-> stacks.  These shadow stacks are allocated in the address space of the
-> userspace process.
-> 
-> Our API for shadow stacks does not currently offer userspace any
-> flexiblity for managing the allocation of shadow stacks for newly
-> created threads, instead the kernel allocates a new shadow stack with
-> the same size as the normal stack whenever a thread is created with the
-> feature enabled.  The stacks allocated in this way are freed by the
-> kernel when the thread exits or shadow stacks are disabled for the
-> thread.  This lack of flexibility and control isn't ideal, in the vast
-> majority of cases the shadow stack will be over allocated and the
-> implicit allocation and deallocation is not consistent with other
-> interfaces.  As far as I can tell the interface is done in this manner
-> mainly because the shadow stack patches were in development since before
-> clone3() was implemented.
-> 
-> Since clone3() is readily extensible let's add support for specifying a
-> shadow stack when creating a new thread or process in a similar manner
-> to how the normal stack is specified, keeping the current implicit
-> allocation behaviour if one is not specified either with clone3() or
-> through the use of clone().  The user must provide a shadow stack
-> address and size, this must point to memory mapped for use as a shadow
-> stackby map_shadow_stack() with a shadow stack token at the top of the
-> stack.
-> 
-> Please note that the x86 portions of this code are build tested only, I
-> don't appear to have a system that can run CET avaible to me, I have
-> done testing with an integration into my pending work for GCS.  There is
-> some possibility that the arm64 implementation may require the use of
-> clone3() and explicit userspace allocation of shadow stacks, this is
-> still under discussion.
-> 
-> Please further note that the token consumption done by clone3() is not
-> currently implemented in an atomic fashion, Rick indicated that he would
-> look into fixing this if people are OK with the implementation.
-> 
-> A new architecture feature Kconfig option for shadow stacks is added as
-> here, this was suggested as part of the review comments for the arm64
-> GCS series and since we need to detect if shadow stacks are supported it
-> seemed sensible to roll it in here.
-> 
-> [1] https://lore.kernel.org/r/20231009-arm64-gcs-v6-0-78e55deaa4dd@kernel.org/
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+Hi Colton,
 
-Reviewed-by: Kees Cook <kees@kernel.org>
-Tested-by: Kees Cook <kees@kernel.org>
+On Thu, Aug 08, 2024 at 05:42:43PM +0000, Colton Lewis wrote:
+> This DSB guarantees page table updates have been made visible to the
+> hardware table walker. Moving the DSB from stage2_split_walker() to
+> after the walk is finished in kvm_pgtable_stage2_split() results in a
+> roughly 70% reduction in Clear Dirty Log Time in
+> dirty_log_perf_test (modified to use eager page splitting) when using
+> huge pages. This gain holds steady through a range of vcpus
+> used (tested 1-64) and memory used (tested 1-64GB).
 
-(Testing was done on CET hardware.)
+Would you have time to put together a patch for the dirty_log_perf_test
+changes you've made? This would be quite valuable for testing future
+improvements to eager page splitting.
+
+> This is safe to do because nothing else is using the page tables while
+> they are still being mapped and this is how other page table walkers
+> already function. None of them have a data barrier in the walker
+> itself because relative ordering of table PTEs to table contents comes
+> from the release semantics of stage2_make_pte().
+> 
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+
+The diff itself looks good to me, so:
+
+Acked-by: Oliver Upton <oliver.upton@linux.dev>
 
 -- 
-Kees Cook
+Thanks,
+Oliver
 
