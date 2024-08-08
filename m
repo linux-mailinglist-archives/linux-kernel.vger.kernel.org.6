@@ -1,213 +1,201 @@
-Return-Path: <linux-kernel+bounces-279832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DC194C25D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:12:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 927A994C25F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6691F24298
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:12:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 832A81C22211
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD3818FC99;
-	Thu,  8 Aug 2024 16:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C22618E02A;
+	Thu,  8 Aug 2024 16:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgI8nBpW"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jWffMtFu"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2056.outbound.protection.outlook.com [40.107.249.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A395B18E743
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 16:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723133566; cv=none; b=HnWwd2W76k9O6i5v2/oz89d1ZkRFr5RyeoLmZ0W66bxtqInT0BvFn/uQeGSOqNEIW9sjO2+o1qyPA8sq1iFMpo4sqA1Ru3aNIuT0eXjwm2uNZGKyXuuSNVJZvKNzpc81qdk1CMymRtB+FV9jUJshpcL0UuEdsllFYbRqnsvdTmc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723133566; c=relaxed/simple;
-	bh=gyPAB3oe+L39mKF4x8mc84RHFko1+s6nUX5Si7AG7+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m70u1W8GHuAV3N/M0TVXXrP1rQXhDTSn97zsMozQGKywl9p81qH0LQj+WOtHp5ZZBhkaaXitCi9MrsOQD5/KaQguGs56MTu8eqHYVCt9no35PncIeeWaGpqjxEMpwNHTLCT/M/e2h0f4PaOIr0B8hWz5FxAaSSguSbY/dadKCbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgI8nBpW; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-368584f9e36so512605f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 09:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723133563; x=1723738363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9sMXnmSS5qxZThRe1pr+22qASOYPaMxsbUL8t/p0LOk=;
-        b=bgI8nBpWHprHKfZcLs+IH+UMwx1WjbvCIMoN6kMCfTvg/XGWLJawQpHZSOzp9WUOAA
-         bGcWK3+hZgIGm4hN23gJ5v3edumESjvOgQtWZ9/2/aAdK4df0+ZNoEdiHzQXywtOQpOv
-         K/b/vo8TPXsoJBWYkdk0SSRgglEweaTMBPyW/qjL1wG6nt0s5sAGLhAsSy5RUyb98Xd2
-         XmyGu1nzddxxLIoh22WLGVGvccHiX+rGWTp5V493yjxPC4ovgZ8eTrQWlHVuj3Z21cL0
-         Z/LU5NH1ElQ/WNfn9f1JRWr/C1b8iUrsn5tX1r4RxFlGYmEt/hfQC2DP3LUk/OwG0aio
-         Bn8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723133563; x=1723738363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9sMXnmSS5qxZThRe1pr+22qASOYPaMxsbUL8t/p0LOk=;
-        b=jewGZE3uKHgzNPoNcJTYGaLLdNOxXcYalISFWOqX4ubo/2Jy7XyJkZ0idMoKHZaOWV
-         UnIUsEC4EW37GAExy/f4yResNxpNjYouhMthGE6n2Uyn/j2SrKAe+LGnaP4BJAXmFFd5
-         GqcXdNHlFFghtcAEUF0rdp6Zzn7vYhKSaDSPExbVMq2Ic27dnUIA0HkV/MdanhjFFIG3
-         C9S/n1Ww/a6PONuCUUHwCbjyA12Kx1kV7/hK1LuLfWNB19ANDuLqbLolAjPK35IM98Dj
-         MW2V7kIFXpQT/wQVa4AV2JDikjABcI63xNcZnLuhYfJC+jlHw1KolAfvW02jJLJmCqHv
-         zHNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1zyvbPMlezzjpboXtzAXFXzwjL2BnBLiGwCdrLnxLWfqxDlRJf2LLYV0L80qnB8x+jYvOGjL0EkmQx/G9Q7q4EVptCZl4yXpVKyxU
-X-Gm-Message-State: AOJu0Yz0ts6wNGueixFBYjKfwQ0oC592btzT+qQZEH26YO2OZOPLCw2o
-	jvdzp3gSMQtYYX87ZHzSjl/s3qhxSVsm87SfoD+ElCx6cO8rL8rIE9tn+lyhxteqJOyj63OQWR3
-	gV9/Nivn/rCw2jwv7CpCvsY9aR9g=
-X-Google-Smtp-Source: AGHT+IEdiZMBtJngrto1ht27v/5JHnPvqtCkJYl13Qwly4qrnmowSTl1Mh/8E4AvT5zWqzVDC+a/YACAR13VIfjPmrM=
-X-Received: by 2002:a05:6000:e02:b0:367:9881:7d66 with SMTP id
- ffacd0b85a97d-36d2755f55fmr1539058f8f.41.1723133562567; Thu, 08 Aug 2024
- 09:12:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652991A269;
+	Thu,  8 Aug 2024 16:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723133717; cv=fail; b=c941eBwuVQbcoj/IURPXj+0Xp33fhuCvzDqU+1edeznUgDs97GES44rbi+JdaIja49bsr8zmJ9pT6zOUmnjd3CaPVYCZ54R4PZ0VmyD+FKOi10ABpPPHJ1ikC+92qHxhuA1ldqYyEKRdQbUEV+BqS1An86/DokwCxrTITUzIpAo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723133717; c=relaxed/simple;
+	bh=VIifYJygM2ej+DFM5KwMS3g9Liop9KoinjPXE8mtE0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=VI08CuvOmSSbdzwMKESSTTshkJYt84Xr1fUqvoCKL1SK9dQ2bcrCC/TNYRHJLEt9/1BGSXRGfyCDoA9eYum1tOAA/Qwnvc+FpfwoA0yZdV2yGHIWzWTPxnoHjpezhzfQXhs85hBnswQTa48BimyP3M/mdCmxaSJyChf15VFAWHs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jWffMtFu; arc=fail smtp.client-ip=40.107.249.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Qd2S6CH8H0YDtRjH0bXiZd0FA4SqsOrdcXZ2Aru0lkgLJmwbpekL3leeIaa8S2bKxlAeTuTmh5JU0zFteQ55PZY2xF7uZ1uQ6Txqnhph9V6vKoo3ZAOU8GyF31SaxQrBofL/DMCu/d4CYLeoL7nunF8ig0z4WZzrxjV53LV7IxM73qQ1PyUtIp7i/6H+GJ8568cTbz+cLbTLarw3S9Bq1SivSGAUFKfjvmKOLdVnHnuXgLX+pohXUTktr2+KraDVKUhSH46Y/+JVoywr7RytjC4g+Im8JxJxDpz7X/JPv5DY0jQchRWTaXlb5zfaf1zLaeXlRbPsbpE9HrgG3WnjXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VIifYJygM2ej+DFM5KwMS3g9Liop9KoinjPXE8mtE0Y=;
+ b=rIOp2WoH8WhCtqtmkLrJcazFyPNpelPHv2et4cazKPAKbAHwG6a9hH5B4R2FPNHix9hWAHH8+BLngJc+dPCATk6hunqhQCAqAM4VcOpO6Li25vt902clcHBvg70JRXtn6xUwsHiz8WTUjXtA7Qq6E0xtFwTS+mI2EeRpOga7q0qZMvIymwl5R09L78FX/nadpHzVjuC7YIql1RWzO6MIaHc8/tifWoxTuN/LBw49INdpZJ0QK+0pkivdAMY7zMkzEk8vu0vPRnl2fiZ6rJ6KxbobXtdVw7HK3cCknUYxOD5G+ZhEaVMRffQwPfa9VNdEET/sNq8PT1TiQ19GmgfaZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VIifYJygM2ej+DFM5KwMS3g9Liop9KoinjPXE8mtE0Y=;
+ b=jWffMtFutvJdpLWkrYQa9QGA31fYHvVV1Ah/UCdRGvtmDqUhEPCLl+cw/z64UFhrx7th1O+FTu5SVafrZ16kGdxWryVsPITb0oADG3YxacBOzhAQHdWobGjNCG/Xe1t2NH+dbrlsd/4ZPZtErlw8U9jeP6Pn2ov+H3QjIjrUpdHzkDAp3zm8a/nKM1Ig9/OWsShycWdxjciV9CuqPACvBnycC5NTcbboQHQwCd9xzi97U4qYAvwqP4aAHISJs5Y0ZQ83LvpBm8BBzfXwn+1KfWWcvFmtAw15rEStpsmoMoH35SIJ6J+Y5sRWs93vsG/sCyupFG7mlAvpYCFBRBkFxA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI1PR04MB7037.eurprd04.prod.outlook.com (2603:10a6:800:125::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.12; Thu, 8 Aug
+ 2024 16:15:11 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7828.023; Thu, 8 Aug 2024
+ 16:15:11 +0000
+Date: Thu, 8 Aug 2024 12:15:03 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] arm64: dts: lx2160a: Change PCIe compatible string
+ to fsl,ls2088a-pcie
+Message-ID: <ZrTvB/3GGIhEOItT@lizhi-Precision-Tower-5810>
+References: <20240808153120.3305203-1-Frank.Li@nxp.com>
+ <20240808-frosted-voicing-883f4f728527@spud>
+ <ZrTphsdTZVsbiGo/@lizhi-Precision-Tower-5810>
+ <20240808-linoleum-evasion-ad7111a2afc4@spud>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808-linoleum-evasion-ad7111a2afc4@spud>
+X-ClientProxiedBy: BY5PR20CA0002.namprd20.prod.outlook.com
+ (2603:10b6:a03:1f4::15) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808125430.1172152-1-longman@redhat.com>
-In-Reply-To: <20240808125430.1172152-1-longman@redhat.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Thu, 8 Aug 2024 18:12:29 +0200
-Message-ID: <CA+fCnZdWgAD1pu4yyjON0ph9ae1B6iaWas0CbET+MXLNNXt5Hg@mail.gmail.com>
-Subject: Re: [PATCH v3] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is enabled
-To: Waiman Long <longman@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB7037:EE_
+X-MS-Office365-Filtering-Correlation-Id: c2bb61d5-6810-460f-8421-08dcb7c54722
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LbOR8rl0JGuv+s8kFRnEyAkAIJCc4GHfwGQQA0E/cAfy1ZDXIk7qSoIOkm4u?=
+ =?us-ascii?Q?/uTnElahMU74Lhd++oC6bhOuawmuU8nXu6sFMLgyFHwNchDHf4BvfXv6HDoo?=
+ =?us-ascii?Q?0otAiE696sx+vaECJLb6mlSLc6r1UFeWMUFtZmDcK6HkOwqfM57hLD6Wx5gC?=
+ =?us-ascii?Q?04+6+8TKwTJonmc4n1/cz/NGMEDwoSw2kQyYb1idJpB6X9Te98HRh/NglybQ?=
+ =?us-ascii?Q?KsZIWtAR9KkkNAcwZ2X8pXyqYAffTAawGWQFz59tBoO59unV5zVUlDQTO/FF?=
+ =?us-ascii?Q?XpZhZ6M3GPcARz1CHPHu7+fS3e4D0C+lmXMxPES0qbfF6jL5BaygWuy4ZxQe?=
+ =?us-ascii?Q?WbZoV0ASnZfDv521rLlF+5rdIGW0GDrpn+O+qEVhk8A2YBoMmQHae4HwCa6d?=
+ =?us-ascii?Q?/gTvux5ZzfoqdaBZ46E5jwHkt1CmDNz5DmcCL3U0I6wQXI32SUH2yR46O5Ho?=
+ =?us-ascii?Q?b/n3k5xzPxybZrpkCBFrBUulc1iA10B8kAZUw+7BrvjvdxkPUCWnJewJuW8v?=
+ =?us-ascii?Q?zchN7PyQ/VHJ0P3JCGysZkjMfT9bvVqYqnnJECArBZXBKGGvkCgF08VJf1Qk?=
+ =?us-ascii?Q?w5jiFVCvuKDx5V9peuSUpLwNsUI2geXW0NW9IrjUxGgJVVQyfgjBqTDImTG2?=
+ =?us-ascii?Q?8bxakBrextUNLn4qt6DTxMfqB7ZY8zCtH7tiqbZJZpO+xtAkLz4Ppq8Xu86W?=
+ =?us-ascii?Q?nauyHRnIbrsnh7U0CUL6EDWlbVS1mD1Nf9byAwe1rIuIB1dO84xfdam8uUDW?=
+ =?us-ascii?Q?Ovk42j/VODRpzFgcIz3zIeA9ZHA22uvySInyQ4AaAI11SGUKPl/MwqaZ/601?=
+ =?us-ascii?Q?LasTQuBLmG8Lct0IwgRAzJBiqwwcJq52AiTwd4+ZceJmsHWrlJiof/goIePq?=
+ =?us-ascii?Q?yApHHO6B/ifnlrV6gTF7zZwfqQT5kxnTyKiYfFjo7EagMuz9eejjITmf0+0/?=
+ =?us-ascii?Q?AHH1g0C7JBC3lqXVQVbRI//npfOJCuAZ+jMGuVaQbky1GS7Jv0H/tpG+X7Yg?=
+ =?us-ascii?Q?C3ZgZE+kCWxiZpaMZ451qCh6F62EiUbT4K3YGEQkSGvGaIVkDbXAzHXFlEKM?=
+ =?us-ascii?Q?pXKQIH+HYAlaSMtShyXWDYzQErKRTZ10BH/7Sajiv1GWKDYqVUCsOdxQAp03?=
+ =?us-ascii?Q?fqVpJ+Q7/j0F3GX/MIqscCrVb85r/+q5MMXKQAwCN3khGAIhzt8a3eG26RbB?=
+ =?us-ascii?Q?U7oDUQMBFsVLHmCTVH4UJ9Og5o3Ln6kOYvAkTtkTUvkncziSlEymVsCJMCW6?=
+ =?us-ascii?Q?Nnyrhv8+Gn84ClUS+GwLLnmU5JaFXDqOglAUwgjfl5C0tQ5Py7LdMJguuto+?=
+ =?us-ascii?Q?URL4MkpGnfRfBfA+ArWtcbex6IKZOKz0eIypVKSLvVOaGy8BhSH52GHZgHIa?=
+ =?us-ascii?Q?kdv85F1Rk5xJNkJFKRmYlAJ4+ePKuHswIrinw7KXb9xA3e7CTA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xslZ/oiqvSmsPh3yV9/1kooa5IoI8zlgza6nS56wJQ8x+znwRu1EuNLxrlSV?=
+ =?us-ascii?Q?SQy60v4/HR14BOuf6kL/bbfhksk2Lax4dKIE4U39Up56S+D+TUnfEXwMtf/j?=
+ =?us-ascii?Q?jMlY5UNPMw1rQugVWvMguTuT/Bf8A6cy1psUpqRrBZJI4nF8G3lLWyeH81Rk?=
+ =?us-ascii?Q?G/U/CRZ9tzDSVoTMKKc2xVV/SVASqcOBjNeVpZZswNAe18m1HGg7xRBZAXde?=
+ =?us-ascii?Q?v4FIGSqyiUmNUNWV/gSap1y3iW2mP4wUSwlScPUNvmocvglLneEg00DuKowl?=
+ =?us-ascii?Q?c4jF9XK0bwZfpYAsE1bA7gVKB0W4TbrOcT5f7Q7dt35bG+ayz+ZG/yb5AqPg?=
+ =?us-ascii?Q?XhGE5IxLJju9rmPHXiI2rtlngZ4fB/jigF5SlJStphf95m88TTiqvXNFIGSo?=
+ =?us-ascii?Q?IXBtP4ixa7XOIGriiegg+puciLGny3KBgf9EyTtcASDeZ5mdKY7TUBL5CUWB?=
+ =?us-ascii?Q?NQWohkDOBJEdb1j/M1RIQauWKGeCKMK1+St365k52613rxGydXfJooLmO9mV?=
+ =?us-ascii?Q?6itPKol/wnsjwMmsr7Hzx1d3Q3vGMx2is1GkVYuoOT6VKWBu9WdwGmk7evDq?=
+ =?us-ascii?Q?DtOKrcR2NjnICIgDYBiUmgerteKQPIIOSwVkHOpWv8dyuAyMJ3mcNhxp9xJH?=
+ =?us-ascii?Q?u6vlhxidTZkNihC5ApmABGlZ8QYhPdD5BEXBTm7nV7zCfWo74dzhf8mjx5Mt?=
+ =?us-ascii?Q?a5EFDieefzTJ1xSmTExQWn4sgtlnkvDP5tn617OQZ3qEgyY5P8cC5wBNOM5l?=
+ =?us-ascii?Q?gGVoy+0bpz1bPXeAfVu20dHSsDFq+9H3AefB7xW3BsXwdZorcm1hd5U8Lq8Y?=
+ =?us-ascii?Q?R47NMKUSUPiI/kHl9wunbivjrbbHdWmW7uETJfbyomeSRFCxzUIUL4N+/9fJ?=
+ =?us-ascii?Q?8RHSIJe6ocRbCR9OtcgVENVSABN8cRDk6Jy5E5sKHHBrWXjCeFzyNw5Hf0EM?=
+ =?us-ascii?Q?llw5ATsAg103d95GgTLILSOvklPuzmyt+frOqsT7NEFE05SliW5CPaJMmUF6?=
+ =?us-ascii?Q?qwF6aSMD4Z6EFd4BID2Gdpcjq3Exdkxqx7bXwto58ONKsc25AZ2Ek+NS0LIk?=
+ =?us-ascii?Q?w/p0XvUyVaerPQbpqrOSt6kGdaWkyKrgxFuVpdKajh4bSd7ttVR2mDWcuV8n?=
+ =?us-ascii?Q?niFLRl1W5L8SR5k4xC+oF2HFIvWJiHc+WtMzhXQntgn6yNkH6ZVxnKQB9kIy?=
+ =?us-ascii?Q?kMzhF4Cx+zPxPmtdZTbkBJi3I6ajcbsREgZy1RwScgXHmsUT4usa9He/evnz?=
+ =?us-ascii?Q?BaF8r5U+HgEozK7gtqoLMcZwfX8ruJJnm7uSU4fSqJhmNkFQV1Cx03XFC8iO?=
+ =?us-ascii?Q?9ZNdvVyHEVnM7vtj57aQFtuarn0Gh/plru3jwQ8dHuvjVBDhYFACp28QvV6+?=
+ =?us-ascii?Q?Jm2OuEcVC/FyVby4BoBOgYc85oA8WLazik1jOKu8S8vxOzQVcwg2dm/FzQcU?=
+ =?us-ascii?Q?rx9TWrz7E/DbQuVoUosDYLo2XhVGkOUHdJYqNrLlCDNol3chJQPKXnjjlKbi?=
+ =?us-ascii?Q?tVsZm70Gi4g/VcfwKuCcWHZYxzqB1Xh4IHjyR1FFauAOFYeB0sknrAtFkn7A?=
+ =?us-ascii?Q?WX5cPrHShw2lse9HR7I=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2bb61d5-6810-460f-8421-08dcb7c54722
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 16:15:11.0396
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tbb6/27ItlDJS8GFgwcMXXYTjoeyQLy8fgFQ+Dq9HR1OIRmQJBxIvjHkDtJ9h7qTEqXiFYvm0t3JYP/BEnSqTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7037
 
-On Thu, Aug 8, 2024 at 2:54=E2=80=AFPM Waiman Long <longman@redhat.com> wro=
-te:
+On Thu, Aug 08, 2024 at 04:55:14PM +0100, Conor Dooley wrote:
+> On Thu, Aug 08, 2024 at 11:51:34AM -0400, Frank Li wrote:
+> > On Thu, Aug 08, 2024 at 04:34:32PM +0100, Conor Dooley wrote:
+> > > On Thu, Aug 08, 2024 at 11:31:20AM -0400, Frank Li wrote:
+> > > > The mass production lx2160 rev2 use designware PCIe Controller. Old Rev1
+> > > > which use mobivel PCIe controller was not supported. Although uboot
+> > > > fixup can change compatible string fsl,lx2160a-pcie to fsl,ls2088a-pcie
+> > > > since 2019, it is quite confused and should correctly reflect hardware
+> > > > status in fsl-lx2160a.dtsi.
+> > >
+> > > This does not begin to explain why removing the soc-specific compatible,
+> > > and instead putting the compatible for another soc is the right fix.
+> > > Come up with a new compatible for this device, that perhaps falls back
+> > > to the ls2088a, but this change doesn't seem right to me.
+> >
+> > It can't fallback to fsl,ls2088a-pcie if fsl,lx2160a-pcie exist, which are
+> > totally imcompatible between fsl,ls2088a-pcie and fsl,lx2160a-pcie.
+> >
+> > Previous dtb can work just because uboot dynamtic change fsl,lx2160a-pcie
+> > to fsl,ls2088a-pcie when boot kernel.
+> >
+> > fsl,lx2160a-pcie should be removed because Rev1 have not mass productioned.
 >
-> As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
-> capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
-> for all kmalloc/kfree calls. So stackdepot capacity was increased 8
-> times to accommodate KASAN usage even thought it was claimed 4X should
-> be enough at that time.
->
-> With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
-> for stack records"), all stackdepot records uses a fixed size with
-> CONFIG_STACKDEPOT_MAX_FRAMES (default=3D64) entries. This is merged to
-> support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
-> use variable size records for non-evictable entries") re-enabled
-> the use of variable size records for non-KASAN use cases, but KASAN
-> (generic mode) still uses the large fixed size stack records.
+> Please re-read what I wrote. I said to come up with a new compatible for
+> this device, not fall back from the existing fsl,lx2160a-pcie to
+> fsl,ls2088a-pcie.
 
-No, since commit 711d349174fd ("kasan: revert eviction of stack traces
-in generic mode") Generic KASAN doesn't use fixed-sized slots.
+According to my understand, It needn't add new compatible string if nothing
+difference. for example, it use fsl,vf610-i2c for all i2c without add
+new soc-specific fsl,lx2160-i2c.
 
-> With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
-> stackdepot space had been more than double than before. Assuming an
-> average stack frame size of 16, a KASAN stack record is almost 4X the
-> size of a non-KASAN one.
+So far lx2160a-pcie is the same as ls2088a-pcie.
 
-So this is not correct.
-
-> When a wide variety of workloads are run on a debug kernel with KASAN
-> enabled, the following warning may sometimes be printed.
->
->  [ 6818.650674] Stack depot reached limit capacity
->  [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot=
-_alloc_stack+0x39e/0x3d0
->    :
->  [ 6818.650907] Call Trace:
->  [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
->  [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
->  [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
->  [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
->  [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
->  [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
->  [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
->  [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
->  [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
->  [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
->  [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
->  [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
->  [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
->  [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
->  [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
->  [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
->  [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
->  [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
->  [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
->  [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 =
-[xfs]
->  [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs=
-]
->  [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
->  [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
->  [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
->  [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
->  [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
->
-> With all the recent changes in stackdepot to support new KASAN features,
-> it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
-> enough when KASAN is enabled. Fix this stackdepot capability issue
-> by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
-> maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
-
-It is possible that the stack depot runs out of space due to a truly
-large number of unique stack traces, but I would first make sure that
-is indeed the case. The one thing to check would be to dump all the
-stack traces from the stack depot when it overflows, and check whether
-they make sense. There have been cases in the past, when e.g. the task
-context part of a stack trace from an interrupt didn't get stripped
-properly, and thus almost each stack trace from an interrupt was
-considered unique by the stack depot. Perhaps, something similar
-started happening again.
+Frank
 
 >
-> Also use the MIN() macro for defining DEPOT_MAX_POOLS to clarify the
-> intention.
->
-> Fixes: fc60e0caa94d ("lib/stackdepot: use fixed-sized slots for stack rec=
-ords")
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  lib/stackdepot.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
->  [v3] Include <linux/minmax.h"> to avoid potential undefined macro proble=
-m.
->
-> diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-> index 5ed34cc963fc..1f1673b357b5 100644
-> --- a/lib/stackdepot.c
-> +++ b/lib/stackdepot.c
-> @@ -20,6 +20,7 @@
->  #include <linux/kernel.h>
->  #include <linux/kmsan.h>
->  #include <linux/list.h>
-> +#include <linux/minmax.h>
->  #include <linux/mm.h>
->  #include <linux/mutex.h>
->  #include <linux/poison.h>
-> @@ -36,11 +37,12 @@
->  #include <linux/memblock.h>
->  #include <linux/kasan-enabled.h>
->
-> -#define DEPOT_POOLS_CAP 8192
-> +/* KASAN is a big user of stackdepot, double the cap if KASAN is enabled=
- */
-> +#define DEPOT_POOLS_CAP (8192 * (IS_ENABLED(CONFIG_KASAN) ? 2 : 1))
-> +
->  /* The pool_index is offset by 1 so the first record does not have a 0 h=
-andle. */
->  #define DEPOT_MAX_POOLS \
-> -       (((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
-> -        (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
-> +       MIN((1LL << (DEPOT_POOL_INDEX_BITS)) - 1, DEPOT_POOLS_CAP)
->
->  static bool stack_depot_disabled;
->  static bool __stack_depot_early_init_requested __initdata =3D IS_ENABLED=
-(CONFIG_STACKDEPOT_ALWAYS_INIT);
-> --
-> 2.43.5
->
+> Thanks,
+> Conor.
+
+
 
