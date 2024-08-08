@@ -1,110 +1,132 @@
-Return-Path: <linux-kernel+bounces-279435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BC294BD4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:24:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D71894BD54
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 14:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B240E1C21EED
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:24:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1B13B23056
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E2B18C35F;
-	Thu,  8 Aug 2024 12:24:20 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 9D8A9156220;
-	Thu,  8 Aug 2024 12:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D1718C912;
+	Thu,  8 Aug 2024 12:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="LNtf2SjJ"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F9B18C348
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 12:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723119859; cv=none; b=Ssl2k7tBD6/Ot4tJlIvBcEb3yxrOhanCY/X/MORSyCI0j3wNhbADUIXP9z2udlax6pddw8USIBuFxUiR1OrLVgeb9QAl/VVmr63JsmAKGB/g8B8FeurUEDQEWwA1F0A7LDQ4xcTW1ixd9PkuQysY3p9/FRy/gkYZmBLMzyc4hv8=
+	t=1723119898; cv=none; b=fIGXbXGk4Z7dFOlMOA3hosHqHDaCPXT2TbIr3LiJnu07OmBeKZj9PAwm3Ec9wcIERq0x3FdQPdLt0cL8S8nzDQmHlfEvYkru8+3xAer2j0StaYE3bEA0zJEydUXv+p5znzlZhOy8KSaO3qveaTLbfUMIJTLUMOLA3rrCyZpHikk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723119859; c=relaxed/simple;
-	bh=SXys11+xLoBsHco0MZl/A5tIPMtTS+9EsXL6IR3Hvxk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rieHxcu8WFJ5cQD5DSkuLIe7dwPqlcYeDF+jFDSzLiSITxqu/5bKh3Dk/mFMEbPmBwpZFKUHik+gY7mywcbONNf3t0FO1vLkLDHndNnakSjNjJIlZCOxmAWRgWyGtdRsZhL9P4+viNqHnUO+Ph2zPGsS+ErjfMBGCcRQ3F9yOas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C603B60C7B26D;
-	Thu,  8 Aug 2024 20:23:45 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: sfrench@samba.org,
-	pc@manguebit.com,
-	ronniesahlberg@gmail.com,
-	sprasad@microsoft.com,
-	tom@talpey.com,
-	bharathsm@microsoft.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: Su Hui <suhui@nfschina.com>,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] smb/client: avoid possible NULL dereference in cifs_free_subrequest()
-Date: Thu,  8 Aug 2024 20:23:32 +0800
-Message-Id: <20240808122331.342473-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1723119898; c=relaxed/simple;
+	bh=oEuWZae036GQ7jXBrMcJ89tlNiHxMOCogZ5ebECNtmQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QMhsbLwxIYkbIK+0ruANgWlLlL9jeNGb1iACDZ3QYcRn8UdgO7MEMW0xHwyR2Kfm4uX+zR2HUojbWrGCbXgRQEadNZxpFXjuvbDNOi0cHaaGFeLO0GmiuE5H98pQ1+9B3b5OFH2AkzpR4ePAdg9ak3LIsPWmcmgpbDkcEtZOkl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=LNtf2SjJ; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d1c176635bso461569a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 05:24:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1723119896; x=1723724696; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rfAfcdXAF2CMiBj/87aqcHqpCcyX1shZ8yk7dz5R1uE=;
+        b=LNtf2SjJLYdsaPx7VLojoda/3Kbcgx30u7UpKXvxgE+C1MBnheUJp4JzpeU3titslf
+         JZLkLG5RoItHjrDc8RP6dEr232gerQ+x2nT1fogmcFr/w0KvX/6sFFBABHqc95noJUQZ
+         6b7zlRrQLJ6Knw/O097tLkRDZtfbD+96DEQtqVCS0IzAultCFexgIxGCHvSJ9xVvqGZ1
+         on+O0gK/iVEFkJOWf8MOTEj9B3BMjiDKJG5WVCNnovGd8pCufa/tGlYhU+/wGPrjuiWK
+         JLb8QMa7y+QYzbGCqSqxNCaFUwzHX0U6WL10PW2Hg5SECiKlBUccv672YDyHr5EPNAmr
+         lDgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723119896; x=1723724696;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rfAfcdXAF2CMiBj/87aqcHqpCcyX1shZ8yk7dz5R1uE=;
+        b=SuQmSxHBlefz+mpxvrTS4TA99OaCQiS5hdwGXnMdBHqJf3aTdMVqJ7NzU4jXIK4Sw0
+         +ehSb5xFUpvEcncArNfqGpi3x0OUu5GsqYyo2ZVQl2RHfHQvo/zPbC8eWlX2JqBYf1gj
+         KX3ghyo7gix2NUDoCh0VC9AK3dFXWuFiCSNgoK5buWlwDcRMGj18l7FmJdGOHsadZTlf
+         JTQOzFcHRX2Hel8vMk4KYKdkCsqyHzg4zkSTpHkqJbxAZjj9AN9go4EXaHTrEn6Q+uyj
+         73XccxKgNl/sf4286oSSpfrzBuEOJdUn72KLFify+Tq9ur13nq5enVOw1NQycYj4136d
+         /1vA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGdoWkcFKkJt6LsA3/sYrR88oi2NcxOUKe37FXvq3OtFSOqhDHa2prRl3YasciXa/S92HyIB3WXXvMEHyghhJqcnDw4Rjm5sbU517r
+X-Gm-Message-State: AOJu0Yycnlovr/wi/wKBBDOhNxt59TREuhwkKgbnVwfwoiFfDu33c3v+
+	d5dD2xx2SwU2aTKPEnmEKFD5M/CHe0ksKh03fRLiWhKAADcpWx/kFL+CpTm1tUiXzgNTbOZA4EW
+	nPlzYTaFzFSt03x9vwCmIV05hnd/RDPcKzoi/NA==
+X-Google-Smtp-Source: AGHT+IGZfCQrsBQaBp8v+W2s/fAHN32pPPoANaguDaxiXXrdG2KlTFuQjIkgMbIJzL0P5hzPmIHrN+c6QDv66p+Xf3Y=
+X-Received: by 2002:a17:90b:4aca:b0:2c9:96fc:ac54 with SMTP id
+ 98e67ed59e1d1-2d1c336efb2mr1862632a91.2.1723119896355; Thu, 08 Aug 2024
+ 05:24:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240807150019.412911622@linuxfoundation.org>
+In-Reply-To: <20240807150019.412911622@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Thu, 8 Aug 2024 21:24:45 +0900
+Message-ID: <CAKL4bV4CXPtyD9Jj5wmUjMnmNgre5UVtmVj-hGAWA7VjRJrzsA@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/121] 6.6.45-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Clang static checker (scan-build) warning:
-	cifsglob.h:line 890, column 3
-	Access to field 'ops' results in a dereference of a null pointer.
+Hi Greg
 
-Commit 519be989717c ("cifs: Add a tracepoint to track credits involved in
-R/W requests") adds a check for 'rdata->server', and let clang throw this
-warning about NULL dereference.
+On Thu, Aug 8, 2024 at 12:07=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.45 release.
+> There are 121 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 09 Aug 2024 14:59:53 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.45-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-When 'rdata->credits.value != 0 && rdata->server == NULL' happens,
-add_credits_and_wake_if() will call rdata->server->ops->add_credits().
-This will cause NULL dereference problem. Add a check for 'rdata->server'
-to avoid NULL dereference.
+6.6.45-rc1 tested.
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- fs/smb/client/file.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index b2405dd4d4d4..45459af5044d 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -315,7 +315,7 @@ static void cifs_free_subrequest(struct netfs_io_subrequest *subreq)
- #endif
- 	}
- 
--	if (rdata->credits.value != 0)
-+	if (rdata->credits.value != 0) {
- 		trace_smb3_rw_credits(rdata->rreq->debug_id,
- 				      rdata->subreq.debug_index,
- 				      rdata->credits.value,
-@@ -323,8 +323,12 @@ static void cifs_free_subrequest(struct netfs_io_subrequest *subreq)
- 				      rdata->server ? rdata->server->in_flight : 0,
- 				      -rdata->credits.value,
- 				      cifs_trace_rw_credits_free_subreq);
-+		if (rdata->server)
-+			add_credits_and_wake_if(rdata->server, &rdata->credits, 0);
-+		else
-+			rdata->credits.value = 0;
-+	}
- 
--	add_credits_and_wake_if(rdata->server, &rdata->credits, 0);
- 	if (rdata->have_xid)
- 		free_xid(rdata->xid);
- }
--- 
-2.30.2
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
 
+[    0.000000] Linux version 6.6.45-rc1rv
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240805, GNU ld (GNU
+Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Thu Aug  8 20:02:46 JST 2024
+
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
