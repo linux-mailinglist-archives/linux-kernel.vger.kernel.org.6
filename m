@@ -1,177 +1,118 @@
-Return-Path: <linux-kernel+bounces-279884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B85094C300
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:48:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F4894C2FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 688C0B247E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:47:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38A1E1F212FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DE919004E;
-	Thu,  8 Aug 2024 16:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="TDR04Xer"
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9173F190475;
+	Thu,  8 Aug 2024 16:46:25 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4D61474B5
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 16:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594E0190067;
+	Thu,  8 Aug 2024 16:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723135668; cv=none; b=fwNZivW8alLGwDdHbx3cGLj+qIIGPeG1W/r18B+3Rd77AUBT6M1ChV5UmF2Q38O8Euh50TlmQGiEfYs95661Swl7vqP2w5SZilgYVdNq0zU/eivYNG5iX31nNMT6ncenVuBlno2gA32dOOK8dlY83CVrWmOW8xNH/SNDiCCAupM=
+	t=1723135585; cv=none; b=WVzJCuI7SaRheQG1DbDVL7MI8nOa437YW2cGVw9d1lwWcZMfPIelqRnfqXW/6YbSFqpPIl+wBeuDa32878U+bNatcbiD8N7T0yEj6zg2hs011zuH78o/R+Zp3buY0J1/nwf3+QnGyDX5S9wR48+vNh/dl4DsMxdo+aZXVX3xgVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723135668; c=relaxed/simple;
-	bh=RajS3Iv3t7XxfZVVa/qqKpOf5NV/TKtvi18u1+/kUNo=;
-	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VEbY6y0hK6KjoXmLPAW/Nj7vXaeV4bSWWTyTfU75iQPzHs7JVTX1V+3cm/CfiZ50YnD4mmHPf9WcJ3cpTMG7h8MDw57u4ATKM4usVt0vpwkWzc9gzxt9in2n4nM0g+RS+Igw3JwzevzL3dtH6Cy4ZL7AZmxpYs1sXSnz+NbhQag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=TDR04Xer; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
-	by cmsmtp with ESMTPS
-	id ba7dsFf3UnNFGc6HAsTOSp; Thu, 08 Aug 2024 16:46:08 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id c6H9sg0AV0K4nc6H9sRl81; Thu, 08 Aug 2024 16:46:08 +0000
-X-Authority-Analysis: v=2.4 cv=RsjDLjmK c=1 sm=1 tr=0 ts=66b4f650
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=s2I88z9o6i3GcfhhhlwA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:
-	Date:Message-ID:References:Cc:To:From:Subject:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=LSgTUSHkIv7hXmHEcrbfOGnyRbNeawZhTZ0yhaq4pDg=; b=TDR04Xer/BoIPT/JyZo7g6PH/D
-	VabLFL+AaG1SIxKwtR+6lhw/UzXGD5J5DByg0pPBXQh51rF8CNVbigE/6X/nknW7CMslpQnwFVyTt
-	7hs6kRpPGjmenXm32aRVPaeQ6G8wtRlSXUo9FxrLiRUpwXWwQDN1sut+IyfOJ8x/uyadNktzsZ2nb
-	dcIu6TpYMhLqUD+uEr/2mkZDccr+clCdfRK8TFhS/EDyFsFD+nwB/+weC7B0Le0bWV34r2e9t5lqB
-	sGsqkSWQM+LrGxhv/lu67e6dAStisnDkDJawD+noDeTBc1jJ+vuyl9QwDPEmao1prVs/gfSXhAVCw
-	0YOPIaYg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:33544 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sc6H4-0016rU-2L;
-	Thu, 08 Aug 2024 10:46:02 -0600
-Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc2 review
-From: Ron Economos <re@w6rz.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240808091131.014292134@linuxfoundation.org>
- <96b86f9b-c516-9742-5e33-e5cbfbed10b3@w6rz.net>
- <c4b1489f-42b8-8c16-f487-93b0dd8cd8c4@w6rz.net>
-Message-ID: <b6caeb4b-116e-068c-440d-7489ce7e8af3@w6rz.net>
-Date: Thu, 8 Aug 2024 09:45:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1723135585; c=relaxed/simple;
+	bh=07F8n5MvsCYMmCPHHwaeA3RHn8tt9n6stIA7mFgipy4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BUULnYR0hOBuI37Ec1iQ/T+NMQ05drKEQ4QFXpsMLGNAImqZzOQv7zAk7+7Lfx9FpfXsv1bjG1jejz3J71xJ39QpHGzqCUjYMFL5XfKXf3Z0rGFUt/454PI1ZwG0UrpETAlN5IVm9Ub89lomvS0jQNmKFORJnThwhnVAGGM5+ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sc6HF-0004jv-7w; Thu, 08 Aug 2024 18:46:13 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Finley Xiao <finley.xiao@rock-chips.com>, Jagan Teki <jagan@edgeble.ai>,
+ Elaine Zhang <zhangqing@rock-chips.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: Add power-domain header for RK3576 SoCs
+Date: Thu, 08 Aug 2024 18:46:12 +0200
+Message-ID: <3030655.BQQF58Tnoo@diego>
+In-Reply-To: <0c66dbf97fc5a5adc3831b1ed01e1188@manjaro.org>
+References:
+ <20240802151647.294307-1-detlev.casanova@collabora.com>
+ <10908017.3WhfQktd6Z@diego> <0c66dbf97fc5a5adc3831b1ed01e1188@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c4b1489f-42b8-8c16-f487-93b0dd8cd8c4@w6rz.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sc6H4-0016rU-2L
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:33544
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfAt6XccMINh+TAaWsiTQojSLR7MJ0zXiHJJ8GKEe6bH8Xv0c936NhKmsp5fAeQ7VGzQs/+fLCHqeV1NQExy+BE7U4vVMZFFBbN7mpjJ4SUHHPmHsOm4Z
- +bTeedOtDPV4ZD3HzBW9yomRXWcWvvZMrTrz4v9SyQTTKovw+SFzMRd33oqokK21+/4PbK/UMARDZ/I3AM33gi5bZo/iwLAa+rY=
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On 8/8/24 7:43 AM, Ron Economos wrote:
-> On 8/8/24 4:55 AM, Ron Economos wrote:
->> On 8/8/24 2:11 AM, Greg Kroah-Hartman wrote:
->>> This is the start of the stable review cycle for the 6.1.104 release.
->>> There are 86 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>>
->>> Responses should be made by Sat, 10 Aug 2024 09:11:02 +0000.
->>> Anything received after that time might be too late.
->>>
->>> The whole patch series can be found in one patch at:
->>>     https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.104-rc2.gz 
->>>
->>> or in the git tree and branch at:
->>>     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git 
->>> linux-6.1.y
->>> and the diffstat can be found below.
->>>
->>> thanks,
->>>
->>> greg k-h
->>>
->> I'm seeing a build failure.
->>
->> sound/pci/hda/patch_conexant.c:273:10: error: ‘const struct 
->> hda_codec_ops’ has no member named ‘suspend’
->>   273 |         .suspend = cx_auto_suspend,
->>       |          ^~~~~~~
->> sound/pci/hda/patch_conexant.c:273:20: error: initialization of ‘void 
->> (*)(struct hda_codec *, hda_nid_t,  unsigned int)’ {aka ‘void 
->> (*)(struct hda_codec *, short unsigned int,  unsigned int)’} from 
->> incompatible pointer type ‘int (*)(struct hda_codec *)’ 
->> [-Werror=incompatible-pointer-types]
->>   273 |         .suspend = cx_auto_suspend,
->>       |                    ^~~~~~~~~~~~~~~
->> sound/pci/hda/patch_conexant.c:273:20: note: (near initialization for 
->> ‘cx_auto_patch_ops.set_power_state’)
->> sound/pci/hda/patch_conexant.c:274:10: error: ‘const struct 
->> hda_codec_ops’ has no member named ‘check_power_status’; did you mean 
->> ‘set_power_state’?
->>   274 |         .check_power_status = snd_hda_gen_check_power_status,
->>       |          ^~~~~~~~~~~~~~~~~~
->>       |          set_power_state
->> sound/pci/hda/patch_conexant.c:274:31: error: 
->> ‘snd_hda_gen_check_power_status’ undeclared here (not in a function); 
->> did you mean ‘snd_hda_check_power_state’?
->>   274 |         .check_power_status = snd_hda_gen_check_power_status,
->>       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>       |                               snd_hda_check_power_state
->>
->> This is triggered because my config does not include CONFIG_PM. But 
->> the error is caused by upstream patch 
->> 9e993b3d722fb452e274e1f8694d8940db183323 "ALSA: hda: codec: Reduce 
->> CONFIG_PM dependencies" being missing. This patch removes the #ifdef 
->> CONFIG_PM in the hda_codec_ops structure. So if CONFIG_PM is not set, 
->> some structure members are missing and the the build fails.
->>
->>
-> Same failure occurs in 6.6.45-rc1 if CONFIG_PM is not set.
->
->
-Note: Both upstream 9e993b3d722fb452e274e1f8694d8940db183323 "ALSA: hda: 
-codec: Reduce CONFIG_PM dependencies" and 
-6c8fd3499423fc3ebb735f32d4a52bc5825f6301 "ALSA: hda: generic: Reduce 
-CONFIG_PM dependencies" are required to fix the build if CONFIG_PM is 
-not set.
+Am Donnerstag, 8. August 2024, 18:43:42 CEST schrieb Dragan Simic:
+> Hello Heiko,
+>=20
+> On 2024-08-08 09:54, Heiko St=FCbner wrote:
+> > Am Dienstag, 6. August 2024, 18:34:41 CEST schrieb Detlev Casanova:
+> >> On Sunday, 4 August 2024 05:56:39 EDT Krzysztof Kozlowski wrote:
+> >> > On 02/08/2024 17:14, Detlev Casanova wrote:
+> >> > > From: Finley Xiao <finley.xiao@rock-chips.com>
+> >> > >
+> >> > > Define power domain IDs as described in the TRM.
+> >> >
+> >> > Please use subject prefixes matching the subsystem. You can get them=
+ for
+> >> > example with `git log --oneline -- DIRECTORY_OR_FILE` on the directo=
+ry
+> >> > your patch is touching. For bindings, the preferred subjects are
+> >> > explained here:
+> >> > https://www.kernel.org/doc/html/latest/devicetree/bindings/submittin=
+g-patche
+> >> > s.html#i-for-patch-submitters
+> >> > > Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> >> > > [reword]
+> >> > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> >> > > ---
+> >> > >
+> >> > >  include/dt-bindings/power/rk3576-power.h | 30 +++++++++++++++++++=
++++++
+> >> > >  1 file changed, 30 insertions(+)
+> >> > >  create mode 100644 include/dt-bindings/power/rk3576-power.h
+> >> >
+> >> > This is part of bindings.
+> >> >
+> >> > > diff --git a/include/dt-bindings/power/rk3576-power.h
+> >> > > b/include/dt-bindings/power/rk3576-power.h
+> >> > Missing vendor prefix. This should be named after compatible.
+> >>=20
+> >> Looks like all other rockchip power bindings use the=20
+> >> include/dt-bindings/
+> >> power/rkXXXX.h format. Should I keep that way ?
+> >=20
+> > there is also rockchip,rv1126-power.h , so please follow Krzysztof's
+> > suggestion. Older header namings need to stay the same of course
+> > but that shouldn't keep us from updating naming schemes to better
+> > work in new additions.
+>=20
+> Actually, why don't we rename the old headers to follow the new naming=20
+> rules?
+> Is there something preventing us from doing that, which I'm missing?
+
+yes, the headers are _part_ of the actual devicetree-binding.
+So you have out of tree users in the BSDs or whereever else.
+
+
 
 
