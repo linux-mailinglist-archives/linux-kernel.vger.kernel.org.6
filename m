@@ -1,127 +1,161 @@
-Return-Path: <linux-kernel+bounces-279191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E798F94BA32
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:57:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E32F794BA34
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93BE81F2294A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:57:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131E21C20F42
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE54189F37;
-	Thu,  8 Aug 2024 09:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E1818A6D1;
+	Thu,  8 Aug 2024 09:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eVguVVyW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AMjimGSM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PA9KRask"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652D5145B25;
-	Thu,  8 Aug 2024 09:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691B1189F48
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723111024; cv=none; b=afO1RFUlsCQXp7dkSEpfSY5e7VEv3svTE+5MDNMJbZjKIHHymNK2h7au3AU7m8WG5+zUaHiAC5k31kGTHFNzJgZPQQ2enBAN3pSA5230JHTz1XDaoQYuYZ9SQzcD17EcEnQDYD8R5TV+EdRdkNPEQxOtHEgiLg/Mk4M7z5weIpM=
+	t=1723111028; cv=none; b=sHON4pSHZ//3XJ+zsb8RMVdxz8V+2gdMm38AOuOYya5MWEwcuOhRCgnuJYSYtjmaMfQ8MwSPufdVIf/ef15sgdVHVXur3hnBDNeNTqib6nrFJS0vWgI7vDCEK8epeuuAkCtwa4uzLDrXKjn90VemV3ng3ULKwvTPRkAE7fJm8dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723111024; c=relaxed/simple;
-	bh=Zo81MnJlSvtgcM0U8Z9Vf7MSw8vopGCkiuOytHYtpIg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ctfH5i5c68AiADYyL+32ccS4eL6H5GyuFK3Q97Lq4q4eWUeevvhxQO/B/hCALLMhizVo69XzGbtGLmFW/y/JyI3rQCq3lU9mqNOSbiqm1uQHjhNJuTHFFaRKv7C7nxYii4xjbEuaGXXZJgtV/Ark1Rn24Y4XDhBs27VRmTAp5SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eVguVVyW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AMjimGSM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723111021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sO34r1Qxr5Xkr2/DORM0xLF1wvsmMokXf8JtrLHWjEg=;
-	b=eVguVVyWfgAiex7NwW6HTa04ePLeBtyhRsiuqFfbL7w+25qS/zF25kJOB37fHwOFp40JTY
-	WJccbnCRhYhvO4nTWI10okcvBgN8FnXc26dTwF7sLgp9eAe0R8L/0A+so1yyukQVrFARHt
-	Me9V+2S+2V4+k2rayQpVOr87ogOt2jEWzClijguJNqLxMfHD846hQhUv3tAC1e4fQ8ZAzy
-	p2yd8tO71f5QUDBStACj0KIvp/NF0urNQ3xSDiTiupJadRGASMaIqMQejVlAKCV1zlX0+S
-	fnWpTQP8QUu3uBoRKPPouM8nChq36EftX3yqhWMG6Vao3K4km/PLTmfLzMF1XA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723111021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sO34r1Qxr5Xkr2/DORM0xLF1wvsmMokXf8JtrLHWjEg=;
-	b=AMjimGSMrqHJro712QgzhDXKpeaWoeXUdygnmWfSPd8TfRHG6Nmk0iFeCUepZ/S9SIvwsK
-	CuetYMY/d1KuccCw==
-To: Guenter Roeck <linux@roeck-us.net>, Vlastimil Babka <vbabka@suse.cz>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>, Helge
- Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-In-Reply-To: <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net>
-References: <20240731095022.970699670@linuxfoundation.org>
- <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
- <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
- <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
- <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net>
-Date: Thu, 08 Aug 2024 11:57:01 +0200
-Message-ID: <87plqjz6aa.ffs@tglx>
+	s=arc-20240116; t=1723111028; c=relaxed/simple;
+	bh=BCc3JMeiVU/pbaDkOckj9tlDKP3uaM6hbtGH0PHfALk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T8m1HVoz9Tyhlq/mppnxTPwbnuB2VyHlGTRSXpcjLzMz7/PhDymKndj6dW2M6AVU+LieQ+oSzluS4Pry+LPp2WR+vui2LtjxIABc3vB7irb1dJblxsf8wnL/15zlcShD4piCzOzlq0O+JOib1lCvMrsw1dlI0QHWB9U/wwXFcj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PA9KRask; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a611adso989884a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 02:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723111025; x=1723715825; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=wGmpPT++dxS0VwVrHHvITcmSKbRjA6D6vdhXmz2ZdyI=;
+        b=PA9KRaskFT/E3zHE3icU9Ueh/Am7h3ywvXbUpwEDlsHvLWHOYlebcFw46IvCkHP2oT
+         wKqOa7xucEy9b47+3BJSxrhWVn8iCWFSSSOYM/XdILfVCnkt/WuUutfcK8SPjTg5l0LE
+         PoLny+iqGLv66Qfk4un5cW83nNMAlxb4CxtUbdlFqfep4XxtST5BnLKaG9zoGflgAvxN
+         ArWHXKhD9w6ELV9k6r+voHLA1gd2pxMqRlhuAVRsVkgR0H6y2KGD2Do/IB+QoYyyVVL7
+         nrZvW38TEI0x2DkMghXzMkSKnlzIhEXLRPtwcrjefxznwNdN9vkBT83IKpfs0hY+B8/e
+         o9mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723111025; x=1723715825;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wGmpPT++dxS0VwVrHHvITcmSKbRjA6D6vdhXmz2ZdyI=;
+        b=LfmxOqvLb2qy+QTJ5B/vfzJ6usiJtm3MHCva9agupca/M9nlhS5W+SMIx/BBJm10qG
+         Bxnvp86/0lgztfZhg6ihKggTt/OKqCceI25gCesXftMVzPyKPwniV5WS8H36FbENkmlY
+         95lwnHUEY5reD8p8ajPVS81Kp98o1Pp6RC3z4OmFZvlmUU1d84U+VAqH/LjplFR9E+D3
+         kSTKRVb+CbORm2x7sA3nvRAR11//C6Ewh1Hl/lW7CN1v2iTNZIhiyM7uiaQWC5s/HRCP
+         gsimF4c6FXT8stNbyfi2yussoIzbN2OdNam6VUIGeQNYTgEUD72dq6zlOTHxmW8BeQN7
+         C5rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZfiwJJMQ2fzT7AxGi8O+Tvb2HQRCVtjj5yNeEuRpoDZV8r8/9hJe4NUSLKFWmaBgLMI0XmTdwiAe0H+zeVvMJ7akP0v3caStvrWvy
+X-Gm-Message-State: AOJu0YzE7c4rAfuHzoVoagx2GbyToLZF4EfSCLvPmFNmAeJ77J0aubRL
+	jYZ237LOk53j5RZqYdfsiNQnK5Kxh02rPngys/o4OxFxlrwydjlW+jThcklCHVM=
+X-Google-Smtp-Source: AGHT+IFe3lArDXHLFN9+vIQ2xudce7dStaP5T9pFhGDsyWTJCn+t8VuWCIKjDVbHkGDtMuboeY5P9g==
+X-Received: by 2002:a05:6402:35ce:b0:58c:2a57:b1e7 with SMTP id 4fb4d7f45d1cf-5bbb218daadmr1093950a12.8.1723111024719;
+        Thu, 08 Aug 2024 02:57:04 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c41ec9sm490339a12.42.2024.08.08.02.57.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 02:57:04 -0700 (PDT)
+Message-ID: <4230387d-0413-4da8-b55a-ac708af05e34@linaro.org>
+Date: Thu, 8 Aug 2024 11:57:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt
+ binding
+To: Aakarsh Jain <aakarsh.jain@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: m.szyprowski@samsung.com, hverkuil-cisco@xs4all.nl, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
+ aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+References: <CGME20240808083027epcas5p153e64139a5e71448b1ea3f04af1df2bd@epcas5p1.samsung.com>
+ <20240808081815.88711-1-aakarsh.jain@samsung.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240808081815.88711-1-aakarsh.jain@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 07 2024 at 18:07, Guenter Roeck wrote:
-> On 8/6/24 16:24, Thomas Gleixner wrote:
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 4927edec6a8c..b8a33966d858 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -1385,6 +1385,9 @@ static int check_slab(struct kmem_cache *s, struct slab *slab)
->          }
->
->          maxobj = order_objects(slab_order(slab), s->size);
-> +
-> +       pr_info_once("##### slab->objects=%u maxobj=%u\n", slab->objects, maxobj);
-> +
->          if (slab->objects > maxobj) {
->                  slab_err(s, slab, "objects %u > max %u",
->                          slab->objects, maxobj);
->
-> results in:
->
-> ##### slab->objects=21 maxobj=21
-> =============================================================================
-> BUG kmem_cache_node (Not tainted): objects 21 > max 16
+On 08/08/2024 10:18, Aakarsh Jain wrote:
+> s5p-mfc bindings to json-schema is already merged with
+> this commit 538af6e5856b ("dt-bindings: media: s5p-mfc:
+> convert bindings to json-schema"). Remove s5p-mfc.txt
+> file.
+> 
+> Fixes: 538af6e5856b ("dt-bindings: media: s5p-mfc: convert bindings to json-schema")
+> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+> changelog:
+> v1->v2
+> Add Fixes tag suggested by Krzysztof
+> v2->v3
+> Aligned Fixes tag in oneline and corrected commit message
+> Link: https://patchwork.kernel.org/project/linux-media/patch/20240213045733.63876-1-aakarsh.jain@samsung.com/
 
-Careful vs. the pr_once(). It's not necessarily the first allocation
-which trips up. I removed slab_err() in that condition and just printed
-the data:
-
-[    0.000000] Order: 1 Size:  384 Nobj: 21 Maxobj: 16 21 Inuse: 14
-[    0.000000] Order: 0 Size:  168 Nobj: 24 Maxobj: 16 24 Inuse:  1
-[    0.000000] Order: 1 Size:  320 Nobj: 25 Maxobj: 16 25 Inuse: 18
-[    0.000000] Order: 1 Size:  320 Nobj: 25 Maxobj: 16 25 Inuse: 19
-[    0.000000] Order: 1 Size:  320 Nobj: 25 Maxobj: 16 25 Inuse: 20
-[    0.000000] Order: 0 Size:  160 Nobj: 25 Maxobj: 16 25 Inuse:  5
-[    0.000000] Order: 2 Size:  672 Nobj: 24 Maxobj: 16 24 Inuse:  1
-[    0.000000] Order: 3 Size: 1536 Nobj: 21 Maxobj: 16 21 Inuse:  1
-[    0.000000] Order: 3 Size: 1536 Nobj: 21 Maxobj: 16 21 Inuse:  2
-[    0.000000] Order: 3 Size: 1536 Nobj: 21 Maxobj: 16 21 Inuse: 10
-
-The maxobj column shows the failed result and the result from the second
-invocation inside of the printk().
-
-Let's wait for PARISC people to run it on actual hardware.
-
-Thanks,
-
-        tglx
+Something got corrupted in your changelog.
 
 
-
-
+Best regards,
+Krzysztof
 
 
