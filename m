@@ -1,140 +1,123 @@
-Return-Path: <linux-kernel+bounces-280223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A3F94C760
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:30:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B3794C763
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFEEB1F2372D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:30:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57EF51C22887
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D236215F301;
-	Thu,  8 Aug 2024 23:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB0B15EFCD;
+	Thu,  8 Aug 2024 23:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1oo1bUE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZC2cC4bb"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C46E55769;
-	Thu,  8 Aug 2024 23:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9E4146D55
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 23:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723159817; cv=none; b=OU7fJqcELmKziNYYChSjTFcaAFvjViE6Cc12ufTHuDI4AhLFbkML4pN4UR3pzrpulGOB4Gyo8E+qDWSG5BtuoOtGA12BXpbBNG0QUwdzmbapVK6Ce0+yZcERtwKRUshY4roTw+vOSoC6FG3SUsyzao0YNcS0BEg7VZWtnb6qmtc=
+	t=1723160009; cv=none; b=UfZQNfwL4DPnDyYvCoMz9r4lx7gn/EgzpyB1l38U0KobCUBpte3LyIJ+hKLjuXIIbLYJiBiRfipMGRQlsEbmLobhzcQh/Fv/LZALIt7laqoAvREbyCxqK3V1SzDh8uhSA9xkImf7J2d9dIG+sm6ZDEmuTklCFOQAplehuP0fNl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723159817; c=relaxed/simple;
-	bh=rK4tB4WPJfLPrcZ+F5Fbbqix6Gv+OfmlxqJkua2A56E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eRONa2+ADb3mYL0FDfxaHZ4qurzvmw62bWgh7jnNf3c7O/AeFiXYd/biV9PrYT7B/B7KkjpSKeUbfNPUN9MhWPiW/7GlDGGHHLWpwyj3xA2xQsgJ5HWAU3gWSB56xBCEHpJFi4wyR+zDRCokrCKIHgRlY5k89rI165mVlisgxfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1oo1bUE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7CAC9C32782;
-	Thu,  8 Aug 2024 23:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723159816;
-	bh=rK4tB4WPJfLPrcZ+F5Fbbqix6Gv+OfmlxqJkua2A56E=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=k1oo1bUE2xX0PrC20hKap0i825/r4wc0SQTeDnfIvu2QBCWJIWNXlud7Ri8yOezFW
-	 8t4TRtWopwdF6heZ81JMKn5owSDSIQnytwzyw1bQhU23WxDUg3wdQplRLSsorJ3uuc
-	 vom0f8XL/6IgY64uQvd3I45P75INHY0lX6F7ocgeU/THFuBCV0E/ed3VMWitMt524Y
-	 AZHlgZ8TI1wU0Ozp5kZWd82HdGq5yrEe6KMyYutQj76GcG7U0m/TpI+Or+3kwh/CxP
-	 oWO+eRqvQbvTY43gCvR5DaoPcbUNiowTDPzrflUozA2WWsbtZ6PI6Ge4Gj2Pw1+vIR
-	 sO37x0woLt15g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C160C3DA4A;
-	Thu,  8 Aug 2024 23:30:16 +0000 (UTC)
-From: Mitchell Levy via B4 Relay <devnull+levymitchell0.gmail.com@kernel.org>
-Date: Thu, 08 Aug 2024 16:30:10 -0700
-Subject: [PATCH] x86/fpu: Avoid writing LBR bit to IA32_XSS unless
- supported
+	s=arc-20240116; t=1723160009; c=relaxed/simple;
+	bh=524bUS/jikPk0prhYgnLoimooCyCKUal6MFrC3vnAWw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mjqJ7P3kccn+2JzUuQLyEvhytA4Lubp5r/BP/Pnyq4zS+lkGhimRbY/aDO/LvsEPnmAu+LRkRjLvQyNRZg7UR2H9igtpqgcrGEr7xPUUvD66xizgfjmeTpo63EztNB6o9VMJCFT0h0Nujfj/Zp/d12yij3A4Ag7JO/zH1vvSCT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZC2cC4bb; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efe4c7c16so2063088e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:33:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1723160006; x=1723764806; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rqlZbaQMZu+3GtlIS+SGt/2J89sdAOurpYSJPp/fzz4=;
+        b=ZC2cC4bbNr9T6tDiPiGPyCTs4nkUnDyTCwyVRaEPPTbTgE7NPrZpaHRGh6aYt9dXCG
+         4ZpTr+QryMp2OVvTVxL012oJ+NiSBqeaDu4/w4TxN1wUrxuYdOQ6sq63ZyBXWDh+ZuIJ
+         049IDno2gSi3EeVFFJYFss8Fp0lcWou4J7tfE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723160006; x=1723764806;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rqlZbaQMZu+3GtlIS+SGt/2J89sdAOurpYSJPp/fzz4=;
+        b=A6L04eunyqxitVAo1fpHccaS40b9mc7ROYJqcrt9E+vaVnQ6aKQl+I+O4nFncUq67t
+         P9hrw/gaHUpCC/DdYO7Nm+C6LjiaJA5lSgom7FLxNnb/EJRZNSntb1rsKy6z6v4lKmSm
+         kjj2rRY10THBQzfR1ZLj/5Jf1qqLHeIeCL2vV+bSiypbj+0KYu0TeOKp/QaiNSx48ABm
+         DGYfkEeuJNp/VH6D7DRRhawlmSvwk3bA+6co2gs1UEPtuEw5heWh/rfNT1ShqcZBQ+pf
+         NNXwZ9iYdvkO4R2OQCrciWuC/MCp3vRr4GCt1rvEjwlkUHt5vcktnwKR0M8gxzBmbqM6
+         946Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXaT2Bva89gtqdbnXB14ecLFOMGFMps9k1omklm78l0Odc8v9/c3xbLoFja+9vW1NYVzyCy+f27PX0nDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvgRfBLw4LADBKGBs3xluwJqVgRpCVw5oXBVoUE4ECweaBtta3
+	jykkhFcSWqPgYywRWpgeVLsHiwQ3R8DPD+nAQ42ofGBzFFD3kSt4iZgYRj+CzGFn4UZl/OLKc3f
+	hR3G7rg==
+X-Google-Smtp-Source: AGHT+IGIJIpBW71GcpF18Iq3MoQTRou05t4s7aEF6KIpaBUq0Gb9Aq5gLDUc5soqL9Llna+Lr4d5dQ==
+X-Received: by 2002:a05:6512:b03:b0:530:db85:e02a with SMTP id 2adb3069b0e04-530e5875653mr2541197e87.22.1723160005642;
+        Thu, 08 Aug 2024 16:33:25 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf869dsm1057743a12.1.2024.08.08.16.33.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 16:33:24 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so178821766b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:33:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVOUin+HxTdH3q4vnNOjOgCmHuGgkoprJy54fj+qYehRC/BxLiT27EdJD0sL1y8fzmR904QbsZJ4axm/RY=@vger.kernel.org
+X-Received: by 2002:a17:906:bc02:b0:a77:db36:1ccf with SMTP id
+ a640c23a62f3a-a8090e40894mr247283366b.42.1723160003998; Thu, 08 Aug 2024
+ 16:33:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240808-xsave-lbr-fix-v1-1-a223806c83e7@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAFVtWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCwNz3YrixLJU3ZykIt20zApdA6MUU6M0MxNDM1NjJaCegqJUoDDYvOj
- Y2loA3RILWF8AAAA=
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc: stable@vger.kernel.org, Borislav Petkov <bp@suse.de>, 
- linux-kernel@vger.kernel.org, Mitchell Levy <levymitchell0@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723159817; l=2576;
- i=levymitchell0@gmail.com; s=20240719; h=from:subject:message-id;
- bh=aD/HH3dzvhy4muD2Cy5M+AM0El/r97xW+eGKYw26zH0=;
- b=8zO+Sr3nZNkO0VBtBSMe+DEVkhL/JnpFkIRgRz9xwiRA3wosgdPgOjDqT7Jax6ZpKs639xRMp
- aN2VKMIWN6UDdqZWgjibE8iMOvub2REaomBJsAf1tRvpBT4MRsZaxem
-X-Developer-Key: i=levymitchell0@gmail.com; a=ed25519;
- pk=n6kBmUnb+UNmjVkTnDwrLwTJAEKUfs2e8E+MFPZI93E=
-X-Endpoint-Received: by B4 Relay for levymitchell0@gmail.com/20240719 with
- auth_id=188
-X-Original-From: Mitchell Levy <levymitchell0@gmail.com>
-Reply-To: levymitchell0@gmail.com
+References: <20240731095022.970699670@linuxfoundation.org> <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
+ <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
+ <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
+ <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net> <87plqjz6aa.ffs@tglx>
+ <CAHk-=wi_YCS9y=0VJ+Rs9dcY-hbt_qFdiV_6AJnnHN4QaXsbLg@mail.gmail.com>
+ <87a5hnyox6.ffs@tglx> <CAHk-=wh4rxXPpYatnuXpu98KswLzg+u7Z9vYWJCLNHC_yXZtWw@mail.gmail.com>
+ <8734nezz0g.ffs@tglx> <CAHk-=wiZUidi6Gm_6XFArT621H7vAzhDA63zn2pSGJHdnjRCMA@mail.gmail.com>
+ <eba27c56-dc36-4410-bb6b-cbe8769b8a6d@roeck-us.net> <ac7284f9-ba29-4068-ab00-82ddc839afaf@bell.net>
+ <37f94771-4ebc-46d2-ad10-f145d139dd9d@bell.net>
+In-Reply-To: <37f94771-4ebc-46d2-ad10-f145d139dd9d@bell.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 8 Aug 2024 16:33:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiwG4-5UZY9-ZvnhXuGXMsu+u8k5b2BBL-jRcyagW5oxg@mail.gmail.com>
+Message-ID: <CAHk-=wiwG4-5UZY9-ZvnhXuGXMsu+u8k5b2BBL-jRcyagW5oxg@mail.gmail.com>
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+To: John David Anglin <dave.anglin@bell.net>
+Cc: Guenter Roeck <linux@roeck-us.net>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
+	Linux-MM <linux-mm@kvack.org>, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, 
+	Richard Henderson <richard.henderson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Mitchell Levy <levymitchell0@gmail.com>
+On Thu, 8 Aug 2024 at 15:30, John David Anglin <dave.anglin@bell.net> wrote:
+>
+> > I believe the shladd instruction should be changed to shladd,l (shift left and add logical).
+>
+> diff --git a/arch/parisc/kernel/entry.S b/arch/parisc/kernel/entry.S
+> index ab23e61a6f01..1ec60406f841 100644
+> --- a/arch/parisc/kernel/entry.S
+> +++ b/arch/parisc/kernel/entry.S
+> @@ -399,7 +399,7 @@
+> -    shladd        \index,BITS_PER_PTE_ENTRY,\pmd,\pmd /* pmd is now pte */
+> +    shladd,l    \index,BITS_PER_PTE_ENTRY,\pmd,\pmd /* pmd is now pte */
 
-When computing which xfeatures are available, make sure that LBR is only
-present if both LBR is supported in general, as well as by XSAVES.
+This doesn't seem wrong, but doesn't RFIR already restore the status word?
 
-There are two distinct CPU features related to the use of XSAVES as it
-applies to LBR: whether LBR is itself supported (strictly speaking, I'm
-not sure that this is necessary to check though it's certainly a good
-sanity check), and whether XSAVES supports LBR (see sections 13.2 and
-13.5.12 of the Intel 64 and IA-32 Architectures Software Developer's
-Manual, Volume 1). Currently, the LBR subsystem correctly checks both
-(see intel_pmu_arch_lbr_init), however the xstate initialization
-subsystem does not.
+So even if the itlb fill modifies C/B, I don't see why that should
+actually matter.
 
-When calculating what value to place in the IA32_XSS MSR,
-xfeatures_mask_independent only checks whether LBR support is present,
-not whether XSAVES supports LBR. If XSAVES does not support LBR, this
-write causes #GP, leaving the state of IA32_XSS unchanged (i.e., set to
-zero, as its not written with other values, and its default value is
-zero out of RESET per section 13.3 of the arch manual).
+But again, parisc is very much not one of the architectures I've ever
+worked with, so..
 
-Then, the next time XRSTORS is used to restore supervisor state, it will
-fail with #GP (because the RFBM has zero for all supervisor features,
-which does not match the XCOMP_BV field). In particular,
-XFEATURE_MASK_FPSTATE includes supervisor features, so setting up the FPU
-will cause a #GP. This results in a call to fpu_reset_from_exception_fixup,
-which by the same process results in another #GP. Eventually this causes
-the kernel to run out of stack space and #DF.
-
-Fixes: d72c87018d00 ("x86/fpu/xstate: Move remaining xfeature helpers to core")
-Cc: stable@vger.kernel.org
-
-Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
----
- arch/x86/kernel/fpu/xstate.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-index 2ee0b9c53dcc..574d2c2ea227 100644
---- a/arch/x86/kernel/fpu/xstate.h
-+++ b/arch/x86/kernel/fpu/xstate.h
-@@ -61,7 +61,8 @@ static inline u64 xfeatures_mask_supervisor(void)
- 
- static inline u64 xfeatures_mask_independent(void)
- {
--	if (!cpu_feature_enabled(X86_FEATURE_ARCH_LBR))
-+	if (!cpu_feature_enabled(X86_FEATURE_ARCH_LBR) ||
-+	    (fpu_kernel_cfg.max_features & XFEATURE_MASK_LBR) != XFEATURE_MASK_LBR)
- 		return XFEATURE_MASK_INDEPENDENT & ~XFEATURE_MASK_LBR;
- 
- 	return XFEATURE_MASK_INDEPENDENT;
-
----
-base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
-change-id: 20240807-xsave-lbr-fix-02d52f641653
-
-Best regards,
--- 
-Mitchell Levy <levymitchell0@gmail.com>
-
-
+          Linus
 
