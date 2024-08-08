@@ -1,373 +1,181 @@
-Return-Path: <linux-kernel+bounces-279193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE5E94BA3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:58:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3757794BA42
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97DB428186A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A5B11C20FBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103E918A6AE;
-	Thu,  8 Aug 2024 09:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73139189BBE;
+	Thu,  8 Aug 2024 09:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLcCQR0i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WVDId8eX"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8331891DA
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E6E148856
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723111042; cv=none; b=b2xrcU0DudaS4MoN3Zc7dPI+oKvBxqC99RJRzkRTXGRAZnq407oOAvo0BXUd35QXJqcDIBT7DtCqJSaySD/SOwgVmxD3KOTvSf2s1kRXF9Keq86itNZ+zir77wBSuRiQwBg5QKzM86K9iX52HJZljPDR6EzkZHZzpxvFYWUhhCU=
+	t=1723111146; cv=none; b=H4eEdWIWCsLXxqZClUYdjlfBo7II1Ia4j1095YZaLfgpBguufjwXBRGhmcD6dSKZZvrVB7vyRwGxVLcMJUXgsHxnU+1IoEAsbg5uBQkMzPWfREGLfJXozXXctEszQw3oMlpwH0DlsQq5RC7NG+v4V+yAjTZ/YZ59uOg4tZHBYoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723111042; c=relaxed/simple;
-	bh=u177nhYLIu3Nax7qYSEq2sI2wQoIWJKdFtYmZZ/neoo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iECkHdZmM/fxJ18dRNZ+IVXMjRW9K3goEC2B+LcWZXieYadGfBxqdcAZlX9XB4T6WmY5V3GWw0xIR6AQQVQonyXiRSE0tfTnRpRPDag8y6awbiz4aXgZpGt0BTPC0rTFQXc2JTTOp528Df/aPlwg8A5u7OO4LScqrTwE+yZ5/lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLcCQR0i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C58C4AF12
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 09:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723111040;
-	bh=u177nhYLIu3Nax7qYSEq2sI2wQoIWJKdFtYmZZ/neoo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bLcCQR0iTFhNhHOTZ0E0knJ1J5wbLo2ucmIB8wwuOkxZT2h+Zf59lydAgOumjEBX+
-	 fU5dNUR+JOJpDOmSjDKd8oZBGo6dsGOO78l0d3pH775YjZH3/ifxzHuNtYp9v6F7sC
-	 9Nm9Ije/scUDGrX13xOJFDehxuhgRhiHUmShaNNdYp3nvM9kYCTQO0Uk3KQoxrjSva
-	 pVUvt8Tv6d93tC7/Y0szQ/Xmy0p7UMzKfH5Owm8yb+Z1qt/Gdp3IidrT4km9KdnwDF
-	 MmErJz4e1Q1ihdLfh90J2+qUqXHRS5154bxHHDVgo/UG44DSSEHuAmyXdCz7iBetmt
-	 ZX8kSGWZLvKpQ==
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a1c496335aso284663a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 02:57:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDtzrR8MWnOFZ89sbHPvYvdlFEQlh0f/yJmS0QOKEVDRxBXwMNBVx/FvObYjmVCiENBoUPKHodjEVkFl1LeHojyqbFapClCZnBQCJN
-X-Gm-Message-State: AOJu0YxjgShoq/UGqrQ1xqTyorVQ+cM0MMGO9oTh7dyGktIumFW6I0Ah
-	LH5q3V/ACcmoLhPfGT8hxPv2KhGCWV1tJi3uJo485RYHpFNq9GbyaWBewXYrmc24BnNg1uBRQh5
-	ZKde/W9dMDrXWxp6t1c+WP7c3tx4FwyC/vAMu
-X-Google-Smtp-Source: AGHT+IERDWOqOazZm2yzAO4Ur+305d9i1Y7BIeJPcI41VKREQadNM47jdcRYaVfL+JxfMjr/LEJY9Zjrzsmxqj0yjJg=
-X-Received: by 2002:a05:6402:5308:b0:5a2:2b56:e06e with SMTP id
- 4fb4d7f45d1cf-5bbb24be6d4mr1069377a12.36.1723111038763; Thu, 08 Aug 2024
- 02:57:18 -0700 (PDT)
+	s=arc-20240116; t=1723111146; c=relaxed/simple;
+	bh=pGmVQpP4pPuD5fcNHJ1UuHYXYgUIFk/XFz533Uf3FT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aNz29CILE7Tbr8O+v1jyQBGA5dt7wWAuWD5Jt+DdH7K4dZ5dp3H8/6+oP+RcDSSTZHd5ArtX5CXwR4tk27ObjyiCRhA986F1ix/Bn1k5ofpdZ9o2hByV3BTgbdznop2ri796Lln2lJdDsjnWOI33TAyJ7iSIpl0J3ZhVCHCSsKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WVDId8eX; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7aada2358fso296968966b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 02:59:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723111143; x=1723715943; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Fcx2EwOfwUSAtVSfh1fPy+at8W7SLWNzydZ39p3XCNI=;
+        b=WVDId8eX6lPO9kdf2jVLsCEg0J4NMOgEYR9iAzg1qVy+gizxXXWjV/yj4MezEeZq0+
+         +55Q9exR22Yq0QNwWRYLg88iL+N8ns8hxOorkY2P7fxICMcL1EtCMQHYxxUThjbDkIEk
+         zLkdURoilTq54bAQT3C/RM4xPs0Y5G9Q/ND2+hcp/GL8x51+I77o58GH+R26aPDITOPd
+         It+GZb50gRZLvH+COLoIsGQbFxw79djhaguhWxN6wCTdPvfpW41fkNJwYl48MoPjvjqW
+         DJO8vxLDpwRKchKzK2umgJSXQXrxNoJw8b4sJlmOCpEyzdi6VTadSQYm6rlr9ANbIOEj
+         gT+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723111143; x=1723715943;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fcx2EwOfwUSAtVSfh1fPy+at8W7SLWNzydZ39p3XCNI=;
+        b=a2Tz6iE3xJo35tdPp4Sis8mobi4S4BHefLyU9YPk+yw5DZ94kY97KKW+p6fSkcyUeq
+         Uyjzi3EVkru09GEaWKIQ/BINBUOb54pCP5HjtPUDkEZcHHtm/jPwE2mwrn8U3TaRAfzZ
+         fTNkM5q5Tk7lOrLojQbbHGpJzAFVpFOWN2g3iPvd7lt96lkXRCTQdzTkdawmceU2Oqd3
+         j4F+hwQUr0Vy1qJfwm0J5bN923I9h3yG5ovNrECdFMoP0c9DFIw0r5G9OB6YEwbY6zH6
+         xCJi0MvDvJR+s1e1/dLhEBrc4zcPK7GR7XnRPHWWvuyV8DsaP/tI5v6CwZEWGS0kXRAE
+         iq/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWuYoiO95fRXtu2JXsywKM2dJOMtktw5nVF/wlJajMvCWL4LYLUn2PyFLtT4Q53ySkE3rS8GijkCXsWSYN1bXYwMnshSYLA+JeOs/dH
+X-Gm-Message-State: AOJu0YxrPm3upsUk1GVlu01kWtz/KwObE6cQAethnCLoW57c85kjvw7q
+	83VoFng3MXmP3w+j7Gugr/a8743lpIyIz5mEsufYHxvkpTP2gjcg1s/CM1WnjPQ=
+X-Google-Smtp-Source: AGHT+IFL8ep1gZsn49dY0KctCRlF+ZQwvI1yNn8Wrf1nzNSBPa/BG9Ul0XeVVDKTQY+z/+grscb8pg==
+X-Received: by 2002:a17:907:9814:b0:a7a:afe8:1013 with SMTP id a640c23a62f3a-a8091ed3d11mr121335066b.1.1723111143072;
+        Thu, 08 Aug 2024 02:59:03 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3be2sm729036866b.38.2024.08.08.02.59.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 02:59:02 -0700 (PDT)
+Date: Thu, 8 Aug 2024 11:59:00 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Song Liu <songliubraving@meta.com>
+Cc: Sami Tolvanen <samitolvanen@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Song Liu <song@kernel.org>,
+	"live-patching@vger.kernel.org" <live-patching@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	"morbo@google.com" <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Leizhen <thunder.leizhen@huawei.com>,
+	"kees@kernel.org" <kees@kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	Matthew Maurer <mmaurer@google.com>,
+	"Alessandro Carminati (Red Hat)" <alessandro.carminati@gmail.com>
+Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
+ without .XXX suffix
+Message-ID: <ZrSW5KgFMjlB1Rn2@pathway.suse.cz>
+References: <20240806144426.00ed349f@gandalf.local.home>
+ <B53E6C7F-7FC4-4B4B-9F06-8D7F37B8E0EB@fb.com>
+ <20240806160049.617500de@gandalf.local.home>
+ <20240806160149.48606a0b@gandalf.local.home>
+ <6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
+ <20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
+ <BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
+ <20240807190809.cd316e7f813400a209aae72a@kernel.org>
+ <CABCJKucdMS1hkWjHWty8JyACjZy2R9juusABcbsMYzNej=pB2Q@mail.gmail.com>
+ <09ED7762-A464-45FF-9062-9560C59F304E@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801171747.3155893-1-kpsingh@kernel.org> <CAHC9VhRO-weTJPGcrkgntFLG3RPRCUvHh9m+uduDN+q4hzyhGg@mail.gmail.com>
- <CACYkzJ6486mzW97LF+QrHhM9-pZt0QPWFH+oCrTmubGkJVvGhw@mail.gmail.com>
- <20240806022002.GA1570554@thelio-3990X> <CAHC9VhTZPsgO=h-zutQ9_LuaAVKZDdE2SwECHt01QSkgB_qexQ@mail.gmail.com>
- <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
- <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
-In-Reply-To: <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
-From: KP Singh <kpsingh@kernel.org>
-Date: Thu, 8 Aug 2024 11:57:07 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
-Message-ID: <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Paul Moore <paul@paul-moore.com>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
-	peterz@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <09ED7762-A464-45FF-9062-9560C59F304E@fb.com>
 
-On Thu, Aug 8, 2024 at 6:07=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> w=
-rote:
->
-> On 8/7/24 19:13, Guenter Roeck wrote:
-> ...
-> >
-> > I'll need to establish a baseline first to determine if the failures
-> > are caused by newly enabled configuration options or by this patch set.
-> > Below are just early test results.
-> >
-> > [ Though if those are all upstream there seems to be be something serio=
-usly
-> >    wrong with the lockdown lsm.
-> > ]
-> >
->
-> Verdict is that all the messages below are from this patch set.
->
-> On top of the reports below, alpha images fail completely, and the
-> backtraces are seen with several architectures. Please see the
-> "testing" column at https://kerneltests.org/builders for details.
->
-> The only unrelated problems are the apparmor unit test failures;
-> those apparently fail on all big endian systems.
->
-> Guenter
->
-> > Guenter
-> >
-> > ----
-> > arm:
-> >
-> > [    0.000000] ------------[ cut here ]------------
-> > [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/jump_label.c:199 static=
-_key_enable_cpuslocked+0xb0/0xfc
-> > [    0.000000] static_key_enable_cpuslocked(): static key 'security_hoo=
-k_active_locked_down_0+0x0/0x8' used before call to jump_label_init()
-> > [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc=
-2-00134-g679d51771510 #1
-> > [    0.000000] Hardware name: Generic DT based system
-> > [    0.000000] Call trace:
-> > [    0.000000]  unwind_backtrace from show_stack+0x18/0x1c
-> > [    0.000000]  show_stack from dump_stack_lvl+0x48/0x74
-> > [    0.000000]  dump_stack_lvl from __warn+0x7c/0x134
-> > [    0.000000]  __warn from warn_slowpath_fmt+0x9c/0xdc
-> > [    0.000000]  warn_slowpath_fmt from static_key_enable_cpuslocked+0xb=
-0/0xfc
-> > [    0.000000]  static_key_enable_cpuslocked from security_add_hooks+0x=
-a0/0x104
-> > [    0.000000]  security_add_hooks from lockdown_lsm_init+0x1c/0x2c
-> > [    0.000000]  lockdown_lsm_init from initialize_lsm+0x44/0x84
-> > [    0.000000]  initialize_lsm from early_security_init+0x3c/0x58
-> > [    0.000000]  early_security_init from start_kernel+0x78/0x748
-> > [    0.000000]  start_kernel from 0x0
-> > [    0.000000] irq event stamp: 0
-> > [    0.000000] hardirqs last  enabled at (0): [<00000000>] 0x0
-> > [    0.000000] hardirqs last disabled at (0): [<00000000>] 0x0
-> > [    0.000000] softirqs last  enabled at (0): [<00000000>] 0x0
-> > [    0.000000] softirqs last disabled at (0): [<00000000>] 0x0
-> > [    0.000000] ---[ end trace 0000000000000000 ]---
-> >
+On Wed 2024-08-07 20:48:48, Song Liu wrote:
+> 
+> 
+> > On Aug 7, 2024, at 8:33 AM, Sami Tolvanen <samitolvanen@google.com> wrote:
+> > 
+> > Hi,
+> > 
+> > On Wed, Aug 7, 2024 at 3:08 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >> 
+> >> On Wed, 7 Aug 2024 00:19:20 +0000
+> >> Song Liu <songliubraving@meta.com> wrote:
+> >> 
+> >>> Do you mean we do not want patch 3/3, but would like to keep 1/3 and part
+> >>> of 2/3 (remove the _without_suffix APIs)? If this is the case, we are
+> >>> undoing the change by Sami in [1], and thus may break some tracing tools.
+> >> 
+> >> What tracing tools may be broke and why?
+> > 
+> > This was a few years ago when we were first adding LTO support, but
+> > the unexpected suffixes in tracing output broke systrace in Android,
+> > presumably because the tools expected to find specific function names
+> > without suffixes. I'm not sure if systrace would still be a problem
+> > today, but other tools might still make assumptions about the function
+> > name format. At the time, we decided to filter out the suffixes in all
+> > user space visible output to avoid these issues.
+> > 
+> >> For this suffix problem, I would like to add another patch to allow probing on
+> >> suffixed symbols. (It seems suffixed symbols are not available at this point)
+> >> 
+> >> The problem is that the suffixed symbols maybe a "part" of the original function,
+> >> thus user has to carefully use it.
+> >> 
+> >>> 
+> >>> Sami, could you please share your thoughts on this?
+> >> 
+> >> Sami, I would like to know what problem you have on kprobes.
+> > 
+> > The reports we received back then were about registering kprobes for
+> > static functions, which obviously failed if the compiler added a
+> > suffix to the function name. This was more of a problem with ThinLTO
+> > and Clang CFI at the time because the compiler used to rename _all_
+> > static functions, but one can obviously run into the same issue with
+> > just LTO.
+> 
+> I think newer LLVM/clang no longer add suffixes to all static functions
+> with LTO and CFI. So this may not be a real issue any more?
+> 
+> If we still need to allow tracing without suffix, I think the approach
+> in this patch set is correct (sort syms based on full name,
 
-This seems very odd for especially ARM as I don't see this error when
-I do it on the next branch. Possibly something in setup_arch is
-initializing jump_tables indirectly between v6.11-rc2 and linux-next
-and/or this is a warning that does not immediately splash up on the
-dmesg.
+Yes, we should allow to find the symbols via the full name, definitely.
 
-Both ARM64 and x86 (the architectures I really have access to)
-initializes jump_tables and x86 is the only architecture that does an
-explicit static_call_init is x86 and it's already in the setup_arch
-code.
+> remove suffixes in special APIs during lookup).
 
-https://elixir.bootlin.com/linux/v6.11-rc2/source/arch/arm64/kernel/setup.c=
-#L295
-https://elixir.bootlin.com/linux/v6.11-rc2/source/arch/x86/kernel/setup.c#L=
-783
+Just an idea. Alternative solution would be to make make an alias
+without the suffix when there is only one symbol with the same
+name.
 
-Guenter, I have updated my tree, could you give it another run please?
+It would be complementary with the patch adding aliases for symbols
+with the same name, see
+https://lore.kernel.org/r/20231204214635.2916691-1-alessandro.carminati@gmail.com
 
-Thanks!
-- KP
+I would allow to find the symbols with and without the suffix using
+a single API.
 
-> > m68k:
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 0 at include/linux/jump_label.h:322 security_add_h=
-ooks+0xc4/0x12c
-> > static_key_enable(): static key '0x6e5860' used before call to jump_lab=
-el_init()
-> > Modules linked in:
-> > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2-mac-00134-g67=
-9d51771510 #1
-> > Stack from 0065df00:
-> >          0065df00 005ff98d 005ff98d 00000000 00000009 00000009 004aa710=
- 005ff98d
-> >          0049f87a 005c9849 00000142 0063f5ec 004cbd3e 0049f8f8 005c9849=
- 00000142
-> >          0075ac3e 00000009 00000000 0065df60 00000000 00000040 00000000=
- 00000000
-> >          005c980c 0065df7c 0075ac3e 005c9849 00000142 00000009 005c980c=
- 004c9f98
-> >          006e5860 00000000 00782b50 00000000 00000000 0075b7ba 0063f5ec=
- 00000001
-> >          004cbd3e 0075a62e 00782b50 0075a79e 00782b50 00782b50 0049feb6=
- 00749d4c
-> > Call Trace: [<004aa710>] dump_stack+0xc/0x10
-> >   [<0049f87a>] __warn+0x7e/0xb4
-> >   [<0049f8f8>] warn_slowpath_fmt+0x48/0x66
-> >   [<0075ac3e>] security_add_hooks+0xc4/0x12c
-> >   [<0075ac3e>] security_add_hooks+0xc4/0x12c
-> >   [<0075b7ba>] lockdown_lsm_init+0x16/0x1e
-> >   [<0075a62e>] initialize_lsm+0x32/0x5c
-> >   [<0075a79e>] early_security_init+0x30/0x38
-> >   [<0049feb6>] _printk+0x0/0x18
-> >   [<00749d4c>] start_kernel+0x60/0x600
-> >   [<00748414>] _sinittext+0x414/0xae0
-> > ---[ end trace 0000000000000000 ]---
-> >
-> > Microblaze:
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 0 at include/linux/jump_label.h:322 security_add_h=
-ooks+0x124/0x21c
-> > static_key_enable(): static key 'security_hook_active_locked_down_0+0x0=
-/0x4' used before call to jump_label_init()
-> > Modules linked in:
-> > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2-00134-g679d51=
-771510 #1
-> > Kernel Stack:
-> > (ptrval): c0999390 c0f4c9ec 00000000 00000000 ffffffff a589f3a9 c0984c2=
-0 00000000
-> > (ptrval): c0c51ef8 00000009 c0984c30 00000000 00000000 c0c51ef8 0000000=
-0 c0c51ef8
-> > (ptrval): 00000009 c0984cf8 c09bad94 00000000 00000000 c0a30c10 0000014=
-2 c0d19e10
-> > (ptrval): c0a30bd0 c0a30c10 00000000 c0d19e10 c09bade4 00000142 0000000=
-9 c0a30bd0
-> > (ptrval): c0a30ca0 c0f58820 c0a30bd0 c0c51f28 00000142 00000009 c0d19e1=
-0 c0a37340
-> > (ptrval): c0c190c0 c0d1b1d0 00000000 00000000 00000000 c0a30bd0 c0a30ca=
-0 c0f58820
-> > (ptrval): c0d42b20 c0d35464 c0d42b38 00000000 00000000 00000000 0000000=
-0 00000000
-> > (ptrval): 00100000 00000280 c0d196e8 c0d04ed0 00000000 c098465c 0000000=
-0 00000000
-> > (ptrval): c0d19778 c0d19784 00000000 00000000 c0d0488c c09b8e40 c09b9b2=
-4 c0d42b20
-> > (ptrval): c0d42b38 c0d00898 4883e4b3 00000000 c0d0088c 00000280 0000000=
-0 00000000
-> > (ptrval): 00000000 00000000 00000000 c0984194 c09b7208 c0b125f8 c0f5d59=
-c 00000000
-> > (ptrval): 00000002 00000000 c00002e0 91a86e08 c0d33f7c 00000000 0000000=
-0 00000000
-> > (ptrval): 00000000 00000000 00000000 00000000
-> > Call Trace:
-> > [<c0003168>] microblaze_unwind+0x64/0x80
-> > [<c0984548>] show_stack+0x128/0x180
-> > [<c0999330>] dump_stack_lvl+0x44/0x94
-> > [<c099938c>] dump_stack+0xc/0x24
-> > [<c0984c2c>] __warn+0xac/0xfc
-> > [<c0984cf4>] warn_slowpath_fmt+0x78/0x98
-> > [<c0d19e0c>] security_add_hooks+0x120/0x21c
-> > [<c0d1b1cc>] lockdown_lsm_init+0x18/0x34
-> > [<c0d196e4>] initialize_lsm+0x44/0x94
-> > [<c0d19780>] early_security_init+0x4c/0x74
-> > [<c0d00894>] start_kernel+0x90/0x8ac
-> > [<c0984190>] machine_shutdown+0x1c/0x20
-> > no locks held by swapper/0.
-> > ---[ end trace 0000000000000000 ]---
-> >
-> > mips:
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 0 at include/linux/jump_label.h:322 security_add_h=
-ooks+0xf8/0x1bc
-> > static_key_enable(): static key 'security_hook_active_locked_down_0+0x0=
-/0x4' used before call to jump_label_init()
-> > Modules linked in:
-> > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2-00134-g679d51=
-771510 #1
-> > Hardware name: mti,malta
-> > Stack : 00000000 811eedd8 00000000 00000000 00000000 00000000 00000000 =
-00000000
-> >          00000000 00000000 00000000 00000000 00000000 00000001 81257cd8=
- 00000000
-> >          81257d70 00000000 00000000 00000000 00000038 80e549c4 00000000=
- ffffffff
-> >          00000000 00000000 00000000 00040000 00000000 00000000 81174584=
- 81280000
-> >          00000000 00000142 00000000 00000000 00000000 00000000 0a0a0b0b=
- bbe00cfc
-> >          ...
-> > Call Trace:
-> > [<8010a0a8>] show_stack+0x60/0x154
-> > [<80e731d8>] dump_stack_lvl+0xbc/0x138
-> > [<8012f908>] __warn+0x9c/0x1f8
-> > [<8012fc20>] warn_slowpath_fmt+0x1bc/0x1cc
-> > [<8138a184>] security_add_hooks+0xf8/0x1bc
-> > [<8138a5fc>] lockdown_lsm_init+0x20/0x30
-> > [<813899e8>] initialize_lsm+0x44/0x80
-> > [<81389be0>] early_security_init+0x50/0x6c
-> > [<8136c82c>] start_kernel+0xa8/0x7dc
-> > irq event stamp: 0
-> > hardirqs last  enabled at (0): [<00000000>] 0x0
-> > hardirqs last disabled at (0): [<00000000>] 0x0
-> > softirqs last  enabled at (0): [<00000000>] 0x0
-> > softirqs last disabled at (0): [<00000000>] 0x0
-> > ---[ end trace 0000000000000000 ]---
-> >
-> > Loongarch (crash):
-> >
-> > [    0.000000] ------------[ cut here ]------------
-> > [    0.000000] static_key_enable_cpuslocked(): static key 'security_hoo=
-k_active_locked_down_0+0x0/0x10' used before call to jump_label_init()
-> > [    0.000000] ------------[ cut here ]------------
-> > [    0.000000] DEBUG_LOCKS_WARN_ON(early_boot_irqs_disabled)
-> > [    0.000000] Caught reserved exception 12 on pid:0 [swapper] - should=
- not happen
-> > [    0.000000] do_reserved exception[#1]:
-> > [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc=
-2+ #1
-> > [    0.000000] Hardware name: QEMU QEMU Virtual Machine, BIOS 0.0.0 02/=
-06/2015
-> > [    0.000000] pc 9000000004cf9334 ra 9000000004cf9334 tp 9000000006cc8=
-000 sp 9000000006ccbc10
-> > [    0.000000] a0 000000000000002d a1 9000000006df7830 a2 0000000000000=
-000 a3 9000000006ccba28
-> > [    0.000000] a4 0000000000000001 a5 0000000000000000 a6 9000000006175=
-570 a7 0000000000000005
-> > [    0.000000] t0 0000000000000000 t1 0000000000000000 t2 0000000000000=
-001 t3 0000000000000001
-> > [    0.000000] t4 0000000000000004 t5 0000000000000094 t6 0000000000000=
-023 t7 0000000000000030
-> > [    0.000000] t8 ffffffff8dcb3998 u0 9000000006a45388 s9 000000000f5ea=
-330 s0 9000000006230788
-> > [    0.000000] s1 9000000006265c70 s2 0000000000000001 s3 0000000000000=
-001 s4 9000000006cfaa80
-> > [    0.000000] s5 000000000f75dad8 s6 000000000a5b0000 s7 000000000f75d=
-b30 s8 000000000eee5b18
-> > [    0.000000]    ra: 9000000004cf9334 lockdep_hardirqs_on_prepare+0x20=
-0/0x208
-> > [    0.000000]   ERA: 9000000004cf9334 lockdep_hardirqs_on_prepare+0x20=
-0/0x208
-> > [    0.000000]  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=3DCC DACM=3DCC -W=
-E)
-> > [    0.000000]  PRMD: 00000000 (PPLV0 -PIE -PWE)
-> > [    0.000000]  EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
-> > [    0.000000]  ECFG: 00070800 (LIE=3D11 VS=3D7)
-> > [    0.000000] ESTAT: 000c0000 [BRK] (IS=3D ECode=3D12 EsubCode=3D0)
-> > [    0.000000]  PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
-> > [    0.000000] Modules linked in:
-> > [    0.000000] Process swapper (pid: 0, threadinfo=3D(____ptrval____), =
-task=3D(____ptrval____))
-> > [    0.000000] Stack : 0000000000000001 9000000006265c70 9000000006169c=
-58 9000000004dd9ba8
-> > [    0.000000]         9000000006ccbc70 0000000000000000 9000000006ccbc=
-70 9000000006169c58
-> > [    0.000000]         00000000000000b0 90000000074f08b8 90000000086164=
-78 9000000007ad1924
-> > [    0.000000]         0000000000000000 9000000004e95fa8 9000000006cc80=
-00 9000000006ccbdb0
-> > [    0.000000]         000000000000007e 9000000006df7830 00000000000000=
-00 9000000006ccbbc8
-> > [    0.000000]         0000000000000001 0000000000000001 90000000073f6e=
-58 9000000006175570
-> > [    0.000000]         0000000000000000 0000000000000000 00000000000000=
-01 0000000000000001
-> > [    0.000000]         0000000000000000 0000000000000092 00000000000000=
-01 0000000000006000
-> > [    0.000000]         ffffffff8dcb3998 9000000006a6bed8 000000000f5ea3=
-30 9000000008616478
-> > [    0.000000]         90000000074f08b8 0000000000000001 00000000000000=
-01 9000000006cfaa80
-> > [    0.000000]         ...
-> > [    0.000000] Call Trace:
-> > [    0.000000] [<9000000004cf9334>] lockdep_hardirqs_on_prepare+0x200/0=
-x208
-> > [    0.000000] [<9000000004dd9ba4>] trace_hardirqs_on+0x54/0x70
-> > [    0.000000] [<9000000006169c54>] do_reserved+0x1c/0xcc
-> > [    0.000000] [<9000000004c52560>] handle_bp+0x120/0x1c0
-> > [    0.000000] [<9000000004e95fa8>] static_key_enable_cpuslocked+0xdc/0=
-xec
-> > [    0.000000] [<9000000004e960b8>] static_key_enable+0x18/0x2c
-> > [    0.000000] [<90000000061a9154>] security_add_hooks+0xbc/0x12c
-> > [    0.000000] [<90000000061aa880>] lockdown_lsm_init+0x20/0x34
-> > [    0.000000] [<90000000061a8a80>] initialize_lsm+0x3c/0x6c
-> > [    0.000000] [<90000000061a8c34>] early_security_init+0x44/0x68
-> > [    0.000000] [<9000000006180830>] start_kernel+0xa0/0x84c
-> > [    0.000000] [<900000000616d0f0>] kernel_entry+0xf0/0xf8
-> >
-> >
->
+Best Regards,
+Petr
 
