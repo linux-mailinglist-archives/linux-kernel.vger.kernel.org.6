@@ -1,184 +1,111 @@
-Return-Path: <linux-kernel+bounces-279217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C6594BA9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:15:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A4A994BAA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EB15B214EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:15:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8E11C21C6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8AB189F59;
-	Thu,  8 Aug 2024 10:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D8318A6AE;
+	Thu,  8 Aug 2024 10:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USu59iT5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="F1VcoxOd"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85C5189F3B;
-	Thu,  8 Aug 2024 10:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06FA146A7B
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112096; cv=none; b=sg5mTVsDRqCcJ2njrIDHCZ7xQlM0rD9rL7Ai3TFmlwetxsgTBylT9hSMJlQg05dFSw5xD1H6QEpzmfx5bBq6Zh3Y8+q9VRZmue9l6k+zdPAqPLrp+kghybj0pnQaDW903H8zCdA+NIgpIcruZutqecA8NTpcDbqUDbztRl1zbZw=
+	t=1723112122; cv=none; b=hudINvMnFG2gPZ0Z4hwOA31vtaceZLPUzOwtUYQp+B5ZGp1PX8iWDjnucltbKbI8fap1jLdBuPqgpIdH97pkocQbBUNluKMrDWdwjHBvYIcXObTOOjmssFFfmigkqzctUQ47Wc2B1Be4uS7PdDXtiDeY7htaH8ezyAHoRIShSm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112096; c=relaxed/simple;
-	bh=dh7oDQEDvsFMBMEJeKdrDyxS2nNFjJ1jhncBVJEXWvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Mpzj62S3tU7lj5BnPyeF5TuI2qrZO+aRpqTHJosnOlwYBVxho8DwLSB8sIJfhXiMQiJDf0RjbIzxDnK83QaSzkb6CrIEqdczsoql+L2d6kB2pBVFOlsg9Z4cjrd3ZeKccFNpeegL8KOTTNVM53SJKurxpTHUQ4VKVqkg5V3ExQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USu59iT5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D9C0C32782;
-	Thu,  8 Aug 2024 10:14:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723112096;
-	bh=dh7oDQEDvsFMBMEJeKdrDyxS2nNFjJ1jhncBVJEXWvk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=USu59iT5F9bjAZLxN8x+aiv+4UKzeBd2i+ZhhGw+oH0+Kn4qHjFChEeicybHlMdaN
-	 MsMracGpQZfygEFueqj0mKdIFqMrxg8NizjxFIc6/tsI77RmYrj1kKfI1afeNEBXyY
-	 B0T6qyjJWnOv0QzTV7hMJUKcaGc1awYv+UaaA6I/fXpt1uGbPl/9GEDuoB3QWMu0k4
-	 eS2rDePBvD9t88VjUtXq6ouWGINWyDsxt2tHkx9eEsR4E94ql4V+mqQHoPxkWbCowx
-	 KgU4EU0HYo6Ui380nNSHSf/3kwfISVPnQ271X+gzmF4Hw3S4Y3sQP+q57l5RjaFYeN
-	 G7LgzByd6nY2w==
-Message-ID: <2f27285e-6aa5-4e42-b361-224d8d164113@kernel.org>
-Date: Thu, 8 Aug 2024 12:14:49 +0200
+	s=arc-20240116; t=1723112122; c=relaxed/simple;
+	bh=h9yni8FP8oD8omveTs3RhzoPgoL+8M3n2GqB/6DS6rY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k2rylUMo1uG2lacMghproPXdXKkidlQ3m6G+OBfW427+7ZArF+TXrH97UtIZEA3PSNH65FxglrAL21wsBwQ4CVOwra07OVOdSOCb29qUxI19i90aoSLB4IIpi7/WB3e36fmuQV8EOxRMuVb2B/gsvNB2HtOeF3VJX1tpW+yKhJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=F1VcoxOd; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso5575245e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 03:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723112118; x=1723716918; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uHKU+qWDGf01eQdWksVZpo4JSdzafD6OrXnwsvy06EY=;
+        b=F1VcoxOdaFycAyc9yFVYr/rrjAcDH2KrWkmDgqjQojsxdoZMElbLrsOBR4dZQqc1xb
+         E73qnw/yvKBj1GF2Eb+gIr/s2+X2WGbyK2M07owdrZ/sZwK04LoqQwb672b9X6HyGh+c
+         XlljnWcgwcHdG3ShxxR43U+jgQsQqXal7KQS05JkItYPwO5s8g3JmrCEpFYlmkoBkqSh
+         MlwcHn1nBSwu11INjD4QJ26bgMfZVW8h7PviiBy/GVBy13Owocz/lH2tPF9stEZbHRI8
+         y7LkHBVKBcCqZCxydYdbk4IAV67rPEyBFEGpBYCUVXorUzGxmvBQmuncUMEhTRIUbZim
+         8KuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723112118; x=1723716918;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uHKU+qWDGf01eQdWksVZpo4JSdzafD6OrXnwsvy06EY=;
+        b=OoSMX/IOL5eYz1ppR+fk0jHm7V0mtOy1ItaD6xHc8tOuakhbEb3VHPaTZ5SB5xeraS
+         1hhlNgAcyKN9UaJBfc6C/yMmK/QBpAehd6muYIqys2xj9XS7vVSYt5s/pAuYMaz6Ln14
+         bvyN+SX8KpScDjyE2k82AhxvYMlf1sAjwibzFQ/npwbkh/SWN0N63xiaXKwnqZ+jVXKh
+         xfeo+UjctTSkm5L89Nzr4zovJzGThDe5FLdVgVnmKoQ3mrkhdOz9tAtBshVvpPXNyMqz
+         H4GvFrAxvM2hcZZ09TRsDaCMFl8XaoFB6xnHKyjA2Mpl3NvfGzH3yD/mVDASn8Lp8Zb8
+         FB5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWPY20n0hWao6S/N2RuIQth8ih+Ap4PxxpVSZUAcT3iIOJOCoDYzeAVNRw31dsFn6c4HBeav0wZAKbcaInPdC9mHM1Pivk02JkwF1pH
+X-Gm-Message-State: AOJu0YwHTOANy3BYbe4GOZX8aEecxCe8z+ov6KoSxHt8JZpPnrvPLxwT
+	fPjBKRWTAREA3+Usyz389wwwX9Cy+ByTqCMHrC96wY/7qO+mBBDPcwD00SDIiSQ=
+X-Google-Smtp-Source: AGHT+IH20/85w4Ip7Pzi8RePzbDVoqHc01uOa2goRjWmjwxMDR86wk62jwXwrKpXG/AxjdYpn/0xog==
+X-Received: by 2002:a05:600c:1d05:b0:426:6e9a:7a1c with SMTP id 5b1f17b1804b1-4290af0fc7fmr9739075e9.25.1723112118023;
+        Thu, 08 Aug 2024 03:15:18 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:ae7:4e79:8821:15db])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c74a96bsm15015415e9.24.2024.08.08.03.15.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 03:15:17 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Jan Dakinevich <jan.dakinevich@salutedevices.com>,  Philipp Zabel
+ <p.zabel@pengutronix.de>,  Neil Armstrong <neil.armstrong@linaro.org>,
+  linux-kernel@vger.kernel.org,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/8] reset: amlogic: convert driver to regmap
+In-Reply-To: <11e8dd92e07674133d8a291cc016c314.sboyd@kernel.org> (Stephen
+	Boyd's message of "Thu, 18 Jul 2024 12:29:13 -0700")
+References: <20240710162526.2341399-1-jbrunet@baylibre.com>
+	<20240710162526.2341399-2-jbrunet@baylibre.com>
+	<b12ac6b2-cb46-4410-9846-86ed4c3aea1f@salutedevices.com>
+	<1jv813makr.fsf@starbuckisacylon.baylibre.com>
+	<f5bc9590-f37e-491e-9978-c1eab8914c30@salutedevices.com>
+	<11e8dd92e07674133d8a291cc016c314.sboyd@kernel.org>
+Date: Thu, 08 Aug 2024 12:15:16 +0200
+Message-ID: <1jle17xqvf.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
- <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 08/08/2024 09:59, Ryan Chen wrote:
-> Add compatible support for AST2700 clk, reset, pinctrl, silicon-id
-> and example for AST2700 scu.
-> 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  .../bindings/mfd/aspeed,ast2x00-scu.yaml      | 31 +++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> index 86ee69c0f45b..c0965f08ae8c 100644
-> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> @@ -21,6 +21,8 @@ properties:
->            - aspeed,ast2400-scu
->            - aspeed,ast2500-scu
->            - aspeed,ast2600-scu
-> +          - aspeed,ast2700-scu0
-> +          - aspeed,ast2700-scu1
+On Thu 18 Jul 2024 at 12:29, Stephen Boyd <sboyd@kernel.org> wrote:
 
-What are the differences between these two?
+>> 
+>> Full analysis is following:
+>> - using regmap_update_bits() instead of writel() is incorrect because
+>> this changes the behavior of the driver
+>> - regmap_update_bits() should not be used here because default value of
+>> regs isn't taken into account and (_apparently_, the doc is terse) these
+>> regs could be updated by hw itself.
+>
+> Maybe use regmap_write_bits() instead.
 
->        - const: syscon
->        - const: simple-mfd
->  
-> @@ -30,10 +32,12 @@ properties:
->    ranges: true
->  
->    '#address-cells':
-> -    const: 1
-> +    minimum: 1
-> +    maximum: 2
->  
->    '#size-cells':
-> -    const: 1
-> +    minimum: 1
-> +    maximum: 2
->  
->    '#clock-cells':
->      const: 1
-> @@ -56,6 +60,8 @@ patternProperties:
->              - aspeed,ast2400-pinctrl
->              - aspeed,ast2500-pinctrl
->              - aspeed,ast2600-pinctrl
-> +            - aspeed,ast2700-soc0-pinctrl
-> +            - aspeed,ast2700-soc1-pinctrl
->  
->      required:
->        - compatible
-> @@ -76,6 +82,7 @@ patternProperties:
->                - aspeed,ast2400-silicon-id
->                - aspeed,ast2500-silicon-id
->                - aspeed,ast2600-silicon-id
-> +              - aspeed,ast2700-silicon-id
->            - const: aspeed,silicon-id
->  
->        reg:
-> @@ -115,4 +122,24 @@ examples:
->              reg = <0x7c 0x4>, <0x150 0x8>;
->          };
->      };
-> +  - |
-> +    soc0 {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
+Actually regmap_write_bits() performs an update behind the scene.
+You'd still get the undefined read value making a mess AFAICT.
 
-That's the same example as previous, right? The drop, no need.
+I'll stick to the usual regmap_write().
 
-Best regards,
-Krzysztof
-
+-- 
+Jerome
 
