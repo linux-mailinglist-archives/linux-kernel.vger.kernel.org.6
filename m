@@ -1,188 +1,137 @@
-Return-Path: <linux-kernel+bounces-278784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D8794B4D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC6694B4D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 04:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17368B2177A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:05:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF5DBB2232D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CDDD2E5;
-	Thu,  8 Aug 2024 02:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EECD530;
+	Thu,  8 Aug 2024 02:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnfKY1B2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="LHsZlJgo"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36E4A23;
-	Thu,  8 Aug 2024 02:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603B78F6E;
+	Thu,  8 Aug 2024 02:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723082702; cv=none; b=SZFCvd70XMON6STGcab+OYNVWtHbMfXguvl/mKAn44xtrP4bSgNh3KkAWxvWMIQ6j642BGLK+HKXjRkW4V2BrVWp+2OH9JjKXFA8+7oKCSyjSU5p6eedTkDhb5ORuZtpT2+o9osbn9rvQJQ8QRcFh4Y38vtBG/psC9hgqG8ma5w=
+	t=1723082793; cv=none; b=U16i7jXrEzeRf7kRf7lfuTGtw/j1/wlAYcspPUCfuw7qGeXwotLP9HjmegdmdH4FKIh8Juw20m9Y10Kec3jL9jLAxKCvxD05t2315Cvg2vyi+S+zWTyX+2yjYen5abzU+GFLtS1JlRv1qAfvVd6+Wz90WWn7iFlrUMEA9uNbj0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723082702; c=relaxed/simple;
-	bh=2EcT3zPydLdHe4h+d6LItih1FkoUOBaRXJ1Xwae7odY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Zcy0a5SWWqdJCc61Y/8JAPzGsZWLIj0cjGE1klU9mZnSM0Xc4IA6TMgT44HJCIaBv1WjfwWDnL7QBp5VoRBEBf7Mzvh+hr++LdzciOwFML2X6ELFrV97YxcGZhSKMSkPCdrKsAq2gKASmIKGYZAp4tvfGeovoTnsnWqruLXtkM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnfKY1B2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5E7C5C32781;
-	Thu,  8 Aug 2024 02:05:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723082701;
-	bh=2EcT3zPydLdHe4h+d6LItih1FkoUOBaRXJ1Xwae7odY=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=MnfKY1B2ugtjj0Ah/aw35kKJY+FvKHU9WcoIangAwcExW5aK5Jorg3pVqxnI4yioC
-	 8HhofzvQDyiQPI3ssLvHDn4EuMTrqoG/JOu3UyZ682j2p+v9WKJrsOyDPiXdHaAJ61
-	 7/NYlWxweE2V3fUfJNdTJdVQg6dOmEfp1kcmxtZVktF+5XsHriLcWu8w7uFTJNq71h
-	 BLI13zvbrWVxrs+cI30SxoCCgQU5ge8fm6ASclzcOtZ6u89OGG+4wJF7Rop9VuFhG6
-	 2kna466QI6d/+Xk8LRCX85nedp6HHdBSc8gwIwQot6jK4321joN+Qn8MQ95VX6arFW
-	 mhCqgDWEKjZhA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC3AC52D6F;
-	Thu,  8 Aug 2024 02:05:01 +0000 (UTC)
-From: Koakuma via B4 Relay <devnull+koachan.protonmail.com@kernel.org>
-Date: Thu, 08 Aug 2024 09:05:00 +0700
-Subject: [PATCH v2] sparc/vdso: Add helper function for 64-bit right shift
- on 32-bit target
+	s=arc-20240116; t=1723082793; c=relaxed/simple;
+	bh=JBdg6JXfCp38NgqsLBqTczGG/krMK0JxDUiKEO/2sH0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=h4J0qHIMU0YDDREY0tExCcG3TzMR5Xpww5fsk86DgrP5e4/wJVtXoV9gUbekhNYS/LBkYNLcg03UbXmtTyh613rxIYQf6XeXDL2C7/0MXGRTlZnszXooPmk2qIzFCyjQNGmFll+s1AZhhDDYmPi/wJ0RCUrIdbHPYDbPpOkIIrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=LHsZlJgo; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1723082789;
+	bh=OnyU4K9Xs3OQ6gjOrSz6jTsZs25qhB/EPzhnB51St3U=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=LHsZlJgoxe2y22kAI9EN4j+HNry8kSr3WF2Od0kH5bmtymF7vLHaKSmj2xnzH6zc7
+	 Vc3iX6jMT1QztIpxXfMFEJRVam4nLKamu1TDi/cmZMlfSptW9gtXRWBynGfLzvVDoV
+	 98WI63bq6l72+k4JF6/Bk3+km79IHArILkFHmDvqp5mjMJma2EHn70Qf53yvkzLJCX
+	 7AelvkqsrM7a4bdr5sAnpEMxGK3dp1QWQmgIADUKvrpK2ugsrnJhE1BqVPMhLpPJJJ
+	 9ebml7Gr1q17RVD+8xpsyiSeySQmOBaP+JNv0gJMAZN5EiUcqr1V4Io4mQySZompv8
+	 744nsHhAWMy8w==
+Received: from [192.168.68.112] (203-57-213-111.dyn.iinet.net.au [203.57.213.111])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8C20B66F97;
+	Thu,  8 Aug 2024 10:06:28 +0800 (AWST)
+Message-ID: <4d26bde0bda7cb1d44958d967c4b0c2da5b2abc4.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 2/2] dt-bindings: misc: aspeed,ast2400-cvic: Convert to
+ DT schema
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Joel Stanley
+ <joel@jms.id.au>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Date: Thu, 08 Aug 2024 11:36:28 +0930
+In-Reply-To: <ec19fe07-84bd-4c32-a886-e6126af52f4c@kernel.org>
+References: 
+	<20240802-dt-warnings-irq-aspeed-dt-schema-v1-0-8cd4266d2094@codeconstruct.com.au>
+	 <20240802-dt-warnings-irq-aspeed-dt-schema-v1-2-8cd4266d2094@codeconstruct.com.au>
+	 <ec19fe07-84bd-4c32-a886-e6126af52f4c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240808-sparc-shr64-v2-1-fd18f1b2cea9@protonmail.com>
-X-B4-Tracking: v=1; b=H4sIAMsntGYC/1XMQQ6CMBCF4auQWVszLYUWV97DsGhqkUmEkikhG
- tK7W3Hl8n/J+3ZIgSkkuFQ7cNgoUZxLqFMFfnTzIwi6lwaFSqORRqTFsRdp5FYLNSA6Y602BqE
- 8Fg4DvQ7t1pceKa2R3we+ye/6cyzqP2eTQgrVYINda+u6c9eF4xrnydHz7OMEfc75A6nfi5OrA
- AAA
-To: "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, Koakuma <koachan@protonmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723082700; l=3512;
- i=koachan@protonmail.com; s=20240620; h=from:subject:message-id;
- bh=Si3c44/d6jXgPlqHAyYiaOjLlLDe1/nmaPBaKpcPsPo=;
- b=kN78zuvs/mL6hPLposgcU9M29S3E9kBq3BS+8FzltzlrdxSTJDNeaDNDLou81Sqo6m93sqG47
- MEVfcgCRTcJAQlIIHmzdXbKSV8zMnEkOycj+RuqbwOfStGRK4FjLCgw
-X-Developer-Key: i=koachan@protonmail.com; a=ed25519;
- pk=UA59FS3yiAA1cnAAUZ1rehTmr6skh95PgkNRBLcoKCg=
-X-Endpoint-Received: by B4 Relay for koachan@protonmail.com/20240620 with
- auth_id=174
-X-Original-From: Koakuma <koachan@protonmail.com>
-Reply-To: koachan@protonmail.com
 
-From: Koakuma <koachan@protonmail.com>
+On Tue, 2024-08-06 at 08:12 +0200, Krzysztof Kozlowski wrote:
+> On 02/08/2024 07:36, Andrew Jeffery wrote:
+> > Address warnings such as:
+> >=20
+>=20
+>=20
+> > +description:
+> > +  The Aspeed AST2400 and AST2500 SoCs have a controller that provides =
+interrupts
+> > +  to the ColdFire coprocessor. It's not a normal interrupt controller =
+and it
+> > +  would be rather inconvenient to create an interrupt tree for it, as =
+it
+> > +  somewhat shares some of the same sources as the main ARM interrupt c=
+ontroller
+> > +  but with different numbers.
+> > +
+> > +  The AST2500 also supports a software generated interrupt.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - aspeed,ast2400-cvic
+> > +          - aspeed,ast2500-cvic
+> > +      - const: aspeed,cvic
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  valid-sources:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> > +    description:
+> > +      One cell, bitmap of support sources for the implementation.
+>=20
+> maxItems: 1
+> (and drop "One cell" - no need to repeat constraints in free form text)
 
-Add helper function for 64-bit right shift on 32-bit target so that
-clang does not emit a runtime library call.
+Ack to both.
 
-Signed-off-by: Koakuma <koachan@protonmail.com>
----
-Hi~
+>=20
+> BTW, for both bindings, I do not see any user in the kernel. Why is this
+> property needed in the DTS?
 
-This adds a small function to do 64-bit right shifts for use in vDSO
-code, needed so that clang does not emit a call to runtime library.
----
-Changes in v2:
-- Move __shr64 to sparc code since there are no other users of it.
-- Now that __shr64 is not in portable code, redo it in inline asm for simpler implementation & better performance.
-- Link to v1: https://lore.kernel.org/r/20240804-sparc-shr64-v1-1-25050968339a@protonmail.com
----
- arch/sparc/vdso/vclock_gettime.c | 28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+Good question. This is a hangover from when benh was involved in the
+Aspeed kernel port.
 
-diff --git a/arch/sparc/vdso/vclock_gettime.c b/arch/sparc/vdso/vclock_gettime.c
-index e794edde6755..79607804ea1b 100644
---- a/arch/sparc/vdso/vclock_gettime.c
-+++ b/arch/sparc/vdso/vclock_gettime.c
-@@ -86,6 +86,11 @@ notrace static long vdso_fallback_gettimeofday(struct __kernel_old_timeval *tv,
- }
- 
- #ifdef	CONFIG_SPARC64
-+notrace static __always_inline u64 __shr64(u64 val, int amt)
-+{
-+	return val >> amt;
-+}
-+
- notrace static __always_inline u64 vread_tick(void)
- {
- 	u64	ret;
-@@ -102,6 +107,21 @@ notrace static __always_inline u64 vread_tick_stick(void)
- 	return ret;
- }
- #else
-+notrace static __always_inline u64 __shr64(u64 val, int amt)
-+{
-+	u64 ret;
-+
-+	__asm__ __volatile__("sllx %H1, 32, %%g1\n\t"
-+			     "srl %L1, 0, %L1\n\t"
-+			     "or %%g1, %L1, %%g1\n\t"
-+			     "srlx %%g1, %2, %L0\n\t"
-+			     "srlx %L0, 32, %H0"
-+			     : "=r" (ret)
-+			     : "r" (val), "r" (amt)
-+			     : "g1");
-+	return ret;
-+}
-+
- notrace static __always_inline u64 vread_tick(void)
- {
- 	register unsigned long long ret asm("o4");
-@@ -154,7 +174,7 @@ notrace static __always_inline int do_realtime(struct vvar_data *vvar,
- 		ts->tv_sec = vvar->wall_time_sec;
- 		ns = vvar->wall_time_snsec;
- 		ns += vgetsns(vvar);
--		ns >>= vvar->clock.shift;
-+		ns = __shr64(ns, vvar->clock.shift);
- 	} while (unlikely(vvar_read_retry(vvar, seq)));
- 
- 	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
-@@ -174,7 +194,7 @@ notrace static __always_inline int do_realtime_stick(struct vvar_data *vvar,
- 		ts->tv_sec = vvar->wall_time_sec;
- 		ns = vvar->wall_time_snsec;
- 		ns += vgetsns_stick(vvar);
--		ns >>= vvar->clock.shift;
-+		ns = __shr64(ns, vvar->clock.shift);
- 	} while (unlikely(vvar_read_retry(vvar, seq)));
- 
- 	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
-@@ -194,7 +214,7 @@ notrace static __always_inline int do_monotonic(struct vvar_data *vvar,
- 		ts->tv_sec = vvar->monotonic_time_sec;
- 		ns = vvar->monotonic_time_snsec;
- 		ns += vgetsns(vvar);
--		ns >>= vvar->clock.shift;
-+		ns = __shr64(ns, vvar->clock.shift);
- 	} while (unlikely(vvar_read_retry(vvar, seq)));
- 
- 	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
-@@ -214,7 +234,7 @@ notrace static __always_inline int do_monotonic_stick(struct vvar_data *vvar,
- 		ts->tv_sec = vvar->monotonic_time_sec;
- 		ns = vvar->monotonic_time_snsec;
- 		ns += vgetsns_stick(vvar);
--		ns >>= vvar->clock.shift;
-+		ns = __shr64(ns, vvar->clock.shift);
- 	} while (unlikely(vvar_read_retry(vvar, seq)));
- 
- 	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
+Given it's specified in the prose binding and the devicetrees contain
+the property I'll leaving it in for now, but I think it's something we
+could consider removing down the track.
 
----
-base-commit: defaf1a2113a22b00dfa1abc0fd2014820eaf065
-change-id: 20240717-sparc-shr64-2f00a7884770
+>=20
+> > +
+> > +  copro-sw-interrupts:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>=20
+> uint32? I do not see anywhere usage as an array. The in-kernel driver
+> explicitly reads just uint32.
 
-Best regards,
--- 
-Koakuma <koachan@protonmail.com>
+You're right, and in the context of the hardware an array doesn't make
+sense here. I'll switch it to a uint32.
 
+Thanks for the review.
 
+Andrew
 
