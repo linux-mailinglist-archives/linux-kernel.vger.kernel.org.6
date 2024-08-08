@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-279806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC12994C210
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:54:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E780B94C214
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8209728ACD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 945C21F2894E
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BCF18FDB8;
-	Thu,  8 Aug 2024 15:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB5318B489;
+	Thu,  8 Aug 2024 15:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjMwUih1"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="quvZyxoq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464E7183CCB;
-	Thu,  8 Aug 2024 15:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A535418CC0C;
+	Thu,  8 Aug 2024 15:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723132488; cv=none; b=HFxxgsD9BH6+eqzb7/eHZ/G4/xs3fwICEaYAaQQyXdyc/KSDA44dkvLZFSvgVLQR3SCL3StUamoyOiZT8aI+pmDHvu40mkKkVN3U3qA2ennvh5D4A+9oOIqzIvaSxQmsWjiXcLrI/ieE8VjRtFMbBLeeTzwj8i14O0aoWg8geLQ=
+	t=1723132518; cv=none; b=Utp2xP+O5h1QpK/WWZTtqN2wm8Jhl7n0vP22NqngJGQcJ/Kz2PzHoYOyHOIejwuJ8MCrlh91YSJoY3/wEhBIxnUAjU53EtzASo6rpIIf/XkHS/0rup2L1qsBp+f0oqgfDZDYp0fRTH2KfXkymYDIEg08SM6lCrg/hSSo2imEq7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723132488; c=relaxed/simple;
-	bh=g2iwU3kTZWYexXO7EP+tPVGA5m/ulc15bcFrrIeT+2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VpTqYfnSvHbdwmZHnmUdCTebzbl1EfZ3ilyevWEBBzRwW3syAPinAgxB7d0O/osGkxU5SwKY63BAQC68rJcXbLRChbMV9uWM+pguUOwe/kr/sd0L5vFYc+Oe0ptErwborXi5arjeHCH5DPoR5IzECh6dgwF+290uq/k8JoeTjOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjMwUih1; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a20de39cfbso1225995a12.1;
-        Thu, 08 Aug 2024 08:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723132486; x=1723737286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mQ0G3gIYv0zW5ywze1/rQd1nVJRudLESup0uQOy1PM4=;
-        b=fjMwUih19cRjvvz8bxpNcj7YnLhI+SsztZKSqb7aQY9c0n6k4DJL2Tv9cJSH5b8aij
-         Hhg0r3i66TFB1gaVUxRZVCOS0L2dwsq2qBUVv9kCeGCIGUxJOZ+H83i/erMisn0frMsU
-         IBf6vcmpI9w7ujeZh48cEOC6BXjM4RASlPDIwKsseOIxYjWl2G0YeQ5Lw9cifJ56kZxl
-         HPdpCDVLEQo1b1C+Lb+zHh9PcZqqv0YRazEd/qXgNTSh8Bxic7tLex168RCDN7+iCXj1
-         IVsTq9wmXzCz16oWie4zrRpwd4oNG1N2xRoZUiH0FxDRQXEkV8me0O1zbEXIPkh1DbEc
-         ghHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723132486; x=1723737286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mQ0G3gIYv0zW5ywze1/rQd1nVJRudLESup0uQOy1PM4=;
-        b=NuHxC9Ak4SEhTVV8SoZdnc643gJMLyjLsJLhToPjYdUdNISppbpovmsCVE7zSuKSaj
-         pNQaFe+vmFf5Vzj+BxMmx0SGGAF/io1wjLgjSjgjyhnbvvVEWQXKRZ3qIFstyb3TrRfz
-         Vm1G3EYBZj/jUm4fC5dJK5XHsUdRsfhDAorFkN8GTcVDeBaQ+6YohBhVUqhekNwyGnZv
-         y+B++ThiMZ/ZadksZHSDEAI4kmqcUr9H9xCprbSXLtELsAS/ts+Rtx00QfBltYevLaCn
-         yN9ntNTirjs+oFTb3xZkx+UWZH0kfZKNee0JtI0p/GIKFvDLUWy3jZ25XkipzBBBBfiq
-         ohzA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+5bwrpadKC2eyV1Fb28IGQCKMXVeMBPnpj9C6NwODLRCuGY21C6iRwHL7TMWsr9a7Gx+jb2dVcCGfi3ckiuRUnQ3PHx9tD2/fnDNqObXGB4tRjjMD31cDy57/bJdUjQGdkqUax34VSeVaVg==
-X-Gm-Message-State: AOJu0Ywr93n20H8bCZzvRaNkevSKxIqgB4uV6QTR6D/A4RAqYVQ2Ecge
-	r4IBeGmF8mb7uB8qDUIS4vVIeBJ4pzCTqIdeEmIrzBkPd8V1mxlQ
-X-Google-Smtp-Source: AGHT+IFiFsQmRCqKqrSpUCyJTAg+hoj7Nf9Zlunp7PnwX/h7AT7D2qpyBrWyLBDzqhhS0nNVq+/JTg==
-X-Received: by 2002:a05:6402:50d2:b0:5a2:694e:5faa with SMTP id 4fb4d7f45d1cf-5bbb21f42ddmr1885843a12.8.1723132485167;
-        Thu, 08 Aug 2024 08:54:45 -0700 (PDT)
-Received: from f.. (cst-prg-72-52.cust.vodafone.cz. [46.135.72.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2d34a7fsm744335a12.74.2024.08.08.08.54.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 08:54:44 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] vfs: only read fops once in fops_get/put
-Date: Thu,  8 Aug 2024 17:54:28 +0200
-Message-ID: <20240808155429.1080545-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723132518; c=relaxed/simple;
+	bh=vEzY4C6mfTs2TFhQiIQT2GbsCRXnBiJuK+ehBtym/eM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mz7zCpX0tpKPgZ2uzPSC2Nbicr4OJO2xqQCMMPwmAaDGcZGq3rlIDMhqgJRkEZxB/li9bnmNfx0KnLTbfPmn9WYyqSlqF//wJ0tocekeUqYAqN6wK7UCpZ/j5YTtKQEHKcty5HLwNrTSwzatGKf1c8qYynVPkYuE3q8VKVtnU3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=quvZyxoq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36F1DC32782;
+	Thu,  8 Aug 2024 15:55:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723132518;
+	bh=vEzY4C6mfTs2TFhQiIQT2GbsCRXnBiJuK+ehBtym/eM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=quvZyxoqosQ7vYc9F+w9yQtxhcLXk1oLpov53MqiZT+ELJixY4qSmgwrMGKhKg8nR
+	 f2io3sgdUP9B98BCaO/Td8zOFsp4vk7JcyqTj85IWFYq0lGWlPsb2yK4VrF99DE9K+
+	 koQPIpfA5iPU7mHzZEVyauLZ+F/+dn9a5vbvrP5GCK+91FFDeeW/cxBw65iv356xti
+	 17ZSas5gjbF0CSIHqsytDlG5VDFT6gZ1ZwR6EpnehaBwndjZ/5eT234EQZ0nBeBbOB
+	 5Oe+UdLfHSLRnIrXom0KYiE9FEriusJjrbRPmLTqK9yuVUR5iCJXCx1iI2Q2rf+7I0
+	 3vg6CamLy1YiA==
+Date: Thu, 8 Aug 2024 16:55:14 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] arm64: dts: lx2160a: Change PCIe compatible string
+ to fsl,ls2088a-pcie
+Message-ID: <20240808-linoleum-evasion-ad7111a2afc4@spud>
+References: <20240808153120.3305203-1-Frank.Li@nxp.com>
+ <20240808-frosted-voicing-883f4f728527@spud>
+ <ZrTphsdTZVsbiGo/@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iF4455zFqFQ3CKov"
+Content-Disposition: inline
+In-Reply-To: <ZrTphsdTZVsbiGo/@lizhi-Precision-Tower-5810>
 
-The compiler emits 2 access in fops_get(), put is patched to maintain some
-consistency.
 
-This makes do_dentry_open() go down from 1177 to 1154 bytes.
+--iF4455zFqFQ3CKov
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This popped up due to false-sharing where loads from inode->i_fop end up
-bouncing a cacheline on parallel open. While this is going to be fixed,
-the spurious load does not need to be there.
+On Thu, Aug 08, 2024 at 11:51:34AM -0400, Frank Li wrote:
+> On Thu, Aug 08, 2024 at 04:34:32PM +0100, Conor Dooley wrote:
+> > On Thu, Aug 08, 2024 at 11:31:20AM -0400, Frank Li wrote:
+> > > The mass production lx2160 rev2 use designware PCIe Controller. Old R=
+ev1
+> > > which use mobivel PCIe controller was not supported. Although uboot
+> > > fixup can change compatible string fsl,lx2160a-pcie to fsl,ls2088a-pc=
+ie
+> > > since 2019, it is quite confused and should correctly reflect hardware
+> > > status in fsl-lx2160a.dtsi.
+> >
+> > This does not begin to explain why removing the soc-specific compatible,
+> > and instead putting the compatible for another soc is the right fix.
+> > Come up with a new compatible for this device, that perhaps falls back
+> > to the ls2088a, but this change doesn't seem right to me.
+>=20
+> It can't fallback to fsl,ls2088a-pcie if fsl,lx2160a-pcie exist, which are
+> totally imcompatible between fsl,ls2088a-pcie and fsl,lx2160a-pcie.
+>=20
+> Previous dtb can work just because uboot dynamtic change fsl,lx2160a-pcie
+> to fsl,ls2088a-pcie when boot kernel.
+>=20
+> fsl,lx2160a-pcie should be removed because Rev1 have not mass productione=
+d.
 
-No functional changes.
+Please re-read what I wrote. I said to come up with a new compatible for
+this device, not fall back from the existing fsl,lx2160a-pcie to
+fsl,ls2088a-pcie.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- include/linux/fs.h | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+Thanks,
+Conor.
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ef5ada9d5e33..87d191798454 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2565,10 +2565,17 @@ struct super_block *sget(struct file_system_type *type,
- struct super_block *sget_dev(struct fs_context *fc, dev_t dev);
- 
- /* Alas, no aliases. Too much hassle with bringing module.h everywhere */
--#define fops_get(fops) \
--	(((fops) && try_module_get((fops)->owner) ? (fops) : NULL))
--#define fops_put(fops) \
--	do { if (fops) module_put((fops)->owner); } while(0)
-+#define fops_get(fops) ({						\
-+	const struct file_operations *_fops = (fops);			\
-+	(((_fops) && try_module_get((_fops)->owner) ? (_fops) : NULL));	\
-+})
-+
-+#define fops_put(fops) ({						\
-+	const struct file_operations *_fops = (fops);			\
-+	if (_fops)							\
-+		module_put((_fops)->owner);				\
-+})
-+
- /*
-  * This one is to be used *ONLY* from ->open() instances.
-  * fops must be non-NULL, pinned down *and* module dependencies
--- 
-2.43.0
+--iF4455zFqFQ3CKov
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrTqYgAKCRB4tDGHoIJi
+0oKoAPwOlkVSMPKo4T7m7wer8pIHsbwifYEUcKJ8UxsVCdBU2gEAhNy5yupcBVO7
+VUD6MOFw7a357c6cRPw6F/FAz+JfWg4=
+=Xu7U
+-----END PGP SIGNATURE-----
+
+--iF4455zFqFQ3CKov--
 
