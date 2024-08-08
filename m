@@ -1,97 +1,158 @@
-Return-Path: <linux-kernel+bounces-278999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A642D94B78A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:19:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9219E94B78F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9251F2560F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 464AB1F25BCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027101891B9;
-	Thu,  8 Aug 2024 07:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsHyLPLe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8751898EE;
+	Thu,  8 Aug 2024 07:17:04 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2151A186294;
-	Thu,  8 Aug 2024 07:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE0A187864;
+	Thu,  8 Aug 2024 07:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723101219; cv=none; b=b1ve1okvM9vzeUL3jGqsDPWdBSOwwj8msqbCo+ABCV6fjNDzqlpneMETA8SDCKygpNz9hDk5BgByBH1uPx6cdZLf301Kwava80mi8fvenaTdUof5e+DMMeiCULo967/WQgP9DDkUPU8BvtLfhzFhNC9TWmCESSbhLEaxXHLEokg=
+	t=1723101423; cv=none; b=oLHnfe1b5ZvLITG6xt6jIwa9cIyX3tBanHdv3F38gTqJfS+jIggiBMd27G9rV7e9oKJyTnNP3LtuyXr5LQGpynIi4rcRHTRm4ad1/RMTnpztn9VS7qHfR9dhIKC6hooz6MCUM2JKN8A14L4KWI2EsAJhOPvZhARbzWdLgNtXO1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723101219; c=relaxed/simple;
-	bh=0g9XRgxfeMZc9/uVHfto4j4RtP6dqmPPmizw0m2bd6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mmj8ETtRBXRtNDhuTQ54dvMf7TAlD/6dSNSO8yzZjV+ZdtWcyGVZT4cuTAeyOortdSZv2OsYMF6afq+Bhrv1v6earOliE9YrZ5lQ7o3tSAsrl2num2hKaVrHH3nBa5Lw94M3mtIrK/hDMwP7/k72/7nHoI6Q9Xpx8Wdhw2anSuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsHyLPLe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D572FC4AF09;
-	Thu,  8 Aug 2024 07:13:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723101218;
-	bh=0g9XRgxfeMZc9/uVHfto4j4RtP6dqmPPmizw0m2bd6g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FsHyLPLefdQdvQC+jQGRnXZVwnSjt7F3ggBBoZL/I0bL6nAjbVdkePPxZv+aHPTeF
-	 WiywH3KMXzzxx/upp6GV14gSZ8JeW66TVawsFgZS0b1bAIGsaKdAe01jnCNKUx3Q2R
-	 uydw63ZfXUrkzhFR7Zvk9qIl9+oYHx41Psd4Nb2Di9438tvjQtLePmZOxuym6niaPI
-	 NGcL67xBk0hKa2hue4EAiE1lCKEDxlwePef+t7D9evgmFd2KPVby0xVOEw3iWcfsDt
-	 yrvHlFsMiApjDeagf6EdReWd5f7IuuBQYBOaMsOkLU8Xmk4X+nzA9YXG277WHy5JOd
-	 e+qK7vu5psi+Q==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Joe Damato <jdamato@fastly.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	netdev@vger.kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	stable@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Stanislav Fomichev <sdf@fomichev.me>,
+	s=arc-20240116; t=1723101423; c=relaxed/simple;
+	bh=6vHSOVBe1Sa4iBroamdp+dNMEwK1hZVU83XzCsh7OKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tV/qoc6ZujghIXTGpstSzuQccFvWSMquwpBulv5lwgo3ShuCpzZjp81WvlkyMTHq7QWlMir67B75Bitdrc4RynsH0+36DZXAKAk844bhiM8s/xSHcQqfM/Ku5UypchCQuQPgruBNmgBqpzk8l6196GbWuUWAjX4uD66SHApgRl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Wfddl4Wrmz9sRr;
+	Thu,  8 Aug 2024 09:16:59 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id le_qI80roccu; Thu,  8 Aug 2024 09:16:59 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wfddl3c6gz9sRk;
+	Thu,  8 Aug 2024 09:16:59 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 657788B76C;
+	Thu,  8 Aug 2024 09:16:59 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id KOxqsiZjrNoM; Thu,  8 Aug 2024 09:16:59 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.234.168])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E651B8B763;
+	Thu,  8 Aug 2024 09:16:58 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Pantelis Antoniou <pantelis.antoniou@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH net] eventpoll: Annotate data-race of busy_poll_usecs
-Date: Thu,  8 Aug 2024 09:13:26 +0200
-Message-ID: <20240808-geteert-skala-44fb9303360b@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240806123301.167557-1-jdamato@fastly.com>
-References: <20240806123301.167557-1-jdamato@fastly.com>
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net] net: fs_enet: Fix warning due to wrong type
+Date: Thu,  8 Aug 2024 09:16:48 +0200
+Message-ID: <ec67ea3a3bef7e58b8dc959f7c17d405af0d27e4.1723101144.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=981; i=brauner@kernel.org; h=from:subject:message-id; bh=0g9XRgxfeMZc9/uVHfto4j4RtP6dqmPPmizw0m2bd6g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRtKZCcru3wjZH7y1Tr4lcXYtY4z7+z+9E80/z5CgeOb 9ylNonhe0cpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE5ixg+F+ScbQ3kHVFkbb0 4iNbX5QEufRwPrpmNLXIYMbWcK2PK60Z/ld6l/85uiprkdKjvJDvJdy3rJ63cJXq2AmZnoxSCSj /zwEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723101409; l=3691; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=6vHSOVBe1Sa4iBroamdp+dNMEwK1hZVU83XzCsh7OKY=; b=+KYHQ8fWDa+wydP+Q2tqZ+3PPXATioHzeQX/H2UaLrcwy1rvD1gEKv8XvdHnrlWkSf3YfbHNM ocANgIU4CQDBVXLuT2HrVA4Zgajrvq+IoFaLYhxH76DOYQZhVXvimUq
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-On Tue, 06 Aug 2024 12:33:01 +0000, Joe Damato wrote:
-> A struct eventpoll's busy_poll_usecs field can be modified via a user
-> ioctl at any time. All reads of this field should be annotated with
-> READ_ONCE.
-> 
-> 
+Building fs_enet on powerpc e500 leads to following warning:
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+    CC      drivers/net/ethernet/freescale/fs_enet/mac-scc.o
+  In file included from ./include/linux/build_bug.h:5,
+                   from ./include/linux/container_of.h:5,
+                   from ./include/linux/list.h:5,
+                   from ./include/linux/module.h:12,
+                   from drivers/net/ethernet/freescale/fs_enet/mac-scc.c:15:
+  drivers/net/ethernet/freescale/fs_enet/mac-scc.c: In function 'allocate_bd':
+  ./include/linux/err.h:28:49: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     28 | #define IS_ERR_VALUE(x) unlikely((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
+        |                                                 ^
+  ./include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
+     77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+        |                                             ^
+  drivers/net/ethernet/freescale/fs_enet/mac-scc.c:138:13: note: in expansion of macro 'IS_ERR_VALUE'
+    138 |         if (IS_ERR_VALUE(fep->ring_mem_addr))
+        |             ^~~~~~~~~~~~
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+This is due to fep->ring_mem_addr not being a pointer but a DMA
+address which is 64 bits on that platform while pointers are
+32 bits as this is a 32 bits platform with wider physical bus.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+However, using fep->ring_mem_addr is just wrong because
+cpm_muram_alloc() returns an offset within the muram and not
+a physical address directly. So use fpi->dpram_offset instead.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Fixes: 48257c4f168e ("Add fs_enet ethernet network driver, for several embedded platforms.")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ .../net/ethernet/freescale/fs_enet/mac-scc.c   | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+diff --git a/drivers/net/ethernet/freescale/fs_enet/mac-scc.c b/drivers/net/ethernet/freescale/fs_enet/mac-scc.c
+index a64cb6270515..9e89ac2b6ce3 100644
+--- a/drivers/net/ethernet/freescale/fs_enet/mac-scc.c
++++ b/drivers/net/ethernet/freescale/fs_enet/mac-scc.c
+@@ -131,15 +131,14 @@ static int setup_data(struct net_device *dev)
+ static int allocate_bd(struct net_device *dev)
+ {
+ 	struct fs_enet_private *fep = netdev_priv(dev);
+-	const struct fs_platform_info *fpi = fep->fpi;
++	struct fs_platform_info *fpi = fep->fpi;
+ 
+-	fep->ring_mem_addr = cpm_muram_alloc((fpi->tx_ring + fpi->rx_ring) *
+-					     sizeof(cbd_t), 8);
+-	if (IS_ERR_VALUE(fep->ring_mem_addr))
++	fpi->dpram_offset = cpm_muram_alloc((fpi->tx_ring + fpi->rx_ring) *
++					    sizeof(cbd_t), 8);
++	if (IS_ERR_VALUE(fpi->dpram_offset))
+ 		return -ENOMEM;
+ 
+-	fep->ring_base = (void __iomem __force*)
+-		cpm_muram_addr(fep->ring_mem_addr);
++	fep->ring_base = cpm_muram_addr(fpi->dpram_offset);
+ 
+ 	return 0;
+ }
+@@ -147,9 +146,10 @@ static int allocate_bd(struct net_device *dev)
+ static void free_bd(struct net_device *dev)
+ {
+ 	struct fs_enet_private *fep = netdev_priv(dev);
++	const struct fs_platform_info *fpi = fep->fpi;
+ 
+ 	if (fep->ring_base)
+-		cpm_muram_free(fep->ring_mem_addr);
++		cpm_muram_free(fpi->dpram_offset);
+ }
+ 
+ static void cleanup_data(struct net_device *dev)
+@@ -247,9 +247,9 @@ static void restart(struct net_device *dev)
+ 		__fs_out8((u8 __iomem *)ep + i, 0);
+ 
+ 	/* point to bds */
+-	W16(ep, sen_genscc.scc_rbase, fep->ring_mem_addr);
++	W16(ep, sen_genscc.scc_rbase, fpi->dpram_offset);
+ 	W16(ep, sen_genscc.scc_tbase,
+-	    fep->ring_mem_addr + sizeof(cbd_t) * fpi->rx_ring);
++	    fpi->dpram_offset + sizeof(cbd_t) * fpi->rx_ring);
+ 
+ 	/* Initialize function code registers for big-endian.
+ 	 */
+-- 
+2.44.0
 
-[1/1] eventpoll: Annotate data-race of busy_poll_usecs
-      https://git.kernel.org/vfs/vfs/c/b4988e3bd1f0
 
