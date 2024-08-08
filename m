@@ -1,229 +1,305 @@
-Return-Path: <linux-kernel+bounces-279099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C90494B8F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:23:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 931DC94B8F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6BC1C245B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:23:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2987B24225
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBEA189502;
-	Thu,  8 Aug 2024 08:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F441898E1;
+	Thu,  8 Aug 2024 08:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fzjAR4zF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IWB/w5kP"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC9614431C
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DCB145B0C
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723105377; cv=none; b=Ey4FgX80yucv0RdwErwo+lxmO+yefdPXYG5/eRP7L7F9hoaX4uZhoS8gAwPucPHBCYkzVvsTIQBg9iFqPNVhMNFuo9ICDsfrVvj1Rh+NPa0BdC0GjEg3pAGrdO8Oh+HlH9y3j+59W223rntBav8iMiigROWxnQnRwbqe316CuzI=
+	t=1723105399; cv=none; b=fKd5Qi8ahfhkqVHJ6C3nbNtAas4RUlc3quAW83LWaTyPryc50Ti7Wfsw7u0UYGzhq7+pup0jmv1N53GXLI4nLzC9V51NPxliB8zClVgy9BcKQJxmimqQhyAumJTQNR8ltwSb+JTrU/wIdSdA1fOxBF73dR/ahyXSG1FD3YvVFtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723105377; c=relaxed/simple;
-	bh=sq65un/oxhnmyKHS8t6PfDmZu8oN7DJm2znS4qkay4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dtbfzLSlpyoO9U66RwbKPJ2qAtidvvfP27E6UShCDGH1MGn9xB1H1KhsQklbHxlXjzy0g13Au1XTff3QxRGK4xWAt4edeVsT3L7A/iHp+PBHj2fjTvO6dIG1yhL9225JjEaOXuQezSXtFwCXJvFJ+tV20fgXce7JXnGGIXV+i1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fzjAR4zF; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1723105399; c=relaxed/simple;
+	bh=rYs0xBw0Gjql2y66a/D5Zjd80I5J6xFemY/YYFHA1vk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N7rs6Upb3IFX4iShgG5O1aVmWPEDVMwFDG2s4yyFTYE0FHFjZdLsdjKbZHVqjGNXGT4t+6tDxIz/QPksT1TIKlzZoclWbk/+XK+VeQ1j0Ngu1H3Fl0Ju6m9ngCtPoQyvI52Y7K9cq0t4yvKfmeCf0yFNWAdfbasEWfL1GfLOgRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IWB/w5kP; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723105375;
+	s=mimecast20190719; t=1723105397;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QBOa+iBKOlZAR7CtrCD45hB+YFcxzO/ihnHiEvwPdKQ=;
-	b=fzjAR4zFpwQ7f/NEEADJ4+GWLTKCXueeonNzw7waW5SqtgPUTV30JAjykErv4g0q9CyZw+
-	CJXmLskDN97a4ubTez7RA/My1u2uS1NKKIpUOPcehRI2cO3RvsRhLUl4CrZpCDIwiUsRf5
-	uNgGVNh8s8O0Hpp/t07LQTfKBJx/d6E=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=l0A20Uov+OyNtb3al7aHaWJQ9qEXD3mIhigIcXWDeEM=;
+	b=IWB/w5kPU4Pb/J6LeHI0gEysc/WI/RB9wxfl0jTLv7AehlbsQz708cMmlAs8srx+OqAOdg
+	qDpOwSnOyHjqzQzBrpjWbeZ5x00Rwc16Z0le4GFFR+NPqoeNxkVkic2ZaAiDycDKy32T53
+	hms0iyVAoGhL9gyq6tyllD/RBGFuy9s=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-209-tCXz6vFeP6mqZhQ8_BTTkQ-1; Thu, 08 Aug 2024 04:22:53 -0400
-X-MC-Unique: tCXz6vFeP6mqZhQ8_BTTkQ-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52efcb739adso722164e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 01:22:53 -0700 (PDT)
+ us-mta-665-AvswMDx4MY2hdG3HeBjQ3Q-1; Thu, 08 Aug 2024 04:23:15 -0400
+X-MC-Unique: AvswMDx4MY2hdG3HeBjQ3Q-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1fc596b86a6so17609865ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 01:23:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723105372; x=1723710172;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QBOa+iBKOlZAR7CtrCD45hB+YFcxzO/ihnHiEvwPdKQ=;
-        b=mzUx4CgFSmQ3YlV3vllMeym/AAGUqNUuK70cYPmXqSHWMVaDUcCnuR7D77CmhEstcZ
-         a+NXQ1YXuL5Y8K+HEOVbYKQ2ILY0JcTLvy3zCUm7HRI1ZbJJGZ75eSTG3mG9XqfCda9I
-         yE5syDvQvRy774Pv9RAyWx1kpXe6KDdxvS0oPEjMy5VVhHes2isNzzJc8KVHENTen5te
-         O/WMg/05TzoQMhDhfGaQtd0oM1MPj83bkiiPpc3WyjWHTtYa6biCSZuFViKpD7dOVzBu
-         J82n3OZBEb3X65e6q66nCy6/BpJ4xUXNXmGAEqaD8UjDEOkd7CM0SmxdgaM/jg84zr+C
-         1E4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUrDTJS203MCn2NbsHTzcEaEYukJncBiqGjfZFWiVEbZEXECa+NVgdfET4u/jLaBYItYUI3sZbm8OjMJeEkCIK4nFxR1h1xr/ljDs71
-X-Gm-Message-State: AOJu0YxwKrvXHdH8oE4J8PjIFk1X1ET81snvPGXFGnaA5vHCb9atgXZ/
-	4Y1qybdzOf3gwo7de3m8KPos2KYAWWEPuHe1L4NKLIlsGpwf4iB1+7w6z0QpcVMY+rMi1g3rb47
-	JWOauHqEr5siDnsGAHAiuDRJ+bJwV2Bpijm08qob9T7V6JMbjirQZwttiV5W7Lg==
-X-Received: by 2002:a05:6512:224a:b0:52c:d750:bd19 with SMTP id 2adb3069b0e04-530e5815811mr771787e87.8.1723105372080;
-        Thu, 08 Aug 2024 01:22:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGpOQVfn+dhBFkGIFYzM9dXqBv/DIiWSOoMDaIlVKokm4AmIjr1t8Guo55YiOrpBwf+2i4xpA==
-X-Received: by 2002:a05:6512:224a:b0:52c:d750:bd19 with SMTP id 2adb3069b0e04-530e5815811mr771762e87.8.1723105371409;
-        Thu, 08 Aug 2024 01:22:51 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c713:2a00:f151:50f1:7164:32e6? (p200300cbc7132a00f15150f1716432e6.dip0.t-ipconnect.de. [2003:cb:c713:2a00:f151:50f1:7164:32e6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d272095c6sm1083008f8f.86.2024.08.08.01.22.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 01:22:51 -0700 (PDT)
-Message-ID: <1881267a-723d-4ba0-96d0-d863ae9345a4@redhat.com>
-Date: Thu, 8 Aug 2024 10:22:50 +0200
+        d=1e100.net; s=20230601; t=1723105393; x=1723710193;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l0A20Uov+OyNtb3al7aHaWJQ9qEXD3mIhigIcXWDeEM=;
+        b=b8SH5tGSsM2Ue5Vf+9ouBaJx3bz/XncyN6S4Y2Xouz3hvqLSqRWpJZlXwODR5bB5T2
+         89XD0ispxdT2IEnIMsdFDE/QYDCoO3A6HueFDGUFH1kyLZgkMrTquD+oiJRXZ3eo8RlT
+         UAKOavDG0t5werrR1guP+sF+wyOmJ2AlVQbUl82sHNobZNYCFaMElbVykWPMfU9tTIoR
+         zdqPraEHZlVkwc5NoR5g6DTmmRNyjIwSB6c5ohWiHV4V4fqpRZnwnxuCgcIMUJbwhO+3
+         r3nYnhu1orS0M98P7tu/aYs07Osa7dyvbEVgW0ioIUE4AcFIuWMwGmxMGPr/73cmYYAO
+         v1dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVF7ZSeknYIlmAL5fg1zF03avJAQ0hDR5lheomCGjTzhxrwU6Pov/IPU6ieWJLiG1Nh37jF2pC92Ggkz8NDP57QXqz3XsKkAmzKwIxU
+X-Gm-Message-State: AOJu0YxpZmI/tVAiAdC6lUfttAiKNSpd204/HA9WBUZlQhhUerP7eTES
+	UG+2a5eN0HgxzhAq9O5PLZJ91+nUKmkLoBN453b0tp4T95v5mZuqbtoB7FTd0eTc7M3Szdd5czW
+	cdM2zk3Gw6k93YdWUgdEmrKcD4qGUDljZksMwu4K0f8TbhCvQOHzLkhCpK94jjhUBNSbT0tqK+e
+	ygvXXYbSiS4/UNlrchpxLynITgWETN4MaWciJh
+X-Received: by 2002:a17:90a:1101:b0:2c9:63fb:d3ab with SMTP id 98e67ed59e1d1-2d1c516396emr1412642a91.22.1723105392622;
+        Thu, 08 Aug 2024 01:23:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHXkUKCyr84JcKtnNjWT4uFvHMb5WKTN4thytsIwauo27ntH/qn52Bv+h4iEAijzx22xOWvDB9gGJpUvf9V5+o=
+X-Received: by 2002:a17:90a:1101:b0:2c9:63fb:d3ab with SMTP id
+ 98e67ed59e1d1-2d1c516396emr1412602a91.22.1723105391894; Thu, 08 Aug 2024
+ 01:23:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/numa: no task_numa_fault() call if page table is
- changed
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>,
- linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Huang, Ying" <ying.huang@intel.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240807184730.1266736-1-ziy@nvidia.com>
- <956553dc-587c-4a43-9877-7e8844f27f95@linux.alibaba.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <956553dc-587c-4a43-9877-7e8844f27f95@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240801153722.191797-2-dtatulea@nvidia.com> <CACGkMEutqWK+N+yddiTsnVW+ZDwyM+EV-gYC8WHHPpjiDzY4_w@mail.gmail.com>
+ <51e9ed8f37a1b5fbee9603905b925aedec712131.camel@nvidia.com>
+ <CACGkMEuHECjNVEu=QhMDCc5xT_ajaETqAxNFPfb2-_wRwgvyrA@mail.gmail.com>
+ <cc771916-62fe-4f6b-88d2-9c17dff65523@nvidia.com> <CACGkMEvPNvdhYmAofP5Xoqf7mPZ97Sv2EaooyEtZVBoGuA-8vA@mail.gmail.com>
+ <b603ff51-88d6-4066-aafa-64a60335db37@nvidia.com> <69850046-6b14-4910-9a89-cca8305c1bb9@nvidia.com>
+ <CACGkMEt3Zuv9UcF6YoUgw1UPyHhZCpZufCSejTp6mA6aNVB4oA@mail.gmail.com>
+In-Reply-To: <CACGkMEt3Zuv9UcF6YoUgw1UPyHhZCpZufCSejTp6mA6aNVB4oA@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 8 Aug 2024 16:23:00 +0800
+Message-ID: <CACGkMEtzmYwoOj7Z0fnDkB+t6HCx+387_VjH0byWcsOxm3thmg@mail.gmail.com>
+Subject: Re: [RFC PATCH vhost] vhost-vdpa: Fix invalid irq bypass unregister
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "mst@redhat.com" <mst@redhat.com>, 
+	"eperezma@redhat.com" <eperezma@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08.08.24 05:19, Baolin Wang wrote:
-> 
-> 
-> On 2024/8/8 02:47, Zi Yan wrote:
->> When handling a numa page fault, task_numa_fault() should be called by a
->> process that restores the page table of the faulted folio to avoid
->> duplicated stats counting. Commit b99a342d4f11 ("NUMA balancing: reduce
->> TLB flush via delaying mapping on hint page fault") restructured
->> do_numa_page() and do_huge_pmd_numa_page() and did not avoid
->> task_numa_fault() call in the second page table check after a numa
->> migration failure. Fix it by making all !pte_same()/!pmd_same() return
->> immediately.
->>
->> This issue can cause task_numa_fault() being called more than necessary
->> and lead to unexpected numa balancing results (It is hard to tell whether
->> the issue will cause positive or negative performance impact due to
->> duplicated numa fault counting).
->>
->> Reported-by: "Huang, Ying" <ying.huang@intel.com>
->> Closes: https://lore.kernel.org/linux-mm/87zfqfw0yw.fsf@yhuang6-desk2.ccr.corp.intel.com/
->> Fixes: b99a342d4f11 ("NUMA balancing: reduce TLB flush via delaying mapping on hint page fault")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> 
-> The fix looks reasonable to me. Feel free to add:
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> 
-> (Nit: These goto labels are a bit confusing and might need some cleanup
-> in the future.)
+On Thu, Aug 8, 2024 at 10:56=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> On Tue, Aug 6, 2024 at 10:45=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.c=
+om> wrote:
+> >
+> >
+> >
+> > On 06.08.24 10:18, Dragos Tatulea wrote:
+> > > (Re-sending. I messed up the previous message, sorry about that.)
+> > >
+> > > On 06.08.24 04:57, Jason Wang wrote:
+> > >> On Mon, Aug 5, 2024 at 11:59=E2=80=AFPM Dragos Tatulea <dtatulea@nvi=
+dia.com> wrote:
+> > >>>
+> > >>> On 05.08.24 05:17, Jason Wang wrote:
+> > >>>> On Fri, Aug 2, 2024 at 2:51=E2=80=AFPM Dragos Tatulea <dtatulea@nv=
+idia.com> wrote:
+> > >>>>>
+> > >>>>> On Fri, 2024-08-02 at 11:29 +0800, Jason Wang wrote:
+> > >>>>>> On Thu, Aug 1, 2024 at 11:38=E2=80=AFPM Dragos Tatulea <dtatulea=
+@nvidia.com> wrote:
+> > >>>>>>>
+> > >>>>>>> The following workflow triggers the crash referenced below:
+> > >>>>>>>
+> > >>>>>>> 1) vhost_vdpa_unsetup_vq_irq() unregisters the irq bypass produ=
+cer
+> > >>>>>>>    but the producer->token is still valid.
+> > >>>>>>> 2) vq context gets released and reassigned to another vq.
+> > >>>>>>
+> > >>>>>> Just to make sure I understand here, which structure is referred=
+ to as
+> > >>>>>> "vq context" here? I guess it's not call_ctx as it is a part of =
+the vq
+> > >>>>>> itself.
+> > >>>>>>
+> > >>>>>>> 3) That other vq registers it's producer with the same vq conte=
+xt
+> > >>>>>>>    pointer as token in vhost_vdpa_setup_vq_irq().
+> > >>>>>>
+> > >>>>>> Or did you mean when a single eventfd is shared among different =
+vqs?
+> > >>>>>>
+> > >>>>> Yes, that's what I mean: vq->call_ctx.ctx which is a eventfd_ctx.
+> > >>>>>
+> > >>>>> But I don't think it's shared in this case, only that the old eve=
+ntfd_ctx value
+> > >>>>> is lingering in producer->token. And this old eventfd_ctx is assi=
+gned now to
+> > >>>>> another vq.
+> > >>>>
+> > >>>> Just to make sure I understand the issue. The eventfd_ctx should b=
+e
+> > >>>> still valid until a new VHOST_SET_VRING_CALL().
+> > >>>>
+> > >>> I think it's not about the validity of the eventfd_ctx. More about
+> > >>> the lingering ctx value of the producer after vhost_vdpa_unsetup_vq=
+_irq().
+> > >>
+> > >> Probably, but
+> > >>
+> > >>> That value is the eventfd ctx, but it could be anything else really=
+...
+> > >>
+> > >> I mean we hold a refcnt of the eventfd so it should be valid until t=
+he
+> > >> next set_vring_call() or vhost_dev_cleanup().
+> > >>
+> > >> But I do spot some possible issue:
+> > >>
+> > >> 1) We swap and assign new ctx in vhost_vring_ioctl():
+> > >>
+> > >>                 swap(ctx, vq->call_ctx.ctx);
+> > >>
+> > >> 2) and old ctx will be put there as well:
+> > >>
+> > >>                 if (!IS_ERR_OR_NULL(ctx))
+> > >>                         eventfd_ctx_put(ctx);
+> > >>
+> > >> 3) but in vdpa, we try to unregister the producer with the new token=
+:
+> > >>
+> > >> static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned in=
+t cmd,
+> > >>                            void __user *argp)
+> > >> {
+> > >> ...
+> > >>         r =3D vhost_vring_ioctl(&v->vdev, cmd, argp);
+> > >> ...
+> > >>         switch (cmd) {
+> > >> ...
+> > >>         case VHOST_SET_VRING_CALL:
+> > >>                 if (vq->call_ctx.ctx) {
+> > >>                         cb.callback =3D vhost_vdpa_virtqueue_cb;
+> > >>                         cb.private =3D vq;
+> > >>                         cb.trigger =3D vq->call_ctx.ctx;
+> > >>                 } else {
+> > >>                         cb.callback =3D NULL;
+> > >>                         cb.private =3D NULL;
+> > >>                         cb.trigger =3D NULL;
+> > >>                 }
+> > >>                 ops->set_vq_cb(vdpa, idx, &cb);
+> > >>                 vhost_vdpa_setup_vq_irq(v, idx);
+> > >>
+> > >> in vhost_vdpa_setup_vq_irq() we had:
+> > >>
+> > >>         irq_bypass_unregister_producer(&vq->call_ctx.producer);
+> > >>
+> > >> here the producer->token still points to the old one...
+> > >>
+> > >> Is this what you have seen?
+> > > Yup. That is the issue. The unregister already happened at
+> > > vhost_vdpa_unsetup_vq_irq(). So this second unregister will
+> > > work on an already unregistered element due to the token still
+> > > being set.
+> > >
+> > >>
+> > >>>
+> > >>>
+> > >>>> I may miss something but the only way to assign exactly the same
+> > >>>> eventfd_ctx value to another vq is where the guest tries to share =
+the
+> > >>>> MSI-X vector among virtqueues, then qemu will use a single eventfd=
+ as
+> > >>>> the callback for multiple virtqueues. If this is true:
+> > >>>>
+> > >>> I don't think this is the case. I see the issue happening when runn=
+ing qemu vdpa
+> > >>> live migration tests on the same host. From a vdpa device it's basi=
+cally a device
+> > >>> starting on a VM over and over.
+> > >>>
+> > >>>> For bypass registering, only the first registering can succeed as =
+the
+> > >>>> following registering will fail because the irq bypass manager alr=
+eady
+> > >>>> had exactly the same producer token.
+> > >>>> For registering, all unregistering can succeed:
+> > >>>>
+> > >>>> 1) the first unregistering will do the real job that unregister th=
+e token
+> > >>>> 2) the following unregistering will do nothing by iterating the
+> > >>>> producer token list without finding a match one
+> > >>>>
+> > >>>> Maybe you can show me the userspace behaviour (ioctls) when you se=
+e this?
+> > >>>>
+> > >>> Sure, what would you need? qemu traces?
+> > >>
+> > >> Yes, that would be helpful.
+> > >>
+> > > Will try to get them.
+> > As the traces are quite large (~5MB), I uploaded them in this location =
+[0].
+> > I used the following qemu traces:
+> > --trace vhost_vdpa* --trace virtio_net_handle*
+> >
+> > [0] https://drive.google.com/file/d/1XyXYyockJ_O7zMgI7vot6AxYjze9Ljju/v=
+iew?usp=3Dsharing
+>
+> Thanks for doing this.
+>
+> So it looks not like a case of eventfd sharing:
+>
+> """
+> 153@1722953531.918958:vhost_vdpa_iotlb_begin_batch vdpa:0x7f6f9cfb5190
+> fd: 17 msg_type: 2 type: 5
+> 153@1722953531.918959:vhost_vdpa_set_vring_base dev: 0x55573cc9ca70
+> index: 6 num: 0 svq 1
+> 153@1722953531.918961:vhost_vdpa_set_vring_kick dev: 0x55573cc9ca70
+> index: 6 fd: 237
+> 153@1722953531.918964:vhost_vdpa_set_vring_call dev: 0x55573cc9ca70
+> index: 6 fd: 238
+> 153@1722953531.918978:vhost_vdpa_dma_map vdpa:0x7f6f9cfb5190 fd: 17
+> msg_type: 2 asid: 1 iova: 0x13000 size: 0x2000 uaddr: 0x7f6f9da1a000
+> perm: 0x1 type: 2
+> 153@1722953531.918984:vhost_vdpa_dma_map vdpa:0x7f6f9cfb5190 fd: 17
+> msg_type: 2 asid: 1 iova: 0x15000 size: 0x1000 uaddr: 0x7f6f9da19000
+> perm: 0x3 type: 2
+> 153@1722953531.918987:vhost_vdpa_set_vring_addr dev: 0x55573cc9ca70
+> index: 6 flags: 0x0 desc_user_addr: 0x13000 used_user_addr: 0x15000
+> avail_user_addr: 0x14000 log_guest_\
+> addr: 0x0
+> 153@1722953531.918989:vhost_vdpa_set_vring_base dev: 0x55573cc9ca70
+> index: 7 num: 0 svq 1
+> 153@1722953531.918991:vhost_vdpa_set_vring_kick dev: 0x55573cc9ca70
+> index: 7 fd: 239
+> 153@1722953531.918993:vhost_vdpa_set_vring_call dev: 0x55573cc9ca70
+> index: 7 fd: 240
+> """
+>
+> I think a more proper way is to unregister and clean the token before
+> calling vhost_vring_ioctl() in the case of SET_VRING_KICK. Let me try
+> to draft a patch and see.
 
-Agreed, maybe we should simply handle that right away and replace the "goto out;" users by "return 0;".
+I've posted a RFC patch, please try to see if it works.
 
-Then, just copy the 3 LOC.
+Thanks
 
-For mm/memory.c that would be:
-
-diff --git a/mm/memory.c b/mm/memory.c
-index 67496dc5064f..410ba50ca746 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5461,7 +5461,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
-  
-         if (unlikely(!pte_same(old_pte, vmf->orig_pte))) {
-                 pte_unmap_unlock(vmf->pte, vmf->ptl);
--               goto out;
-+               return 0;
-         }
-  
-         pte = pte_modify(old_pte, vma->vm_page_prot);
-@@ -5528,15 +5528,14 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
-                 vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
-                                                vmf->address, &vmf->ptl);
-                 if (unlikely(!vmf->pte))
--                       goto out;
-+                       return 0;
-                 if (unlikely(!pte_same(ptep_get(vmf->pte), vmf->orig_pte))) {
-                         pte_unmap_unlock(vmf->pte, vmf->ptl);
--                       goto out;
-+                       return 0;
-                 }
-                 goto out_map;
-         }
-  
--out:
-         if (nid != NUMA_NO_NODE)
-                 task_numa_fault(last_cpupid, nid, nr_pages, flags);
-         return 0;
-@@ -5552,7 +5551,9 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
-                 numa_rebuild_single_mapping(vmf, vma, vmf->address, vmf->pte,
-                                             writable);
-         pte_unmap_unlock(vmf->pte, vmf->ptl);
--       goto out;
-+       if (nid != NUMA_NO_NODE)
-+               task_numa_fault(last_cpupid, nid, nr_pages, flags);
-+       return 0;
-  }
-
-
--- 
-Cheers,
-
-David / dhildenb
+>
+> Thanks
+>
+> >
+> > Thanks,
+> > Dragos
+> >
 
 
