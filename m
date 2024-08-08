@@ -1,235 +1,275 @@
-Return-Path: <linux-kernel+bounces-279935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD2594C395
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:23:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A06CE94C39A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12E6428596B
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:23:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F27287DD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493811917D9;
-	Thu,  8 Aug 2024 17:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557CE1917D9;
+	Thu,  8 Aug 2024 17:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CsFiq7p4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HiBJruDB"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63D3190692
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54817190489
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 17:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723137771; cv=none; b=YoLH4GwcsrAE/LEx7Z1ayO20f44FXNBlOBiMzyb5na/KgSm/3f10uS0olLoMza2izzAZWEjyDk8AyWfb5ZArLXf/uIrQdL4FBdIDFw+WfLckRsJuKlfx7QTOHUeBo354pWrR0uBmzSiebwcZC0ymXlqzu0bEPHHDPOmDjLa/yqs=
+	t=1723137828; cv=none; b=g2sT3e6nHmdBlVzvLJutL+7HxNoByUOhrWzV1v+HpS7GA63IsiSuBPwkYLd3Ard59ZZBtquafDB515uCTT1aCGkzCowKV8hP2IqrfYXE5SCh0V1yEI5STVzDx8vYiVTjAj3QFHhOmuKnfjPXLumvFnpZrh/Ikw4WMJ+gmf2DLhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723137771; c=relaxed/simple;
-	bh=6MUvh+2GpXKXQyyfW8XqEeiTwI3JUG3jKUKLxb7crUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lpKDiuRQn2MtWNd3lqn+Dq++O1SnOMzm4M00LaTKywVBnVo/VNruu/oK2j2cbIlPdXnGpEG8Rag9Tz5YmMAasCPMBDiV27LstkQHOrCh73cNTTC7ER3MA0hGHvFe2ghlzZlw+8rCj9cvq5ziXilePJ55MIRIMRgKCZ4wnpIu0IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CsFiq7p4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723137768;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7jdTVRq/ML5O9MM/Zy15y5zkZSHABz60MdmEFuSzK3g=;
-	b=CsFiq7p4aCPhVDYWHe/5H8D0BibOeGHFN6W+zSXubIyGwYg6CjDAsD44HJhnVtpVWVrsu8
-	KlIGHHCMk8WjvMHqQg2GeuBHOh0zez1w2NlQm7SLCqSpCUMo/1fCZfoznUBsVIa6wZkIFF
-	Y+SDIXF2DCHS1OFQs4kIfDmeZyGIwos=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-124-C3FUVGRWNm2KGVpLwRngfA-1; Thu, 08 Aug 2024 13:22:45 -0400
-X-MC-Unique: C3FUVGRWNm2KGVpLwRngfA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42816aacabcso8425515e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:22:45 -0700 (PDT)
+	s=arc-20240116; t=1723137828; c=relaxed/simple;
+	bh=EXrTZ5R7zXGaTHEthIw+hSVSLI3+CtkeI6b60UAGLWU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=h/WrHB5VVk5lXDSRZI2euNyIpCobCzO4kXztJLLZFh5QZLzKdJIoON9yf1cArwNX8zFRYMzhc5zZXjzBnWF7DrLRoDMr13Gj8bImhU40ZukwLq2ddY4E72cNAENpC7QQKl/36gE+9pbmKf+POgNZ9N1v4HR3tLlz1cUE3/2RIT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HiBJruDB; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-42820c29a76so8912065e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 10:23:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723137825; x=1723742625; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0lj5cEaK01DMF+Ts55tD11YdG34VpHT9zpqu9sa/BQA=;
+        b=HiBJruDBG5DfhS7ZuhQM86suJbWdXW+hO4LMvqTVgwUs/0pwdUZ06w06g0TXgyTqXn
+         GjDBMSuLfseC4M/uEx57PDtjREDDoscFzAlXMqyJznkMukEN8fVfoODZYoHxOWM2pRRk
+         0CrzPgynuObpqWEjI5+oX/+uXOabfIewGR4gnq7g3lz//DsZYtMyviDiQZXAX9feUV3r
+         Zew6OGAfuch208EjlexQK4P9VpN/iq5xdtZTctZ8170nWi1mGioIW+u4F8rwloWDlbdG
+         MWHZQF53G/ScvWYXjqDN7ZZuAYFvjzkbC9JqsYjWAbsj1IaymDLaZTyNlKnJBdkQJP5q
+         i3RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723137764; x=1723742564;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7jdTVRq/ML5O9MM/Zy15y5zkZSHABz60MdmEFuSzK3g=;
-        b=JaxVAzLsUTxGkqZ7nx0z/6wnGexDu6EUPP0qfA0sbv1O5M4RNelibgtxDe0A8djvrm
-         kflOrvziyuyBwt5GhbXFDBg4UQwROCZDMPZ8lgpVUxaAj6oNZOo67lIjPUalxFJ0R8KL
-         v3L4fDUKIGXy58W2XXjOSY4aCSfiqfugDndrQhHUkms/8WjRSJAxGwFlu7fDbWQSdhLA
-         p7kNx4o01Emrq1ybX7KwtQ57dmrGiB4n296V0OUhij1q9gxrzeU4ua527ExnLgZwYaza
-         L1skx3E31xHj6kIO4uOOtUug6SdUSA87vxo297ISTknBdxJECLIfBj2sG3dIFsdX9x6J
-         60wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFcJzCroPpBt+Bt9m9r9OTTXeiqklOg9To5vAxFvkk2hwT9WI+2pSZ6FHkUz8ZcUX1mvjUCh25UMFpGLiwemaxipjd6/KV0IOLyV5b
-X-Gm-Message-State: AOJu0YzIwHK4SqQ06F7EREND4BfvX/EY0Xe+TziF3aBGTd/MW0hEgTKM
-	Dp0cPlamdByjikRUZIeZF02IYLFzUxuq2Zsc53w6FOkTh4mqRb9Bzy2q+3TwsBWEKaI3el8fG7Q
-	F04zl7b74euVT8oWaedezP/CkbfV6tY4VDyf35/DEahwCQnIi8215LE5mD7I6Gg==
-X-Received: by 2002:a5d:4534:0:b0:366:e89c:342b with SMTP id ffacd0b85a97d-36d2757d4bfmr1810226f8f.52.1723137764132;
-        Thu, 08 Aug 2024 10:22:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqdtChQBZpN1JH7puu+XlXH02XOmQ5DJetV/Nf/lePk3KFQrsqH/VR0g9ltlQzH8bHk2zFcA==
-X-Received: by 2002:a5d:4534:0:b0:366:e89c:342b with SMTP id ffacd0b85a97d-36d2757d4bfmr1810211f8f.52.1723137763564;
-        Thu, 08 Aug 2024 10:22:43 -0700 (PDT)
-Received: from localhost (53.116.107.80.static.otenet.gr. [80.107.116.53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2716c684sm2560176f8f.28.2024.08.08.10.22.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 10:22:42 -0700 (PDT)
-Date: Thu, 8 Aug 2024 19:22:39 +0200
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Daniel Xu <dxu@dxuuu.xyz>,
-	Alexander Lobakin <alexandr.lobakin@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Larysa Zaremba <larysa.zaremba@intel.com>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Jonathan Lemon <jonathan.lemon@gmail.com>,
-	"toke@redhat.com" <toke@redhat.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	David Miller <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Yajun Deng <yajun.deng@linux.dev>,
-	Willem de Bruijn <willemb@google.com>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xdp-hints@xdp-project.net
-Subject: Re: [xdp-hints] Re: [PATCH RFC bpf-next 32/52] bpf, cpumap: switch
- to GRO from netif_receive_skb_list()
-Message-ID: <ZrT-3-1lRPzCCFhT@lore-rh-laptop>
-References: <20220628194812.1453059-1-alexandr.lobakin@intel.com>
- <20220628194812.1453059-33-alexandr.lobakin@intel.com>
- <cadda351-6e93-4568-ba26-21a760bf9a57@app.fastmail.com>
- <ZrRPbtKk7RMXHfhH@lore-rh-laptop>
- <54aab7ec-80e9-44fd-8249-fe0cabda0393@intel.com>
+        d=1e100.net; s=20230601; t=1723137825; x=1723742625;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0lj5cEaK01DMF+Ts55tD11YdG34VpHT9zpqu9sa/BQA=;
+        b=DK4YMIM1MkjelZKA+ZuvGrPlYyvhQoAO1Aahxwt2jEvc8u1niTuw8MkBLYIaRL0lxd
+         mxjRQeES44CGyw+XexloE/i62hTSanzZL3BKJyIWuMxGw33yfO9IGAG8/tK/zSsG+ZFK
+         nqvUMfQuq1ftzE2Nfb5T89DZQqKw/ZTHRqK6QisgZtqBhijj6ts8ZfcepVt4sBYd/sgK
+         LLacqqABm70z3cB4Xg6Pl9wkx99H17da/irFKiWOFhZ8TV0wdfds0F+vJ31DOhXnlC1B
+         4xtsyBfDw55Rhbh8jvebXV8N7xe3ETx8F/NLWjvMTfGqBdDG7/n9uBuyPTWBzbyhXLjV
+         kuxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkx7Y0PFX5RZEBqS1+7jy6FohR47t3YwOfeAY+kwlrwsTVVCOMi1PHmi7SnEvDvS/sZPLbfiK7B7a7qsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpn+BenohqQzJBA00lKtR3QqXO9W9gEStBFSUJz0/LJqdPo7oh
+	pfw9IinHVpJKIXZKlvCTAvd82t3ajde45KmIaxl4oHp3rrVyOg6dVvrkwLM/fjOORLtkN0glzDh
+	p6zvddCh+Ljj7fQ==
+X-Google-Smtp-Source: AGHT+IFUyUu+65lTZkbGz5xkESYfzEgxbLVm+RbfRwHdwMW5RdJRZNPPWyqzUyct2N0zKQrC5Yb9Bug/AQUUIsY=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:6000:4014:b0:367:9812:b7e3 with SMTP
+ id ffacd0b85a97d-36d2758eba5mr4651f8f.12.1723137824521; Thu, 08 Aug 2024
+ 10:23:44 -0700 (PDT)
+Date: Thu, 08 Aug 2024 17:23:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gWopvvUjnRev2ziB"
-Content-Disposition: inline
-In-Reply-To: <54aab7ec-80e9-44fd-8249-fe0cabda0393@intel.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIABj/tGYC/23PQW7DIBCF4atErEvFDAyxs+o9qi4Ajx2k1kTYs
+ hJFvnuJNzVylw/p+zU8xcQ58iQup6fIvMQpprEM+3YS4erGgWXsyhao0CirrJyzC3xLcZylBgb
+ yrWJzBlHALXMf71vs86vsa5zmlB9be4HX67+ZBaSSlggsnn1P4D+GlIZvfg/pR7w6C+4sqMpis
+ b1j77oGvCY6WL2zCJXVxbZsDDM79M3Rmr1tKmuK1aQ7Qu3aAEdLf7ZRWFnabnZgjWlNF+r/ruv 6CxPXLhWVAQAA
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6191; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=EXrTZ5R7zXGaTHEthIw+hSVSLI3+CtkeI6b60UAGLWU=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmtP8apye15CDPjep8a4sKbnjhVshmQj6bqmEpn
+ FY/clEVV4iJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZrT/GgAKCRAEWL7uWMY5
+ Rn6pEACJelIjUYMObVtpvs7JKcQ/GkHNHGNbyVCyd2s7wibhbrfX1MYZ22uey8alwOOYoAABCnX
+ oVYjkJUUFisP4QR9yOy4cgV+2SPewumv8vEPfIm/46xYfbvkPwM2d4kUJrsFKsJY17ljll2L5br
+ IBsGTTcBscKsnI96M1/kBhykao3Ba6wcjc1CKbePG1XNHOwIIwURIMNQP2JltG1syenoCRVbb6J
+ UPAKXNYPb+eDt8kNMRBpKzD+q+6aQcDUB5Il2VgQAvhV0B11G0rVkBgJ3UrUOnuIcbpWGhb6wfn
+ BEFrvyEk2A2PuDz5QmkBGym1Ts9uEV1/JzQDr6UH1m6Z5jzy3aZ0XrVrkMN0uAxRQxebID41Cok
+ 6qfFbFF12H4ygvaSrCCcbo9vB4ws2pAOa5G8rsNuqUl67UL8BJzdulss1MieqD3o5JnzLlKhTk2
+ UasU3G9XTc2+xzyfmoXvmH6ZWCnKWTxc0D0B5AsH0yxrMdVbW6ymo9GGsAOEyBlbOKEADCCcQuA
+ etl5yY6SvHpw69V5tOpSGGot2s6wwZ7JZZ+j/ZpjOTmC6PZNvPdWb3vvS5k1U85231d5zkrH7fm
+ hK/wpLZM7TZAtS70qsbbJAda95xy1x1S8DtiMCUgN4/8J6vs3Qe43wguoau5p81BS9fda7sl/aB +AA7X+swvP8JnCw==
+X-Mailer: b4 0.13.0
+Message-ID: <20240808-tracepoint-v6-0-a23f800f1189@google.com>
+Subject: [PATCH v6 0/5] Tracepoints and static branch in Rust
+From: Alice Ryhl <aliceryhl@google.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>
+Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
+	linux-arm-kernel@lists.infradead.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, 
+	Alice Ryhl <aliceryhl@google.com>, Carlos Llamas <cmllamas@google.com>
+Content-Type: text/plain; charset="utf-8"
 
+An important part of a production ready Linux kernel driver is
+tracepoints. So to write production ready Linux kernel drivers in Rust,
+we must be able to call tracepoints from Rust code. This patch series
+adds support for calling tracepoints declared in C from Rust.
 
---gWopvvUjnRev2ziB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To use the tracepoint support, you must:
 
-> From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-> Date: Thu, 8 Aug 2024 06:54:06 +0200
->=20
-> >> Hi Alexander,
-> >>
-> >> On Tue, Jun 28, 2022, at 12:47 PM, Alexander Lobakin wrote:
-> >>> cpumap has its own BH context based on kthread. It has a sane batch
-> >>> size of 8 frames per one cycle.
-> >>> GRO can be used on its own, adjust cpumap calls to the
-> >>> upper stack to use GRO API instead of netif_receive_skb_list() which
-> >>> processes skbs by batches, but doesn't involve GRO layer at all.
-> >>> It is most beneficial when a NIC which frame come from is XDP
-> >>> generic metadata-enabled, but in plenty of tests GRO performs better
-> >>> than listed receiving even given that it has to calculate full frame
-> >>> checksums on CPU.
-> >>> As GRO passes the skbs to the upper stack in the batches of
-> >>> @gro_normal_batch, i.e. 8 by default, and @skb->dev point to the
-> >>> device where the frame comes from, it is enough to disable GRO
-> >>> netdev feature on it to completely restore the original behaviour:
-> >>> untouched frames will be being bulked and passed to the upper stack
-> >>> by 8, as it was with netif_receive_skb_list().
-> >>>
-> >>> Signed-off-by: Alexander Lobakin <alexandr.lobakin@intel.com>
-> >>> ---
-> >>>  kernel/bpf/cpumap.c | 43 ++++++++++++++++++++++++++++++++++++++-----
-> >>>  1 file changed, 38 insertions(+), 5 deletions(-)
-> >>>
-> >>
-> >> AFAICT the cpumap + GRO is a good standalone improvement. I think
-> >> cpumap is still missing this.
->=20
-> The only concern for having GRO in cpumap without metadata from the NIC
-> descriptor was that when the checksum status is missing, GRO calculates
-> the checksum on CPU, which is not really fast.
-> But I remember sometimes GRO was faster despite that.
->=20
-> >>
-> >> I have a production use case for this now. We want to do some intellig=
-ent
-> >> RX steering and I think GRO would help over list-ified receive in some=
- cases.
-> >> We would prefer steer in HW (and thus get existing GRO support) but no=
-t all
-> >> our NICs support it. So we need a software fallback.
-> >>
-> >> Are you still interested in merging the cpumap + GRO patches?
->=20
-> For sure I can revive this part. I was planning to get back to this
-> branch and pick patches which were not related to XDP hints and send
-> them separately.
->=20
-> >=20
-> > Hi Daniel and Alex,
-> >=20
-> > Recently I worked on a PoC to add GRO support to cpumap codebase:
-> > - https://github.com/LorenzoBianconi/bpf-next/commit/a4b8264d5000ecf016=
-da5a2dd9ac302deaf38b3e
-> >   Here I added GRO support to cpumap through gro-cells.
-> > - https://github.com/LorenzoBianconi/bpf-next/commit/da6cb32a4674aa7240=
-1c7414c9a8a0775ef41a55
-> >   Here I added GRO support to cpumap trough napi-threaded APIs (with a =
-some
-> >   changes to them).
->=20
-> Hmm, when I was testing it, adding a whole NAPI to cpumap was sorta
-> overkill, that's why I separated GRO structure from &napi_struct.
+1. Declare the tracepoint in a C header file as usual.
 
-if we consider the NAPI-threaded implementation, we have the same architect=
-ure
-we have in current cpumap codebase, a thread for each cpumap entry, the only
-different is we can rely on GRO APIs.
+2. Add #define CREATE_RUST_TRACE_POINTS next to your
+   #define CREATE_TRACE_POINTS.
 
-Regards,
-Lorenzo
+2. Make sure that the header file is visible to bindgen.
 
->=20
-> Let me maybe find some free time, I would then test all 3 solutions
-> (mine, gro_cells, threaded NAPI) and pick/send the best?
->=20
-> >=20
-> > Please note I have not run any performance tests so far, just verified =
-it does
-> > not crash (I was planning to resume this work soon). Please let me know=
- if it
-> > works for you.
-> >=20
-> > Regards,
-> > Lorenzo
-> >=20
-> >>
-> >> Thanks,
-> >> Daniel
->=20
-> Thanks,
-> Olek
->=20
+3. Use the declare_trace! macro in your Rust code to generate Rust
+   functions that call into the tracepoint.
 
---gWopvvUjnRev2ziB
-Content-Type: application/pgp-signature; name="signature.asc"
+For example, the kernel has a tracepoint called `sched_kthread_stop`. It
+is declared like this:
 
------BEGIN PGP SIGNATURE-----
+	TRACE_EVENT(sched_kthread_stop,
+		TP_PROTO(struct task_struct *t),
+		TP_ARGS(t),
+		TP_STRUCT__entry(
+			__array(	char,	comm,	TASK_COMM_LEN	)
+			__field(	pid_t,	pid			)
+		),
+		TP_fast_assign(
+			memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
+			__entry->pid	= t->pid;
+		),
+		TP_printk("comm=%s pid=%d", __entry->comm, __entry->pid)
+	);
 
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZrT+3AAKCRA6cBh0uS2t
-rNmOAQCJ9AZ6VVqlHeY+Ep7EQlMd0ybYpws3TIoQ8xaHVmjHyAD9HFXaElQMwHQ4
-DACmDzL52jcn/Xv3bji9aj2oL+3shwg=
-=3Ltv
------END PGP SIGNATURE-----
+To call the above tracepoint from Rust code, you must first ensure that
+the Rust helper for the tracepoint is generated. To do this, you would
+modify kernel/sched/core.c by adding #define CREATE_RUST_TRACE_POINTS.
 
---gWopvvUjnRev2ziB--
+Next, you would include include/trace/events/sched.h in
+rust/bindings/bindings_helper.h so that the exported C functions are
+visible to Rust, and then you would declare the tracepoint in Rust:
+
+	declare_trace! {
+	    fn sched_kthread_stop(task: *mut task_struct);
+	}
+
+This will define an inline Rust function that checks the static key,
+calling into rust_do_trace_##name if the tracepoint is active. Since
+these tracepoints often take raw pointers as arguments, it may be
+convenient to wrap it in a safe wrapper:
+
+	mod raw {
+	    declare_trace! {
+	    	/// # Safety
+		/// `task` must point at a valid task for the duration
+		/// of this call.
+	        fn sched_kthread_stop(task: *mut task_struct);
+	    }
+	}
+	
+	#[inline]
+	pub fn trace_sched_kthread_stop(task: &Task) {
+	    // SAFETY: The pointer to `task` is valid.
+	    unsafe { raw::sched_kthread_stop(task.as_raw()) }
+	}
+
+A future expansion of the tracepoint support could generate these safe
+versions automatically, but that is left as future work for now.
+
+This is intended for use in the Rust Binder driver, which was originally
+sent as an RFC [1]. The RFC did not include tracepoint support, but you
+can see how it will be used in Rust Binder at [2]. The author has
+verified that the tracepoint support works on Android devices.
+
+This implementation implements support for static keys in Rust so that
+the actual static branch happens in the Rust object file. However, the
+__DO_TRACE body remains in C code. See v1 for an implementation where
+__DO_TRACE is also implemented in Rust.
+
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
+Link: https://r.android.com/3119993 [2]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v6:
+- Add support for !CONFIG_JUMP_LABEL.
+- Add tracepoint to rust_print sample.
+- Deduplicate inline asm.
+- Require unsafe inside `declare_trace!`.
+- Fix bug on x86 due to use of intel syntax.
+- Link to v5: https://lore.kernel.org/r/20240802-tracepoint-v5-0-faa164494dcb@google.com
+
+Changes in v5:
+- Update first patch regarding inline asm duplication.
+- Add __rust_do_trace helper to support conditions.
+- Rename DEFINE_RUST_DO_TRACE_REAL to __DEFINE_RUST_DO_TRACE.
+- Get rid of glob-import in tracepoint macro.
+- Address safety requirements on tracepoints in docs.
+- Link to v4: https://lore.kernel.org/rust-for-linux/20240628-tracepoint-v4-0-353d523a9c15@google.com
+
+Changes in v4:
+- Move arch-specific code into rust/kernel/arch.
+- Restore DEFINE_RUST_DO_TRACE at end of define_trace.h
+- Link to v3: https://lore.kernel.org/r/20240621-tracepoint-v3-0-9e44eeea2b85@google.com
+
+Changes in v3:
+- Support for Rust static_key on loongarch64 and riscv64.
+- Avoid failing compilation on architectures that are missing Rust
+  static_key support when the archtectures does not actually use it.
+- Link to v2: https://lore.kernel.org/r/20240610-tracepoint-v2-0-faebad81b355@google.com
+
+Changes in v2:
+- Call into C code for __DO_TRACE.
+- Drop static_call patch, as it is no longer needed.
+- Link to v1: https://lore.kernel.org/r/20240606-tracepoint-v1-0-6551627bf51b@google.com
+
+---
+Alice Ryhl (5):
+      rust: add generic static_key_false
+      rust: add tracepoint support
+      rust: samples: add tracepoint to Rust sample
+      jump_label: adjust inline asm to be consistent
+      rust: add arch_static_branch
+
+ MAINTAINERS                             |  1 +
+ arch/arm/include/asm/jump_label.h       | 14 +++--
+ arch/arm64/include/asm/jump_label.h     | 20 +++++---
+ arch/loongarch/include/asm/jump_label.h | 16 +++---
+ arch/riscv/include/asm/jump_label.h     | 50 ++++++++++--------
+ arch/x86/include/asm/jump_label.h       | 38 ++++++--------
+ include/linux/tracepoint.h              | 22 +++++++-
+ include/trace/define_trace.h            | 12 +++++
+ include/trace/events/rust_sample.h      | 31 +++++++++++
+ rust/Makefile                           |  5 +-
+ rust/bindings/bindings_helper.h         |  3 ++
+ rust/helpers.c                          |  9 ++++
+ rust/kernel/.gitignore                  |  3 ++
+ rust/kernel/arch_static_branch_asm.rs   |  1 +
+ rust/kernel/arch_static_branch_asm.rs.S |  7 +++
+ rust/kernel/jump_label.rs               | 91 +++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs                      | 32 ++++++++++++
+ rust/kernel/tracepoint.rs               | 49 ++++++++++++++++++
+ samples/rust/Makefile                   |  3 +-
+ samples/rust/rust_print.rs              | 18 +++++++
+ samples/rust/rust_print_events.c        |  8 +++
+ scripts/Makefile.build                  |  9 +++-
+ 22 files changed, 375 insertions(+), 67 deletions(-)
+---
+base-commit: 58e218fe517eff550f8a6cd5f2179d973b006d10
+change-id: 20240606-tracepoint-31e15b90e471
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
