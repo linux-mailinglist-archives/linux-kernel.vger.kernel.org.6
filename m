@@ -1,124 +1,108 @@
-Return-Path: <linux-kernel+bounces-279904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F59F94C337
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:01:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529F694C341
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 19:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B86B25592
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:01:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6147A1C22E84
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36231917CA;
-	Thu,  8 Aug 2024 17:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACAB1922E4;
+	Thu,  8 Aug 2024 17:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l1xzIK5C"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="TGazH7mr"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5D3190676;
-	Thu,  8 Aug 2024 17:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723136427; cv=none; b=K1ydGzTrnMPN5yeS5nDBfF0jA0jmt2UavauYHrAJz1g4UXFvz5nKLNIUpNfVz2lp8js4PBb2XYVv4FHOYVpAxgaNWGknkwDzkzR8JLbTeQ7o6rjEc3XB8dJTe2251o1dgCPKj7DiG49q+Vv7+uT34qRrEeqrvdpMuLH1h25d93g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723136427; c=relaxed/simple;
-	bh=79E3I9rnh6cuexV59Tr1qEKnDOCpKpgureeRzYsAf+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n7QkLsFArbkzbF/+QTzoOmZ5Vjm/hOoKOnGNO2KAiDXILeIB8yQyHLCvxNm1SrYAlydw0m338/9RP2oxTEET2u86MVdwcj44bav2wPLG5UWKtF5DaMRqhNYO3Gks8+A5o3ZnKM8OoFvOw7SelhX1ZAHfXHWe9bE6gXTp56Osis4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l1xzIK5C; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb5789297eso960652a91.3;
-        Thu, 08 Aug 2024 10:00:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723136424; x=1723741224; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=79E3I9rnh6cuexV59Tr1qEKnDOCpKpgureeRzYsAf+k=;
-        b=l1xzIK5CfmtoUCLMnTLnxO6vSe3jc1dn8OWXYwj2yF93FmsRK0SFXdO0I6dJ1rYHDy
-         QVQcooks/GhXykh9GC/f9k9g1cWjDkUwOx2IT9Ow3t5rvsDikPf9ffcpfnY1kByZIoX4
-         wW7e8IpzEr+uCA5bvA4AN9QWP8qbCY3PmDunqMF1AuB7o6yydzuFNb77DMIiReTYNGxa
-         PORBblKEBGObIfkFwAtn0zVhuf3KUEnWzlMSikwrHz7T5SzMmsLh0uchJ4FgNg2vuXVw
-         Lf9xiIpEp6LJDDHL7I9WBxuu3zulY5RFrF0AGIhMblsKvJ5/kU2oiQUMDoJd3EiUaO5T
-         fxgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723136424; x=1723741224;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=79E3I9rnh6cuexV59Tr1qEKnDOCpKpgureeRzYsAf+k=;
-        b=a3FCH2dPdIjYQgdRvqhnvoPffBoPCJ1WuAo55Gx+joRPhdGzOJ6z+0i0dRQV/99xpG
-         phCQwf2U0SwseBGgd3293OSI/RDY/YFhCmN2iLwfn0hJXI0En9cufhk7zdeimJUeEIYn
-         750diUao6ZDVE1aX+elK6QThmju179rZnYuEoVXU4PYiAN7jiCJ8gzCwpCzUYaemDzHz
-         KnGqo0Z86xEiYoyLe/wV5jRT3FYwLxax7hs3oMiBi7eHO/bQ3qTaItiYRHnhpkPXA+xi
-         PCIAZc/qdGH7GQrCpf4gNIP4w1Lek6t0uflEYXakmr/+niuP9n3w46Pblivgt+l0AMu3
-         Hvrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDaF3Dat16tl+cdMZvRilXbfCqhHF8KNALDWsttISiUqCEUhAerQ8ykbGSYd34HA7O13OymvW9Zd3ViRyf3xOMP11QouYXKHp+0MSIAjpUSM5IDPl9UDN6mXJiU0yVAXuYhEgd1zhlcWrwRSnnn9VDOI/A0GETfLq6f4Zf5T5GpXu4mnCF
-X-Gm-Message-State: AOJu0YwNkCnSPV9nW9UL6mUL0fEHTxyyrkk39RdvBXY9pUnETzwXrZn2
-	ycpCe4NyHLv+AsHgzbaJcnjYZtcRjaoHCt8l/dhjnWU3ioC1K3TTWOZnu2qOD5sD9Oga8VqJ54T
-	ndwseoheVftFx6qbE4gX+ZD0Sdzc=
-X-Google-Smtp-Source: AGHT+IG4AjU8cd9c4BbwsbTHkh5tFspfHK00zOrkjggKt3MhV48RSKUD33NHjh4fqO9wSs2Puy2f8iyojyJtoPO/mFU=
-X-Received: by 2002:a17:90b:4c89:b0:2c9:9eb3:8477 with SMTP id
- 98e67ed59e1d1-2d1c33c0974mr2743943a91.16.1723136423922; Thu, 08 Aug 2024
- 10:00:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EAE18B471;
+	Thu,  8 Aug 2024 17:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723136439; cv=pass; b=VjkDm6lyicb71S3pEKsmZNcdLOBape1w9hyty1BLVcdbbT4YnA67KIrVKtzJDjKilQlNwG+Xn++De1LV4ecrZiCS7qLOE80ReZUcIRlUV6DiMJSdWQY4CjXNKPmQMUL0uniQG48S4d8s7nqeipcA+Ww7JcRYtdWRKt5+ONgQ4Tc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723136439; c=relaxed/simple;
+	bh=ZJc6UZNNkrQszcl8lVcGVZCC2nUp6OHQph69oHVv5ro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XUTJ0mhRwGkgRGzXL/mld6JTzcI2r7bP77PV7pQdGzzcG71hgGQzmINWoq0R7TaZuzCSpGVb5wCznMGVWuLOdmVXshHXQ246Hnb/amlH9wiphRnvXRgWCF3Hja0tOFmdvw3100FQVW7hbBQeUX+Q7JEEsTGhZU0HbQkkTotYc/4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=TGazH7mr; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723136400; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=iufzSaCy1styaAcA1ACND9zvtAK5h50zw+7d/AHF1uHdSCZQh8419xBPItU0tFxPsWuGYGA8154598/0uXsGBVvo/nBp+wAF3EQUcUhArz94Vnj0ehA7Zv5EoZrE+74Twkhsc8rHS7owT8tSbYPE+FmG9hAAGir+qXcZ0mOvK0k=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723136400; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=nrb729petfY91nzUq0Q3CuuVyGhgg3PoYngbWZak+YA=; 
+	b=oC5ki124tlmSTkczfqJDK0kfBeQ/ZpiYha40PYgfxXguZZpRteU3vUazp5ehtdKx0NkkzTaFJ+VrAEDpsqVjUuvuYRsAF+un+3BCwd1qcVaRqIYE0jxZmOJiinXWTZZ3MvcdhTT/dL4eUB5Y4z2YdM29ryI5hLqHokUIEoW5iMM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723136400;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=nrb729petfY91nzUq0Q3CuuVyGhgg3PoYngbWZak+YA=;
+	b=TGazH7mrbZN/WSe2rKBwGJxBtwoy5NfjHrohQ/WRP0ibmbtLkBtaOLgKZx340r2F
+	JTftASJFEMHwKLhJoc+j7ENSzlfIYl8pSju3gZLCuahwQnHYx59vvnv3TW9/3LgKdqW
+	KxQrG+kabjyKqtK2wwWoPEB/vEaEkiLcW4UDizUQ=
+Received: by mx.zohomail.com with SMTPS id 1723136398929189.99879437516017;
+	Thu, 8 Aug 2024 09:59:58 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	David Wu <david.wu@rock-chips.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	kernel@collabora.com,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH v2 0/2] Add GMAC support for rk3576
+Date: Thu,  8 Aug 2024 13:00:16 -0400
+Message-ID: <20240808170113.82775-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731214256.3588718-1-andrii@kernel.org> <20240731214256.3588718-8-andrii@kernel.org>
- <CAEf4BzYbXzt7RXB962OLEd3xoQcPfT1MFw5JcHSmRzPx-Etm_A@mail.gmail.com> <20240808142916.GF8020@redhat.com>
-In-Reply-To: <20240808142916.GF8020@redhat.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 8 Aug 2024 10:00:12 -0700
-Message-ID: <CAEf4BzYzbwqPD=8S3Vgjfwyju2dCO-3aOK-vXvM_EwsV_6faJA@mail.gmail.com>
-Subject: Re: [PATCH 7/8] uprobes: perform lockless SRCU-protected uprobes_tree lookup
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
-	paulmck@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Thu, Aug 8, 2024 at 7:29=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wrot=
-e:
->
-> On 08/07, Andrii Nakryiko wrote:
-> >
-> > So, any ideas how we can end up with "corrupted" root on lockless
-> > lookup with rb_find_rcu()?
->
-> I certainly can't help ;) I know ABSOLUTELY NOTHING about rb or any
-> other tree.
->
-> But,
->
-> > This seems to be the very first lockless
-> > RB-tree lookup use case in the tree,
->
-> Well, latch_tree_find() is supposed to be rcu-safe afaics, and
-> __lt_erase() is just rb_erase(). So it is not the 1st use case.
->
-> See also the "Notes on lockless lookups" comment in lib/rbtree.c.
->
-> So it seems that rb_erase() is supposed to be rcu-safe. However
-> it uses __rb_change_child(), not __rb_change_child_rcu().
->
+Add the necessary constants and functions to support the GMAC devices on
+the rk3576.
 
-While trying to mitigate the crash locally I noticed
-__rb_change_child() and changed manually all the cases to
-__rb_change_child_rcu(). That didn't help :) But I think your guess
-about sharing rcu and rb_node is the right now, so hopefully that will
-solve the issue.
+Changes since v1:
+- Add binding in net/snps,dwmac.yaml too
 
-> Not that I think this can explain the problem, and on x86
-> __smp_store_release() is just WRITE_ONCE, but looks confusing...
->
-> Oleg.
->
+David Wu (1):
+  ethernet: stmmac: dwmac-rk: Add GMAC support for RK3576
+
+Detlev Casanova (1):
+  dt-bindings: net: Add support for rk3576 dwmac
+
+ .../bindings/net/rockchip-dwmac.yaml          |   2 +
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 156 ++++++++++++++++++
+ 3 files changed, 159 insertions(+)
+
+-- 
+2.46.0
+
 
