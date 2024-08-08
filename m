@@ -1,112 +1,277 @@
-Return-Path: <linux-kernel+bounces-280207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F298094C729
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:03:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1359094C72E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30AE61C21464
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:03:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49DA8B24421
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 23:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387EC15A87B;
-	Thu,  8 Aug 2024 23:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A0115F40A;
+	Thu,  8 Aug 2024 23:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="malC2YKY"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Mup5G055"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7FD156257;
-	Thu,  8 Aug 2024 23:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3997F15B119
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 23:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723158194; cv=none; b=c/6A4ATo/mPpUOdX/L7/gs1iz9L4MQyiH50RPdlQ5WxEaBNWFNAmVV0FC+PYVMcSykuUt4TW7k2FHkuH59gqklXqf8XafgXuo3pLLeBQ1R8YY2lGul/bHmt2A8z7opUU19Sd+SPtn13mEDoHGbF8AywEb/LkfaIJ/CFUrQ2FVxk=
+	t=1723158227; cv=none; b=dVNHcBjQN6RochqVwvL1ex6UMPFgzNTkfyvL6ouu0N/t4OFGjV9HYPLNj7D3nnyhMM2xcN0JipJLHYHXsXRGPehn5iv9W8P+NzRJoExMY5Ay8BLXnsjWfQFxniDyt8XHPCotPInaoNGXbt78lY2sYPkvPI5+GzySJjD3gdV5Mrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723158194; c=relaxed/simple;
-	bh=RWOEBneEsGpeeX/BLuOcLXfO3oRs/VUy5GTvzYRNu+8=;
+	s=arc-20240116; t=1723158227; c=relaxed/simple;
+	bh=iBP+u9JbzgsDg0aj7FR+sU65Rp+zUgwKYa05Yl+inK8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fLsGJeJJsultf2Hkiivkj9Xmd+sMpX9XU9pgoKY5DXHF2uPqULa2kJPxo0x85kNOb+neMRxO0OaiK3mOSJ4fxeBMhF8zV2JRRv9WoQUIIClI3TmHp880ZJOnKH1gIMYGLj0mcD3VvqkNHH5SEzRreOVSHw2qcY65sXHtQlZPw7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=malC2YKY; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3db14930a1aso1068879b6e.3;
-        Thu, 08 Aug 2024 16:03:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=Zln8PnxBJJ3NQo9ZcJJPTvO0596UKfDYsX1TNbBw9NVy+SEsCnLLUY+Bu10/A1tyiL5b5MCaqezMMufEV/1OjjmsukoNdvON+BxAvPzvQVpORFlYW18s66v6cq/LZDhyB5mCKbsNH4Qm0WjGVjBkSTnsTuLF8Lt0oivi7dC+tgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Mup5G055; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2cd5e3c27c5so1216188a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 16:03:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723158192; x=1723762992; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yAGQCbZhGGSfb2shOtWzL6tNjqUA+2izhtp7nnZqtgM=;
-        b=malC2YKYWi9TY8xI6/L455lGUUbLx6r/oL4l9/Pws9G4EWCO1oiXZ/PibRFHIlKNnG
-         NDeSeQlfztCeBND+bNONXanfrfcHE0aYJfLnOaakE0omTQxkVi2k1xhyx4z0aBjagsEa
-         +feHtkz4xy4scIVKE0vjc4+Lz2mJ/9aE9vTVavYG4sCEHCnvcHguaeQdj7RbOyC07kB3
-         +naADR/KH+l5xnSOEaq5WT5tmxmAsLnQpXIxzCy1mwvM7kbmOgmLSxwPqLZ678+x2zQw
-         26F7RMBixHzPisL/wLbeUSyXu6PSUn6MtHlfiKKhJiqcmuRssCTfqg2g7umed1z7SOwh
-         NzXA==
+        d=broadcom.com; s=google; t=1723158225; x=1723763025; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Skx3GBh0EZ38qc6WcYlol/aA6cFrTOAY50sC1FrBmBA=;
+        b=Mup5G055qdG4QMWaN2QRWg5wUoqlkAZF/SqCBomj00qpaDac3ZT6FJUJouiLlVsnXq
+         yhI1IaGXiij2QVM9KGUSLfwVN5e+ETP7/uOCIchzxMsiF9TFfOubx/s6xq8zbVSXi9qv
+         Xfd6OuhGB4jeFT5Em+MoBXUhrMkg15oaKnKns=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723158192; x=1723762992;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yAGQCbZhGGSfb2shOtWzL6tNjqUA+2izhtp7nnZqtgM=;
-        b=rmJXjMB4202d34Qppdu6TqIB/Sn6ah71kMxZfFHv0Flq0/G+6Z8oDIeMDOGgDYocH8
-         U6242aNWps855RES8VG633gMI+72G1fj1cbsF51DnGatm0EjAvYejgpBvSG7nYiAlZOj
-         oqF1zOC/mloPNfvOWHxPcpyZt/yQSYraGvl/SH2vHgEm0MsMTcPifX4DEF67ysWeMiU/
-         8PT0VKWNPNbrz2cxrqaolOnypQbjvRIH/8WRt9DeYx81E5EM5wPe41EIip7bsDmROQHa
-         2SqFJRMsRyNDQfOITt4O97fULFC3NoaX6iMV1za9ChKmQDETr+NgeoOcZzfVhO29wHSn
-         uWGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwtAeJ/DUAjmYeK/ZP1iIEW13ypfWKuQiA3Urdvcc2Ahrpo1MVwvtqlJZIR5U8R1YOnbTqEEOxESn3mig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIXAuNPyUbPPyGoSup8DFtUIHG2jW+BWMc9+YQddtWdVo+rWXp
-	OJWuv11jFEOhZ5wGDNRjvpbntRIBw7CCHV3rwsrChIVUlA2ALo0xtFj8uXBO7NW+WPBfGv8FlRI
-	BvavhvR/n1G6+v7quZDH0hO8QP/Y=
-X-Google-Smtp-Source: AGHT+IGPKcJ9znziyGOcJ+0eRd0csLuu+W1Dx9VkXMQnAqfpJGArWUcFzXeFPh4GROY/NuffsNGlfVvX2rUvxe+qzAU=
-X-Received: by 2002:a05:6808:2016:b0:3d9:dabc:7b8d with SMTP id
- 5614622812f47-3dc3b46213fmr3298346b6e.48.1723158192188; Thu, 08 Aug 2024
- 16:03:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723158225; x=1723763025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Skx3GBh0EZ38qc6WcYlol/aA6cFrTOAY50sC1FrBmBA=;
+        b=JgV1sXV4g4NE/2O9jBurfR9/zipG6El6IubJBDx7iQA3aukNbgfINbaqsQ4mX7HasD
+         0OO2HL+QkRSHEcxayi0QX37hRbUAZBcVfrTjkXkRpV+E4609iq0IAfoE6HT2MhJLZQ70
+         s3UvwedW/kf6F+ZH0c0z01Lba6zyapZYl/l6xqgXq7OZvoy2s54sbVH9IL7l6k8coIn8
+         xnmag/yNdHw3OcPGNB4NnU7XDJdpNokAQxBvXE/xckTjYxqSSWZpYogbdv6QRvsrq+S7
+         0+/ikqIaj6vbeYmI3PV9KSLRuyP/RTMpy2FBQ2rAa7c9luFowuLApoNAnWPlp6TTMBuh
+         5eNg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5dByu3KmjGaFrNXAAVHNwlrQQowTc34u0QqWefnl10PyZUYPVQ+Wno6HVKbwJZiUh1F32OFba54OsiotQF1G2lPhuSdEwgpgiS7Td
+X-Gm-Message-State: AOJu0YxwdbLbKhF2AHWYV5ug1Vomp5ZPEmoXXyeyOnr4sIjkLOG6cSvP
+	K5MbyYZjcSYBz35yFCS/HiklFMqVINtotRzylMRNUNcrSg63S4Igpz8rM4V/dyft9o/1DYldwv3
+	+FoDUFRQOURCYOKSFOVnJYjQXITlNyay9KwD50jp5fhW/wsrbjQ==
+X-Google-Smtp-Source: AGHT+IEurs1ZraK16gLlx2+6o+2jGNgwZ+6lAL2/OitH1L7OF2fZ4tavR/6IquvNnXpvFpwc04B358Poa1eJ6aD7fXk=
+X-Received: by 2002:a17:90a:9c11:b0:2cf:c2df:67de with SMTP id
+ 98e67ed59e1d1-2d1c33741bdmr3917540a91.9.1723158225194; Thu, 08 Aug 2024
+ 16:03:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807150020.790615758@linuxfoundation.org>
-In-Reply-To: <20240807150020.790615758@linuxfoundation.org>
-From: Allen <allen.lkml@gmail.com>
-Date: Thu, 8 Aug 2024 16:03:01 -0700
-Message-ID: <CAOMdWS+upkbMbE82CmtKFgRb9shEcq2izJEBHsKW-AusiYxOpw@mail.gmail.com>
-Subject: Re: [PATCH 6.10 000/123] 6.10.4-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, broonie@kernel.org
+References: <20240802031822.1862030-1-jitendra.vegiraju@broadcom.com>
+ <oul3ymxlfwlqc3wikwyfix5e2c7hozwfsdwswkdtayxd2zzphz@mld3uobyw5pv>
+ <CAMdnO-JKfi0hqaR5zrzzv6j-c6OhH-LTZT5WWBCFDOG_+ZxTeQ@mail.gmail.com> <2vvet4ai3uihb2skzyfiym2qh6g26knb7ymjp73eejoiywqnkm@2rxxv6zqvi33>
+In-Reply-To: <2vvet4ai3uihb2skzyfiym2qh6g26knb7ymjp73eejoiywqnkm@2rxxv6zqvi33>
+From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+Date: Thu, 8 Aug 2024 16:03:34 -0700
+Message-ID: <CAMdnO-+PHMBsarskvzcTSHFeSdf9t2iN3EMcBYUGKdQJ28ctTg@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 0/3] net: stmmac: Add PCI driver support for BCM8958x
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
+	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	hawk@kernel.org, john.fastabend@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, 
+	linux@armlinux.org.uk, horms@kernel.org, florian.fainelli@broadcom.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> This is the start of the stable review cycle for the 6.10.4 release.
-> There are 123 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Aug 5, 2024 at 3:43=E2=80=AFPM Serge Semin <fancer.lancer@gmail.com=
+> wrote:
 >
-> Responses should be made by Fri, 09 Aug 2024 14:59:54 +0000.
-> Anything received after that time might be too late.
+> On Fri, Aug 02, 2024 at 03:06:05PM -0700, Jitendra Vegiraju wrote:
+> > On Fri, Aug 2, 2024 at 3:02=E2=80=AFAM Serge Semin <fancer.lancer@gmail=
+.com> wrote:
+> > >
+> > > Hi Jitendra
+> > >
+> > > On Thu, Aug 01, 2024 at 08:18:19PM -0700, jitendra.vegiraju@broadcom.=
+com wrote:
+> > > > From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+> > > >
+> > > > This patchset adds basic PCI ethernet device driver support for Bro=
+adcom
+> > > > BCM8958x Automotive Ethernet switch SoC devices.
+> > > >
+> > > > This SoC device has PCIe ethernet MAC attached to an integrated eth=
+ernet
+> > > > switch using XGMII interface. The PCIe ethernet controller is prese=
+nted to
+> > > > the Linux host as PCI network device.
+> > > >
+> > > > The following block diagram gives an overview of the application.
+> > > >              +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> > > >              |       Host CPU/Linux            |
+> > > >              +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> > > >                         || PCIe
+> > > >                         ||
+> > > >         +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> > > >         |           +--------------+               |
+> > > >         |           | PCIE Endpoint|               |
+> > > >         |           | Ethernet     |               |
+> > > >         |           | Controller   |               |
+> > > >         |           |   DMA        |               |
+> > > >         |           +--------------+               |
+> > > >         |           |   MAC        |   BCM8958X    |
+> > > >         |           +--------------+   SoC         |
+> > > >         |               || XGMII                   |
+> > > >         |               ||                         |
+> > > >         |           +--------------+               |
+> > > >         |           | Ethernet     |               |
+> > > >         |           | switch       |               |
+> > > >         |           +--------------+               |
+> > > >         |             || || || ||                  |
+> > > >         +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> > > >                       || || || || More external interfaces
+> > > >
+> > > > The MAC block on BCM8958x is based on Synopsis XGMAC 4.00a core. Th=
+is
+> > > > driver uses common dwxgmac2 code where applicable.
+> > >
+> > > Thanks for submitting the series.
+> > >
+> > > I am curious how come Broadcom got to use an IP-core which hasn't
+> > > been even announced by Synopsys. AFAICS the most modern DW XGMAC
+> > > IP-core is of v3.xxa version:
+> > >
+> > > https://www.synopsys.com/dw/ipdir.php?ds=3Ddwc_ether_xgmac
+> > >
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.4-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
+> > I am not sure why the 4.00a IP-code is not announced for general
+> > availability yet.
+> > The Synopsis documentation for this IP mentions 3.xx IP as reference
+> > for this design and lists
+> > new features for 4.00a.
+> >
+> > > Are you sure that your device isn't equipped with some another DW MAC
+> > > IP-core, like DW 25G Ethernet MAC? (which BTW is equipped with a new
+> > > Hyper DMA engine with a capability to have up to 128/256 channels wit=
+h
+> > > likely indirect addressing.) Do I miss something?
+> > >
+> > Yes, I briefly mentioned the new DMA architecture in the commit log
+> > for patch 1/3.
+> > You are correct, the name for the new DMA engine is Hyper DMA. It
+> > probably started with some 3.xx IP-Core.
+> > This DW-MAC is capable of 25G, but this SOC is not using 25G support.
 >
-> thanks,
+> Then what you have is likely the DW 25GMAC since just DW XGMAC hasn't
+> been announced to have neither 25G speed nor the Hyper-DMA with the
+> virtualization channels capabilities. Meanwhile the former IP-core
+> does have these features:
+> https://www.synopsys.com/dw/ipdir.php?ds=3Ddwc_25g_ethernet_mac_ip
 >
-> greg k-h
+> Alas I don't have the DW 25GMAC IP-core databook to say for sure, but
+> that's the only explanation of why you have the 0x40 Synopsys ID and
+> the IP-core version of v4.00a, and the 25G capability of the MAC.
 >
+> Seeing Synopsys tends to re-use the CSRs mapping even across the major
+> IP-core releases it isn't that surprising that the DW XGMAC 3.xx
+> IP-core was referenced in the doc. (See the driver, DW XLGMAC is
+> almost fully compatible with the DW XGMAC CSRs mapping.)
+>
+> Moreover the most DMA-capable device currently supported by the
+> STMMAC-driver is DW XGMAC/XLGMAC and it can't have more than 16
+> DMA-channels. That allows to directly map all the channels CSRs to the
+> system memory. But your case is different. The DW 25GMAC IP-core is
+> announced to support virtualization up to 128/256 channels, for which
+> the direct CSRs mapping could require 16-times more memory. That's
+> likely why the indirect addressing was implemented to access the
+> settings of all the possible channels. That's also implicitly proofs
+> that you have the DW 25GMAC IP-core.
+Hi Serge(y)
 
-Compiled and booted on my x86_64 and ARM64 test systems. No errors or
-regressions.
-
-Tested-by: Allen Pais <apais@linux.microsoft.com>
-
-Thanks.
+Thanks for reviewing the patch series.
+Sorry for the delay in my response. We waited for a clarification on
+the IP version.
+Its confirmed that we got an early adapter version of 25GMAC IP-Core.
+Added more details in the context of other questions in Patch 1,2.
+>
+> -Serge(y)
+>
+> >
+> > > * I'll join the patch set review after the weekend, sometime on the
+> > > next week.
+> > >
+> > > -Serge(y)
+> > >
+> > > > Driver functionality specific to this MAC is implemented in dwxgmac=
+4.c.
+> > > > Management of integrated ethernet switch on this SoC is not handled=
+ by
+> > > > the PCIe interface.
+> > > > This SoC device has PCIe ethernet MAC directly attached to an integ=
+rated
+> > > > ethernet switch using XGMII interface.
+> > > >
+> > > > v2->v3:
+> > > >    Addressed v2 comments from Andrew, Jakub, Russel and Simon.
+> > > >    Based on suggestion by Russel and Andrew, added software node to=
+ create
+> > > >    phylink in fixed-link mode.
+> > > >    Moved dwxgmac4 specific functions to new files dwxgmac4.c and dw=
+xgmac4.h
+> > > >    in stmmac core module.
+> > > >    Reorganized the code to use the existing glue logic support for =
+xgmac in
+> > > >    hwif.c and override ops functions for dwxgmac4 specific function=
+s.
+> > > >    The patch is split into three parts.
+> > > >      Patch#1 Adds dma_ops for dwxgmac4 in stmmac core
+> > > >      Patch#2 Hooks in the hardware interface handling for dwxgmac4
+> > > >      Patch#3 Adds PCI driver for BCM8958x device
+> > > >
+> > > > v1->v2:
+> > > >    Minor fixes to address coding style issues.
+> > > >    Sent v2 too soon by mistake, without waiting for review comments=
+.
+> > > >    Received feedback on this version.
+> > > >    https://lore.kernel.org/netdev/20240511015924.41457-1-jitendra.v=
+egiraju@broadcom.com/
+> > > >
+> > > > v1:
+> > > >    https://lore.kernel.org/netdev/20240510000331.154486-1-jitendra.=
+vegiraju@broadcom.com/
+> > > >
+> > > > Jitendra Vegiraju (3):
+> > > >   Add basic dwxgmac4 support to stmmac core
+> > > >   Integrate dwxgmac4 into stmmac hwif handling
+> > > >   Add PCI driver support for BCM8958x
+> > > >
+> > > >  MAINTAINERS                                   |   8 +
+> > > >  drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+> > > >  drivers/net/ethernet/stmicro/stmmac/Makefile  |   3 +-
+> > > >  drivers/net/ethernet/stmicro/stmmac/common.h  |   4 +
+> > > >  .../net/ethernet/stmicro/stmmac/dwmac-brcm.c  | 517 ++++++++++++++=
+++++
+> > > >  .../ethernet/stmicro/stmmac/dwxgmac2_dma.c    |  31 ++
+> > > >  .../net/ethernet/stmicro/stmmac/dwxgmac4.c    | 142 +++++
+> > > >  .../net/ethernet/stmicro/stmmac/dwxgmac4.h    |  84 +++
+> > > >  drivers/net/ethernet/stmicro/stmmac/hwif.c    |  26 +-
+> > > >  drivers/net/ethernet/stmicro/stmmac/hwif.h    |   1 +
+> > > >  10 files changed, 825 insertions(+), 2 deletions(-)
+> > > >  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.=
+c
+> > > >  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxgmac4.c
+> > > >  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxgmac4.h
+> > > >
+> > > > --
+> > > > 2.34.1
+> > > >
+> > > >
 
