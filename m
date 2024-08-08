@@ -1,184 +1,221 @@
-Return-Path: <linux-kernel+bounces-279376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1922294BC87
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:52:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74D394BC90
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189DA1C21AE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:52:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6917AB2161A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AAB18C324;
-	Thu,  8 Aug 2024 11:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA46D18C327;
+	Thu,  8 Aug 2024 11:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mqFL2Eyz"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="sqWnBlK6"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2025.outbound.protection.outlook.com [40.92.103.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC84145FE0;
-	Thu,  8 Aug 2024 11:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5634E189BB3;
+	Thu,  8 Aug 2024 11:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.25
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723117942; cv=fail; b=V6bqppu1RjN8r+VP30iuZFZUy+h+vINSuquAwMhxhUo0RtnUdNloKtaFVLR/ygtVepL4rFXEw0QH24gPVwKD4jzbBAqmgz2ZlEBxA59hDIoXHKJpdFQ235HKC5aWDSiWHCao0u2mLBmpUn6jLtCwgLVv3rvDlxdP3eUaK/JpPL0=
+	t=1723118023; cv=fail; b=DsQUBLaSAOG4+/NFVSLnw3W5ry7dI12uzRcKjz5uBQ7N+yxbb1jl9IZOUIgnzbUuzt+v5i/5KZrqk4BudRc4iJwE4rkw7czgST8/rBQzvwot3aCgf8k9UIirr/sYf6qyWkXuDs/9z6Qda4WrCzaL/ZAXmi++wqRNqsAxendswYg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723117942; c=relaxed/simple;
-	bh=TCVQN2xvY502dQUSLUdw18cxnKlTvIANMKjAE7j+z1c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ql3fNeeeDMef625A6sSeUYwjwnrmsOTMZKGi0YWKrw8PcGt7SFNArAHdqcQLkCmv6n3KEQktrH9J7vGq4ldvdhWnO3qp/cPnbMjUNYzhvel+VdH+Tvkw0rZ9gPCIdvCcsL86qMWvyOcP/mXJMsxNK8+88xKqHdMhMMOiBSJIhnc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=mqFL2Eyz; arc=fail smtp.client-ip=40.107.237.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1723118023; c=relaxed/simple;
+	bh=F+AkPGqEPP23gsq8Usgg7+g6TTGut752b7lb2nqj/sw=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=K7j7dG1+F3UbaZxYROwxeQkqzGKThntF47QZ5M2XT+xM8e34StNJmMr2gdr4/P4gh3wX+7M4bZ2XDPqwwEwO1mBOEQtfJBf93UrawZ9ZPqSD+hg+zGFj5CXFAF5uvO8CzPAQY8EopzU9hzRfeR06yTd2kkUnRgNyY/5z6yuqY44=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=sqWnBlK6; arc=fail smtp.client-ip=40.92.103.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AWeNSF4TfLtyJZmrk/bAJYuF9B0i38DnifBSmDdT1xYivcq9sLRzjShMufgFUatkOLXec4yrhkppqKD1oOQ0n05EfLuzykzqMqLjpXjedqOVNtIQXSHxWnbq/Q44VN+fo7fehcosM3csSRcXHmx1m/tU5+jSCOgvdUL9jn4WqAYFF3VR3OBHkGGjHACeJAxp0UYF6pQwbwu2YMNhCOqz5SWFRcmteUbGxWgkqFJ0NXFEop+j8twjaiAmxMwB66HUCGSYuJUMS/Mjuy3feA0Ju/1GvcZ8/zqfKjWeYH9Ym6tV6v5r9vc3iancFXxLA2uWQNNvtquuy6Bo2O/tha9D5w==
+ b=UGLWCezbyoWvll4X5yAZO6Hli4Y4R+Ja7galbyjlf9ewTMwMweq6N1b+4RYGB+A7jURqATtsHyAj2nDEpet+0HL4oSIjcrl0g23/h9qVv/fBX+5OtKW1KP7mbwVJaEYCPVnPdz7EahqR+WmUolq/C1OuExueWTmyD6O3BTzRI+r94/YKm53LMvdYR9gbHTNJxwqIxDdyCjUZfSoLbar0t74CRb+kWlOJ87bPuxmZFb9JKtXW8OHn4M78VgyMViWMd+xB714m5ILrJG9lDckUi4JycwtNOSJtTZrgXeXsC4rN2k4NheyFYu368sYfL842aZtMMAUwwfClBf5B1W89tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TCVQN2xvY502dQUSLUdw18cxnKlTvIANMKjAE7j+z1c=;
- b=inm6k0+LkEQzCU+jCWrTrZZJmA+lQi6lygx7iUTIFnVMtV/iBKSvWYR/65PMq4AE/qtq56SXi0hqk+aHECBa8i4DltJ1SuM46bZ+JpZO5TbURdCQaTrGlhRPfGqkSawHQJ/JFP2nj9N89zkDbAo42g4UUV++qlRlNq418hSDaRQBnVe7pRisbtd1yg3B9UYYtrn0sjvIbXF1q09ludU4xXWtDVVvwtc2IY1t2WwGyk+AeY5udAeIkkfVXEJhSFZlE5jZnuSeWN6RDa/yO5gxIU6TSwtxKivlI8eXv3LfifQpqFoZu0llLkqqQRJuN4sFS9jMLHl0XmmhnZKumMeM2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
+ bh=dOUbGrF+b2BonyYuam42yF6r12JT1Gq3gTCmyY1qiE0=;
+ b=nsNerIN2xlxanNe2Liziig3iHVzvbEafCgeu+TsJ+HSN8X1aD3wZqQfe86K5ijoZbYiPwGqSds8dX3vXNKribRICELehogmzWvlNhBTD/EwFGmEHobKocR0rrhHwPxnrJrZPiBeipuiZa9cJSd7kPqNhf2vm/pMAYMNtb5/1jT1wAcbSzYlpLn6wehzLJugs1L5SQ9QUAinJM3biKlx2BPrbURmAtKZHeH3psesw+BFYdYuniVxeSWpT1DESqABAl+sJ/e3R/TjxWEPjUwVde/iAIqfV2hJ99ltaVs1AOGrV3jTALL+MCd/afJTMG2yOAFTatAyHwV8KL2nY4w0E4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TCVQN2xvY502dQUSLUdw18cxnKlTvIANMKjAE7j+z1c=;
- b=mqFL2Eyz93AGcjVY8O6M2Qhd0tpWWYN4v0pkslMUg5oSWVFTbbq3XBcHLPYzp1JbSAp1denRcWtjc804/jCqatLjIJ63Qd/dNO+GhDIJBUrwLu/BwEUzvMolbcEFCVCgLeRVa8c9Vm8LKcasbpjJBlgDQModm2vf9BdukLIC2qTpWw1PPTuimXTI9xtUgZFce0u+AebMqKMMidhNMm9+jK+Z7aK/0h1F6EPIBumbS6dv/l3fjR5/Ud/J8+JAFEUKAEgHQJY67C+o0mFEa+p4uq/m3uxgPDjTsk7G6IR6XOW0Z4/bQXfUQJQfkA8xd2tAgkQ2gqNIDhPZCSN3H4ebYQ==
-Received: from BN9PR11MB5289.namprd11.prod.outlook.com (2603:10b6:408:136::10)
- by DS0PR11MB7192.namprd11.prod.outlook.com (2603:10b6:8:13a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.29; Thu, 8 Aug
- 2024 11:52:16 +0000
-Received: from BN9PR11MB5289.namprd11.prod.outlook.com
- ([fe80::93b4:c87a:32b4:c395]) by BN9PR11MB5289.namprd11.prod.outlook.com
- ([fe80::93b4:c87a:32b4:c395%3]) with mapi id 15.20.7828.029; Thu, 8 Aug 2024
- 11:52:16 +0000
-From: <Andrei.Simion@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 1/6] regulator: mcp16502: Add supplier for regulators
-Thread-Topic: [PATCH 1/6] regulator: mcp16502: Add supplier for regulators
-Thread-Index: AQHa5LhEn97L1tgXxECJyG0oBvR81bIT7XGAgAAYs4CAADuWgIAJB6iA
-Date: Thu, 8 Aug 2024 11:52:16 +0000
-Message-ID: <fa6c3079-517c-4874-96ae-35da7674b536@microchip.com>
-References: <20240802084433.20958-1-andrei.simion@microchip.com>
- <20240802084433.20958-2-andrei.simion@microchip.com>
- <98f91a56-946c-4a40-b908-45f4c6c6d66e@sirena.org.uk>
- <f318439f-b520-4b86-99a7-eb9a2e47525f@microchip.com>
- <e0db4f2b-ce4f-4560-b586-1d8dbb75c7ff@sirena.org.uk>
-In-Reply-To: <e0db4f2b-ce4f-4560-b586-1d8dbb75c7ff@sirena.org.uk>
-Accept-Language: en-US
+ bh=dOUbGrF+b2BonyYuam42yF6r12JT1Gq3gTCmyY1qiE0=;
+ b=sqWnBlK6GI7hjOMr94SrvzP7TRPSYcuJhaQbkKhkGpsv7v01rXmdC99BHJ+IkO+jC9BX3g0vT/B2AhoswwYlfqD6s+sYALcVhcfeBlU3TYCxcaybDVKh6VxI8QFx9RiRTeldLGbIOrhJ4Gc+mtPJpeVe+a6C46pl8WtksJwRkW89HJ5alqMUGPDTDH0p+Z3Gj7sHgTN4OYLn0yo9369OWSJzT0u3u1CqWF2OL3lD3LRGK+42rF0EYvtEt872PNsVafZ6J5X5O2YqDXnz0Opp2exWT+hiL2OMjNgxPIwryoZj+fKCgt0/HIQbBo7RLUnLF0vtc8eIti/O7aWUHA18Eg==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ MA0P287MB0680.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:11b::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.14; Thu, 8 Aug 2024 11:53:35 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
+ 11:53:35 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: [PATCH v2 0/9] Touch Bar support for T2 Macs
+Thread-Topic: [PATCH v2 0/9] Touch Bar support for T2 Macs
+Thread-Index: AQHa6YmZuOYCRPgde0qoHgv/QhoGCA==
+Date: Thu, 8 Aug 2024 11:53:34 +0000
+Message-ID: <9550ADFD-0534-471D-94B4-EF370943CF80@live.com>
+Accept-Language: en-IN, en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [4LmLyMJE2utlNXPODHR4wESMg47r1GDc5m8jSgx3HZWKZprDYULfwU5fHC9alg6feNFRl0eoJLI=]
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5289:EE_|DS0PR11MB7192:EE_
-x-ms-office365-filtering-correlation-id: 5d7d956a-88a6-4f6a-eaa5-08dcb7a08cbb
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5289.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB0680:EE_
+x-ms-office365-filtering-correlation-id: 43b747ca-43a5-4e70-5e15-08dcb7a0bb94
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799003|19110799003|8060799006|461199028|1602099012|440099028|3412199025|4302099013|102099032;
 x-microsoft-antispam-message-info:
- =?utf-8?B?VjcxY3J2bEZWRTZUNHpkamx3RXZ6QzFQaTdkK3QrL3kxSks5bjZxUE1IcVFY?=
- =?utf-8?B?dlVSV29tRkhCWWs4T09FQXI4bk5iSWZDM2V3MXpWeWw4NURQSVk1TDE4WDFm?=
- =?utf-8?B?VG5EVHhrWS9hZ1FtRnlyTXpGcHhIOVFKZ1l0bEt3N3hkVHdxM3dZMHFYZkdC?=
- =?utf-8?B?ckRXQmhidTNMbFZ5TmpnK1FuaE5RSlpKN1pERnZPQXV3dTdkZEx3alFFbU9D?=
- =?utf-8?B?cW8rSXV0Ym9vbnJQMFpud3lCbnZEeGRuYUpES3NCa2pCbFljTGpRMVlxUktJ?=
- =?utf-8?B?VnA4bEgydDlrMlgrcHp6VWd1cnZQd012a2pGL3NKM3ZBb0dOZzcyaW9iVVJX?=
- =?utf-8?B?WmN1T01yemxZNEs4OGJnNHJUUDhscklGVitvYUtPOHhQcVJlbGNZY21oZkRw?=
- =?utf-8?B?ckZYZ1RQcmZLZWpwVzBmcVY3Wko5Njl6NWRXMy9PNGNYWDJZNG40aTdxd3FE?=
- =?utf-8?B?dXg0Z01HU2VScWo0U29zbW1RQTRNV3NoWG8rN0JyWis2cHUvM3AxQTJjUFZo?=
- =?utf-8?B?QTVGSjlDN2hGdjhkY093ZXhVQm9xa0Q0bktRemMwajBHbWE0MWMvTGZlOGZP?=
- =?utf-8?B?VlZ0QkZldG42RmVQQ3ZnSGNBL1BwN2tkWmR4elZJMVM0Rk1ZNXFwRE5aZjNL?=
- =?utf-8?B?blRoTWJrVzJpNXlUOHAvd3oxMUpjNVNaNEtZTXFPajY4T0ptanVZeHg3UHdO?=
- =?utf-8?B?YTc0aTQ2Q1VGc2NzbDNWOWVOVXkybjZZWXc4dHJmd2J3bEFFTmFEYkprdzVZ?=
- =?utf-8?B?eWJFbk5iRE5aQU80RGNNZGNYR0g1MVlvVk9lb2tFWmxweDJnTEdTK0J3WURN?=
- =?utf-8?B?M2dHUklHbWpFK0hwU0JSQUtEMEY4QzBkNmkwMncrTGRaektEQXMxZlQ1YnZi?=
- =?utf-8?B?M0lJbG1VOTRzUWtxTjNKRzcwempCRzlMZHhnRS9vMDJ2Zi93NmI5dTZGazRy?=
- =?utf-8?B?MU9UemphQUJXODN4cExCODZRSjBzUE1uaFVkdFFBZi9kMDdxVEcyN0MxRlhj?=
- =?utf-8?B?YWsvd2VPQkJlYlEyclhDa1JkK3lhRDZzcHhwTkw0UmNYU2pmcmtObUF0Q0hq?=
- =?utf-8?B?RTZMRWpGdEJPdUFCcit0TkRlWGwvbnVZSlBlVjdYaXRUWkNqTjhLUGRwSE12?=
- =?utf-8?B?aSt4Nkx5UjRkL2QrNkE3YzhETzBiQkp3QnV6THhrSmZEV2VZNTFEdnBaM0Fa?=
- =?utf-8?B?VDVZRUJNeldlWXV2cUhhMEx5b1VmelNrK280Vi9lNTltdjBweHBFTjIvZHBD?=
- =?utf-8?B?cnFCU0NwT2I0NmluaGpUMG9rUDRpZW51RjZma1Roa2ZITk9UcXp2cEE0aXVa?=
- =?utf-8?B?MnlVUTZ1VGNrS1pIQ3pOcyt1RytZbExpcEFJekxIWS9SdVMvVDB3UjNDd1hm?=
- =?utf-8?B?WnBVNFgyYzlya0ZTSkhSMmo3OEVOazVGMTI5ZXZLbDVXWVRzYWo5T0xER1hK?=
- =?utf-8?B?TFlGYiswQ29VdlExTHF5WFNibUVrWGhBbnBLUXVHRlExK1BnRWpwWkVrd3gw?=
- =?utf-8?B?NXlTdU5OZEIzN1lKOW5mNXpzNEg3emhUVmFtQXJMbU1nQTFDRTJ3TE95TEl1?=
- =?utf-8?B?TFhlVWNCUUJyeHBVRmZYeVk4dks3WXVOL0lBZ1loRlZ1T05NZGFxMi84emM0?=
- =?utf-8?B?bFNpYlgzZGl1dTNhUm0zWmZoNGZsNTREazA2WXZ2MGE2MVZJMkVqaWZRK1Nq?=
- =?utf-8?B?WWk5NXc3TGpFajJLTVlhMnFUQytZMUErSmg3M2lZYjdvY2w3Q3Z5Tk03MTFm?=
- =?utf-8?B?c1FCcjhrdjhXenF6MXI5b2UxVnUxSWJWQXR2UTBlOGJRSkFsZ3NQY0xFcm9K?=
- =?utf-8?B?OE1SOEwvVUNEUTVlS0hsNmdVcFJncGZ1bUtra2ZQL2d1NDVuTzcvc0p2T3lu?=
- =?utf-8?B?dzBkc1NGU2Vka3lJYndTUFhjVDgwbDFnNVFGa2E0c0dlVUE9PQ==?=
+ /kHZ83a8q7L1gao5i0qdL/wVzpt85IXZwb5JAEzscdDBePei+3suWI8G+QwJ5dG0l76ok1UlsxOWP5yJy2sbE481MhlAyE1f9zcPUS359CURk9vqoPJh0N0KxtscZNqv+t3ZKDzX87uBHfEJaT1dl3YGY1Xf9JyzIGi2KVsBtKhBPCthGmiHpjuRgz1EIkdWHKfYhQMsRSFzoPWtclahY4ZonIy4XUJkDeqa8msC9cOpND6OO/aVex3ncWv4oxD8F1qnford7skozgobV5HKaLbZwzzISjxmkpDvybkMOIIUn0zuTFfNZyiEeGajgzHOn8Er4tFCDOGRMkfJYkflSFN3aJ0VGXgV9Oy/WEuJ0+nW5j3UpRekrVK9AR3WNWZbxE3WzZbAih6Y6wgtTize2Snz5tQ8ddJK046+3U2qdWyeD6sIVmmR2/L8QI7RsOHRQfsmbPjc1RZiBQJI13kFj6UeiRTyKHBzvD3cDLPaizlgYyTTAojEIh5emP7RsqP/w/LFOTg0fYwAgc3MUEUhb/D5PKFLfJzHWqblQY5sa1tJmCyFLHGAwFx62rn0jSyhzy61o2zlVXy/lLe772DXuKtDXNfRqgB2m4j1z2m1IX0RlLEUnyJoYZl+tCncAuSmGngPJ09KMabri2U1qkpA+Q4W/gksPX1vo7aRUPARJVKgtStOtyiEfHp83Xm5qHRasgQnWdoZlYOUmBcoHt1CtjvgMvPlfSiT2tiTaOZTQN9uWA94njyabMj0YBfPYMXlYdvi+j9aUiIa3A+n9ZPuCvoh1Jdk5R6w4KSBdFVQIuk=
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?d1BDZ2dDRTBDZG0wOFdQVjc3dUxvaG1YbXQ5Z0F6Y3FSMWEraUllL1J4aWFz?=
- =?utf-8?B?L0VKMmNIMHVldDJjeVIrc3lYQ3RqMXYxYWNvZmVOVHJIY05JQTB2cTlFS3E2?=
- =?utf-8?B?aXlPMkMvOExYQUNVa3dtSEF2azlwZ05ZRlFLbU1lTnFpaDJ3bmRXd29LZStk?=
- =?utf-8?B?WFdUVkdFNDlMTGxhaUR2MDh3dnA2dWo3OFpSbVg3d3VJbEd1dWlLZzdYY29y?=
- =?utf-8?B?M21oQ3NBdWw0KzVmZFRHeDJCVTl4RWcyVDF0RzBneDhZalVVVU1TM1VSS1do?=
- =?utf-8?B?bXNrcVZuVFVjYWVBWUFkU1h2ejVwMVdpeFlnWmgyejNYWjRNaVpWNDE3bWZw?=
- =?utf-8?B?em43ZndBWkxLdFg1S3B4NUJyZDVmZ2k1SG0xME5MM2hwV0l4RnV2SU1Md2dI?=
- =?utf-8?B?dFBxb0dXUHd3em5TTUVLT1FveFlzKzY3ZGxRdXJveTMzSUlCekJaNEliYml6?=
- =?utf-8?B?NkRYL29sc213Y1o0eUlmM2t1UGR1b2hkaW9Va2hYVFdHa3cwSG5Yelk4M0x4?=
- =?utf-8?B?dUhrWXNIS01xT2ZoNFBMa3NMYXFsKzB4U2tqTWI5SU1ybmdZSHZHSmUrWGVR?=
- =?utf-8?B?Sll2aUNjRFJ0b1NWNW9EMDJEWjg3bUlydnFPdWNCM1FNeWFYbUZnRnBXd2JX?=
- =?utf-8?B?QnFFVWhDWk9nWitlc1JBMEovZVdFcGs0Yk9rQU9ablAyY1dsd0RSVkVnSXgr?=
- =?utf-8?B?WUd3STVyaU9aK1F4VXd0NGZ4aUJLQUhWV2FaT2o5dWVROHpoTXRUYndtczMr?=
- =?utf-8?B?Y1YveHhjend6UEFCSW9jRTlaSHNVbjFqNGJZTHp1MjRrOWVDazVieVBFUzBn?=
- =?utf-8?B?eHhJZ095WEpHS0U1MXR4TG1nZ3Fzd01Oai82SXJRNVUxbm9Xb3FsSlRRcHk4?=
- =?utf-8?B?S0N3d2Z1YkpCdzZ6NFZ1UnREQlFPdHlWN1BmNGdsOFJteDFjRFVGSmlJdlQ3?=
- =?utf-8?B?YTN6Rmh1bnpMSndqYS8wZVg4TWN3VnpORXdTZGJ1d3NPUTJuUDJrdVMzbGtB?=
- =?utf-8?B?YVdYZUloaFdJUkt0WEUwSk9RZkRQUTRwZ2ZhMUlQbkFkekNuL3MxTXI5amlV?=
- =?utf-8?B?VWRjSGxQb0dlV1c5NzdiOU95V2xQaXgxR1kxVDArd3AybE5SOS9xRUVGbEI2?=
- =?utf-8?B?aCtBQk1WZTRXQ2ZOYTBtVWx2dFFZMC9lZW1ObjFSNGJuMXlmVHU0WERXQmhk?=
- =?utf-8?B?UjcxR3NZNzh3NkdhR1BBWkxROERzcmh5UzdZaDZnQUNYTHQ5QlVYcUJMU3BH?=
- =?utf-8?B?TitaL2Y0dHlURlJNbmFsR3RVZC9nL2pGbTB1enZhWU4yVXR1VDU4cW42RTVw?=
- =?utf-8?B?bW5ZL0FDK1c2a3NqbGR5N3pyOW1KMkV1ZlJkR2tpMlg5bnlZaXAweENNWEZO?=
- =?utf-8?B?Tmk4eXBMZ2NHd1Rhb0dRZVFNTjZoREsyYlVPRkR3VzN2SytkcDRqN09wWDhp?=
- =?utf-8?B?WC9ZS2ZhblVDRlRUSG8weCt5M2Y1cmROclJjRjdKaVBHWkRzR1RoYnVhYURa?=
- =?utf-8?B?cEhyQ2VVMjcvRGdKY0tsdVpSaStYMFk5UCtMWEc5MzlCanJLVUlESnpVUUFB?=
- =?utf-8?B?SnRXRUExckRjNGxzcVNlSzZQR1duK2pBK2h3VHpuRDBaSVNpQ0JaSHpxZWh6?=
- =?utf-8?B?NFg3OHhKWVY5WWp5bjcrYllTMFQ3Y3VSSWZmbUYvQVh3REZwNkdtV3BWZG53?=
- =?utf-8?B?Sk9ONkRFL2ZTL2dETWUvZ1JocHdXMmo3ZVpaVVNud29PUzdQK1I2S0ZuUE45?=
- =?utf-8?B?QlJJb2FMYmk5QjA1WlhGSElKbkxXMWpXT2l2ZXcwMXhra2lwT3NqRWFjSHZq?=
- =?utf-8?B?Z2NCQ2s1Rm41VFllMVVqZFN6OWVFTVlMckkvaWRYUmhmOW85WFQ4Wi9KbHlT?=
- =?utf-8?B?Um0zYXFnZ1ZtVzJFV1l5TmpnQnpla0xhVzA4SnVoL0FmV3hiYTJRVUhRWGg4?=
- =?utf-8?B?NHlVRy9jYUhLcHd0RFFUdlZGQWJvYXp0UUNoVGRrNnlUNnV1Q2pXa0h2WmRv?=
- =?utf-8?B?MGQrc0MreXpBaXRkYjE0dFZpUzNwamJXMXRQdVYxY1Y3ZFFTN0VwUWE5S01x?=
- =?utf-8?B?OXIrMUJOS0ZWc2c5dTZhcjNLclpDQld3WlFEeXJXelhCTS9MUGhyQUswanpX?=
- =?utf-8?B?M1ZVdmVSSFlPRTE5SzNjRENnMlVFMXVrLzVORzJIUUdMVlYrZ21mcmR6Z1kz?=
- =?utf-8?B?Wnc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A8431890C2671A4E9AAB948AFCEBD036@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ =?us-ascii?Q?P1EBYnHYHIyZo0BL4/EYtV9y0dsBXXlZP1gnmiFhh4QsilY1Wlhir7S8jRgV?=
+ =?us-ascii?Q?InA/JmSno1JaEUaG0SSMzaicKJimiFnPWXyL4l0iNK1406Dx05Yq48tprv3Y?=
+ =?us-ascii?Q?XMae2L9BqdJ/U8tjM0q0xTgKi2IlqK8CSVWBoWisl4fdc7OFKpuI5kCc742W?=
+ =?us-ascii?Q?0mXMhtofsjfe0X3+PvUhb+2tFKv0OfyDoosVStDWV74nOT/dPWYD+e78W5QJ?=
+ =?us-ascii?Q?Inlnhg/+0/0g7/e5wQ3AGnML1aCwzMxxdkIK3AcbHi0m+4LY+WLTr2OtNoHV?=
+ =?us-ascii?Q?X4/aodXIFONlOXt8TDzHO8oUqGZjCA+KIO8Eyg/QVUd1sNCQxuFfc/9+o1Dq?=
+ =?us-ascii?Q?gAWnTR4jsZBv3AKNicd2bT3w92SksGIBZVNSUoRe6cl8cwXrEaFZskSy+qfT?=
+ =?us-ascii?Q?ifyaXptrbefPkyeAgBsPDrDWl1Njl2F5UqcWkL1so6AMCWqxXBEGS7G6ZwuX?=
+ =?us-ascii?Q?gWhKttRFgIaAAG0IBKUfJ3vri4ToD8KoU341PuSjt45jOSVj0B08Qry4xQYU?=
+ =?us-ascii?Q?zUGGNViCjXkTitOpYRMxd9p5YjJqLJf7sOs7DMqHZ9O1tky7xzc6zDcNrI/O?=
+ =?us-ascii?Q?y3H1s8RRkFYzOy26SKNOuG5VDxmtqVcDImTCfBwSf4/3LlmSLCHXhoDYT8cw?=
+ =?us-ascii?Q?gjV0YnOB+oY1JcZlegYFsd9kGqw/SbXh+a3B6UzOHjSbc2OXnR/G9VbtogNb?=
+ =?us-ascii?Q?0OMj7cnkQWNJY+8GOrii9dILGiAHDxPZHXWdIm6FqkfmcGUeZmw/PJxXicNf?=
+ =?us-ascii?Q?d3HK0ZllahpxsbH+/fnglx7E00TLcrpdRmxHcd9e6quZ3x1UJk8g9M5qbG7E?=
+ =?us-ascii?Q?RjNxEXDmJi72vB3vU4oZlngdUZyQBAAPy9MY6f6yzDUxKva+FbQ7kCAtbuGh?=
+ =?us-ascii?Q?BpooDbjm36z/Tmc/5NrpVJVb4pM7ZVWEcYLdy0cd7lqalVFwvOKX6SJN2Q2h?=
+ =?us-ascii?Q?rTWnDvR8MOXTZfV+vOlfKzCsxnFOa3X5uPAH4Fv8ku3T92D4it1tMyE6xyfV?=
+ =?us-ascii?Q?Xj6DZL9zH/fO6X+Izi8ThmbshQBiwpiu3n12FFNL0IlQKqi1lkKvc27366bj?=
+ =?us-ascii?Q?h3s6THKAvTQPih1DNNGIno89GOQCGbOWaw6UhdHcydZCHkM3tHssQct1ReIu?=
+ =?us-ascii?Q?rZO1dV6tuKsdUwN3PZwzWqDbrftXZwI3bdt1hMPuaULjmOQMTd44t1b4iyum?=
+ =?us-ascii?Q?fIYYUNCYr5Fp/W9XdA8rTL3X/KhSGkGfoX2tx/3Y9SqEaztH3dVLSrWfvFqp?=
+ =?us-ascii?Q?L38q+ZvuLg5UK++/AzsMkG8Zll75+v3ygwcPz9wgpjWlfSIgmgqZKvH0ECBw?=
+ =?us-ascii?Q?6nZlv//zX6VdyzId2kIm4bn1?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <C7747DA70498114FAB273C69809F953F@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5289.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d7d956a-88a6-4f6a-eaa5-08dcb7a08cbb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 11:52:16.3427
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43b747ca-43a5-4e70-5e15-08dcb7a0bb94
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 11:53:34.9416
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dFBI8qgzc3yRTVjXhRyM/Pu1quL7r0kedba/Bv+B9naOiJemPOTeKhldpMAIh8QXPvRTULjRZgIuPlMtdHL6EP7NM0kH0JF7o+kUFgqpsu8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7192
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB0680
 
-T24gMDIuMDguMjAyNCAyMDo1OCwgTWFyayBCcm93biB3cm90ZToNCj4gRVhURVJOQUwgRU1BSUw6
-IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Uga25vdyB0
-aGUgY29udGVudCBpcyBzYWZlDQoNClNvcnJ5IGZvciB0aGlzIG5vaXNlIC4gTXkgZS1tYWlscyBk
-b2VzIG5vdCBhcnJpdmUgb24gbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QuDQpJdCBpcyBh
-IHByb2JsZW0gd2l0aCByRE5TLCBQVFIgSSBndWVzcy4NCg0KUFM6IEkgYXBvbG9naXplIGZvciB0
-aGUgc3BhbQ0KDQpCUiwgDQpBbmRyZWkgU2ltaW9uDQoNCg0K
+Hi Maintainers
+
+The Touch Bars found on x86 Macs support two USB configurations: one
+where the device presents itself as a HID keyboard and can display
+predefined sets of keys, and one where the operating system has full
+control over what is displayed.
+
+This patch series adds support for both the configurations.
+
+The hid-appletb-bl driver adds support for the backlight of the Touch Bar.
+This enables the user to control the brightness of the Touch Bar from
+userspace. The Touch Bar supports 3 modes here: Max brightness, Dim and Off=
+.
+So, daemons, used to manage Touch Bar can easily manage these modes by writ=
+ing
+to /sys/class/backlight/appletb_backlight/brightness. It is needed by both =
+the
+configurations of the Touch Bar.
+
+The hid-appletb-kbd adds support for the first (predefined keys) configurat=
+ion.
+There are 4 modes here: Esc key only, Fn mode, Media keys and No keys.
+Mode can be changed by writing to /sys/bus/hid/drivers/hid-appletb-kbd/<dev=
+>/mode
+This configuration is what Windows uses with the official Apple Bootcamp dr=
+ivers.
+
+Rest patches support the second configuration, where the OS has full contro=
+l
+on what's displayed on the Touch Bar. It is achieved by the patching the
+hid-multitouch driver to add support for touch feedback from the Touch Bar
+and the appletbdrm driver, that displays what we want to on the Touch Bar.
+This configuration is what macOS uses.
+
+The appletbdrm driver is based on the similar driver made for Windows by
+imbushuo [1].
+
+Currently, a daemon named tiny-dfr [2] is being used to display function ke=
+ys
+and media controls using the second configuration for both Apple Silicon an=
+d
+T2 Macs.
+
+A daemon for the first configuration is being developed, but that's a users=
+pace
+thing.
+
+[1]: https://github.com/imbushuo/DFRDisplayKm
+[2]: https://github.com/WhatAmISupposedToPutHere/tiny-dfr
+
+v2:
+  1. Cleaned up some code in the hid-appletb-kbd driver.
+  2. Fixed wrong subject in drm/format-helper patch.
+  3. Fixed Co-developed-by wrongly added to hid-multitouch patch.
+
+Kerem Karabay (9):
+  HID: hid-appletb-bl: add driver for the backlight of Apple Touch Bars
+  HID: hid-appletb-kbd: add driver for the keyboard mode of Apple Touch
+    Bars
+  HID: multitouch: support getting the contact ID from
+    HID_DG_TRANSDUCER_INDEX fields
+  HID: multitouch: support getting the tip state from HID_DG_TOUCH
+    fields
+  HID: multitouch: take cls->maxcontacts into account for devices
+    without a HID_DG_CONTACTMAX field too
+  HID: multitouch: allow specifying if a device is direct in a class
+  HID: multitouch: add device ID for Apple Touch Bars
+  drm/format-helper: Add conversion from XRGB8888 to BGR888
+  drm/tiny: add driver for Apple Touch Bars in x86 Macs
+
+ .../ABI/testing/sysfs-driver-hid-appletb-kbd  |  13 +
+ MAINTAINERS                                   |  12 +
+ drivers/gpu/drm/drm_format_helper.c           |  54 ++
+ .../gpu/drm/tests/drm_format_helper_test.c    |  81 +++
+ drivers/gpu/drm/tiny/Kconfig                  |  12 +
+ drivers/gpu/drm/tiny/Makefile                 |   1 +
+ drivers/gpu/drm/tiny/appletbdrm.c             | 624 ++++++++++++++++++
+ drivers/hid/Kconfig                           |  22 +
+ drivers/hid/Makefile                          |   2 +
+ drivers/hid/hid-appletb-bl.c                  | 206 ++++++
+ drivers/hid/hid-appletb-kbd.c                 | 303 +++++++++
+ drivers/hid/hid-multitouch.c                  |  60 +-
+ drivers/hid/hid-quirks.c                      |   8 +-
+ include/drm/drm_format_helper.h               |   3 +
+ 14 files changed, 1385 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
+ create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
+ create mode 100644 drivers/hid/hid-appletb-bl.c
+ create mode 100644 drivers/hid/hid-appletb-kbd.c
+
+--=20
+2.39.3 (Apple Git-146)
+
 
