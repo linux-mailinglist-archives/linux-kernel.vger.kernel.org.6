@@ -1,98 +1,92 @@
-Return-Path: <linux-kernel+bounces-278888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB12794B61D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:13:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E3994B632
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC8C21C21E48
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7F51F247BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 05:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961D113AA38;
-	Thu,  8 Aug 2024 05:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+w0BUko"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F84313E41F;
+	Thu,  8 Aug 2024 05:20:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDCD12E1EE;
-	Thu,  8 Aug 2024 05:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AB113C814
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 05:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723094020; cv=none; b=V0JW/7Pqo2YoyCKfLBOPnGdbcJ8edUfQnSHNxcAqBV9+cPzhXqGfiPX/2M1OJLDpyqtRZVe24GYUWH5ys2MqbwShtQyI7wFXqzfRC4XqgsE/qN9azr4t3HG1wMJ3pWkKBC6X3G3xw8jtX4KGVa/WaKndiTe3s8yA4KbVc1JpRYg=
+	t=1723094406; cv=none; b=ri0+9aVLTjoOSOAWFYZPlTeU2xk5rh+45nRfWb71cE0JrWf0Yac/0x9HGAR5lt9KB1u6OjmcRhQhj1o+x1cNHYKiPfduCPo87os63iw+tqEane8XJxx+dJLbcaxfpX8m148Ee6x+A9TEmRW2h2uHGACyOm4OtVe/HUXHJu1WlRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723094020; c=relaxed/simple;
-	bh=XDWKiKw680UJ/nB02bQsAOwQGdekxTDwsxI6MBT1WIA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=oUpcVM50QoAE/G/kOUrP7GILwztfm5+M4bnD82fpXeZshjLahWorofcJvzbT3U8BARHO1enWu8mHDYqM4hmBVw3R28ON1ugQeYF5YoK6nR/Di/nupRxf2r9E0horzi5N7wtMkEF/VOHYfHiZGatmvo8gh899TGATLMmeC3ffWC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+w0BUko; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76EECC32782;
-	Thu,  8 Aug 2024 05:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723094020;
-	bh=XDWKiKw680UJ/nB02bQsAOwQGdekxTDwsxI6MBT1WIA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=f+w0BUkorOcoarbcE49MOwrzjLqg8bVbdLmVjcf9DbsEuXXmQYQ596Gt/m8HL2i8T
-	 PmCxFA1q6z5fu4/bD7nm85uZLtLs/AhoHvaAhqE8hYwJL+RBVG8dJTWNI+bdJue2zs
-	 DWBoBSOOGQW1pJU6OVCUcg07Kf5fL5ChfPGEsE2q7G3RS+e+cC4LymSBDRVna6Yjx2
-	 q/p7dbdKRQAJv630LpjdLPlYbIt3b+PKVNfUh7GCrhzIdE6X3a1F52nGG1tVvTdZra
-	 BVxjwZgTCRYtCnUKR+Mu0j3kzBPXlQ9mXLOJ8xRNZ0Db/NgJYKhkO7Wt9jgkhiw9CX
-	 KbuXZOfwwIF8g==
-From: Kalle Valo <kvalo@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeff Johnson <jjohnson@kernel.org>,  Ath10k List
- <ath10k@lists.infradead.org>,  Aditya Kumar Singh
- <quic_adisi@quicinc.com>,  Baochen Qiang <quic_bqiang@quicinc.com>,  Kalle
- Valo <quic_kvalo@quicinc.com>,  Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>,  Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the ath-next tree with the ath tree
-References: <20240808104348.6846e064@canb.auug.org.au>
-Date: Thu, 08 Aug 2024 08:13:36 +0300
-In-Reply-To: <20240808104348.6846e064@canb.auug.org.au> (Stephen Rothwell's
-	message of "Thu, 8 Aug 2024 10:43:48 +1000")
-Message-ID: <87bk234mwv.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1723094406; c=relaxed/simple;
+	bh=5fs52SLgd/Wa9Qk6AnGY2MINv0qRxrKfG2vAjMob6wo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rH7nfgFpidzt4HScX/Qgz4V2N8xpKBPv6jYkNUoGoQ1irSfQ/rB1uWHkj0U2wBa2j5z3N+M02j8DWHGvspin9UGSicpHAB+5SYe3OXXSWfW4yjH0AwXhxiApW38+e/zYlBTmFj4fNjSodUuijjecQobENvGY/1tDlISH7hs4PTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81d1b92b559so75382639f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 22:20:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723094404; x=1723699204;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n/8Sl/8wtZuOpXGHi6WNR/MUTmmUjWmBACkoHV+PUDs=;
+        b=LGwwfVbU0AC+jrPeRCBPPomIcwgWFsOEh43Fv+2Jlki4O7iewQLTu5n2wY+UZ2swBt
+         t55Bc6s7/zUKQhx85qjpifZOyUOPB8VD5Vcli+BtL/sjkzLfJqK64S7nCyJtid1DhvOg
+         wQ2M85AVgua6EfdTj+hAl4urDMGkp4v33q6bdTlLzX7yRnifzRedZhZYRrcTNw/HQ6nY
+         iyG1gyRL7i/ICb2lNYgPvHNNkCfvt2+GF7k4HOqUFgxSlVPBvb5w2E5iu3gxWT6guhOE
+         nkbxo8KFWNheqq/yxN/Ac13wNAWaYRZYlyjD6Y89rxj3Ds5D2eLy8yUTz/NCWkJTWo/Z
+         30Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUV6zBP9ZwJWxbZMnlQBVbGHTU+qlEWqQ9ARrfGsXXMDpo1hnDxSi1zI0iqaC/4MYi578nJ4CQSgtzar2W4xUKVtxscduEYx6knsYaZ
+X-Gm-Message-State: AOJu0YwEEfex7iqY08gbzrPeytObX4G40TtIdGEs2xtBHLzkV/zarE5f
+	KAOCHUHZus7zZQZDYLayjqoGUyoIFZS2VsjwQmN8QrIffBaF7fv8uDyJq/BTob4SHpS+D48fwky
+	gpSFm8h7rm4/VRJHBtCPnRtjJRJmV+0vwxmO878loHm2QS+P52lvSVZs=
+X-Google-Smtp-Source: AGHT+IF7GD4v7lHspJC+Jfs24j4tamRlFwZl1OSJoLkUDwS5Ibf9MNjk30+Z0IWeFZHASh3iI8qbJOSsalcz40AT5pDGZk+0wk7E
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6638:130b:b0:4c2:7a26:278b with SMTP id
+ 8926c6da1cb9f-4ca5e153b10mr47876173.5.1723094403922; Wed, 07 Aug 2024
+ 22:20:03 -0700 (PDT)
+Date: Wed, 07 Aug 2024 22:20:03 -0700
+In-Reply-To: <000000000000f52642060d4e3750@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dc521a061f252d4c@google.com>
+Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
+ dereference in do_pagemap_scan
+From: syzbot <syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, seanjc@google.com, 
+	syzkaller-bugs@googlegroups.com, usama.anjum@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+syzbot suspects this issue was fixed by commit:
 
-> Hi all,
->
-> Today's linux-next merge of the ath-next tree got a conflict in:
->
->   drivers/net/wireless/ath/ath12k/hw.c
->
-> between commit:
->
->   38055789d151 ("wifi: ath12k: use 128 bytes aligned iova in transmit
-> path for WCN7850")
->
-> from the ath tree and commit:
->
->   8be12629b428 ("wifi: ath12k: restore ASPM for supported hardwares only")
->
-> from the ath-next tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+commit 4cccb6221cae6d020270606b9e52b1678fc8b71a
+Author: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Date:   Tue Jan 9 11:24:42 2024 +0000
 
-Thanks, the fix looks correct to me.
+    fs/proc/task_mmu: move mmu notification mechanism inside mm lock
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=141753f9980000
+start commit:   fbafc3e621c3 Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=298e57794135adf0
+dashboard link: https://syzkaller.appspot.com/bug?extid=f9238a0a31f9b5603fef
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1108a595e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16777bbee80000
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs/proc/task_mmu: move mmu notification mechanism inside mm lock
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
