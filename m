@@ -1,515 +1,308 @@
-Return-Path: <linux-kernel+bounces-279380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6627294BC94
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:54:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED0194BC97
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 13:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B51542865F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:54:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8253E1F227D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0DA18C33B;
-	Thu,  8 Aug 2024 11:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C567D18A957;
+	Thu,  8 Aug 2024 11:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="ovBnGy4Q"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="sPv6ilxc"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2029.outbound.protection.outlook.com [40.92.102.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66CD189BB6
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 11:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723118045; cv=none; b=n6+ERS3RAtsZE1TNvAfmUPV1FSgrTZ/Phv+AbxkQNSHU3qI9QaFIZVHFoP9Z/zAlqspn4hDbItKo26OLfm1pkh1a9Y9o2vILmVChLcwJ2Buagyee964cNDwu0o7wksbje3iMo3PwESBh+h1oZivAS0shmwmCiBVuBL5sd/ITnCY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723118045; c=relaxed/simple;
-	bh=qORwyzZNVy+LEfLQUhKyUT6dDm8Pd+lt5k8zjI+Wak0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shzuVbhZGFOoWTykPOnGDhpuwzIPeuFPfoWBXfYUc3tFPVTwing3TlWVl5gBLBwWrgTg9FYS+DueUOMToj/uQIcA+1UImlNisZOvHA2Mlp2EXhRUezVUCQDZthbfipllHFauoHk2kJNpPXtOnzoRVybqIC1MopD++Dex8wsHtOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=ovBnGy4Q; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-368380828d6so471654f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 04:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1723118041; x=1723722841; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWpv6IdB+ZSBfOKheCIDI4o/Rhh1iSvNP7j21IpVm2Y=;
-        b=ovBnGy4QfvxjOSGjItaR+QtNT+VMNsDk93owP/b/KxRxIklaImK2lzC62Gsa7PbK6j
-         SCugvA4h+3cuqFSRKCP6sSKSyijXm9FfArVQfGWdJaW0BWOm2yUMNhrl/wzJbX2Z7ajB
-         zd162fFirG9k/2nFj2fbOcAwPOXiLQZn+7bhJip1vEi5sBRkZ9XX8p6cgebhtjdkDjL1
-         AcMB4CHc2+hYfAAI/vnw43NpsvsUnuwxr6+hySR4WkaCaoi5EVMRY4dDYIRREywICYlS
-         Ozktk5qvP7Ghxe7s5Zjmig4Y7tzdYP58Vf3JbtDmt4SMBXMkgsNRWIWzX7+o9lEWbXVb
-         mLxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723118041; x=1723722841;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cWpv6IdB+ZSBfOKheCIDI4o/Rhh1iSvNP7j21IpVm2Y=;
-        b=jBR4rgz665UzBxMTthBhqpTfYPBzGJCliwnS8+yybxiQm40ep6gWL8N4bnlu1Ror/l
-         bOYHXKrc2yOLPPAclPcuWqfew/C+IzktrGJtII4n36wcPQ9W+hvcH5MYduNk57BtTXyh
-         lkS53XG3Uf1Meczco8SW07E3/YQQcp+dNsKpsXTgudoQxjZj9ZzH61hxVmc1lThbWgtm
-         mo7C6JErCuRNvXbrx6DLImXT6eU2tRRrQ7aJQkDi/LSWZqIHJkgWH4cYNvahyVjS7Tge
-         PXXic9sJLGYZ4KbdjXxE/AbMEjBunlg9wEjSLMLnDb4DJ1Kan7BF6bSj75xln9WNZmUZ
-         f5hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX88pwdaZPZwLmCFWNxHqxaHqNcu7b33pfnh+OrfDO9neQgnhMpyQtehm1akaq5tZo4JlwcqThxUkNzn9QEL4IWOit+lfHVCum7Bl7A
-X-Gm-Message-State: AOJu0YxXN4MEkYm2PG5C7p1fWaC+Hy8/HylPca3zw0oOmOWXzqnbicR1
-	vOG49yNUYJ8vKS1ZwxeBDrskseP2nw1ZljRilSgKQ7HYBlo8hKXuhtARih1An6M=
-X-Google-Smtp-Source: AGHT+IFbwV1ZgK3TfeFhHW45tmFI2J0yflhWdJBEw/KQZN0Y2AF+Ufz9gZ31TJyAL/7pee3t219e8g==
-X-Received: by 2002:a5d:4f11:0:b0:367:96a0:c4b7 with SMTP id ffacd0b85a97d-36d27582bf5mr1231300f8f.62.1723118035463;
-        Thu, 08 Aug 2024 04:53:55 -0700 (PDT)
-Received: from localhost ([213.235.133.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2718bfb9sm1676883f8f.54.2024.08.08.04.53.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 04:53:54 -0700 (PDT)
-Date: Thu, 8 Aug 2024 13:53:53 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Cc: netdev@vger.kernel.org, vadim.fedorenko@linux.dev, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, donald.hunter@gmail.com,
-	anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	intel-wired-lan@lists.osuosl.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Subject: Re: [PATCH net-next v1 1/2] dpll: add Embedded SYNC feature for a pin
-Message-ID: <ZrSx0QRXUXB53UFr@nanopsycho.orion>
-References: <20240808112013.166621-1-arkadiusz.kubalewski@intel.com>
- <20240808112013.166621-2-arkadiusz.kubalewski@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406DC4A33;
+	Thu,  8 Aug 2024 11:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723118074; cv=fail; b=SKHh9jsy7PqSKXNQonNsJAX8JYpLztg3tKV3623fNgQ8DK4MsW3yUNnzK1YUQLOb2NHDFJzfIA5+bPlYZmpGTcul6UcDt8k2nIn7zYmj0beQVcHvEshcU3FfPTh+Nq0zyzKe+S5MbW03RTJCPzSGlByGUnZ5o68sOknHyfcR0bA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723118074; c=relaxed/simple;
+	bh=Akx0MrXpd+JVj1ZDV4IdDdBaVXlyzdtgQ3clE80/1X4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uxYebRS24NfSvX/pFW+Bi+mWZZCFubgXiKBbGyL3moABizUzL9ufMzShdRLSadUnsL6ybZ9rJLdtaCQACFJ2RV8wg5QplsaVK5njYiNYI6x/GobaxcSoC5N38pIZQw6T2kshAib8nAnNL8iFQWgRA1Shteddmt5iTFj+mRI8/so=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=sPv6ilxc; arc=fail smtp.client-ip=40.92.102.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DUZupMM6GHkZlsHtl8hk7nv5IJu/D+7DwcoVYxJlUereL+a7FLtjHvDndAVkkteVwvkJpjr1b0DW7ONmR6lDQ/muV2cTcNBYSMf6tDaAwiCGOVW0oSVFKmcjoM1M0BK3ojRlug4bRQvEYha5qc8zI49a11nyspwzeQjuvxOsl82EyqV4iuhe2/w9img1wNhngcDBvb7zo3Mbs39EMCc547z3lUS9nOu/zq6WUFMc51yKxJl4OV3zIu0aXvNvA1vnhpJgrmu1kPuuTpsO9sqSqZrerDvKjKtU21M2DPBoVB5bRrBGCZurP6hJE1fG8X4dGZSIa3e419AuPjFoaR4GQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Akx0MrXpd+JVj1ZDV4IdDdBaVXlyzdtgQ3clE80/1X4=;
+ b=uBvP5ZyiZ9HfsyOaxaUcKuw6duEyeUAV41yP+f3U0NPUgIBCOdEXsYWpd/dbovjOx+EjW3gyg9BkOjNZk8x8VQJPTiBiyMw+LDwwJtpebnD0Da7/SIYm1WCeIQTeTuc9MDDx759mGMTOUPJMQCN9Qk9/xRicPPtnFfruKFPHSpZw9mqK982d66ErjwIj6rN9AUlpqSMuy7Uypxm6Pp334UF+cSqluBEqRkSg9ny0WvlVtt8b+4AxDn9J+slnY/N5Twoeonm3s+6HHkT+PAmL93GXafPPAKPaypXmdeo9PX53S9WkZeiiMVQiKUSQSthaYwh0KxdtDyHDE1Inu5F7mA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Akx0MrXpd+JVj1ZDV4IdDdBaVXlyzdtgQ3clE80/1X4=;
+ b=sPv6ilxca09IIDetTPzuk7wibd1Q+IYlDNY5iSm33rtI/oPIG6wkpLvoYLslAQNCkP1gnCoHCWEfM2/KfcAy2qPkbEWzYfmz8EkgmQTfg65b/29S46LPytoJR04WcSd238xb3bBXg4RYZKLqHV6+gvknVs5MLmAV/MdXvCcnHEK46D3qIVGvts5BegpRUuVyCDQ37yKax3KML0xS01bb8ce2InywcM8nwzmu17aWBTfg0QetL7ym7OS+o8v8ZWfoKcNScIocz6cZjHwu5FyVvnSC+ov6s5ajzXVVURtGYwK+99V/a2vXG0NkxbCYfqDhTxD7o81nW8NUM9aAdAYJyQ==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ MA0P287MB0680.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:11b::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.14; Thu, 8 Aug 2024 11:54:25 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.013; Thu, 8 Aug 2024
+ 11:54:25 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: [PATCH v2 1/9] HID: hid-appletb-bl: add driver for the backlight of
+ Apple Touch Bars
+Thread-Topic: [PATCH v2 1/9] HID: hid-appletb-bl: add driver for the backlight
+ of Apple Touch Bars
+Thread-Index: AQHa6Ym3gmD6gtRo4kOUi8viR/zBrg==
+Date: Thu, 8 Aug 2024 11:54:25 +0000
+Message-ID: <0E5065B4-8E9E-4E4B-A504-54E20EDDACED@live.com>
+References: <9550ADFD-0534-471D-94B4-EF370943CF80@live.com>
+In-Reply-To: <9550ADFD-0534-471D-94B4-EF370943CF80@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [1wpSoEXkGnEJ0bP5ZmGrBaTVPEdm6vrcsqMxVRrxdpwpEAdQRNGTxOLj+V1bahP3b6dBYUHSUCo=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MA0P287MB0680:EE_
+x-ms-office365-filtering-correlation-id: 12ff68ce-f43d-4176-586b-08dcb7a0d9d4
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799003|19110799003|8060799006|461199028|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ 4U9Evb3llAGzTRc1bryvR7BM77FC55NHCKf1LhgPQtA6euvMak2IpJPY4yHdWi3YlyX27F2W6aGWjDWoymnJyZLTq6Lw2FTh+6L5NEdlPA9GdsgyYFNw6Tl/k2xqBSF/1HDiZGR6nNwzVT0/0dz/kf4Tpc49olF03HkScbkva9830VgqhotAmrQMHG2Ir3NkNa7rB9A2hyoRn9BSi2nJLjyaVJ7eKcZa+71yUu8QD0Nw2W3hoOJ9va4cIyPneEo3w0ILzMMeJ2em+B3wYqg/xqS0KxzhB8/8yaaNBF4pRTm4qiKNsr9Z67fFqf08QqnmZszkkAYFnv9QFa4LLRzRlSjSAZcJu+WGEzKj9QVNwHDJV+xRDyHk9PmMY+6/D8MNeudqqS/LCAuyLSLiU/QDnctm0ZyMjR+hGmXYSg7wPPzwD78+djAexUQdgXh48UMEGwukMTgdPT+DRQhJrlZUH39v2kqA6OBEIVQMjG6bznss3oQ4lFIww8azJwdOxKmgmImRJ2Djnbx2Uj1DhmDxqBRRulfskN5LDA1KaL5r+WkSDJ78QuXNtHvGCJtjOBZ91QO156wmKgAi4VEju6tjqSf4/vjxCp7/zd8WfVzLvAS8Xhun+sKjHTA0u8/NMBUd3Hy+x9zdkuyVNOFSdMdJ45AMd0d4oFINJ5WR6NXAKX9A7kpx7XF2MvEuJWMPY/Xq
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?RC8xczRwbGdwQ0RVbm02ekNkZksybEp1TDZyY2lZL3VTRXRvS2hibkZGcU1C?=
+ =?utf-8?B?elFvb2p6U2k1VkM5M01tTmdmYTdBQU9zUElYcGtnaFJETVBOYTd4RVdDSjY3?=
+ =?utf-8?B?OFlxQzBRencrdkRBa09NclZZNEczbGFtajZyLzVWc3JvRTVMZ3lQYlNad3JW?=
+ =?utf-8?B?S1FQNGgrS2xmVXp0bTMzNkFZZDF2eWljbmhjVlQxaVgzSjdWM0puckN2L0V1?=
+ =?utf-8?B?ZjlRVkx4RnltaVBrT1hrdmNjTUMyRXZmd25CRjZwalZpbDhhM2g5dzNEVTRR?=
+ =?utf-8?B?bVBOb0VmZVd6STZ3NEVaWUZuSDU2M3QrMWpPMVpoZThWYjJ2U0swNHlUWTV0?=
+ =?utf-8?B?aFRRVmp0NUZOTGt2OG00ditZY3ZBNkQyeVRwVHFDNitEbEk4eXB2N0pTQmUz?=
+ =?utf-8?B?OE95cU9RNEhFc0FJTGJoS1lCbUZqNFd1RGRSbVVzejJBaEoraVpJRzZiaUpQ?=
+ =?utf-8?B?MGhBVkt0UHdILzRaK3h1RUkxZkVPK2RZUEg0Qll3NFRMd0c0aUxKcmZmZFZu?=
+ =?utf-8?B?SExLYmJvdHZtNDdqeUYyUXhMWGdKM09CbWJFTXBrNW16bkhPenIwNTduNEhm?=
+ =?utf-8?B?ZVpEWk9XZWFtaW5SZnRFc0gvckM1emNUR3UvYm1wQjA5em5kbHlldHg2KzBB?=
+ =?utf-8?B?YklRQXZ6dnF1TUhwUlFyN0pDSmVJSzhZbkNvR25TeWRLdlk1QkxiQkdwLzcv?=
+ =?utf-8?B?QVhPSFhHRnl4YnEyVHYwM1hJdU1pRGVZekpOZEdzb0pQQVduSk9aNHp0cE9J?=
+ =?utf-8?B?cmdRQnhZWmV1N1p6NGJZbThXcWVONFVCRmtYRXlYd1J6MGJxWVVrK1ZEU2dN?=
+ =?utf-8?B?ZW9EcW1wNmEwRDVubmIra08xVnUrbXpaTmZqWFI5VWNjdHlzNjR6dEhHTEFh?=
+ =?utf-8?B?SHNyeFNGeUdyMklDdDd2Mk10NWk4NGI5NElCMkx2V2FpTzlZd3dEaVBGU2t3?=
+ =?utf-8?B?MktmelFOSkgzbUxhUXg3NFJUUEVydFZ2bDBxQVFLR1RBb0hJekk3aUpoTlhB?=
+ =?utf-8?B?K0xRaVlBNmVtL2xEbDJaeGI1b041ZFlJd2NhWFFUcmwySVFoWDhSbWxYNGdH?=
+ =?utf-8?B?WTBDTGcvSmlsRGNja2FHdGR3blJVdzlEZkMvNlN0RXFNcWZtYUxlSmpBYTRw?=
+ =?utf-8?B?aTQ4OVB4NjdubEE4K1hjZ1RWbXdsTGkxOHZneGJVVDZURHRKK00rZ2RiMzFT?=
+ =?utf-8?B?a2FUdFhrcUtlTzkzR2FxUXZlRHRMQnlFMU9xemNURTd3cmZXcGZ2a2ZTanlD?=
+ =?utf-8?B?TGFJZU1XRUZLUy9aZmMxNHVWVEJ4YldDSVpVMW5rYnpscEQ0MWozSFNoWGlu?=
+ =?utf-8?B?SEJIODRCR1g1UmcvYzVSbVlEdkRKWFkxelFIMkRKRlNQblpoN1JiUThtRjk2?=
+ =?utf-8?B?Mzd3WnZXUkhHQVA3WFQ2OWFoRFpQUW4rN0hIUm9NM2ZRaDBrQjlhNWxPdHNO?=
+ =?utf-8?B?YUs4bXJyTXBVNVM5L0pIaDY5SlppdjFVWFRZRmp0RlV2aWtFZmMzWUFBbXV0?=
+ =?utf-8?B?citjcjhMV1A3WjJtL0lBRUxWRUJSLyt4TzFQR3dPMWl1eE84aEpnNG1haVFM?=
+ =?utf-8?B?WE9qWHJUQ1ZsV3N4T0x3TVhuRWc3Yitvd01uOTJ0cWt0SDkwMFIrN2pVV0JY?=
+ =?utf-8?B?VFJ1SCtwaDVjbU5zdUxFQUlCNFVtT2k5UDFWNzlqcFlrTzFCWUhEZ1FkaWs0?=
+ =?utf-8?B?aUFJZi9wWTJvVEl1S1NqTm5xcXdvMHpHckNCS2ZOMGRjUG10cVBpSk15YzJu?=
+ =?utf-8?Q?8YwAC1j/KB+7H3CrrVPFs7cViyitbtq7O+G75cz?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F2182BEF97EFBC4EA3714A1E887357DC@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808112013.166621-2-arkadiusz.kubalewski@intel.com>
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12ff68ce-f43d-4176-586b-08dcb7a0d9d4
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2024 11:54:25.6539
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB0680
 
-Thu, Aug 08, 2024 at 01:20:12PM CEST, arkadiusz.kubalewski@intel.com wrote:
->Implement and document new pin attributes for providing Embedded SYNC
->capabilities to the DPLL subsystem users through a netlink pin-get
->do/dump messages. Allow the user to set Embedded SYNC frequency with
->pin-set do netlink message.
->
->Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
->Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->---
-> Documentation/driver-api/dpll.rst     |  21 +++++
-> Documentation/netlink/specs/dpll.yaml |  41 +++++++++
-> drivers/dpll/dpll_netlink.c           | 127 ++++++++++++++++++++++++++
-> drivers/dpll/dpll_nl.c                |   5 +-
-> include/linux/dpll.h                  |  10 ++
-> include/uapi/linux/dpll.h             |  23 +++++
-> 6 files changed, 225 insertions(+), 2 deletions(-)
->
->diff --git a/Documentation/driver-api/dpll.rst b/Documentation/driver-api/dpll.rst
->index ea8d16600e16..d7d091d268a1 100644
->--- a/Documentation/driver-api/dpll.rst
->+++ b/Documentation/driver-api/dpll.rst
->@@ -214,6 +214,27 @@ offset values are fractional with 3-digit decimal places and shell be
-> divided with ``DPLL_PIN_PHASE_OFFSET_DIVIDER`` to get integer part and
-> modulo divided to get fractional part.
-> 
->+Embedded SYNC
->+=============
->+
->+Device may provide ability to use Embedded SYNC feature. It allows
->+to embed additional SYNC signal into the base frequency of a pin - a one
->+special pulse of base frequency signal every time SYNC signal pulse
->+happens. The user can configure the frequency of Embedded SYNC.
->+The Embedded SYNC capability is always related to a given base frequency
->+and HW capabilities. The user is provided a range of embedded sync
->+frequencies supported, depending on current base frequency configured for
->+the pin.
->+
->+  ========================================= =================================
->+  ``DPLL_A_PIN_E_SYNC_FREQUENCY``           current embedded SYNC frequency
->+  ``DPLL_A_PIN_E_SYNC_FREQUENCY_SUPPORTED`` nest available embedded SYNC
->+                                            frequency ranges
->+    ``DPLL_A_PIN_FREQUENCY_MIN``            attr minimum value of frequency
->+    ``DPLL_A_PIN_FREQUENCY_MAX``            attr maximum value of frequency
->+  ``DPLL_A_PIN_E_SYNC_PULSE``               pulse type of embedded SYNC
->+  ========================================= =================================
->+
-> Configuration commands group
-> ============================
-> 
->diff --git a/Documentation/netlink/specs/dpll.yaml b/Documentation/netlink/specs/dpll.yaml
->index 94132d30e0e0..0aabf6f1fc2f 100644
->--- a/Documentation/netlink/specs/dpll.yaml
->+++ b/Documentation/netlink/specs/dpll.yaml
->@@ -210,6 +210,25 @@ definitions:
->       integer part of a measured phase offset value.
->       Value of (DPLL_A_PHASE_OFFSET % DPLL_PHASE_OFFSET_DIVIDER) is a
->       fractional part of a measured phase offset value.
->+  -
->+    type: enum
->+    name: pin-e-sync-pulse
->+    doc: |
->+      defines possible pulse length ratio between high and low state when
->+      embedded sync signal occurs on base clock signal frequency
->+    entries:
->+      -
->+        name: none
->+        doc: embedded sync not enabled
->+      -
->+        name: 25-75
->+        doc: when embedded sync signal occurs 25% of signal's period is in
->+          high state, 75% of signal's period is in low state
->+      -
->+        name: 75-25
-
-It is very odd to name enums like this.
-Why can't this be:
-
-    name: e-sync-pulse-ratio
-    type: u32
-    doc: Embedded sync signal ratio. Value of 0 to 100. Defines the high
-    state percentage.
-
-?
-
-
->+        doc: when embedded sync signal occurs 75% of signal's period is in
->+          high state, 25% of signal's period is in low state
->+    render-max: true
-> 
-> attribute-sets:
->   -
->@@ -345,6 +364,24 @@ attribute-sets:
->           Value is in PPM (parts per million).
->           This may be implemented for example for pin of type
->           PIN_TYPE_SYNCE_ETH_PORT.
->+      -
->+        name: e-sync-frequency
->+        type: u64
->+        doc: |
->+          Embedded Sync frequency. If provided a non-zero value, the pin is
-
-Why non-zero? Why the attr cannot be omitted instead?
-
-
->+          configured with an embedded sync signal into its base frequency.
->+      -
->+        name: e-sync-frequency-supported
->+        type: nest
->+        nested-attributes: frequency-range
->+        doc: |
->+          If provided a pin is capable of enabling embedded sync frequency
->+          into it's base frequency signal.
->+      -
->+        name: e-sync-pulse
->+        type: u32
->+        enum: pin-e-sync-pulse
->+        doc: Embedded sync signal ratio.
->   -
->     name: pin-parent-device
->     subset-of: pin
->@@ -510,6 +547,9 @@ operations:
->             - phase-adjust-max
->             - phase-adjust
->             - fractional-frequency-offset
->+            - e-sync-frequency
->+            - e-sync-frequency-supported
->+            - e-sync-pulse
-> 
->       dump:
->         request:
->@@ -536,6 +576,7 @@ operations:
->             - parent-device
->             - parent-pin
->             - phase-adjust
->+            - e-sync-frequency
->     -
->       name: pin-create-ntf
->       doc: Notification about pin appearing
->diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
->index 98e6ad8528d3..5ae2c0adb98e 100644
->--- a/drivers/dpll/dpll_netlink.c
->+++ b/drivers/dpll/dpll_netlink.c
->@@ -342,6 +342,50 @@ dpll_msg_add_pin_freq(struct sk_buff *msg, struct dpll_pin *pin,
-> 	return 0;
-> }
-> 
->+static int
->+dpll_msg_add_pin_esync(struct sk_buff *msg, struct dpll_pin *pin,
-
-This is "esync", attributes are "E_SYNC". Why can't they be named
-"ESYNC" too? Same comment to another "e_sync" names (vars, ops, etc).
-
-
->+		       struct dpll_pin_ref *ref, struct netlink_ext_ack *extack)
->+{
->+	const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
->+	struct dpll_device *dpll = ref->dpll;
->+	enum dpll_pin_e_sync_pulse pulse;
->+	struct dpll_pin_frequency range;
->+	struct nlattr *nest;
->+	u64 esync;
->+	int ret;
->+
->+	if (!ops->e_sync_get)
->+		return 0;
->+	ret = ops->e_sync_get(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
->+			      dpll_priv(dpll), &esync, &range, &pulse, extack);
->+	if (ret == -EOPNOTSUPP)
->+		return 0;
->+	else if (ret)
->+		return ret;
->+	if (nla_put_64bit(msg, DPLL_A_PIN_E_SYNC_FREQUENCY, sizeof(esync),
->+			  &esync, DPLL_A_PIN_PAD))
->+		return -EMSGSIZE;
->+	if (nla_put_u32(msg, DPLL_A_PIN_E_SYNC_PULSE, pulse))
->+		return -EMSGSIZE;
->+
->+	nest = nla_nest_start(msg, DPLL_A_PIN_E_SYNC_FREQUENCY_SUPPORTED);
->+	if (!nest)
->+		return -EMSGSIZE;
->+	if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY_MIN, sizeof(range.min),
->+			  &range.min, DPLL_A_PIN_PAD)) {
->+		nla_nest_cancel(msg, nest);
->+		return -EMSGSIZE;
->+	}
->+	if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY_MAX, sizeof(range.max),
->+			  &range.max, DPLL_A_PIN_PAD)) {
-
-Don't you want to have the MIN-MAX here multiple times. I mean, in
-theory, can the device support 2 fixed frequencies for example?
-Have it at least for UAPI so this is easily extendable.
-
-
-
->+		nla_nest_cancel(msg, nest);
->+		return -EMSGSIZE;
->+	}
->+	nla_nest_end(msg, nest);
->+
->+	return 0;
->+}
->+
-> static bool dpll_pin_is_freq_supported(struct dpll_pin *pin, u32 freq)
-> {
-> 	int fs;
->@@ -481,6 +525,9 @@ dpll_cmd_pin_get_one(struct sk_buff *msg, struct dpll_pin *pin,
-> 	if (ret)
-> 		return ret;
-> 	ret = dpll_msg_add_ffo(msg, pin, ref, extack);
->+	if (ret)
->+		return ret;
->+	ret = dpll_msg_add_pin_esync(msg, pin, ref, extack);
-> 	if (ret)
-> 		return ret;
-> 	if (xa_empty(&pin->parent_refs))
->@@ -738,6 +785,81 @@ dpll_pin_freq_set(struct dpll_pin *pin, struct nlattr *a,
-> 	return ret;
-> }
-> 
->+static int
->+dpll_pin_e_sync_set(struct dpll_pin *pin, struct nlattr *a,
->+		    struct netlink_ext_ack *extack)
->+{
->+	u64 esync = nla_get_u64(a), old_esync;
-
-"freq"/"old_freq". That aligns with the existing code.
-
-
->+	struct dpll_pin_ref *ref, *failed;
->+	enum dpll_pin_e_sync_pulse pulse;
->+	struct dpll_pin_frequency range;
->+	const struct dpll_pin_ops *ops;
->+	struct dpll_device *dpll;
->+	unsigned long i;
->+	int ret;
->+
->+	xa_for_each(&pin->dpll_refs, i, ref) {
->+		ops = dpll_pin_ops(ref);
->+		if (!ops->e_sync_set ||
-
-No need for line break.
-
-
->+		    !ops->e_sync_get) {
->+			NL_SET_ERR_MSG(extack,
->+				       "embedded sync feature is not supported by this device");
->+			return -EOPNOTSUPP;
->+		}
->+	}
->+	ref = dpll_xa_ref_dpll_first(&pin->dpll_refs);
->+	ops = dpll_pin_ops(ref);
->+	dpll = ref->dpll;
->+	ret = ops->e_sync_get(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
->+			      dpll_priv(dpll), &old_esync, &range, &pulse, extack);
-
-Line over 80cols? Didn't checkpatch warn you?
-
-
->+	if (ret) {
->+		NL_SET_ERR_MSG(extack, "unable to get current embedded sync frequency value");
->+		return ret;
->+	}
->+	if (esync == old_esync)
->+		return 0;
->+	if (esync > range.max || esync < range.min) {
->+		NL_SET_ERR_MSG_ATTR(extack, a,
->+				    "requested embedded sync frequency value is not supported by this device");
->+		return -EINVAL;
->+	}
->+
->+	xa_for_each(&pin->dpll_refs, i, ref) {
->+		void *pin_dpll_priv;
->+
->+		ops = dpll_pin_ops(ref);
->+		dpll = ref->dpll;
->+		pin_dpll_priv = dpll_pin_on_dpll_priv(dpll, pin);
->+		ret = ops->e_sync_set(pin, pin_dpll_priv, dpll, dpll_priv(dpll),
->+				      esync, extack);
->+		if (ret) {
->+			failed = ref;
->+			NL_SET_ERR_MSG_FMT(extack,
->+					   "embedded sync frequency set failed for dpll_id:%u",
->+					   dpll->id);
->+			goto rollback;
->+		}
->+	}
->+	__dpll_pin_change_ntf(pin);
->+
->+	return 0;
->+
->+rollback:
->+	xa_for_each(&pin->dpll_refs, i, ref) {
->+		void *pin_dpll_priv;
->+
->+		if (ref == failed)
->+			break;
->+		ops = dpll_pin_ops(ref);
->+		dpll = ref->dpll;
->+		pin_dpll_priv = dpll_pin_on_dpll_priv(dpll, pin);
->+		if (ops->e_sync_set(pin, pin_dpll_priv, dpll, dpll_priv(dpll),
->+				    old_esync, extack))
->+			NL_SET_ERR_MSG(extack, "set embedded sync frequency rollback failed");
->+	}
->+	return ret;
->+}
->+
-> static int
-> dpll_pin_on_pin_state_set(struct dpll_pin *pin, u32 parent_idx,
-> 			  enum dpll_pin_state state,
->@@ -1039,6 +1161,11 @@ dpll_pin_set_from_nlattr(struct dpll_pin *pin, struct genl_info *info)
-> 			if (ret)
-> 				return ret;
-> 			break;
->+		case DPLL_A_PIN_E_SYNC_FREQUENCY:
->+			ret = dpll_pin_e_sync_set(pin, a, info->extack);
->+			if (ret)
->+				return ret;
->+			break;
-> 		}
-> 	}
-> 
->diff --git a/drivers/dpll/dpll_nl.c b/drivers/dpll/dpll_nl.c
->index 1e95f5397cfc..ba79a47f3a17 100644
->--- a/drivers/dpll/dpll_nl.c
->+++ b/drivers/dpll/dpll_nl.c
->@@ -62,7 +62,7 @@ static const struct nla_policy dpll_pin_get_dump_nl_policy[DPLL_A_PIN_ID + 1] =
-> };
-> 
-> /* DPLL_CMD_PIN_SET - do */
->-static const struct nla_policy dpll_pin_set_nl_policy[DPLL_A_PIN_PHASE_ADJUST + 1] = {
->+static const struct nla_policy dpll_pin_set_nl_policy[DPLL_A_PIN_E_SYNC_FREQUENCY + 1] = {
-> 	[DPLL_A_PIN_ID] = { .type = NLA_U32, },
-> 	[DPLL_A_PIN_FREQUENCY] = { .type = NLA_U64, },
-> 	[DPLL_A_PIN_DIRECTION] = NLA_POLICY_RANGE(NLA_U32, 1, 2),
->@@ -71,6 +71,7 @@ static const struct nla_policy dpll_pin_set_nl_policy[DPLL_A_PIN_PHASE_ADJUST +
-> 	[DPLL_A_PIN_PARENT_DEVICE] = NLA_POLICY_NESTED(dpll_pin_parent_device_nl_policy),
-> 	[DPLL_A_PIN_PARENT_PIN] = NLA_POLICY_NESTED(dpll_pin_parent_pin_nl_policy),
-> 	[DPLL_A_PIN_PHASE_ADJUST] = { .type = NLA_S32, },
->+	[DPLL_A_PIN_E_SYNC_FREQUENCY] = { .type = NLA_U64, },
-> };
-> 
-> /* Ops table for dpll */
->@@ -138,7 +139,7 @@ static const struct genl_split_ops dpll_nl_ops[] = {
-> 		.doit		= dpll_nl_pin_set_doit,
-> 		.post_doit	= dpll_pin_post_doit,
-> 		.policy		= dpll_pin_set_nl_policy,
->-		.maxattr	= DPLL_A_PIN_PHASE_ADJUST,
->+		.maxattr	= DPLL_A_PIN_E_SYNC_FREQUENCY,
-> 		.flags		= GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
-> 	},
-> };
->diff --git a/include/linux/dpll.h b/include/linux/dpll.h
->index d275736230b3..137ab4bcb60e 100644
->--- a/include/linux/dpll.h
->+++ b/include/linux/dpll.h
->@@ -15,6 +15,7 @@
-> 
-> struct dpll_device;
-> struct dpll_pin;
->+struct dpll_pin_frequency;
-> 
-> struct dpll_device_ops {
-> 	int (*mode_get)(const struct dpll_device *dpll, void *dpll_priv,
->@@ -83,6 +84,15 @@ struct dpll_pin_ops {
-> 	int (*ffo_get)(const struct dpll_pin *pin, void *pin_priv,
-> 		       const struct dpll_device *dpll, void *dpll_priv,
-> 		       s64 *ffo, struct netlink_ext_ack *extack);
->+	int (*e_sync_set)(const struct dpll_pin *pin, void *pin_priv,
->+			  const struct dpll_device *dpll, void *dpll_priv,
->+			  u64 e_sync_freq, struct netlink_ext_ack *extack);
->+	int (*e_sync_get)(const struct dpll_pin *pin, void *pin_priv,
->+			  const struct dpll_device *dpll, void *dpll_priv,
->+			  u64 *e_sync_freq,
->+			  struct dpll_pin_frequency *e_sync_range,
->+			  enum dpll_pin_e_sync_pulse *pulse,
->+			  struct netlink_ext_ack *extack);
-> };
-> 
-> struct dpll_pin_frequency {
->diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
->index 0c13d7f1a1bc..2a80a6fb0d1d 100644
->--- a/include/uapi/linux/dpll.h
->+++ b/include/uapi/linux/dpll.h
->@@ -169,6 +169,26 @@ enum dpll_pin_capabilities {
-> 
-> #define DPLL_PHASE_OFFSET_DIVIDER	1000
-> 
->+/**
->+ * enum dpll_pin_e_sync_pulse - defines possible pulse length ratio between
->+ *   high and low state when embedded sync signal occurs on base clock signal
->+ *   frequency
->+ * @DPLL_PIN_E_SYNC_PULSE_NONE: embedded sync not enabled
->+ * @DPLL_PIN_E_SYNC_PULSE_25_75: when embedded sync signal occurs 25% of
->+ *   signal's period is in high state, 75% of signal's period is in low state
->+ * @DPLL_PIN_E_SYNC_PULSE_75_25: when embedded sync signal occurs 75% of
->+ *   signal's period is in high state, 25% of signal's period is in low state
->+ */
->+enum dpll_pin_e_sync_pulse {
->+	DPLL_PIN_E_SYNC_PULSE_NONE,
->+	DPLL_PIN_E_SYNC_PULSE_25_75,
->+	DPLL_PIN_E_SYNC_PULSE_75_25,
->+
->+	/* private: */
->+	__DPLL_PIN_E_SYNC_PULSE_MAX,
->+	DPLL_PIN_E_SYNC_PULSE_MAX = (__DPLL_PIN_E_SYNC_PULSE_MAX - 1)
->+};
->+
-> enum dpll_a {
-> 	DPLL_A_ID = 1,
-> 	DPLL_A_MODULE_NAME,
->@@ -210,6 +230,9 @@ enum dpll_a_pin {
-> 	DPLL_A_PIN_PHASE_ADJUST,
-> 	DPLL_A_PIN_PHASE_OFFSET,
-> 	DPLL_A_PIN_FRACTIONAL_FREQUENCY_OFFSET,
->+	DPLL_A_PIN_E_SYNC_FREQUENCY,
->+	DPLL_A_PIN_E_SYNC_FREQUENCY_SUPPORTED,
->+	DPLL_A_PIN_E_SYNC_PULSE,
-> 
-> 	__DPLL_A_PIN_MAX,
-> 	DPLL_A_PIN_MAX = (__DPLL_A_PIN_MAX - 1)
->-- 
->2.38.1
->
+RnJvbTogS2VyZW0gS2FyYWJheSA8a2VrcmJ5QGdtYWlsLmNvbT4NCg0KVGhpcyBjb21taXQgYWRk
+cyBhIGRyaXZlciBmb3IgdGhlIGJhY2tsaWdodCBvZiBBcHBsZSBUb3VjaCBCYXJzIG9uIHg4Ng0K
+TWFjcy4gTm90ZSB0aGF0IGN1cnJlbnRseSBvbmx5IFQyIE1hY3MgYXJlIHN1cHBvcnRlZC4NCg0K
+VGhpcyBkcml2ZXIgaXMgYmFzZWQgb24gcHJldmlvdXMgd29yayBkb25lIGJ5IFJvbmFsZCBUc2No
+YWzDpHINCjxyb25hbGRAaW5ub3ZhdGlvbi5jaD4uDQoNClNpZ25lZC1vZmYtYnk6IEtlcmVtIEth
+cmFiYXkgPGtla3JieUBnbWFpbC5jb20+DQpDby1kZXZlbG9wZWQtYnk6IEFkaXR5YSBHYXJnIDxn
+YXJnYWRpdHlhMDhAbGl2ZS5jb20+DQpTaWduZWQtb2ZmLWJ5OiBBZGl0eWEgR2FyZyA8Z2FyZ2Fk
+aXR5YTA4QGxpdmUuY29tPg0KLS0tDQogTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICB8ICAg
+NiArDQogZHJpdmVycy9oaWQvS2NvbmZpZyAgICAgICAgICB8ICAxMCArKw0KIGRyaXZlcnMvaGlk
+L01ha2VmaWxlICAgICAgICAgfCAgIDEgKw0KIGRyaXZlcnMvaGlkL2hpZC1hcHBsZXRiLWJsLmMg
+fCAyMDYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCiBkcml2ZXJzL2hpZC9o
+aWQtcXVpcmtzLmMgICAgIHwgICA0ICstDQogNSBmaWxlcyBjaGFuZ2VkLCAyMjYgaW5zZXJ0aW9u
+cygrKSwgMSBkZWxldGlvbigtKQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2hpZC9oaWQt
+YXBwbGV0Yi1ibC5jDQoNCmRpZmYgLS1naXQgYS9NQUlOVEFJTkVSUyBiL01BSU5UQUlORVJTDQpp
+bmRleCA4NzY2ZjNlNWUuLmFjMjdmNDFkNCAxMDA2NDQNCi0tLSBhL01BSU5UQUlORVJTDQorKysg
+Yi9NQUlOVEFJTkVSUw0KQEAgLTk5MzEsNiArOTkzMSwxMiBAQCBGOglpbmNsdWRlL2xpbnV4L3Bt
+LmgNCiBGOglpbmNsdWRlL2xpbnV4L3N1c3BlbmQuaA0KIEY6CWtlcm5lbC9wb3dlci8NCiANCitI
+SUQgQVBQTEUgVE9VQ0ggQkFSIERSSVZFUlMNCitNOglLZXJlbSBLYXJhYmF5IDxrZWtyYnlAZ21h
+aWwuY29tPg0KK0w6CWxpbnV4LWlucHV0QHZnZXIua2VybmVsLm9yZw0KK1M6CU1haW50YWluZWQN
+CitGOglkcml2ZXJzL2hpZC9oaWQtYXBwbGV0Yi0qDQorDQogSElEIENPUkUgTEFZRVINCiBNOglK
+aXJpIEtvc2luYSA8amlrb3NAa2VybmVsLm9yZz4NCiBNOglCZW5qYW1pbiBUaXNzb2lyZXMgPGJl
+bnRpc3NAa2VybmVsLm9yZz4NCmRpZmYgLS1naXQgYS9kcml2ZXJzL2hpZC9LY29uZmlnIGIvZHJp
+dmVycy9oaWQvS2NvbmZpZw0KaW5kZXggMDg0NDZjODllLi40OTg4YzFmYjIgMTAwNjQ0DQotLS0g
+YS9kcml2ZXJzL2hpZC9LY29uZmlnDQorKysgYi9kcml2ZXJzL2hpZC9LY29uZmlnDQpAQCAtMTQ4
+LDYgKzE0OCwxNiBAQCBjb25maWcgSElEX0FQUExFSVINCiANCiAJU2F5IFkgaGVyZSBpZiB5b3Ug
+d2FudCBzdXBwb3J0IGZvciBBcHBsZSBpbmZyYXJlZCByZW1vdGUgY29udHJvbC4NCiANCitjb25m
+aWcgSElEX0FQUExFVEJfQkwNCisJdHJpc3RhdGUgIkFwcGxlIFRvdWNoIEJhciBCYWNrbGlnaHQi
+DQorCWRlcGVuZHMgb24gQkFDS0xJR0hUX0NMQVNTX0RFVklDRQ0KKwloZWxwDQorCSAgU2F5IFkg
+aGVyZSBpZiB5b3Ugd2FudCBzdXBwb3J0IGZvciB0aGUgYmFja2xpZ2h0IG9mIFRvdWNoIEJhcnMg
+b24geDg2DQorCSAgTWFjQm9vayBQcm9zLg0KKw0KKwkgIFRvIGNvbXBpbGUgdGhpcyBkcml2ZXIg
+YXMgYSBtb2R1bGUsIGNob29zZSBNIGhlcmU6IHRoZQ0KKwkgIG1vZHVsZSB3aWxsIGJlIGNhbGxl
+ZCBoaWQtYXBwbGV0Yi1ibC4NCisNCiBjb25maWcgSElEX0FTVVMNCiAJdHJpc3RhdGUgIkFzdXMi
+DQogCWRlcGVuZHMgb24gVVNCX0hJRA0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlkL01ha2VmaWxl
+IGIvZHJpdmVycy9oaWQvTWFrZWZpbGUNCmluZGV4IGU0MGYxZGRlYi4uMWQ4MjVhNDc0IDEwMDY0
+NA0KLS0tIGEvZHJpdmVycy9oaWQvTWFrZWZpbGUNCisrKyBiL2RyaXZlcnMvaGlkL01ha2VmaWxl
+DQpAQCAtMjksNiArMjksNyBAQCBvYmotJChDT05GSUdfSElEX0FMUFMpCQkrPSBoaWQtYWxwcy5v
+DQogb2JqLSQoQ09ORklHX0hJRF9BQ1JVWCkJCSs9IGhpZC1heGZmLm8NCiBvYmotJChDT05GSUdf
+SElEX0FQUExFKQkJKz0gaGlkLWFwcGxlLm8NCiBvYmotJChDT05GSUdfSElEX0FQUExFSVIpCSs9
+IGhpZC1hcHBsZWlyLm8NCitvYmotJChDT05GSUdfSElEX0FQUExFVEJfQkwpCSs9IGhpZC1hcHBs
+ZXRiLWJsLm8NCiBvYmotJChDT05GSUdfSElEX0NSRUFUSVZFX1NCMDU0MCkJKz0gaGlkLWNyZWF0
+aXZlLXNiMDU0MC5vDQogb2JqLSQoQ09ORklHX0hJRF9BU1VTKQkJKz0gaGlkLWFzdXMubw0KIG9i
+ai0kKENPTkZJR19ISURfQVVSRUFMKQkrPSBoaWQtYXVyZWFsLm8NCmRpZmYgLS1naXQgYS9kcml2
+ZXJzL2hpZC9oaWQtYXBwbGV0Yi1ibC5jIGIvZHJpdmVycy9oaWQvaGlkLWFwcGxldGItYmwuYw0K
+bmV3IGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDAwMDAwMDAwMC4uMDBiYmU0NWRmDQotLS0gL2Rl
+di9udWxsDQorKysgYi9kcml2ZXJzL2hpZC9oaWQtYXBwbGV0Yi1ibC5jDQpAQCAtMCwwICsxLDIw
+NiBAQA0KKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wDQorLyoNCisgKiBBcHBs
+ZSBUb3VjaCBCYXIgQmFja2xpZ2h0IERyaXZlcg0KKyAqDQorICogQ29weXJpZ2h0IChjKSAyMDE3
+LTIwMTggUm9uYWxkIFRzY2hhbMOkcg0KKyAqIENvcHlyaWdodCAoYykgMjAyMi0yMDIzIEtlcmVt
+IEthcmFiYXkgPGtla3JieUBnbWFpbC5jb20+DQorICovDQorDQorI2RlZmluZSBwcl9mbXQoZm10
+KSBLQlVJTERfTU9ETkFNRSAiOiAiIGZtdA0KKw0KKyNpbmNsdWRlIDxsaW51eC9oaWQuaD4NCisj
+aW5jbHVkZSA8bGludXgvYmFja2xpZ2h0Lmg+DQorDQorI2luY2x1ZGUgImhpZC1pZHMuaCINCisN
+CisjZGVmaW5lIEFQUExFVEJfQkxfT04JCQkxDQorI2RlZmluZSBBUFBMRVRCX0JMX0RJTQkJCTMN
+CisjZGVmaW5lIEFQUExFVEJfQkxfT0ZGCQkJNA0KKw0KKyNkZWZpbmUgSElEX1VQX0FQUExFVkVO
+RE9SX1RCX0JMCTB4ZmYxMjAwMDANCisNCisjZGVmaW5lIEhJRF9WRF9BUFBMRV9UQl9CUklHSFRO
+RVNTCTB4ZmYxMjAwMDENCisjZGVmaW5lIEhJRF9VU0FHRV9BVVgxCQkJMHhmZjEyMDAyMA0KKyNk
+ZWZpbmUgSElEX1VTQUdFX0JSSUdIVE5FU1MJCTB4ZmYxMjAwMjENCisNCitzdGF0aWMgaW50IGFw
+cGxldGJfYmxfZGVmX2JyaWdodG5lc3MgPSAyOw0KK21vZHVsZV9wYXJhbV9uYW1lZChicmlnaHRu
+ZXNzLCBhcHBsZXRiX2JsX2RlZl9icmlnaHRuZXNzLCBpbnQsIDA0NDQpOw0KK01PRFVMRV9QQVJN
+X0RFU0MoYnJpZ2h0bmVzcywgIkRlZmF1bHQgYnJpZ2h0bmVzczpcbiINCisJCQkgIiAgICAwIC0g
+VG91Y2hiYXIgaXMgb2ZmXG4iDQorCQkJICIgICAgMSAtIERpbSBicmlnaHRuZXNzXG4iDQorCQkJ
+ICIgICAgWzJdIC0gRnVsbCBicmlnaHRuZXNzIik7DQorDQorc3RydWN0IGFwcGxldGJfYmwgew0K
+KwlzdHJ1Y3QgaGlkX2ZpZWxkICphdXgxX2ZpZWxkLCAqYnJpZ2h0bmVzc19maWVsZDsNCisJc3Ry
+dWN0IGJhY2tsaWdodF9kZXZpY2UgKmJkZXY7DQorDQorCWJvb2wgZnVsbF9vbjsNCit9Ow0KKw0K
+K2NvbnN0IHU4IGFwcGxldGJfYmxfYnJpZ2h0bmVzc19tYXBbXSA9IHsNCisJQVBQTEVUQl9CTF9P
+RkYsDQorCUFQUExFVEJfQkxfRElNLA0KKwlBUFBMRVRCX0JMX09ODQorfTsNCisNCitzdGF0aWMg
+aW50IGFwcGxldGJfYmxfc2V0X2JyaWdodG5lc3Moc3RydWN0IGFwcGxldGJfYmwgKmJsLCB1OCBi
+cmlnaHRuZXNzKQ0KK3sNCisJc3RydWN0IGhpZF9yZXBvcnQgKnJlcG9ydCA9IGJsLT5icmlnaHRu
+ZXNzX2ZpZWxkLT5yZXBvcnQ7DQorCXN0cnVjdCBoaWRfZGV2aWNlICpoZGV2ID0gcmVwb3J0LT5k
+ZXZpY2U7DQorCWludCByZXQ7DQorDQorCXJldCA9IGhpZF9zZXRfZmllbGQoYmwtPmF1eDFfZmll
+bGQsIDAsIDEpOw0KKwlpZiAocmV0KSB7DQorCQloaWRfZXJyKGhkZXYsICJGYWlsZWQgdG8gc2V0
+IGF1eGlsaWFyeSBmaWVsZCAoJXBlKVxuIiwgRVJSX1BUUihyZXQpKTsNCisJCXJldHVybiByZXQ7
+DQorCX0NCisNCisJcmV0ID0gaGlkX3NldF9maWVsZChibC0+YnJpZ2h0bmVzc19maWVsZCwgMCwg
+YnJpZ2h0bmVzcyk7DQorCWlmIChyZXQpIHsNCisJCWhpZF9lcnIoaGRldiwgIkZhaWxlZCB0byBz
+ZXQgYnJpZ2h0bmVzcyBmaWVsZCAoJXBlKVxuIiwgRVJSX1BUUihyZXQpKTsNCisJCXJldHVybiBy
+ZXQ7DQorCX0NCisNCisJaWYgKCFibC0+ZnVsbF9vbikgew0KKwkJcmV0ID0gaGlkX2h3X3Bvd2Vy
+KGhkZXYsIFBNX0hJTlRfRlVMTE9OKTsNCisJCWlmIChyZXQgPCAwKSB7DQorCQkJaGlkX2Vyciho
+ZGV2LCAiRGV2aWNlIGRpZG4ndCBwb3dlciBvbiAoJXBlKVxuIiwgRVJSX1BUUihyZXQpKTsNCisJ
+CQlyZXR1cm4gcmV0Ow0KKwkJfQ0KKw0KKwkJYmwtPmZ1bGxfb24gPSB0cnVlOw0KKwl9DQorDQor
+CWhpZF9od19yZXF1ZXN0KGhkZXYsIHJlcG9ydCwgSElEX1JFUV9TRVRfUkVQT1JUKTsNCisNCisJ
+aWYgKGJyaWdodG5lc3MgPT0gQVBQTEVUQl9CTF9PRkYpIHsNCisJCWhpZF9od19wb3dlcihoZGV2
+LCBQTV9ISU5UX05PUk1BTCk7DQorCQlibC0+ZnVsbF9vbiA9IGZhbHNlOw0KKwl9DQorDQorCXJl
+dHVybiAwOw0KK30NCisNCitzdGF0aWMgaW50IGFwcGxldGJfYmxfdXBkYXRlX3N0YXR1cyhzdHJ1
+Y3QgYmFja2xpZ2h0X2RldmljZSAqYmRldikNCit7DQorCXN0cnVjdCBhcHBsZXRiX2JsICpibCA9
+IGJsX2dldF9kYXRhKGJkZXYpOw0KKwl1MTYgYnJpZ2h0bmVzczsNCisNCisJaWYgKGJkZXYtPnBy
+b3BzLnN0YXRlICYgQkxfQ09SRV9TVVNQRU5ERUQpDQorCQlicmlnaHRuZXNzID0gMDsNCisJZWxz
+ZQ0KKwkJYnJpZ2h0bmVzcyA9IGJhY2tsaWdodF9nZXRfYnJpZ2h0bmVzcyhiZGV2KTsNCisNCisJ
+cmV0dXJuIGFwcGxldGJfYmxfc2V0X2JyaWdodG5lc3MoYmwsIGFwcGxldGJfYmxfYnJpZ2h0bmVz
+c19tYXBbYnJpZ2h0bmVzc10pOw0KK30NCisNCitzdGF0aWMgY29uc3Qgc3RydWN0IGJhY2tsaWdo
+dF9vcHMgYXBwbGV0Yl9ibF9iYWNrbGlnaHRfb3BzID0gew0KKwkub3B0aW9ucyA9IEJMX0NPUkVf
+U1VTUEVORFJFU1VNRSwNCisJLnVwZGF0ZV9zdGF0dXMgPSBhcHBsZXRiX2JsX3VwZGF0ZV9zdGF0
+dXMsDQorfTsNCisNCitzdGF0aWMgaW50IGFwcGxldGJfYmxfcHJvYmUoc3RydWN0IGhpZF9kZXZp
+Y2UgKmhkZXYsIGNvbnN0IHN0cnVjdCBoaWRfZGV2aWNlX2lkICppZCkNCit7DQorCXN0cnVjdCBo
+aWRfZmllbGQgKmF1eDFfZmllbGQsICpicmlnaHRuZXNzX2ZpZWxkOw0KKwlzdHJ1Y3QgYmFja2xp
+Z2h0X3Byb3BlcnRpZXMgYmxfcHJvcHMgPSB7IDAgfTsNCisJc3RydWN0IGRldmljZSAqZGV2ID0g
+JmhkZXYtPmRldjsNCisJc3RydWN0IGFwcGxldGJfYmwgKmJsOw0KKwlpbnQgcmV0Ow0KKw0KKwly
+ZXQgPSBoaWRfcGFyc2UoaGRldik7DQorCWlmIChyZXQpDQorCQlyZXR1cm4gZGV2X2Vycl9wcm9i
+ZShkZXYsIHJldCwgIkhJRCBwYXJzZSBmYWlsZWRcbiIpOw0KKw0KKwlhdXgxX2ZpZWxkID0gaGlk
+X2ZpbmRfZmllbGQoaGRldiwgSElEX0ZFQVRVUkVfUkVQT1JULA0KKwkJCQkgICAgSElEX1ZEX0FQ
+UExFX1RCX0JSSUdIVE5FU1MsIEhJRF9VU0FHRV9BVVgxKTsNCisNCisJYnJpZ2h0bmVzc19maWVs
+ZCA9IGhpZF9maW5kX2ZpZWxkKGhkZXYsIEhJRF9GRUFUVVJFX1JFUE9SVCwNCisJCQkJCSAgSElE
+X1ZEX0FQUExFX1RCX0JSSUdIVE5FU1MsIEhJRF9VU0FHRV9CUklHSFRORVNTKTsNCisNCisJaWYg
+KCFhdXgxX2ZpZWxkIHx8ICFicmlnaHRuZXNzX2ZpZWxkKQ0KKwkJcmV0dXJuIC1FTk9ERVY7DQor
+DQorCWlmIChhdXgxX2ZpZWxkLT5yZXBvcnQgIT0gYnJpZ2h0bmVzc19maWVsZC0+cmVwb3J0KQ0K
+KwkJcmV0dXJuIGRldl9lcnJfcHJvYmUoZGV2LCAtRU5PREVWLCAiRW5jb3VudGVyZWQgdW5leHBl
+Y3RlZCByZXBvcnQgc3RydWN0dXJlXG4iKTsNCisNCisJYmwgPSBkZXZtX2t6YWxsb2MoZGV2LCBz
+aXplb2YoKmJsKSwgR0ZQX0tFUk5FTCk7DQorCWlmICghYmwpDQorCQlyZXR1cm4gLUVOT01FTTsN
+CisNCisJcmV0ID0gaGlkX2h3X3N0YXJ0KGhkZXYsIEhJRF9DT05ORUNUX0RSSVZFUik7DQorCWlm
+IChyZXQpDQorCQlyZXR1cm4gZGV2X2Vycl9wcm9iZShkZXYsIHJldCwgIkhJRCBoYXJkd2FyZSBz
+dGFydCBmYWlsZWRcbiIpOw0KKw0KKwlyZXQgPSBoaWRfaHdfb3BlbihoZGV2KTsNCisJaWYgKHJl
+dCkgew0KKwkJZGV2X2Vycl9wcm9iZShkZXYsIHJldCwgIkhJRCBoYXJkd2FyZSBvcGVuIGZhaWxl
+ZFxuIik7DQorCQlnb3RvIHN0b3BfaHc7DQorCX0NCisNCisJYmwtPmF1eDFfZmllbGQgPSBhdXgx
+X2ZpZWxkOw0KKwlibC0+YnJpZ2h0bmVzc19maWVsZCA9IGJyaWdodG5lc3NfZmllbGQ7DQorDQor
+CWlmIChhcHBsZXRiX2JsX2RlZl9icmlnaHRuZXNzID09IDApDQorCQlyZXQgPSBhcHBsZXRiX2Js
+X3NldF9icmlnaHRuZXNzKGJsLCBBUFBMRVRCX0JMX09GRik7DQorCWVsc2UgaWYgKGFwcGxldGJf
+YmxfZGVmX2JyaWdodG5lc3MgPT0gMSkNCisJCXJldCA9IGFwcGxldGJfYmxfc2V0X2JyaWdodG5l
+c3MoYmwsIEFQUExFVEJfQkxfRElNKTsNCisJZWxzZQ0KKwkJcmV0ID0gYXBwbGV0Yl9ibF9zZXRf
+YnJpZ2h0bmVzcyhibCwgQVBQTEVUQl9CTF9PTik7DQorDQorCWlmIChyZXQpIHsNCisJCWRldl9l
+cnJfcHJvYmUoZGV2LCByZXQsICJGYWlsZWQgdG8gc2V0IHRvdWNoIGJhciBicmlnaHRuZXNzIHRv
+IG9mZlxuIik7DQorCQlnb3RvIGNsb3NlX2h3Ow0KKwl9DQorDQorCWJsX3Byb3BzLnR5cGUgPSBC
+QUNLTElHSFRfUkFXOw0KKwlibF9wcm9wcy5tYXhfYnJpZ2h0bmVzcyA9IEFSUkFZX1NJWkUoYXBw
+bGV0Yl9ibF9icmlnaHRuZXNzX21hcCkgLSAxOw0KKw0KKwlibC0+YmRldiA9IGRldm1fYmFja2xp
+Z2h0X2RldmljZV9yZWdpc3RlcihkZXYsICJhcHBsZXRiX2JhY2tsaWdodCIsIGRldiwgYmwsDQor
+CQkJCQkJICAmYXBwbGV0Yl9ibF9iYWNrbGlnaHRfb3BzLCAmYmxfcHJvcHMpOw0KKwlpZiAoSVNf
+RVJSKGJsLT5iZGV2KSkgew0KKwkJcmV0ID0gUFRSX0VSUihibC0+YmRldik7DQorCQlkZXZfZXJy
+X3Byb2JlKGRldiwgcmV0LCAiRmFpbGVkIHRvIHJlZ2lzdGVyIGJhY2tsaWdodCBkZXZpY2VcbiIp
+Ow0KKwkJZ290byBjbG9zZV9odzsNCisJfQ0KKw0KKwloaWRfc2V0X2RydmRhdGEoaGRldiwgYmwp
+Ow0KKw0KKwlyZXR1cm4gMDsNCisNCitjbG9zZV9odzoNCisJaGlkX2h3X2Nsb3NlKGhkZXYpOw0K
+K3N0b3BfaHc6DQorCWhpZF9od19zdG9wKGhkZXYpOw0KKw0KKwlyZXR1cm4gcmV0Ow0KK30NCisN
+CitzdGF0aWMgdm9pZCBhcHBsZXRiX2JsX3JlbW92ZShzdHJ1Y3QgaGlkX2RldmljZSAqaGRldikN
+Cit7DQorCXN0cnVjdCBhcHBsZXRiX2JsICpibCA9IGhpZF9nZXRfZHJ2ZGF0YShoZGV2KTsNCisN
+CisJYXBwbGV0Yl9ibF9zZXRfYnJpZ2h0bmVzcyhibCwgQVBQTEVUQl9CTF9PRkYpOw0KKw0KKwlo
+aWRfaHdfY2xvc2UoaGRldik7DQorCWhpZF9od19zdG9wKGhkZXYpOw0KK30NCisNCitzdGF0aWMg
+Y29uc3Qgc3RydWN0IGhpZF9kZXZpY2VfaWQgYXBwbGV0Yl9ibF9oaWRfaWRzW10gPSB7DQorCS8q
+IE1hY0Jvb2sgUHJvJ3MgMjAxOCwgMjAxOSwgd2l0aCBUMiBjaGlwOiBpQnJpZGdlIERGUiBCcmln
+aHRuZXNzICovDQorCXsgSElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9BUFBMRSwgVVNCX0RF
+VklDRV9JRF9BUFBMRV9UT1VDSEJBUl9CQUNLTElHSFQpIH0sDQorCXsgfQ0KK307DQorTU9EVUxF
+X0RFVklDRV9UQUJMRShoaWQsIGFwcGxldGJfYmxfaGlkX2lkcyk7DQorDQorc3RhdGljIHN0cnVj
+dCBoaWRfZHJpdmVyIGFwcGxldGJfYmxfaGlkX2RyaXZlciA9IHsNCisJLm5hbWUgPSAiaGlkLWFw
+cGxldGItYmwiLA0KKwkuaWRfdGFibGUgPSBhcHBsZXRiX2JsX2hpZF9pZHMsDQorCS5wcm9iZSA9
+IGFwcGxldGJfYmxfcHJvYmUsDQorCS5yZW1vdmUgPSBhcHBsZXRiX2JsX3JlbW92ZSwNCit9Ow0K
+K21vZHVsZV9oaWRfZHJpdmVyKGFwcGxldGJfYmxfaGlkX2RyaXZlcik7DQorDQorTU9EVUxFX0FV
+VEhPUigiUm9uYWxkIFRzY2hhbMOkciIpOw0KK01PRFVMRV9BVVRIT1IoIktlcmVtIEthcmFiYXkg
+PGtla3JieUBnbWFpbC5jb20+Iik7DQorTU9EVUxFX0RFU0NSSVBUSU9OKCJNYWNCb29rUHJvIFRv
+dWNoIEJhciBCYWNrbGlnaHQgRHJpdmVyIik7DQorTU9EVUxFX0xJQ0VOU0UoIkdQTCIpOw0KZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2hpZC1xdWlya3MuYyBiL2RyaXZlcnMvaGlkL2hpZC1xdWly
+a3MuYw0KaW5kZXggZTBiYmYwYzYzLi44MThkNDFhMzUgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2hp
+ZC9oaWQtcXVpcmtzLmMNCisrKyBiL2RyaXZlcnMvaGlkL2hpZC1xdWlya3MuYw0KQEAgLTMyOCw3
+ICszMjgsNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGhpZF9kZXZpY2VfaWQgaGlkX2hhdmVfc3Bl
+Y2lhbF9kcml2ZXJbXSA9IHsNCiAJeyBISURfVVNCX0RFVklDRShVU0JfVkVORE9SX0lEX0FQUExF
+LCBVU0JfREVWSUNFX0lEX0FQUExFX0dFWVNFUjFfVFBfT05MWSkgfSwNCiAJeyBISURfVVNCX0RF
+VklDRShVU0JfVkVORE9SX0lEX0FQUExFLCBVU0JfREVWSUNFX0lEX0FQUExFX01BR0lDX0tFWUJP
+QVJEXzIwMjEpIH0sDQogCXsgSElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9BUFBMRSwgVVNC
+X0RFVklDRV9JRF9BUFBMRV9NQUdJQ19LRVlCT0FSRF9GSU5HRVJQUklOVF8yMDIxKSB9LA0KLQl7
+IEhJRF9VU0JfREVWSUNFKFVTQl9WRU5ET1JfSURfQVBQTEUsIFVTQl9ERVZJQ0VfSURfQVBQTEVf
+VE9VQ0hCQVJfQkFDS0xJR0hUKSB9LA0KIAl7IEhJRF9VU0JfREVWSUNFKFVTQl9WRU5ET1JfSURf
+QVBQTEUsIFVTQl9ERVZJQ0VfSURfQVBQTEVfVE9VQ0hCQVJfRElTUExBWSkgfSwNCiAjZW5kaWYN
+CiAjaWYgSVNfRU5BQkxFRChDT05GSUdfSElEX0FQUExFSVIpDQpAQCAtMzM4LDYgKzMzNyw5IEBA
+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgaGlkX2RldmljZV9pZCBoaWRfaGF2ZV9zcGVjaWFsX2RyaXZl
+cltdID0gew0KIAl7IEhJRF9VU0JfREVWSUNFKFVTQl9WRU5ET1JfSURfQVBQTEUsIFVTQl9ERVZJ
+Q0VfSURfQVBQTEVfSVJDT05UUk9MNCkgfSwNCiAJeyBISURfVVNCX0RFVklDRShVU0JfVkVORE9S
+X0lEX0FQUExFLCBVU0JfREVWSUNFX0lEX0FQUExFX0lSQ09OVFJPTDUpIH0sDQogI2VuZGlmDQor
+I2lmIElTX0VOQUJMRUQoQ09ORklHX0hJRF9BUFBMRVRCX0JMKQ0KKwl7IEhJRF9VU0JfREVWSUNF
+KFVTQl9WRU5ET1JfSURfQVBQTEUsIFVTQl9ERVZJQ0VfSURfQVBQTEVfVE9VQ0hCQVJfQkFDS0xJ
+R0hUKSB9LA0KKyNlbmRpZg0KICNpZiBJU19FTkFCTEVEKENPTkZJR19ISURfQVNVUykNCiAJeyBI
+SURfSTJDX0RFVklDRShVU0JfVkVORE9SX0lEX0FTVVNURUssIFVTQl9ERVZJQ0VfSURfQVNVU1RF
+S19JMkNfS0VZQk9BUkQpIH0sDQogCXsgSElEX0kyQ19ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9BU1VT
+VEVLLCBVU0JfREVWSUNFX0lEX0FTVVNURUtfSTJDX1RPVUNIUEFEKSB9LA0KLS0gDQoyLjM5LjMg
+KEFwcGxlIEdpdC0xNDYpDQoNCg==
 
