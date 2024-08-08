@@ -1,118 +1,195 @@
-Return-Path: <linux-kernel+bounces-279859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E811594C2A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:24:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1182294C2BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2518F1C22A79
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:24:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70578B2202D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 16:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E5E19049A;
-	Thu,  8 Aug 2024 16:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5biSwfs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7063618EFC6;
+	Thu,  8 Aug 2024 16:27:33 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0691F18E752;
-	Thu,  8 Aug 2024 16:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85CE646
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 16:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723134258; cv=none; b=KwdlOU4OmpGYATK7iWQGRhfW6/CW5Decad+33bzY3qDqIEg7OHsl4KwvrLiCfO2Qdavbam0Y2lyYVwV6WqNqfdI4jVGFKb5vnCpRav7Vlnlp574iG7vEyMu/YdyCLlzv5fvPA8vC3vQOAWZAaRGeRyCnakXJx8UCuA6ZFEA6WmM=
+	t=1723134453; cv=none; b=sN6ZfI4yiu65X/uFYbdU3+WVzn6tq3RuQMoGYoxKtyGXxDV6xycErhsFFox82JIF2x13ZkyTzOxU3dvx8jc2CSdmup/h6EtDMKhP6fxZaFiVz+2mPFno0uWZzJqdugZW4WGFh47Xwg8Rf2cUWTtmBnsPKlyAySwW0yqo3A6HZbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723134258; c=relaxed/simple;
-	bh=LbWQSf2pCqgQzt6P1kYq5tJgjgYEyq/E5jxvh5xYMUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XKkFfF1oj287AZOQn5V04tag7nFoFlpoNLR6oAiQdp/xPyNf+TPS2bMooGrkNCek9B8tvolBg4k7if7xAgmz1wX0mETk+zBiOv/qaTKQCn+ZlQKx9tlemMmC0GD7FUo5XMzPOvfl2wD8m7imni4EARCIdnGuPwzun0ifzd1eMUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5biSwfs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 110CDC32782;
-	Thu,  8 Aug 2024 16:24:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723134257;
-	bh=LbWQSf2pCqgQzt6P1kYq5tJgjgYEyq/E5jxvh5xYMUg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U5biSwfsv1UsPpfRXmOPczwEe60uQvDeFR5QlpcCRqx0bGPO/3GVP7Ya9zh18RWb3
-	 v1KDbkAxaGCTUBpbmknrEENObrTtn0ICTamJcd19NnIMl9mHLP/kIlbOG5ynxCFPzn
-	 iennuszdwVpygz2v6EESemjsqM0+1agEX10SNtIjUIn0dIH9yHOge/oYzjDS1BQRst
-	 oviixmWkD786bhGSrRfmOsdBBgkER6xZ9xd0ye2TPi4kxIZMg8psyFEpZAkfI61zw9
-	 SZYvAqp5hfDx+wYvzFo+2hsG33RYJFoD4LfVQjM84CtsLlSEPpV5arXHR+uof7U3cg
-	 paFjyroAbmtIA==
-Date: Thu, 8 Aug 2024 18:24:07 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Hongxing Zhu <hongxing.zhu@nxp.com>, "tj@kernel.org" <tj@kernel.org>,
-	"dlemoal@kernel.org" <dlemoal@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v4 4/6] ata: ahci_imx: Add 32bits DMA limit for i.MX8QM
- AHCI SATA
-Message-ID: <ZrTxJzmWJyH2P0Ba@x1-carbon.lan>
-References: <1721367736-30156-1-git-send-email-hongxing.zhu@nxp.com>
- <1721367736-30156-5-git-send-email-hongxing.zhu@nxp.com>
- <Zp/Uh/mavwo+755Q@x1-carbon.lan>
- <AS8PR04MB867612E75A6C08983F7031528CB32@AS8PR04MB8676.eurprd04.prod.outlook.com>
- <ZrP2lUjTAazBlUVO@x1-carbon.lan>
- <ZrTQJSjxaQglSgmX@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1723134453; c=relaxed/simple;
+	bh=jDIyH9aokYnOVCogvexan605XgzRSRiBHX7aA0XjmHM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QaZWuLor5782pig0azqsTAoTd8l/fr5U+XxHndESeJpFqGEvJz0Na4ZsReHt8WXbDMv7kV62fmL7ASvxSz5eOqONGllT+nL9/62gRznorkJ+BQp7UEngN3AtqaZOm+T8xesUYzKF2hBUVQMQpKqWvGK65EhHWw9fE7Mf6dq7dfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wfsnj5C1Xz6K8wp;
+	Fri,  9 Aug 2024 00:24:41 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 34A251400CB;
+	Fri,  9 Aug 2024 00:27:28 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 8 Aug
+ 2024 17:27:27 +0100
+Date: Thu, 8 Aug 2024 17:27:26 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tvrtko Ursulin
+	<tursulin@igalia.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-dev@igalia.com>,
+	=?ISO-8859-1?Q?Ma=ED?= =?ISO-8859-1?Q?ra?= Canal <mcanal@igalia.com>, Catalin
+ Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, "Mike
+ Rapoport (Microsoft)" <rppt@kernel.org>
+Subject: Re: [PATCH 1/2] numa: Add simple generic NUMA emulation
+Message-ID: <20240808172726.0000154a@Huawei.com>
+In-Reply-To: <54b357b2-2132-4fd6-89db-7a60617dc859@igalia.com>
+References: <20240625125803.38038-1-tursulin@igalia.com>
+	<20240625125803.38038-2-tursulin@igalia.com>
+	<2024062627-curler-unlucky-51e0@gregkh>
+	<679a9dda-8e8a-4428-8d57-30b0c60f28ce@igalia.com>
+	<54b357b2-2132-4fd6-89db-7a60617dc859@igalia.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrTQJSjxaQglSgmX@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Thu, Aug 08, 2024 at 10:03:17AM -0400, Frank Li wrote:
-> On Thu, Aug 08, 2024 at 12:35:01AM +0200, Niklas Cassel wrote:
-> > On Fri, Aug 02, 2024 at 02:30:45AM +0000, Hongxing Zhu wrote:
-> > > >
-> > > Hi Niklas:
-> > > I'm so sorry to reply late.
-> > > About the 32bit DMA limitation of i.MX8QM AHCI SATA.
-> > > It's seems that one "dma-ranges" property in the DT can let i.MX8QM SATA
-> > >  works fine in my past days tests without this commit.
-> > > How about drop these driver changes, and add "dma-ranges" for i.MX8QM SATA?
-> > > Thanks a lot for your kindly help.
-> >
-> > Hello Richard,
-> >
-> > did you try my suggested patch above?
-> >
-> >
-> > If you look at dma-ranges:
-> > https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#dma-ranges
-> >
-> > "dma-ranges" property should be used on a bus device node
-> > (such as PCI host bridges).
-> 
-> Yes, 32bit is limited by internal bus farbic, not AHCI controller.
+On Thu, 8 Aug 2024 12:56:44 +0100
+Tvrtko Ursulin <tvrtko.ursulin@igalia.com> wrote:
 
-If the limit is by the interconnect/bus, then the limit will affect all
-devices connected to that bus, i.e. both the PCIe controller and the AHCI
-controller, and using "dma-ranges" in that case is of course correct.
+> [Please excuse the re-send, but as I heard nothing concern is it did not=
+=20
+> get lost in your busy mailbox.]
+>=20
+> Hi Greg,
+>=20
+> Gentle reminder on the opens from this thread. Let me re-summarise the=20
+> question below:
+>=20
+> On 26/06/2024 12:47, Tvrtko Ursulin wrote:
+> >=20
+> > Hi Greg,
+> >=20
+> > On 26/06/2024 08:38, Greg Kroah-Hartman wrote: =20
+> >> On Tue, Jun 25, 2024 at 01:58:02PM +0100, Tvrtko Ursulin wrote: =20
+> >>> From: Ma=C3=ADra Canal <mcanal@igalia.com>
+> >>>
+> >>> Add some common code for splitting the memory into N emulated NUMA=20
+> >>> memory
+> >>> nodes.
+> >>>
+> >>> Individual architecture can then enable selecting this option and use=
+=20
+> >>> the
+> >>> existing numa=3Dfake=3D<N> kernel argument to enable it.
+> >>>
+> >>> Memory is always split into equally sized chunks.
+> >>>
+> >>> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+> >>> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> >>> Co-developed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> >>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>> Cc: Will Deacon <will@kernel.org>
+> >>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >>> Cc: =E2=80=9CRafael J. Wysocki" <rafael@kernel.org>
+> >>> ---
+> >>> =C2=A0 drivers/base/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 7 ++++
+> >>> =C2=A0 drivers/base/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 1 +
+> >>> =C2=A0 drivers/base/arch_numa.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+ 6 ++++
+> >>> =C2=A0 drivers/base/numa_emulation.c | 67 +++++++++++++++++++++++++++=
+++++++++
+> >>> =C2=A0 drivers/base/numa_emulation.h | 21 +++++++++++ =20
+> >>
+> >> Why not just properly describe the numa topology in your bootloader or
+> >> device tree and not need any such "fake" stuff at all?
+> >>
+> >> Also, you are now asking me to maintain these new files, not something
+> >> I'm comfortable doing at all sorry. =20
+> >=20
+> > Mostly because ae3c107cd8be ("numa: Move numa implementation to common=
+=20
+> > code") and existing common code in drivers/base/arch_numa.c it appeared=
+=20
+> > it could be acceptable to add the simple NUMA emulation into the common=
+=20
+> > code too. Then building upon the same concept as on x86 where no need=20
+> > for firmware changes is needed for experimenting with different=20
+> > configurations.
+> >=20
+> > Would folding into arch_numa.c so no new files are added address your=20
+> > concern, or your main issue is the emulation in general? =20
+>=20
+> Re-iterating and slightly re-formulating this question I see three option=
+s:
+>=20
+> a)
+> Fold the new simple generic code into the existing arch_numa.c,=20
+> addressing the "no new files" objection, if that was the main objection.
+>=20
+> b)
+> Move completely into arch code - aka you don't want to see it under=20
+> drivers/base at all, ever, regardless of how simple the new code is, or=20
+> that common NUMA code is already there.
+>=20
+> c)
+> Strong nack for either a) or b) - so "do it in the firmware" comment.
+>=20
+> Trying to understand your position so we can progress this.
 
-I guess I'm mostly surprised that i.MX8QM doesn't already have this
-property defined in its device tree.
+See:=20
+https://lore.kernel.org/all/20240807064110.1003856-20-rppt@kernel.org/
+and rest of thread=20
+https://lore.kernel.org/all/20240807064110.1003856-1-rppt@kernel.org/
+[PATCH v4 00/26] mm: introduce numa_memblks
 
-Anyway, please send a v5 of this series without the patch in $subject,
-and we should be able to queue it up for 6.12.
+Much larger rework and unification set from Mike Rapoport
+that happens to end up adding numa emulation as part of making
+the x86 numa_memblk work for arm64 etc.
+
+It's in mm-unstable now so getting some test coverage etc.
+
+Sorry, I'd kind of assumed this also went to linux-mm so
+the connection would have been made.
+
+Jonathan
 
 
-Kind regards,
-Niklas
+>=20
+> Thanks,
+>=20
+> Tvrtko
+>=20
+> >  =20
+> >  >> +=C2=A0=C2=A0=C2=A0 if (str_has_prefix(opt, "fake=3D"))
+> >  >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return numa_emu_cmdline=
+(opt + 5); =20
+> >  >
+> >  > You did not document this at all :( =20
+> >=20
+> > That was indeed an oversight. Just need to "copy with edits" some stuff=
+=20
+> > from Documentation/arch/x86/x86_64/boot-options.rst.
+> >=20
+> > Regards,
+> >=20
+> > Tvrtko =20
+>=20
+
 
