@@ -1,196 +1,199 @@
-Return-Path: <linux-kernel+bounces-280097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B599294C59A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:21:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B686A94C5A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6427D28131D
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C982847E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FBA158D92;
-	Thu,  8 Aug 2024 20:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B70015A848;
+	Thu,  8 Aug 2024 20:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYncLnNW"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FwA5yNNV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D/VTDpu3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B900B15534E;
-	Thu,  8 Aug 2024 20:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46C0159598
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 20:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723148501; cv=none; b=Ixh3ma98N5dJsiAThw4Oj0TGdc+AqBGViJ2Vs7eu58o41fqeklyGeOma8boYV9n0KMm+LdoMxfcXKxp69tD/Fnke2A+iDaSWaRY7nxdmBiR65GXuZlCdD2BFIJdNpbgXRMysojLSslVAbqzrdYt3bcxQ8z7TLIVgrLm8FF0Yuao=
+	t=1723148590; cv=none; b=dVwlMxk3LuP13AAxCxYIjvJptk75YdRRIa7RM5O9leZ7AAt/xhMSlJsGb/xusfT/dW9xoj+FIXuD+jMoOsOnCII/kruAq++QctFuPW7pIVG4YAzuqiqZpIs4eQWtCKFmFZJYmCWJhkAis1JBWpz0DFCCIuO3E/ePqdQVHRX/pOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723148501; c=relaxed/simple;
-	bh=ulSh7AmtkBM9yddz7RYR8V3T1DjbU7clScPfSgShZY4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kbc17XqFhx4TgYP0ZC/Kuo+eoWi0fHzVw6SmrLnob//K/GvaODGitXxumWEwbt5uStF0f+3z8m2V9PVn6LHgBuuCGctBrnGavTW6kAtrJFn47qT9GZwxzl3oJl3SqWJF4EojAUJQQXeMLw/P8roCB4bpndgFLVE+dT3e+itoQss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nYncLnNW; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-690e9001e01so14162397b3.3;
-        Thu, 08 Aug 2024 13:21:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723148498; x=1723753298; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v6xdS7bzEVOCuR9cOi9wKUV7nBc7NnnlRdFXvp48F9E=;
-        b=nYncLnNWbwXhg4CShQvk1jG9TmGN1h0D4ckG2gFkv02oDuMWfLqFADTpOg/fbmem1c
-         lrG8ucjfdvLfWz3Y0SZ5Flx+50zhTieenFfkD+73y1i8gjugeqUeVvhEID5p12xTNQ8N
-         qK7HrTQqqmzxVOdWN0vrCxGY+XzzU1fX725amDzdYgbHLRhfGUWfDouCMqighfQo+XI4
-         VFNis9rqzZJYqj+G+bne3+ymepBs+NgEyz3O7xsaK+rxjv2vHOhkpGJXdSQSvgvv84Dx
-         VlBshOlksgnO+OeXGzrhWiIJTzDngl8Jr2Z4wwXdMvmFtQ9yZDLMxHTSW8BsB/Exvlf2
-         4vEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723148498; x=1723753298;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v6xdS7bzEVOCuR9cOi9wKUV7nBc7NnnlRdFXvp48F9E=;
-        b=cJcC6DuFsR/Pqa60K1do07JvST8fcUkTLKYjcPhcVsEUtGhnIC91g5ICgN5Rby9LAO
-         gxhLr/3nnN0aZbd5/D33YXriwgILedeJYGmleLtdbwAb3Jqhccim0ya7IkEPcxW97SaP
-         O1fVHELS9PqK+poDy2IZ6IK7RTUNEZUfiGpr53GcATe5n7wL5uE7/zO2CEuacX9OLB/P
-         RcdPXjOvs9AqKEvjjB5ESUCYUVDmahdzHRf6hQdSycds8HzanSsE6n8Op4+XMhye0tYB
-         bqK5zozevFY4gh+/3s9i62rldsAPLq1ItkaEq3mEV4LqstgGsPuawKEzwVdio+cznkE7
-         sCmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUC0gIugNJtppV5SrOEGtGIvcaCWameDZ7odFLMGMm6ZFbtLAtsbTvOKaEVXjL+Pdz8qzex/T21NzoHzidRuMPiHcB6S5a6T4BlUCSn
-X-Gm-Message-State: AOJu0Yz0weKx9xrB/gyQYnmR0aVHhtrqjvR/nzK5C3Sr9m/z2TuIysqo
-	kXvdoYxp7w6Hgc9UXYCGME0rmhV2TD+pLJNfycG6hg362yN/yKWqot4a8jZ7seEVe10UMT8Wpxw
-	Y7xTo10x/cfW/k8ey5qtPshWNklLssF7a
-X-Google-Smtp-Source: AGHT+IECnvIxIQ3ftZOgsj1eDP/P0RZPNJl5MIWsxIG4ZUOjkI7fzrnQb+wb0HqD1rw9kYxeppODNAiRLKkI1Bs5vOw=
-X-Received: by 2002:a05:690c:60ca:b0:64b:75d8:5002 with SMTP id
- 00721157ae682-69bf7355798mr39263347b3.9.1723148498572; Thu, 08 Aug 2024
- 13:21:38 -0700 (PDT)
+	s=arc-20240116; t=1723148590; c=relaxed/simple;
+	bh=LwA9F7XZ2oEMCjw7Kgx97oUzAF53Fmps3bt12FnFCKw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ra+I6xI/izbspUCgqUStwEc9r91Eg6Nbc0IxNxBFXoHNnSdk122xjgChFulKTOOUGZdIV3vs02SQ/HO8JhBA3773TWHluMtJJBynEg3oaPWdSTl33vruV6tHbOJeTSQvAWBPIYS2aqk6MQAeEj0AQk3+Tm8zL6dlw95xsznJoH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FwA5yNNV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D/VTDpu3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723148587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Yq+NG8Hl8l7ZEs/tA7F+DiDs6lzdrkcFIK7wyGTvlU=;
+	b=FwA5yNNVEZGtMwMrKq+5ogSWlfipXpPIs2hDc9c5Ucsy23dEYW58Xri8HLF9YEEjr3tzFN
+	3dVWf7WjM81P7hdRsfy4pJy02klYvRgJ3dJflVyzYBvHybZYmiRdtWCVnyxjrI4RzB1/P8
+	rauVMBhffFg0kwU7Ie/XDp3B5xQbnpuOLTtnYT1sgzTT5DvnJrfov2KDubmuNXSGDLqSzX
+	pJy/keP3cdn01h6Cb2AMLMCz/23XFjnWMrY7o8HaDx2kZutv5fOjDAzYecF1NNEfPXi6kS
+	PA9Zz93VgX5xdiEJZsGqBMUxVYnGWh9UfJTprrzWOb4hAPZCu9km1e2mQ09SNA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723148587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Yq+NG8Hl8l7ZEs/tA7F+DiDs6lzdrkcFIK7wyGTvlU=;
+	b=D/VTDpu3t7nheEw3iMTILhfgEnmqMUh18tjJYKpqfdRz7pF3jpXhue36DBTV1TotOOOili
+	/z/gUZNpBuX53PBg==
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>
+Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: [PATCH v2a 2/3] irqdomain: Allow giving name suffix for domain
+In-Reply-To: <874j7uvkbm.ffs@tglx>
+References: <cover.1723120028.git.mazziesaccount@gmail.com>
+ <7a048c0139e79beb46d887b0cd5a620963ff8ef8.1723120028.git.mazziesaccount@gmail.com>
+ <877ccqvkfm.ffs@tglx> <874j7uvkbm.ffs@tglx>
+Date: Thu, 08 Aug 2024 22:23:06 +0200
+Message-ID: <871q2yvk5x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808040425.5833-1-rosenp@gmail.com> <acb8e8cc-ebc1-4542-a880-8bb081e1a4c7@wanadoo.fr>
-In-Reply-To: <acb8e8cc-ebc1-4542-a880-8bb081e1a4c7@wanadoo.fr>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Thu, 8 Aug 2024 13:21:27 -0700
-Message-ID: <CAKxU2N9qEDyEQUgk33AEWA=gxYZ7EN4n9aosQ0=675QDdWjONg@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: moxart_ether: use devm in probe
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: netdev@vger.kernel.org, u.kleine-koenig@pengutronix.de, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, Aug 8, 2024 at 1:18=E2=80=AFAM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 08/08/2024 =C3=A0 06:03, Rosen Penev a =C3=A9crit :
-> > alloc_etherdev and kmalloc_array are called first and destroyed last.
-> > Safe to use devm to remove frees.
-> >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
->
-> Hi,
->
-> using dmam_alloc_coherent() would go even one step further I think.
-> It would remove moxart_mac_free_memory() completely.
->
-> Then IIUC, using devm_register_netdev() would keep things ordered and
-> moxart_remove() could also be removed completely.
->
-> (by inspection only)
-Right and that's the issue. I don't have hardware to test this on.
-Limiting this to alloc_etherdev and kmalloc_array is safe as they are
-the last to go.
->
-> CJ
->
->
-> >   drivers/net/ethernet/moxa/moxart_ether.c | 19 ++++++-------------
-> >   1 file changed, 6 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/moxa/moxart_ether.c b/drivers/net/eth=
-ernet/moxa/moxart_ether.c
-> > index 96dc69e7141f..06c632c90494 100644
-> > --- a/drivers/net/ethernet/moxa/moxart_ether.c
-> > +++ b/drivers/net/ethernet/moxa/moxart_ether.c
-> > @@ -81,9 +81,6 @@ static void moxart_mac_free_memory(struct net_device =
-*ndev)
-> >               dma_free_coherent(&priv->pdev->dev,
-> >                                 RX_REG_DESC_SIZE * RX_DESC_NUM,
-> >                                 priv->rx_desc_base, priv->rx_base);
-> > -
-> > -     kfree(priv->tx_buf_base);
-> > -     kfree(priv->rx_buf_base);
-> >   }
-> >
-> >   static void moxart_mac_reset(struct net_device *ndev)
-> > @@ -461,15 +458,14 @@ static int moxart_mac_probe(struct platform_devic=
-e *pdev)
-> >       unsigned int irq;
-> >       int ret;
-> >
-> > -     ndev =3D alloc_etherdev(sizeof(struct moxart_mac_priv_t));
-> > +     ndev =3D devm_alloc_etherdev(p_dev, sizeof(struct moxart_mac_priv=
-_t));
-> >       if (!ndev)
-> >               return -ENOMEM;
-> >
-> >       irq =3D irq_of_parse_and_map(node, 0);
-> >       if (irq <=3D 0) {
-> >               netdev_err(ndev, "irq_of_parse_and_map failed\n");
-> > -             ret =3D -EINVAL;
-> > -             goto irq_map_fail;
-> > +             return -EINVAL;
-> >       }
-> >
-> >       priv =3D netdev_priv(ndev);
-> > @@ -511,15 +507,15 @@ static int moxart_mac_probe(struct platform_devic=
-e *pdev)
-> >               goto init_fail;
-> >       }
-> >
-> > -     priv->tx_buf_base =3D kmalloc_array(priv->tx_buf_size, TX_DESC_NU=
-M,
-> > -                                       GFP_KERNEL);
-> > +     priv->tx_buf_base =3D devm_kmalloc_array(p_dev, priv->tx_buf_size=
-,
-> > +                                            TX_DESC_NUM, GFP_KERNEL);
-> >       if (!priv->tx_buf_base) {
-> >               ret =3D -ENOMEM;
-> >               goto init_fail;
-> >       }
-> >
-> > -     priv->rx_buf_base =3D kmalloc_array(priv->rx_buf_size, RX_DESC_NU=
-M,
-> > -                                       GFP_KERNEL);
-> > +     priv->rx_buf_base =3D devm_kmalloc_array(p_dev, priv->rx_buf_size=
-,
-> > +                                            RX_DESC_NUM, GFP_KERNEL);
-> >       if (!priv->rx_buf_base) {
-> >               ret =3D -ENOMEM;
-> >               goto init_fail;
-> > @@ -553,8 +549,6 @@ static int moxart_mac_probe(struct platform_device =
-*pdev)
-> >   init_fail:
-> >       netdev_err(ndev, "init failed\n");
-> >       moxart_mac_free_memory(ndev);
-> > -irq_map_fail:
-> > -     free_netdev(ndev);
-> >       return ret;
-> >   }
-> >
-> > @@ -565,7 +559,6 @@ static void moxart_remove(struct platform_device *p=
-dev)
-> >       unregister_netdev(ndev);
-> >       devm_free_irq(&pdev->dev, ndev->irq, ndev);
-> >       moxart_mac_free_memory(ndev);
-> > -     free_netdev(ndev);
-> >   }
-> >
-> >   static const struct of_device_id moxart_mac_match[] =3D {
->
+
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+
+Devices can provide multiple interrupt lines. One reason for this is that
+a device has multiple subfunctions, each providing its own interrupt line.
+Another reason is that a device can be designed to be used (also) on a
+system where some of the interrupts can be routed to another processor.
+
+A line often further acts as a demultiplex for specific interrupts
+and has it's respective set of interrupt (status, mask, ack, ...)
+registers.
+
+Regmap supports the handling of these registers and demultiplexing
+interrupts, but the interrupt domain code ends up assigning the same name
+for the per interrupt line domains. This causes a naming collision in the
+debugFS code and leads to confusion, as /proc/interrupts shows two separate
+interrupts with the same domain name and hardware interrupt number.
+
+Instead of adding a workaround in regmap or driver code, allow giving a
+name suffix for the domain name when the domain is created.
+
+Add a name_suffix field in the irq_domain_info structure and make
+irq_domain_instantiate() use this suffix if it is given when a domain is
+created.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+Revision history:
+v2 => v2a:
+   Update to name allocation cleanup patch. Fix the invalid NULL return.
+v1 => v2:
+ - typofix in comment. 'collison' to 'collision'.
+---
+ include/linux/irqdomain.h |    3 +++
+ kernel/irq/irqdomain.c    |   32 +++++++++++++++++++++++---------
+ 2 files changed, 26 insertions(+), 9 deletions(-)
+
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -295,6 +295,8 @@ struct irq_domain_chip_generic_info;
+  * @virq_base:		The first Linux interrupt number for legacy domains to
+  *			immediately associate the interrupts after domain creation
+  * @bus_token:		Domain bus token
++ * @name_suffix:	Optional name suffix to avoid collisions when multiple
++ *			domains are added using same fwnode
+  * @ops:		Domain operation callbacks
+  * @host_data:		Controller private data pointer
+  * @dgc_info:		Geneneric chip information structure pointer used to
+@@ -313,6 +315,7 @@ struct irq_domain_info {
+ 	unsigned int				hwirq_base;
+ 	unsigned int				virq_base;
+ 	enum irq_domain_bus_token		bus_token;
++	const char				*name_suffix;
+ 	const struct irq_domain_ops		*ops;
+ 	void					*host_data;
+ #ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -140,11 +140,14 @@ static int alloc_name(struct irq_domain
+ }
+ 
+ static int alloc_fwnode_name(struct irq_domain *domain, const struct fwnode_handle *fwnode,
+-			     enum irq_domain_bus_token bus_token)
++			     enum irq_domain_bus_token bus_token, const char *suffix)
+ {
+-	char *name = bus_token ? kasprintf(GFP_KERNEL, "%pfw-%d", fwnode, bus_token) :
+-				 kasprintf(GFP_KERNEL, "%pfw", fwnode);
++	const char *sep = suffix ? "-" : "";
++	const char *suf = suffix ? : "";
++	char *name;
+ 
++	name = bus_token ? kasprintf(GFP_KERNEL, "%pfw-%s%s%d", fwnode, suf, sep, bus_token) :
++			   kasprintf(GFP_KERNEL, "%pfw-%s", fwnode, suf);
+ 	if (!name)
+ 		return -ENOMEM;
+ 
+@@ -172,13 +175,24 @@ static int alloc_unknown_name(struct irq
+ 	return 0;
+ }
+ 
+-static int irq_domain_set_name(struct irq_domain *domain, const struct fwnode_handle *fwnode,
+-			       enum irq_domain_bus_token bus_token)
++static int irq_domain_set_name(struct irq_domain *domain, const struct irq_domain_info *info)
+ {
+-	struct irqchip_fwid *fwid;
++	enum irq_domain_bus_token bus_token = info->bus_token;
++	const struct fwnode_handle *fwnode = info->fwnode;
+ 
+ 	if (is_fwnode_irqchip(fwnode)) {
+-		fwid = container_of(fwnode, struct irqchip_fwid, fwnode);
++		struct irqchip_fwid *fwid = container_of(fwnode, struct irqchip_fwid, fwnode);
++
++		/*
++		 * The name_suffix is only intended to be used to avoid a name
++		 * collision, when multiple domains are created for a single
++		 * device and the name is picked using a real device node.
++		 * (Typical use-case is regmap-IRQ controllers for devices
++		 * providing more than one physical IRQ.) There should be no
++		 * need to use name_suffix with irqchip-fwnode.
++		 */
++		if (info->name_suffix)
++			return -EINVAL;
+ 
+ 		switch (fwid->type) {
+ 		case IRQCHIP_FWNODE_NAMED:
+@@ -191,7 +205,7 @@ static int irq_domain_set_name(struct ir
+ 		}
+ 
+ 	} else if (is_of_node(fwnode) || is_acpi_device_node(fwnode) || is_software_node(fwnode)) {
+-		return alloc_fwnode_name(domain, fwnode, bus_token);
++		return alloc_fwnode_name(domain, fwnode, bus_token, info->name_suffix);
+ 	}
+ 
+ 	if (domain->name)
+@@ -217,7 +231,7 @@ static struct irq_domain *__irq_domain_c
+ 	if (!domain)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	err = irq_domain_set_name(domain, info->fwnode, info->bus_token);
++	err = irq_domain_set_name(domain, info);
+ 	if (err) {
+ 		kfree(domain);
+ 		return ERR_PTR(err);
 
