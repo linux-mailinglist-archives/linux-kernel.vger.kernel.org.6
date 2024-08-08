@@ -1,184 +1,128 @@
-Return-Path: <linux-kernel+bounces-279228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD1A94BABD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:20:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924D994BA8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8382B217E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:20:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F359728306F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC1A189F5B;
-	Thu,  8 Aug 2024 10:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FD7189F54;
+	Thu,  8 Aug 2024 10:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TnbCJxX4"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PgdJfuFH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EDE189F37
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABB81891BD;
+	Thu,  8 Aug 2024 10:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112413; cv=none; b=VU425PRDhnEdnkpfRqOl1Eoyj8hlgqQF0BoqmU+mliFsTqHTwzVC6Rja6KtMqwoQP2o7j9QFp3tP0Z3fTwcJqF8KrRPpMNgnEyB/FC0AfngrAw6FNKUTDILQZ4dMnso3crpFc0qkQWaYqrno8VC0IRZ8hOszZq7ek9cxrVaASQg=
+	t=1723111955; cv=none; b=jl67Usc6zA5XL1221TKrn87JoVK6vjkufeInAIG/X1sK5QzsRCfvVv0b/7piyCNglLPiyPzfGsnbRo0FsDfB/ClO41pcX8k3INRS3ebflRt3j7lOjSglSXCdgLAvle0au0Z2JEJqEv3qUpOGK+dyw3FtXcL2K/ei+pUCh82n7WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112413; c=relaxed/simple;
-	bh=UhxD8im38+S9o2RE5MKHC1dJ4++2PGyTJMvp2PywTHg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=qIcd607Q5KCNFD5UfWRaVGwMGvn6B5uFDibJOh4rZr6FLBiUHp4vd9hYMLfufG4w7wVUC2jrmVbib281N+n6qegO2rmHJDztfu8/YdsputoS6AMfeQbWBLpHh1GuGvQGygJm56kHP+3xVttEsIPcYgJtRQuGOYjhE/O78zLaEt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TnbCJxX4; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240808102008epoutp02d315b7255303a255d9a6f4e79fb310e5~puZsokEiN3051730517epoutp02Z
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:20:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240808102008epoutp02d315b7255303a255d9a6f4e79fb310e5~puZsokEiN3051730517epoutp02Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723112408;
-	bh=vSskDQ4p+O3Xzvm1qBN34l6sdSHV2WZ5K4DNo5E16Qs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=TnbCJxX4QxqQHlOZpsTQedkhdYibIifpbhK9qAdT7gOVdgi2u59xCQvqB9uFYtcty
-	 gm9s6dBjNlF3y8aUy3uTF0sbCbzg6focFMtDzImaIDlwYTEi97heZn07Ly2q6C/U/L
-	 ULJG1SWtJC2LTXj9zd3v6dkI+MzigQq+dy0NKO90=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240808102008epcas5p3e49ca958ff362cd11c2ca01fd4261fa6~puZsMziXj1041910419epcas5p3d;
-	Thu,  8 Aug 2024 10:20:08 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Wfjj21jm5z4x9Q2; Thu,  8 Aug
-	2024 10:20:06 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9E.D6.09640.6DB94B66; Thu,  8 Aug 2024 19:20:06 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240808101124epcas5p3844c94d3106e6082bf7a91d3e37aef1f~puSEwsnmc0889308893epcas5p3V;
-	Thu,  8 Aug 2024 10:11:24 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240808101124epsmtrp235da5eca8919dc9ef625a0fe276a3e56~puSEvyaxh1894718947epsmtrp2I;
-	Thu,  8 Aug 2024 10:11:24 +0000 (GMT)
-X-AuditID: b6c32a49-aabb8700000025a8-9b-66b49bd60620
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EC.AD.08456.CC994B66; Thu,  8 Aug 2024 19:11:24 +0900 (KST)
-Received: from FDSFTE308 (unknown [107.122.81.79]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240808101122epsmtip21b71e60b704d0fb651bc30a58e0767fc~puSCuDPC_2278622786epsmtip2Q;
-	Thu,  8 Aug 2024 10:11:22 +0000 (GMT)
-From: "Aakarsh Jain" <aakarsh.jain@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Cc: <m.szyprowski@samsung.com>, <hverkuil-cisco@xs4all.nl>,
-	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<conor+dt@kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-	<gost.dev@samsung.com>, <aswani.reddy@samsung.com>,
-	<pankaj.dubey@samsung.com>
-In-Reply-To: <4230387d-0413-4da8-b55a-ac708af05e34@linaro.org>
-Subject: RE: [PATCH V3] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt
- binding
-Date: Thu, 8 Aug 2024 15:41:21 +0530
-Message-ID: <04fb01dae97b$52f88980$f8e99c80$@samsung.com>
+	s=arc-20240116; t=1723111955; c=relaxed/simple;
+	bh=UE231iugHPUW/3bgRFxzB7CNPnl7ZIKI0d+HIKbhipc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sYQyP33q5JBFEtyUAU8/SBIjoGtKJiKpMBUq8zrgIocA4ZeF2VGnSerDQfE3+LzP/zkx/gJLQZjd72Q9P/P8+Lp9GdWSUQ7Dp38KDP4C2v4Ct+Qn3uMBrbPJtcVfXTHmxFTwDp641zeutRYoI/+VJcwyMikKhN6HrzahCk0Huac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PgdJfuFH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92F27C32782;
+	Thu,  8 Aug 2024 10:12:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723111955;
+	bh=UE231iugHPUW/3bgRFxzB7CNPnl7ZIKI0d+HIKbhipc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PgdJfuFHvbuVlMSiUhVZMyxnPRI1Y3yXZbtj9xbjdLCJnTRFqGZtwWFeCD7UHfZdv
+	 dXuPbJDZ+6cEYSClORIp3hJFIRrBcfhvWiHMVkFeGUywDmjTiw8Epel3X1VktDpnsB
+	 FAlnQ2+uJpMtu9YiKXdYbId8FRgr9q/A9Mb9DdEVexokCEWJ7aaHrunaWXHdHQLaoI
+	 mGgjXHBXfmmt6TlfT977UblTQ6kHH+VCm/fB7pQ6kBw9q13T3ZbpxyyXKPMEvhtTbt
+	 12V/3wj55pWlUoZICV65a4Qw4Oqd+Ix0z4r5R5sGk9ulsYDqdH+mX8vpA7TcniU/Ub
+	 O+v72ZkDu1brQ==
+Message-ID: <82c52a82-2d20-4ad9-9319-b1eb5ba4bbf5@kernel.org>
+Date: Thu, 8 Aug 2024 12:12:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: dmaengine: zynqmp_dma: Add a new
+ compatible string
+To: Abin Joseph <abin.joseph@amd.com>, vkoul@kernel.org,
+ michal.simek@amd.com, robh@kernel.org, conor+dt@kernel.org,
+ krzk+dt@kernel.org, u.kleine-koenig@pengutronix.de,
+ radhey.shyam.pandey@amd.com, harini.katakam@amd.com
+Cc: git@amd.com, dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240808100024.317497-1-abin.joseph@amd.com>
+ <20240808100024.317497-2-abin.joseph@amd.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240808100024.317497-2-abin.joseph@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQINSNkawEI3KcSuc3/gK7NSY7HThgItsEw+AxAn8TKxjnWJkA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCJsWRmVeSWpSXmKPExsWy7bCmlu612VvSDHY/Ybc4tHkru8WaveeY
-	LOYfOcdqcfPATiaLizPvslj0vXjIbLH3NVB20+NrrBaXd81hs+jZsJXVYsb5fUwWa4/cZbdY
-	tPULu0Xr3iPsDnwem1Z1snncubaHzWPzknqPvi2rGD0+b5LzOPX1M3sAW1S2TUZqYkpqkUJq
-	XnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QtUoKZYk5pUChgMTiYiV9
-	O5ui/NKSVIWM/OISW6XUgpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7Iyf+y4zFnTxVFxe
-	uZepgXE2VxcjJ4eEgInE+vkdjCC2kMBuRokNOxK7GLmA7E+MEgvX7mCGcL4xSjzdsJMdpuPN
-	0kksEIm9jBIn7x5ig3CeM0r8uDAfbBabgL7E/VM9rCAJEYGjjBIPtjwEm8Us0Mkk8e3eZCaQ
-	Kk4BO4kzvfPA5goLBEr8uz8JrJtFQEXiauNNVhCbV8BSonX2RChbUOLkzCcsIDazgLzE9rdz
-	mCFuUpD4+XQZWI2IgJPE4jXnGCFqxCWO/uwBWywhcIFDYvqEVhaIBheJ9+saoR4Slnh1fAuU
-	LSXx+d1eNgg7WeLxopdQC3Ik1u+ZAtVrL3HgyhwgmwNogabE+l36EGFZiamn1jFB7OWT6P39
-	hAkiziuxYx6MrSYx584PVghbRuLw6qWMExiVZiF5bRaS12YheWEWwrYFjCyrGCVTC4pz01OL
-	TQsM81LL4VGenJ+7iRGcnLU8dzDeffBB7xAjEwfjIUYJDmYlEd7m8E1pQrwpiZVVqUX58UWl
-	OanFhxhNgeE9kVlKNDkfmB/ySuINTSwNTMzMzEwsjc0MlcR5X7fOTRESSE8sSc1OTS1ILYLp
-	Y+LglGpgMvvT8X35sXvtuXd8jon9WnTwxNXK+e5Bf/y7185W+bvl84vXMuuUp0V8jqixD5D+
-	8XXq9Fm+f+puxhe/1kve8Zl1Hcdvsbr6hX9Trvy+9nRP111xPa/D6VwMZR/PfD11QaP/tGMW
-	9xyZqfw5hzpC/rHurHw9P0Ds0OGtrNJ/YgKO/n8mJ3qSW9/VrVXsc+Te7IMTZboi/t7RWFfd
-	MOd9cLPeM7FElaNryj76rGBO6V2044xqYE87jweD9m1mG7GaTsWDd+Zl5TEs2+mqPTdj34R1
-	QhxHGoo3fE0QZIy8oZofMn9J1PUtikv+TOo4mDHpQtiZG9yV5gYitXJ3CmQm6ln85r8ryCbM
-	ZDxJ0KeeTYmlOCPRUIu5qDgRALk1ThZXBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSvO6ZmVvSDKbdl7M4tHkru8WaveeY
-	LOYfOcdqcfPATiaLizPvslj0vXjIbLH3NVB20+NrrBaXd81hs+jZsJXVYsb5fUwWa4/cZbdY
-	tPULu0Xr3iPsDnwem1Z1snncubaHzWPzknqPvi2rGD0+b5LzOPX1M3sAWxSXTUpqTmZZapG+
-	XQJXxs99lxkLungqLq/cy9TAOJuri5GTQ0LAROLN0kksXYxcHEICuxklpu69ywaRkJH433aM
-	HcIWllj57zmYLSTwlFFi4+RIEJtNQF/i/qkeVpBmEYGTjBL9Z1rAHGaBiUwSq7/MYIUYe5BR
-	YnLjX7B2TgE7iTO988BsYQF/ifUXfzCB2CwCKhJXG2+ygti8ApYSrbMnQtmCEidnPmEBsZkF
-	tCWe3nwKZctLbH87hxniPAWJn0+XgdWLCDhJLF5zjhGiRlzi6M8e5gmMwrOQjJqFZNQsJKNm
-	IWlZwMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOEK1tHYw7ln1Qe8QIxMH4yFG
-	CQ5mJRHe5vBNaUK8KYmVValF+fFFpTmpxYcYpTlYlMR5v73uTRESSE8sSc1OTS1ILYLJMnFw
-	SjUwcRidPZgcsEPYzWeP4dov1me36hvKPpSp+ZRq6esb+srecea8Vbts+w2//96cflR46/eP
-	8cYNB1iTN7yMyEnqnVuw/vKS5zNaH4XFqF/rfBp7csI0oc8RvrpnWatXFupyH1/Y83hGYJH1
-	p3kycyeEFrx0z7e6ap/22Sco6uatWT9uOby//TzKKfPJ3lS2fxqfz61xajmf5jDZYvfDoEVn
-	lt5OO7i3eXFJijJPrPHJCqZ//RESF9pPcmfEtVt9UdlWai9v9GLhzuOz3TJ31HU+3Ky9zSLi
-	sP2KiTXPb32dqT/pboXRezOriLytO/ctEBRz7N7xgyU+o8x3weqshz7T7h078N+/UNHjpyzP
-	lKCNUUosxRmJhlrMRcWJAB+g/Ik/AwAA
-X-CMS-MailID: 20240808101124epcas5p3844c94d3106e6082bf7a91d3e37aef1f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240808083027epcas5p153e64139a5e71448b1ea3f04af1df2bd
-References: <CGME20240808083027epcas5p153e64139a5e71448b1ea3f04af1df2bd@epcas5p1.samsung.com>
-	<20240808081815.88711-1-aakarsh.jain@samsung.com>
-	<4230387d-0413-4da8-b55a-ac708af05e34@linaro.org>
 
-
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Sent: 08 August 2024 15:27
-> To: Aakarsh Jain <aakarsh.jain@samsung.com>; linux-arm-
-> kernel@lists.infradead.org; linux-media@vger.kernel.org; linux-
-> kernel@vger.kernel.org; devicetree@vger.kernel.org
-> Cc: m.szyprowski@samsung.com; hverkuil-cisco@xs4all.nl;
-> robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
-> conor+dt@kernel.org; linux-samsung-soc@vger.kernel.org;
-> gost.dev@samsung.com; aswani.reddy@samsung.com;
-> pankaj.dubey@samsung.com
-> Subject: Re: [PATCH V3] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt
-> binding
+On 08/08/2024 12:00, Abin Joseph wrote:
+> Add compatible string "amd,versal2-dma-1.0" to support AMD Versal Gen 2
+> platform.
 > 
-> On 08/08/2024 10:18, Aakarsh Jain wrote:
-> > s5p-mfc bindings to json-schema is already merged with this commit
-> > 538af6e5856b ("dt-bindings: media: s5p-mfc:
-> > convert bindings to json-schema"). Remove s5p-mfc.txt file.
-> >
-> > Fixes: 538af6e5856b ("dt-bindings: media: s5p-mfc: convert bindings to
-> > json-schema")
-> > Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
-> > changelog:
-> > v1->v2
-> > Add Fixes tag suggested by Krzysztof
-> > v2->v3
-> > Aligned Fixes tag in oneline and corrected commit message
-> > Link:
-> > https://patchwork.kernel.org/project/linux-media/patch/20240213045733.
-> > 63876-1-aakarsh.jain@samsung.com/
+> AMD Versal Gen 2 has 8 LPD DMA IPs in PS that can be used as general
+> purpose DMAs which is designed to support memory to memory and memory to
+> IO buffer transfer. Versal Gen 2 DMA IP has different interrupt register
+> offset.
 > 
-> Something got corrupted in your changelog.
-> 
-I just realized that it would go as part of commit message.
-Do you want me to respin this patch or you will take care while applying?
+> Signed-off-by: Abin Joseph <abin.joseph@amd.com>
+> ---
 
-Thanks
-> 
-> Best regards,
-> Krzysztof
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Best regards,
+Krzysztof
 
 
