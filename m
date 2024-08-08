@@ -1,106 +1,222 @@
-Return-Path: <linux-kernel+bounces-280191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF2494C6F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:21:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEB894C6F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8AD1C21E83
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 475AE2877E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA32615ECE9;
-	Thu,  8 Aug 2024 22:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114D915EFBC;
+	Thu,  8 Aug 2024 22:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZuCwP/rS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iDe+91GT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A332515A85E;
-	Thu,  8 Aug 2024 22:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE8715A85E;
+	Thu,  8 Aug 2024 22:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723155704; cv=none; b=gOqpnKWOsUXcyHgUq2P3WRONUX0FLQk0qF0kD9JxDj+CpaU/ejPjO665CqxVzd/akBq0x90UtcV9aB2U7qe3VbSXSFv5vPym5pL4ZmIehbATV85V2zo1yPYCd5NyHVKluRALy58I7KyVL85GSa/21yvuXz0qUKBqYgZkzc8A3P0=
+	t=1723155988; cv=none; b=ALygsZv/QwoPP0Fu0bzre7kM9J+tCXKR7yYUz/9QOU0LNJlHg13oGD4iamozO/CHOyiLkcjrdEZDYwlqZtDCcqA5sZh3v+wQXpQSYLhc5uaqHK/EURPbUYNzHKmMdzm4uPARq9ka8qaNxocqHkepf6tDF+lWuUkOFpQxwUxaSOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723155704; c=relaxed/simple;
-	bh=18WQLSx38osmYOgpmcaBIc7FiYWManq3aNioNdHQhZE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UPfru7PDSdTozZzwS3Jno6J1Y2ItbJkPUpxr/27NU2mM4k9HXlhE2CkbCGaxdZRMqsagMOBJdW1mPyHuR2uq15u4KWsSrmosrY0X8X0b2aUM04Y2ta4ZDP5Q+AccwAvDnv6jYac12M1oDp3khdqbe+pRN8gBZmYazFpwj3mBfI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=fail smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZuCwP/rS; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723155702; x=1754691702;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=18WQLSx38osmYOgpmcaBIc7FiYWManq3aNioNdHQhZE=;
-  b=ZuCwP/rShStcDTEM7axii6lAWJqyT6v6ZUl/uPh/dZGRScR5WctERwhM
-   h3Kxnk6oUFgEufRW09vNIqcBxNshMFlqC8C6uK6ASilfkfLsf+OpNKt0N
-   Y/+Y9txVVrhDqL6cPZAtT+OhgjMMAIVod8z/5/bxOdx32ZahJqy5g6Cyv
-   07Ffl7GE494NpksbX1fdzVV0s1Cx/ic4PhFLyuyUvQiYZ4ZGNZJV4aQqP
-   N0V5cJKQc8bD2cszroJBFs7HsyEGIIzdqxmhfHEDrPTvoHKvV4/y8RAh5
-   QuhblcLH9HfBhmaOpjaNjYhFdci+GUAQVdoBcW6e/UXJ73+uQdF574LAV
-   A==;
-X-CSE-ConnectionGUID: cEzZ+1SLTXaW4IMh0JqqYw==
-X-CSE-MsgGUID: nOwQvyU9QYOu/T0jIngE2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21194496"
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="21194496"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 15:21:42 -0700
-X-CSE-ConnectionGUID: M8UTKyQhScuq0XSQe/NQBw==
-X-CSE-MsgGUID: wVCVB8OxRtS9ag2/sGaSwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="57330120"
-Received: from mihailpu-mobl.ger.corp.intel.com (HELO colinkin-mobl.ger.corp.intel.com) ([10.245.145.146])
-  by fmviesa008.fm.intel.com with ESMTP; 08 Aug 2024 15:21:39 -0700
-From: Colin Ian King <colin.king@intel.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ACPI: align slab for improved memory performance
-Date: Thu,  8 Aug 2024 23:21:38 +0100
-Message-ID: <20240808222138.51-1-colin.king@intel.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1723155988; c=relaxed/simple;
+	bh=aQKPko7oyNxXCPgEAztG4lUMdjyzE531e4ugA7Yiask=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aT1UamiaAqPIt0JlkXz3ZdbL3NFfUGhaYslxhzvEpLXr89/tSVjd4WI2NKpuCoETvIFhbqxLPIX7jvUFsHQT1bJv4s+2YEWROM23fZQlESxZHbEHuWI0iMtzdvKCH1290bF7+BY2IVhoyO7SSpEEJn5Tr75i9nKuvoIq7E4daI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iDe+91GT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478LZi8e016208;
+	Thu, 8 Aug 2024 22:26:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=EK1i03qsYytFn0u1BrmUqL3n
+	sZybCV3ZW6JZjdd6FcE=; b=iDe+91GTFIL0MHmpbWPrL/r1ykxcJfmTanra2ZhK
+	0AF2xvVPmuiZKrnKlpOZRi+M+/srLeaFkSboZS3PJ6TmzPe3KG9Z9jPeN3YHJqik
+	LK8xLRTKltyoOpYW/ot9udek9FsF5st9FnyH8+eClISOSfGX1xZhNsnFE5eqrnrm
+	EvhfqQ5yW26v7eAkscdODD9xLZJm1TUPjyy0on67lZT7sdAwtePG4Cthmhy8kz7R
+	KB8If1Vbc9UFXTLsOFdDmVptbDf6lpgBGaxILzw8c1JHvYKmHVLEWUwPpap6WTJm
+	uWOoPMHSJsqLu+NBzCXVeLByERTFQyvBWaTZF2+2QLBo2g==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vue3sy7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 22:26:14 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 478MQCci019345
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 Aug 2024 22:26:12 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 8 Aug 2024 15:26:12 -0700
+Date: Thu, 8 Aug 2024 15:26:12 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: David Hildenbrand <david@redhat.com>
+CC: Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Bonzini
+	<pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Fuad Tabba
+	<tabba@google.com>, Patrick Roy <roypat@amazon.co.uk>,
+        <qperret@google.com>, Ackerley Tng <ackerleytng@google.com>,
+        <linux-coco@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <kvm@vger.kernel.org>
+Subject: Re: [PATCH RFC 4/4] mm: guest_memfd: Add ability for mmap'ing pages
+Message-ID: <20240808151910630-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
+ <20240805-guest-memfd-lib-v1-4-e5a29a4ff5d7@quicinc.com>
+ <4cdd93ba-9019-4c12-a0e6-07b430980278@redhat.com>
+ <20240806093625007-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <a7c5bfc0-1648-4ae1-ba08-e706596e014b@redhat.com>
+ <20240808101944778-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <6f3b5c38-fc33-43cd-8ab7-5b0f49169d5c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <6f3b5c38-fc33-43cd-8ab7-5b0f49169d5c@redhat.com>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 33CsOkwwEsaxHOqmdCGwMzUMEIrCS5Lo
+X-Proofpoint-ORIG-GUID: 33CsOkwwEsaxHOqmdCGwMzUMEIrCS5Lo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-08_22,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxlogscore=915
+ malwarescore=0 impostorscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408080160
 
-Enabling SLAB_HWCACHE_ALIGN for the ACPI object caches improves
-boot speed in the ACPICA core for object allocation and free'ing
-especially in the AML parsing and execution phases in boot. Testing
-with 100 boots shows an average boot saving in acpi_init of ~35000
-usecs compared to the unaligned version. Most of the ACPI objects
-being allocated and free'd are of very short life times in the
-critical paths for parsing and execution, so the extra memory used
-for alignment isn't too onerous.
+On Thu, Aug 08, 2024 at 11:55:15PM +0200, David Hildenbrand wrote:
+> On 08.08.24 23:41, Elliot Berman wrote:
+> > On Wed, Aug 07, 2024 at 06:12:00PM +0200, David Hildenbrand wrote:
+> > > On 06.08.24 19:14, Elliot Berman wrote:
+> > > > On Tue, Aug 06, 2024 at 03:51:22PM +0200, David Hildenbrand wrote:
+> > > > > > -	if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
+> > > > > > +	if (!ops->accessible && (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP)) {
+> > > > > >     		r = guest_memfd_folio_private(folio);
+> > > > > >     		if (r)
+> > > > > >     			goto out_err;
+> > > > > > @@ -107,6 +109,82 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
+> > > > > >     }
+> > > > > >     EXPORT_SYMBOL_GPL(guest_memfd_grab_folio);
+> > > > > > +int guest_memfd_make_inaccessible(struct file *file, struct folio *folio)
+> > > > > > +{
+> > > > > > +	unsigned long gmem_flags = (unsigned long)file->private_data;
+> > > > > > +	unsigned long i;
+> > > > > > +	int r;
+> > > > > > +
+> > > > > > +	unmap_mapping_folio(folio);
+> > > > > > +
+> > > > > > +	/**
+> > > > > > +	 * We can't use the refcount. It might be elevated due to
+> > > > > > +	 * guest/vcpu trying to access same folio as another vcpu
+> > > > > > +	 * or because userspace is trying to access folio for same reason
+> > > > > 
+> > > > > As discussed, that's insufficient. We really have to drive the refcount to 1
+> > > > > -- the single reference we expect.
+> > > > > 
+> > > > > What is the exact problem you are running into here? Who can just grab a
+> > > > > reference and maybe do nasty things with it?
+> > > > > 
+> > > > 
+> > > > Right, I remember we had discussed it. The problem I faced was if 2
+> > > > vcpus fault on same page, they would race to look up the folio in
+> > > > filemap, increment refcount, then try to lock the folio. One of the
+> > > > vcpus wins the lock, while the other waits. The vcpu that gets the
+> > > > lock vcpu will see the elevated refcount.
+> > > > 
+> > > > I was in middle of writing an explanation why I think this is best
+> > > > approach and realized I think it should be possible to do
+> > > > shared->private conversion and actually have single reference. There
+> > > > would be some cost to walk through the allocated folios and convert them
+> > > > to private before any vcpu runs. The approach I had gone with was to
+> > > > do conversions as late as possible.
+> > > 
+> > > We certainly have to support conversion while the VCPUs are running.
+> > > 
+> > > The VCPUs might be able to avoid grabbing a folio reference for the
+> > > conversion and only do the folio_lock(): as long as we have a guarantee that
+> > > we will disallow freeing the folio in gmem, for example, by syncing against
+> > > FALLOC_FL_PUNCH_HOLE.
+> > > 
+> > > So if we can rely on the "gmem" reference to the folio that cannot go away
+> > > while we do what we do, we should be fine.
+> > > 
+> > > <random though>
+> > > 
+> > > Meanwhile, I was thinking if we would want to track the references we
+> > > hand out to "safe" users differently.
+> > > 
+> > > Safe references would only be references that would survive a
+> > > private<->shared conversion, like KVM MMU mappings maybe?
+> > > 
+> > > KVM would then have to be thought to return these gmem references
+> > > differently.
+> > > 
+> > > The idea would be to track these "safe" references differently
+> > > (page->private?) and only allow dropping *our* guest_memfd reference if all
+> > > these "safe" references are gone. That is, FALLOC_FL_PUNCH_HOLE would also
+> > > fail if there are any "safe" reference remaining.
+> > > 
+> > > <\random though>
+> > > 
+> > 
+> > I didn't find a path in filemap where we can grab folio without
+> > increasing its refcount. I liked the idea of keeping track of a "safe"
+> > refcount, but I believe there is a small window to race comparing the
+> > main folio refcount and the "safe" refcount.
+> 
+> There are various possible models. To detect unexpected references, we could
+> either use
+> 
+> folio_ref_count(folio) == gmem_folio_safe_ref_count(folio) + 1
+> 
+> [we increment both ref counter]
+> 
+> or
+> 
+> folio_ref_count(folio) == 1
+> 
+> [we only increment the safe refcount and let other magic handle it as
+> described]
+> 
+> A vcpu could have
+> > incremented the main folio refcount and on the way to increment the safe
+> > refcount. Before that happens, another thread does the comparison and
+> > sees a mismatch.
+> 
+> Likely there won't be a way around coming up with code that is able to deal
+> with such temporary, "speculative" folio references.
+> 
+> In the simplest case, these references will be obtained from our gmem code
+> only, and we'll have to detect that it happened and retry (a seqcount would
+> be a naive solution).
+> 
+> In the complex case, these references are temporarily obtained from other
+> core-mm code -- using folio_try_get(). We can minimize some of them
+> (speculative references from GUP or the pagecache), and try optimizing
+> others (PFN walkers like page migration).
+> 
+> But likely we'll need some retry magic, at least initially.
+> 
 
-Signed-off-by: Colin Ian King <colin.king@intel.com>
----
- drivers/acpi/osl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I thought retry magic would not fly. I'll try this out.
 
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index 70af3fbbebe5..dab3d5089635 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -1549,7 +1549,7 @@ void acpi_os_release_lock(acpi_spinlock lockp, acpi_cpu_flags not_used)
- acpi_status
- acpi_os_create_cache(char *name, u16 size, u16 depth, acpi_cache_t **cache)
- {
--	*cache = kmem_cache_create(name, size, 0, 0, NULL);
-+	*cache = kmem_cache_create(name, size, 0, SLAB_HWCACHE_ALIGN, NULL);
- 	if (*cache == NULL)
- 		return AE_ERROR;
- 	else
--- 
-2.45.2
+Thanks,
+Elliot
 
 
