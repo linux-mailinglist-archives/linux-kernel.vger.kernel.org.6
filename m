@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-278990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EDB94B76F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A3E94B772
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014681F22334
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:17:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8739A1C235EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 07:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B2018EFDA;
-	Thu,  8 Aug 2024 07:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610C418F2E3;
+	Thu,  8 Aug 2024 07:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZM06mKVk"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HhHKjZTN"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF2818E03F;
-	Thu,  8 Aug 2024 07:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F5E18E740;
+	Thu,  8 Aug 2024 07:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723101123; cv=none; b=QcMGAa3i4naWwhJKK2eiEOU3+jX6gDfJzQiv76erNhE7GoENVDcOwPOme06Eqm5AJ7GAehg2KZBKcs5pL6m59XZxt+re3J00qNF0/irVAq24kOJ7cF6bb1qwoflRr/3now9+2K2U+RrPBjWyPFr0YE26jxG8MviJWlB4gY/MxeE=
+	t=1723101124; cv=none; b=lGMJF6l2sXLS2jDYrGF89uiYoA/7zdrV02jdxIhGx2p/iZ/yKedXpFtEXy79Zk8cYgvXwv+a5jIVD06GBexQpaYEpodu605iTzSosZQCfbjEa4X9qEdZ9jmYhAV9V4ckA0J7AQNBkwZffh0ii/ijH4yRczQi7858GQKb5JASVRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723101123; c=relaxed/simple;
-	bh=f/hrRqpvgSWR7o8SqjfiRErULoXGgJxRx/Q8mSLYBh0=;
+	s=arc-20240116; t=1723101124; c=relaxed/simple;
+	bh=r1/o0ZpD2s4W36oH1G6fvDGnRurZP3VHkF0V9MGkaAU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N4Obi3CX62SlYm4UpaQ4wGzn20BotFYP850vo1b2lEu/5mwL/j8uE4paARXhiSD9+NP2ZiRWuGAgEdDnU2l32GnfQ7NrILi6IKm2wv76nmPOLiDz18Zklj7xRFS/Z6gJjy+nAMQO6xaHxmH7vghdWYsp9ofF9/NUhpAEsm0Cnw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZM06mKVk; arc=none smtp.client-ip=217.70.183.198
+	 MIME-Version; b=OoHmaZEIai+NBQ4Xo7kFCOdIkSP6CMIbrEhKh3147cqRNZm7X1mlmXYzIsiREt/ei082B1HQANbIxyxfdUAvWO331RdM4JMoZv1x6Hf/y9yXqn/+rn88njA/bS24LOafmhV60pfmCGarp2yDh4rXE2r8V7YKKYnxgWNItGxXEds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HhHKjZTN; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 8B277C000E;
-	Thu,  8 Aug 2024 07:11:59 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 51B8AC000B;
+	Thu,  8 Aug 2024 07:12:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1723101120;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZrOLWiN4Z4gUXHz3D+P5LAM+sQ2zdU0ZhJY0pukQIhM=;
-	b=ZM06mKVkWxip8jeTHbTGOzVT2AN+OnEHd+U/xXElUS450tiav/PKKlL8o0hDfhKS70RkxJ
-	0J2M8fMrkf89VgA46ppnyJV08EMTU/FAR1lOTgjw4ND/w8E3WuyGAYwjta74BltWxU0ob3
-	NuLpdCDdAGrWY+Z8/pJ/TzjfRHPPPkzStEegwqkdeEA3d4HKz+nKLDAuNDE/1w4szjq+eA
-	DFmurRVc+dC0qfA8T2I8r9SHKSV/A6pj3iRsf5RmNqQkW4/wfRMF4rRIf6DuHSF5zYIK2s
-	VwHnRHlLdc3qAC+lYbxRc1N2wg6xGfWFVeVwJuKIzePWACmgvORFyPrp5u0+wA==
+	bh=Ns1shNAo8zEhYUmPszlirWDSVtM9okYPzpFYT+pVz24=;
+	b=HhHKjZTN3TIWxgS9BA+NzIJH9M0Nw1IJKYJ3QvoNPHSduDj0Na/SmlST0OLz7qYRiuX2PD
+	3HOyFQiPPMnFnEufReTfQuPQ2U/CuW6FKWjpxr8SwTjljWAWRjqzP3yuuuft75lyzgTQK7
+	zKGxCjYi09J7rP3bG2Vv3HE8xqzOzdHIYPz6okN6VIqVj6bJvoXu1eb4OHekfsSOBO7tY1
+	idbrXx8U7sQGpegZ7pmXz9h+CR/E9IkkqTjoD4bhjQgAqgZnJJ3Qv8PApwBMa/VrkfuSYC
+	6OU/Sn737ElhQ8S8GKpYkimjX3CJCf2fHuQKpgZM8vl+MO6sJT6wG0sr8wJCjQ==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Herve Codina <herve.codina@bootlin.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
@@ -58,9 +58,9 @@ Cc: linuxppc-dev@lists.ozlabs.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 28/36] soc: fsl: cpm1: qmc: Rename qmc_chan_command()
-Date: Thu,  8 Aug 2024 09:11:21 +0200
-Message-ID: <20240808071132.149251-29-herve.codina@bootlin.com>
+Subject: [PATCH v2 29/36] soc: fsl: cpm1: qmc: Handle RPACK initialization
+Date: Thu,  8 Aug 2024 09:11:22 +0200
+Message-ID: <20240808071132.149251-30-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240808071132.149251-1-herve.codina@bootlin.com>
 References: <20240808071132.149251-1-herve.codina@bootlin.com>
@@ -73,48 +73,73 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-Current code handles CPM1 version of QMC and qmc_chan_command() is
-clearly CPM1 specific.
+Current code handles the CPM1 version of QMC, RPACK does not need to
+be initialized. This is not the case in the QUICC Engine (QE) version.
 
-In order to prepare the support for the QUICC Engine (QE) version,
-rename qmc_chan_command() to reflect that point.
+In preparation of the support for QE, initialize the RPACK register
+when the receiver is initialized and each time it is restarted.
+
+This additional RPACK initialization has no impact in the CPM1 version
+of QMC.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/soc/fsl/qe/qmc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/soc/fsl/qe/qmc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index b95227378f97..272da250a763 100644
+index 272da250a763..63af2608c3cd 100644
 --- a/drivers/soc/fsl/qe/qmc.c
 +++ b/drivers/soc/fsl/qe/qmc.c
-@@ -794,7 +794,7 @@ static int qmc_chan_setup_tsa_rx(struct qmc_chan *chan, bool enable)
- 	return qmc_chan_setup_tsa_32rx(chan, &info, enable);
- }
+@@ -221,6 +221,7 @@ struct qmc_data {
+ 	u32 zistate; /* Initial ZISTATE value */
+ 	u32 zdstate_hdlc; /* Initial ZDSTATE value (HDLC mode) */
+ 	u32 zdstate_transp; /* Initial ZDSTATE value (Transparent mode) */
++	u32 rpack; /* Initial RPACK value */
+ };
  
--static int qmc_chan_command(struct qmc_chan *chan, u8 qmc_opcode)
-+static int qmc_chan_cpm1_command(struct qmc_chan *chan, u8 qmc_opcode)
- {
- 	return cpm_command(chan->id << 2, (qmc_opcode << 4) | 0x0E);
- }
-@@ -813,7 +813,7 @@ static int qmc_chan_stop_rx(struct qmc_chan *chan)
+ struct qmc {
+@@ -552,6 +553,7 @@ int qmc_chan_read_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
+ 	/* Restart receiver if needed */
+ 	if (chan->is_rx_halted && !chan->is_rx_stopped) {
+ 		/* Restart receiver */
++		qmc_write32(chan->s_param + QMC_SPE_RPACK, chan->qmc->data->rpack);
+ 		qmc_write32(chan->s_param + QMC_SPE_ZDSTATE,
+ 			    chan->mode == QMC_TRANSPARENT ?
+ 				chan->qmc->data->zdstate_transp :
+@@ -980,6 +982,7 @@ static int qmc_chan_start_rx(struct qmc_chan *chan)
  	}
  
- 	/* Send STOP RECEIVE command */
--	ret = qmc_chan_command(chan, 0x0);
-+	ret = qmc_chan_cpm1_command(chan, 0x0);
- 	if (ret) {
- 		dev_err(chan->qmc->dev, "chan %u: Send STOP RECEIVE failed (%d)\n",
- 			chan->id, ret);
-@@ -850,7 +850,7 @@ static int qmc_chan_stop_tx(struct qmc_chan *chan)
- 	}
+ 	/* Restart the receiver */
++	qmc_write32(chan->s_param + QMC_SPE_RPACK, chan->qmc->data->rpack);
+ 	qmc_write32(chan->s_param + QMC_SPE_ZDSTATE,
+ 		    chan->mode == QMC_TRANSPARENT ?
+ 			chan->qmc->data->zdstate_transp :
+@@ -1405,6 +1408,7 @@ static int qmc_setup_chan(struct qmc *qmc, struct qmc_chan *chan)
+ 	qmc_write32(chan->s_param + QMC_SPE_TSTATE, chan->qmc->data->tstate);
+ 	qmc_write32(chan->s_param + QMC_SPE_RSTATE, chan->qmc->data->rstate);
+ 	qmc_write32(chan->s_param + QMC_SPE_ZISTATE, chan->qmc->data->zistate);
++	qmc_write32(chan->s_param + QMC_SPE_RPACK, chan->qmc->data->rpack);
+ 	if (chan->mode == QMC_TRANSPARENT) {
+ 		qmc_write32(chan->s_param + QMC_SPE_ZDSTATE, chan->qmc->data->zdstate_transp);
+ 		qmc_write16(chan->s_param + QMC_SPE_TMRBLR, 60);
+@@ -1544,6 +1548,8 @@ static void qmc_irq_gint(struct qmc *qmc)
+ 			/* Restart the receiver if needed */
+ 			spin_lock_irqsave(&chan->rx_lock, flags);
+ 			if (chan->rx_pending && !chan->is_rx_stopped) {
++				qmc_write32(chan->s_param + QMC_SPE_RPACK,
++					    chan->qmc->data->rpack);
+ 				qmc_write32(chan->s_param + QMC_SPE_ZDSTATE,
+ 					    chan->mode == QMC_TRANSPARENT ?
+ 						chan->qmc->data->zdstate_transp :
+@@ -1810,6 +1816,7 @@ static const struct qmc_data qmc_data_cpm1 = {
+ 	.zistate = 0x00000100,
+ 	.zdstate_hdlc = 0x00000080,
+ 	.zdstate_transp = 0x18000080,
++	.rpack = 0x00000000,
+ };
  
- 	/* Send STOP TRANSMIT command */
--	ret = qmc_chan_command(chan, 0x1);
-+	ret = qmc_chan_cpm1_command(chan, 0x1);
- 	if (ret) {
- 		dev_err(chan->qmc->dev, "chan %u: Send STOP TRANSMIT failed (%d)\n",
- 			chan->id, ret);
+ static const struct of_device_id qmc_id_table[] = {
 -- 
 2.45.0
 
