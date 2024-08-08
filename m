@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-279773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C7B94C1AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:43:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADFEA94C1AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 17:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3EAC1F218F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:43:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3061D1F26939
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 15:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBBD18FDA6;
-	Thu,  8 Aug 2024 15:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6A518FDA2;
+	Thu,  8 Aug 2024 15:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="odX2AyLr"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="lfdwOovR"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06ABC19007E
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2311219048A
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 15:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723131766; cv=none; b=gbqOIHCqyntL3b4CaCV19gXw1BfcbbI9WtFyk5U2gybOfQxCVxg2zapF3U/PtrPmII0zJNwCUXKJWpg5BPVPK9POvBbFHkyS3OfFeybktSu5vCRmLs8JNQv481SZBrPpcUoy0zAIm3OYEACJT774LFszQ9srGxLcD3royGmUFqo=
+	t=1723131768; cv=none; b=QN+BEUL+JtmWzdYZKLl4XQaKOpvdOiJZrB16Z3CS8rklxfY5fM7G2J0VX93WqW9+UYcBlljEi3epXqFA9jlTgOQKAw/5eSbG6jCqJtF+kcLjP9zWQ/Hma/CLZ9JyXizL2GIfJRDap4YTbgwDamzUu8Ltcj2k/UY39n/JSMDcXQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723131766; c=relaxed/simple;
-	bh=KzCccIwCfnqYYKbqVUPtNw8gt5c4QzHqTyrIudH/hWU=;
+	s=arc-20240116; t=1723131768; c=relaxed/simple;
+	bh=barVuvVWK8KR6ESCkmFpcAZAOty3u4GD5RV7yz86z3E=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KrDN5wpVEMHnCAPeF8J3weg4NkZtmr33H34XSwhnAWgY+KRRMLtVbx/wKqGlez0oYicF2FDlbp/X//gK1kS9z9ORF4L8UcxdI7rPCt8FjRU70bavBA5/CIau2YM+A9ASPu1oU+r40GJwOws8S0UTLkV4jvaSEjHQNoOYpg+NFX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=odX2AyLr; arc=none smtp.client-ip=209.85.219.53
+	 MIME-Version; b=Ero+6eYM6b+Fbe1k6e/hwfaVW9/WAut453mcG3lhDHxge5UxWM3OCphLEm4/EzYAEp+x0eo8HG7CR+uSmcshZ4cyy7vTWO0MzoLio+Y6PBP8bnuqnJldO8qZdVnKYCXuCVIIXejNFUlThNRTSF9WZj50fJlO5yeKWK6Jv5SVP20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=lfdwOovR; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b7b28442f9so11940096d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:42:44 -0700 (PDT)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b795574f9dso6440486d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 08:42:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1723131764; x=1723736564; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1723131765; x=1723736565; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JDFp22AQxyyflK1t03n9dVCi8P6WDfRZ5X/KyWOrQIc=;
-        b=odX2AyLrot3kgdbhZbBRiCYmdx1Zx8p8TW8nEmTyUYrO24SlNzAdXkx9+H0diWoXfY
-         FAWruzir6KtjcsPh7xLFJo8K5E9T20dZxgUEPNCnE8FAHKfBml71z/BfkIPWt9oynFFS
-         QuipZWInGHZDqQ+YFkPINM+DHDuWoqqpejaF7FqqsMYeXSdpf3ZLD6+dr8pOCz5OsW/o
-         1c4h0lT7B1KD/W1yu26ZXLZpggXgPKw41TWzeVFcrR9z7LAj/oCsb6dObFVjR/5keC8q
-         jkM9wtdCRUBmf/CcraGHny1b0Iuv2wJ7kp7yQB/yYjpzU/hRH7RNaVnW6fZuLmsNl4DC
-         Po+g==
+        bh=wVUhpkOPZqVQX3h1eHDFuE2aZCm6U3+B79UvbkAx6DA=;
+        b=lfdwOovRrSuSVoz8FI3l0QABuA4NVYu9dYFsYpI/0fT5I2jLdXGHTbR8RgozsMrrQ5
+         SIFcITwsar+8zDmfYpglSlrDd91l/gFspJWmLZ95zU+SkZG/TkpJC3RJT1XN+50NKDuf
+         GoRCYiY6BMy9XSbcPphSCfCkc6UDhMeRiph9F/6gJgzRds3csSNcbZrLg6d6i0zNdNBf
+         0zekTXsev8IE+/+iuXS0jUmLo890bKiy1wNENH1+QnJHe4s8Y22NIudk1GSLyvztwuwq
+         Kw2xgjYqrz3EUyHxFSQM43YoKukvHMD9olgA4+pM+p4cfYZbUM8y1UxmBsjSSe8GXxqA
+         Ha6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723131764; x=1723736564;
+        d=1e100.net; s=20230601; t=1723131765; x=1723736565;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JDFp22AQxyyflK1t03n9dVCi8P6WDfRZ5X/KyWOrQIc=;
-        b=ppHxHT8v7cOHWOlgVsZPzBI/3kL6XdK1ND47ckBfAPSZXjuUqHkaLMUAu3ETIp1xQZ
-         1di8H+lDhL+NwyGiSmTsNQmAeAg3p9oH5fmvMAI/vkra1XQvHE6HRKNQbQ6iMsCJw4Ss
-         PTTu7FDuWg646GSTCGY7ox9O+LXNr5z6698EPDqn1eLGWG9Eu/uOO9HiLjrqa5oukqnz
-         TPPAEeqW017Zr2qciuYSwK/5xWuSoYJnOmYy8Jlq6cWEnt8O7n9qeZfkEJIGU+7Gc++3
-         fP2DK7eNm6UEc7ZImzRAcu+5Ld+1GyOfnubFC36eCw8+i7zrWIF+ApV9U/Ns2Gk1F53c
-         S80Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXdGm07gNoubVR0A7oGY3frH9alns9A3dqQls3G9Bv1+kBrDiAMmuo5ofOwxmd2NFwtzAJpZ6vro8XJ/JBWhitDpTg4cBvMMq9I52l2
-X-Gm-Message-State: AOJu0YzfvAtLzCV8HhZjZYqSBM3UQWp1371YqLONDkoXmz53sczqRf2R
-	SzIyM89SWJJw4iJZLbuGQKNdLYr2MKKnNhhZAaK3cOq+a5z1RK65VFUBlrFtmjs=
-X-Google-Smtp-Source: AGHT+IEX9KsTxhX/Ixnu+CrH4K+4EL15weClfV8tgGdVgFqf5/zGrOX8N7XKxkOKw/LPNvKUtrOSaQ==
-X-Received: by 2002:a05:6214:5d0d:b0:6b5:7e09:970c with SMTP id 6a1803df08f44-6bd6bd227f2mr22276276d6.33.1723131763822;
-        Thu, 08 Aug 2024 08:42:43 -0700 (PDT)
+        bh=wVUhpkOPZqVQX3h1eHDFuE2aZCm6U3+B79UvbkAx6DA=;
+        b=bguPFaikulbvYNdkV+TjNdsv9HpbdZZbPQ0PlOeSmlcyuxvkxZyitweHfyZvA5RevJ
+         ysQ0LMbMzFcVPe7T8JNBE4hW9VJvPHPAPwed+qCRoEgOzJAsautaDkBm6FNeCd+nmxQF
+         dNvZbNSynMGU0ZRuv1CxwumUpElPT8ZOSqxalOGCchzcaIPlXWMVpeokSZYfW/sLd0TH
+         KjPpj31/EpW09pmEDU3ejJGKYX1oDSH3c+YcAhyTweswAphAnOroQZNvcHBTluv7m+lv
+         RBwubGOiSVEiPRRIn/KBgK58Fh8YQXAwfsEi2XNZAwmZJh2b7Sx6Kb+RJbLV8TpKAz/Q
+         5g7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVpmLLebpPvMLWEe/y0fZeSOkVveUZKC+arQAiEpbOi0QRYu5LSmPRuzB0E6yqSz+oeiu0f7SM7NNyo7wtbds1d0c7zfEtHxUj+BC9O
+X-Gm-Message-State: AOJu0YzJr3mUfpFLjG2n78OP10jR4rVcfXGgDY8fgTQasdSwOdX6YMAJ
+	eo8BgRQh22Qgz3knHw32SGA2o8MYzawEZEEnCkLmZu2VdR7QqZwNRjI4wK0PUrQ=
+X-Google-Smtp-Source: AGHT+IHuyPvu08+JZDwV+1cdjbraCLK1a/zBKaZNVdpIAi6OHbeRHRlv6moOdjtW9Wgi7xkF2vcdiQ==
+X-Received: by 2002:a05:6214:2f90:b0:6b9:5b0d:8c9b with SMTP id 6a1803df08f44-6bd6bd53e67mr31343756d6.43.1723131764981;
+        Thu, 08 Aug 2024 08:42:44 -0700 (PDT)
 Received: from soleen.c.googlers.com.com (118.239.150.34.bc.googleusercontent.com. [34.150.239.118])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c7b72d9sm67160936d6.60.2024.08.08.08.42.42
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c7b72d9sm67160936d6.60.2024.08.08.08.42.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 08:42:42 -0700 (PDT)
+        Thu, 08 Aug 2024 08:42:44 -0700 (PDT)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: akpm@linux-foundation.org,
 	linux-kernel@vger.kernel.org,
@@ -88,9 +88,9 @@ To: akpm@linux-foundation.org,
 	alison.schofield@intel.com,
 	david@redhat.com,
 	yosryahmed@google.com
-Subject: [PATCH v3 3/4] mm: add system wide stats items category
-Date: Thu,  8 Aug 2024 15:42:36 +0000
-Message-ID: <20240808154237.220029-4-pasha.tatashin@soleen.com>
+Subject: [PATCH v3 4/4] mm: don't account memmap per-node
+Date: Thu,  8 Aug 2024 15:42:37 +0000
+Message-ID: <20240808154237.220029-5-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 In-Reply-To: <20240808154237.220029-1-pasha.tatashin@soleen.com>
 References: <20240808154237.220029-1-pasha.tatashin@soleen.com>
@@ -102,104 +102,305 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-/proc/vmstat contains events and stats, events can only grow, but stats
-can grow and srhink.
+Currently, when memory is hot-plugged or hot-removed the accounting is
+done based on the assumption that memmap is allocated from the same node
+as the hot-plugged/hot-removed memory, which is not always the case.
 
-vmstat has the following:
--------------------------
-NR_VM_ZONE_STAT_ITEMS:	per-zone stats
-NR_VM_NUMA_EVENT_ITEMS:	per-numa events
-NR_VM_NODE_STAT_ITEMS:	per-numa stats
-NR_VM_WRITEBACK_STAT_ITEMS:	system-wide background-writeback and
-				dirty-throttling tresholds.
-NR_VM_EVENT_ITEMS:	system-wide events
--------------------------
+In addition, there are challenges with keeping the node id of the memory
+that is being remove to the time when memmap accounting is actually
+performed: since this is done after remove_pfn_range_from_zone(), and
+also after remove_memory_block_devices(). Meaning that we cannot use
+pgdat nor walking though memblocks to get the nid.
 
-Rename NR_VM_WRITEBACK_STAT_ITEMS to NR_VM_STAT_ITEMS, to track the
-system-wide stats, we are going to add per-page metadata stats to this
-category in the next patch.
+Given all of that, account the memmap overhead system wide instead.
 
-Also delete unused writeback_stat_name() function.
+For this we are going to be using global atomic counters, but given that
+memmap size is rarely modified, and normally is only modified either
+during early boot when there is only one CPU, or under a hotplug global
+mutex lock, therefore there is no need for per-cpu optimizations.
 
-Suggested-by: Yosry Ahmed <yosryahmed@google.com>
+Reported-by: Yi Zhang <yi.zhang@redhat.com>
+Closes: https://lore.kernel.org/linux-cxl/CAHj4cs9Ax1=CoJkgBGP_+sNu6-6=6v=_L-ZBZY0bVLD3wUWZQg@mail.gmail.com
+Reported-by: Alison Schofield <alison.schofield@intel.com>
+Closes: https://lore.kernel.org/linux-mm/Zq0tPd2h6alFz8XF@aschofie-mobl2/#t
+
+Fixes: 15995a352474 ("mm: report per-page metadata information")
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
- include/linux/vmstat.h | 15 ++++-----------
- mm/vmstat.c            |  6 +++---
- 2 files changed, 7 insertions(+), 14 deletions(-)
+ include/linux/mmzone.h |  2 --
+ include/linux/vmstat.h |  7 ++++---
+ mm/hugetlb_vmemmap.c   |  8 ++++----
+ mm/mm_init.c           |  3 +--
+ mm/page_alloc.c        |  1 -
+ mm/page_ext.c          | 15 +++++---------
+ mm/sparse-vmemmap.c    | 11 ++++-------
+ mm/sparse.c            |  5 ++---
+ mm/vmstat.c            | 45 ++++++++++++++++++++----------------------
+ 9 files changed, 41 insertions(+), 56 deletions(-)
 
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 41458892bc8a..1dc6248feb83 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -220,8 +220,6 @@ enum node_stat_item {
+ 	PGDEMOTE_KSWAPD,
+ 	PGDEMOTE_DIRECT,
+ 	PGDEMOTE_KHUGEPAGED,
+-	NR_MEMMAP, /* page metadata allocated through buddy allocator */
+-	NR_MEMMAP_BOOT, /* page metadata allocated through boot allocator */
+ 	NR_VM_NODE_STAT_ITEMS
+ };
+ 
 diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-index 23cd17942036..9ab4fa5e09b5 100644
+index 9ab4fa5e09b5..596c050ed492 100644
 --- a/include/linux/vmstat.h
 +++ b/include/linux/vmstat.h
-@@ -34,10 +34,11 @@ struct reclaim_stat {
- 	unsigned nr_lazyfree_fail;
- };
- 
--enum writeback_stat_item {
-+/* Stat data for system wide items */
-+enum vm_stat_item {
+@@ -38,6 +38,8 @@ struct reclaim_stat {
+ enum vm_stat_item {
  	NR_DIRTY_THRESHOLD,
  	NR_DIRTY_BG_THRESHOLD,
--	NR_VM_WRITEBACK_STAT_ITEMS,
-+	NR_VM_STAT_ITEMS,
++	NR_MEMMAP,	/* page metadata allocated through buddy allocator */
++	NR_MEMMAP_BOOT,	/* page metadata allocated through boot allocator */
+ 	NR_VM_STAT_ITEMS,
  };
  
- #ifdef CONFIG_VM_EVENT_COUNTERS
-@@ -514,21 +515,13 @@ static inline const char *lru_list_name(enum lru_list lru)
- 	return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+@@ -618,7 +620,6 @@ static inline void lruvec_stat_sub_folio(struct folio *folio,
+ 	lruvec_stat_mod_folio(folio, idx, -folio_nr_pages(folio));
  }
  
--static inline const char *writeback_stat_name(enum writeback_stat_item item)
--{
--	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
--			   NR_VM_NUMA_EVENT_ITEMS +
--			   NR_VM_NODE_STAT_ITEMS +
--			   item];
--}
+-void __meminit mod_node_early_perpage_metadata(int nid, long delta);
+-void __meminit store_early_perpage_metadata(void);
 -
- #if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
- static inline const char *vm_event_name(enum vm_event_item item)
++void mod_memmap_boot(long delta);
++void mod_memmap(long delta);
+ #endif /* _LINUX_VMSTAT_H */
+diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+index 70027869d844..60a5faa1f341 100644
+--- a/mm/hugetlb_vmemmap.c
++++ b/mm/hugetlb_vmemmap.c
+@@ -185,10 +185,10 @@ static int vmemmap_remap_range(unsigned long start, unsigned long end,
+ static inline void free_vmemmap_page(struct page *page)
  {
- 	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
- 			   NR_VM_NUMA_EVENT_ITEMS +
- 			   NR_VM_NODE_STAT_ITEMS +
--			   NR_VM_WRITEBACK_STAT_ITEMS +
-+			   NR_VM_STAT_ITEMS +
- 			   item];
+ 	if (PageReserved(page)) {
+-		mod_node_page_state(page_pgdat(page), NR_MEMMAP_BOOT, -1);
++		mod_memmap_boot(-1);
+ 		free_bootmem_page(page);
+ 	} else {
+-		mod_node_page_state(page_pgdat(page), NR_MEMMAP, -1);
++		mod_memmap(-1);
+ 		__free_page(page);
+ 	}
  }
- #endif /* CONFIG_VM_EVENT_COUNTERS || CONFIG_MEMCG */
+@@ -341,7 +341,7 @@ static int vmemmap_remap_free(unsigned long start, unsigned long end,
+ 		copy_page(page_to_virt(walk.reuse_page),
+ 			  (void *)walk.reuse_addr);
+ 		list_add(&walk.reuse_page->lru, vmemmap_pages);
+-		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, 1);
++		mod_memmap(1);
+ 	}
+ 
+ 	/*
+@@ -396,7 +396,7 @@ static int alloc_vmemmap_page_list(unsigned long start, unsigned long end,
+ 			goto out;
+ 		list_add(&page->lru, list);
+ 	}
+-	mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, nr_pages);
++	mod_memmap(nr_pages);
+ 
+ 	return 0;
+ out:
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 75c3bd42799b..29677274e74e 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -1623,8 +1623,7 @@ static void __init alloc_node_mem_map(struct pglist_data *pgdat)
+ 		panic("Failed to allocate %ld bytes for node %d memory map\n",
+ 		      size, pgdat->node_id);
+ 	pgdat->node_mem_map = map + offset;
+-	mod_node_early_perpage_metadata(pgdat->node_id,
+-					DIV_ROUND_UP(size, PAGE_SIZE));
++	mod_memmap_boot(DIV_ROUND_UP(size, PAGE_SIZE));
+ 	pr_debug("%s: node %d, pgdat %08lx, node_mem_map %08lx\n",
+ 		 __func__, pgdat->node_id, (unsigned long)pgdat,
+ 		 (unsigned long)pgdat->node_mem_map);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 28f80daf5c04..875d76e8684a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5755,7 +5755,6 @@ void __init setup_per_cpu_pageset(void)
+ 	for_each_online_pgdat(pgdat)
+ 		pgdat->per_cpu_nodestats =
+ 			alloc_percpu(struct per_cpu_nodestat);
+-	store_early_perpage_metadata();
+ }
+ 
+ __meminit void zone_pcp_init(struct zone *zone)
+diff --git a/mm/page_ext.c b/mm/page_ext.c
+index 962d45eee1f8..a4b485b39330 100644
+--- a/mm/page_ext.c
++++ b/mm/page_ext.c
+@@ -214,8 +214,7 @@ static int __init alloc_node_page_ext(int nid)
+ 		return -ENOMEM;
+ 	NODE_DATA(nid)->node_page_ext = base;
+ 	total_usage += table_size;
+-	mod_node_page_state(NODE_DATA(nid), NR_MEMMAP_BOOT,
+-			    DIV_ROUND_UP(table_size, PAGE_SIZE));
++	mod_memmap_boot(DIV_ROUND_UP(table_size, PAGE_SIZE));
+ 	return 0;
+ }
+ 
+@@ -275,10 +274,8 @@ static void *__meminit alloc_page_ext(size_t size, int nid)
+ 	else
+ 		addr = vzalloc_node(size, nid);
+ 
+-	if (addr) {
+-		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP,
+-				    DIV_ROUND_UP(size, PAGE_SIZE));
+-	}
++	if (addr)
++		mod_memmap(DIV_ROUND_UP(size, PAGE_SIZE));
+ 
+ 	return addr;
+ }
+@@ -330,14 +327,12 @@ static void free_page_ext(void *addr)
+ 	if (is_vmalloc_addr(addr)) {
+ 		page = vmalloc_to_page(addr);
+ 		pgdat = page_pgdat(page);
+-		mod_node_page_state(pgdat, NR_MEMMAP,
+-				    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
++		mod_memmap(-1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
+ 		vfree(addr);
+ 	} else {
+ 		page = virt_to_page(addr);
+ 		pgdat = page_pgdat(page);
+-		mod_node_page_state(pgdat, NR_MEMMAP,
+-				    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
++		mod_memmap(-1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
+ 		BUG_ON(PageReserved(page));
+ 		kmemleak_free(addr);
+ 		free_pages_exact(addr, table_size);
+diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+index 1dda6c53370b..307f6fe83598 100644
+--- a/mm/sparse-vmemmap.c
++++ b/mm/sparse-vmemmap.c
+@@ -469,13 +469,10 @@ struct page * __meminit __populate_section_memmap(unsigned long pfn,
+ 	if (r < 0)
+ 		return NULL;
+ 
+-	if (system_state == SYSTEM_BOOTING) {
+-		mod_node_early_perpage_metadata(nid, DIV_ROUND_UP(end - start,
+-								  PAGE_SIZE));
+-	} else {
+-		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP,
+-				    DIV_ROUND_UP(end - start, PAGE_SIZE));
+-	}
++	if (system_state == SYSTEM_BOOTING)
++		mod_memmap_boot(DIV_ROUND_UP(end - start, PAGE_SIZE));
++	else
++		mod_memmap(DIV_ROUND_UP(end - start, PAGE_SIZE));
+ 
+ 	return pfn_to_page(pfn);
+ }
+diff --git a/mm/sparse.c b/mm/sparse.c
+index e4b830091d13..9cc80ba1f7c1 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -463,7 +463,7 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
+ 	sparsemap_buf = memmap_alloc(size, section_map_size(), addr, nid, true);
+ 	sparsemap_buf_end = sparsemap_buf + size;
+ #ifndef CONFIG_SPARSEMEM_VMEMMAP
+-	mod_node_early_perpage_metadata(nid, DIV_ROUND_UP(size, PAGE_SIZE));
++	mod_memmap_boot(DIV_ROUND_UP(size, PAGE_SIZE));
+ #endif
+ }
+ 
+@@ -643,8 +643,7 @@ static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
+ 	unsigned long start = (unsigned long) pfn_to_page(pfn);
+ 	unsigned long end = start + nr_pages * sizeof(struct page);
+ 
+-	mod_node_page_state(page_pgdat(pfn_to_page(pfn)), NR_MEMMAP,
+-			    -1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
++	mod_memmap(-1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
+ 	vmemmap_free(start, end, altmap);
+ }
+ static void free_map_bootmem(struct page *memmap)
 diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 04a1cb6cc636..6f8aa4766f16 100644
+index 6f8aa4766f16..896f9a2ace8a 100644
 --- a/mm/vmstat.c
 +++ b/mm/vmstat.c
-@@ -1257,7 +1257,7 @@ const char * const vmstat_text[] = {
+@@ -1033,6 +1033,23 @@ unsigned long node_page_state(struct pglist_data *pgdat,
+ }
+ #endif
+ 
++/*
++ * Count number of pages "struct page" and "struct page_ext" consume.
++ * nr_memmap_boot: # of pages allocated by boot allocator & not part of MemTotal
++ * nr_memmap: # of pages that were allocated by buddy allocator
++ */
++static atomic_long_t nr_memmap_boot, nr_memmap;
++
++void mod_memmap_boot(long delta)
++{
++	atomic_long_add(delta, &nr_memmap_boot);
++}
++
++void mod_memmap(long delta)
++{
++	atomic_long_add(delta, &nr_memmap);
++}
++
+ #ifdef CONFIG_COMPACTION
+ 
+ struct contig_page_info {
+@@ -1255,11 +1272,11 @@ const char * const vmstat_text[] = {
+ 	"pgdemote_kswapd",
+ 	"pgdemote_direct",
  	"pgdemote_khugepaged",
- 	"nr_memmap",
- 	"nr_memmap_boot",
--	/* enum writeback_stat_item counters */
-+	/* system-wide enum vm_stat_item counters */
+-	"nr_memmap",
+-	"nr_memmap_boot",
+ 	/* system-wide enum vm_stat_item counters */
  	"nr_dirty_threshold",
  	"nr_dirty_background_threshold",
++	"nr_memmap",
++	"nr_memmap_boot",
  
-@@ -1790,7 +1790,7 @@ static const struct seq_operations zoneinfo_op = {
- #define NR_VMSTAT_ITEMS (NR_VM_ZONE_STAT_ITEMS + \
- 			 NR_VM_NUMA_EVENT_ITEMS + \
- 			 NR_VM_NODE_STAT_ITEMS + \
--			 NR_VM_WRITEBACK_STAT_ITEMS + \
-+			 NR_VM_STAT_ITEMS + \
- 			 (IS_ENABLED(CONFIG_VM_EVENT_COUNTERS) ? \
- 			  NR_VM_EVENT_ITEMS : 0))
- 
-@@ -1827,7 +1827,7 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
+ #if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
+ 	/* enum vm_event_item counters */
+@@ -1827,6 +1844,8 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
  
  	global_dirty_limits(v + NR_DIRTY_BG_THRESHOLD,
  			    v + NR_DIRTY_THRESHOLD);
--	v += NR_VM_WRITEBACK_STAT_ITEMS;
-+	v += NR_VM_STAT_ITEMS;
++	v[NR_MEMMAP_BOOT] = atomic_long_read(&nr_memmap_boot);
++	v[NR_MEMMAP] = atomic_long_read(&nr_memmap);
+ 	v += NR_VM_STAT_ITEMS;
  
  #ifdef CONFIG_VM_EVENT_COUNTERS
- 	all_vm_events(v);
+@@ -2285,25 +2304,3 @@ static int __init extfrag_debug_init(void)
+ module_init(extfrag_debug_init);
+ 
+ #endif
+-
+-/*
+- * Page metadata size (struct page and page_ext) in pages
+- */
+-static unsigned long early_perpage_metadata[MAX_NUMNODES] __meminitdata;
+-
+-void __meminit mod_node_early_perpage_metadata(int nid, long delta)
+-{
+-	early_perpage_metadata[nid] += delta;
+-}
+-
+-void __meminit store_early_perpage_metadata(void)
+-{
+-	int nid;
+-	struct pglist_data *pgdat;
+-
+-	for_each_online_pgdat(pgdat) {
+-		nid = pgdat->node_id;
+-		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP_BOOT,
+-				    early_perpage_metadata[nid]);
+-	}
+-}
 -- 
 2.46.0.76.ge559c4bf1a-goog
 
