@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-280000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1312294C45E
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:32:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D75F94C45F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 20:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36FA31C221CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:32:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0FD1F26677
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 18:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CADE148308;
-	Thu,  8 Aug 2024 18:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A3E1474B2;
+	Thu,  8 Aug 2024 18:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CROxWmNV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hc09FZTP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6C21474A5;
-	Thu,  8 Aug 2024 18:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A9280C13
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 18:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723141941; cv=none; b=SxbG0vufbmHFjQY/5O77B1zTWgfUoTfIt63MW/MajhV0WD26faoL7YpsObGhZvuciKVT/rGIQdpimVsSOiANnlB1NiPHPGeHNZc++BZ/wvfGt1xjg4pcMYsP5qinyigmcedjHSc0uaep4znPjKfQdi5H+NmbNvkwx9PpaQ8shVg=
+	t=1723141964; cv=none; b=Cz+3s5ebTY1BMjBMSk+o1Gbs/LI/l64YVgI1lLNHvObthM0VtUSVBjubsKFzLOzzxrkMxKbYoAchxhVftqffSEtGx2puzdRvPzA0yCYazPFR/MkFYEyFoyVAsOqbytW3JgYvhRqK6+C0YlRwvROEU1HlbknnWB3L6mmhw3VZ3w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723141941; c=relaxed/simple;
-	bh=9Yt4pnncH6mFyFDA0PhRciskoYS67a0cDghZgw5y9/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U/M/1PaZTtB9UfSl6Nv9CGnt4nIqqFeBjy/upb/0f4KG+GqdYzmxKHI2nXzHkKiMqSGDKX28MQ21SYgjCNrMQRlMGXbHXGrywmOO3/CNJPtcH9+FdT1obcCENMlLIp7u/6/vMKarn0H+nyjck5wcqFQ/4i1emHLregonPku4Poc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CROxWmNV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478BOGQG020921;
-	Thu, 8 Aug 2024 18:32:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zobjxfHDjVRTy23SW+DYAKRhJIe+GrRQlShULtl4F5E=; b=CROxWmNVPUTqyFck
-	FFX3F1Pz/rftm7ZnPH+ht97Ey3nDMvWocXSYBAF2zoR4VUJvWHO7qsS8MFqIJfMp
-	wqw5KLwQblR65g2Dk2VeHVZPOX7sjChnXBOC89G0Lg+u5CpHcS65c8cGW/aUmM+L
-	S/XwLIc6UFjNYwVoijSxClhf5nckA3OMg2Mc5DtjtcZHF4UkcNUQMQb4fBSN+U2q
-	wYANu7+KrMWdgMn1L09NaK0uGWOmCv4wlkS+/nmCCUmxe6CvsplmFtJm0+YeLrT0
-	R+76F5wZ1Ha1Ujz3owCb7UvliDZA7sVQ9bV96wufIU34PF1UZmV1SyVZPnL0oelB
-	gBWi3g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40v79jcf85-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 18:32:11 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 478IWAxV008391
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 8 Aug 2024 18:32:10 GMT
-Received: from [10.46.163.151] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 8 Aug 2024
- 11:32:10 -0700
-Message-ID: <81f9a907-8010-4c13-970f-d216dd54b1f1@quicinc.com>
-Date: Thu, 8 Aug 2024 11:30:52 -0700
+	s=arc-20240116; t=1723141964; c=relaxed/simple;
+	bh=m4Ld8dHbB+JXQotUzhSuM6EmaklWFfNmYOEsUH6d9Pg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SXR/DhQcaqstTzvhnuMfShpyZZDveB8IW80QQbROQPZlw47ZMi1tS6Whx21MjuMp27vJP7aUjqAcBzI16VBYaqGZL7UphGokMS+pferDFBxug3nTkDxm3j3cnNe1pMmXmApKqN4KeB2MYdeDTxebvIcDttWe7g03flJLDEvGDuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hc09FZTP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723141960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=smsHi6xEMXRFi8V3HreFHnPllEpbGv3MaP8Bg03pLpM=;
+	b=hc09FZTPPAPQj8AChOdn0erSw0b2owbMQxiOgK4kb2A/k9S7qlavDCKcAlIkOrz5NNrpzn
+	jdZzOtU+Kopk9Nyz8pdgIPQnnEm6gMrSxvcA544XAABbS7mK4XwWD6SY/fIORJJR3cVaqm
+	hpI7H04DK9F99b0NDo4Gbupc7Jn9qlU=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-616-qTL7JnWaOM6bx3Z9eRmUZw-1; Thu,
+ 08 Aug 2024 14:32:35 -0400
+X-MC-Unique: qTL7JnWaOM6bx3Z9eRmUZw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CCB381944A86;
+	Thu,  8 Aug 2024 18:32:33 +0000 (UTC)
+Received: from [10.2.16.232] (unknown [10.2.16.232])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 64E8719560AA;
+	Thu,  8 Aug 2024 18:32:32 +0000 (UTC)
+Message-ID: <f8c46f64-1ac3-4da3-87b5-ef7ec2e37fb8@redhat.com>
+Date: Thu, 8 Aug 2024 14:32:31 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,165 +64,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] PCI: dwc: Add dbi_phys_addr and atu_phys_addr to
- struct dw_pcie
-To: Serge Semin <fancer.lancer@gmail.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Bjorn Helgaas <helgaas@kernel.org>
-CC: <jingoohan1@gmail.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_mrana@quicinc.com>
-References: <20240724022719.2868490-1-quic_pyarlaga@quicinc.com>
- <20240724022719.2868490-2-quic_pyarlaga@quicinc.com>
- <vbq3ma3xanu4budrrt7iwk7bh7evgmlgckpohqksuamf3odbee@mvox7krdugg3>
- <6d926346-1c24-4aee-85b1-ffb5a0df904b@quicinc.com>
- <j62ox6yeemxng3swlnzkqpl4mos7zj4khui6rusrm7nqcpts6r@vmoddl4lchlt>
- <20240802052206.GA4206@thinkpad>
- <rw45lgwf5btlsr64okzk2e4rpd62fdyrou7u2c6lndozxjhdpq@qm5qx4dvw5ci>
+Subject: Re: [PATCH v3] lib/stackdepot: Double DEPOT_POOLS_CAP if KASAN is
+ enabled
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, linux-kernel@vger.kernel.org
+References: <20240808125430.1172152-1-longman@redhat.com>
+ <CA+fCnZdWgAD1pu4yyjON0ph9ae1B6iaWas0CbET+MXLNNXt5Hg@mail.gmail.com>
 Content-Language: en-US
-From: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-In-Reply-To: <rw45lgwf5btlsr64okzk2e4rpd62fdyrou7u2c6lndozxjhdpq@qm5qx4dvw5ci>
-Content-Type: text/plain; charset="UTF-8"
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <CA+fCnZdWgAD1pu4yyjON0ph9ae1B6iaWas0CbET+MXLNNXt5Hg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: a_VDmT9LalIgb6dYp_CWrWMX1LyhsfA9
-X-Proofpoint-ORIG-GUID: a_VDmT9LalIgb6dYp_CWrWMX1LyhsfA9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_18,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 mlxlogscore=999
- suspectscore=0 spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408080132
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
 
-
-On 8/2/2024 2:22 AM, Serge Semin wrote:
-> On Fri, Aug 02, 2024 at 10:52:06AM +0530, Manivannan Sadhasivam wrote:
->> On Fri, Aug 02, 2024 at 12:59:57AM +0300, Serge Semin wrote:
->>> On Thu, Aug 01, 2024 at 02:29:49PM -0700, Prudhvi Yarlagadda wrote:
->>>> Hi Serge,
->>>>
->>>> Thanks for the review comment.
->>>>
->>>> On 8/1/2024 12:25 PM, Serge Semin wrote:
->>>>> On Tue, Jul 23, 2024 at 07:27:18PM -0700, Prudhvi Yarlagadda wrote:
->>>>>> Both DBI and ATU physical base addresses are needed by pcie_qcom.c
->>>>>> driver to program the location of DBI and ATU blocks in Qualcomm
->>>>>> PCIe Controller specific PARF hardware block.
->>>>>>
->>>>>> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
->>>>>> Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
->>>>>> ---
->>>>>>  drivers/pci/controller/dwc/pcie-designware.c | 2 ++
->>>>>>  drivers/pci/controller/dwc/pcie-designware.h | 2 ++
->>>>>>  2 files changed, 4 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
->>>>>> index 1b5aba1f0c92..bc3a5d6b0177 100644
->>>>>> --- a/drivers/pci/controller/dwc/pcie-designware.c
->>>>>> +++ b/drivers/pci/controller/dwc/pcie-designware.c
->>>>>> @@ -112,6 +112,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
->>>>>>  		pci->dbi_base = devm_pci_remap_cfg_resource(pci->dev, res);
->>>>>>  		if (IS_ERR(pci->dbi_base))
->>>>>>  			return PTR_ERR(pci->dbi_base);
->>>>>> +		pci->dbi_phys_addr = res->start;
->>>>>>  	}
->>>>>>  
->>>>>>  	/* DBI2 is mainly useful for the endpoint controller */
->>>>>> @@ -134,6 +135,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
->>>>>>  			pci->atu_base = devm_ioremap_resource(pci->dev, res);
->>>>>>  			if (IS_ERR(pci->atu_base))
->>>>>>  				return PTR_ERR(pci->atu_base);
->>>>>> +			pci->atu_phys_addr = res->start;
->>>>>>  		} else {
->>>>>>  			pci->atu_base = pci->dbi_base + DEFAULT_DBI_ATU_OFFSET;
->>>>>>  		}
->>>>>> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
->>>>>> index 53c4c8f399c8..efc72989330c 100644
->>>>>> --- a/drivers/pci/controller/dwc/pcie-designware.h
->>>>>> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->>>>>> @@ -407,8 +407,10 @@ struct dw_pcie_ops {
->>>>>>  struct dw_pcie {
->>>>>>  	struct device		*dev;
->>>>>>  	void __iomem		*dbi_base;
->>>>>
->>>>>> +	phys_addr_t		dbi_phys_addr;
->>>>>>  	void __iomem		*dbi_base2;
->>>>>>  	void __iomem		*atu_base;
->>>>>> +	phys_addr_t		atu_phys_addr;
->>>>>
->>>>> What's the point in adding these fields to the generic DW PCIe private
->>>>> data if they are going to be used in the Qcom glue driver only?
->>>>>
->>>>> What about moving them to the qcom_pcie structure and initializing the
->>>>> fields in some place of the pcie-qcom.c driver?
->>>>>
->>>>> -Serge(y)
->>>>>
->>>>
->>>
->>>> These fields were in pcie-qcom.c driver in the v1 patch[1] and
->>>> Manivannan suggested to move these fields to 'struct dw_pcie' so that duplication
->>>> of resource fetching code 'platform_get_resource_byname()' can be avoided.
->>>>
->>>> [1] https://lore.kernel.org/linux-pci/a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com/T/#mf9843386d57e9003de983e24e17de4d54314ff73
->>>
->>> Em, polluting the core driver structure with data not being used by
->>> the core driver but by the glue-code doesn't seem like a better
->>> alternative to additional platform_get_resource_byname() call in the
->>> glue-driver. I would have got back v1 version so to keep the core
->>> driver simpler. Bjorn?
->>>
+On 8/8/24 12:12, Andrey Konovalov wrote:
+> On Thu, Aug 8, 2024 at 2:54 PM Waiman Long <longman@redhat.com> wrote:
+>> As said in commit 02754e0a484a ("lib/stackdepot.c: bump stackdepot
+>> capacity from 16MB to 128MB"), KASAN uses stackdepot to memorize stacks
+>> for all kmalloc/kfree calls. So stackdepot capacity was increased 8
+>> times to accommodate KASAN usage even thought it was claimed 4X should
+>> be enough at that time.
 >>
->> IDK how adding two fields which is very related to DWC code *pollutes* it. Since
->> there is already 'dbi_base', adding 'dbi_phys_addr' made sense to me even though
->> only glue drivers are using it. Otherwise, glue drivers have to duplicate the
->> platform_get_resource_byname() code which I find annoying.
-> 
-> I just explained why it was redundant:
-> 1. adding the fields expands the core private data size for _all_
-> platforms for no reason. (a few bytes but still)
-> 2. the new fields aren't utilized by the core driver, but still
-> defined in the core private data which is first confusing and
-> second implicitly encourages the kernel developers to add another
-> unused or even weakly-related fields in there.
-> 3. the new fields utilized in a single glue-driver and there is a small
-> chance they will be used in another ones. Another story would have
-> been if we had them used in more than one glue-driver...
-> 
-> So from that perspective I find adding these fields to the driver core
-> data less appropriate than duplicating the
-> platform_get_resource_byname() call in a _single_ glue driver. It
-> seems more reasonable to have them defined and utilized in the code
-> that actually needs them, but not in the place that doesn't annoy you.)
-> 
-> Anyway I read your v1 command and did understand your point in the
-> first place. That's why my question was addressed to Bjorn.
-> 
-> Please also note the resource::start field is of the resource_size_t
-> type. So wherever the fields are added, it's better to have them
-> defined of that type instead.
-> 
-> -Serge(y)
-> 
-
-Hi Bjorn,
-
-Gentle ping for your feedback on the above discussed two approaches.
-
-Thanks,
-Prudhvi
+>> With commit fc60e0caa94d ("lib/stackdepot: use fixed-sized slots
+>> for stack records"), all stackdepot records uses a fixed size with
+>> CONFIG_STACKDEPOT_MAX_FRAMES (default=64) entries. This is merged to
+>> support evictable KASAN stack records. Commit 31639fd6cebd ("stackdepot:
+>> use variable size records for non-evictable entries") re-enabled
+>> the use of variable size records for non-KASAN use cases, but KASAN
+>> (generic mode) still uses the large fixed size stack records.
+> No, since commit 711d349174fd ("kasan: revert eviction of stack traces
+> in generic mode") Generic KASAN doesn't use fixed-sized slots.
+>
+>> With the default CONFIG_STACKDEPOT_MAX_FRAMES of 64, KASAN use of
+>> stackdepot space had been more than double than before. Assuming an
+>> average stack frame size of 16, a KASAN stack record is almost 4X the
+>> size of a non-KASAN one.
+> So this is not correct.
+Yes, you are right. I missed the KASAN commit 711d349174fd in my 
+analysis. I will update the commit log in the next version.
+>> When a wide variety of workloads are run on a debug kernel with KASAN
+>> enabled, the following warning may sometimes be printed.
 >>
->> - Mani
+>>   [ 6818.650674] Stack depot reached limit capacity
+>>   [ 6818.650730] WARNING: CPU: 1 PID: 272741 at lib/stackdepot.c:252 depot_alloc_stack+0x39e/0x3d0
+>>     :
+>>   [ 6818.650907] Call Trace:
+>>   [ 6818.650909]  [<00047dd453d84b92>] depot_alloc_stack+0x3a2/0x3d0
+>>   [ 6818.650916]  [<00047dd453d85254>] stack_depot_save_flags+0x4f4/0x5c0
+>>   [ 6818.650920]  [<00047dd4535872c6>] kasan_save_stack+0x56/0x70
+>>   [ 6818.650924]  [<00047dd453587328>] kasan_save_track+0x28/0x40
+>>   [ 6818.650927]  [<00047dd45358a27a>] kasan_save_free_info+0x4a/0x70
+>>   [ 6818.650930]  [<00047dd45358766a>] __kasan_slab_free+0x12a/0x1d0
+>>   [ 6818.650933]  [<00047dd45350deb4>] kmem_cache_free+0x1b4/0x580
+>>   [ 6818.650938]  [<00047dd452c520da>] __put_task_struct+0x24a/0x320
+>>   [ 6818.650945]  [<00047dd452c6aee4>] delayed_put_task_struct+0x294/0x350
+>>   [ 6818.650949]  [<00047dd452e9066a>] rcu_do_batch+0x6ea/0x2090
+>>   [ 6818.650953]  [<00047dd452ea60f4>] rcu_core+0x474/0xa90
+>>   [ 6818.650956]  [<00047dd452c780c0>] handle_softirqs+0x3c0/0xf90
+>>   [ 6818.650960]  [<00047dd452c76fbe>] __irq_exit_rcu+0x35e/0x460
+>>   [ 6818.650963]  [<00047dd452c79992>] irq_exit_rcu+0x22/0xb0
+>>   [ 6818.650966]  [<00047dd454bd8128>] do_ext_irq+0xd8/0x120
+>>   [ 6818.650972]  [<00047dd454c0ddd0>] ext_int_handler+0xb8/0xe8
+>>   [ 6818.650979]  [<00047dd453589cf6>] kasan_check_range+0x236/0x2f0
+>>   [ 6818.650982]  [<00047dd453378cf0>] filemap_get_pages+0x190/0xaa0
+>>   [ 6818.650986]  [<00047dd453379940>] filemap_read+0x340/0xa70
+>>   [ 6818.650989]  [<00047dd3d325d226>] xfs_file_buffered_read+0x2c6/0x400 [xfs]
+>>   [ 6818.651431]  [<00047dd3d325dfe2>] xfs_file_read_iter+0x2c2/0x550 [xfs]
+>>   [ 6818.651663]  [<00047dd45364710c>] vfs_read+0x64c/0x8c0
+>>   [ 6818.651669]  [<00047dd453648ed8>] ksys_read+0x118/0x200
+>>   [ 6818.651672]  [<00047dd452b6cf5a>] do_syscall+0x27a/0x380
+>>   [ 6818.651676]  [<00047dd454bd7e74>] __do_syscall+0xf4/0x1a0
+>>   [ 6818.651680]  [<00047dd454c0db58>] system_call+0x70/0x98
 >>
->> -- 
->> மணிவண்ணன் சதாசிவம்
-> 
+>> With all the recent changes in stackdepot to support new KASAN features,
+>> it is obvious that the current DEPOT_POOLS_CAP of 8192 may not be
+>> enough when KASAN is enabled. Fix this stackdepot capability issue
+>> by doubling DEPOT_POOLS_CAP if KASAN is enabled. With 4k pages, the
+>> maximum stackdepot capacity is doubled to 256 MB with KASAN enabled.
+> It is possible that the stack depot runs out of space due to a truly
+> large number of unique stack traces, but I would first make sure that
+> is indeed the case. The one thing to check would be to dump all the
+> stack traces from the stack depot when it overflows, and check whether
+> they make sense. There have been cases in the past, when e.g. the task
+> context part of a stack trace from an interrupt didn't get stripped
+> properly, and thus almost each stack trace from an interrupt was
+> considered unique by the stack depot. Perhaps, something similar
+> started happening again.
+
+It could be.
+
+Anyway, I got a bug report from our QE team and they have seen it once 
+so far. So it is not an easily reproducible problem. I need to do 
+further investigation first. Thanks for your quick response.
+
+Cheers,
+Longman
+
+
 
