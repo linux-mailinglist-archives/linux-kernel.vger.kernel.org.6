@@ -1,274 +1,133 @@
-Return-Path: <linux-kernel+bounces-279300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D083D94BB88
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:44:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB9394BB8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63E7F1F220BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:44:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E420B238B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5B518A6CA;
-	Thu,  8 Aug 2024 10:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E513318A925;
+	Thu,  8 Aug 2024 10:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="G+G6CyJx";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="G+G6CyJx"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2056.outbound.protection.outlook.com [40.107.22.56])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="bsYr7oDx"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36BC7489
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 10:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.56
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723113858; cv=fail; b=dm/ohT8X4T7DTpsAVlcypE+lyh3QdPqlfis9rzqFyrU1lPyzD5klL2zwataPVZQ+wbSjnFmtPuTIdwIxpkmBtPSBGsVJ+WlbflcuqodWqOhNPk8xcpUuS0hmtPVa/U+qfqjlv/gef3c/1t10ogblqREp2HLV3UhPmR8yifjiGvE=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723113858; c=relaxed/simple;
-	bh=BIHgNPP6aWc3bATc9aUEVNVkEwnMrI7gpK1yZdkPxHU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TZR+nQEHjvENGmmm/G1Q0dCsh0D//BTQVZmgktXoIKG5sZLUoA7VzE53XnTV6b/jyupzf/0q5QVKGnq/rH7wu3St0kNkyB+whljx8NxW/VWgaQAlW6O78fLuRE7lkJslaI9N4Sq8D0EFPUkTRAIerwoEdgfpBHggjODvCVkyrgI=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=G+G6CyJx; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=G+G6CyJx; arc=fail smtp.client-ip=40.107.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=qCnb3OPFZEQxdvAoEqKzY561RpKKMeO0CoKEhYRZY1bUMOjoZLfoAbXdukCtvL9SyrOs378g67w4BDC/brJT7H9lQQomO2/BUQqOA/fldQgI3eqiMEP/awC79yjTasef6FYmjsHJOzyP2RMSzyqm4F+i586FGgao5pH9jbb7GUPtA4V0YC9W0kf39fDmH8S+RJXsrwUJptUi4hEVW7bmaKuhVCFq5P4il1pNr4G7oZ1G/bpKrjEfsrpuseerVZwIwXTgMjQ9RpRqiG13UCKYWuxnB74sTTgQmFe7f5/cEeYwSZW/1UBDacGqnojgyfWIj7JRxmm6v9QH7dRdQBkm4A==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DjrEQRszpjdpC5DlWlofPLq9rFsTvc08FV+A6Sfl91E=;
- b=tjIERyow34lS2ONHNvf3MY2BO4woVEXO+wdqO7up6sQvLRlutmArOjS4i7u7IZvMP/nX9Al0K8PL/h9PGvuY6UQYhC+/T+6P+ReUXt2Oy2vPXy5G7WIT6Zcm/tYpnLyzbKwSQsrDfpMIt+eEjrObQccdxwM8LjvBf8snTNGveGstbZJCs1zoz426WBv/agXHxmC6jjL+oQiYnzQR763QMVqLd1gm+zUWRkkFKgA2M0rR8RxuPXSX2R68ROhBO6Ova6gB0EB0HLLDHE6pb8GjqdnUqkigtSLcl1BdwwJB9GJL7rtRcTq2BkoQboMVbasNt8UXYdIWi03KGn9i6BlPxQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DjrEQRszpjdpC5DlWlofPLq9rFsTvc08FV+A6Sfl91E=;
- b=G+G6CyJx/s69bPCygAksRBUCtQhGQVhIlfig7KzZzxJqb1WXOdgF7N7bEs3iIbpOqW6H2m6CZ7153oO8m25SUKMtgmc5Ug6YfSuZaQ9yya4GdD6981rRwp7hhZTnBciPlKhABOs3DygDsFdLaVcO5+uaSXaeT9MPjqNVNzI0Icg=
-Received: from AS9PR05CA0237.eurprd05.prod.outlook.com (2603:10a6:20b:494::30)
- by AM8PR08MB6466.eurprd08.prod.outlook.com (2603:10a6:20b:363::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.8; Thu, 8 Aug
- 2024 10:44:11 +0000
-Received: from AMS0EPF0000019B.eurprd05.prod.outlook.com
- (2603:10a6:20b:494:cafe::66) by AS9PR05CA0237.outlook.office365.com
- (2603:10a6:20b:494::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14 via Frontend
- Transport; Thu, 8 Aug 2024 10:44:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AMS0EPF0000019B.mail.protection.outlook.com (10.167.16.247) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7849.8
- via Frontend Transport; Thu, 8 Aug 2024 10:44:11 +0000
-Received: ("Tessian outbound 0842327a015a:v365"); Thu, 08 Aug 2024 10:44:10 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 855aaf70e9152197
-X-CR-MTA-TID: 64aa7808
-Received: from L45cc0c0202f9.1
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 98A3DF7E-DCD3-45BB-8E45-F5379CB850C4.1;
-	Thu, 08 Aug 2024 10:44:03 +0000
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L45cc0c0202f9.1
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Thu, 08 Aug 2024 10:44:03 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lral1N87L31CKQeQwHlG5ytuE4HywX27cZAPvAdK0ww8Kb+YMcURzz9Em/6daHJrjoKuAerjfEg+uYDjztvPG+mMWHYgM7H09T6ksVo7bV+W0gtnPrucMKrw3+omY8z5xriZUC3O8HMeNbsCy3wYfr9bUCNACmYrKX0KP8vzuudpDo3KacWdvMa2+I9NiNEyIuqaoAoX+UE958xkJWQCjHUQEh0llaPyDOnsPa4wb0VOS17bhaTztHeehzEYtJ4Pcz1X91t+6vMyx9ZENk1LU8O11jAfbpEuIjjVWkVW4QaECaKm5L2QM7EHez2kzH/QuMhQt6x4gNXQ7kx1Uxdwng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DjrEQRszpjdpC5DlWlofPLq9rFsTvc08FV+A6Sfl91E=;
- b=IcKEMMhWZwL1sLCwbEzYNwBx5X97mnWLIDdVkl8vq0PbpiR0ff5e5wIBWWO4xZ+HyLg+JRWj6qHtR5r5xg0jB61D0fXAInneXScowV0eV4pJIB+lPHRr36iB5YhFJ4aGXRSw6135YsoKBP/2UKHlJGwM2fruMCnJ85mTDWQw1gAOblhpFnSatTHuWLjkEA/gGYVlPgsbO4JEY8z4ljJDgEG6cmdFyHZpcB+sCf0qTDHBXHG5JSVVf75/m4qxkXt/b5O4PFYmapQIendZGWE7xpQXp9K8tDupjEy/7rcqWjKQelDPtt9ZT8eSWQydsDe5hOlMG5ZeX1slXOsyE/h3rA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DjrEQRszpjdpC5DlWlofPLq9rFsTvc08FV+A6Sfl91E=;
- b=G+G6CyJx/s69bPCygAksRBUCtQhGQVhIlfig7KzZzxJqb1WXOdgF7N7bEs3iIbpOqW6H2m6CZ7153oO8m25SUKMtgmc5Ug6YfSuZaQ9yya4GdD6981rRwp7hhZTnBciPlKhABOs3DygDsFdLaVcO5+uaSXaeT9MPjqNVNzI0Icg=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AS8PR08MB6263.eurprd08.prod.outlook.com (2603:10a6:20b:290::9)
- by GV1PR08MB10717.eurprd08.prod.outlook.com (2603:10a6:150:170::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.25; Thu, 8 Aug
- 2024 10:43:58 +0000
-Received: from AS8PR08MB6263.eurprd08.prod.outlook.com
- ([fe80::12b5:3f0a:2090:fa7c]) by AS8PR08MB6263.eurprd08.prod.outlook.com
- ([fe80::12b5:3f0a:2090:fa7c%7]) with mapi id 15.20.7849.008; Thu, 8 Aug 2024
- 10:43:58 +0000
-Message-ID: <f452327d-b035-42a6-8b78-d2d4d2c96e17@arm.com>
-Date: Thu, 8 Aug 2024 13:43:54 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panthor: Add DEV_QUERY_TIMESTAMP_INFO dev query
-To: Mary Guillemard <mary.guillemard@collabora.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- kernel@collabora.com, Christopher Healy <healych@amazon.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, nd@arm.com
-References: <20240807153553.142325-2-mary.guillemard@collabora.com>
- <327a3440-8d01-4787-83be-a00fbbe0b593@arm.com>
- <ZrSc87IA0U9WPNYW@kuroko.kudu-justice.ts.net>
-Content-Language: en-US
-From: Mihail Atanassov <mihail.atanassov@arm.com>
-In-Reply-To: <ZrSc87IA0U9WPNYW@kuroko.kudu-justice.ts.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA2P291CA0048.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1f::10) To AS8PR08MB6263.eurprd08.prod.outlook.com
- (2603:10a6:20b:290::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAB31448D7;
+	Thu,  8 Aug 2024 10:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723113931; cv=pass; b=OQd0exsgMaZ0Rmd6beogfXZfxunCcxPICJcvRqKwnpVKn2J5ryxpthU5qDoaKVOJFM+GRrfWHEBeCm6umy8VtBBuEwWL3eIykVbIsFXA3A2YqepkzLhdoi0yrod9yrK4GWittdVUglj/WMObXGYpQE/XQeptuZ0z0dLDq4xm2ks=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723113931; c=relaxed/simple;
+	bh=tzJh6V8U7ktztmiZcXG8TGGcEmA14cBAyKDC7eoUwF0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bRTOEb1yAki/aHsgflgEYJM15E3+lrt3bNPANCgkaKq2JZzZhFx4dWeeJfLIy7JgPy3tnVmJlFW0iugkXPJJKLQtAzXB8dvLjhtqFQ/v8T1LGZO1JINN9TR6fu7DSaIO1l5uM7S9yrPzR49w7gKv/vALmByP9qMVKBgC6yQxR0s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=bsYr7oDx; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: laura.nao@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723113914; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZX1Z0U/wKaZUi7Y9bO5bcYwzwqlhDF+96UwSRew6a9QsWL3HdrpzoudPDqRnVB0iTXjW5egvkzudmiEhHreDSksTblurcOSxfKrIgdGWdym6/g3VJCZkx/ZSUtBNIIgXqQfyCnb6MKGej7FviVNnsbkOc+2TzK6c0shxp3qIyR0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723113914; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ImzYMPWJt3gp3X9eDVJ3gAtm0zj1XfKecGOdA3mAkyU=; 
+	b=UoB4saxU8ZctYOkVaCKqR1TWv37NvtfMudWx+B3RHLTR573cdtGYEu3027XfmIjy0NilVTaXdIcE6pe0HrKLKzHFU//gqpHVH8tn66FxSi9cV70/o8DnIefOGLp76HGYCXxIN2cCFBtv2GOyl/KkB75wa7T0n9xBh+QXNru8UN4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
+	dmarc=pass header.from=<laura.nao@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723113914;
+	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=ImzYMPWJt3gp3X9eDVJ3gAtm0zj1XfKecGOdA3mAkyU=;
+	b=bsYr7oDxQwjcpF2H7RWcGpq6vtXStk3iZq8FhnaxtUY5YHKVINr4CvvBMTjJw5C4
+	LNBJkP11kU6BLp5NDhex0lCtLDlr+dgHWuRvtMCiFEdB6+NJdiXyBYeaUGd1yMaOUVG
+	QhRjpir1jEF+mml+8y4CQL1webh64uBT1zjFj1+E=
+Received: by mx.zohomail.com with SMTPS id 172311391141613.748118648028026;
+	Thu, 8 Aug 2024 03:45:11 -0700 (PDT)
+From: Laura Nao <laura.nao@collabora.com>
+To: laura.nao@collabora.com
+Cc: kernel@collabora.com,
+	kernelci@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	mhiramat@kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	tim.bird@sony.com,
+	todd.e.brandt@linux.intel.com
+Subject: Re: [RFC PATCH 1/1] kselftests: Add test to detect boot event slowdowns
+Date: Thu,  8 Aug 2024 12:45:34 +0200
+Message-Id: <20240808104534.17994-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240731092534.16213-1-laura.nao@collabora.com>
+References: <20240731092534.16213-1-laura.nao@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AS8PR08MB6263:EE_|GV1PR08MB10717:EE_|AMS0EPF0000019B:EE_|AM8PR08MB6466:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c87ac15-470d-4a73-5b60-08dcb79709bf
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?M2hDaWJkSzJjZGwwOVpzYVFLUTVVa0pQUFcrQk53YTU1bEtETWZqb2dHRDQ4?=
- =?utf-8?B?QXg1b3F4cGhwRHpMWE5Kazg2Y1EvQ3hXYzFZKzI3Y3B3OHJvem9uSTNBWTlW?=
- =?utf-8?B?NTQ5Y1FWWERPTmhBN1J2UTBSWk5nbnFWZ3lDS2Q5UWg4YktkbDNhRHgvUzVz?=
- =?utf-8?B?N04zQWNGdzZtcG4waFo5RHRQUVE1RUk1Wmk4SFJvemJCbGJhQklCSUZmbUMw?=
- =?utf-8?B?aytyL2xCcEZ5K09OdXdyYnRHM0Rad293RGlQT0NEUUZtcDJhMFowZkFKVE1U?=
- =?utf-8?B?b1Ewb0NieEtZWXdXSjdsOE0vd3NXYnZBa3dZelpmTGJ0Z3pzSTJ4VnBCYURm?=
- =?utf-8?B?VEgxSlNQR3dOZzRySlBOSEUzVFZKVkJoMzFKTGYvRHgzL1Q0MnJDbE0rYXFq?=
- =?utf-8?B?SzZ3RmZYei9Sek01MmlBcW9SQ0xzeHo5ZU5vam8xRUF2aGhyZ2NxVW5hS0tz?=
- =?utf-8?B?b3h3dk1GV004YlAzSmM5bnIvem5kRzB4MDBJcWNQcXlNUkpEd1V4UDIvcmpY?=
- =?utf-8?B?S0FvZU5UUzRLT0I1MTgrWkQ5S0tJeW14VWxsaFZBTzA3R2YzUVJraUx3bUtR?=
- =?utf-8?B?WWhFb0ZlTEl0WjBwTG1LdU0xc0R1Ti9OTmJlR250YmdaL1RZcnJieEZ6ZEFM?=
- =?utf-8?B?V0d5OU4xcllqZEpxQ0FnRU1YZ1VtcCtkaGpDS1MyQnM4bmZmaVI4dkduMkpt?=
- =?utf-8?B?b05nRXBLeHE4RGluOGc1dWlIZUxEZ0hpU2QrY1c4UUEvTWt4RExIeDZjTU5i?=
- =?utf-8?B?QXNzSmw5Q1ZEODBZNHhsOVZiVFFSaTlpTFo5VnFrM3JPemRleUVNWGdQNG9E?=
- =?utf-8?B?MEN0RldNNTU3S0U1TlN3RTByMUdEMFVaa25yMjF1dElha29FTGZMUWpEVDZ2?=
- =?utf-8?B?Q3pwOGVpSDY0Y2hPMU1pcDEyUlpYVlRESmpZZ1NQS2ZKcmFpYVlwWUFaNFhC?=
- =?utf-8?B?VThjaERMdVlWdUFLcitsWVhrVm42b0FZd0xxblRYZjMzUTBhT2Y3UTBKQkt2?=
- =?utf-8?B?NHFLaTdrYzlMdTl3YVQvQ2xkZTFzVXlzUzJEUFRmNDRnM2dlYVVkNEt3RkpH?=
- =?utf-8?B?Q1F4cW4wVlJpN0I1VnNRZzk1TnF3NjRvKzZ4ZEZzT2dVNG1QYzg4WXkyQU9J?=
- =?utf-8?B?RUI5NEplbDFUUkNkQTk5MHcrT0ZhbnpJeXViNFNkN2N4VUdxbXRSeUZVanJE?=
- =?utf-8?B?TUhGc3BrUk9kSUpIWWlHcEhtT2dzdmVpcTI5TStlcjhkZkZIWVgybTRndXdD?=
- =?utf-8?B?MlBRc0ZIUW4wWGsxeVNNOGQ2ZmFNUEhkTEZqNzV0MU0vUHhmYndyS0ZhalF5?=
- =?utf-8?B?UE1qeDNoc3hQRkZLL0lDZXJ3ZmF4UVF1K0ZOdWVtSC9FdzVKcWNsWWw2VGRH?=
- =?utf-8?B?WXRuRGgrRjMxMTdoQ2o5VXROdFJldWpZUmJSUVNOTGNZODVreWM2WlU1Q0dN?=
- =?utf-8?B?NXZHTHZFM0VQVjIrNmlUYTBWM0IzSzI3aTgrM0NMczlzeEpZekNMNVJqT3k0?=
- =?utf-8?B?RlpRRHIrSS83SzVDZ1ZYVjJ5ZjNzUHFucG0yZFp5cW80a3JRUlhWRjJvenNB?=
- =?utf-8?B?TmNHbTlrM0hrckxnUEhZS3BIZDYzV1pZL3U1VFFwV2VXL040eEpYdmNrbzA2?=
- =?utf-8?B?UUxqT29kTTdHQlhnOGpZek40UHh4MnIrc004TTJVcElvTmJ6UUdsbDBrTGZE?=
- =?utf-8?B?c2Q0VDNBbzQyUHlLNkNBRDlxWWdrd0FRUHdSanBtd28zamtTemxFamZVR3Vl?=
- =?utf-8?B?K3k2bFFRN1Ntek1KOXg4NkJpTTZKcmRNOElRYldGcEZJOG1ocHAreUQwVURl?=
- =?utf-8?B?QXlsTlYxWWtWRk16SWVhUT09?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR08MB6263.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB10717
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-SkipListedInternetSender:
- ip=[2603:10a6:20b:290::9];domain=AS8PR08MB6263.eurprd08.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS0EPF0000019B.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	2dfd8a71-2c95-4bce-5236-08dcb797021c
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|35042699022;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q2VQcGl3aVRicEQ2bjQrZ1lVNmdIQkFoczU4SkJ1VnoxMHNLS1hFMHdVdkIr?=
- =?utf-8?B?cEkwSmVqRW40WTRjYWxRZHY1cU1xVDhqQzNBVE5ML1lGLzRIdFI3N09RTDBE?=
- =?utf-8?B?MnpPWlExQkxJd09tZGlmcTk0K1VhQ1NFeUY2azdSUkhKZEI2ZEdxRVd0cy9O?=
- =?utf-8?B?S3UrWlVtZWRnL2UrdzVYL2M1bW9LMVIvK3ltb0h4RnFtNnZHTHA2eXFHeUNy?=
- =?utf-8?B?QWo0Z25Yc3dPd0xWOWRlSnBrM2tkWG9QUnRzcUZhY3A0MTE4dW1JSFV5Snhs?=
- =?utf-8?B?S1hBYUZOTlNpT2s2SG1tSm9NdkMwampvR3VGTGY3YnN3eE9BZlJzYjlyd0tv?=
- =?utf-8?B?S2puYUpHQW1nUUh4ZkRMMlE0QldndVRPZ1gzcXZmNm5va0NLNnZDRHdqZyta?=
- =?utf-8?B?TFQwdFlBdlUrTjF5RElPMEpwNk9MRVBoWFhKSkM5aDB2YXJwaTVTRENmbWE0?=
- =?utf-8?B?eTRxQzBTTkdvMlVhZHMvdENwZEJ6TWhlMlZEb2tuenh5OS83bk5yc0dhcEp4?=
- =?utf-8?B?S0dDdk55QTNFbmxBVzIvUG1ORXhVVGxnRVNjaGVpa0VBSUNHYU1VOWpvQVRW?=
- =?utf-8?B?clBjbkViUlhhZkFWSGMxZlNmcTM5VzN1b3kvKzBlMXRsWDhwWE9LSHFyQnhB?=
- =?utf-8?B?YitML0FIYmdHV3RhT2RvUDBVTEVpc2JhZUpadWFGdUdpd01RelozaWJZSnlm?=
- =?utf-8?B?KzJoS0ZNYUtEbnB2b3ZxT3hlVVFmRWc5cWVMMVdNWCtRTUxxOFRiN3pDdWcr?=
- =?utf-8?B?UldrWXFsRGg1eEJZUHgwSzRQU2Iyci9ubVE2cWFwa0p3SXNXazU4RGtuUVdW?=
- =?utf-8?B?cENVSEdHVVk5VXJuajljLzlxZXFzOHRZcWFhMjhySGI1YzYwYzV1VlpjOXRO?=
- =?utf-8?B?NEEyNGZCZEdBOXFuc2h4SVJqOCtIMUlMajhrNm1mYjk5NlA5akh6U1RCS09q?=
- =?utf-8?B?c3JQK2Rxck5YeldyZC8vYktKaVVxV1ZBZ3VhT3p1ZSs2VVBnaDhhSzBZZkVW?=
- =?utf-8?B?ck1GTFFDaVpRVG1rSHZVMGU5b0dXQzg5ek0zSURKVXIxMXQyZjZmcm9wNHVZ?=
- =?utf-8?B?bnBoempndHRVQ3ZBRXhYbzN6SUh4RVkrOUdiT2k5WURWZnVVTTRhMDV5WGVv?=
- =?utf-8?B?VU4rSVM2TmkweWVZZ0ZXUUhRbUppRTNnNmx5RkR0bW9zMzJTeU9nak95RDQ4?=
- =?utf-8?B?cXNTKzNISldWM0pVNG5DblBIWFpSVGlKUktDS2hxZCtDaHZNZmZqdTBGekhQ?=
- =?utf-8?B?TmtSLzZBVlROTmtJN2ZmUzBQUWMycWNTVjMvUG90YUIranR4TFp6ZFkxVmN0?=
- =?utf-8?B?QWZnWUY0SGdRdXNPOTJsK3dLdTZiUmtXeHcrS1lKT05XNmFYWVZmTHRwS0xC?=
- =?utf-8?B?MkcyM1FpdUJ0T3lJT2JMS2p2UWhNd0JiY2VVU0hMeE1LTXlmQng1Z1JQS1Fy?=
- =?utf-8?B?cytTdjZQZ3pPSitvM2hCRnIwVGsrVFpQN1BzblhyWFY5Y0FUY0VuUXd0SEVR?=
- =?utf-8?B?VVVSTk5DaXpoaXNnNWNCcVc1TFVtM3QrQkVqLzJtZlpEZ285MWhQTXJrWDRI?=
- =?utf-8?B?K1pzajFjbjFSUDFZZmwyUEIxY3ZIZDRGZnpWRnV6c0Q4bzNrVVpYOUt3Wm96?=
- =?utf-8?B?eTNsSng0RkpjVjNKcXBsRTZ5THpZdGdLbHVPek9wODFqaWEzYzQ2bEcrRWtn?=
- =?utf-8?B?amtiYkR6UGlwNG9Vb25xTjljM1lMZXNYVHdmMUhYSFZsYm91Z2YzZ3BMYTg5?=
- =?utf-8?B?TlBhTjN2bFBZR0N0ZnJIRWtDT2pib3F2dzhBYXJpWTZ6SlBkTjZlVFlFNk45?=
- =?utf-8?B?TG96bm1VeTVCMm0zRGF6YyswZUhrVkJwNk5ZenprbzdtMVgzYW55SFRVZ0VT?=
- =?utf-8?B?M3N3ZkdhMDd0OFhQcExHeFRWWkJhK2JHZDJ5Tzc2elF0U0dmdzVMMFlSdFJq?=
- =?utf-8?Q?ZrowDxcdjd3h7myCAB6MeBNMsH4iQE6k?=
-X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(35042699022);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 10:44:11.0779
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c87ac15-470d-4a73-5b60-08dcb79709bf
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF0000019B.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR08MB6466
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-
-
-On 08/08/2024 13:24, Mary Guillemard wrote:
->> As it stands, this query has nothing to do with the actual GPU so
->> doesn't really belong here.
->>
->> It'd be more valuable, and can maybe give better calibration results
->> than querying the system timestamp separately in userspace, if you
->> reported all of:
->>   * the system timer value
->>   * the system timer frequency
->>   * the GPU timer value
->>   * the GPU timer frequency (because it _could_ be different in some systems)
->>   * the GPU timer offset
+On 7/31/24 11:25, Laura Nao wrote:
 > 
-> I see, I missed those registers... I will also fix this on my v2 of my Panfrost series.
+> It looks like sleepgraph.py is more focused on analyzing suspend/resume
+> timings, while bootgraph.py measures boot time using the kernel log and
+> ftrace. The latter might indeed come in handy.
+> As far as I can see, the script doesn't support automatic detection of
+> boot slowdowns, and the output is in HTML format, which is meant for
+> human analysis. However, I can look into adding support for a more
+> machine-readable output format too. The test proposed in this patch could
+> then use bootgraph.py to generate the reference file and measure current
+> boot timings.
 > 
->  From my understanding, the GPU timer frequency doesn't have a register
-> so I suppose it would be wired to cntfrq_el0 if CONFIG_ARM_ARCH_TIMER is
-> set, am I correct?
-
-Barring any HW errata, yes, that's the frequency the GPU timer should 
-tick at, too.
-
+> I'll look into this and report back.
 > 
-> Thanks for the review,
-> 
-> Mary
 
--- 
-Mihail Atanassov <mihail.atanassov@arm.com>
+After examining the bootgraph.py script, it seems feasible to add
+support for generating the output in a machine-readable format 
+(e.g., JSON) for automated analysis. Todd, I've CC'd you on this 
+discussion in case you have feedback on possibly using bootgraph.py in 
+an automated test to detect slowdowns.
 
+Some points to consider:
+
+- The bootgraph.py script supports ftrace through the -fstat and -ftrace
+  options, and it parses the kernel log to get initcall timings. To use
+  this in an automated test, we need a way to provide the necessary 
+  command line options. One approach is to include these options in a 
+  bootconfig file embedded in the kernel image (as per proposal in this 
+  RFC). Shuah, do you think this is acceptable? I haven't seen other 
+  tests doing this, so I'm unsure if this is a proper way to handle 
+  required command line options in a selftest.
+
+- The bootgraph.py script tracks timings for all init calls, which might
+  be excessive and generate too much output when integrated in an 
+  automated test. We might need to limit the test output to report only 
+  significant slowdowns to make it manageable.
+
+- I'd like to get some feedback on which key boot process events are
+  more relevant to track; depending on this, we could use the 
+  bootgraph.py script to monitor initcalls and possibly other events 
+  tracked via ftrace. The script currently uses the function_graph 
+  tracer, and its parser is designed for this tracer's output. If we need 
+  to track other events (e.g., kprobe events), the parser might need some 
+  adjustments.
+
+I'll be discussing this at LPC in September
+(https://lpc.events/event/18/contributions/1700/) and look forward to
+exploring more details and alternative approaches for an automated boot
+time test.
+
+Best,
+
+Laura
 
