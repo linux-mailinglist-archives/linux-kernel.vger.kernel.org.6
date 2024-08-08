@@ -1,154 +1,187 @@
-Return-Path: <linux-kernel+bounces-279107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 919A394B906
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:30:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9193694B910
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42C121F222A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0474D280EF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 08:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3784A18953B;
-	Thu,  8 Aug 2024 08:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EBco8W3I"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E3B14658D;
+	Thu,  8 Aug 2024 08:31:39 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1191188004;
-	Thu,  8 Aug 2024 08:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD52143C7D
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 08:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723105797; cv=none; b=msAvshW6QvS+e4M9r/IGHYgtbPMEZbHutd1+S3CA4UCalqzPWh85aAphLgqNrwLabmWv+EImiZ3eXS4F5UaiAp6i+pcX7PCabChOKQDs1SolT0HkICiQWFILqElFM/jFf7lDYk/Y61NAuj2Vrlvgs0qCdV9hqfa4jXLx8CynE4c=
+	t=1723105898; cv=none; b=K0hDyWnK1y5+7lud7W5mWXsOM0+kWY4JKtA0Du9vIZLIV6F8yJKHszfdWFXa1KuiF5bb3iYEw3d48v8ZOVlqN8lqAzN3Qrfv7KHjQK9JtJRWi6o8FyHFSmGbvEfBY2J22OHXHQWMR9cTbLSTF5lf++oA4n03L5A5LIrsSRXolZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723105797; c=relaxed/simple;
-	bh=5rAKlKGzGydrprOOzglAQhYQrMbE5Ti2sS1sDTFQXy0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+t5yHb1HcsMqaYm7Hf4qm28oXZnSxFEBv/9cFRlNQfiS/Bv+zzlhu58xIUUHsbBmMDRvARBfI4717LzYjcMLEacCrFZgqs5Tn62zwooeObihHg9Jna359l93JsfwrXA3SU4mBRu3z8+3dwtxwwMLeECZKqzl9slUvxuRYIuc1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EBco8W3I; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4788Tmf5016834;
-	Thu, 8 Aug 2024 03:29:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723105788;
-	bh=FKX809N1Z2e/jn5gGGfjwgllKlIy5ezWa1gnW+9XNvE=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=EBco8W3Iq3OgIyRR0lAG2WUQTE11ExL5NeX26j9zBZEQ4fMvvkspLLcfkePvtosTQ
-	 rC60qoxsDie+PODgLYeBIplKiXrw4hJFo5J+GQOdB/HGsWuTx+TKS/lJ4N4A/PCpkM
-	 gNFB5TXTWQr9Dgw6uzgTEE8gP6bILncaA7IzCaPk=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4788TmPl119069
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 8 Aug 2024 03:29:48 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
- Aug 2024 03:29:48 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 8 Aug 2024 03:29:48 -0500
-Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4788TlBt090632;
-	Thu, 8 Aug 2024 03:29:47 -0500
-Date: Thu, 8 Aug 2024 13:59:46 +0530
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-To: Neha Malcom Francis <n-francis@ti.com>
-CC: Bhavya Kapoor <b-kapoor@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
-        <kristo@kernel.org>, <vigneshr@ti.com>, <nm@ti.com>,
-        <sinthu.raja@ti.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am68-sk-base-board: Add clklb pin mux
- for mmc1
-Message-ID: <20240808082946.pkmztwz6dthhnm57@uda0497581>
-References: <20240807101624.2713490-1-b-kapoor@ti.com>
- <8fa39624-9a92-404d-8651-9ade5700a7d3@ti.com>
- <1319a6ac-6784-45d6-8a0e-170e40d3aa18@ti.com>
- <2279305f-2efa-4320-866a-fc4340d2e70c@ti.com>
+	s=arc-20240116; t=1723105898; c=relaxed/simple;
+	bh=J6eyOjQh9ePK+M4qnKZgmGARjVwWmTTUklInHlTCE0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=D3gqKUfisoK5ro8+nTfv744d8Hy0y/sFh/ej4vhL+h/7i0bPg7AyFLlHFYAECiMIhrq/2vwx3JcpuYKNK5oBzcPAsnZxnXymZ9uz/ofIVUW3QCAUKArIE8mpVSddWAd7nNC1RrG2nUtpx1fWUW7dqHfFMElkNkAnJBM12sBwAQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WfgGN5FB6zpT2F;
+	Thu,  8 Aug 2024 16:30:20 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 371E71401E0;
+	Thu,  8 Aug 2024 16:31:32 +0800 (CST)
+Received: from [10.67.109.211] (10.67.109.211) by
+ kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 8 Aug 2024 16:31:31 +0800
+Message-ID: <3ac296ea-7f9f-4df4-af3b-77d3d3cdcc73@huawei.com>
+Date: Thu, 8 Aug 2024 16:31:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [build fail] v6.11-rc2 from "ARM: 9404/1: arm32: enable
+ HAVE_LD_DEAD_CODE_DATA_ELIMINATION"
+Content-Language: en-US
+To: Arnd Bergmann <arnd@arndb.de>, Harith George <mail2hgg@gmail.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Russell King
+	<rmk+kernel@armlinux.org.uk>, Ard Biesheuvel <ardb@kernel.org>,
+	<harith.g@alifsemi.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com>
+ <c11ba413-89f6-46b4-8d59-96306c9f1f14@huawei.com>
+ <52518ac5-53bb-4c70-ba99-4314593129dc@gmail.com>
+ <2812367a-49ad-4c88-8844-8f8493b15bbd@huawei.com>
+ <a65d0b09-466d-415f-9bd0-cbc5ff3539e7@gmail.com>
+ <2083af75-e2d8-42b9-8fa6-f5b7496671bd@app.fastmail.com>
+From: "liuyuntao (F)" <liuyuntao12@huawei.com>
+In-Reply-To: <2083af75-e2d8-42b9-8fa6-f5b7496671bd@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2279305f-2efa-4320-866a-fc4340d2e70c@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-Hi Bhavya,
 
-On 13:19-20240808, Neha Malcom Francis wrote:
-> Hi Bhavya
-> 
-> On 08/08/24 13:08, Bhavya Kapoor wrote:
-> > Hi Neha,
-> > 
-> > On 08/08/24 11:51 am, Neha Malcom Francis wrote:
-> > > Hi Bhavya
-> > > 
-> > > On 07/08/24 15:46, Bhavya Kapoor wrote:
-> > > > mmc1 was not functional since pin mux for clklb was not present.
-> > > > Thus, add clklb pin mux to get MMC working.
-> > > > 
-> > > > Fixes: a266c180b398 ("arm64: dts: ti: k3-am68-sk: Add support
-> > > > for AM68 SK base board")
-> > > > Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
-> > > > ---
-> > > > 
-> > > > rebased to next-20240807
-> > > > 
-> > > >   arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts | 1 +
-> > > >   1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-> > > > b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-> > > > index 90dbe31c5b81..d5ceab79536c 100644
-> > > > --- a/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-> > > > +++ b/arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts
-> > > > @@ -204,6 +204,7 @@ main_mmc1_pins_default: main-mmc1-default-pins {
-> > > >           pinctrl-single,pins = <
-> > > >               J721S2_IOPAD(0x104, PIN_INPUT, 0) /* (P23) MMC1_CLK */
-> > > >               J721S2_IOPAD(0x108, PIN_INPUT, 0) /* (N24) MMC1_CMD */
-> > > > +            J721S2_IOPAD(0x100, PIN_INPUT, 0) /* (###) MMC1_CLKLB */
-> > > >               J721S2_IOPAD(0x0fc, PIN_INPUT, 0) /* (M23) MMC1_DAT0 */
-> > > >               J721S2_IOPAD(0x0f8, PIN_INPUT, 0) /* (P24) MMC1_DAT1 */
-> > > >               J721S2_IOPAD(0x0f4, PIN_INPUT, 0) /* (R24) MMC1_DAT2 */
-> > > 
-> > > How is this different from the P23 pinmux for MMC1_CLK? Could you
-> > > explain what CLKLB is, since it doesn't have a ball number I'm
-> > > finding it difficult to understand what it is?
-> > > 
-> > This pin needs to be setup so that MMC_CLK is looped back at pad level
-> > for highspeed SDIO operations (has been same across K3 family). MMC0/1
-> > has this pin configured as INPUT by reset default as these have boot
-> > media
-> > 
-> >   These pinmuxes are derived from pinmux file shared by EVM team during
-> > wakeup/board bringup.
 
-I think it'd be good to put this in the commit message as well for more
-clarity.
+On 2024/8/7 23:41, Arnd Bergmann wrote:
+> On Wed, Aug 7, 2024, at 17:36, Harith George wrote:
+>> On 07-08-2024 20:52, liuyuntao (F) wrote:
+>>> Thanks, I reproduce the link error with toolchain
+>>> gcc version 9.3.0
+>>> GNU ld (GNU Binutils) 2.33.1
+>>>
+>>> with same gcc version, just upgrading ld version to 2.36.1, it does not
+>>> segfault and build completes. there should be bugs in low version of ld,
+>>> and the ".relocÂ  .text, R_ARM_NONE, ." triggers that.
+>>>
+>> Thanks for confirming.
+>>
+>> I guess we need to add something like
+>> #if !CONFIG_CC_IS_GCC || CONFIG_LD_VERSION >= 23600
+>> around the entry-armv.S changes and maybe select
+>> HAVE_LD_DEAD_CODE_DATA_ELIMINATION in arch/arm/Kconfig only if the same
+>> conditions are met ??
+> 
+> I think it makes most sense to have a minimum LD
+> version as a dependency for HAVE_LD_DEAD_CODE_DATA_ELIMINATION.
+> Are you sure that 2.36 is the first one that works, and it's
+> not just 2.33 specifically that is broken?
+> 
+> If so, we could use
+> 
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -117,7 +117,7 @@ config ARM
+>          select HAVE_KERNEL_XZ
+>          select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M && !CPU_32v3
+>          select HAVE_KRETPROBES if HAVE_KPROBES
+> -       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION
+> +       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if (LD_VERSION >= 23600 || LD_IS_LLD)
+>          select HAVE_MOD_ARCH_SPECIFIC
+>          select HAVE_NMI
+>          select HAVE_OPTPROBES if !THUMB2_KERNEL
+> 
+> 
+> binutils only takes a few seconds to build from source, so
+> you could just try all version from 2.25 (the oldest supported)
+> to 2.36) to see which ones work.
 
-Regards,
-Manorit
+After testing, all version of ld with version earlier than 2.36 has a 
+build issue.
 
-> > 
-> 
-> Thank you for explaining.
-> 
-> Reviewed-by: Neha Malcom Francis <n-francis@ti.com>
-> 
-> > Regards
-> > 
-> 
-> -- 
-> Thanking You
-> Neha Malcom Francis
+as Harith mentioned:
+> The select alone may not be enough. Wont the changes in arch/arm/kernel/entry-armv.S still result in LD Segfaults even if the HAVE_LD_DEAD_CODE_DATA_ELIMINATION flag is not set in .config for older toolchains? 
+
+I think we could eliminate the impact of ".reloc  .text, R_ARM_NONE, ." 
+when CONFIG_LD_DEAD_CODE_DATA_ELIMINATION is not enabled.
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 54b2bb817a7f..173159e93c99 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -117,7 +117,7 @@ config ARM
+         select HAVE_KERNEL_XZ
+         select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M
+         select HAVE_KRETPROBES if HAVE_KPROBES
+-       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION
++       select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if (LD_VERSION >= 
+23600 || LD_IS_LLD)
+         select HAVE_MOD_ARCH_SPECIFIC
+         select HAVE_NMI
+         select HAVE_OPTPROBES if !THUMB2_KERNEL
+diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
+index f01d23a220e6..cd443faf8645 100644
+--- a/arch/arm/kernel/entry-armv.S
++++ b/arch/arm/kernel/entry-armv.S
+@@ -29,6 +29,12 @@
+  #include "entry-header.S"
+  #include <asm/probes.h>
+
++#ifdef CONFIG_HAVE_LD_DEAD_CODE_DATA_ELIMINATION
++#define RELOC_TEXT_NONE (.reloc  .text, R_ARM_NONE, .)
++#else
++#define RELOC_TEXT_NONE
++#endif
++
+  /*
+   * Interrupt handling.
+   */
+@@ -1065,7 +1071,7 @@ vector_addrexcptn:
+         .globl  vector_fiq
+
+         .section .vectors, "ax", %progbits
+-       .reloc  .text, R_ARM_NONE, .
++       RELOC_TEXT_NONE
+         W(b)    vector_rst
+         W(b)    vector_und
+  ARM(   .reloc  ., R_ARM_LDR_PC_G0, .L__vector_swi              )
+@@ -1079,7 +1085,7 @@ THUMB(    .reloc  ., R_ARM_THM_PC12, 
+.L__vector_swi               )
+
+  #ifdef CONFIG_HARDEN_BRANCH_HISTORY
+         .section .vectors.bhb.loop8, "ax", %progbits
+-       .reloc  .text, R_ARM_NONE, .
++       RELOC_TEXT_NONE
+         W(b)    vector_rst
+         W(b)    vector_bhb_loop8_und
+  ARM(   .reloc  ., R_ARM_LDR_PC_G0, .L__vector_bhb_loop8_swi    )
+@@ -1092,7 +1098,7 @@ THUMB(    .reloc  ., R_ARM_THM_PC12, 
+.L__vector_bhb_loop8_swi     )
+         W(b)    vector_bhb_loop8_fiq
+
+         .section .vectors.bhb.bpiall, "ax", %progbits
+-       .reloc  .text, R_ARM_NONE, .
++       RELOC_TEXT_NONE
+         W(b)    vector_rst
+         W(b)    vector_bhb_bpiall_und
+  ARM(   .reloc  ., R_ARM_LDR_PC_G0, .L__vector_bhb_bpiall_swi   )
+
+
 
