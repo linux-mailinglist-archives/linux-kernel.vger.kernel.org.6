@@ -1,44 +1,62 @@
-Return-Path: <linux-kernel+bounces-278763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4D894B474
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE77094B479
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 03:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82CD1281B75
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:10:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80728281ED9
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 01:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4FE4A28;
-	Thu,  8 Aug 2024 01:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B1C8F7D;
+	Thu,  8 Aug 2024 01:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="YUIm9eJd"
-Received: from mail-m2424.xmail.ntesmail.com (mail-m2424.xmail.ntesmail.com [45.195.24.24])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nuyOU1V6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030FC1854;
-	Thu,  8 Aug 2024 01:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BAA8BE5;
+	Thu,  8 Aug 2024 01:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723079432; cv=none; b=fJt9iXh/bSThA8965NG3NsoBXdlkXjMQMJZq62aJzKqYLZK5pySzMuxJGBLSVnu3cczeR2TU8xOx/0do54ta/hZ1OexKHmQ7O4cRBS44NJj/s8NrUiQFK8AWDEBYv4rHdFOs+OyYDlTf8OM3ZhwzSeYzBOW19SXuEnMG9iIz8+Y=
+	t=1723079443; cv=none; b=jNtwawGbVdT0HReSy3bb7Xdffh5o1ILU7pFKjaoXeGbwAwg3ZFrN4jf4nWBGpMTQJS5vq2bLKylMXzWd5YuiiCv8VLxVZpcKGlVeMge1fBRLo+lDV0y4VGe4F50vRsXztBrd93ptk9GEt2GNGUq8HNQuHknC9DkCofS8kULNbFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723079432; c=relaxed/simple;
-	bh=dh1ak82e9XfXuV20OTVOUmhuXF7NnOZjNWRze+CvXIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Eey4i0TX0EIY5WlvQ09AV0P4LtVkFtLfiKwIKROBrffsxWZNkG3a7CzRZITFWMDYaKhoMr03lj3ofvQEWt+tO0KKauZF1SQd/bWvtMGQWoxccYqoklH+vGPA5jHxS+VaExfUuc+TAdRpR3Cx2K+w1mYkkHM7MCpw2VK292VJLPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=YUIm9eJd; arc=none smtp.client-ip=45.195.24.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=YUIm9eJd8vgxIDtf5OwCf7W46znutQw3GqwfC1dBeHC7zswhnuw0jGQnanPc2phYovI5/QtNqUmrFEsplTI+CJQZ6SK61eS6khTe+Uhz6aI752QJIckZMBX8CDy3MYg7H3Md/96BD0rKaCdhv3VLlShAuFvWhZBCR/qfli/t98o=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=uqG3/IZXzJ43M58oVjKKr6TZYE+/bhrYky3foWhb+w8=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.49] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 8EA23A025A;
-	Thu,  8 Aug 2024 09:09:54 +0800 (CST)
-Message-ID: <e407b8ba-e72a-4b53-af8e-7dbb58420b07@rock-chips.com>
-Date: Thu, 8 Aug 2024 09:09:53 +0800
+	s=arc-20240116; t=1723079443; c=relaxed/simple;
+	bh=zNqeGe5SZ1R/HNoeZ1p4saUGdt1QHIZFw6RmLBAQO2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aaA3a/5izrASk8l3dh1h3yuw7S8ALoMxPy3Xnsqb2fmb//9J58nt/TOblsSrYmlB49GAZaui3VGkhglcx17FFHNREMKt8Uyy8XE8RXF27j1gSlepu0yDwNEakNnoLroJLjgv707UPmthbW3IkbaqrB2Y+vNqzBtsYNA0T6eergg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nuyOU1V6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477I6VRB013694;
+	Thu, 8 Aug 2024 01:10:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	R8zs0pLpq9x10EoaY6DU1mr+Wg5AwuPzK8KlejsV5fI=; b=nuyOU1V6o7OYh+hS
+	UFSXiPT9DsKWeK/FbLCmp8JuNx11//GQ3raF6dTZHwJChUqsk5lEuOmK3yQr+NIC
+	0zFsark0QY1JjDg0bw8XGpaGZfEs6uyCFKbwJEuAVtUV6Grre914rw8LYdoTvqhr
+	T1IFOJCP2UTF3q3jvz9DfzHo5jQux/zSG0NK7gHvMgKPRFOETZQa1ubvIGuKI7Wr
+	5Tpz/FANsTeMCSKSViwmvlErFF443K9hKfOcRoQMCU7dWoUO/RBY/fO90eLt/6yY
+	eGHG2TQlCmr5gT1/wKlEaCxct5pTKMnsZaniYb4WygofHrofQ1n7qOTwDTPmS2KB
+	h6A15w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sa8f4c4g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 01:10:21 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4781AKOH017260
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 Aug 2024 01:10:20 GMT
+Received: from [10.71.113.127] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 7 Aug 2024
+ 18:10:19 -0700
+Message-ID: <49dc63b7-1b9b-4888-8127-d988bc3e8373@quicinc.com>
+Date: Wed, 7 Aug 2024 18:10:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,61 +64,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] clk: gate: export clk_gate_endisable
-To: Stephen Boyd <sboyd@kernel.org>, heiko <heiko@sntech.de>,
- mturquette <mturquette@baylibre.com>, =?UTF-8?B?5p2o5Yev?=
- <kever.yang@rock-chips.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
- linux-rockchip <linux-rockchip@lists.infradead.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- huangtao <huangtao@rock-chips.com>, =?UTF-8?B?5byg5a2m5bm/?=
- <sugar.zhang@rock-chips.com>
-References: <20240806073832.13568-1-zhangqing@rock-chips.com>
- <cca491b4b4f5716e634f7c0ce0c574af.sboyd@kernel.org>
- <2024080709283455745026@rock-chips.com>
- <d673b1539ad5d4abfff29900461f9209.sboyd@kernel.org>
-From: zhangqing <zhangqing@rock-chips.com>
-In-Reply-To: <d673b1539ad5d4abfff29900461f9209.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v24 29/34] ALSA: usb-audio: qcom: Add USB offload route
+ kcontrol
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-30-quic_wcheng@quicinc.com>
+ <4d5fe3f8-d7ba-4647-8dd7-22656ec2fde5@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <4d5fe3f8-d7ba-4647-8dd7-22656ec2fde5@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUhDGlZMTRlOS05CHUwaHRlWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a912f89073c03a8kunm8ea23a025a
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nj46NRw*GTI9HxRJSioDLhIy
-	ORMwCiNVSlVKTElIS0xCSEJOTUhNVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUhCTkk3Bg++
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: w1MIkmMMNVY1A41xA_hAbWhFLD1zzPmE
+X-Proofpoint-ORIG-GUID: w1MIkmMMNVY1A41xA_hAbWhFLD1zzPmE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-07_15,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=999
+ impostorscore=0 lowpriorityscore=0 suspectscore=0 mlxscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408080007
 
-Hi,
+Hi Pierre,
 
-在 2024/8/8 4:57, Stephen Boyd 写道:
-> Quoting zhangqing@rock-chips.com (2024-08-06 18:28:34)
->> Hi，
->>
->> Some modules, which need to do workaround, need to disabled the clock directly,
->> independent of the reference count.
-> We don't want clk consumers going behind the clk provider and turning it
-> off and on. You'll need to figure out some other way to do this. Are
-> there really other consumers besides the one changing the pin to a gpio?
-> If there's only one user then it seems like clk_disable() should work?
-Well, then I use other ways to workaround module problems.
+On 8/1/2024 2:02 AM, Pierre-Louis Bossart wrote:
+>
+>> +ifneq ($(CONFIG_SND_USB_QC_OFFLOAD_MIXER),)
+>> +snd-usb-audio-qmi-objs += mixer_usb_offload.o
+>> +endif
+>> \ No newline at end of file
+> add one?
+>
+>> diff --git a/sound/usb/qcom/mixer_usb_offload.c b/sound/usb/qcom/mixer_usb_offload.c
+>> new file mode 100644
+>> index 000000000000..c00770400c67
+>> --- /dev/null
+>> +++ b/sound/usb/qcom/mixer_usb_offload.c
+>> @@ -0,0 +1,101 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/usb.h>
+>> +
+>> +#include <sound/core.h>
+>> +#include <sound/control.h>
+>> +#include <sound/soc-usb.h>
+>> +
+>> +#include "../card.h"
+>> +#include "../mixer.h"
+>> +#include "../usbaudio.h"
+>> +
+>> +#include "mixer_usb_offload.h"
+>> +
+>> +#define PCM_IDX(n)  (n & 0xffff)
+>> +#define CARD_IDX(n) (n >> 16)
+>> +
+>> +static int
+>> +snd_usb_offload_route_get(struct snd_kcontrol *kcontrol,
+>> +		      struct snd_ctl_elem_value *ucontrol)
+>> +{
+>> +	struct device *sysdev = snd_kcontrol_chip(kcontrol);
+>> +	int card;
+>> +	int pcm;
+>> +
+>> +	card = soc_usb_get_offload_device(sysdev, CARD_IDX(kcontrol->private_value),
+>> +					  PCM_IDX(kcontrol->private_value),
+>> +					  SND_SOC_USB_KCTL_CARD_ROUTE);
+>> +
+>> +	pcm = soc_usb_get_offload_device(sysdev, CARD_IDX(kcontrol->private_value),
+>> +					 PCM_IDX(kcontrol->private_value),
+>> +					 SND_SOC_USB_KCTL_PCM_ROUTE);
+>> +	if (card < 0 || pcm < 0) {
+>> +		card = -1;
+>> +		pcm = -1;
+>> +	}
+>> +
+>> +	ucontrol->value.integer.value[0] = card;
+>> +	ucontrol->value.integer.value[1] = pcm;
+>> +
+>> +	return 0;
+>> +}
+> see my earlier comment, should those two calls be collapsed to return
+> all the information in one shot?
+>
+>> +
+>> +static int snd_usb_offload_route_info(struct snd_kcontrol *kcontrol,
+>> +			      struct snd_ctl_elem_info *uinfo)
+>> +{
+>> +	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
+>> +	uinfo->count = 2;
+>> +	uinfo->value.integer.min = -1;
+>> +	/* Arbitrary max value, as there is no 'limit' on number of PCM devices */
+>> +	uinfo->value.integer.max = 0xff;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct snd_kcontrol_new snd_usb_offload_mapped_ctl = {
+>> +	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+>> +	.access = SNDRV_CTL_ELEM_ACCESS_READ,
+>> +	.info = snd_usb_offload_route_info,
+>> +	.get = snd_usb_offload_route_get,
+>> +};
+>> +
+>> +/**
+>> + * snd_usb_offload_create_ctl() - Add USB offload bounded mixer
+>> + * @chip - USB SND chip device
+>> + *
+>> + * Creates a sound control for a USB audio device, so that applications can
+>> + * query for if there is an available USB audio offload path, and which
+>> + * card is managing it.
+>> + */
+>> +int snd_usb_offload_create_ctl(struct snd_usb_audio *chip)
+>> +{
+>> +	struct usb_device *udev = chip->dev;
+>> +	struct snd_kcontrol_new *chip_kctl;
+>> +	struct snd_usb_stream *as;
+>> +	char ctl_name[37];
+>> +	int ret;
+>> +
+>> +	list_for_each_entry(as, &chip->pcm_list, list) {
+>> +		chip_kctl = &snd_usb_offload_mapped_ctl;
+>> +		chip_kctl->count = 1;
+>> +		/*
+>> +		 * Store the associated USB SND card number and PCM index for
+>> +		 * the kctl.
+>> +		 */
+>> +		chip_kctl->private_value = as->pcm_index |
+>> +					  chip->card->number << 16;
+>> +		sprintf(ctl_name, "USB Offload Playback Route PCM#%d",
+>> +			as->pcm_index);
+>> +		chip_kctl->name = ctl_name;
+>> +		ret = snd_ctl_add(chip->card, snd_ctl_new1(chip_kctl,
+>> +				  udev->bus->sysdev));
+>> +		if (ret < 0)
+>> +			break;
+>> +	}
+>> +
+>> +	return ret;
+> None of this looks Qualcomm-specific, shouldn't this be part of the
+> soc_usb framework instead of being added in the qcom/ stuff?
 
--- 
-张晴
-瑞芯微电子股份有限公司
-Rockchip Electronics Co.,Ltd
-地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
-Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
-Tel:+86-0591-83991906-8601
-邮编：350003
-E-mail:elaine.zhang@rock-chips.com
-****************************************************************************
-保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
+Let me see if I can do that. 
 
-IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
+Thanks
 
-****************************************************************************
+Wesley Cheng
 
 
