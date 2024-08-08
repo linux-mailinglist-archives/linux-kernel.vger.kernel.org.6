@@ -1,202 +1,128 @@
-Return-Path: <linux-kernel+bounces-279302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4268B94BB8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:46:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6229694BB90
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 12:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F9F1B23BCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:46:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93F531C21674
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 10:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2745218A92C;
-	Thu,  8 Aug 2024 10:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4903618A950;
+	Thu,  8 Aug 2024 10:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNyK+biA"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wutMQ/7p"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53657489;
-	Thu,  8 Aug 2024 10:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54341119A;
+	Thu,  8 Aug 2024 10:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723113974; cv=none; b=ZGJ8gitz23ckAHKFPUVdlNolnXOxtYVW2FI+GXCoL0Cb64SKJKvEXo+S8gRBo7AikShYbk8P8nJJQRwcxoHUfjvPtH+flTTQTc4CaQxz37q8VFn5Rc5uTNjoWoNoHsuM/13tV9XWlqFrEYG+0CPOetDOQXMJlIoNHXZFn3Pr5Fs=
+	t=1723113992; cv=none; b=u6mGkAMgm/i7JTX72U7gx2UiZqBV8k3uzedRciMrKJnvqFBuKumPJkfnvzdlRjVPpGniES+1hN41XbeXxnTDUvo/ZJPV+ZA1VIk8sb9i9fmn8FfGpb4sop27g2jkGdE3dIWjM10lsw08yn0S2vNz0nvrO4U+iVKImCWPf5kWqIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723113974; c=relaxed/simple;
-	bh=mtPWdaeQ0bQhe3SB1Eeh+IeYnHIKJ7H7jdPYy47irvo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HumfQfB2+9UTE49pZyAIXoKdiEIzQYxrWcCa9C4L/EaI4zBtsxYtn9jnWWzH8x30PmS4yYBNsIPHLumytuJfvRA4MMnlRR2++3OQvP/iNRIIbIjW6pDIn7KmVDuySX+8VbnrPonmFWg6apyiLJUpEdf32bLDHE5d9+htEvfZR+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QNyK+biA; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bb477e3a6dso789470a12.0;
-        Thu, 08 Aug 2024 03:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723113971; x=1723718771; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IHKi9ykob8PgDZOZwwLhrIOPSlG3JYxeUgugXLSxsbs=;
-        b=QNyK+biAnhYAQSUshe2FApjgp1FvKk++oKK405kzeqfuBgv7fGVfEuhtuliN4NEJmS
-         yUB1BShXHItkT3Smp3rGx/tJ+3ZHnynfTlz/SWQ9YRJiMI62InywOWgSq1fHEsVeIByk
-         gpPnSbvDmVdbrpBsmrwXU2nE8t8rOeX/8PklpcHdxE7vLdWuRcg5+8X6rCY7gKaSS+UG
-         7UeV92l5Re00KeKcVcM8T/RoBNviKZDvE/tapZBrzgOO1wbfrqVJNgw/8ZAaQTvSXSqn
-         kBmXM69aLRjmKP/sAoqXW9wsBM+ISmv+KWwD+1IkTw+nSbP14bY1wi436crsapTdqXC6
-         1F+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723113971; x=1723718771;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IHKi9ykob8PgDZOZwwLhrIOPSlG3JYxeUgugXLSxsbs=;
-        b=LmLlsQq5X+5+r1ejgO381w8lVK+RqSsF1greZ90b5997I+3jac0va2WszGCATDwQ6y
-         xO+vSzOfjGAEx/REZ9WKsHU+vjvMguBaJ8PikxEMcpDs4PgvqVAWvkPNBp4BK42seVb9
-         JvlMV8BQ+unGSkZevS4OJAgBPXFXyBBifpfpCi+fiuuve9a3Grcxou0P25WbDkjDSFfY
-         amJF5exZ9nCx7zVyW1Bu2GLvU+OLkIBmSiSe2bVAQQc3IKrmht6paTBMsQnu+Y/4TmEh
-         UZhsxG2by7Xyq4zYP/32HgipC0+OVVzLL3x4V6AZ6/lbwHjIqo/tg27bae7rU4HQUZzi
-         7tdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNiZ5XpWVGHah9NrJfSbWVITgdpHKZpcwkjiqpGcnherQftc6uKOEr9nTETUax3YkHP0PzsBLsf840fb7iYiuhSnScoL97joJkElKaq6kiJoGfYay8KVoZLIMoRObosKVG
-X-Gm-Message-State: AOJu0YzAGkQq+qnU8dF7Zxq9Tbkfoy7FxRj1pu6xBigY0KMIdyKjMS8m
-	kwlIaiEds5Z7qzYNI5vo1LD7kF00J5Dix7K2iWVaPBZsHsooSRja
-X-Google-Smtp-Source: AGHT+IFRoXbTHp8kxNWqUxzdJ7TjIrYaauE7JYMyv6BlWpx8THWcPrznEMWjs6KZu1qW2slwMINqew==
-X-Received: by 2002:a17:907:da0:b0:a7a:c106:3647 with SMTP id a640c23a62f3a-a8090f04205mr139163666b.58.1723113970508;
-        Thu, 08 Aug 2024 03:46:10 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec755bsm728987766b.200.2024.08.08.03.46.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 03:46:10 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 8 Aug 2024 12:46:08 +0200
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Artem Savkov <asavkov@redhat.com>
-Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
-Message-ID: <ZrSh8AuV21AKHfNg@krava>
-References: <ZrCZS6nisraEqehw@jlelli-thinkpadt14gen4.remote.csb>
- <ZrECsnSJWDS7jFUu@krava>
- <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
- <ZrIj9jkXqpKXRuS7@krava>
- <CAADnVQ+NpPtFOrvD0o2F8npCpZwPrLf4dX8h8Rt96uwM+crQcQ@mail.gmail.com>
+	s=arc-20240116; t=1723113992; c=relaxed/simple;
+	bh=x+tZuspA2t+CMCIn/2V9J5WD4Zy3Mhv0AW798+aKarw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Umo3Chnh+S8Vtbc5ai5NI+GEc1Ll9F30URmMGaRcYZL9DjzNkQnIbsBPS3WowpFpFiS2DKHTiGlGF5sICDUG0eudGTMji5Nal9u5tJ3OtsOc7UfwqHEuhAqm+MdfZVMR6huGPlGpW9wKLdsX0vhSkALlAsNkOoe+t0BIcfoHFwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wutMQ/7p; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 478AkFR8123830;
+	Thu, 8 Aug 2024 05:46:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723113975;
+	bh=WxP0cieu8jSFxPs7H85p6qun5NZTEmwTciJNLXZ3tnc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=wutMQ/7peDtqs6x5XpG3m2RP3oeRyW90es5tC/KyRoCF6Z6nvxS/KM0VIH9wupDxi
+	 /dwdNkk2qqRABKfNn3pvA71jeEHnOhGst2aAfxKS5LWxAqBEwJt87S0KIU7BCW75G8
+	 tfKFLfhkX8A1Ay8yA7OSl5rGvhqUQz7qbSVmaLE0=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 478AkF3t005718
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 8 Aug 2024 05:46:15 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 8
+ Aug 2024 05:46:15 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 8 Aug 2024 05:46:15 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 478AkEDe054743;
+	Thu, 8 Aug 2024 05:46:15 -0500
+Date: Thu, 8 Aug 2024 16:16:14 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Kevin Hilman <khilman@kernel.org>
+CC: "Rob Herring (Arm)" <robh@kernel.org>,
+        "Rafael J. Wysocki"
+	<rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian
+ Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/6] cpufreq: omap: Drop asm includes
+Message-ID: <20240808104614.v5smqbtyretivfkf@lcpd911>
+References: <20240806-dt-api-cleanups-v1-0-459e2c840e7d@kernel.org>
+ <20240806-dt-api-cleanups-v1-2-459e2c840e7d@kernel.org>
+ <7h1q313alv.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQ+NpPtFOrvD0o2F8npCpZwPrLf4dX8h8Rt96uwM+crQcQ@mail.gmail.com>
+In-Reply-To: <7h1q313alv.fsf@baylibre.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Aug 06, 2024 at 11:44:52AM -0700, Alexei Starovoitov wrote:
-> On Tue, Aug 6, 2024 at 6:24 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> >
-> > > Jiri,
-> > >
-> > > the verifier removes the check because it assumes that pointers
-> > > passed by the kernel into tracepoint are valid and trusted.
-> > > In this case:
-> > >         trace_sched_pi_setprio(p, pi_task);
-> > >
-> > > pi_task can be NULL.
-> > >
-> > > We cannot make all tracepoint pointers to be PTR_TRUSTED | PTR_MAYBE_NULL
-> > > by default, since it will break a bunch of progs.
-> > > Instead we can annotate this tracepoint arg as __nullable and
-> > > teach the verifier to recognize such special arguments of tracepoints.
-> >
-> > ok, so you mean to be able to mark it in event header like:
-> >
-> >   TRACE_EVENT(sched_pi_setprio,
-> >         TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task __nullable),
-> >
-> > I guess we could make pahole to emit DECL_TAG for that argument,
-> > but I'm not sure how to propagate that __nullable info to pahole
-> >
-> > while wondering about that, I tried the direct fix below ;-)
+On Aug 06, 2024 at 09:00:12 -0700, Kevin Hilman wrote:
+> "Rob Herring (Arm)" <robh@kernel.org> writes:
 > 
-> We don't need to rush such a hack below.
-> No need to add decl_tag and change pahole either.
-> The arg name is already vmlinux BTF:
-> [51371] FUNC_PROTO '(anon)' ret_type_id=0 vlen=3
->         '__data' type_id=61
->         'tsk' type_id=77
->         'pi_task' type_id=77
-> [51372] FUNC '__bpf_trace_sched_pi_setprio' type_id=51371 linkage=static
+> > The omap driver doesn't actually need asm/smp_plat.h, so drop it.
+> > asm/cpu.h is not needed either as linux/cpu.h is already included.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > 
-> just need to rename "pi_task" to "pi_task__nullable"
-> and teach the verifier.
+> Acked-by: Kevin Hilman <khilman@baylibre.com>
 
-the problem is that btf_trace_<xxx> is typedef 
-
-  typedef void (*btf_trace_##call)(void *__data, proto);
-
-and dwarf does not store argument names for subroutine type entry,
-so it's not in BTF's TYPEDEF either
-
-it's the btf_trace_##call typedef ID that verifier has to work with,
-I wonder we could somehow associate that ID with __bpf_trace_##call
-subroutine entry which has the argument names
-
-we could store __bpf_trace_##call's BTF_ID in __bpf_raw_tp_map record,
-but we'd need to do the lookup based on the tracepoint name when loading
-the program .. ATM we do the lookup __bpf_raw_tp_map record only when
-doing attach, so we would need to move it to program load time
-
-or we could 'fix' the argument names in pahole, but that'd probably
-mean extra setup and hash lookup, so also not great
-
-jirka
-
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
 
 > 
-> 
-> > jirka
-> >
-> >
 > > ---
-> > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> > index 95426d5b634e..1a20bbdead64 100644
-> > --- a/kernel/bpf/btf.c
-> > +++ b/kernel/bpf/btf.c
-> > @@ -6377,6 +6377,25 @@ int btf_ctx_arg_offset(const struct btf *btf, const struct btf_type *func_proto,
-> >         return off;
-> >  }
+> >  drivers/cpufreq/omap-cpufreq.c | 3 ---
+> >  1 file changed, 3 deletions(-)
 > >
-> > +static bool is_tracing_prog_raw_tp(const struct bpf_prog *prog, const char *name)
-> > +{
-> > +       struct btf *btf = prog->aux->attach_btf;
-> > +       const struct btf_type *t;
-> > +       const char *tname;
-> > +
-> > +       if (prog->expected_attach_type != BPF_TRACE_RAW_TP)
-> > +               return false;
-> > +
-> > +       t = btf_type_by_id(btf, prog->aux->attach_btf_id);
-> > +       if (!t)
-> > +               return false;
-> > +
-> > +       tname = btf_name_by_offset(btf, t->name_off);
-> > +       if (!tname)
-> > +               return false;
-> > +       return !strcmp(tname, name);
-> > +}
-> > +
-> >  bool btf_ctx_access(int off, int size, enum bpf_access_type type,
-> >                     const struct bpf_prog *prog,
-> >                     struct bpf_insn_access_aux *info)
-> > @@ -6544,6 +6563,10 @@ bool btf_ctx_access(int off, int size, enum bpf_access_type type,
-> >                 }
-> >         }
+> > diff --git a/drivers/cpufreq/omap-cpufreq.c b/drivers/cpufreq/omap-cpufreq.c
+> > index 3458d5cc9b7f..de8be0a8932d 100644
+> > --- a/drivers/cpufreq/omap-cpufreq.c
+> > +++ b/drivers/cpufreq/omap-cpufreq.c
+> > @@ -28,9 +28,6 @@
+> >  #include <linux/platform_device.h>
+> >  #include <linux/regulator/consumer.h>
+> >  
+> > -#include <asm/smp_plat.h>
+> > -#include <asm/cpu.h>
+> > -
+> >  /* OPP tolerance in percentage */
+> >  #define	OPP_TOLERANCE	4
+> >  
 > >
-> > +       /* Second argument of sched_pi_setprio tracepoint can be null */
-> > +       if (is_tracing_prog_raw_tp(prog, "btf_trace_sched_pi_setprio") && arg == 1)
-> > +               info->reg_type |= PTR_MAYBE_NULL;
-> > +
-> >         info->btf = btf;
-> >         info->btf_id = t->type;
-> >         t = btf_type_by_id(btf, t->type);
+> > -- 
+> > 2.43.0
+> 
+
+-- 
+Best regards,
+Dhruva
 
