@@ -1,151 +1,176 @@
-Return-Path: <linux-kernel+bounces-278750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF0C94B44A
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:44:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A653094B44C
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 02:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C9CB1C21A66
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:44:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63C90283233
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29D74A1E;
-	Thu,  8 Aug 2024 00:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDA333F7;
+	Thu,  8 Aug 2024 00:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="V5IUzPoN"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jIJmLyDc"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BDD440C;
-	Thu,  8 Aug 2024 00:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123E520ED
+	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 00:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723077841; cv=none; b=EkN5il78/w8942f/eA5cinl1XVOGCfufVQL7MxYDhuQ4B2WT9bh42bRACpSGd2RtyOzDu6n9AsN1tnvqgQo7v642Ua40JVgZbSPkVr/yxbZ0rV+3ESxRdbkOo7I4lSdACsD/4F7/zE8nWYzcQxNgD3orPhSUb8JLAEmHuZqhfmU=
+	t=1723077881; cv=none; b=tacxoxF9o38RzGuu5JGR0WeWt5qVquQCKYYoQ8vKy/oGLqHkCfDnewEyHTtb52m1SwonCgOXVnIaRBE+AXYiWSZLdCjeLyAAck5rICU+MzvSyJ6mFiVbQwAoCWQEmHX2fGTrmECCNO3PWAc8chTkAfNxLmphKS5iMaV2gxWahzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723077841; c=relaxed/simple;
-	bh=7mbApR3ZBwxfpid5b2EvaWwXOxT6ehpKWiF0Mr7vCvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UsAZK+0ABmcXjcYr2sBbrFYPoZoNpUw9YIWEk8aeVwXZuBC1iH5pJYS4/iY8/USDQQ4UGJl+EPXQoEkbWTd2Wbq2sPzDj7XJvB9OfMRl5SCUg6IAiZGWbA/Hxbp98qHal9cnA4HkRBvpVIEQHiOuJJ9o2r0HJ+WNA8dXFJzQUtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=V5IUzPoN; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723077830;
-	bh=D33cx3XCrLB+VT+exOdc1DZTElUFvm/vXNRQtYDViV4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=V5IUzPoNgI6e9IewYkevntNhiw2IncSARxo4EkYhfNEKRVUQ/W25vQt4gyENhsJY1
-	 zF0DMKq1fVGVpaw51rVEyQ+z+/0N4751o4DIHk5l+9AlrZnXJKu+AtOp4iGU6GxK5u
-	 DvF1CRdvvsIxECgQgOnusew7vn98XZKfEFv8xRTfAwemcUcGEa5838bVDhc9mlpGWA
-	 SeapHpQaMNGTJVLlXoYFqvfLpCfRQeR6qaZWVc4dm8mZ1nirjrEjaK42j2Pnx5wE5R
-	 teiJ8SXnCz2z8xjcsjq7mP3uAFRg0tEDMe4gzGzeaJBHiPeewMdUii3yeKijn3QRUn
-	 e9ggo1BeIBHRw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WfSw62jkjz4x42;
-	Thu,  8 Aug 2024 10:43:50 +1000 (AEST)
-Date: Thu, 8 Aug 2024 10:43:48 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: Ath10k List <ath10k@lists.infradead.org>, Aditya Kumar Singh
- <quic_adisi@quicinc.com>, Baochen Qiang <quic_bqiang@quicinc.com>, Kalle
- Valo <quic_kvalo@quicinc.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the ath-next tree with the ath tree
-Message-ID: <20240808104348.6846e064@canb.auug.org.au>
+	s=arc-20240116; t=1723077881; c=relaxed/simple;
+	bh=tkB/yxMfi9tH2MYGu9S+eSvgA1ZmBxOUJIsSG4B72Jk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fdArQAySdP8MN+acNC7B3bPtZggyLzVSnfbOGYTi9X6IEg5tYpMuNPlrKZW7A8rOC2bjr57c0up+W5FVUlbpR1j5jKk2PeqjooX4SsknUMVO8o0abXasjSL8aRVP/IyF8Ip1GV+33/SC6W8h1aB2s56p9u8Yus/EN7GO5ZWt+fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jIJmLyDc; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso8308a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 17:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723077878; x=1723682678; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IBshlEm/hRezkXwc4E0KD/35MsKepvejjcK36JSLpHw=;
+        b=jIJmLyDcl9wHMMZFVZBljdw8wVohyPXWVD+c16bSXqjTMPSuVDOA8Ofp8sPr/qBypb
+         PoDzjFlYpbiyBJGkunq5/cwZPOe09cmhnOFWGWbS9uGTFz/xbWi28ztdfKm9kViWQyAp
+         YxnC4iPLF1jNB7ny0IgdDEvTkzlgYY7N3DTZfIu8CF+GoxOED9PnL2FgA5K2oalX/P2s
+         znjluJOImPDP1dGiJKiSdTa9Yw9l3UNuD6GpOd27htBbq/9jfS2yAkwFFNwb93+3DFEQ
+         CvrMnQWLXf8cqvXyQTbI9LUqQUomWTytcWykTJSKbRBaA5aMwyuGIrpaZGDvTrZB4yOd
+         +HSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723077878; x=1723682678;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IBshlEm/hRezkXwc4E0KD/35MsKepvejjcK36JSLpHw=;
+        b=Upq1cgXTaF2Bx1O//bkoIf3CZDaiKClIDNMW5bFp7+JMOOyxrvSu4FAMyR7nNgby9B
+         MF4KeBWoRtXXZAbHj6BC5x4mbyGgRQg6HgjxNYEOUEu7vWZswLWTGepUIO4VYL748usz
+         4n7cXylT4d9tsDtTR8KBVgYZfKG8oTXIidKBG0ewqQjcYVVkD74/MAUEKRMG3wO13xTY
+         /w0Amn9oW2eO+zNmOaJbhCvkGL+T5HNSEFPGMV62fsBBKJ+cYgiY7P9LEU2J+rAZPKLP
+         Iqx9+pgepzXk0yyGo1rTb9SdB0TyWWZ/di9zMQLHGKYCmE5bqETLIqQD9LMA+E+Avdta
+         9hfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXegksvpBzYXEwxixi9GCUfh0/tAnEHsdfbTEUK5d9Tp/oQVmkpFZ1ZNIIQd02WrcM+4a+JoYSqXrzOtqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySMZ0DiUJH7DgPj0BkST2M7qLV57YiLBGawpJhXsXaAO6+p+ym
+	iB01kvdbxpBDKPjvrum0XqwMpzK8Xpc5xtnkKq6LtftwuuiNzjapcu0K5KSqz6g+IozZW54M12v
+	Cl1NGDeJe+y6UWyE9FJIQzZH4IN3N93PieCKu
+X-Google-Smtp-Source: AGHT+IFpSNLTowScUK0fEebUg+Q3Xnxts9HFjMWAOTXuidhtMpb/V16+i/w5kNL0GLm3kG2zTXSX+ecuI5sC7wHI46U=
+X-Received: by 2002:a05:6402:3496:b0:58b:15e4:d786 with SMTP id
+ 4fb4d7f45d1cf-5bbb1797fd1mr44545a12.5.1723077877633; Wed, 07 Aug 2024
+ 17:44:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/aVhgp843wQxgMkM6fC0wQpA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/aVhgp843wQxgMkM6fC0wQpA
-Content-Type: text/plain; charset=US-ASCII
+References: <20240802-kasan-tsbrcu-v6-0-60d86ea78416@google.com>
+ <20240802-kasan-tsbrcu-v6-2-60d86ea78416@google.com> <c41afd73-97b4-4683-96a1-0da4a4dfeb2b@suse.cz>
+In-Reply-To: <c41afd73-97b4-4683-96a1-0da4a4dfeb2b@suse.cz>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 8 Aug 2024 02:44:00 +0200
+Message-ID: <CAG48ez0VHMFNAFGKV5yPCrJw16-_avDHJB+YTJaxaXuC6+WSYw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] slub: Introduce CONFIG_SLUB_RCU_DEBUG
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, David Sterba <dsterba@suse.cz>, Marco Elver <elver@google.com>, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzbot+263726e59eab6b442723@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Aug 7, 2024 at 11:26=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+> On 8/2/24 22:31, Jann Horn wrote:
+> > Currently, KASAN is unable to catch use-after-free in SLAB_TYPESAFE_BY_=
+RCU
+> > slabs because use-after-free is allowed within the RCU grace period by
+> > design.
+> >
+> > Add a SLUB debugging feature which RCU-delays every individual
+> > kmem_cache_free() before either actually freeing the object or handing =
+it
+> > off to KASAN, and change KASAN to poison freed objects as normal when t=
+his
+> > option is enabled.
+> >
+> > For now I've configured Kconfig.debug to default-enable this feature in=
+ the
+> > KASAN GENERIC and SW_TAGS modes; I'm not enabling it by default in HW_T=
+AGS
+> > mode because I'm not sure if it might have unwanted performance degrada=
+tion
+> > effects there.
+> >
+> > Note that this is mostly useful with KASAN in the quarantine-based GENE=
+RIC
+> > mode; SLAB_TYPESAFE_BY_RCU slabs are basically always also slabs with a
+> > ->ctor, and KASAN's assign_tag() currently has to assign fixed tags for
+> > those, reducing the effectiveness of SW_TAGS/HW_TAGS mode.
+> > (A possible future extension of this work would be to also let SLUB cal=
+l
+> > the ->ctor() on every allocation instead of only when the slab page is
+> > allocated; then tag-based modes would be able to assign new tags on eve=
+ry
+> > reallocation.)
+> >
+> > Tested-by: syzbot+263726e59eab6b442723@syzkaller.appspotmail.com
+> > Signed-off-by: Jann Horn <jannh@google.com>
+>
+> Actually, wait a second...
+>
+> > +#ifdef CONFIG_SLUB_RCU_DEBUG
+> > +static void slab_free_after_rcu_debug(struct rcu_head *rcu_head)
+> > +{
+> > +     struct rcu_delayed_free *delayed_free =3D
+> > +                     container_of(rcu_head, struct rcu_delayed_free, h=
+ead);
+> > +     void *object =3D delayed_free->object;
+> > +     struct slab *slab =3D virt_to_slab(object);
+> > +     struct kmem_cache *s;
+> > +
+> > +     if (WARN_ON(is_kfence_address(object)))
+> > +             return;
+> > +
+> > +     /* find the object and the cache again */
+> > +     if (WARN_ON(!slab))
+> > +             return;
+> > +     s =3D slab->slab_cache;
+> > +     if (WARN_ON(!(s->flags & SLAB_TYPESAFE_BY_RCU)))
+> > +             return;
+> > +
+> > +     /* resume freeing */
+> > +     if (!slab_free_hook(s, object, slab_want_init_on_free(s), true))
+> > +             return;
+> > +     do_slab_free(s, slab, object, object, 1, _THIS_IP_);
+> > +     kfree(delayed_free);
+>
+> This will leak memory of delayed_free when slab_free_hook() returns false
+> (such as because of KASAN quarantine), the kfree() needs to happen always=
+.
+> Even in the WARN_ON cases but that's somewhat less critical.
 
-Today's linux-next merge of the ath-next tree got a conflict in:
+... oh. Indeed. I guess really I can just move the kfree(delayed_free)
+up before the first bailout, we're not accessing anything in it after
+loading the ->object member...
 
-  drivers/net/wireless/ath/ath12k/hw.c
+> Thanks to David Sterba for making me look again, as he's been asking me
+> about recent OOMs in -next with heavy kmalloc-32 cache usage (delayed_fre=
+e
+> is 24 bytes) and CONFIG_SLUB_RCU_DEBUG was so far almost certainly confir=
+med.
 
-between commit:
+Nice catch...
 
-  38055789d151 ("wifi: ath12k: use 128 bytes aligned iova in transmit path =
-for WCN7850")
-
-from the ath tree and commit:
-
-  8be12629b428 ("wifi: ath12k: restore ASPM for supported hardwares only")
-
-from the ath-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/wireless/ath/ath12k/hw.c
-index 7b0b6a7f4701,76c0e07a88de..000000000000
---- a/drivers/net/wireless/ath/ath12k/hw.c
-+++ b/drivers/net/wireless/ath/ath12k/hw.c
-@@@ -925,7 -925,7 +925,9 @@@ static const struct ath12k_hw_params at
-  		.acpi_guid =3D NULL,
-  		.supports_dynamic_smps_6ghz =3D true,
- =20
- +		.iova_mask =3D 0,
-++
-+ 		.supports_aspm =3D false,
-  	},
-  	{
-  		.name =3D "wcn7850 hw2.0",
-@@@ -1003,7 -1003,7 +1005,9 @@@
-  		.acpi_guid =3D &wcn7850_uuid,
-  		.supports_dynamic_smps_6ghz =3D false,
- =20
- +		.iova_mask =3D ATH12K_PCIE_MAX_PAYLOAD_SIZE - 1,
-++
-+ 		.supports_aspm =3D true,
-  	},
-  	{
-  		.name =3D "qcn9274 hw2.0",
-@@@ -1077,7 -1077,7 +1081,9 @@@
-  		.acpi_guid =3D NULL,
-  		.supports_dynamic_smps_6ghz =3D true,
- =20
- +		.iova_mask =3D 0,
-++
-+ 		.supports_aspm =3D false,
-  	},
-  };
- =20
-
---Sig_/aVhgp843wQxgMkM6fC0wQpA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma0FMQACgkQAVBC80lX
-0GxNfwgAmvMublhZkhutZM2kgnrpMhJ1DZKtE9uXPXf9V40PUz6IvyG7Oa39+4jU
-E3XkSTvGtwuy12vB1jPZ2QLp8LOlgEOl9Q7yIiuIzYBUIB6wN5PrGkpfopnc73nL
-j52fW5k4PbSrk5OJIWRubGJV9SV0LfGJWqRqRFVq/TbbAkpWZ9PazTPEKDLuovCn
-xo2LJmvgeDo9Rj3kDOjaO9CR1qUphGgLz2Xofn4G035396ydAnmtJtKpaq0pDJiM
-lvfInH2V3ptpiHbRPgw/dUkscA3jh+FQFHoOzeariWDzRcxxEafrItaG1qx7BIwo
-dWKdMSt52JI3VMWaQaAzC9s9/fj2dA==
-=BkAT
------END PGP SIGNATURE-----
-
---Sig_/aVhgp843wQxgMkM6fC0wQpA--
+I guess I'll get to send a v7 of the series.
 
