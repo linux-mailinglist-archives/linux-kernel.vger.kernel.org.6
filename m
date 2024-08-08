@@ -1,181 +1,121 @@
-Return-Path: <linux-kernel+bounces-280201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB7394C715
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:46:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079BB94C718
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A8FFB234DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:46:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 387BA1C210C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 22:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2327F15ECF7;
-	Thu,  8 Aug 2024 22:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DDD15B0FC;
+	Thu,  8 Aug 2024 22:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="csGvELGG"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdTz5mdy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D2D12F5B1
-	for <linux-kernel@vger.kernel.org>; Thu,  8 Aug 2024 22:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ECA4A1E;
+	Thu,  8 Aug 2024 22:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723157153; cv=none; b=WmX0H0DCgHmeNMr5Y+CZaRMMqtZr6bPDQ64ra5Geke0tGssIasgiski1C298CS/Vv5YSixdEX9ObvuFe91DDpYb9kw1Y15qJfS1zYcAB28uPerFvCPFczUF9o0gR9+kU8TInO7wV0dyHtq/kD9GAqwpl1uzRcuYykOliLj0RNlM=
+	t=1723157286; cv=none; b=dTzhb7l6okVNRPX2ciYOW4VQO7yq7BkIT8MVVrdJVKSg0s2ufK14vckXxVJ87GHXs14xzpKQrq8+PNUbsc/MM3+YKWWH4SoSEwviJhyxEkqFEbbmwcZ6h3UN2129CT3aY/NftlI84F652e28pKPAjqfIQowxh/C+Tym4LJIgRVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723157153; c=relaxed/simple;
-	bh=NuRvK7tHeF/VaYkrRFz1WItqpmKnBbpdbZIjayxYJC4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=szYOHz1BnGxvgpQxPZqL9x+S8SIADnHh3G4o5ota1rO2XT/i+MtjetrKJp4+sXQp9ErX60lh8jGDCs6jbE2rp1+nXtkX0uKzXErgBv1Nf1WzXPTjfKf3XJG8Me86cXQ/FBwlvpxvk14zNFQasOSDUoY/tSM+L+ZBTsjZL6ONTYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=csGvELGG; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7a994e332a8so1308182a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 15:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723157151; x=1723761951; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNoZqlzt9ZBl78Ypw3YUgXOuKREj1jjRu4BYW9vQ8bI=;
-        b=csGvELGGfDXSAuUsOgrCrrv3EchPNfXAoLuyjsUczCTD4yrGdcG5h+mOcI17JINe6R
-         Uj6naOIySRaR7YkU5dVMwAXOtBf1yOj3Xh70naNLsNgXv3NBKl7MP2oXP4ZwrkxIVbP5
-         /VXoU5E8APZo58MRH88V0EXZjKBA1nOiM1RjF7l6PK9cXhGyRUpPfbomIMIB+/4d3A9h
-         Ln2AvnepxF5ehcJSAp/5CBCmDQRl/Q7uPRa1xkCOK1BkoXnvHNKJQmiEHDV9/R8IGS+Q
-         4iV7vddG279BED+E4AA7fpsuWIOnPUw3oO1rv/ukCjfjTeztlMH0NHl/GrBHIDHJiveS
-         Bs6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723157151; x=1723761951;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNoZqlzt9ZBl78Ypw3YUgXOuKREj1jjRu4BYW9vQ8bI=;
-        b=gh6YktGA2xZQ4DelWpfquVYkBL27839vtiNU+Q+jfBaHMrV4cukVM8K4rpDlgCm/uz
-         GvovNLto4w0d6u/pxdubIQwVb41UWohgP3Ik0AlX+JV8bKEaamJdMPR3XzQJ2ymcsg+3
-         YJnEVVdtWvoeLr+hpQUrTNqFDbkbVycuE8On8WyXuBHG3+leA9/nk2HkDRSq1HrKdl/E
-         xMwBTxN3iJUsyXMmWLTRaVAWIEzyKapFAP8qwV1Fr5YqocGQhgofvjOo8NmzpvxZfMZE
-         1pbNZP0UGXwH6AvrCWUqJ102Yzhgd6FMaUh0bHqgkrDFWsGR56DyfhfKoahjn976wuFe
-         bXAQ==
-X-Gm-Message-State: AOJu0YxDHljEfYiViot+b5hHfbOB0RWjjsoSryhJEnnlNmPxBobVZ/BZ
-	MZTlYpLg9XtNeoNPz6mQOYyIXfWe26ViY+4o8YrpyaLCTuo8NOZ0+TGH8Auyfwl+gDxEO6HTO3l
-	Xzw==
-X-Google-Smtp-Source: AGHT+IEPJ08ELA+TzWWFCZw07FCvVi/TuALPCbLFSyKyDr+wDhcDE59d0hzyaFMhbl9jQNfxVlpU+d7vYMQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:b242:0:b0:6e7:95d3:b35c with SMTP id
- 41be03b00d2f7-7c2684072femr6690a12.5.1723157150809; Thu, 08 Aug 2024 15:45:50
- -0700 (PDT)
-Date: Thu, 8 Aug 2024 15:45:49 -0700
-In-Reply-To: <ZrU9AJi7-pHT_UWS@x1n>
+	s=arc-20240116; t=1723157286; c=relaxed/simple;
+	bh=aPaESeImOrbfP0m5Al8CEekd6PKV0hGYl7I48g2RPqw=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=ewNjqn3RWQKkwSsE7cWIj04TcOL0GOYgmLu3f7R7pK8bNVggHdSny48U8QHFEwltE+qlEMYqegKLeHheU2O2ntl/9OHIpa7LOlrfYpehHf0DJ4dGhcjXhomWczA6ReEBfb+Pvm9SPsxVaayEO5yHOzejfXvv6pTuON848hqE388=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdTz5mdy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A1CFC32782;
+	Thu,  8 Aug 2024 22:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723157286;
+	bh=aPaESeImOrbfP0m5Al8CEekd6PKV0hGYl7I48g2RPqw=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=SdTz5mdyfEf8YjwUfL3VZjxml4aBFJFv7+EWX+kJ4B90UD0i9TXvKSIxINVzRMjrD
+	 LAoPK680XmAdvEW3s71SQtHNXYEzgX7hMwalrloTIP6qr0W25q1YpmlhSUvaOpBbVB
+	 udcW08elVxFxbIiakPWhfU0a3hxucIOPb0treGd/ftO1Y2AHiq0LfG0AF1Fs4Ma9/X
+	 c0eFZOBcsGTapQoempW8Y3tiBoHVVaijP0f28Ged8lFfvpcQOdWBh5FEHLt3Grv9Xu
+	 sHa5/LOgxPMjKGOivH4c0SbvfMEw5fYd0SteOUwyPLGCiIaE9nDC8iVO2ddyzpnof0
+	 8JEr5ck6FCPNw==
+Message-ID: <ac67f76d4b4b5f4bf108c1457f1263c7.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240807194812.819412-1-peterx@redhat.com> <20240807194812.819412-3-peterx@redhat.com>
- <ZrTlZ4vZ74sK8Ydd@google.com> <ZrU20AqADICwwmCy@x1n> <ZrU5JyjIa1CwZ_KD@google.com>
- <ZrU9AJi7-pHT_UWS@x1n>
-Message-ID: <ZrVKndceu5gZT-j5@google.com>
-Subject: Re: [PATCH v4 2/7] mm/mprotect: Push mmu notifier to PUDs
-From: Sean Christopherson <seanjc@google.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Oscar Salvador <osalvador@suse.de>, Dan Williams <dan.j.williams@intel.com>, 
-	James Houghton <jthoughton@google.com>, Matthew Wilcox <willy@infradead.org>, 
-	Nicholas Piggin <npiggin@gmail.com>, Rik van Riel <riel@surriel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org, Ingo Molnar <mingo@redhat.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, "Kirill A . Shutemov" <kirill@shutemov.name>, 
-	linuxppc-dev@lists.ozlabs.org, Mel Gorman <mgorman@techsingularity.net>, 
-	Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>, David Hildenbrand <david@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Huang Ying <ying.huang@intel.com>, kvm@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240722121910.14647-1-naman.trivedimanojbhai@amd.com>
+References: <20240722121910.14647-1-naman.trivedimanojbhai@amd.com>
+Subject: Re: [PATCH V2] drivers: clk: zynqmp: remove clock name dependency
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
+To: Naman Trivedi <naman.trivedimanojbhai@amd.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, michal.simek@amd.com, mturquette@baylibre.com, senthilnathan.thangaraj@amd.com
+Date: Thu, 08 Aug 2024 15:48:03 -0700
+User-Agent: alot/0.10
 
-On Thu, Aug 08, 2024, Peter Xu wrote:
-> On Thu, Aug 08, 2024 at 02:31:19PM -0700, Sean Christopherson wrote:
-> > On Thu, Aug 08, 2024, Peter Xu wrote:
-> > > Hi, Sean,
-> > > 
-> > > On Thu, Aug 08, 2024 at 08:33:59AM -0700, Sean Christopherson wrote:
-> > > > On Wed, Aug 07, 2024, Peter Xu wrote:
-> > > > > mprotect() does mmu notifiers in PMD levels.  It's there since 2014 of
-> > > > > commit a5338093bfb4 ("mm: move mmu notifier call from change_protection to
-> > > > > change_pmd_range").
-> > > > > 
-> > > > > At that time, the issue was that NUMA balancing can be applied on a huge
-> > > > > range of VM memory, even if nothing was populated.  The notification can be
-> > > > > avoided in this case if no valid pmd detected, which includes either THP or
-> > > > > a PTE pgtable page.
-> > > > > 
-> > > > > Now to pave way for PUD handling, this isn't enough.  We need to generate
-> > > > > mmu notifications even on PUD entries properly.  mprotect() is currently
-> > > > > broken on PUD (e.g., one can easily trigger kernel error with dax 1G
-> > > > > mappings already), this is the start to fix it.
-> > > > > 
-> > > > > To fix that, this patch proposes to push such notifications to the PUD
-> > > > > layers.
-> > > > > 
-> > > > > There is risk on regressing the problem Rik wanted to resolve before, but I
-> > > > > think it shouldn't really happen, and I still chose this solution because
-> > > > > of a few reasons:
-> > > > > 
-> > > > >   1) Consider a large VM that should definitely contain more than GBs of
-> > > > >   memory, it's highly likely that PUDs are also none.  In this case there
-> > > > 
-> > > > I don't follow this.  Did you mean to say it's highly likely that PUDs are *NOT*
-> > > > none?
-> > > 
-> > > I did mean the original wordings.
-> > > 
-> > > Note that in the previous case Rik worked on, it's about a mostly empty VM
-> > > got NUMA hint applied.  So I did mean "PUDs are also none" here, with the
-> > > hope that when the numa hint applies on any part of the unpopulated guest
-> > > memory, it'll find nothing in PUDs. Here it's mostly not about a huge PUD
-> > > mapping as long as the guest memory is not backed by DAX (since only DAX
-> > > supports 1G huge pud so far, while hugetlb has its own path here in
-> > > mprotect, so it must be things like anon or shmem), but a PUD entry that
-> > > contains pmd pgtables.  For that part, I was trying to justify "no pmd
-> > > pgtable installed" with the fact that "a large VM that should definitely
-> > > contain more than GBs of memory", it means the PUD range should hopefully
-> > > never been accessed, so even the pmd pgtable entry should be missing.
-> > 
-> > Ah, now I get what you were saying.
-> > 
-> > Problem is, walking the rmaps for the shadow MMU doesn't benefit (much) from
-> > empty PUDs, because KVM needs to blindly walk the rmaps for every gfn covered by
-> > the PUD to see if there are any SPTEs in any shadow MMUs mapping that gfn.  And
-> > that walk is done without ever yielding, which I suspect is the source of the
-> > soft lockups of yore.
-> > 
-> > And there's no way around that conundrum (walking rmaps), at least not without a
-> > major rewrite in KVM.  In a nested TDP scenario, KVM's stage-2 page tables (for
-> > L2) key off of L2 gfns, not L1 gfns, and so the only way to find mappings is
-> > through the rmaps.
-> 
-> I think the hope here is when the whole PUDs being hinted are empty without
-> pgtable installed, there'll be no mmu notifier to be kicked off at all.
-> 
-> To be explicit, I meant after this patch applied, the pud loop for numa
-> hints look like this:
-> 
->         FOR_EACH_PUD() {
->                 ...
->                 if (pud_none(pud))
->                         continue;
-> 
->                 if (!range.start) {
->                         mmu_notifier_range_init(&range,
->                                                 MMU_NOTIFY_PROTECTION_VMA, 0,
->                                                 vma->vm_mm, addr, end);
->                         mmu_notifier_invalidate_range_start(&range);
->                 }
->                 ...
->         }
-> 
-> So the hope is that pud_none() is always true for the hinted area (just
-> like it used to be when pmd_none() can be hopefully true always), then we
-> skip the mmu notifier as a whole (including KVM's)!
+Quoting Naman Trivedi (2024-07-22 05:19:10)
+> From: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
+>=20
+> Use struct clk_parent_data to register the clock parents with the clock
+> framework instead of parent name.
+>=20
+> Signed-off-by: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
 
-Gotcha, that makes sense.  Too many page tables flying around :-)
+This is great! Thanks for doing this.
+
+> diff --git a/drivers/clk/zynqmp/clk-gate-zynqmp.c b/drivers/clk/zynqmp/cl=
+k-gate-zynqmp.c
+> index b89e55737198..6bb9704ee1d3 100644
+> --- a/drivers/clk/zynqmp/clk-gate-zynqmp.c
+> +++ b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+> @@ -104,8 +104,8 @@ static const struct clk_ops zynqmp_clk_gate_ops =3D {
+>   *
+>   * Return: clock hardware of the registered clock gate
+>   */
+> -struct clk_hw *zynqmp_clk_register_gate(const char *name, u32 clk_id,
+> -                                       const char * const *parents,
+> +struct clk_hw *zynqmp_clk_register_gate(struct device_node *np, const ch=
+ar *name, u32 clk_id,
+
+General comment: Please use 'struct device' instead so that this driver
+isn't DT specific. When you do that you can similarly use
+devm_clk_hw_register() instead and introduce a lot of automatic cleanup.
+If you want to do that in two steps that's fine. One patch that uses
+parent_data/parent_hws and one that uses devm_ APIs and struct device to
+register.
+
+> diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
+> index a91d98e238c2..b791a459280e 100644
+> --- a/drivers/clk/zynqmp/clkc.c
+> +++ b/drivers/clk/zynqmp/clkc.c
+> @@ -543,7 +554,7 @@ static int zynqmp_clock_get_parents(u32 clk_id, struc=
+t clock_parent *parents,
+>   * Return: 0 on success else error+reason
+>   */
+>  static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
+> -                                 const char **parent_list, u32 *num_pare=
+nts)
+> +                                 struct clk_parent_data *parent_list, u3=
+2 *num_parents)
+>  {
+>         int i =3D 0, ret;
+>         u32 total_parents =3D clock[clk_id].num_parents;
+> @@ -555,18 +566,30 @@ static int zynqmp_get_parent_list(struct device_nod=
+e *np, u32 clk_id,
+> =20
+>         for (i =3D 0; i < total_parents; i++) {
+>                 if (!parents[i].flag) {
+> -                       parent_list[i] =3D parents[i].name;
+> +                       ret =3D of_property_match_string(np, "clock-names=
+",
+> +                                                      parents[i].name);
+
+You shouldn't need to match 'clock-names'. The order of that property is
+fixed in the binding, which means you can simply use the index that the
+name is at in the binding in 'struct parent_data'.
 
