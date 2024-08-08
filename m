@@ -1,56 +1,39 @@
-Return-Path: <linux-kernel+bounces-279187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-279188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3BD94BA17
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:50:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B610B94BA1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 11:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E78C528202F
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:50:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E0AE1F2264A
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 09:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4760B18A6A1;
-	Thu,  8 Aug 2024 09:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="X9L6VYOo"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88D41494BB;
-	Thu,  8 Aug 2024 09:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E63189BA7;
+	Thu,  8 Aug 2024 09:54:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10263146A93;
+	Thu,  8 Aug 2024 09:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723110582; cv=none; b=e1FPsPu6rkC+SHkkb6b2qmsnpD3pgKwFlVqAoHK3zK4LXSiW2MotHDyE7pkxEVipdzj7M9TnE0SNUoirdlz8EW9aLdHXogSxFbHqcpiLv08AgKzSDE9cCI6YZP4iS146lzBQwVm4EsBruMu9DCN7h5707oSPLf/rfGkr9fUSbpc=
+	t=1723110873; cv=none; b=HnUGzx9Y+4Fsejnqv23h4bDsFisSxseTuZfA/p4DwlTRiiuMByH92uiFbAaaSoOljm2ypRZcniFKy7JanesevDwSd1qm7lGWMXsflJOH4Fxp01z4FWJ09p2it+zzt6p6F9P5+tbuiWAEr8587T2W0C+2t5frN6ra6LyuuqVPurE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723110582; c=relaxed/simple;
-	bh=5HH0jUt+vlEiSEtkkhsfiu8TgAtJzkrWtdL9zWUfeiM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hXhFMHZYJuP0rH9jou4eYBEI3QxEoIL5ZXC5NVrrduMk5Ht2sW+IhWGNH1isYlwhxvhiksb1lqkNqLUBBWNQAQfjvnjgqRrRwIFV4oSlhTNI6mdgzmMl3wzPCCDsVkkJzZQu6ih8mknmE2913dHz93X80Hu/ci/KBMPoMxOYCIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=X9L6VYOo; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id ABEFCA02FA;
-	Thu,  8 Aug 2024 11:49:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=HWgcu+nMnNfMlqErSxKS
-	w+bBbNvWeyDcFJmtJSZ09OM=; b=X9L6VYOoifxEl0w25j90b5+e0aZnnGBrWMeM
-	CssyWqVmzsy139dNo7l4zUHb+lkx9FM7rt/OLX36H91SXSsW+zAV5etCo0fEJbll
-	7eF4uN3NFcRWROTNFw9LAr3wmi3NutSiDlh0l920jNrU+Lt/Tnw7Xp/x/NEH++u5
-	RMBjjC+J++u2MFVSAZt9p1UBUlRaMEwefnRMK+IKIuydDpuA7eSh6aHnDZgxz/VZ
-	QGvnv/hUV6Kxr1eBzkclom7FQHogY559IJImZmOBLGSRV/3tNS8oJMhscvItgqD8
-	vzdOLSN7mMlTdHqewmqpeSwwls/sZBwwS+x/16AfUuce6NM7Hihs55PdfkgiHoD8
-	zNAsbwQt/3HMbU6VuY1EsDFIW/tWnLR+frm/C6v0qEYp7LJ7qlKikaDCo4lfSz+y
-	mV5G1tMdK/o3a4lZa5jLqEiZySWZfyiSdkBAKADSLdKc8HgXaRO/okrBJIwPGyao
-	9NMoMsKzuC62WCUJFvCGScrkeZYfV0vB8y5zhVzt8uQhVupWcA6v6a87Dko7/l0y
-	GXDR3aTuG+0d8hFoDC84oT8H/h/I3J7cplmv5PqnGBnacFhdpQ6ztP8FiETbU3le
-	D8ujiOp/yqmRU1kVXMFIjBJ7f52yeksHRmxYnzx9chs2RSvUXHiA0Rw6YbAslv2x
-	1j0hn2g=
-Message-ID: <449a855a-e3e2-4eed-b8bd-ce64d6f66788@prolan.hu>
-Date: Thu, 8 Aug 2024 11:49:29 +0200
+	s=arc-20240116; t=1723110873; c=relaxed/simple;
+	bh=PbFKdQioBXqrCR8IhPsvdeiSsqZdtgzRJibcfIc0ipk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M3i12vyK7iFx2RXOLNFURxRiA2lR6+2HX0oUpSFE7195SLlh+VXqGN2JL9+Pc1983uVsyjNevXNm3qB4pBMKEVxYxMxL5ANr880UidNK2hf/HMZ1lDnVeRr++R4xiwnU1MiLKcbvP72ueosRNeaSaCRraRt0TKxp1Bg5gpFzGvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E8C0DA7;
+	Thu,  8 Aug 2024 02:54:55 -0700 (PDT)
+Received: from [10.1.26.21] (e122027.cambridge.arm.com [10.1.26.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 632F73F6A8;
+	Thu,  8 Aug 2024 02:54:23 -0700 (PDT)
+Message-ID: <34468ff8-2159-4adb-b680-c6048eecee80@arm.com>
+Date: Thu, 8 Aug 2024 10:54:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,60 +41,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH resubmit net 1/2] net: fec: Forward-declare
- `fec_ptp_read()`
-To: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-CC: Jakub Kicinski <kuba@kernel.org>, <imx@lists.linux.dev>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Frank Li
-	<Frank.li@nxp.com>, Wei Fang <wei.fang@nxp.com>, Shenwei Wang
-	<shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	<pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>
-References: <20240807082918.2558282-1-csokas.bence@prolan.hu>
- <1d87cbd1-846c-4a43-9dd3-2238670d650e@lunn.ch>
- <20240808094116.GG3006561@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20240808094116.GG3006561@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94854617767
+Subject: Re: [PATCH v12 01/84] KVM: arm64: Release pfn, i.e. put page, if
+ copying MTE tags hits ZONE_DEVICE
+To: Catalin Marinas <catalin.marinas@arm.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
+ <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+ Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
+References: <20240726235234.228822-1-seanjc@google.com>
+ <20240726235234.228822-2-seanjc@google.com> <ZrOBg70pCnv7PHyK@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ZrOBg70pCnv7PHyK@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 8/8/24 11:41, Simon Horman wrote:
-> On Wed, Aug 07, 2024 at 03:53:17PM +0200, Andrew Lunn wrote:
->> On Wed, Aug 07, 2024 at 10:29:17AM +0200, Csókás, Bence wrote:
->>> This function is used in `fec_ptp_enable_pps()` through
->>> struct cyclecounter read(). Forward declarations make
->>> it clearer, what's happening.
+On 07/08/2024 15:15, Catalin Marinas wrote:
+> On Fri, Jul 26, 2024 at 04:51:10PM -0700, Sean Christopherson wrote:
+>> Put the page reference acquired by gfn_to_pfn_prot() if
+>> kvm_vm_ioctl_mte_copy_tags() runs into ZONE_DEVICE memory.  KVM's less-
+>> than-stellar heuristics for dealing with pfn-mapped memory means that KVM
+>> can get a page reference to ZONE_DEVICE memory.
 >>
->> In general, forward declarations are not liked. It is better to move
->> the code to before it is used.
+>> Fixes: f0376edb1ddc ("KVM: arm64: Add ioctl to fetch/store tags in a guest")
+>> Signed-off-by: Sean Christopherson <seanjc@google.com>
+>> ---
+>>  arch/arm64/kvm/guest.c | 1 +
+>>  1 file changed, 1 insertion(+)
 >>
->> Since this is a minimal fix for stable, lets allow it. But please wait
->> for net to be merged into net-next, and submit a cleanup patch which
->> does move fec_ptp_read() earlier and remove the forward declaration.
+>> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+>> index 11098eb7eb44..e1f0ff08836a 100644
+>> --- a/arch/arm64/kvm/guest.c
+>> +++ b/arch/arm64/kvm/guest.c
+>> @@ -1059,6 +1059,7 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
+>>  		page = pfn_to_online_page(pfn);
+>>  		if (!page) {
+>>  			/* Reject ZONE_DEVICE memory */
+>> +			kvm_release_pfn_clean(pfn);
+>>  			ret = -EFAULT;
+>>  			goto out;
+>>  		}
 > 
-> That makes sense.
+> This patch makes sense irrespective of whether the above pfn is a
+> ZONE_DEVICE or not. gfn_to_pfn_prot() increased the page refcount via
+> GUP, so it must be released before bailing out of this loop.
 > 
-> However, is this a fix?
-> It's not clear to me that it is.
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> 
 
-Well, it's not clear to me either what constitutes as a "fix" versus 
-"just a cleanup". But, whatever floats Andrew's boat...
+Yep, as Catalin says, this is an 'obviously' correct fix - the reference
+needs releasing before bailing out. The comment there is perhaps
+misleading - it's not just ZONE_DEVICE memory that will be rejected, but
+this is the case that was in my mind when I wrote it. Although clearly I
+wasn't thinking hard enough when writing the code in the first place... ;)
 
-> And if it is a pre-requisite for patch 2/2,
-> well that doesn't seem to be a fix.
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-It indeed is.
+Thanks,
 
-> So in all, I'm somewhat confused.
-> And wonder if all changes can go via net-next.
-
-That's probably what will be happening.
-
-Bence
-
+Steve
 
