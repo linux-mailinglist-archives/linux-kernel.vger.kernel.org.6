@@ -1,125 +1,136 @@
-Return-Path: <linux-kernel+bounces-281258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB87694D4E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:43:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256B794D4E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82C411F22386
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:43:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 584F41C21126
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E99210EE;
-	Fri,  9 Aug 2024 16:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754C92233B;
+	Fri,  9 Aug 2024 16:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m2XDgHeX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LIdkZEd0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EB51CA94
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA96381D9;
+	Fri,  9 Aug 2024 16:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723221788; cv=none; b=RVSVAUgV2IA/an3jjUi49ghCOI3QTg94iSrJTuLa0QB45AVzPOZH4w3clKuT1XP5e6eb1k2jznf4tLdqh4GI74Mjcj6EUkhSzUw10zEzJYFZKls/2Meb9Utf/pkMQer4irmpQO1PLJ+IowcYrO28KtSZX9NLOEBhjia/cKZVLpI=
+	t=1723221876; cv=none; b=aFdYou7Uw7NHEe0hB2FPFnKlzNfCnLg+8v0WKl42JAdLkqLxYq4vnfWRmrQl+TZznW+pTTrs46bLOFsVPSsYt1VPZyE6Y2byH4GY5PBfT63pvIw3gvJJTEDL6cGYw1URvVHxnUSqpmxTMMsW07tKX+N6ZNb/tWy0wwaQ0qr/61A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723221788; c=relaxed/simple;
-	bh=khBQyipgC+xqvY07uKRPNMt0byYTCVYRiljjZIpVvpM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KGdiMyt1IT/s80+x6I4KASTY6kbucQalH2A/vbAuE7FXqaQKfBNhIhQwl6duZ+pQV0T4+FAJIUYpPXYrb1Wg3i+Nk/ezUXBMrGmVuuidJReUDDrbyprfReeCFHfPbfqdREW7VmI7xm3jXe5xxV8Bdkyev7DhNa6BO8YTZREJclE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m2XDgHeX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 479CXjEO019134;
-	Fri, 9 Aug 2024 16:43:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3iNENNCKgMSSnVAFJiUwiDvA7ONrEFhOxsIBgb4ZxBg=; b=m2XDgHeXC1qTIEK7
-	THRRLlKLkDZYLb/zu2QlbFRXdYd6nFf1/o85fPYaYbv+UN5ORu40lFfYgtUESUlM
-	hsIz03+8TTvuUEywQotqV/x8Ot6Y7oTtVO3zoi2ZTBpsasMIb1WevmjxKZ/BrDwl
-	htELuNUVJkgKNe3Gi20HwfIP1OPO/r1B1owmItCDdQbUNLtKpoqq2Wc3wVjmKkLs
-	xvILsgayEDCCkT20JAfO3CVdNWRLbUeEn3UfmPu/ZXTPwABr0A4JIXAPWIsSfqeI
-	8iv+ymciMQs9AjRg90kTw3TFLARz7KgJAG7fl9nju+s0s6W6ycaSBR3woBSe4YcK
-	Cy/08A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vvgm42ag-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 16:43:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 479Gh0YW030876
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 Aug 2024 16:43:00 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
- 09:42:59 -0700
-Message-ID: <3f79b66c-89fa-ce78-e34b-294df1d9d1a0@quicinc.com>
-Date: Fri, 9 Aug 2024 10:42:53 -0600
+	s=arc-20240116; t=1723221876; c=relaxed/simple;
+	bh=vLE2cjx+eGlTzAhIetya+WWnuf0ErM3c6dyZ/onkUFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ljOdYVHKZXLP1Uo1+s24IQr/syM81hNJsWoWOcxX88/idG/NjyE4l6l8bpxROMlc/eC2mnOfdJCMwO10xjq7DVsBqWnclWTP4+aFrlbNVJK4zjuk3SWImYjrJJoxjaJBg3CY6KIMaKvQlXM1hq4cfm32CIVncMdWgPBx+4CPA0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LIdkZEd0; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723221875; x=1754757875;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vLE2cjx+eGlTzAhIetya+WWnuf0ErM3c6dyZ/onkUFc=;
+  b=LIdkZEd0Kesm6ACKzuNpqqdGRdmAE7j8zwQABwffF6m2qXNgweVJoeFB
+   mPaPpCb2wCKfRCKtVsBav/ZBgmNzKplWylwT6lNzhcYItQ347lvL80KLT
+   k0LG09jxmooTmhaUjdpwMVBcmHBRGBHd4IgKyPw8x2GB7YgOR4hgPR+bK
+   cuW7Dk9jFyN/2Qtp2ChSV84aMpBePbcCkbtXJLvViwchtp6TDEvDY75wz
+   y4dBAGAfz0nwEFqVQkw5NUFuaxgz+sNhgdAy3axsP0BoctfFxBsNdSk2n
+   NaLJhkK4kJ97sNgjsRfWaOv/Wm6ckYbL7o5T2E7hG11ukJRgRDtrOprRU
+   g==;
+X-CSE-ConnectionGUID: ljRL99NsTT6db0M8wKS8MQ==
+X-CSE-MsgGUID: hwvaDGgpRsiceN1qvxwo0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21284318"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="21284318"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 09:44:34 -0700
+X-CSE-ConnectionGUID: Kpg+x0KOQn2Xht89cUizQg==
+X-CSE-MsgGUID: e7B76N61TUyKXw8NmPYnuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="57842290"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 09 Aug 2024 09:44:33 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1scSj7-0008ii-2s;
+	Fri, 09 Aug 2024 16:44:29 +0000
+Date: Sat, 10 Aug 2024 00:43:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Hutterer <peter.hutterer@who-t.net>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] HID: hidraw - add HIDIOCREVOKE ioctl
+Message-ID: <202408100004.Lp6vMaKd-lkp@intel.com>
+References: <20240809100342.GA52163@quokka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V2 09/10] accel/amdxdna: Add query functions
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20240805173959.3181199-1-lizhi.hou@amd.com>
- <20240805173959.3181199-10-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240805173959.3181199-10-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4LNx1Cls1-JtkleyglxhUlloDI1e8E2n
-X-Proofpoint-GUID: 4LNx1Cls1-JtkleyglxhUlloDI1e8E2n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_13,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxscore=0 suspectscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 mlxlogscore=964 bulkscore=0
- phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408090120
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809100342.GA52163@quokka>
 
-On 8/5/2024 11:39 AM, Lizhi Hou wrote:
-> +/**
-> + * struct amdxdna_drm_query_hwctx - The data for single context.
-> + * @context_id: The ID for this context.
-> + * @start_col: The starting column for the partition assigned to this context.
-> + * @num_col: The number of columns in the partition assigned to this context.
-> + * @pid: The Process ID of the process that created this context.
-> + * @command_submissions: The number of commands submitted to this context.
-> + * @command_completions: The number of commands completed by this context.
-> + * @migrations: The number of times this context has been moved to a different partition.
-> + * @preemptions: The number of times this context has been preempted by another context in the
-> + *               same partition.
-> + * @pad: MBZ.
+Hi Peter,
 
-Did you make the documentation?  This looks like it'll generate errors 
-from missing fields, and not having the same order as the struct.
+kernel test robot noticed the following build warnings:
 
-> + */
-> +struct amdxdna_drm_query_hwctx {
-> +	__u32 context_id;
-> +	__u32 start_col;
-> +	__u32 num_col;
-> +	__u32 pad;
-> +	__s64 pid;
-> +	__u64 command_submissions;
-> +	__u64 command_completions;
-> +	__u64 migrations;
-> +	__u64 preemptions;
-> +	__u64 errors;
-> +};
+[auto build test WARNING on hid/for-next]
+[also build test WARNING on linus/master v6.11-rc2 next-20240809]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Hutterer/HID-hidraw-add-HIDIOCREVOKE-ioctl/20240809-202833
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+patch link:    https://lore.kernel.org/r/20240809100342.GA52163%40quokka
+patch subject: [PATCH v2] HID: hidraw - add HIDIOCREVOKE ioctl
+config: i386-randconfig-052-20240809 (https://download.01.org/0day-ci/archive/20240810/202408100004.Lp6vMaKd-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240810/202408100004.Lp6vMaKd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408100004.Lp6vMaKd-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/hid/hidraw.c:41:22: warning: no previous prototype for 'hidraw_is_revoked' [-Wmissing-prototypes]
+      41 | __weak noinline bool hidraw_is_revoked(struct hidraw_list *list)
+         |                      ^~~~~~~~~~~~~~~~~
+>> drivers/hid/hidraw.c:47:21: warning: no previous prototype for 'hidraw_open_errno' [-Wmissing-prototypes]
+      47 | __weak noinline int hidraw_open_errno(__u32 major, __u32 minor)
+         |                     ^~~~~~~~~~~~~~~~~
+
+
+vim +/hidraw_is_revoked +41 drivers/hid/hidraw.c
+
+    40	
+  > 41	__weak noinline bool hidraw_is_revoked(struct hidraw_list *list)
+    42	{
+    43		return list->revoked;
+    44	}
+    45	ALLOW_ERROR_INJECTION(hidraw_is_revoked, TRUE);
+    46	
+  > 47	__weak noinline int hidraw_open_errno(__u32 major, __u32 minor)
+    48	{
+    49		return 0;
+    50	}
+    51	ALLOW_ERROR_INJECTION(hidraw_open_errno, ERRNO);
+    52	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
