@@ -1,183 +1,254 @@
-Return-Path: <linux-kernel+bounces-281186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC3E94D417
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:00:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2452A94D41D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A2CF1C20C97
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:00:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D368C284756
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561221922DB;
-	Fri,  9 Aug 2024 16:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F1D1990C3;
+	Fri,  9 Aug 2024 16:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="KSIeOAqe";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XUk2IQK1"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="k/8DvqZE"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEC4198A0F
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB284194A4C
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723219215; cv=none; b=eA3hve3PhNo/bM0Fvx0Z+93q2YVdGN5CFlEiJwLK4mW19kwpmsdY7QsULPfbG/wOhF7d2+lBYDXAXlSvuL7L1OF60aOLSgePzGtUheJ0kVYP52BEfc5vFYHBGwDh9STM2ZHXSJsMCV+wWzH2BKatBim+Oghfs2JzF2Q8HJD7b5w=
+	t=1723219296; cv=none; b=GRrdT12npUHNXTVZbddCGbIbA6EhVf9tO/SALk/1nRalzQDvganoA5cC3mwBlVMuGzAGtTcbkfyMwEJDj+AlQ46NGhWGyOfES4mWEwGCDRJprsLd4VyrnZKrpHgWDTaKuj60G/x0JC11oPE7gyTndBnzqK2YNdRgM+jcbxed+Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723219215; c=relaxed/simple;
-	bh=g0zJKP7UfSwSGJHsiiB/cxJ+gM8c+Sttd9cfbV9YmTc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=dg1499L/xALN2SRo99TnnHQ3f/cK9/M2VNjmx9kf2/oZGo38H4cONqs19uhirEje4GgP8QbOXBPm6xSeR5ByoxmvFUYYRzGlGwD6HfqDz6jX+2B7HEQ2lR84fKJfXpvkz76ejarUVCKdhezbXhRdTIgJMryp70WCxunHmdUvFNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=KSIeOAqe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XUk2IQK1; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 066A0138FC65;
-	Fri,  9 Aug 2024 12:00:12 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Fri, 09 Aug 2024 12:00:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm2; t=1723219212; x=1723305612; bh=z6
-	KzBzXeafkZblPznJTixRwjIgV1GVdoejv+2wiuTU4=; b=KSIeOAqeGOFVAxThW/
-	urcDL0VxXX27giz+YhpE+GRHDGP+z21RErQbkj2XtGWL1NP2zOZDG/lYUXyS625P
-	sTWn1R97NtuT4eqPdh+KcPViUHjFOrzoB1YnW3R4HnZ+BJPNm6l+iJg0bfW2TEcf
-	FUrTJsod5n1M4lx3s7H6Z2blFxkfNKhMFxuFzviAVCKrRM9Vpg69N5T/xPvTmDR+
-	ZgzTb086PkpFrTx26S3t/67Jf1Rc/a06YelJuTdmLr5PHAWAzND7BEsDJNc30XWt
-	xfNpfgBTCPqliiGSh8OAMoNX9xa8TMpP3mB/9B0Xazpy/RFlFb/L6Cq0XnlgMjaY
-	Y3rw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm3; t=1723219212; x=1723305612; bh=z6KzBzXeafkZb
-	lPznJTixRwjIgV1GVdoejv+2wiuTU4=; b=XUk2IQK1dfYJqdn/T4vj2VDHb5gBZ
-	xkp8R+Yb0Vc/gSjq8yCagRuWiyvX+r/0dRLEBeJwF/csMHQqq8oENFvnsAaNtUqB
-	qXJ6DSNbrEXMyIXFN7j0Jso0dnd3g1DqY8n1OctlJSHhckvwLWJAqDZ+Js4xcatI
-	Fv4ZHQ3zAzDBmbsaptD2QFxCNKa+xxagLj3izpBvHIG3RRlcw56RTNhF8KgVtGIM
-	rtBlw1W+Hbk7IfNQHkPW2JGBexsxiruZEsU04LayuuZ448iZpusXZa/OnWjakSm3
-	Lu95FvEcO24+ZURXbzq3moMEXAkOhiyq0ovDJnpN9sYV/wxsjDZaplB7Q==
-X-ME-Sender: <xms:Cz22ZknCYBo_ojixRGKwXLSKQdOzKqe-mIR7Zdl-NJkeZbzD1GamOQ>
-    <xme:Cz22Zj1rAtvi3Q-kwvVK5Le85rlEmqu1XhErSJ2A4DZOMqMYQVlSSr2bVAOR8vrh_
-    nu99sU1DQBftfPbHSE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleeggdelgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkufgtgfesthhqredtredtjeenucfh
-    rhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqe
-    enucggtffrrghtthgvrhhnpedvieeggefhhffhgfeuvddvledvffdtgfdvffdtvdfggeeg
-    hfektdefuedtvdeugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggs
-    rdguvgdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epshhotgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhorhhvrghlughssehlihhn
-    uhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqd
-    hkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Cz22ZirP_CVzf9Y4rG1Hz1i21i3e-WIe4-f-NIuEhLtHI21JyQGJjQ>
-    <xmx:Cz22ZgldX_rqdeMYHYYthh7EscHtOyloachBdPzhEYPpA15V7qUh7g>
-    <xmx:Cz22Zi13wBZoaW6Zd2MUqKtTJuCA7NK6s4Pox3t8k25fqg1y8Weuuw>
-    <xmx:Cz22ZnvIZ_9LPW7gZAW-pewLFRs0XmdjD7R-AR9CP1tWM0xeCL_gSg>
-    <xmx:Cz22ZnyiVKZikuUsYstTebM12X1U3us84zy1IrOdqz11e_7cd2v0V7zi>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 7069EB6008D; Fri,  9 Aug 2024 12:00:11 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723219296; c=relaxed/simple;
+	bh=paKDUZfAMnT9p4c9PEEcxRCBnyjhCPshVDMBespFmZk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CGtQRxdCOYPPOfvQcc/avA+lO4FFH47IYZXK1yw8RKVhn4vlzLonPofaCs0zjJIa/sSG/T/AiWwjb8eeKNF3Ru1oUJOJRNdXew69lX+VZrREAHQYbksaHaSfjubfw3OsgTfn6H8zEnKU73mp90LrKSPmbHOc7MC35q24gubOglA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=k/8DvqZE; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5d5f9d68805so1186471eaf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:01:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723219293; x=1723824093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kRHkMeyOghMMPrSX3/7w5ue7vx+CNaxKKfqAReZDd9I=;
+        b=k/8DvqZEUE4Vu2v0ZVPZktsaZjJXwhhUVmZNSku/0egFDL8gbXfaliaXweyRlpuBil
+         4O3oNMH32fVpeWn82d4QiUkfO0UqchFpaEFXRGj5YeLDP8066hM5cxAtGVZPNYyySruV
+         zdTg8wHAb/fgJJanmKqPJwXSb01DuFFE2kCNIcKk0uOGGvKiiKHhm9n4Z476XLC8tvWs
+         avirw6VZ69KR4HktTex8IS3J46kCfdDzUvQdraN/q8KgKZz5W574sCDEt6Z3rqRFQj6G
+         hSSwNQYd5gVL/hSayBfvJy5OaO2gWDEm63bMQkljy/GeMTjheMXkUGYMZGesjw7oTSuF
+         cfpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723219293; x=1723824093;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kRHkMeyOghMMPrSX3/7w5ue7vx+CNaxKKfqAReZDd9I=;
+        b=pkkwLX8N8nVUB+hwgQtKfVn7NDz/Kk4x6NyEe+pI+7RI1/hhXwHJTyfwttzMJOkfSU
+         lQM/Y0+q31NAKkoR+icSuUJ3qIpvsVNPMRkTJVBDsTNBE15dsckI0mk1Adh4HOr95ufQ
+         COGeta47WsQeVD41PafDIp+U/obPDDvXu79U/kRa2zTVUrTHfZQld9zKkzpKTKEZejHR
+         DqEyFT2Y5JUm4isALw9fhRMeQgnCITr/zo6IifzJicAUW5wnwCyM/6GaWA3/W5FRDycE
+         iuhWpPUnAHZGZMbg1dpiyi0s8Zj5hGMrbP75gFr3UqU9Bcym7SR8+D96XMgTTvOw+XFF
+         GuDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPr0bBJP3UZIaJiV6M/uZ21OLuQ3VJlxspmwogI4qhToxcefhfn/8c4nNBbsfBhBgptQpPqvdaW9jN1a8a9wgeiu0sqfFwRP26uVGA
+X-Gm-Message-State: AOJu0Yxk0KTbdiY16DTIkRb6xLpDbneJxkVICCSuRtUuoi3fXEiVz9+l
+	y25r7zWKE9WU0o4IdR+XMlp7JtlncKQPcHrbI3+ITBJPnJ7bwfCbVTsRgcR9hbA=
+X-Google-Smtp-Source: AGHT+IH9cyUlesTG85P8+AooQGiR7emhvTR2YwnxoSVddeAKsx77skaLFRBiuQBnXteKmSR5RIAFsg==
+X-Received: by 2002:a05:6820:821:b0:5c6:61b9:20ba with SMTP id 006d021491bc7-5d867c8185amr2330284eaf.1.1723219292772;
+        Fri, 09 Aug 2024 09:01:32 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d757178a0dsm4280141eaf.7.2024.08.09.09.01.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 09:01:32 -0700 (PDT)
+Message-ID: <4c62baf4-fcb0-474f-87cf-9689aa41966a@baylibre.com>
+Date: Fri, 9 Aug 2024 11:01:31 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 09 Aug 2024 18:00:11 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: soc@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Message-Id: <3e7ea374-c321-4f80-b22b-96ce34cfaa3e@app.fastmail.com>
-Subject: [GIT PULL] ARM: soc fixes for 6.11, part 1
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iio: adc: ad4695: implement triggered buffer
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240807-iio-adc-ad4695-buffered-read-v1-0-bdafc39b2283@baylibre.com>
+ <20240807-iio-adc-ad4695-buffered-read-v1-1-bdafc39b2283@baylibre.com>
+ <8bb01a8946aaa5855b5ac15d79c0292a668eee59.camel@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <8bb01a8946aaa5855b5ac15d79c0292a668eee59.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f0=
-17b:
+On 8/9/24 9:24 AM, Nuno Sá wrote:
+> On Wed, 2024-08-07 at 15:02 -0500, David Lechner wrote:
+>> This implements buffered reads for the ad4695 driver using the typical
+>> triggered buffer implementation, including adding a soft timestamp
+>> channel.
+>>
+>> The chip has 4 different modes for doing conversions. The driver is
+>> using the advanced sequencer mode since that is the only mode that
+>> allows individual configuration of all aspects each channel (e.g.
+>> bipolar config currently and oversampling to be added in the future).
+>>
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>> ---
+> 
+> Hi David,
+> 
+> Just two nit comments...
+> 
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> 
+>>  drivers/iio/adc/ad4695.c | 233 ++++++++++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 230 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/ad4695.c b/drivers/iio/adc/ad4695.c
+>> index 007ecb951bc3..a3bd5be36134 100644
+>> --- a/drivers/iio/adc/ad4695.c
+>> +++ b/drivers/iio/adc/ad4695.c
+> 
+> ...
+> 
+>>
+>>  
+>> +static int ad4695_buffer_preenable(struct iio_dev *indio_dev)
+>> +{
+>> +	struct ad4695_state *st = iio_priv(indio_dev);
+>> +	struct spi_transfer *xfer;
+>> +	u8 temp_chan_bit = st->chip_info->num_voltage_inputs;
+>> +	bool temp_chan_en = false;
+>> +	u32 reg, mask, val, bit, num_xfer, num_slots;
+>> +	int ret;
+>> +
+>> +	/*
+>> +	 * We are using the advanced sequencer since it is the only way to read
+>> +	 * multiple channels that allows individual configuration of each
+>> +	 * voltage input channel. Slot 0 in the advanced sequencer is used to
+>> +	 * account for the gap between trigger polls - we don't read data from
+>> +	 * this slot. Each enabled voltage channel is assigned a slot starting
+>> +	 * with slot 1.
+>> +	 */
+>> +	num_slots = 1;
+>> +
+>> +	memset(st->buf_read_xfer, 0, sizeof(st->buf_read_xfer));
+>> +
+>> +	/* First xfer is only to trigger conversion of slot 1, so no rx. */
+>> +	xfer = &st->buf_read_xfer[0];
+>> +	xfer->cs_change = 1;
+>> +	xfer->delay.value = AD4695_T_CNVL_NS;
+>> +	xfer->delay.unit = SPI_DELAY_UNIT_NSECS;
+>> +	xfer->cs_change_delay.value = AD4695_T_CONVERT_NS;
+>> +	xfer->cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+>> +	num_xfer = 1;
+>> +
+>> +	iio_for_each_active_channel(indio_dev, bit) {
+>> +		xfer = &st->buf_read_xfer[num_xfer];
+>> +		xfer->bits_per_word = 16;
+>> +		xfer->rx_buf = &st->buf[(num_xfer - 1) * 2];
+>> +		xfer->len = 2;
+>> +		xfer->cs_change = 1;
+>> +		xfer->cs_change_delay.value = AD4695_T_CONVERT_NS;
+>> +		xfer->cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+>> +
+>> +		if (bit == temp_chan_bit) {
+>> +			temp_chan_en = true;
+>> +		} else {
+>> +			reg = AD4695_REG_AS_SLOT(num_slots);
+>> +			val = FIELD_PREP(AD4695_REG_AS_SLOT_INX, bit);
+>> +
+>> +			ret = regmap_write(st->regmap, reg, val);
+>> +			if (ret)
+>> +				return ret;
+>> +
+>> +			num_slots++;
+>> +		}
+>> +
+>> +		num_xfer++;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Don't keep CS asserted after last xfer. Also triggers conversion of
+>> +	 * slot 0.
+>> +	 */
+>> +	xfer->cs_change = 0;
+>> +
+>> +	/**
+>> +	 * The advanced sequencer requires that at least 2 slots are enabled.
+>> +	 * Since slot 0 is always used for other purposes, we need only 1
+>> +	 * enabled voltage channel to meet this requirement. This error will
+>> +	 * only happen if only the temperature channel is enabled.
+>> +	 */
+>> +	if (num_slots < 2) {
+>> +		dev_err_ratelimited(&indio_dev->dev,
+>> +			"Buffered read requires at least 1 voltage channel
+>> enabled\n");
+> 
+> This one is intriguing... Why the ratelimited variant? Normally you'd use that in IRQ
+> routines where the log could be flooded.
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+IIO Oscilloscope does a lot of retries of buffered reads very quickly,
+so was getting a minor flood (10-20 repeats). I'm not sure that
+ratelimited actually helped in this case though.
 
-are available in the Git repository at:
+I suppose we could just drop this and expect people to read the docs
+if they get an EINVAL when attempting to enable the buffer. Or just
+make it dev_err() since it isn't 100s of repeats.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/arm-f=
-ixes-6.11-1
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Temperature channel isn't included in the sequence, but rather
+>> +	 * controlled by setting a bit in the TEMP_CTRL register.
+>> +	 */
+>> +
+>> +	reg = AD4695_REG_TEMP_CTRL;
+>> +	mask = AD4695_REG_TEMP_CTRL_TEMP_EN;
+>> +	val = FIELD_PREP(mask, temp_chan_en ? 1 : 0);
+>> +
+>> +	ret = regmap_update_bits(st->regmap, reg, mask, val);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	spi_message_init_with_transfers(&st->buf_read_msg, st->buf_read_xfer,
+>> +					num_xfer);
+>> +
+>> +	ret = spi_optimize_message(st->spi, &st->buf_read_msg);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* This triggers conversion of slot 0. */
+>> +	ret = ad4695_enter_advanced_sequencer_mode(st, num_slots);
+>> +	if (ret) {
+>> +		spi_unoptimize_message(&st->buf_read_msg);
+>> +		return ret;
+>> +	}
+> 
+> Could save one line with (unless ad4695_enter_advanced_sequencer_mode() does not
+> return 0 on success)
 
-for you to fetch changes up to 6b1124c4526fb1648a3921a441515ea8a98b92e4:
+sure
 
-  Merge tag 'ti-k3-dt-fixes-for-v6.11' of https://git.kernel.org/pub/scm=
-/linux/kernel/git/ti/linux into arm/fixes (2024-08-07 14:45:45 +0200)
+> 
+> ret = ad4695_enter_advanced_sequencer_mode(st, num_slots);
+> if (ret)
+> 	spi_unoptimize_message(&st->buf_read_msg);
+> 
+> return ret;
+> 
+> - Nuno Sá
+> 
 
-----------------------------------------------------------------
-ARM: soc fixes for 6.11, part 1
-
-There are three sets of patches for the soc tree:
-
- - Marek Beh=C3=BAn addresses multiple build time regressions caused
-   by changes to the cznic turris-omnia support
-
- - Dmitry Torokhov fixes a regression in the legacy "gumstix"
-   board code he cleaned up earlier
-
- - The TI K3 maintainers found multiple bugs in the in gpio,
-   audio and pcie devicetree nodes.
-
-----------------------------------------------------------------
-Andrew Halaney (2):
-      arm64: dts: ti: k3-j784s4-evm: Assign only lanes 0 and 1 to PCIe1
-      arm64: dts: ti: k3-j784s4-evm: Consolidate serdes0 references
-
-Arnd Bergmann (1):
-      Merge tag 'ti-k3-dt-fixes-for-v6.11' of https://git.kernel.org/pub=
-/scm/linux/kernel/git/ti/linux into arm/fixes
-
-Dmitry Torokhov (1):
-      ARM: pxa/gumstix: fix attaching properties to vbus gpio device
-
-Francesco Dolcini (1):
-      arm64: dts: ti: k3-am62-verdin-dahlia: Keep CTRL_SLEEP_MOCI# regul=
-ator on
-
-Jared McArthur (3):
-      arm64: dts: ti: k3-am62p: Add gpio-ranges for mcu_gpio0
-      arm64: dts: ti: k3-am62p: Fix gpio-range for main_pmx0
-      arm64: dts: ti: k3-j722s: Fix gpio-range for main_pmx0
-
-Marek Beh=C3=BAn (6):
-      platform: cznic: turris-omnia-mcu: Make watchdog code optional
-      platform: cznic: turris-omnia-mcu: Make TRNG code optional
-      platform: cznic: turris-omnia-mcu: Make poweroff and wakeup code o=
-ptional
-      platform: cznic: turris-omnia-mcu: Make GPIO code optional
-      doc: platform: cznic: turris-omnia-mcu: Fix sphinx-build warning
-      doc: platform: cznic: turris-omnia-mcu: Use double backticks for a=
-ttribute value
-
-Nishanth Menon (1):
-      Merge tag 'ti-k3-dt-for-v6.11-part2' into ti-k3-dts-next
-
-Parth Pancholi (1):
-      arm64: dts: ti: k3-j784s4-main: Correct McASP DMAs
-
- .../testing/sysfs-bus-i2c-devices-turris-omnia-mcu |  6 +-
- arch/arm/mach-pxa/gumstix.c                        | 11 +--
- arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi  | 22 ------
- arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi         |  6 --
- .../boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi     |  2 +
- arch/arm64/boot/dts/ti/k3-am62p-main.dtsi          |  3 +-
- arch/arm64/boot/dts/ti/k3-j722s-main.dtsi          |  3 +-
- arch/arm64/boot/dts/ti/k3-j784s4-evm.dts           | 25 +++----
- arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi         |  4 +-
- drivers/platform/cznic/Kconfig                     | 80 +++++++++++++++=
--------
- drivers/platform/cznic/Makefile                    |  8 +--
- drivers/platform/cznic/turris-omnia-mcu-base.c     |  4 ++
- drivers/platform/cznic/turris-omnia-mcu.h          | 42 +++++++++++-
- 13 files changed, 129 insertions(+), 87 deletions(-)
 
