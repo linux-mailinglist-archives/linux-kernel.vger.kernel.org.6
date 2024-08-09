@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-281603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6B794D8B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:27:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A8294D8B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47F9D1F22F44
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:27:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C5F31F22E5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8A516B725;
-	Fri,  9 Aug 2024 22:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B1A16A954;
+	Fri,  9 Aug 2024 22:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TBKRwJjM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dJ7o0y5j"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3C616A947
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 22:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C70A16B3A6
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 22:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723242465; cv=none; b=m1+hkLesxgQg6+KQAe7CDmd707hc8U+5XawIsMpde0N3aiBn+MVWjnLZU1ONhjRetjXJwJvt7XysZgvc5K4p51+zcJE37dwso3CUddhWql55uNA18y8fg7Zit362PGFGglCMamtJeC2F7ekFCdRoDLGvi2dSmGKLNkj7C5qCil0=
+	t=1723242467; cv=none; b=fowNyTLg7FNO6M65XzbsVxLm9vzYBzVqOjNPKe1tE8BV+fQugu1azNz4iQsX8IhESSCZwomdcnHzCbbgkHONHpXQ/jnxCStI85SRoOZWT00hpolSAddEOWyQySIEh2hNwYg/qZk4mFYx4IDyqJVSwF3t5IHZOGVSEWyDTEPgaDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723242465; c=relaxed/simple;
-	bh=eXVnnnar9saKdQimYvtgB6nNuDPP7ZZqNvvDa0T9rQ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IgzpytmidRS/LXLDKZ16DiItU9aWtmYwWIOiL+nsWX6RPncBpUpIZqcP4xx2eP7WWjxpdBdwDcrHGtMw4JVFi9x3A4B6YghmXbyF+PgrsbWqiX0jZwdIJvdKaOYnG5U6zjW1LD0Ql1Tksn2ln0XLVYvv4RWEKmrPngb+RDHAEyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TBKRwJjM; arc=none smtp.client-ip=198.175.65.14
+	s=arc-20240116; t=1723242467; c=relaxed/simple;
+	bh=ZTr6JyEn1nSzgdfSh1QuqS59D0zZxggT3OqlXoJsrlE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tcIcjzhn859yvbFpZripyQzQMnrZzFmOwg9W1x3GqhGL9IhcX2ih/8430rauDEj8XBxeZsOzYJNhjJxXyR8tZbRNKHnr44YTHRyhjsYSbwyOTPwZXxuIhDbUNHZNmDjydJ5a7RKiZJEI+j/DhCvhUHByczrDSIg9ZdRz1x1SKqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dJ7o0y5j; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723242464; x=1754778464;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=eXVnnnar9saKdQimYvtgB6nNuDPP7ZZqNvvDa0T9rQ4=;
-  b=TBKRwJjMvLJWsrJDcNfp16QD7jp/0nY9CR8MNFFeHFusS8V0rWo8MB+V
-   8KmxUsZUhy9gCy232NvbP3RUUqDvA0/vueEAmNL4hWf85OyRmB9EZu/W0
-   9DLqcNsxwcb86CvUEQNvpdO6+Q0uaDH18veNAorhEnSftLN6jDBwIIE+W
-   emacTzRMIrPlmt53RY9aTdBPxTHGlcmW2SaHT2VD+VxXxj+vq76Vpi6Cj
-   FFhvYHu/e9rhu5bln4MHKlqnJoDh6nbYgX/a/c0D8gPAbn9S/KkeRTs+b
-   utq9Uhhhc4RlDCvXto1E4eIodMdxEKgm4fyTNvV6SAeEW+ftUKf5DyBfU
+  t=1723242466; x=1754778466;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ZTr6JyEn1nSzgdfSh1QuqS59D0zZxggT3OqlXoJsrlE=;
+  b=dJ7o0y5jzwE0eUxlpsnY4NwvilBn8c7ZguIfFI1DYAsqTCANuiPb17fk
+   8knjDXO3BkRH/DWiEmYqKGMtTRQ2jdVG4giILdMsKR296AEPjALtSZ8R0
+   sQy8X81epBI1LOnW+DfsW39djx7PY2Y1Hjq2IFIhjncphu/thglJI3I1s
+   GSeGsrwdlry75QQrbYv4R8hPJ3EOq7aqSjMfOeBRnsmPoG42vRixezN5z
+   7y2x5KfDJV0ylyL+2Pdv557fqvIi+RN+5s+EgYzDi2tyE/J6mIfHEl5Qa
+   o6KqE72Cvpe7f++Kk2LbKgROqs6G0tyzsXOq10tG8nV9YorR/0Lxs5+In
    A==;
-X-CSE-ConnectionGUID: lCuoLSe2SjuGhrmEv4ss+g==
-X-CSE-MsgGUID: 4jY8krJvTZmWYdVNWbrqyA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="25229636"
+X-CSE-ConnectionGUID: h9BZz1xvQw6EYpf6SLOyqA==
+X-CSE-MsgGUID: Mx7okzGbQoOy/6499idxlA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="25229641"
 X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
-   d="scan'208";a="25229636"
+   d="scan'208";a="25229641"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
   by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 15:27:43 -0700
-X-CSE-ConnectionGUID: +Wr2FzcjTtudxBeyHgq/XQ==
-X-CSE-MsgGUID: ySeNZa6ZR7qYyxhmgGEDeQ==
+X-CSE-ConnectionGUID: LScDgSonScyBM7vJaVgrww==
+X-CSE-MsgGUID: N+9j/irpR96KLJvRSuTSWw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
-   d="scan'208";a="62641781"
+   d="scan'208";a="62641782"
 Received: from lstrano-desk.jf.intel.com ([10.54.39.91])
   by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 15:27:43 -0700
 From: Matthew Brost <matthew.brost@intel.com>
@@ -65,64 +66,96 @@ Cc: tj@kernel.org,
 	christian.koenig@amd.com,
 	ltuikov89@gmail.com,
 	daniel@ffwll.ch
-Subject: [PATCH v3 0/5] Use user-defined workqueue lockdep map for drm sched
-Date: Fri,  9 Aug 2024 15:28:22 -0700
-Message-Id: <20240809222827.3211998-1-matthew.brost@intel.com>
+Subject: [PATCH v3 1/5] workqueue: Split alloc_workqueue into internal function and lockdep init
+Date: Fri,  9 Aug 2024 15:28:23 -0700
+Message-Id: <20240809222827.3211998-2-matthew.brost@intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240809222827.3211998-1-matthew.brost@intel.com>
+References: <20240809222827.3211998-1-matthew.brost@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-By default, each DRM scheduler instance creates an ordered workqueue for
-submission, and each workqueue creation allocates a new lockdep map.
-This becomes problematic when a DRM scheduler is created for every user
-queue (e.g., in DRM drivers with firmware schedulers like Xe) due to the
-limited number of available lockdep maps. With numerous user queues
-being created and destroyed, lockdep may run out of maps, leading to
-lockdep being disabled. Xe mitigated this by creating a pool of
-workqueues for DRM scheduler use. However, this approach also encounters
-issues if the driver is unloaded and reloaded multiple times or if many
-VFs are probed.
+Will help enable user-defined lockdep maps for workqueues.
 
-To address this, we propose creating a single lockdep map for all DRM
-scheduler workqueues, which will also resolve issues for other DRM
-drivers that create a DRM scheduler per user queue.
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+---
+ kernel/workqueue.c | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
-This solution has been tested by unloading and reloading the Xe driver.
-Before this series, around 30 driver reloads would result in lockdep
-being turned off. After implementing the series, the driver can be
-unloaded and reloaded hundreds of times without issues.
-
-v2:
- - Split workqueue changes into multiple patches
- - Add alloc_workqueue_lockdep_map (Tejun)
- - Drop RFC
-v3:
- - Drop __WQ_USER_OWNED_LOCKDEP (Tejun)
- - static inline alloc_ordered_workqueue_lockdep_map (Tejun)
-
-Matt
-
-Matthew Brost (5):
-  workqueue: Split alloc_workqueue into internal function and lockdep
-    init
-  workqueue: Change workqueue lockdep map to pointer
-  workqueue: Add interface for user-defined workqueue lockdep map
-  drm/sched: Use drm sched lockdep map for submit_wq
-  drm/xe: Drop GuC submit_wq pool
-
- drivers/gpu/drm/scheduler/sched_main.c | 11 ++++
- drivers/gpu/drm/xe/xe_guc_submit.c     | 60 +--------------------
- drivers/gpu/drm/xe/xe_guc_types.h      |  7 ---
- include/linux/workqueue.h              | 52 ++++++++++++++++++
- kernel/workqueue.c                     | 75 ++++++++++++++++++++------
- 5 files changed, 124 insertions(+), 81 deletions(-)
-
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 1745ca788ede..90a98c9b0ac6 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -5612,9 +5612,9 @@ static void wq_adjust_max_active(struct workqueue_struct *wq)
+ }
+ 
+ __printf(1, 4)
+-struct workqueue_struct *alloc_workqueue(const char *fmt,
+-					 unsigned int flags,
+-					 int max_active, ...)
++static struct workqueue_struct *__alloc_workqueue(const char *fmt,
++						  unsigned int flags,
++						  int max_active, ...)
+ {
+ 	va_list args;
+ 	struct workqueue_struct *wq;
+@@ -5680,12 +5680,11 @@ struct workqueue_struct *alloc_workqueue(const char *fmt,
+ 	INIT_LIST_HEAD(&wq->flusher_overflow);
+ 	INIT_LIST_HEAD(&wq->maydays);
+ 
+-	wq_init_lockdep(wq);
+ 	INIT_LIST_HEAD(&wq->list);
+ 
+ 	if (flags & WQ_UNBOUND) {
+ 		if (alloc_node_nr_active(wq->node_nr_active) < 0)
+-			goto err_unreg_lockdep;
++			goto err_free_wq;
+ 	}
+ 
+ 	/*
+@@ -5724,9 +5723,6 @@ struct workqueue_struct *alloc_workqueue(const char *fmt,
+ 		kthread_flush_worker(pwq_release_worker);
+ 		free_node_nr_active(wq->node_nr_active);
+ 	}
+-err_unreg_lockdep:
+-	wq_unregister_lockdep(wq);
+-	wq_free_lockdep(wq);
+ err_free_wq:
+ 	free_workqueue_attrs(wq->unbound_attrs);
+ 	kfree(wq);
+@@ -5737,6 +5733,25 @@ struct workqueue_struct *alloc_workqueue(const char *fmt,
+ 	destroy_workqueue(wq);
+ 	return NULL;
+ }
++
++__printf(1, 4)
++struct workqueue_struct *alloc_workqueue(const char *fmt,
++					 unsigned int flags,
++					 int max_active, ...)
++{
++	struct workqueue_struct *wq;
++	va_list args;
++
++	va_start(args, max_active);
++	wq = __alloc_workqueue(fmt, flags, max_active, args);
++	va_end(args);
++	if (!wq)
++		return NULL;
++
++	wq_init_lockdep(wq);
++
++	return wq;
++}
+ EXPORT_SYMBOL_GPL(alloc_workqueue);
+ 
+ static bool pwq_busy(struct pool_workqueue *pwq)
 -- 
 2.34.1
 
