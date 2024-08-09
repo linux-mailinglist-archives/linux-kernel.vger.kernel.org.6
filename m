@@ -1,236 +1,169 @@
-Return-Path: <linux-kernel+bounces-281576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E10794D859
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:14:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C76EC94D85D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74AEE1C21758
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:14:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7A851C21A79
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE2F16631D;
-	Fri,  9 Aug 2024 21:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7A01684AB;
+	Fri,  9 Aug 2024 21:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yKY270Qi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xBpykJDL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHstCtmu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2AE160860;
-	Fri,  9 Aug 2024 21:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCF0225D6;
+	Fri,  9 Aug 2024 21:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723238082; cv=none; b=lB2lnxtPoQjQU4i2HJrccEs74cajEJ3pTSMroEwPX8A5tX0pLGG5orJQr8CUIhqlD5fCBHYScViKUiTWiOE0GrNs4aiuvpV7FXCasXQ+fk2R45mUm7LylkT/JSM1AVeFh5M6fzeS53tWruJDi1osTqgsoW6JS00g+/GCWvXsVLE=
+	t=1723238134; cv=none; b=lXuWXksm2Ny5bQ7lfpoxNCGsMtFbqFURcNTUa0I/f9KhTUiY7jd8xdaOBtTSlE3+taVu0Aauk89SrrQlvqDNXuOJlC5iFSiNuiwMnwaVqABrus9zF0pa7zST8M7eeEm2eysTICkdZmYt86xRAxnmNn4EKoLFhRwQd/9oqp+O+rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723238082; c=relaxed/simple;
-	bh=iOGMmqMFT6jalMSrFHeMpKhyPUhgBbeCr99TQ1IauPs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FfN6lP03d6s4oVxhJu92Vrhx3ak7YR3OlDfCMtYgdaG2CJ1+5+reiWDD7p6rse52FAIT2fDbOHa7+RP6XQPpnBgDvwYLdIoMbTDDUVDzUmkPZyZkQJNJ77qRMUJaxN1d2jYGbxm/5dTj9bUs2LreLxJ6v8Cot0HBH6Rw/ypS3Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yKY270Qi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xBpykJDL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 09 Aug 2024 21:14:39 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723238079;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LaOAAwYWUMK7TRiCzhE0dzWv1M+4M2kYpBUiSSHIaZw=;
-	b=yKY270QiFD7I0yYMoIGNAMQU4pC6GxyC+heJS7HSgLCujUii3dfJkBiJI1p83nzFN/mm6i
-	Wvrg/oxqRI9zmuzHnBYVvEqQ0KdlfaajC7ugpRBfcKD0jUUAIt/sfITthPn2309hcEebVp
-	au1DyO+OSyUEufF8UjvOnIgO2dGdkWLNGoLY8Y29+doUzuNFa7hCKQjnZILfh4lZ/YeDXv
-	DDOq7OoM8VyONwBBgzRfSMNkm76BxY0vDnCkJU0NiWAbKuq5dcnFYYXEJ4gDS66jS9Aj1U
-	Haczw3P5dEzh94EvAxKm192YWPPGCiTQk01g7qIvXpvsJhepL6khsueT3kdi2g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723238079;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LaOAAwYWUMK7TRiCzhE0dzWv1M+4M2kYpBUiSSHIaZw=;
-	b=xBpykJDL2wNaNpx9+kLC471MvJ9m7qWMyJlTFY5PaWPDn7PSg38sFlFeMXETxoSW6FUlZk
-	zLJFpDYU9sFbbCDA==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqdomain: Cleanup domain name allocation
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Matti Vaittinen <mazziesaccount@gmail.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <874j7uvkbm.ffs@tglx>
-References: <874j7uvkbm.ffs@tglx>
+	s=arc-20240116; t=1723238134; c=relaxed/simple;
+	bh=WDLxd448HftortWiAdBjWMSTzbRSfPU4kr/k4P1TZyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5ntoArXLliv+aJwEq8rmAtu0LgxrFCbBqDAmQEfKy+1OFhWLneYBxorWswwId6YxgDpuAOEGW5BPFZ7lYMyj6i1iTDYbhvC7H0YCMelqyUyVBOucPmmZaPbJmU66VmLUS8Ia3XsjRLBLAVTm2pohtEZ/MAtVNxW1xOw1ihfoO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHstCtmu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59000C32782;
+	Fri,  9 Aug 2024 21:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723238133;
+	bh=WDLxd448HftortWiAdBjWMSTzbRSfPU4kr/k4P1TZyk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VHstCtmu0TcueqpNSJ8DYR/q9JqgdqfFS0kcfbMES/8FqKK4x+zfM+Is+qbRUFlbL
+	 6pUuatyLut4MeIL0vIl5D8amJs24w96rwlNI1snB+QqsCU0DEuicS4dEMcctND1RxX
+	 a1BwjdifR1E98tsk/hj6p+vYlGJtimJ+IwKaWbSFOY5DM1PBqIh1eUQtZ4KoChK0rb
+	 bRbC+hJK4K/XlFhbLvLjUiHctYANHzSJSXH6if6ykScSoq8nJcQTXijmwwO0UDnF2q
+	 EMk/do5xNFx3BNTf7LJySMllN+MF4baJMTNgreTcgXbwRCpFmVBVn8drv92sIH5zF1
+	 EAS/gbdRHBIpA==
+Date: Fri, 9 Aug 2024 18:15:30 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH] perf annotate: Fix --group behavior when leader has no
+ samples
+Message-ID: <ZraG8ryV_qubOt8R@x1>
+References: <CAM9d7cjXmaMuidQR10PXrp9khZ4LhDZbLno1rN2JcCncaYyp7Q@mail.gmail.com>
+ <20240807061555.1642669-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172323807905.2215.15647999136649709715.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807061555.1642669-1-namhyung@kernel.org>
 
-The following commit has been merged into the irq/core branch of tip:
+On Tue, Aug 06, 2024 at 11:15:55PM -0700, Namhyung Kim wrote:
+> When --group option is used, it should display all events together.  But
+> the current logic only checks if the first (leader) event has samples or
+> not.  Let's check the member events as well.
+> 
+> Also it missed to put the linked samples from member evsels to the
+> output RB-tree so that it can be displayed in the output.
 
-Commit-ID:     1bf2c92829274e7c815d06d7b3196a967ff70917
-Gitweb:        https://git.kernel.org/tip/1bf2c92829274e7c815d06d7b3196a967ff70917
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Thu, 08 Aug 2024 22:19:41 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 09 Aug 2024 22:37:54 +02:00
+Thanks, re-tested and applied.
 
-irqdomain: Cleanup domain name allocation
+- Arnaldo
 
-irq_domain_set_name() is truly unreadable gunk. Clean it up before adding
-more.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Link: https://lore.kernel.org/all/874j7uvkbm.ffs@tglx
-
----
- kernel/irq/irqdomain.c | 106 ++++++++++++++++++++--------------------
- 1 file changed, 55 insertions(+), 51 deletions(-)
-
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 7625e42..72ab601 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -128,72 +128,76 @@ void irq_domain_free_fwnode(struct fwnode_handle *fwnode)
- }
- EXPORT_SYMBOL_GPL(irq_domain_free_fwnode);
- 
--static int irq_domain_set_name(struct irq_domain *domain,
--			       const struct fwnode_handle *fwnode,
--			       enum irq_domain_bus_token bus_token)
-+static int alloc_name(struct irq_domain *domain, char *base, enum irq_domain_bus_token bus_token)
-+{
-+	domain->name = bus_token ? kasprintf(GFP_KERNEL, "%s-%d", base, bus_token) :
-+				   kasprintf(GFP_KERNEL, "%s", base);
-+	if (!domain->name)
-+		return -ENOMEM;
-+
-+	domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
-+	return 0;
-+}
-+
-+static int alloc_fwnode_name(struct irq_domain *domain, const struct fwnode_handle *fwnode,
-+			     enum irq_domain_bus_token bus_token)
-+{
-+	char *name = bus_token ? kasprintf(GFP_KERNEL, "%pfw-%d", fwnode, bus_token) :
-+				 kasprintf(GFP_KERNEL, "%pfw", fwnode);
-+
-+	if (!name)
-+		return -ENOMEM;
-+
-+	/*
-+	 * fwnode paths contain '/', which debugfs is legitimately unhappy
-+	 * about. Replace them with ':', which does the trick and is not as
-+	 * offensive as '\'...
-+	 */
-+	domain->name = strreplace(name, '/', ':');
-+	domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
-+	return 0;
-+}
-+
-+static int alloc_unknown_name(struct irq_domain *domain, enum irq_domain_bus_token bus_token)
- {
- 	static atomic_t unknown_domains;
--	struct irqchip_fwid *fwid;
-+	int id = atomic_inc_return(&unknown_domains);
-+
-+	domain->name = bus_token ? kasprintf(GFP_KERNEL, "unknown-%d-%d", id, bus_token) :
-+				   kasprintf(GFP_KERNEL, "unknown-%d", id);
- 
-+	if (!domain->name)
-+		return -ENOMEM;
-+	domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
-+	return 0;
-+}
-+
-+static int irq_domain_set_name(struct irq_domain *domain, const struct fwnode_handle *fwnode,
-+			       enum irq_domain_bus_token bus_token)
-+{
- 	if (is_fwnode_irqchip(fwnode)) {
--		fwid = container_of(fwnode, struct irqchip_fwid, fwnode);
-+		struct irqchip_fwid *fwid = container_of(fwnode, struct irqchip_fwid, fwnode);
- 
- 		switch (fwid->type) {
- 		case IRQCHIP_FWNODE_NAMED:
- 		case IRQCHIP_FWNODE_NAMED_ID:
--			domain->name = bus_token ?
--					kasprintf(GFP_KERNEL, "%s-%d",
--						  fwid->name, bus_token) :
--					kstrdup(fwid->name, GFP_KERNEL);
--			if (!domain->name)
--				return -ENOMEM;
--			domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
--			break;
-+			return alloc_name(domain, fwid->name, bus_token);
- 		default:
- 			domain->name = fwid->name;
--			if (bus_token) {
--				domain->name = kasprintf(GFP_KERNEL, "%s-%d",
--							 fwid->name, bus_token);
--				if (!domain->name)
--					return -ENOMEM;
--				domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
--			}
--			break;
-+			if (bus_token)
-+				return alloc_name(domain, fwid->name, bus_token);
- 		}
--	} else if (is_of_node(fwnode) || is_acpi_device_node(fwnode) ||
--		   is_software_node(fwnode)) {
--		char *name;
- 
--		/*
--		 * fwnode paths contain '/', which debugfs is legitimately
--		 * unhappy about. Replace them with ':', which does
--		 * the trick and is not as offensive as '\'...
--		 */
--		name = bus_token ?
--			kasprintf(GFP_KERNEL, "%pfw-%d", fwnode, bus_token) :
--			kasprintf(GFP_KERNEL, "%pfw", fwnode);
--		if (!name)
--			return -ENOMEM;
--
--		domain->name = strreplace(name, '/', ':');
--		domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
-+	} else if (is_of_node(fwnode) || is_acpi_device_node(fwnode) || is_software_node(fwnode)) {
-+		return alloc_fwnode_name(domain, fwnode, bus_token);
- 	}
- 
--	if (!domain->name) {
--		if (fwnode)
--			pr_err("Invalid fwnode type for irqdomain\n");
--		domain->name = bus_token ?
--				kasprintf(GFP_KERNEL, "unknown-%d-%d",
--					  atomic_inc_return(&unknown_domains),
--					  bus_token) :
--				kasprintf(GFP_KERNEL, "unknown-%d",
--					  atomic_inc_return(&unknown_domains));
--		if (!domain->name)
--			return -ENOMEM;
--		domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
--	}
-+	if (domain->name)
-+		return 0;
- 
--	return 0;
-+	if (fwnode)
-+		pr_err("Invalid fwnode type for irqdomain\n");
-+	return alloc_unknown_name(domain, bus_token);
- }
- 
- static struct irq_domain *__irq_domain_create(const struct irq_domain_info *info)
+> For example, take a look at this example.
+> 
+>   $ ./perf evlist
+>   cpu/mem-loads,ldlat=30/P
+>   cpu/mem-stores/P
+>   dummy:u
+> 
+> It has three events but 'path_put' function has samples only for
+> mem-stores (second) event.
+> 
+>   $ sudo ./perf annotate --stdio -f path_put
+>    Percent |      Source code & Disassembly of kcore for cpu/mem-stores/P (2 samples, percent: local period)
+>   ----------------------------------------------------------------------------------------------------------
+>            : 0                0xffffffffae600020 <path_put>:
+>       0.00 :   ffffffffae600020:       endbr64
+>       0.00 :   ffffffffae600024:       nopl    (%rax, %rax)
+>      91.22 :   ffffffffae600029:       pushq   %rbx
+>       0.00 :   ffffffffae60002a:       movq    %rdi, %rbx
+>       0.00 :   ffffffffae60002d:       movq    8(%rdi), %rdi
+>       8.78 :   ffffffffae600031:       callq   0xffffffffae614aa0
+>       0.00 :   ffffffffae600036:       movq    (%rbx), %rdi
+>       0.00 :   ffffffffae600039:       popq    %rbx
+>       0.00 :   ffffffffae60003a:       jmp     0xffffffffae620670
+>       0.00 :   ffffffffae60003f:       nop
+> 
+> Therefore, it didn't show up when --group option is used since the
+> leader ("mem-loads") event has no samples.  But now it checks both
+> events.
+> 
+> Before:
+>   $ sudo ./perf annotate --stdio -f --group path_put
+>   (no output)
+> 
+> After:
+>   $ sudo ./perf annotate --stdio -f --group path_put
+>    Percent                 |      Source code & Disassembly of kcore for cpu/mem-loads,ldlat=30/P, cpu/mem-stores/P, dummy:u (0 samples, percent: local period)
+>   -------------------------------------------------------------------------------------------------------------------------------------------------------------
+>                            : 0                0xffffffffae600020 <path_put>:
+>       0.00    0.00    0.00 :   ffffffffae600020:       endbr64
+>       0.00    0.00    0.00 :   ffffffffae600024:       nopl    (%rax, %rax)
+>       0.00   91.22    0.00 :   ffffffffae600029:       pushq   %rbx
+>       0.00    0.00    0.00 :   ffffffffae60002a:       movq    %rdi, %rbx
+>       0.00    0.00    0.00 :   ffffffffae60002d:       movq    8(%rdi), %rdi
+>       0.00    8.78    0.00 :   ffffffffae600031:       callq   0xffffffffae614aa0
+>       0.00    0.00    0.00 :   ffffffffae600036:       movq    (%rbx), %rdi
+>       0.00    0.00    0.00 :   ffffffffae600039:       popq    %rbx
+>       0.00    0.00    0.00 :   ffffffffae60003a:       jmp     0xffffffffae620670
+>       0.00    0.00    0.00 :   ffffffffae60003f:       nop
+> 
+> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/builtin-annotate.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+> index efcadb7620b8..1bfe41783a7c 100644
+> --- a/tools/perf/builtin-annotate.c
+> +++ b/tools/perf/builtin-annotate.c
+> @@ -632,13 +632,23 @@ static int __cmd_annotate(struct perf_annotate *ann)
+>  	evlist__for_each_entry(session->evlist, pos) {
+>  		struct hists *hists = evsel__hists(pos);
+>  		u32 nr_samples = hists->stats.nr_samples;
+> +		struct ui_progress prog;
+> +		struct evsel *evsel;
+>  
+> -		if (nr_samples == 0)
+> +		if (!symbol_conf.event_group || !evsel__is_group_leader(pos))
+>  			continue;
+>  
+> -		if (!symbol_conf.event_group || !evsel__is_group_leader(pos))
+> +		for_each_group_member(evsel, pos)
+> +			nr_samples += evsel__hists(evsel)->stats.nr_samples;
+> +
+> +		if (nr_samples == 0)
+>  			continue;
+>  
+> +		ui_progress__init(&prog, nr_samples,
+> +				  "Sorting group events for output...");
+> +		evsel__output_resort(pos, &prog);
+> +		ui_progress__finish();
+> +
+>  		hists__find_annotations(hists, pos, ann);
+>  	}
+>  
+> -- 
+> 2.46.0.rc2.264.g509ed76dc8-goog
+> 
 
