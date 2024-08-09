@@ -1,223 +1,119 @@
-Return-Path: <linux-kernel+bounces-280648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B3994CD44
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:25:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12EFB94CD49
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597161F21D9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:25:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F331C20ED1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972D11917D0;
-	Fri,  9 Aug 2024 09:25:12 +0000 (UTC)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A181917FA;
+	Fri,  9 Aug 2024 09:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="ZocnFN+p"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D05518FDBC
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF5718FDBC;
+	Fri,  9 Aug 2024 09:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723195512; cv=none; b=A1mqyqjfRpVO7PN7573V5C6DVorGr4MBlb0EnAvrw82GQP4f9gPxxtPIN/OVBgFsLFW9mO3RQCErIzSHaUDdiqJf1NxpqPYNVeeELArMvHc7fk6ALTR4McaCQpAthz1th6VaoAP89f2MW2Yp3mWSkrTERVvU7X820hjPHqGm+DE=
+	t=1723195663; cv=none; b=P47dWNe5K+lVVj5KE2RZEhKTkErqxmSlu5K2g1F6z/fqrfTzot/k6GX2E10AVyWhgiY11CR/9qLAKsHQhxyFOH1Odp0micPUmb+3aYKUtiBTsqSv2SrU97eZoHo8pgveZr9/lZdGtq84WDCI6rrw2ov1WDH8r3XVmhIAAeOvvec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723195512; c=relaxed/simple;
-	bh=21tmuR+uEpjf4I8oa+7Fks6/ar1LljS186mc/7Sb2BA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jk/SoTPa6sAOKz+Q1EcJ/SS+PuNzLMkqLxB56wfnRBRRpJGn92XAi4Aqse3XVzplMLo7Gmqw6EJw8YzDEu1Ww9iT97N36I5vqplEPPgHFabQaD8OAKl6tTKykpKEsK+2n8ZZ71YdRmVXeMcFa+w9QEKnL+nu6uNsKH3QbeqGneU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-492a09d4c42so656591137.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 02:25:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723195509; x=1723800309;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tmzmq7HALPWLcX9GnDg2w3rFPxXduK8YFzJI7L+SaRo=;
-        b=PbWo4+DE9K8xMegyCys0A3KlIyRsJmAsZW8jn3LNZen54N+Gzgnid6yoPDP11nNSWa
-         vJqOOi0/GyWywhNf9aQSVnliqBN/9KwEjYnupdhdwbXLlxuCCSXp3MFEmwomgRaSqHIA
-         Nm0cvMC4LMyhQ+wkItZrKJLJ0ZQO+h79P/3iXdvFoBsSdAW2Ln2jVmfqPaZFrEkXBpLh
-         YM8GXwjykb3m95R4a6R6BYEUgjpzvn1EkyrTQC5EroJQoSM/FC7L2Grqor+rBbrGb3s0
-         RuISNUDVc0zgp5FYCd1pcyTdtonQhgpJOwtPgXMumYdVzt/p3XryfKjfmcxzvNMC3zqm
-         lPkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqdav7+bttj71gL1t3zqCkQKtJYAAvQMI8DqhyHyl2hJipXzqV9BtE5UKprwCf57G6ofaZdSDSe6gv3Ey0DbzHv/e4x1qfU6OUsaIu
-X-Gm-Message-State: AOJu0Yx2TDxhv3eePFlA/iwSZgRh5nmO96JVxo8d/J386oHLBj690dSY
-	E75yF64F/zeWQzVZjE+tLHGrcNIYSOZ+KKO2jTrorIJMEimKHxoI9wU3ZoaLoOSaT8Q7x7yTQ9h
-	F2/AiO9/gu0cxr+Q0kM9sby1orv09z/Bb
-X-Google-Smtp-Source: AGHT+IFykyb073NTa+DKA+15uG7iZC4IMttVG3aLBdscCwbHSk73gRZM8qT7bs6w229V+xr56S6FlW5GxbNhGve69tw=
-X-Received: by 2002:a05:6102:dc6:b0:493:b965:7d03 with SMTP id
- ada2fe7eead31-495d84538cdmr904222137.13.1723195509209; Fri, 09 Aug 2024
- 02:25:09 -0700 (PDT)
+	s=arc-20240116; t=1723195663; c=relaxed/simple;
+	bh=n3NhaaEDX80/2TzfeEQq8Sqn7B7+AA/mO1GNp1zKs5g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=InCX4unFuXre+3cP9OROcCWlp9XWJsDi1A2hIcMe4fs36tfbGIHbuIDg/8S8YhLamtgwCJszOL+XN3rjsQs3nWulwG1f+aOD7qQg0iMPyrO4R/pwUIFP6UUznYBBSMX+TEh9DXuAK1kdmTaJhAiFnpskvUVThjBOGozWIefiyQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=ZocnFN+p; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4799Qm1gA631844, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1723195608; bh=n3NhaaEDX80/2TzfeEQq8Sqn7B7+AA/mO1GNp1zKs5g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=ZocnFN+pA1Gb/ZoBrHmRad/UhssL0zRzWAzYYw7sXIiKWaVaQNX3RwjC8O7AVs3k3
+	 3eUFIAEKFkSKpbHlrPAaYOu+u99XLIqv2Xgkd9mBXm6DF+TvkrZDdzGnPt9NmvygLO
+	 KsXz2D0RLIIW8Mt1cgPUEMDuGE9F3On3rnn0DUPv6Wr/Pr4BSaLxWmW8Pm1bkFQH9Y
+	 wZUb1pjcedIgHD0EVdPBlSgAOwpyj35pp/aQbncyPkHy5VbV6tqDDse/aGP2FpmRSW
+	 7xrmTwsi4y0+t9Fd9QnyQk9xD9maAFoh3Qxq9ktTrnFnmVjq0T3Q2jo2afT+0vw9sx
+	 yhhroR9HWM1qQ==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 4799Qm1gA631844
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 9 Aug 2024 17:26:48 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 9 Aug 2024 17:26:49 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 9 Aug 2024 17:26:48 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Fri, 9 Aug 2024 17:26:48 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+CC: Brian Norris <briannorris@chromium.org>,
+        Francesco Dolcini
+	<francesco@dolcini.it>,
+        Kalle Valo <kvalo@kernel.org>,
+        Yogesh Ashok Powar
+	<yogeshp@marvell.com>,
+        Bing Zhao <bzhao@marvell.com>,
+        "John W. Linville"
+	<linville@tuxdriver.com>,
+        Amitkumar Karwar <akarwar@marvell.com>,
+        "Avinash
+ Patil" <patila@marvell.com>,
+        Kiran Divekar <dkiran@marvell.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "stable@vger.kernel.org"
+	<stable@vger.kernel.org>
+Subject: RE: [PATCH] mwifiex: duplicate static structs used in driver instances
+Thread-Topic: [PATCH] mwifiex: duplicate static structs used in driver
+ instances
+Thread-Index: AQHa6jPW1qXxj1kE10+gt4nIKUPfkrIenWTw//+AnwCAAIns8A==
+Date: Fri, 9 Aug 2024 09:26:48 +0000
+Message-ID: <33fa77bdf10b48a48105f25ebed50fe0@realtek.com>
+References: <20240809-mwifiex-duplicate-static-structs-v1-1-6837b903b1a4@pengutronix.de>
+ <4021e822699b44939f6a4731290e2627@realtek.com>
+ <ZrXdgIJe6U4sJJwU@pengutronix.de>
+In-Reply-To: <ZrXdgIJe6U4sJJwU@pengutronix.de>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808101700.571701-1-ryan.roberts@arm.com> <99b78488-c524-4269-b1fb-a13eaa4f274c@redhat.com>
-In-Reply-To: <99b78488-c524-4269-b1fb-a13eaa4f274c@redhat.com>
-From: Barry Song <baohua@kernel.org>
-Date: Fri, 9 Aug 2024 17:24:56 +0800
-Message-ID: <CAGsJ_4z2D2yWWZhUM_yDSdn9=zpkYkHhzAKO8CQ1Xu3gDaECRA@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: Override mTHP "enabled" defaults at kernel cmdline
-To: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Lance Yang <ioworker0@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 9, 2024 at 5:19=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 08.08.24 12:16, Ryan Roberts wrote:
-> > Add thp_anon=3D cmdline parameter to allow specifying the default
-> > enablement of each supported anon THP size. The parameter accepts the
-> > following format and can be provided multiple times to configure each
-> > size:
+Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> On Fri, Aug 09, 2024 at 08:49:32AM +0000, Ping-Ke Shih wrote:
+> > Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> > > +       wiphy->bands[NL80211_BAND_2GHZ] =3D devm_kmemdup(adapter->dev=
+,
+> > > +                                                      &mwifiex_band_=
+2ghz,
+> > > +                                                      sizeof(mwifiex=
+_band_2ghz),
+> > > +                                                      GFP_KERNEL);
 > >
-> > thp_anon=3D<size>[KMG]:<value>
-> >
-> > See Documentation/admin-guide/mm/transhuge.rst for more details.
-> >
-> > Configuring the defaults at boot time is useful to allow early user
-> > space to take advantage of mTHP before its been configured through
-> > sysfs.
->
-> I suspect a khugeapged enhancement and/or kernel-config-dependant
-> defaults and/or early system settings will also be able to mitigate that
-> without getting kernel cmdlines involved in the future.
->
-> >
-> > Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> > ---
-> >
-> > Hi All,
-> >
-> > I've split this off from my RFC at [1] because Barry highlighted that h=
-e would
-> > benefit from it immediately [2]. There are no changes vs the version in=
- that
-> > series.
-> >
-> > It applies against today's mm-unstable (275d686abcb59). (although I had=
- to fix a
-> > minor build bug in stackdepot.c due to MIN() not being defined in this =
-tree).
-> >
-> > Thanks,
-> > Ryan
-> >
-> >
-> >   .../admin-guide/kernel-parameters.txt         |  8 +++
-> >   Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
-> >   mm/huge_memory.c                              | 55 ++++++++++++++++++=
--
-> >   3 files changed, 82 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
-ation/admin-guide/kernel-parameters.txt
-> > index bcdee8984e1f0..5c79b58c108ec 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -6631,6 +6631,14 @@
-> >                       <deci-seconds>: poll all this frequency
-> >                       0: no polling (default)
-> >
-> > +     thp_anon=3D       [KNL]
-> > +                     Format: <size>[KMG]:always|madvise|never|inherit
-> > +                     Can be used to control the default behavior of th=
-e
-> > +                     system with respect to anonymous transparent huge=
-pages.
-> > +                     Can be used multiple times for multiple anon THP =
-sizes.
-> > +                     See Documentation/admin-guide/mm/transhuge.rst fo=
-r more
-> > +                     details.
-> > +
-> >       threadirqs      [KNL,EARLY]
-> >                       Force threading of all interrupt handlers except =
-those
-> >                       marked explicitly IRQF_NO_THREAD.
-> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
-/admin-guide/mm/transhuge.rst
-> > index 24eec1c03ad88..f63b0717366c6 100644
-> > --- a/Documentation/admin-guide/mm/transhuge.rst
-> > +++ b/Documentation/admin-guide/mm/transhuge.rst
-> > @@ -284,13 +284,27 @@ that THP is shared. Exceeding the number would bl=
-ock the collapse::
-> >
-> >   A higher value may increase memory footprint for some workloads.
-> >
-> > -Boot parameter
-> > -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +Boot parameters
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > -You can change the sysfs boot time defaults of Transparent Hugepage
-> > -Support by passing the parameter ``transparent_hugepage=3Dalways`` or
-> > -``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dnever``
-> > -to the kernel command line.
-> > +You can change the sysfs boot time default for the top-level "enabled"
-> > +control by passing the parameter ``transparent_hugepage=3Dalways`` or
-> > +``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dnever``=
- to the
-> > +kernel command line.
-> > +
-> > +Alternatively, each supported anonymous THP size can be controlled by
-> > +passing ``thp_anon=3D<size>[KMG]:<state>``, where ``<size>`` is the TH=
-P size
-> > +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
-> > +``inherit``.
-> > +
-> > +For example, the following will set 64K THP to ``always``::
-> > +
-> > +     thp_anon=3D64K:always
-> > +
-> > +``thp_anon=3D`` may be specified multiple times to configure all THP s=
-izes as
-> > +required. If ``thp_anon=3D`` is specified at least once, any anon THP =
-sizes
-> > +not explicitly configured on the command line are implicitly set to
-> > +``never``.
->
-> I suggest documenting that "thp_anon=3D" will not effect the value of
-> "transparent_hugepage=3D", or any configured default.
->
-> Wondering if a syntax like
->
-> thp_anon=3D16K,32K,64K:always;1048K,2048K:madvise
->
-> (one could also support ranges, like "16K-64K")
->
-> Would be even better. Then, maybe only allow a single instance.
->
-> Maybe consider it if it's not too crazy to parse ;)
+> > It seems like you forget to free the duplicate memory somewhere?
+>=20
+> It's freed automatically when adapter->dev is released, see the various
+> devm_* functions
+>=20
 
-I prefer the current approach because it effectively filters cases like thi=
-s.
+Cool. Thanks for the info.=20
 
-[    0.000000] huge_memory: thp_anon=3D8K:inherit: cannot parse, ignored
-[    0.000000] Unknown kernel command line parameters
-"thp_anon=3D8K:inherit", will be passed to user space.
-
-if we put multiple sizes together, 8K,32K,64K:always
-
-We can't determine whether this command line is legal or illegal as it
-is partially legal and partially illegal.
-
-Just my two cents :-)
-
->
-> --
-> Cheers,
->
-> David / dhildenb
-
-Thanks
-Barry
 
