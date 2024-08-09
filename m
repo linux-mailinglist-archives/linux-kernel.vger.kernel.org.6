@@ -1,85 +1,84 @@
-Return-Path: <linux-kernel+bounces-280875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3AC94D057
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:36:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E0A94D059
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959901C213A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:36:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029A7286473
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13D2194A4B;
-	Fri,  9 Aug 2024 12:36:17 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C894194A40;
+	Fri,  9 Aug 2024 12:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Ityy9BB9"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E14A1DFF5;
-	Fri,  9 Aug 2024 12:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3461DFF5;
+	Fri,  9 Aug 2024 12:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723206977; cv=none; b=PwcEW/JuxWpFLNEz7zDEWA4ZZMhS99s9qSw4ThLJaftfaQzfLdhOc5xyYzYvgixpmb97YiqdavF1gPSOZvv/V6b/SWXYEpcvQF3gS0Fao5ExW2dMkQTRU9b5ekYhxy//F9yTdwdgLOfZuSQUGO/tmkp/O58xAWtpFGYTa8dbLFg=
+	t=1723207040; cv=none; b=MO88P6J5URaqy0B6mg14gacxxuYqx14ZFJukv8U3EP6tVMLNLsty60Rav7SlT2mfyCqD1pnlS5Ozf3FwfjB/bmSoDfcrMYps1AF+Yk93Y+a40/NSY2yw9gqY5OvR2mr2CR8IUqET3cahKgSqArcdzXaDFCZAGz6gNx/nzILs5Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723206977; c=relaxed/simple;
-	bh=FWWNxodoUrQMHGfjDm+iomNz8elNmj4w8U94tH1X8xo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hd5wrx7kcpu22FW7/I46aKf9Lp7AFLzBGehQ29RJOBYHU0wwYqS5AyePFcf62dp8mW7Sk/YLt0MDBx/Ypg/Kwan1UaMXRpEWZ+XUc7oxgH0LPdKqWUV9EBib32KLTBsSPo1BbE2oZO+Al1QJ6fqwTT++knKPOYvenPaYDZ0rung=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b02.versanet.de ([83.135.91.2] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1scOqX-0006V9-No; Fri, 09 Aug 2024 14:35:53 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-kernel@vger.kernel.org,
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Chris Morgan <macromorgan@hotmail.com>,
- Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
- Muhammed Efe Cetin <efectn@protonmail.com>, Andy Yan <andyshrk@163.com>,
- Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
- Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
- Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
- Yifeng Zhao <yifeng.zhao@rock-chips.com>,
- Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
-Subject:
- Re: [PATCH 05/10] dt-bindings: mfd: syscon: Add rk3576 QoS register
- compatible
-Date: Fri, 09 Aug 2024 14:35:51 +0200
-Message-ID: <14126945.ov1OQ5z9iq@diego>
-In-Reply-To: <20240802214612.434179-6-detlev.casanova@collabora.com>
-References:
- <20240802214612.434179-1-detlev.casanova@collabora.com>
- <20240802214612.434179-6-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1723207040; c=relaxed/simple;
+	bh=HAr1YBK5Iti57WLZAVf7xawM2aVnXg0kQ77MBFfGA9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u44Dki0KCyqYUTAh5ZjmcFckJ/q4vnJNIfT+XQHLN3GNwsgj6b2j944CJHgL0FdhxBPuYZ97CFUU7W7G0CQj4sTF75RcGqnviekLOhE64iW4GflauUdB01o6kusU7cRX3c2ITUBLErQ9wvwa0JLVGU79Qfb8ZSPh5jhEten7o7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Ityy9BB9; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 9CE962123B;
+	Fri,  9 Aug 2024 14:37:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1723207035;
+	bh=5TlxZTfYBXeSTqAWOdY0khCP4g3uC9jK6KkgNXu/7uw=;
+	h=Received:From:To:Subject;
+	b=Ityy9BB992Y8DWemRQiB9DmPglNNPWTsCt6S4Xm1gaIsPSA2nTdInwxvKke73BZM0
+	 TY2uD5lWLuCw25pCdylIzLABfiLug0PO6admsTPrcIPPWYZ3w/DJtI+EbktvI0boxO
+	 7o6q3k1lvurtM2nNxwTRE4B6uhOAnNgMIrbAzdu+tQMHgGp3fkh/TlWsCtBQ3hGhw6
+	 5nB6Nr4YvFmVeaei7gp7SEy7MbneQ1ibSlsVVNVFEeG3MchjE+DzcV3os1CZLy3L4e
+	 fVbWGpbsYH5BMrl6AYP4ZGqQyzb7+Abg95pv6GSnOfSQd+c4KDT32TNrHUsOx7pZEN
+	 PamlP44xQUOtw==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 3E0937F911; Fri,  9 Aug 2024 14:37:15 +0200 (CEST)
+Date: Fri, 9 Aug 2024 14:37:15 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH] wifi: mwifiex: keep mwifiex_cfg80211_ops constant
+Message-ID: <ZrYNex2LjSd09N-m@gaggiata.pivistrello.it>
+References: <20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de>
 
-Am Freitag, 2. August 2024, 23:45:32 CEST schrieb Detlev Casanova:
-> Document rk3576 compatible for QoS registers.
+On Fri, Aug 09, 2024 at 11:51:48AM +0200, Sascha Hauer wrote:
+> With host_mlme support being added mwifiex_cfg80211_ops is no longer
+> constant, but supplemented with the host_mlme related ops when host_mlme
+> support is enabled. This doesn't work with multiple adapters when only
+> few of then have host_mlme support. Duplicate mwifiex_cfg80211_ops
+> before using it and keep the original constant.
 > 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> While at it mark mwifiex_cfg80211_ops const to prevent people from
+> changing it again during runtime.
+> 
+> Fixes: 36995892c271c ("wifi: mwifiex: add host mlme for client mode")
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-Acked-by: Heiko Stuebner <heiko@sntech.de>
-
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
 
