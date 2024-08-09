@@ -1,135 +1,102 @@
-Return-Path: <linux-kernel+bounces-280643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0457094CD3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:20:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF17694CD3B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79B00B209E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:20:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F7D28320B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DE4191F89;
-	Fri,  9 Aug 2024 09:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nx4XNTg9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD03174EE7;
+	Fri,  9 Aug 2024 09:20:11 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5982BA41;
-	Fri,  9 Aug 2024 09:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF4616C87C
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723195170; cv=none; b=OzY9GvorzF2TmbAY8BVH4UXLH4IzbccSVZRaVaoqeHbNSRig9CRviXC/JkWRvY4/AcXmyEaXQWFVa2TkKDbxqGT7oNOp8ltunP0mYrKg2gGkvzJl6TmT30NTmVAuyAyenKB8u4zs57ImJazWIUrTUDSdGyD+bKMqxFfOLOWgIow=
+	t=1723195210; cv=none; b=qSXS0UDeK94aTsCrnxqQBmqOQ/iBO+heGXQsx2Gimp8JTbZUAqdlSxiIimNvnZ6td8kpGrKPejm698k9j6NEC+HB0l9Qn6xBLn6Lm4O2uLUKD1fcogLnPbubNW2zO32pcfXYijOrXLR3E8WXwuX1rExJ3qSDcWV1lGws/yTTKvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723195170; c=relaxed/simple;
-	bh=sUsO4fKiqSiBVaZ+TYIJBDRCCTtp09Sd/uJiufQVOi0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mbMpVfFE6sgyNVrBBwYIgPSga+0E/sHZ3zHDd6Igx8yCBa5KiVs0bdkILJ/oDEALxBfXn5G/naU/tvT0Kxei0Gx12S134uiFkr3lRUpHU4YJjWvLW79GgicnZXbG/ixX9Kdh6J3ocnmLZFxNXBSC5/CVBx5WLBN4IliZ3lPPuJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nx4XNTg9; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723195169; x=1754731169;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=sUsO4fKiqSiBVaZ+TYIJBDRCCTtp09Sd/uJiufQVOi0=;
-  b=Nx4XNTg9tD5lKZv6Fw5QeteIjD4ZR+daDe43shi3xeK4eTiW863T9SWn
-   U8qNzOix0SHvZHrIUehXTYpXPj3x1rHdvnrHcjnAyc6J20fpmqXAr2LX+
-   NmKglNaJocrFzTOYeHbJanJjB7TYi7k9VuEViluB/aHLveUaQfaniqYJs
-   b3aTH6yq4jjed7X/8rdQsKmpmZxyuvFO8mucKt9zW2SG6koKcdkiPD3F5
-   HAKiigwVariwI4LznhucwkQ3oxPtUuv0uni4zLbpLACFjlyrtjqnwriqD
-   PdqxzYau5Hznv8XNnKQTrn2wJ9gkwpKrbZtD6SWnyu94tUTiMxti8GGj/
-   Q==;
-X-CSE-ConnectionGUID: rK67eKHESLSFOZT67AhN3g==
-X-CSE-MsgGUID: ycjlhFRUQxSHhiZ4RH9mpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="38813415"
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="38813415"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 02:19:28 -0700
-X-CSE-ConnectionGUID: DkXxQpMMR1+lvafwMBmBuA==
-X-CSE-MsgGUID: fWK0ENh4TT2qZsgrWa01Rw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="57160206"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.119])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 02:19:25 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 9 Aug 2024 12:19:21 +0300 (EEST)
-To: Arnd Bergmann <arnd@kernel.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-    Arnd Bergmann <arnd@arndb.de>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH 2/2] serial: 8250_platform: fix uart_8250_port
- initializer
-In-Reply-To: <20240807075751.2206508-2-arnd@kernel.org>
-Message-ID: <fc9934a5-e770-ac07-e68a-b6528ad19aec@linux.intel.com>
-References: <20240807075751.2206508-1-arnd@kernel.org> <20240807075751.2206508-2-arnd@kernel.org>
+	s=arc-20240116; t=1723195210; c=relaxed/simple;
+	bh=XuYf+FkiIRQDv6+nihGzh4piyaI3rk9/N5j0bXrW0DI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Zti/Rp5YjEP0gaABpJr0zFKOe2OkNRecyvm4vPUX2nYDKNqYICLOanZ4A2EYFpwvGT041kUHM0XDnjZWr4bnWXVwyvuY2olGDTMMpWlSnQCzp6QZlqBq6Uq2OG0hy0zVBhCj4OIb5I/KO6ypapxOUTQG0AdHbng/bN6YGlX4S0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8223c3509a9so242575439f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 02:20:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723195208; x=1723800008;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F2+ycnOEIVqf60Oyev3imHG8B7xcdVffnxvlBFtf4wU=;
+        b=lLdC0dbs3eyuW9RSBqVAc5d5LuIG9rnrHuDod0fkUOhAzxzoCOcmcy6PlR9nGOEriV
+         4zTKm9/k31ZdU8fAKUkYQ9Z5F1eS/hxoVHWnihGBBc6S4VS+jRHTbnZ3EB0H0Qpjr2rh
+         YXheSf/d+p5My5Wq1If8zaxt1THyv1NwBUc7zg2oPwK2YDHM0IulJDMCVfWbTvtNsFWR
+         LXHqa0Vamth+cAzq4I0AVupecrVDQNzGKJ1uSfyN1E6bo0rG3Ze5Oxq9ch7Ijhsp4aFS
+         T9tDaQDIp6u7UmNCE02avZy047GjkBVWzfbjV9PXSQ0BjTky4wn2QTMaDnAbE5sHF5Te
+         Ov6w==
+X-Gm-Message-State: AOJu0YxQQ6q6dnDJC3ULVcbqloZ3rWYG/aR6l7WAER9dgkUz2KO6kNWn
+	83+BVRevQJzkJa4ZVqmqGC1dU1jzNp/pXjgofmedxs7Y3Uh3md2mkzZC6cY8qbIH2C1cfm7ETAr
+	wCv4wpWL2V0vz6SQHUIHx8n3rX4Wg9fnU5FGur4xgcPB7OScU4gDplBo=
+X-Google-Smtp-Source: AGHT+IGB4qwWfWTxCifA0XQ0LfYtbHVscPg7bVyrULaL18mbrjCF1gZAVX7unHcEv5c3yYywRYZDB4iIMhSbgl6hwFBV/LQtY0wn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-353041224-1723195161=:1401"
+X-Received: by 2002:a05:6638:8405:b0:4c0:7f0f:b42e with SMTP id
+ 8926c6da1cb9f-4ca6ecce25dmr39498173.1.1723195208422; Fri, 09 Aug 2024
+ 02:20:08 -0700 (PDT)
+Date: Fri, 09 Aug 2024 02:20:08 -0700
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000046e7f3061f3ca6fa@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
---8323328-353041224-1723195161=:1401
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+***
 
-On Wed, 7 Aug 2024, Arnd Bergmann wrote:
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Author: lizhi.xu@windriver.com
 
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> The first element in uart_8250_port is a structure, so initializing
-> it to 0 causes a warning on newer compilers:
->=20
-> drivers/tty/serial/8250/8250_platform.c: In function 'serial8250_platform=
-_probe':
-> drivers/tty/serial/8250/8250_platform.c:111:40: error: excess elements in=
- struct initializer [-Werror]
->   111 |         struct uart_8250_port uart =3D { 0 };
->=20
-> Use the modern empty {} initializer instead that works on all
-> supported compilers.
->=20
-> Fixes: d9e5a0ce2f16 ("serial: 8250_platform: Enable generic 16550A platfo=
-rm devices")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/tty/serial/8250/8250_platform.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial=
-/8250/8250_platform.c
-> index c9ef988d58b3..2a3765334843 100644
-> --- a/drivers/tty/serial/8250/8250_platform.c
-> +++ b/drivers/tty/serial/8250/8250_platform.c
-> @@ -108,7 +108,7 @@ void __init serial8250_isa_init_ports(void)
->  static int serial8250_platform_probe(struct platform_device *pdev)
->  {
->  =09struct device *dev =3D &pdev->dev;
-> -=09struct uart_8250_port uart =3D { 0 };
-> +=09struct uart_8250_port uart =3D { };
->  =09struct resource *regs;
->  =09unsigned char iotype;
->  =09int ret, line;
->=20
+permission not granted 
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+#syz test: upstream c0ecd6388360
 
-
---=20
- i.
-
---8323328-353041224-1723195161=:1401--
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 348cc90bf9c5..02cbc93ece5c 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -22,6 +22,7 @@
+ #include <linux/slab.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
++#include <linux/security.h>
+ 
+ #include "v9fs.h"
+ #include "v9fs_vfs.h"
+@@ -44,6 +45,10 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 	struct p9_fid *fid;
+ 	int omode;
+ 
++	if ((file->f_flags & O_RDWR || file->f_flags & O_WRONLY) &&
++	    security_file_permission(file, MAY_WRITE))
++		return -EPERM;
++
+ 	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, file);
+ 	v9ses = v9fs_inode2v9ses(inode);
+ 	if (v9fs_proto_dotl(v9ses))
 
