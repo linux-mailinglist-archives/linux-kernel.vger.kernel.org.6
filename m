@@ -1,119 +1,95 @@
-Return-Path: <linux-kernel+bounces-281046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF2094D252
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:40:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20EF94D236
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E5101F23AB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:40:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4AF2820B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E83196C86;
-	Fri,  9 Aug 2024 14:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F37FGskT"
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F4B15ECE9;
+	Fri,  9 Aug 2024 14:31:46 +0000 (UTC)
+Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3100156676;
-	Fri,  9 Aug 2024 14:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDAB13FEE;
+	Fri,  9 Aug 2024 14:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723214399; cv=none; b=Y3buqakBwuik6qfLaq+BYDUSXFYP6olssuPxZSWSxei3XMgLSAXmHnxksxSfbAK1BlUnQu++pT6svV8epAJiH0Y1ZxEgtGiSYAWJZL0jhhY0su9OryDvNjKe8OXeG2mUwVNc1m9iXWDmtleWHfb28E95IJv0CG8SHaab1Qspzu0=
+	t=1723213905; cv=none; b=aogYSDUwvTBX7DYYt/hfUJhGsLkGrQQclHPgcii3BN8WdlVDr0mykF7Ipkswt8up0Ghgfp4DnlK6H1tdhQ+rekpUpxiCcXr17U8hr/pAlP6BxVN50fmcmBud3Ns7ecsqKIWd/OwgxN/A75VrW35Kx0kuejrDhc+hj2cE83h/j5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723214399; c=relaxed/simple;
-	bh=8eJnSf+WzgK/g/GHQkGpnjWagYrg//HOUOW4nYKbG3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hbiCIFQIWvH/BEXnY1NNvE/Sypdnr5xoNNhwaouaZz+go4KaR+Tgaml/BAcHHKPo9Afma8FO5qvW2TwC/JLuXX2QsbCtPceWAKVLZs6m0i0KlM/opfd0qDScPUiFQtcdZerfu82VpBHyLw9O4HoUMdjcTc2w4HLm6zi0JpegmLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F37FGskT; arc=none smtp.client-ip=193.252.23.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id cQdfsPE1NEQ85cQdfsE7xu; Fri, 09 Aug 2024 16:30:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723213844;
-	bh=QquEDRsc4XE1jvfUtvrYehdl3AqPbLD0343ayILx//A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=F37FGskTklVOb3g1pk481ccM+eUk76018/FVrzTMBiPTw5NV7jYxJV7AR/ckwe+35
-	 ExW4zk/CGW7IOzXdaOoQqkwGEg7mSu8FAVAz41VLdoVdBkygic9OTY4ESD98aaPf6J
-	 yJSUO6fkcLXR04v08Khu9MmvocJwvI0VAeWrogpPzXG/zzUmIdnotf8dq03zepMQpE
-	 vcgHrA1kxF8Id4L+gOCQHHwG9pZa6wrClOfP9HQlsawekraVYUeZxRWcsCfS7lqTpF
-	 neQGaIS9RyPwtpGou7r99/6bAy0LRHwugMD/viTdqMrkNYf/y4X/wzXIBr9EL9WHmB
-	 X6eI63n5p8RJA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 09 Aug 2024 16:30:44 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <37357b8a-1995-473d-a6fb-168fc38e0641@wanadoo.fr>
-Date: Fri, 9 Aug 2024 16:30:42 +0200
+	s=arc-20240116; t=1723213905; c=relaxed/simple;
+	bh=D7BrfeSltrCH0avDP7QS/TjumZjqfLCIg9JFiWEDlbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DdFnRqKZhlUxEnUmytYVweAf7o0AKIsgxlfoaa96wSe7aOCSaziFM9ef9XpzwH8IpWzRAkaas/DMJdMa9MukLd6xgdkYkH3HeesVKfVpuxPjU+sUzqGXgFET6aOaeSdPTxPXUmH5SY/aISvwhAbbEMY/5laHj8ONEr8V+zOqvrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: by air.basealt.ru (Postfix, from userid 490)
+	id 341432F20284; Fri,  9 Aug 2024 14:31:40 +0000 (UTC)
+X-Spam-Level: 
+Received: from dutyrok-pc.ipa.basealt.ru (unknown [194.247.22.88])
+	by air.basealt.ru (Postfix) with ESMTPSA id D222E2F2027C;
+	Fri,  9 Aug 2024 14:31:39 +0000 (UTC)
+From: Alexandr Shashkin <dutyrok@altlinux.org>
+To: linux-kernel@vger.kernel.org
+Cc: Alexandr Shashkin <dutyrok@altlinux.org>,
+	stable@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	kovalev@altlinux.org,
+	syzbot+de87c09cc7b964ea2e23@syzkaller.appspotmail.com,
+	Johannes Berg <johannes.berg@intel.com>,
+	Alexander Ofitserov <oficerovas@altlinux.org>
+Subject: [PATCH v2 5.10/5.15] wifi: mac80211: apply mcast rate only if interface is up
+Date: Fri,  9 Aug 2024 17:31:22 +0300
+Message-ID: <20240809143122.534704-1-dutyrok@altlinux.org>
+X-Mailer: git-send-email 2.42.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] iio: adc: ad7173: add support for ad4113
-To: devnull+dumitru.ceclan.analog.com@kernel.org
-Cc: Michael.Hennerich@analog.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, dumitru.ceclan@analog.com, jic23@kernel.org,
- krzk+dt@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, mitrutzceclan@gmail.com, robh@kernel.org
-References: <20240809-ad4113-v2-0-2a70c101a1f4@analog.com>
- <20240809-ad4113-v2-2-2a70c101a1f4@analog.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240809-ad4113-v2-2-2a70c101a1f4@analog.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 09/08/2024 à 12:33, Dumitru Ceclan via B4 Relay a écrit :
-> From: Dumitru Ceclan <dumitru.ceclan-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-> 
-> This commit adds support for the AD4113 ADC.
-> The AD4113 is a low power, low noise, 16-bit, Σ-Δ analog-to-digital
-> converter (ADC) that integrates an analog front end (AFE) for four
-> fully differential or eight single-ended inputs.
-> 
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-> ---
->   drivers/iio/adc/ad7173.c | 36 +++++++++++++++++++++++++++++++++++-
->   1 file changed, 35 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-> index a854f2d30174..3ac09d326472 100644
-> --- a/drivers/iio/adc/ad7173.c
-> +++ b/drivers/iio/adc/ad7173.c
-> @@ -3,7 +3,7 @@
->    * AD717x and AD411x family SPI ADC driver
->    *
->    * Supported devices:
-> - *  AD4111/AD4112/AD4114/AD4115/AD4116
-> + *  AD4111/AD4112/AD4113/AD4114/AD4115/AD4116
->    *  AD7172-2/AD7172-4/AD7173-8/AD7175-2
->    *  AD7175-8/AD7176-2/AD7177-2
->    *
-> @@ -84,6 +84,7 @@
->   #define AD4111_ID			AD7173_ID
->   #define AD4112_ID			AD7173_ID
->   #define AD4114_ID			AD7173_ID
-> +#define AD4113_ID			0x31D0
+[ Upstream commit 02c665f048a439c0d58cc45334c94634bd7c18e6 ]
 
-Nitpick: others are in lowercase --> 0x31d0
+If the interface isn't enabled, don't apply multicast
+rate changes immediately.
 
->   #define AD4116_ID			0x34d0
->   #define AD4115_ID			0x38d0
->   #define AD7175_8_ID			0x3cd0
+Reported-by: syzbot+de87c09cc7b964ea2e23@syzkaller.appspotmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+[oficerovas: Backported to 5.10 and 5.15]
+Signed-off-by: Alexander Ofitserov <oficerovas@altlinux.org>
+Signed-off-by: Alexandr Shashkin <dutyrok@altlinux.org>
+---
+Changes in v2:
+- edit comment of oficerovas and add upstream commit
+---
+ net/mac80211/cfg.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Other than that, is there any reason to have this "random" order for 
-these defines?
-
-CJ
-
-
-
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 0c3da7771b48..13ac16026129 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -2560,7 +2560,8 @@ static int ieee80211_set_mcast_rate(struct wiphy *wiphy, struct net_device *dev,
+ 	memcpy(sdata->vif.bss_conf.mcast_rate, rate,
+ 	       sizeof(int) * NUM_NL80211_BANDS);
+ 
+-	ieee80211_bss_info_change_notify(sdata, BSS_CHANGED_MCAST_RATE);
++	if (ieee80211_sdata_running(sdata))
++		ieee80211_bss_info_change_notify(sdata, BSS_CHANGED_MCAST_RATE);
+ 
+ 	return 0;
+ }
+-- 
+2.42.2
 
 
