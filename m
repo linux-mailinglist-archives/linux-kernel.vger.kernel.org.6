@@ -1,209 +1,181 @@
-Return-Path: <linux-kernel+bounces-280620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE97A94CCE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:06:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE1594CCEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 160471C20BB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:06:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAAADB21480
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CCB18FDC9;
-	Fri,  9 Aug 2024 09:06:49 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24BF18FDC5;
+	Fri,  9 Aug 2024 09:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBvqdEtT"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91158BA41
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384CFBA41
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723194408; cv=none; b=dlTf1tszMTE3qSKeBVt9+QKgQENSUyc6nPWCTjLLxAadMet8QOv0FNPbVA8GtWjoTNEoys8HhAdd+LMNfgz/Piru6aJvYe9CNs8Dk8vHKh190N7gSbU6anM+FeVhbqD/20/KyTwYfrVoIjLiL2KX/h077t+8bLIrvPOGdRY+1fM=
+	t=1723194437; cv=none; b=VE9I//Ghn+opQbi5tSG7xDy99DfYBtZCxXpEAK0hfnW71IN8NNe8pjT+saM05b/Wx5C7ufzpMzCyb41p6NV+phHaoFbLNEPB/Vne8eJP19vTwuWHMafFwfDOInPTTz9gc/HybqQrDbKVh1t1qMyXRad3JFcog5vW9+q21WrJW0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723194408; c=relaxed/simple;
-	bh=/znwvimnWBhr2n6p78aBltCzW9iGTTUmO80hL31FEAE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=uAvFQOP2iUqlstLudNZqfauvYqc8jdwAbmfHxWXfORDWI8Ome5ceUDqE9W+zPREmRezSHw/XOtLOqrXUFCggdIX10PlkAv/hHKd5Zt+aKiz0O6KssMdXgi1JwQ8TkQwiqWkzGN+DP1OUU2GXy2RJeb+rKeVDhkmE9R32LDH0phg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WgHzf32LPzfb7Z;
-	Fri,  9 Aug 2024 17:04:46 +0800 (CST)
-Received: from dggpemm500022.china.huawei.com (unknown [7.185.36.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id 322EB1400C9;
-	Fri,  9 Aug 2024 17:06:41 +0800 (CST)
-Received: from [10.67.110.25] (10.67.110.25) by dggpemm500022.china.huawei.com
- (7.185.36.162) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 9 Aug
- 2024 17:06:40 +0800
-Message-ID: <f361f595-f703-358b-4785-4b81df1d3269@huawei.com>
-Date: Fri, 9 Aug 2024 17:06:40 +0800
+	s=arc-20240116; t=1723194437; c=relaxed/simple;
+	bh=nEJVtcoMpn7xsXtIMc1Qo1u4UbOJ5jaOpWiwSsCd87A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oQ1Yuv1RgO6a95/+WYQ9OYQTO1ke6NglxzD7WOBocofmbzViIb08B94043RNp/IF/273ihYrrg6MIBGjH75Fgr6scOSb2OlHCEwwnzKsodXIG1lmmNQliA7tFGWMJj82L276jFPVb6Tm5fM2SzlscVApKrrMxjbVaSGW3wxawbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LBvqdEtT; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f149845d81so20885641fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 02:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723194434; x=1723799234; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RLxn0IwV+KEsqILm3vURB532jKLGPjcTtemkHlPJtu8=;
+        b=LBvqdEtTo4nXtoreyggA1gTLJ9c76gbSc+Ug8M55Hqh15U9O8OxrqSOsTJMV0H3wGY
+         UBu0MyUF+O0xk1P2Lx1RnRqbnwwlIFaNO0im+pu9a5/kEotmK6xgsLO+nEj7b4qgnB99
+         GwWRRnUXN5BxS7smC8M8ILLIYvhZ+/b1wwpBiepb1QKe7wYgoknznII3OR1UTa2aBrbJ
+         KbWwptTVx+PxhjvzQuW5yTOJ+BI17focuSQllKuWt9SyCw/d2SzS1VTUgMGQCFq9Fiwu
+         arox+iLYzi9JSNQDP71trDQ//4agIpH/GPl0K/DUS6GtnnNLjXIXdnRbNgR0WoXAH/L6
+         ZH8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723194434; x=1723799234;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RLxn0IwV+KEsqILm3vURB532jKLGPjcTtemkHlPJtu8=;
+        b=b8g7LDAFwW1bWHY2xlxa3QVu32ucjjykx+ajyQ9UkapBuyV/Pzh6orR3siJdDXf6cJ
+         DFBFlzG8QWNeL8y09YQ2nLNNFccsD8YObCQSpA/qAdO6iY3DNmSLUkuH4UPIOlVL/OEm
+         vEv2xmZCe6eUTL9gzfBVVREf4+daa6S/OeGQVOYcSyWSwaS7hdpzYHyIZnACtx/Ndvuh
+         hIHpnWBcRiNcQeT+JKxMIukxU6x95eixQK5nFrcBDFdvUy6w0keVxUltOYNMUBQ9rWe/
+         ePvSKXo038GQ/nZbW39HkUGSaIT4GgAZ0RoXpOXbt6atiEUaZb7YObQswtLdCZrBGsjp
+         Y0Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLCLYCnMhNcl9VQjgwZRnT+Ui0HJqO45PEdmcgAo6bP5eivOxxmIfGnEZmcQHqZRXGXfoDxssSg3rnW5X3GMflOURHctKLr8cjdb7o
+X-Gm-Message-State: AOJu0YzY7ke7FxDAZHGhz9Epz279OrepiKw6/2hk16Px6U2+IgszyMAI
+	UUud8sbIK5hWUNoTr0//5M3lqwmhGDN9PLwUiqGeR+/lxjwCe4RaJxfdRDTbSp0=
+X-Google-Smtp-Source: AGHT+IHhnLFl3rT+x7KMYXiEdQNEfCuCtExoR2tPSUmgwgq125nOMspyp/xEWEFKq5hnf+UiwSSYHw==
+X-Received: by 2002:a2e:4612:0:b0:2f1:929b:af03 with SMTP id 38308e7fff4ca-2f1a6ce6ec3mr6769431fa.30.1723194434144;
+        Fri, 09 Aug 2024 02:07:14 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c7492cesm66204715e9.20.2024.08.09.02.07.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 02:07:13 -0700 (PDT)
+Message-ID: <d9e2f63519f3fcbf4fe334975691d573e20c53c8.camel@linaro.org>
+Subject: Re: [PATCH v6 01/20] clk: bump stdout clock usage for earlycon
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peng Fan <peng.fan@nxp.com>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+ <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Sam
+ Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Abel Vesa <abelvesa@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>
+Cc: Will McVicker <willmcvicker@google.com>, "kernel-team@android.com"
+ <kernel-team@android.com>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
+ <linux-samsung-soc@vger.kernel.org>, "imx@lists.linux.dev"
+ <imx@lists.linux.dev>
+Date: Fri, 09 Aug 2024 10:07:12 +0100
+In-Reply-To: <d4580b33c195dcf1c3a0054b29555383d2e1606b.camel@linaro.org>
+References: 
+	<20240808-gs101-non-essential-clocks-2-v6-0-e91c537acedc@linaro.org>
+	 <20240808-gs101-non-essential-clocks-2-v6-1-e91c537acedc@linaro.org>
+	 <PAXPR04MB8459F99475C289A827987AF588BA2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	 <d4580b33c195dcf1c3a0054b29555383d2e1606b.camel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH] sched/rt: Fix rt_runtime leaks with cpu hotplug and
- RT_RUNTIME_SHARE
-From: "zhaowenhui (A)" <zhaowenhui8@huawei.com>
-To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<bristot@redhat.com>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>
-References: <20240524034227.1871565-1-zhaowenhui8@huawei.com>
- <0428528e-d82d-d018-dbe5-77d1314526fb@huawei.com>
-In-Reply-To: <0428528e-d82d-d018-dbe5-77d1314526fb@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500022.china.huawei.com (7.185.36.162)
 
+On Fri, 2024-08-09 at 10:02 +0100, Andr=C3=A9 Draszik wrote:
+> Hi Peng,
+>=20
+> On Fri, 2024-08-09 at 07:16 +0000, Peng Fan wrote:
+> > > +static int __init of_clk_drop_stdout_clocks(void) {
+> > > +	for (size_t i =3D 0; i < of_clk_stdout_clks.n_clks; ++i) {
+> > > +		clk_disable_unprepare(of_clk_stdout_clks.clks[i]);
+> > > +		clk_put(of_clk_stdout_clks.clks[i]);
+> > > +	}
+> > > +
+> > > +	kfree(of_clk_stdout_clks.clks);
+> > > +
+> > > +	/*
+> > > +	 * Do not try to acquire stdout clocks after late initcalls, e.g.
+> > > +	 * during further module loading, as we then wouldn't have a
+> > > way to
+> > > +	 * drop the references (and associated allocations) ever again.
+> > > +	 */
+> > > +	of_clk_stdout_clks.bump_refs =3D false;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +late_initcall_sync(of_clk_drop_stdout_clocks);
+> >=20
+> > If the uart driver is built as module, this might break earlycon.
+> > Before uart driver loaded, clk disabled per my understanding.
+>=20
+> You're right.
+>=20
+> With this in mind, I'm not sure then if a generic solution is possible...
+>=20
+> I guess it has to be duplicated into the platforms after all and platform=
+s
+> can enable this if they opt to disallow uart as module?
+>=20
+> Any other suggestions?
+>=20
+> > > +
+> > > =C2=A0/**
+> > > =C2=A0 * struct of_clk_provider - Clock provider registration structu=
+re
+> > > =C2=A0 * @link: Entry in global list of clock providers @@ -5031,6 +5=
+156,8
+> > > @@ int of_clk_add_provider(struct device_node *np,
+> > >=20
+> > > =C2=A0	fwnode_dev_initialized(&np->fwnode, true);
+> > >=20
+> > > +	of_clk_bump_stdout_clocks();
+> > > +
+> > > =C2=A0	return ret;
+> > > =C2=A0}
+> > > =C2=A0EXPORT_SYMBOL_GPL(of_clk_add_provider);
+> > > @@ -5073,6 +5200,8 @@ int of_clk_add_hw_provider(struct
+> > > device_node *np,
+> > >=20
+> > > =C2=A0	fwnode_dev_initialized(&np->fwnode, true);
+> > >=20
+> > > +	of_clk_bump_stdout_clocks();
+> >=20
+> > If clock driver is built as module,=C2=A0 the will make the
+> > clocks will be always enabled, if my understanding is correct.
+>=20
+> until late_initcall_sync(), at which point it'll be disabled before the u=
+art
+> driver has probed, yes :-(
 
+Sorry, ignore that. If clock driver is built as module, the code to bump
+the clocks is disabled by the time this code runs (due to setting the flag
+as part of late_initcall_sync(of_clk_drop_stdout_clocks)), in other words
+it will not bump the clocks at all in that case and behaviour is as before.
 
-在 2024/6/3 17:00, zhaowenhui (A) 写道:
-> Friendly Ping.
-> 
-> Regards,
-> Zhao Wenhui
-> 
-> On 2024/5/24 11:42, Zhao Wenhui Wrote:
->> When using cgroup rt_bandwidth with RT_RUNTIME_SHARE, if there are cpu
->> hotplug and cpu.rt_runtime_us changing concurrently, the warning in
->> __disable_runtime may occur:
->> [  991.697692] WARNING: CPU: 0 PID: 49573 at kernel/sched/rt.c:802
->> rq_offline_rt+0x24d/0x260
->> [  991.697795] CPU: 0 PID: 49573 Comm: kworker/1:0 Kdump: loaded Not
->> tainted 6.9.0-rc1+ #4
->> [  991.697800] Workqueue: events cpuset_hotplug_workfn
->> [  991.697803] RIP: 0010:rq_offline_rt+0x24d/0x260
->> [  991.697825] Call Trace:
->> [  991.697827]  <TASK>
->> [  991.697858]  set_rq_offline.part.125+0x2d/0x70
->> [  991.697864]  rq_attach_root+0xda/0x110
->> [  991.697867]  cpu_attach_domain+0x433/0x860
->> [  991.697880]  partition_sched_domains_locked+0x2a8/0x3a0
->> [  991.697885]  rebuild_sched_domains_locked+0x608/0x800
->> [  991.697895]  rebuild_sched_domains+0x1b/0x30
->> [  991.697897]  cpuset_hotplug_workfn+0x4b6/0x1160
->> [  991.697909]  process_scheduled_works+0xad/0x430
->> [  991.697917]  worker_thread+0x105/0x270
->> [  991.697922]  kthread+0xde/0x110
->> [  991.697928]  ret_from_fork+0x2d/0x50
->> [  991.697935]  ret_from_fork_asm+0x11/0x20
->> [  991.697940]  </TASK>
->> [  991.697941] ---[ end trace 0000000000000000 ]---
->>
->> That's how it happens:
->> CPU0                                   CPU1
->> -----                                  -----
->>
->> set_rq_offline(rq)
->>      __disable_runtime(rq) (1)
->>                                        tg_set_rt_bandwidth (2)
->>                                        do_balance_runtime  (3)
->> set_rq_online(rq)
->>      __enable_runtime(rq)  (4)
->>
->> In step(1) rt_rq->rt_runtime is set to RUNTIME_INF, and this rtrq's
->> runtime is not supposed to change until its rq gets online. However,
->> in step(2) tg_set_rt_bandwidth can set rt_rq->rt_runtime to
->> rt_bandwidth.rt_runtime. Then, in step(3) rtrq's runtime is not
->> RUNTIME_INF, so others can borrow rt_runtime from it. Finally, in
->> step(4) the rq gets online, so its rtrq's runtime is set to
->> rt_bandwidth.rt_runtime again, and Since then the total rt_runtime in
->> the domain is increased by this way. After these steps, when offline cpu,
->> rebuilding the sched_domain will offline all rq, and the last rq will
->> find the rt_runtime is increased but nowhere to return.
->>
->> To fix this, we can add a state RUNTIME_DISABLED, which means the runtime
->> is disabled and should not be used. When rq get offline, we can set its
->> rtrq's rt_runtime to RUNTIME_DISABLED, and when rq get online, reset it.
->> And in tg_set_rt_bandwidth and do_balance_runtime, never change a
->> disabled rt_runtime.
->>
->> Fixes: 7def2be1dc67 ("sched: fix hotplug cpus on ia64")
->> Closes: 
->> https://lore.kernel.org/all/47b4a790-9a27-2fc5-f2aa-f9981c6da015@huawei.com/
->> Co-developed-by: Hui Tang <tanghui20@huawei.com>
->> Signed-off-by: Hui Tang <tanghui20@huawei.com>
->> Signed-off-by: Zhao Wenhui <zhaowenhui8@huawei.com>
->> ---
->>   kernel/sched/rt.c    | 15 +++++++++------
->>   kernel/sched/sched.h |  5 +++++
->>   2 files changed, 14 insertions(+), 6 deletions(-)
->>
->> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
->> index aa4c1c874fa4..44b8cc5a2f5f 100644
->> --- a/kernel/sched/rt.c
->> +++ b/kernel/sched/rt.c
->> @@ -704,7 +704,8 @@ static void do_balance_runtime(struct rt_rq *rt_rq)
->>            * or __disable_runtime() below sets a specific rq to inf to
->>            * indicate its been disabled and disallow stealing.
->>            */
->> -        if (iter->rt_runtime == RUNTIME_INF)
->> +        if (iter->rt_runtime == RUNTIME_INF ||
->> +                iter->rt_runtime == RUNTIME_DISABLED)
->>               goto next;
->>           /*
->> @@ -775,7 +776,9 @@ static void __disable_runtime(struct rq *rq)
->>               /*
->>                * Can't reclaim from ourselves or disabled runqueues.
->>                */
->> -            if (iter == rt_rq || iter->rt_runtime == RUNTIME_INF)
->> +            if (iter == rt_rq ||
->> +                    iter->rt_runtime == RUNTIME_INF ||
->> +                    iter->rt_runtime == RUNTIME_DISABLED)
->>                   continue;
->>               raw_spin_lock(&iter->rt_runtime_lock);
->> @@ -801,10 +804,9 @@ static void __disable_runtime(struct rq *rq)
->>           WARN_ON_ONCE(want);
->>   balanced:
->>           /*
->> -         * Disable all the borrow logic by pretending we have inf
->> -         * runtime - in which case borrowing doesn't make sense.
->> +         * Disable all the borrow logic by marking runtime disabled.
->>            */
->> -        rt_rq->rt_runtime = RUNTIME_INF;
->> +        rt_rq->rt_runtime = RUNTIME_DISABLED;
->>           rt_rq->rt_throttled = 0;
->>           raw_spin_unlock(&rt_rq->rt_runtime_lock);
->>           raw_spin_unlock(&rt_b->rt_runtime_lock);
->> @@ -2827,7 +2829,8 @@ static int tg_set_rt_bandwidth(struct task_group 
->> *tg,
->>           struct rt_rq *rt_rq = tg->rt_rq[i];
->>           raw_spin_lock(&rt_rq->rt_runtime_lock);
->> -        rt_rq->rt_runtime = rt_runtime;
->> +        if (rt_rq->rt_runtime != RUNTIME_DISABLED)
->> +            rt_rq->rt_runtime = rt_runtime;
->>           raw_spin_unlock(&rt_rq->rt_runtime_lock);
->>       }
->>       raw_spin_unlock_irq(&tg->rt_bandwidth.rt_runtime_lock);
->> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
->> index a831af102070..c2ad9102b8fa 100644
->> --- a/kernel/sched/sched.h
->> +++ b/kernel/sched/sched.h
->> @@ -183,6 +183,11 @@ extern struct list_head asym_cap_list;
->>    */
->>   #define RUNTIME_INF        ((u64)~0ULL)
->> +/*
->> + * Single value that denotes runtime is disabled, and it should not 
->> be used.
->> + */
->> +#define RUNTIME_DISABLED    (-2ULL)
->> +
->>   static inline int idle_policy(int policy)
->>   {
->>       return policy == SCHED_IDLE;
-> 
+Did I miss something?
 
-Ping.
+Cheers,
+Andre'
 
-Regards,
-Zhao Wenhui
 
