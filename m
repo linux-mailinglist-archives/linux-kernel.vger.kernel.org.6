@@ -1,137 +1,304 @@
-Return-Path: <linux-kernel+bounces-281232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45CC394D4A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:25:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80DCA94D4AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB202B22514
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:25:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3A11F22299
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D941990DE;
-	Fri,  9 Aug 2024 16:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAED198E6E;
+	Fri,  9 Aug 2024 16:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="Su4Kf1Ya"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJHDNjNo"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75A51990AD;
-	Fri,  9 Aug 2024 16:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723220735; cv=pass; b=jaBhl/LQTNN2so+qEYhQlzqoGEQ2ybgBoG48hHchzvB2sj1MYe5dwHiv10UMGWlnM7VJAnNPThKPUTo5gi9T4Gbkkna/BI9yexghDh+Olb7GmABB2RA4XPMgaqJlG0ymjaHQKQaaioJIHc6nUR9JfuAqgt+Bmh/s9LFb7JnC710=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723220735; c=relaxed/simple;
-	bh=uQCqtJkUdQ1jKlpa4vxcmvCmXb2EPakE0nbZcoRVk+4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O4YB7arMF6pgBROlf19Mtb8Li1VvPsavDopg8cbJCYUG2KpKFS1hKrNizzPA7mL/2wzQTyLNHHGAWxPWq71Az0n8+vCYSS7PtHsVPBq02UcPAa73cdMJZO8XYM6ZqHiFUm/60R49G9xF8xHwi3m3bXHhi0zO7Wave15LihXitFo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=Su4Kf1Ya; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723220729; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EIDtJXUCDbX29JPomatD90bSCrNxdIVkdBaPP9/cD2MWkRu3d4NGZnYS6W0wvsEN1uqLGtDF527Pkl+4hygRaL4aa3R/R86vdRRnj+0rxsAggemV/PD607eKps4NR38m/lbRPkWeAMikfdVNNllRcTJxEEWkiYBf0US5YB+7otw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723220729; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ytJAQtlx2zxWIOsp5xVT7X9vrgTIf3+4EEF+s5oG3xM=; 
-	b=U1PdTVstt+MKWipGBfNYwnrvyZgUqG/MO8pf3poECfPq9D63lCA5mrqis2aZUZsuvu2AOpP+7qsen6qDyjLC/jOeFphoPWjpexp4EGoVvZb7XLbk/EhjUhAiy/20JtWu1gESMiVuX86F2SBqOWjxbw3qQheEiDvbx0Uq12YgTYI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
-	dmarc=pass header.from=<laura.nao@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723220729;
-	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=ytJAQtlx2zxWIOsp5xVT7X9vrgTIf3+4EEF+s5oG3xM=;
-	b=Su4Kf1YacWydOybbEwwCwA1x20BrALC0eA/s8/dgu/k0TudhbKxb+ph0x4GTd9OT
-	Q1+IL88aPMmpnGRCLkX4RfeDbAVkUhQ0rt/1+PRmUdXw4F32NlkYhbU7n585kPlW7fc
-	CcpPEoSwCIXd/ibrUbFDnEPlvpDYhJ6MBFP3VFLE=
-Received: by mx.zohomail.com with SMTPS id 1723220728607163.70555237743986;
-	Fri, 9 Aug 2024 09:25:28 -0700 (PDT)
-From: Laura Nao <laura.nao@collabora.com>
-To: kernelci@lists.linux.dev
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Testing Quality Call notes - 2024-08-08
-Date: Fri,  9 Aug 2024 18:25:57 +0200
-Message-Id: <20240809162557.32300-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908221870;
+	Fri,  9 Aug 2024 16:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723220806; cv=none; b=BkruhaAIRNT8LYRa12CB6OeN86ZKt1srAFUeyxYmXaMb+IfGCswVbSTryDzvv3/2+JKrYco2rXvYRpoLak2hNIeecYPqKsbW1wc4Oz0iepiBu6YJ+4GNeFW0flK5ELV1kVINWZCB/zVbOrE+P8UqS7KdTCri7iiV6HeptMT/0Xg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723220806; c=relaxed/simple;
+	bh=AaNlEszEaeLcL217zCzVxN0zEN2kVBXz/z6HnHGoi80=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j1+ayGukMqXDPVJ60Xk4Tls4bXJIx0qtyKlkQ/9HAh7GTH7NT+VqRQowjphgQnJG9QDcDCV/9GZBIadpbv6rwnLiMA4B0QuN6OgzaawosBgKao65KreJuhy5HogVhzQPcjz5uB7OJ0MZm/X4SdcltPpCt6zZUmWGBbN4YlZFOfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJHDNjNo; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f0271b0ae9so22825321fa.1;
+        Fri, 09 Aug 2024 09:26:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723220802; x=1723825602; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8GhuZXBHrLQFERoBhWAzGEBHzpGEHA+J+lL0pNJNCos=;
+        b=LJHDNjNohMBn5PDrOj2KFiMyyiGSf0oLhJ5eelXyXh6FIXzsAYG5+nRANYvEn7uH0c
+         CL9+4koH82PQx3/Dvh5MHxd6gPgfkpwo17lF4PAU/GMxZTrA3u097BuUQSFretTJ784k
+         saAUMT/y9Rm8ccqHCvtWgzo8HtsavjmE+WlfLgmm2Pf7baVl9O1DVWkclKmb6R/P+9Wr
+         eFCUi2PB9E/8PL5b8ZKbZcxguiI74I430PwUwNdp8L/cjjzzD6FWyhTP1DS+vQhqlGsh
+         cJtQ+xQ//5XZxMfqHFLqGfWKPt2eatDcArsr0cWD8XkJsrGP0ojDv142QdmKtcVIUTD3
+         GoVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723220802; x=1723825602;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8GhuZXBHrLQFERoBhWAzGEBHzpGEHA+J+lL0pNJNCos=;
+        b=jeXc5gat1YlSCFOMyFLRdJQnOlTsnti4vO2g0ccsnWOU+yf8amYTVoJ80diYEq391t
+         O/k9jLMjfc4XeAeNa7pgWp0Q9DkKVQuep1z/ln+a2BpTxAz0oW2zoNb5/QaX6ShUPNaz
+         rsixfFXJq7KnHFY70C5qwkdVknfRxzx+lfTINdbZMvJHpiC19TRmnSyE0VBIRmZiidml
+         55wDla1op+amOg2p7zZ0uvN9jaI0MpbKE0HJwtM1uFtLi0r5jwm7pW1wOOro4pW4iwZl
+         gohpQdUhww+Vg1zB0b/NCflBxgBVL63o7bST097WJ2eOGFYYq9TgwsDM09KR53wLII0A
+         baFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdRok810ovNlj7ajEL+Xxj1qvHVCzm5k1XS7Lh2A7csK0TX+Yk1gmkLj5J7yUExOSdsRjQSKcbJ5b+FNyrtE4gnwuSGG9euueHFMnWkOL2esOmOhYIp/aCquUxgIokgtVQ
+X-Gm-Message-State: AOJu0YyUjErxTuERG9Vn6NtIa4GReHexma67JPlKcVwkqWr9RDR03+lI
+	Of6oJbYXHBMhh0ZB6HnybylhQfq2w+ME3/SKRrZ/HN10QkyozYfx
+X-Google-Smtp-Source: AGHT+IHIcKoF3Ie/2OsybzOIBFmvl+sf2xsm7hrxBYfGa1D+ay/Ymjy0D/SiESw+BOi2PbJsSYyuEw==
+X-Received: by 2002:a2e:a581:0:b0:2ec:500c:b2e0 with SMTP id 38308e7fff4ca-2f1a6d1d1e9mr19917041fa.22.1723220801209;
+        Fri, 09 Aug 2024 09:26:41 -0700 (PDT)
+Received: from pc636 (host-90-233-216-8.mobileonline.telia.com. [90.233.216.8])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e26038bsm25892501fa.117.2024.08.09.09.26.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 09:26:40 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 9 Aug 2024 18:26:36 +0200
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com, Jann Horn <jannh@google.com>,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH v2 5/7] rcu/kvfree: Add kvfree_rcu_barrier() API
+Message-ID: <ZrZDPLN9CRvRrbMy@pc636>
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+ <20240807-b4-slab-kfree_rcu-destroy-v2-5-ea79102f428c@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807-b4-slab-kfree_rcu-destroy-v2-5-ea79102f428c@suse.cz>
 
-Hello,
+Hello, Vlastimil!
 
-KernelCI is hosting a bi-weekly call on Thursday to discuss improvements
-to existing upstream tests, the development of new tests to increase 
-kernel testing coverage, and the enablement of these tests in KernelCI. 
+> From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+> 
+> Add a kvfree_rcu_barrier() function. It waits until all
+> in-flight pointers are freed over RCU machinery. It does
+> not wait any GP completion and it is within its right to
+> return immediately if there are no outstanding pointers.
+> 
+> This function is useful when there is a need to guarantee
+> that a memory is fully freed before destroying memory caches.
+> For example, during unloading a kernel module.
+> 
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  include/linux/rcutiny.h |   5 +++
+>  include/linux/rcutree.h |   1 +
+>  kernel/rcu/tree.c       | 103 ++++++++++++++++++++++++++++++++++++++++++++----
+>  3 files changed, 101 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
+> index d9ac7b136aea..522123050ff8 100644
+> --- a/include/linux/rcutiny.h
+> +++ b/include/linux/rcutiny.h
+> @@ -111,6 +111,11 @@ static inline void __kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>  	kvfree(ptr);
+>  }
+>  
+> +static inline void kvfree_rcu_barrier(void)
+> +{
+> +	rcu_barrier();
+> +}
+> +
+>  #ifdef CONFIG_KASAN_GENERIC
+>  void kvfree_call_rcu(struct rcu_head *head, void *ptr);
+>  #else
+> diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
+> index 254244202ea9..58e7db80f3a8 100644
+> --- a/include/linux/rcutree.h
+> +++ b/include/linux/rcutree.h
+> @@ -35,6 +35,7 @@ static inline void rcu_virt_note_context_switch(void)
+>  
+>  void synchronize_rcu_expedited(void);
+>  void kvfree_call_rcu(struct rcu_head *head, void *ptr);
+> +void kvfree_rcu_barrier(void);
+>  
+>  void rcu_barrier(void);
+>  void rcu_momentary_dyntick_idle(void);
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index e641cc681901..ebcfed9b570e 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -3584,18 +3584,15 @@ kvfree_rcu_drain_ready(struct kfree_rcu_cpu *krcp)
+>  }
+>  
+>  /*
+> - * This function is invoked after the KFREE_DRAIN_JIFFIES timeout.
+> + * Return: %true if a work is queued, %false otherwise.
+>   */
+> -static void kfree_rcu_monitor(struct work_struct *work)
+> +static bool
+> +kvfree_rcu_queue_batch(struct kfree_rcu_cpu *krcp)
+>  {
+> -	struct kfree_rcu_cpu *krcp = container_of(work,
+> -		struct kfree_rcu_cpu, monitor_work.work);
+>  	unsigned long flags;
+> +	bool queued = false;
+>  	int i, j;
+>  
+> -	// Drain ready for reclaim.
+> -	kvfree_rcu_drain_ready(krcp);
+> -
+>  	raw_spin_lock_irqsave(&krcp->lock, flags);
+>  
+>  	// Attempt to start a new batch.
+> @@ -3634,11 +3631,27 @@ static void kfree_rcu_monitor(struct work_struct *work)
+>  			// be that the work is in the pending state when
+>  			// channels have been detached following by each
+>  			// other.
+> -			queue_rcu_work(system_wq, &krwp->rcu_work);
+> +			queued = queue_rcu_work(system_wq, &krwp->rcu_work);
+>  		}
+>  	}
+>  
+>  	raw_spin_unlock_irqrestore(&krcp->lock, flags);
+> +	return queued;
+> +}
+> +
+> +/*
+> + * This function is invoked after the KFREE_DRAIN_JIFFIES timeout.
+> + */
+> +static void kfree_rcu_monitor(struct work_struct *work)
+> +{
+> +	struct kfree_rcu_cpu *krcp = container_of(work,
+> +		struct kfree_rcu_cpu, monitor_work.work);
+> +
+> +	// Drain ready for reclaim.
+> +	kvfree_rcu_drain_ready(krcp);
+> +
+> +	// Queue a batch for a rest.
+> +	kvfree_rcu_queue_batch(krcp);
+>  
+>  	// If there is nothing to detach, it means that our job is
+>  	// successfully done here. In case of having at least one
+> @@ -3859,6 +3872,80 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>  }
+>  EXPORT_SYMBOL_GPL(kvfree_call_rcu);
+>  
+> +/**
+> + * kvfree_rcu_barrier - Wait until all in-flight kvfree_rcu() complete.
+> + *
+> + * Note that a single argument of kvfree_rcu() call has a slow path that
+> + * triggers synchronize_rcu() following by freeing a pointer. It is done
+> + * before the return from the function. Therefore for any single-argument
+> + * call that will result in a kfree() to a cache that is to be destroyed
+> + * during module exit, it is developer's responsibility to ensure that all
+> + * such calls have returned before the call to kmem_cache_destroy().
+> + */
+> +void kvfree_rcu_barrier(void)
+> +{
+> +	struct kfree_rcu_cpu_work *krwp;
+> +	struct kfree_rcu_cpu *krcp;
+> +	bool queued;
+> +	int i, cpu;
+> +
+> +	/*
+> +	 * Firstly we detach objects and queue them over an RCU-batch
+> +	 * for all CPUs. Finally queued works are flushed for each CPU.
+> +	 *
+> +	 * Please note. If there are outstanding batches for a particular
+> +	 * CPU, those have to be finished first following by queuing a new.
+> +	 */
+> +	for_each_possible_cpu(cpu) {
+> +		krcp = per_cpu_ptr(&krc, cpu);
+> +
+> +		/*
+> +		 * Check if this CPU has any objects which have been queued for a
+> +		 * new GP completion. If not(means nothing to detach), we are done
+> +		 * with it. If any batch is pending/running for this "krcp", below
+> +		 * per-cpu flush_rcu_work() waits its completion(see last step).
+> +		 */
+> +		if (!need_offload_krc(krcp))
+> +			continue;
+> +
+> +		while (1) {
+> +			/*
+> +			 * If we are not able to queue a new RCU work it means:
+> +			 * - batches for this CPU are still in flight which should
+> +			 *   be flushed first and then repeat;
+> +			 * - no objects to detach, because of concurrency.
+> +			 */
+> +			queued = kvfree_rcu_queue_batch(krcp);
+> +
+> +			/*
+> +			 * Bail out, if there is no need to offload this "krcp"
+> +			 * anymore. As noted earlier it can run concurrently.
+> +			 */
+> +			if (queued || !need_offload_krc(krcp))
+> +				break;
+> +
+> +			/* There are ongoing batches. */
+> +			for (i = 0; i < KFREE_N_BATCHES; i++) {
+> +				krwp = &(krcp->krw_arr[i]);
+> +				flush_rcu_work(&krwp->rcu_work);
+> +			}
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Now we guarantee that all objects are flushed.
+> +	 */
+> +	for_each_possible_cpu(cpu) {
+> +		krcp = per_cpu_ptr(&krc, cpu);
+> +
+> +		for (i = 0; i < KFREE_N_BATCHES; i++) {
+> +			krwp = &(krcp->krw_arr[i]);
+> +			flush_rcu_work(&krwp->rcu_work);
+> +		}
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(kvfree_rcu_barrier);
+> +
+>  static unsigned long
+>  kfree_rcu_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
+>  {
+> 
+> -- 
+> 2.46.0
+> 
+I need to send out a v2. What is a best way? Please let me know. I have not
+checked where this series already landed.
 
-Below is a list of the tests the community has been working on and their 
-latest status updates, as discussed in the last meeting held on 
-2024-08-08:
+Thank you!
 
-*KTAP performance counters*
-
-- Upcoming presentation @LPC2024 by Tim Bird on adding benchmark results 
-  to KTAP: https://lpc.events/event/18/contributions/1791/
-- Proposing new system to handle benchmark data, composed of 3 parts:
-  adding syntax to KTAP to support benchmark values, using a set of
-  external criteria for interpreting benchmark results, an automated tool
-  to determine and set the reference values used in these criteria.
-- One related topic for discussion is where to store the reference files
-  and the test configuration, including all details that might impact the
-  results.
-
-*Missing devices kselftest*
-
-- Proposing new kselftest to report devices that go missing in the system:
-  https://lore.kernel.org/all/20240724-kselftest-dev-exist-v1-1-9bc21aa761b5@collabora.com/#r
-- Received feedback on the usability of the test and main unknowns about
-  management of reference files in tests
-
-*Boot time test*
-
-- RFC:
-  https://lore.kernel.org/all/20240725110622.96301-1-laura.nao@collabora.com/T/#ma568382acdc81af65c30fe3823a7be3e49f98108
-- Got feedback on the potential use of scripts from pm-graph. The
-  bootgraph.py script could be adapted for the test with some
-  modifications, such as adding support for machine-readable output and
-  different ftrace configurations.
-
-*Suspend/resume in cpufreq kselftest*
-
-- Sent v2 for patch adding RTC wakeup alarm in the cpufreq kselftest:
-  https://lore.kernel.org/lkml/20240715192634.19272-1-shreeya.patel@collabora.com/
-- Looking into using the sleepgraph.py script from pm-graph to calculate
-  suspend/hibernation and resume time:
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/power/pm-graph/sleepgraph.py?h=v6.11-rc1
-- Would require additional configs to be enabled in an automated
-  environment
-
-*TAP conformance in kselftests and other fixes*
-
-- Some dead selftests were removed:
-  https://lore.kernel.org/all/20240725110817.659099-1-usama.anjum@collabora.com
-  and
-  https://lore.kernel.org/all/20240725121212.808206-1-usama.anjum@collabora.com
-- Bitmap test module conversion to KUnit was not accepted:
-  https://lore.kernel.org/lkml/49108735-c776-4b6f-8264-62a827dd7b26@collabora.com/T/
-- Fixing error when kvm suite is built for unsupported architecure:
-  https://lore.kernel.org/kvm/c2aaa06e-e86d-4af9-bce4-6067e53cdf39@collabora.com/T/
-
-Please reply to this thread if you'd like to join the call or discuss any
-of the topics further. We look forward to collaborating with the community
-to improve upstream tests and expand coverage to more areas of interest
-within the kernel.
-
-Best regards,
-
-Laura Nao
-
+--
+Uladzislau Rezki
 
