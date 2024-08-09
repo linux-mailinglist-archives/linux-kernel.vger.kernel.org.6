@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-281512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D09CB94D7A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:48:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C46294D7A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E031281700
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C671F251A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995531993B0;
-	Fri,  9 Aug 2024 19:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AD6199E9D;
+	Fri,  9 Aug 2024 19:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WJov4la9"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3qlLhUcC"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641BD199250
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580FD19939E
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723232648; cv=none; b=IJo/MelVXHJHriixYbd5A/Uc2xuEtoyH7/uZn+MVS/kgoWj49QaYZbmHBPINQabhfRcAJ/Vf49BZ0UOwUtu2hMZ0/8RfIiPxDizGopJWhPt3MAGQiuBO5+jYqPeILZapoKRfRdwjUuI5F90Rdws1A7LAilt/YgIyakTVQI5Rypc=
+	t=1723232650; cv=none; b=GO4OHUGJETDvZtRpGUxkuMt+J/mccA5kG2EJ0LIQ6d0PnMZxdNP89GVxbp8P+3tUdZK09Seaz0TUqt9HBXfKvzHXsuWXbac35dImnoKUihDUtxExTRXo4fioD3FzVKeSO7C9WOnoMV/BxWh1pS/Wp3wDBDELkEGgMoBtejsnoIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723232648; c=relaxed/simple;
-	bh=Ed1G/Nb2CnyIN7eoTZ0EijA3UdmeGBcXP9PKO/DqlAo=;
+	s=arc-20240116; t=1723232650; c=relaxed/simple;
+	bh=VG0ehnLRBNQjGjdZ62CiB3/PrgwQ8Ke9eyr0F1VXaGU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XtZAqXQHI7YyC2QlBp3mxThFaaEL/GtgnRTqDm9nr7p2DkoO4ZoOsTBI9Up5GnINQn9yWppZxWEVZU8lHH/LRt/nUloDnYU1Rghy4b5cdb95t5ElWvRT6hdNc+MvHbGa2aLXmwh/FzxHd4OjOjfQtwdhXMzZxgg6O4eu8/uBzVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WJov4la9; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=lD+bOJdwCx5XeSs2dLoKWN9Zn+preR2HDgHQvVkYqnKSUgNPikRgmkY/2yngs3xraHE6cEXFbs39ZsKujLbyMuBwAk4AoLc0ciqOsFBgij44lVJs2m+olQ5HY/tHhff38YFWMdVAiYjhiy5d3g9i6vb5tGsTE7OsbcTHk+47Jqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3qlLhUcC; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7a30753fe30so2302560a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:44:07 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71050384c9aso2463665b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:44:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723232647; x=1723837447; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723232648; x=1723837448; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=xgf0knUlsf9OwxiOIKoJyEqysjyCp256HfjOAsBxKsQ=;
-        b=WJov4la9g6mT6plMsSYQXNdHAX9fpke2GXA9PibfRBbl/km/cDZ6eW/g5uljUZLvAL
-         lNLemc0pucMcfpvsH3IdogpZWpONwLKd8tBK/GBCNq6lgjtI6uANf8AlLT3edj234NSL
-         +uZt+QPjGBTWNdcLCCvZnPRFFBAJy/EKXjwHm5AW/Qw5iu1vUFG2icWu9+044H4FjRm1
-         hzvIb+qDAKcfpUZau8lLIi/7iknVionVOe75FxTM9NUT6MwZTxHdv8oDAPV7E0++nobf
-         4cW2h7jf7KzoDaAUl74AlvfOcgkrgy66YrFQEWCQPu4OPZwnCsKRofdLV/UF2+XpFQn1
-         ZMSg==
+        bh=Ai8EH7U6wTbiOPvc4tDQEcYQ+E/EtVyC6HGLhPebPF8=;
+        b=3qlLhUcC97lB6vCpdUPWtkuyd4ObXkDIAeSa+M9klnKyX5L6H2S67M6HxaE6pIJQV6
+         VHdblS5NGUk7ROWxOvP08JH655dAuNTTe8bDHkbjBLuLlJWNHZOvNYsedBgMLnZ3Ih42
+         Ad+pyOTzngUWy5i90jrJOZ0+SSHdUBuePexfbsgSQEV1H8ND7msrLyv0YAvH8y7jBIWm
+         oFzpkQT2F+GqtzX8yg8tr1Ydq6lDdvbJZAY+TqklSgsy00ybax5BxOMqpTSelcGvuWzp
+         oWOsMgmdN5ioNYnLAAavhTjP8buGZ16QCyHZ6whtp79/Xf2+Tfxio2j6bc0BV9nowmCY
+         BmAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723232647; x=1723837447;
+        d=1e100.net; s=20230601; t=1723232648; x=1723837448;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xgf0knUlsf9OwxiOIKoJyEqysjyCp256HfjOAsBxKsQ=;
-        b=NyjLNcx0jTyD/YTqhC0J/stdshfF9yJ3AzCTTqxE5G52YjiF7DAxYzYovRxZQmvdkg
-         aR85gyRaKknQF/7n3BoeR7NnjpwqEvry6/+AFPD9p6BK+WY+F1v7Rq74yaOUUtWXwkfq
-         lPLNVFvAw2N1N1fMiQ8ZWRDdlxINeD74wluD1vmxujUt+4Fbcqy7zdOGj8e2HFj7vkYY
-         dSuVt+r3DFC0bUNtBk7mQendLxxRBd8jwzQZKBO9Tj4rL+85kFV/IODn5Lg49yedjBvS
-         avXwPReKoQFybGUltWT+jkWw56EFMfepjXNsymCZeCBqY9+2cQFmpnoRMtkyO2+qjsHc
-         tdIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwH2xWbUXRbUk3nMeO5Qddp4GUD5yoDfTOYOW+Kr6HCjB0T8Bjv3M9EVCWg2OYE/3UcAjP3wcUQZ1zrbs417FKdlg8H/OLQGFmNflf
-X-Gm-Message-State: AOJu0Yw0cBsmqFcXOeQ8rtXhF3gXIXamyRZumZaDXIfCuojjNiWf4Yg5
-	L8Tu6PA+saLNmy+gQrYgSkJLyBBIGBqFMIicl+aV5DKTM/FW43PYW6ow9/ajQ5VaX48QPpjvFM8
-	5oQ==
-X-Google-Smtp-Source: AGHT+IH1270TZbw7dwgOHkJEckbD2SAane4OZgA6vncKd5lKiIhglKNNCAxVffQiCers7rx90OBnP67l4os=
+        bh=Ai8EH7U6wTbiOPvc4tDQEcYQ+E/EtVyC6HGLhPebPF8=;
+        b=kO4wp274WAzHlqakQIXWo767dueYbhJNHkm/DIQHiPr0IqJma0+twmUwX+FmgHtPDq
+         SUiSB2gb2oeogHZdanFL3Nx1Ty6VYrEuf0w1s6glRiTwYxMyR2MNGsrxfQWKcJF/c6L5
+         FBThAzFemca70VVjSkOiDkA3boi3yN9lEdImfjJZ0r1e5OLFTqwH+2eF9CXL6ROqqaNw
+         X4lahBzhVGfTzcF0RhMj8S/a9aFg+OzGeAqYl9pmTy5PvdKmzk//A25m40NSPJUW0i02
+         Q/2GIs3VTakAY8Wabhwp/rbqT8RK1N9MoTXanvNC53SeuvXy4+lHFvVHDwcmq0K8CbCt
+         ESuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXbqoAwkAScxQvEDq68nomIoKkMT1DNLD+5egkASTbcfqd3fHsrhCUQc+RtQOpddQxCFbyuYaW9rfMlIYRNE1G7iTJZGPFBy/EgdHd
+X-Gm-Message-State: AOJu0Yxdvd7MVxmVK6EoNn+EID/NgYVnk1L4UOWlFJ+zrphtOYVD23+u
+	VoRktP8J18kS4COdyir4uX7WhS5BAZhRRBcbnjKgq8Cqi2UurughJLY1gfny+ZCVkmx8lCA6Q5t
+	p2g==
+X-Google-Smtp-Source: AGHT+IHNNFbniYTOQTi7bihux9iGSGXPTBj4ES/WY0YDfyXV3hzhWFmxyp3a86iRwwurPT1lphBR34jXitQ=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:6d46:0:b0:718:665d:65c9 with SMTP id
- 41be03b00d2f7-7c3d2bd2a84mr4911a12.6.1723232646717; Fri, 09 Aug 2024 12:44:06
- -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:9167:b0:70d:1b0d:a15d with SMTP id
+ d2e1a72fcca58-710ccb04a71mr122147b3a.3.1723232648511; Fri, 09 Aug 2024
+ 12:44:08 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  9 Aug 2024 12:43:26 -0700
+Date: Fri,  9 Aug 2024 12:43:27 -0700
 In-Reply-To: <20240809194335.1726916-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240809194335.1726916-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240809194335.1726916-15-seanjc@google.com>
-Subject: [PATCH 14/22] KVM: x86/mmu: Morph kvm_handle_gfn_range() into an
- aging specific helper
+Message-ID: <20240809194335.1726916-16-seanjc@google.com>
+Subject: [PATCH 15/22] KVM: x86/mmu: Fold mmu_spte_age() into kvm_rmap_age_gfn_range()
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -85,125 +84,92 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	James Houghton <jthoughton@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Rework kvm_handle_gfn_range() into an aging-specic helper,
-kvm_rmap_age_gfn_range().  In addition to purging a bunch of unnecessary
-boilerplate code, this sets the stage for aging rmap SPTEs outside of
-mmu_lock.
+Fold mmu_spte_age() into its sole caller now that aging and testing for
+young SPTEs is handled in a common location, i.e. doesn't require more
+helpers.
 
-Note, there's a small functional change, as kvm_test_age_gfn() will now
-return immediately if a young SPTE is found, whereas previously KVM would
-continue iterating over other levels.
+Opportunistically remove the use of mmu_spte_get_lockless(), as mmu_lock
+is held (for write!), and marking SPTEs for access tracking outside of
+mmu_lock is unsafe (at least, as written).  I.e. using the lockless
+accessor is quite misleading.
+
+No functional change intended.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/mmu/mmu.c | 68 ++++++++++++++----------------------------
- 1 file changed, 22 insertions(+), 46 deletions(-)
+ arch/x86/kvm/mmu/mmu.c | 50 +++++++++++++++++++-----------------------
+ 1 file changed, 22 insertions(+), 28 deletions(-)
 
 diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 0a33857d668a..88b656a1453d 100644
+index 88b656a1453d..c536a069d6b9 100644
 --- a/arch/x86/kvm/mmu/mmu.c
 +++ b/arch/x86/kvm/mmu/mmu.c
-@@ -1596,25 +1596,6 @@ static bool __kvm_rmap_zap_gfn_range(struct kvm *kvm,
- 				 start, end - 1, can_yield, true, flush);
+@@ -614,32 +614,6 @@ static u64 mmu_spte_get_lockless(u64 *sptep)
+ 	return __get_spte_lockless(sptep);
  }
  
--typedef bool (*rmap_handler_t)(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
--			       struct kvm_memory_slot *slot, gfn_t gfn,
--			       int level);
--
--static __always_inline bool kvm_handle_gfn_range(struct kvm *kvm,
--						 struct kvm_gfn_range *range,
--						 rmap_handler_t handler)
+-/* Returns the Accessed status of the PTE and resets it at the same time. */
+-static bool mmu_spte_age(u64 *sptep)
 -{
--	struct slot_rmap_walk_iterator iterator;
--	bool ret = false;
+-	u64 spte = mmu_spte_get_lockless(sptep);
 -
--	for_each_slot_rmap_range(range->slot, PG_LEVEL_4K, KVM_MAX_HUGEPAGE_LEVEL,
--				 range->start, range->end - 1, &iterator)
--		ret |= handler(kvm, iterator.rmap, range->slot, iterator.gfn,
--			       iterator.level);
+-	if (!is_accessed_spte(spte))
+-		return false;
 -
--	return ret;
+-	if (spte_ad_enabled(spte)) {
+-		clear_bit((ffs(shadow_accessed_mask) - 1),
+-			  (unsigned long *)sptep);
+-	} else {
+-		/*
+-		 * Capture the dirty status of the page, so that it doesn't get
+-		 * lost when the SPTE is marked for access tracking.
+-		 */
+-		if (is_writable_pte(spte))
+-			kvm_set_pfn_dirty(spte_to_pfn(spte));
+-
+-		spte = mark_spte_for_access_track(spte);
+-		mmu_spte_update_no_track(sptep, spte);
+-	}
+-
+-	return true;
 -}
 -
- bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
+ static inline bool is_tdp_mmu_active(struct kvm_vcpu *vcpu)
  {
- 	bool flush = false;
-@@ -1634,31 +1615,6 @@ bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
- 	return flush;
- }
- 
--static bool kvm_age_rmap(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
--			 struct kvm_memory_slot *slot, gfn_t gfn, int level)
--{
--	u64 *sptep;
--	struct rmap_iterator iter;
--	int young = 0;
--
--	for_each_rmap_spte(rmap_head, &iter, sptep)
--		young |= mmu_spte_age(sptep);
--
--	return young;
--}
--
--static bool kvm_test_age_rmap(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
--			      struct kvm_memory_slot *slot, gfn_t gfn, int level)
--{
--	u64 *sptep;
--	struct rmap_iterator iter;
--
--	for_each_rmap_spte(rmap_head, &iter, sptep)
--		if (is_accessed_spte(*sptep))
--			return true;
--	return false;
--}
--
- #define RMAP_RECYCLE_THRESHOLD 1000
- 
- static void __rmap_add(struct kvm *kvm,
-@@ -1693,12 +1649,32 @@ static void rmap_add(struct kvm_vcpu *vcpu, const struct kvm_memory_slot *slot,
- 	__rmap_add(vcpu->kvm, cache, slot, spte, gfn, access);
- }
- 
-+static bool kvm_rmap_age_gfn_range(struct kvm *kvm,
-+				   struct kvm_gfn_range *range, bool test_only)
-+{
-+	struct slot_rmap_walk_iterator iterator;
-+	struct rmap_iterator iter;
-+	bool young = false;
-+	u64 *sptep;
+ 	return tdp_mmu_enabled && vcpu->arch.mmu->root_role.direct;
+@@ -1660,10 +1634,30 @@ static bool kvm_rmap_age_gfn_range(struct kvm *kvm,
+ 	for_each_slot_rmap_range(range->slot, PG_LEVEL_4K, KVM_MAX_HUGEPAGE_LEVEL,
+ 				 range->start, range->end - 1, &iterator) {
+ 		for_each_rmap_spte(iterator.rmap, &iter, sptep) {
+-			if (test_only && is_accessed_spte(*sptep))
++			u64 spte = *sptep;
 +
-+	for_each_slot_rmap_range(range->slot, PG_LEVEL_4K, KVM_MAX_HUGEPAGE_LEVEL,
-+				 range->start, range->end - 1, &iterator) {
-+		for_each_rmap_spte(iterator.rmap, &iter, sptep) {
-+			if (test_only && is_accessed_spte(*sptep))
-+				return true;
++			if (!is_accessed_spte(spte))
++				continue;
 +
-+			young = mmu_spte_age(sptep);
-+		}
-+	}
-+	return young;
-+}
++			if (test_only)
+ 				return true;
+ 
+-			young = mmu_spte_age(sptep);
++			if (spte_ad_enabled(spte)) {
++				clear_bit((ffs(shadow_accessed_mask) - 1),
++					(unsigned long *)sptep);
++			} else {
++				/*
++				 * Capture the dirty status of the page, so that
++				 * it doesn't get lost when the SPTE is marked
++				 * for access tracking.
++				 */
++				if (is_writable_pte(spte))
++					kvm_set_pfn_dirty(spte_to_pfn(spte));
 +
- bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
- {
- 	bool young = false;
- 
- 	if (kvm_memslots_have_rmaps(kvm))
--		young = kvm_handle_gfn_range(kvm, range, kvm_age_rmap);
-+		young = kvm_rmap_age_gfn_range(kvm, range, false);
- 
- 	if (tdp_mmu_enabled)
- 		young |= kvm_tdp_mmu_age_gfn_range(kvm, range);
-@@ -1711,7 +1687,7 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
- 	bool young = false;
- 
- 	if (kvm_memslots_have_rmaps(kvm))
--		young = kvm_handle_gfn_range(kvm, range, kvm_test_age_rmap);
-+		young = kvm_rmap_age_gfn_range(kvm, range, true);
- 
- 	if (tdp_mmu_enabled)
- 		young |= kvm_tdp_mmu_test_age_gfn(kvm, range);
++				spte = mark_spte_for_access_track(spte);
++				mmu_spte_update_no_track(sptep, spte);
++			}
++			young = true;
+ 		}
+ 	}
+ 	return young;
 -- 
 2.46.0.76.ge559c4bf1a-goog
 
