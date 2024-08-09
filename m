@@ -1,201 +1,219 @@
-Return-Path: <linux-kernel+bounces-281115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA2B94D344
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:19:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9888E94D345
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4F47B22A10
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:19:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2733F1F213B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884CD198A05;
-	Fri,  9 Aug 2024 15:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D35197A98;
+	Fri,  9 Aug 2024 15:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="YkVYJcwH"
-Received: from CY4PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11020114.outbound.protection.outlook.com [40.93.198.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K+K06c75"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005731DFE1;
-	Fri,  9 Aug 2024 15:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.114
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216770; cv=fail; b=E1qs58UKov/EDkkAkkY0S0+V1TfzPiscm56i3gABEjMDJY/zm7gC+o93hlRqo3ekBX1AedVVOGiwgpF4hJ/5UMxQjaqjgCM5a6cxxjpqapysJqPvbZSfCq9PZNpSZUqU6ybEsdjHm4htlasqb1bcKz0VK2q/5uHsGO8lqB/qKno=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216770; c=relaxed/simple;
-	bh=fA64zh404lmyH2lgLoHz7eKq4KJuLCfUGPz/HtWDUlE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EwIweDeFkjHvZrB/OJ1FIhapaBokJn13D9m9Dze+cxpinJAutIXF+1NFbG1C56/WmuTycCf/J/K1DKcSaRM2+mDkLBrltmMTVbYkkrVXcn9DH6DNihdsQGzQ6PwXjp7+olr+w91LJTWbhscuuw/nFsu238tnBzZB+bU1nwX1FPw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=YkVYJcwH; arc=fail smtp.client-ip=40.93.198.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F4QvrhLaEHMOQKSbRn7NOYl3odJ0LfGM0Jl7firch+sSj4EgVjvI8lwHfcjBx7XFiMv+HRvCHpTv+bmfj8ENAwa8PGuOWMMrnPLFdRxey9cqyR85yP9y5KvYkeUcGu6Q+CslVJ6p1RhuQVBc3IRFXqjqOTsbjp19lDV4yemu2EZTQ0POqeBVBPs/KTAqj6qt9rT7oc2SFls+9R+FchYv0jzDHsazW/pGR+NHewHBQJTwTGN3WvvH1Os4Im+rifj8wrtiJkGaCBetZXCUGVNWEDf1BIBCEr/h/WXyz65EYyG8e6z841SS8G757x7zT68JdpzJX23d0j8xv9ZZYrmvjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YrThUFXO5n03XscYkWV08IKoTbh6JVqoiuV2d6pLSuI=;
- b=tejMtVeJwT+GYQAaiYHG2szrLXtBrQ82RbIEbxmG5M5pGIVb/2+JuTDLX8PKpDswxPPws1mAsg4LvRNxPYUTbzFwZfDCAR3FE10LChCfy59jglcsxNmw72JBC8YNPgfhrvaUo/k1Gk7KHekcKIpHJzkK//V20qUfv5vNdAg184vBIKzNJSCAMgcSRY4kw13ZLAhPVdY42ShBY30E9Rl3QYx5+vmUnWSjGdi2qKjjNuGPBoDpVfwM5/nD7ebvUtY9d/kWceYnb1/5ZbUUNfBma51Rh2UowMZ6tminwDSKtJm/NJjr2KqTneRBynFfUr7Y/XtpH4tSyFHqlcMIlyjkYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YrThUFXO5n03XscYkWV08IKoTbh6JVqoiuV2d6pLSuI=;
- b=YkVYJcwHYh4fS5lc+zbqTievT/aGgmssHLxsBcmTCYtyew/PQu3nob1Bn5vpiHJjJlqz6YcNKFUIMBEZACOoCA/EJmAWm3NcUQGwLuAOTQWdwsjVNiOfrY3f6s9SrdlydHMo5TwPma0vfQfGTh2tMHGT3Nu4Q8NTJj6NrIC7yXU=
-Received: from DM4PR21MB3536.namprd21.prod.outlook.com (2603:10b6:8:a4::5) by
- DM4PR21MB3706.namprd21.prod.outlook.com (2603:10b6:8:ae::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7875.9; Fri, 9 Aug 2024 15:19:26 +0000
-Received: from DM4PR21MB3536.namprd21.prod.outlook.com
- ([fe80::d1ee:5aa2:44d0:dee3]) by DM4PR21MB3536.namprd21.prod.outlook.com
- ([fe80::d1ee:5aa2:44d0:dee3%4]) with mapi id 15.20.7875.009; Fri, 9 Aug 2024
- 15:19:26 +0000
-From: Long Li <longli@microsoft.com>
-To: Simon Horman <horms@kernel.org>
-CC: KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shradha Gupta
-	<shradhagupta@linux.microsoft.com>, Konstantin Taranov
-	<kotaranov@microsoft.com>, Souradeep Chakrabarti
-	<schakrabarti@linux.microsoft.com>, Erick Archer <erick.archer@outlook.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v2 net] net: mana: Fix doorbell out of order violation and
- avoid unnecessary doorbell rings
-Thread-Topic: [PATCH v2 net] net: mana: Fix doorbell out of order violation
- and avoid unnecessary doorbell rings
-Thread-Index: AQHa6R/zQgAE3/VEwkaNHXMnN1gZdbIenzgAgABtdvA=
-Date: Fri, 9 Aug 2024 15:19:25 +0000
-Message-ID:
- <DM4PR21MB35364264950F0182B50F5846CEBA2@DM4PR21MB3536.namprd21.prod.outlook.com>
-References: <1723072626-32221-1-git-send-email-longli@linuxonhyperv.com>
- <20240809084716.GA3432921@kernel.org>
-In-Reply-To: <20240809084716.GA3432921@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=14296e4d-4e8e-468c-bbd9-e5cb7bf4707a;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-08-09T15:19:02Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR21MB3536:EE_|DM4PR21MB3706:EE_
-x-ms-office365-filtering-correlation-id: 651dc68e-da0b-45ac-dc28-08dcb886a7b7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?6iokwGZeUd7pyCbQ8ccXFEM/XJU53tKgnD9rvZxn+V9AsT9Hae3DwKdaadW0?=
- =?us-ascii?Q?Lgvoj2XDy74hbN+b30hdFhqGHIIqnIKtbTOregEimt8GctVdDYNMUTZiyxAz?=
- =?us-ascii?Q?DSNOyv+BcqavXN2HjRgRvElB3qo3Eaagb/OWQY/K/rhteFcT4prruBOQ1Lyk?=
- =?us-ascii?Q?TDSF2uA0ZC/jhh2Iw44RMoWtj2hxC2feNC6672rN5Qui0wVLJ0o8e8sVz+yA?=
- =?us-ascii?Q?mHWvEhuFxvmYexQr/jjpLwOKZcD4WgucXwNZXXJQEAS7OV0fZPPcUeR99Eaz?=
- =?us-ascii?Q?B8bqaHn3rQSYyJYGppM4xn+HbFZ8KmqLYXUfMsuXd2rMilfYC3Em2E1DzZ8W?=
- =?us-ascii?Q?qRIFvUxocSdCKZaFEN/vE9175liAetZ0q3Yogu0o0ZOAReCnyW9yug4wMKk9?=
- =?us-ascii?Q?b1nnM+vO6VeefqahBwuTaHmforrlBN9P82rV6jKn+Bh0A3OkuSBOPOy6Omz1?=
- =?us-ascii?Q?TImfky2PeSIACSDUJjfTRPbxMEFAyLjGsgOqIGhovw3CPowqFvW60XSCYwVz?=
- =?us-ascii?Q?RZHjzRVJEmcZpObFdPQ/Zbu5xJWe8AXsF55tOF8+dR/rETLqHZzmWxdpqQ0Q?=
- =?us-ascii?Q?6Nr0ySmibDmbH9fap1zkGKUHm16IAssKVNR3MJdaPPD3NX1OCH83kGzzTzqy?=
- =?us-ascii?Q?lU9k4+hfEnKrvvRIYl9kY02sTmKM6YuFQsJRsB/pCwD/BTWDoK7EyMUSyOHd?=
- =?us-ascii?Q?7Zu8D2csJRMpGP5995QSb6h1CTGMcECdL3WwOraWaXckvdimgQus+sAxop+4?=
- =?us-ascii?Q?VZGhznyiPf46OG6BvSj3BWubgRXJVSs4mC7p9UreLWFg59uHf2JO/hFu7e8l?=
- =?us-ascii?Q?+39XzTSZGong3cRdEn5BoQ0YqzZdLc7uyxGm0ckjB6Tto3oV9kIwe45XCJ0l?=
- =?us-ascii?Q?wgcjt+kd5j5TQJxeOjfRW73EJV4K1YOarK2h+DXOY20BEprcBEq+LK9f0dhH?=
- =?us-ascii?Q?2fIN1kqAcbz21DX8dr4/fMWg8mMQ1QcZkbX6PnhYNKaWVR0WE44XUsoFiv8T?=
- =?us-ascii?Q?JQfTSTykhoB/J1vXfPHAlAQbdM8Pc0NXXxerMM8lRMG1yGIccECXYaPoK+Jn?=
- =?us-ascii?Q?g6wX6zv/GvyEpuiv4ZXXGgLRWn968QaISzQEDRKX1Kd1tLpe9Nw1pZWjXjK0?=
- =?us-ascii?Q?G3YEAzSc11HkLkf8X99/BRbRobxCSojLanpYPoaENKaMwuF7MQrTNqNwhJ8H?=
- =?us-ascii?Q?qXYLgx43c67joZtnsAteg6pf42o0lBmzoc+5whidbkSn+80HzAhCrkuAmB1L?=
- =?us-ascii?Q?2ZvwqzHvDp3ZzkDPxmD89nb8VAmtmTuQPHwKrhkJsqnwTKDP3BN+6FOjfTsI?=
- =?us-ascii?Q?XSVBcg9zw5OBP81Lyqw5tbKm/qOGpGf7+OWXqIIeEPENIQsX12IxMEIcmqtZ?=
- =?us-ascii?Q?gDGoH3STU5PAF5JhTtLFuUoKl2nz9jKBQ4bcOod1Ie6A3iuH+Q=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR21MB3536.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?KH9u8t6dH49iwIalKyClnF5PY7HWB3G4E+UXKZITI3m8C2j+J1liOE2xgPij?=
- =?us-ascii?Q?PEtBZUpI34i1Ms9DkEQF5je7fUJucsehFTUcC95zXtl2bwjjYzX0Elk2KLn/?=
- =?us-ascii?Q?eC0BKG61/E6v8Bxvd/9KalmQDuOHrviCh1cCe3bMVNfYQOXkvVLBVKT9ADaZ?=
- =?us-ascii?Q?aCeV1an4nqWjtVLT2K7dZyFAIoSMz88nNjGcQNzxKt6UtFOuyfO8IxFXd1v5?=
- =?us-ascii?Q?glj1SwNtt26v7U4OmZff3u1Ye+zZHa4kGRBDrdKnutkuF3dJwqm2TjRWsRgR?=
- =?us-ascii?Q?PJDcazhz1iFbiOCDFp9KkmrQPp/rX1AZY2r7DljX46UtUzzvTRnuGLG+vyG+?=
- =?us-ascii?Q?NZPp696IGatrSXm2TipLSGbCkRUG9Fp6TuCWl94G7gY9t1NyK3ZUSWJH0PFg?=
- =?us-ascii?Q?6WYG0kWCAzA5ajFXeg5Z/uBieh2p9nWnAMQYLwju3LHOA/qnlQRYiFYjPpN3?=
- =?us-ascii?Q?Sn1wxsf/o6VStRpxbnldfPUi5M3f1JS6k7blRcdvbQjt86PD3yrTsvuZFjrG?=
- =?us-ascii?Q?scmzf8FfUoREpoNE2gOAxH9Iicir9DOYBc3rBKCxvQlnqGRGXTJPwAWIDAjz?=
- =?us-ascii?Q?O+oI3l6RlRhuQUlbzDm5i6kzzvMhvZs+Bo2R/p+HafccqKZMSaZ6w+skbo9y?=
- =?us-ascii?Q?UUw6sht8CGJ3YYZ3HHoTZreSmLCJlyF8kUbmryY83Ze2/ywbVSJFBsyvfFRm?=
- =?us-ascii?Q?t/22eGHiovqpo3nr7udeOHT3S9SfxnNGmiibfC8xZF5Cf48arpONFF5NsIkZ?=
- =?us-ascii?Q?RdAzk6xPgAOBJctxt/PMxR3IFzTzdrtDICFtSqLFZnVE/ix7JqhitaCw3IxD?=
- =?us-ascii?Q?GttFwi9dEu/3ojEIdLfTRYLteZ/ORwb83a4NJjslF2TbzGgWfTsSCesZ9Bq/?=
- =?us-ascii?Q?Sp9TSIjiaPBlJq4chazHC32/Xg5Jk3U8+WppXDSX87Li56aCWalugFDcFvvo?=
- =?us-ascii?Q?TeVOjrUtrVcYKipOTynU3krAh0UwDQXVUCHOhclKL8CtVrVu0DiQEckabfnx?=
- =?us-ascii?Q?BFXyDxULG7/YLUGuudOxLL0GmpJ93wqZxjwqKngkVMd5dr7BDKlm5+8x9wnA?=
- =?us-ascii?Q?l6HsbsNPXGp3IwGvJTfhDtE2wwlqPwH3g3KgK56W5BgZ5fNbtunofpnM7pcD?=
- =?us-ascii?Q?tIcQtyXM++qrwJHuZrvjGRqK3Cj0F0KHPAhMt2kJZBbtoR1qbAw9TZeBFjeI?=
- =?us-ascii?Q?aKVThcxPkX5jJhgkyIg6NLQJWyde2o0hsktkn3KK68iuD/Jb9h3tdiVgpeGl?=
- =?us-ascii?Q?Tvc3A4SUAPdoVVDrteUejEnDtJXigeG4X6OiUu+prjc4v3zAY6oV489VziSH?=
- =?us-ascii?Q?jgZY5GMxjuFoeIO7d3l34Fv8Qu7tBdvwNFQvWA9+u71n/KaU+YCe6Tgek4Z+?=
- =?us-ascii?Q?mWOqw+M5VQcamkx+8Av0Xt9FcEpEmeQtNrM+G/Sbl9i59qHy7qkMpjqz+pfx?=
- =?us-ascii?Q?U6Q1xvgJmOTSSmdxsxCh1hd1vEa+Ez0EC4JTU2FinYsXdewW7gE/Jm2G4fFr?=
- =?us-ascii?Q?KhlK1ydNKOML/NHFpALtO4pIdZYMoxPvrGeI6kh/ftZA03Nq8DO+PdHYKCfR?=
- =?us-ascii?Q?Tw3nY5+4au28lL0Xyy5s8rytvXtS3JJaIMPslb7dOgjIdjJvQs4QQSFTF8Tc?=
- =?us-ascii?Q?AupXYHC9e5t3omUHSN5LNZVzcJY+FNNf8pF+piVcFE6v?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99F91DFE1
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723216803; cv=none; b=chtdgrKuSUkAvDfFghLCU0EtHcvNf4zoGNpoc3gyOq/AymEpDXodEdHBfYO0l6Cx4KOQl8lbUI0aRadTIkM3CHSpuvOaKvlFrRjVLzM1Q4cxpIFczJuwTVdY0rl0i2rVhk/hv0iCB6hZ7fsChytnQJb6vzhknbcs066hBG8uwwM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723216803; c=relaxed/simple;
+	bh=iwUPLESXx6SeVlovMPVG7VEd7FJAhgD94g0Aubv+Mto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ms9X84NQGUNl1CNsSTdfWNl4a0pB3Hr95r/7C+zMct3YSVRswDSVAasIv9IvFkCYd2k9M3KA3CZ0AAYBpYdciIgqh6ySpkl1PpyvW5ZzFp0u2fokKxxqFuUVDRipghWIjyEdzgB3FAq8VeU6ih436cjGbjoiCa5G8NqZpTlWm48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K+K06c75; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d25b5b6b0so1770834b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:20:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723216801; x=1723821601; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KuHjjD0+jbbUA+k6XyGgH2RnuLm3A6KZozTWTGWl80Q=;
+        b=K+K06c75LFqxy0+qRQlWJo30Qp3k2E1s49cE8lJliiL4qZdXfawiSaQlZg5qMH/iDN
+         Xirclh9RL914JxDpujhpIAIrJTtIvzk1XtFaJns7JlmWVi1wje4kyke77YQmXgHhB2Jk
+         cwmmTzeP7tFxQ+/GNtXo2b7V5qsvhYbf3bw8EEukFozG/JaBBwH35cLN+EmWBWnnEfer
+         1x/rW62GBTy7jPXvhqY/BffT8p89l2/znPwN7VjgDQ/swQjwYgIG/ZUaAnJQBiOa2ZoL
+         GhaQAYngiPYorhN/SygzC3xvwLEbtiARQaFumVhgNGiBcmP0aiMkVv5w+3CjaRrzHetr
+         PkAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723216801; x=1723821601;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KuHjjD0+jbbUA+k6XyGgH2RnuLm3A6KZozTWTGWl80Q=;
+        b=SnAYpqfCG0tei3n8s8TzK4t3/BkBfBnMGh3XDA5Q5g+vjEZP3aOHLsLLg1rwr5mlHa
+         aBHLu4YseY0OTT0j2vBzN5l1os+k0to42KeyXMQXCfQt8yYTDfEaAARbH+k2oIhCBosJ
+         NdJY3VjE3jnjbwaGL3AjmVIIQyrpiSwyENuwgtSuf6pEAdoQwV8Z4+pSmjphLBrMqxEY
+         K6i5jkiGRzkF54ODKKwkdgbT7KzJcLzDeHxr7CDqu6klA2ETuIGSC9vQy6frn/9Ldnkb
+         tZk6OMBMeNCl6KH/qywgA9nHYQpzcgL4+hKQ9+cCEdyzuYpiw6JWVRcC0GoUeXis+/fy
+         d8+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUEFGzLg4AOCiS9Z2C9nPkTM3p2ItfDSwjWBVMyKC8YQlgmus0hF5cHLbnDkS8fjv8eOS8MdsM2VRBppKH6RxlgeM0RQolasUGoY2bt
+X-Gm-Message-State: AOJu0Yyf+7gxzesU8y00TcmxQgnQ3+3gx2hdFLD3cuXzb6MKrT3zYFtN
+	J++nS2+0hngd0iCZCFP6fnY0vVFuX6pwrybFftL7ttnVqIflNGlWh9aSnanvjpk=
+X-Google-Smtp-Source: AGHT+IG70S5uas7buLXlBz4OkM/rW/DPbP9Mgzb9nG4/GURKryVDE1KhwW9GHFD3PTJx5V0QNrHdIA==
+X-Received: by 2002:a05:6a00:39a7:b0:706:747c:76b6 with SMTP id d2e1a72fcca58-710dcae9b0emr2183570b3a.22.1723216800898;
+        Fri, 09 Aug 2024 08:20:00 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb20a076sm2827545b3a.11.2024.08.09.08.19.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 08:20:00 -0700 (PDT)
+Message-ID: <27912fc6-8419-4828-82a7-dacde5b4a759@linaro.org>
+Date: Fri, 9 Aug 2024 16:19:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR21MB3536.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 651dc68e-da0b-45ac-dc28-08dcb886a7b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 15:19:25.8466
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SIhwpuHwj7sP2bgtZqOHUdIkuvO3dHiEG7xbF9WABLYKEM0R7H8oBHMbP5ko6F1J7vsPG3j6HCtqOdRegB+9Mg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR21MB3706
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf scripts python arm-cs-trace-disasm.py: Skip disasm
+ if address continuity is broken
+To: Mike Leach <mike.leach@linaro.org>
+Cc: Leo Yan <leo.yan@arm.com>,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ scclevenger@os.amperecomputing.com, acme@redhat.com,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, darren@os.amperecomputing.com,
+ james.clark@arm.com, suzuki.poulose@arm.com, Al.Grant@arm.com
+References: <20240719092619.274730-1-gankulkarni@os.amperecomputing.com>
+ <ce4af204-874f-404c-a7aa-42dc6693d072@linaro.org>
+ <a197123a-be59-4052-9615-cac79ffa357a@os.amperecomputing.com>
+ <543813f6-cb1f-4759-b26f-75246750814d@linaro.org>
+ <f72038a0-c6b5-4245-8515-3b735ca38cbb@linaro.org>
+ <ae1b2d8c-588a-4f0a-b3c9-c869f8dd0f25@os.amperecomputing.com>
+ <00fac24c-d664-4ebb-8c60-f4697b7f76c1@linaro.org>
+ <8b53a424-19f7-4042-a2db-e1c5d051f9cc@os.amperecomputing.com>
+ <6adf84fa-b755-4d7a-957a-9bf01e442238@linaro.org>
+ <d71dff17-6f1e-4a67-89c6-7ecc86af0f3a@linaro.org>
+ <6f535bb6-2cee-48e6-93f1-ea19887bae74@os.amperecomputing.com>
+ <027c76a9-9bd4-43e9-a170-8391a0037291@linaro.org>
+ <3d7a6f93-0555-48fa-99cb-bf26b53c2da5@os.amperecomputing.com>
+ <d6170beb-754e-4be3-8ff7-18acddccf077@linaro.org>
+ <4dd7f210-c03e-4203-b8e9-1c26a7f8fe79@arm.com>
+ <c73573e7-206e-4a6c-b6c6-27903978d0aa@linaro.org>
+ <CAJ9a7VhJFNxPCVva5tS51SBaxx76nFq9in0MGJe2jEwbVdSTkA@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAJ9a7VhJFNxPCVva5tS51SBaxx76nFq9in0MGJe2jEwbVdSTkA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Subject: Re: [PATCH v2 net] net: mana: Fix doorbell out of order violatio=
-n and
-> avoid unnecessary doorbell rings
->=20
-> On Wed, Aug 07, 2024 at 04:17:06PM -0700, longli@linuxonhyperv.com
-> wrote:
-> > From: Long Li <longli@microsoft.com>
-> >
-> > After napi_complete_done() is called when NAPI is polling in the
-> > current process context, another NAPI may be scheduled and start
-> > running in softirq on another CPU and may ring the doorbell before the
-> > current CPU does. When combined with unnecessary rings when there is
-> > no need to arm the CQ, it triggers error paths in the hardware.
-> >
-> > This patch fixes this by calling napi_complete_done() after doorbell
-> > rings. It limits the number of unnecessary rings when there is no need
-> > to arm. MANA hardware specifies that there must be one doorbell ring
-> > every 8 CQ wraparounds. This driver guarantees one doorbell ring as
-> > soon as the number of consumed CQEs exceeds 4 CQ wraparounds. In
-> > pratical
->=20
-> nit: practical
->=20
->      Flagged by checkpatch.pl --codespell
->=20
-> ...
 
-Thank you! Will fix it.
+
+On 09/08/2024 3:13 pm, Mike Leach wrote:
+> Hi James
+> 
+> On Thu, 8 Aug 2024 at 10:32, James Clark <james.clark@linaro.org> wrote:
+>>
+>>
+>>
+>> On 07/08/2024 5:48 pm, Leo Yan wrote:
+>>> Hi all,
+>>>
+>>> On 8/7/2024 3:53 PM, James Clark wrote:
+>>>
+>>> A minor suggestion: if the discussion is too long, please delete the
+>>> irrelevant message ;)
+>>>
+>>> [...]
+>>>
+>>>>> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>>>> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>>>> @@ -257,6 +257,11 @@ def process_event(param_dict):
+>>>>>                    print("Stop address 0x%x is out of range [ 0x%x .. 0x%x
+>>>>> ] for dso %s" % (stop_addr, int(dso_start), int(dso_end), dso))
+>>>>>                    return
+>>>>>
+>>>>> +       if (stop_addr < start_addr):
+>>>>> +               if (options.verbose == True):
+>>>>> +                       print("Packet Dropped, Discontinuity detected
+>>>>> [stop_add:0x%x start_addr:0x%x ] for dso %s" % (stop_addr, start_addr,
+>>>>> dso))
+>>>>> +               return
+>>>>> +
+>>>>
+>>>> I suppose my only concern with this is that it hides real errors and
+>>>> Perf shouldn't be outputting samples that go backwards. Considering that
+>>>> fixing this in OpenCSD and Perf has a much wider benefit I think that
+>>>> should be the ultimate goal. I'm putting this on my todo list for now
+>>>> (including Steve's merging idea).
+>>>
+>>> In the perf's util/cs-etm.c file, it handles DISCONTINUITY with:
+>>>
+>>>      case CS_ETM_DISCONTINUITY:
+>>>           /*
+>>>            * The trace is discontinuous, if the previous packet is
+>>>            * instruction packet, set flag PERF_IP_FLAG_TRACE_END
+>>>            * for previous packet.
+>>>            */
+>>>           if (prev_packet->sample_type == CS_ETM_RANGE)
+>>>                   prev_packet->flags |= PERF_IP_FLAG_BRANCH |
+>>>                                         PERF_IP_FLAG_TRACE_END;
+>>>
+>>> I am wandering if OpenCSD has passed the correct info so Perf decoder can
+>>> detect the discontinuity. If yes, then the flag 'PERF_IP_FLAG_TRACE_END' will
+>>> be set (it is a general flag in branch sample), then we can consider use it in
+>>> the python script to handle discontinuous data.
+>>
+>> No OpenCSD isn't passing the correct info here. Higher up in the thread
+>> I suggested an OpenCSD patch that makes it detect the error earlier and
+>> fixes the issue. It also needs to output a discontinuity when the
+>> address goes backwards. So two fixes and then the script works without
+>> modifications.
+>>
+> 
+> Which address is going backwards here? - OpenCSD generates trace
+> ranges only by walking forwards from the last known address till it
+> hits a branch. Unless this wraps round 0x000000 this will never result
+> in a backwards address as far as I can see.
+> Do you have an example dump with OpenCSD outputting a range packet
+> with backwards addresses?
+> 
+> Mike
+> 
+The example I have I think is something like this:
+
+1.  Start address / trace on
+2.  E
+3.  Output range
+     ...
+4.  Periodic address update
+     ...
+5.  E
+6.  Output range
+
+If decode has gone wrong (but undetectably) between steps 1 and 3. Then 
+the next steps still output a second range based on the last periodic 
+address received. (I think it might not necessarily have to be a 
+periodic address but could also be indirect address packet?). Perf 
+converts the ranges into branch samples by taking the end of the first 
+range and beginning of the second range. Then the disassembly script 
+converts those samples into ranges again by taking the source and 
+destination of the last two branch samples.
+
+The original issue that Ganapat saw was that the periodic address causes 
+OpenCSD to put the source address of the second range somewhere before 
+the first one, even though it didn't output a branch or discontinuity 
+that would explain how it got there.
+
+But yes you're right the ranges themselves always go forwards from the 
+point of view of their own start and end addresses.
+
+I thought it might be possible for OpenCSD to check against the last 
+range output? Although I wasn't sure if maybe it's actually valid to do 
+a backwards jump like that without the trace on/off packets with address 
+filtering or something?
+
+The root cause is still the incorrect image, but I think this check 
+along with the other direct branch check should make it pretty difficult 
+for people to make the mistake.
 
