@@ -1,123 +1,209 @@
-Return-Path: <linux-kernel+bounces-280408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8ED94CA1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:09:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C8A94CA1F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AACA9287DCA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:09:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3532E1F27777
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA0916CD17;
-	Fri,  9 Aug 2024 06:09:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55D216CD21;
+	Fri,  9 Aug 2024 06:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="D9WRddoT"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2065.outbound.protection.outlook.com [40.107.92.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A337B17C98
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 06:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723183745; cv=none; b=HAYZnx9iWr8oI43uE2RJyaH2Y7AA+4MlPuAUxzRn/WYSoDYHLs3AMx1mf8PtsP2AES9oeN7XyIBiBiZEzknGXY+qabCbxgqeEQJa9T0atgoFNeGHAF704xgwBks0XUfKEfLKs0758d6RimnrHUtTkHF/aTb21Yy7BBnbs58eYIg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723183745; c=relaxed/simple;
-	bh=LPBqF1wcWx2ubMCdIBSIokl4RdBxT/tbHgzW3LbuRAs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=k5H+pueXVCbUA0ISCZ8OT5vyZtI77cxIaygCW+eZzdlOTjaDqLNp4e6jWv7GHdZ5Hw/GcpCqxRyGHTfSYcc7kaOYlqBnJjMmmFNLGFH5VCtsi9VVnGianZfNzlFyNxgEoBQC4niFMwSBDbYl5mgWj9kSF4ST9yG+A/7B5Q0My6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f8c78cc66so218134839f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 23:09:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723183742; x=1723788542;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=auPRQqPB/SSOgoeSmIgFYUNjROoHTkFvrvBWVbEj5Wo=;
-        b=um0uQXkhMNAEnsex1SP263fIln1+b697u7M1eME9KUnO58kuZWMC8bUx5nmT05eYmM
-         FyyooRNRooYFJ3SWDWqz2wHORP+Gapbe9e/MHEA0cvSe/+HsP+oE/qJiphYND+ncggGM
-         NTaAlgtFL/PQu/Hr8cwJoZZC3OsihTAnJKmUd5Sj//J9FIn8zCVIcZ3yFxnAnAlt7igS
-         J9Ou/kjAEkbijdb18GCkj1OqpLFrblRr9g7/Wgrs8jvTIXhVMALJ9A0XBjvvFo7/i1Pv
-         u09Ir9EVKc5Xj3CCa7blcVrcqv+obx9Zf/AiiZaotboNloUDz4mWKbv7CXcyjAw3zl0J
-         k7cQ==
-X-Gm-Message-State: AOJu0YySKi2acGHf5lCVaoaauFKD638yjuWJ6ztyIdqSTUAwBaZMGrlk
-	1oasJ/sjGG61ranZ+zhB2CdA2Cbzf4ZIHz7RrAiWrud0KhvI+cAj0Nk/UcS9zBWv/4VZVJbmgnw
-	SabAgJb/HVjijBXhERLokXH+QIQN3FiaCyDBAOokj1cork+7gAfNhJH4=
-X-Google-Smtp-Source: AGHT+IHI6hfLPgdBNPaOg8PP+l7/sZifbBHZUwLpRcN6k38HM9PLstL56vxr4s5bDmKPXRytrQySR9xTh11BgQMLh36tgpeECCFa
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82B916CD07;
+	Fri,  9 Aug 2024 06:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723183766; cv=fail; b=fFI5Z5ozbwjuAlgeAR6X68M5WMxm02He97uzHdUt1C10qgL7Q4bchJ1xNXeltK4HkDLHhkKEAj4Fhi1PvuXZ7TIpa1uQ283D0rqHX/wMxFkFaPyEWtOPJu4evsKd75+KOdOr9KLavZ7EnY+xo8LSxT79sAtQWh9YTDAULlmQmu4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723183766; c=relaxed/simple;
+	bh=1SKrQ4LuC9x9mjwTN4y4ehDlRuYsZ19IoqWyWj46a6c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fvxf6OiX4yHWPLxYy4wWU12kbCdOp8NlaVugoQFmIXXviTJbqmIDg0etxLqniknNHooKnVwnvjg5aGmelacDulXZna8Lr5xMQXF91oZ6T9s+b6ybtfAaioHRjz/cQJCnUS2DUvM1IA8nCdG290pQGjkD3PeZlPcGatFZ3Ox2WuA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=D9WRddoT; arc=fail smtp.client-ip=40.107.92.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bMFYm4Bq97+74Y2ZhbUq4jBwm0ZYCP6qWk3aFYPTtD2+ViFB9hgqqQW96APOuDN2KWiRzSd49RPlGABVi8Lb3MQBL7KtVj+SRiuvtOzqUKR+zfQamBJWoDhDhPOI7mvqiJsBk8n1u7kmCAcL/UenOf0+OTX9MKej4hnlDg5LcIt6gFZYRNJfm/AOGMzlvBGCAXRLuKxDYzhCPcjHExSprdocEbPvfgvubFWIIk6yMRQtsy0lBzMd1DAkH51EQHaCACcXg6X9G/2IPs8mHKnFoMbWt4T8FTOFZ6t+62iOKZB94d86q9WrgrMBqCMnaeQOXrfUTPMN5d1zfD38Y4/Veg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cn0aM/4J8bCJxNM6PjGHALw+yREOfRutJlVPIETnLK0=;
+ b=M+XrIqEtAQpIVjVXHAk1+ge8PcSXUaV6rpJ2iyUtqS0kfjUTNy/DopD8VeqpdbB1rqNZkGDaTaX4JeoAoKm0xaiNzEO3hSnBnuoNY4jRcScx8t+H/ERaxnjJDq2oJErOnC1Rkqf2DJvDOtf5mCE/wHVBb6DVCOY4CqTlQq8yIZTSO9ubBsc3sxc171Sa7/puXUOPCwX7WM7Xc5y6xx1NX3skOyqx7Wnd6jAtbyLDljAaSOq+NbDtMVyjiTPB/UZBU6t2LbaYvTurOOTZObxIh1nlntsCDB87sHPaeR5SoVxui77gDGxf8ftth8k8tkPL0ONGV2AL0ScYiYnhboBTlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cn0aM/4J8bCJxNM6PjGHALw+yREOfRutJlVPIETnLK0=;
+ b=D9WRddoT0xYyzEzx5hYGGMoifWQN7RFrQY1DtwtOwAcwp2NvxmydGVotKf1Z11+7mAKvGtXSXU3nnKue27hzeQc1rjaWOH9SOQNvEw/D2ADuK1+o+XMpwLytHPNhO1gDboTkNZpcspA/wE7RsXwMer0/zIgBbT5FdpZHVYBpEuQ=
+Received: from SJ0PR03CA0168.namprd03.prod.outlook.com (2603:10b6:a03:338::23)
+ by SN7PR12MB6930.namprd12.prod.outlook.com (2603:10b6:806:262::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.31; Fri, 9 Aug
+ 2024 06:09:21 +0000
+Received: from MWH0EPF000989EB.namprd02.prod.outlook.com
+ (2603:10b6:a03:338:cafe::35) by SJ0PR03CA0168.outlook.office365.com
+ (2603:10b6:a03:338::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.30 via Frontend
+ Transport; Fri, 9 Aug 2024 06:09:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000989EB.mail.protection.outlook.com (10.167.241.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Fri, 9 Aug 2024 06:09:21 +0000
+Received: from pyuan-Chachani-VN.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 9 Aug 2024 01:09:16 -0500
+From: Perry Yuan <perry.yuan@amd.com>
+To: <rafael.j.wysocki@intel.com>, <Mario.Limonciello@amd.com>,
+	<viresh.kumar@linaro.org>, <Ray.Huang@amd.com>, <gautham.shenoy@amd.com>,
+	<Borislav.Petkov@amd.com>, <00107082@163.com>
+CC: <Xinmei.Huang@amd.com>, <Xiaojian.Du@amd.com>, <Li.Meng@amd.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESENT] cpufreq: amd-pstate: add quirk for Ryzen 3000 series processor
+Date: Fri, 9 Aug 2024 14:09:05 +0800
+Message-ID: <20240809060905.777146-1-perry.yuan@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:12c7:b0:4c0:a8a5:81f5 with SMTP id
- 8926c6da1cb9f-4ca6eda5917mr16402173.4.1723183742651; Thu, 08 Aug 2024
- 23:09:02 -0700 (PDT)
-Date: Thu, 08 Aug 2024 23:09:02 -0700
-In-Reply-To: <20240809054850.762409-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dd284f061f39facb@google.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989EB:EE_|SN7PR12MB6930:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2bd93741-b86c-44aa-657e-08dcb839cf8a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cbbD/nMy9N3icVB3JQOZuenMmxwaqiGNqi8ulD0D3auo7l0JMk8eRY30TNkD?=
+ =?us-ascii?Q?An6IX0lUJF2NvPGMB/4JpL8T72KtCcwxNIo+jOGPQ0s7UfWOliItSuXI9wof?=
+ =?us-ascii?Q?Z8yrM8866lrOW9Fstd+ka1NljlCwwWvI07uwa0feTZiCvkVpxObxg1xN7f6w?=
+ =?us-ascii?Q?matG44anjD5I3zNKLn239kZYbAHiqYu0kNupj0C/4TiyOhcn9JbhlzVw1EMu?=
+ =?us-ascii?Q?Bqz/vrHpcYYAbso8yyPRUeEMe7l1Uc7cw98euk5tVKlg51XnjoNOyecT4e9g?=
+ =?us-ascii?Q?pXzmSISIl2llQ6nPBxkqIZgJojJbRjmZvUwXtnvBr1GvFa28mz/pCv8n8zNe?=
+ =?us-ascii?Q?rm7BDbMM1+gRPc+A5f7cPm6NNInEqVwMjNP1vgGK/OnU23VmF5pAzzXxb5WG?=
+ =?us-ascii?Q?ewEzgYoBUb47z5GXwak1TbgFnJx6FknhlroYyRWbbcxe2UarT6clg8WKZj5a?=
+ =?us-ascii?Q?NoAJ3nSc3npBShN03tY9iwWfRr+2XxisVNZgyWF3jlN3xr2OqD2FGx9yzffD?=
+ =?us-ascii?Q?xKdVjycSx0XPi+qtPtl6Q0cylgJEUxCXDbr+C+FBB8rpwRPUFma0bJpxutun?=
+ =?us-ascii?Q?HnsHHfIDzaITYh9ZVaNPc1kbmo/dD50psLRCTqXAtl61T+tPoPSTX25Uo6UV?=
+ =?us-ascii?Q?pKhYoGoG3H5KQnIR1bvkJNccaUVJeAhX95jt3hSi1GNBJ+8tMi3yNTv3Hqw6?=
+ =?us-ascii?Q?Rs5iHijVpaotnCKxXsylBItnpOM5IrmmLnHltxIunAg6o34KcwwoPiM2Vbwk?=
+ =?us-ascii?Q?8wasHwdMyX+l7Pxo1Uak8f1eialRBHNBfMYPcVlaYbBhntFPqqim2c+0QBwU?=
+ =?us-ascii?Q?+OwDBst/wQZKiWLCVJPZ22NBCyEuZ44LUpkoU7fdjH4n0pcFVIYwhIE/pm5g?=
+ =?us-ascii?Q?2K+Ow6VKL4nFaXBec55hdVskwjgjxRRF+wNMhE235RQ6WawQeB7jwOabyy7l?=
+ =?us-ascii?Q?zfkDQLAA+h+qKsrOpEUT40Ji0hFZh8WcPyTJYRPivAGeP/EaHeJTnNJndMuQ?=
+ =?us-ascii?Q?8Yq51KDpUEGsK8+ZjiCfnIiwALZTasj84GtjiPVUWFm/kf+mfRcwlJ5bzO5T?=
+ =?us-ascii?Q?YlLYW0W+Jnz3hn4odmgaDXOBSFVKODrpG3sYKfCSAGbQwdsHF11x85lBFJE4?=
+ =?us-ascii?Q?0kDsM/irQSw4GJGhztGPGba/+nf3TZc0f6SMEdJDUGG8/neodz9+tpDpNZ3D?=
+ =?us-ascii?Q?CWlZoIV/I0V8j+Pr9wg/8ULrLsfq2BJ8pOEEMSVGcIOWKU9NisqLfoBW+3w3?=
+ =?us-ascii?Q?cl63yyCOahvcpSSwR8KSH0ur1mecjtCiAGXDboMLQGpvYJ5xjOItCZilVbyS?=
+ =?us-ascii?Q?fJ5UKFZSj+uTogB1+6TxJ0Zl9ld7HXYjBMem0hzRe91ulr34VFfxezo1ZOmR?=
+ =?us-ascii?Q?qjFkkn6bvOK6izs9qk7PWcgNObm9PnuGxW6yzzi3nRbbtSpgTRg0lnM7F5TW?=
+ =?us-ascii?Q?Q2gQSJpHrlKqFJmMC3j1fuB3pUMs3P4m?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 06:09:21.2649
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bd93741-b86c-44aa-657e-08dcb839cf8a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989EB.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6930
 
-Hello,
+The Ryzen 3000 series processors have been observed lacking the
+nominal_freq and lowest_freq parameters in their ACPI tables. This
+absence causes issues with loading the amd-pstate driver on these
+systems. Introduces a fix to resolve the dependency issue
+by adding a quirk specifically for the Ryzen 3000 series.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in v9fs_begin_writeback
+Reported-by: David Wang <00107082@163.com>
+Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+---
+ drivers/cpufreq/amd-pstate.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-------------[ cut here ]------------
-folio expected an open fid inode->i_ino=1901335
-WARNING: CPU: 1 PID: 1107 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
-WARNING: CPU: 1 PID: 1107 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
-Modules linked in:
-CPU: 1 UID: 0 PID: 1107 Comm: kworker/u32:7 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: writeback wb_workfn (flush-9p-39)
-RIP: 0010:v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
-RIP: 0010:v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
-Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 66 48 8b 73 40 48 c7 c7 20 9a 8e 8b e8 51 4a 0d fe 90 <0f> 0b 90 90 e9 62 ff ff ff e8 32 2b a8 fe e9 51 ff ff ff e8 98 2a
-RSP: 0018:ffffc90005d6f480 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff888032a2ad10 RCX: ffffffff814cc379
-RDX: ffff888022d94880 RSI: ffffffff814cc386 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff888040c47448
-R13: dffffc0000000000 R14: ffffc90005d6f840 R15: ffff888040c47698
-FS:  0000000000000000(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f18749020c0 CR3: 000000000db7c000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netfs_writepages+0x656/0xde0 fs/netfs/write_issue.c:534
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
- __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
- writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
- wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
- wb_do_writeback fs/fs-writeback.c:2274 [inline]
- wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
-Tested on:
-
-commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=17004ff9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17406ff1980000
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 68c616b572f2..b39365b980b9 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -142,6 +142,11 @@ static struct quirk_entry quirk_amd_7k62 = {
+ 	.lowest_freq = 550,
+ };
+ 
++static struct quirk_entry quirk_amd_mts = {
++	.nominal_freq = 3600,
++	.lowest_freq = 550,
++};
++
+ static int __init dmi_matched_7k62_bios_bug(const struct dmi_system_id *dmi)
+ {
+ 	/**
+@@ -158,6 +163,21 @@ static int __init dmi_matched_7k62_bios_bug(const struct dmi_system_id *dmi)
+ 	return 0;
+ }
+ 
++static int __init dmi_matched_mts_bios_bug(const struct dmi_system_id *dmi)
++{
++	/**
++	 * match the broken bios for ryzen 3000 series processor support CPPC V2
++	 * broken BIOS lack of nominal_freq and lowest_freq capabilities
++	 * definition in ACPI tables
++	 */
++	if (cpu_feature_enabled(X86_FEATURE_ZEN2)) {
++		quirks = dmi->driver_data;
++		pr_info("Overriding nominal and lowest frequencies for %s\n", dmi->ident);
++		return 1;
++	}
++
++	return 0;
++}
+ static const struct dmi_system_id amd_pstate_quirks_table[] __initconst = {
+ 	{
+ 		.callback = dmi_matched_7k62_bios_bug,
+@@ -168,6 +188,16 @@ static const struct dmi_system_id amd_pstate_quirks_table[] __initconst = {
+ 		},
+ 		.driver_data = &quirk_amd_7k62,
+ 	},
++	{
++		.callback = dmi_matched_mts_bios_bug,
++		.ident = "AMD Ryzen 3000",
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "B450M MORTAR MAX (MS-7B89)"),
++			DMI_MATCH(DMI_BIOS_RELEASE, "06/10/2020"),
++			DMI_MATCH(DMI_BIOS_VERSION, "5.14"),
++		},
++		.driver_data = &quirk_amd_mts,
++	},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(dmi, amd_pstate_quirks_table);
+-- 
+2.34.1
 
 
