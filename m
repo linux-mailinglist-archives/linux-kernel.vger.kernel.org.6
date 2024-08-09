@@ -1,150 +1,257 @@
-Return-Path: <linux-kernel+bounces-280464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6649594CAF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:09:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 380B494CAF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22DAE2835F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:09:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8886F283958
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD9B16DC0E;
-	Fri,  9 Aug 2024 07:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8F516D9D8;
+	Fri,  9 Aug 2024 07:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="cUK+2OxK"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KfYkvVgW"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011065.outbound.protection.outlook.com [52.101.70.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9733D16D9B1
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723187343; cv=none; b=blUoSEW2vzSby70HMgfByMM5jIgSpDuBley6eQwxjUe4F0GACi1D6LuPuB1clpzU/PK2SpVtbnWuQ0iX0W2dTMFKGaieMrblv/PIj3k7Ns26Ujqtz4CaCwZMqEQsL5I0eDVeq6QKNEibw5Ec594lDBe91eFqRGhyktu1z3nlJQM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723187343; c=relaxed/simple;
-	bh=VfECz7OPrQqPTCXZmokmOw+YGaGRk23fu+dwqvsd0QQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Q6JAXpE3cwz1JbEJg8nYkWD4dmGklkQ/BvOrET1FISIaS8bGqIJuPcrd3jcnPopGqMPf5gdic3bg7UM89ixGmJ1c6lRE9XqAfUkA1yrNqxUkBGYCQeU0AapzgeyJUuwhcWkFeOo8y+lcxfZw9lRuFjJ1C/4pZVbbA6Epc49mWtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=cUK+2OxK; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a1c496335aso686897a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:09:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1723187340; x=1723792140; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uyevx1eSZveednPIyrWDCVPvbsLJ4CSv84HEJGwgqRA=;
-        b=cUK+2OxKdFs3j66gaTn6DtxLCFKl/B5tVAn18w+VYYnqMzHK5Kj74JR5FpKsi+1B44
-         DOrmmM3HXPfOEkLlfXkFv9PDEPndLzAnfitoKe9JmqmwjSXxynLyx0Fi+aZjCjhBizvB
-         EcMH150UGj3Anoi/DQfiBwD6fRKV4QRBSx140qzBSrT3v7b2uZIqiNAHMBXB6/kpL91G
-         H5TyF0B8Zt7oJ5+w0cMXnybdq3uvY4kNMQWsfHYTmN9kD/qBwCD82bA1HVdaCIg/heWx
-         L++AuzEdgVw0h6RC4C2hKbtvc6lbNGDwzFmMytRufKAvmB1/BGuhOuzy2dhMHTCvhRgL
-         3AtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723187340; x=1723792140;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uyevx1eSZveednPIyrWDCVPvbsLJ4CSv84HEJGwgqRA=;
-        b=hmhBh8FbQG7JN8KPQxHV2AXrT9fQS6YsJGUronuijz8sqO3R+n4Z+ySojEMgaMnzSK
-         JZaWQcoD9k2Bu1bi6uUsPu1nXGxMoJwJ5auR/rcu8WZigrRocXL81LGbD1I2N2Kzi9TH
-         Wi2vFwXGE76G3ISxlZZwK1sDVylVT/6C9Ymd/gDVPnbF0oaBY66DfM8gZtUnE0D75zZi
-         Yc72YVk5DiwL2otQQKWD6nU1EYmL8A169/Y9k/4ebLv9gaUx2uLNSxFP1BveKgRb+3H3
-         pydzbNDNla3D8iJB610teawCj7TCsSRYFtjtG0a+UVoXuO3keOy+9aNXrnboG54F39Yb
-         8GOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHFWTYUKV9I4c6H55MVggapM8rkpyUz21alpJ+nkg4VIFKO11ofk8pTUaXFFgjSLjVvqh9dE63OdjFKMkVNjxICpZ6wwEzYgZKMIHn
-X-Gm-Message-State: AOJu0Yyh/EYwpxS1zGZ7Dh2XUKy72F6p5/LdxShHnXbr6DLs1f4MTeDL
-	Gz4XQ9/KSQcs081NZNpgn7OkYPQc0w7moY+QZS2LcIjptKfn4N5RnM0qa9ib9WA=
-X-Google-Smtp-Source: AGHT+IGS2QSI7Zek1QoyFMiJIsl9IBJLkppjoDYkqSIfv+JYsY3kSxvXPRLfJWdBp4iPNDsWfQLR7w==
-X-Received: by 2002:a05:6402:2116:b0:5a0:f9f7:6565 with SMTP id 4fb4d7f45d1cf-5bd0a577cc8mr714543a12.21.1723187339798;
-        Fri, 09 Aug 2024 00:08:59 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.180])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3d77sm807642866b.43.2024.08.09.00.08.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 00:08:59 -0700 (PDT)
-Message-ID: <8359caf0-5219-47dc-b68b-41486757be92@tuxon.dev>
-Date: Fri, 9 Aug 2024 10:08:57 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD0916D9BF;
+	Fri,  9 Aug 2024 07:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723187378; cv=fail; b=WSkFXUwD0I1Q344in+sBJeIArj6GFW+FdYNfbBjxf7KKHf0VormiFcKYmXZ2kJ/Umt7Yz248UoLLbgeWsy4pT5FRsAx/QZJoyQ7yOXoeVMAeW6e1Vd0AT5t70CVQmrF/fOhdUgxkobA+6xg+IEr+ougGF421BInCsWQUvDR2pWs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723187378; c=relaxed/simple;
+	bh=rddV5WwzcURkFg/j6NgUPj148Z8UCVlqW5fTmbn+YEU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Eo/6Pkqoir/ORBeh5XkHROVrZTFsd6Hy2Du26JDB2tBRZsQ1xyXDbcalJJBpnPhpDUZTQdHaCsWcKxlUYhTrvmgE8i8jcIBDGustf+OQMdDx3k4k5CATOAK9PX2/rrW2pZKO+2YSKm9N4XCg1C8bzQlq2avw/bHfKcTBAVrc9q4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KfYkvVgW; arc=fail smtp.client-ip=52.101.70.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Tbp7ChaIgQgSkF6W4n8FNa49GRtwB+Xnchg8lJ6HTXUJTNja1+6cNcRpRT0pEPpOR1rz5R15bAP/jDErT5QUjc0TjRcnDfyxjQzsKaoTOyCdu+n6DHgKF0yStMF/Lckij0kCPorykxH60zezxC+a3IlxzijMqiAc3Lnrg6ZrQl/EXQWKAiz3ASwzW5jCqqYw+ykRER6kTBqQGs1MlpbVVCP+Woakq8frVHdO6Od7PeF8Mj4vQJbSd08pPnQqEaJRq5tfREZCtt3tksYpFLUycCuKOjfdMO/cClFtHOaYNqDlLtc8hs20TtLu1KhllHsYTQQjss7T7BYBKfP59ZVWWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RSpxOVv2peI/TE9WPKSrMgugRO4HuTWLRu/U0dfqEjg=;
+ b=CR8VNvkjAhnmuUltk4loBy5Qbg7prqm2dOzNDWLSEwoDeKQf7hGp3ubw3h/p6ePvCgkWVfrbyiQWuogqWo7o8BkqbcmiqzZHeBDAOWk4DWID6rTyeUXGOyYrN7VSbjVf5kgaRZiSbOdA4Eb9EisAHejb+tctezCZssBAjofrgX1HnVmmZVbeqXzfrJ6o8Hux/KWQFgW6PVGJsQg+OQsh9SmLFSH+LVq82aVRTIrDPATtFcDNghcbVFu13O/uAl5YPYkh6VgUC6O9Q9y0Epr+WbBC/fD00VSP89GQg4c2gyOrIkeZwRypTbQD2wU0VJ+8Hn8oVhEWdtVR1Ao1qfjB7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RSpxOVv2peI/TE9WPKSrMgugRO4HuTWLRu/U0dfqEjg=;
+ b=KfYkvVgWNr3/BSH6TI5fIwgpu8kXPtbYZkLbyRXgc7G4kDcimLtBx3diw+KQLfntFknMKF628/9/wzD0g27aXxwHzhTaAf+ZOdt1g3u4VNhOf+Lvt1dMK90ZEV2udiNngOwhpmubPw67G7VTzr0QSj82bs/fDOma+J/HTScabk5LyXRvi4A7VtNcVRhDLbGfPI7sfns3E8golSh4x0vxDLCby4iz+oi7vIG6cicsxAuwnSN5QcUv7zOwrpDwnVmkKsGHBAQcxTOhSao+T6qlsh7IO6IXAzP5OgeTpBbK/nbvX/QOmAgJFghyoAPZz8tHut0tNNW2H1uyQ/lD35Er/w==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by PA1PR04MB10842.eurprd04.prod.outlook.com (2603:10a6:102:483::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.28; Fri, 9 Aug
+ 2024 07:09:33 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7849.015; Fri, 9 Aug 2024
+ 07:09:33 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"jirislaby@kernel.org" <jirislaby@kernel.org>,
+	"u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>, "Peng Fan
+ (OSS)" <peng.fan@oss.nxp.com>
+CC: Sherry Sun <sherry.sun@nxp.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>
+Subject: RE: [PATCH] tty: serial: fsl_lpuart: mark last busy before
+ uart_add_one_port
+Thread-Topic: [PATCH] tty: serial: fsl_lpuart: mark last busy before
+ uart_add_one_port
+Thread-Index: AQHa6ZqEOE3e4yv4QUiDdqKPWb8K9LIde80AgAEBN6A=
+Date: Fri, 9 Aug 2024 07:09:33 +0000
+Message-ID:
+ <PAXPR04MB8459C70644E1F1852A0782FB88BA2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240808140325.580105-1-peng.fan@oss.nxp.com>
+ <3306657.aeNJFYEL58@steina-w>
+In-Reply-To: <3306657.aeNJFYEL58@steina-w>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|PA1PR04MB10842:EE_
+x-ms-office365-filtering-correlation-id: 08d2e391-b8d9-4404-d486-08dcb842386a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?Z/yo8iDc2KT6OST3Mb9P54I+TkvQf4HZAn5IdZWk8/TtCYWDdEuJqRxdYb?=
+ =?iso-8859-1?Q?IBuDroRTabUiTsZl7SgpGzzLM/w/lfGG6p243JnZzykBTQjvSpVlYTejZC?=
+ =?iso-8859-1?Q?u+tSBxO+P9ngHmzLVULDRjZa2P0bB/ZubglVdtmT8xQcjOXnt8NQc2ce0Q?=
+ =?iso-8859-1?Q?c0LWUMxRr1AXb+XdQhxaX73Xq1RZZFtlh0QOL41U0jkEvs05CukIG6GBfD?=
+ =?iso-8859-1?Q?04in2NNeQwUxU76ITtWR1tahlux4MDuqTpxZHpcP+bU67uyulPV/HCgIzY?=
+ =?iso-8859-1?Q?CIatZJU9kn8dCzamDUBW9LFB6BdHSSMQRTXNedbHJbY3AJIRzHk/QiKs78?=
+ =?iso-8859-1?Q?Xfxlxkd/Jt05Vq5DGxEJFVcXWtwG9h39IYvlVXWxJg879wqfnurS7OdYSR?=
+ =?iso-8859-1?Q?yRVP7pCVyS0IjtqjlpwqTc1iG2TN+3KmYm/JctXdPx4mpj/d64Yb2Mr/Os?=
+ =?iso-8859-1?Q?hQkaFoP8xxwt6xEhvux0Q7L04pmOb9KkqahfB6xL8OOWzPriyH7IVLCFj6?=
+ =?iso-8859-1?Q?oQfcBFWyFaoebfB1swrT1wv5uum2+FR0aKHdqCwCQ0ZuFC36NE08z0lmAY?=
+ =?iso-8859-1?Q?5EbUm6BqhZasEfDDhNagQrr/BU//zhlOL089tulZOnSI9DcFG34V/GDV55?=
+ =?iso-8859-1?Q?Op3s4unmNVCMq+x7Ghol5yyWGOifL+Ct5sYB8CF0t/wKth+8PmCxrXjDJW?=
+ =?iso-8859-1?Q?L7ah4JFVxEhVYu1ZiGP5SYx5AsYPTxMWzCEkzEczA7HuL9b1PraSLGk0Lm?=
+ =?iso-8859-1?Q?7Rh3yQztsoQLgAh1uIE9rUT/yOQaWpLb+bD3lJOw7t3Le/T129auasdPzQ?=
+ =?iso-8859-1?Q?1lruAjj80k0TprLup/48LxnYT15TowqszhDCLNMFm/UWBdjkkTdwYua8AD?=
+ =?iso-8859-1?Q?3VYwXVMQ6F6b8pWzTwEiQWE8Z2LBaJlqEVEwiYK55wlDo9rLvlRDWDdPVy?=
+ =?iso-8859-1?Q?YD/HCGl/SCI3/GSfH6OcPrSl2C6C/yPlCi3U8rWySf+R7KUVG1O7bYBWND?=
+ =?iso-8859-1?Q?7AQ2yCr0Kv34noHeWK08jbEZ2DJZz6Pgwfupx2rPXG2/qEhPl6elqzPven?=
+ =?iso-8859-1?Q?0shK0wfR7Y2i8a5mV7Bqj4fq/sMq8jVjd4FpWoTNgVgYgz3OiPV72MUWFO?=
+ =?iso-8859-1?Q?XdHC7It08k+POF1Eq/1Sb/HjX1aUhhZn+rUO/SPeMljvb9+l5MbgCwvajV?=
+ =?iso-8859-1?Q?eX35lmW1vHTT+y+9w3rfjFQAlGPN8mBbE7O4bKFuh5KRANFE2GjO5/nzKV?=
+ =?iso-8859-1?Q?5U6/DsaWUxd7nkA7zHuH4Bq2ab6y9pyc57+I0i25V/14p2AxPD8gMFxRAw?=
+ =?iso-8859-1?Q?6cxLWkuJWNf2JvxlZfoS4wvDtPVU7tsDUfsxdPcaMTPNiTFUKTHD4thFdm?=
+ =?iso-8859-1?Q?pIBoFIrU/Oh25MDLclU/U1sdyoImkcqxzpkjoWzyJudpS4Rb3u9pg=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?7naE000uKPTNrboPfQLqH6mhLNciOtWBo542lsjhLRjwwMGYxTI2gv3CqI?=
+ =?iso-8859-1?Q?83mG0pbocBCy24NwJxeJ19vBN4UOOpdc93NoY+U4bcGVjKOy337t36O5mb?=
+ =?iso-8859-1?Q?02H0XdfE8H4SmKJy7I00yICmvSaSgowmEGWoKn6/w+jwbhLe2qSdkTK/z1?=
+ =?iso-8859-1?Q?2RpM/pA65Doy/b2OsLQQkKS+EwLaqc77zGMJB2EKJwfGm41R1NTAbMG45/?=
+ =?iso-8859-1?Q?8sc9AHrWZ75QB4wgjUeTwvoe4KqyFfqrcmfdvT4K22Bgh4CCffv8XRzNN8?=
+ =?iso-8859-1?Q?MoAWRS1lP/CrxqUFyagKpRRUCRiwUbZVlwvuDEELhP53d/hAFnMcunX+X1?=
+ =?iso-8859-1?Q?uzGuSE3PqlcOHojhtji8RMm2ge4BGQ/viYJOr2AVH4d6N3xP1lu6Aeq7Xm?=
+ =?iso-8859-1?Q?e6wDx50e2HVuLs6yNKFdGMZPt8vkgRxGGMzSTWtb7OEs/18ozc1ahHVWNK?=
+ =?iso-8859-1?Q?k3fUzAbPmaMR78YH1cl2MDYyNFrS6CXp+4dk3t9PfhTZSAU5lzEyvdynGg?=
+ =?iso-8859-1?Q?G56dXIR6nq03a0oKqXjuyR2N07qi3cP6zXNa25rNLzYWfB7oP1GwVA7RDg?=
+ =?iso-8859-1?Q?e0tqhUJlPBqg+fQQCYJdjzpUw2D2avZYvMW5d1RI5lKxaq8+Vhwu/f8+UB?=
+ =?iso-8859-1?Q?dcHbTKf+suCga7eg+rZhbH9ePiZE7pwcmU/nxwFS2Tq4ekURK/9h4CM6CK?=
+ =?iso-8859-1?Q?/RuaAcdquuxDNq126Y++2mJ77oOAa5bA7mpbCSgQqc7TcrdXTedmjI8mrL?=
+ =?iso-8859-1?Q?12Av9lXNd3zHlICVFU5snuKGR9BJc8b8JiesS6Vyd9/471R5Ir/1nYDEmg?=
+ =?iso-8859-1?Q?MVoRYHuTL92B6E/7Tof+9S6aj007oxBHEb9Vju5cs9uMH7QHw7mgPMCZYB?=
+ =?iso-8859-1?Q?+2PolmALLMxq7W1HjhF8DwN04xSsXLrMwv0yRWtMQcPO2/ZflC/AM2wGrB?=
+ =?iso-8859-1?Q?HSkz5xqT7qjR5vPD1843KaXeWSKv4OvIuLRJBqaFJgs5Nj7eZLYCwM3tfy?=
+ =?iso-8859-1?Q?cmtyGpCfVxtyclDbnoNTHSl/GLQfLv9i+BYOtFECE5Byxl1hkIzz/+89Vg?=
+ =?iso-8859-1?Q?H0cm7JedA27IbStXZRhJoExUb9I2Gq2HduaDwjwhN/VnoaKdxdZ/E/XyCf?=
+ =?iso-8859-1?Q?hAEI4o42fZIr8fpEaZ1BPM6mMCJ0FydZBDznSk7xlN6BrVEKGkrvusbAhb?=
+ =?iso-8859-1?Q?eVSuH+3vutggKFGTuAvyYR/+3PKX5JwpbafNFD7VaLtsJHrTfeyDhZ366r?=
+ =?iso-8859-1?Q?S++tz9yBMz7jePaJM4yFQ9GdGUZUDYvHpX8HlnpNo/LUcbNyubOUmxBtqX?=
+ =?iso-8859-1?Q?AGLbA44RsR8vdQVImuG9o6x8195iCL9xbqxJesi5Bu3Z27tBH5nt99ssWR?=
+ =?iso-8859-1?Q?kCbC2SmtY0YkRuNk6e108m1o2tMUUDAhJpDOwSgxkbNwJm8Gd92HWehXXn?=
+ =?iso-8859-1?Q?DCiy6tck/j3WW/h+NXKyCUqoZ9r9YhKxBK32w2y61PkN5N5ITAtuE0vbwr?=
+ =?iso-8859-1?Q?gsAAs+egz5P9+c9B7Sl3q8j9RKd6MlZ1HQeeuU0yD/USU3YOZ9ck9GHWdE?=
+ =?iso-8859-1?Q?VZrrkYWnDb5cmzMmCX6BNS8OX7gh/YpD92Bu0vUnpCz5ZKbFIxxb5lemq6?=
+ =?iso-8859-1?Q?mLeWb6qVX6EXg=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/11] i2c: riic: Add suspend/resume support
-Content-Language: en-US
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
- magnus.damm@gmail.com, p.zabel@pengutronix.de,
- linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
- <20240711115207.2843133-6-claudiu.beznea.uj@bp.renesas.com>
- <ZrTg-_Tzmu6whv_W@shikoro>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <ZrTg-_Tzmu6whv_W@shikoro>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08d2e391-b8d9-4404-d486-08dcb842386a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 07:09:33.3555
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yaJ6lX3AeT10HTdSFGDAgZ1opLftph9V0wZ5L8WzVASCrBuLCa10MBCOGqDBsjY1ZMdtleJfumhxWxWWtRlXTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10842
 
+> Subject: Re: [PATCH] tty: serial: fsl_lpuart: mark last busy before
+> uart_add_one_port
+>=20
+> Am Donnerstag, 8. August 2024, 16:03:25 CEST schrieb Peng Fan (OSS):
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > With "earlycon initcall_debug=3D1 loglevel=3D8" in bootargs, kernel
+> > sometimes boot hang. It is because normal console still is not ready,
+> > but runtime suspend is called, so early console putchar will hang in
+> > waiting TRDE set in UARTSTAT.
+> >
+> > The lpuart driver has auto suspend delay set to 3000ms, but during
+> > uart_add_one_port, a child device serial ctrl will added and probed
+> > with its pm runtime enabled(see serial_ctrl.c).
+> > The runtime suspend call path is:
+> > device_add
+> >      |-> bus_probe_device
+> >            |->device_initial_probe
+> > 	           |->__device_attach
+> >                          |-> pm_runtime_get_sync(dev->parent);
+> > 			 |-> pm_request_idle(dev);
+> > 			 |-> pm_runtime_put(dev->parent);
+> >
+> > So in the end, before normal console ready, the lpuart get runtime
+> > suspended. And earlycon putchar will hang.
+> >
+> > To address the issue, mark last busy just after pm_runtime_enable,
+> > three seconds is long enough to switch from bootconsole to normal
+> > console.
+> >
+> > Fixes: 43543e6f539b ("tty: serial: fsl_lpuart: Add runtime pm
+> > support")
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >  drivers/tty/serial/fsl_lpuart.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/tty/serial/fsl_lpuart.c
+> > b/drivers/tty/serial/fsl_lpuart.c index 615291ea9b5e..77efa7ee6eda
+> > 100644
+> > --- a/drivers/tty/serial/fsl_lpuart.c
+> > +++ b/drivers/tty/serial/fsl_lpuart.c
+> > @@ -2923,6 +2923,7 @@ static int lpuart_probe(struct
+> platform_device *pdev)
+> >  	pm_runtime_set_autosuspend_delay(&pdev->dev,
+> UART_AUTOSUSPEND_TIMEOUT);
+> >  	pm_runtime_set_active(&pdev->dev);
+> >  	pm_runtime_enable(&pdev->dev);
+> > +	pm_runtime_mark_last_busy(&pdev->dev);
+>=20
+> This change looks sensible to me. Is maybe [1] addressing the same
+> issue at a different level?
 
+If the lpuart driver is built as module, [1] could not resolve the issue.
 
-On 08.08.2024 18:15, Wolfram Sang wrote:
-> On Thu, Jul 11, 2024 at 02:52:01PM +0300, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Add suspend/resume support for the RIIC driver. This is necessary for the
->> Renesas RZ/G3S SoC which support suspend to deep sleep state where power
->> to most of the SoC components is turned off. As a result the I2C controller
->> needs to be reconfigured after suspend/resume. For this, the reset line
->> was stored in the driver private data structure as well as i2c timings.
->> The reset line and I2C timings are necessary to re-initialize the
->> controller after resume.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> ? Doesn't apply on top of the previous patches for me?
+And if lpuart driver is built as module, [1] might break earlycon.
+of_clk_drop_stdout_clocks disables clocks, but lpuart driver not
+insmod at that time.
 
-I just checked it on next-20240809. It should be due to commit
-e1571b1fb4ff ("i2c: riic: reword according to newest specification")
-which introduced changes around riic_algo object, present also in the diff
-of this patch.
+The current patch is simple and easy for backporting to stable
+tree. [1] is not suitable for backporting to stable tree.
 
-> 
->> +static int riic_i2c_resume(struct device *dev)
->> +{
->> +	struct riic_dev *riic = dev_get_drvdata(dev);
->> +	int ret;
->> +
->> +	ret = reset_control_deassert(riic->rstc);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = riic_init_hw(riic);
->> +	if (ret) {
->> +		reset_control_assert(riic->rstc);
-> 
-> Is this assertion really needed? It is not done when init_hw fails in
-> probe().
+Regards,
+Peng.
 
-In case riic_init_hw() fails there is no recovering way for this driver,
-AFAICT, and thus there is no point in keeping the reset signal de-asserted.
+>=20
+> Best regards,
+> Alexander
+>=20
+> [1] https://lore.kernel.org/all/20240808-gs101-non-essential-clocks-2-v6-=
+0-e91c537acedc@linaro.org/
+>=20
+> >
+> >  	ret =3D lpuart_global_reset(sport);
+> >  	if (ret)
+> >
+>=20
+>=20
+> --
+> TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld,
+> Germany Amtsgericht M=FCnchen, HRB 105018
+> Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2F
+> www.tq-
+> group.com%2F&data=3D05%7C02%7Cpeng.fan%40nxp.com%7C40e104d
+> ceb2146494b3608dcb7bea82c%7C686ea1d3bc2b4c6fa92cd99c5c301
+> 635%7C0%7C0%7C638587276699315042%7CUnknown%7CTWFpbGZ
+> sb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJX
+> VCI6Mn0%3D%7C0%7C%7C%7C&sdata=3DF%2FHNvj%2Bh5VdTVfRaYkXF
+> VwYfm7NTUcy2o4UaewMHvT4%3D&reserved=3D0
+>=20
 
-In probe this is handled by the devres through action or reset function
-(riic_reset_control_assert) registered by:
-
-ret = devm_add_action_or_reset(dev, riic_reset_control_assert, rstc);
-
-if (ret)
-
-        return ret;
-
-
-Thank you,
-Claudiu Beznea
 
