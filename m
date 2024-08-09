@@ -1,126 +1,118 @@
-Return-Path: <linux-kernel+bounces-280481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B3A094CB35
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:23:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC2C94CB3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B3628767C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:23:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC186B24249
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD8E174ED0;
-	Fri,  9 Aug 2024 07:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2BF17557C;
+	Fri,  9 Aug 2024 07:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i/yqMHyX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VMHjWnl7"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB1C170A02;
-	Fri,  9 Aug 2024 07:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDB11741C6
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723188220; cv=none; b=RiYd4OTKS7f7pJlBgq4Y1Uc2e0p/NMdsPxkcYqTmFQ4LbKpkU3DhY3db1MV5QizGsP5RRn48DaUwpkzXKF63zVWJrkCJVCXCCTuoEOFxgYqqN0l8RS0tOXg2YvHOFEBslyx4ZFAsCaUggLHDNWUosG5/xz3wHUQDMiw8Dh2mwuc=
+	t=1723188258; cv=none; b=aeG6X/vtmKH33V8oidyN6ZkRa5j8mxbqmRRD5onAsGrTISTOLpa6e8sYZBklsK7eBPiKlDZOF4jUBo8YVlnUjNd/A588HtLjJyy1Njnr3I1B5COZzAnV8vly2EZlivoMOQckf5eZZ0OxmIggbRdlFo+52CiIB3PuR2QwhWernYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723188220; c=relaxed/simple;
-	bh=UOQfJg5xhp8GyUKgK0ri3glpubgJdIRJ1MSNnWt0Npc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZYeLsxbm9Y/mkE9dZ0eBOd5ezY9zRX7TCSONdSsO7l8IrYiKigHg23YU79vlSrPBvjGc0HsHQTif55WpsN/EmAOzwgtOyv+2fcrUJZHb2j0a82YiZC26D5a5M70CpDQG40WdjFIZR5UOBcXLynmFJBkAoh4G7Op06tLKCG2Z/4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i/yqMHyX; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723188220; x=1754724220;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=UOQfJg5xhp8GyUKgK0ri3glpubgJdIRJ1MSNnWt0Npc=;
-  b=i/yqMHyX7ou0r/nw55+hHf1OSMEis2vPLtfehq8JOlcNQUCcffJu6v93
-   VtRYoKiBvEJa98YD5JuFwoe3jJ4+dHagk5TCTi6G/8vdf70L1kE2wXWgL
-   ehkBMRM9FjU7XcB1heashgb2k53iiebdkhXLQFvo91NIoZzajMaBPBTDG
-   aIbPOcsZi41OXQ5RxmuoEpMvGN+0AxwOBbVkD7WvvOCfA772QvDFrQzE0
-   z8zy/E1NNH0gZiSCdVIr1tHS7GEIETIfuzzOjDsFf4N61pd+CnWh5FOaf
-   xSQIOCuZizHlNzPehFJ2l3X3fJv6HB81kPetfuElXaGaZDJGfTGcLiBqD
-   g==;
-X-CSE-ConnectionGUID: tGb6Q2YmQNa3pQEyax8/Og==
-X-CSE-MsgGUID: vIN59I3JTcOaoFmCeychoQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="43865713"
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="43865713"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 00:23:39 -0700
-X-CSE-ConnectionGUID: qpbQjXdrToK1gPdsnsmSyA==
-X-CSE-MsgGUID: J8vSJt0gQ2Gw2Z799Ra7uA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="61878939"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.119])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 00:23:35 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 9 Aug 2024 10:23:31 +0300 (EEST)
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-cc: Fenghua Yu <fenghua.yu@intel.com>, 
-    Reinette Chatre <reinette.chatre@intel.com>, Shuah Khan <shuah@kernel.org>, 
-    Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, kernel@collabora.com, 
-    Shuah Khan <skhan@linuxfoundation.org>, 
-    LKML <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftests: resctrl: ignore builds for unsupported
- architectures
-In-Reply-To: <20240809071059.265914-1-usama.anjum@collabora.com>
-Message-ID: <d60cf782-9ab0-ed4a-0b3e-ba7a73ae8d51@linux.intel.com>
-References: <20240809071059.265914-1-usama.anjum@collabora.com>
+	s=arc-20240116; t=1723188258; c=relaxed/simple;
+	bh=uzGnaSKlR/R50GQ7A4X84un4jnegurSJZ8rylNS/d2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ImRZRiFVUZvhdgQ6Kqxq4O38uEHvQYc3G3sgJTMFfyltgFnBc8mdevuyQNsecHxPwrDAwR1BGgbG3kwUiFMWoisUoiivwr1eYXJ2jHBPY9ZXZsY56yHQPzY5TobtTpYbN+grTfXjX1PJzlH4PN3e8ksmPlUOtqsUDKnbfYt43qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VMHjWnl7; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7a9e25008aso212742366b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:24:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1723188255; x=1723793055; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mdnmq+Slg6i3Npfhfe9yUOafdUaerhQWvFa4LDjEPFk=;
+        b=VMHjWnl7GVELrh8snRtVAS40eKygxzuX5UEb72vEi1bRq75hgrh8a7+XKltULBeENf
+         /2lfesG5Rg6uChAjo1TOcR8vzWp8oEv9kFaK7aSpIGunq7BLxZkH+KPIbtRjqiFk82MR
+         br1zNlGOT59ONZazkblc49XJiPBWn1Ucv+SyXeqcUBz54epPuy9mFMwYhShhQmjCqBLq
+         8IDl86xC1yejZLnyCWu2+bRFd/d/hQmSWTFa2YELWI0hNi0YjjQEipfk8eFXyfxAKK9h
+         3LN0QmCvu4OxUWXZlLpCAou6mtFJnpvnFcxWivKizrpAl3kKF6l4VbHSq8y7isAV+YF1
+         7gTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723188255; x=1723793055;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mdnmq+Slg6i3Npfhfe9yUOafdUaerhQWvFa4LDjEPFk=;
+        b=H1Xm8y8fW3LSD9QIIo+BksgbwELPlXzBpRvqUp2U0SCtd8EvamihuX/N1AEN3jl5gb
+         zibu+LbqaAP4Tz26T69Xy65JINteVy2JgczssrIkYLGNsl5mI78cSX36UhXGOM0oOvHh
+         WOiWz9pniQ/+uE+k0Nv0xEJkGqIUEn1TOYiYxWBbklH/hY71CPnCeDNfMkoYWdtbcdAJ
+         Slsx5kQhePJqu/Hm+oVJjGx1foFnBdJaYR4mKJIQRPC6MZeuuJpzdl6pvHZF1iOt6a8j
+         XgfoBo8orF4iJDmF6n069eDXZbK3Vyrdumhe68KcL0s5tKVe8gsY2Vb8IUlUbC94MU0d
+         IVnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWv7ZMO/ttvhSPgVZFRgzWk/vVeRbmWNw+55e9dx5BHj0JUtilSYKCHqeSfXxUchA1xxeDtdmHhKjtr+ukfoDHNehndZ+KtsyQB/Tw
+X-Gm-Message-State: AOJu0YwHFnv0K6AddrxOM/Q0mT9NtRf3hghek6JY/KhHOsghFpKT8uRm
+	Bs5VMxZV8RwpcJU2kXYiBcNg1IhwOi9S2XGS4ouH0gUQwOApJEWNZL/VzkE1hDo=
+X-Google-Smtp-Source: AGHT+IF0hro6QG4NNQgLsufiIvP4PS8yLQbWRBjrVjQgDfQEoADKu7uu1sGInmEV7NS4hQXsd4wclg==
+X-Received: by 2002:a17:907:5c9:b0:a7d:a008:abca with SMTP id a640c23a62f3a-a80aa673651mr43072566b.56.1723188255076;
+        Fri, 09 Aug 2024 00:24:15 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.180])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d437b0sm811352166b.114.2024.08.09.00.24.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 00:24:14 -0700 (PDT)
+Message-ID: <349e240b-64cf-43f6-9ebe-2598bff9f6d9@tuxon.dev>
+Date: Fri, 9 Aug 2024 10:24:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/11] i2c: riic: Add support for fast mode plus
+Content-Language: en-US
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+ magnus.damm@gmail.com, p.zabel@pengutronix.de,
+ linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240711115207.2843133-9-claudiu.beznea.uj@bp.renesas.com>
+ <ZrTjgqBlq0xM5VDq@shikoro>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <ZrTjgqBlq0xM5VDq@shikoro>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
 
-> This test doesn't have support for other architectures. Altough resctrl
-> is supported on x86 and ARM, but arch_supports_noncont_cat() shows that
-> only x86 for AMD and Intel are supported by the test.
 
-One does not follow from the other. arch_supports_noncont_cat() is only 
-small part of the tests so saying "This test" based on a small subset of 
-all tests is bogus. Also, I don't see any reason why ARCH_ARM could not be 
-added and arch_supports_noncont_cat() adapted accordingly.
-
-> We get build
-> errors when built for ARM and ARM64.
-
-As this seems the real reason, please quote any errors when you use them 
-as justification so it can be reviewed if the reasoning is sound or not.
-
--- 
- i.
-
-> Hence add support in the Makefile to build this suite only for x86 and
-> x86_64 architectures.
+On 08.08.2024 18:25, Wolfram Sang wrote:
 > 
-> Fixes: b733143cc455 ("selftests/resctrl: Make resctrl_tests run using kselftest framework")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  tools/testing/selftests/resctrl/Makefile | 2 ++
->  1 file changed, 2 insertions(+)
+>> +	if (info->fast_mode_plus && t->bus_freq_hz == I2C_MAX_FAST_MODE_PLUS_FREQ)
+>> +		riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
 > 
-> diff --git a/tools/testing/selftests/resctrl/Makefile b/tools/testing/selftests/resctrl/Makefile
-> index f408bd6bfc3d4..d5cf96315ef9b 100644
-> --- a/tools/testing/selftests/resctrl/Makefile
-> +++ b/tools/testing/selftests/resctrl/Makefile
-> @@ -3,7 +3,9 @@
->  CFLAGS = -g -Wall -O2 -D_FORTIFY_SOURCE=2
->  CFLAGS += $(KHDR_INCLUDES)
->  
-> +ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
->  TEST_GEN_PROGS := resctrl_tests
-> +endif
->  
->  LOCAL_HDRS += $(wildcard *.h)
->  
+> Shouldn't that be something like
 > 
+> 	t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ
 
+You're right, it should be.
+
+Looking though the HW manual, it specifies this about FPM bit: "Set this
+bit to 1 when using the transmission rate within a range up to 1 Mbps".
+
+Thank  you,
+Claudiu Beznea
+
+> 
+> ? On R-Car, we have to enable the FM+ bit as soon as we exceed plain
+> FastMode bus speeds.
+> 
 
