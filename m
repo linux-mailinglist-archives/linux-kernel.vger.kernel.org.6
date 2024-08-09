@@ -1,134 +1,153 @@
-Return-Path: <linux-kernel+bounces-280636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD3D94CD23
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:17:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021C994CD2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBE6CB21321
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A20381F219EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B053818E77E;
-	Fri,  9 Aug 2024 09:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FF51917F7;
+	Fri,  9 Aug 2024 09:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MmWhZGJw"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmkfAsw4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE6A18C329
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13A616C87C;
+	Fri,  9 Aug 2024 09:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723195049; cv=none; b=YyNLwO/WhyjDdhoTaYKWYxnipXcAPI85SSpEi5dbh2Dd2PDoJEkj8hK4V39kWZsAme1MeLbH68dVknCqmqw8J515XwOOuqdfuS/iJ2FCvLFUEITRIwkqQNJnfS4KLeetrD3bxM584MbwojGwRKyJ0gk2BfLOMbHUvPRQc+CobL8=
+	t=1723195083; cv=none; b=pCV24WMdNpV88sP3vOIXXr30nb/0Lp7iyvwivyrL3bYx8oRVt1dxzWCR0pGMy29ioaQgwZGpRsGIPWLEpAquAIyhsgLrUPK3KYe2aMwcXbQv6LRqRMoTGelxNJ9kI5cvU4Ci1Xy+MO0kElLWOm3pp/n1atEKlEP1mWtPIqv4NtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723195049; c=relaxed/simple;
-	bh=igugQdRXVlIowamKTTuJc1HvGonj6sWWYikfdzHf0q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+BfI9eTn472EfPT+WdW2nngxPxHkz+RQpI3/Wvlpa06wYqu+2OpdBDwV9+r4EkCmmUv6PhjAaoUeFKOCV+CiOq5iAXyGRUijHisfKdNO9HJ5wW9CCJLthGACaI5H5Sce7wHdNNtW6ofI1rPDV3u/P2bS4WbWzLeV3deNiHrhXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MmWhZGJw; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a61386so2413558a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 02:17:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723195045; x=1723799845; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ryfApYxhX7PXGbTIMxg0b4RWcSid+CaUrEM5mIYRhSE=;
-        b=MmWhZGJwQM2GRcmXSs1c4B3aEzhpP+pat7WKOjOu3coJfXt8CEPoY0UtufGtNCghjH
-         nkFfx1NOaW+wwBHi96naijBCrmFd0AdJSQXcOyeIIws/wZAQkhxDpoaGmZNs33Il/gR5
-         GgjEIu2ohOVxCBpQRFkKrhDnYMIAoUadUMk/xnBrdh9fhLS7bRWbuAKN+jGJJT6p7ps+
-         10rzYRZqzb1ZKQMgQOSyxQq7Nfr+wIgtjmTJB2Yew2M4DpwynoIa83UutzSOyszrof3R
-         uoY8Zch+s+MwqwYfaKzIjfc1dU8Oh3rSKeAehnzu51vkGaJhYZiXkkjHm4hOv06tg3C6
-         LqDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723195045; x=1723799845;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ryfApYxhX7PXGbTIMxg0b4RWcSid+CaUrEM5mIYRhSE=;
-        b=hgcjVq7W6NaoGuOlah7A+OnIDqNwpHvU4I9Yvb7VririjVpPFZ3CH5NHnBDOmqBLIy
-         FoG2Vbx0SIZ3765rjcbnzxb4sAWqqw9h6FFZRpfG9zYQsGKSfZ+FR+9rcbitqAW/t8yg
-         O75sy+j+fcO0avUcKmlnNRHddz3tCr3tppUJH0sRwps8sh6kk/KgvcYGn9oXfyWePmCG
-         c3XBHSuiy4UV2oG1o0LY9njUTZa52H09qZNeR+0TchSpnrqtkyMb8prExA2dk9VdSTg3
-         fkWPOnz4+ydE1L44NvtIVFpQIh/6Wv/UJFl/7wFKZfTYcfPvnAJjV5i8jUXYR6ekB5LD
-         SjRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCBwIgUnnYwdmN47t0HHp/FUuKQWCIgWaTuYqrB0SC9s25sdhOPOAdMoh6/de7wlBD0oGR8+/OaqvZeXWLcsPUwWxUYl8tpyE3WxJp
-X-Gm-Message-State: AOJu0YzX++P6AFSh3GK2UNNzT/oqer8xdE9so6xdwJZdr5MqRgTWhN61
-	jk7C7byVnzeDkkzpQcrYNLjsKSo8DcXIUjavsA2LqM/eUKpY1CBA1WBf2zOPNj8=
-X-Google-Smtp-Source: AGHT+IEo3cEyPoxBA2fpRetZ9/GlKWVify2iYpIuz68wK2jXgKKKT45PlxSJNQupUzQvxtrtknhlKQ==
-X-Received: by 2002:a05:6402:1913:b0:5b9:df62:15cd with SMTP id 4fb4d7f45d1cf-5bd0a6a554fmr741677a12.32.1723195045346;
-        Fri, 09 Aug 2024 02:17:25 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c4d99csm1363351a12.47.2024.08.09.02.17.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 02:17:24 -0700 (PDT)
-Date: Fri, 9 Aug 2024 11:17:23 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Ryo Takakura <takakura@valinux.co.jp>
-Subject: Re: linux-next: manual merge of the rcu tree with the printk tree
-Message-ID: <ZrXeo7iG0bO-JeIS@pathway.suse.cz>
-References: <20240809122321.5675db8f@canb.auug.org.au>
+	s=arc-20240116; t=1723195083; c=relaxed/simple;
+	bh=TS4sBFXo9aLaO+jf6cLdVdNjXsHptKYmVhaQJcsmw1s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nXwRUs/OpBVAkC+GK0Oq2tMVb8bZkjOYTvPalY/jPLwR2LMGisIZQUqzJzgshUUDZI/J5ALWnAmGX3rB+W//ZwRct7SLy+plylLSqEzxmP4bfPTeIb8sXL70/UaB75hyDN5T1COLqMUbPbOq4c/QRicbNg2AXYIZGCVOtOJYkhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmkfAsw4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF99BC32782;
+	Fri,  9 Aug 2024 09:17:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723195083;
+	bh=TS4sBFXo9aLaO+jf6cLdVdNjXsHptKYmVhaQJcsmw1s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nmkfAsw4kEnGq9L/W9/z0nATzZeuFu2fNv6wLVnDlm4RzNHM0bdOBoFIkGJCwGXnT
+	 vDuWPaflEswUHztuCpyAt6FrzlIgUrsylcyD9B3uYJnFdcFUXtmxzAJIqDnQ8ePL/J
+	 ADYoLKwzSptCXsux0iQrs8iE77tyJKBXHagVRI2BvGFeCJFatQbL8FwPz52e7SSjTV
+	 4Ywgurf0ujbPIRpOLt65IPCWJtz0LlXfDrNGWf/nih0fjMK1c5KDAXdQLPhx1c8hsj
+	 3Uwi5X6lVeHqzTlV+7ZLp8uJUscnWwX1LUujzm1409eBGyN9iUzT/KDOLT69vKtHuw
+	 qzis8Ji3rk3ng==
+Message-ID: <dff78d74-a71a-4b50-b55c-cbeb945d0b06@kernel.org>
+Date: Fri, 9 Aug 2024 11:17:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809122321.5675db8f@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] media: dt-bindings: qcom,sc7280-venus: Allow one IOMMU
+ entry
+To: Luca Weiss <luca.weiss@fairphone.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240412-sc7280-venus-bindings-v2-1-48ca8c2ec532@fairphone.com>
+ <D1Q6CMZM78VI.ABYGRRV5E61B@fairphone.com>
+ <D2245MXG8CS1.11EGKFJQLYPTI@fairphone.com>
+ <D3B8I0RHMCRX.27GXO53ITZKEH@fairphone.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <D3B8I0RHMCRX.27GXO53ITZKEH@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri 2024-08-09 12:23:21, Stephen Rothwell wrote:
+On 09/08/2024 10:22, Luca Weiss wrote:
+> On Mon Jun 17, 2024 at 9:28 AM CEST, Luca Weiss wrote:
+>> On Mon Jun 3, 2024 at 8:39 AM CEST, Luca Weiss wrote:
+>>> On Fri Apr 12, 2024 at 4:19 PM CEST, Luca Weiss wrote:
+>>>> Some SC7280-based boards crash when providing the "secure_non_pixel"
+>>>> context bank, so allow only one iommu in the bindings also.
+>>>
+>>> Hi all,
+>>>
+>>> This patch is still pending and not having it causes dt validation
+>>> warnings for some qcom-sc7280 boards.
+>>
+>> Hi Rob,
+>>
+>> Could you please pick up this patch? Mauro seems to ignore this patch
+>> either on purpose or by accident and I'd like for this dtbs_check
+>> failure to finally be fixed.
+> 
 > Hi all,
 > 
-> Today's linux-next merge of the rcu tree got a conflict in:
+> Another month, another ping.
 > 
->   kernel/rcu/tree_exp.h
-> 
-> between commit:
-> 
->   9a30ceb4d93e ("rcu: Mark emergency sections in rcu stalls")
-> 
-> from the printk tree and commits:
-> 
->   34863005f96e ("rcu: Extract synchronize_rcu_expedited_stall() from synchronize_rcu_expedited_wait()")
->   c925e2f61399 ("rcu: Let dump_cpu_task() be used without preemption disabled")
-> 
-> from the rcu tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+> Can *anybody* please pick up this patch?
 
-I have removed the conflicting commit from the printk tree for now.
-The patchset has to be reworked. And the new version won't include
-nbcon_cpu_emergency_flush().
+Still in state "New" on media patchwork:
+https://patchwork.linuxtv.org/project/linux-media/patch/20240412-sc7280-venus-bindings-v2-1-48ca8c2ec532@fairphone.com/
 
-Sigh, this conflict existed already before 6.11 merge window.
-At that time, Paul decided the postpone the RCU change to make the life easier,
-see https://lore.kernel.org/r/20240703131820.02eb8021@canb.auug.org.au
+so it won't move. Please ping Rob on #devicetree channel once he comes
+online.
 
-Unfortunately, Linus did not accept the printk changes during the
-merge window for 6.11, see
-https://lore.kernel.org/r/CAHk-=whU_woFnFN-3Jv2hNCmwLg_fkrT42AWwxm-=Ha5BmNX4w@mail.gmail.com
+Best regards,
+Krzysztof
 
-I am sorry for all inconveniences.
-
-Best Regards,
-Petr
 
