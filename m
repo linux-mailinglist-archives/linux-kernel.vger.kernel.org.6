@@ -1,108 +1,120 @@
-Return-Path: <linux-kernel+bounces-280339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A9C94C8F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:45:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F41794C8F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B961282EE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:45:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE15AB22AD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B571B59A;
-	Fri,  9 Aug 2024 03:44:57 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183061946B;
+	Fri,  9 Aug 2024 03:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LARA/Qhw"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348E418B04;
-	Fri,  9 Aug 2024 03:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5312F22;
+	Fri,  9 Aug 2024 03:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723175096; cv=none; b=PMjehfYMRKM8EQvkd2rwPc/5WoyeO0YGpNjs5dlSZutB5N9hhYf4aU5G9F+jnY9FWE/hSiM7/mHBl/wmbBYRhVdpQgb7RhNzVxxI1ZN7F82NjPlPc0WByg1QTCsvoiG56EpfOyCA9yfzRwQiIrGHJiFG1vycxHgHSZtGqDOII1I=
+	t=1723175429; cv=none; b=YhsnYEpegH8vMvZv0amZVA/Yh1OzLEzAHdWmxq7w77IUPzr3S8YcdAnfenSeBHgpSHLjkqGoKzHdy7W6NMpHGaYGxfHSHuE5DPCugzRAcOKB3FwLqSLA3OgZMHVsJzbG3n3YBJCMgpnlTVeFeeO+aNY+ANKWCnduX25yuT0Ah6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723175096; c=relaxed/simple;
-	bh=OhET1XZSG40Mo/skFzSUw3iQfX3vkRLXE0SBE9EiGto=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=NQlQaO0E04OvDSjv1PfFkAgcILOqbCUJDv82yIzpUwVdzf3TnAHEU7FjokEgHRaEbzcHtJtDIAdj310iZgdATpAPPsBZxXlP2dGGCUnb7xIivtRcIWHcxkuft78qKmWWG5d8ddIkyOJaoOcZ38pNU0j1OFpCkMGFDM9cUuI04cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wg8t31rQbzyP5D;
-	Fri,  9 Aug 2024 11:44:27 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id 53B2714011A;
-	Fri,  9 Aug 2024 11:44:50 +0800 (CST)
-Received: from [10.67.120.126] (10.67.120.126) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 9 Aug 2024 11:44:50 +0800
-Subject: Re: [PATCH] scsi: sd: retry command SYNC CACHE if format in progress
-To: Bart Van Assche <bvanassche@acm.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-References: <20240808021719.4167352-1-liyihang9@huawei.com>
- <1cd0b145-431a-4d9f-979f-04d4063eeda8@acm.org>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<prime.zeng@huawei.com>, <linuxarm@huawei.com>, <liyihang9@huawei.com>
-From: Yihang Li <liyihang9@huawei.com>
-Message-ID: <e6b05d46-7acd-8364-2826-c14e342f8e2d@huawei.com>
-Date: Fri, 9 Aug 2024 11:44:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1723175429; c=relaxed/simple;
+	bh=GcsKyLDJONt+ZvzDLWHq4abBRnvwVFDALz1JbD/AO9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lcDJTSnVB0qo4HB+sgyiaKfsx1cWCXNc0DA6XqGKmoXZdSiHlFlhGbp+K5WxfaxHsBDtRleGGj84VlY7SE+gl9XGNhW11Nz7XCL0EpX8k/2UzgsF1PbuDED242AK0iQfShwbbFkRUcba8M0tJN63KWHbklBH2OyM2O9VHR8E22w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LARA/Qhw; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f189a2a7f8so16627311fa.2;
+        Thu, 08 Aug 2024 20:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723175426; x=1723780226; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GcsKyLDJONt+ZvzDLWHq4abBRnvwVFDALz1JbD/AO9M=;
+        b=LARA/QhwsWs3/2nZXF4MpP/06i0xvIwHevz849z/r6edRlzqnXQXv23GuRHLbHmt89
+         6glcbD1yyHLVPD1LnzlpiHOajMJVJRKV3QkB9nb41vTh/ggO52Es5sycIagaI2JCLhgD
+         yge5JbclDvqntDtrNt+q1WU8PTD2QABWdSmGMava8YUWerpGNUJ1zkKw2KiGFITHHeiE
+         6jnnVHf6OhSEHtVEOlS8H2dNorTNyucDs+Qb9m35/ZYKG1zna0Ty/vOyN9njEsXSh/ab
+         lQuVRSAZo+PKsT03p3kfrtrxpWITZsRtiIgBD6KHKZyAsMTDvvvH+yTU6wBdTbwPAk3j
+         4c6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723175426; x=1723780226;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GcsKyLDJONt+ZvzDLWHq4abBRnvwVFDALz1JbD/AO9M=;
+        b=sWwKIi3FWBuhfTWFPpkbyuNgu6cQBU6X93Z0eBMww9cE+ILVQpi4o1EuN96ymIc9eP
+         w8G68ZVShKdfO3ZZn3wq6akSTW2zbQpZbdHz5ImzyhViM9BRoXymn3ECYD1LKa9q9ICR
+         n9f5+pX9AhzCnbdJKlaIDJ99ILATRQWImNkNjmyyPLIxiEj74IpM2amlY4BvYY9AH3q8
+         zbtyorVc7vs8iznLfq5hXgu7Vb9BVT60pqLnu5b9W28qh7MBQRxvTiImQfwpYFOf1g7S
+         Cp/k/1zcflWH8n80Tr6lmKDQMAd/6nc+KiXKKbVNKdXOUwUtt9VbhdjfThg/OSh6lWrq
+         G2Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1xm+F9A1B+2nz521ROup05OkW2qP21VG63+A3hO2w190UmHRH9bIsRfuO6QqgQC9NBp6ZHXYpxGrUV1zoIWDMN/Su+RwESHi/tg9e4GJoeELN1iEpqPXM7XRg1EyhL2o+SiPRhZCmYrIpoFArgilwnbrqnTPa3PNzMQ3TJ6+mFfII8m2Cl6BizQ==
+X-Gm-Message-State: AOJu0YwHsxPrAdcCPHayWUWXEDUEREZXhiFRM0W4P87xHxVLeUl2X7ne
+	M5CgtSB6otOVausbdT317VrBW/sDulqlWZvgLKQv3i/NSauppnc+7wwD/dHx1U9Hn0Uo3VSuPMi
+	NMfOo4N8NPWsUMSrRdMu6LVjOlss=
+X-Google-Smtp-Source: AGHT+IHAViZ+40B8/UqdywKboDwJDM5h369EKkboKszxuNwuILrsCiD/Dz2BVQ2iWoUGlelJi3lxJWMEmm+/c9da4s8=
+X-Received: by 2002:a05:6512:2314:b0:52e:9b9f:9377 with SMTP id
+ 2adb3069b0e04-530ee9cc5d8mr180073e87.21.1723175425293; Thu, 08 Aug 2024
+ 20:50:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1cd0b145-431a-4d9f-979f-04d4063eeda8@acm.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf100013.china.huawei.com (7.185.36.179)
+References: <ZrVA1N6Iv0Byb3I7@cute> <CAKYAXd-5gKBEAO_GvSKBLciiB1qhjevTSd8kre_-nJQpTw+3vQ@mail.gmail.com>
+In-Reply-To: <CAKYAXd-5gKBEAO_GvSKBLciiB1qhjevTSd8kre_-nJQpTw+3vQ@mail.gmail.com>
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 8 Aug 2024 22:50:13 -0500
+Message-ID: <CAH2r5muVvaOii15Kg5e0zWzhKdDy5fVh=GjtM=kZ=fyapKxtyQ@mail.gmail.com>
+Subject: Re: [PATCH][next] smb: smb2pdu.h: Use static_assert() to check struct sizes
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Steve French <sfrench@samba.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>, 
+	Paulo Alcantara <pc@manguebit.com>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+merged into cifs-2.6.git for-next
+
+On Thu, Aug 8, 2024 at 9:51=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org> =
+wrote:
+>
+> 2024=EB=85=84 8=EC=9B=94 9=EC=9D=BC (=EA=B8=88) =EC=98=A4=EC=A0=84 7:04, =
+Gustavo A. R. Silva <gustavoars@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
+=84=B1:
+> >
+> > Commit 9f9bef9bc5c6 ("smb: smb2pdu.h: Avoid -Wflex-array-member-not-at-=
+end
+> > warnings") introduced tagged `struct create_context_hdr`. We want to
+> > ensure that when new members need to be added to the flexible structure=
+,
+> > they are always included within this tagged struct.
+> >
+> > So, we use `static_assert()` to ensure that the memory layout for
+> > both the flexible structure and the tagged struct is the same after
+> > any changes.
+> >
+> > Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> Acked-by: Namjae Jeon <linkinjeon@kernel.org>
+>
+> Thanks!
+>
 
 
-
-On 2024/8/9 3:09, Bart Van Assche wrote:
-> On 8/7/24 7:17 PM, Yihang Li wrote:
->> If formatting a suspended disk (such as formatting with different DIF
->> type), the SYNC CACHE command will fail because the disk is in the
->> formatting process, which will cause the runtime_status of the disk to
->> error and it is difficult for user to recover it.
->>
->> To solve the issue, retry the command until format command is finished.
-> 
-> How is the format command submitted to the SCSI disk? Is that command
-> perhaps submitted as a SCSI pass-through command (SG_IO ioctl)?
-> 
-
-When formatting a suspended disk, the disk will be resuming first,
-and then the format command will submit to the disk through SG_IO ioctl.
-
-When the disk is processing the formatting command, the system does not
-submit other commands to the disk. Therefore, the system attempts to suspend
-the disk again and sends the SYNC CACHE command. However, the SYNC CACHE
-command fails because the disk is being formatted.
-
-Error info like:
-
-[  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
-[  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
-[  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
-[  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
-
-
-> Should the sd driver perhaps be unbound while the format command is in
-> progress?
-> 
-
-I do not have any suggestions for this yet. I don't know how to unbound driver
-when executing the format command and bound driver after the command is executed.
-
-If you have any suggestions, please let me know.
-
+--=20
 Thanks,
 
-Yihang.
+Steve
 
