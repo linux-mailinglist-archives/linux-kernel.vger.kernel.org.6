@@ -1,122 +1,147 @@
-Return-Path: <linux-kernel+bounces-281050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D104894D264
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:43:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 801D994D261
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A195B21DB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:43:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C6541F248D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89D8197A62;
-	Fri,  9 Aug 2024 14:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CFB197A68;
+	Fri,  9 Aug 2024 14:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OzwJmFZf"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRIe5fUP"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C968C194C6F;
-	Fri,  9 Aug 2024 14:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1B819645C
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723214574; cv=none; b=pGUgwVjdoNWTO8wJfTkR1bgwROK0E3e1FgkW/oEb+XYsJ1mTnFQmIm/jfFdao5J9Zr6cwy0S5gMD/SUx3okGeIObuhKWQNIjDDkGf5me4lrvtZtdyDS0CXLBCr5j2/z9f3yn3h97tFEhJzckzpcshlLvlvlizYDMos9xudp5HUQ=
+	t=1723214562; cv=none; b=DNHzWztwcQYxQTpToTA2gjBafnZP+6iLhTNfvozoDvDAbl/w4G5BZhKb2fnawpiqrwHKB6JUfB+lDIWO+43tB2HG00adx/erpCA6zbXVrsJT4nORxRCVInGYSqcTrNp7d7STsyhMWohnHA1G1veteZ4sluhM3bMqjSFe6G2lhjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723214574; c=relaxed/simple;
-	bh=EuIddEfRhDaehf9hEKui7w4cVOyFJjM3xP06ctSX+f4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KodZZes+zRT0nwh8ssmGuR39iDW6WbdB+mNzoGlBLdVQR4wil+DmRto/W4VlFFzfasqaQuNW0VY1w/OLkeuRsHCBMM2rSo/WNuoMwHTYwUXkqUIHigiI38q53zLufNInpyJUAqNLIeeyYfTrXjbZcxzpLNKVP3kkbTHFkAATNcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OzwJmFZf; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1ff4568676eso20886565ad.0;
-        Fri, 09 Aug 2024 07:42:52 -0700 (PDT)
+	s=arc-20240116; t=1723214562; c=relaxed/simple;
+	bh=X/lBbMgdKoyFT+HpOqv9BADMNYYjdYwiRKzB+VBXKWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iryJmmLno3r9/G7xb5YnapZlOdI3OKLs8/K8fTNsLQsbggH7H7kQae2/CSq1+6JdvvRyZ0F6psM9lECjFmzJwnlOOU8+CSoZcI9pCZjRPJak8c6VCWYax8bqinmg1rlVLLa0SnctpmvaFdfZaRH/GRZoA5aS93grJnJtslKkOCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NRIe5fUP; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so2587613a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 07:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723214572; x=1723819372; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+sxa7qTvG9KDhnWrmlJwgpsQ4FoIyL5aoUcStCTGlo=;
-        b=OzwJmFZf+vaTMRclT7T1VSv4ZS2sIyo/STGai1NVbnANrD45SQntEUQ9e12IQCGp4x
-         8e9Kh5KmghOWiIVDXqq7dvRbx4/OFGZkgiFhdB4PUoqlAoRLzoI5r+zU7T7C3B5p5964
-         M+qlKcl6iY//ByFNwD2vHRV9isu5AW05zkt2pSmBTmZ41DqIGwyEdX7KY6mCFjbTxXSi
-         XblyHWhTmhrC+Pdxfao0Jl7qJPd+CCW+Iif1Q/6g6EvFMy0DCsdMhYeOqbDSWqsdWt1V
-         GgDjsOCIH9cdeWVaX5a8HHDOOegVHGR/Rxh0xT9ObiLB7iIvJesiXGHjXghRRViFMlaI
-         I4HA==
+        d=linaro.org; s=google; t=1723214559; x=1723819359; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJ6x68SVn9l/rEaIOjZbaLG4v3ZBQSVdzvMkr4BOLnE=;
+        b=NRIe5fUPuQTh9Z/grhH+BbTPv80iXokwu5/G1iuw6NN7HUa3+MjGIY1lLxue57GML2
+         XkXwA7VOx2Jdh9kv4PFd3m+krE49XNpF52CB5tZM0bsfnKCACVKmo3ER3sRGwel3q2Dc
+         UIBoKP/bWupgmunuMR3wZt95GmPdlaP6b6GDUNKGYM5dGXyxrajN3XDik/ZJqr4RdCyl
+         IV6NOE1tDhDLXvlOYtofR5jrHNGISLdJoS2kuenEStfBZyQzHHVLT/34JKQ+A5ne72UV
+         EYzWG2cHjLTljQ7ArhwIjOrxZ523MLwZsjUFG2X0v3kErTXY1/rS69yVFa4TmTRtEvXp
+         slNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723214572; x=1723819372;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z+sxa7qTvG9KDhnWrmlJwgpsQ4FoIyL5aoUcStCTGlo=;
-        b=bJ0UeDhT1vJbPDld2hxIlmTAXaFzv7Sw3fXqnnCDovGJzHGgU2/R4WTC5yy/SXiPnK
-         zDW6VQ7l3o/A13yIBRbxudDfogzq/blejnRW9iz6sdUBumYkf7IY4N8Om14WXxUcTNyI
-         xnEIhs2Acl34XcJvS0UQNCt7lMS2/Su7ybbSVTytD0nNJ4ohbPss1OphQrHgS8QxxlDP
-         k2ocQJuJRWUn8xE9t89jsE56PIbVbDIgKS2MKkjy6ww9xGBr9QMwW3KObYMPs/u3SBs1
-         dwKgmbhIftX+HiYGejsIsoonYWYQ7/EC8YleJ3gBB/bVWAfA/wfKg3sXgoSMdz1ZdwLw
-         X6Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGYjq4sJo46L60slwYjGl6cPoeQ4Wh0XTKLZm6Ggp5NvCfVlkN5WDoElFwLJaBmMs07T4cKFt6jnRFLnX0qjEZA0DtgoWASuQINITl
-X-Gm-Message-State: AOJu0YwTScNJ/QEPpYWpFEO7VxaU95LCUmGOArrZ+COsWkntG2xukp3B
-	iw7qJHCvmkqocAU44NjAVThljAfOtEKsiaZ32KEnphQfXMMUKZXJW/a3hI5W
-X-Google-Smtp-Source: AGHT+IG0re+W7ZSvQjvZbUKNBa+0Uf70NomvbO9dGh/k4s7QAX5QlfhvL68ySqfM3bd7GNvbP4fReg==
-X-Received: by 2002:a17:902:db05:b0:1fb:4fa4:d24 with SMTP id d9443c01a7336-200ae5eedb0mr19667355ad.50.1723214571432;
-        Fri, 09 Aug 2024 07:42:51 -0700 (PDT)
-Received: from localhost.localdomain ([2001:e68:5403:cdf2:8431:c235:c4a0:3975])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905e58fsm143581615ad.177.2024.08.09.07.42.48
+        d=1e100.net; s=20230601; t=1723214559; x=1723819359;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EJ6x68SVn9l/rEaIOjZbaLG4v3ZBQSVdzvMkr4BOLnE=;
+        b=FUKK6/1RDtSKRWBzO7T4J2YSu5sqwOat0cMeabWIjuLm/v5Unjcw56tL5jHFoPToQM
+         LUjuikXlr/tr7jD99Ue/xpFlUG7Tnh9ux6/vAWgL2La357G6AbvOeKntUO/l0MlHIcUN
+         p0NAlK4lt+aLZiU//US782DDIU4AC5GhNoicWdJSHuPtkSaPd2vSuoS96EXauAbzQMwl
+         HqQ6HukBO/15Bzmb2cNHk487xugyPwP7MyZ/2WDjzjc20YNt4D+kNUpKP3zyyVf2+I5y
+         Iuadqtay3BzMa5o8TeO5crM7AMovwM+jupL4fUlv32NWha1mBwFuH2gK9RRJWtQi/bcP
+         IF+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXnr5GgczOOTcmzU/94Qi793P5wrkcHNQ4lLptNd83BHy6rZDgiG+38zenYNyw6kS/wHFnFxJPq+qg5JQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1tVGsk8SwTmdftUBrZZNeQbVagwb/xijrxuPGFMnTfKg6laXy
+	/Pvhjn+zKRLNsELcOVPx5KXpqyZcDicnLHszXRat/UyZg0G5ItL3gMpbYKLbzeM=
+X-Google-Smtp-Source: AGHT+IH1TWOy97ETcTplA1MtQKCoS3LFPfum0DPCd6fTTLZAlQKCA2baV4vNFWcjn6rsWNaXtYSuKA==
+X-Received: by 2002:a05:6402:848:b0:59e:a1a6:134d with SMTP id 4fb4d7f45d1cf-5bd0a63f468mr1207333a12.32.1723214558805;
+        Fri, 09 Aug 2024 07:42:38 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c1f856sm1580740a12.25.2024.08.09.07.42.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 07:42:51 -0700 (PDT)
-From: Tan En De <endeneer@gmail.com>
-X-Google-Original-From: Tan En De <ende.tan@starfivetech.com>
-To: netdev@vger.kernel.org
-Cc: alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	linux-kernel@vger.kernel.org,
-	leyfoon.tan@starfivetech.com,
-	Tan En De <ende.tan@starfivetech.com>
-Subject: [net,1/1] net: stmmac: Set OWN bit last in dwmac4_set_rx_owner()
-Date: Fri,  9 Aug 2024 22:42:29 +0800
-Message-Id: <20240809144229.1370-1-ende.tan@starfivetech.com>
-X-Mailer: git-send-email 2.38.1.windows.1
+        Fri, 09 Aug 2024 07:42:38 -0700 (PDT)
+Date: Fri, 9 Aug 2024 17:42:32 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] fbdev: omapfb: panel-sony-acx565akm: Simplify
+ show_cabc_available_modes()
+Message-ID: <aa43c1f8-05bc-4edd-b7ba-474953f28f5c@stanley.mountain>
+References: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
 
-Ensure that all other bits in the RDES3 descriptor are configured before
-transferring ownership of the descriptor to DMA via the OWN bit.
+On Thu, Aug 08, 2024 at 11:46:11AM +0200, Christophe JAILLET wrote:
+> Use sysfs_emit_at() instead of snprintf() + custom logic.
+> Using sysfs_emit_at() is much more simple.
+> 
+> Also, sysfs_emit() is already used in this function, so using
+> sysfs_emit_at() is more consistent.
+> 
+> Also simplify the logic:
+>   - always add a space after an entry
+>   - change the last space into a '\n'
+> 
+> Finally it is easy to see that, given the size of cabc_modes, PAGE_SIZE
+> can not be reached.
+> So better keep everything simple (and correct).
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  .../omap2/omapfb/displays/panel-sony-acx565akm.c  | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
+> index 71d2e015960c..fc975615d5c9 100644
+> --- a/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
+> +++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
+> @@ -466,19 +466,20 @@ static ssize_t show_cabc_available_modes(struct device *dev,
+>  		char *buf)
+>  {
+>  	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+> -	int len;
+> +	int len = 0;
+>  	int i;
+>  
+>  	if (!ddata->has_cabc)
+>  		return sysfs_emit(buf, "%s\n", cabc_modes[0]);
+>  
+> -	for (i = 0, len = 0;
+> -	     len < PAGE_SIZE && i < ARRAY_SIZE(cabc_modes); i++)
+> -		len += snprintf(&buf[len], PAGE_SIZE - len, "%s%s%s",
+> -			i ? " " : "", cabc_modes[i],
+> -			i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
+> +	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++)
+> +		len += sysfs_emit_at(buf, len, "%s ", cabc_modes[i]);
+> +
+> +	/* Remove the trailing space */
+> +	if (len)
+> +		buf[len - 1] = '\n';
 
-Signed-off-by: Tan En De <ende.tan@starfivetech.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I'm uncomfortable with this line.  It assumes we don't overflow PAGE_SIZE where
+the original code was careful about checking.  Probably easiest to do what the
+original code did and say:
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
-index 1c5802e0d7f4..95aea6ad485b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
-@@ -186,10 +186,13 @@ static void dwmac4_set_tx_owner(struct dma_desc *p)
- 
- static void dwmac4_set_rx_owner(struct dma_desc *p, int disable_rx_ic)
- {
--	p->des3 |= cpu_to_le32(RDES3_OWN | RDES3_BUFFER1_VALID_ADDR);
-+	p->des3 |= cpu_to_le32(RDES3_BUFFER1_VALID_ADDR);
- 
- 	if (!disable_rx_ic)
- 		p->des3 |= cpu_to_le32(RDES3_INT_ON_COMPLETION_EN);
-+
-+	dma_wmb();
-+	p->des3 |= cpu_to_le32(RDES3_OWN);
- }
- 
- static int dwmac4_get_tx_ls(struct dma_desc *p)
--- 
-2.34.1
+	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++)
+		len += sysfs_emit_at(buf, len, "%s%s", cabc_modes[i],
+				     i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
+
+regards,
+dan carpenter
+
 
 
