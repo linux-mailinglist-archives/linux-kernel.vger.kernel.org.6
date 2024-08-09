@@ -1,357 +1,634 @@
-Return-Path: <linux-kernel+bounces-281081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF2094D2CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:00:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE5F94D2D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9311F21D7C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187DC28250C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24C0198E96;
-	Fri,  9 Aug 2024 14:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6338198A2F;
+	Fri,  9 Aug 2024 15:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="msMk/chR"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2056.outbound.protection.outlook.com [40.107.102.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q4ppzYCu"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8303519885D
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723215572; cv=fail; b=I0ya5PQG92hi0eKonIaDT6b68awBoQBT6CMggZva+d37PDxlx15bdm7pRj3M33z8kz7jIvvTQhNLMr2pJe3jrbADSt0OFp8GjtlUWAkvDg3hPNy/r5isPmnBkRaMYSJeyu8p4CW1typYf1HA1gdg9CHHpyk5nXhE5PHFh2FDoOY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723215572; c=relaxed/simple;
-	bh=OjsoFSvB+Zz86ZG4BUemaFe/IEbkn0GSHNyKdnpOL8s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ci8dJ3+KBbxukV0+gVjyrsW6hjrqAVoMz3Sw9HvGZlqIGfNvhRkOh0rKm2Zygz+U3aILas4xirzRw6E2L9nvEIq4uoQ5jKZQnFrOi9Tab5j/hfNV8L59eqrs4eDA8JcTwmFNb2ixeX0OCe1Oo19ySdW6PioE7sRoO3jG74QvdW4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=msMk/chR; arc=fail smtp.client-ip=40.107.102.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DbKuD2iwF4gFglTo+WrcYagwHK7VSz+mZGVDbqL1N4yhQxmgqyFkc1RhcOIWb4z48EgdbnMhSCKGcGzPu5oLu5KI8Mi/ID1jmbbLAPnNI4guKHnInZslbpxjjQ3/US9BUn748w1D5fSeYIqvIXgdCvJxfuQuB5RPVqmDJSAUw6UrrvCRhRAfXoCssU5GdAcv6IYxlleisu5BTwxFJTCxax6CjqWz9m2p/my7w0gG5KLJAdnByAScDtcUPzbTF7teJW5i+3RkD8ekSxJLomF6IQ7tdFPzhLLnsuGxmR8q2glzCSCTKBUkw2ZdIYHT+rYzc97ZUnp/xdz6G5ABSytihQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jp1ggtAq2TPL+tWQv2b9sD0zy1Lqc8F9tl7KovE4HMg=;
- b=k0oJ1BcH0CK6azo2E/wqHYrp5oBnaQJDsjf3xZnJ0vemrNbFMgtN4Rvn2QxF578VT05IVz1wqBdcoVkxr9bIBgF/TJDUr2aLPdFXu8LQtO38tXhPk/kcDuavJ1I1q5LMdquP/ECE7SFWwq7TYusS93nBzLuL6GSKLZjZg1l574Z15MKVjrnVae3aVOaIeSFdkR63gntkBxsYpfT71/6UWEJplOr/yqV2ivT/MHa/4fO0fYOHF+UaR79/5/YFclYqecm18p8LGYu14hAIQfzwzH/lLAhcwjcCiA8liA69cEkz36a8JX2oKjycV0G+VCgfVV1S553nOY3vdmRx4z5+ow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jp1ggtAq2TPL+tWQv2b9sD0zy1Lqc8F9tl7KovE4HMg=;
- b=msMk/chRuSZUhIUp4Hy93Ik51puNiRdC0d3LILReIOE2R4V4l+LYQP0y/W2Qvagig+hW3V04Wwj86uugUIMAM4qZWesxgAVK7v2ZPcjfh2q03UafUypvQJ96EpehWCEkiOkrpqpUl6Y11ybMWYwJ4r2SiTbS9rUkbBanIkp5i9gZwe0PQK4IxnpxmU7AqVA+9AYeYxczL/MvLxu9A5M3tDiUNCwunv60XFf+S1zaTIaA6SlDxsAysU5fLqvUUplzvA2UYJ0zYKLHsdAhVM5+H55ntK/vrh3q4vO2EvD0eVY3qYnV7/bYzfjpR0X0KTghHyE3LKBt9yskxvD0MRiYrg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CYXPR12MB9320.namprd12.prod.outlook.com (2603:10b6:930:e6::9)
- by SA1PR12MB6823.namprd12.prod.outlook.com (2603:10b6:806:25e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14; Fri, 9 Aug
- 2024 14:59:23 +0000
-Received: from CYXPR12MB9320.namprd12.prod.outlook.com
- ([fe80::9347:9720:e1df:bb5f]) by CYXPR12MB9320.namprd12.prod.outlook.com
- ([fe80::9347:9720:e1df:bb5f%3]) with mapi id 15.20.7849.014; Fri, 9 Aug 2024
- 14:59:23 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Yang Shi <shy828301@gmail.com>,
-	Mel Gorman <mgorman@suse.de>,
-	linux-kernel@vger.kernel.org,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v3 3/3] mm/migrate: move common code to numa_migrate_check (was numa_migrate_prep)
-Date: Fri,  9 Aug 2024 10:59:06 -0400
-Message-ID: <20240809145906.1513458-4-ziy@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240809145906.1513458-1-ziy@nvidia.com>
-References: <20240809145906.1513458-1-ziy@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BLAPR03CA0088.namprd03.prod.outlook.com
- (2603:10b6:208:329::33) To CYXPR12MB9320.namprd12.prod.outlook.com
- (2603:10b6:930:e6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9588219306F
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723215607; cv=none; b=DIXn+M03KzOCz4g0b7HAkpze0s9rBDmozr5B3xVHXf7QVoqjwnZQML1D4iVI4ALOp8eS3lXmRub3pLDWprbPheY233EXBCOCECbhtAZqZu9msJ8GESq3dveKsw9NgmeUd19ji5hMuFqSTNeh3DeJ3msZundpJIzypIDtK/suGWI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723215607; c=relaxed/simple;
+	bh=NG+OyY7N1YAHHr9E+SoeyIeqVKoHFXqAcQpeb9adPBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ev6IYGh6noLXU1t2p5XHDNkajvwso8O4BhRO5v/TvxEqWEU9srPspfAD+eJPebglnyM2JhXIfphC8B6nczAeiJHouT6hzxZuGkFyguwFgZ6kEDQkCZeFhgpw7LEpREiIAo8ooiXBvvE7kJwBIRBlOS8y3bVQUwMWJ0G62Z9F5gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q4ppzYCu; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-699d8dc6744so19720137b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:00:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723215603; x=1723820403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6FzaQlKMY+XgcJFar+qm/IXeUetuX7JtYfUfmsTE1X4=;
+        b=q4ppzYCuKQ6zGZrlt934EOQC4W1zG9kV38+S7LzdWDFYPm+4glju8oH+5JlOMeBCWR
+         aO/e8iLGe7youOxq6TT46W4vPfLY78D0S3SUXd8itwzlsNHJfWhNOsH+25BXLJ0GIoT3
+         TC8ZGZs8OQnal1xMOlKeX2XPm2qM9oUu/bk1IqlB8xcIfJa+2gSGxLsSY8csnzXrY4je
+         8aGxYuxiA2lCJ84kxpTBqrQTtRfLTHQnXbgU/Tr5a/G5xxWCnUWa5lYq5VIEt15EAdw/
+         Ip2Ur46TH5RfvWlrh8ZlVfi4/BJjQ/woDWkWWwGDNUaT4UaU6DiMqDScsodpfRjFCgyI
+         hE3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723215603; x=1723820403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6FzaQlKMY+XgcJFar+qm/IXeUetuX7JtYfUfmsTE1X4=;
+        b=ajlzt9t/1wa68ZzQpVwOTmNCcl1gLL9lbfAqy1AlTqindvykBlp51d6PnznWIDzk7i
+         MhuNolbwBG5hZW7WQ/V4KW4IjGQlamYP6H1d39ciVAIv+4rk3eDc6GOiYqNJeteo6Qet
+         NXD4uKK8S3AE1EPUPdOOarNzEqX3xI7L1yu5Z64NF3ywc+wVkHzEtcxH1kGtPFMlUE1t
+         0CgAtszR3QcUHG9Yd4Z1h1omSE3ZN3SKM89XHxQATwVOYWhhAghO3bqmL8twvD4KfClh
+         focuasfYq2e42bdFV2bcJsXKfOyXdq52u1UlKiIDFKb2MhOlX4gMFUI1bFq0oq/Uha+V
+         5uQw==
+X-Gm-Message-State: AOJu0YxsPLbkFghN1IMQIUX8jTiV/7733DKgV5NuhB+Xzbl2zUy9Ob8T
+	WclvmMZ9nl/Mpl73LCzee0dBhga24VlOTT2Nto/f+XGYr3//Nyyxx9m3FlKj22n9+gny/ranQA6
+	Y2sEoC8wjAsh16cqqFvy1AM4CTrLVOwFvOEy0
+X-Google-Smtp-Source: AGHT+IEx+ei7jaw8xhbw2dlJdDH29KCP5OpcrSckGDNpzYTyBfQJGheMK+/AA6uTe8q+rnAn3nOpTaWI6gItjATmIfk=
+X-Received: by 2002:a05:690c:2706:b0:697:7c82:e7c with SMTP id
+ 00721157ae682-69edc903b3cmr10040977b3.9.1723215602746; Fri, 09 Aug 2024
+ 08:00:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYXPR12MB9320:EE_|SA1PR12MB6823:EE_
-X-MS-Office365-Filtering-Correlation-Id: fcc233f4-6fe5-404b-b093-08dcb883db08
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ooUYHu3jv0TDp6L6f7V/oUy+zyp/KNRRBspA8U9Wyvh0DcWa11G6/Z22yMMO?=
- =?us-ascii?Q?auztTJ0T5uWKXfclU0Ymr1mRwLLJFg/d4MzULAzyv822MoY3OZo9nmE/5tSu?=
- =?us-ascii?Q?ZiXp1xpXyIMkcsBzeotfzWG99NLegOarrCwJc8zzmXz87rLI6uJgdnBpVcXi?=
- =?us-ascii?Q?K0iz/5+/i3DgaeOz8FPz9yZXF9SS+8lSp9rRCr3lfVEM3XnAuUs+wG5irV+W?=
- =?us-ascii?Q?1LLuqrvAgPV9/K2Tpwc79K08m0kAFTbTuKZMsV6zyTXoT7tFXDl0u3P18Jpx?=
- =?us-ascii?Q?g5JdKw/qbzcHtgTid8x/+UhKcxBziQmEHngyFCnVmyN1CH3UIO8QoG6gIHNr?=
- =?us-ascii?Q?0ZCLu+9o682Tdf5MBQZNQwYgJvJD6XC7BvIRoC628RWbxcLGEFAIeWGfv08H?=
- =?us-ascii?Q?T7/Bom4VhEt681iY5JagMOblk80R+/4yLQjoI+D1NBvt8nCpAD9mzNMCsXXU?=
- =?us-ascii?Q?4e+PakHwDxp7AO0LdlO90TnfB6LoHgPw+qufOAe3g9N9S5HcafdLiiw8wM0x?=
- =?us-ascii?Q?z/70dx1qHK6OGs/xY2YWJQ9nsMB+ivMnY92ATojeuP7xbelxEYEsRhupFNNP?=
- =?us-ascii?Q?JpmpJc9KFFdKNUFkzJATCiitBQ7ylI4n4lk+pPSj4/OQEW4fdoYBjtAZA0FD?=
- =?us-ascii?Q?xaORzbsYniXleO3Bj4MxEldnDZhiTbT4R/h9qYqoQZviJ5dkhdglDyfCye3W?=
- =?us-ascii?Q?3NYg4IShwKdGzWY6il3BKu4wgGgKE0uk2tbYafCGRUoaRH3Fldto3q3g+VpI?=
- =?us-ascii?Q?CKNEYrtvL1EC1TyRbov+pmWlSuDKE5x5BMYi/BMP2GvGn8K58Mk4ftYvH1rO?=
- =?us-ascii?Q?5zEfzwt7hCYNHC0p/JW68q2WX3jX3ntTWxpJ8/yktwuAW3sznAJhYSiixox/?=
- =?us-ascii?Q?N3uUY7Hx9WJnukUri/fdc0Z8uPLB2gV4mHtBzQenH6GS5n5dgMpRkF+28hAk?=
- =?us-ascii?Q?EuGw0pTaZdKGIXypx5ItEeTXYprFkCnFrwQtEJlCa2WCyS18DpEHnhxytlsz?=
- =?us-ascii?Q?QrFVodL0ONVsi4HrIW2wK/kKX0MSZOg6G+z0dmwlb0nogUCJmQ+9mz7JXMNf?=
- =?us-ascii?Q?fPYO43wFatyZAvCroCo5yagq35gpVjySDPg+He0mz8kd3FjwagKO+eAI5LZD?=
- =?us-ascii?Q?tTyWbLaDnOBSFGqEKvi4OjaGUC4RhgpiCAQLreHM3oAO8aqhLr+Lu/L8HJtT?=
- =?us-ascii?Q?C4xTxYpLcroVVBuy98TioGoyKAMcREmyuMZ8P50fN8Xy6mEuPpzZybV3Eths?=
- =?us-ascii?Q?SB86kLyWLFvc7020XWucboInPl5pltX0OWd8MtU6ssDmz38jf81U5eJ4M3MF?=
- =?us-ascii?Q?2o+R+sVQeDc+XzoSYMR3Wgj3q38MD0xTTaMGK29nhL/fdA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYXPR12MB9320.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?EnIpbK5dj9/xYPibNM3XPy4mXGaS6lCzJzruuk5AREgyCupp5uLXB8662rzH?=
- =?us-ascii?Q?37IXWGV6xC1VuGcrDOZntHNcv5NftEddccj4qdv7HHSYD0esqL4e8D4PGWJX?=
- =?us-ascii?Q?si7dZ0pnAs61NKtx09ApDMg86FLRutEDmEZbDGGyt3LoOM6N3c+ZvOWkjB2k?=
- =?us-ascii?Q?NDUpK0TbCrWSd9e1zUrXrNsFrSONHu9u6d4K5EE7Q0CWjrdSOhpJ4xdIF39K?=
- =?us-ascii?Q?f/5j1uSYGnmIEgi/pu2sTNBO9Ah0egRLGbqkKRz4eAIvA7MXHz9HeIwkkFgt?=
- =?us-ascii?Q?1D08JmkXawj1Ganinj/BRe4FONgtS0Qvo8gXjiypE8NarCI2ArqjMJqwpEC5?=
- =?us-ascii?Q?ogNvDa4OLPYG2EHskOEhP5q9Ca2Xie58bcnvx+RF8f9IjuPKMiRvPYrORDFg?=
- =?us-ascii?Q?aK9V+xRg2hN+fKkhKPbKZa63rDWhdePgmGbSm+VPOwQbWoIMGQp8Xvz3SrcO?=
- =?us-ascii?Q?5A2V+87wEv5PTWxu2k2RxYHWKZ8EUZfclbv1epzqhOlFApfFqoiat6cKPMon?=
- =?us-ascii?Q?Fbe3T03saQ1zirqY1k8ia0szB1yiNvlYnxoIGyF5FmlW919byysPhQn6TnAj?=
- =?us-ascii?Q?NVd8Mtw9f17h+EIqbSedao3VwEOzoQEJAda8Q5GWjFdIq1Ju82/0J9veXp1i?=
- =?us-ascii?Q?1oPeDh8SSGHICXxJKqRnkT+flPPrTLBWPVQlEwDtbcDCtjPkzxKzvPKBbg+E?=
- =?us-ascii?Q?mCJxRaJFmD1hPcjNyXbfI7paOHjAXWTNbbrQtInwUCWBKw05OHzgpLGkrvhH?=
- =?us-ascii?Q?oSoeXl6EN5qdA6ZqFVtfuCkPv1Iu1GJdmLXpxNtGfIwyo3+35lTBn3NX5Sw9?=
- =?us-ascii?Q?TYl1NRpDyLjR0Pw6bHcGBQPlSTSJR0FfAS5EFWKKCBwIJA2peEtDVjv3v34H?=
- =?us-ascii?Q?NFJimcXO0qUH1LL2i4OzuwmC3oE9NYpZM3NOGNv7wX5KCpoT0RcR6QJ6VX6C?=
- =?us-ascii?Q?1I00AxybhGHqgHuq7KVKgF2BDt7Qvc2apN8QJ5kdIBXcJ7tjQy6P3wd5Uhz1?=
- =?us-ascii?Q?8p7XrefQpXYleoni//I19RDJtgAzgu02a3HeR6KV184mxEvHyOKVr5sE7u0q?=
- =?us-ascii?Q?Xuy0glHfgHUTsFFfDTh2b1rKjSLss4fPPQlbIFosjGIwgD5JOBccd4UqbdBp?=
- =?us-ascii?Q?QKrs1o6e5sKs7rOLh0d2MpyxgvNePEE9LbgMPAGOOOwL10VOMvkctEU10Kuw?=
- =?us-ascii?Q?VutQ29ZsZgsG/IPL4xzF47irdn5ws9nLlLk5x74RZ180FqfqUN/xxWdjncPn?=
- =?us-ascii?Q?gpuMG8bMBQ2COFTWhAsS/rK2/Q9keJYtRGZj5vBArkrv73eqRI8QFvXj0P3A?=
- =?us-ascii?Q?pCCN9+jIaEjHyIbar4g6dxQbfewVMJXShX18kWKBB3fVTPorb27cLAz8CKQ1?=
- =?us-ascii?Q?1/Vc+0DrSiiT4KnteFTeW/hlo7rLar48AxA2VRk9VAIJrBUNDgUoKEk2MAWl?=
- =?us-ascii?Q?Lw0HbGLu3xN3An5t9p5e15cbkZ2v8c2+ssQ+GJ0MAOpK8mmpY6srtuJS3JUv?=
- =?us-ascii?Q?dde9SJePX6rDRCZepa0VzWKntEAep8dLSq9eLsbqSDIb//cPsFbNKafB5a7W?=
- =?us-ascii?Q?B2M7XLnZpqkdNTjYUGvOP6znYSEpBeMdsDWrFuoE?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fcc233f4-6fe5-404b-b093-08dcb883db08
-X-MS-Exchange-CrossTenant-AuthSource: CYXPR12MB9320.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 14:59:23.5882
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Df0qtp2IIRRfrJzjzaQPUeVR0ovLobssFrabwTHHkUoiRx1d22byt8FwOVnVpBlw
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6823
+References: <20240808185949.1094891-1-mjguzik@gmail.com> <CAJuCfpEsYi77cuUhvQrFOazFX1OK0vp0PyevKqZsi0f1DeT3NA@mail.gmail.com>
+ <CAGudoHHHOH=+ka=xw6cy51EYaGsUZEaC=LXYFvnXgFT+co9mKQ@mail.gmail.com>
+ <CAJuCfpFXdx40UGRsXUYFgFGvEy-nM02f+TQ9nOPPepw6gbykmA@mail.gmail.com>
+ <CAJuCfpH36sXvCaYL88nzi_8-Yr1tpxHuaLfCMqCac-zN6QHWmg@mail.gmail.com> <CAGudoHHB3PEQBbcmZwwLAUrNLUqwOt8fnantO--3mF19C1A+6g@mail.gmail.com>
+In-Reply-To: <CAGudoHHB3PEQBbcmZwwLAUrNLUqwOt8fnantO--3mF19C1A+6g@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 9 Aug 2024 14:59:49 +0000
+Message-ID: <CAJuCfpF4CAzuX_YWfqpjK6xJmF3GguTC8cFoKkgY=VqNRBuSpA@mail.gmail.com>
+Subject: Re: [RFC PATCH] vm: align vma allocation and move the lock back into
+ the struct
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, pedro.falcato@gmail.com, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-do_numa_page() and do_huge_pmd_numa_page() share a lot of common code. To
-reduce redundancy, move common code to numa_migrate_prep() and rename
-the function to numa_migrate_check() to reflect its functionality.
+On Fri, Aug 9, 2024 at 8:15=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> wr=
+ote:
+>
+> On Fri, Aug 9, 2024 at 5:57=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+> >
+> > On Thu, Aug 8, 2024 at 9:19=E2=80=AFPM Suren Baghdasaryan <surenb@googl=
+e.com> wrote:
+> > >
+> > > On Thu, Aug 8, 2024 at 1:04=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.c=
+om> wrote:
+> > > >
+> > > > On Thu, Aug 8, 2024 at 9:39=E2=80=AFPM Suren Baghdasaryan <surenb@g=
+oogle.com> wrote:
+> > > > >
+> > > > > On Thu, Aug 8, 2024 at 7:00=E2=80=AFPM Mateusz Guzik <mjguzik@gma=
+il.com> wrote:
+> > > > > >
+> > > > > > ACHTUNG: this is more of a request for benchmarking than a patc=
+h
+> > > > > > proposal at this stage
+> > > > > >
+> > > > > > I was pointed at your patch which moved the vma lock to a separ=
+ate
+> > > > > > allocation [1]. The commit message does not say anything about =
+making
+> > > > > > sure the object itself is allocated with proper alignment and I=
+ found
+> > > > > > that the cache creation lacks the HWCACHE_ALIGN flag, which may=
+ or may
+> > > > > > not be the problem.
+> > > > > >
+> > > > > > I verified with a simple one-liner than on a stock kernel the v=
+mas keep
+> > > > > > roaming around with a 16-byte alignment:
+> > > > > > # bpftrace -e 'kretprobe:vm_area_alloc  { @[retval & 0x3f] =3D =
+count(); }'
+> > > > > > @[16]: 39
+> > > > > > @[0]: 46
+> > > > > > @[32]: 53
+> > > > > > @[48]: 56
+> > > > > >
+> > > > > > Note the stock vma lock cache also lacks the alignment flag. Wh=
+ile I
+> > > > > > have not verified experimentally, if they are also romaing it w=
+ould mean
+> > > > > > that 2 unrelated vmas can false-share locks. If the patch below=
+ is a
+> > > > > > bust, the flag should probably be added to that one.
+> > > > > >
+> > > > > > The patch has slapped-around vma lock cache removal + HWALLOC f=
+or the
+> > > > > > vma cache. I left a pointer to not change relative offsets betw=
+een
+> > > > > > current fields. I does compile without CONFIG_PER_VMA_LOCK.
+> > > > > >
+> > > > > > Vlastimil says you tested a case where the struct got bloated t=
+o 256
+> > > > > > bytes, but the lock remained separate. It is unclear to me if t=
+his
+> > > > > > happened with allocations made with the HWCACHE_ALIGN flag thou=
+gh.
+> > > > > >
+> > > > > > There is 0 urgency on my end, but it would be nice if you could=
+ try
+> > > > > > this out with your test rig.
+> > > > >
+> > > > > Hi Mateusz,
+> > > > > Sure, I'll give it a spin but I'm not optimistic. Your code looks
+> > > > > almost identical to my latest attempt where I tried placing vm_lo=
+ck
+> > > > > into different cachelines including a separate one and using
+> > > > > HWCACHE_ALIGN. And yet all my attempts showed regression.
+> > > > > Just FYI, the test I'm using is the pft-threads test from mmtests
+> > > > > suite. I'll post results today evening.
+> > > > > Thanks,
+> > > > > Suren.
+> > > >
+> > > > Ok, well maybe you did not leave the pointer in place? :)
+> > >
+> > > True, maybe that will make a difference. I'll let you know soon.
+> > >
+> > > >
+> > > > It is plausible the problem is on vs off cpu behavior of rwsems --
+> > > > there is a corner case where they neglect to spin. It is plausible
+> > > > perf goes down simply because there is less on cpu time.
+> > > >
+> > > > Thus you bench can you make sure to time(1)?
+> > >
+> > > Sure, will do once I'm home. Thanks for the hints!
+> >
+> > Unfortunately the same regression shows its ugly face:
+> >
+> > compare-mmtests.pl Hmean results:
+> > Hmean     faults/cpu-1    471264.4904 (   0.00%)   473085.6736 *   0.39=
+%*
+> > Hmean     faults/cpu-4    434571.7116 (   0.00%)   431214.3974 *  -0.77=
+%*
+> > Hmean     faults/cpu-7    407755.3217 (   0.00%)   395773.4052 *  -2.94=
+%*
+> > Hmean     faults/cpu-12   335604.9251 (   0.00%)   285426.3358 * -14.95=
+%*
+> > Hmean     faults/cpu-21   187588.9077 (   0.00%)   171227.7179 *  -8.72=
+%*
+> > Hmean     faults/cpu-30   140875.7878 (   0.00%)   124120.3437 * -11.89=
+%*
+> > Hmean     faults/cpu-48   106175.5493 (   0.00%)    93073.1499 * -12.34=
+%*
+> > Hmean     faults/cpu-56    92585.2536 (   0.00%)    82837.4299 * -10.53=
+%*
+> > Hmean     faults/sec-1    470924.4946 (   0.00%)   472730.9937 *   0.38=
+%*
+> > Hmean     faults/sec-4   1714823.8198 (   0.00%)  1693226.7248 *  -1.26=
+%*
+> > Hmean     faults/sec-7   2801395.1898 (   0.00%)  2717561.9417 *  -2.99=
+%*
+> > Hmean     faults/sec-12  3934168.2690 (   0.00%)  3319710.7540 * -15.62=
+%*
+> > Hmean     faults/sec-21  3736832.4592 (   0.00%)  3444687.9145 *  -7.82=
+%*
+> > Hmean     faults/sec-30  3845187.2636 (   0.00%)  3403585.7064 * -11.48=
+%*
+> > Hmean     faults/sec-48  4712317.7461 (   0.00%)  4180658.4710 * -11.28=
+%*
+> > Hmean     faults/sec-56  4873233.9844 (   0.00%)  4423608.6568 *  -9.23=
+%*
+> >
+> > This is the time(1) output with the baseline:
+> > 920.47user 7748.31system 18:30.85elapsed 780%CPU (0avgtext+0avgdata
+> > 26385096maxresident)k
+> > 140848inputs+19744outputs (66major+1583463207minor)pagefaults 0swaps
+> >
+> > This is the time(1) output with your change:
+> > 1025.73user 8618.74system 19:10.79elapsed 838%CPU (0avgtext+0avgdata
+> > 26385116maxresident)k
+> > 16584inputs+19512outputs (61major+1583468687minor)pagefaults 0swaps
+> >
+> > Maybe it has something to do with NUMA? The system I'm running has 2 NU=
+MA nodes:
+> >
+>
+> hrmpf. final cheap stab I forgot to mention is that plausibly this is
+> all about the adjacent cacheline prefetcher.
+>
+> google-fu temporarily fails me, but there was a one-liner to toggle
+> that on Linux. Worst case you can flip it in the BIOS
 
-Now do_huge_pmd_numa_page() also checks shared folios to set TNF_SHARED
-flag.
+Is "L2 Adjacent Cache Line Prefetcher" described in
+https://www.intel.com/content/dam/develop/external/us/en/documents/335592-s=
+dm-vol-4.pdf
+the feature you are referring to? Searching through some discussions
+looks like I'll need MSR tools to enable/disable it:
+https://mirrors.edge.kernel.org/pub/linux/utils/cpu/msr-tools/. I'll
+try poking with it over the weekend and see what happens.
 
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Zi Yan <ziy@nvidia.com>
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- mm/huge_memory.c | 29 +++++++++-------------
- mm/internal.h    |  5 ++--
- mm/memory.c      | 63 +++++++++++++++++++++++++-----------------------
- 3 files changed, 47 insertions(+), 50 deletions(-)
+> if that does not change anything, I'm going to grab a numa box of
+> similar scale to poke around myself, but I don't have an ETA
+>
+> even so, do you have a handy one-liner to run the case with 56
+> threads?
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 666fa675e5b6..f2fd3aabb67b 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1669,22 +1669,23 @@ static inline bool can_change_pmd_writable(struct vm_area_struct *vma,
- vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
--	pmd_t oldpmd = vmf->orig_pmd;
--	pmd_t pmd;
- 	struct folio *folio;
- 	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
- 	int nid = NUMA_NO_NODE;
--	int target_nid, last_cpupid = (-1 & LAST_CPUPID_MASK);
-+	int target_nid, last_cpupid;
-+	pmd_t pmd, old_pmd;
- 	bool writable = false;
- 	int flags = 0;
- 
- 	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
--	if (unlikely(!pmd_same(oldpmd, *vmf->pmd))) {
-+	old_pmd = pmdp_get(vmf->pmd);
-+
-+	if (unlikely(!pmd_same(old_pmd, vmf->orig_pmd))) {
- 		spin_unlock(vmf->ptl);
- 		return 0;
- 	}
- 
--	pmd = pmd_modify(oldpmd, vma->vm_page_prot);
-+	pmd = pmd_modify(old_pmd, vma->vm_page_prot);
- 
- 	/*
- 	 * Detect now whether the PMD could be writable; this information
-@@ -1699,18 +1700,10 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
- 	if (!folio)
- 		goto out_map;
- 
--	/* See similar comment in do_numa_page for explanation */
--	if (!writable)
--		flags |= TNF_NO_GROUP;
--
- 	nid = folio_nid(folio);
--	/*
--	 * For memory tiering mode, cpupid of slow memory page is used
--	 * to record page access time.  So use default value.
--	 */
--	if (!folio_use_access_time(folio))
--		last_cpupid = folio_last_cpupid(folio);
--	target_nid = numa_migrate_prep(folio, vmf, haddr, nid, &flags);
-+
-+	target_nid = numa_migrate_check(folio, vmf, haddr, &flags, writable,
-+					&last_cpupid);
- 	if (target_nid == NUMA_NO_NODE)
- 		goto out_map;
- 	if (migrate_misplaced_folio_prepare(folio, vma, target_nid)) {
-@@ -1730,13 +1723,13 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
- 
- 	flags |= TNF_MIGRATE_FAIL;
- 	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
--	if (unlikely(!pmd_same(oldpmd, *vmf->pmd))) {
-+	if (unlikely(!pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd))) {
- 		spin_unlock(vmf->ptl);
- 		return 0;
- 	}
- out_map:
- 	/* Restore the PMD */
--	pmd = pmd_modify(oldpmd, vma->vm_page_prot);
-+	pmd = pmd_modify(pmdp_get(vmf->pmd), vma->vm_page_prot);
- 	pmd = pmd_mkyoung(pmd);
- 	if (writable)
- 		pmd = pmd_mkwrite(pmd, vma);
-diff --git a/mm/internal.h b/mm/internal.h
-index 52f7fc4e8ac3..fb16e18c9761 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1191,8 +1191,9 @@ void vunmap_range_noflush(unsigned long start, unsigned long end);
- 
- void __vunmap_range_noflush(unsigned long start, unsigned long end);
- 
--int numa_migrate_prep(struct folio *folio, struct vm_fault *vmf,
--		      unsigned long addr, int page_nid, int *flags);
-+int numa_migrate_check(struct folio *folio, struct vm_fault *vmf,
-+		      unsigned long addr, int *flags, bool writable,
-+		      int *last_cpupid);
- 
- void free_zone_device_folio(struct folio *folio);
- int migrate_device_coherent_page(struct page *page);
-diff --git a/mm/memory.c b/mm/memory.c
-index bf791da57cab..e4f27c0696cb 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5368,16 +5368,43 @@ static vm_fault_t do_fault(struct vm_fault *vmf)
- 	return ret;
- }
- 
--int numa_migrate_prep(struct folio *folio, struct vm_fault *vmf,
--		      unsigned long addr, int page_nid, int *flags)
-+int numa_migrate_check(struct folio *folio, struct vm_fault *vmf,
-+		      unsigned long addr, int *flags,
-+		      bool writable, int *last_cpupid)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 
-+	/*
-+	 * Avoid grouping on RO pages in general. RO pages shouldn't hurt as
-+	 * much anyway since they can be in shared cache state. This misses
-+	 * the case where a mapping is writable but the process never writes
-+	 * to it but pte_write gets cleared during protection updates and
-+	 * pte_dirty has unpredictable behaviour between PTE scan updates,
-+	 * background writeback, dirty balancing and application behaviour.
-+	 */
-+	if (!writable)
-+		*flags |= TNF_NO_GROUP;
-+
-+	/*
-+	 * Flag if the folio is shared between multiple address spaces. This
-+	 * is later used when determining whether to group tasks together
-+	 */
-+	if (folio_likely_mapped_shared(folio) && (vma->vm_flags & VM_SHARED))
-+		*flags |= TNF_SHARED;
-+	/*
-+	 * For memory tiering mode, cpupid of slow memory page is used
-+	 * to record page access time.  So use default value.
-+	 */
-+	if (folio_use_access_time(folio))
-+		*last_cpupid = (-1 & LAST_CPUPID_MASK);
-+	else
-+		*last_cpupid = folio_last_cpupid(folio);
-+
- 	/* Record the current PID acceesing VMA */
- 	vma_set_access_pid_bit(vma);
- 
- 	count_vm_numa_event(NUMA_HINT_FAULTS);
--	if (page_nid == numa_node_id()) {
-+	if (folio_nid(folio) == numa_node_id()) {
- 		count_vm_numa_event(NUMA_HINT_FAULTS_LOCAL);
- 		*flags |= TNF_FAULT_LOCAL;
- 	}
-@@ -5479,35 +5506,11 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
- 	if (!folio || folio_is_zone_device(folio))
- 		goto out_map;
- 
--	/*
--	 * Avoid grouping on RO pages in general. RO pages shouldn't hurt as
--	 * much anyway since they can be in shared cache state. This misses
--	 * the case where a mapping is writable but the process never writes
--	 * to it but pte_write gets cleared during protection updates and
--	 * pte_dirty has unpredictable behaviour between PTE scan updates,
--	 * background writeback, dirty balancing and application behaviour.
--	 */
--	if (!writable)
--		flags |= TNF_NO_GROUP;
--
--	/*
--	 * Flag if the folio is shared between multiple address spaces. This
--	 * is later used when determining whether to group tasks together
--	 */
--	if (folio_likely_mapped_shared(folio) && (vma->vm_flags & VM_SHARED))
--		flags |= TNF_SHARED;
--
- 	nid = folio_nid(folio);
- 	nr_pages = folio_nr_pages(folio);
--	/*
--	 * For memory tiering mode, cpupid of slow memory page is used
--	 * to record page access time.  So use default value.
--	 */
--	if (folio_use_access_time(folio))
--		last_cpupid = (-1 & LAST_CPUPID_MASK);
--	else
--		last_cpupid = folio_last_cpupid(folio);
--	target_nid = numa_migrate_prep(folio, vmf, vmf->address, nid, &flags);
-+
-+	target_nid = numa_migrate_check(folio, vmf, vmf->address, &flags,
-+					writable, &last_cpupid);
- 	if (target_nid == NUMA_NO_NODE)
- 		goto out_map;
- 	if (migrate_misplaced_folio_prepare(folio, vma, target_nid)) {
--- 
-2.43.0
+Never tried restricting to only 56 threads before but I assume that
+changing lines in configs/config-workload-pft-threads:
+export PFT_MIN_CLIENTS=3D1
+export PFT_MAX_CLIENTS=3D$NUMCPUS
+to
+export PFT_MIN_CLIENTS=3D$NUMCPUS
+export PFT_MAX_CLIENTS=3D$NUMCPUS
 
+should do the trick. If it doesn't I'll ask Mel.
+
+> *maybe* comparing instructions which generate cache misses
+> before/after will explain what's up
+
+Any instructions/docs on how to capture this info?
+Thanks,
+Suren.
+
+>
+> > $ lscpu
+> > Architecture:             x86_64
+> >   CPU op-mode(s):         32-bit, 64-bit
+> >   Address sizes:          46 bits physical, 48 bits virtual
+> >   Byte Order:             Little Endian
+> > CPU(s):                   56
+> >   On-line CPU(s) list:    0-55
+> > Vendor ID:                GenuineIntel
+> >   Model name:             Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
+> >     CPU family:           6
+> >     Model:                79
+> >     Thread(s) per core:   2
+> >     Core(s) per socket:   14
+> >     Socket(s):            2
+> >     Stepping:             1
+> >     CPU max MHz:          3500.0000
+> >     CPU min MHz:          1200.0000
+> >     BogoMIPS:             5188.26
+> >     Flags:                fpu vme de pse tsc msr pae mce cx8 apic sep
+> > mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht
+> > tm pbe syscall nx pdpe1gb rdtscp lm constant_ts
+> >                           c arch_perfmon pebs bts rep_good nopl
+> > xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor
+> > ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm p
+> >                           cid dca sse4_1 sse4_2 x2apic movbe popcnt
+> > tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch
+> > cpuid_fault epb cat_l3 cdp_l3 pti intel_ppin ss
+> >                           bd ibrs ibpb stibp tpr_shadow flexpriority
+> > ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms
+> > invpcid rtm cqm rdt_a rdseed adx smap intel_pt xsave
+> >                           opt cqm_llc cqm_occup_llc cqm_mbm_total
+> > cqm_mbm_local dtherm ida arat pln pts vnmi md_clear flush_l1d
+> > Virtualization features:
+> >   Virtualization:         VT-x
+> > Caches (sum of all):
+> >   L1d:                    896 KiB (28 instances)
+> >   L1i:                    896 KiB (28 instances)
+> >   L2:                     7 MiB (28 instances)
+> >   L3:                     70 MiB (2 instances)
+> > NUMA:
+> >   NUMA node(s):           2
+> >   NUMA node0 CPU(s):      0-13,28-41
+> >   NUMA node1 CPU(s):      14-27,42-55
+> >
+> > Any ideas?
+> >
+> >
+> >
+> >
+> >
+> >
+> >
+> >
+> > >
+> > > >
+> > > > For example with zsh I got:
+> > > > ./run-mmtests.sh --no-monitor --config configs/config-workload-pft-=
+threads
+> > > >
+> > > > 39.35s user 445.45s system 390% cpu 124.04s (2:04.04) total
+> > > >
+> > > > I verified with offcputime-bpfcc -K that indeed there is a bunch of
+> > > > pft going off cpu from down_read/down_write even at the modest scal=
+e
+> > > > this was running in my case.
+> > > >
+> > > > >
+> > > > > >
+> > > > > > 1: https://lore.kernel.org/all/20230227173632.3292573-34-surenb=
+@google.com/T/#u
+> > > > > >
+> > > > > > ---
+> > > > > >  include/linux/mm.h       | 18 +++++++--------
+> > > > > >  include/linux/mm_types.h | 10 ++++-----
+> > > > > >  kernel/fork.c            | 47 ++++----------------------------=
+--------
+> > > > > >  mm/userfaultfd.c         |  6 ++---
+> > > > > >  4 files changed, 19 insertions(+), 62 deletions(-)
+> > > > > >
+> > > > > > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > > > > > index 43b40334e9b2..6d8b668d3deb 100644
+> > > > > > --- a/include/linux/mm.h
+> > > > > > +++ b/include/linux/mm.h
+> > > > > > @@ -687,7 +687,7 @@ static inline bool vma_start_read(struct vm=
+_area_struct *vma)
+> > > > > >         if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(vma->v=
+m_mm->mm_lock_seq))
+> > > > > >                 return false;
+> > > > > >
+> > > > > > -       if (unlikely(down_read_trylock(&vma->vm_lock->lock) =3D=
+=3D 0))
+> > > > > > +       if (unlikely(down_read_trylock(&vma->vm_lock) =3D=3D 0)=
+)
+> > > > > >                 return false;
+> > > > > >
+> > > > > >         /*
+> > > > > > @@ -702,7 +702,7 @@ static inline bool vma_start_read(struct vm=
+_area_struct *vma)
+> > > > > >          * This pairs with RELEASE semantics in vma_end_write_a=
+ll().
+> > > > > >          */
+> > > > > >         if (unlikely(vma->vm_lock_seq =3D=3D smp_load_acquire(&=
+vma->vm_mm->mm_lock_seq))) {
+> > > > > > -               up_read(&vma->vm_lock->lock);
+> > > > > > +               up_read(&vma->vm_lock);
+> > > > > >                 return false;
+> > > > > >         }
+> > > > > >         return true;
+> > > > > > @@ -711,7 +711,7 @@ static inline bool vma_start_read(struct vm=
+_area_struct *vma)
+> > > > > >  static inline void vma_end_read(struct vm_area_struct *vma)
+> > > > > >  {
+> > > > > >         rcu_read_lock(); /* keeps vma alive till the end of up_=
+read */
+> > > > > > -       up_read(&vma->vm_lock->lock);
+> > > > > > +       up_read(&vma->vm_lock);
+> > > > > >         rcu_read_unlock();
+> > > > > >  }
+> > > > > >
+> > > > > > @@ -740,7 +740,7 @@ static inline void vma_start_write(struct v=
+m_area_struct *vma)
+> > > > > >         if (__is_vma_write_locked(vma, &mm_lock_seq))
+> > > > > >                 return;
+> > > > > >
+> > > > > > -       down_write(&vma->vm_lock->lock);
+> > > > > > +       down_write(&vma->vm_lock);
+> > > > > >         /*
+> > > > > >          * We should use WRITE_ONCE() here because we can have =
+concurrent reads
+> > > > > >          * from the early lockless pessimistic check in vma_sta=
+rt_read().
+> > > > > > @@ -748,7 +748,7 @@ static inline void vma_start_write(struct v=
+m_area_struct *vma)
+> > > > > >          * we should use WRITE_ONCE() for cleanliness and to ke=
+ep KCSAN happy.
+> > > > > >          */
+> > > > > >         WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
+> > > > > > -       up_write(&vma->vm_lock->lock);
+> > > > > > +       up_write(&vma->vm_lock);
+> > > > > >  }
+> > > > > >
+> > > > > >  static inline void vma_assert_write_locked(struct vm_area_stru=
+ct *vma)
+> > > > > > @@ -760,7 +760,7 @@ static inline void vma_assert_write_locked(=
+struct vm_area_struct *vma)
+> > > > > >
+> > > > > >  static inline void vma_assert_locked(struct vm_area_struct *vm=
+a)
+> > > > > >  {
+> > > > > > -       if (!rwsem_is_locked(&vma->vm_lock->lock))
+> > > > > > +       if (!rwsem_is_locked(&vma->vm_lock))
+> > > > > >                 vma_assert_write_locked(vma);
+> > > > > >  }
+> > > > > >
+> > > > > > @@ -827,10 +827,6 @@ static inline void assert_fault_locked(str=
+uct vm_fault *vmf)
+> > > > > >
+> > > > > >  extern const struct vm_operations_struct vma_dummy_vm_ops;
+> > > > > >
+> > > > > > -/*
+> > > > > > - * WARNING: vma_init does not initialize vma->vm_lock.
+> > > > > > - * Use vm_area_alloc()/vm_area_free() if vma needs locking.
+> > > > > > - */
+> > > > > >  static inline void vma_init(struct vm_area_struct *vma, struct=
+ mm_struct *mm)
+> > > > > >  {
+> > > > > >         memset(vma, 0, sizeof(*vma));
+> > > > > > @@ -839,6 +835,8 @@ static inline void vma_init(struct vm_area_=
+struct *vma, struct mm_struct *mm)
+> > > > > >         INIT_LIST_HEAD(&vma->anon_vma_chain);
+> > > > > >         vma_mark_detached(vma, false);
+> > > > > >         vma_numab_state_init(vma);
+> > > > > > +       init_rwsem(&vma->vm_lock);
+> > > > > > +       vma->vm_lock_seq =3D -1;
+> > > > > >  }
+> > > > > >
+> > > > > >  /* Use when VMA is not part of the VMA tree and needs no locki=
+ng */
+> > > > > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.=
+h
+> > > > > > index 003619fab20e..caffdb4eeb94 100644
+> > > > > > --- a/include/linux/mm_types.h
+> > > > > > +++ b/include/linux/mm_types.h
+> > > > > > @@ -615,10 +615,6 @@ static inline struct anon_vma_name *anon_v=
+ma_name_alloc(const char *name)
+> > > > > >  }
+> > > > > >  #endif
+> > > > > >
+> > > > > > -struct vma_lock {
+> > > > > > -       struct rw_semaphore lock;
+> > > > > > -};
+> > > > > > -
+> > > > > >  struct vma_numab_state {
+> > > > > >         /*
+> > > > > >          * Initialised as time in 'jiffies' after which VMA
+> > > > > > @@ -716,8 +712,7 @@ struct vm_area_struct {
+> > > > > >          * slowpath.
+> > > > > >          */
+> > > > > >         int vm_lock_seq;
+> > > > > > -       /* Unstable RCU readers are allowed to read this. */
+> > > > > > -       struct vma_lock *vm_lock;
+> > > > > > +       void *vm_dummy;
+> > > > > >  #endif
+> > > > > >
+> > > > > >         /*
+> > > > > > @@ -770,6 +765,9 @@ struct vm_area_struct {
+> > > > > >         struct vma_numab_state *numab_state;    /* NUMA Balanci=
+ng state */
+> > > > > >  #endif
+> > > > > >         struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
+> > > > > > +#ifdef CONFIG_PER_VMA_LOCK
+> > > > > > +       struct rw_semaphore vm_lock ____cacheline_aligned_in_sm=
+p;
+> > > > > > +#endif
+> > > > > >  } __randomize_layout;
+> > > > > >
+> > > > > >  #ifdef CONFIG_NUMA
+> > > > > > diff --git a/kernel/fork.c b/kernel/fork.c
+> > > > > > index 92bfe56c9fed..eab04a24d5f1 100644
+> > > > > > --- a/kernel/fork.c
+> > > > > > +++ b/kernel/fork.c
+> > > > > > @@ -436,35 +436,6 @@ static struct kmem_cache *vm_area_cachep;
+> > > > > >  /* SLAB cache for mm_struct structures (tsk->mm) */
+> > > > > >  static struct kmem_cache *mm_cachep;
+> > > > > >
+> > > > > > -#ifdef CONFIG_PER_VMA_LOCK
+> > > > > > -
+> > > > > > -/* SLAB cache for vm_area_struct.lock */
+> > > > > > -static struct kmem_cache *vma_lock_cachep;
+> > > > > > -
+> > > > > > -static bool vma_lock_alloc(struct vm_area_struct *vma)
+> > > > > > -{
+> > > > > > -       vma->vm_lock =3D kmem_cache_alloc(vma_lock_cachep, GFP_=
+KERNEL);
+> > > > > > -       if (!vma->vm_lock)
+> > > > > > -               return false;
+> > > > > > -
+> > > > > > -       init_rwsem(&vma->vm_lock->lock);
+> > > > > > -       vma->vm_lock_seq =3D -1;
+> > > > > > -
+> > > > > > -       return true;
+> > > > > > -}
+> > > > > > -
+> > > > > > -static inline void vma_lock_free(struct vm_area_struct *vma)
+> > > > > > -{
+> > > > > > -       kmem_cache_free(vma_lock_cachep, vma->vm_lock);
+> > > > > > -}
+> > > > > > -
+> > > > > > -#else /* CONFIG_PER_VMA_LOCK */
+> > > > > > -
+> > > > > > -static inline bool vma_lock_alloc(struct vm_area_struct *vma) =
+{ return true; }
+> > > > > > -static inline void vma_lock_free(struct vm_area_struct *vma) {=
+}
+> > > > > > -
+> > > > > > -#endif /* CONFIG_PER_VMA_LOCK */
+> > > > > > -
+> > > > > >  struct vm_area_struct *vm_area_alloc(struct mm_struct *mm)
+> > > > > >  {
+> > > > > >         struct vm_area_struct *vma;
+> > > > > > @@ -474,10 +445,6 @@ struct vm_area_struct *vm_area_alloc(struc=
+t mm_struct *mm)
+> > > > > >                 return NULL;
+> > > > > >
+> > > > > >         vma_init(vma, mm);
+> > > > > > -       if (!vma_lock_alloc(vma)) {
+> > > > > > -               kmem_cache_free(vm_area_cachep, vma);
+> > > > > > -               return NULL;
+> > > > > > -       }
+> > > > > >
+> > > > > >         return vma;
+> > > > > >  }
+> > > > > > @@ -496,10 +463,8 @@ struct vm_area_struct *vm_area_dup(struct =
+vm_area_struct *orig)
+> > > > > >          * will be reinitialized.
+> > > > > >          */
+> > > > > >         data_race(memcpy(new, orig, sizeof(*new)));
+> > > > > > -       if (!vma_lock_alloc(new)) {
+> > > > > > -               kmem_cache_free(vm_area_cachep, new);
+> > > > > > -               return NULL;
+> > > > > > -       }
+> > > > > > +       init_rwsem(&new->vm_lock);
+> > > > > > +       new->vm_lock_seq =3D -1;
+> > > > > >         INIT_LIST_HEAD(&new->anon_vma_chain);
+> > > > > >         vma_numab_state_init(new);
+> > > > > >         dup_anon_vma_name(orig, new);
+> > > > > > @@ -511,7 +476,6 @@ void __vm_area_free(struct vm_area_struct *=
+vma)
+> > > > > >  {
+> > > > > >         vma_numab_state_free(vma);
+> > > > > >         free_anon_vma_name(vma);
+> > > > > > -       vma_lock_free(vma);
+> > > > > >         kmem_cache_free(vm_area_cachep, vma);
+> > > > > >  }
+> > > > > >
+> > > > > > @@ -522,7 +486,7 @@ static void vm_area_free_rcu_cb(struct rcu_=
+head *head)
+> > > > > >                                                   vm_rcu);
+> > > > > >
+> > > > > >         /* The vma should not be locked while being destroyed. =
+*/
+> > > > > > -       VM_BUG_ON_VMA(rwsem_is_locked(&vma->vm_lock->lock), vma=
+);
+> > > > > > +       VM_BUG_ON_VMA(rwsem_is_locked(&vma->vm_lock), vma);
+> > > > > >         __vm_area_free(vma);
+> > > > > >  }
+> > > > > >  #endif
+> > > > > > @@ -3192,10 +3156,7 @@ void __init proc_caches_init(void)
+> > > > > >                         SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCO=
+UNT,
+> > > > > >                         NULL);
+> > > > > >
+> > > > > > -       vm_area_cachep =3D KMEM_CACHE(vm_area_struct, SLAB_PANI=
+C|SLAB_ACCOUNT);
+> > > > > > -#ifdef CONFIG_PER_VMA_LOCK
+> > > > > > -       vma_lock_cachep =3D KMEM_CACHE(vma_lock, SLAB_PANIC|SLA=
+B_ACCOUNT);
+> > > > > > -#endif
+> > > > > > +       vm_area_cachep =3D KMEM_CACHE(vm_area_struct, SLAB_PANI=
+C|SLAB_ACCOUNT|SLAB_HWCACHE_ALIGN);
+> > > > > >         mmap_init();
+> > > > > >         nsproxy_cache_init();
+> > > > > >  }
+> > > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > > > > index 3b7715ecf292..e95ecb2063d2 100644
+> > > > > > --- a/mm/userfaultfd.c
+> > > > > > +++ b/mm/userfaultfd.c
+> > > > > > @@ -92,7 +92,7 @@ static struct vm_area_struct *uffd_lock_vma(s=
+truct mm_struct *mm,
+> > > > > >                  * mmap_lock, which guarantees that nobody can =
+lock the
+> > > > > >                  * vma for write (vma_start_write()) under us.
+> > > > > >                  */
+> > > > > > -               down_read(&vma->vm_lock->lock);
+> > > > > > +               down_read(&vma->vm_lock);
+> > > > > >         }
+> > > > > >
+> > > > > >         mmap_read_unlock(mm);
+> > > > > > @@ -1468,9 +1468,9 @@ static int uffd_move_lock(struct mm_struc=
+t *mm,
+> > > > > >                  * See comment in uffd_lock_vma() as to why not=
+ using
+> > > > > >                  * vma_start_read() here.
+> > > > > >                  */
+> > > > > > -               down_read(&(*dst_vmap)->vm_lock->lock);
+> > > > > > +               down_read(&(*dst_vmap)->vm_lock);
+> > > > > >                 if (*dst_vmap !=3D *src_vmap)
+> > > > > > -                       down_read_nested(&(*src_vmap)->vm_lock-=
+>lock,
+> > > > > > +                       down_read_nested(&(*src_vmap)->vm_lock,
+> > > > > >                                          SINGLE_DEPTH_NESTING);
+> > > > > >         }
+> > > > > >         mmap_read_unlock(mm);
+> > > > > > --
+> > > > > > 2.43.0
+> > > > > >
+> > > >
+> > > >
+> > > >
+> > > > --
+> > > > Mateusz Guzik <mjguzik gmail.com>
+>
+>
+>
+> --
+> Mateusz Guzik <mjguzik gmail.com>
 
