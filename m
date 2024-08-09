@@ -1,206 +1,167 @@
-Return-Path: <linux-kernel+bounces-280367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3707B94C99E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:27:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763D494C9A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF9251F23344
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:27:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2F1286DAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAB316C697;
-	Fri,  9 Aug 2024 05:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8722116C6AA;
+	Fri,  9 Aug 2024 05:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Hf3osR7i"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2047.outbound.protection.outlook.com [40.107.96.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gxYIZ3+C"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E6816B384;
-	Fri,  9 Aug 2024 05:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723181248; cv=fail; b=ktfezkr7Odob8zpZWVOjgMBzgoT7uMPz1ZsYsPcju2xLJ3/8z+lrWROAYcKrbxr6IT3b4TAL9R+cdoNScbtvF55tTxSiK8XwlXr01xzMaQszUe5a4vj/g3Wc5mRA1LH4x5C1bo2Sk15wElyu52rbldWYGq9y8BHl0/JmoQ0r9Q0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723181248; c=relaxed/simple;
-	bh=K6OkaMdG6GPJv7Z7utu6feANxaDOVRG7aJO2jbxFkMc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=A8jyq4jaAXdHoZrQ2buGQsVK9+TejAKxHal1S4gw85ug5DWO+PzxLvZNJDdun+OiwhU7RQsr2l0UHkeTkPH97DebubYpVfi47iYDq2VCAfJ6VqFsDMTG4nR6uFpU00V//zAIbEYGCiXp5YoEAAVHO6cQQdsEF/px2zKo6tMDCk8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Hf3osR7i; arc=fail smtp.client-ip=40.107.96.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VRsNPeZ9bolw1q3ePMbDUxtYXp0ZBy30QFcAGRIiEJEtTWqi28QCmGGbUzUQ0T8nEWffqVz/rhNRN6I/kV9hrGbLQARoB4BZeJZncA9oo45uWNKqbW7dNrPFAazSrGgB0MJGEz9ZfXIE3RNhifx8Lu42VW2NxOj4HO+ZENijCWldbG7rByCmc+6D/6IDPn8X/CR+o51UTvlTMEPVExRhQWXr7gQSnji4hVtpzxHvHK+XIXvtlZCI05xS4Dm3DBg6Dc8+pIMC2hYbhYrowySdFU9XSftkwFceuxxxqLD0H+DO58dr6t7jaWAacmq1x4EjxHjKYrLpW0LQQtS7mIvLVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xAEmLcuPFFH+tGF0RVkyuj7Xs8Qbe6Ct9aGsnmNNpd0=;
- b=JVcDj3wiGA4UnIWDBTdEwvQtG+IFRnJR/hSX6BRoY5ck4cD7MD25Bf+BV10ZlMAMDR6bcLZ6/YjFPWUPnoUSFSWNnEbiCe0+Umu9O3pITE2/3fHKzAx1bufHRPWRMC8tLo5rmvkCwV1LyGDAyqRqdSf837AzC/0xvGo76vY7MTsiWpvFI3nNTBPtJvWWZqbB4pvk2P87Uu6oLVvZh7Od7Qf4BrmHnG06BdbJN6oBEyY/YPvSNvwGUKGd2UK+ehhqZQ8UVi/dh4pON8dDaA4JhMJOAyfB0y+iC8pFC59Jwl27yfrokqNkGlOldsI6nBifFx5kQSdt0cGArt88ThRXYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xAEmLcuPFFH+tGF0RVkyuj7Xs8Qbe6Ct9aGsnmNNpd0=;
- b=Hf3osR7i29vfHpt4dCUWUGSLjEHoz0D5pnlYmlDXQCQiwLJK0dSn8FR0Ck83wQA054zGoHcsqCnAsT68F0KMwJmWrap7iQdIjNUjw8TSD+P/Rm2XtPnLvFu1zbIts6Bao60+9bi3LmV21zV5nSm4LM3aqrKBk82QZzM3TzWttKA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by SA3PR12MB8045.namprd12.prod.outlook.com (2603:10b6:806:31d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.17; Fri, 9 Aug
- 2024 05:27:21 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%4]) with mapi id 15.20.7828.031; Fri, 9 Aug 2024
- 05:27:21 +0000
-Message-ID: <484da8d3-c03a-4315-8861-93888adece47@amd.com>
-Date: Fri, 9 Aug 2024 10:57:10 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cpufreq/amd-pstate: Add the missing cpufreq_cpu_put()
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: ray.huang@amd.com, gautham.shenoy@amd.com, mario.limonciello@amd.com,
- perry.yuan@amd.com, rafael@kernel.org, li.meng@amd.com,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240808123651.3741-1-Dhananjay.Ugwekar@amd.com>
- <20240809051455.eswe346caiee6gpp@vireshk-i7>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <20240809051455.eswe346caiee6gpp@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA1PR01CA0157.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:71::27) To SA3PR12MB9198.namprd12.prod.outlook.com
- (2603:10b6:806:39f::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809E4433D8
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 05:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723181595; cv=none; b=chXs2DE9WYDu4KhKt1kSPD447QpB16KmKycz/bsjT2nrcEcx+Ywao+k6mFc6Hci6km38R78Z4x945S4f6MtmKQ6QGRW9S0fXlO/vLdWjWu90Y+zU+zMyguuHrMkoShKQpBjTxcwPM7/YbBHKFIJn5oPIcxI1TRNepVjh5bBsUO4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723181595; c=relaxed/simple;
+	bh=pnz4pn2aIuI7q35aQCwWQSEhHuiNUdJUQyIwuU/LSLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YD0rq8UIM1Ran5nO8beKoPDmNo/X0W+K7JsmPmr+Sg7repejjV5Wi79rftHwLamyO6ayW+S6z4e0a4F6n6DLnlLRB349bOmWTaA8pEA5re9spoQtAKCZh+/WGtdtGjUdxoud4nWSu/I7HqFvbppej5Jp76uCIh1YzxUW4bopkGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gxYIZ3+C; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-710dc3015bfso93154b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 22:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723181593; x=1723786393; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Rpcp7sNOdXCekWfh56WPO6OMCeZXKdG+njZ3Axxp7Y8=;
+        b=gxYIZ3+CwZ4w1gVCNA/mqBAaXC53cvrQZGls5BPrVQ45oaK18T8Br91zEat6YzRx3u
+         044HV59tJM4kDzTLq7U4AJnNbI0d4PwzF9Uo0sJWobgNA212Y1dyS5Am+bYM0vSE9+kK
+         nVRxtmKLz30eodpi4aiFRGhkRGqStsqiDA4o9XQb9j7uZef3VmtN4K1ZJ7jo0Xt2SkYq
+         8c+ideIfz46vCdON5S+rMfSUW05L+SpI/AtBB7R0BQijYvcqQqyU4oKasG2oR5EdXeLT
+         98mazfh/3ZzwLFDvFu9AJzprpwPfhEjqfZPLolFs7r8e5Z5q0fP2x3fa3PeSNjEJ2ueQ
+         azuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723181593; x=1723786393;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rpcp7sNOdXCekWfh56WPO6OMCeZXKdG+njZ3Axxp7Y8=;
+        b=larhDEH9mnc+ylr8irlGygwqf0iWwxVluAaTjHHJglu5UXRklli6hNFIitZyj/2nqK
+         M4NE/fa7rhKt2Wpxx4me+Wz23IQISI85THIHurYuqbjx8jnry5EgE7MB/U0JTFyS8Z0U
+         cRlYa76zecgARM2DFgPrVc9apUs4TBbgeMBhq5/ZB8EcjwQ2GZolxHuFejQ/4sf0fWS6
+         X4fRoEKwAhgp64/HQlFPQv9Wbu6A4ObQOrth+yQ2Q8dczYfS3NitrQkxP+p1/aPKyeIv
+         hKT0sFwNyyuV3be2Xykz04YDUlOsE8JAOxbeKHH9+DvPbYHWYnRryCqc3JY8tPjO1Kv9
+         GwuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVehYmcy2Sr0Y6XYhVLaxDMotaaUH3Xp32KTt195tvbiu/9OvssEpuaNcVc3nBYTew/Bf9j7bv69ucZLwq46gvCE4lmQW10F4e/uUYL
+X-Gm-Message-State: AOJu0YyIjiKFN4NZ/mV0Hq0UrsPqv9nHTHaTxHpHkvuXxaBOWi1kIt1s
+	iRvbwnpTUTXUZpX85cptZ82+v2W9iMhFA1PO/8C4rgby3LZoX3g2n3I8rIhBrA==
+X-Google-Smtp-Source: AGHT+IHjsR+odVk/XFoa4hO6BfS6oiJfnTEktUyDC4vLxB+lplkufKntidsEa0rknzxBQC+JIgXZTA==
+X-Received: by 2002:a05:6a00:b8e:b0:70d:2a1b:422c with SMTP id d2e1a72fcca58-710dcd5c457mr847790b3a.7.1723181592792;
+        Thu, 08 Aug 2024 22:33:12 -0700 (PDT)
+Received: from thinkpad ([117.213.100.70])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2e7416sm1934529b3a.158.2024.08.08.22.33.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 22:33:12 -0700 (PDT)
+Date: Fri, 9 Aug 2024 11:03:04 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andrew Halaney <ahalaney@redhat.com>
+Cc: Rob Herring <robh@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
+	bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	vigneshr@ti.com, kishon@kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org, srk@ti.com
+Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
+Message-ID: <20240809053304.GB2826@thinkpad>
+References: <20240724065048.285838-1-s-vadapalli@ti.com>
+ <20240724161916.GG3349@thinkpad>
+ <20240725042001.GC2317@thinkpad>
+ <93e864fb-cf52-4cc0-84a0-d689dd829afb@ti.com>
+ <20240726115609.GF2628@thinkpad>
+ <CAL_JsqJ-mfU88E_Ri=BzH6nAFg405gkPPJTtjdp7UR2n96QMkw@mail.gmail.com>
+ <20240805164519.GF7274@thinkpad>
+ <CAL_JsqKxF6yYTWbmU8SRhxemNMwErNViHuk05sLyFjFzssh=Eg@mail.gmail.com>
+ <wr2z74wsqhitisgp4qsfrmuvvhw3cpp3bdzkp5batawv6btfyd@xcyhug7jyfxg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|SA3PR12MB8045:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37c427b9-f85a-42ab-647a-08dcb833f074
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bGJEdEF3em9PSDB1TXM0eU5YNHhxak1yS3BBYSt4ODNvTGY4R1BuMTFyT3ZC?=
- =?utf-8?B?a1NEeWxBV2U1QzI1UmxJc2dLTnZwa1BQSnJXL0FzT20yeDlGQ1FNV3lLYUc3?=
- =?utf-8?B?OEJEdXc1WmtLNFJ4SWJSeEN4Y2g0ZnVPRlA3QmdwUUFkZm1nZzcvQjZaUWJp?=
- =?utf-8?B?ZzEyaG53QnlpRWJ3cndETENDRVhoWlpBdzliQm02SWNFOFoybmV4MjkzMmtZ?=
- =?utf-8?B?ZVZJR3dyMDJzdXE3SkdUVGFrMjNYSXg2WkpNVGpUZEorbktIdGgvM1VFbXZB?=
- =?utf-8?B?R2RzVEN4NUZvN25WakxNNFRoVmU4Nm5qcVRORlIzWm1sTk9razZwUTNjNVpL?=
- =?utf-8?B?ZU1SY1praytralQrbS9UaUZ2K2xTWXViYkdLOVZrcTNUejJGYmN3QXdKVjNo?=
- =?utf-8?B?bFNKVFdEVHlPb29oYWJ3RlZmQnFXLytlR0tDSFlpd202T251SWRSdmJyaUph?=
- =?utf-8?B?d3lNYlJIS0ZDaXdYbWQzYWJkaERrcUpvdEFRSCtEOCtSbTNZbEFJem9tVG1V?=
- =?utf-8?B?TVNXUkpUSlFIQ1lXSHdHbXduNWJZb2lCOEdpRExQYkZhZERRS1h1aTdCUWVE?=
- =?utf-8?B?N1dDZ0I5RHROTUtVQlNsLzQ5YjF4c1VmNUgxclNNQ3hwaDZJMWZoa01ucThU?=
- =?utf-8?B?Z1BROWpjRU5tRmxPY2Nud3NUTngzbkhiZ3JDdjRSS1RHM2ljYTBKckwwRkdW?=
- =?utf-8?B?bzBudGhQRWtndVhuS1FwTndVRlRXVS9lbFVoTmpwYzFxSndXN3Nhc2xma0VQ?=
- =?utf-8?B?WjVpNjhpT0gvUE1STUJURHltM0luUjlnbjVjTzZOVW9vVWFqWWJBUHBJY2ZW?=
- =?utf-8?B?aHVjZGh0L0ZWUVpNZFdDQ04rRVB6U0VFR1JDWEVVUGNnL0hlakdNb0NKaXFt?=
- =?utf-8?B?aXk1TnNuaFMyVmE2NU5yaW1NV3ovTkgxaGQwMVRoTm5BNHdFZy9pVUlFak1W?=
- =?utf-8?B?cW5wWTJYZ0ppUXhlVVFibFI5eG9obVRvYjJVZXhHWjlHU2phcG8xOEZaZFUr?=
- =?utf-8?B?NWcvaVZzZy9YSEFkQnpneEkreGZ2VkhOZVhiM1drNnBIcDRJNVVndkdYNzFZ?=
- =?utf-8?B?L1NVWFpSNFBPWGhVOUZIc2poVE5Na2M4Y1FrNkdCbDEzV3MySWhaMHZBUm5q?=
- =?utf-8?B?UTl0NnpRMXAvcnVwem1qWGNHaWFBTkk1NG5xd0JWMDI3OWo0eWJuZDFhakxG?=
- =?utf-8?B?WEpoQnRjT0RPRURYTUwvVXo0WFhYVUcrL1VDRlJUbEgwNU95N2lRZEdmdlU5?=
- =?utf-8?B?UlBKTlpTTGNRdTZ1Q3VDMnljVzhJdDhoQ2Q3dWxSczIwWU1RT0FzbUxqOEV5?=
- =?utf-8?B?aDE1dU1IbEpIQjVkbjFjeVpLVEQ4UmxobUtJcFhCQmo1MkJTa0I4c2QvQmxi?=
- =?utf-8?B?MU1KbmxXck4yVGNJZkJoSThYTFd1NndVRWlHR2JETTZWL2NyYW9id0RnUEYv?=
- =?utf-8?B?TXRKQzcwckw4d0JrN3pIc0I3Y0RrOGV1NkN2VGRQRjlvb1VsNVg4T2FsT24w?=
- =?utf-8?B?eUY1K3FZcWV2RUYyb0U0L0JBcEJia085QkN5SXdGMTMxbHgvTHd1M0pUekt5?=
- =?utf-8?B?RjAvYTRYUFVmcWRtSWFhdHg4WlBObWlzSWFSZGJOSmxtUEtqUWgrRndvUkZy?=
- =?utf-8?B?MGlJZG82bDQwYUhWOHovZVh6RzM3WFMzM0ZXMWdleUdlSnJIK2hRc2trb2Ev?=
- =?utf-8?B?SzdyV3JyN1Y2NE5nVXdhZHVIUDQzbzI1UUR6Y2FLVEFhcG93QWI5RnEzZklu?=
- =?utf-8?B?L2VId2ZQai9DYW96Y3VOU0ZmK0VXZGlaUDhpaUw4dWQwLzNLN0lReXY5TlVo?=
- =?utf-8?B?RWh0TWRWV3FFLzMxZjFQQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dHZBUm45b2tpMDFsWm9rM2FtSnE1K3dWb01EUTBZUm83UjVWSGFoYzJQRWlD?=
- =?utf-8?B?NXJYUzVyUmRRVUZFUm5SZVZ2dVpDeC92S2UycmFNeHN2Q09KRnA5T0JXNlBU?=
- =?utf-8?B?V09mWW9MalFKQ2UydzBPMnJYbzFNcGdXSVlQblJSeWpFMWNrOHloM3RZblZq?=
- =?utf-8?B?YzdsQUNRbWM5bm5LN1VRaXlWT1dsSzZINlZYd2pveUJGZmd5VlpTNzdxakZh?=
- =?utf-8?B?bXZaV1RyaERxbDBqd2o0bC82WWgvM2h5VWs1MmlIYnQ1QjhRRDArUjBzYzkr?=
- =?utf-8?B?eWIvMVpiY2ZsaWYrUVAzWWtYQllGYlpKZXlkdnFUV3E4VjB1eVFoSDE1bGxr?=
- =?utf-8?B?S1laa01TcmtZdEFUM3FHdTRTZ2R6dXpSMlhtblBPOWR5bElMVGVvZUVwc0Uy?=
- =?utf-8?B?RWllUjVTbG5oV213R2VQeW9oV2dXdkkweGE4Yng3YWh2RjhKbE1sNlNpUHh4?=
- =?utf-8?B?RzJid2xNTE1vQ043NURQNEw2dGE0R1ZaWTNXREl4OXFlNUF5R1B6MUZVd0h3?=
- =?utf-8?B?NVFmSmVJUTlsbERzS05nYU9rbm0vTHpnRFJVWVE2akRqSTlUUXpUQUVUV1A0?=
- =?utf-8?B?SXFVcDVnZU1wRElCQ3p3Nzh4TXo1NHlKc0ZZTDYxVzIvd3h3QVh2UXQzd0JS?=
- =?utf-8?B?TnNZNmdmdzlQSEhIRWZiVERmN3JvenBldGNVejdEZ1laTENWTkxDZWw2Wlda?=
- =?utf-8?B?eVNJNVFqL3VBQ2tsdUt5UWlBcnZPVjN5Z0lZaHcvNlZSa0lacHZqUTBzYWxu?=
- =?utf-8?B?UW5lY045OTNWQ3F6SEluemhsMGZSbGxTc0hWZFQ1ekFKSm1TMWlqWEdUdlR1?=
- =?utf-8?B?TXJQUzhReTI4QW5IQ2p2Tm5IUXE0a1AwWWxteFNYajJyak9DMnpNak5UUmdW?=
- =?utf-8?B?eVdyVGxBazU4N1N5QU16S2lnWDBpd2NaRFlvclYxdUtCUk5rbmdDSGQwTnpx?=
- =?utf-8?B?a3hDSitBTGdTV1dqQlZiaWRLRWQwdldqazRzb2k0UWg0QURwTkpIcGRmSmlI?=
- =?utf-8?B?YmlCR1dKMU1SWUdKR1ptSzFYbEpGMG5rN0xWWWlRbEIycUNjSGlDY3ErZE4w?=
- =?utf-8?B?ZGZyUisyL3JwZk4xTmxJRHF4RElyRUpSZUhDb0Z0VDNFZjBYOGJlaldZZkdo?=
- =?utf-8?B?blhVK0gyMlE3TURjUmJ4ajJYTWdCR0pXOWJpTVNydGtHdFJMcU90YUhtRFlY?=
- =?utf-8?B?em50czhNcW15UHB4Q0REQTBTZGJSU2s0NWlSS1ZZbFZSR0J2N1RLenBPdUY2?=
- =?utf-8?B?RUdKblBDdHRKZ3o1UHVDSXdOZVU2bm5xYUk2SjU0NVZmVjJxR3I4MFRMbzJ4?=
- =?utf-8?B?SkFRdVRBSEllSmtlTEtGOWxjQnY2bktNd1E1a29nTjU5R2NVZXBqZ296NjRT?=
- =?utf-8?B?aGdGazZ4L1hSemVVTHhNYzJjVnRBbmhiYTZzcVFhL0czMVo5NnFHUzVmMjcy?=
- =?utf-8?B?Z3lkelVDRGM0bmo3OHlkQTNVYXVqNDJ5Rm81dG9HcEhDVlpTUC84emVQQ0hQ?=
- =?utf-8?B?NFp3SHFJUW1kWTUvUDhSZXpRY3pxUzJVZmdIaVREMm51cGxCa0J3cm5qa1l3?=
- =?utf-8?B?aFpwU0QzLzlaMWQwTUEvQzZXUHJlWGZpY3BpeWkwQ0xQK3JUS3lSdmdtNU1U?=
- =?utf-8?B?UTZVZXZlZlN5Nm5seWR2ZkhUa0Y4WmcyZ3J1cUo5R0JlaFFObmVNODZESWow?=
- =?utf-8?B?aXhRYUkwK3ZDVCtKY2Jnam8rWFA2elZMUUJZMHV1VWxrVlZ5dDI2blpRNFI4?=
- =?utf-8?B?Zkhkd1hSTGZnNVZPVmIrS3RBRmEyUW53cjJ4T2Z0djdoYm9HUHlEOHd6Y3BC?=
- =?utf-8?B?Q2pBVFVkc2xoYjlJMCtjaHNzbGFOU1N4TWJjdzgzdFZ3SEQ1eTFVVUJCUDJK?=
- =?utf-8?B?bVdRVTJYUmpyK2JaUFladyszNVVCVmo2ZDJmZVpDKys5eVMyVzJxNXBXUWVH?=
- =?utf-8?B?eFJ1M1hON01EdFM2T3hETTVaTTFoV2p0SzRSc1JsM0E2ZTVYaEJtWGdBV3lF?=
- =?utf-8?B?Z1hCdzlKMFgxa3NSNkpUVnR2RWYwQVlLOXJpWUhLa1ExRDhFaHROeWp4Zlk4?=
- =?utf-8?B?TEFEYTEwcGFsaWw4VTcwSVRIc1NXZERRY3dRRkJCTFBSNnhtbGRZL3hmc1lw?=
- =?utf-8?Q?UYqgtjvxsLXWVJCFBw5BMKbtc?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37c427b9-f85a-42ab-647a-08dcb833f074
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB9198.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 05:27:20.9536
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qrRFpouHQ265mxBLFw9stUwZheULjcHg6zE643dTmQ1p2lku5UsI08KBRcfnA25nPZ4Yae2Sxz64u663IhnyrA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8045
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <wr2z74wsqhitisgp4qsfrmuvvhw3cpp3bdzkp5batawv6btfyd@xcyhug7jyfxg>
 
+On Thu, Aug 08, 2024 at 03:56:10PM -0500, Andrew Halaney wrote:
 
+[...]
 
-On 8/9/2024 10:44 AM, Viresh Kumar wrote:
-> On 08-08-24, 12:36, Dhananjay Ugwekar wrote:
->> Fix the reference counting of cpufreq_policy object in amd_pstate_update()
->> function by adding the missing cpufreq_cpu_put().
->>
->> Fixes: e8f555daacd3 ("cpufreq/amd-pstate: fix setting policy current frequency value")
->> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
->> Reviewed-by: Perry Yuan <perry.yuan@amd.com>
->> ---
->>  drivers/cpufreq/amd-pstate.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
->> index 804fab4ebb26..36edae40db1a 100644
->> --- a/drivers/cpufreq/amd-pstate.c
->> +++ b/drivers/cpufreq/amd-pstate.c
->> @@ -560,6 +560,8 @@ static void amd_pstate_update(struct amd_cpudata *cpudata, u32 min_perf,
->>  
->>  	amd_pstate_update_perf(cpudata, min_perf, des_perf,
->>  			       max_perf, fast_switch);
->> +
->> +	cpufreq_cpu_put(policy);
+> > There's a lot of history and the interrupt parsing is fragile due to
+> > all the "interesting" DT interrupt hierarchies. So while I think it
+> > would work, that's just a guess. I'm open to trying it and seeing.
 > 
-> There is an early return path in this routine, which still doesn't
-> perform this action.
-
-Thanks for catching this, will fix in next version
-
-Regards,
-Dhananjay
-
+> Would something like this be what you're imagining? If so I can post a
+> patch if this patch is a dead end:
 > 
+>     diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+>     index dacea3fc5128..4e4ecaa95599 100644
+>     --- a/drivers/pci/of.c
+>     +++ b/drivers/pci/of.c
+>     @@ -512,6 +512,10 @@ static int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *
+>                             if (ppnode == NULL) {
+>                                     rc = -EINVAL;
+>                                     goto err;
+>     +                       } else if (!of_get_property(ppnode, "interrupt-map", NULL)) {
+>     +                               /* No interrupt-map on a host bridge means we're done here */
+>     +                               rc = -ENOENT;
+>     +                               goto err;
+>                             }
+>                     } else {
+>                             /* We found a P2P bridge, check if it has a node */
+> 
+
+This is a reasonable change if the parent is the host bridge. But if parent is a
+PCI bridge node (note the else condition), then of_irq_parse_raw() will get
+called and we will hit the same issue.
+
+IMO, either we need to fix of_irq_parse_raw() or come up with another
+implementation that does the right thing i.e., travese upto the host bridge and
+check for the 'interrupt-map'. Currently it goes till the top level interrupt
+controller.
+
+> I must admit that you being nervous has me being nervous since I'm not all
+> that familiar with PCI... but if y'all think this is ok then I'm for it.
+> I'm sure I'm not picturing all the cases here so would appreciate
+> some scrutiny.
+> 
+> You still end up with warnings, which kind of sucks, since as I
+> understand it the lack of INTx interrupts on this platform is
+> *intentional*:
+> 
+>     [    3.342548] pci_bus 0000:00: 2-byte config write to 0000:00:00.0 offset 0x4 may corrupt adjacent RW1C bits
+>     [    3.346716] pcieport 0000:00:00.0: of_irq_parse_pci: no interrupt-map found, INTx interrupts not available
+>     [    3.346721] PCI: OF: of_irq_parse_pci: possibly some PCI slots don't have level triggered interrupts capability
+> 
+
+I propose to demote these prints to debug as these are not warnings by any
+means.
+
+> You could have a combo of both this patch (to indicate that a specific driver (even further
+> limited to a match data based on compatible) doesn't support these) as well as
+> the above diff (to improve the message printed in the situation where a driver
+> *does* claim to support these interrupts but fails to describe them properly).
+> 
+
+Again, I don't think we need to have the change in the driver. DT already
+indicated that there is no INTx support, so why should driver duplicate the same
+info?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
