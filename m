@@ -1,324 +1,162 @@
-Return-Path: <linux-kernel+bounces-280649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F247494CD45
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:25:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD0C94CC97
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2347D1C2116D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:25:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF7528899B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63140191F89;
-	Fri,  9 Aug 2024 09:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEAB618F2E8;
+	Fri,  9 Aug 2024 08:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="h2Ipt9D2"
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XKomwMlS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEF7190059
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8546219E1;
+	Fri,  9 Aug 2024 08:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723195516; cv=none; b=foEOXblZC+Dlj6TA4GrnI6Er7NnWkwvS/C5JBpWaDLsJtDD06PSnWL2mulhz/v1jmLTgOEqle9GC8JG/jGCl/HA/+V4i/K1kjz/EZow/sQRBdLrBTXh5ih1xFDFCazACpfd2zTT8ZZezbDutVNgsEjK+u+oPpSEtU/JsQ9cMO38=
+	t=1723193159; cv=none; b=hzTHx9LbkYbhd9AM7jMwPPpzOyxHSkCHWlD9L0ET779LfZjSkKmZGrAP+arvs0vu9kq2TMSEFj7vhUJW6xatVdbA4fCZyjUYciOn42L1P3UkwBuYiI/UtIDzBnTmLRBhCU0eWaLy2yIsnN7DCdHnwt6bLp91d0Vj67E1Knjc9WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723195516; c=relaxed/simple;
-	bh=Cc3CTSJnqciZ5F97WujY8wtP6LwylWlntc2UMCDJOAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBuGa9v3IhROCfJqGFv2YMLfWzSSBM3VkGTS7pzLGuc9BMELIWiFW3YCh1LuoTxCC9jZdU41WtZmIeSLNNO3JSkRTN4yygxJCfZA1GmVlD6qrYcvhbK3z6mnlN3SAfbhB/xd3sPFzGUYW5WSkMWmM9AhFwPH6eeLFaT8Ws6+Thw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=h2Ipt9D2; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WgHYY28mjzcxg;
-	Fri,  9 Aug 2024 10:45:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723193137;
-	bh=A4Mye3W1GO6Qfy6D2ZWCed9/6+HjtrIW34KoXP/3AGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h2Ipt9D2gSZ/q8ygM/sKMThiKAgF5W7JXFX6TJPXNTZAYDmh1klJCHwS2nWk1/Ls6
-	 rODW1Jw9gRqcGJJlyTfXdlR0gZLZ9XfO6hh5TppcVcLc35YP40xdWPET10w2N9LHIp
-	 rSAeWKTu4mMzgbT0el463lS6S0/0zMcqfxAW+NGE=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WgHYN5HlJzLZR;
-	Fri,  9 Aug 2024 10:45:28 +0200 (CEST)
-Date: Fri, 9 Aug 2024 10:45:23 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240809.Taiyah0ii7ph@digikod.net>
-References: <20240717.neaB5Aiy2zah@digikod.net>
- <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net>
- <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
- <20240719.shaeK6PaiSie@digikod.net>
- <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
- <20240719.sah7oeY9pha4@digikod.net>
- <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
- <20240723.beiTu0qui2ei@digikod.net>
- <CALmYWFtHQY41PbRwGxge1Wo=8D4ocZfQgRUO47-PF1eJCEr0Sw@mail.gmail.com>
+	s=arc-20240116; t=1723193159; c=relaxed/simple;
+	bh=wEhcj53DkrlZmffVI00o4H9SljxYA7hs7RXC4Jh+eTw=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rRTyHxqNqEiBubfs6D29pPe1iwrzdkkMh2Qj2zJFDbSJ7wk34shl+xrTk0+LsoOdb5A60SwkttRe/wtncSmRDBlYB59RNd10/nKjabJm+7zNeCfn9TSK9XNg+489IifZ+TkOM4L6AKyN/VWHYtr86wmQisDd0VDgXNUen2yu28E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XKomwMlS; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723193158; x=1754729158;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=wEhcj53DkrlZmffVI00o4H9SljxYA7hs7RXC4Jh+eTw=;
+  b=XKomwMlSehdviTSyeLzWhtki1tJscinnJ2LOGUHitxqYPfae12ERMuWz
+   WEws7ALLe8RNFnSuzE1v7e6n/3qBQBqV1/RkbBOxrx9I3AaavOzSwY6/E
+   HYDoW5VIMwFUjAeqT4Ub0ZdyHPCmJVIiPh8BdDgmwh0Q3iTHr5C7DmQT0
+   akHPz9+vv6GsRrFmh5Bs8G1cz1UxZxpy+pxi6XzLzOelse30YE3qbxocm
+   TVhILjsKvWtAZEj81wp8uQhC9zD1K8NWsTM/qI5S3tI1yFxAAdaKc/9Vi
+   PRn3QQ7QxaPDGZo4r9aBN9BhQAf/PEl1cuPdBTZhY0aPqnewfjOGfOucD
+   Q==;
+X-CSE-ConnectionGUID: DLz+7GDMQNKHrweEz2x+yg==
+X-CSE-MsgGUID: ZoqlrVNcQBmFUs3Ganfc/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="32505126"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="32505126"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:45:57 -0700
+X-CSE-ConnectionGUID: opBM65RkRL+uosEHDpSRDw==
+X-CSE-MsgGUID: QOAfpaoASRm4xvWeXWQ0fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="57161883"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.119])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:45:53 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 9 Aug 2024 11:45:50 +0300 (EEST)
+To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+cc: Fenghua Yu <fenghua.yu@intel.com>, 
+    Reinette Chatre <reinette.chatre@intel.com>, 
+    Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, kernel@collabora.com, 
+    Shuah Khan <skhan@linuxfoundation.org>, 
+    LKML <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>
+Subject: Re: [PATCH] selftests: resctrl: ignore builds for unsupported
+ architectures
+In-Reply-To: <080c4692-c53c-417f-9975-0b4ced0b044c@collabora.com>
+Message-ID: <f7593344-203a-8e73-d53e-574ca511d003@linux.intel.com>
+References: <20240809071059.265914-1-usama.anjum@collabora.com> <d60cf782-9ab0-ed4a-0b3e-ba7a73ae8d51@linux.intel.com> <080c4692-c53c-417f-9975-0b4ced0b044c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFtHQY41PbRwGxge1Wo=8D4ocZfQgRUO47-PF1eJCEr0Sw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Type: multipart/mixed; BOUNDARY="8323328-280030225-1723192289=:1401"
+Content-ID: <e640bbdd-99ee-22b9-28b0-2dfdef844a94@linux.intel.com>
 
-On Mon, Aug 05, 2024 at 11:35:09AM -0700, Jeff Xu wrote:
-> On Tue, Jul 23, 2024 at 6:15 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Fri, Jul 19, 2024 at 08:27:18AM -0700, Jeff Xu wrote:
-> > > On Fri, Jul 19, 2024 at 8:04 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > >
-> > > > On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
-> > > > > On Fri, Jul 19, 2024 at 1:45 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > >
-> > > > > > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
-> > > > > > > On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > >
-> > > > > > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > > > > > > > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > > > > > > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> > > > > > > > > > > > allowed for execution.  The main use case is for script interpreters and
-> > > > > > > > > > > > dynamic linkers to check execution permission according to the kernel's
-> > > > > > > > > > > > security policy. Another use case is to add context to access logs e.g.,
-> > > > > > > > > > > > which script (instead of interpreter) accessed a file.  As any
-> > > > > > > > > > > > executable code, scripts could also use this check [1].
-> > > > > > > > > > > >
-> > > > > > > > > > > > This is different than faccessat(2) which only checks file access
-> > > > > > > > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
-> > > > > > > > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
-> > > > > > > > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
-> > > > > > > > > > > > real execution, user space gets the same error codes.
-> > > > > > > > > > > >
-> > > > > > > > > > > So we concluded that execveat(AT_CHECK) will be used to check the
-> > > > > > > > > > > exec, shared object, script and config file (such as seccomp config),
-> > > > > >
-> > > > > > > > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
-> > > > > > > > > > > sure it passes AT_CHECK, before loading it into memory.
-> > > > > > > > > >
-> > > > > > > > > > All ELF dependencies are opened and checked with open_exec(), which
-> > > > > > > > > > perform the main executability checks (with the __FMODE_EXEC flag).
-> > > > > > > > > > Did I miss something?
-> > > > > > > > > >
-> > > > > > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
-> > > > > > > > > The app can choose its own dynamic linker path during build, (maybe
-> > > > > > > > > even statically link one ?)  This is another reason that relying on a
-> > > > > > > > > userspace only is not enough.
-> > > > > > > >
-> > > > > > > > The kernel calls open_exec() on all dependencies, including
-> > > > > > > > ld-linux-x86-64.so.2, so these files are checked for executability too.
-> > > > > > > >
-> > > > > > > This might not be entirely true. iiuc, kernel  calls open_exec for
-> > > > > > > open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
-> > > > > >
-> > > > > > Correct, the dynamic linker is in charge of that, which is why it must
-> > > > > > be enlighten with execveat+AT_CHECK and securebits checks.
-> > > > > >
-> > > > > > > load_elf_binary() {
-> > > > > > >    interpreter = open_exec(elf_interpreter);
-> > > > > > > }
-> > > > > > >
-> > > > > > > libc.so.6 is opened and mapped by dynamic linker.
-> > > > > > > so the call sequence is:
-> > > > > > >  execve(a.out)
-> > > > > > >   - open exec(a.out)
-> > > > > > >   - security_bprm_creds(a.out)
-> > > > > > >   - open the exec(ld.so)
-> > > > > > >   - call open_exec() for interruptor (ld.so)
-> > > > > > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
-> > > > > > > the same check and code path as libc.so below ?
-> > > > > >
-> > > > > > open_exec() checks are enough.  LSMs can use this information (open +
-> > > > > > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
-> > > > > > request.
-> > > > > >
-> > > > > Then the ld.so doesn't go through the same security_bprm_creds() check
-> > > > > as other .so.
-> > > >
-> > > > Indeed, but...
-> > > >
-> > > My point is: we will want all the .so going through the same code
-> > > path, so  security_ functions are called consistently across all the
-> > > objects, And in the future, if we want to develop additional LSM
-> > > functionality based on AT_CHECK, it will be applied to all objects.
-> >
-> > I'll extend the doc to encourage LSMs to check for __FMODE_EXEC, which
-> > already is the common security check for all executable dependencies.
-> > As extra information, they can get explicit requests by looking at
-> > execveat+AT_CHECK call.
-> >
-> I agree that security_file_open + __FMODE_EXEC for checking all
-> the .so (e.g for executable memfd) is a better option  than checking at
-> security_bprm_creds_for_exec.
-> 
-> But then maybe execveat( AT_CHECK) can return after  calling alloc_bprm ?
-> See below call graph:
-> 
-> do_execveat_common (AT_CHECK)
-> -> alloc_bprm
-> ->->do_open_execat
-> ->->-> do_filp_open (__FMODE_EXEC)
-> ->->->->->->> security_file_open
-> -> bprm_execve
-> ->-> prepare_exec_creds
-> ->->-> prepare_creds
-> ->->->-> security_prepare_creds
-> ->-> security_bprm_creds_for_exec
-> 
-> What is the consideration to mark the end at
-> security_bprm_creds_for_exec ? i.e. including brpm_execve,
-> prepare_creds, security_prepare_creds, security_bprm_creds_for_exec.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-This enables LSMs to know/log an explicit execution request, including
-context with argv and envp.
+--8323328-280030225-1723192289=:1401
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <961a97e4-08a8-5b5e-d23b-d78ff5216cdc@linux.intel.com>
 
-> 
-> Since dynamic linker doesn't load ld.so (it is by kernel),  ld.so
-> won't go through those  security_prepare_creds and
-> security_bprm_creds_for_exec checks like other .so do.
+Adding Maciej.
 
-Yes, but this is not an issue nor an explicit request. ld.so is only one
-case of this patch series.
+On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
+> On 8/9/24 12:23 PM, Ilpo J=E4rvinen wrote:
+> > On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
+> >=20
+> >> This test doesn't have support for other architectures. Altough resctr=
+l
+> >> is supported on x86 and ARM, but arch_supports_noncont_cat() shows tha=
+t
+> >> only x86 for AMD and Intel are supported by the test.
+> >=20
+> > One does not follow from the other. arch_supports_noncont_cat() is only=
+=20
+> > small part of the tests so saying "This test" based on a small subset o=
+f=20
+> > all tests is bogus. Also, I don't see any reason why ARCH_ARM could not=
+ be=20
+> > added and arch_supports_noncont_cat() adapted accordingly.
+> I'm not familiar with resctrl and the architectural part of it. Feel
+> free to fix it and ignore this patch.
+>=20
+> If more things are missing than just adjusting
+> arch_supports_noncont_cat(), the test should be turned off until proper
+> support is added to the test.
+>
+> >> We get build
+> >> errors when built for ARM and ARM64.
+> >=20
+> > As this seems the real reason, please quote any errors when you use the=
+m=20
+> > as justification so it can be reviewed if the reasoning is sound or not=
+=2E
+>=20
+>   CC       resctrl_tests
+> In file included from resctrl.h:24,
+>                  from cat_test.c:11:
+> In function 'arch_supports_noncont_cat',
+>     inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
+> ../kselftest.h:74:9: error: impossible constraint in 'asm'
+>    74 |         __asm__ __volatile__ ("cpuid\n\t"
+>        \
+>       |         ^~~~~~~
+> cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
+>   301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+>       |                 ^~~~~~~~~~~~~
+> ../kselftest.h:74:9: error: impossible constraint in 'asm'
+>    74 |         __asm__ __volatile__ ("cpuid\n\t"
+>        \
+>       |         ^~~~~~~
+> cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
+>   303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+>       |                 ^~~~~~~~~~~~~
 
-> 
-> > >
-> > > Another thing to consider is:  we are asking userspace to make
-> > > additional syscall before  loading the file into memory/get executed,
-> > > there is a possibility for future expansion of the mechanism, without
-> > > asking user space to add another syscall again.
-> >
-> > AT_CHECK is defined with a specific semantic.  Other mechanisms (e.g.
-> > LSM policies) could enforce other restrictions following the same
-> > semantic.  We need to keep in mind backward compatibility.
-> >
-> > >
-> > > I m still not convinced yet that execveat(AT_CHECK) fits more than
-> > > faccessat(AT_CHECK)
-> >
-> > faccessat2(2) is dedicated to file permission/attribute check.
-> > execveat(2) is dedicated to execution, which is a superset of file
-> > permission for executability, plus other checks (e.g. noexec).
-> >
-> That sounds reasonable, but if execveat(AT_CHECK) changes behavior of
-> execveat(),  someone might argue that faccessat2(EXEC_CHECK) can be
-> made for the executability.
+Okay, so it's specific to lack of CPUID. This seems a kselftest common=20
+level problem to me, since __cpuid_count() is provided in kselftest.h.
 
-AT_CHECK, as any other syscall flags, changes the behavior of execveat,
-but the overall semantic is clearly defined.
+Shuah (or others), what is the intended mechanism for selftests to know if=
+=20
+it can be used or not since as is, it's always defined?
 
-Again, faccessat2 is only dedicated to file attributes/permissions, not
-file executability.
+I see some Makefiles use compile testing a trivial program to decide whethe=
+r=20
+they build some x86_64 tests or not. Is that what should be done here too,=
+=20
+test if __cpuid_count() compiles or not (and then build some #ifdeffery=20
+based on the result of that compile testing)?
 
-> 
-> I think the decision might depend on what this PATCH intended to
-> check, i.e. where we draw the line.
-
-The goal is clearly defined in the cover letter and patches: makes it
-possible to control (or log) script execution.
-
-> 
-> do_open_execat() seems to cover lots of checks for executability, if
-> we are ok with the thing that do_open_execat() checks, then
-> faccessat(AT_CHECK) calling do_open_execat() is an option, it  won't
-> have those "unrelated" calls  in execve path, e.g.  bprm_stack_limits,
-> copy argc/env .
-
-I don't thing there is any unrelated calls in execve path, quite the
-contrary, it follows the same semantic as for a full execution, and
-that's another argument to use the execveat interface.  Otherwise, we
-couldn't argue that `./script.sh` can be the same as `sh script.sh`
-
-The only difference is that user space is in charge of parsing and
-interpreting the file's content.
-
-> 
-> However, you mentioned superset of file permission for executability,
-> can you elaborate on that ? Is there something not included in
-> do_open_execat() but still necessary for execveat(AT_CHECK)? maybe
-> security_bprm_creds_for_exec? (this goes back to my  question above)
-
-As explained above, the goal is to have the same semantic as a full
-execveat call, taking into account all the checks (e.g. stack limit,
-argv/envp...).
-
-> 
-> Thanks
-> Best regards,
-> -Jeff
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> > >
-> > >
-> > > > >
-> > > > > As my previous email, the ChromeOS LSM restricts executable mfd
-> > > > > through security_bprm_creds(), the end result is that ld.so can still
-> > > > > be executable memfd, but not other .so.
-> > > >
-> > > > The chromeOS LSM can check that with the security_file_open() hook and
-> > > > the __FMODE_EXEC flag, see Landlock's implementation.  I think this
-> > > > should be the only hook implementation that chromeOS LSM needs to add.
-> > > >
-> > > > >
-> > > > > One way to address this is to refactor the necessary code from
-> > > > > execveat() code patch, and make it available to call from both kernel
-> > > > > and execveat() code paths., but if we do that, we might as well use
-> > > > > faccessat2(AT_CHECK)
-> > > >
-> > > > That's why I think it makes sense to rely on the existing __FMODE_EXEC
-> > > > information.
-> > > >
-> > > > >
-> > > > >
-> > > > > > >   - transfer the control to ld.so)
-> > > > > > >   - ld.so open (libc.so)
-> > > > > > >   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
-> > > > > > > require dynamic linker change.
-> > > > > > >   - ld.so mmap(libc.so,rx)
-> > > > > >
-> > > > > > Explaining these steps is useful. I'll include that in the next patch
-> > > > > > series.
-> > >
-> 
+--=20
+ i.
+--8323328-280030225-1723192289=:1401--
 
