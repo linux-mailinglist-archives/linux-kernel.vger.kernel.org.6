@@ -1,177 +1,165 @@
-Return-Path: <linux-kernel+bounces-281183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF05794D40C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:58:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC6094D413
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D5EAB21C31
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:58:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34FF1C20CC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4701D198E71;
-	Fri,  9 Aug 2024 15:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5106F1990BC;
+	Fri,  9 Aug 2024 15:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iwdxrWr2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1425F168B8
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="iLn0KDAi"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E90168B8;
+	Fri,  9 Aug 2024 15:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723219074; cv=none; b=LgywF3yvcJDBn6LHz9EDuhJ9s0GxXQqhektEa3ZxEZlS45qM74fW72Tqw3k0yP3I9qRwFmOJv/kcIQNclQOIl0lCmeLyjzgR1S+PjOna8fLKaK5yQ0lbavYwUf7+dVKXbTVylsdrn3ad9eNeCn5dpGHANwErNoaKrxabHDDlC3w=
+	t=1723219148; cv=none; b=azFfb5HIaS/ItbqEkGdARKgVjc8XIPflBsYwj2XxuqUoI/RpcQeYJdsGAqTleXhU3wDPu+LqEyl2mWNw99L/p+D1Bk7GFa0Wf4WZjfJ0w7dnI2XmsIlCbIgaLutapYN1N65qGnkTtujUnGjV48ZgmIu+6mWXcplX/0e60AcDrwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723219074; c=relaxed/simple;
-	bh=Y8edBrqv1pzht7Xi4mM+aUWqnoTHAgGonimtxluGamw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o+pKFGoWE3rR968E9zS1gDUyNxYytwtT8k1qA7iwGc9tCFjIXBbABYzhSauo3MI9ouWoZ3ymJK0T6Lg2XlZatIj3/zk/Mv/eOYeYyJYltfZabqG7fR7DX9E/SivFhT4v4I7qhZjomGg4HtSGNTcMSnuJtNr+Q0VVO0XeT4M/TcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iwdxrWr2; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723219074; x=1754755074;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Y8edBrqv1pzht7Xi4mM+aUWqnoTHAgGonimtxluGamw=;
-  b=iwdxrWr2uilgzBDU1PsncqNU0uRQaHZxieNjO8ay5P0ajL1UNotx3Uob
-   XuuSM6yvn/PY3x/lQg/tGCdLUhKw8VPwwAILBYhrvepAL4hisD8yH35dS
-   qkfWsDeseP5c0fKxi+i00aPvJ93IYO25KkU+43N+ZKdjj9yBzDmot367w
-   puvDu1N3RoQM1BFinbnUKF8s1XWUfQc1nXMBn2adYa0MH0ICCUXPQmFxS
-   q4FLW0zk2MqhoRUEWqJDSBhKvcpwuheN1qyIc3I/j3qCDlsiU42aprGKu
-   cEyFMTGcReH5rAggIX2PbIhHKdKx1hzm2gftZ7y6ywcEFyleqoPZu3zbk
-   g==;
-X-CSE-ConnectionGUID: yXPl7OCgSNSfDS3QsaeGJQ==
-X-CSE-MsgGUID: 78b4LL15TzGseTcXu37bcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="25193362"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="25193362"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:57:10 -0700
-X-CSE-ConnectionGUID: HIDNdw4fQI26LVRB1vR5OA==
-X-CSE-MsgGUID: 3mVOzCSmSrOQTpCMNvGOkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="57565751"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:57:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1scRzE-0000000DTBB-3uIV;
-	Fri, 09 Aug 2024 18:57:04 +0300
-Date: Fri, 9 Aug 2024 18:57:04 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
-	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH RESEND v3 1/6] i3c: mipi-i3c-hci: Add MIPI0100 ACPI ID to
- the I3C Support List
-Message-ID: <ZrY8UOIsud8-NM_F@smile.fi.intel.com>
-References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
- <20240807052359.290046-2-Shyam-sundar.S-k@amd.com>
- <e94efd42-bc3f-4003-8ad8-2da6500f0f13@linux.intel.com>
- <ZrYlNOjFQE9dHsVV@smile.fi.intel.com>
- <c6ef0253-9f32-46d6-a658-295e39c926b2@amd.com>
+	s=arc-20240116; t=1723219148; c=relaxed/simple;
+	bh=o6tlLB78wZ53IZ6Aiama6z+t6jWgrwl2gdMt+4iGKog=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=UR05jeo0QNzZsHSHr/DvPIey7TIapXGcvcUv8Q2bRbQldzxOrFEpoG+v3aAdnteOrKmmZxm9t1es3718lyJB+nIKZuZ01qFWhtuveursAAuxY8PRfrrWZVoc3fkJZywanJ7O0FY1KOS4taEc7lx1JtYQNzOKLpoFeKoPDfSkOmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=iLn0KDAi; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+	id 9691B20B7165; Fri,  9 Aug 2024 08:59:06 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9691B20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+	s=default; t=1723219146;
+	bh=ZWU1aKJ8KRiWGgDAYXkoXRuaLAzAdO5nNSZSCU3reII=;
+	h=From:To:Cc:Subject:Date:Reply-To:From;
+	b=iLn0KDAiCG3Z+z90LfNifUUJETcleyju62zJA180vysZhMF36ojgUTWJ0noYXvQux
+	 BqOEDfEp44HKV4I0yNQRigA12XY2UWDzT+9tPQmKdhwpK+SvE2s6W7jLcIwOXnqUq7
+	 osE8uRi13yyWGCtK+4FjLnNS32LKIMI+coj8jV2M=
+From: longli@linuxonhyperv.com
+To: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Simon Horman <horms@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	Paul Rosswurm <paulros@microsoft.com>,
+	linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v3 net] net: mana: Fix doorbell out of order violation and avoid unnecessary doorbell rings
+Date: Fri,  9 Aug 2024 08:58:58 -0700
+Message-Id: <1723219138-29887-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
+Reply-To: longli@microsoft.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6ef0253-9f32-46d6-a658-295e39c926b2@amd.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Aug 09, 2024 at 09:02:35PM +0530, Shyam Sundar S K wrote:
-> On 8/9/2024 19:48, Andy Shevchenko wrote:
-> > On Fri, Aug 09, 2024 at 04:54:18PM +0300, Jarkko Nikula wrote:
-> >> On 8/7/24 8:23 AM, Shyam Sundar S K wrote:
+From: Long Li <longli@microsoft.com>
 
-...
+After napi_complete_done() is called when NAPI is polling in the current
+process context, another NAPI may be scheduled and start running in
+softirq on another CPU and may ring the doorbell before the current CPU
+does. When combined with unnecessary rings when there is no need to arm
+the CQ, it triggers error paths in the hardware.
 
-> > When adding a new ACPI ID, always provide the following information:
-> > 
-> > 1) link (in some form) to the official confirmation / documentation for
-> > the allocated ID by the vendor (MIPI in this case) _OR_ (very exceptional!)
-> > why the bad ID had been allocated;
-> 
-> Member version:
-> https://members.mipi.org/wg/All-Members/document/previewpdf/89465
-> 
-> Public version: https://www.mipi.org/mipi-disco-for-i3c-download (this
-> requires a signup).
-> 
-> Since there is no direct link available for preview, I did not include
-> them in the commit-msg. But left a note that the MIPI ID is the one as
-> specified in the MIPI DisCo spec.
+This patch fixes this by calling napi_complete_done() after doorbell
+rings. It limits the number of unnecessary rings when there is
+no need to arm. MANA hardware specifies that there must be one doorbell
+ring every 8 CQ wraparounds. This driver guarantees one doorbell ring as
+soon as the number of consumed CQEs exceeds 4 CQ wraparounds. In practical
+workloads, the 4 CQ wraparounds proves to be big enough that it rarely
+exceeds this limit before all the napi weight is consumed.
 
-It's fine.
+To implement this, add a per-CQ counter cq->work_done_since_doorbell,
+and make sure the CQ is armed as soon as passing 4 wraparounds of the CQ.
 
-> > 2) are there devices in the wild (on the market) that use the being added ID(s)?
-> 
-> Not in the wild. But the latest platform will have this support
-> included. So, these device IDs are crucial for the i3c-hci to be
-> supported on AMD platforms.
+Cc: stable@vger.kernel.org
+Fixes: e1b5683ff62e ("net: mana: Move NAPI from EQ to CQ")
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+change in v2:
+Added more details to comments to explain the patch.
 
-Good, let's do it right then!
+change in v3:
+Corrected typo. Removed extra empty lines between "Fixes" and "Reviewed-by".
 
-> > 3) excerpt from the device (independently if it's public already, see above,
-> > or not) DSDT ACPI table.
-> > 
-> > With the given patch it looks to me that you most likely need a local, AMD
-> > specific ID as well.
-> > 
-> > So, in my ideal world the DSDT should be like
-> > 
-> > 	Device (I3CC)
-> > 	{
-> > 		Name (_HID, "...") // AMD specific _HID
-> > 		Name (_CID, "MIPI0100") // Compatible ID for generic I3C controller
-> > 		...
-> > 	}
-> > 
-> > Is this the case? Why not?
-> 
-> Please refer to the MIPI HCI I3C DisCo specification
-> (https://members.mipi.org/wg/All-Members/document/previewpdf/89465)
-> section 5.4. The ASL looks the same in case of AMD.
-> 
-> MSFT says that they want to use MIPI0100 as mentioned in the
-> specification.
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 24 ++++++++++++-------
+ include/net/mana/mana.h                       |  1 +
+ 2 files changed, 16 insertions(+), 9 deletions(-)
 
-MIPI doesn't know how to assign the ACPI ID correctly. But again, what I put in
-the above is the correct way of approaching.
-
-> What would you advise?
-
-Since my intuition and experience tells me that the two devices even based on
-the same IP are not the same (see word 'quirk' or '.driver_data' or alike in
-the kernel sources) the generic ID may not be used for the specific vendor
-unless it's _the only_ vendor for the certain IP.
-
-So, please do as I suggested above. And file a error report (and correction
-proposal) to the MIPI, so in "5.1 I3C Host Controller ACPI Hardware ID (_HID)"
-they should use _CID instead of _HID and add some text like
-"Each vendor should dedicate it's own _HID for the platform in question. The
-same _HID as _CID may be used if and only if vendor guarantees that there 100%
-compatibility with MIPI as described in this and other related documents."
-
-I.o.w. do you 100% guarantee that MIPI HCI I3C DisCo covers all necessary
-properties that you need for _your_ hardware? If not, use my approach, if yes,
-use the same _HID *and* _CID.
-
-Microsoft should know this as well and much better than MIPI.
-
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index d2f07e179e86..f83211f9e737 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -1788,7 +1788,6 @@ static void mana_poll_rx_cq(struct mana_cq *cq)
+ static int mana_cq_handler(void *context, struct gdma_queue *gdma_queue)
+ {
+ 	struct mana_cq *cq = context;
+-	u8 arm_bit;
+ 	int w;
+ 
+ 	WARN_ON_ONCE(cq->gdma_cq != gdma_queue);
+@@ -1799,16 +1798,23 @@ static int mana_cq_handler(void *context, struct gdma_queue *gdma_queue)
+ 		mana_poll_tx_cq(cq);
+ 
+ 	w = cq->work_done;
+-
+-	if (w < cq->budget &&
+-	    napi_complete_done(&cq->napi, w)) {
+-		arm_bit = SET_ARM_BIT;
+-	} else {
+-		arm_bit = 0;
++	cq->work_done_since_doorbell += w;
++
++	if (w < cq->budget) {
++		mana_gd_ring_cq(gdma_queue, SET_ARM_BIT);
++		cq->work_done_since_doorbell = 0;
++		napi_complete_done(&cq->napi, w);
++	} else if (cq->work_done_since_doorbell >
++		   cq->gdma_cq->queue_size / COMP_ENTRY_SIZE * 4) {
++		/* MANA hardware requires at least one doorbell ring every 8
++		 * wraparounds of CQ even if there is no need to arm the CQ.
++		 * This driver rings the doorbell as soon as we have exceeded
++		 * 4 wraparounds.
++		 */
++		mana_gd_ring_cq(gdma_queue, 0);
++		cq->work_done_since_doorbell = 0;
+ 	}
+ 
+-	mana_gd_ring_cq(gdma_queue, arm_bit);
+-
+ 	return w;
+ }
+ 
+diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+index 6439fd8b437b..7caa334f4888 100644
+--- a/include/net/mana/mana.h
++++ b/include/net/mana/mana.h
+@@ -275,6 +275,7 @@ struct mana_cq {
+ 	/* NAPI data */
+ 	struct napi_struct napi;
+ 	int work_done;
++	int work_done_since_doorbell;
+ 	int budget;
+ };
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
 
