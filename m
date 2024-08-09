@@ -1,348 +1,150 @@
-Return-Path: <linux-kernel+bounces-280245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B2E94C7A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:33:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EB794C7A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F24BE1F214F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA53D1F22082
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E6D4C6E;
-	Fri,  9 Aug 2024 00:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5972F37;
+	Fri,  9 Aug 2024 00:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxj18S27"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b="PUuLdkcQ"
+Received: from cmx-mtlrgo002.bell.net (mta-mtl-001.bell.net [209.71.208.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCAC1FB4;
-	Fri,  9 Aug 2024 00:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1F98F49;
+	Fri,  9 Aug 2024 00:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.71.208.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723163607; cv=none; b=Pt5bBgYk5FU9Nr9hvximrm24ipsX96yOTWMvwzjzPJXdsWV2SVERELFz9ZXtfKBrCsiaYyArUXwW9vFdRzGYv+QaH9xx2wL45g2XJC2xDYbkd6IROyUGE7OMu+xdj5F1jvaHNJisyU+kJKDJFqE6sKYjvulSeslHWd/8DFhz90E=
+	t=1723163640; cv=none; b=WDCX4uLV4I77K3aig4PeiM6dRK3UHhIRgFgOZr3mV2l66e0x1E8bbiwQniaO36FxYAeUZYck+pgGowEGv0FYEuDPi9JP4Bb4DuAu2GGnwVZh7slH9G4oG4hgD5D45oZjWAACQKdRTG/rbdTeMfuZwf/GrAYbcUzTtTnv933noo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723163607; c=relaxed/simple;
-	bh=uQYhGj9VBxzOGt86Wrg3aBgYrE+Tc4iOlBOj2w3iD4s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oXo0JP3xZsa2adAaBuRUOOQ79mdeg21sL+Ehwrr74QFpVjeyt80rZXce72wZjZWFONowx4pd40j7ia8kIAuXvBeey++Yv6bpfJtzs5bMyLQxwMnBBW9Uy3PSBXIpZqjRedXj/xHAWTGVA+b08oIxhgWQoH4XFZSJM73w+UGRpxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cxj18S27; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECEAEC32782;
-	Fri,  9 Aug 2024 00:33:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723163606;
-	bh=uQYhGj9VBxzOGt86Wrg3aBgYrE+Tc4iOlBOj2w3iD4s=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=cxj18S27Z3Hw7brUxZx3momhag5Pp8cf4XSSUIFkPXXELRVUX7V18B4XDmyqfRZIJ
-	 uaP1wrhK7/lqIb7T0Pv+IviITmNxwSts3BIgy72t6FrhEDoLFUtKOleKrNls1TcrJL
-	 /RDllv1RIBnEqPvIYtlD0ddldB1L4wiWfeornw+BubfqAOj2u9T/HTmeTGzuEga2FW
-	 fo2jpTujw5otiHpZ9Nr02sNM0Ld1zCrFbKAq04STuoUfbVA9DDRFLIScwXhk0dnNVH
-	 yttXMRFb9Bzhnr2mhY3rIE0ITMQ+uEWRNy08NVV1yrgqw9e/UZXlzm/9m6cfn15pzH
-	 +jKHB2x++Hcnw==
-Message-ID: <a8e24c94fa5500ee3c99a3dabba452e381512808.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-From: Jeff Layton <jlayton@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton
- <akpm@linux-foundation.org>, Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik
- <josef@toxicpanda.com>,  linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,  audit@vger.kernel.org
-Date: Thu, 08 Aug 2024 20:33:24 -0400
-In-Reply-To: <CAHC9VhREbEAYQUoVrJ3=YHUh2tuL5waUMaXQGG_yzFsMNomRVg@mail.gmail.com>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
-	 <20240807-erledigen-antworten-6219caebedc0@brauner>
-	 <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
-	 <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner>
-	 <20240808171130.5alxaa5qz3br6cde@quack3>
-	 <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
-	 <d0677c60eb1f47eb186f3e5493ba5aa7e0eaa445.camel@kernel.org>
-	 <CAHC9VhREbEAYQUoVrJ3=YHUh2tuL5waUMaXQGG_yzFsMNomRVg@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
+	s=arc-20240116; t=1723163640; c=relaxed/simple;
+	bh=OCxJAJfUvqBXDYuDP+R7KqSw5Ei8EhG6wBn+72/hVZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Eqe0I2MuUvXzwQfXFquFQQPIldLhSRajNTxsX1bvAzMRU6mZ+MydW8MAZyHsUEZbEFTEf2JA12R+QwaX6/Xc9+g1O8hzwLttQoX4zcDxa60/gkJ6QYqJRjx5FXQeTVRSmT7e29IuF0tLw3qZn/Dgq+8tbb9ps87OVTMmC4p71s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net; spf=pass smtp.mailfrom=bell.net; dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b=PUuLdkcQ; arc=none smtp.client-ip=209.71.208.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bell.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bell.net; s=selector1; t=1723163637; 
+        bh=536p684sFrVWFSbPF+vFGjKWOv9fmZ5ATAOwMCLkRtI=;
+        h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type;
+        b=PUuLdkcQ/ISFIFGXugulIjsgAaiSLoMlYuczPf5Ua8WBECyel6OEpImI03258u4iqd/8ifIPfnPHwEMV+upOnVF554VztB/gRZnfNecJsZwJ2sb4l5q95FRsm7c3bOuRg7Vsc1ba6fDkOLG+Y4K7juYVxFmtSwgTTC2XU42O8Bv5+N49IH3b9mvSMgsP8GiQlvpLQ4weYH1SCRr6KRCrA7pCDPMQurMZyzn+h12QfQPbSYytWyZPm2lW4C5voBOwiN05sDcKm0HBEV/4kAmAOx5rkN8ez5VbHi7rQwuCg6Qs1wDxfQZvFpuLUFUTkb6xo6tckzUVw1Suk4mXISmvbg==
+X-RG-SOPHOS: Clean
+X-RG-VADE-SC: 0
+X-RG-VADE: Clean
+X-RG-Env-Sender: dave.anglin@bell.net
+X-RG-Rigid: 6698E80E02194C7A
+X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgeeftddrleefgdefgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceugffnnfdpqfgfvfenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeflohhhnhcuffgrvhhiugcutehnghhlihhnuceouggrvhgvrdgrnhhglhhinhessggvlhhlrdhnvghtqeenucggtffrrghtthgvrhhnpeejtdehteffvedtieettedtudegffetgfektdejkeduuddvuedtieegueeuheeuueenucffohhmrghinhepvghnthhrhidrshgsnecukfhppeejiedrjedurdduudehrdejheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhephhgvlhhopegludelvddrudeikedrvddrgeelngdpihhnvghtpeejiedrjedurdduudehrdejhedpmhgrihhlfhhrohhmpegurghvvgdrrghnghhlihhnsegsvghllhdrnhgvthdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepuggrvhgvrdgrnhhglhhinhessggvlhhlrdhnvghtpdhrtghpthhtohepuggvlhhlvghrsehgmhigrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhprghrihhstgesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+	rhgtphhtthhopehlihhnuhigsehrohgvtghkqdhushdrnhgvthdprhgtphhtthhopehrihgthhgrrhgurdhhvghnuggvrhhsohhnsehlihhnrghrohdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
+X-RazorGate-Vade-Verdict: clean 0
+X-RazorGate-Vade-Classification: clean
+Received: from [192.168.2.49] (76.71.115.75) by cmx-mtlrgo002.bell.net (authenticated as dave.anglin@bell.net)
+        id 6698E80E02194C7A; Thu, 8 Aug 2024 20:33:30 -0400
+Message-ID: <5018ea69-985f-417d-928e-be1ee9a80d88@bell.net>
+Date: Thu, 8 Aug 2024 20:33:30 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+ Linux-MM <linux-mm@kvack.org>, Helge Deller <deller@gmx.de>,
+ linux-parisc@vger.kernel.org,
+ Richard Henderson <richard.henderson@linaro.org>
+References: <20240731095022.970699670@linuxfoundation.org>
+ <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
+ <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <87le194kuq.ffs@tglx>
+ <90e02d99-37a2-437e-ad42-44b80c4e94f6@suse.cz> <87frrh44mf.ffs@tglx>
+ <76c643ee-17d6-463b-8ee1-4e30b0133671@roeck-us.net> <87plqjz6aa.ffs@tglx>
+ <CAHk-=wi_YCS9y=0VJ+Rs9dcY-hbt_qFdiV_6AJnnHN4QaXsbLg@mail.gmail.com>
+ <87a5hnyox6.ffs@tglx>
+ <CAHk-=wh4rxXPpYatnuXpu98KswLzg+u7Z9vYWJCLNHC_yXZtWw@mail.gmail.com>
+ <8734nezz0g.ffs@tglx>
+ <CAHk-=wiZUidi6Gm_6XFArT621H7vAzhDA63zn2pSGJHdnjRCMA@mail.gmail.com>
+ <eba27c56-dc36-4410-bb6b-cbe8769b8a6d@roeck-us.net>
+ <ac7284f9-ba29-4068-ab00-82ddc839afaf@bell.net>
+ <37f94771-4ebc-46d2-ad10-f145d139dd9d@bell.net>
+ <CAHk-=wiwG4-5UZY9-ZvnhXuGXMsu+u8k5b2BBL-jRcyagW5oxg@mail.gmail.com>
+Content-Language: en-US
+From: John David Anglin <dave.anglin@bell.net>
+Autocrypt: addr=dave.anglin@bell.net; keydata=
+ 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
+ T70V9SSrl2hiw38vRzsl
+In-Reply-To: <CAHk-=wiwG4-5UZY9-ZvnhXuGXMsu+u8k5b2BBL-jRcyagW5oxg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2024-08-08 at 20:28 -0400, Paul Moore wrote:
-> On Thu, Aug 8, 2024 at 7:43=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
-rote:
-> > On Thu, 2024-08-08 at 17:12 -0400, Paul Moore wrote:
-> > > On Thu, Aug 8, 2024 at 1:11=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > > > On Thu 08-08-24 12:36:07, Christian Brauner wrote:
-> > > > > On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
-> > > > > > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
-> > > > > > > > +static struct dentry *lookup_fast_for_open(struct nameidat=
-a *nd, int open_flag)
-> > > > > > > > +{
-> > > > > > > > +       struct dentry *dentry;
-> > > > > > > > +
-> > > > > > > > +       if (open_flag & O_CREAT) {
-> > > > > > > > +               /* Don't bother on an O_EXCL create */
-> > > > > > > > +               if (open_flag & O_EXCL)
-> > > > > > > > +                       return NULL;
-> > > > > > > > +
-> > > > > > > > +               /*
-> > > > > > > > +                * FIXME: If auditing is enabled, then we'l=
-l have to unlazy to
-> > > > > > > > +                * use the dentry. For now, don't do this, =
-since it shifts
-> > > > > > > > +                * contention from parent's i_rwsem to its =
-d_lockref spinlock.
-> > > > > > > > +                * Reconsider this once dentry refcounting =
-handles heavy
-> > > > > > > > +                * contention better.
-> > > > > > > > +                */
-> > > > > > > > +               if ((nd->flags & LOOKUP_RCU) && !audit_dumm=
-y_context())
-> > > > > > > > +                       return NULL;
-> > > > > > >=20
-> > > > > > > Hm, the audit_inode() on the parent is done independent of wh=
-ether the
-> > > > > > > file was actually created or not. But the audit_inode() on th=
-e file
-> > > > > > > itself is only done when it was actually created. Imho, there=
-'s no need
-> > > > > > > to do audit_inode() on the parent when we immediately find th=
-at file
-> > > > > > > already existed. If we accept that then this makes the change=
- a lot
-> > > > > > > simpler.
-> > > > > > >=20
-> > > > > > > The inconsistency would partially remain though. When the fil=
-e doesn't
-> > > > > > > exist audit_inode() on the parent is called but by the time w=
-e've
-> > > > > > > grabbed the inode lock someone else might already have create=
-d the file
-> > > > > > > and then again we wouldn't audit_inode() on the file but we w=
-ould have
-> > > > > > > on the parent.
-> > > > > > >=20
-> > > > > > > I think that's fine. But if that's bothersome the more aggres=
-sive thing
-> > > > > > > to do would be to pull that audit_inode() on the parent furth=
-er down
-> > > > > > > after we created the file. Imho, that should be fine?...
-> > > > > > >=20
-> > > > > > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/=
-?ref_type=3Dheads
-> > > > > > > for a completely untested draft of what I mean.
-> > > > > >=20
-> > > > > > Yeah, that's a lot simpler. That said, my experience when I've =
-worked
-> > > > > > with audit in the past is that people who are using it are _ver=
-y_
-> > > > > > sensitive to changes of when records get emitted or not. I don'=
-t like
-> > > > > > this, because I think the rules here are ad-hoc and somewhat ar=
-bitrary,
-> > > > > > but keeping everything working exactly the same has been my MO =
-whenever
-> > > > > > I have to work in there.
-> > > > > >=20
-> > > > > > If a certain access pattern suddenly generates a different set =
-of
-> > > > > > records (or some are missing, as would be in this case), we mig=
-ht get
-> > > > > > bug reports about this. I'm ok with simplifying this code in th=
-e way
-> > > > > > you suggest, but we may want to do it in a patch on top of mine=
-, to
-> > > > > > make it simple to revert later if that becomes necessary.
-> > > > >=20
-> > > > > Fwiw, even with the rearranged checks in v3 of the patch audit re=
-cords
-> > > > > will be dropped because we may find a positive dentry but the pat=
-h may
-> > > > > have trailing slashes. At that point we just return without audit
-> > > > > whereas before we always would've done that audit.
-> > > > >=20
-> > > > > Honestly, we should move that audit event as right now it's just =
-really
-> > > > > weird and see if that works. Otherwise the change is somewhat hor=
-rible
-> > > > > complicating the already convoluted logic even more.
-> > > > >=20
-> > > > > So I'm appending the patches that I have on top of your patch in
-> > > > > vfs.misc. Can you (other as well ofc) take a look and tell me whe=
-ther
-> > > > > that's not breaking anything completely other than later audit ev=
-ents?
-> > > >=20
-> > > > The changes look good as far as I'm concerned but let me CC audit g=
-uys if
-> > > > they have some thoughts regarding the change in generating audit ev=
-ent for
-> > > > the parent. Paul, does it matter if open(O_CREAT) doesn't generate =
-audit
-> > > > event for the parent when we are failing open due to trailing slash=
-es in
-> > > > the pathname? Essentially we are speaking about moving:
-> > > >=20
-> > > >         audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-> > > >=20
-> > > > from open_last_lookups() into lookup_open().
-> > >=20
-> > > Thanks for adding the audit mailing list to the CC, Jan.  I would ask
-> > > for others to do the same when discussing changes that could impact
-> > > audit (similar requests for the LSM framework, SELinux, etc.).
-> > >=20
-> > > The inode/path logging in audit is ... something.  I have a
-> > > longstanding todo item to go revisit the audit inode logging, both to
-> > > fix some known bugs, and see what we can improve (I'm guessing quite =
-a
-> > > bit).  Unfortunately, there is always something else which is burning
-> > > a little bit hotter and I haven't been able to get to it yet.
-> > >=20
-> >=20
-> > It is "something" alright. The audit logging just happens at strange
-> > and inconvenient times vs. what else we're trying to do wrt pathwalking
-> > and such. In particular here, the fact __audit_inode can block is what
-> > really sucks.
-> >=20
-> > Since we're discussing it...
-> >=20
-> > ISTM that the inode/path logging here is something like a tracepoint.
-> > In particular, we're looking to record a specific set of information at
-> > specific points in the code. One of the big differences between them
-> > however is that tracepoints don't block.  The catch is that we can't
-> > just drop messages if we run out of audit logging space, so that would
-> > have to be handled reasonably.
->=20
-> Yes, the buffer allocation is the tricky bit.  Audit does preallocate
-> some structs for tracking names which ideally should handle the vast
-> majority of the cases, but yes, we need something to handle all of the
-> corner cases too without having to resort to audit_panic().
->=20
-> > I wonder if we could leverage the tracepoint infrastructure to help us
-> > record the necessary info somehow? Copy the records into a specific
-> > ring buffer, and then copy them out to the audit infrastructure in
-> > task_work?
->=20
-> I believe using task_work will cause a number of challenges for the
-> audit subsystem as we try to bring everything together into a single
-> audit event.  We've had a lot of problems with io_uring doing similar
-> things, some of which are still unresolved.
->=20
-> > I don't have any concrete ideas here, but the path/inode audit code has
-> > been a burden for a while now and it'd be good to think about how we
-> > could do this better.
->=20
-> I've got some grand ideas on how to cut down on a lot of our
-> allocations and string generation in the critical path, not just with
-> the inodes, but with audit records in general.  Sadly I just haven't
-> had the time to get to any of it.
->=20
-> > > The general idea with audit is that you want to record the informatio=
-n
-> > > both on success and failure.  It's easy to understand the success
-> > > case, as it is a record of what actually happened on the system, but
-> > > you also want to record the failure case as it can provide some
-> > > insight on what a process/user is attempting to do, and that can be
-> > > very important for certain classes of users.  I haven't dug into the
-> > > patches in Christian's tree, but in general I think Jeff's guidance
-> > > about not changing what is recorded in the audit log is probably good
-> > > advice (there will surely be exceptions to that, but it's still good
-> > > guidance).
-> > >=20
-> >=20
-> > In this particular case, the question is:
-> >=20
-> > Do we need to emit a AUDIT_INODE_PARENT record when opening an existing
-> > file, just because O_CREAT was set? We don't emit such a record when
-> > opening without O_CREAT set.
->=20
-> I'm not as current on the third-party security requirements as I used
-> to be, but I do know that oftentimes when a file is created the parent
-> directory is an important bit of information to have in the audit log.
->=20
+On 2024-08-08 7:33 p.m., Linus Torvalds wrote:
+> On Thu, 8 Aug 2024 at 15:30, John David Anglin <dave.anglin@bell.net> wrote:
+>>> I believe the shladd instruction should be changed to shladd,l (shift left and add logical).
+>> diff --git a/arch/parisc/kernel/entry.S b/arch/parisc/kernel/entry.S
+>> index ab23e61a6f01..1ec60406f841 100644
+>> --- a/arch/parisc/kernel/entry.S
+>> +++ b/arch/parisc/kernel/entry.S
+>> @@ -399,7 +399,7 @@
+>> -    shladd        \index,BITS_PER_PTE_ENTRY,\pmd,\pmd /* pmd is now pte */
+>> +    shladd,l    \index,BITS_PER_PTE_ENTRY,\pmd,\pmd /* pmd is now pte */
+> This doesn't seem wrong, but doesn't RFIR already restore the status word?
+Yes.
+>
+> So even if the itlb fill modifies C/B, I don't see why that should
+> actually matter.
+Probably won't help unless there's a bug in qemu rfir emulation.
 
-Right. We'd still have that here since we have to unlazy to actually
-create the file.
+Dave
 
-The question here is about the case where O_CREAT is set, but the file
-already exists. Nothing is being created in that case, so do we need to
-emit an audit record for the parent?
---=20
-Jeff Layton <jlayton@kernel.org>
+-- 
+John David Anglin  dave.anglin@bell.net
+
 
