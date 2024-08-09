@@ -1,144 +1,117 @@
-Return-Path: <linux-kernel+bounces-281178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA6194D400
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:52:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A08E94D402
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ACFA28118C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:52:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E17B1F220C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71711198E63;
-	Fri,  9 Aug 2024 15:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B17198E6D;
+	Fri,  9 Aug 2024 15:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UrmA/vOH"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OwKyqDC8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7385168B8
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F152168B8;
+	Fri,  9 Aug 2024 15:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723218724; cv=none; b=IrUJEY5ptkVWYrlb/ZnAzjyb5Z8T3aK1SgQXhtbZaAFRyPj2vPC19TJDzw0lIj64heWGc2/GNVd8XGnaPqsRBIWj2bg9UIMO+6IsCzBB3CBmzcusnQsJO2BBTI0qU44WedAY1xcO6z35LEyWx89T7aJAR+TgSK2FmUSvjUPFgjs=
+	t=1723218823; cv=none; b=Vg1yNsEYZ+Wih90PruXvQ2eu57RXT8awX4PQ9B6X+MnJIuTBkW6DGH22rKA3Jr3Kp7gG0+ru4k8JVleeYsqD2sjQX7uZJ00NyeqjC4WOi5iomPlgOAeejIKcp6twZ3VYqH0jAAmv2+8q4kcYMWKkq5Icm7qAXlA2bzt1Z/oGGm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723218724; c=relaxed/simple;
-	bh=Aoe1tUdGN9EszDwJoMQScE40lj1e/glqHFnZQ6+LxtY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G6OjFkD8EvM7WtA0+hRI6vA5b3UbCobKnFZbF9nonSc36pgT2ipBQ6IVkNPFa5GA6OM86btBMDM48gHRk/Iu00GlckRp6wA6kKVWpNHxjvNKLv+fj68xnP4jv+6Qi1ITZu+KX1OarDv5FpK/8oal+Jawdgsx7kHMb0z3M2Jw5Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UrmA/vOH; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-810ca166fd4so8386939f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:52:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723218722; x=1723823522; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KF0ax7W1P20MaxQnCV8sySibamf26ozw3OigTBi50ug=;
-        b=UrmA/vOHF09oQk9hQ5pBmtRdUc2ZcsIwq4jz9L55ZMXrb1egAkGXhWy8MO+UeASU+2
-         8RqyBP4KVzVN2LKIoktyF+89Qgbx8QnMKjvjPLA66FBTB6PdXjQ/AGEafglkI3Zaj6DG
-         3fZVRlHiRcaIrVAf77eq6s1TGwFN36qfTJjuw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723218722; x=1723823522;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KF0ax7W1P20MaxQnCV8sySibamf26ozw3OigTBi50ug=;
-        b=ipkwdlGlNF+SpueddFqLgm99zoGVM9O2xQkTpXag1zlHIPI1Nwo8Vu8GaQlbVldhkN
-         AH1Qj8uWj8Lz0ojaBXUuecmC7/BHjT1jTiiobUHo0fxc7Zj7UXBmvGTqp6ZJCzXm6TkQ
-         jtJCcjXzuVMLfeyOAq4l8dzjoRdHcTx1jZgzidSQYH/pgNq1QPxXtNepue+WtqNFgtAI
-         0Jd9hfTG+Cj8AmfmB5n4bxB4Sxf4iEyss57oe56dkWT4VtCXUnzi2D6U4o3z18mItEjm
-         CkDD5udALDnWojfeUMLaQCy/am2J1mOLXuk0XhsRUcDg47k52vH28g3B5/+v3tQj7P68
-         5JZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFL89r/4BZukfw+BZFs8nGfPzxQcV6aep5Gvqo1VVhO71MLAQkZLHO1RtmUkUmuBOY19qBkSrAV6hJiik=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5w/HUb8BGUeIsGFoOVoqDFRcinAEgCqnlc8gW3HqzLVRzMqGJ
-	7UIduwdVThohKLKvExeW4a32kNYycyxXejtwvqxbLGs+0CoBUiCJqzU5EVzqZWE=
-X-Google-Smtp-Source: AGHT+IEacVzfZxGYgS2156+QwFCiFEXj4BEbmIa8BBPXXEUNPS4UZLc9VOdK5aRJKr56+itJk9oxfw==
-X-Received: by 2002:a05:6e02:1aa9:b0:39a:ef62:4e96 with SMTP id e9e14a558f8ab-39b86f8553dmr14604925ab.4.1723218721875;
-        Fri, 09 Aug 2024 08:52:01 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39b20ab6c3bsm65747215ab.47.2024.08.09.08.52.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 08:52:01 -0700 (PDT)
-Message-ID: <2036d89d-0387-4477-92b5-7d220b0430ba@linuxfoundation.org>
-Date: Fri, 9 Aug 2024 09:52:00 -0600
+	s=arc-20240116; t=1723218823; c=relaxed/simple;
+	bh=P6cS1YkhJ0u2ZgDB+sTJKdZitAKqXDejZ1hjDidMg2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqYsCxmWfzdvKjw1HjEr/epyqY+buMC+p6HLt10WXiHBeORr37II34rdH6/TqKDr9B1eJYBaPdJbV9/5NM6fMwD9bIIsayTLURapvtiZvW+Mx3OdkhZuAuKMu27eBhaDi1lsupcfo5adRCDcCgf7nDO5iceqc4au3IOgJqhB4Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OwKyqDC8; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723218822; x=1754754822;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=P6cS1YkhJ0u2ZgDB+sTJKdZitAKqXDejZ1hjDidMg2o=;
+  b=OwKyqDC8KSt/vrTTGW0ck9Jg07kWpBp30IHvaUGHcv0frQdae0dOWHqy
+   uSLsQc+viLkfw2YVi46+Lnw+dBfLiRFAU5cdTLkpB+kG//SQPW/6g3G4P
+   gShR3Cn+R2259LPzUEf8Qidtoh0+wc+MkVhlIBQEA2pbU5zW8/5H31JEX
+   FcUuhhlog6zcZZxnKYym9YAqVnNyECSo/zgishlb4uSidQa8IMmbxowtS
+   6ujsAQyiTPrb6yoBfP7QsqH2jqNyF0fMg7/zBQPBr+im+6Bg8GfKWL4ma
+   O3mY8UZp5fm8PXcvfoQ1W6MNXSdZpWJrrNRz+QWRy15ZkbO7RfIXg6Tv0
+   Q==;
+X-CSE-ConnectionGUID: 1oXVM3f6T0aK8hXVYyNXCg==
+X-CSE-MsgGUID: bFCznxoIS0e6cnaeIaIGfw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21557251"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="21557251"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:53:41 -0700
+X-CSE-ConnectionGUID: 89AvCJGWRveMYUwnYpgHlQ==
+X-CSE-MsgGUID: ZLRaqbLYTtGS83rI88Q0RQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="88241156"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 09 Aug 2024 08:53:38 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1scRvq-0008Sy-2l;
+	Fri, 09 Aug 2024 15:53:34 +0000
+Date: Fri, 9 Aug 2024 23:52:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
+	kevin.tian@intel.com
+Cc: oe-kbuild-all@lists.linux.dev, robin.murphy@arm.com, joro@8bytes.org,
+	will@kernel.org, shuah@kernel.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] iommufd/selftest: Add coverage for reserved IOVAs
+Message-ID: <202408092301.M51NPXgL-lkp@intel.com>
+References: <544ab894a301c83eb9f9d7a6326f4cb87f517019.1722644866.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kerneldoc: Fix two missing newlines in drm_connector.c
-To: Daniel Yang <danielyangkang@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240808084058.223770-1-danielyangkang@gmail.com>
- <20240809032350.226382-1-danielyangkang@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240809032350.226382-1-danielyangkang@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <544ab894a301c83eb9f9d7a6326f4cb87f517019.1722644866.git.nicolinc@nvidia.com>
 
-On 8/8/24 21:23, Daniel Yang wrote:
-> Fix the unexpected indentation errors.
-> 
-> drm_connector.c has some kerneldoc comments that were missing newlines.
-> This results in the following warnings when running make htmldocs:
-> ./Documentation/gpu/drm-kms:538: ./drivers/gpu/drm/drm_connector.c:2344: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
-> ./Documentation/gpu/drm-kms:538: ./drivers/gpu/drm/drm_connector.c:2346: ERROR: Unexpected indentation. [docutils]
-> ./Documentation/gpu/drm-kms:538: ./drivers/gpu/drm/drm_connector.c:2368: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-> ./Documentation/gpu/drm-kms:538: ./drivers/gpu/drm/drm_connector.c:2381: ERROR: Unexpected indentation. [docutils]
-> 
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> ---
-> 
-> Notes:
->      v2: added "Fix the unexpected indentation errors" line to description.
-> 
->   drivers/gpu/drm/drm_connector.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index 80e239a6493..fc35f47e284 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -2342,7 +2342,9 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
->    *
->    *	Default:
->    *		The behavior is driver-specific.
-> + *
->    *	BT2020_RGB:
-> + *
->    *	BT2020_YCC:
->    *		User space configures the pixel operation properties to produce
->    *		RGB content with Rec. ITU-R BT.2020 colorimetry, Rec.
-> @@ -2366,6 +2368,7 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
->    *		range.
->    *		The variants BT2020_RGB and BT2020_YCC are equivalent and the
->    *		driver chooses between RGB and YCbCr on its own.
-> + *
->    *	SMPTE_170M_YCC:
->    *	BT709_YCC:
->    *	XVYCC_601:
-> @@ -2378,6 +2381,7 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
->    *	DCI-P3_RGB_Theater:
->    *	RGB_WIDE_FIXED:
->    *	RGB_WIDE_FLOAT:
-> + *
->    *	BT601_YCC:
->    *		The behavior is undefined.
->    *
+Hi Nicolin,
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+kernel test robot noticed the following build errors:
 
-thanks,
--- Shuah
+[auto build test ERROR on shuah-kselftest/next]
+[also build test ERROR on shuah-kselftest/fixes linus/master v6.11-rc2 next-20240809]
+[cannot apply to joro-iommu/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Nicolin-Chen/iommufd-Reorder-include-files/20240803-210818
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
+patch link:    https://lore.kernel.org/r/544ab894a301c83eb9f9d7a6326f4cb87f517019.1722644866.git.nicolinc%40nvidia.com
+patch subject: [PATCH v2 3/3] iommufd/selftest: Add coverage for reserved IOVAs
+config: x86_64-rhel-8.3-kselftests (https://download.01.org/0day-ci/archive/20240809/202408092301.M51NPXgL-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240809/202408092301.M51NPXgL-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408092301.M51NPXgL-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
+>> ERROR: modpost: "iommu_dma_prepare_msi" [drivers/iommu/iommufd/iommufd.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
