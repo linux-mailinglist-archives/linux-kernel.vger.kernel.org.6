@@ -1,71 +1,87 @@
-Return-Path: <linux-kernel+bounces-280333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AF694C8DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:24:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D1794C8D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 831A2281E4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:24:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D656BB24399
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6031E1B978;
-	Fri,  9 Aug 2024 03:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77011804E;
+	Fri,  9 Aug 2024 03:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K2Nfzm0a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkZM0vGv"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD2C18AF9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 03:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABB317BCE
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 03:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723173851; cv=none; b=f4NZxZl7TnoDEbBteC3NijkpYFywpHP/Xucm0a6w4tF/VYNhInNQtnMkWPiAsL2Dp1UT8+RcVYH53pe8aU7rBrqWC2DMZ1roz8+RdqMO3um/sHfPFbrXto+yygX41KA+EhTNvcndO3qsbalWD9PotYFrLJOXcwPysA3/By8Pfm8=
+	t=1723173848; cv=none; b=hBHKxa+TPdVHs7iK/TCEeC8SdLHFOrvip3SQQyiPLAeX9nDs0pZyzaiPj0BOgC9l5yDhGo/YLsR9TrG2aLsJ2dN9UgYs5Q+TnKZfgMG+pYLj2vw9HLnlAWqEpPGWrm8OiuTZBAncLRhQe3d91EBMrSQh6sYUJFLqWFe1JGDwnDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723173851; c=relaxed/simple;
-	bh=zLllgtJ8Y5UizVP7ZmuOLoMyXKOTMmB1fEG+ggYCA6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mJap5KntnCPldiobO/8z+xCOv3z8ubZEhibCMQjjw+FjLIOSHW6fRjg9zR+OPkHQrnhm1IPd6SK2wOAsQQDyPLR1xqek5U5vUpqXgo8BwzsyxzcH7wvzEr1UPjUmcIATrJt1bt0taKrNjZBFXgYmG+nzor9Z6AmQdPGBv/45K6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K2Nfzm0a; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723173848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=G4nqDhT0g2nygRuu74hpthZDpxJstIniDobBGPyGMQI=;
-	b=K2Nfzm0aNmc8jl7iLhVUI4ktAt/B0ybumMTklGYgmpUpNRJ+OHw26iVKOwHDrHR3VkleFr
-	16MK5bqB7peRNSBTUvzMCQl2OISWZEuroP+F965nG6GvXWQhO0PpKQtB9icrEb/Lv5xchU
-	8zcmajU8Wy8bYX+2NgVmgDJ8PLob0SU=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-58-KT90tR09M-aS_4gmRsglzA-1; Thu,
- 08 Aug 2024 23:24:05 -0400
-X-MC-Unique: KT90tR09M-aS_4gmRsglzA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 156EB1955F54;
-	Fri,  9 Aug 2024 03:24:03 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.232])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 385AA1945109;
-	Fri,  9 Aug 2024 03:24:00 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] cgroup: Fix incorrect WARN_ON_ONCE() in css_release_work_fn()
-Date: Thu,  8 Aug 2024 23:22:59 -0400
-Message-ID: <20240809032259.1233679-1-longman@redhat.com>
+	s=arc-20240116; t=1723173848; c=relaxed/simple;
+	bh=IYAJ7WHW/yozr5fM9uxmyZfm3sJIvldTjgLKHshYTr0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=I0aMPRFf5A8oxLH5AeD2s7CvZ+yueEranDs1Jt348MWqP75I59H+IPdcLn5c4gMHOcaD/ke3i9PvLh5+aNTa9oNc7SF/RGdMKT9ARuizakWjbmYHfi7wf7SKm3uPgRNQSMmqL2NE9aGyu1bMGWZKUOFawTRw3IBeQT1wJlCFO1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkZM0vGv; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-260f057aa9bso1013487fac.2
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 20:24:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723173846; x=1723778646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZFOK/hAUa0fw7FuOJzaSSnTG1BQkQ3YWl0HKcCK5k/Y=;
+        b=lkZM0vGv4Htyfj19E7/T9EKHYKVxKHCnSxT6ogS3KifzfnLgCGfWTQbw26OUXtNjnL
+         YSWC89sw197ThIhHAatN6mGYT3oRrsjBvGUhGJe7X0NEm+Yc0dYvOJoah6595/9k6WSR
+         8gfvdRvXfffsUC3/UtF9I85dsds1IBNLeqIFke46l2cXbSnAKA2tbNpusI41uhww5ORo
+         XfbWnGvJ/motJ6BnQl8ZNvWrSGUe+ixIkT0K+jHezcsCh6eB5or15PfmRZoKtNF2a1mb
+         RUngd1/xvxLeI4rI34abf1+2LE+/JCoWA0sGIflBiuRgO6WGKPMcVmrj04WLqg7Xli7R
+         Lbhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723173846; x=1723778646;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZFOK/hAUa0fw7FuOJzaSSnTG1BQkQ3YWl0HKcCK5k/Y=;
+        b=K4cBYSMiPRJSFGtZUtSbIGKTGxpCJBgUqKPOxvPwxTomzKEJZFWS1srFn+EwNymlDP
+         FCFm9TgBAlZ0fjwzNX+duqT0mb2brSAodLEWN2PR7+6Pjgu1eVIJ0j7gr5MGtRQK/k7t
+         vKu/0aBgaOCtilNWCAZlbAY5ij04IQ1TFHVIWeEnA8zUKWuCjJ8wYbBLlNiNFgnKRFIE
+         VVYp7TTKj1CNhYHGBQiTeoxUSdW6Py3sJcrkbUPBYzkLLeMj4tlejeOg1x6XaikDK/aH
+         EWYj+ZbIvFI2jyOGlQTwIjQaFuCesgkNNNfdbsWbvkjEIXgwRNQjYyh12Hx9Me2xWZus
+         z1iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGzd4SFP2qGDmhm2A8iZNv1zM0SSh2i+XXJJTElf6VlTK+LoMAWslyR1MZRtKL5B7RGuxW6X8cX/r+9g7M36dNWZ8gwh9StsAkCjcC
+X-Gm-Message-State: AOJu0YxXtZwfWJzlPxTRUf2VBgcmpeJzC2Gs1IxCxV5mKm6p/S1ei9Dt
+	wmlo7z89amWpynk0k/mclEYQapA+WnICXiTXTotsYwhYhc5BSBHB
+X-Google-Smtp-Source: AGHT+IEjse90ATIO4w5F4sCUoF9JSdEdyJCL9sLs5MTq81S3LQ9AqIZ0nZ4JFQ9tE25/41wFjdz25g==
+X-Received: by 2002:a05:6870:3282:b0:261:1339:1cb9 with SMTP id 586e51a60fabf-26c62f21d48mr379004fac.35.1723173845724;
+        Thu, 08 Aug 2024 20:24:05 -0700 (PDT)
+Received: from localhost.localdomain (c-76-133-147-99.hsd1.ca.comcast.net. [76.133.147.99])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-710cb20af7csm1840447b3a.19.2024.08.08.20.24.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 20:24:05 -0700 (PDT)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: skhan@linuxfoundation.org
+Cc: danielyangkang@gmail.com,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] kerneldoc: Fix two missing newlines in drm_connector.c
+Date: Thu,  8 Aug 2024 20:23:50 -0700
+Message-Id: <20240809032350.226382-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240808084058.223770-1-danielyangkang@gmail.com>
+References: <20240808084058.223770-1-danielyangkang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,46 +89,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-It turns out that the WARN_ON_ONCE() call in css_release_work_fn
-introduced by commit ab0312526867 ("cgroup: Show # of subsystem CSSes
-in cgroup.stat") is incorrect. Although css->nr_descendants must be
-0 when a css is released and ready to be freed, the corresponding
-cgrp->nr_dying_subsys[ss->id] may not be 0 if a subsystem is activated
-and deactivated multiple times with one or more of its previous
-activation leaving behind dying csses.
+Fix the unexpected indentation errors.
 
-Fix the incorrect warning by removing the cgrp->nr_dying_subsys check.
+drm_connector.c has some kerneldoc comments that were missing newlines.
+This results in the following warnings when running make htmldocs:
+./Documentation/gpu/drm-kms:538: ./drivers/gpu/drm/drm_connector.c:2344: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+./Documentation/gpu/drm-kms:538: ./drivers/gpu/drm/drm_connector.c:2346: ERROR: Unexpected indentation. [docutils]
+./Documentation/gpu/drm-kms:538: ./drivers/gpu/drm/drm_connector.c:2368: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+./Documentation/gpu/drm-kms:538: ./drivers/gpu/drm/drm_connector.c:2381: ERROR: Unexpected indentation. [docutils]
 
-Fixes: ab0312526867 ("cgroup: Show # of subsystem CSSes in cgroup.stat")
-Closes: https://lore.kernel.org/cgroups/6f301773-2fce-4602-a391-8af7ef00b2fb@redhat.com/T/#t
-Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
 ---
- kernel/cgroup/cgroup.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 601600afdd20..244ec600b4d8 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -5465,7 +5465,14 @@ static void css_release_work_fn(struct work_struct *work)
- 			ss->css_released(css);
- 
- 		cgrp->nr_dying_subsys[ss->id]--;
--		WARN_ON_ONCE(css->nr_descendants || cgrp->nr_dying_subsys[ss->id]);
-+		/*
-+		 * When a css is released and ready to be freed, its
-+		 * nr_descendants must be zero. However, the corresponding
-+		 * cgrp->nr_dying_subsys[ss->id] may not be 0 if a subsystem
-+		 * is activated and deactivated multiple times with one or
-+		 * more of its previous activation leaving behind dying csses.
-+		 */
-+		WARN_ON_ONCE(css->nr_descendants);
- 		parent_cgrp = cgroup_parent(cgrp);
- 		while (parent_cgrp) {
- 			parent_cgrp->nr_dying_subsys[ss->id]--;
+Notes:
+    v2: added "Fix the unexpected indentation errors" line to description.
+
+ drivers/gpu/drm/drm_connector.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+index 80e239a6493..fc35f47e284 100644
+--- a/drivers/gpu/drm/drm_connector.c
++++ b/drivers/gpu/drm/drm_connector.c
+@@ -2342,7 +2342,9 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
+  *
+  *	Default:
+  *		The behavior is driver-specific.
++ *
+  *	BT2020_RGB:
++ *
+  *	BT2020_YCC:
+  *		User space configures the pixel operation properties to produce
+  *		RGB content with Rec. ITU-R BT.2020 colorimetry, Rec.
+@@ -2366,6 +2368,7 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
+  *		range.
+  *		The variants BT2020_RGB and BT2020_YCC are equivalent and the
+  *		driver chooses between RGB and YCbCr on its own.
++ *
+  *	SMPTE_170M_YCC:
+  *	BT709_YCC:
+  *	XVYCC_601:
+@@ -2378,6 +2381,7 @@ EXPORT_SYMBOL(drm_mode_create_aspect_ratio_property);
+  *	DCI-P3_RGB_Theater:
+  *	RGB_WIDE_FIXED:
+  *	RGB_WIDE_FLOAT:
++ *
+  *	BT601_YCC:
+  *		The behavior is undefined.
+  *
 -- 
-2.43.5
+2.39.2
 
 
