@@ -1,62 +1,60 @@
-Return-Path: <linux-kernel+bounces-281088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6809E94D2ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:07:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A3F94D2F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC6BAB2141C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:07:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F821F21CD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225A1197A97;
-	Fri,  9 Aug 2024 15:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEEC197A9F;
+	Fri,  9 Aug 2024 15:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+ZMHH7/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3NPNVJW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6184A155A25;
-	Fri,  9 Aug 2024 15:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595B9155A25;
+	Fri,  9 Aug 2024 15:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216050; cv=none; b=V5lEzdzHtzjcPQTB0+fvMwBIL7QroujDoF31DRq7R7ANmIRUnBwZI805792raHVMy6DtcMsWIGxMjGgbHkGqHqg1bjJeNQO28bzwJFRKhhoJzkxdTsCxT0jHvoKnwzhvOaEHEKYj4WLI8ARV70CYhi0DuPXsaccTHQuvKUrH9Tg=
+	t=1723216152; cv=none; b=cyfYATh0uuYfxm2gu7Et4A4sD04z9PjxCa2QPHqPW0dYMZh5WW6B9uXg332NU701lJYlcZO8XQsgG9v+jgALlWaFiCbdSQdLKhvQ+KA7GNCVgKjGWHQpl7vhf7b790gvkaOD05t5IyBlPYv6zlXA1Ex2WjQWXDg/ncjQYal8gBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216050; c=relaxed/simple;
-	bh=jZLAqxbDw1Q7Bre45+Qasn0USRspIPfzQt7t2DwZdu0=;
+	s=arc-20240116; t=1723216152; c=relaxed/simple;
+	bh=Zd2NZGppqJ5H2ZezF19+St/GBCUKROAZMrbD9l7nyRE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ocA7+1tOOLnWG9ZHI5xBH6LKNkdl+2+mRYGG8N33F9bTilcvUDxaAJIyeaVJL+odd52QzS6v1EnNv4ny7VvcdprEw9B5LrjEHQ7VpmGuBtZzDAFvRQl/zM8k+m+hl0w6O9Lg8sXf6Fflbzfu+9ql/sCbIE7li3A3FkqIlvHYBkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+ZMHH7/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 003D0C32782;
-	Fri,  9 Aug 2024 15:07:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDtJ5hkJXkZhoj5Eh3h1PCjLd0msdtzleXasVm2GinMyxzAH+iwj5aAF7vtCj1D9hhoXCAYGWSq4olkLIbfVal22wKtYehPjcQLpoIiO2gEh+Y0sFyFxtopW6YW+wZgNlj0x5nVkzuVqUofx/vNsLqb0vUtDKlLz8WBKQmAnw70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3NPNVJW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D536C32782;
+	Fri,  9 Aug 2024 15:09:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723216049;
-	bh=jZLAqxbDw1Q7Bre45+Qasn0USRspIPfzQt7t2DwZdu0=;
+	s=k20201202; t=1723216151;
+	bh=Zd2NZGppqJ5H2ZezF19+St/GBCUKROAZMrbD9l7nyRE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C+ZMHH7/Ky1jYRed3dGXymjDrDX1nSAuHkGWFTYxh5gmyk79O5BJBjfjHL5eh9nHm
-	 dMQ32ZSffgri8/8+zEESezP94mOfiLlZL7P6tb2NkAEsgnXNyQfson7LP7ySmLq5KD
-	 Kk02AvfO4JDT0409ElPGc6nmdlbWu1ppM6Q1NHbAZ2qj3JMUM5D6Ua4fjHbJOUa8q7
-	 ONmUwcTkttL9h8y1Nm9SUGhhpbcfCybvsTVJue5w5Y+eSzOch0Ai2k+KthpRELhbdA
-	 ylcPTr0dQdtTmWpnVDmMB9CjK6hiCgZZuBlJNt1gaCTNiN0yT9G2St5BOclCguuRaq
-	 ZlbCIdrE8tQeA==
-Date: Fri, 9 Aug 2024 16:07:25 +0100
+	b=W3NPNVJWFdVcMudjhf/waU1B2KmzMjAlWEeBdbYOuIlU/IDAYVpX/I8oF2xXcwu8W
+	 hHZDD+BjfzQMwLNVuU8yNjAMoAl+3cY5/3F3kGn9ue75lFf8r7rPS4v40Gs3zyD/B0
+	 s6QVqZw0CW6++/9eFq9SNm+EC9xcWNS8ogc0wUfaL3fJ/tvHPHVSaYlyEy+7Q86DEE
+	 V9zmRyDVTWMvsqZmhhc8R2vU55Hhk5bWUXy8w3OgvLD142gOsmKh4gb+y4SHHTQbdv
+	 uSkqjrk/IHtt7/BKtsvTIeMeCodeptt2DEtYKRDFnIhisv+i7gnlmzfzhDvQGpURGw
+	 KJTtBqhZTqaZw==
+Date: Fri, 9 Aug 2024 16:09:07 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] arm64: dts: lx2160a: Change PCIe compatible string
- to fsl,ls2088a-pcie
-Message-ID: <20240809-freewill-compactor-4f441a4a60bb@spud>
-References: <20240808153120.3305203-1-Frank.Li@nxp.com>
- <20240808-frosted-voicing-883f4f728527@spud>
- <ZrTphsdTZVsbiGo/@lizhi-Precision-Tower-5810>
- <20240808-linoleum-evasion-ad7111a2afc4@spud>
- <ZrTvB/3GGIhEOItT@lizhi-Precision-Tower-5810>
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: adc: ad7173: add support for ad4113
+Message-ID: <20240809-autograph-sugar-e79e54fd7a24@spud>
+References: <20240809-ad4113-v2-0-2a70c101a1f4@analog.com>
+ <20240809-ad4113-v2-1-2a70c101a1f4@analog.com>
+ <20240809-glowing-discard-87263f656a7e@spud>
+ <67eb7f5c-3f20-4831-a0cc-e407ac3f24ad@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,75 +62,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UqI6MOyeE0fEpu25"
+	protocol="application/pgp-signature"; boundary="mZH1m8C8+ubbaXbm"
 Content-Disposition: inline
-In-Reply-To: <ZrTvB/3GGIhEOItT@lizhi-Precision-Tower-5810>
+In-Reply-To: <67eb7f5c-3f20-4831-a0cc-e407ac3f24ad@gmail.com>
 
 
---UqI6MOyeE0fEpu25
-Content-Type: text/plain; charset=us-ascii
+--mZH1m8C8+ubbaXbm
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2024 at 12:15:03PM -0400, Frank Li wrote:
-> On Thu, Aug 08, 2024 at 04:55:14PM +0100, Conor Dooley wrote:
-> > On Thu, Aug 08, 2024 at 11:51:34AM -0400, Frank Li wrote:
-> > > On Thu, Aug 08, 2024 at 04:34:32PM +0100, Conor Dooley wrote:
-> > > > On Thu, Aug 08, 2024 at 11:31:20AM -0400, Frank Li wrote:
-> > > > > The mass production lx2160 rev2 use designware PCIe Controller. O=
-ld Rev1
-> > > > > which use mobivel PCIe controller was not supported. Although ubo=
-ot
-> > > > > fixup can change compatible string fsl,lx2160a-pcie to fsl,ls2088=
-a-pcie
-> > > > > since 2019, it is quite confused and should correctly reflect har=
-dware
-> > > > > status in fsl-lx2160a.dtsi.
-> > > >
-> > > > This does not begin to explain why removing the soc-specific compat=
-ible,
-> > > > and instead putting the compatible for another soc is the right fix.
-> > > > Come up with a new compatible for this device, that perhaps falls b=
-ack
-> > > > to the ls2088a, but this change doesn't seem right to me.
-> > >
-> > > It can't fallback to fsl,ls2088a-pcie if fsl,lx2160a-pcie exist, whic=
-h are
-> > > totally imcompatible between fsl,ls2088a-pcie and fsl,lx2160a-pcie.
-> > >
-> > > Previous dtb can work just because uboot dynamtic change fsl,lx2160a-=
-pcie
-> > > to fsl,ls2088a-pcie when boot kernel.
-> > >
-> > > fsl,lx2160a-pcie should be removed because Rev1 have not mass product=
-ioned.
-> >
-> > Please re-read what I wrote. I said to come up with a new compatible for
-> > this device, not fall back from the existing fsl,lx2160a-pcie to
-> > fsl,ls2088a-pcie.
+On Fri, Aug 09, 2024 at 05:32:08PM +0300, Ceclan, Dumitru wrote:
+> On 09/08/2024 17:21, Conor Dooley wrote:
+> > On Fri, Aug 09, 2024 at 01:33:24PM +0300, Dumitru Ceclan via B4 Relay w=
+rote:
+> >> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> >>
+> >> This commit adds bindings support for AD4113.
+> >>
+> >> The AD4113 is a low power, low noise, 16-bit, =CE=A3-=CE=94 analog-to-=
+digital
+> >> converter (ADC) that integrates an analog front end (AFE) for four
+> >> fully differential or eight single-ended inputs.
+> >>
+> >> Added ad4113 to the compatible list and the "avdd2-supply: false"
+> >> restriction.
+> >>
+> >> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> >> ---
+> >>  Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml=
+ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> >> index 17c5d39cc2c1..ad15cf9bc2ff 100644
+> >> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> >> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
+> >> @@ -28,6 +28,7 @@ description: |
+> >>    Datasheets for supported chips:
+> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4111.pdf
+> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
+ts/AD4112.pdf
+> >> +    <AD4113: not released yet>
+> >=20
+> > Am I meant to ack it with this placeholder? When will the document be
+> > released?
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> Not really sure tbh, up to you. The document will be released in the upco=
+ming months.
 >=20
-> According to my understand, It needn't add new compatible string if nothi=
-ng
-> difference. for example, it use fsl,vf610-i2c for all i2c without add
-> new soc-specific fsl,lx2160-i2c.
+> If it's considered best to wait until the docs are public and send another
+> version with the correct link.=20
+> If not, and maintainers consider that these changes can be accepted even
+> without viewing the datasheet, I'll send a patch when it goes public.
 
-No, you should have soc-specific compatibles regardless. Just because
-you got away with it once, doesn't mean I'm not going to complain about
-it here!
+I don't really care, it's just to Jonathan I think. I'm happy enough
+with you adding it when it is released.
 
-> So far lx2160a-pcie is the same as ls2088a-pcie.
-
-
---UqI6MOyeE0fEpu25
+--mZH1m8C8+ubbaXbm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrYwrQAKCRB4tDGHoIJi
-0kFZAQDhZtW3Gh4EocWE0cDSarMnBHPDLutlvuYc7HAvPYLSJQD7BZstVgOrE24z
-F/qic6aIukQGRBClY+6y9FD4k33rUgw=
-=nqIL
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrYxEwAKCRB4tDGHoIJi
+0n/qAP46DdaGcNK4r+njbC8daaCXJoPLBI99yaM2E3AykeSMawEA4nNzddIASR+c
+oCMX3Zn4oRUKQWEVbeAuGqK3vcfpiAc=
+=crai
 -----END PGP SIGNATURE-----
 
---UqI6MOyeE0fEpu25--
+--mZH1m8C8+ubbaXbm--
 
