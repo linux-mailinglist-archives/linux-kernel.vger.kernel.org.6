@@ -1,162 +1,198 @@
-Return-Path: <linux-kernel+bounces-281227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF32A94D498
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:23:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5712394D49F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7A91F22B6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:23:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ADCE28443C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B068199225;
-	Fri,  9 Aug 2024 16:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B911990C4;
+	Fri,  9 Aug 2024 16:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="GfAjM6/N"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UDDV5QGe"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9C4199223
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E365217ADE8;
+	Fri,  9 Aug 2024 16:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723220577; cv=none; b=ZpysNpHbUD/rWeDNX8EgH6xryDQTqi3Mnm3i+t/N103GtrWDiiedQxdPpj05cyG/oBprcxuCTC56WoBErpeFqhVdSpe7JPdawOikABofQh11q9qoaYlxZPPoqoB6yUZUpmrfTPmdVlA0aowNxMCyF1azH0Yu+iL/bW5cgiOS5HU=
+	t=1723220640; cv=none; b=VrY0u2UQQBaSjBjYSzi4XODBs7RQMpjckz9mG/cl6vrUvXThOlrWTEEKOPDnq7H51rzNthHGri9CfcZXiguep3lSZDIQ1zntATEsRH0fmIUvTrlgLP0hWYxS+yAqQdCuQlvHMi+abZhOh4xmsliAcfaa4uBzJKk2JLBrO3vdp4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723220577; c=relaxed/simple;
-	bh=Q7+mHfaG/gPeyphnTcK6yRgJq6izjUUPKdZlakTOdNk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZOWxIe/e0Iazf8M2uaOGWa89yBHx6LhQd2ALmq2BDotqksgw5QIQS4qz9c8CoJESHcvWF9K+B2RXIV4v+XKjQsf3RX+xDGJ7KxPLYsyO0eGM/RsNsSKEd+0pYbkzy1UVa1i3ajKqCNKJTxL/9vYkET6wMLefn7L45n/FzOmt378=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=GfAjM6/N; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7163489149eso1561626a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:22:55 -0700 (PDT)
+	s=arc-20240116; t=1723220640; c=relaxed/simple;
+	bh=MuvI/xFsL+CNUTH19sViET9s8LJFVNCewQGI5dvpEMM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tOPMZSxCv10YR/2qMRfsF/oK5FxNInNgcEvcVWVIlyxJ/yOsDwZ4mZi24HSfSxhIQAgvru51k3RlnD3tEDAtN5aukjOw/lYfdtVZWWkPMfUIB15/vBk0lTkl5WiKxiORBWcNh55Dfo8C2DI4zh6HqGfiEGiKVrPPqbvUPlI/atY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UDDV5QGe; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52fcc56c882so2260936e87.0;
+        Fri, 09 Aug 2024 09:23:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723220575; x=1723825375; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P9KwuCeskSHSsK6Ge80MByzX2lckhBzz4l4UPkzzqNs=;
-        b=GfAjM6/Ne+yZDIGc7Hh3LvhCoHfcA6Xu11M902TZPpip/79PHPtf7g48DWwCivUens
-         BKVtBJf+/8KKgbuBiZIuziE3ekpIpF5BD0cbWK6Q9x7UmPI1Tk7EWls1Sx5mP6RaPpZ9
-         FTE4VAarfotAaHN49Ky4DTTbP/s3OIKP0olG+6hI58cctg8qxPn9hhD+Mr/dl5TqQEZM
-         q5TyNgf8ZUy/5vpTD26BJrGeEfvbnMaaQuENuh/PNIRdId3LhfudYZqLgNeW8oh6xPMo
-         Q8kUPlC8Q5ggQWiFFjrM5x/QM7+n/FHwfWXPZknCxbWLm3YCbPM/jDDQdRA1arFmkCa8
-         wM5g==
+        d=gmail.com; s=20230601; t=1723220637; x=1723825437; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=urwFjYIe54BX21GUD0rDONyqjA52hcZTxeP+KnuDeBc=;
+        b=UDDV5QGedSofUIUmfpKN0ZJyuq+PpgMq0bjMu71y1/T6Jd3Ia281YQeyoZ33+lWQSl
+         Jan8qAdelWAviRoWN73SZlk/ZQ8W0osj/lYW0tPd7mBkgMUJ0sfHbpCrCy/Om1LF6+yo
+         L61/ByseoyCJIAMj21oweh5gjbpJrkEdXxrNM//PQ0ZJLPSKfqkosFki3h3AUqXg4Iif
+         +dhjFjXmX3/ZhUwQ1L6C5OtQeYUqXEP4guipYTtzc8L6fxTefGcSzxKagbQBDv+0YUAs
+         v5K1d6bCA84RJmSsZ/QRD+OE+o3o+lwSCQpa0ONGclfaQH6xyVF+v/Jtkzo+xK3ahCxJ
+         VSlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723220575; x=1723825375;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P9KwuCeskSHSsK6Ge80MByzX2lckhBzz4l4UPkzzqNs=;
-        b=ryj3ABrXt0/UHwkj3kGv+Efx0n22rEyH9N8pf0uV414rErjHhzQMYSXBOJJfokqKSS
-         NBp6p9hB/PJi2amoBXbVHiFi6HGgSJVRwVsPLRaD6DOIElcIlvc2BGo7njMW05vAyns2
-         UpHsH62jobChamb7Wy3XnmPAxsCDB+LZnLKs8ml/K77hv6lOEstJ9tIXMTiJmP+8Z0Z9
-         ch3h3Mbkme8kFsZSf2DcWdu/O09wc5qe/DNqhKPyMAE6d1rDS8ssaHV9lSlIz6v9k9p4
-         8/shRBs7E/YbWiRoenA7i+bkiiSHcz3LEGdz+eqbgt8MIw8+U63IQQoR24x1hzpPjlxk
-         z91w==
-X-Forwarded-Encrypted: i=1; AJvYcCXmei7WTUJylDBNRWL7/SZTBSqbv97xdDy8vJ73UPaJGexFiZUvQLju3rXRNTpCF0Xp5g+jLmlzwhhd/6KYoMEgfgX1s6tRgY7frfR6
-X-Gm-Message-State: AOJu0YzN5ba8BYW1nOWvpTWl+oyiKljWKggfV9GwHSeg+wY9JwlajxDj
-	abHnUEGJBQCY8zzVIF4Iu+vJemuP0jGWxNH5NI10FA5iKcXjJT4NhjTf6wtBbiA=
-X-Google-Smtp-Source: AGHT+IHp8h7nr4BcWcXSmFlRdpIdfs78+tQ8JlqIPTYsDMyESOd63kL6pHIyup+248wklqPMUEbOiw==
-X-Received: by 2002:a17:903:944:b0:1f7:3a4:f66f with SMTP id d9443c01a7336-200ae59b5e2mr19226275ad.43.1723220575225;
-        Fri, 09 Aug 2024 09:22:55 -0700 (PDT)
-Received: from jesse-desktop.ba.rivosinc.com (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200668fc398sm100414505ad.207.2024.08.09.09.22.51
+        d=1e100.net; s=20230601; t=1723220637; x=1723825437;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=urwFjYIe54BX21GUD0rDONyqjA52hcZTxeP+KnuDeBc=;
+        b=qK9H/lYMysZtMce+oci9yAtc9HSv7KZsgFPnfObu4R3eRztFYQNYmURx5cfnYGiChF
+         axYI+ttAwYdrVkmcph2LLSpPphL2IZLo1X6RItDQgV4jhcfy7QPmzQzzRbQMqPV8uy2o
+         Nhljb1ABoK2tYcohILVAsUbbUI0TMnnb7JnXYxYun7NAmvW9jC1bje1pNlw3L/QAKi9F
+         Y0gzV1bdgSidsRPnu7evJp4ukFDS/I15He8F6tGuHhTQUL/TN0xRxJv2YTVmoBIWKLXS
+         POqPvX3vCPicI+rLyLMDSxwNhCIflLU1lgoaRBClkDBWyGokhOzzjQGKZTGgGwut7fQq
+         6Q1A==
+X-Forwarded-Encrypted: i=1; AJvYcCU67kzDSKSckTvixP81dBh+TDD8bIIazDDAV8+Mjtv4uoftNKCiuDf9qb9p9K2y2fFLsRPGbaLHNGR2KtQZbqSOfnMtZbqJ0c+mKp5UgQP4iOTpUcbwc34DhS2JBrTBclAv
+X-Gm-Message-State: AOJu0Yw285Swzb62aUdA96K4XBer0AhY8SFr1//uFuEl6C45WKYwHwL4
+	IU+OCF0nK/9DIU+Ij5357Q+YTun92WchWQAXQmFpg2NbJML1/Ff+
+X-Google-Smtp-Source: AGHT+IFVbMvFAZSc1sQVj5YuOvjL6UcHN+fDMssrAbMlFDr0AaxMw+YNalTFTi6yIa269yVuOEZoYw==
+X-Received: by 2002:a05:6512:3e28:b0:52e:fd8f:624b with SMTP id 2adb3069b0e04-530e5de775emr1601552e87.29.1723220632467;
+        Fri, 09 Aug 2024 09:23:52 -0700 (PDT)
+Received: from pc636 (host-90-233-216-8.mobileonline.telia.com. [90.233.216.8])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530de3e313csm1030750e87.55.2024.08.09.09.23.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 09:22:54 -0700 (PDT)
-From: Jesse Taube <jesse@rivosinc.com>
-To: linux-riscv@lists.infradead.org
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Evan Green <evan@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Jesse Taube <jesse@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Xiao Wang <xiao.w.wang@intel.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Costa Shulyupin <costa.shul@redhat.com>,
+        Fri, 09 Aug 2024 09:23:52 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 9 Aug 2024 18:23:48 +0200
+To: Vlastimil Babka <vbabka@suse.cz>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Zong Li <zong.li@sifive.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Erick Archer <erick.archer@gmx.com>,
-	Joel Granados <j.granados@samsung.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH 2/2] dt-bindings: riscv: Add Zicclsm ISA extension description.
-Date: Fri,  9 Aug 2024 12:22:40 -0400
-Message-ID: <20240809162240.1842373-3-jesse@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240809162240.1842373-1-jesse@rivosinc.com>
-References: <20240809162240.1842373-1-jesse@rivosinc.com>
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com, Jann Horn <jannh@google.com>,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH v2 7/7] kunit, slub: add test_kfree_rcu() and
+ test_leak_destroy()
+Message-ID: <ZrZClPolptzUgSr8@pc636>
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+ <20240807-b4-slab-kfree_rcu-destroy-v2-7-ea79102f428c@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807-b4-slab-kfree_rcu-destroy-v2-7-ea79102f428c@suse.cz>
 
-Add description for Zicclsm ISA extension.
+On Wed, Aug 07, 2024 at 12:31:20PM +0200, Vlastimil Babka wrote:
+> Add a test that will create cache, allocate one object, kfree_rcu() it
+> and attempt to destroy it. As long as the usage of kvfree_rcu_barrier()
+> in kmem_cache_destroy() works correctly, there should be no warnings in
+> dmesg and the test should pass.
+> 
+> Additionally add a test_leak_destroy() test that leaks an object on
+> purpose and verifies that kmem_cache_destroy() catches it.
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  lib/slub_kunit.c | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
+> index e6667a28c014..6e3a1e5a7142 100644
+> --- a/lib/slub_kunit.c
+> +++ b/lib/slub_kunit.c
+> @@ -5,6 +5,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+> +#include <linux/rcupdate.h>
+>  #include "../mm/slab.h"
+>  
+>  static struct kunit_resource resource;
+> @@ -157,6 +158,34 @@ static void test_kmalloc_redzone_access(struct kunit *test)
+>  	kmem_cache_destroy(s);
+>  }
+>  
+> +struct test_kfree_rcu_struct {
+> +	struct rcu_head rcu;
+> +};
+> +
+> +static void test_kfree_rcu(struct kunit *test)
+> +{
+> +	struct kmem_cache *s = test_kmem_cache_create("TestSlub_kfree_rcu",
+> +				sizeof(struct test_kfree_rcu_struct),
+> +				SLAB_NO_MERGE);
+> +	struct test_kfree_rcu_struct *p = kmem_cache_alloc(s, GFP_KERNEL);
+> +
+> +	kfree_rcu(p, rcu);
+> +	kmem_cache_destroy(s);
+> +
+> +	KUNIT_EXPECT_EQ(test, 0, slab_errors);
+> +}
+> +
+>
+Thank you for this test case!
 
-Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
-V1 -> V2:
- - New patch
-V2 -> V3:
- - No changes
-V3 -> V4:
- - No changes
-V4 -> V5:
- - No changes
-V5 -> V6:
- - No changes
-V6 -> V7:
- - No changes
-V7 -> V8:
- - Rebase onto 2d1f51d8a4b0 (palmer/for-next)
----
- Documentation/devicetree/bindings/riscv/extensions.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+I used this series to test _more_ the barrier and came to conclusion that it is
+not enough, i.e. i had to extend it to something like below:
 
-diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-index a06dbc6b4928..d06ee82abcc1 100644
---- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-+++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-@@ -361,6 +361,13 @@ properties:
-             The standard Zicboz extension for cache-block zeroing as ratified
-             in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
- 
-+        - const: zicclsm
-+          description:
-+            The standard Zicclsm extension for misaligned support for all regular
-+            load and store instructions (including scalar and vector) but not AMOs
-+            or other specialized forms of memory access. Defined in the
-+            RISC-V RVA Profiles Specification.
+<snip>
++       snprintf(name, sizeof(name), "test-slub-%d", current->pid);
 +
-         - const: zicntr
-           description:
-             The standard Zicntr extension for base counters and timers, as
--- 
-2.45.2
++       for (i = 0; i < test_loop_count; i++) {
++               s = test_kmem_cache_create(name, sizeof(struct test_kfree_rcu_struct),
++                       SLAB_NO_MERGE);
++
++               if (!s)
++                       BUG();
++
++               get_random_bytes(&nr_to_alloc, sizeof(nr_to_alloc));
++               nr_to_alloc = nr_to_alloc % 1000000;
++               INIT_LIST_HEAD(&local_head);
++
++               for (j = 0; j < nr_to_alloc; j++) {
++                       p = kmem_cache_alloc(s, GFP_KERNEL);
++
++                       if (p)
++                               list_add(&p->list, &local_head);
++               }
++
++               list_for_each_entry_safe(p, n, &local_head, list)
++                       kfree_rcu(p, rcu);
++
++               kmem_cache_destroy(s);
++       }
+<snip>
 
+by using this(~11 parallel jobs) i could trigger a warning that a freed
+cache still has some objects and i have already figured out why. I will
+send a v2 of barrier implementation with a fix.
+
+Thanks!
+
+--
+Uladzislau Rezki
 
