@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-280362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E4094C98E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:18:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42A494C995
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAEB6B237E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:18:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9098A286CD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E8816C684;
-	Fri,  9 Aug 2024 05:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40EE16C69B;
+	Fri,  9 Aug 2024 05:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J/f7lkwr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aEky0727"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D18167265;
-	Fri,  9 Aug 2024 05:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C25E169AE3;
+	Fri,  9 Aug 2024 05:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723180729; cv=none; b=R5DEmCzqv2nmgSqZvIdDEUdojxmskA9P8Hnfi3ZhdywA85ivao9f9e7zZN2RV+t3ADw94V7XQLf16pHE6YtZRpaJmxw3NzhnzvK4hFlh0a5iOsSY48m3rfa1AVjZTdHDST9lG1BTCbPaF4454ZIHENG8lnvM7RDCqQtCCyoaZ8s=
+	t=1723180779; cv=none; b=fT817cOAA+oze++HyPi2nE3FwM+9UQXAu6HA9FHKZ9uAuSnmyE/3TYzVaPoPA8mlWqF2NpBgn8Yp9jD4VPz7kn88nmQJ8ZOr2Ks4tgyQ+yTZfoqqzgSMhF/I5CvoNhGJOOAkdWvhGyAZkhmp/W2nFtfFQfCTGxXlAbsHCq6b30k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723180729; c=relaxed/simple;
-	bh=3mXoSfd6SeRX1psM4eVeRTQ7fvXYaRo7W/A8xAyA5oI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fve0tXjFDtned86VtEECWbWuOATGzHGZ5x7y7EZ2reGEZErKWXxHq5sms0kbVjIaU3Aaxdm7ZQvHFpPZtgxFVzU9Zv7zyTuQvZlhq6uC4kMtD1OwLqxYH5+TxaWl1aQNJ20PYgFqrEKPR9n8QPZLHBzu2wsNOBgX7d1HgWpJeB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J/f7lkwr; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723180728; x=1754716728;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3mXoSfd6SeRX1psM4eVeRTQ7fvXYaRo7W/A8xAyA5oI=;
-  b=J/f7lkwrwiQT2qYukiP91xGZ4Zc7p0DjZIQPz5LFbeD8bsCCBiMiDs/s
-   SKAPiPlWu1qWvGI10H3BuJ5JI52TqFltqP7HwaUTwQFiARc408Q/1ZrMS
-   FBQ+MoVJJDS4gqkF37H16dhBZU0zFi6ShCXJi8ojZQbKaybpeFyihXrFt
-   ubMSVVC2XuqHC0NhV/ERILIQk7jZmt84myYymC219KlTbhEqqBBjXP8GL
-   +arb0PXN9tIEd28IrG41Y1TzHGKLJpraoSYJ5EjK9CcFsHPrhT6MxoV/W
-   EIvOvGrAvVyqtSs99WO3NLcSmcJAqGkAImWtsC9+p4R00m7rhGg0rzVa2
-   A==;
-X-CSE-ConnectionGUID: 5tFlssK+Q3alnM8S0RnTLw==
-X-CSE-MsgGUID: bhnKzdi2Qxyj12DM0RIINg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21481676"
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="21481676"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 22:18:47 -0700
-X-CSE-ConnectionGUID: CVkkeCoKQgu4HTmHYfAxeg==
-X-CSE-MsgGUID: jibG+sskQ/KHz+pGXoK10g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="62293005"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 08 Aug 2024 22:18:45 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scI1S-0006rS-1y;
-	Fri, 09 Aug 2024 05:18:42 +0000
-Date: Fri, 9 Aug 2024 13:17:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: hexue <xue01.he@samsung.com>, axboe@kernel.dk, asml.silence@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hexue <xue01.he@samsung.com>
-Subject: Re: [PATCH v7 RESENT] io_uring: releasing CPU resources when polling
-Message-ID: <202408091329.zC0XSfdm-lkp@intel.com>
-References: <20240808071712.2429842-1-xue01.he@samsung.com>
+	s=arc-20240116; t=1723180779; c=relaxed/simple;
+	bh=JCts/cexkaa+AN/hfoehqT3dy9ZUJrAXQH3E4HWFJeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r63JQky/OXvIC9HL0Vak3a8b6emuALZ0/Or6YDT5lbmSnanjYWJlq7h3hfmVLOD4gmpqwrs1OMQ1e/Gii9AY4ZpfO2doIgO5b/xdJKopt29dSxa6D12IptyhSQ/3ALVA7asKcClA/ac0/Z3g+fP4tGKMNxy1vaOjlzmRmLVy0SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aEky0727; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4792K07N019134;
+	Fri, 9 Aug 2024 05:19:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ypkmty92BUmAbgOA9LUQTbb+un0zDd4LL3EixrBNJ+g=; b=aEky07276Y69C15q
+	0H07DE5Z7D0TeNyhDJSiLv5AtlSnMEbP78IGuoq5WFaL/DE48JJDvmyw0hnPmHQE
+	xj/xh3r9l34UltBYww0/XDtdhlYWYbsA7dXVBB8240AUWqpkd7VnrggeXGpHirAW
+	/lGhWpejMzGSWV19O2NIaldcahuASusyV3Yc3Z//caBVS32FvRIdvgGBKf6dNWMF
+	s62vtud6YAHJMT2zknvG2Kt0+l2zYX6igAEzL+Ou5YoWdpveziRvHjxFFTaqej6F
+	kx5rZUqpJo2wUDKeE68gc3DF+jQunwE/3+ShaKef3iH954pBIT3KmINKYG0neoTS
+	YHy7fw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vvgm2cj7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 05:19:08 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4795J6Hv026694
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 9 Aug 2024 05:19:06 GMT
+Received: from [10.216.3.179] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 8 Aug 2024
+ 22:19:02 -0700
+Message-ID: <0b3603b7-e09d-2754-90d1-2095efc2fbd5@quicinc.com>
+Date: Fri, 9 Aug 2024 10:48:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808071712.2429842-1-xue01.he@samsung.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] clk: qcom: clk-rpmh: Fix overflow in BCM vote
+To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        David Dai <daidavid1@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Taniya Das" <quic_tdas@quicinc.com>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>,
+        "Satya Priya Kakitapalli"
+	<quic_skakitap@quicinc.com>,
+        Mike Tipton <quic_mdtipton@quicinc.com>, <stable@vger.kernel.org>
+References: <20240808-clk-rpmh-bcm-vote-fix-v1-1-109bd1d76189@quicinc.com>
+ <a7607f45e26c79f13b846fd0d8284bcf.sboyd@kernel.org>
+Content-Language: en-US
+From: Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <a7607f45e26c79f13b846fd0d8284bcf.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 5XbWEaadz3lVo_NuoGYoyrHg_p65ZoGW
+X-Proofpoint-GUID: 5XbWEaadz3lVo_NuoGYoyrHg_p65ZoGW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-09_02,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 mlxscore=0 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 mlxlogscore=915 bulkscore=0
+ phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408090039
 
-Hi hexue,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.11-rc2 next-20240808]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 8/9/2024 1:13 AM, Stephen Boyd wrote:
+> Quoting Imran Shaik (2024-08-08 00:05:02)
+>> From: Mike Tipton <quic_mdtipton@quicinc.com>
+>>
+>> Valid frequencies may result in BCM votes that exceed the max HW value.
+>> Set vote ceiling to BCM_TCS_CMD_VOTE_MASK to ensure the votes aren't
+>> truncated, which can result in lower frequencies than desired.
+>>
+>> Fixes: 04053f4d23a4 ("clk: qcom: clk-rpmh: Add IPA clock support")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
+>> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/clk-rpmh.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+>> index bb82abeed88f..233ccd365a37 100644
+>> --- a/drivers/clk/qcom/clk-rpmh.c
+>> +++ b/drivers/clk/qcom/clk-rpmh.c
+>> @@ -263,6 +263,9 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+>>                  cmd_state = 0;
+>>          }
+>>   
+>> +       if (cmd_state > BCM_TCS_CMD_VOTE_MASK)
+>> +               cmd_state = BCM_TCS_CMD_VOTE_MASK;
+>> +
+> 
+> This is
+> 
+> 	cmd_state = min(cmd_state, BCM_TCS_CMD_VOTE_MASK);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/hexue/io_uring-releasing-CPU-resources-when-polling/20240808-153455
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240808071712.2429842-1-xue01.he%40samsung.com
-patch subject: [PATCH v7 RESENT] io_uring: releasing CPU resources when polling
-config: x86_64-randconfig-161-20240809 (https://download.01.org/0day-ci/archive/20240809/202408091329.zC0XSfdm-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+Sure, I will update this logic and post another series.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408091329.zC0XSfdm-lkp@intel.com/
-
-smatch warnings:
-io_uring/rw.c:1183 io_uring_hybrid_poll() warn: unsigned 'runtime' is never less than zero.
-
-vim +/runtime +1183 io_uring/rw.c
-
-  1171	
-  1172	static int io_uring_hybrid_poll(struct io_kiocb *req,
-  1173					struct io_comp_batch *iob, unsigned int poll_flags)
-  1174	{
-  1175		struct io_ring_ctx *ctx = req->ctx;
-  1176		int ret;
-  1177		u64 runtime, sleep_time;
-  1178	
-  1179		sleep_time = io_delay(ctx, req);
-  1180		ret = io_uring_classic_poll(req, iob, poll_flags);
-  1181		req->iopoll_end = ktime_get_ns();
-  1182		runtime = req->iopoll_end - req->iopoll_start - sleep_time;
-> 1183		if (runtime < 0)
-  1184			return 0;
-  1185	
-  1186		/* use minimize sleep time if there are different speed
-  1187		 * drivers, it could get more completions from fast one
-  1188		 */
-  1189		if (ctx->available_time > runtime)
-  1190			ctx->available_time = runtime;
-  1191		return ret;
-  1192	}
-  1193	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Imran
 
