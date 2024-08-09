@@ -1,120 +1,216 @@
-Return-Path: <linux-kernel+bounces-280286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E28694C82B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:45:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D9B94C859
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331331F22BCD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:45:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2782B22603
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C7AC2FD;
-	Fri,  9 Aug 2024 01:45:35 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F8A14A90;
+	Fri,  9 Aug 2024 02:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KLVyVMOl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D3A8F6B
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 01:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6104168B8
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 02:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723167934; cv=none; b=FVDV7xBBWdIRW1FplGOJ61nQoTOToyVQrhrwmynOrLg3eTrj9ER1I2aLTsEIY3ImpG6gbOEk/7nH75BYXASkwZtjXyGjq9nP/gV5YSWzMg2FmWkcXAK/BpuuBzjveHFtO7MwedHvsFQgRnr5C7Ilw1FIaphweD6jw3UlELiEqa4=
+	t=1723168824; cv=none; b=dsU1WRSYcDYXReFuxdZDvTMV290WO0UsqZgu811uLqS5vSmTd7NrQ2qbJ/GG/p5scZV/LKTmLaKuMHq5nZTTFbb98gMTfmVvjkdysLTO5FMu41SKjwn0vByTC/IjRDenqVRg4vNKmcojH8f2qSTzuSROQCL5E0j/TfImCX3RRGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723167934; c=relaxed/simple;
-	bh=+kCdjF6046mnqBE/XKWCSaPMPwRXBp5mC8eOD3eJaMk=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=LqygFMxNYcM7EqyakGnntf4QbCzflpCGbuXv4SU9c6895dfn+iMzgyzR8aczHotY0SW4F9C2w8njxsEef2uPl2jZEtfhvi6AEfpeE/ZVnPy8iSNmzjBopy/tYQQeJd9QkJIh6BDhH58kZfAA+C//9U8e1O6o9PGdRAwhCGhOYxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Wg6DL19mpz1T6q8;
-	Fri,  9 Aug 2024 09:45:06 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id CA315180AE5;
-	Fri,  9 Aug 2024 09:45:28 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 9 Aug 2024 09:45:27 +0800
-Subject: Re: [PATCH v3] mm/memory-failure: Use raw_spinlock_t in struct
- memory_failure_cpu
-To: Waiman Long <longman@redhat.com>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Huang Ying
-	<ying.huang@intel.com>, Len Brown <len.brown@intel.com>, Juri Lelli
-	<juri.lelli@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Naoya
- Horiguchi <nao.horiguchi@gmail.com>
-References: <20240807181130.1122660-1-longman@redhat.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <af72159b-8142-ccab-5ccb-cca3ea3cdca9@huawei.com>
-Date: Fri, 9 Aug 2024 09:45:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1723168824; c=relaxed/simple;
+	bh=cRwVS9eHk3IMaF26nCc5bTWt3ef9127cCLtshdgEgPA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ijv3qzCTI55JimjZTr0tqUL9T6O4FrDmCYIHYhJ1vtlBSSmVnouinwXno4UlK6MIXb4f0ZGp/uzgnl0Ndpw4SSHoCSY+yOX70efl1U1xrBRB5R5El5salZXA5kJswYWi+au4BhaF86bpkOy7riMyv3mHmEkgx6Ihs4sebbUPC4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KLVyVMOl; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723168824; x=1754704824;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=cRwVS9eHk3IMaF26nCc5bTWt3ef9127cCLtshdgEgPA=;
+  b=KLVyVMOljdkA1XVVLlUxMn7IJ5/WptbbVLMnWXrAR4kku/ctgn+EbjcD
+   pwQ0Du+RoMyxeugouxl+go8XyqDdHf6Qc2YTRxZCXpk2MOnsbuuQdbjhi
+   qNKSsHQsiU7aomkfqpulRZbyuk19zW7yVusbjhqHTWUF/cqOgQX1JSc6b
+   fx756i/UQP26LcYmvehn6y5Ozjdu2pOqrbfE/tIHDgM/4ah2+/SNdnZiR
+   elb8HMT63Xass73L74MpZYGiLDK1kOoVlzhmhInJeg94cy6E4HHwwl1ow
+   99NKjERSe2KI97mrujV5sKJuV2Q0X23ZgGjWmJBAmwlippq4JGDBAhu/R
+   g==;
+X-CSE-ConnectionGUID: an4WuuMqSTiuhFq3gjmbbA==
+X-CSE-MsgGUID: SpwUPnkwR9+bV9NlMLFMqw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25123218"
+X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
+   d="scan'208";a="25123218"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 19:00:23 -0700
+X-CSE-ConnectionGUID: rgjU4LmLRzme07w/ccVWvA==
+X-CSE-MsgGUID: eln9WItJQCquGLxHTQGSAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
+   d="scan'208";a="62256120"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 19:00:20 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	will@kernel.org
+Cc: longman@redhat.com,
+	boqun.feng@gmail.com,
+	linux-kernel@vger.kernel.org,
+	qiuxu.zhuo@intel.com
+Subject: [PATCH v2 1/1] locking/pvqspinlock: Convert fields of 'enum vcpu_state' to uppercase
+Date: Fri,  9 Aug 2024 09:48:02 +0800
+Message-Id: <20240809014802.15320-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240805023816.28003-1-qiuxu.zhuo@intel.com>
+References: <20240805023816.28003-1-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20240807181130.1122660-1-longman@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200019.china.huawei.com (7.221.188.193)
 
-On 2024/8/8 2:11, Waiman Long wrote:
-> The memory_failure_cpu structure is a per-cpu structure. Access to its
-> content requires the use of get_cpu_var() to lock in the current CPU
-> and disable preemption. The use of a regular spinlock_t for locking
-> purpose is fine for a non-RT kernel.
-> 
-> Since the integration of RT spinlock support into the v5.15 kernel,
-> a spinlock_t in a RT kernel becomes a sleeping lock and taking a
-> sleeping lock in a preemption disabled context is illegal resulting in
-> the following kind of warning.
-> 
->   [12135.732244] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
->   [12135.732248] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 270076, name: kworker/0:0
->   [12135.732252] preempt_count: 1, expected: 0
->   [12135.732255] RCU nest depth: 2, expected: 2
->     :
->   [12135.732420] Hardware name: Dell Inc. PowerEdge R640/0HG0J8, BIOS 2.10.2 02/24/2021
->   [12135.732423] Workqueue: kacpi_notify acpi_os_execute_deferred
->   [12135.732433] Call Trace:
->   [12135.732436]  <TASK>
->   [12135.732450]  dump_stack_lvl+0x57/0x81
->   [12135.732461]  __might_resched.cold+0xf4/0x12f
->   [12135.732479]  rt_spin_lock+0x4c/0x100
->   [12135.732491]  memory_failure_queue+0x40/0xe0
->   [12135.732503]  ghes_do_memory_failure+0x53/0x390
->   [12135.732516]  ghes_do_proc.constprop.0+0x229/0x3e0
->   [12135.732575]  ghes_proc+0xf9/0x1a0
->   [12135.732591]  ghes_notify_hed+0x6a/0x150
->   [12135.732602]  notifier_call_chain+0x43/0xb0
->   [12135.732626]  blocking_notifier_call_chain+0x43/0x60
->   [12135.732637]  acpi_ev_notify_dispatch+0x47/0x70
->   [12135.732648]  acpi_os_execute_deferred+0x13/0x20
->   [12135.732654]  process_one_work+0x41f/0x500
->   [12135.732695]  worker_thread+0x192/0x360
->   [12135.732715]  kthread+0x111/0x140
->   [12135.732733]  ret_from_fork+0x29/0x50
->   [12135.732779]  </TASK>
-> 
-> Fix it by using a raw_spinlock_t for locking instead.
-> 
-> Also move the pr_err() out of the lock critical section and after
-> put_cpu_ptr() to avoid indeterminate latency and the possibility of
-> sleep with this call.
-> 
-> Fixes: 0f383b6dc96e ("locking/spinlock: Provide RT variant")
-> Signed-off-by: Waiman Long <longman@redhat.com>
+Convert the fields of 'enum vcpu_state' to uppercase for better
+readability. No functional changes intended.
 
-LGTM. Thanks.
-Acked-by: Miaohe Lin <linmiaohe@huawei.com>
+Acked-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+---
+v1->v2:
+ - Collect an ACK from Waiman (thanks for the review).
+ - Rebase on top of v6.11-rc2.
 
-Thanks.
-.
+ kernel/locking/qspinlock_paravirt.h | 36 ++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
+index ac2e22502741..dc1cb90e3644 100644
+--- a/kernel/locking/qspinlock_paravirt.h
++++ b/kernel/locking/qspinlock_paravirt.h
+@@ -38,13 +38,13 @@
+ #define PV_PREV_CHECK_MASK	0xff
+ 
+ /*
+- * Queue node uses: vcpu_running & vcpu_halted.
+- * Queue head uses: vcpu_running & vcpu_hashed.
++ * Queue node uses: VCPU_RUNNING & VCPU_HALTED.
++ * Queue head uses: VCPU_RUNNING & VCPU_HASHED.
+  */
+ enum vcpu_state {
+-	vcpu_running = 0,
+-	vcpu_halted,		/* Used only in pv_wait_node */
+-	vcpu_hashed,		/* = pv_hash'ed + vcpu_halted */
++	VCPU_RUNNING = 0,
++	VCPU_HALTED,		/* Used only in pv_wait_node */
++	VCPU_HASHED,		/* = pv_hash'ed + VCPU_HALTED */
+ };
+ 
+ struct pv_node {
+@@ -266,7 +266,7 @@ pv_wait_early(struct pv_node *prev, int loop)
+ 	if ((loop & PV_PREV_CHECK_MASK) != 0)
+ 		return false;
+ 
+-	return READ_ONCE(prev->state) != vcpu_running;
++	return READ_ONCE(prev->state) != VCPU_RUNNING;
+ }
+ 
+ /*
+@@ -279,7 +279,7 @@ static void pv_init_node(struct mcs_spinlock *node)
+ 	BUILD_BUG_ON(sizeof(struct pv_node) > sizeof(struct qnode));
+ 
+ 	pn->cpu = smp_processor_id();
+-	pn->state = vcpu_running;
++	pn->state = VCPU_RUNNING;
+ }
+ 
+ /*
+@@ -308,26 +308,26 @@ static void pv_wait_node(struct mcs_spinlock *node, struct mcs_spinlock *prev)
+ 		/*
+ 		 * Order pn->state vs pn->locked thusly:
+ 		 *
+-		 * [S] pn->state = vcpu_halted	  [S] next->locked = 1
++		 * [S] pn->state = VCPU_HALTED	  [S] next->locked = 1
+ 		 *     MB			      MB
+-		 * [L] pn->locked		[RmW] pn->state = vcpu_hashed
++		 * [L] pn->locked		[RmW] pn->state = VCPU_HASHED
+ 		 *
+ 		 * Matches the cmpxchg() from pv_kick_node().
+ 		 */
+-		smp_store_mb(pn->state, vcpu_halted);
++		smp_store_mb(pn->state, VCPU_HALTED);
+ 
+ 		if (!READ_ONCE(node->locked)) {
+ 			lockevent_inc(pv_wait_node);
+ 			lockevent_cond_inc(pv_wait_early, wait_early);
+-			pv_wait(&pn->state, vcpu_halted);
++			pv_wait(&pn->state, VCPU_HALTED);
+ 		}
+ 
+ 		/*
+-		 * If pv_kick_node() changed us to vcpu_hashed, retain that
++		 * If pv_kick_node() changed us to VCPU_HASHED, retain that
+ 		 * value so that pv_wait_head_or_lock() knows to not also try
+ 		 * to hash this lock.
+ 		 */
+-		cmpxchg(&pn->state, vcpu_halted, vcpu_running);
++		cmpxchg(&pn->state, VCPU_HALTED, VCPU_RUNNING);
+ 
+ 		/*
+ 		 * If the locked flag is still not set after wakeup, it is a
+@@ -357,7 +357,7 @@ static void pv_wait_node(struct mcs_spinlock *node, struct mcs_spinlock *prev)
+ static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
+ {
+ 	struct pv_node *pn = (struct pv_node *)node;
+-	u8 old = vcpu_halted;
++	u8 old = VCPU_HALTED;
+ 	/*
+ 	 * If the vCPU is indeed halted, advance its state to match that of
+ 	 * pv_wait_node(). If OTOH this fails, the vCPU was running and will
+@@ -374,7 +374,7 @@ static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
+ 	 * subsequent writes.
+ 	 */
+ 	smp_mb__before_atomic();
+-	if (!try_cmpxchg_relaxed(&pn->state, &old, vcpu_hashed))
++	if (!try_cmpxchg_relaxed(&pn->state, &old, VCPU_HASHED))
+ 		return;
+ 
+ 	/*
+@@ -407,7 +407,7 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
+ 	 * If pv_kick_node() already advanced our state, we don't need to
+ 	 * insert ourselves into the hash table anymore.
+ 	 */
+-	if (READ_ONCE(pn->state) == vcpu_hashed)
++	if (READ_ONCE(pn->state) == VCPU_HASHED)
+ 		lp = (struct qspinlock **)1;
+ 
+ 	/*
+@@ -420,7 +420,7 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
+ 		 * Set correct vCPU state to be used by queue node wait-early
+ 		 * mechanism.
+ 		 */
+-		WRITE_ONCE(pn->state, vcpu_running);
++		WRITE_ONCE(pn->state, VCPU_RUNNING);
+ 
+ 		/*
+ 		 * Set the pending bit in the active lock spinning loop to
+@@ -460,7 +460,7 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
+ 				goto gotlock;
+ 			}
+ 		}
+-		WRITE_ONCE(pn->state, vcpu_hashed);
++		WRITE_ONCE(pn->state, VCPU_HASHED);
+ 		lockevent_inc(pv_wait_head);
+ 		lockevent_cond_inc(pv_wait_again, waitcnt);
+ 		pv_wait(&lock->locked, _Q_SLOW_VAL);
+
+base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
+-- 
+2.17.1
 
 
