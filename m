@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-280247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21EBB94C7A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:35:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E847594C7A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D0041C21F2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89AC21F22DB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFCE2F2A;
-	Fri,  9 Aug 2024 00:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EC93D6D;
+	Fri,  9 Aug 2024 00:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IK8wrlvT"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T99Vfqcg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0151FB4
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 00:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA9A2581;
+	Fri,  9 Aug 2024 00:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723163694; cv=none; b=OIztXiEn+eeQgmDnXMMGA3PBXpGLrJ++mCkpjU7fWH5DrbsuNH3gQ6t/8t72wUgBPNtYfSwvdXYrRfiXjVcSc4n3VA4b/HksMsz//GxbCXvDlVqEWF/eSK+AY54AZcVeSXcyGDGbuQS7ofWxvFjPKTDTsBH5uCNvoCiGD0u3XsA=
+	t=1723163943; cv=none; b=VnJc3W4hb6PJ34KFbqV/T0/JQqHR8SeGr50HbzVCPAeANI4+qwozduCZFQu0Ft6anJpa+geRAxAYi6UW3smz2LYG/Z5wrVPq/yU2SV0kftk1nc52DcsYK/YfoVuN7tFpxgiNulKUTNdU6jKjsIXxk0Pk+rTlrYsijHfxbDBJgnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723163694; c=relaxed/simple;
-	bh=luzDOqqJeG0jQf8m7TdGHfyb+dY6lJfgpnAxl/BB114=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n5gtx1NBN5vVuAWdEUPbgZ0coakZhC4yh+EgwWyQLuFGh2wVi3qqfdU5DJOE6Vv1EGKaR9o/U1QMnRMkg2YwuaPPPFYmCvtvRcdmOhjppvuuOQrKkShuVPl5Pt5h+8ISdx4iMG+UgXJ4u3x1ZR3Keub7oujJuGEnD5v5Xz0s/Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IK8wrlvT; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f0277daa5so2116302e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 17:34:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723163691; x=1723768491; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W2ogeVtQlhT9WeNRGJxT4wbvVR02faBqDKyUFif3ow8=;
-        b=IK8wrlvT6sSTEd4XZ2EmkayGF/eC9qwACQpmmWkjo9GVOs1QBFkT1mYSMysYnP4tiR
-         MCLzuVXvphb1N0K6as0sA2lQMel61Z2RZ+mU0F7vhJRDrItrml5q1Hvf/bHb1jn0mydP
-         JLzdI9DI9iVprRrLK7cbv6OKJEBv2qK9JrDqybECXsN4VfuSZYr64Ye9Dgnjwma+8z6K
-         QIUGPwlMvGDWGRNGaN+PqFfH3jpR2qDH2I/Y0SU8SGKhyQ3YSFo/btGqDnLzXcepvk4s
-         wu890faH79vR2f+VCGxwHhLOhAyGp5fzYEUN3gL919BffLDZ7/a08FcBWS/gWyshIVA8
-         2E1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723163691; x=1723768491;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W2ogeVtQlhT9WeNRGJxT4wbvVR02faBqDKyUFif3ow8=;
-        b=doG8J5Vyo5BBn5O4ylbT+TqOkrT5di2slVlKEd/3NsZumEiPHimokQ6ofwY+mRXZEF
-         bn9nJB+N2ixsNVZed712brDQpQX05I99Sgs8AFKyADid3s2n73Rh2b+yDDULnOH2mkeu
-         D1h60CNYg26kA8DAKQuypbRTT5Bq93+5d289yMhUndAz6T9hzW9uuYFca/6y2ahghQGV
-         HRXYrYwFurcyU8U++CascHrVVV7A8Ybv3MohJmDwvUCUxhQ8E3dW2CCa/jPQBULFo/Jy
-         iJFzjy94VswHcdkUprecpGPLHc2OKonsFHi2q6JeK4/wOYn7EbEyiAPHgRQQcpw8a0Uj
-         0l8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGudVqnLuv/gH4U9wmHp2Nfl+AaF04qevBcXZj1qsdXS10KUYissWQ+GwMUuqpgSdVD38t7OE2Ro5+Pokscpcv/X8EgWambOSvylql
-X-Gm-Message-State: AOJu0YxL8WOz+ZBsaq1u3y24gC91SHI/ZG1LWEWkpmNdtjTuLcDHOq2m
-	rAr+7jleEWM/vXzGEU6aog5eIcfHip7JqXxnH9bxuoSDvCv0AjvzC/LRZCagpLqASJWL6xTvNNM
-	HYbhLJoHvv0IZU4ntUlbslmlvMMw=
-X-Google-Smtp-Source: AGHT+IG+OWgt/JTOtOb6ay7w4NdI2CbhkenmUHF2ZQ06qsxXIecrYLwxxxllL5pII5mW13MB0mj/Op2MbKpPOcTDGF8=
-X-Received: by 2002:a05:6512:3b21:b0:530:b871:eb9a with SMTP id
- 2adb3069b0e04-530e58764damr2528461e87.47.1723163690149; Thu, 08 Aug 2024
- 17:34:50 -0700 (PDT)
+	s=arc-20240116; t=1723163943; c=relaxed/simple;
+	bh=tKkCex9MPT4VTsXxTdkI7NP69v2sb5QnTwf3fb2/Xg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BleuJSY/QIdFV8y7OVCccm5D+NA1FEdc3GLpbxe7lC/xnyB3NUcV5Pq4C7G+OxypDKCPDXtTraxjRnVmMweL5VxLe5409im1KoEKpBm1OyfZ6+I4vKDdMwIDzg6wpp+DvxuKE+UGtkMiDuKU1o1yGkRxaxhY35jGN57wjjV0U2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T99Vfqcg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 322C6C32782;
+	Fri,  9 Aug 2024 00:39:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723163943;
+	bh=tKkCex9MPT4VTsXxTdkI7NP69v2sb5QnTwf3fb2/Xg4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T99Vfqcg/lfxg34e1JmGjpzv5nLL0fTrBBM4TPUqnBZZBTWLu+jZK+aD0hlnHmHX9
+	 EiGHMzA6HvYRjocekE87o0dEajmIrhUlygOY9Fk67bBO3SaOZH8QMot+VUaU7brCuy
+	 eZN5N66/gz036bk6vayJgbNJRCjojZbFNyemuOIvExGGMIq1nHm6wnhvvbiQHoocDY
+	 1JWw2W/ep8DzVUvkNQcu0KBcb85lKJ34i1u7BT6SpinYc1DgTRLLLp1OzDOg8+HnGg
+	 9LlqrGyLxisAmV6aQJV0MEWxgUuhnOYMwNSaIiWk47XDPoWBQQqfaMB4bSIfVC1rdJ
+	 I6toOEvAEf1Lw==
+Date: Thu, 8 Aug 2024 17:39:01 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Philip Li <philip.li@intel.com>
+Cc: kernel test robot <lkp@intel.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: ERROR: modpost: "__popcountsi2" [fs/bcachefs/bcachefs.ko]
+ undefined!
+Message-ID: <20240809003901.GA3870107@thelio-3990X>
+References: <202408070432.X6n56VaY-lkp@intel.com>
+ <20240807153616.GA2942016@thelio-3990X>
+ <ZrQ7Vj4hf8Fbxa6j@rli9-mobl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807211309.2729719-1-pedro.falcato@gmail.com> <20240808161226.b853642c0ecf530b5cef2ecc@linux-foundation.org>
-In-Reply-To: <20240808161226.b853642c0ecf530b5cef2ecc@linux-foundation.org>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Fri, 9 Aug 2024 01:34:37 +0100
-Message-ID: <CAKbZUD0_BSv6KOgaRuqjLWGnttzcprcUu5WysSZeX8FXAvui5w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] mm: Optimize mseal checks
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
-	torvalds@linux-foundation.org, jeffxu@google.com, 
-	Michael Ellerman <mpe@ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrQ7Vj4hf8Fbxa6j@rli9-mobl>
 
-On Fri, Aug 9, 2024 at 12:12=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Wed,  7 Aug 2024 22:13:03 +0100 Pedro Falcato <pedro.falcato@gmail.com=
-> wrote:
->
-> > This series also depends on (and will eventually very slightly conflict=
- with)
-> > the powerpc series that removes arch_unmap[2].
->
-> That's awkward.  Please describe the dependency?
+On Thu, Aug 08, 2024 at 11:28:22AM +0800, Philip Li wrote:
+> On Wed, Aug 07, 2024 at 08:36:16AM -0700, Nathan Chancellor wrote:
+> > On Wed, Aug 07, 2024 at 04:43:13AM +0800, kernel test robot wrote:
+> > > Hi Kent,
+> > > 
+> > > First bad commit (maybe != root cause):
+> > > 
+> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > > head:   eb5e56d1491297e0881c95824e2050b7c205f0d4
+> > > commit: 9ae82fe6ace1b267005758ccfb2347a4a6aa4398 bcachefs: Inline make_bfloat() into __build_ro_aux_tree()
+> > > date:   10 months ago
+> > > config: arm-randconfig-002-20240805 (https://download.01.org/0day-ci/archive/20240807/202408070432.X6n56VaY-lkp@intel.com/config)
+> > > compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
+> > > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240807/202408070432.X6n56VaY-lkp@intel.com/reproduce)
+> > > 
+> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > > the same patch/commit), kindly add following tags
+> > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > | Closes: https://lore.kernel.org/oe-kbuild-all/202408070432.X6n56VaY-lkp@intel.com/
+> > > 
+> > > All errors (new ones prefixed by >>, old ones prefixed by <<):
+> > ...
+> > > ERROR: modpost: "__popcountsi2" [fs/ext4/ext4.ko] undefined!
+> > > ERROR: modpost: "__popcountsi2" [fs/fat/fat.ko] undefined!
+> > > ERROR: modpost: "__popcountsi2" [fs/hfsplus/hfsplus.ko] undefined!
+> > > ERROR: modpost: "__popcountsi2" [fs/xfs/xfs.ko] undefined!
+> > > ERROR: modpost: "__popcountsi2" [fs/gfs2/gfs2.ko] undefined!
+> > > >> ERROR: modpost: "__popcountsi2" [fs/bcachefs/bcachefs.ko] undefined!
+> > > ERROR: modpost: "__aeabi_uldivmod" [fs/bcachefs/bcachefs.ko] undefined!
+> > > ERROR: modpost: "__popcountsi2" [drivers/block/virtio_blk.ko] undefined!
+> > > ERROR: modpost: "__popcountsi2" [drivers/net/ipa/ipa.ko] undefined!
+> > > ERROR: modpost: "__popcountsi2" [drivers/memory/emif.ko] undefined!
+> > > WARNING: modpost: suppressed 5 unresolved symbol warnings because there were too many)
+> > 
+> > Intel folks, can you upgrade your build of Clang main to
+> > https://github.com/llvm/llvm-project/commit/4527fba9ad6bc682eceda603150bfaec65ec6916?
+> 
+> Got it, we will update clang to this version 4527fba9.
 
-One of the transformations done in this patch series (patch 2) assumes
-that arch_unmap either doesn't exist or does nothing.
-PPC is the only architecture with an arch_unmap implementation, and
-through the series I linked they're going to make it work via
-->close().
+Thanks a lot! Is there a way to notice when a compiler upgrade causes a
+lot of similar reports to be generated? If so, would it be possible to
+send the reports that would be generated to only me and
+llvm@lists.linux.dev? We want to get notified when there would be a lot
+of reports generated after a compiler upgrade (because that usually
+points to a compiler regression) but kernel developers shouldn't get
+notified (since there is not anything for them to do).
 
-What's the easiest way to deal with this? Can the PPC series go
-through the mm tree?
+> > The current revision is broken and unrelated changes are getting
+> > notified. There might be one more regression that I am looking into, so
+> > consider not going further than that revision.
+> 
+> Ok, we will keep at 4527fba9, and kindly let us know if we can move to
+> latest head.
 
-I could also possibly work around this on my end, and either limit the
-terribleness to the ppc arch_unmap code or limit the effectiveness of
-the patch set a bit. But both of these options feel like somewhat
-fighting the inevitable.
+You should be able to move to the latest whenever now, the regression I
+noticed was fixed with a revert (it has since been reapplied with a
+fix).
 
-What do you think?
-
-Thanks,
-Pedro
+Cheers,
+Nathan
 
