@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-280538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28D094CBD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:06:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E789B94CBE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8FB2861DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:06:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2501E1C2098B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AAB18C90C;
-	Fri,  9 Aug 2024 08:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA3118C927;
+	Fri,  9 Aug 2024 08:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="JzEsI228"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hw8DJTQt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4010FC8D1;
-	Fri,  9 Aug 2024 08:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723190773; cv=pass; b=V8TLWs+rsg9XKS7V5LL02ip6BAKcncDMdX7vxYNuyD6S90YZGYSwubBD3eAAs/z9LRgI1eAtjUyzdnp6yCZT5FXcQeigvpR0ckNVkBTT8Xp51DwILnyzwNA95likmmHaBwnbLOZ9CWo8z2T0Q1ZcDXkJcH7pg5ODOnGY41/kZ7Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723190773; c=relaxed/simple;
-	bh=Cl9Dewi2Rq6zcHumdBriW/ismSmPNEXUrJwFR0TJw6M=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AD0C8D1
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723190977; cv=none; b=GJ9VTBHIrcYBzxxIFGfrxfeq4Gw7kmgdDzaCtUt4D9K9y9SG0oNvbFh3YBEFpejO+yfoXRc9+8DIfOkyyLW2XJmQGg2nCDgIoPkUDqG4XOovUPuxBzgCca763M1t4/uvY3yjTiHPtNHs81COBtSDVwX/A17C5E8Pv9nzREXzOe0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723190977; c=relaxed/simple;
+	bh=4me2Otj/1oatxnC6SB6SCwY1Mjomeaa+i+n+6ePk9F4=;
 	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mNR2FPriSDTUUIrantqpdO6b1E5eVMXlAmvndEH3rpP4OWPDqqNLBPi9Zty02SlQ5178smE7gmMUxnnU19IAmOKLeDSBKQ2fGK0350ZFc2xYCOX1/smNMq8wVdMNGKySEaqXIpAKhDx7KHm9rmuGxjjZRGZTKse08D37gocxbow=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=JzEsI228; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: Usama.Anjum@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723190748; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VlXtCAvDnV2VIVqxe/V8j6kVAHrGofQSuKDkUUnFmbX3QvndtkB2sJtpjMPLDbbN/kakDWCgm5G+xlWe40bIK/1Bk9Kp0Lo/xSGv94X21quU5LOJ877t//9K+t1kWCuA+vQJXntnLYFVLgnluyn5hfph0hLQCXH3HMSrRjuL3SA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723190748; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=6MyEdyt6ey7wA9ddBiHtScRZUQGHpxzx9hd6e/N8ulk=; 
-	b=eYUe9AsPe4SWctNi/pIlYr3ltQ/0IbT8xN6Jryh8fI12IXA5Vl3AbXBpxBK5vEDafxrnQvSnbCU8UaHoMbN5arPdxgSM7KHEewdNwYbfimSr4YcAbq5wFtr3eTLubVv6zY/gTcqy2RXDeifjDrFmijM8/yvxqB47tw9z5eoqP2o=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723190748;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=6MyEdyt6ey7wA9ddBiHtScRZUQGHpxzx9hd6e/N8ulk=;
-	b=JzEsI228OODI9Cj4siY5Pz79/EMI4OzM7XrkT55dwqX4L6L2fre3q8w1USL9p2tU
-	4+tsp4co4JKS2MDu379udw5Efk9DuIC+9B5JkIpCKgdBXIqgSPO7Biv/7gWJf2q/TMg
-	RfZaMxuJjSa9xp+MLIC3KbPfSzLPg1TH2HF0uPtg=
-Received: by mx.zohomail.com with SMTPS id 1723190745513476.6928946853733;
-	Fri, 9 Aug 2024 01:05:45 -0700 (PDT)
-Message-ID: <080c4692-c53c-417f-9975-0b4ced0b044c@collabora.com>
-Date: Fri, 9 Aug 2024 13:05:38 +0500
+	 In-Reply-To:Content-Type; b=k8iYGE1T3y1ljapbebCv4dnFAzzh3dOHUmeG15fSg6DW/8iIwYU+9cK8EM1St5Eq9CfhaTKkEVIi6FqbmgBj2VsEMYInQGFtG9a/7vOsqTXg9T6YpMZ5VDttQp2Wl8Mw/dOR32Fd/yu8Rm1c/caw9bsxOFhRb0ghKJdbXdfvqEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hw8DJTQt; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723190976; x=1754726976;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4me2Otj/1oatxnC6SB6SCwY1Mjomeaa+i+n+6ePk9F4=;
+  b=Hw8DJTQtFYnqt6YisUb1xaXtOzILYV+GT1h0cUJ4iGpdE7ZGK2Daz4dJ
+   Rxnci/uGMY7jNGpgYRFcobMyX14XZQtrxvpK0YyWZ0k83ZFEkZU4sdp9L
+   5yZHia4DhW/tFA2rGE3CDlTbfKYEmhwE9fsyqWi1iJNEVvJmufaLZt2N2
+   qqG+Zcfbq7XCbWD43CI3gBcq6kQoKPzxryr1fOvh/ixRIiYuo98WuqKsp
+   5V4fV7VlvWgzVz4B5x8KCyGA4Wa1HkeNMmfWDtqZ7qwOBGNlTJ/ov4k/t
+   tlX/SI6+XYz4kc05d0wrFKMLIXThLEqJgLx5Ctyy5B6a/PSQr+G48RQmX
+   w==;
+X-CSE-ConnectionGUID: bJCquOL2ThqbL4unu+/GYg==
+X-CSE-MsgGUID: nBDeSaYfRky0exixYMQiWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="38862274"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="38862274"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:09:35 -0700
+X-CSE-ConnectionGUID: G5guY3llQvWKjSyKyIBRxw==
+X-CSE-MsgGUID: 7k7TzrgIQC6mBYjkKhicLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="95014520"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.229.145]) ([10.124.229.145])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:09:34 -0700
+Message-ID: <f31580dd-f289-4423-8410-37c7e4727704@linux.intel.com>
+Date: Fri, 9 Aug 2024 16:09:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,71 +66,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, Fenghua Yu <fenghua.yu@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Shuah Khan <shuah@kernel.org>,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, kernel@collabora.com,
- Shuah Khan <skhan@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftests: resctrl: ignore builds for unsupported
- architectures
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20240809071059.265914-1-usama.anjum@collabora.com>
- <d60cf782-9ab0-ed4a-0b3e-ba7a73ae8d51@linux.intel.com>
+Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] iommu/vt-d: Refactor IOTLB and Dev-IOTLB flush
+ logic
+To: Tina Zhang <tina.zhang@intel.com>, Kevin Tian <kevin.tian@intel.com>
+References: <20240809025431.14605-1-tina.zhang@intel.com>
+ <20240809025431.14605-3-tina.zhang@intel.com>
 Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <d60cf782-9ab0-ed4a-0b3e-ba7a73ae8d51@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240809025431.14605-3-tina.zhang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 8/9/24 12:23 PM, Ilpo Järvinen wrote:
-> On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
+On 2024/8/9 10:54, Tina Zhang wrote:
+> Introduce three new helper functions, handle_iotlb_flush(), handle_dev_
+> tlb_flush() and handle_dev_tlb_flush_all() to encapsulate the logic for
+> IOTLB and Dev-IOTLB invalidation commands. This refactoring aims to
+> improve code readability and maintainability by centralizing the handling
+> of these flush operations.
 > 
->> This test doesn't have support for other architectures. Altough resctrl
->> is supported on x86 and ARM, but arch_supports_noncont_cat() shows that
->> only x86 for AMD and Intel are supported by the test.
+> Signed-off-by: Tina Zhang <tina.zhang@intel.com>
+> ---
+>   drivers/iommu/intel/cache.c | 136 +++++++++++++++++++-----------------
+>   1 file changed, 72 insertions(+), 64 deletions(-)
 > 
-> One does not follow from the other. arch_supports_noncont_cat() is only 
-> small part of the tests so saying "This test" based on a small subset of 
-> all tests is bogus. Also, I don't see any reason why ARCH_ARM could not be 
-> added and arch_supports_noncont_cat() adapted accordingly.
-I'm not familiar with resctrl and the architectural part of it. Feel
-free to fix it and ignore this patch.
+> diff --git a/drivers/iommu/intel/cache.c b/drivers/iommu/intel/cache.c
+> index 44e92638c0cd..3ae84ccfcfa1 100644
+> --- a/drivers/iommu/intel/cache.c
+> +++ b/drivers/iommu/intel/cache.c
+> @@ -255,6 +255,72 @@ static unsigned long calculate_psi_aligned_address(unsigned long start,
+>   	return ALIGN_DOWN(start, VTD_PAGE_SIZE << mask);
+>   }
+>   
+> +static inline void handle_iotlb_flush(struct dmar_domain *domain,
+> +				      struct cache_tag *tag,
+> +				      unsigned long addr,
+> +				      unsigned long pages,
+> +				      unsigned long mask,
+> +				      int ih)
+> +{
+> +	struct intel_iommu *iommu = tag->iommu;
+> +
+> +	if (domain->use_first_level) {
+> +		qi_flush_piotlb(iommu, tag->domain_id,
+> +				tag->pasid, addr, pages, ih);
+> +	} else {
+> +		/*
+> +		 * Fallback to domain selective flush if no
+> +		 * PSI support or the size is too big.
+> +		 */
+> +		if (!cap_pgsel_inv(iommu->cap) ||
+> +		    mask > cap_max_amask_val(iommu->cap) ||
+> +		    pages == -1)
+> +			iommu->flush.flush_iotlb(iommu, tag->domain_id,
+> +						 0, 0, DMA_TLB_DSI_FLUSH);
+> +		else
+> +			iommu->flush.flush_iotlb(iommu, tag->domain_id,
+> +						 addr | ih, mask,
+> +						 DMA_TLB_PSI_FLUSH);
+> +	}
+> +}
 
-If more things are missing than just adjusting
-arch_supports_noncont_cat(), the test should be turned off until proper
-support is added to the test.
+No need to make it inline. Same to other places in this series. If you
+really want any inline helper, please add it in the header.
 
-> 
->> We get build
->> errors when built for ARM and ARM64.
-> 
-> As this seems the real reason, please quote any errors when you use them 
-> as justification so it can be reviewed if the reasoning is sound or not.
-
-  CC       resctrl_tests
-In file included from resctrl.h:24,
-                 from cat_test.c:11:
-In function 'arch_supports_noncont_cat',
-    inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
-../kselftest.h:74:9: error: impossible constraint in 'asm'
-   74 |         __asm__ __volatile__ ("cpuid\n\t"
-       \
-      |         ^~~~~~~
-cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
-  301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
-      |                 ^~~~~~~~~~~~~
-../kselftest.h:74:9: error: impossible constraint in 'asm'
-   74 |         __asm__ __volatile__ ("cpuid\n\t"
-       \
-      |         ^~~~~~~
-cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
-  303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
-      |                 ^~~~~~~~~~~~~
-
-
--- 
-BR,
-Muhammad Usama Anjum
-
+Thanks,
+baolu
 
