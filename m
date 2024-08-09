@@ -1,107 +1,86 @@
-Return-Path: <linux-kernel+bounces-280349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA0494C957
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:27:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12B494C959
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E5DEB21CA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93FEB2843B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5629D166318;
-	Fri,  9 Aug 2024 04:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TxupwZhz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF140166319;
+	Fri,  9 Aug 2024 04:29:22 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924811649CC;
-	Fri,  9 Aug 2024 04:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3E81649CC;
+	Fri,  9 Aug 2024 04:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723177623; cv=none; b=gUHxBWtwbbHoGrM9qQoTGO8qgkIiUHW0sRGwJD9oG3UTTgljG5x13xgcTHbfkPXQS8I/vDBflYj2C4hzfbd3wsfmgqUyNWXOup4ZIFFc1SNJ/BH6ZB8YSz/ZpB4H02PV03p8aEbNxyB8/E9NYYP2WGG65wzmpguLiCyFxpcWx60=
+	t=1723177762; cv=none; b=ALLsRSZ6VW8PGfhFCjjI1kswmRtHPpYxH7cWrDfzgynEgPdbBsFeFpqCLtLq8vAuzp5L7CelNBM4Qw8kre6DeOgFxbFaLbXumfqJqzQ8dc1hbMzohozIE9dmDJ4F6K/P7p3PCOIO3zkov0W8dvBHGXwyLRSxIg7DtYHh/WP0rL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723177623; c=relaxed/simple;
-	bh=TTJYNXCy1pPRc/5TO8VwoRKY621wjKLdTOcSlKLVEaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Nk+1IwOE7puBbiBsGJbG5gSYFzQ9qrIUqWqNo/xcoeKd8HK7lN3Vu6Bzid6uTyPjJfHlaAd7rMisCO1Qn1MouriPYV4FkRJ1cWW0BjxQyQ9Mpiapr/FJCMAxrjlMyMumfkWcKBpZbtiWAYSaKfJ7oLED+dfN/z2vzGt4qQkkUpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TxupwZhz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723177619;
-	bh=du/NOwU5Mol4o9Dzpd2XjbaLktXhBOjZ7xYu7QkC1OQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TxupwZhz9Nr/Dza0v/VonLSkKIF0/6P5MfpygbkL1m8BPoPTEUfbTJ1aPq0MBSBmp
-	 IHVE1G+urw1Ugy58RZsqWgQrqB6CcCamnDgFfvGcKKaLhvsQPw0HSpi6IoUHQJqenF
-	 BVLT8yjswcWXQgQXT0siRXaiPJa8kUdcQ67+Gba/JxIDhqqTXQK0bL2o1DCDmKVq0/
-	 IG8gQbiNY0QrD5uGnlNby3ijLZbnmrt9Rcgs1La/L1Nk9SbKaZXowrTV5bjOxPz0ZO
-	 olsdxkbjXXFryTClKKm7GclT+FE5MfC0W2GkHYt7oB0COfJliHaqneFmQ/cCgflBkf
-	 //bXc5AXEBUBQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wg9q74WmZz4wc1;
-	Fri,  9 Aug 2024 14:26:59 +1000 (AEST)
-Date: Fri, 9 Aug 2024 14:26:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker
- <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Boqun
- Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>
-Cc: Zqiang <qiang.zhang1211@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the rcu tree
-Message-ID: <20240809142659.5fee6d52@canb.auug.org.au>
+	s=arc-20240116; t=1723177762; c=relaxed/simple;
+	bh=VjZqan/cHU62V9lEkU9kx5uqw9w4yOTjy7SUjTrnCqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AEEASxjNdYlJf8vp+MP+Nv9WAcogJnqH/J4neDz889GewbAHR2r6mBr1pGwsXDBZHOqQqoX01bkWVSbg6NeFGDkHCueJk5f3BTlgmD7Uzli09D4hYRSFUtdBGdMrhDPu2FSVVYK5/WwiyCtgRWBiTuvqxNTLPKeLCyweCeY6OQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1scH6r-003TJF-2i;
+	Fri, 09 Aug 2024 12:28:59 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 09 Aug 2024 12:28:58 +0800
+Date: Fri, 9 Aug 2024 12:28:58 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Roman Smirnov <r.smirnov@omp.ru>
+Cc: "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	"zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: mpi: add NULL checks to mpi_normalize().
+Message-ID: <ZrWbCnhg1XYIk5IB@gondor.apana.org.au>
+References: <20240716082825.65219-1-r.smirnov@omp.ru>
+ <ZqzVPGCbwAS8ChEa@gondor.apana.org.au>
+ <4ea0ced79912e810e2655bf21896937bd8f8d24e.camel@omp.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7QGW0_GywIyt.sI=03zBCoY";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ea0ced79912e810e2655bf21896937bd8f8d24e.camel@omp.ru>
 
---Sig_/7QGW0_GywIyt.sI=03zBCoY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 07, 2024 at 02:20:36PM +0000, Roman Smirnov wrote:
+>
+> Svace found a similar case but it is no longer relevant:
+> 
+> NULL constant:
+>     mpi_ec_mul_point()
+>       ec_mulm(z3, point->z, z2, ctx)
+>         ec_mod()
+>           mpi_mod()
+>             mpi_fdiv_r()
+>               mpi_tdiv_r()
+>                 mpi_tdiv_qr()
+>                   mpi_resize()
+>                     kcalloc()
 
-Hi all,
+In general, I think it's better to deal with the error at the
+point of allocation.  So whoever calls mpi_resize should check
+for errors and return an error if appropriate.
 
-After merging the rcu tree, today's linux-next build (htmldocs) produced
-these warnings:
+We can deal with this if this function is ever reintroduced.
 
-kernel/rcu/tasks.h:54: warning: Function parameter or struct member 'index'=
- not described in 'rcu_tasks_percpu'
-kernel/rcu/tasks.h:127: warning: Function parameter or struct member 'rtpcp=
-_array' not described in 'rcu_tasks'
-
-Introduced by commit
-
-  a79e0e72ffa6 ("rcu-tasks: Fix access non-existent percpu rtpcp variable i=
-n rcu_tasks_need_gpcb()")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/7QGW0_GywIyt.sI=03zBCoY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma1mpMACgkQAVBC80lX
-0GwCHQf/Vh+UPkAebGCUwurxoWyf+iLna3sIE1vBXkfpH5AmyDPNF87lmTlcQgti
-4io7mzQjsEaotuErcqoIV5m1NgBH1uzt+zSjqVjbHJy4IDrb2k/L2Y/OdJjgBXie
-LMnu/ngReY+lRTkrgK7DMlW0Z5XDRCoCf02NENeyCiLxqcc6GJR3DsKIlvoyuI0W
-ReyIDhTsuxq3UjqyhOHrwlPt/T0KQ0fQuSTZ/99o+SulmnSIRcQjzvMeGjw9GEgQ
-9ic5QIafdmHmSVHZbPfe/eaQyYv2YVr7lMS983dOfK2DrDiTZu7QOA7KPKXGQQQq
-AZH19n1Pobz4fAtS7rypVgcmXqezxQ==
-=/Lwn
------END PGP SIGNATURE-----
-
---Sig_/7QGW0_GywIyt.sI=03zBCoY--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
