@@ -1,93 +1,180 @@
-Return-Path: <linux-kernel+bounces-280462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF60F94CAEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:06:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B5C94CAF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B59C1C22175
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:06:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C41A4B236E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53DA16D4E6;
-	Fri,  9 Aug 2024 07:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E576C16D9A2;
+	Fri,  9 Aug 2024 07:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="VGjNi0Fr"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fl/YGOaz"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D426A2905;
-	Fri,  9 Aug 2024 07:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7C716D4FE
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723187168; cv=none; b=bzH+J2mO+xd5tSehSa3R97HdLva/hLW7M/rSGYqUvN6/ZYGlQUWI8At55TD6hI8MGOuA5K8c5rwdTA8VH1gujLw3G0UuUMPSZdQJyKJaMO6zKr0Z0sg7kjeLDiyNRBvlOLSwiMgvQrNlonZq7/jf/hobLZHtYQeFxXBLzmwsAZ8=
+	t=1723187335; cv=none; b=EtN3BwMe0OzEOVln4bFO331fv3AMjEcSp6Wss7hMFOpfuIiSiJCAXgpUHK6fhTPqDxSzLg/+E2XXT7XsvOhlbhQZ6eZoR/eSghUeYyKOov7ttB9tCptm81FsFOXqfyXQgTUNRwHSGdwbXirGFK4VQm11logITx9DOVq4DJ9NoOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723187168; c=relaxed/simple;
-	bh=8NzGtQEk1djIjdQwNEp9FntFkkxEYN7OgLvWBCDKTNw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=o4eRdDtVP+FiGqbsgjrj4apvoWb54wUXevWro7mofFOEUcOVCOWdZmV3FA8/EEVgiKRR5jVaC5NWlwbQMYi0qqghrj4T90KcNJ9FIwCmRr4/gmXxEVJjldZBtKARnUugNYyM6GCT1jrW/T+PpNWfhVHhhYNhQGtwuv1oCjUqBSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=VGjNi0Fr; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1723187335; c=relaxed/simple;
+	bh=1N26HGLw//R3d32px3tfcAXifr5s/f7rI6nJGtHpe08=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KzRKcqg41Og0SyZOmKOzwsJaIG4BxqiJAn28wZir8CzvJr3xKDGrz7t6nn4qjFPBEwt2e0hHB1cYSfrSQLp1UBAwbQmNsfg2yREUq19NmSri+tRm+wL82T2C4firD3YAAuC/UlCBgYdho8ozTkIBUTP8lvdAaBlY66vzqw+RdX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fl/YGOaz; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc4fccdd78so15455885ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1723187162;
-	bh=+Plf4ZWD1RmGz+3DAbjeVsVnM/ML3T/p7cds+xmG834=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=VGjNi0Fr51RRWjZ85KwHn4LpSxGwfFn0x0KJYWbBgbau5d0F2NDAsZLLoK4xjYoHb
-	 Kz/YPn1YOsQc7IprBQko/zOuC7dCMYzXe4hRlx86my7Tk/XkLsLLVZBtvJ706c7TA2
-	 8CMOeOm+WLZdXu4UdTNxPR9cFmlKZ4Ze77IWGovesolHj4eNrMrBjXQW7EbuxR48dk
-	 G/o/fNIhd6bxM3blbK6M/FnZGTRIW35GogfKWY+uyFUzjNvmhjf1ywjc1VeO0pKtiv
-	 cyiZ2elprPghg041ZFDk5NBx+sk9WfYfnmWN5bMPIgmq97zGbKvGTbbkW+GskbxaTK
-	 0QBd5QB5JW2JA==
-Received: from [192.168.68.112] (203-57-213-111.dyn.iinet.net.au [203.57.213.111])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8308D656AB;
-	Fri,  9 Aug 2024 15:06:01 +0800 (AWST)
-Message-ID: <3ace8d9363265449acc124316b9a76b9f8d095a9.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 0/7] ARM: dts: aspeed: Miscellaneous devicetree cleanups
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Eddie
- James <eajames@linux.ibm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date: Fri, 09 Aug 2024 16:36:00 +0930
-In-Reply-To: <20240802-dt-warnings-bmc-dts-cleanups-v1-0-1cb1378e5fcd@codeconstruct.com.au>
-References: 
-	<20240802-dt-warnings-bmc-dts-cleanups-v1-0-1cb1378e5fcd@codeconstruct.com.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=chromium.org; s=google; t=1723187333; x=1723792133; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TSZy4qeB9prpZkXZFFSCy09Nr7J/x1zL/3+bFofkJV8=;
+        b=fl/YGOazmUU8dFbFqU21k8RuxP7J+gnZnpKsbEwNqtEMPOhMvjJoVAvEt7vCkNt3NZ
+         zTWgnXORGRooqQ7cloprrqg4/cwPZuTUnDCUk9DCX5I9MHde+1aVgd6hRXtI42IGLp2A
+         OqKwcXDxTGRG+DEFj4IV8TeDoQRL3fFXwyIaY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723187333; x=1723792133;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TSZy4qeB9prpZkXZFFSCy09Nr7J/x1zL/3+bFofkJV8=;
+        b=svwUxlO0GEd5tcw2o+zn8CdLp197ijdH9M4Ytp6dqTOPjNwheVfI4btQtM0RabzP0/
+         WAx6LBgBEFylLis3lMYxpwWpLCTUyIXs4nspLMQeHiuar1uEavCh9KLv3d4gmpNZfF6O
+         CNP+xSiN9/Xh190HGsU5gbeShYglLh8xhPkqYoPn7taM/7vdM5fffqITaG3TMsqjm8+t
+         rSAJC/IWPF7qeLpEoyQQatIsoICP5w2dSkyNMFrAwdEsTMESaOethZ531g+27Nx2AAq7
+         v78uPG/tPhiicHLEW7/sd8LeNYwyDOcwSzs9Tp0JooozjjAJWuMhP4ADrR9LfaHHrBMq
+         or7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVab9JBudrDidlXvhvrB3vuRRv6BvU+g88XOi3pm3ErMpcR/eygqufcdP3DdPHugrysoZGsFxhvHxH3bIpMVEcGRZVstWIP63KMqkK7
+X-Gm-Message-State: AOJu0YxZdZ141+Wqag1Lf7U3RDPMTMO8LgGkIK6nkrvB3qRLrQPhLB0X
+	5a0LRJ9MhopkdFodA/UJKz6xtEGwB7fZdqbx6K4Hmsqx0CCPZv2ucDt6Ii/1bw==
+X-Google-Smtp-Source: AGHT+IEojA8/Dm/IiJ94OPxhJiSpOpo4eMo23qz6LSsMPk8j238AnhJYY+ravisXXY3kEbh0Zu1A8A==
+X-Received: by 2002:a17:903:41ca:b0:1fb:7435:c2cc with SMTP id d9443c01a7336-200ae5e6889mr6909505ad.45.1723187333055;
+        Fri, 09 Aug 2024 00:08:53 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:e48b:2b26:14f9:21cb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59294515sm136254215ad.244.2024.08.09.00.08.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 00:08:52 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>
+Cc: Icenowy Zheng <uwu@icenowy.me>,
+	Mark Brown <broonie@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-mediatek@lists.infradead.org,
+	Hsin-Te Yuan <yuanhsinte@chromium.org>,
+	Chen-Yu Tsai <wenst@chromium.org>
+Subject: [PATCH v2] thermal/of: support thermal zones w/o trips subnode
+Date: Fri,  9 Aug 2024 15:08:19 +0800
+Message-ID: <20240809070822.2835371-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2024-08-02 at 13:55 +0930, Andrew Jeffery wrote:
-> Hello,
->=20
-> As mentioned elsewhere the Aspeed devicetrees are in a bit of a sad
-> state. This series is a collection of fixes that make them a little
-> less so.
->=20
-> If there no concerns raised in the near future I'll queue them up for
-> the BMC tree.
->=20
-> Andrew
->=20
-> ---
-> Andrew Jeffery (7):
->       ARM: dts: aspeed: Fix coprocessor interrupt controller node name
->       ARM: dts: aspeed: Specify correct generic compatible for CVIC
->       ARM: dts: aspeed: Specify required properties for sram node
->       ARM: dts: aspeed: Remove undocumented XDMA nodes
->       ARM: dts: aspeed: Clean up AST2500 pinctrl properties
->       ARM: dts: aspeed-g6: Use generic 'ethernet' for ftgmac100 nodes
->       ARM: dts: aspeed-g6: Drop cells properties from ethernet nodes
+From: Icenowy Zheng <uwu@icenowy.me>
 
-I've applied these to be picked up through the BMC tree.
+Although the current device tree binding of thermal zones require the
+trips subnode, the binding in kernel v5.15 does not require it, and many
+device trees shipped with the kernel, for example,
+allwinner/sun50i-a64.dtsi and mediatek/mt8183-kukui.dtsi in ARM64, still
+comply to the old binding and contain no trips subnode.
 
-Andrew
+Allow the code to successfully register thermal zones w/o trips subnode
+for DT binding compatibility now.
+
+Furtherly, the inconsistency between DTs and bindings should be resolved
+by either adding empty trips subnode or dropping the trips subnode
+requirement.
+
+Fixes: d0c75fa2c17f ("thermal/of: Initialize trip points separately")
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+Resurrecting this patch specifically for MediaTek MT8183 Kukui devices.
+
+Changes since v1:
+- set *ntrips at beginning of thermal_of_trips_init()
+- Keep goto out_of_node_put in of_get_child_count(trips) == 0 branch
+- Check return value of thermal_of_trips_init(), if it is -ENXIO, print
+  warning and clear |trips| pointer
+- Drop |mask| change, as the variable was removed
+
+I kept Mark's reviewed-by since the changes are more stylish than
+functional.
+---
+ drivers/thermal/thermal_of.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+index aa34b6e82e26..f237e74c92fc 100644
+--- a/drivers/thermal/thermal_of.c
++++ b/drivers/thermal/thermal_of.c
+@@ -128,16 +128,17 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
+ 	struct device_node *trips, *trip;
+ 	int ret, count;
+ 
++	*ntrips = 0;
+ 	trips = of_get_child_by_name(np, "trips");
+ 	if (!trips) {
+-		pr_err("Failed to find 'trips' node\n");
+-		return ERR_PTR(-EINVAL);
++		pr_debug("Failed to find 'trips' node\n");
++		return ERR_PTR(-ENXIO);
+ 	}
+ 
+ 	count = of_get_child_count(trips);
+ 	if (!count) {
+-		pr_err("No trip point defined\n");
+-		ret = -EINVAL;
++		pr_debug("No trip point defined\n");
++		ret = -ENXIO;
+ 		goto out_of_node_put;
+ 	}
+ 
+@@ -162,7 +163,6 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
+ 
+ out_kfree:
+ 	kfree(tt);
+-	*ntrips = 0;
+ out_of_node_put:
+ 	of_node_put(trips);
+ 
+@@ -490,8 +490,13 @@ static struct thermal_zone_device *thermal_of_zone_register(struct device_node *
+ 
+ 	trips = thermal_of_trips_init(np, &ntrips);
+ 	if (IS_ERR(trips)) {
+-		pr_err("Failed to find trip points for %pOFn id=%d\n", sensor, id);
+-		return ERR_CAST(trips);
++		if (PTR_ERR(trips) != -ENXIO) {
++			pr_err("Failed to find trip points for %pOFn id=%d\n", sensor, id);
++			return ERR_CAST(trips);
++		}
++
++		pr_warn("Failed to find trip points for %pOFn id=%d\n", sensor, id);
++		trips = NULL;
+ 	}
+ 
+ 	ret = thermal_of_monitor_init(np, &delay, &pdelay);
+-- 
+2.46.0.76.ge559c4bf1a-goog
+
 
