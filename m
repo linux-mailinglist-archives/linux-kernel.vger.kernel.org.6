@@ -1,242 +1,223 @@
-Return-Path: <linux-kernel+bounces-280960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5845294D16A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:37:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E87494D16B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 940F01C20B69
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:37:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA7C4B219D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A435194A43;
-	Fri,  9 Aug 2024 13:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723D0195808;
+	Fri,  9 Aug 2024 13:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OpYdACcN"
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+	dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b="fh0U9Zgz"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2081.outbound.protection.outlook.com [40.107.21.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42E0195803
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723210659; cv=none; b=lD5JW655+1jbX6UA9H1sm5P7WmUN472ssIY67FwAsd5HBVIA8tbaQW4jn/U4qXdQyO0qMyyMYiGCG8RtMdslF4J1nQlY15/VVHTkkHI2EUUDxXkN62pmVbYOXl5Vt/SymjUxUHkrK8BKnmfQY26l4bHGQXMWTD1Xjbtlaiatnn4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723210659; c=relaxed/simple;
-	bh=CV2KsuTzZFM3tb3jpFAEOVmdFeFl9DGCIr23w73TUBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2/eDHSjbA2tRCz1b1u5Oc2GZPubaqVxx/HsO9JwGq/UkQIgrQj5DiNsD8opnx0UgTkWLCEXDWRCsyiAFVHM6YrN52MFNr4Op0sfCImAYClfwW6ytWZx8pkecDZw3otp6XQDS2zWXN4ijVfIYHPwB23adGxzMxHeWQCGvgdYIqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OpYdACcN; arc=none smtp.client-ip=83.166.143.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WgQ2G15hFzsbq;
-	Fri,  9 Aug 2024 15:37:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723210646;
-	bh=8yuEdFJ5d9KshgHjOdDGSrL9W7g0PXB4OxTMQzj+pOw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OpYdACcNA4gLC3N3pH0KoWMirAjjPj2EBVJfEGi4dfMGog77vLpqZuSTrW72bVb3M
-	 +EQ3x26RAlAsnbvc1YpYxMtM/93AA3EBwXiEFROh8BxkZ5/30nqycipm6+yqoJkswN
-	 Bts5A/dMbwc93yssOu8etR1rmfOSZV1LvaBfXbOU=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WgQ2F4g09z7Hk;
-	Fri,  9 Aug 2024 15:37:25 +0200 (CEST)
-Date: Fri, 9 Aug 2024 15:37:20 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jann Horn <jannh@google.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>, outreachy@lists.linux.dev, 
-	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
-Message-ID: <20240809.fee1eiPohphu@digikod.net>
-References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net>
- <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
- <20240808.kaiyaeZoo1ha@digikod.net>
- <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
- <20240809.eejeekoo4Quo@digikod.net>
- <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E23818C93F;
+	Fri,  9 Aug 2024 13:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723210667; cv=fail; b=fmYgwJsbl6p8GN7hjhZusxAeODrzNLd2tNgmtXM1EpHUGcWrniRG8U2BNRjUgeevjLbjIBfWZyPHzEv9GLF5ah+KgDmpJhS9kom2Yg8FUR/i+aF8BWuO5OUbf5cPEZwQRKKmvF34dt2KU65+Cb8ewq+NHUegBEiIaD1uJUdC4pk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723210667; c=relaxed/simple;
+	bh=lrJkLioVm5UeNdvRLjO/0X2kSIc1G2YxvXueyma2eeU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Oi9mK+kYqk8x9J0KlyHCiIDW1m66d5Ah9Pdwtuu3rJlT5fNkJjsnMw4v1tCqWPGbdmQ/QdxQQiQ6k1rE6r/amxpNM8f3d9WhS3oj4JA5vB7Zt04cEpBjIIOz+fFNvLgNOx1GF6qbpEdva0TCWXqzzXnOxjttqvOK6VUEoXhUVYw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com; spf=fail smtp.mailfrom=nokia.com; dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b=fh0U9Zgz; arc=fail smtp.client-ip=40.107.21.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nokia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EXWXGS3LMqtdoAVPDWtouQtm5P0OXUbaHSpu/g7pKlWm5bgEn4WjpvPlYaf2A8KbwP4rnWB9uQDXBmLXeIL0no+MDAap5jfIjvAva2Hf9bI9oGiC7OeD01Thtl85+7lg4ywQG10xIYTjt5Ykga0JhtbJq+nFh1Yb7LnbTvBJ2f/71QKtnqAksQ3tSrISB485R8yKaDkehZcIY4fNL+KKblA4LrBPUooPq5tRS5sAuwY3gSaTibAZ3djxiockx65ERhA0zp+BKwHj3U4RfzfSrZNmC3S9gXlPzg4C6+vMr8nF2Iwfz5Oac4+uqtL8nYwZmWDBjdUVn1QK78UvjkSmeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1FR/iafYYJSJxzmG419L7tSuoxqSd7x6bzr9CFpcvK4=;
+ b=kRAYH4S1wFxQc0VmJN+mjjUGKwQDWaT8d/TLxMBqI1IAYEvPIU47fXZqsxycYs6+rztjGto9LBcCRXGxM955j3KFVR1kOcr7tm8L26knk/qcoflNNc8j9UvGGyT+A/ChTEoKUhgM05boAVCWTsYt6PTP/OWhrOKBZfubHFnf0jlmLcOXtLyPBmpiTQM4G9ER70mzTuyS1NqpSIu/ZYhY/6HfRGPDvvBdB3xoIKmWMlqqcvD7gV9fowwXcaPFFALCDUUILfiNOVhEMPk96Pl+NFQzJEoS39F8yrID3wK292toaijEOTnr4Il3QZRnukScWobkQfji3eXAMRzV0s/E0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
+ dkim=pass header.d=nokia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1FR/iafYYJSJxzmG419L7tSuoxqSd7x6bzr9CFpcvK4=;
+ b=fh0U9ZgzoocuFfjCxaz21WBJl4IfTG5xnYdump4kOpw9HQ9v/HE2zU0FUv5A/8wsB93FUzfsYYKcltyr+ng0itWWjJC2u7r5WnyA1RjfnmL8ucgRd2V98qEABsY4uxNRIgnT/fjrwC5eRCxpEfdfZJlte1z4hnBQ6DdwfsEON2aev6XfdsS1U0E10EHvsQux+emaEkH/Wz8KBYXNdg1/hnbKHMNdYvsm8UF7MRwJ8P26wqXXw05jY3MmvlP130XNn44GR9JF921P2h3nPwkSMKEYci7VfX5ueGTpf5eRfiL/XjagXHf6PyIadZnXnfrQ6O8xQl8o8AuCRA/AhCAWnw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nokia.com;
+Received: from PAWPR07MB9688.eurprd07.prod.outlook.com (2603:10a6:102:383::17)
+ by DBAPR07MB6757.eurprd07.prod.outlook.com (2603:10a6:10:19a::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.15; Fri, 9 Aug
+ 2024 13:37:39 +0000
+Received: from PAWPR07MB9688.eurprd07.prod.outlook.com
+ ([fe80::6b9d:9c50:8fe6:b8c5]) by PAWPR07MB9688.eurprd07.prod.outlook.com
+ ([fe80::6b9d:9c50:8fe6:b8c5%5]) with mapi id 15.20.7849.008; Fri, 9 Aug 2024
+ 13:37:39 +0000
+Message-ID: <f15aea08-8daa-4994-a8f6-be0461b06539@nokia.com>
+Date: Fri, 9 Aug 2024 15:37:38 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm: smp: Avoid false positive CPU hotplug Lockdep-RCU
+ splat
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Will Deacon <will@kernel.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, rcu@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240307160951.3607374-1-stefan.wiehler@nokia.com>
+ <bce79497-52c5-4241-aaf6-2a95dc459041@joelfernandes.org>
+ <66fdce3a-c7f6-4ef4-ab56-7c9ece0b00e2@nokia.com>
+ <ZewycILled+mZhwe@shell.armlinux.org.uk>
+ <20240312221440.GA29419@willie-the-truck>
+ <ZfDZolTDQa76hhaS@shell.armlinux.org.uk>
+ <20240313003244.GA29568@willie-the-truck>
+ <ZfF4t74OD4CgVaGV@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Stefan Wiehler <stefan.wiehler@nokia.com>
+Organization: Nokia
+In-Reply-To: <ZfF4t74OD4CgVaGV@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0048.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4a::20) To PAWPR07MB9688.eurprd07.prod.outlook.com
+ (2603:10a6:102:383::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAWPR07MB9688:EE_|DBAPR07MB6757:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63fdf15f-36ea-42e1-74af-08dcb8787009
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MjRDcXRZNlZBdnk2SGhNbnpYbHFvc01JVmJqdFprQkozQWNVVDlWckc4SGM5?=
+ =?utf-8?B?TFhKWUJ0N05odVJKT0ZpdWpCYklrZGZmd2gwbjU1b0JOb1RrZS8wOEJjNTZP?=
+ =?utf-8?B?R2h0TmlUc3lsU1dtV2VxMWVkSDdlT0xhWDFWNnFUZlRuamZjdzhTMjVyTkZI?=
+ =?utf-8?B?UmxmOEp0WGdvb3FLWFJ6cHl2eU5oY01oaWQrZFhuNnVoNEs2VWZ0YjdoVUgz?=
+ =?utf-8?B?bTd0UEptdDhwQnhFSlU2d1hmZVRKNlJUUU52M2ZEQmR6T1dKNHcrVk1OdW1X?=
+ =?utf-8?B?RFBZM0UxNTZaU09DdjdmaGc5cy82M3RHOVV2cURiSmI4alZxaWZMTkI1WmVM?=
+ =?utf-8?B?RVJSV1ZRdEJSempqdGcrbmlOK0w4QUgxVWtQZDUzL29MTUlOZTJjQUlQZVNT?=
+ =?utf-8?B?Mm05dE1jb2JjQllBVUpJZkdqSFlPOXA4QXM0MVBpVHh5SEJGT2w2b0hJenFS?=
+ =?utf-8?B?bVlWM1lYMXQyVkt3WERTMFFlSjJ3TzhmVVY1bmdNM1hibmRpaUpDUGs0SmIw?=
+ =?utf-8?B?K0IxdzJZV1AyM1J3UW9IQ29vcSsrUEQ1ZnZlNklVUjdTVmNMcnFhNThzaHJS?=
+ =?utf-8?B?K2hEdG1wbTE3QlQ3V0FZZ0RoR0VxTlJaOHp1c1R2MGV1a1RIS045UEd5ZmI2?=
+ =?utf-8?B?YmpKNEFCRE5XNXhXTlppWHQxMjRmZ1ozWWwvenIyVEZkcjhJL0cxa0JkQmRH?=
+ =?utf-8?B?M3ZzazdOVC9Hb2kyQmFVSy82MDRqMld1V1ZmQjF1WW5RUFJQKzQvRUdwTmFV?=
+ =?utf-8?B?VWpSdm5GK21IZmdvK2pCOStzWDRNKzdoL3dha2I2UlRndkFTY3kybEZScGZ4?=
+ =?utf-8?B?eUxUVmtXejhuT05FUDUyejRQelpRdW1PRlpHOWVvYjZ6N1lLeFd1QkE1aVJu?=
+ =?utf-8?B?OWZ4T1JNQ1pENlJ6VTVNRTgvWlZJbkhwUVlrTmo4VlNSUmhXcFNBdXUxZkU2?=
+ =?utf-8?B?ZmJ6REUrSWZuMUhnMXBWbnJaR25xS2xDdUF4NFMyREYxU3RoRlUweXVLVUly?=
+ =?utf-8?B?OTkyU3lUNWJCbWl0K3B1dzFEOXZWWWlXSVJmODBsTkJYeGFJZGxsYWFHNVJL?=
+ =?utf-8?B?Wk4zT0taUXpHNVgyK2cydlQ5S2JJS2tBQkc1bTdLcWp2ZldsQnVUVHVvRmJD?=
+ =?utf-8?B?YWRvbTJIaUpFY0d5YmlWczZCUzN3dTRzOGYrSWdudWZxZk9EVmt1ZzQvWk0x?=
+ =?utf-8?B?ZDk2T05DZUQzekF5a05JZDlJZjVRTURBRjN0M0hQeUtjbmdkd3FFM2FMdmxB?=
+ =?utf-8?B?by9WODcxeDRKN3pkRHIvZFFnRUpZUmRqQUlhbkxEV3NhUksvbGRMSERTb0hw?=
+ =?utf-8?B?eldvY0pMTmk0TVB3NktUaGZVR3V1UGxWc1AzMThwWjJYOU1FUksrMVNpSkp3?=
+ =?utf-8?B?MEVnV2xZSkVSL3VidTd5Q0xHMUwzdmQxYjNYVmdla2h2LzBmdGFMeXJyZkF6?=
+ =?utf-8?B?Q0tqVWlQRUhqY04xdzAxQ2NtclJhelg5NDlTQ1JKRjJ6Q3JIdXlRT25PT3hq?=
+ =?utf-8?B?dVZBL0NCMzBONmdUdjJVZ2VBbExvMk9ERlpYNkdPLzlWS0tMZmZQN1c1aUc5?=
+ =?utf-8?B?OVJkM0l4Y25EZzYyaWN6aDRsTUV2R2NuRXFackhqekUxQXU0UllLM2pjRXlj?=
+ =?utf-8?B?b2xTNUNMR1BLMU9IWEhJaGVOdDRCSFo2VDRibXlobFlEMjdXRG5WdDZHN1NM?=
+ =?utf-8?B?TnZSQlBEVmpvbU9jZ0dFM3hlM0NGRmQxWENtM2kzNkFLbCtrOXIwNUFpd2Nh?=
+ =?utf-8?Q?V6LzyFmnzt84dETvnNatsdn3ZHM+/r2AaWyJvNj?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR07MB9688.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bUhCSzFOeHkwY0hhaS82NnVtYnJBUVI0dEIvYzVRMWRtN3RnYkNPaUZVeUFJ?=
+ =?utf-8?B?a2NidG9WQ1JnajdVdGUwdk9DNUlsUlpKMkd0U2prYU9ZeVlNV3lvcGhWUTg2?=
+ =?utf-8?B?K3BYUU56MEN4L2RlRVkxSG5WVTV3QUovbFpyb1JKcjI4OEhHVEhFYVNMUHMx?=
+ =?utf-8?B?Y2hoSndyWXpaRG03UzhHNk1aTi9NMGFaWURkRjFNUXJkdnFDQ293bldBcnp6?=
+ =?utf-8?B?TFRxK1VYemw0ZFBHbDVFOVErSzJXRGUvelB5L1pHZjhZRXJ2OFMxbGZpMU10?=
+ =?utf-8?B?alZxMUh1eEJ0Y1dENW9OcmR5M29jRStJSE5iMjFvajVFSHhCSU9mT1hESG14?=
+ =?utf-8?B?TDhud2QvQjlOOHpxaVBkLy9tQTJpaGNTRUkxbWFlSnZzdHpWMHREbWRXOHA1?=
+ =?utf-8?B?ZTI3OGVia21PcDM1WTBVaHU0SzkxNGZaeFVOVE1SUDhQZlo3eVZ1VjJ1cVpJ?=
+ =?utf-8?B?Q3RxVWx0emlrT0w5aGNGRUgxdnhndkNxeU54WXJEdE9YZW1pSzVkRG5ncTJw?=
+ =?utf-8?B?Nlo3UmtNd0dYWHV3RUpNRUxmZitQSXJOY1RaOUFkUmJQOGtwZnI5ZDZ5U1Ur?=
+ =?utf-8?B?aUlWaHFoNmNtZFBLaFFQWjc2OUdoT1J3b0o5cXRWSmdrc2VQTC9nMDV3ald1?=
+ =?utf-8?B?Znd0UHJsdER4VWJqREtvbUFVY0k2UkhjMEtLR1dydEtDSmI0QlZRdG4rZEdM?=
+ =?utf-8?B?NkZjQUVyZC9yZE5URGFqaDV3UUpCNkcrUU0wcGpJNUtVNGU5bFNRZGRBUzR5?=
+ =?utf-8?B?TlcxYkQ3VVhRM3EwU1NsZmI4TlNvdzBPVDVYeGtZdjhFWDlCNE9rMGJuY1dy?=
+ =?utf-8?B?VW9uK1VtT0FEQytqVU9ha21iSVdvV1BUcFdZYmZUWlNGYVBSSUU2c1dzd3ZG?=
+ =?utf-8?B?RGlKSzdMbkVhcnVHdkJRSDJPWVJXT2h3QlVra3FRckJwOG9BYm5hZ3JNbVVl?=
+ =?utf-8?B?dGdsMEZmRGFPdk5QTlRLSWRoNzFMMkRIYWVkMWpER1ErM1FKb0lPV2ZaWE5N?=
+ =?utf-8?B?WUZPZUtMUENiYWVkSHFuSURGbjdyVWlJMnBpM254OUlSckZIcUdtYVRQWUor?=
+ =?utf-8?B?dXpUY2pTSDRBVllQWXMzVkV1aVFqN2hmMk44ZlhUaDFsWGRsWUNUQ3ZNLzdj?=
+ =?utf-8?B?SE0xY2FnV29wVWVRMGs2eG1QcW05T3VSdWhyQjI4Ykp5Um5hNkxiR2tmRDJD?=
+ =?utf-8?B?S0hhN3V1K2hKenVXa0NFS0R0RjVnVmViZitZT3JBbDVsM0NOeEsyVUhrZ3NZ?=
+ =?utf-8?B?V3poVWx2SkM2YjhPc2h5SkVjaXRIRjhaa1RoMzJLaGZZY2twbnEzQ3diWkZ4?=
+ =?utf-8?B?NzBHS3p1N3pmL3diNmk4SThsNTc4TWZvNkN4TVdvbWpxbndiZm0zMEtoOERZ?=
+ =?utf-8?B?Ty8xa3ZKSDRFUElCUy9IeUIzNUpxeG5XazVIb1gyZE8wRTJFc3RZVUc3OGRk?=
+ =?utf-8?B?VVpNTlkzMkJyTWhqUlVoU2tLeUhlcTNab2lLNmlsczBvREVieHRySUYzK1FV?=
+ =?utf-8?B?bzhCVmk3NWpkTzU1UCtPbCtEQXlDdkFwSXFGb09HZGZrVU05cXN2bDhrK0lS?=
+ =?utf-8?B?VWJvSHpjd0Q5NktFUFc2dVZtMGNMSXh6NzdzWWZLK291Y3JjN3NqcmI0V1Qz?=
+ =?utf-8?B?czlqNGwyaGhYRm5tR3hQbEI0L2I0ZWtTUGxNdGMxTUZaNWdqelMyOUkzYTNv?=
+ =?utf-8?B?M3ZDTVZWYXVoeElRejc3d1BTMUJib3F4QUp1Z3V0RXJRTS9lMmkvUUp1Vmpr?=
+ =?utf-8?B?eURQeGt3N0xpUzdNVzhUOWt2TjdlcW43eFIxTkRFWXdFaHkyWUg0ODR0NEt4?=
+ =?utf-8?B?VFpNN0RtTEhmVjlCaVlDVFhpSlZkOXpXaXVZckRnSmVPZFk4eHFTRGY4dGhj?=
+ =?utf-8?B?Mkx6OUpscGo4a1BLTVZrYUNpdTVkbEkwczNKekFtaTFnbGt5T3dlZ0JnS3M0?=
+ =?utf-8?B?ZDZyM1BWWEtjVzBMN0xNR0RWdXE5Y0dZMUEzUWZJTG91TnlXV0tISG4xOXFZ?=
+ =?utf-8?B?ak9JU05xNE9XbWl0aVZGdnJPdURLWHdFcGo5QTdNTHZiQm8yTm1zS2k3OFBB?=
+ =?utf-8?B?WGc2MVpKTGRNc056QXR1WmUxR3BrMW5DYWFwUzJjWnk4cEt4eUZsU0MvSkd1?=
+ =?utf-8?B?Vm1YU0k1RENUOG84N0lTUldiR0RZUWdSbTZDNjB3WEs0MWkzLyt0c0NQdzVN?=
+ =?utf-8?B?cVFOUkNTMzZsVVhCYTZLZ3lrMnNZdit1T3RrV3BVVUpLZk9vdU42dVBIOHNq?=
+ =?utf-8?B?Y05HUkl6aUg2YnlEVVJETnJBYXBBPT0=?=
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63fdf15f-36ea-42e1-74af-08dcb8787009
+X-MS-Exchange-CrossTenant-AuthSource: PAWPR07MB9688.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 13:37:39.5906
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XDJaNDuBDhEbcMNe/dgUkPUNYxbHriBEjklbdNq+zpeFZcNb6ExcIfGiuRj9lAfWIIWuiL46lhgGI++LAWHl/HAjWlflKL7qW8R8tbHygpM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR07MB6757
 
-On Fri, Aug 09, 2024 at 02:44:06PM +0200, Jann Horn wrote:
-> On Fri, Aug 9, 2024 at 12:59 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Thu, Aug 08, 2024 at 04:42:23PM +0200, Jann Horn wrote:
-> > > On Thu, Aug 8, 2024 at 4:09 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > On Thu, Aug 08, 2024 at 03:10:54AM +0200, Jann Horn wrote:
-> > > > > On Thu, Aug 8, 2024 at 1:36 AM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> > > > > > On Wed, Aug 07, 2024 at 08:16:47PM +0200, Mickaël Salaün wrote:
-> > > > > > > On Tue, Aug 06, 2024 at 11:55:27PM +0200, Jann Horn wrote:
-> > > > > > > > On Tue, Aug 6, 2024 at 8:56 PM Jann Horn <jannh@google.com> wrote:
-> > > > > > > > > On Tue, Aug 6, 2024 at 8:11 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> > > > > > > > > > Currently, a sandbox process is not restricted to send a signal
-> > > > > > > > > > (e.g. SIGKILL) to a process outside of the sandbox environment.
-> > > > > > > > > > Ability to sending a signal for a sandboxed process should be
-> > > > > > > > > > scoped the same way abstract unix sockets are scoped. Therefore,
-> > > > > > > > > > we extend "scoped" field in a ruleset with
-> > > > > > > > > > "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset will deny
-> > > > > > > > > > sending any signal from within a sandbox process to its
-> > > > > > > > > > parent(i.e. any parent sandbox or non-sandboxed procsses).
-> > > > > > > > [...]
-> > > > > > > > > > +       if (is_scoped)
-> > > > > > > > > > +               return 0;
-> > > > > > > > > > +
-> > > > > > > > > > +       return -EPERM;
-> > > > > > > > > > +}
-> > > > > > > > > > +
-> > > > > > > > > > +static int hook_file_send_sigiotask(struct task_struct *tsk,
-> > > > > > > > > > +                                   struct fown_struct *fown, int signum)
-> > > > > > >
-> > > > > > > I was wondering if we should handle this case, but I guess it makes
-> > > > > > > sense to have a consistent policy for all kind of user-triggerable
-> > > > > > > signals.
-> > > > > > >
-> > > > > > > > > > +{
-> > > > > > > > > > +       bool is_scoped;
-> > > > > > > > > > +       const struct landlock_ruleset *dom, *target_dom;
-> > > > > > > > > > +       struct task_struct *result = get_pid_task(fown->pid, fown->pid_type);
-> > > > > > > > >
-> > > > > > > > > I'm not an expert on how the fowner stuff works, but I think this will
-> > > > > > > > > probably give you "result = NULL" if the file owner PID has already
-> > > > > > > > > exited, and then the following landlock_get_task_domain() would
-> > > > > > > > > probably crash? But I'm not entirely sure about how this works.
-> > > > > > > > >
-> > > > > > > > > I think the intended way to use this hook would be to instead use the
-> > > > > > > > > "file_set_fowner" hook to record the owning domain (though the setup
-> > > > > > > > > for that is going to be kind of a pain...), see the Smack and SELinux
-> > > > > > > > > definitions of that hook. Or alternatively maybe it would be even
-> > > > > > > > > nicer to change the fown_struct to record a cred* instead of a uid and
-> > > > > > > > > euid and then use the domain from those credentials for this hook...
-> > > > > > > > > I'm not sure which of those would be easier.
-> > > > > > > >
-> > > > > > > > (For what it's worth, I think the first option would probably be
-> > > > > > > > easier to implement and ship for now, since you can basically copy
-> > > > > > > > what Smack and SELinux are already doing in their implementations of
-> > > > > > > > these hooks. I think the second option would theoretically result in
-> > > > > > > > nicer code, but it might require a bit more work, and you'd have to
-> > > > > > > > include the maintainers of the file locking code in the review of such
-> > > > > > > > refactoring and have them approve those changes. So if you want to get
-> > > > > > > > this patchset into the kernel quickly, the first option might be
-> > > > > > > > better for now?)
-> > > > > > > >
-> > > > > > >
-> > > > > > > I agree, let's extend landlock_file_security with a new "fown" pointer
-> > > > > > > to a Landlock domain. We'll need to call landlock_get_ruleset() in
-> > > > > > > hook_file_send_sigiotask(), and landlock_put_ruleset() in a new
-> > > > > > > hook_file_free_security().
-> > > > > > I think we should add a new hook (hook_file_set_owner()) to initialize
-> > > > > > the "fown" pointer and call landlock_get_ruleset() in that?
-> > > > >
-> > > > > Yeah. Initialize the pointer in the file_set_fowner hook, and read the
-> > > > > pointer in the file_send_sigiotask hook.
-> > > > >
-> > > > > Note that in the file_set_fowner hook, you'll probably need to use
-> > > > > both landlock_get_ruleset() (to take a reference on the ruleset you're
-> > > > > storing in the fown pointer) and landlock_put_ruleset() (to drop the
-> > > > > reference to the ruleset that the fown pointer was pointing to
-> > > > > before). And you'll need to use some kind of lock to protect the fown
-> > > > > pointer - either by adding an appropriate lock next to your fown
-> > > > > pointer or by using some appropriate existing lock in "struct file".
-> > > > > Probably it's cleanest to have your own lock for this? (This lock will
-> > > > > have to be something like a spinlock, not a mutex, since you need to
-> > > > > be able to acquire it in the file_set_fowner hook, which runs inside
-> > > > > an RCU read-side critical section, where sleeping is forbidden -
-> > > > > acquiring a mutex can sleep and therefore is forbidden in this
-> > > > > context, acquiring a spinlock can't sleep.)
-> > > >
-> > > > Yes, I think this should work for file_set_fowner:
-> > > >
-> > > > struct landlock_ruleset *prev_dom, *new_dom;
-> > > >
-> > > > new_dom = landlock_get_current_domain();
-> > > > landlock_get_ruleset(new_dom);
-> > > >
-> > > > /* Cf. f_modown() */
-> > > > write_lock_irq(&filp->f_owner.lock);
-> > > > prev_dom = rcu_replace_pointer(&landlock_file(file)->fown_domain,
-> > > >         new_dom, lockdep_is_held(&filp->f_owner.lock));
-> > > > write_unlock_irq(&filp->f_owner.lock);
-> > > >
-> > > > landlock_put_ruleset_rcu(prev_dom);
-> > > >
-> > > >
-> > > > With landlock_put_ruleset_rcu() define with this:
-> > > >
-> > > > diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> > > > index a93bdbf52fff..897116205520 100644
-> > > > --- a/security/landlock/ruleset.c
-> > > > +++ b/security/landlock/ruleset.c
-> > > > @@ -524,6 +524,20 @@ void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset)
-> > > >         }
-> > > >  }
-> > > >
-> > > > +static void free_ruleset_rcu(struct rcu_head *const head)
-> > > > +{
-> > > > +       struct landlock_ruleset *ruleset;
-> > > > +
-> > > > +       ruleset = container_of(head, struct landlock_ruleset, rcu);
-> > > > +       free_ruleset(ruleset);
-> > > > +}
-> > >
-> > > free_ruleset() can block but RCU callbacks aren't allowed to block,
-> > > that's why landlock_put_ruleset_deferred() exists.
-> >
-> > Yes, but landlock_put_ruleset_deferred() doesn't wait for RCU read-side
-> > critical sections.
-> 
-> Ah, I phrased that badly - I didn't mean to suggest that you should
-> use landlock_put_ruleset_deferred() as a replacement for call_rcu().
-> 
-> [...]
-> > > So if you want to use RCU lifetime for this, I think you'll have to
-> > > turn landlock_put_ruleset() and landlock_put_ruleset_deferred() into
-> > > one common function that always, when reaching refcount 0, schedules
-> > > an RCU callback which then schedules a work_struct which then does
-> > > free_ruleset().
-> > >
-> > > I think that would be a little ugly, and it would look nicer to just
-> > > use normal locking in the file_send_sigiotask hook?
-> >
-> > I don't see how we can do that without delaying the free_ruleset() call
-> > to after the RCU read-side critical section in f_setown().
-> 
-> It should work if you used landlock_put_ruleset_deferred() instead of
-> landlock_put_ruleset().
+I'd like to revive the discussion and quickly summarize our options to
+avoid a false-positive Lockdep-RCU splat when check_and_switch_context()
+acquires the ASID spinlock:
 
-Calling landlock_put_ruleset_deferred() in hook_file_set_fowner() or
-replacing all landlock_put_ruleset() calls?
+1. Briefly report CPU as online again via
+   rcutree_report_cpu_{starting|dead}()
+2. Replace raw_spin_lock*() by arch_spin_lock()
+3. Remove ASID spinlock
 
-The deferred work queue is not guarantee to run after all concurrent RCU
-read-side critical sections right?  Calling synchronize_rcu() in
-free_ruleset_work() should give this guarantee, but it's not nice.  We
-could add a boolean in landlock_ruleset to only call synchronize_rcu()
-when required (i.e. called from file_set_fowner).
+Both 1. and 2. are workarounds with different pros and cons/proponents.
+Regarding 3., the last comment form Russell is:
 
+> For 32-bit non-LPAE, I can't recall any issues, nor can I think of any
+> because module space is just another few entries in the L1 page tables
+> below the direct mapping (which isn't a problem because we don't use
+> anything in hardware to separate the kernel space from user space in
+> the page tables.) TTBCR is set to 0.
 > 
-> > What about calling refcount_dec_and_test() in free_ruleset_rcu()?  That
-> > would almost always queue this call but it looks safe.
+> For LPAE, there may be issues there because TTBR0 and TTBR1 are both
+> used, and TTBCR.T1SZ is set non-zero to:
 > 
-> Every queued RCU invocation needs to have its own rcu_head - I think
-> the approach you're suggesting could end up queuing the same rcu_head
-> multiple times?
-
-Right
-
+> arch/arm/include/asm/pgtable-3level-hwdef.h:#define TTBR1_SIZE (((PAGE_OFFSET >> 30) - 1) << 16)
 > 
-> > An alternative might be to call synchronize_rcu() in free_ruleset(), but
-> > it's a big ugly too.
+> so I suspect that's where the problems may lie - but then module
+> mappings should also exist in init_mm (swapper_pg_dir) and should
+> be global.
+
+Unfortunately I'm don't feel qualified to contribute to the discussion
+on option 3. Russell and Will, would you be able to spare some time to
+drive this further? Otherwise I would propose to make a decision on
+going for option 1 or 2.
+
+Kind regards,
+
+Stefan
 
