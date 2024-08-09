@@ -1,185 +1,91 @@
-Return-Path: <linux-kernel+bounces-280542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A185B94CBF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:13:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651C394CBFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D37981C21AC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECD92281489
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFE518CBEB;
-	Fri,  9 Aug 2024 08:13:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F235C8D1
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DCA18CC0E;
+	Fri,  9 Aug 2024 08:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXFy7XqZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BBDC8D1;
+	Fri,  9 Aug 2024 08:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723191232; cv=none; b=PpKjsVIgfJSWh5DcC4p2mzFgXKHi2qP03e3I80clHlcozv5XEIpSykeceQvW4ZwLPage0TvKmsdKuSMgGEe1UZLWIHVDacJ+NLr2H8q/nO82o4C6bvACCQujKHFSMznUhMusbARUY4Pm9NpY9IsYLWIX5/mREN/0ABPc8pJ52hk=
+	t=1723191281; cv=none; b=KXo80ZxDg71NvkBSHc24N+p7rYYqoiv6sx4drRLYx61yrUyaQ0EvrlHpN60L9Pefl9Yu6ElPZKUlrWya83bZQ0C0T++aBOQxcgEVOvaeCGomQyZsdACX3PpF42JGkV39YySV5GF2G1cU9vMP8T12Ffo6L41t1R9hsWDdfEa+KbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723191232; c=relaxed/simple;
-	bh=/Zkjc1P/CAm8LCHS2Xn/86ygMDCLGdnJXFyOgdMmdIo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X8QdWIFAmUxA5kv946k3EIlSRaYVOS6trliQ029A8v8+zD80eFZYe3p7ribTQpv8vPAiJp0IPTriOnDtnrD6tme41LZE7P5BcOTV8tvgW+Du2aLsXNtOYFqLB/nYcv9uWCDezvesOY25lcf4mZlL3hJNCo99eqL+NEMJFimBlg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F84EFEC;
-	Fri,  9 Aug 2024 01:14:15 -0700 (PDT)
-Received: from [10.57.95.64] (unknown [10.57.95.64])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECCA03F6A8;
-	Fri,  9 Aug 2024 01:13:47 -0700 (PDT)
-Message-ID: <e9f82fd8-e1da-49ea-a735-b174575c02bc@arm.com>
-Date: Fri, 9 Aug 2024 09:13:46 +0100
+	s=arc-20240116; t=1723191281; c=relaxed/simple;
+	bh=a/g1SiizDFUuREfKCvBDyOSvAerNfT2kcq2x19KzR+k=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=DqIFra99NH86XPTwRpIFRbcpV/VPijOg1ALqUU+fEftkayZEp4qP0DAUL6prQJeF9gH6LqJN80KinJDlftMPf7sJ0Tzx5Isf+axNeXThx41tWHIbw56Cex5C5FwN5Zwsl1GJJYU2Ng3tIdFIf1l7OFQdfXrOypg9qYFnYU320h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXFy7XqZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E744FC32782;
+	Fri,  9 Aug 2024 08:14:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723191281;
+	bh=a/g1SiizDFUuREfKCvBDyOSvAerNfT2kcq2x19KzR+k=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=iXFy7XqZurXVUjl5/OmYqh4vuK7lSx8DpAneuhZbmMcjjznXteTVli+/gkKqaQTgU
+	 gQDQTkvRvyVU9q4RpVIiNUILNfGOabRXgnRHIgE+oGsUx7rbzlQp/XSj4w0N4eheEM
+	 dSnHnIIwhqxfXPsBh0/OKpvzPBd30qjFQFbSdOpGnbEyhBgV5MHbhN06GxqjJSL33x
+	 shWrq964AzNLN1NzUMYHJAqkppt1JicVrsTJyiVRVGCQOO1wXNI/x/uuIxby0/wJGE
+	 5NHpc54Ptiet4HBRoTpkcBMc0WsGOJijl0kVUz0y0Y2LVLtvL1AeVAwFQsB/TvkI9m
+	 8niloLYyLfe1A==
+From: Kalle Valo <kvalo@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Brian Norris <briannorris@chromium.org>,  Francesco Dolcini
+ <francesco@dolcini.it>,  Yogesh Ashok Powar <yogeshp@marvell.com>,  Bing
+ Zhao <bzhao@marvell.com>,  "John W. Linville" <linville@tuxdriver.com>,
+  Amitkumar Karwar <akarwar@marvell.com>,  Avinash Patil
+ <patila@marvell.com>,  Kiran Divekar <dkiran@marvell.com>,
+  linux-wireless@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  kernel@pengutronix.de,  stable@vger.kernel.org
+Subject: Re: [PATCH] mwifiex: duplicate static structs used in driver instances
+References: <20240809-mwifiex-duplicate-static-structs-v1-1-6837b903b1a4@pengutronix.de>
+Date: Fri, 09 Aug 2024 11:14:36 +0300
+In-Reply-To: <20240809-mwifiex-duplicate-static-structs-v1-1-6837b903b1a4@pengutronix.de>
+	(Sascha Hauer's message of "Fri, 09 Aug 2024 10:11:33 +0200")
+Message-ID: <875xsai043.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
-Content-Language: en-GB
-To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org
-Cc: chrisl@kernel.org, david@redhat.com, kaleshsingh@google.com,
- kasong@tencent.com, linux-kernel@vger.kernel.org, ioworker0@gmail.com,
- baolin.wang@linux.alibaba.com, ziy@nvidia.com, hanchuanhua@oppo.com,
- Barry Song <v-songbaohua@oppo.com>
-References: <20240808010457.228753-1-21cnbao@gmail.com>
- <20240808010457.228753-2-21cnbao@gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240808010457.228753-2-21cnbao@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 08/08/2024 02:04, Barry Song wrote:
-> From: Barry Song <v-songbaohua@oppo.com>
-> 
-> When a new anonymous mTHP is added to the rmap, we increase the count.
-> We reduce the count whenever an mTHP is completely unmapped.
-> 
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> ---
->  Documentation/admin-guide/mm/transhuge.rst |  5 +++++
->  include/linux/huge_mm.h                    | 15 +++++++++++++--
->  mm/huge_memory.c                           |  2 ++
->  mm/rmap.c                                  |  3 +++
->  4 files changed, 23 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-> index 058485daf186..715f181543f6 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -527,6 +527,11 @@ split_deferred
->          it would free up some memory. Pages on split queue are going to
->          be split under memory pressure, if splitting is possible.
->  
-> +anon_num
-> +       the number of anon huge pages we have in the whole system.
-> +       These huge pages could be still entirely mapped and have partially
-> +       unmapped and unused subpages.
+Sascha Hauer <s.hauer@pengutronix.de> writes:
 
-nit: "entirely mapped and have partially unmapped and unused subpages" ->
-"entirely mapped or have partially unmapped/unused subpages"
+> mwifiex_band_2ghz and mwifiex_band_5ghz are statically allocated, but
+> used and modified in driver instances. Duplicate them before using
+> them in driver instances so that different driver instances do not
+> influence each other.
+>
+> This was observed on a board which has one PCIe and one SDIO mwifiex
+> adapter. It blew up in mwifiex_setup_ht_caps(). This was called with
+> the statically allocated struct which is modified in this function.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: d6bffe8bb520 ("mwifiex: support for creation of AP interface")
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-> +
->  As the system ages, allocating huge pages may be expensive as the
->  system uses memory compaction to copy data around memory to free a
->  huge page for use. There are some counters in ``/proc/vmstat`` to help
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index e25d9ebfdf89..294c348fe3cc 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -281,6 +281,7 @@ enum mthp_stat_item {
->  	MTHP_STAT_SPLIT,
->  	MTHP_STAT_SPLIT_FAILED,
->  	MTHP_STAT_SPLIT_DEFERRED,
-> +	MTHP_STAT_NR_ANON,
->  	__MTHP_STAT_COUNT
->  };
->  
-> @@ -291,14 +292,24 @@ struct mthp_stat {
->  #ifdef CONFIG_SYSFS
->  DECLARE_PER_CPU(struct mthp_stat, mthp_stats);
->  
-> -static inline void count_mthp_stat(int order, enum mthp_stat_item item)
-> +static inline void mod_mthp_stat(int order, enum mthp_stat_item item, int delta)
->  {
->  	if (order <= 0 || order > PMD_ORDER)
->  		return;
->  
-> -	this_cpu_inc(mthp_stats.stats[order][item]);
-> +	this_cpu_add(mthp_stats.stats[order][item], delta);
-> +}
-> +
-> +static inline void count_mthp_stat(int order, enum mthp_stat_item item)
-> +{
-> +	mod_mthp_stat(order, item, 1);
->  }
-> +
->  #else
-> +static inline void mod_mthp_stat(int order, enum mthp_stat_item item, int delta)
-> +{
-> +}
-> +
->  static inline void count_mthp_stat(int order, enum mthp_stat_item item)
->  {
->  }
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 697fcf89f975..b6bc2a3791e3 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -578,6 +578,7 @@ DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
->  DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
->  DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
->  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
-> +DEFINE_MTHP_STAT_ATTR(anon_num, MTHP_STAT_NR_ANON);
->  
->  static struct attribute *stats_attrs[] = {
->  	&anon_fault_alloc_attr.attr,
-> @@ -591,6 +592,7 @@ static struct attribute *stats_attrs[] = {
->  	&split_attr.attr,
->  	&split_failed_attr.attr,
->  	&split_deferred_attr.attr,
-> +	&anon_num_attr.attr,
->  	NULL,
->  };
->  
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 901950200957..2b722f26224c 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1467,6 +1467,7 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
->  	}
->  
->  	__folio_mod_stat(folio, nr, nr_pmdmapped);
-> +	mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, 1);
->  }
->  
->  static __always_inline void __folio_add_file_rmap(struct folio *folio,
-> @@ -1582,6 +1583,8 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
->  	    list_empty(&folio->_deferred_list))
->  		deferred_split_folio(folio);
->  	__folio_mod_stat(folio, -nr, -nr_pmdmapped);
-> +	if (folio_test_anon(folio) && !atomic_read(mapped))
+Should this go to wireless tree for v6.11?
 
-Agree that atomic_read() is dodgy here.
+"wifi:" missing in subject but I can add that, no need to resend because
+of this.
 
-Not sure I fully understand why David prefers to do the unaccounting at
-free-time though? It feels unbalanced to me to increment when first mapped but
-decrement when freed. Surely its safer to either use alloc/free or use first
-map/last map?
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-If using alloc/free isn't there a THP constructor/destructor that prepares the
-deferred list? (My memory may be failing me). Could we use that?
-
-> +		mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, -1);
->  
->  	/*
->  	 * It would be tidy to reset folio_test_anon mapping when fully
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
