@@ -1,260 +1,83 @@
-Return-Path: <linux-kernel+bounces-281359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCF9F94D5F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:00:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B519B94D5F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF4C1C21384
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:00:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC4B281CEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28D22941C;
-	Fri,  9 Aug 2024 18:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LCsCDoyZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF241465BA;
+	Fri,  9 Aug 2024 18:05:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F4B20309
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD9F23DE;
+	Fri,  9 Aug 2024 18:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723226406; cv=none; b=Y/JXh+7tC2gM/veVOIF1PvaWqarNfNgeu3mUfyhTeOITMAqFACoXTZpp7gvXRd2eNVQnSkDdEQep4OlLu9rbYhFyAfPJ2uIMlKUFsomi7bWw6J35dZ6spnPNRFaxpVba4H2KW7Qfd2/aug9ZC5OsI4Y/NRw8Kdm+yRvaBjNCtpw=
+	t=1723226744; cv=none; b=GhtZbj0vp+JbQ3SPZooTj9u2QG2/sQYFBUVLVaI4wjnDblAZ0xMXKic65V29/oYO4gUH6KyN6GxQr6fGR49rkv9aXbTFsNrxc8czgsbKbJaeoH/Vb1ilPoLC6Ea9WmqoFwxw9PvzZ02A3DHwo3IGHy/lw2Ic5TTrKvPiUtb6JUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723226406; c=relaxed/simple;
-	bh=oCvuE7ykKSdNrjtp0MSGG2YO7SOy0k+4f6Y0lgKnYqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J5N/Q9RrHGJw/5322+oXqnm4mRxq8Tm6gfvqrdC/mD26jKQbnTVi4V5nw0qwR0zXPkS8kQDfwzC/wPXBTVk/h/WxQ9W/+23MnOvYmWnlMQWTMZFuo3IaXiTif9MN7L5fDiL2UmAcGxU3XilXgNXbLCVqyZdDKXJkRFKE582TKAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LCsCDoyZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723226404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DX4RN1Et8eu8M9wJHr8iJWlu/fe0EnkKpPUfaVGTg7I=;
-	b=LCsCDoyZoZU+by6DiyQvo6Rmr3JBqwUbEbBHWazGX0N+8FqbtZ5rqyhu2Nk1Iu/cPKELqL
-	Ts88PshVhZCfHKqitP5H3/U01sdiZGqJn0L2rkgEDUS6qbxmdTTg2n28xbVYyL88xp06x3
-	fJITMdZceELrjD8MN0x0k5ThHrLAPXI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-652-thjqw0IYP--bAJ2TIZDZcg-1; Fri, 09 Aug 2024 14:00:02 -0400
-X-MC-Unique: thjqw0IYP--bAJ2TIZDZcg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280a39ecebso16320245e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 11:00:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723226401; x=1723831201;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DX4RN1Et8eu8M9wJHr8iJWlu/fe0EnkKpPUfaVGTg7I=;
-        b=qJXg+yppxlwQ4H1oNsu/5w0drGdzFEJiW1KDSSM5e4f3oWZq3l1mb1LY2+U2nDZ5MW
-         BVDyxZcT97UwXcu+61Nxu8KJQsMpygrbXykwrhYQOqbvus9jyn3QR/P4oYHzmFn4PYL7
-         uKw09ojnl1dtSi/REaHe2A3qmjKmi8iwuvuBCAPz+TLH6CnnYNZ0y8H9tc3bf3TP6MuU
-         3dgV6nW9j+sj6sTVcgd0F7XrY11L+u1PG6XP8gNJsFk91DNT9KStsnmX3cxlj5a6+e6R
-         cfxcTQjru1mDjWK5qFcTv9dB3TK2zXPNdo8IrdGmdDhyH/o72iEHbeMsMaZgKreO1emQ
-         Iffw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxwxFnrqy1IbH9+qbsnfQKKUrvvUVuZIQxcvC0iHj6R97HVACxPx/UseQoQz2aH6PFI3HYFtoSdlnadtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR96mRqDeYHowWh7NRd6bFX9eJQ6nXk+ei7vU7w6jNxZCNjwE7
-	x2AlWCznywC1F7JkKIrJ/Z+1Y+W3jBuqB71qy2aflfeJUvm6E7FiVgbPKGAVhwaSers0oSqldu3
-	u7DFbRWSmaZb8QNWGQntWruCsXYyCg4Q197yAYmMu1xnk8EVuBwNvd7zwsOHR/A==
-X-Received: by 2002:a05:600c:1d92:b0:426:5e32:4857 with SMTP id 5b1f17b1804b1-429c3a56054mr21757135e9.0.1723226401448;
-        Fri, 09 Aug 2024 11:00:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECbfH0ejIYTjOVYWYYJA8AiDUjGL07T0f+A833d33g0qdGRZHggLq4pZxtx0Xz/M05a/t+Ow==
-X-Received: by 2002:a05:600c:1d92:b0:426:5e32:4857 with SMTP id 5b1f17b1804b1-429c3a56054mr21756905e9.0.1723226400905;
-        Fri, 09 Aug 2024 11:00:00 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c74ffb1esm1582035e9.5.2024.08.09.10.59.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 11:00:00 -0700 (PDT)
-Message-ID: <8ef394e6-a964-41c4-b33c-0e940b6b9bd8@redhat.com>
-Date: Fri, 9 Aug 2024 19:59:58 +0200
+	s=arc-20240116; t=1723226744; c=relaxed/simple;
+	bh=rFwRMeqH0yhoQipGZ53eFLQUu6WdxoIJnw+e3aTlPos=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Oe0L2BosNSppqVrx3K5TV0cZXyNo5VICjeDXeVRVuszj7k0Lkf1Z3FMnBuzclza3MBTIjfF6RrQBAD2MzB3KEQc7nAoRio2muRm8U8HP2W5cmEQMIQJAcxB2NzPNqRXflN85/oJvOEU9SaICGkc+a2dgemA7d7Mx7P3My+8nmIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2074DC32782;
+	Fri,  9 Aug 2024 18:05:43 +0000 (UTC)
+Date: Fri, 9 Aug 2024 14:05:45 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: John Kacur <jkacur@redhat.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Daniel Bristot de Oliveira
+ <bristot@kernel.org>, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+ Clark Williams <williams@redhat.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] rtla/osnoise: prevent NULL dereference in error
+ handling
+Message-ID: <20240809140545.698f654e@gandalf.local.home>
+In-Reply-To: <7ece353a-36a6-6154-97d9-b255728b9807@redhat.com>
+References: <f964ed1f-64d2-4fde-ad3e-708331f8f358@stanley.mountain>
+	<c73c51ae-99da-793a-6dcb-2fbc6871261d@redhat.com>
+	<20240809134133.751723e5@gandalf.local.home>
+	<7ece353a-36a6-6154-97d9-b255728b9807@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/19] mm/fork: Accept huge pfnmap entries
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Sean Christopherson <seanjc@google.com>, Oscar Salvador <osalvador@suse.de>,
- Jason Gunthorpe <jgg@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
- linux-arm-kernel@lists.infradead.org, x86@kernel.org,
- Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Ingo Molnar <mingo@redhat.com>,
- Alistair Popple <apopple@nvidia.com>, Borislav Petkov <bp@alien8.de>,
- Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Alex Williamson <alex.williamson@redhat.com>, Yan Zhao <yan.y.zhao@intel.com>
-References: <20240809160909.1023470-1-peterx@redhat.com>
- <20240809160909.1023470-8-peterx@redhat.com>
- <d7fcec73-16f6-4d54-b334-6450a29e0a1d@redhat.com> <ZrZOqbS3bcj52JZP@x1n>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZrZOqbS3bcj52JZP@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 09.08.24 19:15, Peter Xu wrote:
-> On Fri, Aug 09, 2024 at 06:32:44PM +0200, David Hildenbrand wrote:
->> On 09.08.24 18:08, Peter Xu wrote:
->>> Teach the fork code to properly copy pfnmaps for pmd/pud levels.  Pud is
->>> much easier, the write bit needs to be persisted though for writable and
->>> shared pud mappings like PFNMAP ones, otherwise a follow up write in either
->>> parent or child process will trigger a write fault.
->>>
->>> Do the same for pmd level.
->>>
->>> Signed-off-by: Peter Xu <peterx@redhat.com>
->>> ---
->>>    mm/huge_memory.c | 27 ++++++++++++++++++++++++---
->>>    1 file changed, 24 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>> index 6568586b21ab..015c9468eed5 100644
->>> --- a/mm/huge_memory.c
->>> +++ b/mm/huge_memory.c
->>> @@ -1375,6 +1375,22 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->>>    	pgtable_t pgtable = NULL;
->>>    	int ret = -ENOMEM;
->>> +	pmd = pmdp_get_lockless(src_pmd);
->>> +	if (unlikely(pmd_special(pmd))) {
->>> +		dst_ptl = pmd_lock(dst_mm, dst_pmd);
->>> +		src_ptl = pmd_lockptr(src_mm, src_pmd);
->>> +		spin_lock_nested(src_ptl, SINGLE_DEPTH_NESTING);
->>> +		/*
->>> +		 * No need to recheck the pmd, it can't change with write
->>> +		 * mmap lock held here.
->>> +		 */
->>> +		if (is_cow_mapping(src_vma->vm_flags) && pmd_write(pmd)) {
->>> +			pmdp_set_wrprotect(src_mm, addr, src_pmd);
->>> +			pmd = pmd_wrprotect(pmd);
->>> +		}
->>> +		goto set_pmd;
->>> +	}
->>> +
->>
->> I strongly assume we should be using using vm_normal_page_pmd() instead of
->> pmd_page() further below. pmd_special() should be mostly limited to GUP-fast
->> and vm_normal_page_pmd().
+On Fri, 9 Aug 2024 13:53:33 -0400 (EDT)
+John Kacur <jkacur@redhat.com> wrote:
+
+
+> > > Although your fix appears to be correct, I wonder if it would be better to 
+> > > create a second error label, such as out_destroy_tool: as described in 
+> > > section 7 of the coding-style.rst
+> > >   
+> > 
+> > There's no reason for that. It's the only error path. That is, nothing
+> > would jump to the original out_err:
+> > 
+> > And for a single error, an if statement is good enough.
+> > 
+> > -- Steve
+> > 
+> >   
 > 
-> One thing to mention that it has this:
-> 
-> 	if (!vma_is_anonymous(dst_vma))
-> 		return 0;
+> Ah, right of course.
+> Okay in that case, Signed-off-by: John Kacur <jkacur@redhat.com>
+> (applied the patch, built and ran)
 
-Another obscure thing in this function. It's not the job of 
-copy_huge_pmd() to make the decision whether to copy, it's the job of 
-vma_needs_copy() in copy_page_range().
+Note, "Signed-off-by" is for the author of a patch or someone pushing it
+through their tree. I believe you want either "Acked-by" or "Reviewed-by",
+and since you ran it you could also add "Tested-by".
 
-And now I have to suspect that uffd-wp is broken with this function, 
-because as vma_needs_copy() clearly states, we must copy, and we don't 
-do that for PMDs. Ugh.
-
-What a mess, we should just do what we do for PTEs and we will be fine ;)
-
-Also, we call copy_huge_pmd() only if "is_swap_pmd(*src_pmd) || 
-pmd_trans_huge(*src_pmd) || pmd_devmap(*src_pmd)"
-
-Would that even be the case with PFNMAP? I suspect that pmd_trans_huge() 
-would return "true" for special pfnmap, which is rather "surprising", 
-but fortunate for us.
-
-Likely we should be calling copy_huge_pmd() if pmd_leaf() ... cleanup 
-for another day.
-
-> 
-> So it's only about anonymous below that.  In that case I feel like the
-> pmd_page() is benign, and actually good.
-
-Yes, it would likely currently work.
-
-> 
-> Though what you're saying here made me notice my above check doesn't seem
-> to be necessary, I mean, "(is_cow_mapping(src_vma->vm_flags) &&
-> pmd_write(pmd))" can't be true when special bit is set, aka, pfnmaps.. and
-> if it's writable for CoW it means it's already an anon.
-> 
-> I think I can probably drop that line there, perhaps with a
-> VM_WARN_ON_ONCE() making sure it won't happen.
-> 
->>
->> Again, we should be doing this similar to how we handle PTEs.
->>
->> I'm a bit confused about the "unlikely(!pmd_trans_huge(pmd)" check, below:
->> what else should we have here if it's not a migration entry but a present
->> entry?
-> 
-> I had a feeling that it was just a safety belt since the 1st day of thp
-> when Andrea worked that out, so that it'll work with e.g. file truncation
-> races.
-> 
-> But with current code it looks like it's only anonymous indeed, so looks
-> not possible at least from that pov.
-
-Yes, as stated above, likely broken with UFFD-WP ...
-
-I really think we should make this code just behave like it would with 
-PTEs, instead of throwing in more "different" handling.
-
--- 
-Cheers,
-
-David / dhildenb
-
+-- Steve
 
