@@ -1,121 +1,122 @@
-Return-Path: <linux-kernel+bounces-281391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8A394D65E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:38:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E83F94D666
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F25B1C20C8C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:38:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D13201C21A2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E3515E5CF;
-	Fri,  9 Aug 2024 18:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6980214B96C;
+	Fri,  9 Aug 2024 18:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cDUWftdS"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="grUHYDTd"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B917115AD9B;
-	Fri,  9 Aug 2024 18:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED332F41
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723228678; cv=none; b=FvoKDk3++srGlvP04Z4kGNnz8jBqCJJNCR4tbJLxeqx+e5+zCKSwmxdhXv7EhouSnfUGi2LwA1O027EWCJmPEQ425mxrTiKWQfENX7snFBSwMgXcJSCNKJ0nZ1/5OI/bgsLc688RmuGdtkdpIfp7educHInnEQPaAwGqtTLLKOc=
+	t=1723228792; cv=none; b=d4jval5h5NISNBWQm0KiXpjNRcjFVW7dcMWqUFC/K1nRscDzcgzG/u4hpvGXDulQ1AosASDY0Ptnn2oMxRqA0CEJUt9A91zfCjGP5F52Aie9mFtbS21tZPJ/aTLQ+3guZBVahscAabiDkQlF6dYen/dDrwgN8C3cIzMWbDNaWro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723228678; c=relaxed/simple;
-	bh=Lvd1+b+rzlVHbVA2wsGaQIik0N4Z41fVLeWvp32JF/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ir5DkncwGusEd8ba3BsOx9iW/2rWm91YQl2KODXQybdYG94GbbjKPdkODJam4xFMXWYHW2ilmIVQHE1gfq+gBWoRx9qdQLJ6dzTdTc+kAq2ZZQtZcQobyMJiNOORQYsDQ/u9KNPP17ZczKQfd8OvtC8GdCcDVT/z0ytC/Zo6prE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cDUWftdS; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2642cfb2f6aso1615944fac.2;
-        Fri, 09 Aug 2024 11:37:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723228676; x=1723833476; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=23V8N5AdZVNN/gtxnVahpyZ2F/zrIdL7fbh1DnGikW8=;
-        b=cDUWftdSu6cMa1E8Ful5TC4KhDk9QYx2/mS9aE+XnyEHbxzSxp+uiwPgWBPI9CX4QJ
-         dnmjpgO1hZY2bYbZDGmFG8wMx2hyFLY4xT7oERF8BcWgbj+u/3IVfKSgSoRyDDxMinjc
-         Ov/y0RjP9RCsRKdtORHBk72H8hCOiRBfftdt/v4DmC9uPuizXiJv7FwRE3fcPLwmhdxY
-         WdHSxRbXn4PSQdgIouCVGPHXiAjTfJiibPARP08DOVxjBEYzEjKmkKl+r3XV8TuA1RWI
-         0lKHyECosj8smd2puVn9nHba6xVgNs+6S9KQdi3RSVGcuoIMe/n1KvHSZnzsSJPbBIBh
-         paOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723228676; x=1723833476;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=23V8N5AdZVNN/gtxnVahpyZ2F/zrIdL7fbh1DnGikW8=;
-        b=TmgT6PhbWwHernEvXcmBG4ZIHYxwV3f3MtBDYjslOQ3HaTBVPFpuVdGc8U05svfn8X
-         0hJVIXpLuRuXYffcccDPR39LGPjuy9NRR7rSnyVh7j7apTNQnvxyk+LunGY9TcErfKDy
-         GTLKRnIGK9gI4uBNYhPuKDxvFSYFSitRsSVPWewl0NQQmqPdaL9U8kYFcFhFNIidUzh7
-         LXMc00d8CBl2nv2kBLpoTh8XjD9Pt7QKnKAEl7azbZdO3IZ99HkQlKoOiD8eTkg5w+6v
-         L5A+VodKxhZ/dttfukU5p+FNxH288P51jr+87omVqyVGvwyg6mP4HBws40wCEjr836sG
-         7vnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlgs3/+dHpxQ1BjbE1F5fKlQ/30V1CP2iEu0FVvIMEavAzB0rnKj1vXnEW18GeA79lWWrlrz6bARG6kXDm/0tefZPIoznphya/QRLJmadQWzvKfI/F3jPNK/24UMSBqBk30rgRQ37XhGY6AA==
-X-Gm-Message-State: AOJu0YzdH1dFz0NK558CPre8pyuCT9Jl9MJCDGPJKxEyVxrJsr06hBmE
-	a0bDu5dxtXCPd83NwT6ODebV7a2SdBChyN5HxvTfmUzhvAQXC5XM
-X-Google-Smtp-Source: AGHT+IENkZRkxsFSj8C+quRCgcAYIlP4KqTdlj4pXZh5I6G6gUctkIHTSWJe6NHYXlgtEeTz+miBOg==
-X-Received: by 2002:a05:6870:8318:b0:254:94a4:35d2 with SMTP id 586e51a60fabf-26c63021a6dmr2759931fac.45.1723228675709;
-        Fri, 09 Aug 2024 11:37:55 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:12e9:d196:a1e9:ab67])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a4a962sm68841b3a.106.2024.08.09.11.37.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 11:37:54 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	Rob Clark <robdclark@chromium.org>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/msm: Remove unused pm_state
-Date: Fri,  9 Aug 2024 11:37:52 -0700
-Message-ID: <20240809183752.160634-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723228792; c=relaxed/simple;
+	bh=gcCVPAbo1n/pJKPDXPuBaSVUEHJEs8Ta7McoBWUfgFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G7NH9rkBw8u33PdFfHK5Fyvu/Q8t6wQ20K426BJZO+J/d+miSmYDTr1zPJ3f7HGq9WeKxeLrYuL+J45plOyJMvb9g12i+5tNkm8aSIp4zBIYXlbuN2X9a1TeQbCoGHHIAkfNJPMKIunccxkGJkwJabzlf/2zsUc7R+4gMv0kfww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=grUHYDTd; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E4565E0002;
+	Fri,  9 Aug 2024 18:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723228782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7q5afJNAYFs7MIsWDfSymukcg4XFnkrqTZxpLlWq/n4=;
+	b=grUHYDTd9AUhIzOjQHZQ3TS9VJ3LbqKVd2KPyrVbVBsLPRbvXMMPX3nHxKYiyCmtVFP24r
+	vJ8Qa3enR0KGGzZe+uYwpwiRUUqW3GlMQtdxbPePkNrHYuEu3lHzotNaJtzuL++sGxBPdH
+	4NS/crMOEUVUALM0qdbLc2kh0Bk96XzEsUKDFJHmU8c/FCf1Mz2xzZ5p7Wcc9ZsqvxsR/D
+	LRgwCSg6290Yzhc2zudGGfZYeqY57g/7V3L8fhXWcVf6Yc6/EaTHJHfQJPlfngBFQyaym2
+	fKoPes0mNMtLLNKM9j+34kl9+q1hbygWl0VZ1dxfjwVqmz9iwibIP4JE+q9dqg==
+Date: Fri, 9 Aug 2024 20:39:40 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
+	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH RESEND v3 1/6] i3c: mipi-i3c-hci: Add MIPI0100 ACPI ID to
+ the I3C Support List
+Message-ID: <20240809183940461e3838@mail.local>
+References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
+ <20240807052359.290046-2-Shyam-sundar.S-k@amd.com>
+ <e94efd42-bc3f-4003-8ad8-2da6500f0f13@linux.intel.com>
+ <ZrYlNOjFQE9dHsVV@smile.fi.intel.com>
+ <c6ef0253-9f32-46d6-a658-295e39c926b2@amd.com>
+ <ZrY8UOIsud8-NM_F@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrY8UOIsud8-NM_F@smile.fi.intel.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-From: Rob Clark <robdclark@chromium.org>
+On 09/08/2024 18:57:04+0300, Andy Shevchenko wrote:
+> > Please refer to the MIPI HCI I3C DisCo specification
+> > (https://members.mipi.org/wg/All-Members/document/previewpdf/89465)
+> > section 5.4. The ASL looks the same in case of AMD.
+> > 
+> > MSFT says that they want to use MIPI0100 as mentioned in the
+> > specification.
+> 
+> MIPI doesn't know how to assign the ACPI ID correctly. But again, what I put in
+> the above is the correct way of approaching.
+> 
+> > What would you advise?
+> 
+> Since my intuition and experience tells me that the two devices even based on
+> the same IP are not the same (see word 'quirk' or '.driver_data' or alike in
+> the kernel sources) the generic ID may not be used for the specific vendor
+> unless it's _the only_ vendor for the certain IP.
 
-This was added in commit ec446d09366c ("drm/msm: call
-drm_atomic_helper_suspend() and drm_atomic_helper_resume()"), but unused
-since commit ca8199f13498 ("drm/msm/dpu: ensure device suspend happens
-during PM sleep") which switched to drm_mode_config_helper_suspend()/
-drm_mode_config_helper_resume()..
+Just to be clear, the HCI defines the register interface to the IP but
+not the IP itself, this is just like the various USB and SD HCIs. So we
+will definitively see quirks as implementers will interpret the
+interface differently (and so I agree with everything that was said ;) )
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/msm_drv.h | 2 --
- 1 file changed, 2 deletions(-)
+> 
+> So, please do as I suggested above. And file a error report (and correction
+> proposal) to the MIPI, so in "5.1 I3C Host Controller ACPI Hardware ID (_HID)"
+> they should use _CID instead of _HID and add some text like
+> "Each vendor should dedicate it's own _HID for the platform in question. The
+> same _HID as _CID may be used if and only if vendor guarantees that there 100%
+> compatibility with MIPI as described in this and other related documents."
+> 
+> I.o.w. do you 100% guarantee that MIPI HCI I3C DisCo covers all necessary
+> properties that you need for _your_ hardware? If not, use my approach, if yes,
+> use the same _HID *and* _CID.
+> 
+> Microsoft should know this as well and much better than MIPI.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
-diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
-index be016d7b4ef1..c2eb9f14323e 100644
---- a/drivers/gpu/drm/msm/msm_drv.h
-+++ b/drivers/gpu/drm/msm/msm_drv.h
-@@ -215,8 +215,6 @@ struct msm_drm_private {
- 	struct notifier_block vmap_notifier;
- 	struct shrinker *shrinker;
- 
--	struct drm_atomic_state *pm_state;
--
- 	/**
- 	 * hangcheck_period: For hang detection, in ms
- 	 *
 -- 
-2.46.0
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
