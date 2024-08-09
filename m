@@ -1,108 +1,140 @@
-Return-Path: <linux-kernel+bounces-281057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEEF94D280
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:49:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC0594D282
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A7A61F239B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:49:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75EFF1F2241D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98ED5197A8A;
-	Fri,  9 Aug 2024 14:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1E619882E;
+	Fri,  9 Aug 2024 14:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Vld4p26j"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2JA35G7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D84195809;
-	Fri,  9 Aug 2024 14:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6205D197A68;
+	Fri,  9 Aug 2024 14:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723214964; cv=none; b=SmBBFZYAsddq1/0nqJV+A1eiwVqzAKSdqMO2uVztpwhfL5HHXgWMN5XzWR0Qd/Zo4uTLYus5fk7r1b8foQGwYEvVPptJmDNwiAgTYb4Yi+JXvTt/fPML+3GCbWxrXLQOTqteBrU06bZrTURG0DWG7AMF5evmScNQTUviRNP2l+Q=
+	t=1723214965; cv=none; b=mb1QbTicEkSoA1556ePcYJtDY3SPKTgA2GKQyhRPg+sKBqLvKjXXsn4Yn42B1H8LFndjx86gyQgHkAK6mpYLYA35zz8e1IvGCzqTuDgySfkd8T2pI++SxChWthISedloW6xD2leabpdm9N4PIpN8ebPLWIpUZ9TqQzYYra928Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723214964; c=relaxed/simple;
-	bh=22tE3bcxOV4XQUyxYBM8SclBMeZRi8d9Ee40iy2gYwE=;
+	s=arc-20240116; t=1723214965; c=relaxed/simple;
+	bh=26n09ZIaJtD0l1jyPbXELEN64tF3YdvsFI0WbmrVEqk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YxsI+UZ9Z8bYrWEv3bcB6bbkCNd5X4q9UpbVSqBr0+knDonN2pqVy6OukRbICwbJZ4rAyEAaS+y7KIt+OOwfSYvnYuT/p2oR6QzqvGEYNlMIdJlHvevzGu8feSwKmbcpobf7N6r56zmFIMtWEWcoSsyuDVaqQgdV45V5uhpP9tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Vld4p26j; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 2CD7C1F8BD;
-	Fri,  9 Aug 2024 16:49:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1723214959;
-	bh=vqTV2il+IVohltGgzCzW6B4mCGXHGDpJVmefQp88URU=; h=From:To:Subject;
-	b=Vld4p26j0w6i6/Wg3NX21IYkJ+teBsKRvXvoXaYpJv5mTvAmKOIF4tIBvUx4Z10ec
-	 N8NfuGQGrkHEuk4ajEUc7NYzOZ14RibmCjvj12eV6PjtDsublnI2cwO48jBYp10E3D
-	 NMl/Gm5Ew1cfzu+hr7FPxRz+OrzrhxWoy+TnZLDSnwyjtR9dFi7+yt6mBENywxsh4+
-	 lBQCpzo4rk7Gca84OthJp1GfoRLuWL3uqJFz/8vU3YUnur86x/UaLnyCZ1SXzj4REr
-	 +D6+d42NChiQoEQSB1TLuxUFCzQsthr0uCJpUfjv8mGnwNeef/5kL6s5ozCh9CoEoL
-	 FSI/NreBAG3gA==
-Date: Fri, 9 Aug 2024 16:49:14 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Conor Dooley <conor@kernel.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Wei Fang <wei.fang@nxp.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=tjbZcizPqQBc0DQcpvmkgTaz/ehpc5e1oKsbKKC9YZWf1tmn+eXAKApuyJ3QBBg/Tqe1+o7LRt7eh4fogjdeJohbffXIyn5joQLRc5/RpJWs7BkQqK0ut82v+k+PpP6DE73TK+rfdlQ+UxQ075zYEKAM80B392WDMOzY/tuv6Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2JA35G7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8E49C4AF0D;
+	Fri,  9 Aug 2024 14:49:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723214964;
+	bh=26n09ZIaJtD0l1jyPbXELEN64tF3YdvsFI0WbmrVEqk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U2JA35G7gH/3s3VRNzS8PKNYunNi9aYQoVFy8XmJ+BwfY5+bQa7LTU3v1QTfEBH3z
+	 1t4PxiF8wc0NPzfu0gGcJvmJ5VmEiSi+Iq0iwjl++g93EP98Q0DQrXRG3xN9y0We0I
+	 bf1MPn6fHCyPlu0BUjSdcq+Qw5H0nGovMyYEVmjHAFjeUpy1vqOqYvHdhJAMmAniIF
+	 d60vrsmjvpbV/gABQG5bJECMEkg2ftFXso1EZx1AWXsGn7jxRGwUm+XHwQufcnGt9f
+	 L+r+rgdbLYi/JOksgGbaFh2DYTh7wcwOaJi0qFR0aOr9yNcLD0+IGD4Lc5GF9d75er
+	 hwoaAVk4w+VkQ==
+Date: Fri, 9 Aug 2024 15:49:20 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Linux Team <linux-imx@nxp.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	imx@lists.linux.dev, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/3] dt-bindings: net: fec: add pps channel
- property
-Message-ID: <20240809144914.GA418297@francesco-nb>
-References: <20240809094804.391441-1-francesco@dolcini.it>
- <20240809094804.391441-2-francesco@dolcini.it>
- <20240809-bunt-undercook-3bb1b5da084f@spud>
+	Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] dt-bindings: mtd: Add Loongson-1 NAND Controller
+Message-ID: <20240809-smuggler-patrol-067003f0ba9b@spud>
+References: <20240808-loongson1-nand-v8-0-c96dea418b41@gmail.com>
+ <20240808-loongson1-nand-v8-1-c96dea418b41@gmail.com>
+ <20240808-backyard-unglue-3cf429ad8da5@spud>
+ <CAJhJPsVOTAj9ePzeHkwDX049FKd=9Rs_NjQE2qwQL76GKSC66Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="SxlQ+XhTGBIdU8Mo"
 Content-Disposition: inline
-In-Reply-To: <20240809-bunt-undercook-3bb1b5da084f@spud>
+In-Reply-To: <CAJhJPsVOTAj9ePzeHkwDX049FKd=9Rs_NjQE2qwQL76GKSC66Q@mail.gmail.com>
 
-On Fri, Aug 09, 2024 at 03:27:39PM +0100, Conor Dooley wrote:
-> On Fri, Aug 09, 2024 at 11:48:02AM +0200, Francesco Dolcini wrote:
-> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > 
-> > Add fsl,pps-channel property to specify to which timer instance the PPS
-> > channel is connected to.
-> 
-> In the driver patch you say "depending on the soc ... might be routed to
-> different timer instances", why is a soc-specific compatible
-> insufficient to determine which timer instance is in use?
-> I think I know what you mean, but I'm not 100%.
-> 
-> That said, the explanation in the driver patch is better than the one
-> here, so a commit message improvement is required.
 
-This was clarified by NXP during the discussion on this series [1] and the
-commit messages were not amended to take this new information into
-account, my fault.
+--SxlQ+XhTGBIdU8Mo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I would propose something like this here:
+On Fri, Aug 09, 2024 at 02:47:53PM +0800, Keguang Zhang wrote:
+> On Thu, Aug 8, 2024 at 11:37=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> >
+> > On Thu, Aug 08, 2024 at 07:22:19PM +0800, Keguang Zhang via B4 Relay wr=
+ote:
+> > > From: Keguang Zhang <keguang.zhang@gmail.com>
+> > >
+> > > Add devicetree binding document for Loongson-1 NAND Controller.
+> > >
+> > > Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
+> > > ---
+> > > Changes in v8:
+> > > - Add a description part.
+> > > - Adjust the compatible because the match data for ls1c-nfc differs f=
+rom ls1b-nfc.
+> > > - Mark 'nand-use-soft-ecc-engine' and 'nand-ecc-algo' as mandatory.
+> > > - Delete the superfluous blank lines.
+> > >
+> > > Changes in v7:
+> > > - rename the file to loongson,ls1b-nfc.yaml
+> > >
+> > > Changes in v6:
+> > > - A newly added patch
+> > > ---
+> > >  .../devicetree/bindings/mtd/loongson,ls1b-nfc.yaml | 75 ++++++++++++=
+++++++++++
+> > >  1 file changed, 75 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/mtd/loongson,ls1b-nfc.=
+yaml b/Documentation/devicetree/bindings/mtd/loongson,ls1b-nfc.yaml
+> > > new file mode 100644
+> > > index 000000000000..7ce335324a29
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/mtd/loongson,ls1b-nfc.yaml
+> >
+> > When I first read "nfc" here I thought it was a copy-paste mistake, as
+> > "nfc" is a technology of it's own. I think it would make sense to rename
+> > to "loongson,ls1b-nand-controller" etc to remove that sort of confusion.
+> > These devices might not implement NFC, but what's to say that a future
+> > device will not?
+> >
+> Sorry for the confusion.
+> The string "loongson,ls1b-nand-controller" might be too long.
 
-```
-Add fsl,pps-channel property to select where to connect the PPS
-signal. This depends on the internal SoC routing and on the board, for
-example on the i.MX8 SoC it can be connected to an external pin (using
-channel 1) or to internal eDMA as DMA request (channel 0).
-```
+It "might"? Why do you think it is too long?
 
-Francesco
+> May I rename it to "loongson,ls1b-nand"?
 
-[1] https://lore.kernel.org/all/ZrPYOWA3FESx197L@lizhi-Precision-Tower-5810/
+Sure.
+
+--SxlQ+XhTGBIdU8Mo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrYscAAKCRB4tDGHoIJi
+0tPAAPsG15YkPAlg2tUUrN2amO1EFgloq1wSMyBK1Q29C6L50AEA4AVTK9jOQ9Zg
+mm2+nrwrqf0WFQT/soeSzKGLISNMVg4=
+=zt9F
+-----END PGP SIGNATURE-----
+
+--SxlQ+XhTGBIdU8Mo--
 
