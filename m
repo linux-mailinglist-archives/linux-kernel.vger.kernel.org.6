@@ -1,158 +1,201 @@
-Return-Path: <linux-kernel+bounces-281163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800CB94D3CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:41:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29AB594D3CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A469C1C21EED
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:40:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58E5284F78
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE701990A5;
-	Fri,  9 Aug 2024 15:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CD3198E61;
+	Fri,  9 Aug 2024 15:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rTukblR+"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=eideticcom.onmicrosoft.com header.i=@eideticcom.onmicrosoft.com header.b="Y56/tEa0"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2097.outbound.protection.outlook.com [40.107.244.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF8E168DC
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723218047; cv=none; b=nfZ9MaY6riBwJE/l+XQGZ0fZ2yfDmMnQj2OL15ZPqUBRXfqmQ9wKz89w6Hj9lixuMRou+uvAQL67yHMqTZOPAh+SY5/PSDU8K56tUhNJ1u05lLKBQhwSDum7ExxKzCZNUnzz3q8xn5qRAfYjZ7GCysoaU+j4Syexovh02mq/1bI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723218047; c=relaxed/simple;
-	bh=qYLK/8+7XbwXyc5gcegIRBpIsaI+pvRczdbaYtaSCdE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=V56Kzqcj0ZYsMMSoZtMyyMc/FtXyGqZHY9V8elz1yCXEKbMLaQGCN6xkb8jjb9roVSc28lCOeG49onvm0EK8X74yU2E4zh8I4jj2dEoLs5i+koNs92gfP8hg4Hq5goyYEbs3f1IEmUnERdpyOrP7ZlUX5Ocd7PxDKp5o2eQY0dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rTukblR+; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7a242496897so2192375a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:40:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA188CA64;
+	Fri,  9 Aug 2024 15:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.97
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723218119; cv=fail; b=b8k/wHAKN726Wvqv8d10PGlZ4sujBYZXsZDyvMJi5a2AS6GjfBWX3oUOyzIwulgBfe56Lg+sMHL55HTmzhkQAgdOOydUP3Ejp435rezyrUPqBL5bEnKcLCSqnBCIBgRa8tGhyerSymw6/BT+nFnSM/RbNpUIDCvgWGbeZ/MntOo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723218119; c=relaxed/simple;
+	bh=M9mUCsvTqPZDISg+6twQDHA1Gz7iJ9Flrn64p15dOdo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GNg5rF55Vwbvs7usNeHUbERs0ePKhQghKrhye9/g8nd6H7l8t3mj16E1UMhl0xv4DjMRz32gQV9ET6mgvOXbF4oP2J3Qu/LXj9vxr99kNV+3N5rho6NF9XIBYCOQlg0QSNzPn+CPFAHQeoiLkYKY/DyjOypE9ELFsKf030bGpQ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eideticom.com; spf=pass smtp.mailfrom=eideticom.com; dkim=pass (1024-bit key) header.d=eideticcom.onmicrosoft.com header.i=@eideticcom.onmicrosoft.com header.b=Y56/tEa0; arc=fail smtp.client-ip=40.107.244.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eideticom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eideticom.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Xg1IhoHkQJISY5TorHQUyoelkqI+zDrWHGe7nX5SM2tjHg+Fj2kBusa46lK/pWgo+8c0nXHGBf/gCnHyF/cTUvCh7TTkrvETTICXgMD6MjURaCft9jLZu/4fUYth4wSFldsHuC6m3BO1DBmUcRjrzXzhg+9a1iyXccAYk4Z0vLz8ihEUYDp12Do+WbG2aHkWHNMKWCJ8szFjoEZfVTt8MFww5u4PT5eQilvLMpZBrzlY8OSFDCg6QreFKF5doy4lQlxHM/EDOYC0F1Mx95tfoL3KGI3ZI5QqscrhW1MRs2iZPbcIBpc9r9YFlbkx6OMz4EDSQcpov6SNJDkqdQoQuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SC00QCPFfvhcb4qWy9qtulBu3TVn+Bi7Y2Htp5GADTA=;
+ b=bqn9gRpKEIEJ4f1w5EIQWG/kRih8iVAUkDKAw/AOKIVLcQrDlLZjOEj5u8wts5vozQgUsOwp1ugoTcNougQ86LzNBBTELSjNfx/NR2fix7IcLCyw99pYnAfuJgq0QHyn58ndlWNiLwd8bLZNB8wZYuklFb0gk5dRRWODL3S5Bb9nIrBqRm4v8+HYrWL9LvTm+Jv/A1aPfLEz78JtMmnGNKaJUkie3BgJxS3vKEGgtlDDM4q9aJtk3sSNKq3Pi0Cb08w0Zz83ZyvaXRQtx8h3IJVsmNcnGsZGpmdoofEHvF/u1G+5PEesqVl0Oyp/SboTLJJcU8Jj8SGzJDy0MgBVNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=eideticom.com; dmarc=pass action=none
+ header.from=eideticom.com; dkim=pass header.d=eideticom.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723218045; x=1723822845; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ErMc17L04Y+frI1FBkQ+3nAwLH6q7Xg4kpfE9NJb3g8=;
-        b=rTukblR+lXJim9aJNe/7HYybeb6EyBeiNVE7XKqVlglAFg3q4MmEtTVq2SVUD9UkHT
-         9Rc6NiJrfradZSSb7gp9cztf3ZCy9125X8olpgxHccfvc5fNRJgqhDLU7p22Sj4VKs5o
-         gIPcZPa83VcdcSWdT1xxKiREIYExuhunQk5pki8qNybKIF61EML+jp6VJKLkVVEVcGD/
-         V7PqhthgZjrlPdJW+aA/ydYUHHTia3cYBND6tuyBSM7UvoYgnfUVJpD7DLaYcsSDFOle
-         OV3slopw4zhonHNA86AsxS+CEK3FuK7SM+WWPkhCHVC5AbJmF+ETYVDbCvfCZCQad2m3
-         pNbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723218045; x=1723822845;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ErMc17L04Y+frI1FBkQ+3nAwLH6q7Xg4kpfE9NJb3g8=;
-        b=qL023iSWP7V890yt5jZy8+x2YS35h4af4kLTWj7bK/oZNCnh634Hv5kC/dEPWQadeX
-         nie23QjT4+XR6nMn4+Kvmr1bW0Q2erI2azeOjdvXL02JAyX4Vwz1A4ZmA13OB331xZmM
-         LilwoC25WzlTwNm4KLm7zYQWlZ6xMJtNIbkatW46y4+RWELHUqVHSKiB10BvsNJujtcd
-         VTpMrWoMoFAwajEUdt9u0AcXCOEotqHLGR5qauJuEZz4X1g7cjHmYVwT0cYG0lTqbekL
-         M4ZRjW5NBMcHYNGApIKPQUBsr3wGszqAwgLM1AFzRP2bcQpFEoL/DXXKcNnEzrwuuAZ/
-         2yLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIJjKrglbEV5LuINiWzNy1BFO4DOvNcJ/2UM9FpX6JiuLQpy4YkJgh0KO/RbZq6loR3zrff6xopc2Ph+mnBVHgAp29tmzKr3ztUiB4
-X-Gm-Message-State: AOJu0YwLowLaawjo1duaeN8U+wDal1K6iYKz2P6BwM2pNsw/ELldY8k7
-	AuQEr2zjXRINZ1zJqq9RvwBkQSX/Qauxein3PPTahEqLctEVNma+ZnhOgAc8SokbYRsUFSuuYJZ
-	dVA==
-X-Google-Smtp-Source: AGHT+IGwKw2KKUU7sXggWm9RjiZAHKpy2+WRk1B7z9K2MDWh7RD36JKtkCJ+xCXkC9ifEG/LznRinzDK984=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:66c4:0:b0:78b:4703:17af with SMTP id
- 41be03b00d2f7-7c3d2bed86emr3612a12.6.1723218045232; Fri, 09 Aug 2024 08:40:45
- -0700 (PDT)
-Date: Fri, 9 Aug 2024 08:40:43 -0700
-In-Reply-To: <20240710220540.188239-3-pratikrajesh.sampat@amd.com>
+ d=eideticcom.onmicrosoft.com; s=selector2-eideticcom-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SC00QCPFfvhcb4qWy9qtulBu3TVn+Bi7Y2Htp5GADTA=;
+ b=Y56/tEa0KCYPCYnDTtEKH7Ra1QcvOvPXBqdmoiEFh3AA4Bb+1/B09/7ZM/IvfuMuPBUOegv0WijCwSf77ALKc7dErIQ3M84gMHiG7nB0SbIwat8T3fCWMSk9u4NnvplMj/JqbCG0x3LZzz7LEBPF4iXDN2UZGBVRArrVdG9h44o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=eideticom.com;
+Received: from PH7PR19MB6828.namprd19.prod.outlook.com (2603:10b6:510:1ba::20)
+ by DS0PR19MB7838.namprd19.prod.outlook.com (2603:10b6:8:12a::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Fri, 9 Aug
+ 2024 15:41:54 +0000
+Received: from PH7PR19MB6828.namprd19.prod.outlook.com
+ ([fe80::69c8:bdb9:b882:b849]) by PH7PR19MB6828.namprd19.prod.outlook.com
+ ([fe80::69c8:bdb9:b882:b849%3]) with mapi id 15.20.7849.015; Fri, 9 Aug 2024
+ 15:41:54 +0000
+Message-ID: <a9468d88-c2e9-431c-a2bc-847ce9743729@eideticom.com>
+Date: Fri, 9 Aug 2024 09:41:48 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] kernfs: add a WARN_ON_ONCE if ->close is set
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Artemy Kovalyov <artemyko@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, Logan Gunthorpe <logang@deltatee.com>,
+ Michael Guralnik <michaelgur@nvidia.com>,
+ Mike Marciniszyn <mike.marciniszyn@intel.com>,
+ Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
+ John Hubbard <jhubbard@nvidia.com>, Dan Williams <dan.j.williams@intel.com>,
+ David Sloan <david.sloan@eideticom.com>
+References: <20240808183340.483468-1-martin.oliveira@eideticom.com>
+ <20240808183340.483468-2-martin.oliveira@eideticom.com>
+ <2024080933-jazz-supernova-9f3a@gregkh>
+Content-Language: en-US
+From: Martin Oliveira <martin.oliveira@eideticom.com>
+In-Reply-To: <2024080933-jazz-supernova-9f3a@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0073.namprd03.prod.outlook.com
+ (2603:10b6:303:b6::18) To PH7PR19MB6828.namprd19.prod.outlook.com
+ (2603:10b6:510:1ba::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240710220540.188239-1-pratikrajesh.sampat@amd.com> <20240710220540.188239-3-pratikrajesh.sampat@amd.com>
-Message-ID: <ZrY4e39Q2_WxhrkI@google.com>
-Subject: Re: [RFC 2/5] selftests: KVM: Decouple SEV ioctls from asserts
-From: Sean Christopherson <seanjc@google.com>
-To: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
-Cc: kvm@vger.kernel.org, shuah@kernel.org, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, pbonzini@redhat.com, pgonda@google.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR19MB6828:EE_|DS0PR19MB7838:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f223de2-012a-4b5d-8945-08dcb889cb4a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z28rOXE2SlE3ejNCcnhoTDhNUklUM1hpRzF2MUo1SnJQTHVlVE1DRGFOc3lu?=
+ =?utf-8?B?RnZwSnZWZ0VPQ2x4QlFGT09xakpNUlc5Z2cxWHVMUFpFa1dSRFVJUDlxOWoy?=
+ =?utf-8?B?cWE4OFo0SEpRbFFtaVErY05HcWtJZTlFYlNrelBUbzd0ZHp2Yzl4VjcvbWE5?=
+ =?utf-8?B?OVFIWC8wQ1ZmWEplYlJCeW5oUGxDbHZjZmgxMEFhWjFaOXNwV0s3YzRiZTBu?=
+ =?utf-8?B?UGRxUzdKMmxEMWcyOFJhQ1h5UXU4SXJJelViUUpPWUN6VXBtdGZRZ0VBUk1y?=
+ =?utf-8?B?dDUxTHAzNnBFM1R2d1VNelMxQXkwbnJadUtEd2thOUgwbHlNWmdLOEYxdVhF?=
+ =?utf-8?B?MnV3K292TEJyakNXeW5UODhOWUdaOXhoZ2duMzFUZnJqL3BBdkN6Q2ErN3Fu?=
+ =?utf-8?B?Q2ZPVUFqa205Rkllb0ZwR0VabDJvSnduVzZQd0U2S2FjTG1VaHlNcm5sUDhO?=
+ =?utf-8?B?OGI0Y24zNy9WM1B1K1I3eS95bDVzT0Y2ZFNUT29sL25vdm1hSzE0L0RkRXdp?=
+ =?utf-8?B?cWZ4MTlNZUZUMVFRSVhXYlZDR1FMSTlnRmcvditWZW0xMTVQZHoyL1pQbzlh?=
+ =?utf-8?B?S083L1drU2xzZEVQcW1zTktSRVBqSmlScFpGeldjOUtRamdrUHkrYzlVa2pV?=
+ =?utf-8?B?R1cyRGxGYjBNMlNrbHR4Y2FJMUkwbSttcWhYWE1sZmJkU2RXMmd5OWtueUc1?=
+ =?utf-8?B?MEpLeGxTOHM5YVQ2UE9PQkYrdVBRV21FS2x0bVdzdElwZGJVRVpmVGhUSi9X?=
+ =?utf-8?B?TCs1SjY3ZThnbjRPczVXUkU2dkJJTXJwaS9nVDh2b3Y4a2c2djE5YkZpclgw?=
+ =?utf-8?B?UmY2RmM2b056aXQ4ZkFHNjcwZFlJUU82N21SS1B2UDBEMG1xallQQUlDZGlo?=
+ =?utf-8?B?dEZhUDJDdVBTcHV2TkZUa1BRRTdqc0ZQQXRNL2ZQYjBSWHV3UEtpeFVDMkh2?=
+ =?utf-8?B?OWIwa3BXcG9yMEZkYStnY1hadWxXSnRsNnNKU3Q2c3NiaUlEaDVtQVlBVVBx?=
+ =?utf-8?B?eUJlMEhHbW5GUWlxWjRPYUFxREZxU3VSL0MrR1FicVcxU1FGbXpRSWd2WVRR?=
+ =?utf-8?B?aEpEOXpaUUZZMG4yRXZxeVJRRnZxRjRuRnBiL3NoMy9mQm80NXJ3WURjUEk5?=
+ =?utf-8?B?QUlkQmJGcGVUdEFLRTlpeGg0eXBKTTBDbEExMnlZVWltRW96WlBqTnBWMGZp?=
+ =?utf-8?B?VXNPTVZyeVNoOE5mcEFrWHZKbUhZcUdraklJbldYdE5Ta1Y4VDR1MHBTWm5s?=
+ =?utf-8?B?S085ZWVTS1RLbUZ4eitMNnByN0Z2SXdkQkpuK1REdlk2Yk80TlJEdmwzRVAz?=
+ =?utf-8?B?NVBxOXUyWkNtdmsrWS9wMHc0czJKTEVlWmF3R3NEcHYvQWRiZTcwVGRqZDBS?=
+ =?utf-8?B?eXp6Q0U2ekx0MnFlNkUvM1NTT0Q0UjE5WGRadmpDbnZESnh6a0xQWEZ1cTZJ?=
+ =?utf-8?B?dmplTVVFaWlKWXVuUld5VXA0SzU4a01lUzFVRDhVcnFzaU1ra3pwNTZZbWxT?=
+ =?utf-8?B?TjM2L3E5RVlUZGFTYlNuaHk5UlUzTEZrYVRJY1R3Tjg0RVpxVHNWby8yT1ZH?=
+ =?utf-8?B?Z1FHOURHQ2g4KzhpZEZ6VzNRc2VoWnZ2cjJycUM4VXcvZ2F6VW40aThqdnpN?=
+ =?utf-8?B?ZVluU2dnc3lPaTUxY3o2dk1iNnFHVzhQZ0pkMFp3Y21pc2lrNEoyRlZ3QU05?=
+ =?utf-8?B?ODhjVXcwTWpnL05Ic092T1pucjd0VGtaUkJ2NUNCZXhxVm1tdncxUTdXSFBn?=
+ =?utf-8?B?bjdIbGNQbTZNTUd5UzJLaDJjYVRWR3VXREtiZ1VidkJwTFJhcDhwMyt0SDJM?=
+ =?utf-8?B?Njk1VTJpOWtmV1FBZll4Zz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR19MB6828.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WkVxM2lHVVA3dmxkaGw5MnVEVnZiRUdUVy9QQzhIVDdaL2JkS05aVktCVTZ4?=
+ =?utf-8?B?ZGRhV2g3amZ1SExPRTlZUmZnS25Ma3U1dzJNZFdQUVZhSXkwd3I0Mmh2LzQ1?=
+ =?utf-8?B?KytJbzk3d3VkY2dxcUpsMDI1TTBheVEwZ0tXekRMV01DNUpZR2p6VkxDbk1C?=
+ =?utf-8?B?MnZSNytHcUdiRzdWdTdBUW12S2ZGcXNVZUVJWm5IMFFlTjAzNmJWbHIwd2oy?=
+ =?utf-8?B?MWg4SVNZcndrUlVzaTZhN3FHQ0FzbUFtK2l3b1hvcGgyR2tiM0xYelMyYVNP?=
+ =?utf-8?B?V0tYak9JaU1wRmR0RzJEZS9iVkxUZ3kxTjVFb1dPdDd5WkpsTitaSldlMVI3?=
+ =?utf-8?B?TjdTa3ZMOG9aQWVWbUprWksxeGREREc0NXErc0g1aXNQQlVaaE1SZEE4clhP?=
+ =?utf-8?B?SWN0S2hFcjRONGFiRmw2dStNRmN0dnRRWDF3YzRXUTdSQm1Ga0FKZ3NOWi9M?=
+ =?utf-8?B?K2xqdk5uME1XVW1BOVZrczJLYm0wbVdpbXBFVi9SUHNmWm00c1IwUDFBUUZm?=
+ =?utf-8?B?dW8yclFYbXhNbVBFOWs4Smt3clI5c0cyMHNXWUh3aGRPZmw0czZTN0l3Y29i?=
+ =?utf-8?B?MGIrR3RyRVdveGV1R3dlNjZZZFA0dUJPOW1wcitJUXlqMVNZMEN1QUJwTit2?=
+ =?utf-8?B?U3NHVlVnNnRCdDM1U2JLczJOd2M1b0VicGE4alN6U0o3eGRuVUE1dEdPcDBV?=
+ =?utf-8?B?aklzcjFoRXNjNUZxMXgvQS9PcVUzYUMxcEZYaHZyRjBjMTRVc1EvUDAxdTg0?=
+ =?utf-8?B?SUZSbWFsdk10VG81cFRhZjZUdG1leXdRK04yV3VzMmZRbEZnN0NiQ3doZTVq?=
+ =?utf-8?B?UjVST1ZZaDdRMWJRc0UrcEZ5NEJDMDhLaEpjRnVzdDFUQ0RtSTlTR3I5ajdw?=
+ =?utf-8?B?K0JRRGYrYkdIb2s3d0RCYXgrUHZGalQra2h5OWFrK3hxMXR0WitsejRLQlky?=
+ =?utf-8?B?ZVdaYk1OdHltSlVUU3hCcVBORUZJNUdGZGwxK3FMaDl2MnBGTDgvOGhRS0Fs?=
+ =?utf-8?B?RDlpdnpVUUhaazNRWG5NdmVpNkRNbllhK3lwRTFOcnZqc09YK3cxanJBUGtr?=
+ =?utf-8?B?NGRweVN6QTZJU3MwR0daSmMzWG5EeCtQU3JmWVJucDc2VEZ4cFZ6RDRuS053?=
+ =?utf-8?B?eFFNLzRNbWZhZC9yTnNzS01ETmpUcGcwbUNpZU1YVnlhRDdyUFJmaitveDdM?=
+ =?utf-8?B?bWdpR2lIRXVyYXNJLzBYdVBXMWlNaGNRbk9zQkoxUU43WHdzY290YWVKemJR?=
+ =?utf-8?B?VTM4bUd2OWJKa0pVRm5VU0F4SURic1Q5TndEK00wc2ZWUk9ra2dydTloRXlp?=
+ =?utf-8?B?bkl5c3BZdm15T1c4QUs3bGhYVlNXbEVxWDlMbzJ5R05oRWZMKzVtMEdoVTl3?=
+ =?utf-8?B?Z3M3WTNvRnFhZzFEUUQ1L1pBSE9JdlNQeHJsdnlpQ0JLdCttYkExU05FTll6?=
+ =?utf-8?B?TjFhNSthT2NSN1dZaHBTajJrQk9CNnY5cWhEMkxnMnExVkt2WXBGWkpRNFln?=
+ =?utf-8?B?OVJRWVdWNlhvNDdxT0o0QVJrMGhieGQ5clU5a2pKaUQ3WTYrMm5GdDBqWWhT?=
+ =?utf-8?B?VTh6SXhJalBZZEVnZFFxd1AxbEkyUTJZemYydkxvQjNJVFczM080Mm9IQ1B4?=
+ =?utf-8?B?aTd5N0VLS0I3alFFdWZMV3dkS0hGTXhabjA2bXJIVUhteXNvY01qNHdaUG5J?=
+ =?utf-8?B?bCtma3ZOUytMQUdBZlRUYWJMNDVGNlZMSWl1UXpBVENXK0ZyeHhWMzg0bWYw?=
+ =?utf-8?B?Ujh5WTZWMjRiQmRvNmFsckg5K0ZGbzlKZE1ZTUd0VFY5Z2M0ZGxqOVMrdHdG?=
+ =?utf-8?B?ZUgvQVVaT011NUN3ZzdmMGYzMW9jL3krN3RmVFAwdTVwdTQzSHlBRG5pVkhw?=
+ =?utf-8?B?bndjVVVrVkc0bTBwSldUQm56Zml6Z0I3eUxhNENBcTF6TmZubUtkdjVBMDkr?=
+ =?utf-8?B?UTdkQnBheVhPMzhPNmZ4SGVtV0dUQ1JwOTdnTDFNNDZGU3JUUEgydmoyUmtP?=
+ =?utf-8?B?V1hRekJIKzJkYU43QTNIekZSSU9nT3lPT2pTU2hMb0pOTldBbmFhNUJReVBZ?=
+ =?utf-8?B?ay9QQldXbHVMRXdTelE3aVdWOURMQWkvK3JYL2ZqWDk1Zzdac252OFJHajFu?=
+ =?utf-8?B?c0tpTEpNZ1BHeHNaU0EzemttcHVPMG5ZT3Q2cUwwRTBUSXEydDlIelh6d2pk?=
+ =?utf-8?B?YlE9PQ==?=
+X-OriginatorOrg: eideticom.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f223de2-012a-4b5d-8945-08dcb889cb4a
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR19MB6828.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 15:41:54.2097
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3490cd4b-0360-4377-abb1-15f8c5af8fc2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +TA+FpnnAdoe9ZzrUCTtRZ/8JuiaSk9sL6r4rBgKlnjeZgwifJFSxdoa5dYvdNEzCYwR1KJDJFQHWk2P3yEWE4OGhwwn7yy0Hunqbtjyqok=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR19MB7838
 
-On Wed, Jul 10, 2024, Pratik R. Sampat wrote:
-> This commit separates the SEV, SEV-ES, SEV-SNP ioctl calls from its
-
-Don't start with "This commit".  Please read Documentation/process/maintainer-kvm-x86.rst,
-and by extension, Documentation/process/maintainer-tip.rst.
-
-> positive test asserts. This is done so that negative tests can be
-> introduced and both kinds of testing can be performed independently
-> using the same base helpers of the ioctl.
+On 2024-08-08 23:37, Greg Kroah-Hartman wrote:
+>> diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+>> index 8502ef68459b..72cc51dcf870 100644
+>> --- a/fs/kernfs/file.c
+>> +++ b/fs/kernfs/file.c
+>> @@ -479,7 +479,7 @@ static int kernfs_fop_mmap(struct file *file, struct vm_area_struct *vma)
+>>        * It is not possible to successfully wrap close.
+>>        * So error if someone is trying to use close.
+>>        */
+>> -     if (vma->vm_ops && vma->vm_ops->close)
+>> +     if (WARN_ON_ONCE(vma->vm_ops && vma->vm_ops->close))
 > 
-> This commit also adds additional parameters such as flags to improve
-> testing coverage for the ioctls.
-> 
-> Cleanups performed with no functional change intended.
-> 
-> Signed-off-by: Pratik R. Sampat <pratikrajesh.sampat@amd.com>
-> ---
->  .../selftests/kvm/include/x86_64/sev.h        |  20 +--
->  tools/testing/selftests/kvm/lib/x86_64/sev.c  | 145 ++++++++++++------
->  2 files changed, 108 insertions(+), 57 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/include/x86_64/sev.h b/tools/testing/selftests/kvm/include/x86_64/sev.h
-> index 43b6c52831b2..ef99151e13a7 100644
-> --- a/tools/testing/selftests/kvm/include/x86_64/sev.h
-> +++ b/tools/testing/selftests/kvm/include/x86_64/sev.h
-> @@ -37,14 +37,16 @@ enum sev_guest_state {
->  #define GHCB_MSR_TERM_REQ	0x100
->  
->  void sev_vm_launch(struct kvm_vm *vm, uint32_t policy);
-> -void sev_vm_launch_measure(struct kvm_vm *vm, uint8_t *measurement);
-> -void sev_vm_launch_finish(struct kvm_vm *vm);
-> +int sev_vm_launch_start(struct kvm_vm *vm, uint32_t policy);
-> +int sev_vm_launch_update(struct kvm_vm *vm, uint32_t policy);
-> +int sev_vm_launch_measure(struct kvm_vm *vm, uint8_t *measurement);
-> +int sev_vm_launch_finish(struct kvm_vm *vm);
->  
->  bool is_kvm_snp_supported(void);
->  
-> -void snp_vm_launch(struct kvm_vm *vm, uint32_t policy);
-> -void snp_vm_launch_update(struct kvm_vm *vm);
-> -void snp_vm_launch_finish(struct kvm_vm *vm);
-> +int snp_vm_launch(struct kvm_vm *vm, uint32_t policy, uint8_t flags);
-> +int snp_vm_launch_update(struct kvm_vm *vm, uint8_t page_type);
-> +int snp_vm_launch_finish(struct kvm_vm *vm, uint16_t flags);
->  
->  struct kvm_vm *vm_sev_create_with_one_vcpu(uint32_t type, void *guest_code,
->  					   struct kvm_vcpu **cpu);
-> @@ -98,7 +100,7 @@ static inline void sev_register_encrypted_memory(struct kvm_vm *vm,
->  	vm_ioctl(vm, KVM_MEMORY_ENCRYPT_REG_REGION, &range);
->  }
->  
-> -static inline void snp_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
-> +static inline int snp_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
->  					   uint64_t size, uint8_t type)
->  {
->  	struct kvm_sev_snp_launch_update update_data = {
-> @@ -108,10 +110,10 @@ static inline void snp_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
->  		.type = type,
->  	};
->  
-> -	vm_sev_ioctl(vm, KVM_SEV_SNP_LAUNCH_UPDATE, &update_data);
-> +	return __vm_sev_ioctl(vm, KVM_SEV_SNP_LAUNCH_UPDATE, &update_data);
+> So you just rebooted a machine that hits this, loosing data everywhere.
+> Not nice :(
 
-Don't introduce APIs and then immediately rewrite all of the users.  If you want
-to rework similar APIs, do the rework, then add the new APIs.  Doing things in
-this order adds a pile of pointless churn.
+Well, apologies for that, but there's no way to know what every single machine
+out there is doing...
 
-But that's a moot point, because it's far easier to just add __snp_launch_update_data().
-And if you look through other APIs in kvm_util.h, you'll see that the strong
-preference is to let vm_ioctl(), or in this case vm_sev_ioctl(), do the heavy
-lifting.  Yeah, it requires copy+pasting marshalling parameters into the struct,
-but that's relatively uninteresting code, _and_ piggybacking the "good" version
-means you can't do things like pass in a garbage virtual address (because the
-"good" version always guarantees a good virtual address).
+However if this machine is using ->close when that's clearly marked as
+unsupported then shouldn't we fix that?
 
