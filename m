@@ -1,114 +1,103 @@
-Return-Path: <linux-kernel+bounces-281247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2BD94D4CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:36:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1105794D4CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02391C20DB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:36:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0CDA1F21F96
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3BC1C6A5;
-	Fri,  9 Aug 2024 16:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484561BDDF;
+	Fri,  9 Aug 2024 16:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMvcEJeU"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iQ/RzX7U"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5581B5AA;
-	Fri,  9 Aug 2024 16:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAE11BC2A
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723221385; cv=none; b=NpuaGn5Axhs0iloaYXq5FNKQonS33TriJFG4gjnUWj/oouOtUav5E0gsJNMwCsoKeBQujvADMIVnWaDL6hRwxcAJXX0blA96i2JBrlD4k93Kh7qT4TQ+vWBrLpGqQRvGjEQ4kBAKJTNKU9h+0PYr5VVgWdMfwHtrwni8bMFTPEA=
+	t=1723221396; cv=none; b=KxTVeTlsOAj7MnwtK7fChezeWF/V/dUOVhX/8QnfQPhdZpWsWQC49E9MAhCZ7ANitd0D3X16mKZmQIVThPi+6SsiRWXwIPIvNd+vglMNRcZ8APrbBFD1ZPjkjxLDhf0BqfYsXPB/ypra3bdvJZDywzLw6eitqx00z1r2M1Z+E5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723221385; c=relaxed/simple;
-	bh=OToVOByJc9WGbBP2Mfrsg0JmnvRj/WNyOXEd2KhUXiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mPUfvQzT3amwS1Y3BIQVQFQC9f3C/Wm3SZ2SBreFp25MpE3o/zcb5Scy8JxN8WhDT4nMGzIOp8lbB8QocoJl64QMX03NhiXFDYbAbjW5ih/gdVUx1vYKBCoxE8Q0ox0QlqTCLYG3gckzLzCBS3WxExhZXcLfEF4LO2P/m67YPAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dMvcEJeU; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd65aaac27so23367275ad.1;
-        Fri, 09 Aug 2024 09:36:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723221383; x=1723826183; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dOvKQQNP7wKM/xhTNrHs3+UTyLUMewT6tRAzSUGbnrM=;
-        b=dMvcEJeUFfu18NpjPJWh//ug3MgJTIrhntF7cmcccUMc9uP+6yszQynnjCtUOLSkeO
-         frtQ281xImH9o6yhYHf7ejwIbA+7Zp4a1u0cPOW1622P0D3+lKyKKC5XQsH4+bmOhu6t
-         j80x26fPt8IA9Doy7n2n+or/rgtFm7AOP13J+/Kjwi27yQp+XMC/In2bJPv9+ymUr1aH
-         ir2L3dXB4jFjhu+lyH1RUJF7y0h8JYxlGeOh/py28PcwR70QCpeEwZjWezllfcxpj4dF
-         c4MTFVQ4ao7eF8lfyrKNqLAQKW7iDGFt7XDq8YMnQhW8+GqvabO1GuydK8b9YinLhdQj
-         Gwyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723221383; x=1723826183;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dOvKQQNP7wKM/xhTNrHs3+UTyLUMewT6tRAzSUGbnrM=;
-        b=PPsgTzghHIEnZEInZKhoImIPUA14VWPR3Ozko21tywo9ZudsahR1ul3Cf1BHo5dMtK
-         1crhw1+CzyMITkz7yQafXBTsAObIrvNl/QsACcE4atCVaBpzto7gcSN3m6TxGkArfCLT
-         mDmuKc3+9cRV/poCW8uQBuaIyKlYe1zh7mZOJrqwUgxtX1XNXmXnFaDHAYfCG16FiPbz
-         nD5U72oWxeMAs4t0HOjWPpJGgHZofE5XaVUQN6m9Efc9r4dclfSXJ7wNQ07opKkW0lS9
-         a9fm1136cJCWvqD1Srxp4yI5a4Ndl/hxVBNGJ3+lJGyZg0aOtY5BErH1dHE61D9pgFSe
-         swRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGk/ygzvtRCnPAb1MH9mLeEKRRhfwkPjqRglEm08tRT2PziAdpt+l0b4immrfKsNup1BsDoxpVkPddkNvyUEr8+rFOxFIjHx6E8y2avcplHRmqXl0X5e3ndEC86WfdnIO0JyA4gQ==
-X-Gm-Message-State: AOJu0Yye9QRTmzd2nweCAS32VJOdQbayf+U3AoS0uuBQcq0A/G6WFAYR
-	PZaVgB855Nq3dZTFRL4l7jXGw7fg4CXiwHBmE++ywQcObe/ch1IF
-X-Google-Smtp-Source: AGHT+IFVCeA/b9e17h+cmmnvP7oaLRRrCCPmeSg+lLdsYq3zPA+cU53wOV+gn/K003Of3sgVK5GwGw==
-X-Received: by 2002:a17:902:f70d:b0:1fd:71cd:4431 with SMTP id d9443c01a7336-200ae5ebdadmr36719215ad.24.1723221382730;
-        Fri, 09 Aug 2024 09:36:22 -0700 (PDT)
-Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f26f4bsm144551635ad.34.2024.08.09.09.36.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 09:36:22 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 9 Aug 2024 06:36:21 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>
-Subject: Re: [PATCH] cgroup: Fix incorrect WARN_ON_ONCE() in
- css_release_work_fn()
-Message-ID: <ZrZFhe-teNE6xAKn@slm.duckdns.org>
-References: <20240809032259.1233679-1-longman@redhat.com>
+	s=arc-20240116; t=1723221396; c=relaxed/simple;
+	bh=Pk181wZrc8CjOyiK+x8jE4viIK2vJcNu9pdHc000mm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qzcTiMrsc1VzOgHR8nRXbu5NUHGXboZBkN6jwWFJ3sbANaNlSHSz7gnJZsxtmWChcoWix5hCkd3iMQE7dHPsdaqDVZglLaMRip2y7uiaGVDRadGUVBPYBiB/7UWd0iQcXTJUyOwNQsxLWZgf6VOniNpe8/8YP7uNmEqnefSd8RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iQ/RzX7U; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4796bLLD010747;
+	Fri, 9 Aug 2024 16:36:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+fnDO0hWiOwDNXkXzOMlxzXZYhPAo062ATrotLP5le0=; b=iQ/RzX7UO6d4nw1l
+	peP32BenC4ZvHHNTN+OR+CqWNBRHQRTQ1ZR+cc8EgVqJN9i8cNIr5CqwqIYQcgFw
+	GSLPjyyXXTk4rpFpMHzvp0xtCMo/AZERh7x2QfFkdrO1O/XdQdVxtejTD/FHYIzD
+	H8XPA2ICbS5fWRVwqbCeJjuJgc2LXMe/JirVXmWStWVX6exxKJtgGFCErIFcB8lw
+	u1CAItHCN6t/ckkLzExeSmtevcaBuBBXyyC8uAIuirGa3fnlp81FUIZCNIL7kH0q
+	3Fv67GqCeRuiT9uFdpyzjYZndmBpjO89Do9uFAiMUs/0kqoFCbZB6qHzLfjC1wV9
+	+czbJg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vpuvmytj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 16:36:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 479GaSnC009861
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 9 Aug 2024 16:36:28 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
+ 09:36:28 -0700
+Message-ID: <06648b4f-c606-06fb-0b9d-945a51f9a297@quicinc.com>
+Date: Fri, 9 Aug 2024 10:36:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809032259.1233679-1-longman@redhat.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V2 03/10] accel/amdxdna: Add hardware resource solver
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240805173959.3181199-1-lizhi.hou@amd.com>
+ <20240805173959.3181199-4-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240805173959.3181199-4-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ISCiTNZOVjEBVWlxcMl-QJ_3gDM2Xgs3
+X-Proofpoint-GUID: ISCiTNZOVjEBVWlxcMl-QJ_3gDM2Xgs3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-09_13,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ spamscore=0 lowpriorityscore=0 suspectscore=0 priorityscore=1501
+ clxscore=1015 bulkscore=0 mlxscore=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408090119
 
-On Thu, Aug 08, 2024 at 11:22:59PM -0400, Waiman Long wrote:
-> It turns out that the WARN_ON_ONCE() call in css_release_work_fn
-> introduced by commit ab0312526867 ("cgroup: Show # of subsystem CSSes
-> in cgroup.stat") is incorrect. Although css->nr_descendants must be
-> 0 when a css is released and ready to be freed, the corresponding
-> cgrp->nr_dying_subsys[ss->id] may not be 0 if a subsystem is activated
-> and deactivated multiple times with one or more of its previous
-> activation leaving behind dying csses.
-> 
-> Fix the incorrect warning by removing the cgrp->nr_dying_subsys check.
-> 
-> Fixes: ab0312526867 ("cgroup: Show # of subsystem CSSes in cgroup.stat")
-> Closes: https://lore.kernel.org/cgroups/6f301773-2fce-4602-a391-8af7ef00b2fb@redhat.com/T/#t
-> Signed-off-by: Waiman Long <longman@redhat.com>
+On 8/5/2024 11:39 AM, Lizhi Hou wrote:
 
-Applied to cgroup/for-6.12.
+> +int aie2_max_col = XRS_MAX_COL;
+> +module_param(aie2_max_col, int, 0600);
+> +MODULE_PARM_DESC(aie2_max_col, "Maximum column could be used");
 
-Thanks.
-
--- 
-tejun
+I think you selected the wrong type.  What happens if someone sets this 
+to a negative value?
 
