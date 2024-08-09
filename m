@@ -1,132 +1,146 @@
-Return-Path: <linux-kernel+bounces-280497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E2494CB62
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:31:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0322994CB66
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E480A1C2110A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:31:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F47F1C2241D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17343176AB0;
-	Fri,  9 Aug 2024 07:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C6A178373;
+	Fri,  9 Aug 2024 07:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fw3Zi08V"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F29ZTZ9B"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E917A42A80;
-	Fri,  9 Aug 2024 07:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBB31779BA;
+	Fri,  9 Aug 2024 07:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723188703; cv=none; b=nOH2cy1Mmiu32YGsLIboFM+XC/+y3nVWxC456yO3Sui8S7p+uDb12s50MITQz0j9vjY/uw1oax/2klFmF7H6zoiPhxUBEegFHY7H5zAqfj7dvtwEO9uI2/IVXsiea1op+TB/vRhuc/sU9b99PY8PiKC8iozkjy9mG5QxgmQGMak=
+	t=1723188708; cv=none; b=EBd2Wg0k3phBj0UstQXUuIk7sB+KKnsC9k2HPajygdfMdoHgAcdjRxfdjmxMhEWx9sdY2P/G262X27YIARjI6MBlEzmz1xi5a0INWw2KSFgFjrMYHub2F56mQxsgcoPnOYz7jb3ePD0FcQ5nRsXS1NEgFM8av2aJOFpPCdYd/qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723188703; c=relaxed/simple;
-	bh=yMQ3Q3eLvNbv9q2n1oFCiwLvHFSgMLVSSkJlH/F4ODo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QrGf+iPePMESqEz/YtOem9b9FAzES1DhrNkfXQ588PzLJerQ5Uarb/VjqB45LEaXCBGUT7dxbsyLBADgy0RSzHlcG8jEec0+t/oOj6nbbLHOYZNcbA11TJrr/HHsIjR5n9EXDiJu0ueG0S3SemKC5D8k1yo1STl83OopFmfpHRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fw3Zi08V; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4793vX94027462;
-	Fri, 9 Aug 2024 07:31:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=A2J2fMDbSsONj
-	HYVtVqbdyBvoF11xb7WI9cAk+oPzAo=; b=Fw3Zi08VVl+xWmKryPsif9fJ0ANAa
-	T3zSzxAoAtZZejMtpeLZf6lI4NpF9o+D6Wdpp8IPYZBDzg0U0eulEvDRtRkWVhMn
-	dnlLk6vleyK/jtr7RbnbsuGpHdDjG/9FxVAd6K/hWzS8QKzubPb820KkBv9jlvMu
-	5fX9/RzGpkmrvxqTFnC+R8qDEOfg4IwTi6rr1bdcqjlCCFy0xTutX2199u5TD8Cm
-	/PasmoQwj04pyzFWS4/w1ZScbLPz4MkO2TAwKXOluURL0mcSXe6kOl6Bp35pPiQE
-	4xQTXTTOgho/RvwLe38/qVFarsvcZTtw47oUvO2mdWpdv86NQsdpBFcrw==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkd27gw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 07:31:34 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4796xOJe024361;
-	Fri, 9 Aug 2024 07:31:33 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy912m79-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 07:31:33 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4797VRrA50856250
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 9 Aug 2024 07:31:30 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CE3842004B;
-	Fri,  9 Aug 2024 07:31:27 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 501E820040;
-	Fri,  9 Aug 2024 07:31:25 +0000 (GMT)
-Received: from li-34d1fccc-27cd-11b2-a85c-c167793e56f7.ibm.com.com (unknown [9.43.8.213])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  9 Aug 2024 07:31:24 +0000 (GMT)
-From: Aboorva Devarajan <aboorvad@linux.ibm.com>
-To: rafael@kernel.org, daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: aboorvad@linux.ibm.com, christian.loehle@arm.com, gautam@linux.ibm.com
-Subject: [PATCH 1/1] cpuidle/menu: avoid prioritizing physical state over polling state
-Date: Fri,  9 Aug 2024 13:01:20 +0530
-Message-Id: <20240809073120.250974-2-aboorvad@linux.ibm.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240809073120.250974-1-aboorvad@linux.ibm.com>
-References: <20240809073120.250974-1-aboorvad@linux.ibm.com>
+	s=arc-20240116; t=1723188708; c=relaxed/simple;
+	bh=hNU3ozueY40LRoCvofvYQKhPPd3iK5bl8NdzeAq74qk=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=s8pPlgXeLgneImskjFtPH7PDkLkHfSy5n0lF9d4zgUxIsrFdCiT+CqfiuL1+pVfz5EMNjH/BveIpnA5UA0qlPvmEvG9PkpEJaIpoRyc+kI74vNv+/QLrr3xILgoygAiRF3w0jKglUQG7EJKmgsEJ9PTgac6NbkkuYg/BAL2O+68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F29ZTZ9B; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so9914945e9.1;
+        Fri, 09 Aug 2024 00:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723188705; x=1723793505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m0HItoXUY0vD1gfIPgJQfdPpyuKVG6YHUkSKI7hGTZg=;
+        b=F29ZTZ9BkdxV4XT+FLVaHghXpbUsc3kSbp6ZHa1tsaLH0eXJKcrFfAt4Y1vT6EUULH
+         quXvMt8ArW5x9isQvmKDHhfAbm/IIradAerV6HOT9CedeulMKiFLEw8BwSBqbnSkQl1x
+         8qCazVtHTkNCp+a3t+Pvdfd4N45zlCK1fT/meHiJmjbUzQfVNR/OPvgEm69yG6FUi7ex
+         n1eq+HyC3bjyRE0KpEDojYN7MJ250RyJZxiIO9f0Qg3sEhb4TtKYgpFWYpfHVsY5MNu+
+         ytQPmiQcP6jRvUYOyxYIh6MKBM67lt9z9oC2DDKbCmkVhHBwRvXPsJxVjIQjgFppPIDL
+         ZueA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723188705; x=1723793505;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=m0HItoXUY0vD1gfIPgJQfdPpyuKVG6YHUkSKI7hGTZg=;
+        b=rw8pkbw3z5IUGlLJo4kEB+7VgDTfcPlzAiU/hBCrDDBXny+1UR1TB9Ub47Y1/7iUHa
+         +uVvLzFZOdqluhXMIfnY3UauYFv5kVuLWwa/R8lcYM0beNumGIOu9OZo/kC4nqH3oeIU
+         U2V9tDDGIlVcRi/LfbGC5P2WCp2s0LFpwfRdzJ+DlW75HnHCGKTGWTrHPALESWaJJCwc
+         BPpVSWxRCcVGr1EygXUvN3GrBdPasx+n/bc1VAeTRQOdkxJixSO87YVpQ57coqe8tj1f
+         r/CiVLjo4YHOTiW48mj/zRJfcb9YUxnP5WJvnVZO5Dh8iXXdhRmNQPknB3GPmU3xW36z
+         bi3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWbXRbE2v1NoiE88ZXbog563Cc5mpjxXmwvl+H5FgYbAm2+N+MAB3Xal+R8q1kcURFO8SK7r8JVa9BZ1KwqcKeriOcDbGqNsiYEDMcT7ij8r6CubuNKWDpztvUD2XRi8lSODmNj3lBJuHv2jAO81fF+L3C0hMkxXyMMgVLVGjB3eHU5LYLqpsl6
+X-Gm-Message-State: AOJu0Yx1Kkio3bxVxfPbWyuIgOF3TW2vVmR2fbWR8oBhiK29XUUVZTBu
+	o/vaugtMvyrMqXGvZEvSD0OzfK8RCHbJTstAyvOmUsS2YMKOp8s3
+X-Google-Smtp-Source: AGHT+IHxM0Qxjf5+EXhqs8UX+4V8VT3XBx3QV4lPRJsN9yOxLS3fnFSOCpAf7E7SairwYIE7IZO7Kg==
+X-Received: by 2002:a05:600c:3c8c:b0:424:7871:2e9e with SMTP id 5b1f17b1804b1-429c3ac6ademr5658885e9.6.1723188705113;
+        Fri, 09 Aug 2024 00:31:45 -0700 (PDT)
+Received: from localhost (host-87-20-57-122.retail.telecomitalia.it. [87.20.57.122])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d272290c2sm4422682f8f.92.2024.08.09.00.31.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 00:31:44 -0700 (PDT)
+Date: Fri, 09 Aug 2024 09:31:43 +0200
+From: Matteo Martelli <matteomartelli3@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: jic23@kernel.org, 
+ kernel-janitors@vger.kernel.org, 
+ lars@metafoo.de, 
+ linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ matteomartelli3@gmail.com
+Message-ID: <66b5c5df76766_133d37031@njaxe.notmuch>
+In-Reply-To: <36b1a47a-7af2-4baf-8188-72f6eed78529@wanadoo.fr>
+References: <1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain>
+ <36b1a47a-7af2-4baf-8188-72f6eed78529@wanadoo.fr>
+Subject: Re: [PATCH] iio: adc: pac1921: add missing error return in probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Lw_nz3AssyCdF4eSBwEL1UPnIp7kA92X
-X-Proofpoint-ORIG-GUID: Lw_nz3AssyCdF4eSBwEL1UPnIp7kA92X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_04,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 impostorscore=0 clxscore=1015 mlxscore=0 suspectscore=0
- priorityscore=1501 phishscore=0 mlxlogscore=861 spamscore=0 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408090052
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Update the cpuidle menu governor to avoid prioritizing physical states
-over polling states when predicted idle duration is lesser than the
-physical states target residency duration for performance gains.
+Christophe JAILLET wrote:
+> Le 08/08/2024 =C3=A0 21:28, Dan Carpenter a =C3=A9crit=C2=A0:
+> > This error path was intended to return, and not just print an error. =
+ The
+> > current code will lead to an error pointer dereference.
+> > =
 
-Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
----
- drivers/cpuidle/governors/menu.c | 11 -----------
- 1 file changed, 11 deletions(-)
+> > Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
+> > Signed-off-by: Dan Carpenter <dan.carpenter-QSEj5FYQhm4dnm+yROfE0A@pu=
+blic.gmane.org>
+> > ---
+> >   drivers/iio/adc/pac1921.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > =
 
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index f3c9d49f0f2a..cf99ca103f9b 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -354,17 +354,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 			idx = i; /* first enabled state */
- 
- 		if (s->target_residency_ns > predicted_ns) {
--			/*
--			 * Use a physical idle state, not busy polling, unless
--			 * a timer is going to trigger soon enough.
--			 */
--			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
--			    s->exit_latency_ns <= latency_req &&
--			    s->target_residency_ns <= data->next_timer_ns) {
--				predicted_ns = s->target_residency_ns;
--				idx = i;
--				break;
--			}
- 			if (predicted_ns < TICK_NSEC)
- 				break;
- 
--- 
-2.39.3
+> > diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+> > index d04c6685d780..8200a47bdf21 100644
+> > --- a/drivers/iio/adc/pac1921.c
+> > +++ b/drivers/iio/adc/pac1921.c
+> > @@ -1168,8 +1168,8 @@ static int pac1921_probe(struct i2c_client *cli=
+ent)
+> >   =
 
+> >   	priv->regmap =3D devm_regmap_init_i2c(client, &pac1921_regmap_conf=
+ig);
+> >   	if (IS_ERR(priv->regmap))
+> > -		dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> > -			      "Cannot initialize register map\n");
+> > +		return dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> =
+
+> The (int) is unusual.
+>
+The (int) explicit cast is to address Wconversion warnings since dev_err_=
+probe
+takes an int as argument.
+> =
+
+> CJ
+> =
+
+> > +				     "Cannot initialize register map\n");
+> >   =
+
+> >   	devm_mutex_init(dev, &priv->lock);
+> >   =
+
+> =
+
+
+Thanks,
+Matteo Martelli=
 
