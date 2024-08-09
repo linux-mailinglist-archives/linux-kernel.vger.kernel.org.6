@@ -1,122 +1,137 @@
-Return-Path: <linux-kernel+bounces-280930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C382394D118
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:21:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8CB94D11C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F8C1C21068
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:21:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166611F2290D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22567194C65;
-	Fri,  9 Aug 2024 13:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02ECD195B14;
+	Fri,  9 Aug 2024 13:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IEXIkJTa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="48teUsHm"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12E519046B
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87751957FF;
+	Fri,  9 Aug 2024 13:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723209682; cv=none; b=ezPvRCwbbnuLvkrpwjDE4QXdI6AqW47dDF62561vwSqkrtDERpsYT458lYHZc3jXMjuYtm4bW7Ay2c/gjRKMN2V1dKmHdiWbculoXouxSFHjARRfbERHRpyt34LxLGurifp5v2htCXhJ2WWjVhFefPYOjnhXyqHtNanjXkZzE4Q=
+	t=1723209694; cv=none; b=LUeJfm30Bp752LKYIiscPj4c3bnLezIjRaEMkwqJiHexwfdjwrl1Q1ffFZGyb1PY6FIqunPwN2djGN2OqPjBLeDKp2rmosEh52JM1osm7h9RLl96us3SC7PNYw2wFYI+M0FNzg1VRem+qiGGGX+f1px9cjLiWAjuG3Lp0bG57QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723209682; c=relaxed/simple;
-	bh=21XDyHoIvdr2kmFYpi3tjvKxqhkqRnTC/2zgaZaZaJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qmUBgnCVG4uOFCkyUcpyrfJJG2NnSJFTHKRmD+kit7mpaUKoW4tw1f6fHveKOCC1Ev008OyIezfbHXCfLDlsyoddMiBTNT4kCSUV6KPRfReZUBSR4I0Qeae4s7XWvS6lZCD6jSbh/jo/gdBd4GHbCEYEaNA1whSUdX6s3nQunb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IEXIkJTa; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723209681; x=1754745681;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=21XDyHoIvdr2kmFYpi3tjvKxqhkqRnTC/2zgaZaZaJg=;
-  b=IEXIkJTaT89LunDjJgRfh7goBqN5kc8gi6Qe74MghjFXXynquduKjPxu
-   S8r8SBWwzCWMJdkQWuLf6TbF87VhJelJoVMiqGMLq8NZRXtli2HyiW2aA
-   7uwEuMTLfQ8uPSlia0XTyag1uxtZz94lM2tEosASvm6vat52ocJDos+Nb
-   jefocqwkELWjQtYXjukhThD35hj01lZxm6nxQi/r5UBYEc6w1H2/FpIZI
-   YOL3RzcNOcMT4QHkZB19OSSpUoEjaVqxreGM/NJrYwvGFlj0W0e4u5Huk
-   J8CaNeax5R23UNLY9i3ensv5qelIgN5Tz0JIxah6fZJubdh0dLoo869FJ
-   w==;
-X-CSE-ConnectionGUID: U2Zm9xqDRgCVokPbJXMKPw==
-X-CSE-MsgGUID: PWRSDTUjSluu70T4zu0h/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21534230"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="21534230"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 06:21:20 -0700
-X-CSE-ConnectionGUID: 2kR6hczSQoKB6JEPPB6kqA==
-X-CSE-MsgGUID: EpyfFweMQY6Frlz242WdmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="80799493"
-Received: from unknown (HELO [10.237.72.57]) ([10.237.72.57])
-  by fmviesa002.fm.intel.com with ESMTP; 09 Aug 2024 06:21:18 -0700
-Message-ID: <ce725e2b-378c-46ba-86ad-a877de0e1ef4@linux.intel.com>
-Date: Fri, 9 Aug 2024 16:21:17 +0300
+	s=arc-20240116; t=1723209694; c=relaxed/simple;
+	bh=uaWrmKfdlp08h4LImLDnqKG4lh1zZEe9v6J8JQG8DWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kkitb6MNriqFu18FXc6kIQ0JwVB2Kbxslko2d5r5cMnMo7Dww0Aq1l8Lw4VuS/6AhIANsYOSL85anIym0+/m5B7IxR4SbMD6y4bIGw3JL3tIM4Dj17KrzE303/LXmZZKvTPJgYmjhkzPIXBpSV6cn/7wg1NlHecDsQUzQ/RTVD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=48teUsHm; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=qXJQWKapDAVP5jZSgfm2qajWJklwAeB017mC5jJNkuA=; b=48teUsHmRPeZEGgsZx2SmCpep7
+	X7yR8KU6aqTmyyJ32STj6F6X1Fk3uXhyLos6953CtBGXwh661YeANUNIGtrC29TIL2262CbeqyuIp
+	39jVrMekTE6JHYuW8oO+nu+c7qlTTeV4bp+TfQEPpKGcAQbgtOSuwr+YGj8AKXuojsns=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1scPYU-004NYc-1K; Fri, 09 Aug 2024 15:21:18 +0200
+Date: Fri, 9 Aug 2024 15:21:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Divya.Koppera@microchip.com
+Cc: linux@armlinux.org.uk, Arun.Ramadoss@microchip.com,
+	UNGLinuxDriver@microchip.com, hkallweit1@gmail.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: microchip_t1: Adds support for
+ LAN887x phy
+Message-ID: <ff514ba1-61c1-45ff-a3bd-c5ca1f8b744d@lunn.ch>
+References: <20240808145916.26006-1-Divya.Koppera@microchip.com>
+ <ZrS3m/Ah8Rx7tT6H@shell.armlinux.org.uk>
+ <CO1PR11MB4771395A5D050DC1662E3C08E2BA2@CO1PR11MB4771.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 2/6] i3c: mipi-i3c-hci: Read HC_CONTROL_PIO_MODE
- only after i3c hci v1.1
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
- Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
- <20240807052359.290046-3-Shyam-sundar.S-k@amd.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20240807052359.290046-3-Shyam-sundar.S-k@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CO1PR11MB4771395A5D050DC1662E3C08E2BA2@CO1PR11MB4771.namprd11.prod.outlook.com>
 
-Hi
-
-On 8/7/24 8:23 AM, Shyam Sundar S K wrote:
-> The HC_CONTROL_PIO_MODE bit was introduced in the HC_CONTROL register
-> starting from version 1.1. Therefore, checking the HC_CONTROL_PIO_MODE bit
-> on hardware that adheres to older specification revisions (i.e., versions
-> earlier than 1.1) is incorrect. To address this, add an additional check
-> to read the HCI version before attempting to read the HC_CONTROL_PIO_MODE
-> status.
+> > On Thu, Aug 08, 2024 at 08:29:16PM +0530, Divya Koppera wrote:
+> > > +static int lan887x_config_init(struct phy_device *phydev) {
+> > > +     /* Disable pause frames */
+> > > +     linkmode_clear_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev-
+> > >supported);
+> > > +     /* Disable asym pause */
+> > > +     linkmode_clear_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
+> > > +phydev->supported);
+> > 
+> > Why is this here? Pause frames are just like normal ethernet frames, they only
+> > have meaning to the MAC, not to the PHY.
+> > 
+> > In any case, by the time the config_init() method has been called, the higher
+> > levels have already looked at phydev->supported and made decisions on
+> > what's there.
+> > 
 > 
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> ---
->   drivers/i3c/master/mipi-i3c-hci/core.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+> We tried to disable this in get_features.
+> These are set again in phy_probe API.
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/drivers/net/phy/phy_device.c#n3544
 > 
-> diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
-> index 24dd4603d6c6..a16da70bdfe1 100644
-> --- a/drivers/i3c/master/mipi-i3c-hci/core.c
-> +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-> @@ -33,6 +33,7 @@
->   #define reg_clear(r, v)		reg_write(r, reg_read(r) & ~(v))
->   
->   #define HCI_VERSION			0x00	/* HCI Version (in BCD) */
-> +#define HCI_VERSION_V1			0x100   /* MIPI HCI Version number V1.0 */
->   
->   #define HC_CONTROL			0x04
->   #define HC_CONTROL_BUS_ENABLE		BIT(31)
-> @@ -756,7 +757,7 @@ static int i3c_hci_init(struct i3c_hci *hci)
->   	/* Try activating DMA operations first */
->   	if (hci->RHS_regs) {
->   		reg_clear(HC_CONTROL, HC_CONTROL_PIO_MODE);
-> -		if (reg_read(HC_CONTROL) & HC_CONTROL_PIO_MODE) {
-> +		if (regval > HCI_VERSION_V1 && !(reg_read(HC_CONTROL) & HC_CONTROL_PIO_MODE)) {
->   			dev_err(&hci->master.dev, "PIO mode is stuck\n");
->   			ret = -EIO;
->   		} else {
+> We will re-look into these settings while submitting auto-negotiation patch in future series.
 
-Here's typo and logic is reversed.
+Let me see if i understand this correctly. You don't have autoneg at
+the moment. Hence you cannot negotiate pause. PHYLIB is setting pause
+is supported by default. Ethtool then probably suggests pause is
+supported, if the MAC you are using is not masking it out.
+
+Since pause frames are just regular frames, the PHY should just be
+passing them through. So you should be able to forced pause, rather
+than autoneg pause:
+
+ethtool --pause eth42 autoneg off] rx on tx on
+
+assuming the MAC supports pause.
+
+Does this still work if you clear the PUASE bits from supported as you
+are doing? Ideally we want to offer force paused configuration if the
+MAC supports it.
+
+> > > +static int lan887x_config_aneg(struct phy_device *phydev) {
+> > > +     int ret;
+> > > +
+> > > +     /* First patch only supports 100Mbps and 1000Mbps force-mode.
+> > > +      * T1 Auto-Negotiation (Clause 98 of IEEE 802.3) will be added later.
+> > > +      */
+> > > +     if (phydev->autoneg != AUTONEG_DISABLE) {
+> > > +             /* PHY state is inconsistent due to ANEG Enable set
+> > > +              * so we need to assign ANEG Disable for consistent behavior
+> > > +              */
+> > > +             phydev->autoneg = AUTONEG_DISABLE;
+> > 
+> > If you clear phydev->supported's autoneg bit, then phylib ought to enforce
+> > this for you. Please check this rather than adding code to drivers.
+> 
+> Phylib is checking if advertisement is empty or not, but the feature is not verified against supported parameter.
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/drivers/net/phy/phy.c#n1092
+> 
+> But in the following statement phylib is updating advertising parameter.
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/drivers/net/phy/phy.c#n1113
+> 
+> This is making the feature enabled in driver, the right thing is to fix the library.
+> We will fix the phylib in next series.
+
+I'm not too surprised you are hitting such issues. Not actually
+supporting autoneg is pretty uncommon, and is not well tested. Thanks
+for offering to fix this up.
+
+    Andrew
 
