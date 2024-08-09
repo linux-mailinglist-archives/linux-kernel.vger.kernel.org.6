@@ -1,300 +1,155 @@
-Return-Path: <linux-kernel+bounces-280732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2655294CE3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:05:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0717294CE3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62AB9B21501
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:05:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85641B21F55
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D84192B9E;
-	Fri,  9 Aug 2024 10:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4681917D0;
+	Fri,  9 Aug 2024 10:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="anFpHUMJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F2cDuWdh"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISe1vpCy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA78B1922D7;
-	Fri,  9 Aug 2024 10:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB966EADA;
+	Fri,  9 Aug 2024 10:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723197832; cv=none; b=UcwWlwOReGnVpLvFw+1RNwG3iLV8tfK07b8fWcBEzEBQxg3zqLyA2NkPdzcA4QAZ8HZG2QaMDRluaM83DRfweo+RFd5VuXohSe9tcqgdpc+gn1E7YTuPVtS67/57P3jOBg+8r+0Pl62JkhxtGH7W2nt6uX1YoVjBlJx9bRkOBeM=
+	t=1723197945; cv=none; b=BtE6MQrIp+akGq+99wCN6GcWt7r8Rqdg1BEJutFiGcbgBu357LQm1Gv+iJIaZ3cAjuAraq8V6sTykephnO84q7g58FSYPfviEk7Pw3RmbWp1IlbRhuCDpcfBgN021ky2hkQdyoVsAAJtrRogAIyH7V/vnfEJjm6hLndF4eVZSpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723197832; c=relaxed/simple;
-	bh=9GQcy1qd9NWVxlLrLF3rWsQ8GGkY667hqZKg2cR9b9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NZPp5GD8W3JthRhp7x1d3fgNujinrpxK5oKhApQQUpUqJ3TGZV/154rvVWwQ1dZbY6vWsGoVDqCqX99EZYjxGAoklrjqSIROFpO0j25jfViTpVs8isczvGWRrTVS8PGRnekWNxDRVWkKfq1ymhjQEXRS2zbCnVAghxdLo/tQkfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=anFpHUMJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F2cDuWdh; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id BD4781151B1D;
-	Fri,  9 Aug 2024 06:03:48 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Fri, 09 Aug 2024 06:03:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
-	 t=1723197828; x=1723284228; bh=rN+bQCwzpuaxy9DuH7JMnY29r/U8Bdci
-	iIULDINT+i0=; b=anFpHUMJoQRuiQ6DV8yOya2H/QeNct6j3vYfqVX4GUa7B1rY
-	sC7Q4caUE5vsF04Uc6IHgnKFmdgHKp5o44XUwOTghkP79h/I5xLv3qB0MrYYGZGa
-	rBlIhqaOZq0povLDKsC4M8vFE/XIWA82CK8Yw0fXtExfqAM0Q7sfJmfRikYp63dE
-	r11LA79K4OpHcpJuLqCpCrcBg/zRqw8HzxclQpwKu1Ht0RwwQtSQbQ+JhNWoemVQ
-	rAs2De4kjsojFKefNCZfv2bkinJh6kSQwEjdXCmY50aoMmr1WSCs871hzNccd0Wy
-	QMtFxw481D3GgyGx4Cnaq49uvdsXb93UQhtR3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1723197828; x=1723284228; bh=rN+bQCwzpuaxy9DuH7JMnY29r/U8BdciiIU
-	LDINT+i0=; b=F2cDuWdhEVTLurg3lorG/No788xqn56kC6WLeH12vp+St0WW7cj
-	WGU3e9GSsyfmfsl+2WHOFmGzkH2aqSR2qm145/qXOXv9lgY3gulCAzK16O5iwe0Z
-	pKB4f97+le6QjNBL0GSSurMfxqO5xZpNluAc/DguqoRpG8PSPlqsvB9QtaXC4mtS
-	RRhNbCHwimr5lnuISt/XVT3RqpEEReh4Ez/rKgaFo2CDvYOAzgm0bs99fTGhXV6y
-	BTt7+2U7iEQ6ADfVlaFX6gO8haF214OL/sthyjF+7KttrhSw/5PKD+bTfozP9cXT
-	rmuC3hhPX6LQ8DC/YrQn4ZTb4wVhlmK1NNA==
-X-ME-Sender: <xms:hOm1ZoTYAMZ4xSUEJW_J2KJPj6kV8dkUa83Irs3LxHIDVsHdf7p7Ag>
-    <xme:hOm1ZlzkiGqh2G3SbOlm6Y8q9cJbz6YpyJv-IeWaNNywrNAhCxFUbATZjGsB9WpIG
-    7n7CUmufLWuJ4cX5zM>
-X-ME-Received: <xmr:hOm1Zl07pJ2MCIxeqZErcyxL6a7crvc5byZR-UTLJtTrU4Rp9xzvDPT2pmI05cvjlVAdGmWjdqKkk4llT0e6h5KwvGVj8mTHNDPg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleeggddvvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfggtggusehttdertddttddvnecuhfhr
-    ohhmpefrvghtvghrucfjuhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrhgvrhesfi
-    hhohdqthdrnhgvtheqnecuggftrfgrthhtvghrnhepkeejueffveetgeffieegudeitddu
-    fefhhffgjeefueeuheelhfevhffghedutdefnecuffhomhgrihhnpehgihhthhhusgdrtg
-    homhdpkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
-    pehmrghilhhfrhhomhepphgvthgvrhdrhhhuthhtvghrvghrseifhhhoqdhtrdhnvghtpd
-    hnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjihhk
-    ohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnjhgrmhhinhdrthhishhsoh
-    hirhgvshesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqihhnphhuthes
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:hOm1ZsBA4lB20AIkjck7yt383VScBtvwSv7icj17cZlPGJRAjW_7AQ>
-    <xmx:hOm1ZhjWxSPoCdIqWUQSDuIB0Zpx34PWzIu3o7iQAPgnnix9P0RFhw>
-    <xmx:hOm1ZopUnKiIpGfH5oUO90JGe2TijhGZMGwYELMLHzIojcre43Y3bg>
-    <xmx:hOm1ZkiMWUxwKTcsLGofq0lrvHWdVA4FmPaUw5jUBu9azFdhIozGFQ>
-    <xmx:hOm1ZhdcBck4Dor5HqJpG1Da4SI_jFUJIhx4EJ7d9XnTb5VJUNhkXxMN>
-Feedback-ID: i7ce144cd:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 9 Aug 2024 06:03:46 -0400 (EDT)
-Date: Fri, 9 Aug 2024 20:03:42 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] HID: hidraw - add HIDIOCREVOKE ioctl
-Message-ID: <20240809100342.GA52163@quokka>
+	s=arc-20240116; t=1723197945; c=relaxed/simple;
+	bh=BF/gLX+YLdTrLNBjsmlMUFG4iTz6zad/entPbCJIMRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lWR2YXESf5Zoa7Mzp+OJQtcR4vhw4yPvkBMHahGIA0aQ7kUB+25Wy3QOMfgK1YfcG1rj3/WMlNTAD7HZbH0vAJRE7KrqNlkEe/S6MKLgC3Jvhz/VbYY6GiyG/7qShnH+pkx0q1S674tu0ByEJ422N5F1F2pFNAFELZHWC7Dm0UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISe1vpCy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F6D9C32782;
+	Fri,  9 Aug 2024 10:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723197945;
+	bh=BF/gLX+YLdTrLNBjsmlMUFG4iTz6zad/entPbCJIMRk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ISe1vpCykFza8Pjtj5r7w7Sce1y5HSKziXewGmiB948PGBWfp+w/18aix0qz+uOqS
+	 AyWgysBw41Q4IxCgaR9a28eofWNK0nH4skJIolqGmv644PLvh9DNecxwfu/snK4E66
+	 wOmYTAhvsv1EFmnNaqA9sDW5feC3ucuiRFlhM7FEb8ylnF3ZNO1nQkLOAilEB6YdjE
+	 AsYQjEY67sdFpC8oaieFEiDEXgXcOVQvh8BhRk5C5FIHidkdJQfXefnQOzNnzlOZ/g
+	 4EX5CW812bm0BzE76RWCtopL1a7ED0tZHKDFia/XUlVG+O71NYy007zvIJKNkaU9df
+	 CU+uFpf3ZS2Kg==
+Message-ID: <5fdf6810-f729-42bf-a5fd-a2de02d0a894@kernel.org>
+Date: Fri, 9 Aug 2024 12:05:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
+To: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
+ kernel@xen0n.name, p.zabel@pengutronix.de
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, loongarch@lists.linux.dev
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+ <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
+ <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
+ <601adbfd-fbb6-48c6-b755-da1b5d321d6b@kernel.org>
+ <89e71573-9365-2e61-bb38-759363df1b8b@loongson.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <89e71573-9365-2e61-bb38-759363df1b8b@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-There is a need for userspace applications to open HID devices directly.
-Use-cases include configuration of gaming mice or direct access to
-joystick devices. The latter is currently handled by the uaccess tag in
-systemd, other devices include more custom/local configurations or just
-sudo.
+On 09/08/2024 11:55, 郑豪威 wrote:
+>>
+>>>>> +    description: Enables fractional-N division. Currently,
+>>>>> +      only LS2K1500 and LS2K2000 support this feature.
+>>>>> +
+>>>>> +  rts-invert:
+>>>>> +    description: Inverts the RTS value in the MCR register.
+>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>>>> +
+>>>>> +  dtr-invert:
+>>>>> +    description: Inverts the DTR value in the MCR register.
+>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>>>> +
+>>>>> +  cts-invert:
+>>>>> +    description: Inverts the CTS value in the MSR register.
+>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>>>> +      and Loongson LS7A bridge chips.
+>>>>> +
+>>>>> +  dsr-invert:
+>>>>> +    description: Inverts the DSR value in the MSR register.
+>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>>>> +      and Loongson LS7A bridge chips.
+>> Same questions for all these. Why choosing invert is a board level
+>> decision? If it "should be used" then why it is not used always?
+>>
+> Because these features are not applicable to all chips, such as 
+> 'fractional-division',
 
-A better approach is what we already have for evdev devices: give the
-application a file descriptor and revoke it when it may no longer access
-that device.
+Hm?
 
-This patch is the hidraw equivalent to the EVIOCREVOKE ioctl, see
-commit c7dc65737c9a607d3e6f8478659876074ad129b8 for full details.
+> 
+> which is currently supported only by 2K1500 and 2K2000, and for 
+> Loongson-3 series
 
-An MR for systemd-logind has been filed here:
-https://github.com/systemd/systemd/pull/33970
+These are SoCs. Compatible defines that. Please align with your
+colleagues, because *we talked about this* already.
 
-hidraw_is_revoked() and hidraw_open_errno() are both defined as weak
-functions to allow for a BPF program to deny access to a /dev/hidraw
-device. The functions return 0 on success or a negative errno
-otherwise that is returned to the caller.
-
-As a use-case example, a gamepad-managing process could attach a BPF
-program that defaults to -EACCESS for all hidraw devices except those
-with ID_INPUT_JOYSTICK set by udev.
-
-Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
----
-First version of the patch:
-https://patchwork.kernel.org/project/linux-input/patch/YmEAPZKDisM2HAsG@quokka/
-
-Changes to v1:
-- add the hidraw_is_revoked and hidraw_open_errno weak functions as
-  suggested by Benjamin
-
- drivers/hid/hidraw.c        | 52 +++++++++++++++++++++++++++++++++----
- include/linux/hidraw.h      |  1 +
- include/uapi/linux/hidraw.h |  1 +
- 3 files changed, 49 insertions(+), 5 deletions(-)
-
-diff --git ./drivers/hid/hidraw.c ../drivers/hid/hidraw.c
-index 2bc762d31ac7..a9c68448cb20 100644
---- ./drivers/hid/hidraw.c
-+++ ../drivers/hid/hidraw.c
-@@ -38,12 +38,27 @@ static const struct class hidraw_class = {
- static struct hidraw *hidraw_table[HIDRAW_MAX_DEVICES];
- static DECLARE_RWSEM(minors_rwsem);
- 
-+__weak noinline bool hidraw_is_revoked(struct hidraw_list *list)
-+{
-+	return list->revoked;
-+}
-+ALLOW_ERROR_INJECTION(hidraw_is_revoked, TRUE);
-+
-+__weak noinline int hidraw_open_errno(__u32 major, __u32 minor)
-+{
-+	return 0;
-+}
-+ALLOW_ERROR_INJECTION(hidraw_open_errno, ERRNO);
-+
- static ssize_t hidraw_read(struct file *file, char __user *buffer, size_t count, loff_t *ppos)
- {
- 	struct hidraw_list *list = file->private_data;
- 	int ret = 0, len;
- 	DECLARE_WAITQUEUE(wait, current);
- 
-+	if (hidraw_is_revoked(list))
-+		return -ENODEV;
-+
- 	mutex_lock(&list->read_mutex);
- 
- 	while (ret == 0) {
-@@ -161,9 +176,13 @@ static ssize_t hidraw_send_report(struct file *file, const char __user *buffer,
- 
- static ssize_t hidraw_write(struct file *file, const char __user *buffer, size_t count, loff_t *ppos)
- {
-+	struct hidraw_list *list = file->private_data;
- 	ssize_t ret;
- 	down_read(&minors_rwsem);
--	ret = hidraw_send_report(file, buffer, count, HID_OUTPUT_REPORT);
-+	if (hidraw_is_revoked(list))
-+		ret = -ENODEV;
-+	else
-+		ret = hidraw_send_report(file, buffer, count, HID_OUTPUT_REPORT);
- 	up_read(&minors_rwsem);
- 	return ret;
- }
-@@ -256,7 +275,7 @@ static __poll_t hidraw_poll(struct file *file, poll_table *wait)
- 	poll_wait(file, &list->hidraw->wait, wait);
- 	if (list->head != list->tail)
- 		mask |= EPOLLIN | EPOLLRDNORM;
--	if (!list->hidraw->exist)
-+	if (!list->hidraw->exist || hidraw_is_revoked(list))
- 		mask |= EPOLLERR | EPOLLHUP;
- 	return mask;
- }
-@@ -267,7 +286,11 @@ static int hidraw_open(struct inode *inode, struct file *file)
- 	struct hidraw *dev;
- 	struct hidraw_list *list;
- 	unsigned long flags;
--	int err = 0;
-+	int err;
-+
-+	err = hidraw_open_errno(hidraw_major, minor);
-+	if (err < 0)
-+		return err;
- 
- 	if (!(list = kzalloc(sizeof(struct hidraw_list), GFP_KERNEL))) {
- 		err = -ENOMEM;
-@@ -320,6 +343,9 @@ static int hidraw_fasync(int fd, struct file *file, int on)
- {
- 	struct hidraw_list *list = file->private_data;
- 
-+	if (hidraw_is_revoked(list))
-+		return -ENODEV;
-+
- 	return fasync_helper(fd, file, on, &list->fasync);
- }
- 
-@@ -372,6 +398,13 @@ static int hidraw_release(struct inode * inode, struct file * file)
- 	return 0;
- }
- 
-+static int hidraw_revoke(struct hidraw_list *list)
-+{
-+	list->revoked = true;
-+
-+	return 0;
-+}
-+
- static long hidraw_ioctl(struct file *file, unsigned int cmd,
- 							unsigned long arg)
- {
-@@ -379,11 +412,12 @@ static long hidraw_ioctl(struct file *file, unsigned int cmd,
- 	unsigned int minor = iminor(inode);
- 	long ret = 0;
- 	struct hidraw *dev;
-+	struct hidraw_list *list = file->private_data;
- 	void __user *user_arg = (void __user*) arg;
- 
- 	down_read(&minors_rwsem);
- 	dev = hidraw_table[minor];
--	if (!dev || !dev->exist) {
-+	if (!dev || !dev->exist || hidraw_is_revoked(list)) {
- 		ret = -ENODEV;
- 		goto out;
- 	}
-@@ -421,6 +455,14 @@ static long hidraw_ioctl(struct file *file, unsigned int cmd,
- 					ret = -EFAULT;
- 				break;
- 			}
-+		case HIDIOCREVOKE:
-+			{
-+				if (user_arg)
-+					ret = -EINVAL;
-+				else
-+					ret = hidraw_revoke(list);
-+				break;
-+			}
- 		default:
- 			{
- 				struct hid_device *hid = dev->hid;
-@@ -527,7 +569,7 @@ int hidraw_report_event(struct hid_device *hid, u8 *data, int len)
- 	list_for_each_entry(list, &dev->list, node) {
- 		int new_head = (list->head + 1) & (HIDRAW_BUFFER_SIZE - 1);
- 
--		if (new_head == list->tail)
-+		if (hidraw_is_revoked(list) || new_head == list->tail)
- 			continue;
- 
- 		if (!(list->buffer[list->head].value = kmemdup(data, len, GFP_ATOMIC))) {
-diff --git ./include/linux/hidraw.h ../include/linux/hidraw.h
-index cd67f4ca5599..18fd30a288de 100644
---- ./include/linux/hidraw.h
-+++ ../include/linux/hidraw.h
-@@ -32,6 +32,7 @@ struct hidraw_list {
- 	struct hidraw *hidraw;
- 	struct list_head node;
- 	struct mutex read_mutex;
-+	bool revoked;
- };
- 
- #ifdef CONFIG_HIDRAW
-diff --git ./include/uapi/linux/hidraw.h ../include/uapi/linux/hidraw.h
-index 33ebad81720a..d0563f251da5 100644
---- ./include/uapi/linux/hidraw.h
-+++ ../include/uapi/linux/hidraw.h
-@@ -46,6 +46,7 @@ struct hidraw_devinfo {
- /* The first byte of SOUTPUT and GOUTPUT is the report number */
- #define HIDIOCSOUTPUT(len)    _IOC(_IOC_WRITE|_IOC_READ, 'H', 0x0B, len)
- #define HIDIOCGOUTPUT(len)    _IOC(_IOC_WRITE|_IOC_READ, 'H', 0x0C, len)
-+#define HIDIOCREVOKE	_IOW('H', 0x0D, int) /* Revoke device access */
- 
- #define HIDRAW_FIRST_MINOR 0
- #define HIDRAW_MAX_DEVICES 64
--- 
-2.45.2
+Best regards,
+Krzysztof
 
 
