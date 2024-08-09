@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-281419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01A594D6CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:03:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5DA94D6CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3002FB2226E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:03:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A24E282062
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BBC1607B9;
-	Fri,  9 Aug 2024 19:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B2D16726E;
+	Fri,  9 Aug 2024 19:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MRRt48XY"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oDK1iV3p"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5112215AD9B
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D64615FD15
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723230210; cv=none; b=d0BTnQle8x3j4RI/FfofYIzygyvBxz0HNOLD0dkDcQGyQalgx6FHb0nL7d9JNhWaFpZ1KTrwfhCOWT9V9j41YjThucx/pXvnkl2sVvFJXSEz9GMIjGDNR0/0KHFa1pLAgGqnfx5e/zpAPgk/0t2If9xSYkDKZkS8/6THsccOSeg=
+	t=1723230212; cv=none; b=nwxn1+owur9o1awnkEelRrAf2vIgiZhJj/KNeWNunGDLpyRu/cOUG05US5sGVsfLGveFvet9yoms83wT09n6+BhKryA5BbLH/jViVLiKwAPVU6YW7E0yEcMtJgB+duAn+KbwUOnb/JXbWHVaaarucZ1cKGdkw7pLQPQ8+iBkHGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723230210; c=relaxed/simple;
-	bh=+mKRLKzoADpOE20G4o9BQCTbkCSsOug+v9doDlmgPOw=;
+	s=arc-20240116; t=1723230212; c=relaxed/simple;
+	bh=/3Mc0aYUnYlmMvDT2VZdsvGshabqaL6eclOqKW0yriU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=B/GKmq+H+UZjq9xPfKRkiF7BvyJZLlhFeF4LcWBiBtDGXzAD+2AUx8aZrNzf2WL59T3r9lUBbT0wLC1vqZHrCRYzNGKLszlbjFx6szVlb4mL1U95zTnjNgot6AxGbwjjbJ2/QVrrBh2RbDHaDFfOce7CQeNhScXJRC5I0097pWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MRRt48XY; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=sa8r55LlZjovK5guagtHk2d9Q4F9k0R/tSfktaXx1dF+vhvhUtdhGPmBLWtLQJNBmTqTBk9/b4Vy9jTPAIl++wjwn7jn63IaFkJEZy79DaqsIu5hc5hK1eSnGWhobAegcIni4QpL5ZE93VJnMMDSVOhY3bxyuF4UeN7M8r/CciE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oDK1iV3p; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-6c8f99fef10so2782251a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:03:29 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70d34fa1726so2497865b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:03:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723230208; x=1723835008; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=GsIoGeUgslSIDQu3stBnO5MiBTFOAiP1ETUsvE40Zzk=;
-        b=MRRt48XYz6NoJWHb17AFlSJga+T1iOTrY5u389ZIr9h/aiPb8vVqnFyX4Uk5kY5PL0
-         khxdE7MjLkoTvBqEBVJu67yNn8atyJCSqrBLoQKO2nmI0dkbDvvq+rq+NCdI6bqZcZTT
-         p1sKiWigmVuQvWvUtzID/9MLjxkSsuLe4yNbYOHKaUZYMe0xWXXPVQOnoQWkGdt1znJB
-         D3jpPKPcRLgoVA9I6Ir3hdNkllZvlqBQKD3PLX+e/PA9cpYS4eCazzMdS2pGTvYV8Yts
-         2K0ZMHlwYhfd0brWQWuQPnTl7ZdWZ8SR5jMjRBbT7dFfDi4WLxmZoHUtqIBdXYU+ZQdq
-         2jWA==
+        d=google.com; s=20230601; t=1723230210; x=1723835010; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:reply-to:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NqYKYc5ZaZDxsjSNj47554NGsl1XvrBnLwjmIYW0Wgc=;
+        b=oDK1iV3purwsR54IVPgw81HLbhgJHjrtb77iJTs3+5eF2ctuvhuFITBCMxYca4DIlQ
+         9qZztRVNSIXlxffv6qBQErqEt8YU86uDzVcIBC4DHfKBn6IFt3QI8DkXQVN+QTLVAgSK
+         ciE5Sh+gutRUC/0VHpfdsK44jQZ8PhNeBPB7sP2r7W/d+iXC9QPGAvFk6GjJ4FDpWGmK
+         m3pCezCnruPMFGO4BX4MeFC0EUzAg6H9RvrUByGg+VfAP2SEoFu+6rlniXKLsVB0ffri
+         o+SStKmeZ1PZoamq+dZCMQ8lYn/kghkWjDHhtbsRg3KXPZoYE3srKLk7KuKMe/T19g9g
+         l/2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723230208; x=1723835008;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GsIoGeUgslSIDQu3stBnO5MiBTFOAiP1ETUsvE40Zzk=;
-        b=OJTQsJGYupwkjlZ7wwuuBrBTjm4vj0chby+x7jgmnfTtsMU86FtPkW8yhpvHd1POlk
-         NDgx5c2/rg1pjVGlLMwagCHFlJJ+2dTtsJqxLGIWLfRFRj9TVn7bHuq9R8i0lsRrjsQd
-         3ntfoxNj6bAJ1GMjLtTEfloZXuN6CV4rXls8DFvEwBFoEOhbptTl4fCWbXtbb2unoouM
-         h/YSaMDmPwoBvn9tRPubHM7aTybKK1Ob16pB3SiKOqHd21jvA6ZtRhVYEidjShosidnN
-         vBv3+bHZV6KgFqIlfhHhNVHm/hISKZaTD1L75Jb/cxDAw/4YHTh5FP2PhU/Xccaz7wQn
-         vVmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMXKZy29LyiCBABDUUC73KxBAT/R9OyGOspf1PTUf4DzF/OrDF33j+VJzirC6qtCigklay7fWcE1ZjX+Yn3DUrOmALzHt2/31mjBJ1
-X-Gm-Message-State: AOJu0YzMysO3ITKrNRqJpyj9rjoD2Ef2wXIJ8PXSK48RyDaggAiGfJE0
-	vOTgZt2fQDPL1asVLAPeuO9gj9j5TnuBOouAio5Q24Z3vt/YEWXXZqwIKdZXYToU60hHA31HqkI
-	vcg==
-X-Google-Smtp-Source: AGHT+IE3eXOVlwsDRuB2+lPmtn5qtlNh4cfa2iZm6g38l3Rqzh9FsNEd+cI5zpswhamioOgLLQz+IgMJaoM=
+        d=1e100.net; s=20230601; t=1723230210; x=1723835010;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:reply-to:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NqYKYc5ZaZDxsjSNj47554NGsl1XvrBnLwjmIYW0Wgc=;
+        b=XQsqit4fLw9yqTY+YL5bnFej/qXfMGVprRq9ZnOEnnaavSIUd1EYRoUDqkeUMpIhVp
+         R7Z2ckJ18wlj7XxWx4QIv+14ndS55FDXIsX80DnnlWqxiLsgiImk1qlip8a3Yx5WZxqz
+         1C+EoYaMYCYsFnvPpnoWmFrUghXYV+tOY0Exbp0j8EyZOk+lm1EeEdbxifyYROCZ2LCH
+         uxupiqz36NJM+LV7FOdrgrOOc6XcYeK27d+ZY8BkanUv6XyxtmYgXn2wSxIExgrwxoaZ
+         a/ZCksEV1O1+nohQoCtLv+bknA/fp6zbeizdFIvEOknczm96r+yWfYXUPQ6ja96c4QfC
+         ZyCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpLsp0HN0FOqMB4v2gRu1zf4ljdTQwsQTzoMzOZQdZLuoqTJfqwyCxAAzn91vdDhDhx+DlvokWXnCrs4A8RXLR3TctKLBKOEHhkaER
+X-Gm-Message-State: AOJu0YwbyOgEauHcJddTfTCnPOYfz0BPyT5r2qTkUa+lANGZNwDi4L59
+	WOeqNunNyivz2k/jQKS5VQW1xV3QqSymmIDGS44WPxoHZ1Xs2+CiD5vCvD/r9POFOB1v/hzQEgM
+	Ehw==
+X-Google-Smtp-Source: AGHT+IHgCacj5m1MLlQUENYq6BFjimFqJz5RZsNs8W7hnjalJaUAINnEvpiTyC8RkzL0KTMAd+i6sITJmiw=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:8c52:0:b0:7c1:271a:c780 with SMTP id
- 41be03b00d2f7-7c3d2acc41emr4853a12.0.1723230208428; Fri, 09 Aug 2024 12:03:28
- -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:66d7:b0:706:3421:7406 with SMTP id
+ d2e1a72fcca58-710dc62cb1bmr198733b3a.1.1723230210279; Fri, 09 Aug 2024
+ 12:03:30 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  9 Aug 2024 12:02:58 -0700
+Date: Fri,  9 Aug 2024 12:02:59 -0700
 In-Reply-To: <20240809190319.1710470-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,114 +76,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240809190319.1710470-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240809190319.1710470-2-seanjc@google.com>
-Subject: [PATCH 01/22] KVM: x86: Disallow read-only memslots for SEV-ES and
- SEV-SNP (and TDX)
+Message-ID: <20240809190319.1710470-3-seanjc@google.com>
+Subject: [PATCH 02/22] KVM: VMX: Set PFERR_GUEST_{FINAL,PAGE}_MASK if and only
+ if the GVA is valid
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
 	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Disallow read-only memslots for SEV-{ES,SNP} VM types, as KVM can't
-directly emulate instructions for ES/SNP, and instead the guest must
-explicitly request emulation.  Unless the guest explicitly requests
-emulation without accessing memory, ES/SNP relies on KVM creating an MMIO
-SPTE, with the subsequent #NPF being reflected into the guest as a #VC.
+Set PFERR_GUEST_{FINAL,PAGE}_MASK based on EPT_VIOLATION_GVA_TRANSLATED if
+and only if EPT_VIOLATION_GVA_IS_VALID is also set in exit qualification.
+Per the SDM, bit 8 (EPT_VIOLATION_GVA_TRANSLATED) is valid if and only if
+bit 7 (EPT_VIOLATION_GVA_IS_VALID) is set, and is '0' if bit 7 is '0'.
 
-But for read-only memslots, KVM deliberately doesn't create MMIO SPTEs,
-because except for ES/SNP, doing so requires setting reserved bits in the
-SPTE, i.e. the SPTE can't be readable while also generating a #VC on
-writes.  Because KVM never creates MMIO SPTEs and jumps directly to
-emulation, the guest never gets a #VC.  And since KVM simply resumes the
-guest if ES/SNP guests trigger emulation, KVM effectively puts the vCPU
-into an infinite #NPF loop if the vCPU attempts to write read-only memory.
+  Bit 7 (a.k.a. EPT_VIOLATION_GVA_IS_VALID)
 
-Disallow read-only memory for all VMs with protected state, i.e. for
-upcoming TDX VMs as well as ES/SNP VMs.  For TDX, it's actually possible
-to support read-only memory, as TDX uses EPT Violation #VE to reflect the
-fault into the guest, e.g. KVM could configure read-only SPTEs with RX
-protections and SUPPRESS_VE=0.  But there is no strong use case for
-supporting read-only memslots on TDX, e.g. the main historical usage is
-to emulate option ROMs, but TDX disallows executing from shared memory.
-And if someone comes along with a legitimate, strong use case, the
-restriction can always be lifted for TDX.
+  Set if the guest linear-address field is valid.  The guest linear-address
+  field is valid for all EPT violations except those resulting from an
+  attempt to load the guest PDPTEs as part of the execution of the MOV CR
+  instruction and those due to trace-address pre-translation
 
-Don't bother trying to retroactively apply the restriction to SEV-ES
-VMs that are created as type KVM_X86_DEFAULT_VM.  Read-only memslots can't
-possibly work for SEV-ES, i.e. disallowing such memslots is really just
-means reporting an error to userspace instead of silently hanging vCPUs.
-Trying to deal with the ordering between KVM_SEV_INIT and memslot creation
-isn't worth the marginal benefit it would provide userspace.
+  Bit 8 (a.k.a. EPT_VIOLATION_GVA_TRANSLATED)
 
-Fixes: 26c44aa9e076 ("KVM: SEV: define VM types for SEV and SEV-ES")
-Fixes: 1dfe571c12cf ("KVM: SEV: Add initial SEV-SNP support")
-Cc: Peter Gonda <pgonda@google.com>
-Cc: Michael Roth <michael.roth@amd.com>
-Cc: Vishal Annapurve <vannapurve@google.com>
-Cc: Ackerly Tng <ackerleytng@google.com>
+  If bit 7 is 1:
+    =E2=80=A2 Set if the access causing the EPT violation is to a guest-phy=
+sical
+      address that is the translation of a linear address.
+    =E2=80=A2 Clear if the access causing the EPT violation is to a paging-=
+structure
+      entry as part of a page walk or the update of an accessed or dirty bi=
+t.
+      Reserved if bit 7 is 0 (cleared to 0).
+
+Failure to guard the logic on GVA_IS_VALID results in KVM marking the page
+fault as PFERR_GUEST_PAGE_MASK when there is no known GVA, which can put
+the vCPU into an infinite loop due to kvm_mmu_page_fault() getting false
+positive on its PFERR_NESTED_GUEST_PAGE logic (though only because that
+logic is also buggy/flawed).
+
+In practice, this is largely a non-issue because so GVA_IS_VALID is almost
+always set.  However, when TDX comes along, GVA_IS_VALID will *never* be
+set, as the TDX Module deliberately clears bits 12:7 in exit qualification,
+e.g. so that the faulting virtual address and other metadata that aren't
+practically useful for the hypervisor aren't leaked to the untrusted host.
+
+  When exit is due to EPT violation, bits 12-7 of the exit qualification
+  are cleared to 0.
+
+Fixes: eebed2438923 ("kvm: nVMX: Add support for fast unprotection of neste=
+d guest page tables")
+Cc: stable@vger.kernel.org
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/asm/kvm_host.h | 2 ++
- include/linux/kvm_host.h        | 7 +++++++
- virt/kvm/kvm_main.c             | 5 ++---
- 3 files changed, 11 insertions(+), 3 deletions(-)
+ arch/x86/kvm/vmx/vmx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 950a03e0181e..37c4a573e5fb 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -2191,6 +2191,8 @@ void kvm_configure_mmu(bool enable_tdp, int tdp_forced_root_level,
- #define kvm_arch_has_private_mem(kvm) false
- #endif
- 
-+#define kvm_arch_has_readonly_mem(kvm) (!(kvm)->arch.has_protected_state)
-+
- static inline u16 kvm_read_ldt(void)
- {
- 	u16 ldt;
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 689e8be873a7..62a3d1c0cc07 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -715,6 +715,13 @@ static inline bool kvm_arch_has_private_mem(struct kvm *kvm)
- }
- #endif
- 
-+#ifndef kvm_arch_has_readonly_mem
-+static inline bool kvm_arch_has_readonly_mem(struct kvm *kvm)
-+{
-+	return IS_ENABLED(CONFIG_HAVE_KVM_READONLY_MEM);
-+}
-+#endif
-+
- struct kvm_memslots {
- 	u64 generation;
- 	atomic_long_t last_used_slot;
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index d0788d0a72cc..fad2d5932844 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1578,15 +1578,14 @@ static int check_memory_region_flags(struct kvm *kvm,
- 	if (mem->flags & KVM_MEM_GUEST_MEMFD)
- 		valid_flags &= ~KVM_MEM_LOG_DIRTY_PAGES;
- 
--#ifdef CONFIG_HAVE_KVM_READONLY_MEM
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f18c2d8c7476..52de013550e9 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -5804,8 +5804,9 @@ static int handle_ept_violation(struct kvm_vcpu *vcpu=
+)
+ 	error_code |=3D (exit_qualification & EPT_VIOLATION_RWX_MASK)
+ 		      ? PFERR_PRESENT_MASK : 0;
+=20
+-	error_code |=3D (exit_qualification & EPT_VIOLATION_GVA_TRANSLATED) !=3D =
+0 ?
+-	       PFERR_GUEST_FINAL_MASK : PFERR_GUEST_PAGE_MASK;
++	if (error_code & EPT_VIOLATION_GVA_IS_VALID)
++		error_code |=3D (exit_qualification & EPT_VIOLATION_GVA_TRANSLATED) ?
++			      PFERR_GUEST_FINAL_MASK : PFERR_GUEST_PAGE_MASK;
+=20
  	/*
- 	 * GUEST_MEMFD is incompatible with read-only memslots, as writes to
- 	 * read-only memslots have emulated MMIO, not page fault, semantics,
- 	 * and KVM doesn't allow emulated MMIO for private memory.
- 	 */
--	if (!(mem->flags & KVM_MEM_GUEST_MEMFD))
-+	if (kvm_arch_has_readonly_mem(kvm) &&
-+	    !(mem->flags & KVM_MEM_GUEST_MEMFD))
- 		valid_flags |= KVM_MEM_READONLY;
--#endif
- 
- 	if (mem->flags & ~valid_flags)
- 		return -EINVAL;
--- 
+ 	 * Check that the GPA doesn't exceed physical memory limits, as that is
+--=20
 2.46.0.76.ge559c4bf1a-goog
 
 
