@@ -1,115 +1,177 @@
-Return-Path: <linux-kernel+bounces-281182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB45D94D40B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:57:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF05794D40C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581AA1F224E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:57:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D5EAB21C31
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABCB198E71;
-	Fri,  9 Aug 2024 15:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4701D198E71;
+	Fri,  9 Aug 2024 15:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GujSMncl"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iwdxrWr2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B134168B8;
-	Fri,  9 Aug 2024 15:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1425F168B8
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723219057; cv=none; b=gd+roCva5XmykL0n61MXZese+OTFWMMgwkBBSs5nYWZXwOCSyIIjrWj5WZNHUSdYwLoQm0uWIrx6xAtAScxGD1Pu1FVI74/NSjGhZl9rE5EePeHwwRXQKwpBUFTcJlf1qYF2UWmQagfSh0LoWQfJ/RxNvRIdVJNoqCgO7bal41o=
+	t=1723219074; cv=none; b=LgywF3yvcJDBn6LHz9EDuhJ9s0GxXQqhektEa3ZxEZlS45qM74fW72Tqw3k0yP3I9qRwFmOJv/kcIQNclQOIl0lCmeLyjzgR1S+PjOna8fLKaK5yQ0lbavYwUf7+dVKXbTVylsdrn3ad9eNeCn5dpGHANwErNoaKrxabHDDlC3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723219057; c=relaxed/simple;
-	bh=aupWW4PudjT0riYrRXYHfSbERNtSjKDoPxOKPQ4Jz3U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tx3oEf98ucUJoIp+yDB5zT0raE2qeP7giqnLkm0DVSZH2dA1medN102nAYBm/Ju+vKGx6jYsxOfN5oHo2v8H0z632GPJpLaRfLZxdR8Ebegtc5OnZiT+OAvmyqxakEJ7KSKAvkMA5P4SG/5QwF94BI9+/sAAY8KmIn3BfheHHrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GujSMncl; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d1c655141so1840326b3a.1;
-        Fri, 09 Aug 2024 08:57:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723219055; x=1723823855; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AQbheJKaZzimqi2nM1cZ0ksDOovJ28S86O+Xj2+eZ34=;
-        b=GujSMncl9kDoHaMs2sjeRZj4xzWKo2BRiVpkBt4485Tf/P0rtX0pV6OS1H2ESw0T9R
-         XGcqwow1q/oKmuIuSpK/IHJGlOHPaeala15COdnSYfwdV+BcgXUo+8stt4sgV3y1g0X7
-         VRTvLlYGNHto46JW0zy8gKt2f4VM83n8NmXdzrEiNUVIrIplnw8t9UR5sdwwNCX9tbcl
-         4Z4MBJ77Y08nnBhsmpXFCkz19aZ60ylh1XxaRJXeQs0pwliW9A0LtEeo1Qxm0zHTSGOm
-         GwE6pQKN12X8j8FZB4A62NpXYf3j+uSe+PSoud7IkJxumzShTteHOc/kisv9zUrgLM59
-         EA1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723219055; x=1723823855;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AQbheJKaZzimqi2nM1cZ0ksDOovJ28S86O+Xj2+eZ34=;
-        b=dAq8K3sylRv8B7tcHcyZYr/wHFiO4W6Lxr16qrY9S/4Rk+5zMZ5aaae3huNbjHBjdf
-         RMwAnM0fm1cmUrHh0MzhOSedC0IGsRb2DKVJeoo0yVYulftQ1mXaLl4bl8uiHUqutQON
-         qKdK6ID0ZWoc6G7BY7XVYLfjmkA0CCwJ40OgfzKVC+mztbw0GLs++03Tp9TRRWZqfSQv
-         hvh/C5Uu286wK9eiS+boLra1HEAtIBq5kTEyjfhcSzhQY5m3M1EHVYPYf3GxkYT6RSV+
-         pXY6ct0NmJ7DBChBsXKciLwem1WFW8nRecdkjp79lIanGtlB1pOyBG96tbPqpg7wNPLt
-         V2Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVgT2BFk/540uIvSnQewoIjNnE/KYbyyOuNfvYLb6ExuYCIJ+6+6eUDeQE6cX4DiG3M77Re2c1Dk1jKjirP4Lh0YK/mMANWGvW3Qe5/
-X-Gm-Message-State: AOJu0YydTANLDwicfj95xCJ1Eiwd/0bShDWkKeHvoSHN71pP7QhqEMCt
-	//lX7cwPlc3cUj9vHTTobd05BCo3NYT0ogh7AaLmkDBkcVdz8SyeZqFVlBAd
-X-Google-Smtp-Source: AGHT+IG8JAzFFhDJpXp5iBbOS/4CTp1mY7URlH5eSwuMsh8ncTmLK8FtAeFexWHo5ZBxFFWnFAvk0w==
-X-Received: by 2002:a05:6a00:14c4:b0:70d:2b1b:a37f with SMTP id d2e1a72fcca58-710dcaec5cdmr2119906b3a.24.1723219055254;
-        Fri, 09 Aug 2024 08:57:35 -0700 (PDT)
-Received: from embed-PC.. ([110.225.178.109])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2e7490sm2774842b3a.164.2024.08.09.08.57.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 08:57:34 -0700 (PDT)
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: alexandre.belloni@bootlin.com
-Cc: linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH] rtc: m48t59: Remove division condition with direct comparison
-Date: Fri,  9 Aug 2024 21:26:31 +0530
-Message-Id: <20240809155631.548044-1-abhishektamboli9@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723219074; c=relaxed/simple;
+	bh=Y8edBrqv1pzht7Xi4mM+aUWqnoTHAgGonimtxluGamw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+pKFGoWE3rR968E9zS1gDUyNxYytwtT8k1qA7iwGc9tCFjIXBbABYzhSauo3MI9ouWoZ3ymJK0T6Lg2XlZatIj3/zk/Mv/eOYeYyJYltfZabqG7fR7DX9E/SivFhT4v4I7qhZjomGg4HtSGNTcMSnuJtNr+Q0VVO0XeT4M/TcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iwdxrWr2; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723219074; x=1754755074;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y8edBrqv1pzht7Xi4mM+aUWqnoTHAgGonimtxluGamw=;
+  b=iwdxrWr2uilgzBDU1PsncqNU0uRQaHZxieNjO8ay5P0ajL1UNotx3Uob
+   XuuSM6yvn/PY3x/lQg/tGCdLUhKw8VPwwAILBYhrvepAL4hisD8yH35dS
+   qkfWsDeseP5c0fKxi+i00aPvJ93IYO25KkU+43N+ZKdjj9yBzDmot367w
+   puvDu1N3RoQM1BFinbnUKF8s1XWUfQc1nXMBn2adYa0MH0ICCUXPQmFxS
+   q4FLW0zk2MqhoRUEWqJDSBhKvcpwuheN1qyIc3I/j3qCDlsiU42aprGKu
+   cEyFMTGcReH5rAggIX2PbIhHKdKx1hzm2gftZ7y6ywcEFyleqoPZu3zbk
+   g==;
+X-CSE-ConnectionGUID: yXPl7OCgSNSfDS3QsaeGJQ==
+X-CSE-MsgGUID: 78b4LL15TzGseTcXu37bcg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="25193362"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="25193362"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:57:10 -0700
+X-CSE-ConnectionGUID: HIDNdw4fQI26LVRB1vR5OA==
+X-CSE-MsgGUID: 3mVOzCSmSrOQTpCMNvGOkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="57565751"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:57:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1scRzE-0000000DTBB-3uIV;
+	Fri, 09 Aug 2024 18:57:04 +0300
+Date: Fri, 9 Aug 2024 18:57:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
+	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH RESEND v3 1/6] i3c: mipi-i3c-hci: Add MIPI0100 ACPI ID to
+ the I3C Support List
+Message-ID: <ZrY8UOIsud8-NM_F@smile.fi.intel.com>
+References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
+ <20240807052359.290046-2-Shyam-sundar.S-k@amd.com>
+ <e94efd42-bc3f-4003-8ad8-2da6500f0f13@linux.intel.com>
+ <ZrYlNOjFQE9dHsVV@smile.fi.intel.com>
+ <c6ef0253-9f32-46d6-a658-295e39c926b2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6ef0253-9f32-46d6-a658-295e39c926b2@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Replace 'year / 100' with a direct comparison 'year >= 100'
-in m48t59_rtc_set_time() function. Improve the code clarity
-and eliminate division overhead.
+On Fri, Aug 09, 2024 at 09:02:35PM +0530, Shyam Sundar S K wrote:
+> On 8/9/2024 19:48, Andy Shevchenko wrote:
+> > On Fri, Aug 09, 2024 at 04:54:18PM +0300, Jarkko Nikula wrote:
+> >> On 8/7/24 8:23 AM, Shyam Sundar S K wrote:
 
-Fix the following smatch warning:
-drivers/rtc/rtc-m48t59.c:135 m48t59_rtc_set_time() warn:
-replace divide condition 'year / 100' with 'year >= 100'
+...
 
-Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
----
- drivers/rtc/rtc-m48t59.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > When adding a new ACPI ID, always provide the following information:
+> > 
+> > 1) link (in some form) to the official confirmation / documentation for
+> > the allocated ID by the vendor (MIPI in this case) _OR_ (very exceptional!)
+> > why the bad ID had been allocated;
+> 
+> Member version:
+> https://members.mipi.org/wg/All-Members/document/previewpdf/89465
+> 
+> Public version: https://www.mipi.org/mipi-disco-for-i3c-download (this
+> requires a signup).
+> 
+> Since there is no direct link available for preview, I did not include
+> them in the commit-msg. But left a note that the MIPI ID is the one as
+> specified in the MIPI DisCo spec.
 
-diff --git a/drivers/rtc/rtc-m48t59.c b/drivers/rtc/rtc-m48t59.c
-index f0f6b9b6daec..cd2ca49805d8 100644
---- a/drivers/rtc/rtc-m48t59.c
-+++ b/drivers/rtc/rtc-m48t59.c
-@@ -132,7 +132,7 @@ static int m48t59_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	M48T59_WRITE((bin2bcd(tm->tm_mon + 1) & 0x1F), M48T59_MONTH);
- 	M48T59_WRITE(bin2bcd(year % 100), M48T59_YEAR);
+It's fine.
 
--	if (pdata->type == M48T59RTC_TYPE_M48T59 && (year / 100))
-+	if (pdata->type == M48T59RTC_TYPE_M48T59 && (year >= 100))
- 		val = (M48T59_WDAY_CEB | M48T59_WDAY_CB);
- 	val |= (bin2bcd(tm->tm_wday) & 0x07);
- 	M48T59_WRITE(val, M48T59_WDAY);
---
-2.34.1
+> > 2) are there devices in the wild (on the market) that use the being added ID(s)?
+> 
+> Not in the wild. But the latest platform will have this support
+> included. So, these device IDs are crucial for the i3c-hci to be
+> supported on AMD platforms.
+
+Good, let's do it right then!
+
+> > 3) excerpt from the device (independently if it's public already, see above,
+> > or not) DSDT ACPI table.
+> > 
+> > With the given patch it looks to me that you most likely need a local, AMD
+> > specific ID as well.
+> > 
+> > So, in my ideal world the DSDT should be like
+> > 
+> > 	Device (I3CC)
+> > 	{
+> > 		Name (_HID, "...") // AMD specific _HID
+> > 		Name (_CID, "MIPI0100") // Compatible ID for generic I3C controller
+> > 		...
+> > 	}
+> > 
+> > Is this the case? Why not?
+> 
+> Please refer to the MIPI HCI I3C DisCo specification
+> (https://members.mipi.org/wg/All-Members/document/previewpdf/89465)
+> section 5.4. The ASL looks the same in case of AMD.
+> 
+> MSFT says that they want to use MIPI0100 as mentioned in the
+> specification.
+
+MIPI doesn't know how to assign the ACPI ID correctly. But again, what I put in
+the above is the correct way of approaching.
+
+> What would you advise?
+
+Since my intuition and experience tells me that the two devices even based on
+the same IP are not the same (see word 'quirk' or '.driver_data' or alike in
+the kernel sources) the generic ID may not be used for the specific vendor
+unless it's _the only_ vendor for the certain IP.
+
+So, please do as I suggested above. And file a error report (and correction
+proposal) to the MIPI, so in "5.1 I3C Host Controller ACPI Hardware ID (_HID)"
+they should use _CID instead of _HID and add some text like
+"Each vendor should dedicate it's own _HID for the platform in question. The
+same _HID as _CID may be used if and only if vendor guarantees that there 100%
+compatibility with MIPI as described in this and other related documents."
+
+I.o.w. do you 100% guarantee that MIPI HCI I3C DisCo covers all necessary
+properties that you need for _your_ hardware? If not, use my approach, if yes,
+use the same _HID *and* _CID.
+
+Microsoft should know this as well and much better than MIPI.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
