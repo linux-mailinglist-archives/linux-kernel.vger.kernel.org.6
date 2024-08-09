@@ -1,172 +1,180 @@
-Return-Path: <linux-kernel+bounces-280915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7B294D0DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:09:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00AF94D0E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6907F2852F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B441F21EF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8904A1953AD;
-	Fri,  9 Aug 2024 13:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C7A194AF0;
+	Fri,  9 Aug 2024 13:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ODEQLotP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3U2gxwvz"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6080B194AEE
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5255718E04E
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723208971; cv=none; b=qiVM2qGshsqZKM61aVbzk+ZQLgJEBuRwLH0o1wwOLgzGN+YS0oUnKOBVvq/CvwVjS6OgarU+2xtML2TeczD4diZlaRzQ7vIN/fqkpoumY72Rq3kQhrO32GZRzubXrBRZsMaWOLGj9a2Ona0hQfrA6rr2BwZUL6CMceEYBIPiISI=
+	t=1723209232; cv=none; b=HnGP1F+6QAQyJNIkDvOt74BBdHR1XoUno5fETG7s5Jpdoa0ACuykHGNqeY0TNY0Izazt/ucgPErFCaozp4CoI8uh8EEQpKyJ+5k78p3dMx/CsT6YlC+o7/1Z0Fxbhh5TyjimEo+Zu1RLUEkOPkfugauVVDCifpH8OlhHl0bfYKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723208971; c=relaxed/simple;
-	bh=1k07vV7KQj8ThVBwSvxTgnF1hHNqQwmPgYo9YN/leIQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JqE09y7OEBIrEKPXWixNQuLJJvY8QNCGEDyGJMkIIdbrFCWlWm6uMDy40ffRhbIhZrA/3zN6INbvrXw1pQwaWjyrVTXAG5PkSLAjlKN4fDIIo0pW25Q28boaebVUvnB6qWUUBp8RHvXJU7fZoqgr4RQjzX36Wz2J0w042/cn3kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ODEQLotP; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723208970; x=1754744970;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=1k07vV7KQj8ThVBwSvxTgnF1hHNqQwmPgYo9YN/leIQ=;
-  b=ODEQLotPO7xoYvVpIRVteXR1f64MoubeE/PSr3St926kmb7uPRSXW4Lt
-   /fPpVts0KHDUoRvGYYAZLOpwjHh3vM/yTLYeWPUyMbBVabNFAtRQsycDf
-   zFjlv/PHHJaXNPz5GnVkeIZiN/Tkr93m/Ygujj6gsHqJYwE9yhRufqIlk
-   TWavp5YWanTImS5NPfRuyw4TPHt9CqoQwhWofwOUiJOnQ3ALiNWi6vw7Z
-   h7Czqh9SDVVdu1UyAE3e+Pq0cN4TXTT+Gn9Bjv+wIGTr22vd2cLy/i1uS
-   DyZ9BIYlAiOrSutUMrNLYRm12PEo+yXNKcI/apmg5q8oDlP3A+lK8y3yf
-   Q==;
-X-CSE-ConnectionGUID: /65bBK1aSQuAgxsCyRRfSA==
-X-CSE-MsgGUID: Zqis8UQUTo+uBDi4VHbX3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="46788167"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="46788167"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 06:09:28 -0700
-X-CSE-ConnectionGUID: Z1jgRXOfQpuIo18Klt7I/A==
-X-CSE-MsgGUID: EePILd/eQZCPK7XWD5Rk8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="57651639"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 09 Aug 2024 06:09:27 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 35F44A14; Fri, 09 Aug 2024 16:09:25 +0300 (EEST)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv5, REBASED 4/4] x86/tdx: Enable CPU topology enumeration
-Date: Fri,  9 Aug 2024 16:09:23 +0300
-Message-ID: <20240809130923.3893765-5-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240809130923.3893765-1-kirill.shutemov@linux.intel.com>
-References: <20240809130923.3893765-1-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1723209232; c=relaxed/simple;
+	bh=98Z/diLKNDBsST+GyskNA46yYAnNS1EgmuzelcgBkGU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mJV2/YHjTjleVVc5TLaPNsV9u5O3BS+hT4hvGDiOw+/XORLJjAgKVTKsR0g7Sd0J3ydGc9iNjUd57Jzi56ON/SgSwRDKGnIE1q0OY1Otv/QpTlhfr8JdbgQ6k0qCJ9JOIsN3oapnWT55wh1HsqbYhSEyDLzHmw/x2AxynhH5n+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3U2gxwvz; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6902dc6d3ffso51108087b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 06:13:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723209230; x=1723814030; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfk55jXbMJ+9XW8lw7BFbqVnIJpApyghmdPVYouiRvE=;
+        b=3U2gxwvzxhp+p7WyFOS7vl6kVG5g4BRxj2cYPKMnIpBXD/LQQpa0cSp7phIHciDUoB
+         UxohIqI9llqldjkQ2yj9wpLVY6oUdNi2v5MUrNQMrC5EfLkTqCknGJwHLn5aUOLHsG2H
+         Rv30gBFILfWQ76TFu16ZV0qOlHKFwHS5hU59LmaRj74L3AXGceHanyh0qB76prJ++TIE
+         9D2C8tLn6Zn5e3TPO+OL8S/gzvqPMI3YA5nt+8AYYb1AQz/2FrsnHCosI6I/eH0t1pjk
+         0tSEETmvOSliVL1J9R83pT3qiOx1a3hBIq34L6z2Tas9l3HwPScBe5tDPj2s27rhpEKV
+         J/zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723209230; x=1723814030;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfk55jXbMJ+9XW8lw7BFbqVnIJpApyghmdPVYouiRvE=;
+        b=Jda0W+S+KyzuaAvgFthljCYzngoZU4WBdPx/1roCEZ4SW/lXLfpbKLZQYLrVKg8DjF
+         JRHt5v5dJtdoOLE5C5ywH0rP3zcqvld9CWi0lHsmlxW3U1q4ghaAG/gdRBmeuESIa7og
+         018RP5iXu9G6KTvW5LyHuQ4S5Rcan2FsntLDI4som3pojHjsGnCnGT0qGNGXr6BSc4l7
+         GpesyqXiJcVYKygvajJqLszo7q2iZZ0YkdRnryvOch1wT6j+IFe++Got+HdBLLRa5XAy
+         DR7QEmfOFE/5MrToj9v+eWffKEh4l+3M4qtrM6fOq3avmG5ZECfkaEbrD4tvSXYQknOt
+         iJhg==
+X-Gm-Message-State: AOJu0YweCMylSKhVBE0PHucOv610A0WhoXBdn0HwhzF/JBdZnWjAcG2p
+	Dkyr1tYs16Z9PsheYI2syPIfeEmkSLcuPh+No8iAoeVEUCY/wM1Xzc4aBdMpDmzQjw1QiyZjUOr
+	OmGXuNSsD8K4y5fFpzwOStgx7NU3+u6/bggCLeNoN8UV9aIVrHmv3wvfpcb3N+p8tUR3B+QCHWn
+	1EA9e9Dg7V2cHquy6Q2+wDOA5SRZPkWhz2ug2PBrQKOcQHHox1uFnaTVtz
+X-Google-Smtp-Source: AGHT+IH4kJBCxiOiei21ZZPcfcqwWZSWG5cinBXlbnJTFOwf/ORgOJMo9yMLleQC22aHWj0qjIMdzl6ROAG0znA=
+X-Received: from mmaslanka2.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:b8d])
+ (user=mmaslanka job=sendgmr) by 2002:a05:690c:711:b0:691:2f66:4b1c with SMTP
+ id 00721157ae682-69ec8c8e4camr110527b3.6.1723209229629; Fri, 09 Aug 2024
+ 06:13:49 -0700 (PDT)
+Date: Fri,  9 Aug 2024 13:13:32 +0000
+In-Reply-To: <28567169-4588-002d-85b8-906d22f12f05@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <28567169-4588-002d-85b8-906d22f12f05@linux.intel.com>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240809131343.1173369-1-mmaslanka@google.com>
+Subject: [PATCH v4 1/2] clocksource: acpi_pm: Add external callback for suspend/resume
+From: Marek Maslanka <mmaslanka@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marek Maslanka <mmaslanka@google.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, 
+	David E Box <david.e.box@intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	"=?UTF-8?q?Ilpo=20J=C3=A4rvinen?=" <ilpo.jarvinen@linux.intel.com>, platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-TDX 1.0 defines baseline behaviour of TDX guest platform. In TDX 1.0
-generates a #VE when accessing topology-related CPUID leafs (0xB and
-0x1F) and the X2APIC_APICID MSR. The kernel returns all zeros on CPUID
-topology. In practice, this means that the kernel can only boot with a
-plain topology. Any complications will cause problems.
+Provides the capability to register an external callback for the ACPI PM
+timer, which is called during the suspend and resume processes.
 
-The ENUM_TOPOLOGY feature allows the VMM to provide topology
-information to the guest. Enabling the feature eliminates
-topology-related #VEs: the TDX module virtualizes accesses to
-the CPUID leafs and the MSR.
+Signed-off-by: Marek Maslanka <mmaslanka@google.com>
 
-Enable ENUM_TOPOLOGY if it is available.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/coco/tdx/tdx.c           | 27 +++++++++++++++++++++++++++
- arch/x86/include/asm/shared/tdx.h |  2 ++
- 2 files changed, 29 insertions(+)
+Changes in v4:
+- No changes as this was introduced as a separated patch after the v3
+  review.
+- Link to v3: https://lore.kernel.org/lkml/20240730120546.1042515-1-mmaslanka@google.com/
+---
+---
+ drivers/clocksource/acpi_pm.c | 27 +++++++++++++++++++++++++++
+ drivers/clocksource/acpi_pm.h | 16 ++++++++++++++++
+ 2 files changed, 43 insertions(+)
+ create mode 100644 drivers/clocksource/acpi_pm.h
 
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index ba3103877b21..f6e48119d6fd 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -249,6 +249,32 @@ static void disable_sept_ve(u64 td_attr)
- 	return;
+diff --git a/drivers/clocksource/acpi_pm.c b/drivers/clocksource/acpi_pm.c
+index 82338773602ca..c629f5462bc0f 100644
+--- a/drivers/clocksource/acpi_pm.c
++++ b/drivers/clocksource/acpi_pm.c
+@@ -25,6 +25,12 @@
+ #include <asm/io.h>
+ #include <asm/time.h>
+ 
++#include "acpi_pm.h"
++
++static void *suspend_resume_cb_data;
++
++static void (*suspend_resume_callback)(void *data, bool suspend);
++
+ /*
+  * The I/O port the PMTMR resides at.
+  * The location is detected during setup_arch(),
+@@ -58,6 +64,25 @@ u32 acpi_pm_read_verified(void)
+ 	return v2;
  }
  
-+/*
-+ * TDX 1.0 generates a #VE when accessing topology-related CPUID leafs (0xB and
-+ * 0x1F) and the X2APIC_APICID MSR. The kernel returns all zeros on CPUID #VEs.
-+ * In practice, this means that the kernel can only boot with a plain topology.
-+ * Any complications will cause problems.
-+ *
-+ * The ENUM_TOPOLOGY feature allows the VMM to provide topology information.
-+ * Enabling the feature  eliminates topology-related #VEs: the TDX module
-+ * virtualizes accesses to the CPUID leafs and the MSR.
-+ *
-+ * Enable ENUM_TOPOLOGY if it is available.
-+ */
-+static void enable_cpu_topology_enumeration(void)
++void acpi_pm_register_suspend_resume_callback(void (*cb)(void *data, bool suspend),
++					      void *data)
 +{
-+	u64 configured;
-+
-+	/* Has the VMM provided a valid topology configuration? */
-+	tdg_vm_rd(TDCS_TOPOLOGY_ENUM_CONFIGURED, &configured);
-+	if (!configured) {
-+		pr_err("VMM did not configure X2APIC_IDs properly\n");
-+		return;
-+	}
-+
-+	tdg_vm_wr(TDCS_TD_CTLS, TD_CTLS_ENUM_TOPOLOGY, TD_CTLS_ENUM_TOPOLOGY);
++	suspend_resume_callback = cb;
++	suspend_resume_cb_data = data;
 +}
 +
- static void tdx_setup(u64 *cc_mask)
++static void acpi_pm_suspend(struct clocksource *cs)
++{
++	if (suspend_resume_callback)
++		suspend_resume_callback(suspend_resume_cb_data, true);
++}
++
++static void acpi_pm_resume(struct clocksource *cs)
++{
++	if (suspend_resume_callback)
++		suspend_resume_callback(suspend_resume_cb_data, false);
++}
++
+ static u64 acpi_pm_read(struct clocksource *cs)
  {
- 	struct tdx_module_args args = {};
-@@ -280,6 +306,7 @@ static void tdx_setup(u64 *cc_mask)
- 	tdg_vm_wr(TDCS_NOTIFY_ENABLES, 0, -1ULL);
+ 	return (u64)read_pmtmr();
+@@ -69,6 +94,8 @@ static struct clocksource clocksource_acpi_pm = {
+ 	.read		= acpi_pm_read,
+ 	.mask		= (u64)ACPI_PM_MASK,
+ 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
++	.suspend	= acpi_pm_suspend,
++	.resume		= acpi_pm_resume,
+ };
  
- 	disable_sept_ve(td_attr);
-+	enable_cpu_topology_enumeration();
- }
  
- /*
-diff --git a/arch/x86/include/asm/shared/tdx.h b/arch/x86/include/asm/shared/tdx.h
-index fecb2a6e864b..89f7fcade8ae 100644
---- a/arch/x86/include/asm/shared/tdx.h
-+++ b/arch/x86/include/asm/shared/tdx.h
-@@ -23,12 +23,14 @@
- #define TDCS_CONFIG_FLAGS		0x1110000300000016
- #define TDCS_TD_CTLS			0x1110000300000017
- #define TDCS_NOTIFY_ENABLES		0x9100000000000010
-+#define TDCS_TOPOLOGY_ENUM_CONFIGURED	0x9100000000000019
- 
- /* TDCS_CONFIG_FLAGS bits */
- #define TDCS_CONFIG_FLEXIBLE_PENDING_VE	BIT_ULL(1)
- 
- /* TDCS_TD_CTLS bits */
- #define TD_CTLS_PENDING_VE_DISABLE	BIT_ULL(0)
-+#define TD_CTLS_ENUM_TOPOLOGY		BIT_ULL(1)
- 
- /* TDX hypercall Leaf IDs */
- #define TDVMCALL_MAP_GPA		0x10001
+diff --git a/drivers/clocksource/acpi_pm.h b/drivers/clocksource/acpi_pm.h
+new file mode 100644
+index 0000000000000..c932899f04282
+--- /dev/null
++++ b/drivers/clocksource/acpi_pm.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __ACPI_PM_H__
++#define __ACPI_PM_H__
++
++#include <linux/types.h>
++
++/**
++ * Register callback for suspend and resume event
++ *
++ * @cb Callback triggered on suspend and resume
++ * @data Data passed with the callback
++ */
++void acpi_pm_register_suspend_resume_callback(void (*cb)(void *data, bool suspend),
++					      void *data);
++
++#endif
 -- 
-2.43.0
+2.46.0.76.ge559c4bf1a-goog
 
 
