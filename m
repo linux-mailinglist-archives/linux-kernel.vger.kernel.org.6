@@ -1,227 +1,196 @@
-Return-Path: <linux-kernel+bounces-280791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7372594CF43
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:16:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C09294CF48
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FCEA28464C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:16:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2842328460A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F76191F65;
-	Fri,  9 Aug 2024 11:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE78192B80;
+	Fri,  9 Aug 2024 11:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LxOw2go+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZVJmJnqj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LxOw2go+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZVJmJnqj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="AlrLXCuN"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2058.outbound.protection.outlook.com [40.107.22.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A4110A1E;
-	Fri,  9 Aug 2024 11:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723202178; cv=none; b=PqTSh906GX0+ivsvsANbNYYqANyErA3reUNuNN79pQYf6El3VZugsEBGfSE6PXUaU5xbZ4DWUxUcJ/wLTOV9wohMKljD6mNEuS51odyoqsWqKY4KtNbATjgA+NcVjiWPQC55zLSAPFC+p18xflUG3yKojAyHcv+OxjilmN6w/sA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723202178; c=relaxed/simple;
-	bh=6Ym0oDETDrjgbvdG5mB7eZdQAUmgFHmwD4yMULqEwoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Eg7/nPky2ILP86gyaqZNbPTLRsXlRIHZDKVaFWMbTSQLWVswid9JgcVfHsZMpq1Uy5IkF1qO1IybTMcCTfost2c6LB1P5wY+GIxa8S+k+4zaMSr5K5C98EMcxsxjmpcWhixeOsHCSJfmgKy5agzP+iTsYn1t1IW1xazideE9JrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LxOw2go+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZVJmJnqj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LxOw2go+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZVJmJnqj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 123DA1F7EA;
-	Fri,  9 Aug 2024 11:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723202175; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KoQephddyhrmFgErZqHzG4uceSyWf0Kb3FnNqXo2HNM=;
-	b=LxOw2go+PQySyA91JrDxgpTJ0Hvnrs/hAM2TH4CxnHvXoIEdSf0A+K8UwWxavlzqUp5Uyz
-	2iGJXSly3MR1HLPS8oqmc+C9VpGR078OChW3pAZucZQzwYLisDidQmkChvhtGe7PHqj2+5
-	CX0mD37+/4M8BBTo2FnjZxrHTrJ+5B0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723202175;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KoQephddyhrmFgErZqHzG4uceSyWf0Kb3FnNqXo2HNM=;
-	b=ZVJmJnqjS8cUJdeToSKx8+joDIhYAIQ+Dq/CkIH9F26HEKjKV/SFjrpmIsY39dVb5Q6W0R
-	jP4pV3+AyRLWPNCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723202175; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KoQephddyhrmFgErZqHzG4uceSyWf0Kb3FnNqXo2HNM=;
-	b=LxOw2go+PQySyA91JrDxgpTJ0Hvnrs/hAM2TH4CxnHvXoIEdSf0A+K8UwWxavlzqUp5Uyz
-	2iGJXSly3MR1HLPS8oqmc+C9VpGR078OChW3pAZucZQzwYLisDidQmkChvhtGe7PHqj2+5
-	CX0mD37+/4M8BBTo2FnjZxrHTrJ+5B0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723202175;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KoQephddyhrmFgErZqHzG4uceSyWf0Kb3FnNqXo2HNM=;
-	b=ZVJmJnqjS8cUJdeToSKx8+joDIhYAIQ+Dq/CkIH9F26HEKjKV/SFjrpmIsY39dVb5Q6W0R
-	jP4pV3+AyRLWPNCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0C9831379A;
-	Fri,  9 Aug 2024 11:16:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wMpHAH76tWbCVwAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Fri, 09 Aug 2024 11:16:13 +0000
-Message-ID: <9c22a495-7b89-4df6-b57b-cb0f39b09c30@suse.de>
-Date: Fri, 9 Aug 2024 14:16:09 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29541591F3;
+	Fri,  9 Aug 2024 11:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723202227; cv=fail; b=aSWNaY4t8NZ+W1c0H6RAeDIqqPhsjm3jmAq4X91vpI5L/eIPNGe3tJ4iNSWxV9ypMZgMUSuohnizoL0uBYMTIExu5CZ8UyOGyid8613zKWIVhgKyOAyKPN7gpgY7lKdYeEdL/Recbg4jtBwpJN5uc2V839FHi3bZO066bz0mK8k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723202227; c=relaxed/simple;
+	bh=M85Oq3jzwsm4CfDHf1wJxOX/F44pHwum7L8VPkjfyuw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UEpdKT4r/NbQ1tQQRY31iqnaCW9t06xncq5n5vd24lv3VHaS2kqe6DEt6WVUdAwY6Pk0Abhncq3PHiNojYNMneHrrekcHzisv+HLkSPPEN9HGlf57CEDhpYPLf9P0ZhgxjBLLwFPVKQaNmoUnl2/FM4N6ucLLSQ/jY0cqovOa2c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=AlrLXCuN; arc=fail smtp.client-ip=40.107.22.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lj/eicnnn9qdxfbs1tvuwekjEZwNcW7i8ctbqXZYqtkErNFHpd+cfgHifhoZRjmIPcwciHQy9p9er9Lev1DbEMHC5DDVA7VfbCZ9R6jhIkagq9d+2yqu8D7jxsG5BVDXHaQniliyZG00t+2EOt4YBaNU61QOacQ193FVqLnsN05P4CMgEWgckc+gVFYKgpn1+vLI90BXD7Tdxm03MRiaSaIcIKF79wci9XCNvE3GRFQF9sIXqwZcdFghBsmiUemX8nmlIfq+zhGUw0vEUU3Xd7GvcJpFvRbVFo93fF+fM19OdUUl49Ewt7+LbfzSMve7Y1t3hSYsax4yVS1arOIhBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ljyw4niLmBBuyBsAY2VA7tTOOfymc8Rp9D0ZDFtIkZo=;
+ b=KGDXsk559jnlvQj8OEFNo4m8uTbnSP69vrxFwqIFvI09VLTM3oV47NM5GG/W8AMP8vSlEyvppRr8GW0PPHn+jCbwazKwFHWNMUB5KfOsevFziTUJ0tq9s0lUuJolQM8Xa6Ohbn3N4z+OigeiqxY3ttgaRsrFt58CS+pLb3vXbI3V6blVQYUtl3CRbwYpUFBVAwhkd85VG3qsPNRMhIQ4aVs0InUvdRzYPi1TYCtH5jKjAZC+cePPqk8ug/JRa1tU07jewSYKsjHYDcpa6CpyZjxzDub4I0+vn3ZXlk/VqCwDix3Y+2VjnRc5Xk0NWgI2hcMtcnUKdq8kMDp+/AgqCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.205) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ljyw4niLmBBuyBsAY2VA7tTOOfymc8Rp9D0ZDFtIkZo=;
+ b=AlrLXCuN8mGC/Rpn11VK1d0Z3OdC+S5xdVih9q+ot0xrR/TFPskB9UXwqFZbi9TbWl0thcEqkUkpZSoUdLB2mvOQVFLXHKfR7gj85ji16SLiRhntINOyejXn3lUxB6CFQBkg+LzJB/SnVlneFOMjyD1Z2AwCtfzIo2SHseDp7m8JZ4QV4rAyqT519DJZgoi7/75G5YFCj2bdnQsC1dy7m70GvAVWlXwAn4MSsvYXqpZnqQcqFYhhO4Smj+hX25PZIV7J0sGdOOLKyn9GUp3fmm5HuShRligMibiPA30UocNMCR2kkvu2ocW6Y+fRpPDNdiTjDG7f9apPvUKcEBDvbA==
+Received: from AM6P194CA0014.EURP194.PROD.OUTLOOK.COM (2603:10a6:209:90::27)
+ by AM7PR10MB3557.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:131::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.15; Fri, 9 Aug
+ 2024 11:17:01 +0000
+Received: from AMS0EPF00000195.eurprd05.prod.outlook.com
+ (2603:10a6:209:90:cafe::d2) by AM6P194CA0014.outlook.office365.com
+ (2603:10a6:209:90::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14 via Frontend
+ Transport; Fri, 9 Aug 2024 11:17:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.205) by
+ AMS0EPF00000195.mail.protection.outlook.com (10.167.16.215) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.8 via Frontend Transport; Fri, 9 Aug 2024 11:17:01 +0000
+Received: from FE-EXCAS2000.de.bosch.com (10.139.217.199) by eop.bosch-org.com
+ (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 9 Aug
+ 2024 13:16:58 +0200
+Received: from LR-C-0008DVM.rt.de.bosch.com (10.139.217.196) by
+ FE-EXCAS2000.de.bosch.com (10.139.217.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 9 Aug 2024 13:16:58 +0200
+From: <Jianping.Shen@de.bosch.com>
+To: <jic23@kernel.org>, <lars@metafoo.de>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <dima.fedrau@gmail.com>,
+	<marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<Jianping.Shen@de.bosch.com>, <Christian.Lorenz3@de.bosch.com>,
+	<Ulrike.Frauendorf@de.bosch.com>, <Kai.Dolde@de.bosch.com>
+Subject: [PATCH v2 0/2] iio: imu: smi240: cover-letter
+Date: Fri, 9 Aug 2024 13:16:33 +0200
+Message-ID: <20240809111635.106588-1-Jianping.Shen@de.bosch.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/12] PCI: brcmstb: Use bridge reset if available
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-5-james.quinlan@broadcom.com>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <20240731222831.14895-5-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.29
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[broadcom.com,vger.kernel.org,kernel.org,google.com,arm.com,debian.org,suse.de,linaro.org,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF00000195:EE_|AM7PR10MB3557:EE_
+X-MS-Office365-Filtering-Correlation-Id: a435dced-c377-4e2c-5b2d-08dcb864ca65
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|1800799024|376014|82310400026|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aVUyZWFiRk1LSEkvZmRlWDJIYjk4TkxpVmhDZzFKOFB1Q0VTemhTL25XT0RE?=
+ =?utf-8?B?a3RORm0yNFp4OGN4a1RWNlpQL21tNHlnb1VtcXMvTkJhOWNoSmFqUkFDVk5X?=
+ =?utf-8?B?ZE1tdGVUd2ljS3hLZGx2NGV2bjZ0b0U1NWV1d1ZJUlUxNWVZNnRQRXZDNHJx?=
+ =?utf-8?B?d2pRVnBPbU9XV2JqdW0rdmdkQXNiZlhQMzRMVTN5ODRuenNtcnZIaHpPdmx5?=
+ =?utf-8?B?WSszd1lsSlllWDJNTXFOb3RSMGZjSjBsME0vK0ZvRWV5bSs0T0xWL2tpaUdv?=
+ =?utf-8?B?L0JOR0JCUDdaUkIwNnFEM3pYYk0vL05NOVZ5K0NzSzFiQU13WmxGS1VFUHhr?=
+ =?utf-8?B?ZHVsTEJ6OGtSTDRBQ1hMaWgrdUl4V3B0QlR3VmpHdmRzTTRwOWF0N3c5RW9D?=
+ =?utf-8?B?R1EvTzl2YXlWdUc3NEo1dEp0a0dMVlI4enlSaFBSYlZLVFJOS3hDK1U2c2NB?=
+ =?utf-8?B?WGtOcUhMTDU0MUMzRjUrdXRQWCtwa25ETEZuQXE4QjdSYU4xTnJGcHFnR2R3?=
+ =?utf-8?B?ZmVVeVJnemhUbzhFb3JhZDVwc05qSE9hOU0wc2IxdWxFRGE3aUZLejZPMEVX?=
+ =?utf-8?B?RUFDSEQ3bTF2R0NKbmxLMU11NkIwRWd3UmZzdHQyR2JqWll6QTlXYTRGUGht?=
+ =?utf-8?B?d0Y5ajk0dVRyQ24xUllUZ3pMcEkvQnFXMS9PbWYrRlR3bXV0NUFDbGFON3NS?=
+ =?utf-8?B?dFZzMkFFdkJSUHIyYm9GbU14dlZpZUpkbHI5L1c4V0pLU2hBZWQrbVhRYWFS?=
+ =?utf-8?B?Mld6R0NvUzNsMTNhbmZHU0dJT09SS1V3RzAycUloSkpFeWRnYVVaa1l1dUpM?=
+ =?utf-8?B?S3N6OVMvdWJ1ZjdHNXFneEJsZzU2S2NieE1QTWxrbHRheTc1K0RtK0Z5VVox?=
+ =?utf-8?B?bTcwMjBqcS9kaW1HVmV0Z1UwYzZTd3pxa3cwUzVQNU41UlFmVTB2ek12Mzd5?=
+ =?utf-8?B?UUpmSnJVMFJtaHB3bGlGVTJNYmE4c1ZKbG1OcnI0NXhjNnZyUTdibGJ2YkUw?=
+ =?utf-8?B?MGM2OUE2K1BQYTR1SnN2cG14cThkU3B0NmcvYVV6enJ0NitSMElZUXBTY1BJ?=
+ =?utf-8?B?QjZtQUdUNEZPS3owenZXRmtzNW9DQ3c3TXVjbjlXYkhrQnVaOHNnRm0wUG1p?=
+ =?utf-8?B?NVYrdG9MVFp4bWVWUHNhT3BmR3ZVTnNWRWJHK0Z2L3NISWVPZ2xQcEpiS2tY?=
+ =?utf-8?B?UGFGbDkrMTdPTCt3U0FzRm1MaDNsdUxmbjRoeEhibWFkVVpXKzVXU0RraTdj?=
+ =?utf-8?B?WFZlaVRTQVdERnJKQm1QaTFTOUF5enpzb0U3TDhJdUlXNEZMNDl6S1diU2RH?=
+ =?utf-8?B?ZDFQbllxL3R0NVZrSG85R25LSFVmdTRrN0paWXRvL3hPN0FqTXZpUUVLMEhS?=
+ =?utf-8?B?RE1KN3RsQzhHVlk5aU5uK1dlMWlQVGJMWjA5R1BXaWxyc3ZtQThBZW9XWG5S?=
+ =?utf-8?B?YnpUUFdlV1poV3RWZi9tanpSQkoyUnpCVmlIdXVjbVA5QXlRSWNWQ1pqbG1Y?=
+ =?utf-8?B?d0FqODNWc0FMY3ozOXlVTDVQaHBMNWEwL1FvZEhwOWloTmZ5aDZrQ3J3RmRu?=
+ =?utf-8?B?cU4xSVhRUHo3d1Bxd0ppQU9PblpMVjNlZExEcFpqazkweWJYaEl2RUt4VTNx?=
+ =?utf-8?B?Nlg5M2pXTTZXLzI1Vi9ERUdxUlRVR0hvcFlWQUgyazlPUnRicENEdFA1dmFv?=
+ =?utf-8?B?SVhsS01LT1c1bGNCZVgzNFJ3RzJtVXZTc3hVeDVza2FwQlJsRTRMRXVPdGtQ?=
+ =?utf-8?B?aGx2cGVIL1NOYlQ5S3hMUFpSQXBMdUFKcncwUGtyb2JWRGF2US9KT3Fja3JQ?=
+ =?utf-8?B?TG9CRVdQWWY5Mk5Wa3lDSm9rbG90dnI2dkxmeVAvQ2JXQXVQMFk4MWNtbFF5?=
+ =?utf-8?B?bVlzVVp4WVpsUmQrUnM5YWxhZlZ4OURQbUdtTC83MndTa2lZdXJXMHdiSlM1?=
+ =?utf-8?B?SEE1d2phSitYNEgwUXNtc1dtVFNKa3U3SXJZM3B1eVl1aFF2bDRpMlhMdC9o?=
+ =?utf-8?B?REIwV2tzTSt3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(1800799024)(376014)(82310400026)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 11:17:01.0867
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a435dced-c377-4e2c-5b2d-08dcb864ca65
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF00000195.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3557
 
-Hi Jim,
+From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
 
-On 8/1/24 01:28, Jim Quinlan wrote:
-> The 7712 SOC has a bridge reset which can be described in the device tree.
-> Use it if present.  Otherwise, continue to use the legacy method to reset
-> the bridge.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
->  1 file changed, 19 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 7595e7009192..4d68fe318178 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -265,6 +265,7 @@ struct brcm_pcie {
->  	enum pcie_type		type;
->  	struct reset_control	*rescal;
->  	struct reset_control	*perst_reset;
-> +	struct reset_control	*bridge_reset;
->  	int			num_memc;
->  	u64			memc_size[PCIE_BRCM_MAX_MEMC];
->  	u32			hw_rev;
-> @@ -732,12 +733,19 @@ static void __iomem *brcm7425_pcie_map_bus(struct pci_bus *bus,
->  
->  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
->  {
-> -	u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-> -	u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-> +	if (val)
-> +		reset_control_assert(pcie->bridge_reset);
-> +	else
-> +		reset_control_deassert(pcie->bridge_reset);
->  
-> -	tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> -	tmp = (tmp & ~mask) | ((val << shift) & mask);
-> -	writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> +	if (!pcie->bridge_reset) {
-> +		u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-> +		u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-> +
-> +		tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> +		tmp = (tmp & ~mask) | ((val << shift) & mask);
-> +		writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> +	}
->  }
->  
->  static void brcm_pcie_bridge_sw_init_set_7278(struct brcm_pcie *pcie, u32 val)
-> @@ -1621,10 +1629,16 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->  	if (IS_ERR(pcie->perst_reset))
->  		return PTR_ERR(pcie->perst_reset);
->  
-> +	pcie->bridge_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "bridge");
+This patchset adds the iio driver and the dt-binding for bosch imu smi240.
+The smi240 is a combined three axis angular rate and three axis acceleration
+sensor module with a measurement range of +/-300°/s and up to 16g.
+smi240 does not support interrupt.
 
-Shouldn't this be devm_reset_control_get_optional_shared? See more below.
+dt-bindings: v1 -> v2
+    - Add more detail in description
+    - Add maintainer
+    - Add vdd and vddio power supply
+    - Use generic node name
+    - Order the properties according to DTS coding style
+    
+imu driver v1 -> v2
+    - Use regmap for register access
+    - Redefine channel for each singel axis
+    - Provide triggered buffer
+    - Fix findings in Kconfig
+    - Remove unimportant functions
 
-> +	if (IS_ERR(pcie->bridge_reset))
-> +		return PTR_ERR(pcie->bridge_reset);
-> +
->  	ret = clk_prepare_enable(pcie->clk);
->  	if (ret)
->  		return dev_err_probe(&pdev->dev, ret, "could not enable clock\n");
->  
-> +	pcie->bridge_sw_init_set(pcie, 0);
+Shen Jianping (ME-SE/EAD2) (2):
+  dt-bindings: iio: imu: smi240: devicetree binding
+  iio: imu: smi240: imu driver
 
-According to reset_control_get_shared description looks like this
-.deassert is satisfying the requirements for _shared reset-control API
-variant.
-Is that the intention to call reset_control_deassert() here?
+ .../bindings/iio/imu/bosch,smi240.yaml        |  51 +++
+ drivers/iio/imu/Kconfig                       |   1 +
+ drivers/iio/imu/Makefile                      |   1 +
+ drivers/iio/imu/smi240/Kconfig                |  12 +
+ drivers/iio/imu/smi240/Makefile               |   7 +
+ drivers/iio/imu/smi240/smi240.h               |  30 ++
+ drivers/iio/imu/smi240/smi240_core.c          | 392 ++++++++++++++++++
+ drivers/iio/imu/smi240/smi240_spi.c           | 173 ++++++++
+ 8 files changed, 667 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
+ create mode 100644 drivers/iio/imu/smi240/Kconfig
+ create mode 100644 drivers/iio/imu/smi240/Makefile
+ create mode 100644 drivers/iio/imu/smi240/smi240.h
+ create mode 100644 drivers/iio/imu/smi240/smi240_core.c
+ create mode 100644 drivers/iio/imu/smi240/smi240_spi.c
 
-> +
->  	ret = reset_control_reset(pcie->rescal);
->  	if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n"))
->  		goto clk_disable_unprepare;
+-- 
+2.34.1
 
-~Stan
 
