@@ -1,131 +1,86 @@
-Return-Path: <linux-kernel+bounces-280278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C05E94C812
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:34:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCD494C829
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D364D1F23800
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:34:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A99B2880D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669DBC8FE;
-	Fri,  9 Aug 2024 01:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="ZRZCUma2"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB52134B2;
+	Fri,  9 Aug 2024 01:44:14 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256DDC125
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 01:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CDB3234;
+	Fri,  9 Aug 2024 01:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723167277; cv=none; b=at383+fLs3FGIdiksFg1oD7oZe7Y6DlbMk2c1wwcpFqvN6yrhxkVXIaUbj8QsNOQBjcF/nKQ6twHdlfXQXf5/boQjx/D74T5tWJzBSDbKsp8mwiEz02/OcRLISdjVYH6FpxBLdkZL3N+61FR8oQX6AaexvL5dy62woVEgY0wzlc=
+	t=1723167854; cv=none; b=FdA/7chv7wzwU4+xuMs8doc1P88f1t4oXerjjiVZso2+XdBUJa4KVMvtzCq9KHY5fxP+d2j1UO9WaUu+YNEjaz4bV3OXWvUvc3P7nfSdfBOFu7gz3HtR3NmB56aq+Gnzrq1PMzG6r52IxZtm3L11BGwxZcBUsJy9eKSVQ++KtjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723167277; c=relaxed/simple;
-	bh=ToaX6peDCB9hbmMU2GLlvLW1Nh9ojFmC84nfltrsG9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUQ+sDSRiexuNSr3JF1TeOEQ/SknaMO7rmDp2fLDtiWphk8PqHlzGpgRn4b7ctn5NZu7fV3E1aohAjHsIcGElcvSmA8Qa4r3cKAQfTSTxroaAwjafCEty/PWdyQPr/SIPT0ACsr6QGNUevcc9P/kji9pqgoOXsbT5eqLAR/8JWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=ZRZCUma2; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3687ea0521cso1103373f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 18:34:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1723167274; x=1723772074; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9y2C8B+lF/Lu/CAlX1W3oq5Kr7FiXBOOsxkXKzU7Rhg=;
-        b=ZRZCUma2IFtUDkf596jFg7TJW+3NCLbGJzuThML+q+/2SdY+W2erIhAQr+ddTyX5ZK
-         qjga87kQhBv1GL3YRSZJSM3f/opkKvuLuEgprXZ+hidH9MU3/LlxQ67oAuaPc6VxRQDo
-         1whSUnQaKd1HvxmiAxaAsox9mpPK2lESKLbZ2RcQGI8d+m1Mwr2X+CoqPO/R+gR5SLPM
-         JnreJJ/lGn9X/ZcG46yQzvjC7uLbGodr+EzwSnMjneIcfo/dtB27wh8osmXbV4BTPB+K
-         iFIR4vV1frYzJmw132Z74H1X2HLmeouow3eUWd+Lmh14U1GhFqoQzAEiSUNPkW+BNV4Y
-         kyfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723167274; x=1723772074;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9y2C8B+lF/Lu/CAlX1W3oq5Kr7FiXBOOsxkXKzU7Rhg=;
-        b=srW7p6C1yqXmmAiDeoni2ddwxeJlm50Dfq14JWXGJtcy2VYE7KfuH5BPonTRPj0Pwz
-         ODwIYYwkt2uGT/5tIxOxj11kx4XcRNvuFsRHwaoLKAWqaF8g+21nS7qjJE6DHpMO6M6B
-         jOhb0O+JFoDIGES7rCCWtcBvbmk/qZ3hzif8jx5/1cbDgXkTnLuFyUgwGeHIDoGtxx70
-         rbVcRGTlbA7jskk1TdeQkk6BSb/mY3ToLH6Q/OFRQVvQfZfoCIFhqziAGdhawnOfVhsp
-         CGA+Ss7XpGWjOJwfdKPTVMG5KhFvp2arDxc8Hbxxre6FgsRSskI8dS/r/qO5Sa8eSk14
-         W4Zg==
-X-Gm-Message-State: AOJu0YxYfk9kBXiItxTeWRCvD9eKEyJobK9kdmPPZtZbU11eNA/7/bmT
-	lwrkYku52IG3jmYPnUmeak2W4wMRcYFY5zgD2BND2+pAYdAJB80ghRVmUbw9ugk=
-X-Google-Smtp-Source: AGHT+IHgxmkzadjixFKAZvgrgSR6E6CZFBClPkj7rqhI/8wgnxNh9+m5FX63Zkh1nB2PKYWXDsWE+Q==
-X-Received: by 2002:a05:6000:b89:b0:368:3b5c:7a5d with SMTP id ffacd0b85a97d-36d5e1c7656mr13291f8f.20.1723167274274;
-        Thu, 08 Aug 2024 18:34:34 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290598e970sm101502785e9.24.2024.08.08.18.34.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 18:34:34 -0700 (PDT)
-Date: Fri, 9 Aug 2024 02:34:33 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Felix Moessbauer <felix.moessbauer@siemens.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	jan.kiszka@siemens.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v2 0/1] hrtimer: More fixes for handling of timer slack
- of rt tasks
-Message-ID: <20240809013433.pazaymcdx37lhpau@airbuntu>
-References: <20240805140930.29462-1-felix.moessbauer@siemens.com>
+	s=arc-20240116; t=1723167854; c=relaxed/simple;
+	bh=zjhg9zTvqXg9WUCET1dD1tSFmzlocx7JI25rFZnMsUc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RStkgzyk6KVCoXhKhgWHsek7UZOzMWsaxI9jHaWJouUKYBU9rARXZBu1YaJxjlYXJuT2yQQNtZF0NQYhAnsYSA/Dw6gdvLI8uQKrmGQ5UM4BZizDK0gSmcnvU48uFU7bbC+FIn7hhIl3Ec0EyRRL///FWu33NuPQuyx2p4/UORA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wg6C24f8jzcd5c;
+	Fri,  9 Aug 2024 09:43:58 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id ACCAD18007C;
+	Fri,  9 Aug 2024 09:44:07 +0800 (CST)
+Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 9 Aug
+ 2024 09:44:07 +0800
+From: Liao Chen <liaochen4@huawei.com>
+To: <linux-fsdevel@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <dlemoal@kernel.org>,
+	<naohiro.aota@wdc.com>, <jth@kernel.org>, <liaochen4@huawei.com>
+Subject: [PATCH -next] zonefs: add support for FS_IOC_GETFSSYSFSPATH
+Date: Fri, 9 Aug 2024 01:36:27 +0000
+Message-ID: <20240809013627.3546649-1-liaochen4@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240805140930.29462-1-felix.moessbauer@siemens.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-On 08/05/24 16:09, Felix Moessbauer wrote:
-> This series fixes the (hopefully) last location of an incorrectly
-> handled timer slack on rt tasks in hrtimer_start_range_ns(), which was
-> uncovered by a userland change in glibc 2.33.
-> 
-> Changes since v1:
-> 
-> - drop patch "hrtimer: Document, that PI boosted tasks have no timer slack", as
->   this behavior is incorrect and is already adressed in 20240610192018.1567075-1-qyousef@layalina.io
+FS_IOC_GETFSSYSFSPATH ioctl expects sysfs sub-path of a filesystem, the
+format can be "$FSTYP/$SYSFS_IDENTIFIER" under /sys/fs, it can helps to
+standardizes exporting sysfs datas across filesystems.
 
-There was discussion about this hrtimer usage in earlier version if it helps to
-come up with a potentially better patch
+This patch wires up FS_IOC_GETFSSYSFSPATH for zonefs, it will output
+"zonefs/<dev>".
 
-	https://lore.kernel.org/lkml/20240521110035.KRIwllGe@linutronix.de/
+Signed-off-by: Liao Chen <liaochen4@huawei.com>
+---
+ fs/zonefs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-My patches got picked up by the way, you'd probably want to rebase and resend
-as now the function is named rt_or_dl_task_policy()
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index faf1eb87895d..e180daa39578 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -1262,6 +1262,7 @@ static int zonefs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sb->s_maxbytes = 0;
+ 	sb->s_op = &zonefs_sops;
+ 	sb->s_time_gran	= 1;
++	super_set_sysfs_name_id(sb);
+ 
+ 	/*
+ 	 * The block size is set to the device zone write granularity to ensure
+-- 
+2.34.1
 
-
-Cheers
-
---
-Qais Yousef
-
-> - use task_is_realtime() instead of rt_task()
-> - fix style of commit message
-> 
-> v1 discussion: https://lore.kernel.org/lkml/20240805124116.21394-1-felix.moessbauer@siemens.com
-> 
-> Best regards,
-> Felix Moessbauer
-> Siemens AG
-> 
-> Felix Moessbauer (1):
->   hrtimer: Ignore slack time for RT tasks in hrtimer_start_range_ns()
-> 
->  kernel/time/hrtimer.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> -- 
-> 2.39.2
-> 
 
