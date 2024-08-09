@@ -1,130 +1,295 @@
-Return-Path: <linux-kernel+bounces-280993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F168D94D1AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:55:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C470994D1B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A300B1F24ED7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:55:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8A131C21027
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C9419581F;
-	Fri,  9 Aug 2024 13:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FA7196C86;
+	Fri,  9 Aug 2024 13:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dDKvEPkQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QpfoHd3s"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23C91957FF
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A659195F3B
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723211746; cv=none; b=GXlhvxFEAXwvx4jFIzDnqWgWz7+i+1Q3GQr4M182XS6+l9YWvGXpm6SmwneY7hlXtbXjleXz/FXct+riEix1M+LaswQhQEusAvHQauxZhBE8w9jWsFi25y6Lr8jHFdgCD+SK0BNc/kZBXL+XU3hliTmPe1+Nsk5nG73yimTPMbk=
+	t=1723211788; cv=none; b=THecNMHyS33iObSZbeYQ1r10zW2zMYcGJZkIrbXmga4ew7f7G2iRdQMl6AVFtuPrto3bStv/ZWZeWMxEKXPToE5HZxGM5XH65joidCJ9CA+KINkSVUf9reGeoT75YzQ++RADdSPlr//udGJZte9qgpsDnxrAH4wyR/EA5elMRZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723211746; c=relaxed/simple;
-	bh=u3qb9u7xUqfWCyseEYNO2y6Aw00VoHXE9cd46e9bm7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRcmoOsiAPgyvgd5d9tAf1GN382uVbqZ9+ZP7RJT3okgHAqur+dDWwxSrSUu6oHVMHHAfPfBFGmgP1hl69R0cS33ehti8u/250qdcS8Vn0kWwQP1kH1y8apY4wqCE8HvJSN04lhAQF25z7DAQiP4+1jPMJ/QCQe1GqDuZ5fTPZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dDKvEPkQ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723211745; x=1754747745;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=u3qb9u7xUqfWCyseEYNO2y6Aw00VoHXE9cd46e9bm7g=;
-  b=dDKvEPkQng1xtvqcORK9MyGfYZA2rcp/ACTLCkl9LML2OkT2iY3kM3/k
-   XoC0cuBFShBqpHOXh5ve/f9cWNCjVNeTg+qpQugJIhGSelgUdbFR5xmOv
-   l54x801/QWI3OiGcnGupT8BaW2ghYJlU3obcGVcfYJUsEZm0FF3e8IouW
-   aW/zA+hBq4VRGY9motwbkqzU0vkxjgoyMFbO8T611fQFfdGcLXs5jgYOU
-   ukI6fzVGLUoQWKy2Lsk5jBDssfFXjvdjXmB2FPEsGFpBzolOLVThULBky
-   A/m653gp1YPAZ3y+7RgfT7v5tgtRkFpu521nmd3OgGl7fB+i2T8xWSsMr
-   g==;
-X-CSE-ConnectionGUID: P4zFqmZoRzy1YrGa63++aQ==
-X-CSE-MsgGUID: Ut5bqgx3Qvi8y7jbZMrWIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="38891107"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="38891107"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 06:55:44 -0700
-X-CSE-ConnectionGUID: HNMyY+K7TzSrs6VZjAP8ug==
-X-CSE-MsgGUID: Gcxom01WTMeHvnEkUCog5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="57787766"
-Received: from unknown (HELO [10.237.72.57]) ([10.237.72.57])
-  by orviesa006.jf.intel.com with ESMTP; 09 Aug 2024 06:55:43 -0700
-Message-ID: <2a9f6c23-9c7b-496b-9998-ea0afe526b46@linux.intel.com>
-Date: Fri, 9 Aug 2024 16:55:41 +0300
+	s=arc-20240116; t=1723211788; c=relaxed/simple;
+	bh=GLNnkj1oYbZiZy4j5Eu0TSV+NeDFNL5rcs9PdWBpS6M=;
+	h=To:cc:Subject:MIME-Version:Content-Type:From:Date:Message-ID; b=FGPLD3z6yEmM3PrbVtisM6LYvqtXk8iDA2G3WHsEemM5Sn2DnFc9YyySEbkWIGMd4M+Aqi19ew93T+p21uf4agDlH3v6HXOhwoTqftvICQJ2fdVcOJXJD2E7gQl++02R8GnzPzx+BYjXTvHmTMLTqYSy6TY3hQFHX0eWnggqg9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QpfoHd3s; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723211786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=apin+9jgzFuDXSZ4CuNnU6Ut/Wa48SE7YgICxGZt4k8=;
+	b=QpfoHd3sACnvAkwr6pfm6slLLlN5U9FzO6HtWIoTXjuXr8b9YNqtljqMsSzPJ4R8IB/vnu
+	E7WCUtX1lJCz5/q14UVKfvfR3q1CLkP/urHwwq1SssE2gv9rfTutT5HR8/wIG9FXJ0Y5H+
+	Gt91VYlyDMl1cKwoOb+vfAh+9m+Gfrk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-424-65E9MiYgO2Ox1Cz4ptHNCA-1; Fri,
+ 09 Aug 2024 09:56:20 -0400
+X-MC-Unique: 65E9MiYgO2Ox1Cz4ptHNCA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 589471944B2C;
+	Fri,  9 Aug 2024 13:56:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E820F300018D;
+	Fri,  9 Aug 2024 13:56:10 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+To: Dominique Martinet <asmadeus@codewreck.org>,
+    Eric Van Hensbergen <ericvh@kernel.org>
+cc: dhowells@redhat.com, Latchesar Ionkov <lucho@ionkov.net>,
+    Christian Schoenebeck <linux_oss@crudebyte.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Ilya Dryomov <idryomov@gmail.com>, Steve French <sfrench@samba.org>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Trond Myklebust <trond.myklebust@hammerspace.com>,
+    Christian Brauner <brauner@kernel.org>, v9fs@lists.linux.dev,
+    linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] 9p: Fix DIO read through netfs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 3/6] i3c: mipi-i3c-hci: Add a quirk to set PIO
- mode
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
- Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
- <20240807052359.290046-4-Shyam-sundar.S-k@amd.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20240807052359.290046-4-Shyam-sundar.S-k@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1229143.1723211707.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+From: David Howells <dhowells@redhat.com>
+Date: Fri, 09 Aug 2024 14:56:09 +0100
+Message-ID: <1229195.1723211769@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi
+From: Dominique Martinet <asmadeus@codewreck.org>
 
-On 8/7/24 8:23 AM, Shyam Sundar S K wrote:
-> The AMD HCI controller currently only supports PIO mode but exposes DMA
-> rings to the OS, which leads to the controller being configured in DMA
-> mode. To address this, add a quirk to avoid configuring the controller in
-> DMA mode and default to PIO mode.
-> 
-> Additionally, introduce a generic quirk infrastructure to the mipi-i3c-hci
-> driver to facilitate seamless future quirk additions.
-> 
-> Co-developed-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
-> Signed-off-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
-> Co-developed-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-> Signed-off-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> ---
+9p: Fix DIO read through netfs
 
-...
+If a program is watching a file on a 9p mount, it won't see any change in
+size if the file being exported by the server is changed directly in the
+source filesystem, presumably because 9p doesn't have change notifications=
+,
+and because netfs skips the reads if the file is empty.
 
-> +void amd_i3c_hci_quirks_init(struct i3c_hci *hci)
-> +{
-> +#if defined(CONFIG_X86)
-> +	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-> +		hci->quirks |= HCI_QUIRK_PIO_MODE;
-> +#endif
-> +}
+Fix this by attempting to read the full size specified when a DIO read is
+requested (such as when 9p is operating in unbuffered mode) and dealing
+with a short read if the EOF was less than the expected read.
 
-I was thinking these quirks can be passed as driver_data more cleanly 
-and be specific only to affected HW if AMD HW would have an unique ACPI 
-ID for each HW version.
+To make this work, filesystems using netfslib must not set
+NETFS_SREQ_CLEAR_TAIL if performing a DIO read where that read hit the EOF=
+.
+I don't want to mandatorily clear this flag in netfslib for DIO because,
+say, ceph might make a read from an object that is not completely filled,
+but does not reside at the end of file - and so we need to clear the
+excess.
 
-Above X86_VENDOR_AMD might be too generic if and when quirks are fixed 
-in the future HW :-)
+This can be tested by watching an empty file over 9p within a VM (such as
+in the ktest framework):
 
-So something like:
+        while true; do read content; if [ -n "$content" ]; then echo $cont=
+ent; break; fi; done < /host/tmp/foo
 
-static const struct acpi_device_id i3c_hci_acpi_match[] = {
-	{"AMDI1234", HCI_QUIRK_PIO_MODE | HCI_QUIRK_OD_PP_TIMING | 
-HCI_QUIRK_RESP_BUF_THLD},
-	{}
-};
+then writing something into the empty file.  The watcher should immediatel=
+y
+display the file content and break out of the loop.  Without this fix, it
+remains in the loop indefinitely.
 
-and set them in the i3c_hci_probe() as:
+Fixes: 80105ed2fd27 ("9p: Use netfslib read/write_iter")
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218916
+Written-by: Dominique Martinet <asmadeus@codewreck.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Eric Van Hensbergen <ericvh@kernel.org>
+cc: Latchesar Ionkov <lucho@ionkov.net>
+cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Steve French <sfrench@samba.org>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+cc: v9fs@lists.linux.dev
+cc: linux-afs@lists.infradead.org
+cc: ceph-devel@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-nfs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/9p/vfs_addr.c     |    3 ++-
+ fs/afs/file.c        |    3 ++-
+ fs/ceph/addr.c       |    6 ++++--
+ fs/netfs/io.c        |   17 +++++++++++------
+ fs/nfs/fscache.c     |    3 ++-
+ fs/smb/client/file.c |    3 ++-
+ 6 files changed, 23 insertions(+), 12 deletions(-)
 
-hci->quirks = (unsigned long)device_get_match_data(&pdev->dev);
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index a97ceb105cd8..24fdc74caeba 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -75,7 +75,8 @@ static void v9fs_issue_read(struct netfs_io_subrequest *=
+subreq)
+ =
+
+ 	/* if we just extended the file size, any portion not in
+ 	 * cache won't be on server and is zeroes */
+-	__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++	if (subreq->rreq->origin !=3D NETFS_DIO_READ)
++		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ =
+
+ 	netfs_subreq_terminated(subreq, err ?: total, false);
+ }
+diff --git a/fs/afs/file.c b/fs/afs/file.c
+index c3f0c45ae9a9..ec1be0091fdb 100644
+--- a/fs/afs/file.c
++++ b/fs/afs/file.c
+@@ -242,7 +242,8 @@ static void afs_fetch_data_notify(struct afs_operation=
+ *op)
+ =
+
+ 	req->error =3D error;
+ 	if (subreq) {
+-		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++		if (subreq->rreq->origin !=3D NETFS_DIO_READ)
++			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 		netfs_subreq_terminated(subreq, error ?: req->actual_len, false);
+ 		req->subreq =3D NULL;
+ 	} else if (req->done) {
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index cc0a2240de98..c4744a02db75 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -246,7 +246,8 @@ static void finish_netfs_read(struct ceph_osd_request =
+*req)
+ 	if (err >=3D 0) {
+ 		if (sparse && err > 0)
+ 			err =3D ceph_sparse_ext_map_end(op);
+-		if (err < subreq->len)
++		if (err < subreq->len &&
++		    subreq->rreq->origin !=3D NETFS_DIO_READ)
+ 			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 		if (IS_ENCRYPTED(inode) && err > 0) {
+ 			err =3D ceph_fscrypt_decrypt_extents(inode,
+@@ -282,7 +283,8 @@ static bool ceph_netfs_issue_op_inline(struct netfs_io=
+_subrequest *subreq)
+ 	size_t len;
+ 	int mode;
+ =
+
+-	__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++	if (rreq->origin !=3D NETFS_DIO_READ)
++		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 	__clear_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
+ =
+
+ 	if (subreq->start >=3D inode->i_size)
+diff --git a/fs/netfs/io.c b/fs/netfs/io.c
+index c179a1c73fa7..5367caf3fa28 100644
+--- a/fs/netfs/io.c
++++ b/fs/netfs/io.c
+@@ -530,7 +530,8 @@ void netfs_subreq_terminated(struct netfs_io_subreques=
+t *subreq,
+ =
+
+ 	if (transferred_or_error =3D=3D 0) {
+ 		if (__test_and_set_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags)) {
+-			subreq->error =3D -ENODATA;
++			if (rreq->origin !=3D NETFS_DIO_READ)
++				subreq->error =3D -ENODATA;
+ 			goto failed;
+ 		}
+ 	} else {
+@@ -601,9 +602,14 @@ netfs_rreq_prepare_read(struct netfs_io_request *rreq=
+,
+ 			}
+ 			if (subreq->len > ictx->zero_point - subreq->start)
+ 				subreq->len =3D ictx->zero_point - subreq->start;
++
++			/* We limit buffered reads to the EOF, but let the
++			 * server deal with larger-than-EOF DIO/unbuffered
++			 * reads.
++			 */
++			if (subreq->len > rreq->i_size - subreq->start)
++				subreq->len =3D rreq->i_size - subreq->start;
+ 		}
+-		if (subreq->len > rreq->i_size - subreq->start)
+-			subreq->len =3D rreq->i_size - subreq->start;
+ 		if (rreq->rsize && subreq->len > rreq->rsize)
+ 			subreq->len =3D rreq->rsize;
+ =
+
+@@ -739,11 +745,10 @@ int netfs_begin_read(struct netfs_io_request *rreq, =
+bool sync)
+ 	do {
+ 		_debug("submit %llx + %llx >=3D %llx",
+ 		       rreq->start, rreq->submitted, rreq->i_size);
+-		if (rreq->origin =3D=3D NETFS_DIO_READ &&
+-		    rreq->start + rreq->submitted >=3D rreq->i_size)
+-			break;
+ 		if (!netfs_rreq_submit_slice(rreq, &io_iter))
+ 			break;
++		if (test_bit(NETFS_SREQ_NO_PROGRESS, &rreq->flags))
++			break;
+ 		if (test_bit(NETFS_RREQ_BLOCKED, &rreq->flags) &&
+ 		    test_bit(NETFS_RREQ_NONBLOCK, &rreq->flags))
+ 			break;
+diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
+index bf29a65c5027..7a558dea75c4 100644
+--- a/fs/nfs/fscache.c
++++ b/fs/nfs/fscache.c
+@@ -363,7 +363,8 @@ void nfs_netfs_read_completion(struct nfs_pgio_header =
+*hdr)
+ 		return;
+ =
+
+ 	sreq =3D netfs->sreq;
+-	if (test_bit(NFS_IOHDR_EOF, &hdr->flags))
++	if (test_bit(NFS_IOHDR_EOF, &hdr->flags) &&
++	    sreq->rreq->origin !=3D NETFS_DIO_READ)
+ 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &sreq->flags);
+ =
+
+ 	if (hdr->error)
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index b2405dd4d4d4..3f3842e7b44a 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -217,7 +217,8 @@ static void cifs_req_issue_read(struct netfs_io_subreq=
+uest *subreq)
+ 			goto out;
+ 	}
+ =
+
+-	__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++	if (subreq->rreq->origin !=3D NETFS_DIO_READ)
++		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ =
+
+ 	rc =3D rdata->server->ops->async_readv(rdata);
+ out:
+
 
