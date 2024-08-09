@@ -1,114 +1,130 @@
-Return-Path: <linux-kernel+bounces-281441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8909C94D6FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:10:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0EE94D701
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F97B1F23260
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:10:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B2EB225D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654F2167D83;
-	Fri,  9 Aug 2024 19:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32B816A92B;
+	Fri,  9 Aug 2024 19:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CFhY4uBj"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="3wXsC+yv"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6173214D29B
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34FC13AA38;
+	Fri,  9 Aug 2024 19:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723230277; cv=none; b=IbXA1PRlj9Elw/JrgSDwj2ly1Q3cux/9uxM6mwWXTaDnw5y/+lOwOjQixrugKf7bRcrPyDc0v7teLNC36dXCx2nMo+KOXRQSKMw+CFUMI4GpCYP+AZqcWFiSC4oKboUzLGSJ4rOCDmaMaPUNqlTJsTNaLVbb2gdooDVxBxBa3I8=
+	t=1723230396; cv=none; b=smwZa0Hbmsbg9QR1jJZBrxPafMRx2zq9yTHKGGNCu3zG+K9FHDqHyUz81fow9yQgLDaiU08FcRxmo0tPLbb/x/PM2+HFto+A4JwgQTZYvOqoU/XJvUKW74nzL2C5LcoCf6IJnvQrps42y+bwqCtpxb7gvSJ0OxfViMqoyJ8bXEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723230277; c=relaxed/simple;
-	bh=SBsyicGTG9gfAjD0K++NNapLlsd6aU+7cGu4LmewABI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RglsImruFH31ML/1qFVDpgFbCHFopQ5b/mP+uaYmnWSfgv1McjZKJqeBxKeR0K2hXrpH/BHeDJkdHuEPS+e1wb3AKul6B5yaH00BFTVLVd8IQ32uIGpHBCERa+3Fz82v4AfgONEsDIFIWqAzEZcaIuwX9XSRiSKpFtw2ixII4sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CFhY4uBj; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2cb685d5987so3028226a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:04:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723230276; x=1723835076; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1OP2TrkQAg4l9VmYgH+ppUrAs3PZd5BTHpl5JP294L8=;
-        b=CFhY4uBjLHNhZcHYRHzsb0OKRfXdxFvToX0xcnKc0h0k10Y5bDULBkxyTeVv2hfNbD
-         uPu+A0zytU3hQIdhVENJvLIHTygKzjRRNo6PdxQBy0coNqD0vIB89pNssdfAqT4/8BSO
-         EvBsv38o6WG7fSE5CWn1UK6zGNtsnpfQc9kXL0uXNd2cqY/ousHFYgeLgrVCu9VL9WmX
-         yBxz+/O4FAtxVKNsu5tqH+aiPlf9f6IpwloBx0XAi303d++yf6Pj3kxFn/H8RYWfSR2Z
-         3/282atP5Em3Wjj+nzcH6O4Qv3gAhNeW674C0t81DmX5lP+fZzmRnEYFEN3SzCONPDaz
-         +HBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723230276; x=1723835076;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1OP2TrkQAg4l9VmYgH+ppUrAs3PZd5BTHpl5JP294L8=;
-        b=OioqB8tlq+isoeC3wgv4QEFPez/n+Q2tPFQLCxPpi4CxzftDyT6vgfThl6fHWMPqTQ
-         TyIlM1fWeEd0sq62dw3NrqvagIPrXmmIHZ1erEAJaCjA7P4mutGHahNDNzpAd8eN73J7
-         oq/T2rwjLcURpHhNAqU8mXuJMczd65ETt2FFscEGJm6v5fc9KJbWghZZ1udbsJilHI6c
-         tsMhfk6/9fKptzwVKdVq9mi+N+PlcUHme7SobGwkwqyKmj7vaoz5eidmVPZ8qjS+LDE8
-         uOcjJl1VspjORlZ0oicpAJgMukqANxtqOP9+qO5F2sCDZP+DWu1RUL9w/Tx1xtPGILk6
-         LYRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXm19TffFtgdszf52XCWuc5e3DWT4f+RMzPihaBVse2Q0ggsK+TFu3xztar5XwPj8o9bX40Pm+UMmEEX0TcxdGRz/EkpttVM28MuBG
-X-Gm-Message-State: AOJu0YwCFTQRb3h5SuUfFisu1Z4szQ7hbhKozJrGrI/OTIrbhZ5RbD4G
-	GnXpCwmJMy0DYzZ1CzjMVXSJUeQPOl7/nzctk78PbqR/monolgwLr9W8wNDibLppjJLAOav4k28
-	P1w==
-X-Google-Smtp-Source: AGHT+IHhyrWGwABBPnK3P+PXk3XqbI8YZLVeMIPiph5Olb+oYKw7B2dpfLQyExK13fUsFXUwAeZdgkDC2W8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:60b:b0:2cd:57fc:1db6 with SMTP id
- 98e67ed59e1d1-2d1e7c5e18dmr25038a91.0.1723230275593; Fri, 09 Aug 2024
- 12:04:35 -0700 (PDT)
-Date: Fri, 9 Aug 2024 12:04:33 -0700
-In-Reply-To: <DS0PR11MB6373A1908092810E99F387F7DCBA2@DS0PR11MB6373.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1723230396; c=relaxed/simple;
+	bh=GDeSvflfgNP53Bnn6NwxyLup2T5xICejTY4xxMRsW7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aElxyq5AHAPT8Y1/pX9fIjkpy9FbVFeTNfS9Z++XWwec+x4yceTJc9gqpmw6AP901aCCqzo/OdiwVZxK/qMt4iaIsSbPubiUJmf2ThSZFfdo1skW2O8yVaEBFJTsHc9AivBH/cRIpWsuxwnr+y/3mNbJzvIDQDH/nN4v57Q53CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=3wXsC+yv; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WgYKw2KlczlgTGW;
+	Fri,  9 Aug 2024 19:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1723230383; x=1725822384; bh=DW9duP/WSzGKgw6N8JbyhvDM
+	ENJtltoq9LzdIzH07QI=; b=3wXsC+yvI86+JvuSDvFMn01MUZMGzMz2kM9Uk5Eh
+	RCKjdsUJIDoh75MzaP+PnO72nSGuFBR/O2RaYlKMy9ZFQmPqH+GDQliUKFyLSCCq
+	7xK11ehoXOSd4+d1T/hUaBGrAMYbbem0X55iR40Gd5MIryd6ux678DoaWO0PCd6D
+	848CscKTSWYB+QINptqqSnN8T7mph67+mQRJu+Y4ww0FppF9IX3CgiMgZouLlmZe
+	pVa13dekFI6+puujw35+mayzi01rk7V4pwQoOHhO+5CGevKkxOBNG5UUyVQYNtE8
+	x4k7rjwOYh9/Zc7ff2AwnXPd3GB0aSYmcS9DkasBob2uXw==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id aW_A8ey1jKET; Fri,  9 Aug 2024 19:06:23 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WgYKl5vvLzlgVnF;
+	Fri,  9 Aug 2024 19:06:19 +0000 (UTC)
+Message-ID: <203bf2c3-e55d-4b1e-9ef1-a7d73401ce52@acm.org>
+Date: Fri, 9 Aug 2024 12:06:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240801224349.25325-1-seanjc@google.com> <CADrL8HXVNcbcuu9qF3wtkccpW6_QEnXQ1ViWEceeS9QGdQUTiw@mail.gmail.com>
- <DS0PR11MB63733F7AEC9B2E80A52C33D4DCB92@DS0PR11MB6373.namprd11.prod.outlook.com>
- <CADrL8HWH3d2r12xWv+fYM5mfUnnavLBhHDhof0MwGKeroJHWHA@mail.gmail.com> <DS0PR11MB6373A1908092810E99F387F7DCBA2@DS0PR11MB6373.namprd11.prod.outlook.com>
-Message-ID: <ZrZoQZEfTffvVT75@google.com>
-Subject: Re: [ANNOUNCE] PUCK Agenda - 2024.08.07 - KVM userfault
- (guest_memfd/HugeTLB postcopy)
-From: Sean Christopherson <seanjc@google.com>
-To: Wei W Wang <wei.w.wang@intel.com>
-Cc: James Houghton <jthoughton@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Xu <peterx@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Axel Rasmussen <axelrasmussen@google.com>, David Matlack <dmatlack@google.com>, 
-	Anish Moorthy <amoorthy@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] scsi: ufs: rockchip: init support for UFS
+To: Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Heiko Stuebner <heiko@sntech.de>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>, YiFeng Zhao <zyf@rock-chips.com>,
+ Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <1723089163-28983-1-git-send-email-shawn.lin@rock-chips.com>
+ <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 09, 2024, Wei W Wang wrote:
-> On Friday, August 9, 2024 3:05 AM, James Houghton wrote:
-> > On Thu, Aug 8, 2024 at 5:15=E2=80=AFAM Wang, Wei W <wei.w.wang@intel.co=
-m> wrote:
-> There also seems to be a race condition between KVM userfault and userfau=
-ltfd.
-> For example, guest access to a guest-shared page triggers KVM userfault t=
-o
-> userspace while vhost (or KVM) could access to the same page during the w=
-indow
-> that KVM userfault is handling the page, then there will be two simultane=
-ous faults
-> on the same page.
-> I'm thinking how would this case be handled? (leaving it to userspace to =
-detect and
-> handle such cases would be an complex)
+On 8/7/24 8:52 PM, Shawn Lin wrote:
+> RK3576 contains a UFS controller, add init support fot it.
+					^^^^	     ^^^
+                                         initial      for
 
-Userspace is going to have to handle racing "faults" no matter what, e.g. i=
-f
-multiple vCPUs hit the same fault and exit at the same time.  I don't think=
- it'll
-be too complex to detect spurious/fixed faults and retry.
+Again a very short patch description. What is "RK3576"? Please explain.
+
+> +config SCSI_UFS_ROCKCHIP
+> +	tristate "Rockchip specific hooks to UFS controller platform driver"
+
+A better description would be: "Rockchip UFS host controller driver"
+
+> +#include "ufshcd-dwc.h"
+
+No, you should not include the ufshcd-dwc.h header file. That is a 
+header file for the Designware UFS host controller.
+
+> +	reset_control_assert(host->rst);
+> +	udelay(1);
+> +	reset_control_deassert(host->rst);
+
+Why udelay() instead of usleep_range()?
+
+> +static int ufs_rockchip_device_reset(struct ufs_hba *hba)
+> +{
+> +	struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+> +
+> +	if (!host->rst_gpio)
+> +		return -EOPNOTSUPP;
+> +
+> +	gpiod_set_value_cansleep(host->rst_gpio, 0);
+> +	udelay(20);
+> +
+> +	gpiod_set_value_cansleep(host->rst_gpio, 1);
+> +	udelay(20);
+> +
+> +	return 0;
+> +}
+
+Same question here: why udelay() instead of usleep_range()?
+
+Thanks,
+
+Bart.
 
