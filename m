@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-280502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449C294CB6D
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8628494CB6E
 	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0546E285611
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B44351C22193
 	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25A1178361;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F78178364;
 	Fri,  9 Aug 2024 07:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqpCoLXI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G96xFR9z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C66175D2F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CB4175D36;
 	Fri,  9 Aug 2024 07:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723188790; cv=none; b=SOZtAw7rVBqTKycKdAReD6J/WoNfRnIVsRZD9zP29CLKW3DgBDgABC503hZfiHT/N01jn3v01Aao0VdmeNo2Pe/HNfpDI2C3+WXGbLDujdBwLLGtzV++nrOqTKZJngWNuooo75ZFPDPWsAH1r2n6v3p8k4XTAvo8JaNgjFsCqfk=
+	t=1723188790; cv=none; b=e3PQ1TMgyyRTqUUjXO5dBZxdBnii/73Ce+e4bKVJP1c79mFl7cWzI3RZhnGdFHb38VhKWBTnyUAAeMwK3hMpVwx8OWkLz7/CBxwxVdOvWwR8n+IO47/WmXM7g1cXxz7mDUkirsu+M2XMVpcDc65W+c1DIk3oix4+3xeUXhNU2Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723188790; c=relaxed/simple;
-	bh=Bm7wZvIpH1u9Fue5VhYGh2wN4XsW+HXCBPDIfO+4Wi0=;
+	bh=Stx3EEnB/9LWtVMs8bPtcAXmif1O8Z/znzWwrIr1yQM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WKjo8ng11sVv8znPDT4PMdaoMTqb3r4379FA/1bLpj1Y4pdaeT/JoKu8Glu8g1HXOtGGMDka1q73frNJGGMrenABcd85mSBO5CoAtomt4tFcHG+wSmqrqYPLvR1V/ZDwS2YNjDum2Yd4HfXZE58PxtIaAvjX4T9oew61yA0xyG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqpCoLXI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A604FC4AF0D;
+	 MIME-Version; b=hMY+M44pGGrhVGVkFaIf0T/tcTeYW4KHA2VKkZOpQwOxJxp1BH9py2i3ZF9VNb8yjwayI/Qatq8bYD4ip7LYuheSqi+5eEHEINkBCiIGLl40p0xOQsL4epAbUQlb+N9mwcwtqHWTLYGSCBa+pZw4ILpPUuMyJQ4bOQn13v1dF7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G96xFR9z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB099C4AF10;
 	Fri,  9 Aug 2024 07:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1723188789;
-	bh=Bm7wZvIpH1u9Fue5VhYGh2wN4XsW+HXCBPDIfO+4Wi0=;
+	bh=Stx3EEnB/9LWtVMs8bPtcAXmif1O8Z/znzWwrIr1yQM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QqpCoLXIIBMnBfGGkEX09zukRI2+BmDPINyNOYod5uVhbZDarz3N5Gon+RuXzFMAb
-	 oPfcGVx2F89WvXdR38xVPnVsVlOUmNcyHLnIz/i0Chy93oj1L4sP0lHM9ULrx3F+Dy
-	 3wtCujBr/ZAjZcrcrOYEQHYox5wX8h0ySRVdiy4kQYmXwl16b/dgOdo7qfIJdcuOze
-	 /My+X+Esi8xyVCPP+QA8hTU/aKTo2FyoEfdKL29fwNZw2fSN5v+VcPTVRG6MpbJbIh
-	 z6fXqwUOtqJjrwqRQmB4cR3qiejfPc+eHmuFlse3M/B3SuOYmoyKMkjQGsPZiZMAAm
-	 X3fYWCL8pp4Yg==
+	b=G96xFR9zVeh09ObUFoqqZFktxg1j3FtzvLiXQZGmQZW/HVQIm7p5HIUbK5Ww99589
+	 CNxj96mi3eBlCxegp72LfDbiC9rOvnrWCQzO0YvRFp6aR3VIj/SuoeDWAMXhIbxV8O
+	 cjeBU/r8ZOz+n88QSTZXJ9cFA1/i28S4PPfS/AKJ2uwN4tSkbb3JKof8G+eosTEybG
+	 485xFvfsK3AuAe/sxtfTl47vL4CU3b2ybBPEAFXxACwNrNDgvU5G2oZNtuTk4AYoyV
+	 9pYD8+LMbuhN6C9vBvYfaJZfhUZngVa/DpU5F+dlB9t9jc6WTqOaLW4mZPlzd8Hk+n
+	 ziag+GbKspAEQ==
 From: Kees Cook <kees@kernel.org>
 To: Vlastimil Babka <vbabka@suse.cz>
 Cc: Kees Cook <kees@kernel.org>,
@@ -60,9 +60,9 @@ Cc: Kees Cook <kees@kernel.org>,
 	Xiu Jianfeng <xiujianfeng@huawei.com>,
 	linux-kernel@vger.kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH 2/5] codetag: Run module_load hooks for builtin codetags
-Date: Fri,  9 Aug 2024 00:33:03 -0700
-Message-Id: <20240809073309.2134488-2-kees@kernel.org>
+Subject: [PATCH 3/5] codetag: Introduce codetag_early_walk()
+Date: Fri,  9 Aug 2024 00:33:04 -0700
+Message-Id: <20240809073309.2134488-3-kees@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240809072532.work.266-kees@kernel.org>
 References: <20240809072532.work.266-kees@kernel.org>
@@ -72,13 +72,14 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1658; i=kees@kernel.org; h=from:subject; bh=Bm7wZvIpH1u9Fue5VhYGh2wN4XsW+HXCBPDIfO+4Wi0=; b=owGbwMvMwCVmps19z/KJym7G02pJDGlbjxke+n5p3ULn87cf9DTKdwmaspUUamrMS9iRlnGLf TIne3NeRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwEQuXGZkeC42Q9N+bpD98SIX x6h7Lvs+C7ZwcS3zP3qIZfUbhd77AQz/IwUeVCk7XGpQ0dpqWr5Ru4/R+rV7RXv5Wob9sVHfDmx hBwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2359; i=kees@kernel.org; h=from:subject; bh=Stx3EEnB/9LWtVMs8bPtcAXmif1O8Z/znzWwrIr1yQM=; b=owGbwMvMwCVmps19z/KJym7G02pJDGlbjxnOseXU/pJl/43T0XOt5r2jXsvfZqg+sjDOii3I3 vMo2r2zo5SFQYyLQVZMkSXIzj3OxeNte7j7XEWYOaxMIEMYuDgFYCKPwhgZPkd03P/cfODJhK1S TXHcc1wl7ylP8ufytdEOmixz1c7Yg+F/pc/9q0Ub7q7Zv+boUV0X+f1xT5Q6ndp1tt0+78NeFv6 LAwA=
 X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-The module_load callback should still run for builtin codetags that
-define it, even in a non-modular kernel. (i.e. for the cmod->mod == NULL
-case).
+In order to process builtin alloc_tags much earlier during boot (before
+register_codetag() is processed), provide codetag_early_walk() that
+perform a lockless walk with a specified callback function. This will be
+used to allocate required caches that cannot be allocated on demand.
 
 Signed-off-by: Kees Cook <kees@kernel.org>
 ---
@@ -94,39 +95,50 @@ Cc: Roman Gushchin <roman.gushchin@linux.dev>
 Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 Cc: linux-mm@kvack.org
 ---
- lib/codetag.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ include/linux/codetag.h |  2 ++
+ lib/codetag.c           | 16 ++++++++++++++++
+ 2 files changed, 18 insertions(+)
 
+diff --git a/include/linux/codetag.h b/include/linux/codetag.h
+index c2a579ccd455..9eb1fcd90570 100644
+--- a/include/linux/codetag.h
++++ b/include/linux/codetag.h
+@@ -64,6 +64,8 @@ void codetag_lock_module_list(struct codetag_type *cttype, bool lock);
+ bool codetag_trylock_module_list(struct codetag_type *cttype);
+ struct codetag_iterator codetag_get_ct_iter(struct codetag_type *cttype);
+ struct codetag *codetag_next_ct(struct codetag_iterator *iter);
++void codetag_early_walk(const struct codetag_type_desc *desc,
++			void (*callback)(struct codetag *ct));
+ 
+ void codetag_to_text(struct seq_buf *out, struct codetag *ct);
+ 
 diff --git a/lib/codetag.c b/lib/codetag.c
-index 5ace625f2328..ef7634c7ee18 100644
+index ef7634c7ee18..9d563c8c088a 100644
 --- a/lib/codetag.c
 +++ b/lib/codetag.c
-@@ -125,7 +125,6 @@ static inline size_t range_size(const struct codetag_type *cttype,
- 			cttype->desc.tag_size;
+@@ -154,6 +154,22 @@ static struct codetag_range get_section_range(struct module *mod,
+ 	};
  }
  
--#ifdef CONFIG_MODULES
- static void *get_symbol(struct module *mod, const char *prefix, const char *name)
++void codetag_early_walk(const struct codetag_type_desc *desc,
++			void (*callback)(struct codetag *ct))
++{
++	struct codetag_range range;
++	struct codetag *ct;
++
++	range = get_section_range(NULL, desc->section);
++	if (!range.start || !range.stop ||
++	    range.start == range.stop ||
++	    range.start > range.stop)
++		return;
++
++	for (ct = range.start; ct < range.stop; ct = ((void *)ct + desc->tag_size))
++		callback(ct);
++}
++
+ static int codetag_module_init(struct codetag_type *cttype, struct module *mod)
  {
- 	DECLARE_SEQ_BUF(sb, KSYM_NAME_LEN);
-@@ -199,6 +198,7 @@ static int codetag_module_init(struct codetag_type *cttype, struct module *mod)
- 	return 0;
- }
- 
-+#ifdef CONFIG_MODULES
- void codetag_load_module(struct module *mod)
- {
- 	struct codetag_type *cttype;
-@@ -248,9 +248,6 @@ bool codetag_unload_module(struct module *mod)
- 
- 	return unload_ok;
- }
--
--#else /* CONFIG_MODULES */
--static int codetag_module_init(struct codetag_type *cttype, struct module *mod) { return 0; }
- #endif /* CONFIG_MODULES */
- 
- struct codetag_type *
+ 	struct codetag_range range;
 -- 
 2.34.1
 
