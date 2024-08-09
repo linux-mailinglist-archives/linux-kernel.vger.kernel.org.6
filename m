@@ -1,118 +1,118 @@
-Return-Path: <linux-kernel+bounces-280870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D6AD94D045
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:32:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05E794D04A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E4761C20EDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:32:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC6F21C21511
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860E71946B5;
-	Fri,  9 Aug 2024 12:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487B51946B8;
+	Fri,  9 Aug 2024 12:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IiRELPhf"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iys3YvRs"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF831DFF5
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 12:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5281DFF5;
+	Fri,  9 Aug 2024 12:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723206758; cv=none; b=l9xjAwdBVRdoVJZgyBnKwLMcirrUZdZkLtJIBc5bgtjXS9kiKMB1uUWqMewAq9QDIvAwIhnx1q5Uq4kCG9o9fYwbghguU8Bc2jWWAec3HmrVSuJw2toxCsuv72u+oHx69DtDOvHtZ91HGkSaw/a5h5GJbNSxergoUPz9iEHRk8w=
+	t=1723206775; cv=none; b=cjAsbWU6schNVNfekH5PcJnkBTTZ7HnIbl9m8qw3n/DNK6admYzdgKFl5Xf4OjZeRFte92vUhifREuv1GYUfUyfVNg2YL92HOj0j/yqlT93C0vLwyh2n1PEh9ZCqFYwUpaNUgWooHMsUiUSdAkTNxhP7ob/3epsTx813BXo7poc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723206758; c=relaxed/simple;
-	bh=QNcaoqLsaVCec6Cy7SIaExvsGVbtIi52cpW6p62gqfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ekOneJJJq+FroPppMFgfcA30jHq3kL6eQ6oiEb0ucSKMV6RdDb7KGcRhCSeacnMP18Ykk4hHg2XZyJUD5w3LNjyBEY883PpMpX/aV1BnQwBzIY+1cYvfas7b0ltnvaFOn1PssuCh4dubH86teOVXuceaBQZ2tdUqP4SgXeGUd2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IiRELPhf; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52efd08e6d9so2561156e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 05:32:36 -0700 (PDT)
+	s=arc-20240116; t=1723206775; c=relaxed/simple;
+	bh=bVxkj+M+/qQYL51947hehJnWkPK6ID3XtdlKAPMkPRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lJYnF4m9CalSk5NPOFKvCyqp/m4L79eUBRzyOQl3wpdbP35TAKZD9Jx5xZQFZfcFj33/ckhh6cwqs+/1/kiBUu5jn2plXYLZv3uuCTu3SwRPI8Aazvqd5Ooe1+dp6K9lVVpOpifxApF2Be+tPWMk+Gh2uq4N+ZpPWgnf7nZ1XLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iys3YvRs; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7a8caef11fso237763366b.0;
+        Fri, 09 Aug 2024 05:32:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723206755; x=1723811555; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=gmail.com; s=20230601; t=1723206772; x=1723811572; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XEvmrJApAdAdB8IUGlSUXCcZKgELg0TXzRkX9FYQA2E=;
-        b=IiRELPhffhyMMLf9Mkhbx5pVy7wSrrlRl2m5A7RuUOv8hgePIATFegZEYow0ytnnl6
-         3V4qbdwEmcwS76zXHfVbikZCgIMxwEm+v9T2g4hpTaZOOER71xh68PTrfVE2J6TQBcbu
-         i4pPUAVNsPFyIIelLvbmmLcariEOS2P+f4JZaWh7JeiPu5Zl2Aha7HHQ2hSXq3GY5jSU
-         EoJC8kysXtJEOVEFwu5iGGOLLklOEnMv7yKG4blbs0VpdNegiMrYJKKqlyQga/iEjQWh
-         Nbh6gXXEnAdTR2q3eYMKj7DyBvYMKWh4ufZIRgCe9UcEaY3Oe5V8kd7WBaBp0JaEh+TO
-         XOMA==
+        bh=owNanohVQNU73I5o2qMty3Cf+e76uO8QKFg2xVe2c7A=;
+        b=iys3YvRsFXStNFjCiYrannqLlbb2irkxrJxxgVLfhya6fJ3iA2bZr4zwLXXs0n+yKr
+         ymKvLikDwF9iqVvdA9CW6q2vVtXB9PP5cN3E/GdPnWq+xa4810ati136OMoQx7+wA9mk
+         /YVKnoMEewmZ2nyUWZRBOjJA2ihwN6V6WTYlFWQJNV9kho/wpu00E3uccwjKPHblz17K
+         acRSySq4zoopHSZVHa3tyFwjxD75vURSMkL3nT9F0UAM+/YBH655jAyyUHebSjy+S84+
+         QrD83XO2hgQGSDps4pC/VV1ryAh4Ptkq9QXPERWjET2m1S1M8rAPxwUlR5UTWvVDrNbl
+         xrWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723206755; x=1723811555;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1723206772; x=1723811572;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XEvmrJApAdAdB8IUGlSUXCcZKgELg0TXzRkX9FYQA2E=;
-        b=pT845mVESzbPWX7EBeZKKiZeLhbHHVEc22cMo6Yj9aXMrKrsKcGCNT93GAH0IdGk6B
-         eX8QZcW9dD4f5dR5Kebg3nfnJuccfhRQziJ4ZPCno2XSxAbRYH1hbjQtiXdHBFnEGEab
-         hUuds/Y3Aiix5TJWQXWM4uTYkchU5kCFyIKaAnlYrATmkJZizRvfVy9iRQO4QT2x9z67
-         sjGNwDJoaLDNaFHANRlhWlUmE1JIJrGeafiQokF69asFlbLERdSIfL1kL2aHUcEBJ6ET
-         LDEsSBFhFtxsTbrV509qCzOyTcVZTrweYqHBCPxbPjpzoaAUX7qlQdQtH0MWPF4Is8ho
-         7f6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVIDV5z8r72nBKwXka1fOtzbNBwfQ5IO+V4M8n1WsS+Y5k0C8SIJlSR2+dUOJc3621YshcqLq2Ca2zX3ZJzdqCEgxy/aPBNulsSewbL
-X-Gm-Message-State: AOJu0YyqmUR9r3DCaP3rXZ2UDVLA4FSlzUdiSFVGxtzTVBpkDhRcqLeQ
-	J+E5zwfy2SEpsII+uGNG8xAAAvZfknQPV/xK96+ztKmbHmpRi1tK9BeYW5ytDuA=
-X-Google-Smtp-Source: AGHT+IGzPu2doVLDNZ6syQ8+456inTtlzazWj4IP4I0oNXM1Sz9cwjKQLoWzh+mGsvT5bHuN4rBo4A==
-X-Received: by 2002:a05:6512:3b0b:b0:52c:6461:e913 with SMTP id 2adb3069b0e04-530ee97436fmr1248689e87.16.1723206754996;
-        Fri, 09 Aug 2024 05:32:34 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf8666sm1495151a12.9.2024.08.09.05.32.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 05:32:34 -0700 (PDT)
-Date: Fri, 9 Aug 2024 15:32:30 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] selftests/mm: compaction_test: Fix off by one in
- check_compaction()
-Message-ID: <87470c06-b45a-4e83-92ff-aac2e7b9c6ba@stanley.mountain>
+        bh=owNanohVQNU73I5o2qMty3Cf+e76uO8QKFg2xVe2c7A=;
+        b=h87j1B91WMD+HmsL3O9PbKWs/ztiPhnhozpxMRq2xv3bW3C0eOZLh3JnC+xCy+bpPv
+         LhC9EAOEo6GvPJbSgQtWQLj1wgMl3zJmuq8+k4fHgGO+yfXkuqwUhdX8uoPE/3wD1tYF
+         XHUhQAa8Urm2Ll26XB3U+N0zGKVLyJPWfbrEEhxCOJ6cIE4m39ZjYthff3B1NgyGDl+3
+         5w26EgtPbDohGl3F/yvGSEOWeDOkf4sbySfol3EJs8wVQF9cz5oXO2u9vlNIick2xUVY
+         qd2r3O0XvCGTdUzxKh/QIpheftDG5cDwI90431GrvB2HV5mAjSYP9ZW/2D7gqbJr4cVf
+         pS0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXQNdZuHiGLKPviSqYbGIEvhW8+IcwRgvbqIKbtHeURwPxnpmLhrnUjc6gWpNz5lf9gvMji1WKy5U7I@vger.kernel.org, AJvYcCXz8/XFnNRVt84rARZXNcwBtYaC5NAohSV51fFXrdV4iVSoUnvi/ObZaRspYVcufOFWDidzZeeHu1pJxuIO@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk1UYY3YGrwzRm6h4u0XsCdlIuymfVb9G+NlZvFETRl7BugVz5
+	v0o4RTijryeHFZkZ0kCwbQg9Gm8Sum9+qglmCO2ANRWKM0mbdnZb
+X-Google-Smtp-Source: AGHT+IHCmdH4T4+NUFBtQJxZxX6JEURsg9+GsOSDPh9PXi3OgJAGnNt8QcClGMsPMTuNCAj2LeCK2w==
+X-Received: by 2002:a17:907:7204:b0:a7a:a06b:eecf with SMTP id a640c23a62f3a-a80aa53b6bcmr117096266b.3.1723206771965;
+        Fri, 09 Aug 2024 05:32:51 -0700 (PDT)
+Received: from [192.168.0.220] ([83.103.132.21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0cc95sm828415866b.85.2024.08.09.05.32.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 05:32:51 -0700 (PDT)
+Message-ID: <39fa2711-7bd6-4c12-a668-9a3af33283d8@gmail.com>
+Date: Fri, 9 Aug 2024 15:32:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] iio: adc: ad7173: add support for ad4113
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240809-ad4113-v2-0-2a70c101a1f4@analog.com>
+ <20240809-ad4113-v2-2-2a70c101a1f4@analog.com>
+ <1a3dc92c4f91d271fd54f7b77b2850cd4d95301b.camel@gmail.com>
+Content-Language: en-US
+From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
+In-Reply-To: <1a3dc92c4f91d271fd54f7b77b2850cd4d95301b.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The "initial_nr_hugepages" variable is unsigned long so it takes up to
-20 characters to print, plus 1 more character for the NUL terminator.
-Unfortunately, this buffer is not quite large enough for the terminator
-to fit.  Also use snprintf() for a belt and suspenders approach.
+On 09/08/2024 15:26, Nuno Sá wrote:
+> On Fri, 2024-08-09 at 13:33 +0300, Dumitru Ceclan via B4 Relay wrote:
+>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>>
+>> This commit adds support for the AD4113 ADC.
+>> The AD4113 is a low power, low noise, 16-bit, Σ-Δ analog-to-digital
+>> converter (ADC) that integrates an analog front end (AFE) for four
+>> fully differential or eight single-ended inputs.
+>>
+>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+>> ---
+> 
+> Any reason to drop my tag :)? There a b4 command that can help you with it.
+> 
+> - Nuno Sá
+> 
+> 
 
-Fixes: fb9293b6b015 ("selftests/mm: compaction_test: fix bogus test success and reduce probability of OOM-killer invocation")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- tools/testing/selftests/mm/compaction_test.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yes, I added a new field to the device info struct and changed dt parsing
+because I missed in V1 that this model actually has a 16 bit data register.
+I considered that the rb would not apply anymore and it would need a re-review.
 
-diff --git a/tools/testing/selftests/mm/compaction_test.c b/tools/testing/selftests/mm/compaction_test.c
-index e140558e6f53..2c3a0eb6b22d 100644
---- a/tools/testing/selftests/mm/compaction_test.c
-+++ b/tools/testing/selftests/mm/compaction_test.c
-@@ -89,9 +89,10 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
- 	int fd, ret = -1;
- 	int compaction_index = 0;
- 	char nr_hugepages[20] = {0};
--	char init_nr_hugepages[20] = {0};
-+	char init_nr_hugepages[24] = {0};
- 
--	sprintf(init_nr_hugepages, "%lu", initial_nr_hugepages);
-+	snprintf(init_nr_hugepages, sizeof(init_nr_hugepages),
-+		 "%lu", initial_nr_hugepages);
- 
- 	/* We want to test with 80% of available memory. Else, OOM killer comes
- 	   in to play */
--- 
-2.43.0
-
+Thanks for the b4 suggestion but this was intentional :))
 
