@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-280531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B1C94CBC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:57:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91ACF94CBC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F21280F8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2831F21C0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4F318C926;
-	Fri,  9 Aug 2024 07:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D60118C345;
+	Fri,  9 Aug 2024 07:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="baoEat06"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZX9LLivd"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629DF148FF6;
-	Fri,  9 Aug 2024 07:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723190245; cv=pass; b=ApcK7SJfP/dRs22g4iDmSQ24q81oE9Oyxz7Zokeptrh/oDLmxD7lEijhbCeLZqfvGG+ITSlAa3WkxyKO3+ZIpprLCAl7LRuXsmxSHtVCICzZDgJDFmPlhRA4WXC73pnOMppu2CrFhs7GQ4zGIV23gmpBGE/bD/1oyfGG27I4CM0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723190245; c=relaxed/simple;
-	bh=IgK/VjeXR/viGZbuKEHuWnGeds1bN+eUNFUWUYgr1Lw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dQlFjgvExkOEKNY2wwJhau/kpPII7LwMqpivnFHj6oJ4oK4kH+kVnqgEptqO/4+hOsV/fCrb1LghQEWU+r+Uf0Esx0pDG0F8piIPYyBfnG4RjPo1Apo7DeBjIEBwPahlf23QNl08YATQCCClP7WZd1zOdkCXOFrThemsY6rli6o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=baoEat06; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: usama.anjum@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723190225; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hc7RzBokHDN2N9oNmXMxZQ2W2gtcn4BfdhAo7EGb5VOW/IWpn5FKeke0G3JR3FfxuGc/GLuxIeuWp1mKevBXTQ0yoFe2a3zPSkk4IfDoQP2BBOb/X8Ai/p74KrUBb/mkUhitK0oBT9/ylttChDbd4jVtbdN09YT58hqqQivyvas=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723190225; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=icKPXt17t9Kx30jQW8DqzSUWcb+Xzik3rs56lRblVGo=; 
-	b=S+rqzHnzIgpu9k8DyzqRY6iDpo22yYa5iGor6HDiruYIyTjdobZ2Ss7L20DnlrFjjZQKRQ9KrAQwxqrA8NZueRUT922z+kf2V44ZP1POeZgP7+rdvsJtDGSkJY/F4AjqomZBwl8EVzETE/LICgSEJCjNikVE/0Xklu6ipCKfzIc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723190225;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=icKPXt17t9Kx30jQW8DqzSUWcb+Xzik3rs56lRblVGo=;
-	b=baoEat06HZ2Q4x+RKme432Zc7LrqBMAMUPE0jUd68CNpaX4vyylF3E5BbSbBCd78
-	J3hjUfJbGvhCJtRM4e62TTgXeA9M9qfQRAQJRyqEO3Si3TsxoO6fb3Alsn8U+1LhW4O
-	kG9VU8VXXd+Hhv3AjWM/56WC0h6yuPivTzf2tGt4=
-Received: by mx.zohomail.com with SMTPS id 1723190224501788.7935482020652;
-	Fri, 9 Aug 2024 00:57:04 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mike Rapoport <rppt@kernel.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	kernel@collabora.com,
-	stable@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH] selftests: memfd_secret: don't build memfd_secret test on unsupported arches
-Date: Fri,  9 Aug 2024 12:56:42 +0500
-Message-Id: <20240809075642.403247-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDAC16CD3D
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723190224; cv=none; b=BEBzTrq3NWABnDB8q+59wxnkmdyKDlZRrjcWo4pCuSrCTRT8jL1aTKZE1WHKvxtqIod0NQQShep9sG0q7SZU2Rs0g5OrQD3DudwYa3vEu3QdbiOXa9hjT71pCId1IiO+SXV1yYlA6/muSOdQnl2XhGzAQo3yOVsokrtH6o5o450=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723190224; c=relaxed/simple;
+	bh=P+o9B5Qz0ZtDkL2hLySey3oT5H+7QGtKNfKaCyayAzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4+cdoDOy6sYC0s7ZiGgO5LqJz5mEKX32PiNLLPZ431IJ/E96hcSBSdjoExyE1q9Gnpu0jK+e1sUn9YIAF6sAjGaqQOHyitXkXrWsLZiO2ZWE5Jq7V3Go853lWdpMlljeBeMqTcvZmKjwHL54gJquGNjGCHlEP0muNsndBAtxp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZX9LLivd; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5b7b6a30454so2185115a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:57:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723190221; x=1723795021; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q4X2j5n+HQVX/p/U1z0tmTHZFV7Oux1KeJmnmOuLwIY=;
+        b=ZX9LLivdxxAKvPm5nptOrywSA494AJVOA2rmD167JEkfQNxluOfm5NVn2x3Vhwtfmp
+         7ntn7IC6k3ISVBnGABRXAHDb/+hbCUl2ibwl2Jhj1JA6o8bkKwgaCLoVs/lDeqdsp0DD
+         1x/OelXza+NaQDdsByDRg9AE1QqvYKSr2ahR0cBfUZA8WqrjF05uJd/ZqREQa9kEVD4b
+         FZ/gwcJkvY+kgt/DMk5KQQq7h4pQQq9kQJlCsLkKRv5lZZ4LyNrx8vx8ORm+PggN+ydO
+         ZGJqVQADiGtx0slFMlcyMAO24JVPBQzYmzG9jAjgnpb88fRq7Bx8IC3INOWMzTCZX+fr
+         n9ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723190221; x=1723795021;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q4X2j5n+HQVX/p/U1z0tmTHZFV7Oux1KeJmnmOuLwIY=;
+        b=ODWP0pI7YxWVz+Yw68a7YMkiG/s6JdqIXK9l+UHRJflA9RgIai61KU4Zpm+U5SNgHt
+         ujAfVA9eYo5G1SPhiTzdT+xzzKkxnHuJIMErZTBxdGuq79m1yUbilSk/HaPSnr5scO7H
+         09+RkMWEK4XkFpAy7AjTaMIozo1Skhg9cTgOcLFvdabvl2ypmU0EM2Bk1gxZ1P3WEyl7
+         HIEknnOQHmDeULn5ABSdtLtVWahVfk6nTJ15iIeX0YrmV6XUV6E+kTwyTGz7b9fE7yG4
+         NjpC2/em/zXVDSaQAKstv+2GdYhEDiOVJHCcnzrRYwoJyWogNsuMK4J65nLxvi0T55va
+         C/Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvIOrZ3GyEFxR4RqaGlDXle7kAvI6w6iN5mClx8tUJ03bcLSy4lLvzFTpaI/oyqEq+/QP+86IX9LDBLabjOudEmtMbPxRy19g5L39L
+X-Gm-Message-State: AOJu0YxqZRp+b2/XoqMCH9bpw4GZ431KFzu5vfOWGaMv7Zztp49Gxa9Y
+	mBztQkhwK9GmtEiN6qGn33fxuVnMEIk5gBp3+QDtVUlohM3BEik3fd+Kc9fCjJ6uPE968mbmbgP
+	Z
+X-Google-Smtp-Source: AGHT+IGn9nQwEAFW4Y/TSm4pYY5wYW39ON7OgDyDPub94onrCBjU1AoPd0RfQSKxRCt+Kk2msP+4Xw==
+X-Received: by 2002:a05:6402:26c8:b0:5a2:1f7b:dffa with SMTP id 4fb4d7f45d1cf-5bd0a50cff0mr594761a12.3.1723190220878;
+        Fri, 09 Aug 2024 00:57:00 -0700 (PDT)
+Received: from localhost (109-81-83-166.rct.o2.cz. [109.81.83.166])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf855esm1299238a12.13.2024.08.09.00.57.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 00:57:00 -0700 (PDT)
+Date: Fri, 9 Aug 2024 09:56:59 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: akpm@linux-foundation.org, 21cnbao@gmail.com,
+	herbert@gondor.apana.org.au, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/rhashtable: cleanup fallback check in
+ bucket_table_alloc()
+Message-ID: <ZrXLy6-EpFJdro8b@tiehlicka>
+References: <20240806153927.184515-1-dave@stgolabs.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806153927.184515-1-dave@stgolabs.net>
 
-[1] mentions that memfd_secret is only supported on arm64, riscv, x86
-and x86_64 for now. It doesn't support other architectures. I found the
-build error on arm and decided to send the fix as it was creating noise
-on KernelCI. Hence I'm adding condition that memfd_secret should only be
-compiled on supported architectures.
+On Tue 06-08-24 08:39:27, Davidlohr Bueso wrote:
+> Upon allocation failure, the current check with the nofail bits
+> is unnecessary, and further stands in the way of discouraging
+> direct use of __GFP_NOFAIL. Remove this and replace with the
+> proper way of determining if doing a non-blocking allocation
+> for the nested table case.
+> 
+> Suggested-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
 
-Also check in run_vmtests script if memfd_secret binary is present
-before executing it.
+Thanks. This is not really something I feel qualified to ack but the
+change looks good to me.
 
-[1] https://lore.kernel.org/all/20210518072034.31572-7-rppt@kernel.org/
-Cc: stable@vger.kernel.org
-Fixes: 76fe17ef588a ("secretmem: test: add basic selftest for memfd_secret(2)")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- tools/testing/selftests/mm/Makefile       | 2 ++
- tools/testing/selftests/mm/run_vmtests.sh | 3 +++
- 2 files changed, 5 insertions(+)
+> ---
+>  lib/rhashtable.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+> index dbbed19f8fff..6c902639728b 100644
+> --- a/lib/rhashtable.c
+> +++ b/lib/rhashtable.c
+> @@ -189,7 +189,7 @@ static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
+>  
+>  	size = nbuckets;
+>  
+> -	if (tbl == NULL && (gfp & ~__GFP_NOFAIL) != GFP_KERNEL) {
+> +	if (tbl == NULL && !gfpflags_allow_blocking(gfp)) {
+>  		tbl = nested_bucket_table_alloc(ht, nbuckets, gfp);
+>  		nbuckets = 0;
+>  	}
+> -- 
+> 2.45.2
 
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index 1a83b70e84535..4ea188be0588a 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -53,7 +53,9 @@ TEST_GEN_FILES += madv_populate
- TEST_GEN_FILES += map_fixed_noreplace
- TEST_GEN_FILES += map_hugetlb
- TEST_GEN_FILES += map_populate
-+ifneq (,$(filter $(ARCH),arm64 riscv riscv64 x86 x86_64))
- TEST_GEN_FILES += memfd_secret
-+endif
- TEST_GEN_FILES += migration
- TEST_GEN_FILES += mkdirty
- TEST_GEN_FILES += mlock-random-test
-diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
-index 03ac4f2e1cce6..36045edb10dea 100755
---- a/tools/testing/selftests/mm/run_vmtests.sh
-+++ b/tools/testing/selftests/mm/run_vmtests.sh
-@@ -374,8 +374,11 @@ CATEGORY="hmm" run_test bash ./test_hmm.sh smoke
- # MADV_POPULATE_READ and MADV_POPULATE_WRITE tests
- CATEGORY="madv_populate" run_test ./madv_populate
- 
-+if [ -x ./memfd_secret ]
-+then
- (echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope 2>&1) | tap_prefix
- CATEGORY="memfd_secret" run_test ./memfd_secret
-+fi
- 
- # KSM KSM_MERGE_TIME_HUGE_PAGES test with size of 100
- CATEGORY="ksm" run_test ./ksm_tests -H -s 100
 -- 
-2.39.2
-
+Michal Hocko
+SUSE Labs
 
