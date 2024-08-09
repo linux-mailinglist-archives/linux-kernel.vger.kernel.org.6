@@ -1,118 +1,113 @@
-Return-Path: <linux-kernel+bounces-281325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6237494D58D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:38:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AE494D58F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2AC5B20DFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F781F22213
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811967316E;
-	Fri,  9 Aug 2024 17:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B007E59A;
+	Fri,  9 Aug 2024 17:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="IfIUf9lL"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vOk3wxoG"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0110D282F0
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 17:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7F88288F
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 17:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723225091; cv=none; b=SjOXJGYxF1gqwcSp/DK2pOVdZOH9tteNdaYatQzVXkjSesiq6oZWUrqEOjqoYteRvQKUkft43Ln9D/HwIGYfyzt5p9HQgWWszzgmOy+YxcVRHWgFIJh+pO6nNINcUghLEbfNbcU49w25lIfO+XbR4zaxgAH4I+50Rik1dVy4wgA=
+	t=1723225117; cv=none; b=r7cg4ZbDDuUGBwkPpzDZFMGtzyUvnjj6iPq5vkhzHMEgJAuxItR2nmAVYijKXYArOUUae79LBKXe0drBo1gOXkawzAWGlpLc7eez/EbOMdAHn6oP36n9/rt8Y+rhSXjfurSDp/BnOlwnLuTavamGjpflMasPexWzf5Fj6ROTn/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723225091; c=relaxed/simple;
-	bh=he6jXoerSQvCcsE3+17+mDsqZXqXL8RLBIvboBKOyGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Af6jnGytySBPJICvI5ha8++IGp/wrM0pjYavu7OkwYq9YlZ4cF54LHniCXqEcicNDbV0CQFjhBUNXwq7SzK0WjEwKVj214QQgbvsuK7W31K4nRadu8xurw7beH2q9uum4tj/JThO8ijFlwmPex3k+lmMYnfbbywfBVwka2fT/t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=IfIUf9lL; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 479Hb9vd1811690
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 9 Aug 2024 10:37:09 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 479Hb9vd1811690
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024071601; t=1723225031;
-	bh=bhthDcE52lFd1qkkTCpMHU3fmdUIgwXD5TPfW1M+czA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IfIUf9lLY6fzaoxRZgP90Vm6ObXeo0rBkqj8oaBJtpxp7bYzFHAfBOoiDaQ5qgQ0V
-	 msXjiebjbLKASNm2w+EN8BgHPeFbgevl5griUv3nUeBREeBfd2UgMjS89gOZ+OMeJi
-	 l/USfJ2kbw2c9ynvoQ/Dcv5JlgAgNpeayInuQzYFukkRnCeXEUbmn0Pm5bO7qn4p+U
-	 iBSdqc+Be5i2WEONvlMBnyHAfuVF7HvA8vRF+QI5gecSFvCAa1o00ttlgrhoAQC374
-	 cbvcomL8e6BlaiGrNZ4NjDpf7+N8JErtF6NwwLYNjegYeS9kQdNb5Vve5Rgwil+ehR
-	 tqv5DphIGHVKw==
-Message-ID: <34964ea0-dbf5-41a1-82cb-5f677afad23c@zytor.com>
-Date: Fri, 9 Aug 2024 10:37:08 -0700
+	s=arc-20240116; t=1723225117; c=relaxed/simple;
+	bh=cXxYEXZARGsajeKNP9d0RS9azqEcBNcFd0GgIoMO+s4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ejjenQQX7aQiAQHl24UoTCYMeHOn/oo0FmrxyXN7Cb8AmmBN/H9BXjE8SitM8SMn44I/3EiC9osLG9SGSDzMDpRxFRUeeae4WWgddONVq2rDgO9Q3qZVq3GQlr8ol2I9E8HXT/dzg4IWf9n2Wvxh6kNFAVAy+LDb+MPY1bfpNTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vOk3wxoG; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42803bbf842so22310195e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 10:38:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723225114; x=1723829914; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wK/eXbtSXt7i7qGRvp4JY5MYm4mTg33gbZoavV57C+w=;
+        b=vOk3wxoG5dxVz2yYdtRQByI9uhxIBAoQXyjJBT73BETSm1yQlAo6+AisyYu1zsedgr
+         tKr8+4XknMzR8xz2r2BJDMwj5ahbZY07WuB2VljglD/byP3eogB39XJMa8TXlUl1zvcG
+         4+6FEA9tMpkoODxqaJzALjHMAOayy3pxfHHohyTcjJdGssPhtlZsSGImPkFK/xHOXiNJ
+         kGZHl6gQ068xIpKbH7x7qCZQYRmZdeqONKdf+ja9dwzs7ZIMqWHwawkIS9GmM+BGny0f
+         0mN050LUyOUkt/Aqxs8kCi21KvY/XM/v4DunsG0Y1HoEFDXcA9tNEmuJmB3GheR95bUz
+         7cvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723225114; x=1723829914;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wK/eXbtSXt7i7qGRvp4JY5MYm4mTg33gbZoavV57C+w=;
+        b=gPnu0XgS04EUufI15lzNJEFyUc0bT/ZRMGWr+gubITPHYNG0mvbYElKju3nt21FUYm
+         t+orhAFBaK5/AV9V+BamG1cmerme7QITIrqtq4g+uRdRTjYWO0tF6VvNzD9eGvSbAvkk
+         R375tFvJ2zDnzIaa3LtJGqx6ci0ZHG4UubPImkXYSUEpi2k0rLPtIxOxdqNLRRPpxEye
+         FY0Obx3RBsR04gZe2hF7Yq8aGvHNLHe5zqdM7Svx94sQTbRgTxaKd4BzTUtOBxGO9uwr
+         wz+QazOq6uduFdvmgJ/2rYWyDmLRYNx+5sFZZB1HOEMPznYhAT9Ke+Krn5mxOIW5F6dx
+         1PIQ==
+X-Gm-Message-State: AOJu0YyfuLr4Lm8XnbPFugD/TSDR8/hHj1lOsujZbUUTCICRo807wgVt
+	iaJyLITbO38ag6XFtDsHKhJuvnEQwfsRb3RS10BKpIREmbH33iHlxw2BLF+GQg7UjJwMeE24K42
+	s
+X-Google-Smtp-Source: AGHT+IHlKsFJK5FyeGImDhFZElsrrYy4iv5r7ySzQHymljAVd0WoJ9rnFzjR1TGdbNLOS209wzEC4w==
+X-Received: by 2002:a05:600c:1f81:b0:426:5269:982c with SMTP id 5b1f17b1804b1-429c3a52e1cmr22944565e9.28.1723225114348;
+        Fri, 09 Aug 2024 10:38:34 -0700 (PDT)
+Received: from [192.168.68.116] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4efae579sm40543f8f.111.2024.08.09.10.38.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 10:38:33 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: linux-kernel@vger.kernel.org, monstr@monstr.eu, git@xilinx.com, 
+ robh@kernel.org, Michal Simek <michal.simek@amd.com>, 
+ Michal Simek <michal.simek@amd.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Kalyani Akula <kalyani.akula@amd.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>, 
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+ "moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <1184b2799ecdeef04128f4bab3db7460fd8edb10.1723114978.git.michal.simek@amd.com>
+References: <1184b2799ecdeef04128f4bab3db7460fd8edb10.1723114978.git.michal.simek@amd.com>
+Subject: Re: [PATCH v2] dt-bindings: nvmem: Use soc-nvmem node name instead
+ of nvmem
+Message-Id: <172322511112.401904.15547829402297792628.b4-ty@linaro.org>
+Date: Fri, 09 Aug 2024 18:38:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] x86/entry: Set FRED RSP0 on return to userspace
- instead of context switch
-To: Nikolay Borisov <nik.borisov@suse.com>, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        peterz@infradead.org, andrew.cooper3@citrix.com, seanjc@google.com
-References: <20240807054722.682375-1-xin@zytor.com>
- <20240807054722.682375-4-xin@zytor.com>
- <eb2ed1b4-94cf-4d3d-b726-6ee0fa13ca9e@suse.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <eb2ed1b4-94cf-4d3d-b726-6ee0fa13ca9e@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.2
 
-On 8/9/2024 3:45 AM, Nikolay Borisov wrote:
->> +#define TIF_LOAD_USER_STATES    30    /* Load user level states */
+
+On Thu, 08 Aug 2024 13:02:59 +0200, Michal Simek wrote:
+> Based on commit d8764d347bd7 ("dt-bindings: firmware: xilinx: Describe
+> soc-nvmem subnode") soc-nvmem should be used instead of simple nvmem that's
+> why also update example to have it described correctly everywhere.
 > 
-> Wouldn't something along the l ines of TIF_LOAD_FRED_RSP be more 
-> descriptive, or it's expected that this flag can cover more state in the 
-> future?
+> 
 
-Sean mentioned TIF_LOAD_FRED_RSP, however we also have FRED SSP0, which
-needs to be handled similarly.
+Applied, thanks!
 
-And we also want to use it to cover future states.
+[1/1] dt-bindings: nvmem: Use soc-nvmem node name instead of nvmem
+      commit: 972bbba114bd45c7526f88512c277b1a1c4fc3c8
+
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
 
