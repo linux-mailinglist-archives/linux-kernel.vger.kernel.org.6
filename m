@@ -1,85 +1,137 @@
-Return-Path: <linux-kernel+bounces-280801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66E394CF65
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:36:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6014A94CF6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92118282BE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:36:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D767EB20EA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774C1192B93;
-	Fri,  9 Aug 2024 11:36:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEFD19306A;
+	Fri,  9 Aug 2024 11:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qo6Q/vXk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B470515A848
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B4D156C4B;
+	Fri,  9 Aug 2024 11:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723203364; cv=none; b=JT+3PncSrcCWvlLtAtZ7bVF7iXg1kqTBCNTCrDDcXO73jlM8EUvwUDu4VWtBKBGvsm3euy2Nq6mBVXeX9WS0SOFeWVerjuqWmy2wCrPjpnx9E7xTx8KtRVbZmvXmCrFCh6dZtUyG2M8fT6xeAUCNM0dQ8O/HOehO3mP127+xHFk=
+	t=1723203413; cv=none; b=byYKZiufbPTk5EHOtzirIdRFOsIHyD0xClk7kSpkzE0o6FYo1zGVC33IpjYsx08PMxtGPuFa33YEqnQ9YTK5aSKuWNaMAv9lQjQCjcvBl9wbqbskC8QBSkrWWqHL0ry+w7yPFyCjYr0o2MtZ5hg2HP0bUeWvldzL6gknJjn1ApA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723203364; c=relaxed/simple;
-	bh=n4mpLws280hDngb4tNI814GEf1E+wWFxR4oy9OSsW8A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fGAmXJgX1G3o1ssqN3MuzC3/U282sHPLolQW7NwL3nfnYw+9gUlupeCuYTep2a+YOk/bq/+8VILrw+8lyoSVkZaAJFqrJ43Nw8xVGkoaa5OCiAU7rNHQcpNpxcZiBo7PalgNhK/6+gw+7IQZIL+tbJKELSU4PAnJRp82E1UdugE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39b3b585980so26042415ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 04:36:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723203362; x=1723808162;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G9wPCtQeAbSrsBJvFhHjEjUiZujlSd3I5GE3r2EoOEM=;
-        b=VMpxrDrMtDN6MizgV44y0X3/GB0KpYdDD8z/kt3sGYBtmcD40FrpbVcmHORX/p0c50
-         AzMiu0H3ezUfyY62dE0cHNZ75OEnurLk+u4o+2HC2eCCxcus1vjwEQRI0vvpDvZjtlgW
-         BjCQCwWhgmy1DL2eHzpQbOHcbptya0lk/DRm/I2V9WSrVQHgH7LckSjISZ517P0WZoCk
-         a8goO6NVs+XC8xLBOA2417W2oT0rGRmgnt13xEgi5hDJKmi7J/CGS7fcABLT248RrMqP
-         XG/eAMgzOUdhTjIHI/wBuqBtmnEJ9WoAtdcNMxtD/CopeaiLSpHMiFGNDJFv//KSC3qA
-         1whA==
-X-Forwarded-Encrypted: i=1; AJvYcCULgd+5AsGVq9CDpub4pr17ZhOyuqlp321RGzTgzwAGt6kAicO/Rvghwsf2D1C1kuAt3tlaS6B6gMpBmscwkON8LJ7XgKKa0I3+gpU1
-X-Gm-Message-State: AOJu0YwzxkInhKRgQLzfWxcHMowJ7Ow6APONQILuagmibSrOyC0Uh5SH
-	Wx4SU6YjfWkq4U/oM3q+3YrAkd9zcKBK88qdXXxZH0SQPmTAjkvJ23tCh5pzCd24VGlHhYKZqNT
-	sksZA0xsAHTbmfpXPyhnUZFLiZ1G4DuoQ4gpcN0R5E16ScFTouQBF4zI=
-X-Google-Smtp-Source: AGHT+IEqb02OAPbmz3Yd8kPUtWJVmrFvqhcpC86RVeYSS74SqzN1pTmwCs99RoZzxDs2Iu5g5WchnaHMciBW2KF7Wtj2W4B+1aBz
+	s=arc-20240116; t=1723203413; c=relaxed/simple;
+	bh=LZ6V+O4VBtArghCZWjRD6xeXn5xm8T+FsR5jPh3tYnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TGqh0KxBVcSfIoqexhr8wfwuVlDQZRPLWfahiODqDRALXo3vN5sC4sRGXIVBEhSF4PG5k+gXn2MdFMHgalSFvGbraylH9xzfuux91MtNVK/LU5omVEQ0nxAdOBDTBKCKSN+3ylG8WZdAeaWjosVkIMJazP6YFANC4qLkdOJw0Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qo6Q/vXk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4797QIIM005836;
+	Fri, 9 Aug 2024 11:36:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6o3BwuyjtmlRMufjxvERVxCcd2fb4s3twoRgcS2jlZg=; b=Qo6Q/vXkQI9Hycel
+	FT/6AnA5GgoLsKAtqW41O8yaxVywDQPv8lzHmAwjyJLLXMbje1Ca80H2aJRQpxzK
+	tbLYhnhClwBSFxTYYGhH0srWXT2wKvTs0Bspfx9J9e0/bxx2H2KOKnLM9IapxRoo
+	lBqkUspMyEmrnHZBOBzYJPM0TiHQbFcCpKVtZvDj04tklbbbcMo0vp9NHOWQtBug
+	5o0ScynI5mbPjkUBlGj8SDSp+VeSn+J9iwuoFLz3x4aURPtAODteOvxC1cht3MTp
+	0gBoXjaSMD6cJ2bpP/m9nv9i1pnZ4u/9k+bXQKd3IwYyn77FdGD/LkXUvr1GkmSv
+	fnu8RA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40weqf8pb2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 11:36:43 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 479Bagm1015230
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 9 Aug 2024 11:36:42 GMT
+Received: from [10.253.72.235] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
+ 04:36:37 -0700
+Message-ID: <41aea3f3-d21a-4d8e-a91a-0fe06947c75f@quicinc.com>
+Date: Fri, 9 Aug 2024 19:36:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18ce:b0:39a:ea7d:2a9a with SMTP id
- e9e14a558f8ab-39b8709167fmr942895ab.6.1723203361747; Fri, 09 Aug 2024
- 04:36:01 -0700 (PDT)
-Date: Fri, 09 Aug 2024 04:36:01 -0700
-In-Reply-To: <tencent_91612968A3A2A44D176F377926C453710305@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000040c6ea061f3e8cb3@google.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: defconfig: Enable Qualcomm IPQ common PLL
+ clock controller
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>
+References: <20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com>
+ <20240808-qcom_ipq_cmnpll-v1-3-b0631dcbf785@quicinc.com>
+ <afbf0554-56a5-4df0-9e4b-97c065d78bb3@kernel.org>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <afbf0554-56a5-4df0-9e4b-97c065d78bb3@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fi3KHOAn5eSuCujTqnXA-1Tf3PMI8pG2
+X-Proofpoint-GUID: fi3KHOAn5eSuCujTqnXA-1Tf3PMI8pG2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-09_08,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ spamscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
+ mlxlogscore=751 suspectscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408090085
 
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-fs/netfs/write_issue.c:531:53: error: 'wret' undeclared (first use in this function); did you mean 'wreq'?
 
 
-Tested on:
+On 8/8/2024 10:41 PM, Krzysztof Kozlowski wrote:
+> On 08/08/2024 16:03, Luo Jie wrote:
+>> The common PLL clock controller provides fixed rate output clocks to
+>> the hardware blocks that enable ethernet function on IPQ platform.
+> 
+> That's defconfig for all platforms, so how anyone can guess which one
+> you target here? Be specific, which company, which Soc, which board
+> needs it.
+> 
 
-commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=163928ed980000
+Sure, I will update the commit message as below to provide the details
+required.
+
+The common PLL hardware block is available in the Qualcomm IPQ SoC such
+as IPQ9574 and IPQ5332. It provides fixed rate output clocks to Ethernet
+related hardware blocks such as external Ethernet PHY or switch. This
+driver is initially being enabled for IPQ9574. All boards based on
+IPQ9574 SoC will require to include this driver in the build.
+
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
 
