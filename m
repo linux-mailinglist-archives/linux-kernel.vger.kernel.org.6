@@ -1,178 +1,212 @@
-Return-Path: <linux-kernel+bounces-281401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A2B94D681
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:43:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF76594D686
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F9DC1C211D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:43:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19BF61C21FEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C0E15B103;
-	Fri,  9 Aug 2024 18:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627F915ECC0;
+	Fri,  9 Aug 2024 18:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="NipKB8yA"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NqeHxe67"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1AC155CB3;
-	Fri,  9 Aug 2024 18:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD7913C8F4;
+	Fri,  9 Aug 2024 18:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723228973; cv=none; b=VbkzzwmtRFeQQ61QovLYxmnNvs3HkzMT1Cx2BRoZD5O+323BcqEx7sIt2kMKgSwrTtZXQF1yjVDSD28f6k2VIf3mD9mk4FgnwT13LrTOjGqb6wy8ACMfkI9zQiZ95QSZry0BH/x07alsi/tJ6w6DzSr3o9WOdQnj5jp40enDkhU=
+	t=1723229002; cv=none; b=iDyGQ71C4AO3e5yVzAjhk3bqywToyu0vDxCLZOKgMrjE4iNrbjf1YGgf9jN1yki/icpvixSMXCB2GDj0mSFf6SqtC97gORFr2Z1u3vyoe13h1FIqmSR2qzKnUyqa+CGI3c2lKVFidaUPbppJMx41QIwI7cQRtZFY1MlC6Oj9pmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723228973; c=relaxed/simple;
-	bh=++5Q1VYKvXtJUJscG2q3w3Xg3TXoCvLyZdPWnHS9Glo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NmqmGD6zFljD29yITs0RvgVbccWaWqYOEVKpCm0RuxTCg2qYUo06ZZYXUwHYwRHyexQeU02+S1j0s5W4UfVAc3pgy10aMSJmGyjA2tIBw7jTnRma99A2KQ3L3vvWlG6LIvlatfiHrCtQEXxFyHS4R55+Pk7IWrSJWze4EA/FGRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=NipKB8yA; arc=none smtp.client-ip=212.227.17.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1723228946; x=1723833746; i=christian@heusel.eu;
-	bh=9VJxNljMRbHuWlAL33wEBRP4XdGy3G5ZfaieYxNUqSw=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=NipKB8yAhnraXICoVCuEKc0MRQogeun5fyMYwxHMaMMcLgo3I7HhFclggETQXu19
-	 JXiKeADF4o/mAXJ+hx9ihEQyK6Iye5nSY2rcXs+6WYA/95pexlStHHame8RUpuVC8
-	 bxUyuhhc9efeS5pX9Mzfu5lV67rsMtmo8LBPBT88RPBpz5PBm7b5fxGfF1pLvMp+4
-	 g9sPgYA0V/GEQb6o6WP183aqC2tEJmjmZchXYa85cjJdiwCI2opqV6/hERy+wA4h9
-	 j5fBfpb38vf/Dn6ULoAss17fIT+bdUwNuuSu6lazSjSZVhrD0BUOTfLWQJGJTcZ2n
-	 wlRg9lBc9LlfxttmPQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([84.170.92.222]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MwPfX-1sK8nv1hjx-00wJhL; Fri, 09 Aug 2024 20:42:26 +0200
-Date: Fri, 9 Aug 2024 20:42:23 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Niklas Cassel <cassel@kernel.org>, Igor Pylypiv <ipylypiv@google.com>, 
-	linux-ide@vger.kernel.org, Hannes Reinecke <hare@suse.de>, regressions@lists.linux.dev, 
-	stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION][BISECTED][STABLE] hdparm errors since 28ab9769117c
-Message-ID: <df43ed14-9762-4193-990a-daec1a320288@heusel.eu>
-References: <0bf3f2f0-0fc6-4ba5-a420-c0874ef82d64@heusel.eu>
- <45cdf1c2-9056-4ac2-8e4d-4f07996a9267@kernel.org>
- <ZrPw5m9LwMH5NQYy@x1-carbon.lan>
- <1376f541-bc8a-4162-a814-a9146ebaf4eb@kernel.org>
+	s=arc-20240116; t=1723229002; c=relaxed/simple;
+	bh=H9FXHLpYfMUXWbFJSEQFUoSRkz4T4dpFivSoqqloZSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oGoc7NgmGDsIzJ/zBelWiqNYvgtkqwLScZWbqwvMWKbSUIoQOSPuqxP0RtgXDxRKqNfKCVEYpun83WYzpUux1r64Pql+MB0Re9/Dz7D/2BaKIaRtl/9kLehmFFR+1LhpL6+1Ll991I/JASIrUmLmGDjgxGIuz2TuIyMqoBJaMpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NqeHxe67; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cf93dc11c6so1901390a91.1;
+        Fri, 09 Aug 2024 11:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723229000; x=1723833800; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q6v/APqpkjljeWsKuKvJifVCNrWaIH3KrJtyq7+urjQ=;
+        b=NqeHxe677jNI7V4opI6VRANVY6D0IvCahel1bjW6xBsXvYjgehxvI3iKJ8Z76fgHSG
+         TWMFpRBRON+Gpuhuula3YDVjSWeqK9I2LQzNTs7npmNtPAsuRxl1SQ+52SyCMX6LY+i0
+         /0NW4Avw48OBrseI6CMvsOAzNfx/BmUrUWUozB96gCC+/DfVy03qkGUeg72hfni2pxGY
+         f+4jT8PnMAFrYpEwNVbJZDV7OFLOpAsqCsBf4yMiSI6Kw6lvXZ1HN5qYxR32yLRiS7j3
+         YXMzMX6Ew/4LYOQ+oT55ymtgHw419Kkjzu2BPqGKoN73xHrHVNFAqb8AZe8FLjfE+JuX
+         5mbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723229000; x=1723833800;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q6v/APqpkjljeWsKuKvJifVCNrWaIH3KrJtyq7+urjQ=;
+        b=JLxiKdTN4hrihWphyz0di8kN1OHjnV5nK4QChAp2n7goduN1B93w/8vIWdnt6hQJm3
+         Et7+nzgAynsVA5BupLW3zqDa0eQ+StiTRJBxl54Bt9IgGu0qkzK65vp037o7hbkTfv8m
+         x63Q4juXYCSRLajYbBoIPVoM6KdduO1J2MCavudKyqjC7bKz2dt8PxJmi6TSJ/I2F0KQ
+         P7L0Gxt2HgdV8rnVAquhQHohk8BaGKhElMN6yRbOfg1D2Wg3fiEx0LqsnoFotdFyc3zg
+         K2HWKvYEtmL8cBQDgs6ExADYydDyRtLYscR7rcVwpHZfJ7EdKnYgXMFeOxozHRHe7aKr
+         /1sg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7uxkmJVbipgGoycWfeuEpadizNO+MnnmaQ8UqwTUffLs6Wmfi3Aeonwpek2Xt91xlFbRdCJkrH5O8HiXaV62Lq3G2+PAI0iNJhH2s+QpN9FED1Lbp9cpOKqIrcBc6X6x/XUWUpkF7hQSeBY+lxT0eMb7jnOs5YbdcV0fS6s4n43eM9rla
+X-Gm-Message-State: AOJu0Ywdjjl9Pd4fMMLl5q/k9OINMeTEprAOwft4VSUTeSkVNJNBeCq0
+	Y4DmTeKmRFTrXMFra3U+kOpiRZE+8YKEdhU1J/UUKbGSW5GmZs/hrTxUFGmQ7D1Kznobsfzz7gY
+	w54OgyQwVnu0nmj2gXqQ/4F6yC18=
+X-Google-Smtp-Source: AGHT+IFbHS8h9BI8SNX7Kxkg+6R8B5ycqFbc+TxbxK49+cr4DQJrVJ7Lw0LCL/3Dtjc2Pzhrf3fSwVd4DMJFNKiXBVA=
+X-Received: by 2002:a17:90a:4b87:b0:2c9:6d8:d823 with SMTP id
+ 98e67ed59e1d1-2d1e7fa91b6mr2955323a91.1.1723229000137; Fri, 09 Aug 2024
+ 11:43:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ptudwdcg6mr7zqda"
-Content-Disposition: inline
-In-Reply-To: <1376f541-bc8a-4162-a814-a9146ebaf4eb@kernel.org>
-X-Provags-ID: V03:K1:4kPBECwcfyBekMCXJyemCQew6S6+W8u03kFT1ejrE7e9dtHWcYa
- DS7JWAc/aa5waekKra8/pzD2Ecvm12+cN368ta2A0oj2EuO/RAf7gNysQ6bDRHSxYbZGQgl
- fs3xOxO5vhsZQ3cAqVGGDQVyE+7njkZyYe8nThDOs9FWfrmu0X8C333QWgJEXyQdRaqwp0v
- HFUsvuZrnRZHY8SX7lnmw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8dCMNt/qDbc=;YKd+L8XFNXrlaxOjept3pkVxcnD
- lg0aVRzlnVsYHSdGrEjbOLu/n3YMnqA129H6vZfY8u+Ro5PpkL5lC2+xIHBYQjV3FFEG2kuyr
- 33HC0iDT4Dj1McEKWlKrL7IHhm8QKH8UJm3+mUefGftr7uHknUrdnkaUdrZo9sbKMzQgu86kI
- ASEWLfTPJu1idicC5Sm+DwX8IwJbqTJyBzdjn0RZVJ4xIf2CEoRyWDR4cDALqPOP16BWvpmO2
- oJxPLy7Pv5tJm23iTPuhfZUKIAmUZELay0o0fjtVHoCeIQr4z78k9hTqRiT4j+OEfCBbh38pJ
- n95z7DrJL0mhhACnH8LWLWfru9d03045LQVuoDP+6cBxjg6zfKDmlsUjyh2Bfo1dDyPtChyS0
- vyyyP9Le6xnSDnZw5nT5JvS5r2SQ7U9xRghrsWR0qKPUDoZWhLzYBCwPEedwSSdrq5UHGQLj4
- BTfB6qqVm5KU17XuD3xiFLke2Mx/QgvISfbjUn8HVdDNWsgXXjVTOBVgQaHCpoxZH0IWNcNcZ
- Rd/M7gxMhJyeMDMoZwl+B9BR54SF03UkaW9VH4XBwnp8zj6kzBFecPLqaLk/1yY/nTi2fOu1x
- skUKAxklp82Q1KL3IV3MCpIpVNcFOI7Gh4sL+Mn52eKYNm/i7C0S1O2FLqiLuGyYD+VXASuMW
- w/qMOX+vASqAVtkCmfArxB46Xs0+NaPwK339atecBUDFKrJ5PueQg7Gmkk+Sm5vQ1qz5dyQdk
- 5pAqcOnazJe/+OdY8VSzulFiyzNt6adpA==
-
-
---ptudwdcg6mr7zqda
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20240805202803.1813090-1-andrii@kernel.org> <ZrHSts7eySxHs4wh@krava>
+ <CAEf4Bzaq86fPVGWtXqvxLtbsk06coGBebnAO5YiuvuUF2v7++w@mail.gmail.com> <20240808064353.7470f6bfab89bd28dbcdebe0@kernel.org>
+In-Reply-To: <20240808064353.7470f6bfab89bd28dbcdebe0@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 9 Aug 2024 11:43:07 -0700
+Message-ID: <CAEf4BzYeVT_pSaZP6HNVtdH1EpntXLbXB=6TLymnsA9YOjsWhg@mail.gmail.com>
+Subject: Re: [PATCH] uprobes: get rid of bogus trace_uprobe hit counter
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org, peterz@infradead.org, 
+	oleg@redhat.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 24/08/09 08:34AM, Damien Le Moal wrote:
-> On 2024/08/07 15:10, Niklas Cassel wrote:
-> > On Wed, Aug 07, 2024 at 11:26:46AM -0700, Damien Le Moal wrote:
-> >> On 2024/08/07 10:23, Christian Heusel wrote:
-> >>> Hello Igor, hello Niklas,
-> >>>
-> >>> on my NAS I am encountering the following issue since v6.6.44 (LTS),
-> >>> when executing the hdparm command for my WD-WCC7K4NLX884 drives to get
-> >>> the active or standby state:
-> >>>
-> >>>     $ hdparm -C /dev/sda
-> >>>     /dev/sda:
-> >>>     SG_IO: bad/missing sense data, sb[]:  f0 00 01 00 50 40 ff 0a 00 =
-00 78 00 00 1d 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> >>>      drive state is:  unknown
-> >>>
-> >>>
-> >>> While the expected output is the following:
-> >>>
-> >>>     $ hdparm -C /dev/sda
-> >>>     /dev/sda:
-> >>>      drive state is:  active/idle
-> >>>
->=20
-> Yes, indeed. I do not want to revert any of these recent patches, because=
- as you
-> rightly summarize here, these fix something that has been broken for a lo=
-ng
-> time. We were just lucky that we did not see more application failures un=
-til
-> now, or rather unlucky that we did not as that would have revealed these
-> problems earlier.
->=20
-> So I think we will have some patching to do to hdparm at least to fix the
-> problems there.
+On Wed, Aug 7, 2024 at 2:44=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.or=
+g> wrote:
+>
+> On Tue, 6 Aug 2024 10:26:25 -0700
+> Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+>
+> > On Tue, Aug 6, 2024 at 12:37=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> =
+wrote:
+> > >
+> > > On Mon, Aug 05, 2024 at 01:28:03PM -0700, Andrii Nakryiko wrote:
+> > > > trace_uprobe->nhit counter is not incremented atomically, so its va=
+lue
+> > > > is bogus in practice. On the other hand, it's actually a pretty big
+> > > > uprobe scalability problem due to heavy cache line bouncing between=
+ CPUs
+> > > > triggering the same uprobe.
+> > >
+> > > so you're seeing that in the benchmark, right? I'm curious how bad
+> > > the numbers are
+> > >
+> >
+> > Yes. So, once we get rid of all the uprobe/uretprobe/mm locks (ongoing
+> > work), this one was the last limiter to linear scalability.
+> >
+> > With this counter, I was topping out at about 12 mln/s uprobe
+> > triggering (I think it was 32 CPUs, but I don't remember exactly now).
+> > About 30% of CPU cycles were spent in this increment.
+> >
+> > But those 30% don't paint the full picture. Once the counter is
+> > removed, the same uprobe throughput jumps to 62 mln/s or so. So we
+> > definitely have to do something about it.
+> >
+> > > >
+> > > > Drop it and emit obviously unrealistic value in its stead in
+> > > > uporbe_profiler seq file.
+> > > >
+> > > > The alternative would be allocating per-CPU counter, but I'm not su=
+re
+> > > > it's justified.
+> > > >
+> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > ---
+> > > >  kernel/trace/trace_uprobe.c | 4 +---
+> > > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprob=
+e.c
+> > > > index 52e76a73fa7c..5d38207db479 100644
+> > > > --- a/kernel/trace/trace_uprobe.c
+> > > > +++ b/kernel/trace/trace_uprobe.c
+> > > > @@ -62,7 +62,6 @@ struct trace_uprobe {
+> > > >       struct uprobe                   *uprobe;
+> > > >       unsigned long                   offset;
+> > > >       unsigned long                   ref_ctr_offset;
+> > > > -     unsigned long                   nhit;
+> > > >       struct trace_probe              tp;
+> > > >  };
+> > > >
+> > > > @@ -821,7 +820,7 @@ static int probes_profile_seq_show(struct seq_f=
+ile *m, void *v)
+> > > >
+> > > >       tu =3D to_trace_uprobe(ev);
+> > > >       seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
+> > > > -                     trace_probe_name(&tu->tp), tu->nhit);
+> > > > +                trace_probe_name(&tu->tp), ULONG_MAX);
+> > >
+> > > seems harsh.. would it be that bad to create per cpu counter for that=
+?
+> >
+> > Well, consider this patch a conversation starter. There are two
+> > reasons why I'm removing the counter instead of doing per-CPU one:
+> >
+> >   - it's less work to send out a patch pointing out the problem (but
+> > the solution might change)
+> >   - this counter was never correct in the presence of multiple
+> > threads, so I'm not sure how useful it is.
+> >
+> > Yes, I think we can do per-CPU counters, but do we want to pay the
+> > memory price? That's what I want to get from Masami, Steven, or Peter
+> > (whoever cares enough).
+>
+> I would like to make it per-cpu counter *and* make it kconfig optional.
+> Or just remove with the file (but it changes the user interface without
+> option).
+>
+> For the kprobes, the profile file is useful because it shows "missed"
+> counter. This tells user whether your trace data drops some events or not=
+.
+> But if uprobes profile only shows the number of hit, we can use the
+> histogram trigger if needed.
+>
 
-It seems like this does not only break hdparm but also hddtemp, which
-does not use hdparm as dep as far as I can tell:
+I really don't like extra Kconfig options for something like this. So
+I'll just go ahead and switch this to per-CPU counters
+unconditionally.
 
-    # on bad kernel for the above issue
-    $ hddtemp /dev/sda
-    /dev/sda: WDC WD40EFRX-68N32N0                    : drive is sleeping
+For BPF, this is unnecessary memory overhead, but as we shift to
+multi-uprobe (which doesn't go through trace_uprobe logic), it
+probably isn't a big deal over the longer term.
 
-    # on good kernel for the above issue
-    $ hddtemp /dev/sda
-    /dev/sda: WDC WD40EFRX-68N32N0: 31=B0C
-
-I didn't take the time to actually verify that this is the same issue,
-but it seems very likely from what we have gathered in this thread
-already.
-
-So while I agree that it might have previously just worked by chance it
-seems like there is quite some stuff depending on the previous behavior.
-
-This was first discovered in [this thread in the Arch Linux Forums][0]
-by user @GerBra.
-
- ~Chris
-
-[0]: https://bbs.archlinux.org/viewtopic.php?id=3D298407
-
---ptudwdcg6mr7zqda
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAma2Yw4ACgkQwEfU8yi1
-JYXAQRAAv9TUqnuZ/OI7N3unkZfyQFbfAWEcf5ex4wpw78jUNQqd9b6JNZ5c4nVn
-eF/Vn4ge+xuQAzjv2QeATsibRVY+61tENkNq06fHavugICCu8Mij/h42hgFQ0Pob
-G6dtgo/P7aFl9123von4sZJevtn3YvtTfq3AcJZdGgEvivnSeQvdQ2i6E5BiGPk/
-bypLY9+RUNHT5ZMix6tEmfEPsBI6Px1gzS6oRG2CFfQ2H0nGqiBK5wMLH0goijLx
-sPBaHf9xgC15SDvA6q4v2LZliG2vS5OUsRX+HMDhoOGi5agFN02+L8X8Ic0iBZmK
-eY5eKrMXPmDYlLxF3y2KmqMd1Fie1eQ7fnDogz6ycq2Yz1etDCJvYNqnALOTzQBi
-jyLlVD3L3GH2e0dhsGraVcJynWbUdz1cbmLeYcFP6SEkLtKMrhgY8jVWuFLdxPGo
-r7su1c7dCZSDg9BOrz4xuu/ELD2BRinWEh89CFDBiV1bwT5gluGMMHV2UIIhQ3hh
-DbHYNzdBe+gXyYZTQi7T0sQiP86+LcTFF7He5whhtEgHRLJbrMJmd8pIdrZ/CAyS
-CtDpWT+0W6NN4ZyDE5C0PxtJLus8klIVDyUWorvWwJ0qpax+Ox565Onxjf7+Hs7a
-yTsvxqcGdj+Q3C+l7rqFf5+odAVWjewprtewftHUBCUAtCn+XRE=
-=TnUX
------END PGP SIGNATURE-----
-
---ptudwdcg6mr7zqda--
+> Thank you,
+>
+> >
+> > >
+> > > jirka
+> > >
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > @@ -1507,7 +1506,6 @@ static int uprobe_dispatcher(struct uprobe_co=
+nsumer *con, struct pt_regs *regs)
+> > > >       int ret =3D 0;
+> > > >
+> > > >       tu =3D container_of(con, struct trace_uprobe, consumer);
+> > > > -     tu->nhit++;
+> > > >
+> > > >       udd.tu =3D tu;
+> > > >       udd.bp_addr =3D instruction_pointer(regs);
+> > > > --
+> > > > 2.43.5
+> > > >
+>
+>
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
