@@ -1,133 +1,125 @@
-Return-Path: <linux-kernel+bounces-281495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F359094D77B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:40:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 501B994D781
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF3CA1C21700
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88361F24D41
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409BA15FCEA;
-	Fri,  9 Aug 2024 19:40:02 +0000 (UTC)
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC1F1607A3;
+	Fri,  9 Aug 2024 19:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="rp46QHR+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jp5zb9cG"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522E3381AD
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54784101E6;
+	Fri,  9 Aug 2024 19:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723232401; cv=none; b=tPSlwJlBjfgnhqDS9SmivKxKN1UlzykRrelzjmnGl/zAGB6/M+FsYX8v2Z9AolFTdYo5JcbtVVQ/Ktb+RV3gwMACY103ZT9urCM0Ybt1mkJ5MR3cDd/dQO5tMlZ6Rm8HwEkF8zHgIJzFxsFhdxwlizSN+PNY2cu3ZjMVxdrEya4=
+	t=1723232542; cv=none; b=lhJKoB7VKPaxmiNimhkWkiQuplm73JVTK1vFJ5Gqgj2l3gZ0+X9oaI514UPyNk/PFLVzINF/u2G4Rmba48skOh5dEqHEWtjnn4YVA2/Cr2O2+Dl2/b7WIyj9EEYzlHifCMZ9mLiB0TLp6TCmNpUK43GH711eKfxCJ4LhB96ROTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723232401; c=relaxed/simple;
-	bh=AwapjTFFhp3dFbRVbLgG7aYAQRlwvpNz0qSnFdm9RMA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MXmaXtcU2HC4v1nwYbC9lQmUlbkByc02CfH2UO7/Vc5q9EqhxBsm082O/uiigjPTbnVqIvhrRUkADbd6CKvU25OFeC7D85K9FgsvIYqkYaSs3aQllvPjD/z2fgD88lJOqakqnw1NJKreeO4dAYMM1+8CSVhrc8I/IbVJqcSYKkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7a264a24ea7so1809520a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:40:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723232399; x=1723837199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N1Qn8YPFxnx8TAiNeYXz9KAEVqW09rM5irsn7sT330Q=;
-        b=EHSq7ztES53cDh0p2Y4tamcZJXo0I/jSx5b05GoTP0ACfctU3kAMcCcTQ2M4fOHKSw
-         RW4PmdTwM6dcsxggLOgDSCeRtVGSMRjhLWB79PPxuR9VPJ7vXHiNyhoVVgMwzJ0VHycJ
-         KdVT6V5qHaIrzVQCNwxQQ9zdgTFXHAU5q80bYzsvCgGRgYxQDdMcZ1fmnW48Ef8DQOpK
-         nYkbO9C0GbPgDGprP5zjb3hu10tMgNTQhvFIGtX/MD1FXD8cXUxu94kcRpYlTuwZpwii
-         tmvAwvHsuUV0IOsQ9JfpNcSO6+shF5QUhFbyHv4WZ8vl8bk7l7HuvZHsfffpBv25NFwT
-         BARw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhhC6TeEDyp6jp52wKSOsPywS/ZPL2qb8tVFdy/U24JuIVWdn3kCqPcH/uI9QiJ7D4JaiBeaH3iNGTFwP/aUfkK0AWcwO3/s0yKuu7
-X-Gm-Message-State: AOJu0YxeERlJgPVDxo1p8640+K64FavcjAqIdYOGuupuEKoU+0ipbHhj
-	sCk5aJGkNnNMYtaLyWsMaTlJHlrMbD+PnHq0YBOfdoYqUtcqpMW8wwO22zhXsr8vvLd4yJj+WsP
-	15EltUpX1MjNreBtyVuWdfVVJvv4=
-X-Google-Smtp-Source: AGHT+IHZLD1Vl+hkAFqTypDM6YJhE/E932sfrVijCNlr1tRNMPomekkC3cYsV2TX/JFvjKl+AWLLfVccvRNLfasKCLw=
-X-Received: by 2002:a17:90b:14a:b0:2c9:7ebd:b957 with SMTP id
- 98e67ed59e1d1-2d1e7fc6036mr2696515a91.11.1723232399325; Fri, 09 Aug 2024
- 12:39:59 -0700 (PDT)
+	s=arc-20240116; t=1723232542; c=relaxed/simple;
+	bh=tclaRpL2H/toCm7e347ieAc2LgjeBry9iVGCm1RK9yA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=X6bEg6S4p+ZsvTR1g5cMO1EYtr9wt1JZ4SpK6ftMb++edIOMuLeU3uibh+HjqwM3cxxlBi64m1MCCQKTtUc8NJYUL+PSGzsTCYrp5TIdx1AXmFISVRKdFKYubBHOSTBwqPlhOgNBcR+3l1mhNoiFh9M63smAaHjDJyyN0jvaMaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=rp46QHR+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jp5zb9cG; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 5E3CD1388200;
+	Fri,  9 Aug 2024 15:42:19 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Fri, 09 Aug 2024 15:42:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1723232539;
+	 x=1723318939; bh=+jbITZ+KV7Pn3QxvU2tZAWF7/BSd4ZxIKMbe2jdtxbw=; b=
+	rp46QHR+NS7tu0DvKopq43Y2KP6ZrkXmfdARB8avwh3qDkYO8AJExNO5KXzDrEc6
+	JVzVAJoV7j86EN6RzqxgDzGBPjjvA4+2YekVYZGdzWdf9SHth81uIgq6U0jqQJcz
+	CAEPYr0uBYsQ9+wD5JFMElXEn8lDuFE2VoOYoudbt0eUIszfSuMfocHEw3DiAXEA
+	gQ4g5IvExQuDUnJfPIIsDW8zs7afMMbuTIYQb9k2SgMSfd4Dwtrla5YWh8s03gID
+	kR5JC/mlIMB7Hf+hYhL8mE3mvXi/P+N42O6UpkK8Ri95gM4upAqFHma2i0Xogyzr
+	pCGZhbQAKiD04aIAungeKw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723232539; x=
+	1723318939; bh=+jbITZ+KV7Pn3QxvU2tZAWF7/BSd4ZxIKMbe2jdtxbw=; b=j
+	p5zb9cGC6fhszmL887QilwM2dpEm119NrOc6Y9qX9E/G4RLT5nIYSNrWGQyEWrRr
+	jYhPvVQGm0CsyPp2FnqZOggFPEc8USWmJoW72lryl0bEJ9N3kO7rSr9FzWkHXYCC
+	iFeAE9mOh1EJpWQnI/rc7C8V41qpprdl2mQ5SmL2l8GN1eiNH//J29mUjZgsNSoF
+	uMWCDp94bPhLV2FHAJm99X6ZF2ozLrEhxK1HMpB/x6LykNkL+7MA2b9bGOYiBpeC
+	Q1z57o9v5dEpIcJ1qZd1c2YF8mBL+ss7QID3y0ksEjZDSJ0U1joqzqQDg/TM7oAS
+	wmd8eIzmon1WiEd1spaUA==
+X-ME-Sender: <xms:G3G2ZqrSUk14jpj63l271Fbtv1xy6A6XHKRn7Kl2kNB86sJeWRR5iw>
+    <xme:G3G2ZoqKNj6XlipcnLBgdIDsSffcjgmbs1TTXGf4pnSNYo4KDXxa1P1tZxCPz1558
+    dsSEfLXik2kuH5jonA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleeggddufeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrd
+    hfrhgrnhhkvghnrdguvgdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhihghho
+    rghtrdgtohhmpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+    nhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+    nhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:G3G2ZvNQSdgYaiJfiGWLO_021SkZdI4ZXOflLWMNDILXDbT9tuhwNw>
+    <xmx:G3G2Zp412ZR3cM1VQ6ZN0-XNTOmzgZ8SAj4idhBo-GmfW09Zbqrr1g>
+    <xmx:G3G2Zp6MkzRC14SmhUBg4v1uEbOeTq66AbFDJ--PICShdgnhzyKb7w>
+    <xmx:G3G2ZphvtxlGKuOANKGtlib6D4ng8ubCOtuMzQdTE-NeGr5cqogFkA>
+    <xmx:G3G2Zms2IiiyHNlyrW8Lb9roaJn3dar-q96lVj7xHuv5DLhPHarsdFxS>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 23EC8B6008D; Fri,  9 Aug 2024 15:42:19 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZrYsDYh2VVmh3GMw@x1>
-In-Reply-To: <ZrYsDYh2VVmh3GMw@x1>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Fri, 9 Aug 2024 12:39:47 -0700
-Message-ID: <CAM9d7ciushSwEfj7yW4rtDEJBTcCB991V4cswwFEL+cv6QF2pg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] perf debuginfo: Fix the build with !HAVE_DWARF_SUPPORT
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Ian Rogers <irogers@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Fri, 09 Aug 2024 21:41:31 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-mips@vger.kernel.org
+Message-Id: <70f908d0-7cca-40c3-9aaa-c838b02dc4c4@app.fastmail.com>
+In-Reply-To: <20240809-mips-numa-v1-1-568751803bf8@flygoat.com>
+References: <20240809-mips-numa-v1-0-568751803bf8@flygoat.com>
+ <20240809-mips-numa-v1-1-568751803bf8@flygoat.com>
+Subject: Re: [PATCH 1/7] arch_numa: Provide platform numa init hook
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 9, 2024 at 7:47=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
+On Fri, Aug 9, 2024, at 21:25, Jiaxun Yang wrote:
+> For some pre-devicetree systems, NUMA information may come from
+> platform specific way.
 >
-> In that case we have a set of placeholder functions, one of them uses a
-> 'Dwarf_Addr' type that is not present as it is defined in the missing
-> DWARF libraries, so provide a placeholder typedef for that as well.
+> Provide platform numa init hook to allow platform code kick in
+> as last resort method to supply NUMA configuration.
 >
-> The build error before this patch, a static build out of 'make -C tools/p=
-erf build-test':
->
->   In file included from util/annotate.c:28:
->   util/debuginfo.h:44:46: error: unknown type name =E2=80=98Dwarf_Addr=E2=
-=80=99
->      44 |                                              Dwarf_Addr *offs _=
-_maybe_unused,
->         |                                              ^~~~~~~~~~
->   make[6]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build=
-:106: util/annotate.o] Error 1
->   make[6]: *** Waiting for unfinished jobs....
->
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Can you do this with a Kconfig symbol in the header instead
+of a __weak symbol?
 
-> ---
->
-> I have this in perf-tools-next.
-
-Thanks,
-Namhyung
-
->
-> ---
->  tools/perf/util/debuginfo.h | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/tools/perf/util/debuginfo.h b/tools/perf/util/debuginfo.h
-> index 4d65b8c605fc5445..ad6422c3f8ca3ef6 100644
-> --- a/tools/perf/util/debuginfo.h
-> +++ b/tools/perf/util/debuginfo.h
-> @@ -40,6 +40,8 @@ static inline void debuginfo__delete(struct debuginfo *=
-dbg __maybe_unused)
->  {
->  }
->
-> +typedef void Dwarf_Addr;
-> +
->  static inline int debuginfo__get_text_offset(struct debuginfo *dbg __may=
-be_unused,
->                                              Dwarf_Addr *offs __maybe_unu=
-sed,
->                                              bool adjust_offset __maybe_u=
-nused)
-> --
-> 2.45.2
->
+      Arnd
 
