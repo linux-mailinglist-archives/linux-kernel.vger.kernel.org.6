@@ -1,221 +1,125 @@
-Return-Path: <linux-kernel+bounces-281117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF5594D34A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:21:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CC494D350
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AF03B21639
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:21:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D735E1F21F5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B951B197A9E;
-	Fri,  9 Aug 2024 15:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987F3198857;
+	Fri,  9 Aug 2024 15:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OShB5ktm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="qJznsSdi"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBBE1DFE1
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9C7198E6D
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216877; cv=none; b=eSKbT8qLTlo/edNb1Ahnj9JJanDHqukXa8djtMrYfPZskVW3R9/3qAZ3fPZjES2RDFvXzkbGlLzsOP58VzqciUkLQoKQq8qOGyLzAwKA9PwZqTXm7bcI1+wWN1snofx8YawAniFevQiETcbNn90FG6qNtkE45YMUz0bAxF/26M8=
+	t=1723216891; cv=none; b=L1ZtI4Bpf6t7Srm1lFUtnhQ2fK5AR9bW9Y1Pyx00dQH/SYdy2JEGk+1n2w3WvMPI+zbHCi+KBcCr74jQBty7a9rvbtI9uvXkhFtlF/6GdkJaFNnaHyLgvn9ol/dBEsKalrUu1Sks97ZYb0qLDTLt4smAvXMEzTV5NJAV8iNqYrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216877; c=relaxed/simple;
-	bh=+e45tLYw96QzSx1JJxifNwQRkTEEc2NjzN/OrVccRR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nJXLA6kqvZSsHfzdl4AVeELQ4WD203umeW3t+I2E6HAuShB5qoSJZyy/DPHG88sqycKpOGyM83yFETH29keFBfPYGzNb9w0RU885gOVRhR5YploqlrUo2jnfMcqevhHnZQnGpyJ7wgsqAjrBgmjAqdGlA1OAPAHfMjX0t6lIdXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OShB5ktm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4799amt7022651;
-	Fri, 9 Aug 2024 15:21:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eofYyZ1RqBF9U+H27nAEGGgxJ2PAI/2nNJ2a3PlEXos=; b=OShB5ktmWzsnCVTe
-	qttsX08aOFdQ64lPQYwDDxDVyLaRkbg75Cn9vhx16RXZhhHeXpyEQyWxIn7dPJ1E
-	YWC6D9o/XOLYrEyvg7DcQGG0eaMye7qsL95gBNQdlwg0XTNHkhPvANMaENwQ+81O
-	Mh9wjbqafSeqX7INIkeK+5UtFGTAR77ol979IIpOt6bRjX/KTgOTKMJdAGLWcBXa
-	qq9U0e4lFsi88RW7nziN+AE0gm/nLHaOz+wERBXy4+kRT9bkBtJpoPKG/m6dxDYJ
-	SK4R3qRfSkwmjrTTCBDrwrKn968immUX6+lTG6Le8gahezraJD8vlWhDPFJiZb2C
-	D7TRzA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vtbcvbkr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 15:21:08 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 479FL7CT019525
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 Aug 2024 15:21:07 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
- 08:21:07 -0700
-Message-ID: <292c06d0-b96a-b5b5-5d82-e74b82bbb6de@quicinc.com>
-Date: Fri, 9 Aug 2024 09:21:06 -0600
+	s=arc-20240116; t=1723216891; c=relaxed/simple;
+	bh=YF2j1+300pl2tJxsYrUBAqHlJ5+NsKgS1Kx7u3KmH5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CwpZEr8QkOwyi3SxM+FIROtLrOShSrgYdtn3e0XCj7Xvc8XxrGgnfDIOCBf2OiOqDJey4B1XpZfsJTy676Rm/0V1wkcahMrSDUvf47x3x6ZpoNdW9Zj21eYPFfCB2bt8kQ2nHLOru9NBlVT3aO1aRulOCg0SWdlezVG2DcXUk8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=qJznsSdi; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5004a.ext.cloudfilter.net ([10.0.29.221])
+	by cmsmtp with ESMTPS
+	id cQU8sSd24nNFGcRQmsco94; Fri, 09 Aug 2024 15:21:28 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id cRQlsw0UG0vWTcRQlsS3kS; Fri, 09 Aug 2024 15:21:27 +0000
+X-Authority-Analysis: v=2.4 cv=ffZmyFQF c=1 sm=1 tr=0 ts=66b633f7
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=T-l7Lcn7wvsJkd90kOwA:9
+ a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ahVHeUMbhgnB+4j25dq8VaYi1sZLU1wW+FemcJlE7HA=; b=qJznsSdiEPtuO2wrUGnlBQKaGZ
+	yk58PbqpzGYOPOD62nYNFmqLHJohRgT9AdyvnzFTD+XsyxvR0adWHccEXXLdOLJVjb81UXG3qXHAL
+	mxnGSOiNVZTVdve7q/fCKEPhFA5cUkoQALBXkjSpIx0dF322hdy+pywWD2m7bv+tIGNx348LnV3Y6
+	oM6qbYHM64w33S2wwl3hMWJcZZ2jfsQinBAdGLjDABBLkPqUlvS8IALblA1b5aWRMMJOdbjz4vVvk
+	g4hrDEJZ1+rZ7+t4ZKjOTe6UR+Yzij+kasVhBgUQYb9kZ6QlOqrWgAV88jB+r/COqmpKbS/QvfuxH
+	eXyu14vg==;
+Received: from [201.172.173.139] (port=54138 helo=[192.168.15.5])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1scRQk-002rcf-2B;
+	Fri, 09 Aug 2024 10:21:26 -0500
+Message-ID: <cc27ae84-e759-480b-a1ff-2fac4494307b@embeddedor.com>
+Date: Fri, 9 Aug 2024 09:21:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V2 00/10] AMD XDNA driver
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] sched: act_ct: avoid -Wflex-array-member-not-at-end
+ warning
+To: Jakub Kicinski <kuba@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang
+ <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <ZrDxUhm5bqCKU9a9@cute> <20240808194655.6bd39d2e@kernel.org>
 Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20240805173959.3181199-1-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240805173959.3181199-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240808194655.6bd39d2e@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NedW00QHtyXo4LBOQs5ju31uENv0icjD
-X-Proofpoint-ORIG-GUID: NedW00QHtyXo4LBOQs5ju31uENv0icjD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_12,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxscore=0 mlxlogscore=999 clxscore=1011 impostorscore=0 adultscore=0
- bulkscore=0 priorityscore=1501 phishscore=0 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408090111
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1scRQk-002rcf-2B
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:54138
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGEp/9vKcDCDj3hY+/im2XvmgMsWVr7t6VMlDv5+3xRoPRM8pPvE+ypdftBG6fe4IidvBc0skreYTLzaLUs3+qYqk6CkQvII9uTeespbQXJmhvxYmdZk
+ 2MeYEW3x2RrPh3iFlRM7xJ5arRRlPCoGSBQeoU3Ct/6DQu/bjEoEz7mCOc4GTsq9S3BbNe8KU9D7rQYM91pk73qCClT5wiz/mXGJQ5EQD2V+aq8BCebW7LYu
 
-On 8/5/2024 11:39 AM, Lizhi Hou wrote:
-> This patchset introduces a new Linux Kernel Driver, amdxdna for AMD NPUs.
-> The driver is based on Linux accel subsystem.
-> 
-> NPU (Neural Processing Unit) is an AI inference accelerator integrated
-> into AMD client CPUs. NPU enables efficient execution of Machine Learning
-> applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
-> architecture [1].
-> 
-> AMD NPU consists of the following components:
-> 
->    - Tiled array of AMD AI Engine processors.
->    - Micro Controller which runs the NPU Firmware responsible for
->      command processing, AIE array configuration, and execution management.
->    - PCI EP for host control of the NPU device.
->    - Interconnect for connecting the NPU components together.
->    - SRAM for use by the NPU Firmware.
->    - Address translation hardware for protected host memory access by the
->      NPU.
-> 
-> NPU supports multiple concurrent fully isolated contexts. Concurrent
-> contexts may be bound to AI Engine array spatially and or temporarily.
-> 
-> The driver is licensed under GPL-2.0 except for UAPI header which is
-> licensed GPL-2.0 WITH Linux-syscall-note.
-> 
-> User mode driver stack consists of XRT [2] and AMD AIE Plugin for IREE [3].
 
-Is there a special branch with the code?  I don't see any of the uAPI in 
-either project when searching for the ioctl codes or ioctl structures.
 
+On 08/08/24 20:46, Jakub Kicinski wrote:
+> On Mon, 5 Aug 2024 09:35:46 -0600 Gustavo A. R. Silva wrote:
+>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>> getting ready to enable it, globally.
+>>
+>> Move the conflicting declaration to the end of the structure. Notice
+>> that `struct zones_ht_key` is a flexible structure --a structure that
+>> contains a flexible-array member.
 > 
-> The firmware for the NPU is distributed as a closed source binary, and has
-> already been pushed to the DRM firmware repository [4].
-> 
-> [1] https://www.amd.com/en/technologies/xdna.html
-> [2] https://github.com/Xilinx/XRT
-> [3] https://github.com/nod-ai/iree-amd-aie
-> [4] https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu
-> 
-> Changes since v1:
-> - Remove some inline defines
-> - Minor changes based code review comments
-> 
-> Lizhi Hou (10):
->    accel/amdxdna: Add a new driver for AMD AI Engine
->    accel/amdxdna: Support hardware mailbox
->    accel/amdxdna: Add hardware resource solver
->    accel/amdxdna: Add hardware context
->    accel/amdxdna: Add GEM buffer object management
->    accel/amdxdna: Add command execution
->    accel/amdxdna: Add suspend and resume
->    accel/amdxdna: Add error handling
->    accel/amdxdna: Add query functions
->    accel/amdxdna: Add firmware debug buffer support
-> 
->   MAINTAINERS                                   |   9 +
->   drivers/accel/Kconfig                         |   1 +
->   drivers/accel/Makefile                        |   1 +
->   drivers/accel/amdxdna/Kconfig                 |  15 +
->   drivers/accel/amdxdna/Makefile                |  22 +
->   drivers/accel/amdxdna/TODO                    |   4 +
->   drivers/accel/amdxdna/aie2_ctx.c              | 949 ++++++++++++++++++
->   drivers/accel/amdxdna/aie2_error.c            | 349 +++++++
->   drivers/accel/amdxdna/aie2_message.c          | 775 ++++++++++++++
->   drivers/accel/amdxdna/aie2_msg_priv.h         | 372 +++++++
->   drivers/accel/amdxdna/aie2_pci.c              | 756 ++++++++++++++
->   drivers/accel/amdxdna/aie2_pci.h              | 264 +++++
->   drivers/accel/amdxdna/aie2_psp.c              | 137 +++
->   drivers/accel/amdxdna/aie2_smu.c              | 112 +++
->   drivers/accel/amdxdna/aie2_solver.c           | 329 ++++++
->   drivers/accel/amdxdna/aie2_solver.h           | 156 +++
->   drivers/accel/amdxdna/amdxdna_ctx.c           | 597 +++++++++++
->   drivers/accel/amdxdna/amdxdna_ctx.h           | 165 +++
->   drivers/accel/amdxdna/amdxdna_drm.c           | 172 ++++
->   drivers/accel/amdxdna/amdxdna_drm.h           | 114 +++
->   drivers/accel/amdxdna/amdxdna_gem.c           | 700 +++++++++++++
->   drivers/accel/amdxdna/amdxdna_gem.h           |  73 ++
->   drivers/accel/amdxdna/amdxdna_mailbox.c       | 582 +++++++++++
->   drivers/accel/amdxdna/amdxdna_mailbox.h       | 124 +++
->   .../accel/amdxdna/amdxdna_mailbox_helper.c    |  50 +
->   .../accel/amdxdna/amdxdna_mailbox_helper.h    |  43 +
->   drivers/accel/amdxdna/amdxdna_pci_drv.c       | 234 +++++
->   drivers/accel/amdxdna/amdxdna_pci_drv.h       |  31 +
->   drivers/accel/amdxdna/amdxdna_sysfs.c         |  58 ++
->   drivers/accel/amdxdna/npu1_regs.c             |  94 ++
->   drivers/accel/amdxdna/npu2_regs.c             | 111 ++
->   drivers/accel/amdxdna/npu4_regs.c             | 111 ++
->   drivers/accel/amdxdna/npu5_regs.c             | 111 ++
->   include/trace/events/amdxdna.h                | 101 ++
->   include/uapi/drm/amdxdna_accel.h              | 456 +++++++++
->   35 files changed, 8178 insertions(+)
->   create mode 100644 drivers/accel/amdxdna/Kconfig
->   create mode 100644 drivers/accel/amdxdna/Makefile
->   create mode 100644 drivers/accel/amdxdna/TODO
->   create mode 100644 drivers/accel/amdxdna/aie2_ctx.c
->   create mode 100644 drivers/accel/amdxdna/aie2_error.c
->   create mode 100644 drivers/accel/amdxdna/aie2_message.c
->   create mode 100644 drivers/accel/amdxdna/aie2_msg_priv.h
->   create mode 100644 drivers/accel/amdxdna/aie2_pci.c
->   create mode 100644 drivers/accel/amdxdna/aie2_pci.h
->   create mode 100644 drivers/accel/amdxdna/aie2_psp.c
->   create mode 100644 drivers/accel/amdxdna/aie2_smu.c
->   create mode 100644 drivers/accel/amdxdna/aie2_solver.c
->   create mode 100644 drivers/accel/amdxdna/aie2_solver.h
->   create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.c
->   create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.h
->   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.c
->   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.h
->   create mode 100644 drivers/accel/amdxdna/amdxdna_gem.c
->   create mode 100644 drivers/accel/amdxdna/amdxdna_gem.h
->   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.c
->   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.h
->   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.c
->   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.h
->   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.c
->   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.h
->   create mode 100644 drivers/accel/amdxdna/amdxdna_sysfs.c
->   create mode 100644 drivers/accel/amdxdna/npu1_regs.c
->   create mode 100644 drivers/accel/amdxdna/npu2_regs.c
->   create mode 100644 drivers/accel/amdxdna/npu4_regs.c
->   create mode 100644 drivers/accel/amdxdna/npu5_regs.c
->   create mode 100644 include/trace/events/amdxdna.h
->   create mode 100644 include/uapi/drm/amdxdna_accel.h
-> 
+> I think the flex member is there purely to mark the end of the struct.
+> You can use offsetofend(zone) instead of offsetof(pad), and delete pad.
 
-No Documentation?
+Nice! I'll send v2, shortly.
+
+Thanks
+--
+Gustavo
 
