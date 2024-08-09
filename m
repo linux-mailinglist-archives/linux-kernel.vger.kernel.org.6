@@ -1,156 +1,130 @@
-Return-Path: <linux-kernel+bounces-280857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB7194D00D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE6794CFFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81D9F282E5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4C61F2232C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9AE194A63;
-	Fri,  9 Aug 2024 12:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B55155CA5;
+	Fri,  9 Aug 2024 12:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSVtUbdi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KQ+RfkWG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BC1194A40;
-	Fri,  9 Aug 2024 12:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A0A19309D;
+	Fri,  9 Aug 2024 12:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723206024; cv=none; b=sxJ4M/qCXVxEaY19yGzffPYhYgMHfTHGiAFmIkYdbeipxvw80BiRaS+zVd393dTI6fEQjLdXwcnVAAfvo+sdnqbbKjRLu/C5T5XpLFO8uAOkHuYueLvg6ozMUjrk0nolU86XlTJZKoCSIpyCWTVo6fbHZQTOREHzrfcUSO/8YJ8=
+	t=1723205959; cv=none; b=OjuysZQ0VKuMOlySoQwDqPG19vVll0fPpPyuOlMEkHKteNVRFC1bHbjCUz4Eq+yqfAL5USzdZLNurB6ArGlBgCip8Gx/KhrPDOxmw/93xKqfGATqqgPvlh5qjkDB1Q/j8IZkZ96qgDTFA8wvPm/j+g9I0o/YmGYeBYEhK7lenRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723206024; c=relaxed/simple;
-	bh=h+ds7OiVeWdJ4ojS6Mrf3Z/P231oCN+JkfXtJwD8qVI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UrQILL8ww2G8fSghyWJng7mVS0w5+gQbD+t6m2f5jxp3wP4VLLwDr1mw7zC7qRP8iDrymsXOxHiCXzdqDvM/IWhwXczJ172XiTMEhRLLQ4t/PddRQAlL9zVh/E00ecKI+HxMqpw78xc13D350UQ3ou7myNYVSGuADoymOfcdrdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSVtUbdi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C01C4AF12;
-	Fri,  9 Aug 2024 12:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723206023;
-	bh=h+ds7OiVeWdJ4ojS6Mrf3Z/P231oCN+JkfXtJwD8qVI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fSVtUbdi3hzcn2DpKZVl9V/Xpc8ffvqVX8/H/Gx2fG9aZl0LUTYIit0yhwT++xR+j
-	 SW2r8GMNjGO/fs64kq8S1gEczckn/w3LPp1BUAbVhkdD7aRvJZhYA6aqG8IoUdYqQp
-	 towgUBsHPA0H1UqsQ2zwmVC+5M93SrTqzgZYnCIMMi4lD+nrzCQQMrBmiyvYLTxf4b
-	 ll/BN1MuXPOR2Vucos8Q3IjPJqjQ7IpS6zzlktUJE1yQYai2j6mfVnuwq5uCupbJd4
-	 G+NREDSeeXvNnIKvVSlzf+/KJeAtPYk0ZOguiocc6IsVJM4uSSGwU11duDmdfoI2RY
-	 NCNKu7Locyqmw==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Paul Moore <paul@paul-moore.com>,
-	linux-security-module@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	selinux@vger.kernel.org
-Subject: [PATCH 2/2] selinux: move genheaders to security/selinux/
-Date: Fri,  9 Aug 2024 21:19:02 +0900
-Message-ID: <20240809122007.1220219-3-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240809122007.1220219-1-masahiroy@kernel.org>
-References: <20240809122007.1220219-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1723205959; c=relaxed/simple;
+	bh=EwpoTDeMRiz/mNTb0pde6dTI3Kfg9kV/geo7GvjFXps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XgKtahF7CSpEcz6JHdkyaXZyfynrMrbEY+lyG1yo1W+VDcKYD+/EycJYb/JICiw1li4CZnfGH/gZpmPiyfiy9mgdLCxF50N48X42R1NoPhTVPlSYr3LWmHJB1REf8H5ivyLB5u4I6zf0QmDgZCfzAqFLSXuic3yHqaflN2uy7MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KQ+RfkWG; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723205958; x=1754741958;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EwpoTDeMRiz/mNTb0pde6dTI3Kfg9kV/geo7GvjFXps=;
+  b=KQ+RfkWGY6O7MLkA3vyTE7/yDmS9/XNO1xPl7eE8l8ErqFspNwn4gAbR
+   CQQn932E/xQa3acAhDGgmTiAZXo4HpArsft1vWiMMBYTpVAOXFxCEqWxf
+   soOdwd7N/EzNRQoSTA9PD5kmw3MNirOQwsym2cXn1n8uXCxp67ScCMP0/
+   PRdGEj/YbheQS/zueKrWVIiRXG88rBQhohu5UhCjgMv82+1dwjehp2qoH
+   o7clkwizJf87aILr6rgQdl/de80RMxBebwVflt+DCds7xZSlIRWXLQWm0
+   r5Hg6gQSQwp6FxNECjxeBDrjQlt/R6621+Q29BfX68PQcy/g6UGAzhLLb
+   g==;
+X-CSE-ConnectionGUID: 1Fx/GmXdSnu4Bdgq36NtsQ==
+X-CSE-MsgGUID: ShhLsWupTt+EQlDSY5ucNQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="20939203"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="20939203"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 05:19:16 -0700
+X-CSE-ConnectionGUID: 4K1gC6H/RZaDQcghtQpxFA==
+X-CSE-MsgGUID: jvcRsWdxTxG5Egytdxe0Pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="62505555"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 05:19:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1scOaL-0000000DPdS-3N8b;
+	Fri, 09 Aug 2024 15:19:09 +0300
+Date: Fri, 9 Aug 2024 15:19:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: ldewangan@nvidia.com, Dmitry Osipenko <digetx@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, paulmck@kernel.org,
+	apopple@nvidia.com, Michael van der Westhuizen <rmikey@meta.com>,
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] [i2c-tegra] Do not mark ACPI devices as irq safe
+Message-ID: <ZrYJPdW0-MQMejP3@smile.fi.intel.com>
+References: <20240606132708.1610308-1-leitao@debian.org>
+ <ZmhHvpHlkxe4kid7@smile.fi.intel.com>
+ <ZmmQu15Z2acgAjZQ@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmmQu15Z2acgAjZQ@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-This tool is only used in security/selinux/Makefile.
+On Wed, Jun 12, 2024 at 05:12:43AM -0700, Breno Leitao wrote:
+> On Tue, Jun 11, 2024 at 03:49:02PM +0300, Andy Shevchenko wrote:
+> > On Thu, Jun 06, 2024 at 06:27:07AM -0700, Breno Leitao wrote:
+> 
+> > > The problem arises because during __pm_runtime_resume(), the spinlock
+> > > &dev->power.lock is acquired before rpm_resume() is called. Later,
+> > > rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+> > > mutexes, triggering the error.
+> > > 
+> > > To address this issue, devices on ACPI are now marked as not IRQ-safe,
+> > > considering the dependency of acpi_subsys_runtime_resume() on mutexes.
+> > 
+> > ...
+> > 
+> > While it's a move in the right direction, the real fix is to get rid of
+> > the IRQ safe PM hack completely.
+> > Look at how OMAP code was modified for
+> > the last few years and now it's pm_runtime_irq_safe()-free. The main
+> > (ab)users are SH code followed by Tegra drivers.
+> 
+> Thanks. 
+> 
+> I think these are two different goals here. This near term goal is just
+> fix the driver so it can use the pm_runtime_irq_safe() in a saner
+> way, avoiding calling mutexes inside spinlocks.
+> 
+> Getting rid of the IRQ safe PM seems to me to be more a long term
+> desirable goal, and unfortunately I cannot afford doing it now.
+> 
+> Laxman, what is your view on this topic?
 
-There is no reason to keep it under scripts/.
+Yes, please, comment on this. We would like to get rid of the hack named "IRQ
+safe PM runtime".
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- scripts/remove-stale-files                                 | 3 +++
- scripts/selinux/Makefile                                   | 2 +-
- scripts/selinux/genheaders/.gitignore                      | 2 --
- scripts/selinux/genheaders/Makefile                        | 3 ---
- security/selinux/.gitignore                                | 1 +
- security/selinux/Makefile                                  | 7 +++++--
- .../selinux/genheaders => security/selinux}/genheaders.c   | 0
- 7 files changed, 10 insertions(+), 8 deletions(-)
- delete mode 100644 scripts/selinux/genheaders/.gitignore
- delete mode 100644 scripts/selinux/genheaders/Makefile
- rename {scripts/selinux/genheaders => security/selinux}/genheaders.c (100%)
-
-diff --git a/scripts/remove-stale-files b/scripts/remove-stale-files
-index f38d26b78c2a..4e7d25668a98 100755
---- a/scripts/remove-stale-files
-+++ b/scripts/remove-stale-files
-@@ -20,4 +20,7 @@ set -e
- # yard. Stale files stay in this file for a while (for some release cycles?),
- # then will be really dead and removed from the code base entirely.
- 
-+# moved to security/selinux/genheaders
-+rm -f scripts/selinux/genheaders/genheaders
-+
- rm -f *.spec
-diff --git a/scripts/selinux/Makefile b/scripts/selinux/Makefile
-index 59494e14989b..4b1308fa5732 100644
---- a/scripts/selinux/Makefile
-+++ b/scripts/selinux/Makefile
-@@ -1,2 +1,2 @@
- # SPDX-License-Identifier: GPL-2.0-only
--subdir-y := mdp genheaders
-+subdir-y := mdp
-diff --git a/scripts/selinux/genheaders/.gitignore b/scripts/selinux/genheaders/.gitignore
-deleted file mode 100644
-index 5fcadd307908..000000000000
---- a/scripts/selinux/genheaders/.gitignore
-+++ /dev/null
-@@ -1,2 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0-only
--genheaders
-diff --git a/scripts/selinux/genheaders/Makefile b/scripts/selinux/genheaders/Makefile
-deleted file mode 100644
-index 866f60e78882..000000000000
---- a/scripts/selinux/genheaders/Makefile
-+++ /dev/null
-@@ -1,3 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--hostprogs-always-y += genheaders
--HOST_EXTRACFLAGS += -I$(srctree)/security/selinux/include
-diff --git a/security/selinux/.gitignore b/security/selinux/.gitignore
-index 168fae13ca5a..01c0df8ab009 100644
---- a/security/selinux/.gitignore
-+++ b/security/selinux/.gitignore
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- av_permissions.h
- flask.h
-+/genheaders
-diff --git a/security/selinux/Makefile b/security/selinux/Makefile
-index c47519ed8156..86f0575f670d 100644
---- a/security/selinux/Makefile
-+++ b/security/selinux/Makefile
-@@ -36,7 +36,10 @@ quiet_cmd_genhdrs = GEN     $(addprefix $(obj)/,$(genhdrs))
- # see the note above, replace the $targets and 'flask.h' rule with the lines
- # below:
- #  targets += $(genhdrs)
--#  $(addprefix $(obj)/,$(genhdrs)) &: scripts/selinux/...
-+#  $(addprefix $(obj)/,$(genhdrs)) &: $(obj)/genheaders FORCE
- targets += flask.h
--$(obj)/flask.h: scripts/selinux/genheaders/genheaders FORCE
-+$(obj)/flask.h: $(obj)/genheaders FORCE
- 	$(call if_changed,genhdrs)
-+
-+hostprogs := genheaders
-+HOST_EXTRACFLAGS += -I$(srctree)/security/selinux/include
-diff --git a/scripts/selinux/genheaders/genheaders.c b/security/selinux/genheaders.c
-similarity index 100%
-rename from scripts/selinux/genheaders/genheaders.c
-rename to security/selinux/genheaders.c
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
