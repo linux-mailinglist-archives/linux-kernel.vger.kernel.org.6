@@ -1,272 +1,158 @@
-Return-Path: <linux-kernel+bounces-281355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7E794D5E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:58:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E2E94D5E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E1731F2180D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:58:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F31AB21C36
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496AB1991D4;
-	Fri,  9 Aug 2024 17:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614BB14F126;
+	Fri,  9 Aug 2024 17:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hRKlBKdd"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y0zgXt6m"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EB7198A05;
-	Fri,  9 Aug 2024 17:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25BD14883B;
+	Fri,  9 Aug 2024 17:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723226120; cv=none; b=alHzcwpuhtEESeBt+B0pNxp4hP19H95O6bb/TpJ00SFcyjIASZyustWFiRPxRCKIDfmA3dn6MZpnAhmGUgYtFXL5QiZIqN/qGt4lwRrHhN+Z2ugb+wyDXWefgihfWCmHzBkL00pkyCccKaM0bJRBY/KfLuEEAFk4HMlbbRpqN2o=
+	t=1723226151; cv=none; b=SAi7QS65P9h8Rw0iTymyukR91gvBJkoHAZ2ApGNpvGoZZCmstfz7zYHeuX5mwazRtWPEujZfi6NqHqEx01sBBJ6aJQCdZzzIOgcbU6txIsOrxzevQnBmkwdwT07uawA6oMf9LXJK5KyHrFCAEa51UU0Gq8U2JStnxEYVO2XL324=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723226120; c=relaxed/simple;
-	bh=nJwL5W/k2NV6zI2WnACdvNfVGHGjviwtWucFQOpDrs8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dxLdOYKlK+SC321/bUDgvgXaIIhn6/pNtDKH3xtUfLeTcKN9vTCuHIAPm64fhfXjWvKHvvLU0Xh+9DDB1hTGqS1TgbREGBznHk7IGn7QLxM0iR4RHol1BCP+Cp+B0rFY1CYbaHh8w3iRITbE+6YBn1+z+VZxpn1GPXW+Xn5JWZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hRKlBKdd; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A783FF805;
-	Fri,  9 Aug 2024 17:55:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723226116;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D7cK6/EMSnQv5H5EPJGct+dZUJWUlV/+VviEVP5kYMo=;
-	b=hRKlBKddLryWyCQMOLIVQ38DQFkfFWGUFHIovwkeZ4Ebf5Yj6ld6w6QlmPux+WB8rpwjI3
-	GiCNykjJnruYSgmW8kxl5hW47h5U2qOj2J2T0H6/CLh1GIbfXyyQim47gwmJNBl/RiTKZP
-	VV8q4WXoboQgnbyjB+egI8Gpf0gMoD2r7Uchv2+APnL5oHCsm7vajxrU3IhHeZQUBYqjpf
-	sxMCCu6EWnyFvLejwSVN+HRz8O1IskV83QFeRH4DEL+h1L1lIBx3ts2+InWDvfIM4RwjaQ
-	mwPFyBP/JivTAlK308gwVqxzUmdDs4yb1QNwvTt28XlVkhPCnVLKIQr734cuIA==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Fri, 09 Aug 2024 19:54:57 +0200
-Subject: [PATCH v10 16/16] drm/vkms: Add support for DRM_FORMAT_R*
+	s=arc-20240116; t=1723226151; c=relaxed/simple;
+	bh=lZ+RBQBmLrdgxulilt9piDrRQT9wvO+NFi9nGvNqpJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aX4X4yJVi8pYhOoO1rvpis75aXuvuzsxzgGwAABdf+3VCN/iYM7FPK2OMCYNkbQofNt/gYe2C65cMSAq9k3xulefJDv8KMUERXqQ9qDUvlR8P1B4NWkOKEixI+/r2Khkfkj4lh92KCOGSJpRT74Kz77h5lkzh3dkdvusjldaXVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y0zgXt6m; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723226150; x=1754762150;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lZ+RBQBmLrdgxulilt9piDrRQT9wvO+NFi9nGvNqpJo=;
+  b=Y0zgXt6mMU8VDNrlecEoB6dvgoK6sTchsqnsCE5glirwNeQUsdkqrnn7
+   o6ASiU4USq9TW3zFUC9XBy/C3LpZUHfYiR2ZHNPAR6nCzq0gTw3BRY24J
+   W8IRcUo/2kd41+LZT9o8ldMVzg0tnVfynRigfUwFF+e5XcnZZv7zDTECm
+   tNl2Asyu5n3ZNEv+u+kY2VbWjCBgEER0PRJb8ogAO5dPh9fqxb7YSWPBp
+   JDdVfhUegH4vHikR25F02fThnoxDSGhv7P4ADvrRt6XmHMOSs8FQDVE31
+   aJ/xk4FSN+RQ8YTymV9IUNBiMfZ0KmyqZmgreJKo6E9dUR590cctPbreH
+   w==;
+X-CSE-ConnectionGUID: 5fN3ESOoRsScA9M5AFq3fA==
+X-CSE-MsgGUID: tlw0MfFgSPWZJ3i1k6CK1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21268498"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="21268498"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 10:55:49 -0700
+X-CSE-ConnectionGUID: NiZaaY8zTdOet7QTygHTvg==
+X-CSE-MsgGUID: Ohk5d/AqS1GSWL9/wy713g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="88278913"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 09 Aug 2024 10:55:46 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1scTq3-000981-2R;
+	Fri, 09 Aug 2024 17:55:43 +0000
+Date: Sat, 10 Aug 2024 01:55:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 3/3] net: phy: dp83tg720: Add cable testing
+ support
+Message-ID: <202408100138.gwg3Yuur-lkp@intel.com>
+References: <20240809072440.3477125-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240809-yuv-v10-16-1a7c764166f7@bootlin.com>
-References: <20240809-yuv-v10-0-1a7c764166f7@bootlin.com>
-In-Reply-To: <20240809-yuv-v10-0-1a7c764166f7@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
- rdunlap@infradead.org, arthurgrillo@riseup.net, 
- pekka.paalanen@haloniitty.fi
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>, 
- Pekka Paalanen <pekka.paalanen@collabora.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6383;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=nJwL5W/k2NV6zI2WnACdvNfVGHGjviwtWucFQOpDrs8=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmtlfrreWG+QPHscGswcTe+0OZ/MGL+iCPdfvq7
- tQtLSly9NWJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrZX6wAKCRAgrS7GWxAs
- 4m/TEACfwYAmNe1seOA8UdAPhZqZqSQ73IrrXWbggxc3QATJe6d3nKJAyoftENoTVY+hu12c7Ex
- ZG0Op/ZFgLUp7m0gBkE3lC6bgNJk9P5wS36fCtNjFmg5Kdle1yfwDoILsjfWwZGfSxfwNFeJOv1
- y/sSYMH2HVGYSb63Y9AnvXlHoYPE+BK+537H9hlCrbtcns80yjnpu2gNWh1lwDYJX7Q7A6NidxR
- ffJd9vMt2t31t+MHrb27KAbq//Ee/JEzvCV6oyNML9Me5jGVdRvP0T/+iYAAICVEyt4IMggVfgz
- sFLS5OymZOTrzB4BVV+7lckCwp1PU5FxjJOhST/br2/IGLHXxbhR/vEMYaBJYDXJEWUhBzKRMX5
- yE/Mb7kzZHqH1N5FQfeprb9OhPLD15M5DSygOuNgO/X/rOGcKMRLGeYMC5+wskXbEy94NorNjw1
- TQSvdL5SMXaLlMu4k3zK+TzR3iwcfi3EcPuJYy3JOzjoldvavZ1O7Hbe190eqi8howSA5PHiox3
- 7sfeF8S6i/eIpoLx9EBRJVsqz8vQPnwDRg9bbrY5oRfCK50ZPZeN0JJmbSe1gNr9SoJZxToColB
- 0qJxSCjcWGdgjtg7+JgzmIFoxpWCnJrcCgtFUc3lnZaOdL4SHjAc7y/ohd3esuFYq3fwtm/X/mh
- x2m4QujNH+pmE8w==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809072440.3477125-3-o.rempel@pengutronix.de>
 
-This add the support for:
-- R1/R2/R4/R8
+Hi Oleksij,
 
-R1 format was tested with [1] and [2].
+kernel test robot noticed the following build errors:
 
-[1]: https://lore.kernel.org/r/20240313-new_rotation-v2-0-6230fd5cae59@bootlin.com
-[2]: https://lore.kernel.org/igt-dev/20240306-b4-kms_tests-v1-0-8fe451efd2ac@bootlin.com/
+[auto build test ERROR on net-next/main]
 
-Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_formats.c | 110 +++++++++++++++++++++++++++++++++++-
- drivers/gpu/drm/vkms/vkms_plane.c   |   4 ++
- 2 files changed, 113 insertions(+), 1 deletion(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/phy-Add-Open-Alliance-helpers-for-the-PHY-framework/20240809-172119
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240809072440.3477125-3-o.rempel%40pengutronix.de
+patch subject: [PATCH net-next v3 3/3] net: phy: dp83tg720: Add cable testing support
+config: i386-buildonly-randconfig-004-20240809 (https://download.01.org/0day-ci/archive/20240810/202408100138.gwg3Yuur-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240810/202408100138.gwg3Yuur-lkp@intel.com/reproduce)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index 6cc0834ee218..3065086a7ea4 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.c
-+++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -247,6 +247,16 @@ static struct pixel_argb_u16 argb_u16_from_RGB565(const __le16 *pixel)
- 	return out_pixel;
- }
- 
-+static struct pixel_argb_u16 argb_u16_from_gray8(u16 gray)
-+{
-+	return argb_u16_from_u8888(255, gray, gray, gray);
-+}
-+
-+static struct pixel_argb_u16 argb_u16_from_grayu16(u16 gray)
-+{
-+	return argb_u16_from_u16161616(0xFFFF, gray, gray, gray);
-+}
-+
- VISIBLE_IF_KUNIT struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
- 							    const struct conversion_matrix *matrix)
- {
-@@ -284,7 +294,7 @@ EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv888);
-  * The following functions are read_line function for each pixel format supported by VKMS.
-  *
-  * They read a line starting at the point @x_start,@y_start following the @direction. The result
-- * is stored in @out_pixel and in the format ARGB16161616.
-+ * is stored in @out_pixel and in a 64 bits format, see struct pixel_argb_u16.
-  *
-  * These functions are very repetitive, but the innermost pixel loops must be kept inside these
-  * functions for performance reasons. Some benchmarking was done in [1] where having the innermost
-@@ -293,6 +303,96 @@ EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv888);
-  * [1]: https://lore.kernel.org/dri-devel/d258c8dc-78e9-4509-9037-a98f7f33b3a3@riseup.net/
-  */
- 
-+static void Rx_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	struct pixel_argb_u16 *end = out_pixel + count;
-+	int bits_per_pixel = drm_format_info_bpp(plane->frame_info->fb->format, 0);
-+	u8 *src_pixels;
-+	int rem_x, rem_y;
-+
-+	WARN_ONCE(drm_format_info_block_height(plane->frame_info->fb->format, 0) != 1,
-+		  "%s() only support formats with block_h == 1", __func__);
-+
-+	packed_pixels_addr(plane->frame_info, x_start, y_start, 0, &src_pixels, &rem_x, &rem_y);
-+	int bit_offset = (8 - bits_per_pixel) - rem_x * bits_per_pixel;
-+	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
-+	int mask = (0x1 << bits_per_pixel) - 1;
-+	int lum_per_level = 0xFFFF / mask;
-+
-+	if (direction == READ_LEFT_TO_RIGHT || direction == READ_RIGHT_TO_LEFT) {
-+		int restart_bit_offset;
-+		int step_bit_offset;
-+
-+		if (direction == READ_LEFT_TO_RIGHT) {
-+			restart_bit_offset = 8 - bits_per_pixel;
-+			step_bit_offset = -bits_per_pixel;
-+		} else {
-+			restart_bit_offset = 0;
-+			step_bit_offset = bits_per_pixel;
-+		}
-+
-+		while (out_pixel < end) {
-+			u8 val = ((*src_pixels) >> bit_offset) & mask;
-+
-+			*out_pixel = argb_u16_from_grayu16((int)val * lum_per_level);
-+
-+			bit_offset += step_bit_offset;
-+			if (bit_offset < 0 || 8 <= bit_offset) {
-+				bit_offset = restart_bit_offset;
-+				src_pixels += step;
-+			}
-+			out_pixel += 1;
-+		}
-+	} else if (direction == READ_TOP_TO_BOTTOM || direction == READ_BOTTOM_TO_TOP) {
-+		while (out_pixel < end) {
-+			u8 val = (*src_pixels >> bit_offset) & mask;
-+			*out_pixel = argb_u16_from_grayu16((int)val * lum_per_level);
-+			src_pixels += step;
-+			out_pixel += 1;
-+		}
-+	}
-+}
-+
-+static void R1_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	Rx_read_line(plane, x_start, y_start, direction, count, out_pixel);
-+}
-+
-+static void R2_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	Rx_read_line(plane, x_start, y_start, direction, count, out_pixel);
-+}
-+
-+static void R4_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	Rx_read_line(plane, x_start, y_start, direction, count, out_pixel);
-+}
-+
-+static void R8_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	struct pixel_argb_u16 *end = out_pixel + count;
-+	u8 *src_pixels;
-+	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
-+
-+	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
-+
-+	while (out_pixel < end) {
-+		*out_pixel = argb_u16_from_gray8(*src_pixels);
-+		src_pixels += step;
-+		out_pixel += 1;
-+	}
-+}
-+
- static void ARGB8888_read_line(const struct vkms_plane_state *plane, int x_start, int y_start,
- 			       enum pixel_read_direction direction, int count,
- 			       struct pixel_argb_u16 out_pixel[])
-@@ -604,6 +704,14 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
- 	case DRM_FORMAT_YVU422:
- 	case DRM_FORMAT_YVU444:
- 		return &planar_yuv_read_line;
-+	case DRM_FORMAT_R1:
-+		return &R1_read_line;
-+	case DRM_FORMAT_R2:
-+		return &R2_read_line;
-+	case DRM_FORMAT_R4:
-+		return &R4_read_line;
-+	case DRM_FORMAT_R8:
-+		return &R8_read_line;
- 	default:
- 		/*
- 		 * This is a bug in vkms_plane_atomic_check(). All the supported
-diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-index 8f764a108b00..67f891e7ac58 100644
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -30,6 +30,10 @@ static const u32 vkms_formats[] = {
- 	DRM_FORMAT_YVU420,
- 	DRM_FORMAT_YVU422,
- 	DRM_FORMAT_YVU444,
-+	DRM_FORMAT_R1,
-+	DRM_FORMAT_R2,
-+	DRM_FORMAT_R4,
-+	DRM_FORMAT_R8,
- };
- 
- static struct drm_plane_state *
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408100138.gwg3Yuur-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/net/phy/open_alliance_helpers.c:34:18: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      34 |         u8 tdr_status = FIELD_GET(OA_1000BT1_HDD_TDR_STATUS_MASK, reg_value);
+         |                         ^
+   drivers/net/phy/open_alliance_helpers.c:69:16: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      69 |         u8 dist_val = FIELD_GET(OA_1000BT1_HDD_TDR_DISTANCE_MASK, reg_value);
+         |                       ^
+   2 errors generated.
+
+
+vim +/FIELD_GET +34 drivers/net/phy/open_alliance_helpers.c
+
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  21  
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  22  /**
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  23   * oa_1000bt1_get_ethtool_cable_result_code - Convert TDR status to ethtool
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  24   *					      result code
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  25   * @reg_value: Value read from the TDR register
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  26   *
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  27   * This function takes a register value from the HDD.TDR register and converts
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  28   * the TDR status to the corresponding ethtool cable test result code.
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  29   *
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  30   * Return: The appropriate ethtool result code based on the TDR status
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  31   */
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  32  int oa_1000bt1_get_ethtool_cable_result_code(u16 reg_value)
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  33  {
+f4eee3aa678aeb Oleksij Rempel 2024-08-09 @34  	u8 tdr_status = FIELD_GET(OA_1000BT1_HDD_TDR_STATUS_MASK, reg_value);
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  35  	u8 dist_val = FIELD_GET(OA_1000BT1_HDD_TDR_DISTANCE_MASK, reg_value);
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  36  
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  37  	switch (tdr_status) {
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  38  	case OA_1000BT1_HDD_TDR_STATUS_CABLE_OK:
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  39  		return ETHTOOL_A_CABLE_RESULT_CODE_OK;
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  40  	case OA_1000BT1_HDD_TDR_STATUS_OPEN:
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  41  		return ETHTOOL_A_CABLE_RESULT_CODE_OPEN;
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  42  	case OA_1000BT1_HDD_TDR_STATUS_SHORT:
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  43  		return ETHTOOL_A_CABLE_RESULT_CODE_SAME_SHORT;
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  44  	case OA_1000BT1_HDD_TDR_STATUS_NOISE:
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  45  		return ETHTOOL_A_CABLE_RESULT_CODE_NOISE;
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  46  	default:
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  47  		if (dist_val == OA_1000BT1_HDD_TDR_DISTANCE_RESOLUTION_NOT_POSSIBLE)
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  48  			return ETHTOOL_A_CABLE_RESULT_CODE_RESOLUTION_NOT_POSSIBLE;
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  49  		return ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  50  	}
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  51  }
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  52  EXPORT_SYMBOL_GPL(oa_1000bt1_get_ethtool_cable_result_code);
+f4eee3aa678aeb Oleksij Rempel 2024-08-09  53  
 
 -- 
-2.44.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
