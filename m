@@ -1,350 +1,168 @@
-Return-Path: <linux-kernel+bounces-281402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475A994D684
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:43:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F3194D670
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1AA4281760
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:43:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3017DB21B43
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31B82941C;
-	Fri,  9 Aug 2024 18:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4218B15FD04;
+	Fri,  9 Aug 2024 18:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l09XT3hV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ttDxVcG2"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A304F12C52E;
-	Fri,  9 Aug 2024 18:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75D015622E
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723228985; cv=none; b=JxzV/hCgCFbwcEcNz5DysNAY1wO2TAfkc5+UmUWe8b35BTQmN6n/On5iFKy6Yk3WfaS5P9tZjBXMWluhCcYmoeG3od7/aSRLnDrQb6zkrfrR2Dpmg8LgxC8Siew2gWyMY1UFhl7iQevqaA/B8W840E57TRPdU54paTpVS9x+Wrs=
+	t=1723228879; cv=none; b=QvmT7UnyYa8dHWm/yMwJIN6SZVK1b53kUJ88+Z/r2EqijuYUkGzr1IVBdIEADpqlkNURUoQQmTH8E93fix0D3iJP3D1afBKQ/GSBp0PelJUJ3BLgSm5+EB/ovgoVvaNw3du3g+KenpKyrPkw7ynGZNwXmJesqIpIH0KZb4PKsWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723228985; c=relaxed/simple;
-	bh=F8O9fNcSYO4qz1LsnVTOJbOetsfwTl/NnQqRqznPtk8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rbsa8ieUBeXon0b3VCrhyyfABu5ngMIAWKGa49yikpaXeoaoj5Nb6YUjLlMnclr8kK4luP3oXMnVEY7zJRLh81MGTkePXDqjW+97a21g+jgsrT0AKk3DvWwyvGWXVTwNemVfroq2wchMhuBUxo3DNDJauUruOA1gz0BLTiv/K5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l09XT3hV; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723228984; x=1754764984;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=F8O9fNcSYO4qz1LsnVTOJbOetsfwTl/NnQqRqznPtk8=;
-  b=l09XT3hV+LMZYSREkm/osLh9iAx/okJv47Uy1/tfy32fTv3egUVQAHkk
-   zC2qrN2gySSRoNcgNZEuEltlshfa4HGg8oKRKqn175l2MywUqTq8AyM2b
-   MiZFcuB2sxxz3TX6sTfSCeXbK4LpIJNcok+y8Gect9aHEepGXUkFOlhJV
-   ogYhOO6u1mcc8x0Ztnf10VEvDb+UCQIG45XIUTWFSmXKFu3QktUChv8KG
-   WA4/f/wtpVBm2p/uAgMyAq1ebS9/f3Lca2uD0CFU3A/XE/dzoOuRU1qqh
-   jAJgQ3NVrRnpWW42ZOmytqLiVukqom0kuntntJeQEg54CdEIeRenuWFWz
-   Q==;
-X-CSE-ConnectionGUID: H3BuTkXGTCWY2k/8+eBnuQ==
-X-CSE-MsgGUID: WTAuBVipTkS3R2C0LZP/Ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="31991581"
-X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
-   d="scan'208";a="31991581"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 11:41:05 -0700
-X-CSE-ConnectionGUID: 1/e1L5hlS7mZaJVYCHaZ9Q==
-X-CSE-MsgGUID: NjQ9dNgTQ2qFbDoic/pd1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
-   d="scan'208";a="57878076"
-Received: from sj-2308-osc3.sj.altera.com ([10.244.138.69])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 11:41:05 -0700
-Date: Fri, 9 Aug 2024 11:41:04 -0700 (PDT)
-From: matthew.gerlach@linux.intel.com
-To: Rob Herring <robh@kernel.org>
-cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com, 
-    krzk+dt@kernel.org, conor+dt@kernel.org, dinguyen@kernel.org, 
-    joyce.ooi@intel.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v2 1/7] dt-bindings: PCI: altera: Convert to YAML
-In-Reply-To: <20240809181401.GA973841-robh@kernel.org>
-Message-ID: <98185d65-805f-f09d-789-6eda61c4b36d@linux.intel.com>
-References: <20240809151213.94533-1-matthew.gerlach@linux.intel.com> <20240809151213.94533-2-matthew.gerlach@linux.intel.com> <20240809181401.GA973841-robh@kernel.org>
+	s=arc-20240116; t=1723228879; c=relaxed/simple;
+	bh=499uChQw/H8tuwVB852PCytBsZoBNg9ljrsRouyxw8c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D5/tiTdVnDr7cyhfVUzOTji5Co+UR3Xz6gYr9tRQIRreAdCm+DavhDVpqlrw2IMkXeSKF268A+uUWtHMfo874L+qmqcpIziWt8nuACB3REVjNQGKoR0ce32dbWK+gSZSdZ6QCLWuKP+TZWgZsPurkalbNvzDmV7xDFSvbqtTq8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ttDxVcG2; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44fdde0c8dcso13334431cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 11:41:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723228875; x=1723833675; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FfdQAnQ8Z8ZT/AgYzgbksuN7QqG5prioZPiURB3vxSI=;
+        b=ttDxVcG21/QSAd19ve0zcb01CcKUd/9a2sISaBrM+SqjyvPV0Z7Umrl8NiO5C06VvL
+         zLXCB6wxKc55L8MZsB9LYvWhjaBjxl8K/EBwugdjVyAe57LKaMdIJzikAGfHtF0LDDr1
+         4yVGUs8QWSSZw6JIqZW06FAl2mZf/3x0jjg/vW8NSU+PB2334+3kM4d/5zG3XpKxmVf0
+         ErhXGabXarIL5ouwhWSc67YmqY3SCiIJHEv4VtAPHeW31XVSVsKe0n2nnzHORbXd0IK3
+         9BzIr86wg8FbGAJJ5Qz+Ik7a9HcX4hXdcM6vf9+//yKF0zm3oXTKY3GdWIKZQVSluu9D
+         gmcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723228875; x=1723833675;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FfdQAnQ8Z8ZT/AgYzgbksuN7QqG5prioZPiURB3vxSI=;
+        b=jmfLfMSpK7R/y8hR5gYUmA337oLiWF3IWuH7ruWQzRrVQvf7td/7x5LHIyIp4CjLGC
+         JbsoY/nxXcPA5SJVCeWEdsjJ5p2dpH6IHTcuoYFGZD90qR24859CZxiH35Bh2wBs5wLO
+         iQak0mRfYEeOj9fUMPIyX3w4ZTzwN32CQGcCccXQXANwAea42SzKPOizmc0d/xH8JzcS
+         LCZzN/8yO8GpnpcV06Fz3CxVMLo8mBsui3VgrfIAqGiul/Faa87DZZgrVgm2oWKyKB9W
+         BcGCOJCydyFoPr+aFTuTMhrcJt94I2Y9eIkWyThR3G6rgusV825vQgFu0p4G7R4J8S9m
+         qpcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPd5poL7gllqhcILDQVgoKrhOsFijTVJPMt7QXWivaLrMysjhLtgV34vvgbOvRqI6D1s1KMqk96HzKIhktSLxuuBfC/P8UmEmEU/MO
+X-Gm-Message-State: AOJu0YzDWH2LmcJvxYeDY3CQ8OXhMtJewVEdNREBBug9FRJdss3B2QPt
+	SRa2aU0hmf5OjptM/kRz29BZhRoxsLe227ueLzCU3P2US2KSghm3AkF4yhanNcA=
+X-Google-Smtp-Source: AGHT+IHP1porj01E9X+XteR4M7jFvXiDPMNfBNz5d1BFpsYIHU4rO8j8xtRYIo0yw4U4FtD5jEb1ZA==
+X-Received: by 2002:a05:622a:4d95:b0:43f:ee9d:c2ce with SMTP id d75a77b69052e-453126b9003mr24455131cf.45.1723228875400;
+        Fri, 09 Aug 2024 11:41:15 -0700 (PDT)
+Received: from [127.0.1.1] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4531c1d723asm370381cf.44.2024.08.09.11.41.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 11:41:14 -0700 (PDT)
+From: Trevor Gamblin <tgamblin@baylibre.com>
+Subject: [PATCH v2 0/3] iio: adc: add new ad7625 driver
+Date: Fri, 09 Aug 2024 14:41:07 -0400
+Message-Id: <20240809-ad7625_r1-v2-0-f85e7ac83150@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMNitmYC/03M0QrCIBTG8VcZ5zpDLefWVe8RI3Qe24GaoSGN4
+ btng6DL/8fHb4WEkTDBqVkhYqZEYa4hdw2Mk5lvyMjVBsnlkesDZ8bpVqprFKzlTmg0sutVB/X
+ /jOjpvVmXofZE6RXistFZfNefIv6ULFhFBXr0ykhj+7M1y51sxP0YHjCUUj7WbplfpQAAAA==
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ David Lechner <dlechner@baylibre.com>, 
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Trevor Gamblin <tgamblin@baylibre.com>
+X-Mailer: b4 0.14.1
 
+This series adds a new driver for the Analog Devices Inc. AD7625,
+AD7626, AD7960, and AD7961. These chips are part of a family of
+LVDS-based SAR ADCs. The initial driver implementation does not support
+the devices' self-clocked mode, although that can be added later.
 
+The devices make use of two offset PWM signals, one to trigger
+conversions and the other as a burst signal for transferring data to the
+host. These rely on the new PWM waveform functionality being
+reviewed in [1] and also available at [2].
 
-On Fri, 9 Aug 2024, Rob Herring wrote:
+This work is being done by BayLibre and on behalf of Analog Devices
+Inc., hence the maintainers are @analog.com.
 
-> On Fri, Aug 09, 2024 at 10:12:07AM -0500, matthew.gerlach@linux.intel.com wrote:
->> From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
->>
->> Convert the device tree bindings for the Altera Root Port PCIe controller
->> from text to YAML. Update the entries in the interrupt-map field to have
->> the correct number of address cells for the interrupt parent.
->>
->> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
->> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->> ---
->> v8:
->
-> v2 or v8 or ??? I'm confused and tools will be too.
+Special thanks to David Lechner for his guidance and reviews.
 
-Sorry for the confusion. Patch 1 and patch 2 were individually reviewed 
-previously. Patch 1 was previously reviewed up to v8, and I included them 
-in the greater patch set for convience and completeness, and this is v2 of
-the entire patch set.
+[1]: https://lore.kernel.org/linux-pwm/cover.1722261050.git.u.kleine-koenig@baylibre.com
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git/log/?h=pwm/chardev
 
-How should this be handled for better clarity? Would it be better to not 
-to include Patch 1 and 2 in the patch set and refer to them, or would it 
-better to remove the history in patch 1 and 2, or something else?
+Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+---
+Changes in v2:
+- Link to v1 (marked as RFC): https://lore.kernel.org/r/20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com
+- Include link to required PWM patch series in cover letter (missing before)
+- Include new link to the pwm/chardev branch of Uwe's kernel tree
+  
+  [PATCH 1/3]
+  - Rework dt bindings to be compliant using make dt_binding_check
+  - Add "adi,no-dco" flag to address indication of how DCO lines are
+    configured
+  - Fix binding patch message
+  - Remove chip packaging info from binding description
+  - Move comments around to be clearer
 
-Thanks,
-Matthew Gerlach
+  [PATCH 2/3]
+  - Remove ad7625_pwm_disable(), call pwm_disable() directly
+  - Add ad7625_buffer_preenable() and ad7625_buffer_postdisable()
+    functions
+  - Add devm_ad7625_regulator_setup() function, move all regulator logic
+    to it, consolidate the comment blocks related to it above
+  - Add have_refin flag in ad7625_state struct
+  - Add pwm_waveform structs to ad7625_state struct for storing
+    requested waveform characteristics
+  - Refactor ad7625_set_sampling_freq() to set the pwm_waveform struct
+    values in ad7625_state, limiting PWM enable/disable to
+    preenable/postdisable functions
+  - Remove redundant dev_err_probe() after devm_ad7625_pwm_get()
+  - Use device_property_read_bool() instead of device_property_present()
+  - General alignment and line wrapping fixes
 
->
->>  - Precisely constrain the number of items for reg and reg-names properties.
->>    Constrain maxItems to 2 for altr,pcie-root-port-1.0.
->>    Constrain minItems to 3 for altr,pcie-root-port-2.0.
->>
->> v7:
->>  - Keep original example dts, but fix warnings of interrupt-map field.
->>
->> v6:
->>  - Fix dt_binding_check warnings by creating interrupt-controller subnode
->>    and fixing interrupt-map.
->>  - Updated filename in MAINTAINERS.
->>
->> v5:
->>  - add interrupt-controller #interrupt-cells to required field
->>  - don't touch original example dts
->>
->> v4:
->>  - reorder reg-names to match original binding
->>  - move reg and reg-names to top level with limits.
->>
->> v3:
->>  - Added years to copyright
->>  - Correct order in file of allOf and unevaluatedProperties
->>  - remove items: in compatible field
->>  - fix reg and reg-names constraints
->>  - replace deprecated pci-bus.yaml with pci-host-bridge.yaml
->>  - fix entries in ranges property
->>  - remove device_type from required
->>
->> v2:
->>  - Move allOf: to bottom of file, just like example-schema is showing
->>  - add constraint for reg and reg-names
->>  - remove unneeded device_type
->>  - drop #address-cells and #size-cells
->>  - change minItems to maxItems for interrupts:
->>  - change msi-parent to just "msi-parent: true"
->>  - cleaned up required:
->>  - make subject consistent with other commits coverting to YAML
->>  - s/overt/onvert/g
->> ---
->>  .../devicetree/bindings/pci/altera-pcie.txt   |  50 --------
->>  .../bindings/pci/altr,pcie-root-port.yaml     | 114 ++++++++++++++++++
->>  MAINTAINERS                                   |   2 +-
->>  3 files changed, 115 insertions(+), 51 deletions(-)
->>  delete mode 100644 Documentation/devicetree/bindings/pci/altera-pcie.txt
->>  create mode 100644 Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/pci/altera-pcie.txt b/Documentation/devicetree/bindings/pci/altera-pcie.txt
->> deleted file mode 100644
->> index 816b244a221e..000000000000
->> --- a/Documentation/devicetree/bindings/pci/altera-pcie.txt
->> +++ /dev/null
->> @@ -1,50 +0,0 @@
->> -* Altera PCIe controller
->> -
->> -Required properties:
->> -- compatible :	should contain "altr,pcie-root-port-1.0" or "altr,pcie-root-port-2.0"
->> -- reg:		a list of physical base address and length for TXS and CRA.
->> -		For "altr,pcie-root-port-2.0", additional HIP base address and length.
->> -- reg-names:	must include the following entries:
->> -		"Txs": TX slave port region
->> -		"Cra": Control register access region
->> -		"Hip": Hard IP region (if "altr,pcie-root-port-2.0")
->> -- interrupts:	specifies the interrupt source of the parent interrupt
->> -		controller.  The format of the interrupt specifier depends
->> -		on the parent interrupt controller.
->> -- device_type:	must be "pci"
->> -- #address-cells:	set to <3>
->> -- #size-cells:		set to <2>
->> -- #interrupt-cells:	set to <1>
->> -- ranges:	describes the translation of addresses for root ports and
->> -		standard PCI regions.
->> -- interrupt-map-mask and interrupt-map: standard PCI properties to define the
->> -		mapping of the PCIe interface to interrupt numbers.
->> -
->> -Optional properties:
->> -- msi-parent:	Link to the hardware entity that serves as the MSI controller
->> -		for this PCIe controller.
->> -- bus-range:	PCI bus numbers covered
->> -
->> -Example
->> -	pcie_0: pcie@c00000000 {
->> -		compatible = "altr,pcie-root-port-1.0";
->> -		reg = <0xc0000000 0x20000000>,
->> -			<0xff220000 0x00004000>;
->> -		reg-names = "Txs", "Cra";
->> -		interrupt-parent = <&hps_0_arm_gic_0>;
->> -		interrupts = <0 40 4>;
->> -		interrupt-controller;
->> -		#interrupt-cells = <1>;
->> -		bus-range = <0x0 0xFF>;
->> -		device_type = "pci";
->> -		msi-parent = <&msi_to_gic_gen_0>;
->> -		#address-cells = <3>;
->> -		#size-cells = <2>;
->> -		interrupt-map-mask = <0 0 0 7>;
->> -		interrupt-map = <0 0 0 1 &pcie_0 1>,
->> -			            <0 0 0 2 &pcie_0 2>,
->> -			            <0 0 0 3 &pcie_0 3>,
->> -			            <0 0 0 4 &pcie_0 4>;
->> -		ranges = <0x82000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x10000000
->> -			  0x82000000 0x00000000 0x10000000 0xd0000000 0x00000000 0x10000000>;
->> -	};
->> diff --git a/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
->> new file mode 100644
->> index 000000000000..52533fccc134
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
->> @@ -0,0 +1,114 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +# Copyright (C) 2015, 2019, 2024, Intel Corporation
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/altr,pcie-root-port.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Altera PCIe Root Port
->> +
->> +maintainers:
->> +  - Matthew Gerlach <matthew.gerlach@linux.intel.com>
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - altr,pcie-root-port-1.0
->> +      - altr,pcie-root-port-2.0
->> +
->> +  reg:
->> +    items:
->> +      - description: TX slave port region
->> +      - description: Control register access region
->> +      - description: Hard IP region
->> +    minItems: 2
->> +
->> +  reg-names:
->> +    items:
->> +      - const: Txs
->> +      - const: Cra
->> +      - const: Hip
->> +    minItems: 2
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  interrupt-controller: true
->> +
->> +  interrupt-map-mask:
->> +    items:
->> +      - const: 0
->> +      - const: 0
->> +      - const: 0
->> +      - const: 7
->> +
->> +  interrupt-map:
->> +    maxItems: 4
->> +
->> +  "#interrupt-cells":
->> +    const: 1
->> +
->> +  msi-parent: true
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - reg-names
->> +  - interrupts
->> +  - "#interrupt-cells"
->> +  - interrupt-controller
->> +  - interrupt-map
->> +  - interrupt-map-mask
->> +
->> +allOf:
->> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          enum:
->> +            - altr,pcie-root-port-1.0
->> +    then:
->> +      properties:
->> +        reg:
->> +          maxItems: 2
->> +
->> +        reg-names:
->> +          maxItems: 2
->> +
->> +    else:
->> +      properties:
->> +        reg:
->> +          minItems: 3
->> +
->> +        reg-names:
->> +          minItems: 3
->> +
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/interrupt-controller/irq.h>
->> +    pcie_0: pcie@c00000000 {
->> +        compatible = "altr,pcie-root-port-1.0";
->> +        reg = <0xc0000000 0x20000000>,
->> +              <0xff220000 0x00004000>;
->> +        reg-names = "Txs", "Cra";
->> +        interrupt-parent = <&hps_0_arm_gic_0>;
->> +        interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
->> +        interrupt-controller;
->> +        #interrupt-cells = <1>;
->> +        bus-range = <0x0 0xff>;
->> +        device_type = "pci";
->> +        msi-parent = <&msi_to_gic_gen_0>;
->> +        #address-cells = <3>;
->> +        #size-cells = <2>;
->> +        interrupt-map-mask = <0 0 0 7>;
->> +        interrupt-map = <0 0 0 1 &pcie_0 0 0 0 1>,
->> +                        <0 0 0 2 &pcie_0 0 0 0 2>,
->> +                        <0 0 0 3 &pcie_0 0 0 0 3>,
->> +                        <0 0 0 4 &pcie_0 0 0 0 4>;
->> +        ranges = <0x82000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x10000000>,
->> +                 <0x82000000 0x00000000 0x10000000 0xd0000000 0x00000000 0x10000000>;
->> +    };
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 1e71f97fb674..53f239114400 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -17435,7 +17435,7 @@ PCI DRIVER FOR ALTERA PCIE IP
->>  M:	Joyce Ooi <joyce.ooi@intel.com>
->>  L:	linux-pci@vger.kernel.org
->>  S:	Supported
->> -F:	Documentation/devicetree/bindings/pci/altera-pcie.txt
->> +F:	Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
->>  F:	drivers/pci/controller/pcie-altera.c
->>
->>  PCI DRIVER FOR APPLIEDMICRO XGENE
->> --
->> 2.34.1
->>
->
+  [PATCH 3/3]
+  - No change
+
+---
+Trevor Gamblin (3):
+      dt-bindings: iio: adc: add AD762x/AD796x ADCs
+      iio: adc: ad7625: add driver
+      docs: iio: new docs for ad7625 driver
+
+ .../devicetree/bindings/iio/adc/adi,ad7625.yaml    | 175 ++++++
+ Documentation/iio/ad7625.rst                       |  91 +++
+ MAINTAINERS                                        |  11 +
+ drivers/iio/adc/Kconfig                            |  15 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/ad7625.c                           | 688 +++++++++++++++++++++
+ 6 files changed, 981 insertions(+)
+---
+base-commit: ac6a258892793f0a255fe7084ec2b612131c67fc
+change-id: 20240730-ad7625_r1-60d17ea28958
+
+Best regards,
+-- 
+Trevor Gamblin <tgamblin@baylibre.com>
+
 
