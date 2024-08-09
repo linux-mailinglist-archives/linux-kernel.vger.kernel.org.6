@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-280807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B056594CF7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:49:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30FA994CF87
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB1C282F07
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:49:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 550E21C21680
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0402D193071;
-	Fri,  9 Aug 2024 11:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E800E194AFA;
+	Fri,  9 Aug 2024 11:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZABbTSJ8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="daypgCBf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAF115FA66
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AEC1940B3;
+	Fri,  9 Aug 2024 11:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723204148; cv=none; b=tNnP2lBpnihYHwYbYVfTfuDAi5+3AqgtYWVmaITw/zUlTJvv+wposu6555JPtF7g3IBHwGg/0OcY1KHn/t/rYgrY1/CT8007ExopJXeZm7YvjyQgIwts1pTAXauFjAGuFhp7dQ152N4A1WIwhhDJn78mhuM9FT58hHOHPDz2RQg=
+	t=1723204157; cv=none; b=slLCTM0NXl94p/GCA/ZOqwwgF51jbMM+pIoy8+J0Uw/nao4uqYBpYRwoUL2VlpGqZMQDtf7PTRiF0gSnfYCQbq784Ef0k/E8rdNR+tXm1VbLaefZwx3RRRxDjdMERQU3ZqZiW3DwJDYC8oso9sDiaSQOK5695vmk9/lyAHkbxDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723204148; c=relaxed/simple;
-	bh=1o1J8Vu+Z9sKKxcoPCgjjMgniFAdKVo4MC3MNb32AIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JUQ5R9XT2C5Dj4hsBqSyCcX7LWQ4EIPAoiSjl6W15jkhtwHSSvGu6hX+prCZmuXwWkCQz2ONAqTgokhnILx74qO6pdOvvnu/uUlUmgsms3OiXTczrM8zvsSXgHDuc4+JU7YwEVioJXbpyaPwfyNTBgCY40kCiYwE225RG0RCAAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZABbTSJ8; arc=none smtp.client-ip=192.198.163.11
+	s=arc-20240116; t=1723204157; c=relaxed/simple;
+	bh=SK6555nvVLN6liKsrnsOkA+XODJGhiDFiIQx9X5haBs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HhVIKy65bvsRpna2jsV+23c2DUqAW59ITvPPMkoSc8CJL+YQQWD4zSh1n3/18UZMLGuwz2phxB2aViEnI8Xs06Ro9gaMf2ysBPDiFaoe23xjDpwn2IFFzymshKdjuT1G2WRI97CZFZTXri/WeiuYDH1H72ztgJ2eSLFXq4ARbd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=daypgCBf; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723204147; x=1754740147;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1o1J8Vu+Z9sKKxcoPCgjjMgniFAdKVo4MC3MNb32AIY=;
-  b=ZABbTSJ8JLfcHYEiygf50TNkYGU/O9+DA3lqBUpGeJkungg0F77/6hPC
-   po5RhJN0DHPxvDFCCvbLY545Wb++zweBSY6Kh6HUMaDrT/JMptayi6gn1
-   2tvNqe5AtbJgltvTGaSil9+FfIYcBFrEjtewviSDPOtvSeOfizmCipg9v
-   LnbLLvAuYXUQcS3NxY8fANFiOIDy+tglQN19pvWbFiRIehFmgD9AmtFde
-   EUT+kbLcBOApoIk83Nfr2wyumAJkTi6m84lMJ5sB9oCY/h69UCRFFIVxo
-   B92Z2VOdK3NOlGDE+IesDHJpyAJn3QwjcNk7ygLSY9spECk+FtZRwV4TO
-   g==;
-X-CSE-ConnectionGUID: SaBwSICGRPueJ0D9EA9x5w==
-X-CSE-MsgGUID: Oqtu+Mm1TSOh3b/6n/UgrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="31999733"
+  t=1723204155; x=1754740155;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=SK6555nvVLN6liKsrnsOkA+XODJGhiDFiIQx9X5haBs=;
+  b=daypgCBfoHTkW2GYEkxxvS+Msuq44yd486/g1S785+2zSdiV57zSG4L1
+   LPixAdIgm8tVDpEGlQEVQMhIqND/u9FGxA2XegTujRWdPAk40mFSDDCY0
+   aiw1Uh86LCdO+vxFqFKw9q6LDhQMx2N9sRLB1Ba/d7WAfPbiTCS9Rtb2j
+   t+N1Wa3IrHRNoPp6mx8NP2t5riWo1mKnDHiGI7rmhOJcO3QoPuRvQoIOV
+   n22pHfVPjjJG8kZ/Tid49KIrKBizWK7eE+zXqcYMkvbfs53/7QMErixev
+   XL87HTHyCnjEK/2f0MM9/Sco38cSEEdbS9MJN2sLndjbSSGuX+bhpEyDV
+   Q==;
+X-CSE-ConnectionGUID: i7/2CFVGTlOLu32oQpCdsA==
+X-CSE-MsgGUID: JqTTwyUnTj648fuEec23MQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="24280321"
 X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="31999733"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:49:06 -0700
-X-CSE-ConnectionGUID: 1+AYzhGXTDiXjMiOmX9Oyw==
-X-CSE-MsgGUID: PUt3CqcmTP6PUJa7xZHW5g==
+   d="scan'208";a="24280321"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:49:10 -0700
+X-CSE-ConnectionGUID: 7BLDRKQVTJG1D1Ux70Uajg==
+X-CSE-MsgGUID: qgriSKmHSL+s9l8ao6oQnA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="58108812"
+   d="scan'208";a="57423600"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 09 Aug 2024 04:49:03 -0700
+  by orviesa010.jf.intel.com with ESMTP; 09 Aug 2024 04:49:07 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 2277A538; Fri, 09 Aug 2024 14:49:01 +0300 (EEST)
+	id 31F3919E; Fri, 09 Aug 2024 14:49:02 +0300 (EEST)
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	"Borislav Petkov (AMD)" <bp@alien8.de>,
@@ -70,11 +71,15 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>,
 	Johannes Weiner <hannes@cmpxchg.org>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 0/8] mm: Fix several issues with unaccepted memory
-Date: Fri,  9 Aug 2024 14:48:46 +0300
-Message-ID: <20240809114854.3745464-1-kirill.shutemov@linux.intel.com>
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Jianxiong Gao <jxgao@google.com>,
+	stable@vger.kernel.org
+Subject: [PATCHv2 1/8] mm: Fix endless reclaim on machines with unaccepted memory
+Date: Fri,  9 Aug 2024 14:48:47 +0300
+Message-ID: <20240809114854.3745464-2-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240809114854.3745464-1-kirill.shutemov@linux.intel.com>
+References: <20240809114854.3745464-1-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,53 +88,144 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The patchset addresses several issues related to unaccepted memory.
+Unaccepted memory is considered unusable free memory, which is not
+counted as free on the zone watermark check. This causes
+get_page_from_freelist() to accept more memory to hit the high
+watermark, but it creates problems in the reclaim path.
 
-It replaces "mm: fix endless reclaim on machines with unaccepted
-memory" commit which is in mm-unstable now.
+The reclaim path encounters a failed zone watermark check and attempts
+to reclaim memory. This is usually successful, but if there is little or
+no reclaimable memory, it can result in endless reclaim with little to
+no progress. This can occur early in the boot process, just after start
+of the init process when the only reclaimable memory is the page cache
+of the init executable and its libraries.
 
-The most severe issue is a kswapd hang, which is fixed by patch 1/8.
+Make unaccepted memory free from watermark check point of view. This way
+unaccepted memory will never be the trigger of memory reclaim.
+Accept more memory in the get_page_from_freelist() if needed.
 
-Pach 2/8 preparatory cleanup.
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reported-by: Jianxiong Gao <jxgao@google.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Fixes: dcdfdd40fa82 ("mm: Add support for unaccepted memory")
+Cc: stable@vger.kernel.org # v6.5+
+---
+ mm/page_alloc.c | 42 ++++++++++++++++++++----------------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
-Patch 3/8 ensures that __alloc_pages_bulk() will not exhaust all
-accepted memory without accepting more.
-
-Patches 4/8-6/8 are preparations for patch 7/8, which fixes
-alloc_config_page() on machines with unaccepted memory. This allows, for
-example, the allocation of gigantic pages at runtime.
-
-Patch 8/8 enable the kernel to accept memory up to the promo watermark.
-
-I believe only the first patch deserves backporting.
-
-Please review. Any feedback is welcome.
-
-Kirill A. Shutemov (8):
-  mm: Fix endless reclaim on machines with unaccepted memory
-  mm: Reduce deferred struct page init ifdeffery
-  mm: Accept memory in __alloc_pages_bulk().
-  mm: Introduce PageUnaccepted() page type
-  mm: Rework accept memory helpers
-  mm: Add a helper to accept page
-  mm: page_isolation: Handle unaccepted memory isolation
-  mm: Accept to promo watermark
-
- arch/x86/boot/compressed/misc.c               |   2 +-
- arch/x86/boot/compressed/misc.h               |   2 +-
- drivers/firmware/efi/libstub/efistub.h        |   2 +-
- .../firmware/efi/libstub/unaccepted_memory.c  |   3 +-
- drivers/firmware/efi/unaccepted_memory.c      |  18 +--
- include/linux/mm.h                            |  12 +-
- include/linux/page-flags.h                    |   8 ++
- mm/internal.h                                 |   8 ++
- mm/memblock.c                                 |   2 +-
- mm/mm_init.c                                  |   2 +-
- mm/page_alloc.c                               | 128 ++++++++++--------
- mm/page_isolation.c                           |   8 ++
- tools/testing/memblock/internal.h             |   2 +-
- 13 files changed, 122 insertions(+), 75 deletions(-)
-
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 5b5f99f4b20a..a9a89980f3f2 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -287,7 +287,7 @@ EXPORT_SYMBOL(nr_online_nodes);
+ 
+ static bool page_contains_unaccepted(struct page *page, unsigned int order);
+ static void accept_page(struct page *page, unsigned int order);
+-static bool try_to_accept_memory(struct zone *zone, unsigned int order);
++static bool cond_accept_memory(struct zone *zone, unsigned int order);
+ static inline bool has_unaccepted_memory(void);
+ static bool __free_unaccepted(struct page *page);
+ 
+@@ -3108,9 +3108,6 @@ static inline long __zone_watermark_unusable_free(struct zone *z,
+ 	if (!(alloc_flags & ALLOC_CMA))
+ 		unusable_free += zone_page_state(z, NR_FREE_CMA_PAGES);
+ #endif
+-#ifdef CONFIG_UNACCEPTED_MEMORY
+-	unusable_free += zone_page_state(z, NR_UNACCEPTED);
+-#endif
+ 
+ 	return unusable_free;
+ }
+@@ -3404,6 +3401,8 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 			}
+ 		}
+ 
++		cond_accept_memory(zone, order);
++
+ 		/*
+ 		 * Detect whether the number of free pages is below high
+ 		 * watermark.  If so, we will decrease pcp->high and free
+@@ -3429,10 +3428,8 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 				       gfp_mask)) {
+ 			int ret;
+ 
+-			if (has_unaccepted_memory()) {
+-				if (try_to_accept_memory(zone, order))
+-					goto try_this_zone;
+-			}
++			if (cond_accept_memory(zone, order))
++				goto try_this_zone;
+ 
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+ 			/*
+@@ -3486,10 +3483,8 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 
+ 			return page;
+ 		} else {
+-			if (has_unaccepted_memory()) {
+-				if (try_to_accept_memory(zone, order))
+-					goto try_this_zone;
+-			}
++			if (cond_accept_memory(zone, order))
++				goto try_this_zone;
+ 
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+ 			/* Try again if zone has deferred pages */
+@@ -6988,9 +6983,6 @@ static bool try_to_accept_memory_one(struct zone *zone)
+ 	struct page *page;
+ 	bool last;
+ 
+-	if (list_empty(&zone->unaccepted_pages))
+-		return false;
+-
+ 	spin_lock_irqsave(&zone->lock, flags);
+ 	page = list_first_entry_or_null(&zone->unaccepted_pages,
+ 					struct page, lru);
+@@ -7016,23 +7008,29 @@ static bool try_to_accept_memory_one(struct zone *zone)
+ 	return true;
+ }
+ 
+-static bool try_to_accept_memory(struct zone *zone, unsigned int order)
++static bool cond_accept_memory(struct zone *zone, unsigned int order)
+ {
+ 	long to_accept;
+-	int ret = false;
++	bool ret = false;
++
++	if (!has_unaccepted_memory())
++		return false;
++
++	if (list_empty(&zone->unaccepted_pages))
++		return false;
+ 
+ 	/* How much to accept to get to high watermark? */
+ 	to_accept = high_wmark_pages(zone) -
+ 		    (zone_page_state(zone, NR_FREE_PAGES) -
+-		    __zone_watermark_unusable_free(zone, order, 0));
++		    __zone_watermark_unusable_free(zone, order, 0) -
++		    zone_page_state(zone, NR_UNACCEPTED));
+ 
+-	/* Accept at least one page */
+-	do {
++	while (to_accept > 0) {
+ 		if (!try_to_accept_memory_one(zone))
+ 			break;
+ 		ret = true;
+ 		to_accept -= MAX_ORDER_NR_PAGES;
+-	} while (to_accept > 0);
++	}
+ 
+ 	return ret;
+ }
+@@ -7075,7 +7073,7 @@ static void accept_page(struct page *page, unsigned int order)
+ {
+ }
+ 
+-static bool try_to_accept_memory(struct zone *zone, unsigned int order)
++static bool cond_accept_memory(struct zone *zone, unsigned int order)
+ {
+ 	return false;
+ }
 -- 
 2.43.0
 
