@@ -1,115 +1,118 @@
-Return-Path: <linux-kernel+bounces-281279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E5194D50F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:53:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A75494D514
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8291F247B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAAF228585D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39687288B1;
-	Fri,  9 Aug 2024 16:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE85381D5;
+	Fri,  9 Aug 2024 16:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LkYP9m0f"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3ysCgGD"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E221200A9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533D82F855;
+	Fri,  9 Aug 2024 16:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723222373; cv=none; b=ij25H2BRVgZIj7F3eV7V8knQpHuq/udbcUGDtjK58i2fnf698B1VCBcfrpWw8B7+N+ABqOsxMZJ5D+c/16uKCxeBZ34C+ANFRLDNGjW12NsAxHgBRF9kvztpDwcHiC+vWCJqLYhHASlA5+lP+SzOWCqLigrsiY7OUDpLQYTV4tU=
+	t=1723222416; cv=none; b=Wqgy2RmDIsYAykzGZM9ymHhacSbHUqB0XE/mp9pkYuUVAJoET0Io6GsrIgV/PNSY3i0VTMLWPeZQIRKvog87DyBRNKdQDYXwOTRZnMLU7whCMVt20WmST3tyvZapf4JBoFU0gzin7d/fuZbhQyo79+G7fXz+oNgvAvvDCOX79AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723222373; c=relaxed/simple;
-	bh=jVbb7318dilSQEYZEN9KJsek/12Zng8/LakQpc9THfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UBKj/kNYsJTA7aErqX+CtHbuS5C5lbldtzheZJjW115TZue16quZC9HKIiVyOuV6+0qtdbfMadbXbnL/Wcjo5W1Ba3YbXhJIqDf0g9faaE8ersg3DPtXNDyPY1P1La76b6ujJJO/B/8vYR61iwkhm2wwpH2XXpccwCqqSTlBT+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LkYP9m0f; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4799mgqM015951;
-	Fri, 9 Aug 2024 16:52:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3OtSRxMjMwChT6ppgovQDG8n2yyeIzDV9nL+PQmt2AQ=; b=LkYP9m0faqut7o2C
-	/cZbsn1YR0RZzcuQqd57XOx+5OWeeN/avneHkmSHwtu9RUk/CAGcfVgLoSPBATMz
-	C0VnUm+4Q6HUFvSxh7mr16+68KLqWeXLWDWshO7TH9BvspBBfu6EkuQL3ejiyICf
-	Xryg6ANcx/vDULSkSUBV4XXjfVoSlzpAFHeSCM3rIbX514Np8oYoZqFH/By8vome
-	u3nRUi0y3ynj+vQOd48QE4sqNcitPjyaCQS7iHwiPKrYqTR5f0M8rzoh0C7V9Xrf
-	VWzTUujWhN5qM7K1ETOnuwj/xPBd3qQ2UQbERukjkRgY9ROhnJ99xUnK0oz4W9nM
-	dsE8vw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vdupp47c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 16:52:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 479GqkpJ009858
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 Aug 2024 16:52:46 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
- 09:52:45 -0700
-Message-ID: <54cdd823-98cc-ae67-c824-fad664e796a6@quicinc.com>
-Date: Fri, 9 Aug 2024 10:52:45 -0600
+	s=arc-20240116; t=1723222416; c=relaxed/simple;
+	bh=W/q0Lo5fEvvh+mgQSJQvkXtSXnB9SHntg1Uak/T2Tog=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fSvajX6blXo5UQNSyVdoh/0cOEsyqgmGPfAVhJrWeGR0KI1q82YET3TcyYDAF/lKUWcZTELI4jmOSH9i7A8dhWzaUCGfLooi6vCSYLV8QAg1r5SDnxieeGzktc5wDzM6VDvd43/Fb5tqxNwIMj1mLS1POH8R/8qTFCsmT/bZnqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e3ysCgGD; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7a264a24ea7so1718649a12.3;
+        Fri, 09 Aug 2024 09:53:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723222414; x=1723827214; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W/q0Lo5fEvvh+mgQSJQvkXtSXnB9SHntg1Uak/T2Tog=;
+        b=e3ysCgGD4yS5BCxi534a1LSDGavOcXz70D4XTPak6TfL1R5y/t1CiHyolkDeyckjnO
+         LdDxOPrqjsAKxhaUOcrFcFKe7UNIUQS6Vnod3zRtnvYQSJA9xrK6usBnLmFL+DFzIZsz
+         uUlbOvjpVb6sbgWET05RZvLA3Q8edAW6dgAOKUSFFFu9ugd2gZqBqAVw5Vo31fUs0OkF
+         4jk9O3uSPIvhwyjLXU8iBE3jyt/hfJTOPAueqPqkPRmAAcI4PdO85qGBu4AgOJUv2bDK
+         H3AaGaTAwnsz4B3CY/MTsT2xzdRkjHnU7xUwqZ+7ZOxHS648NfW1MEofAvWI3j0YH8GR
+         Wwwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723222414; x=1723827214;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W/q0Lo5fEvvh+mgQSJQvkXtSXnB9SHntg1Uak/T2Tog=;
+        b=wLSE+eNg49t7djwgLMsC1sjwlNqKUfgZhzCaNyhjrQ1XtrEMUGc6iRMyqAMJmIXcdQ
+         pIvXDEC5Wd/mjY2WxMyKUaCP3C3F9YsbXxFErZjNjwn0x/ma4O6TuybDfnd4O/uwu+kF
+         yzJoktZEIRILNRh1olglyx9OZJJFu+//0GIxokpPneHnFZ93Y+XbJ1BEO6LMTZb7koN8
+         oJR3/ICb6qic6FCUW+xtJwlU9VkJnT+jrRo3ZfDXHGI7CkG2x352/S/iNmB55AkyE3GW
+         tYy8krAD2W1QdQH8Tm4zoK591px9BsM3216s1tynDKUYdolY+T7JrByPk+PrWV3nrDc7
+         S6jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmg6OUZs438FEh8UFn9UykR1NpBmnQY10ItEzqq8cj+DsBq/jWmbeEFfcaTfYu2UaPz5ExCeNIWpeFswtxRGBv4+jSQZY+bowWwEDvB08xZ5H1zdJBgOprWkPwdkK4VYisQ25O7hIbWVZvvI6yF+QpSKuefqruywOj0tpezZ3Hm3Twv162
+X-Gm-Message-State: AOJu0YxIn5Q3l5i+3GkxI7J5Sb05NDakdoUagNkWrodI3PDtXOQfICrF
+	f9L7hF5tfBj4m4X+x/FBezhbCNdSk0+3I3wxF9t1Y47eeOI0Uszp
+X-Google-Smtp-Source: AGHT+IGG5UW+BLY2K7kyUpG/5+/cGAzOozdPxAzCcDq6IniYY3vrKnO0nehWL7flnvtJvhpEN+dd4g==
+X-Received: by 2002:a17:90b:951:b0:2c7:aba6:d32f with SMTP id 98e67ed59e1d1-2d1e7ff2687mr2603822a91.22.1723222414471;
+        Fri, 09 Aug 2024 09:53:34 -0700 (PDT)
+Received: from dev0.. ([49.43.168.245])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b3b36067sm5536126a91.41.2024.08.09.09.53.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 09:53:33 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: kuba@kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	jain.abhinav177@gmail.com,
+	javier.carrasco.cruz@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH v5 1/2] selftests: net: Create veth pair for testing in networkless kernel
+Date: Fri,  9 Aug 2024 16:53:26 +0000
+Message-Id: <20240809165326.382044-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240808092309.2a811cf4@kernel.org>
+References: <20240808092309.2a811cf4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] accel: drm_accel: remove incorrect comments
-Content-Language: en-US
-To: bajing <bajing@cmss.chinamobile.com>, <ogabbay@kernel.org>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240731064253.24523-1-bajing@cmss.chinamobile.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240731064253.24523-1-bajing@cmss.chinamobile.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: iWS63QX0a51Rfhujod6BKKy27V1zY1Fo
-X-Proofpoint-GUID: iWS63QX0a51Rfhujod6BKKy27V1zY1Fo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_13,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0 mlxscore=0
- clxscore=1011 mlxlogscore=982 spamscore=0 bulkscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408090121
+Content-Transfer-Encoding: 8bit
 
-On 7/31/2024 12:42 AM, bajing wrote:
-> accel_minor_replace is of type void, so remove the explanation of the return value in the comments.
-> 
-> Signed-off-by: bajing <bajing@cmss.chinamobile.com>
-> ---
->   drivers/accel/drm_accel.c | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/accel/drm_accel.c b/drivers/accel/drm_accel.c
-> index 16c3edb8c46e..09fb64444cc6 100644
-> --- a/drivers/accel/drm_accel.c
-> +++ b/drivers/accel/drm_accel.c
-> @@ -161,8 +161,6 @@ void accel_minor_remove(int index)
->    * This function access the accel minors idr structure and replaces the pointer
->    * that is associated with an existing id. Because the minor pointer can be
->    * NULL, we need to explicitly pass the index.
-> - *
-> - * Return: 0 for success, negative value for error
->    */
->   void accel_minor_replace(struct drm_minor *minor, int index)
->   {
+On Thu, 8 Aug 2024 09:23:09 -0700, Jakub Kicinski wrote:
+> A number of checks now return SKIP because veth doesn't support all
+> ethtool APIs.
+>
+> In netdev selftests we try to make sure SKIP is only used when test
+> cannot be performed because of limitations of the environment.
+> For example some tool is not installed, kernel doesn't have a config.
+> Something that the person running the test is able to fix by fixing
+> how the test is run.
+>
+> Running this test on veth will always SKIP, nothing CI system can do.
+> Please make the test use the keyword XFAIL instead of SKIP when
+> functionality is not supported by the underlying driver.
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Ack, understood. I will do that, one clarification though.
+Currently, the tests are using either PASS or FAIL and no SKIP. Based on
+the above suggestion, it seems that I have replace FAIL with XFAIL for all
+the tests that fail due to functionality not being supported by the
+underlying driver.
+
+Please confirm if my understanding is correct and I will send a v6 of the
+series in accordance with netdev patch submission guidelines.
+---
 
