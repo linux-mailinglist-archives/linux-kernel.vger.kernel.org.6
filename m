@@ -1,258 +1,224 @@
-Return-Path: <linux-kernel+bounces-281405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF73194D6AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:49:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C774394D6B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF072831E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:49:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 477D01F22FD9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F0015B980;
-	Fri,  9 Aug 2024 18:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B672C49630;
+	Fri,  9 Aug 2024 18:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VmDCGgss"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="gUnBpOlX"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703AC49630;
-	Fri,  9 Aug 2024 18:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C6A126F1E
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723229344; cv=none; b=hKKXLwgtLpMFk4r0zfib+dBtME0WBNPOPRRB9NZ0wdfjWmFTF8Ha/GahK+PJRHJ4w44lIOLnmEfWFDugocg/TdBd+25hOrHeeHFpSL6ABopN3ftDkgm8di1TqrR54+L+IwQc7CGf8SyGmM+TwB2mA08fyWmYqZqMeyNkelHalHQ=
+	t=1723229403; cv=none; b=dgBbVvNDBxTB3O+hU8+iS79xA8+GstDjAktwTA33DHiZgfWA9fjZem58ThqruPbXvsZ1k0fAvpwWpUc1weMGubypdN2pUCF9PdU2FDXvERYToZqU3xQ67GJdy9lh1oZf3xCT0TTjvpW41inzuWd43hZfJwhH5FKwLhaFxCQXVWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723229344; c=relaxed/simple;
-	bh=G0s1rj14AIRtP/emmXHl8MDxufjExKfWIr6diFaipi8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FlZ+LBWKC3BHC8lLMe7onFzoaXWBg4NboB6WYjve9hx+maOcvRo0E6kRqBBf5Z+mefAEdicbnrYMSZJKRxZKle2V5YcUiIx38fmM8GqTXh/aPDY3YL2gwUuAs+ushuzKKEU557qu/ymuCjdeArm3O/cpXXchC+uFjg83fHrxgUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VmDCGgss; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 479AI960003292;
-	Fri, 9 Aug 2024 18:48:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FnZiCsOE4iogMiFCRF4MNW0QwIx+k/BFS0PtP3n+TIE=; b=VmDCGgssBD0zenne
-	Hs3jjme7T9YIg290WaHsLr1OhCwqYIVjtQDqqM3waEFpze0Al6/ffIebHl4fUlyX
-	T7q1CKU3t4p0uerp0JK5jTB1V37qP+tK0pz8Oj7nplQraFrgvO+EVcscAio2o+/v
-	huu6EPXI7/yJShatvoFIwHSaufgFT7Iz5cA+4NIN9elHHzZTsRv3KjS7ePUn1Rdo
-	t9Chzc0ndU9VsehgK1jZ15GP2m2nbu0Ea5CCUJfi08KQxCyH9XQd0I0REvHiMAUa
-	URMUjttOke/0c7PeRn3Q/YgNJNFhNcP7M/7UH4hFnG7hfPHYpKAVsNuiZ71WC5F4
-	UJnm7w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vue3vkf6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 18:48:42 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 479Imf6u000644
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 Aug 2024 18:48:41 GMT
-Received: from hu-obabatun-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 9 Aug 2024 11:48:38 -0700
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-To: <robh@kernel.org>, <saravanak@google.com>
-CC: <klarasmodin@gmail.com>, <aisheng.dong@nxp.com>, <hch@lst.de>,
-        <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <will@kernel.org>, <catalin.marinas@arm.com>,
-        <kernel@quicinc.com>, Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-Subject: [PATCH v7 2/2] of: reserved_mem: Add code to dynamically allocate reserved_mem array
-Date: Fri, 9 Aug 2024 11:48:14 -0700
-Message-ID: <20240809184814.2703050-3-quic_obabatun@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240809184814.2703050-1-quic_obabatun@quicinc.com>
-References: <20240809184814.2703050-1-quic_obabatun@quicinc.com>
+	s=arc-20240116; t=1723229403; c=relaxed/simple;
+	bh=QAES32h+gct60eeb5URYRuTt6zu7HhIZyf2cvOuY89o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAlQ1ihyez8ap7UlsYRy50s6spoAhwy98cIC8P/49KS/ebhgIplxyieREomFqlsT4hO6Tb4ML8kDfyDytm3ykRL+v1hIrUeA5pLQoFo8eILczHtjnWE+hMje/sA/1JT51yzuszBZLfcESpwPuGRHgoDms8nMx1RQP0HtRKdxL58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=gUnBpOlX; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc692abba4so21158185ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 11:50:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723229401; x=1723834201; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pTR80LART49AwfTCZhDaQ9X3675Tbg/ziI9l0jgP2i4=;
+        b=gUnBpOlXv2g1BPWaX9eI0eM+U0hzwRQH5Z8ztWjpNpgm+ZpEoWevDHjUEeOhqwqJFe
+         voacAhmpEVUkOmFGevrcbtnZ/S53SSBl47nE8LxCKW6wXL3TzUonhjVVgzJ4DUW06cad
+         2anxw4Uv7iGLxFVlsP6uCos1QcWAj/l0NvqS5smD3iMZb+kDPTeRavV84DGxbstj3Tdn
+         XqKVZXBbtHmRjqyy+Fy8mQyCvifC09P4Etn0XdM34F+QZXUYa6c8ziHzYQoL2DFi24nC
+         50s/FfqZ8joJwhajnmuzqI0yrzcSlhls2mJF5+7G/NhYq0xp3Wxp42IH4HeUnP20tCEh
+         aJMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723229401; x=1723834201;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pTR80LART49AwfTCZhDaQ9X3675Tbg/ziI9l0jgP2i4=;
+        b=cyE9pZ6gzxmDPTV2ZS0E3P4X7JOfsXk5Nq9N042hr9UQS15ztBPcBaZWvpJHxU1Y5f
+         rN2LlhI7lJ39baxBY0r3ZRD2q/ZSl9BZdnXU+nazl8Y4iUHFkP6uEBvKJkAmSd5Fsknp
+         vXA5DCROS1I4Eda+rc96KSbjaQdZ+HXp7L36b7up5Qijx40xDjXCOZlS7MTFbdmneyN3
+         dw+jJ0biYNoTkVACOEyCqb7+QhWJoLizfIaUMftm6twmbKhx8NMlcbJoc9tMrS3fhmgg
+         0rIaXLpWwXowOAXR7TLcIrLmLQV2K/+z8KEGI5qD6nifOlDY6KQ0BOamMH8OLQh/ri7f
+         eQ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCaLhAwaNTFUHeMo0yRw/i/tQqL4J4qRs3rL11kN9xLqNedaog4mYc28fsh6NqmxceXmgG5KTa2peVf5tj9jClWUNYFRemwDT2JQq6
+X-Gm-Message-State: AOJu0YxJeZpP4AVBbX3+g4zH9dqKh7bvFWh39IIpMFHRLpjfM1ZJ9u+/
+	9DDUZZyFepiMH8ADcqV1uZ4VU5wRbjbWUtiXCLlx3tf66r6qZ9Trblv/JzzZ7ug=
+X-Google-Smtp-Source: AGHT+IGn2lIs6m4F9PqnQxrCoDxM9ibXdCJFJLnZ4eHgEWlgh5F8ljLu/bemuIJyW9+rcge+TfIiJQ==
+X-Received: by 2002:a17:902:f707:b0:1fd:70f7:220d with SMTP id d9443c01a7336-200ae59eef4mr25979215ad.40.1723229400814;
+        Fri, 09 Aug 2024 11:50:00 -0700 (PDT)
+Received: from ghost ([2601:647:6700:64d0:c486:937c:35d4:b6a2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb8f8b08sm864425ad.64.2024.08.09.11.49.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 11:49:59 -0700 (PDT)
+Date: Fri, 9 Aug 2024 11:49:56 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Jesse Taube <jesse@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Evan Green <evan@rivosinc.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Greentime Hu <greentime.hu@sifive.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Anup Patel <apatel@ventanamicro.com>,
+	Zong Li <zong.li@sifive.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Erick Archer <erick.archer@gmx.com>,
+	Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH 1/2] RISC-V: Add Zicclsm to cpufeature and hwprobe
+Message-ID: <ZrZk1EACQoo1+9jm@ghost>
+References: <20240809162240.1842373-1-jesse@rivosinc.com>
+ <20240809162240.1842373-2-jesse@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oh29NJunGIW4-wDlBPdCXXFH8dAfW87Z
-X-Proofpoint-ORIG-GUID: oh29NJunGIW4-wDlBPdCXXFH8dAfW87Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_15,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 bulkscore=0 mlxscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408090135
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809162240.1842373-2-jesse@rivosinc.com>
 
-The reserved_mem array is statically allocated with a size of
-MAX_RESERVED_REGIONS(64). Therefore, if the number of reserved_mem
-regions exceeds this size, there will not be enough space to store
-all the data.
+On Fri, Aug 09, 2024 at 12:22:39PM -0400, Jesse Taube wrote:
+> > Zicclsm Misaligned loads and stores to main memory regions with both
+> > the cacheability and coherence PMAs must be supported.
+> > Note:
+> > This introduces a new extension name for this feature.
+> > This requires misaligned support for all regular load and store
+> > instructions (including scalar and vector) but not AMOs or other
+> > specialized forms of memory access. Even though mandated, misaligned
+> > loads and stores might execute extremely slowly. Standard software
+> > distributions should assume their existence only for correctness,
+> > not for performance.
 
-Hence, extend the use of the static array by introducing a
-dynamically allocated array based on the number of reserved memory
-regions specified in the DT.
+You left in the > characters.
 
-On architectures such as arm64, memblock allocated memory is not
-writable until after the page tables have been setup. Hence, the
-dynamic allocation of the reserved_mem array will need to be done only
-after the page tables have been setup.
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Tested-by: Charlie Jenkins <charlie@rivosinc.com>
 
-As a result, a temporary static array is still needed in the initial
-stages to store the information of the dynamically-placed reserved
-memory regions because the start address is selected only at run-time
-and is not stored anywhere else.
-It is not possible to wait until the reserved_mem array is allocated
-because this is done after the page tables are setup and the reserved
-memory regions need to be initialized before then.
-
-After the reserved_mem array is allocated, all entries from the static
-array is copied over to the new array, and the rest of the information
-for the statically-placed reserved memory regions are read in from the
-DT and stored in the new array as well.
-
-Once the init process is completed, the temporary static array is
-released back to the system because it is no longer needed. This is
-achieved by marking it as __initdata.
-
-Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
----
- drivers/of/of_reserved_mem.c | 68 +++++++++++++++++++++++++++++++++---
- 1 file changed, 64 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-index b52690e554f0..d90972cb5949 100644
---- a/drivers/of/of_reserved_mem.c
-+++ b/drivers/of/of_reserved_mem.c
-@@ -27,7 +27,9 @@
- 
- #include "of_private.h"
- 
--static struct reserved_mem reserved_mem[MAX_RESERVED_REGIONS];
-+static struct reserved_mem reserved_mem_array[MAX_RESERVED_REGIONS] __initdata;
-+static struct reserved_mem *reserved_mem __refdata = reserved_mem_array;
-+static int total_reserved_mem_cnt = MAX_RESERVED_REGIONS;
- static int reserved_mem_count;
- 
- static int __init early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
-@@ -55,6 +57,50 @@ static int __init early_init_dt_alloc_reserved_memory_arch(phys_addr_t size,
- 	return err;
- }
- 
-+/*
-+ * alloc_reserved_mem_array() - allocate memory for the reserved_mem
-+ * array using memblock
-+ *
-+ * This function is used to allocate memory for the reserved_mem
-+ * array according to the total number of reserved memory regions
-+ * defined in the DT.
-+ * After the new array is allocated, the information stored in
-+ * the initial static array is copied over to this new array and
-+ * the new array is used from this point on.
-+ */
-+static void __init alloc_reserved_mem_array(void)
-+{
-+	struct reserved_mem *new_array;
-+	size_t alloc_size, copy_size, memset_size;
-+
-+	alloc_size = array_size(total_reserved_mem_cnt, sizeof(*new_array));
-+	if (alloc_size == SIZE_MAX) {
-+		pr_err("Failed to allocate memory for reserved_mem array with err: %d", -EOVERFLOW);
-+		return;
-+	}
-+
-+	new_array = memblock_alloc(alloc_size, SMP_CACHE_BYTES);
-+	if (!new_array) {
-+		pr_err("Failed to allocate memory for reserved_mem array with err: %d", -ENOMEM);
-+		return;
-+	}
-+
-+	copy_size = array_size(reserved_mem_count, sizeof(*new_array));
-+	if (copy_size == SIZE_MAX) {
-+		memblock_free(new_array, alloc_size);
-+		total_reserved_mem_cnt = MAX_RESERVED_REGIONS;
-+		pr_err("Failed to allocate memory for reserved_mem array with err: %d", -EOVERFLOW);
-+		return;
-+	}
-+
-+	memset_size = alloc_size - copy_size;
-+
-+	memcpy(new_array, reserved_mem, copy_size);
-+	memset(new_array + reserved_mem_count, 0, memset_size);
-+
-+	reserved_mem = new_array;
-+}
-+
- /*
-  * fdt_reserved_mem_save_node() - save fdt node for second pass initialization
-  */
-@@ -63,7 +109,7 @@ static void __init fdt_reserved_mem_save_node(unsigned long node, const char *un
- {
- 	struct reserved_mem *rmem = &reserved_mem[reserved_mem_count];
- 
--	if (reserved_mem_count == ARRAY_SIZE(reserved_mem)) {
-+	if (reserved_mem_count == total_reserved_mem_cnt) {
- 		pr_err("not enough space for all defined regions.\n");
- 		return;
- 	}
-@@ -199,6 +245,13 @@ void __init fdt_scan_reserved_mem_reg_nodes(void)
- 		return;
- 	}
- 
-+	/*
-+	 * Allocate the exact size needed for the reserved_mem array and
-+	 * copy all the contents from the previous array if allocation
-+	 * is successful.
-+	 */
-+	alloc_reserved_mem_array();
-+
- 	fdt_for_each_subnode(child, fdt, node) {
- 		const char *uname;
- 
-@@ -233,7 +286,7 @@ static int __init __reserved_mem_alloc_size(unsigned long node, const char *unam
- int __init fdt_scan_reserved_mem(void)
- {
- 	int node, child;
--	int dynamic_nodes_cnt = 0;
-+	int dynamic_nodes_cnt = 0, count = 0;
- 	int dynamic_nodes[MAX_RESERVED_REGIONS];
- 	const void *fdt = initial_boot_params;
- 
-@@ -256,6 +309,9 @@ int __init fdt_scan_reserved_mem(void)
- 		uname = fdt_get_name(fdt, child, NULL);
- 
- 		err = __reserved_mem_reserve_reg(child, uname);
-+		if (!err)
-+			count++;
-+
- 		/*
- 		 * Save the nodes for the dynamically-placed regions
- 		 * into an array which will be used for allocation right
-@@ -270,11 +326,15 @@ int __init fdt_scan_reserved_mem(void)
- 	}
- 	for (int i = 0; i < dynamic_nodes_cnt; i++) {
- 		const char *uname;
-+		int err;
- 
- 		child = dynamic_nodes[i];
- 		uname = fdt_get_name(fdt, child, NULL);
--		__reserved_mem_alloc_size(child, uname);
-+		err = __reserved_mem_alloc_size(child, uname);
-+		if (!err)
-+			count++;
- 	}
-+	total_reserved_mem_cnt = count;
- 	return 0;
- }
- 
--- 
-2.34.1
-
+> 
+> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Andy Chiu <andy.chiu@sifive.com>
+> ---
+> V1 -> V2:
+>  - Add documentation for Zicclsm
+>  - Move Zicclsm to correct location
+> V2 -> V3:
+>  - No changes
+> V3 -> V4:
+>  - Add definitions to hwprobe.rst
+> V4 -> V5:
+>  - No changes
+> V5 -> V6:
+>  - No changes
+> V6 -> V7:
+>  - No changes
+> V7 -> V8:
+>  - Rebase onto 2d1f51d8a4b0 (palmer/for-next)
+>  - Change commit description
+> ---
+>  Documentation/arch/riscv/hwprobe.rst  | 5 +++++
+>  arch/riscv/include/asm/hwcap.h        | 1 +
+>  arch/riscv/include/uapi/asm/hwprobe.h | 1 +
+>  arch/riscv/kernel/cpufeature.c        | 1 +
+>  arch/riscv/kernel/sys_hwprobe.c       | 1 +
+>  5 files changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> index 3db60a0911df..22c118df520b 100644
+> --- a/Documentation/arch/riscv/hwprobe.rst
+> +++ b/Documentation/arch/riscv/hwprobe.rst
+> @@ -239,6 +239,11 @@ The following keys are defined:
+>         ratified in commit 98918c844281 ("Merge pull request #1217 from
+>         riscv/zawrs") of riscv-isa-manual.
+>  
+> +  * :c:macro:`RISCV_HWPROBE_EXT_ZICCLSM`:  The Zicclsm extension is supported as
+> +        defined in the RISC-V RVA Profiles Specification. Misaligned support for
+> +        all regular load and store instructions (including scalar and vector) but
+> +        not AMOs or other specialized forms of memory access.
+> +
+>  * :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A bitmask that contains performance
+>    information about the selected set of processors.
+>  
+> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+> index 5a0bd27fd11a..c93d957458f0 100644
+> --- a/arch/riscv/include/asm/hwcap.h
+> +++ b/arch/riscv/include/asm/hwcap.h
+> @@ -92,6 +92,7 @@
+>  #define RISCV_ISA_EXT_ZCF		83
+>  #define RISCV_ISA_EXT_ZCMOP		84
+>  #define RISCV_ISA_EXT_ZAWRS		85
+> +#define RISCV_ISA_EXT_ZICCLSM		86
+>  
+>  #define RISCV_ISA_EXT_XLINUXENVCFG	127
+>  
+> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+> index b706c8e47b02..a9370968fc9f 100644
+> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> @@ -72,6 +72,7 @@ struct riscv_hwprobe {
+>  #define		RISCV_HWPROBE_EXT_ZCF		(1ULL << 46)
+>  #define		RISCV_HWPROBE_EXT_ZCMOP		(1ULL << 47)
+>  #define		RISCV_HWPROBE_EXT_ZAWRS		(1ULL << 48)
+> +#define		RISCV_HWPROBE_EXT_ZICCLSM	(1ULL << 49)
+>  #define RISCV_HWPROBE_KEY_CPUPERF_0	5
+>  #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
+>  #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> index 8f20607adb40..2f54d811a9b8 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -314,6 +314,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+>  					  riscv_ext_zicbom_validate),
+>  	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zicboz, RISCV_ISA_EXT_ZICBOZ, riscv_xlinuxenvcfg_exts,
+>  					  riscv_ext_zicboz_validate),
+> +	__RISCV_ISA_EXT_DATA(zicclsm, RISCV_ISA_EXT_ZICCLSM),
+>  	__RISCV_ISA_EXT_DATA(zicntr, RISCV_ISA_EXT_ZICNTR),
+>  	__RISCV_ISA_EXT_DATA(zicond, RISCV_ISA_EXT_ZICOND),
+>  	__RISCV_ISA_EXT_DATA(zicsr, RISCV_ISA_EXT_ZICSR),
+> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+> index 8d1b5c35d2a7..01eea29a56cd 100644
+> --- a/arch/riscv/kernel/sys_hwprobe.c
+> +++ b/arch/riscv/kernel/sys_hwprobe.c
+> @@ -107,6 +107,7 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
+>  		EXT_KEY(ZCB);
+>  		EXT_KEY(ZCMOP);
+>  		EXT_KEY(ZICBOZ);
+> +		EXT_KEY(ZICCLSM);
+>  		EXT_KEY(ZICOND);
+>  		EXT_KEY(ZIHINTNTL);
+>  		EXT_KEY(ZIHINTPAUSE);
+> -- 
+> 2.45.2
+> 
 
