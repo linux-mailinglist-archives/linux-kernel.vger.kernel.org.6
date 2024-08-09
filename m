@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-281135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99A494D37B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:29:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F20294D37E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44213284406
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:29:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CAB91C223F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF5F198A19;
-	Fri,  9 Aug 2024 15:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063BA198A30;
+	Fri,  9 Aug 2024 15:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WM8s0Apg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eCjKLWlK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6E8174EE4
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE54198850
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723217367; cv=none; b=acLc0Kq0O1dj/pRhKkZ7fnIPwtQTQ9wLWsWV93H7vi2DBnZ6lnMKsF2s6sKEMxgYQQGq+DdroHxEm96ww+V0vUoNOkQ19SAzC0YQyPWXQmAYtDf2r3MvMjhezWyRt1Y3k7F0Vytj8AV/CjDk/rUbjKV28oPLITttW0j2i94SUeI=
+	t=1723217391; cv=none; b=oJvackMxr3rnnaUSdmNpLLi1FwGq2Lr4/noteCkdZCG4lGb0bRsuBEZbj/6clboW+4CelyXdROzzunaaqap716pSQfppuHKgSSIz127iGG5w2ra4jgy0lsOEURxKLqI18tZuUwYv5x/zvCC34SeQJN+99TOWRKCOGswFgNFa6yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723217367; c=relaxed/simple;
-	bh=98E3TuM3TQmqoSqfPWEv3I8pWRbRVWWV8quLbdF4slk=;
+	s=arc-20240116; t=1723217391; c=relaxed/simple;
+	bh=Cre+FQ/kmBnvYs5YgX6DqNdezSARA5lCioFzGEHHVvw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MtXm6VFw1tPXMFjujkLvGNxDCYdJI2aWCmXe2V8Mmw1JyenIAi9a5GACqAUInLb3IJzDzVkFiyH6rofVnwm9pd4YyYpeNhx/Ayxz3IGGijWu1YLdozT4QI5+IJAKYe85wh+om5gRjZFOuy2y20Tm8VTk9W6ZZGjNpAmidVBWjlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WM8s0Apg; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=SLM8MCasVliFdBS0Yjo5s1unazmrbipqdL7l1rSS0qtGeW9M49Dtmij4IxhXOx4otfU5t9lYNp6fledRMuhq0f0/QLayPkqBPUA6LxRek0E/4Na4bNSkcMoXyO4vWgapWCLXT14wLtiXmFk76ih36jr+9j7jZsw0plA4OtzNwGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eCjKLWlK; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723217365;
+	s=mimecast20190719; t=1723217387;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=IkaFtYOglx3SERuq0AG1B8o+eSlXUn20hFBeWUD5Y4o=;
-	b=WM8s0Apg+nptOhMneZfSAjBrCEw2aPcqy2n02Tc4ONG/fC2CkCrxI50r7b6ckD/P8bbMcc
-	9gxdzm2hUXmXbKYYvyOfDhdl3zgDdf4vaP/fnG/pO4CDbZGO/oWpyhPvxY/UeWTLJzjeu0
-	mHvJi0U0jO2MwmCFAhBQXMO1Ba4fRtQ=
+	bh=+qb0Tn3R4/F9P9guJ4b8TeJDGiJ6K5JkcxwGHngJl1Y=;
+	b=eCjKLWlK7+jeuTMv6R/dSpZMcokjwiKnoCbUX8rRhVBMFKpjS5mmJibpnDJjcytC5mvL9V
+	Z2E6MSHIfdV0BQo2rGXB8iJzbuyDFKI2TkElwB5DeA5xQkaXVEs4E9ZYZRJ9sRl5ZYx05b
+	rBQpgQ+DilUFTwEPXKrtv3thzbdnaow=
 Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
  [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-436-m1NkH7RKM2O_jpc-PWrxyA-1; Fri, 09 Aug 2024 11:29:23 -0400
-X-MC-Unique: m1NkH7RKM2O_jpc-PWrxyA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42808efc688so15492345e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:29:23 -0700 (PDT)
+ us-mta-365-MSEAx86sOqeKqLUXPuh9zA-1; Fri, 09 Aug 2024 11:29:46 -0400
+X-MC-Unique: MSEAx86sOqeKqLUXPuh9zA-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4280cf2be19so14857155e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:29:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723217362; x=1723822162;
+        d=1e100.net; s=20230601; t=1723217385; x=1723822185;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=IkaFtYOglx3SERuq0AG1B8o+eSlXUn20hFBeWUD5Y4o=;
-        b=X25Pue6d5HvT7PBW4BoNdvOFA+EvQWH3hC5+B6DoDJrFqe6CCrRVtdzNEy/NdSrqGv
-         /fy4apBIaJF7hQ6lxU/sAawvn3aks/pWOyJJR8YyX6k/ddp/fWqx5j51YwzhzswDZJ0v
-         JGzNogrcGR3glXSQR0v7oS2Z8cWigUHdB+l8zKPmh/AC2kUXd7k4MsexyIEcP4NFIdCD
-         nQOhsA97GNTa0ygvcci2EvBuz6NGFrb/o42FoaLWU01ZjjZYVgTpvwnwl2d9YJo/Uhkd
-         RVAr0uJecr6zxDWwG5LIRSuUEZVQXBPpM8O769yrHihxbYkGSM99zfxfk9Da+LFb+oyS
-         g9PA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXHq7Ql7gwKsSfCAJgTVmxE9wM0GWdQCft75Yys5mZ+0TTR+bk65Xg03f56CVxYv/REZyLacLyAi6FA9WlRr0ofSF5Cqr+UCi+BsBc
-X-Gm-Message-State: AOJu0YwUbkcdyG6EWPXBG6gslvm2e0Tvw9PIkIiSe4RhNP7oI1Eak4Fa
-	BGEfe1IJn8sHK26ZvsW27boU5vB3wLMlsOhHyXW1yxau366t/kWrrQCUk0iZa+QC1UUr0xZt2BP
-	9dQ0GcO8RcTWGq/VJIE9V9mO2iXTx1r/3YGdKck6jP4cOdpdoqFqu+lDyy+TCLA==
-X-Received: by 2002:a05:600c:46ce:b0:426:5ddf:fd22 with SMTP id 5b1f17b1804b1-429c3a17f1bmr13036395e9.6.1723217362434;
-        Fri, 09 Aug 2024 08:29:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE9g/HImcMSBHo0q13rPpw/b1gOqisdmkCTPdK/rjlFupPIN6Eqj9sBoWS7cZ0WsvzucC7hMw==
-X-Received: by 2002:a05:600c:46ce:b0:426:5ddf:fd22 with SMTP id 5b1f17b1804b1-429c3a17f1bmr13036185e9.6.1723217361886;
-        Fri, 09 Aug 2024 08:29:21 -0700 (PDT)
+        bh=+qb0Tn3R4/F9P9guJ4b8TeJDGiJ6K5JkcxwGHngJl1Y=;
+        b=dd1YfOzKL6C5UIkS8v4Yvolg8KWrKxMl0pMJtPuiH4piNimRClLdcz8PeIcjELtYpb
+         gftvxTTo3NQH3OCLpJZYcN9LZb2fWoskZ9yJRHKNLoOcTUk9RBhE0G1fhGb/1G6MhVYs
+         2gAc0JAhaj8CaIik+xSFpY+sUtIrnA5A1hNdkWminj11UbJIz03CuWS/zg02M3wU/VBw
+         DNSYcfRTULEuh8o13UrOQ6lUKAOOo/097xdlk00/ZbQQmtIgOH4ZeYC/W/5FLYi9b6kM
+         5MeW9Ifd+GS6kQY4vJfnmvhOCo7X4cak/C80jzlMNTNbA8BxdNMnFxlFY1Fn8dPvjhNG
+         P0dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmx9/7o6VVQsxwf8mLqsAxL0azZRwY/obz0xRp1V1s76g5cJ+6P2tTVT5KfVbxwJjJoDsR4JIKUo516uxML8ff3+qO6lRAGE26Qn2B
+X-Gm-Message-State: AOJu0YwkAErMmAuQYBNCHkObyYohZjevTmF7Y81fB7+ZNad6YipeZKaJ
+	AogG1rv+u7+sO3YlMtm1gKF27slypMzi/g/bd+ixG6LzjSKHKQnIpX4vlabebBgmZ3DELE1szlC
+	ZGeebiRvVCFyJViu8lBSsERrb5MBrM5sVnWEsSxUO2RGgoHjidcipMaz9Ahcahw==
+X-Received: by 2002:a05:600c:3588:b0:426:647b:1bfa with SMTP id 5b1f17b1804b1-429c3a174c2mr14386855e9.8.1723217385222;
+        Fri, 09 Aug 2024 08:29:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKTiQa7A0hgIVpw/ZWs2EQKjIeTX5+pvF0wUqZq/lUQ9GaeOmQ8UyiigVuIJHlsZzHtD3kPw==
+X-Received: by 2002:a05:600c:3588:b0:426:647b:1bfa with SMTP id 5b1f17b1804b1-429c3a174c2mr14386615e9.8.1723217384686;
+        Fri, 09 Aug 2024 08:29:44 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059713adsm133237355e9.11.2024.08.09.08.29.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059e0082sm133666195e9.48.2024.08.09.08.29.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 08:29:21 -0700 (PDT)
-Message-ID: <2cdc6d9a-0855-4209-9745-0ae15c4498a8@redhat.com>
-Date: Fri, 9 Aug 2024 17:29:20 +0200
+        Fri, 09 Aug 2024 08:29:44 -0700 (PDT)
+Message-ID: <13318f5e-6a76-49ca-8c7a-9f461061d1d7@redhat.com>
+Date: Fri, 9 Aug 2024 17:29:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] mm/numa: no task_numa_fault() call if PTE is
+Subject: Re: [PATCH v3 2/3] mm/numa: no task_numa_fault() call if PMD is
  changed
 To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -92,7 +92,7 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
  Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
  stable@vger.kernel.org
 References: <20240809145906.1513458-1-ziy@nvidia.com>
- <20240809145906.1513458-2-ziy@nvidia.com>
+ <20240809145906.1513458-3-ziy@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -140,18 +140,17 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240809145906.1513458-2-ziy@nvidia.com>
+In-Reply-To: <20240809145906.1513458-3-ziy@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 09.08.24 16:59, Zi Yan wrote:
 > When handling a numa page fault, task_numa_fault() should be called by a
 > process that restores the page table of the faulted folio to avoid
-> duplicated stats counting. Commit b99a342d4f11 ("NUMA balancing: reduce
-> TLB flush via delaying mapping on hint page fault") restructured
-> do_numa_page() and did not avoid task_numa_fault() call in the second page
-> table check after a numa migration failure. Fix it by making all
-> !pte_same() return immediately.
+> duplicated stats counting. Commit c5b5a3dd2c1f ("mm: thp: refactor NUMA
+> fault handling") restructured do_huge_pmd_numa_page() and did not avoid
+> task_numa_fault() call in the second page table check after a numa
+> migration failure. Fix it by making all !pmd_same() return immediately.
 > 
 > This issue can cause task_numa_fault() being called more than necessary
 > and lead to unexpected numa balancing results (It is hard to tell whether
@@ -160,7 +159,7 @@ On 09.08.24 16:59, Zi Yan wrote:
 > 
 > Reported-by: "Huang, Ying" <ying.huang@intel.com>
 > Closes: https://lore.kernel.org/linux-mm/87zfqfw0yw.fsf@yhuang6-desk2.ccr.corp.intel.com/
-> Fixes: b99a342d4f11 ("NUMA balancing: reduce TLB flush via delaying mapping on hint page fault")
+> Fixes: c5b5a3dd2c1f ("mm: thp: refactor NUMA fault handling")
 > Cc: <stable@vger.kernel.org>
 > Signed-off-by: Zi Yan <ziy@nvidia.com>
 > ---
