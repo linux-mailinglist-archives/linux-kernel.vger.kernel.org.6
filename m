@@ -1,263 +1,577 @@
-Return-Path: <linux-kernel+bounces-280780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88CD394CF12
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:00:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090B994CF23
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC5661C21BE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 283FC1C21EB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BCC1922FF;
-	Fri,  9 Aug 2024 11:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="lHEccI9a"
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9CD192B62
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD19192B73;
+	Fri,  9 Aug 2024 11:00:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C3B18B488;
+	Fri,  9 Aug 2024 11:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723201205; cv=none; b=UrjSdhBescF2TkGruS7+MdqOaLoDDAD6DURVeeShFF9Wp1gbdNRBaSIrpbpCOHkji5ICFRo2p+IQMP9w+JEmTc90hkWVWrtPkbugivxUoFVJ1DlfWc46mxjvvOsGRCrIrDAXdXx66aFuziukYtJuATVuNDXooZyeEgZtamtOhr4=
+	t=1723201242; cv=none; b=dhokzZW7YxZIJQuCprtIJKZdKyE/mX7rIkkd9oxlPn+WRvs8YUgZFTKzzHIlQlEbX5d7JJG7EBd1LGBA22DhZMJcS8VOgOM4vbpqXCOBIYXxqH6l3ROSnNyBr1GOm97aoYmgBFZ+mHHw7bOXLSaAKq9jckix5ZpgFs1j0A17oFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723201205; c=relaxed/simple;
-	bh=Mf1sRCEypY9swIJ/AxUm/AxwcP1XfSY3IlRzU1OxLV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gkxpo/6iZTiLfp2T6WWL6LgUU3WWiX5/relwAmfzxGGJuZmePjuztzO51OgRVCJVYUoMnw+8YilEhjfAWXRE2xu0vE80ToQdqEcXOO3uRh6uNKm+qwwXAH5YOxq8qkdZ8wBnc6NAvHGMFJB0CMZ8V7n+p/rtk2tL9WPiEyLWggE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=lHEccI9a; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WgLXS5MvSzWM9;
-	Fri,  9 Aug 2024 12:59:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723201192;
-	bh=I6Na9DO30UMwkNlX8r1d0MAAf/0FuC7McCKgzMSCsbA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lHEccI9aOlnwNP2OTuk2YKx+ott5FJo2ml+hOL4F20IWHuIOlMBQJUkNpWO8ZhYfW
-	 dCFa0uvZwr3C6UP+ivzIXFdFY2jTwAowHu+R5xGZWhncc92CWWO7XEO8hBLp2Q6Y2z
-	 sbqwZx+6NzJboqgQDSq8pZU9E5W0g+QkeAV0jPgw=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WgLXR4NmWz41B;
-	Fri,  9 Aug 2024 12:59:51 +0200 (CEST)
-Date: Fri, 9 Aug 2024 12:59:44 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jann Horn <jannh@google.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>, outreachy@lists.linux.dev, 
-	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
-Message-ID: <20240809.eejeekoo4Quo@digikod.net>
-References: <cover.1722966592.git.fahimitahera@gmail.com>
- <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net>
- <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
- <20240808.kaiyaeZoo1ha@digikod.net>
- <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
+	s=arc-20240116; t=1723201242; c=relaxed/simple;
+	bh=e96X2r2SQTGxQ3lwGoeE+zYNPolTjQCZrlVQsCIjyA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A3OrWPKanvi7z3Oy7cB3UFpQMaHDr+da0d5R5Kio8HIB9HE/g9JKyH7GBUuq4MEHHaG3MH+mWml9NE2+UIff+UjU1QJv++vd+Zamewpk05TAFuj64c/9spqTL4v88dGscQb72cNOHQq/AKoAkCNgQlAkcBgA7xw5u/eYq4/WahQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A2E613D5;
+	Fri,  9 Aug 2024 04:01:05 -0700 (PDT)
+Received: from [10.57.69.28] (unknown [10.57.69.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CDE413F71E;
+	Fri,  9 Aug 2024 04:00:36 -0700 (PDT)
+Message-ID: <db875eb9-9000-4e05-b955-866acda2f6a6@arm.com>
+Date: Fri, 9 Aug 2024 12:00:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] coresight: Add source filtering for multi-port
+ output
+Content-Language: en-GB
+To: Tao Zhang <quic_taozha@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20240711081750.21792-1-quic_taozha@quicinc.com>
+ <20240711081750.21792-3-quic_taozha@quicinc.com>
+ <d63cdd7e-69db-4fc4-b98a-d4555a843e05@arm.com>
+ <103157b0-976c-4e60-97fa-49eb713b7982@quicinc.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <103157b0-976c-4e60-97fa-49eb713b7982@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Thu, Aug 08, 2024 at 04:42:23PM +0200, Jann Horn wrote:
-> On Thu, Aug 8, 2024 at 4:09 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Thu, Aug 08, 2024 at 03:10:54AM +0200, Jann Horn wrote:
-> > > On Thu, Aug 8, 2024 at 1:36 AM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> > > > On Wed, Aug 07, 2024 at 08:16:47PM +0200, Mickaël Salaün wrote:
-> > > > > On Tue, Aug 06, 2024 at 11:55:27PM +0200, Jann Horn wrote:
-> > > > > > On Tue, Aug 6, 2024 at 8:56 PM Jann Horn <jannh@google.com> wrote:
-> > > > > > > On Tue, Aug 6, 2024 at 8:11 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> > > > > > > > Currently, a sandbox process is not restricted to send a signal
-> > > > > > > > (e.g. SIGKILL) to a process outside of the sandbox environment.
-> > > > > > > > Ability to sending a signal for a sandboxed process should be
-> > > > > > > > scoped the same way abstract unix sockets are scoped. Therefore,
-> > > > > > > > we extend "scoped" field in a ruleset with
-> > > > > > > > "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset will deny
-> > > > > > > > sending any signal from within a sandbox process to its
-> > > > > > > > parent(i.e. any parent sandbox or non-sandboxed procsses).
-> > > > > > [...]
-> > > > > > > > +       if (is_scoped)
-> > > > > > > > +               return 0;
-> > > > > > > > +
-> > > > > > > > +       return -EPERM;
-> > > > > > > > +}
-> > > > > > > > +
-> > > > > > > > +static int hook_file_send_sigiotask(struct task_struct *tsk,
-> > > > > > > > +                                   struct fown_struct *fown, int signum)
-> > > > >
-> > > > > I was wondering if we should handle this case, but I guess it makes
-> > > > > sense to have a consistent policy for all kind of user-triggerable
-> > > > > signals.
-> > > > >
-> > > > > > > > +{
-> > > > > > > > +       bool is_scoped;
-> > > > > > > > +       const struct landlock_ruleset *dom, *target_dom;
-> > > > > > > > +       struct task_struct *result = get_pid_task(fown->pid, fown->pid_type);
-> > > > > > >
-> > > > > > > I'm not an expert on how the fowner stuff works, but I think this will
-> > > > > > > probably give you "result = NULL" if the file owner PID has already
-> > > > > > > exited, and then the following landlock_get_task_domain() would
-> > > > > > > probably crash? But I'm not entirely sure about how this works.
-> > > > > > >
-> > > > > > > I think the intended way to use this hook would be to instead use the
-> > > > > > > "file_set_fowner" hook to record the owning domain (though the setup
-> > > > > > > for that is going to be kind of a pain...), see the Smack and SELinux
-> > > > > > > definitions of that hook. Or alternatively maybe it would be even
-> > > > > > > nicer to change the fown_struct to record a cred* instead of a uid and
-> > > > > > > euid and then use the domain from those credentials for this hook...
-> > > > > > > I'm not sure which of those would be easier.
-> > > > > >
-> > > > > > (For what it's worth, I think the first option would probably be
-> > > > > > easier to implement and ship for now, since you can basically copy
-> > > > > > what Smack and SELinux are already doing in their implementations of
-> > > > > > these hooks. I think the second option would theoretically result in
-> > > > > > nicer code, but it might require a bit more work, and you'd have to
-> > > > > > include the maintainers of the file locking code in the review of such
-> > > > > > refactoring and have them approve those changes. So if you want to get
-> > > > > > this patchset into the kernel quickly, the first option might be
-> > > > > > better for now?)
-> > > > > >
-> > > > >
-> > > > > I agree, let's extend landlock_file_security with a new "fown" pointer
-> > > > > to a Landlock domain. We'll need to call landlock_get_ruleset() in
-> > > > > hook_file_send_sigiotask(), and landlock_put_ruleset() in a new
-> > > > > hook_file_free_security().
-> > > > I think we should add a new hook (hook_file_set_owner()) to initialize
-> > > > the "fown" pointer and call landlock_get_ruleset() in that?
-> > >
-> > > Yeah. Initialize the pointer in the file_set_fowner hook, and read the
-> > > pointer in the file_send_sigiotask hook.
-> > >
-> > > Note that in the file_set_fowner hook, you'll probably need to use
-> > > both landlock_get_ruleset() (to take a reference on the ruleset you're
-> > > storing in the fown pointer) and landlock_put_ruleset() (to drop the
-> > > reference to the ruleset that the fown pointer was pointing to
-> > > before). And you'll need to use some kind of lock to protect the fown
-> > > pointer - either by adding an appropriate lock next to your fown
-> > > pointer or by using some appropriate existing lock in "struct file".
-> > > Probably it's cleanest to have your own lock for this? (This lock will
-> > > have to be something like a spinlock, not a mutex, since you need to
-> > > be able to acquire it in the file_set_fowner hook, which runs inside
-> > > an RCU read-side critical section, where sleeping is forbidden -
-> > > acquiring a mutex can sleep and therefore is forbidden in this
-> > > context, acquiring a spinlock can't sleep.)
-> >
-> > Yes, I think this should work for file_set_fowner:
-> >
-> > struct landlock_ruleset *prev_dom, *new_dom;
-> >
-> > new_dom = landlock_get_current_domain();
-> > landlock_get_ruleset(new_dom);
-> >
-> > /* Cf. f_modown() */
-> > write_lock_irq(&filp->f_owner.lock);
-> > prev_dom = rcu_replace_pointer(&landlock_file(file)->fown_domain,
-> >         new_dom, lockdep_is_held(&filp->f_owner.lock));
-> > write_unlock_irq(&filp->f_owner.lock);
-> >
-> > landlock_put_ruleset_rcu(prev_dom);
-> >
-> >
-> > With landlock_put_ruleset_rcu() define with this:
-> >
-> > diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> > index a93bdbf52fff..897116205520 100644
-> > --- a/security/landlock/ruleset.c
-> > +++ b/security/landlock/ruleset.c
-> > @@ -524,6 +524,20 @@ void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset)
-> >         }
-> >  }
-> >
-> > +static void free_ruleset_rcu(struct rcu_head *const head)
-> > +{
-> > +       struct landlock_ruleset *ruleset;
-> > +
-> > +       ruleset = container_of(head, struct landlock_ruleset, rcu);
-> > +       free_ruleset(ruleset);
-> > +}
+On 09/08/2024 11:21, Tao Zhang wrote:
 > 
-> free_ruleset() can block but RCU callbacks aren't allowed to block,
-> that's why landlock_put_ruleset_deferred() exists.
+> On 7/11/2024 9:05 PM, Suzuki K Poulose wrote:
+>> On 11/07/2024 09:17, Tao Zhang wrote:
+>>> In order to enable the output ports of multi-port output devices,
+>>
+>> This has nothing to do with multi-port. You wanted to pain the picture
+>> of a multi-port device, while the reality is different.
+>>
+>>> such as static replicator, to correspond to designated sources,
+>>> a mechanism for filtering data sources is introduced for the
+>>> output ports.
+>>>
+>>> The specified source will be marked like below in the Devicetree.
+>>> test-replicator {
+>>>      ... ... ... ...
+>>>      out-ports {
+>>>          ... ... ... ...
+>>>          port@0 {
+>>>              reg = <0>;
+>>>              xxx: endpoint {
+>>>                  remote-endpoint = <&xxx>;
+>>>                  filter_src = <&xxx>; <-- To specify the source to
+>>>              };                           be filtered out here.
+>>>          };
+>>>
+>>>          port@1 {
+>>>              reg = <1>;
+>>>              yyy: endpoint {
+>>>                  remote-endpoint = <&yyy>;
+>>>                  filter_src = <&yyy>; <-- To specify the source to
+>>>              };                           be filtered out here.
+>>>          };
+>>>      };
+>>> };
+>>>
+>>> Then driver will find the expected source marked in the Devicetree, and
+>>> save it to the coresight path. When the function needs to filter the
+>>> source, it could obtain it from coresight path parameter. Finally,
+>>> the output port knows which source it corresponds to, and it also knows
+>>> which input port it corresponds to.
+>>
+>> Minor nit: I think the commit description is full of "How" you are 
+>> doing something, while it must rather be: "What and Why?"
+>>
+>> I would prefer something like :
+>>
+>> Subject: coresight: Add support for trace filtering by source
+>>
+>> Some replicators have hard coded filtering of "trace" data, based on the
+>> source device. This is different from the trace filtering based on
+>> TraceID, available in the standard programmable replicators. e.g.,
+>> Qualcomm replicators have filtering based on custom trace protocol
+>> format and is not programmable.
+>>
+>> The source device could be connected to the replicator via intermediate
+>> components (e.g., a funnel). Thus we need platform information from
+>> the firmware tables to decide the source device corresponding to a
+>> given output port from the replicator. Given this affects "trace
+>> path building" and traversing the path back from the sink to source,
+>> add the concept of "filtering by source" to the generic coresight
+>> connection.
+>>
+>>
+>>>
+>>> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+>>> ---
+>>>   drivers/hwtracing/coresight/coresight-core.c  | 125 ++++++++++++++++--
+>>>   .../hwtracing/coresight/coresight-platform.c  |  18 +++
+>>>   include/linux/coresight.h                     |   5 +
+>>>   3 files changed, 135 insertions(+), 13 deletions(-)
+>>>
+>>> diff --git a/drivers/hwtracing/coresight/coresight-core.c 
+>>> b/drivers/hwtracing/coresight/coresight-core.c
+>>> index 9fc6f6b863e0..3f02a31b9328 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-core.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-core.c
+>>> @@ -75,15 +75,60 @@ struct coresight_device 
+>>> *coresight_get_percpu_sink(int cpu)
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(coresight_get_percpu_sink);
+>>>   +static struct coresight_device *coresight_get_source(struct 
+>>> list_head *path)
+>>> +{
+>>> +    struct coresight_device *csdev;
+>>> +
+>>> +    if (!path)
+>>> +        return NULL;
+>>> +
+>>> +    csdev = list_first_entry(path, struct coresight_node, link)->csdev;
+>>> +    if (csdev->type != CORESIGHT_DEV_TYPE_SOURCE)
+>>> +        return NULL;
+>>> +
+>>> +    return csdev;
+>>> +}
+>>> +
+>>
+>> Why is this still here ? Didn't agree to remove this and pass the source
+>> directly ?
+> 
+> I would like to discuss with you about passing the "source" directly. 
+> Since the APIs "coresight_enable_path" and
+> 
+> "coresight_disable_path" are called in coresight-etm-perf.c as well. If 
+> passing the "source" to them directly, I need to
+> 
+> modify the code in coresight-etm-perf.c as well. In order to reduce the 
+> modification, how about if I keep using
+> 
+> "coresight_get_source" in "coresight_enable_path" and 
+> "coresight_disable_path" to get "source" for filtering
+> 
+> the source in "coresight_block_source"?
 
-Yes, but landlock_put_ruleset_deferred() doesn't wait for RCU read-side
-critical sections.
+Yes, please retain the helper. The above comment was based on my
+"bad memory" of disable_path_from() was called with a partial path.
+
+No need to change the function. Once again, apologies for the confusion.
+
+Suzuki
+
+
 
 > 
-> > +
-> > +void landlock_put_ruleset_rcu(struct landlock_ruleset *const ruleset)
-> > +{
-> > +       if (ruleset && refcount_dec_and_test(&ruleset->usage))
-> > +               call_rcu(&ruleset->rcu, free_ruleset_rcu);
-> > +}
 > 
-> No, this pattern of combining refcounting and RCU doesn't work.
+> Best,
 > 
-> One legal pattern is:
-> *The entire object* is subject to RCU; any refcount decrement that
-> drops the refcount to 0 does call_rcu().
-> (This is the usual RCU refcounting pattern in the kernel.)
+> Tao
 > 
-> Another legal pattern is:
-> One particular *reference* is subject to RCU; when dropping this
-> reference, *the refcount decrement is delayed with call_rcu()*.
-> (This is basically the RCU pattern used for stuff like the reference
-> from "struct pid" to "struct task_struct".)
-> 
-> But you can't use call_rcu() depending on whether the last dropped
-> reference happened to be a reference that required RCU; what if the
-> refcount is 2, then you first call landlock_put_ruleset_rcu() which
-> decrements the refcount to 1, and immediately afterwards you call
-> landlock_put_ruleset() which drops the refcount to 0 and frees the
-> object without waiting for an RCU grace period? Like so:
-> 
-> thread A         thread B
-> ========         ========
-> rcu_read_lock()
-> ruleset = rcu_dereference(...->fown_domain)
->                  ruleset = rcu_replace_pointer(...->fown_domain, new_dom, ...)
->                  landlock_put_ruleset_rcu(ruleset)
->                  landlock_put_ruleset(ruleset)
->                    free_ruleset(ruleset)
->                      kfree(ruleset)
-> access ruleset [UAF]
-> rcu_read_unlock()
+>>
+>>> +/**
+>>> + * coresight_source_filter - checks whether the connection matches 
+>>> the source
+>>> + * of path if connection is binded to specific source.
+>>> + * @trace_source: The source device of the trace path
+>>> + * @conn:      The connection of one outport
+>>> + *
+>>> + * Return zero if the connection doesn't have a source binded or 
+>>> source of the
+>>> + * path matches the source binds to connection.
+>>> + */
+>>> +static int coresight_source_filter(struct coresight_device 
+>>> *trace_source,
+>>> +            struct coresight_connection *conn)
+>>
+>> This name is a bit confusing. It doesn't tell you, whether it
+>> allows the trace or blocks it.
+>>
+>>> +{
+>>> +    int ret = 0;
+>>> +
+>>> +    if (!conn->filter_src_dev)
+>>> +        return ret;
+>>
+>> This is not the correct check. It must be :
+>>
+>> if (!conn->filter_src_fwnode)
+>>
+>> Because, the device could have disappeared (or not appeared yet). 
+>> e.g., (TPDM) driver module unloaded/not - loaded.
+>>
+>>> +
+>>> +    if (!trace_source)
+>>
+>> Is that possible ?
+>>
+>>> +        return -1;
+>>> +
+>>> +    if (conn->filter_src_dev == trace_source)
+>>> +        ret = 0;
+>>> +    else
+>>> +        ret = -1;
+>>
+>> Couldn't this simply be :
+>>
+>> /*
+>>  * Returns true, if the trace path is not possible through @conn
+>>  * for trace originating from @src
+>>  */
+>> static bool coresight_blocks_source(src, conn)
+>> {
+>>     return conn->filter_src_fwnode &&
+>>         (conn->filter_src_dev != src);
+>> }
+>>
+>>> +
+>>> +    return ret;
+>>> +}
+>>> +
+>>>   static struct coresight_connection *
+>>>   coresight_find_out_connection(struct coresight_device *src_dev,
+>>> -                  struct coresight_device *dest_dev)
+>>> +                  struct coresight_device *dest_dev,
+>>> +                  struct coresight_device *trace_source)
+>>
+>> Please could you rename :
+>>
+>>     src_dev => csdev
+>>     dest_dev => out_dev
+>>     trace_source => trace_src ?
+>>
+>> Having src_dev and trace_source in the same list is confusing.
+>>
+>>>   {
+>>>       int i;
+>>>       struct coresight_connection *conn;
+>>>         for (i = 0; i < src_dev->pdata->nr_outconns; i++) {
+>>>           conn = src_dev->pdata->out_conns[i];
+>>> +        if (coresight_source_filter(trace_source, conn))
+>>
+>>         if (coresight_blocks_source(trace_source, conn))
+>>             continue;
+>>
+>>> +            continue;
+>>>           if (conn->dest_dev == dest_dev)
+>>>               return conn;
+>>>       }
+>>> @@ -251,7 +296,8 @@ static void coresight_disable_sink(struct 
+>>> coresight_device *csdev)
+>>>     static int coresight_enable_link(struct coresight_device *csdev,
+>>>                    struct coresight_device *parent,
+>>> -                 struct coresight_device *child)
+>>> +                 struct coresight_device *child,
+>>> +                 struct coresight_device *trace_source)
+>>>   {
+>>>       int link_subtype;
+>>>       struct coresight_connection *inconn, *outconn;
+>>> @@ -259,8 +305,8 @@ static int coresight_enable_link(struct 
+>>> coresight_device *csdev,
+>>>       if (!parent || !child)
+>>>           return -EINVAL;
+>>>   -    inconn = coresight_find_out_connection(parent, csdev);
+>>> -    outconn = coresight_find_out_connection(csdev, child);
+>>> +    inconn = coresight_find_out_connection(parent, csdev, 
+>>> trace_source);
+>>> +    outconn = coresight_find_out_connection(csdev, child, 
+>>> trace_source);
+>>>       link_subtype = csdev->subtype.link_subtype;
+>>>         if (link_subtype == CORESIGHT_DEV_SUBTYPE_LINK_MERG && 
+>>> IS_ERR(inconn))
+>>> @@ -273,15 +319,16 @@ static int coresight_enable_link(struct 
+>>> coresight_device *csdev,
+>>>     static void coresight_disable_link(struct coresight_device *csdev,
+>>>                      struct coresight_device *parent,
+>>> -                   struct coresight_device *child)
+>>> +                   struct coresight_device *child,
+>>> +                   struct coresight_device *trace_source)
+>>>   {
+>>>       struct coresight_connection *inconn, *outconn;
+>>>         if (!parent || !child)
+>>>           return;
+>>>   -    inconn = coresight_find_out_connection(parent, csdev);
+>>> -    outconn = coresight_find_out_connection(csdev, child);
+>>> +    inconn = coresight_find_out_connection(parent, csdev, 
+>>> trace_source);
+>>> +    outconn = coresight_find_out_connection(csdev, child, 
+>>> trace_source);
+>>>         link_ops(csdev)->disable(csdev, inconn, outconn);
+>>>   }
+>>> @@ -341,6 +388,9 @@ static void coresight_disable_path_from(struct 
+>>> list_head *path,
+>>>   {
+>>>       u32 type;
+>>>       struct coresight_device *csdev, *parent, *child;
+>>> +    struct coresight_device *source;
+>>> +
+>>> +    source = coresight_get_source(path);
+>>
+>> Grr! This must come from the "caller of the 
+>> coresight_disable_path_from()", which was my comment. Please go back
+>> and double check the comment on previous version.
+>>
+>>
+>>>         if (!nd)
+>>>           nd = list_first_entry(path, struct coresight_node, link);
+>>> @@ -375,7 +425,7 @@ static void coresight_disable_path_from(struct 
+>>> list_head *path,
+>>>           case CORESIGHT_DEV_TYPE_LINK:
+>>>               parent = list_prev_entry(nd, link)->csdev;
+>>>               child = list_next_entry(nd, link)->csdev;
+>>> -            coresight_disable_link(csdev, parent, child);
+>>> +            coresight_disable_link(csdev, parent, child, source);
+>>>               break;
+>>>           default:
+>>>               break;
+>>> @@ -418,6 +468,9 @@ int coresight_enable_path(struct list_head *path, 
+>>> enum cs_mode mode,
+>>>       u32 type;
+>>>       struct coresight_node *nd;
+>>>       struct coresight_device *csdev, *parent, *child;
+>>> +    struct coresight_device *source;
+>>> +
+>>> +    source = coresight_get_source(path);
+>>>         list_for_each_entry_reverse(nd, path, link) {
+>>>           csdev = nd->csdev;
+>>> @@ -456,7 +509,7 @@ int coresight_enable_path(struct list_head *path, 
+>>> enum cs_mode mode,
+>>>           case CORESIGHT_DEV_TYPE_LINK:
+>>>               parent = list_prev_entry(nd, link)->csdev;
+>>>               child = list_next_entry(nd, link)->csdev;
+>>> -            ret = coresight_enable_link(csdev, parent, child);
+>>> +            ret = coresight_enable_link(csdev, parent, child, source);
+>>>               if (ret)
+>>>                   goto err;
+>>>               break;
+>>> @@ -619,6 +672,7 @@ static void coresight_drop_device(struct 
+>>> coresight_device *csdev)
+>>>    * @csdev:    The device to start from.
+>>>    * @sink:    The final sink we want in this path.
+>>>    * @path:    The list to add devices to.
+>>> + * @trace_source: The trace source device of the path.
+>>>    *
+>>>    * The tree of Coresight device is traversed until @sink is found.
+>>>    * From there the sink is added to the list along with all the 
+>>> devices that led
+>>> @@ -627,7 +681,8 @@ static void coresight_drop_device(struct 
+>>> coresight_device *csdev)
+>>>    */
+>>>   static int _coresight_build_path(struct coresight_device *csdev,
+>>>                    struct coresight_device *sink,
+>>> -                 struct list_head *path)
+>>> +                 struct list_head *path,
+>>> +                 struct coresight_device *trace_source)
+>>>   {
+>>>       int i, ret;
+>>>       bool found = false;
+>>> @@ -639,7 +694,7 @@ static int _coresight_build_path(struct 
+>>> coresight_device *csdev,
+>>>         if (coresight_is_percpu_source(csdev) && 
+>>> coresight_is_percpu_sink(sink) &&
+>>>           sink == per_cpu(csdev_sink, 
+>>> source_ops(csdev)->cpu_id(csdev))) {
+>>> -        if (_coresight_build_path(sink, sink, path) == 0) {
+>>> +        if (_coresight_build_path(sink, sink, path, trace_source) == 
+>>> 0) {
+>>>               found = true;
+>>>               goto out;
+>>>           }
+>>> @@ -650,8 +705,13 @@ static int _coresight_build_path(struct 
+>>> coresight_device *csdev,
+>>>           struct coresight_device *child_dev;
+>>>             child_dev = csdev->pdata->out_conns[i]->dest_dev;
+>>> +
+>>> +        if (csdev->pdata->out_conns[i]->filter_src_dev
+>>> +            && (csdev->pdata->out_conns[i]->filter_src_dev != 
+>>> trace_source))
+>>> +            continue;
+>>> +
+>>>           if (child_dev &&
+>>> -            _coresight_build_path(child_dev, sink, path) == 0) {
+>>> +            _coresight_build_path(child_dev, sink, path, 
+>>> trace_source) == 0) {
+>>>               found = true;
+>>>               break;
+>>>           }
+>>> @@ -696,7 +756,7 @@ struct list_head *coresight_build_path(struct 
+>>> coresight_device *source,
+>>>         INIT_LIST_HEAD(path);
+>>>   -    rc = _coresight_build_path(source, sink, path);
+>>> +    rc = _coresight_build_path(source, sink, path, source);
+>>>       if (rc) {
+>>>           kfree(path);
+>>>           return ERR_PTR(rc);
+>>> @@ -957,6 +1017,14 @@ static int coresight_orphan_match(struct device 
+>>> *dev, void *data)
+>>>               /* This component still has an orphan */
+>>>               still_orphan = true;
+>>>           }
+>>
+>>
+>>> +        if ((conn->filter_src_fwnode) && dst_csdev
+>>> +            && (conn->filter_src_fwnode == dst_csdev->dev.fwnode)) {
+>>> +            conn->filter_src_dev = dst_csdev;
+>>> +            if (conn->filter_src_dev->type
+>>> +                != CORESIGHT_DEV_TYPE_SOURCE)
+>>> +                dev_warn(&conn->filter_src_dev->dev,
+>>> +                  "Filter source is not a source device\n");
+>>> +        }
+>>
+>> Have you tested your code with the following order :
+>>
+>> 1) Build everything as module
+>> 2) Load the replicator driver.
+>> 3) Load the TPDM driver
+>>
+>> And are you able to get the trace working ? I suspect it doesn't work. 
+>> The csdev->orphan must be used to track if there is any missing link
+>> with unresolved "filter_src_dev".
+>>
+>>
+>>>       }
+>>>         src_csdev->orphan = still_orphan;
+>>> @@ -974,6 +1042,30 @@ static int coresight_fixup_orphan_conns(struct 
+>>> coresight_device *csdev)
+>>>                csdev, coresight_orphan_match);
+>>>   }
+>>>   +/* reset_filter_src - Reset the filter source if the source is 
+>>> being removed */
+>>> +static int reset_filter_src(struct coresight_device *trace_source,
+>>> +                struct coresight_connection *conn)
+>>> +{
+>>> +    int i;
+>>> +    int ret = -1;
+>>> +    struct coresight_device *csdev;
+>>> +    struct coresight_connection *output_conn;
+>>
+>> I don't think this is sufficient. I would rather walk through the 
+>> entire coresight bus and fixup the filter_src_dev, rather than 
+>> traversing the
+>> paths. e.g., one of the devices in the path could have been removed.
+>> See coresight_clear_default_sink() for e.g. You should have something
+>> similar :
+>>
+>> coresight_clear_filter_source();
+>>
+>>
+>> Suzuki
+>>
+>>
+>>
+>>> +
+>>> +    csdev = conn->dest_dev;
+>>> +    for (i = 0; i < csdev->pdata->nr_outconns; i++) {
+>>> +        output_conn = csdev->pdata->out_conns[i];
+>>> +        if (output_conn->filter_src_dev
+>>> +            && (output_conn->filter_src_dev == trace_source)) {
+>>> +            output_conn->filter_src_dev = NULL;
+>>> +            return 0;
+>>> +        }
+>>> +        ret = reset_filter_src(trace_source, output_conn);
+>>> +        if (!ret)
+>>> +            return ret;
+>>> +    }
+>>> +    return ret;
+>>> +}
+>>> +
+>>>   /* coresight_remove_conns - Remove other device's references to 
+>>> this device */
+>>>   static void coresight_remove_conns(struct coresight_device *csdev)
+>>>   {
+>>> @@ -986,6 +1078,13 @@ static void coresight_remove_conns(struct 
+>>> coresight_device *csdev)
+>>>        */
+>>
+>>
+>>>       for (i = 0; i < csdev->pdata->nr_outconns; i++) {
+>>>           conn = csdev->pdata->out_conns[i];
+>>> +        if (csdev->type == CORESIGHT_DEV_TYPE_SOURCE)
+>>> +            reset_filter_src(csdev, conn);
+>>> +        if (conn->filter_src_fwnode) {
+>>> +            conn->filter_src_dev = NULL;
+>>> +            conn->filter_src_fwnode = NULL;
+>>> +        }
+>>> +
+>>>           if (!conn->dest_dev)
+>>>               continue;
+>>>   diff --git a/drivers/hwtracing/coresight/coresight-platform.c 
+>>> b/drivers/hwtracing/coresight/coresight-platform.c
+>>> index 64e171eaad82..b3c3e2361d07 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-platform.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+>>> @@ -243,6 +243,24 @@ static int of_coresight_parse_endpoint(struct 
+>>> device *dev,
+>>>           conn.dest_fwnode = fwnode_handle_get(rdev_fwnode);
+>>>           conn.dest_port = rendpoint.port;
+>>>   +        /*
+>>> +         * Get the firmware node of the filter source through the
+>>> +         * reference. This could be used to filter the source in
+>>> +         * building path.
+>>> +         */
+>>> +        conn.filter_src_fwnode =
+>>> +            fwnode_find_reference(&ep->fwnode, "filter-src", 0);
+>>> +        if (IS_ERR(conn.filter_src_fwnode))
+>>> +            conn.filter_src_fwnode = NULL;
+>>> +        else {
+>>> +            conn.filter_src_dev =
+>>> + coresight_find_csdev_by_fwnode(conn.filter_src_fwnode);
+>>> +            if (conn.filter_src_dev && (conn.filter_src_dev->type
+>>> +                != CORESIGHT_DEV_TYPE_SOURCE))
+>>> +                dev_warn(&conn.filter_src_dev->dev,
+>>> +                  "Filter source %s is not a source device\n");
+>>> +        }
+>>> +
+>>>           new_conn = coresight_add_out_conn(dev, pdata, &conn);
+>>>           if (IS_ERR_VALUE(new_conn)) {
+>>>               fwnode_handle_put(conn.dest_fwnode);
+>>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+>>> index f09ace92176e..91a689b4514b 100644
+>>> --- a/include/linux/coresight.h
+>>> +++ b/include/linux/coresight.h
+>>> @@ -172,6 +172,9 @@ struct coresight_desc {
+>>>    * @dest_dev:    a @coresight_device representation of the component
+>>>           connected to @src_port. NULL until the device is created
+>>>    * @link: Representation of the connection as a sysfs link.
+>>> + * @filter_src_fwnode: filter source component's fwnode handle.
+>>> + * @filter_src_dev: a @coresight_device representation of the 
+>>> component that
+>>> +        needs to be filtered.
+>>>    *
+>>>    * The full connection structure looks like this, where in_conns store
+>>>    * references to same connection as the source device's out_conns.
+>>> @@ -200,6 +203,8 @@ struct coresight_connection {
+>>>       struct coresight_device *dest_dev;
+>>>       struct coresight_sysfs_link *link;
+>>>       struct coresight_device *src_dev;
+>>> +    struct fwnode_handle *filter_src_fwnode;
+>>> +    struct coresight_device *filter_src_dev;
+>>>       atomic_t src_refcnt;
+>>>       atomic_t dest_refcnt;
+>>>   };
+>>
 
-Indeed
-
-> 
-> So if you want to use RCU lifetime for this, I think you'll have to
-> turn landlock_put_ruleset() and landlock_put_ruleset_deferred() into
-> one common function that always, when reaching refcount 0, schedules
-> an RCU callback which then schedules a work_struct which then does
-> free_ruleset().
-> 
-> I think that would be a little ugly, and it would look nicer to just
-> use normal locking in the file_send_sigiotask hook?
-
-I don't see how we can do that without delaying the free_ruleset() call
-to after the RCU read-side critical section in f_setown().
-
-What about calling refcount_dec_and_test() in free_ruleset_rcu()?  That
-would almost always queue this call but it looks safe.
-
-An alternative might be to call synchronize_rcu() in free_ruleset(), but
-it's a big ugly too.
-
-BTW, I don't understand why neither SELinux nor Smack use (explicit)
-atomic operations nor lock.  And it looks weird that
-security_file_set_fowner() isn't called by f_modown() with the same
-locking to avoid races.
 
