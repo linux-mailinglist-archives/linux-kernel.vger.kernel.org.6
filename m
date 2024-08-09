@@ -1,164 +1,96 @@
-Return-Path: <linux-kernel+bounces-280719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA9894CDF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:01:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FA994CDF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1417C1F231BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:01:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 501BE28421C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9EF1922FF;
-	Fri,  9 Aug 2024 09:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAA3192B67;
+	Fri,  9 Aug 2024 09:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EjlOaKFD"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxrlU6WM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CF01946BC;
-	Fri,  9 Aug 2024 09:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B57F175D2C;
+	Fri,  9 Aug 2024 09:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723196958; cv=none; b=D3Lz9aKsvtOpZdIddKSvPoRMIC2/NCrvu9YVvHcGB2jyjS5jsPjdiKCv0zFZpR5WuJ9PgQdG7HWzDfuzjHWB0Lau7CE++pQ65NdzoQiciJ2ebHFMgNKsW5GedMoNPshB8TedsYM+Kvrn4Tn7dj+vFaIzvJupvjFR+YqlH5u6Gkc=
+	t=1723196996; cv=none; b=W5FvDdwB0MBzZFtGxVMdbWwlx5H0XQbYRn0dbIImPy1ODZRU9Rf8w7CVpPRM5lvyylthBndcYo9pTHIo9/h6QMXdF9ssoM3lAuuZj6GN4pAgDUh+Y3XPKM2q8UYhg40kpL4Gfx2IA/tWscXBZXRfYW/B3+SNbt6Uiw84dV4RpiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723196958; c=relaxed/simple;
-	bh=m3nNUq1Sj4RVBOMVUtGmILRYiTnZttmoSx8eySOiKoM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DMgX0jsTEpZHwpvTgrSZlenzX1ngTH9bxMJI421d+PuLjxOdSVyAAe1CzKDaLqy1jJNKUjAZSRw83cbQaXSVUnunsdvtXQsKhtM1bXtRNnokKBDrL5gs2OfuKNryAZNoKM4YlE30Pl/yaXK4KidaRTCQBuWmxZQinmFitOnEyNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EjlOaKFD; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4799n1TO020669;
-	Fri, 9 Aug 2024 04:49:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723196942;
-	bh=hY2Hom1U5rajQJIcxGTIqwywMIol0o2qmrQZlrCSEMs=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=EjlOaKFDnc5wx/aswCwa2KmjMyJtAOLp7TpGelwhj9BYarFZcSx5NmKTFaWGTRLf2
-	 wHMj9Jwj+JV5lSKgo7QVBWBNcFPKHwr4yrrsqA0gMRa9x7RpkhpkeB7An3k+LHGtsN
-	 RoGScAp4cPaqoGPJlcJkCUox4bJGHD4xhgKjyRYM=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4799n1PQ019962
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 9 Aug 2024 04:49:01 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 9
- Aug 2024 04:49:01 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 9 Aug 2024 04:49:01 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4799n0Wr073307;
-	Fri, 9 Aug 2024 04:49:01 -0500
-Date: Fri, 9 Aug 2024 15:19:00 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len
- Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad
- Dybcio <konrad.dybcio@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Bryan O'Donoghue"
-	<bryan.odonoghue@linaro.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] PM: domains: add device managed version of
- dev_pm_domain_attach|detach_list()
-Message-ID: <20240809094900.j5c2q6gm72ycheeu@lcpd911>
-References: <1723014947-15571-1-git-send-email-quic_dikshita@quicinc.com>
- <1723014947-15571-2-git-send-email-quic_dikshita@quicinc.com>
- <20240808104130.3lehlvkcprag2md6@lcpd911>
- <36de7f9c-701f-6650-468b-bf07453e2e21@quicinc.com>
- <9b852bed-0daf-634c-13c9-00c6b8dd327a@quicinc.com>
- <20240809041913.frh4ooo25gfakwia@lcpd911>
- <b16a25d0-3f39-3231-bc80-d79739dc0168@quicinc.com>
+	s=arc-20240116; t=1723196996; c=relaxed/simple;
+	bh=km1bJkPPQGurldrwmYem5p7vDz5dgJsB7r0C5f9d1Tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HlPnbkDpGmRWmuXxkoS7yIW3VdtKfNXTgCeAKue9jQ+Bi2LOf5oFzclgSgboIjWiW8GOtLBu2jHOeVttiZl9APvEJ+/72LOfsM7eOEl7kScuwWlHpOJ5TZKMdlmhbxwL8W0BGedRce10lroHSPTT5UN1d2bOero2fH5p/wwtLLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxrlU6WM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03ECCC32782;
+	Fri,  9 Aug 2024 09:49:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723196995;
+	bh=km1bJkPPQGurldrwmYem5p7vDz5dgJsB7r0C5f9d1Tk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OxrlU6WMHEYz2Pz5cOJtAMv+PnUDWKPkTZK6CbbZlJ/Q7byyhkzqNnt5p8XUfI5lh
+	 UwPN3XYvFgRpl62UvqUFPXPYg/Rjmqf63vZjmYo8fK4g8MLRuZn/Z34SafSdKkEZXS
+	 zb78AODKXeEgw58BxRW7hBZYCKu57LXqSOqSvfB5/73wdkxdOawhgvy8oNjE14DXJs
+	 gewwpKHBZN8cOXbkxb5+SXfPXG9e9/Zr6lXSNIoQSUfzjvidEtt3Vmd9rnzBJne3XI
+	 F+nSpGFPu1nmTt7mlBVSAJh2rJ29PBhj+HUnTYLU7yc6iv6BXkpY5pI5dCaeLMli6x
+	 /FnFwtiEIs/JQ==
+Date: Fri, 9 Aug 2024 10:49:51 +0100
+From: Simon Horman <horms@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net] net: fs_enet: Fix warning due to wrong type
+Message-ID: <20240809094951.GI3075665@kernel.org>
+References: <ec67ea3a3bef7e58b8dc959f7c17d405af0d27e4.1723101144.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b16a25d0-3f39-3231-bc80-d79739dc0168@quicinc.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <ec67ea3a3bef7e58b8dc959f7c17d405af0d27e4.1723101144.git.christophe.leroy@csgroup.eu>
 
-Hi,
-
-On Aug 09, 2024 at 14:57:11 +0530, Dikshita Agarwal wrote:
+On Thu, Aug 08, 2024 at 09:16:48AM +0200, Christophe Leroy wrote:
+> Building fs_enet on powerpc e500 leads to following warning:
 > 
+>     CC      drivers/net/ethernet/freescale/fs_enet/mac-scc.o
+>   In file included from ./include/linux/build_bug.h:5,
+>                    from ./include/linux/container_of.h:5,
+>                    from ./include/linux/list.h:5,
+>                    from ./include/linux/module.h:12,
+>                    from drivers/net/ethernet/freescale/fs_enet/mac-scc.c:15:
+>   drivers/net/ethernet/freescale/fs_enet/mac-scc.c: In function 'allocate_bd':
+>   ./include/linux/err.h:28:49: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>      28 | #define IS_ERR_VALUE(x) unlikely((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
+>         |                                                 ^
+>   ./include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
+>      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+>         |                                             ^
+>   drivers/net/ethernet/freescale/fs_enet/mac-scc.c:138:13: note: in expansion of macro 'IS_ERR_VALUE'
+>     138 |         if (IS_ERR_VALUE(fep->ring_mem_addr))
+>         |             ^~~~~~~~~~~~
 > 
-> On 8/9/2024 9:49 AM, Dhruva Gole wrote:
-> > Hi,
-> > 
-> > On Aug 08, 2024 at 16:29:12 +0530, Dikshita Agarwal wrote:
-> >>
-> >>
-> >> On 8/8/2024 4:25 PM, Dikshita Agarwal wrote:
-> >>>
-> >>>
-> >>> On 8/8/2024 4:11 PM, Dhruva Gole wrote:
-> >>>> On Aug 07, 2024 at 12:45:46 +0530, Dikshita Agarwal wrote:
-> >>>>> Add the devres-enabled version of dev_pm_domain_attach|detach_list.
-> >>>>> If client drivers use devm_pm_domain_attach_list() to attach the
-> >>>>> PM domains, devm_pm_domain_detach_list() will be invoked implicitly
-> >>>>> during remove phase.
-> >>>>>
-> >>>>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> >>>>> ---
-> >>>>>  drivers/base/power/common.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
-> >>>>>  include/linux/pm_domain.h   | 13 +++++++++++++
-> >>>>>  2 files changed, 57 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
-> >>>>> index 327d168..729d6c2 100644
-> >>>>> --- a/drivers/base/power/common.c
-> >>>>> +++ b/drivers/base/power/common.c
-> >>>>> @@ -277,6 +277,50 @@ int dev_pm_domain_attach_list(struct device *dev,
-> >>>>>  EXPORT_SYMBOL_GPL(dev_pm_domain_attach_list);
-> >>>>>  
-> >>>>>  /**
-> >>>>> + * devm_pm_domain_detach_list - devres-enabled version of dev_pm_domain_detach_list.
-> >>>>> + * @_list: The list of PM domains to detach.
-> >>>>> + *
-> >>>>> + * This function reverse the actions from devm_pm_domain_attach_list().
-> >>>>> + * it will be invoked during the remove phase from drivers implicitly if driver
-> >>>>> + * uses devm_pm_domain_attach_list() to attach the PM domains.
-> >>>>> + */
-> >>>>> +void devm_pm_domain_detach_list(void *_list)
-> > 
-> > My problem is with the type of parameter used being void, why void?
-> > Why not be explicit about it and call it dev_pm_domain_list *list like
-> > the non-devres version of the API?
-> > 
-> devm_add_action_or_reset API expects the argument as void (*)(void *).
+> This is due to fep->ring_mem_addr not being a pointer but a DMA
+> address which is 64 bits on that platform while pointers are
+> 32 bits as this is a 32 bits platform with wider physical bus.
 > 
-> Below are code references following the same way:
-> https://elixir.bootlin.com/linux/v6.11-rc2/source/drivers/devfreq/devfreq.c#L1332
-> https://elixir.bootlin.com/linux/v6.11-rc2/source/drivers/clk/clk.c#L1033
+> However, using fep->ring_mem_addr is just wrong because
+> cpm_muram_alloc() returns an offset within the muram and not
+> a physical address directly. So use fpi->dpram_offset instead.
 > 
-> If I change the type of argument as you are suggesting, it will throw
-> compilation error.
-> "expected 'void (*)(void *)' but argument is of type 'void (*)(struct
-> dev_pm_domain_list *)'"
+> Fixes: 48257c4f168e ("Add fs_enet ethernet network driver, for several embedded platforms.")
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-Ah yes sorry I missed the devm_add_action_or_reset part. Thanks for clarifying!
-
-
--- 
-Best regards,
-Dhruva Gole <d-gole@ti.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
 
