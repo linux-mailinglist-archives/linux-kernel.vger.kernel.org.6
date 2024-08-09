@@ -1,59 +1,79 @@
-Return-Path: <linux-kernel+bounces-281133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E003594D376
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:28:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608C494D379
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57C7BB22254
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:28:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF636B226E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF22C198E71;
-	Fri,  9 Aug 2024 15:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C6A198A0F;
+	Fri,  9 Aug 2024 15:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sO0IxqGy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jO535wSV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9BB15B992;
-	Fri,  9 Aug 2024 15:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DF215B992;
+	Fri,  9 Aug 2024 15:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723217275; cv=none; b=ZEkqw/ms439yNIsHtHPp2Z14c4q1B5mqoH5T8O5k67IkcOV1htdQKBlxFB4s23aUhaewfMAEfuOGxdDPB1Up4VWtwXfsOLr82IwQxR20O6ziA37Ny4wUy/nvekSTCDVxWIzsOX6R5JYd74uFjih/JHK3plsg5jkRrIfBUj67tz4=
+	t=1723217339; cv=none; b=T/Hh2fSUqD3aQV+2a+f006XMHB+iCDIPT/7QpypFNFjjxr/ABQWc2CEmkG3CJzEweFaNe425ztV8FpzQJ+JU0WWNd4tDp582ukUszWuHNCa8TItsD4PRKSDWNtZ2E9/1EcFRMhJ+YIKSneEEub4u/exCWWIJe7e56X9YtPOs6JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723217275; c=relaxed/simple;
-	bh=78MTpby5wUdMPDJYFhMoXDD9VtwkON7pKOzZZuUVa8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LMUuhzR5Wck08h98Qcoa3LgSQCLYDDIgPYl80ZQnZ9H9/ZAFhKlZzpenTh7e4QxQH2rPeEQ/2pyyMrtKHvCJ/ejAOa7+/lhK0POY37OtcFWWb8An1LESi4SKrFp7qQyP8HdIvmvy0gssI4mh92cLPnUaoGl1YxNyL7z/6vMHwLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sO0IxqGy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F7DC32782;
-	Fri,  9 Aug 2024 15:27:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723217274;
-	bh=78MTpby5wUdMPDJYFhMoXDD9VtwkON7pKOzZZuUVa8o=;
-	h=Date:From:To:Cc:Subject:From;
-	b=sO0IxqGyW0S6fPtHKANNdur6onARB40reweqbZ6295fDYGtnoyGQhHBft0Ms81Q0c
-	 ZHYnw3ZLX3XFTppp3TZaA5f1EYpp0X6GUuyh09qwkduPLNAvgSPP8IRIMhCIkiFl7U
-	 +bC2ZWqNzb64k4lwY3EtS/5T/LYPTaBcWVFrP2KX54YFhAQAoxcJmQzwPy7bgMrLGB
-	 LcIYMJecNHWCOB8z5HBnEon1GMY/dqMpUHLq2YzW/VOROQ9N5BW2e5h2xH2Lg9Shi2
-	 ISKGPHNfErG83T8YIgCJwB6jR/TkvlkKMAMptCbraxJ57sfYkw/DqbaHlkW97NYbU/
-	 y0CgEXvQBCFGA==
-Date: Fri, 9 Aug 2024 09:27:51 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Potnuri Bharat Teja <bharat@chelsio.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2][next] UAPI: net/sched: Avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <ZrY1d01+JrX/SwqB@cute>
+	s=arc-20240116; t=1723217339; c=relaxed/simple;
+	bh=KsX+Kf82qQK+XJnO+x6d8UQK9IGdMWChaFfgA5l5EsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ToTMgWAeaDBYLx4knJcDpRnngYKTlwtrBHc1kPB8MsTwlY4JSMY94xIhXOT3+NH65u+l24CgvQJmWH0zW0vVUk9fxzfxQPcuJhVK+8CfKOBBmJ4iSFa0BYIdRQRs2Fow6Hc4sr4yqXnETLMCoeYnwZiusbN1kSxPzb4Qpc60+Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jO535wSV; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723217338; x=1754753338;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KsX+Kf82qQK+XJnO+x6d8UQK9IGdMWChaFfgA5l5EsU=;
+  b=jO535wSVJd9gnFSs3IMeL2Ce1dvcO4XguZ0QlqXsc40Su68XlllaMpk1
+   4UESAEuJS8wOxpNs4oq4XKXqDC3VATTDNnTnj7XTCH442aj1kqfYwH209
+   atLE0459D5dhPI27F812y6K4ro/k59csTIOZChK8GtfU4HpGKsGP0d82j
+   sYGpWz9Wz6moyWD4YPjki6gej0MykLKil6WOlF2Rr/ToY/h4ujgH8eYHE
+   MLNs4IaZ9dgcn880Q6aHjZ3Wd7ohntz+YvAlJtuy60rhxbuBQppvL6GmC
+   +ew1t8QrXuGJ1mvbfKO+jE48UfPTkQ4V6vgqbDdgtCuCy8wfwF6LJ0efp
+   Q==;
+X-CSE-ConnectionGUID: IynqNRkgQRO/djfO7gyBtA==
+X-CSE-MsgGUID: ZfBTFZ/OTECdnUlE0yiVPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="25163216"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="25163216"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:28:56 -0700
+X-CSE-ConnectionGUID: 2e0XJ5hSQPWNM0euqwq0yg==
+X-CSE-MsgGUID: ClDyMm98RXSdFm/l2U6R+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="58313165"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:28:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1scRXv-0000000DSL9-2SUd;
+	Fri, 09 Aug 2024 18:28:51 +0300
+Date: Fri, 9 Aug 2024 18:28:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: pd.pstoykov@gmail.com
+Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: pressure: Add driver for Sensirion SDP500
+Message-ID: <ZrY1s5fYdC3hMxjj@smile.fi.intel.com>
+References: <20240702-mainline_sdp500-v3-0-0902047b3eee@gmail.com>
+ <20240702-mainline_sdp500-v3-2-0902047b3eee@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,86 +82,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240702-mainline_sdp500-v3-2-0902047b3eee@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
--Wflex-array-member-not-at-end has been introduced in GCC-14, and we
-are getting ready to enable it, globally.
+On Tue, Jul 02, 2024 at 04:59:09PM +0200, Petar Stoykov via B4 Relay wrote:
+> From: Petar Stoykov <pd.pstoykov@gmail.com>
+> 
+> Sensirion SDP500 is a digital differential pressure sensor. The sensor is
+> accessed over I2C.
 
-So, in order to avoid ending up with a flexible-array member in the
-middle of multiple other structs, we use the `__struct_group()`
-helper to create a new tagged `struct tc_u32_sel_hdr`. This structure
-groups together all the members of the flexible `struct tc_u32_sel`
-except the flexible array.
+...
 
-As a result, the array is effectively separated from the rest of the
-members without modifying the memory layout of the flexible structure.
-We then change the type of the middle struct member currently causing
-trouble from `struct tc_u32_sel` to `struct tc_u32_sel_hdr`.
++ array_size.h
++ bits.h
++ dev_printk.h
++ errno.h
 
-This approach avoids having to implement `struct tc_u32_sel_hdr`
-as a completely separate structure, thus preventing having to maintain
-two independent but basically identical structures, closing the door
-to potential bugs in the future.
+> +#include <linux/i2c.h>
+> +#include <linux/crc8.h>
+> +#include <linux/iio/iio.h>
 
-So, with these changes, fix the following warning:
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32_parse.h:245:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
++ mod_devicetable.h
++ module.h
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v2:
- - Update subject line. (Jakub)
+> +#include <linux/regulator/consumer.h>
 
- .../chelsio/cxgb4/cxgb4_tc_u32_parse.h        |  2 +-
- include/uapi/linux/pkt_cls.h                  | 23 +++++++++++--------
- 2 files changed, 14 insertions(+), 11 deletions(-)
++ types.h
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32_parse.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32_parse.h
-index 9050568a034c..64663112cad8 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32_parse.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32_parse.h
-@@ -242,7 +242,7 @@ struct cxgb4_next_header {
- 	 * field's value to jump to next header such as IHL field
- 	 * in IPv4 header.
- 	 */
--	struct tc_u32_sel sel;
-+	struct tc_u32_sel_hdr sel;
- 	struct tc_u32_key key;
- 	/* location of jump to make */
- 	const struct cxgb4_match_field *jump;
-diff --git a/include/uapi/linux/pkt_cls.h b/include/uapi/linux/pkt_cls.h
-index d36d9cdf0c00..2c32080416b5 100644
---- a/include/uapi/linux/pkt_cls.h
-+++ b/include/uapi/linux/pkt_cls.h
-@@ -246,16 +246,19 @@ struct tc_u32_key {
- };
- 
- struct tc_u32_sel {
--	unsigned char		flags;
--	unsigned char		offshift;
--	unsigned char		nkeys;
--
--	__be16			offmask;
--	__u16			off;
--	short			offoff;
--
--	short			hoff;
--	__be32			hmask;
-+	/* New members MUST be added within the __struct_group() macro below. */
-+	__struct_group(tc_u32_sel_hdr, hdr, /* no attrs */,
-+		unsigned char		flags;
-+		unsigned char		offshift;
-+		unsigned char		nkeys;
-+
-+		__be16			offmask;
-+		__u16			off;
-+		short			offoff;
-+
-+		short			hoff;
-+		__be32			hmask;
-+	);
- 	struct tc_u32_key	keys[];
- };
- 
+Keep them ordered, also you may split iio/ group out
+
+> +#include <asm/unaligned.h>
+
+linux/*
+...blank line...
+asm/*
+...blank line...
+iio/*
+
+...
+
+> +struct sdp500_data {
+> +	struct device *dev;
+> +};
+
+Why is this structure needed at all? You may put dev pointer directly, no?
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
