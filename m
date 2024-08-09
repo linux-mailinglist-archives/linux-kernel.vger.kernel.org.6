@@ -1,165 +1,121 @@
-Return-Path: <linux-kernel+bounces-281184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC6094D413
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:59:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD1094D415
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34FF1C20CC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DEF71F226DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5106F1990BC;
-	Fri,  9 Aug 2024 15:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EA31990A2;
+	Fri,  9 Aug 2024 15:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="iLn0KDAi"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E90168B8;
-	Fri,  9 Aug 2024 15:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j+LM+5o+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB544198E6E;
+	Fri,  9 Aug 2024 15:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723219148; cv=none; b=azFfb5HIaS/ItbqEkGdARKgVjc8XIPflBsYwj2XxuqUoI/RpcQeYJdsGAqTleXhU3wDPu+LqEyl2mWNw99L/p+D1Bk7GFa0Wf4WZjfJ0w7dnI2XmsIlCbIgaLutapYN1N65qGnkTtujUnGjV48ZgmIu+6mWXcplX/0e60AcDrwg=
+	t=1723219182; cv=none; b=hXBCpVtPi4Bdlg3uxasOnuajuKu+XwPsX5+NIRa3zown+8LX+r/WwLlIv8u4V44GXZ0IpqDdqW7C6BN88OwKMePNumtjNhvcxZq6prhxwDch2FjFnADXevqC5AvBjBbll3wWl0xO6YncbBfEPP8yGtDw+TLUb4wj6TCPq0MWvhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723219148; c=relaxed/simple;
-	bh=o6tlLB78wZ53IZ6Aiama6z+t6jWgrwl2gdMt+4iGKog=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=UR05jeo0QNzZsHSHr/DvPIey7TIapXGcvcUv8Q2bRbQldzxOrFEpoG+v3aAdnteOrKmmZxm9t1es3718lyJB+nIKZuZ01qFWhtuveursAAuxY8PRfrrWZVoc3fkJZywanJ7O0FY1KOS4taEc7lx1JtYQNzOKLpoFeKoPDfSkOmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=iLn0KDAi; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1202)
-	id 9691B20B7165; Fri,  9 Aug 2024 08:59:06 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9691B20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
-	s=default; t=1723219146;
-	bh=ZWU1aKJ8KRiWGgDAYXkoXRuaLAzAdO5nNSZSCU3reII=;
-	h=From:To:Cc:Subject:Date:Reply-To:From;
-	b=iLn0KDAiCG3Z+z90LfNifUUJETcleyju62zJA180vysZhMF36ojgUTWJ0noYXvQux
-	 BqOEDfEp44HKV4I0yNQRigA12XY2UWDzT+9tPQmKdhwpK+SvE2s6W7jLcIwOXnqUq7
-	 osE8uRi13yyWGCtK+4FjLnNS32LKIMI+coj8jV2M=
-From: longli@linuxonhyperv.com
-To: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	Paul Rosswurm <paulros@microsoft.com>,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1723219182; c=relaxed/simple;
+	bh=vpnP2tgla/xZEJUsNA+ATZINZPaYxLHd6/0iTSkf7Jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DMgfr9jBjnL/wKqSFU0xYaixVjKKU6cHXCplU4kUzGaXLvQVACFncalQ7fMn4A1apc5bRTBtfAayoB6P70HVRQs0eSpl0yrU5j8UNU2BAAG8V/3rlUzcvi4ja8cvA5BfjDrozwPqtZt1Er9lsT81kPjLCEu4nvDil9JzY2PrCgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j+LM+5o+; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723219181; x=1754755181;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vpnP2tgla/xZEJUsNA+ATZINZPaYxLHd6/0iTSkf7Jo=;
+  b=j+LM+5o+PDqPtukKLLfxtOrahAvGkcYvfShlPtY5J7yU5l8Tzyu6yyd9
+   HChEMlz/WpkNETcQtLISN9u1FOOuXOzEbqOFPo/bZQ5rS1CGGK8t9ast7
+   PqRK7speLnT6C+b7dOq7ZBhVZkiq1Sv/NiU8u0sdn5/WkzxQH1Vm1ZVd/
+   pySK7kFRyHeqcTl12zRCaIsx0BMZN3s6WecQ3v2p9gyNHOFG1K9YY08xh
+   5sjN9VZ93V5a9aeun131dHQyYo8zo7dDYa0aDs60aS1eyCWjvHdkgacoC
+   fiGVYj60tvzAejfGCpW0c7X3xUEz06KcVTO8XfeE3rPUAWaGHI8YXdLRo
+   g==;
+X-CSE-ConnectionGUID: rMtZ3SzcQ9G/9Wg2l8VP+Q==
+X-CSE-MsgGUID: F9QXu+FyQ2ySjLKaFdO9sA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="32022940"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="32022940"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:59:40 -0700
+X-CSE-ConnectionGUID: F9+AT1F9SF6ve329GAjNLA==
+X-CSE-MsgGUID: peMcEwRvQXSuA/uTzXEARA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="62447282"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:59:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1scS1f-0000000DTDc-2RUQ;
+	Fri, 09 Aug 2024 18:59:35 +0300
+Date: Fri, 9 Aug 2024 18:59:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Cc: Long Li <longli@microsoft.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3 net] net: mana: Fix doorbell out of order violation and avoid unnecessary doorbell rings
-Date: Fri,  9 Aug 2024 08:58:58 -0700
-Message-Id: <1723219138-29887-1-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
-Reply-To: longli@microsoft.com
+	Sanket Goswami <Sanket.Goswami@amd.com>
+Subject: Re: [PATCH v1] ACPI: APD: Add AMDI0015 as platform device
+Message-ID: <ZrY854CyoKwQfQXi@smile.fi.intel.com>
+References: <20240718152324.3449253-1-Shyam-sundar.S-k@amd.com>
+ <7c550151-39a8-4155-ae9e-4796d9463cd4@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c550151-39a8-4155-ae9e-4796d9463cd4@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Long Li <longli@microsoft.com>
+On Fri, Aug 09, 2024 at 09:08:22PM +0530, Shyam Sundar S K wrote:
+> +Andy
+> 
+> On 7/18/2024 20:53, Shyam Sundar S K wrote:
+> > Add AMDI0015 to the ACPI APD support list to ensure correct clock settings
+> > for the I3C device on the latest AMD platforms.
 
-After napi_complete_done() is called when NAPI is polling in the current
-process context, another NAPI may be scheduled and start running in
-softirq on another CPU and may ring the doorbell before the current CPU
-does. When combined with unnecessary rings when there is no need to arm
-the CQ, it triggers error paths in the hardware.
+...
 
-This patch fixes this by calling napi_complete_done() after doorbell
-rings. It limits the number of unnecessary rings when there is
-no need to arm. MANA hardware specifies that there must be one doorbell
-ring every 8 CQ wraparounds. This driver guarantees one doorbell ring as
-soon as the number of consumed CQEs exceeds 4 CQ wraparounds. In practical
-workloads, the 4 CQ wraparounds proves to be big enough that it rarely
-exceeds this limit before all the napi weight is consumed.
+> >  	{ "AMD0040", APD_ADDR(fch_misc_desc)},
+> >  	{ "AMDI0010", APD_ADDR(wt_i2c_desc) },
+> >  	{ "AMDI0019", APD_ADDR(wt_i2c_desc) },
+> > +	{ "AMDI0015", APD_ADDR(wt_i3c_desc) },
 
-To implement this, add a per-CQ counter cq->work_done_since_doorbell,
-and make sure the CQ is armed as soon as passing 4 wraparounds of the CQ.
+Please, keep it sorted.
 
-Cc: stable@vger.kernel.org
-Fixes: e1b5683ff62e ("net: mana: Move NAPI from EQ to CQ")
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: Long Li <longli@microsoft.com>
----
-change in v2:
-Added more details to comments to explain the patch.
+...
 
-change in v3:
-Corrected typo. Removed extra empty lines between "Fixes" and "Reviewed-by".
+> FYI..
 
- drivers/net/ethernet/microsoft/mana/mana_en.c | 24 ++++++++++++-------
- include/net/mana/mana.h                       |  1 +
- 2 files changed, 16 insertions(+), 9 deletions(-)
+Thanks!
 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index d2f07e179e86..f83211f9e737 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -1788,7 +1788,6 @@ static void mana_poll_rx_cq(struct mana_cq *cq)
- static int mana_cq_handler(void *context, struct gdma_queue *gdma_queue)
- {
- 	struct mana_cq *cq = context;
--	u8 arm_bit;
- 	int w;
- 
- 	WARN_ON_ONCE(cq->gdma_cq != gdma_queue);
-@@ -1799,16 +1798,23 @@ static int mana_cq_handler(void *context, struct gdma_queue *gdma_queue)
- 		mana_poll_tx_cq(cq);
- 
- 	w = cq->work_done;
--
--	if (w < cq->budget &&
--	    napi_complete_done(&cq->napi, w)) {
--		arm_bit = SET_ARM_BIT;
--	} else {
--		arm_bit = 0;
-+	cq->work_done_since_doorbell += w;
-+
-+	if (w < cq->budget) {
-+		mana_gd_ring_cq(gdma_queue, SET_ARM_BIT);
-+		cq->work_done_since_doorbell = 0;
-+		napi_complete_done(&cq->napi, w);
-+	} else if (cq->work_done_since_doorbell >
-+		   cq->gdma_cq->queue_size / COMP_ENTRY_SIZE * 4) {
-+		/* MANA hardware requires at least one doorbell ring every 8
-+		 * wraparounds of CQ even if there is no need to arm the CQ.
-+		 * This driver rings the doorbell as soon as we have exceeded
-+		 * 4 wraparounds.
-+		 */
-+		mana_gd_ring_cq(gdma_queue, 0);
-+		cq->work_done_since_doorbell = 0;
- 	}
- 
--	mana_gd_ring_cq(gdma_queue, arm_bit);
--
- 	return w;
- }
- 
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index 6439fd8b437b..7caa334f4888 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -275,6 +275,7 @@ struct mana_cq {
- 	/* NAPI data */
- 	struct napi_struct napi;
- 	int work_done;
-+	int work_done_since_doorbell;
- 	int budget;
- };
- 
+> AMDI0015 is for MIPI I3C (we call it I3C legacy) version of the
+> implementation.
+> 
+> and.. MIPI0100 is for HCI based implementation of the MIPI I3C
+> Specification.
+
+This is fine as long as there is no collision, i.e. if a new (HCI I3C _HID is
+required the new one should be allocated).
+
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
 
