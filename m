@@ -1,93 +1,103 @@
-Return-Path: <linux-kernel+bounces-281060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A319194D28A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:50:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1125994D288
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DA7D1F21276
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2350281E3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8E7198831;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460BB197A92;
 	Fri,  9 Aug 2024 14:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKGYRVSa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9PjMn7r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071E8197A61;
-	Fri,  9 Aug 2024 14:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A12F13FFC;
+	Fri,  9 Aug 2024 14:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723215033; cv=none; b=tNtgPYxNrXwZx8Rc8Qw7rnO1WE3s6fFLxn0h40oiNzXFRjSeSRElt4JI3uGcs3wq5QnffuPVNUKTmkorFkVzuOyg3Qa/pecxVYv7mCOd6TOcLW82+eD5OShpQ5O54TfEIRoOWg8ydHrdxOMgWMRtCuWEHiOF6rLw+r72DyZXetU=
+	t=1723215032; cv=none; b=uMSkCfSiBhVM+CG2vVO+X3IGR2THl4E7JzB3lzNMI8Xk00QG+qzQjRKSlYDZovRZuAuI9/39zcglkrlZqR2AX/xoVvEfRQWnVGJbNq8YACpPxF0aNclOXy5JbxtBBTtAGwgKJ793h4I7fWynX15JVElXJ6ObeSXSZ8FapMf61R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723215033; c=relaxed/simple;
-	bh=pusN1guf/ThWaUjlvFs35XIGTaJ+enFcX0AJpzsovP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIYYEWOibMbUGozIugqWDvq8TEVk2TGwv5bL/NRToNbXnV9kEqbZir/Cw2axK3A+QfCM/WMSIRoMhNA4ue68Rf/gC2CrGIVpMrnUwENnVyj+X2+HC3Uvej2mQEngjTS7PsZdIFidpRYEMOXL4aO/2a9Ec70uYOLQ2on9JU7r26M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKGYRVSa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0643C4AF0D;
-	Fri,  9 Aug 2024 14:50:29 +0000 (UTC)
+	s=arc-20240116; t=1723215032; c=relaxed/simple;
+	bh=o2boHsvugOoSfnRryclCz3yN8ZygMbaTL2M4TClf0ho=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=fkwC0RXEdqwLgnsVk07uL+/xJ2BqcuMI2iIOxPL2MsJmC8s+EPvgTTCKZDTn9AeJcCqyt3XnRM8vpZs9V6DPsBUXmSXQxPOQ39xF1+1/5GMtIYYenPg3saS81L0XBJt2mdffA5ICo3ah3ZfBqiw6RIjamTKpMGTGJLQU8h5doDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9PjMn7r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB2CAC32782;
+	Fri,  9 Aug 2024 14:50:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723215032;
-	bh=pusN1guf/ThWaUjlvFs35XIGTaJ+enFcX0AJpzsovP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iKGYRVSa4MR9nKJWQDv08h4p6CcEnfyL1AR6UJd+lM/4+sFC5kiCpatWJ4IFnhr4z
-	 yIh0n6//HLK4wlNhivsj8pqO3nrQMJ8JLPC2fQGdbp/ZmQfu/2bdD6jfw0BTAEkrY5
-	 sl3aTO/5Ozy5zcAJftQyjVp72NaepNMgNr9IP1THA7XKDXB5qn7f3lIPNVhplkx8ST
-	 h1rD/kPpkkDxO4LEj+S4wS+e0QvW4iK+Vk2rKIE7siEQXAb7IAcmitP0LqomEchQT1
-	 0OYiTcO98fFhpcJi7X6I2sM5HVunq5cnpFtVWT5Ri60H+JhzW71VRzLxWCBYsXHvc6
-	 /otdSh+jvoQlg==
-Date: Fri, 9 Aug 2024 15:50:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Thippeswamy Havalige <thippesw@amd.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, thippeswamy.havalige@amd.com,
-	linux-arm-kernel@lists.infradead.org, michal.simek@amd.com
-Subject: Re: [PATCH v3 1/2] dt-bindings: PCI: xilinx-xdma: Add schemas for
- Xilinx QDMA PCIe Root Port Bridge
-Message-ID: <20240809-reversal-succulent-d7e320a00b16@spud>
-References: <20240809060955.1982335-1-thippesw@amd.com>
- <20240809060955.1982335-2-thippesw@amd.com>
+	s=k20201202; t=1723215030;
+	bh=o2boHsvugOoSfnRryclCz3yN8ZygMbaTL2M4TClf0ho=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=u9PjMn7rRm/BVqGZVoTXCghvzLq1t+ClKm564TRMywPtaeTIB6+74i5T8cQiss5XS
+	 fcu7Z9W3kAcLFcfwX9i2MxCkoprfn6C5uBw7LWJGYEtAcZ66cguckB08J08aQRwWoq
+	 5Ry3C0RnhI2H7Pyo3sAR9dJym4ulLDbFDNHMf44WhIyTqieERQqDLnW+jOIbXQDpy2
+	 id+mCpL6CQEiToKcY9aIFV7ViJrE+uV6NjbfXiFpOzdroMTZtbngf8R+TExCBtK+si
+	 59hctD/uUghz/QCVO3dDg6+0WQQuXn2dIlREFsiQ8mMfQ8nw9b2Y20Y2/KadEi/eCp
+	 /j8j7b+CaaSxw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEB6382333D;
+	Fri,  9 Aug 2024 14:50:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GMxCTLc9r8Zvc3a/"
-Content-Disposition: inline
-In-Reply-To: <20240809060955.1982335-2-thippesw@amd.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 0/3] Add support for Amlogic HCI UART
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <172321502977.3810378.15779692366071680309.git-patchwork-notify@kernel.org>
+Date: Fri, 09 Aug 2024 14:50:29 +0000
+References: <20240809-btaml-v4-0-376b284405a7@amlogic.com>
+In-Reply-To: <20240809-btaml-v4-0-376b284405a7@amlogic.com>
+To: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com,
+ will@kernel.org, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, yang.li@amlogic.com,
+ krzysztof.kozlowski@linaro.org, ye.he@amlogic.com
+
+Hello:
+
+This series was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+
+On Fri, 09 Aug 2024 13:42:23 +0800 you wrote:
+> Add support for Amlogic HCI UART, including dt-binding,
+> and Amlogic Bluetooth driver.
+> 
+> Signed-off-by: Yang Li <yang.li@amlogic.com>
+> ---
+> Changes in v4:
+> - Modified the compatible list in the DT binding.
+> - Reduced the boot delay from 350ms to 60ms.
+> - Minor fixes.
+> - Link to v3: https://lore.kernel.org/r/20240802-btaml-v3-0-d8110bf9963f@amlogic.com
+> 
+> [...]
+
+Here is the summary with links:
+  - [v4,1/3] dt-bindings: net: bluetooth: Add support for Amlogic Bluetooth
+    https://git.kernel.org/bluetooth/bluetooth-next/c/8802f81065c3
+  - [v4,2/3] Bluetooth: hci_uart: Add support for Amlogic HCI UART
+    https://git.kernel.org/bluetooth/bluetooth-next/c/58803465ec1a
+  - [v4,3/3] MAINTAINERS: Add an entry for Amlogic HCI UART (M: Yang Li)
+    https://git.kernel.org/bluetooth/bluetooth-next/c/f173b220f9dc
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---GMxCTLc9r8Zvc3a/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Aug 09, 2024 at 11:39:54AM +0530, Thippeswamy Havalige wrote:
-> Add YAML devicetree schemas for Xilinx QDMA Soft IP PCIe Root Port
-> Bridge.
->=20
-> Signed-off-by: Thippeswamy Havalige <thippesw@amd.com>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---GMxCTLc9r8Zvc3a/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrYsswAKCRB4tDGHoIJi
-0kIFAP49YPFKdJWHltBzcf18htAAOh3hx1gyuFLfZMT4cmK0vAD/TwH08EDBjO5Q
-OoERKJarFT/sxYSyWAbGxkl/wW74Mgw=
-=WV3o
------END PGP SIGNATURE-----
-
---GMxCTLc9r8Zvc3a/--
 
