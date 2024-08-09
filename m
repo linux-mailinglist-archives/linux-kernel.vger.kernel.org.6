@@ -1,136 +1,189 @@
-Return-Path: <linux-kernel+bounces-281089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A3F94D2F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:09:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979B494D2F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F821F21CD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:09:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E804FB215AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEEC197A9F;
-	Fri,  9 Aug 2024 15:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4003E197A8A;
+	Fri,  9 Aug 2024 15:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3NPNVJW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M1hMRnX9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fn3+dS3Q";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M1hMRnX9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fn3+dS3Q"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595B9155A25;
-	Fri,  9 Aug 2024 15:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B52155A25
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216152; cv=none; b=cyfYATh0uuYfxm2gu7Et4A4sD04z9PjxCa2QPHqPW0dYMZh5WW6B9uXg332NU701lJYlcZO8XQsgG9v+jgALlWaFiCbdSQdLKhvQ+KA7GNCVgKjGWHQpl7vhf7b790gvkaOD05t5IyBlPYv6zlXA1Ex2WjQWXDg/ncjQYal8gBI=
+	t=1723216158; cv=none; b=IBivDdc/dsuxoD9Fxeo5rsRqE7qTO/9XLrmu+PZ30QpfJVHeWfG6avXhdes99CH638wKH3PSlK7J3o0pTy0vbADZTHidpcq3dLdCAfjiQoSxFkKhZmJ/5s1my6dkEHxXJtzz7FXFXYaG2tAdD3cxaN+2v+ET42uNO+NZHhUMQgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216152; c=relaxed/simple;
-	bh=Zd2NZGppqJ5H2ZezF19+St/GBCUKROAZMrbD9l7nyRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDtJ5hkJXkZhoj5Eh3h1PCjLd0msdtzleXasVm2GinMyxzAH+iwj5aAF7vtCj1D9hhoXCAYGWSq4olkLIbfVal22wKtYehPjcQLpoIiO2gEh+Y0sFyFxtopW6YW+wZgNlj0x5nVkzuVqUofx/vNsLqb0vUtDKlLz8WBKQmAnw70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3NPNVJW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D536C32782;
-	Fri,  9 Aug 2024 15:09:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723216151;
-	bh=Zd2NZGppqJ5H2ZezF19+St/GBCUKROAZMrbD9l7nyRE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W3NPNVJWFdVcMudjhf/waU1B2KmzMjAlWEeBdbYOuIlU/IDAYVpX/I8oF2xXcwu8W
-	 hHZDD+BjfzQMwLNVuU8yNjAMoAl+3cY5/3F3kGn9ue75lFf8r7rPS4v40Gs3zyD/B0
-	 s6QVqZw0CW6++/9eFq9SNm+EC9xcWNS8ogc0wUfaL3fJ/tvHPHVSaYlyEy+7Q86DEE
-	 V9zmRyDVTWMvsqZmhhc8R2vU55Hhk5bWUXy8w3OgvLD142gOsmKh4gb+y4SHHTQbdv
-	 uSkqjrk/IHtt7/BKtsvTIeMeCodeptt2DEtYKRDFnIhisv+i7gnlmzfzhDvQGpURGw
-	 KJTtBqhZTqaZw==
-Date: Fri, 9 Aug 2024 16:09:07 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: adc: ad7173: add support for ad4113
-Message-ID: <20240809-autograph-sugar-e79e54fd7a24@spud>
-References: <20240809-ad4113-v2-0-2a70c101a1f4@analog.com>
- <20240809-ad4113-v2-1-2a70c101a1f4@analog.com>
- <20240809-glowing-discard-87263f656a7e@spud>
- <67eb7f5c-3f20-4831-a0cc-e407ac3f24ad@gmail.com>
+	s=arc-20240116; t=1723216158; c=relaxed/simple;
+	bh=72cz05C6GWd2ycceYd40fnm+RtBhltHNE6V9m93w75Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XdhC6v3WKe7HlRCXpw5ee5sqIDsOZL9dRUtgl6IHgMBdnzYe/bZbY2VoRbLomO0OgjJJQXcNsK/vzndiq3x4SfRLtPM8eipAXNwIcMKs8FVOULCutThp6PzOR72NgZqlK0zQKgvdGPYp7VHJrTnHUVns11Ijwt7T7BzyVcWHYZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M1hMRnX9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fn3+dS3Q; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=M1hMRnX9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fn3+dS3Q; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 057061FF90;
+	Fri,  9 Aug 2024 15:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723216155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=72cz05C6GWd2ycceYd40fnm+RtBhltHNE6V9m93w75Y=;
+	b=M1hMRnX9avuQya1DMthTuY7CYkHQPcW3iLVFh/mjlfXvnDTp/NVAqUegizGFalTWgSD+3i
+	lDmmeGkKmJ/W+SSBtHrda2Cy2BPueTyOpaQ7iYvGL9oLP8UAMsnvduzsYpxZpo48mKEeEp
+	Bcg2Fgs2qN7E5eRzLRmW2+8WMN0JVx0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723216155;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=72cz05C6GWd2ycceYd40fnm+RtBhltHNE6V9m93w75Y=;
+	b=fn3+dS3QrbWVy933NKtv8091YalYUhQKC1K4lqtGgU+FFGk+gGE+wu8A9XnBeRTWQmvMBN
+	b5eqWCoS0/gilyBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723216155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=72cz05C6GWd2ycceYd40fnm+RtBhltHNE6V9m93w75Y=;
+	b=M1hMRnX9avuQya1DMthTuY7CYkHQPcW3iLVFh/mjlfXvnDTp/NVAqUegizGFalTWgSD+3i
+	lDmmeGkKmJ/W+SSBtHrda2Cy2BPueTyOpaQ7iYvGL9oLP8UAMsnvduzsYpxZpo48mKEeEp
+	Bcg2Fgs2qN7E5eRzLRmW2+8WMN0JVx0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723216155;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=72cz05C6GWd2ycceYd40fnm+RtBhltHNE6V9m93w75Y=;
+	b=fn3+dS3QrbWVy933NKtv8091YalYUhQKC1K4lqtGgU+FFGk+gGE+wu8A9XnBeRTWQmvMBN
+	b5eqWCoS0/gilyBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D6A4E1379A;
+	Fri,  9 Aug 2024 15:09:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YIBFMxoxtmZNHwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 09 Aug 2024 15:09:14 +0000
+Message-ID: <be0be869-4daf-4530-b90d-6dd6c27c8736@suse.cz>
+Date: Fri, 9 Aug 2024 17:09:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mZH1m8C8+ubbaXbm"
-Content-Disposition: inline
-In-Reply-To: <67eb7f5c-3f20-4831-a0cc-e407ac3f24ad@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] vm: align vma allocation and move the lock back into
+ the struct
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>, Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Liam.Howlett@oracle.com, lstoakes@gmail.com, pedro.falcato@gmail.com
+References: <20240808185949.1094891-1-mjguzik@gmail.com>
+ <CAJuCfpEsYi77cuUhvQrFOazFX1OK0vp0PyevKqZsi0f1DeT3NA@mail.gmail.com>
+ <CAGudoHHHOH=+ka=xw6cy51EYaGsUZEaC=LXYFvnXgFT+co9mKQ@mail.gmail.com>
+ <CAJuCfpFXdx40UGRsXUYFgFGvEy-nM02f+TQ9nOPPepw6gbykmA@mail.gmail.com>
+ <CAJuCfpH36sXvCaYL88nzi_8-Yr1tpxHuaLfCMqCac-zN6QHWmg@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CAJuCfpH36sXvCaYL88nzi_8-Yr1tpxHuaLfCMqCac-zN6QHWmg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -2.79
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,oracle.com,gmail.com];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[google.com,gmail.com];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On 8/9/24 05:57, Suren Baghdasaryan wrote:
+> Maybe it has something to do with NUMA? The system I'm running has 2 NUMA nodes:
 
---mZH1m8C8+ubbaXbm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Aug 09, 2024 at 05:32:08PM +0300, Ceclan, Dumitru wrote:
-> On 09/08/2024 17:21, Conor Dooley wrote:
-> > On Fri, Aug 09, 2024 at 01:33:24PM +0300, Dumitru Ceclan via B4 Relay w=
-rote:
-> >> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> >>
-> >> This commit adds bindings support for AD4113.
-> >>
-> >> The AD4113 is a low power, low noise, 16-bit, =CE=A3-=CE=94 analog-to-=
-digital
-> >> converter (ADC) that integrates an analog front end (AFE) for four
-> >> fully differential or eight single-ended inputs.
-> >>
-> >> Added ad4113 to the compatible list and the "avdd2-supply: false"
-> >> restriction.
-> >>
-> >> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> >> ---
-> >>  Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml | 3 +++
-> >>  1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml=
- b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> >> index 17c5d39cc2c1..ad15cf9bc2ff 100644
-> >> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> >> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
-> >> @@ -28,6 +28,7 @@ description: |
-> >>    Datasheets for supported chips:
-> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
-ts/AD4111.pdf
-> >>      https://www.analog.com/media/en/technical-documentation/data-shee=
-ts/AD4112.pdf
-> >> +    <AD4113: not released yet>
-> >=20
-> > Am I meant to ack it with this placeholder? When will the document be
-> > released?
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> Not really sure tbh, up to you. The document will be released in the upco=
-ming months.
->=20
-> If it's considered best to wait until the docs are public and send another
-> version with the correct link.=20
-> If not, and maintainers consider that these changes can be accepted even
-> without viewing the datasheet, I'll send a patch when it goes public.
-
-I don't really care, it's just to Jonathan I think. I'm happy enough
-with you adding it when it is released.
-
---mZH1m8C8+ubbaXbm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrYxEwAKCRB4tDGHoIJi
-0n/qAP46DdaGcNK4r+njbC8daaCXJoPLBI99yaM2E3AykeSMawEA4nNzddIASR+c
-oCMX3Zn4oRUKQWEVbeAuGqK3vcfpiAc=
-=crai
------END PGP SIGNATURE-----
-
---mZH1m8C8+ubbaXbm--
+I kinda doubt the NUMA aspect. Whether you allocate a vma that embeds a
+lock, or a vma and immediately the separate lock, it's unlikely they would
+end up on different nodes so from the NUMA perspective I don't see a
+difference. And if they ended up on separate nodes, it would more likely be
+worse for the case of separate locks, not better.
 
