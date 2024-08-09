@@ -1,142 +1,131 @@
-Return-Path: <linux-kernel+bounces-280757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0235D94CEB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:32:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF54694CEB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BEDB1C21425
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F921F228B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D1F1922E2;
-	Fri,  9 Aug 2024 10:32:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0B8190490;
-	Fri,  9 Aug 2024 10:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887211922FF;
+	Fri,  9 Aug 2024 10:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Smr4Ih9U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4542176237;
+	Fri,  9 Aug 2024 10:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723199557; cv=none; b=XLNhNe/TjyPC4It6R7YnnKb/UK3J1hLeuMiUnOg75sfeX+Gkw0U6vChHjVmFmVh+P7vWRmsqcMugOBpyKqLd0GSxP5kRWDfj4+1fISTbc+TI13llL0iuyheuzVoBorH7JJVH1MGeejC95eux8Woy7Yx17JF7vHp+m77X4o9RcLA=
+	t=1723199608; cv=none; b=VU/+jyRjw+B9G+tCQXai/XdBwjUebKEwq3w+MqZDKE1hxdhCu09qqdLK0TCUv7Vu8sCkPrR67/1442im5wFGCuT7D7tlelgw557Jg5C1Q7R1xH4TZATkS/Wh86JQdtewR7S72lhm66CaOkSW8Cz1bHg7KowM1VnXaRkCRdB8yCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723199557; c=relaxed/simple;
-	bh=US9OPA3sgFjfqONG9ii/Jz0uPCjcdjDpmydJ7Bqn7SU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RNf8a70Ne3NVkzy5ZZKvj3wxsyX6+VUznn4gHCaYfzO4h5NlXN78y+Z/IwBA2hXd+jk2O2oLFeE6bwvdAAPcoFUUTnhgx91vpF3scfsnsCG6nf7XzvsVfKG+DROTG5xMOnulWj7wbSSLiYL11m4uEadFuvHfquLS6lsH4B/bMZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC37613D5;
-	Fri,  9 Aug 2024 03:33:00 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A366D3F766;
-	Fri,  9 Aug 2024 03:32:21 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	shuah@kernel.org,
-	david@redhat.com,
-	willy@infradead.org
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	cl@gentwo.org,
-	vbabka@suse.cz,
-	mhocko@suse.com,
-	apopple@nvidia.com,
-	osalvador@suse.de,
-	baolin.wang@linux.alibaba.com,
-	dave.hansen@linux.intel.com,
-	will@kernel.org,
-	baohua@kernel.org,
-	ioworker0@gmail.com,
-	gshan@redhat.com,
-	mark.rutland@arm.com,
-	kirill.shutemov@linux.intel.com,
-	hughd@google.com,
-	aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com,
-	peterx@redhat.com,
-	broonie@kernel.org,
-	mgorman@techsingularity.net,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH 2/2] selftests/mm: Do not fail test for a single migration failure
-Date: Fri,  9 Aug 2024 16:01:29 +0530
-Message-Id: <20240809103129.365029-3-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240809103129.365029-1-dev.jain@arm.com>
-References: <20240809103129.365029-1-dev.jain@arm.com>
+	s=arc-20240116; t=1723199608; c=relaxed/simple;
+	bh=XLUn36JDfGVD+kFvEnQoA8EoeGkaGqnjyaOJ/Fu01Dw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KtAHEMKg9FjVuQg+uJBzQJW+x8LEELT+g7p8wqQ+L/Xq7rqlfoSO85amujiqOropX/iJ4i0xS29p/61mnv7MKC75Miwokpvt4FCB5c1eTOE8gTQAXUtYPSl7BdBpyRXNzmKM0Vk+eUGfpm0bQq1tE+BPm1sWOIFYLcFU6XS0CmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Smr4Ih9U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 91B78C32782;
+	Fri,  9 Aug 2024 10:33:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723199608;
+	bh=XLUn36JDfGVD+kFvEnQoA8EoeGkaGqnjyaOJ/Fu01Dw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Smr4Ih9UI+zr05/xwxaEJxc01zmTjrK9qXfqWuYucB0jOa529zUzvfa0TYLjyT0dm
+	 KEkxxmUiHtz5rWSGahCa/VLmPwTgP3BaOJxwP2uRZ7BD1joQjiRXqDy5DNUWX1aq4Q
+	 /HSViIK+dxnQ3vQ163DxJQOzcgeAzbkqx9Cvy7dBfdHww0v9INd1yijtdNODotvBrW
+	 8bcKLZfupGPVlRIDJoP0lZjinLzwNRwhFwVEi/pzRFEmAsq+5jQMONA4lnWbKh84fH
+	 W42xAnyeH6VDjyxyb5HURhJ+sseCBZdwGgZF0V+5UgNe9hhJMXup9qOIdeKefsP60y
+	 Ywk6y8IAPvTPA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF32C52D7C;
+	Fri,  9 Aug 2024 10:33:28 +0000 (UTC)
+From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
+Subject: [PATCH v2 0/2] Add support for AD4113
+Date: Fri, 09 Aug 2024 13:33:23 +0300
+Message-Id: <20240809-ad4113-v2-0-2a70c101a1f4@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHPwtWYC/zXMSw7CIBSF4a00dywGLlRaR+7DdEB5tCQKBgzRN
+ OxdrHH4n5x8G2SbvM1w7jZItvjsY2iBhw70qsJiiTetASkKKrEnygjGOJmVOnHnxhFFD+38SNb
+ 51w5dp9arz8+Y3rtb2Hf9EQOVf6IwQgkazgcnKWo5X1RQt7gcdbzDVGv9AHw25YydAAAA
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: mitrutzceclan@gmail.com, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dumitru Ceclan <dumitru.ceclan@analog.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723199607; l=1716;
+ i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
+ bh=XLUn36JDfGVD+kFvEnQoA8EoeGkaGqnjyaOJ/Fu01Dw=;
+ b=6Ck5QjXw9XixE3oQ2YRd1xmaxGStGwvGlpPHwvsTwGD68lDgJBUOZhrt074exXpG1iLp6QA8b
+ FBpYdB2otawCaYbrdu+l8l4jZaW2xXDUbvtbTukEz+pnYlcg3ycMXZQ
+X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
+ pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
+X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
+ with auth_id=140
+X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Reply-To: dumitru.ceclan@analog.com
 
-Do not fail the test for just a single instance of migration failure,
-since migration is a best-effort service.
+This patch series adds support for the AD4113 ADC within the existing
+AD7173 driver.
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
-Suggested-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-Tested-by: Ryan Roberts <ryan.roberts@arm.com>
+The AD4113 is a low power, low noise, 16-bit, Σ-Δ analog-to-digital
+converter (ADC) that integrates an analog front end (AFE) for four
+fully differential or eight single-ended inputs.
+
+The part is not released yet and the documentation is not public.
+Register map is identical to AD4114 besides the lower width data
+register and the GPIO register.
+
+Particularities of this model:
+- 16 bit data register
+- no temperature sensor
+- no current inputs
+- input buffers
+- internal reference
+- external reference REF-/REF+
+- no second external reference REF2-/REF2+
+- no AVDD2 supply
+- 2 GPIO pins with config bits starting at a higher position in register
+- 8 VINx inputs with voltage divider
+- 16 channel registers and 8 setup registers
+
+Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
 ---
- tools/testing/selftests/mm/migration.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+Changes in v2:
+- correctly set realbits and storagebits to 16 in iio_chan_spec
+- describe bindings restrictions in commit message due to lack of
+  sufficient diff context
+- describe model differences better in cover letter
+- Link to v1: https://lore.kernel.org/r/20240807-ad4113-v1-0-2d338f702c7b@analog.com
 
-diff --git a/tools/testing/selftests/mm/migration.c b/tools/testing/selftests/mm/migration.c
-index 6908569ef406..64bcbb7151cf 100644
---- a/tools/testing/selftests/mm/migration.c
-+++ b/tools/testing/selftests/mm/migration.c
-@@ -15,10 +15,10 @@
- #include <signal.h>
- #include <time.h>
- 
--#define TWOMEG (2<<20)
--#define RUNTIME (20)
--
--#define ALIGN(x, a) (((x) + (a - 1)) & (~((a) - 1)))
-+#define TWOMEG		(2<<20)
-+#define RUNTIME		(20)
-+#define MAX_RETRIES	100
-+#define ALIGN(x, a)	(((x) + (a - 1)) & (~((a) - 1)))
- 
- FIXTURE(migration)
- {
-@@ -65,6 +65,7 @@ int migrate(uint64_t *ptr, int n1, int n2)
- 	int ret, tmp;
- 	int status = 0;
- 	struct timespec ts1, ts2;
-+	int failures = 0;
- 
- 	if (clock_gettime(CLOCK_MONOTONIC, &ts1))
- 		return -1;
-@@ -79,13 +80,17 @@ int migrate(uint64_t *ptr, int n1, int n2)
- 		ret = move_pages(0, 1, (void **) &ptr, &n2, &status,
- 				MPOL_MF_MOVE_ALL);
- 		if (ret) {
--			if (ret > 0)
-+			if (ret > 0) {
-+				/* Migration is best effort; try again */
-+				if (++failures < MAX_RETRIES)
-+					continue;
- 				printf("Didn't migrate %d pages\n", ret);
-+			}
- 			else
- 				perror("Couldn't migrate pages");
- 			return -2;
- 		}
--
-+		failures = 0;
- 		tmp = n2;
- 		n2 = n1;
- 		n1 = tmp;
+---
+Dumitru Ceclan (2):
+      dt-bindings: adc: ad7173: add support for ad4113
+      iio: adc: ad7173: add support for ad4113
+
+ .../devicetree/bindings/iio/adc/adi,ad7173.yaml    |  3 ++
+ drivers/iio/adc/ad7173.c                           | 36 +++++++++++++++++++++-
+ 2 files changed, 38 insertions(+), 1 deletion(-)
+---
+base-commit: 1c61e13d7dc9003662bd7fd6064dfea67e64b014
+change-id: 20240725-ad4113-baa63ff99245
+
+Best regards,
 -- 
-2.30.2
+Dumitru Ceclan <dumitru.ceclan@analog.com>
+
 
 
