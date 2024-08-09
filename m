@@ -1,136 +1,118 @@
-Return-Path: <linux-kernel+bounces-280248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1924E94C7A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:35:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EBB94C7A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F6AF1C21A22
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D0041C21F2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF61C46B5;
-	Fri,  9 Aug 2024 00:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFCE2F2A;
+	Fri,  9 Aug 2024 00:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="edXVeSU/"
-Received: from mail-m1826.xmail.ntesmail.com (mail-m1826.xmail.ntesmail.com [45.195.18.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IK8wrlvT"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77CB79D0;
-	Fri,  9 Aug 2024 00:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.18.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0151FB4
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 00:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723163705; cv=none; b=k60yHEWXzU9SJb6pSeSPkU+lVh03JBWtqHMHCe3Ue2IebxPaEv+Ibd9MkT5qUfzM+fls8muelJhcsVTZNErn91tvzY8r1WaXTCZxNrfCtacql0x2N+GVOwyC1vckNANCJttINTczt01j1Ls6ji5sqow/v3ZgU2sqQNWQ7TprVc8=
+	t=1723163694; cv=none; b=OIztXiEn+eeQgmDnXMMGA3PBXpGLrJ++mCkpjU7fWH5DrbsuNH3gQ6t/8t72wUgBPNtYfSwvdXYrRfiXjVcSc4n3VA4b/HksMsz//GxbCXvDlVqEWF/eSK+AY54AZcVeSXcyGDGbuQS7ofWxvFjPKTDTsBH5uCNvoCiGD0u3XsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723163705; c=relaxed/simple;
-	bh=NOUA8uBOnVyXK1muBe0S1GGnrSoVftaHERh6PrFYKO0=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nHrQjI0NtADmlWv2TfcP6CNlKhXH+DvAylOwV+646tUCzPIVNrAebSUK2lbV3DA4Gh4F5Oxi+zv74U9GL0xCNLSsUbxTIWHfe3RKKqHGWcr2DS/eCHn6aUOa4b2y6FFoXUcw3pCjqm6P3EJv5d1cikT5qlR+xlOBnKDwdNMTmbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=edXVeSU/; arc=none smtp.client-ip=45.195.18.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=edXVeSU/tlo0ib3//1REPLrCrGzPmMGAbJm3CAlzPZhvvjtYXdpURz6fzWJRqREK209rGKFl4Mnfknvt4rURR71c6gbI97NTm64sCSnBJLfCptEdKn/b/XaPbkfgyt40oaizOpr81o53CLWEUmp/dczw5VCDwwFNDGDv8Go4JX4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=0psmqwAZQghCEzaJP7VMmOIMVcUsXtkRYcmJbJCNZ2Q=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.69] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id EE3AE4601EB;
-	Fri,  9 Aug 2024 08:33:56 +0800 (CST)
-Message-ID: <009a9eb8-ff0f-4d77-8ff9-d54b92be5f0d@rock-chips.com>
-Date: Fri, 9 Aug 2024 08:33:56 +0800
+	s=arc-20240116; t=1723163694; c=relaxed/simple;
+	bh=luzDOqqJeG0jQf8m7TdGHfyb+dY6lJfgpnAxl/BB114=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n5gtx1NBN5vVuAWdEUPbgZ0coakZhC4yh+EgwWyQLuFGh2wVi3qqfdU5DJOE6Vv1EGKaR9o/U1QMnRMkg2YwuaPPPFYmCvtvRcdmOhjppvuuOQrKkShuVPl5Pt5h+8ISdx4iMG+UgXJ4u3x1ZR3Keub7oujJuGEnD5v5Xz0s/Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IK8wrlvT; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f0277daa5so2116302e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 17:34:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723163691; x=1723768491; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W2ogeVtQlhT9WeNRGJxT4wbvVR02faBqDKyUFif3ow8=;
+        b=IK8wrlvT6sSTEd4XZ2EmkayGF/eC9qwACQpmmWkjo9GVOs1QBFkT1mYSMysYnP4tiR
+         MCLzuVXvphb1N0K6as0sA2lQMel61Z2RZ+mU0F7vhJRDrItrml5q1Hvf/bHb1jn0mydP
+         JLzdI9DI9iVprRrLK7cbv6OKJEBv2qK9JrDqybECXsN4VfuSZYr64Ye9Dgnjwma+8z6K
+         QIUGPwlMvGDWGRNGaN+PqFfH3jpR2qDH2I/Y0SU8SGKhyQ3YSFo/btGqDnLzXcepvk4s
+         wu890faH79vR2f+VCGxwHhLOhAyGp5fzYEUN3gL919BffLDZ7/a08FcBWS/gWyshIVA8
+         2E1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723163691; x=1723768491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W2ogeVtQlhT9WeNRGJxT4wbvVR02faBqDKyUFif3ow8=;
+        b=doG8J5Vyo5BBn5O4ylbT+TqOkrT5di2slVlKEd/3NsZumEiPHimokQ6ofwY+mRXZEF
+         bn9nJB+N2ixsNVZed712brDQpQX05I99Sgs8AFKyADid3s2n73Rh2b+yDDULnOH2mkeu
+         D1h60CNYg26kA8DAKQuypbRTT5Bq93+5d289yMhUndAz6T9hzW9uuYFca/6y2ahghQGV
+         HRXYrYwFurcyU8U++CascHrVVV7A8Ybv3MohJmDwvUCUxhQ8E3dW2CCa/jPQBULFo/Jy
+         iJFzjy94VswHcdkUprecpGPLHc2OKonsFHi2q6JeK4/wOYn7EbEyiAPHgRQQcpw8a0Uj
+         0l8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVGudVqnLuv/gH4U9wmHp2Nfl+AaF04qevBcXZj1qsdXS10KUYissWQ+GwMUuqpgSdVD38t7OE2Ro5+Pokscpcv/X8EgWambOSvylql
+X-Gm-Message-State: AOJu0YxL8WOz+ZBsaq1u3y24gC91SHI/ZG1LWEWkpmNdtjTuLcDHOq2m
+	rAr+7jleEWM/vXzGEU6aog5eIcfHip7JqXxnH9bxuoSDvCv0AjvzC/LRZCagpLqASJWL6xTvNNM
+	HYbhLJoHvv0IZU4ntUlbslmlvMMw=
+X-Google-Smtp-Source: AGHT+IG+OWgt/JTOtOb6ay7w4NdI2CbhkenmUHF2ZQ06qsxXIecrYLwxxxllL5pII5mW13MB0mj/Op2MbKpPOcTDGF8=
+X-Received: by 2002:a05:6512:3b21:b0:530:b871:eb9a with SMTP id
+ 2adb3069b0e04-530e58764damr2528461e87.47.1723163690149; Thu, 08 Aug 2024
+ 17:34:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Heiko Stuebner <heiko@sntech.de>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
- YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: ufs: Document Rockchip UFS host
- controller
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <1723089163-28983-1-git-send-email-shawn.lin@rock-chips.com>
- <1723089163-28983-3-git-send-email-shawn.lin@rock-chips.com>
- <a4f8059f-efe0-4874-8746-24e4cf9b9e89@kernel.org>
-Content-Language: en-GB
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <a4f8059f-efe0-4874-8746-24e4cf9b9e89@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRhPQ1ZJS0MYQkoYT0tKQhlWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a91348e790003aekunmee3ae4601eb
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mxg6LQw*MjI9HwlNDyEZIRUU
-	M0wKFAlVSlVKTElISk1ITUhDT0xOVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQU9PTEw3Bg++
+References: <20240807211309.2729719-1-pedro.falcato@gmail.com> <20240808161226.b853642c0ecf530b5cef2ecc@linux-foundation.org>
+In-Reply-To: <20240808161226.b853642c0ecf530b5cef2ecc@linux-foundation.org>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Fri, 9 Aug 2024 01:34:37 +0100
+Message-ID: <CAKbZUD0_BSv6KOgaRuqjLWGnttzcprcUu5WysSZeX8FXAvui5w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] mm: Optimize mseal checks
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, jeffxu@google.com, 
+	Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof
+On Fri, Aug 9, 2024 at 12:12=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Wed,  7 Aug 2024 22:13:03 +0100 Pedro Falcato <pedro.falcato@gmail.com=
+> wrote:
+>
+> > This series also depends on (and will eventually very slightly conflict=
+ with)
+> > the powerpc series that removes arch_unmap[2].
+>
+> That's awkward.  Please describe the dependency?
 
-在 2024/8/8 18:34, Krzysztof Kozlowski 写道:
-> On 08/08/2024 05:52, Shawn Lin wrote:
->> Document Rockchip UFS host controller for RK3576 SoC.
->>
->> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->>
->> ---
->>
->> Changes in v2:
->> - renmae file name
->> - fix all errors and pass the dt_binding_check:
->>    make dt_binding_check DT_SCHEMA_FILES=rockchip,rk3576-ufs.yaml
-> 
-> 
-> You did much more. Some properties appeared which were here not
-> before... The way you send patches makes it difficult to review. Look:
-> 
+One of the transformations done in this patch series (patch 2) assumes
+that arch_unmap either doesn't exist or does nothing.
+PPC is the only architecture with an arch_unmap implementation, and
+through the series I linked they're going to make it work via
+->close().
 
-Yes, will update full changelog next version.
+What's the easiest way to deal with this? Can the PPC series go
+through the mm tree?
 
-> b4 diff '<1723089163-28983-3-git-send-email-shawn.lin@rock-chips.com>'
-> Grabbing thread from
-> lore.kernel.org/all/1723089163-28983-3-git-send-email-shawn.lin@rock-chips.com/t.mbox.gz
-> Checking for older revisions
-> Grabbing search results from lore.kernel.org
->    Added from v1: 4 patches
-> ---
-> Analyzing 18 messages in the thread
-> WARNING: duplicate messages found at index 2
->     Subject 1: dt-bindings: ufs: Document Rockchip UFS host controller
->     Subject 2: dt-bindings: ufs: Document Rockchip UFS host controller
->    2 is not a reply... assume additional patch
-> Looking for additional code-review trailers on lore.kernel.org
-> Analyzing 0 code-review messages
-> Preparing fake-am for v1: Init support for RK3576 UFS controller
->    range: e86f0d80765d..3ae8e722f6ab
-> Preparing fake-am for v2: scsi: ufs: core: Export
-> ufshcd_dme_link_startup() helper
-> ERROR: v2 series incomplete; unable to create a fake-am range
-> ---
-> Could not create fake-am range for upper series v2
-> 
-> 
-> So how can we handle it? Your job is to use standard process so life of
-> reviewers is not more difficult than it should be.
-> 
-> Provide FULL CHANGELOG with explanation what happened here.
+I could also possibly work around this on my end, and either limit the
+terribleness to the ppc arch_unmap code or limit the effectiveness of
+the patch set a bit. But both of these options feel like somewhat
+fighting the inevitable.
 
-Sorry for that. I'll improve them when the dependency is solved.
+What do you think?
 
-> 
-> Best regards,
-> Krzysztof
-> 
+Thanks,
+Pedro
 
