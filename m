@@ -1,58 +1,105 @@
-Return-Path: <linux-kernel+bounces-281191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0C294D430
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:09:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF14294D432
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A105FB21C2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35ADB1F22A5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43861990BE;
-	Fri,  9 Aug 2024 16:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFF31991AE;
+	Fri,  9 Aug 2024 16:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8Z5u4+U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BhG9NU0u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF24D1870;
-	Fri,  9 Aug 2024 16:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61F4198A0F
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723219746; cv=none; b=QiXxpcKfLqiXHdCJePEVw9CUrlwx0o+dMCb+dmgl+64qwtHtLGeaOuMn5dDM8QetOc7olMf1S7zkm7GiZrfNzge2pXvCYb3PCpcDZQgNY7/cw4/2lzFyFEBCm6G/z82EwjCJxgsOdV5e5WcIZtDM+3JNpGJQnrWGZnoTzLdyTLI=
+	t=1723219758; cv=none; b=MBTx4QDi/8D67D1cmiXeLamLTyFlpWbWYlOuQD2yW94o5Jx/3OxE25X+oknIQP9Jxqn2B6yPQQKlsfAkhYecRuVNDekzQet4b6/Zlw7XjhT3hwinPR7fbPWEnxtEFUItz9D6nqkdGv8c8TaGIqhwgQTcFxzdSNuH1pCqfnc6LlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723219746; c=relaxed/simple;
-	bh=omwvjFoS49SAlXYzfzzu4DPijGXZFsgBINHbieSf1VU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KkCkKv9R2bOVliOg8XaBNJ0Atwkof7bi0UCSbZIXthL09ARaZbZMiTaTQzyDxyJfl0xeccmPUprDIVp11weiRPzpjTvjO7qOI/L61YZlU4VwEjETIEeVJtt3oPNZuXyTkcI7P4lGAAl7rgrfk73OfWCmLRTgnv0VpVr2VI/zb2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8Z5u4+U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BC0FC32782;
-	Fri,  9 Aug 2024 16:09:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723219745;
-	bh=omwvjFoS49SAlXYzfzzu4DPijGXZFsgBINHbieSf1VU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=s8Z5u4+UY/TuJZZY19mD6njpuv3yDwbAWJ3FR4U8BXkpMRiqTYbMCvuwBHV6qPn3X
-	 QSXnORxzMmAX0CyhHylMhwotNePhrRZ3HQohpBvKnBpY8vic6QHlZwG34ZxBexa0IA
-	 5hQ4pxeaZIRIxESvwdizYORaiBdDn1U15Hw3xk4I+iEzUE4BiT7bCCcarY1GaM9Q8V
-	 n1ZHFkwyMOyxoV71Q24CJHWQ4WW8vGt+eDcCOY5vHmMEHC4VTbe/kec0LNrIxIX9v6
-	 9xMk+zq2git1gJZBhIJ7fH8AZzTSl/2MpUAqq6qLgTPg02LkodRfiT/+uCklxKtvOI
-	 8ZzuRBbdlvtkA==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kbuild@vger.kernel.org,
-	Max Krummenacher <max.krummenacher@toradex.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: [PATCH] tty: vt: conmakehash: remove non-portable code printing comment header
-Date: Sat, 10 Aug 2024 01:07:20 +0900
-Message-ID: <20240809160853.1269466-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723219758; c=relaxed/simple;
+	bh=2WgmQgQEfr26aTfowCfsCu0TYq0w2lQ2BLK13a6pqnQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gq+l/TRZcvjzWSr1vP9PIdbgVMNLTEfjxp0abulJkd+63MJZR7VcJhS5xye5QKtjR+xXD+IgMUWF2vGd4e4Ggg8wTm5muMYDWUZRejUJ1cBPAznySz/ZuN4Lwy2SqfikEU7vpejxjl+RxKPftVSMqiQpU73PR/28s/IkUeEGLP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BhG9NU0u; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723219755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=H3FphSULA278eQYK8IhU8kCmMsD1ITR1tZt6BMM/yRo=;
+	b=BhG9NU0ueCmcC3gIjYHgnAE13civaizyi0c/69Y5JKjZPnxeRj8lMpG2ZnoNCntRlerZE6
+	OHxxGXb6x2uuhNtP/YmkahjdSBjrOUg32i57Cx13yQRFhKlsRz3LoeISAWufFWwA+HAZ0p
+	0A8gqDuKwTV4euTQdyNZph7a+bR5+78=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-454--OTXl_tCPYKvr4xMwS16OA-1; Fri, 09 Aug 2024 12:09:14 -0400
+X-MC-Unique: -OTXl_tCPYKvr4xMwS16OA-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-44fe28cd027so3757341cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:09:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723219754; x=1723824554;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H3FphSULA278eQYK8IhU8kCmMsD1ITR1tZt6BMM/yRo=;
+        b=ErsMqDZeomUwYBLuE6QtxxeImioSFFRbuvdugAyd6AOTOQF7jb8KvcKyk/vRAZT7Qv
+         H0LCTyST3Xn4mectAwKop4GbV7SbYat0K/eV012R6TBz7+W0xeyG7EW3V9sgPRtHMRJR
+         0AakbKFeHne3fM063nIqayYyurzO8WLj3ntd8gYniTEwlgfJsiTMtNL9WW26wWaGRDnv
+         eEryAUf9hWvfilITKRLYIV6AuaxtN+2WGLsHv41lgENzoXZ8iesuOtX7H1MoxSc9ri6h
+         1K1JTd6VCwMUCZme9V0B+dG+Xx1wK/4bEk30T+WHlQuJIWkHM/EGCvCLMH4Lzlms1bqi
+         z/8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXMEYw4/EXIQ7ldqg0M6Tx5fMPr310iR++dQchFog1A9BaB+1g9A7k5JagqTFJ+9IcSic+HFNu51D3ji6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfjX5c14d+Bw9r+EwxX7K9GjWpblxWMDzHduwHCGc1WhNFrhvy
+	ZJ2DJgGqpeDXmZ+/rU9Bew+mY2U/gU07woIyzLIw9NFKbXWLesGkt72Of/zEz5yiq9Kzf+GmYGY
+	vy3RQD4/9JlSWVNZcPYcx8sCHuPiacD4sdZVHsMv4yRoE9CorCDb2mBQOWakLIg==
+X-Received: by 2002:a05:622a:1b8e:b0:447:e636:9ea9 with SMTP id d75a77b69052e-4531251c724mr14418051cf.3.1723219753541;
+        Fri, 09 Aug 2024 09:09:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWNPDs+vlFTPHpFuMrdeo6E/S0PAcXPPqx11I4cRXb3TL+utF6Zl6s0U3W9M0F2mk2TxiY/g==
+X-Received: by 2002:a05:622a:1b8e:b0:447:e636:9ea9 with SMTP id d75a77b69052e-4531251c724mr14417681cf.3.1723219752892;
+        Fri, 09 Aug 2024 09:09:12 -0700 (PDT)
+Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451c870016csm22526741cf.19.2024.08.09.09.09.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 09:09:11 -0700 (PDT)
+From: Peter Xu <peterx@redhat.com>
+To: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	x86@kernel.org,
+	peterx@redhat.com,
+	Will Deacon <will@kernel.org>,
+	Gavin Shan <gshan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	David Hildenbrand <david@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	kvm@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH 00/19] mm: Support huge pfnmaps
+Date: Fri,  9 Aug 2024 12:08:50 -0400
+Message-ID: <20240809160909.1023470-1-peterx@redhat.com>
+X-Mailer: git-send-email 2.45.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,99 +108,206 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no
-longer in env") included <linux/limits.h>, which invoked another
-(wrong) patch that tried to address a build error on macOS.
+Overview
+========
 
-According to the specification [1], the correct header to use PATH_MAX
-is <limits.h>.
+This series is based on mm-unstable, commit 98808d08fc0f of Aug 7th latest,
+plus dax 1g fix [1].  Note that this series should also apply if without
+the dax 1g fix series, but when without it, mprotect() will trigger similar
+errors otherwise on PUD mappings.
 
-The minimal fix would be to replace <linux/limits.h> with <limits.h>.
+This series implements huge pfnmaps support for mm in general.  Huge pfnmap
+allows e.g. VM_PFNMAP vmas to map in either PMD or PUD levels, similar to
+what we do with dax / thp / hugetlb so far to benefit from TLB hits.  Now
+we extend that idea to PFN mappings, e.g. PCI MMIO bars where it can grow
+as large as 8GB or even bigger.
 
-However, the following commits seem questionable to me:
+Currently, only x86_64 (1G+2M) and arm64 (2M) are supported.  The last
+patch (from Alex Williamson) will be the first user of huge pfnmap, so as
+to enable vfio-pci driver to fault in huge pfn mappings.
 
- - 3bd85c6c97b2 ("tty: vt: conmakehash: Don't mention the full path of the input in output")
- - 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no longer in env")
+Implementation
+==============
 
-These commits made too many efforts to cope with a comment header in
-drivers/tty/vt/consolemap_deftbl.c:
+In reality, it's relatively simple to add such support comparing to many
+other types of mappings, because of PFNMAP's specialties when there's no
+vmemmap backing it, so that most of the kernel routines on huge mappings
+should simply already fail for them, like GUPs or old-school follow_page()
+(which is recently rewritten to be folio_walk* APIs by David).
 
-  /*
-   * Do not edit this file; it was automatically generated by
-   *
-   * conmakehash drivers/tty/vt/cp437.uni > [this file]
-   *
-   */
+One trick here is that we're still unmature on PUDs in generic paths here
+and there, as DAX is so far the only user.  This patchset will add the 2nd
+user of it.  Hugetlb can be a 3rd user if the hugetlb unification work can
+go on smoothly, but to be discussed later.
 
-With this commit, the header part of the generate C file will be
-simplified as follows:
+The other trick is how to allow gup-fast working for such huge mappings
+even if there's no direct sign of knowing whether it's a normal page or
+MMIO mapping.  This series chose to keep the pte_special solution, so that
+it reuses similar idea on setting a special bit to pfnmap PMDs/PUDs so that
+gup-fast will be able to identify them and fail properly.
 
-  /*
-   * Automatically generated file; Do not edit.
-   */
+Along the way, we'll also notice that the major pgtable pfn walker, aka,
+follow_pte(), will need to retire soon due to the fact that it only works
+with ptes.  A new set of simple API is introduced (follow_pfnmap* API) to
+be able to do whatever follow_pte() can already do, plus that it can also
+process huge pfnmaps now.  Half of this series is about that and converting
+all existing pfnmap walkers to use the new API properly.  Hopefully the new
+API also looks better to avoid exposing e.g. pgtable lock details into the
+callers, so that it can be used in an even more straightforward way.
 
-BTW, another series of excessive efforts for a comment header can be
-seen in the following:
+Here, three more options will be introduced and involved in huge pfnmap:
 
- - 5ef6dc08cfde ("lib/build_OID_registry: don't mention the full path of the script in output")
- - 2fe29fe94563 ("lib/build_OID_registry: avoid non-destructive substitution for Perl < 5.13.2 compat")
+  - ARCH_SUPPORTS_HUGE_PFNMAP
 
-[1]: https://pubs.opengroup.org/onlinepubs/009695399/basedefs/limits.h.html
+    Arch developers will need to select this option when huge pfnmap is
+    supported in arch's Kconfig.  After this patchset applied, both x86_64
+    and arm64 will start to enable it by default.
 
-Fixes: 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no longer in env")
-Reported-by: Daniel Gomez <da.gomez@samsung.com>
-Closes: https://lore.kernel.org/all/20240807-macos-build-support-v1-11-4cd1ded85694@samsung.com/
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+  - ARCH_SUPPORTS_PMD_PFNMAP / ARCH_SUPPORTS_PUD_PFNMAP
 
- drivers/tty/vt/conmakehash.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+    These options are for driver developers to identify whether current
+    arch / config supports huge pfnmaps, making decision on whether it can
+    use the huge pfnmap APIs to inject them.  One can refer to the last
+    vfio-pci patch from Alex on the use of them properly in a device
+    driver.
 
-diff --git a/drivers/tty/vt/conmakehash.c b/drivers/tty/vt/conmakehash.c
-index 82d9db68b2ce..a931fcde7ad9 100644
---- a/drivers/tty/vt/conmakehash.c
-+++ b/drivers/tty/vt/conmakehash.c
-@@ -11,8 +11,6 @@
-  * Copyright (C) 1995-1997 H. Peter Anvin
-  */
- 
--#include <libgen.h>
--#include <linux/limits.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <sysexits.h>
-@@ -79,7 +77,6 @@ int main(int argc, char *argv[])
- {
-   FILE *ctbl;
-   const char *tblname;
--  char base_tblname[PATH_MAX];
-   char buffer[65536];
-   int fontlen;
-   int i, nuni, nent;
-@@ -245,20 +242,15 @@ int main(int argc, char *argv[])
-   for ( i = 0 ; i < fontlen ; i++ )
-     nuni += unicount[i];
- 
--  strncpy(base_tblname, tblname, PATH_MAX);
--  base_tblname[PATH_MAX - 1] = 0;
-   printf("\
- /*\n\
-- * Do not edit this file; it was automatically generated by\n\
-- *\n\
-- * conmakehash %s > [this file]\n\
-- *\n\
-+ * Automatically generated file; Do not edit.\n\
-  */\n\
- \n\
- #include <linux/types.h>\n\
- \n\
- u8 dfont_unicount[%d] = \n\
--{\n\t", basename(base_tblname), fontlen);
-+{\n\t", fontlen);
- 
-   for ( i = 0 ; i < fontlen ; i++ )
-     {
+So after the whole set applied, and if one would enable some dynamic debug
+lines in vfio-pci core files, we should observe things like:
+
+  vfio-pci 0000:00:06.0: vfio_pci_mmap_huge_fault(,order = 9) BAR 0 page offset 0x0: 0x100
+  vfio-pci 0000:00:06.0: vfio_pci_mmap_huge_fault(,order = 9) BAR 0 page offset 0x200: 0x100
+  vfio-pci 0000:00:06.0: vfio_pci_mmap_huge_fault(,order = 9) BAR 0 page offset 0x400: 0x100
+
+In this specific case, it says that vfio-pci faults in PMDs properly for a
+few BAR0 offsets.
+
+Patch Layout
+============
+
+Patch 1:         Introduce the new options mentioned above for huge PFNMAPs
+Patch 2:         A tiny cleanup
+Patch 3-8:       Preparation patches for huge pfnmap (include introduce
+                 special bit for pmd/pud)
+Patch 9-16:      Introduce follow_pfnmap*() API, use it everywhere, and
+                 then drop follow_pte() API
+Patch 17:        Add huge pfnmap support for x86_64
+Patch 18:        Add huge pfnmap support for arm64
+Patch 19:        Add vfio-pci support for all kinds of huge pfnmaps (Alex)
+
+TODO
+====
+
+Nothing I plan to do myself, as in our VM use case most of these doesn't
+yet apply, but still list something I think might be interesting.
+
+More architectures / More page sizes
+------------------------------------
+
+Currently only x86_64 (2M+1G) and arm64 (2M) are supported.
+
+For example, if arm64 can start to support THP_PUD one day, the huge pfnmap
+on 1G will be automatically enabled.
+
+Generically speaking, arch will need to first support THP / THP_1G, then
+provide a special bit in pmds/puds to support huge pfnmaps.
+
+remap_pfn_range() support
+-------------------------
+
+Currently, remap_pfn_range() still only maps PTEs.  With the new option,
+remap_pfn_range() can logically start to inject either PMDs or PUDs when
+the alignment requirements match on the VAs.
+
+When the support is there, it should be able to silently benefit all
+drivers that is using remap_pfn_range() in its mmap() handler on better TLB
+hit rate and overall faster MMIO accesses similar to processor on hugepages.
+
+More driver support
+-------------------
+
+VFIO is so far the only consumer for the huge pfnmaps after this series
+applied.  Besides above remap_pfn_range() generic optimization, device
+driver can also try to optimize its mmap() on a better VA alignment for
+either PMD/PUD sizes.  This may, iiuc, normally require userspace changes,
+as the driver doesn't normally decide the VA to map a bar.  But I don't
+think I know all the drivers to know the full picture.
+
+Tests
+=====
+
+- Cross-build tests that I normally do. I only saw one bluetooth driver
+  build failure on i386 PAE on top of latest mm-unstable, but shouldn't be
+  relevant.
+
+- run_vmtests.sh whole set, no more failures (e.g. mlock2 tests fail on
+  mm-unstable)
+
+- Hacked e1000e QEMU with 128MB BAR 0, with some prefault test, mprotect()
+  and fork() tests on the bar mapped
+
+- x86_64 + AMD GPU
+  - Needs Alex's modified QEMU to guarantee proper VA alignment to make
+    sure all pages to be mapped with PUDs
+  - Main BAR (8GB) start to use PUD mappings
+  - Sub BAR (??MBs?) start to use PMD mappings
+  - Performance wise, slight improvement comparing to the old PTE mappings
+
+- aarch64 + NIC
+  - Detached NIC test to make sure driver loads fine with PMD mappings
+
+Credits all go to Alex on help testing the GPU/NIC use cases above.
+
+Comments welcomed, thanks.
+
+[1] https://lore.kernel.org/r/20240807194812.819412-1-peterx@redhat.com
+
+Alex Williamson (1):
+  vfio/pci: Implement huge_fault support
+
+Peter Xu (18):
+  mm: Introduce ARCH_SUPPORTS_HUGE_PFNMAP and special bits to pmd/pud
+  mm: Drop is_huge_zero_pud()
+  mm: Mark special bits for huge pfn mappings when inject
+  mm: Allow THP orders for PFNMAPs
+  mm/gup: Detect huge pfnmap entries in gup-fast
+  mm/pagewalk: Check pfnmap early for folio_walk_start()
+  mm/fork: Accept huge pfnmap entries
+  mm: Always define pxx_pgprot()
+  mm: New follow_pfnmap API
+  KVM: Use follow_pfnmap API
+  s390/pci_mmio: Use follow_pfnmap API
+  mm/x86/pat: Use the new follow_pfnmap API
+  vfio: Use the new follow_pfnmap API
+  acrn: Use the new follow_pfnmap API
+  mm/access_process_vm: Use the new follow_pfnmap API
+  mm: Remove follow_pte()
+  mm/x86: Support large pfn mappings
+  mm/arm64: Support large pfn mappings
+
+ arch/arm64/Kconfig                  |   1 +
+ arch/arm64/include/asm/pgtable.h    |  30 +++++
+ arch/powerpc/include/asm/pgtable.h  |   1 +
+ arch/s390/include/asm/pgtable.h     |   1 +
+ arch/s390/pci/pci_mmio.c            |  22 ++--
+ arch/sparc/include/asm/pgtable_64.h |   1 +
+ arch/x86/Kconfig                    |   1 +
+ arch/x86/include/asm/pgtable.h      |  80 ++++++++-----
+ arch/x86/mm/pat/memtype.c           |  17 ++-
+ drivers/vfio/pci/vfio_pci_core.c    |  60 +++++++---
+ drivers/vfio/vfio_iommu_type1.c     |  16 +--
+ drivers/virt/acrn/mm.c              |  16 +--
+ include/linux/huge_mm.h             |  16 +--
+ include/linux/mm.h                  |  57 ++++++++-
+ include/linux/pgtable.h             |  12 ++
+ mm/Kconfig                          |  13 ++
+ mm/gup.c                            |   6 +
+ mm/huge_memory.c                    |  48 +++++---
+ mm/memory.c                         | 178 ++++++++++++++++++++--------
+ mm/pagewalk.c                       |   5 +
+ virt/kvm/kvm_main.c                 |  19 ++-
+ 21 files changed, 422 insertions(+), 178 deletions(-)
+
 -- 
-2.43.0
+2.45.0
 
 
