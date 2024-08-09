@@ -1,225 +1,214 @@
-Return-Path: <linux-kernel+bounces-281626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA54E94D8F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:05:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B67894D8FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A0351F227A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BFD61F22842
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C38516C686;
-	Fri,  9 Aug 2024 23:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4384616D31B;
+	Fri,  9 Aug 2024 23:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="M+giBGZ9"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/csMJl8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B0716B3AB
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 23:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6DF1607AF;
+	Fri,  9 Aug 2024 23:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723244722; cv=none; b=XAYW7Z8V+gV69BL+Dj9TGOkcAbjVCBAw9BJ5eP5d0UFTV+MBTnFFhRChdJd71jHho/BfM6d9zSbBbB5gSb3bfC6Ke4A6kGEdxUYhz6u+0JJY3RIcYKItAbtvSbEn9LBwRmuiwarx2/JXPSf6YVo+Ljvj2AiEK2nlwdeirx7ytBo=
+	t=1723244784; cv=none; b=CBYktqmhZkiDNDbW1TuibJlra1FEidLNWaszBsdjmkd1Jf+xyDgXXaBAKNzutIAvHsaC4wwQFz8NOJbhyuN8oQYS21c2EQPeoQiA3/BGT6ffqrZmtQkiD2CshC6YWQRnCFjjNkkaYl+5XcQaL5yEjtaGSqFmgji69Os6SBBmODo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723244722; c=relaxed/simple;
-	bh=vWkSxykn1cvJmCP36LasKH/Tbo44KivDmwGTYeyWhCU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Sk4tuJkX9UrpwGIBYhPqjWddmqOTAmjYZhbDNaqjj27WjpE2VFHvWn0SSuWDGhvmrFWK+sc3dM7i3rk60DPeQ5w+enZdKg2YJ2P79mlrl7VnH19pyCOzyTxX/J0oQ8Jrbk35eCA2EPHV87A1ixlZdVZf2Rr33e3/7GLs3YW1Mfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=M+giBGZ9; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1723244655; x=1723849455; i=spasswolf@web.de;
-	bh=amghjiPmBdNDjZ+QdNP/jp2SmgB4Kt9zFVs1Mtm8BNk=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=M+giBGZ94Iev8emMHqP0Tm1TlQf0f/2PjFAq/NVCfhH/rhBEDelFusBvv6DyTeQY
-	 NA6l58okSX3kcfISxnRTbJfEjR1nPoA4/WZ2NshOYb9V7WpNW2/rgfKAU+o+TYK6G
-	 utNAJObYNpHNQHE/Zx2YTs1gxU9bJxesEuqEJ0j0hDUT4V1zjJKWXCXz1Romde+hI
-	 rSx/4kjlJm6TTCvbWaQ+F6S7aiFFoK53XoBJvbylAEvk2q5KqbVnUjAJ0t0Fi9bge
-	 9zmbhBm2sdexejclrlG6VYRV74cvJ6KCV9NfqNJM5OpP6FWYucs45ZGDjf0QOn7VN
-	 R03gBGDLSJoQOtDOMg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrOdp-1rodho1tvL-00pmq9; Sat, 10
- Aug 2024 01:04:15 +0200
-Message-ID: <8559e4f66f1e6f1d7e938cc7a833528f232872d2.camel@web.de>
-Subject: Re: commit 81106b7e0b13 can break asm_int80_emulation on x86_64
-From: Bert Karwatzki <spasswolf@web.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: mingo@kernel.org, akpm@linux-foundation.org, Oleg Nesterov
- <oleg@redhat.com>,  Andy Lutomirski	 <luto@kernel.org>, Borislav Petkov
- <bp@alien8.de>, Fenghua Yu	 <fenghua.yu@intel.com>, "H . Peter Anvin"
- <hpa@zytor.com>, Dave Hansen	 <dave.hansen@linux.intel.com>, Thomas
- Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>,
- linux-kernel@vger.kernel.org, peterz@infradead.org, spasswolf@web.de
-Date: Sat, 10 Aug 2024 01:04:10 +0200
-In-Reply-To: <CAHk-=wi=M1MT8TT8oMsXcUTyNi+zgV56b6wNmhYZ5c=vaXiCOQ@mail.gmail.com>
-References: <20240809145320.77100-1-spasswolf@web.de>
-	 <CAHk-=wi=M1MT8TT8oMsXcUTyNi+zgV56b6wNmhYZ5c=vaXiCOQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.53.2-1 
+	s=arc-20240116; t=1723244784; c=relaxed/simple;
+	bh=BwFadedF5rj9rHUpdYtKkGHf7SYGqFjoEgqWwCF1UD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LsU9DwkTVmjs9SCWnOQaeAF/tDThFiUUJfGFJaJXFhshAPzYg++2XBgymI4//X121lmOzzwDHSsFpk3EPvEH24CFy7NNjnoeFVHNdYsVDJe/KmhidZ/kzpEZFUMmCAS/jXhoyuQ//mHxKZW28jox30MRcgyb9x4V8pVN+z7HjnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/csMJl8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10BFDC4AF10;
+	Fri,  9 Aug 2024 23:06:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723244784;
+	bh=BwFadedF5rj9rHUpdYtKkGHf7SYGqFjoEgqWwCF1UD8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a/csMJl8QqWNRzHe4O2Oh/D2HjQdYXYJOFjTWkGLrl5Pg/18MvOlw6fe/PouHcaEX
+	 31h1e/OdO8hYuT9f1OB7ii6pcmtCOHiBtMqXTG2Mn6UVBkhO2QuXrEeUe42gCasrFG
+	 SilEMZJtjGH30T14nObqxxLCf0yz0st1RI4pZoI9L8G5MLBjvtwAyCx62QFnqKnN4B
+	 ubMyM9ZmJmyT44HR1hYHCnj8iKPtXInOrJytBy0FWu1NeKSZHB/OD0Fv2IlxIa36CV
+	 xHJGTyaxsoHP7LBzc/MWahStrMOkiPaAJDYwhccoLK1TOSEPAW0kMn5AwSros5MVam
+	 pmSKTzFHkMRrg==
+Date: Sat, 10 Aug 2024 00:06:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>, jannh@google.com,
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
+Message-ID: <Zrag5A5K9pv1K9Uz@finisterre.sirena.org.uk>
+References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
+ <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
+ <ZrZdrgOQVHhCyWmA@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x+vqlBicxCJXdkp6"
+Content-Disposition: inline
+In-Reply-To: <ZrZdrgOQVHhCyWmA@arm.com>
+X-Cookie: Your love life will be... interesting.
+
+
+--x+vqlBicxCJXdkp6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:E8Xdx6B7LgAsJUzz0sDGmCxBAVynMFh4/ZAjds4Ox3fdMhZWH6T
- 9KJ2sT8z2gNXgAMimWrirqkfvghD3osj3HFWtK7iwVwKKs+/A4ocj8qW8DOKb60kK5v40Qd
- 9ZYZ1IDlmXCp2eWfOjwMxC0cozhj3mCwAWZxtLhcL+DO64mIFVrpFKlarAojJsWQqhSr0DU
- iZrbJ3QtFGKyJtqG9djGA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ucmnhs72Vl0=;Ka9d4MFHSG1A0YpBpBLekuCVsEt
- q2iLQjpJugyIQ5oc61RV1BuOyhVdFieyLgYZC0OEe4ryaJus0OE0jJ1SjGB1lKAQli0VWN709
- OOi1yqaprpc17ZGRZDBDBLOBkvD3HpWZgSM+Edxt3VpDXyCPb75zquDoAwvxdumfuezqvaRF7
- UAa9TMFcxkOyzV96nhNO1CDLFmig0H9i4xoZnfkXTTVxbo8HJwBKvaKTbRUD4rS6fhELo8EgY
- 2+GDLDE8pxELX9Fl9BBgF63SpArOEW4uFBSqpV78eI76awhJuernuIHsGK2B+pRAGb91pyNBO
- odatUiCkK7Yk8yznt15teq6bFLsnZ/ITRvDgMzZ13Y+6ZKP4wdmDvxlbAK6FyT1pFiv9rdqC4
- lYj6TTEm3nMGCynyfI+UoMOXLDiIuIxKFBD3T/sb9AIoZwEdhfVGEqX6EghOXIENhR/bAXtrV
- X4P9Iu/WXQOZ5eoZUTSNczw0R4K7IWA74GeyIUoDzn6oEISq2O6eckUoECuHQGfgd/kGlfw7A
- +m3S9QBXjqTBpyqlbjFLWTvLBg9xiMwlw0Pq/+t7I4lwFNkfPhZjYomhbs4ERf1JyT7SAyduW
- y1N/kkTf5fUF+UjYK+9rscNqxr42HB3TOriG89bdIXRtYC+rc0NWNtx34b6c5fPX3adhM0qv7
- yOCIhG1i+VfrHTd/EySey/KfX6rI06HQhppfQgC/A50RU2LH8ECYPz0lqyGDo2oYXAIQ0q7nx
- WRlRMp26OcCntrNXOwGkyGZCts+A3hGaHQr6UvjF7uos6h1cgl68/bIkU38EwBgZ6rf/P0bi6
- 2CBQu06os535mumQluGvgAbw==
 
-Am Freitag, dem 09.08.2024 um 11:17 -0700 schrieb Linus Torvalds:
-> On Fri, 9 Aug 2024 at 07:53, Bert Karwatzki <spasswolf@web.de> wrote:
-> >
-> > So the problem seems to be that the kmem_cache object *s has usersize =
-0. This
-> > should be impossible in theory as kmem_cache_create_usercopy() should =
-print
-> > a warning in case of (!usersize && useroffset).
->
-> Following along from your original report:
->
->   usercopy: Kernel memory overwrite attempt detected to SLUB object
-> 'task_struct' (offset 3072, size 160)!
->
-> IOW, the user copy code is unhappy about copying data from user mode
-> into the task_struct allocation.
->
-> Anyway, on x86-64 with that commit we now just do
->
->   arch_thread_struct_whitelist(unsigned long *offset, unsigned long *siz=
-e)
->    {
->         *offset =3D 0;
->         *size =3D 0;
->   }
->
-> and that seems to be the bug.
->
-> It's still allocated together with that 'struct task_struct', even if
-> it's no longer inside the 'struct thread_struct'.
->
-> Ingo? I think it needs to be something like
->
->         *offset =3D sizeof(struct task_struct)
->                 - offsetof(struct task_struct, thread)
->                 + offsetof(struct fpu, __fpstate.regs);
->         *size =3D fpu_kernel_cfg.default_size;
->
-> and the commit message of
->
->     The fpu_thread_struct_whitelist() quirk to hardened usercopy can be =
-removed,
->     now that the FPU structure is not embedded in the task struct anymor=
-e, which
->     reduces text footprint a bit.
->
-> is clearly not true. No, it's not embedded in 'struct task_struct',
-> but it *is* still allocated together with it in the same slab if I
-> read the code correctly (ie this part
->
->   static void __init fpu__init_task_struct_size(void)
->   {
->         int task_size =3D sizeof(struct task_struct);
->
->         task_size +=3D sizeof(struct fpu);
->         ..
->         arch_task_struct_size =3D task_size;
->
->
-> is because it's still all one single slab allocation.
->
->                Linus
+On Fri, Aug 09, 2024 at 07:19:26PM +0100, Catalin Marinas wrote:
+> On Thu, Aug 08, 2024 at 09:15:25AM +0100, Mark Brown wrote:
 
-Yes, this seems to be the problem. As the old code (from linux-5.16-rc1 to
-linux-6.11-rc2) used this
+> > +	/* This should really be an atomic cmpxchg.  It is not. */
+> > +	if (access_remote_vm(mm, addr, &val, sizeof(val),
+> > +			     FOLL_FORCE) !=3D sizeof(val))
+> > +		goto out;
 
-void fpu_thread_struct_whitelist(unsigned long *offset, unsigned long *siz=
-e)
-{
-	*offset =3D offsetof(struct thread_struct, fpu.__fpstate.regs);
-	*size =3D fpu_kernel_cfg.default_size;
-}
+> If we restrict the shadow stack creation only to the CLONE_VM case, we'd
+> not need the remote vm access, it's in the current mm context already.
+> More on this below.
 
-I tried this as a potential solution:
+The discussion in previous iterations was that it seemed better to allow
+even surprising use cases since it simplifies the analysis of what we
+have covered.  If the user has specified a shadow stack we just do what
+they asked for and let them worry about if it's useful.
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/proce=
-ssor.h
-index bd0621210f63..f1d713de6dba 100644
-=2D-- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -516,8 +516,9 @@ extern struct fpu *x86_task_fpu(struct task_struct *ta=
-sk);
- static inline void
- arch_thread_struct_whitelist(unsigned long *offset, unsigned long *size)
- {
--       *offset =3D 0;
--       *size =3D 0;
-+       *offset =3D sizeof(struct thread_struct)
-+               + offsetof(struct fpu, __fpstate.regs);
-+       *size =3D fpu_kernel_cfg.default_size;
- }
+> > +	if (val !=3D expected)
+> > +		goto out;
 
- static inline void
+> I'm confused that we need to consume the token here. I could not find
+> the default shadow stack allocation doing this, only setting it via
+> create_rstor_token() (or I did not search enough). In the default case,
+> is the user consuming it? To me the only difference should been the
+> default allocation vs the one passed by the user via clone3(), with the
+> latter maybe requiring the user to set the token initially.
 
-and it seems to solve the problem (debug output from my previous printk pa=
-tch):
+As discussed for a couple of previous versions if we don't have the
+token and userspace can specify any old shadow stack page as the shadow
+stack this allows clone3() to be used to overwrite the shadow stack of
+another thread, you can point to a shadow stack page which is currently
+in use and then run some code that causes shadow stack writes.  This
+could potentially then in turn be used as part of a bigger exploit
+chain, probably it's hard to get anything beyond just causing the other
+thread to fault but won't be impossible.
 
-[  T57380] copy_uabi_to_xstate 1261: calling copy_from buffer with offset =
-=3D
-0x200, size =3D 0x40
-[  T57380] copy_from_buffer: calling copy_from_user with to =3D ffffadf495=
-127d58
-from =3D 000000003ffef840, n =3D 0x40
-[  T57380] copy_uabi_to_xstate 1275: calling copy_from buffer with offset =
-=3D
-0x18, size =3D 0x8
-[  T57380] copy_from_buffer: calling copy_from_user with to =3D ffffadf495=
-127d50
-from =3D 000000003ffef658, n =3D 0x8
-[  T57380] copy_uabi_to_xstate 1300: calling copy_from buffer 0 with offse=
-t =3D
-0x0, size =3D 0xa0, dst =3D ffff90d285ec7880, kbuf =3D 0000000000000000, u=
-buf =3D
-000000003ffef640
-[  T57380] copy_from_buffer: calling copy_from_user with to =3D ffff90d285=
-ec7880
-from =3D 000000003ffef640, n =3D 0xa0
+With a kernel allocated shadow stack this is not an issue since we are
+placing the shadow stack in new memory, userspace can't control where we
+place it so it can't overwrite an existing shadow stack.
 
-Here the bug would happen in linux-next-20240806 which seems to be avoided=
- by
-the patch.
+> > +		/*
+> > +		 * For CLONE_VFORK the child will share the parents
+> > +		 * shadow stack.  Make sure to clear the internal
+> > +		 * tracking of the thread shadow stack so the freeing
+> > +		 * logic run for child knows to leave it alone.
+> > +		 */
+> > +		if (clone_flags & CLONE_VFORK) {
+> > +			shstk->base =3D 0;
+> > +			shstk->size =3D 0;
+> > +			return 0;
+> > +		}
 
-[  T57380] copy_uabi_to_xstate 1300: calling copy_from buffer 1 with offse=
-t =3D
-0xa0, size =3D 0x100, dst =3D ffff90d285ec7920, kbuf =3D 0000000000000000,=
- ubuf =3D
-000000003ffef640
-[  T57380] copy_from_buffer: calling copy_from_user with to =3D ffff90d285=
-ec7920
-from =3D 000000003ffef6e0, n =3D 0x100
+> I think we should leave the CLONE_VFORK check on its own independent of
+> the clone3() arguments. If one passes both CLONE_VFORK and specific
+> shadow stack address/size, they should be ignored (or maybe return an
+> error if you want to make it stricter).
 
-Bert Karwatzki
+This is existing logic from the current x86 code that's been reindented
+due to the addition of explicitly specified shadow stacks, it's not new
+behaviour.  It is needed to stop the child thinking it has the parent's
+shadow stack in the CLONE_VFORK case.
 
+> > -	/*
+> > -	 * For !CLONE_VM the child will use a copy of the parents shadow
+> > -	 * stack.
+> > -	 */
+> > -	if (!(clone_flags & CLONE_VM))
+> > -		return 0;
+> > +		/*
+> > +		 * For !CLONE_VM the child will use a copy of the
+> > +		 * parents shadow stack.
+> > +		 */
+> > +		if (!(clone_flags & CLONE_VM))
+> > +			return 0;
+
+> Is the !CLONE_VM case specific only to the default shadow stack
+> allocation? Sorry if this has been discussed already (or I completely
+> forgot) but I thought we'd only implement this for the thread creation
+> case. The typical fork() for a new process should inherit the parent's
+> layout, so applicable to the clone3() with the shadow stack arguments as
+> well (which should be ignored or maybe return an error with !CLONE_VM).
+
+This is again all existing behaviour for the case where the user has not
+specified a shadow stack reindented, as mentioned above if the user has
+specified one explicitly then we just do what we were asked.  The
+existing behaviour is to only create a new shadow stack for the child in
+the CLONE_VM case and leave the child using the same shadow stack as the
+parent in the copied mm for !CLONE_VM.
+
+> > @@ -2790,6 +2808,8 @@ pid_t kernel_clone(struct kernel_clone_args *args)
+> >  	 */
+> >  	trace_sched_process_fork(current, p);
+> > =20
+> > +	shstk_post_fork(p, args);
+
+> Do we need this post fork call? Can we not handle the setup via the
+> copy_thread() path in shstk_alloc_thread_stack()?
+
+It looks like we do actually have the new mm in the process before we
+call copy_thread() so we could move things into there though we'd loose
+a small bit of factoring out of the error handling (at one point I had
+more code factored out but right now it's quite small, looking again we
+could also factor out the get_task_mm()/mput()).  ISTR having the new
+process' mm was the biggest reason for this initially but looking again
+I'm not sure why that was.  It does still feel like even the small
+amount that's factored out currently is useful though, a bit less
+duplication in the architecture code which feels welcome here.
+
+--x+vqlBicxCJXdkp6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma2oOEACgkQJNaLcl1U
+h9DJAAf+JgJexSTM8FYO5LJrp+jcI3PrWuxmpz8oe4r2ikqJ0cNCDIythdgUWZi/
+cq2eE1HvcKW/hHzIXqZNTung2CRIzciY3mURpSSoZ5QEb07VJ6aGpqUjhRIcpf/h
+jdy+rbBRgXD7mv1fvrHVsBz29a6+Ke5hbmSg5VoWYpb8PH7LTxJvtdTh+5j0Gu21
+t5DBD7ZgayCI9k4O7wCcAacCKmZqv+2SEYNpfYGHzXuL4HZZkdGs8gCI2GVYW5rR
++g80dalbhsVWhEq9bMfESemL2Rb5BSINFey6n7bRcACK1+/I7eSNprv5L1GL/AKK
+clCbRH0HNAvbw9ymbemgTt0U/cU2ZA==
+=MunQ
+-----END PGP SIGNATURE-----
+
+--x+vqlBicxCJXdkp6--
 
