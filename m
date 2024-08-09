@@ -1,71 +1,79 @@
-Return-Path: <linux-kernel+bounces-281017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FFA94D1F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:14:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF4E94D1CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329991F222B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:14:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC6BD1C2103B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0D9196DA4;
-	Fri,  9 Aug 2024 14:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F5A195FE5;
+	Fri,  9 Aug 2024 14:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=emerson.com header.i=@emerson.com header.b="S0u+U4+c"
-Received: from mx0a-00300601.pphosted.com (mx0a-00300601.pphosted.com [148.163.146.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MR+OoK1z"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A5C198A0D
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.146.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC20A19580A
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723212863; cv=none; b=q/ipIjojqXfhiyToHdCVX2ct0/ldxaPZYpOFXUVtWUZI9YS0EtsEUwu7/T9J8gY2gAfNrckml4paO0h1dA3lXDAfWGoqmol+M44qUKyAdiQgaHeIoqbFQdRUO/EjzvVPcMsc+00MguW0FrDnbLaztU1yNN7+4mCE0lCxwXTXTjw=
+	t=1723212438; cv=none; b=ha/yY19vRK5IOemK/i+ETWG/MaTxOWJd3Sen7LdBxNAntgElbBA1U2MLYEpLlqpSeUQWG6j4lZ+0t3Rq+RLhjwTE4QPHYpqnjy+TgAPAIVDy0g1p0bBdm9bDLO42/DpWHx2FC6YNzTlxh/w/jkjYWxKo/gbQVCuO53mG0oy5Fl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723212863; c=relaxed/simple;
-	bh=k0lXxdUujEHbSE4su7DMaLb+8ejwBxpqdvYGku1UOu0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bdW8HhDY444lK6u09SaDg5W64wZG2DcvdZCY2nSrmey+NbGCraSqrnj/4TzVV+uZjciJwYtzSx/FFt0Op7YdKq7RglvDkprs9lAs18cZiDY6jaNARwnzrJasxfMvMPi7hQoutUyllgBiYajdmlrqYfbTp4WSaRshw1lsToiTbNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emerson.com; spf=pass smtp.mailfrom=emerson.com; dkim=pass (2048-bit key) header.d=emerson.com header.i=@emerson.com header.b=S0u+U4+c; arc=none smtp.client-ip=148.163.146.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emerson.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emerson.com
-Received: from pps.filterd (m0359308.ppops.net [127.0.0.1])
-	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 479C4eFv004134;
-	Fri, 9 Aug 2024 13:24:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emerson.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding:content-type; s=email; bh=IXuzo+k1Fuz
-	U2qFtsu2QEn/iOLlKK50tpT2YpCc7BLo=; b=S0u+U4+c20+I+JaBO+MRF9CNY79
-	hed6TRlrsljcIvzAgKkwXfp2BcYoIQ9UEe3nYm8QYtlsiLzGjImFkoClf1sInEsP
-	n8yEtbSDbURC6KFACcH3Ys1zSg+Kh9QAFsCDLQhnTB/eXEJV7zGEl3kREAEM3Ehd
-	hhZOUDND9YrT44KQ5b77GTRVxqNEyU9KIkA0vw/vySoo6+0Invbw3O7PHCTEMOPf
-	FhWa+ZmEfr3hVLl1u4dg8m4VClUKv1G45mqJF0gfRUmOUhkfYklFkfdHGbCIwPce
-	N95Is2d/wBfKOuAcyKIthkvHnxBJgL/JbWldfRCdmfqtpfyRhjaycD0ElcA==
-Received: from usgdcecpmsgae03.extemr.org ([144.191.128.204])
-	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 40wjsk1bta-5
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 13:24:55 +0000 (GMT)
-Received: from usgdcecpmsgap05.emrsn.org (10.16.75.137) by mail.emerson.com
- (10.16.11.129) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 9 Aug
- 2024 13:25:28 +0000
-Received: from usgdcecpmsgap05.emrsn.org (10.16.75.137) by
- usgdcecpmsgap05.emrsn.org (10.16.75.137) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 9 Aug 2024 13:24:40 +0000
-Received: from localhost.localdomain (10.19.249.15) by Inetmail.emrsn.net
- (10.16.75.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11 via Frontend
- Transport; Fri, 9 Aug 2024 13:24:38 +0000
-From: Claus Fabig <claus.fabig@emerson.com>
-To: <claus.fabig@emerson.com>, <mwalle@kernel.org>, <tudor.ambarus@linaro.org>,
-        <pratyush@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <vigneshr@ti.com>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] mtd: spi-nor: add support for MRAM Everspin EM008LX
-Date: Fri, 9 Aug 2024 15:21:58 +0200
-Message-ID: <20240809132246.3395-1-claus.fabig@emerson.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723212438; c=relaxed/simple;
+	bh=3XkI4b92uJtcH/wkNHuOUJZhokFuyv930DI5WCjRN0I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PMhjEzjhHWsj2YfpGBtCxOGfkEuRc/hVAtxT0oXbCkgSoOkXV8rSZh1iCZkZXrRJE4z0zJizz3fIJ0JXyvs6bjWKSGbKojuj2eoSUEuwk5RlRKSBysnGr96YDQqTV4u8MUPpdBNrV4lbV8z0IUZlJvc8CWmoZ80aKVwWR8I/v8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MR+OoK1z; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cb510cd097so1720843a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 07:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723212436; x=1723817236; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g2ubsNBkHICjAKnj3VJLgF6tvUYKGQaSXUZ9IHeUjTM=;
+        b=MR+OoK1z+WEVapylEJ4HxE6IRY2hXdDLmhaTz4BF+RbEGdCdYKQljSkB+ZEOn3En6o
+         79LJou+9AOGfoz+Ilqdvw2xJbAe4lCK/cziDHh6qpwSiX2n2+sQiq5id2HTS3dM1hIos
+         6PR19NTBRAnubusxypWwTQo2Fnu26GaRmiYhM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723212436; x=1723817236;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g2ubsNBkHICjAKnj3VJLgF6tvUYKGQaSXUZ9IHeUjTM=;
+        b=mFTml0NXJIylAfhwHK1EUXqTnQtPqzpwXqFuoA0SDaiCycXhtWVULiHD4G9BFhxcBw
+         Go8nztuwlBeXCbu4urcNquP/EKmfYppr+1e2uvYDGT1zhIxg2+rMJm6XQQdKTR+RAA6y
+         +6SVTnOtFAO/YUsjFkIVUJfodyqdRsnKEXqyfSsghiTgQiMvop3eKf7sSIC9uaEOti8o
+         T/b5hK98jDPDvl7Lf6dEkyOHZVeGoHcBPAt3wuJkNELzfUCmx18cUoNYCLWcYjzBjM5A
+         DAveosZr8J7qbIUjZy/sMRMg2KebQzDCBcFF+vZliP+GXNqqjqlIr3mCXM7x1ZUTY+J9
+         d27A==
+X-Gm-Message-State: AOJu0Yyet8nNMdxlhv77YYL5ROc/YfDTBSVkOzx3cEZEjD/V+O7azjtg
+	kbwzGF6pKm5GGksLqhvw8vKobj24jWv9kcJsY7zcLZhhEOXa8i5l9WtY3bJAudk2CLAICs9REuI
+	=
+X-Google-Smtp-Source: AGHT+IHBh5T9/m4Bb3Mnijo58OaunbxzLHZGB7+5RnK6l5Z6jVFq/unajHaFdxGJkfXNRPo1eRsBIQ==
+X-Received: by 2002:a17:90a:510e:b0:2cb:5128:efdd with SMTP id 98e67ed59e1d1-2d1e7fb6373mr1812276a91.10.1723212435769;
+        Fri, 09 Aug 2024 07:07:15 -0700 (PDT)
+Received: from normanbt-p620.tpe.corp.google.com ([2401:fa00:1:17:86a2:9ae6:e93:3245])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9c64b1fsm3262422a91.7.2024.08.09.07.07.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 07:07:15 -0700 (PDT)
+From: Norman Bintang <normanbt@chromium.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: broonie@kernel.org,
+	alsa-devel@alsa-project.org,
+	Takashi Iwai <tiwai@suse.com>,
+	cujomalainey@chromium.org,
+	Norman Bintang <normanbt@chromium.org>,
+	Chih-Yang Hsia <paulhsia@chromium.org>,
+	David Riley <davidriley@chromium.org>
+Subject: [PATCH] ALSA: pcm: Add xrun counter for snd_pcm_substream
+Date: Fri,  9 Aug 2024 22:06:45 +0800
+Message-ID: <20240809140648.3414349-1-normanbt@chromium.org>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,136 +81,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: RFcVTwCqkTrzuRZrgTpuLLKXg_H3yzgQ
-X-Proofpoint-ORIG-GUID: RFcVTwCqkTrzuRZrgTpuLLKXg_H3yzgQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_10,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- malwarescore=0 phishscore=0 clxscore=1015 mlxlogscore=999
- priorityscore=1501 adultscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408090097
 
-The Everspin EM008LX MRAM has 8Mb and is populated on a custom board
-using Microchip's PCI12000 spi host controller running on low 30MHz clock.
-According to Everspin Read Fast (0xb) command below 60MHz is neither
-specified and nor tested. Test shows that using Read Fast (0xb) will
-result in reading inconsistent data in this setup but writing is fine, so
-only supporting Read (0x3) command should be acceptable for the moment.
-The device is JEDEC compatible (JESD251 and JESD251-1) but not able to
-provide SFDP information.
+This patch adds an xrun counter to snd_pcm_substream as an alternative
+to using logs from XRUN_DEBUG_BASIC. The counter provides a way to track
+the number of xrun occurences, accessible through the /proc interface.
 
-For spec v3.2 refer to Link: https://www.everspin.com/file/158315/download.
+The counter is enabled when CONFIG_SND_PCM_XRUN_DEBUG is set.
 
-Successfully tested according to
-Link: https://www.kernel.org/doc/html/latest/driver-api/mtd/spi-nor.html.
+Example output:
 
-Signed-off-by: Claus Fabig <claus.fabig@emerson.com>
+$ cat /proc/asound/card0/pcm9p/sub0/status
+
+owner_pid   : 1425
+trigger_time: 235.248957291
+tstamp      : 0.000000000
+delay       : 1912
+avail       : 480
+avail_max   : 1920
+-----
+hw_ptr      : 672000
+appl_ptr    : 673440
+xrun_counter: 3  # (new row)
+
+Signed-off-by: Norman Bintang <normanbt@chromium.org>
+Reviewed-by: Chih-Yang Hsia <paulhsia@chromium.org>
+Tested-by: Chih-Yang Hsia <paulhsia@chromium.org>
+Reviewed-by: David Riley <davidriley@chromium.org>
 ---
-Changes in V2:
- - add id for probing instead of name
- - change sector size from 1MB to 64k
 
-test em008lxb MRAM
-cat /sys/bus/spi/devices/spi-EMR5555\:00/spi-nor/partname
-em008lx
-cat /sys/bus/spi/devices/spi-EMR5555\:00/spi-nor/jedec_id
-6bbb14
-cat /sys/bus/spi/devices/spi-EMR5555\:00/spi-nor/manufacturer
-everspin
-cat /sys/kernel/debug/spi-nor/spi-EMR5555\:00/capabilities
-Supported read modes by the flash
- 1S-1S-1S
-  opcode	0x03
-  mode cycles	0
-  dummy cycles	0
+ include/sound/pcm.h  | 3 +++
+ sound/core/pcm.c     | 6 ++++++
+ sound/core/pcm_lib.c | 3 +++
+ 3 files changed, 12 insertions(+)
 
-Supported page program modes by the flash
- 1S-1S-1S
-  opcode	0x02
-cat /sys/kernel/debug/spi-nor/spi-EMR5555\:00/params
-name		em008lx
-id		6b bb 14 10 48 5f
-size		1.00 MiB
-write size	1
-page size	256
-address nbytes	3
-flags		HAS_SR_TB | HAS_16BIT_SR | HAS_4BIT_BP | HAS_SR_BP3_BIT6
-
-opcodes
- read		0x03
-  dummy cycles	0
- erase		0xd8
- program	0x02
- 8D extension	none
-
-protocols
- read		1S-1S-1S
- write		1S-1S-1S
- register	1S-1S-1S
-
-erase commands
- d8 (64.0 KiB) [0]
- c7 (1.00 MiB)
-
-sector map
- region (in hex)   | erase mask | overlaid
- ------------------+------------+----------
- 00000000-000fffff |     [0   ] | no
-cat /proc/mtd
-dev:    size   erasesize  name
-mtd0: 00020000 00020000 "spi-EMR1010:00"
-mtd1: 00100000 00010000 "spi-EMR5555:00"
-mtd_debug info /dev/mtd1
-mtd.type = MTD_NORFLASH
-mtd.flags = MTD_CAP_NORFLASH
-mtd.size = 1048576 (1M)
-mtd.erasesize = 65536 (64K)
-mtd.writesize = 1 
-mtd.oobsize = 0 
-regions = 0
-
-dd if=/dev/urandom of=spi_test bs=1M count=1
-mtd_debug erase /dev/mtd1 0 1048576
-mtd_debug read /dev/mtd1 0 1048576 spi_read
-Copied 1048576 bytes from address 0x00000000 in flash to spi_read
-hexdump spi_read
-0000000 ffff ffff ffff ffff ffff ffff ffff ffff
-*
-0100000
-sha256sum spi_read
-f5fb04aa5b882706b9309e885f19477261336ef76a150c3b4d3489dfac3953ec  spi_read
-mtd_debug write /dev/mtd1 0 1048576 spi_test
-Copied 1048576 bytes from spi_test to address 0x00000000 in flash
-mtd_debug read /dev/mtd1 0 1048576 spi_read
-Copied 1048576 bytes from address 0x00000000 in flash to spi_read
-sha256sum spi*
-8b73cb3cf9a032236fc3f41c974fced7b8dd43262628c5425f178c84ad619965  spi_read
-8b73cb3cf9a032236fc3f41c974fced7b8dd43262628c5425f178c84ad619965  spi_test
-
- drivers/mtd/spi-nor/everspin.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/mtd/spi-nor/everspin.c b/drivers/mtd/spi-nor/everspin.c
-index add37104d673..178529ed0a28 100644
---- a/drivers/mtd/spi-nor/everspin.c
-+++ b/drivers/mtd/spi-nor/everspin.c
-@@ -31,6 +31,12 @@ static const struct flash_info everspin_nor_parts[] = {
- 		.size = SZ_512K,
- 		.sector_size = SZ_512K,
- 		.flags = SPI_NOR_NO_ERASE,
-+	}, {
-+		.id = SNOR_ID(0x6b, 0xbb, 0x14),
-+		.name = "em008lx",
-+		.size = SZ_1M,
-+		.sector_size = SZ_64K,
-+		.flags = SPI_NOR_HAS_TB | SPI_NOR_4BIT_BP | SPI_NOR_BP3_SR_BIT6,
- 	}
+diff --git a/include/sound/pcm.h b/include/sound/pcm.h
+index ac8f3aef9205..384032b6c59c 100644
+--- a/include/sound/pcm.h
++++ b/include/sound/pcm.h
+@@ -498,6 +498,9 @@ struct snd_pcm_substream {
+ 	/* misc flags */
+ 	unsigned int hw_opened: 1;
+ 	unsigned int managed_buffer_alloc:1;
++#ifdef CONFIG_SND_PCM_XRUN_DEBUG
++	unsigned int xrun_counter; /* number of times xrun happens */
++#endif /* CONFIG_SND_PCM_XRUN_DEBUG */
  };
  
+ #define SUBSTREAM_BUSY(substream) ((substream)->ref_count > 0)
+diff --git a/sound/core/pcm.c b/sound/core/pcm.c
+index dc37f3508dc7..290690fc2abc 100644
+--- a/sound/core/pcm.c
++++ b/sound/core/pcm.c
+@@ -462,6 +462,9 @@ static void snd_pcm_substream_proc_status_read(struct snd_info_entry *entry,
+ 	snd_iprintf(buffer, "-----\n");
+ 	snd_iprintf(buffer, "hw_ptr      : %ld\n", runtime->status->hw_ptr);
+ 	snd_iprintf(buffer, "appl_ptr    : %ld\n", runtime->control->appl_ptr);
++#ifdef CONFIG_SND_PCM_XRUN_DEBUG
++	snd_iprintf(buffer, "xrun_counter: %d\n", substream->xrun_counter);
++#endif
+ }
+ 
+ #ifdef CONFIG_SND_PCM_XRUN_DEBUG
+@@ -970,6 +973,9 @@ int snd_pcm_attach_substream(struct snd_pcm *pcm, int stream,
+ 	substream->pid = get_pid(task_pid(current));
+ 	pstr->substream_opened++;
+ 	*rsubstream = substream;
++#ifdef CONFIG_SND_PCM_XRUN_DEBUG
++	substream->xrun_counter = 0;
++#endif /* CONFIG_SND_PCM_XRUN_DEBUG */
+ 	return 0;
+ }
+ 
+diff --git a/sound/core/pcm_lib.c b/sound/core/pcm_lib.c
+index 6e7905749c4a..6eaa950504cf 100644
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -184,6 +184,9 @@ void __snd_pcm_xrun(struct snd_pcm_substream *substream)
+ 		pcm_warn(substream->pcm, "XRUN: %s\n", name);
+ 		dump_stack_on_xrun(substream);
+ 	}
++#ifdef CONFIG_SND_PCM_XRUN_DEBUG
++	substream->xrun_counter++;
++#endif
+ }
+ 
+ #ifdef CONFIG_SND_PCM_XRUN_DEBUG
 -- 
-2.43.0
+2.46.0.76.ge559c4bf1a-goog
 
 
