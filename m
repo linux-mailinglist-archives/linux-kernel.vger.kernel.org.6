@@ -1,86 +1,131 @@
-Return-Path: <linux-kernel+bounces-281556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BC794D81E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:29:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3AB694D821
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B433A1C22E47
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:29:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 623EFB231A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812D516849C;
-	Fri,  9 Aug 2024 20:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105AD167DB9;
+	Fri,  9 Aug 2024 20:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="yiD3owdv"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRfAdA9f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F88160860;
-	Fri,  9 Aug 2024 20:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5099E41C79;
+	Fri,  9 Aug 2024 20:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723235351; cv=none; b=m45R70IVEwCiubZAcpeFffcUdmQn+Ih9L1TF6eOh0eMK4rD2h9VUxIp+paABKnuy4fQApz8DOHH+jkLbqSPfC7CCSkYseJ2dPiuUmm6vQnb6P9iHSup32Mv+d8xfom+awD9PuI5e+LasMPX2/pVw0WDLTRpfSKLaN0P7Y2KRkTk=
+	t=1723235784; cv=none; b=EkdYYk3gqjLQkg8zhNPZvMd5hMgrhRzHRmk/7upJW7jWA7xYyYt37R1/+F9r1U/Rr386YEIfHLWT0S2sMdZk0TngVgUMPlFH2xYmkkt+8aoIGaBVu0mnGgQMe1vldPCs3G4L+AxyQRHRI0F8D7RSgFtxUxOT1FcYtnrvB8PQVRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723235351; c=relaxed/simple;
-	bh=nVqkkeyrmTGgcnXfRITtsKBO6z2Z2/JVkTYqk/m0Kvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XdxR1NClyzpR1K5GC33g9HUQHRkix/nvlWNqwwRdmpInpL3YPb2ncLjDprpA1slkMPHoZHCxh1SUQSY1U485gxG8TNQa+QcEbePuAvfXbm0nG+qJPgU88/osU2ThU82YrBNuAoLPWXFSe0kFPehacG+vQQbfErI5Zc7xWVWi0gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=yiD3owdv; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=isLbLvrwXTiBIaXavkcKvINqHF3YJCSZSXuu1C1UwDM=; b=yiD3owdv4/je/By6Ovp+AfbJa3
-	tiNOosS+uRqMilg5a1oJjpDHtaAbAGe08MK5zFHvqRbDJHTPD+sz8uqoXDQ6hA7RO3F3XytTeWsM/
-	zaWIvS+H/+1KiQcFL0wgSeN3WbUjpSyduQjvVSUC6yLcdrVGzPuP0l//IdU/8f1G3rjU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1scWEM-004PfJ-MO; Fri, 09 Aug 2024 22:28:58 +0200
-Date: Fri, 9 Aug 2024 22:28:58 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: ende.tan@starfivetech.com
-Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, leyfoon.tan@starfivetech.com,
-	minda.chen@starfivetech.com
-Subject: Re: [net-next,1/1] net: stmmac: Set OWN bit last in
- dwmac4_set_rx_owner()
-Message-ID: <6ad2c74c-b187-4ac7-9303-c661e02b9b1a@lunn.ch>
-References: <20240809153138.1865681-1-ende.tan@starfivetech.com>
+	s=arc-20240116; t=1723235784; c=relaxed/simple;
+	bh=gvFcEXP1ZfFTAGD9WjamLKCJD24rNneCFSQb6KTy1jk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Dn5Q2upG5eP1XptWtz+65xX75/sNv84LvNu7bzKI85VEFbZNMWkcsBlw9in1coYWjHkeZKFJg/M+Cx456PGrliNGDprAEmgYhDIjK+6wW3+SdWCxa+6PCDxp8X+Dl6qQTQykxb8/i+VTw+nVAybRztqOl6YUYIQtrNFDEgW2TUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRfAdA9f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85BE1C32782;
+	Fri,  9 Aug 2024 20:36:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723235783;
+	bh=gvFcEXP1ZfFTAGD9WjamLKCJD24rNneCFSQb6KTy1jk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=NRfAdA9fnGwiTrl+Mjmf0ZHQagjMOOsDrednmlEoVw++Jd0NrR9M04/v7AY5dFrbw
+	 2qLzqSLkUvhJE2kHLL1xdHjecnl90Lvt/AQ+g5Iwf3SRQrEbp9KB7+jArMYDscJWLk
+	 3rdUzNylJdfj8EzyvIbof6rCeksJJNrw0u3fjETq/bkwl0wgfN0dx97DTZlzBXocFv
+	 /BR2u+xFWBupyo6Q8RDW9dTLkG7fWUHJlMXYuDbKlRpiEajku8SdxcEBg5dURbHUqR
+	 g2D7CSA4gYm/z5/JoYYz236rhqDmClw7dIWlI2uI6G38rt+heH9mLqWwzE43eoQFfH
+	 5gKUbyqOc3A8g==
+Date: Fri, 9 Aug 2024 15:36:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: "David E . Box" <david.e.box@linux.intel.com>,
+	Jian-Hong Pan <jhp@endlessos.org>, Lukas Wunner <lukas@wunner.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH 1/1] PCI: Wait for Link before restoring Downstream Buses
+Message-ID: <20240809203621.GA214516@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240809153138.1865681-1-ende.tan@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240808121708.2523-1-ilpo.jarvinen@linux.intel.com>
 
-On Fri, Aug 09, 2024 at 11:31:38PM +0800, ende.tan@starfivetech.com wrote:
-> From: Tan En De <ende.tan@starfivetech.com>
+On Thu, Aug 08, 2024 at 03:17:07PM +0300, Ilpo Järvinen wrote:
+> __pci_reset_bus() calls pci_bridge_secondary_bus_reset() to perform the
+> reset and also waits for the Secondary Bus to become again accessible.
+> __pci_reset_bus() then calls pci_bus_restore_locked() that restores the
+> PCI devices connected to the bus, and if necessary, recursively restores
+> also the subordinate buses and their devices.
 > 
-> Ensure that all other bits in the RDES3 descriptor are configured before
-> transferring ownership of the descriptor to DMA via the OWN bit.
+> The logic in pci_bus_restore_locked() does not take into account that
+> after restoring a device on one level, there might be another Link
+> Downstream that can only start to come up after restore has been
+> performed for its Downstream Port device. That is, the Link may
+> require additional wait until it becomes accessible.
+> 
+> Similarly, pci_slot_restore_locked() lacks wait.
+> 
+> Amend pci_bus_restore_locked() and pci_slot_restore_locked() to wait
+> for the Secondary Bus before recursively performing the restore of that
+> bus.
+> 
+> Fixes: 090a3c5322e9 ("PCI: Add pci_reset_slot() and pci_reset_bus()")
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-Please leave at least 24 hours between versions. If you notice
-something wrong with your own patch, please reply to it and point out
-the problem. And then wait the needed 24 hours before posting a new
-version.
+Seems reasonable to me, applied to pci/reset for v6.12, thanks!
 
-Also, this should be v2, and you should include under the --- how this
-version is different to v1.
-
-    Andrew
-
----
-pw-bot: cr
+> ---
+> 
+> NOTE TO MAINTAINER: I've not seen anything to actually trigger this issue
+> but only realized this problem exist while looking into the other issues
+> related to bus reset/restore. The fix regardless seems to make sense so
+> sending it out.
+> 
+>  drivers/pci/pci.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index e3a49f66982d..98c7b732998a 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5671,8 +5671,10 @@ static void pci_bus_restore_locked(struct pci_bus *bus)
+>  
+>  	list_for_each_entry(dev, &bus->devices, bus_list) {
+>  		pci_dev_restore(dev);
+> -		if (dev->subordinate)
+> +		if (dev->subordinate) {
+> +			pci_bridge_wait_for_secondary_bus(dev, "bus reset");
+>  			pci_bus_restore_locked(dev->subordinate);
+> +		}
+>  	}
+>  }
+>  
+> @@ -5706,8 +5708,10 @@ static void pci_slot_restore_locked(struct pci_slot *slot)
+>  		if (!dev->slot || dev->slot != slot)
+>  			continue;
+>  		pci_dev_restore(dev);
+> -		if (dev->subordinate)
+> +		if (dev->subordinate) {
+> +			pci_bridge_wait_for_secondary_bus(dev, "slot reset");
+>  			pci_bus_restore_locked(dev->subordinate);
+> +		}
+>  	}
+>  }
+>  
+> -- 
+> 2.39.2
+> 
 
