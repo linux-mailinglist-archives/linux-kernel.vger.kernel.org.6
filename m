@@ -1,114 +1,122 @@
-Return-Path: <linux-kernel+bounces-281094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2E694D300
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:11:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D310294D304
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595F4281D88
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95494281988
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C53F198A24;
-	Fri,  9 Aug 2024 15:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF82C198830;
+	Fri,  9 Aug 2024 15:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oA916N8+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w8M5uOVb"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FD1198857;
-	Fri,  9 Aug 2024 15:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C3819306F
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216281; cv=none; b=XSpRhOSNukvtEnK/Zg/1IE7cpifJPGl8rMeydl4gDk6SNhcg3VlCancjHmOAU4caQlAKeunr/xqRjIECzL9mpTX7vrqiTBaRyB0MWsUJYHJzt3DTZoYItDGSZtCFnw2DHIZaH1Z2dqhAK+xAAXN7qRk81FAmmlhH4esl8NmbY08=
+	t=1723216364; cv=none; b=ThN0vEbZvXmrrZruumMXv6Ox7Hq8i+z8sFABngrwGpnl0sg2sE0AP6qjzFMqdOEtFhvWPEE2Rtm0dhmy3fNL7zv9ilGUChaHP+8yeRaICBOYoc/xGOzSwq3dLgeMw69yFjbhSOYSfkQ2CI8xYqIHQK6Dkhkk8nEQWjGgrrsLGlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216281; c=relaxed/simple;
-	bh=9R2NKMWQqNjzvTm5mD4XvqzZMMa1bqVjqcONwMIe8jY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PzGVwDWO6qsqSqUEQThCycsyQYkwkadTNtu2RcOrViJNu6Ik77lTy84xGEmgcy0iDNQCFCCmcJPAiHNAsiKP7V31pSzKtplYlxHtpugwADHpxYyT5LQ2N6YU1HunWTO6e9qvSC7jwDxQDgh87wYNpGItyL6S0MAIPfd4mBvyUgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oA916N8+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00A1EC32782;
-	Fri,  9 Aug 2024 15:11:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723216281;
-	bh=9R2NKMWQqNjzvTm5mD4XvqzZMMa1bqVjqcONwMIe8jY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oA916N8+cz6JtAd2vkZQrKN8SOtpRD8xzIPTr5U6pnLuauUbaC9R/RoxRjtSS4hV8
-	 iH6Wwprq8nIxom5cuoHT1SLJIHgbWD65BIXPp6HwEb7oNghQ8iOEK+Er+U6TxwoPfm
-	 6bBMBEs7pLqJhyq6NUHNM1DAmUonza2nEU+M1i6pWx8+mFduBiXsRwIBbvzpzWdKir
-	 zESSitKMvWzyaeyqZs5LIY9R6+ezaYv9W65q30aROIedzoLTVNdrM3NpLyZViJs86o
-	 +6BWSdw86Hc1FKaGIlVF/ls4u7ZFP83eRce1A9kk6Zdlc8wB3z04c7M1ZQVZSVUuI9
-	 a1ou+MexXVAww==
-Date: Fri, 9 Aug 2024 16:11:15 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, kernel@collabora.com,
-	Sugar Zhang <sugar.zhang@rock-chips.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: reset: Add rk3576 reset definitions
-Message-ID: <20240809-retired-rug-517972cde092@spud>
-References: <20240809125553.3889-1-detlev.casanova@collabora.com>
- <20240809125553.3889-2-detlev.casanova@collabora.com>
- <20240809-linoleum-ogle-ace67939d9a0@spud>
- <8409208.T7Z3S40VBb@trenzalore>
+	s=arc-20240116; t=1723216364; c=relaxed/simple;
+	bh=NLUhkN4T1k329vjYkXWhULqBvElnYZGqs0JqvibKTLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sg3eSb0k7h/ZcE6P6w5zPZxsDLNIoOnj7FoOSIYo4h/4ostPS44D2OA+V9jiKehzislGjU6a6ksm3xbS43cVBCWtprmEJS+8ljy0uR2HngY8XoPVJLLaxgOf+uU4Jp05w43O/IxKzzK+A8V0gd4zAUTaZGl8lFzPEd38Qc97ONQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w8M5uOVb; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5b9fe5ea355so12896a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723216361; x=1723821161; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NLUhkN4T1k329vjYkXWhULqBvElnYZGqs0JqvibKTLs=;
+        b=w8M5uOVbCjjqD3J+fUEFM8z6AMM2+sklqa/1vAQI1BedM8lzLFOogiTEQJd5gBbnRX
+         XV5ESh5KCrjDk5an28TKJ6g3yhC2j6gAoWb1S+hbALgjmHLDmNvWJBjI5Xp3rm94p8sx
+         nI6CAUk9UM2BRp3mOYpS66CtAtG4IiJsjJ0PmwtDRVj+VvA+XjoYz96MZbbSnnNxU8su
+         JSrogLtTu24CTbD6zpVuz5AvRxZ9o34uwe9XX+mzJSkJQAxJCRnDkf+mhEQSi7DD5Yf6
+         kIseiiWD8W2JVJp0dhiK/1kSWWl8E72LG0mgAd2nZN+yPoPMP/LUTPaCwy6Yijn5mmDB
+         XMQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723216361; x=1723821161;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NLUhkN4T1k329vjYkXWhULqBvElnYZGqs0JqvibKTLs=;
+        b=r9kfW1oRwNZraUOoT6LYnmfnD9VFxjujQ2iLBqMAGLLNrrYdHB7CGJgZ5B2uT8GEBy
+         A/S7revJxvGR6mT4uezcC8wGNWuewxeCDCitDZKpFqpfeVyCwVHH19mTC8P7Kcqnk1tS
+         Fccrvnqp1Y6Vw38UV3tSxlnsBJEO419uxl1ZyVzK3hbn86UIpKc3Wnb5gXSmxmhK6WO+
+         3sE2PU9a+S7EyQ+T2CyLMcdVDEHd2xnRGyH1LuJECUzGGqXP7j/8NDWi7kS12oy0PxTb
+         syfWHkbs9U+XN8Y9ZZ7WfAes/PyOZ+d05wK4kJfNHCBM/66m3I/jlsWiAc4zQwkfKCrv
+         TVhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZLMBYi1ECGcrdIQdVEWfMiwrTgJsQJCLpXh399P1GFPVR8g3WPy1tSfLrVRu5vW7JQ1WNEggfBfaNhcgfmlWKCo8ZEooW4zHeJr7c
+X-Gm-Message-State: AOJu0YzqKqPxxTP3HFTbmcHxKriiQamyAsXSbvBc9CkrQESiPpE4/LJc
+	+G6mBFdLHgR4s2ro9rO2my1HaCKEx6z1l4UttBZrpqqHcvnMlu8/KzfqqC+Tc4Rex+iV5a7x3w9
+	v8h3Rn4a2I9SdxbHs3ytEcX3blneCIcFhlNYR
+X-Google-Smtp-Source: AGHT+IH2FdbCTQHk6jRUPXYOzJt1FnyqBbnUEuJ7oJ/IN4Lv/62UZaUBVO4VE5lIl+MJ4LjXUxvP6r+/WBZVxeyJtjw=
+X-Received: by 2002:a05:6402:5216:b0:5b8:ccae:a8b8 with SMTP id
+ 4fb4d7f45d1cf-5bc4b3fd7b2mr149224a12.3.1723216360417; Fri, 09 Aug 2024
+ 08:12:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wCc8uvbAGo3F87mQ"
-Content-Disposition: inline
-In-Reply-To: <8409208.T7Z3S40VBb@trenzalore>
-
-
---wCc8uvbAGo3F87mQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz> <54d62d5a-16e3-4ea9-83c6-8801ee99855e@suse.cz>
+In-Reply-To: <54d62d5a-16e3-4ea9-83c6-8801ee99855e@suse.cz>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 9 Aug 2024 17:12:02 +0200
+Message-ID: <CAG48ez3Y7NbEGV0JzGvWjQtBwjrO3BNTEZZLNc3_T09zvp8T-g@mail.gmail.com>
+Subject: Re: [-next conflict imminent] Re: [PATCH v2 0/7] mm, slub: handle
+ pending kfree_rcu() in kmem_cache_destroy()
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Zqiang <qiang.zhang1211@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, 
+	Jakub Kicinski <kuba@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	kasan-dev@googlegroups.com, Mateusz Guzik <mjguzik@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 09, 2024 at 10:49:42AM -0400, Detlev Casanova wrote:
-> On Friday, 9 August 2024 10:15:12 EDT Conor Dooley wrote:
-> > On Fri, Aug 09, 2024 at 08:54:52AM -0400, Detlev Casanova wrote:
-> > > Add reset ID defines for rk3576.
-> > >=20
-> > > Compared to the downstream bindings this uses continous gapless
-> > > reset IDs starting at 1 instead of register offsets as IDs, as
-> > > introduced in the RK3588 bindings.
-> > > Thus all numbers are different between upstream and downstream,
-> > > but names are kept exactly the same.
-> > >=20
-> > > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> > > Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
-> > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> >=20
-> > IMO squash this with the other binding patch.
->=20
-> Yes, I wanted to but the issue is with the subject line: do I use "dt-
-> bindings: reset+clock: [...]" in the squashed commit ?=20
+On Fri, Aug 9, 2024 at 5:02=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wro=
+te:
+> On 8/7/24 12:31, Vlastimil Babka wrote:
+> > Also in git:
+> > https://git.kernel.org/vbabka/l/slab-kfree_rcu-destroy-v2r2
+>
+> I've added this to slab/for-next, there will be some conflicts and here's=
+ my
+> resulting git show or the merge commit I tried over today's next.
+>
+> It might look a bit different with tomorrow's next as mm will have v7 of =
+the
+> conflicting series from Jann:
+>
+> https://lore.kernel.org/all/1ca6275f-a2fc-4bad-81dc-6257d4f8d750@suse.cz/
+>
+> (also I did resolve it in the way I suggested to move Jann's block before
+> taking slab_mutex() but unless that happens in mm-unstable it would proba=
+bly be more
+> correct to keep where he did)
 
-Yeah, I guess you could do "dt-bindings: clock, reset:".
-
---wCc8uvbAGo3F87mQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrYxkwAKCRB4tDGHoIJi
-0u4bAQDbfTmaC6mGuyb1tOI8hRt4dtHfi1tdv+frSiGKKcg1PAD/SpuNV7bmfg5j
-yQkal1bS7WmQ4ojLJiY1Fi2MYmCfAw8=
-=0g09
------END PGP SIGNATURE-----
-
---wCc8uvbAGo3F87mQ--
+Regarding my conflicting patch: Do you want me to send a v8 of that
+one now to move things around in my patch as you suggested? Or should
+we do that in the slab tree after the conflict has been resolved in
+Linus' tree, or something like that?
+I'm not sure which way of doing this would minimize work for maintainers...
 
