@@ -1,254 +1,109 @@
-Return-Path: <linux-kernel+bounces-281188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2452A94D41D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:01:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4E994D421
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D368C284756
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:01:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7729FB2247C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F1D1990C3;
-	Fri,  9 Aug 2024 16:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FC71990C9;
+	Fri,  9 Aug 2024 16:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="k/8DvqZE"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ge3/4AUi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB284194A4C
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E598F194A4C;
+	Fri,  9 Aug 2024 16:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723219296; cv=none; b=GRrdT12npUHNXTVZbddCGbIbA6EhVf9tO/SALk/1nRalzQDvganoA5cC3mwBlVMuGzAGtTcbkfyMwEJDj+AlQ46NGhWGyOfES4mWEwGCDRJprsLd4VyrnZKrpHgWDTaKuj60G/x0JC11oPE7gyTndBnzqK2YNdRgM+jcbxed+Kc=
+	t=1723219441; cv=none; b=ObH7l6v/zCpPLKZ8vAf7E1Mbg+e8shgdiyi/D9J53O+QptZ5xtjal3faHTK5OHZKiWH+xYRqBbRUiynNWet6hitMOlHmF3MUhneeGevfzIL+Z0eql/rRS7YnIRWzYxbzaNLFWzhMIZFljkha6rOdvLjO7hLzwfGZP3urYfxkLUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723219296; c=relaxed/simple;
-	bh=paKDUZfAMnT9p4c9PEEcxRCBnyjhCPshVDMBespFmZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CGtQRxdCOYPPOfvQcc/avA+lO4FFH47IYZXK1yw8RKVhn4vlzLonPofaCs0zjJIa/sSG/T/AiWwjb8eeKNF3Ru1oUJOJRNdXew69lX+VZrREAHQYbksaHaSfjubfw3OsgTfn6H8zEnKU73mp90LrKSPmbHOc7MC35q24gubOglA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=k/8DvqZE; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5d5f9d68805so1186471eaf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:01:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723219293; x=1723824093; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kRHkMeyOghMMPrSX3/7w5ue7vx+CNaxKKfqAReZDd9I=;
-        b=k/8DvqZEUE4Vu2v0ZVPZktsaZjJXwhhUVmZNSku/0egFDL8gbXfaliaXweyRlpuBil
-         4O3oNMH32fVpeWn82d4QiUkfO0UqchFpaEFXRGj5YeLDP8066hM5cxAtGVZPNYyySruV
-         zdTg8wHAb/fgJJanmKqPJwXSb01DuFFE2kCNIcKk0uOGGvKiiKHhm9n4Z476XLC8tvWs
-         avirw6VZ69KR4HktTex8IS3J46kCfdDzUvQdraN/q8KgKZz5W574sCDEt6Z3rqRFQj6G
-         hSSwNQYd5gVL/hSayBfvJy5OaO2gWDEm63bMQkljy/GeMTjheMXkUGYMZGesjw7oTSuF
-         cfpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723219293; x=1723824093;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kRHkMeyOghMMPrSX3/7w5ue7vx+CNaxKKfqAReZDd9I=;
-        b=pkkwLX8N8nVUB+hwgQtKfVn7NDz/Kk4x6NyEe+pI+7RI1/hhXwHJTyfwttzMJOkfSU
-         lQM/Y0+q31NAKkoR+icSuUJ3qIpvsVNPMRkTJVBDsTNBE15dsckI0mk1Adh4HOr95ufQ
-         COGeta47WsQeVD41PafDIp+U/obPDDvXu79U/kRa2zTVUrTHfZQld9zKkzpKTKEZejHR
-         DqEyFT2Y5JUm4isALw9fhRMeQgnCITr/zo6IifzJicAUW5wnwCyM/6GaWA3/W5FRDycE
-         iuhWpPUnAHZGZMbg1dpiyi0s8Zj5hGMrbP75gFr3UqU9Bcym7SR8+D96XMgTTvOw+XFF
-         GuDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPr0bBJP3UZIaJiV6M/uZ21OLuQ3VJlxspmwogI4qhToxcefhfn/8c4nNBbsfBhBgptQpPqvdaW9jN1a8a9wgeiu0sqfFwRP26uVGA
-X-Gm-Message-State: AOJu0Yxk0KTbdiY16DTIkRb6xLpDbneJxkVICCSuRtUuoi3fXEiVz9+l
-	y25r7zWKE9WU0o4IdR+XMlp7JtlncKQPcHrbI3+ITBJPnJ7bwfCbVTsRgcR9hbA=
-X-Google-Smtp-Source: AGHT+IH9cyUlesTG85P8+AooQGiR7emhvTR2YwnxoSVddeAKsx77skaLFRBiuQBnXteKmSR5RIAFsg==
-X-Received: by 2002:a05:6820:821:b0:5c6:61b9:20ba with SMTP id 006d021491bc7-5d867c8185amr2330284eaf.1.1723219292772;
-        Fri, 09 Aug 2024 09:01:32 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d757178a0dsm4280141eaf.7.2024.08.09.09.01.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 09:01:32 -0700 (PDT)
-Message-ID: <4c62baf4-fcb0-474f-87cf-9689aa41966a@baylibre.com>
-Date: Fri, 9 Aug 2024 11:01:31 -0500
+	s=arc-20240116; t=1723219441; c=relaxed/simple;
+	bh=3X4KnqOVvMgnV0xVVa+Fn5xLpXaLDEnmDWpiCsg0VZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKamNwtfBgex270+/cLyyDLrdNcRcjdiKrf3xuYXQqBbVOlfZmMDXnrtBV7xaiM6GSHB8bGS2vs9fONzdUMy3HB7HMlxlYjejQAdwSHERhkBVO/0zNynca1CJEIKZRPB+4aFwEzvoW9wPzWM3cqrpuUtT1mTTGsP2ykzs60coxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ge3/4AUi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7FA7C32782;
+	Fri,  9 Aug 2024 16:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723219440;
+	bh=3X4KnqOVvMgnV0xVVa+Fn5xLpXaLDEnmDWpiCsg0VZo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ge3/4AUi+b2X9uEi+mTizqxwaCD5rARF6blKYGvDdPpWTeLWDFIaOQFPcr7y7DI2O
+	 24yirXPxxE0vvi6VW1rd+TG3EGekAcefZMYr0sPMl8vsplQBg3YCRH+xzJkGXRFv9m
+	 4+GzkA39C21hvxnyM6w99WoEqTCmKvSigqer2t2Bk/oUqwiBCQdS7KMPASEUlHEGOG
+	 7C+O4x3oDuVV1K2dejYx0wNhmA11ks9EPfsb/VFq7qik8ckBqZzScC74ca+BS6XAas
+	 MmroD0WsxZ7+y8W/EyWNzCOdOhZqjpvp47+sOX0rio0lUroOeGhg1RtBBwHHszKe7I
+	 7eskg1ZUxjEeA==
+Date: Fri, 9 Aug 2024 17:03:55 +0100
+From: Simon Horman <horms@kernel.org>
+To: Michael Nemanov <michael.nemanov@ti.com>
+Cc: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sabeeh Khan <sabeeh-khan@ti.com>
+Subject: Re: [PATCH v3 12/17] wifi: cc33xx: Add scan.c, scan.h
+Message-ID: <20240809160355.GD1951@kernel.org>
+References: <20240806170018.638585-1-michael.nemanov@ti.com>
+ <20240806170018.638585-13-michael.nemanov@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] iio: adc: ad4695: implement triggered buffer
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20240807-iio-adc-ad4695-buffered-read-v1-0-bdafc39b2283@baylibre.com>
- <20240807-iio-adc-ad4695-buffered-read-v1-1-bdafc39b2283@baylibre.com>
- <8bb01a8946aaa5855b5ac15d79c0292a668eee59.camel@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <8bb01a8946aaa5855b5ac15d79c0292a668eee59.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806170018.638585-13-michael.nemanov@ti.com>
 
-On 8/9/24 9:24 AM, Nuno Sá wrote:
-> On Wed, 2024-08-07 at 15:02 -0500, David Lechner wrote:
->> This implements buffered reads for the ad4695 driver using the typical
->> triggered buffer implementation, including adding a soft timestamp
->> channel.
->>
->> The chip has 4 different modes for doing conversions. The driver is
->> using the advanced sequencer mode since that is the only mode that
->> allows individual configuration of all aspects each channel (e.g.
->> bipolar config currently and oversampling to be added in the future).
->>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
-> 
-> Hi David,
-> 
-> Just two nit comments...
-> 
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-> 
->>  drivers/iio/adc/ad4695.c | 233 ++++++++++++++++++++++++++++++++++++++++++++++-
->>  1 file changed, 230 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/iio/adc/ad4695.c b/drivers/iio/adc/ad4695.c
->> index 007ecb951bc3..a3bd5be36134 100644
->> --- a/drivers/iio/adc/ad4695.c
->> +++ b/drivers/iio/adc/ad4695.c
-> 
-> ...
-> 
->>
->>  
->> +static int ad4695_buffer_preenable(struct iio_dev *indio_dev)
->> +{
->> +	struct ad4695_state *st = iio_priv(indio_dev);
->> +	struct spi_transfer *xfer;
->> +	u8 temp_chan_bit = st->chip_info->num_voltage_inputs;
->> +	bool temp_chan_en = false;
->> +	u32 reg, mask, val, bit, num_xfer, num_slots;
->> +	int ret;
->> +
->> +	/*
->> +	 * We are using the advanced sequencer since it is the only way to read
->> +	 * multiple channels that allows individual configuration of each
->> +	 * voltage input channel. Slot 0 in the advanced sequencer is used to
->> +	 * account for the gap between trigger polls - we don't read data from
->> +	 * this slot. Each enabled voltage channel is assigned a slot starting
->> +	 * with slot 1.
->> +	 */
->> +	num_slots = 1;
->> +
->> +	memset(st->buf_read_xfer, 0, sizeof(st->buf_read_xfer));
->> +
->> +	/* First xfer is only to trigger conversion of slot 1, so no rx. */
->> +	xfer = &st->buf_read_xfer[0];
->> +	xfer->cs_change = 1;
->> +	xfer->delay.value = AD4695_T_CNVL_NS;
->> +	xfer->delay.unit = SPI_DELAY_UNIT_NSECS;
->> +	xfer->cs_change_delay.value = AD4695_T_CONVERT_NS;
->> +	xfer->cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
->> +	num_xfer = 1;
->> +
->> +	iio_for_each_active_channel(indio_dev, bit) {
->> +		xfer = &st->buf_read_xfer[num_xfer];
->> +		xfer->bits_per_word = 16;
->> +		xfer->rx_buf = &st->buf[(num_xfer - 1) * 2];
->> +		xfer->len = 2;
->> +		xfer->cs_change = 1;
->> +		xfer->cs_change_delay.value = AD4695_T_CONVERT_NS;
->> +		xfer->cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
->> +
->> +		if (bit == temp_chan_bit) {
->> +			temp_chan_en = true;
->> +		} else {
->> +			reg = AD4695_REG_AS_SLOT(num_slots);
->> +			val = FIELD_PREP(AD4695_REG_AS_SLOT_INX, bit);
->> +
->> +			ret = regmap_write(st->regmap, reg, val);
->> +			if (ret)
->> +				return ret;
->> +
->> +			num_slots++;
->> +		}
->> +
->> +		num_xfer++;
->> +	}
->> +
->> +	/*
->> +	 * Don't keep CS asserted after last xfer. Also triggers conversion of
->> +	 * slot 0.
->> +	 */
->> +	xfer->cs_change = 0;
->> +
->> +	/**
->> +	 * The advanced sequencer requires that at least 2 slots are enabled.
->> +	 * Since slot 0 is always used for other purposes, we need only 1
->> +	 * enabled voltage channel to meet this requirement. This error will
->> +	 * only happen if only the temperature channel is enabled.
->> +	 */
->> +	if (num_slots < 2) {
->> +		dev_err_ratelimited(&indio_dev->dev,
->> +			"Buffered read requires at least 1 voltage channel
->> enabled\n");
-> 
-> This one is intriguing... Why the ratelimited variant? Normally you'd use that in IRQ
-> routines where the log could be flooded.
+On Tue, Aug 06, 2024 at 08:00:13PM +0300, Michael Nemanov wrote:
 
-IIO Oscilloscope does a lot of retries of buffered reads very quickly,
-so was getting a minor flood (10-20 repeats). I'm not sure that
-ratelimited actually helped in this case though.
+...
 
-I suppose we could just drop this and expect people to read the docs
-if they get an EINVAL when attempting to enable the buffer. Or just
-make it dev_err() since it isn't 100s of repeats.
+> diff --git a/drivers/net/wireless/ti/cc33xx/scan.h b/drivers/net/wireless/ti/cc33xx/scan.h
 
->> +		return -EINVAL;
->> +	}
->> +
->> +	/*
->> +	 * Temperature channel isn't included in the sequence, but rather
->> +	 * controlled by setting a bit in the TEMP_CTRL register.
->> +	 */
->> +
->> +	reg = AD4695_REG_TEMP_CTRL;
->> +	mask = AD4695_REG_TEMP_CTRL_TEMP_EN;
->> +	val = FIELD_PREP(mask, temp_chan_en ? 1 : 0);
->> +
->> +	ret = regmap_update_bits(st->regmap, reg, mask, val);
->> +	if (ret)
->> +		return ret;
->> +
->> +	spi_message_init_with_transfers(&st->buf_read_msg, st->buf_read_xfer,
->> +					num_xfer);
->> +
->> +	ret = spi_optimize_message(st->spi, &st->buf_read_msg);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* This triggers conversion of slot 0. */
->> +	ret = ad4695_enter_advanced_sequencer_mode(st, num_slots);
->> +	if (ret) {
->> +		spi_unoptimize_message(&st->buf_read_msg);
->> +		return ret;
->> +	}
-> 
-> Could save one line with (unless ad4695_enter_advanced_sequencer_mode() does not
-> return 0 on success)
+...
 
-sure
+> +/**
+> + * struct cc33xx_cmd_ssid_list - scan SSID list description
+> + *
+> + * @role_id:            roleID
+> + *
+> + * @num_of_ssids:       Number of SSID in the list. MAX 16 entries
 
-> 
-> ret = ad4695_enter_advanced_sequencer_mode(st, num_slots);
-> if (ret)
-> 	spi_unoptimize_message(&st->buf_read_msg);
-> 
-> return ret;
-> 
-> - Nuno Sá
-> 
+@num_of_ssids -> @n_ssids
 
+> + *
+> + * @ssid_list:          SSIDs to scan for (active scan only)
+
+@ssid_list -> @ssids
+
+Please document all non-private fields,
+and annotate those that are private.
+
+There are a number of similar minor Kernel doc problems with this patch.
+Please consider using W=1 builds or ./scripts/kernel-doc -none
+(bonus points for -Wall) 
+
+> + */
+> +struct cc33xx_cmd_ssid_list {
+> +	struct cc33xx_cmd_header header;
+> +
+> +	u8 role_id;
+> +	u8 scan_type;
+> +	u8 n_ssids;
+> +	struct cc33xx_ssid ssids[SCHED_SCAN_MAX_SSIDS];
+> +	u8 padding;
+> +} __packed;
+
+...
 
