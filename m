@@ -1,296 +1,214 @@
-Return-Path: <linux-kernel+bounces-281162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEABF94D3C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:40:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6AB94D3C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EFC0281AC0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:40:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AC51F21167
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3DD198A30;
-	Fri,  9 Aug 2024 15:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3F9198A30;
+	Fri,  9 Aug 2024 15:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wm6opV9j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CdMgFVBZ"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05DCCA64
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178EE1946B9
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723218035; cv=none; b=O6N9NHVmnTNxCXU6Y21pr6V4vCUjyr5aR8qtpx0ZmpQyvDOVh5TV87/yks3XHsJ/SJf766Hz/ZF2yd/XwfS1p1iy0/xfYVW0sDNRJYenkvPkRC4BBOf1RttqOA4kEIvVwfPph3OI3dhTt6iGypqzD1u81s9Ma3cuTetAOYfBYU4=
+	t=1723218009; cv=none; b=NGouA1bfXpEnTj/lgwfxBVfxCFQPAGRKBc+Cbtu1SMag9Na8ZGGxTZ/OhRKK/0Te+BTvfd/HqBEUGUswE/JMcn/VGzgYX38Q6bIYyL9USH3NdpJ4VVCKhzMvFUxTe4XECoOeVR4cg4ixY6hg3YIHpdDTdj7LJVES/0MzKTen1Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723218035; c=relaxed/simple;
-	bh=qO517J1iDP0tUe36n24hkHZINX2ekMlXNX1Kvb295y4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=edSsHoYoYsiPrwOgcoGHT9BVwG1kP0tEGPMnhcnwIBrzimpA4DKVwQAAB8sGyP01PXVtqE63OdOGWUVp/oS9O5q33KPYFid12Bzhaan0lD9BOgV6hJ4T5mLX9GPjkKKESJB6GDfiKAx70x5M9B7d1m0AtoPrh9JioqEE10NQXvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wm6opV9j; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723218034; x=1754754034;
-  h=date:from:to:cc:subject:message-id;
-  bh=qO517J1iDP0tUe36n24hkHZINX2ekMlXNX1Kvb295y4=;
-  b=Wm6opV9jav5X6+ubGg0EpgcAzLLqJ01WB2sgcy8uRsF4PdXBm2Yzu47R
-   BTO4GrmHK1KJ6DbI34lJn4Q0MhEkAgc+BwSk/ZCrqt4adz7UTxhJLAmXU
-   3bfXdWqpuCvqkqW1KOPGsGfa56JGS9i+L90VEHaKGjmfEuJVyh2FMzE9G
-   bLMxtBcPxLAvW+lP9JXtpNhak7GaTHGXGgdBD7/4PYdjC3Xx0IfvlgR1k
-   yk80Rg/0NJG3bOxogQ7jjIu1Lo2uxahv7sUq41Qm+2aykkHWTT7R+DMi9
-   QyHLxUm2XD6qSn6WDuyan6heiMJ7mMI1u3t5KoosBNYJ3Ogf8pJLVb4sr
-   A==;
-X-CSE-ConnectionGUID: QHgglSs1QaaP14Xk7H6+Sg==
-X-CSE-MsgGUID: FRhy7yuwR2eKEouE4J4/SQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21054795"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="21054795"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:40:33 -0700
-X-CSE-ConnectionGUID: 1iG3XG77RKahbaoe6YmdkQ==
-X-CSE-MsgGUID: MLZgjmZMRGi2bojFYC8omw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="62239932"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 09 Aug 2024 08:40:32 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scRjB-0008Ob-2s;
-	Fri, 09 Aug 2024 15:40:29 +0000
-Date: Fri, 09 Aug 2024 23:39:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/mm] BUILD SUCCESS
- 830a0d12943f53077b235f2a3caa8ab2b36475a3
-Message-ID: <202408092356.LA4SNU2b-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1723218009; c=relaxed/simple;
+	bh=7uxpbX0dUiV2nAtAAnEFPVZf9an/qeChOgroY1rCZn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XPVEIgA5N+4VCBvGr0EMcf6hCbuhSwHzLyLMWfuSJ6OOeQDnZomquOm5oYZMuSoziJWApZ0jGi1eSkM55fWOT7vFtGKO+lx67QC7HJAXQXtfmHuHKUhzXI7sdzhasw4OvT5ZyFjdiTwHeHgCCH7ibYmF5OiPQj51ZQU2jn3Nh5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CdMgFVBZ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7aa086b077so225286866b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723218005; x=1723822805; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=g9/gdXLxSnsU9nxoiw00oEcO7EcPaiVsBgSH221d6bo=;
+        b=CdMgFVBZj9uRB6Hm+ZK6IAvIQd51ws0M+duKz3z1OCIT7NvOdmMEZ9uqDmXTdv2oG3
+         BKH43dITcFZhdqPo7pOW9EMNXM8VroSJGCzEBQZe3+H3Cu1Eni1rbUiEPud0pSIwkVS0
+         l5h35eSSleDacrFJQQQoB1UQmwSTA0EcLFzEs1kEeM+iH2/LrFdnYeX9ihwLW6EOPzF9
+         mbmsu1Hcda4pOPVI6EQpCR/GaGIc09oM3cz37duFUaOzMcYPbxgXuvXnvHE1yJybProF
+         yKZrOSd8XpyPZtIRtdS7V2G5xUhlvLNPGSndqkdxAjzaYQ182jpGhf8yWGMazstZ71uO
+         g/fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723218005; x=1723822805;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g9/gdXLxSnsU9nxoiw00oEcO7EcPaiVsBgSH221d6bo=;
+        b=XmMNjcZVGJWf25G5vLGRru28GO0C9e3cL6qUCsfuW7d6wRd5EUFZc//yAKEln+3+7b
+         qULDjHvIDh/HfCd+OOeAGYx/ZM8FXnUDfvWyjMnvPR2wigOgaIZoou9tOD1Xlrts/ZsO
+         aGrt7sKTlT1JzOuCXnfNHH/gHu6OSyWvJjhlgCgUY6QMQM7JNeXClZBRaUjj6bcUFn7Z
+         PjW39wjBHH3Rm+B9eE5cOYMxGq67rps4bFtDIwg2LV0328dH/SqjgClMcaoKkKA7PyWG
+         a/jiqmelxbpxqzkqO5wSmOQexIqNE8p+9igM8ouadqp7jRBOJ1YOioRW+d5huHgsdtKy
+         LyXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/il+uYezckOVUubBydq2f1b90UpSerC4VvvF8lIB1utbiLVt5TCBLYPjH4FN3stvmj43YBfG5tkuw7P4iZ7rG8zF8NMWZcW2S9NOB
+X-Gm-Message-State: AOJu0YzhSoLPHGJv4TgIhhkD6umOwD0/qqyoxyzApHhDG/S2BG2VmJi8
+	k8CV2/7kzmGM0vqjxF9QOhHTkB+WXzqm4seni7+jJ8JfI7WxeGnaBQ2IGUfYbAo=
+X-Google-Smtp-Source: AGHT+IGaMJDQMYJCSNSGSCt/WttKifUKYpng5iXyE2ihkAwEcQvtfaW+DwlSQS3puMV/UUa3yUyaPg==
+X-Received: by 2002:a17:907:e6a4:b0:a7a:929f:c0cb with SMTP id a640c23a62f3a-a80aa5eb16amr149281466b.38.1723218005223;
+        Fri, 09 Aug 2024 08:40:05 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c12ad3sm851185966b.88.2024.08.09.08.40.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 08:40:04 -0700 (PDT)
+Date: Fri, 9 Aug 2024 17:40:02 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Song Liu <songliubraving@meta.com>
+Cc: Sami Tolvanen <samitolvanen@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Song Liu <song@kernel.org>,
+	"live-patching@vger.kernel.org" <live-patching@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	"morbo@google.com" <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Leizhen <thunder.leizhen@huawei.com>,
+	"kees@kernel.org" <kees@kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	Matthew Maurer <mmaurer@google.com>,
+	"Alessandro Carminati (Red Hat)" <alessandro.carminati@gmail.com>
+Subject: Re: [PATCH v2 3/3] tracing/kprobes: Use APIs that matches symbols
+ without .XXX suffix
+Message-ID: <ZrY4UhJpsFP_vuds@pathway.suse.cz>
+References: <20240806160049.617500de@gandalf.local.home>
+ <20240806160149.48606a0b@gandalf.local.home>
+ <6F6AC75C-89F9-45C3-98FF-07AD73C38078@fb.com>
+ <20240807090146.88b38c2fbd1cd8db683be22c@kernel.org>
+ <BEEE3F89-717B-44A4-8571-68DA69408DA4@fb.com>
+ <20240807190809.cd316e7f813400a209aae72a@kernel.org>
+ <CABCJKucdMS1hkWjHWty8JyACjZy2R9juusABcbsMYzNej=pB2Q@mail.gmail.com>
+ <09ED7762-A464-45FF-9062-9560C59F304E@fb.com>
+ <ZrSW5KgFMjlB1Rn2@pathway.suse.cz>
+ <A3701B71-D95F-4E99-A32D-C1604575D40F@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <A3701B71-D95F-4E99-A32D-C1604575D40F@fb.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/mm
-branch HEAD: 830a0d12943f53077b235f2a3caa8ab2b36475a3  x86/mm: Don't print out SRAT table information
+On Thu 2024-08-08 15:20:26, Song Liu wrote:
+> 
+> 
+> > On Aug 8, 2024, at 2:59 AM, Petr Mladek <pmladek@suse.com> wrote:
+> > 
+> > On Wed 2024-08-07 20:48:48, Song Liu wrote:
+> >> 
+> >> 
+> >>> On Aug 7, 2024, at 8:33 AM, Sami Tolvanen <samitolvanen@google.com> wrote:
+> >>> 
+> >>> Hi,
+> >>> 
+> >>> On Wed, Aug 7, 2024 at 3:08 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >>>> 
+> >>>> On Wed, 7 Aug 2024 00:19:20 +0000
+> >>>> Song Liu <songliubraving@meta.com> wrote:
+> >>>> 
+> >>>>> Do you mean we do not want patch 3/3, but would like to keep 1/3 and part
+> >>>>> of 2/3 (remove the _without_suffix APIs)? If this is the case, we are
+> >>>>> undoing the change by Sami in [1], and thus may break some tracing tools.
+> >>>> 
+> >>>> What tracing tools may be broke and why?
+> >>> 
+> >>> This was a few years ago when we were first adding LTO support, but
+> >>> the unexpected suffixes in tracing output broke systrace in Android,
+> >>> presumably because the tools expected to find specific function names
+> >>> without suffixes. I'm not sure if systrace would still be a problem
+> >>> today, but other tools might still make assumptions about the function
+> >>> name format. At the time, we decided to filter out the suffixes in all
+> >>> user space visible output to avoid these issues.
+> >>> 
+> >>>> For this suffix problem, I would like to add another patch to allow probing on
+> >>>> suffixed symbols. (It seems suffixed symbols are not available at this point)
+> >>>> 
+> >>>> The problem is that the suffixed symbols maybe a "part" of the original function,
+> >>>> thus user has to carefully use it.
+> >>>> 
+> >>>>> 
+> >>>>> Sami, could you please share your thoughts on this?
+> >>>> 
+> >>>> Sami, I would like to know what problem you have on kprobes.
+> >>> 
+> >>> The reports we received back then were about registering kprobes for
+> >>> static functions, which obviously failed if the compiler added a
+> >>> suffix to the function name. This was more of a problem with ThinLTO
+> >>> and Clang CFI at the time because the compiler used to rename _all_
+> >>> static functions, but one can obviously run into the same issue with
+> >>> just LTO.
+> >> 
+> >> I think newer LLVM/clang no longer add suffixes to all static functions
+> >> with LTO and CFI. So this may not be a real issue any more?
+> >> 
+> >> If we still need to allow tracing without suffix, I think the approach
+> >> in this patch set is correct (sort syms based on full name,
+> > 
+> > Yes, we should allow to find the symbols via the full name, definitely.
+> > 
+> >> remove suffixes in special APIs during lookup).
+> > 
+> > Just an idea. Alternative solution would be to make make an alias
+> > without the suffix when there is only one symbol with the same
+> > name.
+> > 
+> > It would be complementary with the patch adding aliases for symbols
+> > with the same name, see
+> > https://lore.kernel.org/r/20231204214635.2916691-1-alessandro.carminati@gmail.com
+> 
+> I guess v3 plus this work may work well together.  
+> 
+> > I would allow to find the symbols with and without the suffix using
+> > a single API.
+> 
+> Could you please describe how this API would work? I tried some 
+> idea in v1, but it turned out to be quite confusing. So I decided 
+> to leave this logic to the users of kallsyms APIs in v2. 
 
-elapsed time: 1445m
+If we create an alias without the suffix but only when there is only
+one symbol with such a name then we have, for example:
 
-configs tested: 204
-configs skipped: 6
+  klp_complete_transition.lwn.123456
+  klp_complete_transition		[alias]
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+  init_once.lwn.2131221
+  init_once.lwn.3443243
+  init_once.lwn.4324322
+  init_once.lwn.5214121
+  init_once.lwn.2153121
+  init_once.lwn.4342343
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240809   gcc-13.2.0
-arc                   randconfig-002-20240809   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                               allnoconfig   clang-20
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                         assabet_defconfig   clang-15
-arm                          collie_defconfig   clang-15
-arm                                 defconfig   gcc-13.2.0
-arm                           h3600_defconfig   gcc-14.1.0
-arm                       imx_v6_v7_defconfig   gcc-14.1.0
-arm                            mmp2_defconfig   clang-15
-arm                          moxart_defconfig   clang-15
-arm                        mvebu_v7_defconfig   gcc-14.1.0
-arm                   randconfig-001-20240809   gcc-13.2.0
-arm                   randconfig-002-20240809   gcc-13.2.0
-arm                   randconfig-003-20240809   gcc-13.2.0
-arm                   randconfig-004-20240809   gcc-13.2.0
-arm                         s3c6400_defconfig   clang-15
-arm                       spear13xx_defconfig   clang-15
-arm                        spear6xx_defconfig   clang-15
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240809   gcc-13.2.0
-arm64                 randconfig-002-20240809   gcc-13.2.0
-arm64                 randconfig-003-20240809   gcc-13.2.0
-arm64                 randconfig-004-20240809   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240809   gcc-13.2.0
-csky                  randconfig-002-20240809   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240809   gcc-12
-i386         buildonly-randconfig-002-20240809   clang-18
-i386         buildonly-randconfig-002-20240809   gcc-12
-i386         buildonly-randconfig-003-20240809   gcc-11
-i386         buildonly-randconfig-003-20240809   gcc-12
-i386         buildonly-randconfig-004-20240809   clang-18
-i386         buildonly-randconfig-004-20240809   gcc-12
-i386         buildonly-randconfig-005-20240809   clang-18
-i386         buildonly-randconfig-005-20240809   gcc-12
-i386         buildonly-randconfig-006-20240809   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240809   gcc-12
-i386                  randconfig-002-20240809   clang-18
-i386                  randconfig-002-20240809   gcc-12
-i386                  randconfig-003-20240809   clang-18
-i386                  randconfig-003-20240809   gcc-12
-i386                  randconfig-004-20240809   gcc-12
-i386                  randconfig-005-20240809   clang-18
-i386                  randconfig-005-20240809   gcc-12
-i386                  randconfig-006-20240809   gcc-12
-i386                  randconfig-011-20240809   gcc-12
-i386                  randconfig-012-20240809   gcc-12
-i386                  randconfig-013-20240809   gcc-12
-i386                  randconfig-014-20240809   gcc-12
-i386                  randconfig-015-20240809   gcc-11
-i386                  randconfig-015-20240809   gcc-12
-i386                  randconfig-016-20240809   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240809   gcc-13.2.0
-loongarch             randconfig-002-20240809   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-14.1.0
-mips                     cu1830-neo_defconfig   gcc-14.1.0
-mips                          eyeq5_defconfig   gcc-14.1.0
-mips                      fuloong2e_defconfig   gcc-14.1.0
-mips                           gcw0_defconfig   gcc-14.1.0
-mips                           ip32_defconfig   clang-15
-mips                     loongson1b_defconfig   gcc-14.1.0
-mips                        maltaup_defconfig   gcc-14.1.0
-mips                          rm200_defconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240809   gcc-13.2.0
-nios2                 randconfig-002-20240809   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240809   gcc-13.2.0
-parisc                randconfig-002-20240809   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                   bluestone_defconfig   clang-15
-powerpc               randconfig-001-20240809   gcc-13.2.0
-powerpc64                        alldefconfig   clang-15
-powerpc64             randconfig-001-20240809   gcc-13.2.0
-powerpc64             randconfig-002-20240809   gcc-13.2.0
-powerpc64             randconfig-003-20240809   gcc-13.2.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv             nommu_k210_sdcard_defconfig   clang-15
-riscv             nommu_k210_sdcard_defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240809   gcc-13.2.0
-riscv                 randconfig-002-20240809   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240809   gcc-13.2.0
-s390                  randconfig-002-20240809   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                         apsh4a3a_defconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                    randconfig-001-20240809   gcc-13.2.0
-sh                    randconfig-002-20240809   gcc-13.2.0
-sh                           se7705_defconfig   gcc-14.1.0
-sh                   secureedge5410_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc                       sparc64_defconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240809   gcc-13.2.0
-sparc64               randconfig-002-20240809   gcc-13.2.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240809   gcc-13.2.0
-um                    randconfig-002-20240809   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                           alldefconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240809   clang-18
-x86_64       buildonly-randconfig-002-20240809   clang-18
-x86_64       buildonly-randconfig-003-20240809   clang-18
-x86_64       buildonly-randconfig-004-20240809   clang-18
-x86_64       buildonly-randconfig-005-20240809   clang-18
-x86_64       buildonly-randconfig-006-20240809   clang-18
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                randconfig-001-20240809   clang-18
-x86_64                randconfig-002-20240809   clang-18
-x86_64                randconfig-003-20240809   clang-18
-x86_64                randconfig-004-20240809   clang-18
-x86_64                randconfig-005-20240809   clang-18
-x86_64                randconfig-006-20240809   clang-18
-x86_64                randconfig-011-20240809   clang-18
-x86_64                randconfig-012-20240809   clang-18
-x86_64                randconfig-013-20240809   clang-18
-x86_64                randconfig-014-20240809   clang-18
-x86_64                randconfig-015-20240809   clang-18
-x86_64                randconfig-016-20240809   clang-18
-x86_64                randconfig-071-20240809   clang-18
-x86_64                randconfig-072-20240809   clang-18
-x86_64                randconfig-073-20240809   clang-18
-x86_64                randconfig-074-20240809   clang-18
-x86_64                randconfig-075-20240809   clang-18
-x86_64                randconfig-076-20240809   clang-18
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240809   gcc-13.2.0
-xtensa                randconfig-002-20240809   gcc-13.2.0
+This way, it will be possible to find the static symbol
+"klp_complete_transition" without the suffix via the alias.
+It will have the alias because it has an unique name.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+While "init_once" symbol must always be searched with the suffix
+because it is not unique.
+
+It looks like >99% of static symbols have unique name.
+
+Best Regards,
+Petr
 
