@@ -1,180 +1,133 @@
-Return-Path: <linux-kernel+bounces-280848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784AF94CFF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:17:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E90294CFF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F08CC1F23369
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75ABF1C22052
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AB119412E;
-	Fri,  9 Aug 2024 12:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD35E1946CD;
+	Fri,  9 Aug 2024 12:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRN/2jYx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QBfChtI9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC7A190684;
-	Fri,  9 Aug 2024 12:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EAC18CBFA;
+	Fri,  9 Aug 2024 12:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723205754; cv=none; b=rvgutAaVDLYHGwThMRbQoWwn3YwImYQuWZrjIBb/uAnc7FHzd7vG03kHEMOkA7qpEmDjOtMjL1qRLoBYevf6lipOOcqCPQ/OFhb52jVPs1b7AXwMJqHFk/Gbz977ymSgJB6+GejFyGbVXtBdexZEgLVBjjHroQV6M618uNzSkbE=
+	t=1723205802; cv=none; b=Dfa1VKFX7R0FR7zqzjPjGnWFchUtGvPwhgLISl+oTf1ah1lPL2setCaGn6Kv7UwojgUoQOxYiJI6TAhNzQN2vCcHNJJ1HaEUQgAxa6oEilairrL7QdeKKkTSp2IKlMH0XxN+5LA9CT/blDZxDd5Nia8WYWxXeoPaQLybtXVmW5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723205754; c=relaxed/simple;
-	bh=YmzphMja6XXmXFsRDikB4wVg7CMV9XsA3fHfiK6varY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qshsMgUTJs6RgoRo0sS0PW/HblWgP2MrNw8xIqGyKtUPE8lKS3p3yzftWqwp4Wg/AhNEH0J+TERBjwnQDTNWG+7XzRILYP2oSVzPT3hA+SFCUkfUBz0mlXV8F2hShjQwc+Acd8x+9wxWBET6+uWIiYC0i3wFRNHQXiO/kBG1ZzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRN/2jYx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433BBC4AF18;
-	Fri,  9 Aug 2024 12:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723205754;
-	bh=YmzphMja6XXmXFsRDikB4wVg7CMV9XsA3fHfiK6varY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fRN/2jYxvxAK2rPD3+0naMbaZ/DnT37y8CwrQvdGhQ5zxh/2Z+G0bnaEdZKNDyS3l
-	 yBGIzBnKK5I66olifKJ+Xe3c70z15ijiIrBrEwB8qDXOFo1cXjMwLfbE1HwtSELDcr
-	 cr3NGFHumQf2V5oaCmKYbFErdr17fgRqOndlWO6eoZG9HF+4kHn0PRVEaR2u64sl7w
-	 6+nHVpfU8Y9irVsV+NuCz95HvmH+bk0DRm7Hiqr7Ca/EProf7zoSean45ouoNR9xqX
-	 WvQT1EfO599+KS8CWjkHm6uEsz2r2ssdlmB3ttsSVZ4xxM6fFpReUasLUCFVn8H5O8
-	 rE0BWb9/quglQ==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso3603303e87.3;
-        Fri, 09 Aug 2024 05:15:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWorwrTi7DfiwYb9aTtQcGBWX3PNyaKplciWD27/8RvsxSxdAEZpLpUoEDyyBi5oEF4RSJ397JsK0LQYetHpef6eCm2n/TfImWbULEEjusBh8M4gAFM/GgFZm6oa09eFLVddjX0DMqE0DZhTWa4hSxJObbqmk8u38Q0K9hjZd5rpWRIpXxJCZ4Q0HLxTQcpuOhTxHWYpzgzuCNiiLKHYmhYFQ==
-X-Gm-Message-State: AOJu0YwJjs3rQUFLHpOLuZ4PZE0sqFsB6Cxlm8Zz1L62qPVPWowrB39P
-	zIE61RjUPPv+2gPtrymOTihbS5IStMrmosjoPkOXB71WkBVsH3l2lm931kCnwLiFxhdPVe7NGNW
-	g7bH3j1BjDyOt/IgmK03PjOA2g8w=
-X-Google-Smtp-Source: AGHT+IGlPsd9qpxK+kaW4uaKRNj+aYSzSne6anO3DKhp0I4fJNAaAhyO1zxPErAVmUP4wrg91CYucQo7Gmyudhjr2sM=
-X-Received: by 2002:a05:6512:2311:b0:52c:db76:2a7a with SMTP id
- 2adb3069b0e04-530ee9b76bemr1127480e87.34.1723205752741; Fri, 09 Aug 2024
- 05:15:52 -0700 (PDT)
+	s=arc-20240116; t=1723205802; c=relaxed/simple;
+	bh=JP8VCxbNq7CBoSPJbq8/KBX4hfxCfPDfHkMylr4pZvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NHdJP6yvPCl+QQm6tMV64cmU5ChElk10ia2PnfitQrix09uAdGrgBZjr318ZoVMluCGYuw76Am2khSNPYr/DdmBAMSA0mLDew5FsziRXe+sq0/Q7TRpZMUQmovuDPlXJlwrgeEBlKW+v89gZU7Zflh721NdPZ0inYYxipqnRDP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QBfChtI9; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723205800; x=1754741800;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JP8VCxbNq7CBoSPJbq8/KBX4hfxCfPDfHkMylr4pZvU=;
+  b=QBfChtI9702Fkgu43iFu36OqbukCPGGAfTw/seWGWmPhU/d21BKJ13pQ
+   Nyyu6YX1BnNswT6pJbmRSxdmZaRPzfIZrkM9YjK/ZcFC/4Ut7ZtFNwOlZ
+   rC1KpJOPfF5sTDKF7cGXtBwPE5g7dSZekhBUa/+mvboQ14+fB/ZbSY2G8
+   Afxah01r1sQ0D4eGTYhQZs+eFaJUf/qYjNEPf8L5Z8OF1eVw1ANAVSliQ
+   HReIFy949YrOYZAA8z3Fnsx1Zt8htvSMvED80j7+5m2vHRNF3NjPqUSz5
+   gc3afekXV/sf755yD8Br++SoOBRAebGMiKHlTj97XyONJveRgvxMH7QiF
+   g==;
+X-CSE-ConnectionGUID: RR+n4EMzSFuPyn+YV/zyJw==
+X-CSE-MsgGUID: rvV9RMlQS1qe42beJaSr5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21550995"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="21550995"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 05:16:39 -0700
+X-CSE-ConnectionGUID: yyOzs8w9SnW3By1qr2Qtlg==
+X-CSE-MsgGUID: E8YCVP4kRnmavvFOSJKCHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="88187943"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 05:16:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1scOXq-0000000DPav-1keS;
+	Fri, 09 Aug 2024 15:16:34 +0300
+Date: Fri, 9 Aug 2024 15:16:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Hanjun Guo <guohanjun@huawei.com>
+Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH v1 1/1] ACPI/IORT: Switch to use kmemdup_array()
+Message-ID: <ZrYIosRuNG9S-SqM@smile.fi.intel.com>
+References: <20240606165005.3031490-1-andriy.shevchenko@linux.intel.com>
+ <3a1e0ffe-db11-d18f-db33-881df7d9b18d@huawei.com>
+ <2edd3b72-24a4-8b19-8738-cc82dc4fae6c@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com> <20240807-macos-build-support-v1-11-4cd1ded85694@samsung.com>
-In-Reply-To: <20240807-macos-build-support-v1-11-4cd1ded85694@samsung.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 9 Aug 2024 21:15:16 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARafZ=zFMeoDdiMh=ZRU_XiJ08Naf=oAdYpOiUN02HizQ@mail.gmail.com>
-Message-ID: <CAK7LNARafZ=zFMeoDdiMh=ZRU_XiJ08Naf=oAdYpOiUN02HizQ@mail.gmail.com>
-Subject: Re: [PATCH 11/12] tty/vt: conmakehash requires linux/limits.h
-To: da.gomez@samsung.com
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
-	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
-	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
-	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
-	Finn Behrens <me@kloenk.dev>, "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2edd3b72-24a4-8b19-8738-cc82dc4fae6c@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Aug 7, 2024 at 8:10=E2=80=AFAM Daniel Gomez via B4 Relay
-<devnull+da.gomez.samsung.com@kernel.org> wrote:
->
-> From: Daniel Gomez <da.gomez@samsung.com>
->
-> macOS hosts do not provide the linux/limits.h header required for
-> conmakehash. To address this, ensure that usr/include is included in
-> the conmakehash HOSTCFLAGS. This will provide the necessary header for
-> successful compilation on macOS.
->
-> Fixes error:
-> HOSTCC  drivers/tty/vt/conmakehash - due to target missing
->   clang -Wp,-MMD,drivers/tty/vt/.conmakehash.d -Wall
-> -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
-> -std=3Dgnu11   -I ./scripts/include     -o drivers/tty/vt/conmakehash
-> drivers/tty/vt/conmakehash.c
-> drivers/tty/vt/conmakehash.c:15:10: fatal error: 'linux/
->    limits.h' file not found 15 | #include <linux/limits.h>    |
->    ^~~~~~~~~~~~~~~~
+On Fri, Jun 14, 2024 at 08:54:39AM +0800, Hanjun Guo wrote:
+> +Cc Catalin
+> 
+> On 2024/6/11 18:42, Hanjun Guo wrote:
+> > On 2024/6/7 0:50, Andy Shevchenko wrote:
+> > > Let the kememdup_array() take care about multiplication and possible
+> > > overflows.
+> > > 
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > ---
+> > >   drivers/acpi/arm64/iort.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+> > > index c0b1c2c19444..e596dff20f1e 100644
+> > > --- a/drivers/acpi/arm64/iort.c
+> > > +++ b/drivers/acpi/arm64/iort.c
+> > > @@ -822,7 +822,7 @@ static struct iommu_iort_rmr_data *iort_rmr_alloc(
+> > >           return NULL;
+> > >       /* Create a copy of SIDs array to associate with this rmr_data */
+> > > -    sids_copy = kmemdup(sids, num_sids * sizeof(*sids), GFP_KERNEL);
+> > > +    sids_copy = kmemdup_array(sids, num_sids, sizeof(*sids),
+> > > GFP_KERNEL);
+> > >       if (!sids_copy) {
+> > >           kfree(rmr_data);
+> > >           return NULL;
+> > 
+> > Looks good to me,
+> > 
+> > Acked-by: Hanjun Guo <guohanjun@huawei.com>
+> 
+> Catalin, would you mind pick this up as well?
+
+Any news?
+
+I do not see this even in Linux Next...
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-The error is reported at line 15 of drivers/tty/vt/conmakehash.c
-
-
-The line 15 is #include <stdlib.h>:
-
-https://github.com/torvalds/linux/blob/v6.11-rc1/drivers/tty/vt/conmakehash=
-.c#L15
-
-
-So, host programs cannot include <stdlib.h> on your build machine.
-
-
-
-drivers/tty/vt/conmakehash.c has only 5 include directives:
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <sysexits.h>
-#include <string.h>
-#include <ctype.h>
-
-
-You cannot build this, your build machine cannot build anything.
-
-
-
-
-
-
-
-
-
-> 1 error generated.
-> make[5]: *** [scripts/Makefile.host:116: drivers/tty/vt/conmakehash]
-> Error 1
-> make[4]: *** [scripts/Makefile.build:485: drivers/tty/vt] Error 2
-> make[3]: *** [scripts/Makefile.build:485: drivers/tty] Error 2
-> make[2]: *** [scripts/Makefile.build:485: drivers] Error 2
-> make[1]: *** [/Volumes/src/kernel/linux-next/Makefile:1925: .] Error 2
-> make: *** [Makefile:224: __sub-make] Error 2
->
-> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> ---
->  drivers/tty/vt/Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/tty/vt/Makefile b/drivers/tty/vt/Makefile
-> index 2c8ce8b592ed..d266895357e5 100644
-> --- a/drivers/tty/vt/Makefile
-> +++ b/drivers/tty/vt/Makefile
-> @@ -13,6 +13,7 @@ obj-$(CONFIG_CONSOLE_TRANSLATIONS)    +=3D consolemap.o=
- consolemap_deftbl.o
->  clean-files :=3D consolemap_deftbl.c defkeymap.c
->
->  hostprogs +=3D conmakehash
-> +HOSTCFLAGS_conmakehash.o =3D -I$(srctree)/usr/include
->
->  quiet_cmd_conmk =3D CONMK   $@
->        cmd_conmk =3D $(obj)/conmakehash $< > $@
->
-> --
-> Git-146)
->
->
-
-
---
-Best Regards
-Masahiro Yamada
 
