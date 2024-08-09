@@ -1,844 +1,285 @@
-Return-Path: <linux-kernel+bounces-280793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A430994CF4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:17:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5EE94CF51
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6139028460C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:17:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A2C28149A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA95C193078;
-	Fri,  9 Aug 2024 11:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CCF192B6F;
+	Fri,  9 Aug 2024 11:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="eorrAgIE"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2064.outbound.protection.outlook.com [40.107.21.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NMR6/EIv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2340E15A86B;
-	Fri,  9 Aug 2024 11:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5A615A86B;
+	Fri,  9 Aug 2024 11:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723202229; cv=fail; b=hxhketvBg3LZb8bQHhktkQeGe0bvL4PmdddSHwBqI4a6rG3JhAWqfozBY5EvrnKJeZ81gGjDGtLVmGBpnJ29udo3+vGloi5rdKgqm8sEtWmqbxmbgnbWbiX2Q/Y/OzR5OLJS4v6rsz3zS1xbyt15ZPoMyEn1dSDVbk+nvYvXQHI=
+	t=1723202368; cv=fail; b=G9tZr1uL/bupcaB3hFU8MJNvT7+cJ1mwNIhXccW+UJP6A/JGpbdBFek9+ROB6+Zcd7gYY/fGyDavPmANG50ILKX4pW8SFOY9oSxV67BOOxDf6iIe8kpvadwrQX54h+0R7CLQcBaEz04zxG8RHNBIiP3d8QVZVzi0pZpvoXTl0Do=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723202229; c=relaxed/simple;
-	bh=lwToPlafuVehN/g3zrpxoNZMsE9cFKp3VZIYAERtUKI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g19Ou1am+Crl+rEx4OtPT11v8OqzoF4gHpZOsGl6jp4dHkZfJtFUFiUFjwVnHdvzr0U9Co+XWVblCPCmJSLWBo7DT386M9gpwcb8i6b/2PPgI+6b3ViUQqpsWb9UWZeVISorimZwz7al3imEk2z2GNXxBRx6WRe5OqcZKN87+q0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=eorrAgIE; arc=fail smtp.client-ip=40.107.21.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+	s=arc-20240116; t=1723202368; c=relaxed/simple;
+	bh=XPGFf6KrPgjk1b/2spJ6xFabJ2KKckIb96oVq+xRMvc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EnVa/mPAmsu0gCTQyq6D1Y32vjfF+FqccXtBZvWafVtfVW5Oa3eH8Ay8V/4m9pze7zyCG0P8lk/2l6AlaBHb939ZJQTFN/6CIjeQc4fbm95lOJEqksmVkuzYOXpj8TcdXTvJqxOJrnWAZOdYFm1G7lQRm5k+/MbmmRmKkNfK2zg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NMR6/EIv; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723202367; x=1754738367;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=XPGFf6KrPgjk1b/2spJ6xFabJ2KKckIb96oVq+xRMvc=;
+  b=NMR6/EIvn+zD0rGklfnxcu1VVQTWfig5kXX/7tUyjkWqS4c6OZFz7GkB
+   EPpWJnvCHPs3Hf773q3sEP2Np75yWnvYW7qiCTkSSiid06GvDOpKptuyS
+   K7yqISD9HDDYYyI16xFHDUNzhudTqShqofioEANEsn2NnikzzuUDQavQZ
+   m+JuxBKyQS5JuTA3Q0IcOtw+CpHQ8UsCgxCMzOrB8agV/I91yrCoqc79P
+   CR3kii2daWpHiGcQ4hWuXOvBRQR+poXhpttIVbykRLnnJDwSckkIwWq3T
+   /zTvB5lGp2WubmnFKsMMDBH4MlpHqf7AFzEHlnj8AtDjAUYqylrXrBg+n
+   g==;
+X-CSE-ConnectionGUID: pcwA+GvjTWiRg9zoZc8aMw==
+X-CSE-MsgGUID: bNaRd/YLRXu7MdKu0p9sWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21030477"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="21030477"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:19:26 -0700
+X-CSE-ConnectionGUID: I68Pk8FxRkqqLlzcFXMXGg==
+X-CSE-MsgGUID: IygYUZ4JQ2evAp220hmcYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="57620384"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Aug 2024 04:19:26 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 9 Aug 2024 04:19:25 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 9 Aug 2024 04:19:25 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 9 Aug 2024 04:19:25 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 9 Aug 2024 04:19:25 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LBNdh+1sE+z5J/zsRPdh9Yt/Gy48Dp3Z3APotp/pYIz9lQeTs55DcNKZ5SSzJnoZLEmBzGChtxdfweINMM5x63LSLgBihQapzLULExZGpgYhiYAbSm6SA1go6p33gSnm27A6JRacCO5a/0x4/DOF6tHBmCSKYxR++TlMMwMWH12yMAxB5obUtzuQij0y3+zBTnFOkD6y0mYTcy9WlZw7yLLtdur278PGwoj4mYlrjXwpWeD1705/d1d7sORS6J/gWXTObTV9/YjKIYbv/+H3M8n1QmX5eWwtI5l9U/XkPJ9pkTNHVF9yg9oH24WZDuktVp2kK10XXtSYq5xwbdpp6Q==
+ b=m0xV+4gdzjBFCozAP84XdmsDpc5K3fitOCxM+TUSl/GlBZXyLOp/8vuKiSn+UFT+VqQQEcw4yLMZ61yl4bQaciXlMVb8QYNzIHi84R5tNR8T6DOyfmZDAgaH/uorf8wdr61dscv2uwRVnzYO8jiB+mLEaFdcEw6OBXigzErhK0TAoEO1Zjy40+NBt4CPZloRckkbmhQLKuCXtXEmgUkEyt46PTOwLMuuCxW9BoVD0GBNb+dCgpBSzegA/IHex21EuJ+CLpMOQhxwx4h8kY8cnTGlrRYEp1Gpn9ca3S/mTx3n0jbC7S10f16dNuRc5yhwys4IQxrlUAsT3sL9rFylKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ythG+xoTUU/deJ34ehi0wuX6Ex5Zx0MEIa0civtpgMQ=;
- b=uz3uKln4RCXtk8+39pPHd4WXZvZTNNKkpmKCgG2J+1zglxDwlJ+rJdIi2Zfi8BL3/m3zTNPOy9XJSOLuVxfKWQ2Vv4Z9vnrW0y2AoRuBts+Y2rjwZ4Bx0CUV2er9VOTUO+kW2QjV6uHnzO3bM+IluCboXsd5zfJoD7ycbYvGEvRHl+S7wgGNePIqtkkmjitkdzgnE6LxXKwJocMwQNZmYRhFx+89SWKhgD2sktA0rZLX/DZ3+54Ay+tF8nsyoXJupylhkm5ZTwxLzMfVgd7AEXL/L6KPbSBOJ/1tbRKRPy2GYHNETsyI/4iBIeGTDWVoE+yk+LGtOdlhAATth25SKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.205) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ythG+xoTUU/deJ34ehi0wuX6Ex5Zx0MEIa0civtpgMQ=;
- b=eorrAgIEUwnninvAKjqSGVtFEr4CKhr7Db20g/TBVGu7OrpdYkPvnseE88xPzKcWMT+CwYukz2JAbJ0mDYbNtUjN1kLFgZ2uuNIpr0HtxuR61dx2MDTUCf2j1ibo4fW0mdYsracbzaYPcpbg3/JBDvY/TwQy5bHoRFxVL0RXwMkJn/Z0h1fU6QoC6794BPEviVeV1M0e+EKtRH6Uj4fJUMCBGmhgH9pZZtj2HS0Wbr1tNaTJ2wR7CZYbW0fe74zt7YXz5BVbgt1QSyJlJvxUCdLAwv8mSoUQotMiSRe/2r0E8OAvTsiRduM/3szGXh7Sb27GOW4JtwQ9eeYSmD3hKg==
-Received: from AM6P194CA0009.EURP194.PROD.OUTLOOK.COM (2603:10a6:209:90::22)
- by DU0PR10MB7051.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:422::9) with
+ bh=XPGFf6KrPgjk1b/2spJ6xFabJ2KKckIb96oVq+xRMvc=;
+ b=Tt1/52OPNWFWbGUyeLspl7iAGN8MrIj7PxXyNeDWfpjob1oEsA7vBaU/FgTsZreUlf3PPIvsmBh2i/uKt3YEtc724l7C1U0YFJHr5NLQXINlirIKMMPST59yFQWsLNaT/n/c7e1ZbHgXHc9z1ES+gxjiQkmmY4SOm8wnSwuBbyVO6QozvjdZ9cM3XDttYl2eOGO5gtBpjHUx7ML5hmaH2Hx2JzrcC3fcdSjyL8THOzPYr5Dqfiw8W6XMl9YC1fpXYB2KISDr+f8vsBXDu1BHwGEAX/Mn2mffITBmPDJp6ExOKLZ2GINKKck8kKgQWyHIITWfDxMIhYmvacZXCSHsRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by MW4PR11MB5892.namprd11.prod.outlook.com (2603:10b6:303:16a::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.12; Fri, 9 Aug
- 2024 11:17:01 +0000
-Received: from AMS0EPF00000195.eurprd05.prod.outlook.com
- (2603:10a6:209:90:cafe::5d) by AM6P194CA0009.outlook.office365.com
- (2603:10a6:209:90::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14 via Frontend
- Transport; Fri, 9 Aug 2024 11:17:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.205) by
- AMS0EPF00000195.mail.protection.outlook.com (10.167.16.215) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.8 via Frontend Transport; Fri, 9 Aug 2024 11:17:01 +0000
-Received: from FE-EXCAS2000.de.bosch.com (10.139.217.199) by eop.bosch-org.com
- (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 9 Aug
- 2024 13:16:59 +0200
-Received: from LR-C-0008DVM.rt.de.bosch.com (10.139.217.196) by
- FE-EXCAS2000.de.bosch.com (10.139.217.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 9 Aug 2024 13:16:59 +0200
-From: <Jianping.Shen@de.bosch.com>
-To: <jic23@kernel.org>, <lars@metafoo.de>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <dima.fedrau@gmail.com>,
-	<marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<Jianping.Shen@de.bosch.com>, <Christian.Lorenz3@de.bosch.com>,
-	<Ulrike.Frauendorf@de.bosch.com>, <Kai.Dolde@de.bosch.com>
-Subject: [PATCH v2 2/2] iio: imu: smi240: imu driver
-Date: Fri, 9 Aug 2024 13:16:35 +0200
-Message-ID: <20240809111635.106588-3-Jianping.Shen@de.bosch.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240809111635.106588-1-Jianping.Shen@de.bosch.com>
-References: <20240809111635.106588-1-Jianping.Shen@de.bosch.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27; Fri, 9 Aug
+ 2024 11:19:22 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%7]) with mapi id 15.20.7828.030; Fri, 9 Aug 2024
+ 11:19:22 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "Kuvaiskii, Dmitrii" <dmitrii.kuvaiskii@intel.com>
+CC: "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"jarkko@kernel.org" <jarkko@kernel.org>, "Chatre, Reinette"
+	<reinette.chatre@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Qin, Kailun" <kailun.qin@intel.com>,
+	"haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, "Vij, Mona"
+	<mona.vij@intel.com>
+Subject: Re: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data
+ race
+Thread-Topic: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data
+ race
+Thread-Index: AQHazrB4mIMKrvC2y0eY2IQtmlLA9bIGxLIAgBgc0wCAAB0PAA==
+Date: Fri, 9 Aug 2024 11:19:22 +0000
+Message-ID: <8ab0f2d8aaf80e263796e18010e0fa0a4f0686a3.camel@intel.com>
+References: <6645526a-7c56-4f98-be8c-8c8090d8f043@intel.com>
+	 <20240809093520.954552-1-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240809093520.954552-1-dmitrii.kuvaiskii@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|MW4PR11MB5892:EE_
+x-ms-office365-filtering-correlation-id: f95282ee-899d-4d33-035e-08dcb8651e83
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?b0VUZlhzaGFjWk1meUEvTFp6V1pXRXRaa3FicGFhZ21zUHljOURCVzBFdXVv?=
+ =?utf-8?B?TjVpQVcvbWJQMFNrekVqVmNzSjVPMFpNT1JrK1QyZkZJcm81TU90U2FMajQ3?=
+ =?utf-8?B?eWpXajFNVzFiR3NVZUY3dGpLalJ0R3c0U093d01pL0pDQ0RLMzJoQ2xBQzhT?=
+ =?utf-8?B?ZFh4Q1I4a1Bjb2IwRGJNWktObXBiR2lISXhUZFpEZFRocFFoL3lxK0VsRXM4?=
+ =?utf-8?B?amRIcXg0VG5nUWFYRCtQMHZybTAxWGRoUUgrVGRkM2U1d3lMZkN4Y2g3WFZQ?=
+ =?utf-8?B?N0NFakhNRUJHYS9uMkpMUXZuQWlFRVFXNmxrZFA2bVhaSjMyRTJYemd3UEQv?=
+ =?utf-8?B?SGkxSnFMNTBmSzlubDZSQjFCSUwwWDdYVlN5ZFVPY3JVcDlvb1FIMno4by95?=
+ =?utf-8?B?VzliZW5jUFJyejdmVnVuamU3eWdqWURqZWtFUmZ5QS8wRnA2aG9DdmlQanh6?=
+ =?utf-8?B?S1NlaDRkSmJMN3A5eDB1WEJwQ2N4UnI2YzZlU29jS3V4Y2tMUmNGbVpKaWJ5?=
+ =?utf-8?B?eWR5cFI2dk4zNGEwVTdRL3V0bVZqOTRqMUpNUG5HSzhHcFBjVEs5aDEvd1gv?=
+ =?utf-8?B?L0pJZkdrVTFWc01BbVJlMkp6WCtmY3BMUWY5dHd0RXJGMkNuUFlKYjJPSmlW?=
+ =?utf-8?B?OUZra2lnV2QzeEhzc1Q5c0NQTmxwaGJhRUFBZExEVFRKQ1JMQ1dFTGlGK25E?=
+ =?utf-8?B?TzFGdDZIRE5jaWFzcEU3NUhKZk5BMTQyQUxhZjRSaTN4Rnl1N3FwMWxNb3Fs?=
+ =?utf-8?B?NHZNZkp4Q1ovd3dQbDZxcWZrWUtMd1BmTk5NT3VhVExGTHBGa1MwTCt5ZzVu?=
+ =?utf-8?B?RDVTU2hGaDduWm05alIxNmcrclRRUWdwUjhWVGU2RkplN2FpTjNHems5a2RZ?=
+ =?utf-8?B?b3BmakxJRkU0WmpuQkpEanFMMnJSU1pkZndsVHkvSU0zekQwVmtndFgrK3JR?=
+ =?utf-8?B?cURKUitjZDEya1ZwZ2duWXVMaXZDSGlKa0sxMmxRTWZqdm1TRm9Gc2JzZVFo?=
+ =?utf-8?B?NHJWMGdnZXJ6a1JyRG9FMDIvQk0xV1pFRHNyQ1RxYllVSnhPczlCUkhzanUz?=
+ =?utf-8?B?QU1Gb0xBdE1vWTlFeHY1WEJpWGRPdUpwdXpERnFkMHQ0d0VMMmI0N2xaaXU1?=
+ =?utf-8?B?Q1dQdmRSTUl1NkhFNjJQZWxIYUFYWVgrQmFzdXFCK1B1N3RjTUJDMGZTMTdQ?=
+ =?utf-8?B?cVJ0TVZqZUw1ajJJZFhvSVJkNGM4Z1RXeWVZN3czZXVsREJBcFE3OW53RU1E?=
+ =?utf-8?B?V1Z4U0NWdkxyRDF6NTlubXBYLzBtbGEwR2U2dTN2WWFzbHRPMlNkd1RnVWVH?=
+ =?utf-8?B?MkVVR2ZjTGxpelB1aC95Y20yYkwrVlJEZ2lLR3laSGQxNTdKOGpkeW43NzFK?=
+ =?utf-8?B?UG5mNVlJOEpRTlFTVWtBSWVXTzVVZzZ2aEQ2QXNRdzRUNUppcjVCY1dIbG1B?=
+ =?utf-8?B?Y1F0VkdMak90ekU3NGk5SXVxT1h5SjJ5cnJDQ2xIU21BdFVoU2pkNTdUQXFN?=
+ =?utf-8?B?YjZpN09SUDdFRTU3VXpDSzlxekNuVjloYzR5UmNVa201cUlRSmVrL0NPemoy?=
+ =?utf-8?B?cmtnR1NsVy9manoyNlFuNFFXUVFDVWhaVjZ6UGZpSExpREExZkxoT2NSZHJ4?=
+ =?utf-8?B?TzNib1g1SmpLQXlkeE9tMXdGbHZxVUxRL1A4cmx0emphZ0xxZGEva1RVN3Uz?=
+ =?utf-8?B?VTg0U3d1NWlxbWMwbTdoakViemVEMk0rZGY2MWd4VGlxQ2IvVzB4V3NlOVZO?=
+ =?utf-8?B?bW1QbDk4OGhLcDMxalNXdG1HZllTM3dKR3lBOHRYMGlYRkZvZDZibmtaSG83?=
+ =?utf-8?B?a210WVNtbVFzemc4WEdSeWNtendjUVhVc1doMEV6V1FBNkc3RXFsZGFLQ0px?=
+ =?utf-8?B?bzhzSXpPYlU0aGJTZnkvS2trcTJFN0dtT05DdXRiS1IyUUE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ajZtb3R0SU9sZk84SFZGUitKTUVodUJlZ3UrVHBrV0h5MkxoamV4L1NFcFI3?=
+ =?utf-8?B?VklFUGp4a3NEUHZwR0VBdExNcDgwNXIvdnZVUklRbTdEaFJnL0hHWitZais0?=
+ =?utf-8?B?T3cralVUTGQ3N01jQ1ZJWElrRnFNckNaaERJZktqZVYrOW5kcjZ3MXJ2WDh3?=
+ =?utf-8?B?RjV1WVljanYwelFMbzFHOTBtbW1kTGY2UzlSWHNXbDlmWVAyaUM4STliNmxC?=
+ =?utf-8?B?NUpPSkF5UGo1cVFZNUNDTDByRWd1UGRiMmNQeTZwNWhBMWpFdmk3YmRFeWpo?=
+ =?utf-8?B?N3YxNGFxcHdUOGlUQUF3Vmt1TEsyY0VOQWV1ZGxSc05KVnRiZG1LZDA5Wmt0?=
+ =?utf-8?B?QUR3UWE4VUljMVpLQ0RsVkFZV0lOaVBzN3FldXNMVkJkM3pGald6M1NXSUJw?=
+ =?utf-8?B?Zm44c25lS1ZDQ3VPa0RRejg4L0hvWFlodk5WS3F6NHYrSjRhUHZGYnNPb200?=
+ =?utf-8?B?VGtuTi9rbWJJbWJZZmJRNUdoTm41ZDRrcms2Y3pramF1eUptcHRYRkxFaTNR?=
+ =?utf-8?B?MDQ1T09KREwxUE9TdWIzeE5zMjVsSk1IY0hwemhNYVZJZXBjMUFabGtFbExh?=
+ =?utf-8?B?ZUg2L1k3cG9DdEYzRzFmbDZxUFdEM3VJZzVQSGJ1ajJhMG5rdjdnVWdJdFly?=
+ =?utf-8?B?M2ZHZCtIZkwrcm9NR0J4aThGanozRDdaZDM0WmN5NmpoZXZSdk9HUmNsREd4?=
+ =?utf-8?B?NGVjZUhzK0RNWWFkYTV5Z0dIWGZWbHZ5Ym44YW04bkZURWptQXI3Wm9JcWwr?=
+ =?utf-8?B?T3BaWm9BRzdCYWRHRW5QaUJUN1FibWJRNlZ5MUphb25qTkNxdUxIa3JzdjRv?=
+ =?utf-8?B?cHVxMHZUUzJsTEt6NFVoTDBQVE5jZU5vR244TWV2REdsTFZPRzlCTmYxVWpN?=
+ =?utf-8?B?cGhnbDBINVlpZkFXdkFhSUlRVDZraDZXbjltWHY1WnVXWjRuOXVaK1FCREY2?=
+ =?utf-8?B?V29wT3NzYUxCVW9lUnBWSGsrakpCcnhiUllrTFZYeVltc2RJZXc5WXUzVnpa?=
+ =?utf-8?B?aFkwems3VFlaV2I3WWpNaDlvcExXVUpSM09Kdit3M1ZjbnVZU0Jsa3JNQWFt?=
+ =?utf-8?B?d0wyZDRheWI0TytkdXYrQmhSZHRKcTQvUUJLdytmRlc2ekxETitaSWdXYkVY?=
+ =?utf-8?B?Q1lVSVZ4cmc1Nmhpa25rWTQ0U0Z6TGZqU1pkQ0l3WkpaZFVWTlozUzFodU1U?=
+ =?utf-8?B?QlZLZmdONWE5QlJJdXBvZGE4WHpXSHBDMzV4a1AyalN4V3hjWmI0VHN1UnV6?=
+ =?utf-8?B?SE5sK0Y5QVFzYnNBamVnSkRVQmplcWZ2Skd1b21xYmVBN2d0R3NDSXkxVGls?=
+ =?utf-8?B?ZnlBYXhMWDUzdzY5WVF2NGt4NlI2RU1CRmpDWVQ3K2JmeFNXNnUydHA0UTBU?=
+ =?utf-8?B?UmtrRGhWTTNWWFZnb29yMis5YTN6ZHBUSWgxRGE2YS9MQkV6Y2krMXhvUHdx?=
+ =?utf-8?B?ZTVwbTArcVhURk1iUUtSUVFpckNNM2F6aXdpQkw3TkFNM0NzVFhlV2hUdm02?=
+ =?utf-8?B?Ykd2LzBia3Vra3lkNnBkNGE0V2ZVa3AzNEFtOVpYb1FwWGRseVhhRHFRVmpV?=
+ =?utf-8?B?N2FqVDNxUW4xNDZKQkFTY3lXZUM1V3lSOVFmdTVkc09pNzQ3dFhNbmk3NmZv?=
+ =?utf-8?B?R2RNRjg0WFVDTmhIMGhGQzlJdlM2dm42YnJTc2dsdDFuN2VVbzE3TUwxeDBY?=
+ =?utf-8?B?bGlETmp3MzVIbDhVT0J6aytxMXMrVjFQR1VJNmJqNzRCd2hUc1ZFMmx6QVY4?=
+ =?utf-8?B?YU1vU2tvVjhidEdCeVhMa0kveGdkcER6NnJpcEJGcWU0SjVwT0VBKzBGZzVR?=
+ =?utf-8?B?bkN3S2xFYVZwZFlvL2ZqcjYvbFE4Z0hFdUJtV2wyNG9SVXhpSmg5V1BEV21M?=
+ =?utf-8?B?VGpNekxYYnN4WEp6ZDZ4QXdheXZwL242R1pQOVJBSTY2MFlYUjBiK2liaWJ5?=
+ =?utf-8?B?VUo2cHF2V0xrbXBrSndSV2V6ZXd6emRXZmFnU3lKME9oOEg3Q3NPMlRWVFp5?=
+ =?utf-8?B?Z3dWY2pXT3pnd011dDljck5vK0xhWHdFWFFZZTh4dXlpN0htRDhFdGJ2NjZE?=
+ =?utf-8?B?bW4vNFpFMFQzdW4rUUZ6Ti9mSTVWRTZoM1N0MGFsWGV2d3ViMEFzZXRZVzBN?=
+ =?utf-8?Q?SSYi4UZrpMkI1kZYKxqTpabal?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <50A980F8EB9D4F4BBFC84925FCE628BE@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF00000195:EE_|DU0PR10MB7051:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9f228ed8-d5c5-47d4-457b-08dcb864ca90
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|36860700013|376014|82310400026|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wjEG7frgcEQ+5zUkVuwcnkbtW0ray67NLlfj4O17viEZeUclKmMXQ7N+3KBR?=
- =?us-ascii?Q?Hbw5oCc1pL/RvX7eKlX2vkX+8MgAB9ugicjxyA2kFuXLYJRqtL3gLuyDwwvF?=
- =?us-ascii?Q?sWw78rABYiUxBOf+ES81/8E+seH1V2Vpg4ZNF/1ZylQ0YxZooclq1594mBn7?=
- =?us-ascii?Q?OsHXFV8x8JWrgdpjbZiW1x1ozQ/9SyOQAJDagqgHhHADBS9/rXMPI9rpjbt6?=
- =?us-ascii?Q?gOHZvXFUx5jfZiHsI38Knfxy3ixaFDdvy18Cr8VJCXwBMzPUAb2tIXs0BT8Q?=
- =?us-ascii?Q?Z7hkXF1MEgWSchWS+lRuFcABWtM+eu2Oz/tebCNul703WgOW+rw6C4ptKgXI?=
- =?us-ascii?Q?qYD8L8gjRe5ywg1IFi7ep2rzq26oca5DKuwR/zQglKEEmbCWPWXdR6vEL/J+?=
- =?us-ascii?Q?RSv3WLOXdLZtIJw0yQNBhKSv04aljhS3HH0bke5xvh0P+toYSyp8mhTikEJ0?=
- =?us-ascii?Q?yZWNKL5edMALcQZYg8x3YtBd2aGw1rv5jgozKEAi7y1DOcsX1ZKakPnofU4s?=
- =?us-ascii?Q?Uro0DRL1cAdBfG+f1NZpN7XhaEFjmazx/OIQtgbnfKV19pfF+oGpBcmwnJpC?=
- =?us-ascii?Q?SuUEIh7Cbsfg6l1jATTWuSEtiyJN8auG/j3eTkOYKOxHMeeY1Wg4MjUXcJZa?=
- =?us-ascii?Q?HU+FGTEp3ZImRRnTKauct+cPZn/pOXOhmIyT0RI8w+3FYyQA52Lgt3/3w6KJ?=
- =?us-ascii?Q?V1c6I0a4YjY6ej/F3iKYEtw66k3xO6JfM3zs2vzF5mKSVdKQgWmP4VzpbDRP?=
- =?us-ascii?Q?PRpEWyMQrO7NZTTP5YzOW725Ii3u2gdqdDl2owR0fM/JjocN2z8wer+yPOpP?=
- =?us-ascii?Q?2UaT66H72yF7oHrlVxGyh868YrH7iAUO1EhvLn9V60URHLlV8p3aX6u6ZzKa?=
- =?us-ascii?Q?wV/l0ocumuC3tI6kU6V7uHeldKhHkoKC7TnN1A4DPCZSKECMWWAUOs2sfa61?=
- =?us-ascii?Q?5Gg9s1rOfoMv/236SGnTJo38VYwUMjRw7c1oQeVuZFTTE4FJsO5cmOQmT6rI?=
- =?us-ascii?Q?5WL0f6ssK1h9ELHsqxUV6sqKZo5VwBB+83U04IdvuX2zOICrZXh99HdhQA+c?=
- =?us-ascii?Q?xD0OsRkckngiLSamIHus5MH+yjsFmYflw37NtDXTh74AoExjUgLZ+rLsH2Nl?=
- =?us-ascii?Q?aBguIebNPwWAdI4vHUAQ6ZIvObXHD+sQ2XZPxzabSxvL4p1V0lEtaNX9lINB?=
- =?us-ascii?Q?ypOuclISu0vBkBuf8aFfv6XwVwOy6AmfjQqH+smTzZxgqXSVOCIFqDdNLfUB?=
- =?us-ascii?Q?ZMaez9jdETUOG6fIbrDSbKF22xOwl4JKYreGKyqroHJfgP/3EUTU3dyrQcz9?=
- =?us-ascii?Q?PMCPTUzgnynkgcuzANe7n4F0ImSXevhGxLtBvWkU0vo8iF6zSGV6yjK2QJ1D?=
- =?us-ascii?Q?q8ps00kVcp57czehxzjj2ua8toJrw+eE0MEdoVYiYJQsYAm/UnIBgSFI8I5m?=
- =?us-ascii?Q?ofvo57PWYr3PBGaV9VFpfYXcmpoJp4FZ5V7Xtx7QrNRZ9BDxBsvTrg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(376014)(82310400026)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 11:17:01.3679
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f95282ee-899d-4d33-035e-08dcb8651e83
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 11:19:22.2380
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f228ed8-d5c5-47d4-457b-08dcb864ca90
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF00000195.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7051
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: a2HF4YEJb9lMi7UkzQw6Ec+st4ZB1ILf4qXaYoeZUjB1q4nrLcMsm4l4If0MwRt9uZ/a5dXEv9dAMb4TESd6qw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB5892
+X-OriginatorOrg: intel.com
 
-From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
-
-iio: imu: smi240: driver improvements
-Signed-off-by: Shen Jianping (ME-SE/EAD2) <Jianping.Shen@de.bosch.com>
----
-
-Notes:
-    v1 -> v2
-    - Use regmap for register access
-    - Redefine channel for each singel axis
-    - Provide triggered buffer
-    - Fix findings in Kconfig
-    - Remove unimportant functions
-
- drivers/iio/imu/Kconfig              |   1 +
- drivers/iio/imu/Makefile             |   1 +
- drivers/iio/imu/smi240/Kconfig       |  12 +
- drivers/iio/imu/smi240/Makefile      |   7 +
- drivers/iio/imu/smi240/smi240.h      |  30 ++
- drivers/iio/imu/smi240/smi240_core.c | 392 +++++++++++++++++++++++++++
- drivers/iio/imu/smi240/smi240_spi.c  | 173 ++++++++++++
- 7 files changed, 616 insertions(+)
- create mode 100644 drivers/iio/imu/smi240/Kconfig
- create mode 100644 drivers/iio/imu/smi240/Makefile
- create mode 100644 drivers/iio/imu/smi240/smi240.h
- create mode 100644 drivers/iio/imu/smi240/smi240_core.c
- create mode 100644 drivers/iio/imu/smi240/smi240_spi.c
-
-diff --git a/drivers/iio/imu/Kconfig b/drivers/iio/imu/Kconfig
-index 52a155ff325..8808074513d 100644
---- a/drivers/iio/imu/Kconfig
-+++ b/drivers/iio/imu/Kconfig
-@@ -96,6 +96,7 @@ config KMX61
- 
- source "drivers/iio/imu/inv_icm42600/Kconfig"
- source "drivers/iio/imu/inv_mpu6050/Kconfig"
-+source "drivers/iio/imu/smi240/Kconfig"
- source "drivers/iio/imu/st_lsm6dsx/Kconfig"
- source "drivers/iio/imu/st_lsm9ds0/Kconfig"
- 
-diff --git a/drivers/iio/imu/Makefile b/drivers/iio/imu/Makefile
-index 7e2d7d5c3b7..b6f162ae4ed 100644
---- a/drivers/iio/imu/Makefile
-+++ b/drivers/iio/imu/Makefile
-@@ -27,5 +27,6 @@ obj-y += inv_mpu6050/
- 
- obj-$(CONFIG_KMX61) += kmx61.o
- 
-+obj-y += smi240/
- obj-y += st_lsm6dsx/
- obj-y += st_lsm9ds0/
-diff --git a/drivers/iio/imu/smi240/Kconfig b/drivers/iio/imu/smi240/Kconfig
-new file mode 100644
-index 00000000000..b7f3598f6c4
---- /dev/null
-+++ b/drivers/iio/imu/smi240/Kconfig
-@@ -0,0 +1,12 @@
-+config SMI240
-+	tristate "Bosch Sensor SMI240 Inertial Measurement Unit"
-+	depends on SPI
-+	select REGMAP_SPI
-+	select IIO_BUFFER
-+	select IIO_TRIGGERED_BUFFER
-+	help
-+	  If you say yes here you get support for SMI240 IMU on SPI with
-+	  accelerometer and gyroscope.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called smi240.
-diff --git a/drivers/iio/imu/smi240/Makefile b/drivers/iio/imu/smi240/Makefile
-new file mode 100644
-index 00000000000..0e5f7db7d78
---- /dev/null
-+++ b/drivers/iio/imu/smi240/Makefile
-@@ -0,0 +1,7 @@
-+# SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-+#
-+# Makefile for Bosch SMI240
-+#
-+obj-$(CONFIG_SMI240) += smi240.o
-+smi240-objs := smi240_core.o
-+smi240-objs += smi240_spi.o
-diff --git a/drivers/iio/imu/smi240/smi240.h b/drivers/iio/imu/smi240/smi240.h
-new file mode 100644
-index 00000000000..de79b289532
---- /dev/null
-+++ b/drivers/iio/imu/smi240/smi240.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0 */
-+/*
-+ * Copyright (c) 2024 Robert Bosch GmbH.
-+ *
-+ */
-+#ifndef _SMI240_H
-+#define _SMI240_H
-+
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+
-+struct smi240_data {
-+	struct regmap *regmap;
-+	u16 accel_filter_freq;
-+	u16 anglvel_filter_freq;
-+	u8 bite_reps;
-+	u8 capture;
-+	/*
-+	 * Ensure natural alignment for timestamp if present.
-+	 * Channel size: 2 bytes.
-+	 * Max length needed: 2 * 3 channels + temp channel + 2 bytes padding + 8 byte ts.
-+	 * If fewer channels are enabled, less space may be needed, as
-+	 * long as the timestamp is still aligned to 8 bytes.
-+	 */
-+	s16 buf[12] __aligned(8);
-+};
-+
-+int smi240_core_probe(struct device *dev, struct regmap *regmap);
-+
-+#endif /* _SMI240_H */
-diff --git a/drivers/iio/imu/smi240/smi240_core.c b/drivers/iio/imu/smi240/smi240_core.c
-new file mode 100644
-index 00000000000..4b2a4a290f3
---- /dev/null
-+++ b/drivers/iio/imu/smi240/smi240_core.c
-@@ -0,0 +1,392 @@
-+// SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-+/*
-+ * Copyright (c) 2024 Robert Bosch GmbH.
-+ *
-+ */
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/delay.h>
-+#include <linux/bits.h>
-+#include <linux/bitfield.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/iio/triggered_buffer.h>
-+#include <linux/iio/trigger_consumer.h>
-+#include <linux/iio/buffer.h>
-+#include <linux/iio/trigger.h>
-+
-+#include "smi240.h"
-+
-+enum {
-+	SMI240_TEMP_OBJECT,
-+	SMI240_SCAN_ACCEL_X,
-+	SMI240_SCAN_ACCEL_Y,
-+	SMI240_SCAN_ACCEL_Z,
-+	SMI240_SCAN_GYRO_X,
-+	SMI240_SCAN_GYRO_Y,
-+	SMI240_SCAN_GYRO_Z,
-+	SMI240_SCAN_TIMESTAMP,
-+};
-+
-+#define SMI240_CHIP_ID 0x0024
-+
-+#define SMI240_SOFT_CONFIG_EOC_MASK BIT_MASK(0)
-+#define SMI240_SOFT_CONFIG_GYR_BW_MASK BIT_MASK(1)
-+#define SMI240_SOFT_CONFIG_ACC_BW_MASK BIT_MASK(2)
-+#define SMI240_SOFT_CONFIG_BITE_AUTO_MASK BIT_MASK(3)
-+#define SMI240_SOFT_CONFIG_BITE_REP_MASK GENMASK(6, 4)
-+
-+#define SMI240_CHIP_ID_REG 0x00
-+#define SMI240_SOFT_CONFIG_REG 0x0A
-+#define SMI240_TEMP_CUR_REG 0x10
-+#define SMI240_ACCEL_X_CUR_REG 0x11
-+#define SMI240_GYRO_X_CUR_REG 0x14
-+#define SMI240_DATA_CAP_FIRST_REG 0x17
-+#define SMI240_CMD_REG 0x2F
-+
-+#define SMI240_SOFT_RESET_CMD 0xB6
-+
-+#define SMI240_BITE_SEQUENCE_DELAY_US 140000
-+#define SMI240_FILTER_FLUSH_DELAY_US 60000
-+#define SMI240_DIGITAL_STARTUP_DELAY_US 120000
-+#define SMI240_MECH_STARTUP_DELAY_US 100000
-+
-+#define SMI240_LOW_BANDWIDTH_HZ 50
-+#define SMI240_HIGH_BANDWIDTH_HZ 400
-+
-+#define SMI240_DATA_CHANNEL(_type, _axis, _index)                          \
-+	{                                                                  \
-+		.type = _type, .modified = 1, .channel2 = IIO_MOD_##_axis, \
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),              \
-+		.info_mask_shared_by_type =                                \
-+			BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY),  \
-+		.info_mask_shared_by_type_available =                      \
-+			BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY),  \
-+		.scan_index = _index,                                      \
-+		.scan_type = {                                             \
-+			.sign = 's',                                       \
-+			.realbits = 16,                                    \
-+			.storagebits = 16,                                 \
-+			.endianness = IIO_LE,                              \
-+		},                                                         \
-+	}
-+
-+#define SMI240_TEMP_CHANNEL(_index)                           \
-+	{                                                     \
-+		.type = IIO_TEMP, .modified = 1,              \
-+		.channel2 = IIO_MOD_TEMP_OBJECT,              \
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW), \
-+		.scan_index = _index,                         \
-+		.scan_type = {                                \
-+			.sign = 's',                          \
-+			.realbits = 16,                       \
-+			.storagebits = 16,                    \
-+			.endianness = IIO_LE,                 \
-+		},                                            \
-+	}
-+
-+static const struct iio_chan_spec smi240_channels[] = {
-+	SMI240_TEMP_CHANNEL(SMI240_TEMP_OBJECT),
-+	SMI240_DATA_CHANNEL(IIO_ACCEL, X, SMI240_SCAN_ACCEL_X),
-+	SMI240_DATA_CHANNEL(IIO_ACCEL, Y, SMI240_SCAN_ACCEL_Y),
-+	SMI240_DATA_CHANNEL(IIO_ACCEL, Z, SMI240_SCAN_ACCEL_Z),
-+	SMI240_DATA_CHANNEL(IIO_ANGL_VEL, X, SMI240_SCAN_GYRO_X),
-+	SMI240_DATA_CHANNEL(IIO_ANGL_VEL, Y, SMI240_SCAN_GYRO_Y),
-+	SMI240_DATA_CHANNEL(IIO_ANGL_VEL, Z, SMI240_SCAN_GYRO_Z),
-+	IIO_CHAN_SOFT_TIMESTAMP(SMI240_SCAN_TIMESTAMP),
-+};
-+
-+static const int smi240_low_pass_freqs[] = { SMI240_LOW_BANDWIDTH_HZ,
-+					     SMI240_HIGH_BANDWIDTH_HZ };
-+
-+static int smi240_soft_reset(struct smi240_data *data)
-+{
-+	int ret;
-+
-+	ret = regmap_write(data->regmap, SMI240_CMD_REG, SMI240_SOFT_RESET_CMD);
-+	if (ret)
-+		return ret;
-+	fsleep(SMI240_DIGITAL_STARTUP_DELAY_US);
-+	return 0;
-+}
-+
-+static int smi240_soft_config(struct smi240_data *data)
-+{
-+	int ret;
-+	u8 acc_bw, gyr_bw;
-+	u16 request;
-+
-+	switch (data->accel_filter_freq) {
-+	case SMI240_LOW_BANDWIDTH_HZ:
-+		acc_bw = 0x1;
-+		break;
-+	case SMI240_HIGH_BANDWIDTH_HZ:
-+		acc_bw = 0x0;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	switch (data->anglvel_filter_freq) {
-+	case SMI240_LOW_BANDWIDTH_HZ:
-+		gyr_bw = 0x1;
-+		break;
-+	case SMI240_HIGH_BANDWIDTH_HZ:
-+		gyr_bw = 0x0;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	request = FIELD_PREP(SMI240_SOFT_CONFIG_EOC_MASK, 1);
-+	request |= FIELD_PREP(SMI240_SOFT_CONFIG_GYR_BW_MASK, gyr_bw);
-+	request |= FIELD_PREP(SMI240_SOFT_CONFIG_ACC_BW_MASK, acc_bw);
-+	request |= FIELD_PREP(SMI240_SOFT_CONFIG_BITE_AUTO_MASK, 1);
-+	request |= FIELD_PREP(SMI240_SOFT_CONFIG_BITE_REP_MASK,
-+			      data->bite_reps - 1);
-+
-+	ret = regmap_write(data->regmap, SMI240_SOFT_CONFIG_REG, request);
-+	if (ret)
-+		return ret;
-+
-+	fsleep(SMI240_MECH_STARTUP_DELAY_US +
-+	       data->bite_reps * SMI240_BITE_SEQUENCE_DELAY_US +
-+	       SMI240_FILTER_FLUSH_DELAY_US);
-+	return 0;
-+}
-+
-+static int smi240_get_low_pass_filter_freq(struct smi240_data *data,
-+					   int chan_type, int *val)
-+{
-+	switch (chan_type) {
-+	case IIO_ACCEL:
-+		*val = data->accel_filter_freq;
-+		break;
-+	case IIO_ANGL_VEL:
-+		*val = data->anglvel_filter_freq;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int smi240_get_data(struct smi240_data *data, int chan_type, int axis,
-+			   int *val)
-+{
-+	u8 reg;
-+	int ret, sample;
-+
-+	if (chan_type == IIO_TEMP)
-+		reg = SMI240_TEMP_CUR_REG;
-+	else if (chan_type == IIO_ACCEL)
-+		reg = SMI240_ACCEL_X_CUR_REG + (axis - IIO_MOD_X);
-+	else if (chan_type == IIO_ANGL_VEL)
-+		reg = SMI240_GYRO_X_CUR_REG + (axis - IIO_MOD_X);
-+	else
-+		return -EINVAL;
-+
-+	ret = regmap_read(data->regmap, reg, &sample);
-+	if (ret)
-+		return ret;
-+
-+	*val = sign_extend32(sample, 15);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t smi240_trigger_handler(int irq, void *p)
-+{
-+	struct iio_poll_func *pf = p;
-+	struct iio_dev *indio_dev = pf->indio_dev;
-+	struct smi240_data *data = iio_priv(indio_dev);
-+	int ret, sample, chan, i = 0;
-+
-+	data->capture = 1;
-+
-+	for_each_set_bit(chan, indio_dev->active_scan_mask,
-+			 indio_dev->masklength) {
-+		ret = regmap_read(data->regmap,
-+				  SMI240_DATA_CAP_FIRST_REG + chan, &sample);
-+		data->capture = 0;
-+		if (ret)
-+			break;
-+		data->buf[i++] = sample;
-+	}
-+
-+	if (ret == 0)
-+		iio_push_to_buffers_with_timestamp(indio_dev, data->buf,
-+						   pf->timestamp);
-+
-+	iio_trigger_notify_done(indio_dev->trig);
-+	return IRQ_HANDLED;
-+}
-+
-+static int smi240_read_avail(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan, const int **vals,
-+			     int *type, int *length, long mask)
-+{
-+	switch (mask) {
-+	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-+		*vals = smi240_low_pass_freqs;
-+		*length = ARRAY_SIZE(smi240_low_pass_freqs);
-+		*type = IIO_VAL_INT;
-+		return IIO_AVAIL_LIST;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int smi240_read_raw(struct iio_dev *indio_dev,
-+			   struct iio_chan_spec const *chan, int *val,
-+			   int *val2, long mask)
-+{
-+	int ret = 0;
-+	struct smi240_data *data = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		if (iio_buffer_enabled(indio_dev))
-+			return -EBUSY;
-+		ret = smi240_get_data(data, chan->type, chan->channel2, val);
-+		if (ret)
-+			return ret;
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-+		ret = smi240_get_low_pass_filter_freq(data, chan->type, val);
-+		if (ret)
-+			return ret;
-+		return IIO_VAL_INT;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int smi240_write_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *chan, int val, int val2,
-+			    long mask)
-+{
-+	int ret, i;
-+	struct smi240_data *data = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-+		for (i = 0; i < ARRAY_SIZE(smi240_low_pass_freqs); i++) {
-+			if (val == smi240_low_pass_freqs[i])
-+				break;
-+		}
-+
-+		if (i == ARRAY_SIZE(smi240_low_pass_freqs))
-+			return -EINVAL;
-+
-+		switch (chan->type) {
-+		case IIO_ACCEL:
-+			data->accel_filter_freq = val;
-+			break;
-+		case IIO_ANGL_VEL:
-+			data->anglvel_filter_freq = val;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	// Write access to soft config is locked until hard/soft reset
-+	ret = smi240_soft_reset(data);
-+	if (ret)
-+		return ret;
-+	ret = smi240_soft_config(data);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int smi240_init(struct smi240_data *data)
-+{
-+	data->accel_filter_freq = SMI240_HIGH_BANDWIDTH_HZ;
-+	data->anglvel_filter_freq = SMI240_HIGH_BANDWIDTH_HZ;
-+	data->bite_reps = 3;
-+
-+	return smi240_soft_config(data);
-+}
-+
-+static IIO_CONST_ATTR_TEMP_SCALE("1/256");
-+static IIO_CONST_ATTR_TEMP_OFFSET("25");
-+
-+static struct attribute *smi240_attrs[] = {
-+	&iio_const_attr_in_temp_scale.dev_attr.attr,
-+	&iio_const_attr_in_temp_offset.dev_attr.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group smi240_attrs_group = {
-+	.attrs = smi240_attrs,
-+};
-+
-+static const struct iio_info smi240_info = {
-+	.read_avail = smi240_read_avail,
-+	.read_raw = smi240_read_raw,
-+	.write_raw = smi240_write_raw,
-+	.attrs = &smi240_attrs_group,
-+};
-+
-+int smi240_core_probe(struct device *dev, struct regmap *regmap)
-+{
-+	struct iio_dev *indio_dev;
-+	struct smi240_data *data;
-+	int ret, response;
-+
-+	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-+	if (!indio_dev)
-+		return dev_err_probe(dev, -ENOMEM,
-+				     "Allocate iio device failed\n");
-+
-+	data = iio_priv(indio_dev);
-+	dev_set_drvdata(dev, indio_dev);
-+	data->regmap = regmap;
-+	data->capture = 0;
-+
-+	ret = regmap_read(data->regmap, SMI240_CHIP_ID_REG, &response);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Read chip id failed\n");
-+
-+	if (response != SMI240_CHIP_ID)
-+		dev_info(dev, "Unknown chip id: 0x%04x\n", response);
-+
-+	ret = smi240_init(data);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Device initialization failed\n");
-+
-+	indio_dev->channels = smi240_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(smi240_channels);
-+	indio_dev->name = "smi240";
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->info = &smi240_info;
-+
-+	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
-+					      iio_pollfunc_store_time,
-+					      smi240_trigger_handler, NULL);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Setup triggered buffer failed\n");
-+
-+	ret = devm_iio_device_register(dev, indio_dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Register IIO device failed\n");
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(smi240_core_probe);
-+
-+MODULE_AUTHOR("Markus Lochmann <markus.lochmann@de.bosch.com>");
-+MODULE_AUTHOR("Stefan Gutmann <stefan.gutmann@de.bosch.com>");
-+MODULE_DESCRIPTION("Bosch SMI240 driver");
-+MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/iio/imu/smi240/smi240_spi.c b/drivers/iio/imu/smi240/smi240_spi.c
-new file mode 100644
-index 00000000000..ac9e37ffa37
---- /dev/null
-+++ b/drivers/iio/imu/smi240/smi240_spi.c
-@@ -0,0 +1,173 @@
-+// SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
-+/*
-+ * Copyright (c) 2024 Robert Bosch GmbH.
-+ *
-+ */
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/spi/spi.h>
-+#include <linux/bitfield.h>
-+#include <linux/iio/iio.h>
-+
-+#include "smi240.h"
-+
-+#define SMI240_CRC_INIT 0x05
-+#define SMI240_CRC_POLY 0x0B
-+#define SMI240_BUS_ID 0x00
-+
-+#define SMI240_SD_BIT_MASK 0x80000000
-+#define SMI240_CS_BIT_MASK 0x00000008
-+
-+#define SMI240_WRITE_ADDR_MASK GENMASK(29, 22)
-+#define SMI240_WRITE_BIT_MASK 0x00200000
-+#define SMI240_WRITE_DATA_MASK GENMASK(18, 3)
-+#define SMI240_CAP_BIT_MASK 0x00100000
-+#define SMI240_READ_DATA_MASK GENMASK(19, 4)
-+
-+static u8 smi240_crc3(u32 data, u8 init, u8 poly)
-+{
-+	u8 crc = init;
-+	u8 do_xor;
-+	s8 i = 31;
-+
-+	do {
-+		do_xor = crc & 0x04;
-+		crc <<= 1;
-+		crc |= 0x01 & (data >> i);
-+		if (do_xor)
-+			crc ^= poly;
-+
-+		crc &= 0x07;
-+	} while (--i >= 0);
-+
-+	return crc;
-+}
-+
-+static bool smi240_sensor_data_is_valid(u32 data)
-+{
-+	if (smi240_crc3(data, SMI240_CRC_INIT, SMI240_CRC_POLY) != 0)
-+		return false;
-+
-+	if (FIELD_GET(SMI240_SD_BIT_MASK, data) &
-+	    FIELD_GET(SMI240_CS_BIT_MASK, data))
-+		return false;
-+
-+	return true;
-+}
-+
-+static int smi240_regmap_spi_read(void *context, const void *reg_buf,
-+				  size_t reg_size, void *val_buf,
-+				  size_t val_size)
-+{
-+	int ret;
-+	__be32 request, response;
-+	struct spi_device *spi = context;
-+	struct iio_dev *indio_dev = dev_get_drvdata(&spi->dev);
-+	struct smi240_data *data = iio_priv(indio_dev);
-+
-+	request = SMI240_BUS_ID << 30;
-+	request |= FIELD_PREP(SMI240_CAP_BIT_MASK, data->capture);
-+	request |= FIELD_PREP(SMI240_WRITE_ADDR_MASK, *(u8 *)reg_buf);
-+	request |= smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
-+	request = cpu_to_be32(request);
-+
-+	/*
-+	 * SMI240 module consists of a 32Bit Out Of Frame (OOF)
-+	 * SPI protocol, where the slave interface responds to
-+	 * the Master request in the next frame.
-+	 * CS signal must toggle (> 700 ns) between the frames.
-+	 */
-+	ret = spi_write(spi, &request, sizeof(request));
-+	if (ret)
-+		return ret;
-+
-+	ret = spi_read(spi, &response, sizeof(response));
-+	if (ret)
-+		return ret;
-+
-+	response = be32_to_cpu(response);
-+
-+	if (!smi240_sensor_data_is_valid(response))
-+		return -EIO;
-+
-+	response = FIELD_GET(SMI240_READ_DATA_MASK, response);
-+	memcpy(val_buf, &response, val_size);
-+
-+	return 0;
-+}
-+
-+static int smi240_regmap_spi_write(void *context, const void *data,
-+				   size_t count)
-+{
-+	__be32 request;
-+	struct spi_device *spi = context;
-+	u8 reg_addr = ((u8 *)data)[0];
-+	u16 reg_data = ((u8 *)data)[2] << 8 | ((u8 *)data)[1];
-+
-+	request = SMI240_BUS_ID << 30;
-+	request |= FIELD_PREP(SMI240_WRITE_BIT_MASK, 1);
-+	request |= FIELD_PREP(SMI240_WRITE_ADDR_MASK, reg_addr);
-+	request |= FIELD_PREP(SMI240_WRITE_DATA_MASK, reg_data);
-+	request |= smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
-+	request = cpu_to_be32(request);
-+
-+	return spi_write(spi, &request, sizeof(request));
-+}
-+
-+static struct regmap_bus smi240_regmap_bus = {
-+	.read = smi240_regmap_spi_read,
-+	.write = smi240_regmap_spi_write,
-+};
-+
-+static const struct regmap_config smi240_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 16,
-+	.val_format_endian = REGMAP_ENDIAN_LITTLE,
-+};
-+
-+static int smi240_spi_probe(struct spi_device *spi)
-+{
-+	struct regmap *regmap;
-+
-+	u32 max_frequency = 10000000;
-+
-+	of_property_read_u32(spi->dev.of_node, "spi-max-frequency",
-+			     &max_frequency);
-+
-+	spi->bits_per_word = 8;
-+	spi->max_speed_hz = max_frequency;
-+	spi->mode = SPI_MODE_0;
-+
-+	regmap = devm_regmap_init(&spi->dev, &smi240_regmap_bus, &spi->dev,
-+				  &smi240_regmap_config);
-+	if (IS_ERR(regmap))
-+		return dev_err_probe(&spi->dev, PTR_ERR(regmap),
-+				     "Failed to initialize SPI Regmap\n");
-+
-+	return smi240_core_probe(&spi->dev, regmap);
-+}
-+
-+static const struct spi_device_id smi240_spi_id[] = { { "smi240", 0 }, {} };
-+MODULE_DEVICE_TABLE(spi, smi240_spi_id);
-+
-+static const struct of_device_id smi240_of_match[] = {
-+	{ .compatible = "bosch,smi240" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, smi240_of_match);
-+
-+static struct spi_driver smi240_spi_driver = {
-+	.probe = smi240_spi_probe,
-+	.id_table = smi240_spi_id,
-+	.driver = {
-+		.of_match_table = of_match_ptr(smi240_of_match),
-+		.name = "smi240",
-+	},
-+};
-+module_spi_driver(smi240_spi_driver);
-+
-+MODULE_AUTHOR("Markus Lochmann <markus.lochmann@de.bosch.com>");
-+MODULE_AUTHOR("Stefan Gutmann <stefan.gutmann@de.bosch.com>");
-+MODULE_DESCRIPTION("Bosch SMI240 SPI driver");
-+MODULE_LICENSE("Dual BSD/GPL");
--- 
-2.34.1
-
+T24gRnJpLCAyMDI0LTA4LTA5IGF0IDAyOjM1IC0wNzAwLCBEbWl0cmlpIEt1dmFpc2tpaSB3cm90
+ZToNCj4gT24gVGh1LCBKdWwgMjUsIDIwMjQgYXQgMDE6MjE6NTZQTSArMTIwMCwgSHVhbmcsIEth
+aSB3cm90ZToNCj4gPiANCj4gPiA+IFR3byBlbmNsYXZlIHRocmVhZHMgbWF5IHRyeSB0byBhZGQg
+YW5kIHJlbW92ZSB0aGUgc2FtZSBlbmNsYXZlIHBhZ2UNCj4gPiA+IHNpbXVsdGFuZW91c2x5IChl
+LmcuLCBpZiB0aGUgU0dYIHJ1bnRpbWUgc3VwcG9ydHMgYm90aCBsYXp5IGFsbG9jYXRpb24NCj4g
+PiA+IGFuZCBNQURWX0RPTlRORUVEIHNlbWFudGljcykuIENvbnNpZGVyIHNvbWUgZW5jbGF2ZSBw
+YWdlIGFkZGVkIHRvIHRoZQ0KPiA+ID4gZW5jbGF2ZS4gVXNlciBzcGFjZSBkZWNpZGVzIHRvIHRl
+bXBvcmFyaWx5IHJlbW92ZSB0aGlzIHBhZ2UgKGUuZy4sDQo+ID4gPiBlbXVsYXRpbmcgdGhlIE1B
+RFZfRE9OVE5FRUQgc2VtYW50aWNzKSBvbiBDUFUxLiBBdCB0aGUgc2FtZSB0aW1lLCB1c2VyDQo+
+ID4gPiBzcGFjZSBwZXJmb3JtcyBhIG1lbW9yeSBhY2Nlc3Mgb24gdGhlIHNhbWUgcGFnZSBvbiBD
+UFUyLCB3aGljaCByZXN1bHRzDQo+ID4gPiBpbiBhICNQRiBhbmQgdWx0aW1hdGVseSBpbiBzZ3hf
+dm1hX2ZhdWx0KCkuIFNjZW5hcmlvIHByb2NlZWRzIGFzDQo+ID4gPiBmb2xsb3dzOg0KPiA+ID4g
+DQo+ID4gPiAgIFsgLi4uIHNraXBwZWQgLi4uIF0NCj4gPiA+IA0KPiA+ID4gSGVyZSwgQ1BVMSBy
+ZW1vdmVkIHRoZSBwYWdlLiBIb3dldmVyIENQVTIgaW5zdGFsbGVkIHRoZSBQVEUgZW50cnkgb24g
+dGhlDQo+ID4gPiBzYW1lIHBhZ2UuIFRoaXMgZW5jbGF2ZSBwYWdlIGJlY29tZXMgcGVycGV0dWFs
+bHkgaW5hY2Nlc3NpYmxlICh1bnRpbA0KPiA+ID4gYW5vdGhlciBTR1hfSU9DX0VOQ0xBVkVfUkVN
+T1ZFX1BBR0VTIGlvY3RsKS4gVGhpcyBpcyBiZWNhdXNlIHRoZSBwYWdlIGlzDQo+ID4gPiBtYXJr
+ZWQgYWNjZXNzaWJsZSBpbiB0aGUgUFRFIGVudHJ5IGJ1dCBpcyBub3QgRUFVR2VkLCBhbmQgYW55
+IHN1YnNlcXVlbnQNCj4gPiA+IGFjY2VzcyB0byB0aGlzIHBhZ2UgcmFpc2VzIGEgZmF1bHQ6IHdp
+dGggdGhlIGtlcm5lbCBiZWxpZXZpbmcgdGhlcmUgdG8NCj4gPiA+IGJlIGEgdmFsaWQgVk1BLCB0
+aGUgdW5saWtlbHkgZXJyb3IgY29kZSBYODZfUEZfU0dYIGVuY291bnRlcmVkIGJ5IGNvZGUNCj4g
+PiA+IHBhdGggZG9fdXNlcl9hZGRyX2ZhdWx0KCkgLT4gYWNjZXNzX2Vycm9yKCkgY2F1c2VzIHRo
+ZSBTR1ggZHJpdmVyJ3MNCj4gPiA+IHNneF92bWFfZmF1bHQoKSB0byBiZSBza2lwcGVkIGFuZCB1
+c2VyIHNwYWNlIHJlY2VpdmVzIGEgU0lHU0VHViBpbnN0ZWFkLg0KPiA+ID4gVGhlIHVzZXJzcGFj
+ZSBTSUdTRUdWIGhhbmRsZXIgY2Fubm90IHBlcmZvcm0gRUFDQ0VQVCBiZWNhdXNlIHRoZSBwYWdl
+DQo+ID4gPiB3YXMgbm90IEVBVUdlZC4gVGh1cywgdGhlIHVzZXIgc3BhY2UgaXMgc3R1Y2sgd2l0
+aCB0aGUgaW5hY2Nlc3NpYmxlDQo+ID4gPiBwYWdlLg0KPiA+IA0KPiA+IFJlYWRpbmcgdGhlIGNv
+ZGUsIGl0IHNlZW1zIHRoZSBpb2N0bChzZ3hfaW9jX2VuY2xhdmVfbW9kaWZ5X3R5cGVzKSBhbHNv
+IHphcHMNCj4gPiBFUEMgbWFwcGluZyB3aGVuIGNvbnZlcnRpbmcgYSBub3JtYWwgcGFnZSB0byBU
+U0MuICBUaHVzIElJVUMgaXQgc2hvdWxkIGFsc28NCj4gPiBzdWZmZXIgdGhpcyBpc3N1ZT8NCj4g
+DQo+IFRlY2huaWNhbGx5IHllcywgc2d4X2VuY2xhdmVfbW9kaWZ5X3R5cGVzKCkgaGFzIGEgc2lt
+aWxhciBjb2RlIHBhdGggYW5kDQo+IGNhbiBiZSBwYXRjaGVkIGluIGEgc2ltaWxhciB3YXkuDQo+
+IA0KPiBQcmFjdGljYWxseSB0aG91Z2gsIEkgY2FuJ3QgaW1hZ2luZSBhbiBTR1ggcHJvZ3JhbSBv
+ciBmcmFtZXdvcmsgdG8gYWxsb3cgYQ0KPiBzY2VuYXJpbyB3aGVuIENQVTEgbW9kaWZpZXMgdGhl
+IHR5cGUgb2YgdGhlIGVuY2xhdmUgcGFnZSBmcm9tIFJFRyB0byBUQ1MNCj4gYW5kIGF0IHRoZSBz
+YW1lIHRpbWUgQ1BVMiBwZXJmb3JtcyBhIG1lbW9yeSBhY2Nlc3Mgb24gdGhlIHNhbWUgcGFnZS4g
+VGhpcw0KPiB3b3VsZCBiZSBjbGVhcmx5IGEgYnVnIGluIHRoZSBTR1ggcHJvZ3JhbS9mcmFtZXdv
+cmsuIEZvciBleGFtcGxlLCBHcmFtaW5lDQo+IGFsd2F5cyBmb2xsb3dzIHRoZSBwYXRoIG9mOiBj
+cmVhdGUgYSBuZXcgUkVHIGVuY2xhdmUgcGFnZSwgbW9kaWZ5IGl0IHRvDQo+IFRDUywgb25seSB0
+aGVuIHN0YXJ0IHVzaW5nIGl0OyBpLmUuLCB0aGVyZSBpcyBuZXZlciBhIHBvaW50IGluIHRpbWUg
+YXQNCj4gd2hpY2ggdGhlIFJFRyBwYWdlIGlzIGFsbG9jYXRlZCBhbmQgcmVhZHkgdG8gYmUgY29u
+dmVydGVkIHRvIGEgVENTIHBhZ2UsDQo+IGFuZCBzb21lIG90aGVyIHRocmVhZC9DUFUgYWNjZXNz
+ZXMgaXQgaW4tYmV0d2VlbiB0aGVzZSBzdGVwcy4NCg0KSSB0aGluayB3ZSBuZWVkIHRvIHVuZGVy
+c3RhbmQgdGhlIGNvbnNlcXVlbmNlIG9mIHN1Y2ggYnVnIChhc3N1bWluZyBzdWNoDQpiZWhhdmlv
+dXIgaXMgMTAwJSBhIGJ1ZykgYm90aCB0byBrZXJuZWwgYW5kIHRvIGVuY2xhdmUuDQoNClRvIHRo
+ZSBrZXJuZWwgSSBkb24ndCBzZWUgYW55IGJpZyBpc3N1ZTogZm9yIHRoZSBzZ3hfdm1hX2ZhdWx0
+KCkgcGF0aCBpdCB3aWxsDQpmaW5kIHRoZSBFUEMgcGFnZSBpcyBhbHJlYWR5IGxvYWRlZCB0aHVz
+IGp1c3Qgc2V0dXAgdGhlIG1hcHBpbmcgYWdhaW47IGZvciB0aGUNCnNneF9lbmNsYXZlX21vZGlm
+eV90eXBlcygpIHBhdGggdGhlIHdvcnN0IGNhc2UgaXMgX19lbW9kdCgpIGNvdWxkIGZhaWwsDQpy
+ZXN1bHRpbmcgaW4gZW5jbGF2ZSBiZWluZyBraWxsZWQgcHJvYmFibHkuDQoNClNvIGlmIHRoaXMg
+cmFjZSBpcyAxMDAlIGEgYnVnLCBhbmQgd2lsbCBhbHNvIGNlcnRhaW5seSBraWxsIHRoZSBlbmNs
+YXZlLCB0aGVuDQpJIGd1ZXNzIGl0IGlzIGZpbmUgbm90IHRvIGhhbmRsZS4gIEJ1dCB0aGVyZSdz
+IGFuICJhc3N1bWluZyIgaGVyZS4NCg0KT24gdGhlIG90aGVyIGhhbmQsIHRoZXJlJ3Mgbm8gcmlz
+ayBpZiB3ZSBhcHBseSBCVVNZIGZsYWcgaGVyZSB0b28uICBJZiBpdCBpcyBhDQpidWcgaW4gZW5j
+bGF2ZSwgdGhlbiBpdCBjYW4gZGllIGFueXdheTsgb3RoZXJ3aXNlIGl0IG1heSBzdXJ2aXZlLg0K
+DQo+IA0KPiBUTERSOiBJIGNhbiBhZGQgc2ltaWxhciBoYW5kbGluZyB0byBzZ3hfZW5jbGF2ZV9t
+b2RpZnlfdHlwZXMoKSBpZg0KPiByZXZpZXdlcnMgaW5zaXN0LCBidXQgSSBkb24ndCBzZWUgaG93
+IHRoaXMgZGF0YSByYWNlIGNhbiBldmVyIGJlDQo+IHRyaWdnZXJlZCBieSBiZW5pZ24gcmVhbC13
+b3JsZCBTR1ggYXBwbGljYXRpb25zLg0KPiANCg0KU28gYXMgbWVudGlvbmVkIGFib3ZlLCBJIGlu
+dGVuZCB0byBzdWdnZXN0IHRvIGFsc28gYXBwbHkgdGhlIEJVU1kgZmxhZyBoZXJlLiDCoA0KQW5k
+IHdlIGNhbiBoYXZlIGEgY29uc2lzdCBydWxlIGluIHRoZSBrZXJuZWw6DQoNCklmIGFuIGVuY2xh
+dmUgcGFnZSBpcyB1bmRlciBjZXJ0YWlubHkgb3BlcmF0aW9uIGJ5IHRoZSBrZXJuZWwgd2l0aCB0
+aGUgbWFwcGluZw0KcmVtb3ZlZCwgb3RoZXIgdGhyZWFkcyB0cnlpbmcgdG8gYWNjZXNzIHRoYXQg
+cGFnZSBhcmUgdGVtcG9yYXJpbHkgYmxvY2tlZCBhbmQNCnNob3VsZCByZXRyeS4NCg0KQnV0IHRo
+aXMgaXMgb25seSBteSAyY2VudHMsIGFuZCBJJ2xsIGxlYXZlIHRvIG1haW50YWluZXJzLg0KDQo=
 
