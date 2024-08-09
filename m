@@ -1,141 +1,125 @@
-Return-Path: <linux-kernel+bounces-280509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A8F94CB7C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:35:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EB694CB7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC811C225F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:35:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43EDB1C226DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9931D176228;
-	Fri,  9 Aug 2024 07:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1065E176AD0;
+	Fri,  9 Aug 2024 07:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FYvNUqx5"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANIuIKC4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C86012FB34
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBF916D315;
+	Fri,  9 Aug 2024 07:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723188931; cv=none; b=K7ag0WP1Pz0VqHdTsb0iAykEdz4LtTfOsdBNi7fKyuujdiuLMuhheuUB0F1cFD4kYTYsIDAsIlr8m5sd9pL3CUNiBAYQPzLLICBnM8UWNa2GrgvGPE8u80rm5CTtkixxoj5jP7gdK4LrKlOIq605E3JOtOJNftDdWicg3BlyaiY=
+	t=1723188949; cv=none; b=aNlEL/h0CsDlGyS4O92mtGzoymg5GGA8ziVURMPoMEtCXADJP9DZIXWTtT9T/8G9HhNzWc0CSbh9YS4LNwHoB2Hu6lE+VGst9XCAcEBdHYnA6YiVO1JGXNonP1JXQKejLYmoIIScgnGeYMlBvXH3KhszyoahdPhQq3DU5ii1610=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723188931; c=relaxed/simple;
-	bh=pDUPRjsOLV3M1oYI4Rw4ENYeWvIh4LwVRZTJ8ngr3vo=;
+	s=arc-20240116; t=1723188949; c=relaxed/simple;
+	bh=1QQ6IERaVvmQgZYfk/xYBeo9a86+7mGsf8Ey/jbzXQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NxNi+44/mE6NtLOoBMKf+GJq7dZFJDN/REIMYzOilma3o17nebasuWaa+5MIh5wRb9eGt8lqVNPZZQ4NpIve5qTJaF2NS9jSLOv12ysNlM3f87UuZeRIMISjXBxIC1rgeRywRkzcPBsFqBBKuxmxBraYAv4wVZkNxZPay+SyQqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FYvNUqx5; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gHdnJFMueDtgGahaf/EdRvyZJrV/GIQ0r76XfrqQjKw=; b=FYvNUqx56dgvb1+0M0ymAEk3n1
-	9BdZZKgew80GbVGbnBWRavt6Uyyw5oaUSaqw+B5cpHHn0DaxDqnPQ/YxZiCw851/jJCZd8JWhX5xR
-	N1MerbLGvt+NYFl5JW+Wc4eWk57Qxls3QhICnRxfdeGlqTxygmbcBzJjd880BxukitCZ0hyHPopEr
-	wjqAcoNXUukbPkPOuM3wvh3bNAC8/Qgkc1uryT2GyQseObQyogaYHxsa5VdOHLUjQGsWxf5tTcVtJ
-	KuBfi1SiqEvc+JvqAFcphXnfLHZD81OMFRN7CV9btH21xOkoIBBDNcQ1PVH/e19z9WfPIvKznE1nh
-	8ZnhERIg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1scK9W-0000000ACqh-2dPk;
-	Fri, 09 Aug 2024 07:35:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3A4A4300402; Fri,  9 Aug 2024 09:35:09 +0200 (CEST)
-Date: Fri, 9 Aug 2024 09:35:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de,
-	Mike Galbraith <umgwanakikbuti@gmail.com>
-Subject: Re: [PATCH 21/24] sched/eevdf: Allow shorter slices to wakeup-preempt
-Message-ID: <20240809073509.GK31338@noisy.programming.kicks-ass.net>
-References: <20240727102732.960974693@infradead.org>
- <20240727105030.735459544@infradead.org>
- <ZrSa1uxiL7G8PnWm@chenyu5-mobl2>
- <20240808102207.GH31338@noisy.programming.kicks-ass.net>
- <ZrS6uQfSfTtq96t9@chenyu5-mobl2>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F8NYgATU1nqzPT9dTGk5xWcewv6HADSWIN8acJOwwm6WaYqlMWzy75POQ6hXWN4LeBc61u/mZeiedCc4yKjnELDB71E8NWKY16KAtyOxNk/Bh1Z733/GeiR3JXD8GYPIvl92TVaD5TffvgI7ssUkGMpBqZuXwvGVLvgqHqAZhv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANIuIKC4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F67C32782;
+	Fri,  9 Aug 2024 07:35:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723188948;
+	bh=1QQ6IERaVvmQgZYfk/xYBeo9a86+7mGsf8Ey/jbzXQ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ANIuIKC44kb6rGZ2+BWwRs1fobAope6oTe2TR7eZVrvbX7dln1qyRVxRQKEsfbkrh
+	 uwriJwOtabpfS9B0tJrWQn1FcHKN3ttkKaRVh+2mSZ4kSB6X7kuvbEMSai2CkabR62
+	 ux2cXvV/DaG8/+vCDJu3qff1flOWYJSyBe7B7/RYUrZYCFJQogCIIqMxhXRkTg7CL0
+	 Xcujy+YV88lBR3Q1z6YyEykvS/oTBx7dBPTqFFmW8iBYtNnB5CKSok2KZ3RfzIQjTc
+	 fXg4+nWPdLP7tHpV3f/ATUGx985XAwj7U+f0fDwbpN7iaoTPgIDTyHQRZ596jTYLRr
+	 KbbiBQT9dnY/w==
+Date: Fri, 9 Aug 2024 08:35:42 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
+Cc: alsa-devel@alsa-project.org, Basavaraj.Hiregoudar@amd.com,
+	Sunil-kumar.Dommati@amd.com, venkataprasad.potturu@amd.com,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"moderated list:SOUND - SOUND OPEN FIRMWARE (SOF) DRIVERS" <sound-open-firmware@alsa-project.org>,
+	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/8] ASoC: SOF: amd: fix for acp error reason registers
+ wrong offset
+Message-ID: <ZrXGzmhgyIJ9ID6I@finisterre.sirena.org.uk>
+References: <20240807051341.1616925-1-Vijendar.Mukunda@amd.com>
+ <20240807051341.1616925-2-Vijendar.Mukunda@amd.com>
+ <ZrUdOyGiFRH0sRlt@finisterre.sirena.org.uk>
+ <a6a0c975-728b-4379-b074-b88ac928c58b@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oZGvFgiQ7XPpJzCg"
 Content-Disposition: inline
-In-Reply-To: <ZrS6uQfSfTtq96t9@chenyu5-mobl2>
-
-On Thu, Aug 08, 2024 at 08:31:53PM +0800, Chen Yu wrote:
-> On 2024-08-08 at 12:22:07 +0200, Peter Zijlstra wrote:
-> > On Thu, Aug 08, 2024 at 06:15:50PM +0800, Chen Yu wrote:
-> > > Hi Peter,
-> > > 
-> > > On 2024-07-27 at 12:27:53 +0200, Peter Zijlstra wrote:
-> > > > Part of the reason to have shorter slices is to improve
-> > > > responsiveness. Allow shorter slices to preempt longer slices on
-> > > > wakeup.
-> > > > 
-> > > >     Task                  |   Runtime ms  | Switches | Avg delay ms    | Max delay ms    | Sum delay ms     |
-> > > > 
-> > > >   100ms massive_intr 500us cyclictest NO_PREEMPT_SHORT
-> > > > 
-> > > >   1 massive_intr:(5)      | 846018.956 ms |   779188 | avg:   0.273 ms | max:  58.337 ms | sum:212545.245 ms |
-> > > >   2 massive_intr:(5)      | 853450.693 ms |   792269 | avg:   0.275 ms | max:  71.193 ms | sum:218263.588 ms |
-> > > >   3 massive_intr:(5)      | 843888.920 ms |   771456 | avg:   0.277 ms | max:  92.405 ms | sum:213353.221 ms |
-> > > >   1 chromium-browse:(8)   |  53015.889 ms |   131766 | avg:   0.463 ms | max:  36.341 ms | sum:60959.230  ms |
-> > > >   2 chromium-browse:(8)   |  53864.088 ms |   136962 | avg:   0.480 ms | max:  27.091 ms | sum:65687.681  ms |
-> > > >   3 chromium-browse:(9)   |  53637.904 ms |   132637 | avg:   0.481 ms | max:  24.756 ms | sum:63781.673  ms |
-> > > >   1 cyclictest:(5)        |  12615.604 ms |   639689 | avg:   0.471 ms | max:  32.272 ms | sum:301351.094 ms |
-> > > >   2 cyclictest:(5)        |  12511.583 ms |   642578 | avg:   0.448 ms | max:  44.243 ms | sum:287632.830 ms |
-> > > >   3 cyclictest:(5)        |  12545.867 ms |   635953 | avg:   0.475 ms | max:  25.530 ms | sum:302374.658 ms |
-> > > > 
-> > > >   100ms massive_intr 500us cyclictest PREEMPT_SHORT
-> > > > 
-> > > >   1 massive_intr:(5)      | 839843.919 ms |   837384 | avg:   0.264 ms | max:  74.366 ms | sum:221476.885 ms |
-> > > >   2 massive_intr:(5)      | 852449.913 ms |   845086 | avg:   0.252 ms | max:  68.162 ms | sum:212595.968 ms |
-> > > >   3 massive_intr:(5)      | 839180.725 ms |   836883 | avg:   0.266 ms | max:  69.742 ms | sum:222812.038 ms |
-> > > >   1 chromium-browse:(11)  |  54591.481 ms |   138388 | avg:   0.458 ms | max:  35.427 ms | sum:63401.508  ms |
-> > > >   2 chromium-browse:(8)   |  52034.541 ms |   132276 | avg:   0.436 ms | max:  31.826 ms | sum:57732.958  ms |
-> > > >   3 chromium-browse:(8)   |  55231.771 ms |   141892 | avg:   0.469 ms | max:  27.607 ms | sum:66538.697  ms |
-> > > >   1 cyclictest:(5)        |  13156.391 ms |   667412 | avg:   0.373 ms | max:  38.247 ms | sum:249174.502 ms |
-> > > >   2 cyclictest:(5)        |  12688.939 ms |   665144 | avg:   0.374 ms | max:  33.548 ms | sum:248509.392 ms |
-> > > >   3 cyclictest:(5)        |  13475.623 ms |   669110 | avg:   0.370 ms | max:  37.819 ms | sum:247673.390 ms |
-> > > > 
-> > > > As per the numbers the, this makes cyclictest (short slice) it's
-> > > > max-delay more consistent and consistency drops the sum-delay. The
-> > > > trade-off is that the massive_intr (long slice) gets more context
-> > > > switches and a slight increase in sum-delay.
-> > > > 
-> > > > [mike: numbers]
-> > > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > > Tested-by: Mike Galbraith <umgwanakikbuti@gmail.com>
-> > > 
-> > > Besides this short preemption, it seems that an important patch is missing from
-> > > this patch set, that was originally from Prateek and you refined it to fix the
-> > > current task's false negative eligibility:
-> > > https://lore.kernel.org/lkml/20240424150721.GQ30852@noisy.programming.kicks-ass.net/
-> > > 
-> > > The RESPECT_SLICE is introduced to honor the current task's slice during wakeup preemption.
-> > > Without it we got reported that over-preemption and performance downgrading are observed
-> > > when running SPECjbb on servers.
-> > 
-> > So I *think* that running as SCHED_BATCH gets you exactly that
-> > behaviour, no?
-> 
-> SCHED_BATCH should work as it avoids the wakeup preemption as much as possible.
-> Except that RESPECT_SLICE considers the cgroup hierarchical to check if the current
-> sched_entity has used up its slice, which seems to be less aggressive.
-
-Note that update_deadline() will trigger a resched at the end up a slice
-regardless -- this is driven from update_curr() and also invoked from
-any preemption.
+In-Reply-To: <a6a0c975-728b-4379-b074-b88ac928c58b@amd.com>
+X-Cookie: Your love life will be... interesting.
 
 
+--oZGvFgiQ7XPpJzCg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Aug 09, 2024 at 07:30:54AM +0530, Mukunda,Vijendar wrote:
+> On 09/08/24 01:02, Mark Brown wrote:
+
+> > /build/stage/linux/sound/soc/sof/amd/acp.c: In function =E2=80=98acp_ir=
+q_handler=E2=80=99:
+> > /build/stage/linux/sound/soc/sof/amd/acp.c:407:26: error: =E2=80=98stru=
+ct acp_dev_data=E2=80=99 h
+> > as no member named =E2=80=98pci_rev=E2=80=99
+> >   407 |                 if (adata->pci_rev >=3D ACP_RMB_PCI_ID)
+> >       |                          ^~
+
+> This patch is part of https://github.com/thesofproject/linux/pull/5103
+> which got successfully merged into sof github without any build errors.
+> This patch is dependent on
+> Link: https://patch.msgid.link/20240801111821.18076-10-Vijendar.Mukunda@a=
+md.com
+> which got already merged in to ASoC tree for-next base.
+> It shouldn't cause build error if the dependent patch already merged.
+
+Are the patches it depends on actually before it in the patch series?
+We want the resulting git tree to be bisectable, that means testing each
+commit not just the final result.
+
+--oZGvFgiQ7XPpJzCg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma1xs0ACgkQJNaLcl1U
+h9D8Awf+Idi79Uow4rDHeevyxUJtVFJXMcuUJIjmkUD4+D/O9De7gvSHEszmIGbL
+J8DQrDQ6PJhXBSEcdGojOFP4EB5zXiX3f4pt3rY+Fi2D7ek4A+kjdG8UFrpeX4qQ
+WBQP1ycUxZSV0JI7+a0pBVoo+Zr0tAcn4Rar29VXRKFH4ZD1JCUIKsRf6Db1JZRt
+hgJf41uLg5siRcgrouiVrJeqiL0SvsK2IWbINNbbJ4xc52YDjLs0H8+ux0MCh+/E
+h2Hd3q7THZibHlVEuBO+v6h6e86dR6k+X05Ou5uPgGeygR88Mm+3NQb47SXIj28K
+l56vUzz42Bjtmk0dQLonssYugDtOyg==
+=iQRN
+-----END PGP SIGNATURE-----
+
+--oZGvFgiQ7XPpJzCg--
 
