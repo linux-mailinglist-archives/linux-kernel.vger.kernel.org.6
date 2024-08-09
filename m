@@ -1,153 +1,97 @@
-Return-Path: <linux-kernel+bounces-280637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021C994CD2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:18:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 050A694CD37
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A20381F219EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:18:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E9E31F21B53
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FF51917F7;
-	Fri,  9 Aug 2024 09:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE55192B63;
+	Fri,  9 Aug 2024 09:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmkfAsw4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="JpIqDZqX"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13A616C87C;
-	Fri,  9 Aug 2024 09:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAE016C87C;
+	Fri,  9 Aug 2024 09:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723195083; cv=none; b=pCV24WMdNpV88sP3vOIXXr30nb/0Lp7iyvwivyrL3bYx8oRVt1dxzWCR0pGMy29ioaQgwZGpRsGIPWLEpAquAIyhsgLrUPK3KYe2aMwcXbQv6LRqRMoTGelxNJ9kI5cvU4Ci1Xy+MO0kElLWOm3pp/n1atEKlEP1mWtPIqv4NtE=
+	t=1723195136; cv=none; b=qQ2ytS42htH0+5nhB1NZLflCQOnguXaIVT07ZwDu/Lj12di2b81IAGsixp9T026zxJsjjO8bFmy0MfkRgNqkOKR6ELyaopfRZlz2CAlEiAwHIE2CZubVYN1ggtp7qSyVY0ml5+akOeUxFg7t/f7GC1axbeg/w5lMAAPp6NJ90yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723195083; c=relaxed/simple;
-	bh=TS4sBFXo9aLaO+jf6cLdVdNjXsHptKYmVhaQJcsmw1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nXwRUs/OpBVAkC+GK0Oq2tMVb8bZkjOYTvPalY/jPLwR2LMGisIZQUqzJzgshUUDZI/J5ALWnAmGX3rB+W//ZwRct7SLy+plylLSqEzxmP4bfPTeIb8sXL70/UaB75hyDN5T1COLqMUbPbOq4c/QRicbNg2AXYIZGCVOtOJYkhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmkfAsw4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF99BC32782;
-	Fri,  9 Aug 2024 09:17:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723195083;
-	bh=TS4sBFXo9aLaO+jf6cLdVdNjXsHptKYmVhaQJcsmw1s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nmkfAsw4kEnGq9L/W9/z0nATzZeuFu2fNv6wLVnDlm4RzNHM0bdOBoFIkGJCwGXnT
-	 vDuWPaflEswUHztuCpyAt6FrzlIgUrsylcyD9B3uYJnFdcFUXtmxzAJIqDnQ8ePL/J
-	 ADYoLKwzSptCXsux0iQrs8iE77tyJKBXHagVRI2BvGFeCJFatQbL8FwPz52e7SSjTV
-	 4Ywgurf0ujbPIRpOLt65IPCWJtz0LlXfDrNGWf/nih0fjMK1c5KDAXdQLPhx1c8hsj
-	 3Uwi5X6lVeHqzTlV+7ZLp8uJUscnWwX1LUujzm1409eBGyN9iUzT/KDOLT69vKtHuw
-	 qzis8Ji3rk3ng==
-Message-ID: <dff78d74-a71a-4b50-b55c-cbeb945d0b06@kernel.org>
-Date: Fri, 9 Aug 2024 11:17:55 +0200
+	s=arc-20240116; t=1723195136; c=relaxed/simple;
+	bh=Iurit3RB6U6Jt5tLhwlj0CKfYP8cL3XtA4dsOC4jPMU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P9RTRrh8Qbd82yyJzC40DSyiOXpPskrevtrN2QlS/TU1VNz2pMHAimb2OH9xIxZ0LNpxZqIn7vcDGt4RacsWKhJ4StZyp4HqL8ex51wzWFPtFZKWdeH+RIi4JvVg0SutMPDkCYKSyU4H39o1iGm56AtcL418DZCoP0korp/VvVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=JpIqDZqX; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id C11C42123B;
+	Fri,  9 Aug 2024 11:18:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1723195129;
+	bh=jeOAWrYg7aFi7Y/vZPKPruXm2NagQZFHxCWeBakzMtg=; h=From:To:Subject;
+	b=JpIqDZqXrWOcHOgh6BuI53Q+BGDc3UZqBrKxKch3lhtYKTOtZbIdYEs2SoZ+donrZ
+	 4zAJ+Lavcf/+02/HsEVRvztX9xqJC+VfFAAOUkl7vNM5rvHUc1sxJojRvPyi6LldwO
+	 EOVipa2wJrADLDmtcy3/V7Kuyywtt4sGR1zQVYyWuwCzwFHSuKA7dbpl7jB3DwXi4Y
+	 69DYE+FOJbUeQdFlAFIPmD570g8gh+b4OVi3S5ajhDSQQkf1pWyLdKngpQ3M3o/6my
+	 /+I+X7fg+MFbJnJZxHFTMD+/spAMi5vza1rFmBQyVV3VQU+FJoyGiap9YDSjhXXsmS
+	 yYVDpobHUYeQw==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Wei Fang <wei.fang@nxp.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Linux Team <linux-imx@nxp.com>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	imx@lists.linux.dev,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/3] net: fec: add PPS channel configuration
+Date: Fri,  9 Aug 2024 11:18:41 +0200
+Message-Id: <20240809091844.387824-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: dt-bindings: qcom,sc7280-venus: Allow one IOMMU
- entry
-To: Luca Weiss <luca.weiss@fairphone.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240412-sc7280-venus-bindings-v2-1-48ca8c2ec532@fairphone.com>
- <D1Q6CMZM78VI.ABYGRRV5E61B@fairphone.com>
- <D2245MXG8CS1.11EGKFJQLYPTI@fairphone.com>
- <D3B8I0RHMCRX.27GXO53ITZKEH@fairphone.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <D3B8I0RHMCRX.27GXO53ITZKEH@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/08/2024 10:22, Luca Weiss wrote:
-> On Mon Jun 17, 2024 at 9:28 AM CEST, Luca Weiss wrote:
->> On Mon Jun 3, 2024 at 8:39 AM CEST, Luca Weiss wrote:
->>> On Fri Apr 12, 2024 at 4:19 PM CEST, Luca Weiss wrote:
->>>> Some SC7280-based boards crash when providing the "secure_non_pixel"
->>>> context bank, so allow only one iommu in the bindings also.
->>>
->>> Hi all,
->>>
->>> This patch is still pending and not having it causes dt validation
->>> warnings for some qcom-sc7280 boards.
->>
->> Hi Rob,
->>
->> Could you please pick up this patch? Mauro seems to ignore this patch
->> either on purpose or by accident and I'd like for this dtbs_check
->> failure to finally be fixed.
-> 
-> Hi all,
-> 
-> Another month, another ping.
-> 
-> Can *anybody* please pick up this patch?
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-Still in state "New" on media patchwork:
-https://patchwork.linuxtv.org/project/linux-media/patch/20240412-sc7280-venus-bindings-v2-1-48ca8c2ec532@fairphone.com/
+Make the FEC Ethernet PPS channel configurable from device tree.
 
-so it won't move. Please ping Rob on #devicetree channel once he comes
-online.
+v1: https://lore.kernel.org/all/20240807144349.297342-1-francesco@dolcini.it/
 
-Best regards,
-Krzysztof
+Francesco Dolcini (3):
+  dt-bindings: net: fec: add pps channel property
+  net: fec: refactor PPS channel configuration
+  net: fec: make PPS channel configurable
+
+ Documentation/devicetree/bindings/net/fsl,fec.yaml |  7 +++++++
+ drivers/net/ethernet/freescale/fec_ptp.c           | 11 ++++++-----
+ 2 files changed, 13 insertions(+), 5 deletions(-)
+
+-- 
+2.39.2
 
 
