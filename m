@@ -1,141 +1,143 @@
-Return-Path: <linux-kernel+bounces-281542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C391C94D7F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:15:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B6F94D7F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8E4C1C22B3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF14B1F22DDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3798815534B;
-	Fri,  9 Aug 2024 20:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782B615990C;
+	Fri,  9 Aug 2024 20:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u+CR8fXQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f4jmMGTs"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ndjlo4kD"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178FB4C83
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 20:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBEC4C83
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 20:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723234526; cv=none; b=gd2OXvbLXiMA9znbIfgPAK6iMTfis1lKam00PMLJwGa5w7FEW6OOYeDX7s9sKcuDgjCFZqGxzy1vG6MPUcrli3GehsFev2jHrAs4IqR/OVozpg18/cugyuHQKbVlz42NvUJQsrImXTpL4Kx5F3+LU8mMDO28Xx3C3Nv/nHbfqjY=
+	t=1723234550; cv=none; b=TrgYefG53vgTj/NUjR3o26qjK+/8fiEYgCjWL+dMhaVpg22yuvN5ekLaiuphqO7PfCWDdwuAveQBcWctk1HpxOMoIrR0EnOfEpENZI5QZhTfn3k0XCCwp5I6EX8PF+x9Y7OvL8bsVqBYYVPfTLloY7QHdSYwjJp7ct4MIeVRnxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723234526; c=relaxed/simple;
-	bh=3wDwr4ieS/qd1ZS6aZJrTSknXaFpATFsZyMZdW5VIFI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bJVZBU7Eyuy4nQnVCpf57DeZY475dnB/qH7wMk3EKmWHLwk6/DkfyWuntvbyQqFe6tzImWHEOR5F7HjdRey8Mbxy5h8FKOUhf0sB6D6hoRwPVle2iI7IFCeSQ1UoUnciGYGWxADMeZMlk28NARSDv6zg9IJUqsIn0GR9bHUlI8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u+CR8fXQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f4jmMGTs; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723234523;
+	s=arc-20240116; t=1723234550; c=relaxed/simple;
+	bh=Q94hflshZwPlN9gWDzrp3w4LNxNlq8oseCBU0cc0n+Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XLCYBquhwJ5bNZPwiSYzQmL6BoEx53zAQQGXUm/6LjszWGKHYm2NVpMzbZd49kP/3LTFi/qTYZQWPm5ziPXruoVwV2BgviFDXX9I8HFZoI2wmO0rUppSTH7ihO+y8eS0OfYp479B4s3tF6xnFdkpTqikdTpTYaZ/xaKXNSBGJAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ndjlo4kD; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723234544;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nYzXcZ6YmSl5dDiG+XZfEaXficbZOAVIibMVnTgCdNs=;
-	b=u+CR8fXQGN9XysRM47Y2z2J0SpqFWyMzyDpPiDRA90BOYGsB2M/o0FdenRPhM8tNoOS1X6
-	7joZYUfBqEAdfS6g8M24ppNq4IBYpHxM1ok2+1tTZeqDWi9lO+e0y4wgz/VKolFvK5bXVC
-	UFLUnH07iJLQJE/wQ64I3OwFAlAL++BjyNMe46VZYOvIYk6G8+Xej91smqmU98Cf4vKppZ
-	OAFsF0cHlv7vC0HMPfBYFCkXXWKUhaE2lnBI3CKh77IXQDTQnSzScqNn+ktY9F7/QU86b5
-	u7d0yc6TA8gVRlgb51RzdsZ75Tz2b7NJtqx++U1Bko6p8Z5xerfDj06hdAAocg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723234523;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nYzXcZ6YmSl5dDiG+XZfEaXficbZOAVIibMVnTgCdNs=;
-	b=f4jmMGTsSy5aaC8oOLI1NPxRfUHt+wwvQZD+SzOmRVAni254OaVG/uHMvnGSmNrOUxcC0W
-	QuDuH6pOq6CVb4Bw==
-To: "MOESSBAUER, Felix" <felix.moessbauer@siemens.com>,
- "qyousef@layalina.io" <qyousef@layalina.io>
-Cc: "frederic@kernel.org" <frederic@kernel.org>, "Kiszka, Jan"
- <jan.kiszka@siemens.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "bigeasy@linutronix.de"
- <bigeasy@linutronix.de>, "anna-maria@linutronix.de"
- <anna-maria@linutronix.de>
-Subject: Re: [PATCH v2 0/1] hrtimer: More fixes for handling of timer slack
- of rt tasks
-In-Reply-To: <46ad86f8b1fc4fb5dbb3da8f6ab664f48955849f.camel@siemens.com>
-References: <20240805140930.29462-1-felix.moessbauer@siemens.com>
- <20240809013433.pazaymcdx37lhpau@airbuntu>
- <46ad86f8b1fc4fb5dbb3da8f6ab664f48955849f.camel@siemens.com>
-Date: Fri, 09 Aug 2024 22:15:22 +0200
-Message-ID: <878qx5tput.ffs@tglx>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fo+3VJ+o4t+MrmdGWaJA4KhyUwcpEZuL9fWevaCmTQE=;
+	b=Ndjlo4kDAMLo9FRor5uyBWIAschAWNV+QRH/1UPDBgk9PfybRkZq8p4Thc8mJOpJpDf4CA
+	ocQf95+HRRPUrpAykLey7+NGTGAonXJKxFJ2mYCIVd7cwjM1PmAQcnKF3mkFwDGD/i5xBR
+	zJlUOlA4BeT75u7Zpd3aexqTpl7j5q8=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Mark Brown <broonie@kernel.org>,
+	linux-spi@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Michal Simek <michal.simek@amd.com>,
+	linux-kernel@vger.kernel.org,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH] spi: zynqmp-gqspi: Scale timeout by data size
+Date: Fri,  9 Aug 2024 16:15:39 -0400
+Message-Id: <20240809201540.3363243-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 09 2024 at 08:47, Felix MOESSBAUER wrote:
-> On Fri, 2024-08-09 at 02:34 +0100, Qais Yousef wrote:
->> On 08/05/24 16:09, Felix Moessbauer wrote:
->> > This series fixes the (hopefully) last location of an incorrectly
->> > handled timer slack on rt tasks in hrtimer_start_range_ns(), which
->> > was
->> > uncovered by a userland change in glibc 2.33.
->> >=20
->> > Changes since v1:
->> >=20
->> > - drop patch "hrtimer: Document, that PI boosted tasks have no
->> > timer slack", as
->> > =C2=A0 this behavior is incorrect and is already adressed in
->> > 20240610192018.1567075-1-qyousef@layalina.io
->>=20
->> There was discussion about this hrtimer usage in earlier version if
->> it helps to
->> come up with a potentially better patch
->
-> Hi, Sebastian already pointed me to this thread.
->
-> When debugging my issue, I did not know about it but was scratching my
-> head if the behavior / usage of rt_task is actually correct.
-> The whole naming was quite confusing. Many thanks for cleaning that up.
->
->>=20
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
->> https://lore.kernel.org/lkml/20240521110035.KRIwllGe@linutronix.de/
->>=20
->> My patches got picked up by the way, you'd probably want to rebase
->> and resend
->> as now the function is named rt_or_dl_task_policy()
->
-> As we use rt_or_dl_task() in nanosleep, I'm wondering if we should use
-> the same in hrtimer_start_range_ns(). Is that because PI boosted tasks
-> need to acquire a lock which can only be a mutex_t or equivalent
-> sleeping lock on PREEMPT_RT?
+Large blocks of data time out when reading because we don't wait long
+enough for the transfer to complete. Scale our timeouts based on the
+amount of data we are tranferring, with a healthy dose of pessimism.
 
-No. Arming the timer has nothing to do with mutexes or such. It's an
-optimization to grant RT/DL tasks zero slack automatically.
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+---
 
-The correct thing is to use policy based delta adjustment.
+ drivers/spi/spi-zynqmp-gqspi.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
-The fact that a task got boosted temporatily does not make it eligble
-for zero slack. It stays a SCHED_OTHER task no matter what.
-
-rt_or_dl_task() in nanosleep() is fundamentally wrong and needs to be
-replaced with rt_or_dl_task_policy() and not the other way round.
-
-> Anyways, I'm thinking about getting rid of the policy based delta=3D0 and
-> just set the task->timer_slack_ns to 0 when changing the scheduling
-> policy (and changing it back to the default when reverting to
-> SCHED_OTHER). By that, we can get rid of the special handling and users
-> of the procfs would also see correct data in /timerslack_ns.
-
-That makes sense.
-
-Thanks
-
-        tglx
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index 99524a3c9f38..558c466135a5 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -1033,6 +1033,18 @@ static int __maybe_unused zynqmp_runtime_resume(struct device *dev)
+ 	return 0;
+ }
+ 
++static unsigned long zynqmp_qspi_timeout(struct zynqmp_qspi *xqspi, u8 bits,
++					 unsigned long bytes)
++{
++	unsigned long timeout;
++
++	/* Assume we are at most 2x slower than the nominal bus speed */
++	timeout = mult_frac(bytes, 2 * 8 * MSEC_PER_SEC,
++			    bits * xqspi->speed_hz);
++	/* And add 100 ms for scheduling delays */
++	return msecs_to_jiffies(timeout + 100);
++}
++
+ /**
+  * zynqmp_qspi_exec_op() - Initiates the QSPI transfer
+  * @mem: The SPI memory
+@@ -1049,6 +1061,7 @@ static int zynqmp_qspi_exec_op(struct spi_mem *mem,
+ {
+ 	struct zynqmp_qspi *xqspi = spi_controller_get_devdata
+ 				    (mem->spi->controller);
++	unsigned long timeout;
+ 	int err = 0, i;
+ 	u32 genfifoentry = 0;
+ 	u16 opcode = op->cmd.opcode;
+@@ -1077,8 +1090,10 @@ static int zynqmp_qspi_exec_op(struct spi_mem *mem,
+ 		zynqmp_gqspi_write(xqspi, GQSPI_IER_OFST,
+ 				   GQSPI_IER_GENFIFOEMPTY_MASK |
+ 				   GQSPI_IER_TXNOT_FULL_MASK);
+-		if (!wait_for_completion_timeout
+-		    (&xqspi->data_completion, msecs_to_jiffies(1000))) {
++		timeout = zynqmp_qspi_timeout(xqspi, op->cmd.buswidth,
++					      op->cmd.nbytes);
++		if (!wait_for_completion_timeout(&xqspi->data_completion,
++						 timeout)) {
+ 			err = -ETIMEDOUT;
+ 			goto return_err;
+ 		}
+@@ -1104,8 +1119,10 @@ static int zynqmp_qspi_exec_op(struct spi_mem *mem,
+ 				   GQSPI_IER_TXEMPTY_MASK |
+ 				   GQSPI_IER_GENFIFOEMPTY_MASK |
+ 				   GQSPI_IER_TXNOT_FULL_MASK);
+-		if (!wait_for_completion_timeout
+-		    (&xqspi->data_completion, msecs_to_jiffies(1000))) {
++		timeout = zynqmp_qspi_timeout(xqspi, op->addr.buswidth,
++					      op->addr.nbytes);
++		if (!wait_for_completion_timeout(&xqspi->data_completion,
++						 timeout)) {
+ 			err = -ETIMEDOUT;
+ 			goto return_err;
+ 		}
+@@ -1173,8 +1190,9 @@ static int zynqmp_qspi_exec_op(struct spi_mem *mem,
+ 						   GQSPI_IER_RXEMPTY_MASK);
+ 			}
+ 		}
+-		if (!wait_for_completion_timeout
+-		    (&xqspi->data_completion, msecs_to_jiffies(1000)))
++		timeout = zynqmp_qspi_timeout(xqspi, op->data.buswidth,
++					      op->data.nbytes);
++		if (!wait_for_completion_timeout(&xqspi->data_completion, timeout))
+ 			err = -ETIMEDOUT;
+ 	}
+ 
+-- 
+2.35.1.1320.gc452695387.dirty
 
 
