@@ -1,48 +1,50 @@
-Return-Path: <linux-kernel+bounces-280501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518CC94CB6C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:33:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449C294CB6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D79A1C22541
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:33:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0546E285611
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC861779BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25A1178361;
 	Fri,  9 Aug 2024 07:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1GOg7df"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqpCoLXI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0098F42A80;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C66175D2F;
 	Fri,  9 Aug 2024 07:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723188790; cv=none; b=EnTZJ/FSPXrbl6wnegowtYiJe/sRhac5ayCKNo3SuQEzVwqpfRc4VnAyg4/isTqBnl67xVUhAb0tpQUnjq2EcI3/pVdl5NDjuiUakHQxBpDoHm1Dfalc1Jj75wcuEfSMmyfUkpBXS/lBKF7HKnuy0nYQUcPmXoTYmMj9d0wrFZ0=
+	t=1723188790; cv=none; b=SOZtAw7rVBqTKycKdAReD6J/WoNfRnIVsRZD9zP29CLKW3DgBDgABC503hZfiHT/N01jn3v01Aao0VdmeNo2Pe/HNfpDI2C3+WXGbLDujdBwLLGtzV++nrOqTKZJngWNuooo75ZFPDPWsAH1r2n6v3p8k4XTAvo8JaNgjFsCqfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723188790; c=relaxed/simple;
-	bh=fH+32u2hbe+aYvteHR+ZPHJXyfY1tBWhDA7Vvn2Or58=;
+	bh=Bm7wZvIpH1u9Fue5VhYGh2wN4XsW+HXCBPDIfO+4Wi0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e+gQmH+GTW/5BSS/Kml+P8c1gpwqkeGj6XTOJew18wkxRZN6di3Q2GvvLgAarX0OqSmBZ+2m9F0ZB60FreAjN2gjOzACXGLFv/tCNc+ZON0ks2D0XuwUCrCkzk4UxqmjsfoKvNjfBmiJLNMW3pNRiL0q2ksWDKPGzf+qgs78MMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1GOg7df; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F687C32782;
+	 MIME-Version; b=WKjo8ng11sVv8znPDT4PMdaoMTqb3r4379FA/1bLpj1Y4pdaeT/JoKu8Glu8g1HXOtGGMDka1q73frNJGGMrenABcd85mSBO5CoAtomt4tFcHG+wSmqrqYPLvR1V/ZDwS2YNjDum2Yd4HfXZE58PxtIaAvjX4T9oew61yA0xyG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqpCoLXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A604FC4AF0D;
 	Fri,  9 Aug 2024 07:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1723188789;
-	bh=fH+32u2hbe+aYvteHR+ZPHJXyfY1tBWhDA7Vvn2Or58=;
+	bh=Bm7wZvIpH1u9Fue5VhYGh2wN4XsW+HXCBPDIfO+4Wi0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U1GOg7dfFb6vCTpdmAesrPycht4b3E2BP61/NHu5KkhADUw+F/qMwpsb+4EE0wwPr
-	 L9nvFDqSei8WJyngCv1Q76XygeWaSsjBlLrD6F/LC8/k4VknfL0og/dzm76kmgZgtR
-	 95TPrS8GpHcyJsvMNXhSCnbwb/zN8o2cGRSd7yux2dwYNZdWYITUiYaoPN0QRrAz4J
-	 xWzfOO8GT/bjnPzIqghQGJWNHo7TvFmqxfVY9RsL2FSgfXLSt5noN6OfXW0U8mVhWW
-	 LIZVWRO8MeNF1Hpm2FoGdrC++nOc8Th3OtGsIxGUZ8FgbOdZ6MVMjlaGpBWyS3Y5Uq
-	 lUO1diWANHxyg==
+	b=QqpCoLXIIBMnBfGGkEX09zukRI2+BmDPINyNOYod5uVhbZDarz3N5Gon+RuXzFMAb
+	 oPfcGVx2F89WvXdR38xVPnVsVlOUmNcyHLnIz/i0Chy93oj1L4sP0lHM9ULrx3F+Dy
+	 3wtCujBr/ZAjZcrcrOYEQHYox5wX8h0ySRVdiy4kQYmXwl16b/dgOdo7qfIJdcuOze
+	 /My+X+Esi8xyVCPP+QA8hTU/aKTo2FyoEfdKL29fwNZw2fSN5v+VcPTVRG6MpbJbIh
+	 z6fXqwUOtqJjrwqRQmB4cR3qiejfPc+eHmuFlse3M/B3SuOYmoyKMkjQGsPZiZMAAm
+	 X3fYWCL8pp4Yg==
 From: Kees Cook <kees@kernel.org>
 To: Vlastimil Babka <vbabka@suse.cz>
 Cc: Kees Cook <kees@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
 	Christoph Lameter <cl@linux.com>,
 	Pekka Enberg <penberg@kernel.org>,
 	David Rientjes <rientjes@google.com>,
@@ -51,8 +53,6 @@ Cc: Kees Cook <kees@kernel.org>,
 	Roman Gushchin <roman.gushchin@linux.dev>,
 	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
 	linux-mm@kvack.org,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
 	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
 	Jann Horn <jannh@google.com>,
 	Matteo Rizzo <matteorizzo@google.com>,
@@ -60,9 +60,9 @@ Cc: Kees Cook <kees@kernel.org>,
 	Xiu Jianfeng <xiujianfeng@huawei.com>,
 	linux-kernel@vger.kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH 1/5] slab: Introduce kmem_buckets_destroy()
-Date: Fri,  9 Aug 2024 00:33:02 -0700
-Message-Id: <20240809073309.2134488-1-kees@kernel.org>
+Subject: [PATCH 2/5] codetag: Run module_load hooks for builtin codetags
+Date: Fri,  9 Aug 2024 00:33:03 -0700
+Message-Id: <20240809073309.2134488-2-kees@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240809072532.work.266-kees@kernel.org>
 References: <20240809072532.work.266-kees@kernel.org>
@@ -72,16 +72,18 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2139; i=kees@kernel.org; h=from:subject; bh=fH+32u2hbe+aYvteHR+ZPHJXyfY1tBWhDA7Vvn2Or58=; b=owGbwMvMwCVmps19z/KJym7G02pJDGlbjxkoHv8l8yD/Mrump/fE6Mr5/aFh0Z63wl+F6swJe 9mx9VNSRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwER0XzEyzOnisNb8799w6KzH TqX4LWYLH5sfsG/JsPy17/be9sMdXxgZDioISWWoefx3MnrGUf7s0jzWyOPSmyWaxZQnrvt/sGs bNwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1658; i=kees@kernel.org; h=from:subject; bh=Bm7wZvIpH1u9Fue5VhYGh2wN4XsW+HXCBPDIfO+4Wi0=; b=owGbwMvMwCVmps19z/KJym7G02pJDGlbjxke+n5p3ULn87cf9DTKdwmaspUUamrMS9iRlnGLf TIne3NeRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwEQuXGZkeC42Q9N+bpD98SIX x6h7Lvs+C7ZwcS3zP3qIZfUbhd77AQz/IwUeVCk7XGpQ0dpqWr5Ru4/R+rV7RXv5Wob9sVHfDmx hBwA=
 X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-Modular use of kmem_buckets_create() means that kmem_buckets will need
-to be removed as well. Introduce kmem_buckets_destroy(), matching
-kmem_cache_destroy().
+The module_load callback should still run for builtin codetags that
+define it, even in a non-modular kernel. (i.e. for the cmod->mod == NULL
+case).
 
 Signed-off-by: Kees Cook <kees@kernel.org>
 ---
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
 Cc: Vlastimil Babka <vbabka@suse.cz>
 Cc: Christoph Lameter <cl@linux.com>
 Cc: Pekka Enberg <penberg@kernel.org>
@@ -92,57 +94,39 @@ Cc: Roman Gushchin <roman.gushchin@linux.dev>
 Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 Cc: linux-mm@kvack.org
 ---
- include/linux/slab.h |  1 +
- mm/slab_common.c     | 17 ++++++++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ lib/codetag.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index eb2bf4629157..86cb61a0102c 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -552,6 +552,7 @@ void kmem_cache_free(struct kmem_cache *s, void *objp);
- kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
- 				  unsigned int useroffset, unsigned int usersize,
- 				  void (*ctor)(void *));
-+void kmem_buckets_destroy(kmem_buckets *b);
- 
- /*
-  * Bulk allocation and freeing operations. These are accelerated in an
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 40b582a014b8..fc698cba0ebe 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -392,6 +392,19 @@ kmem_cache_create(const char *name, unsigned int size, unsigned int align,
+diff --git a/lib/codetag.c b/lib/codetag.c
+index 5ace625f2328..ef7634c7ee18 100644
+--- a/lib/codetag.c
++++ b/lib/codetag.c
+@@ -125,7 +125,6 @@ static inline size_t range_size(const struct codetag_type *cttype,
+ 			cttype->desc.tag_size;
  }
- EXPORT_SYMBOL(kmem_cache_create);
  
-+void kmem_buckets_destroy(kmem_buckets *b)
-+{
-+	int idx;
-+
-+	if (!b)
-+		return;
-+
-+	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++)
-+		kmem_cache_destroy((*b)[idx]);
-+	kfree(b);
-+}
-+EXPORT_SYMBOL(kmem_buckets_destroy);
-+
- static struct kmem_cache *kmem_buckets_cache __ro_after_init;
- 
- /**
-@@ -476,9 +489,7 @@ kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
- 	return b;
- 
- fail:
--	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++)
--		kmem_cache_destroy((*b)[idx]);
--	kfree(b);
-+	kmem_buckets_destroy(b);
- 
- 	return NULL;
+-#ifdef CONFIG_MODULES
+ static void *get_symbol(struct module *mod, const char *prefix, const char *name)
+ {
+ 	DECLARE_SEQ_BUF(sb, KSYM_NAME_LEN);
+@@ -199,6 +198,7 @@ static int codetag_module_init(struct codetag_type *cttype, struct module *mod)
+ 	return 0;
  }
+ 
++#ifdef CONFIG_MODULES
+ void codetag_load_module(struct module *mod)
+ {
+ 	struct codetag_type *cttype;
+@@ -248,9 +248,6 @@ bool codetag_unload_module(struct module *mod)
+ 
+ 	return unload_ok;
+ }
+-
+-#else /* CONFIG_MODULES */
+-static int codetag_module_init(struct codetag_type *cttype, struct module *mod) { return 0; }
+ #endif /* CONFIG_MODULES */
+ 
+ struct codetag_type *
 -- 
 2.34.1
 
