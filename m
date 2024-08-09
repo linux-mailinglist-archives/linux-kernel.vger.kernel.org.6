@@ -1,214 +1,108 @@
-Return-Path: <linux-kernel+bounces-280905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4728B94D0B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:59:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B30E94D0B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F16892837D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:59:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C38B1B233E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C04E19539F;
-	Fri,  9 Aug 2024 12:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18869195B28;
+	Fri,  9 Aug 2024 12:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="cuNkd5rk"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJQyaNBK"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3CD194A57;
-	Fri,  9 Aug 2024 12:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723208319; cv=pass; b=ZQ0GOdnvi8eapkzbUFc9Xdbve9YL33CBFHnT1LVlPH2TKROIwK40Vmggrpptr21CkEYe+JboQ4FM3cQ43j/7eUFbV8Subop0lS26h27h8i7WyCqQa8ylzp7vSIgPOmGgQYt3u6afHVhHmqlxyf/lVe1EwcXzH+V1HTtS5WPOurc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723208319; c=relaxed/simple;
-	bh=vB1vihcZ0eEkgl8Qk+c4jcfU4v+ZHhL5OcdGuAd6xKE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oRoKoFfO8ego8i0whWn6CYG2FI74kV5UD+74arAkP69Kageo+9V28GOr0lXWAywCy+5DP2AutVbjGzYUbW2zJawuD+jrZxMgjyivQgvcuNeTes+O0kPKkJ6gC5pQshOba867Lp2f3nI05qBKdiiT3NANzvVkMfr4Kk1lJp24DlI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=cuNkd5rk; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: detlev.casanova@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723208297; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=d417bd6DIN2FFSG6FZquvHBfJ7o0uQ1cjE1id4i61djT9MPy9RgUIZNcnZ2CTnc/lE2VdCos6T1X0BPWzjHae6Qdh41/+YYNYr/tmjFQ774skSd1KpInem1J4eDB7O1LUOfDqbNf4KunlZmKUuxn/nOeYP1gTtx2nEPuQyYTEMY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723208297; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ZAm373FW8SSRcdPW3Co+g9V2mPAp48MIYJ8wFwNFSmk=; 
-	b=lHXjPoEwNnV06DNN+83HwvM6bV39HKePFD3BVX1wh4jtwmdt9dnqIVfszoGhvf5jUGdOQMnR1yVNHEPafF3Y0NEl3sC/s1t7x+EdiKeCU4+Dt9cSxg5Z3xvAccsdNsdqLxmD1qW0g7bpsnUoSuZJp2uT0Ua6xtReoq9yysz9Hw0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723208297;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=ZAm373FW8SSRcdPW3Co+g9V2mPAp48MIYJ8wFwNFSmk=;
-	b=cuNkd5rkQtvgRNMhWmbtTBxQQPLd7WEMentl+aBrDV8MCnd+HxIUFz2hdKIGZMFh
-	UHfX4U9SuZNCU8Pp2GeFV5aSddhFLARxEqFkXvFjlqnnjKvEXWVOgG8v3MfNWLekVXX
-	YZplKve9sojFnKUVSU2N3OXG5hOhCn98zoysmwoY=
-Received: by mx.zohomail.com with SMTPS id 1723208296397381.82442922141547;
-	Fri, 9 Aug 2024 05:58:16 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Jagan Teki <jagan@edgeble.ai>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH v3 2/2] pmdomain: rockchip: Add support for rk3576 SoC
-Date: Fri,  9 Aug 2024 08:58:05 -0400
-Message-ID: <20240809125925.4295-3-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240809125925.4295-1-detlev.casanova@collabora.com>
-References: <20240809125925.4295-1-detlev.casanova@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3D1194AD6;
+	Fri,  9 Aug 2024 12:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723208325; cv=none; b=fyzeB4TWh/2dFAs+/0Vp7INBoMJGhE4YhrUBIXBXn3tQIhW8XJS3sLfk1UpjObmTSV+aj1DkUGll8imEe/86RWwjvxIr3AaSLVrbSxrchnpxvmDUhMBAzN/xEyzo8UXPo7BFv1D7AZQyGGQRJm9Ic3il/xBCQXZWPgxPnRqHXqk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723208325; c=relaxed/simple;
+	bh=FGRFfoKrCyjpQ1L1xKhEW2Z5ELvYBvnzVXI9tJ5zXpg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xmk7T7AXWpbMJtRWqagxntA/ssl9hRb7ifZcwzIquJjIqunvRQRsqymDypHNJdN+B72Zc200qdbS8eRURQR+2yb42MC0sYFMRztBuKt3YHR6sJWgNTiVkzqpDDqPBHM1sX2MBHEuUBiwrvs3+hsXwZq1JaVZzsK/YF8b2efFO2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJQyaNBK; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2cb4b7fef4aso1651827a91.0;
+        Fri, 09 Aug 2024 05:58:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723208323; x=1723813123; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6v9350Nj3vlAUY0CEodJkrVSeYBUy8/gULVsctF3FR4=;
+        b=dJQyaNBKCki5A060PHBAhEahD5oSk4rvyIwlAECfDxauo9Ii6RM2Vd/P+fSzoYzcLn
+         4dyez+XMHqEYe4+XWjpVGzKhOZKJGm64/iIK6A/pjrmv/8TBG3pEtxmB0t7PpPM8Th7P
+         fdQTefaDpit6fovn8bUB+Jn1Z/1fey8E4srr3FGQm/V1KBsOrzTF3yCsvego7JqLySud
+         XW206Z78tC7klUjeiPr7dxVLjy28c2cfcn0uMON2+PxYNTzCUUq4zhFlGzVRuN7Q59t/
+         Ba9ABUKzS3NlkoZjl4n5ceZeXN+WGZhg9sz96XeO7LovsqAFIGnJCpQ9FHUgI3oaMs0s
+         iofw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723208323; x=1723813123;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6v9350Nj3vlAUY0CEodJkrVSeYBUy8/gULVsctF3FR4=;
+        b=BaBT38WWNQuBZWQOO91y3LOqUp0gD1UVRkSBsQK3sRVT9iOJDbFfsvUGz7Kp1n6Qf0
+         rtlv5+bf4buDcNTIkUfmY7ddkKYH4J07au3niZKxyFtR08GlKpUlcMqwPQJ9KsXmKVf+
+         7vTDKmeSxMLIOs2kqVZDaGN+1tNfuwp6p6WPgnKiEm6QS4DEqtDUgUQ7DkcVhZ7LztKq
+         rl96ie2V/XNdlc3obbrdCLJnRFZ7/7aTnOE/i+thY+pRvN494kvpu9m5YhHUVVyL0Kz7
+         iH+VjnbRr/CQ5EfNkzLEaMA9Wi0t1tm1ldejJ9FPPq4inzEx502R7Ty29yQEaFMyCY86
+         db0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWos16VxmMUIpQ8CRU3eB9B9QwzMHPa8awje+Lu+1JSpqo59eomm7fIPVAXfD9+AYFdUnHuntzvz9WifujxIR3akJow5rvut6/I08zWWEpfSZfSLdUCOrqTpzD4PP9V+/inzAWse/mR3ziji1LBSLN297WArtqkOhajw34eXK9cpIXhP4eZB+yEdA==
+X-Gm-Message-State: AOJu0Yxsm+IDfpKc0z0LIm76r2+Mc9przcBsJGulrR9tJiDqQuKErtW3
+	Jwpr17OG8/ExCRC207QQmDtauf5fd1oCdv0jKN6c19mGBGB9uJOa9kUx53ketGjfd8LoFak2ZBu
+	VIzzEYbShuz6rT6mgY31247rWEr0=
+X-Google-Smtp-Source: AGHT+IEQc5kyXmolW0Sis7l41/WL9/1/vMoeqxdlcXNfi8hS5iNTv0gWd+JH9Ib8sWecYe9p6gOg94R1Pplbq30RUXo=
+X-Received: by 2002:a17:90b:124f:b0:2c9:cbdd:acd with SMTP id
+ 98e67ed59e1d1-2d1e807165amr1599804a91.35.1723208323234; Fri, 09 Aug 2024
+ 05:58:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <20240809064222.3527881-1-aliceryhl@google.com>
+In-Reply-To: <20240809064222.3527881-1-aliceryhl@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 9 Aug 2024 14:58:30 +0200
+Message-ID: <CANiq72nP+pL7fEvaB7HA-mHJFs1j9SKMoSMSCif61YCy4QDFoA@mail.gmail.com>
+Subject: Re: [PATCH] rust: sort includes in bindings_helper.h
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Finley Xiao <finley.xiao@rock-chips.com>
+On Fri, Aug 9, 2024 at 8:42=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
+>
+> Dash has ascii value 45 and underscore has ascii value 95, so to
+> correctly sort the includes, the underscore should be last.
+>
+> Fixes: 3253aba3408a ("rust: block: introduce `kernel::block::mq` module")
 
-Add configuration for RK3576 SoC and list the power domains.
+Looks good to me (`LC_ALL=3DC`), thanks!
 
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-[rebase, reword, squash]
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
----
- drivers/pmdomain/rockchip/pm-domains.c | 66 +++++++++++++++++++++++++-
- 1 file changed, 64 insertions(+), 2 deletions(-)
+I can take it; otherwise:
 
-diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-index 9b76b62869d0d..466c0aab72060 100644
---- a/drivers/pmdomain/rockchip/pm-domains.c
-+++ b/drivers/pmdomain/rockchip/pm-domains.c
-@@ -33,6 +33,7 @@
- #include <dt-bindings/power/rk3368-power.h>
- #include <dt-bindings/power/rk3399-power.h>
- #include <dt-bindings/power/rk3568-power.h>
-+#include <dt-bindings/power/rockchip,rk3576-power.h>
- #include <dt-bindings/power/rk3588-power.h>
- 
- struct rockchip_domain_info {
-@@ -144,9 +145,26 @@ struct rockchip_pmu {
- 	.active_wakeup = wakeup,			\
- }
- 
--#define DOMAIN_RK3036(_name, req, ack, idle, wakeup)		\
-+#define DOMAIN_M_O_R_G(_name, p_offset, pwr, status, r_status, r_offset, req, idle, ack, g_mask, wakeup)	\
- {							\
--	.name = _name,				\
-+	.name = _name,					\
-+	.pwr_offset = p_offset,				\
-+	.pwr_w_mask = (pwr) << 16,			\
-+	.pwr_mask = (pwr),				\
-+	.status_mask = (status),			\
-+	.mem_status_mask = (r_status),			\
-+	.repair_status_mask = (r_status),		\
-+	.req_offset = r_offset,				\
-+	.req_w_mask = (req) << 16,			\
-+	.req_mask = (req),				\
-+	.idle_mask = (idle),				\
-+	.ack_mask = (ack),				\
-+	.active_wakeup = wakeup,			\
-+}
-+
-+#define DOMAIN_RK3036(_name, req, ack, idle, wakeup)	\
-+{							\
-+	.name = _name,					\
- 	.req_mask = (req),				\
- 	.req_w_mask = (req) << 16,			\
- 	.ack_mask = (ack),				\
-@@ -175,6 +193,9 @@ struct rockchip_pmu {
- #define DOMAIN_RK3568(name, pwr, req, wakeup)		\
- 	DOMAIN_M(name, pwr, pwr, req, req, req, wakeup)
- 
-+#define DOMAIN_RK3576(name, p_offset, pwr, status, r_status, r_offset, req, idle, g_mask, wakeup)	\
-+	DOMAIN_M_O_R_G(name, p_offset, pwr, status, r_status, r_offset, req, idle, idle, g_mask, wakeup)
-+
- /*
-  * Dynamic Memory Controller may need to coordinate with us -- see
-  * rockchip_pmu_block().
-@@ -1106,6 +1127,28 @@ static const struct rockchip_domain_info rk3568_pm_domains[] = {
- 	[RK3568_PD_PIPE]	= DOMAIN_RK3568("pipe", BIT(8), BIT(11), false),
- };
- 
-+static const struct rockchip_domain_info rk3576_pm_domains[] = {
-+	[RK3576_PD_NPU]		= DOMAIN_RK3576("npu",    0x0, BIT(0),  BIT(0), 0,       0x0, 0,       0,       0,       false),
-+	[RK3576_PD_NVM]		= DOMAIN_RK3576("nvm",    0x0, BIT(6),  0,      BIT(6),  0x4, BIT(2),  BIT(18), BIT(2),  false),
-+	[RK3576_PD_SDGMAC]	= DOMAIN_RK3576("sdgmac", 0x0, BIT(7),  0,      BIT(7),  0x4, BIT(1),  BIT(17), 0x6,     false),
-+	[RK3576_PD_AUDIO]	= DOMAIN_RK3576("audio",  0x0, BIT(8),  0,      BIT(8),  0x4, BIT(0),  BIT(16), BIT(0),  false),
-+	[RK3576_PD_PHP]		= DOMAIN_RK3576("php",    0x0, BIT(9),  0,      BIT(9),  0x0, BIT(15), BIT(15), BIT(15), false),
-+	[RK3576_PD_SUBPHP]	= DOMAIN_RK3576("subphp", 0x0, BIT(10), 0,      BIT(10), 0x0, 0,       0,       0,       false),
-+	[RK3576_PD_VOP]		= DOMAIN_RK3576("vop",    0x0, BIT(11), 0,      BIT(11), 0x0, 0x6000,  0x6000,  0x6000,  false),
-+	[RK3576_PD_VO1]		= DOMAIN_RK3576("vo1",    0x0, BIT(14), 0,      BIT(14), 0x0, BIT(12), BIT(12), 0x7000,  false),
-+	[RK3576_PD_VO0]		= DOMAIN_RK3576("vo0",    0x0, BIT(15), 0,      BIT(15), 0x0, BIT(11), BIT(11), 0x6800,  false),
-+	[RK3576_PD_USB]		= DOMAIN_RK3576("usb",    0x4, BIT(0),  0,      BIT(16), 0x0, BIT(10), BIT(10), 0x6400,  true),
-+	[RK3576_PD_VI]		= DOMAIN_RK3576("vi",     0x4, BIT(1),  0,      BIT(17), 0x0, BIT(9),  BIT(9),  BIT(9),  false),
-+	[RK3576_PD_VEPU0]	= DOMAIN_RK3576("vepu0",  0x4, BIT(2),  0,      BIT(18), 0x0, BIT(7),  BIT(7),  0x280,   false),
-+	[RK3576_PD_VEPU1]	= DOMAIN_RK3576("vepu1",  0x4, BIT(3),  0,      BIT(19), 0x0, BIT(8),  BIT(8),  BIT(8),  false),
-+	[RK3576_PD_VDEC]	= DOMAIN_RK3576("vdec",   0x4, BIT(4),  0,      BIT(20), 0x0, BIT(6),  BIT(6),  BIT(6),  false),
-+	[RK3576_PD_VPU]		= DOMAIN_RK3576("vpu",    0x4, BIT(5),  0,      BIT(21), 0x0, BIT(5),  BIT(5),  BIT(5),  false),
-+	[RK3576_PD_NPUTOP]	= DOMAIN_RK3576("nputop", 0x4, BIT(6),  0,      BIT(22), 0x0, 0x18,    0x18,    0x18,    false),
-+	[RK3576_PD_NPU0]	= DOMAIN_RK3576("npu0",   0x4, BIT(7),  0,      BIT(23), 0x0, BIT(1),  BIT(1),  0x1a,    false),
-+	[RK3576_PD_NPU1]	= DOMAIN_RK3576("npu1",   0x4, BIT(8),  0,      BIT(24), 0x0, BIT(2),  BIT(2),  0x1c,    false),
-+	[RK3576_PD_GPU]		= DOMAIN_RK3576("gpu",    0x4, BIT(9),  0,      BIT(25), 0x0, BIT(0),  BIT(0),  BIT(0),  false),
-+};
-+
- static const struct rockchip_domain_info rk3588_pm_domains[] = {
- 	[RK3588_PD_GPU]		= DOMAIN_RK3588("gpu",     0x0, BIT(0),  0,       0x0, 0,       BIT(1),  0x0, BIT(0),  BIT(0),  false),
- 	[RK3588_PD_NPU]		= DOMAIN_RK3588("npu",     0x0, BIT(1),  BIT(1),  0x0, 0,       0,       0x0, 0,       0,       false),
-@@ -1284,6 +1327,21 @@ static const struct rockchip_pmu_info rk3568_pmu = {
- 	.domain_info = rk3568_pm_domains,
- };
- 
-+static const struct rockchip_pmu_info rk3576_pmu = {
-+	.pwr_offset = 0x210,
-+	.status_offset = 0x230,
-+	.chain_status_offset = 0x248,
-+	.mem_status_offset = 0x250,
-+	.mem_pwr_offset = 0x300,
-+	.req_offset = 0x110,
-+	.idle_offset = 0x128,
-+	.ack_offset = 0x120,
-+	.repair_status_offset = 0x570,
-+
-+	.num_domains = ARRAY_SIZE(rk3576_pm_domains),
-+	.domain_info = rk3576_pm_domains,
-+};
-+
- static const struct rockchip_pmu_info rk3588_pmu = {
- 	.pwr_offset = 0x14c,
- 	.status_offset = 0x180,
-@@ -1359,6 +1417,10 @@ static const struct of_device_id rockchip_pm_domain_dt_match[] = {
- 		.compatible = "rockchip,rk3568-power-controller",
- 		.data = (void *)&rk3568_pmu,
- 	},
-+	{
-+		.compatible = "rockchip,rk3576-power-controller",
-+		.data = (void *)&rk3576_pmu,
-+	},
- 	{
- 		.compatible = "rockchip,rk3588-power-controller",
- 		.data = (void *)&rk3588_pmu,
--- 
-2.46.0
+    Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
+I am not sure if this should count as a bug/fix (there is an
+recent/ongoing debate about the Fixes tag).
+
+(This kind of issues can be also opened as "good first issues", by the
+way, i.e. as a way to get contributors to set their email workflow.)
+
+Cheers,
+Miguel
 
