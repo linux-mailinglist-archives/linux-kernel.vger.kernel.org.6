@@ -1,90 +1,58 @@
-Return-Path: <linux-kernel+bounces-281463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61B694D727
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:22:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4495994D729
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1471D1C21FB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:22:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3851F22D9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF67915FA8A;
-	Fri,  9 Aug 2024 19:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97E115FCEA;
+	Fri,  9 Aug 2024 19:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZa6LtrD"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAzhLSna"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E49156228;
-	Fri,  9 Aug 2024 19:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302B22B9A9;
+	Fri,  9 Aug 2024 19:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723231319; cv=none; b=mNOAOsS2JOcvwf5l1lpb+AZICOt1/brWB8dz+0fGVZh1fuS45qCJ056QIU22G9Ans3YET1QC3Z98ZdwN4LkSMGmUFQywQanGiuS1uzgtNghWZklhgRr5RJQzcwcb2Bv7csl2tvsfAJiCHKJELhzX8rX7aZefRoNHAI1csD9Xsus=
+	t=1723231442; cv=none; b=q8sSuHY7AYRsa3U31Pxtpxz/4r3P8Wu+iCUqPP2AdPVo7dghurK5b74gDTzUaF+LJQN2AaGb6w1aRPe8YFAfCu91N6KZlXM9Bwu+2PyO5VWb2bzadn5cnKB8qDTwBtZPrAMGaLvGU53+Tgs94/y9V6ZNETYmW+jTKoX6c/XHKH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723231319; c=relaxed/simple;
-	bh=t0e0a6LXI6LeDS1IfT6HENQbOl9eDddwRUJQCJMyh3o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lf9w0Z8X1uK3CgFnM5KUlY1usJ+LNzlyHctmZmxqRVaX+76Nj+dezCew6t7yIsCjpmsxWGw6gqa0JmGeF+g/QQS6CPYuFaUX92jcMIYKVgU7wTc+yRDZmeXEhSR7fdaKhbLauojK4e3nqg77JNCk4U5TtqGGVlE/Hsjmg+Tjg30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mZa6LtrD; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eeb1ba040aso32733561fa.1;
-        Fri, 09 Aug 2024 12:21:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723231315; x=1723836115; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3zQR5I5Z9YI9eBNAvBlhP8v0AMty41l/RawM3riRFrM=;
-        b=mZa6LtrDxr5bhxobUTTM12pz+GFx5SWu4n+QVatZXAEODrisKoC/WZlhC5q3tgmOIT
-         cKHMXR9zbE55cG/i2VCUvNc1sMrq4pCvy0kkBfETwul2cpLrxiFKhUAUdtTbdYhpUPao
-         knu+SVqFaA/yJR5VcnAlXxOLMeg12h7wG8jSOa4RW6iVyt38GhVmedQAhsIOEawJMEzl
-         yYYwHMMwuJWYaCfnMagEhHG6BVZLPItHa237I9obzKVOI23Of+G/DnVwPRI+HDqXmF0g
-         8DfE9Y817w92DUgqYVa8uQZHpVZRDc/so8rkkGbPlzrDFfaOGxZLIgk2sVhQAF/YJc28
-         mS7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723231315; x=1723836115;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3zQR5I5Z9YI9eBNAvBlhP8v0AMty41l/RawM3riRFrM=;
-        b=Gvl6OD3xICf8o/ndZBQzfppJPMdbNpyllYO19KLVk/Dcw35+NFC2EtueqedE/msmHl
-         vIu2O8M8+WXNZL7/+3aw+Or+mPyzu0SJA4J716/eIq3g4TvkcwchU+1Gb1Sbv7eZLGBy
-         IxtmOYL/VenntcI+OGMEK7iUI3x3XrEuJeOeEBRK/w5X4sl1nqG5bcaU91zEwduRDXDu
-         b4TDJYSG8yHKgkV2kcQEl3DnTfGl7hVJcZT6YWxIn930cx+qs/qZfnxNUJ1XHdrGgLul
-         PiSSVWHu7G1JiZYGfytawf3XVL7ollRds2pNLdG8TrV+1iKo1EIJgSDPQk+CWf38bEG/
-         OS9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVRbHpRkbuTHQhiseLfLeiSJ8Kfpxf/022ttxlfZveHzTggkw+HvPYyns2aIRoSzLx0ee+iIRSeM+v7ZRFQNKPcP+ZGqooHv6tCTAB8YQLnVeQyVFsRgd3d/4I6BV6OMWa1Jk0U
-X-Gm-Message-State: AOJu0YzHqipAE3fv2TluMV+augnjD1e4SiefQvjA5vSd4CTVWs6/bJC1
-	cJmYnQqf+y8hH8op4Vjc+JzLfNVawt/QNCYMU2cJ5U+9XeF6PWpt
-X-Google-Smtp-Source: AGHT+IFZsdAmeqUUT6dg+xSHUP03KteOOKTe2JhiKfH0J1W1ciDN8u2ABk4LKTPDoact9/vXoMGhSg==
-X-Received: by 2002:a2e:9dc5:0:b0:2ef:21e5:1f01 with SMTP id 38308e7fff4ca-2f1a6d1da0dmr19326411fa.20.1723231314255;
-        Fri, 09 Aug 2024 12:21:54 -0700 (PDT)
-Received: from localhost ([109.197.207.99])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f291ddbbb0sm435501fa.8.2024.08.09.12.21.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 12:21:53 -0700 (PDT)
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Giuseppe CAVALLARO <peppe.cavallaro@st.com>
-Cc: Serge Semin <fancer.lancer@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] net: stmmac: Fix false "invalid port speed" warning
-Date: Fri,  9 Aug 2024 22:21:39 +0300
-Message-ID: <20240809192150.32756-1-fancer.lancer@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723231442; c=relaxed/simple;
+	bh=zmnG5xSUMyo+9plaKeJ+uvQbkZxCdb3QwwtYbn++p1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XNcJtlxBT1A9cFt9VA+c9js5zVLh0U1dVh5bX2bHfrjPnIl0bMpMGLJau215Ci7JNzJsMt/ao8jSHrr3I1qEKNqaTgE5k/d1wm0xEHglXDg82ROFe/5uT4lyfiPzkIfR5u8hpujNUC/kkvIWBP+8jof/qvXcwrt2bTVf4Qan4/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAzhLSna; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A98C4AF0D;
+	Fri,  9 Aug 2024 19:24:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723231441;
+	bh=zmnG5xSUMyo+9plaKeJ+uvQbkZxCdb3QwwtYbn++p1Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rAzhLSnad0hcaVB+vG8FglY5NDsl00xiqannTJyJ7R1OMaf4orx6nYpKJh3i71R/C
+	 cfKPqVlLNRVn7177R+UCaiRxkPaJzknGOP6Z4qZd/pOPFafE0+oCed7+qAVFKz6Oa7
+	 ZStMgAwLoPNGYNPKrucxFDObkQJJXrD5Dqz4lvbb9X7BzV5pPN0Nd9brC69aSPPVun
+	 zZ5pu+O+I0UoPysQL4K5+2FLhlGbB1MgTxXjcB0bJxWs2kIOOLQCTUY+SlL2EFBwh6
+	 77lZVx6iJBni56wlWiJ4jsYwMqMLq3Wwf1++WDARkzXOh1b0uZkfclJ23+EvX1SKxs
+	 hBhBXuIrA89ew==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org
+Cc: peterz@infradead.org,
+	oleg@redhat.com,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jolsa@kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v2] uprobes: make trace_uprobe->nhit counter a per-CPU one
+Date: Fri,  9 Aug 2024 12:23:57 -0700
+Message-ID: <20240809192357.4061484-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,56 +61,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the internal SGMII/TBI/RTBI PCS is available in a DW GMAC or DW QoS Eth
-instance and there is no "snps,ps-speed" property specified (or the
-plat_stmmacenet_data::mac_port_sel_speed field is left zero), then the
-next warning will be printed to the system log:
+trace_uprobe->nhit counter is not incremented atomically, so its value
+is questionable in when uprobe is hit on multiple CPUs simultaneously.
 
-> [  294.611899] stmmaceth 1f060000.ethernet: invalid port speed
+Also, doing this shared counter increment across many CPUs causes heavy
+cache line bouncing, limiting uprobe/uretprobe performance scaling with
+number of CPUs.
 
-By the original intention the "snps,ps-speed" property was supposed to be
-utilized on the platforms with the MAC2MAC link setup to fix the link
-speed with the specified value. But since it's possible to have a device
-with the DW *MAC with the SGMII/TBI/RTBI interface attached to a PHY, then
-the property is actually optional (which is also confirmed by the DW MAC
-DT-bindings). Thus it's absolutely normal to have the
-plat_stmmacenet_data::mac_port_sel_speed field zero initialized indicating
-that there is no need in the MAC-speed fixing and the denoted warning is
-false.
+Solve both problems by making this a per-CPU counter.
 
-Fix the warning by permitting the plat_stmmacenet_data::mac_port_sel_speed
-field to have the zero value in case if the internal PCS is available.
-
-Fixes: 02e57b9d7c8c ("drivers: net: stmmac: add port selection programming")
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
+ kernel/trace/trace_uprobe.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-Note this fix will get to be mainly actual after the next patch is merged
-in:
-https://lore.kernel.org/netdev/E1sauuS-000tvz-6E@rmk-PC.armlinux.org.uk/
-
-Cc: Russell King (Oracle) <linux@armlinux.org.uk>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrew Halaney <ahalaney@redhat.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index f3a1b179aaea..fb63df1b99c0 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -3422,7 +3422,7 @@ static int stmmac_hw_setup(struct net_device *dev, bool ptp_register)
- 		if ((speed == SPEED_10) || (speed == SPEED_100) ||
- 		    (speed == SPEED_1000)) {
- 			priv->hw->ps = speed;
--		} else {
-+		} else if (speed) {
- 			dev_warn(priv->device, "invalid port speed\n");
- 			priv->hw->ps = 0;
- 		}
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index 52e76a73fa7c..002f801a7ab4 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -17,6 +17,7 @@
+ #include <linux/string.h>
+ #include <linux/rculist.h>
+ #include <linux/filter.h>
++#include <linux/percpu.h>
+ 
+ #include "trace_dynevent.h"
+ #include "trace_probe.h"
+@@ -62,7 +63,7 @@ struct trace_uprobe {
+ 	struct uprobe			*uprobe;
+ 	unsigned long			offset;
+ 	unsigned long			ref_ctr_offset;
+-	unsigned long			nhit;
++	unsigned long __percpu		*nhits;
+ 	struct trace_probe		tp;
+ };
+ 
+@@ -337,6 +338,12 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
+ 	if (!tu)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	tu->nhits = alloc_percpu(unsigned long);
++	if (!tu->nhits) {
++		ret = -ENOMEM;
++		goto error;
++	}
++
+ 	ret = trace_probe_init(&tu->tp, event, group, true, nargs);
+ 	if (ret < 0)
+ 		goto error;
+@@ -349,6 +356,7 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
+ 	return tu;
+ 
+ error:
++	free_percpu(tu->nhits);
+ 	kfree(tu);
+ 
+ 	return ERR_PTR(ret);
+@@ -362,6 +370,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
+ 	path_put(&tu->path);
+ 	trace_probe_cleanup(&tu->tp);
+ 	kfree(tu->filename);
++	free_percpu(tu->nhits);
+ 	kfree(tu);
+ }
+ 
+@@ -815,13 +824,21 @@ static int probes_profile_seq_show(struct seq_file *m, void *v)
+ {
+ 	struct dyn_event *ev = v;
+ 	struct trace_uprobe *tu;
++	unsigned long nhits;
++	int cpu;
+ 
+ 	if (!is_trace_uprobe(ev))
+ 		return 0;
+ 
+ 	tu = to_trace_uprobe(ev);
++
++	nhits = 0;
++	for_each_possible_cpu(cpu) {
++		nhits += READ_ONCE(*per_cpu_ptr(tu->nhits, cpu));
++	}
++
+ 	seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
+-			trace_probe_name(&tu->tp), tu->nhit);
++		   trace_probe_name(&tu->tp), nhits);
+ 	return 0;
+ }
+ 
+@@ -1507,7 +1524,8 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs)
+ 	int ret = 0;
+ 
+ 	tu = container_of(con, struct trace_uprobe, consumer);
+-	tu->nhit++;
++
++	this_cpu_inc(*tu->nhits);
+ 
+ 	udd.tu = tu;
+ 	udd.bp_addr = instruction_pointer(regs);
 -- 
-2.43.0
+2.43.5
 
 
