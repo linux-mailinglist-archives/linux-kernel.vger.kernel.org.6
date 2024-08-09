@@ -1,288 +1,344 @@
-Return-Path: <linux-kernel+bounces-281014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8721994D1EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:14:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2945D94D1E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155751F22FD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0DCE281276
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7956B19645C;
-	Fri,  9 Aug 2024 14:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187AE196C6C;
+	Fri,  9 Aug 2024 14:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g57fzUru"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xf9Hcckd"
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8838D1D551
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257A8197549
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723212842; cv=none; b=gvHSZtg3/rfRUTm5KmCA8kWHEBtxw1z+I32l4fLV4oiPTjZ7nwRnZCOGkyQ9jP1g2BRcZoX4wR1hJEQVslK3xUNCnL+wuc137HFzAYPg4V6ctnoHONUdT4yFxBKxs1de3f2mKY5BNpQSzg718ZBuSAUzz5Ibt+MvuiPh2dDkVoQ=
+	t=1723212801; cv=none; b=iXfA/pnAAm6IUcVDLcwpLJ/XTkv9UlkJLdDXjJf/8dtkke+1j85kS9UxT246lTBP3VJMyY4p50hJDJZemOEKWz839bWlnlRjyEkU6ylo8e0cjl1DguUaDHe7NF3dp8TCcTuopXHuWe/TQlnvm81JpNiFDNH3tdbpbZzvtF+EkY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723212842; c=relaxed/simple;
-	bh=crgsed95WCuThIQdlkPvdtmbqgEgNTh3SoUCBLT2ZxM=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Yl9HW+R95a/rBJxdogApXL4TSMJwpWxIZquapnlnNGiZf5xX/f0kA47p2nBrQnDpXBH8MJWXrwZ81bZzj3LUGkO6Le+rHCd5twkWSBp/eU/AN/UGmwDndxYxowk4hspcshaqYrpPdogDGWa4PfjTnpXV55+acC9a8XvvOBpKkLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g57fzUru; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723212841; x=1754748841;
-  h=date:from:to:cc:subject:message-id;
-  bh=crgsed95WCuThIQdlkPvdtmbqgEgNTh3SoUCBLT2ZxM=;
-  b=g57fzUrudsWGzORH7lMa4oLPGyyfMHlAoAPT27TENWW57zoWSKLneYPW
-   mnqfyKID6J/2RXI0aTNewzySFy5+JXTTSsh3OH0uEP1bNLG0xhDzYrgxn
-   tZwOv3qZn1unb3X+t69PwdKW7U3x3+UulPMFrOhO2mx2g6JTfE4MVZTLZ
-   S03DydHMAFw3QOC9gU6Rrzef3lKaKW2E681BB9VHyhh/PQzJHBJHd7vxj
-   gLL2L7Tg2tmBls3WfnHlZPe4NNnlxEtQD9bb0g2G4LPxCe77CetaS2+Ex
-   cXayvqPslKz6wUvWtfhw00ESAfCfYbndzLCLguRlWDV7vMTb+Of3QpW4i
-   Q==;
-X-CSE-ConnectionGUID: X6/DqSf+TN+eWU+/pp8XGQ==
-X-CSE-MsgGUID: Jtmn9uUORzGVBRNVgChxDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="38838649"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="38838649"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 07:14:00 -0700
-X-CSE-ConnectionGUID: x4WaPJCRTAmJc2i0XDIW+g==
-X-CSE-MsgGUID: KaQo/Z+PSVuEyD4koPIvQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="61986169"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 09 Aug 2024 07:13:58 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scQMv-0008HJ-0k;
-	Fri, 09 Aug 2024 14:13:34 +0000
-Date: Fri, 09 Aug 2024 22:12:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/build] BUILD SUCCESS
- ae94b263f5f69c180347e795fbefa051b65aacc3
-Message-ID: <202408092239.slrf5Ylc-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1723212801; c=relaxed/simple;
+	bh=IdyXKuv8TCnQV7kc3lc9CHgBFc/wIDn4JaWOALDmfFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mu9StTdVfHtLSwpjodPhhGLoDrU5AdH1uofZBrIkIq/vkjk4j03nV9lhuytWUpfi8iekXtzHkupNBEEMrWGwxyH3a8iY8JLfCztYbNBiu6YVKjek7ZosaB/xERGKt17UW2ObtJGhXcFfcS3bTi5vnI4Wi9EcDCl18i4NVtJm1U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xf9Hcckd; arc=none smtp.client-ip=83.166.143.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WgQqb0RyWzZF9;
+	Fri,  9 Aug 2024 16:13:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723212794;
+	bh=5BWDmypNukZ0yTegwp5Rd5X/N9tPnn8xecPpj+dDlYU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xf9HcckdVauPhJ3oo4DRn7uHRHMXLd7Pcka7j+6WLKpm1E1JXnRhNkHCT7HTcl47Y
+	 S0yYlpiGyeIHB+e284LyNInzlQqoC7KQSmg4jg7hMj6Ik4j/izVVw+YBQBHcWsyecG
+	 8RnsDwzlrLR8QrZdOV3FaGnjpq+2GiM/aKaFbt2E=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WgQqZ3WRSzqWn;
+	Fri,  9 Aug 2024 16:13:14 +0200 (CEST)
+Date: Fri, 9 Aug 2024 16:13:08 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect
+ restriction
+Message-ID: <20240808.aiQu4ohho1xi@digikod.net>
+References: <cover.1722570749.git.fahimitahera@gmail.com>
+ <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
+ <20240803.iefooCha4gae@digikod.net>
+ <ZrOUq6rBRS1Fch42@tahera-OptiPlex-5000>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrOUq6rBRS1Fch42@tahera-OptiPlex-5000>
+X-Infomaniak-Routing: alpha
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/build
-branch HEAD: ae94b263f5f69c180347e795fbefa051b65aacc3  x86: Ignore stack unwinding in KCOV
+On Wed, Aug 07, 2024 at 09:37:15AM -0600, Tahera Fahimi wrote:
+> On Sat, Aug 03, 2024 at 01:29:04PM +0200, Mickaël Salaün wrote:
+> > On Thu, Aug 01, 2024 at 10:02:33PM -0600, Tahera Fahimi wrote:
+> > > This patch introduces a new "scoped" attribute to the landlock_ruleset_attr
+> > > that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
+> > > abstract Unix sockets from connecting to a process outside of
+> > > the same landlock domain. It implements two hooks, unix_stream_connect
+> > > and unix_may_send to enforce this restriction.
+> > > 
+> > > Closes: https://github.com/landlock-lsm/linux/issues/7
+> > > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > > 
+> > > ---
+> > > v8:
+> > > - Code refactoring (improve code readability, renaming variable, etc.) based
+> > >   on reviews by Mickaël Salaün on version 7.
+> > > - Adding warn_on_once to check (impossible) inconsistencies.
+> > > - Adding inline comments.
+> > > - Adding check_unix_address_format to check if the scoping socket is an abstract
+> > >   unix sockets.
+> > > v7:
+> > >  - Using socket's file credentials for both connected(STREAM) and
+> > >    non-connected(DGRAM) sockets.
+> > >  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
+> > >    ptrace ensures that if a server's domain is accessible from the client's
+> > >    domain (where the client is more privileged than the server), the client
+> > >    can connect to the server in all edge cases.
+> > >  - Removing debug codes.
+> > > v6:
+> > >  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
+> > >    the same domain scoping as ptrace.
+> > >  - code clean up.
+> > > v5:
+> > >  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
+> > >  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
+> > >    landlock_hierarchy to its respective landlock_ruleset.
+> > >  - Using curr_ruleset to check if a domain is scoped while walking in the
+> > >    hierarchy of domains.
+> > >  - Modifying inline comments.
+> > > V4:
+> > >  - Rebased on Günther's Patch:
+> > >    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
+> > >    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
+> > >  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
+> > >  - Using socket's file credentials instead of credentials stored in peer_cred
+> > >    for datagram sockets. (see discussion in [1])
+> > >  - Modifying inline comments.
+> > > V3:
+> > >  - Improving commit description.
+> > >  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
+> > >    purpose, and adding related functions.
+> > >  - Changing structure of ruleset based on "scoped".
+> > >  - Removing rcu lock and using unix_sk lock instead.
+> > >  - Introducing scoping for datagram sockets in unix_may_send.
+> > > V2:
+> > >  - Removing wrapper functions
+> > > 
+> > > [1]https://lore.kernel.org/all/20240610.Aifee5ingugh@digikod.net/
+> > > ----
+> > > ---
+> > >  include/uapi/linux/landlock.h |  30 +++++++
+> > >  security/landlock/limits.h    |   3 +
+> > >  security/landlock/ruleset.c   |   7 +-
+> > >  security/landlock/ruleset.h   |  23 ++++-
+> > >  security/landlock/syscalls.c  |  14 ++-
+> > >  security/landlock/task.c      | 155 ++++++++++++++++++++++++++++++++++
+> > >  6 files changed, 225 insertions(+), 7 deletions(-)
+> > 
+> > > diff --git a/security/landlock/task.c b/security/landlock/task.c
+> > > index 849f5123610b..7e8579ebae83 100644
+> > > --- a/security/landlock/task.c
+> > > +++ b/security/landlock/task.c
+> > > @@ -13,6 +13,8 @@
+> > >  #include <linux/lsm_hooks.h>
+> > >  #include <linux/rcupdate.h>
+> > >  #include <linux/sched.h>
+> > > +#include <net/sock.h>
+> > > +#include <net/af_unix.h>
+> > >  
+> > >  #include "common.h"
+> > >  #include "cred.h"
+> > > @@ -108,9 +110,162 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
+> > >  	return task_ptrace(parent, current);
+> > >  }
+> > >  
+> > > +static bool walk_and_check(const struct landlock_ruleset *const child,
+> > > +			   struct landlock_hierarchy **walker,
+> > > +			   size_t base_layer, size_t deep_layer,
+> > > +			   access_mask_t check_scoping)
+> > 
+> > s/check_scoping/scope/
+> > 
+> > > +{
+> > > +	if (!child || base_layer < 0 || !(*walker))
+> > 
+> > I guess it should be:
+> > WARN_ON_ONCE(!child || base_layer < 0 || !(*walker))
+> > 
+> > > +		return false;
+> > > +
+> > > +	for (deep_layer; base_layer < deep_layer; deep_layer--) {
+> > 
+> > No need to pass deep_layer as argument:
+> > deep_layer = child->num_layers - 1
+> > 
+> > > +		if (check_scoping & landlock_get_scope_mask(child, deep_layer))
+> > > +			return false;
+> > > +		*walker = (*walker)->parent;
+> > > +		if (WARN_ON_ONCE(!*walker))
+> > > +			/* there is an inconsistency between num_layers
+> > 
+> > Please use full sentences starting with a capital letter and ending with
+> > a dot, and in this case start with "/*"
+> > 
+> > > +			 * and landlock_hierarchy in the ruleset
+> > > +			 */
+> > > +			return false;
+> > > +	}
+> > > +	return true;
+> > > +}
+> > > +
+> > > +/**
+> > > + * domain_IPC_scope - Checks if the client domain is scoped in the same
+> > > + *		      domain as the server.
+> > 
+> > Actually, you can remove IPC from the function name.
+> > 
+> > > + *
+> > > + * @client: IPC sender domain.
+> > > + * @server: IPC receiver domain.
+> > > + *
+> > > + * Check if the @client domain is scoped to access the @server; the @server
+> > > + * must be scoped in the same domain.
+> > 
+> > Returns true if...
+> > 
+> > > + */
+> > > +static bool domain_IPC_scope(const struct landlock_ruleset *const client,
+> > > +			     const struct landlock_ruleset *const server,
+> > > +			     access_mask_t ipc_type)
+> > > +{
+> > > +	size_t client_layer, server_layer = 0;
+> > > +	int base_layer;
+> > > +	struct landlock_hierarchy *client_walker, *server_walker;
+> > > +	bool is_scoped;
+> > > +
+> > > +	/* Quick return if client has no domain */
+> > > +	if (!client)
+> > > +		return true;
+> > > +
+> > > +	client_layer = client->num_layers - 1;
+> > > +	client_walker = client->hierarchy;
+> > > +	if (server) {
+> > > +		server_layer = server->num_layers - 1;
+> > > +		server_walker = server->hierarchy;
+> > > +	}
+> > 
+> > } else {
+> > 	server_layer = 0;
+> > 	server_walker = NULL;
+> > }
+> > 
+> > > +	base_layer = (client_layer > server_layer) ? server_layer :
+> > > +						     client_layer;
+> > > +
+> > > +	/* For client domain, walk_and_check ensures the client domain is
+> > > +	 * not scoped until gets to base_layer.
+> > 
+> > until gets?
+> > 
+> > > +	 * For server_domain, it only ensures that the server domain exist.
+> > > +	 */
+> > > +	if (client_layer != server_layer) {
+> > 
+> > bool is_scoped;
+> It is defined above. 
 
-elapsed time: 1279m
+Yes, but it should be defined here because it is not used outside of
+this block.
 
-configs tested: 196
-configs skipped: 6
+> > > +		if (client_layer > server_layer)
+> > > +			is_scoped = walk_and_check(client, &client_walker,
+> > > +						   server_layer, client_layer,
+> > > +						   ipc_type);
+> > > +		else
+> > 
+> > server_walker may be uninitialized and still read here, and maybe later
+> > in the for loop.  The whole code should maks sure this cannot happen,
+> > and a test case should check this.
+> I think this case never happens, since the server_walker can be read
+> here if there are more than one layers in server domain which means that
+> the server_walker is not unintialized.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Yes, but this code makes it more difficult to convince yourself.  The
+proposed refactoring should help.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240809   gcc-13.2.0
-arc                   randconfig-002-20240809   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                               allnoconfig   clang-20
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                         assabet_defconfig   clang-15
-arm                          collie_defconfig   clang-15
-arm                                 defconfig   gcc-13.2.0
-arm                           h3600_defconfig   gcc-14.1.0
-arm                       imx_v6_v7_defconfig   gcc-14.1.0
-arm                            mmp2_defconfig   clang-15
-arm                          moxart_defconfig   clang-15
-arm                        mvebu_v7_defconfig   gcc-14.1.0
-arm                   randconfig-001-20240809   gcc-13.2.0
-arm                   randconfig-002-20240809   gcc-13.2.0
-arm                   randconfig-003-20240809   gcc-13.2.0
-arm                   randconfig-004-20240809   gcc-13.2.0
-arm                         s3c6400_defconfig   clang-15
-arm                       spear13xx_defconfig   clang-15
-arm                        spear6xx_defconfig   clang-15
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240809   gcc-13.2.0
-arm64                 randconfig-002-20240809   gcc-13.2.0
-arm64                 randconfig-003-20240809   gcc-13.2.0
-arm64                 randconfig-004-20240809   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240809   gcc-13.2.0
-csky                  randconfig-002-20240809   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240809   gcc-12
-i386         buildonly-randconfig-002-20240809   gcc-12
-i386         buildonly-randconfig-003-20240809   gcc-12
-i386         buildonly-randconfig-004-20240809   gcc-12
-i386         buildonly-randconfig-005-20240809   gcc-12
-i386         buildonly-randconfig-006-20240809   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240809   gcc-12
-i386                  randconfig-002-20240809   gcc-12
-i386                  randconfig-003-20240809   gcc-12
-i386                  randconfig-004-20240809   gcc-12
-i386                  randconfig-005-20240809   gcc-12
-i386                  randconfig-006-20240809   gcc-12
-i386                  randconfig-011-20240809   gcc-12
-i386                  randconfig-012-20240809   gcc-12
-i386                  randconfig-013-20240809   gcc-12
-i386                  randconfig-014-20240809   gcc-12
-i386                  randconfig-015-20240809   gcc-12
-i386                  randconfig-016-20240809   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240809   gcc-13.2.0
-loongarch             randconfig-002-20240809   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-14.1.0
-mips                     cu1830-neo_defconfig   gcc-14.1.0
-mips                          eyeq5_defconfig   gcc-14.1.0
-mips                      fuloong2e_defconfig   gcc-14.1.0
-mips                           gcw0_defconfig   gcc-14.1.0
-mips                           ip32_defconfig   clang-15
-mips                     loongson1b_defconfig   gcc-14.1.0
-mips                        maltaup_defconfig   gcc-14.1.0
-mips                          rm200_defconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240809   gcc-13.2.0
-nios2                 randconfig-002-20240809   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240809   gcc-13.2.0
-parisc                randconfig-002-20240809   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                   bluestone_defconfig   clang-15
-powerpc               randconfig-001-20240809   gcc-13.2.0
-powerpc64                        alldefconfig   clang-15
-powerpc64             randconfig-001-20240809   gcc-13.2.0
-powerpc64             randconfig-002-20240809   gcc-13.2.0
-powerpc64             randconfig-003-20240809   gcc-13.2.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv             nommu_k210_sdcard_defconfig   clang-15
-riscv             nommu_k210_sdcard_defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240809   gcc-13.2.0
-riscv                 randconfig-002-20240809   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240809   gcc-13.2.0
-s390                  randconfig-002-20240809   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                         apsh4a3a_defconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                    randconfig-001-20240809   gcc-13.2.0
-sh                    randconfig-002-20240809   gcc-13.2.0
-sh                           se7705_defconfig   gcc-14.1.0
-sh                   secureedge5410_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc                       sparc64_defconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240809   gcc-13.2.0
-sparc64               randconfig-002-20240809   gcc-13.2.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240809   gcc-13.2.0
-um                    randconfig-002-20240809   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                           alldefconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240809   clang-18
-x86_64       buildonly-randconfig-002-20240809   clang-18
-x86_64       buildonly-randconfig-003-20240809   clang-18
-x86_64       buildonly-randconfig-004-20240809   clang-18
-x86_64       buildonly-randconfig-005-20240809   clang-18
-x86_64       buildonly-randconfig-006-20240809   clang-18
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                randconfig-001-20240809   clang-18
-x86_64                randconfig-002-20240809   clang-18
-x86_64                randconfig-003-20240809   clang-18
-x86_64                randconfig-004-20240809   clang-18
-x86_64                randconfig-005-20240809   clang-18
-x86_64                randconfig-006-20240809   clang-18
-x86_64                randconfig-011-20240809   clang-18
-x86_64                randconfig-012-20240809   clang-18
-x86_64                randconfig-013-20240809   clang-18
-x86_64                randconfig-014-20240809   clang-18
-x86_64                randconfig-015-20240809   clang-18
-x86_64                randconfig-016-20240809   clang-18
-x86_64                randconfig-071-20240809   clang-18
-x86_64                randconfig-072-20240809   clang-18
-x86_64                randconfig-073-20240809   clang-18
-x86_64                randconfig-074-20240809   clang-18
-x86_64                randconfig-075-20240809   clang-18
-x86_64                randconfig-076-20240809   clang-18
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240809   gcc-13.2.0
-xtensa                randconfig-002-20240809   gcc-13.2.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> > > +			is_scoped = walk_and_check(server, &server_walker,
+> > > +						   client_layer, server_layer,
+> > > +						   ipc_type & 0);
+> > 
+> > "ipc_type & 0" is the same as "0"
+> > 
+> > > +		if (!is_scoped)
+> > 
+> > The name doesn't reflect the semantic. walk_and_check() should return
+> > the inverse.
+> > 
+> > > +			return false;
+> > > +	}
+> > 
+> > This code would be simpler:
+> > 
+> > if (client_layer > server_layer) {
+> > 	base_layer = server_layer;
+> > 	// TODO: inverse boolean logic
+> > 	if (!walk_and_check(client, &client_walker,
+> > 				   base_layer, ipc_type))
+> > 		return false;
+> > } else (client_layer < server_layer) {
+> > 	base_layer = client_layer;
+> > 	// TODO: inverse boolean logic
+> > 	if (!walk_and_check(server, &server_walker,
+> > 				   base_layer, 0))
+> > 		return false;
+> > } else {
+> > 	base_layer = client_layer;
+> > }
+> > 
+> > 
+> > I think we can improve more to make sure there is no path/risk of
+> > inconsistent pointers.
+> > 
+> > 
+> > > +	/* client and server are at the same level in hierarchy. If client is
+> > > +	 * scoped, the server must be scoped in the same domain
+> > > +	 */
+> > > +	for (base_layer; base_layer >= 0; base_layer--) {
+> > > +		if (landlock_get_scope_mask(client, base_layer) & ipc_type) {
+> > 
+> > With each multi-line comment, the first line should be empty:
+> > /*
+> >  * This check must be here since access would be denied only if
+> > 
+> > > +			/* This check must be here since access would be denied only if
+> > > +			 * the client is scoped and the server has no domain, so
+> > > +			 * if the client has a domain but is not scoped and the server
+> > > +			 * has no domain, access is guaranteed.
+> > > +			 */
+> > > +			if (!server)
+> > > +				return false;
+> > > +
+> > > +			if (server_walker == client_walker)
+> > > +				return true;
+> > > +
+> > > +			return false;
+> > > +		}
+> > > +		client_walker = client_walker->parent;
+> > > +		server_walker = server_walker->parent;
+> > > +		/* Warn if there is an incosistenncy between num_layers and
+> > 
+> > Makes sure there is no inconsistency between num_layers and
+> > 
+> > 
+> > > +		 * landlock_hierarchy in each of rulesets
+> > > +		 */
+> > > +		if (WARN_ON_ONCE(base_layer > 0 &&
+> > > +				 (!server_walker || !client_walker)))
+> > > +			return false;
+> > > +	}
+> > > +	return true;
+> > > +}
+> 
 
