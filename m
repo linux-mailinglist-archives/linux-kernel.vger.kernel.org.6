@@ -1,115 +1,141 @@
-Return-Path: <linux-kernel+bounces-281522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6675394D7BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:55:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B9594D7C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82D2282E02
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:55:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2736C1C2289B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4D116631D;
-	Fri,  9 Aug 2024 19:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCBB161320;
+	Fri,  9 Aug 2024 19:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EeYHHjhY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="o4EF+JwH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dJ33XtTE"
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031DA22EE3;
-	Fri,  9 Aug 2024 19:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CD51465BA;
+	Fri,  9 Aug 2024 19:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723233299; cv=none; b=LWSehGklk1XrXpT/mfHBBRHpFyAwnMh965K5KzZeVw58gj/SH8koz5K3tQcLNWAFhLxIqHyn/QnarBe2/U9ELhUXiZOLp/ZXnayG90qGp1eEvS0Cynod5DT9Do/iPXRzbUO9jAxxV73hWz0/O3Lxv/pKchfk4LreriYkhsAi8h8=
+	t=1723233437; cv=none; b=TFR5WDMjdMj8/LiSnJS0gAxFDQeYhbXs067THPkYrcopzt+sbbs56YZeZpOemZx52eKFGcfxUYuQG2T3454Z7YmR2x1QLWBod5MiPhWoJjZAUEONne8iAO0mkelJDCD+mM4xnZpSc10C7tkQl/vFxCmz7YbpxcVx1Y/Rslt6h1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723233299; c=relaxed/simple;
-	bh=yxgNLA1ilMmp2a3RrpUb2yDEIuTC6qQGtGFDKIQ4FGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hRxLi3O+lY1eUb8b6OHEPSyBqBkQ8v9ZOmzZelvo4a7gTBYw46go2u8O7LkwRauHmYHd/CQsAHlTOgJ2rVcPKVL4wuYtO2IOotAZ5org1ONiBz3J6MNmdwRDbiEL/PIRP7PgSdHxteu/MRK+xdSKHL9TxynS46830mV1vT8fHl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EeYHHjhY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35633C32782;
-	Fri,  9 Aug 2024 19:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723233298;
-	bh=yxgNLA1ilMmp2a3RrpUb2yDEIuTC6qQGtGFDKIQ4FGU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=EeYHHjhYyIZf+kA1NCpAC+AgGWlSp4TXAbDOgVzRkGv7AGPs1aNQ7h4PYFzUra8Xd
-	 w5kEv+iu3L80j/ZYBnvjhVpoMzQ9rmcKkIWy5Oyei4zPRyrAwn+JOfdYBaA7pQHASy
-	 VpBfISBg3C1/VqJAsbLsf2vRrc1qoIdf8TVfXbn/acz4UbAxQEU2rEDqi1BjI/aX5K
-	 bDFy/ALq1lKp10QFZBdmBKlueCJopfEebRH3mhFJMMDw6a8CxSKVlYaPjP6q/armsg
-	 8TRmY7HwKZc93qUk5qezpJTPsAwKqSHl3nht9JVYDI27z6g8GMDSwWfZCbCCz6HiUS
-	 PcXDoHew5zdUA==
-Date: Fri, 9 Aug 2024 14:54:55 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
-	Bharat Kumar Gogada <bharatku@xilinx.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Michal Simek <michal.simek@xilinx.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] PCI: xilinx-nwl: Add phy support
-Message-ID: <20240809195455.GA209828@bhelgaas>
+	s=arc-20240116; t=1723233437; c=relaxed/simple;
+	bh=cSR/I6UIof3PaKmfx3kdogeOf9i1dw1xSHcycpodZeE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=VhUTawov0GtMQbO5pJI/L4fL00P6bNl1YTMqd3RZETCaeZmytouuTQTnnU1iQb2OrR/eG6SQhGSVqaIj3HhCFaHwYdsgm46h5Xx8tA/nZQuW5ZnZmkvX2yNesFgszMz7XaUrbCnxbke8za1IJRlgHy1rvecC/uJu9C/OcY1X6xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=o4EF+JwH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dJ33XtTE; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 6A21E114ACF2;
+	Fri,  9 Aug 2024 15:57:14 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute5.internal (MEProxy); Fri, 09 Aug 2024 15:57:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1723233434;
+	 x=1723319834; bh=XVglR1EpsTfCl2068j+vWAn56jnxT+atokUjXFwiBW8=; b=
+	o4EF+JwH/u+5ce4v+mKsOfoCUdyVdsmmS6AVJXlBsSSVqEJHCSU+1YplH4C0KKqS
+	jorAGjtzdDhMkNiGRL7VLHDEbiGDLcFNJLeKWzkbbNU2IXyhRcQKet/KC7UVreda
+	4cfwx3klqARn6CszkZL9XvseRG6ynExaW6QKsmLvXbyFOIEUqs1gOxhitzk1OiIk
+	fFIe61slsnROKQtKgqc8DDWpo5lAIkisVAn3fZpMruBZbEMtMPrxkvkAPSSnWis9
+	j4nBjHfq73VQV5jpDKFq2LI5GqvMTz055zHmUX9nU6WzXLxhvr1tekRQBFoMxE2X
+	3z02ieq55p7hYC0ICqJIkw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723233434; x=
+	1723319834; bh=XVglR1EpsTfCl2068j+vWAn56jnxT+atokUjXFwiBW8=; b=d
+	J33XtTE5rmfAvVaTlWir4ypVOFY/hXFZJMrXTz197zSkPsEzMiDKuGHWGYJ9eheE
+	oGPPcUjUGbAh28ViaV+KCQjaYt5PMx+S6NiP0jYvIaCTP6TIsb94rhaieY498zIB
+	CoKfzxvE3+n4PWQgvVU6kgE7M7KVPAfrXKSDfVbsMlH3m2dEq2Z3sDr6QL+wXEP9
+	5s2Y8jLuKq/a6ZSOOjgdGwXyV/n2Z94ReDCfPoG4oyU4ZRGWqnuk/b7MZh+xtGfC
+	072E6gkm7BNBPU5Crl5IU3ZjLSiqIqcg7pX3gpZybrFRUN03BSZYjXyf8KhIjW5S
+	P+Faak8l6ygl2Br8XQ5zQ==
+X-ME-Sender: <xms:mnS2ZuXZfPrdTxpmpnzGm6KSPlDIbkSGWUa7kcI0hO_JzenpkW1LAw>
+    <xme:mnS2Zqmg_o8arq30rBePVZUfHXjb8snGczrPwNSD-gPDwZ_p0KYYOSmcdzFNBtkuh
+    C9diaOCCRqlMja3W8g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleeggddugeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthho
+    pegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhhinhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:mnS2ZiaW7rRtz55zlVsdivgG1hcuqHxa89x-Zvo6dy1B7uYGNsTGuQ>
+    <xmx:mnS2ZlV-ZwiMvaK3GE0roP_IarccYSUXFdK2nz-9YriPihqEWQ56wQ>
+    <xmx:mnS2ZonsMPhq0LsjgKG8Er8qhTKTMqi34dEqlgET4Zh9iOpcBxpiHw>
+    <xmx:mnS2Zqdoiv5mX89HwXXK8IlIzB80XuyzvgqPvXv_cbFJYYlosaUuGA>
+    <xmx:mnS2ZmaCmNonnR0aq3XSlebHCgIeUt_z4l21sXUhK9Cuzb0FP2YyC-rk>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 3738619C0079; Fri,  9 Aug 2024 15:57:14 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531161337.864994-1-sean.anderson@linux.dev>
+Date: Fri, 09 Aug 2024 20:56:46 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Arnd Bergmann" <arnd@arndb.de>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Message-Id: <f61081e8-6e48-4161-afa5-ec3a7a58ecd6@app.fastmail.com>
+In-Reply-To: <70f908d0-7cca-40c3-9aaa-c838b02dc4c4@app.fastmail.com>
+References: <20240809-mips-numa-v1-0-568751803bf8@flygoat.com>
+ <20240809-mips-numa-v1-1-568751803bf8@flygoat.com>
+ <70f908d0-7cca-40c3-9aaa-c838b02dc4c4@app.fastmail.com>
+Subject: Re: [PATCH 1/7] arch_numa: Provide platform numa init hook
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 12:13:30PM -0400, Sean Anderson wrote:
-> Add phy subsystem support for the xilinx-nwl PCIe controller. This
-> series also includes several small fixes and improvements.
-> 
-> Changes in v4:
-> - Clarify dt-bindings commit subject/message
-> - Explain likely effects of the off-by-one error
-> - Trim down UBSAN backtrace
-> - Move if to after pci_host_probe
-> - Remove if in err_phy
-> - Fix error path in phy_enable skipping the first phy
-> - Disable phys in reverse order
-> - Use dev_err instead of WARN for errors
-> 
-> Changes in v3:
-> - Document phys property
-> - Expand off-by-one commit message
-> 
-> Changes in v2:
-> - Remove phy-names
-> - Add an example
-> - Get phys by index and not by name
-> 
-> Sean Anderson (7):
->   dt-bindings: pci: xilinx-nwl: Add phys property
->   PCI: xilinx-nwl: Fix off-by-one in IRQ handler
->   PCI: xilinx-nwl: Fix register misspelling
->   PCI: xilinx-nwl: Rate-limit misc interrupt messages
->   PCI: xilinx-nwl: Clean up clock on probe failure/removal
->   PCI: xilinx-nwl: Add phy support
 
-Applied the above to pci/controller/xilinx for v6.12, thanks!
 
-I assume the DTS update below should go via some other tree, but let
-me know if I should pick it up.
+=E5=9C=A82024=E5=B9=B48=E6=9C=889=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
+=8D=888:41=EF=BC=8CArnd Bergmann=E5=86=99=E9=81=93=EF=BC=9A
+> On Fri, Aug 9, 2024, at 21:25, Jiaxun Yang wrote:
+>> For some pre-devicetree systems, NUMA information may come from
+>> platform specific way.
+>>
+>> Provide platform numa init hook to allow platform code kick in
+>> as last resort method to supply NUMA configuration.
+>>
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>
+> Can you do this with a Kconfig symbol in the header instead
+> of a __weak symbol?
 
->   arm64: zynqmp: Add PCIe phys
-> 
->  .../bindings/pci/xlnx,nwl-pcie.yaml           |   7 +
->  .../boot/dts/xilinx/zynqmp-zcu102-revA.dts    |   1 +
->  drivers/pci/controller/pcie-xilinx-nwl.c      | 139 +++++++++++++++---
->  3 files changed, 124 insertions(+), 23 deletions(-)
+Hi Arnd,
+
+Sure, is this some kind of subsystem policy or general recommendation
+applies to the whole tree?
+
+Thanks
+- Jiaxun
+
+>
+>       Arnd
+
+--=20
+- Jiaxun
 
