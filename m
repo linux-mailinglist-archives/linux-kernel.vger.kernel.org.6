@@ -1,162 +1,131 @@
-Return-Path: <linux-kernel+bounces-280424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A573094CA50
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:15:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060FE94CA58
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A161F226AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:15:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DCA51C21703
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA9916D33C;
-	Fri,  9 Aug 2024 06:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39CC16CD38;
+	Fri,  9 Aug 2024 06:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="aTcpD1Xh"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5tO+PfK"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C341316D306
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 06:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5203D6D;
+	Fri,  9 Aug 2024 06:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723184108; cv=none; b=QXicVGG2g03ePSwfLtXo0b0SnsaXUFsj3cI7NxJVLPjRj4r2lvdMKT+fCMamluRtpT9i7AtbXPrhb+o1v6/e9S3WAoBUyxMTnCsqDJnZDqi+yU4lyEWqjk3n6H121XjGQP1NQNub+cC5vRUI8EfOnnOdK8/c5XkEZibhA7gTeh8=
+	t=1723184308; cv=none; b=SBLyNlg1LAE39umk+kACx95i2VXT2dzYm9p2Aot8GbsPNmLekSB/D9I+3Vi2TQFnzp9C4G4eqDUmLYRSZNbW6t4I0TnLfxFB5F7VRXXgH/w9Z1SnDMM63KOg+0qnhxbdiC2l2jd6FaoyCS7jVC9vXwpZn6ySddhJhC5AQhnpczM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723184108; c=relaxed/simple;
-	bh=3SkT6eUaGXULYT8HjMToBBp/o+Af4193MeaW7kUSvRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GAZO3JdaM9ci3vbiduBBtCaFPLMSPf6jd0YtB85t0ZUDsRTs/ziy9PBAV+yCu4DI8TDjW/zoruy6E9qYyqgdBYFo3ULVzllf0c1bVg+hPOZE+H/89R3R34M17lQJTrrmNc2C91pi+v/52lFQcgaQpjJ9U2yJI1GkWzI7V+Ql24g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=aTcpD1Xh; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so2251561a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 23:15:06 -0700 (PDT)
+	s=arc-20240116; t=1723184308; c=relaxed/simple;
+	bh=WipezWcI//xYmmLN8Yphu7qOaIJXxVnkcsxNoQPM6x4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ifZ7VSFsolKynUopuUF7jh46UBeBLEj3QyZHBdLwDAEFN3Uj2O+2L+P7wUvumI3Z7ptztmhJDosUsBJME+3UhJo5GF65PK+6yE7fZVZzpsjnlhYdYn90PXnpdbUqNVIT/DA7/GWzdlu0UVlQyRcyJhFdh4w2WD+3nDKcGeNbSeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K5tO+PfK; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc60c3ead4so14423145ad.0;
+        Thu, 08 Aug 2024 23:18:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1723184105; x=1723788905; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mmo7vCSxtWZSUKBq5QA7U8m3yyWxTBrT8d+vUprsRtU=;
-        b=aTcpD1XhK8cieHrKOqHdHD6Rb4gujfRLaQv5GCkWOOGBfhNct1RGjOZkIZqhykOJQX
-         MLaCsWLO6txktOCmRQFxq/QGZfiAqGsTLCu2HCET/LOg5NX0x89hWPbpGPTL2Ouksxzy
-         osEQMy1QyNm+tn4YRFsk7xRmAIiP4w1f3wxsakDbhh08T3I89/s9henC92ZHfyDYsViv
-         ICtNALTATP/PCYSK138mGjOA1TfXxHUvDGb9IDVp5VDxDn/uEId1gFlJsDQUU9iOR0SN
-         WRhkllltf75UL+xclIOWNoFw5cb/OVLmRZHObybnwVuov6/svAxS0iJcm0nHYzzNVGzT
-         cyyQ==
+        d=gmail.com; s=20230601; t=1723184306; x=1723789106; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hn4xytyMtvgHJ5Ah2WfGo1ECfIMWfwDi1xDdj2h0uHk=;
+        b=K5tO+PfKs3rI2gMRbK4QfsEhu1Dy22kIhZWE0Vgdcdp2mM00nfRc9gBDz3DG6/PGhT
+         o6ILRQI2eDqMIpRdhn6l2oeDzV6zXZPgSG3wTxjnNr0LsJcgzfzUL4RucF0ajgGgo55B
+         lD1tm5K1r0iWcw4e2ea1r5FcbKV+fK5Z/FUpdLySEL7msnotpzhi7SZo7cou0tqmd0Es
+         OPFvcMtGgd0S4WYgcKlSi58mzGvNIIBNQuBakYIFXAmMhJBFDiT/wUxFNVVU79X2+bzb
+         8kewePygaIIluWr3OSHmLw18oCb4y3nCpYZlqEEtloFgMvzy/RGSWS53JmRA4c1fH2/P
+         v4tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723184105; x=1723788905;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mmo7vCSxtWZSUKBq5QA7U8m3yyWxTBrT8d+vUprsRtU=;
-        b=Cp8oVsEFKwZu/OtkLm4v4vL1cWYE80ZXpSYDQ/xdVQuPnhOH9pebJPxRF53CKNNB+4
-         P+0NpwAvg9GHahemyG4geEZlESgCUIlJaV3ilBQqdTEz6UHIdnflR1jRo45eCmhuonb4
-         s4zshQGJ5wqAZpTVpAwjm38X9i/+r/Kozx9am5Li+2WQ7Fb0VMx+EFmJPdC9Y19ZNhoV
-         HE0DVoChNLXPc6//7q0eO3K3iGM8P5CvOkhNXKTBefb3keR7YlXsGPrGkrAmv9Pe+qFO
-         6FfltUR2wcNiRa+BqkEE4EZeN8FVK1wAdIGC4exMYO3WsBchnIRjHRL4irlcTrP1yUwD
-         qdSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUflzj6cTCxAuJcAqKKqJg1fItpPVZJNXnA77HF72z9lc6fmsqBDwuxcff9giJNAZcKnI9+JR56NCNbSYCgU4lSAAuPEuSRcTtTCLtc
-X-Gm-Message-State: AOJu0YyDZr+zkiNxmv9R/mjJ84wfFYht19lxOJR2gcvaBUuE2WSO80JI
-	qCFWeoMPHi4i2Qz7b+AsAjrvPvlQbYBDYMmpPOx35HbKXxj+uXtR3j3ugDIJ8cU=
-X-Google-Smtp-Source: AGHT+IF8i6+WlvJMTlwDRi/ONJBvYLchB60INeIHYhAB+fRORUMHsbgzjq6cXCYdLorWHI62kPbVLQ==
-X-Received: by 2002:a05:6402:2551:b0:5b9:3eaf:5bc with SMTP id 4fb4d7f45d1cf-5bd0a52a794mr351200a12.10.1723184104842;
-        Thu, 08 Aug 2024 23:15:04 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.180])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bcd9d08dcbsm250237a12.71.2024.08.08.23.15.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 23:15:04 -0700 (PDT)
-Message-ID: <13fa9b3f-7124-4851-a1e3-7ea93ac7ba48@tuxon.dev>
-Date: Fri, 9 Aug 2024 09:15:03 +0300
+        d=1e100.net; s=20230601; t=1723184306; x=1723789106;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hn4xytyMtvgHJ5Ah2WfGo1ECfIMWfwDi1xDdj2h0uHk=;
+        b=iwPhEPB19+6aTn6htqZOQ6qyId0FHE+auRkn+0VR10oyqFaMNiAY6OnFOAszEY85WK
+         /ndxN0BYnBeX575vtTMtPiQOzhsPpnVQZWVszeyPZxkFfy19KS4dv746gcBTGAvwrPKI
+         jZqf/Tb98yIoPC6bXpJIQFUc/SwGcuOtNsXa2h2K3qrBQYmrDM9MYFHj3p6SSV5kefVH
+         PtsS9Vl+YYVTOBaRgTZ8xvyrdEajal0gApCizQ7ndEE+hXPmQXwPaqOFPFQ8XCBE7s//
+         Wg3zZH4mtwLt6iAOvld0w+Ik9PhlrdvpyDDzqoXywMKT38puWxsNqJavnVY0tNE+SfyO
+         6spw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5Gs5oDERMxB+294HqMtNXK2kml1mfOYLWNzvR00zWod1hqY9XpU+Dp7qdHxo9/3LRk846AzFX0f5U7JPCY4sGLjUOY+0+AFJhTWbpPVYWgdZLLae6v0mVrTQ6gZ7gK8bhMV+UN+21vg==
+X-Gm-Message-State: AOJu0YwEA0hjGWg+6lCV4Pyir8Lbp2BRh1fttJCcRGfugOGFkX6Lg5/c
+	Mye9SDU5ElKkKY4x8EMsfjU76CULyimEKCmCfJf5O3wO5ZajDqCWATmX9Xl/u1wqRPTewQHIqrR
+	DBTKdDl7GnyPfBA1F2X8cifiykgw=
+X-Google-Smtp-Source: AGHT+IGobOCY4sksQzUL1iMUjBF00lClgU7TaPHu616ANKUsA5rAYdId/CoFbV4LDhwIe1O1tNiLzgag5lvAkeRfn9k=
+X-Received: by 2002:a17:902:ecc3:b0:1fb:6b94:66ee with SMTP id
+ d9443c01a7336-200ae55f2b4mr6620335ad.26.1723184305932; Thu, 08 Aug 2024
+ 23:18:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: microchip: sam9x60: Move i2c address/size to
- dtsi
-Content-Language: en-US
-To: Alexander Dahl <ada@thorsis.com>, devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-arm-kernel@lists.infradead.org
-References: <20240528153109.439407-1-ada@thorsis.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240528153109.439407-1-ada@thorsis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240809142659.5fee6d52@canb.auug.org.au>
+In-Reply-To: <20240809142659.5fee6d52@canb.auug.org.au>
+From: Z qiang <qiang.zhang1211@gmail.com>
+Date: Fri, 9 Aug 2024 14:18:14 +0800
+Message-ID: <CALm+0cX+BywJPFu_KX4MDWDPG77cOTGMDrf9PkSP1-nDMd2Qxw@mail.gmail.com>
+Subject: Re: linux-next: build warnings after merge of the rcu tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+>
+> Hi all,
+>
+> After merging the rcu tree, today's linux-next build (htmldocs) produced
+> these warnings:
+>
+> kernel/rcu/tasks.h:54: warning: Function parameter or struct member 'index' not described in 'rcu_tasks_percpu'
+> kernel/rcu/tasks.h:127: warning: Function parameter or struct member 'rtpcp_array' not described in 'rcu_tasks'
+>
 
+Hello, Stephen Rothwell
 
-On 28.05.2024 18:31, Alexander Dahl wrote:
-> These properties are common for all i2c subnodes, and marked as
-> 'required' in atmel/microchip i2c bindings.  Allows to add i2c device
-> nodes (like an rtc for example) in other .dts files including
-> sam9x60.dtsi without requiring to repeat these properties for each i2c
-> device again and again.
-> 
-> Found on a custom board after adding this in .dts:
-> 
->     &flx5 {
->             atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
->             status = "okay";
-> 
->             i2c5: i2c@600 {
->                     pinctrl-0 = <&pinctrl_flx5_default>;
->                     status = "okay";
-> 
->                     pcf8523: rtc@68 {
->                             compatible = "nxp,pcf8523";
->                             reg = <0x68>;
->                     };
->             };
->     };
-> 
-> … which created a warning like this:
-> 
->     […]:236.4-17: Warning (reg_format): 
-> /ahb/apb/flexcom@f0004000/i2c@600/rtc@68:reg: property has invalid 
-> length (4 bytes) (#address-cells == 2, #size-cells == 1)
->     […]: Warning (pci_device_reg): Failed prerequisite 'reg_format'
->     […]: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
->     […]: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
->     
-> […]/linux-6.6.25/arch/arm/boot/dts/microchip/sam9x60.dtsi:283.19-299.7: 
-> Warning (i2c_bus_bridge): /ahb/apb/flexcom@f0004000/i2c@600: incorrect 
-> #address-cells for I2C bus also defined at […]:228.16-238.4
->     
-> […]/linux-6.6.25/arch/arm/boot/dts/microchip/sam9x60.dtsi:283.19-299.7: 
-> Warning (i2c_bus_bridge): /ahb/apb/flexcom@f0004000/i2c@600: incorrect 
-> #size-cells for I2C bus also defined at […]:228.16-238.4
->     […]: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
->     […]: Warning (i2c_bus_reg): Failed prerequisite 'i2c_bus_bridge'
->     […]: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
->     […]:234.19-237.5: Warning (avoid_default_addr_size): 
-> /ahb/apb/flexcom@f0004000/i2c@600/rtc@68: Relying on default 
-> #address-cells value
->     […]:234.19-237.5: Warning (avoid_default_addr_size): 
-> /ahb/apb/flexcom@f0004000/i2c@600/rtc@68: Relying on default #size-cells
->  value
->     […]: Warning (avoid_unnecessary_addr_size): Failed prerequisite 
-> 'avoid_default_addr_size'
->     […]: Warning (unique_unit_address): Failed prerequisite 
-> 'avoid_default_addr_size'
-> 
-> This probably should have been done with commit 84f23f3284d5 ("ARM: dts:
-> at91: sam9x60: move flexcom definitions") already, where those
-> address-cells and size-cells properties were left in the board .dts
-> files instead of moving them to the dtsi.
-> 
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+Please apply it:
 
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index 4e913e5ca737..52ee77516260 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -34,6 +34,7 @@ typedef void (*postgp_func_t)(struct rcu_tasks *rtp);
+  * @rtp_blkd_tasks: List of tasks blocked as readers.
+  * @rtp_exit_list: List of tasks in the latter portion of do_exit().
+  * @cpu: CPU number corresponding to this entry.
++ * @index: index number corresponding to this entry in rtpcp_array.
+  * @rtpp: Pointer to the rcu_tasks structure.
+  */
+ struct rcu_tasks_percpu {
+@@ -77,6 +78,7 @@ struct rcu_tasks_percpu {
+  * @call_func: This flavor's call_rcu()-equivalent function.
+  * @wait_state: Task state for synchronous grace-period waits
+(default TASK_UNINTERRUPTIBLE).
+  * @rtpcpu: This flavor's rcu_tasks_percpu structure.
++ * @rtpcp_array: Pointer array of used to store rtpcpu pointer.
+  * @percpu_enqueue_shift: Shift down CPU ID this much when enqueuing callbacks.
+  * @percpu_enqueue_lim: Number of per-CPU callback queues in use for enqueuing.
+  * @percpu_dequeue_lim: Number of per-CPU callback queues in use for dequeuing.
 
-Applied to at91-dt, thanks!
+Thanks
+Zqiang
 
-Please note that I've adjusted the commit message to reflect that the props
-you've adjusted are not required anymore in the validation schema.
-
-Thank you,
-Claudiu Beznea
+> Introduced by commit
+>
+>   a79e0e72ffa6 ("rcu-tasks: Fix access non-existent percpu rtpcp variable in rcu_tasks_need_gpcb()")
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
