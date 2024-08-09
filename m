@@ -1,229 +1,251 @@
-Return-Path: <linux-kernel+bounces-280910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C9A94D0C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:02:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8002394D0C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F79FB215F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 301E42859B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA22194AE7;
-	Fri,  9 Aug 2024 13:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2435194A53;
+	Fri,  9 Aug 2024 13:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BMXdtn49"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMazjyhI"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD52E1917F7;
-	Fri,  9 Aug 2024 13:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C4017BBF
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723208530; cv=none; b=pacYoHcGotdcDO3Ne/TXPoX7ysXtWTNmaqeRF3B1WXkXEcoUHr6YxMUVid9VCY+akAwM8aOG/HFdBQcYEzD0YXfBom+4qtNjFmOjOLGtyydH9mS4Aw+mwl2E3EUIA7OGt1wcN2Z/eH9mKvC5/jNIJ2MS5Etntfm8WqKzanyRcHU=
+	t=1723208617; cv=none; b=dRgKDii5WVbP//N7IYitAGKputsa5rvgRhU6dUMsUP9xmcHS/n0XFt9tsNe4MGfurBzHC7dJgLD6/zthwpQmEtpIOOw0emOIuG5tM1nYWwlFUdWDC4hGDBA252/lSUUC65LL0fcTpJv93/9C1Q2udt4jXCvLxp91MyJTEFz7ee8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723208530; c=relaxed/simple;
-	bh=0JIgO0RDJpCIh6eOO85xcuuqnaghxCx0BS/wi4vV7UQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n39pE3eu2YR4CxoioOXCTrnq1NY2RqbIODGTQUbsPHEuKfPIQNynnzdlcPG1KVnrvC1OsRiw2BksTOmuceK0QK6BHaTU683reKd1i9MZyu0iP9PSv1D4ulNUERsEMzGsbob6e/IcYNGSNbMKwvFiL+w8j47/S8bq86FFRQ17g4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BMXdtn49; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 479AkrdB000990;
-	Fri, 9 Aug 2024 13:01:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	V709B2quZWGXt+emlcthA4aQUlL8/vH27lYx4Vkru8k=; b=BMXdtn49PRpSBq3x
-	hef4KLV1ZqJfctxb48amz8AtEmrweU8ZLy5qD91Y2URT5FWLXJrjVtF+i1jV4lRT
-	28uN1G/VXpYGuPpLVvmRDpWOFakpPxxAkl+mTa3L4ac3p6bIQFhTDD0YJfllw+dP
-	XcA/EpH7h4lSkVDHnPCp8+8kKSjs5vwH96nHI78wVYrKXaf1PVpVQROx1NoxzAh9
-	dBXTy5HGHY8OkWaCpO3jKO6Y3h1xqb37rlF/Gl1AhLAqOct8elA+r0pB1o8ZjUCR
-	TFt9rThjZrPFlMprcI4Xc184LYWoUF9HeuOroG5OnR8TPrc7y05cWre2/cLrsg68
-	2z9uDg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vfav5c54-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 13:01:54 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 479D1r9V007903
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 Aug 2024 13:01:53 GMT
-Received: from [10.253.72.235] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
- 06:01:49 -0700
-Message-ID: <a0fe7735-76fd-4a53-9446-5371e341ba17@quicinc.com>
-Date: Fri, 9 Aug 2024 21:01:46 +0800
+	s=arc-20240116; t=1723208617; c=relaxed/simple;
+	bh=3m1pZxPhGzTl9v4qiiLVhdqd2onNcoH4RUH556QZQTA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=K5Em0YkE0TpZKdgyjpHywcGFRwz1sJtuZVJXXoCTcI1/Uhig5Y/u8fi68gm4fOs7k2LGk+wGW5cQgk2gPZnR2iRnSUdH5uX40/9DjjWPVbP2Q1viXycw33ulv4YCHFxoCgkqfO4gOhCNfisnPzu7bEFc+EoozeZ4ZtWLQSxTFUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMazjyhI; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-39b3ffc570bso8703115ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 06:03:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723208614; x=1723813414; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hymiwhg9/2lqr04U1VD6nWvguE8GOLKvEYlC5aK96lU=;
+        b=KMazjyhIVFlm5HzcX3tPb5Hw3qfbJ0KNzcmH3fkb7eMXjF7atXdbjMxCgCI2gy0YZM
+         KwTuBGN8+kCTJLB+tYbgcJ1m1PKNY4cEecL+t5lAet19yx4GP38jPbvXnQ9DmJiqNuph
+         lPX1LSEKabx03v0iIBEoxylyXpxCOqJZbkpdqzpjKL2AUCcssUKA3owT8qEkyOW6d70W
+         +PNrHCYT5aek1Xz1d0JzIdseU5pN6rkhNV156hni61mOJGCGRRxeKXbxozbWfFEEXfB4
+         4h5YmoWUpgRJ3aNDLJdw1mXv97d2FP4dSWbuulaGWa0bG1ELIaghNWkDzFIzP4yii07l
+         syog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723208614; x=1723813414;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hymiwhg9/2lqr04U1VD6nWvguE8GOLKvEYlC5aK96lU=;
+        b=S8P8m4CjXYMVvfcB10+q57DV0WE4IR30unmBuhgqxCZvR/ld0UVqjL1Vs/Sa06zCuB
+         LmJEtbgunbhmPZ35i7StkTGDMmxgqsuFZL67O3RVBhpSAnoT1EopFJoqYiChH6Fj5o7P
+         pKiY3vjMFt54vwVd2J7goH/Oxr4Kr8kPW67Bp1Am6AAbuQcy0yBh+hur9E+YAOOexz8E
+         Qcgtq/76N2TednuNbXfvz1XlVX+VAK7IWugbsIdWdlGLQuNN4+siqlRQ3aL+0Yt304s/
+         4j1RA53y3dqqDQc/wH/NzjITPyNZjr3XsPTz/jzXpv8UljfoNmTHk9Fcsmz46DtEeZsH
+         pZWA==
+X-Gm-Message-State: AOJu0YwUrZ4iFR1hUWjZ+DwibPfZx41pqAjxszmEX9dy5max0oKlsWUJ
+	iU4H/wVuwdUXOjXsR7CT2ErD6vHeAkZ23lgpk1iVl0eTe7BcwrZGRunDxpjc
+X-Google-Smtp-Source: AGHT+IHKddaF01tn//hHIPAtYB+Zx+rxlS39zBB4++n8QO44xz/QUxX1hNUPI25cGKI0VHnfWGzQiQ==
+X-Received: by 2002:a05:6e02:12e8:b0:39b:c39:816c with SMTP id e9e14a558f8ab-39b7a4286f2mr21483655ab.16.1723208613632;
+        Fri, 09 Aug 2024 06:03:33 -0700 (PDT)
+Received: from sarvesh-ROG-Zephyrus-M15 ([49.206.116.12])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb209fddsm2564784b3a.27.2024.08.09.06.03.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 06:03:33 -0700 (PDT)
+Date: Fri, 9 Aug 2024 18:33:30 +0530
+From: Sarveshwaar SS <sarvesh20123@gmail.com>
+To: linux-kernel@vger.kernel.org
+Subject: PATCH: Fix spelling/grammar issues and improve consistency in
+ index.rst
+Message-ID: <ZrYTojrik5kD7vRW@sarvesh-ROG-Zephyrus-M15>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add common PLL clock
- controller for IPQ SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>
-References: <20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com>
- <20240808-qcom_ipq_cmnpll-v1-1-b0631dcbf785@quicinc.com>
- <81524fee-c32c-405b-b63b-d048dde6ae33@kernel.org>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <81524fee-c32c-405b-b63b-d048dde6ae33@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pNmHF6kDYnutGDt0tXCqo5BBii1zfhDE
-X-Proofpoint-GUID: pNmHF6kDYnutGDt0tXCqo5BBii1zfhDE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_10,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- lowpriorityscore=0 mlxscore=0 bulkscore=0 phishscore=0 suspectscore=0
- impostorscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408090095
+Content-Type: multipart/mixed; boundary="r9OBn74I9pmv9M6O"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
 
+--r9OBn74I9pmv9M6O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 8/8/2024 10:38 PM, Krzysztof Kozlowski wrote:
-> On 08/08/2024 16:03, Luo Jie wrote:
->> The common PLL controller provides clocks to networking hardware
->> blocks on Qualcomm IPQ SoC. It receives input clock from the on-chip
->> Wi-Fi, and produces output clocks at fixed rates. These output rates
->> are predetermined, and are unrelated to the input clock rate. The
->> output clocks are supplied to the Ethernet hardware such as PPE
->> (packet process engine) and the externally connected switch or PHY
->> device.
->>
->> The common PLL driver is initially being supported for IPQ9574 SoC.
-> 
-> Drop references to driver and explain the hardware.
-> 
-> Above with the usage of "common" looks like this is all for some common
-> driver, not for particular hardware.
+Please find the attached patch for spelling/grammar issues and improvement in consistency in index.rst.
 
-Understand, will remove this driver reference.
+--r9OBn74I9pmv9M6O
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-Fix-spelling-grammar-issues-and-improve-consistency-.patch"
+Content-Transfer-Encoding: 8bit
 
-> 
->>
->> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->> ---
->>   .../bindings/clock/qcom,ipq-cmn-pll.yaml           | 87 ++++++++++++++++++++++
->>   1 file changed, 87 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq-cmn-pll.yaml
->> new file mode 100644
->> index 000000000000..c45b3a201751
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq-cmn-pll.yaml
-> 
-> Use compatible as filename.
+commit 74415fda4ea86acbd185027356658fb342752a0c
+Author:     Saru2003 <sarvesh20123@gmail.com>
+AuthorDate: Fri Aug 9 18:18:43 2024 +0530
+Commit:     Saru2003 <sarvesh20123@gmail.com>
+CommitDate: Fri Aug 9 18:18:43 2024 +0530
 
-OK.
+    Fix spelling/grammar issues and improve consistency in index.rst
+    
+    Signed-off-by: Saru2003 <sarvesh20123@gmail.com>
+---
+ index.rst | 128 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 128 insertions(+)
+ create mode 100644 index.rst
 
-> 
->> @@ -0,0 +1,87 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,ipq-cmn-pll.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Common PLL Clock Controller on IPQ SoC
->> +
->> +maintainers:
->> +  - Bjorn Andersson <andersson@kernel.org>
->> +  - Luo Jie <quic_luoj@quicinc.com>
->> +
->> +description:
->> +  The common PLL clock controller expects a reference input clock.
->> +  This reference clock is from the on-board Wi-Fi. The CMN PLL
->> +  supplies a number of fixed rate output clocks to the Ethernet
->> +  devices including PPE (packet process engine) and the connected
->> +  switch or PHY device.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - qcom,ipq9574-cmn-pll
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    items:
->> +      - description: The reference clock, the supported clock rates include
->> +          25000000, 31250000, 40000000, 48000000, 50000000 and 96000000 HZ.
->> +      - description: The AHB clock
->> +      - description: The SYS clock
->> +    description:
->> +      The reference clock is the source clock of CMN PLL, which is from the
->> +      Wi-Fi. The AHB and SYS clocks must be enabled to access common PLL
->> +      clock registers.
->> +
->> +  clock-names:
->> +    items:
->> +      - const: ref
->> +      - const: ahb
->> +      - const: sys
->> +
->> +  clock-output-names:
->> +    items:
->> +      - const: ppe-353mhz
->> +      - const: eth0-50mhz
->> +      - const: eth1-50mhz
->> +      - const: eth2-50mhz
->> +      - const: eth-25mhz
-> 
-> Drop entire property. If the names are fixed, what's the point of having
-> it in DTS? There is no.
+diff --git a/index.rst b/index.rst
+new file mode 100644
+index 0000000..bdfd296
+--- /dev/null
++++ b/index.rst
+@@ -0,0 +1,128 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. _linux_doc:
++
++==============================
++The Linux Kernel documentation
++==============================
++
++This is the top level of the kernel's documentation tree.  Kernel
++documentation, like the kernel itself, is very much a work in progress;
++that is especially true as we work to integrate our many scattered
++documents into a coherent whole. Please note that improvements to the documentation are welcome. 
++You can join the linux-doc list at vger.kernel.org if you want to help out.
++
++Working with the development community
++======================================
++
++The essential guides for interacting with the kernel's development
++community and getting your work upstream.
++
++.. toctree::
++   :maxdepth: 1
++
++   Development process <process/development-process>
++   Submitting patches <process/submitting-patches>
++   Code of conduct <process/code-of-conduct>
++   Maintainer handbook <maintainer/index>
++   All development-process docs <process/index>
++
++
++Internal API manuals
++====================
++
++Manuals for use by developers working to interface with the rest of the
++kernel.
++
++.. toctree::
++   :maxdepth: 1
++
++   Core API <core-api/index>
++   Driver APIs <driver-api/index>
++   Subsystems <subsystem-apis>
++   Locking <locking/index>
++
++Development tools and processes
++===============================
++
++Various other manuals with useful information for all kernel developers.
++
++.. toctree::
++   :maxdepth: 1
++
++   Licensing rules <process/license-rules>
++   Writing documentation <doc-guide/index>
++   Development tools <dev-tools/index>
++   Testing guide <dev-tools/testing-overview>
++   Hacking guide <kernel-hacking/index>
++   Tracing <trace/index>
++   Fault injection <fault-injection/index>
++   Livepatching <livepatch/index>
++   Rust <rust/index>
++
++
++User-oriented documentation
++===========================
++
++The following manuals are written for *users* of the kernel — those who are
++trying to get it to work optimally on a given system and application
++developers seeking information on the kernel's user-space APIs.
++
++.. toctree::
++   :maxdepth: 1
++
++   Administration <admin-guide/index>
++   Build system <kbuild/index>
++   Reporting issues <admin-guide/reporting-issues.rst>
++   Userspace tools <tools/index>
++   Userspace API <userspace-api/index>
++
++See also: the `Linux man pages <https://www.kernel.org/doc/man-pages/>`_,
++which are kept separately from the kernel's own documentation.
++
++Firmware-related documentation
++==============================
++The following holds information on the kernel's expectations regarding the
++platform firmwares.
++
++.. toctree::
++   :maxdepth: 1
++
++   Firmware <firmware-guide/index>
++   Firmware and Devicetree <devicetree/index>
++
++
++Architecture-specific documentation
++===================================
++
++.. toctree::
++   :maxdepth: 2
++
++   CPU architectures <arch/index>
++
++
++Other documentation
++===================
++
++There are several unsorted documents that don't seem to fit on other parts
++of the documentation body, or may require some adjustments and/or conversion
++to reStructuredText format, or are simply too old.
++
++.. toctree::
++   :maxdepth: 1
++
++   Unsorted documentation <staging/index>
++
++
++Translations
++============
++
++.. toctree::
++   :maxdepth: 2
++
++   Translations <translations/index>
++
++Indices and tables
++==================
++
++* :ref:`genindex`
+-- 
+2.43.0
 
-We had added the output names here for the reasons below. Can you please
-let us know your suggestion whether keeping these here is fine?
 
-1.) These output clocks are used as input reference clocks to other
-consumer blocks. For example, an on-board Ethernet PHY device may be
-wired to receive a specific clock from the above output clocks as
-reference clock input, and hence the PHY's DTS node would need to
-reference a particular index in this output clock array.
-
-Without these output clocks being made available in this DTS, the PHY
-driver in above case would not know the clock specifier to access the
-handle for the desired input clock.
-
-2.) One of the suggestions from the internal code review with Linaro was
-to name the output clocks specifically based on rate and destination
-(Ex: 'ppe-353mhz' for fixed rate 353 MHZ output clock connected to
-Packet Process Engine block), so that the dt-bindings describe the
-input/output clocks clearly.
-
-> 
-> Best regards,
-> Krzysztof
-> 
-
+--r9OBn74I9pmv9M6O--
 
