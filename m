@@ -1,215 +1,113 @@
-Return-Path: <linux-kernel+bounces-281234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D65B94D4AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:27:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 572EB94D4B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BCBBB20C8F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01F921F22C2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CA41990D9;
-	Fri,  9 Aug 2024 16:27:22 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31B41990C4;
+	Fri,  9 Aug 2024 16:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u7tQ+cFA"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C956A159582
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F753182B3;
+	Fri,  9 Aug 2024 16:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723220841; cv=none; b=Vne0+NBqFfNt8vkfvuZzXNW2HcesIxodDWvkQn3wC1rGxcNEK6GAJLpw5Aff0ANG+CIgCMM/czRSg+wX7w+LfRc+zgEzat05KHG2y52+rJkz+Jzx3SqVoUkGxoUHRLgkZtu+KMzfrTW1jDMCRLuXsz2fmx0H/mfnfB/b1uTKMls=
+	t=1723220919; cv=none; b=CTro/EFfnwas+YKSTCcTAS6S/NyoHdZvdoSN6emFbaY2beCPh+6ijsu3NeFuP0E4fyC6FArrp35XzN33gEjCSfDuig5hy+sTPXRbPo5wpdaRDvmHRlfOe87Ovr1bTufZX4O9wgmRGm5KUC7qmnPgy61RD6Q+rv/kmSYv4066FBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723220841; c=relaxed/simple;
-	bh=KmT9S6YnjdLEKW1Btglbp6RJ7wlkQVh3zDswSu2nS0M=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QFg9y1d8ouWOivZZl8QmwIq14Uf3169qqWeOOn8Kw6eNrDyneoCO9rHMiLQJOgyNokZ71al4niLvJBDP8y0nsMROga03T/zTm/uyNtk/X5bHNpxfGmYD7JBDT4NAv1azYoF3dNOiMT2BeRXRdSRcETOSP3pFPj3WjqY9jDq8omI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39b331c43deso30785015ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:27:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723220839; x=1723825639;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8IoWvVemz5fRuzPVv+MJCIjU8SsZaaUaeY1frfcjMFQ=;
-        b=EToFH0R9+DKXLvI71WcoZ0j5ZtIbfEcWpOgNXO+ZVcRrf0xOYQPf+1bwNJ52+hDbzO
-         jCAsLagprGWJWTYwOFFPiKF3cNSVRq3woFgnX58G7sKgb7zs4B0yTT0yPtklckO/ZfNf
-         /NY82IZcz2oCs75wo1V5WHs9IbK7WE2M8kOEERHWaeieTVKRAAmKp6JMsRS6rkS7smwp
-         tSaRAa5z4yz3XoymFgWAiCQWI08a804BfMz+mQIYKVubmKmLCAiog/Q8+b9mN0FXcUIP
-         5xllv2bRnSNdmvy9X9ZUinQCzXscih+QbeC3zlpgTZZom+hULlfpmBFalzhCOzkVwazH
-         3oYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfUjxSCIi2hJR2GCccewg/oTt6OSlZJw6DTPCBVWnzGax3m3JrOUpO5oSLp7awDTvefw77iGGYEWxHEt/vj6BUdG/ZEW7ASLD7s4wN
-X-Gm-Message-State: AOJu0YwQS3CEThAzl1MPGlNEmGWSlg18qQknjg7bjU8OClq5tY9ImVgp
-	XduUQcYhZBQg+jlXb66DcPAF6IqQQBWKLvFi+ARWwK+nBAo2SRC4DeDxDXCN6M7GpvmCDW6JXy8
-	Ll6JOVQr2/47h1WtFNyWa20haxu5QRy1gF2zvdHv0RKam051hLINZc+Q=
-X-Google-Smtp-Source: AGHT+IEYPB0NcLXMa8rZp5vk5+VX7bqLAv2iGd98rafYrCk99iBVDa/r7lQb6Wz/oPTUODYIbP4PyAhPUr/VcZ6kZANB8tIckK79
+	s=arc-20240116; t=1723220919; c=relaxed/simple;
+	bh=gxsH5xLxbmWG2slYJ2FaXvLF3FGiDx1keyZxsof9LQE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PF3r9Tw2owPu6MqjYtRnA/oWzTpbNYOGHQP+2/JwbafNJiBOU9Y2QnGqbjjCFnGFWnDzaBu5h5qveJdPEne7fM8OeOouUgXo/3IKq9nuGXY5JzZLx7K63JNMkOuCkq/ZpRNp9SsXAd+38erJc0yazHy0yTlJ/abaLPQvE19Cew0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=u7tQ+cFA; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 479GSUjU027484;
+	Fri, 9 Aug 2024 11:28:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723220910;
+	bh=mKXJZ2HttY0CuAP2torj/XbsITXI8iaQFG3lN3uFhdY=;
+	h=From:To:CC:Subject:Date;
+	b=u7tQ+cFABGkIqif6APTsFLVJc//gaVYvJEszmUuJjg8PvDc54T+IwlVW5wN6gloga
+	 BiV3Dyd8JqY5PH/hbXWDLxE2z4R/ylp7RnIY+lV+zr9qYX8AwyEBzueTZC/vA9qea1
+	 70RnG78A0MnAgTWuI/n8DkFAhQr8Vw+9n4eUgc1s=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 479GSUbD013371
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 9 Aug 2024 11:28:30 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 9
+ Aug 2024 11:28:29 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 9 Aug 2024 11:28:29 -0500
+Received: from localhost (uda0499903.dhcp.ti.com [128.247.81.191])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 479GSToU003247;
+	Fri, 9 Aug 2024 11:28:29 -0500
+From: Jared McArthur <j-mcarthur@ti.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Nishanth Menon <nm@ti.com>, Jared
+ McArthur <j-mcarthur@ti.com>
+Subject: [PATCH 0/2] arm64: dts: ti: k3-am62p/j722s: Add gpio-reserved-ranges for main_gpio1
+Date: Fri, 9 Aug 2024 11:28:26 -0500
+Message-ID: <20240809162828.1945821-1-j-mcarthur@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a86:b0:381:c14:70cf with SMTP id
- e9e14a558f8ab-39b7484a7famr1619015ab.1.1723220839017; Fri, 09 Aug 2024
- 09:27:19 -0700 (PDT)
-Date: Fri, 09 Aug 2024 09:27:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fabef5061f429db7@google.com>
-Subject: [syzbot] [net?] [s390?] general protection fault in smc_diag_dump_proto
-From: syzbot <syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com>
-To: agordeev@linux.ibm.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
-	edumazet@google.com, guwen@linux.alibaba.com, jaka@linux.ibm.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+The current main_gpio1 gpio controllers for the am62p and
+j722s have holes that are not obvious to a user. Add the
+gpio-reserved-ranges property to the davinci-gpio properties list and
+add gpio-reserved-ranges to the am62p and j722s device trees. Prevents
+users from trying to access gpios that don't exist.
 
-HEAD commit:    d7e78951a8b8 Merge tag 'net-6.11-rc0' of git://git.kernel...
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=173cfd3d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a6f4e2cb79bdcd45
-dashboard link: https://syzkaller.appspot.com/bug?extid=f69bfae0a4eb29976e44
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15900a9d980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1008b645980000
+The holes are taken from the am62p datasheet [1] (Table 5-24) and
+am67x datasheet [2] (Table 5-27).
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6b22bae2c3c1/disk-d7e78951.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/37db35e4bb64/vmlinux-d7e78951.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3e489cf2c28e/bzImage-d7e78951.xz
+Patches depend on patch: dt-bindings: gpio: gpio-davinci: Add the
+gpio-reserved-ranges property [3]
 
-Bisection is inconclusive: the first bad commit could be any of:
+[1] https://www.ti.com/lit/ds/symlink/am62p.pdf
+[2] https://www.ti.com/lit/ds/symlink/am67.pdf
+[3] https://lore.kernel.org/all/20240809154638.394091-2-j-mcarthur@ti.com/
 
-5bcd9a0a5995 wifi: brcm80211: remove unused structs
-f29dcae96ec8 Merge tag 'rtw-next-2024-06-04' of https://github.com/pkshih/rtw
+Best,
+Jared McArthur
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17196f19980000
+Jared McArthur (2):
+  arm64: dts: ti: k3-am62p: Add gpio-reserved-ranges for main_gpio1
+  arm64: dts: ti: k3-j722s: Add gpio-reserved-ranges for main_gpio1
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
+ arch/arm64/boot/dts/ti/k3-am62p-main.dtsi | 1 +
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 1 +
+ 2 files changed, 2 insertions(+)
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 1 PID: 6338 Comm: syz-executor175 Not tainted 6.10.0-syzkaller-09703-gd7e78951a8b8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
-RIP: 0010:__smc_diag_dump net/smc/smc_diag.c:89 [inline]
-RIP: 0010:smc_diag_dump_proto+0x709/0x3270 net/smc/smc_diag.c:217
-Code: 08 48 89 df e8 f8 0d 9d f6 48 8b 44 24 28 4c 8d 68 14 48 8b 1b 48 83 c3 0e 48 89 d8 48 c1 e8 03 49 bf 00 00 00 00 00 fc ff df <42> 0f b6 04 38 84 c0 0f 85 46 1b 00 00 0f b7 1b 66 c1 c3 08 4c 89
-RSP: 0018:ffffc90009d56b00 EFLAGS: 00010203
-RAX: 0000000000000001 RBX: 000000000000000e RCX: ffff88807c439e00
-RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
-RBP: ffffc90009d56f90 R08: ffffffff8990c562 R09: 1ffff11005a1084b
-R10: dffffc0000000000 R11: ffffed1005a1084c R12: 1ffff11005a108e0
-R13: ffff88801f600014 R14: ffff88802d084200 R15: dffffc0000000000
-FS:  00007f92fcb0b6c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f92fcb0bd58 CR3: 000000002290e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- smc_diag_dump+0x59/0xa0 net/smc/smc_diag.c:236
- netlink_dump+0x647/0xd80 net/netlink/af_netlink.c:2325
- __netlink_dump_start+0x59f/0x780 net/netlink/af_netlink.c:2440
- netlink_dump_start include/linux/netlink.h:339 [inline]
- smc_diag_handler_dump+0x1ab/0x250 net/smc/smc_diag.c:251
- sock_diag_rcv_msg+0x3dc/0x5f0
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- sock_sendmsg+0x134/0x200 net/socket.c:768
- splice_to_socket+0xa13/0x10b0 fs/splice.c:889
- do_splice_from fs/splice.c:941 [inline]
- do_splice+0xd77/0x1900 fs/splice.c:1354
- __do_splice fs/splice.c:1436 [inline]
- __do_sys_splice fs/splice.c:1652 [inline]
- __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f92fcb924d9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f92fcb0b218 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
-RAX: ffffffffffffffda RBX: 00007f92fcb0b6c0 RCX: 00007f92fcb924d9
-RDX: 0000000000000005 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00007f92fcc1c348 R08: 0000000080000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f92fcc1c340
-R13: 00007f92fcbe9074 R14: 00007ffd7bd61c20 R15: 00007ffd7bd61d08
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
-RIP: 0010:__smc_diag_dump net/smc/smc_diag.c:89 [inline]
-RIP: 0010:smc_diag_dump_proto+0x709/0x3270 net/smc/smc_diag.c:217
-Code: 08 48 89 df e8 f8 0d 9d f6 48 8b 44 24 28 4c 8d 68 14 48 8b 1b 48 83 c3 0e 48 89 d8 48 c1 e8 03 49 bf 00 00 00 00 00 fc ff df <42> 0f b6 04 38 84 c0 0f 85 46 1b 00 00 0f b7 1b 66 c1 c3 08 4c 89
-RSP: 0018:ffffc90009d56b00 EFLAGS: 00010203
-RAX: 0000000000000001 RBX: 000000000000000e RCX: ffff88807c439e00
-RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
-RBP: ffffc90009d56f90 R08: ffffffff8990c562 R09: 1ffff11005a1084b
-R10: dffffc0000000000 R11: ffffed1005a1084c R12: 1ffff11005a108e0
-R13: ffff88801f600014 R14: ffff88802d084200 R15: dffffc0000000000
-FS:  00007f92fcb0b6c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f92fcb0bd58 CR3: 000000002290e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	08 48 89             	or     %cl,-0x77(%rax)
-   3:	df e8                	fucomip %st(0),%st
-   5:	f8                   	clc
-   6:	0d 9d f6 48 8b       	or     $0x8b48f69d,%eax
-   b:	44 24 28             	rex.R and $0x28,%al
-   e:	4c 8d 68 14          	lea    0x14(%rax),%r13
-  12:	48 8b 1b             	mov    (%rbx),%rbx
-  15:	48 83 c3 0e          	add    $0xe,%rbx
-  19:	48 89 d8             	mov    %rbx,%rax
-  1c:	48 c1 e8 03          	shr    $0x3,%rax
-  20:	49 bf 00 00 00 00 00 	movabs $0xdffffc0000000000,%r15
-  27:	fc ff df
-* 2a:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 46 1b 00 00    	jne    0x1b7d
-  37:	0f b7 1b             	movzwl (%rbx),%ebx
-  3a:	66 c1 c3 08          	rol    $0x8,%bx
-  3e:	4c                   	rex.WR
-  3f:	89                   	.byte 0x89
+-- 
+2.34.1
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
