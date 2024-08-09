@@ -1,308 +1,195 @@
-Return-Path: <linux-kernel+bounces-280326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4D694C8BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:06:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20D794C8D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F00F1C2152B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:06:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A139E1F21D25
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D431862F;
-	Fri,  9 Aug 2024 03:06:20 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962FF18638;
+	Fri,  9 Aug 2024 03:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kZwhbg4X"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012015.outbound.protection.outlook.com [52.101.66.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988181C2E;
-	Fri,  9 Aug 2024 03:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723172779; cv=none; b=iQBBigwkNeEMbVuiX8cd/mMCrlveo2Vedk3kg0rv0cpH+cbm3YJ4GgwdKWLKJzFy1Ejr7T0gtdJNt/0biqTZQZYX63RWYkms30SwiUVk4iLfPnZ9PEaLMXOzKsN12UHq4PRRVI7e4fYQevnZwoqP2HgnseHboEMB3pP7N5MraNE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723172779; c=relaxed/simple;
-	bh=SGW48SGLK0+Dv8hPvGeThhJnAsjtPTcFzXBNDTShiCU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=D/3Gigtq9nLOdBcbrQxKvlbygt2Inqsv3vLbthoXa/rqrBqHU58HStxdlH5+Y1TWwDlAT40BbZh4gXRn6IpggYe8/4uadd8UEdraYM2ijDxLRnJ6sAM3qwL6znWXLzjYnmuZHOjWWW1VzfMC1GbgTRzxXbHcJucQm/nkQ8K5tFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wg81f3GKRz4f3jrl;
-	Fri,  9 Aug 2024 11:05:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DD6C51A0359;
-	Fri,  9 Aug 2024 11:06:11 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.127.227])
-	by APP4 (Coremail) with SMTP id gCh0CgCXv4Wbh7VmVZiwBA--.27808S4;
-	Fri, 09 Aug 2024 11:06:07 +0800 (CST)
-From: Zhihao Cheng <chengzhihao@huaweicloud.com>
-To: mjguzik@gmail.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	error27@gmail.com,
-	tahsin@google.com,
-	rydercoding@hotmail.com,
-	jack@suse.cz,
-	hch@infradead.org,
-	andreas.dilger@intel.com,
-	tytso@mit.edu,
-	richard@nod.at
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	chengzhihao1@huawei.com,
-	yi.zhang@huawei.com,
-	wangzhaolong1@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v2] vfs: Don't evict inode under the inode lru traversing context
-Date: Fri,  9 Aug 2024 11:16:28 +0800
-Message-Id: <20240809031628.1069873-1-chengzhihao@huaweicloud.com>
-X-Mailer: git-send-email 2.31.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8180E28E7;
+	Fri,  9 Aug 2024 03:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723173635; cv=fail; b=ZkPdvAzVQdHCyptzTCmvbRs7gEJMvtSV3/ad/jjguht/sFDnyl11aZLwlakm9L6whxuxeENTpZEKXTCV05MXhXeAbPzdEI3WxJFR7Dd3+NDpppNav4wAS8wWUnypBMqtRw7Nx+kpFtfbwGw81AI24RrPDLh8xar8iEdxTXA31LM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723173635; c=relaxed/simple;
+	bh=lGHaED3yLDSzrp/L8G7H5MX3ioUAZrfDOEjVX6Pi5/Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RtBljx5ON5ZGdtbg6cVj2obCAvmvfb7xzXhUdoc8hsdvx5tNBVZjjHBPeUlhsKDtYsPls8QSqEZgc3QP4Y3PY6m08EcmoNOXrzR3BcKqJpbchXShtTr+qZRwkqEYCsLIVgFA1iImL9K/h998GTf7KxWSLAufw5fp82f2cRxPnXk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kZwhbg4X; arc=fail smtp.client-ip=52.101.66.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SgxG4OPWpdaIVGbiwJYBd3IE7LJCGOXPqOoVPZyOFIWluDLqOkDRFywaumYhemrmWbvVCGSpG6/q++g1F2Ebd00GHEB2MkSG49fhlifg+uG6mrVoNtF9o/gba7bcsu1D1S2XJSdVUMY8duxrYGC4zgZaK5nRr+fDYwgz7QLV01tg8SEVHfyK1Cha6eDUjBPEtOltVIUz52ZkGYu550VNi/CE+NBlr9KHTQjsTQ/2jU9flSttNAwUf8QWOwaC3Mco8hf3FUBIdk/nY1Pkp6jc5ksO4nru8ApBQ6zUmIvmQgrEPpsnXTg5O7KnikejMdZITVlAD6Jhr2o2HA8XgFNXqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lGHaED3yLDSzrp/L8G7H5MX3ioUAZrfDOEjVX6Pi5/Q=;
+ b=JLoVGphndt1czVJoiQybYE05aDDVhna5jfU2QYGsRD5kSMhXrkHRbBxdjhrNcmmBlJbDOfVVBEUGdh5zBDCid8soNkUw5oLpVDNpiNW29pPvfsk4av0qo4YqG35XA0KpmB/U8qw8n9KFe8Z1b/cdRIPj5rwiO32i3lMNmF6Ow1Ss4Tu4okfWqCBicktW9eWX/bAjJvWLlSQZ9BrK0wItGqKfTjK1y4DAheFDR22Xq+Y8Xt9mme7I5LNFrThIJSXeEcoykBWuRaZLBQ45m6ibPvtBmG5s7mGD9xBExpS1nWGKYPTpXSloNrq+9PuYyos638+LKoXRdxA1DoNYdZ0gwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lGHaED3yLDSzrp/L8G7H5MX3ioUAZrfDOEjVX6Pi5/Q=;
+ b=kZwhbg4XO1Uolj2H6zCyDrBmxcz8mP54rUL+c7uozia+4ifZNNmWWNMBD9wPwLL59Wt9EU/zYj2QZYhc18SYxdsqNUgFSKApLSM0ukJEQWOcExlSGZvdsqoff7Lop5aZ7Y1eTbfulgf3LGoEdfvliYEpvdjFsQX3pl6FEw2Y/gx8kNpgr4egzv0u2u6mKbv6AIyzJvRyb1KACjNVVas/CAH6hmPcLuWRgAx8WQ1dvic0aabqJt41rIj3Q6iOV3PvAbseyuLaQMl0LhCTxvNS/Mh3u7hNutLKSvKtBzpCnZUmml/X6Y6PU6ygGK4ypiyR0MO4CSq9/WIHZxjUlxHIMw==
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
+ by DU4PR04MB10719.eurprd04.prod.outlook.com (2603:10a6:10:580::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14; Fri, 9 Aug
+ 2024 03:19:51 +0000
+Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
+ ([fe80::b1b9:faa9:901b:c197%5]) with mapi id 15.20.7849.014; Fri, 9 Aug 2024
+ 03:19:51 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Stephen Boyd <sboyd@kernel.org>, Luca Ceresoli
+	<luca.ceresoli@bootlin.com>, Michael Turquette <mturquette@baylibre.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v4 2/2] clk: clk-conf: support assigned-clock-rates-u64
+Thread-Topic: [PATCH v4 2/2] clk: clk-conf: support assigned-clock-rates-u64
+Thread-Index: AQHa5mkyoyhloa/0yEC8gnGLDGMVHLIdylsAgAB9KyA=
+Date: Fri, 9 Aug 2024 03:19:51 +0000
+Message-ID:
+ <DB9PR04MB84614604CD9292D2626FDA6888BA2@DB9PR04MB8461.eurprd04.prod.outlook.com>
+References: <20240804-clk-u64-v4-0-8e55569f39a4@nxp.com>
+ <20240804-clk-u64-v4-2-8e55569f39a4@nxp.com>
+ <6bc191590c1a5b7fa3ef991d6b7e327b.sboyd@kernel.org>
+In-Reply-To: <6bc191590c1a5b7fa3ef991d6b7e327b.sboyd@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB9PR04MB8461:EE_|DU4PR04MB10719:EE_
+x-ms-office365-filtering-correlation-id: 9bd669ad-fe21-464d-e02e-08dcb82221a3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?ZFQ3b2p0NGJtVjR0aG5FU2ZvZXRyZXFXcXNlMDN3NlgxcnVvdFZEMTM2K2RP?=
+ =?utf-8?B?c080NkxIS2lWNk9vWjdkV2tFcDlrTy9WbndpQjN4ZW81aWYwNGViTC9EV1Ns?=
+ =?utf-8?B?TlFzRWpwVGJPa0taUGNmbng1a0E1cHpDNmM0T1R3MEdpeFJnMnNRMTlFT1pN?=
+ =?utf-8?B?UEVJRnkxRFYrSzRNQTdKTVdNTDNIdFZWVkF4dDFJY29uYi9WR3k4c1dGbXhV?=
+ =?utf-8?B?djJQTk8zWi9SaXc1M3FMTUdnUTY0cnN4blF6R09jTEk3NEdCSCtZRTdoc1RE?=
+ =?utf-8?B?Z2ZaT1VMdVQwc0ppOVZETzcrSEhhaEtYRUQwUHA3S3ZBODJONWhHV2E2UTRr?=
+ =?utf-8?B?cEtjNzdkeFlOWlpIcGpDaThaTXJMR0thTGtCMGxqOC95MkYyTHpPdFlTQTFr?=
+ =?utf-8?B?SzRPb2FMQVNSZU5nbDFMbXFzMEpWc0cvTEEzNUtVY0c3ZWw1UTI0NWQycmhu?=
+ =?utf-8?B?azVsZmxmN0FRMUs3TkZiK3ZFZWh3ajVqMjQ5c3laM2F3U3dyVDErVWRON1Bi?=
+ =?utf-8?B?SllIaktRUmlQVFhHc0tLSnlwT21TZ0N2ZUFENUtkN0VwY1I4TXl6RUtyZ05q?=
+ =?utf-8?B?U0I2K3NYWWF2V3l1elZFS1dMeEg3NFdLbmNqOFZaRzg4Q2w5MzAzNW9QcDRw?=
+ =?utf-8?B?UkRhdnJTK3FjM3NoQWJad3ZacjdJN3dtcHVoZW5IdkI3MXF3aTJrdmxUWnlm?=
+ =?utf-8?B?MWJiQXBpQW1xMmxMWHBXR0lXNFNpM0wwZndlYmVRMUNzWk5TR2NXdC9GQmE0?=
+ =?utf-8?B?NWIwc2xZbnhQaXl1RzZVckIwRUdMMDRiYmJJVHdxWUpWem1WVzVqYzU1S0cy?=
+ =?utf-8?B?bnFrY25rdFp6SjZVWGhJUTlieHBUVXpCMHYvYWxwL3VSdGZRbjhiRUhiRzFJ?=
+ =?utf-8?B?NE9Ra3FVNlhjYW4xRHhIQS82Y2htamU1aHVCZVFMWXNvOE1BckRLWm53bDJN?=
+ =?utf-8?B?SXJ1cEU0c1JtenYyRkFrb1RObyszMElBdFlDRzlzWVhUc1AvQ1R1OWF1aTd1?=
+ =?utf-8?B?d0FpV25KcUhBQ1lPUSt0QU9SSW1RTWxNWVFNbmh2dzVLWXhtZE9wNVR5NW9N?=
+ =?utf-8?B?a1V6REFuZ0xPVTk5Znd1UllHNmpCa25LSlhRRkhCQ0tWdk4wL2E1eGM0N0lj?=
+ =?utf-8?B?WmhuUW5LeVhHcHZsZ2dRT2ozT3dSSFNpMTY3aVpUK1ErZDkvNk5RbWVrSFZT?=
+ =?utf-8?B?aFR3eXVmZGVCM3ZIZ1RiT0RNOFE1bXQvK3BYdGNOYm52amlOeFNlWGdJUTcz?=
+ =?utf-8?B?bG00Z1pUR3JRbHpPTGxsVjZ1RTkvQjNpZmk5VzVwK1B3bG1GeTdjRjBvbGxj?=
+ =?utf-8?B?TzgvUHhsTUlCckZQa2paZHJOU0Y0YnZCaDFsWWtJMUF1Z0loR09sWjdiNzYr?=
+ =?utf-8?B?ajRTaUNXaG1sYTJpNEJueWZRYXhQN2UyMXg1Wkp3ckVIVnB3OHZoK01aS2Fy?=
+ =?utf-8?B?aWVhWUd0WTRBTWVvcGE3SjMxUTczT2JCa1J6MHNJOFJjV3FibGVXeXBIbWhD?=
+ =?utf-8?B?WVNSR2RuR09VSmtNeUVYV3kzMXJFc2ZjREhNVDdmZWdWYy9XeEhSRzJCUDl1?=
+ =?utf-8?B?aXBpNTY2SkhKYUZrMVUzWFZLYS94Z0ROY3I3NC9sTW53ejcrWWE1WVBMRE5L?=
+ =?utf-8?B?MWZXcGk5bUc4dmdMcDFrWTRrNkFsOXlwcmVuNC9Sb0cxNHVxSWhDaHY1cHd4?=
+ =?utf-8?B?cENod09ZS3o5UmF1RzJoa1BKZFFrS1p5SERQVVZ3bmduRUZVQnQ5cUhOMGJs?=
+ =?utf-8?B?djZSZHVNNW9rRVdzUC9DNVlNdFVnUGgwVEJ2ZkpCdkk0ZjVOd1hJMTNIeGFk?=
+ =?utf-8?B?Kyt3OGc1SVNNam51cjBReXNHQmRkYXJuVGxpQ1pLbVNmMTlobitNYUMyMSsx?=
+ =?utf-8?B?YzZXVFJLMXpFNEx0UHFUd3F0OXF6UlNCWGQxYWppSzZoWGc9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?cVpVenFFYkdZeEErd0JSQkVoem1FRUtseWdUMFdqM2tSYm9rbk50L3J4eWZW?=
+ =?utf-8?B?b3Y0TjFlWUgzMm9ubnJ3K0VYNXlCT0I2clVVdThyR1ovZGhQQURTTUcxZXJO?=
+ =?utf-8?B?V2hLWnYzV1lneFNOYmpPVDRpcll1RzQ4RlZBSWdBVThvMEgrUlU3Z0M2TFA5?=
+ =?utf-8?B?OWhDQ2RuZmVwS20veDl3dVFRUUJjeWVnWWFWR055VEdTZFdzRDhnaVVtVTI4?=
+ =?utf-8?B?azlJNCsvTTRUUGFOWTdpai9jY0xYUGxsVFNnV3hwa1ZCSlFVSkVIcythc1Rs?=
+ =?utf-8?B?aSthSWpjNmg2WS93NWNxdWJ6ZExiVjFOeFZFOEFkOUlWcE5mVWptV2Q2ak9n?=
+ =?utf-8?B?cmVuM3FFNmc4VHdKK04zbDBQN3h4K3p2Q2h6T29CTUQ0NHVDa25jVlhFamxy?=
+ =?utf-8?B?RnNNTGgwb0lGQU1EZERtbjEvd3BDY0R5YS9jbnZRclV2bThJWU1kMzBleHFK?=
+ =?utf-8?B?QjB0Z1hNRjBKemtpeG5uM01lSTZQb1hLQkxneFBtdEpkMXc4Ym1RVW5RK2Zz?=
+ =?utf-8?B?d0NnQlVWemptcHZOcUtZZ2RXWFdzcngzU1pwdGJTYXZyaHRDVGR5S05xMEh0?=
+ =?utf-8?B?aE8zaGlzY0E4cm1jTHltbjNlaGx2aERNNnVKdVFtMFFOZ3VYdWJHUHZoOWgr?=
+ =?utf-8?B?ZkZFUE9iK0tlU2JkYmNlUTlURnZCeW9kRENGa0JxWE9MUCtmelYrZHcyTmMz?=
+ =?utf-8?B?SlIyWmE4QWZtVTRUYlduK0F5M0p5dHBld1JURHZxREhsaCtFa2g4aW1HbG1x?=
+ =?utf-8?B?L1hBR2VHOG9JU1hMS0FWZW5GY0I2cHhkN2dOc3JtNTZ4dElaRzBCSEwraDNN?=
+ =?utf-8?B?RnVGUTVrUHJPYm9PZWlPcTNxM1VtK2FzY0lybGQ0cm9Eald4SzVObW5Lb29a?=
+ =?utf-8?B?VGFMOVZpejZrN01oMWNmSENldTNURUltUXlxcXBCYjQ0RkJOMlhtY1lPemdP?=
+ =?utf-8?B?bXBMd05ibU1FeHdIMHNLT1NMV28zWE9wYkNEUElMSU1KRlZNNXBWK0tUVTlW?=
+ =?utf-8?B?UXB4Yk5SdEwrRTh1RUtUNlhML0pXWHVJZVZrNjN2WDdYK0czTTJ3MGFZcXdK?=
+ =?utf-8?B?a2FJNmZySlpFdkZ1em5GMXVxcnl4eWlhRFVDYTJPaitOVjNaeENraXZ4Vjhi?=
+ =?utf-8?B?UjZtTXRQcjYydzdmaTVvNUNCT2p2OGF6WGNqS0I0QS9FOTIwaTltOW0zaUM5?=
+ =?utf-8?B?bnZ3ZGkraEFKS3diVmovdFhYTnZRSzk1Z0J4WkNSdUM3d1hqLzhxUGNlRFUx?=
+ =?utf-8?B?TlU3aVZ5N1V1MjU1ZmM5bmo2MlhtQ3I0R3Y4c3kvQUQvMWVzMlN3R092Zkx3?=
+ =?utf-8?B?V2s1ZnBaZGRvVGU1RWJOa1VLQ3hSQStLRUd2cWpZWFJtdjVPL3c5bWZhcUxk?=
+ =?utf-8?B?TDJoNTl2MzdXQnNSNDZOWnc1b3hTV1Z0Zm5jT2VrbzNvTnUrdlQyRGIya2N2?=
+ =?utf-8?B?MjFSSjQyN2tPYWtNc1hRV3hibjNuaGgvMGZnRk4yVDk5OHlZRmNPcjZtS3g5?=
+ =?utf-8?B?U0NybWZDWmorazRRTzJzejZnazl6UmgxbUhpbDd3ZzRYamMzNjkvZzZWTzdv?=
+ =?utf-8?B?cmhrR2xyemQ5NXlOV0l4bGdUVjF2QVgwaUtIeGhMWmFmN0NET0JBQ2REbUVz?=
+ =?utf-8?B?Y0FycjlYalhGL0dpVFpabno4NGJCekdJcU5yOGJ2NEFtdmVLc2plL2FiT3E5?=
+ =?utf-8?B?L0hsUkxpOUF6MU96anRReHNEL21mMmc3b0hzYmdaekpzdE5pRUtQQ1VoVFh3?=
+ =?utf-8?B?UnFNUXhVUnByNWdseTVoTTBSc1Vra0ducURvWlpHQS9xcFd4cnlVNXdVVnlp?=
+ =?utf-8?B?RzhWYktVcW1PVks4bC9pNElCN3NIUHIreG1Ka0dJbmZVdTVNQUpqczRlSkww?=
+ =?utf-8?B?cjUxdW1peUhvMVJqVzNta1FaRzJtcjdxdVN3ZDhLTnRxYzdzWklBbWdwUnl2?=
+ =?utf-8?B?dWhGWUlnT2prRGM1eVhFRGFiYlZ0SDZvVE5acjRkampiUklCSkoyMzN3alNu?=
+ =?utf-8?B?RFNFL051OU1FanlCd3lLVXRtYXlaeXBKcmUzendQZVBTcmVxdWJhdVhUdG8y?=
+ =?utf-8?B?dG1Nei9JTE9EUmN0d3VsV01yaHBVaVUzY3BNeTRvQk0wNHptT09wMzZIY3Y0?=
+ =?utf-8?Q?pkc8=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXv4Wbh7VmVZiwBA--.27808S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF45Ar1DtrWDJw48JF48Crg_yoW3CF47pF
-	W7WFyrCrs5XFy0g3yvqr48WF1jga1kGr47try5Wr18AFn8JrySqF12qr43ZFy5trWkZ390
-	qF4UGrn7uw42y3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
-	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU0bAw3UUUUU==
-X-CM-SenderInfo: xfkh0wx2klxt3r6k3tpzhluzxrxghudrp/
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9bd669ad-fe21-464d-e02e-08dcb82221a3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 03:19:51.1955
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kWU5IQl1KNjfsdGHmh8izoU0p0gxcd8GnclFgPmPstIwNxtLoYL/QvR9JJD3iyAwoAwFjfl+AXL0z84VKDu5FA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10719
 
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-
-The inode reclaiming process(See function prune_icache_sb) collects all
-reclaimable inodes and mark them with I_FREEING flag at first, at that
-time, other processes will be stuck if they try getting these inodes
-(See function find_inode_fast), then the reclaiming process destroy the
-inodes by function dispose_list(). Some filesystems(eg. ext4 with
-ea_inode feature, ubifs with xattr) may do inode lookup in the inode
-evicting callback function, if the inode lookup is operated under the
-inode lru traversing context, deadlock problems may happen.
-
-Case 1: In function ext4_evict_inode(), the ea inode lookup could happen
-        if ea_inode feature is enabled, the lookup process will be stuck
-	under the evicting context like this:
-
- 1. File A has inode i_reg and an ea inode i_ea
- 2. getfattr(A, xattr_buf) // i_ea is added into lru // lru->i_ea
- 3. Then, following three processes running like this:
-
-    PA                              PB
- echo 2 > /proc/sys/vm/drop_caches
-  shrink_slab
-   prune_dcache_sb
-   // i_reg is added into lru, lru->i_ea->i_reg
-   prune_icache_sb
-    list_lru_walk_one
-     inode_lru_isolate
-      i_ea->i_state |= I_FREEING // set inode state
-     inode_lru_isolate
-      __iget(i_reg)
-      spin_unlock(&i_reg->i_lock)
-      spin_unlock(lru_lock)
-                                     rm file A
-                                      i_reg->nlink = 0
-      iput(i_reg) // i_reg->nlink is 0, do evict
-       ext4_evict_inode
-        ext4_xattr_delete_inode
-         ext4_xattr_inode_dec_ref_all
-          ext4_xattr_inode_iget
-           ext4_iget(i_ea->i_ino)
-            iget_locked
-             find_inode_fast
-              __wait_on_freeing_inode(i_ea) ----→ AA deadlock
-    dispose_list // cannot be executed by prune_icache_sb
-     wake_up_bit(&i_ea->i_state)
-
-Case 2: In deleted inode writing function ubifs_jnl_write_inode(), file
-        deleting process holds BASEHD's wbuf->io_mutex while getting the
-	xattr inode, which could race with inode reclaiming process(The
-        reclaiming process could try locking BASEHD's wbuf->io_mutex in
-	inode evicting function), then an ABBA deadlock problem would
-	happen as following:
-
- 1. File A has inode ia and a xattr(with inode ixa), regular file B has
-    inode ib and a xattr.
- 2. getfattr(A, xattr_buf) // ixa is added into lru // lru->ixa
- 3. Then, following three processes running like this:
-
-        PA                PB                        PC
-                echo 2 > /proc/sys/vm/drop_caches
-                 shrink_slab
-                  prune_dcache_sb
-                  // ib and ia are added into lru, lru->ixa->ib->ia
-                  prune_icache_sb
-                   list_lru_walk_one
-                    inode_lru_isolate
-                     ixa->i_state |= I_FREEING // set inode state
-                    inode_lru_isolate
-                     __iget(ib)
-                     spin_unlock(&ib->i_lock)
-                     spin_unlock(lru_lock)
-                                                   rm file B
-                                                    ib->nlink = 0
- rm file A
-  iput(ia)
-   ubifs_evict_inode(ia)
-    ubifs_jnl_delete_inode(ia)
-     ubifs_jnl_write_inode(ia)
-      make_reservation(BASEHD) // Lock wbuf->io_mutex
-      ubifs_iget(ixa->i_ino)
-       iget_locked
-        find_inode_fast
-         __wait_on_freeing_inode(ixa)
-          |          iput(ib) // ib->nlink is 0, do evict
-          |           ubifs_evict_inode
-          |            ubifs_jnl_delete_inode(ib)
-          ↓             ubifs_jnl_write_inode
-     ABBA deadlock ←-----make_reservation(BASEHD)
-                   dispose_list // cannot be executed by prune_icache_sb
-                    wake_up_bit(&ixa->i_state)
-
-Fix the possible deadlock by using new inode state flag I_LRU_ISOLATING
-to pin the inode in memory while inode_lru_isolate() reclaims its pages
-instead of using ordinary inode reference. This way inode deletion
-cannot be triggered from inode_lru_isolate() thus avoiding the deadlock.
-evict() is made to wait for I_LRU_ISOLATING to be cleared before
-proceeding with inode cleanup.
-
-Link: https://lore.kernel.org/all/37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com/
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=219022
-Fixes: e50e5129f384 ("ext4: xattr-in-inode support")
-Fixes: 7959cf3a7506 ("ubifs: journal: Handle xattrs like files")
-Cc: stable@vger.kernel.org
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-Suggested-by: Jan Kara <jack@suse.cz>
-Suggested-by: Mateusz Guzik <mjguzik@gmail.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- v1->v2: Update commit message according to Jan's suggestion.
-         Rename functions, inode_lru_isolating -> inode_pin_lru_isolating,
-	 inode_lru_finish_isolating -> inode_unpin_lru_isolating.
-	 Add lockdep_assert is inode_pin_lru_isolating().
-	 Wait once for flag I_LRU_ISOLATING in
-	 inode_wait_for_lru_isolating().
-	 ** Add smp_mb() in inode_unpin_lru_isolating() to avoid forever
-	 waiting by out-of-order execution, just like unlock_new_inode()
-	 and inode_sync_complete() do. **
- fs/inode.c         | 39 +++++++++++++++++++++++++++++++++++++--
- include/linux/fs.h |  5 +++++
- 2 files changed, 42 insertions(+), 2 deletions(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 86670941884b..bbeef7323cdd 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -488,6 +488,39 @@ static void inode_lru_list_del(struct inode *inode)
- 		this_cpu_dec(nr_unused);
- }
- 
-+static void inode_pin_lru_isolating(struct inode *inode)
-+{
-+	lockdep_assert_held(&inode->i_lock);
-+	BUG_ON(inode->i_state & (I_LRU_ISOLATING | I_FREEING | I_WILL_FREE));
-+	inode->i_state |= I_LRU_ISOLATING;
-+}
-+
-+static void inode_unpin_lru_isolating(struct inode *inode)
-+{
-+	spin_lock(&inode->i_lock);
-+	BUG_ON(!(inode->i_state & I_LRU_ISOLATING));
-+	inode->i_state &= ~I_LRU_ISOLATING;
-+	smp_mb();
-+	wake_up_bit(&inode->i_state, __I_LRU_ISOLATING);
-+	spin_unlock(&inode->i_lock);
-+}
-+
-+static void inode_wait_for_lru_isolating(struct inode *inode)
-+{
-+	spin_lock(&inode->i_lock);
-+	if (inode->i_state & I_LRU_ISOLATING) {
-+		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
-+		wait_queue_head_t *wqh;
-+
-+		wqh = bit_waitqueue(&inode->i_state, __I_LRU_ISOLATING);
-+		spin_unlock(&inode->i_lock);
-+		__wait_on_bit(wqh, &wq, bit_wait, TASK_UNINTERRUPTIBLE);
-+		spin_lock(&inode->i_lock);
-+		BUG_ON(inode->i_state & I_LRU_ISOLATING);
-+	}
-+	spin_unlock(&inode->i_lock);
-+}
-+
- /**
-  * inode_sb_list_add - add inode to the superblock list of inodes
-  * @inode: inode to add
-@@ -657,6 +690,8 @@ static void evict(struct inode *inode)
- 
- 	inode_sb_list_del(inode);
- 
-+	inode_wait_for_lru_isolating(inode);
-+
- 	/*
- 	 * Wait for flusher thread to be done with the inode so that filesystem
- 	 * does not start destroying it while writeback is still running. Since
-@@ -855,7 +890,7 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
- 	 * be under pressure before the cache inside the highmem zone.
- 	 */
- 	if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) {
--		__iget(inode);
-+		inode_pin_lru_isolating(inode);
- 		spin_unlock(&inode->i_lock);
- 		spin_unlock(lru_lock);
- 		if (remove_inode_buffers(inode)) {
-@@ -867,7 +902,7 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
- 				__count_vm_events(PGINODESTEAL, reap);
- 			mm_account_reclaimed_pages(reap);
- 		}
--		iput(inode);
-+		inode_unpin_lru_isolating(inode);
- 		spin_lock(lru_lock);
- 		return LRU_RETRY;
- 	}
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd34b5755c0b..fb0426f349fc 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2392,6 +2392,9 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
-  *
-  * I_PINNING_FSCACHE_WB	Inode is pinning an fscache object for writeback.
-  *
-+ * I_LRU_ISOLATING	Inode is pinned being isolated from LRU without holding
-+ *			i_count.
-+ *
-  * Q: What is the difference between I_WILL_FREE and I_FREEING?
-  */
- #define I_DIRTY_SYNC		(1 << 0)
-@@ -2415,6 +2418,8 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
- #define I_DONTCACHE		(1 << 16)
- #define I_SYNC_QUEUED		(1 << 17)
- #define I_PINNING_NETFS_WB	(1 << 18)
-+#define __I_LRU_ISOLATING	19
-+#define I_LRU_ISOLATING		(1 << __I_LRU_ISOLATING)
- 
- #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
- #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
--- 
-2.39.2
-
+SGkgU3RlcGhlbiwNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY0IDIvMl0gY2xrOiBjbGstY29u
+Zjogc3VwcG9ydCBhc3NpZ25lZC1jbG9jay1yYXRlcy0NCj4gdTY0DQo+IA0KPiBRdW90aW5nIFBl
+bmcgRmFuIChPU1MpICgyMDI0LTA4LTA0IDA1OjMyOjU2KQ0KPiA+IEZyb206IFBlbmcgRmFuIDxw
+ZW5nLmZhbkBueHAuY29tPg0KPiA+DQo+ID4gaS5NWDk1IFN5c3RlbSBNYW5hZ2VtZW50IENvbnRy
+b2wgRmlybXdhcmUoU0NNSSkgbWFuYWdlcyB0aGUNCj4gY2xvY2sNCj4gPiBmdW5jdGlvbiwgaXQg
+ZXhwb3NlcyBQTEwgVkNPIHdoaWNoIGNvdWxkIHN1cHBvcnQgdXAgdG8gNUdIeiByYXRlDQo+IHRo
+YXQNCj4gPiBleGNlZWRzIFVJTlQzMl9NQVguIFNvIGFkZCBhc3NpZ25lZC1jbG9jay1yYXRlcy11
+NjQgc3VwcG9ydCB0bw0KPiBzZXQNCj4gPiByYXRlIHRoYXQgZXhjZWVkcyBVSU5UMzJfTUFYLg0K
+PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+ID4g
+LS0tDQo+ID4gIGRyaXZlcnMvY2xrL2Nsay1jb25mLmMgfCA0Mg0KPiA+ICsrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKystLS0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMzcgaW5z
+ZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCj4gDQo+IFRoYW5rcy4gSSdkIGxpa2UgdG8gaGF2
+ZSBhIERUIG92ZXJsYXkgS1VuaXQgdGVzdCBmb3IgdGhpcyBhcyB3ZWxsLg0KPiBFaXRoZXIgeW91
+IGNhbiB3cml0ZSBpdCwgb3IgSSdsbCB3cml0ZSBpdCBuZXh0IHdlZWsuDQoNCkkgYW0gbmV3IGlu
+IHdyaXRpbmcgS1VuaXQgdGVzdC4gSWYgeW91IHdvdWxkIGRvIHRoYXQsIHRoYXQgaXMNCkdyZWF0
+LiBUaGFua3MgaW4gYWR2YW5jZS4NCg0KVGhhbmtzLA0KUGVuZy4NCg==
 
