@@ -1,197 +1,165 @@
-Return-Path: <linux-kernel+bounces-281180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC9EA94D404
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:55:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C873D94D409
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90118282381
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:55:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06ED21C20A09
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A42198E71;
-	Fri,  9 Aug 2024 15:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA24198E7A;
+	Fri,  9 Aug 2024 15:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TpQ+b9OA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pkQ39kvl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TpQ+b9OA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pkQ39kvl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WgcvN8n5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E102168B8;
-	Fri,  9 Aug 2024 15:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754E7168B8;
+	Fri,  9 Aug 2024 15:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723218917; cv=none; b=Q3/va6wfCC2kTuUSlZEMcdMJFyMnPc0EKAKV9Dq+9ucKXEDgHTIgnSxEUq0HpkbEcVFz/Lwd6s+dMvMl+n1PByrgcsXeHeCO+pDCtEOXZQqGs5sSg1Ot8ufr2hMW2kv+lCt+bEBcxHXnH+R5OEIej4vpGOBEKggqD1PqwpvXC5k=
+	t=1723218963; cv=none; b=qT0uX0b4ZyCpLJIMPNezadvcy0nI7baGIx9AdT0u9nJWT9AlLSBdZ07Epy/BS2SlfUILxEtzceHwuguYV7rmTEXGPzZYsj8HgvJuE07Gor0OOG/AwWtEZKXmC/bMlmzdKQAqb0ykq1F4ous7dyfMT29pa4/chMcmVutxObN1Jiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723218917; c=relaxed/simple;
-	bh=K998szMebXw+wiKMQrAzHK1blG5e7UVa5gHFuMwOoEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oFPLaJ13xIBzewf2pgOUbN/4/K2yL7U6X2rU/TGKCwOIE9OzUDH0DLbqCqnOO2LQFV2GnaSdhUMA8dFUn/SUZwWZ3GpyD6wY8fLpF4T7xA2k42wTy0xH+Z869VhkAV2LYLg685SU8Ea2U4qduqMRiOehjCBKW/G7KsrdE7JIpGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TpQ+b9OA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pkQ39kvl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TpQ+b9OA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pkQ39kvl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6DB281FF9B;
-	Fri,  9 Aug 2024 15:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723218913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e85hNo6ni4A5wp+GZGW17HDhN1ds6aKku/DzMvBRVxk=;
-	b=TpQ+b9OAoa5ikzu6Ij7UDN2K8PR77z4mqW1+q+SLqnHwHpQyCgw1/cF4/E650o5+mMUukX
-	WJvutI3vqhYgewclGZazlMhpHS0yXQXtg8BoFk1J5W6SNnYLeidxklrNiKoOoi4pc6TLOv
-	MOD0rvtQcLoH6e3+aA7D6ovow4Dfm7Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723218913;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e85hNo6ni4A5wp+GZGW17HDhN1ds6aKku/DzMvBRVxk=;
-	b=pkQ39kvlWu8uxmH6YmEzl4Yrdni4UOPnjpYDTsTrZr6JvvwE4iltxCuiIBXGH6uzI3P8pY
-	feMNvvTTqWbI0lDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723218913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e85hNo6ni4A5wp+GZGW17HDhN1ds6aKku/DzMvBRVxk=;
-	b=TpQ+b9OAoa5ikzu6Ij7UDN2K8PR77z4mqW1+q+SLqnHwHpQyCgw1/cF4/E650o5+mMUukX
-	WJvutI3vqhYgewclGZazlMhpHS0yXQXtg8BoFk1J5W6SNnYLeidxklrNiKoOoi4pc6TLOv
-	MOD0rvtQcLoH6e3+aA7D6ovow4Dfm7Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723218913;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e85hNo6ni4A5wp+GZGW17HDhN1ds6aKku/DzMvBRVxk=;
-	b=pkQ39kvlWu8uxmH6YmEzl4Yrdni4UOPnjpYDTsTrZr6JvvwE4iltxCuiIBXGH6uzI3P8pY
-	feMNvvTTqWbI0lDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4EE6813A7D;
-	Fri,  9 Aug 2024 15:55:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rZi+EuE7tmYrLAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 09 Aug 2024 15:55:13 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A55C4A084B; Fri,  9 Aug 2024 17:55:08 +0200 (CEST)
-Date: Fri, 9 Aug 2024 17:55:08 +0200
-From: Jan Kara <jack@suse.cz>
-To: Stephen Zhang <starzhangzsd@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, tytso@mit.edu, jack@suse.com,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	zhangshida@kylinos.cn, Baolin Liu <liubaolin@kylinos.cn>
-Subject: Re: [RFC PATCH] jbd2: fix a potential assertion failure due to
- improperly dirtied buffer
-Message-ID: <20240809155508.taxgdkwuvsbg3i2k@quack3>
-References: <20240720062356.2522658-1-zhangshida@kylinos.cn>
- <20240806134023.rm2ggd7swopryqci@quack3>
- <CANubcdV32L71ARCznZgKdrt0BmSyOYwW50L17zP=TG4PO2MH4Q@mail.gmail.com>
- <20240807120659.y6cpxas5g3mze2rr@quack3>
- <CANubcdVHbbq=WsTXU4EWAUPUby5--CLe5rf1GPzNPv+Y0a9VzQ@mail.gmail.com>
+	s=arc-20240116; t=1723218963; c=relaxed/simple;
+	bh=OnZ/XKvESL+KOqBHUml6q9GBQ4whpdRFBOLSr7/OVvY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=NlwRdSCvLJr47akMX515cFA4R8wceAd7zE/k+7J8Nb2UEdUciq/KchiaBR//8swlHhoqa3JwuMYeWg8scbgrKrkuUAuAW/pBcBA0DN2c8HC1V1fCVnhgQwLiHF0QOl8TK84Eugu1Qh72njcPAcOttYnyxC/xHKmZ1YM2zSJtCnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WgcvN8n5; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723218962; x=1754754962;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=OnZ/XKvESL+KOqBHUml6q9GBQ4whpdRFBOLSr7/OVvY=;
+  b=WgcvN8n5niV8vkwTvdmxy5TGzFULXv0dH/OWueSXbu633YHC7pmBcxQq
+   tcG/YD+qE7X1+zlWH/qbWfdEHfTXMKsrTxcOK4yCuLv03vay78f0O0z9r
+   Bn1ch925bTvx56ULYmtcJ2QNY/ZR9L192KG7kXiSlLpT46wQAvGD8+F5B
+   yx4al8+wE6sy2o2jKaRSCsIokV4qReTQTM/sHqlcoubnJ7SY9oWoxwLWr
+   wEpXGftAFltlObZbZ6mbPV27YyAV95kC/KGiOQVIcNdUfypg8Z1LEIKiR
+   Cuf2wMLzcI9YMSdhy1D3mLiXJKRgiiCK/pkMCItbDuD9yUrUzWOsm1Ees
+   w==;
+X-CSE-ConnectionGUID: vnAbsRHZTQeHW9izcxw4EA==
+X-CSE-MsgGUID: ubDrxqUXTDeHqj7vsOB3RQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21056342"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="21056342"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:56:01 -0700
+X-CSE-ConnectionGUID: ztPBdIXkTmKV62b/0Z5qhg==
+X-CSE-MsgGUID: qpvnwexlT4qMwbZTiOK9YA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="62243814"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.119])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:55:59 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 9 Aug 2024 18:55:56 +0300 (EEST)
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 1/2] PCI: Clear LBMS on resume to avoid Target Speed
+ quirk
+In-Reply-To: <alpine.DEB.2.21.2408091327390.61955@angie.orcam.me.uk>
+Message-ID: <42afa3ee-4429-90e4-9e98-18a0d30c0a3c@linux.intel.com>
+References: <20240129184354.GA470131@bhelgaas> <aa2d1c4e-9961-d54a-00c7-ddf8e858a9b0@linux.intel.com> <alpine.DEB.2.21.2401301537070.15781@angie.orcam.me.uk> <a7ff7695-77c5-cf5a-812a-e24b716c3842@linux.intel.com> <d5f14b8f-f935-5d5e-e098-f2e78a2766c6@linux.intel.com>
+ <alpine.DEB.2.21.2402011800320.15781@angie.orcam.me.uk> <d9f6efe3-3e99-0e4b-0d1c-5dc3442c2419@linux.intel.com> <a0b070b7-14ce-7cc5-4e6c-6e15f3fcab75@linux.intel.com> <alpine.DEB.2.21.2408091327390.61955@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANubcdVHbbq=WsTXU4EWAUPUby5--CLe5rf1GPzNPv+Y0a9VzQ@mail.gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Type: multipart/mixed; boundary="8323328-969202318-1723218956=:1401"
 
-On Thu 08-08-24 11:05:26, Stephen Zhang wrote:
-> Jan Kara <jack@suse.cz> 于2024年8月7日周三 20:07写道：
-> > So I agree with your analysis now. But still don't like adding hacks to
-> > jbd2 to acommodate for this oddity of data=journal mode. Since we already
-> > have ext4_block_write_begin() implementation anyway, we should be able to
-> > tweak it to do the right thing for data=journal mode inodes...
-> >
-> > So we could replace uses of __block_write_begin() with
-> > ext4_block_write_begin() and then call do_journal_get_write_access() in
-> > ext4_block_write_begin() for inodes with journalled data after the buffer
-> > is mapped with get_block().
-> >
-> > From the part:
-> >                                 if (folio_test_uptodate(folio)) {
-> >                                         clear_buffer_new(bh);
-> >                                         set_buffer_uptodate(bh);
-> >                                         mark_buffer_dirty(bh);
-> >                                         continue;
-> >                                 }
-> >
-> > we can actually remove the clear_buffer_new() and mark_buffer_dirty() bits
-> > because they will be done by block_commit_write() or
-> > folio_zero_new_buffers() and they are superfluous and somewhat odd here
-> > anyway.
-> >
-> > And the call to folio_zero_new_buffers() from ext4_block_write_begin()
-> > needs to call ext4_journalled_zero_new_buffers() for inodes where data is
-> > journalled.
-> >
-> > Will you try to implement this or should I look into it?
-> >
-> 
-> Yeah, Thank you for giving me the opportunity to work on something truly
-> meaningful. All I can do until now is some small cleanups. And doing cleanups
-> all the time is annoyable to the maintainers and frustrating to me. I
-> will try my best.
-> 
-> So basically, we should:
-> 1.Trace the user data dirting in ext4_block_write_begin().
-> 2.Replace the uncontrollable __block_write_begin with ext4_block_write_begin().
-> 3.Remove some superfluous things.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Yes. In the first patch, I'd convert all uses of __block_write_begin() to
-ext4_block_write_begin(). In the second patch I'd replace
-folio_zero_new_buffers() with ext4_journalled_zero_new_buffers() if inode
-has journalled data (with explanation to avoid unexpected dirtying). In the
-third patch I'd remove the clear_buffer_new() and mark_buffer_dirty()
-mentioned above with explanation that either folio_zero_new_buffers() or
-block_commit_write() take care of dirtying the buffer properly. Thanks for
-working on this!
+--8323328-969202318-1723218956=:1401
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On Fri, 9 Aug 2024, Maciej W. Rozycki wrote:
+
+> On Wed, 7 Feb 2024, Ilpo J=C3=A4rvinen wrote:
+>=20
+> > > > > Because if it is constantly picking another speed, it would mean =
+you get=20
+> > > > > LBMS set over and over again, no? If that happens 34-35 times per=
+ second,=20
+> > > > > it should be set already again when we get into that quirk becaus=
+e there=20
+> > > > > was some wait before it gets called.
+> > > >=20
+> > > >  I'll see if I can experiment with the hardware over the next coupl=
+e of=20
+> > > > days and come back with my findings.
+> > >=20
+> > > Okay thanks.
+> >=20
+> > One point I'd be very interested to know if the link actually comes up=
+=20
+> > successfully (even if briefly) because this has large implications whet=
+her=20
+> > the quirk can actually be invoked from the bandwidth controller code.
+>=20
+>  That was more than a couple of days, sorry about it.  I have now been=20
+> able to verify that LBMS keeps getting reasserted over and over again as=
+=20
+> the device goes through the infinite link training dance.  I haven't ever=
+=20
+> observed the link to become active in the course.  Here's a short log of=
+=20
+> commands repeatedly entered at the command prompt:
+>=20
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5011
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5812
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5811
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5812
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5011
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5811
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5811
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5812
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5812
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5811
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5811
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5812
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5812
+> # setpci -s 02:03.0 CAP_EXP+0x12.W
+> 5811
+>=20
+> As you can see the Link Training bit oscillates as I previously reported=
+=20
+> and noted in the introduction to `pcie_failed_link_retrain', and also the=
+=20
+> Current Link Speed field flips between 2.5GT/s and 5GT/s.
+
+Okay, thanks for testing. I suppose that test wasn't done in a busy loop=20
+(it might not be easy capture very short link up state if there was any=20
+such period when testing it by manually launching that command a few=20
+times)?
+
+
+--=20
+ i.
+
+--8323328-969202318-1723218956=:1401--
 
