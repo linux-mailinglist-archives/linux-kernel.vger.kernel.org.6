@@ -1,1082 +1,276 @@
-Return-Path: <linux-kernel+bounces-280584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D4E94CC71
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:40:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB20194CC74
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE0E2846B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68A8B1F23B0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B30818E047;
-	Fri,  9 Aug 2024 08:40:22 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F9418E03F;
+	Fri,  9 Aug 2024 08:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h08vZr7L"
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0631667ED
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B5612FB34
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723192821; cv=none; b=JHICuFKPLsFZWAFqGuO0g/kfxa0EE0n78eCEnw3Kul2ZzmV3sYK1GYnuMOB+lVsYzdKWaoD74riBjA2H2B/5zI2o7wosaElwfl/ULmwcCm1RLt6WH1eF5ZZcZkYOxfUezHewZ0U//ZrY/CoPHSWPoLREvEJJAWT1A1aAAr2uotI=
+	t=1723192862; cv=none; b=WazaOFB8P0UTQakOQHhGff7uZHAVglDPQBT4rhDNZTvnfw/puuqB7kFky3ByAhPikHgPGHq3NN220QkYmMr0F0GPCXszjCB0yo6LZQVnpGo34UEHOaiM7btY5w1jHbZUju59g0bIDhI4kwJF4MuK+fOR2SGR7DMm29limme5FJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723192821; c=relaxed/simple;
-	bh=YeWcsVhAI5IbdKfKAJpi4EoOtTWyC+GL4v1/V0VR1+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S6zhot1eXHRDPRlS8VD8m0P127OrK0zYC/Z8Ve3obGGOxUil3ZYYS6JnJCxp0J+4ieKc47tMyqlPFjN6g3hqnmTIZ5xExu4rVXYhW9zNvYHJpbP/WfHtHrUULWb3suSkoGag0zILUGtNYXxkoBu/F0+Ve3UH/tFxVHhYxGMKtb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1scLAJ-000893-Jy; Fri, 09 Aug 2024 10:40:03 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1scLAI-005ci6-6r; Fri, 09 Aug 2024 10:40:02 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1scLAI-00AjyP-0H;
-	Fri, 09 Aug 2024 10:40:02 +0200
-Date: Fri, 9 Aug 2024 10:40:02 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: David Jander <david@protonic.nl>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] arm: dts: st: Add MECIO1 and MECT1S board variants
-Message-ID: <ZrXV4l0a6vGhSzaI@pengutronix.de>
-References: <20240807072842.3249106-1-o.rempel@pengutronix.de>
- <20240807072842.3249106-2-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1723192862; c=relaxed/simple;
+	bh=UN7ixbZhRlDBmb6HTMbkMAQYkQQhhK0A/IkamTzrHTk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fDLweNZGXeBEQqGdH8XR2ps5DrpcSbizwjp/dc79jyvnO57TtMWvQF+SHNQe5AztVGc70TIFprjvcGu70J3E8+i5+i/l8lgvZceBWtIzeKlpKLEETeI8LM5qqU5rmTKofBsRvqlAwJ0yZO/cLIHja3lFYAYA2rv2w4mdvtXN/oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h08vZr7L; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-822eb80f6e4so643035241.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:41:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723192860; x=1723797660; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yyhhln8LdxGbaSUipVO6QkS3X9KbQAWUVQTlCes9cL8=;
+        b=h08vZr7Ltw9cbghQ6O4DWiGkxkJpJctOUv64qpyIAfKYp7/9cUQyqTBfhpByehRqo9
+         OWrHlGOctgHRvl27sG7vZRzcNP9g030m0VLMyrxeA7+arytlVOuQqFBjBOyT27oRJsp0
+         qPhk+2o8yZQ8AQrs0syoBEJmaomoxFWgdqBldW32uqGqXy807aVwaBY/CVXeo8Kn7WnX
+         9+CCj+JjMfLxW81g7PcmzUBxxcrx3PHnDub++q0WePp6gB2stDaQavWdHCdoJ+D1FZgW
+         7s3bWznpOg8SPki0W4mILN39ATHIGKOBNWamNrE3drTTO2DmFYd0qiPxbl8lo3McAS2A
+         eMRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723192860; x=1723797660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yyhhln8LdxGbaSUipVO6QkS3X9KbQAWUVQTlCes9cL8=;
+        b=dX+rzwsZ7TUVBPPKXs0XRHTLO+reyo0m69WmMnez4AZ6e58JZGeqmr5+u+FX/MZHoQ
+         7C0isHh8CDx1Y+tnDC1HzhE86gwZf7qvDWgxvquT3BJc3tW6MmoUJRglwK94uUF+vwY1
+         PuNiPjZQcpTTGNoNoMUdEztkZsV5/pWuuwfN9xq6AzYNJFYSYpaL7TRonwch/4F/mH9t
+         2ZHBRqqKFkxv+S5AUI8kq2bjAOtqpwUzAf4qmyKR4GOIcqjNajuZFCU1EHWjGzbSeqgV
+         65N7Qs7yf1GLqrnQBuOA3tl/GMiLBFzyfajyPVOYRqHneTUAF8d5qy6Fm+aSoDr7LmU8
+         hUyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyqaM0GHqk/9kyMfpe9pVJmsRXIipLIiITQ/N9nRxBJ9KBdCnSMTDaPHMnJLqvl4knt9XVOjpfqS/I9wgzNaJcb02w1iIldDY30QL9
+X-Gm-Message-State: AOJu0Yx/LibisywYdch3gOnUcPBWwwTpcpXSEbz+tO1hZ2mZo0DMRQgl
+	BBUKlcvSp4IXuDD4mM7qz7aqgNZK8XkNcjsr1dVhFmBPQgwwDE//OmE5uK70WagUQF5OKlDvwXL
+	6EcGjwEk/mXDwJSovTksKdz+J/S8=
+X-Google-Smtp-Source: AGHT+IH/PjpVOgaurrZku4yroPYgH0aUSlgZSBJCHBBnT+awGDYLpvy48+rB/QrEdWv7nteIAriYF9GQNGA3/4JhK9M=
+X-Received: by 2002:a05:6102:442b:b0:493:c95b:4c15 with SMTP id
+ ada2fe7eead31-495d821662cmr923877137.0.1723192859270; Fri, 09 Aug 2024
+ 01:40:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240807072842.3249106-2-o.rempel@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240808010457.228753-1-21cnbao@gmail.com> <20240808010457.228753-2-21cnbao@gmail.com>
+ <e9f82fd8-e1da-49ea-a735-b174575c02bc@arm.com> <1222cd76-e732-4238-9413-61843249c1e8@arm.com>
+In-Reply-To: <1222cd76-e732-4238-9413-61843249c1e8@arm.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 9 Aug 2024 16:40:47 +0800
+Message-ID: <CAGsJ_4x9MB2yrs2zbZz3TpAjAzD-jzbmHY6+nGEy-uOE4y9jFw@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org, 
+	david@redhat.com, kaleshsingh@google.com, kasong@tencent.com, 
+	linux-kernel@vger.kernel.org, ioworker0@gmail.com, 
+	baolin.wang@linux.alibaba.com, ziy@nvidia.com, hanchuanhua@oppo.com, 
+	Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I'll do the same rework as i did for the prtt1* - referring pin control
-subnodes directly to avoid regressions
+On Fri, Aug 9, 2024 at 4:27=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com> =
+wrote:
+>
+> On 09/08/2024 09:13, Ryan Roberts wrote:
+> > On 08/08/2024 02:04, Barry Song wrote:
+> >> From: Barry Song <v-songbaohua@oppo.com>
+> >>
+> >> When a new anonymous mTHP is added to the rmap, we increase the count.
+> >> We reduce the count whenever an mTHP is completely unmapped.
+> >>
+> >> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> >> ---
+> >>  Documentation/admin-guide/mm/transhuge.rst |  5 +++++
+> >>  include/linux/huge_mm.h                    | 15 +++++++++++++--
+> >>  mm/huge_memory.c                           |  2 ++
+> >>  mm/rmap.c                                  |  3 +++
+> >>  4 files changed, 23 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentatio=
+n/admin-guide/mm/transhuge.rst
+> >> index 058485daf186..715f181543f6 100644
+> >> --- a/Documentation/admin-guide/mm/transhuge.rst
+> >> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> >> @@ -527,6 +527,11 @@ split_deferred
+> >>          it would free up some memory. Pages on split queue are going =
+to
+> >>          be split under memory pressure, if splitting is possible.
+> >>
+> >> +anon_num
+> >> +       the number of anon huge pages we have in the whole system.
+> >> +       These huge pages could be still entirely mapped and have parti=
+ally
+> >> +       unmapped and unused subpages.
+> >
+> > nit: "entirely mapped and have partially unmapped and unused subpages" =
+->
+> > "entirely mapped or have partially unmapped/unused subpages"
+> >
+> >> +
+> >>  As the system ages, allocating huge pages may be expensive as the
+> >>  system uses memory compaction to copy data around memory to free a
+> >>  huge page for use. There are some counters in ``/proc/vmstat`` to hel=
+p
+> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> >> index e25d9ebfdf89..294c348fe3cc 100644
+> >> --- a/include/linux/huge_mm.h
+> >> +++ b/include/linux/huge_mm.h
+> >> @@ -281,6 +281,7 @@ enum mthp_stat_item {
+> >>      MTHP_STAT_SPLIT,
+> >>      MTHP_STAT_SPLIT_FAILED,
+> >>      MTHP_STAT_SPLIT_DEFERRED,
+> >> +    MTHP_STAT_NR_ANON,
+> >>      __MTHP_STAT_COUNT
+> >>  };
+> >>
+> >> @@ -291,14 +292,24 @@ struct mthp_stat {
+> >>  #ifdef CONFIG_SYSFS
+> >>  DECLARE_PER_CPU(struct mthp_stat, mthp_stats);
+> >>
+> >> -static inline void count_mthp_stat(int order, enum mthp_stat_item ite=
+m)
+> >> +static inline void mod_mthp_stat(int order, enum mthp_stat_item item,=
+ int delta)
+> >>  {
+> >>      if (order <=3D 0 || order > PMD_ORDER)
+> >>              return;
+> >>
+> >> -    this_cpu_inc(mthp_stats.stats[order][item]);
+> >> +    this_cpu_add(mthp_stats.stats[order][item], delta);
+> >> +}
+> >> +
+> >> +static inline void count_mthp_stat(int order, enum mthp_stat_item ite=
+m)
+> >> +{
+> >> +    mod_mthp_stat(order, item, 1);
+> >>  }
+> >> +
+> >>  #else
+> >> +static inline void mod_mthp_stat(int order, enum mthp_stat_item item,=
+ int delta)
+> >> +{
+> >> +}
+> >> +
+> >>  static inline void count_mthp_stat(int order, enum mthp_stat_item ite=
+m)
+> >>  {
+> >>  }
+> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >> index 697fcf89f975..b6bc2a3791e3 100644
+> >> --- a/mm/huge_memory.c
+> >> +++ b/mm/huge_memory.c
+> >> @@ -578,6 +578,7 @@ DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_=
+STAT_SHMEM_FALLBACK_CHARGE);
+> >>  DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+> >>  DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+> >>  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+> >> +DEFINE_MTHP_STAT_ATTR(anon_num, MTHP_STAT_NR_ANON);
+>
+> Why are the user-facing and internal names different? Perhaps it would be
+> clearer to call this nr_anon in sysfs?
+>
+> >>
+> >>  static struct attribute *stats_attrs[] =3D {
+> >>      &anon_fault_alloc_attr.attr,
+> >> @@ -591,6 +592,7 @@ static struct attribute *stats_attrs[] =3D {
+> >>      &split_attr.attr,
+> >>      &split_failed_attr.attr,
+> >>      &split_deferred_attr.attr,
+> >> +    &anon_num_attr.attr,
+> >>      NULL,
+> >>  };
+> >>
+> >> diff --git a/mm/rmap.c b/mm/rmap.c
+> >> index 901950200957..2b722f26224c 100644
+> >> --- a/mm/rmap.c
+> >> +++ b/mm/rmap.c
+> >> @@ -1467,6 +1467,7 @@ void folio_add_new_anon_rmap(struct folio *folio=
+, struct vm_area_struct *vma,
+> >>      }
+> >>
+> >>      __folio_mod_stat(folio, nr, nr_pmdmapped);
+> >> +    mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, 1);
+> >>  }
+> >>
+> >>  static __always_inline void __folio_add_file_rmap(struct folio *folio=
+,
+> >> @@ -1582,6 +1583,8 @@ static __always_inline void __folio_remove_rmap(=
+struct folio *folio,
+> >>          list_empty(&folio->_deferred_list))
+> >>              deferred_split_folio(folio);
+> >>      __folio_mod_stat(folio, -nr, -nr_pmdmapped);
+> >> +    if (folio_test_anon(folio) && !atomic_read(mapped))
+> >
+> > Agree that atomic_read() is dodgy here.
+> >
+> > Not sure I fully understand why David prefers to do the unaccounting at
+> > free-time though? It feels unbalanced to me to increment when first map=
+ped but
+> > decrement when freed. Surely its safer to either use alloc/free or use =
+first
+> > map/last map?
 
-On Wed, Aug 07, 2024 at 09:28:42AM +0200, Oleksij Rempel wrote:
-> From: David Jander <david@protonic.nl>
-> 
-> Introduce device tree support for the MECIO1 and MECT1S board variants.
-> MECIO1 is an I/O and motor control board used in blood sample analysis
-> machines. MECT1S is a 1000Base-T1 switch for internal machine networks
-> of blood sample analysis machines.
-> 
-> Signed-off-by: David Jander <david@protonic.nl>
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
-> changes v2:
-> - move stm32.yaml changes to a separate patch
-> - remove switch reset for now. sja1105 validation should be fixed first
-> 
->  arch/arm/boot/dts/st/Makefile                 |   3 +
->  arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts |  48 ++
->  arch/arm/boot/dts/st/stm32mp151c-mect1s.dts   | 295 ++++++++++
->  arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts |  48 ++
->  .../arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi | 533 ++++++++++++++++++
->  5 files changed, 927 insertions(+)
->  create mode 100644 arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts
->  create mode 100644 arch/arm/boot/dts/st/stm32mp151c-mect1s.dts
->  create mode 100644 arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts
->  create mode 100644 arch/arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/st/Makefile b/arch/arm/boot/dts/st/Makefile
-> index 015903d09323f..eab3a9bd435f5 100644
-> --- a/arch/arm/boot/dts/st/Makefile
-> +++ b/arch/arm/boot/dts/st/Makefile
-> @@ -35,8 +35,11 @@ dtb-$(CONFIG_ARCH_STM32) += \
->  	stm32mp151a-prtt1c.dtb \
->  	stm32mp151a-prtt1s.dtb \
->  	stm32mp151a-dhcor-testbench.dtb \
-> +	stm32mp151c-mecio1r0.dtb \
-> +	stm32mp151c-mect1s.dtb \
->  	stm32mp153c-dhcom-drc02.dtb \
->  	stm32mp153c-dhcor-drc-compact.dtb \
-> +	stm32mp153c-mecio1r1.dtb \
->  	stm32mp157a-avenger96.dtb \
->  	stm32mp157a-dhcor-avenger96.dtb \
->  	stm32mp157a-dk1.dtb \
-> diff --git a/arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts b/arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts
-> new file mode 100644
-> index 0000000000000..a5ea1431c3991
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts
-> @@ -0,0 +1,48 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-> +/*
-> + * Copyright (C) Protonic Holland
-> + * Author: David Jander <david@protonic.nl>
-> + */
-> +/dts-v1/;
-> +
-> +#include "stm32mp151.dtsi"
-> +#include "stm32mp15xc.dtsi"
-> +#include "stm32mp15-pinctrl.dtsi"
-> +#include "stm32mp15xxaa-pinctrl.dtsi"
-> +#include "stm32mp15x-mecio1-io.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/leds/common.h>
-> +
-> +/ {
-> +	model = "Protonic MECIO1r0";
-> +	compatible = "prt,mecio1r0", "st,stm32mp151";
-> +
-> +	led {
-> +		compatible = "gpio-leds";
-> +
-> +		led-0 {
-> +			color = <LED_COLOR_ID_RED>;
-> +			function = LED_FUNCTION_DEBUG;
-> +			gpios = <&gpioa 13 GPIO_ACTIVE_HIGH>;
-> +		};
-> +
-> +		led-1 {
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			function = LED_FUNCTION_DEBUG;
-> +			gpios = <&gpioa 14 GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
-> +};
-> +
-> +&clk_hse {
-> +	clock-frequency = <25000000>;
-> +};
-> +
-> +&ethernet0 {
-> +	assigned-clocks = <&rcc ETHCK_K>, <&rcc PLL3_Q>;
-> +	assigned-clock-parents = <&rcc PLL3_Q>;
-> +	assigned-clock-rates = <125000000>; /* Clock PLL3 to 625Mhz in tf-a. */
-> +	st,eth-clk-sel;
-> +};
-> diff --git a/arch/arm/boot/dts/st/stm32mp151c-mect1s.dts b/arch/arm/boot/dts/st/stm32mp151c-mect1s.dts
-> new file mode 100644
-> index 0000000000000..bffe6fc66d975
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/st/stm32mp151c-mect1s.dts
-> @@ -0,0 +1,295 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-> +/*
-> + * Copyright (C) Protonic Holland
-> + * Author: David Jander <david@protonic.nl>
-> + */
-> +/dts-v1/;
-> +
-> +#include "stm32mp151.dtsi"
-> +#include "stm32mp15xc.dtsi"
-> +#include "stm32mp15-pinctrl.dtsi"
-> +#include "stm32mp15xxaa-pinctrl.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/leds/common.h>
-> +
-> +/ {
-> +	model = "Protonic MECT1S";
-> +	compatible = "prt,mect1s", "st,stm32mp151";
-> +
-> +	chosen {
-> +		stdout-path = "serial0:1500000n8";
-> +	};
-> +
-> +	aliases {
-> +		serial0 = &uart4;
-> +		ethernet0 = &ethernet0;
-> +		ethernet1 = &ethernet1;
-> +		ethernet2 = &ethernet2;
-> +		ethernet3 = &ethernet3;
-> +		ethernet4 = &ethernet4;
-> +	};
-> +
-> +	v3v3: regulator-v3v3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "v3v3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +	};
-> +
-> +	v5v: regulator-v5v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "v5v";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	led {
-> +		compatible = "gpio-leds";
-> +
-> +		led-0 {
-> +			color = <LED_COLOR_ID_RED>;
-> +			function = LED_FUNCTION_DEBUG;
-> +			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
-> +		};
-> +
-> +		led-1 {
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			function = LED_FUNCTION_DEBUG;
-> +			gpios = <&gpioa 14 GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
-> +};
-> +
-> +&clk_hse {
-> +	clock-frequency = <24000000>;
-> +};
-> +
-> +&clk_lse {
-> +	status = "disabled";
-> +};
-> +
-> +&ethernet0 {
-> +	status = "okay";
-> +	pinctrl-0 = <&ethernet0_rmii_pins_a>;
-> +	pinctrl-1 = <&ethernet0_rmii_sleep_pins_a>;
-> +	pinctrl-names = "default", "sleep";
-> +	phy-mode = "rmii";
-> +	max-speed = <100>;
-> +	st,eth-clk-sel;
-> +
-> +	fixed-link {
-> +		speed = <100>;
-> +		full-duplex;
-> +	};
-> +
-> +	mdio0: mdio {
-> +		 #address-cells = <1>;
-> +		 #size-cells = <0>;
-> +		 compatible = "snps,dwmac-mdio";
-> +	};
-> +};
-> +
-> +&ethernet0_rmii_pins_a {
-> +	pins1 {
-> +		pinmux = <STM32_PINMUX('B', 12, AF11)>, /* ETH1_RMII_TXD0 */
-> +			 <STM32_PINMUX('B', 13, AF11)>, /* ETH1_RMII_TXD1 */
-> +			 <STM32_PINMUX('B', 11, AF11)>, /* ETH1_RMII_TX_EN */
-> +			 <STM32_PINMUX('A', 2, AF11)>,  /* ETH1_MDIO */
-> +			 <STM32_PINMUX('C', 1, AF11)>;  /* ETH1_MDC */
-> +	};
-> +	pins2 {
-> +		pinmux = <STM32_PINMUX('C', 4, AF11)>,  /* ETH1_RMII_RXD0 */
-> +			 <STM32_PINMUX('C', 5, AF11)>,  /* ETH1_RMII_RXD1 */
-> +			 <STM32_PINMUX('A', 1, AF11)>,  /* ETH1_RMII_REF_CLK input */
-> +			 <STM32_PINMUX('A', 7, AF11)>;  /* ETH1_RMII_CRS_DV */
-> +	};
-> +};
-> +
-> +&ethernet0_rmii_sleep_pins_a {
-> +	pins1 {
-> +		pinmux = <STM32_PINMUX('B', 12, ANALOG)>, /* ETH1_RMII_TXD0 */
-> +			 <STM32_PINMUX('B', 13, ANALOG)>, /* ETH1_RMII_TXD1 */
-> +			 <STM32_PINMUX('B', 11, ANALOG)>, /* ETH1_RMII_TX_EN */
-> +			 <STM32_PINMUX('C', 4, ANALOG)>,  /* ETH1_RMII_RXD0 */
-> +			 <STM32_PINMUX('C', 5, ANALOG)>,  /* ETH1_RMII_RXD1 */
-> +			 <STM32_PINMUX('A', 1, ANALOG)>,  /* ETH1_RMII_REF_CLK */
-> +			 <STM32_PINMUX('A', 7, ANALOG)>;  /* ETH1_RMII_CRS_DV */
-> +	};
-> +};
-> +
-> +&mdio0 {
-> +	/* All this DP83TG720R PHYs can't be probed before switch@0 is
-> +	 * probed so we need to use compatible with PHYid
-> +	 */
-> +	/* TI DP83TG720R */
-> +	t1_phy0: ethernet-phy@8 {
-> +		compatible = "ethernet-phy-id2000.a284";
-> +		reg = <8>;
-> +		interrupts-extended = <&gpioi 5 IRQ_TYPE_LEVEL_LOW>;
-> +		reset-gpios = <&gpioh 13 GPIO_ACTIVE_LOW>;
-> +		reset-assert-us = <10>;
-> +		reset-deassert-us = <35>;
-> +	};
-> +
-> +	/* TI DP83TG720R */
-> +	t1_phy1: ethernet-phy@c {
-> +		compatible = "ethernet-phy-id2000.a284";
-> +		reg = <12>;
-> +		interrupts-extended = <&gpioj 0 IRQ_TYPE_LEVEL_LOW>;
-> +		reset-gpios = <&gpioh 14 GPIO_ACTIVE_LOW>;
-> +		reset-assert-us = <10>;
-> +		reset-deassert-us = <35>;
-> +	};
-> +
-> +	/* TI DP83TG720R */
-> +	t1_phy2: ethernet-phy@4 {
-> +		compatible = "ethernet-phy-id2000.a284";
-> +		reg = <4>;
-> +		interrupts-extended = <&gpioi 7 IRQ_TYPE_LEVEL_LOW>;
-> +		reset-gpios = <&gpioh 15 GPIO_ACTIVE_LOW>;
-> +		reset-assert-us = <10>;
-> +		reset-deassert-us = <35>;
-> +	};
-> +
-> +	/* TI DP83TG720R */
-> +	t1_phy3: ethernet-phy@d {
-> +		compatible = "ethernet-phy-id2000.a284";
-> +		reg = <13>;
-> +		interrupts-extended = <&gpioi 15 IRQ_TYPE_LEVEL_LOW>;
-> +		reset-gpios = <&gpioi 13 GPIO_ACTIVE_LOW>;
-> +		reset-assert-us = <10000>;
-> +		reset-deassert-us = <1000>;
-> +	};
-> +};
-> +
-> +&qspi {
-> +	pinctrl-names = "default", "sleep";
-> +	pinctrl-0 = <&qspi_clk_pins_a
-> +		     &qspi_bk1_pins_a
-> +		     &qspi_cs1_pins_a>;
-> +	pinctrl-1 = <&qspi_clk_sleep_pins_a
-> +		     &qspi_bk1_sleep_pins_a
-> +		     &qspi_cs1_sleep_pins_a>;
-> +	status = "okay";
-> +
-> +	flash@0 {
-> +		compatible = "jedec,spi-nor";
-> +		reg = <0>;
-> +		spi-rx-bus-width = <4>;
-> +		spi-max-frequency = <1000000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +	};
-> +};
-> +
-> +&qspi_bk1_pins_a {
-> +	pins {
-> +		/delete-property/ bias-disable;
-> +		bias-pull-up;
-> +		drive-push-pull;
-> +		slew-rate = <1>;
-> +	};
-> +};
-> +
-> +&spi2 {
-> +	pinctrl-0 = <&spi2_pins_b>;
-> +	pinctrl-names = "default";
-> +	cs-gpios = <&gpioj 3 GPIO_ACTIVE_LOW>;
-> +	/delete-property/dmas;
-> +	/delete-property/dma-names;
-> +	status = "okay";
-> +
-> +	switch@0 {
-> +		compatible = "nxp,sja1105q";
-> +		reg = <0>;
-> +		spi-max-frequency = <1000000>;
-> +		spi-rx-delay-us = <1>;
-> +		spi-tx-delay-us = <1>;
-> +		spi-cpha;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			ethernet1: port@0 {
-> +				reg = <0>;
-> +				label = "t10";
-> +				phy-mode = "rgmii-id";
-> +				phy-handle = <&t1_phy0>;
-> +			};
-> +
-> +			ethernet2: port@1 {
-> +				reg = <1>;
-> +				label = "t11";
-> +				phy-mode = "rgmii-id";
-> +				phy-handle = <&t1_phy1>;
-> +			};
-> +
-> +			ethernet3: port@2 {
-> +				reg = <2>;
-> +				label = "t12";
-> +				phy-mode = "rgmii-id";
-> +				phy-handle = <&t1_phy2>;
-> +			};
-> +
-> +			ethernet4: port@3 {
-> +				reg = <3>;
-> +				label = "t13";
-> +				phy-mode = "rgmii-id";
-> +				phy-handle = <&t1_phy3>;
-> +			};
-> +
-> +			port@4 {
-> +				reg = <4>;
-> +				label = "cpu";
-> +				ethernet = <&ethernet0>;
-> +				phy-mode = "rmii";
-> +
-> +				/* RGMII mode is not working properly, using RMII instead. */
-> +				fixed-link {
-> +					speed = <100>;
-> +					full-duplex;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&uart4 {
-> +	pinctrl-names = "default", "sleep", "idle";
-> +	pinctrl-0 = <&uart4_pins_a>;
-> +	pinctrl-1 = <&uart4_sleep_pins_a>;
-> +	pinctrl-2 = <&uart4_idle_pins_a>;
-> +	/delete-property/dmas;
-> +	/delete-property/dma-names;
-> +	status = "okay";
-> +};
-> +
-> +&usbh_ehci {
-> +	status = "okay";
-> +};
-> +
-> +&usbotg_hs {
-> +	dr_mode = "host";
-> +	pinctrl-0 = <&usbotg_hs_pins_a>;
-> +	pinctrl-names = "default";
-> +	phys = <&usbphyc_port1 0>;
-> +	phy-names = "usb2-phy";
-> +	vbus-supply = <&v5v>;
-> +	status = "okay";
-> +};
-> +
-> +&usbphyc {
-> +	status = "okay";
-> +};
-> +
-> +&usbphyc_port0 {
-> +	phy-supply = <&v3v3>;
-> +};
-> +
-> +&usbphyc_port1 {
-> +	phy-supply = <&v3v3>;
-> +};
-> diff --git a/arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts b/arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts
-> new file mode 100644
-> index 0000000000000..16b814c19350c
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts
-> @@ -0,0 +1,48 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-> +/*
-> + * Copyright (C) Protonic Holland
-> + * Author: David Jander <david@protonic.nl>
-> + */
-> +/dts-v1/;
-> +
-> +#include "stm32mp153.dtsi"
-> +#include "stm32mp15xc.dtsi"
-> +#include "stm32mp15-pinctrl.dtsi"
-> +#include "stm32mp15xxaa-pinctrl.dtsi"
-> +#include "stm32mp15x-mecio1-io.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/leds/common.h>
-> +
-> +/ {
-> +	model = "Protonic MECIO1r1";
-> +	compatible = "prt,mecio1r1", "st,stm32mp153";
-> +
-> +	led {
-> +		compatible = "gpio-leds";
-> +
-> +		led-0 {
-> +			color = <LED_COLOR_ID_RED>;
-> +			function = LED_FUNCTION_DEBUG;
-> +			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
-> +		};
-> +
-> +		led-1 {
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			function = LED_FUNCTION_DEBUG;
-> +			gpios = <&gpioa 14 GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
-> +};
-> +
-> +&clk_hse {
-> +	clock-frequency = <24000000>;
-> +};
-> +
-> +&m_can1 {
-> +	pinctrl-names = "default", "sleep";
-> +	pinctrl-0 = <&m_can1_pins_b>;
-> +	pinctrl-1 = <&m_can1_sleep_pins_b>;
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi b/arch/arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi
-> new file mode 100644
-> index 0000000000000..af260ff3765db
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi
-> @@ -0,0 +1,533 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-> +/*
-> + * Copyright (C) Protonic Holland
-> + * Author: David Jander <david@protonic.nl>
-> + */
-> +
-> +#include "stm32mp15xc.dtsi"
-> +#include "stm32mp15-pinctrl.dtsi"
-> +#include "stm32mp15xxaa-pinctrl.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +
-> +/ {
-> +	chosen {
-> +		stdout-path = "serial0:1500000n8";
-> +	};
-> +
-> +	aliases {
-> +		serial0 = &uart4;
-> +		ethernet0 = &ethernet0;
-> +		spi1 = &spi1;
-> +		spi2 = &spi2;
-> +		spi3 = &spi3;
-> +		spi4 = &spi4;
-> +		spi5 = &spi5;
-> +		spi6 = &spi6;
-> +	};
-> +
-> +	memory@c0000000 {
-> +		device_type = "memory";
-> +		reg = <0xC0000000 0x10000000>;
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		mcuram2: mcuram2@10000000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x10000000 0x40000>;
-> +			no-map;
-> +		};
-> +
-> +		vdev0vring0: vdev0vring0@10040000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x10040000 0x1000>;
-> +			no-map;
-> +		};
-> +
-> +		vdev0vring1: vdev0vring1@10041000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x10041000 0x1000>;
-> +			no-map;
-> +		};
-> +
-> +		vdev0buffer: vdev0buffer@10042000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x10042000 0x4000>;
-> +			no-map;
-> +		};
-> +
-> +		mcuram: mcuram@30000000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x30000000 0x40000>;
-> +			no-map;
-> +		};
-> +
-> +		retram: retram@38000000 {
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x38000000 0x10000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	v3v3: regulator-v3v3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "v3v3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +	};
-> +
-> +	v5v: regulator-v5v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "v5v";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		regulator-always-on;
-> +	};
-> +};
-> +
-> +&adc {
-> +	/* ANA0, ANA1 are dedicated pins and don't need pinctrl: only in6. */
-> +	pinctrl-0 = <&adc12_pins_mecsbc>;
-> +	pinctrl-names = "default";
-> +	vdd-supply = <&v3v3>;
-> +	vdda-supply = <&v3v3>;
-> +	vref-supply = <&v3v3>;
-> +	status = "okay";
-> +};
-> +
-> +&adc1 {
-> +	status = "okay";
-> +
-> +	channel@0 {
-> +		reg = <0>;
-> +		/* 16.5 ck_cycles sampling time */
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "p24v_stp";
-> +	};
-> +
-> +	channel@1 {
-> +		reg = <1>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "p24v_hpdcm";
-> +	};
-> +
-> +	channel@2 {
-> +		reg = <2>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "ain0";
-> +	};
-> +
-> +	channel@3 {
-> +		reg = <3>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "hpdcm1_i2";
-> +	};
-> +
-> +	channel@5 {
-> +		reg = <5>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "hpout1_i";
-> +	};
-> +
-> +	channel@6 {
-> +		reg = <6>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "ain1";
-> +	};
-> +
-> +	channel@9 {
-> +		reg = <9>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "hpout0_i";
-> +	};
-> +
-> +	channel@10 {
-> +		reg = <10>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "phint0_ain";
-> +	};
-> +
-> +	channel@13 {
-> +		reg = <13>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "phint1_ain";
-> +	};
-> +
-> +	channel@15 {
-> +		reg = <15>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "hpdcm0_i1";
-> +	};
-> +
-> +	channel@16 {
-> +		reg = <16>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "lsin";
-> +	};
-> +
-> +	channel@18 {
-> +		reg = <18>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "hpdcm0_i2";
-> +	};
-> +
-> +	channel@19 {
-> +		reg = <19>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "hpdcm1_i1";
-> +	};
-> +};
-> +
-> +&adc2 {
-> +	status = "okay";
-> +
-> +	channel@2 {
-> +		reg = <2>;
-> +		/* 16.5 ck_cycles sampling time */
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "ain2";
-> +	};
-> +
-> +	channel@6 {
-> +		reg = <6>;
-> +		st,min-sample-time-ns = <5000>;
-> +		label = "ain3";
-> +	};
-> +};
-> +
-> +&ethernet0 {
-> +	status = "okay";
-> +	pinctrl-0 = <&ethernet0_rgmii_pins_x>;
-> +	pinctrl-1 = <&ethernet0_rgmii_sleep_pins_x>;
-> +	pinctrl-names = "default", "sleep";
-> +	phy-mode = "rgmii-id";
-> +	max-speed = <1000>;
-> +	phy-handle = <&phy0>;
-> +	st,eth-clk-sel;
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		compatible = "snps,dwmac-mdio";
-> +		phy0: ethernet-phy@8 {
-> +			reg = <8>;
-> +			interrupts-extended = <&gpiog 7 IRQ_TYPE_LEVEL_LOW>;
-> +			reset-gpios = <&gpiog 10 GPIO_ACTIVE_LOW>;
-> +			reset-assert-us = <10>;
-> +			reset-deassert-us = <35>;
-> +		};
-> +	};
-> +};
-> +
-> +&gpiod {
-> +	gpio-line-names = "", "", "", "",
-> +			  "", "", "", "",
-> +			  "", "", "", "",
-> +			  "STP_RESETN", "STP_ENABLEN", "HPOUT0", "HPOUT0_ALERTN";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_hog_d_mecsbc>;
-> +};
-> +
-> +&gpioe {
-> +	gpio-line-names = "HPOUT0_RESETN", "HPOUT1", "HPOUT1_ALERTN", "",
-> +			  "", "", "HPOUT1_RESETN",
-> +			  "LPOUT0", "LPOUT0_ALERTN", "GPOUT0_RESETN",
-> +			  "LPOUT1", "LPOUT1_ALERTN", "GPOUT1_RESETN",
-> +			  "LPOUT2", "LPOUT2_ALERTN", "GPOUT2_RESETN";
-> +};
-> +
-> +&gpiof {
-> +	gpio-line-names = "LPOUT3", "LPOUT3_ALERTN", "GPOUT3_RESETN",
-> +			  "LPOUT4", "LPOUT4_ALERTN", "GPOUT4_RESETN",
-> +			  "", "",
-> +			  "", "", "", "",
-> +			  "", "", "", "";
-> +};
-> +
-> +&gpiog {
-> +	gpio-line-names = "LPOUT5", "LPOUT5_ALERTN", "", "LPOUT5_RESETN",
-> +			  "", "", "", "",
-> +			  "", "", "", "",
-> +			  "", "", "", "";
-> +};
-> +
-> +&gpioh {
-> +	gpio-line-names = "", "", "", "",
-> +			  "", "", "", "",
-> +			  "GPIO0_RESETN", "", "", "",
-> +			  "", "", "", "";
-> +};
-> +
-> +&gpioi {
-> +	gpio-line-names = "", "", "", "",
-> +			  "", "", "", "",
-> +			  "HPDCM0_SLEEPN", "HPDCM1_SLEEPN", "GPIO1_RESETN", "",
-> +			  "", "", "", "";
-> +};
-> +
-> +&gpioj {
-> +	gpio-line-names = "HSIN10", "HSIN11", "HSIN12", "HSIN13",
-> +			  "HSIN14", "HSIN15", "", "",
-> +			  "", "", "", "",
-> +			  "", "RTD_RESETN", "", "";
-> +};
-> +
-> +&gpiok {
-> +	gpio-line-names = "", "", "HSIN0", "HSIN1",
-> +			  "HSIN2", "HSIN3", "HSIN4", "HSIN5";
-> +};
-> +
-> +&gpioz {
-> +	gpio-line-names = "", "", "", "HSIN6",
-> +			  "HSIN7", "HSIN8", "HSIN9", "";
-> +};
-> +
-> +&i2c2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c2_pins_a>;
-> +	pinctrl-1 = <&i2c2_sleep_pins_a>;
-> +	status = "okay";
-> +
-> +	gpio0: gpio@20 {
-> +		compatible = "ti,tca6416";
-> +		reg = <0x20>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		gpio-line-names = "HSIN0_BIAS", "HSIN1_BIAS", "HSIN2_BIAS", "HSIN3_BIAS",
-> +				  "", "", "HSIN_VREF0_LVL", "HSIN_VREF1_LVL",
-> +				  "HSIN4_BIAS", "HSIN5_BIAS", "HSIN6_BIAS", "HSIN9_BIAS",
-> +				  "", "", "", "";
-> +	};
-> +
-> +	gpio1: gpio@21 {
-> +		compatible = "ti,tca6416";
-> +		reg = <0x21>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		gpio-line-names = "HSIN8_BIAS", "HSIN9_BIAS", "HSIN10_BIAS", "HSIN11_BIAS",
-> +				  "", "", "HSIN_VREF2_LVL", "HSIN_VREF3_LVL",
-> +				  "HSIN12_BIAS", "HSIN13_BIAS", "HSIN14_BIAS", "HSIN15_BIAS",
-> +				  "", "", "LSIN8_BIAS", "LSIN9_BIAS";
-> +	};
-> +};
-> +
-> +&qspi {
-> +	pinctrl-names = "default", "sleep";
-> +	pinctrl-0 = <&qspi_clk_pins_a
-> +		     &qspi_bk1_pins_a
-> +		     &qspi_cs1_pins_a>;
-> +	pinctrl-1 = <&qspi_clk_sleep_pins_a
-> +		     &qspi_bk1_sleep_pins_a
-> +		     &qspi_cs1_sleep_pins_a>;
-> +	status = "okay";
-> +
-> +	flash@0 {
-> +		compatible = "jedec,spi-nor";
-> +		reg = <0>;
-> +		spi-rx-bus-width = <4>;
-> +		spi-max-frequency = <104000000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +	};
-> +};
-> +
-> +&qspi_bk1_pins_a {
-> +	pins {
-> +		pinmux = <STM32_PINMUX('F', 8, AF10)>, /* QSPI_BK1_IO0 */
-> +			 <STM32_PINMUX('F', 9, AF10)>, /* QSPI_BK1_IO1 */
-> +			 <STM32_PINMUX('F', 7, AF9)>, /* QSPI_BK1_IO2 */
-> +			 <STM32_PINMUX('F', 6, AF9)>; /* QSPI_BK1_IO3 */
-> +		bias-pull-up;
-> +		drive-push-pull;
-> +		slew-rate = <1>;
-> +	};
-> +};
-> +
-> +&timers1 {
-> +	/delete-property/dmas;
-> +	/delete-property/dma-names;
-> +	status = "okay";
-> +
-> +	hpdcm0_pwm: pwm {
-> +		pinctrl-names = "default", "sleep";
-> +		pinctrl-0 = <&pwm1_pins_mecio1>;
-> +		pinctrl-1 = <&pwm1_sleep_pins_mecio1>;
-> +		status = "okay";
-> +	};
-> +};
-> +
-> +&timers8 {
-> +	/delete-property/dmas;
-> +	/delete-property/dma-names;
-> +	status = "okay";
-> +
-> +	hpdcm1_pwm: pwm {
-> +		pinctrl-names = "default", "sleep";
-> +		pinctrl-0 = <&pwm8_pins_mecio1>;
-> +		pinctrl-1 = <&pwm8_sleep_pins_mecio1>;
-> +		status = "okay";
-> +	};
-> +};
-> +
-> +&uart4 {
-> +	pinctrl-names = "default", "sleep", "idle";
-> +	pinctrl-0 = <&uart4_pins_a>;
-> +	pinctrl-1 = <&uart4_sleep_pins_a>;
-> +	pinctrl-2 = <&uart4_idle_pins_a>;
-> +	/delete-property/dmas;
-> +	/delete-property/dma-names;
-> +	status = "okay";
-> +};
-> +
-> +&uart4_pins_a {
-> +	pins1 {
-> +		pinmux = <STM32_PINMUX('B', 9, AF8)>; /* UART4_TX */
-> +		bias-disable;
-> +		drive-push-pull;
-> +		slew-rate = <0>;
-> +	};
-> +	pins2 {
-> +		pinmux = <STM32_PINMUX('B', 2, AF8)>; /* UART4_RX */
-> +		bias-pull-up;
-> +	};
-> +};
-> +
-> +&usbotg_hs {
-> +	dr_mode = "host";
-> +	pinctrl-0 = <&usbotg_hs_pins_a>;
-> +	pinctrl-names = "default";
-> +	phys = <&usbphyc_port1 0>;
-> +	phy-names = "usb2-phy";
-> +	vbus-supply = <&v5v>;
-> +	status = "okay";
-> +};
-> +
-> +&usbphyc {
-> +	status = "okay";
-> +};
-> +
-> +&usbphyc_port0 {
-> +	phy-supply = <&v3v3>;
-> +};
-> +
-> +&usbphyc_port1 {
-> +	phy-supply = <&v3v3>;
-> +};
-> +
-> +&pinctrl {
-> +	adc12_pins_mecsbc: adc12-ain-mecsbc-0 {
-> +		pins {
-> +			pinmux = <STM32_PINMUX('F', 11, ANALOG)>, /* ADC1_INP2 */
-> +				 <STM32_PINMUX('F', 12, ANALOG)>, /* ADC1_INP6 */
-> +				 <STM32_PINMUX('F', 13, ANALOG)>, /* ADC2_INP2 */
-> +				 <STM32_PINMUX('F', 14, ANALOG)>, /* ADC2_INP6 */
-> +				 <STM32_PINMUX('A', 0, ANALOG)>, /* ADC1_INP16 */
-> +				 <STM32_PINMUX('A', 3, ANALOG)>, /* ADC1_INP15 */
-> +				 <STM32_PINMUX('A', 4, ANALOG)>, /* ADC1_INP18 */
-> +				 <STM32_PINMUX('A', 5, ANALOG)>, /* ADC1_INP19 */
-> +				 <STM32_PINMUX('A', 6, ANALOG)>, /* ADC1_INP3 */
-> +				 <STM32_PINMUX('B', 0, ANALOG)>, /* ADC1_INP9 */
-> +				 <STM32_PINMUX('B', 1, ANALOG)>, /* ADC1_INP5 */
-> +				 <STM32_PINMUX('C', 0, ANALOG)>, /* ADC1_INP10 */
-> +				 <STM32_PINMUX('C', 3, ANALOG)>; /* ADC1_INP13 */
-> +		};
-> +	};
-> +
-> +	pinctrl_hog_d_mecsbc: hog-d-0 {
-> +		pins {
-> +			pinmux = <STM32_PINMUX('D', 12, GPIO)>; /* STP_RESETn */
-> +			bias-pull-up;
-> +			drive-push-pull;
-> +			slew-rate = <0>;
-> +		};
-> +	};
-> +
-> +	pwm1_pins_mecio1: pwm1-mecio1-0 {
-> +		pins {
-> +			pinmux = <STM32_PINMUX('A', 8, AF1)>, /* TIM1_CH1 */
-> +				 <STM32_PINMUX('A', 8, AF1)>; /* TIM1_CH2 */
-> +			bias-pull-down;
-> +			drive-push-pull;
-> +			slew-rate = <0>;
-> +		};
-> +	};
-> +
-> +	pwm1_sleep_pins_mecio1: pwm1-sleep-mecio1-0 {
-> +		pins {
-> +			pinmux = <STM32_PINMUX('A', 8, ANALOG)>, /* TIM1_CH1 */
-> +				 <STM32_PINMUX('A', 8, ANALOG)>; /* TIM1_CH2 */
-> +		};
-> +	};
-> +
-> +	pwm8_pins_mecio1: pwm8-mecio1-0 {
-> +		pins {
-> +			pinmux = <STM32_PINMUX('I', 5, AF3)>, /* TIM8_CH1 */
-> +				 <STM32_PINMUX('I', 6, AF3)>; /* TIM8_CH2 */
-> +			bias-pull-down;
-> +			drive-push-pull;
-> +			slew-rate = <0>;
-> +		};
-> +	};
-> +
-> +	pwm8_sleep_pins_mecio1: pwm8-sleep-mecio1-0 {
-> +		pins {
-> +			pinmux = <STM32_PINMUX('I', 5, ANALOG)>, /* TIM8_CH1 */
-> +				 <STM32_PINMUX('I', 6, ANALOG)>; /* TIM8_CH2 */
-> +		};
-> +	};
-> +
-> +	ethernet0_rgmii_pins_x: rgmii-0 {
-> +		pins1 {
-> +			pinmux = <STM32_PINMUX('G', 5, AF11)>, /* ETH_RGMII_CLK125 */
-> +				 <STM32_PINMUX('G', 4, AF11)>, /* ETH_RGMII_GTX_CLK */
-> +				 <STM32_PINMUX('B', 12, AF11)>, /* ETH_RGMII_TXD0 */
-> +				 <STM32_PINMUX('B', 13, AF11)>, /* ETH_RGMII_TXD1 */
-> +				 <STM32_PINMUX('C', 2, AF11)>, /* ETH_RGMII_TXD2 */
-> +				 <STM32_PINMUX('B', 8, AF11)>, /* ETH_RGMII_TXD3 */
-> +				 <STM32_PINMUX('B', 11, AF11)>, /* ETH_RGMII_TX_CTL */
-> +				 <STM32_PINMUX('C', 1, AF11)>; /* ETH_MDC */
-> +			bias-disable;
-> +			drive-push-pull;
-> +			slew-rate = <3>;
-> +		};
-> +		pins2 {
-> +			pinmux = <STM32_PINMUX('A', 2, AF11)>; /* ETH_MDIO */
-> +			bias-disable;
-> +			drive-push-pull;
-> +			slew-rate = <0>;
-> +		};
-> +		pins3 {
-> +			pinmux = <STM32_PINMUX('C', 4, AF11)>, /* ETH_RGMII_RXD0 */
-> +				 <STM32_PINMUX('C', 5, AF11)>, /* ETH_RGMII_RXD1 */
-> +				 <STM32_PINMUX('H', 6, AF11)>, /* ETH_RGMII_RXD2 */
-> +				 <STM32_PINMUX('H', 7, AF11)>, /* ETH_RGMII_RXD3 */
-> +				 <STM32_PINMUX('A', 1, AF11)>, /* ETH_RGMII_RX_CLK */
-> +				 <STM32_PINMUX('A', 7, AF11)>; /* ETH_RGMII_RX_CTL */
-> +			bias-disable;
-> +		};
-> +	};
-> +
-> +	ethernet0_rgmii_sleep_pins_x: rgmii-sleep-0 {
-> +		pins1 {
-> +			pinmux = <STM32_PINMUX('G', 5, ANALOG)>, /* ETH_RGMII_CLK125 */
-> +				 <STM32_PINMUX('G', 4, ANALOG)>, /* ETH_RGMII_GTX_CLK */
-> +				 <STM32_PINMUX('B', 12, ANALOG)>, /* ETH_RGMII_TXD0 */
-> +				 <STM32_PINMUX('B', 13, ANALOG)>, /* ETH_RGMII_TXD1 */
-> +				 <STM32_PINMUX('C', 2, ANALOG)>, /* ETH_RGMII_TXD2 */
-> +				 <STM32_PINMUX('B', 8, ANALOG)>, /* ETH_RGMII_TXD3 */
-> +				 <STM32_PINMUX('B', 11, ANALOG)>, /* ETH_RGMII_TX_CTL */
-> +				 <STM32_PINMUX('A', 2, ANALOG)>, /* ETH_MDIO */
-> +				 <STM32_PINMUX('C', 1, ANALOG)>, /* ETH_MDC */
-> +				 <STM32_PINMUX('C', 4, ANALOG)>, /* ETH_RGMII_RXD0 */
-> +				 <STM32_PINMUX('C', 5, ANALOG)>, /* ETH_RGMII_RXD1 */
-> +				 <STM32_PINMUX('H', 6, ANALOG)>, /* ETH_RGMII_RXD2 */
-> +				 <STM32_PINMUX('H', 7, ANALOG)>, /* ETH_RGMII_RXD3 */
-> +				 <STM32_PINMUX('A', 1, ANALOG)>, /* ETH_RGMII_RX_CLK */
-> +				 <STM32_PINMUX('A', 7, ANALOG)>; /* ETH_RGMII_RX_CTL */
-> +		};
-> +	};
-> +};
-> --
-> 2.39.2
-> 
-> 
+As long as we can account for mTHP when clearing the Anon flag for the foli=
+o,
+we should be safe. It=E2=80=99s challenging to add +1 when allocating a lar=
+ge folio
+because we don=E2=80=99t know its intended use=E2=80=94it could be for file=
+, anon, or shmem.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> >
+> > If using alloc/free isn't there a THP constructor/destructor that prepa=
+res the
+> > deferred list? (My memory may be failing me). Could we use that?
+>
+> Additionally, if we wanted to extend (eventually) to track the number of =
+shmem
+> and file mthps in additional counters, could we also account using simila=
+r folio
+> free-time hooks? If not, it might be an argument to account in rmap_unmap=
+ to be
+> consistent for all?
+
+I've been struggling quite a bit with rmap. Despite trying various
+approaches, I=E2=80=99m
+still occasionally seeing a negative mTHP counter after running it some hou=
+rs
+on phones. It seems that rmap is really tricky to handle.  I admit that I h=
+ave
+failed on rmap :-)
+
+On the other hand, for anon folios, we have cases where they are split from
+order M to order N. So, we add +1 when a new anon folio is added to rmap
+and subtract -1 when we either split it or free it. This approach seems cle=
+arer
+to me. When we split from order M to order N, we can add 1 << (M - N) for
+order N.
+
+>
+>
+> >
+> >> +            mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, -1);
+> >>
+> >>      /*
+> >>       * It would be tidy to reset folio_test_anon mapping when fully
+
+Thanks
+Barry
 
