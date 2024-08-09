@@ -1,170 +1,229 @@
-Return-Path: <linux-kernel+bounces-280737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 791B694CE60
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:13:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A5D94CE61
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD154B20FC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:13:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DECBB20E56
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C3F1917F8;
-	Fri,  9 Aug 2024 10:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1F819148D;
+	Fri,  9 Aug 2024 10:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XHUP5RYo"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cdGNbkRa"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7418618FDBC
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 10:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5831EADA;
+	Fri,  9 Aug 2024 10:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723198380; cv=none; b=e7XoveBmbeVX/J9XW5F0deqGtv3x91bWlRMfIQoQ/eYZBghdQdGzo1QkrNtfT62x9tDs7CHnj+lLFopigFzi7LdU32n9TKYo0IwLb9DLYDGxPi7jegTpATkndhWjugymhlEpUBGgwjalrya0XJnMdPrK2Y0nRdT1WEiRWk146I8=
+	t=1723198486; cv=none; b=kGx3K3ffqbTxX0fOrUJzbzg7QJYxzRckdlBxWBsz4Yd+UiyHMyYgis/EKoEINgoAe6Sehg+a6lOKCxg1islC+VkFMQdKLRVoHNc6SUor9Ax1Q1IDPyTXvIOz429NIkM90qLrGrMRDm4b6fefaJ0RDOCV8h3QB2UEPyEYtoPtSkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723198380; c=relaxed/simple;
-	bh=aQW9daCK+DazrmP2CfvTcxBVOXT8VzUcSmts4V69YMk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Uuve6nF/oXMql4p+hf5xK08yyJr1QI9FwbK5F4KDZTNOAFQwOFiTf4Cg8meTN2v6K7yE9ClTnas8WoSUyfZrZ2B5dK37IFA6sGZI9NvMZP94mVHjNp8mZ7tYMT++x9U2ckvRXXITnWuCRAkov447ypGa1ENVLDgLursVPztF7Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XHUP5RYo; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bba25c1e15so2223449a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 03:12:58 -0700 (PDT)
+	s=arc-20240116; t=1723198486; c=relaxed/simple;
+	bh=NUmuGYnW1zobD4I8ByFfdLUrvlZrQZRt1EAvdJj9LVo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CFwmobN8+9bsrxUy0dHaO3dyBwzIFP8UdvlCFR4UCWBM2ctkQFp2BkVwq6rMXWdfvNwtmlmr+zaZk2LlUeEAv6dSGGfcz8aIPrz2N1ujHkVAvpSMeQb2cQ/AismyzXvtC4fK8QdT2n7rxCfCW9No6EjZW3pMYkN9128uc8vIOTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cdGNbkRa; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-81f8f0197abso92386239f.2;
+        Fri, 09 Aug 2024 03:14:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723198376; x=1723803176; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rilrT7/IjMbXVgMURnQL8NL/sfhS1Oc4diIFcldpBSs=;
-        b=XHUP5RYoLOt6CR29AY3FL0zjedJGJf7e5eBwTEcBTzNUOyTtye8Ymror22iDp5UdFG
-         IbEZgqkBSA4wzLOaI2YzK/4XNdkYSMZ5wqSgObV5TIB3/7YRdhmQST2jiAMYtRzlq7RP
-         LRo3LfkFdDCRg1nUMhr7a7lUqjtPA2CpA+FvL9VnyTXAvRbEdQBy+muaJH1mE10NfA+e
-         fFg3UiGqxM4pHlcdQJGGDGi9c/MSWuptT6iE2MW/EsXRqbchrJh8s9cZIt4PuUAoaocU
-         6ZieDY72W0IBx+GqZ5qFTJ7gLqodDECQSkDQXIzQ9W7odDMJKRkF7wTyIntPjvrn1S6h
-         p7dQ==
+        d=gmail.com; s=20230601; t=1723198484; x=1723803284; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hfsf46z9wf1GW1rvhufmjrriglyClBeG24vWvW2wbYg=;
+        b=cdGNbkRaqD3wzRyGig1AslJjNXLEdQtTnQ6c9AyuQ/ednLHHH5UQzfAIDkC8TMqa9G
+         iVT5JxcYeT+Ok9HvVKImuK3EVYHdb5/aU+8OhTcDVkVmlj6xlhvgSh4hyAwhlFfRMhRM
+         hHeoSdxFzLryVxv8zDTUxuZPmmXyyXjAQqhVwBrkNXzpJAYNtzxde8PdlXNgp2xQGUkV
+         LjuWtXBqFXEmz01oZp5oRsrZ7jJgoHE+nsgIRV0Ly8rGUAjvU9+N6fDxpHKboLfsESPp
+         qBu87peFMmtAHe7/FK2/i8eA+sRwsxkpjoAHJZf6Jl+iuaUM8Z/v6d1P4uSCeo4r1Gyh
+         +fxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723198376; x=1723803176;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rilrT7/IjMbXVgMURnQL8NL/sfhS1Oc4diIFcldpBSs=;
-        b=sZHpcQvJQpGEpKy8rxHqetomtCwHFxemUZR9CFhZo4gFCUpwgUiBDdGJjwc+45/Utp
-         BbwrIdrvgTGbT2cMrCbJ8oB9IkbcPcGyNuZaHkjEKgAApGwctCz6xjXF+3u8+9JnBwcj
-         PDt0IXeyW2cyeVdSkdbK+fDBiSmvQGLZguHxLH7KDDIOzn7ZToSMJugplMuLeL+z3bS+
-         v1zIzCQ0NuBXMf+BT/m4X7obvyvbyaIIJhxpju4ThlWg2Bsv77yyT1kMWmujTAuhsFx5
-         UJxUBCt85QZuc7ssdv+iAng4y4YoZ/dSZ6EVqSfp2dvznjdZjTtAfZgYwGuali0V+0aT
-         fR3A==
-X-Forwarded-Encrypted: i=1; AJvYcCV/GVqPLrLwnOaV9hDEbrVdc+JlonS4MNzM2hFolhFduCKbnBQmKw87ZI/Hs5QqrntKu/CBA5y0FcKIGJoO9nz/0lMyXNZ0A8qb92ZU
-X-Gm-Message-State: AOJu0YztHv+ncJRykPuu5fCwhrNOpx8WT6wd3Yf2au2w7CLxsQaKkpza
-	HmraoDyx9SHFY6wfTWaqh2eMfpV/9ND+SrIpcUHFRU5pwKnbov2iCYm7Cs/3OzhkyE2oL+S5XPI
-	CE/M=
-X-Google-Smtp-Source: AGHT+IEmnaJ9bQ5ZBdtVQd2FJNPVrknPU4mVC2unYQXy8BxmPv05p8cNt1l4yXZYx3UlWxty34jg0w==
-X-Received: by 2002:a17:906:f59b:b0:a7a:acae:340c with SMTP id a640c23a62f3a-a80aa542aefmr86457766b.13.1723198376265;
-        Fri, 09 Aug 2024 03:12:56 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.186.176])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc4230sm828105766b.32.2024.08.09.03.12.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 03:12:55 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Fri, 09 Aug 2024 13:12:43 +0300
-Subject: [PATCH] arm64: dts: qcom: x1e80100: Add HS PHY IRQs to USB1
- SS[0-2]
+        d=1e100.net; s=20230601; t=1723198484; x=1723803284;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hfsf46z9wf1GW1rvhufmjrriglyClBeG24vWvW2wbYg=;
+        b=DEOzrmDUDqWATTbBCpBmjJIjFOxYjKL/Q56AGmWqDFr3Kwa9eQ/6jERowIHzxHU6I3
+         /otNty0fCWCqks8y/pqeMnWD4cLCH/ZGgWmEnLNdacD67ifgyYDXxk2lU+RlrOPxECaR
+         adjiQn+Tq6HUFFjoMSXWx77M5J21CrBdAsEHf/0fJ6AXT1Y4e+D6jx92FICzzGT/N0p7
+         vJJzJFRdVtJ2OxkuFmFnyF8ZWk+MBcmTnU8vvGfZAqN0yFiUTLTNeQ7DPHwBc0H4Ur77
+         o6Gu6X26zAvY3BxIyJM6dt9mNF2Zr1P6duwW8iqKFy59LOsPcpPpkcgSiAnLXYFYGXCC
+         qxKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWAdZnX5pRkLEBuSVVRl6p7A7RQyvUY8JmaGHCI5hxrzxhy+8zUzKQ34hXaYt50oQyRWcUSRCgPAUxw4siQrctwmqHU5GLxJN2n5ml3EzWd4X8H8h4RRnPy6njZt8ixkOJXAkBf5VWr1s=
+X-Gm-Message-State: AOJu0Yzq+tIrO57J6auwd/XG4TYGTG66iuo9Mw46c+df6OiQH6YcQi6+
+	LD5kG/CIruIjwWGnlvzarJnD95HEVTg1VGfWM2cZvJ+/hcgO+pNh3vlY1uQ0hUTdSSOtwaBuhAu
+	dbgON3Udp/ytw18jWX7TCbVbG4aY=
+X-Google-Smtp-Source: AGHT+IFFfg/JrZPkYtkwOZLbKVpyn11ErpaZHgtBuGGv7zwTVNOInIB98snU98XMHtncdjjRq9qFib8e3L29raeRvWE=
+X-Received: by 2002:a05:6e02:156d:b0:375:c394:568b with SMTP id
+ e9e14a558f8ab-39b7a472925mr11954185ab.21.1723198483575; Fri, 09 Aug 2024
+ 03:14:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240809-x1e80100-dts-usb-1-ss0-2-add-hs-phy-irqs-v1-1-9e1bc62fa407@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAJrrtWYC/x2NwQ6CQAwFf4X07Eu6KyrxV4wHpMXtBXELZg3h3
- 914nDnMbOSaTZ2uzUZZP+b2miqEQ0ND6qenwqQyRY4tX+IZJWjHgRmyOFZ/IMCdEdGLIDnm9IX
- lt4Ol7Y5VjjycqObmrKOV/+p23/cfC9rNk3oAAAA=
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2082; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=aQW9daCK+DazrmP2CfvTcxBVOXT8VzUcSmts4V69YMk=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmteuhqUsDsoM+KQ5k+IjJzJyZ6CRVsRtFrSZK5
- bZ8ivG9+L2JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZrXroQAKCRAbX0TJAJUV
- Vh+xD/0S/5l4vZvltDwRrT4pUJiLVGhpPxTIDBfj/6Rqbr7mm0Q78H6fpcZrQ5X3k2s/CMTmGzU
- fzNy9POZA7KdG7YfwOUnI42+O/UHkgNdLcuQt0QyLpnXDJZbYYER1ikylDXqgZIZ8n8dWoCzOjz
- 2mGMiIg5eIx9w28Eu/36HWpOqVYJv5xddbP0ggwuknzuKTgfpJPDOjqBdNdK4LRrZXvedytcCm5
- fLmNVOtNN70r3nEgLwAZY4W0SzZL9CAm6N5dgOCj8a4Zq3hQgfDHfOXgyjGGdCqxZMXo1N5OOeS
- RQOFipqdu5QxEYAYcXUUGitEe7JTjjsCZA7UO7YSFqD7njmA5c7vQUnjYd1QMfxkTY0OjGJSxOg
- GOsHRSGunmgt1D/kHSLIyD0UmKM3bq1RVKHK+O6oPFchAMruw0LoS0NvQ/gcPjW5PmSqUo0rCWV
- UT0GpcjGawCerIhDUioqbD69aag+hJ4zZLSlp5APH3RuaNGQRUEfHXAGshdTGcbob7TOs9zBLA+
- qG9KD//FIpwAZuwKZJ6FhRJa/PDOpihRRIwgRd+VTwvS7ggd+HQyJNFVJh/6Z9g0qBXsrwDZXmd
- dIKlpz0HW6juKud2Ie8G02O+lp/0oLvtncDHcMHAvbEPW/5YyzDK39M6XVmEnsS+57tB+g3ZK5h
- OowA1L8wRVS3nRQ==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+References: <1722940003-20126-1-git-send-email-shengjiu.wang@nxp.com>
+ <1722940003-20126-2-git-send-email-shengjiu.wang@nxp.com> <e89a56bf-c377-43d8-bba8-6a09e571ed64@linux.intel.com>
+ <CAA+D8AN9JXJr-BZf8aY7d4rB6M60pXS_DG=qv=P6=2r1A18ATA@mail.gmail.com>
+ <ffa85004-8d86-4168-b278-afd24d79f9d8@linux.intel.com> <116041ee-7139-4b77-89be-3a68f699c01b@perex.cz>
+ <930bb152-860a-4ec5-9ef0-1c96f554f365@linux.intel.com> <c9039808-cd04-452d-9f6c-f91811088456@perex.cz>
+ <ed1192e0-00e7-4739-a687-c96dc2d62898@linux.intel.com>
+In-Reply-To: <ed1192e0-00e7-4739-a687-c96dc2d62898@linux.intel.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 9 Aug 2024 18:14:32 +0800
+Message-ID: <CAA+D8AMOh=G7W5-dYw_=Xx-s0PqEu2suKYorscoWku86Rn-=+A@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/6] ALSA: compress: add Sample Rate Converter codec support
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, 
+	tiwai@suse.com, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+	nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
+	linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add missing HS PHY IRQs to all 3 USB1 SS instances.
+On Fri, Aug 9, 2024 at 3:25=E2=80=AFPM Pierre-Louis Bossart
+<pierre-louis.bossart@linux.intel.com> wrote:
+>
+>
+> >>>> Then there's the issue of parameters, we chose to only add parameter=
+s
+> >>>> for standard encoders/decoders. Post-processing is highly specific a=
+nd
+> >>>> the parameter definitions varies from one implementation to another =
+-
+> >>>> and usually parameters are handled in an opaque way with binary
+> >>>> controls. This is best handled with a UUID that needs to be known on=
+ly
+> >>>> to applications and low-level firmware/hardware, the kernel code sho=
+uld
+> >>>> not have to be modified for each and every processing and to add new
+> >>>> parameters. It just does not scale and it's unmaintainable.
+> >>>>
+> >>>> At the very least if you really want to use this compress API,
+> >>>> extend it
+> >>>> to use a non-descript "UUID-defined" type and an opaque set of
+> >>>> parameters with this UUID passed in a header.
+> >>>
+> >>> We don't need to use UUID-defined scheme for simple (A)SRC
+> >>> implementation. As I noted, the specific runtime controls may use
+> >>> existing ALSA control API.
+> >>
+> >> "Simple (A)SRC" is an oxymoron. There are multiple ways to define the
+> >> performance, and how the drift estimator is handled. There's nothing
+> >> simple if you look under the hood. The SOF implementation has for
+> >> example those parameters:
+> >>
+> >> uint32_t source_rate;           /**< Define fixed source rate or */
+> >>                 /**< use 0 to indicate need to get */
+> >>                 /**< the rate from stream */
+> >> uint32_t sink_rate;             /**< Define fixed sink rate or */
+> >>                 /**< use 0 to indicate need to get */
+> >>                 /**< the rate from stream */
+> >> uint32_t asynchronous_mode;     /**< synchronous 0, asynchronous 1 */
+> >>                 /**< When 1 the ASRC tracks and */
+> >>                 /**< compensates for drift. */
+> >> uint32_t operation_mode;        /**< push 0, pull 1, In push mode the =
+*/
+> >>                 /**< ASRC consumes a defined number */
+> >>                 /**< of frames at input, with varying */
+> >>                 /**< number of frames at output. */
+> >>                 /**< In pull mode the ASRC outputs */
+> >>                 /**< a defined number of frames while */
+> >>                 /**< number of input frames varies. */
+> >>
+> >> They are clearly different from what is suggested above with a 'ratio-
+> >> mod'.
+> >
+> > I don't think so. The proposed (A)SRC for compress-accel is just one
+> > case for the above configs where the input is known and output is
+> > controlled by the requested rate. The I/O mechanism is abstracted enoug=
+h
+> > in this case and the driver/hardware/firmware must follow it.
+>
+> ASRC is usually added when the nominal rates are known but the clock
+> sources differ and the drift needs to be estimated at run-time and the
+> coefficients or interpolation modified dynamically
+>
+> If the ratio is known exactly and there's no clock drift, then it's a
+> different problem where the filter coefficients are constant.
+>
+> >> Same if you have a 'simple EQ'. there are dozens of ways to implement
+> >> the functionality with FIR, IIR or a combination of the two, and
+> >> multiple bands.
+> >>
+> >> The point is that you have to think upfront about a generic way to pas=
+s
+> >> parameters. We didn't have to do it for encoders/decoders because we
+> >> only catered to well-documented standard solutions only. By choosing t=
+o
+> >> support PCM processing, a new can of worms is now open.
+> >>
+> >> I repeat: please do not make the mistake of listing all processing wit=
+h
+> >> an enum and a new structure for parameters every time someone needs a
+> >> specific transform in their pipeline. We made that mistake with SOF an=
+d
+> >> had to backtrack rather quickly. The only way to scale is an identifie=
+r
+> >> that is NOT included in the kernel code but is known to higher and
+> >> lower-levels only.
+> >
+> > There are two ways - black box (UUID - as you suggested) - or well
+> > defined purpose (abstraction). For your example 'simple EQ', the
+> > parameters should be the band (frequency range) volume values. It's
+> > abstract and the real filters (resp. implementation) used behind may
+> > depend on the hardware/driver capabilities.
+>
+> Indeed there is a possibility that the parameters are high-level, but
+> that would require firmware or hardware to be able to generate actual
+> coefficients from those parameters. That usually requires some advanced
+> math which isn't necessarily obvious to implement with fixed-point hardwa=
+re.
+>
+> > From my view, the really special cases may be handled as black box, but
+> > others like (A)SRC should follow some well-defined abstraction IMHO to
+> > not force user space to handle all special cases.
+>
+> I am not against the high-level abstractions, e.g. along the lines of
+> what Android defined:
+> https://developer.android.com/reference/android/media/audiofx/AudioEffect
+>
+> That's not sufficient however, we also need to make sure there's an
+> ability to provide pre-computed coefficients in an opaque manner for
+> processing that doesn't fit in the well-defined cases. In practice there
+> are very few 3rd party IP that fits in well-defined cases, everyone has
+> secret-sauce parameters and options.
 
-Fixes: 4af46b7bd66f ("arm64: dts: qcom: x1e80100: Add USB nodes")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Appreciate the discussion.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 326283822aee..254643650fa7 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -3871,10 +3871,12 @@ usb_1_ss2: usb@a0f8800 {
- 					       <200000000>;
- 
- 			interrupts-extended = <&intc GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 363 IRQ_TYPE_LEVEL_HIGH>,
- 					      <&pdc 58 IRQ_TYPE_EDGE_BOTH>,
- 					      <&pdc 57 IRQ_TYPE_EDGE_BOTH>,
- 					      <&pdc 10 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "pwr_event",
-+					  "hs_phy_irq",
- 					  "dp_hs_phy_irq",
- 					  "dm_hs_phy_irq",
- 					  "ss_phy_irq";
-@@ -4045,10 +4047,12 @@ usb_1_ss0: usb@a6f8800 {
- 					       <200000000>;
- 
- 			interrupts-extended = <&intc GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>,
- 					      <&pdc 61 IRQ_TYPE_EDGE_BOTH>,
- 					      <&pdc 15 IRQ_TYPE_EDGE_BOTH>,
- 					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "pwr_event",
-+					  "hs_phy_irq",
- 					  "dp_hs_phy_irq",
- 					  "dm_hs_phy_irq",
- 					  "ss_phy_irq";
-@@ -4136,10 +4140,12 @@ usb_1_ss1: usb@a8f8800 {
- 					       <200000000>;
- 
- 			interrupts-extended = <&intc GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 369 IRQ_TYPE_LEVEL_HIGH>,
- 					      <&pdc 60 IRQ_TYPE_EDGE_BOTH>,
- 					      <&pdc 11 IRQ_TYPE_EDGE_BOTH>,
- 					      <&pdc 47 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "pwr_event",
-+					  "hs_phy_irq",
- 					  "dp_hs_phy_irq",
- 					  "dm_hs_phy_irq",
- 					  "ss_phy_irq";
+Let me explain the reason for the change:
 
----
-base-commit: 61c01d2e181adfba02fe09764f9fca1de2be0dbe
-change-id: 20240726-x1e80100-dts-usb-1-ss0-2-add-hs-phy-irqs-0d483addf0c5
+Why I use the metadata ioctl is because the ALSA controls are binding
+to the sound card.  What I want is the controls can be bound to
+snd_compr_stream, because the ASRC compress sound card can
+support multi instances ( the ASRC can support multi conversion in
+parallel).   The ALSA controls can't be used for this case,  the only
+choice in current compress API is metadata ioctl. And metadata
+ioctl can be called many times which can meet the ratio modifier
+requirement (ratio may be drift on the fly)
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+And compress API uses codec as the unit for capability query and
+parameter setting,  So I think need to define "SND_AUDIOCODEC_SRC'
+and 'struct snd_dec_src',  for the 'snd_dec_src' just defined output
+format and output rate, channels definition just reuse the snd_codec.ch_in.
 
+I understand your concern, but there seems no better option.
+If you have, please guide me. Thanks.
+
+Best regards
+Shengjiu Wang
 
