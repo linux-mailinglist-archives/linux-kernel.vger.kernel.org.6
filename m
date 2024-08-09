@@ -1,148 +1,233 @@
-Return-Path: <linux-kernel+bounces-280299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56CFF94C856
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:59:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CC894C858
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE172839AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75B31280EF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35A511CBD;
-	Fri,  9 Aug 2024 01:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E33C10940;
+	Fri,  9 Aug 2024 02:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="HBXFiyUt"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hWf+prnP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A47312B8B
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 01:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723168759; cv=none; b=oy79/EZD/YJUkSHJjMSDNXjW3Qw/lb/3U38pc2vDhl3M+nxLX6UECQ7l8yXBz3Ao6uWhpVtQGckLetNsJ1ScxUpcJteU4qRDD9PrMaeKrjhBWU9Y79a9lfuPBOtaTUr6fM6mgzR9+wjZFX+AzreQx8K5co0ERfsrKasnQr1na2c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723168759; c=relaxed/simple;
-	bh=WqapPhJd4up6BabgiqCpDKyWdkUYttxWT5ytTZDJLbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GxU0HzMUD6JpNjL9DZCzLl7IU8tphbvHVYhNdFbnRordVX0Ms8sX463UfifKhTNu5hgkteKkBoSZ2GE4xPJ6VNYaHCxBvxjU2D420++GdGpuFDs9WDM6Fu9FVHNo6Rfb18iOot2uxd0b19TmP4nRLgTNPi3zyUHTdSYNnx9xjEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=HBXFiyUt; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70eae5896bcso1439640b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 18:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723168757; x=1723773557; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bc6qffhUwkcXDacAW5Q78/sO/0S1JDVscanGD2RO8to=;
-        b=HBXFiyUtYcWRcCnJHOY6POPe5ik2oERcs65MVdkhe/R8xtK/WEabeLTTOhW9BudO2m
-         egR6JaR8IIkDT/VJ/HUVTNI3i/X/Rq5fa8sC/hTHxcW/t5MB5EZdt1YVv5pQirFvnm+M
-         2PGlj7Hd6aIKkmH5tWhlc/9Tb2s8ZR4lboE+TMTgkT4UeigF+6KfCDd4upUCjByHmjew
-         3vCt08ChUjotiGptNjwXDHi7oS3eJ/0Zo6OWDYtMafaPOzMbqWMMMa1mZt+qcGWwPSfn
-         beWl+1WsOiAPxiLhvcZWzK1QYLsCY8NGaBM5U1SgfYbW+FNlLkM9/5eMRHPVjzbws+mC
-         KqXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723168757; x=1723773557;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bc6qffhUwkcXDacAW5Q78/sO/0S1JDVscanGD2RO8to=;
-        b=REtogmh49IdN/oDPUgOp6oY80sFH3tQEt1tWGiD+ToLTqTakz2z63hQjVC0dnihi4N
-         dGEFE7FYWYYAaLFtD70zh9Zvte8M4Um26iPtWkPQnNwCR6L1piLCbXyzHDlfC+e1fN7N
-         hEhwQRy6yDS3rIZPaqRjFDh5FNU+YCZa7xcYw/0f/gyChaHmtDd9bW5zJhaDAGBy2R4h
-         s9baBr7QCIrLdIaU+5AghvRaLLKs1umFFeuxezsl+233glmoNaRaFEXQzGHx36sb4n8h
-         4urpYSmv/qbvJt9Zf4KkXPsfCSuymZpLRtVhcsm9+ZNOeZi43gWenrAwWjMFeJSw5KSd
-         WR5g==
-X-Forwarded-Encrypted: i=1; AJvYcCU82RdUTtCqYQQlgnIfFAEK6vJM8bAUEknreDHAmw2ynGef5MSpc+ub/VVwKbt4nY5MdTjyBklw/9K1Q8sm4tZI5FRy4PjmwJbSFxLa
-X-Gm-Message-State: AOJu0Yx+qF38A5gE9CXbwYWCxfQxWDVq/674pQA9TymBt2QzsBjxi8UJ
-	be9wGHJXz0g4mlxlFgnQXCmi4cu0G6MpBC/YLpIgl1I9lBguWek15bwH4QsB3i8=
-X-Google-Smtp-Source: AGHT+IG3he0uCvXiEW00NgfKnLWgtrpdEAA57ga0AU/qpFPwIontak7wRj1ywcp/+A5LgcQbO6J1eg==
-X-Received: by 2002:a05:6a00:3a04:b0:70a:ffc7:f921 with SMTP id d2e1a72fcca58-710dc79c714mr17715b3a.22.1723168756859;
-        Thu, 08 Aug 2024 18:59:16 -0700 (PDT)
-Received: from [10.70.146.105] ([203.208.189.5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb209337sm1784092b3a.15.2024.08.08.18.59.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 18:59:16 -0700 (PDT)
-Message-ID: <aa5b5bf5-64cd-4c23-a491-5e04acf53d23@bytedance.com>
-Date: Fri, 9 Aug 2024 09:59:09 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A853EF9DA
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 02:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723168816; cv=fail; b=GzlEOnLhXUXzsXqjRbyf8F80nSRypoeMU68JHi83RWic+96Rr/J+rCzYkHzPQzNoRlxypxBrfqsQjTxwswy2Fcm9Sbg6NtRpvuUH25IX3m0qmoyFDGxWW+7Foj8AkJYQnSmiwDlF6fqC/oom3yPlufGuRZne+lfKownkNBWmN+4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723168816; c=relaxed/simple;
+	bh=UrjdycrFNAWtSMCtIuIi6+wzHSGMBLfqJCH3OgO0QaU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=H8n52gYxQSgQ5sqNGvU5J7S752lZTHckfz04CPnVbmZjqEosD61krRjnWH31Us5tI9zlnsubbwaUwMbqq1gXuBMPhioshvhEjB7sdQ3JKhkVIK+0FeAysRXbAvI0CoQk4lVnuoZRTVSFie/bQVCniHr3qWjjvDExERBmoqQP498=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hWf+prnP; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723168814; x=1754704814;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=UrjdycrFNAWtSMCtIuIi6+wzHSGMBLfqJCH3OgO0QaU=;
+  b=hWf+prnPF8h6HYsP/LLNxP9gfzb3YyvAPtCceEhzTb9KuGFLwAESyuwT
+   sej/LyHxaTQg5dQP5G55OcIafEgFbfb9EuEEbP86zA/ewdTbW7NMpeGA5
+   bgNmc9TrLY1GpVVfRLTY83tUKfbfEBomqaVqUku8d/LrC2gvQcNbHvxAT
+   cz9EytUsEzcMZf/rdIuoAcx/mlnvKJdBtXJOtmXsFBQ/vhQCvcvTr43qk
+   W/2tO+iVFCHGxXQcNRfB2rAo3puHTPXMeDS6Lxd3gN9oZeMKMLWPFV/40
+   MytBP7LK5pa7mNQZrmbrDNQ5npTrUKlVmjrOb5iXdIj0fjUdKMGRiy7Xa
+   w==;
+X-CSE-ConnectionGUID: GDr+hs7+SWSwYNT+LHQIWQ==
+X-CSE-MsgGUID: sJY8rH7CQsGMPoP0uTi1Ng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25198697"
+X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
+   d="scan'208";a="25198697"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 19:00:14 -0700
+X-CSE-ConnectionGUID: aNa+xPTXT9iBQbTRY8+PaQ==
+X-CSE-MsgGUID: jhJ3HfzuQsWl0LlTRLfBYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
+   d="scan'208";a="58127881"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Aug 2024 19:00:14 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 8 Aug 2024 19:00:13 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 8 Aug 2024 19:00:13 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 8 Aug 2024 19:00:13 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.44) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 8 Aug 2024 19:00:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aCLjoxZEQ3DHCZsSrPx12/6LzcRArpjDEupixFdrpdyB4rQgfsm/rpYMFEuvAKQ9MfgxepGhf7GI7x1EcupP8oZJhmxNbjCpQJwlY7Cv05TpJ6Jm3BRHu2ds3Ny9z+1DjEHcShAF7y7JoUKI/AUofhwFcIeJamUsBO4BROXiEoy2oUxndx+dFKBOysDsy6iHFtpKH+OseQrp02AOHVQSbJMJe3eXc6bO5+wdPr8D9szHbWJKzoW/vt5+9tUwYpQKPk7+xO9AQ/wUj8E/CDP1tlQXpRWhOGalupZwe1zzFrhjlvNIFupu+tELJf3FOlVbdC0UIVooWJfcOEq7L1Yasw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MEH0VYuH45gWZkvu4xmZmWX+0gTAHzpNEzuLxfMPtZo=;
+ b=BBvk08fdg4gSMhTT4nhk5cUy0g2+lrPYDIzRcvr4kyCTfF515txaHb+r5S560aA1suNNtVF6Vj/1HrLT6t4jeweoQBDhRGu7HZKpbfPwUqhZ/N9sghJ0S5eLePw/+ONkfeovcX8nNKJHZUus6QPiEX/jXFyl3pNBXj3rDE+NhM5K/HM4R5ucQzuOHlMnYBsx2EgC1rPPHs2ed5Qtv/6C+hz1L2vRl9sq0IlqjaVaPKVYJdrn0TYG+kRwaTd8S59S/2L02NWMlOTDptE2uR/vN8XKRu9IKvG/UEaannVQtuWd1x423mX6tG1UEltMwS/SlgOlWE/86DPmSR1EU600vA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by SJ2PR11MB8422.namprd11.prod.outlook.com (2603:10b6:a03:542::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Fri, 9 Aug
+ 2024 02:00:10 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%3]) with mapi id 15.20.7828.023; Fri, 9 Aug 2024
+ 02:00:10 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>
+CC: "Liu, Yi L" <yi.l.liu@intel.com>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3] iommufd/device: Enforce reserved IOVA also when
+ attached to hwpt_nested
+Thread-Topic: [PATCH v3] iommufd/device: Enforce reserved IOVA also when
+ attached to hwpt_nested
+Thread-Index: AQHa6GG5hyMcek1G+0GMs4Xta49467IeLpIg
+Date: Fri, 9 Aug 2024 02:00:10 +0000
+Message-ID: <BN9PR11MB52762AD4E68BC0FC10CACBE18CBA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240807003446.3740368-1-nicolinc@nvidia.com>
+In-Reply-To: <20240807003446.3740368-1-nicolinc@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SJ2PR11MB8422:EE_
+x-ms-office365-filtering-correlation-id: 7282a697-5c0d-4139-383e-08dcb816fffd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?njfyHdkqcM83HRUqIH7fxCtYVZlLE++24B/8PMs1mYWfXf07giop3zx7ZbCY?=
+ =?us-ascii?Q?nHzSd5BH1hy8zdqfgiFYTZxo7VnyrSXpVk/Yp3FHgeuEugS9fH2gijmKOY8x?=
+ =?us-ascii?Q?5JLm4aKgU2cPcBDjIigP8FILyAUp67/5txBHQ7QnDTX1WaYIPb8TlL4gUuMz?=
+ =?us-ascii?Q?FvFEjJcTPWX+FOzjZZ1Gsi458wMohl0FG4FCQomSjfFBeCYtRp4+xx8mdVwE?=
+ =?us-ascii?Q?1vpPPcKqwbq1apR5JP+RK770ALe3IKzFSjflI4XUxe3b8iEF6ELRsW5tCMIH?=
+ =?us-ascii?Q?0jMDtjYVfIpxxB94vABtv8xLWzKPyYSqvq8jK0YXEvqzFFEk+JdhYA+mnt9s?=
+ =?us-ascii?Q?OxLAbmi6Htx/OqxG0UI7RxRNK7cHhGS9z/yCUi1hwBwTyOYHlmZvRZFylJLA?=
+ =?us-ascii?Q?1/I+Gg1CzH33qxMDs3TSEYhnOUkwm6GGaTCwWrm+FHkqaIXV+mKL71hpD6/z?=
+ =?us-ascii?Q?cabf1YDWFH9bViW/ZTbOdtlt+siqddJ+6hXn3irhpnQs2FBTgeYpBmCoGjEH?=
+ =?us-ascii?Q?Zt3qlJespyhnL/hTDfMZnoaH/7dRSSgxF5k8EEVGePeICTpKFVtCFg3u1mW0?=
+ =?us-ascii?Q?U8bfRsvSz0si4XINQk4tzu5t2vq8dv4XTHfSnzuxBYvLlWPfpTcD7kVYSXK/?=
+ =?us-ascii?Q?GflQlEPAd2IF+bW/Tp+4mNorOYLdkp8l2YZwJwMkn+rdBzjPTKiM2svInWeP?=
+ =?us-ascii?Q?xp47YMULeDFxmMLMRueDspcDMo1aQc+6uHmqCcnb4KCu/9HssXw7vtbLgUS5?=
+ =?us-ascii?Q?Rw7T15y2pINbtm8WmDWKnJ8MrMffDPlaGM8VBUonoIQOzb8okCrwGgvMpFG3?=
+ =?us-ascii?Q?40Fo/SFoM72p9T/nB7nSBNBCoWJ2s2bQbai+qo10eEPiPsOOGxNNGovJTTfO?=
+ =?us-ascii?Q?mUu6RfVAUPhrCoWApFRIXJ9I+NnzUALU9qKkXfCajq9Eztfa262+sPUrqImm?=
+ =?us-ascii?Q?hVSTFwWeGFb0HKKa8flOINqUEMtKkJefj/tW4XB7kJuobmx7HdpH3VWmGmzp?=
+ =?us-ascii?Q?5DSIxUdybQcGuaxuqmLt5mabfSAD6gC1Y4D8GHnVLP0KKvLAJiGgJYhlwMaD?=
+ =?us-ascii?Q?Dot4lDo2eTkt7JLYUymWj5SOkQ4xfeCsGf8Kn9FyHAlabSNEpGmfUBtxbq6V?=
+ =?us-ascii?Q?RCzydub+snZRpas9gWeUAypDPj/p/BpDgoGmmoe9afPDUDzwh3MlbUVH/NFa?=
+ =?us-ascii?Q?+R84XiUNhq2bTe3ra3Ylj7Eje6v9RXMDlLkYv73DnKVIXeWjrxCYLknclYZS?=
+ =?us-ascii?Q?1ruWQOe5ns/ZVA+wTa40I2rhecVDxUW3rveIf8KHq0/7Y1SqU/8fIMcAWUIx?=
+ =?us-ascii?Q?eoUTemnR+KWxh9wng4T6vOlrCOcOD8lCSISIp60nCh7yR2OUHZWtn3THoSK+?=
+ =?us-ascii?Q?/WsMXB8=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?EQdlTj4hLG9Eqk0Ig11jfH7oCobWogJfvj024WwEg2EnYTEj+k8lz9vOASQs?=
+ =?us-ascii?Q?im0suXayfcJo7QofpruJEq++FxP+OUmOZG6gCfG/ICviqHjtW1+GPv77JqcK?=
+ =?us-ascii?Q?CwVEegMfFjuw0CNB5K2sdjxm8hV8iPOc9/UHRC5CRvQdLAxvt3RSrjJk5mUg?=
+ =?us-ascii?Q?ylmcEhOP4B0t9dDtZiQ1ms2OPRO1gqTG1Ncjv7Kppjx+Yb4tPmL2Hnl6LVCB?=
+ =?us-ascii?Q?Y5P9jH29rm9wuoyYJnZTMXaAYRhixAw6Ve6Sha8EwZbrkCEXefrDjCS9S9m1?=
+ =?us-ascii?Q?V55ecgNEdOr/biyG0TMtROgCnimhWR6MOksLfZyyKt7h3SemB6XDgeMDgeSv?=
+ =?us-ascii?Q?hm1iO1T5FU3YBFnPOkYwUmocrec6534wWzJOUAVdKL6LnBadV5pc+2hwnqMJ?=
+ =?us-ascii?Q?4i3gtX0O/nkTO+Ado6vXbwNn5OH+YAnT6/tkKVHcbdrqEEvfU/AQOyMlBK6M?=
+ =?us-ascii?Q?5GGwVHOgzsXXpfdos5e0rJRMRoQFtdNrmjsSrXPBiLbH+viWhQ0Abti/T0WZ?=
+ =?us-ascii?Q?fh1cOWzO2NMD3vYxhDvrwqLUPXMn5KMxZ5fZgR3kwMIknwR0aac9Z0vMFaMf?=
+ =?us-ascii?Q?eYdaCfvcLJfg/OR38EJ3t7jxiqiFAouMZexLBR8jI6dM/X+ywSMIG61hEV7s?=
+ =?us-ascii?Q?WBw97+O7qmEKmbTBZvfWKtNHxPHIeTceX882gNDifCmahBIeyF3PdT2exSTU?=
+ =?us-ascii?Q?EKJUNrlb3/JbK2YPYCfz8ArUqvbjA6vdV3ZUHzE0NSsACOmZm5cZeSBZg+MQ?=
+ =?us-ascii?Q?afjeHqG+rKqKng008SktOPuJ+JakORFjMZOnneUVXjV+6HEhrC8qFoSOHlaC?=
+ =?us-ascii?Q?4fj4CC9nuxGO1HE++EjqrVo0NOburOQR9bG7l8NtG34oHMtFtis1BqCNavMK?=
+ =?us-ascii?Q?/tlETLRudDBm6nLQW1To3JI8IhPtT+YeLYQ5f1mNKL1SyLrJc/1TY+jW7HUU?=
+ =?us-ascii?Q?RVybenuWYVCEVJg3U0falukxq5XmK/SOuToWj7+Ifx2/mZPqBComTZPOaG7d?=
+ =?us-ascii?Q?WpWEY2MQJ+AYBIAYUvl83OHWqh+T8PHKwbvumStc48ENvYlYu+F9SVG3aGig?=
+ =?us-ascii?Q?dZof+OHe6Ij0jnRwEEIKf80OiPhfGw2ryif/WxjlfX4QE2yFA1+RVKwPs/Vv?=
+ =?us-ascii?Q?mmIR5aO/fpgYPpGLG8uCpHEq0wMnVRIr607y1BAOq7OnCzJ5MIn2Rx9rR2eg?=
+ =?us-ascii?Q?17PIvk0ggL8B/5lWWIyX1NxyO5Ezq8JKNwrR8P9f9RJ0YUPENKAlzN5yYQ1U?=
+ =?us-ascii?Q?Jb8QlMudvVv2oVpLh7+WLZRRNPiUEOgg8FvdtKpRVkG/r3QwYQDl7KefpWh6?=
+ =?us-ascii?Q?jAuHX45SzISAjGSIK8nosqJVDxhIe5jqMWOEjdJlOoaTzuuwTApQ6mmxlLV0?=
+ =?us-ascii?Q?htzXktQKHSsINvrpxFkqlGjWSnh17cKlpt4HtLCCZc1jDqQN3nM/X+WuobTC?=
+ =?us-ascii?Q?a4Ft0DDDtSUN6bTROw7je3j8htrfp0PzWW9gaE6EnrqkHWJGsAu4GPtH55gp?=
+ =?us-ascii?Q?HVcVvrtOx6v4Pjou1hMDnQox6WGJEEyYFpaFw3HoyS4Op7b7tYp2guCU3znC?=
+ =?us-ascii?Q?LK2dRXwxuHqMe35SZTcV4Kf+mrq3Re/TkQj6k8zh?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH 1/2] perf sched timehist: Add --show-prio
- option
-Content-Language: en-US
-To: vineethr@linux.ibm.com
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20240806015701.1309833-1-yangjihong@bytedance.com>
- <20240806015701.1309833-2-yangjihong@bytedance.com>
- <3f4a68aa-8a74-4698-bf90-d69c315d5ffd@linux.ibm.com>
-From: Yang Jihong <yangjihong@bytedance.com>
-In-Reply-To: <3f4a68aa-8a74-4698-bf90-d69c315d5ffd@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7282a697-5c0d-4139-383e-08dcb816fffd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 02:00:10.3127
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: S1a/t9QMAfbSsvY/k9LkEXWkCYatZmgTUY1oOtYAqmUsU7fCQSdfROFjxP2bkSSQbsJ3a6P4fZZco/AMEKmk7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8422
+X-OriginatorOrg: intel.com
 
-Hello,
+> From: Nicolin Chen <nicolinc@nvidia.com>
+> Sent: Wednesday, August 7, 2024 8:35 AM
+>=20
+> Currently, device reserved regions are only enforced when the device is
+> attached to an hwpt_paging. In other words, if the device gets attached
+> to an hwpt_nested directly, the parent hwpt_paging of the hwpt_nested's
+> would not enforce those reserved IOVAs. This works for most of reserved
+> region types, but not for IOMMU_RESV_SW_MSI, which is a unique software
+> defined window, required by a nesting case too to setup an MSI doorbell
+> on the parent stage-2 hwpt/domain.
+>=20
+> Kevin pointed out that:
+> 1) there is no usage using up closely the entire IOVA space yet,
+> 2) guest may change the viommu mode to switch between nested
+>    and paging then VMM has to take all devices' reserved regions
+>    into consideration anyway, when composing the GPA space.
+> Link:
+> https://lore.kernel.org/all/BN9PR11MB5276497781C96415272E6FED8CB12@
+> BN9PR11MB5276.namprd11.prod.outlook.com/
+>=20
+> So it would be actually convenient for us to also enforce reserved IOVA
+> onto the parent hwpt_paging, when attaching a device to an hwpt_nested.
+>=20
+> Repurpose the existing attach/replace_paging helpers to attach device's
+> reserved IOVAs exclusively.
+>=20
+> Add a new find_hwpt_paging helper, which is only used by these reserved
+> IOVA functions, to allow an IOMMUFD_OBJ_HWPT_NESTED hwpt to redirect
+> to
+> its parent hwpt_paging. Return a NULL in these two helpers for any new
+> HWPT type in the future.
+>=20
+> Suggested-by: Tian, Kevin <kevin.tian@intel.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 
-On 8/9/24 02:42, Madadi Vineeth Reddy wrote:
-> Hi Yang Jihong,
-> 
-> On 06/08/24 07:27, Yang Jihong wrote:
->> The --show-prio option is used to display the priority of task.
->> It is disabled by default, which is consistent with original behavior.
->>
->> The display format is xxx (priority does not change during task running)
->> or xxx->yyy (priority changes during task running)
->>
-> 
-> I had done the following steps.
-> 1) Ran 'perf sched record stress-ng --cpu 32 -l 50 --timeout 40s'
-> 2) Changed the nice value of stress-ng while the record was going on.
-> ps -C stress-ng -o pid=
-> 64195
-> 
-> renice -n 10 -p 64195
-> 
-> 3) Then ran 'perf sched timehist --show-prio'
-> 
-> 343918.720052 [0015]  stress-ng[64195]    120  0.013      0.013   21.719
-> .
-> .
-> 343958.797257 [0009]  stress-ng[64195]    130  40076.812  0.007   0.393
-> 
-> The output shows the final priority change of stress-ng from 120 to 130,
-> but the transition format xxx->yyy is not displayed.
-> 
-> Am I missing something?
-> 
+I'm not sure the name find_hwpt_paging() is good enough but can't
+find a better alternative. So,
 
-1. I think it may be because when change the priority of stress-ng, the 
-stress-ng task had been sched_out and did not run.
-
-2.
-sched_switch: A         ->  B(prio1)
-sched_switch: B(prio_2) ->  C
-
-The specific details are that:
-first process the first sched_switch event, read the priority of task B, 
-as prio1.
-then process the second sched_switch event, read the priority of task B, 
-as prio2.
-
-Only when change the priority of task B, it is in the running state, 
-will show prio1->prio2
-
-Thanks,
-Yang.
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
