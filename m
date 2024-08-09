@@ -1,139 +1,300 @@
-Return-Path: <linux-kernel+bounces-280731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3528F94CE2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:04:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2655294CE3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE25D1F25751
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:04:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62AB9B21501
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75761922F7;
-	Fri,  9 Aug 2024 10:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D84192B9E;
+	Fri,  9 Aug 2024 10:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUoONnBX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="anFpHUMJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F2cDuWdh"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3654191F9E;
-	Fri,  9 Aug 2024 10:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA78B1922D7;
+	Fri,  9 Aug 2024 10:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723197757; cv=none; b=mLiFqRelywh7a96iGaHUkoM15d8ZKAdSUmX/SpaN7W26WbkgkesT2stdGF/9SRmfiDgLi+gbXCJLFPv8RqTuxkothrkYWkKN+hZVvzM9av3y97BShFpViUxGof0TOvlj82VcgtpCi4S/Q1+UqU6SQ1m7snBGzJpU73S3jfyc54k=
+	t=1723197832; cv=none; b=UcwWlwOReGnVpLvFw+1RNwG3iLV8tfK07b8fWcBEzEBQxg3zqLyA2NkPdzcA4QAZ8HZG2QaMDRluaM83DRfweo+RFd5VuXohSe9tcqgdpc+gn1E7YTuPVtS67/57P3jOBg+8r+0Pl62JkhxtGH7W2nt6uX1YoVjBlJx9bRkOBeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723197757; c=relaxed/simple;
-	bh=Gg6GNVZac8M0fXSanieB/ShknDd6zMF0dQYilGAgcns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d2iWMUcJhOPlvUsvc9Mqmt1uFvmOmzuqOqK0AXCKlj7sr1KYpJk8li6lKexJs71YsE0NaMfHtGL75CMNRkr2DU9sNr9SgDBBr2evAa3oIKosSNU7Hvl/p8qanLK6glH18fsWWOb1pgGr9YH0rJ4yJNUHPRTPkA+vtxj1nokmH8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUoONnBX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5BCBC32782;
-	Fri,  9 Aug 2024 10:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723197756;
-	bh=Gg6GNVZac8M0fXSanieB/ShknDd6zMF0dQYilGAgcns=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GUoONnBX01q1eTQN5cQcbzN085bC+FZ14Wit95I4McXPw08lryC1W2l5A03EeNGXS
-	 66MkwW0pbEcUau4s7QQZIZTH4nj+K7yh6UvrmuPstdNc2rmkhf6CkZbCEZDnH72lcd
-	 bY7cN5/FCoDHE3JBUIY3gHszE60p0hBjWMufmzWsGCCO9tVHcqZ9+f/SwRM7638spq
-	 F6rDA6I/c2sDuqMYYXjSDYZmpZh/7hRvj0O03A8goY8zn7cA580Q2Ugta25A4X6wWQ
-	 rx4OzXqSBR6S/vbILgS7SuD4+NBLbou6OuDXPcvqt5byYWmF/gJEePOIQ2mupRErLr
-	 SGsm1F+LZIadw==
-Message-ID: <38b31e5b-57a6-44ab-a5ca-8f890bed6074@kernel.org>
-Date: Fri, 9 Aug 2024 12:02:29 +0200
+	s=arc-20240116; t=1723197832; c=relaxed/simple;
+	bh=9GQcy1qd9NWVxlLrLF3rWsQ8GGkY667hqZKg2cR9b9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NZPp5GD8W3JthRhp7x1d3fgNujinrpxK5oKhApQQUpUqJ3TGZV/154rvVWwQ1dZbY6vWsGoVDqCqX99EZYjxGAoklrjqSIROFpO0j25jfViTpVs8isczvGWRrTVS8PGRnekWNxDRVWkKfq1ymhjQEXRS2zbCnVAghxdLo/tQkfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=anFpHUMJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F2cDuWdh; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id BD4781151B1D;
+	Fri,  9 Aug 2024 06:03:48 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Fri, 09 Aug 2024 06:03:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
+	 t=1723197828; x=1723284228; bh=rN+bQCwzpuaxy9DuH7JMnY29r/U8Bdci
+	iIULDINT+i0=; b=anFpHUMJoQRuiQ6DV8yOya2H/QeNct6j3vYfqVX4GUa7B1rY
+	sC7Q4caUE5vsF04Uc6IHgnKFmdgHKp5o44XUwOTghkP79h/I5xLv3qB0MrYYGZGa
+	rBlIhqaOZq0povLDKsC4M8vFE/XIWA82CK8Yw0fXtExfqAM0Q7sfJmfRikYp63dE
+	r11LA79K4OpHcpJuLqCpCrcBg/zRqw8HzxclQpwKu1Ht0RwwQtSQbQ+JhNWoemVQ
+	rAs2De4kjsojFKefNCZfv2bkinJh6kSQwEjdXCmY50aoMmr1WSCs871hzNccd0Wy
+	QMtFxw481D3GgyGx4Cnaq49uvdsXb93UQhtR3A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1723197828; x=1723284228; bh=rN+bQCwzpuaxy9DuH7JMnY29r/U8BdciiIU
+	LDINT+i0=; b=F2cDuWdhEVTLurg3lorG/No788xqn56kC6WLeH12vp+St0WW7cj
+	WGU3e9GSsyfmfsl+2WHOFmGzkH2aqSR2qm145/qXOXv9lgY3gulCAzK16O5iwe0Z
+	pKB4f97+le6QjNBL0GSSurMfxqO5xZpNluAc/DguqoRpG8PSPlqsvB9QtaXC4mtS
+	RRhNbCHwimr5lnuISt/XVT3RqpEEReh4Ez/rKgaFo2CDvYOAzgm0bs99fTGhXV6y
+	BTt7+2U7iEQ6ADfVlaFX6gO8haF214OL/sthyjF+7KttrhSw/5PKD+bTfozP9cXT
+	rmuC3hhPX6LQ8DC/YrQn4ZTb4wVhlmK1NNA==
+X-ME-Sender: <xms:hOm1ZoTYAMZ4xSUEJW_J2KJPj6kV8dkUa83Irs3LxHIDVsHdf7p7Ag>
+    <xme:hOm1ZlzkiGqh2G3SbOlm6Y8q9cJbz6YpyJv-IeWaNNywrNAhCxFUbATZjGsB9WpIG
+    7n7CUmufLWuJ4cX5zM>
+X-ME-Received: <xmr:hOm1Zl07pJ2MCIxeqZErcyxL6a7crvc5byZR-UTLJtTrU4Rp9xzvDPT2pmI05cvjlVAdGmWjdqKkk4llT0e6h5KwvGVj8mTHNDPg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleeggddvvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfggtggusehttdertddttddvnecuhfhr
+    ohhmpefrvghtvghrucfjuhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrhgvrhesfi
+    hhohdqthdrnhgvtheqnecuggftrfgrthhtvghrnhepkeejueffveetgeffieegudeitddu
+    fefhhffgjeefueeuheelhfevhffghedutdefnecuffhomhgrihhnpehgihhthhhusgdrtg
+    homhdpkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
+    pehmrghilhhfrhhomhepphgvthgvrhdrhhhuthhtvghrvghrseifhhhoqdhtrdhnvghtpd
+    hnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjihhk
+    ohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnjhgrmhhinhdrthhishhsoh
+    hirhgvshesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqihhnphhuthes
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:hOm1ZsBA4lB20AIkjck7yt383VScBtvwSv7icj17cZlPGJRAjW_7AQ>
+    <xmx:hOm1ZhjWxSPoCdIqWUQSDuIB0Zpx34PWzIu3o7iQAPgnnix9P0RFhw>
+    <xmx:hOm1ZopUnKiIpGfH5oUO90JGe2TijhGZMGwYELMLHzIojcre43Y3bg>
+    <xmx:hOm1ZkiMWUxwKTcsLGofq0lrvHWdVA4FmPaUw5jUBu9azFdhIozGFQ>
+    <xmx:hOm1ZhdcBck4Dor5HqJpG1Da4SI_jFUJIhx4EJ7d9XnTb5VJUNhkXxMN>
+Feedback-ID: i7ce144cd:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 9 Aug 2024 06:03:46 -0400 (EDT)
+Date: Fri, 9 Aug 2024 20:03:42 +1000
+From: Peter Hutterer <peter.hutterer@who-t.net>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] HID: hidraw - add HIDIOCREVOKE ioctl
+Message-ID: <20240809100342.GA52163@quokka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [xdp-hints] Re: [PATCH RFC bpf-next 32/52] bpf, cpumap: switch to
- GRO from netif_receive_skb_list()
-To: Daniel Xu <dxu@dxuuu.xyz>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Cc: Alexander Lobakin <alexandr.lobakin@intel.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>,
- Larysa Zaremba <larysa.zaremba@intel.com>,
- Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>, "toke@redhat.com"
- <toke@redhat.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
- David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- John Fastabend <john.fastabend@gmail.com>, Yajun Deng
- <yajun.deng@linux.dev>, Willem de Bruijn <willemb@google.com>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, xdp-hints@xdp-project.net,
- Stanislav Fomichev <sdf@google.com>, kernel-team <kernel-team@cloudflare.com>
-References: <20220628194812.1453059-1-alexandr.lobakin@intel.com>
- <20220628194812.1453059-33-alexandr.lobakin@intel.com>
- <cadda351-6e93-4568-ba26-21a760bf9a57@app.fastmail.com>
- <ZrRPbtKk7RMXHfhH@lore-rh-laptop>
- <54aab7ec-80e9-44fd-8249-fe0cabda0393@intel.com>
- <308fd4f1-83a9-4b74-a482-216c8211a028@app.fastmail.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <308fd4f1-83a9-4b74-a482-216c8211a028@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+There is a need for userspace applications to open HID devices directly.
+Use-cases include configuration of gaming mice or direct access to
+joystick devices. The latter is currently handled by the uaccess tag in
+systemd, other devices include more custom/local configurations or just
+sudo.
 
-On 08/08/2024 22.52, Daniel Xu wrote:
-> 
-> On Thu, Aug 8, 2024, at 7:57 AM, Alexander Lobakin wrote:
->>
-[...]
->> The only concern for having GRO in cpumap without metadata from the NIC
->> descriptor was that when the checksum status is missing, GRO calculates
->> the checksum on CPU, which is not really fast.
->> But I remember sometimes GRO was faster despite that.
- >
-> Good to know, thanks. IIUC some kind of XDP hint support landed already?
-> 
+A better approach is what we already have for evdev devices: give the
+application a file descriptor and revoke it when it may no longer access
+that device.
 
-The XDP-hints ended-up being called 'XDP RX metadata' in kernel docs[1],
-which makes it difficult to talk about without talking past each-other.
-The TX side only got implemented for AF_XDP.
+This patch is the hidraw equivalent to the EVIOCREVOKE ioctl, see
+commit c7dc65737c9a607d3e6f8478659876074ad129b8 for full details.
 
-  [1] https://www.kernel.org/doc/html/latest/networking/xdp-rx-metadata.html
-  [2] https://www.kernel.org/doc/html/latest/networking/xsk-tx-metadata.html
+An MR for systemd-logind has been filed here:
+https://github.com/systemd/systemd/pull/33970
 
-What landed 'XDP RX metadata'[1] is that we (via kfunc calls)  get
-access to reading hardware RX offloads/hints directly from the
-RX-descriptor. This implies a limitation that we only have access to
-this data in the running XDP-program as the RX-descriptor is short lived.
+hidraw_is_revoked() and hidraw_open_errno() are both defined as weak
+functions to allow for a BPF program to deny access to a /dev/hidraw
+device. The functions return 0 on success or a negative errno
+otherwise that is returned to the caller.
 
-Thus, we need to store the RX-descriptor information somewhere, to make
-it available to 'cpumap' on the remote CPU. After failing to standardize
-formatting XDP metadata area. My "new" opinion is that we should simply
-extend struct xdp_frame with the fields needed for SKB creation.  Then
-we can create some kfunc helpers that allow XDP-prog stores this info.
+As a use-case example, a gamepad-managing process could attach a BPF
+program that defaults to -EACCESS for all hidraw devices except those
+with ID_INPUT_JOYSTICK set by udev.
 
+Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+---
+First version of the patch:
+https://patchwork.kernel.org/project/linux-input/patch/YmEAPZKDisM2HAsG@quokka/
 
-> My use case could also use HW RSS hash to avoid a rehash in XDP prog.
-> And HW RX timestamp to not break SO_TIMESTAMPING. These two
-> are on one of my TODO lists. But I can’t get to them for at least
-> a few weeks. So free to take it if you’d like.
+Changes to v1:
+- add the hidraw_is_revoked and hidraw_open_errno weak functions as
+  suggested by Benjamin
 
-The kfuncs you need should be available:
+ drivers/hid/hidraw.c        | 52 +++++++++++++++++++++++++++++++++----
+ include/linux/hidraw.h      |  1 +
+ include/uapi/linux/hidraw.h |  1 +
+ 3 files changed, 49 insertions(+), 5 deletions(-)
 
-  HW RSS hash = bpf_xdp_metadata_rx_hash()
-  HW RX timestamp = bpf_xdp_metadata_rx_timestamp()
-
-We just need to implement storing the information, such that it is
-available to CPUMAP, and make it generic such that it also works for
-veth when getting a XDP redirected xdp_frame.
-
-Hoping someone can works on this soon,
---Jesper
-
-
+diff --git ./drivers/hid/hidraw.c ../drivers/hid/hidraw.c
+index 2bc762d31ac7..a9c68448cb20 100644
+--- ./drivers/hid/hidraw.c
++++ ../drivers/hid/hidraw.c
+@@ -38,12 +38,27 @@ static const struct class hidraw_class = {
+ static struct hidraw *hidraw_table[HIDRAW_MAX_DEVICES];
+ static DECLARE_RWSEM(minors_rwsem);
+ 
++__weak noinline bool hidraw_is_revoked(struct hidraw_list *list)
++{
++	return list->revoked;
++}
++ALLOW_ERROR_INJECTION(hidraw_is_revoked, TRUE);
++
++__weak noinline int hidraw_open_errno(__u32 major, __u32 minor)
++{
++	return 0;
++}
++ALLOW_ERROR_INJECTION(hidraw_open_errno, ERRNO);
++
+ static ssize_t hidraw_read(struct file *file, char __user *buffer, size_t count, loff_t *ppos)
+ {
+ 	struct hidraw_list *list = file->private_data;
+ 	int ret = 0, len;
+ 	DECLARE_WAITQUEUE(wait, current);
+ 
++	if (hidraw_is_revoked(list))
++		return -ENODEV;
++
+ 	mutex_lock(&list->read_mutex);
+ 
+ 	while (ret == 0) {
+@@ -161,9 +176,13 @@ static ssize_t hidraw_send_report(struct file *file, const char __user *buffer,
+ 
+ static ssize_t hidraw_write(struct file *file, const char __user *buffer, size_t count, loff_t *ppos)
+ {
++	struct hidraw_list *list = file->private_data;
+ 	ssize_t ret;
+ 	down_read(&minors_rwsem);
+-	ret = hidraw_send_report(file, buffer, count, HID_OUTPUT_REPORT);
++	if (hidraw_is_revoked(list))
++		ret = -ENODEV;
++	else
++		ret = hidraw_send_report(file, buffer, count, HID_OUTPUT_REPORT);
+ 	up_read(&minors_rwsem);
+ 	return ret;
+ }
+@@ -256,7 +275,7 @@ static __poll_t hidraw_poll(struct file *file, poll_table *wait)
+ 	poll_wait(file, &list->hidraw->wait, wait);
+ 	if (list->head != list->tail)
+ 		mask |= EPOLLIN | EPOLLRDNORM;
+-	if (!list->hidraw->exist)
++	if (!list->hidraw->exist || hidraw_is_revoked(list))
+ 		mask |= EPOLLERR | EPOLLHUP;
+ 	return mask;
+ }
+@@ -267,7 +286,11 @@ static int hidraw_open(struct inode *inode, struct file *file)
+ 	struct hidraw *dev;
+ 	struct hidraw_list *list;
+ 	unsigned long flags;
+-	int err = 0;
++	int err;
++
++	err = hidraw_open_errno(hidraw_major, minor);
++	if (err < 0)
++		return err;
+ 
+ 	if (!(list = kzalloc(sizeof(struct hidraw_list), GFP_KERNEL))) {
+ 		err = -ENOMEM;
+@@ -320,6 +343,9 @@ static int hidraw_fasync(int fd, struct file *file, int on)
+ {
+ 	struct hidraw_list *list = file->private_data;
+ 
++	if (hidraw_is_revoked(list))
++		return -ENODEV;
++
+ 	return fasync_helper(fd, file, on, &list->fasync);
+ }
+ 
+@@ -372,6 +398,13 @@ static int hidraw_release(struct inode * inode, struct file * file)
+ 	return 0;
+ }
+ 
++static int hidraw_revoke(struct hidraw_list *list)
++{
++	list->revoked = true;
++
++	return 0;
++}
++
+ static long hidraw_ioctl(struct file *file, unsigned int cmd,
+ 							unsigned long arg)
+ {
+@@ -379,11 +412,12 @@ static long hidraw_ioctl(struct file *file, unsigned int cmd,
+ 	unsigned int minor = iminor(inode);
+ 	long ret = 0;
+ 	struct hidraw *dev;
++	struct hidraw_list *list = file->private_data;
+ 	void __user *user_arg = (void __user*) arg;
+ 
+ 	down_read(&minors_rwsem);
+ 	dev = hidraw_table[minor];
+-	if (!dev || !dev->exist) {
++	if (!dev || !dev->exist || hidraw_is_revoked(list)) {
+ 		ret = -ENODEV;
+ 		goto out;
+ 	}
+@@ -421,6 +455,14 @@ static long hidraw_ioctl(struct file *file, unsigned int cmd,
+ 					ret = -EFAULT;
+ 				break;
+ 			}
++		case HIDIOCREVOKE:
++			{
++				if (user_arg)
++					ret = -EINVAL;
++				else
++					ret = hidraw_revoke(list);
++				break;
++			}
+ 		default:
+ 			{
+ 				struct hid_device *hid = dev->hid;
+@@ -527,7 +569,7 @@ int hidraw_report_event(struct hid_device *hid, u8 *data, int len)
+ 	list_for_each_entry(list, &dev->list, node) {
+ 		int new_head = (list->head + 1) & (HIDRAW_BUFFER_SIZE - 1);
+ 
+-		if (new_head == list->tail)
++		if (hidraw_is_revoked(list) || new_head == list->tail)
+ 			continue;
+ 
+ 		if (!(list->buffer[list->head].value = kmemdup(data, len, GFP_ATOMIC))) {
+diff --git ./include/linux/hidraw.h ../include/linux/hidraw.h
+index cd67f4ca5599..18fd30a288de 100644
+--- ./include/linux/hidraw.h
++++ ../include/linux/hidraw.h
+@@ -32,6 +32,7 @@ struct hidraw_list {
+ 	struct hidraw *hidraw;
+ 	struct list_head node;
+ 	struct mutex read_mutex;
++	bool revoked;
+ };
+ 
+ #ifdef CONFIG_HIDRAW
+diff --git ./include/uapi/linux/hidraw.h ../include/uapi/linux/hidraw.h
+index 33ebad81720a..d0563f251da5 100644
+--- ./include/uapi/linux/hidraw.h
++++ ../include/uapi/linux/hidraw.h
+@@ -46,6 +46,7 @@ struct hidraw_devinfo {
+ /* The first byte of SOUTPUT and GOUTPUT is the report number */
+ #define HIDIOCSOUTPUT(len)    _IOC(_IOC_WRITE|_IOC_READ, 'H', 0x0B, len)
+ #define HIDIOCGOUTPUT(len)    _IOC(_IOC_WRITE|_IOC_READ, 'H', 0x0C, len)
++#define HIDIOCREVOKE	_IOW('H', 0x0D, int) /* Revoke device access */
+ 
+ #define HIDRAW_FIRST_MINOR 0
+ #define HIDRAW_MAX_DEVICES 64
+-- 
+2.45.2
 
 
