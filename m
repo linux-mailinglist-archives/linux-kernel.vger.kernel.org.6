@@ -1,113 +1,96 @@
-Return-Path: <linux-kernel+bounces-280602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C975C94CCB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 494BB94CCBA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 436D8B217BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:51:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF18FB20D03
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670A719007B;
-	Fri,  9 Aug 2024 08:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knY0Oo/n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC2C18F2F8;
+	Fri,  9 Aug 2024 08:52:25 +0000 (UTC)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C8318FC68;
-	Fri,  9 Aug 2024 08:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDAC4431
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723193453; cv=none; b=qFXPnXyQwLDg84TVwMdjxzLBzof2My9gBbfiz1bCMYBSa+6PzDS9HaR8XyedS/AgpPy38DhTCP3YS0nIZwbWn6lm92UJnzBHCQthLt9Yhph5a51cz7vWt1RKrC1YKPM5Mydf1QIRWAhNtrRBFl2avgKr6NBbG+5KV/oS+OpFMPE=
+	t=1723193545; cv=none; b=qbc5gQnWEYFMNFlPu3CPMBshXNwqpYdCTS0mB5Zu8YHEJ0x25MVQ1QrUed2Ku/xr4PLZy3hG5Dy56TfTHIcBbOKls7DYlNEYg5BgHqOr4+KIs3GozwYOq+EaFCDr9gSJjwWulxVgY5hJXGip728cgIeYkqwBWdmMKORJXEy5XkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723193453; c=relaxed/simple;
-	bh=fVzlvtHFCnaUq2oe9WHI8ZqKZ37g0npwYHKtRgESLW0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dsCazi92WERVFNzm9a/2+QPswFn/zbJINDCtOGvIrfdqhHGEfFCSh/Mpf8WJ+WSjBSa7qj4aRRDABPuEVs9yGXM6PgbftUgxWx3tEZi9UK5AwyrBZUQ9rzOp3JYxanXOBcIQPc7r15dh92kokZdL4SVPt6Im//QlRmmrEBPu4kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knY0Oo/n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 539C3C32782;
-	Fri,  9 Aug 2024 08:50:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723193453;
-	bh=fVzlvtHFCnaUq2oe9WHI8ZqKZ37g0npwYHKtRgESLW0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=knY0Oo/nhPHM0e7Cc78srkwiNLBhdkb6v0hPKb2LO28OiKTgReu0Zz+wtX+AFh92+
-	 SlXqe7+OAa2b9y0xw02/X1tQJK7pqgOI2sGfbO8FR1DmtgqmM8eza8+UTpXbiSiq/Q
-	 LpksQRJtXx0a6VwTADB9NbFSXjA61clgjrOCT6uq6RXJkxslHx9IH9y2qHApb4OErY
-	 BoWWs8LWevtoG07elghDbhBeUCwFfXJabPngLXkuXYQ4+tjRaSUEY4/yxrQQGkijNB
-	 u3wb3+6qsInwNY1/KkiQY43RaxkyVQEfvXurDMzqP2od1CVaHC9Mq7wflvgSp1Q4jJ
-	 0aAmUU10E1BiA==
-Message-ID: <96f7b10a-e33e-4602-ab5f-4ebdac260592@kernel.org>
-Date: Fri, 9 Aug 2024 10:50:49 +0200
+	s=arc-20240116; t=1723193545; c=relaxed/simple;
+	bh=vLgz4I6Wrr/+j59mAlK2Oe6EtTSUzJLKDtuaJ2pAmFo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d4rniHlC7fr6JsbDQzmz+6Hqy193EDxvps13wIzxB7Nb65Ly2c5HMu/IIoZ67ldhrIkKvLFBHsR/XQDN65EtCrQ4UrpeySUmuNIrxILf8DIJrD+Qg1mUFOI/QeEvYsKTYzyNawMZQZu9T+7EXGP8qZVqjfyFOxCim9K3MHk8Rb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-49291b02e20so646913137.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:52:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723193543; x=1723798343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vLgz4I6Wrr/+j59mAlK2Oe6EtTSUzJLKDtuaJ2pAmFo=;
+        b=tjjGqcLgpOXU9XIWXvmxsVBn0cxSJ092So08z6a+WT30T3cRxpynKQNw5FOS4PDfqm
+         tBT+qzVHzzpFeJWqApnBhWmTR+5KbTFhel+q+Aq2428qXI2AlOnCUF48m4yhAWJw6yR6
+         nLqU0qdsCYzYuL0bpC3CF8zK/A+isxg66idt4ba0HtacZXxlEkoSyuapQid+z8SKmzKa
+         1ZfiAwPRR9mYDp6U69EkqeCDFD3AfM/lhdRKB5B3lT5U+1Zf49uccD1y9+8i8ogBkTWT
+         k6rVK4JNaqM/bBsy2KEJlwzQCHDvkPtvYhlyliEkMqU31Tv88D1MjB/bLsL6wLVxpYi0
+         PMAA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1oTXQ4mE74dzsgjEf45aMzGMO+Ytwxba9z2PzTipDtwfXgm5lvQKWaLlWjsAX+5G9MpevH8033815CQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDnZr5CnbrZ0GfFIxVd01vOCMk5Qr58g+Z8RDaSGYgOFup8pHi
+	+Liwo+Nixl+VXFTMm49RanKPlKHMw9l3127F05e4N55dCSUD8BMC9K+5wageGGiz6wl/Uf66PXH
+	iVl2QQpBJsomp6WsM1PHgrlEafJp/18G6
+X-Google-Smtp-Source: AGHT+IHDt4iGySwB9cb5dyfABSDX/qrBc/uh6c66pGSteqMkipqG7mIxjyHIWSn9Bg/Ml0xb/eL3lOi5kpxa5tuqkaw=
+X-Received: by 2002:a05:6102:290a:b0:493:dee7:9b8e with SMTP id
+ ada2fe7eead31-495d841086fmr921207137.7.1723193542971; Fri, 09 Aug 2024
+ 01:52:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] pwm: lp3943: Fix an incorrect type in
- lp3943_pwm_parse_dt()
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Abaci Robot <abaci@linux.alibaba.com>
-References: <20240809080523.32717-1-jiapeng.chong@linux.alibaba.com>
-Content-Language: en-US, de-DE
-From: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-In-Reply-To: <20240809080523.32717-1-jiapeng.chong@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240808101700.571701-1-ryan.roberts@arm.com>
+In-Reply-To: <20240808101700.571701-1-ryan.roberts@arm.com>
+From: Barry Song <baohua@kernel.org>
+Date: Fri, 9 Aug 2024 16:52:10 +0800
+Message-ID: <CAGsJ_4yV6uqwiRsy-Je_WysgUuN2s6MC6n3az9aP_C+3ZKS+mA@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Override mTHP "enabled" defaults at kernel cmdline
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Jiapeng,
+On Thu, Aug 8, 2024 at 6:17=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com> =
+wrote:
+>
+> Add thp_anon=3D cmdline parameter to allow specifying the default
+> enablement of each supported anon THP size. The parameter accepts the
+> following format and can be provided multiple times to configure each
+> size:
+>
+> thp_anon=3D<size>[KMG]:<value>
+>
+> See Documentation/admin-guide/mm/transhuge.rst for more details.
+>
+> Configuring the defaults at boot time is useful to allow early user
+> space to take advantage of mTHP before its been configured through
+> sysfs.
+>
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 
-On 8/9/24 10:05, Jiapeng Chong wrote:
-> The return value from the call to of_property_count_u32_elems() is int.
-> However, the return value is being assigned to an u32 variable
-> 'num_outputs', so making 'num_outputs' an int.
-> 
-> ./drivers/pwm/pwm-lp3943.c:238:6-17: WARNING: Unsigned expression compared with zero: num_outputs <= 0.
+Tested-by: Barry Song <baohua@kernel.org>
+Reviewed-by: Barry Song <baohua@kernel.org>
 
-Which tool does emit this warning? My test build (with C=1 and W=1) 
-doesn't emit it.
-
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9710
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-
-This problem was introduced in a commit in next:
-
-Fixes: d6a56f3bb650 ("pwm: lp3943: Use of_property_count_u32_elems() to 
-get property length")
-
-Rob: I guess this wasn't the only conversion of this type. Maybe these 
-others suffer from the same problem?!
-
-> ---
->   drivers/pwm/pwm-lp3943.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pwm/pwm-lp3943.c b/drivers/pwm/pwm-lp3943.c
-> index f0e94c9e5956..90b0733c00c1 100644
-> --- a/drivers/pwm/pwm-lp3943.c
-> +++ b/drivers/pwm/pwm-lp3943.c
-> @@ -218,8 +218,7 @@ static int lp3943_pwm_parse_dt(struct device *dev,
->   	struct lp3943_platform_data *pdata;
->   	struct lp3943_pwm_map *pwm_map;
->   	enum lp3943_pwm_output *output;
-> -	int i, err, count = 0;
-> -	u32 num_outputs;
-> +	int i, err, num_outputs, count = 0;
->   
->   	if (!node)
->   		return -EINVAL;
-
-Nitpick (maybe even a subjective one):
-While touching num_outputs, its scope could be reduced to the for loop.
-
-Best regards
-Uwe
+Thanks
+Barry
 
