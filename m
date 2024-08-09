@@ -1,144 +1,208 @@
-Return-Path: <linux-kernel+bounces-280385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6F094C9DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:50:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A7F94C9E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65FFB281A10
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BFF71F2435C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2BD16C847;
-	Fri,  9 Aug 2024 05:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA67316C850;
+	Fri,  9 Aug 2024 05:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="LnQXcxUW"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3E334CDD
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 05:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723182598; cv=none; b=KeXj7IyuMbITAhqQlPtmOIcQD7VL4mSWnUCdgqJEesDOyI1q8cf5QN13oElYq4hawhS+AZ/IP1Imr3DURs6FsdoTxxHPlXWUSvBEqeVHJB6unUNWwzCmt0XCHr6zA3nkWO8pW5tc9KgA6Lqy9Z/V3rCFqUMDQQ41+X5CONTWLp0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723182598; c=relaxed/simple;
-	bh=vGVQw6HM7s6ctRJSm0vJ/Kdj8GFEiVIqCoeUbIh8NeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NG8XtGvJdU5EvpH3WYktDcS3D1n19UV3A/TTYR3CXIfFVoJp8scyghKh4+M/OoN3NlrH9lEhSShcdJaUGeJHuOknpfwBlAF+vz8bgo1PRZSIV/8NeobMwgCeln+deRcnZBMVarA4TDyd+eltlpp4dNONiUzFoR9K/WsFKGOZHCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=LnQXcxUW; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 233F020B7165; Thu,  8 Aug 2024 22:49:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 233F020B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1723182596;
-	bh=UhQ1H6gi9SswMxmgtyTkcFeAEphqY31W/5bcdJDEhYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LnQXcxUWVinPlqMhZwA94DjJIumNgXIxKrq05fH/f1aA2oD98BRffuzBW7SQ8J3Dd
-	 F4rsp5Q8uN3OXBr/nsU8RJ2JfgXrVNwA+BPxmQAMj8zRthUKzPzvg+CHfhNT5rK+0z
-	 +Il0hnN6bT5ieUvMurRXTsk3frsspRuZl1Ihwjxg=
-Date: Thu, 8 Aug 2024 22:49:56 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, ssengar@microsoft.com,
-	wei.liu@kernel.org
-Subject: Re: [PATCH] mm/vmstat: Defer the refresh_zone_stat_thresholds after
- all CPUs bringup
-Message-ID: <20240809054956.GA12044@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1720169301-21002-1-git-send-email-ssengar@linux.microsoft.com>
- <20240808222006.72071b7b945b290e5270eb30@linux-foundation.org>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dTKy1jfc"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6830534CDD;
+	Fri,  9 Aug 2024 05:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723182658; cv=fail; b=MDzUvZZl7i6QVKecpXNrJXbX0WUF4uCz3eznOhJ3wMDqRpCdABJMm81qiihgdn2RoeccBOsiOvZamZh7UIFnVdIEXHNmVY6B7imEVrUsgrdtuEfilWf7KIw/ZQHbmWFecD5LZ0SQ9ixysswxgW6x0UTVQr6oELmkD8SsEZcs6Dc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723182658; c=relaxed/simple;
+	bh=UrnCH11idcJnzVSwNIYDKEmOmBcygJSHMmxt2fy3U88=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mc7ZSgud3uQe84OehxK54MvKf2KIFZxMoFqxRZwzLJyWyZRnF4yJGwBKiOIplfH+WYJliyBREDjxzJ77j5JydiWguUPl5/Q40c8Kc9BGz5+SaavukgDVNmhzO/VqgBvW4wqi40ZlY3B9AjJSDwtKTgobaGnaIG7RFIEs92zOXQU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dTKy1jfc; arc=fail smtp.client-ip=40.107.93.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yLMLDoY0G2nAO/jKGNsPcGBS5yMBAHlb6QP6aPeHKTlL0WZk2LAImcUZ+LZmrxsFokCXbXgb/YOejETVyqDxWZEkfWREpUL1tLj5OOqoJpzmnMpPjWbP23DVYp1tqnUOZ1y13M5IrLmFak4zAy2N77ijXVFooXByLU21tLNpPKQv8rX3wpwmsG+7znIzPBGV9CTa34f7avx2tcSDCntJ+eAnozW6Rt0x9D+5LyutvIkXBg++AL+AwMVnnEZlbVjWgOS+9jLIw7xPkFjD71VfbQO2/I/MSBVHVr1+/h1NuC36N8/T28/tYjV1Rtot4pmkrd/uothH63GuXGt6xQtAjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hQX00fxidpyK91SZHFqAZGBmiXIZqpVfcMVx7uURFY8=;
+ b=OWQd0WiralaDm2TDtHRY3jTnZ34Uvn16QwqVwJCIRpZBc3JUW2ahO6dtqKrBIEvcE7CBbLTXsYZ6BWUh0zpvek1dxwRRVjM/F0YvNTNmu0VB/yJPJvwrlsKUvk7L5+A35q7J403HASHglTwLbIWzF3vPX68lCLmlnqEU1lXCbIbqug6gyuKgAF+luefSUoIPRIZOyJzcdcaNAFqEishYUrA+WMdSrf54suUAJPeSrqzAq3qNtxiUULMVWMOOpgnbjJv7lJEXq9aQuZwYc/p6yKBrjUT2Lqj2Z+7uUs9zn/mD7fQN3N5VIFZW1kJ06IHpAzZ9QwVnZf1+eDR1BHpRGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hQX00fxidpyK91SZHFqAZGBmiXIZqpVfcMVx7uURFY8=;
+ b=dTKy1jfcG2LUIlNZGuwOAhalHhnvGfrhIyaXwvU+56KhZZAHw291F9lN0ZWgZnXdl6CCdFYda4ASwP7wxbYgQjt8P69sRctw3VtjJMC6gA/2EKoFXCH/HnlJT1TTI9ZbP+lTwvgL2fQp0ouD+Lh9OkVu5YgWgXQEhD/n1w3p75I=
+Received: from SJ0PR05CA0107.namprd05.prod.outlook.com (2603:10b6:a03:334::22)
+ by SA0PR12MB7461.namprd12.prod.outlook.com (2603:10b6:806:24b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Fri, 9 Aug
+ 2024 05:50:53 +0000
+Received: from CO1PEPF000044F5.namprd05.prod.outlook.com
+ (2603:10b6:a03:334:cafe::a1) by SJ0PR05CA0107.outlook.office365.com
+ (2603:10b6:a03:334::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.11 via Frontend
+ Transport; Fri, 9 Aug 2024 05:50:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044F5.mail.protection.outlook.com (10.167.241.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Fri, 9 Aug 2024 05:50:53 +0000
+Received: from pyuan-Chachani-VN.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 9 Aug 2024 00:50:48 -0500
+From: Perry Yuan <perry.yuan@amd.com>
+To: <rafael.j.wysocki@intel.com>, <Mario.Limonciello@amd.com>,
+	<viresh.kumar@linaro.org>, <Ray.Huang@amd.com>, <gautham.shenoy@amd.com>,
+	<Borislav.Petkov@amd.com>, <00107082@163.com>
+CC: <Xinmei.Huang@amd.com>, <Xiaojian.Du@amd.com>, <Li.Meng@amd.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] cpufreq: amd-pstate: add quirk for Ryzen 3000 series processor
+Date: Fri, 9 Aug 2024 13:50:34 +0800
+Message-ID: <20240809055034.769443-1-perry.yuan@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240808222006.72071b7b945b290e5270eb30@linux-foundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F5:EE_|SA0PR12MB7461:EE_
+X-MS-Office365-Filtering-Correlation-Id: b617648e-9775-4c64-74c4-08dcb8373b11
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ER2y+8sRBdFdXfkzatg7PaLBjjl3FpjkR+o6WiDghXg4W481ttvXwmbSXTYh?=
+ =?us-ascii?Q?hez6cEiokZPHf2M+/g3gqu1tWQGYBxV9XDiUvyy/VC7ISUWX3cOXEGpcKWVG?=
+ =?us-ascii?Q?3UJT6HIBuJFc10Bt0vpWFqW65cmqGizVuSqjBqwVxb5RtQ+IFdV8dLYWGptc?=
+ =?us-ascii?Q?MnlvJBRHGPhq/gROnh5UVIBlXmTyK9D3WtcvogP64pIchw0FgenHAMlQAc7+?=
+ =?us-ascii?Q?Cz7HKwn0V2Eub1Fy0NlQAOReGFvtXC9R2Hbcdf/s/1JJ8sw3Btod6DWurIsY?=
+ =?us-ascii?Q?7QBbDtbeCWdm1Wi+ccQxDLh8fg1m1k0fWoy1yLYH3BMOLNSwdHSbVMOHQj00?=
+ =?us-ascii?Q?21IH9uab7T6ag54w1UsZvvcXDq+sHhSx5naF7GCB/Mn5OEQR8goj51gkI1TO?=
+ =?us-ascii?Q?TK3X6VqijDB7Gf1wX0H7Et9BGiNclvTCQR+maVViuA5Htg7G32VtT512Gf0z?=
+ =?us-ascii?Q?qD3xuH5ShsCUHxi2rBs4W4Qgj90CzL5MHy97l6bipBWU5uLLjQqq4Au3G1/K?=
+ =?us-ascii?Q?7+n6nk16HzzuTOZWkjd6e48VcVbU7s+8n2JfxLgJ81ANbOllUlPIX9i+pMue?=
+ =?us-ascii?Q?AAGA3tumDz5C318QpOEDHslZIXSv66YCW3QPmazM1XC27heNljUbBp9xb5DF?=
+ =?us-ascii?Q?Ew59/vummlvOystYIRi6x+2hpOQdjuqYLA3p7C1TdJaIGTntr3iL/7aGlUHH?=
+ =?us-ascii?Q?Nm1vfpWslSsjkhFhPFcrpTSqPLo5RrEPMjo9YuZLmCBU8DC6TfuVOQLrfmdz?=
+ =?us-ascii?Q?IXY0jOM08cjKFq1/E23Rpe3cVMqb/FWt5ienhW3YYRAbbNVC2pCTV0wtwb1e?=
+ =?us-ascii?Q?LbNcap0HFcbXdyxbSwUaWVC94+oKOpHjqdDwcpwHK9y5bpMyCd0pL7aTNv1P?=
+ =?us-ascii?Q?afKz+aCPaTqi4huIiL3bLI84D0gISiAzzPWXQ0ahHqfqCQ8YSR1C6r+Vmwm7?=
+ =?us-ascii?Q?dzP619n3nK/8pMFo8c5JymubRG2FwuSAZZGGeq4YqmnLblTZjvguqGT2yE9k?=
+ =?us-ascii?Q?ztsnCSxa6fYcbRGyMdOuWfsbCM40vyID+aNEgQo2SOudsgpZZVlm23juwcRI?=
+ =?us-ascii?Q?GI2S48dJMqQQQBwNFLo/STowuhEV088lrPXtThcYk1+ys2XaIrputUC4I1II?=
+ =?us-ascii?Q?8ViMKON4vBN3NLRCX4nqRhYchMHqDI6IzBB/EJdDVwOn0qoSpmK33qckm/3C?=
+ =?us-ascii?Q?MxLb/fEIEtuM/gNbH4GDMydQYO1KwWu47Fy+UuOzTQlWMSs/306Gha+zI8jp?=
+ =?us-ascii?Q?Dfp3k1YFamfYnGO5Sakw38sIQlX4hMDs6hSbGWXHaaPmLpBap30d8ZOu5MVb?=
+ =?us-ascii?Q?DU/7xDEUiE0DHjwq/hdnu5TUufZjhyeCJC+gu1e4JwYtcoIgDYwzDE+kNOpY?=
+ =?us-ascii?Q?T4WzAlTjWvaCM7jQIv661TOqSg+af2uhmXAZovCZDzOqPvoaQgOQijwT0thR?=
+ =?us-ascii?Q?fXvkr/XCCZ92RZRlcewzQqr2nTYd4KEn?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 05:50:53.1760
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b617648e-9775-4c64-74c4-08dcb8373b11
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F5.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7461
 
-On Thu, Aug 08, 2024 at 10:20:06PM -0700, Andrew Morton wrote:
-> On Fri,  5 Jul 2024 01:48:21 -0700 Saurabh Sengar <ssengar@linux.microsoft.com> wrote:
-> 
-> > refresh_zone_stat_thresholds function has two loops which is expensive for
-> > higher number of CPUs and NUMA nodes.
-> > 
-> > Below is the rough estimation of total iterations done by these loops
-> > based on number of NUMA and CPUs.
-> > 
-> > Total number of iterations: nCPU * 2 * Numa * mCPU
-> > Where:
-> >  nCPU = total number of CPUs
-> >  Numa = total number of NUMA nodes
-> >  mCPU = mean value of total CPUs (e.g., 512 for 1024 total CPUs)
-> > 
-> > For the system under test with 16 NUMA nodes and 1024 CPUs, this
-> > results in a substantial increase in the number of loop iterations
-> > during boot-up when NUMA is enabled:
-> > 
-> > No NUMA = 1024*2*1*512  =   1,048,576 : Here refresh_zone_stat_thresholds
-> > takes around 224 ms total for all the CPUs in the system under test.
-> > 16 NUMA = 1024*2*16*512 =  16,777,216 : Here refresh_zone_stat_thresholds
-> > takes around 4.5 seconds total for all the CPUs in the system under test.
-> > 
-> > Calling this for each CPU is expensive when there are large number
-> > of CPUs along with multiple NUMAs. Fix this by deferring
-> > refresh_zone_stat_thresholds to be called later at once when all the
-> > secondary CPUs are up. Also, register the DYN hooks to keep the
-> > existing hotplug functionality intact.
-> >
-> > ...
-> >
-> > --- a/mm/vmstat.c
-> > +++ b/mm/vmstat.c
-> > @@ -31,6 +31,7 @@
-> >  
-> >  #include "internal.h"
-> >  
-> > +static int vmstat_late_init_done;
-> >  #ifdef CONFIG_NUMA
-> >  int sysctl_vm_numa_stat = ENABLE_NUMA_STAT;
-> >  
-> > @@ -2107,7 +2108,8 @@ static void __init init_cpu_node_state(void)
-> >  
-> >  static int vmstat_cpu_online(unsigned int cpu)
-> >  {
-> > -	refresh_zone_stat_thresholds();
-> > +	if (vmstat_late_init_done)
-> > +		refresh_zone_stat_thresholds();
-> >  
-> >  	if (!node_state(cpu_to_node(cpu), N_CPU)) {
-> >  		node_set_state(cpu_to_node(cpu), N_CPU);
-> > @@ -2139,6 +2141,14 @@ static int vmstat_cpu_dead(unsigned int cpu)
-> >  	return 0;
-> >  }
-> >  
-> > +static int __init vmstat_late_init(void)
-> > +{
-> > +	refresh_zone_stat_thresholds();
-> > +	vmstat_late_init_done = 1;
-> > +
-> > +	return 0;
-> > +}
-> > +late_initcall(vmstat_late_init);
-> 
-> OK, so what's happening here.  Once all CPUs are online and running
-> around doing heaven knows what, one of the CPUs sets up everyone's
-> thresholds.  So for a period, all the other CPUs are running with
-> inappropriate threshold values.
-> 
-> So what are all the other CPUs doing at this point in time, and why is
-> it safe to leave their thresholds in an inappropriate state while they
-> are doing it?
+The Ryzen 3000 series processors have been observed lacking the
+nominal_freq and lowest_freq parameters in their ACPI tables. This
+absence causes issues with loading the amd-pstate driver on these
+systems. Introduces a fix to resolve the dependency issue
+by adding a quirk specifically for the Ryzen 3000 series.
 
-From what I undersatnd these threshold values are primarily used by
-userspace tools, and this data will be useful post late_initcall only.
+Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+---
+ drivers/cpufreq/amd-pstate.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-If there’s a more effective approach to handle this, please let me know,
-and I can investigate further.
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 68c616b572f2..07d26ae80454 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -142,6 +142,11 @@ static struct quirk_entry quirk_amd_7k62 = {
+ 	.lowest_freq = 550,
+ };
+ 
++static struct quirk_entry quirk_amd_mts = {
++	.nominal_freq = 3600,
++	.lowest_freq = 550,
++};
++
+ static int __init dmi_matched_7k62_bios_bug(const struct dmi_system_id *dmi)
+ {
+ 	/**
+@@ -158,6 +163,21 @@ static int __init dmi_matched_7k62_bios_bug(const struct dmi_system_id *dmi)
+ 	return 0;
+ }
+ 
++static int __init dmi_matched_mts_bios_bug(const struct dmi_system_id *dmi)
++{
++	/**
++	 * match the broken bios for ryzen 3000 series processor support CPPC V2
++	 * broken BIOS lack of nominal_freq and lowest_freq capabilities
++	 * definition in ACPI tables
++	 */
++	if (cpu_feature_enabled(X86_FEATURE_ZEN2)) {
++		quirks = dmi->driver_data;
++		pr_info("Overriding nominal and lowest frequencies for %s\n", dmi->ident);
++		return 1;
++	}
++
++	return 0;
++}
+ static const struct dmi_system_id amd_pstate_quirks_table[] __initconst = {
+ 	{
+ 		.callback = dmi_matched_7k62_bios_bug,
+@@ -168,6 +188,16 @@ static const struct dmi_system_id amd_pstate_quirks_table[] __initconst = {
+ 		},
+ 		.driver_data = &quirk_amd_7k62,
+ 	},
++	{
++		.callback = dmi_matched_mts_bios_bug,
++		.ident = "AMD Ryzen 3000",
++		.matches = {
++			DMI_MATCH(DMI_PRODUCT_NAME, "B450M MORTAR MAX (MS-7B89)"),
++			DMI_MATCH(DMI_BIOS_RELEASE, "06/10/2020"),
++			DMI_MATCH(DMI_BIOS_VERSION, "5.14"),
++		},
++		.driver_data = &quirk_amd_7k62,
++	},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(dmi, amd_pstate_quirks_table);
+-- 
+2.34.1
 
-- Saurabh
 
