@@ -1,144 +1,121 @@
-Return-Path: <linux-kernel+bounces-280391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C71B394C9F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:57:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 292BB94CA03
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31B95B20F48
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:57:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86F12893DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176192905;
-	Fri,  9 Aug 2024 05:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DA716C86B;
+	Fri,  9 Aug 2024 06:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCnPQp6e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Gz7REli/"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA6616C861;
-	Fri,  9 Aug 2024 05:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4946184;
+	Fri,  9 Aug 2024 06:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723183036; cv=none; b=PK4qHQMxOnajzZOSnjIDspO6SAb9kRZDpFfd+qZ5Il22Y+MPJ7Jt+3dXPSiuQ9u4g0iqojg9YSsE2Uk1iuIIiC1/n5Av0Ohrge1jc1mDEgyJxmpS58fmuPeEPJuaF1sbPnWynFlumyAEbQ5iNlKA7prujLHohOZcdw173QbqQvo=
+	t=1723183315; cv=none; b=sGfDSd7EtFou7sy2K72B4ssqH6ewVyur5etGO4cjZxRI7Lbj/GY/NFKKIrJOKB0z/Tb+cLca1MnlDrcBkAtHZeEm1OnEqEe5vInqPTn01u3iARzmegk0ui62IYZqmt0NmgpkZvVc4GRAdQzZ0pf9dRYBi/Yt2MH9aPnjSAQ6TsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723183036; c=relaxed/simple;
-	bh=/mWCZ3jkN279IwSE5nwXFBrY4GUZ536BaRUa5kC1WKM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=piTufU1HSw/lK3otWAItmGoO0/Gdg+Z4cNL+BP8aYLM7BDKeoezXKef3dY/ce7lEjIHv3MIQVM99Yt6RnlrDowNi7nuValcR8UbmRcHp4Di7V8tU3iRepG/mQik41N3OCyl9EOJVRLEtIsV5wlIAycC3APRZEYrQ3IpOYOJmGkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCnPQp6e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE71C32782;
-	Fri,  9 Aug 2024 05:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723183035;
-	bh=/mWCZ3jkN279IwSE5nwXFBrY4GUZ536BaRUa5kC1WKM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fCnPQp6ebMrRppXFcdm5yHd4Kl0hIbdF17oN1EP5bRGiel62BtwsuKjQXjU50011y
-	 h0SGjvB33A7WNQtIltrGlcUlrT7dRYFTp5ofco6SmvVlKNhpLa0aCyaFRMxj9Defnn
-	 rmxZBk5cnWWTwtW5Va+iuYIj1CX4bJsq9FsxQcrQmVjkXqGLwQzCw/4HvLqVaTJQSS
-	 wdnEk0oxO/EJAjSG79EPZvZ/JsLiHqD7lKVw5qu76lKjVqEJ8QFNMkwItHpMWeG4ej
-	 CbDpQY3af3gBjcn6C4iVqlJYwUsbX48VE47YtVcNrksjxzh7Z+FdIS7KN08H2u5zAF
-	 417cDvZrIqMew==
-Message-ID: <d52861ee-26a3-4673-8aae-9859d435f817@kernel.org>
-Date: Fri, 9 Aug 2024 07:57:05 +0200
+	s=arc-20240116; t=1723183315; c=relaxed/simple;
+	bh=u4M3haMYYhTPIRpC5YY9/hNrGN67fqfpQhhp6BF+mEY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WosKi47A4INvVB+CGZk20ITWCOP9QWGaeIbe1Hv3z+wmCqtSrI9BUH15t3Yhh4I+w5AoHh1lcu1of1/CV3QmRQsOO1Km/7U5vXzS7zGyEt120Aj8Dub5C8i1rt8eMKRgV30xqEQDdxtI66ij4Edy0gO7wlky2hELQj0eNiGa2MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Gz7REli/; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47961Z9I090003;
+	Fri, 9 Aug 2024 01:01:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723183295;
+	bh=rgHh5WpxI1LAQUjXRTB9RmGXouHqqsuo+iVVEkhZLus=;
+	h=From:To:CC:Subject:Date;
+	b=Gz7REli/XcjJuRJaDGb/wW8DbK7MsNcbueR2l00bJO27jQvLcljR64/bo+7MQkYZ4
+	 KxvK6LdgZ+urnpZVjwliGoJ9jeSYTgoKW+zdJxR/6tunBq7w0hoJbEo8uUx5Jq3SD9
+	 L1RdmgiSZvCdFgsXahCXNB4IYM8zWdQGDGhS3/po=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47961Z7p049069
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 9 Aug 2024 01:01:35 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 9
+ Aug 2024 01:01:35 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 9 Aug 2024 01:01:35 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47961WFM102237;
+	Fri, 9 Aug 2024 01:01:33 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <afd@ti.com>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] remoteproc: k3-r5: Delay notification of wakeup event
+Date: Fri, 9 Aug 2024 11:31:32 +0530
+Message-ID: <20240809060132.308642-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] tty: serial: 8250: Add loongson uart driver
- support
-To: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
- kernel@xen0n.name, p.zabel@pengutronix.de
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, loongarch@lists.linux.dev
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
- <20240804063834.70022-2-zhenghaowei@loongson.cn>
- <84ff11bd-1d11-4d66-a56b-84bf915af346@kernel.org>
- <77b249fd-3cf7-4cb4-a2b4-64c0c2ba96fa@loongson.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <77b249fd-3cf7-4cb4-a2b4-64c0c2ba96fa@loongson.cn>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 07/08/2024 10:24, 郑豪威 wrote:
->>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> +	if (!res)
->>> +		return -ENODEV;
->>> +
->>> +	port->membase = devm_ioremap(&pdev->dev, res->start, resource_size(res));
->>> +	if (!port->membase)
->>> +		return -ENOMEM;
->>> +
->> Use wrapper combining both calls.
-> 
-> I got it, did you mean like this?
-> 
-> +    res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +    if (!res)
-> +        return -ENODEV;
-> +
-> +    port->mapbase = res->start;
-> +    port->mapsize = resource_size(res);
-> +
-> +    port->membase = devm_ioremap(&pdev->dev, port->mapbase, port->mapsize);
-> +    if (!port->membase)
->   +       return -ENOMEM;
+From: Udit Kumar <u-kumar1@ti.com>
 
-I still see two calls, so how are they combined? Just open any other
-file and see how it is done there.
+Few times, core1 was scheduled to boot first before core0, which leads
+to error:
 
+'k3_r5_rproc_start: can not start core 1 before core 0'.
 
-Best regards,
-Krzysztof
+This was happening due to some scheduling between prepare and start
+callback. The probe function waits for event, which is getting
+triggered by prepare callback. To avoid above condition move event
+trigger to start instead of prepare callback.
+
+Fixes: 61f6f68447ab ("remoteproc: k3-r5: Wait for core0 power-up before powering up core1")
+Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+[ Applied wakeup event trigger only for Split-Mode booted rprocs ]
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 39a47540c590..f1710a61247f 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -464,8 +464,6 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+ 			ret);
+ 		return ret;
+ 	}
+-	core->released_from_reset = true;
+-	wake_up_interruptible(&cluster->core_transition);
+ 
+ 	/*
+ 	 * Newer IP revisions like on J7200 SoCs support h/w auto-initialization
+@@ -587,6 +585,9 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ 		ret = k3_r5_core_run(core);
+ 		if (ret)
+ 			goto put_mbox;
++
++		core->released_from_reset = true;
++		wake_up_interruptible(&cluster->core_transition);
+ 	}
+ 
+ 	return 0;
+-- 
+2.34.1
 
 
