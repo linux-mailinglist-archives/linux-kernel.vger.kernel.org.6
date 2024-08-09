@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-280876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E0A94D059
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:37:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE0E94D06F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029A7286473
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ACD2281789
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C894194A40;
-	Fri,  9 Aug 2024 12:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE157194A5A;
+	Fri,  9 Aug 2024 12:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Ityy9BB9"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="o8aH7Er+"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3461DFF5;
-	Fri,  9 Aug 2024 12:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9F91E49B;
+	Fri,  9 Aug 2024 12:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723207040; cv=none; b=MO88P6J5URaqy0B6mg14gacxxuYqx14ZFJukv8U3EP6tVMLNLsty60Rav7SlT2mfyCqD1pnlS5Ozf3FwfjB/bmSoDfcrMYps1AF+Yk93Y+a40/NSY2yw9gqY5OvR2mr2CR8IUqET3cahKgSqArcdzXaDFCZAGz6gNx/nzILs5Hs=
+	t=1723207533; cv=none; b=HrabvyTdSar32tCZFh0ujdW9O7GqiwqYJtL5j46CKxj/iogENNUWhHxHjjwdYX+vfpUGcgKMJIXuwNkgmOzXJsZhCqUZcFuB+Xj6eQcKmiK6pQnm2xXEnsUG8BWycz7jAeZPsWKZnT4pO9c03F+8J8WZ0wKjJ2K814AR1dj3AA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723207040; c=relaxed/simple;
-	bh=HAr1YBK5Iti57WLZAVf7xawM2aVnXg0kQ77MBFfGA9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u44Dki0KCyqYUTAh5ZjmcFckJ/q4vnJNIfT+XQHLN3GNwsgj6b2j944CJHgL0FdhxBPuYZ97CFUU7W7G0CQj4sTF75RcGqnviekLOhE64iW4GflauUdB01o6kusU7cRX3c2ITUBLErQ9wvwa0JLVGU79Qfb8ZSPh5jhEten7o7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Ityy9BB9; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 9CE962123B;
-	Fri,  9 Aug 2024 14:37:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1723207035;
-	bh=5TlxZTfYBXeSTqAWOdY0khCP4g3uC9jK6KkgNXu/7uw=;
-	h=Received:From:To:Subject;
-	b=Ityy9BB992Y8DWemRQiB9DmPglNNPWTsCt6S4Xm1gaIsPSA2nTdInwxvKke73BZM0
-	 TY2uD5lWLuCw25pCdylIzLABfiLug0PO6admsTPrcIPPWYZ3w/DJtI+EbktvI0boxO
-	 7o6q3k1lvurtM2nNxwTRE4B6uhOAnNgMIrbAzdu+tQMHgGp3fkh/TlWsCtBQ3hGhw6
-	 5nB6Nr4YvFmVeaei7gp7SEy7MbneQ1ibSlsVVNVFEeG3MchjE+DzcV3os1CZLy3L4e
-	 fVbWGpbsYH5BMrl6AYP4ZGqQyzb7+Abg95pv6GSnOfSQd+c4KDT32TNrHUsOx7pZEN
-	 PamlP44xQUOtw==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 3E0937F911; Fri,  9 Aug 2024 14:37:15 +0200 (CEST)
-Date: Fri, 9 Aug 2024 14:37:15 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH] wifi: mwifiex: keep mwifiex_cfg80211_ops constant
-Message-ID: <ZrYNex2LjSd09N-m@gaggiata.pivistrello.it>
-References: <20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de>
+	s=arc-20240116; t=1723207533; c=relaxed/simple;
+	bh=k8Y6IdSC1c6L9mCKG4YcpPi4RtYeUxeB5vvQv2bbOhI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fEtlzl15ncp4t/7ONMYbyTdlaJUt0xVLtJA/4vUDEUGXrVfBfguTxcu1JhZG0Panr2/Ew6r75UnsFD/p1FNVyTmyItrOXuRNepoyKRmpBf4l3Lkb5pUMYZPYWSDT31Y5oIRNl5JhB/ZGOXlGjcnWIrKRqw3Mrt9ZUI4UTMoxt4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=o8aH7Er+; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from localhost.localdomain (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id 6B506200BE5F;
+	Fri,  9 Aug 2024 14:39:31 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be 6B506200BE5F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1723207171;
+	bh=XpwIqo1AiVwWFE4S3CUBFjvGb9oc0dEp4/MZI+58/fw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=o8aH7Er+lz65rUpRfijCaDQxro4CIJs90dZdJYs8YAsrlXrZLK+Crm6oYlFCADeO8
+	 9EI6GgfEQxTc4qluUUGOOBT5GOPOI03nXVcH3+rerzypMW6fonVWYLncj5D2EG/cMR
+	 jSmh1CdrXuApKy5Gv0J4vnPUyX9euLc4ZqzFmWEwhgt5Zkt37geDFer+EbEr6zBKBC
+	 L/12CLOqdXoTBTCcdtkaGP50xWirn22VjRkftF7xE6p85mR4IuuVZEhCK5j2v4fj9t
+	 GYgcGFjFPQsf4ZeB4MM6LO+cyqLw6i4n2QOIjiL+Tge0HAcpyqg5MJTL9JtKh+1n3x
+	 apsGey7T3drMQ==
+From: Justin Iurman <justin.iurman@uliege.be>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	justin.iurman@uliege.be
+Subject: [PATCH net-next 0/2] net: ipv6: ioam6: introduce tunsrc
+Date: Fri,  9 Aug 2024 14:39:13 +0200
+Message-Id: <20240809123915.27812-1-justin.iurman@uliege.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 09, 2024 at 11:51:48AM +0200, Sascha Hauer wrote:
-> With host_mlme support being added mwifiex_cfg80211_ops is no longer
-> constant, but supplemented with the host_mlme related ops when host_mlme
-> support is enabled. This doesn't work with multiple adapters when only
-> few of then have host_mlme support. Duplicate mwifiex_cfg80211_ops
-> before using it and keep the original constant.
-> 
-> While at it mark mwifiex_cfg80211_ops const to prevent people from
-> changing it again during runtime.
-> 
-> Fixes: 36995892c271c ("wifi: mwifiex: add host mlme for client mode")
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+This patchset introduces a new feature called "tunsrc" (just like seg6
+already does).
 
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Justin Iurman (2):
+  net: ipv6: ioam6: code alignment
+  net: ipv6: ioam6: new feature tunsrc
+
+ include/uapi/linux/ioam6_iptunnel.h |  7 ++++
+ net/ipv6/ioam6_iptunnel.c           | 57 +++++++++++++++++++++++++----
+ 2 files changed, 56 insertions(+), 8 deletions(-)
+
+-- 
+2.34.1
 
 
