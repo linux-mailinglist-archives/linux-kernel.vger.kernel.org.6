@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-280818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9F194CFA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:55:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F068F94CE83
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B30B51F22BF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:55:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41500B212C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D948E194090;
-	Fri,  9 Aug 2024 11:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AC11922C9;
+	Fri,  9 Aug 2024 10:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="G60rWaM1"
-Received: from mail-m3277.qiye.163.com (mail-m3277.qiye.163.com [220.197.32.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="k9Ni1dmH"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF64193064;
-	Fri,  9 Aug 2024 11:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024721922E2
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 10:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723204512; cv=none; b=E1mX0lUnFGuVog2d/Q3RAjm6BnByOeZS5JMgq8JFe9YDKJ5eTLFvd7W57tLj5FUKc/Qik/igtaMTyOI4OirzlMjrk87PfZK/p91fsq0cgvIVuY6gCFWJ9dgz+EFSPXSURpwL/xXSVy5MAU20jPCpQ2P5Vb2A4s/QCHwHCj2Iaw4=
+	t=1723198850; cv=none; b=NYY0OwFge+vRZ+g9IIdibIgyR4ro05EsqGILmFTv8A9NzgUjNLLFHSozZw8h4jmdCoM9okaTd07zZjJnS07yqP7Uo1Ay1NDgrsP3DWDONTD5P4qnrdVEKr4QsKWoNniphC7JLPqa0xMxCm7YLJIaFXxcgrNbF01TSsi7XQfBAkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723204512; c=relaxed/simple;
-	bh=Pp72qnjj4nUr1BpJBnd5XddALQYXt2ZPErAi00si+K4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QhVSLp9W3gLosmB8hY9mwZ36CSaLeDn22Og6PU6jdSnggSHmO37HWlUy20qgSNkRBqp5uubTSAuXOz8FxZzGDLiyv8r2W1Leb+Uk0FzS73GdCbjAMKLhrqkKIaKSQMSD8X/NqVzSNa/1AbAlP2TR3EnKyvg8WbwCqHzOdcZrIKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=G60rWaM1; arc=none smtp.client-ip=220.197.32.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=G60rWaM1FeFUABTIzk/3JC1VcNw/rvY9scjfs0OqvT02HGstOKsf2kq8flQWRnop529GHs6X+PvcKtQsW1f7YKKSR8HNeSnNR7pcllt9tYd1j+QSAAD8QyykV3/+t4DGhPa6rdvLhzOKals6FM5685VrFH8goRmb+MEDj8sFxA0=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=+4lU7weacAbAcla6+btR1q1HDUNuPSWxc4GTP2p+mJA=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.69] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 98B564604DF;
-	Fri,  9 Aug 2024 16:16:41 +0800 (CST)
-Message-ID: <421d48b7-4aa7-4202-8b5f-9c60916f6ef6@rock-chips.com>
-Date: Fri, 9 Aug 2024 16:16:41 +0800
+	s=arc-20240116; t=1723198850; c=relaxed/simple;
+	bh=SMzcdYFvMjTzaYN1elvm5cK56QJk4Z4R1xqPoyL0vho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UroC+fCgDlFTbAhEGaiENGDKPywIvJHcZb9wUpx0jIC08aiI73kaXIIuqy3isD1zOLv/DnX5TQyvp26VQNdyKxq7bPzAoaTExA66mmDCcez3EjUYgK1A7sWtGN8qbg0GGNnRVNkyKHlstsh9hSbKclxYQBLCPNspimoa8FPqxS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=k9Ni1dmH; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1723198842;
+ bh=OO67g+83piiNdnui6ZP/Dz8vFOwmBNOFhFvNVMXIXKM=;
+ b=k9Ni1dmH4apkeZzlNLmVAUWgb8Q0ITEvQiQnoWM+dKP8FgyKV7po0IO/ih4Qmyw9OGzKbvY/p
+ vsRs+CFCLus/7SIJG85795AXrL8OnXijgmNWudiSEV3CvXMXw1E2EROzcg5Of8RQHZgHX3YVjow
+ yQNp4TSl+LC4CQmhIcar11YWXVOFovsOIOsGzpc3+kPcAx2WsbJ0GfLKaje0sDSigFb+mwDJsNU
+ bn3x5e4Eia4QfRWWqHtrO5rHkQ75UQdmtWXmVRTc9RtYVikxY80b7YQmkSJPfaiX482FeZJ1UH2
+ 3bJH7WjgBAOPQSOB0bHhrgIxKx/0Bx1aXUq6R3V0XgiA==
+Message-ID: <17c5e90e-a99d-4e4d-bc18-0366019f0bcf@kwiboo.se>
+Date: Fri, 9 Aug 2024 11:59:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,574 +49,162 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, Rob Herring <robh+dt@kernel.org>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, YiFeng Zhao <zyf@rock-chips.com>,
- Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] scsi: ufs: rockchip: init support for UFS
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <1723089163-28983-1-git-send-email-shawn.lin@rock-chips.com>
- <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
- <20240809062813.GC2826@thinkpad>
-Content-Language: en-GB
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20240809062813.GC2826@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v5] arm64: dts: rockchip: Add missing pinctrl wake and
+ clkreq for PCIe node
+To: Anand Moon <linux.amoon@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Dragan Simic
+ <dsimic@manjaro.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240729123709.2981-1-linux.amoon@gmail.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20240729123709.2981-1-linux.amoon@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUtLGlZPGUgdSBpISksZQk9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a91363620c903aekunm98b564604df
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OQg6OCo6TzI3Dw88H0shCg8*
-	IhgKCzFVSlVKTElISkJKT0tISEJOVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUpCSENMNwY+
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 66b5e899527e81fbd62263f5
 
-Hi Mani
+Hi Anand,
 
-Thanks for the comments.
+On 2024-07-29 14:37, Anand Moon wrote:
+> Add missing pinctrl settings WAKE and CLKREQ for PCIe 3.0 x4, PCIe 3.0 x1
+> and PCIe 2.1 x1 nodes. Each component of PCIe communication have the
+> following control signals: PERST, WAKE, CLKREQ, and REFCLK.
+> These signals work to generate high-speed signals and communicate with
+> other PCIe devices. Used by root complex to endpoint depending on
+> the power state.
+> 
+> PERST# is referred to as a fundamental reset. PERST should be held
+> low until all the power rails in the system and the reference clock
+> are stable. A transition from low to high in this signal usually
+> indicates the beginning of link initialization.
+> 
+> WAKE# signal is an active-low signal that is used to return the PCIe
+> interface to an active state when in a low-power state.
+> 
+> CLKREQ# signal is also an active-low signal and is used to request the
+> reference clock.  L1 sub-states is providing a digital signal
+> (CLKREQ#) for PHYs to use to wake up and resume normal operation.
+> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> v5: Merged all 3 patch into single patch, reabse on master
+>     Fix the $subject and commit message.
+>     Drop the RK_FUNC_GPIO for WAKE and CLKREQ as these seignal are
+>     ment for was introduced to allow PCI Express devices to enter
+>     even deeper power savings states (“L1.1” and “L1.2”) while still
+>      appearing to legacy software to be in the “L1” state
+> ---
+>  .../boot/dts/rockchip/rk3588-rock-5b.dts      | 46 +++++++++++++------
+>  1 file changed, 33 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> index 966bbc582d89..a1e83546f1be 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> @@ -318,7 +318,7 @@ map2 {
+>  
+>  &pcie2x1l0 {
+>  	pinctrl-names = "default";
+> -	pinctrl-0 = <&pcie2_0_rst>;
+> +	pinctrl-0 = <&pcie30x1_pins>;
+>  	reset-gpios = <&gpio4 RK_PA5 GPIO_ACTIVE_HIGH>;
+>  	vpcie3v3-supply = <&vcc3v3_pcie2x1l0>;
+>  	status = "okay";
+> @@ -326,7 +326,7 @@ &pcie2x1l0 {
+>  
+>  &pcie2x1l2 {
+>  	pinctrl-names = "default";
+> -	pinctrl-0 = <&pcie2_2_rst>;
+> +	pinctrl-0 = <&pcie20x12_pins>;
+>  	reset-gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_HIGH>;
+>  	vpcie3v3-supply = <&vcc3v3_pcie2x1l2>;
+>  	status = "okay";
+> @@ -338,7 +338,7 @@ &pcie30phy {
+>  
+>  &pcie3x4 {
+>  	pinctrl-names = "default";
+> -	pinctrl-0 = <&pcie3_rst>;
+> +	pinctrl-0 = <&pcie30x4_pins>;
+>  	reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
+>  	vpcie3v3-supply = <&vcc3v3_pcie30>;
+>  	status = "okay";
+> @@ -363,28 +363,48 @@ hp_detect: hp-detect {
+>  		};
+>  	};
+>  
+> -	pcie2 {
+> -		pcie2_0_rst: pcie2-0-rst {
+> -			rockchip,pins = <4 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
+> +	pcie20x1 {
+> +		pcie20x12_pins: pcie20x12-pins {
+> +			rockchip,pins =
+> +				/* PCIE20_1_2_CLKREQn_M1_L */
+> +				<3 RK_PC7 4 &pcfg_pull_up>,
+> +				/* PCIE_PERST_L */
+> +				<3 RK_PB0 RK_FUNC_GPIO &pcfg_pull_up>,
+> +				/* PCIE20_1_2_WAKEn_M1_L */
+> +				<3 RK_PD0 4 &pcfg_pull_up>;
 
-在 2024/8/9 14:28, Manivannan Sadhasivam 写道:
-> On Thu, Aug 08, 2024 at 11:52:43AM +0800, Shawn Lin wrote:
->> RK3576 contains a UFS controller, add init support fot it.
->>
-> 
-> This description is very simple. Please add more info like the UFSHCD version,
-> lane config, quirks and any other vendor specific difference.
-> 
+Some unanswered questions from v4:
 
-Will improve.
+How come you use internal pull-up/down on these pins?
+And why do they differ for each pcie node in this series?
 
->> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->>
->> ---
->>
->> Changes in v2:
->> - use dev_probe_err
->> - remove ufs-phy-config-mode as it's not used
->> - drop of_match_ptr
->>
->>   drivers/ufs/host/Kconfig        |  12 ++
->>   drivers/ufs/host/Makefile       |   1 +
->>   drivers/ufs/host/ufs-rockchip.c | 438 ++++++++++++++++++++++++++++++++++++++++
->>   drivers/ufs/host/ufs-rockchip.h |  51 +++++
->>   4 files changed, 502 insertions(+)
->>   create mode 100644 drivers/ufs/host/ufs-rockchip.c
->>   create mode 100644 drivers/ufs/host/ufs-rockchip.h
->>
->> diff --git a/drivers/ufs/host/Kconfig b/drivers/ufs/host/Kconfig
->> index 580c8d0..fafaa33 100644
->> --- a/drivers/ufs/host/Kconfig
->> +++ b/drivers/ufs/host/Kconfig
->> @@ -142,3 +142,15 @@ config SCSI_UFS_SPRD
->>   
->>   	  Select this if you have UFS controller on Unisoc chipset.
->>   	  If unsure, say N.
->> +
->> +config SCSI_UFS_ROCKCHIP
->> +	tristate "Rockchip specific hooks to UFS controller platform driver"
->> +	depends on SCSI_UFSHCD_PLATFORM && (ARCH_ROCKCHIP || COMPILE_TEST)
->> +	help
->> +	  This selects the Rockchip specific additions to UFSHCD platform driver.
->> +	  UFS host on Rockchip needs some vendor specific configuration before
->> +	  accessing the hardware which includes PHY configuration and vendor
->> +	  specific registers.
->> +
->> +	  Select this if you have UFS controller on Rockchip chipset.
->> +	  If unsure, say N.
->> diff --git a/drivers/ufs/host/Makefile b/drivers/ufs/host/Makefile
->> index 4573aea..2f97feb 100644
->> --- a/drivers/ufs/host/Makefile
->> +++ b/drivers/ufs/host/Makefile
->> @@ -10,5 +10,6 @@ obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
->>   obj-$(CONFIG_SCSI_UFS_HISI) += ufs-hisi.o
->>   obj-$(CONFIG_SCSI_UFS_MEDIATEK) += ufs-mediatek.o
->>   obj-$(CONFIG_SCSI_UFS_RENESAS) += ufs-renesas.o
->> +obj-$(CONFIG_SCSI_UFS_ROCKCHIP) += ufs-rockchip.o
->>   obj-$(CONFIG_SCSI_UFS_SPRD) += ufs-sprd.o
->>   obj-$(CONFIG_SCSI_UFS_TI_J721E) += ti-j721e-ufs.o
->> diff --git a/drivers/ufs/host/ufs-rockchip.c b/drivers/ufs/host/ufs-rockchip.c
->> new file mode 100644
->> index 0000000..46c90d6
->> --- /dev/null
->> +++ b/drivers/ufs/host/ufs-rockchip.c
->> @@ -0,0 +1,438 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Rockchip UFS Host Controller driver
->> + *
->> + * Copyright (C) 2024 Rockchip Electronics Co.Ltd.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/gpio.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +#include <linux/reset.h>
->> +
->> +#include <ufs/ufshcd.h>
->> +#include <ufs/unipro.h>
->> +#include "ufshcd-pltfrm.h"
->> +#include "ufshcd-dwc.h"
->> +#include "ufs-rockchip.h"
->> +
->> +static inline bool ufshcd_is_device_present(struct ufs_hba *hba)
-> 
-> No inline in .c file please.
+Regards,
+Jonas
 
-ok.
+>  		};
+> +	};
+>  
+> +	pcie30x1 {
+>  		pcie2_0_vcc3v3_en: pcie2-0-vcc-en {
+>  			rockchip,pins = <1 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
+>  		};
+>  
+> -		pcie2_2_rst: pcie2-2-rst {
+> -			rockchip,pins = <3 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		pcie30x1_pins: pcie30x1-pins {
+> +			rockchip,pins =
+> +				/* PCIE30x1_0_CLKREQn_M1_L */
+> +				<4 RK_PA3 4 &pcfg_pull_down>,
+> +				/* PCIE30x1_0_PERSTn_M1_L */
+> +				<4 RK_PA5 RK_FUNC_GPIO &pcfg_pull_down>,
+> +				/* PCIE30x1_0_WAKEn_M1_L */
+> +				<4 RK_PA4 4 &pcfg_pull_down>;
+>  		};
+>  	};
+>  
+> -	pcie3 {
+> -		pcie3_rst: pcie3-rst {
+> -			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+> -		};
+> -
+> +	pcie30x4 {
+>  		pcie3_vcc3v3_en: pcie3-vcc3v3-en {
+>  			rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
+>  		};
+> +
+> +		pcie30x4_pins: pcie30x4-pins {
+> +			rockchip,pins =
+> +				/* PCIE30X4_CLKREQn_M1_L */
+> +				<4 RK_PB4 4 &pcfg_pull_up>,
+> +				/* PCIE30X4_PERSTn_M1_L */
+> +				<4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>,
+> +				/* PCIE30X4_WAKEn_M1_L */
+> +				<4 RK_PB5 4 &pcfg_pull_down>;
+> +		};
+>  	};
+>  
+>  	usb {
+> 
+> base-commit: dc1c8034e31b14a2e5e212104ec508aec44ce1b9
 
-> 
->> +{
->> +	return ufshcd_readl(hba, REG_CONTROLLER_STATUS) & DEVICE_PRESENT;
->> +}
->> +
->> +static int ufs_rockchip_hce_enable_notify(struct ufs_hba *hba,
->> +					 enum ufs_notify_change_status status)
->> +{
->> +	int err = 0;
->> +
->> +	if (status == PRE_CHANGE) {
->> +		int retry_outer = 3;
->> +		int retry_inner;
->> +start:
->> +		if (ufshcd_is_hba_active(hba))
->> +			/* change controller state to "reset state" */
->> +			ufshcd_hba_stop(hba);
->> +
->> +		/* UniPro link is disabled at this point */
->> +		ufshcd_set_link_off(hba);
->> +
->> +		/* start controller initialization sequence */
->> +		ufshcd_writel(hba, CONTROLLER_ENABLE, REG_CONTROLLER_ENABLE);
->> +
->> +		usleep_range(100, 200);
->> +
->> +		/* wait for the host controller to complete initialization */
->> +		retry_inner = 50;
->> +		while (!ufshcd_is_hba_active(hba)) {
->> +			if (retry_inner) {
->> +				retry_inner--;
->> +			} else {
->> +				dev_err(hba->dev,
->> +					"Controller enable failed\n");
->> +				if (retry_outer) {
->> +					retry_outer--;
->> +					goto start;
->> +				}
->> +				return -EIO;
->> +			}
->> +			usleep_range(1000, 1100);
->> +		}
-> 
-> You just duplicated ufshcd_hba_execute_hce() here. Why? This doesn't make sense.
-
-Since we set UFSHCI_QUIRK_BROKEN_HCE, and we also need to do someting
-which is very similar to ufshcd_hba_execute_hce(), before calling
-ufshcd_dme_reset(). Similar but not totally the same. I'll try to see if
-we can export ufshcd_hba_execute_hce() to make full use of it.
-
-> 
->> +	} else { /* POST_CHANGE */
->> +		err = ufshcd_vops_phy_initialization(hba);
->> +	}
->> +
->> +	return err;
->> +}
->> +
->> +static void ufs_rockchip_set_pm_lvl(struct ufs_hba *hba)
->> +{
->> +	hba->rpm_lvl = UFS_PM_LVL_1;
->> +	hba->spm_lvl = UFS_PM_LVL_3;
->> +}
->> +
->> +static int ufs_rockchip_rk3576_phy_init(struct ufs_hba *hba)
->> +{
->> +	struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->> +
->> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(PA_LOCAL_TX_LCC_ENABLE, 0x0), 0x0);
->> +	/* enable the mphy DME_SET cfg */
->> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x200, 0x0), 0x40);
->> +	for (int i = 0; i < 2; i++) {
->> +		/* Configuration M-TX */
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xaa, SEL_TX_LANE0 + i), 0x06);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xa9, SEL_TX_LANE0 + i), 0x02);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xad, SEL_TX_LANE0 + i), 0x44);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xac, SEL_TX_LANE0 + i), 0xe6);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xab, SEL_TX_LANE0 + i), 0x07);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x94, SEL_TX_LANE0 + i), 0x93);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x93, SEL_TX_LANE0 + i), 0xc9);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x7f, SEL_TX_LANE0 + i), 0x00);
->> +		/* Configuration M-RX */
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x12, SEL_RX_LANE0 + i), 0x06);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x11, SEL_RX_LANE0 + i), 0x00);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x1d, SEL_RX_LANE0 + i), 0x58);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x1c, SEL_RX_LANE0 + i), 0x8c);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x1b, SEL_RX_LANE0 + i), 0x02);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x25, SEL_RX_LANE0 + i), 0xf6);
->> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x2f, SEL_RX_LANE0 + i), 0x69);
->> +	}
->> +	/* disable the mphy DME_SET cfg */
->> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x200, 0x0), 0x00);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0x80, 0x08C);
->> +	ufs_sys_writel(host->mphy_base, 0xB5, 0x110);
->> +	ufs_sys_writel(host->mphy_base, 0xB5, 0x250);
->> +
-> 
-> Why can't you do these settings in a PHY driver?
-
-As we have ->phy_initialization in struct ufs_hba_variant_ops,
-which asks the host driver to use it to initialize phys. It doesn't
-seem to need to create a whole new file to just add some smalls fixed
-parameters. :)
-
-
-> 
->> +	ufs_sys_writel(host->mphy_base, 0x03, 0x134);
->> +	ufs_sys_writel(host->mphy_base, 0x03, 0x274);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0x38, 0x0E0);
->> +	ufs_sys_writel(host->mphy_base, 0x38, 0x220);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0x50, 0x164);
->> +	ufs_sys_writel(host->mphy_base, 0x50, 0x2A4);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0x80, 0x178);
->> +	ufs_sys_writel(host->mphy_base, 0x80, 0x2B8);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0x18, 0x1B0);
->> +	ufs_sys_writel(host->mphy_base, 0x18, 0x2F0);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0x03, 0x128);
->> +	ufs_sys_writel(host->mphy_base, 0x03, 0x268);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0x20, 0x12C);
->> +	ufs_sys_writel(host->mphy_base, 0x20, 0x26C);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0xC0, 0x120);
->> +	ufs_sys_writel(host->mphy_base, 0xC0, 0x260);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0x03, 0x094);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0x03, 0x1B4);
->> +	ufs_sys_writel(host->mphy_base, 0x03, 0x2F4);
->> +
->> +	ufs_sys_writel(host->mphy_base, 0xC0, 0x08C);
->> +	udelay(1);
->> +	ufs_sys_writel(host->mphy_base, 0x00, 0x08C);
->> +
->> +	udelay(200);
->> +	/* start link up */
->> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(MIB_T_DBG_CPORT_TX_ENDIAN, 0), 0x0);
->> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(MIB_T_DBG_CPORT_RX_ENDIAN, 0), 0x0);
->> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(N_DEVICEID, 0), 0x0);
->> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(N_DEVICEID_VALID, 0), 0x1);
->> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(T_PEERDEVICEID, 0), 0x1);
->> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(T_CONNECTIONSTATE, 0), 0x1);
->> +
->> +	return 0;
->> +}
->> +
->> +static int ufs_rockchip_common_init(struct ufs_hba *hba)
->> +{
->> +	struct device *dev = hba->dev;
->> +	struct platform_device *pdev = to_platform_device(dev);
->> +	struct ufs_rockchip_host *host;
->> +	int err = 0;
->> +
->> +	host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
->> +	if (!host)
->> +		return -ENOMEM;
->> +
->> +	/* system control register for hci */
->> +	host->ufs_sys_ctrl = devm_platform_ioremap_resource_byname(pdev, "hci_grf");
->> +	if (IS_ERR(host->ufs_sys_ctrl))
->> +		return dev_err_probe(dev, PTR_ERR(host->ufs_sys_ctrl),
->> +					"cannot ioremap for hci system control register\n");
->> +
->> +	/* system control register for mphy */
->> +	host->ufs_phy_ctrl = devm_platform_ioremap_resource_byname(pdev, "mphy_grf");
->> +	if (IS_ERR(host->ufs_phy_ctrl))
->> +		return dev_err_probe(dev, PTR_ERR(host->ufs_phy_ctrl),
->> +				"cannot ioremap for mphy system control register\n");
->> +
->> +	/* mphy base register */
->> +	host->mphy_base = devm_platform_ioremap_resource_byname(pdev, "mphy");
->> +	if (IS_ERR(host->mphy_base))
->> +		return dev_err_probe(dev, PTR_ERR(host->mphy_base),
->> +					"cannot ioremap for mphy base register\n");
->> +
->> +	host->rst = devm_reset_control_array_get_exclusive(dev);
->> +	if (IS_ERR(host->rst))
->> +		return dev_err_probe(dev, PTR_ERR(host->rst), "failed to get reset control\n");
->> +
->> +	reset_control_assert(host->rst);
->> +	udelay(1);
->> +	reset_control_deassert(host->rst);
->> +
->> +	host->ref_out_clk = devm_clk_get(dev, "ref_out");
->> +	if (IS_ERR(host->ref_out_clk))
->> +		return dev_err_probe(dev, PTR_ERR(host->ref_out_clk), "ciu-drive not available\n");
-> 
-> What is 'ciu-drive'?
-
-Will fix.
-
-> 
->> +
->> +	err = clk_prepare_enable(host->ref_out_clk);
->> +	if (err)
->> +		return dev_err_probe(dev, err, "failed to enable ref out clock\n");
->> +
->> +	host->rst_gpio = devm_gpiod_get(&pdev->dev, "reset", GPIOD_OUT_LOW);
->> +	if (IS_ERR(host->rst_gpio)) {
->> +		dev_err_probe(&pdev->dev, PTR_ERR(host->rst_gpio),
->> +				"invalid reset-gpios property in node\n");
->> +		err = PTR_ERR(host->rst_gpio);
-> 
-> Krzysztof already pointed out this.
-> 
->> +		goto out;
->> +	}
->> +	udelay(20);
->> +	gpiod_set_value_cansleep(host->rst_gpio, 1);
-> 
-> Why do you need to assert device reset here? ufshcd driver will do it anyway.
-> 
-
-Yes, I see ufshcd_init（）will do that now. Will improve.
-
->> +
->> +	host->clks[0].id = "core";
->> +	host->clks[1].id = "pclk";
->> +	host->clks[2].id = "pclk_mphy";
->> +	err = devm_clk_bulk_get_optional(dev, UFS_MAX_CLKS, host->clks);
->> +	if (err) {
->> +		dev_err_probe(dev, err, "failed to get clocks\n");
->> +		goto out;
->> +	}
->> +
->> +	err = clk_bulk_prepare_enable(UFS_MAX_CLKS, host->clks);
->> +	if (err) {
->> +		dev_err_probe(dev, err, "failed to enable clocks\n");
->> +		goto out;
->> +	}
->> +
->> +	pm_runtime_set_active(&pdev->dev);
-> 
-> This is already called in ufshcd_pltfrm_init().
-
-Ok.
-
-> 
->> +
->> +	host->hba = hba;
->> +	ufs_rockchip_set_pm_lvl(hba);
->> +
->> +	ufshcd_set_variant(hba, host);
->> +
->> +	return 0;
->> +out:
-> 
-> s/out/disable_ref_clk
-
-Will fix.
-
-> 
->> +	clk_disable_unprepare(host->ref_out_clk);
->> +	return err;
->> +}
->> +
->> +static int ufs_rockchip_rk3576_init(struct ufs_hba *hba)
->> +{
->> +	int ret = 0;
-> 
-> Initialization not needed.
-> 
->> +	struct device *dev = hba->dev;
->> +
-> 
-> Also reverse Xmas order for local variables please.
-
-Will improve, as blow the same.
-
-> 
->> +	hba->quirks = UFSHCI_QUIRK_BROKEN_HCE | UFSHCD_QUIRK_SKIP_DEF_UNIPRO_TIMEOUT_SETTING;
->> +
->> +	/* Enable BKOPS when suspend */
->> +	hba->caps |= UFSHCD_CAP_AUTO_BKOPS_SUSPEND;
->> +	/* Enable putting device into deep sleep */
->> +	hba->caps |= UFSHCD_CAP_DEEPSLEEP;
->> +	/* Enable devfreq of UFS */
->> +	hba->caps |= UFSHCD_CAP_CLK_SCALING;
->> +	/* Enable WriteBooster */
->> +	hba->caps |= UFSHCD_CAP_WB_EN;
->> +
->> +	ret = ufs_rockchip_common_init(hba);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "ufs common init fail\n");
->> +
->> +	return 0;
->> +}
->> +
->> +static int ufs_rockchip_device_reset(struct ufs_hba *hba)
->> +{
->> +	struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->> +
->> +	if (!host->rst_gpio)
->> +		return -EOPNOTSUPP;
-> 
-> Is it possible to hit this condition?
-> 
-
-No. We ask the BSP to provide reset pin as a must one. Will remove.
-
->> +
->> +	gpiod_set_value_cansleep(host->rst_gpio, 0);
->> +	udelay(20);
->> +
->> +	gpiod_set_value_cansleep(host->rst_gpio, 1);
->> +	udelay(20);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct ufs_hba_variant_ops ufs_hba_rk3576_vops = {
->> +	.name = "rk3576",
->> +	.init = ufs_rockchip_rk3576_init,
->> +	.device_reset = ufs_rockchip_device_reset,
->> +	.hce_enable_notify = ufs_rockchip_hce_enable_notify,
->> +	.phy_initialization = ufs_rockchip_rk3576_phy_init,
->> +};
->> +
->> +static const struct of_device_id ufs_rockchip_of_match[] = {
->> +	{ .compatible = "rockchip,rk3576-ufs", .data = &ufs_hba_rk3576_vops},
-> 
-> Use 'rockchip,rk3576-ufshc'.
-
-ok.
-
-> 
->> +	{},
->> +};
->> +MODULE_DEVICE_TABLE(of, ufs_rockchip_of_match);
->> +
->> +static int ufs_rockchip_probe(struct platform_device *pdev)
->> +{
->> +	int err = 0;
-> 
-> Again no init needed and use reverse Xmas order (everywhere).
-> 
->> +	struct device *dev = &pdev->dev;
->> +	const struct ufs_hba_variant_ops *vops;
->> +
->> +	vops = device_get_match_data(dev);
-> 
-> Is it OK if vops is NULL?
-
-Will check.
-
-> 
->> +	err = ufshcd_pltfrm_init(pdev, vops);
->> +	if (err)
->> +		dev_err_probe(dev, err, "ufshcd_pltfrm_init failed\n");
-> 
-> Return err here and return 0 below.
-> 
-
-Ok.
-
->> +
->> +	return err;
->> +}
->> +
-> 
-> [...]
-> 
->> +static const struct dev_pm_ops ufs_rockchip_pm_ops = {
->> +	SET_SYSTEM_SLEEP_PM_OPS(ufs_rockchip_suspend, ufs_rockchip_resume)
->> +	SET_RUNTIME_PM_OPS(ufs_rockchip_runtime_suspend, ufs_rockchip_runtime_resume, NULL)
-> 
-> Why can't you use ufshcd PM ops as like other vendor drivers?
-
-It doesn't work from the test. We have many use case to power down the
-controller and device, so there is no flow to recovery the link. Only
-when the first accessing to UFS fails, the ufshcd error handle recovery 
-the link. This is not what we expect.
-
-
-> 
->> +	.prepare	 = ufshcd_suspend_prepare,
->> +	.complete	 = ufshcd_resume_complete,
->> +};
->> +
->> +static struct platform_driver ufs_rockchip_pltform = {
->> +	.probe = ufs_rockchip_probe,
->> +	.remove = ufs_rockchip_remove,
->> +	.driver = {
->> +		.name = "ufshcd-rockchip",
->> +		.pm = &ufs_rockchip_pm_ops,
->> +		.of_match_table = ufs_rockchip_of_match,
->> +	},
->> +};
->> +module_platform_driver(ufs_rockchip_pltform);
->> +
->> +MODULE_LICENSE("GPL");
->> +MODULE_DESCRIPTION("Rockchip UFS Host Driver");
->> diff --git a/drivers/ufs/host/ufs-rockchip.h b/drivers/ufs/host/ufs-rockchip.h
->> new file mode 100644
->> index 0000000..9eb80e8
->> --- /dev/null
->> +++ b/drivers/ufs/host/ufs-rockchip.h
->> @@ -0,0 +1,51 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Rockchip UFS Host Controller driver
->> + *
->> + * Copyright (C) 2024 Rockchip Electronics Co.Ltd.
->> + */
->> +
->> +#ifndef _UFS_ROCKCHIP_H_
->> +#define _UFS_ROCKCHIP_H_
->> +
->> +#define UFS_MAX_CLKS 3
->> +
->> +#define SEL_TX_LANE0 0x0
->> +#define SEL_TX_LANE1 0x1
->> +#define SEL_TX_LANE2 0x2
->> +#define SEL_TX_LANE3 0x3
->> +#define SEL_RX_LANE0 0x4
->> +#define SEL_RX_LANE1 0x5
->> +#define SEL_RX_LANE2 0x6
->> +#define SEL_RX_LANE3 0x7
->> +
->> +#define MIB_T_DBG_CPORT_TX_ENDIAN	0xc022
->> +#define MIB_T_DBG_CPORT_RX_ENDIAN	0xc023
->> +
->> +struct ufs_rockchip_host {
->> +	struct ufs_hba *hba;
->> +	void __iomem *ufs_phy_ctrl;
->> +	void __iomem *ufs_sys_ctrl;
->> +	void __iomem *mphy_base;
->> +	struct gpio_desc *rst_gpio;
->> +	struct reset_control *rst;
->> +	struct clk *ref_out_clk;
->> +	struct clk_bulk_data clks[UFS_MAX_CLKS];
->> +	uint64_t caps;
->> +	bool in_suspend;
-> 
-> Move bool to the end to avoid holes.
-> 
-> - Mani
-> 
 
