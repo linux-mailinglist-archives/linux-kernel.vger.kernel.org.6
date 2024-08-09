@@ -1,257 +1,244 @@
-Return-Path: <linux-kernel+bounces-280465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380B494CAF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1F194CB4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8886F283958
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:09:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C76284E9C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8F516D9D8;
-	Fri,  9 Aug 2024 07:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KfYkvVgW"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011065.outbound.protection.outlook.com [52.101.70.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0C2178378;
+	Fri,  9 Aug 2024 07:26:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD0916D9BF;
-	Fri,  9 Aug 2024 07:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723187378; cv=fail; b=WSkFXUwD0I1Q344in+sBJeIArj6GFW+FdYNfbBjxf7KKHf0VormiFcKYmXZ2kJ/Umt7Yz248UoLLbgeWsy4pT5FRsAx/QZJoyQ7yOXoeVMAeW6e1Vd0AT5t70CVQmrF/fOhdUgxkobA+6xg+IEr+ougGF421BInCsWQUvDR2pWs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723187378; c=relaxed/simple;
-	bh=rddV5WwzcURkFg/j6NgUPj148Z8UCVlqW5fTmbn+YEU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Eo/6Pkqoir/ORBeh5XkHROVrZTFsd6Hy2Du26JDB2tBRZsQ1xyXDbcalJJBpnPhpDUZTQdHaCsWcKxlUYhTrvmgE8i8jcIBDGustf+OQMdDx3k4k5CATOAK9PX2/rrW2pZKO+2YSKm9N4XCg1C8bzQlq2avw/bHfKcTBAVrc9q4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KfYkvVgW; arc=fail smtp.client-ip=52.101.70.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Tbp7ChaIgQgSkF6W4n8FNa49GRtwB+Xnchg8lJ6HTXUJTNja1+6cNcRpRT0pEPpOR1rz5R15bAP/jDErT5QUjc0TjRcnDfyxjQzsKaoTOyCdu+n6DHgKF0yStMF/Lckij0kCPorykxH60zezxC+a3IlxzijMqiAc3Lnrg6ZrQl/EXQWKAiz3ASwzW5jCqqYw+ykRER6kTBqQGs1MlpbVVCP+Woakq8frVHdO6Od7PeF8Mj4vQJbSd08pPnQqEaJRq5tfREZCtt3tksYpFLUycCuKOjfdMO/cClFtHOaYNqDlLtc8hs20TtLu1KhllHsYTQQjss7T7BYBKfP59ZVWWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RSpxOVv2peI/TE9WPKSrMgugRO4HuTWLRu/U0dfqEjg=;
- b=CR8VNvkjAhnmuUltk4loBy5Qbg7prqm2dOzNDWLSEwoDeKQf7hGp3ubw3h/p6ePvCgkWVfrbyiQWuogqWo7o8BkqbcmiqzZHeBDAOWk4DWID6rTyeUXGOyYrN7VSbjVf5kgaRZiSbOdA4Eb9EisAHejb+tctezCZssBAjofrgX1HnVmmZVbeqXzfrJ6o8Hux/KWQFgW6PVGJsQg+OQsh9SmLFSH+LVq82aVRTIrDPATtFcDNghcbVFu13O/uAl5YPYkh6VgUC6O9Q9y0Epr+WbBC/fD00VSP89GQg4c2gyOrIkeZwRypTbQD2wU0VJ+8Hn8oVhEWdtVR1Ao1qfjB7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RSpxOVv2peI/TE9WPKSrMgugRO4HuTWLRu/U0dfqEjg=;
- b=KfYkvVgWNr3/BSH6TI5fIwgpu8kXPtbYZkLbyRXgc7G4kDcimLtBx3diw+KQLfntFknMKF628/9/wzD0g27aXxwHzhTaAf+ZOdt1g3u4VNhOf+Lvt1dMK90ZEV2udiNngOwhpmubPw67G7VTzr0QSj82bs/fDOma+J/HTScabk5LyXRvi4A7VtNcVRhDLbGfPI7sfns3E8golSh4x0vxDLCby4iz+oi7vIG6cicsxAuwnSN5QcUv7zOwrpDwnVmkKsGHBAQcxTOhSao+T6qlsh7IO6IXAzP5OgeTpBbK/nbvX/QOmAgJFghyoAPZz8tHut0tNNW2H1uyQ/lD35Er/w==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PA1PR04MB10842.eurprd04.prod.outlook.com (2603:10a6:102:483::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.28; Fri, 9 Aug
- 2024 07:09:33 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7849.015; Fri, 9 Aug 2024
- 07:09:33 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"jirislaby@kernel.org" <jirislaby@kernel.org>,
-	"u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>, "Peng Fan
- (OSS)" <peng.fan@oss.nxp.com>
-CC: Sherry Sun <sherry.sun@nxp.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
-	<linux-serial@vger.kernel.org>
-Subject: RE: [PATCH] tty: serial: fsl_lpuart: mark last busy before
- uart_add_one_port
-Thread-Topic: [PATCH] tty: serial: fsl_lpuart: mark last busy before
- uart_add_one_port
-Thread-Index: AQHa6ZqEOE3e4yv4QUiDdqKPWb8K9LIde80AgAEBN6A=
-Date: Fri, 9 Aug 2024 07:09:33 +0000
-Message-ID:
- <PAXPR04MB8459C70644E1F1852A0782FB88BA2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20240808140325.580105-1-peng.fan@oss.nxp.com>
- <3306657.aeNJFYEL58@steina-w>
-In-Reply-To: <3306657.aeNJFYEL58@steina-w>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|PA1PR04MB10842:EE_
-x-ms-office365-filtering-correlation-id: 08d2e391-b8d9-4404-d486-08dcb842386a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?Z/yo8iDc2KT6OST3Mb9P54I+TkvQf4HZAn5IdZWk8/TtCYWDdEuJqRxdYb?=
- =?iso-8859-1?Q?IBuDroRTabUiTsZl7SgpGzzLM/w/lfGG6p243JnZzykBTQjvSpVlYTejZC?=
- =?iso-8859-1?Q?u+tSBxO+P9ngHmzLVULDRjZa2P0bB/ZubglVdtmT8xQcjOXnt8NQc2ce0Q?=
- =?iso-8859-1?Q?c0LWUMxRr1AXb+XdQhxaX73Xq1RZZFtlh0QOL41U0jkEvs05CukIG6GBfD?=
- =?iso-8859-1?Q?04in2NNeQwUxU76ITtWR1tahlux4MDuqTpxZHpcP+bU67uyulPV/HCgIzY?=
- =?iso-8859-1?Q?CIatZJU9kn8dCzamDUBW9LFB6BdHSSMQRTXNedbHJbY3AJIRzHk/QiKs78?=
- =?iso-8859-1?Q?Xfxlxkd/Jt05Vq5DGxEJFVcXWtwG9h39IYvlVXWxJg879wqfnurS7OdYSR?=
- =?iso-8859-1?Q?yRVP7pCVyS0IjtqjlpwqTc1iG2TN+3KmYm/JctXdPx4mpj/d64Yb2Mr/Os?=
- =?iso-8859-1?Q?hQkaFoP8xxwt6xEhvux0Q7L04pmOb9KkqahfB6xL8OOWzPriyH7IVLCFj6?=
- =?iso-8859-1?Q?oQfcBFWyFaoebfB1swrT1wv5uum2+FR0aKHdqCwCQ0ZuFC36NE08z0lmAY?=
- =?iso-8859-1?Q?5EbUm6BqhZasEfDDhNagQrr/BU//zhlOL089tulZOnSI9DcFG34V/GDV55?=
- =?iso-8859-1?Q?Op3s4unmNVCMq+x7Ghol5yyWGOifL+Ct5sYB8CF0t/wKth+8PmCxrXjDJW?=
- =?iso-8859-1?Q?L7ah4JFVxEhVYu1ZiGP5SYx5AsYPTxMWzCEkzEczA7HuL9b1PraSLGk0Lm?=
- =?iso-8859-1?Q?7Rh3yQztsoQLgAh1uIE9rUT/yOQaWpLb+bD3lJOw7t3Le/T129auasdPzQ?=
- =?iso-8859-1?Q?1lruAjj80k0TprLup/48LxnYT15TowqszhDCLNMFm/UWBdjkkTdwYua8AD?=
- =?iso-8859-1?Q?3VYwXVMQ6F6b8pWzTwEiQWE8Z2LBaJlqEVEwiYK55wlDo9rLvlRDWDdPVy?=
- =?iso-8859-1?Q?YD/HCGl/SCI3/GSfH6OcPrSl2C6C/yPlCi3U8rWySf+R7KUVG1O7bYBWND?=
- =?iso-8859-1?Q?7AQ2yCr0Kv34noHeWK08jbEZ2DJZz6Pgwfupx2rPXG2/qEhPl6elqzPven?=
- =?iso-8859-1?Q?0shK0wfR7Y2i8a5mV7Bqj4fq/sMq8jVjd4FpWoTNgVgYgz3OiPV72MUWFO?=
- =?iso-8859-1?Q?XdHC7It08k+POF1Eq/1Sb/HjX1aUhhZn+rUO/SPeMljvb9+l5MbgCwvajV?=
- =?iso-8859-1?Q?eX35lmW1vHTT+y+9w3rfjFQAlGPN8mBbE7O4bKFuh5KRANFE2GjO5/nzKV?=
- =?iso-8859-1?Q?5U6/DsaWUxd7nkA7zHuH4Bq2ab6y9pyc57+I0i25V/14p2AxPD8gMFxRAw?=
- =?iso-8859-1?Q?6cxLWkuJWNf2JvxlZfoS4wvDtPVU7tsDUfsxdPcaMTPNiTFUKTHD4thFdm?=
- =?iso-8859-1?Q?pIBoFIrU/Oh25MDLclU/U1sdyoImkcqxzpkjoWzyJudpS4Rb3u9pg=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?7naE000uKPTNrboPfQLqH6mhLNciOtWBo542lsjhLRjwwMGYxTI2gv3CqI?=
- =?iso-8859-1?Q?83mG0pbocBCy24NwJxeJ19vBN4UOOpdc93NoY+U4bcGVjKOy337t36O5mb?=
- =?iso-8859-1?Q?02H0XdfE8H4SmKJy7I00yICmvSaSgowmEGWoKn6/w+jwbhLe2qSdkTK/z1?=
- =?iso-8859-1?Q?2RpM/pA65Doy/b2OsLQQkKS+EwLaqc77zGMJB2EKJwfGm41R1NTAbMG45/?=
- =?iso-8859-1?Q?8sc9AHrWZ75QB4wgjUeTwvoe4KqyFfqrcmfdvT4K22Bgh4CCffv8XRzNN8?=
- =?iso-8859-1?Q?MoAWRS1lP/CrxqUFyagKpRRUCRiwUbZVlwvuDEELhP53d/hAFnMcunX+X1?=
- =?iso-8859-1?Q?uzGuSE3PqlcOHojhtji8RMm2ge4BGQ/viYJOr2AVH4d6N3xP1lu6Aeq7Xm?=
- =?iso-8859-1?Q?e6wDx50e2HVuLs6yNKFdGMZPt8vkgRxGGMzSTWtb7OEs/18ozc1ahHVWNK?=
- =?iso-8859-1?Q?k3fUzAbPmaMR78YH1cl2MDYyNFrS6CXp+4dk3t9PfhTZSAU5lzEyvdynGg?=
- =?iso-8859-1?Q?G56dXIR6nq03a0oKqXjuyR2N07qi3cP6zXNa25rNLzYWfB7oP1GwVA7RDg?=
- =?iso-8859-1?Q?e0tqhUJlPBqg+fQQCYJdjzpUw2D2avZYvMW5d1RI5lKxaq8+Vhwu/f8+UB?=
- =?iso-8859-1?Q?dcHbTKf+suCga7eg+rZhbH9ePiZE7pwcmU/nxwFS2Tq4ekURK/9h4CM6CK?=
- =?iso-8859-1?Q?/RuaAcdquuxDNq126Y++2mJ77oOAa5bA7mpbCSgQqc7TcrdXTedmjI8mrL?=
- =?iso-8859-1?Q?12Av9lXNd3zHlICVFU5snuKGR9BJc8b8JiesS6Vyd9/471R5Ir/1nYDEmg?=
- =?iso-8859-1?Q?MVoRYHuTL92B6E/7Tof+9S6aj007oxBHEb9Vju5cs9uMH7QHw7mgPMCZYB?=
- =?iso-8859-1?Q?+2PolmALLMxq7W1HjhF8DwN04xSsXLrMwv0yRWtMQcPO2/ZflC/AM2wGrB?=
- =?iso-8859-1?Q?HSkz5xqT7qjR5vPD1843KaXeWSKv4OvIuLRJBqaFJgs5Nj7eZLYCwM3tfy?=
- =?iso-8859-1?Q?cmtyGpCfVxtyclDbnoNTHSl/GLQfLv9i+BYOtFECE5Byxl1hkIzz/+89Vg?=
- =?iso-8859-1?Q?H0cm7JedA27IbStXZRhJoExUb9I2Gq2HduaDwjwhN/VnoaKdxdZ/E/XyCf?=
- =?iso-8859-1?Q?hAEI4o42fZIr8fpEaZ1BPM6mMCJ0FydZBDznSk7xlN6BrVEKGkrvusbAhb?=
- =?iso-8859-1?Q?eVSuH+3vutggKFGTuAvyYR/+3PKX5JwpbafNFD7VaLtsJHrTfeyDhZ366r?=
- =?iso-8859-1?Q?S++tz9yBMz7jePaJM4yFQ9GdGUZUDYvHpX8HlnpNo/LUcbNyubOUmxBtqX?=
- =?iso-8859-1?Q?AGLbA44RsR8vdQVImuG9o6x8195iCL9xbqxJesi5Bu3Z27tBH5nt99ssWR?=
- =?iso-8859-1?Q?kCbC2SmtY0YkRuNk6e108m1o2tMUUDAhJpDOwSgxkbNwJm8Gd92HWehXXn?=
- =?iso-8859-1?Q?DCiy6tck/j3WW/h+NXKyCUqoZ9r9YhKxBK32w2y61PkN5N5ITAtuE0vbwr?=
- =?iso-8859-1?Q?gsAAs+egz5P9+c9B7Sl3q8j9RKd6MlZ1HQeeuU0yD/USU3YOZ9ck9GHWdE?=
- =?iso-8859-1?Q?VZrrkYWnDb5cmzMmCX6BNS8OX7gh/YpD92Bu0vUnpCz5ZKbFIxxb5lemq6?=
- =?iso-8859-1?Q?mLeWb6qVX6EXg=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9FD17BA2
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723188360; cv=none; b=VAhyLnVx++gGwkfZNCYpTASsRBpT9HhvuOKS3DSfr8fRMIFYlfboA6KDypWBZYajl+c4zeaccHoS5hHejtuS7UR2FKt9+ObQ4W4TZma1so4TFrGbcU/nc8BzIoo/cP527GdFI5hfCBUuBpeTd193MPNzKgSBXhx0SgIEdNy1sJA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723188360; c=relaxed/simple;
+	bh=yi4K1zGpJxAsjqqbdwucKt8vGdkCSnyK1MOiAV9eM6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oxW6DxcAeWz4kDHQJoCBlSdv5CptMpf8F6qqYQmT3FoTNXLi3UUdNYtiIEUwfRdu8ggVI2m7zkZwDFcx4ggbDqJ4euYkJZ4JcmuQd7uovJnWVs5ngm/OMdfw8nnLnRxlhGfgwgjQ56/54eeGwfQthc34EshkxRC4l1QCo8dgsus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1scJl7-00012d-Vp; Fri, 09 Aug 2024 09:09:58 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1scJl2-005bez-0o; Fri, 09 Aug 2024 09:09:52 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1scJl1-00Aiml-2s;
+	Fri, 09 Aug 2024 09:09:51 +0200
+Date: Fri, 9 Aug 2024 09:09:51 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [EXT] Re: [PATCH v6 5/5] firmware: imx: adds miscdev
+Message-ID: <ZrXAv79KFCSyB3U_@pengutronix.de>
+References: <20240722-imx-se-if-v6-0-ee26a87b824a@nxp.com>
+ <20240722-imx-se-if-v6-5-ee26a87b824a@nxp.com>
+ <Zp-8MPdWdAhGG9de@pengutronix.de>
+ <AM9PR04MB860410277C8329271E12963F95B92@AM9PR04MB8604.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08d2e391-b8d9-4404-d486-08dcb842386a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 07:09:33.3555
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yaJ6lX3AeT10HTdSFGDAgZ1opLftph9V0wZ5L8WzVASCrBuLCa10MBCOGqDBsjY1ZMdtleJfumhxWxWWtRlXTA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10842
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM9PR04MB860410277C8329271E12963F95B92@AM9PR04MB8604.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-> Subject: Re: [PATCH] tty: serial: fsl_lpuart: mark last busy before
-> uart_add_one_port
->=20
-> Am Donnerstag, 8. August 2024, 16:03:25 CEST schrieb Peng Fan (OSS):
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > With "earlycon initcall_debug=3D1 loglevel=3D8" in bootargs, kernel
-> > sometimes boot hang. It is because normal console still is not ready,
-> > but runtime suspend is called, so early console putchar will hang in
-> > waiting TRDE set in UARTSTAT.
-> >
-> > The lpuart driver has auto suspend delay set to 3000ms, but during
-> > uart_add_one_port, a child device serial ctrl will added and probed
-> > with its pm runtime enabled(see serial_ctrl.c).
-> > The runtime suspend call path is:
-> > device_add
-> >      |-> bus_probe_device
-> >            |->device_initial_probe
-> > 	           |->__device_attach
-> >                          |-> pm_runtime_get_sync(dev->parent);
-> > 			 |-> pm_request_idle(dev);
-> > 			 |-> pm_runtime_put(dev->parent);
-> >
-> > So in the end, before normal console ready, the lpuart get runtime
-> > suspended. And earlycon putchar will hang.
-> >
-> > To address the issue, mark last busy just after pm_runtime_enable,
-> > three seconds is long enough to switch from bootconsole to normal
-> > console.
-> >
-> > Fixes: 43543e6f539b ("tty: serial: fsl_lpuart: Add runtime pm
-> > support")
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  drivers/tty/serial/fsl_lpuart.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/tty/serial/fsl_lpuart.c
-> > b/drivers/tty/serial/fsl_lpuart.c index 615291ea9b5e..77efa7ee6eda
-> > 100644
-> > --- a/drivers/tty/serial/fsl_lpuart.c
-> > +++ b/drivers/tty/serial/fsl_lpuart.c
-> > @@ -2923,6 +2923,7 @@ static int lpuart_probe(struct
-> platform_device *pdev)
-> >  	pm_runtime_set_autosuspend_delay(&pdev->dev,
-> UART_AUTOSUSPEND_TIMEOUT);
-> >  	pm_runtime_set_active(&pdev->dev);
-> >  	pm_runtime_enable(&pdev->dev);
-> > +	pm_runtime_mark_last_busy(&pdev->dev);
->=20
-> This change looks sensible to me. Is maybe [1] addressing the same
-> issue at a different level?
+On Thu, Aug 08, 2024 at 10:49:33AM +0000, Pankaj Gupta wrote:
+> > > +     if (tx_msg->header.tag != priv->cmd_tag) {
+> > > +             err = -EINVAL;
+> > > +             goto exit;
+> > > +     }
+> > > +
+> > > +     guard(mutex)(&priv->se_if_cmd_lock);
+> > > +     priv->waiting_rsp_dev = dev_ctx;
+> > > +     dev_ctx->temp_resp_size = cmd_snd_rcv_rsp_info.rx_buf_sz;
+> > > +
+> > > +     /* Device Context that is assigned to be a
+> > > +      * FW's command receiver, has pre-allocated buffer.
+> > > +      */
+> > > +     if (dev_ctx != priv->cmd_receiver_dev)
+> > > +             dev_ctx->temp_resp = rx_msg;
+> > > +
+> > > +     err = ele_miscdev_msg_send(dev_ctx,
+> > > +                                tx_msg,
+> > > +                                cmd_snd_rcv_rsp_info.tx_buf_sz);
+> > > +     if (err < 0)
+> > > +             goto exit;
+> > > +
+> > > +     cmd_snd_rcv_rsp_info.tx_buf_sz = err;
+> > > +
+> > > +     err = ele_miscdev_msg_rcv(dev_ctx,
+> > > +                               cmd_snd_rcv_rsp_info.rx_buf,
+> > > +                               cmd_snd_rcv_rsp_info.rx_buf_sz);
+> > 
+> > Ok, here you now have serialized sending and receiving messages,
+> > 
+> > With this you no longer need priv->waiting_rsp_dev, dev_ctx->temp_resp and
+> > dev_ctx->temp_resp_size. Drop these for further cleanup.
+> 
+> It is very much needed.
+> - priv->waiting_rsp_dev, help identify in the callback function that:
+> 	- the message is targeted for dev_ctx(user space) or dev(kernel space).
+> 	- the message is targeted for for which dev_ctx.
+> - dev_ctx->temp_resp, this buffer pointer is needed, to receive the message received in call back.
+> - dev_ctx->temp_resp_size, is needed to compare the size of in-coming message.
+> 
+> All the three are needed in callback function.
 
-If the lpuart driver is built as module, [1] could not resolve the issue.
+I think you should throw away ele_miscdev_msg_send() and
+ele_miscdev_msg_rcv() and instead use ele_msg_send_rcv() instead.
 
-And if lpuart driver is built as module, [1] might break earlycon.
-of_clk_drop_stdout_clocks disables clocks, but lpuart driver not
-insmod at that time.
+This driver contains a whole lot of unneeded complexity up to the point
+where it's not clear what this driver is actually trying to archieve.
 
-The current patch is simple and easy for backporting to stable
-tree. [1] is not suitable for backporting to stable tree.
+Please let's do a step back and try to find out the actual usecases.
 
-Regards,
-Peng.
+What I have found out so far is:
 
->=20
-> Best regards,
-> Alexander
->=20
-> [1] https://lore.kernel.org/all/20240808-gs101-non-essential-clocks-2-v6-=
-0-e91c537acedc@linaro.org/
->=20
-> >
-> >  	ret =3D lpuart_global_reset(sport);
-> >  	if (ret)
-> >
->=20
->=20
-> --
-> TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld,
-> Germany Amtsgericht M=FCnchen, HRB 105018
-> Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2F
-> www.tq-
-> group.com%2F&data=3D05%7C02%7Cpeng.fan%40nxp.com%7C40e104d
-> ceb2146494b3608dcb7bea82c%7C686ea1d3bc2b4c6fa92cd99c5c301
-> 635%7C0%7C0%7C638587276699315042%7CUnknown%7CTWFpbGZ
-> sb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJX
-> VCI6Mn0%3D%7C0%7C%7C%7C&sdata=3DF%2FHNvj%2Bh5VdTVfRaYkXF
-> VwYfm7NTUcy2o4UaewMHvT4%3D&reserved=3D0
->=20
+1) We can send one message to the ELE and each message is expected to get
+   one response from the ELE.
+2) We are not allowed to send another message to the ELE while there is a
+   message in flight that hasn't got a response.
+3) Both Kernel and userspace shall be able to send commands and receive
+   its responses.
+4) The ELE is able to send a command itself. Is this true? Does this
+   command need a response? Can we continue sending commands to the ELE
+   while the ELE waits for the response to the command?
 
+
+1) and 2) is covered by ele_msg_send_rcv(). 3) is covered by
+ele_msg_send_rcv() as well, it can be called directly by kernel
+code or via an ioctl from userspace.
+
+4) is the most unclear point for me, but 1) 2) and 3) seems straight
+forward and should be solvable with significantly reduced code size.
+
+Am I missing any features that you need as well?
+
+
+> 
+> > 
+> > > +}
+> > > +
+> > > +static int se_ioctl_get_mu_info(struct se_if_device_ctx *dev_ctx,
+> > > +                             u64 arg) {
+> > > +     struct se_if_priv *priv = dev_get_drvdata(dev_ctx->dev);
+> > > +     struct se_if_node_info *if_node_info;
+> > > +     struct se_ioctl_get_if_info info;
+> > > +     int err = 0;
+> > > +
+> > > +     if_node_info = (struct se_if_node_info *)priv->info;
+> > > +
+> > > +     info.se_if_id = if_node_info->se_if_id;
+> > > +     info.interrupt_idx = 0;
+> > > +     info.tz = 0;
+> > > +     info.did = if_node_info->se_if_did;
+> > > +     info.cmd_tag = if_node_info->cmd_tag;
+> > > +     info.rsp_tag = if_node_info->rsp_tag;
+> > > +     info.success_tag = if_node_info->success_tag;
+> > > +     info.base_api_ver = if_node_info->base_api_ver;
+> > > +     info.fw_api_ver = if_node_info->fw_api_ver;
+> > 
+> > This really shouldn't be here. You pass cmd_tag and rsp_tag to userspace just
+> > to guide userspace how to construct a message.
+> > 
+> > This shows that the messages should be constructed in the Kernel rather than
+> > in userspace. Just pass the message content from userspace to the kernel and
+> > let the kernel build the message on the sender side.
+> 
+> This will help collecting user-space application logs, with correct tags.
+> This is already used by the customers, for debug.
+
+I don't bother that you provide this information to userspace. My point
+is that it shouldn't be needed by userspace to assemble the packets that
+are sent back to the kernel.
+
+Really the packet encapsulation should be done in the kernel and
+userspace shouldn't be bothered with it.
+
+> 
+> > 
+> > > +/* IOCTL entry point of a character device */ static long
+> > > +se_ioctl(struct file *fp, unsigned int cmd, unsigned long arg) {
+> > > +     struct se_if_device_ctx *dev_ctx = container_of(fp->private_data,
+> > > +                                                     struct se_if_device_ctx,
+> > > +                                                     miscdev);
+> > > +     struct se_if_priv *se_if_priv = dev_ctx->priv;
+> > > +     int err = -EINVAL;
+> > > +
+> > > +     /* Prevent race during change of device context */
+> > > +     if (down_interruptible(&dev_ctx->fops_lock))
+> > > +             return -EBUSY;
+> > > +
+> > > +     switch (cmd) {
+> > > +     case SE_IOCTL_ENABLE_CMD_RCV:
+> > > +             if (!se_if_priv->cmd_receiver_dev) {
+> > > +                     err = 0;
+> > > +                     se_if_priv->cmd_receiver_dev = dev_ctx;
+> > > +                     dev_ctx->temp_resp = kzalloc(MAX_NVM_MSG_LEN,
+> > GFP_KERNEL);
+> > > +                     if (!dev_ctx->temp_resp)
+> > > +                             err = -ENOMEM;
+> > > +             }
+> > 
+> > cmd_receiver_dev isn't locked by anything, still it can be accessed by different
+> > userspace processes.
+> 
+> It is not accessed by different Userspace processes. It is a slave to FW.
+> FW interacts with it when FW receive a command to do any action, from userspace.
+> Hence, it will be executed under command-lock.
+
+When two userspace programs have a device instance open, then nothing
+prevents them from calling this ioctl at the same time. You do a
+
+	if (!se_if_priv->cmd_receiver_dev)
+		se_if_priv->cmd_receiver_dev = dev_ctx;
+
+which is executed by two threads simultaneously. It's one of the most
+classic scenarios that need locking.
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
