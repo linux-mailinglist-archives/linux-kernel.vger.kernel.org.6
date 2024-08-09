@@ -1,168 +1,119 @@
-Return-Path: <linux-kernel+bounces-280525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C6694CBB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:53:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8240394CBB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82A97B21758
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377E21F21F4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE5518C341;
-	Fri,  9 Aug 2024 07:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB67918A95D;
+	Fri,  9 Aug 2024 07:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Mrkp4qFw"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bOzX0ksM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8A41552EB
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD3B1552EB
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723190027; cv=none; b=TlKTgshWSGgWbRvulpCzVVZ3xKNKdBviABw3ETca4gSd0S9AaTpvKYqXzZEwT1L6VhynT7XvwUhGLJ0UORBs8PXN9ZK0SXvyYbgNa4uLLprC/i/w57eGL4278ACyCIuqDlZkjdsbqi+ddt+rAw84xIDlnLeKJ7tkJrT9J8O5TxM=
+	t=1723190123; cv=none; b=cL//dgz1rhS284prZGcvInQf0UDVS+8mZWcRNAqWpASQ8IhOpuXLBOdfGsz6fD4Ubj8sSNg3P6Wph1StAifTBvXZ4ivFDhdKAmeDqfsgiRIoZyCMIsRHiMrp+qvt5nBf4jiixHfj6UroA1aHmDA2ucjalA5AYvfeY6a0jjVBau8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723190027; c=relaxed/simple;
-	bh=mx9XvqN8gfoztx5g8Hg8p3zrShD585HpqTze7i/V9sY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tXYaAcN6RGVwwCB8j33uJz/ORriRzPVsNgH7tYsCBNcVVH0jiozKBWpq2lIsrhT5koD4uCsNchdeBa4t+8TFTxfiy4aTkor2z3OnP/sv2m0ar4Y5Mnt7JMdYEVjoyOgvGIwi89yjaYasQH3U+dMWkPDwaXlWCoVRs0tQhq4i2RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Mrkp4qFw; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ef2fbf1d14so27773901fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:53:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723190024; x=1723794824; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tOhlBCGx3wgliIklN4sJ6vIsr9hRttzR53fydIf4y5g=;
-        b=Mrkp4qFww3AZ4zSJchDIw5ZpwDtzlW67B+O3ljI5133Czf3Uj6RZFFJ9AGlLmJ3ka9
-         bmJhvC4wq8SMTCRVkDBaIypsUSn3eTk6OK9UIS5HKkOvXJWXB8XxUg+x+OzVsCulXQv4
-         zPYD9SF+6SQjoekyLWxiTDZa26sXUywn7q7uQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723190024; x=1723794824;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tOhlBCGx3wgliIklN4sJ6vIsr9hRttzR53fydIf4y5g=;
-        b=Rayp3GxqZRAkVftUEECjs1zgXL7pdgwlr0cdFIIH9INqmB3A9eyT5IdzIFP7uoe4qk
-         ch6zzS/L382ojffaNEn52ekwehBJhxpZzGskDwQsruew1wF/vt0yXfr1BEDGNSJUOK29
-         vrIQzUqFKE28sVxleKo9r0+RHE4nZpsEmQs36MQhEZKg02gbX5aiVexueChKKUvbPnhr
-         Hlz8Xs9skhKfMuJ/3gk84Xe0XvoJ8iauE+rOMLexjwz63cvRLArvXN3wA7Nr/wjz1DWH
-         2HvmxQNlmjNx/1WSZ96fAYvNVeRBtC002DJCqDIbcLmZUBdX+FwCDlMOMztFzuFUQMCb
-         D1rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMk3pCTKAr/OTHJ6Ghu44TuFxntkqSWBrLCDyB0SEPi9nUjGqjzX+Z4q35TsNSPvN9lA/i8oUQXVRJJAPA4ccPjzKk3FeDnQ3IThMJ
-X-Gm-Message-State: AOJu0Yw37p51g25vVW+fuxqFo4/uRJdpLLCQ/g+lYhuTCZrybxFIA0y5
-	mObLxrAyRWQvSrrE7c13sT1m/MY+bSIQWFwjunz5VQeClJQ2xn8esrqK+oQMdAcOhhk5NppIaiq
-	z20PU1dobeG2e5/JXQzpBWUlRS0BpRkx1ZrCs
-X-Google-Smtp-Source: AGHT+IH6ychLenqDgOvMBzDQh2JMkFFn21GgkZRTJgCiT8vrbwbMMfUcAwkW9CQQCIA8Bgb7QPT8OmlAiGtufGVI5DI=
-X-Received: by 2002:a05:6512:3f05:b0:52f:cc9e:449d with SMTP id
- 2adb3069b0e04-530e5d210abmr1449084e87.3.1723190023966; Fri, 09 Aug 2024
- 00:53:43 -0700 (PDT)
+	s=arc-20240116; t=1723190123; c=relaxed/simple;
+	bh=RSx2eWpr1wYdEah1lxHqBl9NBPFaOCsVVnKSUHDiYKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qRiNcJzNZzDi9jrhEvULR/w2F6ENOWAYSwqtvOPiDpqg6nN2AZkcOyaNUv5tv2vBVCNlY1Fh99TyE9SGnGWB7cX4VKYdxuRIRK4DQTIFcB9tTjCerdsZl2/OvpXqfZv8dg5TfCYO7CZGkEld0Sam6l783JTxZlV5XDU3KPtzPms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bOzX0ksM; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723190121; x=1754726121;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=RSx2eWpr1wYdEah1lxHqBl9NBPFaOCsVVnKSUHDiYKc=;
+  b=bOzX0ksMpCl+sxbvEZONxCZ1M06JPZ3tCw+BxfJvemWByWplJ5/nlBQi
+   qbvRh84k1KNFslCN6BizF8egJdU1naFR4p1htrw+hIBkdNHNJqSnnc5Cr
+   s+a/TrQCMDaa6d7bO7vhE1j+YVDT6dFZMhnAWB5x+mRWOHCOOLcQQwM/c
+   jhluJV0sj+tWwILHxD4jvlhFP0LHRINE02TeRzTBKgfn+FTMV0rKIVgHP
+   GvxIoWHY4gv1EEE+FayckNV376L0OtWIGqQYY5bWf72FLM+adSrxIhM2Y
+   jqjbUViaZMx9LdGSW/Y1/Bz2pL8XSZY3Jfs7v34qK/u0mLVQTLRSyBu7b
+   A==;
+X-CSE-ConnectionGUID: z7qqd7xkQAGLW0IpbP+PXA==
+X-CSE-MsgGUID: r8DGPB5sR3maeSBBZMo4Iw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21477924"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="21477924"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 00:55:21 -0700
+X-CSE-ConnectionGUID: sf2mU6w0SDWLRAXC5wMT6w==
+X-CSE-MsgGUID: Qt2ST2OjSC2z49DeQcrEzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="57141428"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.197.217])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 00:55:15 -0700
+Message-ID: <391a2bd7-b236-467e-aa68-575201bf7a1d@intel.com>
+Date: Fri, 9 Aug 2024 10:55:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808-kukui_trip-v1-1-6a73c8e0b79a@chromium.org>
-In-Reply-To: <20240808-kukui_trip-v1-1-6a73c8e0b79a@chromium.org>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 9 Aug 2024 15:53:32 +0800
-Message-ID: <CAGXv+5GgmRiqkZdQo--XciuEgAvyOiR+XYWO=dZWziZ-pJzPDQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: mt8183-kukui: Add trip points to each thermal zone
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/9] perf auxtrace: Use evsel__is_aux_event() for
+ checking AUX event
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ James Clark <james.clark@linaro.org>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Liang, Kan" <kan.liang@linux.intel.com>
+References: <20240806204130.720977-1-leo.yan@arm.com>
+ <20240806204130.720977-2-leo.yan@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240806204130.720977-2-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 8, 2024 at 5:09=E2=80=AFPM Hsin-Te Yuan <yuanhsinte@chromium.or=
-g> wrote:
->
-> Add trip points to the tboard1 and tboard2 thermal zones to ensure they
-> are registered successfully.
+On 6/08/24 23:41, Leo Yan wrote:
+> Use evsel__is_aux_event() to decide if an event is a AUX event, this is
+> a refactoring to replace comparing the PMU type.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
 
-The position of tboard_thermistor2 is different between end devices.
-And both sensors are outside of the SoC. Having such a high trip point
-probably doesn't help with keeping the device or user safe.
+Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-The SoC itself also has internal sensors which would be more suited for
-this.
-
-So I think it makes more sense to have the kernel not require trip points
-for thermal zones, matching what the thermal binding says. I resurrected
-an old patch for this [1].
-
-
-ChenYu
-
-[1] https://lore.kernel.org/linux-arm-kernel/20240809070822.2835371-1-wenst=
-@chromium.org/
-
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 > ---
->  arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 26 ++++++++++++++++++++=
-++++++
->  1 file changed, 26 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/=
-boot/dts/mediatek/mt8183-kukui.dtsi
-> index 6345e969efae..1593ea14f81f 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
-> @@ -978,12 +978,38 @@ tboard1 {
->                 polling-delay =3D <1000>; /* milliseconds */
->                 polling-delay-passive =3D <0>; /* milliseconds */
->                 thermal-sensors =3D <&tboard_thermistor1>;
-> +               trips {
-> +                       tboard1_alert: trip-alert {
-> +                               temperature =3D <85000>;
-> +                               hysteresis =3D <2000>;
-> +                               type =3D "passive";
-> +                       };
-> +
-> +                       tboard1_crit: trip-crit {
-> +                               temperature =3D <100000>;
-> +                               hysteresis =3D <2000>;
-> +                               type =3D "critical";
-> +                       };
-> +               };
->         };
->
->         tboard2 {
->                 polling-delay =3D <1000>; /* milliseconds */
->                 polling-delay-passive =3D <0>; /* milliseconds */
->                 thermal-sensors =3D <&tboard_thermistor2>;
-> +               trips {
-> +                       tboard2_alert: trip-alert {
-> +                               temperature =3D <85000>;
-> +                               hysteresis =3D <2000>;
-> +                               type =3D "passive";
-> +                       };
-> +
-> +                       tboard2_crit: trip-crit {
-> +                               temperature =3D <100000>;
-> +                               hysteresis =3D <2000>;
-> +                               type =3D "critical";
-> +                       };
-> +               };
->         };
->  };
->
->
-> ---
-> base-commit: 21b136cc63d2a9ddd60d4699552b69c214b32964
-> change-id: 20240801-kukui_trip-6625c0a54c50
->
-> Best regards,
-> --
-> Hsin-Te Yuan <yuanhsinte@chromium.org>
->
->
+>  tools/perf/util/auxtrace.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+> index e2f317063eec..c3f0ef4349fc 100644
+> --- a/tools/perf/util/auxtrace.c
+> +++ b/tools/perf/util/auxtrace.c
+> @@ -671,11 +671,11 @@ int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
+>  {
+>  	struct evsel *evsel;
+>  
+> -	if (!itr->evlist || !itr->pmu)
+> +	if (!itr->evlist)
+>  		return -EINVAL;
+>  
+>  	evlist__for_each_entry(itr->evlist, evsel) {
+> -		if (evsel->core.attr.type == itr->pmu->type) {
+> +		if (evsel__is_aux_event(evsel)) {
+>  			if (evsel->disabled)
+>  				return 0;
+>  			return evlist__enable_event_idx(itr->evlist, evsel, idx);
+
 
