@@ -1,117 +1,99 @@
-Return-Path: <linux-kernel+bounces-280580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8067B94CC63
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B43094CC5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94FB61C22BA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:36:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC7F1C2348D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79E019148D;
-	Fri,  9 Aug 2024 08:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MNiB1tl9"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0821018F2C4;
+	Fri,  9 Aug 2024 08:36:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5E1190470
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3776D18E749
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723192569; cv=none; b=h5ojOPJSI9U2UVBc0o0LPxZrLEs3AR05l4FeBXAzdfn+yaPkwsEaxAEZ7KMNki6bygy5jGJpuAQgrrQiMnGV8vTHxhEtxax7zijRhQCMLKn9M+WOGKrR28Wl0yGMyknNnRgUtfnueDBJWeieQ70Er8C6kgNifAipJaC6vd715ss=
+	t=1723192564; cv=none; b=F9gL2GodRI1ns6mtwCy13qWbreFat53SWBBN+KeA4jhctey5qBmB3qWD/KBWE5EicnY2ZSv+8YMEkuLv+LG05KRA3adjB4NEL5SuvZ8OqFqoq/B3Hjqq6UMTh8XlgNhSN6zyoMT0sJ/Ne13hiu6UfAgjxfdOO2C3k8UQZAno13k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723192569; c=relaxed/simple;
-	bh=fxzAAnyjhajstMY7ILsQe6gw/ivTul+Ck8i7HDnuODs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=onNDJLJGLLVLPntWbCo+JOZbhnhfD8+5ngIN9/9EI1Sz+9syaB1pX325pylgZf0ckOtv2eSx/uWHEMPPhQvcb2E8grqnRgDrg3MvoK/eLNNhmvXtzC5i20b2cFLFXS5YQL1/P09Yf/+q2JN+flLwYBhCFqigUq0QwARPkSivSPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MNiB1tl9; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3db23a60850so1245763b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:36:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723192566; x=1723797366; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YX0owJGjTUZGW1ZSw8u/h2+6HycvjGlnJbGmlknVqK8=;
-        b=MNiB1tl9FO7ZjzZSkeNjUE4l8OF3gMmfz2XbGdKzQ4skNo0BLqtc7IMOOBm5LuBHXL
-         4YE1f9Jzsv51wSi4oIZi4ufnwnr7PWvN42uYxYyD1tEt7/C7Cu07UDI4K4mFMwkZ01iT
-         48gy8KY6by2PTskBmGXlaKIhKzksUU0u0YbJsthIsXxtJebxR3fhUI8bCnSXF9S/EYOH
-         ufDWy50D9cBU5kBnR+TfQJzGObowDrMkZ+hAbMp2u1fNBiazJoncRYzSX6U9bsPs/qMV
-         +8eRebqWs0wW+WFcvwicd4vbt5pXsq3KZ5imwGXAkAST20gpMOBTqr8Spel3q3AoCtJO
-         Ge2g==
+	s=arc-20240116; t=1723192564; c=relaxed/simple;
+	bh=pRNNk+WOb6WNn5sFGjh4p5bAdX6Wnjl2k4cuXBjYHG0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gr3y4wDIdpYCGp5vWTt+oA/M+DT24QmjDFijOSWkcMJMpliq1YlB1CR2FLnji9WlSX6/nttWj/2Gsp2xOihlsmiPKAMGO4r2pUg4VriZDI20L5E4qFfUwAit2MzvWUoBC+8BAkNLCDRQ6/wTTxRa6wOM9MdiRV+C9EpW3Eg7ie4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39915b8e08dso25343895ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:36:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723192566; x=1723797366;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YX0owJGjTUZGW1ZSw8u/h2+6HycvjGlnJbGmlknVqK8=;
-        b=nhgx6Vzr6JFFHnxG8Y8hrM4kFQFxSiH+c3jq/3bTNabjlOCfRbp+h4wlrrCRJbr6Yn
-         wOINvqv6zOYQY2Wo86DL6X2bOwG5QPhPqM09F/AD7wcZTWvtaUScjqZCChCpojclrMbP
-         H2toMcoeIrNt3JS+P18iRpauJJyRKxuA7V6adZk3GBjc2LpY2/zyjluVruO6eAczUtTU
-         EkNc5A/Y5kTM0F/jF7EbgWr2h/DUlbw0eHtYQTpHMHM1BTLlsdEn8dwZwFWEmCubTCiR
-         uXDcac19OGyKB2lUx3VSPqNtWl5eYTSePPEgiqs7tHWgAcMCatoSmFlkAix61kWAEAXR
-         B2nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUymahySysZID7Tgl27zZdBNBjvnN10PL9FEzyfZtTGHQJy/OKbK+M+Vlp+8snvArg6yx6iSSPeMfKY7Zl2qY3xUf/KsWHFVb48Z4oF
-X-Gm-Message-State: AOJu0Yyg0hcNnGR0X/hhJX1BC6NCs/kYBxFnrKhpsmRBMd7m9z0uJ0BW
-	KhJfEY3vrQG1K6z0/si7H/O5CH/SooLQs4GwTBT1YLBApA6xQAK0qny+6DHpFA==
-X-Google-Smtp-Source: AGHT+IFQVkg6ZtSfIaU+uod33S25nOMqpwS+RsKZODiyjnqKnTlSOE1Vz+YL/yyYCs3UpYV31uiAqQ==
-X-Received: by 2002:a05:6808:38c5:b0:3d9:3a00:cc8f with SMTP id 5614622812f47-3dc41676675mr728490b6e.7.1723192566111;
-        Fri, 09 Aug 2024 01:36:06 -0700 (PDT)
-Received: from localhost.localdomain ([117.213.100.70])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb22971fsm2207254b3a.51.2024.08.09.01.36.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 01:36:05 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mst@redhat.com,
-	jasowang@redhat.com
-Cc: xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 2/2] virtio-pci: Do not break the error message for VIRTIO_F_VERSION_1
-Date: Fri,  9 Aug 2024 14:05:48 +0530
-Message-Id: <20240809083549.14772-2-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240809083549.14772-1-manivannan.sadhasivam@linaro.org>
-References: <20240809083549.14772-1-manivannan.sadhasivam@linaro.org>
+        d=1e100.net; s=20230601; t=1723192562; x=1723797362;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pCBuhkuLRjU/WQT4F1kiA4COLKOBMg3ilAhl6/UpteU=;
+        b=FKtSnlVNXc2UF6d0545eCfkdJoXjQXpg4yCWUPGLx8mYsviyyKB0cPoX7PMZyRyQPT
+         hP5QRfMtBVaomEVIPAkatrMR43R/dULBLh81alXCS41d8v2vkQ02mzyH/B/yAi+FkMoH
+         OCSxoTkXsc6+RDkGG6jc+LB5XI4LUG/wK3KoKpanq7hr7JU9B0noCWvaJH6K9HaSJUlI
+         0zsySALqKv37GZ0PXAD4Uf8hjbvceA35L/eaGTUQ+1NIk/3CRmh3w9Yp6nDhMqQ//SaC
+         aIGS6Lh7/SMZaBX2/d7hsIEJhmNqT5cpLF6Ls07uR7Lro0j8jE7behNLQf/FBg+lVmqj
+         6NBg==
+X-Gm-Message-State: AOJu0Yx3YVnMA0b3R0D5wLTHoR/863Yv7H4CQiB7krv/aTXFOYwrJ5or
+	E9GfOOvFfyDFYKcoN/JnDgdMhVKwjW4yDcWZHnxuA0yGSKXRJE1TR6yy1PvZmy4/iSuryjqEoUn
+	BYX1X6cTFucH/M56UutW+fHqZ7F6KBiPBxJ88v6rA/CF41XAgniYGmUg=
+X-Google-Smtp-Source: AGHT+IHfN7/xts9gtF2LIK63r2ANcv1uUxysbtEQjJZeDvJC6fybJXRYJszolbg05ncz6tGwQ/fvA+ziU4uscB1VBoWIj1+eNSKY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1fc8:b0:39b:17a9:e374 with SMTP id
+ e9e14a558f8ab-39b81325b85mr734785ab.5.1723192562233; Fri, 09 Aug 2024
+ 01:36:02 -0700 (PDT)
+Date: Fri, 09 Aug 2024 01:36:02 -0700
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008d43b1061f3c08c7@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Breaking the error message will make it harder to grep for it in the
-driver. So let's put the error message in a single line.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/virtio/virtio_pci_modern.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+***
 
-diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-index e34ed4870af4..1bb55a3167a5 100644
---- a/drivers/virtio/virtio_pci_modern.c
-+++ b/drivers/virtio/virtio_pci_modern.c
-@@ -274,8 +274,8 @@ static int vp_finalize_features(struct virtio_device *vdev)
- 	vp_transport_features(vdev, features);
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Author: lizhi.xu@windriver.com
+
+add file refconut when add fid to list
+
+#syz test: upstream c0ecd6388360
+
+diff --git a/fs/9p/fid.c b/fs/9p/fid.c
+index de009a33e0e2..b7016e148f48 100644
+--- a/fs/9p/fid.c
++++ b/fs/9p/fid.c
+@@ -13,6 +13,7 @@
+ #include <linux/sched.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
++#include <linux/file.h>
  
- 	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
--		dev_err(&vdev->dev, "device uses modern interface "
--			"but does not have VIRTIO_F_VERSION_1\n");
-+		dev_err(&vdev->dev,
-+			"device uses modern interface but does not have VIRTIO_F_VERSION_1\n");
- 		return -EINVAL;
- 	}
+ #include "v9fs.h"
+ #include "v9fs_vfs.h"
+@@ -95,6 +96,7 @@ void v9fs_open_fid_add(struct inode *inode, struct p9_fid **pfid)
+ 	struct p9_fid *fid = *pfid;
  
--- 
-2.25.1
-
+ 	spin_lock(&inode->i_lock);
++	fget(fid->fid);
+ 	hlist_add_head(&fid->ilist, (struct hlist_head *)&inode->i_private);
+ 	spin_unlock(&inode->i_lock);
+ 
 
