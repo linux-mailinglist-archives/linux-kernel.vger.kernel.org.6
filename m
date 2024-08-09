@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-280627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C3994CD01
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 532ED94CD04
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A5C41C21153
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:11:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D301C2107D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C822BA41;
-	Fri,  9 Aug 2024 09:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5FA191493;
+	Fri,  9 Aug 2024 09:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgpT3YlM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VyDA6BQZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C8C16C861;
-	Fri,  9 Aug 2024 09:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EE819066F;
+	Fri,  9 Aug 2024 09:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723194652; cv=none; b=r4Ud05Uo8F/KBuRdMPEwkFjof9DKAljwQXeDFfUfab+5dKxC6L0zM5pdwkhRQJXTWPrMpncLfKBp9kKuxmvEAJILgq4fOGLkXiSuyeIxsnMJe8SkRqHw0TAoCy7qCYJTgfo5hsL1PmhtAEjg5OqeaUThBgtWKcRO37VGT4WbnL0=
+	t=1723194755; cv=none; b=Ae/CsBBT5D3d/VG9EfF1M+mWeHahgw94NQOzzMAhmVc0+vz87npBU6yWcr81h3twx1tOKVLowLSYN+6LhPb2sV+xqrM7NpOoFN4molEYeLpKUsXg9Uzeh+RjVhuBxO0CagC8+QmWySiDUDC2mOX3cIy/100Thj32GdxtqTWn+CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723194652; c=relaxed/simple;
-	bh=MF6DnJf7RlkwgK2dPBAlcsElsLGqpbCbwaFGF0OXEAc=;
+	s=arc-20240116; t=1723194755; c=relaxed/simple;
+	bh=piWThwkqtUm8CO/JgmWnxZJEh/EOiBvqbPWcfMgo3ec=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NppCeoSTXto/T9x73zndMScZyukNq2t6cmaG/LyD+7j1a1Gsb8TUEW6rYysMAHxTV++QuE9f7MXdWtRXrIIeDnjF8cordCaPSlIEKf4TG4PkQlyR1gdIFNeh9W/v18CVhDPDDnxiP4dDBoNaqnBvo1PM27QoDX7jDRioaX/QEow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tgpT3YlM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 584BBC32782;
-	Fri,  9 Aug 2024 09:10:46 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=eZ1xQeLVAgVWstMAbxQ6oJiCze56ZZrCfHWGoYSMqx9utYIwtKG79zU63Zt9W1SK6zulLkaokLhxKgTnNSjVgaiqO9AotgTfsOP8sNp/HgAg31/LEMAu3KBItKc40eQkED/hZQU8s+XPPfst6AiBB+TJUdT7yuzn/6kaKB2uAys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VyDA6BQZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D88DDC32782;
+	Fri,  9 Aug 2024 09:12:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723194652;
-	bh=MF6DnJf7RlkwgK2dPBAlcsElsLGqpbCbwaFGF0OXEAc=;
+	s=k20201202; t=1723194754;
+	bh=piWThwkqtUm8CO/JgmWnxZJEh/EOiBvqbPWcfMgo3ec=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tgpT3YlMGB0SaeUS9uq+8H4964Gt26uIgwAs7fRfW0LMOaYVzBuJ/XGF0RGOv+dZh
-	 uBdf7GfXc1CBLHgwI6quIcuGLc5Sj03jMy4IW49dAHlP5ryWOR9r/hxDuAC5eHIXXH
-	 LMjwsE7mB3CGyWp1GvyTF/vxoo/TGsiM4Dx2OKx8R6Lf79avLSBFzIMx8WN3zkTft5
-	 v2ezrcOMT6A54oL7Vxqa9eWLUDTPf/5e+wnS3+1AqYHl/QNOA/icTIvr5KVeuVf/Wd
-	 pXZZYkcoZFS/Zb/mH/yE30JGObbO75ea8yKeHOtz3QrOTyInrVT9GY+tAQpR9FJBkT
-	 cnyu8elBk7oYg==
-Message-ID: <36b7bbb9-7eea-4db2-86a6-80af206c29ad@kernel.org>
-Date: Fri, 9 Aug 2024 11:10:44 +0200
+	b=VyDA6BQZ95z5jFOgrdCuipDh410D8nKYHzh97JKQb71pJCRneMLOnoP0eGQvRf9Ts
+	 9W7pOmHO9Zn92APvFCSxgBCJHjn6Kd4yISx4Naen6LHEX9BYf1G2mbMAI+KVcXWtL/
+	 1ancCxSvqPcEr55h9IY7efGfcyl6gY2yoTovJui48LBw+gC1ffEsPJQDXjlMS8Lygo
+	 FZaUQWxXSUDiD1U4ZIbBWnN4MG412ogqQFqA3vNI4PdGzzRzinGAvwGo3NGHGlvs/0
+	 jEPj2umLY9p1msZ9TtQTjqVJxl+nU23z2Rl8rq8wapqctBwhdFaibFterm1eT9p0Ft
+	 3aCVALjQrkMWA==
+Message-ID: <3e78e255-d50a-40fb-a438-bfcebb11b049@kernel.org>
+Date: Fri, 9 Aug 2024 11:12:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,93 +49,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Add DisplayPort sound support for Fairphone 5
- smartphone
-To: Luca Weiss <luca.weiss@fairphone.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH net-next v2] page_pool: unexport set dma_addr helper
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20240809-fp5-dp-sound-v1-0-d7ba2c24f6b9@fairphone.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+References: <20240808214520.2648194-1-almasrymina@google.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240809-fp5-dp-sound-v1-0-d7ba2c24f6b9@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20240808214520.2648194-1-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 09/08/2024 10:33, Luca Weiss wrote:
-> Add the necessary sound card bits and some dts additions to enable sound
-> over DisplayPort-over-USB-C, e.g. to a connected TV or monitor.
+
+
+On 08/08/2024 23.45, Mina Almasry wrote:
+> This helper doesn't need to be exported. Move it to page_pool_priv.h
 > 
-> The UCM files can be found here:
-> https://gitlab.com/postmarketOS/pmaports/-/tree/master/device/testing/device-fairphone-fp5/ucm
+> Moving the implementation to the .c file allows us to hide netmem
+> implementation details in internal header files rather than the public
+> file.
 > 
-> Two extra notes:
+
+Hmm, I worry this is a performance paper cut.
+AFAICT this cause the page_pool_set_dma_addr() to be a function call,
+while it before was inlined and on 64bit archs it is a simple assignment
+"page->dma_addr = addr".
+
+See below, maybe a simple 'static' function define will resolve this.
+
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
 > 
-> 1. I don't quite understand whether the sound driver should have
->    SoC-specific compatible or device-specific compatible. Some earlier
->    patches by another author for a QCM6490 board and a QCS6490 board use
->    device-specific compatible - but from what I can tell this is not how
->    it's generally done for other sound drivers?
+> ---
+> 
+> v2: https://patchwork.kernel.org/project/netdevbpf/patch/20240805212536.2172174-6-almasrymina@google.com/
+> - Move get back to the public header. (Jakub)
+> - Move set to the internal header page_pool_priv.h (Jakub)
+> 
+> ---
+>   include/net/page_pool/helpers.h | 23 -----------------------
+>   net/core/page_pool.c            | 17 +++++++++++++++++
+>   net/core/page_pool_priv.h       |  6 ++++++
+>   3 files changed, 23 insertions(+), 23 deletions(-)
+> 
+> diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
+> index 2b43a893c619d..375656baa2d45 100644
+> --- a/include/net/page_pool/helpers.h
+> +++ b/include/net/page_pool/helpers.h
+> @@ -423,24 +423,6 @@ static inline dma_addr_t page_pool_get_dma_addr(const struct page *page)
+>   	return page_pool_get_dma_addr_netmem(page_to_netmem((struct page *)page));
+>   }
+>   
+> -static inline bool page_pool_set_dma_addr_netmem(netmem_ref netmem,
+> -						 dma_addr_t addr)
+> -{
+> -	struct page *page = netmem_to_page(netmem);
+> -
+> -	if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA) {
+> -		page->dma_addr = addr >> PAGE_SHIFT;
+> -
+> -		/* We assume page alignment to shave off bottom bits,
+> -		 * if this "compression" doesn't work we need to drop.
+> -		 */
+> -		return addr != (dma_addr_t)page->dma_addr << PAGE_SHIFT;
+> -	}
+> -
+> -	page->dma_addr = addr;
+> -	return false;
+> -}
+> -
+>   /**
+>    * page_pool_dma_sync_for_cpu - sync Rx page for CPU after it's written by HW
+>    * @pool: &page_pool the @page belongs to
+> @@ -463,11 +445,6 @@ static inline void page_pool_dma_sync_for_cpu(const struct page_pool *pool,
+>   				      page_pool_get_dma_dir(pool));
+>   }
+>   
+> -static inline bool page_pool_set_dma_addr(struct page *page, dma_addr_t addr)
+> -{
+> -	return page_pool_set_dma_addr_netmem(page_to_netmem(page), addr);
+> -}
+> -
+>   static inline bool page_pool_put(struct page_pool *pool)
+>   {
+>   	return refcount_dec_and_test(&pool->user_cnt);
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index 2abe6e919224d..d689a20780f40 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -1099,3 +1099,20 @@ void page_pool_update_nid(struct page_pool *pool, int new_nid)
+>   	}
+>   }
+>   EXPORT_SYMBOL(page_pool_update_nid);
+> +
+> +bool page_pool_set_dma_addr_netmem(netmem_ref netmem, dma_addr_t addr)
 
-We (including me) were/are a bit inconsistent here, but last statement
-was that these should be board-specific compatibles.
 
-Last discussion I recall:
-https://lore.kernel.org/all/baa6543c-5e2e-4f28-a95b-a086b32d1f2d@linaro.org/
+Maybe defining function as 'static bool' will make compiler inline it(?)
 
-
-Best regards,
-Krzysztof
-
+> +{
+> +	struct page *page = netmem_to_page(netmem);
+> +
+> +	if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA) {
+> +		page->dma_addr = addr >> PAGE_SHIFT;
+> +
+> +		/* We assume page alignment to shave off bottom bits,
+> +		 * if this "compression" doesn't work we need to drop.
+> +		 */
+> +		return addr != (dma_addr_t)page->dma_addr << PAGE_SHIFT;
+> +	}
+> +
+> +	page->dma_addr = addr;
+> +	return false;
+> +}
+> diff --git a/net/core/page_pool_priv.h b/net/core/page_pool_priv.h
+> index 90665d40f1eb7..4fbc69ace7d21 100644
+> --- a/net/core/page_pool_priv.h
+> +++ b/net/core/page_pool_priv.h
+> @@ -8,5 +8,11 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict);
+>   int page_pool_list(struct page_pool *pool);
+>   void page_pool_detached(struct page_pool *pool);
+>   void page_pool_unlist(struct page_pool *pool);
+> +bool page_pool_set_dma_addr_netmem(netmem_ref netmem, dma_addr_t addr);
+> +
+> +static inline bool page_pool_set_dma_addr(struct page *page, dma_addr_t addr)
+> +{
+> +	return page_pool_set_dma_addr_netmem(page_to_netmem(page), addr);
+> +}
+>   
+>   #endif
 
