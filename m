@@ -1,140 +1,106 @@
-Return-Path: <linux-kernel+bounces-280656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D9594CD5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:32:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF8494CD61
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D71B7B21C0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:32:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65101F22416
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A491922CB;
-	Fri,  9 Aug 2024 09:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2501190490;
+	Fri,  9 Aug 2024 09:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7a004Lo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mGEVNzHB"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CDA1DA21;
-	Fri,  9 Aug 2024 09:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3805E16C698;
+	Fri,  9 Aug 2024 09:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723195936; cv=none; b=PmxQTkJKICHmRlgKxL2k8lZHjGirqQYKjrbI9fottg+/GQLSv8zwRDwrRQA+qc5IxnFkNNEJRYJy/12DLTNM0HbH6BZ/6fF0NQDNE9kU4x/6kH/chTH8Ja/vgyW57SOcGKCRFRAvILtRX+xvokAw2UzcTEPPUnHBKYSrQ/VegEs=
+	t=1723195971; cv=none; b=dVaB95MItoBM1gOuEjfzOxGUUhZFa0NgrGd4EBeZLz4TCMUlyIPr9LUnVZM3Vly9Hbv8Jr9rtYNrkXVGGCyY2b7JNFOL/FR532GfA+aN8cLYStyiTCL9wCew2tS9jiKhHzUicq449YGKp1wOnqk67xSoLJ8u/0vdEl7yHNrH5xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723195936; c=relaxed/simple;
-	bh=MVW67Mp6oyQPKwlzFl2IfpyHSdwlY9XxfTNGLs7m2vo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ghXiNOMJGlQJKRd/FVQrbM21BUDkKS8qsDnz1/2DHgQuJyCHfbB2YoEtGML6j1FRm3IsPHNu0n3zWYMtMVh1jO5a0fYxR6s3D+CryuVJfRP2sm5UAobaEqAz4ktMIawDL5uBAguGy75aK8wls2LrdL3BvrHv6i2l/MIltRa9k7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7a004Lo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AA0CC4AF0E;
-	Fri,  9 Aug 2024 09:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723195936;
-	bh=MVW67Mp6oyQPKwlzFl2IfpyHSdwlY9XxfTNGLs7m2vo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D7a004LoAZdI95ADsRi0vcdIqffAGAkjPLox3g6k/rwFTXdG7EXX8UtBbDpbS6tJJ
-	 hSDsZYrhZwCYwSJLfxMQRMIb+Aqphl9HORBkIhtokM4JXH9oxpFwIj4OOGedZEa/XX
-	 hl72YD5ZL9J3hSgyzkt/q8qpqNxeggyOJXBtLNMOgyNOdTHXawRezsRS5Ax7SJc5uu
-	 Y7K0/zbq+522du1NYaHwhjF7VtC3rqtCoH6DEUHTQnDr4jbKKUep1OGRNUNB8jeVoz
-	 aWK1TFqU6r4SCdBTsl82kqa+zlno/6uJSijfpZ9ccDX5vP+FnsKG6xv3Z8MdffqhQO
-	 xTLdx8khxKM3w==
-Message-ID: <6e29dc64-672b-47ba-a874-420c5aa681cf@kernel.org>
-Date: Fri, 9 Aug 2024 11:32:09 +0200
+	s=arc-20240116; t=1723195971; c=relaxed/simple;
+	bh=4KW1ROBDhFMm2b3dGG4xSpJKmeyZw3F35ER4kQ/Yf4w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uoWGGMohdfxZsvf0R0AeoSIQ1iUueRRFUoYe8VojAP0+e+w/Qxgs5WiLFQ/TP2PZtf9qZr8ZXX3ss0jD+AhuGgOhjLPJ8RMoXZklCqwJmGodsIeBmsME0GSeVRsz5k6Gd+t6TWMpxNpkAPngkPO4Nf6OoOUOb8QIA9puZroVNwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mGEVNzHB; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723195964; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=gZ93c15PmjBf9iKf8+aNnVB3ru9vORti3RxMK+6EHUM=;
+	b=mGEVNzHBtfTlt6BggMg57l4EPMorFIQZ1a1xV5wwXMjmgat3eNn8afiYDyUKjenXjQep8MbWjFxEnon5gGhB1VDlwxansZTE/hVQQAs0lsDPSECn8qxhQdi5tQwEu9RCXDPQq0IglVXJwZ+DW0QSMBMXGQVbWNBjgQomVGXYHcg=
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WCPTBTz_1723195963)
+          by smtp.aliyun-inc.com;
+          Fri, 09 Aug 2024 17:32:44 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: axboe@kernel.dk,
+	christoph.boehmwalder@linbit.com
+Cc: drbd-dev@lists.linbit.com,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>
+Subject: [PATCH -next] drbd: Add missing kernel-doc function comments.
+Date: Fri,  9 Aug 2024 17:32:33 +0800
+Message-Id: <20240809093233.8627-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC bpf-next 32/52] bpf, cpumap: switch to GRO from
- netif_receive_skb_list()
-To: Daniel Xu <dxu@dxuuu.xyz>, Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Cc: Alexander Lobakin <alexandr.lobakin@intel.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>,
- Larysa Zaremba <larysa.zaremba@intel.com>,
- Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>, "toke@redhat.com"
- <toke@redhat.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
- David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- John Fastabend <john.fastabend@gmail.com>, Yajun Deng
- <yajun.deng@linux.dev>, Willem de Bruijn <willemb@google.com>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, xdp-hints@xdp-project.net,
- kernel-team <kernel-team@cloudflare.com>
-References: <20220628194812.1453059-1-alexandr.lobakin@intel.com>
- <20220628194812.1453059-33-alexandr.lobakin@intel.com>
- <cadda351-6e93-4568-ba26-21a760bf9a57@app.fastmail.com>
- <ZrRPbtKk7RMXHfhH@lore-rh-laptop>
- <7e6c0c0d-886e-4144-a0f4-d0d6f0faa1e6@app.fastmail.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <7e6c0c0d-886e-4144-a0f4-d0d6f0faa1e6@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Add missing kernel-doc function comments to enhance code readability and
+maintainability in accordance with the kernel coding standards.
 
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ drivers/block/drbd/drbd_bitmap.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On 08/08/2024 22.44, Daniel Xu wrote:
-> Hi Lorenzo,
-> 
-> On Thu, Aug 8, 2024, at 12:54 AM, Lorenzo Bianconi wrote:
->>> Hi Alexander,
->>>
->>> On Tue, Jun 28, 2022, at 12:47 PM, Alexander Lobakin wrote:
-[...]
->>>
->>> AFAICT the cpumap + GRO is a good standalone improvement. I think
->>> cpumap is still missing this.
->>>
->>> I have a production use case for this now. We want to do some intelligent
->>> RX steering and I think GRO would help over list-ified receive in some cases.
->>> We would prefer steer in HW (and thus get existing GRO support) but not all
->>> our NICs support it. So we need a software fallback.
->>>
-I want to state that Cloudflare is also planning to use cpumap in
-production, and (one) blocker is that CPUMAP doesn't support GRO.
-
-
->>> Are you still interested in merging the cpumap + GRO patches?
->>
->> Hi Daniel and Alex,
->>
->> Recently I worked on a PoC to add GRO support to cpumap codebase:
->> -
->> https://github.com/LorenzoBianconi/bpf-next/commit/a4b8264d5000ecf016da5a2dd9ac302deaf38b3e
->>    Here I added GRO support to cpumap through gro-cells.
->> -
->> https://github.com/LorenzoBianconi/bpf-next/commit/da6cb32a4674aa72401c7414c9a8a0775ef41a55
->>    Here I added GRO support to cpumap trough napi-threaded APIs (with a
->> some
->>    changes to them).
-> 
-> Cool!
-> 
->>
->> Please note I have not run any performance tests so far, just verified it does
->> not crash (I was planning to resume this work soon). Please let me know if it
->> works for you.
-> 
-> I’ll try to run an A/B test on your two approaches as well as Alex’s. I’ve still
-> got some testbeds with production traffic going thru them.
-> 
-
-It is awesome that both Olek and you are stepping up for testing this.
-(I'm currently too busy on cgroup rstat lock related work, but more
-people will be joining my team this month and I hope they have interest
-in contributing to this effort).
-
---Jesper
-
+diff --git a/drivers/block/drbd/drbd_bitmap.c b/drivers/block/drbd/drbd_bitmap.c
+index 85ca000a0564..746bb75ab2a4 100644
+--- a/drivers/block/drbd/drbd_bitmap.c
++++ b/drivers/block/drbd/drbd_bitmap.c
+@@ -1213,6 +1213,7 @@ static int bm_rw(struct drbd_device *device, const unsigned int flags, unsigned
+ /**
+  * drbd_bm_read() - Read the whole bitmap from its on disk location.
+  * @device:	DRBD device.
++ * @peer_device:	DRBD peer device.
+  */
+ int drbd_bm_read(struct drbd_device *device,
+ 		 struct drbd_peer_device *peer_device) __must_hold(local)
+@@ -1224,6 +1225,7 @@ int drbd_bm_read(struct drbd_device *device,
+ /**
+  * drbd_bm_write() - Write the whole bitmap to its on disk location.
+  * @device:	DRBD device.
++ * @peer_device:	DRBD peer device.
+  *
+  * Will only write pages that have changed since last IO.
+  */
+@@ -1236,6 +1238,7 @@ int drbd_bm_write(struct drbd_device *device,
+ /**
+  * drbd_bm_write_all() - Write the whole bitmap to its on disk location.
+  * @device:	DRBD device.
++ * @peer_device:	DRBD peer device.
+  *
+  * Will write all pages.
+  */
+@@ -1258,6 +1261,7 @@ int drbd_bm_write_lazy(struct drbd_device *device, unsigned upper_idx) __must_ho
+ /**
+  * drbd_bm_write_copy_pages() - Write the whole bitmap to its on disk location.
+  * @device:	DRBD device.
++ * @peer_device:	DRBD peer device.
+  *
+  * Will only write pages that have changed since last IO.
+  * In contrast to drbd_bm_write(), this will copy the bitmap pages
+-- 
+2.32.0.3.g01195cf9f
 
 
