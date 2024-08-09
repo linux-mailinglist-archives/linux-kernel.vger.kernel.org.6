@@ -1,125 +1,124 @@
-Return-Path: <linux-kernel+bounces-280510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11EB694CB7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BDC94CB81
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43EDB1C226DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A281C213DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1065E176AD0;
-	Fri,  9 Aug 2024 07:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2686C176AC2;
+	Fri,  9 Aug 2024 07:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANIuIKC4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZ/DwBjn"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBF916D315;
-	Fri,  9 Aug 2024 07:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE3016D315;
+	Fri,  9 Aug 2024 07:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723188949; cv=none; b=aNlEL/h0CsDlGyS4O92mtGzoymg5GGA8ziVURMPoMEtCXADJP9DZIXWTtT9T/8G9HhNzWc0CSbh9YS4LNwHoB2Hu6lE+VGst9XCAcEBdHYnA6YiVO1JGXNonP1JXQKejLYmoIIScgnGeYMlBvXH3KhszyoahdPhQq3DU5ii1610=
+	t=1723189002; cv=none; b=APN0+gTv1lx33C4W2pLhiz//7enbbYMpSEDHwCTL0AcDpaZlxPVA7jmgwRSUqxOUeS6ec3ePuTGMauBnO5WLeUQH/yND6sJODmb7qU9XmEHIOuFUCID+u3N6PuY8bbeI85bSoS956q4rD4LbtlmnXJzr3puqfTFXhGXp1SeYmm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723188949; c=relaxed/simple;
-	bh=1QQ6IERaVvmQgZYfk/xYBeo9a86+7mGsf8Ey/jbzXQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8NYgATU1nqzPT9dTGk5xWcewv6HADSWIN8acJOwwm6WaYqlMWzy75POQ6hXWN4LeBc61u/mZeiedCc4yKjnELDB71E8NWKY16KAtyOxNk/Bh1Z733/GeiR3JXD8GYPIvl92TVaD5TffvgI7ssUkGMpBqZuXwvGVLvgqHqAZhv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANIuIKC4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F67C32782;
-	Fri,  9 Aug 2024 07:35:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723188948;
-	bh=1QQ6IERaVvmQgZYfk/xYBeo9a86+7mGsf8Ey/jbzXQ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ANIuIKC44kb6rGZ2+BWwRs1fobAope6oTe2TR7eZVrvbX7dln1qyRVxRQKEsfbkrh
-	 uwriJwOtabpfS9B0tJrWQn1FcHKN3ttkKaRVh+2mSZ4kSB6X7kuvbEMSai2CkabR62
-	 ux2cXvV/DaG8/+vCDJu3qff1flOWYJSyBe7B7/RYUrZYCFJQogCIIqMxhXRkTg7CL0
-	 Xcujy+YV88lBR3Q1z6YyEykvS/oTBx7dBPTqFFmW8iBYtNnB5CKSok2KZ3RfzIQjTc
-	 fXg4+nWPdLP7tHpV3f/ATUGx985XAwj7U+f0fDwbpN7iaoTPgIDTyHQRZ596jTYLRr
-	 KbbiBQT9dnY/w==
-Date: Fri, 9 Aug 2024 08:35:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
-Cc: alsa-devel@alsa-project.org, Basavaraj.Hiregoudar@amd.com,
-	Sunil-kumar.Dommati@amd.com, venkataprasad.potturu@amd.com,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"moderated list:SOUND - SOUND OPEN FIRMWARE (SOF) DRIVERS" <sound-open-firmware@alsa-project.org>,
-	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/8] ASoC: SOF: amd: fix for acp error reason registers
- wrong offset
-Message-ID: <ZrXGzmhgyIJ9ID6I@finisterre.sirena.org.uk>
-References: <20240807051341.1616925-1-Vijendar.Mukunda@amd.com>
- <20240807051341.1616925-2-Vijendar.Mukunda@amd.com>
- <ZrUdOyGiFRH0sRlt@finisterre.sirena.org.uk>
- <a6a0c975-728b-4379-b074-b88ac928c58b@amd.com>
+	s=arc-20240116; t=1723189002; c=relaxed/simple;
+	bh=XZa+83SijQnBCpLMBFwNEPjA1kDA4UXyTv6Yv898LyI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P42pu1s7ZT3+EU5Xh0PJN2o8nefFi3v6jkJxEsIMM/uwfit/ttrRgAnT5nqyZ/qJD2O2SHZr3f30f03XtNR5vfzEPw4eWLwTpjB+ssPPs1eVH3BvydVusOXhz02umqPtzGvs0rVj+1Tb/HO0aEtE6LCVV/A3t+1u1la6cCYQMbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WZ/DwBjn; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc611a0f8cso16290815ad.2;
+        Fri, 09 Aug 2024 00:36:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723189000; x=1723793800; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dCcf6BLa+YFbQdbVYELqdFtAuzitYv4+8HazgULACT0=;
+        b=WZ/DwBjnVr04DSUk0clN+Dha046rqw3GW8S+sQBo6CGZMoTVrbgqTtDlr/Yu3zem8B
+         xqtQpfJyAFOa6GEXMYlq2oDjNCHZwcInBPqMM0iOHX1CyUIbGBI04FJ8Qu8Vq6K6RttF
+         fUwIGnqKC5Y7YbBLqqMKchQEg09QNOT3FaKMmaE92Xku2hNpPCvBX0sduzL/FN3pX5Ki
+         p7CXPlXXg+8YA56zW9XJZNno6Z8FlzmIQoR2CmCbf0qLMJpt0Y99BFQdw/T1Ac0yEncF
+         lmoDn+5WstQH/KOdTJmnIMWpdeb1uFpnmAWeItVFVp49xfZ1j6bO8hO1UBzCJEWXT1gz
+         K9nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723189000; x=1723793800;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dCcf6BLa+YFbQdbVYELqdFtAuzitYv4+8HazgULACT0=;
+        b=qJZxZNURDVlfUnn4MRZfb8U0M/VUp36kYadmqphAW7M63gJyXMZXv8QPmhZ2jijy1T
+         VelNuOz0SM1Dicd5v/QP8qxoVlaAuycY4vYZra648sQsWO8Z2+1cOV336Z3jyeLuhf00
+         wZCBA0CwKWix69XnQ1tINhqs2B+AojdNlCI9uKg208JFSeNm1j96zF2xKVsc0uzolypX
+         mWHdd+5jbBfOoaqLE30Olzw0BaDcIuMFi2PMLmIODU6dyWxK6S0H0UBnzqFwWMCX86CF
+         g3gmMWhuQRiYCB4ErincgerFdMOBOJ+mHmhtcehgH9Jq9k9d8/uHAOughsqnK714pbt8
+         cl0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUkNn2qClOgUbqjEGGxdIgZnO3jd3AQ5f5unqk7wFCQCDm+pVUtJY9v1cgWFC9GTGVS2mjb6+OIkRU240go8ot9eabGoU46AmQ8RTV1asNkDdBQ5yapKkrMJlvkmu4JTZDXmzYnPz+w
+X-Gm-Message-State: AOJu0Yxcd6cx4pvhCHkVjCH/pBICBe4wtFx0oZgzcklZzModrv8jTpsz
+	qQOLJ5ZV4nGxu+0syFSurKpHxHRJBX0zIfrkcMgQtDERpzEzvC4K
+X-Google-Smtp-Source: AGHT+IFqgjG/ZrWb/Pbr+iWfuP6MYtfTQEA9uAjaJ7m+O7kUCxqIuJ0GXMYR7yQXBdrAQ/yTcfLGTA==
+X-Received: by 2002:a17:902:ce8f:b0:1fb:a38b:c5a0 with SMTP id d9443c01a7336-200ae597aa7mr6144245ad.31.1723189000278;
+        Fri, 09 Aug 2024 00:36:40 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f5b349sm136588855ad.108.2024.08.09.00.36.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 00:36:39 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] PCI: dw-rockchip: Enable async probe by default
+Date: Fri,  9 Aug 2024 13:06:09 +0530
+Message-ID: <20240809073610.2517-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oZGvFgiQ7XPpJzCg"
-Content-Disposition: inline
-In-Reply-To: <a6a0c975-728b-4379-b074-b88ac928c58b@amd.com>
-X-Cookie: Your love life will be... interesting.
+Content-Transfer-Encoding: 8bit
 
+Rockchip DWC PCIe driver currently waits for the combo PHY link
+(PCIe 3.0, PCIe 2.0, and SATA 3.0) to be established link training
+during boot, it also waits for the link to be up, which could consume
+several milliseconds during boot.
 
---oZGvFgiQ7XPpJzCg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To optimize boot time, this commit allows asynchronous probing.
+This change enables the PCIe link establishment to occur in the
+background while other devices are being probed.
 
-On Fri, Aug 09, 2024 at 07:30:54AM +0530, Mukunda,Vijendar wrote:
-> On 09/08/24 01:02, Mark Brown wrote:
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+v2: update the commit message to describe the changs.
+---
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > /build/stage/linux/sound/soc/sof/amd/acp.c: In function =E2=80=98acp_ir=
-q_handler=E2=80=99:
-> > /build/stage/linux/sound/soc/sof/amd/acp.c:407:26: error: =E2=80=98stru=
-ct acp_dev_data=E2=80=99 h
-> > as no member named =E2=80=98pci_rev=E2=80=99
-> >   407 |                 if (adata->pci_rev >=3D ACP_RMB_PCI_ID)
-> >       |                          ^~
+diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+index 1170e1107508..7a895b66e4e4 100644
+--- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
++++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+@@ -616,6 +616,7 @@ static struct platform_driver rockchip_pcie_driver = {
+ 		.name	= "rockchip-dw-pcie",
+ 		.of_match_table = rockchip_pcie_of_match,
+ 		.suppress_bind_attrs = true,
++		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+ 	},
+ 	.probe = rockchip_pcie_probe,
+ };
 
-> This patch is part of https://github.com/thesofproject/linux/pull/5103
-> which got successfully merged into sof github without any build errors.
-> This patch is dependent on
-> Link: https://patch.msgid.link/20240801111821.18076-10-Vijendar.Mukunda@a=
-md.com
-> which got already merged in to ASoC tree for-next base.
-> It shouldn't cause build error if the dependent patch already merged.
+base-commit: ee9a43b7cfe2d8a3520335fea7d8ce71b8cabd9d
+-- 
+2.44.0
 
-Are the patches it depends on actually before it in the patch series?
-We want the resulting git tree to be bisectable, that means testing each
-commit not just the final result.
-
---oZGvFgiQ7XPpJzCg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma1xs0ACgkQJNaLcl1U
-h9D8Awf+Idi79Uow4rDHeevyxUJtVFJXMcuUJIjmkUD4+D/O9De7gvSHEszmIGbL
-J8DQrDQ6PJhXBSEcdGojOFP4EB5zXiX3f4pt3rY+Fi2D7ek4A+kjdG8UFrpeX4qQ
-WBQP1ycUxZSV0JI7+a0pBVoo+Zr0tAcn4Rar29VXRKFH4ZD1JCUIKsRf6Db1JZRt
-hgJf41uLg5siRcgrouiVrJeqiL0SvsK2IWbINNbbJ4xc52YDjLs0H8+ux0MCh+/E
-h2Hd3q7THZibHlVEuBO+v6h6e86dR6k+X05Ou5uPgGeygR88Mm+3NQb47SXIj28K
-l56vUzz42Bjtmk0dQLonssYugDtOyg==
-=iQRN
------END PGP SIGNATURE-----
-
---oZGvFgiQ7XPpJzCg--
 
