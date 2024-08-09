@@ -1,454 +1,129 @@
-Return-Path: <linux-kernel+bounces-281447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E1994D706
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:12:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E49C894D70B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C602B222F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:12:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6BBF2820A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8471C192B89;
-	Fri,  9 Aug 2024 19:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827B315FA8B;
+	Fri,  9 Aug 2024 19:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="OIWcB6oe"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="KLQjzp7A"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AED1607B7
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBB215ECC3;
+	Fri,  9 Aug 2024 19:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723230631; cv=none; b=sr0egHmTpCqwTwXtEgVXcb6J2eXCBgkdepnnY55Auz0HRAvYmyqZj1LflP7nTsMh8Wd5F1TsneLZnqa/AmtovjA8NXFTN4RyItLtx87qi9ppVaR32WtgBY7G9cuJWe7/bBc5+8yDkDnih8Jsew+rry1Zgv9Bal+QNTYppxzr850=
+	t=1723230903; cv=none; b=sbw/of+xseElN1dNrymgkBrqf1c/yZZKVfwHk5xdJbUiCkpJkWdAGQ6XlCGm2Khep6w9CyjBXwoElC3bPOlmoEYubr6JgAMQ5osrh54KV3WXvt0ZVqnTtNx7SlySPeMn6SmonbEficIeURD7Ges5n6eBq30Ac31QrmHJyjUocuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723230631; c=relaxed/simple;
-	bh=6wosICAX5upSWdnUV4KS1ODEyn0GpvDE32NQy49q3CU=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tYzuj5u3nXPEqDK6BX89UBa+OJINzbTsVwMh/RWVxCslUTMoB3OkRDwHqoU/uuMLJaYvEuLGA5zs50yCk2wVr8vUmTbp6DJWjmDjJMx2AOWL92u0qQzqjKfaA479htXtyjIvQRE7BzvcYTN23kjIDtuGaGVJvBodGbq9JHZ+KQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=OIWcB6oe; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1d42da3f7so139914785a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1723230627; x=1723835427; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7scNbfOD3UNvIo9y0T+pYKNfJFgM2C7HW5kYHlU5U7s=;
-        b=OIWcB6oek741WgmBJjIzKMySLERThB6hYMhFkIFUNkmyLk+nDygEeuyGvSo7ev4SLp
-         vfI9+LsNESWRNkDWYVvnnCCE24D732QLNOb+/7IKHX1YUNFZMzLOYPThpnc959GE5iBf
-         ELAGh9qlHi77mfPsxiOIT5t4jMycCsC0xui3HNFSWj3W2mYcb8gHQ5z0bDKDs47LsnTC
-         khPdOMG8A2gD7cao3vad482NJlHJ2dNeGWeIDfI1sMndpanJatDHkBO5jviMqEyxDax+
-         d9Qjx0/8H3sW/XgnUb64jHafzgEy4/SVaBDXHhIRcpTlNtNZsepmbjgCB4/sZ5toMVpv
-         nksQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723230627; x=1723835427;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7scNbfOD3UNvIo9y0T+pYKNfJFgM2C7HW5kYHlU5U7s=;
-        b=lTPIitdAObG6CylyNjVKBref5qCABEVHa3ZOiV+/PozWZbd6Tzwbai9PcqGCJUCS/c
-         ZdRwG3lCQ0HmbSEgHcKUdVNUETtgJ/5RK7cpS3+vWCKQsnuA0qm3TnNc6wYmY5wd8zXX
-         19k44epk9XUK0dqhfESMQhkeYt9iwdMmDwYS+YaJ/3ptUYiB2XJaK0jEBQqnlwIuVde5
-         4oS8dYqsewrDiMzucWceJ4CtSJyf6aO0IRPpQynJUbDGCNGuQ1xlXSj4Fv/r0H9Pm33n
-         itMJXcM03YhLgZTnLMCx+DzfBSJ9vNMJ+g2snUXs2FTb1NwyJuoVnlpU8H01ZerXqKNo
-         9myQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnQa3BlypLf2AeTpO93Y1boxG/haxJIqSTNwPHFVCea8+jxOAyHtKgzd6tjZSWy39V5I2HHMYqp5kMMxGi0m04h+/9Qefz0IHgbmzR
-X-Gm-Message-State: AOJu0YwX91z9kO8xWjuIb5c/31/bnHbgxoTqGRnnwfjVlIZjumMYzHV3
-	JqbuObRGPGZVkYIiBjTEcs3AEiYTVfVTwBb4+CgHVSe/zEnEc5NseBlV3GsuepI=
-X-Google-Smtp-Source: AGHT+IG+izZuVqrrLECU59ZUsz/j/pq6H+/mhN6LagU3A3JWt/ctLE0qFWvHYBV7BwQjZPC1c0cfJA==
-X-Received: by 2002:a05:620a:2456:b0:79d:5f67:a836 with SMTP id af79cd13be357-7a4c17aafddmr317308185a.26.1723230627259;
-        Fri, 09 Aug 2024 12:10:27 -0700 (PDT)
-Received: from soleen.c.googlers.com.com (118.239.150.34.bc.googleusercontent.com. [34.150.239.118])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7df5a55sm5522085a.86.2024.08.09.12.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 12:10:26 -0700 (PDT)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org,
-	cerasuolodomenico@gmail.com,
-	hannes@cmpxchg.org,
-	j.granados@samsung.com,
-	lizhijian@fujitsu.com,
-	muchun.song@linux.dev,
-	nphamcs@gmail.com,
-	pasha.tatashin@soleen.com,
-	rientjes@google.com,
-	rppt@kernel.org,
-	souravpanda@google.com,
-	vbabka@suse.cz,
-	willy@infradead.org,
-	dan.j.williams@intel.com,
-	yi.zhang@redhat.com,
-	alison.schofield@intel.com,
-	david@redhat.com,
-	yosryahmed@google.com
-Subject: [PATCH v5 3/3] mm: don't account memmap per-node
-Date: Fri,  9 Aug 2024 19:10:20 +0000
-Message-ID: <20240809191020.1142142-4-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-In-Reply-To: <20240809191020.1142142-1-pasha.tatashin@soleen.com>
-References: <20240809191020.1142142-1-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1723230903; c=relaxed/simple;
+	bh=DibLUEnTsdSBZPfJSqD2frndtrOkbATuQ+3Wb8lPRZk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ftLOdoq8FPXyqZltwmINcRgRggYoBWA5zoQW9HxFuLGlbkAEJMi8yTs/5ZX5FqiMqybJGHNdsg7l21X0uGPuS+jDXaNN+uZvbicIv42bCURXGQzIo1IivPewKiswuvK2W0voot4S55O1dOef1bAVO/szB0ZQmBwsRhlsr0pTm1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=KLQjzp7A; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WgYWn44Lxz6ClY8x;
+	Fri,  9 Aug 2024 19:15:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1723230898; x=1725822899; bh=C3Y7RyE6Umt352oYn9af7CF/
+	QQU4tkrbbVojV42x/og=; b=KLQjzp7A+axw0CZAm/PhGhXC1O+NKGGnC4r8R5D2
+	SspmMv2NjmHKq3fGUcl+PaTA4ncys2YJnhI7mEXKc04wUqY4tL7AP0fISY6zeGyq
+	3wpi/jo+QnyCe28wzQrgfYzgQ3pXad1mkyJGw0A+q3L5WuZIbV7zSL9jug6zg+CY
+	7Rv9mPCg/YkSzga7yU0VAagBYo7lOkibtEtShKP1KmsH1dJryW354ee6YP2vkAPD
+	C9jnQf1qfIv9bLI+c+9V8gXB7g529SnG0fgUqb7p4NGV+Huv8UBpSErzyMi3w5j9
+	xHs3VzOSmKLADWaY0aXqs1ITmp4FD/uun6tvHG3DLz7bjw==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 5e5aGB_-gQWs; Fri,  9 Aug 2024 19:14:58 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WgYWh1VqSz6ClY8s;
+	Fri,  9 Aug 2024 19:14:55 +0000 (UTC)
+Message-ID: <7e6669da-d723-4eb4-8849-77e4deed5ffa@acm.org>
+Date: Fri, 9 Aug 2024 12:14:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: sd: retry command SYNC CACHE if format in progress
+To: Yihang Li <liyihang9@huawei.com>, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ prime.zeng@huawei.com, linuxarm@huawei.com
+References: <20240808021719.4167352-1-liyihang9@huawei.com>
+ <1cd0b145-431a-4d9f-979f-04d4063eeda8@acm.org>
+ <e6b05d46-7acd-8364-2826-c14e342f8e2d@huawei.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <e6b05d46-7acd-8364-2826-c14e342f8e2d@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fix invalid access to pgdat during hot-remove operation:
-ndctl users reported a GPF when trying to destroy a namespace:
-$ ndctl destroy-namespace all -r all -f
- Segmentation fault
- dmesg:
- Oops: general protection fault, probably for
- non-canonical address 0xdffffc0000005650: 0000 [#1] PREEMPT SMP KASAN
- PTI
- KASAN: probably user-memory-access in range
- [0x000000000002b280-0x000000000002b287]
- CPU: 26 UID: 0 PID: 1868 Comm: ndctl Not tainted 6.11.0-rc1 #1
- Hardware name: Dell Inc. PowerEdge R640/08HT8T, BIOS
- 2.20.1 09/13/2023
- RIP: 0010:mod_node_page_state+0x2a/0x110
+On 8/8/24 8:44 PM, Yihang Li wrote:
+> On 2024/8/9 3:09, Bart Van Assche wrote:
+>> On 8/7/24 7:17 PM, Yihang Li wrote:
+>>> If formatting a suspended disk (such as formatting with different DIF
+>>> type), the SYNC CACHE command will fail because the disk is in the
+>>> formatting process, which will cause the runtime_status of the disk to
+>>> error and it is difficult for user to recover it.
+>>>
+>>> To solve the issue, retry the command until format command is finished.
+>>
+>> How is the format command submitted to the SCSI disk? Is that command
+>> perhaps submitted as a SCSI pass-through command (SG_IO ioctl)?
+>>
+> 
+> When formatting a suspended disk, the disk will be resuming first,
+> and then the format command will submit to the disk through SG_IO ioctl.
+> 
+> When the disk is processing the formatting command, the system does not
+> submit other commands to the disk. Therefore, the system attempts to suspend
+> the disk again and sends the SYNC CACHE command. However, the SYNC CACHE
+> command fails because the disk is being formatted.
+> 
+> Error info like:
+> 
+> [  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
+> [  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
+> [  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
+> [  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
 
-cxl-test users report a GPF when trying to unload the test module:
-$ modrpobe -r cxl-test
- dmesg
- BUG: unable to handle page fault for address: 0000000000004200
- #PF: supervisor read access in kernel mode
- #PF: error_code(0x0000) - not-present page
- PGD 0 P4D 0
- Oops: Oops: 0000 [#1] PREEMPT SMP PTI
- CPU: 0 UID: 0 PID: 1076 Comm: modprobe Tainted: G O N 6.11.0-rc1 #197
- Tainted: [O]=OOT_MODULE, [N]=TEST
- Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/15
- RIP: 0010:mod_node_page_state+0x6/0x90
+Please consider integrating this information in the patch description.
 
-Currently, when memory is hot-plugged or hot-removed the accounting is
-done based on the assumption that memmap is allocated from the same node
-as the hot-plugged/hot-removed memory, which is not always the case.
+>> Should the sd driver perhaps be unbound while the format command is in
+>> progress?
+>>
+> 
+> I do not have any suggestions for this yet. I don't know how to unbound driver
+> when executing the format command and bound driver after the command is executed.
+> 
+> If you have any suggestions, please let me know.
 
-In addition, there are challenges with keeping the node id of the memory
-that is being remove to the time when memmap accounting is actually
-performed: since this is done after remove_pfn_range_from_zone(), and
-also after remove_memory_block_devices(). Meaning that we cannot use
-pgdat nor walking though memblocks to get the nid.
+It seems like the PCI core supports binding and unbinding through sysfs
+but the SCSI core not. So it's probably easier to add support for
+ASC/ASCQ 04h / 04h rather than to add bind/unbind support to the SCSI
+core.
 
-Given all of that, account the memmap overhead system wide instead.
+Thanks,
 
-For this we are going to be using global atomic counters, but given that
-memmap size is rarely modified, and normally is only modified either
-during early boot when there is only one CPU, or under a hotplug global
-mutex lock, therefore there is no need for per-cpu optimizations.
-
-Also, while we are here rename nr_memmap to nr_memmap_pages, and
-nr_memmap_boot to nr_memmap_boot_pages to be self explanatory that the
-units are in page count.
-
-Reported-by: Yi Zhang <yi.zhang@redhat.com>
-Closes: https://lore.kernel.org/linux-cxl/CAHj4cs9Ax1=CoJkgBGP_+sNu6-6=6v=_L-ZBZY0bVLD3wUWZQg@mail.gmail.com
-Reported-by: Alison Schofield <alison.schofield@intel.com>
-Closes: https://lore.kernel.org/linux-mm/Zq0tPd2h6alFz8XF@aschofie-mobl2/#t
-
-Fixes: 15995a352474 ("mm: report per-page metadata information")
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-Tested-by: Dan Williams <dan.j.williams@intel.com>
-Tested-by: Alison Schofield <alison.schofield@intel.com>
-Acked-by: David Hildenbrand <david@redhat.com>
----
- include/linux/mmzone.h |  2 --
- include/linux/vmstat.h |  7 ++++---
- mm/hugetlb_vmemmap.c   |  8 ++++----
- mm/mm_init.c           |  3 +--
- mm/page_alloc.c        |  1 -
- mm/page_ext.c          | 18 ++++-------------
- mm/sparse-vmemmap.c    | 11 ++++------
- mm/sparse.c            |  5 ++---
- mm/vmstat.c            | 46 ++++++++++++++++++++----------------------
- 9 files changed, 41 insertions(+), 60 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 41458892bc8a..1dc6248feb83 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -220,8 +220,6 @@ enum node_stat_item {
- 	PGDEMOTE_KSWAPD,
- 	PGDEMOTE_DIRECT,
- 	PGDEMOTE_KHUGEPAGED,
--	NR_MEMMAP, /* page metadata allocated through buddy allocator */
--	NR_MEMMAP_BOOT, /* page metadata allocated through boot allocator */
- 	NR_VM_NODE_STAT_ITEMS
- };
- 
-diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-index 9ab4fa5e09b5..9eb77c9007e6 100644
---- a/include/linux/vmstat.h
-+++ b/include/linux/vmstat.h
-@@ -38,6 +38,8 @@ struct reclaim_stat {
- enum vm_stat_item {
- 	NR_DIRTY_THRESHOLD,
- 	NR_DIRTY_BG_THRESHOLD,
-+	NR_MEMMAP_PAGES,	/* page metadata allocated through buddy allocator */
-+	NR_MEMMAP_BOOT_PAGES,	/* page metadata allocated through boot allocator */
- 	NR_VM_STAT_ITEMS,
- };
- 
-@@ -618,7 +620,6 @@ static inline void lruvec_stat_sub_folio(struct folio *folio,
- 	lruvec_stat_mod_folio(folio, idx, -folio_nr_pages(folio));
- }
- 
--void __meminit mod_node_early_perpage_metadata(int nid, long delta);
--void __meminit store_early_perpage_metadata(void);
--
-+void memmap_boot_pages_add(long delta);
-+void memmap_pages_add(long delta);
- #endif /* _LINUX_VMSTAT_H */
-diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-index 4f51e0596197..0c3f56b3578e 100644
---- a/mm/hugetlb_vmemmap.c
-+++ b/mm/hugetlb_vmemmap.c
-@@ -185,11 +185,11 @@ static int vmemmap_remap_range(unsigned long start, unsigned long end,
- static inline void free_vmemmap_page(struct page *page)
- {
- 	if (PageReserved(page)) {
-+		memmap_boot_pages_add(-1);
- 		free_bootmem_page(page);
--		mod_node_page_state(page_pgdat(page), NR_MEMMAP_BOOT, -1);
- 	} else {
-+		memmap_pages_add(-1);
- 		__free_page(page);
--		mod_node_page_state(page_pgdat(page), NR_MEMMAP, -1);
- 	}
- }
- 
-@@ -341,7 +341,7 @@ static int vmemmap_remap_free(unsigned long start, unsigned long end,
- 		copy_page(page_to_virt(walk.reuse_page),
- 			  (void *)walk.reuse_addr);
- 		list_add(&walk.reuse_page->lru, vmemmap_pages);
--		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, 1);
-+		memmap_pages_add(1);
- 	}
- 
- 	/*
-@@ -396,7 +396,7 @@ static int alloc_vmemmap_page_list(unsigned long start, unsigned long end,
- 			goto out;
- 		list_add(&page->lru, list);
- 	}
--	mod_node_page_state(NODE_DATA(nid), NR_MEMMAP, nr_pages);
-+	memmap_pages_add(nr_pages);
- 
- 	return 0;
- out:
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 75c3bd42799b..f9a60ffc5532 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -1623,8 +1623,7 @@ static void __init alloc_node_mem_map(struct pglist_data *pgdat)
- 		panic("Failed to allocate %ld bytes for node %d memory map\n",
- 		      size, pgdat->node_id);
- 	pgdat->node_mem_map = map + offset;
--	mod_node_early_perpage_metadata(pgdat->node_id,
--					DIV_ROUND_UP(size, PAGE_SIZE));
-+	memmap_boot_pages_add(DIV_ROUND_UP(size, PAGE_SIZE));
- 	pr_debug("%s: node %d, pgdat %08lx, node_mem_map %08lx\n",
- 		 __func__, pgdat->node_id, (unsigned long)pgdat,
- 		 (unsigned long)pgdat->node_mem_map);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 28f80daf5c04..875d76e8684a 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5755,7 +5755,6 @@ void __init setup_per_cpu_pageset(void)
- 	for_each_online_pgdat(pgdat)
- 		pgdat->per_cpu_nodestats =
- 			alloc_percpu(struct per_cpu_nodestat);
--	store_early_perpage_metadata();
- }
- 
- __meminit void zone_pcp_init(struct zone *zone)
-diff --git a/mm/page_ext.c b/mm/page_ext.c
-index c191e490c401..641d93f6af4c 100644
---- a/mm/page_ext.c
-+++ b/mm/page_ext.c
-@@ -214,8 +214,7 @@ static int __init alloc_node_page_ext(int nid)
- 		return -ENOMEM;
- 	NODE_DATA(nid)->node_page_ext = base;
- 	total_usage += table_size;
--	mod_node_page_state(NODE_DATA(nid), NR_MEMMAP_BOOT,
--			    DIV_ROUND_UP(table_size, PAGE_SIZE));
-+	memmap_boot_pages_add(DIV_ROUND_UP(table_size, PAGE_SIZE));
- 	return 0;
- }
- 
-@@ -275,10 +274,8 @@ static void *__meminit alloc_page_ext(size_t size, int nid)
- 	else
- 		addr = vzalloc_node(size, nid);
- 
--	if (addr) {
--		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP,
--				    DIV_ROUND_UP(size, PAGE_SIZE));
--	}
-+	if (addr)
-+		memmap_pages_add(DIV_ROUND_UP(size, PAGE_SIZE));
- 
- 	return addr;
- }
-@@ -323,25 +320,18 @@ static void free_page_ext(void *addr)
- {
- 	size_t table_size;
- 	struct page *page;
--	struct pglist_data *pgdat;
- 
- 	table_size = page_ext_size * PAGES_PER_SECTION;
-+	memmap_pages_add(-1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
- 
- 	if (is_vmalloc_addr(addr)) {
--		page = vmalloc_to_page(addr);
--		pgdat = page_pgdat(page);
- 		vfree(addr);
- 	} else {
- 		page = virt_to_page(addr);
--		pgdat = page_pgdat(page);
- 		BUG_ON(PageReserved(page));
- 		kmemleak_free(addr);
- 		free_pages_exact(addr, table_size);
- 	}
--
--	mod_node_page_state(pgdat, NR_MEMMAP,
--			    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
--
- }
- 
- static void __free_page_ext(unsigned long pfn)
-diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-index 1dda6c53370b..edcc7a6b0f6f 100644
---- a/mm/sparse-vmemmap.c
-+++ b/mm/sparse-vmemmap.c
-@@ -469,13 +469,10 @@ struct page * __meminit __populate_section_memmap(unsigned long pfn,
- 	if (r < 0)
- 		return NULL;
- 
--	if (system_state == SYSTEM_BOOTING) {
--		mod_node_early_perpage_metadata(nid, DIV_ROUND_UP(end - start,
--								  PAGE_SIZE));
--	} else {
--		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP,
--				    DIV_ROUND_UP(end - start, PAGE_SIZE));
--	}
-+	if (system_state == SYSTEM_BOOTING)
-+		memmap_boot_pages_add(DIV_ROUND_UP(end - start, PAGE_SIZE));
-+	else
-+		memmap_pages_add(DIV_ROUND_UP(end - start, PAGE_SIZE));
- 
- 	return pfn_to_page(pfn);
- }
-diff --git a/mm/sparse.c b/mm/sparse.c
-index e4b830091d13..0f018c6f9ec5 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -463,7 +463,7 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
- 	sparsemap_buf = memmap_alloc(size, section_map_size(), addr, nid, true);
- 	sparsemap_buf_end = sparsemap_buf + size;
- #ifndef CONFIG_SPARSEMEM_VMEMMAP
--	mod_node_early_perpage_metadata(nid, DIV_ROUND_UP(size, PAGE_SIZE));
-+	memmap_boot_pages_add(DIV_ROUND_UP(size, PAGE_SIZE));
- #endif
- }
- 
-@@ -643,8 +643,7 @@ static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
- 	unsigned long start = (unsigned long) pfn_to_page(pfn);
- 	unsigned long end = start + nr_pages * sizeof(struct page);
- 
--	mod_node_page_state(page_pgdat(pfn_to_page(pfn)), NR_MEMMAP,
--			    -1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
-+	memmap_pages_add(-1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
- 	vmemmap_free(start, end, altmap);
- }
- static void free_map_bootmem(struct page *memmap)
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 6f8aa4766f16..e875f2a4915f 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1033,6 +1033,24 @@ unsigned long node_page_state(struct pglist_data *pgdat,
- }
- #endif
- 
-+/*
-+ * Count number of pages "struct page" and "struct page_ext" consume.
-+ * nr_memmap_boot_pages: # of pages allocated by boot allocator
-+ * nr_memmap_pages: # of pages that were allocated by buddy allocator
-+ */
-+static atomic_long_t nr_memmap_boot_pages = ATOMIC_LONG_INIT(0);
-+static atomic_long_t nr_memmap_pages = ATOMIC_LONG_INIT(0);
-+
-+void memmap_boot_pages_add(long delta)
-+{
-+	atomic_long_add(delta, &nr_memmap_boot_pages);
-+}
-+
-+void memmap_pages_add(long delta)
-+{
-+	atomic_long_add(delta, &nr_memmap_pages);
-+}
-+
- #ifdef CONFIG_COMPACTION
- 
- struct contig_page_info {
-@@ -1255,11 +1273,11 @@ const char * const vmstat_text[] = {
- 	"pgdemote_kswapd",
- 	"pgdemote_direct",
- 	"pgdemote_khugepaged",
--	"nr_memmap",
--	"nr_memmap_boot",
- 	/* system-wide enum vm_stat_item counters */
- 	"nr_dirty_threshold",
- 	"nr_dirty_background_threshold",
-+	"nr_memmap_pages",
-+	"nr_memmap_boot_pages",
- 
- #if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
- 	/* enum vm_event_item counters */
-@@ -1827,6 +1845,8 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
- 
- 	global_dirty_limits(v + NR_DIRTY_BG_THRESHOLD,
- 			    v + NR_DIRTY_THRESHOLD);
-+	v[NR_MEMMAP_PAGES] = atomic_long_read(&nr_memmap_pages);
-+	v[NR_MEMMAP_BOOT_PAGES] = atomic_long_read(&nr_memmap_boot_pages);
- 	v += NR_VM_STAT_ITEMS;
- 
- #ifdef CONFIG_VM_EVENT_COUNTERS
-@@ -2285,25 +2305,3 @@ static int __init extfrag_debug_init(void)
- module_init(extfrag_debug_init);
- 
- #endif
--
--/*
-- * Page metadata size (struct page and page_ext) in pages
-- */
--static unsigned long early_perpage_metadata[MAX_NUMNODES] __meminitdata;
--
--void __meminit mod_node_early_perpage_metadata(int nid, long delta)
--{
--	early_perpage_metadata[nid] += delta;
--}
--
--void __meminit store_early_perpage_metadata(void)
--{
--	int nid;
--	struct pglist_data *pgdat;
--
--	for_each_online_pgdat(pgdat) {
--		nid = pgdat->node_id;
--		mod_node_page_state(NODE_DATA(nid), NR_MEMMAP_BOOT,
--				    early_perpage_metadata[nid]);
--	}
--}
--- 
-2.46.0.76.ge559c4bf1a-goog
-
+Bart.
 
