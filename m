@@ -1,186 +1,232 @@
-Return-Path: <linux-kernel+bounces-280448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213C994CAC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:46:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F163494CAC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 468321C22116
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:46:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CFFA1F21E40
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D26016D9AA;
-	Fri,  9 Aug 2024 06:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655F216D4CA;
+	Fri,  9 Aug 2024 06:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/sVgBZK"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdUfph/w"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E902216D4EE;
-	Fri,  9 Aug 2024 06:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98251B964;
+	Fri,  9 Aug 2024 06:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723185991; cv=none; b=QRgPPND7XFV2eI8EXd22Z4u4kyZDUIhIHMtcfVkKEnEj+cDdSIe6o4lR9HWpwgA7dplxc73i/GxSopQBfx174EF4wiQIUUfWzLmrYLZ20kk5l/HE3W1hVJwgbtZ9bNAo042lcJifC9hZm9/fXqIpV+r+xak7f5lPZGDy0dl47Eo=
+	t=1723186113; cv=none; b=GqLFmzYo7CcE1G1TsIPo9BDGzsXOLEenykh7n1V4J/a5EiujmFAGCR89ntmYBCHIQaPXhZrUkS23yUX6lgMC0I1XXq3sZoM27WLFaKCLU56purtOL9X8/pAGn6QQ0vAja5OMPpWbv0lYK7vvezzUJWxLIp3Trdk5oocCvANseUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723185991; c=relaxed/simple;
-	bh=0XjSVnAX262gGnoCnVHs2qpH728XqwdlxfLY0/kEphI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=itobLQO7dqM+AsvuswqpehDqFSpBnEgJhGF+BkCrOYSi4HnmgBrLDzl3tkD3+2SmOZpCAJXk4JYvChXu84ODVdObuzgvax/g/TTXVy85DFFs5RWJT4zHlWK7MHVp9Ovs4tcWsNWLOUfBF1RB4aDkU0NgIsT9HHh/0SgOY6NQ0/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/sVgBZK; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1723186113; c=relaxed/simple;
+	bh=oS2XMmjoa+VE/v+mAQNByyB+Ulxv9ZDsqIDdlNb8qhc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cqjeguSGvUYVKLB6E76v86PGCKb+NyubqH3K8enOd6t9KmYT03RpjOLgsusbyOYgn7Fj6Tfo2ISy3CDUWDolgO0FU53I2sG9qiD+FscvyQSNmqlADlMqYud6xhHoAFzBiUpGnJh6xOAZcZCIJ7eu4sMHuL/VRSX/b1ox6gnPsho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdUfph/w; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2cb510cd097so1451133a91.1;
-        Thu, 08 Aug 2024 23:46:29 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f01afa11cso2085349e87.0;
+        Thu, 08 Aug 2024 23:48:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723185989; x=1723790789; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723186110; x=1723790910; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CmeU6YujhDN+JQ00gbkG5q3lZjXBS3ZjjOccDr3kLEc=;
-        b=I/sVgBZKjdzHeA6ho+KX7mNMFWtKJywPtx4z49wtIxOc4Z/rVpllN4Qpx+8rs5ziTt
-         nwZoGreoLTy+niv84dhO4duPywKol9jxgSqtI4pmqJHSlt9AGqn+VouuNL8kSdfdt8gF
-         pEWtHeF81JOebu8LjJbvk/dnHa1R+BELPglzd0wH6DTg2zptgI+Buoq1zS0eQVM+WDRN
-         rwh1422IIcN/kGEDLnVbvU/jfId3wqGmZT6decdY2y+WDzZRMWyRhj4FnlAI7cq9yeN4
-         6QZdtVk+adnOiDcdAAktrfGJ+bLepBBMrtg5XxowNsSKDPRzRYxqrX1xd7iIdXgbP2bI
-         T61Q==
+        bh=awMllGHlNTMUHiAzNhHBD3WsHP+5NhEuahbeF4CxRz0=;
+        b=IdUfph/wIa/0CCO3YOqM9uGtUA7Q4Hu1NlrYggd0lsDfK3O1cTbhGqtcW32wO6q8Bs
+         3v4K3Hu1xuXX2RZshQcMukP3RFC6+0xMjP+rM4QUZasA1JMPjNh+N/BmyJuwZn2hwnr2
+         Mgl1ErTQTjTegqP93ylye/Ig1kP+RNfd4zJPE/sbiFNDpVMoamvzCSoVubG4/5Da2fXS
+         smpdjP6YVIRViGaNl8IeMT1DaObLTZQ/ALuUp7u+i+uG8PgF9//IAn6s11jUtbV0Z1b4
+         TyYLRWFvAsDwySYnDG56ssZIIpLa59EGyK6RP3JlWMDbnTB8i6OzEcQ+XhwDpqXxXLbS
+         oDdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723185989; x=1723790789;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723186110; x=1723790910;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CmeU6YujhDN+JQ00gbkG5q3lZjXBS3ZjjOccDr3kLEc=;
-        b=LNxXYayQ8XSpBndt6dEYUx0muVidGusuOg4/u+CJRsY5V283V2mUy9X8vC7UmKxclV
-         Wv11OVrK3fVNoNa2syh1jcw1iAFoEWLKyzYfF8T9qUQGxL3i6o2TjIzVq4R0cMH9SzK4
-         3rV4hYP/dfT+oUAh5h9W9Rlqrn0STRVdDRIzbKQbURsA2xKutvJkuzU/rn4opEOaUBAT
-         we4igb5/7NfByPNGfElgVcBiRkvAno2hjnUC5eIYMotEx0JxO24hk3tEZyEnj/e2R2XZ
-         ur0wrtKB++IP2p0kXIruU94HP/Lgdio88//vQ5yfG2lpx/6fLSbbcL/mA01A+LLBVovU
-         EzWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAI4YL/Yzh6++HLymZwbIQDP1RxTNnHXVTGvbjBKJL7j8Nj2OrFel+qSDWisGemOM0c72stayRHGELerg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0883ibIYgn8lUY+aN6u11CeMp+hWhZcVQlDNZsGUG9ft8A/7d
-	YUmY1WWWGKIYLLsa+ksekJjHf/zJ3Dk0kxkE23dikzBX3H9jB3+w
-X-Google-Smtp-Source: AGHT+IGXN4pPCc482mbAOY0AU8yxNDO8RXnNS+hRFpMl0trjmLBMX9o8YHd5C8A/dENRrBWSJUTCRA==
-X-Received: by 2002:a17:90a:c695:b0:2c9:66d3:4663 with SMTP id 98e67ed59e1d1-2d1e80a08e2mr478057a91.43.1723185989209;
-        Thu, 08 Aug 2024 23:46:29 -0700 (PDT)
-Received: from localhost.localdomain ([163.53.18.10])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9db44e5sm2201491a91.46.2024.08.08.23.46.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 23:46:28 -0700 (PDT)
-From: zhangshida <starzhangzsd@gmail.com>
-X-Google-Original-From: zhangshida <zhangshida@kylinos.cn>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.com
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhangshida@kylinos.cn,
-	starzhangzsd@gmail.com,
-	Jan Kara <jack@suse.cz>
-Subject: [RFC PATCH V2 2/2] ext4: Replace the __block_write_begin with ext4_block_write_begin
-Date: Fri,  9 Aug 2024 14:46:06 +0800
-Message-Id: <20240809064606.3490994-3-zhangshida@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240809064606.3490994-1-zhangshida@kylinos.cn>
-References: <20240809064606.3490994-1-zhangshida@kylinos.cn>
+        bh=awMllGHlNTMUHiAzNhHBD3WsHP+5NhEuahbeF4CxRz0=;
+        b=YoRY6Jp6SG7Zn6L++Nepp6RZI3MKWdK8t1qH2KrneOnVY4qIPBUrFqOnfl4fu6PKNQ
+         ufmxGouEhk5eH3nvoubVZe975wYQKewge5/Ry4OS7ySGpxOFuMgbuopTUb7R4GU8qpqe
+         BMp/j47QqRg2SlQqO1QzGlqrSUyNQzhZAyJUzo/jsSIyooQGiq2VEnejR4+igiefVcn/
+         Udr6/kdOaEErpoM695iwX+wTBVRDE7AB4CJzRiZx2JeahnY3KqZ+7bWMrSnEYHYtfSCy
+         8VnY/+it4xVR9K+NbypMiONKM6qS4YmO0lefEQGbJ5ASc0NIW2VWbNJLDng+rRJ9c6wz
+         uXjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwOKMN46Bipx77BbzOtHXq0CrfltYmkMutyk7qit1xbfjZYsjxvOPOP00oS+wi0YEjzZBPBWcsFeweWtW+@vger.kernel.org, AJvYcCXXYlv2VH8boxM+XxsOUltKMbiJb2GnHt1dak7zXQMsFz9QWOZKH6+aGU+IYYvIJ1IXGA6uoxdfqrtK@vger.kernel.org, AJvYcCXoGVOcM7V/yNXEl3uor5oVWlr3GfQeFiPFoZGHA4gG3CrdiQaACJQEF6eQ26cqsOTy+eZvDcwTSsbi/L8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3a2aiZTv2eC2Hx/WVFlJLPhxepBi9Cdoc6NFf7oFnUAKhzgqK
+	JTetXTEY4G1gemtmEfqmlSqxItMV38Hh2Na1Nm2aG/5nBn6quTckG8VF0zZLFP0UDK+PcbW6VfA
+	zxf4QQrFb7Y+EEGdu/EwlZ/0+p84=
+X-Google-Smtp-Source: AGHT+IGQ8eJlZAkFtH4sp8+WWj+e/9OZ+apcotabpI+LPBGrb62fWRUl6dC49ZcDGOav+iLDtIT4xNIGPjMag4piiGY=
+X-Received: by 2002:a05:6512:6c4:b0:530:b76c:65df with SMTP id
+ 2adb3069b0e04-530ee99ce52mr332804e87.35.1723186109447; Thu, 08 Aug 2024
+ 23:48:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240808-loongson1-nand-v8-0-c96dea418b41@gmail.com>
+ <20240808-loongson1-nand-v8-1-c96dea418b41@gmail.com> <20240808-backyard-unglue-3cf429ad8da5@spud>
+In-Reply-To: <20240808-backyard-unglue-3cf429ad8da5@spud>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+Date: Fri, 9 Aug 2024 14:47:53 +0800
+Message-ID: <CAJhJPsVOTAj9ePzeHkwDX049FKd=9Rs_NjQE2qwQL76GKSC66Q@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] dt-bindings: mtd: Add Loongson-1 NAND Controller
+To: Conor Dooley <conor@kernel.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Shida Zhang <zhangshida@kylinos.cn>
+On Thu, Aug 8, 2024 at 11:37=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> On Thu, Aug 08, 2024 at 07:22:19PM +0800, Keguang Zhang via B4 Relay wrot=
+e:
+> > From: Keguang Zhang <keguang.zhang@gmail.com>
+> >
+> > Add devicetree binding document for Loongson-1 NAND Controller.
+> >
+> > Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
+> > ---
+> > Changes in v8:
+> > - Add a description part.
+> > - Adjust the compatible because the match data for ls1c-nfc differs fro=
+m ls1b-nfc.
+> > - Mark 'nand-use-soft-ecc-engine' and 'nand-ecc-algo' as mandatory.
+> > - Delete the superfluous blank lines.
+> >
+> > Changes in v7:
+> > - rename the file to loongson,ls1b-nfc.yaml
+> >
+> > Changes in v6:
+> > - A newly added patch
+> > ---
+> >  .../devicetree/bindings/mtd/loongson,ls1b-nfc.yaml | 75 ++++++++++++++=
+++++++++
+> >  1 file changed, 75 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mtd/loongson,ls1b-nfc.ya=
+ml b/Documentation/devicetree/bindings/mtd/loongson,ls1b-nfc.yaml
+> > new file mode 100644
+> > index 000000000000..7ce335324a29
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mtd/loongson,ls1b-nfc.yaml
+>
+> When I first read "nfc" here I thought it was a copy-paste mistake, as
+> "nfc" is a technology of it's own. I think it would make sense to rename
+> to "loongson,ls1b-nand-controller" etc to remove that sort of confusion.
+> These devices might not implement NFC, but what's to say that a future
+> device will not?
+>
+Sorry for the confusion.
+The string "loongson,ls1b-nand-controller" might be too long.
+May I rename it to "loongson,ls1b-nand"?
 
-Using __block_write_begin() make it inconvenient to journal the
-user data dirty process. We can't tell the block layer maintainer,
-‘Hey, we want to trace the dirty user data in ext4, can we add some
-special code for ext4 in __block_write_begin?’:P
+> Cheers,
+> Conor.
+>
+> > @@ -0,0 +1,75 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mtd/loongson,ls1b-nfc.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Loongson-1 NAND Controller
+> > +
+> > +maintainers:
+> > +  - Keguang Zhang <keguang.zhang@gmail.com>
+> > +
+> > +description: |
+>
+> This | is not needed.
+>
+Will remove |.
+Thanks!
 
-So use ext4_block_write_begin() instead.
+> > +  The Loongson-1 NAND controller abstracts all supported operations,
+> > +  meaning it does not support low-level access to raw NAND flash chips=
+.
+> > +  Moreover, the controller is paired with the DMA engine to perform
+> > +  READ and PROGRAM functions.
+> > +
+> > +allOf:
+> > +  - $ref: nand-controller.yaml
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - enum:
+> > +          - loongson,ls1b-nfc
+> > +          - loongson,ls1c-nfc
+> > +      - items:
+> > +          - enum:
+> > +              - loongson,ls1a-nfc
+> > +          - const: loongson,ls1b-nfc
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  dmas:
+> > +    maxItems: 1
+> > +
+> > +  dma-names:
+> > +    const: rxtx
+> > +
+> > +patternProperties:
+> > +  "^nand@[0-3]$":
+> > +    type: object
+> > +    $ref: raw-nand-chip.yaml
+> > +
+> > +    required:
+> > +      - nand-use-soft-ecc-engine
+> > +      - nand-ecc-algo
+> > +
+> > +    unevaluatedProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - dmas
+> > +  - dma-names
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    nand-controller@1fe78000 {
+> > +        compatible =3D "loongson,ls1b-nfc";
+> > +        reg =3D <0x1fe78000 0x40>;
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +        dmas =3D <&dma 0>;
+> > +        dma-names =3D "rxtx";
+> > +
+> > +        nand@0 {
+> > +            reg =3D <0>;
+> > +            nand-use-soft-ecc-engine;
+> > +            nand-ecc-algo =3D "hamming";
+> > +        };
+> > +    };
+> >
+> > --
+> > 2.43.0
+> >
+> >
 
-The two functions are basically doing the same thing except for the
-fscrypt related code. Narrow the scope of CONFIG_FS_ENCRYPTION
-so as to allow ext4_block_write_begin() to function like
-__block_write_begin when the config is disabled.
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
----
- fs/ext4/inode.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index de46c0a6842a..31389633086a 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1046,7 +1046,6 @@ int do_journal_get_write_access(handle_t *handle, struct inode *inode,
- 	return ret;
- }
- 
--#ifdef CONFIG_FS_ENCRYPTION
- static int ext4_block_write_begin(handle_t *handle, struct folio *folio,
- 				  loff_t pos, unsigned len,
- 				  get_block_t *get_block)
-@@ -1135,7 +1134,9 @@ static int ext4_block_write_begin(handle_t *handle, struct folio *folio,
- 							 from, to);
- 		else
- 			folio_zero_new_buffers(folio, from, to);
--	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
-+	}
-+#ifdef CONFIG_FS_ENCRYPTION
-+	else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
- 		for (i = 0; i < nr_wait; i++) {
- 			int err2;
- 
-@@ -1147,10 +1148,10 @@ static int ext4_block_write_begin(handle_t *handle, struct folio *folio,
- 			}
- 		}
- 	}
-+#endif
- 
- 	return err;
- }
--#endif
- 
- /*
-  * To preserve ordering, it is essential that the hole instantiation and
-@@ -1232,20 +1233,12 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
- 	/* In case writeback began while the folio was unlocked */
- 	folio_wait_stable(folio);
- 
--#ifdef CONFIG_FS_ENCRYPTION
- 	if (ext4_should_dioread_nolock(inode))
- 		ret = ext4_block_write_begin(handle, folio, pos, len,
- 					     ext4_get_block_unwritten);
- 	else
- 		ret = ext4_block_write_begin(handle, folio, pos, len,
- 					     ext4_get_block);
--#else
--	if (ext4_should_dioread_nolock(inode))
--		ret = __block_write_begin(&folio->page, pos, len,
--					  ext4_get_block_unwritten);
--	else
--		ret = __block_write_begin(&folio->page, pos, len, ext4_get_block);
--#endif
- 	if (!ret && ext4_should_journal_data(inode)) {
- 		ret = ext4_walk_page_buffers(handle, inode,
- 					     folio_buffers(folio), from, to,
-@@ -2978,12 +2971,8 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
- 	if (IS_ERR(folio))
- 		return PTR_ERR(folio);
- 
--#ifdef CONFIG_FS_ENCRYPTION
- 	ret = ext4_block_write_begin(NULL, folio, pos, len,
- 				     ext4_da_get_block_prep);
--#else
--	ret = __block_write_begin(&folio->page, pos, len, ext4_da_get_block_prep);
--#endif
- 	if (ret < 0) {
- 		folio_unlock(folio);
- 		folio_put(folio);
--- 
-2.33.0
+--
+Best regards,
 
+Keguang Zhang
 
