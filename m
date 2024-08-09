@@ -1,167 +1,114 @@
-Return-Path: <linux-kernel+bounces-280798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0E694CF5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:29:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862DC94CF59
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2ED1F22625
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:29:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88251C21294
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DFA192B89;
-	Fri,  9 Aug 2024 11:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A57192B89;
+	Fri,  9 Aug 2024 11:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="AqQviAJl"
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i0cWoF63"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45173176AB9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39C315D5C3
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723202971; cv=none; b=o9L34ZkOedqGh/Cnm/2OHTqLDrdXG72x1bGTXs26UfwWkrf5G8kDD2Ogg31pQjGTWjcC8sw+r4mBN7WFD+27puYN5AaPDz2AQjF4wq0ZgFsGaGkIZEPxY2J3I6dG7PmlanJ05OrG74zVfriFrfGzGATgi6lus0jqdmj++WCO9ZE=
+	t=1723202850; cv=none; b=X4JMQUaBHTp97qty3SI8+XVjtuk2Grgnqv3mi/1NtSp34oOQ5j6h26iN6/QOIZVh4OXBsCdWij2IExYzq89PmPW/mc0/qcbm9JLjmK1g188p5940luXYLZUfQlKldmF7WM5jJ5L75V/g1/N1c/E4hoK1ctcpdwXU9vLn8j2acng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723202971; c=relaxed/simple;
-	bh=3GkGxuAW3CUt8aH+HH+HsvJNGrWdrhZQM4Jb9l76a78=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=ONM4C2xZ2stfhEQmsOoIrkkSlldnlTr5wc+BEZu7+zSBwdrcD9U9liE//lQnRxq88ESruWAVlnZtN0v2H/xXea6vo3YrOueoyeuiMybwhJQpHrNSe0QXIbehiaa+gajZj6clG21K/n5p+rHfTNsyCtTT+Tt9H2KwekEYsokyBFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=AqQviAJl; arc=none smtp.client-ip=203.205.221.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723202660; bh=s348Imu8O8g9ZtfMO5VPVaAIJLhZbBZyvAJGujt6jrc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=AqQviAJlJuX0KVZMAQWeIfkYfWV7OYqAvwRjybhMjkOe9i51hJddfyVMY9xwM+lKO
-	 lRbWr/g10Lro0awjxfPD/Gg1HBCvnBSc7J+DUe3RBjbePYl5FdcmJ/IapqTHWdxySq
-	 tQ2iuqgpfKYnxxGuGaJJlwAtxPFexPZGEKY2lyN0=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 61237C7F; Fri, 09 Aug 2024 19:24:18 +0800
-X-QQ-mid: xmsmtpt1723202658tn8ld4d06
-Message-ID: <tencent_91612968A3A2A44D176F377926C453710305@qq.com>
-X-QQ-XMAILINFO: NDz66ktblfzJ3Z6nsq7zVfpmuoxNL7q1js9FT8xNTh51L2xXpfbepf+EA4JRSv
-	 Rua9vLpPqIO9AEtyhDF2dwLk3qDekh+gSlxtBesaNrIY4C9QrdyCEoa0MF+mtWtawHfHPPVm/G9I
-	 idHMz+Wksquo98yPdLNkvzBDPEvDBcf91k7lHyDgG8DtmWXENgJ2ADLTZHbjw2+OvPsD3YDfJl2U
-	 MZdEKk8yADOGNU0g/mFQEQ8ppGE2JRX+rn3slaoy2c68kjy39XJmAh14h95znD2HRwSQaVfUpAD6
-	 2cgPbcesBcysT/u4jdKoEIvt4sctMRTK+8px/shctZ8YPuNcf0CD+3ZXQkFg+DZaZwNiJzc2lBew
-	 uRspo8HHlTBTtBD6dpJILvATJe1TkCSbZwP0r94Kji0E4X9iWzmnh+E4NqnAnwJU4l+TeGuRT6wP
-	 GTXxuWqMYhixuRtZHg9ZjBGQqcNuXKGwxt1kGcO7Gar/bMFPo6wZ6ztQiaGb0mXtEjLU6HpcpFem
-	 4UqT/sBlggMcGevM/fHNue4WuUm3Ab545KSIzVFj9Fdx0V9SCNJ9XE+JhOAIshNOfT2wg8fUKwH6
-	 DxxuoUhb3KYHswTeCyRn48712mgFQu3dG6nKTdTGxZLowRPlzR872mmUtSqTLAgUz4fC/L4mFUue
-	 FjWFcUwv7Qrk599cQXLGGh34qZsXerUBgAphsDqpZnTxdq+XK37iMbqpAcP3ToOL29t2sNpSDl1Y
-	 guAQcIYn+QTVTpG9lQ9YPXhia2NgrhPtvx7De+FaKN3WKZ3ioGfeZHW6zEWHRisoD1CbhAQ32+9d
-	 ngC40z7JQXGngy7CVwEbT0NNYdGZ7iaXwFuIJn9wTRbTivj2eG3lP2L3yoeF6oDcCSU7mkRPWiZS
-	 2KqitbP6aOj7jIj8lUUARn+zTfBUCBJMTzQK1iYZHsm2JqG0mVa13CO2FX9d0vfxOLee/lJN1A
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-Date: Fri,  9 Aug 2024 19:24:17 +0800
-X-OQ-MSGID: <20240809112416.1595563-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
-References: <0000000000007ec511061f00a7b2@google.com>
+	s=arc-20240116; t=1723202850; c=relaxed/simple;
+	bh=omG6oOUvVUIz9rPmgn6hJ9KsjtJcCGufwzjHdo6dgG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Du7k8Yb3k1uh4gorTdjWnD4hPgE4sHXSYRSYcXLm7kVtj2uIal9Xd8BFsCCCb7++HEshI9TtWKSNRFnup54ZSfu5+0A9QGQgz5yH73FX87Qy707zd/u6E7nKdJVhuXa9mdTpxCTIR4B673sW+J1x/bQ4w9ptmmnJLFbUmb5ztRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i0cWoF63; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723202849; x=1754738849;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=omG6oOUvVUIz9rPmgn6hJ9KsjtJcCGufwzjHdo6dgG0=;
+  b=i0cWoF63vObkgBeBsxpNQFKLGeGU4w2QlVapr1L+pfvsmLd3kkjRHPiH
+   Q/IjYNi7mZ3BGjatrKuJbPC/ldlGfxUDlwe3FuKuqyB8jAVJuYv+g9iwz
+   yn6FOM+fgD0U607x6BEahQDESphx/PGkhgLG9dRJaHgD83KIJtv6fufGq
+   +bdnu0sMC9fS0o2JR2RxRBsstdGICA7cDShFYir7gVMpLVPo5Ln/WREQ0
+   CBbjdEgprDiOUpoiq6nEVaHRZCcEuWMm1ypYq/tpvxGjorC39e7BFty5W
+   FmDYiHiSBZjvCFscJXG4ZruFA+0yihJnZnJPqjcEDgINO3ptaFMsezpiO
+   Q==;
+X-CSE-ConnectionGUID: j1xsItEHSieFg0IbM6vmeA==
+X-CSE-MsgGUID: fbwn/ikHS5+NRV2kwyWc0Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21498186"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="21498186"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:27:28 -0700
+X-CSE-ConnectionGUID: BNZeqY/5QfOZLvlr33E4lw==
+X-CSE-MsgGUID: RIvCx0e9Tm2dSwEGkXdgdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="62181629"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:27:26 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1scNmF-0000000DOuY-1ZXg;
+	Fri, 09 Aug 2024 14:27:23 +0300
+Date: Fri, 9 Aug 2024 14:27:23 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH] linux/container_of.h: Remove redundant type cast in
+ container_of_const()
+Message-ID: <ZrX9G2Ol2jt4o-s7@smile.fi.intel.com>
+References: <20240802-container_of_const_fix-v1-1-90e7a5b624f9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802-container_of_const_fix-v1-1-90e7a5b624f9@quicinc.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-debug
+On Fri, Aug 02, 2024 at 11:15:15PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> Remove redundant (type *) cast for default branch in container_of_const()
+> since the cast has been done by container_of().
 
-#syz test: upstream c0ecd6388360
+While it might have same effect, the below is explicitly clear about both
+cases. With your patch it will become inconsistent.
 
-diff --git a/fs/9p/fid.c b/fs/9p/fid.c
-index de009a33e0e2..b5ccab74bb6f 100644
---- a/fs/9p/fid.c
-+++ b/fs/9p/fid.c
-@@ -13,6 +13,7 @@
- #include <linux/sched.h>
- #include <net/9p/9p.h>
- #include <net/9p/client.h>
-+#include <linux/file.h>
- 
- #include "v9fs.h"
- #include "v9fs_vfs.h"
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index a97ceb105cd8..7768cc70439d 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -34,6 +34,7 @@ static void v9fs_begin_writeback(struct netfs_io_request *wreq)
- {
- 	struct p9_fid *fid;
- 
-+	printk("ino: %lx, %s\n", wreq->inode->i_ino, __func__);
- 	fid = v9fs_fid_find_inode(wreq->inode, true, INVALID_UID, true);
- 	if (!fid) {
- 		WARN_ONCE(1, "folio expected an open fid inode->i_ino=%lx\n",
-diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-index 348cc90bf9c5..002c3f7f0ba3 100644
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -22,6 +22,7 @@
- #include <linux/slab.h>
- #include <net/9p/9p.h>
- #include <net/9p/client.h>
-+#include <linux/security.h>
- 
- #include "v9fs.h"
- #include "v9fs_vfs.h"
-@@ -44,6 +45,12 @@ int v9fs_file_open(struct inode *inode, struct file *file)
- 	struct p9_fid *fid;
- 	int omode;
- 
-+	if ((file->f_flags & O_RDWR || file->f_flags & O_WRONLY) &&
-+	    security_file_permission(filp, MAY_WRITE)) {
-+		pr_info("file: %p no permission, ino: %lx, %s\n", file, inode->i_ino, __func__);
-+		return -EPERM;
-+	}
-+
- 	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, file);
- 	v9ses = v9fs_inode2v9ses(inode);
- 	if (v9fs_proto_dotl(v9ses))
-@@ -397,6 +404,12 @@ v9fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct p9_fid *fid = file->private_data;
-+	struct inode *inode = file_inode(file);
-+
-+	if (security_file_permission(filp, MAY_WRITE)) {
-+		pr_info("file: %p no permission, ino: %lx, %s\n", file, inode->i_ino,  __func__);
-+		return -EPERM;
-+	}
- 
- 	p9_debug(P9_DEBUG_VFS, "fid %d\n", fid->fid);
- 
-@@ -460,6 +473,11 @@ v9fs_file_mmap(struct file *filp, struct vm_area_struct *vma)
- 	struct inode *inode = file_inode(filp);
- 	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
- 
-+	if (security_file_permission(filp, MAY_WRITE)) {
-+		pr_info("file: %p no permission, ino: %lx, %s\n", filp, inode->i_ino, __func__);
-+		return -EPERM;
-+	}
-+
- 	p9_debug(P9_DEBUG_MMAP, "filp :%p\n", filp);
- 
- 	if (!(v9ses->cache & CACHE_WRITEBACK)) {
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index 9258d30cffe3..bab69d871381 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -528,6 +528,7 @@ int netfs_writepages(struct address_space *mapping,
- 		/* It appears we don't have to handle cyclic writeback wrapping. */
- 		WARN_ON_ONCE(wreq && folio_pos(folio) < wreq->start + wreq->submitted);
- 
-+		printk("ino: %lx, folio: %p, %s\n", wret->inode->i_ino, folio, __func__);
- 		if (netfs_folio_group(folio) != NETFS_FOLIO_COPY_TO_CACHE &&
- 		    unlikely(!test_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags))) {
- 			set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
+...
+
+>  #define container_of_const(ptr, type, member)				\
+>  	_Generic(ptr,							\
+>  		const typeof(*(ptr)) *: ((const type *)container_of(ptr, type, member)),\
+
+(see, in the above line the cast is still present / required)
+
+> -		default: ((type *)container_of(ptr, type, member))	\
+> +		default: container_of(ptr, type, member)	\
+>  	)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
