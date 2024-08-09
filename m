@@ -1,127 +1,128 @@
-Return-Path: <linux-kernel+bounces-281092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A31E94D2FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:10:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1400194D2FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10EBB281F10
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:10:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8261F21F1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB71F198840;
-	Fri,  9 Aug 2024 15:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADC9197A9F;
+	Fri,  9 Aug 2024 15:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pt2x7KNx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dumN3CSD"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C61197A7A;
-	Fri,  9 Aug 2024 15:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB98197A82
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216228; cv=none; b=A7u3MeiD9U/bj13WuHr1L4BguDQMk65tR8CWT8r4bUNqs8ZFuHs+vEqcJdQoUzkRLB2mHdcp8W183Wmb0MYhju9gY1BT6qRA9cmLqEbaB5goXLY3/fpGFZAwhqM12iqX/PM/2VxlEp/X8hZVguq0tZy0KwrgTEmMc5ZJ7HqsS08=
+	t=1723216279; cv=none; b=P0InTAjVlR4jtGtKrmM0XC7WEeHvyE0//0Dx+QraD48jlTGsE/HVNCqVIATDBLAyrP+4VVklwD+VbUoANNNzQvNYMNXZmX3bWVDMS1qiAfYSGnRBCnpyBsgRa/WyariIpdd7Q2hbnc2CpxfDMlmt1splIPntlwlsdcvM1Kc3lRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216228; c=relaxed/simple;
-	bh=P2QtE8OHYSp/8bvRdhI4PJKM3LlbRcrXcb+xFnH/vbs=;
+	s=arc-20240116; t=1723216279; c=relaxed/simple;
+	bh=7qv5/5ztgjnBd8ABlrZklhWeB1+KbwrFTx+b/38oBVk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZeL0cWkMd4x9fOAwf2KzI4XnVht1eTmJv0WQQHEKhu4d41aE6RGIgkaJ5cwQpNpF1fzfyLX0JZtswzPKTsac9uDXDYQ5o/nSuEB4alwqOkct7LjVob2pOZIsMxkt95otsz2dP5hYKSh6LPvzHLoarkfPjp/sgTjpyOWPfF9xa5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pt2x7KNx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC362C32782;
-	Fri,  9 Aug 2024 15:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723216227;
-	bh=P2QtE8OHYSp/8bvRdhI4PJKM3LlbRcrXcb+xFnH/vbs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pt2x7KNxK1bt5Oa0mikDIAjU5w/v44wgKDBEm1T/MwSgkZjNxNBwZMKGObRzr3pI0
-	 7b1crrbN3jFk9/81JriBPG3I+7HrU9HXuAhaoCLuM79FI0DOkOPLq4Rto3KGe0S7k6
-	 QHCVxME/MBg0uKkgUPmI6ggICjYKZGMwznHaBuBDINEqwFNr/2DYeJ0NSIJtZvYzNw
-	 9rJhs1lvw5XZftZHZeCZC/j1D0ADJBCMwLF7JuvHxoSKchLJshnm4/nlGVN5lfbYsa
-	 lwdX6PuSVXvzr3fFltePrDMT05S1PQ+BK9/FRGZAVkiNYy9cXfm04hwSLyqtzCgm2q
-	 mYJjao7/0xh5A==
-Date: Fri, 9 Aug 2024 16:10:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Linux Team <linux-imx@nxp.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	imx@lists.linux.dev, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 1/3] dt-bindings: net: fec: add pps channel
- property
-Message-ID: <20240809-euphemism-degrading-f2b329ccce50@spud>
-References: <20240809094804.391441-1-francesco@dolcini.it>
- <20240809094804.391441-2-francesco@dolcini.it>
- <20240809-bunt-undercook-3bb1b5da084f@spud>
- <20240809144914.GA418297@francesco-nb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqdCmFqp1n2bbdOgGbJl/UmoSD2OC5vIQfP6MRO/8MC7USm7TuB9bOP+8BuUSUSk7qg2hjbOxe02dTmiqqMCGL09E+4b+t5gvEZdse7yMNb1sWj5PwH0xCD1hvWO8UxLkHFRR+dIXWirdZlTGq7omlaN5hJQU3f/tTzoxuHdIlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dumN3CSD; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a61386so2843577a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:11:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723216276; x=1723821076; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HCnFjP8yeSTbgg04jO70aNmUrU3V0BlhkT72Qsh0eiU=;
+        b=dumN3CSDg61IqILdGhI6uKDjeqWFaLYRztBAdAEylQiCpRw1EcT6viaBp6jKfpdM02
+         NgHICBOHKDfikhPodtVd1qTDR7LCTUqBF3ah/YsBqRxLKXW7aUQbPxcs709ZYexdu0ae
+         kzmxm6qNecQMCZZHq9J6vbJFSvxF1IwYPEKQ+i8QXVc8U9sxqh0ueyfnTFhRbn2byohl
+         5xhIYLB7xsjdsgIn6I6DmvDHVLT5f6YG62m8imQYyZnXu8piG3tvRZWbod6cLdN8B9+y
+         ba4SkJkxztKZZlqEdtd7UOiXuN5z0e38XK8XD7+TjpGKQjOKgW5pA+zDp8mibVTwQif7
+         oftw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723216276; x=1723821076;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HCnFjP8yeSTbgg04jO70aNmUrU3V0BlhkT72Qsh0eiU=;
+        b=RGJOGrVkQ3YTieNSvBtH6CYGBorin2bXl6FKz6RiK4vYmCBwDtxMUQfojm2JL+7522
+         g4/LbW9xOEQKVC15vRyxsFBFmeNlUTMj3l8kdKorDCimEupQHnCSQwxn0Dh/O/hfS1dN
+         Vh2wkn6yvs58sIe4ibUiFiYZf8jyPmrj4fLr89/fJ8aRA5xaKGse0UZmPLl2DFqDRrbu
+         epKjVMzHBiqKRii0ZhjKs6x8GOF03oQKRsBbcgi9IaFgR3hdWQtesBVfFnuyYIlYOooN
+         WsyTPzZzq6PsoRwGHE/Sw88IeKS+l+d+B2EaMXhD4aDMSZEaIRa8XazaN8Up6X+j01jS
+         lM5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV+vJGn8BWc/UuV1JpLvdTw4KXsVmMyaOvOzt0rWwDcQ5lJ+D2nfCfItslcyJ2H+tsIlJYvzsX1ZxWc91RFMzc7VFKwCKTw7mgqWmRD
+X-Gm-Message-State: AOJu0YyNjknNqAwrt71BhxU2/3H6sVjS1rO0zHpiBLYrso4vv5WyqzBc
+	gd1F7z90RTI4vR1c6V2C6VC1kRNFgcAxS1TFG61Lf5u6DER5ox/riaxocDR3Fa0=
+X-Google-Smtp-Source: AGHT+IHM6/NyJG0fypeFEFHE1MSoC6qNiWwYqrml/FzF4jdvuVfqudW3tenaS4EdJbwoBirlwLdtnA==
+X-Received: by 2002:a05:6402:348b:b0:5a2:4d19:4c08 with SMTP id 4fb4d7f45d1cf-5bd0a58a137mr1382401a12.11.1723216275896;
+        Fri, 09 Aug 2024 08:11:15 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c1dbe4sm1590031a12.27.2024.08.09.08.11.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 08:11:15 -0700 (PDT)
+Date: Fri, 9 Aug 2024 18:11:11 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>, David Howells <dhowells@redhat.com>
+Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com,
+	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com,
+	nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
+	justinstitt@google.com, linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] smb/client: avoid possible NULL dereference in
+ cifs_free_subrequest()
+Message-ID: <a08c6b03-6d23-4711-a891-14b0250b90be@stanley.mountain>
+References: <20240808122331.342473-1-suhui@nfschina.com>
+ <893f2ebb-2979-4e34-bdab-a7cbb0c7e7b8@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="w/FwCQG0jzaZZ8B9"
-Content-Disposition: inline
-In-Reply-To: <20240809144914.GA418297@francesco-nb>
-
-
---w/FwCQG0jzaZZ8B9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <893f2ebb-2979-4e34-bdab-a7cbb0c7e7b8@stanley.mountain>
 
-On Fri, Aug 09, 2024 at 04:49:14PM +0200, Francesco Dolcini wrote:
-> On Fri, Aug 09, 2024 at 03:27:39PM +0100, Conor Dooley wrote:
-> > On Fri, Aug 09, 2024 at 11:48:02AM +0200, Francesco Dolcini wrote:
-> > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > >=20
-> > > Add fsl,pps-channel property to specify to which timer instance the P=
-PS
-> > > channel is connected to.
-> >=20
-> > In the driver patch you say "depending on the soc ... might be routed to
-> > different timer instances", why is a soc-specific compatible
-> > insufficient to determine which timer instance is in use?
-> > I think I know what you mean, but I'm not 100%.
-> >=20
-> > That said, the explanation in the driver patch is better than the one
-> > here, so a commit message improvement is required.
->=20
-> This was clarified by NXP during the discussion on this series [1] and the
-> commit messages were not amended to take this new information into
-> account, my fault.
->=20
-> I would propose something like this here:
->=20
-> ```
-> Add fsl,pps-channel property to select where to connect the PPS
-> signal. This depends on the internal SoC routing and on the board, for
-> example on the i.MX8 SoC it can be connected to an external pin (using
-> channel 1) or to internal eDMA as DMA request (channel 0).
-> ```
+On Fri, Aug 09, 2024 at 06:00:26PM +0300, Dan Carpenter wrote:
+> On Thu, Aug 08, 2024 at 08:23:32PM +0800, Su Hui wrote:
+> > Clang static checker (scan-build) warning:
+> > 	cifsglob.h:line 890, column 3
+> > 	Access to field 'ops' results in a dereference of a null pointer.
+> > 
+> > Commit 519be989717c ("cifs: Add a tracepoint to track credits involved in
+> > R/W requests") adds a check for 'rdata->server', and let clang throw this
+> > warning about NULL dereference.
+> > 
+> > When 'rdata->credits.value != 0 && rdata->server == NULL' happens,
+> > add_credits_and_wake_if() will call rdata->server->ops->add_credits().
+> > This will cause NULL dereference problem. Add a check for 'rdata->server'
+> > to avoid NULL dereference.
+> > 
+> > Signed-off-by: Su Hui <suhui@nfschina.com>
+> 
+> Needs a Fixes tag.
+> 
+> Also when you add a Fixes tag, then get_maintainer will add the David Howells
+> automatically.  I've added him manually.
+> 
 
-That's definitely better, as it illustrates why the compatible is not
-sufficient.
+Actually, David should have been CC'd but the fixes tag wouldn't have pointed
+to his patch.
 
---w/FwCQG0jzaZZ8B9
-Content-Type: application/pgp-signature; name="signature.asc"
+This is an inconsistent NULL checking warning.  It's not clear to me if the NULL
+checks should be removed or more added.  If David were trying to fix a NULL
+pointer dereference and accidentally left one unchecked dereference out then the
+Fixes tag would point to his patch.  Since David was doing something unrelated
+then we don't point to his patch.  Instead it would point to the first patch to
+introduce the dereference.
 
------BEGIN PGP SIGNATURE-----
+regards,
+dan carpenter
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrYxXQAKCRB4tDGHoIJi
-0nDAAQC0z2Kl9NY506ibzdDJaCI+z0EzhOgMwcAWUwKMd6ohTAD/dByz+NALI2JS
-Q8tXIcDoTnv+eZEIECKJkERYxMfeLws=
-=CMis
------END PGP SIGNATURE-----
-
---w/FwCQG0jzaZZ8B9--
 
