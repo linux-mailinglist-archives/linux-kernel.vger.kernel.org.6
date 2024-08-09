@@ -1,183 +1,104 @@
-Return-Path: <linux-kernel+bounces-280628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532ED94CD04
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:12:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8276994CD09
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D301C2107D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF64281F5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5FA191493;
-	Fri,  9 Aug 2024 09:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VyDA6BQZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5783191461;
+	Fri,  9 Aug 2024 09:13:07 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EE819066F;
-	Fri,  9 Aug 2024 09:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6020419066F
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723194755; cv=none; b=Ae/CsBBT5D3d/VG9EfF1M+mWeHahgw94NQOzzMAhmVc0+vz87npBU6yWcr81h3twx1tOKVLowLSYN+6LhPb2sV+xqrM7NpOoFN4molEYeLpKUsXg9Uzeh+RjVhuBxO0CagC8+QmWySiDUDC2mOX3cIy/100Thj32GdxtqTWn+CQ=
+	t=1723194787; cv=none; b=B39wj2BcCV+NYbPc78M64wa2wKirRvAutk7VHaYlbzDCSV/S93qe6xjGX5f/Xe1UeB1ivS1cVZQMO36mb8Y5R9QQNf+U8LnHAAC55fWInnAbm4g6m31x5h4N01xlh5ZQErJUsq3esMu3F5YMTGxSRJ6DPebJX1SgR56rHmI1fLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723194755; c=relaxed/simple;
-	bh=piWThwkqtUm8CO/JgmWnxZJEh/EOiBvqbPWcfMgo3ec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZ1xQeLVAgVWstMAbxQ6oJiCze56ZZrCfHWGoYSMqx9utYIwtKG79zU63Zt9W1SK6zulLkaokLhxKgTnNSjVgaiqO9AotgTfsOP8sNp/HgAg31/LEMAu3KBItKc40eQkED/hZQU8s+XPPfst6AiBB+TJUdT7yuzn/6kaKB2uAys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VyDA6BQZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D88DDC32782;
-	Fri,  9 Aug 2024 09:12:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723194754;
-	bh=piWThwkqtUm8CO/JgmWnxZJEh/EOiBvqbPWcfMgo3ec=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VyDA6BQZ95z5jFOgrdCuipDh410D8nKYHzh97JKQb71pJCRneMLOnoP0eGQvRf9Ts
-	 9W7pOmHO9Zn92APvFCSxgBCJHjn6Kd4yISx4Naen6LHEX9BYf1G2mbMAI+KVcXWtL/
-	 1ancCxSvqPcEr55h9IY7efGfcyl6gY2yoTovJui48LBw+gC1ffEsPJQDXjlMS8Lygo
-	 FZaUQWxXSUDiD1U4ZIbBWnN4MG412ogqQFqA3vNI4PdGzzRzinGAvwGo3NGHGlvs/0
-	 jEPj2umLY9p1msZ9TtQTjqVJxl+nU23z2Rl8rq8wapqctBwhdFaibFterm1eT9p0Ft
-	 3aCVALjQrkMWA==
-Message-ID: <3e78e255-d50a-40fb-a438-bfcebb11b049@kernel.org>
-Date: Fri, 9 Aug 2024 11:12:31 +0200
+	s=arc-20240116; t=1723194787; c=relaxed/simple;
+	bh=e4DNm1/lJ7U+4PWb6B02i+0u5KN8oACNjU3d7VFKIIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K2wlsVqS3E82JDUD0qVo7PlWZBJUGU1VBCKPu9tk0XPic6Lq1Rdv3jn5WIKlwUuyT6HSBg5b4LY355OBKlTeqF3uzINH7hyaFCxy2KqhhZA28UQwlPA4gi9NCLSjXqZcRSdaE1ycmYa2LnKd0l6Mnd8xkhWL95d9KNBerLzmMtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1scLfl-0002QM-Mo; Fri, 09 Aug 2024 11:12:33 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1scLfk-005dED-Dg; Fri, 09 Aug 2024 11:12:32 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1scLfk-00Al7G-0x;
+	Fri, 09 Aug 2024 11:12:32 +0200
+Date: Fri, 9 Aug 2024 11:12:32 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>,
+	Yogesh Ashok Powar <yogeshp@marvell.com>,
+	Bing Zhao <bzhao@marvell.com>,
+	"John W. Linville" <linville@tuxdriver.com>,
+	Amitkumar Karwar <akarwar@marvell.com>,
+	Avinash Patil <patila@marvell.com>,
+	Kiran Divekar <dkiran@marvell.com>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] mwifiex: duplicate static structs used in driver
+ instances
+Message-ID: <ZrXdgIJe6U4sJJwU@pengutronix.de>
+References: <20240809-mwifiex-duplicate-static-structs-v1-1-6837b903b1a4@pengutronix.de>
+ <4021e822699b44939f6a4731290e2627@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] page_pool: unexport set dma_addr helper
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-References: <20240808214520.2648194-1-almasrymina@google.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20240808214520.2648194-1-almasrymina@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4021e822699b44939f6a4731290e2627@realtek.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-
-
-On 08/08/2024 23.45, Mina Almasry wrote:
-> This helper doesn't need to be exported. Move it to page_pool_priv.h
+On Fri, Aug 09, 2024 at 08:49:32AM +0000, Ping-Ke Shih wrote:
+> Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> > +       wiphy->bands[NL80211_BAND_2GHZ] = devm_kmemdup(adapter->dev,
+> > +                                                      &mwifiex_band_2ghz,
+> > +                                                      sizeof(mwifiex_band_2ghz),
+> > +                                                      GFP_KERNEL);
 > 
-> Moving the implementation to the .c file allows us to hide netmem
-> implementation details in internal header files rather than the public
-> file.
-> 
+> It seems like you forget to free the duplicate memory somewhere?
 
-Hmm, I worry this is a performance paper cut.
-AFAICT this cause the page_pool_set_dma_addr() to be a function call,
-while it before was inlined and on 64bit archs it is a simple assignment
-"page->dma_addr = addr".
+It's freed automatically when adapter->dev is released, see the various
+devm_* functions
 
-See below, maybe a simple 'static' function define will resolve this.
-
-> Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
-> 
-> ---
-> 
-> v2: https://patchwork.kernel.org/project/netdevbpf/patch/20240805212536.2172174-6-almasrymina@google.com/
-> - Move get back to the public header. (Jakub)
-> - Move set to the internal header page_pool_priv.h (Jakub)
-> 
-> ---
->   include/net/page_pool/helpers.h | 23 -----------------------
->   net/core/page_pool.c            | 17 +++++++++++++++++
->   net/core/page_pool_priv.h       |  6 ++++++
->   3 files changed, 23 insertions(+), 23 deletions(-)
-> 
-> diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
-> index 2b43a893c619d..375656baa2d45 100644
-> --- a/include/net/page_pool/helpers.h
-> +++ b/include/net/page_pool/helpers.h
-> @@ -423,24 +423,6 @@ static inline dma_addr_t page_pool_get_dma_addr(const struct page *page)
->   	return page_pool_get_dma_addr_netmem(page_to_netmem((struct page *)page));
->   }
->   
-> -static inline bool page_pool_set_dma_addr_netmem(netmem_ref netmem,
-> -						 dma_addr_t addr)
-> -{
-> -	struct page *page = netmem_to_page(netmem);
-> -
-> -	if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA) {
-> -		page->dma_addr = addr >> PAGE_SHIFT;
-> -
-> -		/* We assume page alignment to shave off bottom bits,
-> -		 * if this "compression" doesn't work we need to drop.
-> -		 */
-> -		return addr != (dma_addr_t)page->dma_addr << PAGE_SHIFT;
-> -	}
-> -
-> -	page->dma_addr = addr;
-> -	return false;
-> -}
-> -
->   /**
->    * page_pool_dma_sync_for_cpu - sync Rx page for CPU after it's written by HW
->    * @pool: &page_pool the @page belongs to
-> @@ -463,11 +445,6 @@ static inline void page_pool_dma_sync_for_cpu(const struct page_pool *pool,
->   				      page_pool_get_dma_dir(pool));
->   }
->   
-> -static inline bool page_pool_set_dma_addr(struct page *page, dma_addr_t addr)
-> -{
-> -	return page_pool_set_dma_addr_netmem(page_to_netmem(page), addr);
-> -}
-> -
->   static inline bool page_pool_put(struct page_pool *pool)
->   {
->   	return refcount_dec_and_test(&pool->user_cnt);
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index 2abe6e919224d..d689a20780f40 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -1099,3 +1099,20 @@ void page_pool_update_nid(struct page_pool *pool, int new_nid)
->   	}
->   }
->   EXPORT_SYMBOL(page_pool_update_nid);
-> +
-> +bool page_pool_set_dma_addr_netmem(netmem_ref netmem, dma_addr_t addr)
+Sascha
 
 
-Maybe defining function as 'static bool' will make compiler inline it(?)
-
-> +{
-> +	struct page *page = netmem_to_page(netmem);
-> +
-> +	if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA) {
-> +		page->dma_addr = addr >> PAGE_SHIFT;
-> +
-> +		/* We assume page alignment to shave off bottom bits,
-> +		 * if this "compression" doesn't work we need to drop.
-> +		 */
-> +		return addr != (dma_addr_t)page->dma_addr << PAGE_SHIFT;
-> +	}
-> +
-> +	page->dma_addr = addr;
-> +	return false;
-> +}
-> diff --git a/net/core/page_pool_priv.h b/net/core/page_pool_priv.h
-> index 90665d40f1eb7..4fbc69ace7d21 100644
-> --- a/net/core/page_pool_priv.h
-> +++ b/net/core/page_pool_priv.h
-> @@ -8,5 +8,11 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict);
->   int page_pool_list(struct page_pool *pool);
->   void page_pool_detached(struct page_pool *pool);
->   void page_pool_unlist(struct page_pool *pool);
-> +bool page_pool_set_dma_addr_netmem(netmem_ref netmem, dma_addr_t addr);
-> +
-> +static inline bool page_pool_set_dma_addr(struct page *page, dma_addr_t addr)
-> +{
-> +	return page_pool_set_dma_addr_netmem(page_to_netmem(page), addr);
-> +}
->   
->   #endif
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
