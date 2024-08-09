@@ -1,121 +1,167 @@
-Return-Path: <linux-kernel+bounces-281185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD1094D415
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:59:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE5894D419
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DEF71F226DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:59:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77A762853E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EA31990A2;
-	Fri,  9 Aug 2024 15:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69CC194A4C;
+	Fri,  9 Aug 2024 16:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j+LM+5o+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LEl8Cede";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mqeWWJs6"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB544198E6E;
-	Fri,  9 Aug 2024 15:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4515E1922DB;
+	Fri,  9 Aug 2024 16:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723219182; cv=none; b=hXBCpVtPi4Bdlg3uxasOnuajuKu+XwPsX5+NIRa3zown+8LX+r/WwLlIv8u4V44GXZ0IpqDdqW7C6BN88OwKMePNumtjNhvcxZq6prhxwDch2FjFnADXevqC5AvBjBbll3wWl0xO6YncbBfEPP8yGtDw+TLUb4wj6TCPq0MWvhQ=
+	t=1723219232; cv=none; b=ear9fBbbzMcrtFxHcu6aUHfsSF5Y78bLZ5pS5G+bDi5Ic4RqLVFOh4AXk9IMsxG8jDnbwRlLze/nm04oxMN841CeHixTIItMjGi+b20tAxeIYRIs5PPJZ8/eFIr5238Qqz7Qo3tIlqnHufWovPYSj3T6qaNBgy3VyiLWVCX7nxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723219182; c=relaxed/simple;
-	bh=vpnP2tgla/xZEJUsNA+ATZINZPaYxLHd6/0iTSkf7Jo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DMgfr9jBjnL/wKqSFU0xYaixVjKKU6cHXCplU4kUzGaXLvQVACFncalQ7fMn4A1apc5bRTBtfAayoB6P70HVRQs0eSpl0yrU5j8UNU2BAAG8V/3rlUzcvi4ja8cvA5BfjDrozwPqtZt1Er9lsT81kPjLCEu4nvDil9JzY2PrCgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j+LM+5o+; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723219181; x=1754755181;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vpnP2tgla/xZEJUsNA+ATZINZPaYxLHd6/0iTSkf7Jo=;
-  b=j+LM+5o+PDqPtukKLLfxtOrahAvGkcYvfShlPtY5J7yU5l8Tzyu6yyd9
-   HChEMlz/WpkNETcQtLISN9u1FOOuXOzEbqOFPo/bZQ5rS1CGGK8t9ast7
-   PqRK7speLnT6C+b7dOq7ZBhVZkiq1Sv/NiU8u0sdn5/WkzxQH1Vm1ZVd/
-   pySK7kFRyHeqcTl12zRCaIsx0BMZN3s6WecQ3v2p9gyNHOFG1K9YY08xh
-   5sjN9VZ93V5a9aeun131dHQyYo8zo7dDYa0aDs60aS1eyCWjvHdkgacoC
-   fiGVYj60tvzAejfGCpW0c7X3xUEz06KcVTO8XfeE3rPUAWaGHI8YXdLRo
-   g==;
-X-CSE-ConnectionGUID: rMtZ3SzcQ9G/9Wg2l8VP+Q==
-X-CSE-MsgGUID: F9QXu+FyQ2ySjLKaFdO9sA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="32022940"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="32022940"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:59:40 -0700
-X-CSE-ConnectionGUID: F9+AT1F9SF6ve329GAjNLA==
-X-CSE-MsgGUID: peMcEwRvQXSuA/uTzXEARA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="62447282"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:59:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1scS1f-0000000DTDc-2RUQ;
-	Fri, 09 Aug 2024 18:59:35 +0300
-Date: Fri, 9 Aug 2024 18:59:35 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sanket Goswami <Sanket.Goswami@amd.com>
-Subject: Re: [PATCH v1] ACPI: APD: Add AMDI0015 as platform device
-Message-ID: <ZrY854CyoKwQfQXi@smile.fi.intel.com>
-References: <20240718152324.3449253-1-Shyam-sundar.S-k@amd.com>
- <7c550151-39a8-4155-ae9e-4796d9463cd4@amd.com>
+	s=arc-20240116; t=1723219232; c=relaxed/simple;
+	bh=b6/4Phi0wH7FFsBh31R0+WplVBsLpARLS994s9I343E=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=iZs8gFuS+gQmW8/L8poYNGoUWMDoiHxdT9M3F3Ceq5T3HRQVgsU4yTkNNdOmjDG2hyga97/lbCUxWdgvhcK47Z5fyKhCF/+5BtWBIZDdQdii+6FCwzv78RJ6xziGOWooFMEq18fEGF6aMB/WLNGDE2QB7T9NWB4P1OZ95AwnAIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LEl8Cede; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mqeWWJs6; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 1E618138E00C;
+	Fri,  9 Aug 2024 12:00:30 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Fri, 09 Aug 2024 12:00:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1723219230; x=1723305630; bh=iZ
+	5NReUgn6OsOfJIpAgObrur6AOb0YrjqjdjPJ0EOnU=; b=LEl8CededdLS0vnJ2w
+	WfKmIBMmlqfa1EvhnHR3iD2jkbKRRRYzGK3IUTdBK4sbDhMYvS9Q4bIHu4eJBGzr
+	rRnh9Vajftf3CgGacqPoUTVD3B2oEtxNCQaiKRxi7Ol0XzLxMPrtQquG+COrTdTv
+	qO0+MHurlEmfu1+c1AmPOsieBtgPGhm+/KE72apkYTW/u47j6pLU71zIhpre7aFw
+	aWy1YDsfypXAybGPWLdx/xonSI1ys4nfCe/n2hILOEpzD8x51ypMbTG9fgLj+UP4
+	zcW/LkqpvXPvtAqIVHoCogCAwfwF2e5/iZLtOW0s4NjIkCC0PabqgQ7ng9kMVDgA
+	VA9w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1723219230; x=1723305630; bh=iZ5NReUgn6OsO
+	fJIpAgObrur6AOb0YrjqjdjPJ0EOnU=; b=mqeWWJs67OUhUiGxuGxKaShWmqPfg
+	Oifx534b4kwx/erCWX7dIU3aSv/O2suEFIYlF/WZZbyCgojQz9CJiVO3N+x/lSBj
+	a2JNeT0FfZ9iN0DbeuIA9IvcJppa2m8gl8Bzy+cOSRRt6HFidP+8szV4Wx6jjsj3
+	SOk4SFJ4q0XDFPcA3OHw22zFTqAyyyfGcscnHhb//v53Ng2eYV+dX2BbvLpE4u8o
+	Gk2fvnHWJHB2pLkxO2JuFJQ+NMsLpsvxBuoDNFrDSEutKRUA1cBszeIwdHxY4VH4
+	o9WGEwsD01eWrlklIzA4qBkWbySl+Acg+RVgslNnF8oNpdxyOr5DxuWfw==
+X-ME-Sender: <xms:HT22ZgAcH5B5GUm_3PX0YNz7S-EAE78Vb1tf3aj6A9s05p6eyD9FsQ>
+    <xme:HT22ZigIXWiXSKg9X6HXqlXDcNMM9hyPakbrpq3IB2mGuS-zar59ddM3Y3xmoQw5I
+    YMu1kT-VWM0Juc1Cmk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleeggdelgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkufgtgfesthejredtredttdenucfh
+    rhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqe
+    enucggtffrrghtthgvrhhnpeevgfefhffftdfftefggfejhefghfejffevveffuefhhfdt
+    ieeuveefhfffueegvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdguvggsihgrnh
+    drnhgvthenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopehruhguiheshhgvihhtsggruhhmrdgtohhmpdhrtghpthht
+    ohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtph
+    htthhopehjrghkuhgssehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdgr
+    rhgthhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvg
+    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:HT22ZjnBMDFGb2mVHirIcD1wX5slPA18XZ3yWcBVhRzx9oVbRJXpMg>
+    <xmx:HT22ZmznypJnk9jTgkDBe00VOY50CHrIQIBiw1t-5pgQwp5eOoim3w>
+    <xmx:HT22ZlRVIwhfp9EBbVAJOFoocFLNz2s0hM5zUkrMPraWk3bqfPk4KQ>
+    <xmx:HT22ZhZpCzhWoT8ncDmpwoZbo4i9I48SRcxOG0lF5VFibvaAi_hJNQ>
+    <xmx:Hj22ZjO7zZtekYJ-g_8Unvg7sCWBg5U_I7cRpwfYMiKrEHDyx5J5vZiO>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id BAA87B6008D; Fri,  9 Aug 2024 12:00:29 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c550151-39a8-4155-ae9e-4796d9463cd4@amd.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Date: Fri, 09 Aug 2024 17:59:35 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ "Rudi Heitbaum" <rudi@heitbaum.com>, "Jakub Jelinek" <jakub@redhat.com>
+Message-Id: <30fdaeb5-520b-4f41-97a1-072c035e1b1d@app.fastmail.com>
+Subject: [GIT PULL] asm-generic fixes for 6.11, part 2
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 09, 2024 at 09:08:22PM +0530, Shyam Sundar S K wrote:
-> +Andy
-> 
-> On 7/18/2024 20:53, Shyam Sundar S K wrote:
-> > Add AMDI0015 to the ACPI APD support list to ensure correct clock settings
-> > for the I3C device on the latest AMD platforms.
+The following changes since commit 343416f0c11c42bed07f6db03ca599f4f1771b17:
 
-...
+  syscalls: fix syscall macros for newfstat/newfstatat (2024-08-02 15:20:47 +0200)
 
-> >  	{ "AMD0040", APD_ADDR(fch_misc_desc)},
-> >  	{ "AMDI0010", APD_ADDR(wt_i2c_desc) },
-> >  	{ "AMDI0019", APD_ADDR(wt_i2c_desc) },
-> > +	{ "AMDI0015", APD_ADDR(wt_i3c_desc) },
+are available in the Git repository at:
 
-Please, keep it sorted.
+  https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/asm-generic-fixes-6.11-2
 
-...
+for you to fetch changes up to b82c1d235a30622177ce10dcb94dfd691a49922f:
 
-> FYI..
+  syscalls: add back legacy __NR_nfsservctl macro (2024-08-06 08:57:02 +0200)
 
-Thanks!
+----------------------------------------------------------------
+asm-generic fixes for 6.11, part 2
 
-> AMDI0015 is for MIPI I3C (we call it I3C legacy) version of the
-> implementation.
-> 
-> and.. MIPI0100 is for HCI based implementation of the MIPI I3C
-> Specification.
+There are two more changes to the syscall.tbl conversion: the
+'__NR_newfstat' in the previous bugfix was a mistake and gets reverted
+now, after triple-checking that the contents are now back to what they
+were on all architectures. The __NR_nfsservctl definition is not really
+needed but came up in the same discussion as it had previously been
+defined in uapi/asm-generic/unistd.h and tested for in user space.
 
-This is fine as long as there is no collision, i.e. if a new (HCI I3C _HID is
-required the new one should be allocated).
+TThere are a few more symbols that used to be defined in the old
+unistd.h file, but that are never defined on any other architecture
+using syscall.tbl format. These used to be needed inside of the kernel:
 
--- 
-With Best Regards,
-Andy Shevchenko
+   __NR_syscalls
+   __NR_arch_specific_syscall
+   __NR3264_*
 
+Searching for these on https://codesearch.debian.net/ shows a few packages
+(rustc, golang, clamav, libseccomp, librsvg, strace) that duplicate all
+the macros from asm/unistd.h, but nothing that actually uses the macros,
+so I concluded that they are fine to omit after all.
 
+----------------------------------------------------------------
+Arnd Bergmann (2):
+      syscalls: fix fstat() entry again
+      syscalls: add back legacy __NR_nfsservctl macro
+
+ scripts/syscall.tbl | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
+index 4586a18dfe9b..845e24eb372e 100644
+--- a/scripts/syscall.tbl
++++ b/scripts/syscall.tbl
+@@ -53,6 +53,7 @@
+ 39     common  umount2                         sys_umount
+ 40     common  mount                           sys_mount
+ 41     common  pivot_root                      sys_pivot_root
++42     common  nfsservctl                      sys_ni_syscall
+ 43     32      statfs64                        sys_statfs64                    compat_sys_statfs64
+ 43     64      statfs                          sys_statfs
+ 44     32      fstatfs64                       sys_fstatfs64                   compat_sys_fstatfs64
+@@ -100,7 +101,7 @@
+ 79     stat64  fstatat64                       sys_fstatat64
+ 79     64      newfstatat                      sys_newfstatat
+ 80     stat64  fstat64                         sys_fstat64
+-80     64      newfstat                        sys_newfstat
++80     64      fstat                           sys_newfstat
+ 81     common  sync                            sys_sync
+ 82     common  fsync                           sys_fsync
+ 83     common  fdatasync                       sys_fdatasync
 
