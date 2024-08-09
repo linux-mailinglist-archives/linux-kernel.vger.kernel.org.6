@@ -1,146 +1,193 @@
-Return-Path: <linux-kernel+bounces-281168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F1694D3DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:45:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAAB94D3E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13BC4B21390
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:45:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09D951F21DCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBDB1946B9;
-	Fri,  9 Aug 2024 15:45:21 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08C21991CC;
+	Fri,  9 Aug 2024 15:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4XRIGju"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68843198E6E
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CCA1990C3;
+	Fri,  9 Aug 2024 15:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723218320; cv=none; b=VJJ2V/bgciI0CF6FRSwIxUuzN/VbaMJpvFAmBSBXzS4eCmbr+TzQYt7iTZAbt5KV/RL1i2oI/n8izfAhGOmnpz94Nfcy6D2HkD1TL3f7xy0Vh6vRoq2kTwXK4THKOIUJMUHbHCMu+04g44K9JW+IPPM/JRCJ9y5ZTb269STIBXw=
+	t=1723218323; cv=none; b=o77Qps3mt2JAQoidVyVSxRUAu7eRZgeVpFxy/IttbUJgbPQwrRg6rHqzYpU1OaVhxau9fY5oZMBtHUUK1u0bghz6UaK92ChQ4wcw3oPQ7jx1vEih8EvQfZZe3BEC0XCX3I4KFNrRz1V6kstggbuZ8kLFLNHbeU1v8gerpqdZuCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723218320; c=relaxed/simple;
-	bh=5fGXuXdavB5QrFI6ZW2XId6XrsCE8kEszsjvz4ngG2s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f13ggLFvs6FliUPNYDtEUB3jJ2e3FJKRvqL+vnJLzdGmswmXNFQeYACK1rJx9qu0MBYb4HUyKNoSp98otYrRwejxMh5S9jJxo8JWUbct7Eo+hlkXJuqiYZeU2+ofnwGqwkn2IV7cwgtEHER5exFPm1iOjU6FsLGayukp6byCcnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f93601444so275597239f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:45:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723218318; x=1723823118;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1723218323; c=relaxed/simple;
+	bh=Bd6gp8vS1KnlhuO7wKJxo1DLFOwvyo1WP/CqGQTLnXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FXcOi6frJN0oXRrUnuo1RRu7xLeXIFz/3dqz6btKCPsYmSuDF+/qQaBocCkzZMmddp0xHS4HfEpZpyJhYMFGUqYh7yMivcArpPTH4muRpfXCz17b1tsvP0bWiB7E9iCEjXtvrpZLUDdU/rPdoXovkQHIKIiPcFYXq8hEroEc9Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4XRIGju; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so366688866b.0;
+        Fri, 09 Aug 2024 08:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723218320; x=1723823120; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gYMz9DavZgsxe/N7/Nv+CrURGsOaUrjPtpaY60Rs55I=;
-        b=EfMeFvP3z5JIDFalTm9+3V+FByYMdrkmgDbzZonxw0GoRJIKk/nC99F6AZLvd1TcCF
-         nPzBOPEW2TPFFTEQ4nmIg8mRa0nsWLKR5e9lH0wJ8m6Rh0Yo8C9y16uFnzG+l7zssB9Q
-         hlnK4gHW5UxH7ps1YVAo6N3Vwbxd7y3FdHAmM4O8MC2gzmJVwAoLuypTP157gm8U7UkM
-         n08km4nPbMp4HQUvnQh8VrS2YYEzQ/Az9StlaRPXRbU8/XqG3omT+W3h10i+ECXCEv7e
-         co1cKTfqH1oDMYaUVeq+x3onkNnp/jLJ1eOEsANw5KOo3tJDODqGl4fSD7O2QfmxCelO
-         xJ8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVGBuHhz4X4tBjz37qmoVZZ81RltCmS1YGvjuIXSaCNaSIMsC9lkE915rfhJFpHQL+gB8olE0BvCMuhDrEDEIRCkrtfqMDSwkEQ70cO
-X-Gm-Message-State: AOJu0YyJLJ9NZ0UoMy7XOQtW9zHRfUU7kh5t1WiLsCMB8lV4E/hI8SIe
-	CIGZGRkJa8ivVkj1/oNYQa/8AZeE3lOnoyNmC4eZkaYs1P6ex6v+L/yuhZgcM8Ihph/gM1De0Gh
-	NZtaYtZgbcrrgWdcVG6eGfVPCj8cPfsEVBi/6G3BFeqFRAMKW6dgAeQA=
-X-Google-Smtp-Source: AGHT+IFwhpqZCjS2l9vlcjlDvow0WdXD/3oRZfuPiyMtgyfKfprUnxaBRZ7BjqZgSF2yYMSbw7i4s8zHFSsIHCNAteczZ6D/DVxm
+        bh=Wa1W3WV7VpGrEaPcisbcd/cWnkBoUbT/sIRi8LearZg=;
+        b=W4XRIGjulb1hhqjAyCp1O8TsdHK84PqMuKKM93hSEjVdTnLzQkSRL90qAOFYqhdc2x
+         GHHRQ6iOT4UtmN3GVhlzQjLa0vDteJEAyLn714ra0LYy3BuponwmsNGMW/Vslir6VdCC
+         v+hTJYFqi3DEF+FXs2c6a4WeWQ8IerANOeYarjUGhAP4fxi/3U992SwlEA2kuBFZopgb
+         XkxENzw3feEJkIzmv5il4b/5DJAJb8mLi8fNOZrvMQpxWz/SBRJXJ4GHzhwDqmGAQ1ou
+         BtpoCepeF9L/xlED6ZgqbH1/56yaTKh4461zxjnMxi8WFonr1C7T14acXOjq/DSDHhGH
+         SzmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723218320; x=1723823120;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wa1W3WV7VpGrEaPcisbcd/cWnkBoUbT/sIRi8LearZg=;
+        b=xIIjkLwrXoma+d/hYXaVKjoUW1yxiBMWJvWC92d95xm7YMETni6VkPKuvGxvPQ1Hj5
+         ihjFrxc5mOzKA5ip9CedgUaTV0a+n+cEilyOXuU0SxVOLMZrm8/6INcJ2g3P55QAqsUw
+         6JBqubANfazW+hgyh5Ldt2s/rrIgMNgFZQsgMI4+wRjyRJ33DMqPyQwqSOO3608YBAkb
+         d1HdD5voBvpsBxDPplLg7nqcOfJJRCmbzT27Uq/bVnc/MoqtFMkjZkIm8PJwPXehDDaS
+         gVpr33Atdn4Yueq+8URtwyooMjld6L5GQwyJx12/RIBYMd15rOgd5gWcrI2tyG5KGyuA
+         Er8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWh11OvVxxylBmePJXMeNLWZ+psob5agcVwUIU/0NtWNfocc+5cedl+ogFaUWOceQKCLbtZqMz50Rbo4yz22maNRgxDE7zigUXbA+o3vxjqJxDDXeoiqIrUv41LrExF8L2yHawBAK5b4frFexEt6CIfv425yjuTYD6DbAh7zWS3PGHRZupYAw3f79UqzF5Xl/GCi3A9MlPqHAxbVoA3uuxNNSJSq66UQoUEqKVKuwT8INUFXHp8r8goCKUniByQzBpYm2SI9Gth6QBPYw6e0qQFbDn6sDRIzpPVfgmIWLyHSFpt7105PFi+ynhB1CPkkAyrGUzE0zJZAzPANOx/L9aIDbEaJQsYxEYGehaQ+QV9LX3lj33R/LwICNcjIlfhgKz4AoKH9ARGIroMLK1BkPFlrrBXl2zc3stNyqxNLUFrifK3Nmkz8zx/+Wm69cDg6h2A5unnHqqFBSBY4dkPdPGO+k/v2p0mixd5dWMTQQ==
+X-Gm-Message-State: AOJu0YztZaIFx2AatPbhRTbcpSwEYFLaToikQzct0+VFDUdUET4TcY1T
+	p415RZPlkcrbJfWwFG9Akvf+TP3khg7Me8ee0W4qFUopFUfLkGn7
+X-Google-Smtp-Source: AGHT+IGaWJiDPaSc3UHkzWGM2j8RhpJMnAUdZZgUzu3ws85xIf7phwHYyeL4ZJReXHb3Sd+69ayIRw==
+X-Received: by 2002:a17:907:6d14:b0:a7a:8a38:9d99 with SMTP id a640c23a62f3a-a80aba196d6mr130567366b.35.1723218319823;
+        Fri, 09 Aug 2024 08:45:19 -0700 (PDT)
+Received: from [192.168.42.29] (82-132-212-15.dab.02.net. [82.132.212.15])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e80e77sm847390266b.169.2024.08.09.08.45.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 08:45:19 -0700 (PDT)
+Message-ID: <fc6a8f0a-cdb4-4705-a08f-7033ef15213e@gmail.com>
+Date: Fri, 9 Aug 2024 16:45:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:411b:b0:4c0:9a3e:c263 with SMTP id
- 8926c6da1cb9f-4ca6eba4580mr51129173.0.1723218318381; Fri, 09 Aug 2024
- 08:45:18 -0700 (PDT)
-Date: Fri, 09 Aug 2024 08:45:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bce370061f4207cf@google.com>
-Subject: [syzbot] [kernel?] WARNING in firmware_fallback_sysfs (2)
-From: syzbot <syzbot+8f06445357a052a92657@syzkaller.appspotmail.com>
-To: dakr@redhat.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	mcgrof@kernel.org, rafael@kernel.org, russ.weight@linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v18 07/14] memory-provider: dmabuf devmem memory
+ provider
+To: Mina Almasry <almasrymina@google.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ bpf@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>,
+ David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20240805212536.2172174-1-almasrymina@google.com>
+ <20240805212536.2172174-8-almasrymina@google.com>
+ <20240806135924.5bb65ec7@kernel.org>
+ <CAHS8izOA80dxpB9rzOwv7Oe_1w4A7vo5S3c3=uCES8TSnjyzpg@mail.gmail.com>
+ <20240808192410.37a49724@kernel.org>
+ <CAHS8izMH4UhD+UDYqMjt9d=gu-wpGPQBLyewzVrCWRyoVtQcgA@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAHS8izMH4UhD+UDYqMjt9d=gu-wpGPQBLyewzVrCWRyoVtQcgA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 8/9/24 15:10, Mina Almasry wrote:
+> On Thu, Aug 8, 2024 at 10:24 PM Jakub Kicinski <kuba@kernel.org> wrote:
+>>
+>> On Thu, 8 Aug 2024 16:36:24 -0400 Mina Almasry wrote:
+>>>> How do you know that the driver:
+>>>>   - supports net_iov at all (let's not make implicit assumptions based
+>>>>     on presence of queue API);
+>>>>   - supports net_iov in current configuration (eg header-data split is
+>>>>     enabled)
+>>>>   - supports net_iov for _this_ pool (all drivers must have separate
+>>>>     buffer pools for headers and data for this to work, some will use
+>>>>     page pool for both)
+>>>>
+>>>> What comes to mind is adding an "I can gobble up net_iovs from this
+>>>> pool" flag in page pool params (the struct that comes from the driver),
+>>>
+>>> This already sorta exists in the current iteration, although maybe in
+>>> an implicit way. As written, drivers need to set params.queue,
+>>> otherwise core will not attempt to grab the mp information from
+>>> params.queue. A driver can set params.queue for its data pages pool
+>>> and not set it for the headers pool. AFAICT that deals with all 3
+>>> issues you present above.
+>>>
+>>> The awkward part is if params.queue starts getting used for other
+>>> reasons rather than passing mp configuration, but as of today that's
+>>> not the case so I didn't add the secondary flag. If you want a second
+>>> flag to be added preemptively, I can do that, no problem. Can you
+>>> confirm params.queue is not good enough?
+>>
+>> I'd prefer a flag. The setting queue in a param struct is not a good
+>> API for conveying that the page pool is for netmem payloads only.
+>>
+>>>> and then on the installation path we can check if after queue reset
+>>>> the refcount of the binding has increased. If it did - driver has
+>>>> created a pool as we expected, otherwise - fail, something must be off.
+>>>> Maybe that's a bit hacky?
+>>>
+>>> What's missing is for core to check at binding time that the driver
+>>> supports net_iov. I had relied on the implicit presence of the
+>>> queue-API.
+>>>
+>>> What you're proposing works, but AFAICT it's quite hacky, yes. I
+>>> basically need to ASSERT_RTNL in net_devmem_binding_get() to ensure
+>>> nothing can increment the refcount while the binding is happening so
+>>> that the refcount check is valid.
+>>
+>> True. Shooting from the hip, but we could walk the page pools of the
+>> netdev and find the one that has the right mp installed, and matches
+>> queue? The page pools are on a list hooked up to the netdev, trivial
+>> to walk.
+>>
+> 
+> I think this is good, and it doesn't seem hacky to me, because we can
+> check the page_pools of the netdev while we hold rtnl, so we can be
+> sure nothing is messing with the pp configuration in the meantime.
+> Like you say below it does validate the driver rather than rely on the
+> driver saying it's doing the right thing. I'll look into putting this
+> in the next version.
 
-syzbot found the following issue on:
+Why not have a flag set by the driver and advertising whether it
+supports providers or not, which should be checked for instance in
+netdev_rx_queue_restart()? If set, the driver should do the right
+thing. That's in addition to a new pp_params flag explicitly telling
+if pp should use providers. It's more explicit and feels a little
+less hacky.
 
-HEAD commit:    de9c2c66ad8e Linux 6.11-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14019861980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
-dashboard link: https://syzkaller.appspot.com/bug?extid=8f06445357a052a92657
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2a5965e13719/disk-de9c2c66.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/52c0d9ae2edc/vmlinux-de9c2c66.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3c8963098f5f/bzImage-de9c2c66.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8f06445357a052a92657@syzkaller.appspotmail.com
-
-usb 1-1: Direct firmware load for v4l-pvrusb2-29xxx-01.fw failed with error -2
-usb 1-1: Falling back to sysfs fallback for: v4l-pvrusb2-29xxx-01.fw
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 2036 at drivers/base/firmware_loader/fallback.c:148 fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:148 [inline]
-WARNING: CPU: 0 PID: 2036 at drivers/base/firmware_loader/fallback.c:148 firmware_fallback_sysfs+0x782/0x9e0 drivers/base/firmware_loader/fallback.c:238
-Modules linked in:
-CPU: 0 UID: 0 PID: 2036 Comm: pvrusb2-context Not tainted 6.11.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:148 [inline]
-RIP: 0010:firmware_fallback_sysfs+0x782/0x9e0 drivers/base/firmware_loader/fallback.c:238
-Code: 1c 24 e9 4d fc ff ff e8 ec cb 9f fb c6 05 45 f0 0d 0a 01 48 c7 c7 80 83 86 8c e8 f9 1e bf 05 e9 72 fc ff ff e8 cf cb 9f fb 90 <0f> 0b 90 48 89 df 48 c7 c6 60 84 86 8c 4c 89 ea e8 29 85 c1 05 e9
-RSP: 0018:ffffc90004daf730 EFLAGS: 00010293
-RAX: ffffffff85f3ab21 RBX: ffff88805bb470a8 RCX: ffff8880258a8000
-RDX: 0000000000000000 RSI: 00000000fffffff5 RDI: 0000000000000000
-RBP: 000000000000003c R08: ffffffff85f3a530 R09: 1ffffffff26e5922
-R10: dffffc0000000000 R11: fffffbfff26e5923 R12: 00000000fffffff5
-R13: ffffffff8cddfb00 R14: 0000000000000001 R15: 0000000000001770
-FS:  0000000000000000(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020bc5000 CR3: 000000000e734000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- _request_firmware+0xcf5/0x12b0 drivers/base/firmware_loader/main.c:914
- request_firmware+0x36/0x50 drivers/base/firmware_loader/main.c:963
- pvr2_locate_firmware+0xb1/0x500 drivers/media/usb/pvrusb2/pvrusb2-hdw.c:1359
- pvr2_upload_firmware1+0x1c6/0x950 drivers/media/usb/pvrusb2/pvrusb2-hdw.c:1426
- pvr2_hdw_setup_low drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2107 [inline]
- pvr2_hdw_setup drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2261 [inline]
- pvr2_hdw_initialize+0x411/0x3d10 drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2338
- pvr2_context_check drivers/media/usb/pvrusb2/pvrusb2-context.c:111 [inline]
- pvr2_context_thread_func+0x4b3/0xb50 drivers/media/usb/pvrusb2/pvrusb2-context.c:158
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Pavel Begunkov
 
