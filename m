@@ -1,102 +1,124 @@
-Return-Path: <linux-kernel+bounces-281295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98EBC94D534
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:07:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCCC94D537
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8DB1C211CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CABB1F21F31
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09533B298;
-	Fri,  9 Aug 2024 17:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B753BBF6;
+	Fri,  9 Aug 2024 17:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2Sa4pzF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OYzQKgIi"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2253738384;
-	Fri,  9 Aug 2024 17:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008B43B1A2;
+	Fri,  9 Aug 2024 17:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723223250; cv=none; b=Q739Kd+obvMDJ9xgCVuOs3YjB+54WEpb/eS/WNvjHS4IPrbLvJzOcq0VxHt92sZvGmS3IpSU+E+Q4eYemt8fUR9M/izgMq58/gLlNP0RyR0TesaxXONMQQEbmIBa/YyKn/2EHj2+EV1Tw5oAGW7ASQhjF1lmcQrdpuvgfP+Hwxo=
+	t=1723223327; cv=none; b=otmB+S9N+RD6m0ySa12W0bsQqcdFMGcF1pxiKtg4OCGFG4FTgcF8K3uwJpcTOKWzFH3t0Cq43okM5NNE4KuXZnVRBSsoByGV797DISG8bK/Vc0InF2L1zOqrjURm22mnNzAhPUyeYZBZ6hTsUtfx5yrAydFaTZbqwthKHxcOvUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723223250; c=relaxed/simple;
-	bh=D87Xvv5zzjUUJIAShTieZ41cpIJJJC3gxx7ySPgrPAY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=JMOMVNgYiYyuHI7twYWkBfIdJNJRqvu0EJcQ+QVXa2vwxVJFqeVZKkxuHUJDrYBJa27ZKqEa+6kTiP5Zotxq4HKYnO079ihlaMGX9Uf9ljiu4nOKAEZC9p9ECxT/UHZ3nWWp31PErG0SgS51KPgKmNffpMNjDsiVqQx1Lwk7flE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2Sa4pzF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8517C32782;
-	Fri,  9 Aug 2024 17:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723223249;
-	bh=D87Xvv5zzjUUJIAShTieZ41cpIJJJC3gxx7ySPgrPAY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=h2Sa4pzFFFaDHf3OGLhaLhjrMivavcHLEpsgWNhXeKSHtYELKTKVAMMEdnMzGFY7Q
-	 5PvsiO5BeLxAjVineP59WbuD6qsmiUu7GJCx0sOntIGm9jn96Sthroll2VH2ynwOj2
-	 C7YsnJq68E8lzJ2NObZ2ZbYaT26DxI3hisOimm9yt7QTYixH7ZYZuEVVbwEzSGxXQt
-	 bQ22BjKKy1Nzh3N7zVvJqvZ4YB9hvWnoZprsui5LPy4UuvlV9B/ELpbC50Bmo705e+
-	 I4K2IxR4YtjaFjqdZqdfeuxjorqsPYYP/euIvr+y5H9RWm6siPAVc30tx8zGYBjy+O
-	 S/5U468qkIpzg==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2635abdc742so203795fac.2;
-        Fri, 09 Aug 2024 10:07:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVAVrQH0bjrWyqca2DmAAdHPL7Lude2m78nHyN/EW3V+Dc/SJtCiwb9zUTkvQTUaAClETHDPIFGOYEbqXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI/Mz16ugzkeDiCdbxqx3UfoP2z3mERiEuLfxdUa5/WrHyyQJ5
-	jZ8XJdUESfBVlsA0NhMLCglrPal5AX0ti9MYl6ox5PdkVSN7JiCIY8eHlnZWOvVXtnz/yaI3qWX
-	KNCQRC2PMelzI+jqOu6ZAXJKHOos=
-X-Google-Smtp-Source: AGHT+IEMaQckbjFpW4mzMm19HAYdTOGyW0qGqJCz+MCxd4kUg1qZb3VGrsbmcNOLgaQ4HDWnAhB5TlXYbxyTxL422lw=
-X-Received: by 2002:a05:6870:b015:b0:260:df6a:28ca with SMTP id
- 586e51a60fabf-26c62f1e92emr1713774fac.5.1723223248920; Fri, 09 Aug 2024
- 10:07:28 -0700 (PDT)
+	s=arc-20240116; t=1723223327; c=relaxed/simple;
+	bh=Sfw93jLscWCKEbEC5Mx1wdh3zf4xAdcm0Xtf+YUCBzY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JWifyFEkNlk4H1ko6XMJe9Pr75yJJVScFmIW8RJKE7ObBBva4y9gfRgQKAOXkHev/PT3s2jx2vYI9z9Y7t4ovXBObEyM+DsnUJq9E9tkhHm+RkGczTKMWI258x/+xb+Kl1mLUuDQKC6CRVsKhfN54wQgNhQtBuoKSRFfEOk//zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OYzQKgIi; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-530ad969360so2595869e87.0;
+        Fri, 09 Aug 2024 10:08:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723223324; x=1723828124; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jUPA00ha0pjXeAraW7mmJ2vOxIYn9Y2B/PCyUa4C5aY=;
+        b=OYzQKgIifNdaB5sNrVkem2kHmC7i1rdrCcc31a/uz2ZuwujmP48wSR4BVhiq3p0OzK
+         KhNjJZS5i6WeNRcHCffwAqQQ86DCgP12Wov65z+u0U9zIVSCzEzWGLvhnjN0N2OlkD2w
+         fxUkIcugYffBh4pBsNXwRt7W6g3MZL8KTJrnzeOnV71TULhp48eJ3NzLNkmr/DFESNko
+         PBxKMaWV8X7hMxD/3YRIAj+5M4ghw0ccn1MTX8cqpLngVOLyTvNynzvHQAfJL6/QLwPn
+         gAqUbxzkCm0slHrE/u/xvLlIKYiYr7p7ncJThxN8QZgmhGhio688FgjzmjSaXNnfJZrw
+         Cx5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723223324; x=1723828124;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jUPA00ha0pjXeAraW7mmJ2vOxIYn9Y2B/PCyUa4C5aY=;
+        b=nWbYGnANN5eruME7l7Rx+EQJyl7pWSGxmnL6eoQ/vd3AU+UlEd83bIGepdWg9EhhDY
+         6wOtQa860ECydwQYxUuLI2u/nllDdraLz6qzW/lcSVB9yX5HSBRW3eL4jRMrt0vKXYyK
+         0AHHVzq1xBbcdJayhrocW02ECs8R8r64iYNlEW96NYywhl6JyKp8fw+aomS6+VSDf/wa
+         w+5n4IcBEC4mcz3JoP5WgmIYSxbr1T1Vt+3r2pbl8eLTuNPpYVdvhGtwe19iLCvjN56n
+         XrsdPdk6jztw4CtDZpE35QhIbmfnIT6DawhAM6ZlajAkEjxdkvCQcoiWGKK9Ti4RDu7y
+         S8hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/z6Ugqkx/Wz17wQanprsQ0mVvm+EniIwitgg+GCloWWvYoAj4dJrdLTzhnf3E059FVT63qdI7A0MFp7Uwm9HxTo1x0/BGQzKG2mnW
+X-Gm-Message-State: AOJu0Yx8WTbmo97o1wwmI9UqdMoNeFGMMnJF6Bzb0wKRqJH2agWs9Ws0
+	OQQrJj8nJX2i1Og6IQHi+FdiKrlk/tKWqVPY8WtEK4q2xgagdGLXlJMhVdSp
+X-Google-Smtp-Source: AGHT+IHobUxoA7hg0QDjsiXD9Li0fuvS8vzc9e8+oXMypsKQzMRpWYoYhgb2mQLLvMzKuy6bv+zERQ==
+X-Received: by 2002:a05:6512:220a:b0:52c:e670:7a12 with SMTP id 2adb3069b0e04-530eea0761bmr1791507e87.60.1723223323483;
+        Fri, 09 Aug 2024 10:08:43 -0700 (PDT)
+Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530de457d49sm1053614e87.130.2024.08.09.10.08.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 10:08:43 -0700 (PDT)
+Message-ID: <71864473-f0f7-41c3-95f2-c78f6edcfab9@gmail.com>
+Date: Fri, 9 Aug 2024 19:08:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 9 Aug 2024 19:07:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hQ3O7E3ygvFKbzjkJbx7pddyD9Qc+rE4EFYzJS12oTMg@mail.gmail.com>
-Message-ID: <CAJZ5v0hQ3O7E3ygvFKbzjkJbx7pddyD9Qc+rE4EFYzJS12oTMg@mail.gmail.com>
-Subject: [GIT PULL] Power management update for v6.11-rc3
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-xfs@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Chandan Babu R <chandan.babu@oracle.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>
+From: Anders Blomdell <anders.blomdell@gmail.com>
+Subject: XFS mount timeout in linux-6.9.11
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+With a filesystem that contains a very large amount of hardlinks
+the time to mount the filesystem skyrockets to around 15 minutes
+on 6.9.11-200.fc40.x86_64 as compared to around 1 second on
+6.8.10-300.fc40.x86_64, this of course makes booting drop
+into emergency mode if the filesystem is in /etc/fstab. A git bisect
+nails the offending commit as 14dd46cf31f4aaffcf26b00de9af39d01ec8d547.
 
-Please pull from the tag
+The filesystem is a collection of daily snapshots of a live filesystem
+collected over a number of years, organized as a storage of unique files,
+that are reflinked to inodes that contain the actual {owner,group,permission,
+mtime}, and these inodes are hardlinked into the daily snapshot trees.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.11-rc3
+The numbers for the filesystem are:
 
-with top-most commit 64a66f4a3c89b4602ee1e6cd23b28729fc4562b3
+   Total file size:           3.6e+12 bytes
+   Unique files:             12.4e+06
+   Reflink inodes:           18.6e+06
+   Hardlinks:                15.7e+09
+   
+Timing between the systems are:
 
- cpufreq: intel_pstate: Update Balance performance EPP for Emerald Rapids
+   6.8.10-300.fc40.x86_64:
 
-on top of commit 8400291e289ee6b2bf9779ff1c83a291501f017b
+     # time mount /dev/vg1/test /test
+     real	0m0.835s
+     user	0m0.002s
+     sys	        0m0.014s
 
- Linux 6.11-rc1
+   6.9.11-200.fc40.x86_64:
 
-to receive a power management update for 6.11-rc3.
+     # time mount /dev/vg1/test /test
+     real	15m36.508s
+     user	0m0.000s
+     sys	        0m27.628s
 
-This changes the default EPP (energy-performance preference) value for
-the Emerald Rapids processor in the intel_pstate driver which should
-improve both the performance and energy efficiency (Pedro Henrique
-Kopper).
+     (iotop reports 1-4 MB/s)
 
-Thanks!
-
-
----------------
-
-Pedro Henrique Kopper (1):
-      cpufreq: intel_pstate: Update Balance performance EPP for Emerald Rapids
-
----------------
-
- drivers/cpufreq/intel_pstate.c | 1 +
- 1 file changed, 1 insertion(+)
 
