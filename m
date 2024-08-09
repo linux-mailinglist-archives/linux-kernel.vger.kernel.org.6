@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-280914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66AB994D0D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:09:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C05D594D0DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CCEE1F21555
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:09:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6640B2150C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002D5194C62;
-	Fri,  9 Aug 2024 13:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0463C195809;
+	Fri,  9 Aug 2024 13:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rc56MrNu"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dtIK0hAj"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8611194A5A
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C5B194AFA;
+	Fri,  9 Aug 2024 13:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723208970; cv=none; b=CYk9WhTW1JX2sn2Beui9Y0nNaj+woAtfPGCqD6PgPg1UxpQIx19fkD3eQsXvXwxTn5NsOhogdAq68+gpoRQiHB2ussZZy6Vpd21jul+rf+CKEHSRLqfFVP6EvEi9VaUXF1RZLIwWn6nMexKYp//uYs3IGwi3bwWGFfuzmMcuxN8=
+	t=1723208972; cv=none; b=EF7SRv0nryYQI7jzPQkLFxGUIHuFh+QPmUmIma54YpM2NgfZVWyrQpExZAuP5ftRFgNjl251MZPG6DNztbS51XC71p7aKNza4K1+hPux/0NqVdCoxwd9FBaqbkche9mg53oU9/LifBfr2UG3ea8WQdmPtHC5wkRIy/MnTX5BZlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723208970; c=relaxed/simple;
-	bh=PP8o0uXQr0k92CCJidXH4v3wHNxcydeY2QrhZ93Y2Fw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gl1rBOPoDjodvKkfBwASXa3xhZ0+6OgYu0By9VnFs4YJE6bSkc3ZBTrjj9p8Q3TN3FtX8K+TbQaw309C7jWWJXqZoZEcwM6TqB0TlDwQw9W3VJWn5vgRLN9ILvThOHfV32mBZxmlUE8uD6Z+4v4oin3AoiI3kzx9lYtDNhN/sfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rc56MrNu; arc=none smtp.client-ip=192.198.163.7
+	s=arc-20240116; t=1723208972; c=relaxed/simple;
+	bh=Nbsl3p9OLbL48cTueVzxumNtwMa9kobgVhE46dIs0EU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IUZyRtpj7RdIEoFlpzec1MjzWL/KRxV5rHqIznCLWcgxXOKi4UjLzyxjcq72AGX2SG6gPJ2QXX5wIjeTc56kpXnKMQ5lV3y7hQTTa/0rBzwgMjJk5Tb1B0iFFHkIhQyGRNOMKgUf3NNL8ekpeCMaBrS2qftP+AEMuuW0AfiZ0X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dtIK0hAj; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723208969; x=1754744969;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PP8o0uXQr0k92CCJidXH4v3wHNxcydeY2QrhZ93Y2Fw=;
-  b=Rc56MrNubpVkY9OHosQpqrhiYsVNqcIvF7DoJBCph1JZIVR3y9WpF6Hj
-   ABTKxItV4llTjwAPJvkSDd0OubORFKFMU4gBp0xBtOP6F002Zmf769Jru
-   0g4ZlrpO6t+/HFZphMig1QYbcjZ6n4iKhrh41eUyjSjGH008jXeYH37GT
-   ROFglhYBEdFrIK7wwtbovuUQqgEkwF0Pwr/VicoDYKq9ZI+M/CoYR+h1d
-   AW7aw3k3BAPqunqrpZglbakqbfUyszH5kbgiwKJU4MOIPfHnx9ZAt0TcE
-   sTAuyPjwC9A6fXdbETnr3tkdqkAT0Hr0BBoHTeMMIzMKjuJl+bqS4RODE
-   Q==;
-X-CSE-ConnectionGUID: 5OmX7DYhRbq2NDlF3LWTUA==
-X-CSE-MsgGUID: +vS9ZQPhSHyKu1FiivU3Wg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="46788160"
+  t=1723208971; x=1754744971;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Nbsl3p9OLbL48cTueVzxumNtwMa9kobgVhE46dIs0EU=;
+  b=dtIK0hAjrEcTh8/U9tzZVzO/nXSL2PSV1ZU0sOkA6k/Kp73J5+XhcgNm
+   sMf+/Kjw9Cy7oHsqH9ZHYxMVHHBQvfP84F5jA/A+JeWpUz4itRQozTULw
+   YC0d8gM/JNaa6/InyTO9laCxzDcF3YINpYkJeqRmWtVdtKJksdddVTmTQ
+   9/f0TaOYhdoN8mxh4LQ3X7zdRMIVwc2mkdFPClcADiVJ8bd20qwuhF9GR
+   Gerw6g4FKKymBpmwSaJOS2QsRyqXH9mm34kKMZnmlnyShpaJdD71gHD37
+   dwVcxM9eVX1TQMlwop2baQNjFrKHYTVkeqi1mETdeqizWqH1Rmu64PjyD
+   g==;
+X-CSE-ConnectionGUID: WDzzHNYiSUyjwFn2wmLu8Q==
+X-CSE-MsgGUID: 54cYRwHWRpqvC+lWSFqXBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="46788175"
 X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="46788160"
+   d="scan'208";a="46788175"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 06:09:28 -0700
-X-CSE-ConnectionGUID: +Sb1hv8/QfWFD6q+tpr6zA==
-X-CSE-MsgGUID: Kv7oy5IZQjmyXreJVMdOVQ==
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 06:09:29 -0700
+X-CSE-ConnectionGUID: NrhCh9GoREKODt0sVRz5pQ==
+X-CSE-MsgGUID: nd+D3aeOSne7ju3Jrvg6uA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="57651636"
+   d="scan'208";a="57651681"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmviesa010.fm.intel.com with ESMTP; 09 Aug 2024 06:09:27 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id F177F597; Fri, 09 Aug 2024 16:09:24 +0300 (EEST)
+	id 0A50C580; Fri, 09 Aug 2024 16:09:25 +0300 (EEST)
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
@@ -67,11 +68,16 @@ To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
 	x86@kernel.org,
 	"H. Peter Anvin" <hpa@zytor.com>
 Cc: linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv5, REBASED 0/4] x86/tdx: Adjust TD settings on boot
-Date: Fri,  9 Aug 2024 16:09:19 +0300
-Message-ID: <20240809130923.3893765-1-kirill.shutemov@linux.intel.com>
+	linux-kernel@vger.kernel.org,
+	Kai Huang <kai.huang@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCHv5, REBASED 1/4] x86/tdx: Introduce wrappers to read and write TD metadata
+Date: Fri,  9 Aug 2024 16:09:20 +0300
+Message-ID: <20240809130923.3893765-2-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240809130923.3893765-1-kirill.shutemov@linux.intel.com>
+References: <20240809130923.3893765-1-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,48 +86,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The patchset adjusts a few TD settings on boot for the optimal functioning
-of the system:
+The TDG_VM_WR TDCALL is used to ask the TDX module to change some
+TD-specific VM configuration. There is currently only one user in the
+kernel of this TDCALL leaf.  More will be added shortly.
 
-  - Disable EPT violation #VE on private memory if TD can control it
+Refactor to make way for more users of TDG_VM_WR who will need to modify
+other TD configuration values.
 
-    The newer TDX module allows the guest to control whether it wants to
-    see #VE on EPT violation on private memory. The Linux kernel does not
-    want such #VEs and needs to disable them.
+Add a wrapper for the TDG_VM_RD TDCALL that requests TD-specific
+metadata from the TDX module. There are currently no users for
+TDG_VM_RD. Mark it as __maybe_unused until the first user appears.
 
-  - Enable virtualization of topology-related CPUID leafs X2APIC_APICID MSR;
+This is preparation for enumeration and enabling optional TD features.
 
-    The ENUM_TOPOLOGY feature allows the VMM to provide topology
-    information to the guest. Enabling the feature eliminates
-    topology-related #VEs: the TDX module virtualizes accesses to the
-    CPUID leafs and the MSR.
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reviewed-by: Kai Huang <kai.huang@intel.com>
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: stable@vger.kernel.org
+---
+ arch/x86/coco/tdx/tdx.c           | 32 ++++++++++++++++++++++++++-----
+ arch/x86/include/asm/shared/tdx.h |  1 +
+ 2 files changed, 28 insertions(+), 5 deletions(-)
 
-    It allows TDX guest to run with non-trivial topology configuration.
-
-v5:
- - Rebased to current tip tree;
-v4:
- - Drop unnecessary enumeration;
- - Drop TDG.SYS.RD wrapper;
- - CC stable@ for SEPT disable patch;
- - Update commit messages;
-v3:
-  - Update commit messages;
-  - Rework patches 3/4 and 4/4;
-v2:
-  - Rebased;
-  - Allow write to TDCS_TD_CTLS to fail;
-  - Adjust commit messages;
-Kirill A. Shutemov (4):
-  x86/tdx: Introduce wrappers to read and write TD metadata
-  x86/tdx: Rename tdx_parse_tdinfo() to tdx_setup()
-  x86/tdx: Dynamically disable SEPT violations from causing #VEs
-  x86/tdx: Enable CPU topology enumeration
-
- arch/x86/coco/tdx/tdx.c           | 140 +++++++++++++++++++++++++-----
- arch/x86/include/asm/shared/tdx.h |  13 ++-
- 2 files changed, 130 insertions(+), 23 deletions(-)
-
+diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+index 078e2bac2553..64717a96a936 100644
+--- a/arch/x86/coco/tdx/tdx.c
++++ b/arch/x86/coco/tdx/tdx.c
+@@ -77,6 +77,32 @@ static inline void tdcall(u64 fn, struct tdx_module_args *args)
+ 		panic("TDCALL %lld failed (Buggy TDX module!)\n", fn);
+ }
+ 
++/* Read TD-scoped metadata */
++static inline u64 __maybe_unused tdg_vm_rd(u64 field, u64 *value)
++{
++	struct tdx_module_args args = {
++		.rdx = field,
++	};
++	u64 ret;
++
++	ret = __tdcall_ret(TDG_VM_RD, &args);
++	*value = args.r8;
++
++	return ret;
++}
++
++/* Write TD-scoped metadata */
++static inline u64 tdg_vm_wr(u64 field, u64 value, u64 mask)
++{
++	struct tdx_module_args args = {
++		.rdx = field,
++		.r8 = value,
++		.r9 = mask,
++	};
++
++	return __tdcall(TDG_VM_WR, &args);
++}
++
+ /**
+  * tdx_mcall_get_report0() - Wrapper to get TDREPORT0 (a.k.a. TDREPORT
+  *                           subtype 0) using TDG.MR.REPORT TDCALL.
+@@ -924,10 +950,6 @@ static void tdx_kexec_finish(void)
+ 
+ void __init tdx_early_init(void)
+ {
+-	struct tdx_module_args args = {
+-		.rdx = TDCS_NOTIFY_ENABLES,
+-		.r9 = -1ULL,
+-	};
+ 	u64 cc_mask;
+ 	u32 eax, sig[3];
+ 
+@@ -946,7 +968,7 @@ void __init tdx_early_init(void)
+ 	cc_set_mask(cc_mask);
+ 
+ 	/* Kernel does not use NOTIFY_ENABLES and does not need random #VEs */
+-	tdcall(TDG_VM_WR, &args);
++	tdg_vm_wr(TDCS_NOTIFY_ENABLES, 0, -1ULL);
+ 
+ 	/*
+ 	 * All bits above GPA width are reserved and kernel treats shared bit
+diff --git a/arch/x86/include/asm/shared/tdx.h b/arch/x86/include/asm/shared/tdx.h
+index fdfd41511b02..7e12cfa28bec 100644
+--- a/arch/x86/include/asm/shared/tdx.h
++++ b/arch/x86/include/asm/shared/tdx.h
+@@ -16,6 +16,7 @@
+ #define TDG_VP_VEINFO_GET		3
+ #define TDG_MR_REPORT			4
+ #define TDG_MEM_PAGE_ACCEPT		6
++#define TDG_VM_RD			7
+ #define TDG_VM_WR			8
+ 
+ /* TDCS fields. To be used by TDG.VM.WR and TDG.VM.RD module calls */
 -- 
 2.43.0
 
