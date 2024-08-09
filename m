@@ -1,392 +1,273 @@
-Return-Path: <linux-kernel+bounces-280782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8C194CF26
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0B694CF28
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D60283C44
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B244D2842AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7120192B78;
-	Fri,  9 Aug 2024 11:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4926192B66;
+	Fri,  9 Aug 2024 11:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WoOD8p75"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SAz2rH4j"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2BE191F94
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AE517993
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723201292; cv=none; b=DyIfgR1mly50CsF/i2kPiYh3Gh2z+LrMdxK/C9CLp8opv0QsfLHkxdGQcpUW2WmdxWMaOfmoMlWNn3OCeJYTlttxnXAfVcG/83E2USe4QgGVIWIrCIUs8XV0g7PJPSZanokDvdFQLRQVAcf34jntKZ2wrRUWeYg1PutKqVWO1Lk=
+	t=1723201432; cv=none; b=CCk91UtjTUtsW6etN+cF813GWyWigl9LncbB2UQ7i5CMdQ7q8R+NSSraqjjw+SuNZBV7rFrzW8R2yaclDonk7WuCZKLRq5NBgK1BdzLY8srY1fdgNM4ohTS15pBWuEZjie+5UHScEIp5qxSvy4KBGREMt/i2xX/eAj6fo0+NWFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723201292; c=relaxed/simple;
-	bh=MUOJttNLDDkaf3vn9kxvM207x74kpVe47iGW1tUIkIQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iseWBsR6VU066wO6dXNJ8H1jqIuAuwa6nCGLAfmC/ouN+9mM7NBCRuR3MivC/byG+h1m/4A76jG1Uvu11qngtkr4bk2vfmQt6QgeBoWa99iPJIkAreLIRl58GlDO9Qyx9SWFy/SU6XymdB/+1o2G/fyvkeMT9XSzgFskRXj7sRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WoOD8p75; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3686b285969so1014034f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 04:01:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723201288; x=1723806088; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/682q/IgmSx1ugjwpcrW1fYYFoT2Yei89ggcZ5WWfo8=;
-        b=WoOD8p75yvavw9AdQB54DgMP5yWrgyHu3FyY6ulR1EHJ86fu9b4J+TzkI510Vii6Io
-         +927POzYWALqqDv4wHeUyxeF2wPgEGMu3y5fHWVrox84xuHBOIUERhUG1yKitlE52HNW
-         32XcFlujcOEX2+uYqTxSQmZR/mAejrFwNIV+Kfdwbu7My4vpnmQliI1MmUYbyCt1A/zp
-         70JXD2kdp2yjAo5IPQ+OWlPYrV6tbKOmWxUJiGoeSjXkn2UCqMNHqNVG+VMDAYJZyEWR
-         TVg0xBlVS/usCMH+OGJ8Vlsrofe9B92FXAHww14b2KIxwbo8huLp59tQrISqy/uyo1Sk
-         cqmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723201288; x=1723806088;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/682q/IgmSx1ugjwpcrW1fYYFoT2Yei89ggcZ5WWfo8=;
-        b=tHxqIrfOIrFSA8QPAZhuBMIaAoanp+8cjhzQ2vsbPWNk5Oftj7GSyB2qyY8e2wzMQG
-         hRfRctQefGDGLX4+/HwNjEaV5EtBzAWaFqhLh+pxBGqZjygxgqRtFoWARylcXpk7rM4l
-         gX1wiuCaZSMbR2ZVzodeIkwfrvkl17te5X7q19iKSgNvui43emeDDkxgdJ8Qn0Y7iPq6
-         0RqyFZ52hGtE4qNUFRsGRSDX3xX2PZhHLLRkk5xAyYDXktPke7rI+Nl7lDwifaQh0Xm7
-         diPjCtyPVRg64o4v1khng7EijlDQKTKkQmdpHDgKXBOi1YC5MCDeE4K/jTEDtW6MKkIv
-         NJHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVm7j0DWpuzDn1mJa0AroLmcsX0vCW/DyK+TP7gRAuVbniyAxtvl1ruATTfFs/k/agtEvLQpXyqYFCx7KRwhiK3okOL7IOVATQwwFYD
-X-Gm-Message-State: AOJu0Yy2CuO4gDlvBxL12fXDx8HJ47ze9MAj2lkD+tI/Zj4hD9Ar+ZtI
-	f/UbI2AmfGawR1f8cN9OBGNWyMFHQ2mu23R0OyLpb1G725vKMcjOetOp+pEwcbc=
-X-Google-Smtp-Source: AGHT+IEMw0S9h0YIYl4LyxIuHNAP7T9PX2ZjGuz2Ky4aelpGhhnCl3Hs3qzr8diKaTFhAHA9AO9+OA==
-X-Received: by 2002:a5d:5f91:0:b0:367:8a84:7427 with SMTP id ffacd0b85a97d-36d5de93557mr1073255f8f.2.1723201288119;
-        Fri, 09 Aug 2024 04:01:28 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d340acfdasm1815992f8f.13.2024.08.09.04.01.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 04:01:27 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3] ASoC: codecs: wsa884x: Implement temperature reading and hwmon
-Date: Fri,  9 Aug 2024 13:01:22 +0200
-Message-ID: <20240809110122.137761-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723201432; c=relaxed/simple;
+	bh=0D+U1vnKibwU/cxx3NOwezp6OPK1IDnV4mEk5hIFuYQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=SXcDKMEg/ly93AEuAq75YE37b7iuef1Y65as4wiemwjD5WqbDMaAnpnyicqx+SuhK6Sd9DDXUeYteuV8vO2oUe4QUXOsYRn+LPXq4RNOhqQuQ+t1NVNxsH5BRJ9tgOdpwNZSwuNVeeuNampJv+4jbj/UywPhi2DPgW30sYukQXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SAz2rH4j; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4793o1gb016037;
+	Fri, 9 Aug 2024 11:03:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	nJqdIO0p9YPVRh8ZpNHZjkYc5An8vfwCyjwbvPnd+W8=; b=SAz2rH4jD+cwHj5b
+	D4UfBmBnCVX6aVVKXwgUDW2l3PJOI3q8hiavJK2WyaXuCrZSSeajqqHAQWIs6mqT
+	EibNjY8NEsPRzG6Z6CIwMJ7jyfMzUobYg4lBzhYkENKte1tXEwFU2A4eJHwN44Kh
+	v8xVNSNKvXF9vES6e5TYvITVQTCjfBKLroAJ0nViF0vsoSpDCVSsKxYhfDAZv82h
+	lGSaPeTCf0hRGxptzUseuGGwjhrUbwSB3sysNMkXZkLBZovBTOZd8/cJJtqBpQcu
+	OvMtACoyqtQQrPUQpwQcGKV+o58CdBhyWTcTiFTz0B9GlfCxITjQ4Ml0qSLWjXvM
+	t8zFFQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkd2m8r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 11:03:31 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 479B3Vkh029468;
+	Fri, 9 Aug 2024 11:03:31 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkd2m8n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 11:03:31 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4799XVRF030246;
+	Fri, 9 Aug 2024 11:03:30 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40t1k3jtfm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 11:03:30 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 479B3QQi52167120
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 9 Aug 2024 11:03:29 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D9B7B20043;
+	Fri,  9 Aug 2024 11:03:26 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A8B3B20040;
+	Fri,  9 Aug 2024 11:03:14 +0000 (GMT)
+Received: from [9.43.4.15] (unknown [9.43.4.15])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  9 Aug 2024 11:03:12 +0000 (GMT)
+Message-ID: <10624524-a078-404e-a5ba-c250de81c36f@linux.ibm.com>
+Date: Fri, 9 Aug 2024 16:33:10 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Document/kexec: Generalize crash hotplug description
+To: Baoquan He <bhe@redhat.com>, Petr Tesarik <petr@tesarici.cz>
+Cc: Hari Bathini <hbathini@linux.ibm.com>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+References: <20240805050829.297171-1-sourabhjain@linux.ibm.com>
+ <ZrV1V4QzDShYJSsI@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <ZrV1V4QzDShYJSsI@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: G3dNSs9_K1sjeYx6XFYqMwIVVVXLlSAp
+X-Proofpoint-ORIG-GUID: HeiXgEUdtAaoaB5J6mr7b5erk5Y9HC1i
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-09_07,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 impostorscore=0 clxscore=1015 mlxscore=0 suspectscore=0
+ priorityscore=1501 phishscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408090077
 
-Read temperature of the speaker and expose it via hwmon interface, which
-will be later used during calibration of speaker protection algorithms.
+Hello Baoquan,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 09/08/24 07:18, Baoquan He wrote:
+> On 08/05/24 at 10:38am, Sourabh Jain wrote:
+>> Commit 79365026f869 ("crash: add a new kexec flag for hotplug support")
+>> generalizes the crash hotplug support to allow architectures to update
+>> multiple kexec segments on CPU/Memory hotplug and not just elfcorehdr.
+>> Therefore, update the relevant kernel documentation to reflect the same.
+>>
+>> No functional change.
+>>
+>> Cc: Petr Tesarik <petr@tesarici.cz>
+>> Cc: Hari Bathini <hbathini@linux.ibm.com>
+>> Cc: kexec@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linuxppc-dev@lists.ozlabs.org
+>> Cc: x86@kernel.org
+>> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+>> ---
+>>
+>> Discussion about the documentation update:
+>> https://lore.kernel.org/all/68d0328d-531a-4a2b-ab26-c97fd8a12e8b@linux.ibm.com/
+>>
+>> ---
+>>   .../ABI/testing/sysfs-devices-memory          |  6 ++--
+>>   .../ABI/testing/sysfs-devices-system-cpu      |  6 ++--
+>>   .../admin-guide/mm/memory-hotplug.rst         |  5 ++--
+>>   Documentation/core-api/cpu_hotplug.rst        | 10 ++++---
+>>   kernel/crash_core.c                           | 29 ++++++++++++-------
+>>   5 files changed, 33 insertions(+), 23 deletions(-)
+> The overall looks good to me, except of concern from Petr. Thanks.
 
----
+Thanks for the review. I will make the suggested changes in v2.
 
-Changes in v3:
-1. Replace Kconfig HWMON dependency in favor of
-   IS_REACHABLE(CONFIG_HWMON) which solves Kernel Test Robot warning for
-   !HWMON and HWMON=y && WSA884x=m
+Additionally I will also generalize the error message
+"kexec_trylock() failed, elfcorehdr may be inaccurate " from
+functions crash_handle_hotplug_event() and crash_check_hotplug_support()
+to "kexec_trylock() failed, kdump image may be inaccurate"
 
-Changes in v2:
-1. Add missing dependency on HWMON for y!=m builds (Kernel Test Robot
-   report: undefined reference to
-   `devm_hwmon_device_register_with_info').
----
- sound/soc/codecs/wsa884x.c | 201 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 201 insertions(+)
+- Sourabh Jain
 
-diff --git a/sound/soc/codecs/wsa884x.c b/sound/soc/codecs/wsa884x.c
-index 8db1380d1f10..86df5152c547 100644
---- a/sound/soc/codecs/wsa884x.c
-+++ b/sound/soc/codecs/wsa884x.c
-@@ -5,11 +5,14 @@
-  */
- 
- #include <linux/bitfield.h>
-+#include <linux/cleanup.h>
- #include <linux/device.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/hwmon.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
-@@ -301,8 +304,28 @@
- #define WSA884X_PA_FSM_MSK1		(WSA884X_DIG_CTRL0_BASE + 0x3b)
- #define WSA884X_PA_FSM_BYP_CTL		(WSA884X_DIG_CTRL0_BASE + 0x3c)
- #define WSA884X_PA_FSM_BYP0		(WSA884X_DIG_CTRL0_BASE + 0x3d)
-+#define WSA884X_PA_FSM_BYP0_DC_CAL_EN_MASK		0x01
-+#define WSA884X_PA_FSM_BYP0_DC_CAL_EN_SHIFT		0
-+#define WSA884X_PA_FSM_BYP0_CLK_WD_EN_MASK		0x02
-+#define WSA884X_PA_FSM_BYP0_CLK_WD_EN_SHIFT		1
-+#define WSA884X_PA_FSM_BYP0_BG_EN_MASK			0x04
-+#define WSA884X_PA_FSM_BYP0_BG_EN_SHIFT			2
-+#define WSA884X_PA_FSM_BYP0_BOOST_EN_MASK		0x08
-+#define WSA884X_PA_FSM_BYP0_BOOST_EN_SHIFT		3
-+#define WSA884X_PA_FSM_BYP0_PA_EN_MASK			0x10
-+#define WSA884X_PA_FSM_BYP0_PA_EN_SHIFT			4
-+#define WSA884X_PA_FSM_BYP0_D_UNMUTE_MASK		0x20
-+#define WSA884X_PA_FSM_BYP0_D_UNMUTE_SHIFT		5
-+#define WSA884X_PA_FSM_BYP0_SPKR_PROT_EN_MASK		0x40
-+#define WSA884X_PA_FSM_BYP0_SPKR_PROT_EN_SHIFT		6
-+#define WSA884X_PA_FSM_BYP0_TSADC_EN_MASK		0x80
-+#define WSA884X_PA_FSM_BYP0_TSADC_EN_SHIFT		7
- #define WSA884X_PA_FSM_BYP1		(WSA884X_DIG_CTRL0_BASE + 0x3e)
- #define WSA884X_TADC_VALUE_CTL		(WSA884X_DIG_CTRL0_BASE + 0x50)
-+#define WSA884X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK	0x01
-+#define WSA884X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_SHIFT	0
-+#define WSA884X_TADC_VALUE_CTL_VBAT_VALUE_RD_EN_MASK	0x02
-+#define WSA884X_TADC_VALUE_CTL_VBAT_VALUE_RD_EN_SHIFT	1
- #define WSA884X_TEMP_DETECT_CTL		(WSA884X_DIG_CTRL0_BASE + 0x51)
- #define WSA884X_TEMP_DIN_MSB		(WSA884X_DIG_CTRL0_BASE + 0x52)
- #define WSA884X_TEMP_DIN_LSB		(WSA884X_DIG_CTRL0_BASE + 0x53)
-@@ -691,6 +714,17 @@
- 		SNDRV_PCM_FMTBIT_S24_LE |\
- 		SNDRV_PCM_FMTBIT_S24_3LE | SNDRV_PCM_FMTBIT_S32_LE)
- 
-+/* Two-point trimming for temperature calibration */
-+#define WSA884X_T1_TEMP			-10L
-+#define WSA884X_T2_TEMP			150L
-+
-+/*
-+ * Device will report senseless data in many cases, so discard any measurements
-+ * outside of valid range.
-+ */
-+#define WSA884X_LOW_TEMP_THRESHOLD	5
-+#define WSA884X_HIGH_TEMP_THRESHOLD	45
-+
- struct wsa884x_priv {
- 	struct regmap *regmap;
- 	struct device *dev;
-@@ -706,6 +740,13 @@ struct wsa884x_priv {
- 	int active_ports;
- 	int dev_mode;
- 	bool hw_init;
-+	/*
-+	 * Protects temperature reading code (related to speaker protection) and
-+	 * fields: temperature and pa_on.
-+	 */
-+	struct mutex sp_lock;
-+	unsigned int temperature;
-+	bool pa_on;
- };
- 
- enum {
-@@ -1660,6 +1701,10 @@ static int wsa884x_spkr_event(struct snd_soc_dapm_widget *w,
- 
- 	switch (event) {
- 	case SND_SOC_DAPM_POST_PMU:
-+		mutex_lock(&wsa884x->sp_lock);
-+		wsa884x->pa_on = true;
-+		mutex_unlock(&wsa884x->sp_lock);
-+
- 		wsa884x_spkr_post_pmu(component, wsa884x);
- 
- 		snd_soc_component_write_field(component, WSA884X_PDM_WD_CTL,
-@@ -1671,6 +1716,10 @@ static int wsa884x_spkr_event(struct snd_soc_dapm_widget *w,
- 		snd_soc_component_write_field(component, WSA884X_PDM_WD_CTL,
- 					      WSA884X_PDM_WD_CTL_PDM_WD_EN_MASK,
- 					      0x0);
-+
-+		mutex_lock(&wsa884x->sp_lock);
-+		wsa884x->pa_on = false;
-+		mutex_unlock(&wsa884x->sp_lock);
- 		break;
- 	}
- 
-@@ -1810,6 +1859,144 @@ static struct snd_soc_dai_driver wsa884x_dais[] = {
- 	},
- };
- 
-+static int wsa884x_get_temp(struct wsa884x_priv *wsa884x, long *temp)
-+{
-+	unsigned int d1_msb = 0, d1_lsb = 0, d2_msb = 0, d2_lsb = 0;
-+	unsigned int dmeas_msb = 0, dmeas_lsb = 0;
-+	int d1, d2, dmeas;
-+	unsigned int mask;
-+	long val;
-+	int ret;
-+
-+	guard(mutex)(&wsa884x->sp_lock);
-+
-+	if (wsa884x->pa_on) {
-+		/*
-+		 * Reading temperature is possible only when Power Amplifier is
-+		 * off. Report last cached data.
-+		 */
-+		*temp = wsa884x->temperature;
-+		return 0;
-+	}
-+
-+	ret = pm_runtime_resume_and_get(wsa884x->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	mask = WSA884X_PA_FSM_BYP0_DC_CAL_EN_MASK |
-+	       WSA884X_PA_FSM_BYP0_CLK_WD_EN_MASK |
-+	       WSA884X_PA_FSM_BYP0_BG_EN_MASK |
-+	       WSA884X_PA_FSM_BYP0_D_UNMUTE_MASK |
-+	       WSA884X_PA_FSM_BYP0_SPKR_PROT_EN_MASK |
-+	       WSA884X_PA_FSM_BYP0_TSADC_EN_MASK;
-+	/*
-+	 * Here and further do not care about read or update failures.
-+	 * For example, before turning on Power Amplifier for the first
-+	 * time, reading WSA884X_TEMP_DIN_MSB will always return 0.
-+	 * Instead, check if returned value is within reasonable
-+	 * thresholds.
-+	 */
-+	regmap_update_bits(wsa884x->regmap, WSA884X_PA_FSM_BYP0, mask, mask);
-+
-+	regmap_update_bits(wsa884x->regmap, WSA884X_TADC_VALUE_CTL,
-+			   WSA884X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK,
-+			   FIELD_PREP(WSA884X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK, 0x0));
-+
-+	regmap_read(wsa884x->regmap, WSA884X_TEMP_DIN_MSB, &dmeas_msb);
-+	regmap_read(wsa884x->regmap, WSA884X_TEMP_DIN_LSB, &dmeas_lsb);
-+
-+	regmap_update_bits(wsa884x->regmap, WSA884X_TADC_VALUE_CTL,
-+			   WSA884X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK,
-+			   FIELD_PREP(WSA884X_TADC_VALUE_CTL_TEMP_VALUE_RD_EN_MASK, 0x1));
-+
-+	regmap_read(wsa884x->regmap, WSA884X_OTP_REG_1, &d1_msb);
-+	regmap_read(wsa884x->regmap, WSA884X_OTP_REG_2, &d1_lsb);
-+	regmap_read(wsa884x->regmap, WSA884X_OTP_REG_3, &d2_msb);
-+	regmap_read(wsa884x->regmap, WSA884X_OTP_REG_4, &d2_lsb);
-+
-+	regmap_update_bits(wsa884x->regmap, WSA884X_PA_FSM_BYP0, mask, 0x0);
-+
-+	dmeas = (((dmeas_msb & 0xff) << 0x8) | (dmeas_lsb & 0xff)) >> 0x6;
-+	d1 = (((d1_msb & 0xff) << 0x8) | (d1_lsb & 0xff)) >> 0x6;
-+	d2 = (((d2_msb & 0xff) << 0x8) | (d2_lsb & 0xff)) >> 0x6;
-+
-+	if (d1 == d2) {
-+		/* Incorrect data in OTP? */
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	val = WSA884X_T1_TEMP + (((dmeas - d1) * (WSA884X_T2_TEMP - WSA884X_T1_TEMP))/(d2 - d1));
-+
-+	dev_dbg(wsa884x->dev, "Measured temp %ld (dmeas=%d, d1=%d, d2=%d)\n",
-+		val, dmeas, d1, d2);
-+
-+	if ((val > WSA884X_LOW_TEMP_THRESHOLD) &&
-+	    (val < WSA884X_HIGH_TEMP_THRESHOLD)) {
-+		wsa884x->temperature = val;
-+		*temp = val;
-+		ret = 0;
-+	} else {
-+		ret = -EAGAIN;
-+	}
-+
-+out:
-+	pm_runtime_mark_last_busy(wsa884x->dev);
-+	pm_runtime_put_autosuspend(wsa884x->dev);
-+
-+	return ret;
-+}
-+
-+static umode_t wsa884x_hwmon_is_visible(const void *data,
-+					enum hwmon_sensor_types type, u32 attr,
-+					int channel)
-+{
-+	if (type != hwmon_temp)
-+		return 0;
-+
-+	switch (attr) {
-+	case hwmon_temp_input:
-+		return 0444;
-+	default:
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int wsa884x_hwmon_read(struct device *dev,
-+			      enum hwmon_sensor_types type,
-+			      u32 attr, int channel, long *temp)
-+{
-+	int ret;
-+
-+	switch (attr) {
-+	case hwmon_temp_input:
-+		ret = wsa884x_get_temp(dev_get_drvdata(dev), temp);
-+		break;
-+	default:
-+		ret = -EOPNOTSUPP;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct hwmon_channel_info *const wsa884x_hwmon_info[] = {
-+	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
-+	NULL
-+};
-+
-+static const struct hwmon_ops wsa884x_hwmon_ops = {
-+	.is_visible	= wsa884x_hwmon_is_visible,
-+	.read		= wsa884x_hwmon_read,
-+};
-+
-+static const struct hwmon_chip_info wsa884x_hwmon_chip_info = {
-+	.ops	= &wsa884x_hwmon_ops,
-+	.info	= wsa884x_hwmon_info,
-+};
-+
- static void wsa884x_reset_powerdown(void *data)
- {
- 	struct wsa884x_priv *wsa884x = data;
-@@ -1866,6 +2053,8 @@ static int wsa884x_probe(struct sdw_slave *pdev,
- 	if (!wsa884x)
- 		return -ENOMEM;
- 
-+	mutex_init(&wsa884x->sp_lock);
-+
- 	for (i = 0; i < WSA884X_SUPPLIES_NUM; i++)
- 		wsa884x->supplies[i].supply = wsa884x_supply_name[i];
- 
-@@ -1923,6 +2112,18 @@ static int wsa884x_probe(struct sdw_slave *pdev,
- 	regcache_cache_only(wsa884x->regmap, true);
- 	wsa884x->hw_init = true;
- 
-+	if (IS_REACHABLE(CONFIG_HWMON)) {
-+		struct device *hwmon;
-+
-+		hwmon = devm_hwmon_device_register_with_info(dev, "wsa884x",
-+							     wsa884x,
-+							     &wsa884x_hwmon_chip_info,
-+							     NULL);
-+		if (IS_ERR(hwmon))
-+			return dev_err_probe(dev, PTR_ERR(hwmon),
-+					     "Failed to register hwmon sensor\n");
-+	}
-+
- 	pm_runtime_set_autosuspend_delay(dev, 3000);
- 	pm_runtime_use_autosuspend(dev);
- 	pm_runtime_mark_last_busy(dev);
--- 
-2.43.0
+>
+>> diff --git a/Documentation/ABI/testing/sysfs-devices-memory b/Documentation/ABI/testing/sysfs-devices-memory
+>> index a95e0f17c35a..421acc8e2c6b 100644
+>> --- a/Documentation/ABI/testing/sysfs-devices-memory
+>> +++ b/Documentation/ABI/testing/sysfs-devices-memory
+>> @@ -115,6 +115,6 @@ What:		/sys/devices/system/memory/crash_hotplug
+>>   Date:		Aug 2023
+>>   Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+>>   Description:
+>> -		(RO) indicates whether or not the kernel directly supports
+>> -		modifying the crash elfcorehdr for memory hot un/plug and/or
+>> -		on/offline changes.
+>> +		(RO) indicates whether or not the kernel update of kexec
+>> +		segments on memory hot un/plug and/or on/offline events,
+>> +		avoiding the need to reload kdump kernel.
+>> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> index 325873385b71..f4ada1cd2f96 100644
+>> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> @@ -703,9 +703,9 @@ What:		/sys/devices/system/cpu/crash_hotplug
+>>   Date:		Aug 2023
+>>   Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+>>   Description:
+>> -		(RO) indicates whether or not the kernel directly supports
+>> -		modifying the crash elfcorehdr for CPU hot un/plug and/or
+>> -		on/offline changes.
+>> +		(RO) indicates whether or not the kernel update of kexec
+>> +		segments on CPU hot un/plug and/or on/offline events,
+>> +		avoiding the need to reload kdump kernel.
+>>   
+>>   What:		/sys/devices/system/cpu/enabled
+>>   Date:		Nov 2022
+>> diff --git a/Documentation/admin-guide/mm/memory-hotplug.rst b/Documentation/admin-guide/mm/memory-hotplug.rst
+>> index 098f14d83e99..cb2c080f400c 100644
+>> --- a/Documentation/admin-guide/mm/memory-hotplug.rst
+>> +++ b/Documentation/admin-guide/mm/memory-hotplug.rst
+>> @@ -294,8 +294,9 @@ The following files are currently defined:
+>>   ``crash_hotplug``      read-only: when changes to the system memory map
+>>   		       occur due to hot un/plug of memory, this file contains
+>>   		       '1' if the kernel updates the kdump capture kernel memory
+>> -		       map itself (via elfcorehdr), or '0' if userspace must update
+>> -		       the kdump capture kernel memory map.
+>> +		       map itself (via elfcorehdr and other relevant kexec
+>> +		       segments), or '0' if userspace must update the kdump
+>> +		       capture kernel memory map.
+>>   
+>>   		       Availability depends on the CONFIG_MEMORY_HOTPLUG kernel
+>>   		       configuration option.
+>> diff --git a/Documentation/core-api/cpu_hotplug.rst b/Documentation/core-api/cpu_hotplug.rst
+>> index dcb0e379e5e8..a21dbf261be7 100644
+>> --- a/Documentation/core-api/cpu_hotplug.rst
+>> +++ b/Documentation/core-api/cpu_hotplug.rst
+>> @@ -737,8 +737,9 @@ can process the event further.
+>>   
+>>   When changes to the CPUs in the system occur, the sysfs file
+>>   /sys/devices/system/cpu/crash_hotplug contains '1' if the kernel
+>> -updates the kdump capture kernel list of CPUs itself (via elfcorehdr),
+>> -or '0' if userspace must update the kdump capture kernel list of CPUs.
+>> +updates the kdump capture kernel list of CPUs itself (via elfcorehdr and
+>> +other relevant kexec segment), or '0' if userspace must update the kdump
+>> +capture kernel list of CPUs.
+>>   
+>>   The availability depends on the CONFIG_HOTPLUG_CPU kernel configuration
+>>   option.
+>> @@ -750,8 +751,9 @@ file can be used in a udev rule as follows:
+>>    SUBSYSTEM=="cpu", ATTRS{crash_hotplug}=="1", GOTO="kdump_reload_end"
+>>   
+>>   For a CPU hot un/plug event, if the architecture supports kernel updates
+>> -of the elfcorehdr (which contains the list of CPUs), then the rule skips
+>> -the unload-then-reload of the kdump capture kernel.
+>> +of the elfcorehdr (which contains the list of CPUs) and other relevant
+>> +kexec segments, then the rule skips the unload-then-reload of the kdump
+>> +capture kernel.
+>>   
+>>   Kernel Inline Documentations Reference
+>>   ======================================
+>> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+>> index 63cf89393c6e..64dad01e260b 100644
+>> --- a/kernel/crash_core.c
+>> +++ b/kernel/crash_core.c
+>> @@ -520,18 +520,25 @@ int crash_check_hotplug_support(void)
+>>   }
+>>   
+>>   /*
+>> - * To accurately reflect hot un/plug changes of cpu and memory resources
+>> - * (including onling and offlining of those resources), the elfcorehdr
+>> - * (which is passed to the crash kernel via the elfcorehdr= parameter)
+>> - * must be updated with the new list of CPUs and memories.
+>> + * To accurately reflect hot un/plug changes of CPU and Memory resources
+>> + * (including onling and offlining of those resources), the relevant
+>> + * kexec segments must be updated with latest CPU and Memory resources.
+>>    *
+>> - * In order to make changes to elfcorehdr, two conditions are needed:
+>> - * First, the segment containing the elfcorehdr must be large enough
+>> - * to permit a growing number of resources; the elfcorehdr memory size
+>> - * is based on NR_CPUS_DEFAULT and CRASH_MAX_MEMORY_RANGES.
+>> - * Second, purgatory must explicitly exclude the elfcorehdr from the
+>> - * list of segments it checks (since the elfcorehdr changes and thus
+>> - * would require an update to purgatory itself to update the digest).
+>> + * Architectures must ensure two things for all segments that need
+>> + * updating during hotplug events:
+>> + *
+>> + * 1. Segments must be large enough to accommodate a growing number of
+>> + *    resources.
+>> + * 2. Exclude the segments from SHA verification.
+>> + *
+>> + * For example, on most architectures, the elfcorehdr (which is passed
+>> + * to the crash kernel via the elfcorehdr= parameter) must include the
+>> + * new list of CPUs and memory. To make changes to the elfcorehdr, it
+>> + * should be large enough to permit a growing number of CPU and Memory
+>> + * resources. One can estimate the elfcorehdr memory size based on
+>> + * NR_CPUS_DEFAULT and CRASH_MAX_MEMORY_RANGES. The elfcorehdr is
+>> + * excluded from SHA verification by default if the architecture
+>> + * supports crash hotplug.
+>>    */
+>>   static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu, void *arg)
+>>   {
+>> -- 
+>> 2.45.2
+>>
 
 
