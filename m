@@ -1,296 +1,1082 @@
-Return-Path: <linux-kernel+bounces-280583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3524794CC6C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:39:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D4E94CC71
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3C7928462C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:39:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE0E2846B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9031618E028;
-	Fri,  9 Aug 2024 08:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SAXVnu4Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B30818E047;
+	Fri,  9 Aug 2024 08:40:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AED15AD86
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0631667ED
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723192762; cv=none; b=GgdaiZkKDwquo+2LW+YE2ZCqiXLjDx7ATZ0yDofqqHS3Goz0V0+5E0NHDAsEUnxq+MzP2XLr3wnORvEq38RjzJd29Rp7ydUcQmaoMFJlivlxXfsY7kJilp8xW7apdK83W57lkGUvWKRejNkMQC1hL+Z8kV1QGIOaIzjfygO0XWE=
+	t=1723192821; cv=none; b=JHICuFKPLsFZWAFqGuO0g/kfxa0EE0n78eCEnw3Kul2ZzmV3sYK1GYnuMOB+lVsYzdKWaoD74riBjA2H2B/5zI2o7wosaElwfl/ULmwcCm1RLt6WH1eF5ZZcZkYOxfUezHewZ0U//ZrY/CoPHSWPoLREvEJJAWT1A1aAAr2uotI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723192762; c=relaxed/simple;
-	bh=JuwUpX0a2Ym+Sl4VF/7OFVSP3pMpgmVZrRHcFlsKm1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KwZntYA2Rt8oLg7SG6OkDxuyWKVREQQH6ryV841Lh9XA8VtaFaGg7Lr2XkVUBwcOWJ3ZmUqio8RgG/IfmJbA62vMpJt9mREhwFceuj6CV5Y6qII1L+k04lvUhD7K1RK8pbeR3AIbfWC8ues+e2fgXivG8SoqcZlhyIqnEN6efmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SAXVnu4Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723192759;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=z+ToSUQpRNrqNnb2kQeG6guPd9BITzxrSCGopxzO/qQ=;
-	b=SAXVnu4YoEW4z/72Xg0jv3vOxWZjGsO+U/j/r4BTEkDdT49pB1DN/uBqLUJFF9eoz/aedc
-	2PlATjdSsfWnNFvbnsnhlZPBg9oxNWWMw+/FQ68jvZEj9VkO+ZryURn+qRD5wLNFlxGmK8
-	LXkf1lX6GloC+SVxb+VBUCmq0Y1yu1o=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-453-sU0SsurNOAepBOgER8g1GQ-1; Fri, 09 Aug 2024 04:39:17 -0400
-X-MC-Unique: sU0SsurNOAepBOgER8g1GQ-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ef3133ca88so17671011fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:39:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723192756; x=1723797556;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=z+ToSUQpRNrqNnb2kQeG6guPd9BITzxrSCGopxzO/qQ=;
-        b=wsUrzhNZMRt4BMRigdJi6JHy4UXMwNcabDZsRThO6Y7bl9u35Z/zh2KjlByub3llcz
-         kDbrqxwJFIWz7acatW7o672DiEmR44wPjetMwfDEJwZ7Fplr+CplOSeYWp0GR3ke6Wx0
-         sqMqgyjOUbJQaZNzZAYJdRMwo/QYO6ZSqhyiDKm204iotO4/ebSfnGB4qSpBgZbhAJrd
-         pwDVeSxzNS8QG6mQN2KIif9ElWTQrJcaP0JRFhUkqtWbPN9JKcQf5vBxnYjTsTlugMAE
-         tGZBBfPHmj5gcZmDwcbbut4F/N7hQqC+irHx185VDOS5nakwyroa45FjEI4SHA4p22b2
-         zpYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVy+TDoDVdLlQ58WS8RN/2YRrDJ+nGcA0XzAZA5/ijHIdwbP8G3qZWwOylC+ngzErBMsPfYKBscB8JBiWDhV3Ayu6LU94b0k3BZv/kM
-X-Gm-Message-State: AOJu0Yyrb7QrWJixPM7S4oHuPQLbjYZ8jdtn1DvFZsGfuq7mIaHMjZHE
-	25R1Aq4R621jxTa5aUNg+fLTa13TBWrjoyOQathF8YA/v4+EH75DDbiDiHPegEPppXknFv/vHhs
-	Wd0qXQnPFLTd4ScDI9yQh4aQxYvEl9jrcdspDxmJJKzgb2hZBxEgaqkWVQK2S3Q==
-X-Received: by 2002:a05:651c:b26:b0:2f1:6a30:6754 with SMTP id 38308e7fff4ca-2f1a6d0c2d9mr8833701fa.12.1723192755801;
-        Fri, 09 Aug 2024 01:39:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE36z+712f1V5/4zo9WFhPBJlxbuRa+wV6+Jnz9fwuLg/xYsUfvQl66wlZtbxzLT9zavwqFew==
-X-Received: by 2002:a05:651c:b26:b0:2f1:6a30:6754 with SMTP id 38308e7fff4ca-2f1a6d0c2d9mr8833501fa.12.1723192755161;
-        Fri, 09 Aug 2024 01:39:15 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c71c:4e00:b097:7075:f6ba:300a? (p200300cbc71c4e00b0977075f6ba300a.dip0.t-ipconnect.de. [2003:cb:c71c:4e00:b097:7075:f6ba:300a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059a564asm118053785e9.32.2024.08.09.01.39.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 01:39:14 -0700 (PDT)
-Message-ID: <537d7a30-2ad8-4c31-9ad3-ad86f1a7b519@redhat.com>
-Date: Fri, 9 Aug 2024 10:39:13 +0200
+	s=arc-20240116; t=1723192821; c=relaxed/simple;
+	bh=YeWcsVhAI5IbdKfKAJpi4EoOtTWyC+GL4v1/V0VR1+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6zhot1eXHRDPRlS8VD8m0P127OrK0zYC/Z8Ve3obGGOxUil3ZYYS6JnJCxp0J+4ieKc47tMyqlPFjN6g3hqnmTIZ5xExu4rVXYhW9zNvYHJpbP/WfHtHrUULWb3suSkoGag0zILUGtNYXxkoBu/F0+Ve3UH/tFxVHhYxGMKtb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1scLAJ-000893-Jy; Fri, 09 Aug 2024 10:40:03 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1scLAI-005ci6-6r; Fri, 09 Aug 2024 10:40:02 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1scLAI-00AjyP-0H;
+	Fri, 09 Aug 2024 10:40:02 +0200
+Date: Fri, 9 Aug 2024 10:40:02 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: David Jander <david@protonic.nl>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] arm: dts: st: Add MECIO1 and MECT1S board variants
+Message-ID: <ZrXV4l0a6vGhSzaI@pengutronix.de>
+References: <20240807072842.3249106-1-o.rempel@pengutronix.de>
+ <20240807072842.3249106-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
-To: Ryan Roberts <ryan.roberts@arm.com>, Barry Song <21cnbao@gmail.com>,
- akpm@linux-foundation.org, linux-mm@kvack.org
-Cc: chrisl@kernel.org, kaleshsingh@google.com, kasong@tencent.com,
- linux-kernel@vger.kernel.org, ioworker0@gmail.com,
- baolin.wang@linux.alibaba.com, ziy@nvidia.com, hanchuanhua@oppo.com,
- Barry Song <v-songbaohua@oppo.com>
-References: <20240808010457.228753-1-21cnbao@gmail.com>
- <20240808010457.228753-2-21cnbao@gmail.com>
- <e9f82fd8-e1da-49ea-a735-b174575c02bc@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <e9f82fd8-e1da-49ea-a735-b174575c02bc@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240807072842.3249106-2-o.rempel@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 09.08.24 10:13, Ryan Roberts wrote:
-> On 08/08/2024 02:04, Barry Song wrote:
->> From: Barry Song <v-songbaohua@oppo.com>
->>
->> When a new anonymous mTHP is added to the rmap, we increase the count.
->> We reduce the count whenever an mTHP is completely unmapped.
->>
->> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
->> ---
->>   Documentation/admin-guide/mm/transhuge.rst |  5 +++++
->>   include/linux/huge_mm.h                    | 15 +++++++++++++--
->>   mm/huge_memory.c                           |  2 ++
->>   mm/rmap.c                                  |  3 +++
->>   4 files changed, 23 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->> index 058485daf186..715f181543f6 100644
->> --- a/Documentation/admin-guide/mm/transhuge.rst
->> +++ b/Documentation/admin-guide/mm/transhuge.rst
->> @@ -527,6 +527,11 @@ split_deferred
->>           it would free up some memory. Pages on split queue are going to
->>           be split under memory pressure, if splitting is possible.
->>   
->> +anon_num
->> +       the number of anon huge pages we have in the whole system.
->> +       These huge pages could be still entirely mapped and have partially
->> +       unmapped and unused subpages.
+I'll do the same rework as i did for the prtt1* - referring pin control
+subnodes directly to avoid regressions
+
+On Wed, Aug 07, 2024 at 09:28:42AM +0200, Oleksij Rempel wrote:
+> From: David Jander <david@protonic.nl>
 > 
-> nit: "entirely mapped and have partially unmapped and unused subpages" ->
-> "entirely mapped or have partially unmapped/unused subpages"
+> Introduce device tree support for the MECIO1 and MECT1S board variants.
+> MECIO1 is an I/O and motor control board used in blood sample analysis
+> machines. MECT1S is a 1000Base-T1 switch for internal machine networks
+> of blood sample analysis machines.
 > 
->> +
->>   As the system ages, allocating huge pages may be expensive as the
->>   system uses memory compaction to copy data around memory to free a
->>   huge page for use. There are some counters in ``/proc/vmstat`` to help
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index e25d9ebfdf89..294c348fe3cc 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -281,6 +281,7 @@ enum mthp_stat_item {
->>   	MTHP_STAT_SPLIT,
->>   	MTHP_STAT_SPLIT_FAILED,
->>   	MTHP_STAT_SPLIT_DEFERRED,
->> +	MTHP_STAT_NR_ANON,
->>   	__MTHP_STAT_COUNT
->>   };
->>   
->> @@ -291,14 +292,24 @@ struct mthp_stat {
->>   #ifdef CONFIG_SYSFS
->>   DECLARE_PER_CPU(struct mthp_stat, mthp_stats);
->>   
->> -static inline void count_mthp_stat(int order, enum mthp_stat_item item)
->> +static inline void mod_mthp_stat(int order, enum mthp_stat_item item, int delta)
->>   {
->>   	if (order <= 0 || order > PMD_ORDER)
->>   		return;
->>   
->> -	this_cpu_inc(mthp_stats.stats[order][item]);
->> +	this_cpu_add(mthp_stats.stats[order][item], delta);
->> +}
->> +
->> +static inline void count_mthp_stat(int order, enum mthp_stat_item item)
->> +{
->> +	mod_mthp_stat(order, item, 1);
->>   }
->> +
->>   #else
->> +static inline void mod_mthp_stat(int order, enum mthp_stat_item item, int delta)
->> +{
->> +}
->> +
->>   static inline void count_mthp_stat(int order, enum mthp_stat_item item)
->>   {
->>   }
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 697fcf89f975..b6bc2a3791e3 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -578,6 +578,7 @@ DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
->>   DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
->>   DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
->>   DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
->> +DEFINE_MTHP_STAT_ATTR(anon_num, MTHP_STAT_NR_ANON);
->>   
->>   static struct attribute *stats_attrs[] = {
->>   	&anon_fault_alloc_attr.attr,
->> @@ -591,6 +592,7 @@ static struct attribute *stats_attrs[] = {
->>   	&split_attr.attr,
->>   	&split_failed_attr.attr,
->>   	&split_deferred_attr.attr,
->> +	&anon_num_attr.attr,
->>   	NULL,
->>   };
->>   
->> diff --git a/mm/rmap.c b/mm/rmap.c
->> index 901950200957..2b722f26224c 100644
->> --- a/mm/rmap.c
->> +++ b/mm/rmap.c
->> @@ -1467,6 +1467,7 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
->>   	}
->>   
->>   	__folio_mod_stat(folio, nr, nr_pmdmapped);
->> +	mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, 1);
->>   }
->>   
->>   static __always_inline void __folio_add_file_rmap(struct folio *folio,
->> @@ -1582,6 +1583,8 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
->>   	    list_empty(&folio->_deferred_list))
->>   		deferred_split_folio(folio);
->>   	__folio_mod_stat(folio, -nr, -nr_pmdmapped);
->> +	if (folio_test_anon(folio) && !atomic_read(mapped))
+> Signed-off-by: David Jander <david@protonic.nl>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+> changes v2:
+> - move stm32.yaml changes to a separate patch
+> - remove switch reset for now. sja1105 validation should be fixed first
 > 
-> Agree that atomic_read() is dodgy here.
+>  arch/arm/boot/dts/st/Makefile                 |   3 +
+>  arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts |  48 ++
+>  arch/arm/boot/dts/st/stm32mp151c-mect1s.dts   | 295 ++++++++++
+>  arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts |  48 ++
+>  .../arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi | 533 ++++++++++++++++++
+>  5 files changed, 927 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts
+>  create mode 100644 arch/arm/boot/dts/st/stm32mp151c-mect1s.dts
+>  create mode 100644 arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts
+>  create mode 100644 arch/arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi
 > 
-> Not sure I fully understand why David prefers to do the unaccounting at
-> free-time though? It feels unbalanced to me to increment when first mapped but
-> decrement when freed. Surely its safer to either use alloc/free or use first
-> map/last map?
-
-Doing it when we set/clear folio->mapping is straight forward.
-
-Anon folios currently come to live when we first map them, and they stay 
-that way until we free them.
-
-In the future, we'll have to move that anon handling further out, when 
-if have to allocate anon-specific memdesc ahead of time, then, it will 
-be clued to that lifetime.
-
+> diff --git a/arch/arm/boot/dts/st/Makefile b/arch/arm/boot/dts/st/Makefile
+> index 015903d09323f..eab3a9bd435f5 100644
+> --- a/arch/arm/boot/dts/st/Makefile
+> +++ b/arch/arm/boot/dts/st/Makefile
+> @@ -35,8 +35,11 @@ dtb-$(CONFIG_ARCH_STM32) += \
+>  	stm32mp151a-prtt1c.dtb \
+>  	stm32mp151a-prtt1s.dtb \
+>  	stm32mp151a-dhcor-testbench.dtb \
+> +	stm32mp151c-mecio1r0.dtb \
+> +	stm32mp151c-mect1s.dtb \
+>  	stm32mp153c-dhcom-drc02.dtb \
+>  	stm32mp153c-dhcor-drc-compact.dtb \
+> +	stm32mp153c-mecio1r1.dtb \
+>  	stm32mp157a-avenger96.dtb \
+>  	stm32mp157a-dhcor-avenger96.dtb \
+>  	stm32mp157a-dk1.dtb \
+> diff --git a/arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts b/arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts
+> new file mode 100644
+> index 0000000000000..a5ea1431c3991
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/st/stm32mp151c-mecio1r0.dts
+> @@ -0,0 +1,48 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> +/*
+> + * Copyright (C) Protonic Holland
+> + * Author: David Jander <david@protonic.nl>
+> + */
+> +/dts-v1/;
+> +
+> +#include "stm32mp151.dtsi"
+> +#include "stm32mp15xc.dtsi"
+> +#include "stm32mp15-pinctrl.dtsi"
+> +#include "stm32mp15xxaa-pinctrl.dtsi"
+> +#include "stm32mp15x-mecio1-io.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+> +
+> +/ {
+> +	model = "Protonic MECIO1r0";
+> +	compatible = "prt,mecio1r0", "st,stm32mp151";
+> +
+> +	led {
+> +		compatible = "gpio-leds";
+> +
+> +		led-0 {
+> +			color = <LED_COLOR_ID_RED>;
+> +			function = LED_FUNCTION_DEBUG;
+> +			gpios = <&gpioa 13 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +		led-1 {
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			function = LED_FUNCTION_DEBUG;
+> +			gpios = <&gpioa 14 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +};
+> +
+> +&clk_hse {
+> +	clock-frequency = <25000000>;
+> +};
+> +
+> +&ethernet0 {
+> +	assigned-clocks = <&rcc ETHCK_K>, <&rcc PLL3_Q>;
+> +	assigned-clock-parents = <&rcc PLL3_Q>;
+> +	assigned-clock-rates = <125000000>; /* Clock PLL3 to 625Mhz in tf-a. */
+> +	st,eth-clk-sel;
+> +};
+> diff --git a/arch/arm/boot/dts/st/stm32mp151c-mect1s.dts b/arch/arm/boot/dts/st/stm32mp151c-mect1s.dts
+> new file mode 100644
+> index 0000000000000..bffe6fc66d975
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/st/stm32mp151c-mect1s.dts
+> @@ -0,0 +1,295 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> +/*
+> + * Copyright (C) Protonic Holland
+> + * Author: David Jander <david@protonic.nl>
+> + */
+> +/dts-v1/;
+> +
+> +#include "stm32mp151.dtsi"
+> +#include "stm32mp15xc.dtsi"
+> +#include "stm32mp15-pinctrl.dtsi"
+> +#include "stm32mp15xxaa-pinctrl.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+> +
+> +/ {
+> +	model = "Protonic MECT1S";
+> +	compatible = "prt,mect1s", "st,stm32mp151";
+> +
+> +	chosen {
+> +		stdout-path = "serial0:1500000n8";
+> +	};
+> +
+> +	aliases {
+> +		serial0 = &uart4;
+> +		ethernet0 = &ethernet0;
+> +		ethernet1 = &ethernet1;
+> +		ethernet2 = &ethernet2;
+> +		ethernet3 = &ethernet3;
+> +		ethernet4 = &ethernet4;
+> +	};
+> +
+> +	v3v3: regulator-v3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "v3v3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +
+> +	v5v: regulator-v5v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "v5v";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	led {
+> +		compatible = "gpio-leds";
+> +
+> +		led-0 {
+> +			color = <LED_COLOR_ID_RED>;
+> +			function = LED_FUNCTION_DEBUG;
+> +			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
+> +		};
+> +
+> +		led-1 {
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			function = LED_FUNCTION_DEBUG;
+> +			gpios = <&gpioa 14 GPIO_ACTIVE_LOW>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +};
+> +
+> +&clk_hse {
+> +	clock-frequency = <24000000>;
+> +};
+> +
+> +&clk_lse {
+> +	status = "disabled";
+> +};
+> +
+> +&ethernet0 {
+> +	status = "okay";
+> +	pinctrl-0 = <&ethernet0_rmii_pins_a>;
+> +	pinctrl-1 = <&ethernet0_rmii_sleep_pins_a>;
+> +	pinctrl-names = "default", "sleep";
+> +	phy-mode = "rmii";
+> +	max-speed = <100>;
+> +	st,eth-clk-sel;
+> +
+> +	fixed-link {
+> +		speed = <100>;
+> +		full-duplex;
+> +	};
+> +
+> +	mdio0: mdio {
+> +		 #address-cells = <1>;
+> +		 #size-cells = <0>;
+> +		 compatible = "snps,dwmac-mdio";
+> +	};
+> +};
+> +
+> +&ethernet0_rmii_pins_a {
+> +	pins1 {
+> +		pinmux = <STM32_PINMUX('B', 12, AF11)>, /* ETH1_RMII_TXD0 */
+> +			 <STM32_PINMUX('B', 13, AF11)>, /* ETH1_RMII_TXD1 */
+> +			 <STM32_PINMUX('B', 11, AF11)>, /* ETH1_RMII_TX_EN */
+> +			 <STM32_PINMUX('A', 2, AF11)>,  /* ETH1_MDIO */
+> +			 <STM32_PINMUX('C', 1, AF11)>;  /* ETH1_MDC */
+> +	};
+> +	pins2 {
+> +		pinmux = <STM32_PINMUX('C', 4, AF11)>,  /* ETH1_RMII_RXD0 */
+> +			 <STM32_PINMUX('C', 5, AF11)>,  /* ETH1_RMII_RXD1 */
+> +			 <STM32_PINMUX('A', 1, AF11)>,  /* ETH1_RMII_REF_CLK input */
+> +			 <STM32_PINMUX('A', 7, AF11)>;  /* ETH1_RMII_CRS_DV */
+> +	};
+> +};
+> +
+> +&ethernet0_rmii_sleep_pins_a {
+> +	pins1 {
+> +		pinmux = <STM32_PINMUX('B', 12, ANALOG)>, /* ETH1_RMII_TXD0 */
+> +			 <STM32_PINMUX('B', 13, ANALOG)>, /* ETH1_RMII_TXD1 */
+> +			 <STM32_PINMUX('B', 11, ANALOG)>, /* ETH1_RMII_TX_EN */
+> +			 <STM32_PINMUX('C', 4, ANALOG)>,  /* ETH1_RMII_RXD0 */
+> +			 <STM32_PINMUX('C', 5, ANALOG)>,  /* ETH1_RMII_RXD1 */
+> +			 <STM32_PINMUX('A', 1, ANALOG)>,  /* ETH1_RMII_REF_CLK */
+> +			 <STM32_PINMUX('A', 7, ANALOG)>;  /* ETH1_RMII_CRS_DV */
+> +	};
+> +};
+> +
+> +&mdio0 {
+> +	/* All this DP83TG720R PHYs can't be probed before switch@0 is
+> +	 * probed so we need to use compatible with PHYid
+> +	 */
+> +	/* TI DP83TG720R */
+> +	t1_phy0: ethernet-phy@8 {
+> +		compatible = "ethernet-phy-id2000.a284";
+> +		reg = <8>;
+> +		interrupts-extended = <&gpioi 5 IRQ_TYPE_LEVEL_LOW>;
+> +		reset-gpios = <&gpioh 13 GPIO_ACTIVE_LOW>;
+> +		reset-assert-us = <10>;
+> +		reset-deassert-us = <35>;
+> +	};
+> +
+> +	/* TI DP83TG720R */
+> +	t1_phy1: ethernet-phy@c {
+> +		compatible = "ethernet-phy-id2000.a284";
+> +		reg = <12>;
+> +		interrupts-extended = <&gpioj 0 IRQ_TYPE_LEVEL_LOW>;
+> +		reset-gpios = <&gpioh 14 GPIO_ACTIVE_LOW>;
+> +		reset-assert-us = <10>;
+> +		reset-deassert-us = <35>;
+> +	};
+> +
+> +	/* TI DP83TG720R */
+> +	t1_phy2: ethernet-phy@4 {
+> +		compatible = "ethernet-phy-id2000.a284";
+> +		reg = <4>;
+> +		interrupts-extended = <&gpioi 7 IRQ_TYPE_LEVEL_LOW>;
+> +		reset-gpios = <&gpioh 15 GPIO_ACTIVE_LOW>;
+> +		reset-assert-us = <10>;
+> +		reset-deassert-us = <35>;
+> +	};
+> +
+> +	/* TI DP83TG720R */
+> +	t1_phy3: ethernet-phy@d {
+> +		compatible = "ethernet-phy-id2000.a284";
+> +		reg = <13>;
+> +		interrupts-extended = <&gpioi 15 IRQ_TYPE_LEVEL_LOW>;
+> +		reset-gpios = <&gpioi 13 GPIO_ACTIVE_LOW>;
+> +		reset-assert-us = <10000>;
+> +		reset-deassert-us = <1000>;
+> +	};
+> +};
+> +
+> +&qspi {
+> +	pinctrl-names = "default", "sleep";
+> +	pinctrl-0 = <&qspi_clk_pins_a
+> +		     &qspi_bk1_pins_a
+> +		     &qspi_cs1_pins_a>;
+> +	pinctrl-1 = <&qspi_clk_sleep_pins_a
+> +		     &qspi_bk1_sleep_pins_a
+> +		     &qspi_cs1_sleep_pins_a>;
+> +	status = "okay";
+> +
+> +	flash@0 {
+> +		compatible = "jedec,spi-nor";
+> +		reg = <0>;
+> +		spi-rx-bus-width = <4>;
+> +		spi-max-frequency = <1000000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +	};
+> +};
+> +
+> +&qspi_bk1_pins_a {
+> +	pins {
+> +		/delete-property/ bias-disable;
+> +		bias-pull-up;
+> +		drive-push-pull;
+> +		slew-rate = <1>;
+> +	};
+> +};
+> +
+> +&spi2 {
+> +	pinctrl-0 = <&spi2_pins_b>;
+> +	pinctrl-names = "default";
+> +	cs-gpios = <&gpioj 3 GPIO_ACTIVE_LOW>;
+> +	/delete-property/dmas;
+> +	/delete-property/dma-names;
+> +	status = "okay";
+> +
+> +	switch@0 {
+> +		compatible = "nxp,sja1105q";
+> +		reg = <0>;
+> +		spi-max-frequency = <1000000>;
+> +		spi-rx-delay-us = <1>;
+> +		spi-tx-delay-us = <1>;
+> +		spi-cpha;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			ethernet1: port@0 {
+> +				reg = <0>;
+> +				label = "t10";
+> +				phy-mode = "rgmii-id";
+> +				phy-handle = <&t1_phy0>;
+> +			};
+> +
+> +			ethernet2: port@1 {
+> +				reg = <1>;
+> +				label = "t11";
+> +				phy-mode = "rgmii-id";
+> +				phy-handle = <&t1_phy1>;
+> +			};
+> +
+> +			ethernet3: port@2 {
+> +				reg = <2>;
+> +				label = "t12";
+> +				phy-mode = "rgmii-id";
+> +				phy-handle = <&t1_phy2>;
+> +			};
+> +
+> +			ethernet4: port@3 {
+> +				reg = <3>;
+> +				label = "t13";
+> +				phy-mode = "rgmii-id";
+> +				phy-handle = <&t1_phy3>;
+> +			};
+> +
+> +			port@4 {
+> +				reg = <4>;
+> +				label = "cpu";
+> +				ethernet = <&ethernet0>;
+> +				phy-mode = "rmii";
+> +
+> +				/* RGMII mode is not working properly, using RMII instead. */
+> +				fixed-link {
+> +					speed = <100>;
+> +					full-duplex;
+> +				};
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&uart4 {
+> +	pinctrl-names = "default", "sleep", "idle";
+> +	pinctrl-0 = <&uart4_pins_a>;
+> +	pinctrl-1 = <&uart4_sleep_pins_a>;
+> +	pinctrl-2 = <&uart4_idle_pins_a>;
+> +	/delete-property/dmas;
+> +	/delete-property/dma-names;
+> +	status = "okay";
+> +};
+> +
+> +&usbh_ehci {
+> +	status = "okay";
+> +};
+> +
+> +&usbotg_hs {
+> +	dr_mode = "host";
+> +	pinctrl-0 = <&usbotg_hs_pins_a>;
+> +	pinctrl-names = "default";
+> +	phys = <&usbphyc_port1 0>;
+> +	phy-names = "usb2-phy";
+> +	vbus-supply = <&v5v>;
+> +	status = "okay";
+> +};
+> +
+> +&usbphyc {
+> +	status = "okay";
+> +};
+> +
+> +&usbphyc_port0 {
+> +	phy-supply = <&v3v3>;
+> +};
+> +
+> +&usbphyc_port1 {
+> +	phy-supply = <&v3v3>;
+> +};
+> diff --git a/arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts b/arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts
+> new file mode 100644
+> index 0000000000000..16b814c19350c
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/st/stm32mp153c-mecio1r1.dts
+> @@ -0,0 +1,48 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> +/*
+> + * Copyright (C) Protonic Holland
+> + * Author: David Jander <david@protonic.nl>
+> + */
+> +/dts-v1/;
+> +
+> +#include "stm32mp153.dtsi"
+> +#include "stm32mp15xc.dtsi"
+> +#include "stm32mp15-pinctrl.dtsi"
+> +#include "stm32mp15xxaa-pinctrl.dtsi"
+> +#include "stm32mp15x-mecio1-io.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+> +
+> +/ {
+> +	model = "Protonic MECIO1r1";
+> +	compatible = "prt,mecio1r1", "st,stm32mp153";
+> +
+> +	led {
+> +		compatible = "gpio-leds";
+> +
+> +		led-0 {
+> +			color = <LED_COLOR_ID_RED>;
+> +			function = LED_FUNCTION_DEBUG;
+> +			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
+> +		};
+> +
+> +		led-1 {
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			function = LED_FUNCTION_DEBUG;
+> +			gpios = <&gpioa 14 GPIO_ACTIVE_LOW>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +};
+> +
+> +&clk_hse {
+> +	clock-frequency = <24000000>;
+> +};
+> +
+> +&m_can1 {
+> +	pinctrl-names = "default", "sleep";
+> +	pinctrl-0 = <&m_can1_pins_b>;
+> +	pinctrl-1 = <&m_can1_sleep_pins_b>;
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi b/arch/arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi
+> new file mode 100644
+> index 0000000000000..af260ff3765db
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/st/stm32mp15x-mecio1-io.dtsi
+> @@ -0,0 +1,533 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> +/*
+> + * Copyright (C) Protonic Holland
+> + * Author: David Jander <david@protonic.nl>
+> + */
+> +
+> +#include "stm32mp15xc.dtsi"
+> +#include "stm32mp15-pinctrl.dtsi"
+> +#include "stm32mp15xxaa-pinctrl.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +
+> +/ {
+> +	chosen {
+> +		stdout-path = "serial0:1500000n8";
+> +	};
+> +
+> +	aliases {
+> +		serial0 = &uart4;
+> +		ethernet0 = &ethernet0;
+> +		spi1 = &spi1;
+> +		spi2 = &spi2;
+> +		spi3 = &spi3;
+> +		spi4 = &spi4;
+> +		spi5 = &spi5;
+> +		spi6 = &spi6;
+> +	};
+> +
+> +	memory@c0000000 {
+> +		device_type = "memory";
+> +		reg = <0xC0000000 0x10000000>;
+> +	};
+> +
+> +	reserved-memory {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		mcuram2: mcuram2@10000000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x10000000 0x40000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev0vring0: vdev0vring0@10040000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x10040000 0x1000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev0vring1: vdev0vring1@10041000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x10041000 0x1000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev0buffer: vdev0buffer@10042000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x10042000 0x4000>;
+> +			no-map;
+> +		};
+> +
+> +		mcuram: mcuram@30000000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x30000000 0x40000>;
+> +			no-map;
+> +		};
+> +
+> +		retram: retram@38000000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x38000000 0x10000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+> +	v3v3: regulator-v3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "v3v3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +
+> +	v5v: regulator-v5v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "v5v";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		regulator-always-on;
+> +	};
+> +};
+> +
+> +&adc {
+> +	/* ANA0, ANA1 are dedicated pins and don't need pinctrl: only in6. */
+> +	pinctrl-0 = <&adc12_pins_mecsbc>;
+> +	pinctrl-names = "default";
+> +	vdd-supply = <&v3v3>;
+> +	vdda-supply = <&v3v3>;
+> +	vref-supply = <&v3v3>;
+> +	status = "okay";
+> +};
+> +
+> +&adc1 {
+> +	status = "okay";
+> +
+> +	channel@0 {
+> +		reg = <0>;
+> +		/* 16.5 ck_cycles sampling time */
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "p24v_stp";
+> +	};
+> +
+> +	channel@1 {
+> +		reg = <1>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "p24v_hpdcm";
+> +	};
+> +
+> +	channel@2 {
+> +		reg = <2>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "ain0";
+> +	};
+> +
+> +	channel@3 {
+> +		reg = <3>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "hpdcm1_i2";
+> +	};
+> +
+> +	channel@5 {
+> +		reg = <5>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "hpout1_i";
+> +	};
+> +
+> +	channel@6 {
+> +		reg = <6>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "ain1";
+> +	};
+> +
+> +	channel@9 {
+> +		reg = <9>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "hpout0_i";
+> +	};
+> +
+> +	channel@10 {
+> +		reg = <10>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "phint0_ain";
+> +	};
+> +
+> +	channel@13 {
+> +		reg = <13>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "phint1_ain";
+> +	};
+> +
+> +	channel@15 {
+> +		reg = <15>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "hpdcm0_i1";
+> +	};
+> +
+> +	channel@16 {
+> +		reg = <16>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "lsin";
+> +	};
+> +
+> +	channel@18 {
+> +		reg = <18>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "hpdcm0_i2";
+> +	};
+> +
+> +	channel@19 {
+> +		reg = <19>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "hpdcm1_i1";
+> +	};
+> +};
+> +
+> +&adc2 {
+> +	status = "okay";
+> +
+> +	channel@2 {
+> +		reg = <2>;
+> +		/* 16.5 ck_cycles sampling time */
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "ain2";
+> +	};
+> +
+> +	channel@6 {
+> +		reg = <6>;
+> +		st,min-sample-time-ns = <5000>;
+> +		label = "ain3";
+> +	};
+> +};
+> +
+> +&ethernet0 {
+> +	status = "okay";
+> +	pinctrl-0 = <&ethernet0_rgmii_pins_x>;
+> +	pinctrl-1 = <&ethernet0_rgmii_sleep_pins_x>;
+> +	pinctrl-names = "default", "sleep";
+> +	phy-mode = "rgmii-id";
+> +	max-speed = <1000>;
+> +	phy-handle = <&phy0>;
+> +	st,eth-clk-sel;
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		compatible = "snps,dwmac-mdio";
+> +		phy0: ethernet-phy@8 {
+> +			reg = <8>;
+> +			interrupts-extended = <&gpiog 7 IRQ_TYPE_LEVEL_LOW>;
+> +			reset-gpios = <&gpiog 10 GPIO_ACTIVE_LOW>;
+> +			reset-assert-us = <10>;
+> +			reset-deassert-us = <35>;
+> +		};
+> +	};
+> +};
+> +
+> +&gpiod {
+> +	gpio-line-names = "", "", "", "",
+> +			  "", "", "", "",
+> +			  "", "", "", "",
+> +			  "STP_RESETN", "STP_ENABLEN", "HPOUT0", "HPOUT0_ALERTN";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_hog_d_mecsbc>;
+> +};
+> +
+> +&gpioe {
+> +	gpio-line-names = "HPOUT0_RESETN", "HPOUT1", "HPOUT1_ALERTN", "",
+> +			  "", "", "HPOUT1_RESETN",
+> +			  "LPOUT0", "LPOUT0_ALERTN", "GPOUT0_RESETN",
+> +			  "LPOUT1", "LPOUT1_ALERTN", "GPOUT1_RESETN",
+> +			  "LPOUT2", "LPOUT2_ALERTN", "GPOUT2_RESETN";
+> +};
+> +
+> +&gpiof {
+> +	gpio-line-names = "LPOUT3", "LPOUT3_ALERTN", "GPOUT3_RESETN",
+> +			  "LPOUT4", "LPOUT4_ALERTN", "GPOUT4_RESETN",
+> +			  "", "",
+> +			  "", "", "", "",
+> +			  "", "", "", "";
+> +};
+> +
+> +&gpiog {
+> +	gpio-line-names = "LPOUT5", "LPOUT5_ALERTN", "", "LPOUT5_RESETN",
+> +			  "", "", "", "",
+> +			  "", "", "", "",
+> +			  "", "", "", "";
+> +};
+> +
+> +&gpioh {
+> +	gpio-line-names = "", "", "", "",
+> +			  "", "", "", "",
+> +			  "GPIO0_RESETN", "", "", "",
+> +			  "", "", "", "";
+> +};
+> +
+> +&gpioi {
+> +	gpio-line-names = "", "", "", "",
+> +			  "", "", "", "",
+> +			  "HPDCM0_SLEEPN", "HPDCM1_SLEEPN", "GPIO1_RESETN", "",
+> +			  "", "", "", "";
+> +};
+> +
+> +&gpioj {
+> +	gpio-line-names = "HSIN10", "HSIN11", "HSIN12", "HSIN13",
+> +			  "HSIN14", "HSIN15", "", "",
+> +			  "", "", "", "",
+> +			  "", "RTD_RESETN", "", "";
+> +};
+> +
+> +&gpiok {
+> +	gpio-line-names = "", "", "HSIN0", "HSIN1",
+> +			  "HSIN2", "HSIN3", "HSIN4", "HSIN5";
+> +};
+> +
+> +&gpioz {
+> +	gpio-line-names = "", "", "", "HSIN6",
+> +			  "HSIN7", "HSIN8", "HSIN9", "";
+> +};
+> +
+> +&i2c2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c2_pins_a>;
+> +	pinctrl-1 = <&i2c2_sleep_pins_a>;
+> +	status = "okay";
+> +
+> +	gpio0: gpio@20 {
+> +		compatible = "ti,tca6416";
+> +		reg = <0x20>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		gpio-line-names = "HSIN0_BIAS", "HSIN1_BIAS", "HSIN2_BIAS", "HSIN3_BIAS",
+> +				  "", "", "HSIN_VREF0_LVL", "HSIN_VREF1_LVL",
+> +				  "HSIN4_BIAS", "HSIN5_BIAS", "HSIN6_BIAS", "HSIN9_BIAS",
+> +				  "", "", "", "";
+> +	};
+> +
+> +	gpio1: gpio@21 {
+> +		compatible = "ti,tca6416";
+> +		reg = <0x21>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		gpio-line-names = "HSIN8_BIAS", "HSIN9_BIAS", "HSIN10_BIAS", "HSIN11_BIAS",
+> +				  "", "", "HSIN_VREF2_LVL", "HSIN_VREF3_LVL",
+> +				  "HSIN12_BIAS", "HSIN13_BIAS", "HSIN14_BIAS", "HSIN15_BIAS",
+> +				  "", "", "LSIN8_BIAS", "LSIN9_BIAS";
+> +	};
+> +};
+> +
+> +&qspi {
+> +	pinctrl-names = "default", "sleep";
+> +	pinctrl-0 = <&qspi_clk_pins_a
+> +		     &qspi_bk1_pins_a
+> +		     &qspi_cs1_pins_a>;
+> +	pinctrl-1 = <&qspi_clk_sleep_pins_a
+> +		     &qspi_bk1_sleep_pins_a
+> +		     &qspi_cs1_sleep_pins_a>;
+> +	status = "okay";
+> +
+> +	flash@0 {
+> +		compatible = "jedec,spi-nor";
+> +		reg = <0>;
+> +		spi-rx-bus-width = <4>;
+> +		spi-max-frequency = <104000000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +	};
+> +};
+> +
+> +&qspi_bk1_pins_a {
+> +	pins {
+> +		pinmux = <STM32_PINMUX('F', 8, AF10)>, /* QSPI_BK1_IO0 */
+> +			 <STM32_PINMUX('F', 9, AF10)>, /* QSPI_BK1_IO1 */
+> +			 <STM32_PINMUX('F', 7, AF9)>, /* QSPI_BK1_IO2 */
+> +			 <STM32_PINMUX('F', 6, AF9)>; /* QSPI_BK1_IO3 */
+> +		bias-pull-up;
+> +		drive-push-pull;
+> +		slew-rate = <1>;
+> +	};
+> +};
+> +
+> +&timers1 {
+> +	/delete-property/dmas;
+> +	/delete-property/dma-names;
+> +	status = "okay";
+> +
+> +	hpdcm0_pwm: pwm {
+> +		pinctrl-names = "default", "sleep";
+> +		pinctrl-0 = <&pwm1_pins_mecio1>;
+> +		pinctrl-1 = <&pwm1_sleep_pins_mecio1>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&timers8 {
+> +	/delete-property/dmas;
+> +	/delete-property/dma-names;
+> +	status = "okay";
+> +
+> +	hpdcm1_pwm: pwm {
+> +		pinctrl-names = "default", "sleep";
+> +		pinctrl-0 = <&pwm8_pins_mecio1>;
+> +		pinctrl-1 = <&pwm8_sleep_pins_mecio1>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&uart4 {
+> +	pinctrl-names = "default", "sleep", "idle";
+> +	pinctrl-0 = <&uart4_pins_a>;
+> +	pinctrl-1 = <&uart4_sleep_pins_a>;
+> +	pinctrl-2 = <&uart4_idle_pins_a>;
+> +	/delete-property/dmas;
+> +	/delete-property/dma-names;
+> +	status = "okay";
+> +};
+> +
+> +&uart4_pins_a {
+> +	pins1 {
+> +		pinmux = <STM32_PINMUX('B', 9, AF8)>; /* UART4_TX */
+> +		bias-disable;
+> +		drive-push-pull;
+> +		slew-rate = <0>;
+> +	};
+> +	pins2 {
+> +		pinmux = <STM32_PINMUX('B', 2, AF8)>; /* UART4_RX */
+> +		bias-pull-up;
+> +	};
+> +};
+> +
+> +&usbotg_hs {
+> +	dr_mode = "host";
+> +	pinctrl-0 = <&usbotg_hs_pins_a>;
+> +	pinctrl-names = "default";
+> +	phys = <&usbphyc_port1 0>;
+> +	phy-names = "usb2-phy";
+> +	vbus-supply = <&v5v>;
+> +	status = "okay";
+> +};
+> +
+> +&usbphyc {
+> +	status = "okay";
+> +};
+> +
+> +&usbphyc_port0 {
+> +	phy-supply = <&v3v3>;
+> +};
+> +
+> +&usbphyc_port1 {
+> +	phy-supply = <&v3v3>;
+> +};
+> +
+> +&pinctrl {
+> +	adc12_pins_mecsbc: adc12-ain-mecsbc-0 {
+> +		pins {
+> +			pinmux = <STM32_PINMUX('F', 11, ANALOG)>, /* ADC1_INP2 */
+> +				 <STM32_PINMUX('F', 12, ANALOG)>, /* ADC1_INP6 */
+> +				 <STM32_PINMUX('F', 13, ANALOG)>, /* ADC2_INP2 */
+> +				 <STM32_PINMUX('F', 14, ANALOG)>, /* ADC2_INP6 */
+> +				 <STM32_PINMUX('A', 0, ANALOG)>, /* ADC1_INP16 */
+> +				 <STM32_PINMUX('A', 3, ANALOG)>, /* ADC1_INP15 */
+> +				 <STM32_PINMUX('A', 4, ANALOG)>, /* ADC1_INP18 */
+> +				 <STM32_PINMUX('A', 5, ANALOG)>, /* ADC1_INP19 */
+> +				 <STM32_PINMUX('A', 6, ANALOG)>, /* ADC1_INP3 */
+> +				 <STM32_PINMUX('B', 0, ANALOG)>, /* ADC1_INP9 */
+> +				 <STM32_PINMUX('B', 1, ANALOG)>, /* ADC1_INP5 */
+> +				 <STM32_PINMUX('C', 0, ANALOG)>, /* ADC1_INP10 */
+> +				 <STM32_PINMUX('C', 3, ANALOG)>; /* ADC1_INP13 */
+> +		};
+> +	};
+> +
+> +	pinctrl_hog_d_mecsbc: hog-d-0 {
+> +		pins {
+> +			pinmux = <STM32_PINMUX('D', 12, GPIO)>; /* STP_RESETn */
+> +			bias-pull-up;
+> +			drive-push-pull;
+> +			slew-rate = <0>;
+> +		};
+> +	};
+> +
+> +	pwm1_pins_mecio1: pwm1-mecio1-0 {
+> +		pins {
+> +			pinmux = <STM32_PINMUX('A', 8, AF1)>, /* TIM1_CH1 */
+> +				 <STM32_PINMUX('A', 8, AF1)>; /* TIM1_CH2 */
+> +			bias-pull-down;
+> +			drive-push-pull;
+> +			slew-rate = <0>;
+> +		};
+> +	};
+> +
+> +	pwm1_sleep_pins_mecio1: pwm1-sleep-mecio1-0 {
+> +		pins {
+> +			pinmux = <STM32_PINMUX('A', 8, ANALOG)>, /* TIM1_CH1 */
+> +				 <STM32_PINMUX('A', 8, ANALOG)>; /* TIM1_CH2 */
+> +		};
+> +	};
+> +
+> +	pwm8_pins_mecio1: pwm8-mecio1-0 {
+> +		pins {
+> +			pinmux = <STM32_PINMUX('I', 5, AF3)>, /* TIM8_CH1 */
+> +				 <STM32_PINMUX('I', 6, AF3)>; /* TIM8_CH2 */
+> +			bias-pull-down;
+> +			drive-push-pull;
+> +			slew-rate = <0>;
+> +		};
+> +	};
+> +
+> +	pwm8_sleep_pins_mecio1: pwm8-sleep-mecio1-0 {
+> +		pins {
+> +			pinmux = <STM32_PINMUX('I', 5, ANALOG)>, /* TIM8_CH1 */
+> +				 <STM32_PINMUX('I', 6, ANALOG)>; /* TIM8_CH2 */
+> +		};
+> +	};
+> +
+> +	ethernet0_rgmii_pins_x: rgmii-0 {
+> +		pins1 {
+> +			pinmux = <STM32_PINMUX('G', 5, AF11)>, /* ETH_RGMII_CLK125 */
+> +				 <STM32_PINMUX('G', 4, AF11)>, /* ETH_RGMII_GTX_CLK */
+> +				 <STM32_PINMUX('B', 12, AF11)>, /* ETH_RGMII_TXD0 */
+> +				 <STM32_PINMUX('B', 13, AF11)>, /* ETH_RGMII_TXD1 */
+> +				 <STM32_PINMUX('C', 2, AF11)>, /* ETH_RGMII_TXD2 */
+> +				 <STM32_PINMUX('B', 8, AF11)>, /* ETH_RGMII_TXD3 */
+> +				 <STM32_PINMUX('B', 11, AF11)>, /* ETH_RGMII_TX_CTL */
+> +				 <STM32_PINMUX('C', 1, AF11)>; /* ETH_MDC */
+> +			bias-disable;
+> +			drive-push-pull;
+> +			slew-rate = <3>;
+> +		};
+> +		pins2 {
+> +			pinmux = <STM32_PINMUX('A', 2, AF11)>; /* ETH_MDIO */
+> +			bias-disable;
+> +			drive-push-pull;
+> +			slew-rate = <0>;
+> +		};
+> +		pins3 {
+> +			pinmux = <STM32_PINMUX('C', 4, AF11)>, /* ETH_RGMII_RXD0 */
+> +				 <STM32_PINMUX('C', 5, AF11)>, /* ETH_RGMII_RXD1 */
+> +				 <STM32_PINMUX('H', 6, AF11)>, /* ETH_RGMII_RXD2 */
+> +				 <STM32_PINMUX('H', 7, AF11)>, /* ETH_RGMII_RXD3 */
+> +				 <STM32_PINMUX('A', 1, AF11)>, /* ETH_RGMII_RX_CLK */
+> +				 <STM32_PINMUX('A', 7, AF11)>; /* ETH_RGMII_RX_CTL */
+> +			bias-disable;
+> +		};
+> +	};
+> +
+> +	ethernet0_rgmii_sleep_pins_x: rgmii-sleep-0 {
+> +		pins1 {
+> +			pinmux = <STM32_PINMUX('G', 5, ANALOG)>, /* ETH_RGMII_CLK125 */
+> +				 <STM32_PINMUX('G', 4, ANALOG)>, /* ETH_RGMII_GTX_CLK */
+> +				 <STM32_PINMUX('B', 12, ANALOG)>, /* ETH_RGMII_TXD0 */
+> +				 <STM32_PINMUX('B', 13, ANALOG)>, /* ETH_RGMII_TXD1 */
+> +				 <STM32_PINMUX('C', 2, ANALOG)>, /* ETH_RGMII_TXD2 */
+> +				 <STM32_PINMUX('B', 8, ANALOG)>, /* ETH_RGMII_TXD3 */
+> +				 <STM32_PINMUX('B', 11, ANALOG)>, /* ETH_RGMII_TX_CTL */
+> +				 <STM32_PINMUX('A', 2, ANALOG)>, /* ETH_MDIO */
+> +				 <STM32_PINMUX('C', 1, ANALOG)>, /* ETH_MDC */
+> +				 <STM32_PINMUX('C', 4, ANALOG)>, /* ETH_RGMII_RXD0 */
+> +				 <STM32_PINMUX('C', 5, ANALOG)>, /* ETH_RGMII_RXD1 */
+> +				 <STM32_PINMUX('H', 6, ANALOG)>, /* ETH_RGMII_RXD2 */
+> +				 <STM32_PINMUX('H', 7, ANALOG)>, /* ETH_RGMII_RXD3 */
+> +				 <STM32_PINMUX('A', 1, ANALOG)>, /* ETH_RGMII_RX_CLK */
+> +				 <STM32_PINMUX('A', 7, ANALOG)>; /* ETH_RGMII_RX_CTL */
+> +		};
+> +	};
+> +};
+> --
+> 2.39.2
 > 
-> If using alloc/free isn't there a THP constructor/destructor that prepares the
-> deferred list? (My memory may be failing me). Could we use that?
-
-Likely the deconstructor could work as well. Not sure if that is any 
-better than the freeing path where folio->mapping currently gets cleared.
-
-The generic constructor certainly won't work right now. That's not where 
-the "anon" part comes to live.
-
-Let's take a look how NR_FILE_THPS is handled:
-
-__filemap_add_folio() increments it -- when we set folio->mapping
-__filemap_remove_folio() (->filemap_unaccount_folio) decrements it -- 
-after which we usually call page_cache_delete() to set folio->mapping = 
-NULL;
+> 
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
