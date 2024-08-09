@@ -1,89 +1,120 @@
-Return-Path: <linux-kernel+bounces-281537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E7594D7E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:10:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE0D94D7E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 699441C2290C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A73828398E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF7C16728B;
-	Fri,  9 Aug 2024 20:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3666B168483;
+	Fri,  9 Aug 2024 20:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pE6BAC6z"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tIN07nqO"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20457161328;
-	Fri,  9 Aug 2024 20:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FF9148823
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 20:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723234246; cv=none; b=EF5GOw3Sn6t0Jk5hAdYMHlz9gd8AGI2/PH6qoyLLzdL484MFjaLAYfJAuCAI6mX28R+P2UBs/2h7XjMDFOxibgy9Tuk8QjyVCBfLKspD4tlFR2eoNacLOJIhGFRx2OdhFcu1rvbTvfAlDPCgdOs9ebXymJUpgn2aHiZRO6URtm0=
+	t=1723234264; cv=none; b=fGriDwz8Yl1v87AZEUw+xCQnqGa9m/q3Aqhm5fDZ0NLVOqiwUi5tzWdezDtMJxZNEcbRgbAxXTaw/qqhpkurFrPvnfmYzifVupoGRmXQCsH1snDNEiyMhCFJjTVsbWRNxJqxwD8fa8HGjJAHibnjj2tKg/JI0vrpMaDjV22Q5ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723234246; c=relaxed/simple;
-	bh=jS4HNxS5YVlzJK+dlPLdW3J1aGFuw3+BwsgCSMaNG+4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aLn96KA2IU2p5oMzJm7Y+WR4Xn/sYh9vNwAFyNXoFmJhqS4z1jAWgvs8JlBa+63F973LUDzvdYx4i4J71kjx6d3khALEbI2h7hunvBgV7zOT7gm5Wb6yuTI1ZSb2fn0l3/7u+trg19xdnQDEYATGb0JQ2fwoOF6S11JgtE2BFlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pE6BAC6z; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=nt6sGjTIM7+4LXnH/dUk3qctUYRRVzNRPbE3hRVC2Gk=; b=pE6BAC6zUQvLEzpOVv/+uO7xJ9
-	euwNlaRTco/Bgs3obsSOPBeZ5WszDJ09+DcRhxY0d0uxXbi8/nBEZYg1ATmuUrUYKXLPDDceR3Ri6
-	y179ov+bUbuyaVL3b2FGhUusZL48Vh//BKNyCbSSEYBFMVhxqEeDKlANMvc+FTSHOo+l20P55hX/w
-	1VCnIchdD8C9IhxDR391v+zMfHlhQJgQwX7iBP3/bQrn4WqJCsrSfplWFf4oK/bW32dsydR1FZyXz
-	nkuJeMpRJnQeut2vShgKi/qC74aMxJOaitOhjTjjGrfCuh0uXO1umEpDfpZMnDW/4ObQjqd5WDyKx
-	WWxDDewA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1scVwh-0000000B6t6-0H2X;
-	Fri, 09 Aug 2024 20:10:43 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf: Remove setting of page->index and ->mapping
-Date: Fri,  9 Aug 2024 21:10:36 +0100
-Message-ID: <20240809201038.2648058-1-willy@infradead.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1723234264; c=relaxed/simple;
+	bh=RXZf7vkTwdMNMIB1Lg640qcRRptGXyS7Rvi9NC+WScM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmME3JWJmHqhGqGFb28cFWqyGBxIxpVSzM+jhqFncz0bVa2p3g99hFmWYj7aa1bf6US/L+hbr7TyP7uvenVO4YEBf6gVPtWL6pRM9cryesTOy4/bAgdSdjMRyrTjgVLz595XrqvYs11TRVpvUplFhR/Ghid8GU6+7TY+syVtKrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tIN07nqO; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f04c29588so3247292e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 13:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723234261; x=1723839061; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pj1EA6fBIZmJ4OF0t8kLT/cba5XWiaDdw7BLVxTuH04=;
+        b=tIN07nqO0JSLBMlzs7u+WKqOUHnwFr3i00aDNxn/oOSEq94jwIPcwOZBrIhRRL+6zT
+         GWe8orSwgMlv+sFtqJqsy0b2Qa5DtElrNxtKIun8Y/EzeUssJfkxgRdzhwS0T0UzGAFQ
+         gLfbO3n7YAsuFD5QWxe/h4FD15ZKIT+iFcarP1MC3lftsOAptFDs+OI6/IVyspJnMGxg
+         u04nDYtz+D8m08DLuZ1VYJeZhigEBiQceERsr18cpxsVGJZ4c5i+kTrln0eYKZtvaQI4
+         nH7e0eV5Fyt6Wq3fHk8hoh2U/1Ty0fHm8GhGfxwRUiLyiNPZ2Kf3pw/P0QnNasOeM4KK
+         XPPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723234261; x=1723839061;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pj1EA6fBIZmJ4OF0t8kLT/cba5XWiaDdw7BLVxTuH04=;
+        b=Hxo9VeTfYcmzOYgiCJfoZF0WPqZnZHP5RhwAupGrx7VWQh2yW406/FoxsvEiKBU0hq
+         s8tOFqM7U1kK3QQf/Q/MHfmTpyxs6uR8s4vZwmqmQpnQn0AO45sSbZQvCip+fpOS4EGt
+         guVIaW89RV4kgXRQ6V26x9EJyJm35iUVAdLNHo35xriuBQCTohGTOrDzJ+9F76qkvuwW
+         0rTdUt5ctCPvAKb6mk5VnBO1QYZNE+n3BEwwvBfK5s5LVg2pJh+mAW0u1HgXceNTHfGt
+         iAV5tWkA+hIEIAILc5rS1IDYrsYb7XE/OuYRvq3OOMBBsBn76ghERb4zBj1Tuw1Ae57j
+         KagA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnF2j7RDvfjSC81tCes6o+HmMKDdeC+pshgemFQBY1QQswKCafbjM1JS7470L5hfHyju7UtqPPj4jwmo2bCpRFBi4GrqjDZfXQ/qf4
+X-Gm-Message-State: AOJu0YyBkxBau2L4mGv31m7b3EpPOWn2kXhirS5WPzHu7OtVmfvUit1m
+	+c9bZKF0Ma7LZOIaRa4ZiprKCQW12OFWRS9C7q3m9FnppcbaVY/fOFOxmaq0QV8=
+X-Google-Smtp-Source: AGHT+IH/LnHxFTHPrshu46vY7c7WkYZl+9lpQ1usrc5SQkzFaG6QQkaJPPpkMh/UODiY9nwCiBZmfg==
+X-Received: by 2002:a05:6512:10d0:b0:52e:9f6b:64 with SMTP id 2adb3069b0e04-530ee9ec4f3mr1766990e87.34.1723234260740;
+        Fri, 09 Aug 2024 13:11:00 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb08f6a0sm7187266b.30.2024.08.09.13.10.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 13:11:00 -0700 (PDT)
+Date: Fri, 9 Aug 2024 23:10:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Simon Horman <horms@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	Roger Quadros <rogerq@kernel.org>
+Subject: Re: [PATCH net-next 5/6] net: ti: icss-iep: Move icss_iep structure
+Message-ID: <6eb3c922-a8c6-4df4-a9ee-ba879e323385@stanley.mountain>
+References: <20240808110800.1281716-1-danishanwar@ti.com>
+ <20240808110800.1281716-6-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808110800.1281716-6-danishanwar@ti.com>
 
-I have no idea why perf is setting these fields.  There should be
-no need to do this.
+On Thu, Aug 08, 2024 at 04:37:59PM +0530, MD Danish Anwar wrote:
+> -	struct ptp_clock *ptp_clock;
+> -	struct mutex ptp_clk_mutex;	/* PHC access serializer */
+> -	u32 def_inc;
+> -	s16 slow_cmp_inc;
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- kernel/events/core.c | 2 --
- 1 file changed, 2 deletions(-)
+[ cut ]
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index aa3450bdc227..f55ab04f3df0 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6221,8 +6221,6 @@ static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
- 		goto unlock;
- 
- 	get_page(vmf->page);
--	vmf->page->mapping = vmf->vma->vm_file->f_mapping;
--	vmf->page->index   = vmf->pgoff;
- 
- 	ret = 0;
- unlock:
--- 
-2.43.0
+> +	struct ptp_clock *ptp_clock;
+> +	struct mutex ptp_clk_mutex;	/* PHC access serializer */
+> +	spinlock_t irq_lock; /* CMP IRQ vs icss_iep_ptp_enable access */
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+The patch adds this new struct member.  When you're moving code around, please
+just move the code.  Don't fix checkpatch warnings or do any other cleanups.
+
+> +	u32 def_inc;
+> +	s16 slow_cmp_inc;
+> +	u32 slow_cmp_count;
+
+regards,
+dan carpenter
 
