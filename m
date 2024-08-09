@@ -1,146 +1,118 @@
-Return-Path: <linux-kernel+bounces-281324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC2594D57C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:34:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6237494D58D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B11D2829EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:34:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2AC5B20DFB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57187344C;
-	Fri,  9 Aug 2024 17:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811967316E;
+	Fri,  9 Aug 2024 17:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dMQUXBFH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="IfIUf9lL"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9318912B176
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 17:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0110D282F0
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 17:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723224876; cv=none; b=ndyi/hV+SYSQLAZNGKVnwLQk/MuRD6K+aAsvfV6Ob90OLZa1NZMhODo3NVq9Zf4wJtuh7JRIupxGMHn0SOlWaHJgJqi8ZpzIFMxlBpUtlOx+bgVcHQC8zoGv790aGpH5fbvxMovx0mMCRoP1EXOi8Yc++vSWm4Z4EBCj8T1Ahdk=
+	t=1723225091; cv=none; b=SjOXJGYxF1gqwcSp/DK2pOVdZOH9tteNdaYatQzVXkjSesiq6oZWUrqEOjqoYteRvQKUkft43Ln9D/HwIGYfyzt5p9HQgWWszzgmOy+YxcVRHWgFIJh+pO6nNINcUghLEbfNbcU49w25lIfO+XbR4zaxgAH4I+50Rik1dVy4wgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723224876; c=relaxed/simple;
-	bh=uaFoxvFaWKTcurfNyk9i82RYMbsjWOiWm8JvkajnOEU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nVEqcTRR2Zxhzoib9NS5zhv6BcyAolTvZQSYCej2HKCKPC4dLaQjE4/GnAIqoiQctStU7QRNn4/4fJNfhx9kHnXNvgmcvRBDBMI/E+9cIAR3PLu1JPv8NJVJmRWyUGcjhQZmNJsifqcpswnn7uiC8lzZ6QBPGNUeeEfXUpjPkx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dMQUXBFH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723224873;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9qAgqY2+FOr0YdLUk8z8Be8IJe7YHmn8uPB+WVVFagE=;
-	b=dMQUXBFHJZ+pAmBSNb8m3tMzK7mO3tUIGa7T77h0F1r8SJvoOYuzlUYjmE+UagYjajxb+3
-	DMD+PcylDy6yFk4T+YMIbEo3TQCGBFcTfR+HfzljrWvTp5HMT7kOXBnluhaKBzttSVUPkQ
-	NQsyeA3SL0SZsWVZzvvQSPy/r1jkh2Y=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-629-J4JaAdxdPZKoxty0KKaMZg-1; Fri, 09 Aug 2024 13:34:32 -0400
-X-MC-Unique: J4JaAdxdPZKoxty0KKaMZg-1
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-4929b9c17feso1187611137.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 10:34:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723224872; x=1723829672;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9qAgqY2+FOr0YdLUk8z8Be8IJe7YHmn8uPB+WVVFagE=;
-        b=cWwcFzg4mU9uJOuY3X7O0GZFk2rXXquq+M74vhXyOqqCtKJz4FWZhRjytliFiCsp8/
-         cH+USRvkOlbV2Np9H3YrOkJggWW2phbhzyMoPZjplB6zkwq+2Bf667GwNASBoj5Yx6IO
-         OdKOmaoZBDa17LAmv0E2hU3zskrPn/JJLBm/w1oKqRCVTWKuu9eCKPM5pVjbDpk96csz
-         f6qkpq/U9N3XchPZW0YsAQtHM11bL9HqYcSNd/mH29DGck2LOcU41Hfc+ziJ633LsLPq
-         uyIHgFOm+aN8ZCBV8pT4BMJ9Gra3DbCdOIMgYzQjEO57r36gjDjy0tgr2FOb189U1pgt
-         qsIw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+eDE7+KhOBkac/g4fqN8PNlRDhyN6B4kKNVoXjoeTF2LdileRZJDWU9tqcAGdWHEezZ68K1ob9SKfsYwQaACfiCnz2103hK2Srq/6
-X-Gm-Message-State: AOJu0Yw8KHU+88NFTbLPUulHtppztEgTuDnFmTdkpwHDbShwUd79a+/q
-	a9Kk6bFcSoU/1AVztEXqAaELQp3SglM+sBpKyUD9n88zPlVJmRU4HURmZiFEA8LG0t2WRTXgCnz
-	2wr9RsnyFISZRGqrze26IzDGt7iTxo0+F4/lT6LymFnbS3n3WRk61cZJZsBj5XY19QcuGcg==
-X-Received: by 2002:a05:6102:3ecd:b0:48f:a7a6:bacb with SMTP id ada2fe7eead31-495d840a6fcmr3080142137.12.1723224871862;
-        Fri, 09 Aug 2024 10:34:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGuWaN08M43DbXCZSgcHg0HBsQZIbgEQVqpCg/mNM2hukMdn00DmL6gxpy8xax+9c89Jl8GZg==
-X-Received: by 2002:a05:6102:3ecd:b0:48f:a7a6:bacb with SMTP id ada2fe7eead31-495d840a6fcmr3080116137.12.1723224871501;
-        Fri, 09 Aug 2024 10:34:31 -0700 (PDT)
-Received: from fionn ([142.189.102.234])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785f2452sm278505685a.59.2024.08.09.10.34.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 10:34:30 -0700 (PDT)
-Date: Fri, 9 Aug 2024 13:34:28 -0400 (EDT)
-From: John Kacur <jkacur@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Daniel Bristot de Oliveira <bristot@kernel.org>, 
-    Steven Rostedt <rostedt@goodmis.org>, 
-    "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>, 
-    Clark Williams <williams@redhat.com>, linux-trace-kernel@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rtla/osnoise: prevent NULL dereference in error
- handling
-In-Reply-To: <f964ed1f-64d2-4fde-ad3e-708331f8f358@stanley.mountain>
-Message-ID: <c73c51ae-99da-793a-6dcb-2fbc6871261d@redhat.com>
-References: <f964ed1f-64d2-4fde-ad3e-708331f8f358@stanley.mountain>
+	s=arc-20240116; t=1723225091; c=relaxed/simple;
+	bh=he6jXoerSQvCcsE3+17+mDsqZXqXL8RLBIvboBKOyGY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Af6jnGytySBPJICvI5ha8++IGp/wrM0pjYavu7OkwYq9YlZ4cF54LHniCXqEcicNDbV0CQFjhBUNXwq7SzK0WjEwKVj214QQgbvsuK7W31K4nRadu8xurw7beH2q9uum4tj/JThO8ijFlwmPex3k+lmMYnfbbywfBVwka2fT/t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=IfIUf9lL; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 479Hb9vd1811690
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 9 Aug 2024 10:37:09 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 479Hb9vd1811690
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024071601; t=1723225031;
+	bh=bhthDcE52lFd1qkkTCpMHU3fmdUIgwXD5TPfW1M+czA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IfIUf9lLY6fzaoxRZgP90Vm6ObXeo0rBkqj8oaBJtpxp7bYzFHAfBOoiDaQ5qgQ0V
+	 msXjiebjbLKASNm2w+EN8BgHPeFbgevl5griUv3nUeBREeBfd2UgMjS89gOZ+OMeJi
+	 l/USfJ2kbw2c9ynvoQ/Dcv5JlgAgNpeayInuQzYFukkRnCeXEUbmn0Pm5bO7qn4p+U
+	 iBSdqc+Be5i2WEONvlMBnyHAfuVF7HvA8vRF+QI5gecSFvCAa1o00ttlgrhoAQC374
+	 cbvcomL8e6BlaiGrNZ4NjDpf7+N8JErtF6NwwLYNjegYeS9kQdNb5Vve5Rgwil+ehR
+	 tqv5DphIGHVKw==
+Message-ID: <34964ea0-dbf5-41a1-82cb-5f677afad23c@zytor.com>
+Date: Fri, 9 Aug 2024 10:37:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] x86/entry: Set FRED RSP0 on return to userspace
+ instead of context switch
+To: Nikolay Borisov <nik.borisov@suse.com>, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, andrew.cooper3@citrix.com, seanjc@google.com
+References: <20240807054722.682375-1-xin@zytor.com>
+ <20240807054722.682375-4-xin@zytor.com>
+ <eb2ed1b4-94cf-4d3d-b726-6ee0fa13ca9e@suse.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
+ 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
+ Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
+ bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
+ raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
+ VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
+ wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
+ 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
+ NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
+ AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
+ tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
+ v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
+ sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
+ QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
+ wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
+ oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
+ vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
+ MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
+ g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
+ cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
+ jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
+ Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
+ m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
+ bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
+ JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
+ /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
+ OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
+ dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
+ 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
+ Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
+ PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
+ gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
+ l75w1xInsg==
+In-Reply-To: <eb2ed1b4-94cf-4d3d-b726-6ee0fa13ca9e@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On Fri, 9 Aug 2024, Dan Carpenter wrote:
-
-> If the "tool->data" allocation fails then there is no need to call
-> osnoise_free_top() and, in fact, doing so will lead to a NULL dereference.
+On 8/9/2024 3:45 AM, Nikolay Borisov wrote:
+>> +#define TIF_LOAD_USER_STATES    30    /* Load user level states */
 > 
-> Fixes: 1eceb2fc2ca5 ("rtla/osnoise: Add osnoise top mode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  tools/tracing/rtla/src/osnoise_top.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
-> index f594a44df840..2f756628613d 100644
-> --- a/tools/tracing/rtla/src/osnoise_top.c
-> +++ b/tools/tracing/rtla/src/osnoise_top.c
-> @@ -651,8 +651,10 @@ struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
->  		return NULL;
->  
->  	tool->data = osnoise_alloc_top(nr_cpus);
-> -	if (!tool->data)
-> -		goto out_err;
-> +	if (!tool->data) {
-> +		osnoise_destroy_tool(tool);
-> +		return NULL;
-> +	}
->  
->  	tool->params = params;
->  
-> @@ -660,11 +662,6 @@ struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
->  				   osnoise_top_handler, NULL);
->  
->  	return tool;
-> -
-> -out_err:
-> -	osnoise_free_top(tool->data);
-> -	osnoise_destroy_tool(tool);
-> -	return NULL;
->  }
->  
->  static int stop_tracing;
-> -- 
+> Wouldn't something along the l ines of TIF_LOAD_FRED_RSP be more 
+> descriptive, or it's expected that this flag can cover more state in the 
+> future?
 
-Although your fix appears to be correct, I wonder if it would be better to 
-create a second error label, such as out_destroy_tool: as described in 
-section 7 of the coding-style.rst
+Sean mentioned TIF_LOAD_FRED_RSP, however we also have FRED SSP0, which
+needs to be handled similarly.
 
-Thanks
-
-John Kacur
-
+And we also want to use it to cover future states.
 
