@@ -1,180 +1,117 @@
-Return-Path: <linux-kernel+bounces-280523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C0B94CBAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:51:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F2A94CBAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25061F24862
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E9AE2847F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B6C18C91E;
-	Fri,  9 Aug 2024 07:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DE618C341;
+	Fri,  9 Aug 2024 07:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Kir8AYT5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="AA13aPQo"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="UeoDu0bN"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF52916D328;
-	Fri,  9 Aug 2024 07:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC20B1552EB;
+	Fri,  9 Aug 2024 07:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723189877; cv=none; b=hheiDe42cOk2F7ucCAQp8JLDdQfuRJzHRzOPsHerM2gCv2ykiMZ1SnBP2y46WjIgMYPncmtYrxXxW1Nn8uMVgGVYH4N8BY5x0ayVqfB3d6HWqR7pFhy604ribgiv9F2Q/0FWnJyiVfUGTYevl+BzQVKPfBJ/4TjM1TpnK1rwoX8=
+	t=1723189933; cv=none; b=Ko8C7NI/dfOiD6v7g4bUdPgfqs/TdE2BZq44yxsYSMbI79JuGrHUmaqTt4EY+eNHeX1nvi1lasz/TVT4rSH1M/nG/9LiHyS3OwfyCEkC8vgymf2vhZrqB62y0P6PIDPfqWwZJ5Z6v1YNNh2DSB/jv3pxbfLtumVaCEFU+3x3V0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723189877; c=relaxed/simple;
-	bh=TCk5Z2tCAqFg1AiRweTnC7ps7kgmg6HBmxa0ONe3/dM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lL5SN/pUxBt9NvvILMEpFN1s0Ssun7D83NbrnQ8gY4SaACecCy01E5VRNzshlgiwP8qUs7PodjwCI7GZwcYuvgx9uHb0Lob7v2WHFeU7TGxtsZrkdoAUQsPnKFkAYkX24W0jIUEdlXDzvgKWTJ4s68UXV9KUU8E1ARxFFID8e+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Kir8AYT5; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=AA13aPQo reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1723189933; c=relaxed/simple;
+	bh=WE7k6D28IPiuVNuNF0yk/oEv5frGPz8PpAqNeBAcOQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=meeMx0j7vHAEYPGhxVT/qo6t3lawyVX2wkGi01RFCOXorHV4Qs6BuRI5gkpenmShoPhA19MWh09Pd4pRnjjizDUAWcPFGrg2Rk4bVzX4Uyj/RxpDbnnVG6eqNPCeI7P3gtx85YCVMmq5vQVtbzQHAU2WUvIZWsBP7L7GhX3PebA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=UeoDu0bN; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so2826518a12.1;
+        Fri, 09 Aug 2024 00:52:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723189874; x=1754725874;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qEKb2tBDFYtPQQYes4QRP4tJM5p3ULThCqzPcDFNfNc=;
-  b=Kir8AYT5X5dNwpcr94afgNNMomWyYLCN/WD9/7+6YjBAOH1wQqyKVUFN
-   xoqXlWDzTdOjFamucAuHT/PIjZk/rQi733LHIqEC5+lwQmIMlsJ9R5n9S
-   KXdUnysK7u5nZqTvLdUuaJ0ubQSU6wqMwG3crypwkef30Aqp2B9i/leQ7
-   zr9Ox6nVWOsbXsuMMBvxPz67YNmJmVEgrHZHGjwcC1E0z5XkMG7x0YgEb
-   W6qJN/KifS4Io+tCSgXJg9PHCOJwqsYaVKTCDSRdlbLlWIzGbmZiZbdAh
-   EG05vE+gd+IxTI1kQGpcxCMJyuggnyP7YhnFC57XKgD3N83WxvUisaRNE
-   g==;
-X-CSE-ConnectionGUID: JwcAz+0XR/aH896pBitJDw==
-X-CSE-MsgGUID: kVdMZKR1RUmNWIVSMJj3Ag==
-X-IronPort-AV: E=Sophos;i="6.09,275,1716242400"; 
-   d="scan'208";a="38329660"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 09 Aug 2024 09:51:11 +0200
-X-CheckPoint: {66B5CA6F-0-F0206917-F54EFEED}
-X-MAIL-CPID: 27227B5B5898C08BF0A2BD19511608BD_4
-X-Control-Analysis: str=0001.0A782F1A.66B5CA6F.0103,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E6E8C163A4B;
-	Fri,  9 Aug 2024 09:51:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723189866;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=qEKb2tBDFYtPQQYes4QRP4tJM5p3ULThCqzPcDFNfNc=;
-	b=AA13aPQoadQSDdUv+s7cijsOmK61bm3M1gbgjqsMZ1SJ/kkwz2qelWR3Ov56morwxcIApY
-	F3Q3T8cakL6YGCgH2h3benXKQ95OuY7vyPe//NM/2IDJK+B/4BJDZdjaHC1j8V/o33C6Yx
-	e5LNf5Ol3x7oh+oGRPf0zO+jVnUSo8XooBtvWpaWHjz8qkWHq2s6UQJLrtFgF9Zo8bVY48
-	NPiXjXUklM5xqEhpQQ8xesdLf0RsYPK8wpNZPuG83hODi6SF6ayNMdSjoopRyCd93YJOU9
-	NFUoodsMHZbTFHBp5XMbTQJ7hHGOJqshzycYN8qA3+fPZYeXqYriYg2foLyPng==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: soc@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, Dinh Nguyen <dinguyen@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Mark Jackson <mpfj@newflow.co.uk>, Tony Lindgren <tony@atomide.com>, Michal Simek <michal.simek@amd.com>, linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, "Rob Herring (Arm)" <robh@kernel.org>
-Subject: Re: [PATCH] ARM: dts: Fix undocumented LM75 compatible nodes
-Date: Fri, 09 Aug 2024 09:51:03 +0200
-Message-ID: <22384730.EfDdHjke4D@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240808164941.1407327-1-robh@kernel.org>
-References: <20240808164941.1407327-1-robh@kernel.org>
+        d=googlemail.com; s=20230601; t=1723189930; x=1723794730; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qfWLL5imiDz9F+CxuIwiH+imn9QnZVkp2UmzuD56ox8=;
+        b=UeoDu0bN32pZymwlahUy0RcUIhW/Fyrjf5dc21eUpwAZNEcJfwEova0xwqKab4nkXD
+         Jr4e8lNaPxMKCW5EAqWgG3TMswSaiUFcRalV5yIitUKg7Soh+SkqIZ4+2Ca75mZV9J2r
+         bPYq9L/DAAy77vv7Tzbwy8pa00tZd/ZX90rE1E1ai9EBwoYIozC9bn1pPCgzSnXCnlUm
+         VHdw/ASk9ajemte1qJH1Zs9Syl7h4OoGWMK3inMy0cIz1/R1tEI7jkAu0wIbZRXxoJWh
+         rPrBes0rNp1tAo0sDl/LV8o7B8bdiUNk1g82x85sg3ZjHJYCoVxwz7NeusPRjGZYunUJ
+         1HDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723189930; x=1723794730;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfWLL5imiDz9F+CxuIwiH+imn9QnZVkp2UmzuD56ox8=;
+        b=DK/3JTS5FVmrZfkRpnTvrjLa2Iob/Ge35nUcO0XqPmgsxetHdePS+p0s4D7Ft2BUqy
+         srJcKAyR7DKyds0NLegorXJ3A8dD6IE06daqoVE8EBQXK5PjhJH7OYSQkNfZxzxb0f8k
+         fUtMoOa9036mRu0GonbHCnoXaryDRc1MiX0yTs8JVcDEXluecSRZW0z6lEdIe8+3DXSo
+         Xg3Y/g2bJb4+BjcMWd04YXg4PUs1DST3s561+3x75J4rEmxpee33yKEexrR5DXjhl0ad
+         hrHsXZUKCOFMmnUtGOG3Ijqm3w8hdycY2ydsZFhrywT0Q8krZ2vNyHqwIhwQJopkWPiP
+         BxqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpajz5FU2jIUxzoNuXkv941APAGk5ljUq9dkrFWG6dosVHF68zwZcom7OZRe76CMXAZd7BZVnTPfmiGGsSDpeh8/uXsEZHfFPfy2mDfS5zkpeqsPM9g5lC56DYlkV2bSQfCNI5
+X-Gm-Message-State: AOJu0Ywvb2KuaaZZNPL6eMqe5EZ+ztXVVwN1MMXinCRE450fNLyysVNO
+	YM3JGublWjpvZUyVJXKe2qZ1Vg4vn3VfrO0rbyKCbq2+L3AdbrE=
+X-Google-Smtp-Source: AGHT+IHo9lOLj5SORUWn1SV2NnWTBLGCiC+vS/GL+OIQBNDL0KUifCX7RaGI+mujFCYv2Rs2wCJglg==
+X-Received: by 2002:a05:6402:1d4f:b0:58c:b2b8:31b2 with SMTP id 4fb4d7f45d1cf-5bd0abdc414mr601773a12.17.1723189929644;
+        Fri, 09 Aug 2024 00:52:09 -0700 (PDT)
+Received: from [192.168.1.3] (p5b05740f.dip0.t-ipconnect.de. [91.5.116.15])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c2019bsm1303945a12.31.2024.08.09.00.52.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 00:52:09 -0700 (PDT)
+Message-ID: <3c61ccd8-38be-4da1-bef1-0738c3593a15@googlemail.com>
+Date: Fri, 9 Aug 2024 09:52:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.10 000/123] 6.10.4-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240807150020.790615758@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240807150020.790615758@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Am Donnerstag, 8. August 2024, 18:49:38 CEST schrieb Rob Herring (Arm):
-> "lm75" without any vendor is undocumented. It works with the Linux
-> kernel since the I2C subsystem will do matches of the compatible string
-> without a vendor prefix to the i2c_device_id and/or driver name.
->=20
-> Mostly replace "lm75" with "national,lm75" as that's the original part
-> vendor and the compatible which matches what "lm75" matched with. In a
-> couple of cases the node name or compatible gives a clue to the actual
-> part and vendor and a more specific compatible can be used. In these
-> cases, it does change the variant the kernel picks.
->=20
-> "nct75" is an OnSemi part which is compatible with TI TMP75C based on
-> a comparison of the OnSemi NCT75 datasheet and configuration the Linux
-> driver uses. Adding an OnSemi compatible would be an ABI change.
->=20
-> "nxp,lm75" is most likely an NXP part. NXP makes a LM75A and LM75B.
-> Both are 11-bit resolution and 100ms sample time, so "national,lm75b" is
-> the closest match.
->=20
-> While we're here, fix the node names to use the generic name
-> "temperature-sensor".
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> SoC maintainers, Please take this directly.
-> ---
->  .../aspeed/aspeed-bmc-facebook-greatlakes.dts |  2 +-
->  .../socfpga/socfpga_cyclone5_vining_fpga.dts  |  4 +--
->  .../dts/marvell/armada-385-clearfog-gtr.dtsi  |  8 ++---
->  .../boot/dts/nuvoton/nuvoton-npcm730-kudo.dts | 32 +++++++++----------
->  .../boot/dts/nuvoton/nuvoton-npcm750-evb.dts  |  6 ++--
->  arch/arm/boot/dts/nxp/imx/imx53-mba53.dts     |  4 +--
->  arch/arm/boot/dts/nxp/imx/imx53-tqma53.dtsi   |  4 +--
->  .../dts/nxp/lpc/lpc4357-ea4357-devkit.dts     |  4 +--
->  .../boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts  |  2 +-
->  arch/arm/boot/dts/ti/omap/am335x-nano.dts     |  2 +-
->  .../boot/dts/xilinx/zynq-zturn-common.dtsi    |  4 +--
->  11 files changed, 36 insertions(+), 36 deletions(-)
->=20
-< [snip]
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx53-mba53.dts b/arch/arm/boot/dt=
-s/nxp/imx/imx53-mba53.dts
-> index 2117de872703..d155b3ec22ef 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx53-mba53.dts
-> +++ b/arch/arm/boot/dts/nxp/imx/imx53-mba53.dts
-> @@ -175,8 +175,8 @@ expander: pca9554@20 {
->  		gpio-controller;
->  	};
-> =20
-> -	sensor2: lm75@49 {
-> -		compatible =3D "lm75";
-> +	sensor2: temperature-sensor@49 {
-> +		compatible =3D "national,lm75";
+Am 07.08.2024 um 16:58 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.10.4 release.
+> There are 123 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-I checked the old schematics. This is an NXP LM75A, so 'national,lm75a'
-would be the correct compatible.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
->  		reg =3D <0x49>;
->  	};
->  };
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx53-tqma53.dtsi b/arch/arm/boot/=
-dts/nxp/imx/imx53-tqma53.dtsi
-> index b2d7271d1d24..d01c3aee0272 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx53-tqma53.dtsi
-> +++ b/arch/arm/boot/dts/nxp/imx/imx53-tqma53.dtsi
-> @@ -254,8 +254,8 @@ pmic: mc34708@8 {
->  		interrupts =3D <6 4>; /* PATA_DATA6, active high */
->  	};
-> =20
-> -	sensor1: lm75@48 {
-> -		compatible =3D "lm75";
-> +	sensor1: temperature-sensor@48 {
-> +		compatible =3D "national,lm75";
-
-I checked the old schematics. This is an NXP LM75A, so 'national,lm75a'
-would be the correct compatible.
-
-Best regards,
-Alexander
-
->  		reg =3D <0x48>;
->  	};
-> =20
-> [snip]
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+Beste Grüße,
+Peter Schneider
 
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
