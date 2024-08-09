@@ -1,471 +1,196 @@
-Return-Path: <linux-kernel+bounces-281107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF14994D32D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:15:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A798794D330
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BA3A1F23A5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:15:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14FE0B2239B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E5C199E95;
-	Fri,  9 Aug 2024 15:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9BC19A295;
+	Fri,  9 Aug 2024 15:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EG2Ajj4k"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="0GhVRpzY"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F411991BB;
-	Fri,  9 Aug 2024 15:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A7519A292
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216448; cv=none; b=S4jP1vKeE29fPq8Gb6ffPdDFpE/1gxpLlQoEXjHeY82oOSr6vjlnesubGfsi0lHtS/TW68K2Be76A284VXcAUR5kAlJK/06YUSt1jp+yS+Slod7Sey9HshHPdZD5iv1FwevjXf1fyTlHf4utT/xOlZfuSH+amKxrPZxMlOoZWe0=
+	t=1723216456; cv=none; b=NoSaZYanZrrZerFHW/rSVMv170Q3Us3k0/GAPGe0pakIf1CbuDLyiYf1NvszJXy6TNxl0X2OO1GlQT+4ZPObu33rk8oSw7qDBp+JI4tV7uRQ/t1qGar3fS+A5pHXgm2VeAg5HYmEyptUAOV6K/yjn1c4Rr76p+QTrBcwrLlIbuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216448; c=relaxed/simple;
-	bh=obBXREvOsgwRvF/z3uY/uYRbwzmaDRLYab42op22cI0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uc6+8Zs2zk63Fr1l+htIrfDwbu7nKHn4C+u3/0ZMFcLZgLCpIU+q/tJz4YNEOfUVhQLERVwCW3zkfBvJ3X0p+Vbai6zDFv8bUNrPd3/U81ectWrXNRbJ4zFtZ5olnvnzjKDP8ljTGENWdAK9y/EZLALSv5VzoMeYH1lBQ9CIsqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EG2Ajj4k; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723216447; x=1754752447;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=obBXREvOsgwRvF/z3uY/uYRbwzmaDRLYab42op22cI0=;
-  b=EG2Ajj4k+xRcfDF401DC8b460pZM5FzrK/k+Oh49uC6ST4IZxGYHVeb4
-   yBzHuUuHLcGB7jlHl+AotvV1VKeX+Hhs8porJMep7RpdHcfP65hKPTmBw
-   9uke+RSTZSDbvw65VIPMhoNJ6/ri40U4JS3qLxopZpsg6gh5wCc0Pbnu6
-   /dyYQo/cD7OL2ug0oTR9XM5jCcV9XvgGT0lY1WhQGnp6K+Ly70Hu+cteU
-   YA0U1xsHoNf1mWitHJibVPvHeU+Q28j8kpd/72c8TUatzERngF1B/rFAV
-   vjx+veBK5iAAascMNTB1Cg8XqUQdHgyqMvlRwqFZW9u+G/2tU95/dCo5l
-   w==;
-X-CSE-ConnectionGUID: 7uJ3Jrl2TZ2vC4Rq0GLM6g==
-X-CSE-MsgGUID: OezGywoKSKOEm3wlLb60lw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21368895"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="21368895"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:14:07 -0700
-X-CSE-ConnectionGUID: sjxMwh9DS66eDItf/lbZBw==
-X-CSE-MsgGUID: oVFMj1gzSp61oGQgw8VkYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="57485974"
-Received: from test2-linux-lab.an.intel.com ([10.122.105.166])
-  by orviesa010.jf.intel.com with ESMTP; 09 Aug 2024 08:14:05 -0700
-From: matthew.gerlach@linux.intel.com
-To: lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	dinguyen@kernel.org,
-	joyce.ooi@intel.com,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "D M, Sharath Kumar" <sharath.kumar.d.m@intel.com>,
-	D@web.codeaurora.org, M@web.codeaurora.org,
-	Matthew Gerlach <matthew.gerlach@linux.intel.com>
-Subject: [PATCH v2 7/7] PCI: altera: Add Agilex support
-Date: Fri,  9 Aug 2024 10:12:13 -0500
-Message-Id: <20240809151213.94533-8-matthew.gerlach@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240809151213.94533-1-matthew.gerlach@linux.intel.com>
-References: <20240809151213.94533-1-matthew.gerlach@linux.intel.com>
+	s=arc-20240116; t=1723216456; c=relaxed/simple;
+	bh=6OcyuUOEXbtjLZCzEwizEKEFbybTtnmQVZ85BNHqinA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AAdlxX58JOI7RLX6/fCT3mM9tbuIqutjVWk+vHiZGr3VNBvWAebZkZ4oNYi0WDF/ohf3jgGxnlqGZv4pPd87em9B1TPAJhpJ9qdScjhJWDDXqhPhxpagqsG4PSx8euN3PK8STlCulI3AErPSKc8D1ZdTwmCItvjlQ1UUcWIoTOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=0GhVRpzY; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 479A0pHv008310;
+	Fri, 9 Aug 2024 17:13:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	FlSaZnNd7y0QCcx39z10PqhY0Rx1yv+xs/5BlCrpbHQ=; b=0GhVRpzYDv+xy6ck
+	hX9bTaggS95gaBY7VXM+NY4RmiYBoycMJeyIwosZSpchFK1sLxlTLeQCrJ5njOfm
+	yBulZBIYBKI4j9vut/gICz7osbfrPApIOBZszePQSBsm9tIHCwADY4q8KN2c5zj4
+	jLCwdjMjunaJg+sVjocNrd5f1d4zSzWpSz7dkkdG1A9G9b6dTbgdhd4I+LAvTJNy
+	DxbLXdUjej6OIEB3cXrGfWVBh+FLmmighkwnPcW2XgvK2Pzou8gcEZBchbloCU1c
+	QZb7RUqXuN74AWCxqzcvbg+9npPXfifETEXSvohsOEZ6bmiEHdHysOTEa688cwKo
+	EkJCmA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40tu6n51kp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 17:13:38 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7449040044;
+	Fri,  9 Aug 2024 17:13:34 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 680AD2606D0;
+	Fri,  9 Aug 2024 17:12:44 +0200 (CEST)
+Received: from [10.252.26.60] (10.252.26.60) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 9 Aug
+ 2024 17:12:42 +0200
+Message-ID: <e3cf0c78-133a-400a-9669-93ff529d708b@foss.st.com>
+Date: Fri, 9 Aug 2024 17:12:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Linux-stm32] [PATCH RESEND v3 0/3] Update STM DSI PHY driver
+To: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>,
+        Yanjun Yang
+	<yangyj.ee@gmail.com>,
+        Philippe CORNU <philippe.cornu@foss.st.com>
+CC: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240129104106.43141-1-raphael.gallais-pou@foss.st.com>
+ <21f4d43d-4abd-4aca-7abb-7321bcfa0f1d@foss.st.com>
+ <CAE8JAfy9NtBa--DnUt2AEZPFnvjU6idj8DqUbaeLaH0DMFvuhw@mail.gmail.com>
+ <e059f157-ff9c-32cb-57a6-48f2331f2555@foss.st.com>
+ <ZqeZEB9peRSQkOLZ@void.tail05c47.ts.net>
+ <94ecd3a6-3a62-4be6-b384-c8237c818e98@gmail.com>
+Content-Language: en-US
+From: Yannick FERTRE <yannick.fertre@foss.st.com>
+In-Reply-To: <94ecd3a6-3a62-4be6-b384-c8237c818e98@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To EQNDAG1NODE6.st.com
+ (10.75.129.135)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-09_12,2024-08-07_01,2024-05-17_01
 
-From: "D M, Sharath Kumar" <sharath.kumar.d.m@intel.com>
+Hi,
 
-Add PCIe root port controller support Agilex family of chips.
+we don't give enough attention to older SOCs like stm32f469. This is an 
+error on our part.
 
-Signed-off-by: D M, Sharath Kumar <sharath.kumar.d.m@intel.com>
-Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
----
-v2:
- - Match historical style of subject.
- - Remove unrelated changes.
- - Fix indentation.
----
- drivers/pci/controller/pcie-altera.c | 246 ++++++++++++++++++++++++++-
- 1 file changed, 237 insertions(+), 9 deletions(-)
+I think that to fix this point it would be necessary to define the clock 
+hse as clock fix.
 
-diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
-index ef73baefaeb9..05ba66825325 100644
---- a/drivers/pci/controller/pcie-altera.c
-+++ b/drivers/pci/controller/pcie-altera.c
-@@ -78,9 +78,19 @@
- #define S10_TLP_FMTTYPE_CFGWR0		0x45
- #define S10_TLP_FMTTYPE_CFGWR1		0x44
- 
-+#define AGLX_RP_CFG_ADDR(pcie, reg)	(((pcie)->hip_base) + (reg))
-+#define AGLX_RP_SECONDARY(pcie)		\
-+	readb(AGLX_RP_CFG_ADDR(pcie, PCI_SECONDARY_BUS))
-+
-+#define AGLX_BDF_REG			0x00002004
-+#define AGLX_ROOT_PORT_IRQ_STATUS	0x14c
-+#define AGLX_ROOT_PORT_IRQ_ENABLE	0x150
-+#define CFG_AER				BIT(4)
-+
- enum altera_pcie_version {
- 	ALTERA_PCIE_V1 = 0,
- 	ALTERA_PCIE_V2,
-+	ALTERA_PCIE_V3,
- };
- 
- struct altera_pcie {
-@@ -103,6 +113,11 @@ struct altera_pcie_ops {
- 			   int size, u32 *value);
- 	int (*rp_write_cfg)(struct altera_pcie *pcie, u8 busno,
- 			    int where, int size, u32 value);
-+	int (*ep_read_cfg)(struct altera_pcie *pcie, u8 busno,
-+			   unsigned int devfn, int where, int size, u32 *value);
-+	int (*ep_write_cfg)(struct altera_pcie *pcie, u8 busno,
-+			    unsigned int devfn, int where, int size, u32 value);
-+	void (*rp_isr)(struct irq_desc *desc);
- };
- 
- struct altera_pcie_data {
-@@ -113,6 +128,9 @@ struct altera_pcie_data {
- 	u32 cfgrd1;
- 	u32 cfgwr0;
- 	u32 cfgwr1;
-+	u32 port_conf_offset;
-+	u32 port_irq_status_offset;
-+	u32 port_irq_enable_offset;
- };
- 
- struct tlp_rp_regpair_t {
-@@ -132,6 +150,28 @@ static inline u32 cra_readl(struct altera_pcie *pcie, const u32 reg)
- 	return readl_relaxed(pcie->cra_base + reg);
- }
- 
-+static inline void cra_writew(struct altera_pcie *pcie, const u32 value,
-+			      const u32 reg)
-+{
-+	writew_relaxed(value, pcie->cra_base + reg);
-+}
-+
-+static inline u32 cra_readw(struct altera_pcie *pcie, const u32 reg)
-+{
-+	return readw_relaxed(pcie->cra_base + reg);
-+}
-+
-+static inline void cra_writeb(struct altera_pcie *pcie, const u32 value,
-+			      const u32 reg)
-+{
-+	writeb_relaxed(value, pcie->cra_base + reg);
-+}
-+
-+static inline u32 cra_readb(struct altera_pcie *pcie, const u32 reg)
-+{
-+	return readb_relaxed(pcie->cra_base + reg);
-+}
-+
- static bool altera_pcie_link_up(struct altera_pcie *pcie)
- {
- 	return !!((cra_readl(pcie, RP_LTSSM) & RP_LTSSM_MASK) == LTSSM_L0);
-@@ -146,6 +186,15 @@ static bool s10_altera_pcie_link_up(struct altera_pcie *pcie)
- 	return !!(readw(addr) & PCI_EXP_LNKSTA_DLLLA);
- }
- 
-+static bool aglx_altera_pcie_link_up(struct altera_pcie *pcie)
-+{
-+	void __iomem *addr = AGLX_RP_CFG_ADDR(pcie,
-+				   pcie->pcie_data->cap_offset +
-+				   PCI_EXP_LNKSTA);
-+
-+	return !!(readw(addr) & PCI_EXP_LNKSTA_DLLLA);
-+}
-+
- /*
-  * Altera PCIe port uses BAR0 of RC's configuration space as the translation
-  * from PCI bus to native BUS.  Entire DDR region is mapped into PCIe space
-@@ -426,6 +475,103 @@ static int s10_rp_write_cfg(struct altera_pcie *pcie, u8 busno,
- 	return PCIBIOS_SUCCESSFUL;
- }
- 
-+static int aglx_rp_read_cfg(struct altera_pcie *pcie, int where,
-+			    int size, u32 *value)
-+{
-+	void __iomem *addr = AGLX_RP_CFG_ADDR(pcie, where);
-+
-+	switch (size) {
-+	case 1:
-+		*value = readb(addr);
-+		break;
-+	case 2:
-+		*value = readw(addr);
-+		break;
-+	default:
-+		*value = readl(addr);
-+		break;
-+	}
-+
-+	/* interrupt pin not programmed in hardware, set to INTA */
-+	if (where == PCI_INTERRUPT_PIN && size == 1 && !(*value))
-+		*value = 0x01;
-+	else if (where == PCI_INTERRUPT_LINE && !(*value & 0xff00))
-+		*value |= 0x0100;
-+
-+	return PCIBIOS_SUCCESSFUL;
-+}
-+
-+static int aglx_rp_write_cfg(struct altera_pcie *pcie, u8 busno,
-+			     int where, int size, u32 value)
-+{
-+	void __iomem *addr = AGLX_RP_CFG_ADDR(pcie, where);
-+
-+	switch (size) {
-+	case 1:
-+		writeb(value, addr);
-+		break;
-+	case 2:
-+		writew(value, addr);
-+		break;
-+	default:
-+		writel(value, addr);
-+		break;
-+	}
-+
-+	/*
-+	 * Monitor changes to PCI_PRIMARY_BUS register on root port
-+	 * and update local copy of root bus number accordingly.
-+	 */
-+	if (busno == pcie->root_bus_nr && where == PCI_PRIMARY_BUS)
-+		pcie->root_bus_nr = value & 0xff;
-+
-+	return PCIBIOS_SUCCESSFUL;
-+}
-+
-+static int aglx_ep_write_cfg(struct altera_pcie *pcie, u8 busno,
-+			     unsigned int devfn, int where, int size, u32 value)
-+{
-+	cra_writel(pcie, ((busno << 8) | devfn), AGLX_BDF_REG);
-+	if (busno > AGLX_RP_SECONDARY(pcie))
-+		where |= (1 << 12); /* type 1 */
-+
-+	switch (size) {
-+	case 1:
-+		cra_writeb(pcie, value, where);
-+		break;
-+	case 2:
-+		cra_writew(pcie, value, where);
-+		break;
-+	default:
-+		cra_writel(pcie, value, where);
-+			break;
-+	}
-+
-+	return PCIBIOS_SUCCESSFUL;
-+}
-+
-+static int aglx_ep_read_cfg(struct altera_pcie *pcie, u8 busno,
-+			    unsigned int devfn, int where, int size, u32 *value)
-+{
-+	cra_writel(pcie, ((busno << 8) | devfn), AGLX_BDF_REG);
-+	if (busno > AGLX_RP_SECONDARY(pcie))
-+		where |= (1 << 12); /* type 1 */
-+
-+	switch (size) {
-+	case 1:
-+		*value = cra_readb(pcie, where);
-+		break;
-+	case 2:
-+		*value = cra_readw(pcie, where);
-+		break;
-+	default:
-+		*value = cra_readl(pcie, where);
-+		break;
-+	}
-+
-+	return PCIBIOS_SUCCESSFUL;
-+}
-+
- static int _altera_pcie_cfg_read(struct altera_pcie *pcie, u8 busno,
- 				 unsigned int devfn, int where, int size,
- 				 u32 *value)
-@@ -438,6 +584,10 @@ static int _altera_pcie_cfg_read(struct altera_pcie *pcie, u8 busno,
- 		return pcie->pcie_data->ops->rp_read_cfg(pcie, where,
- 							 size, value);
- 
-+	if (pcie->pcie_data->ops->ep_read_cfg)
-+		return pcie->pcie_data->ops->ep_read_cfg(pcie, busno, devfn,
-+							where, size, value);
-+
- 	switch (size) {
- 	case 1:
- 		byte_en = 1 << (where & 3);
-@@ -482,6 +632,10 @@ static int _altera_pcie_cfg_write(struct altera_pcie *pcie, u8 busno,
- 		return pcie->pcie_data->ops->rp_write_cfg(pcie, busno,
- 						     where, size, value);
- 
-+	if (pcie->pcie_data->ops->ep_write_cfg)
-+		return pcie->pcie_data->ops->ep_write_cfg(pcie, busno, devfn,
-+						     where, size, value);
-+
- 	switch (size) {
- 	case 1:
- 		data32 = (value & 0xff) << shift;
-@@ -660,7 +814,30 @@ static void altera_pcie_isr(struct irq_desc *desc)
- 				dev_err_ratelimited(dev, "unexpected IRQ, INT%d\n", bit);
- 		}
- 	}
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static void aglx_isr(struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct altera_pcie *pcie;
-+	struct device *dev;
-+	u32 status;
-+	int ret;
-+
-+	chained_irq_enter(chip, desc);
-+	pcie = irq_desc_get_handler_data(desc);
-+	dev = &pcie->pdev->dev;
- 
-+	status = readl(pcie->hip_base + pcie->pcie_data->port_conf_offset +
-+		       pcie->pcie_data->port_irq_status_offset);
-+	if (status & CFG_AER) {
-+		ret = generic_handle_domain_irq(pcie->irq_domain, 0);
-+		if (ret)
-+			dev_err_ratelimited(dev, "unexpected IRQ\n");
-+	}
-+	writel(CFG_AER, (pcie->hip_base + pcie->pcie_data->port_conf_offset +
-+			 pcie->pcie_data->port_irq_status_offset));
- 	chained_irq_exit(chip, desc);
- }
- 
-@@ -695,9 +872,9 @@ static int altera_pcie_parse_dt(struct altera_pcie *pcie)
- 	if (IS_ERR(pcie->cra_base))
- 		return PTR_ERR(pcie->cra_base);
- 
--	if (pcie->pcie_data->version == ALTERA_PCIE_V2) {
--		pcie->hip_base =
--			devm_platform_ioremap_resource_byname(pdev, "Hip");
-+	if (pcie->pcie_data->version == ALTERA_PCIE_V2 ||
-+	    pcie->pcie_data->version == ALTERA_PCIE_V3) {
-+		pcie->hip_base = devm_platform_ioremap_resource_byname(pdev, "Hip");
- 		if (IS_ERR(pcie->hip_base))
- 			return PTR_ERR(pcie->hip_base);
- 	}
-@@ -707,7 +884,7 @@ static int altera_pcie_parse_dt(struct altera_pcie *pcie)
- 	if (pcie->irq < 0)
- 		return pcie->irq;
- 
--	irq_set_chained_handler_and_data(pcie->irq, altera_pcie_isr, pcie);
-+	irq_set_chained_handler_and_data(pcie->irq, pcie->pcie_data->ops->rp_isr, pcie);
- 	return 0;
- }
- 
-@@ -720,6 +897,7 @@ static const struct altera_pcie_ops altera_pcie_ops_1_0 = {
- 	.tlp_read_pkt = tlp_read_packet,
- 	.tlp_write_pkt = tlp_write_packet,
- 	.get_link_status = altera_pcie_link_up,
-+	.rp_isr = altera_pcie_isr,
- };
- 
- static const struct altera_pcie_ops altera_pcie_ops_2_0 = {
-@@ -728,6 +906,16 @@ static const struct altera_pcie_ops altera_pcie_ops_2_0 = {
- 	.get_link_status = s10_altera_pcie_link_up,
- 	.rp_read_cfg = s10_rp_read_cfg,
- 	.rp_write_cfg = s10_rp_write_cfg,
-+	.rp_isr = altera_pcie_isr,
-+};
-+
-+static const struct altera_pcie_ops altera_pcie_ops_3_0 = {
-+	.rp_read_cfg = aglx_rp_read_cfg,
-+	.rp_write_cfg = aglx_rp_write_cfg,
-+	.get_link_status = aglx_altera_pcie_link_up,
-+	.ep_read_cfg = aglx_ep_read_cfg,
-+	.ep_write_cfg = aglx_ep_write_cfg,
-+	.rp_isr = aglx_isr,
- };
- 
- static const struct altera_pcie_data altera_pcie_1_0_data = {
-@@ -750,11 +938,44 @@ static const struct altera_pcie_data altera_pcie_2_0_data = {
- 	.cfgwr1 = S10_TLP_FMTTYPE_CFGWR1,
- };
- 
-+static const struct altera_pcie_data altera_pcie_3_0_f_tile_data = {
-+	.ops = &altera_pcie_ops_3_0,
-+	.version = ALTERA_PCIE_V3,
-+	.cap_offset = 0x70,
-+	.port_conf_offset = 0x14000,
-+	.port_irq_status_offset = AGLX_ROOT_PORT_IRQ_STATUS,
-+	.port_irq_enable_offset = AGLX_ROOT_PORT_IRQ_ENABLE,
-+};
-+
-+static const struct altera_pcie_data altera_pcie_3_0_p_tile_data = {
-+	.ops = &altera_pcie_ops_3_0,
-+	.version = ALTERA_PCIE_V3,
-+	.cap_offset = 0x70,
-+	.port_conf_offset = 0x104000,
-+	.port_irq_status_offset = AGLX_ROOT_PORT_IRQ_STATUS,
-+	.port_irq_enable_offset = AGLX_ROOT_PORT_IRQ_ENABLE,
-+};
-+
-+static const struct altera_pcie_data altera_pcie_3_0_r_tile_data = {
-+	.ops = &altera_pcie_ops_3_0,
-+	.version = ALTERA_PCIE_V3,
-+	.cap_offset = 0x70,
-+	.port_conf_offset = 0x1300,
-+	.port_irq_status_offset = 0x0,
-+	.port_irq_enable_offset = 0x4,
-+};
-+
- static const struct of_device_id altera_pcie_of_match[] = {
- 	{.compatible = "altr,pcie-root-port-1.0",
- 	 .data = &altera_pcie_1_0_data },
- 	{.compatible = "altr,pcie-root-port-2.0",
- 	 .data = &altera_pcie_2_0_data },
-+	{.compatible = "altr,pcie-root-port-3.0-f-tile",
-+	 .data = &altera_pcie_3_0_f_tile_data },
-+	{.compatible = "altr,pcie-root-port-3.0-p-tile",
-+	 .data = &altera_pcie_3_0_p_tile_data },
-+	{.compatible = "altr,pcie-root-port-3.0-r-tile",
-+	 .data = &altera_pcie_3_0_r_tile_data },
- 	{},
- };
- 
-@@ -792,11 +1013,18 @@ static int altera_pcie_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	/* clear all interrupts */
--	cra_writel(pcie, P2A_INT_STS_ALL, P2A_INT_STATUS);
--	/* enable all interrupts */
--	cra_writel(pcie, P2A_INT_ENA_ALL, P2A_INT_ENABLE);
--	altera_pcie_host_init(pcie);
-+	if (pcie->pcie_data->version == ALTERA_PCIE_V1 ||
-+	    pcie->pcie_data->version == ALTERA_PCIE_V2) {
-+		/* clear all interrupts */
-+		cra_writel(pcie, P2A_INT_STS_ALL, P2A_INT_STATUS);
-+		/* enable all interrupts */
-+		cra_writel(pcie, P2A_INT_ENA_ALL, P2A_INT_ENABLE);
-+		altera_pcie_host_init(pcie);
-+	} else if (pcie->pcie_data->version == ALTERA_PCIE_V3) {
-+		writel(CFG_AER,
-+		       pcie->hip_base + pcie->pcie_data->port_conf_offset +
-+		       pcie->pcie_data->port_irq_enable_offset);
-+	}
- 
- 	bridge->sysdata = pcie;
- 	bridge->busnr = pcie->root_bus_nr;
--- 
-2.34.1
+I hope to be able to release a patch before the end of August
 
+Best regards
+
+Yannick Fertré
+
+
+Le 01/08/2024 à 11:07, Raphaël Gallais-Pou a écrit :
+>
+>
+> Le 29/07/2024 à 15:28, Yanjun Yang a écrit :
+>> On Fri, Jul 26, 2024 at 09:55:35AM +0200, Philippe CORNU wrote:
+>>>
+>>>
+>>> On 7/22/24 10:38, Yanjun Yang wrote:
+>>>>
+>>>> This patch (commit id:185f99b614427360) seems to break the dsi of
+>>>> stm32f469 chip.
+>>>> I'm not familiar with the drm and the clock framework, maybe it's
+>>>> because there is no
+>>>>    "ck_dsi_phy" defined for stm32f469.
+>>>> PS:  Sorry for receiving multiple copies of this email, I forgot to
+>>>> use plain text mode last time.
+>>>>
+>>>
+>>> Hi,
+>>> Thank you for letting us know that there was this error. We should have
+>>> detected this before merging, really sorry for the problems caused 
+>>> by this
+>>> patch. We will investigate the issue and get back to you as soon as
+>>> possible. In the meantime, I think you can revert this patch in your 
+>>> git
+>>> tree.
+>>>
+>>> Philippe :-)
+>>>
+>>
+>> Hi,
+> Hi,
+>
+> FYI
+> DSI clock tree for stm32f469 can be found here:
+> https://www.st.com/resource/en/reference_manual/rm0386-stm32f469xx-and-stm32f479xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf 
+>
+>
+> Refer to Figure 17: DSI clock tree.
+>
+> After some research I think "ck_dsi_phy" was introduced in stm32h7 
+> platforms. There is a mux which interfaces between various clocks 
+> (among ck_hse) and the byte lane clock. stm32f469 has a much simpler 
+> clock tree in which we did not bother to implement this "go-between" 
+> clock, even though they is an equivalent of the mux.
+>
+>> After some testing, the reason behind my problem is the parent's name of
+>> 'clk_dsi_phy' for stm32f4 is 'clk-hse' other than 'ck_hse'.  I don't
+>> know which is the better why to fix it:
+>> 1. Change "ck_hse" to "clk-hse" in where "clk_dsi_phy" is defined.
+> Doing so will definitely break other platforms.
+>
+>> 2. Use "pll_in_khz = clk_get_rate(dsi->pllref_clk) / 1000" instead of
+>>     "pll_in_khz = (unsigned int)(parent_rate / 1000)" when get the clock
+>>     rate.
+> dsi->pllref_clk refers to the HSE clock if you take a look in the 
+> device-tree. This is the reason why this work on your setup. I doubt 
+> nevertheless that it wouldn't work on other platforms. But this would 
+> be a semantic nonsense, since the DSI byte lane clock is not always 
+> derived from HSE clock on other platforms.
+>
+> Looking again at the clk-stm32f4 driver and the DSI clock tree linked, 
+> we can maybe implement the desired clock even if it is not represented 
+> on the diagram.
+>
+> Eventually if this solution does not work we will go to the second 
+> solution you suggested and we will test it on all platforms.
+>
+> @Philippe, @Yannick
+> Do you agree with this workflow ?
+>
+> Regards,
+> Raphaël
+>
+>
+>>
+>> Both method can fix my problem. The first one might break other
+>> platforms. Maybe I should change the clock name of 'clk-hse'. However,
+>> I can't find the defination of this clock name for stm32f4.
 
