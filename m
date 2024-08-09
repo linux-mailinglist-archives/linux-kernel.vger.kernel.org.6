@@ -1,80 +1,54 @@
-Return-Path: <linux-kernel+bounces-281139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99BC94D382
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:32:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D8094D38D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375A0286B6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:32:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EBC0B22B2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EAE4198A19;
-	Fri,  9 Aug 2024 15:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79156198A36;
+	Fri,  9 Aug 2024 15:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fznazss9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gGw7MgYP"
+Received: from msa.smtpout.orange.fr (msa-216.smtpout.orange.fr [193.252.23.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DC81922CD
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02787194C62;
+	Fri,  9 Aug 2024 15:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723217570; cv=none; b=h0jrCWYRVMdEQsCxqY0qdWetAiX/0reVdMJr+KtYGYvQE4Tn0lpPSUqG6v7hgJfOkLfKICLm/NktpAvhi8v+XcLpQbTLandgst8DMUOtynUmdd1Pv9lUV/pf1hGutLWgikCIpnKIFk4bfQVyXVU5AjojkBHsnvOnrnB9/Jng/4w=
+	t=1723217723; cv=none; b=KqUSbH+/YFGutnxZow9UGf6EhvtlYGfZY67vl0F8sw6q06/+846VU9G/j1o7nCwHTWVWclL8QPRl0kMwGwEIVuTxsThl70dnKhaMGC4HEvSUIYqXVhoY2e8jMn97PevR6nKl0H5Al4eE9xRsgfA+bZL7mWw6yiCecYwvZN8lfVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723217570; c=relaxed/simple;
-	bh=+pTk2aEi/ogCsdRxsYBqnWsuQm3ye5bJGdOKQ1d7M/g=;
+	s=arc-20240116; t=1723217723; c=relaxed/simple;
+	bh=alMx3FaLXvrCcOpHNI1Kce8yS54FHkxPds+xnj7xf1E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DtcDtTi+lIwOVRNUYbnRiYKEBwlXaFrSfdT/uzLWf+jS0V8FXIvUCdYPdBiPHJaTE6NzCTGyLOOS75cGq9TRuX4+QdBfZDVazUGF/ZDW9OQi6NtA7BVtl+U0P47NWJJPUZccf+5HXf4egIZ53o0cRmYocv0vpoz+U0XwB75ZJ3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fznazss9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723217567;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W+bDlh7xaItgyuKYxRJ95n8/JjvqS8mQFp8R1hqMxuE=;
-	b=Fznazss9C29Z5ygof64lX9eBVEeo96Iy/gh031MS9gCCP1okwlJ6EZftdraPRJTlIO/0XE
-	xdr8cinGvq8GnI86hte0Nd+uZqBc1YMGXtLuLO2de6aGLgXv3qvYyh3z0pV7M7dIf1Z9W/
-	tuhHJjIcse1gSbGAgW5oun0XYdQp1jw=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-412-EN57wZX2NFWPH0-SXLCKUQ-1; Fri, 09 Aug 2024 11:32:46 -0400
-X-MC-Unique: EN57wZX2NFWPH0-SXLCKUQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42671a6fb9dso14883765e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:32:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723217565; x=1723822365;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=W+bDlh7xaItgyuKYxRJ95n8/JjvqS8mQFp8R1hqMxuE=;
-        b=mhzWhdR13kXGXHPZHgR5AaMC7/MmHoNnd6KXhpXBgtSauRmRrx70l9NsgkBSiRcHgh
-         Zwsu/Eo76Al5MUikO0Dq2ro7Htu1VGWKChPVzr3SGQtaAWogxjS7hsXoeXH5S9z9MlVR
-         Hhib71mtqY3Dw47pIU77cLe+VE3uXds3rlUcEJeansT/Ncv5Jb//oQC0Gz234HKJzCjs
-         ssLCYLH5p4bg2irAHz5WozvusxvOqouejoJyYkGM6cVbq0UgXyUYAduIxepOhMBQ7APE
-         KQ/Sltkmfu/6czck6RNE56gmwLrKCRLsNaoxcIp6I31p6mudWdZyr3jxYuUzd5Qdhcf2
-         mBwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSH+WK6titnGXlK38288m8GR/LIyHwndUgMWN9h2VJkZIaumI1l2O5CJTds+Qt36dqsLCTb/+DwcNLG8QFSBya24wzeh0y2WDhz9Rk
-X-Gm-Message-State: AOJu0YweqM3ObkDECGg1wC8hguinFKGO/4piRZpSqtghZuERWT1zGaJ1
-	1roBCBQPBvkeO5TiWfmt/Cj6BAKt9v1qYIdNblF7C7yjChkdxV9IxN4DjlW7ryLbqhESgkTJhSY
-	3XEFt5Eaun8kiSQU+ZtIKxuvdUd6AsC/HrPynBajWC4r/YgOjnqtZxIn5XHxQEA==
-X-Received: by 2002:a05:600c:1f92:b0:428:1e8c:ff75 with SMTP id 5b1f17b1804b1-429c3a58e43mr14390515e9.35.1723217564974;
-        Fri, 09 Aug 2024 08:32:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8qqzCZxjocJRmOEkMUj674dhjVNuLeTJsDldTBnAkT9Q6D4eLgZ56K8asvE2PExbGKakAHw==
-X-Received: by 2002:a05:600c:1f92:b0:428:1e8c:ff75 with SMTP id 5b1f17b1804b1-429c3a58e43mr14390315e9.35.1723217564539;
-        Fri, 09 Aug 2024 08:32:44 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c74a9d2sm79848155e9.27.2024.08.09.08.32.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 08:32:44 -0700 (PDT)
-Message-ID: <17597d58-7da8-4555-b583-1997d78be018@redhat.com>
-Date: Fri, 9 Aug 2024 17:32:43 +0200
+	 In-Reply-To:Content-Type; b=OVRNX3h2nCLNdjMckJU1q/e5KPjSZq199uvZMMq7KkQKPS+i5Qle9ZY8u7cISzCtMBki57GNfLF0K8Hz8WcOo4hT/aIkPTWxsb20ce2dhJ/d/6HGmaXgqoSvuTTqV5JHavBok/1zoZaMgW+1vkj+x/wZeEbbiiZv6o9Lld2dzK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gGw7MgYP; arc=none smtp.client-ip=193.252.23.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id cRczsUVfkOGeacRd0szeSZ; Fri, 09 Aug 2024 17:34:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723217646;
+	bh=dL3EWOnxHrCX3LwQQ8rHJjJ1VknbUrGetrFnEmJangs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=gGw7MgYPDqd8W1f+UOz84kw8NFAwI8nM2/Q1JbFdERkyVhhjb0+RYusfwvuXqYLvF
+	 rxnJld+WgECx3XAKuFfDMGEG/FDpR456opo4tzMP3oPo7a+kA7eYsyT0JggSb1H53R
+	 QMIIE5RcFHR3CkNAMTeTfhqSTqtnhj4SPb6TMRnO5L/bdwKHqhv5H3S47HRLEm3qie
+	 Y/IsPM8+qYP3uTRWk+iZe6dF8a9ktVeHNosluzHLUb+RE5ngzJ9Z4qYDlXw89ezevi
+	 1Pt6NWuXHgwSCZU/tEIO+ZJq1hcL6JhOam4OtyOywisRVhued72JYsXye/kxmFdqmB
+	 hpf0rIBS8y1Tw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 09 Aug 2024 17:34:06 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <8a048baa-d9a7-4285-9242-7a32a594f226@wanadoo.fr>
+Date: Fri, 9 Aug 2024 17:34:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,82 +56,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] mm/migrate: move common code to numa_migrate_check
- (was numa_migrate_prep)
-To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Huang, Ying" <ying.huang@intel.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Yang Shi <shy828301@gmail.com>,
- Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org
-References: <20240809145906.1513458-1-ziy@nvidia.com>
- <20240809145906.1513458-4-ziy@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240809145906.1513458-4-ziy@nvidia.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: ad7173: add support for ad4113
+To: mitrutzceclan@gmail.com
+Cc: Michael.Hennerich@analog.com, christophe.jaillet@wanadoo.fr,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ devnull+dumitru.ceclan.analog.com@kernel.org, dumitru.ceclan@analog.com,
+ jic23@kernel.org, krzk+dt@kernel.org, lars@metafoo.de,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org
+References: <20240809-ad4113-v2-0-2a70c101a1f4@analog.com>
+ <20240809-ad4113-v2-2-2a70c101a1f4@analog.com>
+ <37357b8a-1995-473d-a6fb-168fc38e0641@wanadoo.fr>
+ <93d79fbd-8d1c-4a80-bf65-d4e597247573@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <93d79fbd-8d1c-4a80-bf65-d4e597247573@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09.08.24 16:59, Zi Yan wrote:
-> do_numa_page() and do_huge_pmd_numa_page() share a lot of common code. To
-> reduce redundancy, move common code to numa_migrate_prep() and rename
-> the function to numa_migrate_check() to reflect its functionality.
+Le 09/08/2024 à 16:40, Ceclan, Dumitru a écrit :
+> On 09/08/2024 17:30, Christophe JAILLET wrote:
+>> Le 09/08/2024 à 12:33, Dumitru Ceclan via B4 Relay a écrit :
+>>> From: Dumitru Ceclan <dumitru.ceclan-OyLXuOCK7orQT0dZR+AlfA-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org>
+>>>
+>>> This commit adds support for the AD4113 ADC.
+>>> The AD4113 is a low power, low noise, 16-bit, Σ-Δ analog-to-digital
+>>> converter (ADC) that integrates an analog front end (AFE) for four
+>>> fully differential or eight single-ended inputs.
+>>>
+>>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan-OyLXuOCK7orQT0dZR+AlfA-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org>
+>>> ---
+>>>    drivers/iio/adc/ad7173.c | 36 +++++++++++++++++++++++++++++++++++-
+>>>    1 file changed, 35 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+>>> index a854f2d30174..3ac09d326472 100644
+>>> --- a/drivers/iio/adc/ad7173.c
+>>> +++ b/drivers/iio/adc/ad7173.c
+>>> @@ -3,7 +3,7 @@
+>>>     * AD717x and AD411x family SPI ADC driver
+>>>     *
+>>>     * Supported devices:
+>>> - *  AD4111/AD4112/AD4114/AD4115/AD4116
+>>> + *  AD4111/AD4112/AD4113/AD4114/AD4115/AD4116
+>>>     *  AD7172-2/AD7172-4/AD7173-8/AD7175-2
+>>>     *  AD7175-8/AD7176-2/AD7177-2
+>>>     *
+>>> @@ -84,6 +84,7 @@
+>>>    #define AD4111_ID            AD7173_ID
+>>>    #define AD4112_ID            AD7173_ID
+>>>    #define AD4114_ID            AD7173_ID
+>>> +#define AD4113_ID            0x31D0
+>>
+>> Nitpick: others are in lowercase --> 0x31d0
+>>
+>>>    #define AD4116_ID            0x34d0
+>>>    #define AD4115_ID            0x38d0
+>>>    #define AD7175_8_ID            0x3cd0
+>>
+>> Other than that, is there any reason to have this "random" order for these defines?
+>>
+>> CJ
+>>
 > 
-> Now do_huge_pmd_numa_page() also checks shared folios to set TNF_SHARED
-> flag.
+> It's not random, it was requested to order these defines by the ID value:
+> https://lore.kernel.org/all/CAHp75VcjcgnLkQWim1AVnyeRGFwwKpaWSCvrmqdv41Lx87hMKw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org/
+> 
 
-Yeah, I was also wondering why we didn't check that in the PMD case.
+Ok,
 
-Acked-by: David Hildenbrand <david@redhat.com>
+I thought about it, but it is not sorted either. (a few lines above the 
+place you added the new #define):
 
--- 
-Cheers,
+#define AD7175_ID			0x0cd0
+#define AD7176_ID			0x0c90
 
-David / dhildenb
+Maybe, it should be part of another patch to keep the logic by ID value?
 
+CJ
 
