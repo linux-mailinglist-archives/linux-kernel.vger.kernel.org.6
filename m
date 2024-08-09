@@ -1,113 +1,105 @@
-Return-Path: <linux-kernel+bounces-280307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8156094C869
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:15:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A09C94C86B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F0A7286B00
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:15:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D31A1C22D3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83A4171AF;
-	Fri,  9 Aug 2024 02:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2C5175A1;
+	Fri,  9 Aug 2024 02:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khw48ILc"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eujbSvn6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA69E28E7;
-	Fri,  9 Aug 2024 02:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371731401C;
+	Fri,  9 Aug 2024 02:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723169720; cv=none; b=cdaAlx+odsNIeyFS9cnLFGImAUiHvvaBH3ef18Iw3KdLX7vPpnNeE/TzFkNXWMpSAbMJGFl0oitZlVmTQYvZzSCB92gp1wVWp7XUOJZNUYYUWwqwQIAOw2jyb2t2EwrtQ9M0EpLt34RVHG65Q2iAKHk47DKIYtpp077rYV/L5UU=
+	t=1723169741; cv=none; b=HIufNbeSUK1hcufXDRH9phMvvg7MwSI/heFYcWkeNH+nW5TYvir+aqCluFmxrTaqvlSjyVTPHgvabkRFoDNAJUmhPY84uqhjr0GEnpYibkgYKAUt0NnhCqBJHmoUqTBcQlIMzkTG7QGTgG9AfcYLHsYr34vpVo5+DayOJNBCzSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723169720; c=relaxed/simple;
-	bh=M5MqM1KAWY5oYZaYbTi7EK4ppq6sp2rBOyFJN0AzKvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kk+VcESOX0FoXVruK9fqmkaDJDiFkraAOTi3cEvLHr/VjeK/dpFlrZkAVNmMN9hVJYdXJp3OXoknFiZR+Cc2Q3RrB6gfInFiR06wADVHq7RPNC63L4uV1gHXrySf1aDEDweMgc/bMBSbkWKHCvk9rKia1WjklUGoc3fbEOUCQN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=khw48ILc; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d162eef54so1312260b3a.3;
-        Thu, 08 Aug 2024 19:15:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723169718; x=1723774518; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MTiSyDzQ2lgiFfOqhlBi+UtxoJrWKu0iKpFDCLGRyQc=;
-        b=khw48ILc70Jk5ehnC1KdZMWb4pab2TcSOl8+WqKtnXHy/yp5vpmQT1enoFTgrwCVdn
-         12knZ8iaqItesggbssjrDY2TmwhJLuId8hrpYz7MHalJFv55iNoIIKQ8XOEcEkHv6+Mt
-         iHScvf+IGx2NjsAFe9baqk6pxyhNVQoMwKvQAepQ/1hSaiYtQqiRVtHoTLxACWvj58x3
-         gwMjyn1Hex+nUKHM5p6zN6XwmEY9uNIPuHR+199xXnrV99TPaBrGI9k1s1FDaRJ2T04Y
-         bmOox/L7Tmds48pofCPiX0ZaynAvY+PAy8RSykKYpnUdOr8IsFeyK4ylcEqU5t2cREsX
-         3Kpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723169718; x=1723774518;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MTiSyDzQ2lgiFfOqhlBi+UtxoJrWKu0iKpFDCLGRyQc=;
-        b=sGBhkZj2433sItgE4QBIaysPb+5Gyop95mROUhferFcLRGmanm0arf/ysXjfeRIq/u
-         32nRXtt+5LhosgBGIjEM1456IanbTdO9of0IWvgFeb9U7grgTWCT2Qy7U5Lt5VMUhnft
-         v7XTZlmGKcyocwpU47fb9RpxJ8bpH3OZbH8WZTfU+PBjRnG0ZOeD2E1JdipkG9e58h2h
-         Ok6VatmICg66uYcySb0k4sGgw9PAwWvx8Z0OjF+gExsvUxjZAMDTuyz69FMCRAuemg/a
-         6ShWUQfcMH2TMeCl/KYeGHyqxu1CamdCBVmU8fvRMoO+8hWwGAP31k/Qk6c4e06f2F2i
-         TEhw==
-X-Forwarded-Encrypted: i=1; AJvYcCWr7PKRGKmSDrvLOSJ/07thNjtUe6bC6noy7cbjZDtKIyVm6m/mUgVQXVpKP558y6msTZ4y31PG/Q0suMrooFJ5jS1JHLwxCIyJWlPq5mC4JcV4soplTkW+Ah9cUi2+K5uhAG+1feULzRs5vYeovQ==
-X-Gm-Message-State: AOJu0Yw+NaESaLbgb30HYMS6EBf5LuvrwRnLpN0dwvwNO/yR9g1XhPuV
-	iZkhcyhFgArE28vunExzAHq0FHLT8lPGAru+UGUPS/pb3Qwq9m1L
-X-Google-Smtp-Source: AGHT+IFlU6Bmj66ERhyWTfBHa+SN+Yo7E4RLP1y7LbEefmal6wAYAlWVZKHG8RFi97xIXo3d6ntMxA==
-X-Received: by 2002:a05:6a00:b56:b0:710:9d5e:8a3 with SMTP id d2e1a72fcca58-710dcaa69fbmr46015b3a.30.1723169717910;
-        Thu, 08 Aug 2024 19:15:17 -0700 (PDT)
-Received: from [150.203.214.79] ([150.203.214.79])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb20a054sm1732459b3a.20.2024.08.08.19.15.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 19:15:17 -0700 (PDT)
-Message-ID: <bb2e54b9-a40d-4c4c-b769-0563d071c303@gmail.com>
-Date: Fri, 9 Aug 2024 12:15:08 +1000
+	s=arc-20240116; t=1723169741; c=relaxed/simple;
+	bh=nJuswpyVmo6EC4IpZyEB8KNszJ78dYeSsIYznjgXYsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KyBF4dIKlfIN49KYGPA4arQkNBbQAN+vFZXGtzdcKtWZComP58atEjNUN7VGeH1zJM1wq/jFQRYjmKjJr7jNzmvpDYGyEO5IB/eWKg9t3rWv/NDpvYD3Z638nNTCm/79/MQHER9bZTyCEm0tbPHv7qZVpvPNDMPY0ehSTkgjyXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eujbSvn6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F5CC32782;
+	Fri,  9 Aug 2024 02:15:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723169740;
+	bh=nJuswpyVmo6EC4IpZyEB8KNszJ78dYeSsIYznjgXYsI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eujbSvn6/xFJA0eRi7aEOiDAtjKEngaauVXJ4EWIxSDo50iUkvkE/wEO2u3lpIpdJ
+	 Sk16nQfAvHFnf/D12uHrIXe6GgCAsTujXypo/JdPn7dPhJOG0kMan7ivYIZZJygbmS
+	 RIaR3bfnKsywLL6hdHHXEhqJQMw752KMmx43ajdsde1yzkfUiqoPfvRoA2D2OtZ8+T
+	 rHYnitLW0V4iz9fYwmcsyG4HlkHNTSDDy8F8AtWgC8DJ7xORoQKBlBUWjFdV9fHfpv
+	 srAgFBIWhZ4pgWnZnD+S4VVY6fCpeKPSFTGiM9VnT+DXVKmKTEFhW/mVzAQAuVAsTF
+	 mv9i94TxnV3eA==
+Date: Thu, 8 Aug 2024 19:15:39 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Potnuri Bharat Teja
+ <bharat@chelsio.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jamal Hadi Salim
+ <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko
+ <jiri@resnulli.us>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] cxgb4: Avoid -Wflex-array-member-not-at-end
+ warning
+Message-ID: <20240808191539.615733ab@kernel.org>
+In-Reply-To: <111cc058-a681-4aec-ace4-cd6bc19699f7@embeddedor.com>
+References: <ZrD8vpfiYugd0cPQ@cute>
+	<20240807200522.2caba2dc@kernel.org>
+	<111cc058-a681-4aec-ace4-cd6bc19699f7@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf script python: Add the ins_lat field to event
- handler
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- James Clark <james.clark@linaro.org>, Paran Lee <p4ranlee@gmail.com>,
- Ben Gainey <ben.gainey@arm.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240808133208.3577910-1-fzczx123@gmail.com>
- <8be2eeaf-9c85-4a77-b66d-53dd1b35bf91@intel.com> <ZrUrZOp1w5-8wjQM@x1>
-Content-Language: en-US
-From: Zixian Cai <fzczx123@gmail.com>
-In-Reply-To: <ZrUrZOp1w5-8wjQM@x1>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 9/8/2024 06:32, Arnaldo Carvalho de Melo wrote:
-> On Thu, Aug 08, 2024 at 06:50:16PM +0300, Adrian Hunter wrote:
->>
->> Minor comments, otherwise:
->>
->> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+On Thu, 8 Aug 2024 12:41:32 -0600 Gustavo A. R. Silva wrote:
+> >>   .../chelsio/cxgb4/cxgb4_tc_u32_parse.h        |  2 +-
+> >>   include/uapi/linux/pkt_cls.h                  | 23 +++++++++++--------  
+> > 
+> > Took me a minute to realize you're changing uAPI.
+> > Please fix the subject.  
 > 
-> Thanks, I'm then waiting for a v3 with those comments addressed and your
-> Reviewed-by tag collected,
-> 
-> Thanks,
-> 
-> - Arnaldo
+> What would be a preferred subject?
 
-v3 submitted with the comments addressed.
+The point is that include/uapi/linux/pkt_cls.h is the more important
+change.
+
+net/sched, based on:
+
+git log --oneline -- include/uapi/linux/pkt_cls.h
+
+11036bd7a0b3 net/sched: cls_flower: rework TCA_FLOWER_KEY_ENC_FLAGS usage
+bfda5a63137b net/sched: flower: define new tunnel flags
+6e5c85c003e4 net/sched: flower: refactor control flag definitions
+1d17568e74de net/sched: cls_flower: add support for matching tunnel control flags
+6dd514f48110 pfcp: always set pfcp metadata
+82b2545ed9a4 net/sched: Remove uapi support for tcindex classifier
+41bc3e8fc1f7 net/sched: Remove uapi support for rsvp classifier
+ba24ea129126 net/sched: Retire ipt action
+35b1b1fd9638 Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+4c13eda757e3 tc: flower: support for SPI
+4d50e50045aa net: flower: fix stack-out-of-bounds in fl_set_key_cfm()
+7cfffd5fed3e net: flower: add support for matching cfm fields
+1a432018c0cd net/sched: flower: Allow matching on layer 2 miss
+8b189ea08c33 net/sched: flower: Add L2TPv3 filter
+f86d1fbbe785 Merge tag 'net-next-6.0' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
+5008750eff5d net/sched: flower: Add PPPoE filter
+94dfc73e7cf4 treewide: uapi: Replace zero-length arrays with flexible-array members
+b40003128226 net/sched: flower: Add number of vlan tags filter
+e3acda7ade0a net/sched: Allow flower to match on GTP options
+
+You can throw in uAPI somewhere in the subject, too
 
