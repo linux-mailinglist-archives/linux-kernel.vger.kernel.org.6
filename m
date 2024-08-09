@@ -1,114 +1,137 @@
-Return-Path: <linux-kernel+bounces-280950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01AFB94D14B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:31:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA49894D14D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83EE728414D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08FC81C211FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7224A194C93;
-	Fri,  9 Aug 2024 13:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ErGP9x0E"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6733D1940B9
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDCE194C93;
+	Fri,  9 Aug 2024 13:31:55 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2191194AFA;
+	Fri,  9 Aug 2024 13:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723210293; cv=none; b=nk9rjZUAQJZ3R79QhvdALhRBqzTP37Eys3y2TXMbAIquLw25cGH9bcSD+Iby9QXVfoiflqj0phQBM/PAD0u5kUF55A/8NqUXHoRaWM1eN85ASzxFjljG/wxk2mvGPzBhsLBOf9sF+gX9PptfbsBzYSTM68XFldUFzxkpTsY8YFc=
+	t=1723210315; cv=none; b=gG+wpRR0kO6VK/VCnBEPeJ2jlYXSzHb4pHOQxxepEz4ds2I+TTG9b+fC9dl/7p9haAm0SVE1FKW5uvlnKEoR2j7eOG7mbjEXHQcD8+pLM1HwdXUP9tWQjcLdsdL4zYgemtU67jWYpc/1eWWgPXEQTioVhshSfKSp4ozFA+vL0kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723210293; c=relaxed/simple;
-	bh=lYtDZk0FLPC/JudIe9Jh+TGpstry2aKOQgO3D43H+Q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tan7ttglfLWRQfUjGPIG5QW7gngwV/t5p9pdDg5+fsvkpL+3lXbNDIPEzgwOdt7zxRdO9kG7XKAhdwAG9PDSoNvoqq7JcJdDeoeLdseSc6j/ydA088SAJUrz2RyiBfAtsMjzF/F09xLQ6Pyv3JoQqepv+rxTkCEBew+g0X+PRQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ErGP9x0E; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=62G+
-	6LGOoz3ndT//ceNMgtDoqs2jDeWVt6TUvAoLeF4=; b=ErGP9x0EiIrgAzW09wL+
-	MwanHmQq6svTgG4S1aDmMctRRC+DR9iCnb21onHZsSBLuMnzznd2m68N0xhj1uw3
-	L06mqIgUXVvqSEzGQFi39hDsM4f6bI1N1XTEAZjFd2aCe9CHFk5omWYbNMb7U12R
-	cWSmiWE+PpOfW3bL29gZyE6t9o6Xl6rhbduU1mr1RQG1ix9iRb+NGx/pZLTpbteu
-	SGDdDT/9lA4aSpGjZQWYTOadmMdiiN4FLcwCN2ZaSqxh5qZUx3CyS3UgU05buTBn
-	oh2zT7EBhI6BjvMwUDw7h/uevh4m1H8BRb2ajzoYM0IXmHI0KlSwN1WQQm6KxoZj
-	xw==
-Received: (qmail 624119 invoked from network); 9 Aug 2024 15:31:26 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Aug 2024 15:31:26 +0200
-X-UD-Smtp-Session: l3s3148p1@UGz3KEAfPoMujnvj
-Date: Fri, 9 Aug 2024 15:31:25 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>,
-	Gaosheng Cui <cuigaosheng1@huawei.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Subject: Re: [GIT PULL] i2c-host-fixes for v6.11-rc3
-Message-ID: <ZrYaLQ1GZFBAii0Q@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>,
-	Gaosheng Cui <cuigaosheng1@huawei.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-References: <3oxrthtenkyypr5pqpduxyndw6wxihn24s67p6ppogkcdd6mjd@s5pg3swp6flp>
+	s=arc-20240116; t=1723210315; c=relaxed/simple;
+	bh=WfFpJcJQ35dzLTQUD05Fr67TBk4HOaFQYQsu6eFGzc0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=X5r5h0ThRiOK52rFCt0PgyqpCURDIf9Ge1seX/Dw6GSJZ5rdU1OXk7POVRaR+zIhqvjvJLhd9CRetv1JeqFS0yaAlu0+PbS7n/U46yqwmpzcU6tDn7cqcCSYPiiGVjNTwua3jq8YXvxUrTM7zjJnEh8O+pzkerHt3CK6aCBr23M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 8885192009C; Fri,  9 Aug 2024 15:31:52 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 82E7492009B;
+	Fri,  9 Aug 2024 14:31:52 +0100 (BST)
+Date: Fri, 9 Aug 2024 14:31:52 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: Correct error reporting with PCIe failed link
+ retraining
+In-Reply-To: <20240424221324.GA510262@bhelgaas>
+Message-ID: <alpine.DEB.2.21.2408082349330.61955@angie.orcam.me.uk>
+References: <20240424221324.GA510262@bhelgaas>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zfFAmvyhCPUYaeQW"
-Content-Disposition: inline
-In-Reply-To: <3oxrthtenkyypr5pqpduxyndw6wxihn24s67p6ppogkcdd6mjd@s5pg3swp6flp>
+Content-Type: text/plain; charset=US-ASCII
 
+On Wed, 24 Apr 2024, Bjorn Helgaas wrote:
 
---zfFAmvyhCPUYaeQW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > linux-pcie-failed-link-retrain-status-fix.diff
+> > Index: linux-macro/drivers/pci/quirks.c
+> > ===================================================================
+> > --- linux-macro.orig/drivers/pci/quirks.c
+> > +++ linux-macro/drivers/pci/quirks.c
+> > @@ -74,7 +74,8 @@
+> >   * firmware may have already arranged and lift it with ports that already
+> >   * report their data link being up.
+> >   *
+> > - * Return TRUE if the link has been successfully retrained, otherwise FALSE.
+> > + * Return TRUE if the link has been successfully retrained, otherwise FALSE,
+> > + * also when retraining was not needed in the first place.
+> 
+> Can you recast this?  I think it's slightly unclear what is returned
+> when retraining is not needed.  I *think* you return FALSE when
+> retraining is not needed.  Maybe this?
+> 
+>   Return TRUE if the link has been successfully retrained.  Return
+>   FALSE if retraining was not needed or we attempted a retrain and it
+>   failed.
 
-Hi Andi,
+ Sure, thanks for the suggestion.  Applied verbatim except for formatting.
 
-> two fixes from Gaosheng in this pull request on the Qualcomm Geni
-> device.
+> > @@ -83,10 +84,11 @@ bool pcie_failed_link_retrain(struct pci
+> >  		{}
+> >  	};
+> >  	u16 lnksta, lnkctl2;
+> > +	bool ret = false;
+> >  
+> >  	if (!pci_is_pcie(dev) || !pcie_downstream_port(dev) ||
+> >  	    !pcie_cap_has_lnkctl2(dev) || !dev->link_active_reporting)
+> > -		return false;
+> > +		return ret;
+> 
+> We know the value here, so IMO it's easier to read if we return
+> "false" instead of "ret".
 
-Pulled. But I wonder why this wasn't just one fix because it is the same
-error path?
+ Well, either patch in the series has to make this change.  If you prefer 
+it to be the second one, then I'm fine with it.  Applied throughout then.
 
-> Wish you a great weekend,
+> > @@ -117,13 +120,14 @@ bool pcie_failed_link_retrain(struct pci
+> >  		lnkctl2 |= lnkcap & PCI_EXP_LNKCAP_SLS;
+> >  		pcie_capability_write_word(dev, PCI_EXP_LNKCTL2, lnkctl2);
+> >  
+> > -		if (pcie_retrain_link(dev, false)) {
+> > +		ret = pcie_retrain_link(dev, false) == 0;
+> > +		if (!ret) {
+> >  			pci_info(dev, "retraining failed\n");
+> > -			return false;
+> > +			return ret;
+> >  		}
+> >  	}
+> >  
+> > -	return true;
+> > +	return ret;
+> 
+> It gets awfully subtle by the time we get here.  I guess we could set
+> a "retrain_attempted" flag above and do this:
+> 
+>   if (retrain_attempted)
+>     return true;
+> 
+>   return false;
+> 
+> But I dunno if it's any better.  I understand the need for a change
+> like this, but the whole idea of returning failure (false) for a
+> retrain failure and also for a "no retrain needed" is a little
+> mind-bending.
 
-Thanks, same to you!
+ I agree it's a bit subtle, but not incorrect and to go away with the next 
+change, which I want to keep separate from this one for clarity.  Let's 
+not overdesign for this transitional state then please.
 
-   Wolfram
+ I've posted v2 now with extra patches to address further issues discussed 
+recently: 
+<https://patchwork.kernel.org/project/linux-pci/list/?series=878216>.  
 
+ Thank you for your review!
 
---zfFAmvyhCPUYaeQW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma2GioACgkQFA3kzBSg
-KbYhBw/+KWfj/9rT2OrbKjzS+C6/mMTDrE1I/5imx3gYpsQvODjuaY/QLFDp+Jt9
-s9HqrnSTa7beCd/EoQuH1T+QikYFuXtAG/usJjZ+3lpoX9exYYHQG5Z/REyI6D1P
-gjqw9GOXgIWRnpnRZL7prb6eXwMVCHHDSeguzX2LIcNtPJzYiuzc/SH9h8huHlhY
-e4xax7SkXhnDpbNFuqnQWXWNsz5a3jDiC/mUcaJf+zNjUV4UyMq5VjfPFizx5SH2
-W2gCQ+weCgUFmZRF4IMWhd7haGQRCym2bIo3VKIODIY0zuxvrbakJIyAphh6qiwq
-DEQBg8tBIZ9CRdmP1yZeBV+6aDSeOvABe8oMGbOOe2gnh75Mn6qZrZ2HkrFXj46i
-4dSd8fKtYrY42cbaB0Lg8Gm5aazxl2lYvVPLSwUR+nWP2dk19fD5bV39eFx5PaT3
-eqgpDbCTjz3/SN/JA5CJMbgnkqXN4BhV8yTwOp1t9ZtMrZ+gw2dKN1/dVhfuUm5X
-VNJC5H7DXXv+3tT2VWfIxdPbOHIVoUXrNauwf4ze6R4kJTfdTlp43l2mQJ+U5aXb
-fsG5t3xvESo3u6JVfUCQZ+SEDGTfO+9U4TOna/o3g8A/aFudu+MxGjtyqXilGyYI
-uA7CUOwKTnGzz6jexN/GJXrLpc9pF+a4gRq2ftJHobtQkzkILXE=
-=JRKj
------END PGP SIGNATURE-----
-
---zfFAmvyhCPUYaeQW--
+  Maciej
 
