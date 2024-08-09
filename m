@@ -1,95 +1,39 @@
-Return-Path: <linux-kernel+bounces-280612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEEA894CCCC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:00:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AD494CCCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E86B2835E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:00:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF7311F21507
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E067C18F2F2;
-	Fri,  9 Aug 2024 08:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hecFQTnj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KZgbGkEK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hecFQTnj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KZgbGkEK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B681C18CBFA;
-	Fri,  9 Aug 2024 08:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D14D18E03A;
+	Fri,  9 Aug 2024 09:00:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081C3C8D1
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723193997; cv=none; b=K/yIyFKwlU96Nnmq1xJ8owkxDFlq1vASmqvkfMAnZzArd9ZgPCtS3LjbLwgWD43aruQTnpi1RC6eluTyewNAfPhi5JQ4MHLSuvsNqp+GNu6cfHFTgSQLqM4Rf0mc0NuP08vNOIJb3I7pzZbNniIvZoVMl7QdnOvdluLstb8m9mo=
+	t=1723194028; cv=none; b=sOEXVQooAaVbY3m0kGEKltWlcrha6TXM/z7Mx1QFlw3oMzfnWSah0wAx9IRgyretxJAAHJgunqS9Ua1vnbj2nuG6Fnv7hATlWw0VtOwjKBjCC1bCrvv4cbxckmsQkCNbi1/l2YpiuzbnrMdxw5SJJ6/ILIBG60eTlwoRZNERuvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723193997; c=relaxed/simple;
-	bh=3OBlyozUoezflwc1KcpEwHZ4JBQxYtYXHSnoEd0YwwM=;
+	s=arc-20240116; t=1723194028; c=relaxed/simple;
+	bh=/g6qj860acWqOWhRZdZ+bEN6+0J0OtAeu286wDE0O2c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nnUXUOsTEZxiN443CfokFtft8zYH+U0ADtRiEWLjjKKRQC8NrWTbqfzccI3sh06LJ+kEESAlBirnG10jtQ1H4qGhfhcM5xSL9ZTmDuo1YRcGgqbOV621of1OjOxTuvYo4TcuLoDctsRQ/kQP97deTxlpU/0szrPozeGA7sRUQ7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hecFQTnj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KZgbGkEK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hecFQTnj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KZgbGkEK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 953271FF2F;
-	Fri,  9 Aug 2024 08:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723193993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qJDjhIoxUXDLGf1tiz/qcgoJ9zcTAnQZcgHgMroPuCA=;
-	b=hecFQTnj4dlXZQBDKyFkZXK1KHRihuLmHA9kO1nBPTsQgGxn2v872Jus4rlY8wE9g/4Znd
-	YrfwzhaObA1h/zOnOy3MCdOpnMtm+oshtlJxyp5uwz9WVV7tdaJjBav+nnbz92hDN2o7sg
-	46Ebumhj56azk1lcqsWtQnLkFGeampI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723193993;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qJDjhIoxUXDLGf1tiz/qcgoJ9zcTAnQZcgHgMroPuCA=;
-	b=KZgbGkEK608Fs+II5f0AjZyee9zRmn437pR7XFn+xvI4flIa3KJ2ZdzeLvl2pjO/rcq5iE
-	KPN2wMYGd02IfoBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hecFQTnj;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=KZgbGkEK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723193993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qJDjhIoxUXDLGf1tiz/qcgoJ9zcTAnQZcgHgMroPuCA=;
-	b=hecFQTnj4dlXZQBDKyFkZXK1KHRihuLmHA9kO1nBPTsQgGxn2v872Jus4rlY8wE9g/4Znd
-	YrfwzhaObA1h/zOnOy3MCdOpnMtm+oshtlJxyp5uwz9WVV7tdaJjBav+nnbz92hDN2o7sg
-	46Ebumhj56azk1lcqsWtQnLkFGeampI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723193993;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qJDjhIoxUXDLGf1tiz/qcgoJ9zcTAnQZcgHgMroPuCA=;
-	b=KZgbGkEK608Fs+II5f0AjZyee9zRmn437pR7XFn+xvI4flIa3KJ2ZdzeLvl2pjO/rcq5iE
-	KPN2wMYGd02IfoBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6ADD413A7D;
-	Fri,  9 Aug 2024 08:59:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iEGdGYnatWb0LQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 09 Aug 2024 08:59:53 +0000
-Message-ID: <ddf093db-b0a8-4e44-9d81-1e4840967557@suse.cz>
-Date: Fri, 9 Aug 2024 10:59:52 +0200
+	 In-Reply-To:Content-Type; b=lFN9aY4Lwyt7ATkM2FTtHKjZPZbpwtrPcUk5/G45kBf3FdmvCdcZ8hexGxicCxUdPYQS83ZOS2iqHYgbxeRlX6IQDFz5yLHhBs6I4CLiS3Xsn+ATRXIqn6vEPqngvkcDD1raRUh7nrsU0VzHkpllbikjnpJihFIwalxaLgnz1ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00A49FEC;
+	Fri,  9 Aug 2024 02:00:51 -0700 (PDT)
+Received: from [10.57.95.64] (unknown [10.57.95.64])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21D0E3F6A8;
+	Fri,  9 Aug 2024 02:00:22 -0700 (PDT)
+Message-ID: <7e55d6eb-3384-4cc0-80ea-880ef2175121@arm.com>
+Date: Fri, 9 Aug 2024 10:00:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,248 +41,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slab: Introduce kmalloc_obj() and family
-Content-Language: en-US
-To: Kees Cook <kees@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- "Gustavo A . R . Silva" <gustavoars@kernel.org>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Jann Horn <jannh@google.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Marco Elver <elver@google.com>,
- linux-mm@kvack.org, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-References: <20240807235433.work.317-kees@kernel.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240807235433.work.317-kees@kernel.org>
+Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>, Barry Song <21cnbao@gmail.com>,
+ akpm@linux-foundation.org, linux-mm@kvack.org
+Cc: chrisl@kernel.org, kaleshsingh@google.com, kasong@tencent.com,
+ linux-kernel@vger.kernel.org, ioworker0@gmail.com,
+ baolin.wang@linux.alibaba.com, ziy@nvidia.com, hanchuanhua@oppo.com,
+ Barry Song <v-songbaohua@oppo.com>
+References: <20240808010457.228753-1-21cnbao@gmail.com>
+ <20240808010457.228753-2-21cnbao@gmail.com>
+ <e9f82fd8-e1da-49ea-a735-b174575c02bc@arm.com>
+ <537d7a30-2ad8-4c31-9ad3-ad86f1a7b519@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <537d7a30-2ad8-4c31-9ad3-ad86f1a7b519@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [0.00 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.com,kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,intel.com,kvack.org,vger.kernel.org,lists.linux.dev];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 953271FF2F
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: 0.00
+Content-Transfer-Encoding: 8bit
 
-On 8/8/24 01:54, Kees Cook wrote:
-> Introduce type-aware kmalloc-family helpers to replace the common
-> idioms for single, array, and flexible object allocations:
+On 09/08/2024 09:39, David Hildenbrand wrote:
+> On 09.08.24 10:13, Ryan Roberts wrote:
+>> On 08/08/2024 02:04, Barry Song wrote:
+>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>
+>>> When a new anonymous mTHP is added to the rmap, we increase the count.
+>>> We reduce the count whenever an mTHP is completely unmapped.
+>>>
+>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+>>> ---
+>>>   Documentation/admin-guide/mm/transhuge.rst |  5 +++++
+>>>   include/linux/huge_mm.h                    | 15 +++++++++++++--
+>>>   mm/huge_memory.c                           |  2 ++
+>>>   mm/rmap.c                                  |  3 +++
+>>>   4 files changed, 23 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst
+>>> b/Documentation/admin-guide/mm/transhuge.rst
+>>> index 058485daf186..715f181543f6 100644
+>>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>>> @@ -527,6 +527,11 @@ split_deferred
+>>>           it would free up some memory. Pages on split queue are going to
+>>>           be split under memory pressure, if splitting is possible.
+>>>   +anon_num
+>>> +       the number of anon huge pages we have in the whole system.
+>>> +       These huge pages could be still entirely mapped and have partially
+>>> +       unmapped and unused subpages.
+>>
+>> nit: "entirely mapped and have partially unmapped and unused subpages" ->
+>> "entirely mapped or have partially unmapped/unused subpages"
+>>
+>>> +
+>>>   As the system ages, allocating huge pages may be expensive as the
+>>>   system uses memory compaction to copy data around memory to free a
+>>>   huge page for use. There are some counters in ``/proc/vmstat`` to help
+>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>> index e25d9ebfdf89..294c348fe3cc 100644
+>>> --- a/include/linux/huge_mm.h
+>>> +++ b/include/linux/huge_mm.h
+>>> @@ -281,6 +281,7 @@ enum mthp_stat_item {
+>>>       MTHP_STAT_SPLIT,
+>>>       MTHP_STAT_SPLIT_FAILED,
+>>>       MTHP_STAT_SPLIT_DEFERRED,
+>>> +    MTHP_STAT_NR_ANON,
+>>>       __MTHP_STAT_COUNT
+>>>   };
+>>>   @@ -291,14 +292,24 @@ struct mthp_stat {
+>>>   #ifdef CONFIG_SYSFS
+>>>   DECLARE_PER_CPU(struct mthp_stat, mthp_stats);
+>>>   -static inline void count_mthp_stat(int order, enum mthp_stat_item item)
+>>> +static inline void mod_mthp_stat(int order, enum mthp_stat_item item, int
+>>> delta)
+>>>   {
+>>>       if (order <= 0 || order > PMD_ORDER)
+>>>           return;
+>>>   -    this_cpu_inc(mthp_stats.stats[order][item]);
+>>> +    this_cpu_add(mthp_stats.stats[order][item], delta);
+>>> +}
+>>> +
+>>> +static inline void count_mthp_stat(int order, enum mthp_stat_item item)
+>>> +{
+>>> +    mod_mthp_stat(order, item, 1);
+>>>   }
+>>> +
+>>>   #else
+>>> +static inline void mod_mthp_stat(int order, enum mthp_stat_item item, int
+>>> delta)
+>>> +{
+>>> +}
+>>> +
+>>>   static inline void count_mthp_stat(int order, enum mthp_stat_item item)
+>>>   {
+>>>   }
+>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>> index 697fcf89f975..b6bc2a3791e3 100644
+>>> --- a/mm/huge_memory.c
+>>> +++ b/mm/huge_memory.c
+>>> @@ -578,6 +578,7 @@ DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge,
+>>> MTHP_STAT_SHMEM_FALLBACK_CHARGE);
+>>>   DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+>>>   DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+>>>   DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+>>> +DEFINE_MTHP_STAT_ATTR(anon_num, MTHP_STAT_NR_ANON);
+>>>     static struct attribute *stats_attrs[] = {
+>>>       &anon_fault_alloc_attr.attr,
+>>> @@ -591,6 +592,7 @@ static struct attribute *stats_attrs[] = {
+>>>       &split_attr.attr,
+>>>       &split_failed_attr.attr,
+>>>       &split_deferred_attr.attr,
+>>> +    &anon_num_attr.attr,
+>>>       NULL,
+>>>   };
+>>>   diff --git a/mm/rmap.c b/mm/rmap.c
+>>> index 901950200957..2b722f26224c 100644
+>>> --- a/mm/rmap.c
+>>> +++ b/mm/rmap.c
+>>> @@ -1467,6 +1467,7 @@ void folio_add_new_anon_rmap(struct folio *folio,
+>>> struct vm_area_struct *vma,
+>>>       }
+>>>         __folio_mod_stat(folio, nr, nr_pmdmapped);
+>>> +    mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, 1);
+>>>   }
+>>>     static __always_inline void __folio_add_file_rmap(struct folio *folio,
+>>> @@ -1582,6 +1583,8 @@ static __always_inline void __folio_remove_rmap(struct
+>>> folio *folio,
+>>>           list_empty(&folio->_deferred_list))
+>>>           deferred_split_folio(folio);
+>>>       __folio_mod_stat(folio, -nr, -nr_pmdmapped);
+>>> +    if (folio_test_anon(folio) && !atomic_read(mapped))
+>>
+>> Agree that atomic_read() is dodgy here.
+>>
+>> Not sure I fully understand why David prefers to do the unaccounting at
+>> free-time though? It feels unbalanced to me to increment when first mapped but
+>> decrement when freed. Surely its safer to either use alloc/free or use first
+>> map/last map?
 > 
-> 	ptr = kmalloc(sizeof(*ptr), gfp);
-> 	ptr = kcalloc(count, sizeof(*ptr), gfp);
-> 	ptr = kmalloc_array(count, sizeof(*ptr), gfp);
-> 	ptr = kcalloc(count, sizeof(*ptr), gfp);
-> 	ptr = kmalloc(struct_size(ptr, flex_member, count), gfp);
+> Doing it when we set/clear folio->mapping is straight forward.
 > 
-> These become, respectively:
+> Anon folios currently come to live when we first map them, and they stay that
+> way until we free them.
 > 
-> 	kmalloc_obj(p, gfp);
-> 	kzalloc_obj(p, count, gfp);
-> 	kmalloc_obj(p, count, gfp);
-> 	kzalloc_obj(p, count, gfp);
-> 	kmalloc_obj(p, flex_member, count, gfp);
+> In the future, we'll have to move that anon handling further out, when if have
+> to allocate anon-specific memdesc ahead of time, then, it will be clued to that
+> lifetime.
+> 
+>>
+>> If using alloc/free isn't there a THP constructor/destructor that prepares the
+>> deferred list? (My memory may be failing me). Could we use that?
+> 
+> Likely the deconstructor could work as well. Not sure if that is any better than
+> the freeing path where folio->mapping currently gets cleared.
+> 
+> The generic constructor certainly won't work right now. That's not where the
+> "anon" part comes to live.
+> 
+> Let's take a look how NR_FILE_THPS is handled:
+> 
+> __filemap_add_folio() increments it -- when we set folio->mapping
+> __filemap_remove_folio() (->filemap_unaccount_folio) decrements it -- after
+> which we usually call page_cache_delete() to set folio->mapping = NULL;
+> 
 
-So I'm not a huge fan in hiding the assignment, but I understand there's
-value in having guaranteed the target of the assignment is really the same
-thing as the one used for sizeof() etc.
-
-But returning size seems awkward, it would be IMHO less confusing if it
-still returned the object pointer, that could be then also assigned
-elsewhere if needed, tested for NULL and ZERO_SIZE_PTR (now it's both 0?).
-
-I'm also not sure that having it all called kmalloc_obj() with 3 variants of
-how many parameters it takes is such a win? e.g. kmalloc_obj(),
-kcalloc_obj() and kcalloc_obj_flex() would be more obvious?
-
-> These each return the size of the allocation, so that other common
-> idioms can be converted easily as well. For example:
-> 
-> 	info->size = struct_size(ptr, flex_member, count);
-> 	ptr = kmalloc(info->size, gfp);
-> 
-> becomes:
-> 
-> 	info->size = kmalloc_obj(ptr, flex_member, count, gfp);
-
-How about instead taking an &info->size parameter that assigns size to it,
-so the ptr can be still returned but we also can record the size?
-
-Also the last time David asked for documentation, you say you would try, but
-there's nothing new here? Dunno if the kerneldocs are feasible but there's
-at least Documentation/core-api/memory-allocation.rst ...
-
-Thanks,
-Vlastimil
-
-> Internal introspection of allocated type also becomes possible, allowing
-> for alignment-aware choices and future hardening work. For example,
-> adding __alignof(*ptr) as an argument to the internal allocators so that
-> appropriate/efficient alignment choices can be made, or being able to
-> correctly choose per-allocation offset randomization within a bucket
-> that does not break alignment requirements.
-> 
-> Additionally, once __builtin_get_counted_by() is added by GCC[1] and
-> Clang[2], it will be possible to automatically set the counted member of
-> a struct with a counted_by FAM, further eliminating open-coded redundant
-> initializations, and can internally check for "too large" allocations
-> based on the type size of the counter variable:
-> 
-> 	if (count > type_max(ptr->flex_count))
-> 		fail...;
-> 	info->size = struct_size(ptr, flex_member, count);
-> 	ptr = kmalloc(info->size, gfp);
-> 	ptr->flex_count = count;
-> 
-> becomes (i.e. unchanged from earlier example):
-> 
-> 	info->size = kmalloc_obj(ptr, flex_member, count, gfp);
-> 
-> Replacing all existing simple code patterns found via Coccinelle[3]
-> shows what could be replaced immediately (saving roughly 1,500 lines):
-> 
->  7040 files changed, 14128 insertions(+), 15557 deletions(-)
-> 
-> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116016 [1]
-> Link: https://github.com/llvm/llvm-project/issues/99774 [2]
-> Link: https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/kmalloc_obj-assign-size.cocci [3]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-> Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
-> Cc: Bill Wendling <morbo@google.com>
-> Cc: Justin Stitt <justinstitt@google.com>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> Cc: Marco Elver <elver@google.com>
-> Cc: linux-mm@kvack.org
-> ---
->  include/linux/slab.h | 38 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
-> 
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index eb2bf4629157..46801c28908e 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -686,6 +686,44 @@ static __always_inline __alloc_size(1) void *kmalloc_noprof(size_t size, gfp_t f
->  }
->  #define kmalloc(...)				alloc_hooks(kmalloc_noprof(__VA_ARGS__))
->  
-> +#define __alloc_obj3(ALLOC, P, COUNT, FLAGS)			\
-> +({								\
-> +	size_t __obj_size = size_mul(sizeof(*P), COUNT);	\
-> +	void *__obj_ptr;					\
-> +	(P) = __obj_ptr = ALLOC(__obj_size, FLAGS);		\
-> +	if (!__obj_ptr)						\
-> +		__obj_size = 0;					\
-> +	__obj_size;						\
-> +})
-> +
-> +#define __alloc_obj2(ALLOC, P, FLAGS)	__alloc_obj3(ALLOC, P, 1, FLAGS)
-> +
-> +#define __alloc_obj4(ALLOC, P, FAM, COUNT, FLAGS)		\
-> +({								\
-> +	size_t __obj_size = struct_size(P, FAM, COUNT);		\
-> +	void *__obj_ptr;					\
-> +	(P) = __obj_ptr = ALLOC(__obj_size, FLAGS);		\
-> +	if (!__obj_ptr)						\
-> +		__obj_size = 0;					\
-> +	__obj_size;						\
-> +})
-> +
-> +#define kmalloc_obj(...)					\
-> +	CONCATENATE(__alloc_obj,				\
-> +		    COUNT_ARGS(__VA_ARGS__))(kmalloc, __VA_ARGS__)
-> +
-> +#define kzalloc_obj(...)					\
-> +	CONCATENATE(__alloc_obj,				\
-> +		    COUNT_ARGS(__VA_ARGS__))(kzalloc, __VA_ARGS__)
-> +
-> +#define kvmalloc_obj(...)					\
-> +	CONCATENATE(__alloc_obj,				\
-> +		    COUNT_ARGS(__VA_ARGS__))(kvmalloc, __VA_ARGS__)
-> +
-> +#define kvzalloc_obj(...)					\
-> +	CONCATENATE(__alloc_obj,				\
-> +		    COUNT_ARGS(__VA_ARGS__))(kvzalloc, __VA_ARGS__)
-> +
->  #define kmem_buckets_alloc(_b, _size, _flags)	\
->  	alloc_hooks(__kmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), _flags, NUMA_NO_NODE))
->  
+OK got it, thanks!
 
 
