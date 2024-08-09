@@ -1,120 +1,153 @@
-Return-Path: <linux-kernel+bounces-281647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9D894D949
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:49:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5B394D94A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21B0284145
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 326E61F228B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F28516D9A2;
-	Fri,  9 Aug 2024 23:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7BD16D4D6;
+	Fri,  9 Aug 2024 23:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ab6g/+yC"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OZ+71quX"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12C316C872
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 23:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832DA12E7E
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 23:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723247373; cv=none; b=HUrjH+cTrMpUJaOzO5wrd7VHZ5psMQOSdSjSlcpNF6iAgPwtuAQA3kQS5rSeRwXqng529dDqX45cMRQQTIH6EApGmEZ97nesCplk4FiRvTs+UTqkP14JjuP6IhVbwn6MvMk0HC27WOJ0cE2WrxpvNYLkIGvZAP9Qcu6xEiEFmX4=
+	t=1723247604; cv=none; b=RbfbNl5Jh+HD21a+tydEHVxScBxlE9kbVwrfkRTMKd5ku2wSQPansSQ91cDyfFGwqA3v8hbEsu71xO+hr9GPTcsgnfyQuEKH6BfRUuYqJeuFSW5oOztt9p84sFtwpNbkhxU06ed+VCZdnIP7mQt61kDd2SIGUzhnIw66NIrwJjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723247373; c=relaxed/simple;
-	bh=g1rCBxTQnBiRXXtVThAYP88nGw+rsQgIPLeDP6qNRus=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WmP/aM3OMMyu+wttREu1m83/wW2BraacfcSNW2BeJM3e/vFu9dgocFIrv912yUKV4liHOPcU7Gwq7lyBJuPcOYQa0g8nmD3rEyCxxLP9Aic/qtvv1jYYS7AniGllnyVqua9K5Z3E34VEkJwAI/09xuimeFBodf33HxSCU5CdDhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ab6g/+yC; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f85ee226-122c-479f-a831-de5f986fb3c0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723247368;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yPcuHL2v7l8p+f3+M7/L32h5WIKjLU9wPjEM5bv5Z/E=;
-	b=Ab6g/+yCSxwlSqTNfmT+w0Hqyi4jQ4WVJPM2wH0OZ7t3BhsrH+O+3QCBYC23lFOIrAPOnr
-	lJgsiD+PvGHcVyWxhMta76BOoQ5EWfeTRu9ygDlgi+DFWxCprafhc4j5oOEGUO54ei4mN4
-	ymP/R/JXHAmMDsEgJZpN5g3P9wRHpSc=
-Date: Fri, 9 Aug 2024 16:49:17 -0700
+	s=arc-20240116; t=1723247604; c=relaxed/simple;
+	bh=SVsRI4FZnpWKAafD7zdNZOTprC5QK7spQWfc1pujgJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4uz0xCzKLbmTjeC3GgxXrd8e1wpuH4SS1xc4szADAuh7Z8WOSv5NcEIazRUbJ2UEsolVi1a5/u1qVnBYWmO1tVv9sXzNopCeBkOrT71LJAPHn7FHUG7+gfo9VbI8scNbjMnMbU9kwAaPJ+8RaF9ghYhcmFqaF3KoXV+heXPBUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OZ+71quX; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-81f94ce2272so95934739f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 16:53:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723247601; x=1723852401; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HXq30+qqrGod7UMvtMZ4HXDcZmyjb07duezfSROQDkY=;
+        b=OZ+71quXJ9+MppH4Y08mxWiOrZmNA9Pmktey2t+rF91pz0p55Tp06IKjhvbEzhluMo
+         aEL3WkPnPV1qz4EgGEyouVg7WZePafVdnEkCZ9cX8LN1kWoAshse43rxHk9fQ9xh9KKy
+         PZrQrSyV+P5iH58CkITmJGU0tNsOUKhZiBghtBn+pyycVWLLmMMcipmh94AsFcA/Qk/G
+         6ZgOQ/qk6uYbs/I07yOzcUOasYydzebJLfeTfT5779iOjceUdeKZfesRm4hkAOLCVtbx
+         oPmo7XnnHXyXnCLiBD6N5QGoxekE8I9T4mBQN14Yrx737NxUtjZyH8RUGI9bo3N4+j9E
+         X3NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723247601; x=1723852401;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HXq30+qqrGod7UMvtMZ4HXDcZmyjb07duezfSROQDkY=;
+        b=cvZyJ3qRL1BhVooaGyJoRi1PKUspQBn3hujDkUSpppILMIb5YbAT7epntLwpm3ehEU
+         CWr5NQCNasRRkfRMzQrdUQOd2DXV7CbVxHW9iXKEPFKKV6BcguvFd+6QtgjsEBV/KRm1
+         PCBuKW5gME/xJ+eO7F0loEI20CvXPiQeXRqd7z2HutiKXvZz2W0cKzFwKUvCq46PMGwa
+         0ImhLqJD0Pw1Rmc9zhsgaODx0GLtMU8cI1cceMsOOKWAB3BA5ma6+qUxz79kdPipWCJU
+         zIiddymgBzkj49EidSS9mfmXCNGE8hVQ+zeTvycS132xFDcrEEkv22xQ36wPFJXfsLLp
+         4bsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXHgiecaazRy61ciloXcR2bob7WhOeSgZu4oLaFy6opIvQmdaZoL+fi80L6aX93alUv0kC44IdHwvzpq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwKvjp9nzDSzQq8pyNtx8soBmoB6nzFoQ2PvD1QrnbWrtJdOiz
+	CW9InFJVBrRl43VdpKGgLx7UCtbRV9d8LFn3TrLhIRZ9CNGV1UybkRrd+bWqcf1swnpR+CHWLnb
+	3aw==
+X-Google-Smtp-Source: AGHT+IEt1122BVWzRU/Fdnx9ErHZzG/ziyc35/f/6K4zyR9rH9XW7MgNnZCs/mdNOK5r3s+QQAhjyA==
+X-Received: by 2002:a05:6602:3d2:b0:7fa:56f0:ad87 with SMTP id ca18e2360f4ac-8225ee84692mr469625739f.10.1723247601487;
+        Fri, 09 Aug 2024 16:53:21 -0700 (PDT)
+Received: from google.com (194.225.68.34.bc.googleusercontent.com. [34.68.225.194])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ca7695b7f7sm236213173.80.2024.08.09.16.53.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 16:53:20 -0700 (PDT)
+Date: Fri, 9 Aug 2024 16:53:15 -0700
+From: Justin Stitt <justinstitt@google.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] lib/string_helpers: rework overflow-dependent code
+Message-ID: <dyigpya2tb7obniv3g2rzhtahvjhximzjlvoi42c45fqkb7hx5@tw3loxvglexa>
+References: <20240808-b4-string_helpers_caa133-v1-1-686a455167c4@google.com>
+ <CAHp75VfBjKLf3LqDXvAehW5sxGzYnU4sS3fr=JoaM-6p_gR34w@mail.gmail.com>
+ <202408081609.D08D11C@keescook>
+ <CAHp75Vd3wKyq2XE2UPoW_q3KjmncSeaEebL4ff5Gpx8Lz+dB9A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2 2/4] selftests/bpf: convert
- test_cgroup_storage to test_progs
-To: =?UTF-8?Q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?=
- <alexis.lothore@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>
-References: <20240806-convert_cgroup_tests-v2-0-180c57e5b710@bootlin.com>
- <20240806-convert_cgroup_tests-v2-2-180c57e5b710@bootlin.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-Content-Language: en-US
-In-Reply-To: <20240806-convert_cgroup_tests-v2-2-180c57e5b710@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAHp75Vd3wKyq2XE2UPoW_q3KjmncSeaEebL4ff5Gpx8Lz+dB9A@mail.gmail.com>
 
-On 8/6/24 12:55 AM, Alexis Lothoré (eBPF Foundation) wrote:
-> +++ b/tools/testing/selftests/bpf/prog_tests/cgroup_storage.c
-> @@ -0,0 +1,65 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <test_progs.h>
-> +#include "cgroup_helpers.h"
-> +#include "cgroup_storage.skel.h"
-> +
-> +#define TEST_CGROUP "/test-bpf-cgroup-storage-buf/"
-> +#define PING_CMD "ping localhost -c 1 -W 1 -q"
-> +
-> +void test_cgroup_storage(void)
-> +{
-> +	struct bpf_cgroup_storage_key key;
-> +	struct cgroup_storage *skel;
-> +	unsigned long long value;
-> +	int cgroup_fd;
-> +	int err;
-> +
-> +	cgroup_fd = cgroup_setup_and_join(TEST_CGROUP);
+On Fri, Aug 09, 2024 at 02:07:57PM GMT, Andy Shevchenko wrote:
+> On Fri, Aug 9, 2024 at 2:11 AM Kees Cook <kees@kernel.org> wrote:
+> >
+> > On Fri, Aug 09, 2024 at 01:07:21AM +0300, Andy Shevchenko wrote:
+> > > On Fri, Aug 9, 2024 at 12:44 AM Justin Stitt <justinstitt@google.com> wrote:
+> > > >
+> > > > When @size is 0, the desired behavior is to allow unlimited bytes to be
+> > > > parsed. Currently, this relies on some intentional arithmetic overflow
+> > > > where --size gives us SIZE_MAX when size is 0.
+> > > >
+> > > > Explicitly spell out the desired behavior without relying on intentional
+> > > > overflow/underflow.
+> > >
+> > > Hmm... but why? Overflow for the _unsigned_ types is okay. No?
+> >
+> > Yes, it's well defined, but in trying to find a place to start making a
+> > meaningful impact on unexpected wrap-around, after discussions with
+> > Linus and Peter Zijlstra, we're going taking a stab at defining size_t
+> > as not expecting to wrap. Justin has been collecting false positive
+> > fixes while working on the compiler side of this, and I had asked him to
+> > send this one now since I think it additionally helps with readability.
+> 
+> Okay, but the patch has an off-by-one error (which has no impact on
+> the behavior as it's close to unrealistic to have the SIZE_MAX array).
+> I prefer that patch can be reconsidered to keep original behaviour,
+> otherwise it might be not so clear why 0 is SIZE_MAX - 1 in _this_
+> case.
 
-Same. cgroup_fd is leaked.
+Right, it is technically different but still functionally provides the
+"unlimited" behavior.
 
-> +	if (!ASSERT_OK_FD(cgroup_fd, "create cgroup"))
-> +		return;
-> +
-> +	skel = cgroup_storage__open_and_load();
-> +	if (!ASSERT_OK_PTR(skel, "load program"))
-> +		goto cleanup_cgroup;
-> +
-> +	skel->links.bpf_prog =
-> +		bpf_program__attach_cgroup(skel->progs.bpf_prog, cgroup_fd);
-> +	if (!ASSERT_OK_PTR(skel->links.bpf_prog, "attach program"))
-> +		goto cleanup_progs;
-> +
-> +	/* Check that one out of every two packets is dropped */
-> +	err = SYS_NOFAIL(PING_CMD);
+But, we could  do this too:
 
-Better create a netns for network traffic test. It is pretty simple and there 
-are existing examples to borrow, e.g. the setup_test_env() in 
-prog_tests/sock_addr.c. The netns setup should be done after the 
-cgroup_setup_and_join().
+diff --git a/lib/string_helpers.c b/lib/string_helpers.c
+index 69ba49b853c7..0f76b5288833 100644
+--- a/lib/string_helpers.c
++++ b/lib/string_helpers.c
+@@ -320,11 +320,13 @@ static bool unescape_special(char **src, char **dst)
+ int string_unescape(char *src, char *dst, size_t size, unsigned int flags)
+ {
+ 	char *out = dst;
++	bool unlimited = !size;
+ 
+-	while (*src && --size) {
+-		if (src[0] == '\\' && src[1] != '\0' && size > 1) {
++	while (*src && (unlimited || --size)) {
++		if (src[0] == '\\' && src[1] != '\0' &&
++		    (unlimited || size > 1)) {
+ 			src++;
+-			size--;
++			size -= !unlimited;
+ 
+ 			if (flags & UNESCAPE_SPACE &&
+ 					unescape_space(&src, &out))
 
+
+
+Really, I am fine with either.
+
+Thanks
+Justin
 
