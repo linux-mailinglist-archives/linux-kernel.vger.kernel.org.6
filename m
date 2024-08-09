@@ -1,150 +1,260 @@
-Return-Path: <linux-kernel+bounces-281378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BCC294D636
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:18:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A765494D639
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81ECFB21816
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C744282B44
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DA3154C14;
-	Fri,  9 Aug 2024 18:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYYMRlRx"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C320C154C0D;
+	Fri,  9 Aug 2024 18:19:34 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934FA20309;
-	Fri,  9 Aug 2024 18:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408D520309;
+	Fri,  9 Aug 2024 18:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723227491; cv=none; b=u3OouaidNtAW7hhwl3URgHYk8FRPNiYicE5BZVFRzXXH6N3OB8FsTax0LmuC3Oz20HrJpsRFW6MLfxkqPhJ+BA0YbwdgFTzyaRd8pUVal9KrONU+TY88aGQM9TFso9AzV/SE1JK+4DywNL6hiXOcwfOdy4NeRE1eDGrvkrW15Ko=
+	t=1723227574; cv=none; b=a4oOj501GB4k5j3mURh3V1vA/SpYZL40vhQqGtO8PFTku5KMsevwdiJtgFhSfjISPW44foXvLitSUmlMLL+uUSJQtO0AIsvSejs/iM/6VgV6AgbANpgexvT0lW742RZd+hbwpSPHbTYucFXKiBhZ783T4JOlCpgnXR7SotZ4XyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723227491; c=relaxed/simple;
-	bh=jjnLbbdVBpfhuDZxF6ajgOKZIJ5+WLD/XKTaZtyKMzA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hRnTu11/mPsWAP9J8Nqw7/ONrqhrxcEOwUXpzbd2LW4IzYAID/j+Ci8BUFBrZS2kJHGoFyW8t4L4rqytZ6F/j5XUxbNo10FrElgA+f9C1zXgKmnJro1zcjfojhYoFBra8KfE/R2QgjyVnptHLL47wI79+9dTLUmjUdH6v/SW2Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYYMRlRx; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc611a0f8cso21040835ad.2;
-        Fri, 09 Aug 2024 11:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723227489; x=1723832289; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iPrUGarB5nEOXoX/2BO/BZ/JE38Dogt0DthDK7mWKJI=;
-        b=YYYMRlRxDmD2hzvu5ab9hlVu0XHz1FU+gHlLT3P0xqB52pfPnQEtup/nDPlFnJXAZy
-         CBFyIi8WGZE0xufDiC6THMNjHgx0QL0dK/WIFAGU0+TRDRQ0sQsY5PkIkL/mSUsbO7+b
-         sGdljGC5lCYwCYJLBf3tVm3gCF2hHAm/iQXtikGgSUGAlxcdFRDwL89OqPwGT3lF+8qr
-         giKn2SDU/8B/Iavy4EJ/lurHsnTrzUCrCFXDS3ryYcdmCYPfv2t4bGm4SKT4QXFYVgZA
-         ZdZNCjiUo1bPLbE+l1xVxIp/+UfKpYxIjW7TUVmq0CO6FIUsiwhUL3aubHwQOnv0rZZV
-         8kng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723227489; x=1723832289;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iPrUGarB5nEOXoX/2BO/BZ/JE38Dogt0DthDK7mWKJI=;
-        b=sOfakCXBkpV/1BQXsQkpfepvv7ZUyXdwNqyLIWWFIek5jJG6wjqLJGTnyOWus2drIF
-         vsIsxRLcyNSBcmx9x6f6maRYeZU/z3ZAS4fO0EhIGia16novervYLYstz1qmahBXoL1D
-         qZLUfRGUe77T6hxIvPYsRa9qtRyoTBkHNHlwAo8HhomNnvD3LBpEvLHX5OypB1nzQbBx
-         rWRY+r/yeDNFo0nor5DFlIwjwbtFQu8hhLXzSNqhMEiETnqwsLIWtLagwOehlh5Bb59d
-         LqwPNTcF6AR0TPvApkzWjj3g4hmTCtr0vBrmDZZOXsGzsUZm09tPV459kxxyNRFLqWaw
-         vkLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU62Dje5FUi6Zf6zD95MZNICjuIMTFVsFlugd8IWrX28LKI/6P/b5GIonLOrz9/WRLlEulzLtvL@vger.kernel.org, AJvYcCVQqAOlU/u4lRY2EtQlYvrmY2rVqQN966u89j0y3aT0XlbOm0XKySGrEIwcGPXWxKd4e6/RrsKG/5H8umZL@vger.kernel.org, AJvYcCVjVINaOsQSzQ4tyx/LVNhYhski457e8ZuGAygRYDqJXQWRJj24sl5Lrl8T2NSZWeSXq1j/rtAnlD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaFK2LyKkOAwBogNBZcdtbW+Da/lwHrnG6InbLfbze+td445OW
-	PxYHJIUrt6TryYVIQUPN0M5snNvITowz+uVFer1t9Z+h204kouyE
-X-Google-Smtp-Source: AGHT+IG7gHVQ1+zrXCDxWoCSdNYTRlR81Bxw6R0G+q2ZC6+nT2iFTV2lojUwUasl8ULDe7FDSD11sw==
-X-Received: by 2002:a17:902:e804:b0:1fc:57b7:995c with SMTP id d9443c01a7336-200ae4dba44mr25153305ad.7.1723227488723;
-        Fri, 09 Aug 2024 11:18:08 -0700 (PDT)
-Received: from localhost.localdomain (2001-b400-e451-b7c6-a4e2-bea8-613e-3352.emome-ip6.hinet.net. [2001:b400:e451:b7c6:a4e2:bea8:613e:3352])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb900c2esm608255ad.112.2024.08.09.11.18.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 11:18:08 -0700 (PDT)
-From: Jing-Ping Jan <zoo868e@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: Jing-Ping Jan <zoo868e@gmail.com>
-Subject: [PATCH] Documentation: networking: correct spelling
-Date: Sat, 10 Aug 2024 02:17:50 +0800
-Message-Id: <20240809181750.62522-1-zoo868e@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723227574; c=relaxed/simple;
+	bh=FhTN8MVGmHdQhGdUvdXqfTR8ItK/k7hfsYmmMHr2RsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UmdBsk9rpeaL2YshcoZCu4q++V7EqCJFkkEbP6qDCDgAZ8JiHQWSsIu5QL0mEUlXYApVCqR7njrS2B/iGmflkGCfcIvAi06xF3Hp7opzFJBNLzV7XptYHzmz1edMWulRQCFYiSzhV5XNDp2GHoDT2ACKvH1/7VKMtcQySeSzfHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDC50C32782;
+	Fri,  9 Aug 2024 18:19:28 +0000 (UTC)
+Date: Fri, 9 Aug 2024 19:19:26 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>, jannh@google.com,
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
+Message-ID: <ZrZdrgOQVHhCyWmA@arm.com>
+References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
+ <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
 
-Correct spelling problems for Documentation/networking/ as reported
-by ispell.
+On Thu, Aug 08, 2024 at 09:15:25AM +0100, Mark Brown wrote:
+> diff --git a/arch/x86/kernel/shstk.c b/arch/x86/kernel/shstk.c
+> index 059685612362..d7005974aff5 100644
+> --- a/arch/x86/kernel/shstk.c
+> +++ b/arch/x86/kernel/shstk.c
+> @@ -191,44 +191,105 @@ void reset_thread_features(void)
+>  	current->thread.features_locked = 0;
+>  }
+>  
+> -unsigned long shstk_alloc_thread_stack(struct task_struct *tsk, unsigned long clone_flags,
+> -				       unsigned long stack_size)
+> +int arch_shstk_post_fork(struct task_struct *t, struct kernel_clone_args *args)
+> +{
+> +	/*
+> +	 * SSP is aligned, so reserved bits and mode bit are a zero, just mark
+> +	 * the token 64-bit.
+> +	 */
+> +	struct mm_struct *mm;
+> +	unsigned long addr, ssp;
+> +	u64 expected;
+> +	u64 val;
+> +	int ret = -EINVAL;
+> +
+> +	ssp = args->shadow_stack + args->shadow_stack_size;
+> +	addr = ssp - SS_FRAME_SIZE;
+> +	expected = ssp | BIT(0);
+> +
+> +	mm = get_task_mm(t);
+> +	if (!mm)
+> +		return -EFAULT;
+> +
+> +	/* This should really be an atomic cmpxchg.  It is not. */
+> +	if (access_remote_vm(mm, addr, &val, sizeof(val),
+> +			     FOLL_FORCE) != sizeof(val))
+> +		goto out;
 
-Signed-off-by: Jing-Ping Jan <zoo868e@gmail.com>
----
- Documentation/networking/ethtool-netlink.rst | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+If we restrict the shadow stack creation only to the CLONE_VM case, we'd
+not need the remote vm access, it's in the current mm context already.
+More on this below.
 
-diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
-index d5f246aceb9f..9ecfc4f0f980 100644
---- a/Documentation/networking/ethtool-netlink.rst
-+++ b/Documentation/networking/ethtool-netlink.rst
-@@ -934,7 +934,7 @@ Request contents:
-   ====================================  ======  ===========================
- 
- Kernel checks that requested ring sizes do not exceed limits reported by
--driver. Driver may impose additional constraints and may not suspport all
-+driver. Driver may impose additional constraints and may not support all
- attributes.
- 
- 
-@@ -943,7 +943,7 @@ Completion queue events(CQE) are the events posted by NIC to indicate the
- completion status of a packet when the packet is sent(like send success or
- error) or received(like pointers to packet fragments). The CQE size parameter
- enables to modify the CQE size other than default size if NIC supports it.
--A bigger CQE can have more receive buffer pointers inturn NIC can transfer
-+A bigger CQE can have more receive buffer pointers in turn NIC can transfer
- a bigger frame from wire. Based on the NIC hardware, the overall completion
- queue size can be adjusted in the driver if CQE size is modified.
- 
-@@ -989,7 +989,7 @@ Request contents:
-   =====================================  ======  ==========================
- 
- Kernel checks that requested channel counts do not exceed limits reported by
--driver. Driver may impose additional constraints and may not suspport all
-+driver. Driver may impose additional constraints and may not support all
- attributes.
- 
- 
-@@ -1927,7 +1927,7 @@ When set, the optional ``ETHTOOL_A_PLCA_VERSION`` attribute indicates which
- standard and version the PLCA management interface complies to. When not set,
- the interface is vendor-specific and (possibly) supplied by the driver.
- The OPEN Alliance SIG specifies a standard register map for 10BASE-T1S PHYs
--embedding the PLCA Reconcialiation Sublayer. See "10BASE-T1S PLCA Management
-+embedding the PLCA Reconciliation Sublayer. See "10BASE-T1S PLCA Management
- Registers" at https://www.opensig.org/about/specifications/.
- 
- When set, the optional ``ETHTOOL_A_PLCA_ENABLED`` attribute indicates the
-@@ -1989,7 +1989,7 @@ Request contents:
-   ``ETHTOOL_A_PLCA_ENABLED``              u8      PLCA Admin State
-   ``ETHTOOL_A_PLCA_NODE_ID``              u8      PLCA unique local node ID
-   ``ETHTOOL_A_PLCA_NODE_CNT``             u8      Number of PLCA nodes on the
--                                                  netkork, including the
-+                                                  network, including the
-                                                   coordinator
-   ``ETHTOOL_A_PLCA_TO_TMR``               u8      Transmit Opportunity Timer
-                                                   value in bit-times (BT)
+> +
+> +	if (val != expected)
+> +		goto out;
+> +	val = 0;
+> +	if (access_remote_vm(mm, addr, &val, sizeof(val),
+> +			     FOLL_FORCE | FOLL_WRITE) != sizeof(val))
+> +		goto out;
+
+I'm confused that we need to consume the token here. I could not find
+the default shadow stack allocation doing this, only setting it via
+create_rstor_token() (or I did not search enough). In the default case,
+is the user consuming it? To me the only difference should been the
+default allocation vs the one passed by the user via clone3(), with the
+latter maybe requiring the user to set the token initially.
+
+> +
+> +	ret = 0;
+> +
+> +out:
+> +	mmput(mm);
+> +	return ret;
+> +}
+> +
+> +unsigned long shstk_alloc_thread_stack(struct task_struct *tsk,
+> +				       const struct kernel_clone_args *args)
+>  {
+>  	struct thread_shstk *shstk = &tsk->thread.shstk;
+> +	unsigned long clone_flags = args->flags;
+>  	unsigned long addr, size;
+>  
+>  	/*
+>  	 * If shadow stack is not enabled on the new thread, skip any
+> -	 * switch to a new shadow stack.
+> +	 * implicit switch to a new shadow stack and reject attempts to
+> +	 * explciitly specify one.
+
+Nit: explicitly.
+
+>  	 */
+> -	if (!features_enabled(ARCH_SHSTK_SHSTK))
+> +	if (!features_enabled(ARCH_SHSTK_SHSTK)) {
+> +		if (args->shadow_stack || args->shadow_stack_size)
+> +			return (unsigned long)ERR_PTR(-EINVAL);
+> +
+>  		return 0;
+> +	}
+>  
+>  	/*
+> -	 * For CLONE_VFORK the child will share the parents shadow stack.
+> -	 * Make sure to clear the internal tracking of the thread shadow
+> -	 * stack so the freeing logic run for child knows to leave it alone.
+> +	 * If the user specified a shadow stack then do some basic
+> +	 * validation and use it, otherwise fall back to a default
+> +	 * shadow stack size if the clone_flags don't indicate an
+> +	 * allocation is unneeded.
+>  	 */
+> -	if (clone_flags & CLONE_VFORK) {
+> +	if (args->shadow_stack) {
+> +		addr = args->shadow_stack;
+> +		size = args->shadow_stack_size;
+>  		shstk->base = 0;
+>  		shstk->size = 0;
+> -		return 0;
+> -	}
+> +	} else {
+> +		/*
+> +		 * For CLONE_VFORK the child will share the parents
+> +		 * shadow stack.  Make sure to clear the internal
+> +		 * tracking of the thread shadow stack so the freeing
+> +		 * logic run for child knows to leave it alone.
+> +		 */
+> +		if (clone_flags & CLONE_VFORK) {
+> +			shstk->base = 0;
+> +			shstk->size = 0;
+> +			return 0;
+> +		}
+
+I think we should leave the CLONE_VFORK check on its own independent of
+the clone3() arguments. If one passes both CLONE_VFORK and specific
+shadow stack address/size, they should be ignored (or maybe return an
+error if you want to make it stricter).
+
+>  
+> -	/*
+> -	 * For !CLONE_VM the child will use a copy of the parents shadow
+> -	 * stack.
+> -	 */
+> -	if (!(clone_flags & CLONE_VM))
+> -		return 0;
+> +		/*
+> +		 * For !CLONE_VM the child will use a copy of the
+> +		 * parents shadow stack.
+> +		 */
+> +		if (!(clone_flags & CLONE_VM))
+> +			return 0;
+
+Is the !CLONE_VM case specific only to the default shadow stack
+allocation? Sorry if this has been discussed already (or I completely
+forgot) but I thought we'd only implement this for the thread creation
+case. The typical fork() for a new process should inherit the parent's
+layout, so applicable to the clone3() with the shadow stack arguments as
+well (which should be ignored or maybe return an error with !CLONE_VM).
+
+[...]
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index cc760491f201..18278c72681c 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -128,6 +128,11 @@
+>   */
+>  #define MAX_THREADS FUTEX_TID_MASK
+>  
+> +/*
+> + * Require that shadow stacks can store at least one element
+> + */
+> +#define SHADOW_STACK_SIZE_MIN sizeof(void *)
+> +
+>  /*
+>   * Protected counters by write_lock_irq(&tasklist_lock)
+>   */
+> @@ -2729,6 +2734,19 @@ struct task_struct *create_io_thread(int (*fn)(void *), void *arg, int node)
+>  	return copy_process(NULL, 0, node, &args);
+>  }
+>  
+> +static void shstk_post_fork(struct task_struct *p,
+> +			    struct kernel_clone_args *args)
+> +{
+> +	if (!IS_ENABLED(CONFIG_ARCH_HAS_USER_SHADOW_STACK))
+> +		return;
+> +
+> +	if (!args->shadow_stack)
+> +		return;
+> +
+> +	if (arch_shstk_post_fork(p, args) != 0)
+> +		force_sig_fault_to_task(SIGSEGV, SEGV_CPERR, NULL, p);
+> +}
+> +
+>  /*
+>   *  Ok, this is the main fork-routine.
+>   *
+> @@ -2790,6 +2808,8 @@ pid_t kernel_clone(struct kernel_clone_args *args)
+>  	 */
+>  	trace_sched_process_fork(current, p);
+>  
+> +	shstk_post_fork(p, args);
+
+Do we need this post fork call? Can we not handle the setup via the
+copy_thread() path in shstk_alloc_thread_stack()?
+
 -- 
-2.25.1
-
+Catalin
 
