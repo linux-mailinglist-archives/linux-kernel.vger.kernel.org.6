@@ -1,114 +1,164 @@
-Return-Path: <linux-kernel+bounces-280239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36BF94C78E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:22:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 351FA94C790
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275491C21F8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6FBE286265
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446C64437;
-	Fri,  9 Aug 2024 00:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF8D539A;
+	Fri,  9 Aug 2024 00:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9t60Da1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="S+Tm3mG2"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1F1802;
-	Fri,  9 Aug 2024 00:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059EA442C
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 00:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723162932; cv=none; b=Bq7MEDVrMDYcnZmCYSNTceL2AdOXGk2KT/dUb8BcpE7No+gKcLnXuFbVvBbzHbrf+/dzJ8sMkVQNN4EIqdeiRbjjuXHT0+9Z8FAJWawCyZpvi6dibawI6YPfXrHDTyYa+tmmfgTaDLWNoXX1rEDQGpQ5N5QYOMFdXhjY8Jgdg0M=
+	t=1723163006; cv=none; b=Z+X6angDpkFnwBhrs/n7jdNQRDCEkKgdIp73M3WJcIbeKgOwyLmB2QmEMg9hdZ1O9cCiPL5pH4151IgUHMG9BxGmJJpEH9gv0hrK3hRPi/R5JBnT15z8eWgceOurFSKiD7+vT+l6ttQNYlh6pfnR+VFTH3eMdaiHI1umm4W0P1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723162932; c=relaxed/simple;
-	bh=1Q1V4q5zT2MiYUpvo2kf1eAUp7sExbPBrJjTuQ+QUMk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OamqC7zQkcCPzYG1eFazXZ3X+fAs4gIkQe3+G9R0X9tpD0+zb8nDwDzJ1Jc4S7LTNrUlxVQHqJROxJQfEO++cwQgW3te6xF4j2Ffd4+nYuvwugIruyjn/dsaAxMJ2+RBobJkISS8Z1XPMIoveKwvX29QyaPAktSU7PvVSCP6N2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9t60Da1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91871C32782;
-	Fri,  9 Aug 2024 00:22:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723162932;
-	bh=1Q1V4q5zT2MiYUpvo2kf1eAUp7sExbPBrJjTuQ+QUMk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=P9t60Da1NzDEDejPoHRm0QRovwiiYaUFQef23uA6ox472xfUPNXc02h4lCZg0TpxM
-	 DQFPyf6ihsgLuFvLxZKTMHPbF2WPL+1nyaVesWshQ5PW8sAW5Rtryz6yyTzAaE/4SL
-	 PLAUYgswA48ZeV4tdGvyVz7CA4ebT1WULq+kIlimJO0Jf19BAXAPqrLWR90enJowHi
-	 Luf7FL0hMFIf8mVHZMpUAHeidB3kgZhtgIQqNwJq7BIdgVL3SAJlFpAWMb0X6YH24k
-	 nNJqLOa1K6zrtpFdiHCSSxtHUCeqeDe+R6+FaTOGc4SaDEUE+f4XD/oOVqtMn50Q4b
-	 +R6j4BOroAKWQ==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Fri, 09 Aug 2024 02:22:04 +0200
-Subject: [PATCH] pinctrl: qcom: x1e80100: Fix special pin offsets
+	s=arc-20240116; t=1723163006; c=relaxed/simple;
+	bh=0P3FLHEXhmSjg6tnD5HmluFLz1yQVYbEMJkASKuVmzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUexjhqzmU3GFtZmaoskUHxdUmLvo7l32Y0iIUmq/jYiEQOvXmSjNpyS3yVwbU1ZCiEKnBLG70oCF9zZCZgxopMuNFQe08F5i0kSyrsJyLCgYqZ+Sc7HZTYsa94Ykv8VNdCLrtDts8bauARc1egi+hM2nIfbggpZnOpyflFwbeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=S+Tm3mG2; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280c55e488so8826405e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 17:23:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1723163003; x=1723767803; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AztV0lLOwdqI9QgaMB1DKaQg1Otgpzmj+Q3BL6hIbiw=;
+        b=S+Tm3mG2vnDB1XUDOirXdpmYBPzW3fNOCpS6/cMxIC8OSKTZWnRhHPwBnMWL7MHT0l
+         9wmH4SSYDA3PiJXhzocbnBVt58TNFbZOARweX3POkw/1RtqGj6O6QVOP/ku2CqSckmy4
+         o2nQ198BQsceiavndzoJ2Ob8kJweZnTBG4ysLs0mFoRQaGQKYfkuhyZUNb+8DLCOEo2E
+         BfkT0dAl6rNyYFkT2CsfGlvcrYLWv6AShtEyB4eW2T3ptV819yuLAb/NInXlSXkyO2DG
+         yvGRMT6AykfT0fVvBvW6N2HSaLFBOaDxP7Quec1KGfJPi1jZb87Wip3ir+liARZv8QzD
+         3olw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723163003; x=1723767803;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AztV0lLOwdqI9QgaMB1DKaQg1Otgpzmj+Q3BL6hIbiw=;
+        b=OU84hv32dIdLaQCJjRlFLCMYP8RAoqK+NTIKaEOj4QQvONwPbTeW3ZrICi2a1/T731
+         SVv0tnMojdi5fqsBV+4C+11n7sS/KepqHoc86I8KKgiT5xvAPUcXAOs/eKIRe/BimKbl
+         3ssG6SpJD/QUcyva0eyC59wR5rXYeDvBbbtcqkwZmp/Y3/Uxwfu+dByVaICIpGu5M0Mv
+         lj4thhBVbIq4bt1+e+ztjtSxL8M7/2BuBqIca/HDQZD82WUexI9KxKItU35eRxznJjly
+         iDpIMkGuN8ptWowipA2dCSIoCc+iyagkiO1NrrDubhiLJSDNuxNm29jn5s5zSXdVl3R5
+         2LCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUC++ODlenjnLkH7nx1jXeW+tA4vsL2cJTMz7Mwhs04w7bCMNbUIwq2rUasQa4GxvSNZ2z6bjRyHJFXBSqemWQpW5R8UfaTG4aglF+2
+X-Gm-Message-State: AOJu0Yy6OB16wa+JwIhsKoQ8G9QPcoBmqQGukx1pU89/EryyzESXokgG
+	+O5VsypnMC/yNbJvNY4l1bhs1r9BlJ8ntp6SO6h5zt+2f5cm3nk5OWGRcD/VTjU=
+X-Google-Smtp-Source: AGHT+IFhtIaMHgpaLbc/67n498umxhIehCq9XMMin3UEfUmJ9TNAhBCQfHnOGbQfT6vxAKG5iDaSOw==
+X-Received: by 2002:a05:600c:548d:b0:424:7871:2e9e with SMTP id 5b1f17b1804b1-4290b8480femr29464695e9.6.1723163003296;
+        Thu, 08 Aug 2024 17:23:23 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c72d4c9sm49708995e9.8.2024.08.08.17.23.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 17:23:22 -0700 (PDT)
+Date: Fri, 9 Aug 2024 01:23:21 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: MANISH PANDEY <quic_mapa@quicinc.com>, axboe@kernel.dk,
+	mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, linux-block@vger.kernel.org,
+	sudeep.holla@arm.com, Jaegeuk Kim <jaegeuk@kernel.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Christoph Hellwig <hch@infradead.org>, kailash@google.com,
+	tkjos@google.com, dhavale@google.com, bvanassche@google.com,
+	quic_nitirawa@quicinc.com, quic_cang@quicinc.com,
+	quic_rampraka@quicinc.com, quic_narepall@quicinc.com,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
+ capacities are different"
+Message-ID: <20240809002321.3k5g2isqmiuflrmd@airbuntu>
+References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
+ <3feb5226-7872-432b-9781-29903979d34a@arm.com>
+ <20240805020748.d2tvt7c757hi24na@airbuntu>
+ <e5f0349e-6c72-4847-bf0c-4afb57404907@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240809-topic-h_sdc-v1-1-bb421532c531@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIACthtWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCwNL3ZL8gsxk3Yz44pRk3dQks9SUxBRzQ4vkFCWgjoKi1LTMCrBp0bG
- 1tQBb5oC6XQAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723162928; l=1562;
- i=quic_kdybcio@quicinc.com; s=20230215; h=from:subject:message-id;
- bh=x5seRk1WP98LaMkA9Z1zk0HE9qR/MHMhKwFgfw7mvws=;
- b=GAKbqxq1OirazrLZqKxy+KshFetZ6RDgFi7ufnw++1ykR4DOxZUkqgzNBGexb0CZYio1bRlUA
- eVqoImnCBuaDa6Zu1a7tKDice9cwz3vFUe/RwBwcX9oclr6EBtLWBL+
-X-Developer-Key: i=quic_kdybcio@quicinc.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e5f0349e-6c72-4847-bf0c-4afb57404907@arm.com>
 
-From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+On 08/05/24 11:18, Christian Loehle wrote:
 
-Remove the erroneus 0x100000 offset to prevent the boards from crashing
-on pin state setting, as well as for the intended state changes to take
-effect.
+> > My understanding of rq_affinity=1 is to match the perf of requester. Given that
+> > the characteristic of HMP system is that power has an equal importance to perf
+> > (I think this now has become true for all systems by the way), saying that the
+> > match in one direction is better than the other is sort of forcing a policy of
+> > perf first which I don't think is a good thing to enforce. We don't have enough
+> > info to decide at this level. And our users care about both.
+> 
+> I would argue rq_affinity=1 matches the perf, so that flag should already bias
+> perf in favor of power slightly?
 
-Fixes: 05e4941d97ef ("pinctrl: qcom: Add X1E80100 pinctrl driver")
-Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
----
- drivers/pinctrl/qcom/pinctrl-x1e80100.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Not on this type of systems. If perf was the only thing important, just use
+equally big cpus. Balancing perf and power is important on those systems, and
+I don't think we have enough info to decide which decision is best when
+capacities are not the same. Matching the perf level the requesting on makes
+sense when irq_affinity=1.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-x1e80100.c b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
-index 6cd4d10e6fd6..65ed933f05ce 100644
---- a/drivers/pinctrl/qcom/pinctrl-x1e80100.c
-+++ b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
-@@ -1805,10 +1805,10 @@ static const struct msm_pingroup x1e80100_groups[] = {
- 	[235] = PINGROUP(235, aon_cci, qdss_gpio, _, _, _, _, _, _, _),
- 	[236] = PINGROUP(236, aon_cci, qdss_gpio, _, _, _, _, _, _, _),
- 	[237] = PINGROUP(237, _, _, _, _, _, _, _, _, _),
--	[238] = UFS_RESET(ufs_reset, 0x1f9000),
--	[239] = SDC_QDSD_PINGROUP(sdc2_clk, 0x1f2000, 14, 6),
--	[240] = SDC_QDSD_PINGROUP(sdc2_cmd, 0x1f2000, 11, 3),
--	[241] = SDC_QDSD_PINGROUP(sdc2_data, 0x1f2000, 9, 0),
-+	[238] = UFS_RESET(ufs_reset, 0xf9000),
-+	[239] = SDC_QDSD_PINGROUP(sdc2_clk, 0xf2000, 14, 6),
-+	[240] = SDC_QDSD_PINGROUP(sdc2_cmd, 0xf2000, 11, 3),
-+	[241] = SDC_QDSD_PINGROUP(sdc2_data, 0xf2000, 9, 0),
- };
- 
- static const struct msm_gpio_wakeirq_map x1e80100_pdc_map[] = {
+> Although the actual effect on power probably isn't that significant, given
+> that the (e.g. big) CPU has submitted the IO, is woken up soon, so you could
+> almost ignore a potential idle wakeup and the actual CPU time spent in the block
+> completion is pretty short of course.
+> 
+> > If no matching is required, it makes sense to set rq_affinity to 0. When
+> > matching is enabled, we need to rely on per-task iowait boost to help the
+> > requester to run at a bigger CPU, and naturally the completion will follow when
+> > rq_affinity=1. If the requester doesn't need the big perf, but the irq
+> > triggered on a bigger core, I struggle to understand why it is good for
+> > completion to run on bigger core without the requester also being on a similar
+> > bigger core to truly maximize perf.
+> 
+> So first of all, per-task iowait boosting has nothing to do with it IMO.
 
----
-base-commit: 1e391b34f6aa043c7afa40a2103163a0ef06d179
-change-id: 20240809-topic-h_sdc-eb6edad718cd
+It has. If the perf is not good because the requester is running on little
+core, the requester need to move up to ensure the overall IO perf is better.
 
-Best regards,
--- 
-Konrad Dybcio <quic_kdybcio@quicinc.com>
+> Plenty of IO workloads build up utilization perfectly fine.
 
+These ones have no problems, no? They should migrate to big core and the
+completion will follow them when they move.
+
+> I wouldn't consider the setup: requester little perf, irq+completion big perf
+> invalid necessarily, it does decrease IO latency for the application.
+
+I didn't say invalid. But it is not something we can guess automatically when
+irq_affinity=1. We don't have enough info to judge. The only info we have the
+requester that originated the request is running at different perf level
+(whther higher or lower), so we follow it.
+
+> Consider the IO being page faults (maybe even of various applications running
+> on little).
+> 
+> > 
+> > By the way, if we assume LLC wasn't the same, then assuming HMP system too, and
+> > reverting my patch, then the behavior was to move the completion from bigger
+> > core to little core.
+> > 
+> > So two things to observe:
+> > 
+> > 1. The patch keeps the behavior when LLC truly is not shared on such systems,
+> >    which was in the past.
+> > 2. LLC in this case is most likely L2, and the usual trend is that the bigger
+> >    the core the bigger L2. So the LLC characteristic is different and could
+> >    have impacted performance. No one seem to have cared in the past. I think
+> >    capacity gives this notion now implicitly.
+> 
 
