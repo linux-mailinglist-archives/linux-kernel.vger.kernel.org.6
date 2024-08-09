@@ -1,155 +1,312 @@
-Return-Path: <linux-kernel+bounces-281525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5871D94D7C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:58:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3969F94D7C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2216A280FB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A76BB1C229BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E54216132F;
-	Fri,  9 Aug 2024 19:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ED715ECD2;
+	Fri,  9 Aug 2024 20:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m8y5ADlh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTSgxrie"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97161465BA;
-	Fri,  9 Aug 2024 19:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442AF24B2F
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 20:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723233482; cv=none; b=UxuNuunQgKADW7fK0i8vIAj0g1JR8RTszIyGzCqIXcYCr0P+Ng274/ZVSxLzJSsW3N0p0A0TEtoGzXsQLCVIJpcJJL2zo7Vu2YCepIWELVyFhTpZQoEKXlS1kRPPs9orTRCSCAEKa9kWSqIS47sAiXtv1Y2q+Asx9WWxlwPTtvI=
+	t=1723233624; cv=none; b=MPkLAZKJ0hcdImMFUA0wfa02SExjHMcg7aAaHgIKLYBN+0AxyLuI3yhSNMBsVgFtc5aDe+rl9v+iNCCD6NbaDfhUZzl6MUlUOcS3ONfdqbhifyDI3LT8utWpU/GzLDgWR02wDHBM0fWxeB5SunbaNn2wzEwlYQDM7VZ6yvizvhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723233482; c=relaxed/simple;
-	bh=sg2iS4MgBIyaUcFaJrbtKiFwDQCzucstJIOSUW/GSMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UArNLOFrYkM62BRF/3I49KHEUkbT4+h3SunAGY5sWO+dzei/VyK8yWdllawN5FKm9uS3hEb0OGj23nBHbPvDSO+ebB4AdFAoKjkP5ooldFgdHWDEQzFpdt4yLg3WGknMHPED0QnhMFR+xI1aC8GDlbFtbYrW/rpllFr0eWfH3/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m8y5ADlh; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723233481; x=1754769481;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sg2iS4MgBIyaUcFaJrbtKiFwDQCzucstJIOSUW/GSMA=;
-  b=m8y5ADlhH0h+NC9lRWGh+7X6b47PWfrCCBQMI47f0PmC1ZLutCQUwNwb
-   /PDTN388/n0He9ZmydJPVO9UqzQTGJ2ACi1qWKNbclsE/wh68uff+Llw3
-   y2F8rNcNrsjvJkWGdRWXlHyseNCEeWFcXznGlJIHhruWBFE6OfGPGMcCK
-   YDKwjRpmH6TE6m7kAmT0kg+dYfinEVID8qVwtQbBbyi/Ktmx3e8XRmaj9
-   PTZnFNzeer3Om/SGx8sClQtsSoGOvtz0ClalCA2i3cGz3uI1lRDlRBcyq
-   FUIPprYSnH4SSRKSrPLvWvWNn6mhHH2ev266POsX0DVWA/VfoVEjXfMFE
-   w==;
-X-CSE-ConnectionGUID: tpfJtmv+RT2IgwFdomhswg==
-X-CSE-MsgGUID: CSfUeKznS8unoCQ84ZfC7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="25191872"
-X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
-   d="scan'208";a="25191872"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 12:58:00 -0700
-X-CSE-ConnectionGUID: Z7dv4MKDTo61cMhltIKGxw==
-X-CSE-MsgGUID: q2snOAhcRrObFn1gVT+xkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
-   d="scan'208";a="58225012"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 09 Aug 2024 12:57:56 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scVkH-0009EJ-2A;
-	Fri, 09 Aug 2024 19:57:53 +0000
-Date: Sat, 10 Aug 2024 03:57:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 3/3] net: phy: dp83tg720: Add cable testing
- support
-Message-ID: <202408100348.U6S1jP0z-lkp@intel.com>
-References: <20240809072440.3477125-3-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1723233624; c=relaxed/simple;
+	bh=Tpdy4cgdbsFT29gQug1bFyuPJ0g0lNrJa1Tx2WH9Wys=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZkVaqtIeJ/OrFe6p/MmIKxjjcjWnTRdaaUprrUw8Q14NUAGuToYa8wOIWlIqT/CDzwE1jbG+IoSLDapEI1manxO6pcgJQV7t3pEflaEd1BKU9tBujl4FasP4C+J+LDtcyH5IYAWr0i+LQCs7U6lW5PeKjoALgx/R90jdqumkeLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTSgxrie; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bba25c1e15so2885681a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 13:00:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723233620; x=1723838420; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=q/ZW3nV5tNcjPS6iptoriBrB0i5jeyrg1616ntHGkoU=;
+        b=aTSgxrieXk2IcRB9UCnENYpaJ0BUK9pNmfRWCF3ARlIF5aZaZ5n8bZ9yASVykwqHhT
+         6UNQI9qftkRWU/Cohoe39ix/6bVUs1vt6TLMHnz8HCrr112mV0cRmYXlL48vd7LbLtmv
+         pGNYmvMmu/7OK/G4fdomzRw2PqFo64vZhU6FIQ376SJB6/plqMqNyhg06rHt35kvidpV
+         M2Ve27r/hsuYZNRGtYYySyo5K4djpFsgiVyydRqlQA9/fCllOvvleW1xYjyVARjv1ItL
+         IHAqf6vSl/LvGPmlGbNzheHUDYd721v+r4d1S4yaeP9Ckjzl0c8IZLXzC98ocFbI54vk
+         buNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723233620; x=1723838420;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q/ZW3nV5tNcjPS6iptoriBrB0i5jeyrg1616ntHGkoU=;
+        b=ORwN9/W7Q+zwnWtmsJki7wpi9BIUyC9n5vn14BbS+WtjQfuAl5+sXfbklLVqX8bN1D
+         EN7iIswpX08vGpX5uwED6ZkkB84fSdgk25OeJrH8e1pMij6ISUekaq3GyIjh+S97rdrL
+         wAcjXVH25+ukbRUmENcDFyPbrAcTrep+k4iOPP5yVAiu7/OKLNRs4SPIK+BLudE8Ts8G
+         TYmwOeLVneDeqMCMI/YleMgFASEtGlbEsyKzs1JqZfJPFlCvYpGiQ0iJC8eyZZGGLgTH
+         ciNsWFXs8DKJ68Clh6zajd32I4X7YHj8XTxBbDjEh25jy2ESLLaN/335LfeQVmq10sOA
+         7ARQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYgbiUJDGWT97/cL5GxDYRGzTGeEXkvjdpBSzEuDZTouQExAHbDM2NCxrGJxz1BIn064e2NBtpm767muA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4ACXqMvRu9AgHuJ/lm3bLqp8X4N22vd0eBzn17MaYXPPJEgl9
+	/rgRxJpJiKCa7Ioan9gTQ9yL407YSA8g55oV/o0LuEC984FKOjIBqoz7IHmOniuKuXrN+0pVxKs
+	D3RpQxSO7EobyuXNjl3Sz0xrxNt0=
+X-Google-Smtp-Source: AGHT+IER4wDD4pBbs3PQSGPA4ATqufxR+7PRC0XRU0hX1k+RT9NExlXC/+x7kc54KGWyv5Nh9Qjh9AVvd9sF6bJTD3U=
+X-Received: by 2002:a17:907:7da3:b0:a7a:a0c9:124e with SMTP id
+ a640c23a62f3a-a80aa53909emr188358066b.4.1723233620228; Fri, 09 Aug 2024
+ 13:00:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809072440.3477125-3-o.rempel@pengutronix.de>
+From: Dave Airlie <airlied@gmail.com>
+Date: Sat, 10 Aug 2024 06:00:08 +1000
+Message-ID: <CAPM=9txFVKQ-E5rPvgUJSo_ypt4uWW4dCyozsb_A5HD8Ldc5zQ@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.11-rc3
+To: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Oleksij,
+Hi Linus,
 
-kernel test robot noticed the following build errors:
+Weekly regular fixes, mostly amdgpu with i915/xe having a few each,
+and then some misc bits across the board, seems about right for rc3
+time.
 
-[auto build test ERROR on net-next/main]
+Regards,
+Dave.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/phy-Add-Open-Alliance-helpers-for-the-PHY-framework/20240809-172119
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240809072440.3477125-3-o.rempel%40pengutronix.de
-patch subject: [PATCH net-next v3 3/3] net: phy: dp83tg720: Add cable testing support
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240810/202408100348.U6S1jP0z-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240810/202408100348.U6S1jP0z-lkp@intel.com/reproduce)
+drm-fixes-2024-08-10:
+drm fixes for 6.11-rc3
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408100348.U6S1jP0z-lkp@intel.com/
+client:
+- fix null ptr deref
 
-All errors (new ones prefixed by >>):
+bridge:
+- connector: fix double free
 
-   drivers/net/phy/open_alliance_helpers.c: In function 'oa_1000bt1_get_ethtool_cable_result_code':
->> drivers/net/phy/open_alliance_helpers.c:34:25: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
-      34 |         u8 tdr_status = FIELD_GET(OA_1000BT1_HDD_TDR_STATUS_MASK, reg_value);
-         |                         ^~~~~~~~~
+atomic:
+- fix async flip update
 
+panel:
+- document panel
 
-vim +/FIELD_GET +34 drivers/net/phy/open_alliance_helpers.c
+omap:
+- add config dependency
 
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  21  
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  22  /**
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  23   * oa_1000bt1_get_ethtool_cable_result_code - Convert TDR status to ethtool
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  24   *					      result code
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  25   * @reg_value: Value read from the TDR register
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  26   *
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  27   * This function takes a register value from the HDD.TDR register and converts
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  28   * the TDR status to the corresponding ethtool cable test result code.
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  29   *
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  30   * Return: The appropriate ethtool result code based on the TDR status
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  31   */
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  32  int oa_1000bt1_get_ethtool_cable_result_code(u16 reg_value)
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  33  {
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09 @34  	u8 tdr_status = FIELD_GET(OA_1000BT1_HDD_TDR_STATUS_MASK, reg_value);
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  35  	u8 dist_val = FIELD_GET(OA_1000BT1_HDD_TDR_DISTANCE_MASK, reg_value);
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  36  
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  37  	switch (tdr_status) {
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  38  	case OA_1000BT1_HDD_TDR_STATUS_CABLE_OK:
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  39  		return ETHTOOL_A_CABLE_RESULT_CODE_OK;
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  40  	case OA_1000BT1_HDD_TDR_STATUS_OPEN:
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  41  		return ETHTOOL_A_CABLE_RESULT_CODE_OPEN;
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  42  	case OA_1000BT1_HDD_TDR_STATUS_SHORT:
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  43  		return ETHTOOL_A_CABLE_RESULT_CODE_SAME_SHORT;
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  44  	case OA_1000BT1_HDD_TDR_STATUS_NOISE:
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  45  		return ETHTOOL_A_CABLE_RESULT_CODE_NOISE;
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  46  	default:
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  47  		if (dist_val == OA_1000BT1_HDD_TDR_DISTANCE_RESOLUTION_NOT_POSSIBLE)
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  48  			return ETHTOOL_A_CABLE_RESULT_CODE_RESOLUTION_NOT_POSSIBLE;
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  49  		return ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  50  	}
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  51  }
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  52  EXPORT_SYMBOL_GPL(oa_1000bt1_get_ethtool_cable_result_code);
-f4eee3aa678aeb0 Oleksij Rempel 2024-08-09  53  
+tests:
+- fix gem shmem test
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+drm buddy:
+- Add start address to trim function
+
+amdgpu:
+- DMCUB fix
+- Fix DET programming on some DCNs
+- DCC fixes
+- DCN 4.0.1 fixes
+- SMU 14.0.x update
+- MMHUB fix
+- DCN 3.1.4 fix
+- GC 12.0 fixes
+- Fix soft recovery error propogation
+- SDMA 7.0 fixes
+- DSC fix
+
+xe:
+- Fix off-by-one when processing RTP rules
+- Use dma_fence_chain_free in chain fence unused as a sync
+- Fix PL1 disable flow in xe_hwmon_power_max_write
+- Take ref to VM in delayed dump snapshot
+
+i915:
+- correct dual pps handling for MTL_PCH+ [display]
+- Adjust vma offset for framebuffer mmap offset [gem]
+- Fix Virtual Memory mapping boundaries calculation [gem]
+- Allow evicting to use the requested placement
+- Attempt to get pages without eviction first
+The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
+
+  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-08-10
+
+for you to fetch changes up to 06f5b920d1d0b686d794426264dc39aa8582db14:
+
+  Merge tag 'drm-intel-fixes-2024-08-08' of
+https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
+(2024-08-09 17:16:29 +1000)
+
+----------------------------------------------------------------
+drm fixes for 6.11-rc3
+
+client:
+- fix null ptr deref
+
+bridge:
+- connector: fix double free
+
+atomic:
+- fix async flip update
+
+panel:
+- document panel
+
+omap:
+- add config dependency
+
+tests:
+- fix gem shmem test
+
+drm buddy:
+- Add start address to trim function
+
+amdgpu:
+- DMCUB fix
+- Fix DET programming on some DCNs
+- DCC fixes
+- DCN 4.0.1 fixes
+- SMU 14.0.x update
+- MMHUB fix
+- DCN 3.1.4 fix
+- GC 12.0 fixes
+- Fix soft recovery error propogation
+- SDMA 7.0 fixes
+- DSC fix
+
+xe:
+- Fix off-by-one when processing RTP rules
+- Use dma_fence_chain_free in chain fence unused as a sync
+- Fix PL1 disable flow in xe_hwmon_power_max_write
+- Take ref to VM in delayed dump snapshot
+
+i915:
+- correct dual pps handling for MTL_PCH+ [display]
+- Adjust vma offset for framebuffer mmap offset [gem]
+- Fix Virtual Memory mapping boundaries calculation [gem]
+- Allow evicting to use the requested placement
+- Attempt to get pages without eviction first
+
+----------------------------------------------------------------
+Andi Shyti (2):
+      drm/i915/gem: Adjust vma offset for framebuffer mmap offset
+      drm/i915/gem: Fix Virtual Memory mapping boundaries calculation
+
+Arnd Bergmann (1):
+      drm/omap: add CONFIG_MMU dependency
+
+Arunpravin Paneer Selvam (3):
+      drm/buddy: Add start address support to trim function
+      drm/amdgpu: Add address alignment support to DCC buffers
+      drm/amdgpu: Add DCC GFX12 flag to enable address alignment
+
+Cristian Ciocaltea (1):
+      drm/bridge-connector: Fix double free in error handling paths
+
+Dave Airlie (5):
+      drm/test: fix the gem shmem test to map the sg table.
+      Merge tag 'drm-misc-fixes-2024-08-08' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+      Merge tag 'amd-drm-fixes-6.11-2024-08-08' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
+      Merge tag 'drm-xe-fixes-2024-08-08' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
+      Merge tag 'drm-intel-fixes-2024-08-08' of
+https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
+
+David Gow (2):
+      drm/i915: Allow evicting to use the requested placement
+      drm/i915: Attempt to get pages without eviction first
+
+Dnyaneshwar Bhadane (1):
+      drm/i915/display: correct dual pps handling for MTL_PCH+
+
+Fangzhi Zuo (1):
+      drm/amd/display: Skip Recompute DSC Params if no Stream on Link
+
+Frank Min (2):
+      drm/amdgpu: change non-dcc buffer copy configuration
+      drm/amdgpu: correct sdma7 max dw
+
+Joshua Ashton (1):
+      drm/amdgpu: Forward soft recovery errors to userspace
+
+Karthik Poosa (1):
+      drm/xe/hwmon: Fix PL1 disable flow in xe_hwmon_power_max_write
+
+Kenneth Feng (1):
+      drm/amd/pm: update powerplay structure on smu v14.0.2/3
+
+Likun Gao (2):
+      drm/amdgpu: force to use legacy inv in mmhub
+      drm/amdgpu: add golden setting for gc v12
+
+Lucas De Marchi (1):
+      drm/xe/rtp: Fix off-by-one when processing rules
+
+Ma Ke (1):
+      drm/client: fix null pointer dereference in drm_client_modeset_probe
+
+Matthew Brost (2):
+      drm/xe: Use dma_fence_chain_free in chain fence unused as a sync
+      drm/xe: Take ref to VM in delayed snapshot
+
+Rob Clark (1):
+      dt-bindings: display: panel: samsung,atna45dc02: Document ATNA45DC02
+
+Rodrigo Siqueira (6):
+      drm/amd/display: Replace dm_execute_dmub_cmd with
+dc_wake_and_execute_dmub_cmd
+      drm/amd/display: Add missing DET segments programming
+      drm/amd/display: Add dcc propagation value
+      drm/amd/display: Add missing mcache registers
+      drm/amd/display: Add missing DCN314 to the DML Makefile
+      drm/amd/display: Add missing program DET segment call to pipe init
+
+Simon Ser (1):
+      drm/atomic: allow no-op FB_ID updates for async flips
+
+ .../bindings/display/panel/samsung,atna33xc20.yaml |  9 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.h            |  6 +++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_job.c            |  3 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c       | 36 +++++++++++++-
+ drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c             | 27 +++++++++++
+ drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c             | 18 +++++++
+ drivers/gpu/drm/amd/amdgpu/mmhub_v4_1_0.c          |  3 +-
+ drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c             |  7 +--
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  3 ++
+ drivers/gpu/drm/amd/display/dc/dce/dmub_replay.c   |  3 +-
+ drivers/gpu/drm/amd/display/dc/dml/Makefile        |  2 +
+ .../drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c    |  2 +
+ .../drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c    |  2 +
+ .../display/dc/resource/dcn401/dcn401_resource.c   |  1 +
+ .../display/dc/resource/dcn401/dcn401_resource.h   |  4 +-
+ .../gpu/drm/amd/pm/swsmu/inc/smu_v14_0_2_pptable.h | 52 +++++++++++++++++---
+ drivers/gpu/drm/drm_atomic_uapi.c                  | 15 ++----
+ drivers/gpu/drm/drm_bridge_connector.c             |  8 +---
+ drivers/gpu/drm/drm_buddy.c                        | 25 +++++++++-
+ drivers/gpu/drm/drm_client_modeset.c               |  5 ++
+ drivers/gpu/drm/i915/display/intel_backlight.c     |  3 ++
+ drivers/gpu/drm/i915/display/intel_pps.c           |  3 ++
+ drivers/gpu/drm/i915/gem/i915_gem_mman.c           | 55 +++++++++++++++++++---
+ drivers/gpu/drm/i915/gem/i915_gem_ttm.c            | 13 ++---
+ drivers/gpu/drm/omapdrm/Kconfig                    |  1 +
+ drivers/gpu/drm/tests/drm_gem_shmem_test.c         | 11 +++++
+ drivers/gpu/drm/xe/xe_hwmon.c                      |  3 +-
+ drivers/gpu/drm/xe/xe_lrc.c                        | 15 +++++-
+ drivers/gpu/drm/xe/xe_rtp.c                        |  2 +-
+ drivers/gpu/drm/xe/xe_sync.c                       |  2 +-
+ drivers/gpu/drm/xe/xe_ttm_vram_mgr.c               |  2 +-
+ include/drm/drm_buddy.h                            |  2 +
+ 32 files changed, 287 insertions(+), 56 deletions(-)
 
