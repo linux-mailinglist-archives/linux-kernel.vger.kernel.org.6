@@ -1,149 +1,157 @@
-Return-Path: <linux-kernel+bounces-281312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F0C94D568
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:26:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCA894D56A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 578F1B20DDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:26:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB3E1C20E10
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA514F5FB;
-	Fri,  9 Aug 2024 17:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G20TQ2+p"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EDE61FFE;
+	Fri,  9 Aug 2024 17:27:08 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA975A4D5;
-	Fri,  9 Aug 2024 17:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B565818AF9;
+	Fri,  9 Aug 2024 17:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723224402; cv=none; b=l/AFNUauSzb/TPy16brxJQpu4aBuKfnC3Gw/jqnz6UZsoJFxnfFLjxl7O8ZoR1isqn1Us5cc3mrTx0wWlfU0Yli1Juky/TFLV0jOOBLZ9z+v/oY7jgB5CQNxRAiHXuOUp2j4KtzqxAypYrTDeGT1AvMmH05g+ON/umwjSXhWUvw=
+	t=1723224428; cv=none; b=bW+y2kO00UfxVHj8XiF8tfGRG9ceh1caIZDH+uquxb6PTweC+FscaKtxi+ZOCxay5wp83CFvMELpJrTq1yz5lsRdViXVsM+jpq0xdIoWnN6kANS/0hjPDP5iaajZSdRYqB/sAUTp2VsuWnmR2RDcOSt9z9+mh+JOe8tZElQB/jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723224402; c=relaxed/simple;
-	bh=Y9AqZWGd8ifzezhtCypSmtKu6I9N0YJ4qBpfG6DjUMw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WCHidY4Nrbngn3IC2+tlLHbid1aYCJZ1bNkDmRwyauW+KcIAXhyCEbFkHQvmM88XqHCWUykgWbXyQMkXXn5UBOze9E8rKPgj2JvqKLb/L+a3gx4NnBaARr5eDFpWEUV5eZo7EuwXWQInrjaA3QviMHK4uGwBMZi6zt9mLK7XH/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G20TQ2+p; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723224396;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4iM0sefc3D7BN1ZfyJuESRluKUUBy69Kzbm9ZY4Fy3M=;
-	b=G20TQ2+pPsPGtYkq8R7r38M9mMpyGGn6n276jn3JI1ZBVxvkOU5QGK9WvKp0ioHSZ+boXo
-	Sv7Gu5thZjvb35Jh4i2klPZasx1mouiXlypVYRheOY9kUwUC/vGw7qs1xTDlKYswOxyHLT
-	zTFBdkng29rTwZaGOhIMbkqBm5ZR5UE=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1723224428; c=relaxed/simple;
+	bh=UEMJSCPC06mX95wMv+b6VRAuDY2cK9dt0+DdZbnB0Q0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MY++RP3u0EOp6IkOr6N+1dq7oV1agBLtCCZOTRf/09IlIWoO8TrSip6zCS0YzhW2p04Z/JuZM+QCys7b8DOTe1vLF88D1TY1A1qNSiCNjFJ8YFeRp6pyCeutgdtGzcJeu3y4BjKpf0eouSfkogd8Kefq46kdRfF21qrMHAQLsRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Sam James <sam@gentoo.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Cc: "Jose E . Marchesi" <jose.marchesi@oracle.com>,
+	Andrew Pinski <quic_apinski@quicinc.com>,
+	=?UTF-8?q?Kacper=20S=C5=82omi=C5=84ski?= <kacper.slominski72@gmail.com>,
+	=?UTF-8?q?Arsen=20Arsenovi=C4=87?= <arsen@gentoo.org>,
+	Sam James <sam@gentoo.org>,
+	bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>,
-	cgroups@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] memcg: replace memcg ID idr with xarray
-Date: Fri,  9 Aug 2024 10:26:18 -0700
-Message-ID: <20240809172618.2946790-1-shakeel.butt@linux.dev>
+	llvm@lists.linux.dev
+Subject: [PATCH v2] libbpf: workaround -Wmaybe-uninitialized false positive
+Date: Fri,  9 Aug 2024 18:26:41 +0100
+Message-ID: <8f5c3b173e4cb216322ae19ade2766940c6fbebb.1723224401.git.sam@gentoo.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-At the moment memcg IDs are managed through IDR which requires external
-synchronization mechanisms and makes the allocation code a bit awkward.
-Let's switch to xarray and make the code simpler.
+In `elf_close`, we get this with GCC 15 -O3 (at least):
+```
+In function ‘elf_close’,
+    inlined from ‘elf_close’ at elf.c:53:6,
+    inlined from ‘elf_find_func_offset_from_file’ at elf.c:384:2:
+elf.c:57:9: warning: ‘elf_fd.elf’ may be used uninitialized [-Wmaybe-uninitialized]
+   57 |         elf_end(elf_fd->elf);
+      |         ^~~~~~~~~~~~~~~~~~~~
+elf.c: In function ‘elf_find_func_offset_from_file’:
+elf.c:377:23: note: ‘elf_fd.elf’ was declared here
+  377 |         struct elf_fd elf_fd;
+      |                       ^~~~~~
+In function ‘elf_close’,
+    inlined from ‘elf_close’ at elf.c:53:6,
+    inlined from ‘elf_find_func_offset_from_file’ at elf.c:384:2:
+elf.c:58:9: warning: ‘elf_fd.fd’ may be used uninitialized [-Wmaybe-uninitialized]
+   58 |         close(elf_fd->fd);
+      |         ^~~~~~~~~~~~~~~~~
+elf.c: In function ‘elf_find_func_offset_from_file’:
+elf.c:377:23: note: ‘elf_fd.fd’ was declared here
+  377 |         struct elf_fd elf_fd;
+      |                       ^~~~~~
+```
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+In reality, our use is fine, it's just that GCC doesn't model errno
+here (see linked GCC bug). Suppress -Wmaybe-uninitialized accordingly.
+
+Link: https://gcc.gnu.org/PR114952
+Signed-off-by: Sam James <sam@gentoo.org>
 ---
- mm/memcontrol.c | 34 +++++++---------------------------
- 1 file changed, 7 insertions(+), 27 deletions(-)
+v2: Fix Clang build.
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e1ffd2950393..b8e6b98485c6 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3363,29 +3363,12 @@ static void memcg_wb_domain_size_changed(struct mem_cgroup *memcg)
+Range-diff against v1:
+1:  3ebbe7a4e93a ! 1:  8f5c3b173e4c libbpf: workaround -Wmaybe-uninitialized false positive
+    @@ tools/lib/bpf/elf.c: long elf_find_func_offset(Elf *elf, const char *binary_path
+      	return ret;
+      }
+      
+    ++#if !defined(__clang__)
+     +#pragma GCC diagnostic push
+     +/* https://gcc.gnu.org/PR114952 */
+     +#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+    ++#endif
+      /* Find offset of function name in ELF object specified by path. "name" matches
+       * symbol name or name@@LIB for library functions.
+       */
+    @@ tools/lib/bpf/elf.c: long elf_find_func_offset_from_file(const char *binary_path
+      	elf_close(&elf_fd);
+      	return ret;
+      }
+    ++#if !defined(__clang__)
+     +#pragma GCC diagnostic pop
+    ++#endif
+      
+      struct symbol {
+      	const char *name;
+
+ tools/lib/bpf/elf.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/tools/lib/bpf/elf.c b/tools/lib/bpf/elf.c
+index c92e02394159..7058425ca85b 100644
+--- a/tools/lib/bpf/elf.c
++++ b/tools/lib/bpf/elf.c
+@@ -369,6 +369,11 @@ long elf_find_func_offset(Elf *elf, const char *binary_path, const char *name)
+ 	return ret;
+ }
+ 
++#if !defined(__clang__)
++#pragma GCC diagnostic push
++/* https://gcc.gnu.org/PR114952 */
++#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
++#endif
+ /* Find offset of function name in ELF object specified by path. "name" matches
+  * symbol name or name@@LIB for library functions.
   */
- 
- #define MEM_CGROUP_ID_MAX	((1UL << MEM_CGROUP_ID_SHIFT) - 1)
--static DEFINE_IDR(mem_cgroup_idr);
--static DEFINE_SPINLOCK(memcg_idr_lock);
--
--static int mem_cgroup_alloc_id(void)
--{
--	int ret;
--
--	idr_preload(GFP_KERNEL);
--	spin_lock(&memcg_idr_lock);
--	ret = idr_alloc(&mem_cgroup_idr, NULL, 1, MEM_CGROUP_ID_MAX + 1,
--			GFP_NOWAIT);
--	spin_unlock(&memcg_idr_lock);
--	idr_preload_end();
--	return ret;
--}
-+static DEFINE_XARRAY_ALLOC1(mem_cgroup_ids);
- 
- static void mem_cgroup_id_remove(struct mem_cgroup *memcg)
- {
- 	if (memcg->id.id > 0) {
--		spin_lock(&memcg_idr_lock);
--		idr_remove(&mem_cgroup_idr, memcg->id.id);
--		spin_unlock(&memcg_idr_lock);
--
-+		xa_erase(&mem_cgroup_ids, memcg->id.id);
- 		memcg->id.id = 0;
- 	}
+@@ -384,6 +389,9 @@ long elf_find_func_offset_from_file(const char *binary_path, const char *name)
+ 	elf_close(&elf_fd);
+ 	return ret;
  }
-@@ -3420,7 +3403,7 @@ static inline void mem_cgroup_id_put(struct mem_cgroup *memcg)
- struct mem_cgroup *mem_cgroup_from_id(unsigned short id)
- {
- 	WARN_ON_ONCE(!rcu_read_lock_held());
--	return idr_find(&mem_cgroup_idr, id);
-+	return xa_load(&mem_cgroup_ids, id);
- }
++#if !defined(__clang__)
++#pragma GCC diagnostic pop
++#endif
  
- #ifdef CONFIG_SHRINKER_DEBUG
-@@ -3519,11 +3502,10 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
- 	if (!memcg)
- 		return ERR_PTR(error);
- 
--	memcg->id.id = mem_cgroup_alloc_id();
--	if (memcg->id.id < 0) {
--		error = memcg->id.id;
-+	error = xa_alloc(&mem_cgroup_ids, &memcg->id.id, NULL,
-+			 XA_LIMIT(1, MEM_CGROUP_ID_MAX), GFP_KERNEL);
-+	if (error)
- 		goto fail;
--	}
- 
- 	memcg->vmstats = kzalloc(sizeof(struct memcg_vmstats),
- 				 GFP_KERNEL_ACCOUNT);
-@@ -3664,9 +3646,7 @@ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
- 	 * publish it here at the end of onlining. This matches the
- 	 * regular ID destruction during offlining.
- 	 */
--	spin_lock(&memcg_idr_lock);
--	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
--	spin_unlock(&memcg_idr_lock);
-+	xa_store(&mem_cgroup_ids, memcg->id.id, memcg, GFP_KERNEL);
- 
- 	return 0;
- offline_kmem:
+ struct symbol {
+ 	const char *name;
 -- 
-2.43.5
+2.45.2
 
 
