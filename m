@@ -1,128 +1,85 @@
-Return-Path: <linux-kernel+bounces-280874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BA294D04F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:34:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3AC94D057
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C984E1C213C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:34:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959901C213A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2C31946B4;
-	Fri,  9 Aug 2024 12:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XiyMs+Pe"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13D2194A4B;
+	Fri,  9 Aug 2024 12:36:17 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E179F194120
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 12:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E14A1DFF5;
+	Fri,  9 Aug 2024 12:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723206877; cv=none; b=KF12mkw0bcBoLod3KwUyyr/EjsWBz1G4t8YE/jWgdT2SbXZ310IUWcXUrWlgi63t9jAIEZwJl9NCMVwKVFhfKxKaYb8pZ2dxSkgXLhSve8YRRxVXh8Kq+lpZokSMgqm9kP7uw/SZQQQbUu4RwQWwOyHfNT9I16yzrsgQ8St3qdc=
+	t=1723206977; cv=none; b=PwcEW/JuxWpFLNEz7zDEWA4ZZMhS99s9qSw4ThLJaftfaQzfLdhOc5xyYzYvgixpmb97YiqdavF1gPSOZvv/V6b/SWXYEpcvQF3gS0Fao5ExW2dMkQTRU9b5ekYhxy//F9yTdwdgLOfZuSQUGO/tmkp/O58xAWtpFGYTa8dbLFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723206877; c=relaxed/simple;
-	bh=dFQRHkthV2CiGWZy7z+Br0AUOk55fvfBCAujfUth+ag=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eC460S+xFbacQpJKgczEZVb0FtAHMuonTqHME1fDQsO5gO19JWjXQJVnevkZRd/80gQWU6huTfi68WF14amxIbzYOq6t4vx37Qf8K+1lFtoRpSi9ENA6lC+WjTM0vwdNF9yuZzwYx5F9iZ6ax815rWPdtzZFkiUZPNXG6G5Xg3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XiyMs+Pe; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7d26c2297eso240202366b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 05:34:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723206874; x=1723811674; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PZDoeVn0Ui9DaBYyRf0yS/xJKDLJH8VgYEQMX6ljq/0=;
-        b=XiyMs+PexbDUrvUz2Nls1SXA28OiFJAidssFsVyx+O/62AhitBne17u5Jj0MUZxILT
-         Z8bAhCOB541b+4YsZNzd9L86loCGvZXGSr9Fo4A+ILgBIBP9aHPieCWMFZzoUkJ0Z5CE
-         h0uvsv1nKh4kqEEDsx7enbLb1TK8FS94k9NTWmxox8XEOWlWH0eYPYvjPfyjzSK6s90i
-         R8aKeviuP3YCNZUB5sWHK0DXCwCHhPEimE01wVetOwskh4ftbtSNrh9SuHOEy4IWt0AM
-         5Zpjy/I9pyI+1xQpKqSMZT07YgfltJz1Hd08oNjAgDGzDdEh6Uixzsx1HLi59PCMazji
-         ALfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723206874; x=1723811674;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PZDoeVn0Ui9DaBYyRf0yS/xJKDLJH8VgYEQMX6ljq/0=;
-        b=TnXkyeOCuuGtoeQMSUk7LTKmNNjUeZA24okfMBaIWYgtiqXk+zCvIHQ0VnkkFbkMe7
-         0mCmOZgx9AWvcl41gZdgs/YIka/ibD0ALmzzioUIactNUnVJ/915IeQrx+Y68xsteokC
-         cgJGaSoRI9AwFAm679dxBhmeFmZWbKq++nwzD8QS1yPnEbxZ7V7lVOyFyQkuhU3Vwzta
-         sOZhA0nNjCbJuXJs21qRME4QkUo3bIY+XHV6CIs3LzWWf7yrbaVo8YE2HgPmodMG8Xfr
-         fCDSZWKpMP4Pz4pP3i1ETc7RmjpQm7t3/2ZswewxdFO/cETNNYL3qHlKNzfhnjO2JGtP
-         Pmpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUI35RxJt/mvRA3CNFHx8DnIOUpsJ3pMgafZRM9f+ovCCBx9rlskBdvWfUiJM5/5TLBUEMzlgrjOD8A5TPQWjhV6yD2mTpvoYqxjvUo
-X-Gm-Message-State: AOJu0YwfZZzgGLpvBj3U4GBc8Ax0bs2wnAw534gAafsmvBees4JOkxnt
-	KwGgDENE8E1h3tX9JCBNSUv+TDtkZtdO3Srb+R4IGtc1JDiVDTcE0sc7KQJ8yn8=
-X-Google-Smtp-Source: AGHT+IHhcQkeSlgaiaLuH3O2urxwGk6K9tJx15iJPwIKKgrG2LT/FmwImrhs1ImaNZ2v2YJcFRxg3A==
-X-Received: by 2002:a17:907:60cd:b0:a7a:ab8a:38f with SMTP id a640c23a62f3a-a80aa5fb107mr120044866b.41.1723206874085;
-        Fri, 09 Aug 2024 05:34:34 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d4545dsm837841266b.124.2024.08.09.05.34.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 05:34:33 -0700 (PDT)
-Date: Fri, 9 Aug 2024 15:34:30 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Daniel Bristot de Oliveira <bristot@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, John Kacur <jkacur@redhat.com>,
-	"Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] rtla/osnoise: prevent NULL dereference in error handling
-Message-ID: <f964ed1f-64d2-4fde-ad3e-708331f8f358@stanley.mountain>
+	s=arc-20240116; t=1723206977; c=relaxed/simple;
+	bh=FWWNxodoUrQMHGfjDm+iomNz8elNmj4w8U94tH1X8xo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hd5wrx7kcpu22FW7/I46aKf9Lp7AFLzBGehQ29RJOBYHU0wwYqS5AyePFcf62dp8mW7Sk/YLt0MDBx/Ypg/Kwan1UaMXRpEWZ+XUc7oxgH0LPdKqWUV9EBib32KLTBsSPo1BbE2oZO+Al1QJ6fqwTT++knKPOYvenPaYDZ0rung=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b02.versanet.de ([83.135.91.2] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1scOqX-0006V9-No; Fri, 09 Aug 2024 14:35:53 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org,
+ Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Chris Morgan <macromorgan@hotmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+ Muhammed Efe Cetin <efectn@protonmail.com>, Andy Yan <andyshrk@163.com>,
+ Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
+ Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
+ Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
+ Yifeng Zhao <yifeng.zhao@rock-chips.com>,
+ Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
+Subject:
+ Re: [PATCH 05/10] dt-bindings: mfd: syscon: Add rk3576 QoS register
+ compatible
+Date: Fri, 09 Aug 2024 14:35:51 +0200
+Message-ID: <14126945.ov1OQ5z9iq@diego>
+In-Reply-To: <20240802214612.434179-6-detlev.casanova@collabora.com>
+References:
+ <20240802214612.434179-1-detlev.casanova@collabora.com>
+ <20240802214612.434179-6-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-If the "tool->data" allocation fails then there is no need to call
-osnoise_free_top() and, in fact, doing so will lead to a NULL dereference.
+Am Freitag, 2. August 2024, 23:45:32 CEST schrieb Detlev Casanova:
+> Document rk3576 compatible for QoS registers.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 
-Fixes: 1eceb2fc2ca5 ("rtla/osnoise: Add osnoise top mode")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- tools/tracing/rtla/src/osnoise_top.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
-index f594a44df840..2f756628613d 100644
---- a/tools/tracing/rtla/src/osnoise_top.c
-+++ b/tools/tracing/rtla/src/osnoise_top.c
-@@ -651,8 +651,10 @@ struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
- 		return NULL;
- 
- 	tool->data = osnoise_alloc_top(nr_cpus);
--	if (!tool->data)
--		goto out_err;
-+	if (!tool->data) {
-+		osnoise_destroy_tool(tool);
-+		return NULL;
-+	}
- 
- 	tool->params = params;
- 
-@@ -660,11 +662,6 @@ struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
- 				   osnoise_top_handler, NULL);
- 
- 	return tool;
--
--out_err:
--	osnoise_free_top(tool->data);
--	osnoise_destroy_tool(tool);
--	return NULL;
- }
- 
- static int stop_tracing;
--- 
-2.43.0
 
 
