@@ -1,243 +1,221 @@
-Return-Path: <linux-kernel+bounces-281118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B82894D34C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:21:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF5594D34A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0A0D1C2220A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:21:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AF03B21639
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D610198A30;
-	Fri,  9 Aug 2024 15:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B951B197A9E;
+	Fri,  9 Aug 2024 15:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kTPdD8Cg"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OShB5ktm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D5D198A20
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBBE1DFE1
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216883; cv=none; b=RAd8I60a9ALE1OPQeeUFtCtkp6Z1Sg55CjnQ7OMos0T1aoMc11dAo4cBjr+wfFg/YqHJj16sD63AeSwSZnR6diQ02pdq4KS8mFSeQOki2imwBIEEw08FMcldX2M9rmIe4Ky9d4OVUoga6eOB6lpVK8t3oc0Ac6KFif9RXk/+g14=
+	t=1723216877; cv=none; b=eSKbT8qLTlo/edNb1Ahnj9JJanDHqukXa8djtMrYfPZskVW3R9/3qAZ3fPZjES2RDFvXzkbGlLzsOP58VzqciUkLQoKQq8qOGyLzAwKA9PwZqTXm7bcI1+wWN1snofx8YawAniFevQiETcbNn90FG6qNtkE45YMUz0bAxF/26M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216883; c=relaxed/simple;
-	bh=x7ltWGIKIMpSEQUqVRb7EjS3z17Cftjz65DvSer+VyY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cr86qdPdtO2RBcgHtMnEn6hIc1CRCNo11V6z4nUvIw2e/NPk/MwiEx6DSqf9kb2bli+4IQ/keWMYAm1n7Gr/qSE8mdThnJ7eUSO58m8f5FpA08tksd8L9EbDtjx0o32Ik4qBUj5e/x5o7dil3BdEs1Kc2STa11hvyzTEUNkUBl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kTPdD8Cg; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5b9fe5ea355so12965a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:21:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723216880; x=1723821680; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x7ltWGIKIMpSEQUqVRb7EjS3z17Cftjz65DvSer+VyY=;
-        b=kTPdD8Cg1FJSzE/gKIApNOyc94xurBPKo7Lh3B6lIGqHpHEbhxD3UJxi0m4YivgtHX
-         XWBdgn70fvUeyUosWrK683mcuNrAZiBq8f0lJgFZSkPtKpZ48Ry7W6mBxNTB+606wLZO
-         pWh8YXmfJPy3Fh2sei/ATVRjxchH9tTv8BDqT6AymxLpImZOijRphETQK4UhUpoQ2cj+
-         6+EOI5PtOffcE1KSHSRGvTXbLnMdWlx+aSQy0tJY+cPUHU7ldgnrf8+HA0XOR01Jn7eI
-         r3iOLoH+xppGewJqACS9wj/30tfq+XNJgEB0Wm4BU6rU7gn9IB/J6GlWJcAVOAGDzmbo
-         eZVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723216880; x=1723821680;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x7ltWGIKIMpSEQUqVRb7EjS3z17Cftjz65DvSer+VyY=;
-        b=f7AAWgmTxm++J/qu3YtApHY+/eauiEBz9nNKaXNJRJ7thKQfEltkfcBAw/xwjpFnFC
-         KTD+uZhFUJo4WCYduMvifhs9ggoaS1ikyhgv1+p2qqy+OQeKJA7/gBMzkn+4vtqzf1ou
-         KC/LzvJTC1Xo+tVNSbkYEtoClw+2wOn4e2lLa/uGT0FshzaosCkFEqVCuThLPvynFjLr
-         cGzpMMWW/aQJwQ5af771ui2iaS2hNv4if/owIkFD8u5wZolvD/KJr4uIAEDcsc23VNES
-         He8VcDpQOxlufxRrUNyqoo2omtO85E5FyrIHYabyXTYAjiXfGefSRnu7qWU9pWQSp17N
-         s1YA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyRPNonhpzhGSOYfbY3ZEu/QF+Qb3OXoHugIV7QnbCHmmRqY/GfZ+hKmiANzR6qgE8Kg/L0UGlNyKPZNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy715fQATdZbHC8TZKTnJyNq8nubBUiO0uWq8r/JHId1QJMep2S
-	2rwoyoCYOpCU7SiDHxxatSqxlEsnsuN3yS+wQpbr2RGh8D0I1/g3/WA4CAvl6xfMFGRPijbWXzW
-	SqTE4j5vmEnoKkcx67MlqR+2xE4dhnoIgxO5x
-X-Google-Smtp-Source: AGHT+IGIPHfXCaWajaFbVpbJ28cd50OKg5ViAT7LMapyd6SOHzEqqQ0FInqgFF3aIds28z6LZdkvYr5YURDWIpve5tg=
-X-Received: by 2002:a05:6402:5216:b0:5b8:ccae:a8b8 with SMTP id
- 4fb4d7f45d1cf-5bc4b3fd7b2mr150033a12.3.1723216878902; Fri, 09 Aug 2024
- 08:21:18 -0700 (PDT)
+	s=arc-20240116; t=1723216877; c=relaxed/simple;
+	bh=+e45tLYw96QzSx1JJxifNwQRkTEEc2NjzN/OrVccRR0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nJXLA6kqvZSsHfzdl4AVeELQ4WD203umeW3t+I2E6HAuShB5qoSJZyy/DPHG88sqycKpOGyM83yFETH29keFBfPYGzNb9w0RU885gOVRhR5YploqlrUo2jnfMcqevhHnZQnGpyJ7wgsqAjrBgmjAqdGlA1OAPAHfMjX0t6lIdXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OShB5ktm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4799amt7022651;
+	Fri, 9 Aug 2024 15:21:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eofYyZ1RqBF9U+H27nAEGGgxJ2PAI/2nNJ2a3PlEXos=; b=OShB5ktmWzsnCVTe
+	qttsX08aOFdQ64lPQYwDDxDVyLaRkbg75Cn9vhx16RXZhhHeXpyEQyWxIn7dPJ1E
+	YWC6D9o/XOLYrEyvg7DcQGG0eaMye7qsL95gBNQdlwg0XTNHkhPvANMaENwQ+81O
+	Mh9wjbqafSeqX7INIkeK+5UtFGTAR77ol979IIpOt6bRjX/KTgOTKMJdAGLWcBXa
+	qq9U0e4lFsi88RW7nziN+AE0gm/nLHaOz+wERBXy4+kRT9bkBtJpoPKG/m6dxDYJ
+	SK4R3qRfSkwmjrTTCBDrwrKn968immUX6+lTG6Le8gahezraJD8vlWhDPFJiZb2C
+	D7TRzA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vtbcvbkr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 15:21:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 479FL7CT019525
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 9 Aug 2024 15:21:07 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
+ 08:21:07 -0700
+Message-ID: <292c06d0-b96a-b5b5-5d82-e74b82bbb6de@quicinc.com>
+Date: Fri, 9 Aug 2024 09:21:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807182325.2585582-1-surenb@google.com> <CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com>
- <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com>
- <CAEf4BzYqKAaGE6GEcMs9MTcrV4cA+i0M5pniqFTy1LQ+g0Yxkw@mail.gmail.com>
- <CAG48ez08f0GNfkqtKa3EV6-miRs3AbXej9WdVh4TvB8ErA6S3w@mail.gmail.com>
- <CAEf4BzZT+c3VHkGy2qtpsbrRVLQwE9ESTtvhJ3_xtJ9L=Hmi_g@mail.gmail.com>
- <CAG48ez1_xx=oVB=4Q3Ywf7UPyO3aWR+N=HwGE5SEuO9+Fgiw_g@mail.gmail.com> <CAEf4BzZQ3oXBUVJVBJJ2C49jWL0hMSSxZiCpbMeadof7Q-KPzw@mail.gmail.com>
-In-Reply-To: <CAEf4BzZQ3oXBUVJVBJJ2C49jWL0hMSSxZiCpbMeadof7Q-KPzw@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 9 Aug 2024 17:20:42 +0200
-Message-ID: <CAG48ez3Q5PkiEjfKQR1zA=4dL6RXWNTmPqD==MtGKuTZp2HGtw@mail.gmail.com>
-Subject: Re: [RFC 1/1] mm: introduce mmap_lock_speculation_{start|end}
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, peterz@infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V2 00/10] AMD XDNA driver
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240805173959.3181199-1-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240805173959.3181199-1-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NedW00QHtyXo4LBOQs5ju31uENv0icjD
+X-Proofpoint-ORIG-GUID: NedW00QHtyXo4LBOQs5ju31uENv0icjD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-09_12,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxscore=0 mlxlogscore=999 clxscore=1011 impostorscore=0 adultscore=0
+ bulkscore=0 priorityscore=1501 phishscore=0 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408090111
 
-On Fri, Aug 9, 2024 at 12:36=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
-> On Thu, Aug 8, 2024 at 3:16=E2=80=AFPM Jann Horn <jannh@google.com> wrote=
-:
-> >
-> > On Fri, Aug 9, 2024 at 12:05=E2=80=AFAM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > > On Thu, Aug 8, 2024 at 2:43=E2=80=AFPM Jann Horn <jannh@google.com> w=
-rote:
-> > > >
-> > > > On Thu, Aug 8, 2024 at 11:11=E2=80=AFPM Andrii Nakryiko
-> > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > On Thu, Aug 8, 2024 at 2:02=E2=80=AFPM Suren Baghdasaryan <surenb=
-@google.com> wrote:
-> > > > > >
-> > > > > > On Thu, Aug 8, 2024 at 8:19=E2=80=AFPM Andrii Nakryiko
-> > > > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Wed, Aug 7, 2024 at 11:23=E2=80=AFAM Suren Baghdasaryan <s=
-urenb@google.com> wrote:
-> > > > > > > >
-> > > > > > > > Add helper functions to speculatively perform operations wi=
-thout
-> > > > > > > > read-locking mmap_lock, expecting that mmap_lock will not b=
-e
-> > > > > > > > write-locked and mm is not modified from under us.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > > > > > Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> > > > > > > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > > > > > > ---
-> > > > > > >
-> > > > > > > This change makes sense and makes mm's seq a bit more useful =
-and
-> > > > > > > meaningful. I've also tested it locally with uprobe stress-te=
-st, and
-> > > > > > > it seems to work great, I haven't run into any problems with =
-a
-> > > > > > > multi-hour stress test run so far. Thanks!
-> > > > > >
-> > > > > > Thanks for testing and feel free to include this patch into you=
-r set.
-> > > > >
-> > > > > Will do!
-> > > > >
-> > > > > >
-> > > > > > I've been thinking about this some more and there is a very unl=
-ikely
-> > > > > > corner case if between mmap_lock_speculation_start() and
-> > > > > > mmap_lock_speculation_end() mmap_lock is write-locked/unlocked =
-so many
-> > > > > > times that mm->mm_lock_seq (int) overflows and just happen to r=
-each
-> > > > > > the same value as we recorded in mmap_lock_speculation_start().=
- This
-> > > > > > would generate a false positive, which would show up as if the
-> > > > > > mmap_lock was never touched. Such overflows are possible for vm=
-_lock
-> > > > > > as well (see: https://elixir.bootlin.com/linux/v6.10.3/source/i=
-nclude/linux/mm_types.h#L688)
-> > > > > > but they are not critical because a false result would simply l=
-ead to
-> > > > > > a retry under mmap_lock. However for your case this would be a
-> > > > > > critical issue. This is an extremely low probability scenario b=
-ut
-> > > > > > should we still try to handle it?
-> > > > > >
-> > > > >
-> > > > > No, I think it's fine.
-> > > >
-> > > > Modern computers don't take *that* long to count to 2^32, even when
-> > > > every step involves one or more syscalls. I've seen bugs where, for
-> > > > example, a 32-bit refcount is not decremented where it should, maki=
-ng
-> > > > it possible to overflow the refcount with 2^32 operations of some
-> > > > kind, and those have taken something like 3 hours to trigger in one
-> > > > case (https://bugs.chromium.org/p/project-zero/issues/detail?id=3D2=
-478),
-> > > > 14 hours in another case. Or even cases where, if you have enough R=
-AM,
-> > > > you can create 2^32 legitimate references to an object and overflow=
- a
-> > > > refcount that way
-> > > > (https://bugs.chromium.org/p/project-zero/issues/detail?id=3D809 if=
- you
-> > > > had more than 32 GiB of RAM, taking only 25 minutes to overflow the
-> > > > 32-bit counter - and that is with every step allocating memory).
-> > > > So I'd expect 2^32 simple operations that take the mmap lock for
-> > > > writing to be faster than 25 minutes on a modern desktop machine.
-> > > >
-> > > > So for a reader of some kinda 32-bit sequence count, if it is
-> > > > conceivably possible for the reader to take at least maybe a couple
-> > > > minutes or so between the sequence count reads (also counting time
-> > > > during which the reader is preempted or something like that), there
-> > > > could be a problem. At that point in the analysis, if you wanted to
-> > > > know whether it's actually exploitable, I guess you'd have to look =
-at
-> > > > what kinda context you're running in, and what kinda events can
-> > > > interrupt/preempt you (like whether someone can send a sufficiently
-> > > > dense flood of IPIs to completely prevent you making forward progre=
-ss,
-> > > > like in https://www.vusec.net/projects/ghostrace/), and for how lon=
-g
-> > > > those things can delay you (maybe including what the pessimal
-> > > > scheduler behavior looks like if you're in preemptible context, or =
-how
-> > > > long clock interrupts can take to execute when processing a giant p=
-ile
-> > > > of epoll watches), and so on...
-> > > >
-> > >
-> > > And here we are talking about *lockless* *speculative* VMA usage that
-> > > will last what, at most on the order of a few microseconds?
-> >
-> > Are you talking about time spent in task context, or time spent while
-> > the task is on the CPU (including time in interrupt context), or about
-> > wall clock time?
->
-> We are doing, roughly:
->
-> mmap_lock_speculation_start();
-> rcu_read_lock();
-> vma_lookup();
-> rb_find();
-> rcu_read_unlock();
-> mmap_lock_speculation_end();
->
->
-> On non-RT kernel this can be prolonged only by having an NMI somewhere
-> in the middle.
+On 8/5/2024 11:39 AM, Lizhi Hou wrote:
+> This patchset introduces a new Linux Kernel Driver, amdxdna for AMD NPUs.
+> The driver is based on Linux accel subsystem.
+> 
+> NPU (Neural Processing Unit) is an AI inference accelerator integrated
+> into AMD client CPUs. NPU enables efficient execution of Machine Learning
+> applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
+> architecture [1].
+> 
+> AMD NPU consists of the following components:
+> 
+>    - Tiled array of AMD AI Engine processors.
+>    - Micro Controller which runs the NPU Firmware responsible for
+>      command processing, AIE array configuration, and execution management.
+>    - PCI EP for host control of the NPU device.
+>    - Interconnect for connecting the NPU components together.
+>    - SRAM for use by the NPU Firmware.
+>    - Address translation hardware for protected host memory access by the
+>      NPU.
+> 
+> NPU supports multiple concurrent fully isolated contexts. Concurrent
+> contexts may be bound to AI Engine array spatially and or temporarily.
+> 
+> The driver is licensed under GPL-2.0 except for UAPI header which is
+> licensed GPL-2.0 WITH Linux-syscall-note.
+> 
+> User mode driver stack consists of XRT [2] and AMD AIE Plugin for IREE [3].
 
-I don't think you're running with interrupts off here? Even on kernels
-without any preemption support, normal interrupts (like timers,
-incoming network traffic, TLB flush IPIs) should still be able to
-interrupt here. And in CONFIG_PREEMPT kernels (which enable
-CONFIG_PREEMPT_RCU by default), rcu_read_lock() doesn't block
-preemption, so you can even get preempted here - I don't think you
-need RT for that.
+Is there a special branch with the code?  I don't see any of the uAPI in 
+either project when searching for the ioctl codes or ioctl structures.
 
-My understanding is that the main difference between normal
-CONFIG_PREEMPT and RT is whether spin_lock() blocks preemption.
+> 
+> The firmware for the NPU is distributed as a closed source binary, and has
+> already been pushed to the DRM firmware repository [4].
+> 
+> [1] https://www.amd.com/en/technologies/xdna.html
+> [2] https://github.com/Xilinx/XRT
+> [3] https://github.com/nod-ai/iree-amd-aie
+> [4] https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu
+> 
+> Changes since v1:
+> - Remove some inline defines
+> - Minor changes based code review comments
+> 
+> Lizhi Hou (10):
+>    accel/amdxdna: Add a new driver for AMD AI Engine
+>    accel/amdxdna: Support hardware mailbox
+>    accel/amdxdna: Add hardware resource solver
+>    accel/amdxdna: Add hardware context
+>    accel/amdxdna: Add GEM buffer object management
+>    accel/amdxdna: Add command execution
+>    accel/amdxdna: Add suspend and resume
+>    accel/amdxdna: Add error handling
+>    accel/amdxdna: Add query functions
+>    accel/amdxdna: Add firmware debug buffer support
+> 
+>   MAINTAINERS                                   |   9 +
+>   drivers/accel/Kconfig                         |   1 +
+>   drivers/accel/Makefile                        |   1 +
+>   drivers/accel/amdxdna/Kconfig                 |  15 +
+>   drivers/accel/amdxdna/Makefile                |  22 +
+>   drivers/accel/amdxdna/TODO                    |   4 +
+>   drivers/accel/amdxdna/aie2_ctx.c              | 949 ++++++++++++++++++
+>   drivers/accel/amdxdna/aie2_error.c            | 349 +++++++
+>   drivers/accel/amdxdna/aie2_message.c          | 775 ++++++++++++++
+>   drivers/accel/amdxdna/aie2_msg_priv.h         | 372 +++++++
+>   drivers/accel/amdxdna/aie2_pci.c              | 756 ++++++++++++++
+>   drivers/accel/amdxdna/aie2_pci.h              | 264 +++++
+>   drivers/accel/amdxdna/aie2_psp.c              | 137 +++
+>   drivers/accel/amdxdna/aie2_smu.c              | 112 +++
+>   drivers/accel/amdxdna/aie2_solver.c           | 329 ++++++
+>   drivers/accel/amdxdna/aie2_solver.h           | 156 +++
+>   drivers/accel/amdxdna/amdxdna_ctx.c           | 597 +++++++++++
+>   drivers/accel/amdxdna/amdxdna_ctx.h           | 165 +++
+>   drivers/accel/amdxdna/amdxdna_drm.c           | 172 ++++
+>   drivers/accel/amdxdna/amdxdna_drm.h           | 114 +++
+>   drivers/accel/amdxdna/amdxdna_gem.c           | 700 +++++++++++++
+>   drivers/accel/amdxdna/amdxdna_gem.h           |  73 ++
+>   drivers/accel/amdxdna/amdxdna_mailbox.c       | 582 +++++++++++
+>   drivers/accel/amdxdna/amdxdna_mailbox.h       | 124 +++
+>   .../accel/amdxdna/amdxdna_mailbox_helper.c    |  50 +
+>   .../accel/amdxdna/amdxdna_mailbox_helper.h    |  43 +
+>   drivers/accel/amdxdna/amdxdna_pci_drv.c       | 234 +++++
+>   drivers/accel/amdxdna/amdxdna_pci_drv.h       |  31 +
+>   drivers/accel/amdxdna/amdxdna_sysfs.c         |  58 ++
+>   drivers/accel/amdxdna/npu1_regs.c             |  94 ++
+>   drivers/accel/amdxdna/npu2_regs.c             | 111 ++
+>   drivers/accel/amdxdna/npu4_regs.c             | 111 ++
+>   drivers/accel/amdxdna/npu5_regs.c             | 111 ++
+>   include/trace/events/amdxdna.h                | 101 ++
+>   include/uapi/drm/amdxdna_accel.h              | 456 +++++++++
+>   35 files changed, 8178 insertions(+)
+>   create mode 100644 drivers/accel/amdxdna/Kconfig
+>   create mode 100644 drivers/accel/amdxdna/Makefile
+>   create mode 100644 drivers/accel/amdxdna/TODO
+>   create mode 100644 drivers/accel/amdxdna/aie2_ctx.c
+>   create mode 100644 drivers/accel/amdxdna/aie2_error.c
+>   create mode 100644 drivers/accel/amdxdna/aie2_message.c
+>   create mode 100644 drivers/accel/amdxdna/aie2_msg_priv.h
+>   create mode 100644 drivers/accel/amdxdna/aie2_pci.c
+>   create mode 100644 drivers/accel/amdxdna/aie2_pci.h
+>   create mode 100644 drivers/accel/amdxdna/aie2_psp.c
+>   create mode 100644 drivers/accel/amdxdna/aie2_smu.c
+>   create mode 100644 drivers/accel/amdxdna/aie2_solver.c
+>   create mode 100644 drivers/accel/amdxdna/aie2_solver.h
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.c
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.h
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.c
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.h
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_gem.c
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_gem.h
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.c
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.h
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.c
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.h
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.c
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.h
+>   create mode 100644 drivers/accel/amdxdna/amdxdna_sysfs.c
+>   create mode 100644 drivers/accel/amdxdna/npu1_regs.c
+>   create mode 100644 drivers/accel/amdxdna/npu2_regs.c
+>   create mode 100644 drivers/accel/amdxdna/npu4_regs.c
+>   create mode 100644 drivers/accel/amdxdna/npu5_regs.c
+>   create mode 100644 include/trace/events/amdxdna.h
+>   create mode 100644 include/uapi/drm/amdxdna_accel.h
+> 
 
-> On RT it can get preempted even within RCU locked
-> region, if I understand correctly. If you manage to make this part run
-> sufficiently long to overflow 31-bit counter, it's probably a bigger
-> problem than mmap's sequence wrapping over, no?
-
-From the perspective of security, I don't consider it to be
-particularly severe by itself if a local process can make the system
-stall for very long amounts of time. And from the perspective of
-reliability, I think scenarios where someone has to very explicitly go
-out of their way to destabilize the system don't matter so much?
+No Documentation?
 
