@@ -1,202 +1,136 @@
-Return-Path: <linux-kernel+bounces-280378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F4494C9C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:44:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D9694C9CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DC821F23EFD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:44:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AF5F1F241D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EB816C84F;
-	Fri,  9 Aug 2024 05:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E927A16C6AA;
+	Fri,  9 Aug 2024 05:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kE8bmLk/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fngC3nO0"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F4912E7E;
-	Fri,  9 Aug 2024 05:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA162564
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 05:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723182248; cv=none; b=iRIDm7BAuEHauA8JL3qyLNqwZZBZsw2TwxD8nhDBtGGXQuBycx6FjI2JuV9Tj1zUJb5eB+QF9zlDah82+R8WMlLU06bD9eEmG25pqfydflp/YQEipWbOH72NRNYnyYtUMP+owupTOT1qHXfRYTgGOrJmre6wlUACnux+opyk5BM=
+	t=1723182431; cv=none; b=N9wy9eCm9B7twAPJiIZP5nbQZXpltdKZGquI6xXPn1v9lgzqZbtRmzgQQdf0v7nycxNfWrHPicZdiMPF0/buootOfDqOy5VVeDukXCMrIhV36kQxjEFwKsGzIsbyJ1PHT1zUSPABCQ7e9x8kjUm35pX2t4tIIYFVZXZX84/E8Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723182248; c=relaxed/simple;
-	bh=ce1dczaiqaHq/b4u6sE/IFDSyphVayC0ApbaS3hZQ30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MgnPbLQ6Fn9ek230jdRaraD7KwwNd+RpuuHRzkYj3Ps6DcRqZsTg1ZePl7tFFfyatVPZ4HStkO4UsHet3N3WdcuhdxWZJeeJqtqE+JTuJJVCO/VcAMdakULuUVYhUHmt7wHEiiHpqU+th+xYGsXzIUvsJhApNZod4gmUjqOgqfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kE8bmLk/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FF67C32782;
-	Fri,  9 Aug 2024 05:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723182248;
-	bh=ce1dczaiqaHq/b4u6sE/IFDSyphVayC0ApbaS3hZQ30=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kE8bmLk/lJ6ygH9ZN0lMzWivl4SgsAqma4mSHhFN6/3cUtdhEx/rb7UU8vhHiSSnz
-	 Z6jvgFXGnR045cUUf2u5h5Uycwx100JZFrKsjNf1Bx69pYOMUrx9HrEjsNK6jszINI
-	 Z78ki7MLPa7rRH1bmz7iofHooDbciTHMc7f3a/hMYidh9/hmXZY6+BdXutCafveUt6
-	 IrG/rt1WYkn9qUNpzUfgvAhVAcR/zaj7pw1IEa3Rtn6RjW+cmP+f+UByydh+J4LMfv
-	 QSkUBcoGsbyuGpXQQqT7DUbZGkaWPqt0UqdbWe6ckcgR1zOtGRWGY0oFn0gFwQv0Du
-	 wZxaGTTw5Wl8Q==
-Message-ID: <4de61c50-0f84-40b6-8993-d4e82cf54be0@kernel.org>
-Date: Fri, 9 Aug 2024 07:44:01 +0200
+	s=arc-20240116; t=1723182431; c=relaxed/simple;
+	bh=GfvIK5UBzCDhYqJiwio2zXfcQXCwAi/cWWbG06EnJak=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FsVwchQC0LlVhqfz0UJ1TtPDoiZD9KYcDwQIGKniDm9D+jiMNN5nO9idSiIp5BlgCnShLw+d34igUJdvz2NlvVjO54pPPlJMYyqA49AqPMPxDC3r7meYT4h7djnFWGVWdXRwlHK2jvXtR09OLtaX1x1S+Eoiuo8dlCJLOFU3Pck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fngC3nO0; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4795knBp083282;
+	Fri, 9 Aug 2024 00:46:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723182409;
+	bh=LDaf9m5udums6p3yjcCkDBMTFmKAlc6s/+RJ4+TMm9M=;
+	h=From:To:CC:Subject:Date;
+	b=fngC3nO0W+0DD84TU/4IcJ70U/rTfIGgIyYF9CLU16SIOOZuBfojFcIakOmzuFWcA
+	 LwO7AFqh13A1j09CNP/eexH2GRqqRSO1lmaD8w0i2GxcDvhPjMXDFUmCroTgSBb024
+	 sK6I/igh8aRXKJzejOclaE/CnUH/yYSb90U5k/20=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4795knCs046761
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 9 Aug 2024 00:46:49 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 9
+ Aug 2024 00:46:48 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 9 Aug 2024 00:46:48 -0500
+Received: from lcpd911.dhcp.ti.com (lcpd911.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4795kjlW076490;
+	Fri, 9 Aug 2024 00:46:46 -0500
+From: Dhruva Gole <d-gole@ti.com>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot
+	<vincent.guittot@linaro.org>
+CC: Steven Rostedt <rostedt@goodmis.org>, <linux-kernel@vger.kernel.org>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Kevin Hilman
+	<khilman@baylibre.com>,
+        Markus Schneider-Pargmann <msp@baylibre.com>,
+        Dhruva
+ Gole <d-gole@ti.com>
+Subject: [PATCH V2] sched: idle: s/int/bool for idle_timer: done
+Date: Fri, 9 Aug 2024 11:16:26 +0530
+Message-ID: <20240809054626.580532-1-d-gole@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] scsi: ufs: rockchip: init support for UFS
-To: Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Heiko Stuebner <heiko@sntech.de>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
- YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1723089163-28983-1-git-send-email-shawn.lin@rock-chips.com>
- <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
- <93a16a4a-6a12-446f-bfc9-e8aa907e0598@kernel.org>
- <a8305f20-ea58-40b5-93f6-2c44f151219c@rock-chips.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <a8305f20-ea58-40b5-93f6-2c44f151219c@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 09/08/2024 02:53, Shawn Lin wrote:
-> 在 2024/8/8 18:36, Krzysztof Kozlowski 写道:
->> On 08/08/2024 05:52, Shawn Lin wrote:
->>> RK3576 contains a UFS controller, add init support fot it.
->>>
->>> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->>>
->>
->> ...
->>
->>> +	err = clk_prepare_enable(host->ref_out_clk);
->>> +	if (err)
->>> +		return dev_err_probe(dev, err, "failed to enable ref out clock\n");
->>> +
->>> +	host->rst_gpio = devm_gpiod_get(&pdev->dev, "reset", GPIOD_OUT_LOW);
->>> +	if (IS_ERR(host->rst_gpio)) {
->>> +		dev_err_probe(&pdev->dev, PTR_ERR(host->rst_gpio),
->>> +				"invalid reset-gpios property in node\n");
->>> +		err = PTR_ERR(host->rst_gpio);
->>
->> No. Look at your code above - you have return dev_err_probe, so logical
->> is that the syntax is err = dev_err_probe. Don't over-complicate the code.
->>
->> Anyway, this is suspicious. You already have resets with four resets
->> (!!!) and you claim you have fifth reset - GPIO? This looks just wrong,
->> like you represent some properties which do not belong here.
->>
-> 
-> Thanks for the feadback.
-> 
-> Yes, we have 4 resets for controller, and one gpio to reset the
-> device. It happened to be called reset-gpios in DT but can be
-> any name if you like it to be. I added reset-gpios as a required one
-> listed in dt-bindings file, in patch 2.
+Since it->done takes only 1 or 0 throughout the code it makes sense to
+call it a bool variable than int. This will also help improve
+readability.
 
-Then explain in the bindings what this reset-gpios is for.
-> 
-> 
->  > Also, why do you leave the device in the reset state? Logical one
-> means
->  > - reset is asserted. This applies to ufs_rockchip_device_reset() as > 
-> well
->  > - that's just wrong code.
-> 
-> 
-> No, I tested it in linux-net and the output is HIGH, and leave the
-> device in active state.
-> 
-> In dts, we add:
-> reset-gpios = <&gpio4 RK_PD0 GPIO_ACTIVE_HIGH>;
+Signed-off-by: Dhruva Gole <d-gole@ti.com>
+---
 
-? Don't use random values, what is type of the reset line?
+Changelog:
 
-> 
-> so gpiod_set_value_cansleep(host->rst_gpio, 1) -> output HIGH for
-> gpio4_d0. Based on your comment, we should change the dts to use
-> GPIO_ACTIVE_LOW and then gpiod_set_value_cansleep（host->rst_gpio, 0）
-> 
-> 
-> Both can work, however IMO, isn't logical one means HIGH level in line 
-> more human readable?
+v1 --> v2:
+Fixed $subject as the replace was written reverse.
+No logical changes.
 
-You mix logical level and line level.
+Link to v1: https://lore.kernel.org/all/20240805100046.425598-1-d-gole@ti.com/
 
-If this is reset GPIO, then 1 means asserted so your code is bogus.
+ kernel/sched/idle.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Maybe the the line is active low?
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index e53e2da04ba4..98eac397d667 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -365,14 +365,14 @@ bool cpu_in_idle(unsigned long pc)
+ 
+ struct idle_timer {
+ 	struct hrtimer timer;
+-	int done;
++	bool done;
+ };
+ 
+ static enum hrtimer_restart idle_inject_timer_fn(struct hrtimer *timer)
+ {
+ 	struct idle_timer *it = container_of(timer, struct idle_timer, timer);
+ 
+-	WRITE_ONCE(it->done, 1);
++	WRITE_ONCE(it->done, true);
+ 	set_tsk_need_resched(current);
+ 
+ 	return HRTIMER_NORESTART;
+@@ -398,7 +398,7 @@ void play_idle_precise(u64 duration_ns, u64 latency_ns)
+ 	current->flags |= PF_IDLE;
+ 	cpuidle_use_deepest_state(latency_ns);
+ 
+-	it.done = 0;
++	it.done = false;
+ 	hrtimer_init_on_stack(&it.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+ 	it.timer.function = idle_inject_timer_fn;
+ 	hrtimer_start(&it.timer, ns_to_ktime(duration_ns),
 
-> 
-> 
-> 
->> Where is your DTS so we can validate it?
->>
-> 
-> Will add it in the next version, as now the rk3576.dtsi is under
-> reviewed and UFS node was not added. So I was afraid to interfere
-> with that patch and just wanted to add incremental patch once
-> rk3576.dtsi got merged.
-> 
->> Best regards,
->> Krzysztof
->>
-
-Best regards,
-Krzysztof
+base-commit: 61c01d2e181adfba02fe09764f9fca1de2be0dbe
+-- 
+2.34.1
 
 
