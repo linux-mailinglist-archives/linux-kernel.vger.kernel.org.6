@@ -1,108 +1,318 @@
-Return-Path: <linux-kernel+bounces-281371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAFA94D623
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:13:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F6394D626
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01F17B211BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:13:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9DCE1C21AB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D9E1465BA;
-	Fri,  9 Aug 2024 18:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD15D148FF3;
+	Fri,  9 Aug 2024 18:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGHJCjOs"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPftGWCX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91E2146590
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B467E4C634;
+	Fri,  9 Aug 2024 18:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723227199; cv=none; b=V5B83z+TVi3rQhGxBrt2LRWSbPbSe1CjvDZjg9ztLtq4x6C/639rSN7m3N1/cPOxRRjy4r6Uu0Py2ud1Tz9Ty3W/iVNNgregDFW2Iw9nJqKv93MRt2vtPNX1511TU7p4Z5fRH917ZEhaOXTqDbirUTDInKNkWuxIKfiOHvvDQ6g=
+	t=1723227243; cv=none; b=EtUOXzVPw15RZfM257mkHPph261SqfCH2FqobwMLpjlwPoC26cgVd5X8CMDt0I6b58uMaI8badFUYr1p/YzSEM2J/NzmSRmw9orzCKBrACIArNS5T8jnXirQ87uNEO2VDMv+6HC1a8LyrxLNTNEBJl6CpYflBSGLTq100rmyJgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723227199; c=relaxed/simple;
-	bh=JWCgYbzf+h1KKPwP8jzN/aLLpgY4lR1Jk1TknmNYx+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vBz5MpfACUhvPNRA90fugrpE6p9PAD4F4IeeieMZmZYzKPc8fLnUeSRxE2Hq4EfiGoutlHbWT/pV3nHVVwuxAgGEFBbJdRqR3yXnaCV0jQBfe1LXinRH7tctVkyYGh9JtaVeZ82sO9AvGTyKibsrabtF+moTLwJA0znVhLBZwpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fGHJCjOs; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5314c6dbaa5so737164e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 11:13:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723227195; x=1723831995; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZBI9gWTu2lk3Xag4H2X6YcQpeUA1X2ClW7QmG/3ro88=;
-        b=fGHJCjOssyemtfnOz0TSAwh6huVqmQzVUqlRJlWSirDNYxpjmdFlCYRO9IYcV42PvH
-         HkPNy2VPjZLH5hBIOvSEZGh427oPOLX8LOGDU20PL+SzT7cDj/JDw9KwcWnA3qAm35k8
-         AKY0oR0TzL80dumpRd/zVzFnGSWkB0koBssUrcWPH1ge6SrLcjZ5VFbxTgQIXkrxcSiM
-         XAla06VmHRTKLEvzZ4Qspx2mkkoGPdu+R8MdwSiR3cDJua+72pCtr52rXvrNWHqXZQ8n
-         2Q3Mk4Oy3jMOiM2rJ+0TGpEZoXqTxHrrrTyohTel9n1elo2AlgOibB2fJMVzhfCYkKvo
-         W+dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723227195; x=1723831995;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZBI9gWTu2lk3Xag4H2X6YcQpeUA1X2ClW7QmG/3ro88=;
-        b=AVln5kYpwyw7jWhr8ZktjIx82lzQdaxmjHsdWv11PF+LdG2KnbLqxip4IG5MnoV7qn
-         Ov3OC1GRVdG4PItf0+rDDUAEdqntJu5mrDdSxM/AM3G83p54jC9DQen+zCZQLzNhTlXl
-         GfbPOS/2WCkLW0bqkslAAdVG7pCOHkaFksai4lLv+6fwIOamM8x5SgQfBZcmMCVAYKey
-         OZ7IzV+gc7Wo5svJeJrx90hHOaL0JcIWph611HKM81pxD7hjgGZZKVX8PTGRqLQE6zFw
-         E/dwQrjOzYTYG7VMZQqZ+9T7xsr5B2/EvILVzHFfsDmpz8Aybl7TDo3t29uvT7jzvA1G
-         YTaQ==
-X-Gm-Message-State: AOJu0Yyc6FbKkYHFH9FS3Lms7JXhrmScsJIzdoFEOnvpa2wj8vaBJa5o
-	g3fANF+4reX2u3NAqY7BWHhTGWyltLc3reP9BQGPTqaVQTznj7sfcmywV1wYW53OQQ==
-X-Google-Smtp-Source: AGHT+IFwfco+ndQ4TrtTIKC97NW2y3O3JAiq66SMoIyaUm805y2VhjFFyG9d+GmAUaJn6D0f4YKjgA==
-X-Received: by 2002:a05:6512:3b95:b0:52c:d6a1:5734 with SMTP id 2adb3069b0e04-530ee979bd8mr1522945e87.14.1723227194933;
-        Fri, 09 Aug 2024 11:13:14 -0700 (PDT)
-Received: from localhost.localdomain ([5.211.194.141])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-530de465362sm1063840e87.182.2024.08.09.11.13.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 11:13:14 -0700 (PDT)
-From: Parsa Poorshikhian <parsa.poorsh@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Parsa Poorshikhian <parsa.poorsh@gmail.com>
-Subject: [PATCH] ALSA: hda/realtek: Fix noise from speakers on Lenovo IdeaPad 3 15IAU7
-Date: Fri,  9 Aug 2024 21:42:57 +0330
-Message-ID: <20240809181303.9882-1-parsa.poorsh@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1723227243; c=relaxed/simple;
+	bh=juuKC2o1X97/NQLMvh4+TQj21ZK6EXnrcksM+JTcSqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UARHQyfGF7awZVELh7QkEs+cMpckzF0RgHtgweKvpgmj7O3+HJITS1Aq7Sw0fSDTpJNUArF2pkzwTqVNb9uoyAXBdzBOl6L9NYsDjixWLOAZXa8h34Ee3ygOu1T57l4NYch8zs46adibU1MwM1upV6psHlYAuUyCA+XDU9WRGHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPftGWCX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AF3C32782;
+	Fri,  9 Aug 2024 18:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723227243;
+	bh=juuKC2o1X97/NQLMvh4+TQj21ZK6EXnrcksM+JTcSqY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GPftGWCXsvvQaJqheHBaCHbq5XVBU6HeimghKaJ2iNA5kVi1kaHJx6DkUnzca5SvT
+	 9fSfa13ryx/buk6yUaL2Tk/OXfqXzXTsy/WlwLJ0m0nffLIaqmhUh8dcXqAidwBmjJ
+	 h+MNeqy+wLb9m//0Y9PsQGMZTwZutjgtOSp0RwBsk/VxjpB845IIgOj85ybmAY0rLJ
+	 c9hoSsVo1sE0hmb+iSJlu9jh/5KJsTXC1RlLHROKW74Fr6DukqNFt/LEoKLXhroJCe
+	 qQvOaVy4sNWt7XOjuVqqZwOs3w1hGN7Aeg7aTYh7h6UGyTvTHdxdIF26nWn5bcAMC7
+	 F9ABMFjuXKLWw==
+Date: Fri, 9 Aug 2024 12:14:01 -0600
+From: Rob Herring <robh@kernel.org>
+To: matthew.gerlach@linux.intel.com
+Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, dinguyen@kernel.org,
+	joyce.ooi@intel.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: PCI: altera: Convert to YAML
+Message-ID: <20240809181401.GA973841-robh@kernel.org>
+References: <20240809151213.94533-1-matthew.gerlach@linux.intel.com>
+ <20240809151213.94533-2-matthew.gerlach@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809151213.94533-2-matthew.gerlach@linux.intel.com>
 
-Fixes: 70794b9563fe ("ALSA: hda/realtek: Add more codec ID to no shutup pins list")
-Fix noise from speakers connected to AUX port when no sound is playing.
-The problem occurs because the `alc_shutup_pins` function includes
-a 0x10ec0257 vendor ID, which causes noise on Lenovo IdeaPad 3 15IAU7 with
-Realtek ALC257 codec when no sound is playing.
-Removing this vendor ID from the function fixes the bug.
+On Fri, Aug 09, 2024 at 10:12:07AM -0500, matthew.gerlach@linux.intel.com wrote:
+> From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> 
+> Convert the device tree bindings for the Altera Root Port PCIe controller
+> from text to YAML. Update the entries in the interrupt-map field to have
+> the correct number of address cells for the interrupt parent.
+> 
+> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> v8:
 
-Signed-off-by: Parsa Poorshikhian <parsa.poorsh@gmail.com>
----
- sound/pci/hda/patch_realtek.c | 1 -
- 1 file changed, 1 deletion(-)
+v2 or v8 or ??? I'm confused and tools will be too.
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index e2dbcf8f5bcf..7b593642da99 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -583,7 +583,6 @@ static void alc_shutup_pins(struct hda_codec *codec)
- 	switch (codec->core.vendor_id) {
- 	case 0x10ec0236:
- 	case 0x10ec0256:
--	case 0x10ec0257:
- 	case 0x19e58326:
- 	case 0x10ec0283:
- 	case 0x10ec0285:
--- 
-2.45.2
-
+>  - Precisely constrain the number of items for reg and reg-names properties.
+>    Constrain maxItems to 2 for altr,pcie-root-port-1.0.
+>    Constrain minItems to 3 for altr,pcie-root-port-2.0.
+> 
+> v7:
+>  - Keep original example dts, but fix warnings of interrupt-map field.
+> 
+> v6:
+>  - Fix dt_binding_check warnings by creating interrupt-controller subnode
+>    and fixing interrupt-map.
+>  - Updated filename in MAINTAINERS.
+> 
+> v5:
+>  - add interrupt-controller #interrupt-cells to required field
+>  - don't touch original example dts
+> 
+> v4:
+>  - reorder reg-names to match original binding
+>  - move reg and reg-names to top level with limits.
+> 
+> v3:
+>  - Added years to copyright
+>  - Correct order in file of allOf and unevaluatedProperties
+>  - remove items: in compatible field
+>  - fix reg and reg-names constraints
+>  - replace deprecated pci-bus.yaml with pci-host-bridge.yaml
+>  - fix entries in ranges property
+>  - remove device_type from required
+> 
+> v2:
+>  - Move allOf: to bottom of file, just like example-schema is showing
+>  - add constraint for reg and reg-names
+>  - remove unneeded device_type
+>  - drop #address-cells and #size-cells
+>  - change minItems to maxItems for interrupts:
+>  - change msi-parent to just "msi-parent: true"
+>  - cleaned up required:
+>  - make subject consistent with other commits coverting to YAML
+>  - s/overt/onvert/g
+> ---
+>  .../devicetree/bindings/pci/altera-pcie.txt   |  50 --------
+>  .../bindings/pci/altr,pcie-root-port.yaml     | 114 ++++++++++++++++++
+>  MAINTAINERS                                   |   2 +-
+>  3 files changed, 115 insertions(+), 51 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pci/altera-pcie.txt
+>  create mode 100644 Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/altera-pcie.txt b/Documentation/devicetree/bindings/pci/altera-pcie.txt
+> deleted file mode 100644
+> index 816b244a221e..000000000000
+> --- a/Documentation/devicetree/bindings/pci/altera-pcie.txt
+> +++ /dev/null
+> @@ -1,50 +0,0 @@
+> -* Altera PCIe controller
+> -
+> -Required properties:
+> -- compatible :	should contain "altr,pcie-root-port-1.0" or "altr,pcie-root-port-2.0"
+> -- reg:		a list of physical base address and length for TXS and CRA.
+> -		For "altr,pcie-root-port-2.0", additional HIP base address and length.
+> -- reg-names:	must include the following entries:
+> -		"Txs": TX slave port region
+> -		"Cra": Control register access region
+> -		"Hip": Hard IP region (if "altr,pcie-root-port-2.0")
+> -- interrupts:	specifies the interrupt source of the parent interrupt
+> -		controller.  The format of the interrupt specifier depends
+> -		on the parent interrupt controller.
+> -- device_type:	must be "pci"
+> -- #address-cells:	set to <3>
+> -- #size-cells:		set to <2>
+> -- #interrupt-cells:	set to <1>
+> -- ranges:	describes the translation of addresses for root ports and
+> -		standard PCI regions.
+> -- interrupt-map-mask and interrupt-map: standard PCI properties to define the
+> -		mapping of the PCIe interface to interrupt numbers.
+> -
+> -Optional properties:
+> -- msi-parent:	Link to the hardware entity that serves as the MSI controller
+> -		for this PCIe controller.
+> -- bus-range:	PCI bus numbers covered
+> -
+> -Example
+> -	pcie_0: pcie@c00000000 {
+> -		compatible = "altr,pcie-root-port-1.0";
+> -		reg = <0xc0000000 0x20000000>,
+> -			<0xff220000 0x00004000>;
+> -		reg-names = "Txs", "Cra";
+> -		interrupt-parent = <&hps_0_arm_gic_0>;
+> -		interrupts = <0 40 4>;
+> -		interrupt-controller;
+> -		#interrupt-cells = <1>;
+> -		bus-range = <0x0 0xFF>;
+> -		device_type = "pci";
+> -		msi-parent = <&msi_to_gic_gen_0>;
+> -		#address-cells = <3>;
+> -		#size-cells = <2>;
+> -		interrupt-map-mask = <0 0 0 7>;
+> -		interrupt-map = <0 0 0 1 &pcie_0 1>,
+> -			            <0 0 0 2 &pcie_0 2>,
+> -			            <0 0 0 3 &pcie_0 3>,
+> -			            <0 0 0 4 &pcie_0 4>;
+> -		ranges = <0x82000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x10000000
+> -			  0x82000000 0x00000000 0x10000000 0xd0000000 0x00000000 0x10000000>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+> new file mode 100644
+> index 000000000000..52533fccc134
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+> @@ -0,0 +1,114 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright (C) 2015, 2019, 2024, Intel Corporation
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/altr,pcie-root-port.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Altera PCIe Root Port
+> +
+> +maintainers:
+> +  - Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - altr,pcie-root-port-1.0
+> +      - altr,pcie-root-port-2.0
+> +
+> +  reg:
+> +    items:
+> +      - description: TX slave port region
+> +      - description: Control register access region
+> +      - description: Hard IP region
+> +    minItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: Txs
+> +      - const: Cra
+> +      - const: Hip
+> +    minItems: 2
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  interrupt-map-mask:
+> +    items:
+> +      - const: 0
+> +      - const: 0
+> +      - const: 0
+> +      - const: 7
+> +
+> +  interrupt-map:
+> +    maxItems: 4
+> +
+> +  "#interrupt-cells":
+> +    const: 1
+> +
+> +  msi-parent: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - interrupts
+> +  - "#interrupt-cells"
+> +  - interrupt-controller
+> +  - interrupt-map
+> +  - interrupt-map-mask
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - altr,pcie-root-port-1.0
+> +    then:
+> +      properties:
+> +        reg:
+> +          maxItems: 2
+> +
+> +        reg-names:
+> +          maxItems: 2
+> +
+> +    else:
+> +      properties:
+> +        reg:
+> +          minItems: 3
+> +
+> +        reg-names:
+> +          minItems: 3
+> +
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    pcie_0: pcie@c00000000 {
+> +        compatible = "altr,pcie-root-port-1.0";
+> +        reg = <0xc0000000 0x20000000>,
+> +              <0xff220000 0x00004000>;
+> +        reg-names = "Txs", "Cra";
+> +        interrupt-parent = <&hps_0_arm_gic_0>;
+> +        interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-controller;
+> +        #interrupt-cells = <1>;
+> +        bus-range = <0x0 0xff>;
+> +        device_type = "pci";
+> +        msi-parent = <&msi_to_gic_gen_0>;
+> +        #address-cells = <3>;
+> +        #size-cells = <2>;
+> +        interrupt-map-mask = <0 0 0 7>;
+> +        interrupt-map = <0 0 0 1 &pcie_0 0 0 0 1>,
+> +                        <0 0 0 2 &pcie_0 0 0 0 2>,
+> +                        <0 0 0 3 &pcie_0 0 0 0 3>,
+> +                        <0 0 0 4 &pcie_0 0 0 0 4>;
+> +        ranges = <0x82000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x10000000>,
+> +                 <0x82000000 0x00000000 0x10000000 0xd0000000 0x00000000 0x10000000>;
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1e71f97fb674..53f239114400 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17435,7 +17435,7 @@ PCI DRIVER FOR ALTERA PCIE IP
+>  M:	Joyce Ooi <joyce.ooi@intel.com>
+>  L:	linux-pci@vger.kernel.org
+>  S:	Supported
+> -F:	Documentation/devicetree/bindings/pci/altera-pcie.txt
+> +F:	Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+>  F:	drivers/pci/controller/pcie-altera.c
+>  
+>  PCI DRIVER FOR APPLIEDMICRO XGENE
+> -- 
+> 2.34.1
+> 
 
