@@ -1,124 +1,168 @@
-Return-Path: <linux-kernel+bounces-280476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F80F94CB24
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:21:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE15694CB29
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2371C22D3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787BA2849AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62735172BD6;
-	Fri,  9 Aug 2024 07:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7907A174EFC;
+	Fri,  9 Aug 2024 07:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gOAEgNht"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lgbVLzbO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4549F170A02
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29AA170A02;
+	Fri,  9 Aug 2024 07:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723188074; cv=none; b=EMvo+BhDzk5/3w2B3Wjn7NB/tvZ1PAv3ShOIEooJPRFGzZdLCRypI9lG723QZlAjtp7oHqNP8ktLdYq2qXUmorzlCLkXK0Dg58Y2cdzyXCErrFOUz9SqxY5UObj0nZ9kmLL8Ac/deFbpak9LTWq2Onx468Nh9OetUNh5R9B8PHI=
+	t=1723188135; cv=none; b=HC9rdV4oQRV3rd6EIXp/yGlLahJAAYyImwR+4rLUmxaE3i+jcMoKKLR2PnkSuPCGlbgnD7yZ0IFx4ymLk17KG/cXaZ6KEbPtuxdEQmcvYb++2txV9vjISCKS3ICeosQrHB9x6pxq59TBJi9LWs5LwqQRJ//pnlu8Y9aTfL/7G+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723188074; c=relaxed/simple;
-	bh=QxkBQzipU159PB2wyHzE5iFYHTjRi7kwQk+67LpGaiM=;
+	s=arc-20240116; t=1723188135; c=relaxed/simple;
+	bh=d5FxnMHUMv2rC7ppbxaCgzn622SWNQ8X1+UVYqUlvS4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hVleDzOdzRUppwIqXVkjv0Cy78SjWOKZGh3uxZZfqXy+LaiPxTfJKMrntzqiUeZrMaKbqMT5/TJwJqRG1VX6qyl48B9OzP4wv7v41VJRv5oIvIflHli+UkxsPcQHugAvkPlELnuVAJZ4lQNaYXhxsHodEGBdgomPa7V3moHpJs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gOAEgNht; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc56fd4de1so12082065ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:21:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723188072; x=1723792872; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJ7sJqSF1TkQHDuuGssihp9fwsv9r97LCZqEA521fL0=;
-        b=gOAEgNhtwTVxYsJFxY/7FDOdzam588mYqPSsCDUrEX4Y/Bp+G6FAgo7EilcuLasT6L
-         HXm6R//DkU59CK2pFivyXtxUvBjeRbsoUoLitnGJdTIkW1aTNz133Nu/pEIYxSdoT4J0
-         Ys1kheZZsQ7mrj89iYldu4qqMFkFKs2m4YLp7l4u1viHtyOinuhpE/ArMyY4lG8V8B2N
-         NFRJFDhrlOTYm2Co5T1v/Hk4NLMRh4GYyOviwIWqiw/c4+c7FhQBv3eiXIB3SWZT9CPQ
-         gPGNV+sf4xgF/fA/VuvUGrjkSiwTeOcscEgx9vozS8FnBvmh7Mw4HfDeQAwmX5aAhAoW
-         xy+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723188072; x=1723792872;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jJ7sJqSF1TkQHDuuGssihp9fwsv9r97LCZqEA521fL0=;
-        b=oNl0Vynr4E6SmnGJqdoLQdPTMWzU5Er+yaFL+mquvFerp9sg0SXZzlx9w88jSACr/6
-         TPE5LCwoN8gwyvSxDSmEui2oUHGs7DA4ApTdV3T/urtlW/EFdsOevrNQ/DotJJ7cK/93
-         Cn7J9zJ9xIQvbbNg5oz4EkS8et00p20oDcM1GL31bjjuBubcJATmRX8EJRzPPK4dkLi+
-         OYaQr93G3pOzj09J/ArADgB4xLkctdADEwYbXFugFTVNMcgaoA/tkdX7YCOq4zOeo0Ne
-         B2ziwCO/1zdUxm/aCh8b+F4QUBKlBbxUMKt+csNMtlnLE1NaVCX77xllYW+0REt86R8z
-         ZXSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTE/x0cgpd6AVlcLIdU2LE325GBIyRekTdV2kNaoIleJAooVHpdv1k9Wi/ifW1aXfvVgIsYwzoUtZA8mbDnd1rWEx1rfIYNbOTzEUq
-X-Gm-Message-State: AOJu0YyzqbzLfm4HDmLvkp3NGB8vUMuTjedwV3oZfSa5TUhjvM/Ae5JF
-	pgoGfQ5Rxe/zdB9TqfbmKfR71oGSkj7+0dObxiXYtNfTUhuG1v+rLwtRZhtLhPc=
-X-Google-Smtp-Source: AGHT+IF1i8beM8uAfXZssupMAVGlCAp1gZOrRbekA77KTQLwPssMRWulWeZsjxYUnURP0YkIw6Sxaw==
-X-Received: by 2002:a17:902:f68c:b0:1fb:9cbf:b4e3 with SMTP id d9443c01a7336-200ae5d85d1mr12384395ad.22.1723188072489;
-        Fri, 09 Aug 2024 00:21:12 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59058d20sm136717635ad.175.2024.08.09.00.21.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 00:21:11 -0700 (PDT)
-Date: Fri, 9 Aug 2024 12:51:09 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: ray.huang@amd.com, gautham.shenoy@amd.com, mario.limonciello@amd.com,
-	perry.yuan@amd.com, rafael@kernel.org, li.meng@amd.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] cpufreq/amd-pstate: Add the missing cpufreq_cpu_put()
-Message-ID: <20240809072109.ygel62d4333shkrw@vireshk-i7>
-References: <20240809060815.21518-1-Dhananjay.Ugwekar@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=obSfiy4Bmfz02Iy9WJHy6zlCA4lMRE3w2UKe7fB2HUPh8gcU1693asBI7q+B4lnxU4IqOvon5WerGsxLUbIsWBq6vE40zXLotqYTmudNNNjEbSYeOm8ObWYs2Ffuwk4YDVQ8J77rI+8NVDBp+bnHp9NBWiXPsfhTskev8OX21yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lgbVLzbO; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723188133; x=1754724133;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=d5FxnMHUMv2rC7ppbxaCgzn622SWNQ8X1+UVYqUlvS4=;
+  b=lgbVLzbO9fNqW9iki5yFb565NfjbUQ2v3oLmc30JhkmsdlmX9UGG0BaR
+   EcvEQ93ucMM3WtkmCLPuOWoLw6VrQFXCCTagjPISrMiV9dvVCOSHMoZLC
+   jo6Ub50Is4P3vAe17bulzMPGolKxupfj2dM9B8jGbapkIhdecWu5tB6ju
+   5dr89zb4Yo7a6bESbPo4xS0VoPdwm7gGxSUCzIA6UG3E9KMBWthHo/L3m
+   uJwr/fRoI6npdcWWWATMKhZAdXen9kfCj6V/G/XyaN+gM6SYS69eGy8x1
+   80Vk625PK0LoQ6KecWmhMmJkQ3PQt9TvCEcE66gZgw/WoSmi4EVzXBlDW
+   g==;
+X-CSE-ConnectionGUID: pJxtKXNkTVqAbfwFmNLySg==
+X-CSE-MsgGUID: M9aBksxrQwOnjg2NZBJO+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="12929699"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="12929699"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 00:22:13 -0700
+X-CSE-ConnectionGUID: +BsZKSnbSxu+0vMS++pG3g==
+X-CSE-MsgGUID: 4zKBcZwESw+ROgNMgEBBIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="61603129"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 09 Aug 2024 00:22:09 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1scJwt-0007Db-1T;
+	Fri, 09 Aug 2024 07:22:07 +0000
+Date: Fri, 9 Aug 2024 15:21:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Subject: Re: [PATCH 2/2] tty: serial: samsung_tty: cast the interrupt's void
+ *id just once
+Message-ID: <202408091530.vvvqEiPv-lkp@intel.com>
+References: <20240806-samsung-tty-cleanup-v1-2-a68d3abf31fe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240809060815.21518-1-Dhananjay.Ugwekar@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240806-samsung-tty-cleanup-v1-2-a68d3abf31fe@linaro.org>
 
-On 09-08-24, 06:08, Dhananjay Ugwekar wrote:
-> Fix the reference counting of cpufreq_policy object in amd_pstate_update()
-> function by adding the missing cpufreq_cpu_put().
-> 
-> Fixes: e8f555daacd3 ("cpufreq/amd-pstate: fix setting policy current frequency value")
-> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-> Reviewed-by: Perry Yuan <perry.yuan@amd.com>
-> ---
->  drivers/cpufreq/amd-pstate.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 68c616b572f2..eff039ba49ee 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -554,12 +554,15 @@ static void amd_pstate_update(struct amd_cpudata *cpudata, u32 min_perf,
->  	}
->  
->  	if (value == prev)
-> -		return;
-> +		goto cpufreq_policy_put;
->  
->  	WRITE_ONCE(cpudata->cppc_req_cached, value);
->  
->  	amd_pstate_update_perf(cpudata, min_perf, des_perf,
->  			       max_perf, fast_switch);
-> +
-> +cpufreq_policy_put:
-> +	cpufreq_cpu_put(policy);
->  }
->  
->  static int amd_pstate_verify(struct cpufreq_policy_data *policy)
+Hi André,
 
-Applied. Thanks.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 1e391b34f6aa043c7afa40a2103163a0ef06d179]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Draszik/tty-serial-samsung_tty-drop-unused-argument-to-irq-handlers/20240806-234342
+base:   1e391b34f6aa043c7afa40a2103163a0ef06d179
+patch link:    https://lore.kernel.org/r/20240806-samsung-tty-cleanup-v1-2-a68d3abf31fe%40linaro.org
+patch subject: [PATCH 2/2] tty: serial: samsung_tty: cast the interrupt's void *id just once
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240809/202408091530.vvvqEiPv-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240809/202408091530.vvvqEiPv-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408091530.vvvqEiPv-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/tty/serial/samsung_tty.c:948:31: error: passing 'const struct s3c24xx_uart_port *' to parameter of type 'struct s3c24xx_uart_port *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+     948 |                 ret = s3c24xx_serial_rx_irq(ourport);
+         |                                             ^~~~~~~
+   drivers/tty/serial/samsung_tty.c:856:68: note: passing argument to parameter 'ourport' here
+     856 | static irqreturn_t s3c24xx_serial_rx_irq(struct s3c24xx_uart_port *ourport)
+         |                                                                    ^
+   drivers/tty/serial/samsung_tty.c:952:31: error: passing 'const struct s3c24xx_uart_port *' to parameter of type 'struct s3c24xx_uart_port *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+     952 |                 ret = s3c24xx_serial_tx_irq(ourport);
+         |                                             ^~~~~~~
+   drivers/tty/serial/samsung_tty.c:927:68: note: passing argument to parameter 'ourport' here
+     927 | static irqreturn_t s3c24xx_serial_tx_irq(struct s3c24xx_uart_port *ourport)
+         |                                                                    ^
+   drivers/tty/serial/samsung_tty.c:969:31: error: passing 'const struct s3c24xx_uart_port *' to parameter of type 'struct s3c24xx_uart_port *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+     969 |                 ret = s3c24xx_serial_rx_irq(ourport);
+         |                                             ^~~~~~~
+   drivers/tty/serial/samsung_tty.c:856:68: note: passing argument to parameter 'ourport' here
+     856 | static irqreturn_t s3c24xx_serial_rx_irq(struct s3c24xx_uart_port *ourport)
+         |                                                                    ^
+   drivers/tty/serial/samsung_tty.c:973:31: error: passing 'const struct s3c24xx_uart_port *' to parameter of type 'struct s3c24xx_uart_port *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+     973 |                 ret = s3c24xx_serial_tx_irq(ourport);
+         |                                             ^~~~~~~
+   drivers/tty/serial/samsung_tty.c:927:68: note: passing argument to parameter 'ourport' here
+     927 | static irqreturn_t s3c24xx_serial_tx_irq(struct s3c24xx_uart_port *ourport)
+         |                                                                    ^
+   4 errors generated.
+
+
+vim +948 drivers/tty/serial/samsung_tty.c
+
+   938	
+   939	/* interrupt handler for s3c64xx and later SoC's.*/
+   940	static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
+   941	{
+   942		const struct s3c24xx_uart_port *ourport = id;
+   943		const struct uart_port *port = &ourport->port;
+   944		u32 pend = rd_regl(port, S3C64XX_UINTP);
+   945		irqreturn_t ret = IRQ_HANDLED;
+   946	
+   947		if (pend & S3C64XX_UINTM_RXD_MSK) {
+ > 948			ret = s3c24xx_serial_rx_irq(ourport);
+   949			wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_RXD_MSK);
+   950		}
+   951		if (pend & S3C64XX_UINTM_TXD_MSK) {
+   952			ret = s3c24xx_serial_tx_irq(ourport);
+   953			wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
+   954		}
+   955		return ret;
+   956	}
+   957	
 
 -- 
-viresh
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
