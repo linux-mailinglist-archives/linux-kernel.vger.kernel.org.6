@@ -1,148 +1,114 @@
-Return-Path: <linux-kernel+bounces-281417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F4C94D6C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:03:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE54794D7FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B0F1F2235F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:03:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E061C227AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2AA14D29B;
-	Fri,  9 Aug 2024 19:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZJ0yY33R"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F53167DA8;
+	Fri,  9 Aug 2024 20:21:04 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34BC33CD1
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C327233D1;
+	Fri,  9 Aug 2024 20:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723230190; cv=none; b=CkTER6IZFfjWrtOaOi/35gHw+T6CzbaZsfCUZHnG3O9Dojds3f5k4bK05Zbpu130C6qLaPx6X/A1nmDRDqhRVptzGbgqnKQMMtOdvJHIWnVmuiQdGvJK3IFsH5BDilPoMgplNXCmPgtJWxYEFSz72Uix7P2xXo/QDnluVkvDOa8=
+	t=1723234864; cv=none; b=oYHkAV5miihQrpjgEwBZGhVeQz5lSWj/4DpHsTh7HBHyrYLcPchF4BtT/LOMdCEl7VaMc1CKK6DChia8EGb4T1dXrkIIKTZj1QPd8xHpfA5XerlzY9OBYKdR7KRgjHf/MRfXcvsDeqmkcENehrc6CRL3fT/mEpWVaHSH1Vd98t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723230190; c=relaxed/simple;
-	bh=thw4Am/PR1g2R+DuDWBc1N0Oh0RjkayNhytTMRsJf0g=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JUmD9ASeq9ZDPsal3bO2sgyOcfZubPpczR8NkOtgMRVWmq0RTiawHsyT8wizN1V4XrBSkOGEkQ8Tn2FZC9nTtU9j0R4uTvJfhkbIuHKNDUUuCTOmrAL7Gz8fheR4IanMBxI3664v6S06yIWiVqGu+3VH9ikeqAavb1ASy5gdeGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZJ0yY33R; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428163f7635so17740535e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:03:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723230187; x=1723834987; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=paBUc2iwfJd8fdxpcSoCfr5A+mknn/ALUrhTNjNcrWw=;
-        b=ZJ0yY33ROx+mLlcgxnilmtpPu2c8cToaFf4wBPVDnNUItNKMxx9OOvlnQQAZQVcsKt
-         tCa7XGBVFQHfs84/j9FkBs5IHdokmYk4U7sFcUbguA0mpO7KCzUYNUfvMz/AvTEpDGta
-         HPdFB164YBaa+wGYHRTkckwWQb/o9FqgMrFQXXKlF4CRWY014EizHayHfn6YIcohWS1Y
-         juQ5bn94yQBv9nIIUuvQFhsGozGq3CdlqiAo+rC5+MujXI1epIsv5gEVl/xEpcByx8zk
-         npJF15tCvbCfXn1EJr4phY8AUiBUMvfDgEfIcmHd6AfhkbJwRESmyglJBqjk/TPyxPet
-         kbgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723230187; x=1723834987;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=paBUc2iwfJd8fdxpcSoCfr5A+mknn/ALUrhTNjNcrWw=;
-        b=k6GlkWiM+NZvQMp35XXzQEwoAE+lv5dcMd6F0ScWbXCI/kxzVy4pH+Dt5LVpLzLt99
-         z0jmjurW/Q5f8lXpRcyix43xFrvcYM0MLp0JyZLzi+odfwDTA5BBqPJt4OafDTv9twh3
-         PvmxHyuomTJdkNa072MtFLWDKyNX1/lsXUeBvbf+epjNunYZdA6O34FXZbRLT1LHkezy
-         wbaAaezNrUXdTxCTMq1FbUPW2w/0avZ4P1sXo5A0YAwvV9fU4J39coO7TKPMnJNs2t50
-         1JUvp7Ud83w7I9LGtfV6CEM3N8FbqsZz2gliuIkqoWYWl07PomLmIfvX/L4okWeMK8s/
-         8u/w==
-X-Gm-Message-State: AOJu0YwoYbLCvup9gCWFYcc9ZnWTMmSTnA8eGIZtFtU1D0Rm0zW49n9c
-	lLykJY1ZFBvtB/iyIOX0vF8/ilky9kEPaPNP39+crL2R1KE9F2pLRYpjZdW/KiI=
-X-Google-Smtp-Source: AGHT+IH2ATQCq6rSOsiOGymfBlxZOkyF7WDLLYBEvgR6GwhIpQWL1i1g0MlRNClUDj5iSeE4qYuO+Q==
-X-Received: by 2002:a05:600c:4509:b0:426:66a2:b200 with SMTP id 5b1f17b1804b1-429c39c67f1mr19092075e9.0.1723230186306;
-        Fri, 09 Aug 2024 12:03:06 -0700 (PDT)
-Received: from localhost.localdomain ([156.197.9.67])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4293e41496dsm65442665e9.23.2024.08.09.12.03.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 12:03:05 -0700 (PDT)
-From: Ahmed Ehab <bottaawesome633@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v5 2/2] locking/lockdep: Testing lock class and subclass got the same name pointer
-Date: Sat, 10 Aug 2024 01:01:41 +0300
-Message-ID: <20240809220141.341047-1-bottaawesome633@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <ZrLaKCEJc8FqI38I@tardis>
-References: <ZrLaKCEJc8FqI38I@tardis>
+	s=arc-20240116; t=1723234864; c=relaxed/simple;
+	bh=9pjaJVblH+a3wOhm0a2g/cjkxPhurbm/9byvAbPg0EE=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=gBx2mHuIAPt//GYLxpR8TUBD6i6jSYQBmabIH4+qIqJTsKVJH7IeZ7GsgcYNgyd77BeMd/LrXn0s52ZwN+he7+DSQ6Pgaf2Sc1i2hvWHpzFxQQnas5XZ4EsWd5Miw3hqp1y7eM3hGXI0jpf2uGeAY4IymaMOeGg1gir6KDAhNEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.105] (31.173.86.72) by msexch01.omp.ru (10.188.4.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Fri, 9 Aug
+ 2024 23:20:46 +0300
+Subject: Re: [PATCH] netfilter: nfnetlink_log: remove unnecessary check in
+ __build_packet_message()
+To: Roman Smirnov <r.smirnov@omp.ru>, Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+CC: <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Karina Yankevich
+	<k.yankevich@omp.ru>, <lvc-project@linuxtesting.org>
+References: <20240809074035.11078-1-r.smirnov@omp.ru>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <1d68bf3e-9d71-25fd-826b-250bf9160bda@omp.ru>
+Date: Fri, 9 Aug 2024 23:20:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240809074035.11078-1-r.smirnov@omp.ru>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 08/09/2024 20:03:51
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 186981 [Aug 09 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 24 0.3.24
+ 186c4d603b899ccfd4883d230c53f273b80e467f
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.86.72 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.86.72 in (user) dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.86.72
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 08/09/2024 20:08:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 8/9/2024 6:31:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-Checking if the lockdep_map.name will change when setting the subclass.
-It shouldn't change so that the lock class and subclass will have the same
-name
+On 8/9/24 10:40 AM, Roman Smirnov wrote:
 
-Signed-off-by: Ahmed Ehab <bottaawesome633@gmail.com>
----
- lib/locking-selftest.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+> skb->dev is always non-NULL, the check is unnecessary.
+> 
+> Remove it.
 
-diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index 6f6a5fc85b42..2b4650bdf833 100644
---- a/lib/locking-selftest.c
-+++ b/lib/locking-selftest.c
-@@ -2710,6 +2710,32 @@ static void local_lock_3B(void)
- 
- }
- 
-+static void lock_class_subclass_X1(void)
-+{
-+	const char *name_before_setting_subclass = rwsem_X1.dep_map.name;
-+	const char *name_after_setting_subclass;
-+
-+	lockdep_set_subclass(&rwsem_X1, 1);
-+	name_after_setting_subclass = rwsem_X1.dep_map.name;
-+	DEBUG_LOCKS_WARN_ON(name_before_setting_subclass != name_after_setting_subclass);
-+}
-+
-+/*
-+ * after setting the subclass the lockdep_map.name changes
-+ * if we initialize a new string literal for the subclass
-+ * we will have a new name pointer
-+ */
-+static void class_subclass_X1_name_test(void)
-+{
-+	printk("  --------------------------------------------------------------------------\n");
-+	printk("  | class and subclass name test|\n");
-+	printk("  ---------------------\n");
-+
-+	print_testname("lock class and subclass same name");
-+	dotest(lock_class_subclass_X1, SUCCESS, LOCKTYPE_RWSEM);
-+	pr_cont("\n");
-+}
-+
- static void local_lock_tests(void)
- {
- 	printk("  --------------------------------------------------------------------------\n");
-@@ -2920,6 +2946,8 @@ void locking_selftest(void)
- 	dotest(hardirq_deadlock_softirq_not_deadlock, FAILURE, LOCKTYPE_SPECIAL);
- 	pr_cont("\n");
- 
-+	class_subclass_X1_name_test();
-+
- 	if (unexpected_testcase_failures) {
- 		printk("-----------------------------------------------------------------\n");
- 		debug_locks = 0;
--- 
-2.45.2
+   Mhm, I don't think we need that in a separate paragraph...
 
+> Found by Linux Verification Center (linuxtesting.org) with Svace.
+> 
+> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+[...]
+
+MBR, Sergey
 
