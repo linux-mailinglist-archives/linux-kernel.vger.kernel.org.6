@@ -1,223 +1,215 @@
-Return-Path: <linux-kernel+bounces-281575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CFAE94D856
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:10:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CAD094D85C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CF6D285426
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:10:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C71A1C21865
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C2D16A36E;
-	Fri,  9 Aug 2024 21:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4F516B397;
+	Fri,  9 Aug 2024 21:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QpG5/puR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3W8SyokD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w79TDSRn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321B2224EA;
-	Fri,  9 Aug 2024 21:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1FF224EA;
+	Fri,  9 Aug 2024 21:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723237816; cv=none; b=GCE7DEwHwHn+eLMnfky86c22fw/faSjt2DDNhtLHZL/sSUVbOkc2+MD85qzkz1Ly0L71dO6JLej0XANqJrCp6zZRtim20qzjbHfEUfN9UBcXsuEqP2u0maNoXEHMZxor6WD0A0oznmJOMGt4YRqZmtUxudLTIle+6qYC03I8nY0=
+	t=1723238083; cv=none; b=q2mwIcSD+xok2EFAetPG1E299kBkgf6YpACN02I2qtcoeTrmTcZUOBlIh2CHg4zOFpydP1u7yKQ1Ja/gQrEfg/cA9O+FBHNlO2+0jDJTfUCZMrsKwDCf8gOJhlPu2OvDxOyY27tcmAel0uOHoS+DAqAnbbpL3wV7t0VXik7fYjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723237816; c=relaxed/simple;
-	bh=mqq+JEfGxXJbA9UuP3dN134huReQHnwuwzViD9L6Ti0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1uOI9GNSJi2J0htmJbsHPxb1Jg2A6a76wyUbiJKz9llFioovMAeKYj9cqxtRgGZl0NPfxtHhInP0zJPjjCq+rgNhR3Flu8fRYHGKGIWNnBITZSw+JnX1Un1NzVFbpMP5EFNkH7cVluVVYT9OhABGgrdqprLRPv2s5C8PeKVykk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QpG5/puR; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723237814; x=1754773814;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mqq+JEfGxXJbA9UuP3dN134huReQHnwuwzViD9L6Ti0=;
-  b=QpG5/puRWANUUrYiag9dgf9ldVDEeI4rjPE2DrejdRHsKTFyrIKhqkOR
-   +iaO55TjpcK7UKpw+AXjqGpMkdnHkUCdnJV1bZrT28sB58iG43pnx/XlR
-   Iwj1FYG8buUCzDDHX91n0oa+HY/5Fkr9cyEXOFZMgDLKEnsWwWoCuOT9V
-   8veIXCVFG+rAWnDBvDJMt+k4rOEx2VpKzubqX7WaTsqEw29CMw4tejwhE
-   agQ3u+JCjUlDR3NjLu7hdRjpVpqF+Xb30MPJrhBHQRS6xFS7C6yztZvxV
-   Rz1ApAEPdSNcC+/VW52s8bemS+z0K3y8xBKw4Am9dIzZjztRQWDTqzTCJ
-   Q==;
-X-CSE-ConnectionGUID: pDf4msXPRZ2d4VgSG7d+Og==
-X-CSE-MsgGUID: S+5M6/1JSZ6Rrx6K5qvSQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21403413"
-X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
-   d="scan'208";a="21403413"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 14:10:12 -0700
-X-CSE-ConnectionGUID: 8FlihEywRfunBIQxxE36fA==
-X-CSE-MsgGUID: hXN7S+L4S3iqCNgzJ24Hzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
-   d="scan'208";a="88323810"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 09 Aug 2024 14:10:05 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scWs5-0009Gp-2t;
-	Fri, 09 Aug 2024 21:10:01 +0000
-Date: Sat, 10 Aug 2024 05:09:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mark Yao <markyao0591@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
-	Luis de Arquer <ldearquer@gmail.com>,
-	Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH v2 3/3] drm/rockchip: Add basic RK3588 HDMI output support
-Message-ID: <202408100431.ujB0M1q7-lkp@intel.com>
-References: <20240801-b4-rk3588-bridge-upstream-v2-3-9fa657a4e15b@collabora.com>
+	s=arc-20240116; t=1723238083; c=relaxed/simple;
+	bh=yFMtPylTUpNIoZdoTmnRCMDexbKH3+xBNPWZ21tt/bc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=HUzEPbm5dZOqqAwnR4nOvObnR5dc0B9SWEzq+ZzLFdb8vAVUWwJN+WNpcGg0FUtP7AIkFIlOC4GCZYcotRuhfqcLclZCEOjYxp6knQOhAIOP3uRliiuBEob4L3lXOlBtuNzk58ZyaaofT0CV/IRQmG/Cxiopcm7xFSJIhH6uzN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3W8SyokD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w79TDSRn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 09 Aug 2024 21:14:38 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723238079;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uDq9nIdzosuh0JeYSHFwEOoDvDL14cD9nEciyKtn0PU=;
+	b=3W8SyokD4cI0Z0kZ/tfLv40lK0rhYouOB2Lo1z0hjHzY4u6OU0UpTiJH43jYFNKuefGf+G
+	zuVRW0YAIv4dW1re18gy6TdBtKG10F1nS1q0TU814m/ekwoWEAPa4PtjNQWJhGLOZft78K
+	iw4CAItZv1lscEMs5SoFkepRINiOcC8sMfF5gUM14kgJuFgYC6Gg04/oyK8LpKIgCD4Ai4
+	6oUpJsG0wuXb98qsVeSRhbF5wTMeTwpZcntz1BPPVTFzpAawIMJC4+F07Btq7QEE2C2hY4
+	oB37pijrBJABWSvIsL9fxe/Xw16P/ROJf65VDaznalAZOt7pKdknbHyF/3SBzQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723238079;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uDq9nIdzosuh0JeYSHFwEOoDvDL14cD9nEciyKtn0PU=;
+	b=w79TDSRnZ+1ag6741/eRgqPCR0to39BvmYoRLBXSjBBfcSs9NgeknZrRKyq557Vvyt7j9E
+	D0iOSpMIFm+0HEAA==
+From: "tip-bot2 for Matti Vaittinen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] irqdomain: Allow giving name suffix for domain
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <871q2yvk5x.ffs@tglx>
+References: <871q2yvk5x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801-b4-rk3588-bridge-upstream-v2-3-9fa657a4e15b@collabora.com>
+Message-ID: <172323807846.2215.16980541649812681615.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Cristian,
+The following commit has been merged into the irq/core branch of tip:
 
-kernel test robot noticed the following build errors:
+Commit-ID:     1e7c05292531e5b6bebe409cd531ed4ec0b2ff56
+Gitweb:        https://git.kernel.org/tip/1e7c05292531e5b6bebe409cd531ed4ec0b2ff56
+Author:        Matti Vaittinen <mazziesaccount@gmail.com>
+AuthorDate:    Thu, 08 Aug 2024 22:23:06 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 09 Aug 2024 22:37:54 +02:00
 
-[auto build test ERROR on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
+irqdomain: Allow giving name suffix for domain
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Ciocaltea/dt-bindings-display-rockchip-Add-schema-for-RK3588-HDMI-TX-Controller/20240802-173018
-base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-patch link:    https://lore.kernel.org/r/20240801-b4-rk3588-bridge-upstream-v2-3-9fa657a4e15b%40collabora.com
-patch subject: [PATCH v2 3/3] drm/rockchip: Add basic RK3588 HDMI output support
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240810/202408100431.ujB0M1q7-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project f86594788ce93b696675c94f54016d27a6c21d18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240810/202408100431.ujB0M1q7-lkp@intel.com/reproduce)
+Devices can provide multiple interrupt lines. One reason for this is that
+a device has multiple subfunctions, each providing its own interrupt line.
+Another reason is that a device can be designed to be used (also) on a
+system where some of the interrupts can be routed to another processor.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408100431.ujB0M1q7-lkp@intel.com/
+A line often further acts as a demultiplex for specific interrupts
+and has it's respective set of interrupt (status, mask, ack, ...)
+registers.
 
-All errors (new ones prefixed by >>):
+Regmap supports the handling of these registers and demultiplexing
+interrupts, but the interrupt domain code ends up assigning the same name
+for the per interrupt line domains. This causes a naming collision in the
+debugFS code and leads to confusion, as /proc/interrupts shows two separate
+interrupts with the same domain name and hardware interrupt number.
 
-   In file included from drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c:15:
-   In file included from include/linux/phy/phy.h:17:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c:15:
-   In file included from include/linux/phy/phy.h:17:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c:15:
-   In file included from include/linux/phy/phy.h:17:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   In file included from drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c:15:
-   In file included from include/linux/phy/phy.h:17:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c:18:10: fatal error: 'drm/bridge/dw_hdmi_qp.h' file not found
-      18 | #include <drm/bridge/dw_hdmi_qp.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~~~~~
-   7 warnings and 1 error generated.
+Instead of adding a workaround in regmap or driver code, allow giving a
+name suffix for the domain name when the domain is created.
 
+Add a name_suffix field in the irq_domain_info structure and make
+irq_domain_instantiate() use this suffix if it is given when a domain is
+created.
 
-vim +18 drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+[ tglx: Adopt it to the cleanup patch and fixup the invalid NULL return ]
 
-    17	
-  > 18	#include <drm/bridge/dw_hdmi_qp.h>
-    19	#include <drm/drm_bridge_connector.h>
-    20	#include <drm/drm_of.h>
-    21	#include <drm/drm_probe_helper.h>
-    22	#include <drm/drm_simple_kms_helper.h>
-    23	
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/871q2yvk5x.ffs@tglx
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+---
+ include/linux/irqdomain.h |  3 +++
+ kernel/irq/irqdomain.c    | 30 +++++++++++++++++++++++-------
+ 2 files changed, 26 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index bfcffa2..e432b6a 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -295,6 +295,8 @@ struct irq_domain_chip_generic_info;
+  * @virq_base:		The first Linux interrupt number for legacy domains to
+  *			immediately associate the interrupts after domain creation
+  * @bus_token:		Domain bus token
++ * @name_suffix:	Optional name suffix to avoid collisions when multiple
++ *			domains are added using same fwnode
+  * @ops:		Domain operation callbacks
+  * @host_data:		Controller private data pointer
+  * @dgc_info:		Geneneric chip information structure pointer used to
+@@ -313,6 +315,7 @@ struct irq_domain_info {
+ 	unsigned int				hwirq_base;
+ 	unsigned int				virq_base;
+ 	enum irq_domain_bus_token		bus_token;
++	const char				*name_suffix;
+ 	const struct irq_domain_ops		*ops;
+ 	void					*host_data;
+ #ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 72ab601..01001eb 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -140,11 +140,14 @@ static int alloc_name(struct irq_domain *domain, char *base, enum irq_domain_bus
+ }
+ 
+ static int alloc_fwnode_name(struct irq_domain *domain, const struct fwnode_handle *fwnode,
+-			     enum irq_domain_bus_token bus_token)
++			     enum irq_domain_bus_token bus_token, const char *suffix)
+ {
+-	char *name = bus_token ? kasprintf(GFP_KERNEL, "%pfw-%d", fwnode, bus_token) :
+-				 kasprintf(GFP_KERNEL, "%pfw", fwnode);
++	const char *sep = suffix ? "-" : "";
++	const char *suf = suffix ? : "";
++	char *name;
+ 
++	name = bus_token ? kasprintf(GFP_KERNEL, "%pfw-%s%s%d", fwnode, suf, sep, bus_token) :
++			   kasprintf(GFP_KERNEL, "%pfw-%s", fwnode, suf);
+ 	if (!name)
+ 		return -ENOMEM;
+ 
+@@ -172,12 +175,25 @@ static int alloc_unknown_name(struct irq_domain *domain, enum irq_domain_bus_tok
+ 	return 0;
+ }
+ 
+-static int irq_domain_set_name(struct irq_domain *domain, const struct fwnode_handle *fwnode,
+-			       enum irq_domain_bus_token bus_token)
++static int irq_domain_set_name(struct irq_domain *domain, const struct irq_domain_info *info)
+ {
++	enum irq_domain_bus_token bus_token = info->bus_token;
++	const struct fwnode_handle *fwnode = info->fwnode;
++
+ 	if (is_fwnode_irqchip(fwnode)) {
+ 		struct irqchip_fwid *fwid = container_of(fwnode, struct irqchip_fwid, fwnode);
+ 
++		/*
++		 * The name_suffix is only intended to be used to avoid a name
++		 * collision when multiple domains are created for a single
++		 * device and the name is picked using a real device node.
++		 * (Typical use-case is regmap-IRQ controllers for devices
++		 * providing more than one physical IRQ.) There should be no
++		 * need to use name_suffix with irqchip-fwnode.
++		 */
++		if (info->name_suffix)
++			return -EINVAL;
++
+ 		switch (fwid->type) {
+ 		case IRQCHIP_FWNODE_NAMED:
+ 		case IRQCHIP_FWNODE_NAMED_ID:
+@@ -189,7 +205,7 @@ static int irq_domain_set_name(struct irq_domain *domain, const struct fwnode_ha
+ 		}
+ 
+ 	} else if (is_of_node(fwnode) || is_acpi_device_node(fwnode) || is_software_node(fwnode)) {
+-		return alloc_fwnode_name(domain, fwnode, bus_token);
++		return alloc_fwnode_name(domain, fwnode, bus_token, info->name_suffix);
+ 	}
+ 
+ 	if (domain->name)
+@@ -215,7 +231,7 @@ static struct irq_domain *__irq_domain_create(const struct irq_domain_info *info
+ 	if (!domain)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	err = irq_domain_set_name(domain, info->fwnode, info->bus_token);
++	err = irq_domain_set_name(domain, info);
+ 	if (err) {
+ 		kfree(domain);
+ 		return ERR_PTR(err);
 
