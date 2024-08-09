@@ -1,244 +1,292 @@
-Return-Path: <linux-kernel+bounces-281284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B05F94D518
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:54:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B28094D51A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E84286122
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:54:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005C2286D75
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF3E2941B;
-	Fri,  9 Aug 2024 16:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25613219F;
+	Fri,  9 Aug 2024 16:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HaNg/Se3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SUIcZ35M"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E194644E
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D837B1CF96
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723222475; cv=none; b=jGNu5nNgvd0wnN2Qlg2uVUWfOUFE5PlBFoi/Y8zsUlru+XFHBy/0VrXYonY7y1Mkm+ZAzthG2NuwHEVjkeaUGOPF2yGx3XCv7AqW8jT4XtlUuzVLr8ZSfb4VPlSmOMw/9xyzPLgH9S6a1H0/gDcysfE7L2zIDxwN4BdlPMHPQoU=
+	t=1723222533; cv=none; b=r3EhUCX41hyYV0PDsnfBFqA9EYLPt2FQv5xO9KJZSawn9VpoEoUx09/6sS0RbqqOa/n6Qtv7Bb9bkXP4yug9TTRheiwOYNrEkaCqQaEIGVJAeJQ/Slf8JFFkKklqHCZ39HJOYOfVUBT6STVPz9FMr88Tf81uSGj4ou/DaWqbXek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723222475; c=relaxed/simple;
-	bh=BVuRFk0AbyLEtVmf6tp5uUOxolzFmnVN2II3PL2vKBg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bT/4qL8CMBhCG3fE5nm0YLFszvpBpIGRDznQumQQXt13gn73taeHImbPz/yFVBtXVP9Ut5eU3aKQy0GZCGZzmgjqW4Ux4NV1Tr+LAYY6JGOal/YR28W/hYjHhWlSGxd/it8hJV/YtsX64EnJomHjmSYI+jqX+Q8LYETUxSydBQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HaNg/Se3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723222473;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xJ1NiQQ3WC7fQThUkGE6314nyICIjsXK+pb24G2wLiM=;
-	b=HaNg/Se3viYJeDYQHc+fvh6Y1O9S8KadgnW+Dhyti4L97vsD1sCyntzB/AT0Y2Af8Qv/jZ
-	bDpm4ZZhgCiaC7Ht3cl4s66nvMr5BndEZYXXyEdtSdDQWAtSkhoMCT8jIvZ/dj+vaPoYFq
-	C25sNBDhZqXiMpMT3teCaBj1M5cPwZw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-84-po09fzQEOb6h0sffLn8B4A-1; Fri, 09 Aug 2024 12:54:32 -0400
-X-MC-Unique: po09fzQEOb6h0sffLn8B4A-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36848f30d39so1291786f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:54:31 -0700 (PDT)
+	s=arc-20240116; t=1723222533; c=relaxed/simple;
+	bh=J5i/p0omALrzZ58Vf9x0UYTuhGGWDAQBmom9R+mFQxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M112Be79z/PRf87popch16S2YWOC3E2XVMfeT0icdAAVmxaiP5Kg4MbrE41AAog8pKhN9RR8jVvADam3wXQcbLs3CSeJ+vMMfL9BjEXfm3Gdhza3F2V4/aA57x7M0DyHMJn0Mng+qP9qD3KYz8eT0XQUXdeX/l0XV/wI+2tYfy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SUIcZ35M; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-65f9708c50dso23698497b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:55:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723222531; x=1723827331; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J5i/p0omALrzZ58Vf9x0UYTuhGGWDAQBmom9R+mFQxo=;
+        b=SUIcZ35MiRC2E9y4yd3ke6HxBnDjiAxkUubi2TDFphWuMeY7o4z8dyBjWomoAwHicA
+         +2OMmVfiWAHDg5cnmOx36zlSu2nBaZg4UlHPuD/w/TAYO0yzIao9OKwh/I8IBNypXGwa
+         DuuYFUm+zP1X3qcySV43xdK0f9vw7ABC53VzQo8I7+8Rz7Lw9v2tR7cFaRGc/5pPLUDb
+         UAH7p6TdSqhs90GIhVmjuohvlwKjQ14X8zN7OigKYMvD7ALtZeJvIFLuwMS5gx0qYQBC
+         cw/qEL3MITm+D8LlPWIF07xWWRjZPSOLHTRfcLbstW85NvWAwn2HPpe3f133PfsooNZ/
+         Mzvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723222471; x=1723827271;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xJ1NiQQ3WC7fQThUkGE6314nyICIjsXK+pb24G2wLiM=;
-        b=BaTlD0fCHWuL/0IUpanXA7IrzzO7wo0oPvxHUqmWpJR15Wbbon2qdox2f8l5oAqPpp
-         PMqR/O+U2+5iH75/rZEVPDti0pXKKgMiPz3TjnzdmeBloKozbFMcVtuEFBOaHSx8HcKd
-         8QA35QZGYoQTebz9wytqew1K+JHPx4dbLL3tt4MtCJ4xkLHL2GLck/Q/iqr0oLcH2euH
-         /B8AYd77JnESOa16WCX5VMJgirvkbIVgIwV+M5xcU4zo922RiDRYU6GSk7X+QwZoFxzG
-         uWYm/Vdt5+Wy7KG7rsSKhgFIxZfcEpYU7cl4Rz20lbhGohc4ud1REklVcHHUfWrgXglI
-         TLTA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8zuYHcGnX8FSsWolE1EVaAmyxaY8uVOFvGuZ1SuyAd08JinpLhyZJJKmT3vJaFl7ClfNc4lbKqiwi4a+2rvOHH+70kxQGiAcMOiCp
-X-Gm-Message-State: AOJu0Yw95H41TKdGc+r6zqh4SryUiMwzTzQxiJxe9EpxplXI2YJD/wT9
-	NBn2pdYjt8LG74JGIdL/3Xq5Av3V35UT+uyv2fGyQKBSjvJiM6/USHGDUE3rV00PuHfNN0WkRjE
-	CHbNuSpr7CMJEC7fKwy2OsTWcbGOHBnFC4EwIj8tiR3iFW9EnkVukQd3PPK4egQ==
-X-Received: by 2002:adf:f98d:0:b0:368:667a:3dec with SMTP id ffacd0b85a97d-36d5fc8794cmr1669054f8f.18.1723222470825;
-        Fri, 09 Aug 2024 09:54:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhAPOUhKlN9Xqio8ca2qzNcoa40xiHF+PzNb/raKoKm+RRQfL0QJjkwP4n1hw0w092ycTwEQ==
-X-Received: by 2002:adf:f98d:0:b0:368:667a:3dec with SMTP id ffacd0b85a97d-36d5fc8794cmr1669027f8f.18.1723222470283;
-        Fri, 09 Aug 2024 09:54:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d27156c8asm5782490f8f.24.2024.08.09.09.54.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 09:54:29 -0700 (PDT)
-Message-ID: <f79bbfc9-bb4c-4da4-9902-2e73817dd135@redhat.com>
-Date: Fri, 9 Aug 2024 18:54:28 +0200
+        d=1e100.net; s=20230601; t=1723222531; x=1723827331;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J5i/p0omALrzZ58Vf9x0UYTuhGGWDAQBmom9R+mFQxo=;
+        b=ZPg9GTSCLtgeG8aVbIkBb0uL/lQQDtH0FBwFgPKaoqnCwTwABTa4d3wkiBewMZL6jA
+         WY+ycUsLre1sXTs/u0f7rRTBH3qS89rT1pGXg7Dq+WFQB+zjQLSozCsce4HAixRpTL0p
+         mig5DotIOUy/ld61pXTCzsc6huFsG0xoaSNThA3aFHtEsKW53gktgKeNf8Tv/uX4w9Yf
+         gtUW5eaY2s4LxczzlFPkkntDhsiCmprnwA3SYuwmGp4SmPgEoyzbIroFKF5b27+9A2Gt
+         z9DXtIj0LiVmpD+KEpl0UK0VFTvVgjYoZwT7xNJ/gMJa0FqA31SM/QqR42MrLYfuwJ9+
+         ytiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRIHkNZJRnJz4pE8T3a6WfwsAuDf3LiSLy774mup3jqKVl0P6jcyAkACjxLjMuQHsl3J8oG3a8LXJhFL7I+ca/BOUs7OjQFJakkly8
+X-Gm-Message-State: AOJu0YxQCtjuOTF3kYzAOCT1ratQ9a2MD2Nq4K+q9/8fTs3SziEFyCpw
+	BUnZiDko8ZtByb695MaWYjqH8Hus5aHk7+gc84IOOXcm3wO3FCo2LqEZl/H0FuNLsU9L3XRCl54
+	YJranjdtPuutQuPePwRAHA5mtWMJSlg0H92CpGaGnnj7Z7RofZw==
+X-Google-Smtp-Source: AGHT+IEck6xMZmVO50703MWINq6qnIu7HvngT5vX/8c+opsyGxR16BYh0iiv5ys03WK109fWbm3Iu+oIo9ZiKO0KJB0=
+X-Received: by 2002:a05:690c:b05:b0:646:3ef4:6ace with SMTP id
+ 00721157ae682-69ec66fea64mr28248707b3.24.1723222530393; Fri, 09 Aug 2024
+ 09:55:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/7] mm: pgtable: make pte_offset_map_nolock()
- return pmdval
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- zokeefe@google.com, rientjes@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
-References: <cover.1722861064.git.zhengqi.arch@bytedance.com>
- <d101b185eb55438b18faa2029e4303b7453bd5f5.1722861064.git.zhengqi.arch@bytedance.com>
- <0e8e0503-5796-4b61-bb5b-249e285f5d21@redhat.com>
- <39281a4d-d896-46fd-80a5-8cd547d1625f@bytedance.com>
- <0f467510-a0d0-4a98-8517-43813fa4c131@redhat.com>
- <f6c05526-5ac9-4597-9e80-099ea22fa0ae@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <f6c05526-5ac9-4597-9e80-099ea22fa0ae@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240807182325.2585582-1-surenb@google.com> <CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com>
+ <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com>
+ <CAEf4BzYqKAaGE6GEcMs9MTcrV4cA+i0M5pniqFTy1LQ+g0Yxkw@mail.gmail.com>
+ <CAG48ez08f0GNfkqtKa3EV6-miRs3AbXej9WdVh4TvB8ErA6S3w@mail.gmail.com>
+ <CAEf4BzZT+c3VHkGy2qtpsbrRVLQwE9ESTtvhJ3_xtJ9L=Hmi_g@mail.gmail.com>
+ <CAG48ez1_xx=oVB=4Q3Ywf7UPyO3aWR+N=HwGE5SEuO9+Fgiw_g@mail.gmail.com>
+ <CAEf4BzZQ3oXBUVJVBJJ2C49jWL0hMSSxZiCpbMeadof7Q-KPzw@mail.gmail.com>
+ <CAG48ez3Q5PkiEjfKQR1zA=4dL6RXWNTmPqD==MtGKuTZp2HGtw@mail.gmail.com> <CAEf4BzarYwnt-MT+1icXeTVdk0gLUmXuJtV_5dA9=a8CWE3=Tg@mail.gmail.com>
+In-Reply-To: <CAEf4BzarYwnt-MT+1icXeTVdk0gLUmXuJtV_5dA9=a8CWE3=Tg@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 9 Aug 2024 16:55:17 +0000
+Message-ID: <CAJuCfpHquwbc2768MjOp8vUT7fSaV=xd+pBn4fPOUHBHJdNxnA@mail.gmail.com>
+Subject: Re: [RFC 1/1] mm: introduce mmap_lock_speculation_{start|end}
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jann Horn <jannh@google.com>, akpm@linux-foundation.org, peterz@infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07.08.24 05:08, Qi Zheng wrote:
-> Hi David,
-> 
-> On 2024/8/6 22:16, David Hildenbrand wrote:
->> On 06.08.24 04:40, Qi Zheng wrote:
->>> Hi David,
->>>
->>> On 2024/8/5 22:43, David Hildenbrand wrote:
->>>> On 05.08.24 14:55, Qi Zheng wrote:
->>>>> Make pte_offset_map_nolock() return pmdval so that we can recheck the
->>>>> *pmd once the lock is taken. This is a preparation for freeing empty
->>>>> PTE pages, no functional changes are expected.
->>>>
->>>> Skimming the patches, only patch #4 updates one of the callsites
->>>> (collapse_pte_mapped_thp).
->>>
->>> In addition, retract_page_tables() and reclaim_pgtables_pmd_entry()
->>> also used the pmdval returned by pte_offset_map_nolock().
->>
->> Right, and I am questioning if only touching these two is sufficient,
->> and how we can make it clearer when someone actually has to recheck the
->> PMD.
->>
->>>
->>>>
->>>> Wouldn't we have to recheck if the PMD val changed in more cases after
->>>> taking the PTL?
->>>>
->>>> If not, would it make sense to have a separate function that returns the
->>>> pmdval and we won't have to update each and every callsite?
->>>
->>> pte_offset_map_nolock() had already obtained the pmdval previously, just
->>> hadn't returned it. And updating those callsite is simple, so I think
->>> there may not be a need to add a separate function.
->>
->> Let me ask this way: why is retract_page_tables() and
->> reclaim_pgtables_pmd_entry() different to the other ones, and how would
->> someone using pte_offset_map_nolock() know what's to do here?
-> 
-> If we acuqire the PTL (PTE or PMD lock) after calling
-> pte_offset_map_nolock(), it means we may be modifying the corresponding
-> pte or pmd entry. In that case, we need to perform a pmd_same() check
-> after holding the PTL, just like in pte_offset_map_lock(), to prevent
-> the possibility of the PTE page being reclaimed at that time.
+On Fri, Aug 9, 2024 at 4:39=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Fri, Aug 9, 2024 at 8:21=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
+:
+> >
+> > On Fri, Aug 9, 2024 at 12:36=E2=80=AFAM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > > On Thu, Aug 8, 2024 at 3:16=E2=80=AFPM Jann Horn <jannh@google.com> w=
+rote:
+> > > >
+> > > > On Fri, Aug 9, 2024 at 12:05=E2=80=AFAM Andrii Nakryiko
+> > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > > On Thu, Aug 8, 2024 at 2:43=E2=80=AFPM Jann Horn <jannh@google.co=
+m> wrote:
+> > > > > >
+> > > > > > On Thu, Aug 8, 2024 at 11:11=E2=80=AFPM Andrii Nakryiko
+> > > > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > > > > On Thu, Aug 8, 2024 at 2:02=E2=80=AFPM Suren Baghdasaryan <su=
+renb@google.com> wrote:
+> > > > > > > >
+> > > > > > > > On Thu, Aug 8, 2024 at 8:19=E2=80=AFPM Andrii Nakryiko
+> > > > > > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > > > > > >
+> > > > > > > > > On Wed, Aug 7, 2024 at 11:23=E2=80=AFAM Suren Baghdasarya=
+n <surenb@google.com> wrote:
+> > > > > > > > > >
+> > > > > > > > > > Add helper functions to speculatively perform operation=
+s without
+> > > > > > > > > > read-locking mmap_lock, expecting that mmap_lock will n=
+ot be
+> > > > > > > > > > write-locked and mm is not modified from under us.
+> > > > > > > > > >
+> > > > > > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > > > > > > > > Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> > > > > > > > > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > > > > > > > > > ---
+> > > > > > > > >
+> > > > > > > > > This change makes sense and makes mm's seq a bit more use=
+ful and
+> > > > > > > > > meaningful. I've also tested it locally with uprobe stres=
+s-test, and
+> > > > > > > > > it seems to work great, I haven't run into any problems w=
+ith a
+> > > > > > > > > multi-hour stress test run so far. Thanks!
+> > > > > > > >
+> > > > > > > > Thanks for testing and feel free to include this patch into=
+ your set.
+> > > > > > >
+> > > > > > > Will do!
+> > > > > > >
+> > > > > > > >
+> > > > > > > > I've been thinking about this some more and there is a very=
+ unlikely
+> > > > > > > > corner case if between mmap_lock_speculation_start() and
+> > > > > > > > mmap_lock_speculation_end() mmap_lock is write-locked/unloc=
+ked so many
+> > > > > > > > times that mm->mm_lock_seq (int) overflows and just happen =
+to reach
+> > > > > > > > the same value as we recorded in mmap_lock_speculation_star=
+t(). This
+> > > > > > > > would generate a false positive, which would show up as if =
+the
+> > > > > > > > mmap_lock was never touched. Such overflows are possible fo=
+r vm_lock
+> > > > > > > > as well (see: https://elixir.bootlin.com/linux/v6.10.3/sour=
+ce/include/linux/mm_types.h#L688)
+> > > > > > > > but they are not critical because a false result would simp=
+ly lead to
+> > > > > > > > a retry under mmap_lock. However for your case this would b=
+e a
+> > > > > > > > critical issue. This is an extremely low probability scenar=
+io but
+> > > > > > > > should we still try to handle it?
+> > > > > > > >
+> > > > > > >
+> > > > > > > No, I think it's fine.
+> > > > > >
+> > > > > > Modern computers don't take *that* long to count to 2^32, even =
+when
+> > > > > > every step involves one or more syscalls. I've seen bugs where,=
+ for
+> > > > > > example, a 32-bit refcount is not decremented where it should, =
+making
+> > > > > > it possible to overflow the refcount with 2^32 operations of so=
+me
+> > > > > > kind, and those have taken something like 3 hours to trigger in=
+ one
+> > > > > > case (https://bugs.chromium.org/p/project-zero/issues/detail?id=
+=3D2478),
+> > > > > > 14 hours in another case. Or even cases where, if you have enou=
+gh RAM,
+> > > > > > you can create 2^32 legitimate references to an object and over=
+flow a
+> > > > > > refcount that way
+> > > > > > (https://bugs.chromium.org/p/project-zero/issues/detail?id=3D80=
+9 if you
+> > > > > > had more than 32 GiB of RAM, taking only 25 minutes to overflow=
+ the
+> > > > > > 32-bit counter - and that is with every step allocating memory)=
+.
+> > > > > > So I'd expect 2^32 simple operations that take the mmap lock fo=
+r
+> > > > > > writing to be faster than 25 minutes on a modern desktop machin=
+e.
+> > > > > >
+> > > > > > So for a reader of some kinda 32-bit sequence count, if it is
+> > > > > > conceivably possible for the reader to take at least maybe a co=
+uple
+> > > > > > minutes or so between the sequence count reads (also counting t=
+ime
+> > > > > > during which the reader is preempted or something like that), t=
+here
+> > > > > > could be a problem. At that point in the analysis, if you wante=
+d to
+> > > > > > know whether it's actually exploitable, I guess you'd have to l=
+ook at
+> > > > > > what kinda context you're running in, and what kinda events can
+> > > > > > interrupt/preempt you (like whether someone can send a sufficie=
+ntly
+> > > > > > dense flood of IPIs to completely prevent you making forward pr=
+ogress,
+> > > > > > like in https://www.vusec.net/projects/ghostrace/), and for how=
+ long
+> > > > > > those things can delay you (maybe including what the pessimal
+> > > > > > scheduler behavior looks like if you're in preemptible context,=
+ or how
+> > > > > > long clock interrupts can take to execute when processing a gia=
+nt pile
+> > > > > > of epoll watches), and so on...
+> > > > > >
+> > > > >
+> > > > > And here we are talking about *lockless* *speculative* VMA usage =
+that
+> > > > > will last what, at most on the order of a few microseconds?
+> > > >
+> > > > Are you talking about time spent in task context, or time spent whi=
+le
+> > > > the task is on the CPU (including time in interrupt context), or ab=
+out
+> > > > wall clock time?
+> > >
+> > > We are doing, roughly:
+> > >
+> > > mmap_lock_speculation_start();
+> > > rcu_read_lock();
+> > > vma_lookup();
+> > > rb_find();
+> > > rcu_read_unlock();
+> > > mmap_lock_speculation_end();
+> > >
+> > >
+> > > On non-RT kernel this can be prolonged only by having an NMI somewher=
+e
+> > > in the middle.
+> >
+> > I don't think you're running with interrupts off here? Even on kernels
+> > without any preemption support, normal interrupts (like timers,
+> > incoming network traffic, TLB flush IPIs) should still be able to
+> > interrupt here. And in CONFIG_PREEMPT kernels (which enable
+> > CONFIG_PREEMPT_RCU by default), rcu_read_lock() doesn't block
+> > preemption, so you can even get preempted here - I don't think you
+> > need RT for that.
+>
+> Fair enough, normal interrupts can happen as well. Still, we are
+> talking about the above fast sequence running long enough (for
+> whatever reason) for the rest of the system to update mm (and not just
+> plan increment counters) for 2 billion times with mmap_write_lock() +
+> actual work + vma_end_write_all() logic. All kinds of bad things will
+> start happening before that: RCU stall warnings, lots of accumulated
+> memory waiting for RCU grace period, blocked threads on
+> synchronize_rcu(), etc.
+>
+> >
+> > My understanding is that the main difference between normal
+> > CONFIG_PREEMPT and RT is whether spin_lock() blocks preemption.
+> >
+> > > On RT it can get preempted even within RCU locked
+> > > region, if I understand correctly. If you manage to make this part ru=
+n
+> > > sufficiently long to overflow 31-bit counter, it's probably a bigger
+> > > problem than mmap's sequence wrapping over, no?
+> >
+> > From the perspective of security, I don't consider it to be
+> > particularly severe by itself if a local process can make the system
+> > stall for very long amounts of time. And from the perspective of
+> > reliability, I think scenarios where someone has to very explicitly go
+> > out of their way to destabilize the system don't matter so much?
+>
+> So just to be clear. u64 counter is a no-brainer and I have nothing
+> against that. What I do worry about, though, is that this 64-bit
+> counter will be objected to due to it being potentially slower on
+> 32-bit architectures. So I'd rather have
+> mmap_lock_speculation_{start,end}() with a 32-bit mm_lock_seq counter
+> than not have a way to speculate against VMA/mm at all.
 
-Okay, what I thought.
-
-> 
-> If we call pte_offset_map_nolock() and do not need to acquire the PTL
-> afterwards, it means we are only reading the PTE page. In this case, the
-> rcu_read_lock() in pte_offset_map_nolock() will ensure that the PTE page
-> cannot be reclaimed.
-> 
->>
->> IIUC, we must check the PMDVAL after taking the PTL in case
->>
->> (a) we want to modify the page table to turn pte_none() entries to
->>       !pte_none(). Because it could be that the page table was removed and
->>       now is all pte_none()
->>
->> (b) we want to remove the page table ourselves and want to check if it
->>       has already been removed.
->>
->> Is that it?
-> 
-> Yes.
-> 
->>
->> So my thinking is if another function variant can make that clearer.
-> 
-> OK, how about naming it pte_offset_map_before_lock?
-
-That's the issue with some of the code: for example in 
-filemap_fault_recheck_pte_none() we'll call pte_offset_map_nolock() and 
-conditionally take the PTL. But we won't be modifying the pages tables.
-
-Maybe something like:
-
-pte_offset_map_readonly_nolock()
-
-and
-
-pte_offset_map_maywrite_nolock()
-
-The latter would require you to pass the PMD pointer such that you have 
-to really mess up to ignore what to do with it (check PMD same or not 
-check PMD same if you really know what you are douing).
-
-The first would not take a PMD pointer at all, because there is no need to.
-
--- 
-Cheers,
-
-David / dhildenb
-
+IMHO the probability that the 32-bit counter will wrap around and end
+up at exactly the same value out of 2^32 possible ones is so minuscule
+that we could ignore that possibility.
 
