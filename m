@@ -1,65 +1,81 @@
-Return-Path: <linux-kernel+bounces-281580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E72394D862
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:17:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA0394D852
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3151F232B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:17:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AE90B21EFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B3E1684AB;
-	Fri,  9 Aug 2024 21:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E842169397;
+	Fri,  9 Aug 2024 21:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=matthias-fetzer.de header.i=@matthias-fetzer.de header.b="c4lOIJ2S"
-Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.63.170])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cvOJ4Yk8"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23099225D6;
-	Fri,  9 Aug 2024 21:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.63.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7B917557;
+	Fri,  9 Aug 2024 21:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723238212; cv=none; b=s2JJfQKfqdk526/6NE02BR3dNgCIyMpRk5/KHjxESJt7y+7JyaiwdxPokO2ORHPZ5xcPnA/RTqKyONblS99lBvixlG96IJ/EYpPweEUWXuPnGPEvk7ldkInYZEoQ8DKWfX2akwv3tQhboDzeoTPBrAnV5eYLB8msY4gAgEwL/Pw=
+	t=1723237695; cv=none; b=Lb7gye9uraAuxAYEwIbOyIB1n+UpPq2NUMcVoJm45o0U3Crze523d8XJ5kGuA7uqO3mJQ9O9EjrvwBG9noRLTFiqhZJ+FUxgy6KQWZ7r4MV033xCiQrYjj481tzGW15gMBAnhlgOV+mp3eRNrIJ8D6Y7TV33HLGVkfU3nrsFdis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723238212; c=relaxed/simple;
-	bh=3sHnrlgBst2vs2zoVMb7+BfNAceWGuziTRBozcPZflY=;
+	s=arc-20240116; t=1723237695; c=relaxed/simple;
+	bh=TgOqQo/nNgKQfxm1ZRgcugniZO2FnwfFbT0uV+1sJrg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xpsr2Yuqz5JHQc37Fr04TJB5ecbVl9s++j6FIoQwV8ntknp+0sHjVICH964DM3XAzto4jNEFzaiNCLc/ZjcWIIBidxs43ocseIDML5JvkijLogXxNN47igZ5jRwa9ag+S+AKIBtRxZ/wQftTG+8WksS1EBjlOJORLv3ZJKA6iGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-fetzer.de; spf=pass smtp.mailfrom=matthias-fetzer.de; dkim=pass (2048-bit key) header.d=matthias-fetzer.de header.i=@matthias-fetzer.de header.b=c4lOIJ2S; arc=none smtp.client-ip=188.68.63.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-fetzer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matthias-fetzer.de
-Received: from mors-relay8203.netcup.net (localhost [127.0.0.1])
-	by mors-relay8203.netcup.net (Postfix) with ESMTPS id 4Wgc4J4dDyz8XLf;
-	Fri,  9 Aug 2024 21:09:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=matthias-fetzer.de;
-	s=key2; t=1723237792;
-	bh=3sHnrlgBst2vs2zoVMb7+BfNAceWGuziTRBozcPZflY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=c4lOIJ2Simr6CKegbFFTHjlSveZMb9AMriy+Fl7yKXe3dC9mG3PFHJoWitGUWpWTq
-	 KJtR44YjNC3IaTf42GHyYadZ0ytxVGYD1SXqV0sPAnE+QLvTsekOeD85U/J/gXzHSi
-	 fNUs4QJ2ay/QBV9UL59cRPCfIil4ofi7Jcp/3N7B9Z8KhCsr/q9JdHjZkZhF6IaT8g
-	 6aYkl6+KGBWdJQhbyXTDoRvTbkiNsaaytdB07uIrDnkP7fLNkx3eQVvaBKVpNJqz2E
-	 i57uvBp/vfe0vOYMl6WeHuqwEvF81wV3JdEFIaZOJ/NQLvZYnbluHC+/q3wNPTo+3A
-	 lqpZqytFQNd6Q==
-Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
-	by mors-relay8203.netcup.net (Postfix) with ESMTPS id 4Wgc4J3snyz8Zs6;
-	Fri,  9 Aug 2024 21:09:52 +0000 (UTC)
-Received: from mxf9a3.netcup.net (unknown [10.243.12.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4Wgc0c4D5Sz8sZf;
-	Fri,  9 Aug 2024 23:06:40 +0200 (CEST)
-Received: from [IPV6:2001:9e8:1a76:2600:c5f1:566f:8693:31b4] (unknown [IPv6:2001:9e8:1a76:2600:c5f1:566f:8693:31b4])
-	by mxf9a3.netcup.net (Postfix) with ESMTPSA id 67338402D7;
-	Fri,  9 Aug 2024 23:06:35 +0200 (CEST)
-Authentication-Results: mxf9a3;
-        spf=pass (sender IP is 2001:9e8:1a76:2600:c5f1:566f:8693:31b4) smtp.mailfrom=kontakt@matthias-fetzer.de smtp.helo=[IPV6:2001:9e8:1a76:2600:c5f1:566f:8693:31b4]
-Received-SPF: pass (mxf9a3: connection is authenticated)
-Message-ID: <5a22f1ff-44e9-4e1a-bdbe-cc168f718693@matthias-fetzer.de>
-Date: Fri, 9 Aug 2024 23:06:34 +0200
+	 In-Reply-To:Content-Type; b=aEH3J5AnaJ3iqAVIprTg49edTZzk5SEX73C7SDUi6sdTUcJKGvCTgBYNbR1cZ0ORI5pBv+ewAhRAEmZAu5bTJqM/P6kyEpArQzqe74CNRwcd/RH0BglO90t1+4nDcOZhZKuX99NaUCYp3SseqLB1Rfp9ZDaoFcW493jcTaQM3hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cvOJ4Yk8; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 479IYJXY020215;
+	Fri, 9 Aug 2024 21:08:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=5
+	Alvphok64lsLZw6Dy+9TD3ksgGFhXTGsICf7puBrco=; b=cvOJ4Yk87MLaHHVBL
+	P8biApaaCAOqnh0u6nAudOBnuq5Y6D1jVQdTJVsWR9x44NuWOrM7u22gS2bsDOuF
+	EFQZBTHk8PJ84hl+OjKWAAK899XG0dcnbU5I+8Z29sSy9JoHSOFgNo3tukaHlIy6
+	+ygFWdrb+aZIRDjn4gXzj2cEqXpj9wgVu/FxarY+jY2B+GJm9DGoCwBuTNOh4lfx
+	Ut2aQhIr+MKs4eZQ6YcHWzkkM0ogSJNCbPPvwUQ3gGwieydtxPazeKXYqbRp6+Tu
+	KHdV9fqxRgMadx4E/zgQtFjlHSCEywXDQAqO4sczAwTRaGXlxzHCmpmkWDEtMY8C
+	ladoQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wrgjg90h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 21:08:06 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 479L3oxF009548;
+	Fri, 9 Aug 2024 21:08:06 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wrgjg90c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 21:08:05 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 479IO3Hh024352;
+	Fri, 9 Aug 2024 21:08:05 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy915ngd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 21:08:05 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 479L82Kj46465382
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 9 Aug 2024 21:08:04 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 117C358066;
+	Fri,  9 Aug 2024 21:08:02 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E801158043;
+	Fri,  9 Aug 2024 21:07:59 +0000 (GMT)
+Received: from [9.171.82.52] (unknown [9.171.82.52])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  9 Aug 2024 21:07:59 +0000 (GMT)
+Message-ID: <0afaeec5-f80a-4d8d-806b-d39c0eb5570e@linux.ibm.com>
+Date: Fri, 9 Aug 2024 23:07:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,188 +83,144 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: thinkpad_acpi: Add Thinkpad Edge E531 fan
- support
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: hmh@hmh.eng.br, Hans de Goede <hdegoede@redhat.com>,
- ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240714165054.2261305-1-kontakt@matthias-fetzer.de>
- <ee9624b2-5b24-9976-4746-c622fcba21a6@linux.intel.com>
-Content-Language: en-US, de-DE
-From: Matthias Fetzer <kontakt@matthias-fetzer.de>
-In-Reply-To: <ee9624b2-5b24-9976-4746-c622fcba21a6@linux.intel.com>
+Subject: Re: [PATCH net-next] net/smc: introduce autosplit for smc
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>, jaka@linux.ibm.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+        guwen@linux.alibaba.com, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240709160551.40595-1-guangguan.wang@linux.alibaba.com>
+ <cf07ec76-9d48-4bff-99f6-0842b5127c81@linux.ibm.com>
+ <63862dcc-33fd-4757-8daf-e0a018a1c7a3@linux.alibaba.com>
+ <faad0886-9ece-4a1c-a659-461b060ba70b@linux.alibaba.com>
+Content-Language: en-US
+From: Wenjia Zhang <wenjia@linux.ibm.com>
+In-Reply-To: <faad0886-9ece-4a1c-a659-461b060ba70b@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <172323759583.12787.8869904824999468791@mxf9a3.netcup.net>
-X-Rspamd-Queue-Id: 67338402D7
-X-Rspamd-Server: rspamd-worker-8404
-X-NC-CID: B0rRHBtvFxq2Ah61PT2285jdKpD16c032Jkvc3Mxdm9bZH6qL+v1T8eQ
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: TXeWOLRsmeghkzvaIQ20Azvvq_zbHYk-
+X-Proofpoint-ORIG-GUID: lInTmsyXmRfMXCzTIeZSrwhb0l6SbDFQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-09_17,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ mlxscore=0 clxscore=1011 bulkscore=0 mlxlogscore=999 phishscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408090152
 
 
-Thanks for the review!
 
-Am 08.08.24 um 15:14 schrieb Ilpo Järvinen:
-> On Sun, 14 Jul 2024, Matthias Fetzer wrote:
-> 
->> Fan control on the E531 is done using the ACPI methods FANG and
->> FANW. The correct parameters and register values were found by
->> analyzing EC firmware as well as DSDT. This has been tested on
->> my Thinkpad Edge E531 (6885CTO, BIOS HEET52WW 1.33).
+On 08.08.24 08:26, Guangguan Wang wrote:
+> On 2024/7/15 10:53, Guangguan Wang wrote:
 >>
->> Signed-off-by: Matthias Fetzer <kontakt@matthias-fetzer.de>
->> ---
->>   drivers/platform/x86/thinkpad_acpi.c | 159 +++++++++++++++++++++++++++
->>   1 file changed, 159 insertions(+)
 >>
->> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
->> index 397b409064c9..a171a2b39ac9 100644
->> --- a/drivers/platform/x86/thinkpad_acpi.c
->> +++ b/drivers/platform/x86/thinkpad_acpi.c
->> @@ -7751,6 +7751,28 @@ static struct ibm_struct volume_driver_data = {
->>    * 	EC 0x2f (HFSP) might be available *for reading*, but do not use
->>    * 	it for writing.
->>    *
->> + * TPACPI_FAN_RD_ACPI_FANG:
->> + * 	ACPI FANG method: returns fan control register
->> + *
->> + *	Takes one parameter which is 0x8100 plus the offset to EC memory
->> + *	address 0xf500 and returns the byte at this address.
->> + *
->> + *	0xf500:
->> + *		When the value is less than 9 automatic mode is enabled
->> + *	0xf502:
->> + *		Contains the current fan speed from 0-100%
->> + *	0xf504:
->> + *		Bit 7 has to be set in order to enable manual control by
->> + *		writing a value >= 9 to 0xf500
->> + *
->> + * TPACPI_FAN_WR_ACPI_FANW:
->> + * 	ACPI FANG method: sets fan control registers
->> + *
->> + * 	Takes 0x8100 plus the offset to EC memory address 0xf500 and the
->> + * 	value to be written there as parameters.
->> + *
->> + *	see TPACPI_FAN_RD_ACPI_FANG
->> + *
->>    * TPACPI_FAN_WR_TPEC:
->>    * 	ThinkPad EC register 0x2f (HFSP): fan control loop mode
->>    * 	Supported on almost all ThinkPads
->> @@ -7884,6 +7906,7 @@ enum {					/* Fan control constants */
->>   enum fan_status_access_mode {
->>   	TPACPI_FAN_NONE = 0,		/* No fan status or control */
->>   	TPACPI_FAN_RD_ACPI_GFAN,	/* Use ACPI GFAN */
->> +	TPACPI_FAN_RD_ACPI_FANG,	/* Use ACPI FANG */
->>   	TPACPI_FAN_RD_TPEC,		/* Use ACPI EC regs 0x2f, 0x84-0x85 */
->>   	TPACPI_FAN_RD_TPEC_NS,		/* Use non-standard ACPI EC regs (eg: L13 Yoga gen2 etc.) */
->>   };
->> @@ -7891,6 +7914,7 @@ enum fan_status_access_mode {
->>   enum fan_control_access_mode {
->>   	TPACPI_FAN_WR_NONE = 0,		/* No fan control */
->>   	TPACPI_FAN_WR_ACPI_SFAN,	/* Use ACPI SFAN */
->> +	TPACPI_FAN_WR_ACPI_FANW,	/* Use ACPI FANW */
->>   	TPACPI_FAN_WR_TPEC,		/* Use ACPI EC reg 0x2f */
->>   	TPACPI_FAN_WR_ACPI_FANS,	/* Use ACPI FANS and EC reg 0x2f */
->>   };
->> @@ -7924,9 +7948,13 @@ TPACPI_HANDLE(fans, ec, "FANS");	/* X31, X40, X41 */
->>   TPACPI_HANDLE(gfan, ec, "GFAN",	/* 570 */
->>   	   "\\FSPD",		/* 600e/x, 770e, 770x */
->>   	   );			/* all others */
->> +TPACPI_HANDLE(fang, ec, "FANG",	/* E531 */
->> +	   );			/* all others */
->>   TPACPI_HANDLE(sfan, ec, "SFAN",	/* 570 */
->>   	   "JFNS",		/* 770x-JL */
->>   	   );			/* all others */
->> +TPACPI_HANDLE(fanw, ec, "FANW",	/* E531 */
->> +	   );			/* all others */
->>   
->>   /*
->>    * Unitialized HFSP quirk: ACPI DSDT and EC fail to initialize the
->> @@ -8033,6 +8061,23 @@ static int fan_get_status(u8 *status)
->>   
->>   		break;
->>   	}
->> +	case TPACPI_FAN_RD_ACPI_FANG: {
->> +		/* E531 */
->> +		int mode, speed;
->> +
->> +		if (unlikely(!acpi_evalf(fang_handle, &mode, NULL, "dd", 0x8100)))
->> +			return -EIO;
->> +		if (unlikely(!acpi_evalf(fang_handle, &speed, NULL, "dd", 0x8102)))
->> +			return -EIO;
->> +
->> +		if (likely(status)) {
->> +			*status = speed * 7 / 100;
->> +			if (mode < 9)
->> +				*status |= TP_EC_FAN_AUTO;
->> +		}
->> +
->> +		break;
->> +	}
->>   	case TPACPI_FAN_RD_TPEC:
->>   		/* all except 570, 600e/x, 770e, 770x */
->>   		if (unlikely(!acpi_ec_read(fan_status_offset, &s)))
->> @@ -8147,6 +8192,17 @@ static int fan2_get_speed(unsigned int *speed)
->>   		if (speed)
->>   			*speed = lo ? FAN_RPM_CAL_CONST / lo : 0;
->>   		break;
->> +	case TPACPI_FAN_RD_ACPI_FANG: {
->> +		/* E531 */
->> +		int speed_tmp;
->> +
->> +		if (unlikely(!acpi_evalf(fang_handle, &speed_tmp, NULL, "dd", 0x8102)))
->> +			return -EIO;
->> +
->> +		if (likely(speed))
->> +			*speed =  speed_tmp * 65535 / 100;
->> +		break;
->> +	}
->>   
->>   	default:
->>   		return -ENXIO;
->> @@ -8157,6 +8213,7 @@ static int fan2_get_speed(unsigned int *speed)
->>   
->>   static int fan_set_level(int level)
->>   {
->> +	int rc;
->>   	if (!fan_control_allowed)
->>   		return -EPERM;
->>   
->> @@ -8206,6 +8263,36 @@ static int fan_set_level(int level)
->>   			tp_features.fan_ctrl_status_undef = 0;
->>   		break;
->>   
->> +	case TPACPI_FAN_WR_ACPI_FANW:
->> +		if ((!(level & TP_EC_FAN_AUTO) &&
->> +		    ((level < 0) || (level > 7))) ||
->> +		    (level & TP_EC_FAN_FULLSPEED))
->> +			return -EINVAL;
+>> On 2024/7/11 23:57, Wenjia Zhang wrote:
+>>>
+>>>
+>>> On 09.07.24 18:05, Guangguan Wang wrote:
+>>>> When sending large size data in TCP, the data will be split into
+>>>> several segments(packets) to transfer due to MTU config. And in
+>>>> the receive side, application can be woken up to recv data every
+>>>> packet arrived, the data transmission and data recv copy are
+>>>> pipelined.
+>>>>
+>>>> But for SMC-R, it will transmit as many data as possible in one
+>>>> RDMA WRITE and a CDC msg follows the RDMA WRITE, in the receive
+>>>> size, the application only be woken up to recv data when all RDMA
+>>>> WRITE data and the followed CDC msg arrived. The data transmission
+>>>> and data recv copy are sequential.
+>>>>
+>>>> This patch introduce autosplit for SMC, which can automatic split
+>>>> data into several segments and every segment transmitted by one RDMA
+>>>> WRITE when sending large size data in SMC. Because of the split, the
+>>>> data transmission and data send copy can be pipelined in the send side,
+>>>> and the data transmission and data recv copy can be pipelined in the
+>>>> receive side. Thus autosplit helps improving latency performance when
+>>>> sending large size data. The autosplit also works for SMC-D.
+>>>>
+>>>> This patch also introduce a sysctl names autosplit_size for configure
+>>>> the max size of the split segment, whose default value is 128KiB
+>>>> (128KiB perform best in my environment).
+>>>>
+>>>> The sockperf benchmark shows 17%-28% latency improvement when msgsize
+>>>>> = 256KB for SMC-R, 15%-32% latency improvement when msgsize >= 256KB
+>>>> for SMC-D with smc-loopback.
+>>>>
+>>>> Test command:
+>>>> sockperf sr --tcp -m 1048575
+>>>> sockperf pp --tcp -i <server ip> -m <msgsize> -t 20
+>>>>
+>>>> Test config:
+>>>> sysctl -w net.smc.wmem=524288
+>>>> sysctl -w net.smc.rmem=524288
+>>>>
+>>>> Test results:
+>>>> SMC-R
+>>>> msgsize   noautosplit    autosplit
+>>>> 128KB       55.546 us     55.763 us
+>>>> 256KB       83.537 us     69.743 us (17% improve)
+>>>> 512KB      138.306 us    100.313 us (28% improve)
+>>>> 1MB        273.702 us    197.222 us (28% improve)
+>>>>
+>>>> SMC-D with smc-loopback
+>>>> msgsize   noautosplit    autosplit
+>>>> 128KB       14.672 us     14.690 us
+>>>> 256KB       28.277 us     23.958 us (15% improve)
+>>>> 512KB       63.047 us     45.339 us (28% improve)
+>>>> 1MB        129.306 us     87.278 us (32% improve)
+>>>>
+>>>> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+>>>> ---
+>>>>    Documentation/networking/smc-sysctl.rst | 11 +++++++++++
+>>>>    include/net/netns/smc.h                 |  1 +
+>>>>    net/smc/smc_sysctl.c                    | 12 ++++++++++++
+>>>>    net/smc/smc_tx.c                        | 19 ++++++++++++++++++-
+>>>>    4 files changed, 42 insertions(+), 1 deletion(-)
+>>>>
+>>>
+>>> Hi Guangguan,
+>>>
+>>> If I remember correctly, the intention to use one RDMA-write for a possible large data is to reduce possible many partial stores. Since many year has gone, I'm not that sure if it would still be an issue. I need some time to check on it.
+>>>
+>>
+>> Did you mean too many partial stores will result in some issue? What's the issue?
+>>
+Forget it, I did verify that the partial stores should not be problem now.
+>>
+>>> BTW, I don't really like the idea to use sysctl to set the autosplit_size in any value at will. That makes no sense to improve the performance.
+>>
+>> Although 128KB autosplit_size have a good performance in most scenario, I still found some better autosplit_size for some specific network configurations.
+>> For example, 128KB autosplit_size have a good performance whether the MTU is 1500 or 8500, but for 8500 MTU, 64KB autosplit_size performs better.
+>>
+>> Maybe the sysctl is not the best way, but I think it should have a way to set the value of autosplit_size for possible performance tuning.
+>>
+mhhh, that could be a good reason to use sysctl.
+>> Thanks,
+>> Guangguan Wang
+>>
 > 
-> I'd split this into two to make it more readable:
+> Hi Wenjia,
 > 
-> 		if (!(level & TP_EC_FAN_AUTO) && (level < 0 || level > 7))
-> 			return -EINVAL;
-> 		if (level & TP_EC_FAN_FULLSPEED)
-> 			return -EINVAL;
+> Is there any update comment or information about this patch?
 
-This is much better, thanks.
+Hi Guangguan,
+
+sorry for the delayed answer. In the last time it is really difficult 
+for me to find time to look into it and test it. With more thinking, I'm 
+kind of convinced with this idea. But test is still needed. I'll be in 
+vacation next 3 weeks. I hope it is okay for you that I'll test it as 
+soon as possible when I'm back. If everything is ok, I think we can let 
+it go upstream.
+
+Thanks,
+Wenjia
+
 
 > 
-> I'm not sure if -EINVAL is really the right code to return though in these
-> cases.
-> 
-
-I thought that since those are invalid values/parameters the return code 
-of -EINVAL
-would be a good choice. What do you suggest to use instead?
-
->> +		if (level & TP_EC_FAN_AUTO) {
->> +			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x05)) {
-> 
-> Curiously enough, the comment above doesn't cover offset 0xf506 but the
-> comment mentions 0xf504 that is never touched anywhere? Is that a typo?
-> 
-
-Good catch! This indeed is a typo.
-
+>>>
+>>> Thanks,
+>>> Wenjia
 
