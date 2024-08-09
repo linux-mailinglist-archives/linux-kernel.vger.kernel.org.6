@@ -1,129 +1,107 @@
-Return-Path: <linux-kernel+bounces-281448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49C894D70B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:15:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1244B94D70D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6BBF2820A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:15:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C3A8B22543
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827B315FA8B;
-	Fri,  9 Aug 2024 19:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F7515FCEA;
+	Fri,  9 Aug 2024 19:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="KLQjzp7A"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NQWB0fco";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U2NL9YSs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBB215ECC3;
-	Fri,  9 Aug 2024 19:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DE715EFDA;
+	Fri,  9 Aug 2024 19:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723230903; cv=none; b=sbw/of+xseElN1dNrymgkBrqf1c/yZZKVfwHk5xdJbUiCkpJkWdAGQ6XlCGm2Khep6w9CyjBXwoElC3bPOlmoEYubr6JgAMQ5osrh54KV3WXvt0ZVqnTtNx7SlySPeMn6SmonbEficIeURD7Ges5n6eBq30Ac31QrmHJyjUocuA=
+	t=1723230928; cv=none; b=V/SNiY0gC3ZVdbfP6iOy9okvwVCGZgRYYUUn+f4QALZYAKRyFXn9kYHLjW0C0t7/YaUt/X6f5FSEU3endBG4gM6W1QaIq+AurG5Ret3v3BjQnl/6CDh4UqjvFc/Hi+E35IkRXRdXRBWjeZPUfK7ZJMQJDhP9qGr/yQsqgfP8Veo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723230903; c=relaxed/simple;
-	bh=DibLUEnTsdSBZPfJSqD2frndtrOkbATuQ+3Wb8lPRZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ftLOdoq8FPXyqZltwmINcRgRggYoBWA5zoQW9HxFuLGlbkAEJMi8yTs/5ZX5FqiMqybJGHNdsg7l21X0uGPuS+jDXaNN+uZvbicIv42bCURXGQzIo1IivPewKiswuvK2W0voot4S55O1dOef1bAVO/szB0ZQmBwsRhlsr0pTm1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=KLQjzp7A; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WgYWn44Lxz6ClY8x;
-	Fri,  9 Aug 2024 19:15:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1723230898; x=1725822899; bh=C3Y7RyE6Umt352oYn9af7CF/
-	QQU4tkrbbVojV42x/og=; b=KLQjzp7A+axw0CZAm/PhGhXC1O+NKGGnC4r8R5D2
-	SspmMv2NjmHKq3fGUcl+PaTA4ncys2YJnhI7mEXKc04wUqY4tL7AP0fISY6zeGyq
-	3wpi/jo+QnyCe28wzQrgfYzgQ3pXad1mkyJGw0A+q3L5WuZIbV7zSL9jug6zg+CY
-	7Rv9mPCg/YkSzga7yU0VAagBYo7lOkibtEtShKP1KmsH1dJryW354ee6YP2vkAPD
-	C9jnQf1qfIv9bLI+c+9V8gXB7g529SnG0fgUqb7p4NGV+Huv8UBpSErzyMi3w5j9
-	xHs3VzOSmKLADWaY0aXqs1ITmp4FD/uun6tvHG3DLz7bjw==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 5e5aGB_-gQWs; Fri,  9 Aug 2024 19:14:58 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WgYWh1VqSz6ClY8s;
-	Fri,  9 Aug 2024 19:14:55 +0000 (UTC)
-Message-ID: <7e6669da-d723-4eb4-8849-77e4deed5ffa@acm.org>
-Date: Fri, 9 Aug 2024 12:14:54 -0700
+	s=arc-20240116; t=1723230928; c=relaxed/simple;
+	bh=c1o99fX7+tBBqVvuR7lu4QsGv9wT4U58AHFLlUyJR3s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Aot6BlLsHnfUkcrRtB1Sn3zpa/2dypmK/OpV0EMWE1c9XrIXUb5ozwn5iD81h75Z5qWoufmb1Z7ABacXEkY8b/0wtU58kvkGkzTCROpq9X5mOuYOjna8V3run3sqOsswtmvaHXbg6+QV0hMoloLxh4GIn4VaIlAA1vZJMdkpngc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NQWB0fco; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U2NL9YSs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723230924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UP939gYCcrU3T02uBHEVFDKNfNyRN8nKtOxLjSZBKYk=;
+	b=NQWB0fco/GMzY2UwNqL8g74zHsmlAeAms87dl7yquBD9A2ecZ4h1b5w2kMNHUsRYgqX7fN
+	hYdSIhY545b3jO9iWRyOPBdijLW8v314K80KPEUSd80HBIq0/T0WUwuiKKMMLUnFsZ5jyx
+	/MeNVL2y54oEDlWp4RCijYAUaafsLkhM5v0JxhDfAoH/+OyM/OOq3IN1/9r2e1EgdbokZr
+	aF1Ix2T6Py35jB0cUFmh2UYhsrTajesxfkSqQMbOOBwEAkkWvWJ2JNiTIctW8peOvZwPiq
+	OVpLv3+TKyeoLwIcE3qtQdecLXcVtCApqBs6gNJQFAstpCuLW/wjbOTrpVjilw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723230924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UP939gYCcrU3T02uBHEVFDKNfNyRN8nKtOxLjSZBKYk=;
+	b=U2NL9YSsVUHes77gY3W48KXaBysC7uKvyQS+VcYlexQWIrRNOrbY4C2TqoNZy4i6UNfw/1
+	+1GQgm/iFNxvYAAw==
+To: Marek Maslanka <mmaslanka@google.com>, LKML <linux-kernel@vger.kernel.org>
+Cc: Marek Maslanka <mmaslanka@google.com>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Rajneesh Bhardwaj
+ <irenic.rajneesh@gmail.com>, David E Box <david.e.box@intel.com>, Hans de
+ Goede <hdegoede@redhat.com>, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] clocksource: acpi_pm: Add external callback for
+ suspend/resume
+In-Reply-To: <20240809131343.1173369-1-mmaslanka@google.com>
+References: <28567169-4588-002d-85b8-906d22f12f05@linux.intel.com>
+ <20240809131343.1173369-1-mmaslanka@google.com>
+Date: Fri, 09 Aug 2024 21:15:23 +0200
+Message-ID: <87ed6xtsms.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: sd: retry command SYNC CACHE if format in progress
-To: Yihang Li <liyihang9@huawei.com>, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- prime.zeng@huawei.com, linuxarm@huawei.com
-References: <20240808021719.4167352-1-liyihang9@huawei.com>
- <1cd0b145-431a-4d9f-979f-04d4063eeda8@acm.org>
- <e6b05d46-7acd-8364-2826-c14e342f8e2d@huawei.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <e6b05d46-7acd-8364-2826-c14e342f8e2d@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 8/8/24 8:44 PM, Yihang Li wrote:
-> On 2024/8/9 3:09, Bart Van Assche wrote:
->> On 8/7/24 7:17 PM, Yihang Li wrote:
->>> If formatting a suspended disk (such as formatting with different DIF
->>> type), the SYNC CACHE command will fail because the disk is in the
->>> formatting process, which will cause the runtime_status of the disk to
->>> error and it is difficult for user to recover it.
->>>
->>> To solve the issue, retry the command until format command is finished.
->>
->> How is the format command submitted to the SCSI disk? Is that command
->> perhaps submitted as a SCSI pass-through command (SG_IO ioctl)?
->>
-> 
-> When formatting a suspended disk, the disk will be resuming first,
-> and then the format command will submit to the disk through SG_IO ioctl.
-> 
-> When the disk is processing the formatting command, the system does not
-> submit other commands to the disk. Therefore, the system attempts to suspend
-> the disk again and sends the SYNC CACHE command. However, the SYNC CACHE
-> command fails because the disk is being formatted.
-> 
-> Error info like:
-> 
-> [  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
-> [  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
-> [  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
-> [  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
+On Fri, Aug 09 2024 at 13:13, Marek Maslanka wrote:
+> --- a/drivers/clocksource/acpi_pm.c
+> +++ b/drivers/clocksource/acpi_pm.c
+> @@ -25,6 +25,12 @@
+>  #include <asm/io.h>
+>  #include <asm/time.h>
+>  
+> +#include "acpi_pm.h"
 
-Please consider integrating this information in the patch description.
+include/linux/acpi_pmtmr.h please
 
->> Should the sd driver perhaps be unbound while the format command is in
->> progress?
->>
-> 
-> I do not have any suggestions for this yet. I don't know how to unbound driver
-> when executing the format command and bound driver after the command is executed.
-> 
-> If you have any suggestions, please let me know.
+> +static void *suspend_resume_cb_data;
+> +
+> +static void (*suspend_resume_callback)(void *data, bool suspend);
+> +
+>  /*
+>   * The I/O port the PMTMR resides at.
+>   * The location is detected during setup_arch(),
+> @@ -58,6 +64,25 @@ u32 acpi_pm_read_verified(void)
+>  	return v2;
+>  }
+>  
+> +void acpi_pm_register_suspend_resume_callback(void (*cb)(void *data, bool suspend),
+> +					      void *data)
 
-It seems like the PCI core supports binding and unbinding through sysfs
-but the SCSI core not. So it's probably easier to add support for
-ASC/ASCQ 04h / 04h rather than to add bind/unbind support to the SCSI
-core.
+No line break required. Also the name wants to be acpi_pmtmr_... for the
+global visible function so that it can't be confused with the power
+management related acpi_pm_* functions
 
 Thanks,
 
-Bart.
+        tglx
 
