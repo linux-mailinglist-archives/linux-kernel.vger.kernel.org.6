@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-280321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4007994C8AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:57:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EAF94C8AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA09AB20DFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:57:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A7EFB20DFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BDD179BF;
-	Fri,  9 Aug 2024 02:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C21918C08;
+	Fri,  9 Aug 2024 02:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T6rYRErl"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OksdoeAi"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1BC17BB6
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 02:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA20A17BCC
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 02:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723172195; cv=none; b=eL/SfMZWbYgVdZwrAhZl8t7nbFuACSqXmVywx+wlu17ab7GctfbDZl7bfy4KwshofwA+UPaTL+LhPEfrpv4ZcbqsUb2AzWq1wS+NAu1zLO20wSwXcnoSITz6DxR+fSUtHy8b+AvpbruiRc3tS2jPiQWqn36sZlUAIi3JmOW6RvM=
+	t=1723172194; cv=none; b=mSH3RURmFhI1zcYhe85yBFeGUZczZGDWrn0hJ8sbj/TKCVUUpbR6fSrIoLB+wgNA73PG5DNTuoYHgzTzd5b/XpN1UPwydo46OPlilyb7D59iTnMrqahLK/x9b/DTV0s/BGkw2yTwq2RPYwnj7+yk1zjlzUN6k3uWRl3LS1l3+Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723172195; c=relaxed/simple;
-	bh=1ql59GPNLQi3WjGEBGQSQ0824+BH6uuhZxVOIMX4z8w=;
+	s=arc-20240116; t=1723172194; c=relaxed/simple;
+	bh=KckKa/R5b/+837PBERqDENwklzGlb1Ks72KL9Ex+/Jg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XrACrrY9vP/i05n8ZgBRH70zzX9SClUoK3LnVjNtVeRRvxngqkcHpuCMEDyHleSSBN4rhq6tJyl0Ju9iTr5NDnO32vLVOAgYI+wtyX45c/cRuop1AHF7LhyMXGwoFfPIgKH8ivF+xs3DmW8zyIWzdicyf+RphCTf9Cg9X58xXQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T6rYRErl; arc=none smtp.client-ip=192.198.163.13
+	 MIME-Version; b=GwvOQRuGh+OLb1GCoVnTN8WnkEMl7al4D9EM+bnehydsKCK7n7X08vkBG7uzwOX1A+ajGlQR+kIrkfDSKKzZ90lW+MeURZk9qumblog8G1c5kdS6bQooZCXZCXUdjNKOOLXP3+P3JAQdXLCQiy7ddbizo/48uooxr/YC8FFVw4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OksdoeAi; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,37 +35,37 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1723172192; x=1754708192;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=1ql59GPNLQi3WjGEBGQSQ0824+BH6uuhZxVOIMX4z8w=;
-  b=T6rYRErlhpApmsPycHAPw3Sf5O/AKsgJ2tPBLw7ewu/XJjeyValBrRy9
-   5yxmXCZXvlT7mG7bCzTK57dgA+JxgQfhl0nD0UzFy7oQMaHNgB5z9PETC
-   0jbhuB0FnTw0TAOgjGXkKx7dKY/GGOjnEPPm5UelbJwcjoGHEn5lsIs1r
-   9mf2aRaMVxcwJyAD7XL8pXFkupkwaI7r7eRVausD/l+ZR3fePFH547LH1
-   XScCiESK8LiOvJkuYk0unE3pTIdCdNf2T+oMaBKjh3ZZZ20K4gaBeqJTk
-   AbkMbW39pP+yzRCCusTh/ZUTCg3X9aJnz7FB3Lkv4skslxD0uKYcRtuO4
+  bh=KckKa/R5b/+837PBERqDENwklzGlb1Ks72KL9Ex+/Jg=;
+  b=OksdoeAiPzAfFIGMkeTe3TtR3N7rhc7OyjWIUBjnoEMYxN6FzVIZnUqu
+   Bgj5N5rg/910cuyXIrPgULm/2U6CdFQNrKcc0EGa+Jpf+PGcjaLCj2Gg9
+   cNylRWLuPjPFFRRwvYJtAQzIVYO0Z458duUcknFm8NbZevidFGjGRQsie
+   2L1zXhrV1SC3rC5cADsjeVwe1BE5vJIWbqhlg/77vdI66ot0hpLPqlHCc
+   dRtJhChl1touseuYS8be+SCFP7Im620vWp4idq1ah2BHHGSeRc95RT3XO
+   oHS5+BuMF06pqwbU9YdM3mrR/sA+y6oZk5ub4vf7eOiUFOcpgy/PnDZXs
    Q==;
-X-CSE-ConnectionGUID: tgQeBHaUQ1GUZxFRUpfRYg==
-X-CSE-MsgGUID: 3JK1pVk9TKe+fcUwWgH0wg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="24239350"
+X-CSE-ConnectionGUID: GjAvh3uJScGUDLbYayHZsA==
+X-CSE-MsgGUID: Mqb/jdr8SXOWpIghJoftVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="24239355"
 X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="24239350"
+   d="scan'208";a="24239355"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 19:56:30 -0700
-X-CSE-ConnectionGUID: KOmL/coXRP+DrBF/G1U74Q==
-X-CSE-MsgGUID: eVbQj0BySNaEbS+Q4ll4lA==
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 19:56:31 -0700
+X-CSE-ConnectionGUID: G7GH4bExSi++4EJcY1GlvQ==
+X-CSE-MsgGUID: mTVerTHdRSaiAdyCjycGUA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="62072644"
+   d="scan'208";a="62072647"
 Received: from desktoptgl-tinazhang.bj.intel.com ([10.238.156.103])
-  by fmviesa004.fm.intel.com with ESMTP; 08 Aug 2024 19:56:28 -0700
+  by fmviesa004.fm.intel.com with ESMTP; 08 Aug 2024 19:56:30 -0700
 From: Tina Zhang <tina.zhang@intel.com>
 To: Lu Baolu <baolu.lu@linux.intel.com>,
 	Kevin Tian <kevin.tian@intel.com>
 Cc: iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Tina Zhang <tina.zhang@intel.com>
-Subject: [PATCH v2 1/5] iommu/vt-d: Refactor IOTLB/Dev-IOTLB invalidation command logic
-Date: Fri,  9 Aug 2024 10:54:27 +0800
-Message-Id: <20240809025431.14605-2-tina.zhang@intel.com>
+Subject: [PATCH v2 2/5] iommu/vt-d: Refactor IOTLB and Dev-IOTLB flush logic
+Date: Fri,  9 Aug 2024 10:54:28 +0800
+Message-Id: <20240809025431.14605-3-tina.zhang@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240809025431.14605-1-tina.zhang@intel.com>
 References: <20240809025431.14605-1-tina.zhang@intel.com>
@@ -77,268 +77,201 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Separate assembling IOTLB/dev-IOTLB invalidation command logic from
-qi_flush interfaces. New qi_desc() functions are introduced for this
-purpose. The goal is to facilitate the reuse of these qi_desc()
-functions in the qi_batch interfaces which will be introduced in a
-subsequent patch.
+Introduce three new helper functions, handle_iotlb_flush(), handle_dev_
+tlb_flush() and handle_dev_tlb_flush_all() to encapsulate the logic for
+IOTLB and Dev-IOTLB invalidation commands. This refactoring aims to
+improve code readability and maintainability by centralizing the handling
+of these flush operations.
 
 Signed-off-by: Tina Zhang <tina.zhang@intel.com>
 ---
- drivers/iommu/intel/dmar.c | 203 +++++++++++++++++++++----------------
- 1 file changed, 116 insertions(+), 87 deletions(-)
+ drivers/iommu/intel/cache.c | 136 +++++++++++++++++++-----------------
+ 1 file changed, 72 insertions(+), 64 deletions(-)
 
-diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-index 1c8d3141cb55..64724af1a618 100644
---- a/drivers/iommu/intel/dmar.c
-+++ b/drivers/iommu/intel/dmar.c
-@@ -1360,6 +1360,116 @@ static int qi_check_fault(struct intel_iommu *iommu, int index, int wait_index)
- 	return 0;
+diff --git a/drivers/iommu/intel/cache.c b/drivers/iommu/intel/cache.c
+index 44e92638c0cd..3ae84ccfcfa1 100644
+--- a/drivers/iommu/intel/cache.c
++++ b/drivers/iommu/intel/cache.c
+@@ -255,6 +255,72 @@ static unsigned long calculate_psi_aligned_address(unsigned long start,
+ 	return ALIGN_DOWN(start, VTD_PAGE_SIZE << mask);
  }
  
-+static void qi_desc_iotlb(struct intel_iommu *iommu, u16 did,
-+			  u64 addr, unsigned int size_order,
-+			  u64 type, struct qi_desc *desc)
++static inline void handle_iotlb_flush(struct dmar_domain *domain,
++				      struct cache_tag *tag,
++				      unsigned long addr,
++				      unsigned long pages,
++				      unsigned long mask,
++				      int ih)
 +{
-+	u8 dw = 0, dr = 0;
-+	int ih = 0;
++	struct intel_iommu *iommu = tag->iommu;
 +
-+	if (cap_write_drain(iommu->cap))
-+		dw = 1;
-+
-+	if (cap_read_drain(iommu->cap))
-+		dr = 1;
-+
-+	desc->qw0 = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) | QI_IOTLB_DW(dw)
-+		| QI_IOTLB_GRAN(type) | QI_IOTLB_TYPE;
-+	desc->qw1 = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
-+		| QI_IOTLB_AM(size_order);
-+	desc->qw2 = 0;
-+	desc->qw3 = 0;
-+}
-+
-+static void qi_desc_dev_iotlb(u16 sid, u16 pfsid,
-+			      u16 qdep, u64 addr,
-+			      unsigned int mask,
-+			      struct qi_desc *desc)
-+{
-+	if (mask) {
-+		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
-+		desc->qw1 = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
-+	} else
-+		desc->qw1 = QI_DEV_IOTLB_ADDR(addr);
-+
-+	if (qdep >= QI_DEV_IOTLB_MAX_INVS)
-+		qdep = 0;
-+
-+	desc->qw0 = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
-+		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
-+	desc->qw2 = 0;
-+	desc->qw3 = 0;
-+}
-+
-+static void qi_desc_piotlb(u16 did, u32 pasid, u64 addr,
-+			   unsigned long npages, bool ih,
-+			   struct qi_desc *desc)
-+{
-+	if (npages == -1) {
-+		desc->qw0 = QI_EIOTLB_PASID(pasid) |
-+				QI_EIOTLB_DID(did) |
-+				QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
-+				QI_EIOTLB_TYPE;
-+		desc->qw1 = 0;
++	if (domain->use_first_level) {
++		qi_flush_piotlb(iommu, tag->domain_id,
++				tag->pasid, addr, pages, ih);
 +	} else {
-+		int mask = ilog2(__roundup_pow_of_two(npages));
-+		unsigned long align = (1ULL << (VTD_PAGE_SHIFT + mask));
-+
-+		if (WARN_ON_ONCE(!IS_ALIGNED(addr, align)))
-+			addr = ALIGN_DOWN(addr, align);
-+
-+		desc->qw0 = QI_EIOTLB_PASID(pasid) |
-+				QI_EIOTLB_DID(did) |
-+				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
-+				QI_EIOTLB_TYPE;
-+		desc->qw1 = QI_EIOTLB_ADDR(addr) |
-+				QI_EIOTLB_IH(ih) |
-+				QI_EIOTLB_AM(mask);
++		/*
++		 * Fallback to domain selective flush if no
++		 * PSI support or the size is too big.
++		 */
++		if (!cap_pgsel_inv(iommu->cap) ||
++		    mask > cap_max_amask_val(iommu->cap) ||
++		    pages == -1)
++			iommu->flush.flush_iotlb(iommu, tag->domain_id,
++						 0, 0, DMA_TLB_DSI_FLUSH);
++		else
++			iommu->flush.flush_iotlb(iommu, tag->domain_id,
++						 addr | ih, mask,
++						 DMA_TLB_PSI_FLUSH);
 +	}
 +}
 +
-+static void qi_desc_dev_iotlb_pasid(u16 sid, u16 pfsid,
-+				    u32 pasid,  u16 qdep, u64 addr,
-+				    unsigned int size_order,
-+				    struct qi_desc *desc)
++static void handle_dev_tlb_flush(struct cache_tag *tag,
++				 unsigned long addr,
++				 unsigned long mask)
 +{
-+	unsigned long mask = 1UL << (VTD_PAGE_SHIFT + size_order - 1);
++	struct intel_iommu *iommu = tag->iommu;
++	struct device_domain_info *info;
++	u16 sid;
 +
-+	desc->qw0 = QI_DEV_EIOTLB_PASID(pasid) | QI_DEV_EIOTLB_SID(sid) |
-+		QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE |
-+		QI_DEV_IOTLB_PFSID(pfsid);
++	info = dev_iommu_priv_get(tag->dev);
++	sid = PCI_DEVID(info->bus, info->devfn);
 +
-+	/*
-+	 * If S bit is 0, we only flush a single page. If S bit is set,
-+	 * The least significant zero bit indicates the invalidation address
-+	 * range. VT-d spec 6.5.2.6.
-+	 * e.g. address bit 12[0] indicates 8KB, 13[0] indicates 16KB.
-+	 * size order = 0 is PAGE_SIZE 4KB
-+	 * Max Invs Pending (MIP) is set to 0 for now until we have DIT in
-+	 * ECAP.
-+	 */
-+	if (!IS_ALIGNED(addr, VTD_PAGE_SIZE << size_order))
-+		pr_warn_ratelimited("Invalidate non-aligned address %llx, order %d\n",
-+				    addr, size_order);
++	if (tag->pasid == IOMMU_NO_PASID)
++		qi_flush_dev_iotlb(iommu, sid, info->pfsid,
++				   info->ats_qdep, addr, mask);
++	else
++		qi_flush_dev_iotlb_pasid(iommu, sid, info->pfsid,
++					 tag->pasid, info->ats_qdep,
++					 addr, mask);
 +
-+	/* Take page address */
-+	desc->qw1 = QI_DEV_EIOTLB_ADDR(addr);
++	quirk_extra_dev_tlb_flush(info, addr, mask, tag->pasid, info->ats_qdep);
++}
 +
-+	if (size_order) {
-+		/*
-+		 * Existing 0s in address below size_order may be the least
-+		 * significant bit, we must set them to 1s to avoid having
-+		 * smaller size than desired.
-+		 */
-+		desc->qw1 |= GENMASK_ULL(size_order + VTD_PAGE_SHIFT - 1,
-+					VTD_PAGE_SHIFT);
-+		/* Clear size_order bit to indicate size */
-+		desc->qw1 &= ~mask;
-+		/* Set the S bit to indicate flushing more than 1 page */
-+		desc->qw1 |= QI_DEV_EIOTLB_SIZE;
-+	}
++static void handle_dev_tlb_flush_all(struct cache_tag *tag)
++{
++	struct intel_iommu *iommu = tag->iommu;
++	struct device_domain_info *info;
++	u16 sid;
++
++	info = dev_iommu_priv_get(tag->dev);
++	sid = PCI_DEVID(info->bus, info->devfn);
++
++	qi_flush_dev_iotlb(iommu, sid, info->pfsid, info->ats_qdep,
++			   0, MAX_AGAW_PFN_WIDTH);
++	quirk_extra_dev_tlb_flush(info, 0, MAX_AGAW_PFN_WIDTH,
++				  IOMMU_NO_PASID, info->ats_qdep);
 +}
 +
  /*
-  * Function to submit invalidation descriptors of all types to the queued
-  * invalidation interface(QI). Multiple descriptors can be submitted at a
-@@ -1520,24 +1630,9 @@ void qi_flush_context(struct intel_iommu *iommu, u16 did, u16 sid, u8 fm,
- void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 		    unsigned int size_order, u64 type)
- {
--	u8 dw = 0, dr = 0;
--
- 	struct qi_desc desc;
--	int ih = 0;
--
--	if (cap_write_drain(iommu->cap))
--		dw = 1;
--
--	if (cap_read_drain(iommu->cap))
--		dr = 1;
--
--	desc.qw0 = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) | QI_IOTLB_DW(dw)
--		| QI_IOTLB_GRAN(type) | QI_IOTLB_TYPE;
--	desc.qw1 = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
--		| QI_IOTLB_AM(size_order);
--	desc.qw2 = 0;
--	desc.qw3 = 0;
+  * Invalidates a range of IOVA from @start (inclusive) to @end (inclusive)
+  * when the memory mappings in the target domain have been modified.
+@@ -270,30 +336,10 @@ void cache_tag_flush_range(struct dmar_domain *domain, unsigned long start,
  
-+	qi_desc_iotlb(iommu, did, addr, size_order, type, &desc);
- 	qi_submit_sync(iommu, &desc, 1, 0);
- }
- 
-@@ -1555,20 +1650,7 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
- 	if (!(iommu->gcmd & DMA_GCMD_TE))
- 		return;
- 
--	if (mask) {
--		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
--		desc.qw1 = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
--	} else
--		desc.qw1 = QI_DEV_IOTLB_ADDR(addr);
+ 	spin_lock_irqsave(&domain->cache_lock, flags);
+ 	list_for_each_entry(tag, &domain->cache_tags, node) {
+-		struct intel_iommu *iommu = tag->iommu;
+-		struct device_domain_info *info;
+-		u16 sid;
 -
--	if (qdep >= QI_DEV_IOTLB_MAX_INVS)
--		qdep = 0;
+ 		switch (tag->type) {
+ 		case CACHE_TAG_IOTLB:
+ 		case CACHE_TAG_NESTING_IOTLB:
+-			if (domain->use_first_level) {
+-				qi_flush_piotlb(iommu, tag->domain_id,
+-						tag->pasid, addr, pages, ih);
+-			} else {
+-				/*
+-				 * Fallback to domain selective flush if no
+-				 * PSI support or the size is too big.
+-				 */
+-				if (!cap_pgsel_inv(iommu->cap) ||
+-				    mask > cap_max_amask_val(iommu->cap))
+-					iommu->flush.flush_iotlb(iommu, tag->domain_id,
+-								 0, 0, DMA_TLB_DSI_FLUSH);
+-				else
+-					iommu->flush.flush_iotlb(iommu, tag->domain_id,
+-								 addr | ih, mask,
+-								 DMA_TLB_PSI_FLUSH);
+-			}
++			handle_iotlb_flush(domain, tag, addr, pages, mask, ih);
+ 			break;
+ 		case CACHE_TAG_NESTING_DEVTLB:
+ 			/*
+@@ -307,18 +353,7 @@ void cache_tag_flush_range(struct dmar_domain *domain, unsigned long start,
+ 			mask = MAX_AGAW_PFN_WIDTH;
+ 			fallthrough;
+ 		case CACHE_TAG_DEVTLB:
+-			info = dev_iommu_priv_get(tag->dev);
+-			sid = PCI_DEVID(info->bus, info->devfn);
 -
--	desc.qw0 = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
--		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
--	desc.qw2 = 0;
--	desc.qw3 = 0;
+-			if (tag->pasid == IOMMU_NO_PASID)
+-				qi_flush_dev_iotlb(iommu, sid, info->pfsid,
+-						   info->ats_qdep, addr, mask);
+-			else
+-				qi_flush_dev_iotlb_pasid(iommu, sid, info->pfsid,
+-							 tag->pasid, info->ats_qdep,
+-							 addr, mask);
 -
-+	qi_desc_dev_iotlb(sid, pfsid, qdep, addr, mask, &desc);
- 	qi_submit_sync(iommu, &desc, 1, 0);
- }
+-			quirk_extra_dev_tlb_flush(info, addr, mask, tag->pasid, info->ats_qdep);
++			handle_dev_tlb_flush(tag, addr, mask);
+ 			break;
+ 		}
  
-@@ -1588,28 +1670,7 @@ void qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u32 pasid, u64 addr,
- 		return;
+@@ -338,29 +373,14 @@ void cache_tag_flush_all(struct dmar_domain *domain)
+ 
+ 	spin_lock_irqsave(&domain->cache_lock, flags);
+ 	list_for_each_entry(tag, &domain->cache_tags, node) {
+-		struct intel_iommu *iommu = tag->iommu;
+-		struct device_domain_info *info;
+-		u16 sid;
+-
+ 		switch (tag->type) {
+ 		case CACHE_TAG_IOTLB:
+ 		case CACHE_TAG_NESTING_IOTLB:
+-			if (domain->use_first_level)
+-				qi_flush_piotlb(iommu, tag->domain_id,
+-						tag->pasid, 0, -1, 0);
+-			else
+-				iommu->flush.flush_iotlb(iommu, tag->domain_id,
+-							 0, 0, DMA_TLB_DSI_FLUSH);
++			handle_iotlb_flush(domain, tag, 0, -1, 0, 0);
+ 			break;
+ 		case CACHE_TAG_DEVTLB:
+ 		case CACHE_TAG_NESTING_DEVTLB:
+-			info = dev_iommu_priv_get(tag->dev);
+-			sid = PCI_DEVID(info->bus, info->devfn);
+-
+-			qi_flush_dev_iotlb(iommu, sid, info->pfsid, info->ats_qdep,
+-					   0, MAX_AGAW_PFN_WIDTH);
+-			quirk_extra_dev_tlb_flush(info, 0, MAX_AGAW_PFN_WIDTH,
+-						  IOMMU_NO_PASID, info->ats_qdep);
++			handle_dev_tlb_flush_all(tag);
+ 			break;
+ 		}
+ 
+@@ -399,20 +419,8 @@ void cache_tag_flush_range_np(struct dmar_domain *domain, unsigned long start,
+ 		}
+ 
+ 		if (tag->type == CACHE_TAG_IOTLB ||
+-		    tag->type == CACHE_TAG_NESTING_IOTLB) {
+-			/*
+-			 * Fallback to domain selective flush if no
+-			 * PSI support or the size is too big.
+-			 */
+-			if (!cap_pgsel_inv(iommu->cap) ||
+-			    mask > cap_max_amask_val(iommu->cap))
+-				iommu->flush.flush_iotlb(iommu, tag->domain_id,
+-							 0, 0, DMA_TLB_DSI_FLUSH);
+-			else
+-				iommu->flush.flush_iotlb(iommu, tag->domain_id,
+-							 addr, mask,
+-							 DMA_TLB_PSI_FLUSH);
+-		}
++		    tag->type == CACHE_TAG_NESTING_IOTLB)
++			handle_iotlb_flush(domain, tag, addr, pages, mask, 0);
+ 
+ 		trace_cache_tag_flush_range_np(tag, start, end, addr, pages, mask);
  	}
- 
--	if (npages == -1) {
--		desc.qw0 = QI_EIOTLB_PASID(pasid) |
--				QI_EIOTLB_DID(did) |
--				QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
--				QI_EIOTLB_TYPE;
--		desc.qw1 = 0;
--	} else {
--		int mask = ilog2(__roundup_pow_of_two(npages));
--		unsigned long align = (1ULL << (VTD_PAGE_SHIFT + mask));
--
--		if (WARN_ON_ONCE(!IS_ALIGNED(addr, align)))
--			addr = ALIGN_DOWN(addr, align);
--
--		desc.qw0 = QI_EIOTLB_PASID(pasid) |
--				QI_EIOTLB_DID(did) |
--				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
--				QI_EIOTLB_TYPE;
--		desc.qw1 = QI_EIOTLB_ADDR(addr) |
--				QI_EIOTLB_IH(ih) |
--				QI_EIOTLB_AM(mask);
--	}
--
-+	qi_desc_piotlb(did, pasid, addr, npages, ih, &desc);
- 	qi_submit_sync(iommu, &desc, 1, 0);
- }
- 
-@@ -1617,7 +1678,6 @@ void qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u32 pasid, u64 addr,
- void qi_flush_dev_iotlb_pasid(struct intel_iommu *iommu, u16 sid, u16 pfsid,
- 			      u32 pasid,  u16 qdep, u64 addr, unsigned int size_order)
- {
--	unsigned long mask = 1UL << (VTD_PAGE_SHIFT + size_order - 1);
- 	struct qi_desc desc = {.qw1 = 0, .qw2 = 0, .qw3 = 0};
- 
- 	/*
-@@ -1629,40 +1689,9 @@ void qi_flush_dev_iotlb_pasid(struct intel_iommu *iommu, u16 sid, u16 pfsid,
- 	if (!(iommu->gcmd & DMA_GCMD_TE))
- 		return;
- 
--	desc.qw0 = QI_DEV_EIOTLB_PASID(pasid) | QI_DEV_EIOTLB_SID(sid) |
--		QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE |
--		QI_DEV_IOTLB_PFSID(pfsid);
--
--	/*
--	 * If S bit is 0, we only flush a single page. If S bit is set,
--	 * The least significant zero bit indicates the invalidation address
--	 * range. VT-d spec 6.5.2.6.
--	 * e.g. address bit 12[0] indicates 8KB, 13[0] indicates 16KB.
--	 * size order = 0 is PAGE_SIZE 4KB
--	 * Max Invs Pending (MIP) is set to 0 for now until we have DIT in
--	 * ECAP.
--	 */
--	if (!IS_ALIGNED(addr, VTD_PAGE_SIZE << size_order))
--		pr_warn_ratelimited("Invalidate non-aligned address %llx, order %d\n",
--				    addr, size_order);
--
--	/* Take page address */
--	desc.qw1 = QI_DEV_EIOTLB_ADDR(addr);
--
--	if (size_order) {
--		/*
--		 * Existing 0s in address below size_order may be the least
--		 * significant bit, we must set them to 1s to avoid having
--		 * smaller size than desired.
--		 */
--		desc.qw1 |= GENMASK_ULL(size_order + VTD_PAGE_SHIFT - 1,
--					VTD_PAGE_SHIFT);
--		/* Clear size_order bit to indicate size */
--		desc.qw1 &= ~mask;
--		/* Set the S bit to indicate flushing more than 1 page */
--		desc.qw1 |= QI_DEV_EIOTLB_SIZE;
--	}
--
-+	qi_desc_dev_iotlb_pasid(sid, pfsid, pasid,
-+				qdep, addr, size_order,
-+				&desc);
- 	qi_submit_sync(iommu, &desc, 1, 0);
- }
- 
 -- 
 2.43.0
 
