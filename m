@@ -1,164 +1,122 @@
-Return-Path: <linux-kernel+bounces-280991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF54294D1AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:54:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4966894D1AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6874A1F24D4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F162A281074
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE070197A9B;
-	Fri,  9 Aug 2024 13:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2711195FEF;
+	Fri,  9 Aug 2024 13:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OtU+fIZx"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E9Dmo0fw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35494197A65
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A6B19597F
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723211648; cv=none; b=IhD0UjsV0J9Zp8EngBlvkBW6OMwvkKi03uvkS5czaWtFtdv0SsrWA4fVJKNDqo5fXfqTLTAgunYGygR4PoSKqXk8N4JsVRSRIJhOdiaMoBesdBcU4HbCDkbq9LGymJs755WQvYrStGOTOhlTgnO1BVrAZLovn14ZNkOAovjukFs=
+	t=1723211668; cv=none; b=rSwUmbKUFdF4E2lDCr9o60durZhPpTXYzckdF/0YLLrrBmSsU4qtXQ0VuHQtqCWhkkgpoOWeq4Pb4ky4vB1/zs/sAmCHsKUscHbtJYHsD1mNgWqAxKWATe9ar/YCdfHPNd/stL8hsoM/oEuIiiGX0psJ6QB+u0+0wCx4l8jK0FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723211648; c=relaxed/simple;
-	bh=GQXQ8wVFOUDUI+Zyz/HLa/N07Vz10zEEqMoocpvUBqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bJfjKQN9c/lZ8tvtbXRXOdmezg7OUPeVnSaHkX4Um0+7ygITBi5EgxxSUzwGVGSbFco5NQ9XCEpIFXwif6eInlmWMLihJUdTlOx6dOnD3g7CvRA6J8mvo4LQu6sqtQ53EmrrOSarzVNLSQvhnWMDE2+bYnMx90qQAoU1G8/OcAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OtU+fIZx; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7093efbade6so1336326a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 06:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723211646; x=1723816446; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pcd0Lyz5JwSqZfd6Y5W712pL2iousIM4OAnnr2KOowM=;
-        b=OtU+fIZxBNEP6b+19k7weAy8xF0bU1m/nflzJGtjJ3VWGDnLJJKrcscX1h9GJbY9Bt
-         creJlbCqtt6Je49JDoXzbamMdc6g40AcjSDvkBKzpmhH/7eagKAuSyLJ2gbPX0H04aci
-         XaG+MDDYMMM8Jr8NB+dvGiBkfww1p0XtWGjbbF8OLJWf5Lf51D11Ni4wkFE1T02/Pibz
-         tmFnciBDhSDUtbAjxl82VvIcT+MsVuYIvRf0TmRqDWbGrFAbGXGB3EZ9IaqOwMM06RPB
-         B1LsXpzhmijiNU9ozwzlN3BMB1vxmVg6Ra2k6ELrfyt2LWun1MbzvJTtAnMgP2M4zsGn
-         YY6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723211646; x=1723816446;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pcd0Lyz5JwSqZfd6Y5W712pL2iousIM4OAnnr2KOowM=;
-        b=oP1ns3j7lqk3cRamUcpU+0z0Fw5b9K6Y0gNd/QW12ea3hhayQTfethgtEQtEnEuoy6
-         iLGz1kmBd5F+NmJ+A0rgLGGfUjh8k5nzb+En2KRVobKHplu1TfpoFIdZi7SObxoP62T8
-         ItOSP9D4ion+w5poxPhsxXmGke3ColiXwiPby/QjcnC1mXsxO/fUkbbpAc/SxlB74/Lk
-         aOKTdRQVu5RuE59ZHYsPJYUjCzmlESQSasCPN8jyHB2KDVNO9oRvI8znIiGqXVUrX3gj
-         KOP+7Ws6FzxQl3yIi+MvuCnXWJPCFqAmlG1lnKQ4wrKYKlv9u+r0iiSDVCH70mvvxy6O
-         hcEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzjHHgrX+YvaArqttpysIWbg5Ie9hMQqMZK2Ib8Hqx1CNn5Qrz6sxukza5s5x3SshwyLu8vLytZB9jFsGOBzP8m9CaaikRsCLRp41T
-X-Gm-Message-State: AOJu0Yy9NwTXRz6iwVJPaVR/qMBLJ1o7uTNvFUVIOmzeLJN2l7aZaMvl
-	JY75mRyDpvw3QHBVEooz4ARsfpB10R6zwsDHXVrPTJquMrpKTyL01nnb9wY7iik=
-X-Google-Smtp-Source: AGHT+IGxziKJpCJ3mF7dRPKIDKXl3jdK0ixQw2TmnjOWrBNN31EoWUD8HkNBvokPEvqccdQBDsGsUQ==
-X-Received: by 2002:a05:6830:620f:b0:70b:2aaa:4bd4 with SMTP id 46e09a7af769-70b747318cdmr2155508a34.19.1723211646327;
-        Fri, 09 Aug 2024 06:54:06 -0700 (PDT)
-Received: from blmsp.fritz.box ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a2728bsm4158640173.103.2024.08.09.06.54.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 06:54:05 -0700 (PDT)
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Nishanth Menon <nm@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Vibhore Vardhan <vibhore@ti.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Dhruva Gole <d-gole@ti.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Markus Schneider-Pargmann <msp@baylibre.com>
-Subject: [PATCH v9 4/4] firmware: ti_sci: add CPU latency constraint management
-Date: Fri,  9 Aug 2024 15:53:47 +0200
-Message-ID: <20240809135347.2112634-5-msp@baylibre.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240809135347.2112634-1-msp@baylibre.com>
-References: <20240809135347.2112634-1-msp@baylibre.com>
+	s=arc-20240116; t=1723211668; c=relaxed/simple;
+	bh=GQAmDMevSFWVakuf2z9ooWzz8BNB5oGbvOF1VJq1nYM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i8Pfw6CDVAlYb9tfs1OQ3dKV0YiWgobARbH7pTNrDN3kSxgUk4wZuVYCd6MMuZUq3KkNwle/QX5/rVyqniTH9MRsbfDYRzsWgkqLhrUq/vg0jABWbAuF0byWWvB5ozNbIhOfh2TPSQacvvVHe8p+3uBlbawpuOiyjMESxG/Kwy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E9Dmo0fw; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723211666; x=1754747666;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GQAmDMevSFWVakuf2z9ooWzz8BNB5oGbvOF1VJq1nYM=;
+  b=E9Dmo0fwme0Qeiku0wl2KeKkswmLGW3Q1cNnDmuRym7+dnNPdsBL41A1
+   hab39pkLa5G379w4R4Ud8epwAPwIUpUt1b09EM477iRHSci8CIMdIgcyw
+   l9LIiKou9rkaieNWzkk/7x6g+eCDbHJdAEmVzdYQ2B4EQcr5X9zK1lB6A
+   RoISstzPdpDz8Edenw5W/1mH8ooJ3/IojTX8DdLzaMfehJrrqUt+yzjO0
+   7rySkdEWiupdDrA1zRX9MzRpePVlmIOx2sClJ5wK5jqf55qL/cggImFjS
+   uAgiY39rVQlvILQEO+5SrxcvTQS7d7qjYnSXBEhdnq7p518qpJkIFUNLx
+   A==;
+X-CSE-ConnectionGUID: PtA0NDNaQbqdRS2Ajk+mbw==
+X-CSE-MsgGUID: JWEp38xHSZ+cvynOoPetfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="38890981"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="38890981"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 06:54:23 -0700
+X-CSE-ConnectionGUID: AHPjV8aYSXStf+dyrMH8Yw==
+X-CSE-MsgGUID: DPrllZEEShK4RsT0b3I0oA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="57787447"
+Received: from unknown (HELO [10.237.72.57]) ([10.237.72.57])
+  by orviesa006.jf.intel.com with ESMTP; 09 Aug 2024 06:54:20 -0700
+Message-ID: <e94efd42-bc3f-4003-8ad8-2da6500f0f13@linux.intel.com>
+Date: Fri, 9 Aug 2024 16:54:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v3 1/6] i3c: mipi-i3c-hci: Add MIPI0100 ACPI ID to
+ the I3C Support List
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
+ Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
+ <20240807052359.290046-2-Shyam-sundar.S-k@amd.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20240807052359.290046-2-Shyam-sundar.S-k@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Kevin Hilman <khilman@baylibre.com>
+Hi
 
-During system-wide suspend, check if any of the CPUs have PM QoS
-resume latency constraints set.  If so, set TI SCI constraint.
+I Cc'ed Andy and Rafael because of ACPI ID allocation question that came 
+to my mind below which I'm not expert enough to answer.
 
-TI SCI has a single system-wide latency constraint, so use the max of
-any of the CPU latencies as the system-wide value.
+On 8/7/24 8:23 AM, Shyam Sundar S K wrote:
+> The current driver code lacks the necessary plumbing for ACPI IDs,
+> preventing the mipi-i3c-hci driver from being loaded on x86
+> platforms that advertise I3C ACPI support.
+> 
+> This update adds the MIPI0100 ACPI ID to the list of supported IDs.
+> 
+> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> ---
+>   drivers/i3c/master/mipi-i3c-hci/core.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
+> index 4e7d6a43ee9b..24dd4603d6c6 100644
+> --- a/drivers/i3c/master/mipi-i3c-hci/core.c
+> +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
+> @@ -834,12 +834,19 @@ static const __maybe_unused struct of_device_id i3c_hci_of_match[] = {
+>   };
+>   MODULE_DEVICE_TABLE(of, i3c_hci_of_match);
+>   
+> +static const struct acpi_device_id i3c_hci_acpi_match[] = {
+> +	{"MIPI0100"},
+> +	{}
+> +};
 
-Note: DM firmware clears all constraints at resume time, so
-constraints need to be checked/updated/sent at each system suspend.
+I started thinking that because of quirks would AMD need to allocate an 
+own ACPI ID for each of your HW version and not use generic MIPI ID?
 
-Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
-Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
-Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
----
- drivers/firmware/ti_sci.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+Then passing AMD specific quirks would be easy via driver_data here.
 
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index 5cbeca5df313..481b7649fde1 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -9,6 +9,7 @@
- #define pr_fmt(fmt) "%s: " fmt, __func__
- 
- #include <linux/bitmap.h>
-+#include <linux/cpu.h>
- #include <linux/debugfs.h>
- #include <linux/export.h>
- #include <linux/io.h>
-@@ -19,6 +20,7 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_qos.h>
- #include <linux/property.h>
- #include <linux/semaphore.h>
- #include <linux/slab.h>
-@@ -3639,7 +3641,25 @@ static int ti_sci_prepare_system_suspend(struct ti_sci_info *info)
- static int ti_sci_suspend(struct device *dev)
- {
- 	struct ti_sci_info *info = dev_get_drvdata(dev);
--	int ret;
-+	struct device *cpu_dev;
-+	s32 val, cpu_lat = 0;
-+	int i, ret;
-+
-+	if (info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED) {
-+		for_each_possible_cpu(i) {
-+			cpu_dev = get_cpu_device(i);
-+			val = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_RESUME_LATENCY);
-+			if (val != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT)
-+				cpu_lat = max(cpu_lat, val);
-+		}
-+		if (cpu_lat && cpu_lat != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT) {
-+			dev_dbg(cpu_dev, "%s: sending max CPU latency=%u\n", __func__, cpu_lat);
-+			ret = ti_sci_cmd_set_latency_constraint(&info->handle,
-+								cpu_lat, TISCI_MSG_CONSTRAINT_SET);
-+			if (ret)
-+				return ret;
-+		}
-+	}
- 
- 	ret = ti_sci_prepare_system_suspend(info);
- 	if (ret)
--- 
-2.45.2
 
 
