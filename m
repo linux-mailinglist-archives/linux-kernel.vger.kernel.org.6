@@ -1,206 +1,258 @@
-Return-Path: <linux-kernel+bounces-281071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8396D94D2B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A42D94D2AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7F7282AF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:54:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017222821BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA29198833;
-	Fri,  9 Aug 2024 14:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64C3197A8B;
+	Fri,  9 Aug 2024 14:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ZIpqrbZo"
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KuubxAu6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F61F197A96
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8E3195F0D
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723215239; cv=none; b=LDqxh+3HeDahdzsIa42BkrvhQ1Fo47iYklOuymN4cMZsu67HcvCrVByqkJkM4P+RCPh10Cw37JkjU0owZfKhXo8eWOpHX34ej98S7GNVWAZ5jYcnTGDl+067UzOodGMMEnY/MscXvajBviZO0bTMH8x1s9Fc6jpdolobM1hukDI=
+	t=1723215233; cv=none; b=RcTn5vL1Vlw6gC5kgwPf0m1tB1iTlez6+fztbQr7Yw16qGYmMJlfnRH9Hh5LzeeeZgMDNAWD8pdcK1l25mTtYriDdsaz8/xqmm/WMteOK9cUh558Dr1rGB3RxUoITJwomiCP8GdvXvCl5R5rWJSYth10wZRJ2oDzkch4YAB4o2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723215239; c=relaxed/simple;
-	bh=zCfyFMMs6JDyXlKiwJJVRwVbrxEpXMpBTusDmiA49dY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Z861HoNRlfUGKDpND3GKc/X4VDhUYC4BY+LYIwH+lMPadpl2pcMmqS/4z9X8iCGhUwDxUDlWrkMjpuT6ZVbeeYWSFx0M/cRVw7ffN33ZZjHfQKW1VKsv0wi3FrFz4GyJjGvgicDUhvXA/IUWLT5pGjJ/I6g4eq9EjmCFL14DJx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ZIpqrbZo; arc=none smtp.client-ip=203.205.221.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723215233; bh=zgl3qk9KQa1/i7bu8KrOi+ywWNvE+L0korxbls4p3yo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ZIpqrbZoDTqMJ1+npm1FHDjnnUweS3FTQbuk5NHKURX+t4hjxI3ip3gzPP5ndhhMG
-	 zxT8GDSsfuAw+wLfYZV1t1eSe3qH7VEhW4NxB7CQ7ggh/H5/XbuwwbfDKOoMl0XzXI
-	 vBoYHdGhaSxi652l9+c2cDwka+g0a3mN/DBAjIRA=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id D25AC0D5; Fri, 09 Aug 2024 22:52:37 +0800
-X-QQ-mid: xmsmtpt1723215157tn0aj36o6
-Message-ID: <tencent_156C4BC27437768B67523DE3362496023609@qq.com>
-X-QQ-XMAILINFO: MR/iVh5QLeieHkho6IlFVeYcNXyoLOxFIrielE3TvcH0bb1bkiYTWDO6e4YYvA
-	 aVZYuj3/ZpR2cyWtkKVCHnHODPSqea8SBdNTi3WXk76KelXCS+KJR8jvhtYa/ZmuCAMk0gFBqjmI
-	 KLS5+bC9ixSVpXSDuKqExNNZAhxD5ZJOZrbFcTzWPu1VKRNsSJEplmInTexfukCcG70dU7Te3f9x
-	 btWokNVF7K5CRzd/BfiPqGQT0UQlbEzf+SBjE95XVfqjD1JGWZ21HKHEeeznYinIcwp7MVtfvu/C
-	 qx2/jTwPBxZVCUm2r55r+31B45uAgkYDsOAhGZZE53968ZRLrfLedZB6nsm0lg29k58bgs5Y1wnN
-	 lWhWGBuHtegAmJWWENrXZB+Kw7C/Fsuej4En+XY3ycxsDtuvTbdbWVUuqDP81Oa5ECAFM4lkpHcS
-	 upPwqsWdmYGyxcurzKg6UBMPpRWMNZDEJuhE6PWke5gZbdK6JDsgTA13xRFzAbhkXLPUCMErsMox
-	 Btlh3ERUWlEWck5zgdrlDHRRD9yKMAsR8bQIg+yVx/Ylq79il8SWLWo/vKaRivR1iBjWFg4pFHCg
-	 Ntl/G7yIVbFb8ra/pbTvBBzWq33CkdNbfplkjDJNMeIZM7OsTUFBQwhVe7/Qij1RKdwh2wgQsBIi
-	 hZ1g9NYGxo9LmD0AkNWD44NvMmGCOPfdq5K9BMAKCqQDessG2rzN8YQbZiD6zRbVOwxdgx488pTc
-	 11e7qUfQ6d5ilMVCXJJ1KVLf1/8a6Ph9ep/SH+pXxZuJxD7ZoAtZ0fuhyx2ufcz4FUN9FtR+7Jbt
-	 lKPBhfPFpR0wFiZmBxBg/6/PtzezQVR9tCA56N1JKNPFjhr9qhGUTPaGPYsq7ALOogb0kRWkEygS
-	 EtRgHNhCrrpT9A3Qsypj21ssQhV54iDh7quz8aID7X7sipPSqy3CqiFoIRbZWDH2ptB6Ot30kekn
-	 fEjQLQCGez21MZabOlfZh0doUnpOLUbvM9hvmojf8=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-Date: Fri,  9 Aug 2024 22:52:38 +0800
-X-OQ-MSGID: <20240809145237.1800974-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
-References: <0000000000007ec511061f00a7b2@google.com>
+	s=arc-20240116; t=1723215233; c=relaxed/simple;
+	bh=GSzMuwNbO0R/haLtymCCrn2VcacmkVi1sA+7fw+Ikp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cTUVOfeXi2F1oQoYslSS31eq7/YC7WiR+7JW7ey1nXaylj5CFEVXIF1xf3MlsDpfu8AqnSxApilhXczWLFthgBajP3JE30x3Ur9u4VX+bcCkaGT52Ps6k+rPX9UvuyF1H/MasW4Rllpm8CIVOYpF+VopyMvYgyM79XXYBiyefKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KuubxAu6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723215231;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S3hmYgUok+ozXUThpLpe+47uXAQDhVMRnl+vdYpiArY=;
+	b=KuubxAu681pql0ystz0RJniV5GQSPS0lgx+jZxpM5kufxC7A9bP6DTc8HDX3V5Hr+pw9tb
+	5VggQDpQ3xjYeWHZMP4uZjVkXrRJWR86hkSQIHmtwI3dAaWSBZ9DmLHWfcz3l/rSpSHFDj
+	wn6J5/FMj7cTCsWcfek32Y8jPpB1/as=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-112-tLJEm6q_PmKvEMMDC9bkdg-1; Fri,
+ 09 Aug 2024 10:53:47 -0400
+X-MC-Unique: tLJEm6q_PmKvEMMDC9bkdg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B25119560A2;
+	Fri,  9 Aug 2024 14:53:42 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.16])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0EEFF19560AA;
+	Fri,  9 Aug 2024 14:53:22 +0000 (UTC)
+Date: Fri, 9 Aug 2024 22:53:16 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Daniel Wagner <dwagner@suse.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Christoph Hellwig <hch@lst.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	John Garry <john.g.garry@oracle.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Kashyap Desai <kashyap.desai@broadcom.com>,
+	Sumit Saxena <sumit.saxena@broadcom.com>,
+	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
+	Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+	Nilesh Javali <njavali@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>,
+	Sridhar Balaraman <sbalaraman@parallelwireless.com>,
+	"brookxu.cn" <brookxu.cn@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, virtualization@lists.linux.dev,
+	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
+	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 15/15] blk-mq: use hk cpus only when isolcpus=io_queue
+ is enabled
+Message-ID: <ZrYtXDrdPjn48r6k@fedora>
+References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
+ <20240806-isolcpus-io-queues-v3-15-da0eecfeaf8b@suse.de>
+ <ZrI5TcaAU82avPZn@fedora>
+ <253ec223-98e1-4e7e-b138-0a83ea1a7b0e@flourine.local>
+ <ZrRXEUko5EwKJaaP@fedora>
+ <856091db-431f-48f5-9daa-38c292a6bbd2@flourine.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <856091db-431f-48f5-9daa-38c292a6bbd2@flourine.local>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-debug
+On Fri, Aug 09, 2024 at 09:22:11AM +0200, Daniel Wagner wrote:
+> On Thu, Aug 08, 2024 at 01:26:41PM GMT, Ming Lei wrote:
+> > Isolated CPUs are removed from queue mapping in this patchset, when someone
+> > submit IOs from the isolated CPU, what is the correct hctx used for handling
+> > these IOs?
+> 
+> No, every possible CPU gets a mapping. What this patch series does, is
+> to limit/aligns the number of hardware context to the number of
+> housekeeping CPUs. There is still a complete ctx-hctc mapping. So
 
-#syz test: upstream c0ecd6388360
+OK, then I guess patch 1~7 aren't supposed to belong to this series,
+cause you just want to reduce nr_hw_queues, meantime spread
+house-keeping CPUs first for avoiding queues with all isolated cpu mask.
 
-diff --git a/fs/9p/fid.c b/fs/9p/fid.c
-index de009a33e0e2..b5ccab74bb6f 100644
---- a/fs/9p/fid.c
-+++ b/fs/9p/fid.c
-@@ -13,6 +13,7 @@
- #include <linux/sched.h>
- #include <net/9p/9p.h>
- #include <net/9p/client.h>
-+#include <linux/file.h>
+> whenever an user thread on an isolated CPU is issuing an IO a
+> housekeeping CPU will also be involved (with the additional overhead,
+> which seems to be okay for these users).
+> 
+> Without hardware queue on the isolated CPUs ensures we really never get
+> any unexpected IO on those CPUs unless userspace does it own its own.
+> It's a safety net.
+> 
+> Just to illustrate it, the non isolcpus configuration (default) map
+> for an 8 CPU setup:
+> 
+> queue mapping for /dev/vda
+>         hctx0: default 0
+>         hctx1: default 1
+>         hctx2: default 2
+>         hctx3: default 3
+>         hctx4: default 4
+>         hctx5: default 5
+>         hctx6: default 6
+>         hctx7: default 7
+> 
+> and with isolcpus=io_queue,2-3,6-7
+> 
+> queue mapping for /dev/vda
+>         hctx0: default 0 2
+>         hctx1: default 1 3
+>         hctx2: default 4 6
+>         hctx3: default 5 7
+
+OK, Looks I missed the point in patch 15 in which you added isolated cpu
+into mapping manually, just wondering why not take the current two-stage
+policy to cover both house-keeping and isolated CPUs in group_cpus_evenly()?
+
+Such as spread house-keeping CPUs first, then isolated CPUs, just like
+what we did for present & non-present cpus.
+
+Then the whole patchset can be simplified a lot.
+
+> 
+> > From current implementation, it depends on implied zero filled
+> > tag_set->map[type].mq_map[isolated_cpu], so hctx 0 is used.
+> > 
+> > During CPU offline, in blk_mq_hctx_notify_offline(),
+> > blk_mq_hctx_has_online_cpu() returns true even though the last cpu in
+> > hctx 0 is offline because isolated cpus join hctx 0 unexpectedly, so IOs in
+> > hctx 0 won't be drained.
+> > 
+> > However managed irq core code still shutdowns the hw queue's irq because all
+> > CPUs in this hctx are offline now. Then IO hang is triggered, isn't
+> > it?
+> 
+> Thanks for the explanation. I was able to reproduce this scenario, that
+> is a hardware context with two CPUs which go offline. Initially, I used
+> fio for creating the workload but this never hit the hanger. Instead
+> some background workload from systemd-journald is pretty reliable to
+> trigger the hanger you describe.
+> 
+> Example:
+> 
+>   hctx2: default 4 6
+> 
+> CPU 0 stays online, CPU 1-5 are offline. CPU 6 is offlined:
+> 
+>   smpboot: CPU 5 is now offline
+>   blk_mq_hctx_has_online_cpu:3537 hctx3 offline
+>   blk_mq_hctx_has_online_cpu:3537 hctx2 offline
+> 
+> and there is no forward progress anymore, the cpuhotplug state machine
+> is blocked and an IO is hanging:
+> 
+>   # grep busy /sys/kernel/debug/block/*/hctx*/tags | grep -v busy=0
+>   /sys/kernel/debug/block/vda/hctx2/tags:busy=61
+> 
+> and blk_mq_hctx_notify_offline busy loops forever:
+> 
+>    task:cpuhp/6         state:D stack:0     pid:439   tgid:439   ppid:2      flags:0x00004000
+>    Call Trace:
+>     <TASK>
+>     __schedule+0x79d/0x15c0
+>     ? lockdep_hardirqs_on_prepare+0x152/0x210
+>     ? kvm_sched_clock_read+0xd/0x20
+>     ? local_clock_noinstr+0x28/0xb0
+>     ? local_clock+0x11/0x30
+>     ? lock_release+0x122/0x4a0
+>     schedule+0x3d/0xb0
+>     schedule_timeout+0x88/0xf0
+>     ? __pfx_process_timeout+0x10/0x10d
+>     msleep+0x28/0x40
+>     blk_mq_hctx_notify_offline+0x1b5/0x200
+>     ? cpuhp_thread_fun+0x41/0x1f0
+>     cpuhp_invoke_callback+0x27e/0x780
+>     ? __pfx_blk_mq_hctx_notify_offline+0x10/0x10
+>     ? cpuhp_thread_fun+0x42/0x1f0
+>     cpuhp_thread_fun+0x178/0x1f0
+>     smpboot_thread_fn+0x12e/0x1c0
+>     ? __pfx_smpboot_thread_fn+0x10/0x10
+>     kthread+0xe8/0x110
+>     ? __pfx_kthread+0x10/0x10
+>     ret_from_fork+0x33/0x40
+>     ? __pfx_kthread+0x10/0x10
+>     ret_from_fork_asm+0x1a/0x30
+>     </TASK>
+> 
+> I don't think this is a new problem this code introduces. This problem
+> exists for any hardware context which has more than one CPU. As far I
+> understand it, the problem is that there is no forward progress possible
+> for the IO itself (I assume the corresponding resources for the CPU
+
+When blk_mq_hctx_notify_offline() is running, the current CPU isn't
+offline yet, and the hctx is active, same with the managed irq, so it is fine
+to wait until all in-flight IOs originated from this hctx completed there.
+
+The reason is why these requests can't be completed? And the forward
+progress is provided by blk-mq. And these requests are very likely
+allocated & submitted from CPU6.
+
+Can you figure out what is effective mask for irq of hctx2?  It is
+supposed to be cpu6. And block debugfs for vda should provide helpful
+hint.
+
+> going offline have already been shutdown, thus no progress?) and
+> blk_mq_hctx_notifiy_offline isn't doing anything in this scenario.
+
+RH has internal cpu hotplug stress test, but not see such report so far.
+
+I will try to setup such kind of setting and see if it can be
+reproduced.
+
+> 
+> Couldn't we do something like:
+
+I usually won't thinking about any solution until root-cause is figured
+out, :-)
  
- #include "v9fs.h"
- #include "v9fs_vfs.h"
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index a97ceb105cd8..7768cc70439d 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -34,6 +34,7 @@ static void v9fs_begin_writeback(struct netfs_io_request *wreq)
- {
- 	struct p9_fid *fid;
- 
-+	printk("ino: %lx, %s\n", wreq->inode->i_ino, __func__);
- 	fid = v9fs_fid_find_inode(wreq->inode, true, INVALID_UID, true);
- 	if (!fid) {
- 		WARN_ONCE(1, "folio expected an open fid inode->i_ino=%lx\n",
-diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
-index e0d34e4e9076..0ce9ab0d9a9d 100644
---- a/fs/9p/vfs_dir.c
-+++ b/fs/9p/vfs_dir.c
-@@ -219,6 +219,15 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
- 			retval = filemap_fdatawrite(inode->i_mapping);
- 
- 		spin_lock(&inode->i_lock);
-+		printk("del, ino: %lx, ino sync: %d, %s\n", inode->i_ino, inode->i_state & I_SYNC, __func__);
-+		if (I_SYNC & inode->i_state) {
-+			spin_unlock(&inode->i_lock);
-+			if (wait_on_bit_timeout(&inode->i_state, I_SYNC,
-+						TASK_UNINTERRUPTIBLE, 5 * HZ))
-+				return -EBUSY;
-+			spin_lock(&inode->i_lock);
-+		}
-+
- 		hlist_del(&fid->ilist);
- 		spin_unlock(&inode->i_lock);
- 		put_err = p9_fid_put(fid);
-diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-index 348cc90bf9c5..002c3f7f0ba3 100644
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -22,6 +22,7 @@
- #include <linux/slab.h>
- #include <net/9p/9p.h>
- #include <net/9p/client.h>
-+#include <linux/security.h>
- 
- #include "v9fs.h"
- #include "v9fs_vfs.h"
-@@ -44,6 +45,12 @@ int v9fs_file_open(struct inode *inode, struct file *file)
- 	struct p9_fid *fid;
- 	int omode;
- 
-+	if ((file->f_flags & O_RDWR || file->f_flags & O_WRONLY) &&
-+	    security_file_permission(file, MAY_WRITE)) {
-+		pr_info("file: %p no permission, ino: %lx, %s\n", file, inode->i_ino, __func__);
-+		return -EPERM;
-+	}
-+
- 	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, file);
- 	v9ses = v9fs_inode2v9ses(inode);
- 	if (v9fs_proto_dotl(v9ses))
-@@ -397,6 +404,12 @@ v9fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct p9_fid *fid = file->private_data;
-+	struct inode *inode = file_inode(file);
-+
-+	if (security_file_permission(file, MAY_WRITE)) {
-+		pr_info("file: %p no permission, ino: %lx, %s\n", file, inode->i_ino,  __func__);
-+		return -EPERM;
-+	}
- 
- 	p9_debug(P9_DEBUG_VFS, "fid %d\n", fid->fid);
- 
-@@ -460,6 +473,11 @@ v9fs_file_mmap(struct file *filp, struct vm_area_struct *vma)
- 	struct inode *inode = file_inode(filp);
- 	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
- 
-+	if (security_file_permission(filp, MAY_WRITE)) {
-+		pr_info("file: %p no permission, ino: %lx, %s\n", filp, inode->i_ino, __func__);
-+		return -EPERM;
-+	}
-+
- 	p9_debug(P9_DEBUG_MMAP, "filp :%p\n", filp);
- 
- 	if (!(v9ses->cache & CACHE_WRITEBACK)) {
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index 9258d30cffe3..ce6f3c3d04a3 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -522,12 +522,17 @@ int netfs_writepages(struct address_space *mapping,
- 	trace_netfs_write(wreq, netfs_write_trace_writeback);
- 	netfs_stat(&netfs_n_wh_writepages);
- 
-+	printk("sync: %d, tb-sync: %d, ino: %lx, %s\n", wreq->inode->i_state & I_SYNC,
-+			test_bit(I_SYNC, &wreq->inode->i_state),
-+			wreq->inode->i_ino, __func__);
-+	wreq->inode->i_state |= I_SYNC;
- 	do {
- 		_debug("wbiter %lx %llx", folio->index, wreq->start + wreq->submitted);
- 
- 		/* It appears we don't have to handle cyclic writeback wrapping. */
- 		WARN_ON_ONCE(wreq && folio_pos(folio) < wreq->start + wreq->submitted);
- 
-+		printk("ino: %lx, folio: %p, %s\n", wreq->inode->i_ino, folio, __func__);
- 		if (netfs_folio_group(folio) != NETFS_FOLIO_COPY_TO_CACHE &&
- 		    unlikely(!test_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags))) {
- 			set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
-@@ -538,6 +543,7 @@ int netfs_writepages(struct address_space *mapping,
- 		if (error < 0)
- 			break;
- 	} while ((folio = writeback_iter(mapping, wbc, folio, &error)));
-+	wreq->inode->i_state &= ~I_SYNC;
- 
- 	for (int s = 0; s < NR_IO_STREAMS; s++)
- 		netfs_issue_write(wreq, &wreq->io_streams[s]);
+
+Thanks, 
+Ming
 
 
