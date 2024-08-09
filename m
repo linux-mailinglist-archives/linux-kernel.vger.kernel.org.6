@@ -1,384 +1,200 @@
-Return-Path: <linux-kernel+bounces-281459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2B594D71D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:18:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B58F94D721
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502661C2275B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:18:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D601F22331
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C56160865;
-	Fri,  9 Aug 2024 19:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBF815F301;
+	Fri,  9 Aug 2024 19:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U25OXcX1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qKqiZkD0"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2061.outbound.protection.outlook.com [40.107.96.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C88182B3;
-	Fri,  9 Aug 2024 19:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723231033; cv=none; b=HN3LIOW1jDPipxwyD8EwAiF0hNhlFgYK/4CxsWkYExDYIdjaM5R6jCAAtAmKdymfHIDc0rmJ3fJxiQ6AHkKZFlvYBJHw+G/otP8tQbi8Q4tRvJwTRvjrO9bdpUnHFfnokLHxcNCw38BA36+ONESgkGfg29GM1UjgZuh7ngWt4bw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723231033; c=relaxed/simple;
-	bh=XmL5ncs3p6X8rgr9i2cov2GYQnkuex67uQt9cHDKhfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JA48dSeSOZAVoH5WjJToa5L8mrWqI2zPyTd97Xvo3RNraDa83zVGfHY4yQsB4QUg/Shu84meBbLWg/+VtAlhY7dfV7maGR3VReVwrl3eSNDhWu9vIv3GjMWYShB1yRrQ3G57S58nikptJX8hK4xgwd8lUrXdV+OaBawjeP3Kz3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U25OXcX1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 952A4C32782;
-	Fri,  9 Aug 2024 19:17:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723231032;
-	bh=XmL5ncs3p6X8rgr9i2cov2GYQnkuex67uQt9cHDKhfs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=U25OXcX1QIHYgFDdyQWE//lrB98SXdM6pP2FUzHGA9r/Yey7/IMmScfO75IppX2rz
-	 /lcsYFavSgW+AWhLXEMmZ4tehDCIofU5PwR327R2VCFUFNszALI9UFhCaNG9oGfhvZ
-	 mZcJzOFsQqoBqQ25BD2V1FVjrCqCr6GZwfXIf95bWdfkRPb7ykUi8U7BJgCz/8jTg1
-	 UA9u0lzwdTQLCdKSLM2XGG7jBTecf9pK73lRYl2h/X29ghIxHBAh73l2e04GJJnAlh
-	 0R97nnNCgtK1hollwazKSpHoAqWclhx/L/OmUUnXB0s9UxigzT3h9X9sKAQamj+wRP
-	 1e5UIROKl6z/g==
-Date: Fri, 9 Aug 2024 13:17:09 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] wifi: iwlwifi: mvm: Use __counted_by() and avoid
- -Wfamnae warnings
-Message-ID: <ZrZrNfUZtUIqvbUI@cute>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE7223DE;
+	Fri,  9 Aug 2024 19:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723231132; cv=fail; b=bV1vglmTnBcs8TRVd++STsUMxPjsjV/lcTM0OH7xsiTpoI6O3y29ITlC3ChjF1o3+BVV2bFe5P8vMwpYfn8Z6vwB+/s41BTDNrbeDBbgfvuCHHqfvq3s2W2lkW2tFN3/8bomdVWF4N/Lx4AAZtZq3qFxh7ecbp8AhEG7sn3Cj6Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723231132; c=relaxed/simple;
+	bh=dmIuULJfqHzxLCwkThoc7wEifor3KBkrru0Duf6VSKQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WGMLYOY2yRL7Hq3O6foRwyW/Z1euWdLh8/qhUj3S+j3IRkjfWvCRP1zBP1Uz12mbkz+1TMvmdcWVIB6uATRwcXxOfO/oJQfD6tKEqhaBvSI9RAuxFtCMdeeRlsj5Dz8CS3Y4iQXv4vG53/ItHnW/dqvCrQGLtVUML9oaMw9UoAk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qKqiZkD0; arc=fail smtp.client-ip=40.107.96.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z4V4CbGhKK2Vq56ycYJ5WeOti4Kly2ME8mQB405Hx0TmSe/9n5g977hV3KC+lFI91FfZ0a1omhQz6osV/y2TJjtPYXBCKQchClWcFcFSqMZMHXqB/ICsRfIqLSJo58FjxN6GF2DFInjwYV355bIk9brVgyu/X33GD9arIY5MsZYErQ0qcyGs64qc4QFSvSOhq3efxAQZl8FB07TDQnd8bCq4f8u2fAGY7A5EK7cybrdplV6uwddF9K5HgQveIbvTFklv4ymZVju62o3qhcxB0uDZpDPBXmRUXMf+oH0nziIhYE5O0tcs4FquUoCnztRVwGbpfM2qL/SEBGW1SOHHiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ma8qwO2GL533vXzC+U+10OveH3OvTmjrNzXj2LmSZCc=;
+ b=o+vq87LFfjO9uw2om1SSG+wZ7XAU+axeSijdUGmhAQ5uZ3oU+d4jiYYO97YEU+NTsHGnkW3Nyid7e0wc3v6aFO5hROgQlxNLWfO6ZEG0vztJNmkZ5rao7QCbrG5zGiYbqs0ZACQ1O9lyD1ueIbb5PDA+DYD0R7jXHbt1cmDyyZHnyl4wG5pLOCcPErpKiqbZPNnSJgy/h4PgTf63qTamXmwwH7PCPigY49YnSJCckC9+t+ImKyafpiAqwBlq0JKf9JAMTXfvqUzXY/NxPPm2jGvNGix6M30E5WmPd5HclRjdVAK0qmt33UVTvXlPuuCfTaz80HFBcyXAsoi/NdgrIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ma8qwO2GL533vXzC+U+10OveH3OvTmjrNzXj2LmSZCc=;
+ b=qKqiZkD0aqi2XCuWO+h933/y9QpJCcHeZb9lAJVBvlqWn1jItTIMZTqMrKjTgFMDMt9Udh56II8QllXDHZm1FIE+xMMvwXasNlio90q6fhA/njCpS9hZKry7rDjc0eRD3aLBOqvcyk904wsEMJrs9QZCUwH17q6Yw+NAspFnuNXyrfLUuRGCr4rMlp2VspsRuVd/FsQGCnSHSD+ylBaNmOguGVf8NUaIlYfBfRkEBcNPaHuMd8Zucs4VLHrLfmXBUaSwLV+rJX2MZHZIsx0zqsttvzAPe4aOAvE+5RJfWK+TevY5ICW2o9o3QEB4kG/V2Uug3ZCYs1eXbU9wnV8U1A==
+Received: from CH0P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:ef::19)
+ by DS7PR12MB5838.namprd12.prod.outlook.com (2603:10b6:8:79::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Fri, 9 Aug
+ 2024 19:18:46 +0000
+Received: from DS2PEPF00003445.namprd04.prod.outlook.com
+ (2603:10b6:610:ef:cafe::b7) by CH0P220CA0001.outlook.office365.com
+ (2603:10b6:610:ef::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.27 via Frontend
+ Transport; Fri, 9 Aug 2024 19:18:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ DS2PEPF00003445.mail.protection.outlook.com (10.167.17.72) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.8 via Frontend Transport; Fri, 9 Aug 2024 19:18:46 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 9 Aug 2024
+ 12:18:44 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 9 Aug 2024 12:18:44 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 9 Aug 2024 12:18:43 -0700
+Date: Fri, 9 Aug 2024 12:18:42 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Robin Murphy <robin.murphy@arm.com>, "Tian, Kevin" <kevin.tian@intel.com>,
+	"joro@8bytes.org" <joro@8bytes.org>, "will@kernel.org" <will@kernel.org>,
+	"shuah@kernel.org" <shuah@kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] iommu/dma: Support MSIs through nested domains
+Message-ID: <ZrZrku/Av/y7ID0w@Asurada-Nvidia>
+References: <cover.1722644866.git.nicolinc@nvidia.com>
+ <b1b8ff9c716f22f524be0313ad12e5c6d10f5bd4.1722644866.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276E59FBD67B1119B3E2A858CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <6da4f216-594b-4c51-848c-86e281402820@arm.com>
+ <20240809184136.GL8378@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <20240809184136.GL8378@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003445:EE_|DS7PR12MB5838:EE_
+X-MS-Office365-Filtering-Correlation-Id: 72b4a966-b548-47ce-0da2-08dcb8a8171e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xbpaA1r+8WCrDl/hpjZ1b2sJs6gJOFarDoZ2mVbBecbdtpVb2BanCl/J7jhf?=
+ =?us-ascii?Q?Cp4F8ZqXNormyOyL2bMlFC1Ik7rNiCMfUbSLRe1GHD4A9GhyJUoH3tH98Yg1?=
+ =?us-ascii?Q?3+G1jnQ47XVH25wtWRbOnZjUiekVANXzqoAmc0086ltpRI5Q0aao+/P4bKt/?=
+ =?us-ascii?Q?c4HOmEFyXH5eo7HDzWaMKHzGTE6wFs0cEHRHuttc1cXAV1HyjfMhJQj7nU7w?=
+ =?us-ascii?Q?/GNpPIav5DbOYTcBT0jJWtY+fEhOwXUUL1Tt17qUjf4/oCSFq/iSiAFolAvD?=
+ =?us-ascii?Q?94TMlM/Gh7G1FjP1rM8Rtfqvffmp8B96vAu6uWWu7AXC/zlpZAbAKZ6Mz4jW?=
+ =?us-ascii?Q?wr+i16mNOKFi1jNEbVcz+6PpITw5WoMRdqyBDSnfnWSfHv7D6BoGdCrImdaj?=
+ =?us-ascii?Q?XwOnI8aDP/25z2Yy/VppuQc2YFO+8axur6+PhWmkYKbyksdfYA5ahH0QDL08?=
+ =?us-ascii?Q?Fmpr/C1TaGG4TSJXFFm33i+LotH6mRRk4LlFZF5a45PeEowW9B2iCq6Eagno?=
+ =?us-ascii?Q?iLH4V3yoE9RGUBBIouKVuErw3D99mKkECDOtDuLy+fodHnGIcFXRaeVK/+oU?=
+ =?us-ascii?Q?TTq0iZdIHQS4Tb6GNHXW9n7MDKlQiQC+vhld916ex2NCrrwZh5hmLYTS8/6A?=
+ =?us-ascii?Q?U1KMrkjUua1ouDmkruEcbCZKhS+n5Iv3ODleJZj8MOI3zURWE11Tg9i3sez8?=
+ =?us-ascii?Q?LZ4aS8LcM7p0+DLQZGJykQEHrj8MVZn0q79C/rTvt+0hF0MGas7ToZ4X4gFd?=
+ =?us-ascii?Q?RoiYzNYvgjqd6Z7h4msF9jFSVl3V01etGaF4nrTZMj4Ap8f/ZzGC4PKoMza6?=
+ =?us-ascii?Q?ou2nqPwBiQ+38wZutOrfYI9VzrSHqmq9J1pGhiKX/DvSZ2Y1/c8GzBDyeQD5?=
+ =?us-ascii?Q?yZ0VynGH3yuimsHIFljV+XftkoONXIoXi0FYconPI7uLzEFms/MCh9/GwymH?=
+ =?us-ascii?Q?UmvN1pSnaPTU0sm1JiSu3FQq1i3AjReWJhYwoM+abHLx1ItFmwWIWMqPTr62?=
+ =?us-ascii?Q?inq21PS9SL6R9gYxaiHxB2F6f7Y8A+NIZF6MtQC6foU9t8Ho/PDTVyGHCtus?=
+ =?us-ascii?Q?eBsdRWdVVBvahIWA4Ljnl6Ifjz+5Cr9Ht4Kx3WzWTNitRBhr3TjY4l1g2IYr?=
+ =?us-ascii?Q?Dm+DppaL3TRDx1qIwPikD7beWtWXwjREKnXVtkwLkS5ZfJWnxHizok/00Vg8?=
+ =?us-ascii?Q?37CjpMj2M2+2bwymVS8kWBuCuunqbZE6B3JfFu7rQuPood2cMzhHzqTzTaaL?=
+ =?us-ascii?Q?YJYp5ffqRZehujRM5ygAFlDB1zLTWuhKiReqs8zJWmx5bUR5cyI/FAexo+JU?=
+ =?us-ascii?Q?7z0v2TvUiKpa0tNZsajFP9DgRbYzT3xgdSyQvYETK4qaeoQCBeUvLGg59wTS?=
+ =?us-ascii?Q?iPCWzsNBLQAp8m+eDpjcqJ85hf0NOx/4i+PMo42GNANIviznQyG3jLBmagum?=
+ =?us-ascii?Q?N0CHRIKmVRrhA9UdUwBJ1XbPL8t58kxJ?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 19:18:46.0379
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72b4a966-b548-47ce-0da2-08dcb8a8171e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003445.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5838
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Fri, Aug 09, 2024 at 03:41:36PM -0300, Jason Gunthorpe wrote:
+> On Thu, Aug 08, 2024 at 01:38:44PM +0100, Robin Murphy wrote:
+> > On 06/08/2024 9:25 am, Tian, Kevin wrote:
+> > > > From: Nicolin Chen <nicolinc@nvidia.com>
+> > > > Sent: Saturday, August 3, 2024 8:32 AM
+> > > > 
+> > > > From: Robin Murphy <robin.murphy@arm.com>
+> > > > 
+> > > > Currently, iommu-dma is the only place outside of IOMMUFD and drivers
+> > > > which might need to be aware of the stage 2 domain encapsulated within
+> > > > a nested domain. This would be in the legacy-VFIO-style case where we're
+> > > 
+> > > why is it a legacy-VFIO-style? We only support nested in IOMMUFD.
+> > 
+> > Because with proper nesting we ideally shouldn't need the host-managed MSI
+> > mess at all, which all stems from the old VFIO paradigm of completely
+> > abstracting interrupts from userspace. I'm still hoping IOMMUFD can grow its
+> > own interface for efficient MSI passthrough, where the VMM can simply map
+> > the physical MSI doorbell into whatever IPA (GPA) it wants it to appear at
+> > in the S2 domain, then whatever the guest does with S1 it can program the
+> > MSI address into the endpoint accordingly without us having to fiddle with
+> > it.
+> 
+> +1
+> 
+> I don't have a staged plan to do this though. Getting the ITS page
+> into the S2 at a user specified address should be simple enough to
+> manage.
+> 
+> The bigger issue is that we still have the hypervisor GIC driver
+> controlling things and it will need to know to use the guest provided
+> MSI address captured during the MSI trap, not its own address. I don't
+> have an idea how to connect those two parts yet.
 
-So, use the `DEFINE_FLEX()` helper for multiple on-stack definitions
-of flexible structures where the size of their flexible-array members
-are known at compile-time, and refactor the rest of the code,
-accordingly.
+You mean the gPA of the vITS v.s. PA of the ITS, right? I think
+that's because only VMM knows the virtual IRQ number to insert?
+We don't seem to have a choice for that unless we want to poke
+a hole to the vGIC design..
 
-In order to allow for the use of `DEFINE_FLEX()`, a couple of
-structures were annotated with the `__counted_by()` attribute.
+With that, it feels a quite big improvement already by getting
+rid of the entire shadow MSI mapping, including msi_cookie and
+RMR..
 
-With these changes, fix the following warnings:
-drivers/net/wireless/intel/iwlwifi/mvm/d3.c:124:52: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2053:51: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2148:43: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2211:43: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- .../net/wireless/intel/iwlwifi/fw/api/sta.h   |   2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/d3.c   | 126 ++++++++----------
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c  |   2 +-
- include/net/mac80211.h                        |   2 +-
- 4 files changed, 61 insertions(+), 71 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/sta.h b/drivers/net/wireless/intel/iwlwifi/fw/api/sta.h
-index d7f8a276b683..fe6bd34fefa3 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/api/sta.h
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/api/sta.h
-@@ -479,7 +479,7 @@ struct iwl_mvm_wep_key_cmd {
- 	u8 decryption_type;
- 	u8 flags;
- 	u8 reserved;
--	struct iwl_mvm_wep_key wep_key[];
-+	struct iwl_mvm_wep_key wep_key[] __counted_by(num_keys);
- } __packed; /* SEC_CURR_WEP_KEY_CMD_API_S_VER_2 */
- 
- /**
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-index b4d650583ac2..b19579dd8de3 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-@@ -120,19 +120,15 @@ static void iwl_mvm_wowlan_program_keys(struct ieee80211_hw *hw,
- 	switch (key->cipher) {
- 	case WLAN_CIPHER_SUITE_WEP40:
- 	case WLAN_CIPHER_SUITE_WEP104: { /* hack it for now */
--		struct {
--			struct iwl_mvm_wep_key_cmd wep_key_cmd;
--			struct iwl_mvm_wep_key wep_key;
--		} __packed wkc = {
--			.wep_key_cmd.mac_id_n_color =
--				cpu_to_le32(FW_CMD_ID_AND_COLOR(mvmvif->id,
--								mvmvif->color)),
--			.wep_key_cmd.num_keys = 1,
--			/* firmware sets STA_KEY_FLG_WEP_13BYTES */
--			.wep_key_cmd.decryption_type = STA_KEY_FLG_WEP,
--			.wep_key.key_index = key->keyidx,
--			.wep_key.key_size = key->keylen,
--		};
-+		DEFINE_FLEX(struct iwl_mvm_wep_key_cmd, wkc, wep_key, num_keys, 1);
-+
-+		wkc->mac_id_n_color =
-+			cpu_to_le32(FW_CMD_ID_AND_COLOR(mvmvif->id,
-+							mvmvif->color));
-+		/* firmware sets STA_KEY_FLG_WEP_13BYTES */
-+		wkc->decryption_type = STA_KEY_FLG_WEP;
-+		wkc->wep_key[0].key_index = key->keyidx;
-+		wkc->wep_key[0].key_size = key->keylen;
- 
- 		/*
- 		 * This will fail -- the key functions don't set support
-@@ -142,18 +138,18 @@ static void iwl_mvm_wowlan_program_keys(struct ieee80211_hw *hw,
- 		if (key->flags & IEEE80211_KEY_FLAG_PAIRWISE)
- 			break;
- 
--		memcpy(&wkc.wep_key.key[3], key->key, key->keylen);
-+		memcpy(&wkc->wep_key[0].key[3], key->key, key->keylen);
- 		if (key->keyidx == mvmvif->tx_key_idx) {
- 			/* TX key must be at offset 0 */
--			wkc.wep_key.key_offset = 0;
-+			wkc->wep_key[0].key_offset = 0;
- 		} else {
- 			/* others start at 1 */
- 			data->wep_key_idx++;
--			wkc.wep_key.key_offset = data->wep_key_idx;
-+			wkc->wep_key[0].key_offset = data->wep_key_idx;
- 		}
- 
- 		mutex_lock(&mvm->mutex);
--		ret = iwl_mvm_send_cmd_pdu(mvm, WEP_KEY, 0, sizeof(wkc), &wkc);
-+		ret = iwl_mvm_send_cmd_pdu(mvm, WEP_KEY, 0, __struct_size(wkc), wkc);
- 		data->error = ret != 0;
- 
- 		mvm->ptk_ivlen = key->iv_len;
-@@ -2049,10 +2045,8 @@ static bool iwl_mvm_mlo_gtk_rekey(struct iwl_wowlan_status_data *status,
- 		struct iwl_wowlan_mlo_gtk *mlo_key = &status->mlo_keys[i];
- 		struct ieee80211_key_conf *key, *old_key;
- 		struct ieee80211_key_seq seq;
--		struct {
--			struct ieee80211_key_conf conf;
--			u8 key[32];
--		} conf = {};
-+		DEFINE_FLEX(struct ieee80211_key_conf, conf, key, keylen,
-+			    WOWLAN_KEY_MAX_SIZE);
- 		u16 flags = le16_to_cpu(mlo_key->flags);
- 		int j, link_id, key_id, key_type;
- 
-@@ -2069,40 +2063,40 @@ static bool iwl_mvm_mlo_gtk_rekey(struct iwl_wowlan_status_data *status,
- 			    key_type >= WOWLAN_MLO_GTK_KEY_NUM_TYPES))
- 			continue;
- 
--		conf.conf.cipher = old_keys->cipher[link_id][key_type];
-+		conf->cipher = old_keys->cipher[link_id][key_type];
- 		/* WARN_ON? */
--		if (!conf.conf.cipher)
-+		if (!conf->cipher)
- 			continue;
- 
--		conf.conf.keylen = 0;
--		switch (conf.conf.cipher) {
-+		conf->keylen = 0;
-+		switch (conf->cipher) {
- 		case WLAN_CIPHER_SUITE_CCMP:
- 		case WLAN_CIPHER_SUITE_GCMP:
--			conf.conf.keylen = WLAN_KEY_LEN_CCMP;
-+			conf->keylen = WLAN_KEY_LEN_CCMP;
- 			break;
- 		case WLAN_CIPHER_SUITE_GCMP_256:
--			conf.conf.keylen = WLAN_KEY_LEN_GCMP_256;
-+			conf->keylen = WLAN_KEY_LEN_GCMP_256;
- 			break;
- 		case WLAN_CIPHER_SUITE_BIP_GMAC_128:
--			conf.conf.keylen = WLAN_KEY_LEN_BIP_GMAC_128;
-+			conf->keylen = WLAN_KEY_LEN_BIP_GMAC_128;
- 			break;
- 		case WLAN_CIPHER_SUITE_BIP_GMAC_256:
--			conf.conf.keylen = WLAN_KEY_LEN_BIP_GMAC_256;
-+			conf->keylen = WLAN_KEY_LEN_BIP_GMAC_256;
- 			break;
- 		case WLAN_CIPHER_SUITE_AES_CMAC:
--			conf.conf.keylen = WLAN_KEY_LEN_AES_CMAC;
-+			conf->keylen = WLAN_KEY_LEN_AES_CMAC;
- 			break;
- 		case WLAN_CIPHER_SUITE_BIP_CMAC_256:
--			conf.conf.keylen = WLAN_KEY_LEN_BIP_CMAC_256;
-+			conf->keylen = WLAN_KEY_LEN_BIP_CMAC_256;
- 			break;
- 		}
- 
--		if (WARN_ON(!conf.conf.keylen ||
--			    conf.conf.keylen > sizeof(conf.key)))
-+		if (WARN_ON(!conf->keylen ||
-+			    conf->keylen > WOWLAN_KEY_MAX_SIZE))
- 			continue;
- 
--		memcpy(conf.conf.key, mlo_key->key, conf.conf.keylen);
--		conf.conf.keyidx = key_id;
-+		memcpy(conf->key, mlo_key->key, conf->keylen);
-+		conf->keyidx = key_id;
- 
- 		old_key = old_keys->key[link_id][key_id];
- 		if (old_key) {
-@@ -2114,7 +2108,7 @@ static bool iwl_mvm_mlo_gtk_rekey(struct iwl_wowlan_status_data *status,
- 
- 		IWL_DEBUG_WOWLAN(mvm, "Add MLO key id %d, link id %d\n",
- 				 key_id, link_id);
--		key = ieee80211_gtk_rekey_add(vif, &conf.conf, link_id);
-+		key = ieee80211_gtk_rekey_add(vif, conf, link_id);
- 		if (WARN_ON(IS_ERR(key))) {
- 			ret = false;
- 			goto out;
-@@ -2144,30 +2138,28 @@ static bool iwl_mvm_gtk_rekey(struct iwl_wowlan_status_data *status,
- {
- 	int i, j;
- 	struct ieee80211_key_conf *key;
--	struct {
--		struct ieee80211_key_conf conf;
--		u8 key[32];
--	} conf = {
--		.conf.cipher = gtk_cipher,
--	};
-+	DEFINE_FLEX(struct ieee80211_key_conf, conf, key, keylen,
-+		    WOWLAN_KEY_MAX_SIZE);
- 	int link_id = vif->active_links ? __ffs(vif->active_links) : -1;
- 
-+	conf->cipher = gtk_cipher;
-+
- 	BUILD_BUG_ON(WLAN_KEY_LEN_CCMP != WLAN_KEY_LEN_GCMP);
--	BUILD_BUG_ON(sizeof(conf.key) < WLAN_KEY_LEN_CCMP);
--	BUILD_BUG_ON(sizeof(conf.key) < WLAN_KEY_LEN_GCMP_256);
--	BUILD_BUG_ON(sizeof(conf.key) < WLAN_KEY_LEN_TKIP);
--	BUILD_BUG_ON(sizeof(conf.key) < sizeof(status->gtk[0].key));
-+	BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
-+	BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
-+	BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_TKIP);
-+	BUILD_BUG_ON(conf->keylen < sizeof(status->gtk[0].key));
- 
- 	switch (gtk_cipher) {
- 	case WLAN_CIPHER_SUITE_CCMP:
- 	case WLAN_CIPHER_SUITE_GCMP:
--		conf.conf.keylen = WLAN_KEY_LEN_CCMP;
-+		conf->keylen = WLAN_KEY_LEN_CCMP;
- 		break;
- 	case WLAN_CIPHER_SUITE_GCMP_256:
--		conf.conf.keylen = WLAN_KEY_LEN_GCMP_256;
-+		conf->keylen = WLAN_KEY_LEN_GCMP_256;
- 		break;
- 	case WLAN_CIPHER_SUITE_TKIP:
--		conf.conf.keylen = WLAN_KEY_LEN_TKIP;
-+		conf->keylen = WLAN_KEY_LEN_TKIP;
- 		break;
- 	default:
- 		WARN_ON(1);
-@@ -2177,14 +2169,14 @@ static bool iwl_mvm_gtk_rekey(struct iwl_wowlan_status_data *status,
- 		if (!status->gtk[i].len)
- 			continue;
- 
--		conf.conf.keyidx = status->gtk[i].id;
-+		conf->keyidx = status->gtk[i].id;
- 		IWL_DEBUG_WOWLAN(mvm,
- 				 "Received from FW GTK cipher %d, key index %d\n",
--				 conf.conf.cipher, conf.conf.keyidx);
--		memcpy(conf.conf.key, status->gtk[i].key,
-+				 conf->cipher, conf->keyidx);
-+		memcpy(conf->key, status->gtk[i].key,
- 		       sizeof(status->gtk[i].key));
- 
--		key = ieee80211_gtk_rekey_add(vif, &conf.conf, link_id);
-+		key = ieee80211_gtk_rekey_add(vif, conf, link_id);
- 		if (IS_ERR(key))
- 			return false;
- 
-@@ -2207,41 +2199,39 @@ iwl_mvm_d3_igtk_bigtk_rekey_add(struct iwl_wowlan_status_data *status,
- 				struct iwl_multicast_key_data *key_data)
- {
- 	struct ieee80211_key_conf *key_config;
--	struct {
--		struct ieee80211_key_conf conf;
--		u8 key[WOWLAN_KEY_MAX_SIZE];
--	} conf = {
--		.conf.cipher = cipher,
--		.conf.keyidx = key_data->id,
--	};
-+	DEFINE_FLEX(struct ieee80211_key_conf, conf, key, keylen,
-+		    WOWLAN_KEY_MAX_SIZE);
- 	struct ieee80211_key_seq seq;
- 	int link_id = vif->active_links ? __ffs(vif->active_links) : -1;
- 
-+	conf->cipher = cipher;
-+	conf->keyidx = key_data->id;
-+
- 	if (!key_data->len)
- 		return true;
- 
--	iwl_mvm_d3_set_igtk_bigtk_ipn(key_data, &seq, conf.conf.cipher);
-+	iwl_mvm_d3_set_igtk_bigtk_ipn(key_data, &seq, conf->cipher);
- 
- 	switch (cipher) {
- 	case WLAN_CIPHER_SUITE_BIP_GMAC_128:
--		conf.conf.keylen = WLAN_KEY_LEN_BIP_GMAC_128;
-+		conf->keylen = WLAN_KEY_LEN_BIP_GMAC_128;
- 		break;
- 	case WLAN_CIPHER_SUITE_BIP_GMAC_256:
--		conf.conf.keylen = WLAN_KEY_LEN_BIP_GMAC_256;
-+		conf->keylen = WLAN_KEY_LEN_BIP_GMAC_256;
- 		break;
- 	case WLAN_CIPHER_SUITE_AES_CMAC:
--		conf.conf.keylen = WLAN_KEY_LEN_AES_CMAC;
-+		conf->keylen = WLAN_KEY_LEN_AES_CMAC;
- 		break;
- 	case WLAN_CIPHER_SUITE_BIP_CMAC_256:
--		conf.conf.keylen = WLAN_KEY_LEN_BIP_CMAC_256;
-+		conf->keylen = WLAN_KEY_LEN_BIP_CMAC_256;
- 		break;
- 	default:
- 		WARN_ON(1);
- 	}
--	BUILD_BUG_ON(sizeof(conf.key) < sizeof(key_data->key));
--	memcpy(conf.conf.key, key_data->key, conf.conf.keylen);
-+	BUILD_BUG_ON(WOWLAN_KEY_MAX_SIZE < sizeof(key_data->key));
-+	memcpy(conf->key, key_data->key, conf->keylen);
- 
--	key_config = ieee80211_gtk_rekey_add(vif, &conf.conf, link_id);
-+	key_config = ieee80211_gtk_rekey_add(vif, conf, link_id);
- 	if (IS_ERR(key_config))
- 		return false;
- 	ieee80211_set_key_rx_seq(key_config, 0, &seq);
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-index 15e64d94d6ea..7e550d880584 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-@@ -4350,8 +4350,8 @@ int iwl_mvm_add_pasn_sta(struct iwl_mvm *mvm, struct ieee80211_vif *vif,
- 		goto out;
- 
- 	keyconf->cipher = cipher;
--	memcpy(keyconf->key, key, key_len);
- 	keyconf->keylen = key_len;
-+	memcpy(keyconf->key, key, keyconf->key_len);
- 	keyconf->flags = IEEE80211_KEY_FLAG_PAIRWISE;
- 
- 	if (mld) {
-diff --git a/include/net/mac80211.h b/include/net/mac80211.h
-index 0a04eaf5343c..d3f6056daf8a 100644
---- a/include/net/mac80211.h
-+++ b/include/net/mac80211.h
-@@ -2222,7 +2222,7 @@ struct ieee80211_key_conf {
- 	u16 flags;
- 	s8 link_id;
- 	u8 keylen;
--	u8 key[];
-+	u8 key[] __counted_by(keylen);
- };
- 
- #define IEEE80211_MAX_PN_LEN	16
--- 
-2.34.1
-
+Thanks
+Nicolin
 
