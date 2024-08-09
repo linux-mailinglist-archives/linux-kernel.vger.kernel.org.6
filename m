@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-281443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0EE94D701
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:11:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFBAD94D6FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B2EB225D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:11:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D56441C22439
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32B816A92B;
-	Fri,  9 Aug 2024 19:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586A615F40D;
+	Fri,  9 Aug 2024 19:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="3wXsC+yv"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IT/3DQFG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34FC13AA38;
-	Fri,  9 Aug 2024 19:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFAF14D29B;
+	Fri,  9 Aug 2024 19:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723230396; cv=none; b=smwZa0Hbmsbg9QR1jJZBrxPafMRx2zq9yTHKGGNCu3zG+K9FHDqHyUz81fow9yQgLDaiU08FcRxmo0tPLbb/x/PM2+HFto+A4JwgQTZYvOqoU/XJvUKW74nzL2C5LcoCf6IJnvQrps42y+bwqCtpxb7gvSJ0OxfViMqoyJ8bXEA=
+	t=1723230381; cv=none; b=V6uJrWneSjFOrqmM+7srCTWiD4VR/4edzUbyE5poGy9oyjUgxWD6g66i1MYlDzAJd+ZMo4xuqCCParEF3n4AL/LZx3FVm59DPN0guPwIoHTso3r2KbPL3LcRA6K8Nqz2rrNXmtPlCm+KxnQ/mg3NbTsFRmoqi5e5ShQC0a1LSdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723230396; c=relaxed/simple;
-	bh=GDeSvflfgNP53Bnn6NwxyLup2T5xICejTY4xxMRsW7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aElxyq5AHAPT8Y1/pX9fIjkpy9FbVFeTNfS9Z++XWwec+x4yceTJc9gqpmw6AP901aCCqzo/OdiwVZxK/qMt4iaIsSbPubiUJmf2ThSZFfdo1skW2O8yVaEBFJTsHc9AivBH/cRIpWsuxwnr+y/3mNbJzvIDQDH/nN4v57Q53CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=3wXsC+yv; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WgYKw2KlczlgTGW;
-	Fri,  9 Aug 2024 19:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1723230383; x=1725822384; bh=DW9duP/WSzGKgw6N8JbyhvDM
-	ENJtltoq9LzdIzH07QI=; b=3wXsC+yvI86+JvuSDvFMn01MUZMGzMz2kM9Uk5Eh
-	RCKjdsUJIDoh75MzaP+PnO72nSGuFBR/O2RaYlKMy9ZFQmPqH+GDQliUKFyLSCCq
-	7xK11ehoXOSd4+d1T/hUaBGrAMYbbem0X55iR40Gd5MIryd6ux678DoaWO0PCd6D
-	848CscKTSWYB+QINptqqSnN8T7mph67+mQRJu+Y4ww0FppF9IX3CgiMgZouLlmZe
-	pVa13dekFI6+puujw35+mayzi01rk7V4pwQoOHhO+5CGevKkxOBNG5UUyVQYNtE8
-	x4k7rjwOYh9/Zc7ff2AwnXPd3GB0aSYmcS9DkasBob2uXw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id aW_A8ey1jKET; Fri,  9 Aug 2024 19:06:23 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WgYKl5vvLzlgVnF;
-	Fri,  9 Aug 2024 19:06:19 +0000 (UTC)
-Message-ID: <203bf2c3-e55d-4b1e-9ef1-a7d73401ce52@acm.org>
-Date: Fri, 9 Aug 2024 12:06:18 -0700
+	s=arc-20240116; t=1723230381; c=relaxed/simple;
+	bh=u34Xd5rz4JWanX5zVdA6gtjHYqcgdi9xC5E30BaCsAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=UAOPEqtn3YHmPO6pGLmjcwBrOURjGzqwJ03q36GVfVCWDG8Hu4xH6tq1olLcB6w4hb++bZhVGMUPDc4dtBLxTENh8YSwmfq+S/Hg1iHaGUnH6r7vokNC4sdYiBVom/7s+GjIE2aM19O880trbZ+IJWblKhAEcf6JY3LRtIls1y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IT/3DQFG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A92C32782;
+	Fri,  9 Aug 2024 19:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723230381;
+	bh=u34Xd5rz4JWanX5zVdA6gtjHYqcgdi9xC5E30BaCsAY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=IT/3DQFGDQ8SVxZaUY9e6nFJ2+iyjayjEKDu0s+jObgn5SICq7pFm6MLMrPQjhf/D
+	 UZAautMAmpXEcEvWn95POQrgsQjROAmHBaGhP0PDVTkXsZTa0arr98g7nzHHh12ZaR
+	 E8naemEdZqiYSdrndo1jeMEAJvoeMHfZLhatP9THP1awIZDvJBZua018u9d1WGOYA3
+	 Om8m54pRk8d4Nd0RImnWrNKtrAz9I0nNCnF4WX9xJ9GsTZMfEn3vaHAw1hXfq0wNMK
+	 JPPn2fXLlXjbLBDjqRSUXinnAGF+FXRr3j0e68S4ICJdFY9+NvRywjIxp4ImGffGiu
+	 7+ebQXNRKQOAg==
+Date: Fri, 9 Aug 2024 14:06:19 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Will Deacon <will@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:PCI DRIVER FOR GENERIC OF HOSTS" <linux-pci@vger.kernel.org>,
+	"moderated list:PCI DRIVER FOR GENERIC OF HOSTS" <linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: PCI: host-generic-pci: Drop minItems
+ and maxItems of ranges
+Message-ID: <20240809190619.GA206533@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] scsi: ufs: rockchip: init support for UFS
-To: Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Heiko Stuebner <heiko@sntech.de>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, YiFeng Zhao <zyf@rock-chips.com>,
- Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <1723089163-28983-1-git-send-email-shawn.lin@rock-chips.com>
- <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704164019.611454-1-Frank.Li@nxp.com>
 
-On 8/7/24 8:52 PM, Shawn Lin wrote:
-> RK3576 contains a UFS controller, add init support fot it.
-					^^^^	     ^^^
-                                         initial      for
+On Thu, Jul 04, 2024 at 12:40:19PM -0400, Frank Li wrote:
+> The ranges description states that "at least one non-prefetchable memory
+> and one or both of prefetchable memory and IO space may also be provided."
+> 
+> However, it should not limit the maximum number of ranges to 3.
+> 
+> Freescale LS1028 and iMX95 use more than 3 ranges because the space splits
+> some discontinuous prefetchable and non-prefetchable segments.
+> 
+> Drop minItems and maxItems. The number of entries will be limited to 32
+> in pci-bus-common.yaml in dtschema, which should be sufficient.
+> 
+> Fix the below CHECK_DTBS warning.
+> arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dtb: pcie@1f0000000: ranges: [[2181038080, 1, 4160749568, 1, 4160749568, 0, 1441792], [3254779904, 1, 4162191360, 1, 4162191360, 0, 458752], [2181038080, 1, 4162650112, 1, 4162650112, 0, 131072], [3254779904, 1, 4162781184, 1, 4162781184, 0, 131072], [2181038080, 1, 4162912256, 1, 4162912256, 0, 131072], [3254779904, 1, 4163043328, 1, 4163043328, 0, 131072], [2181038080, 1, 4227858432, 1, 4227858432, 0, 4194304]] is too long
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Again a very short patch description. What is "RK3576"? Please explain.
+Applied with Rob's Reviewed-by to pci/dt-bindings for v6.12, thanks!
 
-> +config SCSI_UFS_ROCKCHIP
-> +	tristate "Rockchip specific hooks to UFS controller platform driver"
-
-A better description would be: "Rockchip UFS host controller driver"
-
-> +#include "ufshcd-dwc.h"
-
-No, you should not include the ufshcd-dwc.h header file. That is a 
-header file for the Designware UFS host controller.
-
-> +	reset_control_assert(host->rst);
-> +	udelay(1);
-> +	reset_control_deassert(host->rst);
-
-Why udelay() instead of usleep_range()?
-
-> +static int ufs_rockchip_device_reset(struct ufs_hba *hba)
-> +{
-> +	struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-> +
-> +	if (!host->rst_gpio)
-> +		return -EOPNOTSUPP;
-> +
-> +	gpiod_set_value_cansleep(host->rst_gpio, 0);
-> +	udelay(20);
-> +
-> +	gpiod_set_value_cansleep(host->rst_gpio, 1);
-> +	udelay(20);
-> +
-> +	return 0;
-> +}
-
-Same question here: why udelay() instead of usleep_range()?
-
-Thanks,
-
-Bart.
+> ---
+> Change from v1 to v2
+> - Rework commit message
+> - drop minItems and maxItems according to Rob's comments.
+> ---
+>  Documentation/devicetree/bindings/pci/host-generic-pci.yaml | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/host-generic-pci.yaml b/Documentation/devicetree/bindings/pci/host-generic-pci.yaml
+> index 3484e0b4b412e..3be1fff411f8d 100644
+> --- a/Documentation/devicetree/bindings/pci/host-generic-pci.yaml
+> +++ b/Documentation/devicetree/bindings/pci/host-generic-pci.yaml
+> @@ -102,8 +102,6 @@ properties:
+>        As described in IEEE Std 1275-1994, but must provide at least a
+>        definition of non-prefetchable memory. One or both of prefetchable Memory
+>        and IO Space may also be provided.
+> -    minItems: 1
+> -    maxItems: 3
+>  
+>    dma-coherent: true
+>    iommu-map: true
+> -- 
+> 2.34.1
+> 
 
