@@ -1,260 +1,151 @@
-Return-Path: <linux-kernel+bounces-280310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276AD94C872
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:23:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FAD294C87E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E1BE1F2313D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:23:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90081280CD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A15E17557;
-	Fri,  9 Aug 2024 02:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8665917BC9;
+	Fri,  9 Aug 2024 02:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fhFF6jfh"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKaWvUP+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AF311CA0;
-	Fri,  9 Aug 2024 02:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBCC11CA0;
+	Fri,  9 Aug 2024 02:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723170210; cv=none; b=kJ6tWdPJTEQDpgVuypChjw5zc/YkddSb5V1rsSNstHwHuyXHAhkH1PeI0BcWqK+aXk4Or269vilzubwWlJwHMkNff1b4usQm7n1Q/OS+jLxgwea0yxm6gGqrsrxcKpYsdjZ/B96HFCPvktMoiE2/UNBtyhEKnan/BtqtYvapfz8=
+	t=1723170254; cv=none; b=rcavAV/HxHaRlMZB/K9gN27K+y8C8qql+R6MjoMeNcrwRNOnvKpy5/F4WqhGCYe+uCWm3dGvAIesC9YkpZfXzA0p/LLdNTzJjD4VLtExNv4nr9kT0XoR8sgW9p8IcvIFRPq3nW3/SHNiNhTSRxSLiVHb0mpnYwb3jsa9N5UrPAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723170210; c=relaxed/simple;
-	bh=ovwy5+sl/P0yufLZpwDaAzkUe1cY3mnZs7VPW131SsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rvmokSyEzXyWaR+ucGcK2b5bmMcJyyMPI3LlwJGOY6iElti/hoyNOU8jsemT7GGVkguYCTJxtI79xU3V5H0dm1H22DC2K/ciLLD6lcLuO2uGMjn8GwUvnU9+NI+vLlcqoruj8ACSDTeF0/DAYITXQ/ghPtaKGsExR3L2kwuOwKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fhFF6jfh; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723170203;
-	bh=yHgvlylgas7/GoNmkuDQlo6AotHW9+Om52I5m+AxM3Y=;
-	h=Date:From:To:Cc:Subject:From;
-	b=fhFF6jfhZO+rC6ozv5VQAT95pbJwU2GcVqnnOzPNDIDJVeaNmzAiv2LZuJn9q8v9V
-	 MPsOiqmz3V2/4bM4jA3/2yxKhzemoXr8/a75sRnLBA9fdjymMlGkKPpZiFplHgnDeA
-	 +D7l2BsijhSOY4bJyLNoBqAzMHxErFyMnOn0OGmy5QZcgzr1hpN/qU9eOKWStUbPi9
-	 JEey57C6qPwvjuVO7P4m0zeXoGmlovf5SwYHfzuGWCmDRbOUkyfk0SscdQ5eZD5BOK
-	 9SzvjEUFVstS6xhAhaSf/vkUAgdcnTfK5UU43/X9T/mL2IGkt5r/dhMbKatvol7I8x
-	 YUVOSsyWr97uw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wg74T6Kybz4w2D;
-	Fri,  9 Aug 2024 12:23:21 +1000 (AEST)
-Date: Fri, 9 Aug 2024 12:23:21 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker
- <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Boqun
- Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, Petr
- Mladek <pmladek@suse.com>
-Cc: John Ogness <john.ogness@linutronix.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Ryo Takakura <takakura@valinux.co.jp>
-Subject: linux-next: manual merge of the rcu tree with the printk tree
-Message-ID: <20240809122321.5675db8f@canb.auug.org.au>
+	s=arc-20240116; t=1723170254; c=relaxed/simple;
+	bh=a4NH/DyOZYr+hQdPVdV/xn3d1kqB1GhzzrD+9MYKuho=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dAQReQjed2MaNUAAQRcVm6y66OwGRzyymcG6Qb9zr9ZZFX4kE1TT1jAN9SqZZ2+42YHNMH3uT6XJ8ukEJ/sVR7sXLpx1LJxo7hfVX5MpfCHhttjrDm8OyRoaK5loHbvs9vo3NrDSSo55k/zFpEsnHLaKL0ss45CzrxgVgX4e9vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKaWvUP+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C56DC32782;
+	Fri,  9 Aug 2024 02:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723170253;
+	bh=a4NH/DyOZYr+hQdPVdV/xn3d1kqB1GhzzrD+9MYKuho=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vKaWvUP+gW8ZxGS17B65tL1nrDAvJqciL9lSUQksuPZ4Iy4KhEGJQGOpNkkXmO+kV
+	 pkdaDInHp2dgMHzollw10zS4gIySrBFG6IgrrwYHj8LsAscwBWBwWjLcNHYy5tTzNE
+	 KSKa+C7m9EwkOjuzA8zG5VWtu7bn8KHoTxxNt5UYMtqglx1DnjyChjgN286dWqm0WA
+	 rT4bNmb9sUeUr0tdrbHNHwMsbmKPhEiAz7/jK5pb3Y5hSQ728/DeRHxDA8I+BOaR8Y
+	 khTAMu7d9Hv788u9Zd01H6xUkCZfx7Afr0wMZbiiN0Z1P7b+nVi/ftr6us3vFG5KWz
+	 4W9X6eOb829Uw==
+Date: Thu, 8 Aug 2024 19:24:10 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ bpf@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
+ Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
+ Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
+ de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
+ Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
+ Taehee Yoo <ap420073@gmail.com>, Pavel Begunkov <asml.silence@gmail.com>,
+ David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
+ <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
+ <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, Kaiyuan
+ Zhang <kaiyuanz@google.com>
+Subject: Re: [PATCH net-next v18 07/14] memory-provider: dmabuf devmem
+ memory provider
+Message-ID: <20240808192410.37a49724@kernel.org>
+In-Reply-To: <CAHS8izOA80dxpB9rzOwv7Oe_1w4A7vo5S3c3=uCES8TSnjyzpg@mail.gmail.com>
+References: <20240805212536.2172174-1-almasrymina@google.com>
+	<20240805212536.2172174-8-almasrymina@google.com>
+	<20240806135924.5bb65ec7@kernel.org>
+	<CAHS8izOA80dxpB9rzOwv7Oe_1w4A7vo5S3c3=uCES8TSnjyzpg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_9kKt58FFrX9AngOo.ehqbs";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/_9kKt58FFrX9AngOo.ehqbs
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Thu, 8 Aug 2024 16:36:24 -0400 Mina Almasry wrote:
+> > How do you know that the driver:
+> >  - supports net_iov at all (let's not make implicit assumptions based
+> >    on presence of queue API);
+> >  - supports net_iov in current configuration (eg header-data split is
+> >    enabled)
+> >  - supports net_iov for _this_ pool (all drivers must have separate
+> >    buffer pools for headers and data for this to work, some will use
+> >    page pool for both)
+> >
+> > What comes to mind is adding an "I can gobble up net_iovs from this
+> > pool" flag in page pool params (the struct that comes from the driver),  
+> 
+> This already sorta exists in the current iteration, although maybe in
+> an implicit way. As written, drivers need to set params.queue,
+> otherwise core will not attempt to grab the mp information from
+> params.queue. A driver can set params.queue for its data pages pool
+> and not set it for the headers pool. AFAICT that deals with all 3
+> issues you present above.
+> 
+> The awkward part is if params.queue starts getting used for other
+> reasons rather than passing mp configuration, but as of today that's
+> not the case so I didn't add the secondary flag. If you want a second
+> flag to be added preemptively, I can do that, no problem. Can you
+> confirm params.queue is not good enough?
 
-Today's linux-next merge of the rcu tree got a conflict in:
+I'd prefer a flag. The setting queue in a param struct is not a good
+API for conveying that the page pool is for netmem payloads only.
 
-  kernel/rcu/tree_exp.h
+> > and then on the installation path we can check if after queue reset
+> > the refcount of the binding has increased. If it did - driver has
+> > created a pool as we expected, otherwise - fail, something must be off.
+> > Maybe that's a bit hacky?  
+> 
+> What's missing is for core to check at binding time that the driver
+> supports net_iov. I had relied on the implicit presence of the
+> queue-API.
+> 
+> What you're proposing works, but AFAICT it's quite hacky, yes. I
+> basically need to ASSERT_RTNL in net_devmem_binding_get() to ensure
+> nothing can increment the refcount while the binding is happening so
+> that the refcount check is valid.
 
-between commit:
+True. Shooting from the hip, but we could walk the page pools of the
+netdev and find the one that has the right mp installed, and matches
+queue? The page pools are on a list hooked up to the netdev, trivial
+to walk.
 
-  9a30ceb4d93e ("rcu: Mark emergency sections in rcu stalls")
+> I think a less hacky approach is to add a function to the queue-API
+> like ndo_queue_supported_features(), which lets the driver declare
+> that it supports net_iov at a given rx queue. However I'm open to both
+> approaches. What do you prefer?
 
-from the printk tree and commits:
+I kinda like trying to query the page pools more, because it's both
+fewer driver changes, and it actually validates that the driver did 
+the right thing based on outcomes. Driver callback may have bugs.
 
-  34863005f96e ("rcu: Extract synchronize_rcu_expedited_stall() from synchr=
-onize_rcu_expedited_wait()")
-  c925e2f61399 ("rcu: Let dump_cpu_task() be used without preemption disabl=
-ed")
-
-from the rcu tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/rcu/tree_exp.h
-index be2d251e84f8,c3266bf709d5..000000000000
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@@ -543,6 -542,67 +543,68 @@@ static bool synchronize_rcu_expedited_w
-  	return false;
-  }
- =20
-+ /*
-+  * Print out an expedited RCU CPU stall warning message.
-+  */
-+ static void synchronize_rcu_expedited_stall(unsigned long jiffies_start, =
-unsigned long j)
-+ {
-+ 	int cpu;
-+ 	unsigned long mask;
-+ 	int ndetected;
-+ 	struct rcu_node *rnp;
-+ 	struct rcu_node *rnp_root =3D rcu_get_root();
-+=20
-+ 	if (READ_ONCE(csd_lock_suppress_rcu_stall) && csd_lock_is_stuck()) {
-+ 		pr_err("INFO: %s detected expedited stalls, but suppressed full report =
-due to a stuck CSD-lock.\n", rcu_state.name);
-+ 		return;
-+ 	}
-+ 	pr_err("INFO: %s detected expedited stalls on CPUs/tasks: {", rcu_state.=
-name);
-+ 	ndetected =3D 0;
-+ 	rcu_for_each_leaf_node(rnp) {
-+ 		ndetected +=3D rcu_print_task_exp_stall(rnp);
-+ 		for_each_leaf_node_possible_cpu(rnp, cpu) {
-+ 			struct rcu_data *rdp;
-+=20
-+ 			mask =3D leaf_node_cpu_bit(rnp, cpu);
-+ 			if (!(READ_ONCE(rnp->expmask) & mask))
-+ 				continue;
-+ 			ndetected++;
-+ 			rdp =3D per_cpu_ptr(&rcu_data, cpu);
-+ 			pr_cont(" %d-%c%c%c%c", cpu,
-+ 				"O."[!!cpu_online(cpu)],
-+ 				"o."[!!(rdp->grpmask & rnp->expmaskinit)],
-+ 				"N."[!!(rdp->grpmask & rnp->expmaskinitnext)],
-+ 				"D."[!!data_race(rdp->cpu_no_qs.b.exp)]);
-+ 		}
-+ 	}
-+ 	pr_cont(" } %lu jiffies s: %lu root: %#lx/%c\n",
-+ 		j - jiffies_start, rcu_state.expedited_sequence, data_race(rnp_root->ex=
-pmask),
-+ 		".T"[!!data_race(rnp_root->exp_tasks)]);
-+ 	if (ndetected) {
-+ 		pr_err("blocking rcu_node structures (internal RCU debug):");
-+ 		rcu_for_each_node_breadth_first(rnp) {
-+ 			if (rnp =3D=3D rnp_root)
-+ 				continue; /* printed unconditionally */
-+ 			if (sync_rcu_exp_done_unlocked(rnp))
-+ 				continue;
-+ 			pr_cont(" l=3D%u:%d-%d:%#lx/%c",
-+ 				rnp->level, rnp->grplo, rnp->grphi, data_race(rnp->expmask),
-+ 				".T"[!!data_race(rnp->exp_tasks)]);
-+ 		}
-+ 		pr_cont("\n");
-+ 	}
-+ 	rcu_for_each_leaf_node(rnp) {
-+ 		for_each_leaf_node_possible_cpu(rnp, cpu) {
-+ 			mask =3D leaf_node_cpu_bit(rnp, cpu);
-+ 			if (!(READ_ONCE(rnp->expmask) & mask))
-+ 				continue;
-+ 			dump_cpu_task(cpu);
-++			nbcon_cpu_emergency_flush();
-+ 		}
-+ 		rcu_exp_print_detail_task_stall_rnp(rnp);
-+ 	}
-+ }
-+=20
-  /*
-   * Wait for the expedited grace period to elapse, issuing any needed
-   * RCU CPU stall warnings along the way.
-@@@ -597,60 -652,8 +657,11 @@@ static void synchronize_rcu_expedited_w
-  		j =3D jiffies;
-  		rcu_stall_notifier_call_chain(RCU_STALL_NOTIFY_EXP, (void *)(j - jiffie=
-s_start));
-  		trace_rcu_stall_warning(rcu_state.name, TPS("ExpeditedStall"));
-- 		pr_err("INFO: %s detected expedited stalls on CPUs/tasks: {",
-- 		       rcu_state.name);
-- 		ndetected =3D 0;
-- 		rcu_for_each_leaf_node(rnp) {
-- 			ndetected +=3D rcu_print_task_exp_stall(rnp);
-- 			for_each_leaf_node_possible_cpu(rnp, cpu) {
-- 				struct rcu_data *rdp;
--=20
-- 				mask =3D leaf_node_cpu_bit(rnp, cpu);
-- 				if (!(READ_ONCE(rnp->expmask) & mask))
-- 					continue;
-- 				ndetected++;
-- 				rdp =3D per_cpu_ptr(&rcu_data, cpu);
-- 				pr_cont(" %d-%c%c%c%c", cpu,
-- 					"O."[!!cpu_online(cpu)],
-- 					"o."[!!(rdp->grpmask & rnp->expmaskinit)],
-- 					"N."[!!(rdp->grpmask & rnp->expmaskinitnext)],
-- 					"D."[!!data_race(rdp->cpu_no_qs.b.exp)]);
-- 			}
-- 		}
-- 		pr_cont(" } %lu jiffies s: %lu root: %#lx/%c\n",
-- 			j - jiffies_start, rcu_state.expedited_sequence,
-- 			data_race(rnp_root->expmask),
-- 			".T"[!!data_race(rnp_root->exp_tasks)]);
-- 		if (ndetected) {
-- 			pr_err("blocking rcu_node structures (internal RCU debug):");
-- 			rcu_for_each_node_breadth_first(rnp) {
-- 				if (rnp =3D=3D rnp_root)
-- 					continue; /* printed unconditionally */
-- 				if (sync_rcu_exp_done_unlocked(rnp))
-- 					continue;
-- 				pr_cont(" l=3D%u:%d-%d:%#lx/%c",
-- 					rnp->level, rnp->grplo, rnp->grphi,
-- 					data_race(rnp->expmask),
-- 					".T"[!!data_race(rnp->exp_tasks)]);
-- 			}
-- 			pr_cont("\n");
-- 		}
-- 		rcu_for_each_leaf_node(rnp) {
-- 			for_each_leaf_node_possible_cpu(rnp, cpu) {
-- 				mask =3D leaf_node_cpu_bit(rnp, cpu);
-- 				if (!(READ_ONCE(rnp->expmask) & mask))
-- 					continue;
-- 				preempt_disable(); // For smp_processor_id() in dump_cpu_task().
-- 				dump_cpu_task(cpu);
-- 				preempt_enable();
-- 				nbcon_cpu_emergency_flush();
-- 			}
-- 			rcu_exp_print_detail_task_stall_rnp(rnp);
-- 		}
-+ 		synchronize_rcu_expedited_stall(jiffies_start, j);
-  		jiffies_stall =3D 3 * rcu_exp_jiffies_till_stall_check() + 3;
- +
- +		nbcon_cpu_emergency_exit();
- +
-  		panic_on_rcu_stall();
-  	}
-  }
-
---Sig_/_9kKt58FFrX9AngOo.ehqbs
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma1fZkACgkQAVBC80lX
-0GxFlQf/Yrvh9dxp/F/yYclDTAMS055oXjgif6dR/yWi3E83dv8nztFN7dofzDJr
-i8hXybLU7PH7na8xiicmasldkC0ga3rrKkN6Tik1tzfzrpKCHobEuEydej6cZpmg
-+lZBHnl+DiIp9BkJjzAjq3/EOGDbLQ/XyZKBZWSLmpGtl+LRsOeR0fj04ZLgMoMp
-xAKtTzLnq9CTY1Vw87ueygZHKdGdtMC0S1tjMixDJqTDZZ8gS2L1H/s/ZnzdAIu9
-dow4cXJWXROrAdtyWmYZ8cG8QGTWWqhGxhS0PJYE6mL3TfuVW9bAsWlQ+y58JqBf
-GD/i3bteiBlRkTIwBZe7eogxJ7zHAg==
-=oHQf
------END PGP SIGNATURE-----
-
---Sig_/_9kKt58FFrX9AngOo.ehqbs--
+If you prefer strongly - fine, but hm.
 
