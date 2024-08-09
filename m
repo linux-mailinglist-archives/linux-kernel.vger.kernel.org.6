@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-281437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07FC594D6F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:09:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114FC94D6F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB94B23363
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:09:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE18A287C05
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0235419D082;
-	Fri,  9 Aug 2024 19:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6219A19D88C;
+	Fri,  9 Aug 2024 19:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2aj6Uc0I"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xhJNpf1j"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBF119CD0F
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE1B19D075
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723230244; cv=none; b=AGkFWRDyIkdQDazv3Xobkcy8oE6uXsMwEBnwGbr7+K/qE0RFxKecWeNAYfXQFYagYels4MVKpUwBagGVE2sZTD/8mZnJHJYZvkohKUPxmotMOQt8BZSmYD1FxJTcfG0ulHFHqeyksbUaCNCTETmkSoj7EWfyeSAmXHcWG6xsES8=
+	t=1723230245; cv=none; b=HTXKA+tSY+G+9kO8kX+jUlZuPFgt24V3JK4E6UEUuK3Z0DcftMy4ny45rDrxBMCeBC22/S7RWCAnj1yynTMc4jd0rRNtyyFBSdfleoZU+BfJ9D+15qAb1G0BU0khMp5An72K5W2vtpo75O8n15Lt+UPI0lG2S0YiYDVMw9F3zBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723230244; c=relaxed/simple;
-	bh=wdr9ikZ2JhMxx8FpdS0bIMEmE4PRqH0Dmh2wTfd07I4=;
+	s=arc-20240116; t=1723230245; c=relaxed/simple;
+	bh=rL3+IDQm11patEvsiloUsWqSDQCzY8fDc8KY40xXf1M=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=quR07azwxuU/n5ta3ZzOFquuD/wLtY17vcn1TiN27vGuFxYjWDsTuBDNuzw0vGTFfbDA/5T3ArLecmzbvrhLNXfeI6lsnMhJp0ABsZt2Fxnj9Ha9ne8PuM4uGOXVHnTc1CRCfiy+9dpAG2ThT8MLTqXFj74RRhOK5fz2gyKMLVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2aj6Uc0I; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=EFBUA5fauM2yaEnSkPxljd+9EU3n773p9EyS9cPQNcq3F04YpAFW90WcsSShEI00S4k1yjy+r5jlfr4n2T7ey2knOYgV387sAqdlcGK72Ga/vekcRJNZ2fA8CjZrMoBoEiZcY/kGNMDLM9pFICzF0Q06FvqaQC5cVbBduqk+77Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xhJNpf1j; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-78e323b3752so1819584a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:04:02 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-710ca162162so2116674b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:04:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723230242; x=1723835042; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723230244; x=1723835044; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=hf4PmVOwr+xgGzCTD+kiITxVr7NtARshe+47djUw/5w=;
-        b=2aj6Uc0IInxiJX19I7lJV4RpJs1v5/uEgbZQgFQkDhsJy88ojCNPP+nnq9l9yKT+mB
-         b7DsWcVVuasuJ5W6oMUlMouj9lf6JxsowqjmKOWvGkmEs6dWEP/ow9MPOpPIRNYHQk9/
-         9xiIrhBD1AAHx4inIH/3iFdo4mZnl0UYoA8UHbgr9amfpiPbwaXTGdQpjc9r1vmZF1QV
-         51hfj4D/SiwzawxRihQiJ1/aA9nBk07e5yfdyQrsMpmDN4sEO3ybcWoOXlHcNi+yXFgs
-         G4gTBObGpyfJYzb/txflIgwFXtKJLKkJoxiepvIGe0wrgY1EDhI18IRQQ0yaeZOWd+su
-         YcTQ==
+        bh=zAoc9f/zQ674f2x3bQLKg9kULz1L+f8jr5RFvkl+QSU=;
+        b=xhJNpf1jG8biD/CMsNeOEXm7qfDsq4e/aYc/J8CAoTWqbDccKWylPufMFLRY3K8Gef
+         Rqgfmci2qygfNkSXmMAIx1vhDHXmJAFrP0WdGVHdYPeKFfhaKXpjyaInpTgPFTwBGrqN
+         PnQ3Z89L46S1KSp3dq0Sg/x5Osi32fys2jhg6YAgs/SGFnP8QivF7U9zVukzeMT5xCBZ
+         FgooekYw9Zzlfy+8E99vRavo67yKUpuRPC+kXZOhVSK/7v5s+VHVXBr2E4kfbauCgL2w
+         czSsWCj/dV7jpbkEILqadRrvS7S7iFUbQvsAKKCXXwl3DKQfRfT30fXdQ3r8qzTp/fch
+         BqCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723230242; x=1723835042;
+        d=1e100.net; s=20230601; t=1723230244; x=1723835044;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hf4PmVOwr+xgGzCTD+kiITxVr7NtARshe+47djUw/5w=;
-        b=gimQvUqTWW6X6CLoNGpjUA/wCxznbGQ7oy6d4b1s2Jh0EJvTgomgSK4OTZpXFbuso2
-         3VA29wxcukX4OWTOIPAb01I/DUeJ9b5Tu8tsxmiPfF6UjAquc0PStIeCua39KXVtY2b5
-         0QG0FoJyzQPpohg7MGCuLgdc6QhnlVlqqWSHe+dku+xdQmZ4doGMZex/Z7VcN0ksRET2
-         q4/V3pAIVefeqfrWidW0S7+0QuYuSRCaH88VUAJeslj55aH21NIKZoGLYfRlapPhfI7e
-         OCUTx24r518HBGsFTMRIHKZR47aN1cnxfl1ugXmHxupaf0X5GaMbHb5jvV5hPdwK9BCD
-         69yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXn+bDh427FsWoe0R42MgATM5PfrOBtWpweTaVaTIARYmMIJ5ZUQTbrBr+rA7c9OURY6hM8ehPZ7/Ilk9D7DljRfPdFf849c/Bdek6/
-X-Gm-Message-State: AOJu0YwNUitprThYyrgboRDMWP4yJiAtu3jJZpESh9+cfgyd7QHj8kdi
-	IfeGIDE/bgoDlrlzQm/6G1ti+kFJRxKNZJGr4pItfy4qqRBOGGF+Q3tP7wMI1wr0Y8HXjKwgnOA
-	jfw==
-X-Google-Smtp-Source: AGHT+IGF6pq1ifYV6Vpt8CaGEEk4qft1uIN5zn189JX1iQA8F6BtQ2QllI81BNCavpgKD3Lyc31lvkGgw54=
+        bh=zAoc9f/zQ674f2x3bQLKg9kULz1L+f8jr5RFvkl+QSU=;
+        b=We64LNBY7xA+wNPQoyLVDhfmIpcAM1PmdMRCIEz9Oqp6dMjxowZQuaVQ//xplpLndK
+         JUU8bTxNWAKYLE+d6n2EPWQcjqmpV92leEApjkN3X1b2SbE0eWdLahjTcTVfUBk1Oeow
+         DH44hyM/QRyOt2dmvhNt3J7uS9TRXsk35FF08kIMEdHN0hcbv/byR/OTUoUjz9M0CdRD
+         V46bCeFwabkfETyL4yR9/RI0zyfDrghF4F0aZUDZ04qvuGIKylIQxgjIIdQYS85IQFxV
+         p16d9ejsztb3xdyhbl9nRrXNtiBLq6V9pv1l4/dR7B1NPRknAAUnMT9FRD7ftfoyXTfM
+         bg0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVIu6O9l8QKqt4SAFP3qdZ00RLEhjhui+Wycg6enVsXYE8Ry/5H1fb1VfSD7jljmaCjQSIvyE2vaM/HFu8Lx80kCktoeQITgQw0SI0O
+X-Gm-Message-State: AOJu0YyszZRlMKnMYsKTEBhYCMPAzWkLF8Cwq7sbuIWwtvgoISrFUVko
+	LTrh6u949Iu1CUPgmvysQRbmXwIkMCpTp7iFf4bcrUvPKax+gcu4GNdTE5AfjiTLNTox/j7GI3G
+	DBA==
+X-Google-Smtp-Source: AGHT+IFWWDSkqm0UJUbqcujAzmPwVvL+hZvhhLf0wMFFrRq4oNl8ycj37ldJXO+dIolxfhHFVUMfScjgue4=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:fa8e:b0:1f6:2964:17b8 with SMTP id
- d9443c01a7336-200ae584d14mr701195ad.10.1723230242082; Fri, 09 Aug 2024
- 12:04:02 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:9158:b0:710:4d39:c8f9 with SMTP id
+ d2e1a72fcca58-710dcb62de8mr26720b3a.6.1723230243593; Fri, 09 Aug 2024
+ 12:04:03 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  9 Aug 2024 12:03:16 -0700
+Date: Fri,  9 Aug 2024 12:03:17 -0700
 In-Reply-To: <20240809190319.1710470-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240809190319.1710470-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240809190319.1710470-20-seanjc@google.com>
-Subject: [PATCH 19/22] KVM: x86: Update retry protection fields when forcing
- retry on emulation failure
+Message-ID: <20240809190319.1710470-21-seanjc@google.com>
+Subject: [PATCH 20/22] KVM: x86: Rename reexecute_instruction()=>kvm_unprotect_and_retry_on_failure()
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -85,86 +84,53 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-When retrying the faulting instruction after emulation failure, refresh
-the infinite loop protection fields even if no shadow pages were zapped,
-i.e. avoid hitting an infinite loop even when retrying the instruction as
-a last-ditch effort to avoid terminating the guest.
+Rename reexecute_instruction() to kvm_unprotect_and_retry_on_failure() to
+make the intent and purpose of the helper much more obvious.
+
+No functional change intended.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/asm/kvm_host.h | 10 +++++++++-
- arch/x86/kvm/mmu/mmu.c          | 12 +++++++-----
- arch/x86/kvm/x86.c              |  2 +-
- 3 files changed, 17 insertions(+), 7 deletions(-)
+ arch/x86/kvm/x86.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 25a3d84ca5e2..b3a2793fc89c 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -2132,7 +2132,15 @@ int kvm_get_nr_pending_nmis(struct kvm_vcpu *vcpu);
- void kvm_update_dr7(struct kvm_vcpu *vcpu);
- 
- int kvm_mmu_unprotect_page(struct kvm *kvm, gfn_t gfn);
--bool kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa);
-+bool __kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
-+				       bool always_retry);
-+
-+static inline bool kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu,
-+						   gpa_t cr2_or_gpa)
-+{
-+	return __kvm_mmu_unprotect_gfn_and_retry(vcpu, cr2_or_gpa, false);
-+}
-+
- void kvm_mmu_free_roots(struct kvm *kvm, struct kvm_mmu *mmu,
- 			ulong roots_to_free);
- void kvm_mmu_free_guest_mode_roots(struct kvm *kvm, struct kvm_mmu *mmu);
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index d3c0220ff7ee..59af085a6e8e 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -2731,22 +2731,24 @@ int kvm_mmu_unprotect_page(struct kvm *kvm, gfn_t gfn)
- 	return r;
- }
- 
--bool kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa)
-+bool __kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
-+				       bool always_retry)
- {
- 	gpa_t gpa = cr2_or_gpa;
--	bool r;
-+	bool r = false;
- 
- 	if (!vcpu->kvm->arch.indirect_shadow_pages)
--		return false;
-+		goto out;
- 
- 	if (!vcpu->arch.mmu->root_role.direct) {
- 		gpa = kvm_mmu_gva_to_gpa_write(vcpu, cr2_or_gpa, NULL);
- 		if (gpa == INVALID_GPA)
--			return false;
-+			goto out;
- 	}
- 
- 	r = kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(gpa));
--	if (r) {
-+out:
-+	if (r || always_retry) {
- 		vcpu->arch.last_retry_eip = kvm_rip_read(vcpu);
- 		vcpu->arch.last_retry_addr = cr2_or_gpa;
- 	}
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index ddeda91b0530..65531768bb1e 100644
+index 65531768bb1e..2f4bb5028226 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -8888,7 +8888,7 @@ static bool reexecute_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 	 * guest to let the CPU re-execute the instruction in the hope that the
- 	 * CPU can cleanly execute the instruction that KVM failed to emulate.
- 	 */
--	kvm_mmu_unprotect_gfn_and_retry(vcpu, cr2_or_gpa);
-+	__kvm_mmu_unprotect_gfn_and_retry(vcpu, cr2_or_gpa, true);
+@@ -8863,8 +8863,9 @@ static int handle_emulation_failure(struct kvm_vcpu *vcpu, int emulation_type)
+ 	return 1;
+ }
  
- 	/*
- 	 * Retry even if _this_ vCPU didn't unprotect the gfn, as it's possible
+-static bool reexecute_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+-				  int emulation_type)
++static bool kvm_unprotect_and_retry_on_failure(struct kvm_vcpu *vcpu,
++					       gpa_t cr2_or_gpa,
++					       int emulation_type)
+ {
+ 	if (!(emulation_type & EMULTYPE_ALLOW_RETRY_PF))
+ 		return false;
+@@ -9131,8 +9132,8 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+ 				kvm_queue_exception(vcpu, UD_VECTOR);
+ 				return 1;
+ 			}
+-			if (reexecute_instruction(vcpu, cr2_or_gpa,
+-						  emulation_type))
++			if (kvm_unprotect_and_retry_on_failure(vcpu, cr2_or_gpa,
++							       emulation_type))
+ 				return 1;
+ 
+ 			if (ctxt->have_exception &&
+@@ -9218,7 +9219,8 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+ 		return 1;
+ 
+ 	if (r == EMULATION_FAILED) {
+-		if (reexecute_instruction(vcpu, cr2_or_gpa, emulation_type))
++		if (kvm_unprotect_and_retry_on_failure(vcpu, cr2_or_gpa,
++						       emulation_type))
+ 			return 1;
+ 
+ 		return handle_emulation_failure(vcpu, emulation_type);
 -- 
 2.46.0.76.ge559c4bf1a-goog
 
