@@ -1,119 +1,138 @@
-Return-Path: <linux-kernel+bounces-280963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718F894D16F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:39:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85D894D175
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00DB9B221F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:39:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A26282D8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D7319580A;
-	Fri,  9 Aug 2024 13:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAAC195809;
+	Fri,  9 Aug 2024 13:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D3ew+NPR"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFuypPs7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B2A192B9F
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A21194A43;
+	Fri,  9 Aug 2024 13:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723210732; cv=none; b=ZEKh7Hbt/zpkAcch/Y9zwZArcZR8dIf9ZlCE1bAxI0EAlFvbSBqjme7sgHGx6ByP2QgShtC/Wi/qihHnj498CgRzvBXKJC24tux+Dd/OLIP0OkEnNrN2khzDISnckPh1mVU2tCQvLmiCs1ErXAhZ3hLXSYfiEysj32kXf1T/HT0=
+	t=1723210815; cv=none; b=HiwRRzh9vMh8nw+jC7DCqim91hZj9DkRCvMRd23lN+bNF5aIHTd3VEZZk72TofIrprGbHOvLWb0sOIOKHszBVTHPNVjO/aC2P2UlLRETtd16UfeLMYBhRz6g+58iY0Xoy+/XusH4/XrrYpqacFFQu1aNlgWHSpcz4HU7c2GddQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723210732; c=relaxed/simple;
-	bh=U9PgHMmXwArkaS49p8aX1dEbXHZP/CRcN0LvOlL7M5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e4r5+OaDjWRLPRVCVx+X4aL9D0iiSvjEip4R6yAKl7IRZcCHTWMeSpgKRzJ2ZW61ZT1+dpBf9xaA4u232Miz/Ba+x/OnGP6bSRG6V70i2EvDCvkzknS0p6NZrl/TOs7ptlqURULvF/nGwzo5VVrWdtSKYIkPM4M+sQPGy4b+YXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D3ew+NPR; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3684e8220f9so1176351f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 06:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723210729; x=1723815529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q+NGAfmPnXsWwgUAptnJ+cd0Pt188Yd+YvqSzH2iizw=;
-        b=D3ew+NPRUjJG7Xvl1GaRZYqEYe1sm7k6CyHsqKMyzebfFha+gvyPm0PSFUx4Rk5j7A
-         m//CgC/GRFGESBz1zWNxVt9MPepsJSW72NljtWbjwyjW7a0W5q3w5HEbvG/XHsBq7RCG
-         mMID2K35NBJmjIyRZu1Q3OflyDoihE3jaY/dDIzvSDkNrWZL8PDMjL9ZalJp2QV3b4XJ
-         GETyyvPDcI61PSAoO8lsKJeSJELXidMmxHbKUm7inVbjJR0VGOoERWBe3ljcmy6lAngl
-         WZqMzdcLwcRmnsb+tuK2ml+GR9XlAo/PZVD/HkYeAmE4w241JnLe5TFOznj2QGyE65nF
-         9q9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723210729; x=1723815529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q+NGAfmPnXsWwgUAptnJ+cd0Pt188Yd+YvqSzH2iizw=;
-        b=G+l7XAs9tMLpwk1re1kQzHo1NtBeIsXpaA5xQ37KiltvZ89PLGqaP++PWsJlGfCbHA
-         kxp59J0HWIM2eGsudQDo1acSmItjqEW8dZ+RkCWDey4XKf8u6F5qUmjqDwW+yjaKxRpg
-         YxbeWOJD2gF0U29V8EeQjtUW5/Sy38Yl/jRVlF3yOx0l+pFDrdmOBf/sElYa+UaBY3OC
-         A2+B6oyd1hpgYRJLt1/5LuOm3bAtrmv0TdcGhaVhAnEObvYAZ3ftQenlmr5Oew784cfA
-         jM/pY2IuQ6bwHrtZPnpNNgSv/3r/5B8Jg2HnMkTm5JEg5PTDPRAsq6k7D2qksaxjrDSi
-         t9vg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlvzh1EuSVpWHcpuH9wr6sfCofIds3ytMvOHmK3l/Bu2EZewMz/XcpXlrjvdgfW7noZ5Y0FbwVAQojFZTuan3W+PJHciTBBLYKRdIV
-X-Gm-Message-State: AOJu0Yw6kqOxVZRw1m1V5VEuLI8jgWVpHj+mSQdX4I/5rns/jAdcdk8x
-	W9Ujx/uAAcCjemx+1p6PONlI321/QYfaysiAbMUE1cw5Z5Ng3wEaWblCEWs4GD8UR0L9u/HxOyE
-	1Dt9G5Dtuv1v5A/+4MGaQtlDf//kPpzL6qRVH
-X-Google-Smtp-Source: AGHT+IGLCN0hdBaFSgURlEBmYzXSiLipHSTPGxPeeVAfZBF3FCClOKXB0C2KWuYJCS7FyPZ+RAPHoq/m3t48/wKHerI=
-X-Received: by 2002:adf:f208:0:b0:360:8c88:ab82 with SMTP id
- ffacd0b85a97d-36d6a75842cmr1629625f8f.30.1723210728768; Fri, 09 Aug 2024
- 06:38:48 -0700 (PDT)
+	s=arc-20240116; t=1723210815; c=relaxed/simple;
+	bh=PCOC6t5DUlw6Zai6p4bX3oYBp74piqtotQ4OSwhgsZU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d3UcjIgLqfz1aDkaNqkCQBhS91Aj9p5um+dLP4l0IPZO8xDPPBcnEiCQFem16M4x5pCWnxSjCwT6roQWM/RgUEnX8uOHYOwNl3kK30nzhaeCMj7L6XcThFWyxINaCKq5nlGZ1hOKFFAC/90moG8aIXtB0CaP/BchFRCP24sUzNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFuypPs7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A687C32782;
+	Fri,  9 Aug 2024 13:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723210815;
+	bh=PCOC6t5DUlw6Zai6p4bX3oYBp74piqtotQ4OSwhgsZU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=BFuypPs7UPPwv1QU90slF1cFAdExzRWbGKRcrWZLq1AfHnAKZn/tlgfSkMa27/cnY
+	 V3MpUoXvVj5JiptZM8hWM8IoshYyYSD5pN/ZRnZKhjE6xblzGs8ITn8n0xaIFG03U7
+	 lvMT1Wb4gBlyjpB9aXgGcL9848XKDIvEy/Y1OCW33/WT8X3Figf4dyVLnt6yg9ZW+P
+	 j1OVc5s6AyxmEQ+LamM8iaQ81l5BCn40vplj4En1CV6YSPVa5atSFyNfIWU7IEnw0c
+	 iCB+aC4M7Pc0Z06kS7bjik4PeKmwPnqS3Z5ZlXHZfgJmxUzk/c85/QlH0lP8TBlwwG
+	 9WzTMuclZ+YAA==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Fri, 09 Aug 2024 09:39:43 -0400
+Subject: [PATCH] fs: don't overwrite the nsec field if I_CTIME_QUERIED is
+ already set
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809064222.3527881-1-aliceryhl@google.com> <CANiq72nP+pL7fEvaB7HA-mHJFs1j9SKMoSMSCif61YCy4QDFoA@mail.gmail.com>
-In-Reply-To: <CANiq72nP+pL7fEvaB7HA-mHJFs1j9SKMoSMSCif61YCy4QDFoA@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 9 Aug 2024 15:38:37 +0200
-Message-ID: <CAH5fLghQ9dRqGdvRxGfiby9-xG4kY3QN8adyH2gVA5urZXpq=Q@mail.gmail.com>
-Subject: Re: [PATCH] rust: sort includes in bindings_helper.h
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, linux-block@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240809-mgtime-v1-1-b2cab4f1558d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAB8ctmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCwNL3dz0kszcVN3kpGSjxESzlGSDtFQloOKCotS0zAqwQdGxtbUAqts
+ gflgAAAA=
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2103; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=PCOC6t5DUlw6Zai6p4bX3oYBp74piqtotQ4OSwhgsZU=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmthw+OIwQZVqktO49/ow2VAmNNr0ZpytiuuLhj
+ 10a9LEhP76JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZrYcPgAKCRAADmhBGVaC
+ FSOYEACJdVic638uQHhz0mp/jJD1UDNaRxqW8vMDlhgLa0Gt7tlMyZVd9i5IGl8BV+RSLA1LTGa
+ 8qSFrVkNejAU4iZWjM9zQTjeFZaaNao2rb8JEGVv6XSX5RvXQHWs3+wkqHp7k8zU3oGhZX3J7kN
+ Wo/o+DEHk+ZReMhhu9Xk2UIs0lveK0cmcnjtIFsMTA94JPx5F7DNjhd3BtgBATOuiGHXvcfGDlg
+ ySGCZxO4Y4iaj+CIxfjhFAIqOn/KhVQAVyZVqd8njM/WeOtBowYB80eLmmb7DvxXiqo4QMkkVp0
+ eK5Vwx2O+Pup+fd3cBnyot5xvCeJMiIXFTmxIActwdDXtDvlGf8WcQoiPxKATPyMjh+Nmmvv78u
+ 0TwlsWdvW1l+rPbAt9adtum9KMI3BvXBcTGVqz3iuV5GVkp1YraZrF+vNGKFQ/I2Bj/JpvSsYET
+ UVh4ZpsoAbW5X62y8ZM2JHxdOdxD1IiXBizTQXGlkEyYIOjvKNi/a5nfhupJ/0Qhy2uig80wk6u
+ SJnWgSnvIl9tZCI4+Az9BOHUqyeSpT+d9I9qh1YRA3diJV+rHca16UJVrmRK3I1rr9ZLYXLWoQN
+ M2vAqIZgwQveoDBAhDtXHbD6ALtWNRiXZs6gAFyVpICsnf6SWYam6xkyCf1QIKSj3mvHBmFQimf
+ RJ/7MIl5Sl7x0tQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Fri, Aug 9, 2024 at 2:58=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Fri, Aug 9, 2024 at 8:42=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
-> >
-> > Dash has ascii value 45 and underscore has ascii value 95, so to
-> > correctly sort the includes, the underscore should be last.
-> >
-> > Fixes: 3253aba3408a ("rust: block: introduce `kernel::block::mq` module=
-")
->
-> Looks good to me (`LC_ALL=3DC`), thanks!
->
-> I can take it; otherwise:
->
->     Acked-by: Miguel Ojeda <ojeda@kernel.org>
->
-> I am not sure if this should count as a bug/fix (there is an
-> recent/ongoing debate about the Fixes tag).
+When fetching the ctime's nsec value for a stat-like operation, do a
+simple fetch first and avoid the atomic_fetch_or if the flag is already
+set.
 
-I fix merge conflicts in this file almost daily, so I think there's a
-case to be made for taking it as a fix. I should have clarified this
-in my commit message. I sent a v2 with more info:
-https://lore.kernel.org/r/20240809132835.274603-1-aliceryhl@google.com
+Suggested-by: Mateusz Guzik <mjguzik@gmail.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+I'm running tests on this now, but I don't expect any problems.
 
-> (This kind of issues can be also opened as "good first issues", by the
-> way, i.e. as a way to get contributors to set their email workflow.)
+This is based on top of Christian's vfs.mgtime branch. It may be best to
+squash this into 6feb43ecdd8e ("fs: add infrastructure for multigrain
+timestamps").
+---
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ fs/stat.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-I didn't think of that, but if I had I would probably still have
-submitted it myself for the above reason.
+diff --git a/fs/stat.c b/fs/stat.c
+index f2bf7cca64b2..9eb6d9b2d010 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -35,8 +35,8 @@
+  * @inode: inode from which to grab the c/mtime
+  *
+  * Given @inode, grab the ctime and mtime out if it and store the result
+- * in @stat. When fetching the value, flag it as queried so the next write
+- * will ensure a distinct timestamp.
++ * in @stat. When fetching the value, flag it as QUERIED (if not already)
++ * so the next write will record a distinct timestamp.
+  */
+ void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
+ {
+@@ -50,7 +50,10 @@ void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
+ 
+ 	stat->mtime = inode_get_mtime(inode);
+ 	stat->ctime.tv_sec = inode->i_ctime_sec;
+-	stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn)) & ~I_CTIME_QUERIED;
++	stat->ctime.tv_nsec = (u32)atomic_read(pcn);
++	if (!(stat->ctime.tv_nsec & I_CTIME_QUERIED))
++		stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn));
++	stat->ctime.tv_nsec &= ~I_CTIME_QUERIED;
+ 	trace_fill_mg_cmtime(inode, &stat->ctime, &stat->mtime);
+ }
+ EXPORT_SYMBOL(fill_mg_cmtime);
 
-Alice
+---
+base-commit: 9000eec2bdc08a0b9027427f9d3d9a3545694258
+change-id: 20240809-mgtime-cbc2aa6dc0fe
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
