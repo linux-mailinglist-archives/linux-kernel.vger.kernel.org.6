@@ -1,65 +1,58 @@
-Return-Path: <linux-kernel+bounces-280325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1299494C8B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:58:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6025994C8BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85B32B211C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:58:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 990EBB23428
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F961803D;
-	Fri,  9 Aug 2024 02:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5645A18052;
+	Fri,  9 Aug 2024 03:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FmAVLbCS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlL7fn63"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D01B17BA9;
-	Fri,  9 Aug 2024 02:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FEE28E7;
+	Fri,  9 Aug 2024 03:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723172302; cv=none; b=tDhoOXAxsltTH4ryX51KryqJxFz4XNAC4cpGYNePaajE8Zf2gQKr8wCrT6Jz8YoralplukGBt5V3AYA25btaM8KtWzCc5JVUwTZsPmTc62BTmmO2e4YdpHQnRgoUKfvTZTibn96GIamTXOdj/Hh5HR4V0M84rFnwEpgUGC6Sk1M=
+	t=1723172827; cv=none; b=j00VeM0PU4OeJ8UxA1dS1zcvikNqkq79R/FPjmDUtXzyr5E72/fGrd8nw0novyvoTeq05gS53QnBL/afSODp4jHV7o8x5bGyBdRBtk0/GjStSLoORzHdViSlSWCaeAtC53KQJhj2DP8JtiDUw6gc7Qk3TKVX0di1rTT5ok/rtZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723172302; c=relaxed/simple;
-	bh=bz9nhQIN68rliIlQwFtbNxyMdG7FAqda1nTylmhka+M=;
+	s=arc-20240116; t=1723172827; c=relaxed/simple;
+	bh=dIHU0BXpxcbDRu80fHaHCCC2/zgvvPwSZLiXB9EUGy8=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RP9MduRjgmDhVzN+Q+VaUyWL7xiFcmAKJkjOTAVyfa6Qi6xMzbCcCIMAKoueAMnUXDCkRUS+WCmafcXS32USjpmMOcU0IV3cUu0CtC3N1Et5FWq8ubGI9IkdzjaIbrCWgiMRIxtFTj1wS237/XmKfjEkpRtL0bpyJN5keTpziiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FmAVLbCS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2F99C32782;
-	Fri,  9 Aug 2024 02:58:20 +0000 (UTC)
+	 MIME-Version:Content-Type; b=k9vH6RRcGq343DlTecjh/tSxw7qTyUUglygjMKoEUG9I+6dgNXikfCFGc0x1mpHEFMwsoc9j86AYortj6B5PlbqICyMNMuo0aUEsTGYaYlfe1twSyqzIhjO8Ov8SRDTAHYw2osxDdnM+NyLP6Et94XoGxOGkP3GiqKB3Ss9IipE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlL7fn63; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96738C32782;
+	Fri,  9 Aug 2024 03:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723172302;
-	bh=bz9nhQIN68rliIlQwFtbNxyMdG7FAqda1nTylmhka+M=;
+	s=k20201202; t=1723172827;
+	bh=dIHU0BXpxcbDRu80fHaHCCC2/zgvvPwSZLiXB9EUGy8=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FmAVLbCSCRp8O5sabC8ZA9Fa2UUWiO/oGl54klQO5M7hAyxEj76clzs1czMZAsL1l
-	 qqEBFHFOBMF+B8i/loc6HelWxB5dmnNjz85wStJ4hKUcmoDtpdaSkkq2TOauEKnZOB
-	 dZWV3KVBpOGHjku33R+mJMhFsMw0idKGqByaujnHY5jNdvqdUCcmR/y1qIE0HrqCy2
-	 zc/37hS1nvogm0AwyyRCYb2gNwq11txgewgV8A7mvBKuQOUOub7Whw2QndAezhXmu4
-	 zuPZAcLp132TMDVXUSgL1B1nCpjj7cYENNrYw57QyKzb/KdxuC7drrS/pqcb8cxWGS
-	 7E9dI40Enn3Lg==
-Date: Thu, 8 Aug 2024 19:58:19 -0700
+	b=IlL7fn63eRgrMziTHUl58NVnNcurqvKyXsx3PEGXBN4T2wWfSED2chmkzM2tO8ia5
+	 xv6c7jafVcQZqL2Od1S1S1L8KIT7blI1X4uQtBewTFab0tZMTXn8BI2yAlFsycKZ3f
+	 9GLPltvWhpOFf1lrYnwsjEu/Gdt98Qgk7RDKz0Y3YN5vOLoCs8edUxU0Tgn6jUUw/i
+	 dNv1RXn3qjpRn3Nlm/ALuYGqsPQXHO5+ysS83npqw7e0Bc0XA2p7oDUmDndmDvNe8r
+	 WUISp/OTEcesp6kqRL6jcCAzMUwHiDB3kklFv/J7X+e3Mlq9cU2GMKtldXPouFQNTg
+	 q308o7jWvO5PQ==
+Date: Thu, 8 Aug 2024 20:07:05 -0700
 From: Jakub Kicinski <kuba@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, Wei Fang <wei.fang@nxp.com>, Shenwei Wang
- <shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Richard Cochran
- <richardcochran@gmail.com>, Linux Team <linux-imx@nxp.com>, Francesco
- Dolcini <francesco.dolcini@toradex.com>, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 0/4]  net: fec: add PPS channel configuration
-Message-ID: <20240808195819.74f9e594@kernel.org>
-In-Reply-To: <ZrU_QwbcgaUxBg61@gaggiata.pivistrello.it>
-References: <20240807144349.297342-1-francesco@dolcini.it>
-	<ZrU_QwbcgaUxBg61@gaggiata.pivistrello.it>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <andrew@lunn.ch>,
+ <jiri@resnulli.us>, <horms@kernel.org>, <rkannoth@marvell.com>,
+ <jdamato@fastly.com>, <pkshih@realtek.com>, <larry.chiu@realtek.com>
+Subject: Re: [PATCH net-next v26 07/13] rtase: Implement a function to
+ receive packets
+Message-ID: <20240808200705.0e77147c@kernel.org>
+In-Reply-To: <20240807033723.485207-8-justinlai0215@realtek.com>
+References: <20240807033723.485207-1-justinlai0215@realtek.com>
+	<20240807033723.485207-8-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,18 +62,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 8 Aug 2024 23:57:23 +0200 Francesco Dolcini wrote:
-> On Wed, Aug 07, 2024 at 04:43:45PM +0200, Francesco Dolcini wrote:
-> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > 
-> > Make the FEC Ethernet PPS channel configurable from device tree.  
-> 
-> I realized that I forgot the `net-next` subject patch prefix on this series,
-> let me know if I should re-send it with it added, thanks.
+On Wed, 7 Aug 2024 11:37:17 +0800 Justin Lai wrote:
+> +static int rx_handler(struct rtase_ring *ring, int budget)
+> +{
+> +	union rtase_rx_desc *desc_base = ring->desc;
+> +	u32 pkt_size, cur_rx, delta, entry, status;
+> +	struct rtase_private *tp = ring->ivec->tp;
+> +	struct net_device *dev = tp->dev;
+> +	union rtase_rx_desc *desc;
+> +	struct sk_buff *skb;
+> +	int workdone = 0;
+> +
+> +	cur_rx = ring->cur_idx;
+> +	entry = cur_rx % RTASE_NUM_DESC;
+> +	desc = &desc_base[entry];
+> +
+> +	do {
+> +		/* make sure discriptor has been updated */
+> +		dma_rmb();
 
-Hm, normally I'd say no, but we also didn't get patch 4 CCed to us.
-We use patchwork for a lot of things (including CI ingest) and if
-we don't get all the patches patchwork considers the series incomplete.
-Could you either repost and CC netdev@ on all 4 or repost just the 
-3 patches meant for netdev as a standalone series?
+I think I already asked, but this still makes no sense to me.
+dma barriers are between accesses to descriptors.
+dma_rmb() ensures ordering of two reads.
+Because modern CPUs can perform reads out of order.
+What two reads is this barrier ordering?
+
+Please read the doc on memory barriers relating to dma.
+I think this is in the wrong place.
+
+r8169 gets it right.
+
+> +		status = le32_to_cpu(desc->desc_status.opts1);
+> +
+> +		if (status & RTASE_DESC_OWN)
+> +			break;
+> +
+
 
