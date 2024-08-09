@@ -1,114 +1,142 @@
-Return-Path: <linux-kernel+bounces-281111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717EC94D337
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:16:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08CEA94D33A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33452284F7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76B12819CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5B21990C7;
-	Fri,  9 Aug 2024 15:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FF5197A76;
+	Fri,  9 Aug 2024 15:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTVUuXbA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AH5H9yyQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CAA198A11;
-	Fri,  9 Aug 2024 15:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5358812B71
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216566; cv=none; b=S76+wFTDK2YlLk7m2x4SHjnXwO+5zJPyCFmU4mdczJAzXOvIqrxp4BcFj5gc602iU+hbIIdTp4fLXtSf+dJKxsj7ET8NmtnK5wWlQrsLOIxUPZELawnQIVm4z/3p2dcbtFSgN7Ztkigj0crdP7vDxtpr3bLlCW+ogfk8SBla9Mw=
+	t=1723216679; cv=none; b=gR22Gn0NUmlm1Gv7QkU1iWxMFaM1vwGvXU9/gjVmpGd7KshXZ2o9dbw5cZBuklZxbxrYqXU7xO+/tbDngyQOKNlSkoFrgy6u/IxxjjMM+2tbogOLDAZ4kq3Dl0tNxWV9LTF7WcvJJZ7DhFDp1oTizfF9S9udi5UdBXNr9GjxISE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216566; c=relaxed/simple;
-	bh=QzbMMXohX/nbFUDAv2G2AVoMhu56MDJK2QCsx8awg/A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jMg7q7foLPH+tHeyfFr1uXDk8B70/cqGBsEgT4vnAt5uVjE7oeeB1NOMyeD1lrwvKExE01DE3o1V5TQvR+eTdoBEI1fJ7sXvb6wKgzl+dgTcSz2Y6HOMv85+QTTmFp7DYaqysHxstJj9fNaAB0uqnki+d2ELnybJW/q5N2HUYRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTVUuXbA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3575C32782;
-	Fri,  9 Aug 2024 15:16:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723216565;
-	bh=QzbMMXohX/nbFUDAv2G2AVoMhu56MDJK2QCsx8awg/A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fTVUuXbArCav3KJVsl+eSc5AkhIRDvwX3uQS+sX0twaDYoS4G1Bb3AUiSFynlLqcL
-	 gEermTVfi66DEOhk3SG1IHPzSHW5i8qj0tXO6o6OcQwoGNiA8JwaUtKpWVXjVc0SBq
-	 S9TdtIMrJ6cQyHpPTxqaeYOMXcJ9Iugr5uLLuvio9ohPakgXzuFEaz5kYTNTwLmNXu
-	 JJ3CGcCEiY6NpxGgg/RcWkxIv7uAs8PLryiMOQpg/Zv08B1/MIsHylABygWZKa0GPY
-	 J5lror6LoFp1Guh0FkH4MAUO5t1xgQBqgoodSuTC2juW+AvUyfGhY4W14iVLFGO5vG
-	 J+/M0xWh0CUGg==
-From: Christian Brauner <brauner@kernel.org>
-To: Zhihao Cheng <chengzhihao@huaweicloud.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	chengzhihao1@huawei.com,
-	yi.zhang@huawei.com,
-	wangzhaolong1@huawei.com,
-	yangerkun@huawei.com,
-	mjguzik@gmail.com,
-	viro@zeniv.linux.org.uk,
-	error27@gmail.com,
-	tahsin@google.com,
-	rydercoding@hotmail.com,
-	jack@suse.cz,
-	hch@infradead.org,
-	andreas.dilger@intel.com,
-	tytso@mit.edu,
-	richard@nod.at
-Subject: Re: [PATCH v2] vfs: Don't evict inode under the inode lru traversing context
-Date: Fri,  9 Aug 2024 17:15:36 +0200
-Message-ID: <20240809-neuanfang-recyceln-b3d99596e98f@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240809031628.1069873-1-chengzhihao@huaweicloud.com>
-References: <20240809031628.1069873-1-chengzhihao@huaweicloud.com>
+	s=arc-20240116; t=1723216679; c=relaxed/simple;
+	bh=6AqbC+HU4YQ2LAJOxXnEAW/+2QcWo16Jjv40Zr+G2ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/aMdjjlgtymiFybYKzOv/20gdoqEaMXUAbhZqSMYrSl0KMLcNBT8INHITXXd1BUMlGpdvIAAiVYsaNXW2xNKqWlj6oQLWTq3obQ80rGND+QdrR1AQzUz3cfj94ogVwhvkQlDPMcNPfcM7dh6gKg/iUUG0Qo/So+hBRinvkhAXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AH5H9yyQ; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723216678; x=1754752678;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6AqbC+HU4YQ2LAJOxXnEAW/+2QcWo16Jjv40Zr+G2ic=;
+  b=AH5H9yyQlv6KeQS1rKNm9sxsP122xPjOH1JMpkqmYyu7MSIZlG5P0KUi
+   My+Xn2Q1HBSo4IxMYxrubRNXySQNDHom7AIe7bgpw+jwZS+0JLvWpbJWz
+   1fYZJu93zYQaZZE6Icufa+tT86rD0TLy1DTT1idQskzfOPgwxtsLWM2sW
+   sexJ+TQbsheMbF24VicLYSaVssM1SbusMLwPWY3oCwahA/ytbQd8d6zfD
+   jR59I7gSWULTl2+JiW7QNfD+MSOOWv5zIUXVyLgBxARzT6u77ojd8BoD2
+   iEBLSjsCnP7xV8djBlh/vS7e7QCaVqcpDg18BS3mPvA3JjdSze/R6VWEH
+   w==;
+X-CSE-ConnectionGUID: DYMv+3E+SiqKHUT36FQ5zA==
+X-CSE-MsgGUID: hAznOO2lSVWhM7kgZxMrIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="38899780"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="38899780"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:17:57 -0700
+X-CSE-ConnectionGUID: 1ZdI463DT5yFGavFpXhXCg==
+X-CSE-MsgGUID: VbYX1t7MTqGnHCVcT/gqjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="88233745"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:17:49 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1scRNB-0000000DSBD-3BY5;
+	Fri, 09 Aug 2024 18:17:45 +0300
+Date: Fri, 9 Aug 2024 18:17:45 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
+	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
+	zhourui@huaqin.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
+	linux-kernel@vger.kernel.org, j-chadha@ti.com,
+	liam.r.girdwood@intel.com, jaden-yue@ti.com,
+	yung-chuan.liao@linux.intel.com, dipa@ti.com, yuhsuan@google.com,
+	henry.lo@ti.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
+	Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com,
+	cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com,
+	savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com,
+	jesse-ji@ti.com, darren.ye@mediatek.com
+Subject: Re: [PATCH v1] ASoc: tas2781: Add new Kontrol to set tas2563 digital
+ gain
+Message-ID: <ZrYzGWQRdsTlYxQg@smile.fi.intel.com>
+References: <20240628041844.1776-1-shenghao-ding@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1472; i=brauner@kernel.org; h=from:subject:message-id; bh=QzbMMXohX/nbFUDAv2G2AVoMhu56MDJK2QCsx8awg/A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRtM1pzas0xLi7eKXOP/jVYMOvYsu3syX8WfDZ7quSVm OqmJR95raOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAipzgZGa46OBQseXPG6PAJ sx6Vtkc/Vv2ZuPfFZf78ZbsKBVbtVU1h+KfJt6xlhYCouNXlpCmZxkdKT298+0Os1m67NcODPtO l0ZwA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240628041844.1776-1-shenghao-ding@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, 09 Aug 2024 11:16:28 +0800, Zhihao Cheng wrote:
-> The inode reclaiming process(See function prune_icache_sb) collects all
-> reclaimable inodes and mark them with I_FREEING flag at first, at that
-> time, other processes will be stuck if they try getting these inodes
-> (See function find_inode_fast), then the reclaiming process destroy the
-> inodes by function dispose_list(). Some filesystems(eg. ext4 with
-> ea_inode feature, ubifs with xattr) may do inode lookup in the inode
-> evicting callback function, if the inode lookup is operated under the
-> inode lru traversing context, deadlock problems may happen.
-> 
-> [...]
+On Fri, Jun 28, 2024 at 12:18:43PM +0800, Shenghao Ding wrote:
+> Requriment from customer to add new kcontrol to set tas2563 digital gain
+> and set "Speaker Force Firmware Load" as the common kcontrol for both
+> tas27871 and tas2563.
 
-I've replaced the BUG_ON() with WARN_ON().
+...
 
----
+>  #include <sound/tas2781.h>
+>  #include <sound/tlv.h>
+>  #include <sound/tas2781-tlv.h>
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+> +#include <asm/unaligned.h>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Before sound would be better, but I'm not insisting.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+...
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+> +	ret =  tasdevice_dev_bulk_read(tas_dev, 0, reg, data, 4);
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+Too many spaces.
 
-[1/1] vfs: Don't evict inode under the inode lru traversing context
-      https://git.kernel.org/vfs/vfs/c/24b0ba4e047d
+...
+
+> +	/* find out the member same as or closer to the current volume */
+> +	ucontrol->value.integer.value[0] =
+> +		abs(target - ar_l) <= abs(target - ar_r) ? l : r;
+
+Why do you need to have target to be applied here? IIUC arithmetics correctly
+it makes no value to use target in this equation.
+
+...
+
+> +out:
+> +	mutex_unlock(&tas_dev->codec_lock);
+
+Why not using cleanup.h?
+
+> +	return 0;
+
+...
+
+This all reminds me that I already gave same/similar comments in the past...
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
