@@ -1,101 +1,203 @@
-Return-Path: <linux-kernel+bounces-281545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3393D94D801
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:23:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EACF94D804
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE6521F22DE1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:23:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 269091F214D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE874168488;
-	Fri,  9 Aug 2024 20:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD8915ECD2;
+	Fri,  9 Aug 2024 20:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="VSCy9ql5"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="br2DyA6I"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2057.outbound.protection.outlook.com [40.107.223.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996EC33D1;
-	Fri,  9 Aug 2024 20:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723234985; cv=none; b=RAGNPxh0IaiWPurGTSnkFcSZChzls3UPrgrJ9Gpg4pSHn4ASxfp44osTjL9Z5wtVze40Dr1btl6bAWuVyDIZuuD8cyvv4lvby+gvDKxsm7scNS2pnjHVgrzfcdFPpZjpnWj7fCjcDst+V+3yU4YxrrttWmHzRGGX5KBkb94eKXE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723234985; c=relaxed/simple;
-	bh=SGdE+e5vii25VpavXbLGyCEpV8mXQD+JqsD7M3i7j8o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FFB6bFo1ZmtxwXPmTWPc+BHqiUt9CLgMSszaxxX/fKGJ/dnUpBLTzAdLO4oHBt4+EwRhHykynHz0ca+JIyyy8XqIfIDkjCr/qgcbQPDmDWOXGy38QmU50Xilg2fuzBcWWcyPuOFs1Jkqj1yxZ7uNU2ebrDoApT5aOovdIDLVc1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=VSCy9ql5; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1723234983; x=1754770983;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=zUeaPEMbAwsBz9fFLJRiAzOBSEZsFMQr1EZcxbWRRq0=;
-  b=VSCy9ql5OnQriNZQ19xqkqV6xgtXbUdqJekYUfnZjxyfiStMVnsHxj3u
-   g2czAOgACFAMhh/vCTwdL4D9Gx4qy4vMxESQpri1GGhGULtj5DS2mRg/F
-   h3NsNk80yWM1Jh1XIA536nP2PReH0mygO5ShdAouxmZyM8UyVutUCQArj
-   M=;
-X-IronPort-AV: E=Sophos;i="6.09,277,1716249600"; 
-   d="scan'208";a="113920681"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 20:23:01 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:45062]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.23.195:2525] with esmtp (Farcaster)
- id a3ffb0ee-4f38-4521-91fd-3a8fa119e9f5; Fri, 9 Aug 2024 20:23:01 +0000 (UTC)
-X-Farcaster-Flow-ID: a3ffb0ee-4f38-4521-91fd-3a8fa119e9f5
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 9 Aug 2024 20:23:00 +0000
-Received: from 88665a182662.ant.amazon.com (10.187.170.20) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 9 Aug 2024 20:22:57 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <socketcan@hartkopp.net>
-CC: <davem@davemloft.net>, <david.hunter.linux@gmail.com>,
-	<edumazet@google.com>, <javier.carrasco.cruz@gmail.com>, <kuba@kernel.org>,
-	<linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<mkl@pengutronix.de>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<skhan@linuxfoundation.org>, <kuniyu@amazon.com>
-Subject: Re: [PATCH 1/1] Net: bcm.c: Remove Subtree Instead of Entry
-Date: Fri, 9 Aug 2024 13:22:49 -0700
-Message-ID: <20240809202249.16183-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <2bf44b8d-b286-4a94-8e1d-6c4e736a1d07@hartkopp.net>
-References: <2bf44b8d-b286-4a94-8e1d-6c4e736a1d07@hartkopp.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2964E167DB9
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 20:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723235013; cv=fail; b=kMK1RM+Gu8vGQ/StMlq7P9cg3NFyI7qawcGPQw5RokKrpH9SKPv4n/nxN7k8mBj3cNkjncjkiZXSAkb0LUbN1rfflZbftCTtY95+xoltiE17JKZmnGcZ65tiBs2kGieVLQKXkkL03fdwJnQlaLRowbQl4rNSY1i2URc5AzCYS6w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723235013; c=relaxed/simple;
+	bh=BXlhyw9UH7BK2cz4aJOqSv02koOzVQ6Fbo2p9qqwvzU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEGYcsjeUHqD/SGHh66tnes9h31bDNoqfvw6E8w6Nv7vXj5nFxuVkdtXUn2xGv21UBqdBGWLWmCGzgRla7AOo64yuMxfv/54i2tlYT7bkBU53E87r5yyzLUc1z28jCaiOvWWhb9JtMoF71UpzKPpkpj6tjXQcuZ9Tpr/kx+WCS4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=br2DyA6I; arc=fail smtp.client-ip=40.107.223.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=meF/dVgjnKjntdLq3zqfG38uYntMjtFBtXPy1OW9PHCn6Mfh+cBFjSc/W9pItgBryjv7KFg5510yeN7VV4dffQS89zDdb+c7m5CxDoD5wg+qUy5DJTdJLVnCt5uqxgrdajHRuXHD2ITAjOwVxF/vRnGg4Ts+08sI/wrDrm1aR1qva2CA8rZr16eWjaRu7ZcqZwbkcVJgcU9HJQ5UmvLKtzE2PChIczvJ8vun/6h6higopX/W+4T/+Oqfi0/FLAw+nyinbEUj6Fj9KoB0PRdTxKzPNlbpVLhFYdHEdZiWuuUg5gsT0nvQxxlQXh7RCq7cRK+dpiF024x7ZElH4uxasQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j6ItZ04HmAP9wjXNnxietDYNikNEoUIRLme9W7yrWuQ=;
+ b=NJF8ihGT54N4WjPEMjGtG6xugrC4Up7COWPccaVVglcO04MJpW5QonwgiXTxNxIT2qmwd3+7piCTiz7hhFQek6AMgxyC9822ZqsL5P39wqisvlCLK92fuhAjFuyKIVipg6MWj5sDQuBdChYsngIgn0Vtd1boROVWpNQ/Q+/xJoXgPWuapdmU/0dA4uVAMLS8NwYurKHCbdxpyUFo/gLjPTEx5YGD0lMOv/P1oJlyCvoJXm36R/l2P6pZv61UbWLIRyUPJuPOToNvq/i6Mq110TilN5FeKkwn6MOtAYU3ibgtYk2qaA3xKZ1WUNfSfz82cGnLD1Bx8WJSCqJGOqTbDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j6ItZ04HmAP9wjXNnxietDYNikNEoUIRLme9W7yrWuQ=;
+ b=br2DyA6IlKMsCHWhi1zsBHiFo7ReL+7C830x+8KQl+6N/JwpZAt+Fr4Axu28/M5y3vuQK1lLgcTRZpix9oYqFaGfYdn2hGOWnW6ORDHC0JG3b0wmiZ4NL0WfwdRUzuYTeSKGkC/ft/7L9rUCqsYok/j9Lcy55N7H/QY7TMcX0UczhC/aiCkynjCrmAjrasrYs5ZPDzpMegZrIY026XNyAVeXZasO7lPwkIz9kHkduP2pAP+UzpspJQ9kCEmAwWPFrhb8eCMY/thaU2rulAWVvVaAZszHYDlTJYUGeB+KetSA+niTPozkITnFBMeKbP8LsfLk7W/eoyiCUDBL2LLfSw==
+Received: from DM6PR11CA0065.namprd11.prod.outlook.com (2603:10b6:5:14c::42)
+ by IA1PR12MB6185.namprd12.prod.outlook.com (2603:10b6:208:3e7::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.15; Fri, 9 Aug
+ 2024 20:23:28 +0000
+Received: from DS1PEPF00017093.namprd03.prod.outlook.com
+ (2603:10b6:5:14c:cafe::6b) by DM6PR11CA0065.outlook.office365.com
+ (2603:10b6:5:14c::42) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.30 via Frontend
+ Transport; Fri, 9 Aug 2024 20:23:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS1PEPF00017093.mail.protection.outlook.com (10.167.17.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Fri, 9 Aug 2024 20:23:28 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 9 Aug 2024
+ 13:23:14 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 9 Aug 2024
+ 13:23:14 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 9 Aug 2024 13:23:13 -0700
+Date: Fri, 9 Aug 2024 13:23:12 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] iommufd/device: Enforce reserved IOVA also when
+ attached to hwpt_nested
+Message-ID: <ZrZ6sBbDK5gJtbB8@Asurada-Nvidia>
+References: <20240807003446.3740368-1-nicolinc@nvidia.com>
+ <BN9PR11MB52762AD4E68BC0FC10CACBE18CBA2@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D036UWC002.ant.amazon.com (10.13.139.242) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB52762AD4E68BC0FC10CACBE18CBA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017093:EE_|IA1PR12MB6185:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35f8d285-33a5-411a-8822-08dcb8b1212b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ii3BJzTqHlLZRvYk0FlbG3h1lK/uOMoPNmqU7RBzLF2xzIgi4wDpJE+/xmAP?=
+ =?us-ascii?Q?yiUmSRcfFjBZF1cniYoe2LJoK25HSUV1SX/F8MSrKUfOlypPAUDJG9T9DTQ/?=
+ =?us-ascii?Q?BTXqxiEphdd4WuZIpoCw1E2cJVGsAYPgz7ZA/DrZuaQ6ANt9xLTUROfJMUe0?=
+ =?us-ascii?Q?GJZ9YdFHbLl+OCGdQffLIqB8T2EhN8ExBID9gqZFKlvsjEpeM8H52sF6H3iF?=
+ =?us-ascii?Q?qQO2Set76qV7UAH1Hgc5vdbjNrUNkvFrHlLqzWYLq68u4L4Q2AwgpZPBzdOH?=
+ =?us-ascii?Q?9lKgihL8Z4cNghFn/+n1/VzgCIbImfZdYEkLv39386YMsmJxmIdmLaya4lFY?=
+ =?us-ascii?Q?FGrTVRPpVHMZroNf9YCKyoEQIqtH4WcmmlmlTWUcQ+4gmmhajUb3O4YKamZJ?=
+ =?us-ascii?Q?jIip0/kqs7xvUl8UmZKCdMSK+RlFZd0d0DFFSdiphmyFxORIDTcusr4viqgz?=
+ =?us-ascii?Q?5UMfbJSIYRA/z4b/kW+RV/H9pAVqsYXzq2spTVdNX5+xdVt+RNjgILPpi3PO?=
+ =?us-ascii?Q?bMzByJRXiMfH+TR8Tz7aoO7KrM+q10pYqZjRoZ2Wq8nIyP+MZ0fgYjbgcnCo?=
+ =?us-ascii?Q?mUHFQjJOhrTaUnHhDISrGsSXzVT7Qw4o/u2yO+w5j4G/WaSlHHhsxEmfhmyB?=
+ =?us-ascii?Q?yOG9MAv3SSJGBJSc9XK9lSFUgf2wRkyZCXUlHH+efzQBWPbmsSqTYyB9pRJA?=
+ =?us-ascii?Q?sVAIbaJAtyS3pQYC+1b62PLyHWJzpop0AT0fm5mtB55hCbgtCjejDbfrrHyM?=
+ =?us-ascii?Q?OglZ42zdsEMxzZYxyrX5q4Ag6BNqz8kiOw3GfGrkYc7kuY43gv82JiUXk2Ry?=
+ =?us-ascii?Q?BkU+fQhdrtsDZC8mFOCNkF1OKqJNNLpRisJ3ThwmIKcXLvHdalfrOx8pb/Zi?=
+ =?us-ascii?Q?gZznsMDB4gqlA4Ru1Le8kbtJA4HhdI9hGHxPsG2fckgombYXUP7C631yuhsg?=
+ =?us-ascii?Q?xa63PPmYEYtsnVR7YLg0VcOlmr1vywXzl8fvpwfN4DlYP3Ugx6ytlKsWB5tb?=
+ =?us-ascii?Q?AdMShnEsfH0urV7hM3nnbyd2gJ1Z39TBt+yM9kicVNe5tCfLyrNha1+c/odK?=
+ =?us-ascii?Q?JuugNrmQC7g6s5v7vuhnKZFxp92F0K9EhL3ufO24+vMSonA8f3rEyER9JvOz?=
+ =?us-ascii?Q?6/5HXLAJrC2D91UwrucLSRTzZ7yNjpoTkduKPPjGfGBNagDDkwkK3pcaq+3x?=
+ =?us-ascii?Q?kfRTUvGJDGWOX6c2FIn27fr3AHcWWNr11Ja3HangJdfDAlVcbaOEXcJ5QKKk?=
+ =?us-ascii?Q?WacgqwoPdw/KUVY8j0mzoDtS9iG/KcblltVwDZPhDL7Nj1h5br83P9rcHbIZ?=
+ =?us-ascii?Q?dIGFFpEGlUDBKc+WtAEat1zieDvD5CknSME6eDd2iXKqgnoRF9ZTeUpAX7jg?=
+ =?us-ascii?Q?qQqo4hMOFyJLt7W7bkV7evHBkso5hTENjgsoHMfnaa4wB0g46CphJCO8wIdP?=
+ =?us-ascii?Q?xdJddgvlHLkL76YJemGX7CJaLvyARnW3?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 20:23:28.2959
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35f8d285-33a5-411a-8822-08dcb8b1212b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017093.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6185
 
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Date: Fri, 9 Aug 2024 11:57:41 +0200
-> Hello David,
+On Fri, Aug 09, 2024 at 02:00:10AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Wednesday, August 7, 2024 8:35 AM
+> >
+> > Currently, device reserved regions are only enforced when the device is
+> > attached to an hwpt_paging. In other words, if the device gets attached
+> > to an hwpt_nested directly, the parent hwpt_paging of the hwpt_nested's
+> > would not enforce those reserved IOVAs. This works for most of reserved
+> > region types, but not for IOMMU_RESV_SW_MSI, which is a unique software
+> > defined window, required by a nesting case too to setup an MSI doorbell
+> > on the parent stage-2 hwpt/domain.
+> >
+> > Kevin pointed out that:
+> > 1) there is no usage using up closely the entire IOVA space yet,
+> > 2) guest may change the viommu mode to switch between nested
+> >    and paging then VMM has to take all devices' reserved regions
+> >    into consideration anyway, when composing the GPA space.
+> > Link:
+> > https://lore.kernel.org/all/BN9PR11MB5276497781C96415272E6FED8CB12@
+> > BN9PR11MB5276.namprd11.prod.outlook.com/
+> >
+> > So it would be actually convenient for us to also enforce reserved IOVA
+> > onto the parent hwpt_paging, when attaching a device to an hwpt_nested.
+> >
+> > Repurpose the existing attach/replace_paging helpers to attach device's
+> > reserved IOVAs exclusively.
+> >
+> > Add a new find_hwpt_paging helper, which is only used by these reserved
+> > IOVA functions, to allow an IOMMUFD_OBJ_HWPT_NESTED hwpt to redirect
+> > to
+> > its parent hwpt_paging. Return a NULL in these two helpers for any new
+> > HWPT type in the future.
+> >
+> > Suggested-by: Tian, Kevin <kevin.tian@intel.com>
+> > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 > 
-> many thanks for the patch and the description.
+> I'm not sure the name find_hwpt_paging() is good enough but can't
+> find a better alternative. So,
 > 
-> Btw. the data structures of the elements inside that bcm proc dir should 
-> have been removed at that point, so that the can-bcm dir should be empty.
-> 
-> I'm not sure what happens to the open sockets that are (later) removed 
-> in bcm_release() when we use remove_proc_subtree() as suggested. 
-> Removing this warning probably does not heal the root cause of the issue.
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
-I posted a patch to fix bcm's proc entry leak few weeks ago, and this might
-be related.
-https://lore.kernel.org/netdev/20240722192842.37421-1-kuniyu@amazon.com/
+Thanks for the review. I couldn't figure out a better name but
+that :)
 
-Oliver, could you take this patch to can tree ?
+With the ongoing discussion with Robin at the other thread, we
+we might be able to get rid of the msi_cookie. If so, this one
+will be unnecessary. So, we might want to put this on hold?
+
+That being said, a new solution will take some time. I'll need
+to go through all cases and untangle the msi_cookie cleanly..
+
+Thanks
+Nicolin
 
