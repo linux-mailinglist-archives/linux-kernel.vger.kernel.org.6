@@ -1,117 +1,197 @@
-Return-Path: <linux-kernel+bounces-281179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A08E94D402
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:53:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9EA94D404
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E17B1F220C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:53:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90118282381
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B17198E6D;
-	Fri,  9 Aug 2024 15:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A42198E71;
+	Fri,  9 Aug 2024 15:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OwKyqDC8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TpQ+b9OA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pkQ39kvl";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TpQ+b9OA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pkQ39kvl"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F152168B8;
-	Fri,  9 Aug 2024 15:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E102168B8;
+	Fri,  9 Aug 2024 15:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723218823; cv=none; b=Vg1yNsEYZ+Wih90PruXvQ2eu57RXT8awX4PQ9B6X+MnJIuTBkW6DGH22rKA3Jr3Kp7gG0+ru4k8JVleeYsqD2sjQX7uZJ00NyeqjC4WOi5iomPlgOAeejIKcp6twZ3VYqH0jAAmv2+8q4kcYMWKkq5Icm7qAXlA2bzt1Z/oGGm0=
+	t=1723218917; cv=none; b=Q3/va6wfCC2kTuUSlZEMcdMJFyMnPc0EKAKV9Dq+9ucKXEDgHTIgnSxEUq0HpkbEcVFz/Lwd6s+dMvMl+n1PByrgcsXeHeCO+pDCtEOXZQqGs5sSg1Ot8ufr2hMW2kv+lCt+bEBcxHXnH+R5OEIej4vpGOBEKggqD1PqwpvXC5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723218823; c=relaxed/simple;
-	bh=P6cS1YkhJ0u2ZgDB+sTJKdZitAKqXDejZ1hjDidMg2o=;
+	s=arc-20240116; t=1723218917; c=relaxed/simple;
+	bh=K998szMebXw+wiKMQrAzHK1blG5e7UVa5gHFuMwOoEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uqYsCxmWfzdvKjw1HjEr/epyqY+buMC+p6HLt10WXiHBeORr37II34rdH6/TqKDr9B1eJYBaPdJbV9/5NM6fMwD9bIIsayTLURapvtiZvW+Mx3OdkhZuAuKMu27eBhaDi1lsupcfo5adRCDcCgf7nDO5iceqc4au3IOgJqhB4Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OwKyqDC8; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723218822; x=1754754822;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P6cS1YkhJ0u2ZgDB+sTJKdZitAKqXDejZ1hjDidMg2o=;
-  b=OwKyqDC8KSt/vrTTGW0ck9Jg07kWpBp30IHvaUGHcv0frQdae0dOWHqy
-   uSLsQc+viLkfw2YVi46+Lnw+dBfLiRFAU5cdTLkpB+kG//SQPW/6g3G4P
-   gShR3Cn+R2259LPzUEf8Qidtoh0+wc+MkVhlIBQEA2pbU5zW8/5H31JEX
-   FcUuhhlog6zcZZxnKYym9YAqVnNyECSo/zgishlb4uSidQa8IMmbxowtS
-   6ujsAQyiTPrb6yoBfP7QsqH2jqNyF0fMg7/zBQPBr+im+6Bg8GfKWL4ma
-   O3mY8UZp5fm8PXcvfoQ1W6MNXSdZpWJrrNRz+QWRy15ZkbO7RfIXg6Tv0
-   Q==;
-X-CSE-ConnectionGUID: 1oXVM3f6T0aK8hXVYyNXCg==
-X-CSE-MsgGUID: bFCznxoIS0e6cnaeIaIGfw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21557251"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="21557251"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:53:41 -0700
-X-CSE-ConnectionGUID: 89AvCJGWRveMYUwnYpgHlQ==
-X-CSE-MsgGUID: ZLRaqbLYTtGS83rI88Q0RQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="88241156"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 09 Aug 2024 08:53:38 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scRvq-0008Sy-2l;
-	Fri, 09 Aug 2024 15:53:34 +0000
-Date: Fri, 9 Aug 2024 23:52:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
-	kevin.tian@intel.com
-Cc: oe-kbuild-all@lists.linux.dev, robin.murphy@arm.com, joro@8bytes.org,
-	will@kernel.org, shuah@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] iommufd/selftest: Add coverage for reserved IOVAs
-Message-ID: <202408092301.M51NPXgL-lkp@intel.com>
-References: <544ab894a301c83eb9f9d7a6326f4cb87f517019.1722644866.git.nicolinc@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFPLaJ13xIBzewf2pgOUbN/4/K2yL7U6X2rU/TGKCwOIE9OzUDH0DLbqCqnOO2LQFV2GnaSdhUMA8dFUn/SUZwWZ3GpyD6wY8fLpF4T7xA2k42wTy0xH+Z869VhkAV2LYLg685SU8Ea2U4qduqMRiOehjCBKW/G7KsrdE7JIpGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TpQ+b9OA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pkQ39kvl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TpQ+b9OA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pkQ39kvl; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6DB281FF9B;
+	Fri,  9 Aug 2024 15:55:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723218913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e85hNo6ni4A5wp+GZGW17HDhN1ds6aKku/DzMvBRVxk=;
+	b=TpQ+b9OAoa5ikzu6Ij7UDN2K8PR77z4mqW1+q+SLqnHwHpQyCgw1/cF4/E650o5+mMUukX
+	WJvutI3vqhYgewclGZazlMhpHS0yXQXtg8BoFk1J5W6SNnYLeidxklrNiKoOoi4pc6TLOv
+	MOD0rvtQcLoH6e3+aA7D6ovow4Dfm7Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723218913;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e85hNo6ni4A5wp+GZGW17HDhN1ds6aKku/DzMvBRVxk=;
+	b=pkQ39kvlWu8uxmH6YmEzl4Yrdni4UOPnjpYDTsTrZr6JvvwE4iltxCuiIBXGH6uzI3P8pY
+	feMNvvTTqWbI0lDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723218913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e85hNo6ni4A5wp+GZGW17HDhN1ds6aKku/DzMvBRVxk=;
+	b=TpQ+b9OAoa5ikzu6Ij7UDN2K8PR77z4mqW1+q+SLqnHwHpQyCgw1/cF4/E650o5+mMUukX
+	WJvutI3vqhYgewclGZazlMhpHS0yXQXtg8BoFk1J5W6SNnYLeidxklrNiKoOoi4pc6TLOv
+	MOD0rvtQcLoH6e3+aA7D6ovow4Dfm7Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723218913;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e85hNo6ni4A5wp+GZGW17HDhN1ds6aKku/DzMvBRVxk=;
+	b=pkQ39kvlWu8uxmH6YmEzl4Yrdni4UOPnjpYDTsTrZr6JvvwE4iltxCuiIBXGH6uzI3P8pY
+	feMNvvTTqWbI0lDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4EE6813A7D;
+	Fri,  9 Aug 2024 15:55:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rZi+EuE7tmYrLAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 09 Aug 2024 15:55:13 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A55C4A084B; Fri,  9 Aug 2024 17:55:08 +0200 (CEST)
+Date: Fri, 9 Aug 2024 17:55:08 +0200
+From: Jan Kara <jack@suse.cz>
+To: Stephen Zhang <starzhangzsd@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, tytso@mit.edu, jack@suse.com,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	zhangshida@kylinos.cn, Baolin Liu <liubaolin@kylinos.cn>
+Subject: Re: [RFC PATCH] jbd2: fix a potential assertion failure due to
+ improperly dirtied buffer
+Message-ID: <20240809155508.taxgdkwuvsbg3i2k@quack3>
+References: <20240720062356.2522658-1-zhangshida@kylinos.cn>
+ <20240806134023.rm2ggd7swopryqci@quack3>
+ <CANubcdV32L71ARCznZgKdrt0BmSyOYwW50L17zP=TG4PO2MH4Q@mail.gmail.com>
+ <20240807120659.y6cpxas5g3mze2rr@quack3>
+ <CANubcdVHbbq=WsTXU4EWAUPUby5--CLe5rf1GPzNPv+Y0a9VzQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <544ab894a301c83eb9f9d7a6326f4cb87f517019.1722644866.git.nicolinc@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANubcdVHbbq=WsTXU4EWAUPUby5--CLe5rf1GPzNPv+Y0a9VzQ@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-Hi Nicolin,
+On Thu 08-08-24 11:05:26, Stephen Zhang wrote:
+> Jan Kara <jack@suse.cz> 于2024年8月7日周三 20:07写道：
+> > So I agree with your analysis now. But still don't like adding hacks to
+> > jbd2 to acommodate for this oddity of data=journal mode. Since we already
+> > have ext4_block_write_begin() implementation anyway, we should be able to
+> > tweak it to do the right thing for data=journal mode inodes...
+> >
+> > So we could replace uses of __block_write_begin() with
+> > ext4_block_write_begin() and then call do_journal_get_write_access() in
+> > ext4_block_write_begin() for inodes with journalled data after the buffer
+> > is mapped with get_block().
+> >
+> > From the part:
+> >                                 if (folio_test_uptodate(folio)) {
+> >                                         clear_buffer_new(bh);
+> >                                         set_buffer_uptodate(bh);
+> >                                         mark_buffer_dirty(bh);
+> >                                         continue;
+> >                                 }
+> >
+> > we can actually remove the clear_buffer_new() and mark_buffer_dirty() bits
+> > because they will be done by block_commit_write() or
+> > folio_zero_new_buffers() and they are superfluous and somewhat odd here
+> > anyway.
+> >
+> > And the call to folio_zero_new_buffers() from ext4_block_write_begin()
+> > needs to call ext4_journalled_zero_new_buffers() for inodes where data is
+> > journalled.
+> >
+> > Will you try to implement this or should I look into it?
+> >
+> 
+> Yeah, Thank you for giving me the opportunity to work on something truly
+> meaningful. All I can do until now is some small cleanups. And doing cleanups
+> all the time is annoyable to the maintainers and frustrating to me. I
+> will try my best.
+> 
+> So basically, we should:
+> 1.Trace the user data dirting in ext4_block_write_begin().
+> 2.Replace the uncontrollable __block_write_begin with ext4_block_write_begin().
+> 3.Remove some superfluous things.
 
-kernel test robot noticed the following build errors:
+Yes. In the first patch, I'd convert all uses of __block_write_begin() to
+ext4_block_write_begin(). In the second patch I'd replace
+folio_zero_new_buffers() with ext4_journalled_zero_new_buffers() if inode
+has journalled data (with explanation to avoid unexpected dirtying). In the
+third patch I'd remove the clear_buffer_new() and mark_buffer_dirty()
+mentioned above with explanation that either folio_zero_new_buffers() or
+block_commit_write() take care of dirtying the buffer properly. Thanks for
+working on this!
 
-[auto build test ERROR on shuah-kselftest/next]
-[also build test ERROR on shuah-kselftest/fixes linus/master v6.11-rc2 next-20240809]
-[cannot apply to joro-iommu/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Nicolin-Chen/iommufd-Reorder-include-files/20240803-210818
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
-patch link:    https://lore.kernel.org/r/544ab894a301c83eb9f9d7a6326f4cb87f517019.1722644866.git.nicolinc%40nvidia.com
-patch subject: [PATCH v2 3/3] iommufd/selftest: Add coverage for reserved IOVAs
-config: x86_64-rhel-8.3-kselftests (https://download.01.org/0day-ci/archive/20240809/202408092301.M51NPXgL-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240809/202408092301.M51NPXgL-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408092301.M51NPXgL-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
->> ERROR: modpost: "iommu_dma_prepare_msi" [drivers/iommu/iommufd/iommufd.ko] undefined!
-
+								Honza
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
