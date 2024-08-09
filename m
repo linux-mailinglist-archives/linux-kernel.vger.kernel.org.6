@@ -1,222 +1,290 @@
-Return-Path: <linux-kernel+bounces-281375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0940594D62E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2CB94D631
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F991F22A46
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:16:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A0CC1F22A53
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E38154C14;
-	Fri,  9 Aug 2024 18:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFAF15530C;
+	Fri,  9 Aug 2024 18:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="JoQP8KLH"
-Received: from GBR01-LO4-obe.outbound.protection.outlook.com (mail-lo4gbr01on2108.outbound.protection.outlook.com [40.107.122.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WscQlzfi"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0162940D;
-	Fri,  9 Aug 2024 18:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.122.108
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723227370; cv=fail; b=tkAQKIva5f7lkchAqpGc3AB9zcIYSaVsHsDsYjRRXpbzZnPUdqEH5XjW5a0+99UtLioUXwen0QhNMLsw0parcRlF1uet8kw5EtrBE9lg3TCawsVWZHXtFvm8lZF2V7B4D+PqSB0Py8Q/9RATSLukP30yBD9UdPATsAs8KuoLnX0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723227370; c=relaxed/simple;
-	bh=LZ5OfRN1WlKMUzsA4VvY1u4W8ZZEK6PTq+sgdqm+wKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=elltQ1K+NQDtJUNvA4GDsDeEdzuHqzoFNxL3RunMQBjHsiMFEwQnUfBZjPDDBiolN5Gg1WlZPSB3WOB/YbbIaoup+B6RD9AV2/Whys1O8+pHv8hbGc14AD+JAFKo3dF8gx/qGVtLD0E6kHJmHM8cBK/vBepbmQ1LBpS+ktWiXB4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=JoQP8KLH; arc=fail smtp.client-ip=40.107.122.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ir9F7ZQPRDg0VsRAVVwfweC+X++yzReY/+MO2GWBebqVR9oDqNx6ZzZKBWphCqzU6gg5tYhodAhjrGfxlrhANX0wYCeEqsjdKnhbMr0Z3/rPd9WAC/BhTZIrYB1nl6j0iWJgJW/XimjnO7vXEIq2UxvRi2vwn/Om+0vSmm+Np+cmfZ2PT2h5iOcKHOpVC99f5GG960gCZbsX+oWNWle/fUq8bNMioTBss+6cWzWrEHOglaNRqqylcbdh+NyaLBWOeyaZzUZExgOFK3J/jzHMX70W261bn2WS86AySIcnQRa5XcsarXW+MGN7PA9Gwh6YoDEGj5Ra4qvDoh/7AZYfuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ro0cjt0RrMazyAxe2LDtC+scgfSEX2YIVx5FUNPVCGM=;
- b=KAOu+ZqHoZWnOlbvvAEpQMU1AmP4Z4xVex0+WnwUfNtt0fPwknIHlE6NDGg50d4R1p1XdcvZR1ETl2cmo5x7+Bv6JNhOa4l+Vs+8tZ96u+52zd7w9/plmASiNcfUP/xPigHHAc5EfyEf6KuUeZP/fC2JLjBU4WGa2aMVoo6eDhwTOmnsrEFiMlOcXxHWrfERTCDP5+AH7Z2uBgik/JAvif+CN6dMpaUW2yMoXosOypViF4qUGq4pmRPXbZWGUSc7hMHrY3lUroq88QhsLVR6tdVBNxnuwBP6x12zz0coFQpcVkwT9kJr6H/RN3OZD2pQfNgzqafDarrgg0+yZqQD0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ro0cjt0RrMazyAxe2LDtC+scgfSEX2YIVx5FUNPVCGM=;
- b=JoQP8KLHNlB33t2zNt7hv5t8XAiUDlBsEVVCDEFvin13UuTNkjp7bFcHUuvnSMS9HpsCzlCJSA14/rbOJFxkBoRs3xGX9Q9arUuie3bD+s59uWgDY//ShHqV3AA7Lv8Itdmvfp53t+0p3ny6sQjUKfEcoPY9NOEpEZq0fEMRh9o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by LO2P265MB2861.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:172::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.17; Fri, 9 Aug
- 2024 18:16:05 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%7]) with mapi id 15.20.7849.014; Fri, 9 Aug 2024
- 18:16:05 +0000
-Date: Fri, 9 Aug 2024 19:16:01 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard Biesheuvel
- <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
- Feng <boqun.feng@gmail.com>, "=?UTF-8?B?QmrDtnJu?= Roy Baron"
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
- Hindborg <a.hindborg@samsung.com>, linux-trace-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann
- <arnd@arndb.de>, linux-arch@vger.kernel.org, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>,
- Uros Bizjak <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
- <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-arm-kernel@lists.infradead.org, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones
- <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Conor
- Dooley <conor.dooley@microchip.com>, Samuel Holland
- <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao
- <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton
- <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
- loongarch@lists.linux.dev
-Subject: Re: [PATCH v6 1/5] rust: add generic static_key_false
-Message-ID: <20240809191601.3d15e3af.gary@garyguo.net>
-In-Reply-To: <20240808-tracepoint-v6-1-a23f800f1189@google.com>
-References: <20240808-tracepoint-v6-0-a23f800f1189@google.com>
-	<20240808-tracepoint-v6-1-a23f800f1189@google.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0646.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:296::15) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D7B2940D;
+	Fri,  9 Aug 2024 18:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723227402; cv=none; b=DWCepMaInBM5BT0xKffdwKfRnAqF1qTD+8XXrMnpA6nQEmDHR8XgyiObgaVVPW2pYFaHcs0TJ1165m1XnKV6H9Rod94i/b6xqBnMmstteh9dqwCeXh3ZALRWWapjkzRe6k+F4e784QaaPeCtGQ1czZ0HItdrTQ7PGYIIhOFxIUQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723227402; c=relaxed/simple;
+	bh=fpvaw8DCnHrzRFGVIoPM/b/Pnw4YKFA+0tumI9p6N2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFUUiUptNPyxJME0dLVDpMWMtjBTVlIjvTGqRApmHPIKoj9A4r5Bzq4csmw8Dk1Yg6Ftq9JaOr7SPfdK7jZcSPcEIF8aFO19I4UxFYJ21RAGEKW6ymxRpskmiXH6zZTZx6qwfAUov3OMU5+v1oS/2KekcgV4FSHJV/lGMjSwDFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WscQlzfi; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-710ce81bf7dso1487783b3a.0;
+        Fri, 09 Aug 2024 11:16:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723227400; x=1723832200; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sGYCfVt5HUFKtCIyB2BVc/wP8dt4cWBhz43nVIBGIDE=;
+        b=WscQlzfiIYV7SgDEieM0NHRLp3mTMpLzKSTBw1Hh8z1mK/oqknttsezULYGAOGAOiM
+         4JLkOkSaBzpzoGDeNCQOLynWQnW5Wf/g+EmXiEsPH8J6YhoHx+31DZINwIi0q9R4eSOk
+         4XEPgah6urXl2cBcUYt2rGfrEX3rzyWu5RWlXIx+tPHCg2UGKV2fsbx60M/JmDA4M9bk
+         yli27iZ2nFQ7toLPDj1lM5Na0I3CUTIWQXc6p8xlxHC98IMHZKL6HnW5us0lUxWvTAIq
+         DSYcMZ3FRj6apf4mmECm/GEZm0QSizYLeMh4k2IZO8DJmWNgAiLicbB44Faha6bsuGIH
+         ySkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723227400; x=1723832200;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sGYCfVt5HUFKtCIyB2BVc/wP8dt4cWBhz43nVIBGIDE=;
+        b=aekRd1ayJqn3MCQILC8KJrLJ8Pu4AYRDqjp/KmMEdJ3hdulAxC9q48KLfHWUGi+Wtb
+         dTj4T9SmhsoL4U1LoJjjg8FYj+UYxD9WzymRHm4M0KuJojQb1xMmu+GIGnaCw+7MkglT
+         GdK/EmiW0gQ+VvgUWeYGYaXZQLN3KQ09Mt3zK0u8qFlpLpGWuDt2q5orXGkLZAhprejg
+         iLT/8IW0dJUaKFzNThl0MCt+ypq5dYXqgZem69fcQG4TKaHlu3h8zavtlvvTPQNc3fAD
+         TDJQPLkF2CimDz6z39fNvvoXscqMaXm+oAOMEiLsFeVeE8qbqDrBJ5I4AOOPoWtMfYmw
+         +zvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyc2eWzuzMj/ef1WfKlZbY/nFFSMtmtvYErKV3xpqKO4zYOydkGpAZ55ZO02ZDtwb22tx6ku6qg2TqPFjtf1sV9h9wL5LW1wkG3IJINtkusIx2U1OrOXDnv4D6ZSldvlryGpOW6UIZIsXE6hOtAUuewn+x8vW490MMJaaQlx4CKJB1UPeN7F4jiPui
+X-Gm-Message-State: AOJu0YwVooP56ficFODPyEa1bZCDrg4omMez30UFTzqmKtFWWnXef7xQ
+	/6+JL34go4KUk+2K4UKc7XhrmyZM1SvzuFZONTR5V3mAqpXdzLQU
+X-Google-Smtp-Source: AGHT+IF1jV8DANk9iQuIkKGS0wN5OseqccVSfh3F1SU4PO2hoGUw4n7h33eWSRiZ7XHTE/v9XlMR8Q==
+X-Received: by 2002:a05:6a20:c792:b0:1c0:f5be:a3ca with SMTP id adf61e73a8af0-1c89ff823eamr3116505637.30.1723227400171;
+        Fri, 09 Aug 2024 11:16:40 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb9fbaf3sm508775ad.183.2024.08.09.11.16.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 11:16:39 -0700 (PDT)
+Date: Fri, 9 Aug 2024 12:16:37 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com, jannh@google.com, netdev@vger.kernel.org
+Subject: Re: [PATCH v8 3/4] sample/Landlock: Support abstract unix socket
+ restriction
+Message-ID: <ZrZdBZUMnCd81pY3@tahera-OptiPlex-5000>
+References: <cover.1722570749.git.fahimitahera@gmail.com>
+ <2b1ac6822d852ea70dd2dcdf41065076d9ee8028.1722570749.git.fahimitahera@gmail.com>
+ <20240809.uupaip5Iepho@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO2P265MB2861:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b3d3127-93d1-4dff-1660-08dcb89f5525
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tbbiP5XDsg21qXX7xmmRXrQGhUt4fT6khE48kx3uxDup1jgJdDHJ+1lE4KCn?=
- =?us-ascii?Q?euevsatY9X6GwymU+iO7tKx0Z9MhkEuwbcjlp8cZsJioomfN+/FH6cUlYct5?=
- =?us-ascii?Q?jH626Y+BclgeYwBQGPiVDCHK6KZkjm0xdb27OJ7WZN5v/xi8RjJ/UrLvHR3Z?=
- =?us-ascii?Q?HFJbKLcHQHU43RtDnLf76F13OCsDRdUm61VRKBDYO5tlMkiDZpe+1415OiAi?=
- =?us-ascii?Q?r1NjvDFXEqqrZyXIzaCjyHu8PTs9kGVmcwcWdO+KMEiu6A11tNJcBLbGQn9E?=
- =?us-ascii?Q?SypIbiUoWoQiFYIj+n615Fiqox3Q8hvILX7n6eO6Mf+djhIEkKYIHAM3Cs8b?=
- =?us-ascii?Q?gVdc86RkDHhJinWPYYFS/aKJY4uKP/7UywKu+x2LD7MmR79T99XNsqkkNarx?=
- =?us-ascii?Q?UW+aXMfr+nc2PXj9Z6WKINJJ0J9ibYfrj9k61HaIK5p0Ao8dcK6N4OJsscTm?=
- =?us-ascii?Q?88hdtOSAMKlfxeQQls2WM3eGZ3AQri3EeoE0FSw4gu2f0o48C9CVp2BK8Uv0?=
- =?us-ascii?Q?9AGdOM17FhkjqF1W7rpAcN1nDX1EFeUgPChlVMqfQgXnCNwIzkn7MPJPeFgs?=
- =?us-ascii?Q?E1Dim9aT2Avi5T7IhEgNGRaTjEFagXr0PoUNJNqVv/hwnMaZQuOVwUjwf46u?=
- =?us-ascii?Q?+wF/9NckRMF18xsSO6LsxZ7P53moGxVp0eahLxmEoediSC99ApeDLmQManoa?=
- =?us-ascii?Q?QjfNxddGhAsT+CyMLR7m9+ZAej6WefJouVBaaAt3CJW7eIC3VLUR27rslR7U?=
- =?us-ascii?Q?K6bMflWNjxR0iaKZjavgx1B691UUlh3XD+9UW3A0Rq/5EehH3pkKBrrU4zsZ?=
- =?us-ascii?Q?TEd/baV+j11hcs1Icwb4smpixM5WBXdmf5Z/YuDwinvXz7uZkySKvu5qg8nh?=
- =?us-ascii?Q?uEOfHXXF0v/hhoGigfsrbh/sGwftBRxhM/42qcdLo6sbD4LDzywkLLDfOUH4?=
- =?us-ascii?Q?Pzoe+fb7oK+G1cW0THGOxs43oFU2SgMVOr0RA5DZWMLtrqtXYmrV5bo7u0Fp?=
- =?us-ascii?Q?TOQpAstVb3tmtTUYo/dRr1fT/OxhBmbmpuW5nBNxxyqBeBZXFbdJLPvgtDXf?=
- =?us-ascii?Q?KP+6ky/wYiFYv1soyNZRaUsEAV2qBYc3X/fZfouXRn7Hir5aAWH93qbeTZh+?=
- =?us-ascii?Q?EIUiUTAaPnIXHLHxx5xHKzHiFf2tr1u4dWoUSCCy2M51DuTYnBRWMpif2k9M?=
- =?us-ascii?Q?CuJWtJlJjPV/FFYlLx6xK9cM+J8L4vIe4kDBFECorp04/WhQkrTagkDDv5JT?=
- =?us-ascii?Q?+hS6SJZkRcrL03Cw53DHO1l/5vrThS8H/PJf8hqO9IcQiRysu24DRfR0GsfE?=
- =?us-ascii?Q?cbk3NuVEtkMEUsbqY124vM+O+cVYcQkYUL16D/YmnMPp5Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HhTqguvXW6YZBUH4iCx6qs2WZEZbbx4JIMJ+2MfQUush5p+7tCC7ze90EabX?=
- =?us-ascii?Q?cmPOwZXmURcLiKuEUixpsmrtXydNuGWs5b41CDptZ/eEn26SLCgNnfA5yRCW?=
- =?us-ascii?Q?2C5VsAJfMaNw+Ey3eyZR2mEHf+JUMjTfY1yxkzMhg3IUxhv3ThoTkt6on3OO?=
- =?us-ascii?Q?Ic80JLlZSeUNx26e4X0dZ4dxEqAVpPxTNv/ju5WphC3121HbhiBYrs9Ou7k3?=
- =?us-ascii?Q?Hn+I4QFvVHr2oPjduCuiMfaS+J1IrfUF4Dmz7iCgx1iVGxLjhZ7xRYhE70lk?=
- =?us-ascii?Q?BZJICo0beum2dP4YGzpS/vDxdLJefW1+BBkZb46FfnGzoxd4eV7h556DBVPU?=
- =?us-ascii?Q?cEclmPbMkTGVcpsLapDqJ/95zBVPAR8S+2KFUczckoCqNg+IrGbJ5xw3MDhy?=
- =?us-ascii?Q?YvqOfA4CrK2DiCP3SBaNQL5+liLRh+oKJVt+ObbzIhdj/5zmJO5ACF2zioNj?=
- =?us-ascii?Q?iNRCLBAU/g5LDyOMFOjm1SbfhFFdlMUVt0tMj0fO3mV3FxhSB7vb42+Azwiz?=
- =?us-ascii?Q?tVYs2ArXaVYyr8zQfO59lHXHQ2zeQIFcu3ztjBpUeoTzJJyewFDaCSVItKwD?=
- =?us-ascii?Q?SGeiqorsaQQeuuokhDbtQdgDT06XaljscadIS3ZJ0JiSYm2yHnkkq+pRshds?=
- =?us-ascii?Q?KfWZC3lvrPpLPcrstVac+ATXcHhwIs0oGth9I5V+C6OpYCfUmuRUijTCPP4f?=
- =?us-ascii?Q?rKbCRHNGrk+Bin7XIKXuqXdfCErXUlVJ/HS3wiMGCoF6We+4WSM3iStJ9gK1?=
- =?us-ascii?Q?ryAR/zKHkNOyxwziGly3D/UemiuJbFjsk3WWoIugh/g+O0pmWAJBLFqKj1m/?=
- =?us-ascii?Q?KzTTun+AfB3pMcdUSJ2MBG0HkZgXn9cefCbAs6ALs0ZMu5CAwTXhJ2S5+86e?=
- =?us-ascii?Q?KHOrx7u1pm2+B7g03VTwThEZLpObrKf2EGsm/zpPABJFoIfjJKR9iYvxaL8b?=
- =?us-ascii?Q?G2VEiiVEx/Rl0jD0qz6Jvsi7FogLyhCzh1tNgQ5P9DcRiNkvLKFcBWmM4gGo?=
- =?us-ascii?Q?/NEbNgM/NNAA3DhgzrpizNPSeDhNH9xpOc/UgjV+zRfhb+oq0DSQ6FXeVwGa?=
- =?us-ascii?Q?z7yigeYjbVB3pK/voTuRnq8XfFWHFroHIfJ4YUyNZfHtPiLtO1GXbWb0ijcq?=
- =?us-ascii?Q?hrBxEwcQhIjOZuVDpxaKw0K95xO0D8SJVjUSMZWSmEw7ROR8MEFJ6orUxVDq?=
- =?us-ascii?Q?WepJno5sm29iQM4T4ikgpEagqkJA2WXavcia7VcG8gQUdb3a/cemVva9NA6j?=
- =?us-ascii?Q?BM3SYjBJXIF/fglp89QRPYf2eRxptT4H8pY294PDbCds3iZX1FEYZYhx2A6G?=
- =?us-ascii?Q?B1Bk/69ccJmdwxc35bDBs4AZ9lStuwbZ3mnUNGZqUD6W7+MMBFRNxjgzfdDd?=
- =?us-ascii?Q?ZT3S9Ab5klPlUhJGDWZoCUJaNJQikh0Pz+uI38oX3Xkve4PsM7nPGe+Elc6F?=
- =?us-ascii?Q?tg3b/39UzA9OcYkoUIsNp0pD6xuNw1wAXa0lPe2f7unjoEFv8TecrjAwCiZi?=
- =?us-ascii?Q?pgSlv3nDOU6UZeufBqO8OQiIOJ+TX6UIwPm4BgBftj4IuyP4xPigNINFA0jO?=
- =?us-ascii?Q?qxDMvLZ3y1f/4ATmYDgtwamM3DYQJOq2IhbWaXaCq7mImmFCsPbIKd9XSB1D?=
- =?us-ascii?Q?Gg=3D=3D?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b3d3127-93d1-4dff-1660-08dcb89f5525
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 18:16:04.8954
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZO/YroiJM6No0tqBf3VLB3IdzsnXKWETF5jKhnws7b67D3ygMUwwCKDhtpavFS2YfYnLIoidwQimdaR+iH1Oog==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB2861
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240809.uupaip5Iepho@digikod.net>
 
-On Thu, 08 Aug 2024 17:23:37 +0000
-Alice Ryhl <aliceryhl@google.com> wrote:
-
-> Add just enough support for static key so that we can use it from
-> tracepoints. Tracepoints rely on `static_key_false` even though it is
-> deprecated, so we add the same functionality to Rust.
+On Fri, Aug 09, 2024 at 04:11:47PM +0200, Mickaël Salaün wrote:
+> On Thu, Aug 01, 2024 at 10:02:35PM -0600, Tahera Fahimi wrote:
+> > A sandboxer can receive the character "a" as input from the environment
+> > variable LL_SCOPE to restrict the abstract unix sockets from connecting
+> > to a process outside its scoped domain.
+> > 
+> > Example
+> > =======
+> > Create an abstract unix socket to listen with socat(1):
+> > socat abstract-listen:mysocket -
+> > Create a sandboxed shell and pass the character "a" to LL_SCOPED:
+> > LL_FS_RO=/ LL_FS_RW=. LL_SCOPED="a" ./sandboxer /bin/bash
+> > If the sandboxed process tries to connect to the listening socket
+> > with command "socat - abstract-connect:mysocket", the connection
+> > will fail.
+> > 
+> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > 
+> > ---
+> > v8:
+> > - Adding check_ruleset_scope function to parse the scope environment
+> >   variable and update the landlock attribute based on the restriction
+> >   provided by the user.
+> > - Adding Mickaël Salaün reviews on version 7.
+> > 
+> > v7:
+> > - Adding IPC scoping to the sandbox demo by defining a new "LL_SCOPED"
+> >   environment variable. "LL_SCOPED" gets value "a" to restrict abstract
+> >   unix sockets.
+> > - Change LANDLOCK_ABI_LAST to 6.
+> > ---
+> >  samples/landlock/sandboxer.c | 56 +++++++++++++++++++++++++++++++++---
+> >  1 file changed, 52 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> > index e8223c3e781a..98132fd823ad 100644
+> > --- a/samples/landlock/sandboxer.c
+> > +++ b/samples/landlock/sandboxer.c
+> > @@ -14,6 +14,7 @@
+> >  #include <fcntl.h>
+> >  #include <linux/landlock.h>
+> >  #include <linux/prctl.h>
+> > +#include <linux/socket.h>
+> >  #include <stddef.h>
+> >  #include <stdio.h>
+> >  #include <stdlib.h>
+> > @@ -22,6 +23,7 @@
+> >  #include <sys/stat.h>
+> >  #include <sys/syscall.h>
+> >  #include <unistd.h>
+> > +#include <stdbool.h>
+> >  
+> >  #ifndef landlock_create_ruleset
+> >  static inline int
+> > @@ -55,6 +57,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+> >  #define ENV_FS_RW_NAME "LL_FS_RW"
+> >  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+> >  #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+> > +#define ENV_SCOPED_NAME "LL_SCOPED"
+> >  #define ENV_DELIMITER ":"
+> >  
+> >  static int parse_path(char *env_path, const char ***const path_list)
+> > @@ -184,6 +187,38 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+> >  	return ret;
+> >  }
+> >  
+> > +static bool check_ruleset_scope(const char *const env_var,
+> > +				struct landlock_ruleset_attr *ruleset_attr)
+> > +{
+> > +	bool ret = true;
+> > +	char *env_type_scope, *env_type_scope_next, *ipc_scoping_name;
+> > +
+> > +	ruleset_attr->scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
 > 
-> This patch only provides a generic implementation without code patching
-> (matching the one used when CONFIG_JUMP_LABEL is disabled). Later
-> patches add support for inline asm implementations that use runtime
-> patching.
-> 
-> When CONFIG_JUMP_LABEL is unset, `static_key_count` is a static inline
-> function, so a Rust helper is defined for `static_key_count` in this
-> case. If Rust is compiled with LTO, this call should get inlined. The
-> helper can be eliminated once we have the necessary inline asm to make
-> atomic operations from Rust.
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/bindings/bindings_helper.h       |  1 +
->  rust/helpers.c                        |  9 +++++++++
->  rust/kernel/arch_static_branch_asm.rs |  1 +
->  rust/kernel/jump_label.rs             | 29 +++++++++++++++++++++++++++++
->  rust/kernel/lib.rs                    |  1 +
->  5 files changed, 41 insertions(+)
-> 
-> diff --git a/rust/kernel/arch_static_branch_asm.rs b/rust/kernel/arch_static_branch_asm.rs
-> new file mode 100644
-> index 000000000000..958f1f130455
-> --- /dev/null
-> +++ b/rust/kernel/arch_static_branch_asm.rs
-> @@ -0,0 +1 @@
-> +::kernel::concat_literals!("1: jmp " "{l_yes}" " # objtool NOPs this \n\t" ".pushsection __jump_table,  \"aw\" \n\t" " " ".balign 8" " " "\n\t" ".long 1b - . \n\t" ".long " "{l_yes}" "- . \n\t" " " ".quad" " " " " "{symb} + {off} + {branch}" " - . \n\t" ".popsection \n\t")
+> Why always removing the suported scope?
+> What happen if ABI < 6 ?
+Right, I will add this check before calling chek_ruleset_scope function.
 
+> > +	env_type_scope = getenv(env_var);
+> > +	/* scoping is not supported by the user */
+> > +	if (!env_type_scope)
+> > +		return true;
+> > +	env_type_scope = strdup(env_type_scope);
+> > +	unsetenv(env_var);
+> > +
+> > +	env_type_scope_next = env_type_scope;
+> > +	while ((ipc_scoping_name =
+> > +			strsep(&env_type_scope_next, ENV_DELIMITER))) {
+> > +		if (strcmp("a", ipc_scoping_name) == 0) {
+> > +			ruleset_attr->scoped |=
+> > +				LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+> 
+> There are two issues here:
+> 1. this would not work for ABI < 6
+> 2. "a" can be repeated several times, which should probably not be
+>    allowed because we don't want to support this
+>    unspecified/undocumented behavior.
+For the second note, I think even if the user provides multiple "a"
+(something like "a:a"), It would not have a different effect (for now).
+Do you suggest that I change this way of handeling this environment
+variable or add documents that mention this note?
+> 
+> > +		} else {
+> > +			fprintf(stderr, "Unsupported scoping \"%s\"\n",
+> > +				ipc_scoping_name);
+> > +			ret = false;
+> > +			goto out_free_name;
+> > +		}
+> > +	}
+> > +out_free_name:
+> > +	free(env_type_scope);
+> > +	return ret;
+> > +}
+> > +
+> >  /* clang-format off */
+> >  
+> >  #define ACCESS_FS_ROUGHLY_READ ( \
+> > @@ -208,7 +243,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+> >  
+> >  /* clang-format on */
+> >  
+> > -#define LANDLOCK_ABI_LAST 5
+> > +#define LANDLOCK_ABI_LAST 6
+> >  
+> >  int main(const int argc, char *const argv[], char *const *const envp)
+> >  {
+> > @@ -223,14 +258,15 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> >  		.handled_access_fs = access_fs_rw,
+> >  		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+> >  				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> > +		.scoped = LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
+> >  	};
+> >  
+> >  	if (argc < 2) {
+> >  		fprintf(stderr,
+> > -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
+> > +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s "
+> >  			"<cmd> [args]...\n\n",
+> >  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> > -			ENV_TCP_CONNECT_NAME, argv[0]);
+> > +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+> >  		fprintf(stderr,
+> >  			"Execute a command in a restricted environment.\n\n");
+> >  		fprintf(stderr,
+> > @@ -251,15 +287,18 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> >  		fprintf(stderr,
+> >  			"* %s: list of ports allowed to connect (client).\n",
+> >  			ENV_TCP_CONNECT_NAME);
+> > +		fprintf(stderr, "* %s: list of restrictions on IPCs.\n",
+> > +			ENV_SCOPED_NAME);
+> >  		fprintf(stderr,
+> >  			"\nexample:\n"
+> >  			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+> >  			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+> >  			"%s=\"9418\" "
+> >  			"%s=\"80:443\" "
+> > +			"%s=\"a\" "
+> >  			"%s bash -i\n\n",
+> >  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> > -			ENV_TCP_CONNECT_NAME, argv[0]);
+> > +			ENV_TCP_CONNECT_NAME, ENV_SCOPED_NAME, argv[0]);
+> >  		fprintf(stderr,
+> >  			"This sandboxer can use Landlock features "
+> >  			"up to ABI version %d.\n",
+> > @@ -327,6 +366,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> >  		/* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
+> >  		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
+> >  
+> > +		__attribute__((fallthrough));
+> > +	case 5:
+> > +		/* Removes LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET for ABI < 6 */
+> > +		ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
+> >  		fprintf(stderr,
+> >  			"Hint: You should update the running kernel "
+> >  			"to leverage Landlock features "
+> > @@ -358,6 +401,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> >  			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+> >  	}
+> >  
+> > +	if (!check_ruleset_scope(ENV_SCOPED_NAME, &ruleset_attr)) {
+> 
+> You should use the same pattern as for TCP access rigths: if the
+> environment variable is not set then remove the ruleset's scopes.
+I think this happens in check_ruleset_scope function. However, I will
+add a condition (abi >=6) to this "if" statement.
 
-I believe this file is included by mistake, given it's added to
-gitignore in patch 5.
-
-Best,
-Gary
+> > +		perror("Unsupported IPC scoping requested");
+> > +		return 1;
+> > +	}
+> > +
+> >  	ruleset_fd =
+> >  		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> >  	if (ruleset_fd < 0) {
+> > -- 
+> > 2.34.1
+> > 
+> > 
 
