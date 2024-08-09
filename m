@@ -1,123 +1,221 @@
-Return-Path: <linux-kernel+bounces-280734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017CC94CE43
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:09:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C5894CE59
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72F28B216EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:08:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6BFF1C21437
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B294190684;
-	Fri,  9 Aug 2024 10:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE343190693;
+	Fri,  9 Aug 2024 10:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BpcLS7eT"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J2oONqPb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFFFEADA
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 10:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FCBEADA;
+	Fri,  9 Aug 2024 10:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723198130; cv=none; b=SDx3i3uKukK/ODARZe7Wva5dJjzDu1sqdiMUsKHOhx6CtQhsrMYQlXXmRiqJVFj4V4JipbzErR2U0GlKDc0RIUhuwgbk6a1cV3qcukInyo9KUtoLqv4l/GWVMKqKS6hoOAqEv5QPlK7QKq82AKYFsnkxzEae3XD1VLyzCxEj4JU=
+	t=1723198262; cv=none; b=ZRrwd6DtIpdLy+KV5qNnDlf/Zg9ESldrtC5sbTSCdtWStW/bmMDgAJUnkBx/65Ik3C/1CMst4OC5gUUk7oCF6gIk+vbi3aHWkrpboKIz0C4mSDmsrOr/T5qYMyRb5p1839Eqw2HtvXNKRe6EIo/zE/WEe1gBulCLShVxo6ebvS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723198130; c=relaxed/simple;
-	bh=TNdfiNtPGBKEiqqYaBmEQaV0ajmcYNCB+JkPSsA2Nzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=mlSMBp7cjslkQeHj33bPP7Iamhhjxm6CzsbWsc8uYhgMtzE/Iuf56VCYcaV00VSmPTdWZq9T+RHnUQyHO6NnHhLMOMxS8ukiaL7Z+GIX26IyBkUNPkOyjqviljD6bQD+6xSI8P6XPz5TDT8BSxsVDkdApXMevJsZskV1HZCW0K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BpcLS7eT; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3687ea0521cso1332395f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 03:08:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723198127; x=1723802927; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xiNn5CbFV0NLfgU2Ui8emxAJOJLFsPl75IXpIHWwt1g=;
-        b=BpcLS7eTi6xpOrBqdg1pnzYckG2ys4P3Me8MeC5GLelsWguYtKx32WbakDVzEyGho6
-         X4owJFzLcQCN1fnurFQpM8nlMRzKm/zCw+ykwJoWfKKTW+dJ4kQov/1rXTgUZIccskQF
-         inyJT/TqQJRYcnodizq74VIj+86GpyNQtSi25eaZ18r4zGwFtArGZWu9vDPmca8jeEQg
-         Ydpj/9ezTVh8+Z1bK/2CWtG0coC16y96N/vt8laOKDsuUWawD6MW6HHz8o1V8AH05qC/
-         ZCbIdzhyAyxcEezAhtriOS5FIjwa6YcD5bFcoNRmA5kLNs3+Bd50JkOJkbyG5/A4EVqa
-         5/NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723198127; x=1723802927;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xiNn5CbFV0NLfgU2Ui8emxAJOJLFsPl75IXpIHWwt1g=;
-        b=eesOJRHuRIDgAq+/gpMAScEzASViuiKXB5a3t8PpdrSSDDwwF5Lb7Zef3LxOotYLcO
-         QqFyALWLZubDdAm1A7Z/OLugkpHNl6W45GFDxXfU/7JKIOzHvIV6jUhFJ7vf40IeJ6tM
-         7KLF3VBb3kJtyI10RPEmaU/no5+edMIYhKk1VwbH9dYy7l9O4605FNS2stOAI10iRscc
-         eCvH4jdZMmfhf4dm9udIGHgNC0YJmoQEBh7YR0CMGeraUneHXllEDmPflkaJSN3xrGex
-         e8abUs2Ho2plFJHF6BkmREpv07eN5W7y5WAtdiZmBGQkYwEtoqW3zj2XHoXyOKeju1Jt
-         vhIw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5rn+RfViIQ/jkbCujD0GNgxH9soxiQaRgKxZGtQNFqib1iAzhSzxONs1+oSyWS4gKeLw8uCKXI7Wd9AwRtMKsjtcpoNfaR1pYMSa2
-X-Gm-Message-State: AOJu0Yw4scUzEb8QxTGPSgX3SYvmH6Eh3mNHWD3T70b4GCHyKr1nfmJO
-	vA24mNUuBmiP81cGa8dDaqOVlHUPbFeJCzkBxgZorU99XzLFWk8wJYos7LJQCbY49vtRHzqsjpq
-	f
-X-Google-Smtp-Source: AGHT+IEjxOMpJijyJPtqjvN2SnJkH31SRvQqSXCULSa1KYcfXyvol0WgIsf493nMf6mm5AMqBEpe4g==
-X-Received: by 2002:a05:6000:b89:b0:368:3b5c:7a5d with SMTP id ffacd0b85a97d-36d5e1c7656mr1238878f8f.20.1723198127039;
-        Fri, 09 Aug 2024 03:08:47 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290598d87asm121020005e9.21.2024.08.09.03.08.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 03:08:46 -0700 (PDT)
-Message-ID: <8258c91a-ab6c-42f0-a77c-dea52201deec@linaro.org>
-Date: Fri, 9 Aug 2024 11:08:45 +0100
+	s=arc-20240116; t=1723198262; c=relaxed/simple;
+	bh=ElNa1R9fS3sL8rOFzmLcBLY5XkiZ9t0O2YMnQTQeJII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VH0/OxqdWTait81AB6qmPjHz+oHI8WO4Es+cAuZsdV8pZlhosq7vA12wXL2ubL2V2Kq1FXP1KF4AbwB5qV8X7npsJALTgyWmc5REfJwY+5ZfGtYOZdArVGIAzg+dO//20sPNzEW3rlSLaU0yBbrE5Ct5Vuoaf+YiGK95l1lgUrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J2oONqPb; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723198261; x=1754734261;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ElNa1R9fS3sL8rOFzmLcBLY5XkiZ9t0O2YMnQTQeJII=;
+  b=J2oONqPbQCFgvI1ePdVtVnEvvihPibAGWqsD8TNyERK1jeVbspDZ/OvZ
+   q0s8pTANq0vsrAsXGkXqdtN+clDbbNzGMFTyBw7kQ3Sdb64rJTaLLhEQh
+   KqBqeYE9SBzvS2edfnru+FQ1S1PHX8l74ijdWJCgP+DJfn54K+XubBNWW
+   6Z0z/HK2CuBdYh4CRwlzB/RNWjMhMpNZLiQYg2nMekVVNtZvA+yYtPbXn
+   38qc1nxCeb+pVY+mwG1FIgcozfeUwHhRYbVAt/uOy6PzhiDDnoCJWTCHn
+   QNZqKr04nzltpdOGCnTy/u364M+HnHWpOhxC7XKYtAunEZJUBM2DJ/cfN
+   w==;
+X-CSE-ConnectionGUID: 2cMm6l2OT1m3fDkQbxPWzg==
+X-CSE-MsgGUID: h2u1qAF6T3qwZ94/lHDaTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21490972"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="21490972"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 03:11:01 -0700
+X-CSE-ConnectionGUID: sReZUgrISUmDXuHgRpgTzQ==
+X-CSE-MsgGUID: KnRNh/vWSbyxp2GSVV7apg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="57436779"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 03:10:56 -0700
+Date: Fri, 9 Aug 2024 13:10:52 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: "Nilawar, Badal" <badal.nilawar@intel.com>
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	anshuman.gupta@intel.com, riana.tauro@intel.com,
+	ashutosh.dixit@intel.com, karthik.poosa@intel.com,
+	andriy.shevchenko@linux.intel.com
+Subject: Re: [PATCH v4] drm/i915/hwmon: expose fan speed
+Message-ID: <ZrXrLPgN0tDutnGb@black.fi.intel.com>
+References: <20240809061525.1368153-1-raag.jadav@intel.com>
+ <23dc7824-50cd-4ba3-be5a-df141e8fe69a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/9] perf auxtrace: Refactor
- auxtrace__evsel_is_auxtrace()
-To: Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>
-References: <20240806204130.720977-1-leo.yan@arm.com>
- <20240806204130.720977-4-leo.yan@arm.com>
- <1059261e-9d1c-472e-a211-f83c313eb5c2@intel.com>
-Content-Language: en-US
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Liang, Kan" <kan.liang@linux.intel.com>
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <1059261e-9d1c-472e-a211-f83c313eb5c2@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <23dc7824-50cd-4ba3-be5a-df141e8fe69a@intel.com>
 
-
-
-On 08/08/2024 1:58 pm, Adrian Hunter wrote:
-> On 6/08/24 23:41, Leo Yan wrote:
->> The auxtrace__evsel_is_auxtrace() function invokes the callback
->> .evsel_is_auxtrace() to check if an event is an AUX trace. In the
->> low-level code, every AUX trace module provides its callback to
->> compare the PMU type.
->>
->> This commit refactors auxtrace__evsel_is_auxtrace() by simply
->> calling evsel__is_aux_event() rather than using the callback function.
->> As a result, the callback .evsel_is_auxtrace() is no longer needed, so
->> the definition and implementations are removed.
+On Fri, Aug 09, 2024 at 03:03:20PM +0530, Nilawar, Badal wrote:
 > 
-> evsel__is_aux_event() assumes it is on the target machine e.g.
-> being called from perf record.  It indirectly reads from sysfs
-> to find PMUs, which will not necessarily be the same a different
-> machine.
 > 
-> For example, what happens if a perf data file from one arch is
-> being processed on a machine from another arch.
-> 
+> On 09-08-2024 11:45, Raag Jadav wrote:
+> > Add hwmon support for fan1_input attribute, which will expose fan speed
+> > in RPM. With this in place we can monitor fan speed using lm-sensors tool.
+> > 
+> > $ sensors
+> > i915-pci-0300
+> > Adapter: PCI adapter
+> > in0:         653.00 mV
+> > fan1:        3833 RPM
+> > power1:           N/A  (max =  43.00 W)
+> > energy1:      32.02 kJ
+> > 
+> > v2:
+> > - Add mutex protection
+> > - Handle overflow
+> > - Add ABI documentation
+> > - Aesthetic adjustments (Riana)
+> > 
+> > v3:
+> > - Declare rotations as "long" and drop redundant casting
+> > - Change date and version in ABI documentation
+> > - Add commenter name in changelog (Riana)
+> > 
+> > v4:
+> > - Fix wakeref leak
+> > - Drop switch case and simplify hwm_fan_xx() (Andi)
+> > 
+> > Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> > Reviewed-by: Riana Tauro <riana.tauro@intel.com>
+> > ---
+> >   .../ABI/testing/sysfs-driver-intel-i915-hwmon |  8 ++
+> >   drivers/gpu/drm/i915/gt/intel_gt_regs.h       |  2 +
+> >   drivers/gpu/drm/i915/i915_hwmon.c             | 81 +++++++++++++++++++
+> >   3 files changed, 91 insertions(+)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon b/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon
+> > index 92fe7c5c5ac1..be4141a7522f 100644
+> > --- a/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon
+> > +++ b/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon
+> > @@ -75,3 +75,11 @@ Description:	RO. Energy input of device or gt in microjoules.
+> >   		for the gt.
+> >   		Only supported for particular Intel i915 graphics platforms.
+> > +
+> > +What:		/sys/bus/pci/drivers/i915/.../hwmon/hwmon<i>/fan1_input
+> > +Date:		November 2024
+> Why November?
 
-I think this does go a bit wrong. If I open an SPE file on x86 it finds 
-the intel_pt PMU which both have the same type number. But because 
-that's also an auxtrace one it appears to work.
+This is expected to land upstream in next cycle right?
+
+> > +KernelVersion:	6.12
+> > +Contact:	intel-gfx@lists.freedesktop.org
+> > +Description:	RO. Fan speed of device in RPM.
+> > +
+> > +		Only supported for particular Intel i915 graphics platforms.
+> > diff --git a/drivers/gpu/drm/i915/gt/intel_gt_regs.h b/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+> > index e42b3a5d4e63..57a3c83d3655 100644
+> > --- a/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+> > +++ b/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+> > @@ -1553,6 +1553,8 @@
+> >   #define VLV_RENDER_C0_COUNT			_MMIO(0x138118)
+> >   #define VLV_MEDIA_C0_COUNT			_MMIO(0x13811c)
+> > +#define PCU_PWM_FAN_SPEED			_MMIO(0x138140)
+> > +
+> >   #define GEN12_RPSTAT1				_MMIO(0x1381b4)
+> >   #define   GEN12_VOLTAGE_MASK			REG_GENMASK(10, 0)
+> >   #define   GEN12_CAGF_MASK			REG_GENMASK(19, 11)
+> > diff --git a/drivers/gpu/drm/i915/i915_hwmon.c b/drivers/gpu/drm/i915/i915_hwmon.c
+> > index 49db3e09826c..bafa5a11ed0f 100644
+> > --- a/drivers/gpu/drm/i915/i915_hwmon.c
+> > +++ b/drivers/gpu/drm/i915/i915_hwmon.c
+> > @@ -36,6 +36,7 @@ struct hwm_reg {
+> >   	i915_reg_t pkg_rapl_limit;
+> >   	i915_reg_t energy_status_all;
+> >   	i915_reg_t energy_status_tile;
+> > +	i915_reg_t fan_speed;
+> >   };
+> >   struct hwm_energy_info {
+> > @@ -43,11 +44,17 @@ struct hwm_energy_info {
+> >   	long accum_energy;			/* Accumulated energy for energy1_input */
+> >   };
+> > +struct hwm_fan_info {
+> > +	u32 reg_val_prev;
+> > +	u32 time_prev;
+> > +};
+> > +
+> >   struct hwm_drvdata {
+> >   	struct i915_hwmon *hwmon;
+> >   	struct intel_uncore *uncore;
+> >   	struct device *hwmon_dev;
+> >   	struct hwm_energy_info ei;		/*  Energy info for energy1_input */
+> > +	struct hwm_fan_info fi;			/*  Fan info for fan1_input */
+> >   	char name[12];
+> >   	int gt_n;
+> >   	bool reset_in_progress;
+> > @@ -276,6 +283,7 @@ static const struct hwmon_channel_info * const hwm_info[] = {
+> >   	HWMON_CHANNEL_INFO(power, HWMON_P_MAX | HWMON_P_RATED_MAX | HWMON_P_CRIT),
+> >   	HWMON_CHANNEL_INFO(energy, HWMON_E_INPUT),
+> >   	HWMON_CHANNEL_INFO(curr, HWMON_C_CRIT),
+> > +	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
+> >   	NULL
+> >   };
+> > @@ -613,6 +621,63 @@ hwm_curr_write(struct hwm_drvdata *ddat, u32 attr, long val)
+> >   	}
+> >   }
+> > +static umode_t
+> > +hwm_fan_is_visible(const struct hwm_drvdata *ddat, u32 attr)
+> > +{
+> > +	struct i915_hwmon *hwmon = ddat->hwmon;
+> > +
+> > +	return attr == hwmon_fan_input &&
+> > +	       i915_mmio_reg_valid(hwmon->rg.fan_speed) ? 0444 : 0;
+> > +}
+> > +
+> > +static int
+> > +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
+> > +{
+> > +	struct i915_hwmon *hwmon = ddat->hwmon;
+> > +	struct hwm_fan_info *fi = &ddat->fi;
+> > +	u32 reg_val, pulses, time, time_now;
+> > +	intel_wakeref_t wakeref;
+> > +	long rotations;
+> > +	int ret = 0;
+> > +
+> > +	if (attr != hwmon_fan_input)
+> > +		return -EOPNOTSUPP;
+> Using a switch case in rev3 is more logical here. It will also simplify
+> adding more fan attributes in the future. This is why switch cases are used
+> in other parts of the file.
+
+Current support is for DG1 and DG2, which do not include any other features
+that can be supported by fan attributes.
+
+Raag
 
