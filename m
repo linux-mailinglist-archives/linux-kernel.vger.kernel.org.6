@@ -1,87 +1,114 @@
-Return-Path: <linux-kernel+bounces-280949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB46C94D149
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:31:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AFB94D14B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AC16B23CBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:31:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83EE728414D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49401953BA;
-	Fri,  9 Aug 2024 13:30:55 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5508192B7F;
-	Fri,  9 Aug 2024 13:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7224A194C93;
+	Fri,  9 Aug 2024 13:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ErGP9x0E"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6733D1940B9
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723210255; cv=none; b=XeEYsmvvZKKY75yaCh+BfnEZOj8VRE+36a43dcFZKgtpwZpJ6mc/GiSyucIDB3cnDKauKVzgL26fYBQ/TzUd7jkNIbF5j3TqE0MVagXrH/yacYyqZn6p0WxFBsICzGKfzZn1yiwv+UypwsHmUiby6pWsu57/DVvwcRyVVX+72Hw=
+	t=1723210293; cv=none; b=nk9rjZUAQJZ3R79QhvdALhRBqzTP37Eys3y2TXMbAIquLw25cGH9bcSD+Iby9QXVfoiflqj0phQBM/PAD0u5kUF55A/8NqUXHoRaWM1eN85ASzxFjljG/wxk2mvGPzBhsLBOf9sF+gX9PptfbsBzYSTM68XFldUFzxkpTsY8YFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723210255; c=relaxed/simple;
-	bh=jCfjBIrwzFS5oyFkT/kguttmfSuh2j+vQZx7YLEVmOY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=C1hAVOzcNkGtdvEloNcTTzqxYf+41orjmzFrN/m+MwIsyxq4foOne0Tw0X/KMGo2weCBJhREsKUdsc5BhTCcNCSlxffj8LpHnyIXSUCAeAetq5rdJx71CY1J4W7lJI+tBSkFAlwi8MFr4heRojRpsztRr9YhBLjD494dJ28XjvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 21E5F92009D; Fri,  9 Aug 2024 15:30:52 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 1BFC792009B;
-	Fri,  9 Aug 2024 14:30:52 +0100 (BST)
-Date: Fri, 9 Aug 2024 14:30:52 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-cc: Bjorn Helgaas <bhelgaas@google.com>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] PCI: Correct error reporting with PCIe failed link
- retraining
-In-Reply-To: <f4eafdbc-b295-a982-fe8e-dbd11b98d56f@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.2408091142330.61955@angie.orcam.me.uk>
-References: <alpine.DEB.2.21.2402092125070.2376@angie.orcam.me.uk> <alpine.DEB.2.21.2402100045590.2376@angie.orcam.me.uk> <f4eafdbc-b295-a982-fe8e-dbd11b98d56f@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1723210293; c=relaxed/simple;
+	bh=lYtDZk0FLPC/JudIe9Jh+TGpstry2aKOQgO3D43H+Q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tan7ttglfLWRQfUjGPIG5QW7gngwV/t5p9pdDg5+fsvkpL+3lXbNDIPEzgwOdt7zxRdO9kG7XKAhdwAG9PDSoNvoqq7JcJdDeoeLdseSc6j/ydA088SAJUrz2RyiBfAtsMjzF/F09xLQ6Pyv3JoQqepv+rxTkCEBew+g0X+PRQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ErGP9x0E; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=62G+
+	6LGOoz3ndT//ceNMgtDoqs2jDeWVt6TUvAoLeF4=; b=ErGP9x0EiIrgAzW09wL+
+	MwanHmQq6svTgG4S1aDmMctRRC+DR9iCnb21onHZsSBLuMnzznd2m68N0xhj1uw3
+	L06mqIgUXVvqSEzGQFi39hDsM4f6bI1N1XTEAZjFd2aCe9CHFk5omWYbNMb7U12R
+	cWSmiWE+PpOfW3bL29gZyE6t9o6Xl6rhbduU1mr1RQG1ix9iRb+NGx/pZLTpbteu
+	SGDdDT/9lA4aSpGjZQWYTOadmMdiiN4FLcwCN2ZaSqxh5qZUx3CyS3UgU05buTBn
+	oh2zT7EBhI6BjvMwUDw7h/uevh4m1H8BRb2ajzoYM0IXmHI0KlSwN1WQQm6KxoZj
+	xw==
+Received: (qmail 624119 invoked from network); 9 Aug 2024 15:31:26 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Aug 2024 15:31:26 +0200
+X-UD-Smtp-Session: l3s3148p1@UGz3KEAfPoMujnvj
+Date: Fri, 9 Aug 2024 15:31:25 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>,
+	Gaosheng Cui <cuigaosheng1@huawei.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.11-rc3
+Message-ID: <ZrYaLQ1GZFBAii0Q@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>,
+	Gaosheng Cui <cuigaosheng1@huawei.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+References: <3oxrthtenkyypr5pqpduxyndw6wxihn24s67p6ppogkcdd6mjd@s5pg3swp6flp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zfFAmvyhCPUYaeQW"
+Content-Disposition: inline
+In-Reply-To: <3oxrthtenkyypr5pqpduxyndw6wxihn24s67p6ppogkcdd6mjd@s5pg3swp6flp>
 
-On Mon, 12 Feb 2024, Ilpo Järvinen wrote:
 
-> > Only return successful completion status from `pcie_failed_link_retrain' 
-> > if retraining has actually been done, preventing excessive delays from 
-> > being triggered at call sites in a hope that communication will finally 
-> > be established with the downstream device where in fact nothing has been 
-> > done about the link in question that would justify such a hope.
-> > 
-> > Fixes: a89c82249c37 ("PCI: Work around PCIe link training failures")
-> > Reported-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> > Link: https://lore.kernel.org/r/aa2d1c4e-9961-d54a-00c7-ddf8e858a9b0@linux.intel.com/
-> > Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
-> > Cc: stable@vger.kernel.org # v6.5+
-> 
-> Thanks.
-> 
-> The original thread might be useful for context if somebody has to look at 
-> this change later on from the history, so:
-> 
-> Link: https://lore.kernel.org/linux-pci/20240129112710.2852-2-ilpo.jarvinen@linux.intel.com/T/#u
+--zfFAmvyhCPUYaeQW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- This refers the same thread of discussion as the link already included 
-(and also is not a permalink), so I chose not to duplicate it in v2.
+Hi Andi,
 
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> two fixes from Gaosheng in this pull request on the Qualcomm Geni
+> device.
 
- Thank you (also for the other change)!
+Pulled. But I wonder why this wasn't just one fix because it is the same
+error path?
 
- New series posted: 
-<https://patchwork.kernel.org/project/linux-pci/list/?series=878216>.
+> Wish you a great weekend,
 
-  Maciej
+Thanks, same to you!
+
+   Wolfram
+
+
+--zfFAmvyhCPUYaeQW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma2GioACgkQFA3kzBSg
+KbYhBw/+KWfj/9rT2OrbKjzS+C6/mMTDrE1I/5imx3gYpsQvODjuaY/QLFDp+Jt9
+s9HqrnSTa7beCd/EoQuH1T+QikYFuXtAG/usJjZ+3lpoX9exYYHQG5Z/REyI6D1P
+gjqw9GOXgIWRnpnRZL7prb6eXwMVCHHDSeguzX2LIcNtPJzYiuzc/SH9h8huHlhY
+e4xax7SkXhnDpbNFuqnQWXWNsz5a3jDiC/mUcaJf+zNjUV4UyMq5VjfPFizx5SH2
+W2gCQ+weCgUFmZRF4IMWhd7haGQRCym2bIo3VKIODIY0zuxvrbakJIyAphh6qiwq
+DEQBg8tBIZ9CRdmP1yZeBV+6aDSeOvABe8oMGbOOe2gnh75Mn6qZrZ2HkrFXj46i
+4dSd8fKtYrY42cbaB0Lg8Gm5aazxl2lYvVPLSwUR+nWP2dk19fD5bV39eFx5PaT3
+eqgpDbCTjz3/SN/JA5CJMbgnkqXN4BhV8yTwOp1t9ZtMrZ+gw2dKN1/dVhfuUm5X
+VNJC5H7DXXv+3tT2VWfIxdPbOHIVoUXrNauwf4ze6R4kJTfdTlp43l2mQJ+U5aXb
+fsG5t3xvESo3u6JVfUCQZ+SEDGTfO+9U4TOna/o3g8A/aFudu+MxGjtyqXilGyYI
+uA7CUOwKTnGzz6jexN/GJXrLpc9pF+a4gRq2ftJHobtQkzkILXE=
+=JRKj
+-----END PGP SIGNATURE-----
+
+--zfFAmvyhCPUYaeQW--
 
