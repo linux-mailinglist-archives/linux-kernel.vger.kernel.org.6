@@ -1,108 +1,317 @@
-Return-Path: <linux-kernel+bounces-280273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A9094C7FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:23:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62A494C800
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3721F23BDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:23:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D4A286F0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7091D9463;
-	Fri,  9 Aug 2024 01:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E63125BA;
+	Fri,  9 Aug 2024 01:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Wk7InOJW"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="c4RdXLHH"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299D279D0;
-	Fri,  9 Aug 2024 01:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8F779DC
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 01:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723166586; cv=none; b=oCPTRDYGyvSKKfIeZW5mhm+fmN+KmPAy+D5MaJ5dUQk/26ZRP6GRsxNtZWRRBkfo+rWiy0GHvZV8UbCgdrw2Y1YqcB2/du4T9TRV76sCiwKCr8avE/Lt3c6dp77tiqYdD1T+2V9KjLZVWZlohEWHYSNTIEl1xP0vKstJvpoNydk=
+	t=1723166588; cv=none; b=ApdrgsbZaDTCQYNGxT4qatWT1Cd7FhnvdjVhnqw6+3gGSs6Sl3Bmyd1x1zmuoMO8bEi6N+e2fWKDTPjFWLqUMz6nn0e81IRBIshuVuOYXBxHhr8Fgek2jD+yXgZkktyU0FXnbLCW6X+EWB6y/imGyIIpdwPxRzf7w+zL5i9lMgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723166586; c=relaxed/simple;
-	bh=OGRZoQ4HYV+HHBsqv2IswACAlUxiSf2w7hO2J/4qF8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VxmRv9puBwxUHqAMUrbotSukSkB1XHdnZWKa6Eep1NWXBCKhjrQ1sRwuL84EaS3ZnlxC1SDcDKLssR5gbxymyLc9ZomSD2RGkDqdos1HVWUDGWGwPJyCIvXxxxasFexRGGt24h5qJUJSBa1nIEnysvlAISLu2uCUDusguieVFsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Wk7InOJW; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723166573;
-	bh=rcmrzcRQHwUeLNJRQa0jQd3IazYdekZwRB8xnKFVUC4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Wk7InOJW8NZ6rFJJxjW6tyBTlZjpOUwSyqND6OygFgO1q63wDASNXa9Gh0PlZgqMv
-	 /fzdBSAiZTd5MI4RaqrPag/3t2HQbBQJ72WZwHtVR453F8Z8g1jXnzwtuiR5/aJPVw
-	 NC6EWAMMqNB6WmrG1b873uJKJlzkWKOTKqaCM4j6W6I0fQjEV0/BZFPnN7KOhmn1Tp
-	 wlyEISwqoOzmQuKm4VOItjaTj6vVyvn5joEc+dhdOqTHHRkJaU3b48NyRzKM88Q5re
-	 tWUr/Fnt/lSVOCRWQo2153+w6DtH2xIF62ooU0okhcH2a4xADv2TmV//6I4D9AvfGD
-	 0MS8OtrXKsWmg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wg5kj4ZXSz4wcl;
-	Fri,  9 Aug 2024 11:22:53 +1000 (AEST)
-Date: Fri, 9 Aug 2024 11:22:52 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the sound tree
-Message-ID: <20240809112252.5af8025f@canb.auug.org.au>
+	s=arc-20240116; t=1723166588; c=relaxed/simple;
+	bh=hbGnygk7hxJbZu0jyxT9iMEYWeJVRVSEXdmikHa4ArQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k63+DqmI6Z84cscqkzYvHfR27Ic2AUytgCUEcacUvY16y0XLHkGSyihZB0JgpJUvRtIksbOvAGuoy2BDNznREXTAA1ZnuZiaGfwiQ9zpPQl6m+0tvQa1e+m4G2HmvNWhrN2wSD9b119NnowmlFJ000WPzoJW8EZwOfN5rOCYTMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=c4RdXLHH; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-690ad83d4d7so14939807b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 18:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1723166585; x=1723771385; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D9bXLF4NefoobiKX9+zIRi7gWzdnSGjmqx0nUbqIEf8=;
+        b=c4RdXLHHmAJRfUYj6g7GpxHyzE6i3Q/LQ83cO8Yemdu4x96BG+j6IMHpQmvQikxNBo
+         NP6AqdkknPDurOVcJ12Yz4+xXHqHUcBdx70rt8CMomWULievM35bLYH/oJ5zeOlcZiqV
+         DZMKVqFbhzdsoaIeVECkt7haAk4K2hzTXranHlkhen/Wg/QpDfSfmBuL9op+LdCUFp93
+         luz9USN+xOQoouBIN0GRn+QPrOUFy4aJ1uuCu6ofT3+F+wzP8000RmqL9ulQvr7sCJnC
+         czudtwraUGQieYMpznwc1Wi8PuMq7iU9JSrxCWeXRm7k85tJa+dD7a13yjI7mbl62FmC
+         D/eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723166585; x=1723771385;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D9bXLF4NefoobiKX9+zIRi7gWzdnSGjmqx0nUbqIEf8=;
+        b=b5JcSK3lQQCq4fCe7lzKKvDc6TxhCG4V3aVaH35J3xOLDH9J7dO3GgqYwXNTqL90BJ
+         AZTqF6CWuw/7Q1OeOVmjfW1eewQAN3MHqjGwRoA9YeUddvE3MN0bq7o2JdX+LzDxFLNp
+         NNQAGTHWdd1iq6coy26pIS1zp545QSENs07UKpe3w0JwXYLQ9Twb/+yMoJ1v8D7TATS5
+         BR0xb2YUgIz6qOsiW3aFZzTJCz/dOJVknO6l7nRWQyHbhfwbbDCHRExiziRvN7ZoaoeI
+         cueFX8FqwIJiHgMPfybvxaQeuBGPfm0LDejpzpHbyhvmVb2DL+bv8P0uIpTTQT04Q8BN
+         0NJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmohgdx4MckUNT/OXOM5DgVeeam59+CXCTv2jo1PKgnTpV1JmXVy3lBmYYVokNC/uytdsYxnLL/uGsCI9ZUwzPa/LYZbWuXzmv7XdR
+X-Gm-Message-State: AOJu0YypkIE5oqPw20FZ0oMu2GKvwuddlNyCnTVJXpFzv1tjVijx+vcr
+	/othh/WFxrjkVVxhLRTOFMwlkMRl0NX5AgNYANzKL5v+skifY9WSPEt97rHQHRRVbxf/lW8rNMb
+	1EyGotebEQei9Ce44k32dxlUzHmBCMJ9UvMuZ
+X-Google-Smtp-Source: AGHT+IHAUa6Q+LYMkbNRDeMI4FjrabMEZxysSMR+Wn8lEcrEUa9i7f8iYckyZqbRN3DpJ6uezP+4mRsx6Ws4h4d3IaQ=
+X-Received: by 2002:a05:690c:fce:b0:64b:7859:a92f with SMTP id
+ 00721157ae682-69ec49238d6mr406897b3.5.1723166585032; Thu, 08 Aug 2024
+ 18:23:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/sOcqvAryE0c7f_seDFKcB2S";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/sOcqvAryE0c7f_seDFKcB2S
-Content-Type: text/plain; charset=US-ASCII
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+ <20240807-erledigen-antworten-6219caebedc0@brauner> <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
+ <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner> <20240808171130.5alxaa5qz3br6cde@quack3>
+ <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
+ <d0677c60eb1f47eb186f3e5493ba5aa7e0eaa445.camel@kernel.org>
+ <CAHC9VhREbEAYQUoVrJ3=YHUh2tuL5waUMaXQGG_yzFsMNomRVg@mail.gmail.com> <a8e24c94fa5500ee3c99a3dabba452e381512808.camel@kernel.org>
+In-Reply-To: <a8e24c94fa5500ee3c99a3dabba452e381512808.camel@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 8 Aug 2024 21:22:54 -0400
+Message-ID: <CAHC9VhSEuj_70ohbrgHrFv7Y8-MvwH7EwkD_L0=0KhVW-bX=Nw@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, audit@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Aug 8, 2024 at 8:33=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
+te:
+> On Thu, 2024-08-08 at 20:28 -0400, Paul Moore wrote:
+> > On Thu, Aug 8, 2024 at 7:43=E2=80=AFPM Jeff Layton <jlayton@kernel.org>=
+ wrote:
+> > > On Thu, 2024-08-08 at 17:12 -0400, Paul Moore wrote:
+> > > > On Thu, Aug 8, 2024 at 1:11=E2=80=AFPM Jan Kara <jack@suse.cz> wrot=
+e:
+> > > > > On Thu 08-08-24 12:36:07, Christian Brauner wrote:
+> > > > > > On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
+> > > > > > > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
+> > > > > > > > > +static struct dentry *lookup_fast_for_open(struct nameid=
+ata *nd, int open_flag)
+> > > > > > > > > +{
+> > > > > > > > > +       struct dentry *dentry;
+> > > > > > > > > +
+> > > > > > > > > +       if (open_flag & O_CREAT) {
+> > > > > > > > > +               /* Don't bother on an O_EXCL create */
+> > > > > > > > > +               if (open_flag & O_EXCL)
+> > > > > > > > > +                       return NULL;
+> > > > > > > > > +
+> > > > > > > > > +               /*
+> > > > > > > > > +                * FIXME: If auditing is enabled, then we=
+'ll have to unlazy to
+> > > > > > > > > +                * use the dentry. For now, don't do this=
+, since it shifts
+> > > > > > > > > +                * contention from parent's i_rwsem to it=
+s d_lockref spinlock.
+> > > > > > > > > +                * Reconsider this once dentry refcountin=
+g handles heavy
+> > > > > > > > > +                * contention better.
+> > > > > > > > > +                */
+> > > > > > > > > +               if ((nd->flags & LOOKUP_RCU) && !audit_du=
+mmy_context())
+> > > > > > > > > +                       return NULL;
+> > > > > > > >
+> > > > > > > > Hm, the audit_inode() on the parent is done independent of =
+whether the
+> > > > > > > > file was actually created or not. But the audit_inode() on =
+the file
+> > > > > > > > itself is only done when it was actually created. Imho, the=
+re's no need
+> > > > > > > > to do audit_inode() on the parent when we immediately find =
+that file
+> > > > > > > > already existed. If we accept that then this makes the chan=
+ge a lot
+> > > > > > > > simpler.
+> > > > > > > >
+> > > > > > > > The inconsistency would partially remain though. When the f=
+ile doesn't
+> > > > > > > > exist audit_inode() on the parent is called but by the time=
+ we've
+> > > > > > > > grabbed the inode lock someone else might already have crea=
+ted the file
+> > > > > > > > and then again we wouldn't audit_inode() on the file but we=
+ would have
+> > > > > > > > on the parent.
+> > > > > > > >
+> > > > > > > > I think that's fine. But if that's bothersome the more aggr=
+essive thing
+> > > > > > > > to do would be to pull that audit_inode() on the parent fur=
+ther down
+> > > > > > > > after we created the file. Imho, that should be fine?...
+> > > > > > > >
+> > > > > > > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jef=
+f/?ref_type=3Dheads
+> > > > > > > > for a completely untested draft of what I mean.
+> > > > > > >
+> > > > > > > Yeah, that's a lot simpler. That said, my experience when I'v=
+e worked
+> > > > > > > with audit in the past is that people who are using it are _v=
+ery_
+> > > > > > > sensitive to changes of when records get emitted or not. I do=
+n't like
+> > > > > > > this, because I think the rules here are ad-hoc and somewhat =
+arbitrary,
+> > > > > > > but keeping everything working exactly the same has been my M=
+O whenever
+> > > > > > > I have to work in there.
+> > > > > > >
+> > > > > > > If a certain access pattern suddenly generates a different se=
+t of
+> > > > > > > records (or some are missing, as would be in this case), we m=
+ight get
+> > > > > > > bug reports about this. I'm ok with simplifying this code in =
+the way
+> > > > > > > you suggest, but we may want to do it in a patch on top of mi=
+ne, to
+> > > > > > > make it simple to revert later if that becomes necessary.
+> > > > > >
+> > > > > > Fwiw, even with the rearranged checks in v3 of the patch audit =
+records
+> > > > > > will be dropped because we may find a positive dentry but the p=
+ath may
+> > > > > > have trailing slashes. At that point we just return without aud=
+it
+> > > > > > whereas before we always would've done that audit.
+> > > > > >
+> > > > > > Honestly, we should move that audit event as right now it's jus=
+t really
+> > > > > > weird and see if that works. Otherwise the change is somewhat h=
+orrible
+> > > > > > complicating the already convoluted logic even more.
+> > > > > >
+> > > > > > So I'm appending the patches that I have on top of your patch i=
+n
+> > > > > > vfs.misc. Can you (other as well ofc) take a look and tell me w=
+hether
+> > > > > > that's not breaking anything completely other than later audit =
+events?
+> > > > >
+> > > > > The changes look good as far as I'm concerned but let me CC audit=
+ guys if
+> > > > > they have some thoughts regarding the change in generating audit =
+event for
+> > > > > the parent. Paul, does it matter if open(O_CREAT) doesn't generat=
+e audit
+> > > > > event for the parent when we are failing open due to trailing sla=
+shes in
+> > > > > the pathname? Essentially we are speaking about moving:
+> > > > >
+> > > > >         audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
+> > > > >
+> > > > > from open_last_lookups() into lookup_open().
+> > > >
+> > > > Thanks for adding the audit mailing list to the CC, Jan.  I would a=
+sk
+> > > > for others to do the same when discussing changes that could impact
+> > > > audit (similar requests for the LSM framework, SELinux, etc.).
+> > > >
+> > > > The inode/path logging in audit is ... something.  I have a
+> > > > longstanding todo item to go revisit the audit inode logging, both =
+to
+> > > > fix some known bugs, and see what we can improve (I'm guessing quit=
+e a
+> > > > bit).  Unfortunately, there is always something else which is burni=
+ng
+> > > > a little bit hotter and I haven't been able to get to it yet.
+> > > >
+> > >
+> > > It is "something" alright. The audit logging just happens at strange
+> > > and inconvenient times vs. what else we're trying to do wrt pathwalki=
+ng
+> > > and such. In particular here, the fact __audit_inode can block is wha=
+t
+> > > really sucks.
+> > >
+> > > Since we're discussing it...
+> > >
+> > > ISTM that the inode/path logging here is something like a tracepoint.
+> > > In particular, we're looking to record a specific set of information =
+at
+> > > specific points in the code. One of the big differences between them
+> > > however is that tracepoints don't block.  The catch is that we can't
+> > > just drop messages if we run out of audit logging space, so that woul=
+d
+> > > have to be handled reasonably.
+> >
+> > Yes, the buffer allocation is the tricky bit.  Audit does preallocate
+> > some structs for tracking names which ideally should handle the vast
+> > majority of the cases, but yes, we need something to handle all of the
+> > corner cases too without having to resort to audit_panic().
+> >
+> > > I wonder if we could leverage the tracepoint infrastructure to help u=
+s
+> > > record the necessary info somehow? Copy the records into a specific
+> > > ring buffer, and then copy them out to the audit infrastructure in
+> > > task_work?
+> >
+> > I believe using task_work will cause a number of challenges for the
+> > audit subsystem as we try to bring everything together into a single
+> > audit event.  We've had a lot of problems with io_uring doing similar
+> > things, some of which are still unresolved.
+> >
+> > > I don't have any concrete ideas here, but the path/inode audit code h=
+as
+> > > been a burden for a while now and it'd be good to think about how we
+> > > could do this better.
+> >
+> > I've got some grand ideas on how to cut down on a lot of our
+> > allocations and string generation in the critical path, not just with
+> > the inodes, but with audit records in general.  Sadly I just haven't
+> > had the time to get to any of it.
+> >
+> > > > The general idea with audit is that you want to record the informat=
+ion
+> > > > both on success and failure.  It's easy to understand the success
+> > > > case, as it is a record of what actually happened on the system, bu=
+t
+> > > > you also want to record the failure case as it can provide some
+> > > > insight on what a process/user is attempting to do, and that can be
+> > > > very important for certain classes of users.  I haven't dug into th=
+e
+> > > > patches in Christian's tree, but in general I think Jeff's guidance
+> > > > about not changing what is recorded in the audit log is probably go=
+od
+> > > > advice (there will surely be exceptions to that, but it's still goo=
+d
+> > > > guidance).
+> > > >
+> > >
+> > > In this particular case, the question is:
+> > >
+> > > Do we need to emit a AUDIT_INODE_PARENT record when opening an existi=
+ng
+> > > file, just because O_CREAT was set? We don't emit such a record when
+> > > opening without O_CREAT set.
+> >
+> > I'm not as current on the third-party security requirements as I used
+> > to be, but I do know that oftentimes when a file is created the parent
+> > directory is an important bit of information to have in the audit log.
+> >
+>
+> Right. We'd still have that here since we have to unlazy to actually
+> create the file.
+>
+> The question here is about the case where O_CREAT is set, but the file
+> already exists. Nothing is being created in that case, so do we need to
+> emit an audit record for the parent?
 
-After merging the sound tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-sound/usb/caiaq/audio.c: In function 'snd_usb_caiaq_pcm_prepare':
-sound/usb/caiaq/audio.c:179:41: error: unused variable 'i' [-Werror=3Dunuse=
-d-variable]
-  179 |         int bytes_per_sample, bpp, ret, i;
-      |                                         ^
-cc1: all warnings being treated as errors
-
-Caused by commit
-
-  e95b9f7f2ee0 ("ALSA: snd-usb-caiaq: use snd_pcm_rate_to_rate_bit")
-
-I used the sound tree from next-20240808 for today.
+As long as the full path information is present in the existing file's
+audit record it should be okay.
 
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_/sOcqvAryE0c7f_seDFKcB2S
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma1b2wACgkQAVBC80lX
-0GwQigf+L0cOBrx4nCzlV0NdYtcNHnD1AbbpFYBaanAXCRnH39NuzEnZ3nfCydWP
-37jd/myhsdsp1BLqBmgvlH0qsYfvThY0zytOCCMyj0umv53Jcvvub8Xzq5X8RbaI
-j2MKgCiO0FER1yb+THGSSebxJfptYNxO99pGh2m5cBxvi57X60mPAaUsLGiNSCVJ
-jVxCY34eOE++BxqS0xC7VjCwNh93dB9MSxmJTV2CjDlFkIZqSicrzdJL6YddZfY4
-9h9yML4fidNRwndMD4IFt78Sz3kmvI9S9353TEV3uxi9yW7DAZHhLgu5VfxkpNJU
-hy/2URR7yQPXRd/cv6VYmGjtBhUzoQ==
-=CcRV
------END PGP SIGNATURE-----
-
---Sig_/sOcqvAryE0c7f_seDFKcB2S--
+paul-moore.com
 
