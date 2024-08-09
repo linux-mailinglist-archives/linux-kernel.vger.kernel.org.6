@@ -1,130 +1,166 @@
-Return-Path: <linux-kernel+bounces-280979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5741394D191
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D29F94D194
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11FB5286D84
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:49:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12BB728729B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8D119581F;
-	Fri,  9 Aug 2024 13:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD91196C86;
+	Fri,  9 Aug 2024 13:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVAR0fXd"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PpBovrYD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E2718C925;
-	Fri,  9 Aug 2024 13:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC1F195805
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723211355; cv=none; b=WR8KR22BQ3pFPBkJx/zHE+G3xxeHSJxg2cx/obvgBxREgV86MISx0u7n3XxwU/LimZ3W7PafjRaFnT4UCX7FtMydLDmKHlc+zSHPeYpAu0UzXvDHNi6erAO84PoQ6ti7Tb+mhWKNwxBU1uRE//xl5PfGI+hSS8e5Jm1XDLLttOM=
+	t=1723211364; cv=none; b=NSV4wNRosaJaJPTzAbVQvolnO3lam6IiCWEwC6uknubF04uFmBmpadDsagj2sQfKz7p34Omf4O7R8rSPCG0cl8nUywsgWFbZ1DF29v6LvKFNjeiXDJRBHeEx05wOTl8Amq0J9H+mj3ENC5LdYy1vhcoI5RAseaXewbXen4D2ohM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723211355; c=relaxed/simple;
-	bh=ZjiwsrSFa0t8o6fGNq60V9Drb5brqlNaEu8OYuhug+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JuNJil30UsymCTAc85FGyk+c/8PU8ILQRc2dRtfTFQZG8qPN5V0+RtgE5e/S35fdI3U7i/BGfscmAUmXlnMLZdZWy6x3xS/ESNxA9ZD+uDUJXpFpxTAHUHFADFUZPvZtD/io34jEfvCIHoaHO7DkG2uSrq/ZEF2xFFj+FxVH3T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVAR0fXd; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b3fff87e6bso2306389a12.0;
-        Fri, 09 Aug 2024 06:49:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723211352; x=1723816152; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1sSUf6K1mg1eTJFMtYJO/PWYF/2PWB2qfNRQMe6qLvY=;
-        b=eVAR0fXdHtIStT+0iCfEy8Xwx8oY53qhVFTKRPN02Y1SoGFgfSf9i8T5XOcNhqpw6J
-         tT03fejma2zLSqk0pJLYgOdug8TAZkPPzggD2XrGPGF0jKHQuHuo+R4USju8ljrIU2Rt
-         ovIdBk9goSu8XqqNeQc75VJsar+NFQRnZLOhNRoTrX2bd32u958Ig4MAAvdoDvCEccBo
-         1fmOFCkru9JMOl1aYzREHCZtBtqhatVVSV+9WB4JeyqfbEfgIJ4Vgelcxz2jKU7wNZuv
-         0AOVVwgN2OftziI0UcN5LcnxlVMb8PvC+iWdU1UGXnrpSZp2/QQTsNNatjOaklSvwSwc
-         rA7g==
+	s=arc-20240116; t=1723211364; c=relaxed/simple;
+	bh=HNB6pfh342t9AnG0iJPolconJkC4Xc2R7QZVU1D94YQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LnTQfDApj4cpCvYD3A+CrzRK6YkhJiNUsOa9QTdg856DJNGRXQFrb74MMJjBNQaSSU57yFlgAbTEDfvcLTxt7DJ7zvNrV9iPO+YoN+A0xidlLe696Gq3MAWzkttSzYjhAx52lvuLLX8Vf/PNMUygChdYtHoZHvAj8nTMN1NhirM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PpBovrYD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723211362;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=d8l6dVkBJNiXSWSlF/TpRr+4mGvpOZoEKaGvvIjG4k8=;
+	b=PpBovrYDvNQo6gCv0TURD5JrtLUsB8Jhf1ygWL/iZjMjek6SMCHX9thV1bvHSowJ2KDJVF
+	RDAKohl+zcmyVLaFgdI+j3OX4yC1M2oKNjlvu3BXymZ6Mx6YjdVpHmkQ00xjRIaJSrb0yS
+	3jKUA5Lab1ggiObyJvb95fLpb8algOM=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-648--jTLFGzaNaSQbeJNuPtGrw-1; Fri, 09 Aug 2024 09:49:20 -0400
+X-MC-Unique: -jTLFGzaNaSQbeJNuPtGrw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-36bb24c86d9so1022135f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 06:49:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723211352; x=1723816152;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1sSUf6K1mg1eTJFMtYJO/PWYF/2PWB2qfNRQMe6qLvY=;
-        b=twlb6AwwjONMmTxAdRO5OS67Xaq374nnziKH6yTVfTr254+WVZaZ/f4vsxgPcHVh+h
-         cPMG5R8CSDtzQgmwE4sZghnTQfomG5EuaBGR4mS5ZH7OSs+lXWvdXvoVclbc+4q5dP0p
-         ThT7PjHeuh+doaMmRVOOyvbp3MiJk1Jy7b4ROkcBD858wd6nl8HOzy1XkIyyzO6I9BEU
-         XntAimwPR6JSAdZlWlITLmO0wVycFi6Zh/41573AdJa93cu4Vx5iOJsS1uEy02Tow/cC
-         /+UznqVQOIvpjvhtXIM4JJDu6/+DTO1KW7TSmFc7w8AbkdRtNyBGKaab3gtr3EwPRqJT
-         lPrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSfzRkSM6LcVa7FxN+B4a8fxdn1g3DVpXR/YiJj6Fsp0Pseem2zXTr1fxl2pVuCMB5mF7xJsTWV4HCLDK69bF6EdNS+UFGZCcsJPBu9L6Z5m7sVDVL+L+Z+bs5K9bW3ZkeBBCTPIrp
-X-Gm-Message-State: AOJu0Yyufr/0KIVGSG1LAVCuR2/TfTZmVEUfpp2J34QJuDGlox7PH7Uz
-	TWqBcxI+MRUQDkuTkCzE4Pz8czkDejsz1TXRbgIuEvczp8SGDZ55
-X-Google-Smtp-Source: AGHT+IFCzxVQaNZvkzO3F5IqJ9BbNONwpS3CmngsyJ/4FoqCY2dBB/dll4l8gA9xCqzt9qVC0kiriA==
-X-Received: by 2002:a05:6402:2344:b0:5a2:1693:1a24 with SMTP id 4fb4d7f45d1cf-5bd0a5759c5mr1250813a12.15.1723211351860;
-        Fri, 09 Aug 2024 06:49:11 -0700 (PDT)
-Received: from HYB-hhAwRlzzMZb.ad.analog.com ([83.103.132.21])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf9e64sm1535512a12.11.2024.08.09.06.49.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 06:49:11 -0700 (PDT)
-From: Dumitru Ceclan <mitrutzceclan@gmail.com>
-X-Google-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-To: mitrutzceclan@gmail.com
-Cc: jic23@kernel.org,
-	dlechner@baylibre.com,
-	dumitru.ceclan@analog.com0,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dumitru Ceclan <dumitru.ceclan@analog.com>
-Subject: [PATCH] iio: adc: ad7173: fix GPIO device info
-Date: Fri,  9 Aug 2024 16:49:08 +0300
-Message-ID: <20240809134909.26829-1-dumitru.ceclan@analog.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1723211359; x=1723816159;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d8l6dVkBJNiXSWSlF/TpRr+4mGvpOZoEKaGvvIjG4k8=;
+        b=qqFmuH9/32aTuKOvqjoO+bNFBbudhWxiHOLHM5XpuJoGoB2AjbAzkQEBouByNUKIFe
+         RYtZLxnLrKRoVF9YbTXRpLastm3i2XNw2nsEzFgtjq6dd0AGWJsfPoNsdJdXKLe4EQ69
+         uw1iTmySfHxP/uBAqeMVs0OdMpGu/iJj3IZbvDwc/P0ojEohhvqGuTM3XsJG6DC5qcll
+         WSuAFppvuraPii3BMvQhC1BUGDEHDEXnSFnkkQAyOxxCnQ5UdFq8jfH89lae/+XpPMh6
+         8w8txj69aHDEDCFUkUi/H4WpraS8jIjmTtdINYCB/79kgQ9CG531I5HLmu8bJsUeb9Jk
+         Xr3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVHbkySGJ8yq4byW4+PWsNhzqjxKxs92aJX7TVpr2GKVqzgjUZ3c4tDoZjumuqKsL66HksSChDM1IyMJBgNnk/JFj9T29NzWHDe2T1Q
+X-Gm-Message-State: AOJu0YyYEcvyalXloIybYyrjyZ0djKSXJJj3v42bAd0pYO4+RQ4jio4R
+	72yJurHx8yrxAMkGTWiw/oPNSvGThA9Nkf7qeMSEMY3/ibk/cycsGArE9L8RxyTfwc7c4YfE+XU
+	6ehsLkusnC4q3IJUGJCsA4P8lLa9TlxYPdBffoNqL60E0aK1LjTYvWKk4BBMqKg==
+X-Received: by 2002:a5d:698d:0:b0:367:2945:4093 with SMTP id ffacd0b85a97d-36d60e02be0mr1202070f8f.40.1723211359481;
+        Fri, 09 Aug 2024 06:49:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2Fgphr0/ew/M2B4tBgNWlZeDwEwZSalcRlUdkd7YL6a8ZmcYF/N612CunYj90VETw7tXQQg==
+X-Received: by 2002:a5d:698d:0:b0:367:2945:4093 with SMTP id ffacd0b85a97d-36d60e02be0mr1202041f8f.40.1723211358986;
+        Fri, 09 Aug 2024 06:49:18 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2718a4edsm5371991f8f.53.2024.08.09.06.49.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 06:49:18 -0700 (PDT)
+Message-ID: <17712a89-58bb-4e1a-99bb-9571a6dbfbad@redhat.com>
+Date: Fri, 9 Aug 2024 15:49:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm/numa: no task_numa_fault() call if page table is
+ changed
+To: Zi Yan <ziy@nvidia.com>, "Huang, Ying" <ying.huang@intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240807184730.1266736-1-ziy@nvidia.com>
+ <956553dc-587c-4a43-9877-7e8844f27f95@linux.alibaba.com>
+ <1881267a-723d-4ba0-96d0-d863ae9345a4@redhat.com>
+ <09AC6DFA-E50A-478D-A608-6EF08D8137E9@nvidia.com>
+ <052552f4-5a8d-4799-8f02-177585a1c8dd@redhat.com>
+ <8890DD6A-126A-406D-8AB9-97CF5A1F4DA4@nvidia.com>
+ <b0b94a65-51f1-459e-879f-696baba85399@huawei.com>
+ <87cymizdvc.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <03D403CE-5893-456D-AB4B-67C9E9F0F532@nvidia.com>
+ <874j7uyvyh.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <6233DD66-9A2E-4885-875D-1E79179146D7@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <6233DD66-9A2E-4885-875D-1E79179146D7@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Models AD4114/5/6 have .higher_gpio_bits = true. This is not correct as
-the only models that have the GPIO bits to a higher position are AD4111/2.
+> Hi Andrew,
+> 
+> Can you fold the fixup below to this patch? Thanks.
 
-Fix by removing the higher_gpio_bits = true from the AD4114/5/6 models.
+It might be reasonable to send out a new version. At least I am confused 
+now what the latest state is :D
 
-Fixes: 13d12e3ad12d ("iio: adc: ad7173: Add support for AD411x devices")
-Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
----
- drivers/iio/adc/ad7173.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index 9544bf7142ad..b77e2beb502a 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -302,7 +302,6 @@ static const struct ad7173_device_info ad4114_device_info = {
- 	.num_configs = 8,
- 	.num_voltage_in = 16,
- 	.num_gpios = 4,
--	.higher_gpio_bits = true,
- 	.has_vincom_input = true,
- 	.has_temp = true,
- 	.has_input_buf = true,
-@@ -320,7 +319,6 @@ static const struct ad7173_device_info ad4115_device_info = {
- 	.num_configs = 8,
- 	.num_voltage_in = 16,
- 	.num_gpios = 4,
--	.higher_gpio_bits = true,
- 	.has_vincom_input = true,
- 	.has_temp = true,
- 	.has_input_buf = true,
-@@ -338,7 +336,6 @@ static const struct ad7173_device_info ad4116_device_info = {
- 	.num_configs = 8,
- 	.num_voltage_in = 16,
- 	.num_gpios = 4,
--	.higher_gpio_bits = true,
- 	.has_vincom_input = true,
- 	.has_temp = true,
- 	.has_input_buf = true,
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
