@@ -1,583 +1,205 @@
-Return-Path: <linux-kernel+bounces-280436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021E094CA78
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:28:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA0B94CA7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EC6F1F23606
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:28:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80BF51F2332F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DA116D323;
-	Fri,  9 Aug 2024 06:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C8A16D31F;
+	Fri,  9 Aug 2024 06:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hqeZ2Mz3"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="peYTN0NF"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886F016D312
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 06:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3943516CD1A
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 06:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723184904; cv=none; b=trzY9zCeOVC+ZekohEiPu2ZKY0j9OlULfgNEgsfDBLDQ8S4sSc582MsgSzcdhV7fLFpclluWqLP4CajxV00z5kz+qdhkDA5EM+4FrV0bjlatw2ZM0mmJbeSfdQudx1rIVaklk4VFSw1bwqDC60dn1x6N0l/XBk0msi+5kw2YGM0=
+	t=1723184964; cv=none; b=t5VF/KwjtRuj6oLciMHAB0wz7gVmK73AqrEbGoeURA+djnivSDfzz568VSl1GP/uwIC19+VwNyc2xj6cSsZTGPs9n/HIdsi4QkeENOcYp9zpfrkbrIbjAa0aEAaZ95x6+vRuLWRaldxdoHigONlOE27N2tehC6h1QPrTiqajDh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723184904; c=relaxed/simple;
-	bh=k36dnBFZIeLBvQIBC1qpxq5W5ItsDC7kxBApVOMKWso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYd7ljhlEkJZJJzzVH9vErVsXYrFJpvroSt008DvCPL6HHI38moUbxxyCS443a1YraLHGGSc1KBvCMDpvK472EszcUyExMUcEsDJg63ikNCfDPhCaxZZhcYOhDmAB2UmEkqOaEuudYhG8BeAEG6qQGJSpo9FngU/FLDIIy1G1xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hqeZ2Mz3; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ff4fa918afso11823605ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 23:28:22 -0700 (PDT)
+	s=arc-20240116; t=1723184964; c=relaxed/simple;
+	bh=qvpbFtmY/ki2GI1uWwjSh+qxSPj3FgUENtOITCdjfm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZO6mXRKnT7ZpPPxwz6h5rNPfY8YzoTShHRzrmUpfCFtvx+CYX+fYovHFOYSo2sURY+M5faIYhVJdfillIGePfdwBtFwCCoxdItY1zXVqhpPy2w0FehVuRMuISIOFMPBRmLyln1BgK/NNjfxNtvREaLIQounzO3S3Qm2zT6mMKkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=peYTN0NF; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so279887766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 23:29:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723184902; x=1723789702; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZIb81mdm3Y+W7n5dTfDQvbXoixCEejMCmdPndqcOSy0=;
-        b=hqeZ2Mz3DfKSYDydAsR4B6seyUMoFqP3cbAXx4rMfgBRQz/X11fIFajqvUzSA27OVY
-         qfudlnKoGCqDMWbSWn/g3EFQaREnA+T4XodpImsh2xqZjpAe6ho29hzT4myXIZbqeN/p
-         L9XY/cS6uw44d6nxZfCy9TNhPQB6VcPgcMv5N+brkGnVFdfJFt1U/ANnnqLNpburbjYU
-         9lww+yFlJjfbLbJyNlvkWz6lhelFxQJg8x4nSN57uiypJ2H4Bo3gpoCnrjLwTyKvHQTX
-         4e6dO5V4TZXcaL3wcc9JwQdDhHOugrTzen3KcLHcV/23RZQ8fCoFr8e9XId0VTx7u4Yt
-         0JXQ==
+        d=tuxon.dev; s=google; t=1723184961; x=1723789761; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ttC+1PaF0ZwcJ1arsMSLD6uLKFV2ZfWm/Rhj6c+k6zI=;
+        b=peYTN0NFhFgf6bfbNbJIuVlBIwJ97uINJSfm8ztLPVzwR5DtKz7M1kEBvyrjwLDE1O
+         Rws0gmvFM9VKIjoqWD7sBJnS5yv/ZJmuUcwSwHQpSgljfLaw7GL4K7xo/AsguHgIH7dx
+         L8IP+qtxLx7lulEnMDd1ovZNtpkv58eGKNZepjjqEUFOOun2dF/4O5UImFm5RYbatPf9
+         kBpLwk8L1HFNdLIK/OoxhZycy6fBeTI0mH2zNlVbNbqaOAau80YlBrhdYu2jMecPPkdT
+         7NXobCnIOqn7dU67SrWAFJKCv8rAqLeKyWW9nLjDbuvFFhHBVyionTv7MzjYLWHL5cmi
+         F5ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723184902; x=1723789702;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1723184961; x=1723789761;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZIb81mdm3Y+W7n5dTfDQvbXoixCEejMCmdPndqcOSy0=;
-        b=VRSgoiqVwpVE/8iwWiF3HA/hq3F5utSxn9vBgY82NHSzJh/9rZTWEv4/22IEKVxddL
-         J5CEztx1r116f7OBtnTTmQldwho3DTpuARA26GoSLrykGmob7w4NDhbJ+l1JVnJnnQMQ
-         dMi87uTvW30bIu/LN9kOfljHbPaG8JjvB5taKqwPti+2vxcl+KKcaSLP99r3ZkhFfYjA
-         5oJpuLRx32jKg1TBEOyKyvkL4qtqjd5uO+PgLvgn3McsRGLuFPH0rUfcorHEYA/cgxsJ
-         q3yO+L9X5paTxmUPcSpNrYmAdEJCMPcWV9R1hHVn6ssoR/80l8QJLI1YyQwFt9tATKo8
-         igMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIIgFqLFIzG7ywiFe6LYYY+tRSrPgkf/hGVHeEpOgXvk3I4j+v7sra4DjJncgr60GBq5RBKincZwo6YRPdUjRRBiHgQ2Z8XOjEHZ83
-X-Gm-Message-State: AOJu0YytzII0x0qD/JQXn+LcOZl9URBbgvkmo2j8uQUJTSVgQfbtsTSn
-	QClV9PVIsQnNn4y4DA7I1MUeVeCVLAiVUTFej2qXBKoRUGZESnkC8GJMK+6aoQ==
-X-Google-Smtp-Source: AGHT+IGsasHpV/b0wZ6hW5jBeHdTPZmWl2BTJu2ASUcJUsUFz15Ge+CsJmrwMOugSuJO5MJnkscfGQ==
-X-Received: by 2002:a17:902:f68c:b0:1fb:6e06:a099 with SMTP id d9443c01a7336-200ae5ce2c7mr5006435ad.40.1723184901711;
-        Thu, 08 Aug 2024 23:28:21 -0700 (PDT)
-Received: from thinkpad ([117.213.100.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5916eaffsm134860975ad.194.2024.08.08.23.28.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 23:28:21 -0700 (PDT)
-Date: Fri, 9 Aug 2024 11:58:13 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
-	linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] scsi: ufs: rockchip: init support for UFS
-Message-ID: <20240809062813.GC2826@thinkpad>
-References: <1723089163-28983-1-git-send-email-shawn.lin@rock-chips.com>
- <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
+        bh=ttC+1PaF0ZwcJ1arsMSLD6uLKFV2ZfWm/Rhj6c+k6zI=;
+        b=w91Xz1zoUdWl4EwgLc0+BM+LwhYzcTeSLQgOlpQkEDORIdZ7fza1TJpiAJMB1QBu+t
+         QY3RLcFA+5BACVw0hYk6pdBhD9ZjlW0aCPAaCU+xAO5Si3S+tVrkhVb+F+t8w2vItLku
+         24Fl72qHcBOFa7zdruXmfIpVODsOprpXp7/xy/qVjkrz3vkh6QGaesD53xw0N8WAWHmx
+         K1bL2YVufDwuICDqpSQHje1XupC+nHoYCZo50/cqszdKoz2XYRZ22Fh/A9MFhOjjwzfT
+         6eWHu2lbT/8c0xgrxKyRovCxapmu5pcqpAmDYVGU6jpuWkxSVhQqWwc6aX3WECOgQPBS
+         AdpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLor8sPu5Y/dhf1n9DHPSroUiYfEAAIY8soW9Bm1FiMb4zyM6cfhb5tDcb7UC8KNhxP4CHYXagUi0fLNm+gqXIVWHWhwmUZlBmlYEl
+X-Gm-Message-State: AOJu0YzDuXAt75x0Wma1Moj3bSzRdXduG5l8+WRb+Fx5eVHAShGbwZnJ
+	2/wv6bHDkxXtHowhxIh0KxWBP/IBKSU7HJkZXkXBfnLnbqGR+DhcNGa4dNNSQlE=
+X-Google-Smtp-Source: AGHT+IHn91yTtxdiFLGjMBp8Q9AOGhfmakKBLnjKcJSGhqNNNr8lDAE3/RoU+AZcnkm3AXka08ZHTA==
+X-Received: by 2002:a17:907:7e84:b0:a7a:b18a:6c with SMTP id a640c23a62f3a-a8091f19b40mr357318466b.16.1723184961354;
+        Thu, 08 Aug 2024 23:29:21 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.180])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0c7bfsm810220866b.70.2024.08.08.23.29.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 23:29:20 -0700 (PDT)
+Message-ID: <026fa7ad-f8d2-49a3-8a1a-0efdae343504@tuxon.dev>
+Date: Fri, 9 Aug 2024 09:29:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: microchip: Rename node, sub-node, and clean up
+ spacing
+Content-Language: en-US
+To: Andrei.Simion@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, Nicolas.Ferre@microchip.com,
+ alexandre.belloni@bootlin.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240723131228.189308-1-andrei.simion@microchip.com>
+ <89f51615-0dee-4ab0-ab72-e3c057fee1e7@tuxon.dev>
+ <4a8c31bf-7524-4f8c-b998-701b721f5001@microchip.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <4a8c31bf-7524-4f8c-b998-701b721f5001@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 08, 2024 at 11:52:43AM +0800, Shawn Lin wrote:
-> RK3576 contains a UFS controller, add init support fot it.
+Hi, Andrei,
+
+On 08.08.2024 17:25, Andrei.Simion@microchip.com wrote:
+>>> diff --git a/arch/arm/boot/dts/microchip/at91sam9g25-gardena-smart-gateway.dts b/arch/arm/boot/dts/microchip/at91sam9g25-gardena-smart-gateway.dts
+>>> index af70eb8a3a02..60560e4c1696 100644
+>>> --- a/arch/arm/boot/dts/microchip/at91sam9g25-gardena-smart-gateway.dts
+>>> +++ b/arch/arm/boot/dts/microchip/at91sam9g25-gardena-smart-gateway.dts
+>>> @@ -37,71 +37,71 @@ button {
+>>>       leds {
+>>>               compatible = "gpio-leds";
+>>>
+>>> -             power_blue {
+>>> +             led-0 {
+>>>                       label = "smartgw:power:blue";
+>>>                       gpios = <&pioC 21 GPIO_ACTIVE_HIGH>;
+>>>                       default-state = "off";
+>>>               };
+>>>
+>>> -             power_green {
+>>> +             led-1 {
+>>>                       label = "smartgw:power:green";
+>>>                       gpios = <&pioC 20 GPIO_ACTIVE_HIGH>;
+>>>                       default-state = "on";
+>>>               };
+>>>
+>>> -             power_red {
+>>> +             led-2 {
+>>>                       label = "smartgw:power:red";
+>>>                       gpios = <&pioC 19 GPIO_ACTIVE_HIGH>;
+>>>                       default-state = "off";
+>>>               };
+>>>
+>>> -             radio_blue {
+>>> +             led-3 {
+>>>                       label = "smartgw:radio:blue";
+>>>                       gpios = <&pioC 18 GPIO_ACTIVE_HIGH>;
+>>>                       default-state = "off";
+>>>               };
+>>>
+>>> -             radio_green {
+>>> +             led-4 {
+>>>                       label = "smartgw:radio:green";
+>>>                       gpios = <&pioC 17 GPIO_ACTIVE_HIGH>;
+>>>                       default-state = "off";
+>>>               };
+>>>
+>>> -             radio_red {
+>>> +             led-5 {
+>>>                       label = "smartgw:radio:red";
+>>>                       gpios = <&pioC 16 GPIO_ACTIVE_HIGH>;
+>>>                       default-state = "off";
+>>>               };
+>>>
+>>> -             internet_blue {
+>>> +             led-6 {
+>>>                       label = "smartgw:internet:blue";
+>>>                       gpios = <&pioC 15 GPIO_ACTIVE_HIGH>;
+>>>                       default-state = "off";
+>>>               };
+>>>
+>>> -             internet_green {
+>>> +             led-7 {
+>>>                       label = "smartgw:internet:green";
+>>>                       gpios = <&pioC 14 GPIO_ACTIVE_HIGH>;
+>>>                       default-state = "off";
+>>>               };
+>>>
+>>> -             internet_red {
+>>> +             led-8 {
+>>>                       label = "smartgw:internet:red";
+>>>                       gpios = <&pioC 13 GPIO_ACTIVE_HIGH>;
+>>>                       default-state = "off";
+>>>               };
+>>>
+>>> -             heartbeat {
+>>> +             led-9 {
+>>>                       label = "smartgw:heartbeat";
+>>>                       gpios = <&pioB 8 GPIO_ACTIVE_HIGH>;
+>>>                       linux,default-trigger = "heartbeat";
+>>>               };
+>>>
+>>> -             pb18 {
+>>> +             led-pb18 {
+>>>                       status = "disabled";
+>>>               };
+>>>
+>>> -             pd21 {
+>>> +             led-pd21 {
+>> Why used led-<old-label> for some leds and led-<integer> for other? Valid
+>> for other files.
+>>
+> I could have done either rule led-<old-label> or led-<integer> 
+> but we ended up with the old label being quite long.
+> So, I use led-<integer> when <old-label> is too long.
+> I don't think it was the best rule to rename.
+> In your opinion, how would it be correct to rename these subnodes?
+
+Keeping old label is OK. FYI, these particular changes were already
+integrated with old labels being kept. See
+https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git/commit/?id=b39c457205d0a3513fed1c3863e7cf9b6d72bf86
+
+Thank you,
+Claudiu Beznea
+
+
 > 
-
-This description is very simple. Please add more info like the UFSHCD version,
-lane config, quirks and any other vendor specific difference.
-
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 > 
-> ---
+> PS: It is a problem on our side with the mail server. The e-mails may not arrive on the linux-arm-kernel mailing list.
 > 
-> Changes in v2:
-> - use dev_probe_err
-> - remove ufs-phy-config-mode as it's not used
-> - drop of_match_ptr
-> 
->  drivers/ufs/host/Kconfig        |  12 ++
->  drivers/ufs/host/Makefile       |   1 +
->  drivers/ufs/host/ufs-rockchip.c | 438 ++++++++++++++++++++++++++++++++++++++++
->  drivers/ufs/host/ufs-rockchip.h |  51 +++++
->  4 files changed, 502 insertions(+)
->  create mode 100644 drivers/ufs/host/ufs-rockchip.c
->  create mode 100644 drivers/ufs/host/ufs-rockchip.h
-> 
-> diff --git a/drivers/ufs/host/Kconfig b/drivers/ufs/host/Kconfig
-> index 580c8d0..fafaa33 100644
-> --- a/drivers/ufs/host/Kconfig
-> +++ b/drivers/ufs/host/Kconfig
-> @@ -142,3 +142,15 @@ config SCSI_UFS_SPRD
->  
->  	  Select this if you have UFS controller on Unisoc chipset.
->  	  If unsure, say N.
-> +
-> +config SCSI_UFS_ROCKCHIP
-> +	tristate "Rockchip specific hooks to UFS controller platform driver"
-> +	depends on SCSI_UFSHCD_PLATFORM && (ARCH_ROCKCHIP || COMPILE_TEST)
-> +	help
-> +	  This selects the Rockchip specific additions to UFSHCD platform driver.
-> +	  UFS host on Rockchip needs some vendor specific configuration before
-> +	  accessing the hardware which includes PHY configuration and vendor
-> +	  specific registers.
-> +
-> +	  Select this if you have UFS controller on Rockchip chipset.
-> +	  If unsure, say N.
-> diff --git a/drivers/ufs/host/Makefile b/drivers/ufs/host/Makefile
-> index 4573aea..2f97feb 100644
-> --- a/drivers/ufs/host/Makefile
-> +++ b/drivers/ufs/host/Makefile
-> @@ -10,5 +10,6 @@ obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
->  obj-$(CONFIG_SCSI_UFS_HISI) += ufs-hisi.o
->  obj-$(CONFIG_SCSI_UFS_MEDIATEK) += ufs-mediatek.o
->  obj-$(CONFIG_SCSI_UFS_RENESAS) += ufs-renesas.o
-> +obj-$(CONFIG_SCSI_UFS_ROCKCHIP) += ufs-rockchip.o
->  obj-$(CONFIG_SCSI_UFS_SPRD) += ufs-sprd.o
->  obj-$(CONFIG_SCSI_UFS_TI_J721E) += ti-j721e-ufs.o
-> diff --git a/drivers/ufs/host/ufs-rockchip.c b/drivers/ufs/host/ufs-rockchip.c
-> new file mode 100644
-> index 0000000..46c90d6
-> --- /dev/null
-> +++ b/drivers/ufs/host/ufs-rockchip.c
-> @@ -0,0 +1,438 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Rockchip UFS Host Controller driver
-> + *
-> + * Copyright (C) 2024 Rockchip Electronics Co.Ltd.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/gpio.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset.h>
-> +
-> +#include <ufs/ufshcd.h>
-> +#include <ufs/unipro.h>
-> +#include "ufshcd-pltfrm.h"
-> +#include "ufshcd-dwc.h"
-> +#include "ufs-rockchip.h"
-> +
-> +static inline bool ufshcd_is_device_present(struct ufs_hba *hba)
-
-No inline in .c file please.
-
-> +{
-> +	return ufshcd_readl(hba, REG_CONTROLLER_STATUS) & DEVICE_PRESENT;
-> +}
-> +
-> +static int ufs_rockchip_hce_enable_notify(struct ufs_hba *hba,
-> +					 enum ufs_notify_change_status status)
-> +{
-> +	int err = 0;
-> +
-> +	if (status == PRE_CHANGE) {
-> +		int retry_outer = 3;
-> +		int retry_inner;
-> +start:
-> +		if (ufshcd_is_hba_active(hba))
-> +			/* change controller state to "reset state" */
-> +			ufshcd_hba_stop(hba);
-> +
-> +		/* UniPro link is disabled at this point */
-> +		ufshcd_set_link_off(hba);
-> +
-> +		/* start controller initialization sequence */
-> +		ufshcd_writel(hba, CONTROLLER_ENABLE, REG_CONTROLLER_ENABLE);
-> +
-> +		usleep_range(100, 200);
-> +
-> +		/* wait for the host controller to complete initialization */
-> +		retry_inner = 50;
-> +		while (!ufshcd_is_hba_active(hba)) {
-> +			if (retry_inner) {
-> +				retry_inner--;
-> +			} else {
-> +				dev_err(hba->dev,
-> +					"Controller enable failed\n");
-> +				if (retry_outer) {
-> +					retry_outer--;
-> +					goto start;
-> +				}
-> +				return -EIO;
-> +			}
-> +			usleep_range(1000, 1100);
-> +		}
-
-You just duplicated ufshcd_hba_execute_hce() here. Why? This doesn't make sense.
-
-> +	} else { /* POST_CHANGE */
-> +		err = ufshcd_vops_phy_initialization(hba);
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +static void ufs_rockchip_set_pm_lvl(struct ufs_hba *hba)
-> +{
-> +	hba->rpm_lvl = UFS_PM_LVL_1;
-> +	hba->spm_lvl = UFS_PM_LVL_3;
-> +}
-> +
-> +static int ufs_rockchip_rk3576_phy_init(struct ufs_hba *hba)
-> +{
-> +	struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-> +
-> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(PA_LOCAL_TX_LCC_ENABLE, 0x0), 0x0);
-> +	/* enable the mphy DME_SET cfg */
-> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x200, 0x0), 0x40);
-> +	for (int i = 0; i < 2; i++) {
-> +		/* Configuration M-TX */
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xaa, SEL_TX_LANE0 + i), 0x06);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xa9, SEL_TX_LANE0 + i), 0x02);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xad, SEL_TX_LANE0 + i), 0x44);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xac, SEL_TX_LANE0 + i), 0xe6);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0xab, SEL_TX_LANE0 + i), 0x07);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x94, SEL_TX_LANE0 + i), 0x93);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x93, SEL_TX_LANE0 + i), 0xc9);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x7f, SEL_TX_LANE0 + i), 0x00);
-> +		/* Configuration M-RX */
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x12, SEL_RX_LANE0 + i), 0x06);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x11, SEL_RX_LANE0 + i), 0x00);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x1d, SEL_RX_LANE0 + i), 0x58);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x1c, SEL_RX_LANE0 + i), 0x8c);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x1b, SEL_RX_LANE0 + i), 0x02);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x25, SEL_RX_LANE0 + i), 0xf6);
-> +		ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x2f, SEL_RX_LANE0 + i), 0x69);
-> +	}
-> +	/* disable the mphy DME_SET cfg */
-> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(0x200, 0x0), 0x00);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0x80, 0x08C);
-> +	ufs_sys_writel(host->mphy_base, 0xB5, 0x110);
-> +	ufs_sys_writel(host->mphy_base, 0xB5, 0x250);
-> +
-
-Why can't you do these settings in a PHY driver?
-
-> +	ufs_sys_writel(host->mphy_base, 0x03, 0x134);
-> +	ufs_sys_writel(host->mphy_base, 0x03, 0x274);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0x38, 0x0E0);
-> +	ufs_sys_writel(host->mphy_base, 0x38, 0x220);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0x50, 0x164);
-> +	ufs_sys_writel(host->mphy_base, 0x50, 0x2A4);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0x80, 0x178);
-> +	ufs_sys_writel(host->mphy_base, 0x80, 0x2B8);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0x18, 0x1B0);
-> +	ufs_sys_writel(host->mphy_base, 0x18, 0x2F0);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0x03, 0x128);
-> +	ufs_sys_writel(host->mphy_base, 0x03, 0x268);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0x20, 0x12C);
-> +	ufs_sys_writel(host->mphy_base, 0x20, 0x26C);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0xC0, 0x120);
-> +	ufs_sys_writel(host->mphy_base, 0xC0, 0x260);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0x03, 0x094);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0x03, 0x1B4);
-> +	ufs_sys_writel(host->mphy_base, 0x03, 0x2F4);
-> +
-> +	ufs_sys_writel(host->mphy_base, 0xC0, 0x08C);
-> +	udelay(1);
-> +	ufs_sys_writel(host->mphy_base, 0x00, 0x08C);
-> +
-> +	udelay(200);
-> +	/* start link up */
-> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(MIB_T_DBG_CPORT_TX_ENDIAN, 0), 0x0);
-> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(MIB_T_DBG_CPORT_RX_ENDIAN, 0), 0x0);
-> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(N_DEVICEID, 0), 0x0);
-> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(N_DEVICEID_VALID, 0), 0x1);
-> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(T_PEERDEVICEID, 0), 0x1);
-> +	ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(T_CONNECTIONSTATE, 0), 0x1);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ufs_rockchip_common_init(struct ufs_hba *hba)
-> +{
-> +	struct device *dev = hba->dev;
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct ufs_rockchip_host *host;
-> +	int err = 0;
-> +
-> +	host = devm_kzalloc(dev, sizeof(*host), GFP_KERNEL);
-> +	if (!host)
-> +		return -ENOMEM;
-> +
-> +	/* system control register for hci */
-> +	host->ufs_sys_ctrl = devm_platform_ioremap_resource_byname(pdev, "hci_grf");
-> +	if (IS_ERR(host->ufs_sys_ctrl))
-> +		return dev_err_probe(dev, PTR_ERR(host->ufs_sys_ctrl),
-> +					"cannot ioremap for hci system control register\n");
-> +
-> +	/* system control register for mphy */
-> +	host->ufs_phy_ctrl = devm_platform_ioremap_resource_byname(pdev, "mphy_grf");
-> +	if (IS_ERR(host->ufs_phy_ctrl))
-> +		return dev_err_probe(dev, PTR_ERR(host->ufs_phy_ctrl),
-> +				"cannot ioremap for mphy system control register\n");
-> +
-> +	/* mphy base register */
-> +	host->mphy_base = devm_platform_ioremap_resource_byname(pdev, "mphy");
-> +	if (IS_ERR(host->mphy_base))
-> +		return dev_err_probe(dev, PTR_ERR(host->mphy_base),
-> +					"cannot ioremap for mphy base register\n");
-> +
-> +	host->rst = devm_reset_control_array_get_exclusive(dev);
-> +	if (IS_ERR(host->rst))
-> +		return dev_err_probe(dev, PTR_ERR(host->rst), "failed to get reset control\n");
-> +
-> +	reset_control_assert(host->rst);
-> +	udelay(1);
-> +	reset_control_deassert(host->rst);
-> +
-> +	host->ref_out_clk = devm_clk_get(dev, "ref_out");
-> +	if (IS_ERR(host->ref_out_clk))
-> +		return dev_err_probe(dev, PTR_ERR(host->ref_out_clk), "ciu-drive not available\n");
-
-What is 'ciu-drive'?
-
-> +
-> +	err = clk_prepare_enable(host->ref_out_clk);
-> +	if (err)
-> +		return dev_err_probe(dev, err, "failed to enable ref out clock\n");
-> +
-> +	host->rst_gpio = devm_gpiod_get(&pdev->dev, "reset", GPIOD_OUT_LOW);
-> +	if (IS_ERR(host->rst_gpio)) {
-> +		dev_err_probe(&pdev->dev, PTR_ERR(host->rst_gpio),
-> +				"invalid reset-gpios property in node\n");
-> +		err = PTR_ERR(host->rst_gpio);
-
-Krzysztof already pointed out this.
-
-> +		goto out;
-> +	}
-> +	udelay(20);
-> +	gpiod_set_value_cansleep(host->rst_gpio, 1);
-
-Why do you need to assert device reset here? ufshcd driver will do it anyway.
-
-> +
-> +	host->clks[0].id = "core";
-> +	host->clks[1].id = "pclk";
-> +	host->clks[2].id = "pclk_mphy";
-> +	err = devm_clk_bulk_get_optional(dev, UFS_MAX_CLKS, host->clks);
-> +	if (err) {
-> +		dev_err_probe(dev, err, "failed to get clocks\n");
-> +		goto out;
-> +	}
-> +
-> +	err = clk_bulk_prepare_enable(UFS_MAX_CLKS, host->clks);
-> +	if (err) {
-> +		dev_err_probe(dev, err, "failed to enable clocks\n");
-> +		goto out;
-> +	}
-> +
-> +	pm_runtime_set_active(&pdev->dev);
-
-This is already called in ufshcd_pltfrm_init().
-
-> +
-> +	host->hba = hba;
-> +	ufs_rockchip_set_pm_lvl(hba);
-> +
-> +	ufshcd_set_variant(hba, host);
-> +
-> +	return 0;
-> +out:
-
-s/out/disable_ref_clk
-
-> +	clk_disable_unprepare(host->ref_out_clk);
-> +	return err;
-> +}
-> +
-> +static int ufs_rockchip_rk3576_init(struct ufs_hba *hba)
-> +{
-> +	int ret = 0;
-
-Initialization not needed.
-
-> +	struct device *dev = hba->dev;
-> +
-
-Also reverse Xmas order for local variables please.
-
-> +	hba->quirks = UFSHCI_QUIRK_BROKEN_HCE | UFSHCD_QUIRK_SKIP_DEF_UNIPRO_TIMEOUT_SETTING;
-> +
-> +	/* Enable BKOPS when suspend */
-> +	hba->caps |= UFSHCD_CAP_AUTO_BKOPS_SUSPEND;
-> +	/* Enable putting device into deep sleep */
-> +	hba->caps |= UFSHCD_CAP_DEEPSLEEP;
-> +	/* Enable devfreq of UFS */
-> +	hba->caps |= UFSHCD_CAP_CLK_SCALING;
-> +	/* Enable WriteBooster */
-> +	hba->caps |= UFSHCD_CAP_WB_EN;
-> +
-> +	ret = ufs_rockchip_common_init(hba);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "ufs common init fail\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int ufs_rockchip_device_reset(struct ufs_hba *hba)
-> +{
-> +	struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-> +
-> +	if (!host->rst_gpio)
-> +		return -EOPNOTSUPP;
-
-Is it possible to hit this condition?
-
-> +
-> +	gpiod_set_value_cansleep(host->rst_gpio, 0);
-> +	udelay(20);
-> +
-> +	gpiod_set_value_cansleep(host->rst_gpio, 1);
-> +	udelay(20);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct ufs_hba_variant_ops ufs_hba_rk3576_vops = {
-> +	.name = "rk3576",
-> +	.init = ufs_rockchip_rk3576_init,
-> +	.device_reset = ufs_rockchip_device_reset,
-> +	.hce_enable_notify = ufs_rockchip_hce_enable_notify,
-> +	.phy_initialization = ufs_rockchip_rk3576_phy_init,
-> +};
-> +
-> +static const struct of_device_id ufs_rockchip_of_match[] = {
-> +	{ .compatible = "rockchip,rk3576-ufs", .data = &ufs_hba_rk3576_vops},
-
-Use 'rockchip,rk3576-ufshc'.
-
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, ufs_rockchip_of_match);
-> +
-> +static int ufs_rockchip_probe(struct platform_device *pdev)
-> +{
-> +	int err = 0;
-
-Again no init needed and use reverse Xmas order (everywhere).
-
-> +	struct device *dev = &pdev->dev;
-> +	const struct ufs_hba_variant_ops *vops;
-> +
-> +	vops = device_get_match_data(dev);
-
-Is it OK if vops is NULL?
-
-> +	err = ufshcd_pltfrm_init(pdev, vops);
-> +	if (err)
-> +		dev_err_probe(dev, err, "ufshcd_pltfrm_init failed\n");
-
-Return err here and return 0 below.
-
-> +
-> +	return err;
-> +}
-> +
-
-[...]
-
-> +static const struct dev_pm_ops ufs_rockchip_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(ufs_rockchip_suspend, ufs_rockchip_resume)
-> +	SET_RUNTIME_PM_OPS(ufs_rockchip_runtime_suspend, ufs_rockchip_runtime_resume, NULL)
-
-Why can't you use ufshcd PM ops as like other vendor drivers?
-
-> +	.prepare	 = ufshcd_suspend_prepare,
-> +	.complete	 = ufshcd_resume_complete,
-> +};
-> +
-> +static struct platform_driver ufs_rockchip_pltform = {
-> +	.probe = ufs_rockchip_probe,
-> +	.remove = ufs_rockchip_remove,
-> +	.driver = {
-> +		.name = "ufshcd-rockchip",
-> +		.pm = &ufs_rockchip_pm_ops,
-> +		.of_match_table = ufs_rockchip_of_match,
-> +	},
-> +};
-> +module_platform_driver(ufs_rockchip_pltform);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Rockchip UFS Host Driver");
-> diff --git a/drivers/ufs/host/ufs-rockchip.h b/drivers/ufs/host/ufs-rockchip.h
-> new file mode 100644
-> index 0000000..9eb80e8
-> --- /dev/null
-> +++ b/drivers/ufs/host/ufs-rockchip.h
-> @@ -0,0 +1,51 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Rockchip UFS Host Controller driver
-> + *
-> + * Copyright (C) 2024 Rockchip Electronics Co.Ltd.
-> + */
-> +
-> +#ifndef _UFS_ROCKCHIP_H_
-> +#define _UFS_ROCKCHIP_H_
-> +
-> +#define UFS_MAX_CLKS 3
-> +
-> +#define SEL_TX_LANE0 0x0
-> +#define SEL_TX_LANE1 0x1
-> +#define SEL_TX_LANE2 0x2
-> +#define SEL_TX_LANE3 0x3
-> +#define SEL_RX_LANE0 0x4
-> +#define SEL_RX_LANE1 0x5
-> +#define SEL_RX_LANE2 0x6
-> +#define SEL_RX_LANE3 0x7
-> +
-> +#define MIB_T_DBG_CPORT_TX_ENDIAN	0xc022
-> +#define MIB_T_DBG_CPORT_RX_ENDIAN	0xc023
-> +
-> +struct ufs_rockchip_host {
-> +	struct ufs_hba *hba;
-> +	void __iomem *ufs_phy_ctrl;
-> +	void __iomem *ufs_sys_ctrl;
-> +	void __iomem *mphy_base;
-> +	struct gpio_desc *rst_gpio;
-> +	struct reset_control *rst;
-> +	struct clk *ref_out_clk;
-> +	struct clk_bulk_data clks[UFS_MAX_CLKS];
-> +	uint64_t caps;
-> +	bool in_suspend;
-
-Move bool to the end to avoid holes.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> BR,
+> Andrei Simion
 
