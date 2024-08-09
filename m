@@ -1,160 +1,135 @@
-Return-Path: <linux-kernel+bounces-281039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B331A94D23B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:32:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B48BB94D247
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 204C1B222B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:32:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70FF1280F6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEF8197A7E;
-	Fri,  9 Aug 2024 14:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089BA197556;
+	Fri,  9 Aug 2024 14:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ETRgyUlQ"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lIsAtwFG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E923125BA;
-	Fri,  9 Aug 2024 14:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C857213FFC
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723213934; cv=none; b=GmYu2k6wvy5BvTD7aLTXh634eso8wGWDe50AC09TqCszwnVwP8jswZ1HkAQ3bWs8PN4aIST3x23BMxcNntiUONfev+McUE1ps1nAXuM4ruRe3OaNXsrkQSrXH7zJtWGfV4ioVH0vfjMWaETvDil0Hncx+WwfFLmcJrn4L++/Xyk=
+	t=1723214205; cv=none; b=PYc8Fl9j9olijQllzgbtqV7ArCYfEAq3yfEBWG4ehIDCcuO6DhEL8lWiibg88FwWn8xzLJWnHLg8X2TW/6BsumBs9YezM9ETEtz/7JVJWkieqiArDZuP0EtJppEvgwDssCo2xM3deeWvpd4xLxZUUg5Y+CFhlkyWTu4OJwfoUks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723213934; c=relaxed/simple;
-	bh=ecgWLraO+k1GMspoEC7wUJdlXKt+YpF/A0yCBuNsqNg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PV+r7S5vHU0twdkdwgRsB1cKFsrM+QzjwDMKCtIhb7Zp4RP8T5XSHsBtdkvsztOBJDC4YY8bcFDOaVyEv6nT9iStlwTH8pnHHY4ezG08iaDJNgh6Vx0SsMVsKLdHJU3E9QIaK2PdSdj1cAdX93FBLJuDTAoaYwNkKclTK5IViJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ETRgyUlQ; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a1e1f6a924so124086985a.1;
-        Fri, 09 Aug 2024 07:32:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723213932; x=1723818732; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NX+Q+EfixZ+2TPkwx6jvCoFLNCbUvWrwCvVOitm7170=;
-        b=ETRgyUlQyx4SownIHLmN4RKb3FBBoiwQarkHM/0kAhZrtgK7r4ZhnUg6/hzaKfUK9H
-         v9VQq1mPi64ybiKsSCQa+mn9M8jm92jD+MeY7k0NNnalOQD0UpIZurkrGViJMlCb6GjJ
-         +V/+D1EyQHguaySvhvIjX2ireRsXIe56/QvpKTDogUaRu2X7VZPyPDpKxv6g7H47l5Z5
-         LlJR2tnAUVlEXiXH6L6OtVn1b7H3zGjIQJUH1es4HQN/leN3IY7/9aTzV7pbpNcJBNKn
-         ubv4RyQYa1buthUpUmxhh0QC6vKQGJsrGmuu9ePiP+PAIv3P4vpTANdiZA7OJTn2+dsO
-         d9tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723213932; x=1723818732;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NX+Q+EfixZ+2TPkwx6jvCoFLNCbUvWrwCvVOitm7170=;
-        b=tJGO/+ZDEp7eFxHITATlb0nbS9f0W/26JqJvqdmnZ64xMr0s6VSX1vwAD5OjjMjnKI
-         b+YDCZDzTJid0nJWQPefF/sJN0zgMXZh8qwOa44048FzO5aRsN0DogZmUkS1jBw++4oK
-         fFtfaflSmuZ7xmEZjODlf8Dolf96Mmp5cqbFasO7Bst8e3RBZ18VnWkEyv7SY/tWE9S9
-         vy3BmJgU6l+Il7PIyQhQS7m8QZaGl1VZA7wTDk+x8MwUi6SoCR2aI9LJQVqHYQ/eFFsJ
-         nEx0eC3tLr7k5hW3c8UF0yLyJ5sLwQpnrfp0X8mqiqFUKnW8FE7vszrAL49OGsVGbgu3
-         MW8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUim1DtGBfmBTrkh3mTA/RE+gnegVimNVNMujOGffFGZxCdS6hal+Sl+dD7c2EyTjXDf7BlDfxpLdr5JBI/ALU2JFUTkF54YoaPYr6wu4pZuXUv7poz0eCAK2QOHRkWT5sxSQTtEs9/VPnVu/TV80A8yA7Qt4zv1JzVRJ3WvRsaaNwsDg==
-X-Gm-Message-State: AOJu0Ywt5dy+49Y42un2C7/cXchBQsqSgz5GgKZ6w03qWocBQl/1TNRU
-	s5J/kJ/ELqbp55EGehA8zybIe68Vp3pSL++RtXmZrcLA3b7E47Ij
-X-Google-Smtp-Source: AGHT+IFXc4sg/wacPaEzwe3kfd5rk1wqFBAPNS/hyuzA4sIDiHLr1YrwflGmuOVKSyIXG5iZOrtjNA==
-X-Received: by 2002:a05:620a:4091:b0:79f:1eb:d76c with SMTP id af79cd13be357-7a4c182c0c9mr204921185a.43.1723213931983;
-        Fri, 09 Aug 2024 07:32:11 -0700 (PDT)
-Received: from [192.168.0.220] ([83.103.132.21])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785e5c54sm266701085a.48.2024.08.09.07.32.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 07:32:11 -0700 (PDT)
-Message-ID: <67eb7f5c-3f20-4831-a0cc-e407ac3f24ad@gmail.com>
-Date: Fri, 9 Aug 2024 17:32:08 +0300
+	s=arc-20240116; t=1723214205; c=relaxed/simple;
+	bh=jfeOKs/97i1MZB9mZgQc/1uRPFTjG8+Gzz1wmjHvPLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q1wwnS8wAvGPS1S4SRbAndPSkFf4sNXMmCjcCdBhuEQ+chpho1CqZgZvBZVO5a48h+uMkLyiWn0XzsXg8JGDqqoCTopbdYx2LdLMey4IvPQkN2e8fWlQY0MgVDkeBYtAaCrdbeB0zAxRn5f5n1Om5Xc5Turzlcgw57aLhp93NTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lIsAtwFG; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723214204; x=1754750204;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=jfeOKs/97i1MZB9mZgQc/1uRPFTjG8+Gzz1wmjHvPLc=;
+  b=lIsAtwFGP2uekuE/+mH9zGZ32n08VlM8EENVTYVA9I2HgPs801mog1to
+   5t3iXOa1ZttRDoEnKvHvtWI2zWRZrDu7veHPgCs40iO2Lb5C0ACQEq0vO
+   ozmvg0ol5psNA87aylNJ8apP+EAAOzLOW7XP1IoGoKFNjIL9NNPhWl1dm
+   NtP6ED5+iBp6AV7k1kr7GmZoHnNVg7QBzUTlBMJtk6HRLxoJk0S09ntFc
+   XXK1ae4IieQkyslC3QVaX76qbEyjuUh31dMzki+5O3EfxFh02WYzVc1+V
+   nBdG29ikb28O4KeDw+10IWkWOUwfThXuL/hTbEzb0SaYMjR8hDiEs6UNc
+   A==;
+X-CSE-ConnectionGUID: 4I9OQmDYQfaTEjiayV2aFg==
+X-CSE-MsgGUID: a4miK6WRQrqa1NcUgr8tHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21532041"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="21532041"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 07:36:43 -0700
+X-CSE-ConnectionGUID: W/40TGxYRI6DXUcx3PHw2g==
+X-CSE-MsgGUID: 6RIEOof2RXGhCJWAdN5VlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="57228455"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 07:36:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1scQjK-0000000DRau-1e7G;
+	Fri, 09 Aug 2024 17:36:34 +0300
+Date: Fri, 9 Aug 2024 17:36:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Ding, Shenghao" <shenghao-ding@ti.com>
+Cc: "broonie@kernel.org" <broonie@kernel.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"perex@perex.cz" <perex@perex.cz>,
+	"pierre-louis.bossart@linux.intel.com" <pierre-louis.bossart@linux.intel.com>,
+	"13916275206@139.com" <13916275206@139.com>,
+	"judyhsiao@google.com" <judyhsiao@google.com>,
+	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+	"Salazar, Ivan" <i-salazar@ti.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Chadha, Jasjot Singh" <j-chadha@ti.com>,
+	"liam.r.girdwood@intel.com" <liam.r.girdwood@intel.com>,
+	"bard.liao@intel.com" <bard.liao@intel.com>,
+	"yung-chuan.liao@linux.intel.com" <yung-chuan.liao@linux.intel.com>,
+	"Rao, Dipa" <dipa@ti.com>,
+	"yuhsuan@google.com" <yuhsuan@google.com>,
+	"tiwai@suse.de" <tiwai@suse.de>, "Xu, Baojun" <baojun.xu@ti.com>,
+	"soyer@irl.hu" <soyer@irl.hu>,
+	"Baojun.Xu@fpt.com" <Baojun.Xu@fpt.com>,
+	"Navada Kanyana, Mukund" <navada@ti.com>,
+	"cujomalainey@google.com" <cujomalainey@google.com>,
+	"Kutty, Aanya" <aanya@ti.com>,
+	"Mahmud, Nayeem" <nayeem.mahmud@ti.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add Calibration
+ Kcontrols and tas2563 digtial gain for Chromebook
+Message-ID: <ZrYpcjC_vf7ldnie@smile.fi.intel.com>
+References: <20240522112942.994-1-shenghao-ding@ti.com>
+ <Zk3eq0k2Eq-gtejq@smile.fi.intel.com>
+ <6b6a0af1e55241c4b2acde42e9966e3b@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: adc: ad7173: add support for ad4113
-To: Conor Dooley <conor@kernel.org>, dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240809-ad4113-v2-0-2a70c101a1f4@analog.com>
- <20240809-ad4113-v2-1-2a70c101a1f4@analog.com>
- <20240809-glowing-discard-87263f656a7e@spud>
-Content-Language: en-US
-From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-In-Reply-To: <20240809-glowing-discard-87263f656a7e@spud>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <6b6a0af1e55241c4b2acde42e9966e3b@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 09/08/2024 17:21, Conor Dooley wrote:
-> On Fri, Aug 09, 2024 at 01:33:24PM +0300, Dumitru Ceclan via B4 Relay wrote:
->> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>
->> This commit adds bindings support for AD4113.
->>
->> The AD4113 is a low power, low noise, 16-bit, Σ-Δ analog-to-digital
->> converter (ADC) that integrates an analog front end (AFE) for four
->> fully differential or eight single-ended inputs.
->>
->> Added ad4113 to the compatible list and the "avdd2-supply: false"
->> restriction.
->>
->> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
->> ---
->>  Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
->> index 17c5d39cc2c1..ad15cf9bc2ff 100644
->> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
->> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7173.yaml
->> @@ -28,6 +28,7 @@ description: |
->>    Datasheets for supported chips:
->>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD4111.pdf
->>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD4112.pdf
->> +    <AD4113: not released yet>
-> 
-> Am I meant to ack it with this placeholder? When will the document be
-> released?
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> 
-Not really sure tbh, up to you. The document will be released in the upcoming months.
+On Mon, Jun 24, 2024 at 11:42:11AM +0000, Ding, Shenghao wrote:
+> > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Sent: Wednesday, May 22, 2024 8:02 PM
+> > To: Ding, Shenghao <shenghao-ding@ti.com>
+> > On Wed, May 22, 2024 at 07: 29: 41PM +0800, Shenghao Ding wrote: >
 
-If it's considered best to wait until the docs are public and send another
-version with the correct link. 
-If not, and maintainers consider that these changes can be accepted even
-without viewing the datasheet, I'll send a patch when it goes public.
 
- 
->>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD4114.pdf
->>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD4115.pdf
->>      https://www.analog.com/media/en/technical-documentation/data-sheets/AD4116.pdf
->> @@ -44,6 +45,7 @@ properties:
->>      enum:
->>        - adi,ad4111
->>        - adi,ad4112
->> +      - adi,ad4113
->>        - adi,ad4114
->>        - adi,ad4115
->>        - adi,ad4116
->> @@ -331,6 +333,7 @@ allOf:
->>              enum:
->>                - adi,ad4111
->>                - adi,ad4112
->> +              - adi,ad4113
->>                - adi,ad4114
->>                - adi,ad4115
->>                - adi,ad4116
->>
->> -- 
->> 2.43.0
->>
->>
+(some comments were not answered, are you agree on all of the points?)
+
+...
+
+> > > +	cali_data->data = devm_kzalloc(tas_priv->dev, tas_priv->ndev *
+> > > +		(cali_data->reg_array_sz * 4 + 1), GFP_KERNEL);
+> > 
+> > No way. First of all, we have kcalloc(), second, there is an overflow.h that has
+> > necessary macros to calculate sizes for memory allocations.
+> Memory allocated with devm_kzalloc is automatically freed on driver detach while kcalloc can’t
+
+Yes, we have devm variant for kcalloc(), why can it be not utilised?
+
+> > > +	if (!cali_data->data)
+> > > +		return -ENOMEM;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
