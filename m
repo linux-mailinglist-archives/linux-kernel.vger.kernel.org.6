@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-281328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE7394D594
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:41:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 746DF94D596
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF80F1C21386
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:41:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3881F2246D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308AF8289C;
-	Fri,  9 Aug 2024 17:41:33 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816E680054;
+	Fri,  9 Aug 2024 17:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wE66LET6"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CABA41;
-	Fri,  9 Aug 2024 17:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345AA5A4D5
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 17:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723225292; cv=none; b=kaKE/Xq+eG3DGBQU1vteW0TU2+wTEJKEIn5kQ9Sh4Hy8M8JTbGE6GOKybpwrRgNEaOFToUafhI65Y6znYmanffMvo7XaIiyWCmsMMaq9F+iGUa8O5KAQoBrBpriglBlFNGvNo95vjyBXco19UnUVjjdbaQW7FVUpUI2GIZsslpI=
+	t=1723225333; cv=none; b=n+dXQ3VhPi2OoumCJbXCxOUmeTW8bKMzaeMuWDZIXEmyXqFon7CIpqx5UOSy4G3ByL5Psjt/79U7BARRYxI9UuOjsflWFmpRv76bNTyzrDPRanrEYfzG6dV0+mKwQf4NAca2TWCH81K15R38ganOkFynlFxmXoZqNV9IV2zQi/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723225292; c=relaxed/simple;
-	bh=K8+dk9K7iJjeQQsItBQdAdMS1Bs5PSg3zHcAZ+TFio4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lzuIz7rv8wR0D0TmnffodyQQV2wYXjyOh915VlQH13VrGw16HVYCQQFueqL/UqR3tORZ77uaDDO+R2Z9DQrE4+Mwcrgk+Rk3VAohenwErthEawXEHsFPdyYr/3JLh3GKah8Gpkh2VWIwRKWqu2eql7Xtcxt+vLgJVi3wzQtDaic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49DF8C32782;
-	Fri,  9 Aug 2024 17:41:31 +0000 (UTC)
-Date: Fri, 9 Aug 2024 13:41:33 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: John Kacur <jkacur@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Daniel Bristot de Oliveira
- <bristot@kernel.org>, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
- Clark Williams <williams@redhat.com>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rtla/osnoise: prevent NULL dereference in error
- handling
-Message-ID: <20240809134133.751723e5@gandalf.local.home>
-In-Reply-To: <c73c51ae-99da-793a-6dcb-2fbc6871261d@redhat.com>
-References: <f964ed1f-64d2-4fde-ad3e-708331f8f358@stanley.mountain>
-	<c73c51ae-99da-793a-6dcb-2fbc6871261d@redhat.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723225333; c=relaxed/simple;
+	bh=unOikXZ8Y81JsN0FVzHGpewC+1L1DF3RT3WmstAS/AA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=W2P+3nKkyH5HR239qPmgj8WxwgWGmF9iO9og2L3IbrEwQ6IIG1pcp1sCfbHoHG58biPVEdImRHDUAOOukrmMWKL/zoo61vk0pR91z8JSoyFnu5AyAsyyDan9Yw5jxWG/5F1Tr7Yz/nsTgPMBAKBZlCetaX9xaiB9eo9Puk7IeJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wE66LET6; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so16915755e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 10:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723225330; x=1723830130; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VamUtaKsdnMO3Xj/IeNiDDarpPSNzAwlcfOY5Y0XulA=;
+        b=wE66LET6/50JNqszRjQfaMtJ0PlmAyIcogyMHm9CesLet211WZIgIBpxPflq9NH4rU
+         4ms6Snn8FVKJ6hklIuZ/RspKm6oJHO14qWrLz197sArdLv8ANAUK24s9ZIHiJj+oJFl9
+         IFb7CwI1ZY4KIa6mtmmpz4SuFaxiIT5INr59oHQv+e9t80K09GsTMabmjmX/1j4OeIee
+         Sh6jLA/KG5gHkJ9Hfz1/ghizgPOyDUf1qKurd4oyKCX8WCEinyJbzZDEdDiTGnKMQzkP
+         qSQQvdHhdcihEmo1wnwZNOIT2uUUXAcJW1gHWFRy+OINXL+KDdjzhPSGZoB6SBeo8CP5
+         GP5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723225330; x=1723830130;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VamUtaKsdnMO3Xj/IeNiDDarpPSNzAwlcfOY5Y0XulA=;
+        b=W4gpvFFCFrgEZ6o6dSfB1F74VDyX1QEA+5wzI7ZwxSsmSUcJ8T13KbzMiwn1YbaV7h
+         XcqU+60YWJyjZP3WWmvL+R7NO8lh6OugXKYoB0jm3PEP2hu8/MpNaMssGYFUjToN/gvV
+         isiG1Rmdi0HaWRMY/56dK2fDKjA1r9zijJtbNRSt+8daa2dDi4fY54S2kXCusT7zzytL
+         d5T9qwLLbkt9X4VmKCW9MWK/eJC3P+bOsoE0tnkNOeLgvRQGBvnY6nm/eMSsIc1Puasf
+         /XzLYwzzBb7IM4+FX5dB3UuP9/CEMTfAmGCgcFIXp2QYFaWg4LUie92IoF1gOCjlXmbg
+         1BlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVtO8nYHA3M11NNGiWtQijjPVK9V/8RGnCLx4UVbcBGNdfwiEP4lygWdh5SV+BgLg/c/I0V+6L229jqI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnt8/52n8yzMRyTRoIP0NcpbI/AK4AWThQpx+u7XzMEFt5OQKu
+	D2DqUNX8sM6PWrqita3vBVMdqh6P8C65nc+hw0D1VeVoV+Bh4VTqMbpJtCTrxXo=
+X-Google-Smtp-Source: AGHT+IGx9DDT4b4iSnts3ZE5LnnsizuK3egrq2q0nfjCRLIg7gJH+YoQ/HeD8f5UDBhmZse6UJatjQ==
+X-Received: by 2002:a05:600c:3b89:b0:426:62c5:4741 with SMTP id 5b1f17b1804b1-429c3a18df4mr16561655e9.2.1723225330233;
+        Fri, 09 Aug 2024 10:42:10 -0700 (PDT)
+Received: from [192.168.68.116] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c750ec0bsm1080765e9.15.2024.08.09.10.42.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 10:42:09 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Michael Walle <michael@walle.cc>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+ devicetree@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, u-boot@lists.denx.de, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+In-Reply-To: <20240808055710.19292-1-zajec5@gmail.com>
+References: <20240808055710.19292-1-zajec5@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Update path for U-Boot environment
+ variables YAML
+Message-Id: <172322532687.402259.7753078917073034445.b4-ty@linaro.org>
+Date: Fri, 09 Aug 2024 18:42:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.2
 
-On Fri, 9 Aug 2024 13:34:28 -0400 (EDT)
-John Kacur <jkacur@redhat.com> wrote:
 
-> On Fri, 9 Aug 2024, Dan Carpenter wrote:
+On Thu, 08 Aug 2024 07:57:10 +0200, Rafał Miłecki wrote:
+> This file was moved to the layouts/ subdirectory.
 > 
-> > If the "tool->data" allocation fails then there is no need to call
-> > osnoise_free_top() and, in fact, doing so will lead to a NULL dereference.
-> > 
-> > Fixes: 1eceb2fc2ca5 ("rtla/osnoise: Add osnoise top mode")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  tools/tracing/rtla/src/osnoise_top.c | 11 ++++-------
-> >  1 file changed, 4 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
-> > index f594a44df840..2f756628613d 100644
-> > --- a/tools/tracing/rtla/src/osnoise_top.c
-> > +++ b/tools/tracing/rtla/src/osnoise_top.c
-> > @@ -651,8 +651,10 @@ struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
-> >  		return NULL;
-> >  
-> >  	tool->data = osnoise_alloc_top(nr_cpus);
-> > -	if (!tool->data)
-> > -		goto out_err;
-> > +	if (!tool->data) {
-> > +		osnoise_destroy_tool(tool);
-> > +		return NULL;
-> > +	}
-> >  
-> >  	tool->params = params;
-> >  
-> > @@ -660,11 +662,6 @@ struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
-> >  				   osnoise_top_handler, NULL);
-> >  
-> >  	return tool;
-> > -
-> > -out_err:
-> > -	osnoise_free_top(tool->data);
-> > -	osnoise_destroy_tool(tool);
-> > -	return NULL;
-> >  }
-> >  
-> >  static int stop_tracing;
-> > --   
-> 
-> Although your fix appears to be correct, I wonder if it would be better to 
-> create a second error label, such as out_destroy_tool: as described in 
-> section 7 of the coding-style.rst
 > 
 
-There's no reason for that. It's the only error path. That is, nothing
-would jump to the original out_err:
+Applied, thanks!
 
-And for a single error, an if statement is good enough.
+[1/1] MAINTAINERS: Update path for U-Boot environment variables YAML
+      commit: f6d1cddd76b2da190462d84546e5202d3b2aa92b
 
--- Steve
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
 
