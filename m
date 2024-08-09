@@ -1,187 +1,275 @@
-Return-Path: <linux-kernel+bounces-281100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F414494D317
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:14:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FDA294D32F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B7D1B2127D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:14:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76211F234D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C384198842;
-	Fri,  9 Aug 2024 15:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7F1199EB0;
+	Fri,  9 Aug 2024 15:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xhUXh7Qg"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNmme8W9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AAC197A9E;
-	Fri,  9 Aug 2024 15:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12759198A1B;
+	Fri,  9 Aug 2024 15:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216439; cv=none; b=hm6X7Lr9pN3TkKvB5WBebDoRwb6nHLtt/ODVfA9MqbPepBw4JLLxSWcipEe9YXugoxU2x7gPzGTJl6S5qZ1gdG370+0NyY9+OOmCzyd0dFYFJhzcIbHISVXdx7UdspjXoB7gCHXCxwOdt04o+5PE4lsbh0c5kx5Trz1aMqRkDF4=
+	t=1723216451; cv=none; b=cIj9P/UV23yPN30b+DHsdMfnKLZkaqNr3mWeU4dSIOerfNMKms79zvlnDaPA8ZQ9tYPLMA3WGNjYN4VLesS7sgKFncTSBxl7TB1V8WLuW4cCn1DR9GQDzN+5Ph617wxByJJ9rx82vX9v1ceuw7i36onQjWewk5yb1Limsi1CNok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216439; c=relaxed/simple;
-	bh=ic2zUbWenI+aK0sAV6cBRsJGprmkwAiVoDaglQXTILo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rv7DtIYMxIQItN2dUbZQ2ORX2LQTzTx11cxHXH607k8tYqyeOy7opwb/2IXdGGuIsNVFxqt5YRes+CTn+Xm17UBbFXbivC/SvFfVEBFByf8jOa8wMDED9q3+rZSLYXbCLLm4AXKh64WIHdBJ1bWqtVfMy4ZQ1xYzT+JLkXqufrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xhUXh7Qg; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4799oVn4020207;
-	Fri, 9 Aug 2024 17:13:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=DFo1fYl9nCcaq9Zjb9msp/
-	A8hQ7oocxj4j73HSkUytY=; b=xhUXh7QgMtiq51FQ2PBRFBr2JxHE7/pXl9qbL7
-	tnH2StFkY0LSOnB8gF7gQHH9VSNIpTa+f/F8rUS9GK8/O4omf0y2yHcTl/EPINAj
-	3/bLMF/JmoeSuLP62Gt7o4tPL11RHQ/df5NnxEekZGZV4jyhHIu/NqNMd3Hsa6cC
-	/aPK1wxjGac1SH/0/OzkZ9R5/6KQ/oE8tA6/1wzAcJO5i/Mpy7JbeqKGx3L8xTmu
-	dWADCQqmXgX/Y2sEEr46fbSoZlPest5CLVnZLNKPGYlMYqGkSVBbSakq27p4FhBE
-	oQIPaFVCoFSkg7CV0UsCETtuDrHQLNKm04M61ucNw3IhGZAg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40tu6nwcx1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 17:13:24 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 49C7140046;
-	Fri,  9 Aug 2024 17:13:17 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ACEC12612A9;
-	Fri,  9 Aug 2024 17:13:17 +0200 (CEST)
-Received: from localhost (10.252.26.60) by EQNDAG1NODE6.st.com (10.75.129.135)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 9 Aug
- 2024 17:13:17 +0200
-From: Yannick Fertre <yannick.fertre@foss.st.com>
-To: Yannick Fertre <yannick.fertre@foss.st.com>,
-        Raphael Gallais-Pou
-	<raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter
-	<daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] dt-bindings: display: st,stm32-ltdc: Document stm32mp25 compatible
-Date: Fri, 9 Aug 2024 17:13:14 +0200
-Message-ID: <20240809151314.221746-1-yannick.fertre@foss.st.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723216451; c=relaxed/simple;
+	bh=3x1I3t23wv26CQk4jS0uLOBKS6hDL4aBZAdgs4f0xhU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bm/xkXb55CclifhFNgDV/P2rC9Pd/DgNEpkjJR1wGAQxk0CW6yBfBWPUhHF9R/SjYJugfsog+Iy/e+5N5XD3QPg0dOwfKWR5VtkzZi1Xsjx1HoZ+w5nzLIUJ6oKSJW+ic3WEi9SPniu7MZmgeCO5GHiJsOOAfMqPDrKyJdhA9uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNmme8W9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94080C4AF0B;
+	Fri,  9 Aug 2024 15:14:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723216450;
+	bh=3x1I3t23wv26CQk4jS0uLOBKS6hDL4aBZAdgs4f0xhU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jNmme8W9NB2+ZamfqnIfE9ryfUdk4JqZIuOUSUE4S4CCeEKaYicGo8rgCPRNmeaMP
+	 ZGSPGUUn3fLFeZ+HIMe3H4uo70EIGhNqm+BsXHjtmOWV3anXWeWRS1pg7nb2NoO1d8
+	 vruhBgCEh+5DrhsfIUHOr2o0uIjMXFXnhEP9wyiGaVDpth4zQ8fSnP2E2CI8sGuBBD
+	 /TZNadFJcXZnVY0Kvb1xvCPfdt15ENINs9ZIcRf8W7ZZv0BNu1Y/UXqZBMnOygVryN
+	 oeq/zNr3h3VdrleWs2tMTOPcqjiKSkaYLVagUBBTvt7n4BKNsCyDSZGBSQvcm7WaeH
+	 WgGKtzEFGXt9w==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f149845fbaso23686091fa.3;
+        Fri, 09 Aug 2024 08:14:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKzZDJqGs0fI3A4oJs0uuodsM9sE6MFFzui86swFSzlkdvvdGl/aIiYazjgmWNHpFWassepjrWbH09C+cAa23mYpipsPrgB4Np+t7dm+EcACJ9wyZS22RLSkYcw1QXWmO7dVwfyp9LQQ==
+X-Gm-Message-State: AOJu0YzJpVS09ikZ3qiD2C2YVAfPF2TjFG69K+zWVr/kTlxjL3CjhIKG
+	ALJ2vKHspoaKvwGP9NmdUqGqvjp4l3xiHkYH/VUOfI5DJcZ00FeFbt20fgzvjgtSHvZLyL+znMl
+	7JAWTsaTgNfHYbLxUaj3wkHgglQ==
+X-Google-Smtp-Source: AGHT+IG+n/t2ITHrMGpOypuDOMLkf0Ms8xRhO88x2Ilm17PKc6/jHWWGSBIWjCKYSlZxolzdomYTClaXJ0JEUAmc8KM=
+X-Received: by 2002:a2e:b8cb:0:b0:2ef:2472:41c7 with SMTP id
+ 38308e7fff4ca-2f1a6d01eaemr17231031fa.7.1723216448824; Fri, 09 Aug 2024
+ 08:14:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To EQNDAG1NODE6.st.com
- (10.75.129.135)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_12,2024-08-07_01,2024-05-17_01
+References: <20240809090158.3267481-2-stefan.wiehler@nokia.com>
+In-Reply-To: <20240809090158.3267481-2-stefan.wiehler@nokia.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 9 Aug 2024 09:13:55 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ-qx=FffPZgx3tdsUu1_mA=E1+xZs0dY+GeoEuvUEm_Q@mail.gmail.com>
+Message-ID: <CAL_JsqJ-qx=FffPZgx3tdsUu1_mA=E1+xZs0dY+GeoEuvUEm_Q@mail.gmail.com>
+Subject: Re: [PATCH v3] of/irq: Prevent device address out-of-bounds read in
+ interrupt map walk
+To: Stefan Wiehler <stefan.wiehler@nokia.com>
+Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add "st,stm32mp25-ltdc" compatible for SOC MP25. This new SOC introduce
-new clocks (bus, ref & lvds). Bus clock was separated from lcd clock.
-New sources are possible for lcd clock (lvds / ref).
+On Fri, Aug 9, 2024 at 3:03=E2=80=AFAM Stefan Wiehler <stefan.wiehler@nokia=
+.com> wrote:
+>
+> When of_irq_parse_raw() is invoked with a device address smaller than
+> the interrupt parent node (from #address-cells property), KASAN detects
+> the following out-of-bounds read when populating the initial match table
+> (dyndbg=3D"func of_irq_parse_* +p"):
+>
+>   OF: of_irq_parse_one: dev=3D/soc@0/picasso/watchdog, index=3D0
+>   OF:  parent=3D/soc@0/pci@878000000000/gpio0@17,0, intsize=3D2
+>   OF:  intspec=3D4
+>   OF: of_irq_parse_raw: ipar=3D/soc@0/pci@878000000000/gpio0@17,0, size=
+=3D2
+>   OF:  -> addrsize=3D3
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   BUG: KASAN: slab-out-of-bounds in of_irq_parse_raw+0x2b8/0x8d0
+>   Read of size 4 at addr ffffff81beca5608 by task bash/764
+>
+>   CPU: 1 PID: 764 Comm: bash Tainted: G           O       6.1.67-484c6135=
+61-nokia_sm_arm64 #1
+>   Hardware name: Unknown Unknown Product/Unknown Product, BIOS 2023.01-12=
+.24.03-dirty 01/01/2023
+>   Call trace:
+>    dump_backtrace+0xdc/0x130
+>    show_stack+0x1c/0x30
+>    dump_stack_lvl+0x6c/0x84
+>    print_report+0x150/0x448
+>    kasan_report+0x98/0x140
+>    __asan_load4+0x78/0xa0
+>    of_irq_parse_raw+0x2b8/0x8d0
+>    of_irq_parse_one+0x24c/0x270
+>    parse_interrupts+0xc0/0x120
+>    of_fwnode_add_links+0x100/0x2d0
+>    fw_devlink_parse_fwtree+0x64/0xc0
+>    device_add+0xb38/0xc30
+>    of_device_add+0x64/0x90
+>    of_platform_device_create_pdata+0xd0/0x170
+>    of_platform_bus_create+0x244/0x600
+>    of_platform_notify+0x1b0/0x254
+>    blocking_notifier_call_chain+0x9c/0xd0
+>    __of_changeset_entry_notify+0x1b8/0x230
+>    __of_changeset_apply_notify+0x54/0xe4
+>    of_overlay_fdt_apply+0xc04/0xd94
+>    ...
+>
+>   The buggy address belongs to the object at ffffff81beca5600
+>    which belongs to the cache kmalloc-128 of size 128
+>   The buggy address is located 8 bytes inside of
+>    128-byte region [ffffff81beca5600, ffffff81beca5680)
+>
+>   The buggy address belongs to the physical page:
+>   page:00000000230d3d03 refcount:1 mapcount:0 mapping:0000000000000000 in=
+dex:0x0 pfn:0x1beca4
+>   head:00000000230d3d03 order:1 compound_mapcount:0 compound_pincount:0
+>   flags: 0x8000000000010200(slab|head|zone=3D2)
+>   raw: 8000000000010200 0000000000000000 dead000000000122 ffffff810000c30=
+0
+>   raw: 0000000000000000 0000000000200020 00000001ffffffff 000000000000000=
+0
+>   page dumped because: kasan: bad access detected
+>
+>   Memory state around the buggy address:
+>    ffffff81beca5500: 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>    ffffff81beca5580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>   >ffffff81beca5600: 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>                         ^
+>    ffffff81beca5680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>    ffffff81beca5700: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   OF:  -> got it !
+>
+> Prevent the out-of-bounds read by copying the device address into a
+> buffer of sufficient size.
+>
+> Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
+> ---
+>  drivers/of/irq.c | 51 ++++++++++++++++++++++++++++++------------------
+>  1 file changed, 32 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> index c94203ce65bb3..34fe0593036d8 100644
+> --- a/drivers/of/irq.c
+> +++ b/drivers/of/irq.c
+> @@ -151,6 +151,26 @@ const __be32 *of_irq_parse_imap_parent(const __be32 =
+*imap, int len, struct of_ph
+>         return imap;
+>  }
+>
+> +static u32 of_get_address_cells(struct device_node *node)
+> +{
 
-Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
----
-Changes in v2: Rework clock property.
- .../bindings/display/st,stm32-ltdc.yaml       | 51 +++++++++++++++----
- 1 file changed, 41 insertions(+), 10 deletions(-)
+See of_bus_n_addr_cells(). It does the same thing. However, I don't
+think you need this. See below.
 
-diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
-index d6ea4d62a2cf..cc578ad9f040 100644
---- a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
-+++ b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
-@@ -12,7 +12,9 @@ maintainers:
- 
- properties:
-   compatible:
--    const: st,stm32-ltdc
-+    enum:
-+      - st,stm32-ltdc
-+      - st,stm32mp25-ltdc
- 
-   reg:
-     maxItems: 1
-@@ -23,13 +25,6 @@ properties:
-       - description: errors interrupt line.
-     minItems: 1
- 
--  clocks:
--    maxItems: 1
--
--  clock-names:
--    items:
--      - const: lcd
--
-   resets:
-     maxItems: 1
- 
-@@ -46,11 +41,47 @@ required:
-   - compatible
-   - reg
-   - interrupts
--  - clocks
--  - clock-names
-   - resets
-   - port
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - st,stm32mp25-ltdc
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 4
-+          items:
-+            - description: Lcd Clock
-+            - description: Bus Clock
-+            - description: Reference Clock
-+            - description: Lvds Clock
-+        clock-names:
-+          items:
-+            - const: lcd
-+            - const: bus
-+            - const: ref
-+            - const: lvds
-+      required:
-+        - clocks
-+        - clock-names
-+    else:
-+      properties:
-+        clocks:
-+          maxItems: 1
-+          items:
-+            - description: Lcd Clock
-+        clock-names:
-+          items:
-+            - const: lcd
-+      required:
-+        - clocks
-+        - clock-names
-+
- additionalProperties: false
- 
- examples:
--- 
-2.34.1
+> +       struct device_node *tnode, *old =3D NULL;
+> +       const __be32 *tmp;
+> +
+> +       /* Look for this #address-cells. We have to implement the old lin=
+ux
+> +        * trick of looking for the parent here as some device-trees rely=
+ on it
+> +        */
+> +       old =3D of_node_get(node);
+> +       do {
+> +               tmp =3D of_get_property(old, "#address-cells", NULL);
+> +               tnode =3D of_get_parent(old);
+> +               of_node_put(old);
+> +               old =3D tnode;
+> +       } while (old && tmp =3D=3D NULL);
+> +       of_node_put(old);
+> +       old =3D NULL;
+> +       return (tmp =3D=3D NULL) ? 2 : be32_to_cpu(*tmp);
+> +}
+> +
+>  /**
+>   * of_irq_parse_raw - Low level interrupt tree parsing
+>   * @addr:      address specifier (start of "reg" property of the device)=
+ in be32 format
+> @@ -167,10 +187,10 @@ const __be32 *of_irq_parse_imap_parent(const __be32=
+ *imap, int len, struct of_ph
+>   */
+>  int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq=
+)
+>  {
+> -       struct device_node *ipar, *tnode, *old =3D NULL;
+> +       struct device_node *ipar, *tnode;
+>         __be32 initial_match_array[MAX_PHANDLE_ARGS];
+>         const __be32 *match_array =3D initial_match_array;
+> -       const __be32 *tmp, dummy_imask[] =3D { [0 ... MAX_PHANDLE_ARGS] =
+=3D cpu_to_be32(~0) };
+> +       const __be32 dummy_imask[] =3D { [0 ... MAX_PHANDLE_ARGS] =3D cpu=
+_to_be32(~0) };
+>         u32 intsize =3D 1, addrsize;
+>         int i, rc =3D -EINVAL;
+>
+> @@ -201,20 +221,7 @@ int of_irq_parse_raw(const __be32 *addr, struct of_p=
+handle_args *out_irq)
+>         if (out_irq->args_count !=3D intsize)
+>                 goto fail;
+>
+> -       /* Look for this #address-cells. We have to implement the old lin=
+ux
+> -        * trick of looking for the parent here as some device-trees rely=
+ on it
+> -        */
+> -       old =3D of_node_get(ipar);
+> -       do {
+> -               tmp =3D of_get_property(old, "#address-cells", NULL);
+> -               tnode =3D of_get_parent(old);
+> -               of_node_put(old);
+> -               old =3D tnode;
+> -       } while (old && tmp =3D=3D NULL);
+> -       of_node_put(old);
+> -       old =3D NULL;
+> -       addrsize =3D (tmp =3D=3D NULL) ? 2 : be32_to_cpu(*tmp);
+> -
+> +       addrsize =3D of_get_address_cells(ipar);
+>         pr_debug(" -> addrsize=3D%d\n", addrsize);
+>
+>         /* Range check so that the temporary buffer doesn't overflow */
+> @@ -343,8 +350,9 @@ int of_irq_parse_one(struct device_node *device, int =
+index, struct of_phandle_ar
+>  {
+>         struct device_node *p;
+>         const __be32 *addr;
+> -       u32 intsize;
+> +       u32 addrsize, intsize;
+>         int i, res;
+> +       __be32 addr_buf[3] =3D { 0 };
+>
+>         pr_debug("of_irq_parse_one: dev=3D%pOF, index=3D%d\n", device, in=
+dex);
+>
+> @@ -354,12 +362,17 @@ int of_irq_parse_one(struct device_node *device, in=
+t index, struct of_phandle_ar
+>
+>         /* Get the reg property (if any) */
+>         addr =3D of_get_property(device, "reg", NULL);
 
+NULL here is the length returned. Use that and just copy length/4 or 3
+cells, which ever is less.
+
+> +       addrsize =3D of_get_address_cells(device);
+> +
+> +       /* Prevent out-of-bounds read in case of longer interrupt parent =
+address size */
+> +       if (addr)
+> +               memcpy(addr_buf, addr, addrsize * sizeof(addrsize));
+
+I find sizeof(addrsize) a bit odd here as it just happens to match,
+but it's storage size isn't really related. I would do sizeof(__be32)
+instead. Though with the above changes, you'll probably have something
+like this:
+
+if (len > (3 * sizeof(__be32))
+    len =3D 3 * sizeof(__be32);
+
+Rob
 
