@@ -1,131 +1,153 @@
-Return-Path: <linux-kernel+bounces-280453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC7594CAD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:57:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434A994CAD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654DB1F23091
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79EC2280D85
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAF516D4C6;
-	Fri,  9 Aug 2024 06:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FDC16D4FC;
+	Fri,  9 Aug 2024 06:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLcxYlAX"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVLM7yYH"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDC417BA0;
-	Fri,  9 Aug 2024 06:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B16917BA0;
+	Fri,  9 Aug 2024 06:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723186629; cv=none; b=QfgLub+Ysk6EfLFt4mZq1YqjnV+ebsyv6qDKQdsksM3U1xylSFCSnugh83CjVOQhxC/nWaujfjTc3gjSHPrCHUwJY1PAFUAoGLq8fztVOeZ9HkE0AfqPgtOnTQy0LlniDRoiINK9rPYMuNfKJ1FY5gneRR16+tLngXiRhC6LgC4=
+	t=1723186637; cv=none; b=WaWLceCEN3l6Mt8rT8/V1qQiiWrKij06B1sZ70s+JCL6+9aKREQL064+MN9tuFGiIvlndsyA8paVTWHpyaNMNOiQ9IkIuyKHEvPhwZ8dXDO/DJHMzzSAQrSN4N8NK2zQ4Xa295k4777bHHzJUTKn/5CGpyZXsMmgf2EcSH94IRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723186629; c=relaxed/simple;
-	bh=4BYMtvrFkWft4VF3qOA2EAHmHrcZvd3X8JPCiCXIIT4=;
+	s=arc-20240116; t=1723186637; c=relaxed/simple;
+	bh=SFwualQUJiCtUYI53Ajwc2qdTB+INbHGk/99fUSxUqo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ijqStvhSXtEmZ/Yy0l43WkpFpvLnIHiONcdmAbb/6GiKW6Hi7BrTavYbe+WWpP5BFgdEd2ZACe6M+EWXxbWnVb4a3ojTSyw1iIR3Ooggq6BlFiC+XhImQnz9A5+dV0jLZ73SzPo0dLm4E08b2NAMIYohry/3LAkHoYR8O11wm/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLcxYlAX; arc=none smtp.client-ip=209.85.128.177
+	 To:Cc:Content-Type; b=lpM13Tr5ml0uE6w8GGt483Kee5ptVP0GrsVGaSvxGsK+BcsKtZkREqAdA+X1IdPXeUxysLmjwu2+fpDblZj2UI5okJkQbXQz2WZlt+U6CXDKK3uZVnbrbPj9aJbboOFHerzXl9wP3GNNMdk1fwm8WbCmU0xsTuv6nulVrJ8l6Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVLM7yYH; arc=none smtp.client-ip=209.85.166.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-69483a97848so17518817b3.2;
-        Thu, 08 Aug 2024 23:57:08 -0700 (PDT)
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39b04f0b486so5911675ab.0;
+        Thu, 08 Aug 2024 23:57:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723186627; x=1723791427; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4jmfk+N8lnkJ31s/xtnjyZBy7/TmtAb8EqeBk3hSGJk=;
-        b=PLcxYlAXfZt2wesloCumDDyIXpcB3iSvJEx4HwcKwO/tOIFldbwmP8+rLceLddCwcA
-         gpwIXegHUGflRkMitZRBiAlj0jWDyQ4Z+HtnRn6E1Rb81K1liQ51D34HafP8EVNmhNG2
-         DpWznotr0we9mfKLLe9iqKbedcjdFj5MrUil2InwS70COC7MpQcuszu2c2VgjfrhM4dm
-         Tt1s/qmASYPss2f6cY0NEj9Kj9kpzCaL9w3YcOK4b9ot+DL17b++EYeR3j2NkHwjLVoe
-         8aghriMk7oCdWdYkk9DPfNeUY0uPXpD8fX+nmX5HJpWRVUNc5NnMRAzXgSWn61vteTEB
-         VYYQ==
+        d=gmail.com; s=20230601; t=1723186635; x=1723791435; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hdjl21mbHZ+eelZloxPA1SUnF5vyXYQa/yQsBlope1g=;
+        b=YVLM7yYHkRJgAQFnjiekhuQih8Hx0Om2XzYr+Hcez+LaSiEjm6iIMQn+nGKzmeFTqF
+         lDPvrzApQJWQaAcVXPa02k8rFsENL6Ss7WHcmbdY8Caeq9lT8PYWdgJLdn10fcUsqMWF
+         6mc/QBcILNYjtrYCAK2YpFHWz5ilTl7dgcYfwYxBHAbW4CXCum7M1oPfUupQLd0Lk+Mm
+         uQaLFvEaGY+34dt8sQSB/xY9z8gweWxYp/IEoAAe14l5ObVzQbGYw6F10FZoNxknk8om
+         REDOlFwb4zumDHOLqUtfDaf8QvgjyAPlKlrvCToDvmNxLz6+/EdUJDNp9G0Hk6qVdCXZ
+         /YBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723186627; x=1723791427;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4jmfk+N8lnkJ31s/xtnjyZBy7/TmtAb8EqeBk3hSGJk=;
-        b=LNpUTwAStccYP95xQHBVH0Sywd2oAUb/q2t506slgUQ6dgesjscGumSToYvEukNF4J
-         S1Mof2GfeoVLOFzQKDd2drfOVfZ5lITeSDC9dRTOJ9AifwQNni57Cb/Nt/Jv0aVl0+VI
-         x6Hg2YAs6mJRAwJQjqixFq09k/0kfjC8Wr/3IlquoaTNo8DFSLjFluWBrCaHTWIIdb1l
-         5JTkvBbPw8trtj9fsHxWFfZafNME0yTW0HN26SIBBPwq7imPl0oMrN+29iY6041fkxtE
-         K9GYupfxWHIC9e1drlrM3nK2Y2Cjvq3mHTGOh113OfsvPYInPw35rktovhlccWWaT5Ca
-         tvnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWi/o4mZkuEiIa4Kt1fWDCZULQ1XCOCxwzCq6Lnav/KFpmdgc+5avPMK53RRFJoRfsdjDLmzUthLfg4PSyJ45nOcllsZmbGwQIQ0VgtL4SiTOmwlZiAsU1O5ntb4YKkyrMIrdsO3VIh
-X-Gm-Message-State: AOJu0Yz5u7l15eYVuoZKzH3Hw19Om/cKox2G+RicRz6DsRTDWliZg1pk
-	vz86CcGwUO5ZnghSY0u4JqW1TckB4ivvzLpkqRC3D6mtY4GnQ7blgxIveea1YK6I98V5OPk8m+6
-	9o/5xAJ0oOAgu6XRsAJHT+5T1p6s=
-X-Google-Smtp-Source: AGHT+IFG0LtAc7u/qVux14X9MtoXA0Qoi0exqz+CEOrr2KAWwbKJzOlKJZFp+lxKjI43LLTKBfXKNEg8L7pIX8bsFQY=
-X-Received: by 2002:a05:6902:983:b0:e0b:ba20:7f87 with SMTP id
- 3f1490d57ef6-e0eb99807bamr761791276.25.1723186627120; Thu, 08 Aug 2024
- 23:57:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723186635; x=1723791435;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hdjl21mbHZ+eelZloxPA1SUnF5vyXYQa/yQsBlope1g=;
+        b=Baqi5IF1QkxIFOCYRE1MMQ0DFXnXITSWWLp5ob44YaM7WjRoEWLAKEb+sA4UzjHMgt
+         pEFgK/GE2m9cHX5oGkm3TvICQ2OA4oUno1RKniuJw+Ucmx3cA4htKxQYk8iIUKd1lVaB
+         2mOBRCpTMNanmCq772k0aULz2cnGdJ0xFPEWyHFLFwHPlNGkJEhDE5EgQ3RC5k1Ua72i
+         7voRPvF6CUVBG4pyyOO8PnMkdEfroBQKijpKThv4ZqV/HHHuqKhqP6Jp6/wG5prGZKBs
+         VsJ1wIM7xLGqPvohoF77bqYrAb7D96w03iejsy+jeWl0HvR5++iHidgCbUi01wX9HyAE
+         j4Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYmSpUHnQ2mr8bqCIjgPusegHZ4glrr8DESS//JTCdGXKcnhZ1sVfqHxTDLhjeeFeW3ll1PWuYSUScgFLEfKYWb4JDmEYdA8vY0EXb80KWkk1TcJhW/P6PNlGYjt3oMn4bwxpX
+X-Gm-Message-State: AOJu0Yx8LIZFWZYZyTKDQHtHZHtRRCygvBd+15r0E8eLWc4/x5CW1Rz/
+	y9SQlKjQFWdUfqc/FrOIlOGNCd6iSu7WcUVkgl2EgUPM6JXrsVvDur4TL8AE41vwEtGS2slwusG
+	tBeWCmO+NLllKhi1bKJRwXYwqRiY=
+X-Google-Smtp-Source: AGHT+IEz2izZRkLcYNo2xJtEW/bFzw4ieuCrQhVfoFQNRNYIv7ngjLRdvkYgT3FREh5qTrIz8Vcnby8trYg9qpTPt+s=
+X-Received: by 2002:a05:6e02:1d07:b0:375:e93b:7c8c with SMTP id
+ e9e14a558f8ab-39b74967149mr8366735ab.12.1723186635423; Thu, 08 Aug 2024
+ 23:57:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806162756.607002-1-rick.wertenbroek@gmail.com> <20240806191541.GA73196@bhelgaas>
-In-Reply-To: <20240806191541.GA73196@bhelgaas>
-From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Date: Fri, 9 Aug 2024 08:56:29 +0200
-Message-ID: <CAAEEuhp2Cm3ujGB_C3Z7XwQh1whP9BcdT+WOT3w+sa-CK9p3fA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: endpoint: pci-epf-test: Move DMA check into
- read/write/copy functions
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org, 
-	alberto.dassatti@heig-vd.ch, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Niklas Cassel <cassel@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAL+tcoB7F3Aviygmxc_DhfLRQN8c=cdn-_1QrXhEWFpyeAQRDw@mail.gmail.com>
+ <20240806100243.269219-1-kuro@kuroa.me>
+In-Reply-To: <20240806100243.269219-1-kuro@kuroa.me>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Fri, 9 Aug 2024 14:56:39 +0800
+Message-ID: <CAL+tcoAyx56CCDk3hyYzR_K_L=fSNsQYy=d88Qv4eQA0GfJD7A@mail.gmail.com>
+Subject: Re: [PATCH net] tcp: fix forever orphan socket caused by tcp_abort
+To: Xueming Feng <kuro@kuroa.me>
+Cc: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Lorenzo Colitti <lorenzo@google.com>, 
+	Neal Cardwell <ncardwell@google.com>, Yuchung Cheng <ycheng@google.com>, 
+	Soheil Hassas Yeganeh <soheil@google.com>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 6, 2024 at 9:15=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> w=
-rote:
+Hello Xueming,
+
+[...]
 >
-> On Tue, Aug 06, 2024 at 06:27:54PM +0200, Rick Wertenbroek wrote:
-> > The test for a DMA transfer was done in pci_epf_test_cmd_handler, which
-> > if not supported would lead to the endpoint function just printing an
-> > error message and waiting for further commands. This would leave the
+> Below is the patch changed according to your advice. The test now happens
+> after the lock_sock and will return -ENOENT if the socket has already been
+> closed by someone else.
 >
-> I guess it's the *test* that prints the error message?  Is this the
-> "Cannot transfer data using DMA" message?
-
-That is the error message, the error message is printed by the
-endpoint function, on the endpoint device. On the host side, nothing
-happens; the test program just hangs because the driver waits
-indefinitely. With the change I proposed, the test program completes
-the test and will display "NOT OKAY" as normal when a test fails.
-
+> About the tests, I have some script that helps me to test the situation.
+> But after reading about KUnit framework, I could not find any current
+> example for TCP testing. Could anyone enlighten me?
 >
-> > host side PCI driver waiting for an interrupt because the call to
-> > pci_epf_test_raise_irq is skipped. The host side driver
-> > drivers/misc/pci_endpoint_test.c would hang indefinitely when sending
-> > a transfer request with DMA if the endpoint does not support it.
-> > This is because wait_for_completion() is used in the host side driver.
-> >
-> > Move the DMA check into the read/write/copy functions so that they
-> > report a transfer (IO) error so that pci_epf_test_raise_irq() is
-> > called when a transfer with DMA is requested, even if unsupported.
 >
-> Add "()" after function names above, as you did for
-> pci_epf_test_raise_irq().
-
-I will add this.
-
+> Signed-off-by: Xueming Feng <kuro@kuroa.me>
+> ---
+>  net/ipv4/tcp.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
 >
-> > The host side driver will still report an error on transfer thanks
-> > to the checksum, because no data was moved, but will not hang anymore
-> > waiting for an interrupt that will never arrive.
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index e03a342c9162..831a18dc7aa6 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -4637,6 +4637,13 @@ int tcp_abort(struct sock *sk, int err)
+>                 /* Don't race with userspace socket closes such as tcp_close. */
+>                 lock_sock(sk);
+>
+> +       /* Avoid closing the same socket twice. */
+> +       if (sk->sk_state == TCP_CLOSE) {
+> +               if (!has_current_bpf_ctx())
+> +                       release_sock(sk);
+> +               return -ENOENT;
+> +       }
+> +
+>         if (sk->sk_state == TCP_LISTEN) {
+>                 tcp_set_state(sk, TCP_CLOSE);
+>                 inet_csk_listen_stop(sk);
+> @@ -4646,16 +4653,13 @@ int tcp_abort(struct sock *sk, int err)
+>         local_bh_disable();
+>         bh_lock_sock(sk);
+>
+> -       if (!sock_flag(sk, SOCK_DEAD)) {
+> -               if (tcp_need_reset(sk->sk_state))
+> -                       tcp_send_active_reset(sk, GFP_ATOMIC,
+> -                                             SK_RST_REASON_NOT_SPECIFIED);
+> -               tcp_done_with_error(sk, err);
+> -       }
+> +       if (tcp_need_reset(sk->sk_state))
+> +               tcp_send_active_reset(sk, GFP_ATOMIC,
+> +                                     SK_RST_REASON_NOT_SPECIFIED);
+> +       tcp_done_with_error(sk, err);
+>
+>         bh_unlock_sock(sk);
+>         local_bh_enable();
+> -       tcp_write_queue_purge(sk);
+>         if (!has_current_bpf_ctx())
+>                 release_sock(sk);
+>         return 0;
+> --
 
-Thanks.
-Regards,
-Rick
+I checked the RFC 793 and reckoned returning 'ENOENT' is similar to
+'error: connection does not exist', which can show enough information
+to the user.
+
+So I think you could try to cook a v2 patch officially.
+
+Thanks,
+Jason
 
