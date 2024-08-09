@@ -1,153 +1,114 @@
-Return-Path: <linux-kernel+bounces-280237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39E094C789
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:21:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36BF94C78E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 316451C227D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:21:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275491C21F8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343424437;
-	Fri,  9 Aug 2024 00:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446C64437;
+	Fri,  9 Aug 2024 00:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JdbsZXsH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9t60Da1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7353123BB;
-	Fri,  9 Aug 2024 00:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1F1802;
+	Fri,  9 Aug 2024 00:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723162886; cv=none; b=eHVhSlSy7eOoslJsuvoWwJZ166TMR1RpbLPN0DjalafMYNXgjD6nlSJpfHRKkKNm3cAWEhdf1gtTmAB6VWH5qKT9d2HlZgp2KwoNChMdS+DpR/jjxpYiNRsdbShc5unhE0GMiy6cHk0m2KkJ8XeB8zsH6h1mmBRGL4cqFBu8RdY=
+	t=1723162932; cv=none; b=Bq7MEDVrMDYcnZmCYSNTceL2AdOXGk2KT/dUb8BcpE7No+gKcLnXuFbVvBbzHbrf+/dzJ8sMkVQNN4EIqdeiRbjjuXHT0+9Z8FAJWawCyZpvi6dibawI6YPfXrHDTyYa+tmmfgTaDLWNoXX1rEDQGpQ5N5QYOMFdXhjY8Jgdg0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723162886; c=relaxed/simple;
-	bh=jOlhRSmG8hVthJmBYfx300Ap8FrWtSMtxMwUhkqNwiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oq8I1g0BksqdFekM9EMnp5UmgWF/vYVE5C/FLKSKsSuH1XrOLp/rahINmLrHLwZLYwb9CX0XnhWMlcpWl8Z/JtOdIo3gd+XRRUmCponPD7xAYgxDnuwsEE00YjMF/KU6HS57kLUvrAvfRtRZbMGGxFhJKNQRFjErnSWCxt+/33Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JdbsZXsH; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723162884; x=1754698884;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jOlhRSmG8hVthJmBYfx300Ap8FrWtSMtxMwUhkqNwiI=;
-  b=JdbsZXsHImDRwvJU5FwbZ6C//DBTJqsdpoTHp9fnq5TxrtMFDBeLE4zo
-   qTh46sMckuoMKDNOnNPTPOplSH2S7c8awVjcctMCDWrUl7ZTOWByZ8qKA
-   Lm7GzPrjN18IZBhgPE0a0VvZKUTSUZLVHhZktNUpq5DPN249MuprYZ/P3
-   WKd43atqv60clswYt/C+NP/2Z+/B2K79BBAXOjJIrAixi1fpiss40GdhO
-   ChNaZ/7aPDc4/p6ruiu8singyVjANs0B7oROIL97Ed8tx8Npd4PPLXHdM
-   rn3Q0+juIPgN3sPFm3+AQgzoAAKWR+fTCwEHRNNNmtVe5+BuGO+6ktPOD
-   g==;
-X-CSE-ConnectionGUID: 4fGx7rgFTySsgDtfWnX6nA==
-X-CSE-MsgGUID: WagRyBu5RbCDgHG7BnFFlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="38777696"
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="38777696"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 17:21:23 -0700
-X-CSE-ConnectionGUID: CdoOqHn6TYq2DVlophwgXw==
-X-CSE-MsgGUID: dlTKFZmbSMqnyycxv+FOoA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="57956414"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 08 Aug 2024 17:21:20 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scDNZ-0006fe-19;
-	Fri, 09 Aug 2024 00:21:14 +0000
-Date: Fri, 9 Aug 2024 08:20:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, quic_jjohnson@quicinc.com,
-	horms@kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: hplance: use devm in probe
-Message-ID: <202408090740.vJYOceuz-lkp@intel.com>
-References: <20240808041109.6871-1-rosenp@gmail.com>
+	s=arc-20240116; t=1723162932; c=relaxed/simple;
+	bh=1Q1V4q5zT2MiYUpvo2kf1eAUp7sExbPBrJjTuQ+QUMk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OamqC7zQkcCPzYG1eFazXZ3X+fAs4gIkQe3+G9R0X9tpD0+zb8nDwDzJ1Jc4S7LTNrUlxVQHqJROxJQfEO++cwQgW3te6xF4j2Ffd4+nYuvwugIruyjn/dsaAxMJ2+RBobJkISS8Z1XPMIoveKwvX29QyaPAktSU7PvVSCP6N2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9t60Da1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91871C32782;
+	Fri,  9 Aug 2024 00:22:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723162932;
+	bh=1Q1V4q5zT2MiYUpvo2kf1eAUp7sExbPBrJjTuQ+QUMk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=P9t60Da1NzDEDejPoHRm0QRovwiiYaUFQef23uA6ox472xfUPNXc02h4lCZg0TpxM
+	 DQFPyf6ihsgLuFvLxZKTMHPbF2WPL+1nyaVesWshQ5PW8sAW5Rtryz6yyTzAaE/4SL
+	 PLAUYgswA48ZeV4tdGvyVz7CA4ebT1WULq+kIlimJO0Jf19BAXAPqrLWR90enJowHi
+	 Luf7FL0hMFIf8mVHZMpUAHeidB3kgZhtgIQqNwJq7BIdgVL3SAJlFpAWMb0X6YH24k
+	 nNJqLOa1K6zrtpFdiHCSSxtHUCeqeDe+R6+FaTOGc4SaDEUE+f4XD/oOVqtMn50Q4b
+	 +R6j4BOroAKWQ==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Fri, 09 Aug 2024 02:22:04 +0200
+Subject: [PATCH] pinctrl: qcom: x1e80100: Fix special pin offsets
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808041109.6871-1-rosenp@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240809-topic-h_sdc-v1-1-bb421532c531@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIACthtWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCwNL3ZL8gsxk3Yz44pRk3dQks9SUxBRzQ4vkFCWgjoKi1LTMCrBp0bG
+ 1tQBb5oC6XQAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Sibi Sankar <quic_sibis@quicinc.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723162928; l=1562;
+ i=quic_kdybcio@quicinc.com; s=20230215; h=from:subject:message-id;
+ bh=x5seRk1WP98LaMkA9Z1zk0HE9qR/MHMhKwFgfw7mvws=;
+ b=GAKbqxq1OirazrLZqKxy+KshFetZ6RDgFi7ufnw++1ykR4DOxZUkqgzNBGexb0CZYio1bRlUA
+ eVqoImnCBuaDa6Zu1a7tKDice9cwz3vFUe/RwBwcX9oclr6EBtLWBL+
+X-Developer-Key: i=quic_kdybcio@quicinc.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Hi Rosen,
+From: Konrad Dybcio <quic_kdybcio@quicinc.com>
 
-kernel test robot noticed the following build errors:
+Remove the erroneus 0x100000 offset to prevent the boards from crashing
+on pin state setting, as well as for the intended state changes to take
+effect.
 
-[auto build test ERROR on net-next/main]
+Fixes: 05e4941d97ef ("pinctrl: qcom: Add X1E80100 pinctrl driver")
+Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
+---
+ drivers/pinctrl/qcom/pinctrl-x1e80100.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-hplance-use-devm-in-probe/20240808-121217
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240808041109.6871-1-rosenp%40gmail.com
-patch subject: [PATCH net-next] net: hplance: use devm in probe
-config: m68k-defconfig (https://download.01.org/0day-ci/archive/20240809/202408090740.vJYOceuz-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240809/202408090740.vJYOceuz-lkp@intel.com/reproduce)
+diff --git a/drivers/pinctrl/qcom/pinctrl-x1e80100.c b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
+index 6cd4d10e6fd6..65ed933f05ce 100644
+--- a/drivers/pinctrl/qcom/pinctrl-x1e80100.c
++++ b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
+@@ -1805,10 +1805,10 @@ static const struct msm_pingroup x1e80100_groups[] = {
+ 	[235] = PINGROUP(235, aon_cci, qdss_gpio, _, _, _, _, _, _, _),
+ 	[236] = PINGROUP(236, aon_cci, qdss_gpio, _, _, _, _, _, _, _),
+ 	[237] = PINGROUP(237, _, _, _, _, _, _, _, _, _),
+-	[238] = UFS_RESET(ufs_reset, 0x1f9000),
+-	[239] = SDC_QDSD_PINGROUP(sdc2_clk, 0x1f2000, 14, 6),
+-	[240] = SDC_QDSD_PINGROUP(sdc2_cmd, 0x1f2000, 11, 3),
+-	[241] = SDC_QDSD_PINGROUP(sdc2_data, 0x1f2000, 9, 0),
++	[238] = UFS_RESET(ufs_reset, 0xf9000),
++	[239] = SDC_QDSD_PINGROUP(sdc2_clk, 0xf2000, 14, 6),
++	[240] = SDC_QDSD_PINGROUP(sdc2_cmd, 0xf2000, 11, 3),
++	[241] = SDC_QDSD_PINGROUP(sdc2_data, 0xf2000, 9, 0),
+ };
+ 
+ static const struct msm_gpio_wakeirq_map x1e80100_pdc_map[] = {
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408090740.vJYOceuz-lkp@intel.com/
+---
+base-commit: 1e391b34f6aa043c7afa40a2103163a0ef06d179
+change-id: 20240809-topic-h_sdc-eb6edad718cd
 
-All errors (new ones prefixed by >>):
-
-   drivers/net/ethernet/amd/hplance.c: In function 'hplance_init_one':
->> drivers/net/ethernet/amd/hplance.c:87:74: error: macro "devm_alloc_etherdev" requires 2 arguments, but only 1 given
-      87 |         dev = devm_alloc_etherdev(sizeof(&d->dev, struct hplance_private));
-         |                                                                          ^
-   In file included from drivers/net/ethernet/amd/hplance.c:24:
-   include/linux/etherdevice.h:64:9: note: macro "devm_alloc_etherdev" defined here
-      64 | #define devm_alloc_etherdev(dev, sizeof_priv) devm_alloc_etherdev_mqs(dev, sizeof_priv, 1, 1)
-         |         ^~~~~~~~~~~~~~~~~~~
->> drivers/net/ethernet/amd/hplance.c:87:15: error: 'devm_alloc_etherdev' undeclared (first use in this function); did you mean 'devm_alloc_etherdev_mqs'?
-      87 |         dev = devm_alloc_etherdev(sizeof(&d->dev, struct hplance_private));
-         |               ^~~~~~~~~~~~~~~~~~~
-         |               devm_alloc_etherdev_mqs
-   drivers/net/ethernet/amd/hplance.c:87:15: note: each undeclared identifier is reported only once for each function it appears in
-
-
-vim +/devm_alloc_etherdev +87 drivers/net/ethernet/amd/hplance.c
-
-    80	
-    81	/* Find all the HP Lance boards and initialise them... */
-    82	static int hplance_init_one(struct dio_dev *d, const struct dio_device_id *ent)
-    83	{
-    84		struct net_device *dev;
-    85		int err;
-    86	
-  > 87		dev = devm_alloc_etherdev(sizeof(&d->dev, struct hplance_private));
-    88		if (!dev)
-    89			return -ENOMEM;
-    90	
-    91		if (!devm_request_mem_region(&d->dev, dio_resource_start(d),
-    92					dio_resource_len(d), d->name))
-    93			return -EBUSY;
-    94	
-    95		hplance_init(dev, d);
-    96		err = devm_register_netdev(&d->dev, dev);
-    97		if (err)
-    98			return err;
-    99	
-   100		dio_set_drvdata(d, dev);
-   101	
-   102		printk(KERN_INFO "%s: %s; select code %d, addr %pM, irq %d\n",
-   103		       dev->name, d->name, d->scode, dev->dev_addr, d->ipl);
-   104	
-   105		return 0;
-   106	}
-   107	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Konrad Dybcio <quic_kdybcio@quicinc.com>
+
 
