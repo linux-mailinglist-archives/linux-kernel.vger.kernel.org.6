@@ -1,121 +1,189 @@
-Return-Path: <linux-kernel+bounces-281409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C11294D6B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:52:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF47E94D6B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C121F22279
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:52:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3BAE1C21CA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4401474C3;
-	Fri,  9 Aug 2024 18:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C03713C8F4;
+	Fri,  9 Aug 2024 18:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gLWEQzSS"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nU/OclpH"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD05517557
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075B217557
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723229548; cv=none; b=ZiOCM3mlDkA4efHqgo7EdpWz91UMi0QwnjVJfuTL12VdK5JFJ1Qq0Lt4q05Q9QCaRL5fRi4dxavLeSm715ubJwUqty+MocyDaTtzZdlQfavCwTWrx1sICIDyoRvsbLQrcDNIHG6FG40iOLI/mf13dUqXeEZOQ+4/Qc3K2gEwW94=
+	t=1723229612; cv=none; b=lzA0ge91fZUQgMuEH/xcvIm76yB7FFQaB0eOdmJXYO99NrYJ8GKQquCWVrsPvpTQkhNqnQFb/ouDcNBPIekZLWE/ZpcphgN0CSqz/mRMTJtngIRYWytmOEjE9eX6YsrjMJ8wDMD6JhTvNnayswuCXsdjTP7lIRiwVHUAtTGcavE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723229548; c=relaxed/simple;
-	bh=t3Cj7VDLa1bnw9WsksFqHlQw2fueh0FzL7HEx6ntwFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mgtDIV5czrGCXvoI0ZnKOnClP0DEbidSjxb37242AYXCA19v4gdB8Xi7DtN7lxvv3uRLe+Cp7itZM4zpcQuuOIVqumWT0dVpsK4xv5+igKEwcdvEGewKlSso91utVBkSQv/W9/ka0L6UCakiLxNtx6zyXXJ22mRpEpG6lPuEhRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gLWEQzSS; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fd9e70b592so19363115ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 11:52:26 -0700 (PDT)
+	s=arc-20240116; t=1723229612; c=relaxed/simple;
+	bh=b6q8ovL/LTwCVdY06z+PIl+e6PJRzJB+ZeGn5ZQTjVM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=W0NN/rAwTtgkjbcHw2aLAzpSpMqaqAo19DvM6gnJ1zzNFYe8lAj8nIHw/gJyFccyc1CXqX8wsdZ8RBjbNEGmjjkAri/hjBCSQ+4an+8LA0luZCsQJsoVc33Fgyb/ui/qrgZ3mD61Bw1tuubD2Q00wey5E/sE48uoVZj8OIrnhxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nU/OclpH; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-492a8333cb1so948639137.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 11:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723229546; x=1723834346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L2kxD8+wCHh7kPrw1r+ewjBkSyFLdoVzJbIrH0Dtpss=;
-        b=gLWEQzSS4nQwp2iiDtvu+BKZkZnVMYPb62VPLZRyERWEK6aHxqnDrkXxYhWS+EYTMJ
-         pM/ni8y2NWORWzqY5oYxQ9qA1ZNLlx7sBqQnj4O4tT1uzWGXesp0jF3DdxswVBLlZmLJ
-         rvqiS0fjRYYsWiJBQRf4qk67Jvl1nxEFkS/Do1dBAc6UmP46Eyabd2UVGAeO8n7X4oay
-         1zmUttpDEAH7/xZIDcxO0oq4sTX0fx70aqYi7eF8nYzSj3dSgp0NWEytfnhK3WpZlCaq
-         Lx7tfnDLMkkd4v0IYDuEjPDhHxf4Ul22A1RN+HV7C6ppRLzDO11zaDKtgFOLUU2M6OC8
-         HxVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723229546; x=1723834346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723229610; x=1723834410; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L2kxD8+wCHh7kPrw1r+ewjBkSyFLdoVzJbIrH0Dtpss=;
-        b=EDW6ce2VwanJd94F7tC82rvyDocGTL2j7kJ+r5OHU1hvmrrC7aR+VK/r+DTW/22zRp
-         FTYmqexPq3xSPJIw2nl5abE/lTzS1Oc0WPqbEtvlFVwwxq0ejRz/tnJoH1zfnDIRHeSm
-         VoWQR3ZxICNa9Yts3hsUVLBMXcMZGNblDvFRQdm7EbbIejycB5oHFupq1FQkWrEiTN2z
-         a6+vbYH/zFTsLgWOURsXrUMHdHdiSSAVpJCS8M6A602TPnUsWKPLmYKE+yetSP6HgEp6
-         xiklYHSCi74siptAb42qSe1/KREDmEhcjqFp97inoKN/DAKGkrg1Oyepkv6W8enx872v
-         4qJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWu9VRJ+287ahls1As7i2xOVPBf1ds+bCnGu3780Pfo0DXw4g5Vu22dxjrAtJA0hcTIpj9GA0KexKTR9gW3sgMVXHCOyE++dMQq+g4R
-X-Gm-Message-State: AOJu0Yy2A8YHKjm661oH3Ec/TC4Scf7+LEy+cBTBSvOTG7qT/xLf51G0
-	/GjQSicx9DLKWQCaT3WM9nLytTJ3SObaO17P87v3ahL71QQ1PcKP4sMEc4tVlw==
-X-Google-Smtp-Source: AGHT+IEfOVhNrAeTDZZOT5dDxnFrZOlxDmQwSQJhCv+U2+iM1w/HDGwYbakEN6xKAfupUHXOX98LGg==
-X-Received: by 2002:a17:903:234a:b0:1fc:3600:5cd7 with SMTP id d9443c01a7336-200ae4b2b0bmr29902105ad.10.1723229545610;
-        Fri, 09 Aug 2024 11:52:25 -0700 (PDT)
-Received: from google.com (57.145.233.35.bc.googleusercontent.com. [35.233.145.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bba02f2csm773505ad.217.2024.08.09.11.52.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 11:52:24 -0700 (PDT)
-Date: Fri, 9 Aug 2024 18:52:19 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: "J. R. Okajima" <hooanon05g@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	kernel-team@android.com, Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v2 1/3] lockdep: fix upper limit for LOCKDEP_*_BITS
- configs
-Message-ID: <ZrZlY-5h5N28PMH7@google.com>
-References: <20240807143922.919604-1-cmllamas@google.com>
- <20240807143922.919604-2-cmllamas@google.com>
- <1503.1723080058@jrotkm2>
+        bh=BFd6Ev453/aDjLObVzNphCwMYt1CKpC7GnDFLP288fM=;
+        b=nU/OclpHVSn4J0ZsdsrwUoyeI5X2uxGJ267NVLSV518mn2v9xwuY/wPUuqUW7KfCtm
+         6sWjTBt9ennyUisk06X5H0ieNC30u9Fj5Rlmz57It1E6kjuHrfS7XFiYLi6c/OewQAE5
+         JkF/5Dv1hiEs4l+e8u0UNQSg97HP4xmJj31F4qQNUDzsc2IedcC0SIxRPf8tecl/N2my
+         9ybwPzUMwwl2utwlKy1XbfUbwPgVbDOIF5S+gdH5tGeqKfJ4NAc/De44maNxukYjc8u5
+         1Ew/Z3PX8mRx4xjsF0ILT02bT6A0mzFJV6iP436AjNomXkdKpQ4OmkRMA6sSSx8SPOT0
+         GOkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723229610; x=1723834410;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BFd6Ev453/aDjLObVzNphCwMYt1CKpC7GnDFLP288fM=;
+        b=ROaEl3gx/PZzVGNcuzqFpacsMLba+W+b9hd8Soijijp8n1rsRs/HvE3QSWlDsL4sJK
+         XE53x1MKUO2GTyJGQZ7R0ZhACD/q4crmmOkCab2AzBldeCcwIx6clZONRNtMZLeM6mjr
+         ugJ0ErIA99H1qsx7FQtPhN1Gg0haiYCbKOy/QhXeF6ubQEn5LjUqKL66GK6AnedwNnPw
+         BKsBV3ec3he9m2qSL5HzhE8uu3NdkLW4LLyV6rip6nS0CyoSzZ4FDzHn2B3tIa+gL56F
+         osadJg5gpxwQs+d/lronxIXpTqAHkA2k4WiKjcRsjztp94lg224Cy4q2UNohILZ36Cgs
+         nooQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVixLv+vY6iVYrL92Aab71Z1qkDGtJdZLUib1ezRKmIqfZgogPCeu0cV0jVzRiw8/B36Z550QFfTwAn2Fobjju1/JwuhNrUNpT10TBh
+X-Gm-Message-State: AOJu0YwWbbXfRWTUgBcUvVucU13on3MXE07jkxK3kCjzkxy8pRhh/V9b
+	Hc4fiJDZsfXdlAq80zwjpjpkQBniRRhdGfdX10ZNUzPTGijV2HlFbuY/K1GL765yQORodjupxyZ
+	pHTewlKwLpfC01w8ExquxiPN5X9M=
+X-Google-Smtp-Source: AGHT+IHjO2laCrD83xGgSKk32SS9gnG4HIGJIclIXUNutnOZzhTtxjLuWCIlNr0AsBryPANi7e+skoBuCZ0o3f2w8Oo=
+X-Received: by 2002:a05:6102:dc9:b0:48f:df47:a4a8 with SMTP id
+ ada2fe7eead31-495d8605e99mr2764146137.29.1723229609875; Fri, 09 Aug 2024
+ 11:53:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1503.1723080058@jrotkm2>
+References: <20240807211309.2729719-1-pedro.falcato@gmail.com>
+ <20240807211309.2729719-3-pedro.falcato@gmail.com> <n3v6ebfiwnk26rvxwtgkingmuduv7gla7kaiasjdvadbrpczlw@d3xjceezvgzc>
+ <3hzwtm7jw25ng5gemkp42k5ypkfky25fxeevccnk2d6gcpft32@qwkwofgauqna>
+In-Reply-To: <3hzwtm7jw25ng5gemkp42k5ypkfky25fxeevccnk2d6gcpft32@qwkwofgauqna>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Fri, 9 Aug 2024 19:53:18 +0100
+Message-ID: <CAKbZUD2VV=FOeGhCOb3o5CKBiaV+6JSPoDRwzV1-3t2hZX7rQw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] mm/munmap: Replace can_modify_mm with can_modify_vma
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Pedro Falcato <pedro.falcato@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, jeffxu@google.com, 
+	Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2024 at 10:20:58AM +0900, J. R. Okajima wrote:
-> Carlos Llamas:
-> > Adjust the upper limits to the maximum values that avoid these issues.
-> > The need for anything more, likely points to a problem elsewhere. Note
-> > that LOCKDEP_CHAINS_BITS was intentionally left out as its upper limit
-> > had a different symptom and has already been fixed [1].
-> 
-> I tried setting all these configs to maximum, but still I got the error.
-> 	ld: kernel image bigger than KERNEL_IMAGE_SIZE
-> 
-> For me, these are the maximum.
-> They are compilable, but could not boot due to "out of memory".
-> Also I am not sure whether these values are meaningful.
-> 
-> CONFIG_LOCKDEP_BITS=23
-> (CONFIG_LOCKDEP_CHAINS_BITS=21)
-> CONFIG_LOCKDEP_STACK_TRACE_BITS=25
-> CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=24
-> CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=22
+On Fri, Aug 9, 2024 at 5:48=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracle=
+.com> wrote:
+>
+> * Liam R. Howlett <Liam.Howlett@oracle.com> [240809 12:15]:
+> > * Pedro Falcato <pedro.falcato@gmail.com> [240807 17:13]:
+> > > We were doing an extra mmap tree traversal just to check if the entir=
+e
+> > > range is modifiable. This can be done when we iterate through the VMA=
+s
+> > > instead.
+> > >
+> > > Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
+> > > ---
+> > >  mm/mmap.c | 13 +------------
+> > >  mm/vma.c  | 23 ++++++++++++-----------
+> > >  2 files changed, 13 insertions(+), 23 deletions(-)
+> > >
+> > > diff --git a/mm/mmap.c b/mm/mmap.c
+> > > index 4a9c2329b09..c1c7a7d00f5 100644
+> > > --- a/mm/mmap.c
+> > > +++ b/mm/mmap.c
+> > > @@ -1740,18 +1740,7 @@ int do_vma_munmap(struct vma_iterator *vmi, st=
+ruct vm_area_struct *vma,
+> > >             unsigned long start, unsigned long end, struct list_head =
+*uf,
+> > >             bool unlock)
+> > >  {
+> > > -   struct mm_struct *mm =3D vma->vm_mm;
+> > > -
+> > > -   /*
+> > > -    * Check if memory is sealed before arch_unmap.
+> > > -    * Prevent unmapping a sealed VMA.
+> > > -    * can_modify_mm assumes we have acquired the lock on MM.
+> > > -    */
+> > > -   if (unlikely(!can_modify_mm(mm, start, end)))
+> > > -           return -EPERM;
+> > > -
+> > > -   arch_unmap(mm, start, end);
+> > > -   return do_vmi_align_munmap(vmi, vma, mm, start, end, uf, unlock);
+> > > +   return do_vmi_align_munmap(vmi, vma, vma->vm_mm, start, end, uf, =
+unlock);
+> > >  }
+> > >
+> > >  /*
+> > > diff --git a/mm/vma.c b/mm/vma.c
+> > > index bf0546fe6ea..7a121bcc907 100644
+> > > --- a/mm/vma.c
+> > > +++ b/mm/vma.c
+> > > @@ -712,6 +712,12 @@ do_vmi_align_munmap(struct vma_iterator *vmi, st=
+ruct vm_area_struct *vma,
+> > >             if (end < vma->vm_end && mm->map_count >=3D sysctl_max_ma=
+p_count)
+> > >                     goto map_count_exceeded;
+> > >
+> > > +           /* Don't bother splitting the VMA if we can't unmap it an=
+yway */
+> > > +           if (!can_modify_vma(vma)) {
+> > > +                   error =3D -EPERM;
+> > > +                   goto start_split_failed;
+> > > +           }
+> > > +
+> >
+> > Would this check be better placed in __split_vma()?  It could replace
+> > both this and the next chunk of code.
+>
+> not quite.
 
-Yeah, I say that's expected if you bump these values to the max all at
-once. The values I gave were tested individually on top of the defconfig
-and boot completed fine (qemu x86_64 and aarch64 with -m 8G). I think
-it's fair to leave room to configure these knobs individually.
+Yeah, I was going to say that splitting a sealed VMA is okay (and we
+allow it on mlock and madvise).
 
---
-Carlos Llamas
+>
+> >
+> > >             error =3D __split_vma(vmi, vma, start, 1);
+> > >             if (error)
+> > >                     goto start_split_failed;
+> > > @@ -723,6 +729,11 @@ do_vmi_align_munmap(struct vma_iterator *vmi, st=
+ruct vm_area_struct *vma,
+> > >      */
+> > >     next =3D vma;
+> > >     do {
+> > > +           if (!can_modify_vma(vma)) {
+> > > +                   error =3D -EPERM;
+> > > +                   goto modify_vma_failed;
+> > > +           }
+> > > +
+>
+> This chunk would need to be moved below the end check so that we catch
+> full vma unmaps.
 
-> 
-> J. R. Okajima
+Why below the end check? I believe we can avoid the split? Is there
+something I'm missing?
+But I did find a bug, what I really seem to want is:
+
+ +           if (!can_modify_vma(next)) {
+instead of (vma). It's somewhat concerning how the mseal selftests
+didn't trip on this?
+
+--=20
+Pedro
 
