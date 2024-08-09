@@ -1,169 +1,109 @@
-Return-Path: <linux-kernel+bounces-281579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76EC94D85D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:15:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A94B294D86C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7A851C21A79
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:15:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC4911C2110D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7A01684AB;
-	Fri,  9 Aug 2024 21:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319E816D33F;
+	Fri,  9 Aug 2024 21:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHstCtmu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="p4GiyJgR"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCF0225D6;
-	Fri,  9 Aug 2024 21:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DF016849C;
+	Fri,  9 Aug 2024 21:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723238134; cv=none; b=lXuWXksm2Ny5bQ7lfpoxNCGsMtFbqFURcNTUa0I/f9KhTUiY7jd8xdaOBtTSlE3+taVu0Aauk89SrrQlvqDNXuOJlC5iFSiNuiwMnwaVqABrus9zF0pa7zST8M7eeEm2eysTICkdZmYt86xRAxnmNn4EKoLFhRwQd/9oqp+O+rI=
+	t=1723238543; cv=none; b=SekSNsf3K59z2fwOxeiYtMSQ4Pi6n8e9enruGNsLaRzpr2JFnP5BYsV2QqxppxkyuMJQ6tNXwW3L2gyFxAkqSnzKmKlqUE1P5AY6Nw7hlnBrY4+YGZPs5564Cga459DXa0n96ZclDh3NTwGbrpVZ4R8dAovzFx/cr5iAC9pBFAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723238134; c=relaxed/simple;
-	bh=WDLxd448HftortWiAdBjWMSTzbRSfPU4kr/k4P1TZyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5ntoArXLliv+aJwEq8rmAtu0LgxrFCbBqDAmQEfKy+1OFhWLneYBxorWswwId6YxgDpuAOEGW5BPFZ7lYMyj6i1iTDYbhvC7H0YCMelqyUyVBOucPmmZaPbJmU66VmLUS8Ia3XsjRLBLAVTm2pohtEZ/MAtVNxW1xOw1ihfoO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHstCtmu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59000C32782;
-	Fri,  9 Aug 2024 21:15:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723238133;
-	bh=WDLxd448HftortWiAdBjWMSTzbRSfPU4kr/k4P1TZyk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VHstCtmu0TcueqpNSJ8DYR/q9JqgdqfFS0kcfbMES/8FqKK4x+zfM+Is+qbRUFlbL
-	 6pUuatyLut4MeIL0vIl5D8amJs24w96rwlNI1snB+QqsCU0DEuicS4dEMcctND1RxX
-	 a1BwjdifR1E98tsk/hj6p+vYlGJtimJ+IwKaWbSFOY5DM1PBqIh1eUQtZ4KoChK0rb
-	 bRbC+hJK4K/XlFhbLvLjUiHctYANHzSJSXH6if6ykScSoq8nJcQTXijmwwO0UDnF2q
-	 EMk/do5xNFx3BNTf7LJySMllN+MF4baJMTNgreTcgXbwRCpFmVBVn8drv92sIH5zF1
-	 EAS/gbdRHBIpA==
-Date: Fri, 9 Aug 2024 18:15:30 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH] perf annotate: Fix --group behavior when leader has no
- samples
-Message-ID: <ZraG8ryV_qubOt8R@x1>
-References: <CAM9d7cjXmaMuidQR10PXrp9khZ4LhDZbLno1rN2JcCncaYyp7Q@mail.gmail.com>
- <20240807061555.1642669-1-namhyung@kernel.org>
+	s=arc-20240116; t=1723238543; c=relaxed/simple;
+	bh=eooEmzaOdzdOErWsWRhRnE9i8LNRWrUtqqpU7D1PZc8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nULFVsoE6+yoroL95KBQ21oDkonf/oLk9AnLyPF++DW56PUExZEZd2aO7zTTb+CIVi6yWpYAZ6WH8uEJjUXhDVbKSbCW2RwmvuzlNFyeaosYK024EQjXVqg7KQXV7jBtC47BbMFCw3Js2m7mC/PqiqQsS4SPjnKfSeuW/PJ7i6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=p4GiyJgR; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1723238542; x=1754774542;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=eooEmzaOdzdOErWsWRhRnE9i8LNRWrUtqqpU7D1PZc8=;
+  b=p4GiyJgRx9pUD0/Y9+N0BrxZFBw279skB/XaTat70BxoSiRTbloHsEeh
+   niSApaEHAA/qEgLdWFbSs/hKU9rCOVwaqTbcdeMVPkc3Y/sZiNuW022aS
+   YTisTgeXI0rwR7/ckFWpNfsQTTP/lmNshiF/cb6nwN7rnAHz93oDGVpHA
+   eq+/ChtYGuNjL+2BJiJHPizrJ06L2Fm8xqtj7CgEBtzHGsn8gd9KuiDyO
+   g8NK5AnC7xav/n54WaW+O9QcUC6DlKPR0NlCTAuvQcHR6ob06nyvchRbd
+   Ii2dfA3/v8W2ewL81ptXpiXGyIFRDhlE1rXRvDH934ebbcLCuM+KXElrF
+   w==;
+X-CSE-ConnectionGUID: SZeDCiigQtOuVYjSeAD19w==
+X-CSE-MsgGUID: VOZBNf2dQdOQLe/ZzanNBA==
+X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
+   d="scan'208";a="261235334"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Aug 2024 14:22:15 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 9 Aug 2024 14:21:42 -0700
+Received: from pop-os.microchip.com (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Fri, 9 Aug 2024 14:21:41 -0700
+From: <Tristram.Ha@microchip.com>
+To: Woojung Huh <woojung.huh@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<devicetree@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli
+	<f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, Rob Herring
+	<robh@kernel.org>
+CC: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Vasut
+	<marex@denx.de>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	Tristram Ha <tristram.ha@microchip.com>
+Subject: [PATCH net-next v3 0/2] net: dsa: microchip: Add KSZ8895/KSZ8864 switch support
+Date: Fri, 9 Aug 2024 14:21:40 -0700
+Message-ID: <20240809212142.3575-1-Tristram.Ha@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807061555.1642669-1-namhyung@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, Aug 06, 2024 at 11:15:55PM -0700, Namhyung Kim wrote:
-> When --group option is used, it should display all events together.  But
-> the current logic only checks if the first (leader) event has samples or
-> not.  Let's check the member events as well.
-> 
-> Also it missed to put the linked samples from member evsels to the
-> output RB-tree so that it can be displayed in the output.
+From: Tristram Ha <tristram.ha@microchip.com>
 
-Thanks, re-tested and applied.
+This series of patches is to add KSZ8895/KSZ8864 switch support to the
+KSZ DSA driver.
 
-- Arnaldo
+v3
+- Correct microchip,ksz.yaml to pass yamllint check
 
-> For example, take a look at this example.
-> 
->   $ ./perf evlist
->   cpu/mem-loads,ldlat=30/P
->   cpu/mem-stores/P
->   dummy:u
-> 
-> It has three events but 'path_put' function has samples only for
-> mem-stores (second) event.
-> 
->   $ sudo ./perf annotate --stdio -f path_put
->    Percent |      Source code & Disassembly of kcore for cpu/mem-stores/P (2 samples, percent: local period)
->   ----------------------------------------------------------------------------------------------------------
->            : 0                0xffffffffae600020 <path_put>:
->       0.00 :   ffffffffae600020:       endbr64
->       0.00 :   ffffffffae600024:       nopl    (%rax, %rax)
->      91.22 :   ffffffffae600029:       pushq   %rbx
->       0.00 :   ffffffffae60002a:       movq    %rdi, %rbx
->       0.00 :   ffffffffae60002d:       movq    8(%rdi), %rdi
->       8.78 :   ffffffffae600031:       callq   0xffffffffae614aa0
->       0.00 :   ffffffffae600036:       movq    (%rbx), %rdi
->       0.00 :   ffffffffae600039:       popq    %rbx
->       0.00 :   ffffffffae60003a:       jmp     0xffffffffae620670
->       0.00 :   ffffffffae60003f:       nop
-> 
-> Therefore, it didn't show up when --group option is used since the
-> leader ("mem-loads") event has no samples.  But now it checks both
-> events.
-> 
-> Before:
->   $ sudo ./perf annotate --stdio -f --group path_put
->   (no output)
-> 
-> After:
->   $ sudo ./perf annotate --stdio -f --group path_put
->    Percent                 |      Source code & Disassembly of kcore for cpu/mem-loads,ldlat=30/P, cpu/mem-stores/P, dummy:u (0 samples, percent: local period)
->   -------------------------------------------------------------------------------------------------------------------------------------------------------------
->                            : 0                0xffffffffae600020 <path_put>:
->       0.00    0.00    0.00 :   ffffffffae600020:       endbr64
->       0.00    0.00    0.00 :   ffffffffae600024:       nopl    (%rax, %rax)
->       0.00   91.22    0.00 :   ffffffffae600029:       pushq   %rbx
->       0.00    0.00    0.00 :   ffffffffae60002a:       movq    %rdi, %rbx
->       0.00    0.00    0.00 :   ffffffffae60002d:       movq    8(%rdi), %rdi
->       0.00    8.78    0.00 :   ffffffffae600031:       callq   0xffffffffae614aa0
->       0.00    0.00    0.00 :   ffffffffae600036:       movq    (%rbx), %rdi
->       0.00    0.00    0.00 :   ffffffffae600039:       popq    %rbx
->       0.00    0.00    0.00 :   ffffffffae60003a:       jmp     0xffffffffae620670
->       0.00    0.00    0.00 :   ffffffffae60003f:       nop
-> 
-> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/builtin-annotate.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-> index efcadb7620b8..1bfe41783a7c 100644
-> --- a/tools/perf/builtin-annotate.c
-> +++ b/tools/perf/builtin-annotate.c
-> @@ -632,13 +632,23 @@ static int __cmd_annotate(struct perf_annotate *ann)
->  	evlist__for_each_entry(session->evlist, pos) {
->  		struct hists *hists = evsel__hists(pos);
->  		u32 nr_samples = hists->stats.nr_samples;
-> +		struct ui_progress prog;
-> +		struct evsel *evsel;
->  
-> -		if (nr_samples == 0)
-> +		if (!symbol_conf.event_group || !evsel__is_group_leader(pos))
->  			continue;
->  
-> -		if (!symbol_conf.event_group || !evsel__is_group_leader(pos))
-> +		for_each_group_member(evsel, pos)
-> +			nr_samples += evsel__hists(evsel)->stats.nr_samples;
-> +
-> +		if (nr_samples == 0)
->  			continue;
->  
-> +		ui_progress__init(&prog, nr_samples,
-> +				  "Sorting group events for output...");
-> +		evsel__output_resort(pos, &prog);
-> +		ui_progress__finish();
-> +
->  		hists__find_annotations(hists, pos, ann);
->  	}
->  
-> -- 
-> 2.46.0.rc2.264.g509ed76dc8-goog
-> 
+v2
+- Add maintainers for devicetree
+
+Tristram Ha (2):
+  dt-bindings: net: dsa: microchip: Add KSZ8895/KSZ8864 switch support
+  net: dsa: microchip: Add KSZ8895/KSZ8864 switch support
+
+ .../bindings/net/dsa/microchip,ksz.yaml       |   2 +
+ drivers/net/dsa/microchip/ksz8795.c           |  16 ++-
+ drivers/net/dsa/microchip/ksz_common.c        | 130 +++++++++++++++++-
+ drivers/net/dsa/microchip/ksz_common.h        |  20 ++-
+ drivers/net/dsa/microchip/ksz_spi.c           |  15 +-
+ include/linux/platform_data/microchip-ksz.h   |   2 +
+ 6 files changed, 172 insertions(+), 13 deletions(-)
+
+-- 
+2.34.1
+
 
