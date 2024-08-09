@@ -1,189 +1,173 @@
-Return-Path: <linux-kernel+bounces-281410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF47E94D6B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:53:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C500694D6B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3BAE1C21CA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:53:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 081B41C21FAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C03713C8F4;
-	Fri,  9 Aug 2024 18:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0608D15F3EF;
+	Fri,  9 Aug 2024 18:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nU/OclpH"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ExrzfYK9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075B217557
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EA8155CBD
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723229612; cv=none; b=lzA0ge91fZUQgMuEH/xcvIm76yB7FFQaB0eOdmJXYO99NrYJ8GKQquCWVrsPvpTQkhNqnQFb/ouDcNBPIekZLWE/ZpcphgN0CSqz/mRMTJtngIRYWytmOEjE9eX6YsrjMJ8wDMD6JhTvNnayswuCXsdjTP7lIRiwVHUAtTGcavE=
+	t=1723229615; cv=none; b=tB4m5mqsNGzJT5yKyyFqDv+2GmPR1ke1dPZgSSAJWQpTxpbFgekZL4fojOVE6JNADa2NJJgGj1e7akyZzmKvC1eqrjJOqZU+UDhnDVAi2O4ASha6l9etNv/J8VSdO2wLEc+YhRhCJmmZsQhixQtteVgFmWKfAMNHChE8iuU7hao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723229612; c=relaxed/simple;
-	bh=b6q8ovL/LTwCVdY06z+PIl+e6PJRzJB+ZeGn5ZQTjVM=;
+	s=arc-20240116; t=1723229615; c=relaxed/simple;
+	bh=kQRoSA92hYDyVhwG0YjQLYfA8ChI4kIlBvhbXyQNZzc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=W0NN/rAwTtgkjbcHw2aLAzpSpMqaqAo19DvM6gnJ1zzNFYe8lAj8nIHw/gJyFccyc1CXqX8wsdZ8RBjbNEGmjjkAri/hjBCSQ+4an+8LA0luZCsQJsoVc33Fgyb/ui/qrgZ3mD61Bw1tuubD2Q00wey5E/sE48uoVZj8OIrnhxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nU/OclpH; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-492a8333cb1so948639137.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 11:53:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723229610; x=1723834410; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BFd6Ev453/aDjLObVzNphCwMYt1CKpC7GnDFLP288fM=;
-        b=nU/OclpHVSn4J0ZsdsrwUoyeI5X2uxGJ267NVLSV518mn2v9xwuY/wPUuqUW7KfCtm
-         6sWjTBt9ennyUisk06X5H0ieNC30u9Fj5Rlmz57It1E6kjuHrfS7XFiYLi6c/OewQAE5
-         JkF/5Dv1hiEs4l+e8u0UNQSg97HP4xmJj31F4qQNUDzsc2IedcC0SIxRPf8tecl/N2my
-         9ybwPzUMwwl2utwlKy1XbfUbwPgVbDOIF5S+gdH5tGeqKfJ4NAc/De44maNxukYjc8u5
-         1Ew/Z3PX8mRx4xjsF0ILT02bT6A0mzFJV6iP436AjNomXkdKpQ4OmkRMA6sSSx8SPOT0
-         GOkA==
+	 To:Cc:Content-Type; b=IKMd8Xuphuh34x9yLlaDFSaaRZ+n3Poyl7Yy0nIsK6sGZKNrqVciEHR/AqvyS473Hd9TyJOAGdh+F3RP8+btYoe8nxivn1+S5VXCYCpda6y7D23WFIpOCdJthMcTwWttKbe2gU4vzN4wHV/xX/Rh7J2wsqCgTvRHCHvnduwQY7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ExrzfYK9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723229612;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Q0TdrPMBWPxQ8cg3/oqyzMEtJu5iYD7aWaTXlS9y5o=;
+	b=ExrzfYK9P/U0ljGgHZfG1Z+9g9v9wNSN/I516ZXj5BvafMfq9tHVyvWeClr5oZbljlAZ1h
+	K6TNymsMqvyxe/YdCWNL4fep0ZDDGlihe798GR34XnKTNsqXveQWJEU+wQaHQLx1sLDPLV
+	gasjRY7M7LgqPOffULdt9O6Q3hoxerM=
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
+ [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-329-GuX74sIcP0-OuXuJdCDFyA-1; Fri, 09 Aug 2024 14:53:31 -0400
+X-MC-Unique: GuX74sIcP0-OuXuJdCDFyA-1
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-492a1905d61so1254453137.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 11:53:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1723229610; x=1723834410;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BFd6Ev453/aDjLObVzNphCwMYt1CKpC7GnDFLP288fM=;
-        b=ROaEl3gx/PZzVGNcuzqFpacsMLba+W+b9hd8Soijijp8n1rsRs/HvE3QSWlDsL4sJK
-         XE53x1MKUO2GTyJGQZ7R0ZhACD/q4crmmOkCab2AzBldeCcwIx6clZONRNtMZLeM6mjr
-         ugJ0ErIA99H1qsx7FQtPhN1Gg0haiYCbKOy/QhXeF6ubQEn5LjUqKL66GK6AnedwNnPw
-         BKsBV3ec3he9m2qSL5HzhE8uu3NdkLW4LLyV6rip6nS0CyoSzZ4FDzHn2B3tIa+gL56F
-         osadJg5gpxwQs+d/lronxIXpTqAHkA2k4WiKjcRsjztp94lg224Cy4q2UNohILZ36Cgs
-         nooQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVixLv+vY6iVYrL92Aab71Z1qkDGtJdZLUib1ezRKmIqfZgogPCeu0cV0jVzRiw8/B36Z550QFfTwAn2Fobjju1/JwuhNrUNpT10TBh
-X-Gm-Message-State: AOJu0YwWbbXfRWTUgBcUvVucU13on3MXE07jkxK3kCjzkxy8pRhh/V9b
-	Hc4fiJDZsfXdlAq80zwjpjpkQBniRRhdGfdX10ZNUzPTGijV2HlFbuY/K1GL765yQORodjupxyZ
-	pHTewlKwLpfC01w8ExquxiPN5X9M=
-X-Google-Smtp-Source: AGHT+IHjO2laCrD83xGgSKk32SS9gnG4HIGJIclIXUNutnOZzhTtxjLuWCIlNr0AsBryPANi7e+skoBuCZ0o3f2w8Oo=
-X-Received: by 2002:a05:6102:dc9:b0:48f:df47:a4a8 with SMTP id
- ada2fe7eead31-495d8605e99mr2764146137.29.1723229609875; Fri, 09 Aug 2024
- 11:53:29 -0700 (PDT)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9Q0TdrPMBWPxQ8cg3/oqyzMEtJu5iYD7aWaTXlS9y5o=;
+        b=sf+Uwk5Wk/obswfCCoJd9v+Zl/qHbUyf2OR6StF3dwgdLrtpo9H4Yx5muyz1JLhYGj
+         FASyztr295sbU5LXawjr5i7NSnTcchdgTkFRdMBHgMI3Hcwbx1hWtADdOsptru6lsTbf
+         TI5y/TMphrjZPmTtFnYyZdCjnOECEarZmosAxWfY8axjt9FwDhdA6cKSWmlQ2E5gEMv7
+         8YzPqeJj312HQwyUafVQhgTWlCpronjf1eGtFEr+d9qyr0W4ZeFm6H/NsTLJd0l7ov05
+         t21lVtnZaVpflqZZmaE5nN7va2Gzcpmlv2Bf0urCjCAAUlJH9WJ4pvzTkJRkx3lB9Iwf
+         YUzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJBMtfkeCi6Gtyp12UrC6Jn+aH0Uf583FLG8Lu8MfxQ7ON80bMaCTbrPVEEV86pModt06qKjHuGXq3+tfAPk+SIeKm+0cq9g7PW89t
+X-Gm-Message-State: AOJu0Yy8tmrNI53ncz4q4g508MgmyAnvljFWnWSKG6H61G71urOC++Ch
+	Uxs0G+YDYQc9KNoTJmFx2+AlAvgZZg/pOGJUXoqQuTmdmSy2K5i6bT8PsGeKPG/o9+/5wyM6OIk
+	0mhjOIa4J2jzPhIXjNl77TG8o4+6Itnv69qGCp2SUSZizvmMW1z9oLll46ESnCLi5/LSLURi+tg
+	Z2LNzl16WTBnyQUH0RJ3E3wvArKwQdevFwIiZM
+X-Received: by 2002:a05:6102:38c7:b0:493:effa:f13c with SMTP id ada2fe7eead31-495d85836d7mr3406272137.19.1723229610636;
+        Fri, 09 Aug 2024 11:53:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFXMG38O6bXHYSFXkgdhixdY/LL01zjfldoTMjmv76wCz3f6Z9SfwN5XHBpdXER9i7WZ/NwgNIWKqdEzG7NnVE=
+X-Received: by 2002:a05:6102:38c7:b0:493:effa:f13c with SMTP id
+ ada2fe7eead31-495d85836d7mr3406261137.19.1723229610341; Fri, 09 Aug 2024
+ 11:53:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807211309.2729719-1-pedro.falcato@gmail.com>
- <20240807211309.2729719-3-pedro.falcato@gmail.com> <n3v6ebfiwnk26rvxwtgkingmuduv7gla7kaiasjdvadbrpczlw@d3xjceezvgzc>
- <3hzwtm7jw25ng5gemkp42k5ypkfky25fxeevccnk2d6gcpft32@qwkwofgauqna>
-In-Reply-To: <3hzwtm7jw25ng5gemkp42k5ypkfky25fxeevccnk2d6gcpft32@qwkwofgauqna>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Fri, 9 Aug 2024 19:53:18 +0100
-Message-ID: <CAKbZUD2VV=FOeGhCOb3o5CKBiaV+6JSPoDRwzV1-3t2hZX7rQw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] mm/munmap: Replace can_modify_mm with can_modify_vma
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Pedro Falcato <pedro.falcato@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
-	torvalds@linux-foundation.org, jeffxu@google.com, 
-	Michael Ellerman <mpe@ellerman.id.au>
+References: <20240808145639.GA20510@asgard.redhat.com> <83d4e1a3-73fc-4634-b133-82b9e883b98b@linuxfoundation.org>
+ <20240809010044.GA28665@asgard.redhat.com> <41cb60af-3175-42ab-896f-b890e51cde0d@linuxfoundation.org>
+In-Reply-To: <41cb60af-3175-42ab-896f-b890e51cde0d@linuxfoundation.org>
+From: Eugene Syromiatnikov <esyromia@redhat.com>
+Date: Fri, 9 Aug 2024 20:53:19 +0200
+Message-ID: <CAKiVLCJK+D7nwSm0rVfL5qh6751SdX-DNHw=rD8OKfcSF767cw@mail.gmail.com>
+Subject: Re: [PATCH] selftests/alsa/Makefile: fix relative rpath usage
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Eugene Syromiatnikov <esyr@redhat.com>, Artem Savkov <asavkov@redhat.com>, linux-sound@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 9, 2024 at 5:48=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracle=
-.com> wrote:
+On Fri, 9 Aug 2024 at 19:01, Shuah Khan <skhan@linuxfoundation.org> wrote:
 >
-> * Liam R. Howlett <Liam.Howlett@oracle.com> [240809 12:15]:
-> > * Pedro Falcato <pedro.falcato@gmail.com> [240807 17:13]:
-> > > We were doing an extra mmap tree traversal just to check if the entir=
-e
-> > > range is modifiable. This can be done when we iterate through the VMA=
-s
-> > > instead.
-> > >
-> > > Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
-> > > ---
-> > >  mm/mmap.c | 13 +------------
-> > >  mm/vma.c  | 23 ++++++++++++-----------
-> > >  2 files changed, 13 insertions(+), 23 deletions(-)
-> > >
-> > > diff --git a/mm/mmap.c b/mm/mmap.c
-> > > index 4a9c2329b09..c1c7a7d00f5 100644
-> > > --- a/mm/mmap.c
-> > > +++ b/mm/mmap.c
-> > > @@ -1740,18 +1740,7 @@ int do_vma_munmap(struct vma_iterator *vmi, st=
-ruct vm_area_struct *vma,
-> > >             unsigned long start, unsigned long end, struct list_head =
-*uf,
-> > >             bool unlock)
-> > >  {
-> > > -   struct mm_struct *mm =3D vma->vm_mm;
-> > > -
-> > > -   /*
-> > > -    * Check if memory is sealed before arch_unmap.
-> > > -    * Prevent unmapping a sealed VMA.
-> > > -    * can_modify_mm assumes we have acquired the lock on MM.
-> > > -    */
-> > > -   if (unlikely(!can_modify_mm(mm, start, end)))
-> > > -           return -EPERM;
-> > > -
-> > > -   arch_unmap(mm, start, end);
-> > > -   return do_vmi_align_munmap(vmi, vma, mm, start, end, uf, unlock);
-> > > +   return do_vmi_align_munmap(vmi, vma, vma->vm_mm, start, end, uf, =
-unlock);
-> > >  }
-> > >
-> > >  /*
-> > > diff --git a/mm/vma.c b/mm/vma.c
-> > > index bf0546fe6ea..7a121bcc907 100644
-> > > --- a/mm/vma.c
-> > > +++ b/mm/vma.c
-> > > @@ -712,6 +712,12 @@ do_vmi_align_munmap(struct vma_iterator *vmi, st=
-ruct vm_area_struct *vma,
-> > >             if (end < vma->vm_end && mm->map_count >=3D sysctl_max_ma=
-p_count)
-> > >                     goto map_count_exceeded;
-> > >
-> > > +           /* Don't bother splitting the VMA if we can't unmap it an=
-yway */
-> > > +           if (!can_modify_vma(vma)) {
-> > > +                   error =3D -EPERM;
-> > > +                   goto start_split_failed;
-> > > +           }
-> > > +
+> On 8/8/24 19:00, Eugene Syromiatnikov wrote:
+> > On Thu, Aug 08, 2024 at 02:20:21PM -0600, Shuah Khan wrote:
+> >> Wouldn't make sense to fix fix this in selftests main Makefile
+> >> instead of changing the all the test makefiles
 > >
-> > Would this check be better placed in __split_vma()?  It could replace
-> > both this and the next chunk of code.
+> > As of now, the usage of rpath is localised, so it is relatively easy
+> > to evaluate the effect/prudence of such a change;  I am not so confident
+> > in imposing rpath on all of the selftests (and, if doing so, I would
+> > rather opt for runpath, to leave out an ability to override the search
+> > path via LD_LIBRARY_PATH, if such need arises);  in that case it is possibly
+> > also worth to add -L$(OUTPUT) to the CFLAGS as well, as the compile-time
+> > counterpart.  But, again, I was trying to avoid the task of evaluating
+> > the possible side effects of such a change, considering the variability
+> > in environments and setups selftests are run.
 >
-> not quite.
-
-Yeah, I was going to say that splitting a sealed VMA is okay (and we
-allow it on mlock and madvise).
-
+> Okay.
 >
 > >
-> > >             error =3D __split_vma(vmi, vma, start, 1);
-> > >             if (error)
-> > >                     goto start_split_failed;
-> > > @@ -723,6 +729,11 @@ do_vmi_align_munmap(struct vma_iterator *vmi, st=
-ruct vm_area_struct *vma,
-> > >      */
-> > >     next =3D vma;
-> > >     do {
-> > > +           if (!can_modify_vma(vma)) {
-> > > +                   error =3D -EPERM;
-> > > +                   goto modify_vma_failed;
-> > > +           }
-> > > +
+> >> Same comment on all other files.
+> >
+> >> It would be easier to send these as series
+> >
+> > I hesitated to do so due to the fact that different selftests are seemingly
+> > maintained by different people.
 >
-> This chunk would need to be moved below the end check so that we catch
-> full vma unmaps.
+> You can cc everybody on the cover-letter explaining the change
+> and the individual patches can be sent selectively.
+>
+> This is a kind of change it would be good to go as a series so
+> it will be easier for reviewers.
 
-Why below the end check? I believe we can avoid the split? Is there
-something I'm missing?
-But I did find a bug, what I really seem to want is:
+I see, thank you for the explanation.
 
- +           if (!can_modify_vma(next)) {
-instead of (vma). It's somewhat concerning how the mseal selftests
-didn't trip on this?
+Right now I am working on the variant of the patch that consolidates
+the -L/-rpath flags in lib.mk, do you think it will be of use to have
+some opt-in/opt-out mechanism, or just impose them unconditionally,
+similarly to -D_GNU_SOURCE? So far I don't see any issues with either
+building or running the tests, but I can imagine it might be necessary
+to avoid such flags in some cases.
 
---=20
-Pedro
+> I had to comment on all 3 patches you sent - instead I could have
+> sent one reply to the cover letter. It makes it so much easier for
+> people to follow the discussion and add to it.
+
+My apologies.
+
+> >> please mentioned the tests run as well after this change.
+> >
+> > I have checked the ldd output after the change remained the same (and that ldd
+> > is able to find the libraries used when run outside the directory the tests
+> > reside in) and did a cursory check of the results of the run of the affected
+> > tests
+>
+> Please mention that then in the change log.
+>
+> I applied this patch and ran alsa test without any issues. You
+> could do the same with:
+>
+> make kselftest TARGETS=alsa
+
+Thanks, will do.
+
+> (but not so sure about the BPF selftests, as they don't compile as-is
+> > due to numerous "incompatible pointer types" warnings that are forced
+> > into errors by -Werror and the fact that it hanged the machine I tried
+> > to run them on).
+> >
+>
+> I see a bpf patch from you in the inbox - if you mention the issues bpf
+> people might be able to help you.
+
+Right, I am in the process of condensing my issues into patches or at
+least useful bug reports.
+
+> I am not replying to your other patches. Take these as comments on others
+> as well.
+>
+> thanks,
+> -- Shuah
+
 
