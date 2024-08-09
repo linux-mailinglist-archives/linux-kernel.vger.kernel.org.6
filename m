@@ -1,122 +1,166 @@
-Return-Path: <linux-kernel+bounces-281314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FAB94D56B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:27:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D046494D566
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A241C211DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:27:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0ADC1C2101C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D2F5A0FE;
-	Fri,  9 Aug 2024 17:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA9669D2B;
+	Fri,  9 Aug 2024 17:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6dU6l89"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="Hi/QJeSM"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448CA1C69A
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 17:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723224443; cv=none; b=etFBM2PbRPvvFNPNtA7aGfREH3gd9URmCj86AEQzvGzZLfywmz7REJDX4tMD1758XJtem7DXXTBiazHEIMc+/Ab/c92xvoiklGD0fADSRYSMvHHEj+5w364wUPM5AqnHqL6cAPJhUh/QYsPmM57DqDPp4t81sNj4WFMqbyllLWQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723224443; c=relaxed/simple;
-	bh=FlHstR73F4adrjgCHMFGjSYm9SWWKnD0W2zVjuzFlJk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IuGe3RMfK6MdxiCpFkKZe0+QMRewhZJh4tti9rggmq2xcvL0Rmq+an5EsgCAicncbQS5NVsTtB2m5Ws/1fKQKaCQFgo4Y1CCd1CIR0dHzbom7oyOJSPUe2gBn0SEFUXOYgUNj3wEdtCOPyFI1XlpVl8mS0I2us4pAjqi5QoSjv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c6dU6l89; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7c3d8f260easo213991a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 10:27:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723224441; x=1723829241; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WQPvShp7okcQ7JAAqXTExHsdJANgIA/pYy+7v5WQOgw=;
-        b=c6dU6l89JICQw3ZgKP1Ko6woxC1VmsoMo8jLrraGXm6pTWFPJhPASzm0eDYMBTPU6e
-         eNvAmdpKdmMrugvvvWAv5du0nrz00+viLbpck84GeMUmfC1nYI9rXv32k0OTF8J7QUlJ
-         uAtqxAeoBkPb7eoYA6Y1Vh9gT5cRIhPFSkJhgOrORH25Dk4uXZdz1gDAnhHWCdLDw6Sj
-         if+JyAfNddDA1FphqTJbXPALrdsM7ti5R8nJwE/idISiKQ9lvHaKWRRCCMgUyw+Ndd4A
-         jDorS5ETqn1XWLWltnd2eZ1mgWzj10D8Z33l9NhZ625cYW0Xe41EJjdmFqgSMfO3+Bzi
-         ZUug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723224441; x=1723829241;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WQPvShp7okcQ7JAAqXTExHsdJANgIA/pYy+7v5WQOgw=;
-        b=Ef9UzN5y80GW6bBXTlw/rATn585AVf7MJJhqhiLinhrZ+6T7uHRQEUtpRkrrEaXdkc
-         SydTEWthTBT2+4Hh8+PouXOdAmmlbhaHUpH+sj+SvmnXh4l+WTWGAMug83DFupP1GFVX
-         /HuZQtR7rJ9WkcqT9HNP8RojmUVuQxwr4SVyKu5wMsJYGnkANGkZ43I/9HbXmhFek3la
-         MqdWuFczxUpFyBONc2e30n6sdE0T9jOQw13x4PFkQw6hSwYXXuSQE5PLIpY4FK/k55iv
-         oS/1Ak6wh5IzwZf+p/1QMAZYnwuSgrzfLgwJhXThkgYZUL/P0aVicCdaqlu6SGqyn0b+
-         37ng==
-X-Forwarded-Encrypted: i=1; AJvYcCVQr0UgCRstWyKI5BehV3H2E9/cNF4AlINsSOzz4TRJDq1LH7aE95k6zkTRkpQNWlxwfesDwVDLOixJdbj9wZte9sMxVPqiI+wUZ68M
-X-Gm-Message-State: AOJu0YwvNpkq9lRsMI2NYppv+5d0TJYDspOel6i86AViLBqfpU2CmGRR
-	CMhBjPTgduip0B3mmKpn5/9fTWvGrmwy1yzXDi1LljwUDSG3WPv1
-X-Google-Smtp-Source: AGHT+IEkjgGPg89j21Z6sTTJq8iGEXpSiujWsxC7JsiG4AHSF1ZSDSAZTLb4PrewOtx7fnimA5C9Jg==
-X-Received: by 2002:a17:903:2308:b0:1fb:8cab:ccc9 with SMTP id d9443c01a7336-200ae5cf9aemr27913985ad.45.1723224441376;
-        Fri, 09 Aug 2024 10:27:21 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:12e9:d196:a1e9:ab67])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bba0db27sm56455ad.239.2024.08.09.10.27.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 10:27:20 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: iommu@lists.linux.dev
-Cc: Rob Clark <robdclark@chromium.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Georgi Djakov <quic_c_gdjako@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Pranjal Shrivastava <praan@google.com>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] iommu/arm-smmu: Un-demote unhandled-fault msg
-Date: Fri,  9 Aug 2024 10:27:14 -0700
-Message-ID: <20240809172716.10275-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9349B14F70;
+	Fri,  9 Aug 2024 17:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723224386; cv=pass; b=AptnPjM/aYlNWMCdn0QcOM07NP2/VNvLrkJSy5KBdXSqy4K54baFhf73Poo4sDkPzDcEUwX8z37k8radj/ulmeiXsg6ViIvRycfkceYb42e2ffcJOCBJwdqiTKDyb5P/iyLv4h1US4jt46X66wOpU8fwCkrvH3QH7OKmFWAwMao=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723224386; c=relaxed/simple;
+	bh=gIsbDqSuaUfGJi7NYRIeUHylwOZj9S28wR+BNU+1whE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dL7Ucun6EYSgOiaK1lPaUff5Ul09DUul3pZK/413C/Cp7CLbutv15RfFYUD5rb5XMHjFxVhVo+bEDtLRup9a2HcBsa+p4f50OCcIbNebQwF7m/E1PZRB4fGtj9ffH/bQM5XM/r7yIdGJQoclAwPaNURJIQQhYc9MHL3hjxxzlGg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=Hi/QJeSM; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723224360; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=iQBBvpC8vMJ99e7tPEJeC1lrhmU+/jexmlTqOoZ+995lMWieOIKa/s5uDT9qXsjWf8zbCmSTshziCVldb3YGDNMPxPMCC0CxD2wiBS8K25JTJrCAXZwkk4g5S9llOyHhQ3ieDE5XPC2cv/hU9G/MRT0893l3SFiUXLzMRBYzXHk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723224360; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=MlUROrStYAoAJMglAHXmhXbY9RBE077SVTGfqsg6ysY=; 
+	b=R/1KB4AjFWPrhfm0PTCJmc1udbrhIScvCEelUDcMcAN+K95GEIVQe3Mef0ESN7xBXHeUo8BemfLOUk58A4+TPj1NrlynxjrdunusR6icUouuOE6cQwUCl5q8WOv+nfFz62/zRas73EE9RVYdmW2MbubJwl4hSet+q++ohPR8phs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723224360;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=MlUROrStYAoAJMglAHXmhXbY9RBE077SVTGfqsg6ysY=;
+	b=Hi/QJeSMAgrDib/xF0r0jqeTdhA/dx5DYQRYIqiN/kKk+tEj7N40lK5lSGQbz/I7
+	xHJcJty4BTWS/oGygqhUnh38BJdmcvM0nZI5oLrGMTqTSxWYIcylKqxhckllaCcdZsc
+	KbfRapariThTbf4Rm3Wung1JlRuwJyV/mMimDmNY=
+Received: by mx.zohomail.com with SMTPS id 1723224359034870.4612231906191;
+	Fri, 9 Aug 2024 10:25:59 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Finley Xiao <finley.xiao@rock-chips.com>, Jagan Teki <jagan@edgeble.ai>,
+ Arnd Bergmann <arnd@arndb.de>, Elaine Zhang <zhangqing@rock-chips.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-pm@vger.kernel.org,
+ kernel@collabora.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: power: Add support for RK3576 SoC
+Date: Fri, 09 Aug 2024 13:27:18 -0400
+Message-ID: <2276665.iZASKD2KPV@trenzalore>
+In-Reply-To: <20240809-constant-oxidize-8aed145179c7@spud>
+References:
+ <20240808163451.80750-1-detlev.casanova@collabora.com>
+ <20240808163451.80750-2-detlev.casanova@collabora.com>
+ <20240809-constant-oxidize-8aed145179c7@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-From: Rob Clark <robdclark@chromium.org>
+On Friday, 9 August 2024 10:59:58 EDT Conor Dooley wrote:
+> On Thu, Aug 08, 2024 at 12:31:04PM -0400, Detlev Casanova wrote:
+> > From: Finley Xiao <finley.xiao@rock-chips.com>
+> > 
+> > Define power domain IDs as described in the TRM and add compatible for
+> > rockchip,rk3576-power-controller
+> > 
+> > Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> > [reword, add yaml]
+> 
+> To be honest, both here and in your other patch, you should remove this
+> [] section and add a co-develop-ed-by instead.
 
-Previously this was dev_err_ratelimited() but it got changed to a
-ratelimited dev_dbg().  Change it back to dev_err().
+That seems to be used quite often though, I like how it gives an idea of what 
+has been adapted from downstream patches.
 
-Fixes: d525b0af0c3b ("iommu/arm-smmu: Pretty-print context fault related regs")
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
-We have crash telemetry watching for "Unhandled context fault", so we
-want to preserve this error msg.
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> 
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > ---
+> > 
+> >  .../power/rockchip,power-controller.yaml      |  1 +
+> >  .../dt-bindings/power/rockchip,rk3576-power.h | 30 +++++++++++++++++++
+> >  2 files changed, 31 insertions(+)
+> >  create mode 100644 include/dt-bindings/power/rockchip,rk3576-power.h
+> > 
+> > diff --git
+> > a/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml
+> > b/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml
+> > index 0d5e999a58f1b..650dc0aae6f51 100644
+> > ---
+> > a/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml
+> > +++
+> > b/Documentation/devicetree/bindings/power/rockchip,power-controller.yaml> 
+> > @@ -41,6 +41,7 @@ properties:
+> >        - rockchip,rk3368-power-controller
+> >        - rockchip,rk3399-power-controller
+> >        - rockchip,rk3568-power-controller
+> > 
+> > +      - rockchip,rk3576-power-controller
+> > 
+> >        - rockchip,rk3588-power-controller
+> >        - rockchip,rv1126-power-controller
+> > 
+> > diff --git a/include/dt-bindings/power/rockchip,rk3576-power.h
+> > b/include/dt-bindings/power/rockchip,rk3576-power.h new file mode 100644
+> > index 0000000000000..324a056aa8512
+> > --- /dev/null
+> > +++ b/include/dt-bindings/power/rockchip,rk3576-power.h
+> > @@ -0,0 +1,30 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> > +#ifndef __DT_BINDINGS_POWER_RK3576_POWER_H__
+> > +#define __DT_BINDINGS_POWER_RK3576_POWER_H__
+> > +
+> > +/* VD_NPU */
+> > +#define RK3576_PD_NPU		0
+> > +#define RK3576_PD_NPUTOP	1
+> > +#define RK3576_PD_NPU0		2
+> > +#define RK3576_PD_NPU1		3
+> > +
+> > +/* VD_GPU */
+> > +#define RK3576_PD_GPU		4
+> > +
+> > +/* VD_LOGIC */
+> > +#define RK3576_PD_NVM		5
+> > +#define RK3576_PD_SDGMAC	6
+> > +#define RK3576_PD_USB		7
+> > +#define RK3576_PD_PHP		8
+> > +#define RK3576_PD_SUBPHP	9
+> > +#define RK3576_PD_AUDIO		10
+> > +#define RK3576_PD_VEPU0		11
+> > +#define RK3576_PD_VEPU1		12
+> > +#define RK3576_PD_VPU		13
+> > +#define RK3576_PD_VDEC		14
+> > +#define RK3576_PD_VI		15
+> > +#define RK3576_PD_VO0		16
+> > +#define RK3576_PD_VO1		17
+> > +#define RK3576_PD_VOP		18
+> > +
+> > +#endif
 
- drivers/iommu/arm/arm-smmu/arm-smmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-index 723273440c21..8321962b3714 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-@@ -417,7 +417,7 @@ void arm_smmu_read_context_fault_info(struct arm_smmu_device *smmu, int idx,
- void arm_smmu_print_context_fault_info(struct arm_smmu_device *smmu, int idx,
- 				       const struct arm_smmu_context_fault_info *cfi)
- {
--	dev_dbg(smmu->dev,
-+	dev_err(smmu->dev,
- 		"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
- 		cfi->fsr, cfi->iova, cfi->fsynr, cfi->cbfrsynra, idx);
- 
--- 
-2.46.0
+
 
 
