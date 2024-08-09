@@ -1,141 +1,218 @@
-Return-Path: <linux-kernel+bounces-281175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4CB94D3F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:49:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4324894D3FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DEFC1C21006
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:49:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77A86B21A30
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E23B198A21;
-	Fri,  9 Aug 2024 15:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213B0198E82;
+	Fri,  9 Aug 2024 15:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u5zGJCwD"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahnxmxkb"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4090315B992
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC07B168B8;
+	Fri,  9 Aug 2024 15:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723218538; cv=none; b=cNfZGtqM60E5e7SCBH35TJsaK/AWoljE0GGz2CEgXPH/ux3rvzuN6SGNm6HB8VyxpI/7OUZuIDw0zaW5/di6I/KjRkZsp7P120IXKqO8nKgwer70gEioAauN0TiG7DeigWMiCALzOB3KT16iQx7ePCKV7OUDqCYaK9KiK1F4cpc=
+	t=1723218685; cv=none; b=F0cUOukAa1Oqw/KJPnWfY33n77r82rr1Wh1ywpLc8lOUSvMuLpGQ59SAKvM9oKkfeXXeyCsqmljXO7B74iyRD5v14fKshcDozcQOljmMHvId0A4+LbF0UFoxLaV7pMpIkrPjazWKFBPMjWKAFaQ4NLU5rlHjNk/btJ5TLZ8FMrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723218538; c=relaxed/simple;
-	bh=boPHeK/FuzEsdNVjN9wdS1yaAPavvyaLNZ/AYT7mH0o=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nXsJlZOZ7gyzhwMlqf77Ht52/dc7K8AbPr9L+aGBj1YFuVObKYgKZnoLJB9I5qGsRPiewtUIaQyeN6HfnQqbQ7Ipj9dsCH6s7UzdqT77dPo4ZM0qz6z7T0uHVOm/LJz30kORshIPSaP0M6NwzWw3Uq5hN8RKY6KakuJO6MsN4kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u5zGJCwD; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-778702b9f8fso1540713a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:48:57 -0700 (PDT)
+	s=arc-20240116; t=1723218685; c=relaxed/simple;
+	bh=hd5zNE5+zWumVAjFm0XVJQp/mAXvj77eS7dwn84251c=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=DOolO4n8wa7rhzU6dW1/lbMG/9LYcpO7dSWVbJUMnOlsnJtCpS9HyusumC29l7ozRXxGE5Ssbc0ROZqII7EgncO2cfXkSzhLDvl7Foubz6PKuFSl54OtXuwGEq9F+l32IBdic+q9rbv45rcMLQBX42rWdnrIpfEfmQPyTH7CVyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ahnxmxkb; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so14830015e9.2;
+        Fri, 09 Aug 2024 08:51:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723218536; x=1723823336; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EKWC05ur8qJ9dixBuWa+E5r9HRoDV0qFqOeFXTmXV1c=;
-        b=u5zGJCwDvT+FJj+8DAncoZY9zVb+UKMn86t7ShWWYqU1EgSkmYV1bYhcodtu08K1BD
-         WD/Ho4maoXtCa1pmOZHT1TN7vyy/4XB3yg4EZzbDDLDuFerahrHtyYgI116CZeCcIJSV
-         w04Usxo+fZiWPLz2TbmxNDx244ywpAyTZ7PyuWT6ym12fIPQHyPqEOkHi1due54fBerV
-         OE3CYM8UnprkBT0v3MIDY4mfSdZoldcQLMlFcOGh/TdbDfrIfNwXibAqc8RwlDUwSqQr
-         IBhNUX9m+Pw0EbUx/fA/qMI0B3/ysqH1fubO0l/IdZX0CKVLco2iWHANDIFkDjLegrsw
-         X18A==
+        d=gmail.com; s=20230601; t=1723218682; x=1723823482; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iZTujf5Zs1EDU0Z1KT2lmwI5sHT0BQmNKS6WrYiVFJo=;
+        b=ahnxmxkb9KQFXD4un7ybLEXi8f3CqGsYP3gQxrzGY8SP8IQBsPvfec+DfySpbDbZjE
+         bmjUiBPzwKQq4/hgJzpTErU25AeEgZk7wY/qT1KDS/shJG2Gz0QW4R+9lkWYSvZZKxM6
+         i+G6vsTNX7Ru+6ZzoZosNediurjfk9J9eD8fn2G9SHLBNoGyGoUbvTLSFd90LbHifkdj
+         t2Htl6zkeEDJ81jwCU6/E7daWI3Dj3EsUdp/9GFj/yycHAZn49C1x7j1TZYUCouO0XbO
+         rGZspbW+tsY0WxBlRqbjf7h3GQzSEyaxJb+pxPy5SWQNAe1ZpDesOmKLVW6P0cO9sBHK
+         9qTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723218536; x=1723823336;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EKWC05ur8qJ9dixBuWa+E5r9HRoDV0qFqOeFXTmXV1c=;
-        b=hqJ/+B0m5GCi20DU3ucIh4b0KqWgbOz6xxQdCs5Z6/kTNUUJ42zr/Egez5xEVhm2pu
-         AOw+R1SBM08s+XXn/GYPPsGLr0mUlEkeKEKjU54t/XDhKCVE7ypoRXujJXroH2hos8i4
-         4FSnppCYPLPfC0Y5Mn2MgvOguFfDzqrvbd5JjHRQuFsdSeXrnmXnNawf2T6CKdC73iQi
-         ir0wEYguo9EsQFwsunF6qUqgmcGTv+xPCYCAf0m1XqFKYSFg7ezfF3lMvcQM2LhPEG9P
-         iqCa8feaRi2daeppno7etHXGxtTBDi9o8LbNSFXSgA0Cly9RH/ZT0faiFsEqwl/g7au5
-         MaLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3FTRaBXlI1ZY/1TUyciOfqdXWRxmhixa6HukPIjOQ5WHQAv7rqeFbAr6ErJ0pZedE0ox9upwhgI2xJPgkCRIeW8Qkqbu0cxOnQSdd
-X-Gm-Message-State: AOJu0YyhoZzH5U+9/oIb+lrWi04qt9TxXwM6nPEqtJgtpy73HrYpo2wk
-	wpnXLLQQh22P3M197Ja8UQGaFO3KDiQWBzGScAehDGAiaqZt+/WRtz0Pe+oQgztiUYHB/+wAItS
-	QvA==
-X-Google-Smtp-Source: AGHT+IGcUTh0RPjHcAl9Gl6mOs8y4fOTciJ0KSSIq9N9x9qDCHR+caHcNrvhuZvHbeuXJhBlCaUN/9h7Hoc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:410d:b0:7a0:b292:47cb with SMTP id
- 41be03b00d2f7-7c3d2b997femr4904a12.0.1723218536385; Fri, 09 Aug 2024 08:48:56
- -0700 (PDT)
-Date: Fri, 9 Aug 2024 08:48:55 -0700
-In-Reply-To: <20240710220540.188239-5-pratikrajesh.sampat@amd.com>
+        d=1e100.net; s=20230601; t=1723218682; x=1723823482;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iZTujf5Zs1EDU0Z1KT2lmwI5sHT0BQmNKS6WrYiVFJo=;
+        b=ulXbk6eBylt1sIDcxjt601fpzPd0OWOB63WgAwBSWBXc/2H+dkYu1ybm30wJXoohUM
+         8FqGUuHyGamyGcKPgJHfiWXUf6EPEzWSOFDaU5cPP/xMJzGiRoeTh9mJbNAvXhEfvh9I
+         Ek2nJoVDtochAGxUof2iEDOaxpHIgUBBrwKuSO6qs50waYIiXC8+//QC5e1POBL/0o9y
+         W+DdvueujKVXzRwBkDnRo7k67Glw2gjj8QoLg4XTfvpbXc3GDmgIRaEglEaGCp2C60fg
+         C+rRi7GAAI4uJ/SAOLMlkAZiY2z818l8yjCo0MSAT8Gw00iMB3sFevYjAf+2Ruv9K85R
+         cDpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUHgPAydOhY9sRwS0BObLf/KkvxvLrDNJzhuDqAKBTHN9TkE6JcJjCx/iCqg2mIDH82fPjz5soNCozULiO@vger.kernel.org, AJvYcCXg67SeWUvkrHDqGArfvUFUk4CW6gqm9Qo3HZ52Eh76p3Lq/9WIYLXpxqTupkxDYPRBvhHuq5gVcUselhoi5O8=@vger.kernel.org, AJvYcCXgnVoFNnkRQcsihFr7DMCivhw+7vWJNXTEiz+v4atfHlmXPnHJZRnTx//8O4d+1FACd0Dmfq/29dfp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8/3KjBn6vs47FmrJCYhcynoIf2dwdVx+RjUrpNlf4PCB2wPL9
+	fWG3u20fS00GEYItXONB7HIbWwaqSQKWtGQZz8omLgYQzQdRBvnB
+X-Google-Smtp-Source: AGHT+IGYj5j70epkeFIRqQMWluaYBwJtAUzZZ2J886RgmY+kRXmvdAJ6fQZ+NM964Qzt7m1bltHC+Q==
+X-Received: by 2002:a5d:65c4:0:b0:360:7971:7e2c with SMTP id ffacd0b85a97d-36d61cd2a7cmr1667118f8f.54.1723218681787;
+        Fri, 09 Aug 2024 08:51:21 -0700 (PDT)
+Received: from localhost (host-87-20-57-122.retail.telecomitalia.it. [87.20.57.122])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2718c020sm5673980f8f.55.2024.08.09.08.51.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 08:51:21 -0700 (PDT)
+Date: Fri, 09 Aug 2024 17:51:20 +0200
+From: Matteo Martelli <matteomartelli3@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: dan.carpenter@linaro.org, 
+ jic23@kernel.org, 
+ kernel-janitors@vger.kernel.org, 
+ lars@metafoo.de, 
+ linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <66b63af81a153_27fed37066@njaxe.notmuch>
+In-Reply-To: <93f18533-da95-4f29-b6d9-8b8337a4cc90@wanadoo.fr>
+References: <1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain>
+ <36b1a47a-7af2-4baf-8188-72f6eed78529@wanadoo.fr>
+ <66b5c5df76766_133d37031@njaxe.notmuch>
+ <93f18533-da95-4f29-b6d9-8b8337a4cc90@wanadoo.fr>
+Subject: Re: [PATCH] iio: adc: pac1921: add missing error return in probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240710220540.188239-1-pratikrajesh.sampat@amd.com> <20240710220540.188239-5-pratikrajesh.sampat@amd.com>
-Message-ID: <ZrY6Z4mbbohVRbEh@google.com>
-Subject: Re: [RFC 4/5] selftests: KVM: SNP IOCTL test
-From: Sean Christopherson <seanjc@google.com>
-To: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
-Cc: kvm@vger.kernel.org, shuah@kernel.org, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, pbonzini@redhat.com, pgonda@google.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024, Pratik R. Sampat wrote:
-> Introduce testing of SNP ioctl calls. This patch includes both positive
-> and negative tests of various parameters such as flags, page types and
-> policies.
-> 
-> Signed-off-by: Pratik R. Sampat <pratikrajesh.sampat@amd.com>
-> ---
->  .../selftests/kvm/x86_64/sev_smoke_test.c     | 119 +++++++++++++++++-
->  1 file changed, 118 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c b/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
-> index 500c67b3793b..1d5c275c11b3 100644
-> --- a/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
-> +++ b/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
-> @@ -186,13 +186,130 @@ static void test_sev_launch(void *guest_code, uint32_t type, uint64_t policy)
->  	kvm_vm_free(vm);
->  }
->  
-> +static int spawn_snp_launch_start(uint32_t type, uint64_t policy, uint8_t flags)
-> +{
-> +	struct kvm_vcpu *vcpu;
-> +	struct kvm_vm *vm;
-> +	int ret;
-> +
-> +	vm = vm_sev_create_with_one_vcpu(type, NULL, &vcpu);
+Christophe JAILLET wrote:
+> Le 09/08/2024 =C3=A0 09:31, Matteo Martelli a =C3=A9crit=C2=A0:
+> > Christophe JAILLET wrote:
+> >> Le 08/08/2024 =C3=A0 21:28, Dan Carpenter a =C3=A9crit=C2=A0:
+> >>> This error path was intended to return, and not just print an error=
+.  The
+> >>> current code will lead to an error pointer dereference.
+> >>>
+> >>> Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
+> >>> Signed-off-by: Dan Carpenter <dan.carpenter-QSEj5FYQhm4dnm+yROfE0A@=
+public.gmane.org>
+> >>> ---
+> >>>    drivers/iio/adc/pac1921.c | 4 ++--
+> >>>    1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+> >>> index d04c6685d780..8200a47bdf21 100644
+> >>> --- a/drivers/iio/adc/pac1921.c
+> >>> +++ b/drivers/iio/adc/pac1921.c
+> >>> @@ -1168,8 +1168,8 @@ static int pac1921_probe(struct i2c_client *c=
+lient)
+> >>>    =
 
-Is a vCPU actually necessary/interesting?
+> >>>    	priv->regmap =3D devm_regmap_init_i2c(client, &pac1921_regmap_c=
+onfig);
+> >>>    	if (IS_ERR(priv->regmap))
+> >>> -		dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> >>> -			      "Cannot initialize register map\n");
+> >>> +		return dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> >>
+> >> The (int) is unusual.
+> >>
+> > The (int) explicit cast is to address Wconversion warnings since dev_=
+err_probe
+> > takes an int as argument.
+> =
 
-> +	ret = snp_vm_launch(vm, policy, flags);
-> +	kvm_vm_free(vm);
-> +
-> +	return ret;
-> +}
-> +
-> +static void test_snp_launch_start(uint32_t type, uint64_t policy)
-> +{
-> +	uint8_t i;
-> +	int ret;
-> +
-> +	ret = spawn_snp_launch_start(type, policy, 0);
+> Ok, but:
+> =
 
-s/spawn/__test, because "spawn" implies there's something living after this.
+> 1) With the cast removed, on my x86_64:
+> 	$ make CFLAGS=3D"-Wconversion" drivers/iio/adc/pac1921.o
+> =
 
-> +	TEST_ASSERT(!ret,
-> +		    "KVM_SEV_SNP_LAUNCH_START should not fail, invalid flag.");
+> doesn't generate any error.
+> =
 
-This should go away once vm_sev_ioctl() handles the assertion, but this assert
-message is bad (there's no invalid flag).
+I can't reproduce the warning in that way either, but maybe CFLAGS gets
+overridden in that case because with the following method I can see the
+warning:
 
-> +
-> +	for (i = 1; i < 8; i++) {
-> +		ret = spawn_snp_launch_start(type, policy, BIT(i));
-> +		TEST_ASSERT(ret && errno == EINVAL,
-> +			    "KVM_SEV_SNP_LAUNCH_START should fail, invalid flag.");
+$ print "CFLAGS_pac1921.o :=3D -Wconversion" >> drivers/iio/adc/Makefile
+$ print "CONFIG_IIO=3Dy\nCONFIG_PAC1921=3Dy" >> arch/x86/configs/x86_64_d=
+efconfig
+$ sed -i 's/CONFIG_WERROR=3Dy/CONFIG_WERROR=3Dn/g' arch/x86/configs/x86_6=
+4_defconfig
+$ make x86_64_defconfig
+$ make -j7
 
-Print the flag, type, and policy.  In general, please think about what information
-would be helpful if this fails.
+drivers/iio/adc/pac1921.c: In function =E2=80=98pac1921_probe=E2=80=99:
+drivers/iio/adc/pac1921.c:1171:36: warning: conversion from =E2=80=98long=
+ int=E2=80=99 to =E2=80=98int=E2=80=99 may change value [-Wconversion]
+ 1171 |                 dev_err_probe(dev, PTR_ERR(priv->regmap),
+      |                                    ^~~~~~~~~~~~~~~~~~~~~
+
+Built with gcc version: gcc version 14.1.1 20240522 (GCC)
+
+Same thing building for aarch64 with gcc version 12.2.0 (Debian 12.2.0-14=
+)
+
+> 2)
+> 	$ it grep dev_err_probe.*\)PTR_ERR | wc -l
+> 	2
+> =
+
+> 	$ it grep dev_err_probe.*PTR_ERR | wc -l
+> 	1948
+> So, should the cast be needed, maybe another fix could make sense?
+>
+It could be assigned to the ret value if that would be preferred:
+	if (IS_ERR(priv->regmap)) {
+		ret =3D (int)PTR_ERR(priv->regmap);
+		return dev_err_probe(dev, ret, "Cannot initialize register map\n");
+	}
+
+Otherwise a more generic approach could be to let PTR_ERR directly cast t=
+o
+(int). I would say that if it is always called after an IS_ERR() it shoul=
+d be
+safe to cast to (int) since the latter should guarantee the pointer value=
+ is
+inside int size boundaries. The similar PTR_ERR_OR_ZERO also casts (impli=
+citly)
+to int but it also checks for IS_ERR before the cast.
+Maybe another solution could be introducing a new macro that does the cas=
+t but
+before it checks the ptr with IS_ERR(), I came up with the following even=
+
+though it doesn't look very idiomatic:
+
+#define WITH_PTR_ERR(ret, ptr) if (IS_ERR(ptr) && (ret =3D (int)PTR_ERR(p=
+tr)))
+...
+static int pac1921_probe(struct i2c_client *client)
+{
+        ...
+	WITH_PTR_ERR(ret, priv->regmap) {
+		return dev_err_probe(dev, ret, "Cannot initialize register map\n");
+	}
+}
+
+Maybe there is already some similar use case?
+
+Anyway, if in general it is preferred to avoid the explicit cast despite =
+the
+Wconversion warning I would be fine with it.
+
+> CJ
+> =
+
+
+Thanks,
+Matteo Martelli=
 
