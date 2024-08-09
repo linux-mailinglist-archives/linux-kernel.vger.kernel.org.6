@@ -1,186 +1,195 @@
-Return-Path: <linux-kernel+bounces-280459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7377794CAE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:02:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974A594CAE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BF01F260E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:02:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFF10B209E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F4E16D317;
-	Fri,  9 Aug 2024 07:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331CB16D33F;
+	Fri,  9 Aug 2024 07:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2K2N4DdF"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2066.outbound.protection.outlook.com [40.107.244.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUqudwC4"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2B42905
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723186958; cv=fail; b=ij702c89Za/vYUOq+9uobLKWfSRbjVBJZ0VNrljr7ghd6rEJGUZ3P2v/7R11u33e8y9ydmSFIEgrfmI/8t/m3GrslgYsZ2X2Lp3EmoalcLzQR24WUpSZ01SiKFq6hPUbWH0bAFVcLLnO9uAjha/SH1AGIG8N/DZji4pT5PZPTY8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723186958; c=relaxed/simple;
-	bh=PzIX03s7Fcj+Dqoit+ClUnm9ZWoPRv4SwZ8IVLb0aEY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aZQGHJ3MCkDFRudn9N7HfotGpYM4iRPLiBjEBzQAYQiYLd8vEC43Z4LGPiiBXyNTGmmT/gczAqaRxVxAsXE3AWKooUBun9ye7mk+Huf8yem2awTC7706/G28IEWbkx0f2acE/LS6oYa5Vj0UrWHufPkHbX7dJ0YaLv3IRYynWGw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2K2N4DdF; arc=fail smtp.client-ip=40.107.244.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=db7s+QNE3iVl30t4d7x6WbRvZfQyZg1rznlSDwsSrCYkcRkqW7uTHHVO6dw6b6Qs7lkg98bilOWK18aLid926o0JA13wgvpfc0TU3uMf5Ck4AQQxBsXiIZWtccxFidtHdKJs+hvNNaHbIg5uYgDHMv2sHCF/JKzA6K+0hj360+sWePnFO7jivdlIO0ZW18iT8fVErppi1sXt3nv3l6OfSjRs65JmmqYEu2S1vR06jYoTXj3t1D5+RTQbvGuYK7j15wo1er6qdy/of+xtGEp/qP8hpqFRig6docweLvKzG2IZe7ZJq6mavBqfUgF+j1OETVW3Ni8sunoAhc5wPmHrlA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z9ABY4WcgGtyrCiAZVFNiMwtw0Ldm5nr5WqR1vLi4Ps=;
- b=tIpEeaGHD8dCoE000XETJStssceWURWkKne4ZCcRNAsNhaJIOZKpoK3vS4cusVWMO0a7izKqjOA/0hpn/ksYU7Qdhy/hTquZtDjHWPFNc0qAYKmMxN+MQDbFHIBKj0gy2LWWwj9XDfLNX1hOIlFl0Ok7bM4UgWu1cBo9WQnOhi2QkPnoNOZ5Fv7SYIsa+/PO4EoOZF6qhKIyv+nDk3c6AbKwvCHnLVWh6MiItTUnAn7koHaRdAaK4aA5rvfvDkNjZrnmE+n5YGm9yaJ3Q5LEShSIy5HEeYrGmz6OUMqaLRO8NUUqcNTS8OFI9B6dZPavXSDUagYnEDyaJsaTQKUVkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z9ABY4WcgGtyrCiAZVFNiMwtw0Ldm5nr5WqR1vLi4Ps=;
- b=2K2N4DdF9E1DuLVy874FXnsTt+f+Z3GUiPYyO+p/SskslTVM3bHvloKKFJndoL+sXsgy3a1Vsr57Mst60juElOLwrIVu2a6hKhu+L+/qnZQ+H6B0WivSbWqJLJDNKd+BaYhhdYBriB6jaoo43RpS4Ym23atLOvQQOBAGDYyZ1E8=
-Received: from BN9PR03CA0893.namprd03.prod.outlook.com (2603:10b6:408:13c::28)
- by IA1PR12MB7760.namprd12.prod.outlook.com (2603:10b6:208:418::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.17; Fri, 9 Aug
- 2024 07:02:32 +0000
-Received: from BN2PEPF000044AA.namprd04.prod.outlook.com
- (2603:10b6:408:13c:cafe::9f) by BN9PR03CA0893.outlook.office365.com
- (2603:10b6:408:13c::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.30 via Frontend
- Transport; Fri, 9 Aug 2024 07:02:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN2PEPF000044AA.mail.protection.outlook.com (10.167.243.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Fri, 9 Aug 2024 07:02:32 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 9 Aug
- 2024 02:02:31 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 9 Aug
- 2024 02:02:31 -0500
-Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 9 Aug 2024 02:02:29 -0500
-From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-To: <tglx@linutronix.de>, <michal.simek@amd.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<git@amd.com>, Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Subject: [PATCH v2] irqchip/xilinx: Fix shift out of bounds
-Date: Fri, 9 Aug 2024 12:32:24 +0530
-Message-ID: <1723186944-3571957-1-git-send-email-radhey.shyam.pandey@amd.com>
-X-Mailer: git-send-email 2.1.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124A82905
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723187072; cv=none; b=goBP5Fo4r+2nutRGq2P706ni9iKnx5ByP1+YrOWrHAp7c3tlnvWQkHkaE0QAkNztQP2gLkIzdJ4N9i1UQ5kFku80F/5dos2sA7oWEpHHjCiheLWRskw0RIdys81Tgi+U9YEnqaxeXEJKOOg9SdAtYDJ5zSPFz2ZCvIPEEWSn8JQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723187072; c=relaxed/simple;
+	bh=8R/x/FLVDwQrZ0rwxLynaPZ5hbdNuQ+yC2+LE22iwVU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bnz7QdYH1CG5qIebxFHWWUlOeJg1H7hiq+GuNb0Owk1xZJRkog/RS7F2kJAD1KhVdZMnOQv9k1I4ya8I6xEXyUPczZad3lKIpXsFoeOH+DY18L5qSj32nk0VHx9QQbbHMixgv5CjAiHz3PjSVceYG/UhWEljxWrddJOkMSqWZ/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fUqudwC4; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso1344166b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:04:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723187070; x=1723791870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EdToOVR8R9qNO1x23qVgI+jyK3cSKVgY8O7SCriXr6I=;
+        b=fUqudwC4Lw+i/FusSQ7K2movxk+nHFBb/uUCTXMMEpPO0LuG8Hy0tqszngEuDJAFeG
+         woL53KYvLxwEGAw4UOrg90QHS9qvTkCPwq1S5IsFT7pl2Np+TKVqMZ9n1/qsK9eTRCIy
+         DUKc78W2J2jJGd2dfubonOveqTIKgdaugvf8w2uuoxtNCwXAx4p/CZDNikDPBXqpkaLt
+         UCOeHECr7/rsg0w0O9eUp1V4P4939euHSlHO9azpOWse9u334JUzpQ1rlmx9RKI+TVRC
+         KysZug/MbKxriVbSfN6quNeaQZXN5K7vuYMc990moyv/uU+pIlEvWtfQh19ZwxP+sova
+         XOyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723187070; x=1723791870;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EdToOVR8R9qNO1x23qVgI+jyK3cSKVgY8O7SCriXr6I=;
+        b=sK9cs6RW3VqBv3nJ33s5tMG6ltMk7nlrp57sBeGw9r7YW3NS8Z2BlfKrADhRDzBEmb
+         oa11b89ps1vQmkGQfflOJUyPs5sYW2k0ueL1Q1XdqqS7Df6bZLM9jbFLlBREygYWZI5s
+         erU0KI1aI1aW6dTpFpqMLHPYdvNgApg1kzD90YuEac4MGRL2UJv4EyE13DkK10ZJWPxu
+         8gBgphm8w5/+tIy9AEYhEA2BOgBuCXKhFtHrPhsojNj2tTPoxyPLOAXf/vN/xsatS9kk
+         LAG54b2SkWx7kadembAwxHNzWmov5W/kxZPGCVQyidD1k2fhW1R5r/AJq3d3/5gPfnMe
+         G7wA==
+X-Forwarded-Encrypted: i=1; AJvYcCXw/YPZ++Hq1mvbfH85DMAKlCoNqWOqPBhp6v1xe1na/1OAqwdBg9bDqz3it/ssszcoIG7PXk8kH7U154VdW9653JrN2OcoJGVjifwe
+X-Gm-Message-State: AOJu0Yy+JbPET05rfQBs6I4UxCiAkUj4Y4VBz0PCOqakMUhiWwOIeuc3
+	pO/U2d+QQ1lFisDvv2xhkjGWR18qsumpIuh7Yv3W5XfcovynScPv
+X-Google-Smtp-Source: AGHT+IEwKsXDwp1MzgW55+Gy4FSYeUfuHdbLgCuhROOzqo65n48JsgvZeIUX9OxU0djNpboUXXFabg==
+X-Received: by 2002:a05:6a20:43a0:b0:1c4:7a11:9ef1 with SMTP id adf61e73a8af0-1c89fe9cf92mr900759637.15.1723187070285;
+        Fri, 09 Aug 2024 00:04:30 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb20a025sm2066787b3a.34.2024.08.09.00.04.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 00:04:29 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: david@redhat.com
+Cc: akpm@linux-foundation.org,
+	baolin.wang@linux.alibaba.com,
+	chrisl@kernel.org,
+	hanchuanhua@oppo.com,
+	ioworker0@gmail.com,
+	kaleshsingh@google.com,
+	kasong@tencent.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	ryan.roberts@arm.com,
+	v-songbaohua@oppo.com,
+	ziy@nvidia.com
+Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
+Date: Fri,  9 Aug 2024 19:04:12 +1200
+Message-Id: <20240809070412.33847-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <41b49313-5804-46ba-9e1d-358b079274cd@redhat.com>
+References: <41b49313-5804-46ba-9e1d-358b079274cd@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044AA:EE_|IA1PR12MB7760:EE_
-X-MS-Office365-Filtering-Correlation-Id: d0a66f07-cf7f-4c0f-348f-08dcb8413d6e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eexP+5668jfOwAr39ZsvhOaf9JFZnAFRYXjMPhFg9ziJwnoA5l9XJpj7lvCf?=
- =?us-ascii?Q?AxRP3Knu1vLEYv2FvbhcZioLWdtsY2o7d/nwtH9YjCtjT/MBXEk3Na5xjyDh?=
- =?us-ascii?Q?brig1AFW90sgFfzt89uG8mQHT2USElYfBpAd1tCO9Dh8VVnQK9k06Pec5hk0?=
- =?us-ascii?Q?VmDLU+NmSdy6+9x6SLXlpi5rmUhDCjKsVPRw348SWwGQY0Oah5yoYb+xG2M/?=
- =?us-ascii?Q?uwI+eFY7Z8WBOii2fRu4wzACouAy7J/l4xSVYXnPJrSCIZswv8dyvT2QFq65?=
- =?us-ascii?Q?vUlGuTQXUp7VVLk+ffVseU5RBSXXNJW3Z6lMhUsAku7vRFbwJNgdhvTfCqRp?=
- =?us-ascii?Q?Q5NitTqiXHmzQO77vGkIillzL63XLRbEhihCtciDkFWKj+yTNE5pXeb6lVmB?=
- =?us-ascii?Q?8qubaeVnSBhjWUguCVDcF/5IruUzGAUjrv9HSugqWdTNCrOwF0gSoh7JEpc+?=
- =?us-ascii?Q?K0CSg+JQZF0e2zaZqTUdyOBtZ/AXQOXLmmtvqiPTTNLgHP+X/hxmu0VbsRde?=
- =?us-ascii?Q?3lBnW9rjRPHUfi9TQbDYg99NONfAYn9vpb7W9QhzMJBdUotW52HC0x8rcMks?=
- =?us-ascii?Q?eB+BhghBudGRZ5RFr3hvoF8yNy9VRzPHoxI17FXt3Bdi7eW8wrTMkXnGNOL2?=
- =?us-ascii?Q?KwaWFyisB88CAFbffKdG3FbSkxpRtB0zggsm357kAv1k+/rx5t5anTmXoFUP?=
- =?us-ascii?Q?sSYGwJBNOSRi2D3AM2bzrou/OfctZmV1LQSVbfDMwlukqCSiolfRGAxQYK97?=
- =?us-ascii?Q?F2TOG3vwbrPLVQtR4T5G93sw6IcnqQlkZeLeM2zXMoVLoCyRf3VR+METCew8?=
- =?us-ascii?Q?SJzgTZsWBuxwwlbXvAS5jNBf9X9G8JiVpIghXeJD5y2tEkFCX7bEHC4ySVHa?=
- =?us-ascii?Q?6arMpnkIWM525gfknZVYV5+9B31IpH2Ute2Fzp9m2nYIhShuIOxhu37QZtKx?=
- =?us-ascii?Q?BfS8POfK7UFCoMWfj9h+6IwG1z9VxKj8eS+q7eC5XehvTfl8WHnC1Wmz/ezJ?=
- =?us-ascii?Q?NPwQZYAGOAP5ARg5Zf8L8qE/JvwDhle3xUiTI0Iqe1/ccrSCkEPSXFl0Sw/w?=
- =?us-ascii?Q?/n78HZFkKph5ehF7m/lYI/kw0g8v6qUFSjuCBEA/S+EMsw1jct6lqtbXdkQ7?=
- =?us-ascii?Q?C5G5P7sX7j6Kfdf1kU5Q0hD1cXK/hX4ejVO5Zt8bOW8n6HLpuicRWrwuxMmZ?=
- =?us-ascii?Q?slQgkYLTobBN1dXItsEg+c0iaF1LPDC7iPrMrEZOpQXyQpW73BWWjzXg1jX5?=
- =?us-ascii?Q?uJ/m2HNw8o9JgYW8F4XRUO0mhTbdg0CHHCezS/5w9sjwZxcPE4Fcc/ZwUErs?=
- =?us-ascii?Q?EShx53fYD/dRwIpG3vLXnWMJtatHjbgzkS/iOU5VSJkH6DpakTa4ozYm0crx?=
- =?us-ascii?Q?KDWXdbs31X+/fHX4gt2Bd6jVl/hCU4qXH6tSUxzRiGgo18GStWwdT630ztaU?=
- =?us-ascii?Q?KxWxyC+Qhy0kqkLsxCttnLUbWAetBVVv?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 07:02:32.0754
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0a66f07-cf7f-4c0f-348f-08dcb8413d6e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044AA.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7760
+Content-Transfer-Encoding: 8bit
 
-The device tree property 'xlnx,kind-of-intr' sanity checked that
-the bitmask contains only set bits which are in the range of the
-number of interrupts supported by the controller.
+> >> I would appreciate if we leave the rmap out here.
+> >>
+> >> Can't we handle that when actually freeing the folio? folio_test_anon()
+> >> is sticky until freed.
+> >
+> > To be clearer: we increment the counter when we set a folio anon, which
+> > should indeed only happen in folio_add_new_anon_rmap(). We'll have to
+> > ignore hugetlb here where we do it in hugetlb_add_new_anon_rmap().
+> >
+> > Then, when we free an anon folio we decrement the counter. (hugetlb
+> > should clear the anon flag when an anon folio gets freed back to its
+> > allocator -- likely that is already done).
+> >
+>
+> Sorry that I am talking to myself: I'm wondering if we also have to
+> adjust the counter when splitting a large folio to multiple
+> smaller-but-still-large folios.
 
-The check is done by shifting the mask right by the number of
-supported interrupts and checking the result for zero.
+Hi David,
 
-The data type of the mask is u32 and the number of supported
-interrupts is up to 32. In case of 32 interrupts the shift is out of
-bounds, resulting in a mismatch warning. The out of bounds condition
-is also reported by UBSAN.
+The conceptual code is shown below. Does this make more
+sense to you? we have a line "mod_mthp_stat(new_order,
+MTHP_STAT_NR_ANON, 1 << (order - new_order));"
 
-UBSAN: shift-out-of-bounds in irq-xilinx-intc.c:332:22
-shift exponent 32 is too large for 32-bit type 'unsigned int'
-
-Fix it by promoting the mask to u64 for the test.
-
-Fixes: d50466c90724 ("microblaze: intc: Refactor DT sanity check")
-Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
----
-Changes for v2:
-Rephrase one line summary and commit description as suggested by
-Thomas Gleixner.
----
- drivers/irqchip/irq-xilinx-intc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-xilinx-intc.c b/drivers/irqchip/irq-xilinx-intc.c
-index 238d3d344949..7e08714d507f 100644
---- a/drivers/irqchip/irq-xilinx-intc.c
-+++ b/drivers/irqchip/irq-xilinx-intc.c
-@@ -189,7 +189,7 @@ static int __init xilinx_intc_of_init(struct device_node *intc,
- 		irqc->intr_mask = 0;
+@@ -3270,8 +3272,9 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
+ 	/* reset xarray order to new order after split */
+ 	XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_order);
+-	struct anon_vma *anon_vma = NULL;
++	bool is_anon = folio_test_anon(folio);
+ 	struct address_space *mapping = NULL;
++	struct anon_vma *anon_vma = NULL;
+ 	int order = folio_order(folio);
+ 	int extra_pins, ret;
+ 	pgoff_t end;
+@@ -3283,7 +3286,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 	if (new_order >= folio_order(folio))
+ 		return -EINVAL;
+ 
+-	if (folio_test_anon(folio)) {
++	if (is_anon) {
+ 		/* order-1 is not supported for anonymous THP. */
+ 		if (new_order == 1) {
+ 			VM_WARN_ONCE(1, "Cannot split to order-1 folio");
+@@ -3323,7 +3326,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 	if (folio_test_writeback(folio))
+ 		return -EBUSY;
+ 
+-	if (folio_test_anon(folio)) {
++	if (is_anon) {
+ 		/*
+ 		 * The caller does not necessarily hold an mmap_lock that would
+ 		 * prevent the anon_vma disappearing so we first we take a
+@@ -3437,6 +3440,10 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 			}
+ 		}
+ 
++		if (is_anon) {
++			mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
++			mod_mthp_stat(new_order, MTHP_STAT_NR_ANON, 1 << (order - new_order));
++		}
+ 		__split_huge_page(page, list, end, new_order);
+ 		ret = 0;
+ 	} else {
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 408ef3d25cf5..c869d0601614 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1039,6 +1039,7 @@ __always_inline bool free_pages_prepare(struct page *page,
+ 	bool skip_kasan_poison = should_skip_kasan_poison(page);
+ 	bool init = want_init_on_free();
+ 	bool compound = PageCompound(page);
++	bool anon = PageAnon(page);
+ 
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
+ 
+@@ -1130,6 +1131,9 @@ __always_inline bool free_pages_prepare(struct page *page,
+ 
+ 	debug_pagealloc_unmap_pages(page, 1 << order);
+ 
++	if (anon && compound)
++		mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
++
+ 	return true;
+ }
+ 
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 8d432051e970..982862cbf5ba 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1467,6 +1467,7 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
  	}
  
--	if (irqc->intr_mask >> irqc->nr_irq)
-+	if ((u64)irqc->intr_mask >> irqc->nr_irq)
- 		pr_warn("irq-xilinx: mismatch in kind-of-intr param\n");
+ 	__folio_mod_stat(folio, nr, nr_pmdmapped);
++	mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, 1);
+ }
  
- 	pr_info("irq-xilinx: %pOF: num_irq=%d, edge=0x%x\n",
-
-base-commit: ee9a43b7cfe2d8a3520335fea7d8ce71b8cabd9d
--- 
-2.34.1
-
+ static __always_inline void __folio_add_file_rmap(struct folio *folio,
 
