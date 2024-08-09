@@ -1,122 +1,172 @@
-Return-Path: <linux-kernel+bounces-280958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF93894D164
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:36:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD47994D166
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2B8B1C21562
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:36:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4033E1F22BAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A186A195B08;
-	Fri,  9 Aug 2024 13:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D661953BE;
+	Fri,  9 Aug 2024 13:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KlLb1G/d"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0P2qDVO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC03194C7A
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670AC192B9F;
+	Fri,  9 Aug 2024 13:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723210545; cv=none; b=Juj7biLHohAKaUuH+PfgsagMr+Sd0gwTOSfT/Y61cCXoSLtTiZPy/+unOyKguhDKYMALNjAqmfu1DNJcwPkU5FiyWJ6rOQpvV7AKQXxj9LrmpFStAJ7hfx3Q1x25KbjlLyNN7SCGnna3CGIVtkjX9Le2DgS1Ib36gLEc7EFzgCs=
+	t=1723210608; cv=none; b=Lbc6WquMkYx9iSAt5fkmJRzEyu/Eh6KuYnH3+bs5LRTDxlGSgy+vEYOsBcrFVpU12VAUf+UJ8Kd19m8gOeiZge64hE+EH1JJ9obzlQskHSPkLx3/hFo3hSopK3ZkNGskzAYirXwFJZJCDA31eGgRskT59oQcPmYlKW2ZmDvK158=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723210545; c=relaxed/simple;
-	bh=EBC7MeI1K5dcDrlovVZkAUqFvht/y52GH6cUeUWaSlY=;
+	s=arc-20240116; t=1723210608; c=relaxed/simple;
+	bh=qbki987gaYsmofTdGaOrSNO/2m7rpUZOrujXQCXht1w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZPjoCJrtVy9O4YAKFiuOej0ISgIUY0vqYSMjTLGC16bELugjnGBwHLsaAWRsWSRxfj0HgARct5XHEcWq9Q+9XJQ0b926kev4vQPoG3JQhdbsPWL86bowIl0gJoyuBQFcJFZduJLfbiP4LZwPCyAaBgZu1SmCM0Uvwqtnq0feB4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KlLb1G/d; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=EBC7
-	MeI1K5dcDrlovVZkAUqFvht/y52GH6cUeUWaSlY=; b=KlLb1G/d7TIIK7WZQBPE
-	9gC1fBbDBtLCk84At96HajLjkVjZmplOQPDghpGF9DGY25w847AY52C86XsbsIuf
-	kYKTUcYf+tq/zC9o6To4tKxlPXRqZC+RqnFrYZzvO9xUZWYJ3z/DApj6opQnK2Me
-	w4Vpdi/8ia8qXK1wnhO9BjcrZFjsooIzcyDTn8MPnHyF9Q72AoFg0ysqnRSgyKKT
-	Spiv8PQapbrvml4kxSRtYZavyPHHrpteg416+JN/cjKtmwIiWF47/ZYz1yqzF4Ku
-	LViKPsi2INW19qRJ40XCsmV/ru+ffWrY/ZSLHIXeXpPmjas7XWzbi4pZcb2qqfLF
-	/A==
-Received: (qmail 625080 invoked from network); 9 Aug 2024 15:35:41 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Aug 2024 15:35:41 +0200
-X-UD-Smtp-Session: l3s3148p1@0+AmOEAfRIoujnvj
-Date: Fri, 9 Aug 2024 15:35:40 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 05/11] i2c: riic: Add suspend/resume support
-Message-ID: <ZrYbLDnvdJE1RYf6@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	claudiu beznea <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
- <20240711115207.2843133-6-claudiu.beznea.uj@bp.renesas.com>
- <ZrTg-_Tzmu6whv_W@shikoro>
- <8359caf0-5219-47dc-b68b-41486757be92@tuxon.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R56B5Sqj5UTTRJW9T55IpGJaZ//voXLd6dT0KzlR1+BVZDXSpr6qmg4ct9ECnEvkQ4PVGYhPEhY7wf7owyzifY8GuoU+c60b2uS827Sh7AJ8QAl3MtWY7nZ+KKxRbXXat4znlk3y4drDmJ7AUoL4JDuk3MSd1nwryQPyZl1uYYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0P2qDVO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996E0C32782;
+	Fri,  9 Aug 2024 13:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723210608;
+	bh=qbki987gaYsmofTdGaOrSNO/2m7rpUZOrujXQCXht1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z0P2qDVONXxvOeB7wDiYJ+x5raP/IoD8prvxqS5xCi1b77IL5lpzGbtSVQMntbMgw
+	 g0L9IyHWLojoOpssXX/AG0jmlZKOq46rDBgZYFCoq11v43yVN5dkTra3+Kq5ZeM1Hn
+	 MOo6/gGFxEC/CVqFLcXBOeLJE7LhqC3zXqpsvg0Ua+tk4T17JWq/MVsyMUqD9FS4Q4
+	 7FY+56yJyMqHf18y6Pj6UdnejnVLkw03Rdt+K7FKWRshPbxY1MTUqjq7G5XZTa2s3t
+	 GCHUQdKbABG52APNgm4S9trksTnKxYkxQ1bcJgOh94PtTT7mYSsxhniFiLLvy53/dz
+	 tVznqBS7/pnBQ==
+Date: Fri, 9 Aug 2024 10:36:45 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Zixian Cai <fzczx123@gmail.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Ben Gainey <ben.gainey@arm.com>, Paran Lee <p4ranlee@gmail.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] perf script python: Add the ins_lat field to event
+ handler
+Message-ID: <ZrYbbZVE4BQ-oqba@x1>
+References: <20240809080137.3590148-1-fzczx123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="X4x3yYV3EHzm5Xi8"
-Content-Disposition: inline
-In-Reply-To: <8359caf0-5219-47dc-b68b-41486757be92@tuxon.dev>
-
-
---X4x3yYV3EHzm5Xi8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240809080137.3590148-1-fzczx123@gmail.com>
 
+On Fri, Aug 09, 2024 at 08:01:36AM +0000, Zixian Cai wrote:
+> For example, when using the Alder Lake PMU memory load event, the
+> instruction latency is stored in ins_lat, while the cache latency
+> is stored in weight.
+> 
+> This patch reports the ins_lat field for Python scripting.
 
-> I just checked it on next-20240809. It should be due to commit
-> e1571b1fb4ff ("i2c: riic: reword according to newest specification")
-> which introduced changes around riic_algo object, present also in the diff
-> of this patch.
+So, how did you test this? I tried:
 
-Ah, okay, this patch is the culprit. I wonder, though, because it is
-already in 6.11-rc1 which was the base for my test. But you need to
-resend anyhow...
+Committer testing:
 
-> In case riic_init_hw() fails there is no recovering way for this driver,
-> AFAICT, and thus there is no point in keeping the reset signal de-asserted.
+On a Rocket Lake Refresh Intel machine (14th gen):
 
-Right. If it fails in resume(), then the driver will still not be removed.
+  root@number:~# grep -m1 'model name' /proc/cpuinfo
+  model name    : Intel(R) Core(TM) i7-14700K
+  root@number:~# perf mem record -a sleep 5
+  Memory events are enabled on a subset of CPUs: 16-27
+  [ perf record: Woken up 85 times to write data ]
+  [ perf record: Captured and wrote 41.236 MB perf.data (191390 samples) ]
+  root@number:~# perf evlist -v
+  cpu_atom/mem-loads,ldlat=30/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x1f
+  cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, precise_ip: 3, sample_id_all: 1
+  dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|CPU|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
+  root@number:~#
 
+Now generate a python script to then dump the dictionary that now needs
+to have that 'ins_lat' field:
 
---X4x3yYV3EHzm5Xi8
-Content-Type: application/pgp-signature; name="signature.asc"
+  root@number:~# perf script --gen python
+  generated Python script: perf-script.py
+  root@number:~# vim perf-script.py
+  root@number:~# perf script -s perf-script.py | head -40
+  in trace_begin
+  in trace_end
+  root@number:~# vim perf-script.py
 
------BEGIN PGP SIGNATURE-----
+But now the perf-script.py doesn't have a handler for the events and I
+got just:
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma2GywACgkQFA3kzBSg
-KbZ0JQ//d/v2U22q45isu3+SVzCcfLPB2W/H3AOEYevA2fe05W8xxMQHRfiZKKAQ
-4aJRcBbrjPJjql8FtPRj+s6gTMrq7NB6Vg4291dEs5C3UnyhOs/Dhz85rXKTqtSL
-WSvza+cio+Lc9lmJBnkcvplW67jN7t1Z0t/bWiM3Gm0WCDYx5gXj8E0Dd04Sp0mj
-vi4LQsGNXBFYgnrBB2Xi6aiHl7IBlYzBbTMkfEkY4J8h3SYbMr35n7QTr09+Xa6Y
-xKGKF5BNRIl8H1m7GAIQSUxRd1xGUPbrmCW7BRLrJ+WktgzOzFeN9TY0O4UzB+j/
-hYhwNbmdezO3KBUQKy4wPzN0clvpPBZWA8GVoPuJ6t3ltgO6wZwuCUUwym+VnSPf
-warCBrmk6Ri1qVWk37+1wJ3TcB4BGQekTXGy83X8khysY/G94cBx3Fk0AsCcgOBl
-JJNwLETr8+sdmkmIkl0SgdnFdYAwIGMWT77sYIr/6x6KR2jzgxufZfEj5QVd8iRG
-R52dxFve8X80RSvMvbvfoTpCRqxGSTsFjsNN2GUy0o1oDLyuu5uxObvet4slSBQ6
-mW9tHFhztPcTFEUJZy6RRUK+4zuNyk+p/U2bMcYmS+NTUZTW3JxtyGY84HFoiMgr
-espbtXyLVkZaugUVkwu1peL8h4vqiz69z3W8C+QOKDUEPGJADKk=
-=iWw/
------END PGP SIGNATURE-----
+  root@number:~# perf script -s perf-script.py 
+  in trace_begin
+  in trace_end
+  root@number:~# perf evlist 
+  cpu_atom/mem-loads,ldlat=30/P
+  cpu_atom/mem-stores/P
+  dummy:u
+  root@number:~# perf report -D | grep PERF_RECORD_SAMPLE | wc -l
+  5857
+  root@number:~#
 
---X4x3yYV3EHzm5Xi8--
+So now I'm investigating if this is some 'perf script' script generation
+oddity by trying to run this on an AMD machine, non-hybrid...
+
+But in general try to provide the steps to show that the functionality
+that you are adding is actually working, making it easy for other
+people to try reproducing your results.
+
+Thanks,
+
+- Arnaldo
+ 
+> Signed-off-by: Zixian Cai <fzczx123@gmail.com>
+> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+> ---
+> v4) reformat commit message for max line length
+> v3) address review comments
+> v2) rebase on top of perf-tools-next
+> 
+>  tools/perf/util/scripting-engines/trace-event-python.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+> index fb00f3ad6815..6971dd6c231f 100644
+> --- a/tools/perf/util/scripting-engines/trace-event-python.c
+> +++ b/tools/perf/util/scripting-engines/trace-event-python.c
+> @@ -888,6 +888,8 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
+>  	set_sample_read_in_dict(dict_sample, sample, evsel);
+>  	pydict_set_item_string_decref(dict_sample, "weight",
+>  			PyLong_FromUnsignedLongLong(sample->weight));
+> +	pydict_set_item_string_decref(dict_sample, "ins_lat",
+> +			PyLong_FromUnsignedLong(sample->ins_lat));
+>  	pydict_set_item_string_decref(dict_sample, "transaction",
+>  			PyLong_FromUnsignedLongLong(sample->transaction));
+>  	set_sample_datasrc_in_dict(dict_sample, sample);
+> @@ -1317,7 +1319,7 @@ static void python_export_sample_table(struct db_export *dbe,
+>  	struct tables *tables = container_of(dbe, struct tables, dbe);
+>  	PyObject *t;
+> 
+> -	t = tuple_new(27);
+> +	t = tuple_new(28);
+> 
+>  	tuple_set_d64(t, 0, es->db_id);
+>  	tuple_set_d64(t, 1, es->evsel->db_id);
+> @@ -1346,6 +1348,7 @@ static void python_export_sample_table(struct db_export *dbe,
+>  	tuple_set_s32(t, 24, es->sample->flags);
+>  	tuple_set_d64(t, 25, es->sample->id);
+>  	tuple_set_d64(t, 26, es->sample->stream_id);
+> +	tuple_set_u32(t, 27, es->sample->ins_lat);
+> 
+>  	call_object(tables->sample_handler, t, "sample_table");
+> 
+> --
+> 2.25.1
 
