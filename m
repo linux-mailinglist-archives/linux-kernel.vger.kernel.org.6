@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-280812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A040594CF84
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:50:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6688694CF88
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52A81C21858
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:50:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F403BB2297A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15F5194ACA;
-	Fri,  9 Aug 2024 11:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3621C194C6C;
+	Fri,  9 Aug 2024 11:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XpY5q/lv"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g85mnHiB"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946D0192B8A
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEB3192B9F
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723204156; cv=none; b=X6yaG8lkZOyrH4scs1TyDh/I7IlUyIpE3IxH2WVb6P7nQKQE6/SoXjztMiHKNYj01891mtsGcDbrjZmATjX5jubNXD7oCYlj73H3O+/g5jHLfkV31zXLihE2Hv3rnBkPVTEIxoX0pExAMQP7jWoq/YNNbSia0H9sv5H9DZMANr8=
+	t=1723204157; cv=none; b=pAz5Gn4Wf9iIGPrG8+XdUOI5kL6RHCIcdTw0IpZ+ljTdwzablKRYyukk0ecmHTP4Vdl17za3NLammkdlsrw/igjo/Nqw19bn+9E27XWtxCMV0mxpqB388urdPaBJyHeSKnUuXlMUxYdzxKatUIVJgD58V6615WiEF1WBZ1dbNxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723204156; c=relaxed/simple;
-	bh=SzZoS9g7jt+luDGgY5b8GrGZZk7RG0DnODBwUGbdsd4=;
+	s=arc-20240116; t=1723204157; c=relaxed/simple;
+	bh=ILver/yjQFclHBCvNLc3z4GjK/nbM+kDF5WFxwHYofI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T7bPC7z/ZhQIdPVpUzwkil/cVSgWCHssPGPzYcs2423a52j8actNwxjGzAnwj/YX8bgp9yEQAtkXd2IFWKGhA6khBbn1y/Y7Hw5FYnxWOMlqlVrd5wtPMQYlTOyMgvnBKH6Pk0VZYaQBSYq6j4Ppa2ZPKgb/2nSgBtlkWOb63U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XpY5q/lv; arc=none smtp.client-ip=192.198.163.13
+	 MIME-Version; b=RbHbpfcZzD/Weil/bm5XhX7DdOBgLyVDXkSNT793bvrakb32y9yrnsVT07VAegaI2Syc4ZUKpeb1jeveMaCa7EzMsOvNhLgl7sdpcCLsPpM2imreKpi0R9GCXtz+Q3o+HEnHayYVSraniary6FND2PXlpZsz48x+OmJt/Zsxp1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g85mnHiB; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723204155; x=1754740155;
+  t=1723204156; x=1754740156;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=SzZoS9g7jt+luDGgY5b8GrGZZk7RG0DnODBwUGbdsd4=;
-  b=XpY5q/lvLIfXTa6Wjfk0fuBdqvwY/gJHiwVKToKC7D9oHS0WuvvBN1Vc
-   q9MvWq719FtxPnM8FliYTjTB/UeaEkdr5HBdnzPIbJvfHcWIkUTQup6wq
-   zevXzTHRAKx7edtdR8iXP95x35U/OmDc/i33quBCAAI5JyDR6g/iujkIH
-   dk/mzpaZpzqyySN+OIpFuVpEfaTuFqW4GKBAXuMaEF4AdnheAe71ENXdg
-   qp4m3zjVOomXj5wyWAZXjLlOQA0wiP9jTFqozd2yKCY4bbyVKCnaN71zX
-   Bv12LdJx/zl4M8V5rBNqunQJjps5tnXzNR75hbPwYFKH065dJQm2mDJSe
+  bh=ILver/yjQFclHBCvNLc3z4GjK/nbM+kDF5WFxwHYofI=;
+  b=g85mnHiBzs05n7S66jRLg1V/e1s5mjTZVfrf/h7b0ps9PWzJ+e3D88c9
+   JROqYDOEfYNhxhBDscMPLna0zgbbKmIy//XRxI/TMS7VOEzK/mV7Ta3FC
+   cdm4v3QKRsW5Zpr2IKF67FUd+1gQowDjKp+fNYSf8rF44BNyuwAogAwEv
+   z7PMcnpS0DothF8H/Cr+RIXg4ngVTrECJhbRB1oxQJK9pJBcETAQSDi2L
+   PIDVqErIOZoMHouin1FTchY2VZQXwD3tO5LM3l/hnFpqatt+I8kss2tWE
+   Vlz6eHKUbrz2zbRlRNCbnlkRr/mjcn54VQWPKQjAHx3GtW75hOzvHZOkP
    w==;
-X-CSE-ConnectionGUID: 1BxHH9LhQv+r+4stuSyOtw==
-X-CSE-MsgGUID: P1JkqN6yQACHvMeTZg7Q/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="24280336"
+X-CSE-ConnectionGUID: mRO+uun/S2qf1OrhWEtWPQ==
+X-CSE-MsgGUID: T+ztNsdRTCmH74M35Iy65w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="24280359"
 X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="24280336"
+   d="scan'208";a="24280359"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:49:12 -0700
-X-CSE-ConnectionGUID: qoa/OEsTQqCUYKdEPPPs8A==
-X-CSE-MsgGUID: RsezZjkdSHGI0vZgO7toSg==
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:49:14 -0700
+X-CSE-ConnectionGUID: 4fzhaZ4JR7yaZMFTdxS2Bg==
+X-CSE-MsgGUID: I64npLpmRJC+ZULq1pND6Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="57423606"
+   d="scan'208";a="57423633"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 09 Aug 2024 04:49:07 -0700
+  by orviesa010.jf.intel.com with ESMTP; 09 Aug 2024 04:49:10 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 6624DA14; Fri, 09 Aug 2024 14:49:02 +0300 (EEST)
+	id 726E7A56; Fri, 09 Aug 2024 14:49:02 +0300 (EEST)
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	"Borislav Petkov (AMD)" <bp@alien8.de>,
@@ -72,9 +72,9 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 6/8] mm: Add a helper to accept page
-Date: Fri,  9 Aug 2024 14:48:52 +0300
-Message-ID: <20240809114854.3745464-7-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 7/8] mm: page_isolation: Handle unaccepted memory isolation
+Date: Fri,  9 Aug 2024 14:48:53 +0300
+Message-ID: <20240809114854.3745464-8-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240809114854.3745464-1-kirill.shutemov@linux.intel.com>
 References: <20240809114854.3745464-1-kirill.shutemov@linux.intel.com>
@@ -86,110 +86,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Accept a given struct page and add it free list.
+Page isolation machinery doesn't know anything about unaccepted memory
+and considers it non-free. It leads to alloc_contig_pages() failure.
 
-The help is useful for physical memory scanners that want to use free
-unaccepted memory.
+Treat unaccepted memory as free and accept memory on pageblock
+isolation. Once memory is accepted it becomes PageBuddy() and page
+isolation knows how to deal with them.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: David Hildenbrand <david@redhat.com>
 ---
- mm/internal.h   |  8 ++++++++
- mm/page_alloc.c | 53 +++++++++++++++++++++++++++++++++++--------------
- 2 files changed, 46 insertions(+), 15 deletions(-)
+ mm/page_isolation.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 1159b04e76a3..ff47d57733ad 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1431,4 +1431,12 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
- 	unsigned long new_addr, unsigned long len,
- 	bool need_rmap_locks, bool for_stack);
- 
-+#ifdef CONFIG_UNACCEPTED_MEMORY
-+void accept_page(struct page *page);
-+#else /* CONFIG_UNACCEPTED_MEMORY */
-+static inline void accept_page(struct page *page)
-+{
-+}
-+#endif /* CONFIG_UNACCEPTED_MEMORY */
-+
- #endif	/* __MM_INTERNAL_H */
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index e7e304d9e739..f0610c691ae5 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6980,11 +6980,46 @@ static bool page_contains_unaccepted(struct page *page, unsigned int order)
- 	return range_contains_unaccepted_memory(start, PAGE_SIZE << order);
- }
- 
-+static void __accept_page(struct zone *zone, unsigned long *flags,
-+			  struct page *page)
-+{
-+	bool last;
-+
-+	list_del(&page->lru);
-+	last = list_empty(&zone->unaccepted_pages);
-+
-+	account_freepages(zone, -MAX_ORDER_NR_PAGES, MIGRATE_MOVABLE);
-+	__mod_zone_page_state(zone, NR_UNACCEPTED, -MAX_ORDER_NR_PAGES);
-+	__ClearPageUnaccepted(page);
-+	spin_unlock_irqrestore(&zone->lock, *flags);
-+
-+	accept_memory(page_to_phys(page), PAGE_SIZE << MAX_PAGE_ORDER);
-+
-+	__free_pages_ok(page, MAX_PAGE_ORDER, FPI_TO_TAIL);
-+
-+	if (last)
-+		static_branch_dec(&zones_with_unaccepted_pages);
-+}
-+
-+void accept_page(struct page *page)
-+{
-+	struct zone *zone = page_zone(page);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&zone->lock, flags);
-+	if (!PageUnaccepted(page)) {
-+		spin_unlock_irqrestore(&zone->lock, flags);
-+		return;
-+	}
-+
-+	/* Unlocks zone->lock */
-+	__accept_page(zone, &flags, page);
-+}
-+
- static bool try_to_accept_memory_one(struct zone *zone)
- {
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index 042937d5abe4..39fb8c07aeb7 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -152,6 +152,9 @@ static int set_migratetype_isolate(struct page *page, int migratetype, int isol_
  	unsigned long flags;
- 	struct page *page;
--	bool last;
+ 	unsigned long check_unmovable_start, check_unmovable_end;
  
++	if (PageUnaccepted(page))
++		accept_page(page);
++
  	spin_lock_irqsave(&zone->lock, flags);
- 	page = list_first_entry_or_null(&zone->unaccepted_pages,
-@@ -6994,20 +7029,8 @@ static bool try_to_accept_memory_one(struct zone *zone)
- 		return false;
- 	}
  
--	list_del(&page->lru);
--	last = list_empty(&zone->unaccepted_pages);
--
--	account_freepages(zone, -MAX_ORDER_NR_PAGES, MIGRATE_MOVABLE);
--	__mod_zone_page_state(zone, NR_UNACCEPTED, -MAX_ORDER_NR_PAGES);
--	__ClearPageUnaccepted(page);
--	spin_unlock_irqrestore(&zone->lock, flags);
--
--	accept_memory(page_to_phys(page), PAGE_SIZE << MAX_PAGE_ORDER);
--
--	__free_pages_ok(page, MAX_PAGE_ORDER, FPI_TO_TAIL);
--
--	if (last)
--		static_branch_dec(&zones_with_unaccepted_pages);
-+	/* Unlocks zone->lock */
-+	__accept_page(zone, &flags, page);
+ 	/*
+@@ -367,6 +370,11 @@ static int isolate_single_pageblock(unsigned long boundary_pfn, int flags,
+ 		VM_BUG_ON(!page);
+ 		pfn = page_to_pfn(page);
  
- 	return true;
- }
++		if (PageUnaccepted(page)) {
++			pfn += MAX_ORDER_NR_PAGES;
++			continue;
++		}
++
+ 		if (PageBuddy(page)) {
+ 			int order = buddy_order(page);
+ 
 -- 
 2.43.0
 
