@@ -1,161 +1,186 @@
-Return-Path: <linux-kernel+bounces-281337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A9A94D5AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0BE94D5AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0AB41F21B42
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD321C21517
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B55E143C7E;
-	Fri,  9 Aug 2024 17:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B71145FE0;
+	Fri,  9 Aug 2024 17:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iCRn8VOj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXnV+S6E"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B16A321A3
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 17:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCFB1CA94;
+	Fri,  9 Aug 2024 17:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723226020; cv=none; b=RVBpxD78QZdSlw3Z5lJSRm24UUJNxfJ6io2rgMqgvq+yg8tgk8rXqnf8GBAYP5HeW0fv977S+7PAqjrRtSY4bDjwyXfm6bms3E6Hk6XTs6zXoUPIE8oufCm0wOdbrgYWM1l1XBgS0jYAx6U30G5sOkbTbVNulthqCsB7OG6A9g8=
+	t=1723226061; cv=none; b=hh3QuE9NmJGYdIN8B+HjhhfOAA59x/GFU1kDDOae8KPoXa6KYN+GstwgaO5VgMcd6LqKF2+BNRGcZZUX+chdZbIfzi4Cw241pFFRRIccDjTtKkOMrkQlJHruwhPGrkQ7GzBZARPV8mEApMmPFsRDKETkpJiCIw77rg4rHWvbXJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723226020; c=relaxed/simple;
-	bh=7Sn5zTLeILz79ErK8b/F1DbmZgWmp91sN0qPXv3ZHh4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mOg5aO+s/9JNStPKtsuIwxpQmbxC6HKVICSm7IaKH3KLPrxyfQ+HzCJ7/sqkzQzt0Njwv/QkUZaLwH7x+dF+f7QFa0rsu+M81Sz+sfeQeKwyb4A1k7a851oERRi8c4QRQZwTTHnsUSVnxI8Fhq2BEFGk8B/y5E3nauCAGfKhiSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iCRn8VOj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723226017;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=noMRONJmEnphGIGG6XXEoyySIPmdg6oUrywJynfzqkw=;
-	b=iCRn8VOjHkR7kXXucNvavB36bntAq1rh3Klx9QtrjrPvC1g0ZFY6ncStgGsABFcT7XRo+7
-	k98gSFbrWcjBGkEqnt/Rb5WWWGb7LYhl/qaTdEARmnOL7b57aFh65jZE5TFTM/yJcgUlBk
-	3PZrXPkD9U7Xjjw+eS9NLXk/4iahosw=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-615-_qeuBfg6Nm-5iEdUeJDn7Q-1; Fri, 09 Aug 2024 13:53:35 -0400
-X-MC-Unique: _qeuBfg6Nm-5iEdUeJDn7Q-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b7abcdbb42so46789636d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 10:53:35 -0700 (PDT)
+	s=arc-20240116; t=1723226061; c=relaxed/simple;
+	bh=w9dwPrdglNjb4CJuuomMjEb9PTsCXrE6sDFhrWPwxbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOKwKi+iutcS8YAhYFJPLAGjvsABfcZ+cMXp64uOw53jC0Hw6q9duV60w6u7V4zQT6qHcMMlHl2mpkuXYP/CnYFtmev8fw4SiMYbhMpEepjRvMVG5U0U3RM16yUI99VVB1kiE54oZqA5dZRKoKm88XmrV0tDA5RFR90TFIc/hJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXnV+S6E; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc569440e1so21670365ad.3;
+        Fri, 09 Aug 2024 10:54:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723226059; x=1723830859; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=i79kJL7es86O5bR3t8PxNT/TfJeYLRkUdgp0cZ8YJDQ=;
+        b=HXnV+S6EW6Hv4B2VTlkxbFrPTbJF5HcrFJAFzYwCm2sOQuVkIPdMhIkD/UqzDAju96
+         tRX21ZhWigu7p78DN3gpQLeJUjf7mwPuyqobpInl8e35XFTe7QfAPhzoor6huYccemE9
+         dXOFIIFEcsLd/amI6q1heHgbQbNDU1awY4dvc7inW3eowB+G8j8xwI1TfI6wgeeUGowK
+         fxHXFWXhvitiQ1HfwEju5VHrrF/DPC3K7ytSfUZQRooY65UPcmEXJ0LYwZ65s9OSWGHk
+         NC+K2hifqqWP91u+HLNpQR4CLzVbIByY3bBBLP8pVBp+IwNKIlpfZDCDOY0fkFk86o5w
+         cKUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723226015; x=1723830815;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=noMRONJmEnphGIGG6XXEoyySIPmdg6oUrywJynfzqkw=;
-        b=VZ0LvwTkkv/lFzs2zM0a1/JvmCdlaLwQ0nGD8uEPHF3+/OgWZRDIeRUIq+RFpn7v9s
-         J2sowP+GEp4MwfvOHqokv48GcLpYgY/Lmh4Jm6p6uJx3zyPpyp0mdlfqJULzbQ7Mlhwb
-         Z64OtKjLQg7HPxiR7xGZGOioynd3g3C1qcCH0H3rQWOY6YBn+cDpU6Erm51OjpizXS69
-         WqCk1ab8BgItTWUtOlRcGkqtggtL2WH02wTNjCAyLQsJ0yk/kObUaJtn8lDVPbY5TNC4
-         Ydzu4c8kycH8v9d3uABop3X907SFHT09iEI2mBwUCFEcxLbalNPJVmwLQ7wNlr44unBO
-         iXxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYN+f8jplBYKY1j5lI4/9LCwOsN+6OjFqODfrILvHdd4FcAS0UCdbat1jE7q6g96Sur5ZiX5lFxH9zVB/3WCxY7QUQmPYpKIquh9LX
-X-Gm-Message-State: AOJu0Yxx2YrwQnxRIp4E+ktG6sckgd2y6MukX8JyPrTdYuK1uMbHTl1H
-	J5ZTjvDSyWMG4Yl6/v38M1ZQMSgWnFFRcb48SJV/eMSDeagDAIJEyuxLT58yjpijQMy6BRrMcz5
-	JXyyq0fWPrQ9NSDOLg7f2pyzHKX19Xk4Q1jBbkyWlK2Hkyk2bPsd3enagjmwSog==
-X-Received: by 2002:a05:6214:3987:b0:6b5:81ac:6b84 with SMTP id 6a1803df08f44-6bd79b628ebmr35449246d6.14.1723226015089;
-        Fri, 09 Aug 2024 10:53:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH9OGtq7qQAsDR9pVVwwXR0QjSLhgmC6ppwwOV1ZYvAe5OWF9se9U79Zo0q8ynY3kCnoAc//Q==
-X-Received: by 2002:a05:6214:3987:b0:6b5:81ac:6b84 with SMTP id 6a1803df08f44-6bd79b628ebmr35448836d6.14.1723226014706;
-        Fri, 09 Aug 2024 10:53:34 -0700 (PDT)
-Received: from fionn ([142.189.102.234])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82c5fa95sm298906d6.6.2024.08.09.10.53.33
+        d=1e100.net; s=20230601; t=1723226059; x=1723830859;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i79kJL7es86O5bR3t8PxNT/TfJeYLRkUdgp0cZ8YJDQ=;
+        b=e4Cj93V3FQ4DmfOPcwQfrcpqPvFnSKmXY3MpsEg8C64lk20lFOZVLIeVsfjceH6iYs
+         lTaS3WnlXj1ndWTS6mie1jDqGcIhvuRy95f7LinskpReXvWow80Iw9MDhL68KGquPb76
+         BYnuOnQuP/DYTPtE9uHWJP6zKl0n/hpFansOiLVPmgusnquLW8ZdgC3f+xHqGSKd/cNL
+         SAHMiWLo2JKslpn2vjFe9asfE5IMlNMDoIrplCSuDFbcGtkFJOaU63Fu5dZJVvqqieKh
+         OzflKltsoXMHfVDEf4XyQtC8zQcmpt7YNxcV3gFb44FYxLw7O9SMuxtZW5mNp1Z3l9Gs
+         g2YA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGarJA/qCvhunQfAxX4MJsOUict2xOPXiQxn1ARjvK1APvcWMaShlPexKeFtgjDyZJfdgYhVTa2xJRaSziBl/fJLdcQnVUf/he8jl8hRhAlAHRrhw9Tr+WFYdiKblVjj6Pt8jfApXU/QHIrJ7/EAUhXlHBPfWXTC3yR3OBFFhyp0YZzbAd4l0nGQ6X
+X-Gm-Message-State: AOJu0YweE/d+zQKGY/ApWKBJHZUStdEvFdf5aYk3F/AAyWFIvv9iDNAS
+	c83CwhovPXjyBNOLJjZBmDasFquJyCNjwxSr9zdmdU+OBm/SRXMO
+X-Google-Smtp-Source: AGHT+IF6TgRVbkkS/8fWCgztwP8ah68LpZDibl4Zah5cJzKVfLC4DTZHFu319cogK1EsbydUK/ROvw==
+X-Received: by 2002:a17:902:d2ce:b0:1fd:9d0c:9996 with SMTP id d9443c01a7336-200ae589d28mr29785955ad.35.1723226059245;
+        Fri, 09 Aug 2024 10:54:19 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bba3ffc7sm300555ad.244.2024.08.09.10.54.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 10:53:34 -0700 (PDT)
-Date: Fri, 9 Aug 2024 13:53:33 -0400 (EDT)
-From: John Kacur <jkacur@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-cc: Dan Carpenter <dan.carpenter@linaro.org>, 
-    Daniel Bristot de Oliveira <bristot@kernel.org>, 
-    "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>, 
-    Clark Williams <williams@redhat.com>, linux-trace-kernel@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rtla/osnoise: prevent NULL dereference in error
- handling
-In-Reply-To: <20240809134133.751723e5@gandalf.local.home>
-Message-ID: <7ece353a-36a6-6154-97d9-b255728b9807@redhat.com>
-References: <f964ed1f-64d2-4fde-ad3e-708331f8f358@stanley.mountain> <c73c51ae-99da-793a-6dcb-2fbc6871261d@redhat.com> <20240809134133.751723e5@gandalf.local.home>
+        Fri, 09 Aug 2024 10:54:18 -0700 (PDT)
+Date: Fri, 9 Aug 2024 11:54:16 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
+	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect
+ restriction
+Message-ID: <ZrZXyGLYSMnpMBfS@tahera-OptiPlex-5000>
+References: <cover.1722570749.git.fahimitahera@gmail.com>
+ <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
+ <20240803.iefooCha4gae@digikod.net>
+ <20240806.nookoChoh2Oh@digikod.net>
+ <CAG48ez2ZYzB+GyDLAx7y2TobE=MLXWucQx0qjitfhPSDaaqjiA@mail.gmail.com>
+ <20240807.mieloh8bi8Ae@digikod.net>
+ <CAG48ez3_u5ZkVY31h4J6Shap9kEsgDiLxF+s10Aea52EkrDMJg@mail.gmail.com>
+ <20240807.Be5aiChaf8ie@digikod.net>
+ <ZrVR9ni4qpFdF0iA@tahera-OptiPlex-5000>
+ <20240809.gooHaid7mo1b@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240809.gooHaid7mo1b@digikod.net>
 
-
-
-On Fri, 9 Aug 2024, Steven Rostedt wrote:
-
-> On Fri, 9 Aug 2024 13:34:28 -0400 (EDT)
-> John Kacur <jkacur@redhat.com> wrote:
-> 
-> > On Fri, 9 Aug 2024, Dan Carpenter wrote:
-> > 
-> > > If the "tool->data" allocation fails then there is no need to call
-> > > osnoise_free_top() and, in fact, doing so will lead to a NULL dereference.
+On Fri, Aug 09, 2024 at 10:49:17AM +0200, Mickaël Salaün wrote:
+> On Thu, Aug 08, 2024 at 05:17:10PM -0600, Tahera Fahimi wrote:
+> > On Wed, Aug 07, 2024 at 04:44:36PM +0200, Mickaël Salaün wrote:
+> > > On Wed, Aug 07, 2024 at 03:45:18PM +0200, Jann Horn wrote:
+> > > > On Wed, Aug 7, 2024 at 9:21 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > On Tue, Aug 06, 2024 at 10:46:43PM +0200, Jann Horn wrote:
+> > > > > > I think adding something like this change on top of your code would
+> > > > > > make it more concise (though this is entirely untested):
+> > > > > >
+> > > > > > --- /tmp/a      2024-08-06 22:37:33.800158308 +0200
+> > > > > > +++ /tmp/b      2024-08-06 22:44:49.539314039 +0200
+> > > > > > @@ -15,25 +15,12 @@
+> > > > > >           * client_layer must be a signed integer with greater capacity than
+> > > > > >           * client->num_layers to ensure the following loop stops.
+> > > > > >           */
+> > > > > >          BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
+> > > > > >
+> > > > > > -        if (!server) {
+> > > > > > -                /*
+> > > > > > -                 * Walks client's parent domains and checks that none of these
+> > > > > > -                 * domains are scoped.
+> > > > > > -                 */
+> > > > > > -                for (; client_layer >= 0; client_layer--) {
+> > > > > > -                        if (landlock_get_scope_mask(client, client_layer) &
+> > > > > > -                            scope)
+> > > > > > -                                return true;
+> > > > > > -                }
+> > > > > > -                return false;
+> > > > > > -        }
+> > > > >
+> > > > > This loop is redundant with the following one, but it makes sure there
+> > > > > is no issue nor inconsistencies with the server or server_walker
+> > > > > pointers.  That's the only approach I found to make sure we don't go
+> > > > > through a path that could use an incorrect pointer, and makes the code
+> > > > > easy to review.
+> > > > 
+> > > > My view is that this is a duplication of logic for one particular
+> > > > special case - after all, you can also end up walking up to the same
+> > > > state (client_layer==-1, server_layer==-1, client_walker==NULL,
+> > > > server_walker==NULL) with the loop at the bottom.
 > > > 
-> > > Fixes: 1eceb2fc2ca5 ("rtla/osnoise: Add osnoise top mode")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > ---
-> > >  tools/tracing/rtla/src/osnoise_top.c | 11 ++++-------
-> > >  1 file changed, 4 insertions(+), 7 deletions(-)
+> > > Indeed
 > > > 
-> > > diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
-> > > index f594a44df840..2f756628613d 100644
-> > > --- a/tools/tracing/rtla/src/osnoise_top.c
-> > > +++ b/tools/tracing/rtla/src/osnoise_top.c
-> > > @@ -651,8 +651,10 @@ struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
-> > >  		return NULL;
-> > >  
-> > >  	tool->data = osnoise_alloc_top(nr_cpus);
-> > > -	if (!tool->data)
-> > > -		goto out_err;
-> > > +	if (!tool->data) {
-> > > +		osnoise_destroy_tool(tool);
-> > > +		return NULL;
-> > > +	}
-> > >  
-> > >  	tool->params = params;
-> > >  
-> > > @@ -660,11 +662,6 @@ struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
-> > >  				   osnoise_top_handler, NULL);
-> > >  
-> > >  	return tool;
-> > > -
-> > > -out_err:
-> > > -	osnoise_free_top(tool->data);
-> > > -	osnoise_destroy_tool(tool);
-> > > -	return NULL;
-> > >  }
-> > >  
-> > >  static int stop_tracing;
-> > > --   
+> > > > 
+> > > > But I guess my preference for more concise code is kinda subjective -
+> > > > if you prefer the more verbose version, I'm fine with that too.
+> > > > 
+> > > > > > -
+> > > > > > -        server_layer = server->num_layers - 1;
+> > > > > > -        server_walker = server->hierarchy;
+> > > > > > +        server_layer = server ? (server->num_layers - 1) : -1;
+> > > > > > +        server_walker = server ? server->hierarchy : NULL;
+> > > > >
+> > > > > We would need to change the last loop to avoid a null pointer deref.
+> > > > 
+> > > > Why? The first loop would either exit or walk the client_walker up
+> > > > until client_layer is -1 and client_walker is NULL; the second loop
+> > > > wouldn't do anything because the walkers are at the same layer; the
+> > > > third loop's body wouldn't be executed because client_layer is -1.
+> > > 
+> > > Correct, I missed that client_layer would always be greater than
+> > > server_layer (-1).
+> > > 
+> > > Tahera, could you please take Jann's proposal?
+> > Done.
+> > We will have duplicate logic, but it would be easier to read and review.
+> 
+> With Jann's proposal we don't have duplicate logic.
+Still the first two for loops apply the same logic for client and server
+domains, but I totally understand that it is much easier to review and
+understand.
+> > > 
+> > > > 
+> > > > The case where the server is not in any Landlock domain is just one
+> > > > subcase of the more general case "client and server do not have a
+> > > > common ancestor domain".
+> > > > 
+> > > > > >
+> > > > > >          /*
+> > > > > >           * Walks client's parent domains down to the same hierarchy level as
+> > > > > >           * the server's domain, and checks that none of these client's parent
+> > > > > >           * domains are scoped.
+> > > > > >
+> > > > 
 > > 
-> > Although your fix appears to be correct, I wonder if it would be better to 
-> > create a second error label, such as out_destroy_tool: as described in 
-> > section 7 of the coding-style.rst
-> > 
-> 
-> There's no reason for that. It's the only error path. That is, nothing
-> would jump to the original out_err:
-> 
-> And for a single error, an if statement is good enough.
-> 
-> -- Steve
-> 
-> 
-
-Ah, right of course.
-Okay in that case, Signed-off-by: John Kacur <jkacur@redhat.com>
-(applied the patch, built and ran)
-
 
