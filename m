@@ -1,53 +1,52 @@
-Return-Path: <linux-kernel+bounces-281344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB0794D5D1
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3D894D5D2
 	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEE9E281A63
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:56:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A6231F2196C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4743177117;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C391662FD;
 	Fri,  9 Aug 2024 17:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RmfChdJq"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fGM0KsNv"
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A4013A260;
-	Fri,  9 Aug 2024 17:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E4A146D75;
+	Fri,  9 Aug 2024 17:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723226109; cv=none; b=DDRaRNs6XC5HstSQ8/N8eb5MEzzI+ac/qZTyh9Gl0jeregTOENY/KEyycYc3EGjW3TwFz1nI0vm3mBH3Cn/5s8TgUYxaJ7JQzMp2uQ3OAsVILk0861ITft98OMqoz8ViVpq2QHUS+ExtmnYB8+QQFr7E6miKAa1GBQPeNWreikM=
+	t=1723226110; cv=none; b=pqSVsF24ywlg/dCNbg7ygEVMJnwfORASCnzspxpxI6DOhZ7nRfT9vXCKiwTosJY1CK85iC4Mrr8sG1yohURu8nyWcPEFaJkmkEh9JkKehecoCwzPDFOkXqMV7HYKiEuYY0nkqpZt6Ritn49iYq49ik+VK9YcYzj8IZI1Figv4Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723226109; c=relaxed/simple;
-	bh=ic2La7o17seVheB1q+5Kf/polYpqYSfSD6kqzqalc+I=;
+	s=arc-20240116; t=1723226110; c=relaxed/simple;
+	bh=AhOHZcHFLhSL/SNSeTwWn26rTi5yNCC7w7mnzl9aHqs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tuFt0kbk4P/6cjAqPR1/6y0AUwPszaRS4ke34I67y4RiUm/k1ZRA2gZa3DTt/WGnTz4CP87LNVb0fCAGJ/EF+ooVoKVYpgloIm7VUoklwXuWRsh8tWR01G+6Bpl14mxGrwDNv9b0PG5wvAcw4A4RQr6bpLQ0jPKL4O4Wwzuvbnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RmfChdJq; arc=none smtp.client-ip=217.70.183.199
+	 In-Reply-To:To:Cc; b=PD7IAaXrL0R/84b3Pvw8GmC5OWp0HIrRw7x1X939Ta217VUDdtqFlCGQNDPviDVKAWPXP7/Fqmg1mGkjdCOa8rJGMcqMCsiBnyW9PrNFOqAzgBWzeTMfdy0VKOUTEXOvGVFJCwGKEaeQ9D33YPd37BwDvIP2hleeo8cFTILOv0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fGM0KsNv; arc=none smtp.client-ip=217.70.183.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7FE96FF809;
-	Fri,  9 Aug 2024 17:55:04 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BD852FF80A;
+	Fri,  9 Aug 2024 17:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723226105;
+	t=1723226106;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/aaRiY9oMPPtXcg03bwF+5a8QEuOrg0mbmpGOcXWoNI=;
-	b=RmfChdJqQP4ZmU7D7sLjWKNXVWHP/adX2s7AhisICDzhik2ibIvx39RgMFeW34SfadlRDJ
-	7aVNg5e7yg2QN6OycYe1sNvEXtcNrilbK0Q6/a9Ru2/st+aTF7DvPhACT9/kaDO+xkG4O8
-	M+p7Ya+39t3rNSjFA935eY5+YkNE7r6qZ12r2QN6vnNlCAAnvRcgaoGSUPfR01bI/lNGYp
-	EHPn/ijJehczUWdO/oR2GZOFHcDl5HK0SDCRxodLVnXOATY9ZhiK+j4fc+e7S3/DFyvTiy
-	0QiOcgMHAMb8Jc2C0JigwqCjGD/93dguYwd7qEbQ5pZxWQPAkcAGlNtKoBusFw==
+	bh=FrnenMs4+vfuk/PPEh+bEwrxicStFC0nt8CsOgWwXy4=;
+	b=fGM0KsNvA1LnkhBmHmmKtROQHo6jdx0TLuFo5KCuyKi4HvIrpE3IAVFoU+YAOAYUnz7r2s
+	Bdzegzu91t7XQCb0onjtWK1rQNPDxgNPoU65HvqJgLg9sVU5imiXHA70pqdVT6ZxSgoi8e
+	cIVXB+oSAP/SFgPLJ+Y8rBg2oNU2ls///Nj5L0ZuVqhS0dlZ6VzSbvpllc+3Uqu3JnXChm
+	R8imnk1xJw+0a3DogzcKfcDF0y+RIy0uMuOb3DnDrD+6NUBWJz3XaZDbXogk65Xwd26Ra/
+	tTSXLkrP0O55UfL7nERYLCYJ0SkVJg7s6RHycsy+XrGQu35JCuRvsyTcZWjnbQ==
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Fri, 09 Aug 2024 19:54:48 +0200
-Subject: [PATCH v10 07/16] drm/vkms: Avoid computing blending limits inside
- pre_mul_alpha_blend
+Date: Fri, 09 Aug 2024 19:54:49 +0200
+Subject: [PATCH v10 08/16] drm/vkms: Introduce pixel_read_direction enum
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240809-yuv-v10-7-1a7c764166f7@bootlin.com>
+Message-Id: <20240809-yuv-v10-8-1a7c764166f7@bootlin.com>
 References: <20240809-yuv-v10-0-1a7c764166f7@bootlin.com>
 In-Reply-To: <20240809-yuv-v10-0-1a7c764166f7@bootlin.com>
 To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
@@ -72,121 +71,161 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  linux-doc@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
  miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
  seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>, 
- Pekka Paalanen <pekka.paalanen@collabora.com>
+ Louis Chauvet <louis.chauvet@bootlin.com>
 X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4075;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5166;
  i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=ic2La7o17seVheB1q+5Kf/polYpqYSfSD6kqzqalc+I=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmtlfqQuvLImmJ7oqhWfk7KmxlP0PME2ylsiXoS
- O5HAG6xKOqJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrZX6gAKCRAgrS7GWxAs
- 4n3DEAC9tPHcKrAGZ0Wc/Nj+vQB25CYNDlGQLd8zQBoXOvi3NHVt0WleiPj6+LS+/igGPMJv9qb
- h4l0YkZpq1lT3jruQfZUY9padFTjFIvMQwND8uv11i1OWqheHy28husmTaHVBH0vwWrBnDC6rc5
- oEj+mgbp5ExTwUbi8wRxl0Z+1REni+3bhd0l3Cqh82mPvxaf2/ciFVukVbnDB4Egb1ugPNGweub
- HtX4W2lFRWGM8HqyPR2CpDMBWQfHjwMxMgz59KefwSobxAXRi2vWVyU/8VbKehgFeeFby5v6Ywz
- glYFAIWk1jZhG20RyqNEWpOhjZhHBwHBEPG/e3Vm/R4bLMPKnn3CkN7VaXjFEIayqT4FoB16e8Z
- LcY4gOQ6iVWvT5k3I0VqonjyjjkO+XtJQQ8e0wcbhN505lQEO/Lb6+lpPgRrAe8LoWA7c3RbGvz
- ecmPIXtCp+Ie2MbSNCsq23o3LbGlvPcj5rtbepLITHMzYJozfeFmPQydOuirg5riMdps81rRw08
- 3qGrpKNyo7Gd2ctkHe5EkKoEJjwbq6YQHUVhTabNzOBWsQXql1nBDycrL1owXoDEy+Vlpz2bLh9
- ESihK85q12PU8c+ZnsjdCTgNhBuAuQeC/S4FDmwVDIzUlRwvuyGPq0FESZYT3b7ai8rhYdxsPU8
- IjAFNEvV0oyLN4w==
+ bh=AhOHZcHFLhSL/SNSeTwWn26rTi5yNCC7w7mnzl9aHqs=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmtlfqdEpljhc/EGxDEnAn7CegLZRI78bTucueo
+ ZdUKhoo5MeJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrZX6gAKCRAgrS7GWxAs
+ 4qqYD/0dUiKe6BJQRFN2YRnmhBt2kNe68U838hZ2Mf+iD9LhJPVEQzjhyXQ87Bmn32CTCtTDYAB
+ M/sK4HwsnqTUnd8E5egB6DVYOL+5uAPj90xXeQ5uLjeI9Tn7NgrekyGWQYLQ9O3GqJ6cXnrwFTs
+ Mjd/lxwRXylBHwviwxsPtMOtRkLHK7JFqV/tKibaA2cL0XWFMfru+y7eX2to6OV0cFSgTwPHH/l
+ yAbhS/YgE4IzI7DhkEWLeAQgDYPanyNNOwMv3m6Dgpd9JGUt+8+047ZUaCmaNdWFOyUGGCGG5Hi
+ Ynjo1XbJvhqOy0d78TR3uGd32ne0eUUvPOZEOxTB/JoIJPI0KKTSia358Fhn/QcPZAZNiXO+DCa
+ NMu3+y1p3Zr19BNmP4VfJPP7fawz8316ewchcmLrTBpjHRmQ2ALRug1DDOMb9KjnxkkURG1T5G3
+ k2f9xXcVgoi7ve8Ik/Q79ZWHlj1+Az92aUX4b98FVgQtUhzQMg1sU0Kbu8RbxlOroa3H2jf24gM
+ 9mCcMpG5vLEqcz5K0lz6xblxUIXlOdJc5Gq8cLCGusQlf7G6kjlL4uoWRXHh5214nbztL8HiRPQ
+ 7FhKfVAec/ar8WH9VG67hRD/wJtDK5fNq0cHIdr7IXM6tUEOid0OucHXZO3HHEgNTfl9cr6sYBn
+ 5HUTLnzGHy17wBA==
 X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
  fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
 X-GND-Sasl: louis.chauvet@bootlin.com
 
-The pre_mul_alpha_blend is dedicated to blending, so to avoid mixing
-different concepts (coordinate calculation and color management), extract
-the x_limit and x_dst computation outside of this helper.
-It also increases the maintainability by grouping the computation related
-to coordinates in the same place: the loop in `blend`.
+The pixel_read_direction enum is useful to describe the reading direction
+in a plane. It avoids using the rotation property of DRM, which not
+practical to know the direction of reading.
+This patch also introduce two helpers, one to compute the
+pixel_read_direction from the DRM rotation property, and one to compute
+the step, in byte, between two successive pixel in a specific direction.
 
-Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
 Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- drivers/gpu/drm/vkms/vkms_composer.c | 40 +++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 21 deletions(-)
+ drivers/gpu/drm/vkms/vkms_composer.c | 44 ++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_drv.h      | 11 +++++++++
+ drivers/gpu/drm/vkms/vkms_formats.c  | 32 ++++++++++++++++++++++++++
+ 3 files changed, 87 insertions(+)
 
 diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-index 931e214b225c..4d220bbb023c 100644
+index 4d220bbb023c..4ebeaf58fa75 100644
 --- a/drivers/gpu/drm/vkms/vkms_composer.c
 +++ b/drivers/gpu/drm/vkms/vkms_composer.c
-@@ -24,34 +24,30 @@ static u16 pre_mul_blend_channel(u16 src, u16 dst, u16 alpha)
- 
- /**
-  * pre_mul_alpha_blend - alpha blending equation
-- * @frame_info: Source framebuffer's metadata
-  * @stage_buffer: The line with the pixels from src_plane
-  * @output_buffer: A line buffer that receives all the blends output
-+ * @x_start: The start offset
-+ * @pixel_count: The number of pixels to blend
-  *
-- * Using the information from the `frame_info`, this blends only the
-- * necessary pixels from the `stage_buffer` to the `output_buffer`
-- * using premultiplied blend formula.
-+ * The pixels 0..@pixel_count in stage_buffer are blended at @x_start..@x_start+@pixel_count in
-+ * output_buffer.
-  *
-  * The current DRM assumption is that pixel color values have been already
-  * pre-multiplied with the alpha channel values. See more
-  * drm_plane_create_blend_mode_property(). Also, this formula assumes a
-  * completely opaque background.
-  */
--static void pre_mul_alpha_blend(struct vkms_frame_info *frame_info,
--				struct line_buffer *stage_buffer,
--				struct line_buffer *output_buffer)
-+static void pre_mul_alpha_blend(const struct line_buffer *stage_buffer,
-+				struct line_buffer *output_buffer, int x_start, int pixel_count)
- {
--	int x_dst = frame_info->dst.x1;
--	struct pixel_argb_u16 *out = output_buffer->pixels + x_dst;
--	struct pixel_argb_u16 *in = stage_buffer->pixels;
--	int x_limit = min_t(size_t, drm_rect_width(&frame_info->dst),
--			    stage_buffer->n_pixels);
--
--	for (int x = 0; x < x_limit; x++) {
--		out[x].a = (u16)0xffff;
--		out[x].r = pre_mul_blend_channel(in[x].r, out[x].r, in[x].a);
--		out[x].g = pre_mul_blend_channel(in[x].g, out[x].g, in[x].a);
--		out[x].b = pre_mul_blend_channel(in[x].b, out[x].b, in[x].a);
-+	struct pixel_argb_u16 *out = &output_buffer->pixels[x_start];
-+	const struct pixel_argb_u16 *in = stage_buffer->pixels;
-+
-+	for (int i = 0; i < pixel_count; i++) {
-+		out[i].a = (u16)0xffff;
-+		out[i].r = pre_mul_blend_channel(in[i].r, out[i].r, in[i].a);
-+		out[i].g = pre_mul_blend_channel(in[i].g, out[i].g, in[i].a);
-+		out[i].b = pre_mul_blend_channel(in[i].b, out[i].b, in[i].a);
+@@ -159,6 +159,50 @@ static void apply_lut(const struct vkms_crtc_state *crtc_state, struct line_buff
  	}
  }
  
-@@ -183,7 +179,7 @@ static void blend(struct vkms_writeback_job *wb,
- {
- 	struct vkms_plane_state **plane = crtc_state->active_planes;
- 	u32 n_active_planes = crtc_state->num_active_planes;
--	int y_pos;
-+	int y_pos, x_dst, pixel_count;
++/**
++ * direction_for_rotation() - Get the correct reading direction for a given rotation
++ *
++ * @rotation: Rotation to analyze. It correspond the field @frame_info.rotation.
++ *
++ * This function will use the @rotation setting of a source plane to compute the reading
++ * direction in this plane which correspond to a "left to right writing" in the CRTC.
++ * For example, if the buffer is reflected on X axis, the pixel must be read from right to left
++ * to be written from left to right on the CRTC.
++ */
++static enum pixel_read_direction direction_for_rotation(unsigned int rotation)
++{
++	struct drm_rect tmp_a, tmp_b;
++	int x, y;
++
++	/*
++	 * Points A and B are depicted as zero-size rectangles on the CRTC.
++	 * The CRTC writing direction is from A to B. The plane reading direction
++	 * is discovered by inverse-transforming A and B.
++	 * The reading direction is computed by rotating the vector AB (top-left to top-right) in a
++	 * 1x1 square.
++	 */
++
++	tmp_a = DRM_RECT_INIT(0, 0, 0, 0);
++	tmp_b = DRM_RECT_INIT(1, 0, 0, 0);
++	drm_rect_rotate_inv(&tmp_a, 1, 1, rotation);
++	drm_rect_rotate_inv(&tmp_b, 1, 1, rotation);
++
++	x = tmp_b.x1 - tmp_a.x1;
++	y = tmp_b.y1 - tmp_a.y1;
++
++	if (x == 1 && y == 0)
++		return READ_LEFT_TO_RIGHT;
++	else if (x == -1 && y == 0)
++		return READ_RIGHT_TO_LEFT;
++	else if (y == 1 && x == 0)
++		return READ_TOP_TO_BOTTOM;
++	else if (y == -1 && x == 0)
++		return READ_BOTTOM_TO_TOP;
++
++	WARN_ONCE(true, "The inverse of the rotation gives an incorrect direction.");
++	return READ_LEFT_TO_RIGHT;
++}
++
+ /**
+  * blend - blend the pixels from all planes and compute crc
+  * @wb: The writeback frame buffer metadata
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index 8edbf44a6896..857e7ce1fb9f 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -69,6 +69,17 @@ struct vkms_writeback_job {
+ 	pixel_write_t pixel_write;
+ };
  
- 	const struct pixel_argb_u16 background_color = { .a = 0xffff };
++/**
++ * enum pixel_read_direction - Enum used internaly by VKMS to represent a reading direction in a
++ * plane.
++ */
++enum pixel_read_direction {
++	READ_BOTTOM_TO_TOP,
++	READ_TOP_TO_BOTTOM,
++	READ_RIGHT_TO_LEFT,
++	READ_LEFT_TO_RIGHT
++};
++
+ /**
+  * typedef pixel_read_t - These functions are used to read a pixel in the source frame,
+  * convert it to `struct pixel_argb_u16` and write it to @out_pixel.
+diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+index 4dca08c1671f..b90445270d7f 100644
+--- a/drivers/gpu/drm/vkms/vkms_formats.c
++++ b/drivers/gpu/drm/vkms/vkms_formats.c
+@@ -77,6 +77,38 @@ static void packed_pixels_addr(const struct vkms_frame_info *frame_info,
+ 	*addr = (u8 *)frame_info->map[0].vaddr + offset;
+ }
  
-@@ -201,14 +197,16 @@ static void blend(struct vkms_writeback_job *wb,
- 
- 		/* The active planes are composed associatively in z-order. */
- 		for (size_t i = 0; i < n_active_planes; i++) {
-+			x_dst = plane[i]->frame_info->dst.x1;
-+			pixel_count = min_t(int, drm_rect_width(&plane[i]->frame_info->dst),
-+					    (int)stage_buffer->n_pixels);
- 			y_pos = get_y_pos(plane[i]->frame_info, y);
- 
- 			if (!check_limit(plane[i]->frame_info, y_pos))
- 				continue;
- 
- 			vkms_compose_row(stage_buffer, plane[i], y_pos);
--			pre_mul_alpha_blend(plane[i]->frame_info, stage_buffer,
--					    output_buffer);
-+			pre_mul_alpha_blend(stage_buffer, output_buffer, x_dst, pixel_count);
- 		}
- 
- 		apply_lut(crtc_state, output_buffer);
++/**
++ * get_block_step_bytes() - Common helper to compute the correct step value between each pixel block
++ * to read in a certain direction.
++ *
++ * @fb: Framebuffer to iter on
++ * @direction: Direction of the reading
++ * @plane_index: Plane to get the step from
++ *
++ * As the returned count is the number of bytes between two consecutive blocks in a direction,
++ * the caller may have to read multiple pixels before using the next one (for example, to read from
++ * left to right in a DRM_FORMAT_R1 plane, each block contains 8 pixels, so the step must be used
++ * only every 8 pixels).
++ */
++static int get_block_step_bytes(struct drm_framebuffer *fb, enum pixel_read_direction direction,
++				int plane_index)
++{
++	switch (direction) {
++	case READ_LEFT_TO_RIGHT:
++		return fb->format->char_per_block[plane_index];
++	case READ_RIGHT_TO_LEFT:
++		return -fb->format->char_per_block[plane_index];
++	case READ_TOP_TO_BOTTOM:
++		return (int)fb->pitches[plane_index] * drm_format_info_block_width(fb->format,
++										   plane_index);
++	case READ_BOTTOM_TO_TOP:
++		return -(int)fb->pitches[plane_index] * drm_format_info_block_width(fb->format,
++										    plane_index);
++	}
++
++	return 0;
++}
++
+ /**
+  * packed_pixels_addr_1x1() - Get the pointer to the block containing the pixel at the given
+  * coordinates
 
 -- 
 2.44.2
