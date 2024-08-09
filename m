@@ -1,94 +1,73 @@
-Return-Path: <linux-kernel+bounces-281032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6D194D21C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:26:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1696694D21E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D121C283DD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:26:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACCF01F22EC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16136196DA4;
-	Fri,  9 Aug 2024 14:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4645197A7F;
+	Fri,  9 Aug 2024 14:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KBsO3KIb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nhyADwxN";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KBsO3KIb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nhyADwxN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NgK2OB6f"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A80196455
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E62E19754A;
+	Fri,  9 Aug 2024 14:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723213558; cv=none; b=NO2DYDovrvo1OZ607gn6Q1NJd/z66xd5CF4lkWP9MIpK23eeKVE80YTP4hgxim9BSSoPIzmsBIcQmuzh6+dQNbJ/+cYXALZiPeqPnmz92I3xOtDp08CFCCgKPqYjc8i1ChGho8nATC9CKxmm6mF0BuyJ2QVx01sKPOhUqRZ9lqM=
+	t=1723213561; cv=none; b=AvNu9fFDxFE5YauNSeTs68frNt2Zdkny/QTtXBeiWsboIFrWBos9DPogpjRYkogbguiFcASHReSIwisnxbgve41z1K8DEIrQ623ee3mBr043PW3RJCW4C1FHmTrWzJ6pnnhyhX/XV3MQtn1GjbbHQ3YM7lmJZBOYQihHO1KvAGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723213558; c=relaxed/simple;
-	bh=71JEsZed4o4ZwRnFfx3g73qFi1f8DHjDp22lpljenGY=;
+	s=arc-20240116; t=1723213561; c=relaxed/simple;
+	bh=vlC6MpCPMFC2AxNAPZC/pzsw2qhNyLWQJQEik8B7I5A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kFrjK2I1iqnyF68EXS2Y2u2C/SdkR+Oj/6D2qyi8quRbKyqCI/DQ/hEeDUQXalB4HKpd+6yETO7qNLivX+7TjzdXQ9fR4hn8hx5dacOGCjy2cIT0b9fVGMwOzORjQf8ApPhrYeV3rtaTt3TC986lgulXwhjE86DVG7RsqqIzvhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KBsO3KIb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nhyADwxN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KBsO3KIb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nhyADwxN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0B3F321E07;
-	Fri,  9 Aug 2024 14:25:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723213554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QBksEJGpnuFRp/mepJbQOzxCuBoXxkk7MiDVFEOMnn8=;
-	b=KBsO3KIbkMAPSjm5b5kL/eFBYLdfehvCkRTcjINHTxdr89+gU0fQJsjt8an5LRgxovMYZ6
-	7EVvpBv+pbWQpjZzjagrEvt8utTEOX21K/46qCjLVHsQIcUv08hzOS60rK4173rHwqM8ox
-	597LhCKUZClPRN08tBV2bfkY2+YY+O8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723213554;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QBksEJGpnuFRp/mepJbQOzxCuBoXxkk7MiDVFEOMnn8=;
-	b=nhyADwxNX2xBIujSmoW3521dmdnsQoEWmQX9fRJai4+mmWcf63n+mSThI/Oatw2OADsQEM
-	Wltsn+7EdZ7SVXBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723213554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QBksEJGpnuFRp/mepJbQOzxCuBoXxkk7MiDVFEOMnn8=;
-	b=KBsO3KIbkMAPSjm5b5kL/eFBYLdfehvCkRTcjINHTxdr89+gU0fQJsjt8an5LRgxovMYZ6
-	7EVvpBv+pbWQpjZzjagrEvt8utTEOX21K/46qCjLVHsQIcUv08hzOS60rK4173rHwqM8ox
-	597LhCKUZClPRN08tBV2bfkY2+YY+O8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723213554;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QBksEJGpnuFRp/mepJbQOzxCuBoXxkk7MiDVFEOMnn8=;
-	b=nhyADwxNX2xBIujSmoW3521dmdnsQoEWmQX9fRJai4+mmWcf63n+mSThI/Oatw2OADsQEM
-	Wltsn+7EdZ7SVXBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F053C13A7D;
-	Fri,  9 Aug 2024 14:25:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id g1NHOvEmtmahEgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 09 Aug 2024 14:25:53 +0000
-Message-ID: <46d631a3-47f6-4ea7-9a69-32bf1a3adf01@suse.cz>
-Date: Fri, 9 Aug 2024 16:25:53 +0200
+	 In-Reply-To:Content-Type; b=lmJXGZ1O5Mw2uzbRR3DnvVEVUBdX4g5bh5aGdBN+h79Z7hCoh7Viy99SkZJ3CIuGq0r0oNqhvLaLlze0EzoIEH3qfMWPJd5OEanSGHLlcX5UnBP9WeQvMbS8gdMNQJ/bC/JrkFTY/rt8hhvBNCUdJfinPT0BDzwLr0GrArXjCIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NgK2OB6f; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so112912a12.1;
+        Fri, 09 Aug 2024 07:25:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723213558; x=1723818358; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CVmL+JUtY+Wn7F+T3SL86Jtw2K/7k/JyMHzuTw81wh4=;
+        b=NgK2OB6fDJ2jrYJZxMf0WYGvMv0FNdpPVJyMfN30RxPs9daLIDaK7l7FCuQyZnnVS/
+         nbQJvakj7ioQrFKa3HRVdg5ISoypZ/0S5SxUdgeVTYPmlGwKrArLhDvY3iWeVLQEc4ai
+         QCa2DlIKack6hR3pR+Ij2mTVw5GmIVpw/o4mbMIQicNfHmMiI7gF00RHzCCwQ1b8lMFJ
+         RgLjNXzTwlzj8DRbIq9hctt5v4isgkYE+zlh/th4xlHlZawJh+v+SK4FgdgzOHweSSNJ
+         0k8nfFmSU+J6J+LrFlbeZV8fM/GR3ofFkprY94qB+/cW0z6Y57kWKU+q2j77kLZOqRJg
+         HDeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723213558; x=1723818358;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CVmL+JUtY+Wn7F+T3SL86Jtw2K/7k/JyMHzuTw81wh4=;
+        b=G095lesZ+z872FMzBTpmdOwpJiMp79kX86fcPNf4NhoYHbm294Do+M5GKvSNFb3Sxw
+         v8Qc9KxpjgD/51PZqNozJUg36IRhQzZ5/PlMbKsplKzc473hGA8FwIdkM1ZJ+W3DgmMN
+         lwcu+Bxu+vn1qN30BdhtS1ctRBrjHItkbYCiB+eFqKuwzHnGvHGcvCmBmAc17WLqtWGs
+         pouZXtg/EZKR7ed1YIb6g6vDjnst+YsgAS0ktYmsjs1s/5dkBgG1UYjrBb7T30MnVwow
+         vWARb4YzMs3MHJFunGnS1WE1jtR3Wlq57TorNR1ngdrMj68a3OI55VF6i+r5+79+2lYW
+         0Cdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaGWH3tB+lF9hbAlE7DYAqxkgyaM6TNrxfe3rPy95k4oZGsoYxvJ0fsMKjRSE6Uh9FWOJXRO6k+THvai9TzDOoIGjEyjJEIEHpdpXcNqTjOjGWkT5KFkTWIaeKxet0aHT0BkewN3pl
+X-Gm-Message-State: AOJu0Yy2tFfycQ2h9DVsL8I++Z3px77bSITmpnyFHEhwkBOM6CjjFcZk
+	23qWXE9CPs8O+mR/ir8WKkzEKPpuiGi154+zW3Wztw+mw6aor7lU
+X-Google-Smtp-Source: AGHT+IFnExldOKrhy5GHhFfjiCC/km2Eo6GrWXuovjXEgdCYefbnjSGwy+f02GPsbVNwm69iWCHPpw==
+X-Received: by 2002:a05:6402:27c9:b0:5b8:36b7:ae51 with SMTP id 4fb4d7f45d1cf-5bbb3c417ddmr4729643a12.9.1723213558079;
+        Fri, 09 Aug 2024 07:25:58 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::6:b73e])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c1d615sm1650192a12.23.2024.08.09.07.25.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 07:25:57 -0700 (PDT)
+Message-ID: <dccf0806-0627-4deb-850e-367689af5b0a@gmail.com>
+Date: Fri, 9 Aug 2024 15:25:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,176 +75,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/10] mm: rework vm_ops->close() handling on VMA merge
+Subject: Re: [PATCH v2 4/4] mm: split underutilized THPs
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: hannes@cmpxchg.org, riel@surriel.com, shakeel.butt@linux.dev,
+ roman.gushchin@linux.dev, yuzhao@google.com, baohua@kernel.org,
+ ryan.roberts@arm.com, rppt@kernel.org, willy@infradead.org,
+ cerasuolodomenico@gmail.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kernel-team@meta.com
+References: <20240807134732.3292797-1-usamaarif642@gmail.com>
+ <20240807134732.3292797-5-usamaarif642@gmail.com>
+ <5adb120e-5408-43a6-b418-33dc17c086f0@redhat.com>
+ <c0ed5796-a6a6-4757-b7df-666ba598d9fe@gmail.com>
+ <3f6e1e0a-6132-4222-abb6-133224e11009@redhat.com>
 Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>
-References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
- <0afd85543d46fd743c0c71b6f6520f9580174b4f.1722849860.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <0afd85543d46fd743c0c71b6f6520f9580174b4f.1722849860.git.lorenzo.stoakes@oracle.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <3f6e1e0a-6132-4222-abb6-133224e11009@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.29
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On 8/5/24 14:13, Lorenzo Stoakes wrote:
-> In commit 714965ca8252 ("mm/mmap: start distinguishing if vma can be
-> removed in mergeability test") we relaxed the VMA merge rules for VMAs
-> possessing a vm_ops->close() hook, permitting this operation in instances
-> where we wouldn't delete the VMA as part of the merge operation.
-> 
-> This was later corrected in commit fc0c8f9089c2 ("mm, mmap: fix vma_merge()
-> case 7 with vma_ops->close") to account for a subtle case that the previous
-> commit had not taken into account.
-> 
-> In both instances, we first rely on is_mergeable_vma() to determine whether
-> we might be dealing with a VMA that might be removed, taking advantage of
-> the fact that a 'previous' VMA will never be deleted, only VMAs that follow
-> it.
-> 
-> The second patch corrects the instance where a merge of the previous VMA
-> into a subsequent one did not correctly check whether the subsequent VMA
-> had a vm_ops->close() handler.
-> 
-> Both changes prevent merge cases that are actually permissible (for
-> instance a merge of a VMA into a following VMA with a vm_ops->close(), but
-> with no previous VMA, which would result in the next VMA being extended,
-> not deleted).
-> 
-> In addition, both changes fail to consider the case where a VMA that would
-> otherwise be merged with the previous and next VMA might have
-> vm_ops->close(), on the assumption that for this to be the case, all three
-> would have to have the same vma->vm_file to be mergeable and thus the same
-> vm_ops.
-> 
-> And in addition both changes operate at 50,000 feet, trying to guess
-> whether a VMA will be deleted.
-> 
-> As we have majorly refactored the VMA merge operation and de-duplicated
-> code to the point where we know precisely where deletions will occur, this
-> patch removes the aforementioned checks altogether and instead explicitly
-> checks whether a VMA will be deleted.
-> 
-> In cases where a reduced merge is still possible (where we merge both
-> previous and next VMA but the next VMA has a vm_ops->close hook, meaning we
-> could just merge the previous and current VMA), we do so, otherwise the
-> merge is not permitted.
-> 
-> We take advantage of our userland testing to assert that this functions
-> correctly - replacing the previous limited vm_ops->close() tests with tests
-> for every single case where we delete a VMA.
-> 
-> We also update all testing for both new and modified VMAs to set
-> vma->vm_ops->close() in every single instance where this would not prevent
-> the merge, to assert that we never do so.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Amazing!
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-> @@ -710,9 +706,30 @@ static struct vm_area_struct *vma_merge_modified(struct vma_merge_struct *vmg)
+On 09/08/2024 14:21, David Hildenbrand wrote:
+> On 09.08.24 12:31, Usama Arif wrote:
+>>
+>>
+>> On 08/08/2024 16:55, David Hildenbrand wrote:
+>>> On 07.08.24 15:46, Usama Arif wrote:
+>>>> This is an attempt to mitigate the issue of running out of memory when THP
+>>>> is always enabled. During runtime whenever a THP is being faulted in
+>>>> (__do_huge_pmd_anonymous_page) or collapsed by khugepaged
+>>>> (collapse_huge_page), the THP is added to  _deferred_list. Whenever memory
+>>>> reclaim happens in linux, the kernel runs the deferred_split
+>>>> shrinker which goes through the _deferred_list.
+>>>>
+>>>> If the folio was partially mapped, the shrinker attempts to split it.
+>>>> A new boolean is added to be able to distinguish between partially
+>>>> mapped folios and others in the deferred_list at split time in
+>>>> deferred_split_scan. Its needed as __folio_remove_rmap decrements
+>>>> the folio mapcount elements, hence it won't be possible to distinguish
+>>>> between partially mapped folios and others in deferred_split_scan
+>>>> without the boolean.
+>>>
+>>> Just so I get this right: Are you saying that we might now add fully mapped folios to the deferred split queue and that's what you want to distinguish?
+>>
+>> Yes
+>>
+>>>
+>>> If that's the case, then could we use a bit in folio->_flags_1 instead?
+>> Yes, thats a good idea. Will create the below flag for the next revision
+>>
+>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>> index 5769fe6e4950..5825bd1cf6db 100644
+>> --- a/include/linux/page-flags.h
+>> +++ b/include/linux/page-flags.h
+>> @@ -189,6 +189,11 @@ enum pageflags {
+>>     #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
+>>   +enum folioflags_1 {
+>> +       /* The first 8 bits of folio->_flags_1 are used to keep track of folio order */
+>> +       FOLIO_PARTIALLY_MAPPED = 8,     /* folio is partially mapped */
+>> +}
 > 
->  	/* If we span the entire VMA, a merge implies it will be deleted. */
->  	merge_will_delete_vma = left_side && right_side;
-> -	/* If we merge both VMAs, then next is also deleted. */
-
-Nit: This comment ...
-
-> +
-> +	/*
-> +	 * If we need to remove vma in its entirety but are unable to do so,
-> +	 * we have no sensible recourse but to abort the merge.
-> +	 */
-> +	if (merge_will_delete_vma && !can_merge_remove_vma(vma))
-> +		return NULL;
-> +
-> +	/*
-> +	 * If we merge both VMAs, then next is also deleted. This implies
-> +	 * merge_will_delete_vma also.
-> +	 */
-
-... changed to this comment. Seems spurious, could have been like that
-before already? I don't see how the new "This implies" part became relevant
-now? We already tested merge_will_delete_vma above.
-
->  	merge_will_delete_next = merge_both;
+> This might be what you want to achieve:
 > 
-> +	/*
-> +	 * If we cannot delete next, then we can reduce the operation to merging
-> +	 * prev and vma (thereby deleting vma).
-> +	 */
-> +	if (merge_will_delete_next && !can_merge_remove_vma(next)) {
-> +		merge_will_delete_next = false;
-> +		merge_right = false;
-> +		merge_both = false;
-> +	}
-> +
->  	/* No matter what happens, we will be adjusting vma. */
->  	vma_start_write(vma);
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index a0a29bd092f8..d4722ed60ef8 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -182,6 +182,7 @@ enum pageflags {
+>         /* At least one page in this folio has the hwpoison flag set */
+>         PG_has_hwpoisoned = PG_active,
+>         PG_large_rmappable = PG_workingset, /* anon or file-backed */
+> +       PG_partially_mapped, /* was identified to be partially mapped */
+>  };
+>  
+>  #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
+> @@ -861,8 +862,9 @@ static inline void ClearPageCompound(struct page *page)
+>         ClearPageHead(page);
+>  }
+>  FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
+> +FOLIO_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+>  #else
+> -FOLIO_FLAG_FALSE(large_rmappable)
+> +FOLIO_FLAG_FALSE(partially_mapped)
+>  #endif
+>  
+>  #define PG_head_mask ((1UL << PG_head))
 > 
+> The downside is an atomic op to set/clear, but it should likely not really matter
+> (initially, the flag will be clear, and we should only ever set it once when
+> partially unmapping). If it hurts, we can reconsider.
+> 
+> [...]
+
+I was looking for where the bits for flags_1 were specified! I just saw the start of enum pageflags, saw that compound order isn't specified anywhere over there and ignored the end :)
+
+Yes, this is what I wanted to do. Thanks.
 
 
