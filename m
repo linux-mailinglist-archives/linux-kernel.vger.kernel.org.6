@@ -1,188 +1,217 @@
-Return-Path: <linux-kernel+bounces-280577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D3C94CC5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:35:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64AF194CC64
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCA9CB24A23
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:35:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D78E61F23D5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4C91922EB;
-	Fri,  9 Aug 2024 08:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608A719006D;
+	Fri,  9 Aug 2024 08:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="NpluVjjP"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c1bhrDZC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052F0191F65
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E703019046B
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723192457; cv=none; b=ZlLTxxoPACSkLkUdlzgdLC3AzjLXoXGuQM5lCFOSb0760IE58gxDLMPaTeR0lNuKp/R0HhCSgjsUIYkvXejkaiZ9pkRGbvUrl46cAxvoA2fMbAeV2r+VE0DWXfoCkYK3rP6IHcVbj2pWLf5LcFz8mxbqG2mJX6QvEmXZHvfAB7Y=
+	t=1723192569; cv=none; b=GljQnhewcyT3mtFBgbh97QzB2YV08q5LeBXfLMwTmQXh4hwQ4YO/iKB11ix6xDgXgIdZcIj9V1b52CZ737srWuJ+LhgPu1G2P9DQjeIgLAkcZ4blLjtY1pAOFx6FASDRF+DSQTQqir/ZN79GgVJ61HaS1mpszSoeKlzeyU5e7mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723192457; c=relaxed/simple;
-	bh=OI0BTlanZ3ouih1Oc8Ys+Q4/CwcrtvqnlxKkb99HXII=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Bso6pcLzzuqQtFBCmyf5aTzlMdEwlV6H9SiBcxd1sV5y7YOpjMCtKoSjoM9e/8ZPnPwGj+spuwu6pWEhf4fxI+WBRS4l6oKxFnxykai4pSu41lqEYN50d92dvxVDLi1F46M3yiK2yeSvUqQNALikA5Q9OJbI8M+k0hqeFxDfGDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=NpluVjjP; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5ba43b433beso2056176a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:34:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1723192454; x=1723797254; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SY4fryrxNkvZgli9BRICsfInr4nHVNsC/F28oVigWAk=;
-        b=NpluVjjPupcYcpoNGGUuKRsFEmM8tuxoI24HaNfPXgrQDoojRfokOtGTjCeGS898NX
-         DsW5ZTsdPMU6aCEmOQ4KqyqDRnkLZYcbLPhElpnrYw33H4o85JxrnrBXH1G0UmrCTbkN
-         7bjbaXHKPQBaLQxpJNzFhZs1DOFsuNnvcwLWuSb4UDi6sTErXGzSX0/tF0CVXKlB9n2I
-         EZpKCWFFqISSNZau/9ZRK96VEQfBjmq1MgQ4X0ys1oO5TPUbP2DSlMwCSB2ykgPR/iDc
-         TkKgD6toxLAm9DDy3+hLYT2Pdu+8X2DtTrVM08LGogoBC4WU4jHpSQorHyxNIcOvS7Dq
-         StXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723192454; x=1723797254;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SY4fryrxNkvZgli9BRICsfInr4nHVNsC/F28oVigWAk=;
-        b=FZsGp9cDT7B4fjeAIlfiquyQOUI1kM5Sy+yvbUe01SXVeq/CotlRJsc7suWdT7p82w
-         P03DOwhDfZJj8sSL5/xYdp60UC+kuS3SKI8GWcpOvIzL46NBMqyFZT5CV2uExDZS1/cv
-         Cn8J9l+gm4oqFhMvFmEgWwr+0kBujfZoNOgIuoNadaU2erl32Q32skolgYVFur4qRJf6
-         VZwX+bvOUBLwoabL9b6fonBZA09hviaumPR3Z7w3zEvihKr0kXQXz8o9ly6NncHELO68
-         jCGVKW6GWggyIjRhbmeJPHytw8RllpN0omDfnSKAM8nAATuXLzMPP3uCk3egAiU+hM3t
-         ZE9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV1OXy/zQudx12Wt/ju5BaRpFKvs/E72nFJwTLcGr0ci+ytjDpg2rStgLy5rN8p7X8xX025A/3HFGCYnjdqtYMhIcXuMdC0DS3+4VCp
-X-Gm-Message-State: AOJu0YyCkPzLx06/gD2ITuGXF79J8lKMYsXMl6j/7SkueCnBfwB0ZbFj
-	2wjuVPCip8MT1FohAuggN30AXf5nxPFgE+OFn2Y4ej7umy7a3fafAgWYB7oPGtU=
-X-Google-Smtp-Source: AGHT+IFR/fUi2PxofvVcuUfiPXGSTvHp8HjNo2okFizvskVBpDGatZfaIDw3fHAvXy9BNCnQOZOyKg==
-X-Received: by 2002:a05:6402:4309:b0:5a1:b42f:c93 with SMTP id 4fb4d7f45d1cf-5bd0a588be6mr680639a12.13.1723192454170;
-        Fri, 09 Aug 2024 01:34:14 -0700 (PDT)
-Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c41916sm1336288a12.41.2024.08.09.01.34.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 01:34:13 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Fri, 09 Aug 2024 10:33:59 +0200
-Subject: [PATCH 3/3] arm64: dts: qcom: qcm6490-fairphone-fp5: Add
- DisplayPort sound support
+	s=arc-20240116; t=1723192569; c=relaxed/simple;
+	bh=PM58SjB+NFMS/oMvT4sY7XbdrOTDx9niR5UytbEZC/E=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=DsKgxCCrmHgO8iTjXanRerGL529yvHo1Wkct8JY0hua9VBDw1Vewif2xLJCbFnkDQH0WsMNK6+73cnERVKeT+mXvFtA5HeV1FAxgMmlungwEoraTuLyW1WdKoWLunIBTus5X6IeCEsa+wy3w6LZELW79tbUfH+z1pNuerDu+kbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c1bhrDZC; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723192567; x=1754728567;
+  h=date:from:to:cc:subject:message-id;
+  bh=PM58SjB+NFMS/oMvT4sY7XbdrOTDx9niR5UytbEZC/E=;
+  b=c1bhrDZCcb6bLZJLBLWCUzSM+hZxZ41FYej66uK0BmvA3UJ5n59jpbTY
+   pHNYWXAG7Zg+5fUS+4SjThfqXf9cChvu7ILAEVnP432xznQLdrDdHntpc
+   Nd8niJGCexHDMS3WN5hbHMuBaCOo2PGOdCb+DC+BOAOEtmiaXWe/j5S0S
+   CKZtTRmvh77s6qVlDdc9aVnXxLe8T+Gxb+obH52OmtSd7DjWBqS0KIlKs
+   6RjCC99jLZjFfKc7hIlbNu9VaG7Zx12fVNifD3qFI+6vrQsNClXeaFDLC
+   nH8AyIuVLoCSB/CQv4nMtYUL4/ouQO9kYZvOHrAaEoYdLxnHD12vthZoz
+   Q==;
+X-CSE-ConnectionGUID: fnGDAES8RsacJ491m6Odxw==
+X-CSE-MsgGUID: BpTu5dWIQnWOYsZdoAseAQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25151399"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="25151399"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:36:06 -0700
+X-CSE-ConnectionGUID: 77mPg0wASzqTx9KPzNMQwQ==
+X-CSE-MsgGUID: /E07dOGYStypoK81cpwiJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="58062987"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 09 Aug 2024 01:36:05 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1scL6Q-0007cy-2s;
+	Fri, 09 Aug 2024 08:36:02 +0000
+Date: Fri, 09 Aug 2024 16:35:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ ad1b4b6ed19f86198f1c2e0c6a9b566944255259
+Message-ID: <202408091603.lSSbHvFb-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240809-fp5-dp-sound-v1-3-d7ba2c24f6b9@fairphone.com>
-References: <20240809-fp5-dp-sound-v1-0-d7ba2c24f6b9@fairphone.com>
-In-Reply-To: <20240809-fp5-dp-sound-v1-0-d7ba2c24f6b9@fairphone.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.1
 
-Add the required nodes for sound playback via a connected external
-display (DisplayPort over USB-C).
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: ad1b4b6ed19f86198f1c2e0c6a9b566944255259  Merge branch into tip/master: 'x86/timers'
 
-In user space just the following route needs to be set (e.g. using
-ALSA UCM):
+elapsed time: 1455m
 
-  amixer -c0 cset name='DISPLAY_PORT_RX Audio Mixer MultiMedia1' 1
+configs tested: 125
+configs skipped: 3
 
-Afterwards one can play audio on the MultiMedia1 sound device, e.g.:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-  aplay -D plughw:0,0 test.wav
-
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
-(from cover letter)
-Unfortunately DisplayPort enablement itself for Fairphone 5 is not
-upstream yet. This is blocked by DSI display bringup upstream which is
-blocked by DSC 1:1:1 not being supported upstream yet and just working
-with a hacky patch. Nevertheless, DisplayPort audio was validated
-working with no additional sound-related changes so once DisplayPort
-gets enabled, sound should also just work upstream.
----
- arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-index 8ab30c01712e..45d4512546fe 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-@@ -14,6 +14,8 @@
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+#include <dt-bindings/sound/qcom,q6afe.h>
-+#include <dt-bindings/sound/qcom,q6asm.h>
- #include "sc7280.dtsi"
- #include "pm7250b.dtsi"
- #include "pm7325.dtsi"
-@@ -841,6 +843,12 @@ &pon_resin {
- 	status = "okay";
- };
- 
-+&q6afedai {
-+	dai@104 {
-+		reg = <DISPLAY_PORT_RX>;
-+	};
-+};
-+
- &qup_spi13_cs {
- 	drive-strength = <6>;
- 	bias-disable;
-@@ -914,6 +922,35 @@ &sdhc_2 {
- 	status = "okay";
- };
- 
-+&sound {
-+	compatible = "qcom,qcm6490-sndcard";
-+	model = "Fairphone 5";
-+
-+	mm1-dai-link {
-+		link-name = "MultiMedia1";
-+
-+		cpu {
-+			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
-+		};
-+	};
-+
-+	displayport-rx-dai-link {
-+		link-name = "DisplayPort Playback";
-+
-+		cpu {
-+			sound-dai = <&q6afedai DISPLAY_PORT_RX>;
-+		};
-+
-+		platform {
-+			sound-dai = <&q6routing>;
-+		};
-+
-+		codec {
-+			sound-dai = <&mdss_dp>;
-+		};
-+	};
-+};
-+
- &spi13 {
- 	status = "okay";
- 
+tested configs:
+alpha                             allnoconfig   gcc-13.3.0
+alpha                            allyesconfig   gcc-13.3.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                   randconfig-001-20240809   gcc-13.2.0
+arc                   randconfig-002-20240809   gcc-13.2.0
+arm                              allmodconfig   gcc-14.1.0
+arm                               allnoconfig   clang-20
+arm                   randconfig-001-20240809   clang-15
+arm                   randconfig-002-20240809   gcc-14.1.0
+arm                   randconfig-003-20240809   clang-20
+arm                   randconfig-004-20240809   clang-20
+arm64                             allnoconfig   gcc-14.1.0
+arm64                 randconfig-001-20240809   clang-20
+arm64                 randconfig-002-20240809   clang-15
+arm64                 randconfig-003-20240809   clang-15
+arm64                 randconfig-004-20240809   clang-20
+csky                              allnoconfig   gcc-14.1.0
+csky                  randconfig-001-20240809   gcc-14.1.0
+csky                  randconfig-002-20240809   gcc-14.1.0
+hexagon                          allmodconfig   clang-20
+hexagon                           allnoconfig   clang-20
+hexagon                          allyesconfig   clang-20
+hexagon               randconfig-001-20240809   clang-20
+hexagon               randconfig-002-20240809   clang-20
+i386                             allmodconfig   gcc-12
+i386                              allnoconfig   gcc-12
+i386                             allyesconfig   gcc-12
+i386         buildonly-randconfig-001-20240809   gcc-12
+i386         buildonly-randconfig-002-20240809   clang-18
+i386         buildonly-randconfig-003-20240809   gcc-11
+i386         buildonly-randconfig-004-20240809   clang-18
+i386         buildonly-randconfig-005-20240809   clang-18
+i386         buildonly-randconfig-006-20240809   gcc-12
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240809   gcc-12
+i386                  randconfig-002-20240809   clang-18
+i386                  randconfig-003-20240809   clang-18
+i386                  randconfig-004-20240809   gcc-12
+i386                  randconfig-005-20240809   clang-18
+i386                  randconfig-006-20240809   gcc-12
+i386                  randconfig-011-20240809   gcc-12
+i386                  randconfig-012-20240809   gcc-12
+i386                  randconfig-013-20240809   gcc-12
+i386                  randconfig-014-20240809   gcc-12
+i386                  randconfig-015-20240809   gcc-11
+i386                  randconfig-016-20240809   gcc-12
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-14.1.0
+loongarch             randconfig-001-20240809   gcc-14.1.0
+loongarch             randconfig-002-20240809   gcc-14.1.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+mips                              allnoconfig   gcc-14.1.0
+nios2                             allnoconfig   gcc-14.1.0
+nios2                 randconfig-001-20240809   gcc-14.1.0
+nios2                 randconfig-002-20240809   gcc-14.1.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc                randconfig-001-20240809   gcc-14.1.0
+parisc                randconfig-002-20240809   gcc-14.1.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   clang-20
+powerpc               randconfig-001-20240809   clang-20
+powerpc64             randconfig-001-20240809   gcc-14.1.0
+powerpc64             randconfig-002-20240809   gcc-14.1.0
+powerpc64             randconfig-003-20240809   gcc-14.1.0
+riscv                            allmodconfig   clang-20
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   clang-20
+riscv                 randconfig-001-20240809   clang-20
+riscv                 randconfig-002-20240809   clang-20
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                  randconfig-001-20240809   gcc-14.1.0
+s390                  randconfig-002-20240809   gcc-14.1.0
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                    randconfig-001-20240809   gcc-14.1.0
+sh                    randconfig-002-20240809   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+um                               allmodconfig   clang-20
+um                                allnoconfig   clang-17
+um                               allyesconfig   gcc-12
+x86_64                            allnoconfig   clang-18
+x86_64       buildonly-randconfig-001-20240809   clang-18
+x86_64       buildonly-randconfig-002-20240809   gcc-12
+x86_64       buildonly-randconfig-003-20240809   gcc-12
+x86_64       buildonly-randconfig-004-20240809   clang-18
+x86_64       buildonly-randconfig-005-20240809   clang-18
+x86_64       buildonly-randconfig-006-20240809   gcc-12
+x86_64                              defconfig   gcc-11
+x86_64                randconfig-001-20240809   gcc-12
+x86_64                randconfig-002-20240809   gcc-12
+x86_64                randconfig-003-20240809   gcc-12
+x86_64                randconfig-004-20240809   clang-18
+x86_64                randconfig-005-20240809   clang-18
+x86_64                randconfig-006-20240809   gcc-12
+x86_64                randconfig-011-20240809   clang-18
+x86_64                randconfig-012-20240809   gcc-12
+x86_64                randconfig-013-20240809   clang-18
+x86_64                randconfig-014-20240809   clang-18
+x86_64                randconfig-015-20240809   clang-18
+x86_64                randconfig-016-20240809   gcc-12
+x86_64                randconfig-071-20240809   clang-18
+x86_64                randconfig-072-20240809   clang-18
+x86_64                randconfig-073-20240809   gcc-12
+x86_64                randconfig-074-20240809   clang-18
+x86_64                randconfig-075-20240809   clang-18
+x86_64                randconfig-076-20240809   gcc-12
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-14.1.0
 
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
