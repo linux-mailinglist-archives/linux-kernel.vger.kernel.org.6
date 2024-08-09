@@ -1,127 +1,117 @@
-Return-Path: <linux-kernel+bounces-280821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D819A94CFAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:58:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D929194CFAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2151F22CB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:58:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D241C214FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF56192B9F;
-	Fri,  9 Aug 2024 11:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED3A193091;
+	Fri,  9 Aug 2024 11:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g06YyS1v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b="WuQIpQB1"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D344C15B992;
-	Fri,  9 Aug 2024 11:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723204687; cv=none; b=CylqQQuazsIP4M23DiB13PTBlagkGcFyG1hlzZN74bnPzW/oHIO88KK9b5vrAInty0fNKH7ExbtFxMXLx3R61ZlSwMOLxGsBid9P6AObiY+qVUjjm7IwS0bGYqweJrj7ImFEA0oqVqBVcmzduXiK2U6lJA8k/LJJiojwVrG2wvs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723204687; c=relaxed/simple;
-	bh=p4NghQtm+bbcZA7K1a2/Zh3lpKaq8lRBcQcDk3r3BJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d7ivraisF8CGOFI9u4E+bCpBjbDKkZHchdU7LtcblEdW4IEMalObr07RRqMvLnWe7guJSerLeVrta3JD3NnT+RoJSlKP09rauOgxIdT4/E4Sp+p3QTwLc5vvKb1tbJCDJcENP3RzwfqWjogXVck7B1obFe7G19XZNw8pmIxTp9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g06YyS1v; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723204686; x=1754740686;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=p4NghQtm+bbcZA7K1a2/Zh3lpKaq8lRBcQcDk3r3BJo=;
-  b=g06YyS1v3MqdA+VkRiwgqaoJRgYcybPai+VPlan9GDxf3KMMmCMMCWjx
-   cwGnE67WHKTdmKZOSsBTyeMka1LOeHE9vLvbrgUl1Izr65o9zNp/FCswQ
-   hSAbd7V5XBlem0q67x3LhaH+VatSqS5LtiUC23r7AyHLtO2zq428sQPZX
-   THhZiIbK1Qkbu427uXOwAvQcxO87x7md5cys2+cMHymAxfa1slEz1DmqW
-   HAp2qY7t+EP3bU7Cn3tAPEXfnDDirt2LdDmME9SNftTq0a9kqxhYlVagU
-   yidQSrRDBYZubK+gQHNzn1fo7KlMyXBfT1JSGW3MxwZGW+/DN2iH1mxuO
-   w==;
-X-CSE-ConnectionGUID: v/oaED4XRD6GxrRuCgluhg==
-X-CSE-MsgGUID: fDyooy0QTuSgVdbF9W5sCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="32784224"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="32784224"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:58:05 -0700
-X-CSE-ConnectionGUID: 4APDhaSoR0+u7qOu+pw0pA==
-X-CSE-MsgGUID: cKBDlGJgSDKvvpBS/opWWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="61959473"
-Received: from dneilan-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.245.169])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:57:58 -0700
-Date: Fri, 9 Aug 2024 12:57:54 +0100
-From: Andi Shyti <andi.shyti@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Raag Jadav <raag.jadav@intel.com>, jani.nikula@linux.intel.com,
-	joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-	tursulin@ursulin.net, airlied@gmail.com, daniel@ffwll.ch,
-	linux@roeck-us.net, andi.shyti@linux.intel.com,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anshuman.gupta@intel.com, badal.nilawar@intel.com,
-	riana.tauro@intel.com, ashutosh.dixit@intel.com,
-	karthik.poosa@intel.com
-Subject: Re: [PATCH v4] drm/i915/hwmon: expose fan speed
-Message-ID: <ZrYEQqs0IwDHWkGx@ashyti-mobl2.lan>
-References: <20240809061525.1368153-1-raag.jadav@intel.com>
- <ZrYB-GI9L2RSc2bt@smile.fi.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CF5192B9F;
+	Fri,  9 Aug 2024 11:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723204749; cv=pass; b=jlUWTaESaxEvIpp50HoxniUvLURnDAsM0OaYqotveurmOeEfoOG63HFv2avFCoX/ItO8NYVTrwOGMF4xII1OPmx0ZmrnUs4/l0nBM1Z0y+RljRMXxuSVTfIPxKhBYfnp/Rk2G3JvMzmN4OaDCQbKlbC98V4jSvUHpFhvX1SaI2o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723204749; c=relaxed/simple;
+	bh=ian4pHvk/Ysor0BQM6WTFZw5Oc++xZLQ6te4Io7dcYE=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=Z0SfhS5zTA/uv4liRmYkyDvvr2YLsStKYrn7uYXYAazAUQBDlwDObUnz94a9jtWQYBQglh2Iaz2lCjDcwFJ0Q9UL07xNGjtDaWoeoBZ9j2hoSyg2O9x0lwRmOGrsDs0KvD1yCj0pKenBGkNxw9MgFGw+/daox7thdaURSjzk/TM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b=WuQIpQB1; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernelci-regressions@lists.collabora.co.uk
+ARC-Seal: i=1; a=rsa-sha256; t=1723204703; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZEIwY7Il0tDeAjVOIkaINZxY95P4A2AZseUheeCfd2GFc04P6gIHL5AQKkdoZK0Y5rplZyZBVBQnCRyxAiME8Sxea7RHv5ngToPVGclAaBJe/Q3JiwEzMJpl0eC6x7AZV/AlrKN1/1r6aj/OqZhaV/wvHy+TYCXTO1zPANrFJ1M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723204703; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7l8Pv9yp1aCfjnBqdkcyjr7Ggfd/MK0caBdzX+atJXU=; 
+	b=ZwVoSrlN9Rea22V95PVFar2T/l8kaVm9xLQBs83xCmXcf1mubzoaJM7u4TjsnI0CpLml24qB8hk5EjINegvvdm0A8nIWrHLuZveLBzhsRNNoh7PlmuaeXKJO92yHR32ZorPl34fPnWxqqYYzP1rFXXdGTpSDWY4tbu617G8UEFE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=shreeya.patel@collabora.com;
+	dmarc=pass header.from=<shreeya.patel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723204703;
+	s=zohomail; d=collabora.com; i=shreeya.patel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=7l8Pv9yp1aCfjnBqdkcyjr7Ggfd/MK0caBdzX+atJXU=;
+	b=WuQIpQB1FG73qz70zwJLLcqMEKUMAr9KKAaC079Biri4eUd27lTGe9Opk8Xsb7js
+	JNoeJpz8T/tqcX8ciID6gkZueJjWqmXyAC2+xayHXbukZaoIrIJlfAc/tb47b0b6rvI
+	f8W4HompVrhXyR9su9Wyfpv9MtuFdwQjC69WHu5I=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1723204701719951.467106810877; Fri, 9 Aug 2024 04:58:21 -0700 (PDT)
+Date: Fri, 09 Aug 2024 17:28:21 +0530
+From: Shreeya Patel <shreeya.patel@collabora.com>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: "stable" <stable@vger.kernel.org>, "patches" <patches@lists.linux.dev>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"torvalds" <torvalds@linux-foundation.org>,
+	"akpm" <akpm@linux-foundation.org>, "linux" <linux@roeck-us.net>,
+	"shuah" <shuah@kernel.org>, "patches" <patches@kernelci.org>,
+	"lkft-triage" <lkft-triage@lists.linaro.org>,
+	"pavel" <pavel@denx.de>, "jonathanh" <jonathanh@nvidia.com>,
+	"f.fainelli" <f.fainelli@gmail.com>,
+	"sudipm.mukherjee" <sudipm.mukherjee@gmail.com>,
+	"srw" <srw@sladewatkins.net>, "rwarsow" <rwarsow@gmx.de>,
+	"conor" <conor@kernel.org>, "allen.lkml" <allen.lkml@gmail.com>,
+	"broonie" <broonie@kernel.org>,
+	"Kernel CI - Regressions" <kernelci-regressions@lists.collabora.co.uk>
+Message-ID: <19137010dfd.e10dce2c1574702.3469505847442580482@collabora.com>
+In-Reply-To: <20240808091131.014292134@linuxfoundation.org>
+References: <20240808091131.014292134@linuxfoundation.org>
+Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc2 review
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrYB-GI9L2RSc2bt@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-On Fri, Aug 09, 2024 at 02:48:08PM +0300, Andy Shevchenko wrote:
-> On Fri, Aug 09, 2024 at 11:45:25AM +0530, Raag Jadav wrote:
-> > Add hwmon support for fan1_input attribute, which will expose fan speed
-> > in RPM. With this in place we can monitor fan speed using lm-sensors tool.
-> > 
-> > $ sensors
-> > i915-pci-0300
-> > Adapter: PCI adapter
-> > in0:         653.00 mV
-> > fan1:        3833 RPM
-> > power1:           N/A  (max =  43.00 W)
-> > energy1:      32.02 kJ
-> 
-> > v2:
-> > - Add mutex protection
-> > - Handle overflow
-> > - Add ABI documentation
-> > - Aesthetic adjustments (Riana)
-> > 
-> > v3:
-> > - Declare rotations as "long" and drop redundant casting
-> > - Change date and version in ABI documentation
-> > - Add commenter name in changelog (Riana)
-> > 
-> > v4:
-> > - Fix wakeref leak
-> > - Drop switch case and simplify hwm_fan_xx() (Andi)
-> 
-> I do not understand why we pollute Git history with changelogs, but it's
-> probably the ugly atavism in DRM workflow.
+ ---- On Thu, 08 Aug 2024 14:41:49 +0530  Greg Kroah-Hartman  wrote ---=20
+ > This is the start of the stable review cycle for the 6.1.104 release.
+ > There are 86 patches in this series, all will be posted as a response
+ > to this one.  If anyone has any issues with these being applied, please
+ > let me know.
+ >=20
+ > Responses should be made by Sat, 10 Aug 2024 09:11:02 +0000.
+ > Anything received after that time might be too late.
+ >=20
+ > The whole patch series can be found in one patch at:
+ > =C2=A0=C2=A0=C2=A0=C2=A0https://www.kernel.org/pub/linux/kernel/v6.x/sta=
+ble-review/patch-6.1.104-rc2.gz
+ > or in the git tree and branch at:
+ > =C2=A0=C2=A0=C2=A0=C2=A0git://git.kernel.org/pub/scm/linux/kernel/git/st=
+able/linux-stable-rc.git linux-6.1.y
+ > and the diffstat can be found below.
+ >=20
+ > thanks,
+ >=20
+Date: 2024-08-07
 
-I never liked it! Besides it should even be against the
-submitting patches recommendation.
+## Build failures:
 
-I don't understand what interest might have someone in a couple
-of years, reading this commit, knowing an unintellegible list of
-differences between v2 and v3.
+No **new** build failures seen for the stable-rc/linux-6.1.y commit head \o=
+/
 
-I consider it a random pollution of the commit log.
+## Boot failures:
 
-Andi
+No **new** boot failures seen for the stable-rc/linux-6.1.y commit head \o/
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
 
