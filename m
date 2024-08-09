@@ -1,465 +1,455 @@
-Return-Path: <linux-kernel+bounces-280256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB8094C7C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:44:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC8AB94C7C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C93287570
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:44:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D944E1F25F84
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 00:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C751401C;
-	Fri,  9 Aug 2024 00:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AB2523A;
+	Fri,  9 Aug 2024 00:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="veiCY/jm"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h19eCIYf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D8C3D6D;
-	Fri,  9 Aug 2024 00:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE3838C;
+	Fri,  9 Aug 2024 00:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723164227; cv=none; b=CdeZunoINzqooQ8HeNr1y+xu0n9IbdvGtLocKv8dj0HqSqV9nOpyAwTQr5y/XEi7OykDKQ/CHmK3XHedrWHzpC0Ih6lCMUXVcsCrAAygsxC61B3PHT/VEfdQCQlseiD2/22ca9WI61Em+QpcHJDoICPSKN5UJkhYI5Mhd10GygY=
+	t=1723164411; cv=none; b=qDx95VefCtXW3ZYm2THAbgg/Ls3ETdIlxl1B5EvIDuJBXtSN1PyfWACFJXNtnuskfQDPDSbjbXm0JcgrD3l5l5wzlOQv4WlWm/BmTLxRh3KgXLdmtBnJkBtubOuM9repODB7B8QOGdBSRUzwVGJVrGnkPWscLNQsQ3eJUVKlBfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723164227; c=relaxed/simple;
-	bh=y3H0JRDBFcVQDW3l3zuPU+Q5Mmwp7oZzz8JkUDu+pCU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X5cQQWvsBunOxc2XufktfnbXIK5PairlavDi0MN0iYgVMCYBRs/qF8IKLcBz0vTKNhpwwOFvygIF6A1x4uzplIXZpLgw6n+cHYrCDmVJtbILzppkyjDhbBzNqmicYk/4w1rX58i1kdigrPr8vgcr0XOoNtF+AQNu8lYb3qrHxj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=veiCY/jm; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1723164225; x=1754700225;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=y3H0JRDBFcVQDW3l3zuPU+Q5Mmwp7oZzz8JkUDu+pCU=;
-  b=veiCY/jm0uQse9XVWZhkUxLE/GxnY9GHHQtyohDmnMFqSgSWO703383H
-   6K7Q4GqvVduSAM+0dDEeF1CRTWnvOzQyybZh474Ti9DGKcinwcAurbqr+
-   UBVulomNZt54Ub+IU6DJb1l6cetCNvizu89TyPbcNFDWEGV/bsXp6vmk1
-   mK9l0w/BENABtmV3rYUO2osJrtqUREwW3ywD4RymBRKZLg6qyNh+aqqxY
-   MXVNhUeDiRbowauyjYXg+wrsrIzZPdgA2qxejVS4mTvr/aZk4Lw8GseP2
-   IIQAxWfvw5Vk2Jj9l/MoIXVxDe3d4JRTPhcclA466Flooi6GRuz7w4Xza
-   Q==;
-X-CSE-ConnectionGUID: +8j0qFodS5iV1GC4lWtiSA==
-X-CSE-MsgGUID: pxiiSbv1ToSzPDdIis/fhQ==
-X-IronPort-AV: E=Sophos;i="6.09,274,1716274800"; 
-   d="scan'208";a="30947695"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Aug 2024 17:43:42 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 8 Aug 2024 17:43:12 -0700
-Received: from pop-os.microchip.com (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 8 Aug 2024 17:43:11 -0700
-From: <Tristram.Ha@microchip.com>
-To: Woojung Huh <woojung.huh@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<devicetree@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli
-	<f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>
-CC: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Marek Vasut <marex@denx.de>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Tristram Ha <tristram.ha@microchip.com>
-Subject: [PATCH net-next v2 2/2] net: dsa: microchip: Add KSZ8895/KSZ8864 switch support
-Date: Thu, 8 Aug 2024 17:43:10 -0700
-Message-ID: <20240809004310.239242-3-Tristram.Ha@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240809004310.239242-1-Tristram.Ha@microchip.com>
-References: <20240809004310.239242-1-Tristram.Ha@microchip.com>
+	s=arc-20240116; t=1723164411; c=relaxed/simple;
+	bh=BHjbX0h4gBwPHoOJpcfLmYzC7Vazky3omT+txTF+jXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hzMcfUmjFdPVDAyjRwNp4SM4JJAvlar8yELeJg3t70QzEqxcewvuszjaMZXPKH+u6qihotw1jBviDSZ72OZij1r0xrpGKJRusuSnQ4XrEC6wbSdRW/FSn1Uzj3/7Z29OhXNFSx4oUX3K0lLwqnm3OEHhVHdvkK92ywlmbgVunJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h19eCIYf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5D1C32782;
+	Fri,  9 Aug 2024 00:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723164410;
+	bh=BHjbX0h4gBwPHoOJpcfLmYzC7Vazky3omT+txTF+jXo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h19eCIYf1rulkzzHu5RhJHo0Qbgg+8pXndGVFg3Yym85KnKcXgDoOgFleAYZnzaFF
+	 2p5zh+VjNGiGjx9Sltsabp6E2bFcFMGjYQP3rTp78Y67VNb+V+vmG4oW0fcYuldiKb
+	 7ds3BDvKdvJmUYCrHkU9NEp++drZzMUnZMYHjcFvZjEBqRhjR2mn6inN8p9cngGkU5
+	 uLHloeSqTVQJTEoJkvTVOZUiYfu2PV0Y3YYWN+w77bBqOdVREWCWvnShExhC+GRS+n
+	 MYbwIgo2M518Mjis6UjK8q6HPL/n5jpJVlJdfSOFNx1sUn/qX9qwI2xiTJUOMYBDox
+	 TA3SfNmOCbN7g==
+Date: Fri, 9 Aug 2024 01:46:44 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Mary Strodl <mstrodl@csh.rit.edu>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
+	urezki@gmail.com, hch@infradead.org, linux-mm@kvack.org, lee@kernel.org, 
+	linux-i2c@vger.kernel.org, s.hauer@pengutronix.de, christian.gmeiner@gmail.com
+Subject: Re: [PATCH v3 1/2] x86: Add basic support for the Congatec CGEB BIOS
+ interface
+Message-ID: <ft2lkhphs25xmvmpbf5ssuafdnmkdnq5j7uqb6jjy6ewnwzn2l@6uoad3ii3h4m>
+References: <20240808183527.3950120-1-mstrodl@csh.rit.edu>
+ <20240808183527.3950120-2-mstrodl@csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808183527.3950120-2-mstrodl@csh.rit.edu>
 
-From: Tristram Ha <tristram.ha@microchip.com>
+Hi Mary,
 
-KSZ8895/KSZ8864 is a switch family between KSZ8863/73 and KSZ8795, so it
-shares some registers and functions in those switches already
-implemented in the KSZ DSA driver.
+...
 
-Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
----
- drivers/net/dsa/microchip/ksz8795.c         |  16 ++-
- drivers/net/dsa/microchip/ksz_common.c      | 130 +++++++++++++++++++-
- drivers/net/dsa/microchip/ksz_common.h      |  20 ++-
- drivers/net/dsa/microchip/ksz_spi.c         |  15 ++-
- include/linux/platform_data/microchip-ksz.h |   2 +
- 5 files changed, 170 insertions(+), 13 deletions(-)
+> --- /dev/null
+> +++ b/drivers/mfd/congatec-cgeb.c
+> @@ -0,0 +1,1138 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * CGEB driver
+> + *
+> + * Copyright (c) 2024 Mary Strodl
+> + *
+> + * Based on code from Congatec AG and Sascha Hauer
+> + *
+> + * CGEB is a BIOS interface found on congatech modules. It consists of
+> + * code found in the BIOS memory map which is called in a ioctl like
+> + * fashion. This file contains the basic driver for this interface
+> + * which provides access to the GCEB interface and registers the child
+> + * devices like I2C busses and watchdogs.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; version 2 of the License.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
 
-diff --git a/drivers/net/dsa/microchip/ksz8795.c b/drivers/net/dsa/microchip/ksz8795.c
-index d27b9c36d73f..ac5da38bab36 100644
---- a/drivers/net/dsa/microchip/ksz8795.c
-+++ b/drivers/net/dsa/microchip/ksz8795.c
-@@ -121,6 +121,8 @@ int ksz8_change_mtu(struct ksz_device *dev, int port, int mtu)
- 	case KSZ8765_CHIP_ID:
- 		return ksz8795_change_mtu(dev, frame_size);
- 	case KSZ8830_CHIP_ID:
-+	case KSZ8895_CHIP_ID:
-+	case KSZ8864_CHIP_ID:
- 		return ksz8863_change_mtu(dev, frame_size);
- 	}
- 
-@@ -317,7 +319,7 @@ static void ksz8863_r_mib_pkt(struct ksz_device *dev, int port, u16 addr,
- void ksz8_r_mib_pkt(struct ksz_device *dev, int port, u16 addr,
- 		    u64 *dropped, u64 *cnt)
- {
--	if (ksz_is_ksz88x3(dev))
-+	if (ksz_is_ksz88x3(dev) || ksz_is_8895_family(dev))
- 		ksz8863_r_mib_pkt(dev, port, addr, dropped, cnt);
- 	else
- 		ksz8795_r_mib_pkt(dev, port, addr, dropped, cnt);
-@@ -325,7 +327,7 @@ void ksz8_r_mib_pkt(struct ksz_device *dev, int port, u16 addr,
- 
- void ksz8_freeze_mib(struct ksz_device *dev, int port, bool freeze)
- {
--	if (ksz_is_ksz88x3(dev))
-+	if (ksz_is_ksz88x3(dev) || ksz_is_8895_family(dev))
- 		return;
- 
- 	/* enable the port for flush/freeze function */
-@@ -343,7 +345,8 @@ void ksz8_port_init_cnt(struct ksz_device *dev, int port)
- 	struct ksz_port_mib *mib = &dev->ports[port].mib;
- 	u64 *dropped;
- 
--	if (!ksz_is_ksz88x3(dev)) {
-+	/* For KSZ8795 family. */
-+	if (ksz_is_ksz87xx(dev)) {
- 		/* flush all enabled port MIB counters */
- 		ksz_cfg(dev, REG_SW_CTRL_6, BIT(port), true);
- 		ksz_cfg(dev, REG_SW_CTRL_6, SW_MIB_COUNTER_FLUSH, true);
-@@ -542,11 +545,11 @@ static int ksz8_r_sta_mac_table(struct ksz_device *dev, u16 addr,
- 			shifts[STATIC_MAC_FWD_PORTS];
- 	alu->is_override = (data_hi & masks[STATIC_MAC_TABLE_OVERRIDE]) ? 1 : 0;
- 
--	/* KSZ8795 family switches have STATIC_MAC_TABLE_USE_FID and
-+	/* KSZ8795/KSZ8895 family switches have STATIC_MAC_TABLE_USE_FID and
- 	 * STATIC_MAC_TABLE_FID definitions off by 1 when doing read on the
- 	 * static MAC table compared to doing write.
- 	 */
--	if (ksz_is_ksz87xx(dev))
-+	if (!ksz_is_ksz88x3(dev))
- 		data_hi >>= 1;
- 	alu->is_static = true;
- 	alu->is_use_fid = (data_hi & masks[STATIC_MAC_TABLE_USE_FID]) ? 1 : 0;
-@@ -1617,7 +1620,8 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
- 	for (i = 0; i < dev->phy_port_cnt; i++) {
- 		p = &dev->ports[i];
- 
--		if (!ksz_is_ksz88x3(dev)) {
-+		/* For KSZ8795 family. */
-+		if (ksz_is_ksz87xx(dev)) {
- 			ksz_pread8(dev, i, regs[P_REMOTE_STATUS], &remote);
- 			if (remote & KSZ8_PORT_FIBER_MODE)
- 				p->fiber = 1;
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index 1491099528be..8751578b7e38 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -2,7 +2,7 @@
- /*
-  * Microchip switch driver main logic
-  *
-- * Copyright (C) 2017-2019 Microchip Technology Inc.
-+ * Copyright (C) 2017-2024 Microchip Technology Inc.
-  */
- 
- #include <linux/delay.h>
-@@ -477,6 +477,61 @@ static const u8 ksz8795_shifts[] = {
- 	[DYNAMIC_MAC_SRC_PORT]		= 24,
- };
- 
-+static const u16 ksz8895_regs[] = {
-+	[REG_SW_MAC_ADDR]		= 0x68,
-+	[REG_IND_CTRL_0]		= 0x6E,
-+	[REG_IND_DATA_8]		= 0x70,
-+	[REG_IND_DATA_CHECK]		= 0x72,
-+	[REG_IND_DATA_HI]		= 0x71,
-+	[REG_IND_DATA_LO]		= 0x75,
-+	[REG_IND_MIB_CHECK]		= 0x75,
-+	[P_FORCE_CTRL]			= 0x0C,
-+	[P_LINK_STATUS]			= 0x0E,
-+	[P_LOCAL_CTRL]			= 0x0C,
-+	[P_NEG_RESTART_CTRL]		= 0x0D,
-+	[P_REMOTE_STATUS]		= 0x0E,
-+	[P_SPEED_STATUS]		= 0x09,
-+	[S_TAIL_TAG_CTRL]		= 0x0C,
-+	[P_STP_CTRL]			= 0x02,
-+	[S_START_CTRL]			= 0x01,
-+	[S_BROADCAST_CTRL]		= 0x06,
-+	[S_MULTICAST_CTRL]		= 0x04,
-+};
-+
-+static const u32 ksz8895_masks[] = {
-+	[PORT_802_1P_REMAPPING]		= BIT(7),
-+	[SW_TAIL_TAG_ENABLE]		= BIT(1),
-+	[MIB_COUNTER_OVERFLOW]		= BIT(7),
-+	[MIB_COUNTER_VALID]		= BIT(6),
-+	[VLAN_TABLE_FID]		= GENMASK(6, 0),
-+	[VLAN_TABLE_MEMBERSHIP]		= GENMASK(11, 7),
-+	[VLAN_TABLE_VALID]		= BIT(12),
-+	[STATIC_MAC_TABLE_VALID]	= BIT(21),
-+	[STATIC_MAC_TABLE_USE_FID]	= BIT(23),
-+	[STATIC_MAC_TABLE_FID]		= GENMASK(30, 24),
-+	[STATIC_MAC_TABLE_OVERRIDE]	= BIT(22),
-+	[STATIC_MAC_TABLE_FWD_PORTS]	= GENMASK(20, 16),
-+	[DYNAMIC_MAC_TABLE_ENTRIES_H]	= GENMASK(6, 0),
-+	[DYNAMIC_MAC_TABLE_MAC_EMPTY]	= BIT(7),
-+	[DYNAMIC_MAC_TABLE_NOT_READY]	= BIT(7),
-+	[DYNAMIC_MAC_TABLE_ENTRIES]	= GENMASK(31, 29),
-+	[DYNAMIC_MAC_TABLE_FID]		= GENMASK(22, 16),
-+	[DYNAMIC_MAC_TABLE_SRC_PORT]	= GENMASK(26, 24),
-+	[DYNAMIC_MAC_TABLE_TIMESTAMP]	= GENMASK(28, 27),
-+};
-+
-+static const u8 ksz8895_shifts[] = {
-+	[VLAN_TABLE_MEMBERSHIP_S]	= 7,
-+	[VLAN_TABLE]			= 13,
-+	[STATIC_MAC_FWD_PORTS]		= 16,
-+	[STATIC_MAC_FID]		= 24,
-+	[DYNAMIC_MAC_ENTRIES_H]		= 3,
-+	[DYNAMIC_MAC_ENTRIES]		= 29,
-+	[DYNAMIC_MAC_FID]		= 16,
-+	[DYNAMIC_MAC_TIMESTAMP]		= 27,
-+	[DYNAMIC_MAC_SRC_PORT]		= 24,
-+};
-+
- static const u16 ksz8863_regs[] = {
- 	[REG_SW_MAC_ADDR]		= 0x70,
- 	[REG_IND_CTRL_0]		= 0x79,
-@@ -1343,6 +1398,61 @@ const struct ksz_chip_data ksz_switch_chips[] = {
- 		.internal_phy = {true, true, true, true, false},
- 	},
- 
-+	[KSZ8895] = {
-+		.chip_id = KSZ8895_CHIP_ID,
-+		.dev_name = "KSZ8895",
-+		.num_vlans = 4096,
-+		.num_alus = 0,
-+		.num_statics = 32,
-+		.cpu_ports = 0x10,	/* can be configured as cpu port */
-+		.port_cnt = 5,		/* total cpu and user ports */
-+		.num_tx_queues = 4,
-+		.num_ipms = 4,
-+		.ops = &ksz8_dev_ops,
-+		.phylink_mac_ops = &ksz8_phylink_mac_ops,
-+		.mib_names = ksz88xx_mib_names,
-+		.mib_cnt = ARRAY_SIZE(ksz88xx_mib_names),
-+		.reg_mib_cnt = MIB_COUNTER_NUM,
-+		.regs = ksz8895_regs,
-+		.masks = ksz8895_masks,
-+		.shifts = ksz8895_shifts,
-+		.supports_mii = {false, false, false, false, true},
-+		.supports_rmii = {false, false, false, false, true},
-+		.internal_phy = {true, true, true, true, false},
-+	},
-+
-+	[KSZ8864] = {
-+		/* WARNING
-+		 * =======
-+		 * KSZ8864 is similar to KSZ8895, except the first port
-+		 * does not exist.
-+		 *           external  cpu
-+		 * KSZ8864   1,2,3      4
-+		 * KSZ8895   0,1,2,3    4
-+		 * port_cnt is configured as 5, even though it is 4
-+		 */
-+		.chip_id = KSZ8864_CHIP_ID,
-+		.dev_name = "KSZ8864",
-+		.num_vlans = 4096,
-+		.num_alus = 0,
-+		.num_statics = 32,
-+		.cpu_ports = 0x10,	/* can be configured as cpu port */
-+		.port_cnt = 5,		/* total cpu and user ports */
-+		.num_tx_queues = 4,
-+		.num_ipms = 4,
-+		.ops = &ksz8_dev_ops,
-+		.phylink_mac_ops = &ksz8_phylink_mac_ops,
-+		.mib_names = ksz88xx_mib_names,
-+		.mib_cnt = ARRAY_SIZE(ksz88xx_mib_names),
-+		.reg_mib_cnt = MIB_COUNTER_NUM,
-+		.regs = ksz8895_regs,
-+		.masks = ksz8895_masks,
-+		.shifts = ksz8895_shifts,
-+		.supports_mii = {false, false, false, false, true},
-+		.supports_rmii = {false, false, false, false, true},
-+		.internal_phy = {false, true, true, true, false},
-+	},
-+
- 	[KSZ8830] = {
- 		.chip_id = KSZ8830_CHIP_ID,
- 		.dev_name = "KSZ8863/KSZ8873",
-@@ -2893,9 +3003,7 @@ static enum dsa_tag_protocol ksz_get_tag_protocol(struct dsa_switch *ds,
- 	struct ksz_device *dev = ds->priv;
- 	enum dsa_tag_protocol proto = DSA_TAG_PROTO_NONE;
- 
--	if (dev->chip_id == KSZ8795_CHIP_ID ||
--	    dev->chip_id == KSZ8794_CHIP_ID ||
--	    dev->chip_id == KSZ8765_CHIP_ID)
-+	if (ksz_is_ksz87xx(dev) || ksz_is_8895_family(dev))
- 		proto = DSA_TAG_PROTO_KSZ8795;
- 
- 	if (dev->chip_id == KSZ8830_CHIP_ID ||
-@@ -3011,6 +3119,8 @@ static int ksz_max_mtu(struct dsa_switch *ds, int port)
- 	case KSZ8765_CHIP_ID:
- 		return KSZ8795_HUGE_PACKET_SIZE - VLAN_ETH_HLEN - ETH_FCS_LEN;
- 	case KSZ8830_CHIP_ID:
-+	case KSZ8895_CHIP_ID:
-+	case KSZ8864_CHIP_ID:
- 		return KSZ8863_HUGE_PACKET_SIZE - VLAN_ETH_HLEN - ETH_FCS_LEN;
- 	case KSZ8563_CHIP_ID:
- 	case KSZ8567_CHIP_ID:
-@@ -3368,6 +3478,18 @@ static int ksz_switch_detect(struct ksz_device *dev)
- 		else
- 			return -ENODEV;
- 		break;
-+	case KSZ8895_FAMILY_ID:
-+		if (id2 == KSZ8895_CHIP_ID_95 ||
-+		    id2 == KSZ8895_CHIP_ID_95R)
-+			dev->chip_id = KSZ8895_CHIP_ID;
-+		else
-+			return -ENODEV;
-+		ret = ksz_read8(dev, REG_KSZ8864_CHIP_ID, &id4);
-+		if (ret)
-+			return ret;
-+		if (id4 & SW_KSZ8864)
-+			dev->chip_id = KSZ8864_CHIP_ID;
-+		break;
- 	default:
- 		ret = ksz_read32(dev, REG_CHIP_ID0, &id32);
- 		if (ret)
-diff --git a/drivers/net/dsa/microchip/ksz_common.h b/drivers/net/dsa/microchip/ksz_common.h
-index 5f0a628b9849..ad8723233a33 100644
---- a/drivers/net/dsa/microchip/ksz_common.h
-+++ b/drivers/net/dsa/microchip/ksz_common.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /* Microchip switch driver common header
-  *
-- * Copyright (C) 2017-2019 Microchip Technology Inc.
-+ * Copyright (C) 2017-2024 Microchip Technology Inc.
-  */
- 
- #ifndef __KSZ_COMMON_H
-@@ -199,6 +199,8 @@ enum ksz_model {
- 	KSZ8795,
- 	KSZ8794,
- 	KSZ8765,
-+	KSZ8895,
-+	KSZ8864,
- 	KSZ8830,
- 	KSZ9477,
- 	KSZ9896,
-@@ -624,9 +626,16 @@ static inline bool ksz_is_ksz88x3(struct ksz_device *dev)
- 	return dev->chip_id == KSZ8830_CHIP_ID;
- }
- 
-+static inline bool ksz_is_8895_family(struct ksz_device *dev)
-+{
-+	return dev->chip_id == KSZ8895_CHIP_ID ||
-+	       dev->chip_id == KSZ8864_CHIP_ID;
-+}
-+
- static inline bool is_ksz8(struct ksz_device *dev)
- {
--	return ksz_is_ksz87xx(dev) || ksz_is_ksz88x3(dev);
-+	return ksz_is_ksz87xx(dev) || ksz_is_ksz88x3(dev) ||
-+	       ksz_is_8895_family(dev);
- }
- 
- static inline int is_lan937x(struct ksz_device *dev)
-@@ -655,6 +664,7 @@ static inline bool is_lan937x_tx_phy(struct ksz_device *dev, int port)
- #define SW_FAMILY_ID_M			GENMASK(15, 8)
- #define KSZ87_FAMILY_ID			0x87
- #define KSZ88_FAMILY_ID			0x88
-+#define KSZ8895_FAMILY_ID		0x95
- 
- #define KSZ8_PORT_STATUS_0		0x08
- #define KSZ8_PORT_FIBER_MODE		BIT(7)
-@@ -663,6 +673,12 @@ static inline bool is_lan937x_tx_phy(struct ksz_device *dev, int port)
- #define KSZ87_CHIP_ID_94		0x6
- #define KSZ87_CHIP_ID_95		0x9
- #define KSZ88_CHIP_ID_63		0x3
-+#define KSZ8895_CHIP_ID_95		0x4
-+#define KSZ8895_CHIP_ID_95R		0x6
-+
-+/* KSZ8895 specific register */
-+#define REG_KSZ8864_CHIP_ID		0xFE
-+#define SW_KSZ8864			BIT(7)
- 
- #define SW_REV_ID_M			GENMASK(7, 4)
- 
-diff --git a/drivers/net/dsa/microchip/ksz_spi.c b/drivers/net/dsa/microchip/ksz_spi.c
-index 8e8d83213b04..11d27df710fd 100644
---- a/drivers/net/dsa/microchip/ksz_spi.c
-+++ b/drivers/net/dsa/microchip/ksz_spi.c
-@@ -2,7 +2,7 @@
- /*
-  * Microchip ksz series register access through SPI
-  *
-- * Copyright (C) 2017 Microchip Technology Inc.
-+ * Copyright (C) 2017-2024 Microchip Technology Inc.
-  *	Tristram Ha <Tristram.Ha@microchip.com>
-  */
- 
-@@ -60,6 +60,9 @@ static int ksz_spi_probe(struct spi_device *spi)
- 		 chip->chip_id == KSZ8794_CHIP_ID ||
- 		 chip->chip_id == KSZ8765_CHIP_ID)
- 		regmap_config = ksz8795_regmap_config;
-+	else if (chip->chip_id == KSZ8895_CHIP_ID ||
-+		 chip->chip_id == KSZ8864_CHIP_ID)
-+		regmap_config = ksz8863_regmap_config;
- 	else
- 		regmap_config = ksz9477_regmap_config;
- 
-@@ -132,6 +135,14 @@ static const struct of_device_id ksz_dt_ids[] = {
- 		.compatible = "microchip,ksz8795",
- 		.data = &ksz_switch_chips[KSZ8795]
- 	},
-+	{
-+		.compatible = "microchip,ksz8895",
-+		.data = &ksz_switch_chips[KSZ8895]
-+	},
-+	{
-+		.compatible = "microchip,ksz8864",
-+		.data = &ksz_switch_chips[KSZ8864]
-+	},
- 	{
- 		.compatible = "microchip,ksz8863",
- 		.data = &ksz_switch_chips[KSZ8830]
-@@ -200,6 +211,8 @@ static const struct spi_device_id ksz_spi_ids[] = {
- 	{ "ksz8765" },
- 	{ "ksz8794" },
- 	{ "ksz8795" },
-+	{ "ksz8895" },
-+	{ "ksz8864" },
- 	{ "ksz8863" },
- 	{ "ksz8873" },
- 	{ "ksz9477" },
-diff --git a/include/linux/platform_data/microchip-ksz.h b/include/linux/platform_data/microchip-ksz.h
-index 8c659db4da6b..4b366b17391d 100644
---- a/include/linux/platform_data/microchip-ksz.h
-+++ b/include/linux/platform_data/microchip-ksz.h
-@@ -27,6 +27,8 @@ enum ksz_chip_id {
- 	KSZ8795_CHIP_ID = 0x8795,
- 	KSZ8794_CHIP_ID = 0x8794,
- 	KSZ8765_CHIP_ID = 0x8765,
-+	KSZ8895_CHIP_ID = 0x8895,
-+	KSZ8864_CHIP_ID = 0x8864,
- 	KSZ8830_CHIP_ID = 0x8830,
- 	KSZ9477_CHIP_ID = 0x00947700,
- 	KSZ9896_CHIP_ID = 0x00989600,
--- 
-2.34.1
+If you use the SPDX identifier you don't need to mention the GPL
+parts here.
 
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/string.h>
+> +#include <linux/module.h>
+> +#include <linux/sched.h>
+> +#include <linux/io.h>
+> +#include <linux/string.h>
+> +#include <linux/errno.h>
+> +#include <linux/kernel.h>
+> +#include <linux/slab.h>
+> +#include <linux/vmalloc.h>
+> +#include <linux/mm.h>
+> +#include <linux/delay.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/connector.h>
+> +#include <linux/mfd/congatec-cgeb.h>
+> +#include <linux/completion.h>
+> +
+> +#include <generated/autoconf.h>
+
+the include files are normally alphabetically sorted.
+
+> +#pragma pack(push, 4)
+> +
+> +struct cgeb_low_desc {
+> +	char magic[8];          /* descriptor magic string */
+> +	u16 size;               /* size of this descriptor */
+> +	u16 reserved;
+> +	char bios_name[8];      /* BIOS name and revision "ppppRvvv" */
+> +	u32 hi_desc_phys_addr;  /* phys addr of the high descriptor, can be 0 */
+> +};
+> +
+> +/* CGEB High Descriptor located in 0xfff00000-0xffffffff */
+> +#ifdef CONFIG_X86_64
+> +#define CGEB_HD_MAGIC "$CGEBQD$"
+> +#else
+> +#define CGEB_HD_MAGIC "$CGEBHD$"
+> +#endif
+> +
+> +struct cgeb_high_desc {
+> +	char magic[8];          /* descriptor magic string */
+> +	u16 size;               /* size of this descriptor */
+> +	u16 reserved;
+> +	u32 data_size;          /* CGEB data area size */
+> +	u32 code_size;          /* CGEB code area size */
+> +	u32 entry_rel;          /* CGEB entry point relative to start */
+> +};
+> +
+> +struct cgeb_far_ptr {
+> +	void __user *off;
+> +	u16 seg;
+> +	u16 pad;
+> +};
+> +
+> +struct cgeb_fps {
+> +	u32 size;               /* size of the parameter structure */
+> +	u32 fct;                /* function number */
+> +	struct cgeb_far_ptr data;       /* CGEB data area */
+> +	void __user *cont;      /* private continuation pointer */
+> +	void __user *subfps;    /* private sub function parameter
+> +				 * structure pointer
+> +				 */
+> +	void __user *subfct;    /* sub function pointer */
+> +	u32 status;             /* result codes of the function */
+> +	u32 unit;               /* unit number or type */
+> +	u32 pars[4];            /* input parameters */
+> +	u32 rets[2];            /* return parameters */
+> +	void __user *iptr;      /* input pointer */
+> +	void __user *optr;      /* output pointer */
+> +};
+
+...
+
+> +struct cgeb_map_mem {
+> +	void *phys;             /* physical address */
+> +	u32 size;               /* size in bytes */
+> +	struct cgeb_far_ptr virt;
+> +};
+> +
+> +struct cgeb_map_mem_list {
+> +	u32 count;              /* number of memory map entries */
+> +	struct cgeb_map_mem entries[];
+> +};
+> +
+> +struct cgeb_boardinfo {
+> +	u32 size;
+> +	u32 flags;
+> +	u32 classes;
+> +	u32 primary_class;
+> +	char board[CGOS_BOARD_MAX_SIZE_ID_STRING];
+> +	/* optional */
+> +	char vendor[CGOS_BOARD_MAX_SIZE_ID_STRING];
+> +};
+> +
+> +struct cgeb_i2c_info {
+> +	u32 size;
+> +	u32 type;
+> +	u32 frequency;
+> +	u32 maxFrequency;
+> +};
+
+...
+
+> +struct cgeb_board_data {
+> +	void __user *data;
+> +	void __user *code;
+> +	size_t code_size;
+> +	u16 ds;
+> +	struct cgeb_map_mem_list *map_mem;
+> +	void __user *map_mem_user;
+> +	struct platform_device **devices;
+> +	int num_devices;
+> +
+> +	#ifdef CONFIG_X86_64
+> +	void (*entry)(void*, struct cgeb_fps *, struct cgeb_fps *, void*);
+> +	#else
+> +	/*
+> +	 * entry points to a bimodal C style function that expects a far pointer
+> +	 * to a fps. If cs is 0 then it does a near return, otherwise a far
+> +	 * return. If we ever need a far return then we must not pass cs at all.
+> +	 * parameters are removed by the caller.
+> +	 */
+> +	void __attribute__((regparm(0)))(*entry)(unsigned short,
+> +			  struct cgeb_fps *, unsigned short);
+> +	#endif
+> +};
+> +
+> +struct cgeb_call_user {
+> +	void *optr;
+> +	size_t size;
+> +	void *callback_data;
+> +	int (*callback)(void __user *optr, void *koptr, void *data);
+> +};
+> +
+> +enum cgeb_msg_type {
+> +	CGEB_MSG_ACK = 0,
+> +	CGEB_MSG_ERROR,
+> +	CGEB_MSG_FPS,
+> +	CGEB_MSG_MAPPED,
+> +	CGEB_MSG_MAP,
+> +	CGEB_MSG_CODE,
+> +	CGEB_MSG_ALLOC,
+> +	CGEB_MSG_ALLOC_CODE,
+> +	CGEB_MSG_FREE,
+> +	CGEB_MSG_MUNMAP,
+> +	CGEB_MSG_CALL,
+> +	CGEB_MSG_PING,
+> +};
+> +
+> +struct cgeb_msg {
+> +	enum cgeb_msg_type type;
+> +	union {
+> +		struct cgeb_msg_mapped {
+> +			void __user *virt;
+> +		} mapped;
+> +		struct cgeb_msg_fps {
+> +			size_t optr_size;
+> +			void __user *optr;
+> +			struct cgeb_fps fps;
+> +		} fps;
+> +		struct cgeb_msg_code {
+> +			size_t length;
+> +			uint32_t entry_rel;
+> +			void __user *data;
+> +		} code;
+> +		struct cgeb_msg_map {
+> +			uint32_t phys;
+> +			size_t size;
+> +		} map;
+> +	};
+> +};
+> +
+> +static char cgeb_helper_path[PATH_MAX] = "/sbin/cgeb-helper";
+> +
+> +static struct cb_id cgeb_cn_id = {
+> +	.idx = CN_IDX_CGEB,
+> +	.val = CN_VAL_CGEB
+> +};
+> +
+> +enum cgeb_request_state {
+> +	CGEB_REQ_IDLE = 0,
+> +	CGEB_REQ_ACTIVE,
+> +	CGEB_REQ_DONE,
+> +};
+> +
+> +static DEFINE_MUTEX(cgeb_lock);
+> +struct cgeb_request {
+> +	struct completion done;
+> +	struct cgeb_msg *out;
+> +	enum cgeb_request_state busy;
+> +	int ack;
+> +	int (*callback)(struct cgeb_msg *msg, void *user);
+> +	void *user;
+> +};
+> +
+> +#define CGEB_REQUEST_MAX 16
+> +static struct cgeb_request cgeb_requests[CGEB_REQUEST_MAX];
+> +
+> +struct cgeb_after_alloc_data {
+> +	void *kernel;
+> +	void __user **user;
+> +	size_t length;
+> +};
+> +
+> +struct cgeb_map_data {
+> +	void __user *user_list;
+> +	struct cgeb_board_data *board;
+> +};
+
+I'm counting too many global variables here and too many global
+structure definitions. It might get a bit hard to follow.
+
+I'd suggest to simplify this part as much as possible and keep
+everything in as less structures as possible (ideally just one). 
+
+Please make local as many variables as you can.
+
+...
+
+> +static int cgeb_request(struct cgeb_msg msg, struct cgeb_msg *out,
+> +			int (*callback)(struct cgeb_msg*, void*), void *user)
+> +{
+
+...
+
+> +	if (req->busy) {
+> +		mutex_unlock(&cgeb_lock);
+> +		err = -EBUSY;
+> +		goto out;
+
+just return -EBUSY
+
+> +	}
+> +	wrapper->seq = seq;
+> +	req->busy = CGEB_REQ_ACTIVE;
+> +	req->ack = wrapper->ack;
+> +	req->out = out;
+> +	req->callback = callback;
+> +	req->user = user;
+> +
+> +	err = cn_netlink_send(wrapper, 0, 0, GFP_KERNEL);
+> +	if (err == -ESRCH) {
+> +		err = cgeb_helper_start();
+> +		if (err) {
+> +			pr_err("failed to execute %s\n", cgeb_helper_path);
+> +			pr_err("make sure the cgeb helper is executable\n");
+> +		} else {
+> +			do {
+> +				err = cn_netlink_send(wrapper, 0, 0,
+> +						      GFP_KERNEL);
+> +				if (err == -ENOBUFS)
+> +					err = 0;
+> +				if (err == -ESRCH)
+> +					msleep(30);
+> +			} while (err == -ESRCH && ++retries < 5);
+
+when you use constants like "5", you need to give it an
+explanation, either as a define (the name speaks by itself) or a
+comment. We don't want people asking "why 5?" :-)
+
+> +		}
+> +	} else if (err == -ENOBUFS)
+> +		err = 0;
+
+based on the coding style this should have been:
+
+	if (err == -ESRCH) {
+		...
+	} else if (err == -ENOBUFS) {
+		err = 0;
+	}
+
+You either use brackets for every if/else/else fi or for no one.
+
+> +	kfree(wrapper);
+> +
+> +	if (++seq >= CGEB_REQUEST_MAX)
+> +		seq = 0;
+> +
+> +	mutex_unlock(&cgeb_lock);
+> +
+> +	if (err)
+> +		goto out;
+
+just return err
+
+> +
+> +	/* Wait for a response to the request */
+> +	err = wait_for_completion_interruptible_timeout(
+> +		&req->done, msecs_to_jiffies(20000));
+> +	if (err == 0) {
+> +		pr_err("CGEB: Timed out running request of type %d!\n",
+> +		       msg.type);
+> +		err = -ETIMEDOUT;
+
+just "return -ETIMEDOUT;" and you can cleanup the code below
+
+> +	} else if (err > 0)
+> +		err = 0;
+
+brackets!
+
+> +	if (err)
+> +		goto out;
+> + 
+> +	mutex_lock(&cgeb_lock);
+> +
+> +	if (req->busy != CGEB_REQ_DONE) {
+> +		pr_err("CGEB: BUG: Request is in a bad state?\n");
+> +		err = -EINVAL;
+> +	}
+> +
+> +	req->busy = CGEB_REQ_IDLE;
+> +	mutex_unlock(&cgeb_lock);
+> +out:
+> +	return err;
+
+I don't see any need for the out: label
+
+> +}
+> +
+> +static void cgeb_cn_callback(struct cn_msg *msg, struct netlink_skb_parms *nsp)
+> +{
+> +	struct cgeb_request *req;
+> +
+> +	if (!capable(CAP_SYS_ADMIN))
+> +		return;
+> +
+> +	if (msg->seq >= CGEB_REQUEST_MAX) {
+> +		pr_err("CGEB: Impossible sequence number: %d! Ignoring\n",
+> +		       msg->seq);
+> +		return;
+> +	}
+> +
+> +	mutex_lock(&cgeb_lock);
+> +	req = &cgeb_requests[msg->seq];
+> +
+> +	if (!req->busy || req->ack != msg->ack) {
+> +		pr_err("CGEB: Bad response to request %d! Ignoring\n",
+> +		       msg->seq);
+> +		mutex_unlock(&cgeb_lock);
+> +		return;
+> +	}
+> +
+> +	if (msg->len != sizeof(*req->out)) {
+> +		pr_err("CGEB: Bad response size for request %d!\n", msg->seq);
+> +		mutex_unlock(&cgeb_lock);
+> +		return;
+
+here it can be useful to have a goto statement:
+
+	goto out;
+	...
+	out:
+		mutex_unlock(...);
+		return;
+
+Andi
 
