@@ -1,234 +1,153 @@
-Return-Path: <linux-kernel+bounces-280388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E80B94C9E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:53:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F9B94C9F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1644E283D87
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:53:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FA84B21A20
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F6616CD01;
-	Fri,  9 Aug 2024 05:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69CE16C870;
+	Fri,  9 Aug 2024 05:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDmnZlXe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fr9ITUW+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0C312E7E;
-	Fri,  9 Aug 2024 05:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E2B12E7E
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 05:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723182811; cv=none; b=dT8KymI9ZT4F7tDbjEgUF2h0oGbDf7cyXS34B9gnLae7CqWsvgAORf3G4tEBqHxISNKtiAyeVNEKZvDmxfGH4uvQzEIodS4TU/UPXfL3wQ3vUUHfiCe21S6kNS31mPvR1P1VXBdn1pcJqgqa+2iKHIvcY5JPtGd2KbCxb6bBywU=
+	t=1723183086; cv=none; b=NbP2j7nL0Hleq+GFSQ9E25aafGwAe5V6aHz9qV9S9S7iWfiBzFs8QMcv//qhxG66Vd/Ne0xd8Lx+w0qCkWvrNN5j60T1DObMXBtmoYXw3jdCsWBIpGCozYSojN+FMf9onTxQkCVWgUGvQGNjOxz3+78PgvX3tbNo63OjALfFyZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723182811; c=relaxed/simple;
-	bh=WPtOAuV9aswhmETP6KB3Lze/3iFuPjnW3egrPbSzqJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J0CMipgd4FFY+YH2i8fVtmYUVrIoSr2H4Iwqy8B9hk/WzdmhpVwp99rZyykeX7mZxI4enVcLmgeZCh9LpL5LExhZ+dfmZiZvxeYzbXRp68ykQho7zQ6XW/t0fME4bh8V6E2uJxmJEUUS8ZLasPMnOWjypR0hgvAcwoC7E6b9418=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDmnZlXe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59810C4AF0D;
-	Fri,  9 Aug 2024 05:53:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723182810;
-	bh=WPtOAuV9aswhmETP6KB3Lze/3iFuPjnW3egrPbSzqJQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aDmnZlXeCEO3tHifcSQMguhtDDfJ+JF3K9nfD+p4O7uCus75dPUrMZKJbVR9VaktW
-	 dLa8HNIqkFVfbu5f0udFDUhymTSsAiaXWNwHPlxTMhB43oTDx3Odg9NmezTnYCPRF4
-	 7BEu6I/800tTW8D5ve8TcYDsrk1kcl89cRSWcBVJxr5RQHO8Wj29rvP0Nldw4zNgDZ
-	 rEaeGm4TMKTa1Egg7d3ZQAkYVuU736YW6WBxt3k/fcpjuiHTNtg3/zLBskSidKLTAK
-	 SHAi7gmqahvwIKRLMzJbzxQK5WNbnce1FaT8bFnB40ExpKNXcUQQ93x+eGoBhiMM85
-	 cc8Q7v3ltxnxw==
-Message-ID: <601adbfd-fbb6-48c6-b755-da1b5d321d6b@kernel.org>
-Date: Fri, 9 Aug 2024 07:53:22 +0200
+	s=arc-20240116; t=1723183086; c=relaxed/simple;
+	bh=EjNUO1G8fUoOFyVU7/LcFACMKocJfSk95eUy2roxy1Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S1KXzdGggBgkrQe8cBkoH7Ger8LEBNH48njR9itMcMD7ndKZLNtqRhrdWD2MRylwfN0eROOm3kUVnrpdL2beNXJ/DZ0T/vcQQogIKn3LQJP5uuYrqgGX8rNa5f9/BjfqF8EiLPRGM19j/YNMT3RlxRml3t/gmO5hX+ooNelP0wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fr9ITUW+; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723183084; x=1754719084;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EjNUO1G8fUoOFyVU7/LcFACMKocJfSk95eUy2roxy1Y=;
+  b=Fr9ITUW+HEwNJur2/5fz80IrzydwbfkR1v46hvqJyoqL/xRVCtVZ1Oqn
+   AeGUuL07/OOE8FrPkbd6imeQkNt4YC5jIXWeNAChLLmRo5kOBoNaMsN6n
+   bHiYvpe29KB8Z/DzaOKyRm9MmMagXDRu2036pJitDF1z96hAIyzlWOYhl
+   Zlhzg1sjgOnRjmCw0ekOZpSdAU0L8rzfdSoxL3rbOkHwYzvHQaHKPpCje
+   uNFxTr+4YnObJjXlQRtT1ebhlFniiw62o8xz9apt0e9Qbu0zbYbVe7Fgh
+   k63tZYULEcV9Wpw0GXXHKnKgKMIZENOy2K2zUlxiZ9TckJjPlB4R8lDFW
+   A==;
+X-CSE-ConnectionGUID: oWHs9f+FRbeqZmu52MAQ7w==
+X-CSE-MsgGUID: hbdT6imhRf6rzNcwG+Bn4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21469106"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="21469106"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 22:58:03 -0700
+X-CSE-ConnectionGUID: osZSMV3mS3myNWtMYFUlYQ==
+X-CSE-MsgGUID: MbrogYbtRT2iNamRqRZ5dQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="57540850"
+Received: from allen-box.sh.intel.com ([10.239.159.127])
+  by fmviesa010.fm.intel.com with ESMTP; 08 Aug 2024 22:58:00 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v4 0/7] iommu/vt-d: Convert to use static identity domain
+Date: Fri,  9 Aug 2024 13:54:24 +0800
+Message-Id: <20240809055431.36513-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
-To: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
- kernel@xen0n.name, p.zabel@pengutronix.de
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, loongarch@lists.linux.dev
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
- <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
- <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 07/08/2024 10:23, 郑豪威 wrote:
-> 
-> 在 2024/8/4 16:43, Krzysztof Kozlowski 写道:
->> On 04/08/2024 08:38,zhenghaowei@loongson.cn wrote:
->>
->> Due to lack of changelog, I assume you send the same patch, so:
->>
->> <form letter>
->> This is a friendly reminder during the review process.
->>
->> It seems my or other reviewer's previous comments were not fully
->> addressed. Maybe the feedback got lost between the quotes, maybe you
->> just forgot to apply it. Please go back to the previous discussion and
->> either implement all requested changes or keep discussing them.
->>
->> Thank you.
->> </form letter>
->>
->> Also:
->>
->>> +
->>> +  clocks:
->>> +    maxItems: 1
->>> +
->>> +  fractional-division:
->> Where are this and following defined? In which schema?
->>
-> These and the ones below are new definitions, can I use them like this?
-> 
-> +  fractional-division:
-> +    description: Enables fractional-N division. Currently,
-> +      only LS2K1500 and LS2K2000 support this feature.
-> +    type: boolean
-> 
+Intel's IOMMU driver used a special domain called 1:1 mapping domain to
+support the domain of type IOMMU_DOMAIN_IDENTITY, which enables device
+drivers to directly utilize physical addresses for DMA access despite
+the presence of IOMMU units.
 
-Missing vendor prefix, but what's more important, why would this be
-property of DT? Just enable it always...
+The implementation of the 1:1 mapping domain is influenced by hardware
+differences. While modern Intel VT-d implementations support hardware
+passthrough translation mode, earlier versions lacked this feature,
+which requires a more complex implementation approach.
 
->>> +    description: Enables fractional-N division. Currently,
->>> +      only LS2K1500 and LS2K2000 support this feature.
->>> +
->>> +  rts-invert:
->>> +    description: Inverts the RTS value in the MCR register.
->>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
->>> +      series CPUs, and Loongson LS7A bridge chips.
->>> +
->>> +  dtr-invert:
->>> +    description: Inverts the DTR value in the MCR register.
->>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
->>> +      series CPUs, and Loongson LS7A bridge chips.
->>> +
->>> +  cts-invert:
->>> +    description: Inverts the CTS value in the MSR register.
->>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
->>> +      and Loongson LS7A bridge chips.
->>> +
->>> +  dsr-invert:
->>> +    description: Inverts the DSR value in the MSR register.
->>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
->>> +      and Loongson LS7A bridge chips.
+The 1:1 mapping domain for earlier hardware was implemented by associating
+a DMA domain with an IOVA (IO Virtual Address) equivalent to the
+physical address. While, for most hardware supporting passthrough mode,
+simply setting the hardware's passthrough mode is sufficient. These two
+modes were merged together in si_domain, which is a special DMA domain
+sharing the domain ops of an ordinary DMA domain.
 
-Same questions for all these. Why choosing invert is a board level
-decision? If it "should be used" then why it is not used always?
+As the iommu core has evolved, it has introduced global static identity
+domain with "never fail" attach semantics. This means that the domain is
+always available and cannot fail to attach. The iommu driver now assigns
+this domain directly at iommu_ops->identity_domain instead of allocating
+it through the domain allocation interface.
 
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - interrupts
->>> +  - clocks
->>> +
->>> +allOf:
->>> +  - $ref: serial.yaml
->>> +
->>> +unevaluatedProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/interrupt-controller/irq.h>
->>> +    #include <dt-bindings/clock/loongson,ls2k-clk.h>
->>> +
->>> +    serial@1fe001e0 {
->>> +        compatible = "loongson,ls7a-uart";
->>> +        reg = <0x0 0x1fe001e0 0x0 0x10>;
->>> +        clock-frequency = <100000000>;
->>> +        interrupt-parent = <&liointc>;
->>> +        interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
->>> +        fractional-division;
->>> +        rts-invert;
->>> +        dtr-invert;
->>> +    };
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 8766f3e5e87e..a6306327dba5 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -13189,6 +13189,13 @@ S:	Maintained
->>>   F:	Documentation/devicetree/bindings/i2c/loongson,ls2x-i2c.yaml
->>>   F:	drivers/i2c/busses/i2c-ls2x.c
->>>   
->>> +LOONGSON UART DRIVER
->>> +M:	Haowei Zheng<zhenghaowei@loongson.cn>
->>> +L:	linux-serial@vger.kernel.org
->>> +S:	Maintained
->>> +F:	Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml
->>> +F:	drivers/tty/serial/8250/8250_loongson.c
->> There is no such file.
->>
->> Best regards,
->> Krzysztof
-> 
-> The file "drivers/tty/serial/8250/8250_loongson.c" will be created in 
-> the patch
-> 
-> "tty: serial: 8250: Add loongson uart driver support". Is it 
-> inappropriate to reference it here?
+This converts the Intel IOMMU driver to embrace the global static
+identity domain. For early legacy hardwares that don't support
+passthrough translation mode, ask the iommu core to use a DMA type of
+default domain. For modern hardwares that support passthrough
+translation mode, implement a static global identity domain.
 
-Apply this patch and run get_maintainers self tests. What do you see?
+The whole series is also available at
 
-Of course it is not appropriate here. The file does not exist.
+https://github.com/LuBaolu/intel-iommu/commits/vtd-static-identity-domain-v4
 
-Best regards,
-Krzysztof
+Change log:
+v4:
+ - Add a new patch to remove has_iotlb_device flag as suggested by
+   Jason.
+   https://lore.kernel.org/linux-iommu/20240807121712.GD8473@ziepe.ca/
+
+v3: https://lore.kernel.org/linux-iommu/20240806023941.93454-1-baolu.lu@linux.intel.com/
+ - Kevin worried that some graphic devices might still require identity
+   domain. Forcing DMA domain for those drivers might break the existing
+   functionality.
+   https://lore.kernel.org/linux-iommu/BN9PR11MB52761FF9AB496B422596DDDF8C8AA@BN9PR11MB5276.namprd11.prod.outlook.com/
+
+   After confirmed with the graphic community, we decouple "igfx_off"
+   kernel command from graphic identity mapping with the following commits:
+   ba00196ca41c ("iommu/vt-d: Decouple igfx_off from graphic identity mapping")
+   4b8d18c0c986 ("iommu/vt-d: Remove INTEL_IOMMU_BROKEN_GFX_WA").
+
+v2: https://lore.kernel.org/linux-iommu/20231205012203.244584-1-baolu.lu@linux.intel.com/
+ - Re-orgnize the patches by removing 1:1 mappings before implementing
+   global static domain.
+
+v1: https://lore.kernel.org/linux-iommu/20231120112944.142741-1-baolu.lu@linux.intel.com/ 
+
+Lu Baolu (7):
+  iommu/vt-d: Require DMA domain if hardware not support passthrough
+  iommu/vt-d: Remove identity mappings from si_domain
+  iommu/vt-d: Always reserve a domain ID for identity setup
+  iommu/vt-d: Remove has_iotlb_device flag
+  iommu/vt-d: Factor out helpers from domain_context_mapping_one()
+  iommu/vt-d: Add support for static identity domain
+  iommu/vt-d: Cleanup si_domain
+
+ drivers/iommu/intel/iommu.h  |   2 -
+ drivers/iommu/intel/iommu.c  | 468 +++++++++++++++--------------------
+ drivers/iommu/intel/nested.c |   2 -
+ 3 files changed, 201 insertions(+), 271 deletions(-)
+
+-- 
+2.34.1
 
 
