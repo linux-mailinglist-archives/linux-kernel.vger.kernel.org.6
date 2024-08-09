@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-280559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D073C94CC23
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:25:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF48894CC29
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5243E1F21CE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:25:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B1EC1C214D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655F818DF8E;
-	Fri,  9 Aug 2024 08:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a8/2MNye"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4717217556C
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E0F18DF7B;
+	Fri,  9 Aug 2024 08:27:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76C517556C
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723191935; cv=none; b=cAKrlDg4c4T5jfmt+c1f+NnODbmurk1jkwTix/sxAWQqjAFsa8CesnwV5JgeDRrQxWbp/8/6+IQunIgI6wRkgkmrqmAIjowCwYBBgo2wodc+hXDw/BC4NDJuiTUaXX4b8R63wmp9D9XNjFATKdmhOQND0EJGv/tuV/No4BT+zxI=
+	t=1723192047; cv=none; b=jk6el6CKhq0IjJEfhL2zTigjXaHCMOqnujQSM7czpi4sFE5zr3KJQPUTbwv/SrRpnUEOHVE/FcwVJv7hKrbo0NWgVStkRTmyBxH9Y4MyxYP42IbCGTg3/+IbOuzSPd3mJxDqBxQ0a1q9jfPKKd0c8qZJRWo7K3H3xkfHRnaODTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723191935; c=relaxed/simple;
-	bh=F00eSuBFRJ85i8bjy/BwzYYFaPqWwWC37gyvZLr183s=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Xh336yudZ7hXgP8O7Vbs4rE8RP+P1zBkUGiRu9mEAnSndrcqB2u2GjxTARniFRd6fZT+lEokQzOAYhLprldy1gQJFC/N4NegHpJpHELuOLn0B5rBu09A+sDHGOcW6IKSrNsNJ79bMNMzaxvz0Z1QMCGp8gcQ/+C14dnql4wYZKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a8/2MNye; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723191934; x=1754727934;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=F00eSuBFRJ85i8bjy/BwzYYFaPqWwWC37gyvZLr183s=;
-  b=a8/2MNyeplU+qdTMA0n1BK9YAX8ZqPf6fbkLvnpKocw+Y3Jn1wwg653o
-   Pwn81vRExIHS+U59YSaGkdpMPj1bjbm5ZDRUcfk2GIFFlAq8E0CP6JUaz
-   0S0y+XPKMn9eu1xhEBuZjU1+k+WJjCBozTtEhvQLPsNeilbrCycv/S/zu
-   rcUIr2C/eGP32hRmpywwoR6e3y0xuXolJIQqw6mFsAns8Ry/lz0MdHnT6
-   kyfy9+UmUgr/9X7+a2bgc+JaHMg5YBTLqYgLdh+sR2hSqWtp57/PWgylg
-   +UCjFcFZO+P4Y3tBEx3ra7xXuWd/NaS/zo6E5hwKGNj/GoV+z6MvuwlkO
-   A==;
-X-CSE-ConnectionGUID: Agyw9boeRSG4s46g9GxRXA==
-X-CSE-MsgGUID: gwizILP3SquXBqL4LCGsEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="31982548"
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="31982548"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:25:34 -0700
-X-CSE-ConnectionGUID: 9tfv5GZfR262HjFhJ08/Yw==
-X-CSE-MsgGUID: G669TIP1Q7qizs7qpyIVGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="57468923"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.229.145]) ([10.124.229.145])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:25:32 -0700
-Message-ID: <4d1f761b-993d-4c13-a296-111bc3b39141@linux.intel.com>
-Date: Fri, 9 Aug 2024 16:25:30 +0800
+	s=arc-20240116; t=1723192047; c=relaxed/simple;
+	bh=l0fYxfMbpqasnGNrj5CdzGJRfT6q4tbYxcGMGdENI3s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jlG3+PI0cd4qd9g/9H5FzakQcgUQqmmaERwnZyH1yl6oc2gx+khm64WxIbFdOIffriQ6ggvM+OYhUWW61cMkEqRcxqwjtAb83dMWL3cdypaMm4B927zkDQ/3cefZPE2AoODxNHkF0SawZ9oSf3Qc7Dfsv0tHk7L1GP/g4WFi25U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12EF4FEC;
+	Fri,  9 Aug 2024 01:27:51 -0700 (PDT)
+Received: from [10.57.95.64] (unknown [10.57.95.64])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F4E93F6A8;
+	Fri,  9 Aug 2024 01:27:23 -0700 (PDT)
+Message-ID: <1222cd76-e732-4238-9413-61843249c1e8@arm.com>
+Date: Fri, 9 Aug 2024 09:27:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,78 +41,159 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] vt-d/iommu: Refactor quirk_extra_dev_tlb_flush()
-To: Tina Zhang <tina.zhang@intel.com>, Kevin Tian <kevin.tian@intel.com>
-References: <20240809025431.14605-1-tina.zhang@intel.com>
- <20240809025431.14605-5-tina.zhang@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240809025431.14605-5-tina.zhang@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: chrisl@kernel.org, david@redhat.com, kaleshsingh@google.com,
+ kasong@tencent.com, linux-kernel@vger.kernel.org, ioworker0@gmail.com,
+ baolin.wang@linux.alibaba.com, ziy@nvidia.com, hanchuanhua@oppo.com,
+ Barry Song <v-songbaohua@oppo.com>
+References: <20240808010457.228753-1-21cnbao@gmail.com>
+ <20240808010457.228753-2-21cnbao@gmail.com>
+ <e9f82fd8-e1da-49ea-a735-b174575c02bc@arm.com>
+In-Reply-To: <e9f82fd8-e1da-49ea-a735-b174575c02bc@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024/8/9 10:54, Tina Zhang wrote:
-> Extract the core logic from quirk_extra_dev_tlb_flush() into a new
-> helper __quirk_extra_dev_tlb_flush(). This helper is for accommodating
-> for both individual and batched TLB invalidation commands, thereby
-> streamlining the process for handling device-specific TLB flush quirks.
+On 09/08/2024 09:13, Ryan Roberts wrote:
+> On 08/08/2024 02:04, Barry Song wrote:
+>> From: Barry Song <v-songbaohua@oppo.com>
+>>
+>> When a new anonymous mTHP is added to the rmap, we increase the count.
+>> We reduce the count whenever an mTHP is completely unmapped.
+>>
+>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+>> ---
+>>  Documentation/admin-guide/mm/transhuge.rst |  5 +++++
+>>  include/linux/huge_mm.h                    | 15 +++++++++++++--
+>>  mm/huge_memory.c                           |  2 ++
+>>  mm/rmap.c                                  |  3 +++
+>>  4 files changed, 23 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>> index 058485daf186..715f181543f6 100644
+>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>> @@ -527,6 +527,11 @@ split_deferred
+>>          it would free up some memory. Pages on split queue are going to
+>>          be split under memory pressure, if splitting is possible.
+>>  
+>> +anon_num
+>> +       the number of anon huge pages we have in the whole system.
+>> +       These huge pages could be still entirely mapped and have partially
+>> +       unmapped and unused subpages.
 > 
-> Signed-off-by: Tina Zhang<tina.zhang@intel.com>
-> ---
->   drivers/iommu/intel/iommu.c | 55 +++++++++++++++++++++++++++++--------
->   drivers/iommu/intel/iommu.h |  4 +++
->   2 files changed, 47 insertions(+), 12 deletions(-)
+> nit: "entirely mapped and have partially unmapped and unused subpages" ->
+> "entirely mapped or have partially unmapped/unused subpages"
 > 
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index 9ff8b83c19a3..160d569015b4 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -4875,6 +4875,41 @@ static void __init check_tylersburg_isoch(void)
->   	       vtisochctrl);
->   }
->   
-> +static inline void __quirk_extra_dev_tlb_flush(struct device_domain_info *info,
-> +					       unsigned long address, unsigned long mask,
-> +					       u32 pasid, u16 qdep,
-> +					       struct qi_batch *batch)
-> +{
-> +	u16 sid;
-> +
-> +	if (likely(!info->dtlb_extra_inval))
-> +		return;
-> +
-> +	sid = PCI_DEVID(info->bus, info->devfn);
-> +	if (batch == NULL) {
-> +		if (pasid == IOMMU_NO_PASID)
-> +			qi_flush_dev_iotlb(info->iommu, sid, info->pfsid,
-> +					   qdep, address, mask);
-> +		else
-> +			qi_flush_dev_iotlb_pasid(info->iommu, sid,
-> +						 info->pfsid, pasid,
-> +						 qdep, address, mask);
-> +	} else {
-> +		if (pasid == IOMMU_NO_PASID)
-> +			qi_batch_add_dev_iotlb_desc(info->iommu, sid,
-> +						    info->pfsid, qdep,
-> +						    address, mask, batch);
-> +		else
-> +			qi_batch_add_dev_iotlb_pasid_desc(info->iommu,
-> +							  sid,
-> +							  info->pfsid,
-> +							  pasid, qdep,
-> +							  address,
-> +							  mask,
-> +							  batch);
-> +	}
-> +}
+>> +
+>>  As the system ages, allocating huge pages may be expensive as the
+>>  system uses memory compaction to copy data around memory to free a
+>>  huge page for use. There are some counters in ``/proc/vmstat`` to help
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index e25d9ebfdf89..294c348fe3cc 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -281,6 +281,7 @@ enum mthp_stat_item {
+>>  	MTHP_STAT_SPLIT,
+>>  	MTHP_STAT_SPLIT_FAILED,
+>>  	MTHP_STAT_SPLIT_DEFERRED,
+>> +	MTHP_STAT_NR_ANON,
+>>  	__MTHP_STAT_COUNT
+>>  };
+>>  
+>> @@ -291,14 +292,24 @@ struct mthp_stat {
+>>  #ifdef CONFIG_SYSFS
+>>  DECLARE_PER_CPU(struct mthp_stat, mthp_stats);
+>>  
+>> -static inline void count_mthp_stat(int order, enum mthp_stat_item item)
+>> +static inline void mod_mthp_stat(int order, enum mthp_stat_item item, int delta)
+>>  {
+>>  	if (order <= 0 || order > PMD_ORDER)
+>>  		return;
+>>  
+>> -	this_cpu_inc(mthp_stats.stats[order][item]);
+>> +	this_cpu_add(mthp_stats.stats[order][item], delta);
+>> +}
+>> +
+>> +static inline void count_mthp_stat(int order, enum mthp_stat_item item)
+>> +{
+>> +	mod_mthp_stat(order, item, 1);
+>>  }
+>> +
+>>  #else
+>> +static inline void mod_mthp_stat(int order, enum mthp_stat_item item, int delta)
+>> +{
+>> +}
+>> +
+>>  static inline void count_mthp_stat(int order, enum mthp_stat_item item)
+>>  {
+>>  }
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 697fcf89f975..b6bc2a3791e3 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -578,6 +578,7 @@ DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
+>>  DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+>>  DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+>>  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+>> +DEFINE_MTHP_STAT_ATTR(anon_num, MTHP_STAT_NR_ANON);
 
-How about moving this helper into cache.c? That's its only or major
-consumer, right?
+Why are the user-facing and internal names different? Perhaps it would be
+clearer to call this nr_anon in sysfs?
 
-By the way, in which case could 'batch' be a NULL?
+>>  
+>>  static struct attribute *stats_attrs[] = {
+>>  	&anon_fault_alloc_attr.attr,
+>> @@ -591,6 +592,7 @@ static struct attribute *stats_attrs[] = {
+>>  	&split_attr.attr,
+>>  	&split_failed_attr.attr,
+>>  	&split_deferred_attr.attr,
+>> +	&anon_num_attr.attr,
+>>  	NULL,
+>>  };
+>>  
+>> diff --git a/mm/rmap.c b/mm/rmap.c
+>> index 901950200957..2b722f26224c 100644
+>> --- a/mm/rmap.c
+>> +++ b/mm/rmap.c
+>> @@ -1467,6 +1467,7 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
+>>  	}
+>>  
+>>  	__folio_mod_stat(folio, nr, nr_pmdmapped);
+>> +	mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, 1);
+>>  }
+>>  
+>>  static __always_inline void __folio_add_file_rmap(struct folio *folio,
+>> @@ -1582,6 +1583,8 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
+>>  	    list_empty(&folio->_deferred_list))
+>>  		deferred_split_folio(folio);
+>>  	__folio_mod_stat(folio, -nr, -nr_pmdmapped);
+>> +	if (folio_test_anon(folio) && !atomic_read(mapped))
+> 
+> Agree that atomic_read() is dodgy here.
+> 
+> Not sure I fully understand why David prefers to do the unaccounting at
+> free-time though? It feels unbalanced to me to increment when first mapped but
+> decrement when freed. Surely its safer to either use alloc/free or use first
+> map/last map?
+> 
+> If using alloc/free isn't there a THP constructor/destructor that prepares the
+> deferred list? (My memory may be failing me). Could we use that?
 
-Thanks,
-baolu
+Additionally, if we wanted to extend (eventually) to track the number of shmem
+and file mthps in additional counters, could we also account using similar folio
+free-time hooks? If not, it might be an argument to account in rmap_unmap to be
+consistent for all?
+
+
+> 
+>> +		mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, -1);
+>>  
+>>  	/*
+>>  	 * It would be tidy to reset folio_test_anon mapping when fully
+> 
+
 
