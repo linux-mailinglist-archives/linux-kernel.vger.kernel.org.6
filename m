@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-280534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4025594CBD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:01:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D5C94CBD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA6EF1F21B42
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:01:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02204281C56
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1425216CD2E;
-	Fri,  9 Aug 2024 08:01:07 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561EA18C926;
+	Fri,  9 Aug 2024 08:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QTGNs2Z2"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F14C8D1
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCFAC8D1;
+	Fri,  9 Aug 2024 08:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723190466; cv=none; b=Gz7z8bYeCk63KtOncvpEDg93RWBgGUBiCr9+JvXLdU7psriYwubUHvHLmjusH+eqr4rfNzyPlOEbWg9Pwmj5gWd9hJaLY9ggeWeWu7PNPvq5FNRJ/J/0ik+hjDvymE/LpqKaG7hl/dYilpy1ZJfNJMPlJUIHLvF3ycnmhvpaEmY=
+	t=1723190522; cv=none; b=cxg7lLO982vU0uUDhEVK8Fsi+scQCK42MfH0bHICP6jULUpgk8aNYW71St51b2b2GMPGdoFZylzaGiilN28crQWi5mbIaHnWBXbRZPYF18GUYUuCwwjpBw6yphw2JUZtmR6Zx2C1W89PXQnAn5VG9nwsaOdN9MAsSGWLmWkJe+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723190466; c=relaxed/simple;
-	bh=B/1qyI/bwZI8VyyT62pZlbsgCiUmMIEJVoPDBAE8ttM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lYUQesLMUYwhw1OsAynoR/uZgQqozMQImmqP68L32VQKuevk2LVAgcyLtlW97WCStgPvNSO2UtNXtJQ6LV4YFd+WnwB180cjO9yoHZAtXHtp82AQDs59R42tmaDORqLB2IZ7rIncmXCpM4T5lYBaX8eIC5ca4kejP4yldVFtEl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f8edd7370so201716339f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:01:05 -0700 (PDT)
+	s=arc-20240116; t=1723190522; c=relaxed/simple;
+	bh=jQjWmYNbejJ8eAQkjviIwQ3DgSsmbdepFeqkOM1I6eE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aFWA5sua3tHT9fROXk/S2U8gJt8vZtZcaVMz52VLDPYrgVLYhw5zBOT9S2s6sLQQZ4Y1l0iDFjWU2vN3zfiVqPN6nm6KW4wGok/QApnOAt/NV9rL6FJmmI4NH1u5Kl/JAwnR2oIcB+H7H2FVX8hSjNfRzNoF6QFMPZJgkhY+CoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QTGNs2Z2; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2cd5d6b2581so1452036a91.2;
+        Fri, 09 Aug 2024 01:02:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723190520; x=1723795320; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k1CNYqLAJBSiRCPmzssQ1Zg4wb+jIfTjQrz6LCzlylA=;
+        b=QTGNs2Z2Fpaf7EFDq6VxvMCbHEkmjeJ7KHaTiIQ0Fz5tvvP+q8jWMjZXjFlhqEHdDa
+         e/Z8hg6hmmoLPM/NyCk2BZdAh8Zn1R8T0G6frfYrf6yEIHAzqCGU6RapX9tes6KFReuZ
+         tGLMv3GhRs42EApFetOgkTKDS/rK7vjavkLLrNDXzihTs9zhDHpZxkNSMkHAQx8zAave
+         JbvUvZt//80VE70IpprH2M8m1ayyJ8DjugjjBqcvRyDld4qrhHE1R4kOSdhMa4RZTbJE
+         P/2svIGnb8vT6Nd167+hm6PjJ2aPJwypdpKtrcv4umJ9YppXLBgTyj1OIRfWqhBXFCWs
+         CJ8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723190464; x=1723795264;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hcA85CCFfsINsKGdo0oSz/srwwJd6gouV+ynJ7APhsE=;
-        b=tRFzIUnm+RLck8ESZkInEBoRTNjVAT9CGEKSoNLntTrR/dkuh891NaNA5EiL2U0Q3/
-         ZJjkJvyQYwBOkDdoshCUPnocZmYbsB6LIrNLRZkfHa48EjFhiYm7yn6PjH4kT3rOZKtm
-         beEpX53lxI4hXLRl8+qgbnJbY1lwsWn8KuRx47/g3ftWc52F8MKZ4Je38ZwUMemMmF8d
-         fbYxZIkTAnYKKjvS0QsTSDOx1ZVByiEr0Pq/NAbSjqR066rn7BkHqzlmZmn+0mMKmFBt
-         gaS6qOCeFA5Kjehar1gMKZPK+GVSOw0GsqLwnz1dY6tq1O0yt7hgiTvfWHsYE3VxvK5H
-         O3tQ==
-X-Gm-Message-State: AOJu0Yx9C2a41bL2L5dpDkkntAZiu/K3bmEYEvEszms34CcEnw+IzK23
-	IimecJSPul0BgcCh0bIwZYwus51q9hx0Zg2TnafPBBBBsX+7VLYFtWS3XsYipkEcX7Pl19kYyrJ
-	Ysipk8bDjJaSEfIwyjmnNRC7KhHstVcN8hBXwGTHWNOfITZhmHSa0104=
-X-Google-Smtp-Source: AGHT+IFVjBlyAJwE5QJSCwhDOvIOaOPiSnKyrlFwLTiNnFNKWTh2ZaeID6iAyy1Eq9HlkxqwNHEQbt/sNHa9RFFRLQlBDmULQMPP
+        d=1e100.net; s=20230601; t=1723190520; x=1723795320;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k1CNYqLAJBSiRCPmzssQ1Zg4wb+jIfTjQrz6LCzlylA=;
+        b=E7XEs2BQ6laUIblnCrAz/ovhyFDYY04S3CCli3TxWlF2K21QsJYg/G4PT7hEHTvJM8
+         /bu2QLVBjIvPcst+V+R20Q2Mgi19RWm0wUPMlM+EUXkijcab8oH78tDhdJ7/GjrSWrWC
+         eV0wzsHmVkdg/9zXzBpuL2goEjQnwzuvwCwNSbOJ/5BWqfVTNtk7XJUmX6pXpkAao2cS
+         gl/gX/CRLfPst7pAntBgV7nqW2xWNLjY3Iucq3AY0zO19a+X+d2SCA3ZP0psxd0vYA2v
+         s8ng04xQQNOE0Y3FZGjtVjBiQn6QiKucyHkBOFLOTpI29/Zt1IOkme3+wuqbyjVHi8xR
+         1IDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUo/ykLoeEHCFQqEnW7XqQZmmS0S4fMG6gr067NozywjIFl9Bpzs/LfhpeQ2kwLV2GVg5mqlgvHzwKPWJLn8ydHnyORXVatkvoks7ioKMHqqzRPVtOYTFHMIMYLnAEGNnpd8tcnpuXwxwyh9jM1Bg==
+X-Gm-Message-State: AOJu0YzCORYtLoOM7k4+G0lc12YV9g7wwdfyKtEYJTA4M3F78JFwnuc2
+	kQunv/ZCMpn6vk0T1W4WiaPKdlI5Q8MomwJ3kckaun7CZAS/ozSS
+X-Google-Smtp-Source: AGHT+IEPSPIVq9WWED3UQMmchGn9WG0dcWWIQ5HvpqN3kBBE5FW5DOwqrrTD5CynQLzz8ScVxMyrlg==
+X-Received: by 2002:a17:90b:1806:b0:2cd:b938:770b with SMTP id 98e67ed59e1d1-2d1e7fa9fe6mr672079a91.5.1723190520437;
+        Fri, 09 Aug 2024 01:02:00 -0700 (PDT)
+Received: from alveo.moma (bullfrog.anu.edu.au. [150.203.163.126])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1b3addc29sm4694276a91.29.2024.08.09.01.01.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 01:01:59 -0700 (PDT)
+From: Zixian Cai <fzczx123@gmail.com>
+To: 
+Cc: Zixian Cai <fzczx123@gmail.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	Paran Lee <p4ranlee@gmail.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] perf script python: Add the ins_lat field to event handler
+Date: Fri,  9 Aug 2024 08:01:36 +0000
+Message-Id: <20240809080137.3590148-1-fzczx123@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc2:b0:383:4db4:cbe0 with SMTP id
- e9e14a558f8ab-39b870aa6f5mr797785ab.5.1723190464339; Fri, 09 Aug 2024
- 01:01:04 -0700 (PDT)
-Date: Fri, 09 Aug 2024 01:01:04 -0700
-In-Reply-To: <20240809074103.2196689-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000081f1a2061f3b8bd9@google.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+For example, when using the Alder Lake PMU memory load event, the
+instruction latency is stored in ins_lat, while the cache latency
+is stored in weight.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in v9fs_begin_writeback
+This patch reports the ins_lat field for Python scripting.
 
-------------[ cut here ]------------
-folio expected an open fid inode->i_ino=1901336
-WARNING: CPU: 2 PID: 77 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
-WARNING: CPU: 2 PID: 77 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
-Modules linked in:
-CPU: 2 UID: 0 PID: 77 Comm: kworker/u32:4 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: writeback wb_workfn (flush-9p-15)
-RIP: 0010:v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
-RIP: 0010:v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
-Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 66 48 8b 73 40 48 c7 c7 20 9a 8e 8b e8 51 4a 0d fe 90 <0f> 0b 90 90 e9 62 ff ff ff e8 32 2b a8 fe e9 51 ff ff ff e8 98 2a
-RSP: 0018:ffffc9000160f480 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff88803299e090 RCX: ffffffff814cc379
-RDX: ffff88801ac3c880 RSI: ffffffff814cc386 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff88801b5260c8
-R13: dffffc0000000000 R14: ffffc9000160f840 R15: ffff88801b526318
-FS:  0000000000000000(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c001011000 CR3: 00000000225d4000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netfs_writepages+0x656/0xde0 fs/netfs/write_issue.c:534
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
- __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
- writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
- wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
- wb_do_writeback fs/fs-writeback.c:2274 [inline]
- wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Signed-off-by: Zixian Cai <fzczx123@gmail.com>
+Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+v4) reformat commit message for max line length
+v3) address review comments
+v2) rebase on top of perf-tools-next
 
+ tools/perf/util/scripting-engines/trace-event-python.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Tested on:
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index fb00f3ad6815..6971dd6c231f 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -888,6 +888,8 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
+ 	set_sample_read_in_dict(dict_sample, sample, evsel);
+ 	pydict_set_item_string_decref(dict_sample, "weight",
+ 			PyLong_FromUnsignedLongLong(sample->weight));
++	pydict_set_item_string_decref(dict_sample, "ins_lat",
++			PyLong_FromUnsignedLong(sample->ins_lat));
+ 	pydict_set_item_string_decref(dict_sample, "transaction",
+ 			PyLong_FromUnsignedLongLong(sample->transaction));
+ 	set_sample_datasrc_in_dict(dict_sample, sample);
+@@ -1317,7 +1319,7 @@ static void python_export_sample_table(struct db_export *dbe,
+ 	struct tables *tables = container_of(dbe, struct tables, dbe);
+ 	PyObject *t;
 
-commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1327b2bd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1493d66d980000
+-	t = tuple_new(27);
++	t = tuple_new(28);
+
+ 	tuple_set_d64(t, 0, es->db_id);
+ 	tuple_set_d64(t, 1, es->evsel->db_id);
+@@ -1346,6 +1348,7 @@ static void python_export_sample_table(struct db_export *dbe,
+ 	tuple_set_s32(t, 24, es->sample->flags);
+ 	tuple_set_d64(t, 25, es->sample->id);
+ 	tuple_set_d64(t, 26, es->sample->stream_id);
++	tuple_set_u32(t, 27, es->sample->ins_lat);
+
+ 	call_object(tables->sample_handler, t, "sample_table");
+
+--
+2.25.1
 
 
