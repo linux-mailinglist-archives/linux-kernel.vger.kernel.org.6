@@ -1,82 +1,103 @@
-Return-Path: <linux-kernel+bounces-280527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF3694CBB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:55:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D11994CBC2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81AF81C2257C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391E81F21D3B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC9418C354;
-	Fri,  9 Aug 2024 07:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B3018CC16;
+	Fri,  9 Aug 2024 07:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="at8Qs08S"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iWy7JWX6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9081552EB;
-	Fri,  9 Aug 2024 07:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013EA1552EB;
+	Fri,  9 Aug 2024 07:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723190133; cv=none; b=CawMhbP6gqrLhHIcNwsPm2lhaVu1D/cLBUZEK0IB1ZKAH4WwOROG3jj/PUDOhjnGVR8ObVwnBY3261xlR2JHZ65dK4mKoN+e0aePTwpygTCxGxjPHczC3bBiHnb0NJtlouPyhRhFu3oplWHBNcEqFe8YyHcpyJHMQ5ZNsujyRFM=
+	t=1723190188; cv=none; b=q/icM8tm/GJw5AQmaxamY0zCZ+d7puypdEBlXsVnmGXFm3qgU5ZumjLFz44PqwyjmMTts65fVHiepjd5mgB4OvprVL9Xbqg6UGtfnychHv6wEotwSsI5FGXuHlKrGb3dxBSoT3pDDzqkrkXajJuGpWY8Rev4RoEnA81aK3mRo3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723190133; c=relaxed/simple;
-	bh=a3NDtrOFkr6eWhw4xLJ1GOK2gjy06ICYCwEMqdwLNjg=;
+	s=arc-20240116; t=1723190188; c=relaxed/simple;
+	bh=WciictBvnZZognJdSB//Vkpj36Vtrbm418N+k4gXKM8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eBBEGLdkcJUvVF5EfRyPfoY/1qwxv7c1VYsYCBWiyZyvHfCiemEY1ZIVWdII4Ns+X4Bz1KUxGRVfTUtjk76AJXFzTBu4F5iIFc6smaafitg8dKbTBWVTLTf+lOYmNSrwsPx3NprLiFfPNe5Pjar9/sqlZMOdu9r8n+7w+05Hl8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=at8Qs08S; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7a1be7b5d70so1424014a12.0;
-        Fri, 09 Aug 2024 00:55:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723190131; x=1723794931; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2mIwtqqNsntLjxTEf9qy3KmpCcVtl80DMioT7BD07WQ=;
-        b=at8Qs08SYeQZStEQD8z/gl3fMiy9rTHLCpLPbgWCFdqwZvXAXELLy+7ahNuSm2s6t+
-         /qobGViq6PN/IfwcGvpgjZ/ESvlWp7cngsU8w6r+jsAabMtYDEWyY49WGDty3q18Yp/9
-         IxBRe0N0whtSYtydBhbGCb8WJ9uQse4FwU1ZiOKaxdsv0VA9r6WSB1s4hxhhdy/JOyqN
-         d2HGvEIltCHhwjOSOrXJf1+dDEE3SqhedMKjmHMWVQzyGteiMgItYZM6BHj2uwgBCy8+
-         AEsaVmcBr2ogFm5B5paR0Wdv2jwG8W03R+YNeDxJLFJiHljsAvs0/HHKzKFyDU295Vfg
-         +ZQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723190131; x=1723794931;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2mIwtqqNsntLjxTEf9qy3KmpCcVtl80DMioT7BD07WQ=;
-        b=pedkufFJXwOo54HQF9uopykIods9D9x7Btw8hQfzyFYeiS/0HuRt0yeeiPZLRutjw3
-         lX5U4YbCF6Hpvhr6Kx8qW5txNiODnYNvkE8pZ/euhWi2HLMAZAm4nWw1Nyn+PR1c/uD1
-         54iOhGWHbJe6sqWrJGBkmGHOVGpqYObeMFzc/KFNhJj3aJohgNHOEKdu7ZJoVx7KoQJL
-         QHFpHxKsLp6S268qFRjWqQrCwzC1LS40wV9NQJ/FcHg0XHeWK74yGQK6762wcsn/+OD2
-         CEMqmNQ+UmPRktxSMFCgEGRZynvQceL+rhPnaqcuaXkQtt15YqMefSSe8FIWWBCDo+AQ
-         lDEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUamUvc1WEx0mT+qVk16oltVjmav92bJksni+CaOGyFvuyFf30e6j1WlO4EOCZcqvHaHoZKR+aQmSXsFqdpT4K6+/Td/66apxvjaQpkddatC3HidfxPFlNUM6rP8kDiL39JYnu0BkXzTg==
-X-Gm-Message-State: AOJu0YzdvajeXQbPafkYHFW8G4mNYVtvWSNoKNJiGkeUnztY6wqnpo7D
-	pt7hdnnk6rWUlogHeypKdIhS/FSQ8BSjaD/15IbkNgJVVKjTu8Fx
-X-Google-Smtp-Source: AGHT+IHA8hn+5Z32hUDFcN9u6j/5XUYfOpOTNglgvb90esXK+j9diout9kueU7OAZbDusLaAvNaxCg==
-X-Received: by 2002:a17:903:22c1:b0:1f4:a04e:8713 with SMTP id d9443c01a7336-200ae608246mr14391345ad.28.1723190131155;
-        Fri, 09 Aug 2024 00:55:31 -0700 (PDT)
-Received: from thinkpad ([117.213.100.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f219easm136368005ad.58.2024.08.09.00.55.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 00:55:30 -0700 (PDT)
-Date: Fri, 9 Aug 2024 13:25:22 +0530
-From: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
-To: Avri Altman <avri.altman@wdc.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Keoseong Park <keosung.park@samsung.com>
-Subject: Re: [PATCH v3 2/2] scsi: ufs: Add HCI capabilities sysfs group
-Message-ID: <20240809075522.GA9360@thinkpad>
-References: <20240809072331.2483196-1-avri.altman@wdc.com>
- <20240809072331.2483196-3-avri.altman@wdc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lue6vbwtS3HJzRZ4DDuQJNKtEil0h6h4lG6IFkP1B5hZIGG8ikUOuuF5Kcihcvq2LJABgU2zkSn7SqbHzVyIsJVSGrB0gMVkoRhgO4qxg5JpAJ98rXp/4ZTYvfg+2Q4hTsM6NO+bTCsHgTb5IFuX9QdMpXBrbmjngJBHjJfFHqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iWy7JWX6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 952AFC4AF0D;
+	Fri,  9 Aug 2024 07:56:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723190187;
+	bh=WciictBvnZZognJdSB//Vkpj36Vtrbm418N+k4gXKM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iWy7JWX63DlQVy2d0mNGhQfP+E5wTH7yt+zLcJ0XE+/2H7ya+xPuYTTvng2lSdR0P
+	 fY3FcxC8uU8GMeAkyI60nvRDENoJPGv+KO8RJqpQagYElLNKgByK/OFTroSX355YCs
+	 LkPyVbDTwM5NLcPamf6V9UY8mS/5OHdlCJ1Bf0Wrzy8CzH4nnoBsnommLbSLYVYa0S
+	 vit/eTqSx1gLR+UhLsyyqz5moCQu5XrPJ2lKHYZlMNpbvAKOB2UKpjpb3hjS9c0GG8
+	 efszcgVI6ngSguWbXJ9ztgvoCk8mZPBFojeGqb+x30Hdvr6lK6GLQBG40LF/KOtnNT
+	 rWCJ8B29HDgmg==
+Date: Fri, 9 Aug 2024 08:56:15 +0100
+From: Simon Horman <horms@kernel.org>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>,
+	Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Kaiyuan Zhang <kaiyuanz@google.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Willem de Bruijn <willemb@google.com>, linux-alpha@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	bpf@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bagas Sanjaya <bagasdotme@gmail.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Ahern <dsahern@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>, David Wei <dw@davidwei.uk>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	Helge Deller <deller@gmx.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"James E. J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Matt Turner <mattst88@gmail.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Shailend Chand <shailend@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Shuah Khan <shuah@kernel.org>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Taehee Yoo <ap420073@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Yunsheng Lin <linyunsheng@huawei.com>
+Subject: Re: [PATCH net-next v17 03/14] netdev: support binding dma-buf to
+ netdevice
+Message-ID: <20240809075615.GD3075665@kernel.org>
+References: <20240730022623.98909-4-almasrymina@google.com>
+ <5d3c74da-7d44-4b88-8961-60f21f84f0ac@web.de>
+ <CAHS8izPxfCv1VMFBK1FahGTjVmUSSfrabgY5y6V+XtaszoHQ4w@mail.gmail.com>
+ <9aad36fe-cd4c-4ce5-b4d8-6c8619d10c46@web.de>
+ <66b2198686b91_3206cf29453@willemb.c.googlers.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,214 +107,46 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240809072331.2483196-3-avri.altman@wdc.com>
+In-Reply-To: <66b2198686b91_3206cf29453@willemb.c.googlers.com.notmuch>
 
-On Fri, Aug 09, 2024 at 10:23:31AM +0300, Avri Altman wrote:
-> The standard register map of UFSHCI is comprised of several groups.  The
-> first group (starting from offset 0x00), is the host capabilities group.
-> It contains some interesting information, that otherwise is not
-> available, e.g. the UFS version of the platform etc.
+On Tue, Aug 06, 2024 at 08:39:34AM -0400, Willem de Bruijn wrote:
+> Markus Elfring wrote:
+> > >> …
+> > >>> +++ b/include/net/devmem.h
+> > >>> @@ -0,0 +1,115 @@
+> > >> …
+> > >>> +#ifndef _NET_DEVMEM_H
+> > >>> +#define _NET_DEVMEM_H
+> > >> …
+> > >>
+> > >> I suggest to omit leading underscores from such identifiers.
+> > >> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+define+a+reserved+identifier
+> > >>
+> > >
+> > > I was gonna apply this change, but I ack'd existing files and I find
+> > > that all of them include leading underscores, including some very
+> > > recently added files like net/core/page_pool_priv.h.
+> > >
+> > > I would prefer to stick to existing conventions if that's OK, unless
+> > > there is widespread agreement to the contrary.
+> > 
+> > Under which circumstances would you become interested to reduce development risks
+> > also according to undefined behaviour?
+> > https://wiki.sei.cmu.edu/confluence/display/c/CC.+Undefined+Behavior#CC.UndefinedBehavior-ub_106
 > 
-> Reviewed-by: Keoseong Park <keosung.park@samsung.com>
-> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-> Signed-off-by: Avri Altman <avri.altman@wdc.com>
-> ---
->  Documentation/ABI/testing/sysfs-driver-ufs | 42 ++++++++++
->  drivers/ufs/core/ufs-sysfs.c               | 95 ++++++++++++++++++++++
->  2 files changed, 137 insertions(+)
+> This series is following established practice in kernel networking.
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-> index fe943ce76c60..b6e0c3b806fd 100644
-> --- a/Documentation/ABI/testing/sysfs-driver-ufs
-> +++ b/Documentation/ABI/testing/sysfs-driver-ufs
-> @@ -1532,3 +1532,45 @@ Contact:	Bean Huo <beanhuo@micron.com>
->  Description:
->  		rtc_update_ms indicates how often the host should synchronize or update the
->  		UFS RTC. If set to 0, this will disable UFS RTC periodic update.
-> +
-> +What:		/sys/devices/platform/.../ufshci_capabilities/capabilities
-> +Date:		August 2024
-> +Contact:	Avri Altman <avri.altman@wdc.com>
-> +Description:
-> +		Host Capabilities register group: host controller capabilities register.
-> +		Symbol - CAP.  Offset: 0x00 - 0x03.
-
-This doesn't look like an ABI description. You are merely specifying the
-register name and offset that gets accessed while reading this attribute.
-
-Also, I'm not sure if we really want to expose HCI/MCQ capabilities as sysfs
-ABI. This just prints the hex value without even telling users how to interpret
-it. 
-
-> +
-> +What:		/sys/devices/platform/.../ufshci_capabilities/mcq_cap
-> +Date:		August 2024
-> +Contact:	Avri Altman <avri.altman@wdc.com>
-> +Description:
-> +		Host Capabilities register group: multi-circular queue capability register.
-> +		Symbol - MCQCAP.  Offset: 0x04 - 0x07.
-> +
-> +What:		/sys/devices/platform/.../ufshci_capabilities/version
-> +Date:		August 2024
-> +Contact:	Avri Altman <avri.altman@wdc.com>
-> +Description:
-> +		Host Capabilities register group: UFS version register.
-> +		Symbol - VER.  Offset: 0x08 - 0x0B.
-
-This and below attributes are fine. But the description should be changed. No
-need to put register name and offset here, that is not relevant to the ABI.
-Description should clearly state what is the purpose of the attribute, how to
-interpret (if necessary) and read/write capability. Like,
-
-```
-	This file shows the UFSHCD version.
-
-	The file is read only.
-```
-
-Applies to other attributes below.
-
-- Mani
-
-> +
-> +What:		/sys/devices/platform/.../ufshci_capabilities/ext_capabilities
-> +Date:		August 2024
-> +Contact:	Avri Altman <avri.altman@wdc.com>
-> +Description:
-> +		Host Capabilities register group: extended controller capabilities register.
-> +		Symbol - EXT_CAP.  Offset: 0x0C - 0x0F.
-> +
-> +What:		/sys/devices/platform/.../ufshci_capabilities/product_id
-> +Date:		August 2024
-> +Contact:	Avri Altman <avri.altman@wdc.com>
-> +Description:
-> +		Host Capabilities register group: product ID register.
-> +		Symbol - HCPID.  Offset: 0x10 - 0x13.
-> +
-> +What:		/sys/devices/platform/.../ufshci_capabilities/man_id
-> +Date:		August 2024
-> +Contact:	Avri Altman <avri.altman@wdc.com>
-> +Description:
-> +		Host Capabilities register group: manufacturer ID register.
-> +		Symbol - HCMID.  Offset: 0x14 - 0x17.
-> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-> index dec7746c98e0..751d5ff406da 100644
-> --- a/drivers/ufs/core/ufs-sysfs.c
-> +++ b/drivers/ufs/core/ufs-sysfs.c
-> @@ -525,6 +525,100 @@ static const struct attribute_group ufs_sysfs_capabilities_group = {
->  	.attrs = ufs_sysfs_capabilities_attrs,
->  };
->  
-> +static ssize_t capabilities_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	struct ufs_hba *hba = dev_get_drvdata(dev);
-> +
-> +	return sysfs_emit(buf, "0x%x\n", hba->capabilities);
-> +}
-> +
-> +static ssize_t mcq_cap_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	struct ufs_hba *hba = dev_get_drvdata(dev);
-> +
-> +	if (hba->ufs_version < ufshci_version(4, 0))
-> +		return -EOPNOTSUPP;
-> +
-> +	return sysfs_emit(buf, "0x%x\n", hba->mcq_capabilities);
-> +}
-> +
-> +static ssize_t version_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	struct ufs_hba *hba = dev_get_drvdata(dev);
-> +
-> +	return sysfs_emit(buf, "0x%x\n", hba->ufs_version);
-> +}
-> +
-> +static ssize_t ext_capabilities_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	int ret;
-> +	u32 val;
-> +	struct ufs_hba *hba = dev_get_drvdata(dev);
-> +
-> +	if (hba->ufs_version < ufshci_version(4, 0))
-> +		return -EOPNOTSUPP;
-> +
-> +	ret = ufshcd_read_hci_reg(hba, &val, REG_EXT_CONTROLLER_CAPABILITIES);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "0x%x\n", val);
-> +}
-> +
-> +static ssize_t product_id_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	int ret;
-> +	u32 val;
-> +	struct ufs_hba *hba = dev_get_drvdata(dev);
-> +
-> +	ret = ufshcd_read_hci_reg(hba, &val, REG_CONTROLLER_PID);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "0x%x\n", val);
-> +}
-> +
-> +static ssize_t man_id_show(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	int ret;
-> +	u32 val;
-> +	struct ufs_hba *hba = dev_get_drvdata(dev);
-> +
-> +	ret = ufshcd_read_hci_reg(hba, &val, REG_CONTROLLER_MID);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sysfs_emit(buf, "0x%x\n", val);
-> +}
-> +
-> +static DEVICE_ATTR_RO(capabilities);
-> +static DEVICE_ATTR_RO(mcq_cap);
-> +static DEVICE_ATTR_RO(version);
-> +static DEVICE_ATTR_RO(ext_capabilities);
-> +static DEVICE_ATTR_RO(product_id);
-> +static DEVICE_ATTR_RO(man_id);
-> +
-> +static struct attribute *ufs_sysfs_ufshci_cap_attrs[] = {
-> +	&dev_attr_capabilities.attr,
-> +	&dev_attr_mcq_cap.attr,
-> +	&dev_attr_version.attr,
-> +	&dev_attr_ext_capabilities.attr,
-> +	&dev_attr_product_id.attr,
-> +	&dev_attr_man_id.attr,
-> +	NULL
-> +};
-> +
-> +static const struct attribute_group ufs_sysfs_ufshci_group = {
-> +	.name = "ufshci_capabilities",
-> +	.attrs = ufs_sysfs_ufshci_cap_attrs,
-> +};
-> +
->  static ssize_t monitor_enable_show(struct device *dev,
->  				   struct device_attribute *attr, char *buf)
->  {
-> @@ -1508,6 +1602,7 @@ static const struct attribute_group ufs_sysfs_attributes_group = {
->  static const struct attribute_group *ufs_sysfs_groups[] = {
->  	&ufs_sysfs_default_group,
->  	&ufs_sysfs_capabilities_group,
-> +	&ufs_sysfs_ufshci_group,
->  	&ufs_sysfs_monitor_group,
->  	&ufs_sysfs_power_info_group,
->  	&ufs_sysfs_device_descriptor_group,
-> -- 
-> 2.25.1
+> If that conflicts with a C standard, then perhaps that needs to be
+> resolved project wide.
 > 
+> Forcing an individual feature to diverge just brings inconsistency.
+> That said, this appears to be inconsistent already.
 > 
+> Main question is whether this is worth respinning a series already at
+> v17 with no more fundamental feedback.
 
--- 
-மணிவண்ணன் சதாசிவம்
+No, from my point of view, it is not.
+
+This really is a trivial and somewhat subjective mater.
+I don't think it should hold up a substantial piece of work.
 
