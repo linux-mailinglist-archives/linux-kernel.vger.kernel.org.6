@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-281451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD48194D70F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:16:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7A794D710
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B1A281D1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E01E11F23B45
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEEC160860;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E9F16131C;
 	Fri,  9 Aug 2024 19:15:58 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9E439FD6
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C2B146590
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723230957; cv=none; b=bKjJkayVYGlOzdCHpBg+pPQ6S5PoxUbzj+y2tEmdTCDAqkjgcqIKaWfdsjM+w9KCYMcMw/rhv6JWN7ZoWYzD0v356R41VPaqAeu+vzN9D0DEMRqlglrJW6aylsC122J1+1e3NL8ZnHIT7FLM+NvGE5v5jEM9Qgdc9OMN/Xnpq7Q=
+	t=1723230958; cv=none; b=Z20bXnVsUVdoYmEdYe2Jr9vn5LHQ6dXvVO2AzvP9ZUoQwUamEfU2paA/8jTC5MocGe4sS4TEuuEyZ43Fmk6cSKK+y3qKZH3C/s0hRHxXPteHCA/INssvDZgCZhxAZrtgq5u0QssHlCChA11SIDkWAmizP+05CIx1Y1zmlnuaAGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723230957; c=relaxed/simple;
-	bh=gVa+eCI2EX7fjWtyxGNqB10Bk2D5k+jevpzmzvlCwN0=;
+	s=arc-20240116; t=1723230958; c=relaxed/simple;
+	bh=pCy+egvK2jHmQ5qflpLymO5tRyRWlBT26O/LhPcYBxo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ACeIeUArmaUVhKxc+/oRH1Eu0O8WMwnR40OFZb/j5R1o4aajreh5QTwyjKzVJ8eIkBlYT71KJStOanuBe5G9aG+cZqH5jgICbbPw9F0aUq7QR5/pSiTTTqWxfy+N/fLQOA0IcfDzIiO25d81dIFlP8E2YiC5mw2+dG69G6MsPOY=
+	 MIME-Version; b=Pi/wRxmtWinIRG84/TbcwfmrfvxdnAgpYtDe7E6CuE1Up0uxol7k0V5X1cPOnOF1LT927/tzW/Nl6ZFdvHIrbF+TfUkEeTIheF4a0CoJWPK9ePu+/bfr87oHfsQwR6nNDbUK2VNW31LJ20SSkTGUTe8J7/1XYM7IoSZEMK3F2yU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BDFD1684;
-	Fri,  9 Aug 2024 12:16:20 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 346AC1688;
+	Fri,  9 Aug 2024 12:16:21 -0700 (PDT)
 Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A33733F71E;
-	Fri,  9 Aug 2024 12:15:53 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 988683F71E;
+	Fri,  9 Aug 2024 12:15:54 -0700 (PDT)
 From: Robin Murphy <robin.murphy@arm.com>
 To: will@kernel.org
 Cc: mark.rutland@arm.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	ilkka@os.amperecomputing.com
-Subject: [PATCH 1/8] perf/arm-cmn: Refactor node ID handling. Again.
-Date: Fri,  9 Aug 2024 20:15:40 +0100
-Message-Id: <998064aa2bdb0e39f91b4f1fea2f428689978ea9.1723229941.git.robin.murphy@arm.com>
+Subject: [PATCH 2/8] perf/arm-cmn: Fix CCLA register offset
+Date: Fri,  9 Aug 2024 20:15:41 +0100
+Message-Id: <e73b31da42a7840d4247fc8a4a3cea805c2ab618.1723229941.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.39.2.101.g768bb238c484.dirty
 In-Reply-To: <cover.1723229941.git.robin.murphy@arm.com>
 References: <cover.1723229941.git.robin.murphy@arm.com>
@@ -52,245 +52,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It transpires that despite the explicit example to the contrary in the
-CMN-700 TRM, the "extra device ports" config is in fact a per-XP thing
-rather than a global one. To that end, rework node IDs yet again to
-carry around the additional data necessary to decode them properly. At
-this point the notion of fully decomposing an ID becomes more
-impractical than it's worth, so unabstracting the XY mesh coordinates
-(where 2/3 users were just debug anyway) ends up leaving things a bit
-simpler overall.
+Apparently pmu_event_sel is offset by 8 for all CCLA nodes, not just
+the CCLA_RNI combination type.
 
-Fixes: 60d1504070c2 ("perf/arm-cmn: Support new IP features")
+Fixes: 23760a014417 ("perf/arm-cmn: Add CMN-700 support")
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/perf/arm-cmn.c | 94 ++++++++++++++++++------------------------
- 1 file changed, 40 insertions(+), 54 deletions(-)
+ drivers/perf/arm-cmn.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
-index c932d9d355cf..fd2122a37f22 100644
+index fd2122a37f22..0e2e12e2f4fb 100644
 --- a/drivers/perf/arm-cmn.c
 +++ b/drivers/perf/arm-cmn.c
-@@ -24,14 +24,6 @@
- #define CMN_NI_NODE_ID			GENMASK_ULL(31, 16)
- #define CMN_NI_LOGICAL_ID		GENMASK_ULL(47, 32)
- 
--#define CMN_NODEID_DEVID(reg)		((reg) & 3)
--#define CMN_NODEID_EXT_DEVID(reg)	((reg) & 1)
--#define CMN_NODEID_PID(reg)		(((reg) >> 2) & 1)
--#define CMN_NODEID_EXT_PID(reg)		(((reg) >> 1) & 3)
--#define CMN_NODEID_1x1_PID(reg)		(((reg) >> 2) & 7)
--#define CMN_NODEID_X(reg, bits)		((reg) >> (3 + (bits)))
--#define CMN_NODEID_Y(reg, bits)		(((reg) >> 3) & ((1U << (bits)) - 1))
--
- #define CMN_CHILD_INFO			0x0080
- #define CMN_CI_CHILD_COUNT		GENMASK_ULL(15, 0)
- #define CMN_CI_CHILD_PTR_OFFSET		GENMASK_ULL(31, 16)
-@@ -280,8 +272,11 @@ struct arm_cmn_node {
- 	u16 id, logid;
- 	enum cmn_node_type type;
- 
-+	/* XP properties really, but replicated to children for convenience */
- 	u8 dtm;
- 	s8 dtc;
-+	u8 portid_bits:4;
-+	u8 deviceid_bits:4;
- 	/* DN/HN-F/CXHA */
- 	struct {
- 		u8 val : 4;
-@@ -357,49 +352,33 @@ struct arm_cmn {
- static int arm_cmn_hp_state;
- 
- struct arm_cmn_nodeid {
--	u8 x;
--	u8 y;
- 	u8 port;
- 	u8 dev;
- };
- 
- static int arm_cmn_xyidbits(const struct arm_cmn *cmn)
- {
--	return fls((cmn->mesh_x - 1) | (cmn->mesh_y - 1) | 2);
-+	return fls((cmn->mesh_x - 1) | (cmn->mesh_y - 1));
- }
- 
--static struct arm_cmn_nodeid arm_cmn_nid(const struct arm_cmn *cmn, u16 id)
-+static struct arm_cmn_nodeid arm_cmn_nid(const struct arm_cmn_node *dn)
- {
- 	struct arm_cmn_nodeid nid;
- 
--	if (cmn->num_xps == 1) {
--		nid.x = 0;
--		nid.y = 0;
--		nid.port = CMN_NODEID_1x1_PID(id);
--		nid.dev = CMN_NODEID_DEVID(id);
--	} else {
--		int bits = arm_cmn_xyidbits(cmn);
--
--		nid.x = CMN_NODEID_X(id, bits);
--		nid.y = CMN_NODEID_Y(id, bits);
--		if (cmn->ports_used & 0xc) {
--			nid.port = CMN_NODEID_EXT_PID(id);
--			nid.dev = CMN_NODEID_EXT_DEVID(id);
--		} else {
--			nid.port = CMN_NODEID_PID(id);
--			nid.dev = CMN_NODEID_DEVID(id);
--		}
--	}
-+	nid.dev = dn->id & ((1U << dn->deviceid_bits) - 1);
-+	nid.port = (dn->id >> dn->deviceid_bits) & ((1U << dn->portid_bits) - 1);
- 	return nid;
- }
- 
- static struct arm_cmn_node *arm_cmn_node_to_xp(const struct arm_cmn *cmn,
- 					       const struct arm_cmn_node *dn)
- {
--	struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
--	int xp_idx = cmn->mesh_x * nid.y + nid.x;
-+	int id = dn->id >> (dn->portid_bits + dn->deviceid_bits);
-+	int bits = arm_cmn_xyidbits(cmn);
-+	int x = id > bits;
-+	int y = id & ((1U << bits) - 1);
- 
--	return cmn->xps + xp_idx;
-+	return cmn->xps + cmn->mesh_x * y + x;
- }
- static struct arm_cmn_node *arm_cmn_node(const struct arm_cmn *cmn,
- 					 enum cmn_node_type type)
-@@ -485,13 +464,13 @@ static const char *arm_cmn_device_type(u8 type)
- 	}
- }
- 
--static void arm_cmn_show_logid(struct seq_file *s, int x, int y, int p, int d)
-+static void arm_cmn_show_logid(struct seq_file *s, const struct arm_cmn_node *xp, int p, int d)
- {
- 	struct arm_cmn *cmn = s->private;
- 	struct arm_cmn_node *dn;
-+	u16 id = xp->id | d | (p << xp->deviceid_bits);
- 
- 	for (dn = cmn->dns; dn->type; dn++) {
--		struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
- 		int pad = dn->logid < 10;
- 
- 		if (dn->type == CMN_TYPE_XP)
-@@ -500,7 +479,7 @@ static void arm_cmn_show_logid(struct seq_file *s, int x, int y, int p, int d)
- 		if (dn->type < CMN_TYPE_HNI)
- 			continue;
- 
--		if (nid.x != x || nid.y != y || nid.port != p || nid.dev != d)
-+		if (dn->id != id)
- 			continue;
- 
- 		seq_printf(s, " %*c#%-*d  |", pad + 1, ' ', 3 - pad, dn->logid);
-@@ -521,6 +500,7 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
- 	y = cmn->mesh_y;
- 	while (y--) {
- 		int xp_base = cmn->mesh_x * y;
-+		struct arm_cmn_node *xp = cmn->xps + xp_base;
- 		u8 port[CMN_MAX_PORTS][CMN_MAX_DIMENSION];
- 
- 		for (x = 0; x < cmn->mesh_x; x++)
-@@ -528,16 +508,14 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
- 
- 		seq_printf(s, "\n%-2d   |", y);
- 		for (x = 0; x < cmn->mesh_x; x++) {
--			struct arm_cmn_node *xp = cmn->xps + xp_base + x;
--
- 			for (p = 0; p < CMN_MAX_PORTS; p++)
--				port[p][x] = arm_cmn_device_connect_info(cmn, xp, p);
-+				port[p][x] = arm_cmn_device_connect_info(cmn, xp + x, p);
- 			seq_printf(s, " XP #%-3d|", xp_base + x);
- 		}
- 
- 		seq_puts(s, "\n     |");
- 		for (x = 0; x < cmn->mesh_x; x++) {
--			s8 dtc = cmn->xps[xp_base + x].dtc;
-+			s8 dtc = xp[x].dtc;
- 
- 			if (dtc < 0)
- 				seq_puts(s, " DTC ?? |");
-@@ -554,10 +532,10 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
- 				seq_puts(s, arm_cmn_device_type(port[p][x]));
- 			seq_puts(s, "\n    0|");
- 			for (x = 0; x < cmn->mesh_x; x++)
--				arm_cmn_show_logid(s, x, y, p, 0);
-+				arm_cmn_show_logid(s, xp + x, p, 0);
- 			seq_puts(s, "\n    1|");
- 			for (x = 0; x < cmn->mesh_x; x++)
--				arm_cmn_show_logid(s, x, y, p, 1);
-+				arm_cmn_show_logid(s, xp + x, p, 1);
- 		}
- 		seq_puts(s, "\n-----+");
- 	}
-@@ -1815,10 +1793,7 @@ static int arm_cmn_event_init(struct perf_event *event)
- 	}
- 
- 	if (!hw->num_dns) {
--		struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, nodeid);
--
--		dev_dbg(cmn->dev, "invalid node 0x%x (%d,%d,%d,%d) type 0x%x\n",
--			nodeid, nid.x, nid.y, nid.port, nid.dev, type);
-+		dev_dbg(cmn->dev, "invalid node 0x%x type 0x%x\n", nodeid, type);
- 		return -EINVAL;
- 	}
- 
-@@ -1921,7 +1896,7 @@ static int arm_cmn_event_add(struct perf_event *event, int flags)
- 			arm_cmn_claim_wp_idx(dtm, event, d, wp_idx, i);
- 			writel_relaxed(cfg, dtm->base + CMN_DTM_WPn_CONFIG(wp_idx));
- 		} else {
--			struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
-+			struct arm_cmn_nodeid nid = arm_cmn_nid(dn);
- 
- 			if (cmn->multi_dtm)
- 				nid.port %= 2;
-@@ -2168,10 +2143,12 @@ static int arm_cmn_init_dtcs(struct arm_cmn *cmn)
- 			continue;
- 
- 		xp = arm_cmn_node_to_xp(cmn, dn);
-+		dn->portid_bits = xp->portid_bits;
-+		dn->deviceid_bits = xp->deviceid_bits;
- 		dn->dtc = xp->dtc;
- 		dn->dtm = xp->dtm;
- 		if (cmn->multi_dtm)
--			dn->dtm += arm_cmn_nid(cmn, dn->id).port / 2;
-+			dn->dtm += arm_cmn_nid(dn).port / 2;
- 
- 		if (dn->type == CMN_TYPE_DTC) {
- 			int err = arm_cmn_init_dtc(cmn, dn, dtc_idx++);
-@@ -2341,18 +2318,27 @@ static int arm_cmn_discover(struct arm_cmn *cmn, unsigned int rgn_offset)
- 		arm_cmn_init_dtm(dtm++, xp, 0);
- 		/*
- 		 * Keeping track of connected ports will let us filter out
--		 * unnecessary XP events easily. We can also reliably infer the
--		 * "extra device ports" configuration for the node ID format
--		 * from this, since in that case we will see at least one XP
--		 * with port 2 connected, for the HN-D.
-+		 * unnecessary XP events easily, and also infer the per-XP
-+		 * part of the node ID format.
- 		 */
- 		for (int p = 0; p < CMN_MAX_PORTS; p++)
- 			if (arm_cmn_device_connect_info(cmn, xp, p))
- 				xp_ports |= BIT(p);
- 
--		if (cmn->multi_dtm && (xp_ports & 0xc))
-+		if (cmn->num_xps == 1) {
-+			xp->portid_bits = 3;
-+			xp->deviceid_bits = 2;
-+		} else if (xp_ports > 0x3) {
-+			xp->portid_bits = 2;
-+			xp->deviceid_bits = 1;
-+		} else {
-+			xp->portid_bits = 1;
-+			xp->deviceid_bits = 2;
-+		}
-+
-+		if (cmn->multi_dtm && (xp_ports > 0x3))
- 			arm_cmn_init_dtm(dtm++, xp, 1);
--		if (cmn->multi_dtm && (xp_ports & 0x30))
-+		if (cmn->multi_dtm && (xp_ports > 0xf))
- 			arm_cmn_init_dtm(dtm++, xp, 2);
- 
- 		cmn->ports_used |= xp_ports;
+@@ -2393,10 +2393,13 @@ static int arm_cmn_discover(struct arm_cmn *cmn, unsigned int rgn_offset)
+ 			case CMN_TYPE_CXHA:
+ 			case CMN_TYPE_CCRA:
+ 			case CMN_TYPE_CCHA:
+-			case CMN_TYPE_CCLA:
+ 			case CMN_TYPE_HNS:
+ 				dn++;
+ 				break;
++			case CMN_TYPE_CCLA:
++				dn->pmu_base += CMN_HNP_PMU_EVENT_SEL;
++				dn++;
++				break;
+ 			/* Nothing to see here */
+ 			case CMN_TYPE_MPAM_S:
+ 			case CMN_TYPE_MPAM_NS:
 -- 
 2.39.2.101.g768bb238c484.dirty
 
