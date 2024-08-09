@@ -1,121 +1,170 @@
-Return-Path: <linux-kernel+bounces-280550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295A594CC0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:22:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D5A94CC13
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37511F23649
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:22:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39D4B1F22B0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7082518DF6C;
-	Fri,  9 Aug 2024 08:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BCB18DF9E;
+	Fri,  9 Aug 2024 08:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NpFSqeEM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="rhOTNa5H"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66500177981
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C9518DF7B
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723191744; cv=none; b=uNkOKekGDKhtzgOUQ/DVr9bBah4aWizaFF2Tf1+lLqrt2smmWbFLHt8h7ZKqbzTVI/JzE1leGMGIfpd0dUpnwSpEXrT1hKp4kav2UFePlvfbasrbhBMOLR1eZ6gxMNQnufg+1mVlJxNnom9sefyedI7Yfk9Bo2sLxeaX8Ykp8ck=
+	t=1723191771; cv=none; b=hLFXBsNnlgIqukzH/DtrMLxoZEsUptAkXpZkanjS35p4XAs3X5hJaB4dOWQfDxvPBZlArp9QXIzsBHt+aTtApxG4pPL6cUpXE/ALZIXvXFY4JZyTHQ6AsUmzMDKjajeubrGlgKuiHCun1efxdGDiXeLcZYhJNqFkCv+WHzTEEXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723191744; c=relaxed/simple;
-	bh=7AEHdMbI9dPiNWAmnQSnggKsq9igIUCEtkuoWmoPLHs=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IvMcVMFJpbgF/fOHzWyZ83zB6NJOGDknwy8zrLRAQd4SCnGexfuVcx+hl59T50KSZmF1kH5AmOQ2WTPhkCUyg+xow1rEhV855r7YlROTqnb17Fh77mLeRmHc1PmlgsgVW3EzTIZbGfEu+MwkZdZ40Djwx4z/KSip9Hclzh/qpsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NpFSqeEM; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723191743; x=1754727743;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7AEHdMbI9dPiNWAmnQSnggKsq9igIUCEtkuoWmoPLHs=;
-  b=NpFSqeEM0XK18V783yNh86Aa4M4BsUvP45XWQPeKBqjuGFMh02nKyksL
-   1Et62/z3Q7K7rIk0brF0lSvkwxa8WbMDLnQZMQv3PfWJRGfoGjObSdGLT
-   8yLlYv+q0NC9aSv5yoO8Yw+lEW3MKvb2QcgtrhbNgZu/isNau0d3qgerO
-   paTVKkUMPGit+MOZIz1XdIKwUeDsObQTNeATkH8WgRrbNKNHblXXoTTmb
-   Y0QDoem3pPW9T2jORULPkRi/jFjMgHFl4OQDYfokJkATnuqWq2e/pUOkf
-   i1vIxM70YVrsLJ78tMf+SiXyUC8UjD7103W9yxBZfuNs54Qj81GTh3u1R
-   w==;
-X-CSE-ConnectionGUID: Rr51+cMvQvGfgiNq3twyjw==
-X-CSE-MsgGUID: MOVnHuD7S5+spIbWOAEULQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="32764861"
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="32764861"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:22:23 -0700
-X-CSE-ConnectionGUID: klIUwH2bTK+vfSxq9FfQDQ==
-X-CSE-MsgGUID: pBFP0nLkQ/KWPEyJ0IVr+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="58058848"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.229.145]) ([10.124.229.145])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:22:21 -0700
-Message-ID: <284bed78-c9ff-4715-a85e-bf353cabaa22@linux.intel.com>
-Date: Fri, 9 Aug 2024 16:22:18 +0800
+	s=arc-20240116; t=1723191771; c=relaxed/simple;
+	bh=Ms18h9NjuLZqJPYnLon/Q1xIk7Z7z9uiAC/S/PYy7ZU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=An6xMXzcn14l9DQRy/H6Iad3TWqhFNnse0UHPizH8YrnhiINKrlX897HrRQ62+veJFBPX8ajsaOD4DTR4OrXTW2/qcVGnFq3AB70ccG5g6V+ontwsqEDGhYWngNAZwWZoexJgwScpkoKLWEuWG39SIAIEGtXur+xI+G3mXRZ7yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=rhOTNa5H; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so249852566b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:22:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1723191767; x=1723796567; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hvSjJhQsiaOkLBeBDuAHjN93be2CrieZJTO6dIpg/w4=;
+        b=rhOTNa5HYUZirDigL6zKL3xOqTXTV/NtGbnOQm6vUFlCDY10DkWjFUXISpvxkuH6+t
+         bSJ4apzgZKTmup1gy6CRayk2Lyyn2SeTA3cwSMGpKYXO/co5l4Cg+L1gmlQT5j5bLBkr
+         FkoJ9ZRxW9I7myUF3/GOn/XX9YHkkfGoX3cB2T8OTUNmPdtW5oWtfj/wCROD5xKil44K
+         pVRUBNoCdwIo5uZybBjnwJSU2WzWvYHlDOLUpgveiLHn1rXQGnx01wP5rhJZnQx+vnGp
+         oBURuNz9MxhfEZOONNXWrw0RaHl8o6WYLWfxMvRY/iTJxTQwnAKqlPyvhUNTJfHw+6Hl
+         t/ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723191767; x=1723796567;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hvSjJhQsiaOkLBeBDuAHjN93be2CrieZJTO6dIpg/w4=;
+        b=oXjBYD6nEFYQ+7rRlQX3xExDsJTbzvQxlXTK1W35mOdVbgDqy2k6ky6dklaLBtym+o
+         PJWsHfov9N3QyZrjuBCIJhtU4343uzSGN1LOs53ePPuth+y7YByOn7OStFQv3nL8gk+8
+         SMvKKLtRngJ4jUdOZZyNrHibKoQPromjy4ym64o7HDxEC6d48VfA5zN6e+VrX0sEYxLz
+         +5jkfV2CaWiABWVimpAjlaxPtEF5l1PEfEnbCcNcuf2dW4GsiXP6eHjzlliqK/6TVlKz
+         zqUGWHzkMFCu1eE6jMUsFQgubUMVh4Q+BiR+Kt0a+K7t9He+BM/0Yd5QvEMJhG1gSRLE
+         XLDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVK3LVAxQNmUbLXAkyIYBt5zMu7kNJF0FyXEzzhPd8QWwYUB6D3AjKvUQTR4DBUb2p8bEOf76R8slp2vZ/Pe2VUpcGQtFrcMqagbi5S
+X-Gm-Message-State: AOJu0YzECPttL3aXFDdI5wuRVTsvdZU4dYCjYBexywZk5Iza7P95vVL0
+	YMvq+3haj2nf7/wSsBI62vr7CZiJbol0r+Z4WvMFk23KgwYXQTo0Tg2b52IjOi0=
+X-Google-Smtp-Source: AGHT+IFnmUoOc78x9xnZg4BTUCEu1xBvAZLSD1YT+x9iEix9bA+IJPvu6V3OKL334EWP+pDr+DaUhw==
+X-Received: by 2002:a17:907:c7d2:b0:a7a:8876:4427 with SMTP id a640c23a62f3a-a80aa59b6b6mr65561366b.25.1723191766644;
+        Fri, 09 Aug 2024 01:22:46 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7de2e1b093sm708152166b.148.2024.08.09.01.22.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 01:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] vt-d/iommu: Enable batching of IOTLB/Dev-IOTLB
- invalidations
-To: Tina Zhang <tina.zhang@intel.com>, Kevin Tian <kevin.tian@intel.com>
-References: <20240809025431.14605-1-tina.zhang@intel.com>
- <20240809025431.14605-6-tina.zhang@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240809025431.14605-6-tina.zhang@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 09 Aug 2024 10:22:45 +0200
+Message-Id: <D3B8I0RHMCRX.27GXO53ITZKEH@fairphone.com>
+Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2] media: dt-bindings: qcom,sc7280-venus: Allow one
+ IOMMU entry
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Luca Weiss" <luca.weiss@fairphone.com>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>, "Stanimir
+ Varbanov" <stanimir.k.varbanov@gmail.com>, "Vikash Garodia"
+ <quic_vgarodia@quicinc.com>, "Bryan O'Donoghue"
+ <bryan.odonoghue@linaro.org>, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20240412-sc7280-venus-bindings-v2-1-48ca8c2ec532@fairphone.com>
+ <D1Q6CMZM78VI.ABYGRRV5E61B@fairphone.com>
+ <D2245MXG8CS1.11EGKFJQLYPTI@fairphone.com>
+In-Reply-To: <D2245MXG8CS1.11EGKFJQLYPTI@fairphone.com>
 
-On 2024/8/9 10:54, Tina Zhang wrote:
-> +static inline void handle_batched_iotlb_descs(struct dmar_domain *domain,
-> +					 struct cache_tag *tag,
-> +					 unsigned long addr,
-> +					 unsigned long pages,
-> +					 unsigned long mask,
-> +					 int ih)
-> +{
-> +	struct intel_iommu *iommu = tag->iommu;
-> +
-> +	if (domain->use_first_level) {
-> +		qi_batch_add_piotlb_desc(iommu, tag->domain_id,
-> +					 tag->pasid, addr, pages,
-> +					 ih, domain->qi_batch);
-> +	} else {
-> +		/*
-> +		 * Fallback to domain selective flush if no
-> +		 * PSI support or the size is too big.
-> +		 */
-> +		if (!cap_pgsel_inv(iommu->cap) ||
-> +		    mask > cap_max_amask_val(iommu->cap) ||
-> +		    pages == -1)
-> +			qi_batch_add_iotlb_desc(iommu, tag->domain_id,
-> +						0, 0, DMA_TLB_DSI_FLUSH,
-> +						domain->qi_batch);
-> +		else
-> +			qi_batch_add_iotlb_desc(iommu, tag->domain_id,
-> +						addr | ih, mask,
-> +						DMA_TLB_PSI_FLUSH,
-> +						domain->qi_batch);
-> +	}
-> +
-> +}
+On Mon Jun 17, 2024 at 9:28 AM CEST, Luca Weiss wrote:
+> On Mon Jun 3, 2024 at 8:39 AM CEST, Luca Weiss wrote:
+> > On Fri Apr 12, 2024 at 4:19 PM CEST, Luca Weiss wrote:
+> > > Some SC7280-based boards crash when providing the "secure_non_pixel"
+> > > context bank, so allow only one iommu in the bindings also.
+> >
+> > Hi all,
+> >
+> > This patch is still pending and not having it causes dt validation
+> > warnings for some qcom-sc7280 boards.
+>
+> Hi Rob,
+>
+> Could you please pick up this patch? Mauro seems to ignore this patch
+> either on purpose or by accident and I'd like for this dtbs_check
+> failure to finally be fixed.
 
-What if the iommu driver is running on an early or emulated hardware
-where the queued invalidation is not supported?
+Hi all,
 
-Thanks,
-baolu
+Another month, another ping.
+
+Can *anybody* please pick up this patch?
+
+Regards
+Luca
+
+>
+> Regards
+> Luca
+>
+> >
+> > Regards
+> > Luca
+> >
+> > >
+> > > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> > > ---
+> > > Reference:
+> > > https://lore.kernel.org/linux-arm-msm/20231201-sc7280-venus-pas-v3-2-=
+bc132dc5fc30@fairphone.com/
+> > > ---
+> > > Changes in v2:
+> > > - Pick up tags
+> > > - Otherwise just a resend, v1 was sent in January
+> > > - Link to v1: https://lore.kernel.org/r/20240129-sc7280-venus-binding=
+s-v1-1-20a9ba194c60@fairphone.com
+> > > ---
+> > >  Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-venu=
+s.yaml b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
+> > > index 8f9b6433aeb8..10c334e6b3dc 100644
+> > > --- a/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
+> > > +++ b/Documentation/devicetree/bindings/media/qcom,sc7280-venus.yaml
+> > > @@ -43,6 +43,7 @@ properties:
+> > >        - const: vcodec_bus
+> > > =20
+> > >    iommus:
+> > > +    minItems: 1
+> > >      maxItems: 2
+> > > =20
+> > >    interconnects:
+> > >
+> > > ---
+> > > base-commit: 9ed46da14b9b9b2ad4edb3b0c545b6dbe5c00d39
+> > > change-id: 20240129-sc7280-venus-bindings-6e62a99620de
+> > >
+> > > Best regards,
+
 
