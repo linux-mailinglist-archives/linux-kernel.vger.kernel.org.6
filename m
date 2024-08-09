@@ -1,135 +1,175 @@
-Return-Path: <linux-kernel+bounces-281134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608C494D379
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:29:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99A494D37B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF636B226E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:29:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44213284406
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C6A198A0F;
-	Fri,  9 Aug 2024 15:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF5F198A19;
+	Fri,  9 Aug 2024 15:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jO535wSV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WM8s0Apg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DF215B992;
-	Fri,  9 Aug 2024 15:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6E8174EE4
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723217339; cv=none; b=T/Hh2fSUqD3aQV+2a+f006XMHB+iCDIPT/7QpypFNFjjxr/ABQWc2CEmkG3CJzEweFaNe425ztV8FpzQJ+JU0WWNd4tDp582ukUszWuHNCa8TItsD4PRKSDWNtZ2E9/1EcFRMhJ+YIKSneEEub4u/exCWWIJe7e56X9YtPOs6JQ=
+	t=1723217367; cv=none; b=acLc0Kq0O1dj/pRhKkZ7fnIPwtQTQ9wLWsWV93H7vi2DBnZ6lnMKsF2s6sKEMxgYQQGq+DdroHxEm96ww+V0vUoNOkQ19SAzC0YQyPWXQmAYtDf2r3MvMjhezWyRt1Y3k7F0Vytj8AV/CjDk/rUbjKV28oPLITttW0j2i94SUeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723217339; c=relaxed/simple;
-	bh=KsX+Kf82qQK+XJnO+x6d8UQK9IGdMWChaFfgA5l5EsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ToTMgWAeaDBYLx4knJcDpRnngYKTlwtrBHc1kPB8MsTwlY4JSMY94xIhXOT3+NH65u+l24CgvQJmWH0zW0vVUk9fxzfxQPcuJhVK+8CfKOBBmJ4iSFa0BYIdRQRs2Fow6Hc4sr4yqXnETLMCoeYnwZiusbN1kSxPzb4Qpc60+Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jO535wSV; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723217338; x=1754753338;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KsX+Kf82qQK+XJnO+x6d8UQK9IGdMWChaFfgA5l5EsU=;
-  b=jO535wSVJd9gnFSs3IMeL2Ce1dvcO4XguZ0QlqXsc40Su68XlllaMpk1
-   4UESAEuJS8wOxpNs4oq4XKXqDC3VATTDNnTnj7XTCH442aj1kqfYwH209
-   atLE0459D5dhPI27F812y6K4ro/k59csTIOZChK8GtfU4HpGKsGP0d82j
-   sYGpWz9Wz6moyWD4YPjki6gej0MykLKil6WOlF2Rr/ToY/h4ujgH8eYHE
-   MLNs4IaZ9dgcn880Q6aHjZ3Wd7ohntz+YvAlJtuy60rhxbuBQppvL6GmC
-   +ew1t8QrXuGJ1mvbfKO+jE48UfPTkQ4V6vgqbDdgtCuCy8wfwF6LJ0efp
-   Q==;
-X-CSE-ConnectionGUID: IynqNRkgQRO/djfO7gyBtA==
-X-CSE-MsgGUID: ZfBTFZ/OTECdnUlE0yiVPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="25163216"
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="25163216"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:28:56 -0700
-X-CSE-ConnectionGUID: 2e0XJ5hSQPWNM0euqwq0yg==
-X-CSE-MsgGUID: ClDyMm98RXSdFm/l2U6R+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="58313165"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:28:54 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1scRXv-0000000DSL9-2SUd;
-	Fri, 09 Aug 2024 18:28:51 +0300
-Date: Fri, 9 Aug 2024 18:28:51 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: pd.pstoykov@gmail.com
-Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iio: pressure: Add driver for Sensirion SDP500
-Message-ID: <ZrY1s5fYdC3hMxjj@smile.fi.intel.com>
-References: <20240702-mainline_sdp500-v3-0-0902047b3eee@gmail.com>
- <20240702-mainline_sdp500-v3-2-0902047b3eee@gmail.com>
+	s=arc-20240116; t=1723217367; c=relaxed/simple;
+	bh=98E3TuM3TQmqoSqfPWEv3I8pWRbRVWWV8quLbdF4slk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MtXm6VFw1tPXMFjujkLvGNxDCYdJI2aWCmXe2V8Mmw1JyenIAi9a5GACqAUInLb3IJzDzVkFiyH6rofVnwm9pd4YyYpeNhx/Ayxz3IGGijWu1YLdozT4QI5+IJAKYe85wh+om5gRjZFOuy2y20Tm8VTk9W6ZZGjNpAmidVBWjlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WM8s0Apg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723217365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IkaFtYOglx3SERuq0AG1B8o+eSlXUn20hFBeWUD5Y4o=;
+	b=WM8s0Apg+nptOhMneZfSAjBrCEw2aPcqy2n02Tc4ONG/fC2CkCrxI50r7b6ckD/P8bbMcc
+	9gxdzm2hUXmXbKYYvyOfDhdl3zgDdf4vaP/fnG/pO4CDbZGO/oWpyhPvxY/UeWTLJzjeu0
+	mHvJi0U0jO2MwmCFAhBQXMO1Ba4fRtQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-436-m1NkH7RKM2O_jpc-PWrxyA-1; Fri, 09 Aug 2024 11:29:23 -0400
+X-MC-Unique: m1NkH7RKM2O_jpc-PWrxyA-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42808efc688so15492345e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:29:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723217362; x=1723822162;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IkaFtYOglx3SERuq0AG1B8o+eSlXUn20hFBeWUD5Y4o=;
+        b=X25Pue6d5HvT7PBW4BoNdvOFA+EvQWH3hC5+B6DoDJrFqe6CCrRVtdzNEy/NdSrqGv
+         /fy4apBIaJF7hQ6lxU/sAawvn3aks/pWOyJJR8YyX6k/ddp/fWqx5j51YwzhzswDZJ0v
+         JGzNogrcGR3glXSQR0v7oS2Z8cWigUHdB+l8zKPmh/AC2kUXd7k4MsexyIEcP4NFIdCD
+         nQOhsA97GNTa0ygvcci2EvBuz6NGFrb/o42FoaLWU01ZjjZYVgTpvwnwl2d9YJo/Uhkd
+         RVAr0uJecr6zxDWwG5LIRSuUEZVQXBPpM8O769yrHihxbYkGSM99zfxfk9Da+LFb+oyS
+         g9PA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXHq7Ql7gwKsSfCAJgTVmxE9wM0GWdQCft75Yys5mZ+0TTR+bk65Xg03f56CVxYv/REZyLacLyAi6FA9WlRr0ofSF5Cqr+UCi+BsBc
+X-Gm-Message-State: AOJu0YwUbkcdyG6EWPXBG6gslvm2e0Tvw9PIkIiSe4RhNP7oI1Eak4Fa
+	BGEfe1IJn8sHK26ZvsW27boU5vB3wLMlsOhHyXW1yxau366t/kWrrQCUk0iZa+QC1UUr0xZt2BP
+	9dQ0GcO8RcTWGq/VJIE9V9mO2iXTx1r/3YGdKck6jP4cOdpdoqFqu+lDyy+TCLA==
+X-Received: by 2002:a05:600c:46ce:b0:426:5ddf:fd22 with SMTP id 5b1f17b1804b1-429c3a17f1bmr13036395e9.6.1723217362434;
+        Fri, 09 Aug 2024 08:29:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9g/HImcMSBHo0q13rPpw/b1gOqisdmkCTPdK/rjlFupPIN6Eqj9sBoWS7cZ0WsvzucC7hMw==
+X-Received: by 2002:a05:600c:46ce:b0:426:5ddf:fd22 with SMTP id 5b1f17b1804b1-429c3a17f1bmr13036185e9.6.1723217361886;
+        Fri, 09 Aug 2024 08:29:21 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059713adsm133237355e9.11.2024.08.09.08.29.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 08:29:21 -0700 (PDT)
+Message-ID: <2cdc6d9a-0855-4209-9745-0ae15c4498a8@redhat.com>
+Date: Fri, 9 Aug 2024 17:29:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702-mainline_sdp500-v3-2-0902047b3eee@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] mm/numa: no task_numa_fault() call if PTE is
+ changed
+To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Huang, Ying" <ying.huang@intel.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Yang Shi <shy828301@gmail.com>,
+ Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20240809145906.1513458-1-ziy@nvidia.com>
+ <20240809145906.1513458-2-ziy@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240809145906.1513458-2-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 02, 2024 at 04:59:09PM +0200, Petar Stoykov via B4 Relay wrote:
-> From: Petar Stoykov <pd.pstoykov@gmail.com>
+On 09.08.24 16:59, Zi Yan wrote:
+> When handling a numa page fault, task_numa_fault() should be called by a
+> process that restores the page table of the faulted folio to avoid
+> duplicated stats counting. Commit b99a342d4f11 ("NUMA balancing: reduce
+> TLB flush via delaying mapping on hint page fault") restructured
+> do_numa_page() and did not avoid task_numa_fault() call in the second page
+> table check after a numa migration failure. Fix it by making all
+> !pte_same() return immediately.
 > 
-> Sensirion SDP500 is a digital differential pressure sensor. The sensor is
-> accessed over I2C.
+> This issue can cause task_numa_fault() being called more than necessary
+> and lead to unexpected numa balancing results (It is hard to tell whether
+> the issue will cause positive or negative performance impact due to
+> duplicated numa fault counting).
+> 
+> Reported-by: "Huang, Ying" <ying.huang@intel.com>
+> Closes: https://lore.kernel.org/linux-mm/87zfqfw0yw.fsf@yhuang6-desk2.ccr.corp.intel.com/
+> Fixes: b99a342d4f11 ("NUMA balancing: reduce TLB flush via delaying mapping on hint page fault")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
 
-...
-
-+ array_size.h
-+ bits.h
-+ dev_printk.h
-+ errno.h
-
-> +#include <linux/i2c.h>
-> +#include <linux/crc8.h>
-> +#include <linux/iio/iio.h>
-
-+ mod_devicetable.h
-+ module.h
-
-> +#include <linux/regulator/consumer.h>
-
-+ types.h
-
-Keep them ordered, also you may split iio/ group out
-
-> +#include <asm/unaligned.h>
-
-linux/*
-...blank line...
-asm/*
-...blank line...
-iio/*
-
-...
-
-> +struct sdp500_data {
-> +	struct device *dev;
-> +};
-
-Why is this structure needed at all? You may put dev pointer directly, no?
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Cheers,
 
+David / dhildenb
 
 
