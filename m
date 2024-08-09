@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-281218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24F694D472
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 027BA94D485
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064421C21438
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:19:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352EB1C2170C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C1C1991AC;
-	Fri,  9 Aug 2024 16:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L9p0E7Ee"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9531990DB;
+	Fri,  9 Aug 2024 16:20:39 +0000 (UTC)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4971990C4;
-	Fri,  9 Aug 2024 16:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395F81990AD;
+	Fri,  9 Aug 2024 16:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723220290; cv=none; b=Kn06bA5Z4qnxyeydrr0t1NK054LZbZjEV8iU85hAUKURnU5pIDOKx5WeVPVZ7yt3TYkDnA1MkRzHHDCvvr8TUkgfpI8M9g328IbXlLjSWiMHy4Rh7w0hTKEmvz3U0zVmnGg+BYdrbaTaN/3FiQVI2saxtnOM0JYWM7wZdRN13Hg=
+	t=1723220439; cv=none; b=AI56W1VPvDoXVziC85RxkH5kLktQ2f0rIIk1p+bbETRrAHZQFSk0e+CCdQHZN1fX1RvZ+L8hkb5BqcuVwGwZ2T13MspTT9gDxbNb3LuJcSyBiqd11BYNJo76vUmYXf/opHOu8Fxs3U3AAIo/YnspRgIKmriSoFji61oUhmi6TjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723220290; c=relaxed/simple;
-	bh=ek/Kg6OmXUi6D5cWxC7C10DYiBHbw6OL9TD8XPV7y4Y=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=UFxtZ+KIVft/rHNSA65l1sh1Pc0UXCbZ8nCGhK7IGZ+ClImxMLyXDULhPay81OtNnHg9yiPueuL7A3GZI+NK/uB8eP+fsTy2t/w2PB0q6NXllc7bV0BHow6eHqZ4Ka/p539NHf0m573gOe49SyYBrDGVhkhJCgP5I9z9P9I2z5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L9p0E7Ee; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA725C32782;
-	Fri,  9 Aug 2024 16:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723220290;
-	bh=ek/Kg6OmXUi6D5cWxC7C10DYiBHbw6OL9TD8XPV7y4Y=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=L9p0E7EeQlzvhjRAqoGpPdcihwHW1MjQbllDSkwN06TxsM8qdXsU6oSBQB9tXP/cJ
-	 yADOr0bk3A/w5CS4ytEl0pVafURAAnGy6zOvlnWf8hPhBHiuJYleEaHytbChUqrC9B
-	 smY3y3ezB64BiTbn8lBcvsjxyjgez2K8ANOqBorTJAS4uoVBXKsNQbje2c176iUbT6
-	 wxjvkme+t/94n448CAveKNbDTTIPJ04CYafRy5mU8vc0mD07nhhG+8SZf0IgPHbfpZ
-	 Ra2eBlsO5e959W0mhdWJGXYF5ZMTqAC0vktQbwOFxeyiFqIHmmeh9jU9rqdy79t52Y
-	 6bOG5kGvno5TA==
-Date: Fri, 09 Aug 2024 10:18:08 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1723220439; c=relaxed/simple;
+	bh=OGoeUYjpEw64DR44DAgucxsJpW7HAfIIurJziUbEFic=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JMgMRiclFq0lVppucTFBWpzOaAnFXr83JjgbXwXuB4uGejSbqWnDqnwxlNKyAKZWPV2mZI1s7IDSY6kQStyZU4QJetczCJlaGwhzNluGMRdUm3s6TaDJrHMz+PrwTEwPJioM+SCO+NcESla//x6P+bPmQbf/dLglhI1wOzk3Itw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa63so2496151a12.0;
+        Fri, 09 Aug 2024 09:20:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723220435; x=1723825235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F9vCCDvz+Mfg5UhCzo9mkGnpNPDGEv6vhkWTt2JAVA0=;
+        b=VYOA5+zLYLWQeYfevS5cVL/MGDtdLeokBZpN2ZoTV7vy0b3nmDX1peDA688qm6OC/5
+         qm4FQbbi49ZwXvYLHt92//N63OduyblWKF/czkZtntCXx/A3EiC+rkqRhbYH4SdW/ifo
+         oiId9H5cAlu5yhYLFon/8MOsn0UPLWm/1W56d9NrGYKj/60RQC8HR8os0OJxMGsZ71ej
+         gS4VlN9UPmbBcfysfB+5AA6JKYYAl+p3R7nzYHW1QGtzIaHQOaVNAHGEKNymSCkSc5kP
+         dYEermM9jrnWmGOYg/NRtTOebdJEKQqo5KZPT0fpJ2z3q5W9UwobAm8JbNPYvgEdAiUh
+         J6OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWr24EpD2g8Z0bn8FDBnfKh5Hr0eMprYw0oxhlQr90Kz+y9fz2d84aEWWZCwATbWINMBB2yoSmSJuRanCSrj5ID7rM9OkzaNSZUIklXFnlQqqgFoLCTrVjLDaMkgVC4KRJvQmKA
+X-Gm-Message-State: AOJu0YwssaQ1b2E93XcD17UWJoSlBz7tJhKDwk/1pFZhNok85nCF8LH4
+	wEU6cDZN7h074NodwwjVVfPb+ZIX0R0oaht8+S5wZPR3kEPqRAkS
+X-Google-Smtp-Source: AGHT+IFUKmbFLDgAP8L8vasHziH7Q+3Yk7kei1zBDPrxJxWPEdnu9/uxzYSxdQ5E2S9aFKGrGqF4/Q==
+X-Received: by 2002:a05:6402:11d2:b0:578:60a6:7c69 with SMTP id 4fb4d7f45d1cf-5bd0a69364emr1259842a12.30.1723220435108;
+        Fri, 09 Aug 2024 09:20:35 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2e5e6f6sm1631543a12.89.2024.08.09.09.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 09:20:34 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com
+Cc: thepacketgeek@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Aijay Adams <aijay@meta.com>
+Subject: [PATCH net-next] net: netconsole: Populate dynamic entry even if netpoll fails
+Date: Fri,  9 Aug 2024 09:19:33 -0700
+Message-ID: <20240809161935.3129104-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Yannick Fertre <yannick.fertre@foss.st.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-stm32@st-md-mailman.stormreply.com, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- David Airlie <airlied@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Daniel Vetter <daniel@ffwll.ch>, 
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
- dri-devel@lists.freedesktop.org, 
- Philippe Cornu <philippe.cornu@foss.st.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <20240809151314.221746-1-yannick.fertre@foss.st.com>
-References: <20240809151314.221746-1-yannick.fertre@foss.st.com>
-Message-Id: <172322028851.588157.5328364169708651531.robh@kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: display: st,stm32-ltdc: Document
- stm32mp25 compatible
+Content-Transfer-Encoding: 8bit
 
+Currently, netconsole discards targets that fail during initialization,
+causing two issues:
 
-On Fri, 09 Aug 2024 17:13:14 +0200, Yannick Fertre wrote:
-> Add "st,stm32mp25-ltdc" compatible for SOC MP25. This new SOC introduce
-> new clocks (bus, ref & lvds). Bus clock was separated from lcd clock.
-> New sources are possible for lcd clock (lvds / ref).
-> 
-> Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
-> ---
-> Changes in v2: Rework clock property.
->  .../bindings/display/st,stm32-ltdc.yaml       | 51 +++++++++++++++----
->  1 file changed, 41 insertions(+), 10 deletions(-)
-> 
+1) Inconsistency between target list and configfs entries
+  * user pass cmdline0, cmdline1. If cmdline0 fails, then cmdline1
+    becomes cmdline0 in configfs.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+2) Inability to manage failed targets from userspace
+  * If user pass a target that fails with netpoll (interface not loaded at
+    netcons initialization time, such as interface is a module), then
+    the target will not exist in the configfs, so, user cannot re-enable
+    or modify it from userspace.
 
-yamllint warnings/errors:
+Failed targets are now added to the target list and configfs, but
+remain disabled until manually enabled or reconfigured. This change does
+not change the behaviour if CONFIG_NETCONSOLE_DYNAMIC is not set.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml: allOf:0:else:properties:clocks: {'maxItems': 1, 'items': [{'description': 'Lcd Clock'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml: allOf:0:then:properties:clocks: {'maxItems': 4, 'items': [{'description': 'Lcd Clock'}, {'description': 'Bus Clock'}, {'description': 'Reference Clock'}, {'description': 'Lvds Clock'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/st,stm32-ltdc.example.dtb: display-controller@40016800: 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/display/st,stm32-ltdc.yaml#
+CC: Aijay Adams <aijay@meta.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/net/netconsole.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240809151314.221746-1-yannick.fertre@foss.st.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+index 43c29b15adbf..41a61fa88c32 100644
+--- a/drivers/net/netconsole.c
++++ b/drivers/net/netconsole.c
+@@ -1258,11 +1258,15 @@ static struct netconsole_target *alloc_param_target(char *target_config,
+ 		goto fail;
+ 
+ 	err = netpoll_setup(&nt->np);
+-	if (err)
++	if (!err)
++		nt->enabled = true;
++	else if (!IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC))
++		/* only fail if dynamic reconfiguration is set,
++		 * otherwise, keep the target in the list, but disabled.
++		 */
+ 		goto fail;
+ 
+ 	populate_configfs_item(nt, cmdline_count);
+-	nt->enabled = true;
+ 
+ 	return nt;
+ 
+@@ -1304,8 +1308,6 @@ static int __init init_netconsole(void)
+ 		while ((target_config = strsep(&input, ";"))) {
+ 			nt = alloc_param_target(target_config, count);
+ 			if (IS_ERR(nt)) {
+-				if (IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC))
+-					continue;
+ 				err = PTR_ERR(nt);
+ 				goto fail;
+ 			}
+-- 
+2.43.5
 
 
