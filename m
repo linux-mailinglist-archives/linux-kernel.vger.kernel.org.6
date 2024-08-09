@@ -1,214 +1,202 @@
-Return-Path: <linux-kernel+bounces-281627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B67894D8FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:06:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C3594D8FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BFD61F22842
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:06:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B1332831A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4384616D31B;
-	Fri,  9 Aug 2024 23:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE0216CD13;
+	Fri,  9 Aug 2024 23:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/csMJl8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="vlPOrv+X"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6DF1607AF;
-	Fri,  9 Aug 2024 23:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C81317557
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 23:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723244784; cv=none; b=CBYktqmhZkiDNDbW1TuibJlra1FEidLNWaszBsdjmkd1Jf+xyDgXXaBAKNzutIAvHsaC4wwQFz8NOJbhyuN8oQYS21c2EQPeoQiA3/BGT6ffqrZmtQkiD2CshC6YWQRnCFjjNkkaYl+5XcQaL5yEjtaGSqFmgji69Os6SBBmODo=
+	t=1723244862; cv=none; b=SwjgAMIMVc2vrGAeOB4sTU0msAZKG5Rru68H3MUGLYAcb1G7pTDb9sbOjaArmnCH2h/6JFUDCb734kXBuqP9AwJ6O3BBvQlhOpifqKgU3yKgj69obqQr9WMsgCffg46kx/R7aKbJ6i6h/TZLmvOtFB5abcFcytWyzTYg5foKB8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723244784; c=relaxed/simple;
-	bh=BwFadedF5rj9rHUpdYtKkGHf7SYGqFjoEgqWwCF1UD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LsU9DwkTVmjs9SCWnOQaeAF/tDThFiUUJfGFJaJXFhshAPzYg++2XBgymI4//X121lmOzzwDHSsFpk3EPvEH24CFy7NNjnoeFVHNdYsVDJe/KmhidZ/kzpEZFUMmCAS/jXhoyuQ//mHxKZW28jox30MRcgyb9x4V8pVN+z7HjnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/csMJl8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10BFDC4AF10;
-	Fri,  9 Aug 2024 23:06:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723244784;
-	bh=BwFadedF5rj9rHUpdYtKkGHf7SYGqFjoEgqWwCF1UD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a/csMJl8QqWNRzHe4O2Oh/D2HjQdYXYJOFjTWkGLrl5Pg/18MvOlw6fe/PouHcaEX
-	 31h1e/OdO8hYuT9f1OB7ii6pcmtCOHiBtMqXTG2Mn6UVBkhO2QuXrEeUe42gCasrFG
-	 SilEMZJtjGH30T14nObqxxLCf0yz0st1RI4pZoI9L8G5MLBjvtwAyCx62QFnqKnN4B
-	 ubMyM9ZmJmyT44HR1hYHCnj8iKPtXInOrJytBy0FWu1NeKSZHB/OD0Fv2IlxIa36CV
-	 xHJGTyaxsoHP7LBzc/MWahStrMOkiPaAJDYwhccoLK1TOSEPAW0kMn5AwSros5MVam
-	 pmSKTzFHkMRrg==
-Date: Sat, 10 Aug 2024 00:06:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
-Message-ID: <Zrag5A5K9pv1K9Uz@finisterre.sirena.org.uk>
-References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
- <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
- <ZrZdrgOQVHhCyWmA@arm.com>
+	s=arc-20240116; t=1723244862; c=relaxed/simple;
+	bh=m02sB9/i6q4HkiX2nN6zh1LoMvAQgF7/4B6lR6Xjg9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hnC2dhS8v9SYqNa7qmJQ3+YpUl18RvL0b+x2BnxapIhhGknmBIFb7T3JxIod6ql+3OHZAktyC9WGD8pAeXbhOXlJpQI8CnOQ+ab8bR/4Ah0d9xYiaF30kKO9BZx0BiP0mmQ5PdfMl3De/ZW3FaTV9DkXEz3Y4gwI//x7sANcjaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=vlPOrv+X; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3686b285969so1325963f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 16:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1723244859; x=1723849659; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=y0eivMhgT/16iODWZuyqbzSljY+8jVTkdgoKaNN6wIA=;
+        b=vlPOrv+XX1DniVHp6Vi+KQofbqDDgDlMhsQZfpySnW7i+ltnuv1eElTqzWMzvsKGO9
+         1ty8W6f62gBobYM9iTc+3A8HreITybefc8oPVx5GG/+OwYefnumyhunIjkqUgAunbChv
+         6WOcmPqH1/rp24+hVUeKxat5KilLsHS7wuZXU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723244859; x=1723849659;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y0eivMhgT/16iODWZuyqbzSljY+8jVTkdgoKaNN6wIA=;
+        b=it/1Vd6FC41NWrD+yZTkVXcEzWYcaeHwTkC2Wp3QJrKkg8oD0Kf1eiuNxYONtjG1MX
+         4j9MewmZGkgNQXQYK6Ky4XcapRoY8zl/YRfTUjXcYlXVTxVRAsMxiNhTQPIo2oazPtg8
+         Lf9Ru51zpz2k/i16UemZ4f1OMGhhgBjC70W/C4CFUTrUa2g6rin/Ofel4a8NEcq5D047
+         nW4BM7CDW/+8bO9BB9pdSSIAaeIp5pyKav6dLBGTSNH2jmbVmLzPg0I5HcqS/sFIdWKo
+         XL8Gx2wTCSV+ko5Qw/e9hsFgrrvEkPSSvHiejA8RQkT1EuEG4KzANiPR8O/WLMT2H94x
+         RRzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpzXP5rN/BlSWhmY7rIknlHqqm5SIcImkHC6guCNewZoji32p1kz/QetR4k52sm6YhUzyN6wvijyoJS6h4VOfqfMKDulYOl7kfwBG1
+X-Gm-Message-State: AOJu0YxVAJmXwKw3Df0+/IAcxlXV+TC1cD7D0UdFFYQyHySwQDNLc6i/
+	84LAEuIH6ayO/5dj3qWMMi08u3tWIgBbROTw8mn9kREvfeP2+hUde1/eLX3fThI=
+X-Google-Smtp-Source: AGHT+IE8ACVGbGcWpC/B9siOpXw/z0FWpse3sa0j1h3k5gNlMDlxELp3E/Jxw1C8Y1PMZnq5rqI5Gw==
+X-Received: by 2002:a5d:5910:0:b0:36b:bcef:b393 with SMTP id ffacd0b85a97d-36d6035553amr1912323f8f.57.1723244858825;
+        Fri, 09 Aug 2024 16:07:38 -0700 (PDT)
+Received: from [192.168.101.107] (ip-185-104-136-31.ptr.icomera.net. [185.104.136.31])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c9381b4sm642151f8f.37.2024.08.09.16.07.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 16:07:38 -0700 (PDT)
+Message-ID: <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
+Date: Sat, 10 Aug 2024 00:07:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x+vqlBicxCJXdkp6"
-Content-Disposition: inline
-In-Reply-To: <ZrZdrgOQVHhCyWmA@arm.com>
-X-Cookie: Your love life will be... interesting.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] x86/msr: Switch between WRMSRNS and WRMSR with the
+ alternatives mechanism
+To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ peterz@infradead.org, seanjc@google.com
+References: <20240807054722.682375-1-xin@zytor.com>
+ <20240807054722.682375-3-xin@zytor.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20240807054722.682375-3-xin@zytor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 07/08/2024 6:47 am, Xin Li (Intel) wrote:
+> From: Andrew Cooper <andrew.cooper3@citrix.com>
+>
+> Per the discussion about FRED MSR writes with WRMSRNS instruction [1],
+> use the alternatives mechanism to choose WRMSRNS when it's available,
+> otherwise fallback to WRMSR.
+>
+> [1] https://lore.kernel.org/lkml/15f56e6a-6edd-43d0-8e83-bb6430096514@citrix.com/
+>
+> Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
+> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> ---
+>  arch/x86/include/asm/msr.h | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+> index d642037f9ed5..3e402d717815 100644
+> --- a/arch/x86/include/asm/msr.h
+> +++ b/arch/x86/include/asm/msr.h
+> @@ -99,19 +99,6 @@ static __always_inline void __wrmsr(unsigned int msr, u32 low, u32 high)
+>  		     : : "c" (msr), "a"(low), "d" (high) : "memory");
+>  }
+>  
+> -/*
+> - * WRMSRNS behaves exactly like WRMSR with the only difference being
+> - * that it is not a serializing instruction by default.
+> - */
+> -static __always_inline void __wrmsrns(u32 msr, u32 low, u32 high)
+> -{
+> -	/* Instruction opcode for WRMSRNS; supported in binutils >= 2.40. */
+> -	asm volatile("1: .byte 0x0f,0x01,0xc6\n"
+> -		     "2:\n"
+> -		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_WRMSR)
+> -		     : : "c" (msr), "a"(low), "d" (high));
+> -}
+> -
+>  #define native_rdmsr(msr, val1, val2)			\
+>  do {							\
+>  	u64 __val = __rdmsr((msr));			\
+> @@ -312,9 +299,22 @@ do {							\
+>  
+>  #endif	/* !CONFIG_PARAVIRT_XXL */
+>  
+> +/* Instruction opcode for WRMSRNS supported in binutils >= 2.40 */
+> +#define WRMSRNS _ASM_BYTES(0x0f,0x01,0xc6)
+> +
+> +/* Non-serializing WRMSR, when available.  Falls back to a serializing WRMSR. */
+>  static __always_inline void wrmsrns(u32 msr, u64 val)
+>  {
+> -	__wrmsrns(msr, val, val >> 32);
+> +	/*
+> +	 * WRMSR is 2 bytes.  WRMSRNS is 3 bytes.  Pad WRMSR with a redundant
+> +	 * DS prefix to avoid a trailing NOP.
+> +	 */
+> +	asm volatile("1: "
+> +		     ALTERNATIVE("ds wrmsr",
 
---x+vqlBicxCJXdkp6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This isn't the version I presented, and there's no discussion of the
+alteration.
 
-On Fri, Aug 09, 2024 at 07:19:26PM +0100, Catalin Marinas wrote:
-> On Thu, Aug 08, 2024 at 09:15:25AM +0100, Mark Brown wrote:
+The choice of CS over DS was deliberate, and came from Intel:
 
-> > +	/* This should really be an atomic cmpxchg.  It is not. */
-> > +	if (access_remote_vm(mm, addr, &val, sizeof(val),
-> > +			     FOLL_FORCE) !=3D sizeof(val))
-> > +		goto out;
+https://www.intel.com/content/dam/support/us/en/documents/processors/mitigations-jump-conditional-code-erratum.pdf
 
-> If we restrict the shadow stack creation only to the CLONE_VM case, we'd
-> not need the remote vm access, it's in the current mm context already.
-> More on this below.
+So unless Intel want to retract that whitepaper, and all the binutils
+work with it, I'd suggest keeping it as CS like we use elsewhere, and as
+explicitly instructed by Intel.
 
-The discussion in previous iterations was that it seemed better to allow
-even surprising use cases since it simplifies the analysis of what we
-have covered.  If the user has specified a shadow stack we just do what
-they asked for and let them worry about if it's useful.
-
-> > +	if (val !=3D expected)
-> > +		goto out;
-
-> I'm confused that we need to consume the token here. I could not find
-> the default shadow stack allocation doing this, only setting it via
-> create_rstor_token() (or I did not search enough). In the default case,
-> is the user consuming it? To me the only difference should been the
-> default allocation vs the one passed by the user via clone3(), with the
-> latter maybe requiring the user to set the token initially.
-
-As discussed for a couple of previous versions if we don't have the
-token and userspace can specify any old shadow stack page as the shadow
-stack this allows clone3() to be used to overwrite the shadow stack of
-another thread, you can point to a shadow stack page which is currently
-in use and then run some code that causes shadow stack writes.  This
-could potentially then in turn be used as part of a bigger exploit
-chain, probably it's hard to get anything beyond just causing the other
-thread to fault but won't be impossible.
-
-With a kernel allocated shadow stack this is not an issue since we are
-placing the shadow stack in new memory, userspace can't control where we
-place it so it can't overwrite an existing shadow stack.
-
-> > +		/*
-> > +		 * For CLONE_VFORK the child will share the parents
-> > +		 * shadow stack.  Make sure to clear the internal
-> > +		 * tracking of the thread shadow stack so the freeing
-> > +		 * logic run for child knows to leave it alone.
-> > +		 */
-> > +		if (clone_flags & CLONE_VFORK) {
-> > +			shstk->base =3D 0;
-> > +			shstk->size =3D 0;
-> > +			return 0;
-> > +		}
-
-> I think we should leave the CLONE_VFORK check on its own independent of
-> the clone3() arguments. If one passes both CLONE_VFORK and specific
-> shadow stack address/size, they should be ignored (or maybe return an
-> error if you want to make it stricter).
-
-This is existing logic from the current x86 code that's been reindented
-due to the addition of explicitly specified shadow stacks, it's not new
-behaviour.  It is needed to stop the child thinking it has the parent's
-shadow stack in the CLONE_VFORK case.
-
-> > -	/*
-> > -	 * For !CLONE_VM the child will use a copy of the parents shadow
-> > -	 * stack.
-> > -	 */
-> > -	if (!(clone_flags & CLONE_VM))
-> > -		return 0;
-> > +		/*
-> > +		 * For !CLONE_VM the child will use a copy of the
-> > +		 * parents shadow stack.
-> > +		 */
-> > +		if (!(clone_flags & CLONE_VM))
-> > +			return 0;
-
-> Is the !CLONE_VM case specific only to the default shadow stack
-> allocation? Sorry if this has been discussed already (or I completely
-> forgot) but I thought we'd only implement this for the thread creation
-> case. The typical fork() for a new process should inherit the parent's
-> layout, so applicable to the clone3() with the shadow stack arguments as
-> well (which should be ignored or maybe return an error with !CLONE_VM).
-
-This is again all existing behaviour for the case where the user has not
-specified a shadow stack reindented, as mentioned above if the user has
-specified one explicitly then we just do what we were asked.  The
-existing behaviour is to only create a new shadow stack for the child in
-the CLONE_VM case and leave the child using the same shadow stack as the
-parent in the copied mm for !CLONE_VM.
-
-> > @@ -2790,6 +2808,8 @@ pid_t kernel_clone(struct kernel_clone_args *args)
-> >  	 */
-> >  	trace_sched_process_fork(current, p);
-> > =20
-> > +	shstk_post_fork(p, args);
-
-> Do we need this post fork call? Can we not handle the setup via the
-> copy_thread() path in shstk_alloc_thread_stack()?
-
-It looks like we do actually have the new mm in the process before we
-call copy_thread() so we could move things into there though we'd loose
-a small bit of factoring out of the error handling (at one point I had
-more code factored out but right now it's quite small, looking again we
-could also factor out the get_task_mm()/mput()).  ISTR having the new
-process' mm was the biggest reason for this initially but looking again
-I'm not sure why that was.  It does still feel like even the small
-amount that's factored out currently is useful though, a bit less
-duplication in the architecture code which feels welcome here.
-
---x+vqlBicxCJXdkp6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma2oOEACgkQJNaLcl1U
-h9DJAAf+JgJexSTM8FYO5LJrp+jcI3PrWuxmpz8oe4r2ikqJ0cNCDIythdgUWZi/
-cq2eE1HvcKW/hHzIXqZNTung2CRIzciY3mURpSSoZ5QEb07VJ6aGpqUjhRIcpf/h
-jdy+rbBRgXD7mv1fvrHVsBz29a6+Ke5hbmSg5VoWYpb8PH7LTxJvtdTh+5j0Gu21
-t5DBD7ZgayCI9k4O7wCcAacCKmZqv+2SEYNpfYGHzXuL4HZZkdGs8gCI2GVYW5rR
-+g80dalbhsVWhEq9bMfESemL2Rb5BSINFey6n7bRcACK1+/I7eSNprv5L1GL/AKK
-clCbRH0HNAvbw9ymbemgTt0U/cU2ZA==
-=MunQ
------END PGP SIGNATURE-----
-
---x+vqlBicxCJXdkp6--
+~Andrew
 
