@@ -1,161 +1,127 @@
-Return-Path: <linux-kernel+bounces-281091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABFDE94D2F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:09:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A31E94D2FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577651F2237B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10EBB281F10
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071D419883C;
-	Fri,  9 Aug 2024 15:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB71F198840;
+	Fri,  9 Aug 2024 15:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OuT1iyRv"
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pt2x7KNx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1890F197A7A;
-	Fri,  9 Aug 2024 15:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C61197A7A;
+	Fri,  9 Aug 2024 15:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216181; cv=none; b=UxKwahAiDlz7jsl2s7Ssg9KuJp+4YBjP9gam8VqBuVBDV2f/s1Fl4Lumbys6burubFMrzAPIk+sqonlunLi7WLc/b1yQk7ogN9IAN4MvqkhiEAAAdirhhCt09nrONitOVeeTGYUw+XGq4+ki0iVSyrxE7/P607ykYxcO6MlDWqM=
+	t=1723216228; cv=none; b=A7u3MeiD9U/bj13WuHr1L4BguDQMk65tR8CWT8r4bUNqs8ZFuHs+vEqcJdQoUzkRLB2mHdcp8W183Wmb0MYhju9gY1BT6qRA9cmLqEbaB5goXLY3/fpGFZAwhqM12iqX/PM/2VxlEp/X8hZVguq0tZy0KwrgTEmMc5ZJ7HqsS08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216181; c=relaxed/simple;
-	bh=OuHZ5Ys/4q21gD7TrBJvv6OUB8KQ14N9UVhninn1ulM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GTcoorqCrwvzp+HCpciSH2+5oRdsMhH/OfUO42yipL+a7NbiLuwhbjCY8Jry3p96qApz4YrGqwGMz7e6Bidu9VG2GwVjkuj5/hyb17pUMkPygCm2ixwSHn39gEDNZfk8VHu+8tSCNJlQMEcfi2RYawJ54NPaZKiA/INNkHjGK9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=OuT1iyRv; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id cRFBsyKbPIDadcRFBsE0us; Fri, 09 Aug 2024 17:09:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723216170;
-	bh=Za0QZIRDiSzOXQG6QHcalUfH/TEPCTSjMejkNNfjFls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=OuT1iyRvtWRj5GvKLCgK2vzSaKajOO0qmnMYjqU89Rcu0pwJP6moSu5o5FB4zUVEM
-	 2FbbAa8lt856bu765fHwjRLxld8QT6w5aoPpBmK/325GjdGeYj3r8E23kHiBDML7d2
-	 k8esYkbADuxng1/OrnaWmu1eDDLqUBndXOorbZvhvOrwBmGzaTffRuHSaC87aygliH
-	 iq6RYYBRdwifsk9Iw08bmturP0gMVU8pRXh2sVJSczSTB6yOwflmttcJNVJi3QKGxn
-	 BamA5rjxdh7jHv/JExkYiq4oeYYCwJSoV0avzWGFDq4QCbCA6sPgWeyEy0smkPzlvY
-	 8xmReqbkEL8Dg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 09 Aug 2024 17:09:30 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <7b65dbd8-1129-4fcc-97ba-43400fc98e31@wanadoo.fr>
-Date: Fri, 9 Aug 2024 17:09:28 +0200
+	s=arc-20240116; t=1723216228; c=relaxed/simple;
+	bh=P2QtE8OHYSp/8bvRdhI4PJKM3LlbRcrXcb+xFnH/vbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZeL0cWkMd4x9fOAwf2KzI4XnVht1eTmJv0WQQHEKhu4d41aE6RGIgkaJ5cwQpNpF1fzfyLX0JZtswzPKTsac9uDXDYQ5o/nSuEB4alwqOkct7LjVob2pOZIsMxkt95otsz2dP5hYKSh6LPvzHLoarkfPjp/sgTjpyOWPfF9xa5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pt2x7KNx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC362C32782;
+	Fri,  9 Aug 2024 15:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723216227;
+	bh=P2QtE8OHYSp/8bvRdhI4PJKM3LlbRcrXcb+xFnH/vbs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pt2x7KNxK1bt5Oa0mikDIAjU5w/v44wgKDBEm1T/MwSgkZjNxNBwZMKGObRzr3pI0
+	 7b1crrbN3jFk9/81JriBPG3I+7HrU9HXuAhaoCLuM79FI0DOkOPLq4Rto3KGe0S7k6
+	 QHCVxME/MBg0uKkgUPmI6ggICjYKZGMwznHaBuBDINEqwFNr/2DYeJ0NSIJtZvYzNw
+	 9rJhs1lvw5XZftZHZeCZC/j1D0ADJBCMwLF7JuvHxoSKchLJshnm4/nlGVN5lfbYsa
+	 lwdX6PuSVXvzr3fFltePrDMT05S1PQ+BK9/FRGZAVkiNYy9cXfm04hwSLyqtzCgm2q
+	 mYJjao7/0xh5A==
+Date: Fri, 9 Aug 2024 16:10:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Linux Team <linux-imx@nxp.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	imx@lists.linux.dev, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/3] dt-bindings: net: fec: add pps channel
+ property
+Message-ID: <20240809-euphemism-degrading-f2b329ccce50@spud>
+References: <20240809094804.391441-1-francesco@dolcini.it>
+ <20240809094804.391441-2-francesco@dolcini.it>
+ <20240809-bunt-undercook-3bb1b5da084f@spud>
+ <20240809144914.GA418297@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: omapfb: panel-sony-acx565akm: Simplify
- show_cabc_available_modes()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
- <aa43c1f8-05bc-4edd-b7ba-474953f28f5c@stanley.mountain>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <aa43c1f8-05bc-4edd-b7ba-474953f28f5c@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Le 09/08/2024 à 16:42, Dan Carpenter a écrit :
-> On Thu, Aug 08, 2024 at 11:46:11AM +0200, Christophe JAILLET wrote:
->> Use sysfs_emit_at() instead of snprintf() + custom logic.
->> Using sysfs_emit_at() is much more simple.
->>
->> Also, sysfs_emit() is already used in this function, so using
->> sysfs_emit_at() is more consistent.
->>
->> Also simplify the logic:
->>    - always add a space after an entry
->>    - change the last space into a '\n'
->>
->> Finally it is easy to see that, given the size of cabc_modes, PAGE_SIZE
->> can not be reached.
->> So better keep everything simple (and correct).
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   .../omap2/omapfb/displays/panel-sony-acx565akm.c  | 15 ++++++++-------
->>   1 file changed, 8 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
->> index 71d2e015960c..fc975615d5c9 100644
->> --- a/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
->> +++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
->> @@ -466,19 +466,20 @@ static ssize_t show_cabc_available_modes(struct device *dev,
->>   		char *buf)
->>   {
->>   	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->> -	int len;
->> +	int len = 0;
->>   	int i;
->>   
->>   	if (!ddata->has_cabc)
->>   		return sysfs_emit(buf, "%s\n", cabc_modes[0]);
->>   
->> -	for (i = 0, len = 0;
->> -	     len < PAGE_SIZE && i < ARRAY_SIZE(cabc_modes); i++)
->> -		len += snprintf(&buf[len], PAGE_SIZE - len, "%s%s%s",
->> -			i ? " " : "", cabc_modes[i],
->> -			i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
->> +	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++)
->> +		len += sysfs_emit_at(buf, len, "%s ", cabc_modes[i]);
->> +
->> +	/* Remove the trailing space */
->> +	if (len)
->> +		buf[len - 1] = '\n';
-> 
-> I'm uncomfortable with this line.  It assumes we don't overflow PAGE_SIZE where
-> the original code was careful about checking.  Probably easiest to do what the
-> original code did and say:
-> 
-
-Hi Dan,
-
-I don't follow you. AFAIK, it does not assume anything.
-
-Thanks to sysfs_emit_at(), len can only be in [0..PAGE_SIZE-1] because 
-the trailing \0 is not counted.
-
-So, as len != 0, len-1 is in [0..PAGE_SIZE-2].
-
-How do you think an overflow could happen?
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="w/FwCQG0jzaZZ8B9"
+Content-Disposition: inline
+In-Reply-To: <20240809144914.GA418297@francesco-nb>
 
 
-Also, all this code does is buildind:
-	"off, ui, still-image, moving-image\n"
+--w/FwCQG0jzaZZ8B9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So in any case, an overflow is impossible, and really unlikely in the 
-future as well.
+On Fri, Aug 09, 2024 at 04:49:14PM +0200, Francesco Dolcini wrote:
+> On Fri, Aug 09, 2024 at 03:27:39PM +0100, Conor Dooley wrote:
+> > On Fri, Aug 09, 2024 at 11:48:02AM +0200, Francesco Dolcini wrote:
+> > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > >=20
+> > > Add fsl,pps-channel property to specify to which timer instance the P=
+PS
+> > > channel is connected to.
+> >=20
+> > In the driver patch you say "depending on the soc ... might be routed to
+> > different timer instances", why is a soc-specific compatible
+> > insufficient to determine which timer instance is in use?
+> > I think I know what you mean, but I'm not 100%.
+> >=20
+> > That said, the explanation in the driver patch is better than the one
+> > here, so a commit message improvement is required.
+>=20
+> This was clarified by NXP during the discussion on this series [1] and the
+> commit messages were not amended to take this new information into
+> account, my fault.
+>=20
+> I would propose something like this here:
+>=20
+> ```
+> Add fsl,pps-channel property to select where to connect the PPS
+> signal. This depends on the internal SoC routing and on the board, for
+> example on the i.MX8 SoC it can be connected to an external pin (using
+> channel 1) or to internal eDMA as DMA request (channel 0).
+> ```
 
+That's definitely better, as it illustrates why the compatible is not
+sufficient.
 
- From my PoV, my proposed patch is both much more readable and still 
-correct in all cases.
+--w/FwCQG0jzaZZ8B9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-CJ
+-----BEGIN PGP SIGNATURE-----
 
-> 	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++)
-> 		len += sysfs_emit_at(buf, len, "%s%s", cabc_modes[i],
-> 				     i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
-> 
-> regards,
-> dan carpenter
-> 
-> 
-> 
-> 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrYxXQAKCRB4tDGHoIJi
+0nDAAQC0z2Kl9NY506ibzdDJaCI+z0EzhOgMwcAWUwKMd6ohTAD/dByz+NALI2JS
+Q8tXIcDoTnv+eZEIECKJkERYxMfeLws=
+=CMis
+-----END PGP SIGNATURE-----
 
+--w/FwCQG0jzaZZ8B9--
 
