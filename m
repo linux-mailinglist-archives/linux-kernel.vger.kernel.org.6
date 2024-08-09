@@ -1,137 +1,297 @@
-Return-Path: <linux-kernel+bounces-280802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6014A94CF6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:37:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A1F194CF6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D767EB20EA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:37:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 406C91C20E5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEFD19306A;
-	Fri,  9 Aug 2024 11:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qo6Q/vXk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F81192B9E;
+	Fri,  9 Aug 2024 11:37:52 +0000 (UTC)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B4D156C4B;
-	Fri,  9 Aug 2024 11:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A22156C4B
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723203413; cv=none; b=byYKZiufbPTk5EHOtzirIdRFOsIHyD0xClk7kSpkzE0o6FYo1zGVC33IpjYsx08PMxtGPuFa33YEqnQ9YTK5aSKuWNaMAv9lQjQCjcvBl9wbqbskC8QBSkrWWqHL0ry+w7yPFyCjYr0o2MtZ5hg2HP0bUeWvldzL6gknJjn1ApA=
+	t=1723203471; cv=none; b=IX2dBj+o/Bm/nWZwuyyA1tDJDeF45WisbQ2ZR6lmQQYnLzOAyBWVfYdfFGax7MsyGC8k9lpaYgIQdChThTEXUv+h7+PTDqQd3duKZ96Oa5UGH0rb2NL44ngosOlkC7Gr09WTYer69L/VURFnaTS0jEW3oy+5i4JF3z6wU96H98I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723203413; c=relaxed/simple;
-	bh=LZ6V+O4VBtArghCZWjRD6xeXn5xm8T+FsR5jPh3tYnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TGqh0KxBVcSfIoqexhr8wfwuVlDQZRPLWfahiODqDRALXo3vN5sC4sRGXIVBEhSF4PG5k+gXn2MdFMHgalSFvGbraylH9xzfuux91MtNVK/LU5omVEQ0nxAdOBDTBKCKSN+3ylG8WZdAeaWjosVkIMJazP6YFANC4qLkdOJw0Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qo6Q/vXk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4797QIIM005836;
-	Fri, 9 Aug 2024 11:36:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6o3BwuyjtmlRMufjxvERVxCcd2fb4s3twoRgcS2jlZg=; b=Qo6Q/vXkQI9Hycel
-	FT/6AnA5GgoLsKAtqW41O8yaxVywDQPv8lzHmAwjyJLLXMbje1Ca80H2aJRQpxzK
-	tbLYhnhClwBSFxTYYGhH0srWXT2wKvTs0Bspfx9J9e0/bxx2H2KOKnLM9IapxRoo
-	lBqkUspMyEmrnHZBOBzYJPM0TiHQbFcCpKVtZvDj04tklbbbcMo0vp9NHOWQtBug
-	5o0ScynI5mbPjkUBlGj8SDSp+VeSn+J9iwuoFLz3x4aURPtAODteOvxC1cht3MTp
-	0gBoXjaSMD6cJ2bpP/m9nv9i1pnZ4u/9k+bXQKd3IwYyn77FdGD/LkXUvr1GkmSv
-	fnu8RA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40weqf8pb2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 11:36:43 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 479Bagm1015230
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 Aug 2024 11:36:42 GMT
-Received: from [10.253.72.235] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
- 04:36:37 -0700
-Message-ID: <41aea3f3-d21a-4d8e-a91a-0fe06947c75f@quicinc.com>
-Date: Fri, 9 Aug 2024 19:36:35 +0800
+	s=arc-20240116; t=1723203471; c=relaxed/simple;
+	bh=UKnv3qt71TRUHAIEpx4ccSeQrdf9tjRuUQuaqL+d3iY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s8NnWcnyE8PI+1ackW/1nDliA7XOftmWL4f6CQ+yzT/1k6iC340eKjobhp+ym50BZMDOu9XEXnTa7aJrxxkykkGd6A5FKSFoLFSZ6xuq9bl9IcMc3gX/N1S4xPgJkvrAv32j6mKzwSqxdrp4mGs3Vj577oBjmRUZUfCdMIxvW2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-492a76c0cfbso663058137.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 04:37:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723203469; x=1723808269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Eh16YITXTl9Eb01hzhlulxj1Oq5rdHWKSMLv+K8fuS8=;
+        b=pVTguXJJPYTEh9dvWD2+Aju1zGIGZc6d1Y50U3JsmBHBgJI6CglE+JgENU+4Jq0+QA
+         T0eXKNTysQVDvBauQ9ytWlxogpFaDkhboO4oDKUR8Je8qoMcG8RwnnEBngfJO2aPndWi
+         YIDgmGXWfj+gU8qA3MjM7fDQ1cs50ZdQo2SEdfKemtRX9uCJ4JOWq/RXC8XK7987ixgU
+         +lg2kDUkWOSvs5k2ilnDEnVHoHq16tPTxH3onmwi/dxzFwrfDfW0vs/jD/Rgaz9RcWmr
+         u8oDLPQCZtp+0hE3xwq0FQzHNSQUsJ47N2kaXFecPmrnHGurhT+vc8zt0JEI6Pn9g6y4
+         jiKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNm2JJ8fmMpPyjRqpBbpNTBaYSgypLyjpgSqe4trX+3SH5/37I+9A2SRarKG54OtRBrFBOlneCy9wHaZjceR8BNNVmXWikq/6h4I8b
+X-Gm-Message-State: AOJu0YwREw9ca2LL6LaWr+PpwBBOuDqgeYpObBPeOHgYsC2HkZEuPmWu
+	RyPh0A/tM3CxyArN0nyjBuZn1PrDp+3KDbFnv7H7dvqNzWM1aEapGSDY2cnMGUs26ofAhSTv47L
+	fdO136/QEk/q6jGtEqSrfKSUzIks=
+X-Google-Smtp-Source: AGHT+IGJbcA9q6wuj6x571tLC8WmW/6VG8C06JLOVWDbR1QVH6G9ZAulwnK/EdbGrlhIT2Ef+s3PXXJbeihQGRqZErI=
+X-Received: by 2002:a05:6102:3e8d:b0:48f:df3b:9827 with SMTP id
+ ada2fe7eead31-495d860bf5bmr1362174137.31.1723203468665; Fri, 09 Aug 2024
+ 04:37:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: defconfig: Enable Qualcomm IPQ common PLL
- clock controller
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>
-References: <20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com>
- <20240808-qcom_ipq_cmnpll-v1-3-b0631dcbf785@quicinc.com>
- <afbf0554-56a5-4df0-9e4b-97c065d78bb3@kernel.org>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <afbf0554-56a5-4df0-9e4b-97c065d78bb3@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fi3KHOAn5eSuCujTqnXA-1Tf3PMI8pG2
-X-Proofpoint-GUID: fi3KHOAn5eSuCujTqnXA-1Tf3PMI8pG2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_08,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- spamscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
- mlxlogscore=751 suspectscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408090085
+References: <20240808101700.571701-1-ryan.roberts@arm.com> <99b78488-c524-4269-b1fb-a13eaa4f274c@redhat.com>
+ <CAGsJ_4z2D2yWWZhUM_yDSdn9=zpkYkHhzAKO8CQ1Xu3gDaECRA@mail.gmail.com>
+ <75eb6e75-8a6d-460a-8e96-7496ed1396b7@redhat.com> <3c8f00ea-af28-46c7-9a5d-83c4b9462be3@arm.com>
+In-Reply-To: <3c8f00ea-af28-46c7-9a5d-83c4b9462be3@arm.com>
+From: Barry Song <baohua@kernel.org>
+Date: Fri, 9 Aug 2024 19:37:36 +0800
+Message-ID: <CAGsJ_4wkQxAUxBtk2Wps_n07-3gSNrg0CkhL5RRDtu2E=Q+Wng@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Override mTHP "enabled" defaults at kernel cmdline
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Lance Yang <ioworker0@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 9, 2024 at 6:37=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com> =
+wrote:
+>
+> On 09/08/2024 10:32, David Hildenbrand wrote:
+> > On 09.08.24 11:24, Barry Song wrote:
+> >> On Fri, Aug 9, 2024 at 5:19=E2=80=AFPM David Hildenbrand <david@redhat=
+.com> wrote:
+> >>>
+> >>> On 08.08.24 12:16, Ryan Roberts wrote:
+> >>>> Add thp_anon=3D cmdline parameter to allow specifying the default
+> >>>> enablement of each supported anon THP size. The parameter accepts th=
+e
+> >>>> following format and can be provided multiple times to configure eac=
+h
+> >>>> size:
+> >>>>
+> >>>> thp_anon=3D<size>[KMG]:<value>
+> >>>>
+> >>>> See Documentation/admin-guide/mm/transhuge.rst for more details.
+> >>>>
+> >>>> Configuring the defaults at boot time is useful to allow early user
+> >>>> space to take advantage of mTHP before its been configured through
+> >>>> sysfs.
+> >>>
+> >>> I suspect a khugeapged enhancement and/or kernel-config-dependant
+> >>> defaults and/or early system settings will also be able to mitigate t=
+hat
+> >>> without getting kernel cmdlines involved in the future.
+> >>>
+> >>>>
+> >>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> >>>> ---
+> >>>>
+> >>>> Hi All,
+> >>>>
+> >>>> I've split this off from my RFC at [1] because Barry highlighted tha=
+t he would
+> >>>> benefit from it immediately [2]. There are no changes vs the version=
+ in that
+> >>>> series.
+> >>>>
+> >>>> It applies against today's mm-unstable (275d686abcb59). (although I =
+had to
+> >>>> fix a
+> >>>> minor build bug in stackdepot.c due to MIN() not being defined in th=
+is tree).
+> >>>>
+> >>>> Thanks,
+> >>>> Ryan
+> >>>>
+> >>>>
+> >>>>    .../admin-guide/kernel-parameters.txt         |  8 +++
+> >>>>    Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
+> >>>>    mm/huge_memory.c                              | 55 ++++++++++++++=
+++++-
+> >>>>    3 files changed, 82 insertions(+), 7 deletions(-)
+> >>>>
+> >>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt
+> >>>> b/Documentation/admin-guide/kernel-parameters.txt
+> >>>> index bcdee8984e1f0..5c79b58c108ec 100644
+> >>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+> >>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> >>>> @@ -6631,6 +6631,14 @@
+> >>>>                        <deci-seconds>: poll all this frequency
+> >>>>                        0: no polling (default)
+> >>>>
+> >>>> +     thp_anon=3D       [KNL]
+> >>>> +                     Format: <size>[KMG]:always|madvise|never|inher=
+it
+> >>>> +                     Can be used to control the default behavior of=
+ the
+> >>>> +                     system with respect to anonymous transparent h=
+ugepages.
+> >>>> +                     Can be used multiple times for multiple anon T=
+HP sizes.
+> >>>> +                     See Documentation/admin-guide/mm/transhuge.rst=
+ for more
+> >>>> +                     details.
+> >>>> +
+> >>>>        threadirqs      [KNL,EARLY]
+> >>>>                        Force threading of all interrupt handlers exc=
+ept those
+> >>>>                        marked explicitly IRQF_NO_THREAD.
+> >>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst
+> >>>> b/Documentation/admin-guide/mm/transhuge.rst
+> >>>> index 24eec1c03ad88..f63b0717366c6 100644
+> >>>> --- a/Documentation/admin-guide/mm/transhuge.rst
+> >>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> >>>> @@ -284,13 +284,27 @@ that THP is shared. Exceeding the number would=
+ block
+> >>>> the collapse::
+> >>>>
+> >>>>    A higher value may increase memory footprint for some workloads.
+> >>>>
+> >>>> -Boot parameter
+> >>>> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>> +Boot parameters
+> >>>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>
+> >>>> -You can change the sysfs boot time defaults of Transparent Hugepage
+> >>>> -Support by passing the parameter ``transparent_hugepage=3Dalways`` =
+or
+> >>>> -``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dneve=
+r``
+> >>>> -to the kernel command line.
+> >>>> +You can change the sysfs boot time default for the top-level "enabl=
+ed"
+> >>>> +control by passing the parameter ``transparent_hugepage=3Dalways`` =
+or
+> >>>> +``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dneve=
+r`` to the
+> >>>> +kernel command line.
+> >>>> +
+> >>>> +Alternatively, each supported anonymous THP size can be controlled =
+by
+> >>>> +passing ``thp_anon=3D<size>[KMG]:<state>``, where ``<size>`` is the=
+ THP size
+> >>>> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
+> >>>> +``inherit``.
+> >>>> +
+> >>>> +For example, the following will set 64K THP to ``always``::
+> >>>> +
+> >>>> +     thp_anon=3D64K:always
+> >>>> +
+> >>>> +``thp_anon=3D`` may be specified multiple times to configure all TH=
+P sizes as
+> >>>> +required. If ``thp_anon=3D`` is specified at least once, any anon T=
+HP sizes
+> >>>> +not explicitly configured on the command line are implicitly set to
+> >>>> +``never``.
+> >>>
+> >>> I suggest documenting that "thp_anon=3D" will not effect the value of
+> >>> "transparent_hugepage=3D", or any configured default.
+>
+> Did you see the previous conversation with Barry about whether or not to =
+honour
+> configured defaults when any thp_anon=3D is provided [1]? Sounds like you=
+ also
+> think we should honour the PMD "inherit" default if not explicitly provid=
+ed on
+> the command line? (see link for justification for the approach I'm curren=
+tly
+> taking).
+>
+> [1]
+> https://lore.kernel.org/linux-mm/CAGsJ_4x8ruPspuk_FQVggJMWcXLbRuZFq44gg-D=
+t7Ewt3ExqTw@mail.gmail.com/
+>
+> >>>
+> >>> Wondering if a syntax like
+> >>>
+> >>> thp_anon=3D16K,32K,64K:always;1048K,2048K:madvise
+>
+> Are there examples of that syntax already or have you just made it up? I =
+found
+> examples with the colon (:) but nothing this fancy. I guess that's not a =
+reason
+> not to do it though (other than the risk of screwing up the parser in a s=
+ubtle way).
+>
+> >>>
+> >>> (one could also support ranges, like "16K-64K")
+> >>>
+> >>> Would be even better. Then, maybe only allow a single instance.
+> >>>
+> >>> Maybe consider it if it's not too crazy to parse ;)
+> I'll take a look. I'm going to be out for 3 weeks from end of Monday thou=
+gh, so
+> probably won't get around to that until I'm back. I know Barry is keen to=
+ get
+> this merged, so Barry, if you'd like to take it over that's fine by me (I=
+'m sure
+> you have enough on your plate though).
 
+Yes, this command line is definitely needed. However, I also agree with
+David that it might be worth considering options like '16K-64K' or '16K,
+32K, 64K' after further reflection. For example, if users want to enable
+six sizes, having six separate commands could end up being quite
+silly :-)
 
-On 8/8/2024 10:41 PM, Krzysztof Kozlowski wrote:
-> On 08/08/2024 16:03, Luo Jie wrote:
->> The common PLL clock controller provides fixed rate output clocks to
->> the hardware blocks that enable ethernet function on IPQ platform.
-> 
-> That's defconfig for all platforms, so how anyone can guess which one
-> you target here? Be specific, which company, which Soc, which board
-> needs it.
-> 
+I can address this after the mTHP number counters series.
 
-Sure, I will update the commit message as below to provide the details
-required.
+>
+> >>
+> >> I prefer the current approach because it effectively filters cases lik=
+e this.
+> >>
+> >> [    0.000000] huge_memory: thp_anon=3D8K:inherit: cannot parse, ignor=
+ed
+> >> [    0.000000] Unknown kernel command line parameters
+> >> "thp_anon=3D8K:inherit", will be passed to user space.
+> >>
+> >> if we put multiple sizes together, 8K,32K,64K:always
+> >>
+> >> We can't determine whether this command line is legal or illegal as it
+> >> is partially legal and partially illegal.
+> >
+> > Besides: I wouldn't bother about this "user does something stupid" scen=
+ario that
+> > much.
+> >
+> > But yes, once we support more sizes a cmdline might turn invalid on an =
+older
+> > kernel.
+> >
+> > However, I don't see the problem here. User passed a non-existant size.=
+ Ignore
+> > that one but handle the others, like you would with multiple commands?
+>
+> Yep, the parser could emit a warning for the size and move on.
+>
+> >
+> > It can be well defined and documented. The command line is legal, just =
+one size
+> > does not exist.
+> >
+> > The world will continue turning :)
 
-The common PLL hardware block is available in the Qualcomm IPQ SoC such
-as IPQ9574 and IPQ5332. It provides fixed rate output clocks to Ethernet
-related hardware blocks such as external Ethernet PHY or switch. This
-driver is initially being enabled for IPQ9574. All boards based on
-IPQ9574 SoC will require to include this driver in the build.
+Right.
 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-
+Thanks
+Barry
 
