@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-281199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE6794D440
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:12:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9778694D446
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC667B217E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:12:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F23FEB2296A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC3819AD9E;
-	Fri,  9 Aug 2024 16:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCBC19CCF2;
+	Fri,  9 Aug 2024 16:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CIujg+TR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UCFXZ4vh"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB7D19A2B7
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF4219B3C6
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723219777; cv=none; b=o62ZBQe0jTeXYDf8MIhrrwryFUpfbxSEKrlwPLz3UPpTqjMj+QFO7OHdvdN17IOKBx/OYAws5ZYog+o1brmHqPLbWMyEzdN02ijGJZJ6MlBaLulhXpjDwsL/qX/Nbu3fGujxM1GXoNYJWdbKxMQ8kvNLDGLQXAUQLvWslAFpBSk=
+	t=1723219780; cv=none; b=LFToxInWQAQTM/oTuP8QuHQZk7+HBQpHzwfzlxW45qO5ZvgrZPjRcWrWDH0OjbG5XzpFV2JGG6DEqSkPaoKgchefXq/7Nom3cH7/7KSTcStU/FuulDorxAzncpf5kIIhYatgML19yDTNUIcQQw16JrHAvb23OnzH3eR8ve8sKtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723219777; c=relaxed/simple;
-	bh=KGvOFcjjnMZbGILhL/il8UWmtwN07FBEuaEKlUcuKek=;
+	s=arc-20240116; t=1723219780; c=relaxed/simple;
+	bh=yfBU6y6kSdOFyZjcdoL0YKRvT9xfK+pyg+o4OfDl314=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nKJSIG6haHhLtah1wV/8qrh2FmhlcrEZ4UcYRDdp9xiWMuf5Kj2ZNYrFPeFxDXHEJkJ4t/gUTMP5yyd8QSgmwr+CTtOI2gG2MGjMkiN4v+6d1UTjpIHrJLpYODDRkTpem6qIk/7VgT2Fi2QkpCVWhW8oHhGnSELUN5xLqFU0v0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CIujg+TR; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=nr/3k+l+IdbGz6kyP3/n6sm5Ucm/vCVKrr19gMYlTFBmbnYRANNA77rkELH1rcJk8mBHtONsAAG0jnrob2JfNx7oKEoFrVqce7Szn9xEZyLgSY0MgkKiOx4dXTJMq+P2tT03NnLg0reKiPAuK+A0eoUYYTwkAlW5EBsNHRkuUT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UCFXZ4vh; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723219774;
+	s=mimecast20190719; t=1723219777;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3aM3oVPeXmFPFf4Q68bjufzjsUq2ESmscQPnLEkaBB8=;
-	b=CIujg+TRmFsPmbbcr2GhZLIcY4kvdjfY20IxHv10a5q6JHl5yM1hZNQvhj9euw5d8ul0mC
-	LRJmlMQt+DtLff+nFF93gywWk46J8QiSAeRQU+i418+CQCTgjFCrXsMZkm6CRnmlOisdsn
-	MeFrqrJ08J85fRExEbtyVCsm5udjvbk=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=IXGL3lb2RETUVA/g/GpjABQk9U9hrAJ/lFeyUGjNHTs=;
+	b=UCFXZ4vhMbtvOf7JuxO23tzqGl/ML7sXTCRlID+n7fKZ6GG9HgMHYxVk2m5A4N1OwebuHS
+	2UfvU5Au06T5dG8873orcFME9Fh0jFbVQSScz2yRpITDkPeQyaXi9U8j00BtI5xWHoJngH
+	0TVAzxwFqL9ZOEM4o2Pwz5oGw78drOU=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-216-yjic9GHFNvKowuXk9w2ITw-1; Fri, 09 Aug 2024 12:09:33 -0400
-X-MC-Unique: yjic9GHFNvKowuXk9w2ITw-1
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-44fea369811so4529931cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:09:33 -0700 (PDT)
+ us-mta-534-XvfV9HQbOdG3bOs3SbFAcQ-1; Fri, 09 Aug 2024 12:09:36 -0400
+X-MC-Unique: XvfV9HQbOdG3bOs3SbFAcQ-1
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-44ff25bbfe1so3070061cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:09:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723219773; x=1723824573;
+        d=1e100.net; s=20230601; t=1723219776; x=1723824576;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3aM3oVPeXmFPFf4Q68bjufzjsUq2ESmscQPnLEkaBB8=;
-        b=R8bng0RyE9Xwuy6wuqMNxjM3A8WjKE0EYs4utp8Kwruf3Pufa3PZ+0wnS4D1JHq+u1
-         GYHhH7AEF69kqahfshunHZbE8ahaSJH+K4fxFSGCI6zbOME40HUD+/76Ey2ygpvmb4QS
-         x3l84u7ZvmNWCpeuaxS3t315XXH4466omTH0WRfX46xXRpwgRGJ9fELWrITTIAsxMI5K
-         mnTKyHDSMDiAOKM3I0sXrjDe4w1RyQN35E2Uq+yZZ0GVS6Ot6+lpSkQER6KW+S0tAE9S
-         0z+Q2PIoHhSNm9S02QHDX3gPrKCBLsikjHbJx7QwWBT+zEPI49RBSvYZ0z3Wjb9Bw2eb
-         1Jyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVysaKRpdMxYln8cr0iuVetuWVINkRQ95J1j/f6SVuQCn5Gof8tyDdt6viemnya/FePYTPCG6DrH+DK+Ly6z0RZoj2rWdLcGNdqCxeK
-X-Gm-Message-State: AOJu0YxsniU/YFU6/73ijDae5cJyYe0cY7O88HkWp6KtVGZ3DiYfgj+L
-	ydK2tSogoi8+jF1dNFQsSq38rTGXTy5zCW5s8UY0hDindah+zdIAsdaAW2Uesn2YtdlTiSl2kgY
-	ndHM6zvDQ4jz9zw6NfTh0E4jTei/zfZjtLrYihJ2kyzhsPsIWigRCXSLmRo458g==
-X-Received: by 2002:ac8:5f10:0:b0:450:349:1170 with SMTP id d75a77b69052e-4531255c62dmr14739711cf.6.1723219773077;
-        Fri, 09 Aug 2024 09:09:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6GyuXgyukqToIMYwmYCyyJms6T0RBSwsqvRpSKO6DWSQsB926zH9/mqcqwcpfSE6Nqd5Tsw==
-X-Received: by 2002:ac8:5f10:0:b0:450:349:1170 with SMTP id d75a77b69052e-4531255c62dmr14739431cf.6.1723219772696;
-        Fri, 09 Aug 2024 09:09:32 -0700 (PDT)
+        bh=IXGL3lb2RETUVA/g/GpjABQk9U9hrAJ/lFeyUGjNHTs=;
+        b=RZPG+Ye4wgF4Q9Mi35FF1K6IjX21l1hlNK334HlJ7+so8ulvx1bnxTxqNxvoeUfp84
+         tAh5p7RVoP6+I1X8E3IkVBA5m11dHEmYuiUJ2calL7JesOkshvzLeRQAutJtYOgbME9R
+         zi2r9Vx3muNvbNgP8HO2rihn5Yq18jF1HV2iK55yzk7PYuAb+nQqYJ8efZzo7wlfHXsK
+         ABn21YgxVl0Kg6V0s6NNRo+MKuR+9VZzoOmji4BAHRwjsmsqG56mx5Rdxr1IydTEvjcj
+         KUV47kDQgpJ/IDg+6X5E/5ClJzpypWEWAQLIuzava+V59C/kImz06lzzgMnAISav4mkl
+         PrRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnHw0rpPgqC2db5nfjd/cmHx8QhzhQ0mZEu4mJPdPQSLGCk6kZrhXPn6tJtXmlhsdlLMZP1i72pHKyF0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHb0FC2G31fLAqURM8nnR0eKS6SReIXeQFvvF5fkJEvpPZgauH
+	3WlQaldyuCwRvl5tV1oP/Vws5FyKUmKAomDeTkCy1YwNVvOpBFVa7HVxJVMdYl5pAwVYJ7wJdso
+	dyQqHlwWZ0uLV7YEEuiGQEqGV6in21ZX9zJCmT4fMomnyDDP0pRobrnn43wwpaA==
+X-Received: by 2002:a05:622a:1b8e:b0:447:e636:9ea9 with SMTP id d75a77b69052e-4531251c724mr14428631cf.3.1723219775681;
+        Fri, 09 Aug 2024 09:09:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFUrJX3vSa/2Mr5PpFf2V5KDcJEixKltLA8oaEJqLbElyFRMCegYAzgvcdg3qK/Zl0Af+cLBA==
+X-Received: by 2002:a05:622a:1b8e:b0:447:e636:9ea9 with SMTP id d75a77b69052e-4531251c724mr14428311cf.3.1723219775158;
+        Fri, 09 Aug 2024 09:09:35 -0700 (PDT)
 Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451c870016csm22526741cf.19.2024.08.09.09.09.30
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451c870016csm22526741cf.19.2024.08.09.09.09.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 09:09:32 -0700 (PDT)
+        Fri, 09 Aug 2024 09:09:34 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
@@ -97,9 +97,9 @@ Cc: Sean Christopherson <seanjc@google.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	Alex Williamson <alex.williamson@redhat.com>,
 	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 08/19] mm: Always define pxx_pgprot()
-Date: Fri,  9 Aug 2024 12:08:58 -0400
-Message-ID: <20240809160909.1023470-9-peterx@redhat.com>
+Subject: [PATCH 09/19] mm: New follow_pfnmap API
+Date: Fri,  9 Aug 2024 12:08:59 -0400
+Message-ID: <20240809160909.1023470-10-peterx@redhat.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240809160909.1023470-1-peterx@redhat.com>
 References: <20240809160909.1023470-1-peterx@redhat.com>
@@ -111,98 +111,216 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There're:
-
-  - 8 archs (arc, arm64, include, mips, powerpc, s390, sh, x86) that
-  support pte_pgprot().
-
-  - 2 archs (x86, sparc) that support pmd_pgprot().
-
-  - 1 arch (x86) that support pud_pgprot().
-
-Always define them to be used in generic code, and then we don't need to
-fiddle with "#ifdef"s when doing so.
+Introduce a pair of APIs to follow pfn mappings to get entry information.
+It's very similar to what follow_pte() does before, but different in that
+it recognizes huge pfn mappings.
 
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- arch/arm64/include/asm/pgtable.h    |  1 +
- arch/powerpc/include/asm/pgtable.h  |  1 +
- arch/s390/include/asm/pgtable.h     |  1 +
- arch/sparc/include/asm/pgtable_64.h |  1 +
- include/linux/pgtable.h             | 12 ++++++++++++
- 5 files changed, 16 insertions(+)
+ include/linux/mm.h |  31 ++++++++++
+ mm/memory.c        | 147 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 178 insertions(+)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 7a4f5604be3f..b78cc4a6758b 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -384,6 +384,7 @@ static inline void __sync_cache_and_tags(pte_t pte, unsigned int nr_pages)
- /*
-  * Select all bits except the pfn
-  */
-+#define pte_pgprot pte_pgprot
- static inline pgprot_t pte_pgprot(pte_t pte)
- {
- 	unsigned long pfn = pte_pfn(pte);
-diff --git a/arch/powerpc/include/asm/pgtable.h b/arch/powerpc/include/asm/pgtable.h
-index 264a6c09517a..2f72ad885332 100644
---- a/arch/powerpc/include/asm/pgtable.h
-+++ b/arch/powerpc/include/asm/pgtable.h
-@@ -65,6 +65,7 @@ static inline unsigned long pte_pfn(pte_t pte)
- /*
-  * Select all bits except the pfn
-  */
-+#define pte_pgprot pte_pgprot
- static inline pgprot_t pte_pgprot(pte_t pte)
- {
- 	unsigned long pte_flags;
-diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
-index 3fa280d0672a..0ffbaf741955 100644
---- a/arch/s390/include/asm/pgtable.h
-+++ b/arch/s390/include/asm/pgtable.h
-@@ -955,6 +955,7 @@ static inline int pte_unused(pte_t pte)
-  * young/old accounting is not supported, i.e _PAGE_PROTECT and _PAGE_INVALID
-  * must not be set.
-  */
-+#define pte_pgprot pte_pgprot
- static inline pgprot_t pte_pgprot(pte_t pte)
- {
- 	unsigned long pte_flags = pte_val(pte) & _PAGE_CHG_MASK;
-diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
-index 3fe429d73a65..2b7f358762c1 100644
---- a/arch/sparc/include/asm/pgtable_64.h
-+++ b/arch/sparc/include/asm/pgtable_64.h
-@@ -783,6 +783,7 @@ static inline pmd_t pmd_mkwrite_novma(pmd_t pmd)
- 	return __pmd(pte_val(pte));
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 90ca84200800..7471302658af 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2374,6 +2374,37 @@ int follow_pte(struct vm_area_struct *vma, unsigned long address,
+ int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
+ 			void *buf, int len, int write);
+ 
++struct follow_pfnmap_args {
++	/**
++	 * Inputs:
++	 * @vma: Pointer to @vm_area_struct struct
++	 * @address: the virtual address to walk
++	 */
++	struct vm_area_struct *vma;
++	unsigned long address;
++	/**
++	 * Internals:
++	 *
++	 * The caller shouldn't touch any of these.
++	 */
++	spinlock_t *lock;
++	pte_t *ptep;
++	/**
++	 * Outputs:
++	 *
++	 * @pfn: the PFN of the address
++	 * @pgprot: the pgprot_t of the mapping
++	 * @writable: whether the mapping is writable
++	 * @special: whether the mapping is a special mapping (real PFN maps)
++	 */
++	unsigned long pfn;
++	pgprot_t pgprot;
++	bool writable;
++	bool special;
++};
++int follow_pfnmap_start(struct follow_pfnmap_args *args);
++void follow_pfnmap_end(struct follow_pfnmap_args *args);
++
+ extern void truncate_pagecache(struct inode *inode, loff_t new);
+ extern void truncate_setsize(struct inode *inode, loff_t newsize);
+ void pagecache_isize_extended(struct inode *inode, loff_t from, loff_t to);
+diff --git a/mm/memory.c b/mm/memory.c
+index 67496dc5064f..2194e0f9f541 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -6338,6 +6338,153 @@ int follow_pte(struct vm_area_struct *vma, unsigned long address,
  }
+ EXPORT_SYMBOL_GPL(follow_pte);
  
-+#define pmd_pgprot pmd_pgprot
- static inline pgprot_t pmd_pgprot(pmd_t entry)
- {
- 	unsigned long val = pmd_val(entry);
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 780f3b439d98..e8b2ac6bd2ae 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1956,6 +1956,18 @@ typedef unsigned int pgtbl_mod_mask;
- #define MAX_PTRS_PER_P4D PTRS_PER_P4D
- #endif
- 
-+#ifndef pte_pgprot
-+#define pte_pgprot(x) ((pgprot_t) {0})
-+#endif
++static inline void pfnmap_args_setup(struct follow_pfnmap_args *args,
++				     spinlock_t *lock, pte_t *ptep,
++				     pgprot_t pgprot, unsigned long pfn_base,
++				     unsigned long addr_mask, bool writable,
++				     bool special)
++{
++	args->lock = lock;
++	args->ptep = ptep;
++	args->pfn = pfn_base + ((args->address & ~addr_mask) >> PAGE_SHIFT);
++	args->pgprot = pgprot;
++	args->writable = writable;
++	args->special = special;
++}
 +
-+#ifndef pmd_pgprot
-+#define pmd_pgprot(x) ((pgprot_t) {0})
-+#endif
++static inline void pfnmap_lockdep_assert(struct vm_area_struct *vma)
++{
++#ifdef CONFIG_LOCKDEP
++	struct address_space *mapping = vma->vm_file->f_mapping;
 +
-+#ifndef pud_pgprot
-+#define pud_pgprot(x) ((pgprot_t) {0})
++	if (mapping)
++		lockdep_assert(lockdep_is_held(&vma->vm_file->f_mapping->i_mmap_rwsem) ||
++			       lockdep_is_held(&vma->vm_mm->mmap_lock));
++	else
++		lockdep_assert(lockdep_is_held(&vma->vm_mm->mmap_lock));
 +#endif
++}
 +
- /* description of effects of mapping type and prot in current implementation.
-  * this is due to the limited x86 page protection hardware.  The expected
-  * behavior is in parens:
++/**
++ * follow_pfnmap_start() - Look up a pfn mapping at a user virtual address
++ * @args: Pointer to struct @follow_pfnmap_args
++ *
++ * The caller needs to setup args->vma and args->address to point to the
++ * virtual address as the target of such lookup.  On a successful return,
++ * the results will be put into other output fields.
++ *
++ * After the caller finished using the fields, the caller must invoke
++ * another follow_pfnmap_end() to proper releases the locks and resources
++ * of such look up request.
++ *
++ * During the start() and end() calls, the results in @args will be valid
++ * as proper locks will be held.  After the end() is called, all the fields
++ * in @follow_pfnmap_args will be invalid to be further accessed.
++ *
++ * If the PTE maps a refcounted page, callers are responsible to protect
++ * against invalidation with MMU notifiers; otherwise access to the PFN at
++ * a later point in time can trigger use-after-free.
++ *
++ * Only IO mappings and raw PFN mappings are allowed.  The mmap semaphore
++ * should be taken for read, and the mmap semaphore cannot be released
++ * before the end() is invoked.
++ *
++ * This function must not be used to modify PTE content.
++ *
++ * Return: zero on success, -ve otherwise.
++ */
++int follow_pfnmap_start(struct follow_pfnmap_args *args)
++{
++	struct vm_area_struct *vma = args->vma;
++	unsigned long address = args->address;
++	struct mm_struct *mm = vma->vm_mm;
++	spinlock_t *lock;
++	pgd_t *pgdp;
++	p4d_t *p4dp, p4d;
++	pud_t *pudp, pud;
++	pmd_t *pmdp, pmd;
++	pte_t *ptep, pte;
++
++	pfnmap_lockdep_assert(vma);
++
++	if (unlikely(address < vma->vm_start || address >= vma->vm_end))
++		goto out;
++
++	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
++		goto out;
++retry:
++	pgdp = pgd_offset(mm, address);
++	if (pgd_none(*pgdp) || unlikely(pgd_bad(*pgdp)))
++		goto out;
++
++	p4dp = p4d_offset(pgdp, address);
++	p4d = READ_ONCE(*p4dp);
++	if (p4d_none(p4d) || unlikely(p4d_bad(p4d)))
++		goto out;
++
++	pudp = pud_offset(p4dp, address);
++	pud = READ_ONCE(*pudp);
++	if (pud_none(pud))
++		goto out;
++	if (pud_leaf(pud)) {
++		lock = pud_lock(mm, pudp);
++		if (!unlikely(pud_leaf(pud))) {
++			spin_unlock(lock);
++			goto retry;
++		}
++		pfnmap_args_setup(args, lock, NULL, pud_pgprot(pud),
++				  pud_pfn(pud), PUD_MASK, pud_write(pud),
++				  pud_special(pud));
++		return 0;
++	}
++
++	pmdp = pmd_offset(pudp, address);
++	pmd = pmdp_get_lockless(pmdp);
++	if (pmd_leaf(pmd)) {
++		lock = pmd_lock(mm, pmdp);
++		if (!unlikely(pmd_leaf(pmd))) {
++			spin_unlock(lock);
++			goto retry;
++		}
++		pfnmap_args_setup(args, lock, NULL, pmd_pgprot(pmd),
++				  pmd_pfn(pmd), PMD_MASK, pmd_write(pmd),
++				  pmd_special(pmd));
++		return 0;
++	}
++
++	ptep = pte_offset_map_lock(mm, pmdp, address, &lock);
++	if (!ptep)
++		goto out;
++	pte = ptep_get(ptep);
++	if (!pte_present(pte))
++		goto unlock;
++	pfnmap_args_setup(args, lock, ptep, pte_pgprot(pte),
++			  pte_pfn(pte), PAGE_MASK, pte_write(pte),
++			  pte_special(pte));
++	return 0;
++unlock:
++	pte_unmap_unlock(ptep, lock);
++out:
++	return -EINVAL;
++}
++EXPORT_SYMBOL_GPL(follow_pfnmap_start);
++
++/**
++ * follow_pfnmap_end(): End a follow_pfnmap_start() process
++ * @args: Pointer to struct @follow_pfnmap_args
++ *
++ * Must be used in pair of follow_pfnmap_start().  See the start() function
++ * above for more information.
++ */
++void follow_pfnmap_end(struct follow_pfnmap_args *args)
++{
++	if (args->lock)
++		spin_unlock(args->lock);
++	if (args->ptep)
++		pte_unmap(args->ptep);
++}
++EXPORT_SYMBOL_GPL(follow_pfnmap_end);
++
+ #ifdef CONFIG_HAVE_IOREMAP_PROT
+ /**
+  * generic_access_phys - generic implementation for iomem mmap access
 -- 
 2.45.0
 
