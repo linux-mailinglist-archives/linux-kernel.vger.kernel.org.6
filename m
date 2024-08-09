@@ -1,167 +1,123 @@
-Return-Path: <linux-kernel+bounces-280662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8213894CD71
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:38:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E7E94CD74
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380561F21351
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98C071F22227
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F090190693;
-	Fri,  9 Aug 2024 09:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="yqQc+Y7n"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DAE19148D;
+	Fri,  9 Aug 2024 09:40:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AB0BA41;
-	Fri,  9 Aug 2024 09:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CE3BA41
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723196286; cv=none; b=fcQvOMciSNDPKkYN7TAvaClm7y+olBSG4BuvP2/D9KreLMuVtiVKj0RYYmESYxPymgLJBJYslHTbSvx2qLbPeY3eRs0PA11O3x8zcXSSm2LdYU5MorEqSdVfBR5NVH4/j3yHD9wiAOS9q/wgumn+5S0mYFruHhJzbgDGidn1TYc=
+	t=1723196405; cv=none; b=CGUB/6zQ4Af8FbhXRyVtpIKO0+2eNRq857tvaI0JJd6RZHwYAehkxepql5+fmLVJtBJMWqoXYF8dhAqyR+m2n5evkdZGdv7MoFkOUCGx1H1RgPrIotJcOCn0pE7QdazN7srTCk3ttdPyAHVHCcAlDtDCWkwpVW7dSSAFXeQLXSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723196286; c=relaxed/simple;
-	bh=d5nspmA/pbwkat/qPZ71h9zN79WSiIkFUjew2mrZZoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qXRz3EY3u9HoDY73BCBcOvtGvud8myqzwcsh8HEsj5VakjgsJGk2cYeenVl5XNBnwiPpxSTJZAJsdRkp9RdW5lhjoouzU2ZDM+LCQ9HS0P1oNKqjRqPFB2ZLkov30utA1emr/idcIJFRAEYBT7gv+9G7Fc2VpwEsQ2O0I0h/Hho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=yqQc+Y7n; arc=none smtp.client-ip=212.227.126.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1723196256; x=1723801056; i=christian@heusel.eu;
-	bh=ooe/R/iT1AwlKFN4hiopuC61Fn2bSHjWVPgT8QwZmrQ=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=yqQc+Y7nS0x+DLvZW8k7rhJhyALsWwJUXGEt3smXzBgO/d7S4GuS15gKf0sJVjIQ
-	 Zd2f74sjRYpsRfrDqsczWazfNSUKKn8hHUa0o97XXMXaYuLyO67RcW8LgSyagaQ0b
-	 CCzMYSG0Q8mXIK9t58mJO4g32VAjY0Mi/0b99kMDacie+/ocTwI+UMTejOE1d78DM
-	 kqgHXBLITAFtCcdCWuHWpOc9U7vv0xBtLXHAUA1kKM7vvSmsPKu0Dz72Hi+PAQSCt
-	 ZXC2MO+H+NsELuwdmIjebuexmlcYGbVlBnSccmtFn6ByX5lnLrum2WXPr2RKr6z4C
-	 PPpb0L5hUlxz/O2uDA==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([78.42.228.106]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1M2w4S-1sdT3T36fU-00625y; Fri, 09 Aug 2024 11:37:36 +0200
-Date: Fri, 9 Aug 2024 11:37:31 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Rob <rob@durendal.co.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	regressions@lists.linux.dev, x86@kernel.org, Joerg Roedel <joro@8bytes.org>, 
-	Tony Luck <tony.luck@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Paul Menzel <pmenzel@molgen.mpg.de>, Lyude Paul <lyude@redhat.com>
-Subject: Re: [PATCH] x86/apic: Remove logical destination mode for 64-bit
-Message-ID: <c7b68723-6ecb-42be-a9f8-14d64c696283@heusel.eu>
-References: <20240725105029.GAZqIt9aLsIaG7JqN5@fat_crate.local>
- <12df8b45-6100-4c8b-b82a-a6a75bed2e05@heusel.eu>
- <87a5i4whoz.ffs@tglx>
- <ZqQSmw51ihns03ob@vendhya2>
- <ZqQl79UhhSQ5IobX@vendhya2>
- <8734nvuvrs.ffs@tglx>
- <ZqTufKvJKvotC-o_@vendhya2>
- <87cymyua9j.ffs@tglx>
- <877cd5u671.ffs@tglx>
- <ZqZ3Kp2NVctgstxs@vendhya2>
+	s=arc-20240116; t=1723196405; c=relaxed/simple;
+	bh=ZWOlYfalz/WcF1v+v8fTfPizsK/yCWLZKWvn9WQk3KU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PfeEQTEMHTKsl8WTJYhxWZyTdevgfSjEoMhpV1pc7Al/vpBTj8i6Ydy/su5BO8/+DrJ1ypMIyNTiZHYrJbuCDJcv4NEj8hUSjOCS4YfkQIU6T7bIXKyUXACeSGxSe3mb0YykLl1b8tXqYdpSafIMF2Lk9RrbHlaGVFtFRJ0MWdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f7fb0103fso308276039f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 02:40:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723196403; x=1723801203;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Ci62slgaX4lYcfNgF16KYrNbjZ1NcLGUDDP+N7LYB4=;
+        b=U5CewdFANfOoN61RQpPbdMNnuoQXDmw8VNx7qH5gImBE/+n3POzsZ0yHtmGsJOEzKl
+         TDiCl7xWiMv1Hx/OtNXZBVWQ4QTQQOMfet7jI0l7Kf9l/UajYvsBwQrhOqBGkJjbO5Dt
+         DFGKw6jTd8pzF5ArI8CpEGyWn8mZFfcDLPrq3/hdavjlS1lnUynEnGLSXwITlivXCd39
+         +VqKB7hIrhwflLRAds5HOcw1YjwBlnyc5o17PxqRROXf02/i27cgpJCCiiVcocm94d/v
+         T94bpyOIk/QSHLfz25gFhOKKORMxsWbV6ZXwk0OALs/y0q3YMEWu7whJmlfWLcABBN6T
+         VAsw==
+X-Gm-Message-State: AOJu0Yzo8rM/BpEW9pi/IGnEvyxYIlP/YtjjVsjHiydLJO33JFho8ZCF
+	IqpAniOmU1JiM5yqpzoG6UNXCgg5jWhR8K+LmpZNk3BSgX13HUZT8rn/MwghFtVk38m7r+n6s0R
+	oBbt+cWNFraJBsGqoqx2RpiyaJ8EllD8LGEGiqIW/GJhbJAQM3MDDvAc=
+X-Google-Smtp-Source: AGHT+IH6TkbKn7+ofN86Zgi44mYG8PgjNG34htEwMeoYOsOCc9WUG8xU0opAxOSCB2786GlgzA78ac9FzIoZPAhKIfVImZZzNClV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="n2dkjomquggalyiy"
-Content-Disposition: inline
-In-Reply-To: <ZqZ3Kp2NVctgstxs@vendhya2>
-X-Provags-ID: V03:K1:ZufdIasE7+/Hjmun+zZy2clD3s4FsMMvUVIbkfL+ZvPP4P6FiDK
- f5oRdRmoOrbg815OEf3jCULs0WOuN+e/Xh2IIx9sqO42qfqgX96StmkVNtUaiLy30TtUUj4
- oli71eJSXKkJ3hO8kKeJfkLX1duP/cItBlMi6NQdMwEbmOLP+CjaYZG1YA+CMWBx8GRIMLm
- IbAxX6M2mVqcqAECIIwSw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ftTL1hHybkQ=;xfqDqVfPPzahFWxCVIQsykhpeBe
- s7+ibyBh46M8PEXe+QJhP57K63FEEuBngZNGKSgP2PadsCFJ8B7x22P8KakGhKmbinEONhx+u
- lLVg09E1Hio23kIEZ5A3fzQ5BsSkZ/hqIKzzXqvlY4e2/Y2K66OnlqhfjAAu3QLKglkyKFolF
- IsEDetVHtj3F7WoZ2sHH8+f3vfHFkahqvlqjgL6vItlxDqjAiAaQ0Wj5Ab9SuZHS4MtinNk9o
- twZlUycEupIRPQeqmlS6pDm+M5hFUCN1G0BlnfEIXCBoO9aPSCgKDj9A5j2z0tkt39o4P/tpk
- XSIoRc+sW3NUgQIuy98AEbLJPkxvbGR9z+cZtZiSsi9MwFBxM3eXL2hDgkr5MkXCFKeSkQPcF
- 637SqnjC0iLo5AItv70ivfw14jd5wH+YpNlQjQiLXKqM5ozT6IJkiQ2BQkGV2OAhPFhZRVpQ4
- dOP9eq/9iUjBmjH4CFneDx6EMcmyvJK0p9KvmnlqFpeVa3Az2WNOenOo3JwtS7sQVKzASfwEV
- Qz/+kBRRmZbaYNnI3qfSCol4afaSwrmqwNEUq5MirhXvlKWx4lD2JUoiwNqfeMe1JnqkhPQ5G
- fLUoU5A+hACnPV/VVR+0U6xHSOgF738JKoJBgDFM8J+VLPNOtbFekHml7dsz/gY+2detKdshR
- D6G3vi198cbA2A/w9OaHFbWK/CsdoaHlIM/k/2SIQOg6gkCp87h4oVG1GREfZlNtBU/W5QfNg
- v+yl1iHXMNvso6Z390AX1mRqquRBXERiA==
+X-Received: by 2002:a05:6638:164b:b0:4ba:f3bd:3523 with SMTP id
+ 8926c6da1cb9f-4ca6ebda88fmr47378173.2.1723196403599; Fri, 09 Aug 2024
+ 02:40:03 -0700 (PDT)
+Date: Fri, 09 Aug 2024 02:40:03 -0700
+In-Reply-To: <20240809092004.3109492-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000083dcd4061f3ced0c@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in v9fs_begin_writeback
+
+------------[ cut here ]------------
+folio expected an open fid inode->i_ino=1901337
+WARNING: CPU: 0 PID: 13 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
+WARNING: CPU: 0 PID: 13 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
+Modules linked in:
+CPU: 0 UID: 0 PID: 13 Comm: kworker/u32:1 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: writeback wb_workfn (flush-9p-18)
+RIP: 0010:v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
+RIP: 0010:v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
+Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 66 48 8b 73 40 48 c7 c7 20 9a 8e 8b e8 51 4a 0d fe 90 <0f> 0b 90 90 e9 62 ff ff ff e8 32 2b a8 fe e9 51 ff ff ff e8 98 2a
+RSP: 0018:ffffc90000107480 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff8880333a53b0 RCX: ffffffff814cc379
+RDX: ffff888017ea8000 RSI: ffffffff814cc386 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff88802bfe5708
+R13: dffffc0000000000 R14: ffffc90000107840 R15: ffff88802bfe5958
+FS:  0000000000000000(0000) GS:ffff88806b000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055556843b5c8 CR3: 0000000026014000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ netfs_writepages+0x656/0xde0 fs/netfs/write_issue.c:534
+ do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
+ __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
+ writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
+ wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
+ wb_do_writeback fs/fs-writeback.c:2274 [inline]
+ wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
---n2dkjomquggalyiy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested on:
 
-On 24/07/28 05:51PM, Rob wrote:
-> * Thomas Gleixner (tglx@linutronix.de) wrote:
-> > Logical destination mode of the local APIC is used for systems with up =
-to
-> > 8 CPUs. It has an advantage over physical destination mode as it allows=
- to
-> > target multiple CPUs at once with IPIs.
-> >=20
-> > That advantage was definitely worth it when systems with up to 8 CPUs
-> > were state of the art for servers and workstations, but that's history.
-> >=20
-> > Aside of that there are systems which fail to work with logical destina=
-tion
-> > mode as the ACPI/DMI quirks show and there are AMD Zen1 systems out the=
-re
-> > which fail when interrupt remapping is enabled. The latter can be cured=
- by
-> > firmware updates, but not all OEMs distribute the required changes.
-> >=20
-> > Physical destination mode is guaranteed to work because it is the only =
-way
-> > to get a CPU up and running via the INIT/INIT/STARTUP sequence.
-> >=20
-> > As the number of CPUs keeps increasing, logical destination mode become=
-s a
-> > less used code path so there is no real good reason to keep it around.
-> >=20
-> > Therefore remove logical destination mode support for 64-bit and defaul=
-t to
-> > physical destination mode.
->=20
-> Thanks Chris for applying the patch for me.
->=20
-> Thomas - The patched kernel boots successfully.  I held off updating the
-> BIOS so there can be no ambiguity.
->=20
-> Thanks,
->=20
-> Rob
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ac45d9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1014bae5980000
 
-As far as I can tell this patch did not get applied anywhere so far,
-right? Or did I miss anything?
-
---n2dkjomquggalyiy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAma141oACgkQwEfU8yi1
-JYVczhAAqygUqUks9yM91GUeNN13Fo3z+TmeXSGQJ4PUnHScZCiL+UQJv9QhZIKz
-cgGnagOJGS0xG158NY74n7NzymMyfs1jArSGtXrcy/t58c7DecYRY3m18b6SryuZ
-lFU4E86CgkZtz7JDElvSyl50/vXq0JcJfxkP2o9/BPTuZg8Qb1QeZSF2EUK90hTi
-thz9SQ3nz1JpZJHKXsdDvepx1M7mEPvdYr7e5VSRr3gChmbRArvDUxcVy3SU8zzM
-YzE5CaOqQ4UX/92ANK6ohaS13BmURgYWzGbg24xvagDfInTVbS8M77Ko8ilpuBnW
-ykHcuoJhCYBB173SR7biUlbndUTzHCOg1jHTsTQuBlJts3p1X3CUKuWY2sy9/QNw
-HAsVuZENno8Ps8SVvBBa4seYT9BHdPpqhBEgSnZsdnk1Z0cIKj4H0nelyXe7iaVd
-vRLwlYPbf0EeY3oHTfb7AcI9MP5ZkDk/Vr9ap4NH7d8dC99YUvI3onB6STU5SmY1
-R5mz/iymhjLDYaqBJ1ySRb6xGtYetxsObsuKhUS1WPe7lovXF2FVahUoN6s7KgNl
-gArr1fOtYzrnciM+jMxCazFbP9tFudTpuVv9ot9Ht7g9wLT9yhq5/7RAHzIAiVTa
-Wjnh+GQagdNjLoG366/d2TR7ZCc1aBp/IxqBcQfuP8Cagmgv3FI=
-=8Vlf
------END PGP SIGNATURE-----
-
---n2dkjomquggalyiy--
 
