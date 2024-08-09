@@ -1,287 +1,168 @@
-Return-Path: <linux-kernel+bounces-280528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E340994CBB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:56:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C6694CBB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F162B1F22135
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:56:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82A97B21758
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4ED18C908;
-	Fri,  9 Aug 2024 07:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE5518C341;
+	Fri,  9 Aug 2024 07:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dpysBue7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Mrkp4qFw"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D451552EB;
-	Fri,  9 Aug 2024 07:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8A41552EB
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723190160; cv=none; b=lmzPA4Rlx3pu3TRhvPT7Iu2qVbK1HdRNqLnKHBpiYP8deld3Jq9jXnMUCkRZXx1P9rkfuldy2GLcZWJrG1E1xN1aEV04rlw5Yu+awWR/3Kr+XxNz/Cf/9Ul4LTHsVzFL+5kXS+OFdoB7nXA/m9KaZiyHutTxxx22Os8XgukjtmE=
+	t=1723190027; cv=none; b=TlKTgshWSGgWbRvulpCzVVZ3xKNKdBviABw3ETca4gSd0S9AaTpvKYqXzZEwT1L6VhynT7XvwUhGLJ0UORBs8PXN9ZK0SXvyYbgNa4uLLprC/i/w57eGL4278ACyCIuqDlZkjdsbqi+ddt+rAw84xIDlnLeKJ7tkJrT9J8O5TxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723190160; c=relaxed/simple;
-	bh=94lZVQDuVX0rmJEGUMmn2REy9MejZbsiPG+f8IK032c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kJFpaGpACBd/hiVpy2P4LZ1TxdGf2+hEYB55Ym/yK557zp46G+MKxDXmPZEtPx9mlpgJ1sQrrX73Yy44JB/x1Lw01FBzi0bH5VZ2ANe6azh6o1TVsicJRi58/kFhLDPEK0AbMSvuNTfQ/9s0KK5QAqyD6r4tHxfVUi45KgEVSaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dpysBue7; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723190159; x=1754726159;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=94lZVQDuVX0rmJEGUMmn2REy9MejZbsiPG+f8IK032c=;
-  b=dpysBue7TMxusw7gnCl9g1ETwXNd0afHnVI5TJRowBYaBGSE4SZeHYAw
-   uWrYIhkF6Ku5x2GKVmOpj01Js6IXfB4nqNm1AbylK1LO0BRQsCfLxnUod
-   dcQmrP4B1Axo6BFBd2gF0Wavb0raeQAipCfnSmh7DXDH2/FMxetoaKW+x
-   DGuysvWXDouDWOHWoTxlN0nSmgJ9Bdr4M4NxI5EyABwdOSnwHZ+E/j7S5
-   z/+2Lp+lkRE6fM4ifso7t/EY23ARqOXXkoWoZzkHhFUd8nsJ4CQQz3bAe
-   Ho20bN0DzDFpfpPfLONUtqtcCHqnSyuyd36ImhLXn4+LyVOlNLQaLLyh4
-   Q==;
-X-CSE-ConnectionGUID: 6p6gpEmLS6amcQpOOPRILw==
-X-CSE-MsgGUID: RdSOdTS0SYqL7euCHEKjQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25120793"
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="25120793"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 00:55:58 -0700
-X-CSE-ConnectionGUID: 7LbPVeFGRV2/faFvfItgpw==
-X-CSE-MsgGUID: ET6+4kdqS+uqbJmnhFPo1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="58204970"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 00:55:55 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>,  David Hildenbrand
- <david@redhat.com>,  Andrew Morton <akpm@linux-foundation.org>,  Baolin
- Wang <baolin.wang@linux.alibaba.com>,  <linux-mm@kvack.org>,
-  <linux-kernel@vger.kernel.org>,  <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm/numa: no task_numa_fault() call if page table is
- changed
-In-Reply-To: <03D403CE-5893-456D-AB4B-67C9E9F0F532@nvidia.com> (Zi Yan's
-	message of "Thu, 08 Aug 2024 22:05:52 -0400")
-References: <20240807184730.1266736-1-ziy@nvidia.com>
-	<956553dc-587c-4a43-9877-7e8844f27f95@linux.alibaba.com>
-	<1881267a-723d-4ba0-96d0-d863ae9345a4@redhat.com>
-	<09AC6DFA-E50A-478D-A608-6EF08D8137E9@nvidia.com>
-	<052552f4-5a8d-4799-8f02-177585a1c8dd@redhat.com>
-	<8890DD6A-126A-406D-8AB9-97CF5A1F4DA4@nvidia.com>
-	<b0b94a65-51f1-459e-879f-696baba85399@huawei.com>
-	<87cymizdvc.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<03D403CE-5893-456D-AB4B-67C9E9F0F532@nvidia.com>
-Date: Fri, 09 Aug 2024 15:52:22 +0800
-Message-ID: <874j7uyvyh.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1723190027; c=relaxed/simple;
+	bh=mx9XvqN8gfoztx5g8Hg8p3zrShD585HpqTze7i/V9sY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tXYaAcN6RGVwwCB8j33uJz/ORriRzPVsNgH7tYsCBNcVVH0jiozKBWpq2lIsrhT5koD4uCsNchdeBa4t+8TFTxfiy4aTkor2z3OnP/sv2m0ar4Y5Mnt7JMdYEVjoyOgvGIwi89yjaYasQH3U+dMWkPDwaXlWCoVRs0tQhq4i2RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Mrkp4qFw; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ef2fbf1d14so27773901fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:53:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723190024; x=1723794824; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tOhlBCGx3wgliIklN4sJ6vIsr9hRttzR53fydIf4y5g=;
+        b=Mrkp4qFww3AZ4zSJchDIw5ZpwDtzlW67B+O3ljI5133Czf3Uj6RZFFJ9AGlLmJ3ka9
+         bmJhvC4wq8SMTCRVkDBaIypsUSn3eTk6OK9UIS5HKkOvXJWXB8XxUg+x+OzVsCulXQv4
+         zPYD9SF+6SQjoekyLWxiTDZa26sXUywn7q7uQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723190024; x=1723794824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tOhlBCGx3wgliIklN4sJ6vIsr9hRttzR53fydIf4y5g=;
+        b=Rayp3GxqZRAkVftUEECjs1zgXL7pdgwlr0cdFIIH9INqmB3A9eyT5IdzIFP7uoe4qk
+         ch6zzS/L382ojffaNEn52ekwehBJhxpZzGskDwQsruew1wF/vt0yXfr1BEDGNSJUOK29
+         vrIQzUqFKE28sVxleKo9r0+RHE4nZpsEmQs36MQhEZKg02gbX5aiVexueChKKUvbPnhr
+         Hlz8Xs9skhKfMuJ/3gk84Xe0XvoJ8iauE+rOMLexjwz63cvRLArvXN3wA7Nr/wjz1DWH
+         2HvmxQNlmjNx/1WSZ96fAYvNVeRBtC002DJCqDIbcLmZUBdX+FwCDlMOMztFzuFUQMCb
+         D1rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMk3pCTKAr/OTHJ6Ghu44TuFxntkqSWBrLCDyB0SEPi9nUjGqjzX+Z4q35TsNSPvN9lA/i8oUQXVRJJAPA4ccPjzKk3FeDnQ3IThMJ
+X-Gm-Message-State: AOJu0Yw37p51g25vVW+fuxqFo4/uRJdpLLCQ/g+lYhuTCZrybxFIA0y5
+	mObLxrAyRWQvSrrE7c13sT1m/MY+bSIQWFwjunz5VQeClJQ2xn8esrqK+oQMdAcOhhk5NppIaiq
+	z20PU1dobeG2e5/JXQzpBWUlRS0BpRkx1ZrCs
+X-Google-Smtp-Source: AGHT+IH6ychLenqDgOvMBzDQh2JMkFFn21GgkZRTJgCiT8vrbwbMMfUcAwkW9CQQCIA8Bgb7QPT8OmlAiGtufGVI5DI=
+X-Received: by 2002:a05:6512:3f05:b0:52f:cc9e:449d with SMTP id
+ 2adb3069b0e04-530e5d210abmr1449084e87.3.1723190023966; Fri, 09 Aug 2024
+ 00:53:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+References: <20240808-kukui_trip-v1-1-6a73c8e0b79a@chromium.org>
+In-Reply-To: <20240808-kukui_trip-v1-1-6a73c8e0b79a@chromium.org>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 9 Aug 2024 15:53:32 +0800
+Message-ID: <CAGXv+5GgmRiqkZdQo--XciuEgAvyOiR+XYWO=dZWziZ-pJzPDQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: mt8183-kukui: Add trip points to each thermal zone
+To: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Zi Yan <ziy@nvidia.com> writes:
+On Thu, Aug 8, 2024 at 5:09=E2=80=AFPM Hsin-Te Yuan <yuanhsinte@chromium.or=
+g> wrote:
+>
+> Add trip points to the tboard1 and tboard2 thermal zones to ensure they
+> are registered successfully.
 
-> On 8 Aug 2024, at 21:25, Huang, Ying wrote:
->
->> Kefeng Wang <wangkefeng.wang@huawei.com> writes:
->>
->>> On 2024/8/8 22:21, Zi Yan wrote:
->>>> On 8 Aug 2024, at 10:14, David Hildenbrand wrote:
->>>>
->>>>> On 08.08.24 16:13, Zi Yan wrote:
->>>>>> On 8 Aug 2024, at 4:22, David Hildenbrand wrote:
->>>>>>
->>>>>>> On 08.08.24 05:19, Baolin Wang wrote:
->>>>>>>>
->>>>>>>>
->>> ...
->>>>>>> Agreed, maybe we should simply handle that right away and replace the "goto out;" users by "return 0;".
->>>>>>>
->>>>>>> Then, just copy the 3 LOC.
->>>>>>>
->>>>>>> For mm/memory.c that would be:
->>>>>>>
->>>>>>> diff --git a/mm/memory.c b/mm/memory.c
->>>>>>> index 67496dc5064f..410ba50ca746 100644
->>>>>>> --- a/mm/memory.c
->>>>>>> +++ b/mm/memory.c
->>>>>>> @@ -5461,7 +5461,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->>>>>>>            if (unlikely(!pte_same(old_pte, vmf->orig_pte))) {
->>>>>>>                   pte_unmap_unlock(vmf->pte, vmf->ptl);
->>>>>>> -               goto out;
->>>>>>> +               return 0;
->>>>>>>           }
->>>>>>>            pte = pte_modify(old_pte, vma->vm_page_prot);
->>>>>>> @@ -5528,15 +5528,14 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->>>>>>>                   vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
->>>>>>>                                                  vmf->address, &vmf->ptl);
->>>>>>>                   if (unlikely(!vmf->pte))
->>>>>>> -                       goto out;
->>>>>>> +                       return 0;
->>>>>>>                   if (unlikely(!pte_same(ptep_get(vmf->pte), vmf->orig_pte))) {
->>>>>>>                           pte_unmap_unlock(vmf->pte, vmf->ptl);
->>>>>>> -                       goto out;
->>>>>>> +                       return 0;
->>>>>>>                   }
->>>>>>>                   goto out_map;
->>>>>>>           }
->>>>>>>    -out:
->>>>>>>           if (nid != NUMA_NO_NODE)
->>>>>>>                   task_numa_fault(last_cpupid, nid, nr_pages, flags);
->>>>>>>           return 0;
->>>
->>> Maybe drop this part too,
->>>
->>> diff --git a/mm/memory.c b/mm/memory.c
->>> index 410ba50ca746..07343c1469e0 100644
->>> --- a/mm/memory.c
->>> +++ b/mm/memory.c
->>> @@ -5523,6 +5523,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->>>         if (!migrate_misplaced_folio(folio, vma, target_nid)) {
->>>                 nid = target_nid;
->>>                 flags |= TNF_MIGRATED;
->>> +               goto out;
->>>         } else {
->>>                 flags |= TNF_MIGRATE_FAIL;
->>>                 vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
->>> @@ -5533,12 +5534,8 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->>>                         pte_unmap_unlock(vmf->pte, vmf->ptl);
->>>                         return 0;
->>>                 }
->>> -               goto out_map;
->>>         }
->>>
->>> -       if (nid != NUMA_NO_NODE)
->>> -               task_numa_fault(last_cpupid, nid, nr_pages, flags);
->>> -       return 0;
->>>  out_map:
->>>         /*
->>>          * Make it present again, depending on how arch implements
->>
->> IMHO, migration success is normal path, while migration failure is error
->> processing path.  If so, it's better to use "goto" for error processing
->> instead of normal path.
->>
->>> @@ -5551,6 +5548,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->>>                 numa_rebuild_single_mapping(vmf, vma, vmf->address,
->>>                 vmf->pte,
->>>                                             writable);
->>>         pte_unmap_unlock(vmf->pte, vmf->ptl);
->>> +out:
->>>         if (nid != NUMA_NO_NODE)
->>>                 task_numa_fault(last_cpupid, nid, nr_pages, flags);
->>>         return 0;
->>>
->>>
->
-> How about calling task_numa_fault and return in the migration successful path?
-> (target_nid cannot be NUMA_NO_NODE, so if is not needed)
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 3441f60d54ef..abdb73a68b80 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5526,7 +5526,8 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->         if (!migrate_misplaced_folio(folio, vma, target_nid)) {
->                 nid = target_nid;
->                 flags |= TNF_MIGRATED;
-> -               goto out;
-> +               task_numa_fault(last_cpupid, nid, nr_pages, flags);
-> +               return 0;
->         } else {
->                 flags |= TNF_MIGRATE_FAIL;
->                 vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
-> @@ -5550,7 +5551,6 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->                 numa_rebuild_single_mapping(vmf, vma, vmf->address, vmf->pte,
->                                             writable);
->         pte_unmap_unlock(vmf->pte, vmf->ptl);
-> -out:
->         if (nid != NUMA_NO_NODE)
->                 task_numa_fault(last_cpupid, nid, nr_pages, flags);
->         return 0;
->
+The position of tboard_thermistor2 is different between end devices.
+And both sensors are outside of the SoC. Having such a high trip point
+probably doesn't help with keeping the device or user safe.
 
-This looks better for me, or change it further.
+The SoC itself also has internal sensors which would be more suited for
+this.
 
-       if (migrate_misplaced_folio(folio, vma, target_nid))
-               goto out_map_pt;
+So I think it makes more sense to have the kernel not require trip points
+for thermal zones, matching what the thermal binding says. I resurrected
+an old patch for this [1].
 
-       nid = target_nid;
-       flags |= TNF_MIGRATED;
-       task_numa_fault(last_cpupid, nid, nr_pages, flags);
 
-       return 0;
+ChenYu
 
-out_map_pt:
-       flags |= TNF_MIGRATE_FAIL;
-       vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
-       ...
-        
+[1] https://lore.kernel.org/linux-arm-kernel/20240809070822.2835371-1-wenst=
+@chromium.org/
+
+> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+> ---
+>  arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 26 ++++++++++++++++++++=
+++++++
+>  1 file changed, 26 insertions(+)
 >
->
-> Or move the make-present code inside migration failed branch? This one
-> does not duplicate code but others can jump into this branch.
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 3441f60d54ef..c9b4e7099815 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5526,7 +5526,6 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->         if (!migrate_misplaced_folio(folio, vma, target_nid)) {
->                 nid = target_nid;
->                 flags |= TNF_MIGRATED;
-> -               goto out;
->         } else {
->                 flags |= TNF_MIGRATE_FAIL;
->                 vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
-> @@ -5537,20 +5536,20 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->                         pte_unmap_unlock(vmf->pte, vmf->ptl);
->                         return 0;
->                 }
-> -       }
->  out_map:
-> -       /*
-> -        * Make it present again, depending on how arch implements
-> -        * non-accessible ptes, some can allow access by kernel mode.
-> -        */
-> -       if (folio && folio_test_large(folio))
-> -               numa_rebuild_large_mapping(vmf, vma, folio, pte, ignore_writable,
-> -                                          pte_write_upgrade);
-> -       else
-> -               numa_rebuild_single_mapping(vmf, vma, vmf->address, vmf->pte,
-> -                                           writable);
-> -       pte_unmap_unlock(vmf->pte, vmf->ptl);
-> -out:
-> +               /*
-> +                * Make it present again, depending on how arch implements
-> +                * non-accessible ptes, some can allow access by kernel mode.
-> +                */
-> +               if (folio && folio_test_large(folio))
-> +                       numa_rebuild_large_mapping(vmf, vma, folio, pte,
-> +                                       ignore_writable, pte_write_upgrade);
-> +               else
-> +                       numa_rebuild_single_mapping(vmf, vma, vmf->address,
-> +                                       vmf->pte, writable);
-> +               pte_unmap_unlock(vmf->pte, vmf->ptl);
-> +       }
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/=
+boot/dts/mediatek/mt8183-kukui.dtsi
+> index 6345e969efae..1593ea14f81f 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+> @@ -978,12 +978,38 @@ tboard1 {
+>                 polling-delay =3D <1000>; /* milliseconds */
+>                 polling-delay-passive =3D <0>; /* milliseconds */
+>                 thermal-sensors =3D <&tboard_thermistor1>;
+> +               trips {
+> +                       tboard1_alert: trip-alert {
+> +                               temperature =3D <85000>;
+> +                               hysteresis =3D <2000>;
+> +                               type =3D "passive";
+> +                       };
 > +
->         if (nid != NUMA_NO_NODE)
->                 task_numa_fault(last_cpupid, nid, nr_pages, flags);
->         return 0;
+> +                       tboard1_crit: trip-crit {
+> +                               temperature =3D <100000>;
+> +                               hysteresis =3D <2000>;
+> +                               type =3D "critical";
+> +                       };
+> +               };
+>         };
+>
+>         tboard2 {
+>                 polling-delay =3D <1000>; /* milliseconds */
+>                 polling-delay-passive =3D <0>; /* milliseconds */
+>                 thermal-sensors =3D <&tboard_thermistor2>;
+> +               trips {
+> +                       tboard2_alert: trip-alert {
+> +                               temperature =3D <85000>;
+> +                               hysteresis =3D <2000>;
+> +                               type =3D "passive";
+> +                       };
+> +
+> +                       tboard2_crit: trip-crit {
+> +                               temperature =3D <100000>;
+> +                               hysteresis =3D <2000>;
+> +                               type =3D "critical";
+> +                       };
+> +               };
+>         };
+>  };
 >
 >
-> Of course, I will need to change mm/huge_memory.c as well.
+> ---
+> base-commit: 21b136cc63d2a9ddd60d4699552b69c214b32964
+> change-id: 20240801-kukui_trip-6625c0a54c50
 >
-
---
-Best Regards,
-Huang, Ying
+> Best regards,
+> --
+> Hsin-Te Yuan <yuanhsinte@chromium.org>
+>
+>
 
