@@ -1,184 +1,136 @@
-Return-Path: <linux-kernel+bounces-280806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC59894CF7C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B056594CF7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9471D282AB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:48:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB1C282F07
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EC2193065;
-	Fri,  9 Aug 2024 11:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0402D193071;
+	Fri,  9 Aug 2024 11:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhfQTJgv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZABbTSJ8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B91EADA;
-	Fri,  9 Aug 2024 11:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAF115FA66
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 11:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723204099; cv=none; b=oTno9mG9PiKgZTlYj2DJi3sIgQRdYcNyHwcT4K8hFflgfF58v1rJq1QvRwuvnR5gCfPVqv+vj20oJPNIslKweSDk4acb/8AWzFXdj+Z6p+P9BRXJb/Z7Odlq56ViGaUNkUKP3s2bqpy92LvH/sQQzFUl501dwrHhqAiLsq+gBJk=
+	t=1723204148; cv=none; b=tNnP2lBpnihYHwYbYVfTfuDAi5+3AqgtYWVmaITw/zUlTJvv+wposu6555JPtF7g3IBHwGg/0OcY1KHn/t/rYgrY1/CT8007ExopJXeZm7YvjyQgIwts1pTAXauFjAGuFhp7dQ152N4A1WIwhhDJn78mhuM9FT58hHOHPDz2RQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723204099; c=relaxed/simple;
-	bh=qpnMDeRnJlAFCtGqKuynReSNxZ3lj28gwduVzRqU0iE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBdD8tvTJfhhdWp4WaVd29IZfDWopKx037GtHHd7pzPMT1bGesG12ovnZrwG+/DfpnbmdhX5JlY2sD+geMmbyBMzSkVbUjmosqLJgm+uMszNqWOdkWd9/P056LwgdB7F1FfYudmolzhyZMRwXfLomvhVW2XphltYVZV+Tko2Tpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhfQTJgv; arc=none smtp.client-ip=192.198.163.7
+	s=arc-20240116; t=1723204148; c=relaxed/simple;
+	bh=1o1J8Vu+Z9sKKxcoPCgjjMgniFAdKVo4MC3MNb32AIY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JUQ5R9XT2C5Dj4hsBqSyCcX7LWQ4EIPAoiSjl6W15jkhtwHSSvGu6hX+prCZmuXwWkCQz2ONAqTgokhnILx74qO6pdOvvnu/uUlUmgsms3OiXTczrM8zvsSXgHDuc4+JU7YwEVioJXbpyaPwfyNTBgCY40kCiYwE225RG0RCAAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZABbTSJ8; arc=none smtp.client-ip=192.198.163.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723204097; x=1754740097;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qpnMDeRnJlAFCtGqKuynReSNxZ3lj28gwduVzRqU0iE=;
-  b=DhfQTJgvjgyy9tn0GcZk01uuLmq/LJcJcbu8+EXnCLHZNhtJaYwPlHMU
-   9+MO3WPWy0EGxliAK96/37/1LwghLeGQwJ53waMZPVLS3bsST9XmYMfPN
-   o+SsEh/svflj5NidaQwhbZe+k9NyJDAfMtm1v1gYcwyMTKD3D/VXELWs3
-   BCbhywiZmyO8/x7LG8k0iX3EX2qBlK7oKFUs5MTRPkC8N1OFPyI3pm8Mf
-   zwuUMzfwKJUhDleI9lwn6DHPK2gBAF/6a/OdImBmMYrlywN2efPVfdLXA
-   ClbGpFPrXRseTVVnb4wwm1ME+ho8JMKgA983W2aKO+CUe3sbTHugDRxo3
-   w==;
-X-CSE-ConnectionGUID: cFfJUehRQTa/xmWcrFPROg==
-X-CSE-MsgGUID: e2fTszMcSg2vIiQncyWU3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="46781444"
+  t=1723204147; x=1754740147;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=1o1J8Vu+Z9sKKxcoPCgjjMgniFAdKVo4MC3MNb32AIY=;
+  b=ZABbTSJ8JLfcHYEiygf50TNkYGU/O9+DA3lqBUpGeJkungg0F77/6hPC
+   po5RhJN0DHPxvDFCCvbLY545Wb++zweBSY6Kh6HUMaDrT/JMptayi6gn1
+   2tvNqe5AtbJgltvTGaSil9+FfIYcBFrEjtewviSDPOtvSeOfizmCipg9v
+   LnbLLvAuYXUQcS3NxY8fANFiOIDy+tglQN19pvWbFiRIehFmgD9AmtFde
+   EUT+kbLcBOApoIk83Nfr2wyumAJkTi6m84lMJ5sB9oCY/h69UCRFFIVxo
+   B92Z2VOdK3NOlGDE+IesDHJpyAJn3QwjcNk7ygLSY9spECk+FtZRwV4TO
+   g==;
+X-CSE-ConnectionGUID: SaBwSICGRPueJ0D9EA9x5w==
+X-CSE-MsgGUID: Oqtu+Mm1TSOh3b/6n/UgrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="31999733"
 X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="46781444"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:48:16 -0700
-X-CSE-ConnectionGUID: duNv+l5FT+GbHA4UyEjmww==
-X-CSE-MsgGUID: xBuRMrSIRiSGYyRs9rFE4Q==
+   d="scan'208";a="31999733"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:49:06 -0700
+X-CSE-ConnectionGUID: 1+AYzhGXTDiXjMiOmX9Oyw==
+X-CSE-MsgGUID: PUt3CqcmTP6PUJa7xZHW5g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
-   d="scan'208";a="62385693"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 04:48:13 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1scO6K-0000000DPCp-462l;
-	Fri, 09 Aug 2024 14:48:08 +0300
-Date: Fri, 9 Aug 2024 14:48:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
-	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anshuman.gupta@intel.com, badal.nilawar@intel.com,
-	riana.tauro@intel.com, ashutosh.dixit@intel.com,
-	karthik.poosa@intel.com
-Subject: Re: [PATCH v4] drm/i915/hwmon: expose fan speed
-Message-ID: <ZrYB-GI9L2RSc2bt@smile.fi.intel.com>
-References: <20240809061525.1368153-1-raag.jadav@intel.com>
+   d="scan'208";a="58108812"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 09 Aug 2024 04:49:03 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 2277A538; Fri, 09 Aug 2024 14:49:01 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Mel Gorman <mgorman@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 0/8] mm: Fix several issues with unaccepted memory
+Date: Fri,  9 Aug 2024 14:48:46 +0300
+Message-ID: <20240809114854.3745464-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809061525.1368153-1-raag.jadav@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 09, 2024 at 11:45:25AM +0530, Raag Jadav wrote:
-> Add hwmon support for fan1_input attribute, which will expose fan speed
-> in RPM. With this in place we can monitor fan speed using lm-sensors tool.
-> 
-> $ sensors
-> i915-pci-0300
-> Adapter: PCI adapter
-> in0:         653.00 mV
-> fan1:        3833 RPM
-> power1:           N/A  (max =  43.00 W)
-> energy1:      32.02 kJ
+The patchset addresses several issues related to unaccepted memory.
 
-> v2:
-> - Add mutex protection
-> - Handle overflow
-> - Add ABI documentation
-> - Aesthetic adjustments (Riana)
-> 
-> v3:
-> - Declare rotations as "long" and drop redundant casting
-> - Change date and version in ABI documentation
-> - Add commenter name in changelog (Riana)
-> 
-> v4:
-> - Fix wakeref leak
-> - Drop switch case and simplify hwm_fan_xx() (Andi)
+It replaces "mm: fix endless reclaim on machines with unaccepted
+memory" commit which is in mm-unstable now.
 
-I do not understand why we pollute Git history with changelogs, but it's
-probably the ugly atavism in DRM workflow.
+The most severe issue is a kswapd hang, which is fixed by patch 1/8.
 
-...
+Pach 2/8 preparatory cleanup.
 
-> +hwm_fan_is_visible(const struct hwm_drvdata *ddat, u32 attr)
-> +{
-> +	struct i915_hwmon *hwmon = ddat->hwmon;
-> +
-> +	return attr == hwmon_fan_input &&
-> +	       i915_mmio_reg_valid(hwmon->rg.fan_speed) ? 0444 : 0;
+Patch 3/8 ensures that __alloc_pages_bulk() will not exhaust all
+accepted memory without accepting more.
 
-Not sure why ternary here, it's not well readable in my opinion.
+Patches 4/8-6/8 are preparations for patch 7/8, which fixes
+alloc_config_page() on machines with unaccepted memory. This allows, for
+example, the allocation of gigantic pages at runtime.
 
-	if (attr == hwmon_fan_input && i915_mmio_reg_valid(hwmon->rg.fan_speed))
-		return 0444;
+Patch 8/8 enable the kernel to accept memory up to the promo watermark.
 
-	return 0;
+I believe only the first patch deserves backporting.
 
-looks better, no?
+Please review. Any feedback is welcome.
 
-> +}
+Kirill A. Shutemov (8):
+  mm: Fix endless reclaim on machines with unaccepted memory
+  mm: Reduce deferred struct page init ifdeffery
+  mm: Accept memory in __alloc_pages_bulk().
+  mm: Introduce PageUnaccepted() page type
+  mm: Rework accept memory helpers
+  mm: Add a helper to accept page
+  mm: page_isolation: Handle unaccepted memory isolation
+  mm: Accept to promo watermark
 
-...
-
-> +	/*
-> +	 * HW register value is accumulated count of pulses from
-> +	 * PWM fan with the scale of 2 pulses per rotation.
-> +	 */
-> +	rotations = pulses >> 1;
-
-In accordance with the comment the
-
-	rotations = pulses / 2;
-
-looks better.
-
-...
-
-(1)
-
-> +	time = time_now - fi->time_prev;
-> +
-
-I think location of this blank line is better at (1) above.
-
-> +	if (unlikely(!time)) {
-> +		ret = -EAGAIN;
-> +		goto exit;
-> +	}
-
-...
-
-> +	/* Convert to minutes for calculating RPM */
-> +	*val = DIV_ROUND_UP(rotations * (60 * MSEC_PER_SEC), time);
-
-Have you considered to keep jiffies in the fi and use something from jiffies.h
-here? To me it feels like we multiply and divide when it can be avoided.
-Please, think about it (I haven't checked myself, just an idea to share).
-
-Also comment probably needs to be expanded to explain the formulas behind all
-this.
+ arch/x86/boot/compressed/misc.c               |   2 +-
+ arch/x86/boot/compressed/misc.h               |   2 +-
+ drivers/firmware/efi/libstub/efistub.h        |   2 +-
+ .../firmware/efi/libstub/unaccepted_memory.c  |   3 +-
+ drivers/firmware/efi/unaccepted_memory.c      |  18 +--
+ include/linux/mm.h                            |  12 +-
+ include/linux/page-flags.h                    |   8 ++
+ mm/internal.h                                 |   8 ++
+ mm/memblock.c                                 |   2 +-
+ mm/mm_init.c                                  |   2 +-
+ mm/page_alloc.c                               | 128 ++++++++++--------
+ mm/page_isolation.c                           |   8 ++
+ tools/testing/memblock/internal.h             |   2 +-
+ 13 files changed, 122 insertions(+), 75 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
