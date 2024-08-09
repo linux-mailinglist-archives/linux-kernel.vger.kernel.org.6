@@ -1,181 +1,196 @@
-Return-Path: <linux-kernel+bounces-280621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE1594CCEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:07:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941F794CCEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAAADB21480
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:07:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C27C28314C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24BF18FDC5;
-	Fri,  9 Aug 2024 09:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB6C190079;
+	Fri,  9 Aug 2024 09:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBvqdEtT"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L6H7IMr/"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384CFBA41
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2B64431
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723194437; cv=none; b=VE9I//Ghn+opQbi5tSG7xDy99DfYBtZCxXpEAK0hfnW71IN8NNe8pjT+saM05b/Wx5C7ufzpMzCyb41p6NV+phHaoFbLNEPB/Vne8eJP19vTwuWHMafFwfDOInPTTz9gc/HybqQrDbKVh1t1qMyXRad3JFcog5vW9+q21WrJW0Y=
+	t=1723194482; cv=none; b=Kgu1vldffWArfmh6jzT0NCwyZgp74opyyMNu/6KNrO1UwaDjhj4DeQ0771AuSse5gT/frMweXT5rE7AEyL/FrDceg4DmwZbOTfS5xYQAaIAjHg5U0sARER6puh4Y37pRxHQuwR7H2DhmI100wUxBBVvF7o02qZ+1ljCiJKLpQ30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723194437; c=relaxed/simple;
-	bh=nEJVtcoMpn7xsXtIMc1Qo1u4UbOJ5jaOpWiwSsCd87A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oQ1Yuv1RgO6a95/+WYQ9OYQTO1ke6NglxzD7WOBocofmbzViIb08B94043RNp/IF/273ihYrrg6MIBGjH75Fgr6scOSb2OlHCEwwnzKsodXIG1lmmNQliA7tFGWMJj82L276jFPVb6Tm5fM2SzlscVApKrrMxjbVaSGW3wxawbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LBvqdEtT; arc=none smtp.client-ip=209.85.208.180
+	s=arc-20240116; t=1723194482; c=relaxed/simple;
+	bh=xIqKlPFTBOJ+6voM4SrfjSL0L9WwiYk4J/CQwLdYuIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pTWvD4RUo+Q8pKNOB29GvMqUCaj0FCtZuwKJaonVrDo+YPdQWAXzRMV9R+2IpCQYlKIDheDLiirijtIeG0iRZvx6kSkx9wk/NV3qNtSmiuXiUNHjANcwf/CC9N0xCdw7CTSSNaZ99OzoiB4YWfTlJ7FLeCo+aS103hEBWKpQxu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L6H7IMr/; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f149845d81so20885641fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 02:07:16 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aada2358fso451996666b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 02:08:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723194434; x=1723799234; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RLxn0IwV+KEsqILm3vURB532jKLGPjcTtemkHlPJtu8=;
-        b=LBvqdEtTo4nXtoreyggA1gTLJ9c76gbSc+Ug8M55Hqh15U9O8OxrqSOsTJMV0H3wGY
-         UBu0MyUF+O0xk1P2Lx1RnRqbnwwlIFaNO0im+pu9a5/kEotmK6xgsLO+nEj7b4qgnB99
-         GwWRRnUXN5BxS7smC8M8ILLIYvhZ+/b1wwpBiepb1QKe7wYgoknznII3OR1UTa2aBrbJ
-         KbWwptTVx+PxhjvzQuW5yTOJ+BI17focuSQllKuWt9SyCw/d2SzS1VTUgMGQCFq9Fiwu
-         arox+iLYzi9JSNQDP71trDQ//4agIpH/GPl0K/DUS6GtnnNLjXIXdnRbNgR0WoXAH/L6
-         ZH8A==
+        d=linaro.org; s=google; t=1723194479; x=1723799279; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B7RTNFF0UhhRSGM9SKE+tATW/EB8i2VcQtdYWBx4S0Y=;
+        b=L6H7IMr/z4a3LgmHLmRSn5Ss8ObViO7bYJqmFwENJYtuIJCRwOMqFCEnzBBuZmGMPH
+         yMD9/ym8w/7/ob85FPE8yc+FzehnTHb10bZ9U+qMhduwvO+v8pwdELLwSMjVIBUvfHAp
+         TddU0PtdcMCGitU7QSrqRsYSCycLWVBH7kxo5LwIyQRqVIsWhsaOT8b26zPTu11/1bxG
+         OF+8KRnZAiYQrLJweCyDTcdDS1tLTrKPI7iVLsJhbWsTGIqVf9o6G8UGyntER38NpcfR
+         OtdxSvECq6JzWp1wmM6SN7d8aswAuSI/aPStoLjWEKgLM6aVfg2Xq0eaQ5x4oO0CQLDM
+         xn/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723194434; x=1723799234;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RLxn0IwV+KEsqILm3vURB532jKLGPjcTtemkHlPJtu8=;
-        b=b8g7LDAFwW1bWHY2xlxa3QVu32ucjjykx+ajyQ9UkapBuyV/Pzh6orR3siJdDXf6cJ
-         DFBFlzG8QWNeL8y09YQ2nLNNFccsD8YObCQSpA/qAdO6iY3DNmSLUkuH4UPIOlVL/OEm
-         vEv2xmZCe6eUTL9gzfBVVREf4+daa6S/OeGQVOYcSyWSwaS7hdpzYHyIZnACtx/Ndvuh
-         hIHpnWBcRiNcQeT+JKxMIukxU6x95eixQK5nFrcBDFdvUy6w0keVxUltOYNMUBQ9rWe/
-         ePvSKXo038GQ/nZbW39HkUGSaIT4GgAZ0RoXpOXbt6atiEUaZb7YObQswtLdCZrBGsjp
-         Y0Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLCLYCnMhNcl9VQjgwZRnT+Ui0HJqO45PEdmcgAo6bP5eivOxxmIfGnEZmcQHqZRXGXfoDxssSg3rnW5X3GMflOURHctKLr8cjdb7o
-X-Gm-Message-State: AOJu0YzY7ke7FxDAZHGhz9Epz279OrepiKw6/2hk16Px6U2+IgszyMAI
-	UUud8sbIK5hWUNoTr0//5M3lqwmhGDN9PLwUiqGeR+/lxjwCe4RaJxfdRDTbSp0=
-X-Google-Smtp-Source: AGHT+IHhnLFl3rT+x7KMYXiEdQNEfCuCtExoR2tPSUmgwgq125nOMspyp/xEWEFKq5hnf+UiwSSYHw==
-X-Received: by 2002:a2e:4612:0:b0:2f1:929b:af03 with SMTP id 38308e7fff4ca-2f1a6ce6ec3mr6769431fa.30.1723194434144;
-        Fri, 09 Aug 2024 02:07:14 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c7492cesm66204715e9.20.2024.08.09.02.07.12
+        d=1e100.net; s=20230601; t=1723194479; x=1723799279;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B7RTNFF0UhhRSGM9SKE+tATW/EB8i2VcQtdYWBx4S0Y=;
+        b=iB/fkaxfNhQ54xN+5u9umi4ZR2aQ7LNbiv3MZid+ucewb+hKdAzyb8i96xOAe794cY
+         HtqeGq8kxvVHSBZhiLhinGaTLWioWfSiUtE0WuV+MUPF4s+RYXFeDtchZXC+k0McjVR3
+         9ReMvREA+267e6iFdzsaL5qLbyao1xoJEGFbBBH355JP5eznFKMalgjHi10AU2NF6TFe
+         PuQfsUxuWkwbktfByZb8S44uKtkdIH9K38xDn/qge65WQZUr8euIYECZvf4lPhyEzH3j
+         FHqP/oNd91f/IxdWZRYdgQy9aUyZzFPR6T48R2NtT10Z8Hnjrh5Bg4ltYM59CPszMgR8
+         bLzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYwdyND9oiZKSpdpKPc1ozRFjUQw30u5fAWR6WNTwrJOU0X1nVtShSkiGfhRtpe0B6JE1XuO87DARm2Uvg8Eg8WXrQq11/auNnvVSY
+X-Gm-Message-State: AOJu0Yxhs31zzZtfrNSQjBkeENwD5InoycrFOwu9OiCP/EKUnqq4Ohz1
+	Ul4bxze1dGkcAF+Rp0khHwGUTb6N1zqI815P/Va5UTyV3l4qbAk2aPOipQ+ECAA=
+X-Google-Smtp-Source: AGHT+IGvhsQpUPKxCm1iJvnax5p0Tv9cMnpIDD0F666gPAGCWco4tbsfdWHtGRtszjZDAr/Ui59qDQ==
+X-Received: by 2002:a17:906:6a1f:b0:a7a:130e:fb6e with SMTP id a640c23a62f3a-a8091f1bdf7mr387496766b.15.1723194478853;
+        Fri, 09 Aug 2024 02:07:58 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff1f:b280:8395:bc08:2fce:1f21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d437a5sm818414866b.101.2024.08.09.02.07.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 02:07:13 -0700 (PDT)
-Message-ID: <d9e2f63519f3fcbf4fe334975691d573e20c53c8.camel@linaro.org>
-Subject: Re: [PATCH v6 01/20] clk: bump stdout clock usage for earlycon
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peng Fan <peng.fan@nxp.com>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
- <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Sam
- Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Abel Vesa <abelvesa@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>
-Cc: Will McVicker <willmcvicker@google.com>, "kernel-team@android.com"
- <kernel-team@android.com>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
- <linux-samsung-soc@vger.kernel.org>, "imx@lists.linux.dev"
- <imx@lists.linux.dev>
-Date: Fri, 09 Aug 2024 10:07:12 +0100
-In-Reply-To: <d4580b33c195dcf1c3a0054b29555383d2e1606b.camel@linaro.org>
-References: 
-	<20240808-gs101-non-essential-clocks-2-v6-0-e91c537acedc@linaro.org>
-	 <20240808-gs101-non-essential-clocks-2-v6-1-e91c537acedc@linaro.org>
-	 <PAXPR04MB8459F99475C289A827987AF588BA2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-	 <d4580b33c195dcf1c3a0054b29555383d2e1606b.camel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+        Fri, 09 Aug 2024 02:07:58 -0700 (PDT)
+Date: Fri, 9 Aug 2024 11:07:56 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Konrad Dybcio <quic_kdybcio@quicinc.com>
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: Add support for X1-based Surface
+ Laptop 7 devices
+Message-ID: <ZrXcbHWXPvVj-lQd@linaro.org>
+References: <20240809-topic-sl7-v1-0-2090433d8dfc@quicinc.com>
+ <20240809-topic-sl7-v1-4-2090433d8dfc@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809-topic-sl7-v1-4-2090433d8dfc@quicinc.com>
 
-On Fri, 2024-08-09 at 10:02 +0100, Andr=C3=A9 Draszik wrote:
-> Hi Peng,
->=20
-> On Fri, 2024-08-09 at 07:16 +0000, Peng Fan wrote:
-> > > +static int __init of_clk_drop_stdout_clocks(void) {
-> > > +	for (size_t i =3D 0; i < of_clk_stdout_clks.n_clks; ++i) {
-> > > +		clk_disable_unprepare(of_clk_stdout_clks.clks[i]);
-> > > +		clk_put(of_clk_stdout_clks.clks[i]);
-> > > +	}
-> > > +
-> > > +	kfree(of_clk_stdout_clks.clks);
-> > > +
-> > > +	/*
-> > > +	 * Do not try to acquire stdout clocks after late initcalls, e.g.
-> > > +	 * during further module loading, as we then wouldn't have a
-> > > way to
-> > > +	 * drop the references (and associated allocations) ever again.
-> > > +	 */
-> > > +	of_clk_stdout_clks.bump_refs =3D false;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +late_initcall_sync(of_clk_drop_stdout_clocks);
-> >=20
-> > If the uart driver is built as module, this might break earlycon.
-> > Before uart driver loaded, clk disabled per my understanding.
->=20
-> You're right.
->=20
-> With this in mind, I'm not sure then if a generic solution is possible...
->=20
-> I guess it has to be duplicated into the platforms after all and platform=
-s
-> can enable this if they opt to disallow uart as module?
->=20
-> Any other suggestions?
->=20
-> > > +
-> > > =C2=A0/**
-> > > =C2=A0 * struct of_clk_provider - Clock provider registration structu=
-re
-> > > =C2=A0 * @link: Entry in global list of clock providers @@ -5031,6 +5=
-156,8
-> > > @@ int of_clk_add_provider(struct device_node *np,
-> > >=20
-> > > =C2=A0	fwnode_dev_initialized(&np->fwnode, true);
-> > >=20
-> > > +	of_clk_bump_stdout_clocks();
-> > > +
-> > > =C2=A0	return ret;
-> > > =C2=A0}
-> > > =C2=A0EXPORT_SYMBOL_GPL(of_clk_add_provider);
-> > > @@ -5073,6 +5200,8 @@ int of_clk_add_hw_provider(struct
-> > > device_node *np,
-> > >=20
-> > > =C2=A0	fwnode_dev_initialized(&np->fwnode, true);
-> > >=20
-> > > +	of_clk_bump_stdout_clocks();
-> >=20
-> > If clock driver is built as module,=C2=A0 the will make the
-> > clocks will be always enabled, if my understanding is correct.
->=20
-> until late_initcall_sync(), at which point it'll be disabled before the u=
-art
-> driver has probed, yes :-(
+On Fri, Aug 09, 2024 at 03:43:23AM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+> 
+> Add support for Surface Laptop 7 machines, based on X1E80100.
+> 
+> The feature status is mostly on par with other X Elite machines,
+> notably lacking:
+> 
+> - USB-A and probably USB-over-Surface-connector
+> - SD card reader (Realtek RTS5261 connected over PCIe)
+> - Touchscreen and touchpad support (hid-over-SPI [1])
+> - Keyboard support (low-hanging fruit, works with pending Surface EC
+>   changes)
+> - Audio (a quick look suggests the setup is very close to the one in
+>   X1E CRD)
+> 
+> The two Surface Laptop 7 SKUs (13.8" and 15") only have very minor
+> differences, amounting close to none on the software side. Even the
+> MBN firmware files and ACPI tables are shared between the two machines.
+> 
+> With that in mind, support is added for both, although only the larger
+> one was physically tested. Display differences will be taken care of
+> through fused-in EDID and other matters should be solved within the
+> EC and boot firmware.
+> 
+> [1] https://www.microsoft.com/en-us/download/details.aspx?id=103325
+> 
+> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile                  |   2 +
+>  .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  | 818 +++++++++++++++++++++
+>  .../boot/dts/qcom/x1e80100-microsoft-romulus13.dts |  13 +
+>  .../boot/dts/qcom/x1e80100-microsoft-romulus15.dts |  13 +
+>  arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi       |   8 +
+>  5 files changed, 854 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index e534442620a1..820b768cdb71 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -270,4 +270,6 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-qrd.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-lenovo-yoga-slim7x.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-microsoft-romulus13.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-microsoft-romulus15.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-qcp.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+> new file mode 100644
+> index 000000000000..3f6d4b93db50
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
+> @@ -0,0 +1,818 @@
+> [...]
+> +	backlight: backlight {
+> +		compatible = "pwm-backlight";
+> +		pwms = <&pmk8550_pwm 0 5000000>;
+> +		enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
+> +		/* TODO: power-supply? */
 
-Sorry, ignore that. If clock driver is built as module, the code to bump
-the clocks is disabled by the time this code runs (due to setting the flag
-as part of late_initcall_sync(of_clk_drop_stdout_clocks)), in other words
-it will not bump the clocks at all in that case and behaviour is as before.
+There seems to be something at <&pmc8380_3_gpios 10>, any idea what?
 
-Did I miss something?
+> [...]
+> +&pmk8550_gpios {
+> +	edp_bl_pwm: edp-bl-pwm-state {
+> +		pins = "gpio5";
+> +		function = "func3";
 
-Cheers,
-Andre'
+Can you add the power-source here to make this more complete?
 
+> +	};
+> +
+> [...]
+> +
+> +&uart2 {
+> +	status = "okay";
+> +};
+
+Any idea what this UART is used for?
+
+> [...]
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
+> index a5ca0fa4e5ae..5b54ee79f048 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
+> @@ -249,6 +249,14 @@ pmk8550_gpios: gpio@8800 {
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+>  		};
+> +
+> +		pmk8550_pwm: pwm {
+> +			compatible = "qcom,pmk8550-pwm";
+> +
+> +			#pwm-cells = <2>;
+> +
+> +			status = "disabled";
+> +		};
+
+I don't mind personally but usually we would have this non-device
+addition in a separate patch. :-)
+
+Thanks,
+Stephan
 
