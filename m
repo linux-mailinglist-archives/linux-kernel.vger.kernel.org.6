@@ -1,124 +1,282 @@
-Return-Path: <linux-kernel+bounces-281297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBCCC94D537
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:08:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658F394D539
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CABB1F21F31
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:08:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C086BB20969
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B753BBF6;
-	Fri,  9 Aug 2024 17:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264523BBCC;
+	Fri,  9 Aug 2024 17:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OYzQKgIi"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HQ8GrdcW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zpNT+khR";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HQ8GrdcW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zpNT+khR"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008B43B1A2;
-	Fri,  9 Aug 2024 17:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2241A38384;
+	Fri,  9 Aug 2024 17:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723223327; cv=none; b=otmB+S9N+RD6m0ySa12W0bsQqcdFMGcF1pxiKtg4OCGFG4FTgcF8K3uwJpcTOKWzFH3t0Cq43okM5NNE4KuXZnVRBSsoByGV797DISG8bK/Vc0InF2L1zOqrjURm22mnNzAhPUyeYZBZ6hTsUtfx5yrAydFaTZbqwthKHxcOvUw=
+	t=1723223448; cv=none; b=G2M+ArZNzxLqhxYu79kzPUrPkNwT2yETDKb8pW0N1RtnKfOQtpsTLxJro4gMjCK/joyyu+WGRGxREbbAC1QNfaQ6qUz3kgfrF5poHsDOD49wrObTejvDIZqpTt+3GIPrV3XbUImyLhhkv3vLygZrRkc0FZIlNWWB73K2QoqeuGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723223327; c=relaxed/simple;
-	bh=Sfw93jLscWCKEbEC5Mx1wdh3zf4xAdcm0Xtf+YUCBzY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JWifyFEkNlk4H1ko6XMJe9Pr75yJJVScFmIW8RJKE7ObBBva4y9gfRgQKAOXkHev/PT3s2jx2vYI9z9Y7t4ovXBObEyM+DsnUJq9E9tkhHm+RkGczTKMWI258x/+xb+Kl1mLUuDQKC6CRVsKhfN54wQgNhQtBuoKSRFfEOk//zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OYzQKgIi; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-530ad969360so2595869e87.0;
-        Fri, 09 Aug 2024 10:08:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723223324; x=1723828124; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jUPA00ha0pjXeAraW7mmJ2vOxIYn9Y2B/PCyUa4C5aY=;
-        b=OYzQKgIifNdaB5sNrVkem2kHmC7i1rdrCcc31a/uz2ZuwujmP48wSR4BVhiq3p0OzK
-         KhNjJZS5i6WeNRcHCffwAqQQ86DCgP12Wov65z+u0U9zIVSCzEzWGLvhnjN0N2OlkD2w
-         fxUkIcugYffBh4pBsNXwRt7W6g3MZL8KTJrnzeOnV71TULhp48eJ3NzLNkmr/DFESNko
-         PBxKMaWV8X7hMxD/3YRIAj+5M4ghw0ccn1MTX8cqpLngVOLyTvNynzvHQAfJL6/QLwPn
-         gAqUbxzkCm0slHrE/u/xvLlIKYiYr7p7ncJThxN8QZgmhGhio688FgjzmjSaXNnfJZrw
-         Cx5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723223324; x=1723828124;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jUPA00ha0pjXeAraW7mmJ2vOxIYn9Y2B/PCyUa4C5aY=;
-        b=nWbYGnANN5eruME7l7Rx+EQJyl7pWSGxmnL6eoQ/vd3AU+UlEd83bIGepdWg9EhhDY
-         6wOtQa860ECydwQYxUuLI2u/nllDdraLz6qzW/lcSVB9yX5HSBRW3eL4jRMrt0vKXYyK
-         0AHHVzq1xBbcdJayhrocW02ECs8R8r64iYNlEW96NYywhl6JyKp8fw+aomS6+VSDf/wa
-         w+5n4IcBEC4mcz3JoP5WgmIYSxbr1T1Vt+3r2pbl8eLTuNPpYVdvhGtwe19iLCvjN56n
-         XrsdPdk6jztw4CtDZpE35QhIbmfnIT6DawhAM6ZlajAkEjxdkvCQcoiWGKK9Ti4RDu7y
-         S8hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/z6Ugqkx/Wz17wQanprsQ0mVvm+EniIwitgg+GCloWWvYoAj4dJrdLTzhnf3E059FVT63qdI7A0MFp7Uwm9HxTo1x0/BGQzKG2mnW
-X-Gm-Message-State: AOJu0Yx8WTbmo97o1wwmI9UqdMoNeFGMMnJF6Bzb0wKRqJH2agWs9Ws0
-	OQQrJj8nJX2i1Og6IQHi+FdiKrlk/tKWqVPY8WtEK4q2xgagdGLXlJMhVdSp
-X-Google-Smtp-Source: AGHT+IHobUxoA7hg0QDjsiXD9Li0fuvS8vzc9e8+oXMypsKQzMRpWYoYhgb2mQLLvMzKuy6bv+zERQ==
-X-Received: by 2002:a05:6512:220a:b0:52c:e670:7a12 with SMTP id 2adb3069b0e04-530eea0761bmr1791507e87.60.1723223323483;
-        Fri, 09 Aug 2024 10:08:43 -0700 (PDT)
-Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530de457d49sm1053614e87.130.2024.08.09.10.08.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 10:08:43 -0700 (PDT)
-Message-ID: <71864473-f0f7-41c3-95f2-c78f6edcfab9@gmail.com>
-Date: Fri, 9 Aug 2024 19:08:41 +0200
+	s=arc-20240116; t=1723223448; c=relaxed/simple;
+	bh=F2FcKpXEziOBXiJntVPncRWvB08MTzNoeBi6qdaveEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gLMPo4uiWuj25gXouYT6nK5CiEkjmKhjzVrWDqnjIkFOJyT5czvWfYUdEzZYEcLxUWnTdkHFbxogv9y0nFaOn3FsmjiC5SSDyYeTyLovagKzfXU+RuxQvCAerGLoYGzGfdk0GJRCc+htMtxAs7mT2lOJZcb9Xk410TadUam4T0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HQ8GrdcW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zpNT+khR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HQ8GrdcW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zpNT+khR; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3142321FE4;
+	Fri,  9 Aug 2024 17:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723223444; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gkf8SBR7lhsed/B/UVyuxGuTKu2GCyr0yzZwpyJwaM8=;
+	b=HQ8GrdcWQ+4Lsj1SS5M3Bs40QOI4iPHd7QKnMJ3QuRQVhA8//p41+el+VZRoYSO0s7dgS/
+	cRu20KLlm+eJ6VHpbJ2jWHcco7vkInjRrvPQ3q3GcxVrWXhlcO1ex6KRum93fDqLo95Diz
+	cv6yGwl4iWkZG0zzCr3iTDmRD9wOcsk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723223444;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gkf8SBR7lhsed/B/UVyuxGuTKu2GCyr0yzZwpyJwaM8=;
+	b=zpNT+khR8ncrP44Z6VWv2lNCy+qwFb7wRT0yrn+JA5dVxOoy+5d4WpbyniYn0WYDQFyD0F
+	o8C6PMhxtdztVIBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=HQ8GrdcW;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zpNT+khR
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723223444; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gkf8SBR7lhsed/B/UVyuxGuTKu2GCyr0yzZwpyJwaM8=;
+	b=HQ8GrdcWQ+4Lsj1SS5M3Bs40QOI4iPHd7QKnMJ3QuRQVhA8//p41+el+VZRoYSO0s7dgS/
+	cRu20KLlm+eJ6VHpbJ2jWHcco7vkInjRrvPQ3q3GcxVrWXhlcO1ex6KRum93fDqLo95Diz
+	cv6yGwl4iWkZG0zzCr3iTDmRD9wOcsk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723223444;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gkf8SBR7lhsed/B/UVyuxGuTKu2GCyr0yzZwpyJwaM8=;
+	b=zpNT+khR8ncrP44Z6VWv2lNCy+qwFb7wRT0yrn+JA5dVxOoy+5d4WpbyniYn0WYDQFyD0F
+	o8C6PMhxtdztVIBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 25AFC1379A;
+	Fri,  9 Aug 2024 17:10:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id P3AxCZRNtmboQAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 09 Aug 2024 17:10:44 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D9050A084C; Fri,  9 Aug 2024 19:10:39 +0200 (CEST)
+Date: Fri, 9 Aug 2024 19:10:39 +0200
+From: Jan Kara <jack@suse.cz>
+To: zhangshida <starzhangzsd@gmail.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	zhangshida@kylinos.cn, Baolin Liu <liubaolin@kylinos.cn>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH V2 1/2] ext4: fix a potential assertion failure due
+ to improperly dirtied buffer
+Message-ID: <20240809171039.nnl4bb5oe2azcggh@quack3>
+References: <20240809064606.3490994-1-zhangshida@kylinos.cn>
+ <20240809064606.3490994-2-zhangshida@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-xfs@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
- "Darrick J. Wong" <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>
-From: Anders Blomdell <anders.blomdell@gmail.com>
-Subject: XFS mount timeout in linux-6.9.11
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809064606.3490994-2-zhangshida@kylinos.cn>
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: 3142321FE4
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-With a filesystem that contains a very large amount of hardlinks
-the time to mount the filesystem skyrockets to around 15 minutes
-on 6.9.11-200.fc40.x86_64 as compared to around 1 second on
-6.8.10-300.fc40.x86_64, this of course makes booting drop
-into emergency mode if the filesystem is in /etc/fstab. A git bisect
-nails the offending commit as 14dd46cf31f4aaffcf26b00de9af39d01ec8d547.
+On Fri 09-08-24 14:46:05, zhangshida wrote:
+> From: Shida Zhang <zhangshida@kylinos.cn>
+> 
+> On an old kernel version(4.19, ext3, data=journal, pagesize=64k),
+> an assertion failure will occasionally be triggered by the line below:
+> -----------
+> jbd2_journal_commit_transaction
+> {
+> ...
+> J_ASSERT_BH(bh, !buffer_dirty(bh));
+> /*
+> * The buffer on BJ_Forget list and not jbddirty means
+> ...
+> }
+> -----------
+> 
+> The same condition may also be applied to the lattest kernel version.
 
-The filesystem is a collection of daily snapshots of a live filesystem
-collected over a number of years, organized as a storage of unique files,
-that are reflinked to inodes that contain the actual {owner,group,permission,
-mtime}, and these inodes are hardlinked into the daily snapshot trees.
+Maybe let me shorten the following part of the changelog a bit:
 
-The numbers for the filesystem are:
+When blocksize < pagesize and we truncate a file, there can be buffers in
+the mapping tail page beyond i_size. These buffers will be filed to
+transaction's BJ_Forget list by ext4_journalled_invalidatepage() during
+truncation. When the transaction doing truncate starts committing, we can
+grow the file again. This calls __block_write_begin() which allocates new
+blocks under these buffers in the tail page we go through the branch:
 
-   Total file size:           3.6e+12 bytes
-   Unique files:             12.4e+06
-   Reflink inodes:           18.6e+06
-   Hardlinks:                15.7e+09
-   
-Timing between the systems are:
+                        if (buffer_new(bh)) {
+                                clean_bdev_bh_alias(bh);
+                                if (folio_test_uptodate(folio)) {
+                                        clear_buffer_new(bh);
+                                        set_buffer_uptodate(bh);
+                                        mark_buffer_dirty(bh);
+                                        continue;
+                                }
+				...
+			}
 
-   6.8.10-300.fc40.x86_64:
+Hence buffers on BJ_Forget list of the committing transaction get marked
+dirty and this triggers the jbd2 assertion.
 
-     # time mount /dev/vg1/test /test
-     real	0m0.835s
-     user	0m0.002s
-     sys	        0m0.014s
+Teach ext4_block_write_begin() to properly handle files with data
+journalling by avoiding dirtying them directly. Instead of
+folio_zero_new_buffers() we use ext4_journalled_zero_new_buffers() which
+takes care of handling journalling. We also don't need to mark new uptodate
+buffers as dirty in ext4_block_write_begin(). That will be either done
+either by block_commit_write() in case of success or by
+folio_zero_new_buffers() in case of failure.
 
-   6.9.11-200.fc40.x86_64:
+> Reported-by: Baolin Liu <liubaolin@kylinos.cn>
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
+> ---
+>  fs/ext4/inode.c | 30 ++++++++++++++++++++++++------
+>  1 file changed, 24 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 941c1c0d5c6e..de46c0a6842a 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -49,6 +49,11 @@
+>  
+>  #include <trace/events/ext4.h>
+>  
+> +static void ext4_journalled_zero_new_buffers(handle_t *handle,
+> +					    struct inode *inode,
+> +					    struct folio *folio,
+> +					    unsigned from, unsigned to);
+> +
+>  static __u32 ext4_inode_csum(struct inode *inode, struct ext4_inode *raw,
+>  			      struct ext4_inode_info *ei)
+>  {
+> @@ -1042,7 +1047,8 @@ int do_journal_get_write_access(handle_t *handle, struct inode *inode,
+>  }
+>  
+>  #ifdef CONFIG_FS_ENCRYPTION
+> -static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
+> +static int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+> +				  loff_t pos, unsigned len,
+>  				  get_block_t *get_block)
+>  {
+>  	unsigned from = pos & (PAGE_SIZE - 1);
+> @@ -1056,6 +1062,7 @@ static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
+>  	struct buffer_head *bh, *head, *wait[2];
+>  	int nr_wait = 0;
+>  	int i;
+> +	bool should_journal_data = ext4_should_journal_data(inode);
+>  
+>  	BUG_ON(!folio_test_locked(folio));
+>  	BUG_ON(from > PAGE_SIZE);
+> @@ -1084,11 +1091,16 @@ static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
+>  			err = get_block(inode, block, bh, 1);
+>  			if (err)
+>  				break;
+> +			if (should_journal_data)
+> +				do_journal_get_write_access(handle, inode, bh);
+>  			if (buffer_new(bh)) {
+>  				if (folio_test_uptodate(folio)) {
+>  					clear_buffer_new(bh);
+>  					set_buffer_uptodate(bh);
+> -					mark_buffer_dirty(bh);
+> +					if (should_journal_data)
+> +						ext4_dirty_journalled_data(handle, bh);
+> +					else
+> +						mark_buffer_dirty(bh);
 
-     # time mount /dev/vg1/test /test
-     real	15m36.508s
-     user	0m0.000s
-     sys	        0m27.628s
+This hunk is not needed. We can just do:
 
-     (iotop reports 1-4 MB/s)
+				if (folio_test_uptodate(folio)) {
+-					clear_buffer_new(bh);
+					set_buffer_uptodate(bh);
+-					mark_buffer_dirty(bh);
+					continue;
+				}
 
+>  					continue;
+>  				}
+>  				if (block_end > to || block_start < from)
+> @@ -1118,7 +1130,11 @@ static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
+>  			err = -EIO;
+>  	}
+>  	if (unlikely(err)) {
+> -		folio_zero_new_buffers(folio, from, to);
+> +		if (should_journal_data)
+> +			ext4_journalled_zero_new_buffers(handle, inode, folio,
+> +							 from, to);
+> +		else
+> +			folio_zero_new_buffers(folio, from, to);
+>  	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+>  		for (i = 0; i < nr_wait; i++) {
+>  			int err2;
+
+This looks good.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
