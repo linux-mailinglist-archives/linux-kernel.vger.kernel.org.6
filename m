@@ -1,142 +1,126 @@
-Return-Path: <linux-kernel+bounces-280472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CF594CB12
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:17:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2378C94CB16
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD911C21CEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:17:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE001281C3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242C316F8F9;
-	Fri,  9 Aug 2024 07:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724F91741FB;
+	Fri,  9 Aug 2024 07:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZZ7thxm"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aAFU0zOa"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D005833D1;
-	Fri,  9 Aug 2024 07:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED1117BA2;
+	Fri,  9 Aug 2024 07:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723187842; cv=none; b=hwBcFiDDqfCQPfoc1gpl/Vs/hl2hNP0JhhD4l9Rr+US1P+dzC9ao3LjgrtWY4XAMy7wrRnsTZ5Hbc+Bd39HgveCyalJpefqxUI7y/ZyksBkm0c7NpgTKQsLpLuVG4y9ZP4nF4M6+tfwW0O8Tdyq8UHJor5IqwwcekGfACv9TSN4=
+	t=1723187969; cv=none; b=ku8m9k3ybuDRRMSUjGMYqYnwU7/Epa4ipvFtJLdMX2At5L6pnRzuoy+/OWDhRKl7I+UB1TdUwzHYulVAA0l8qrumwqMFRa/Eggg0VqAMQ5GV6a4wLSNh0AVttqr7Y82bnZvePvq0CQJy4+wvb5g0C7OVAOjvsIU5zZarVJkCMpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723187842; c=relaxed/simple;
-	bh=pzrnD9OL5vORF2vjCCE4OsxXJs1WaOxOk6OwUjJgrJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qtrQA19XMaPbNeZCxV4qAXplIyASQgjwZQIJTvngRW9nhigNHW9Ql82vaBV6NatggMaWIck6j9fMZlNXcjHlc0/ZQcvtWsvg7w+t3TyQvFQ+8kUv1vSFcGDr65zDGa/BHLb9DP745IKcVIZIh9Xk6a/bZ/M03NE2U5BWJJpLxWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZZ7thxm; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1723187969; c=relaxed/simple;
+	bh=oqyCFkrC2GFxWJXkElWgKcvd7lEdRkKXUB/pBL7diuM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=RVUci2eRJ+wvnit5BkmxH3jHdox3tc61ZPk3fjQ7YXuAAptWfwoTZyEA1aQIfqOPReg6jq64xG0C5Kw66rnLjTpbbYmKK8axQbFkhiBi7o1V/uapxO/bGG3OJpTTSo2c77cw6pYLi9NeTk3/eYuIJBPueJu5Fc704UT8K0Rmf7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aAFU0zOa; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b5b67d0024so1990114a12.0;
-        Fri, 09 Aug 2024 00:17:20 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428e3129851so12440075e9.3;
+        Fri, 09 Aug 2024 00:19:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723187839; x=1723792639; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723187967; x=1723792767; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jpODigRY1HFvjnaXk96bH9eqAyHzDGOWTbmy+vqO+EI=;
-        b=gZZ7thxmtYoGXlNf8619p8XS6B+fkTZA0NNwaCAVH9UAeR131W4fk2iECXj3JaxD3N
-         vPAx0FOH8Do1fMJiSK2cLQshz0o4vXD8wwNi1KVxudqCOtKxbB4kFI0faM2eh+H1/i6A
-         1VlUhMsHu2cUw7tfzNiySCKQaF9TyyhBENz3V8kZ8zBG9Qf/gHV7WY3cEFpg+S0L5lB1
-         4bcl0A90BDukLW0HvDzf7sj+Z1dLhAc6nxU7qtY9a0y2iAp/Mx84xEMAf1pgqnQ2JBUa
-         v2N2QANWlTw2NVophNaVJkX/bExSMSkOWaLd7cn2BKB+LjXxzgk8Bb9YtwK4+oIqiO5S
-         /tCg==
+        bh=wP6ushgnIPrkP08Qb9zI4t4A3mRRpyVIC0onCpnbQLk=;
+        b=aAFU0zOacL3RSlUJHseNTuOa6AY038IxJC7bGa+07+/j5l3wiB4/u072z1iZ5JYbFf
+         VEzIN32aJjtVHsKgZp9WKgDZ0nzu9yMZPW6WgbEbNW2foG+LMbjulstWpxp7Y7oUWLeK
+         gBftFkLHjhT0pZDTzIbdRXguxdGlDHn3OoPB4jSPUZF7Q+TgFVkSu9H2rRe6vIOomzew
+         EFBjkPbA1L7NSITG4CV4SNWFzMpl83ZrPbKEuEEoGFAF6CY6EibuZatmz1c81+H+wago
+         WN+d4DNWOM+LsYNxzqVmOOTlCf7MCXCJOnFvOjzlJaDq8gWp6sj4udwhFno4MIjR8aNW
+         hi2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723187839; x=1723792639;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jpODigRY1HFvjnaXk96bH9eqAyHzDGOWTbmy+vqO+EI=;
-        b=u1x3oAIotQArk5h5g490dDnVi/Y2zo9AkGPj1Ft04+VYIIy2PPOKBHDH753rwDxcgj
-         t5nJBFSrXzZRXvACY4/aeA9d3Ju3Zzl9EriBNidtgSqUy2aRy1toSV/lgB4OB+f9o0+U
-         sDPJ/X8HQ36K6qJniuWshkXNtgk9lUuNLsb+951TDDOiCfTKKTSI2eaLggJFgboB0Wow
-         F93wBNmv21l80eHzaz3MB2ByPEeUbyFm/GN5y8UlGh/b2VDizz7MvSeWbnagE6L9N8qf
-         DSQ1pZxKJiiZ6WG+cWoW7VFqyZNhAbty0RM9fOx4Z5sa6yXnFT7wzXS1sdXNYrViXkb6
-         88jg==
-X-Forwarded-Encrypted: i=1; AJvYcCXItmgEjOxurf096LPUe58VLK0xyqY76/kdvdRwqrOZRaFz6ifUr6z+LSTzgACkGz3xdOn8lnpqSANuk/LssIFHyJyZk32BYpyfkS6azwdam6bf6IpdZZWwIyU8flDuA5K9PIt001yh
-X-Gm-Message-State: AOJu0YwruKPr4r3QQKQDeqcjyW6e4ywH5pkS8+b7aWKA4mCD96kFJBFt
-	USgvap/Y8qgKiYkf2fRKaFVYlau54A316w2iTdniN/FWDWXWhOYL1e8UExAf1hdkt2YvnFHnHSY
-	lbAX5Idajp4AUmakPRo2dYjgHWg==
-X-Google-Smtp-Source: AGHT+IEzTI5d1jLwL4XO4ItIER/rGUNRj6ZhGxovMIQSRGAbuFN/TJjDR3qUkESHPc9yly+OhVRJdzcGDJzeQylhoN4=
-X-Received: by 2002:a17:907:6d15:b0:a7a:9ba8:f890 with SMTP id
- a640c23a62f3a-a80aa54aba5mr44627466b.13.1723187838777; Fri, 09 Aug 2024
- 00:17:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723187967; x=1723792767;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wP6ushgnIPrkP08Qb9zI4t4A3mRRpyVIC0onCpnbQLk=;
+        b=D51mR/hQVjr4+WLQoowKRCAKrgshDZWySWhTgel4QkQ8gfcMJT2qaNRd0jzicNbiIG
+         +r38vVcM7y/LOA1fl3ryF67WAVRnvXScwCW/ZYWUBdyrKSUTmYBFbRhF8YVeS0T2VWpR
+         QR0GEoMXjm7WmCK/SCsyBl3xbFXLJd/LY0GvclLPEN+T++aOiTmQ1VQHrGDbbu1e14eE
+         ItIpW7Q9dmJigUY9LTh+V6F9vGufLmoJIGIkxGl0ZIBn6eJOyEg+u+oia5yaW2CIPSa0
+         JxcxnGBzbJEn8iPOvDmtrNRI4g7r8Z4ja04kcQn3zdHoGPew505Qrolad4Qm1iLyjYd/
+         T0cA==
+X-Forwarded-Encrypted: i=1; AJvYcCVi1eL1p5ZZaDyMnAhDWrsmUVkaguQ9BNvxe4ezGWzWMrjtABWoFpXBZdrc5Zcu482TP2RcCHHrcLMH7X/qb/qqI8OhF1kC+Z93sAgaI8jrsiNXttirqzpXq6Bu0tm2jcBUmelWvXS8djZf5Pu7F7JBttTOgqEk8mcFI4BxRMpeKfgMQlJDHkEC
+X-Gm-Message-State: AOJu0YxMAmhHp44/HjQrSszqoNq/b+exj6anYp0CYQZwYLFFsNUS5hw4
+	xFSUabwjNMwpUCcNOyiZWrjMPn9Qcd2jQIuSJ23IThq+wO6b6QVx
+X-Google-Smtp-Source: AGHT+IErd1gqYViL5s39KvxwkEFHjbBo4qIm58Rtgsbxc4Kdbu2fl7hLx1QSmXAibbhYE1Ri1gcxEQ==
+X-Received: by 2002:a05:600c:204a:b0:427:ff7a:79e with SMTP id 5b1f17b1804b1-429c3a1c4fcmr3536935e9.16.1723187966012;
+        Fri, 09 Aug 2024 00:19:26 -0700 (PDT)
+Received: from localhost (host-87-20-57-122.retail.telecomitalia.it. [87.20.57.122])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c74a698sm63055845e9.21.2024.08.09.00.19.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 00:19:25 -0700 (PDT)
+Date: Fri, 09 Aug 2024 09:19:24 +0200
+From: Matteo Martelli <matteomartelli3@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, 
+ Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+Message-ID: <66b5c2fc7a0ae_133d370b6@njaxe.notmuch>
+In-Reply-To: <1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain>
+References: <1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain>
+Subject: Re: [PATCH] iio: adc: pac1921: add missing error return in probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240807100244.16872-1-kfting@nuvoton.com> <20240807100244.16872-8-kfting@nuvoton.com>
- <b54d11728eebb5307c1bf8ce290764bb001c725e.camel@codeconstruct.com.au>
-In-Reply-To: <b54d11728eebb5307c1bf8ce290764bb001c725e.camel@codeconstruct.com.au>
-From: Tyrone Ting <warp5tw@gmail.com>
-Date: Fri, 9 Aug 2024 15:17:07 +0800
-Message-ID: <CACD3sJbnnH+j0tKYE4BfwTfY5dvMurg9jdZLY+x4W80t_oW9tw@mail.gmail.com>
-Subject: Re: [PATCH v1 7/7] i2c: npcm: fix checkpatch
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, 
-	avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andi.shyti@kernel.org, wsa+renesas@sang-engineering.com, rand.sec96@gmail.com, 
-	kwliu@nuvoton.com, jjliu0@nuvoton.com, kfting@nuvoton.com, 
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Hi Andrew:
+Dan Carpenter wrote:
+> This error path was intended to return, and not just print an error.  The
+> current code will lead to an error pointer dereference.
+> 
+> Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/iio/adc/pac1921.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+> index d04c6685d780..8200a47bdf21 100644
+> --- a/drivers/iio/adc/pac1921.c
+> +++ b/drivers/iio/adc/pac1921.c
+> @@ -1168,8 +1168,8 @@ static int pac1921_probe(struct i2c_client *client)
+>  
+>  	priv->regmap = devm_regmap_init_i2c(client, &pac1921_regmap_config);
+>  	if (IS_ERR(priv->regmap))
+> -		dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> -			      "Cannot initialize register map\n");
+> +		return dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> +				     "Cannot initialize register map\n");
+>  
+>  	devm_mutex_init(dev, &priv->lock);
+>  
+> -- 
+> 2.43.0
+> 
 
-Andrew Jeffery <andrew@codeconstruct.com.au> =E6=96=BC 2024=E5=B9=B48=E6=9C=
-=889=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=882:50=E5=AF=AB=E9=81=93=
-=EF=BC=9A
->
-> Hello,
->
-> On Wed, 2024-08-07 at 18:02 +0800, warp5tw@gmail.com wrote:
-> > From: Tyrone Ting <kfting@nuvoton.com>
-> >
-> > Fix checkpatch warning.
-> >
-> > Fixes: 48acf8292280 ("i2c: Remove redundant comparison in npcm_i2c_reg_=
-slave")
-> > Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
-> > ---
-> >  drivers/i2c/busses/i2c-npcm7xx.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-=
-npcm7xx.c
-> > index 1af6a927b9c1..dbe652d628ee 100644
-> > --- a/drivers/i2c/busses/i2c-npcm7xx.c
-> > +++ b/drivers/i2c/busses/i2c-npcm7xx.c
-> > @@ -1783,7 +1783,7 @@ static int npcm_i2c_int_master_handler(struct npc=
-m_i2c *bus)
-> >               /* reenable slave if it was enabled */
-> >               if (bus->slave)
-> >                       iowrite8((bus->slave->addr & 0x7F) | NPCM_I2CADDR=
-_SAEN,
-> > -                             bus->reg + NPCM_I2CADDR1);
-> > +                              bus->reg + NPCM_I2CADDR1);
-> >  #endif
-> >               return 0;
-> >       }
->
-> Fixing checkpatch warnings means you need to modify the commit that
-> checkpatch identified as having problems, not just add a fix-up patch
-> on top.
->
-> It looks like this change should be squashed into the patch before it.
+The intent was indeed to return the error. Thanks for catching it.
+Acked-by: Matteo Martelli <matteomartelli3@gmail.com>
 
-Got it, thank you for your comments.
-
->
-> Andrew
->
-
-Regards,
-Tyrone
+Thanks,
+Matteo Martelli
 
