@@ -1,193 +1,98 @@
-Return-Path: <linux-kernel+bounces-280515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0226F94CB8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:41:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DEA194CB8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D6391F24E35
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:41:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B01B01C22B45
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A741F17C219;
-	Fri,  9 Aug 2024 07:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="Q61FMbQI"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A84E17C9E3;
+	Fri,  9 Aug 2024 07:41:09 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8BE17B4E1
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D3A17C9F9
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723189255; cv=none; b=JbVipx/k0TfYE6hDvecOIYsJH7rUJMS4fKA4cGZPnyiEYiFYpfJDv8eBjIjSaDxJja0/ZxDeWr/briQfcW+NZZzA81ixhL3+V2BP+wibHIr1jZPpRazknlWeR71+4u/oNeRgi7wJ2D85kKN4zXwz7yNI8XsMrU+/6ITSGgTKFlE=
+	t=1723189268; cv=none; b=j0ihZA8M7tW2dA7zWjV3oGJqve4pj9h3tzeos/xIVnAPVR43jl+D3xuII+kDepvR85HO8SMKNVSUDEzbINacHpUi8TPvxPeq4aXWoErv8UWWCS8QU3o7B48KzkCk6Ru6pTeDoDlYRvQslQy79KYRdf7cocUft6E7wjxys86tMp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723189255; c=relaxed/simple;
-	bh=RL7LCB+DHPQAZvVoyBIlGYWe23JGKUVgbikgDh684mI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u58xb1WGczBXrQ3Bzd9s97LAYccK76C+3Uq30gvTPHBeNdEFhTqHhPEQJIqa0u6xA6DwFtv1BJzhyMSPhzFTPkvc7wTy1J83S+T/ImTVuyj8c7/YgpgJtsIma17SgHLaOCY5PB9PY1pyh4rc/CKwzp2JPYukCEO0/b6vfaJOh8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=Q61FMbQI; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-39b4eadbaa7so5837095ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1723189253; x=1723794053; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XvTxew8Byqy7FH0+Ero8MHq7Yfmx3knxdchtS7o3ERE=;
-        b=Q61FMbQIwB323DmTmyNbBEo3s449vQWw+5p/T4ldaJZLwSmgZ5jmQOs8mKzMzAEeER
-         jusm19nyd8Gr34p6tWKsNFCH7Yd7GcqYf5LfOkLV5kMc0DKCtIF5WA+VALoexrZPHbnn
-         CWsGwCtYwDcegVm3V6R6bb/avrz3zWkQHHEh8c9eRjFsGP2u+4+50oK/b1btrHmhxeGD
-         SlZWLZoUwei2tx8JNIdYE/7yZ5GyCJFC5IhadiY0qPHHkVFJ1QhNJSQj+4BiYGgBWpAf
-         r8N7jHtu4MtejynM8SDu6d3DgkIv/xG7fxZ715NUZN85D/urbRsm6lgO4ZydWDk79RAo
-         L7YA==
+	s=arc-20240116; t=1723189268; c=relaxed/simple;
+	bh=zOFJNnwtrBSgwaerWVAiPmTsRmbmmxBq8mjRvhzOee4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BqNQdyxFN58n2Zx5S1XJRTxmaM72GBPEfUDjgNP+AzPKgiJer+vBxhCDOmPIfnLjyK7bsSI86a7z7lfnd5HsWRn9cCIdOryknjeRuFS83bTYA9BhKYfSKKs3q8QQIDEB6SjHifp8BT5WurwcoMOJhSrNsD5xE1H8uRha6pnyeHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b3c9fdbb6so20597805ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:41:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723189253; x=1723794053;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XvTxew8Byqy7FH0+Ero8MHq7Yfmx3knxdchtS7o3ERE=;
-        b=GlokLK4o5pGym0h3s6gBmpwO2NygFWBGwuNa630PwJ6BlxDFU8QzghEbDZTuwmg7RW
-         asmCGP8tUXV6/tpV9UzkSatqp79IymFImuySgLgcqlyKhsq029jjtbgh2CzZTVTllHsf
-         l8Jmx1rV3RELWewuMGdfWTrZ+MEEPS7R5EVFfcRrk5SnPZlAskUUN2LOU6rfn9m6hEgz
-         Mna56QWdWhn3Sp2AHNMJPiJtE8MLzECkajDzPyY4VWTcKTBUlLwWlRBiGZDq2VTlwG3R
-         UwHimAXPtpTfiZHuzV8MhtLblCKdT+DkH6E7UyWVQsGfBmj4baSeVRS/PtwYPqkR/ePE
-         44EQ==
-X-Gm-Message-State: AOJu0YwcZd84tfsqsgHOQCvIDanv7Pdo4A14abEsUjZ6jGfKfCbSWT9r
-	mqlkMckeG71ah+1cEZAmTeKu+wucPYj9VXHQZCIospiEZ3Z1efuS9p6H30KFzljdv6k6s7aqKTV
-	FRCWMZ6ubI7s2K2ypocicI13ziSfEQr3l5YwspaeGkk+rrbmK
-X-Google-Smtp-Source: AGHT+IHbrJ4hZMchlSmfMj4NgTssVC/F92aVTWn6kOpDdbl79LGZuF4ig3Ca6JpaYJsw6t7esH5uMdUL+zK69nqPc50=
-X-Received: by 2002:a05:6e02:1aa6:b0:397:75a:39b9 with SMTP id
- e9e14a558f8ab-39b7a423e94mr12506315ab.16.1723189252955; Fri, 09 Aug 2024
- 00:40:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723189266; x=1723794066;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ajqCRsP7p1VXgI0Re11CfOt/YWPqmtBzUPsQb9296qc=;
+        b=Kvn/7YqrFij9UMu/frn2zGXzDT/nnjRAeMNl5itle6Bado3D1jNUfdZvG1CHQ5b8/d
+         a/gPV0LEtyLuIc25GwXZ+2tif+JNtV019LkhIYmphQW+9hBu4cIK3ipyX/vsSGXSNqBW
+         0c91Q3BnZzQpMOe7qdIWV6ES8s5eQqngT04Ci+QLjukHAXjoITJTMPvir/uJjCxL+2a5
+         /uVG0FWQWgbInnhgwGCrGGv8iNhgRsBEcuD9Ktu4YkNdPIUkzFL98UhpoTSPGR/+uC1h
+         6n3udHQwPwXidN5mZP9ICc01gwDsqGhfDLeyJ6dGjc50dzgZfxudwAGAyd6T19q3A5SE
+         MMHA==
+X-Gm-Message-State: AOJu0YzZAafHNXJ+5GhDncTiAp+8jRet4IDyEJT6FDjIJ5+lHnehefd+
+	/PwnsXEssv6FVFxaim8n9TJzK1mFGATsbS+r+MGTKMeryEIlUoFXIaxuKCSK65IiU8sfK8yCl5h
+	1Xx8e1s1y3xg1nMSChv8p/W8N307Y4pbRR/Of5J4qunOvPnHf09tQUa0=
+X-Google-Smtp-Source: AGHT+IEouAXBVEG08RljD/vu3dfJHpBJ2niX8SGkfp4hGZC7ydCl53BBxjcmrmfJElaFH6WcnQx6EagSVGqC4QIGpnxGzf11IwRi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809071049.2454-1-yongxuan.wang@sifive.com>
-In-Reply-To: <20240809071049.2454-1-yongxuan.wang@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 9 Aug 2024 13:10:41 +0530
-Message-ID: <CAAhSdy0R7qAFA6DLrEoy5u+5mhQttvyfnrkjcUpvFsxwJeBiVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] irqchip/riscv-aplic: Retrigger MSI interrupt on
- source configuration
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	greentime.hu@sifive.com, vincent.chen@sifive.com, 
-	Thomas Gleixner <tglx@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+X-Received: by 2002:a05:6e02:1d02:b0:39a:eb3d:8c65 with SMTP id
+ e9e14a558f8ab-39b7a473872mr619925ab.4.1723189266510; Fri, 09 Aug 2024
+ 00:41:06 -0700 (PDT)
+Date: Fri, 09 Aug 2024 00:41:06 -0700
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001c85b0061f3b4484@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 9, 2024 at 12:40=E2=80=AFPM Yong-Xuan Wang <yongxuan.wang@sifiv=
-e.com> wrote:
->
-> The section 4.5.2 of the RISC-V AIA specification says that "any write
-> to a sourcecfg register of an APLIC might (or might not) cause the
-> corresponding interrupt-pending bit to be set to one if the rectified
-> input value is high (=3D 1) under the new source mode."
->
-> When the interrupt type is changed in sourcecfg register, the APLIC
-> device might not set the corresponding pending bit, so the interrupt
-> might never become pending.
->
-> To handle sourcecfg register changes for level-triggered interrupts in
-> MSI mode, manually set the pending bit for retriggering interrupt if it
-> was already asserted.
->
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> Reviewed-by: Vincent Chen <vincent.chen@sifive.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-LGTM.
+***
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Author: lizhi.xu@windriver.com
 
-Regards,
-Anup
+add file refconut when add fid to list
 
-> ---
-> v2:
-> - update commit message (Anup, Thomas)
-> - rename aplic_retrigger_asserting_irq() to aplic_msi_irq_retrigger_level=
-()
->   and make it as a static function since only APLIC MSI mode require it.
->   (Anup, Thomas)
->
-> ---
->  drivers/irqchip/irq-riscv-aplic-msi.c | 35 +++++++++++++++++++++------
->  1 file changed, 28 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-riscv-aplic-msi.c b/drivers/irqchip/irq-=
-riscv-aplic-msi.c
-> index 028444af48bd..9d63dc37dea5 100644
-> --- a/drivers/irqchip/irq-riscv-aplic-msi.c
-> +++ b/drivers/irqchip/irq-riscv-aplic-msi.c
-> @@ -32,15 +32,10 @@ static void aplic_msi_irq_unmask(struct irq_data *d)
->         aplic_irq_unmask(d);
->  }
->
-> -static void aplic_msi_irq_eoi(struct irq_data *d)
-> +static void aplic_msi_irq_retrigger_level(struct irq_data *d)
->  {
->         struct aplic_priv *priv =3D irq_data_get_irq_chip_data(d);
->
-> -       /*
-> -        * EOI handling is required only for level-triggered interrupts
-> -        * when APLIC is in MSI mode.
-> -        */
-> -
->         switch (irqd_get_trigger_type(d)) {
->         case IRQ_TYPE_LEVEL_LOW:
->         case IRQ_TYPE_LEVEL_HIGH:
-> @@ -59,6 +54,32 @@ static void aplic_msi_irq_eoi(struct irq_data *d)
->         }
->  }
->
-> +static void aplic_msi_irq_eoi(struct irq_data *d)
-> +{
-> +       /*
-> +        * EOI handling is required only for level-triggered interrupts
-> +        * when APLIC is in MSI mode.
-> +        */
-> +
-> +       aplic_msi_irq_retrigger_level(d);
-> +}
-> +
-> +static int aplic_msi_irq_set_type(struct irq_data *d, unsigned int type)
-> +{
-> +       int rc;
-> +
-> +       rc =3D aplic_irq_set_type(d, type);
-> +       if (rc)
-> +               return rc;
-> +
-> +       /*
-> +        * Updating sourcecfg register for level-triggered interrupts
-> +        * requires interrupt retriggering when APLIC is in MSI mode.
-> +        */
-> +       aplic_msi_irq_retrigger_level(d);
-> +       return 0;
-> +}
-> +
->  static void aplic_msi_write_msg(struct irq_data *d, struct msi_msg *msg)
->  {
->         unsigned int group_index, hart_index, guest_index, val;
-> @@ -130,7 +151,7 @@ static const struct msi_domain_template aplic_msi_tem=
-plate =3D {
->                 .name                   =3D "APLIC-MSI",
->                 .irq_mask               =3D aplic_msi_irq_mask,
->                 .irq_unmask             =3D aplic_msi_irq_unmask,
-> -               .irq_set_type           =3D aplic_irq_set_type,
-> +               .irq_set_type           =3D aplic_msi_irq_set_type,
->                 .irq_eoi                =3D aplic_msi_irq_eoi,
->  #ifdef CONFIG_SMP
->                 .irq_set_affinity       =3D irq_chip_set_affinity_parent,
-> --
-> 2.17.1
->
+#syz test: upstream c0ecd6388360
+
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index e0d34e4e9076..99c7015396ab 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -219,6 +219,14 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 			retval = filemap_fdatawrite(inode->i_mapping);
+ 
+ 		spin_lock(&inode->i_lock);
++		if (test_bit(I_SYNC, &inode->i_state)) {
++			spin_unlock(&inode->i_lock);
++			if (wait_on_bit_timeout(&inode->i_state, I_SYNC,
++						TASK_UNINTERRUPTIBLE, HZ))
++				return -EBUSY;
++			printk("del, ind: %p, ino: %lx, ino is dirty: %d, %s\n", inode, inode->i_ino, inode->i_state & I_SYNC,  __func__);
++			spin_lock(&inode->i_lock);
++		}
+ 		hlist_del(&fid->ilist);
+ 		spin_unlock(&inode->i_lock);
+ 		put_err = p9_fid_put(fid);
 
