@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-281454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D1D94D712
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:16:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F91394D714
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A50F2281B65
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:16:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D629B21601
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28B21684A2;
-	Fri,  9 Aug 2024 19:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8307816A945;
+	Fri,  9 Aug 2024 19:16:00 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F0815FD1B
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E92D16130B
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723230959; cv=none; b=S7c92wNoUKpyGl8dJhi7ZpWOZj7QyDJdvWvicoo/eIoPxPExOTncJAilnEYWFmGqRgvhA+SGRbp9nkdiX85uyGds+MpD/IbPNJJHIGFbb5UiC526FbzKJz9LeAJctWuqQNfx0YOolfuZCQ+2ska2TudvV2JxjeTHxNS8BXo3JK0=
+	t=1723230960; cv=none; b=ShW8rXyUfeNA6IIHGJCrC0jS7oZOmq8VKBuQMFzFkOlgKRiNkPWsqJuiUL2580ihp662zOqfEhOihrsPOu7wwfmx0oLVJk7gaOEvOWrUZz19l23YxkVmOxUJNUZkHuiVfJbSiWtmemjy9oC56HDoo81d0D3BYSTMsJQ0Br1hv6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723230959; c=relaxed/simple;
-	bh=34p9Gi/zWQHOYmvvEJpb/rWkbc7+TTqiOp2IDINoO+A=;
+	s=arc-20240116; t=1723230960; c=relaxed/simple;
+	bh=TMeoUu8mZPW80ys09DNhX2GMp1kgrl8Hx1diGKUwXcU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WC9vfDlXc+Lye3DzV1GSyCR8zGWFAuoHVKwZk3V+vENzZD53GMGD7dorjmHTz6qF5QCvXlfW3lZ/MI7RoSFBJ5y1eiXothOogRDEdsLxlz3+cZ1MrJE/cUZxvXkRuegR6WbT7FYlBhUQlYu7r9FFsS9F9e4U8HU8UQGhsht+LqM=
+	 MIME-Version; b=AtS9ddd29hcMHFjwX/45+yJBMKCIwJ3VtjLm+OKRKat1jJTpBJTaVO0I7k1+PJvA2qGy4XCr82WEe4akgykvcOoP0f5HE3ZMvkBfwnFjZ7bSyj7FUosbjht8zpmLzpk52jCW3lcMS7ZO1RZPemNmQc0yGYda7BfYkoDo+B66+JU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 307A313D5;
-	Fri,  9 Aug 2024 12:16:23 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25C641684;
+	Fri,  9 Aug 2024 12:16:24 -0700 (PDT)
 Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 952C13F71E;
-	Fri,  9 Aug 2024 12:15:56 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 934633F71E;
+	Fri,  9 Aug 2024 12:15:57 -0700 (PDT)
 From: Robin Murphy <robin.murphy@arm.com>
 To: will@kernel.org
 Cc: mark.rutland@arm.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	ilkka@os.amperecomputing.com
-Subject: [PATCH 4/8] perf/arm-cmn: Improve build-time assertions
-Date: Fri,  9 Aug 2024 20:15:43 +0100
-Message-Id: <2aabebd619b65416a6cd2ca7058ca85fa3656958.1723229941.git.robin.murphy@arm.com>
+Subject: [PATCH 5/8] perf/arm-cmn: Make cycle counts less surprising
+Date: Fri,  9 Aug 2024 20:15:44 +0100
+Message-Id: <570c473134426b8e11bb043aa59e3cde3dab8af3.1723229941.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.39.2.101.g768bb238c484.dirty
 In-Reply-To: <cover.1723229941.git.robin.murphy@arm.com>
 References: <cover.1723229941.git.robin.murphy@arm.com>
@@ -52,38 +52,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These days we can use static_assert() in the logical place rather than
-jamming a BUILD_BUG_ON() into the nearest function scope. And since it
-is now so convenient to do so, let's add an extra one to reinforce the
-dtm_idx bitmap as well.
+By default, CMN has automatic clock-gating with the implication that a
+DTC's cycle counter may not increment while the domain is sufficiently
+idle. Given that we may have up to 4 DTCs to choose from when scheduling
+a cycles event, this may potentially lead to surprising results if
+trying to measure metrics based on activity in a different DTC domain
+from where cycles end up being counted. Make the reasonable assumption
+that if the user wants to count cycles, they almost certainly want to
+count all of the cycles, and disable clock gating while a DTC's cycle
+counter is in use.
 
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/perf/arm-cmn.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/perf/arm-cmn.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
-index c9a2b21a7aec..8f7a1a6f8ab7 100644
+index 8f7a1a6f8ab7..4d128db2040c 100644
 --- a/drivers/perf/arm-cmn.c
 +++ b/drivers/perf/arm-cmn.c
-@@ -577,6 +577,9 @@ struct arm_cmn_hw_event {
- 	bool wide_sel;
- 	enum cmn_filter_select filter_sel;
- };
-+static_assert(sizeof(struct arm_cmn_hw_event) <= offsetof(struct hw_perf_event, target));
-+/* Currently XPs are the node type we can have most of; others top out at 128 */
-+static_assert(sizeof_field(struct arm_cmn_hw_event, dtm_idx) >= CMN_MAX_XPS / 4);
+@@ -115,6 +115,7 @@
+ /* The DTC node is where the magic happens */
+ #define CMN_DT_DTC_CTL			0x0a00
+ #define CMN_DT_DTC_CTL_DT_EN		BIT(0)
++#define CMN_DT_DTC_CTL_CG_DISABLE	BIT(10)
  
- #define for_each_hw_dn(hw, dn, i) \
- 	for (i = 0, dn = hw->dn; i < hw->num_dns; i++, dn++)
-@@ -587,7 +590,6 @@ struct arm_cmn_hw_event {
+ /* DTC counters are paired in 64-bit registers on a 16-byte stride. Yuck */
+ #define _CMN_DT_CNT_REG(n)		((((n) / 2) * 4 + (n) % 2) * 4)
+@@ -1544,9 +1545,12 @@ static void arm_cmn_event_start(struct perf_event *event, int flags)
+ 	int i;
  
- static struct arm_cmn_hw_event *to_cmn_hw(struct perf_event *event)
- {
--	BUILD_BUG_ON(sizeof(struct arm_cmn_hw_event) > offsetof(struct hw_perf_event, target));
- 	return (struct arm_cmn_hw_event *)&event->hw;
- }
+ 	if (type == CMN_TYPE_DTC) {
+-		i = hw->dtc_idx[0];
+-		writeq_relaxed(CMN_CC_INIT, cmn->dtc[i].base + CMN_DT_PMCCNTR);
+-		cmn->dtc[i].cc_active = true;
++		struct arm_cmn_dtc *dtc = cmn->dtc + hw->dtc_idx[0];
++
++		writel_relaxed(CMN_DT_DTC_CTL_DT_EN | CMN_DT_DTC_CTL_CG_DISABLE,
++			       dtc->base + CMN_DT_DTC_CTL);
++		writeq_relaxed(CMN_CC_INIT, dtc->base + CMN_DT_PMCCNTR);
++		dtc->cc_active = true;
+ 	} else if (type == CMN_TYPE_WP) {
+ 		u64 val = CMN_EVENT_WP_VAL(event);
+ 		u64 mask = CMN_EVENT_WP_MASK(event);
+@@ -1575,8 +1579,10 @@ static void arm_cmn_event_stop(struct perf_event *event, int flags)
+ 	int i;
  
+ 	if (type == CMN_TYPE_DTC) {
+-		i = hw->dtc_idx[0];
+-		cmn->dtc[i].cc_active = false;
++		struct arm_cmn_dtc *dtc = cmn->dtc + hw->dtc_idx[0];
++
++		dtc->cc_active = false;
++		writel_relaxed(CMN_DT_DTC_CTL_DT_EN, dtc->base + CMN_DT_DTC_CTL);
+ 	} else if (type == CMN_TYPE_WP) {
+ 		for_each_hw_dn(hw, dn, i) {
+ 			void __iomem *base = dn->pmu_base + CMN_DTM_OFFSET(hw->dtm_offset);
 -- 
 2.39.2.101.g768bb238c484.dirty
 
