@@ -1,119 +1,130 @@
-Return-Path: <linux-kernel+bounces-280981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CA794D195
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:49:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5741394D191
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFDFC1F23CC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:49:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11FB5286D84
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446A1197558;
-	Fri,  9 Aug 2024 13:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8D119581F;
+	Fri,  9 Aug 2024 13:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DVRJMbD/"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVAR0fXd"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1116B195B18;
-	Fri,  9 Aug 2024 13:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E2718C925;
+	Fri,  9 Aug 2024 13:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723211367; cv=none; b=hQbXobps4HG1iRS0VRgeZlENgTsUFj//B5PZrcSN59tlE1J6HG8lqbnL0y13UiSpN6YqOAhUB8mnG4tigsFO10dkAgyu10XPHtZd3axN6T7QWE2G/zlfh/jXgC9O+RevsTYAY5pnzHE6w8Y2cCPlGGtMyP+S7spOhVuEduUf9Bc=
+	t=1723211355; cv=none; b=WR8KR22BQ3pFPBkJx/zHE+G3xxeHSJxg2cx/obvgBxREgV86MISx0u7n3XxwU/LimZ3W7PafjRaFnT4UCX7FtMydLDmKHlc+zSHPeYpAu0UzXvDHNi6erAO84PoQ6ti7Tb+mhWKNwxBU1uRE//xl5PfGI+hSS8e5Jm1XDLLttOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723211367; c=relaxed/simple;
-	bh=C+gIFlyGMCduKmWNIBw9dRuDUg+MBEYeouMi/So4pD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rxaVMLLxSoA5JFZrK2tkHnJ8X0NxQmfOp9+3pzu6FTQcrpM1DZjG3Tn9fVKq38RQ2DZqPR/4ANNN19ijZISKKKpRAQfYF+/ii9iZsqZB9x904siAb96e58gPFwGbeNVTPz2dQafo4s0eMQrVBDoHG3C3i6p78JvmxKgbIN97Rd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=DVRJMbD/; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=47NW2XTBLKy+JoGemROVoOjIno1OsPS387sub0zUsJQ=; b=DVRJMbD/d+b+ri1hqUPwI1BYpw
-	AtUaI0DTXrCLJDf3Bk1fR8Cpn01NZsD+WFKzSgEtiOC5a1cl1sUQu7L0IkTfIFLN6gwMVEkjAoxIw
-	LL5b24dTLZawDUUmTiznYYrKygtTy+roU9BMpeXIjeF1+dODK6XGAVEWQctsLYj5dzKo38vDfW362
-	0L/VMRKc/xgE4Cj1SlYpMcVGF8vHMAxHZfMOXNX96MRo78C3GCrDvT8ChpVp+2qOkMOtD8yAznFMB
-	hy6mr+fZid/vjXCptuqgrV5vD7+mAZ4970PNQNiX+JJnvac7b9WKdUtaZNWcg4CTW2KPA8fppRte/
-	2/ovtxGg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54196)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1scPzC-0005zC-1t;
-	Fri, 09 Aug 2024 14:48:54 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1scPzC-0006Ah-U5; Fri, 09 Aug 2024 14:48:54 +0100
-Date: Fri, 9 Aug 2024 14:48:54 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Stefan Wiehler <stefan.wiehler@nokia.com>
-Cc: Will Deacon <will@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm: smp: Avoid false positive CPU hotplug Lockdep-RCU
- splat
-Message-ID: <ZrYeRmn920CACeCa@shell.armlinux.org.uk>
-References: <20240307160951.3607374-1-stefan.wiehler@nokia.com>
- <bce79497-52c5-4241-aaf6-2a95dc459041@joelfernandes.org>
- <66fdce3a-c7f6-4ef4-ab56-7c9ece0b00e2@nokia.com>
- <ZewycILled+mZhwe@shell.armlinux.org.uk>
- <20240312221440.GA29419@willie-the-truck>
- <ZfDZolTDQa76hhaS@shell.armlinux.org.uk>
- <20240313003244.GA29568@willie-the-truck>
- <ZfF4t74OD4CgVaGV@shell.armlinux.org.uk>
- <f15aea08-8daa-4994-a8f6-be0461b06539@nokia.com>
+	s=arc-20240116; t=1723211355; c=relaxed/simple;
+	bh=ZjiwsrSFa0t8o6fGNq60V9Drb5brqlNaEu8OYuhug+8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JuNJil30UsymCTAc85FGyk+c/8PU8ILQRc2dRtfTFQZG8qPN5V0+RtgE5e/S35fdI3U7i/BGfscmAUmXlnMLZdZWy6x3xS/ESNxA9ZD+uDUJXpFpxTAHUHFADFUZPvZtD/io34jEfvCIHoaHO7DkG2uSrq/ZEF2xFFj+FxVH3T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVAR0fXd; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b3fff87e6bso2306389a12.0;
+        Fri, 09 Aug 2024 06:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723211352; x=1723816152; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1sSUf6K1mg1eTJFMtYJO/PWYF/2PWB2qfNRQMe6qLvY=;
+        b=eVAR0fXdHtIStT+0iCfEy8Xwx8oY53qhVFTKRPN02Y1SoGFgfSf9i8T5XOcNhqpw6J
+         tT03fejma2zLSqk0pJLYgOdug8TAZkPPzggD2XrGPGF0jKHQuHuo+R4USju8ljrIU2Rt
+         ovIdBk9goSu8XqqNeQc75VJsar+NFQRnZLOhNRoTrX2bd32u958Ig4MAAvdoDvCEccBo
+         1fmOFCkru9JMOl1aYzREHCZtBtqhatVVSV+9WB4JeyqfbEfgIJ4Vgelcxz2jKU7wNZuv
+         0AOVVwgN2OftziI0UcN5LcnxlVMb8PvC+iWdU1UGXnrpSZp2/QQTsNNatjOaklSvwSwc
+         rA7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723211352; x=1723816152;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1sSUf6K1mg1eTJFMtYJO/PWYF/2PWB2qfNRQMe6qLvY=;
+        b=twlb6AwwjONMmTxAdRO5OS67Xaq374nnziKH6yTVfTr254+WVZaZ/f4vsxgPcHVh+h
+         cPMG5R8CSDtzQgmwE4sZghnTQfomG5EuaBGR4mS5ZH7OSs+lXWvdXvoVclbc+4q5dP0p
+         ThT7PjHeuh+doaMmRVOOyvbp3MiJk1Jy7b4ROkcBD858wd6nl8HOzy1XkIyyzO6I9BEU
+         XntAimwPR6JSAdZlWlITLmO0wVycFi6Zh/41573AdJa93cu4Vx5iOJsS1uEy02Tow/cC
+         /+UznqVQOIvpjvhtXIM4JJDu6/+DTO1KW7TSmFc7w8AbkdRtNyBGKaab3gtr3EwPRqJT
+         lPrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSfzRkSM6LcVa7FxN+B4a8fxdn1g3DVpXR/YiJj6Fsp0Pseem2zXTr1fxl2pVuCMB5mF7xJsTWV4HCLDK69bF6EdNS+UFGZCcsJPBu9L6Z5m7sVDVL+L+Z+bs5K9bW3ZkeBBCTPIrp
+X-Gm-Message-State: AOJu0Yyufr/0KIVGSG1LAVCuR2/TfTZmVEUfpp2J34QJuDGlox7PH7Uz
+	TWqBcxI+MRUQDkuTkCzE4Pz8czkDejsz1TXRbgIuEvczp8SGDZ55
+X-Google-Smtp-Source: AGHT+IFCzxVQaNZvkzO3F5IqJ9BbNONwpS3CmngsyJ/4FoqCY2dBB/dll4l8gA9xCqzt9qVC0kiriA==
+X-Received: by 2002:a05:6402:2344:b0:5a2:1693:1a24 with SMTP id 4fb4d7f45d1cf-5bd0a5759c5mr1250813a12.15.1723211351860;
+        Fri, 09 Aug 2024 06:49:11 -0700 (PDT)
+Received: from HYB-hhAwRlzzMZb.ad.analog.com ([83.103.132.21])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf9e64sm1535512a12.11.2024.08.09.06.49.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 06:49:11 -0700 (PDT)
+From: Dumitru Ceclan <mitrutzceclan@gmail.com>
+X-Google-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+To: mitrutzceclan@gmail.com
+Cc: jic23@kernel.org,
+	dlechner@baylibre.com,
+	dumitru.ceclan@analog.com0,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dumitru Ceclan <dumitru.ceclan@analog.com>
+Subject: [PATCH] iio: adc: ad7173: fix GPIO device info
+Date: Fri,  9 Aug 2024 16:49:08 +0300
+Message-ID: <20240809134909.26829-1-dumitru.ceclan@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f15aea08-8daa-4994-a8f6-be0461b06539@nokia.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 09, 2024 at 03:37:38PM +0200, Stefan Wiehler wrote:
-> Unfortunately I'm don't feel qualified to contribute to the discussion
-> on option 3. Russell and Will, would you be able to spare some time to
-> drive this further? Otherwise I would propose to make a decision on
-> going for option 1 or 2.
+Models AD4114/5/6 have .higher_gpio_bits = true. This is not correct as
+the only models that have the GPIO bits to a higher position are AD4111/2.
 
-Highly unlikely that I'm going to have any time what so ever as I'm
-undergoing a series of operations which are affecting my eye sight
-(over the next 3/4 days, I have only one usable eye while the vision
-in the other settles post-op.) I have little idea at the moment how
-this is going to pan out, or how long I can spend in front of the
-screen.
+Fix by removing the higher_gpio_bits = true from the AD4114/5/6 models.
 
-Worst case, it could be well into September before I'm able to resume
-any serious kernel work. E.g. if the brain is unable to resolve the
-3D imagine from both eyes next week. Then there'll be the second eye
-to be done at the earliest 30th August. Then there's waiting for the
-vision to settle in that eye. Then there's working out whether I
-need sight correction to see the screen and possibly getting a new
-set of lenses for the glasses.
+Fixes: 13d12e3ad12d ("iio: adc: ad7173: Add support for AD411x devices")
+Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+---
+ drivers/iio/adc/ad7173.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-So... I think it's best to count me out on being able to solve this
-problem.
-
-Sorry.
-
+diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+index 9544bf7142ad..b77e2beb502a 100644
+--- a/drivers/iio/adc/ad7173.c
++++ b/drivers/iio/adc/ad7173.c
+@@ -302,7 +302,6 @@ static const struct ad7173_device_info ad4114_device_info = {
+ 	.num_configs = 8,
+ 	.num_voltage_in = 16,
+ 	.num_gpios = 4,
+-	.higher_gpio_bits = true,
+ 	.has_vincom_input = true,
+ 	.has_temp = true,
+ 	.has_input_buf = true,
+@@ -320,7 +319,6 @@ static const struct ad7173_device_info ad4115_device_info = {
+ 	.num_configs = 8,
+ 	.num_voltage_in = 16,
+ 	.num_gpios = 4,
+-	.higher_gpio_bits = true,
+ 	.has_vincom_input = true,
+ 	.has_temp = true,
+ 	.has_input_buf = true,
+@@ -338,7 +336,6 @@ static const struct ad7173_device_info ad4116_device_info = {
+ 	.num_configs = 8,
+ 	.num_voltage_in = 16,
+ 	.num_gpios = 4,
+-	.higher_gpio_bits = true,
+ 	.has_vincom_input = true,
+ 	.has_temp = true,
+ 	.has_input_buf = true,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.43.0
+
 
