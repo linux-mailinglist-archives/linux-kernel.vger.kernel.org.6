@@ -1,104 +1,117 @@
-Return-Path: <linux-kernel+bounces-280922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8DFE94D0FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:16:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F3894D0FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BE031F21BF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:16:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A6E61C219BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612E9194C75;
-	Fri,  9 Aug 2024 13:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ij8QSxps"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3C9194AEB;
+	Fri,  9 Aug 2024 13:16:55 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2323418C93F
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD4A2F37;
+	Fri,  9 Aug 2024 13:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723209389; cv=none; b=MQlv3Fdel3x0YKwOpSXYslUjV4kOSP9eYS23b7Rxk37igQyOBo3lTvEtEGMQy+yMbD4uX1go4Qe1pgeC/uvesFZ78gRV9+bGIz5vhOfcEBvTiqC6W9x4q+MELSXrJf2aWb/PiF9ED6vcKPV/xHrYMp/3nWuP5xgB1QXfbDKBhng=
+	t=1723209415; cv=none; b=n9dhTcHvASCnCu0UBEdd5/xqTFipGxkfPMlEcDbI/coetBR/8B31RJOVjIGuvTw7wm4u04Pl/iMXge2RPC/pzgFj8jdwByLHER382/b/WIm67K04ODXCFcQ+BMqVS5impzYowtSeA2Kxxq3RMRQGmcZf6fCSiXrtGhP//re+Vjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723209389; c=relaxed/simple;
-	bh=92qOkLCSYu9nmceUlAEJm9hX6RmjzSfHnPjdMwunYvU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Knzw3isNKkdeYSzCsWVkRCVglMvYIZqQQPtsp0XND/dYV8yQkGFfASTwdn+FHq9PRCrhY4Fm0/AOsfSxdD7W8Ac/m2OSodIlRwfqtG9pt5JoIm/uvABG3aJuro++sOUHEabBhQnsihwbNikoZxeFgooBUtMzcce6jWkR2xvKrR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ij8QSxps; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-428e3129851so14766165e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 06:16:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723209386; x=1723814186; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=92qOkLCSYu9nmceUlAEJm9hX6RmjzSfHnPjdMwunYvU=;
-        b=ij8QSxpsg2UMcdzOEQX4CYZL1OeZI4vWBGBX5QHtR3glQk7bQDkbcfZhjuXimJCudH
-         HS5Qro1ADMVr/yIVw9KUDRSoYTGNYoBN/PN8EGYzuOGYGcBWeAJxMKCrbw2g7Ol6YTXy
-         ZrckBN1y/ao7E8gjfUxDlFipKqZBIM1IEoxzy/a2Zrp/wgmYa8fjd0Y1oMml3OXg77OM
-         5GlzIJ/Gh4dAwfe5hrPUNoMgeCzDM63gLQ5D+qwvtPS3WksSw643bob6/XSPO7QC07GH
-         J2CgivjRtgZslYmjhwokSkBfNPFGpotCtDXHVk2g7PVASHrSVPCFVjuyuL9eREjEPrQO
-         5Kww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723209386; x=1723814186;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=92qOkLCSYu9nmceUlAEJm9hX6RmjzSfHnPjdMwunYvU=;
-        b=Qyr/Pi7wKokd+r8hHT/HCE3oABx0WLqVj/uQqcWm+DIHbq2zHB5DJQMe39sCaxoOLY
-         jH/gy7lth8497We1T8rhPTInHtIBOTABuO0kN2MwqmLo5x2ESJerRgGuOigb/uS/MjGG
-         bmv4/FC2XPEpxegDKm+pFm2uDDKOLIm/OXPj23NMA7UBtcBJjOeevEjdNj0pCRIimX5Q
-         zkox0aPAw6esE24Gx3nuMhi6otcKE7GveaPXKXuEIECKuXgPldb9uklsPM2kqwUVViP9
-         XnxG4DahiEpcO0M024g5znRtcnl1JFlWM3+OJZ83DzVZimtG3CCGeBqMMSNPf3rYrq8r
-         j45A==
-X-Forwarded-Encrypted: i=1; AJvYcCWwgZTvQmfTp35MoEta7Nk+v+xZVCNRZE2mS5sJurXwdssCgY8dU1SsJkvWVAYWkdz5yj9BPx0cxAm7IhU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgu1x5zgv3ueMoUtx98reVoQRUJgD2SgGgL+FL1fmPv35r7qge
-	0CewKioKFZ6bQCkfNyNMy0BxOmNeHF9pR3ofyHeMZ+ZFf6nAop48yx1XcKHBQsnDXK9Si/QDiq2
-	o7rh5HQsf7GvrvaJmI8I6kpRhhH8DcQC92uXW
-X-Google-Smtp-Source: AGHT+IEencuwb5ZiZqBxrl2yiXarWFIGCnvBaoEIUj3k90VcnrheSq2WUA4koqg2hebfaLRX95IYrP+jEef8wEWRJhg=
-X-Received: by 2002:adf:f545:0:b0:369:c6d7:7b93 with SMTP id
- ffacd0b85a97d-36d5ea00d30mr1177252f8f.28.1723209386152; Fri, 09 Aug 2024
- 06:16:26 -0700 (PDT)
+	s=arc-20240116; t=1723209415; c=relaxed/simple;
+	bh=stRr/ELDXNp234twU4cggytXPYhZO+angZXt2yhKMIQ=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=X+p42QT6ClhHQc3furmHwpgXYz+v8wIqrkiKj7S54EaK2qsszSRUTNm5X0+7rkCOKkApJBhTQ19jeSbFlZ1yPdh0JbN/XGOhWI0dTn/mHBgC5u8DbLfYcWFnYK41DEhiL0Y2YRP3st4FZMkxNriq2o/9BU6bU7IfJleiS7CEkxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WgPVy5LVwz20lH6;
+	Fri,  9 Aug 2024 21:13:46 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id B881F18002B;
+	Fri,  9 Aug 2024 21:16:45 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 9 Aug 2024 21:16:45 +0800
+Subject: Re: [PATCH v1 1/1] ACPI/IORT: Switch to use kmemdup_array()
+To: Catalin Marinas <catalin.marinas@arm.com>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Will Deacon <will@kernel.org>
+CC: <linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>
+References: <20240606165005.3031490-1-andriy.shevchenko@linux.intel.com>
+ <3a1e0ffe-db11-d18f-db33-881df7d9b18d@huawei.com>
+ <2edd3b72-24a4-8b19-8738-cc82dc4fae6c@huawei.com>
+ <ZrYIosRuNG9S-SqM@smile.fi.intel.com> <ZrYRIPYv8euBkStd@arm.com>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <c00c6b13-9048-ead1-0535-f8c9e8fab240@huawei.com>
+Date: Fri, 9 Aug 2024 21:16:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809064222.3527881-1-aliceryhl@google.com> <975158d8-4f26-4b5c-9cc7-eec15d901eb6@kernel.dk>
-In-Reply-To: <975158d8-4f26-4b5c-9cc7-eec15d901eb6@kernel.dk>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 9 Aug 2024 15:16:13 +0200
-Message-ID: <CAH5fLgiqQ6GxPk4-JCdRnKmi9ECgzVj+MkoUnZLYtUp8-yCebQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: sort includes in bindings_helper.h
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZrYRIPYv8euBkStd@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Fri, Aug 9, 2024 at 3:07=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 8/9/24 12:42 AM, Alice Ryhl wrote:
-> > Dash has ascii value 45 and underscore has ascii value 95, so to
-> > correctly sort the includes, the underscore should be last.
->
-> This commit message lacks an explanation for why the change is
-> being done. Yes it states that it brings the headers in ascii
-> sort order, but WHY?
+On 2024/8/9 20:52, Catalin Marinas wrote:
+> On Fri, Aug 09, 2024 at 03:16:34PM +0300, Andy Shevchenko wrote:
+>> On Fri, Jun 14, 2024 at 08:54:39AM +0800, Hanjun Guo wrote:
+>>> +Cc Catalin
+>>>
+>>> On 2024/6/11 18:42, Hanjun Guo wrote:
+>>>> On 2024/6/7 0:50, Andy Shevchenko wrote:
+>>>>> Let the kememdup_array() take care about multiplication and possible
+>>>>> overflows.
+>>>>>
+>>>>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>>>> ---
+>>>>>    drivers/acpi/arm64/iort.c | 2 +-
+>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+>>>>> index c0b1c2c19444..e596dff20f1e 100644
+>>>>> --- a/drivers/acpi/arm64/iort.c
+>>>>> +++ b/drivers/acpi/arm64/iort.c
+>>>>> @@ -822,7 +822,7 @@ static struct iommu_iort_rmr_data *iort_rmr_alloc(
+>>>>>            return NULL;
+>>>>>        /* Create a copy of SIDs array to associate with this rmr_data */
+>>>>> -    sids_copy = kmemdup(sids, num_sids * sizeof(*sids), GFP_KERNEL);
+>>>>> +    sids_copy = kmemdup_array(sids, num_sids, sizeof(*sids),
+>>>>> GFP_KERNEL);
+>>>>>        if (!sids_copy) {
+>>>>>            kfree(rmr_data);
+>>>>>            return NULL;
+>>>>
+>>>> Looks good to me,
+>>>>
+>>>> Acked-by: Hanjun Guo <guohanjun@huawei.com>
+>>>
+>>> Catalin, would you mind pick this up as well?
+>>
+>> Any news?
+>>
+>> I do not see this even in Linux Next...
+> 
+> Ah, sorry, I missed this. Since it doesn't look like a fix, I guess it's
+> fine to go in 6.12. Adding Will since he's handling the upcoming merging
+> window.
 
-I can add the following to the commit message:
+Sorry, I sent another email almost at the same time, so missed this one.
 
-The headers in this file are sorted alphabetically, which makes it
-easy to quickly resolve conflicts by selecting all of the headers and
-invoking :'<,'>sort to sort them. To keep this technique to resolve
-conflicts working, also apply sorting to symbols that are not letters.
-
-Alice
+Thanks
+Hanjun
 
