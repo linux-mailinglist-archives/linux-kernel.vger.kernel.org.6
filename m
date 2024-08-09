@@ -1,122 +1,104 @@
-Return-Path: <linux-kernel+bounces-280964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5821E94D173
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:40:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A1994D176
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C079282178
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:39:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9079D1C20D07
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26ED7195809;
-	Fri,  9 Aug 2024 13:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DB41957F8;
+	Fri,  9 Aug 2024 13:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="EbwMsnsq"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="eZGkQrCK"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA11F192B9F
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ED2192B9F
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723210791; cv=none; b=nGgfvvNi7yZxmS1NdAqV9vBwL5Faj/+B93X9C6v4OlZ+NOKj5KJp+/4zR4CfSd0XrAnnwrbmNwVl1zy2FlaC2Xsg73gRiziLSUd8ZhsHhoAHjT8vfbfFvrXjnvJWrgmT/owxrDH4VOaWl1yo5EPkcr3X1kIi9Us8QblsVqlEvsA=
+	t=1723210925; cv=none; b=ckWcZh6KVXDOmZCRhe1aUj+W2x1MwSnv+lD3VjdV0wBoDxcMkCTI626l9tbliqXMFbxic0P5b0vCF4Tg9N4XBLuJUvB2cDDj4Bcz6cCYiHIpdeQKIgeyOpIIHiN2x+clrG+FFs2ih+hFfOBC/RAflB+fZVCwTa0JClPxdrUIdC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723210791; c=relaxed/simple;
-	bh=d0ADfooSD+MQ9RnlKIStCtMA/V5ID+/9Ydemptv/6kA=;
+	s=arc-20240116; t=1723210925; c=relaxed/simple;
+	bh=1fxOc/3P0me+bve4od/PfTJ74lOE4vkcbcv9RZZM76I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQA5xAtJcf1pyaaub33nLG7pBfRILOfy1gLl0KbY6RfSZ3Yasyxbj9up57N0NM+OHGwQNviPmDsEWcTz3sjVzfOuCkEzZiOQ70l3u8yPCf0NOqxK9n4+4O/ZM4sh+gTwMzZSAA47RFRkmLLyGxuHDOpY2c/c/ZSsntLe2YaNQV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=EbwMsnsq; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=d0AD
-	fooSD+MQ9RnlKIStCtMA/V5ID+/9Ydemptv/6kA=; b=EbwMsnsqe5b601/dfoiH
-	P0tRhsXZjJYY/U0XY23WsBZWDNxB5oCwjPor6GBrP0EFZhbVi9y39o38fNWgvCEV
-	JGeCHNUMUxeRikLx6oYmeqJmHvzSo51Ul9GCkaKmvw/WOd3gSeaJQGowvvR+Bv2g
-	gEHqTNWmQDRs47aWhBDsse+0hBHWOJ7xROtV1wAJwHx5z0zjBO5Tf29JoUioJbqs
-	Il4gFalhFnOPp4WcJZb0rf2jQ6J87C2Vs2ZRaVByp0IkAdA3HNGoJctM09Q/m2Tv
-	OGRw8iBE+en7oZfWB+i8DF1i3rCpJ8OYvWLD30S4kmmVqAIq6tVFTVqgKM+/AzKR
-	bg==
-Received: (qmail 626016 invoked from network); 9 Aug 2024 15:39:47 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Aug 2024 15:39:47 +0200
-X-UD-Smtp-Session: l3s3148p1@9knYRkAfRtsujnvj
-Date: Fri, 9 Aug 2024 15:39:46 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
-	magnus.damm@gmail.com, p.zabel@pengutronix.de,
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 07/11] dt-bindings: i2c: renesas,riic: Document the
- R9A08G045 support
-Message-ID: <ZrYcIr2yHjWuaJk-@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	claudiu beznea <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com,
-	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
- <20240711115207.2843133-8-claudiu.beznea.uj@bp.renesas.com>
- <ZrTiZtD9U4I2LYZj@shikoro>
- <e39ab10e-8e95-4fce-b75f-10fe918e81a5@tuxon.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jjbrOCZzT9Jjih2El6Uz8TasnbJltaOMY6xKv3UasxV7gsYLpM8vL1SPl00RNEVBFaR3byE36d2cG/ECU/wy8RgdrqpWfKIVFAQQsU+pRsNbUasbOJL4mf+BHaLkbWqSLfwszzim2TeIRL+1MIgPOSQiv8MZCQId38Ho56GGwO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=eZGkQrCK; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44fe58fcf2bso12582001cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 06:42:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1723210921; x=1723815721; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sZY6QlLIxw4WLcroKmo96KDSwkSC+vWL18J8wOL3lA0=;
+        b=eZGkQrCK3PAiDQ6iq+OEDE1BEm5GmbSRUAzZEgT3aSwHdA4+XMLP1FL9paltHmmgAp
+         GZ7c1pw6E13mZufZ9k4R09kxXoNEJrTNAFmxidYF+d65QfCBHltdn83mlLanljFYi4hi
+         61fnp4U4Kw8vL/8errYn7iFsgv2Jaa2g0S+uAAvn8xKma0oaV1Ydz9AQDWHM9kTxx+Ld
+         X6ZRnl0ew4MzBFovY9xT7v7NHh5mRh32oed5D/qMURgOzG32IGoQDuh1qOkj4vQAz9zy
+         TESJHWEo5EsXLnQsLWaay8EV/K69w45PDPeFWilc50KOa2FJZKDyX71u5Wxurkynvg3A
+         MrHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723210921; x=1723815721;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sZY6QlLIxw4WLcroKmo96KDSwkSC+vWL18J8wOL3lA0=;
+        b=A9aXHIOuUsaRgN6OZST/5h3ff+qjLUgiRKKU82p3Y5b6SB7/BeAmKHxB1hD0pyeEZu
+         5Req2xBi13yujM/EFpb2YGKVHgpMJ3Mx2exguSS52COaS9t5tArZHquhVgny8Hugjv/5
+         NaAHDxOjw712yfxGMDp2Szn6nfPZ9/7w9Q2oKLzd8MV1N8PKm9xP84aPMyszG0gomz4D
+         j2vydwNGRoXw4tv+vEydbkmvaF/k0VhXXGWxqrQNk8XTgY1FPeR1sdKDol0CzXJkVYX9
+         zYhpW50HujPovTA0Izd7MfWrEJ2SlEfPGigt5+b+9bVxIBobnDDALWLX0a04/GeMFSub
+         YPSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVb2cymKflxs1BjyD8mIOe1N0oie5n9kyT7/OP6QTMDcT69ek7CdKn1o0l2ftX2yTlip4Crtgb/ztl01flqoSpu8Fqe38yQks0qRmqv
+X-Gm-Message-State: AOJu0YzPhsRB8Vtk0JAlk8t1oyGVJlgrXh9NqsB2Xc6NIWKMAKVeD/Oe
+	LzWvyqMwNJroTvh0IBLknKSIolTyQaNBkN/EVcTKZ0YDbGf0kPj5FZFEAdUfh2U=
+X-Google-Smtp-Source: AGHT+IFS+jxQx9k25oojEqcmdiGM2mY6Nd3gXM9gU92IDbR4zObHr3JkscBcWZyMpP32Un+K1OEdTQ==
+X-Received: by 2002:a05:6214:3187:b0:6b7:ad32:3815 with SMTP id 6a1803df08f44-6bd78de66e6mr16564456d6.14.1723210921231;
+        Fri, 09 Aug 2024 06:42:01 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c8678f7sm76635006d6.109.2024.08.09.06.42.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 06:42:00 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1scPsV-00G7sD-Di;
+	Fri, 09 Aug 2024 10:41:59 -0300
+Date: Fri, 9 Aug 2024 10:41:59 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+	baolu.lu@linux.intel.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] iommu: Remove unused declaration
+ iommu_sva_unbind_gpasid()
+Message-ID: <20240809134159.GE1985367@ziepe.ca>
+References: <20240808140619.2498535-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LKWSB06+yuFlnXKJ"
-Content-Disposition: inline
-In-Reply-To: <e39ab10e-8e95-4fce-b75f-10fe918e81a5@tuxon.dev>
-
-
---LKWSB06+yuFlnXKJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240808140619.2498535-1-yuehaibing@huawei.com>
 
+On Thu, Aug 08, 2024 at 10:06:19PM +0800, Yue Haibing wrote:
+> Commit 0c9f17877891 ("iommu: Remove guest pasid related interfaces and definitions")
+> removed the implementation but leave declaration.
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+>  include/linux/iommu.h | 2 --
+>  1 file changed, 2 deletions(-)
 
-> I kept it like this to avoid confusion b/w RZ/G3S and RZ/V2H(P) documented
-> below, as the RZ/G3S falls back to renesas,riic-r9a09g057 (RZ/V2H(P)).
->=20
-> I can add a comment here, too, if you still consider necessary. Please let
-> me know.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-I see. I don't know how such fallbacks are documented usually, so I
-won't consider it necessary. I was just wondering about it. Let's just
-be consistent with previous fallbacks, however they were handled.
-
-
---LKWSB06+yuFlnXKJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma2HCIACgkQFA3kzBSg
-KbbWeBAAhwySOswgim7RXFC0+wmYWTWMPQ//dQm/h/4zKInQ4cqR/IVJjo1qA0gq
-iIgmtyf0AUdG0TbPLGvRBtobSYulS9OTocCsLUAgO5qGNVYfptBkhl++JDC3ZKG2
-RRHJA9fsdGFuoLrN7BeADFXtC84VYvBFHoOoOUX9TV+qPU6WYk6ReVW7HllVaOr8
-mzuq/PGSQ2xieUpFj9lUdYu48WCkUQFBJu5/Cjas6NcHxKzyPbrsb5kFllXix+CN
-Yi8/w1+Q8uZnYC20uH2G7f0xamWvvAq7b34KJbLW5+xE1E0BVBO5xYUTZd8PtZZG
-vgTIDK0Qp0GM+afklmbLdVTrW0yn5YTQF8hWerjln2e2dW4KCK5zN9Ybw8ZYpcQw
-iOuKGt7CMDsEd/Dx/uNsrrOV9v5DxFkDrZC7bGoYtmo1C3bPlRUPziO7KXSzkwZ6
-6gSUFT+Df13pdXe4hUbtF2An20ytN+RxJtOvz3NrLlt6rv0R6aNE91Y0r0UJooUT
-VliQCQlkw5ncYUMy9EJG78SAPTqGPF4NQUxvou+VEnMeeVF4k98QET5zsvX0DoSq
-5z3lARzdrnwxPrxooHhT6LMH+p6bd77LD/CO5NxVtYeofOjFffSPESRIKpIBnKup
-d9dP5viQ/hMi80xCNQe97gHhkVbJpvJSAwHmuYIffIsMl3tw44s=
-=fyRb
------END PGP SIGNATURE-----
-
---LKWSB06+yuFlnXKJ--
+Jason
 
