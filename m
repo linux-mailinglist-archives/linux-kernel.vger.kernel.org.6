@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-281123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3FB94D359
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:23:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F85E94D356
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACBCD1C221FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:23:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4B6AB225A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9B5198A2F;
-	Fri,  9 Aug 2024 15:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31322198E88;
+	Fri,  9 Aug 2024 15:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RU8bgouV"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1b9FwcM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CF11957FC
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BCC19883C;
+	Fri,  9 Aug 2024 15:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216962; cv=none; b=cgXejRq0o3GfdSwvau3ZJsMWmOsuYZCwK8uV+6XmGOoE0AMlbj47XWDZwn9g7cdlX/cY4v/nTC/u+GeuATMUiBAGzuAp3E2+KhXHB/JbDx2HHblW/9FjBzgD8iOf4XxHWOpeo5nDfRA7ilRhhFcPce5cnIHS5hXujPDjIf5or/k=
+	t=1723216936; cv=none; b=hJ/H4/DUmxLTCsjpVOq3Vvsiyun855ORbmKQl0xwVww0fZeVgPzCiwpC39Cj01x5+j//ZpHjxxQDM3Ao88MgP1K1WZtQLImSWnymZ10+cwnuJONxQzZdHMTkXFu+uJIzUfjQGP708YBkN5tidZYMEJmxaSzswR+dv1mnqgTd4hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216962; c=relaxed/simple;
-	bh=I9JBh8Nx6R1OMk1r9f3wJyh5ZFLMFcAl4c+4i4VGcvY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EvKFlopyXqsrpEPpxNB4KhM/RyS54lntRQAD56UHC0zjx61k8fRyLfes1EeisG3h5ukPbbzZFNrapTl2y35y/BqiiMsuv0URqQ3OZjbEfnX1cbkEj0gG9qV2//SGpVxHbDwOk+sC+KcY2SZFXUpX/T5qXtqJuJzX4m0TfQhURV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RU8bgouV; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b79b93a4c9so18240676d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723216960; x=1723821760; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I9JBh8Nx6R1OMk1r9f3wJyh5ZFLMFcAl4c+4i4VGcvY=;
-        b=RU8bgouV2bIRmDylDOCQ5wmdovD8UffyUBMcrprkDNpdgWUBN6+qLERua5J12+1IkF
-         lY9Yvbm8zZE+e11wvsfYl96/rtL5R8E9S1151W6NKKbKEJyrCo6AELLBqiEjkZMtSExK
-         qIuAgnf6jOxFay/dRTX9jLMPA0wt+T9EQYlEjaUUFa+k9JH5m6wFBuxfcBoKgmX8lP10
-         DmkoYu8WWozzU6j0uLifdBFx4am/J/6Tt+X9ypQJTcsO+vk/8ZiLseGjn1Ep9NrxkHn3
-         7Lk7S5NyCVd/Nh3+qcupBDg0jPrwkcax6O9cT+k8eIq+W6FPjYvgzMbnFgAsSqNtZIqJ
-         53Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723216960; x=1723821760;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I9JBh8Nx6R1OMk1r9f3wJyh5ZFLMFcAl4c+4i4VGcvY=;
-        b=Pv2nr+YpvftWRuuiHYJVvCBznwXGgAyvjCaU0qP4VabGddwlwpKPugV72zUTdzBkNu
-         gjH1lcLmW69BYuRJdlr8Ml2VYMF54/xoE2DCBohwgZvG6I4LPK8rHkRWE6Lj5IeG1QRr
-         6VpX4VBEvLd1Y/EyhB4aMQAYRYGg/a8NFoGqyzhlth7OuhqCtP6v+E3R7OOQg4rv7l+1
-         saxZV7/F5Sg5nxdYX1J74wZAkmglpTR2Mbj8Xjs98/ATZwE/XKIGDlNJtPk4UgsIKMhK
-         aKljHgGO5e5h1LLZAw3GitKJYc9yfC1oHZCuyVCMIgY1r184AE8cE/1NKCOqYBFcdlfi
-         A3pA==
-X-Forwarded-Encrypted: i=1; AJvYcCUp4POFrFSIMRR4h6cjXhM97C6TpwmJl89e1ygOCmP/RYbIU6JdMGfcD9mRLbyMMUqkumDh0aPUhzmS/rYpNnprdTyO7rkMxYBokESd
-X-Gm-Message-State: AOJu0Yx/uc/NEyFZF0xOEU/IVPvGL1LrqkK5531iaG8NaDt5iuBcDJZW
-	fb97ZZVaBEzfSHfsAdbQf3unC6ksELfwtDssTrxxAWm+sPku9jxoh2cgX6ZhB+TbYh4bXf8aoTs
-	yhC2nAc7ehFm28wyVb1XmTop7IuY6YdsCzcAI
-X-Google-Smtp-Source: AGHT+IF+eJ/yOfT8He9fhZRxlhLxrCA8EO5BcB2j5C7/E9D5kNDpoCIVUp0J9rAlNwgnKL8gKHxSp+tNgJOpiG/gEwA=
-X-Received: by 2002:a05:6214:5c02:b0:6b5:8015:d72d with SMTP id
- 6a1803df08f44-6bd79b4b3f0mr27122676d6.8.1723216959717; Fri, 09 Aug 2024
- 08:22:39 -0700 (PDT)
+	s=arc-20240116; t=1723216936; c=relaxed/simple;
+	bh=HlyJThkDlBMireeAQexe6626bYIaEEUXGfjWtQZWj04=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cNTUMBxzPDESfoNycy/J9LyefvqkGTQEaPNnOOWgjhVZ657kFGAqW/u7VPSH8yx0xlIILayjSHxZLAavg3ooD728nALphAfun3jxtBUqX9y7bX58xvwFy1F/gymqMUiE1F8N+OY7nXSiaY79bxrsQhr3vGQrRqOP433NZhWDSws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1b9FwcM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A886C32782;
+	Fri,  9 Aug 2024 15:22:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723216936;
+	bh=HlyJThkDlBMireeAQexe6626bYIaEEUXGfjWtQZWj04=;
+	h=Date:From:To:Cc:Subject:From;
+	b=r1b9FwcMuQtYCwpbG+D7+8ZgJHmjTuRNFvYBNtR3Extjz1LkgdeqJ4hhCkpq8fzJA
+	 2g4oMtVivHvTe8D/Ncur8s1vO740tTsLKrGsAMKLODj1LYQWPI6mU/QuBLcG+eHJZH
+	 mfzKLHQ+mnPPezZF0RleQ+vpzG9ksVcBq0NgsGHo4D9rzGhlkK/ZaX1uEB1mvsZLyo
+	 OH3uEPLLE7U60ISuDSUCJYPBF1bom89sWxgwUAdHJr5iHDbFWaQg3Ozb59J/zXBUwa
+	 tFm2T4sUl+8368S3OaPsb1IApCAGS1VxUxURppxO+ABEl5jrUQuSgzL0hYKthFmu9Z
+	 jYdQH2Ev8VGkA==
+Date: Fri, 9 Aug 2024 09:22:12 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2][next] sched: act_ct: avoid -Wflex-array-member-not-at-end
+ warning
+Message-ID: <ZrY0JMVsImbDbx6r@cute>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729022316.92219-1-andrey.konovalov@linux.dev>
-In-Reply-To: <20240729022316.92219-1-andrey.konovalov@linux.dev>
-From: Alexander Potapenko <glider@google.com>
-Date: Fri, 9 Aug 2024 17:22:00 +0200
-Message-ID: <CAG_fn=Uafd4y9eetxBKWWROpSdDYWTOpjhOsCU4ZVf2Z1LvvVA@mail.gmail.com>
-Subject: Re: [PATCH] usb: gadget: dummy_hcd: execute hrtimer callback in
- softirq context
-To: andrey.konovalov@linux.dev
-Cc: Alan Stern <stern@rowland.harvard.edu>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcello Sylvester Bauer <sylv@sylv.io>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Aleksandr Nogikh <nogikh@google.com>, Marco Elver <elver@google.com>, kasan-dev@googlegroups.com, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+2388cdaeb6b10f0c13ac@syzkaller.appspotmail.com, 
-	syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com, stable@vger.kernel.org, 
-	Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Jul 29, 2024 at 4:23=E2=80=AFAM <andrey.konovalov@linux.dev> wrote:
->
-> From: Andrey Konovalov <andreyknvl@gmail.com>
->
-> Commit a7f3813e589f ("usb: gadget: dummy_hcd: Switch to hrtimer transfer
-> scheduler") switched dummy_hcd to use hrtimer and made the timer's
-> callback be executed in the hardirq context.
->
-> With that change, __usb_hcd_giveback_urb now gets executed in the hardirq
-> context, which causes problems for KCOV and KMSAN.
->
-> One problem is that KCOV now is unable to collect coverage from
-> the USB code that gets executed from the dummy_hcd's timer callback,
-> as KCOV cannot collect coverage in the hardirq context.
->
-> Another problem is that the dummy_hcd hrtimer might get triggered in the
-> middle of a softirq with KCOV remote coverage collection enabled, and tha=
-t
-> causes a WARNING in KCOV, as reported by syzbot. (I sent a separate patch
-> to shut down this WARNING, but that doesn't fix the other two issues.)
->
-> Finally, KMSAN appears to ignore tracking memory copying operations
-> that happen in the hardirq context, which causes false positive
-> kernel-infoleaks, as reported by syzbot.
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-Hi Andrey,
+Remove unnecessary flex-array member `pad[]` and refactor the related
+code a bit.
 
-FWIW this problem is tracked as
-https://github.com/google/kmsan/issues/92, I'll try to revisit it in
-September.
+Fix the following warning:
+net/sched/act_ct.c:57:29: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+Changes in v2:
+ - Remove flex array. (Jakub).
+
+ net/sched/act_ct.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/net/sched/act_ct.c b/net/sched/act_ct.c
+index 3ba8e7e739b5..2197eb625658 100644
+--- a/net/sched/act_ct.c
++++ b/net/sched/act_ct.c
+@@ -44,8 +44,6 @@ static DEFINE_MUTEX(zones_mutex);
+ struct zones_ht_key {
+ 	struct net *net;
+ 	u16 zone;
+-	/* Note : pad[] must be the last field. */
+-	u8  pad[];
+ };
+ 
+ struct tcf_ct_flow_table {
+@@ -62,7 +60,7 @@ struct tcf_ct_flow_table {
+ static const struct rhashtable_params zones_params = {
+ 	.head_offset = offsetof(struct tcf_ct_flow_table, node),
+ 	.key_offset = offsetof(struct tcf_ct_flow_table, key),
+-	.key_len = offsetof(struct zones_ht_key, pad),
++	.key_len = offsetofend(struct zones_ht_key, zone),
+ 	.automatic_shrinking = true,
+ };
+ 
+-- 
+2.34.1
+
 
