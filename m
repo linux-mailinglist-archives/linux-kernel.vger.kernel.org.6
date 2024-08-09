@@ -1,250 +1,106 @@
-Return-Path: <linux-kernel+bounces-281286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA2194D51C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2953A94D51D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12A01F21355
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:56:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2F931F21333
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B024D383B1;
-	Fri,  9 Aug 2024 16:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF69381AD;
+	Fri,  9 Aug 2024 16:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FZkER0zs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4lrjnf0z";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FZkER0zs";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4lrjnf0z"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lvncw+aj"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD9D2940D;
-	Fri,  9 Aug 2024 16:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C333321A3
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723222565; cv=none; b=nQXlHhT0qrQJxNELvCtEZK4GPyFPvrQZfCW4V4pv4gOlVweibAl8ucBfQ3sCEn/uf8UqL4b1KVr11ZqWPtzKDK6hAhThppAtdEUNCKkGgHnZ3a/5tU/lMLduVFuQEzHRk78TQWWRQUn2Qem/QF4q2JiQ2BSTWggddi2RLuO+S9o=
+	t=1723222614; cv=none; b=DaGAPjvXJkZCQ8VBcHDUyg4V25jv4qrE4DUAWsikekYuRkoKCUTzU9duYk404ACR85m8hv+kS2O4RpzoJv2sH/+CEaZUUNT/MhNp43YKe3KTwnVXaL5YNwaM4jDdFiv03iaGjFgEls74Jcwhq5103Elwq96xrG0U7AjRIcVC1Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723222565; c=relaxed/simple;
-	bh=XsYfTSEFGm7MRDOgLGo+4usD7dTJHctVvyp56GmC11Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nm22eQFNB2LeNnIRNVLw6torRjtO5xMbe5L+MQkLUGnUxSgLiwjJ88yaIYbkw0mrSYr0KRM7a3Y4gqtmTvfwbmW1+nLlO0LbD0cfDbbxzjIezYiOPaGUaGGHASpyDWnQebb7gCTwTFr5smqL8HCdcxruGJFGTakvMQhZL+rOLkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FZkER0zs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4lrjnf0z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FZkER0zs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4lrjnf0z; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0764221E37;
-	Fri,  9 Aug 2024 16:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723222553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qpsLrP3CPpD0n7dQtsWffHlUALpNhZUbBKs6DWmYf3I=;
-	b=FZkER0zs8p2WhdWUZA7zbhyEF+JS2F1F08vYDUAAntzA54Mv/Sixd/bf4ow4S2FSxbvCNC
-	TgH0goTVIdjsMt1lWVrJNVYMpQ/vCEBR+2tixiBPo2utTH8Qob/vPEdFErtIvnwspJ2+Zn
-	QlvXPm0N9fvSazYCcOKUHzzEennHl3c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723222553;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qpsLrP3CPpD0n7dQtsWffHlUALpNhZUbBKs6DWmYf3I=;
-	b=4lrjnf0zj11sJ/0WfhLVlKO9uWdXVZR5E21EGOIjAbHu/7UrjxgZl9ojXtqOhHJjBXpikn
-	CXa7GkNUTpxx5iAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=FZkER0zs;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=4lrjnf0z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723222553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qpsLrP3CPpD0n7dQtsWffHlUALpNhZUbBKs6DWmYf3I=;
-	b=FZkER0zs8p2WhdWUZA7zbhyEF+JS2F1F08vYDUAAntzA54Mv/Sixd/bf4ow4S2FSxbvCNC
-	TgH0goTVIdjsMt1lWVrJNVYMpQ/vCEBR+2tixiBPo2utTH8Qob/vPEdFErtIvnwspJ2+Zn
-	QlvXPm0N9fvSazYCcOKUHzzEennHl3c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723222553;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qpsLrP3CPpD0n7dQtsWffHlUALpNhZUbBKs6DWmYf3I=;
-	b=4lrjnf0zj11sJ/0WfhLVlKO9uWdXVZR5E21EGOIjAbHu/7UrjxgZl9ojXtqOhHJjBXpikn
-	CXa7GkNUTpxx5iAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB5241379A;
-	Fri,  9 Aug 2024 16:55:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dHVtORhKtmaYPAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 09 Aug 2024 16:55:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 73CC7A084C; Fri,  9 Aug 2024 18:55:48 +0200 (CEST)
-Date: Fri, 9 Aug 2024 18:55:48 +0200
-From: Jan Kara <jack@suse.cz>
-To: zhangshida <starzhangzsd@gmail.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	zhangshida@kylinos.cn, Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH V2 2/2] ext4: Replace the __block_write_begin with
- ext4_block_write_begin
-Message-ID: <20240809165548.nlhsovccmn3kmouw@quack3>
-References: <20240809064606.3490994-1-zhangshida@kylinos.cn>
- <20240809064606.3490994-3-zhangshida@kylinos.cn>
+	s=arc-20240116; t=1723222614; c=relaxed/simple;
+	bh=+qeo8XSUb/uNR8I7ur2Wfmlc8S2xBQ8VkNIPAWrw9r0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kJjEbmQFfKGtWhfzEMY6+xj9kXQDa6q6fO/4KfiqWPoNYK2L6W9KdYb3myiE1aesX9FBHfTHxNFZ+z9MZMzsfq4tI6C259h+AJlQGMDZDMS2jOHthPMbL7SgE2oq2N1ZiR9/7B433fANvpwTOPpoPEz6psp50BU7j0A//YeyKao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lvncw+aj; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-67b709024bfso25257277b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723222612; x=1723827412; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+qeo8XSUb/uNR8I7ur2Wfmlc8S2xBQ8VkNIPAWrw9r0=;
+        b=Lvncw+ajrEe+UxQ3dMVzWIIL4ahIYwoOHZGv1p/Hih7KIbXC0o3mwrMF8vKJTYj1k/
+         NCdYFlO/xZVEqwac4GGv27mje0rHr8Nx1WyFfy7LKMtLq+UX5XxGI21zU6aRKfr0hIaZ
+         RkWnslXMK+rrsVuoRPvSoKQ0/8KkHv2KICDl4fEmvo0lfpJZ67/JE8Bp480b4N8AVthi
+         38tWIBXFcd2Q20l4Gl2bn0Bd3j39T9/ttF06B9ZvZuL+SSO1gbNMcCT8tEHghMrMrvC3
+         c+1S5YQA9n4m/2MKLFjp7r95a0McIxKt9hYElo9DAP0H4BWRuHZzFF3UtISyueaV31Yq
+         QKBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723222612; x=1723827412;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+qeo8XSUb/uNR8I7ur2Wfmlc8S2xBQ8VkNIPAWrw9r0=;
+        b=BYmVwjL/tbiiuWhRi4NH2bwpuOFCOlbfRhQ1DCTlQwYrtN7OjWCVcgOsZFINGXlFpi
+         RtIT6ndLDO3MlO0dLdiF0s0DjTvfgp/DAM38QYL8lJ36r9TTP7DGMxiwwq7tsEgoX6zL
+         aYE66QGJozakFxCAN60NsWiGCdVBMCX+RKPZmjlrMa7Kn3dz/ZQ4DO6VhJe83O2xJ2eY
+         psQ37NnfOlUqezEUQA7lsTfzUcpKzLBRbGDH11oyYaDj91XQUgAJLiDi8XodKKDjmczt
+         +/V9j8OuwlK4wlLQjmN1fCeYzMK/iP0BIUGI1LcXQ+kwhZNhpCAgq+qrPYFsI0zqjNTV
+         GQ2A==
+X-Forwarded-Encrypted: i=1; AJvYcCV3qT7u/NVavG7DYTOfmdiHFCWcIYs8dP94kAD88ZhnPgOvOG2STHvHwsagdcB2+ckbWggoo+wSSS+B4Xy/SvGtlO7h0GccdcPFCUky
+X-Gm-Message-State: AOJu0YzVUxFE5mlCAXe95JaHd5RsOURSXTLN9oA3YWrnX2bBag3Of+Js
+	19lRj7Hc3Lj+gMdBCqPpGcGEyz3M4GYFok0aE5LmQtKpcXi+rFcdTWGOMQVpzyMtNSmVevMjic/
+	pnDyiumjd9BAIy/seAM+jpGXbEPy7Snk0Rb1v
+X-Google-Smtp-Source: AGHT+IFc3F1gmnT9F8krxiHqs+sjwSdScGk+FUmjKl8caSE0mW5405YfmjJVKF5QXR3+7YzcGwjlZ+NxrYZutVx7g1s=
+X-Received: by 2002:a05:690c:2f82:b0:664:a85d:47c6 with SMTP id
+ 00721157ae682-69ec86be920mr24013387b3.33.1723222611642; Fri, 09 Aug 2024
+ 09:56:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240809064606.3490994-3-zhangshida@kylinos.cn>
-X-Spam-Score: -4.01
-X-Rspamd-Queue-Id: 0764221E37
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spam-Flag: NO
+References: <20240808185949.1094891-1-mjguzik@gmail.com> <CAJuCfpEsYi77cuUhvQrFOazFX1OK0vp0PyevKqZsi0f1DeT3NA@mail.gmail.com>
+ <CAGudoHHHOH=+ka=xw6cy51EYaGsUZEaC=LXYFvnXgFT+co9mKQ@mail.gmail.com>
+ <CAJuCfpFXdx40UGRsXUYFgFGvEy-nM02f+TQ9nOPPepw6gbykmA@mail.gmail.com>
+ <CAJuCfpH36sXvCaYL88nzi_8-Yr1tpxHuaLfCMqCac-zN6QHWmg@mail.gmail.com> <be0be869-4daf-4530-b90d-6dd6c27c8736@suse.cz>
+In-Reply-To: <be0be869-4daf-4530-b90d-6dd6c27c8736@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 9 Aug 2024 16:56:40 +0000
+Message-ID: <CAJuCfpEMyRATp+6Xhe_XX-8hPKzONKonWbt_Jnkyp-wOJkN9ng@mail.gmail.com>
+Subject: Re: [RFC PATCH] vm: align vma allocation and move the lock back into
+ the struct
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Liam.Howlett@oracle.com, lstoakes@gmail.com, pedro.falcato@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 09-08-24 14:46:06, zhangshida wrote:
-> From: Shida Zhang <zhangshida@kylinos.cn>
-> 
-> Using __block_write_begin() make it inconvenient to journal the
-> user data dirty process. We can't tell the block layer maintainer,
-> ‘Hey, we want to trace the dirty user data in ext4, can we add some
-> special code for ext4 in __block_write_begin?’:P
-> 
-> So use ext4_block_write_begin() instead.
-> 
-> The two functions are basically doing the same thing except for the
-> fscrypt related code. Narrow the scope of CONFIG_FS_ENCRYPTION
-> so as to allow ext4_block_write_begin() to function like
-> __block_write_begin when the config is disabled.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
+On Fri, Aug 9, 2024 at 3:09=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wro=
+te:
+>
+> On 8/9/24 05:57, Suren Baghdasaryan wrote:
+> > Maybe it has something to do with NUMA? The system I'm running has 2 NU=
+MA nodes:
+>
+> I kinda doubt the NUMA aspect. Whether you allocate a vma that embeds a
+> lock, or a vma and immediately the separate lock, it's unlikely they woul=
+d
+> end up on different nodes so from the NUMA perspective I don't see a
+> difference. And if they ended up on separate nodes, it would more likely =
+be
+> worse for the case of separate locks, not better.
 
-There are three more calls to __block_write_begin() in fs/ext4/inline.c.
-Please convert them as well. We don't allow inline data and data
-journalling combination but it is unexpected surprise that those places
-still use __block_write_begin().
-
-								Honza
-
-> ---
->  fs/ext4/inode.c | 19 ++++---------------
->  1 file changed, 4 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index de46c0a6842a..31389633086a 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1046,7 +1046,6 @@ int do_journal_get_write_access(handle_t *handle, struct inode *inode,
->  	return ret;
->  }
->  
-> -#ifdef CONFIG_FS_ENCRYPTION
->  static int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->  				  loff_t pos, unsigned len,
->  				  get_block_t *get_block)
-> @@ -1135,7 +1134,9 @@ static int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->  							 from, to);
->  		else
->  			folio_zero_new_buffers(folio, from, to);
-> -	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
-> +	}
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
->  		for (i = 0; i < nr_wait; i++) {
->  			int err2;
->  
-> @@ -1147,10 +1148,10 @@ static int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->  			}
->  		}
->  	}
-> +#endif
->  
->  	return err;
->  }
-> -#endif
->  
->  /*
->   * To preserve ordering, it is essential that the hole instantiation and
-> @@ -1232,20 +1233,12 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->  	/* In case writeback began while the folio was unlocked */
->  	folio_wait_stable(folio);
->  
-> -#ifdef CONFIG_FS_ENCRYPTION
->  	if (ext4_should_dioread_nolock(inode))
->  		ret = ext4_block_write_begin(handle, folio, pos, len,
->  					     ext4_get_block_unwritten);
->  	else
->  		ret = ext4_block_write_begin(handle, folio, pos, len,
->  					     ext4_get_block);
-> -#else
-> -	if (ext4_should_dioread_nolock(inode))
-> -		ret = __block_write_begin(&folio->page, pos, len,
-> -					  ext4_get_block_unwritten);
-> -	else
-> -		ret = __block_write_begin(&folio->page, pos, len, ext4_get_block);
-> -#endif
->  	if (!ret && ext4_should_journal_data(inode)) {
->  		ret = ext4_walk_page_buffers(handle, inode,
->  					     folio_buffers(folio), from, to,
-> @@ -2978,12 +2971,8 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
->  	if (IS_ERR(folio))
->  		return PTR_ERR(folio);
->  
-> -#ifdef CONFIG_FS_ENCRYPTION
->  	ret = ext4_block_write_begin(NULL, folio, pos, len,
->  				     ext4_da_get_block_prep);
-> -#else
-> -	ret = __block_write_begin(&folio->page, pos, len, ext4_da_get_block_prep);
-> -#endif
->  	if (ret < 0) {
->  		folio_unlock(folio);
->  		folio_put(folio);
-> -- 
-> 2.33.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I have an UMA machine. Will try the test there as well. It won't
+provide hard proof but at least some possible hints.
 
