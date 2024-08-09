@@ -1,145 +1,154 @@
-Return-Path: <linux-kernel+bounces-281222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A461394D487
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:21:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D4C94D48A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4F5C1C2091E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:21:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C3B1C20A53
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082801991D7;
-	Fri,  9 Aug 2024 16:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FC11990C9;
+	Fri,  9 Aug 2024 16:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTx0pkY3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ta1AGoyt"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF3195F3A;
-	Fri,  9 Aug 2024 16:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FBC1870;
+	Fri,  9 Aug 2024 16:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723220449; cv=none; b=ZWq1wn2cXQ3Kv5i2hVEYt08I32/w632E1Cz3KsxqCFvwoFZfHBz8OWWWSFujfMTCm1dDQW6yYJ6NFhiT79NnMZx4N40jtT/f/rSn15tAW5a0oAh1e57jZSnNT9imjWKm8aMvhD+hk0Mr053CHdB8CPMAjQmBH30UAeUsSl5Ih4c=
+	t=1723220505; cv=none; b=WxHjphEm7bKY152KCE3ExMNnhSAB5JJE2thouuP6cHjZSCPPYHsItdjmFYU+HSB05PWsZv4z62E7K+Nl8iQa5wS8g6RogBF7AXjqskpAExH7Kc5J+B7cafDnOHRpv8b7S2n1eLNfMOcsIuAeyZlnvAy0w5G0xVCbBEi9reOpkTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723220449; c=relaxed/simple;
-	bh=JvFuafIlA5XYuTkzcsIaPQIzRgFXGYfK86QgMIRemXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lWd+yUvlw+Jzi2v1S+7JCD7uVm6VPUA5A87PwQysMBVe0oAzldezTAE7wjOroGuWu4g0Jm+XiBqRgDBRuDYeL4eoc49sX2AhjGEJl5QG6b3kMyN9gzOfN7r2SUDPBRMslK9TpFMWQdNd4witqhlLhCIETAWalT8QXAuQTFukuKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JTx0pkY3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1335BC32782;
-	Fri,  9 Aug 2024 16:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723220448;
-	bh=JvFuafIlA5XYuTkzcsIaPQIzRgFXGYfK86QgMIRemXM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JTx0pkY32DTKdHuZ8o93I2RKkOrJMLad6J9pBwJVg4g/I4Kjq88Xx5NvRbLu7q+rn
-	 g71WncVeC5YSlCMMuF+dTJ5vOg7NkN1eBqh5PKWnAZrBuMUHqaGKj5TgZuJ3pa8c+g
-	 qQnq2FJ/xDMCZsluWC4pLkMRAGvig4a8Cd96pwUZtKS3YZZe/DOKqisVttItQmjf2B
-	 LHfwR8wch9DmpbeEdWklneFb8ENsA1y3Bkbm1W9oYraV7ehsOSbDt5KKzinSKlKyAv
-	 MPHtUqWLNOa7yJDux76y8dqQdkvtFtb2pLtfo4f/UkHz3FzZZQxdUmi7F14PZZuL3k
-	 WXuNAozIuging==
-Date: Fri, 9 Aug 2024 10:20:45 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+	s=arc-20240116; t=1723220505; c=relaxed/simple;
+	bh=tAsNHQqY6WPl5IiY6NLTQwXTBkmxYgDubnsHAW4O1VA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hfeN8exqhwaa+7FvQGfL1yZ7CzSKLvEqlG4lfttgB4zrs7YXeHcV7Zngsp4bPqTbA0P4asKrMbDnFIrmQz2g9B4U71XDjnRxLF/rrphqKqDaqpxA94L8pMtDwT9NPcMZK/pR1dl770b/ikEMJNeJ/9FyGS8KgSqZhcbUXOiL2W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ta1AGoyt; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-8270e081100so719521241.2;
+        Fri, 09 Aug 2024 09:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723220503; x=1723825303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9dNQlxQEsZ7AioP6IPWIOWjIBnVJQhFz2AEVk5oB8sI=;
+        b=Ta1AGoytjp/Hu8y3wFyudLDaKjvv9D1QQsHp13eU3zWYFCT/7VkqGxupg7UTTdTraL
+         FNwI1FWf48bI0gaEFHQfUlaj/lMJGtLA4/YeiTnc9HXtjSIvbAGiZtNLiDsa8FkPDlcv
+         8zySda8iQsmzV4YHb4JMoWt9ipFrEwmttJADBFfy5sioyHxZ3dmBWTUj86zxR7v+mp9Z
+         m9fnWFB7eOPPa3cLmjoIQhTSdL98GTHRZeJi5h3InCq8vHy5GTtqAIXcZnWIiNhHZ6xc
+         W7Ph9z8uEJL22OSxkFFn0N5V9CjUA/RRNB+d1m85h8vQrG/bXdryQOAoL4aYPwU1/iN6
+         XQBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723220503; x=1723825303;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9dNQlxQEsZ7AioP6IPWIOWjIBnVJQhFz2AEVk5oB8sI=;
+        b=BUFz6ie9YgnJwvN8N/GjPMbuytO/4VWPDIiNO18C1RsWZldCdtS60WdV3J1N3uIVc8
+         csD1wJRoEL/mJpIj3fhKKW2cviYClJorYOfpdvYItVk+EAbRnUBdDcKB6l3Pe6tK2bl1
+         u4UyZCfVX684b8bzIHNk1pKO7tIo0cFcnLIQmJsaGAOKMpq32sfQU7Fvr3e/4sL58JNI
+         zLSnfsMRS7S7zNzk18ZRh9cSPDFK1OA7bEgk3ykbXzIKgNTvnKvleTjB2cp61SkxYAYJ
+         4D3qnjj+LIZrjmp/3hnQVomZwo++j5JHvI5WAY9hNv5P7LUgWfV7ZlmiHTe2YiHA+8A7
+         66Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqkL9NZLdwp29U45ssBDECdswnWAgP22gXFpYSTp2182Rxvyt1dhnfIPf7cEc2vTIR/zCNt8BQRTKmnDRXOZDHchgv4EE4XHmsTb6WLdwP3IcdY8st0cxsQhYA3h6wIrEKszK5pjEW9qFoKPTJZ0uTDJUU1bG6vCNal8NHvMcJ
+X-Gm-Message-State: AOJu0Ywux9lmIJkY6thO5nQX6B5c5G05VvsLCJP32DeOvXOM50DoX1Vw
+	sRAsKlnhCeqa15+p/efWsuU6IHc+j3YVx2q2Yxxd6fluNTucLmVO
+X-Google-Smtp-Source: AGHT+IEnpTJcFNeKSmLDz29//kst6PL6XWIXCIaR7BGQIptjNhNvCWRcv7qBBsZTYiBIAYH/f6BtBQ==
+X-Received: by 2002:a05:6122:31a7:b0:4f6:ae65:1e10 with SMTP id 71dfb90a1353d-4f912bf4cd7mr2638873e0c.4.1723220502795;
+        Fri, 09 Aug 2024 09:21:42 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4f8a1a7ef02sm2008740e0c.26.2024.08.09.09.21.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 09:21:42 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: socketcan@hartkopp.net
+Cc: davem@davemloft.net,
+	david.hunter.linux@gmail.com,
+	edumazet@google.com,
+	javier.carrasco.cruz@gmail.com,
+	kuba@kernel.org,
+	linux-can@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] wifi: ath11k: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <ZrZB3Rjswe0ZXtug@cute>
+	mkl@pengutronix.de,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH 1/1] Net: bcm.c: Remove Subtree Instead of Entry
+Date: Fri,  9 Aug 2024 12:21:41 -0400
+Message-Id: <20240809162141.139935-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2bf44b8d-b286-4a94-8e1d-6c4e736a1d07@hartkopp.net>
+References: <2bf44b8d-b286-4a94-8e1d-6c4e736a1d07@hartkopp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+Hello Oliver, 
 
-Move the conflicting declaration to the end of the structure. Notice
-that `struct ieee80211_chanctx_conf` is a flexible structure --a
-structure that contains a flexible-array member.
+> What did you do to trigger the warning? 
 
-Also, remove a couple of unused structures.
+I am in the Linux Kernel Internship Program for the Linux Foundation. Our goal is to fix outstanding bugs with the kernel. I found the following bug on syzbot: 
 
-Fix the following warnings:
-drivers/net/wireless/ath/ath11k/core.h:409:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/ath/ath11k/dp.h:1309:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/ath/ath11k/dp.h:1368:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+https://syzkaller.appspot.com/bug?extid=df49d48077305d17519a
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/net/wireless/ath/ath11k/core.h |  4 +++-
- drivers/net/wireless/ath/ath11k/dp.h   | 23 -----------------------
- 2 files changed, 3 insertions(+), 24 deletions(-)
+This specific link is for a separate issue that I will soon send a separate patch for; however, I found the bug for this patch after I switched the command parameter for panic_on_warn to 0. 
 
-diff --git a/drivers/net/wireless/ath/ath11k/core.h b/drivers/net/wireless/ath/ath11k/core.h
-index df24f0e409af..e283415dccf3 100644
---- a/drivers/net/wireless/ath/ath11k/core.h
-+++ b/drivers/net/wireless/ath/ath11k/core.h
-@@ -406,11 +406,13 @@ struct ath11k_vif {
- 	bool wpaie_present;
- 	bool bcca_zero_sent;
- 	bool do_not_send_tmpl;
--	struct ieee80211_chanctx_conf chanctx;
- 	struct ath11k_arp_ns_offload arp_ns_offload;
- 	struct ath11k_rekey_data rekey_data;
- 
- 	struct ath11k_reg_tpc_power_info reg_tpc_info;
-+
-+	/* Must be last - ends in a flexible-array member. */
-+	struct ieee80211_chanctx_conf chanctx;
- };
- 
- struct ath11k_vif_iter {
-diff --git a/drivers/net/wireless/ath/ath11k/dp.h b/drivers/net/wireless/ath/ath11k/dp.h
-index 2f6dd69d3be2..65d2bc0687c8 100644
---- a/drivers/net/wireless/ath/ath11k/dp.h
-+++ b/drivers/net/wireless/ath/ath11k/dp.h
-@@ -1305,18 +1305,6 @@ struct htt_ppdu_stats_user_rate {
- #define HTT_TX_INFO_PEERID(_flags) \
- 			FIELD_GET(HTT_PPDU_STATS_TX_INFO_FLAGS_PEERID_M, _flags)
- 
--struct htt_tx_ppdu_stats_info {
--	struct htt_tlv tlv_hdr;
--	u32 tx_success_bytes;
--	u32 tx_retry_bytes;
--	u32 tx_failed_bytes;
--	u32 flags; /* %HTT_PPDU_STATS_TX_INFO_FLAGS_ */
--	u16 tx_success_msdus;
--	u16 tx_retry_msdus;
--	u16 tx_failed_msdus;
--	u16 tx_duration; /* united in us */
--} __packed;
--
- enum  htt_ppdu_stats_usr_compln_status {
- 	HTT_PPDU_STATS_USER_STATUS_OK,
- 	HTT_PPDU_STATS_USER_STATUS_FILTERED,
-@@ -1364,17 +1352,6 @@ struct htt_ppdu_stats_usr_cmpltn_ack_ba_status {
- 	u32 success_bytes;
- } __packed;
- 
--struct htt_ppdu_stats_usr_cmn_array {
--	struct htt_tlv tlv_hdr;
--	u32 num_ppdu_stats;
--	/* tx_ppdu_stats_info is filled by multiple struct htt_tx_ppdu_stats_info
--	 * elements.
--	 * tx_ppdu_stats_info is variable length, with length =
--	 *     number_of_ppdu_stats * sizeof (struct htt_tx_ppdu_stats_info)
--	 */
--	struct htt_tx_ppdu_stats_info tx_ppdu_info[];
--} __packed;
--
- struct htt_ppdu_user_stats {
- 	u16 peer_id;
- 	u32 tlv_flags;
--- 
-2.34.1
+If you wish to reproduce the error, you can do the following steps: 
+	1) compile and install a kernel with the config file from the link
+	2) pass kernel paramter panic_on_warn=0
+	3) build and run the C reproducer for the bug. 
 
+As best as I can tell, the C reproducer simply made a system call that resulted in the bcm-can directry entry being deleted. I am still wrapping my head around the code (I am new to kernel programming), but here is the full stacktrace. 
+
+156.449047][   T71] Call Trace:
+[  156.450067][   T71]  <TASK>
+[  156.451076][   T71]  ? show_regs+0x84/0x8b
+[  156.452490][   T71]  ? __warn+0x150/0x29e
+[  156.453754][   T71]  ? remove_proc_entry+0x335/0x385
+[  156.456485][   T71]  ? report_bug+0x33d/0x431
+[  156.457994][   T71]  ? remove_proc_entry+0x335/0x385
+[  156.459845][   T71]  ? handle_bug+0x3d/0x66
+[  156.461230][   T71]  ? exc_invalid_op+0x17/0x3e
+[  156.462672][   T71]  ? asm_exc_invalid_op+0x1a/0x20
+[  156.464282][   T71]  ? __warn_printk+0x26d/0x2aa
+[  156.465759][   T71]  ? remove_proc_entry+0x335/0x385
+[  156.467233][   T71]  ? remove_proc_entry+0x334/0x385
+[  156.468821][   T71]  ? proc_readdir+0x11a/0x11a
+[  156.470122][   T71]  ? __sanitizer_cov_trace_pc+0x1e/0x42
+[  156.471697][   T71]  ? cgw_remove_all_jobs+0xa5/0x16f
+[  156.474096][   T71]  canbcm_pernet_exit+0x73/0x79
+[  156.476732][   T71]  ops_exit_list+0xf1/0x146
+[  156.478358][   T71]  cleanup_net+0x333/0x570
+[  156.479856][   T71]  ? setup_net+0x7ba/0x7ba
+[  156.481479][   T71]  ? process_scheduled_works+0x652/0xbab
+[  156.483592][   T71]  process_scheduled_works+0x7b8/0xbab
+[  156.486039][   T71]  ? drain_workqueue+0x33b/0x33b
+[  156.487841][   T71]  ? __sanitizer_cov_trace_pc+0x1e/0x42
+[  156.489742][   T71]  ? move_linked_works+0x9f/0x108
+[  156.491376][   T71]  worker_thread+0x5bd/0x6cc
+[  156.492877][   T71]  ? rescuer_thread+0x64d/0x64d
+[  156.494350][   T71]  kthread+0x30a/0x31e
+[  156.495769][   T71]  ? kthread_complete_and_exit+0x35/0x35
+[  156.497977][   T71]  ret_from_fork+0x34/0x6b
+[  156.499734][   T71]  ? kthread_complete_and_exit+0x35/0x35
+[  156.501494][   T71]  ret_from_fork_asm+0x11/0x20
+
+> Removing this warning probably does not heal the root cause of the issue.
+
+I would love to work on the root cause of the issue if at all possible. Do you think that the C reproducer went down an unlikely avenue, and therefore, further work is not needed, or do you think that this is an issue that requires some attention? 
+
+I appreciate the response to my patch. I am learning a lot. 
+
+Thanks, 
+David
 
