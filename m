@@ -1,466 +1,277 @@
-Return-Path: <linux-kernel+bounces-281582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F095E94D869
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:22:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9678D94D86E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A0D51F22E7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:22:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF43BB22270
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6EB16C852;
-	Fri,  9 Aug 2024 21:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E0916A921;
+	Fri,  9 Aug 2024 21:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Cdq54nOQ"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItdtXRE2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB9B16849C;
-	Fri,  9 Aug 2024 21:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ED52556F;
+	Fri,  9 Aug 2024 21:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723238535; cv=none; b=DBDiNBXmtCD4GrRqrq/KNLt7dXXriO0eNIjK4W30IbH0Av3Y+iFNk2X0EzW9u6Lm/Jl5hP10qciq9b9ycttieozyA80ybEA6yGokX7+c30QazlDj7lOplTEQhzXXJ+Y223tA2R1bBsXk+PedJyr3dCty+qLsABvWhexxNB6dY1I=
+	t=1723239193; cv=none; b=V1J9IlgV25mUg85xPr6U/GoWlycbG3m9uSlgweLZGmmPUnqS5LvIHu2TKLqxyF25nikeeoC5aCkBPQuM2qVmbV+r9eYEmfvpU4/Owz91lbzF0aqp6BYzi60ICIYi9E60vmNsbEufP3zubkqsMC2+TpXPPnRw7csfAmxofC06B/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723238535; c=relaxed/simple;
-	bh=y3H0JRDBFcVQDW3l3zuPU+Q5Mmwp7oZzz8JkUDu+pCU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=arnwxLpHLaoQHPwm0HN19D6V8VS7GwQ18ctmitfV+pVgk2q5K0EPay2IthQtGRQMOG4PkuYQdDX8sdGLUGb1Xx7au9RkK2DYIa3q+6bMIjWHIeeN3YTiL54mU2LcJOAoGdXQ+X8EXSHDXmquK08fpRXoYTd10Kg21wd/yN7V0Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Cdq54nOQ; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1723238533; x=1754774533;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=y3H0JRDBFcVQDW3l3zuPU+Q5Mmwp7oZzz8JkUDu+pCU=;
-  b=Cdq54nOQtImuRxqdCxH2i6PD1aNetvXxD9J3Jr5yxdLpcyvux4VHFO6R
-   8aMjIByTtdwtDjTsP+kws9WIz5pV8eZl+7qWrtIatIpjTro0bHmv0ZNi9
-   H80o6VoDTlrs3sdhYtZv6GhFH/Qn/+vpZaGkfOrFbLKtvrNU4KsaHQ3iQ
-   gmNdUDjCgdKN36SQEXyNr9WheEWFnk2MRvq1yJ4AbHKPMUY3DCQomiw8r
-   BWCzJfEe9MMA6hlpIindAMPZJtDJufqkdKJpDi/VRR44uU5sJgsmAsPgx
-   jcqwWoKaqJVl1YGCBdH5Ifo+1BG7ezXT4JLrvTo+vBY3Vn3rDdZ6IHkGS
-   Q==;
-X-CSE-ConnectionGUID: fVgutDEfQ6+TQCfyHCdg8Q==
-X-CSE-MsgGUID: yByz1uuoRCihDYOE2mJMRQ==
-X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
-   d="scan'208";a="30985761"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Aug 2024 14:22:04 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 9 Aug 2024 14:21:43 -0700
-Received: from pop-os.microchip.com (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Fri, 9 Aug 2024 14:21:43 -0700
-From: <Tristram.Ha@microchip.com>
-To: Woojung Huh <woojung.huh@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<devicetree@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli
-	<f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, Rob Herring
-	<robh@kernel.org>
-CC: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Vasut
-	<marex@denx.de>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Tristram Ha <tristram.ha@microchip.com>
-Subject: [PATCH net-next v3 2/2] net: dsa: microchip: Add KSZ8895/KSZ8864 switch support
-Date: Fri, 9 Aug 2024 14:21:42 -0700
-Message-ID: <20240809212142.3575-3-Tristram.Ha@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240809212142.3575-1-Tristram.Ha@microchip.com>
-References: <20240809212142.3575-1-Tristram.Ha@microchip.com>
+	s=arc-20240116; t=1723239193; c=relaxed/simple;
+	bh=t62Vh9jkDKZXolX4M0Yc+cWcvhvWa1G5spzRzNQeOkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMBu2yJLl3Y32jUpkA9KHdetN4nGhVPQXkDY9IExf6entX91aUNI5oYrXa2OVN8I9/Gw/p/PnTbClqqKN0ZBr9J0F3VmfLRGmJXuj5PN1Tvk2+1poeo8MmqogWh4FK9BVPY4N6dgBYuYuAEyzXBEa4WTJqPbZhpgvdpIUq5tcmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItdtXRE2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC6FC32782;
+	Fri,  9 Aug 2024 21:33:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723239192;
+	bh=t62Vh9jkDKZXolX4M0Yc+cWcvhvWa1G5spzRzNQeOkM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ItdtXRE2vhZUw9942MVh4DLPc0IQDcvV+QfjQWnUXfXwuqehJX0eJxiNYYgngZ6gV
+	 8KJDGL284z+8cKfiCu8Q0cxM0vYt213227t0cygWswPqSZD5rnzEvdCsgBThrMbQ5I
+	 j9XYFe9NT/iCgAqJoN2xY0XBq90XxnPOFtTrRXO2Sx/HxJl/LN191KaNYAKI29Hlqg
+	 g5VH2Wtm7YZhNazYABGtXKOybu6w0gged6XMkNGNGUgWcaHDLTbCWDJuZD/hgNbBhx
+	 C2QQRQ6aNsZal7cP1gW4q/Z8ZAyFIIf1Q6qCETqJGzFH+LO3EamCqrIhs819O4HmqV
+	 Cd/UW/j/Eo9/g==
+Date: Fri, 9 Aug 2024 18:33:09 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf annotate-data: Support --skip-empty option
+Message-ID: <ZraLFdiu04wjxyt0@x1>
+References: <20240807061713.1642924-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807061713.1642924-1-namhyung@kernel.org>
 
-From: Tristram Ha <tristram.ha@microchip.com>
+On Tue, Aug 06, 2024 at 11:17:13PM -0700, Namhyung Kim wrote:
+> The --skip-empty option is to hide dummy events in a group.  Like other
+> output mode like perf report and perf annotate, the data-type profiling
+> output should support the option.
 
-KSZ8895/KSZ8864 is a switch family between KSZ8863/73 and KSZ8795, so it
-shares some registers and functions in those switches already
-implemented in the KSZ DSA driver.
+Thanks, tested and applied.
 
-Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
----
- drivers/net/dsa/microchip/ksz8795.c         |  16 ++-
- drivers/net/dsa/microchip/ksz_common.c      | 130 +++++++++++++++++++-
- drivers/net/dsa/microchip/ksz_common.h      |  20 ++-
- drivers/net/dsa/microchip/ksz_spi.c         |  15 ++-
- include/linux/platform_data/microchip-ksz.h |   2 +
- 5 files changed, 170 insertions(+), 13 deletions(-)
+    Committer testing:
+    
+    With dummy:
+    
+      root@number:~# perf annotate --stdio --group --data-type --skip-empty | head -24
+      Annotate type: 'pthread_mutex_t' in /usr/lib64/libc.so.6 (50 samples):
+       event[0] = cpu_atom/mem-loads,ldlat=30/P
+       event[1] = cpu_atom/mem-stores/P
+       event[2] = dummy:u
+      ============================================================================
+                       Percent     offset       size  field
+        100.00  100.00    0.00          0         40  pthread_mutex_t        {
+        100.00  100.00    0.00          0         40      struct __pthread_mutex_s  __data {
+         45.21   84.54    0.00          0          4          int   __lock;
+          0.00    0.00    0.00          4          4          unsigned int  __count;
+          0.00    1.83    0.00          8          4          int   __owner;
+          5.19   10.65    0.00         12          4          unsigned int  __nusers;
+         49.61    2.97    0.00         16          4          int   __kind;
+          0.00    0.00    0.00         20          2          short int     __spins;
+          0.00    0.00    0.00         22          2          short int     __elision;
+          0.00    0.00    0.00         24         16          __pthread_list_t      __list {
+          0.00    0.00    0.00         24          8              struct __pthread_internal_list*   __prev;
+          0.00    0.00    0.00         32          8              struct __pthread_internal_list*   __next;
+                                                              };
+                                                          };
+          0.00    0.00    0.00          0          0      char[]    __size;
+         45.21   84.54    0.00          0          8      long int  __align;
+                                                    };
+    Skipping it:
+    
+      root@number:~# perf annotate --stdio --group --data-type --skip-empty | head -24
+      Annotate type: 'pthread_mutex_t' in /usr/lib64/libc.so.6 (50 samples):
+       event[0] = cpu_atom/mem-loads,ldlat=30/P
+       event[1] = cpu_atom/mem-stores/P
+      ============================================================================
+               Percent     offset       size  field
+        100.00  100.00          0         40  pthread_mutex_t        {
+        100.00  100.00          0         40      struct __pthread_mutex_s  __data {
+         45.21   84.54          0          4          int   __lock;
+          0.00    0.00          4          4          unsigned int  __count;
+          0.00    1.83          8          4          int   __owner;
+          5.19   10.65         12          4          unsigned int  __nusers;
+         49.61    2.97         16          4          int   __kind;
+          0.00    0.00         20          2          short int     __spins;
+          0.00    0.00         22          2          short int     __elision;
+          0.00    0.00         24         16          __pthread_list_t      __list {
+          0.00    0.00         24          8              struct __pthread_internal_list*   __prev;
+          0.00    0.00         32          8              struct __pthread_internal_list*   __next;
+                                                      };
+                                                  };
+          0.00    0.00          0          0      char[]    __size;
+         45.21   84.54          0          8      long int  __align;
+                                              };
+    
+      Annotate type: 'pthread_mutexattr_t' in /usr/lib64/libc.so.6 (1 samples):
+      root@number:~#
 
-diff --git a/drivers/net/dsa/microchip/ksz8795.c b/drivers/net/dsa/microchip/ksz8795.c
-index d27b9c36d73f..ac5da38bab36 100644
---- a/drivers/net/dsa/microchip/ksz8795.c
-+++ b/drivers/net/dsa/microchip/ksz8795.c
-@@ -121,6 +121,8 @@ int ksz8_change_mtu(struct ksz_device *dev, int port, int mtu)
- 	case KSZ8765_CHIP_ID:
- 		return ksz8795_change_mtu(dev, frame_size);
- 	case KSZ8830_CHIP_ID:
-+	case KSZ8895_CHIP_ID:
-+	case KSZ8864_CHIP_ID:
- 		return ksz8863_change_mtu(dev, frame_size);
- 	}
+- Arnaldo
  
-@@ -317,7 +319,7 @@ static void ksz8863_r_mib_pkt(struct ksz_device *dev, int port, u16 addr,
- void ksz8_r_mib_pkt(struct ksz_device *dev, int port, u16 addr,
- 		    u64 *dropped, u64 *cnt)
- {
--	if (ksz_is_ksz88x3(dev))
-+	if (ksz_is_ksz88x3(dev) || ksz_is_8895_family(dev))
- 		ksz8863_r_mib_pkt(dev, port, addr, dropped, cnt);
- 	else
- 		ksz8795_r_mib_pkt(dev, port, addr, dropped, cnt);
-@@ -325,7 +327,7 @@ void ksz8_r_mib_pkt(struct ksz_device *dev, int port, u16 addr,
- 
- void ksz8_freeze_mib(struct ksz_device *dev, int port, bool freeze)
- {
--	if (ksz_is_ksz88x3(dev))
-+	if (ksz_is_ksz88x3(dev) || ksz_is_8895_family(dev))
- 		return;
- 
- 	/* enable the port for flush/freeze function */
-@@ -343,7 +345,8 @@ void ksz8_port_init_cnt(struct ksz_device *dev, int port)
- 	struct ksz_port_mib *mib = &dev->ports[port].mib;
- 	u64 *dropped;
- 
--	if (!ksz_is_ksz88x3(dev)) {
-+	/* For KSZ8795 family. */
-+	if (ksz_is_ksz87xx(dev)) {
- 		/* flush all enabled port MIB counters */
- 		ksz_cfg(dev, REG_SW_CTRL_6, BIT(port), true);
- 		ksz_cfg(dev, REG_SW_CTRL_6, SW_MIB_COUNTER_FLUSH, true);
-@@ -542,11 +545,11 @@ static int ksz8_r_sta_mac_table(struct ksz_device *dev, u16 addr,
- 			shifts[STATIC_MAC_FWD_PORTS];
- 	alu->is_override = (data_hi & masks[STATIC_MAC_TABLE_OVERRIDE]) ? 1 : 0;
- 
--	/* KSZ8795 family switches have STATIC_MAC_TABLE_USE_FID and
-+	/* KSZ8795/KSZ8895 family switches have STATIC_MAC_TABLE_USE_FID and
- 	 * STATIC_MAC_TABLE_FID definitions off by 1 when doing read on the
- 	 * static MAC table compared to doing write.
- 	 */
--	if (ksz_is_ksz87xx(dev))
-+	if (!ksz_is_ksz88x3(dev))
- 		data_hi >>= 1;
- 	alu->is_static = true;
- 	alu->is_use_fid = (data_hi & masks[STATIC_MAC_TABLE_USE_FID]) ? 1 : 0;
-@@ -1617,7 +1620,8 @@ void ksz8_config_cpu_port(struct dsa_switch *ds)
- 	for (i = 0; i < dev->phy_port_cnt; i++) {
- 		p = &dev->ports[i];
- 
--		if (!ksz_is_ksz88x3(dev)) {
-+		/* For KSZ8795 family. */
-+		if (ksz_is_ksz87xx(dev)) {
- 			ksz_pread8(dev, i, regs[P_REMOTE_STATUS], &remote);
- 			if (remote & KSZ8_PORT_FIBER_MODE)
- 				p->fiber = 1;
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index 1491099528be..8751578b7e38 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -2,7 +2,7 @@
- /*
-  * Microchip switch driver main logic
-  *
-- * Copyright (C) 2017-2019 Microchip Technology Inc.
-+ * Copyright (C) 2017-2024 Microchip Technology Inc.
-  */
- 
- #include <linux/delay.h>
-@@ -477,6 +477,61 @@ static const u8 ksz8795_shifts[] = {
- 	[DYNAMIC_MAC_SRC_PORT]		= 24,
- };
- 
-+static const u16 ksz8895_regs[] = {
-+	[REG_SW_MAC_ADDR]		= 0x68,
-+	[REG_IND_CTRL_0]		= 0x6E,
-+	[REG_IND_DATA_8]		= 0x70,
-+	[REG_IND_DATA_CHECK]		= 0x72,
-+	[REG_IND_DATA_HI]		= 0x71,
-+	[REG_IND_DATA_LO]		= 0x75,
-+	[REG_IND_MIB_CHECK]		= 0x75,
-+	[P_FORCE_CTRL]			= 0x0C,
-+	[P_LINK_STATUS]			= 0x0E,
-+	[P_LOCAL_CTRL]			= 0x0C,
-+	[P_NEG_RESTART_CTRL]		= 0x0D,
-+	[P_REMOTE_STATUS]		= 0x0E,
-+	[P_SPEED_STATUS]		= 0x09,
-+	[S_TAIL_TAG_CTRL]		= 0x0C,
-+	[P_STP_CTRL]			= 0x02,
-+	[S_START_CTRL]			= 0x01,
-+	[S_BROADCAST_CTRL]		= 0x06,
-+	[S_MULTICAST_CTRL]		= 0x04,
-+};
-+
-+static const u32 ksz8895_masks[] = {
-+	[PORT_802_1P_REMAPPING]		= BIT(7),
-+	[SW_TAIL_TAG_ENABLE]		= BIT(1),
-+	[MIB_COUNTER_OVERFLOW]		= BIT(7),
-+	[MIB_COUNTER_VALID]		= BIT(6),
-+	[VLAN_TABLE_FID]		= GENMASK(6, 0),
-+	[VLAN_TABLE_MEMBERSHIP]		= GENMASK(11, 7),
-+	[VLAN_TABLE_VALID]		= BIT(12),
-+	[STATIC_MAC_TABLE_VALID]	= BIT(21),
-+	[STATIC_MAC_TABLE_USE_FID]	= BIT(23),
-+	[STATIC_MAC_TABLE_FID]		= GENMASK(30, 24),
-+	[STATIC_MAC_TABLE_OVERRIDE]	= BIT(22),
-+	[STATIC_MAC_TABLE_FWD_PORTS]	= GENMASK(20, 16),
-+	[DYNAMIC_MAC_TABLE_ENTRIES_H]	= GENMASK(6, 0),
-+	[DYNAMIC_MAC_TABLE_MAC_EMPTY]	= BIT(7),
-+	[DYNAMIC_MAC_TABLE_NOT_READY]	= BIT(7),
-+	[DYNAMIC_MAC_TABLE_ENTRIES]	= GENMASK(31, 29),
-+	[DYNAMIC_MAC_TABLE_FID]		= GENMASK(22, 16),
-+	[DYNAMIC_MAC_TABLE_SRC_PORT]	= GENMASK(26, 24),
-+	[DYNAMIC_MAC_TABLE_TIMESTAMP]	= GENMASK(28, 27),
-+};
-+
-+static const u8 ksz8895_shifts[] = {
-+	[VLAN_TABLE_MEMBERSHIP_S]	= 7,
-+	[VLAN_TABLE]			= 13,
-+	[STATIC_MAC_FWD_PORTS]		= 16,
-+	[STATIC_MAC_FID]		= 24,
-+	[DYNAMIC_MAC_ENTRIES_H]		= 3,
-+	[DYNAMIC_MAC_ENTRIES]		= 29,
-+	[DYNAMIC_MAC_FID]		= 16,
-+	[DYNAMIC_MAC_TIMESTAMP]		= 27,
-+	[DYNAMIC_MAC_SRC_PORT]		= 24,
-+};
-+
- static const u16 ksz8863_regs[] = {
- 	[REG_SW_MAC_ADDR]		= 0x70,
- 	[REG_IND_CTRL_0]		= 0x79,
-@@ -1343,6 +1398,61 @@ const struct ksz_chip_data ksz_switch_chips[] = {
- 		.internal_phy = {true, true, true, true, false},
- 	},
- 
-+	[KSZ8895] = {
-+		.chip_id = KSZ8895_CHIP_ID,
-+		.dev_name = "KSZ8895",
-+		.num_vlans = 4096,
-+		.num_alus = 0,
-+		.num_statics = 32,
-+		.cpu_ports = 0x10,	/* can be configured as cpu port */
-+		.port_cnt = 5,		/* total cpu and user ports */
-+		.num_tx_queues = 4,
-+		.num_ipms = 4,
-+		.ops = &ksz8_dev_ops,
-+		.phylink_mac_ops = &ksz8_phylink_mac_ops,
-+		.mib_names = ksz88xx_mib_names,
-+		.mib_cnt = ARRAY_SIZE(ksz88xx_mib_names),
-+		.reg_mib_cnt = MIB_COUNTER_NUM,
-+		.regs = ksz8895_regs,
-+		.masks = ksz8895_masks,
-+		.shifts = ksz8895_shifts,
-+		.supports_mii = {false, false, false, false, true},
-+		.supports_rmii = {false, false, false, false, true},
-+		.internal_phy = {true, true, true, true, false},
-+	},
-+
-+	[KSZ8864] = {
-+		/* WARNING
-+		 * =======
-+		 * KSZ8864 is similar to KSZ8895, except the first port
-+		 * does not exist.
-+		 *           external  cpu
-+		 * KSZ8864   1,2,3      4
-+		 * KSZ8895   0,1,2,3    4
-+		 * port_cnt is configured as 5, even though it is 4
-+		 */
-+		.chip_id = KSZ8864_CHIP_ID,
-+		.dev_name = "KSZ8864",
-+		.num_vlans = 4096,
-+		.num_alus = 0,
-+		.num_statics = 32,
-+		.cpu_ports = 0x10,	/* can be configured as cpu port */
-+		.port_cnt = 5,		/* total cpu and user ports */
-+		.num_tx_queues = 4,
-+		.num_ipms = 4,
-+		.ops = &ksz8_dev_ops,
-+		.phylink_mac_ops = &ksz8_phylink_mac_ops,
-+		.mib_names = ksz88xx_mib_names,
-+		.mib_cnt = ARRAY_SIZE(ksz88xx_mib_names),
-+		.reg_mib_cnt = MIB_COUNTER_NUM,
-+		.regs = ksz8895_regs,
-+		.masks = ksz8895_masks,
-+		.shifts = ksz8895_shifts,
-+		.supports_mii = {false, false, false, false, true},
-+		.supports_rmii = {false, false, false, false, true},
-+		.internal_phy = {false, true, true, true, false},
-+	},
-+
- 	[KSZ8830] = {
- 		.chip_id = KSZ8830_CHIP_ID,
- 		.dev_name = "KSZ8863/KSZ8873",
-@@ -2893,9 +3003,7 @@ static enum dsa_tag_protocol ksz_get_tag_protocol(struct dsa_switch *ds,
- 	struct ksz_device *dev = ds->priv;
- 	enum dsa_tag_protocol proto = DSA_TAG_PROTO_NONE;
- 
--	if (dev->chip_id == KSZ8795_CHIP_ID ||
--	    dev->chip_id == KSZ8794_CHIP_ID ||
--	    dev->chip_id == KSZ8765_CHIP_ID)
-+	if (ksz_is_ksz87xx(dev) || ksz_is_8895_family(dev))
- 		proto = DSA_TAG_PROTO_KSZ8795;
- 
- 	if (dev->chip_id == KSZ8830_CHIP_ID ||
-@@ -3011,6 +3119,8 @@ static int ksz_max_mtu(struct dsa_switch *ds, int port)
- 	case KSZ8765_CHIP_ID:
- 		return KSZ8795_HUGE_PACKET_SIZE - VLAN_ETH_HLEN - ETH_FCS_LEN;
- 	case KSZ8830_CHIP_ID:
-+	case KSZ8895_CHIP_ID:
-+	case KSZ8864_CHIP_ID:
- 		return KSZ8863_HUGE_PACKET_SIZE - VLAN_ETH_HLEN - ETH_FCS_LEN;
- 	case KSZ8563_CHIP_ID:
- 	case KSZ8567_CHIP_ID:
-@@ -3368,6 +3478,18 @@ static int ksz_switch_detect(struct ksz_device *dev)
- 		else
- 			return -ENODEV;
- 		break;
-+	case KSZ8895_FAMILY_ID:
-+		if (id2 == KSZ8895_CHIP_ID_95 ||
-+		    id2 == KSZ8895_CHIP_ID_95R)
-+			dev->chip_id = KSZ8895_CHIP_ID;
-+		else
-+			return -ENODEV;
-+		ret = ksz_read8(dev, REG_KSZ8864_CHIP_ID, &id4);
-+		if (ret)
-+			return ret;
-+		if (id4 & SW_KSZ8864)
-+			dev->chip_id = KSZ8864_CHIP_ID;
-+		break;
- 	default:
- 		ret = ksz_read32(dev, REG_CHIP_ID0, &id32);
- 		if (ret)
-diff --git a/drivers/net/dsa/microchip/ksz_common.h b/drivers/net/dsa/microchip/ksz_common.h
-index 5f0a628b9849..ad8723233a33 100644
---- a/drivers/net/dsa/microchip/ksz_common.h
-+++ b/drivers/net/dsa/microchip/ksz_common.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /* Microchip switch driver common header
-  *
-- * Copyright (C) 2017-2019 Microchip Technology Inc.
-+ * Copyright (C) 2017-2024 Microchip Technology Inc.
-  */
- 
- #ifndef __KSZ_COMMON_H
-@@ -199,6 +199,8 @@ enum ksz_model {
- 	KSZ8795,
- 	KSZ8794,
- 	KSZ8765,
-+	KSZ8895,
-+	KSZ8864,
- 	KSZ8830,
- 	KSZ9477,
- 	KSZ9896,
-@@ -624,9 +626,16 @@ static inline bool ksz_is_ksz88x3(struct ksz_device *dev)
- 	return dev->chip_id == KSZ8830_CHIP_ID;
- }
- 
-+static inline bool ksz_is_8895_family(struct ksz_device *dev)
-+{
-+	return dev->chip_id == KSZ8895_CHIP_ID ||
-+	       dev->chip_id == KSZ8864_CHIP_ID;
-+}
-+
- static inline bool is_ksz8(struct ksz_device *dev)
- {
--	return ksz_is_ksz87xx(dev) || ksz_is_ksz88x3(dev);
-+	return ksz_is_ksz87xx(dev) || ksz_is_ksz88x3(dev) ||
-+	       ksz_is_8895_family(dev);
- }
- 
- static inline int is_lan937x(struct ksz_device *dev)
-@@ -655,6 +664,7 @@ static inline bool is_lan937x_tx_phy(struct ksz_device *dev, int port)
- #define SW_FAMILY_ID_M			GENMASK(15, 8)
- #define KSZ87_FAMILY_ID			0x87
- #define KSZ88_FAMILY_ID			0x88
-+#define KSZ8895_FAMILY_ID		0x95
- 
- #define KSZ8_PORT_STATUS_0		0x08
- #define KSZ8_PORT_FIBER_MODE		BIT(7)
-@@ -663,6 +673,12 @@ static inline bool is_lan937x_tx_phy(struct ksz_device *dev, int port)
- #define KSZ87_CHIP_ID_94		0x6
- #define KSZ87_CHIP_ID_95		0x9
- #define KSZ88_CHIP_ID_63		0x3
-+#define KSZ8895_CHIP_ID_95		0x4
-+#define KSZ8895_CHIP_ID_95R		0x6
-+
-+/* KSZ8895 specific register */
-+#define REG_KSZ8864_CHIP_ID		0xFE
-+#define SW_KSZ8864			BIT(7)
- 
- #define SW_REV_ID_M			GENMASK(7, 4)
- 
-diff --git a/drivers/net/dsa/microchip/ksz_spi.c b/drivers/net/dsa/microchip/ksz_spi.c
-index 8e8d83213b04..11d27df710fd 100644
---- a/drivers/net/dsa/microchip/ksz_spi.c
-+++ b/drivers/net/dsa/microchip/ksz_spi.c
-@@ -2,7 +2,7 @@
- /*
-  * Microchip ksz series register access through SPI
-  *
-- * Copyright (C) 2017 Microchip Technology Inc.
-+ * Copyright (C) 2017-2024 Microchip Technology Inc.
-  *	Tristram Ha <Tristram.Ha@microchip.com>
-  */
- 
-@@ -60,6 +60,9 @@ static int ksz_spi_probe(struct spi_device *spi)
- 		 chip->chip_id == KSZ8794_CHIP_ID ||
- 		 chip->chip_id == KSZ8765_CHIP_ID)
- 		regmap_config = ksz8795_regmap_config;
-+	else if (chip->chip_id == KSZ8895_CHIP_ID ||
-+		 chip->chip_id == KSZ8864_CHIP_ID)
-+		regmap_config = ksz8863_regmap_config;
- 	else
- 		regmap_config = ksz9477_regmap_config;
- 
-@@ -132,6 +135,14 @@ static const struct of_device_id ksz_dt_ids[] = {
- 		.compatible = "microchip,ksz8795",
- 		.data = &ksz_switch_chips[KSZ8795]
- 	},
-+	{
-+		.compatible = "microchip,ksz8895",
-+		.data = &ksz_switch_chips[KSZ8895]
-+	},
-+	{
-+		.compatible = "microchip,ksz8864",
-+		.data = &ksz_switch_chips[KSZ8864]
-+	},
- 	{
- 		.compatible = "microchip,ksz8863",
- 		.data = &ksz_switch_chips[KSZ8830]
-@@ -200,6 +211,8 @@ static const struct spi_device_id ksz_spi_ids[] = {
- 	{ "ksz8765" },
- 	{ "ksz8794" },
- 	{ "ksz8795" },
-+	{ "ksz8895" },
-+	{ "ksz8864" },
- 	{ "ksz8863" },
- 	{ "ksz8873" },
- 	{ "ksz9477" },
-diff --git a/include/linux/platform_data/microchip-ksz.h b/include/linux/platform_data/microchip-ksz.h
-index 8c659db4da6b..4b366b17391d 100644
---- a/include/linux/platform_data/microchip-ksz.h
-+++ b/include/linux/platform_data/microchip-ksz.h
-@@ -27,6 +27,8 @@ enum ksz_chip_id {
- 	KSZ8795_CHIP_ID = 0x8795,
- 	KSZ8794_CHIP_ID = 0x8794,
- 	KSZ8765_CHIP_ID = 0x8765,
-+	KSZ8895_CHIP_ID = 0x8895,
-+	KSZ8864_CHIP_ID = 0x8864,
- 	KSZ8830_CHIP_ID = 0x8830,
- 	KSZ9477_CHIP_ID = 0x00947700,
- 	KSZ9896_CHIP_ID = 0x00989600,
--- 
-2.34.1
-
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/ui/browsers/annotate-data.c | 30 ++++++++++++++----
+>  tools/perf/util/annotate-data.c        | 44 +++++++++++++-------------
+>  2 files changed, 45 insertions(+), 29 deletions(-)
+> 
+> diff --git a/tools/perf/ui/browsers/annotate-data.c b/tools/perf/ui/browsers/annotate-data.c
+> index 8d6bf08d371d..c3db80a7589a 100644
+> --- a/tools/perf/ui/browsers/annotate-data.c
+> +++ b/tools/perf/ui/browsers/annotate-data.c
+> @@ -46,15 +46,18 @@ static int get_member_overhead(struct annotated_data_type *adt,
+>  	struct annotated_member *member = entry->data;
+>  	int i, k;
+>  
+> -	for (i = 0; i < member->size; i++) {
+> +	for (i = 0, k = 0; i < member->size; i++) {
+>  		struct type_hist *h;
+>  		struct evsel *evsel;
+>  		int offset = member->offset + i;
+>  
+>  		for_each_group_evsel(evsel, leader) {
+> +			if (symbol_conf.skip_empty &&
+> +			    evsel__hists(evsel)->stats.nr_samples == 0)
+> +				continue;
+> +
+>  			h = adt->histograms[evsel->core.idx];
+> -			k = evsel__group_idx(evsel);
+> -			update_hist_entry(&entry->hists[k], &h->addr[offset]);
+> +			update_hist_entry(&entry->hists[k++], &h->addr[offset]);
+>  		}
+>  	}
+>  	return 0;
+> @@ -203,6 +206,7 @@ static void browser__write(struct ui_browser *uib, void *entry, int row)
+>  	struct annotated_data_type *adt = he->mem_type;
+>  	struct evsel *leader = hists_to_evsel(he->hists);
+>  	struct evsel *evsel;
+> +	int idx = 0;
+>  
+>  	if (member == NULL) {
+>  		bool current = ui_browser__is_current_entry(uib, row);
+> @@ -219,9 +223,12 @@ static void browser__write(struct ui_browser *uib, void *entry, int row)
+>  	/* print the number */
+>  	for_each_group_evsel(evsel, leader) {
+>  		struct type_hist *h = adt->histograms[evsel->core.idx];
+> -		int idx = evsel__group_idx(evsel);
+>  
+> -		browser__write_overhead(uib, h, &be->hists[idx], row);
+> +		if (symbol_conf.skip_empty &&
+> +		    evsel__hists(evsel)->stats.nr_samples == 0)
+> +			continue;
+> +
+> +		browser__write_overhead(uib, h, &be->hists[idx++], row);
+>  	}
+>  
+>  	/* print type info */
+> @@ -300,8 +307,17 @@ int hist_entry__annotate_data_tui(struct hist_entry *he, struct evsel *evsel,
+>  
+>  	ui_helpline__push("Press ESC to exit");
+>  
+> -	if (evsel__is_group_event(evsel))
+> -		browser.nr_events = evsel->core.nr_members;
+> +	if (evsel__is_group_event(evsel)) {
+> +		struct evsel *pos;
+> +		int nr = 0;
+> +
+> +		for_each_group_evsel(pos, evsel) {
+> +			if (!symbol_conf.skip_empty ||
+> +			    evsel__hists(pos)->stats.nr_samples)
+> +				nr++;
+> +		}
+> +		browser.nr_events = nr;
+> +	}
+>  
+>  	ret = annotated_data_browser__collect_entries(&browser);
+>  	if (ret == 0)
+> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+> index 734acdd8c4b7..be3b84a82271 100644
+> --- a/tools/perf/util/annotate-data.c
+> +++ b/tools/perf/util/annotate-data.c
+> @@ -1492,10 +1492,15 @@ static void print_annotated_data_header(struct hist_entry *he, struct evsel *evs
+>  		struct evsel *pos;
+>  		int i = 0;
+>  
+> -		for_each_group_evsel(pos, evsel)
+> -			printf(" event[%d] = %s\n", i++, pos->name);
+> +		nr_members = 0;
+> +		for_each_group_evsel(pos, evsel) {
+> +			if (symbol_conf.skip_empty &&
+> +			    evsel__hists(pos)->stats.nr_samples == 0)
+> +				continue;
+>  
+> -		nr_members = evsel->core.nr_members;
+> +			printf(" event[%d] = %s\n", i++, pos->name);
+> +			nr_members++;
+> +		}
+>  	}
+>  
+>  	if (symbol_conf.show_total_period) {
+> @@ -1530,31 +1535,26 @@ static void print_annotated_data_type(struct annotated_data_type *mem_type,
+>  {
+>  	struct annotated_member *child;
+>  	struct type_hist *h = mem_type->histograms[evsel->core.idx];
+> -	int i, nr_events = 1, samples = 0;
+> +	int i, nr_events = 0, samples = 0;
+>  	u64 period = 0;
+>  	int width = symbol_conf.show_total_period ? 11 : 7;
+> +	struct evsel *pos;
+>  
+> -	for (i = 0; i < member->size; i++) {
+> -		samples += h->addr[member->offset + i].nr_samples;
+> -		period += h->addr[member->offset + i].period;
+> -	}
+> -	print_annotated_data_value(h, period, samples);
+> -
+> -	if (evsel__is_group_event(evsel)) {
+> -		struct evsel *pos;
+> +	for_each_group_evsel(pos, evsel) {
+> +		h = mem_type->histograms[pos->core.idx];
+>  
+> -		for_each_group_member(pos, evsel) {
+> -			h = mem_type->histograms[pos->core.idx];
+> +		if (symbol_conf.skip_empty &&
+> +		    evsel__hists(pos)->stats.nr_samples == 0)
+> +			continue;
+>  
+> -			samples = 0;
+> -			period = 0;
+> -			for (i = 0; i < member->size; i++) {
+> -				samples += h->addr[member->offset + i].nr_samples;
+> -				period += h->addr[member->offset + i].period;
+> -			}
+> -			print_annotated_data_value(h, period, samples);
+> +		samples = 0;
+> +		period = 0;
+> +		for (i = 0; i < member->size; i++) {
+> +			samples += h->addr[member->offset + i].nr_samples;
+> +			period += h->addr[member->offset + i].period;
+>  		}
+> -		nr_events = evsel->core.nr_members;
+> +		print_annotated_data_value(h, period, samples);
+> +		nr_events++;
+>  	}
+>  
+>  	printf(" %10d %10d  %*s%s\t%s",
+> -- 
+> 2.46.0.rc2.264.g509ed76dc8-goog
 
