@@ -1,111 +1,168 @@
-Return-Path: <linux-kernel+bounces-280832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF52894CFC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:05:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C966894CFCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B043282D72
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:05:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B775282B3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF32192B82;
-	Fri,  9 Aug 2024 12:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98094194082;
+	Fri,  9 Aug 2024 12:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="zPLhWBZs"
-Received: from pv50p00im-zteg10021301.me.com (pv50p00im-zteg10021301.me.com [17.58.6.46])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QyRzQHWZ"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998801553A2
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 12:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E451553A2
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 12:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723205107; cv=none; b=QPsEd/EkM3NXLYReUf0xZvsCU0cgQffs6haR5IsXGpf7Y8Y+YHTeYAic8p7+6aGZ+mhpaRUHmEuv8j7reFMxKr8PgDQnejVMLL7QXuRbGQzV/t9bna2W5k0C66c1KGMQmZiyqdoyPRnBvAnHNdYO91G9JKU3istoXdWGQQ4gB14=
+	t=1723205227; cv=none; b=L8MMbKbVnnzHlQyxrL7x/ZoL8qy3NEyxYGi3GFcsWK4J3GsNb+vhZlgfz9KLjXUs+GnlTPPnqgQ+6unmg9BS9a55ZblZpJXJvXWRLUbNDc6TkhwKLPOjqePzF25X9tTPtkLUG2K8dv/mf9ncVQ0UhKIBvt2sj1CnJy5f98waBis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723205107; c=relaxed/simple;
-	bh=aQmufaufbrUJgVw0unwrNxyrz6qqTbQCxhkQayxDZ1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LO5ZNurIPJvLDotlBXyBftSltDeozCUScTOJ9yPtujdtTMaJTnpC4gSu5vpgg6RU0XQ6a9StPyENoQ2Gv20Q++Nagt3SHY0gNcNle4xQpBYA8ofu0By+ynKX3AZuLTYA8Tb+iQ2R/I3AG+XOh5UPafzmi7b+00BluTANwkmUgYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=zPLhWBZs; arc=none smtp.client-ip=17.58.6.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1723205106;
-	bh=91ku7gZIyYNJbyF7z6zrP3dy9raxhhiSk8CHiD8KfgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=zPLhWBZswlJ1MEKK3ZH7NHY78XHo0vkZRWmYC4DhPWyls+rj7aN0T3/1J5t3YG+no
-	 znCbjIJb/p7f4vZXN+g2aM981rDLaAxU/hCIMzRXQcjYckKrOz03sc4QtWkA7TN8lc
-	 U0tmVGvsbatprdF4KTOuWCSktHR8lPOi8lB75yvMVgFYquZEai1FaK7rseS3/4wQgt
-	 VGLL9ktlfIlYiZfK0jKTPqz448NywiTxjXQgSjbqvZ6riE5QDdWXSlr2R8BqbM2UOd
-	 xk77hgxrm5nFsCp9lOZFgRmWh3gitMW0eme0z4Pc51/1/8CvcQbgMwOnqv8y2y/y/z
-	 0OIJh0pZ7T+Zg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10021301.me.com (Postfix) with ESMTPSA id 09877500145;
-	Fri,  9 Aug 2024 12:05:01 +0000 (UTC)
-Message-ID: <ff11cab0-6dfd-407c-8039-3dfd873e7280@icloud.com>
-Date: Fri, 9 Aug 2024 20:04:57 +0800
+	s=arc-20240116; t=1723205227; c=relaxed/simple;
+	bh=yQNr5uu21mbrMW3qH62Z+ChQroa8oSaWtNoVIdl6xPc=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Z6SKTZgFgpzGwpKKsvK6SHf5WVt9npDEq79UuKf5iGJ6s6nUT4Z+Oj9wFAW/wLi6Ngt3pt9yEVB1i22p8fw2e8sq28rbdy85izzjgd9FheP16wgf9fAfS5pQVO3fML2cb78ZholIVbE5hkl7ql78gPQC/fs2nm65P67jvsFTR/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QyRzQHWZ; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723205215; bh=KhY2EGYfQ1SPKLrsNpbG8vfqYFKj/hHqdfUChkPp0uI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=QyRzQHWZX+2eHkRogLvF4b1DHiDb/oD4g/s2pWlIISLW0aXEy2Puc9P7MKMhh6UJT
+	 5c7VSMA1om4VaPiT6Q4iYRYiYAOyc3+iXBb9P9sQOd3LdoooJv3Qnny2se0BcXxfx4
+	 WXKbODiuZwvkBmgKEzecOL/Jy+ZHiCTCtqxy3KyM=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id 166822DB; Fri, 09 Aug 2024 20:05:38 +0800
+X-QQ-mid: xmsmtpt1723205138tp0xybuq6
+Message-ID: <tencent_FABB2C33D59E661B6F4BAB1B3D2538BA2A08@qq.com>
+X-QQ-XMAILINFO: OZZSS56D9fAjNXcpR56+Qf8+XMEkosPjhBX5FLse810VpL0fW7nd+bjYD122sL
+	 8ICdg/YbBIgGK5C6oDsBZ+Dg1wvG7iIIWnbNMfvPHRVPXV/7NUqIY7+rsjj0Jn8UKbYyAMZ582OI
+	 TQlQ9ciJUYQ84AjlmUpt4GM7yWuF0oRvvMB5jKWLhWxADNA7HaDb87p1eLZPlzqnBm1DfPVA18Rf
+	 4Td92HknjYJZ8lJ8HgxPnKhjJnuXoejHFv3CpCPMMyyjxRqjEFbgrpsevZL2KJwYHCgW8NAYpaVi
+	 4BbPSR6YnSrB+PQRLo6Im1FSAJ3qtk23SYG1mWzshwRHzOyWRGYHm0vDDsczQmvbjY0cwoLeIvTt
+	 /MIV9OffvzEti7WrfXHe7wLoyVvpu4zfQy69Rx5TtF7RZh9yXTOQpkxbWKE82qs1ZP3BeISD69Cw
+	 6vAdxHRO7m0P6Mo38Ls8kxd7xbEpO5KNyNfDAOLgqTr3SXQcwgvjkO/cKmyzlSWA4aTwa/tlGuhO
+	 qHGT82c+HOH/zkdst7rE6bi35WyIJVDN4B8o+xfIyl9znqFEPPDDftwn5RWDPCIpRtjK751Arr73
+	 3Qq3jzxASy+BaO8p9JYpuEzJaWrYOvi/RiqZlykvU4dO81udbCfnj+QccxfexmPOtn4UzcFkInno
+	 YSdBnlPjh9F2TW8y3PlorYUy3nMvqM7yo/g6RCb1vNfZgXNXbaLU4OJBnhCZzCfi/ONLzjaAU16h
+	 iIuJYD5JyU2IqFXM3sxrnW3oNt5sIfSM94VcOckhHj5CCL9n7VJtF/BiDe0XSY+FmCWvaEoo89Xy
+	 ArJ7atRQOhmWPctjYCF51ZtLk24cInBJ0J9BfseR+lkYxz6ZIes1xsqdkxK+RADVJd9taayP4bzn
+	 3RT3hAgVxwlRMV7AnyoSaZwGgZUqggC4W7sL6HiX96z/EA1mrLXwZCHNeH1QEL/bQC622k8MFOME
+	 kHdInHitfrtvWUgPi5+KtiKR5/rW+KElhZKplSEwniu2f74v4TckonzPDkDhzP
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Date: Fri,  9 Aug 2024 20:05:38 +0800
+X-OQ-MSGID: <20240809120537.1636810-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+References: <0000000000007ec511061f00a7b2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] linux/container_of.h: Remove redundant type cast in
- container_of_const()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, Sakari Ailus <sakari.ailus@linux.intel.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240802-container_of_const_fix-v1-1-90e7a5b624f9@quicinc.com>
- <ZrX9G2Ol2jt4o-s7@smile.fi.intel.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <ZrX9G2Ol2jt4o-s7@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: GjZA7YvFAi6EvkXUvYot7wfn9wY58hTX
-X-Proofpoint-ORIG-GUID: GjZA7YvFAi6EvkXUvYot7wfn9wY58hTX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_08,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 mlxscore=0
- clxscore=1015 spamscore=0 mlxlogscore=879 phishscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408090088
+Content-Transfer-Encoding: 8bit
 
-On 2024/8/9 19:27, Andy Shevchenko wrote:
-> On Fri, Aug 02, 2024 at 11:15:15PM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> Remove redundant (type *) cast for default branch in container_of_const()
->> since the cast has been done by container_of().
-> 
-> While it might have same effect, the below is explicitly clear about both
-> cases. With your patch it will become inconsistent.
-> 
+debug
 
-my change is more obvious to say that container_of_const() is same as
-container_of() for none const pointer parameter @ptr. it is simpler and
-easier to understand.
+#syz test: upstream c0ecd6388360
 
-> ...
-> 
->>  #define container_of_const(ptr, type, member)				\
->>  	_Generic(ptr,							\
->>  		const typeof(*(ptr)) *: ((const type *)container_of(ptr, type, member)),\
-> 
-> (see, in the above line the cast is still present / required)
-> 
-
-yes, for above case, (const type *) is suitable and required.
-
->> -		default: ((type *)container_of(ptr, type, member))	\
->> +		default: container_of(ptr, type, member)	\
->>  	)
-> 
+diff --git a/fs/9p/fid.c b/fs/9p/fid.c
+index de009a33e0e2..b5ccab74bb6f 100644
+--- a/fs/9p/fid.c
++++ b/fs/9p/fid.c
+@@ -13,6 +13,7 @@
+ #include <linux/sched.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
++#include <linux/file.h>
+ 
+ #include "v9fs.h"
+ #include "v9fs_vfs.h"
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index a97ceb105cd8..7768cc70439d 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -34,6 +34,7 @@ static void v9fs_begin_writeback(struct netfs_io_request *wreq)
+ {
+ 	struct p9_fid *fid;
+ 
++	printk("ino: %lx, %s\n", wreq->inode->i_ino, __func__);
+ 	fid = v9fs_fid_find_inode(wreq->inode, true, INVALID_UID, true);
+ 	if (!fid) {
+ 		WARN_ONCE(1, "folio expected an open fid inode->i_ino=%lx\n",
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 348cc90bf9c5..002c3f7f0ba3 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -22,6 +22,7 @@
+ #include <linux/slab.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
++#include <linux/security.h>
+ 
+ #include "v9fs.h"
+ #include "v9fs_vfs.h"
+@@ -44,6 +45,12 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 	struct p9_fid *fid;
+ 	int omode;
+ 
++	if ((file->f_flags & O_RDWR || file->f_flags & O_WRONLY) &&
++	    security_file_permission(filp, MAY_WRITE)) {
++		pr_info("file: %p no permission, ino: %lx, %s\n", file, inode->i_ino, __func__);
++		return -EPERM;
++	}
++
+ 	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, file);
+ 	v9ses = v9fs_inode2v9ses(inode);
+ 	if (v9fs_proto_dotl(v9ses))
+@@ -397,6 +404,12 @@ v9fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct p9_fid *fid = file->private_data;
++	struct inode *inode = file_inode(file);
++
++	if (security_file_permission(filp, MAY_WRITE)) {
++		pr_info("file: %p no permission, ino: %lx, %s\n", file, inode->i_ino,  __func__);
++		return -EPERM;
++	}
+ 
+ 	p9_debug(P9_DEBUG_VFS, "fid %d\n", fid->fid);
+ 
+@@ -460,6 +473,11 @@ v9fs_file_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	struct inode *inode = file_inode(filp);
+ 	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
+ 
++	if (security_file_permission(filp, MAY_WRITE)) {
++		pr_info("file: %p no permission, ino: %lx, %s\n", filp, inode->i_ino, __func__);
++		return -EPERM;
++	}
++
+ 	p9_debug(P9_DEBUG_MMAP, "filp :%p\n", filp);
+ 
+ 	if (!(v9ses->cache & CACHE_WRITEBACK)) {
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index 9258d30cffe3..bab69d871381 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -528,6 +528,7 @@ int netfs_writepages(struct address_space *mapping,
+ 		/* It appears we don't have to handle cyclic writeback wrapping. */
+ 		WARN_ON_ONCE(wreq && folio_pos(folio) < wreq->start + wreq->submitted);
+ 
++		printk("ino: %lx, folio: %p, %s\n", wreq->inode->i_ino, folio, __func__);
+ 		if (netfs_folio_group(folio) != NETFS_FOLIO_COPY_TO_CACHE &&
+ 		    unlikely(!test_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags))) {
+ 			set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
 
 
