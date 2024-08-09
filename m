@@ -1,351 +1,321 @@
-Return-Path: <linux-kernel+bounces-281252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2AE94D4D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:38:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB44594D4CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A9F7B2159E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E762816C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10174208CA;
-	Fri,  9 Aug 2024 16:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6CC38384;
+	Fri,  9 Aug 2024 16:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="Ke9lBzPZ"
-Received: from rcdn-iport-4.cisco.com (rcdn-iport-4.cisco.com [173.37.86.75])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ILf5RWwl"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2040.outbound.protection.outlook.com [40.107.101.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154D41BDDF;
-	Fri,  9 Aug 2024 16:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=173.37.86.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9E41C28E;
+	Fri,  9 Aug 2024 16:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723221438; cv=fail; b=pup/DH4FcZdaELRWTdWZIikeIW6VMC9s7T1DAm+ClNZ/4Kgn8aoztpEwPOW3wq/HMqBED+eOVVRU431LZxZIQMdtN9UV91n0YeS8/zzGv3LVq5Ukq6D5Frsd8oCZi3gj2S0Lwss5ogO1CKbnLaPP8eGklIv6iQ2SyRLk+GfAOHk=
+	t=1723221399; cv=fail; b=INBOB03hv1+xDMTzUSq805iWZLBsRpTtWB5uVwUhyJR0wRLtMfWA1WTCTr+e5wC3uDpebyOFshxYFNu0NxgzOkwpIe7/JeKNDLOIYUvpWOzbLu0aJZbJnR6u8OVQBUC9lThmDT4B+uJvMQVPRcjFD6shZ7HcF2hNhiefi7if1uI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723221438; c=relaxed/simple;
-	bh=x7Km4VXMhsXxrvXckKvoRfGoKTXzPXBaHCm7sQehs3U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LbF3LPifvnV+OWVBglI9DhNxLmoNMCDdiTIGnxNy59WvFsMG35y50GBFb6e5xcoum99HKMnbZDOzeGIJJgJWjPmGyjJMpptXCalG/gjcN/pyINq4RAzPc6N8RkeOJZVrzztHBjXH8AU665RjvF9oUEHUIolrhW8y9rVDEFL45/8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=Ke9lBzPZ; arc=fail smtp.client-ip=173.37.86.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=7580; q=dns/txt; s=iport;
-  t=1723221436; x=1724431036;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=x7Km4VXMhsXxrvXckKvoRfGoKTXzPXBaHCm7sQehs3U=;
-  b=Ke9lBzPZ9lcEaMqhFi1xt8VYp6eAhfvBUS84IhBQNJnlz+gSgdxt/bak
-   Eb5pvugmfaP+MefW59/VojbCMG8VeZlz08tqEVp/7yrCE36mCli1LSaPy
-   EvsDWigJHasae4nbiYqwaot17cyoC5DjMbYDQhfFN3AoGSd1+So/gMCWi
-   I=;
-X-CSE-ConnectionGUID: TUVOHS4JThuHoqArwszuSg==
-X-CSE-MsgGUID: MvXbd1TLSMaUZMJBbluptg==
-X-IPAS-Result: =?us-ascii?q?A0ANAADRRLZmmIsNJK1aHQEBAQEJARIBBQUBQCWBFggBC?=
- =?us-ascii?q?wGBcVJ7gR5IhFWDTAOETl+GUYIiA54SgSUDVg8BAQENAQFEBAEBhQYCFok+A?=
- =?us-ascii?q?iY0CQ4BAgQBAQEBAwIDAQEBAQEBAQEBBQEBBQEBAQIBBwUUAQEBAQEBAQE3B?=
- =?us-ascii?q?Q47hgKGXQEBAQEDEhEEDUUQAgEIGAICJgICAi8VEAIEAQ0FCBqCXoJlAwGid?=
- =?us-ascii?q?gGBQAKKKHp/M4EB4B2BGi4BiEoBgWyDeUSEMicbgg2BV4I3MT6ERRWDRDqCL?=
- =?us-ascii?q?wSGWTWHfoMQghIBCoNIg1qCOSZNV4dTfYgXCUl7HANZIQIRAVUTFwsJBWiIY?=
- =?us-ascii?q?QqBBoIdKYFLJoEMgwuBNYN5gWcMYYhUgQ6BPoFeAYNAS4NegX9CP4JZdFZIA?=
- =?us-ascii?q?g0CN0QdQAMLbT01FBsFBDp7BaY1gjmBD0I9J4EJDwEpkxUCCIMdSa1igTMKh?=
- =?us-ascii?q?BShbxeqQJhvIqMphSECBAIEBQIPAQEGgWc6gVtwFTuCZ1IZD44tDQnQK3gCO?=
- =?us-ascii?q?QIHCwEBAwmNKwEB?=
-IronPort-PHdr: A9a23:6qhl1BOGg0n3epSsdj0l6nc2WUAX0o4cdiYP4ZYhzrVWfbvmpdLpP
- VfU4rNmi1qaFYnY6vcRk+PNqOigQm0P55+drWoPOIJBTR4LiMga3kQgDceJBFe9LavCZC0hF
- 8MEX1hgl0w=
-IronPort-Data: A9a23:oU2Ix6+Oif5n78kDWGVbDrUDvX6TJUtcMsCJ2f8bNWPcYEJGY0x3y
- zcXUGCDbqqKY2DwLownaIzgo01QuZfXmNc3QAY+ri1EQiMRo6IpJzg2wmQcns+2BpeeJK6yx
- 5xGMrEsFOhtEzmB4E7rauW8xZVF/fngbqLmD+LZMTxGSwZhSSMw4TpugOdRbrRA2bBVOCvT/
- 4ujyyHjEAX9gWIsYjpFs/jrRC5H5ZwehhtJ5jTSWtgT1LPuvyF9JI4SI6i3M0z5TuF8dsamR
- /zOxa2O5WjQ+REgELuNyt4XpWVTH9Y+lSDX4pZnc/DKbipq/0Te4Y5nXBYoUnq7vh3S9zxHJ
- HqhgrTrIeshFvWkdO3wyHC0GQkmVUFN0OevzXRSLaV/wmWeG0YAzcmCA2kKALM/2t0rI11O6
- NwfMRkXcQuRmtm5lefTpulE3qzPLeHiOIcZ/3pn1zycU7AtQIvIROPB4towMDUY358VW62AI
- ZNCL2M0PXwsYDUXUrsTIJE3hvupgnD8WzZZs1mS46Ew5gA/ySQri+m2boqIJ43iqcN9u1ior
- G6fw0DCJxgnBvm94zCB72qwibqa9c/8cNlPTOLjrKECbEeo7mgSDgAGEFi2u/+0jmagVN9Fb
- U8Z4Cwjqe417kPDZt38WQCo5WWPpR80RdVdCas55RuLx66S5ByWblXoVRZIbNgg8cQxXzFvi
- BmCnsjiAnpkt7j9pW+hGqm8kQ6MHggucU0+ZTIkShIs+cb4spwIgUeaJjp8K5KdgtrwEDD25
- jmFqikimrke5fLnMY3loTgrZBry+vD0oh4J2+nBYo6yAupEiGONbois7x3Q6uxNadjfRViat
- 39CkM+bhAzvMX1vvHLTKAnuNOj1jxpgDNE6qQUxd3XG32/xk0NPhagKvFlDyL5Ba67ogwPBb
- k7Joh9275ROJnasZqIfS9vuUZ9zkPK6SIu4Cq68gj9yjn5ZKVHvEMZGOBH44owRuBJ1+U3CE
- c7BKJ/3XCxy5VpPl2XrHb11PUAXKtAWnj6LGsuhkHxLIJKVZWWeTv8eIUCSY+UipKKCq0O9z
- jqsH5Xi9vmra8WnOnO/2ddKdTgidCFnbbio8JY/XrDYfWJb9JQJVqW5LUUJIdI1xsy4V47go
- xmAZ6Ov4ASk2iabeFvXMRiOqtrHBP5CkJ7yBgR1VX6A0Hk4aoHp56AaH6bbt5F+nAC/5ZaYl
- 8U4Rvg=
-IronPort-HdrOrdr: A9a23:C8xbVqPmHfp81cBcT47255DYdb4zR+YMi2TDiHoBKiC9I/b5qy
- nxppUmPEfP+UgssREb9expOMG7MBXhHO1OkPgs1NCZLUbbUQqTXc1fBOTZskfd8kHFh4pgPO
- JbAtdD4b7LfBZHZKTBkXSF+r8bqbHtntHL9ILjJjVWPH1Xgspbnn5E43OgYzZLrX59dOIE/f
- Snl616jgvlU046Ku68AX4IVfXCodrkqLLKCCRtOzcXrCO1oXeN8rDVLzi0ty1yb9pI+9gf2F
- mAtza8yrSosvm9xBOZ/XTU9Y5qlNzozcYGLNCQi+AOQw+cyjqAVcBEYfmvrTo1qOag5BIBi9
- /XuSotOMx19jf4Yny1mx3wwAPtuQxeqEMKiGXow0cLk/aJAA7SOPAxwr6xtSGprXbIiesMlZ
- 6jGVjp7qa/QymwxBgVrOK4Jy2C3nDE0kbK19RjzkC2leAlGeVsRUt1xjIPLL4QWC3984wpC+
- 9oEYXV4+tXa0qTazTDsnBo28HEZAV5Iv6qeDlKhiWu6UkfoFlpi08DgMAPlHYJ85wwD5FC+u
- TfK6xt0LVDVNUfY65xDPoIBZLfMB2BfTvcdGaJZVj3HqAOPHzA75bx/bUu/emvPJgF1oE7lp
- jNWE5R8WQyZ0XtA8uT24AjyGGGfEytGTD2js1O7ZlwvbPxALLtLC2YUVgr19Ctpv0Oa/erLc
- pb+KgmdMMLAVGebbqhhTeOKaW6AUNuJfEohg==
-X-Talos-CUID: 9a23:gUUM4m3x/FVKLCsSqoS577xfJv0bVV3mkFXsI1KYDn9AUqKOW0Kr9/Yx
-X-Talos-MUID: 9a23:SYDaFwp/Tx7fpKJSHjUezxR8BM1kupiKM2UErKcjmeOOMTFoJzjI2Q==
-X-IronPort-Anti-Spam-Filtered: true
-Received: from alln-core-6.cisco.com ([173.36.13.139])
-  by rcdn-iport-4.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 16:36:07 +0000
-Received: from rcdn-opgw-2.cisco.com (rcdn-opgw-2.cisco.com [72.163.7.163])
-	by alln-core-6.cisco.com (8.15.2/8.15.2) with ESMTPS id 479Ga7wI017104
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 9 Aug 2024 16:36:07 GMT
-X-CSE-ConnectionGUID: 4DQnxNveRv6cKRCcBDSgyA==
-X-CSE-MsgGUID: spVb8jWPR5SXAs5awNMb9g==
-Authentication-Results: rcdn-opgw-2.cisco.com; dkim=pass (signature verified) header.i=@cisco.com
-X-IronPort-AV: E=Sophos;i="6.09,276,1716249600"; 
-   d="scan'208";a="19777163"
-Received: from mail-co1nam11lp2168.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.168])
-  by rcdn-opgw-2.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 16:36:06 +0000
+	s=arc-20240116; t=1723221399; c=relaxed/simple;
+	bh=6R26f2Y37xADlWg8J+9H3qO+MOcaVS7T/rLb5fZyU3Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tNEuaTV+4sdOIb1OMPN+fTjQpQOEQiiiRn87jyDBUSEAOWEDI24SMscMtX3+rjSxh4ovXTwPnV+wR5HbHzKbAka6Vq1FrVs4H8hcbfYuJunnCPbIcn/v/9dGQ96U6Gx6Nb2SR7BmzHM0NB0QZ1Iacky0ck3b4hB5XSFPfGWJJno=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ILf5RWwl; arc=fail smtp.client-ip=40.107.101.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dmCl5E1GT4EsyeCqJiTAzZWRueNkoov88GJ0Re5flkilsnCy1U4t1U13c1X5Wt9RuIpR8lh56dbxbL8XFN6qciegFvEIVZCTqPEP+BW+KzeunJ8lF3CxJBGmS+G0cGImf+GWkS8cNlk2tt0ltdxdwzwUrHMK0C2Djm3yJEFtIjyc6/tmU28PEHdI2X85xjbXzjYmExsY8tZbyM7MqfL6OpqRtMNlUJAzBEalc/zjWA3jPcxN0pSc2i3GdYZ69GBHTxXZDfdikG3E0HMbP2/WOLuRhp0YC6gKfupuLpboOOb7ctHS82g8zAWikCgKqQntBwCXdzfhWzrsGswbbKfiKQ==
+ b=idma1l7RFWujq62BaE7qK3RLZjZmq+h6lpcUPIConsVjQzNjSQ8gubsg2n9UJj8AylyzomDiye4hFTJEFrdXiCOhNQUXqff5Z5IAAI2d7UHR1XRaMiCiomQRolBqKarxLACt5n9Bh0Jn6KKK/9/uInKIYKdaD6A5YDE5RdsJhVeNHbrXwO92NyW2aXr8F7Kv7LXEPgp6pzwa99CUyaosIIukTqEiwkTzd4W22P2JOUxTJ6DzPTuanKR3qN1pTzE+V8QN9rWgWVU+oR12Vx5lKk9+8lwsdsmTB2hlHguSz7C7lH7crVaUekq5fiNtQ/PiZ5hy2ZEdHtmzAC3XWit7xQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x7Km4VXMhsXxrvXckKvoRfGoKTXzPXBaHCm7sQehs3U=;
- b=e+oahAV9sxz6oyFVgTYgbgujjpK6p4aANdOYjTwmmq8h2cFlyXquH9EBf7ilcm+iS58+JgyjDpvaYhFHDdTMs6g4jqDhmpzKByixg0cgjqqHpnkrnGc+NbF+V9JtFW6AMJj/phva+mwwtwvw910qLySB9JjFV5emvzLwlJ7YOJro2hfDosy1lQU1qdLZYq9BKbqDiqrOHCGWUcxS0KpsUSQ6PaBhFf2Wap/hLlQ7z22WkbXKYamoRpkPlN4xKxl+gMRco+IdC1q8aYLCr9/a6a40SGZ1YZFLz8uyUdc0G17XZgCDNz8Pf5lW6QTnbAFRFi7/8zf8alvTBlQ0LMsCRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
- dkim=pass header.d=cisco.com; arc=none
-Received: from SJ0PR11MB5896.namprd11.prod.outlook.com (2603:10b6:a03:42c::19)
- by SJ0PR11MB4944.namprd11.prod.outlook.com (2603:10b6:a03:2ae::17) with
+ bh=THUavuF80f5ilmwjf+Ubi+AkdDLr64VnbylAgAZSlLc=;
+ b=T6BnDkCrhCZ45hpbec+zPgbniOPPDvTTfNpUJHUZBGU+k6cgg1KpVMcDfFykQveAFWnqTDxdjwKEGgkvIx+CrnZeTjqqZ9mdFDCeNfJ1OSEmXunG+t8+MpXCdzXqCz1nuSnorRL1U3cfQxJfR+9p3Fzw+ubaznvOiuRWWg+3+UaI5sn7YGE/FhvKW5Xjj3V0NLkyUpRIWybuDHZJjDzYSKXaflGcHcLSD7f4PBSrjZUwUM/YzNj59ZVlyBMmI9mIzSoOS8ttD06nruL0NnS87znPnwFP0lYDC4zkaZV14hl4JEx2BRu3H2tTMfXVgHlYaVuDD4sNJkL3+n3Hhj7wKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=davemloft.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=THUavuF80f5ilmwjf+Ubi+AkdDLr64VnbylAgAZSlLc=;
+ b=ILf5RWwlaB2eJ/Vpj/QZdfiGz6vsGvsO0usaIvq9X+1ZtqQZQZTG/uRWdU2tsdPFI0gnF35Od7Ak156ZE6oHAN+1BTBgxErCe2+M//eZKrPuikRBLeVMmaCIuhL8xq9iqkM1tkOZFCURC66QfTASBRf9FK9OeFwi922lXwjdWauONpoFbwGiSjwnQVxXyju1hnKLDzz5YV7jmSqPA6m0i97+T0d48+8ltEQM5mehC/ORKHt5Q9yar/2HFF0WSa/sjQl2a0XCq7b778zJZlks94mhpHzE7s51ewQCxIRw+cUVzEUNCA4VxZtm2EiyQg/oydMF6GPvqfbTTCX8Gg4igQ==
+Received: from CH2PR03CA0019.namprd03.prod.outlook.com (2603:10b6:610:59::29)
+ by DM4PR12MB6181.namprd12.prod.outlook.com (2603:10b6:8:a9::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.31; Fri, 9 Aug
- 2024 16:36:04 +0000
-Received: from SJ0PR11MB5896.namprd11.prod.outlook.com
- ([fe80::2081:bcd4:cb3e:e2dd]) by SJ0PR11MB5896.namprd11.prod.outlook.com
- ([fe80::2081:bcd4:cb3e:e2dd%7]) with mapi id 15.20.7828.023; Fri, 9 Aug 2024
- 16:36:04 +0000
-From: "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>
-To: John Garry <john.g.garry@oracle.com>,
-        "Sesidhar Baddela (sebaddel)"
-	<sebaddel@cisco.com>
-CC: "Arulprabhu Ponnusamy (arulponn)" <arulponn@cisco.com>,
-        "Dhanraj Jhawar
- (djhawar)" <djhawar@cisco.com>,
-        "Gian Carlo Boffa (gcboffa)"
-	<gcboffa@cisco.com>,
-        "Masa Kai (mkai2)" <mkai2@cisco.com>,
-        "Satish Kharat
- (satishkh)" <satishkh@cisco.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 07/14] scsi: fnic: Add and integrate support for FIP
-Thread-Topic: [PATCH 07/14] scsi: fnic: Add and integrate support for FIP
-Thread-Index: AQHau4DaQOSKJ2YKKUeWgcrHrkbAXbHF2ruAgFmd70A=
-Date: Fri, 9 Aug 2024 16:36:04 +0000
-Message-ID:
- <SJ0PR11MB5896CE3F203F4904D3B0D20CC3BA2@SJ0PR11MB5896.namprd11.prod.outlook.com>
-References: <20240610215100.673158-1-kartilak@cisco.com>
- <20240610215100.673158-8-kartilak@cisco.com>
- <5ca4b94b-8695-4355-997c-3f531d8b8702@oracle.com>
-In-Reply-To: <5ca4b94b-8695-4355-997c-3f531d8b8702@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB5896:EE_|SJ0PR11MB4944:EE_
-x-ms-office365-filtering-correlation-id: 470c573d-8166-41f2-ef5a-08dcb8915cd3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?SUZBcU84VlJXNWorODhnZDJCbThWM1JxQWJCb0lvS2EzZzdqL2NYbjVrOHFq?=
- =?utf-8?B?cmdKTFlLYkJldENmR2crSm1xYVQzZzBuVkhCQ1FQQ2dGY0JzczNDMlNybE4w?=
- =?utf-8?B?MWhoekJpS2YyMkwvcnR1Z2F6dERvSHd4YmR1Y2VpaDJiWGV4Vnh5MWV4akZo?=
- =?utf-8?B?cUU5QjdsUXBTMWM1aVNPVndtV2d3b2NDb3NPK01JZWc5NTlPaEZ6dmtDNTh4?=
- =?utf-8?B?dmE3UzJsa0drRUF6a2MwT1ljQzA1Y2hXWWpXMzhYZTRYRnVqTG9BWE01OVFr?=
- =?utf-8?B?cFUzc05oTVpyV2MrU0ZEMlN5TDA5cDE4TE9jTFBwdy91TCs0SFVWaTUrc2ds?=
- =?utf-8?B?bnBtc20wNk12Tk04VGtLSVk4SWZZR0pjczBmVjV5QlJhYVZidTBKYXdsd0Uv?=
- =?utf-8?B?c3BRV01wT2FjbnY1a1Y5cjhZVHlUQVhZODhaNDBUOHBvQzJaTms0c3NWd3Qx?=
- =?utf-8?B?NUlUNWw4V2htN2ZPbjFEUnVad3ErVVBmemRiZ1gvUFFESjFpU3N5UVFPUE9L?=
- =?utf-8?B?eTYzOVJ6WHN1c0NFamhIdmNMWUp4TmtVa0ZkN0hYbDB0OGRJQWtydW1qcU0y?=
- =?utf-8?B?eUMyQkVmeCtPb3JNTy9VMXN5ZGNjVmx1cGxSUVNlbEFId2RxejBBT21zcmEx?=
- =?utf-8?B?MTVLbENZSHU5cTUya1lVQjUwWjY0NDNQd0FjeWJsUmp6OWt6Z1hkZGpXWGt1?=
- =?utf-8?B?Ujd1N0IvdEVxZ1FGaFdTUUFNVEpmNVBubXUvcG5MYUNsSFpBd2pTN3N1dTU0?=
- =?utf-8?B?WjZJNG9hakRObUxKSUxXOVM4azF2OGhNdVhubGxVeGJ2YlJzSkNsdVRGOGFV?=
- =?utf-8?B?blBEYkJaUlJPSUZrOGx3V1VNQnVtTGlKbmE3ZHdmV2wyYTV1b1ltMmdXei96?=
- =?utf-8?B?bW11ejBqWHlmNW9WT2xOWVRLbGtlaGZETzJVTEN4QUIvdUFSTk5IbUZQTU1Q?=
- =?utf-8?B?ZDhUbGJsWmcxZllFN3BmUVFsVE5oRUlMNHBmaVdQa2loeGMxU0g5czZUb3Ra?=
- =?utf-8?B?aXc4cVFJZ2ZVcVI1TEZCVDNVZzQwTzVydVRtODFvUXFQRU9xcTZaLzNSOGI3?=
- =?utf-8?B?MFZ4aDk5blBqbm05VjExdWJFcmZPdFM2M3ZURmVWQlEyZXhQbFBHVjY5MVpF?=
- =?utf-8?B?MWJ6Q1hHb3prL0RnRzFnYlpRWkJQWEdMNnUzU2x3eWM4OGc2Z25Femw5eUUr?=
- =?utf-8?B?Mi93NnBYZ0I3QXdCUkRXMHNIQ2k3T2pOWEtJdUVSZm04dGZKYUdjRXo1dDlh?=
- =?utf-8?B?VUsvK01CeWNWMjNHTjhWY0UrWnpxKy9BSnQ0NndabjRWSVJEZGhpWkZ5endS?=
- =?utf-8?B?eUo0NWpqOWk3cUtBNG4wREk1Z1RzbmhrbU1uQnd0bU9sNDBJa25INDhKa1Vj?=
- =?utf-8?B?dkdLZ2x6YUpSTGhsdVR2Q0pNR1hkcWpVQTMxaFpzWlkvTFZZQ1pOcitHdXRu?=
- =?utf-8?B?M2FISWMwWmt3K2VxekJvOU9YR01xMVBtNHdzczRWRUVuNVNRMVRzR01WeHFz?=
- =?utf-8?B?c3ZqZG94dkc3L3IvY09HZzByTitZTkYzeDhnVWZEV1BhSFM5cVF3NDZ5cVVQ?=
- =?utf-8?B?VHZFY2dyTFc4MFFkVGd6Lys5QTF1Z2ZnNWNpcmZVSStNTnBtK3M1eG5Nb3Qv?=
- =?utf-8?B?VkxVNURpeXhMRVozdSs2a0w3NzZEMXpBK2RybHhEeWtpQjVnR2hIbllwYjdM?=
- =?utf-8?B?SDVXZmpsNE1hbVBtQktlVXpVRVFWZHU3Y3VyWVlVRy9UWkJiUXQwUWt6dUVz?=
- =?utf-8?B?QjJ4NlVaVGI0TFVlZkNUTFg4MU9sdHJDc1lmc1IxdDNoVUFZbUlESkpXT3Ur?=
- =?utf-8?B?TlFZb25TVlJIVXN1c3hyZDNGOHJnU1RUWlUxRWtOQ2tidXBRQmdqS0VKQU9C?=
- =?utf-8?B?OVFtcVBrZG9pOU5aS1pyL1lVY3JoS3VkMjZSZVVPbkNQaGc9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5896.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?dHNaMGVRVVAvaG5UN2Q5N0svNTQ2Wk9uM3NlNXdjbHlVSlBNTUdtU2hYSVVr?=
- =?utf-8?B?TlZHMVZjYXlvT0lISWxnTE9nellBS1k0QzVRSng4RUtIRHd3Ri8veTFJblk2?=
- =?utf-8?B?RzQ2V0FlYVhrU0VzZzlYenZROUhSZHZLaDZNcWRhU0g1T0tmbjN5czRZR2xi?=
- =?utf-8?B?cTJZR3UxYmlpSEsvZ1dhUmpPL1p6Nk1ZQTVJekhRRllDVkxmL2hmUWJPK251?=
- =?utf-8?B?SDZYZG1YMnNqK2dpNTRYYWFxajd1S3lRSzBtRStlMlRLeUZ4SGNoYTdRVXhB?=
- =?utf-8?B?WmRxYVZmc0FYTmZCM2xBNkJmcFdvZ1NkUEY5T0R6REpqamdGVnoxUU1sYW1W?=
- =?utf-8?B?Mm5JZ2w1YXJsRWc3MzVuVXB6dGVXNVBhdG12U1NuUk5UNjdHNXQrejFuL2w1?=
- =?utf-8?B?aS9WcVc4czhQdmpFSmhxU1pyOVJiRCtPVUo4bEdwTzZTQkFiMDVlZ1gzNDQ2?=
- =?utf-8?B?SEZuWXZhSnVHaEFYQTFXNzgvcWdWQld0dXdMVXpETXBVak1XdklxTUhmdklG?=
- =?utf-8?B?Zk1PQXNGdEswblNjTXh2L3FQdGRCMDRqWXIxLzFnS2ZjbWUwdGJGTVVsTXBo?=
- =?utf-8?B?T2JPYlI3TnVxUHd3SU40cjRxTGRLWjVHVUNqSllkVWh1NEZaVC9KbzlHQW9q?=
- =?utf-8?B?U3JiV0NCQk4zY3BWTmJEbXRDTUxtUnBaaDJMSFIrYVJ0cGFpTm1GcHlYc0lz?=
- =?utf-8?B?MkNXdWRXRTFpamtMT3BuMFhtZzFuT0hqaW1naDljbUZBZlBHMllxcmhPQldM?=
- =?utf-8?B?a1A2c1A4MGtoY1ZrN09VK3pBV1NaMzVJNlJtWWZaSEdQT0VRSU8zNW4wZEpC?=
- =?utf-8?B?NWtGOW5jdFJ6QloyVUpsKzVmcUEzaHRYUjY2RngvYTRrNTJnd2xJMW9WK3dY?=
- =?utf-8?B?RnV4MmZ1dmVsUUVkMFlaR3ZtVkZrWEcvZnFOeitPbDVwTSt0blRhN1hnb3B2?=
- =?utf-8?B?MjBzSUIrMHV1Ni9MNjhqcWlsQ3Y2OTZkMkwwNnVxdzJ2TmY3RlZVSUZQakdo?=
- =?utf-8?B?Y3FBcUhlM2Fnb3BEYVo5NWl6eC9memdHUlFLMERKcWZnTndnbUhXc0tWN0hm?=
- =?utf-8?B?NExCejJYMXpISzN4REsrMVQ0UFVKNDFLZFdYclE2THVDSU5VMzd5TTVuQ0Yw?=
- =?utf-8?B?TjVxa05YWDZLemFISmFUbEV4ODNWaUJIeW4xTktCRjl0Si9rUkhHTGR3Nzlr?=
- =?utf-8?B?RXhTWmtidkg3Z0l5eXkwcHB6c1ZSVVJOTTRqL2phcWU0czhBaDUxL3FVTWts?=
- =?utf-8?B?YXBTN3NKYXBCRWRHSjZRM2FUSUVxWE51WG5Wb0xaSDllQ1RvbHNSQ0g5Q2xQ?=
- =?utf-8?B?SllvRjgwNTNVUnExZ1A4WDVNL2NnYmtIZjV0QnFQditoZnNQYkNZOHdLVnZY?=
- =?utf-8?B?ZE9IUE8rQ0ZtNnR6d0ZTS3d1ODBOYlh1RzZBeTBIalVXdkxoN2VoZDVNWkx1?=
- =?utf-8?B?Z0ZSbU5TNFNwa095Q1BJUnQ1SG5kdVk1MngrRWdUZzJlU3A4ZzdyVnNpWWxh?=
- =?utf-8?B?RDAybGlPTlR3emFkUHcrdlpEMTJjWGpIN3lsZnFSeHFWT2RUdGUzVzZEMWM5?=
- =?utf-8?B?bUoyMzM4OFpXeUNHbzdpU2h6R01hVGNIZHBKd0t3TlVUVjhwbnNpRU04QUJ2?=
- =?utf-8?B?UC9obDN5Tk9FQkJuWnNpclhpbHYrZnBiSUJxdGliQWxLcCtRK1N5dFdJc3l0?=
- =?utf-8?B?OCs3QUpzWVBJQnYzZXZXMWRKZVZ3ZEVxRW9qazN1S2FNVW1zL215azdkeHpo?=
- =?utf-8?B?ZnQ4WmFCUlR1QVQvOHY2WFZaK0pzOXhRN1cwUmpOelI5QW1nQWRqRVpBWVZL?=
- =?utf-8?B?c2VnZmtlZzU3ZGZRTUY4Ymh0L2phWDJEZmZ3azJwdGZjTDEvTmU5U1ZHazA1?=
- =?utf-8?B?S1lidnNKQjFsYkhOcjYrN2hpWFh2dk5jbzVYNkJEQ2UxTjM4SnBTdkt0emdI?=
- =?utf-8?B?YTdtTTFrNUNPQ0d3UnlENlZNUkV0UXhCS1hPbHNnRndIekVMTG95SkhpTGVC?=
- =?utf-8?B?QTBjUGNocE5pcGdKc3BXMVVRYkh6Sk9FNDk2YllEK1ZzaWhBdTNzbXBHbmY5?=
- =?utf-8?B?TnJXQ0VCenhFYlZidmkxWXJQUjhRaW9GOXJlL0hRRHBTRDdJSFh4aUpVREts?=
- =?utf-8?Q?WjOai+ao1A7ZD9+AIRgdaTrvY?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.17; Fri, 9 Aug
+ 2024 16:36:34 +0000
+Received: from CH1PEPF0000A348.namprd04.prod.outlook.com
+ (2603:10b6:610:59:cafe::c0) by CH2PR03CA0019.outlook.office365.com
+ (2603:10b6:610:59::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.31 via Frontend
+ Transport; Fri, 9 Aug 2024 16:36:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH1PEPF0000A348.mail.protection.outlook.com (10.167.244.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.8 via Frontend Transport; Fri, 9 Aug 2024 16:36:33 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 9 Aug 2024
+ 09:36:18 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 9 Aug 2024
+ 09:36:18 -0700
+Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Fri, 9 Aug
+ 2024 09:36:16 -0700
+From: David Thompson <davthompson@nvidia.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <leon@kernel.org>, <yuehaibing@huawei.com>,
+	<andriy.shevchenko@linux.intel.com>, <u.kleine-koenig@pengutronix.de>
+CC: <asmaa@nvidia.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, David Thompson <davthompson@nvidia.com>
+Subject: [PATCH net v1] mlxbf_gige: disable RX filters until RX path initialized
+Date: Fri, 9 Aug 2024 12:36:12 -0400
+Message-ID: <20240809163612.12852-1-davthompson@nvidia.com>
+X-Mailer: git-send-email 2.30.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cisco.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5896.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 470c573d-8166-41f2-ef5a-08dcb8915cd3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 16:36:04.6878
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A348:EE_|DM4PR12MB6181:EE_
+X-MS-Office365-Filtering-Correlation-Id: dbbb5177-9657-4a19-1ba1-08dcb8916e30
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hmrlHXYte/9G7EaXL0rJbHamrkD0xDJIIsbK8GND4msbKEuhJdFA31B/4N1l?=
+ =?us-ascii?Q?x0lUE4CSIdegqDsRnK1mRx/jQfa3M93oTCqDKyudEh+EcwZAvnD+DNv1f3wD?=
+ =?us-ascii?Q?jLuuw/hx1bkn5Qzqf7U5hhUP3hQ5I8A/25ujPDUduxyoALSztyO6kImc0S4A?=
+ =?us-ascii?Q?A6kADLOgEc0d6TL8vohDjmtXzayhmaiYq+qRLlMeEZopOIc5Bnf+o3ovVuFX?=
+ =?us-ascii?Q?NF7IH/wbGGgk184Jyj08yasC2Np2jxHEezFAj9R5SUglTAWswYW2joDMo+Xj?=
+ =?us-ascii?Q?8bfcIAxyG3W/1eRbLSkA5lgCWDQ8/dBYeOrZJPoz6b9oYinaJGJtoedIdJwa?=
+ =?us-ascii?Q?8FH8lL+UFFiPkV8O/ZRElHlkXmW8tMfbxPJA6kLWuAuu+XL0tReCf3A+PB2i?=
+ =?us-ascii?Q?fFvkhhTV8J/ixl+04hXugUEa6ezuoMVBQ1J+AikmMpbi+JIjnp/XkMu4P5iE?=
+ =?us-ascii?Q?z09nHnl88GSjNPUDQBBgdX0IMxxi0GOtUinJekmstnwhnda0xznP5CJlo+xw?=
+ =?us-ascii?Q?neW5Ve4gowtCw21gm2lSIGZIwtT/fTr9F6zVUp7o6b+RMC8NeRp+r41WwWyz?=
+ =?us-ascii?Q?LV9eTL3pEAiUel6pFTbE0hj2pvcYPSxYmVCoOObLB2eOD0ooIYWx/zsViOjG?=
+ =?us-ascii?Q?dG+nkrirIcC14HZrO+7tMMHpG33rS9XKhbtuFgCtArfOa0ADd6O5+GDw3OJ/?=
+ =?us-ascii?Q?sluibfCyQ16CNxtLDZ6BLcih7pDfGAnHIEMMtQnsShvhCt8n3uSwOQAOIHUS?=
+ =?us-ascii?Q?1D+gWoeQf+Mr5A6YkLpLL3Wc10V3MRRTNsWwDE8BxMcmjNeN5xdCsq5bxs+x?=
+ =?us-ascii?Q?1SbXqyMCZuSU+JkiP+EHkLtQu28aQqPq8NuurMjVVHVvxoH1RFkdLIk9e3Pl?=
+ =?us-ascii?Q?wH2tCCZ2RyDP95lHbKSb0goafVtyp4LY9zCCIMdw4c5GvLZT/Eu3iwiyvcIo?=
+ =?us-ascii?Q?rm8VRdP1sf8/1YHgKqNtkfdxgJwtXgMjojtsOUYul1dGRQ979s3R7R2grDmZ?=
+ =?us-ascii?Q?pq31nJQXwMvxd20KIgmwd6dm4Qw7Y52S2h9wPnnfyKF2oBgfRG8ilWY2gpGm?=
+ =?us-ascii?Q?qk3AO79VQMFDMQlOyfv9fefVMsJv+4jx/QpIAJu9EwR5BOoFgdOrnS1zZpVl?=
+ =?us-ascii?Q?dUH4huFQ5+YfVTITrDhmnX0dbErRMmDmatKJaURBCLisqSatBtxu0uug4nGD?=
+ =?us-ascii?Q?5EWAjxMAher8ZpfkNr3ccuEkZz/vdrBm7Fa425dzCLCfb8bq82ktwdIGnySG?=
+ =?us-ascii?Q?2eHYgoO8QN1/mdGyV+Rlhde6YSQIhHWAo+OqF8d/YG0ViOJgMcL4qIBptpR2?=
+ =?us-ascii?Q?D1RnDmcKUKoIyvZbm4bQvoCuh1d3lsth8cChda7RXoTd5oPBdT1mBhOnIkjq?=
+ =?us-ascii?Q?NAebr5KC27rLK4/SW2sC5IkFGb2C5JXRNf42ODp0la7Y+jytwr8m7djpOHtH?=
+ =?us-ascii?Q?3H0hhzPlaeq4cja+j7CvqZzHtr9uikPj?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 16:36:33.6776
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: x8jval9mP1T3X1s25saE0rBH+84rT9fUXk2vxBX7tpmUhNYZeu+CtOhMlq5BI4DH1IMLgxJ7PETtjqkCGzVwLA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4944
-X-Outbound-SMTP-Client: 72.163.7.163, rcdn-opgw-2.cisco.com
-X-Outbound-Node: alln-core-6.cisco.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dbbb5177-9657-4a19-1ba1-08dcb8916e30
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000A348.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6181
 
-T24gVGh1cnNkYXksIEp1bmUgMTMsIDIwMjQgOToxNyBQTSwgSm9obiBHYXJyeSA8am9obi5nLmdh
-cnJ5QG9yYWNsZS5jb20+IHdyb3RlOg0KPiANCj4gT24gMTAvMDYvMjAyNCAyMjo1MCwgS2FyYW4g
-VGlsYWsgS3VtYXIgd3JvdGU6DQo+ID4gQWRkIGFuZCBpbnRlZ3JhdGUgc3VwcG9ydCBmb3IgRkNv
-RSBJbml0aWFsaXphdGlvbg0KPiA+IChwcm90b2NvbCkgRklQLiBUaGlzIHByb3RvY29sIHdpbGwg
-YmUgZXhlcmNpc2VkIG9uDQo+ID4gQ2lzY28gVUNTIHJhY2sgc2VydmVycy4NCj4gPiBBZGQgc3Vw
-cG9ydCB0byBzcGVjaWZpY2FsbHkgcHJpbnQgRklQIHJlbGF0ZWQNCj4gPiBkZWJ1ZyBtZXNzYWdl
-cy4NCj4gPiBSZXBsYWNlIGV4aXN0aW5nIGRlZmluaXRpb25zIHRvIGhhbmRsZSBuZXcNCj4gPiBk
-YXRhIHN0cnVjdHVyZXMuDQo+ID4gQ2xlYW4gdXAgb2xkIGFuZCBvYnNvbGV0ZSBkZWZpbml0aW9u
-cy4NCj4gDQo+ID4gUmV2aWV3ZWQtYnk6IFNlc2lkaGFyIEJhZGRlbGEgPHNlYmFkZGVsQGNpc2Nv
-LmNvbT4NCj4gPiBSZXZpZXdlZC1ieTogQXJ1bHByYWJodSBQb25udXNhbXkgPGFydWxwb25uQGNp
-c2NvLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTogR2lhbiBDYXJsbyBCb2ZmYSA8Z2Nib2ZmYUBjaXNj
-by5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogS2FyYW4gVGlsYWsgS3VtYXIgPGthcnRpbGFrQGNp
-c2NvLmNvbT4NCj4gPiAtLS0NCj4gPiAgIGRyaXZlcnMvc2NzaS9mbmljL01ha2VmaWxlICAgIHwg
-ICAxICsNCj4gPiAgIGRyaXZlcnMvc2NzaS9mbmljL2ZpcC5jICAgICAgIHwgODc1ICsrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAgZHJpdmVycy9zY3NpL2ZuaWMvZmlwLmgg
-ICAgICAgfCAzNDEgKysrKysrKysrKysrKw0KPiA+ICAgZHJpdmVycy9zY3NpL2ZuaWMvZm5pYy5o
-ICAgICAgfCAgMjMgKy0NCj4gPiAgIGRyaXZlcnMvc2NzaS9mbmljL2ZuaWNfZmNzLmMgIHwgODg5
-ICsrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gPiAgIGRyaXZlcnMvc2NzaS9m
-bmljL2ZuaWNfbWFpbi5jIHwgIDQ3ICstDQo+ID4gICA2IGZpbGVzIGNoYW5nZWQsIDE0MDIgaW5z
-ZXJ0aW9ucygrKSwgNzc0IGRlbGV0aW9ucygtKQ0KPiA+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRy
-aXZlcnMvc2NzaS9mbmljL2ZpcC5jDQo+ID4gICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9z
-Y3NpL2ZuaWMvZmlwLmgNCj4gPiArDQo+ID4gKy8qKg0KPiA+ICsgKiBmbmljX2Zjb2VfcHJvY2Vz
-c192bGFuX3Jlc3ANCj4gPiArICoNCj4gPiArICogUHJvY2Vzc2VzIHRoZSB2bGFuIHJlc3BvbnNl
-IGZyb20gb25lIEZDRiBhbmQgcG9wdWxhdGVzIFZMQU4gbGlzdC4NCj4gPiArICogV2lsbCB3YWl0
-IGZvciByZXNwb25zZXMgZnJvbSBtdWx0aXBsZSBGQ0ZzIHVudGlsIHRpbWVvdXQuDQo+ID4gKyAq
-DQo+ID4gKyAqIEBwYXJhbSBmbmljIGRyaXZlciBpbnN0YW5jZQ0KPiA+ICsgKiBAcGFyYW0gZmlw
-aCByZWNlaXZlZCBmaXAgZnJhbWUNCj4gPiArICovDQo+ID4gKw0KPiA+ICt2b2lkIGZuaWNfZmNv
-ZV9wcm9jZXNzX3ZsYW5fcmVzcChzdHJ1Y3QgZm5pYyAqZm5pYywNCj4gPiArCQkJCQkJCQkgc3Ry
-dWN0IGZpcF9oZWFkZXJfcyAqZmlwaCkNCj4gPiArew0KPiA+ICsJc3RydWN0IGZpcF92bGFuX25v
-dGlmX3MgKnZsYW5fbm90aWYgPSAoc3RydWN0IGZpcF92bGFuX25vdGlmX3MgKikgZmlwaDsNCj4g
-PiArDQo+ID4gKwlzdHJ1Y3QgZm5pY19zdGF0cyAqZm5pY19zdGF0cyA9ICZmbmljLT5mbmljX3N0
-YXRzOw0KPiA+ICsJdTE2IHZpZDsNCj4gPiArCWludCBudW1fdmxhbiA9IDA7DQo+ID4gKwlpbnQg
-Y3VyX2Rlc2MsIGRlc2NfbGVuOw0KPiA+ICsJc3RydWN0IGZjb2VfdmxhbiAqdmxhbjsNCj4gPiAr
-CXN0cnVjdCBmaXBfdmxhbl9kZXNjX3MgKnZsYW5fZGVzYzsNCj4gPiArCXVuc2lnbmVkIGxvbmcg
-ZmxhZ3M7DQo+ID4gKw0KPiA+ICsJRk5JQ19GSVBfREJHKEtFUk5fSU5GTywgZm5pYy0+bHBvcnQt
-Pmhvc3QsIGZuaWMtPmZuaWNfbnVtLA0KPiA+ICsJCQkJICJmbmljIDB4JXAgZ290IHZsYW4gcmVz
-cFxuIiwgZm5pYyk7DQo+ID4gKw0KPiA+ICsJZGVzY19sZW4gPSBudG9ocyh2bGFuX25vdGlmLT5m
-aXAuZGVzY19sZW4pOw0KPiA+ICsJRk5JQ19GSVBfREJHKEtFUk5fSU5GTywgZm5pYy0+bHBvcnQt
-Pmhvc3QsIGZuaWMtPmZuaWNfbnVtLA0KPiA+ICsJCQkJICJkZXNjX2xlbiAlZFxuIiwgZGVzY19s
-ZW4pOw0KPiA+ICsNCj4gPiArCXNwaW5fbG9ja19pcnFzYXZlKCZmbmljLT52bGFuc19sb2NrLCBm
-bGFncyk7DQo+ID4gKw0KPiA+ICsJY3VyX2Rlc2MgPSAwOw0KPiA+ICsJd2hpbGUgKGRlc2NfbGVu
-ID4gMCkgew0KPiA+ICsJCXZsYW5fZGVzYyA9DQo+ID4gKwkJCShzdHJ1Y3QgZmlwX3ZsYW5fZGVz
-Y19zICopICgoKGNoYXIgKikgdmxhbl9ub3RpZi0+dmxhbnNfZGVzYykNCj4gPiArCQkJCQkJCQkJ
-CSsgY3VyX2Rlc2MgKiA0KTsNCj4gPiArDQo+ID4gKwkJaWYgKHZsYW5fZGVzYy0+dHlwZSA9PSBG
-SVBfVFlQRV9WTEFOKSB7DQo+ID4gKwkJCWlmICh2bGFuX2Rlc2MtPmxlbiAhPSAxKSB7DQo+ID4g
-KwkJCQlGTklDX0ZJUF9EQkcoS0VSTl9JTkZPLCBmbmljLT5scG9ydC0+aG9zdCwgZm5pYy0+Zm5p
-Y19udW0sDQo+ID4gKwkJCQkJICJJbnZhbGlkIGRlc2NyaXB0b3IgbGVuZ3RoKCV4KSBpbiBWTGFu
-IHJlc3BvbnNlXG4iLA0KPiA+ICsJCQkJCSB2bGFuX2Rlc2MtPmxlbik7DQo+ID4gKw0KPiA+ICsJ
-CQl9DQo+ID4gKwkJCW51bV92bGFuKys7DQo+ID4gKwkJCXZpZCA9IG50b2hzKHZsYW5fZGVzYy0+
-dmxhbik7DQo+ID4gKwkJCUZOSUNfRklQX0RCRyhLRVJOX0lORk8sIGZuaWMtPmxwb3J0LT5ob3N0
-LCBmbmljLT5mbmljX251bSwNCj4gPiArCQkJCQkJICJwcm9jZXNzX3ZsYW5fcmVzcDogRklQIFZM
-QU4gJWRcbiIsIHZpZCk7DQo+ID4gKwkJCXZsYW4gPSBrbWFsbG9jKHNpemVvZigqdmxhbiksIEdG
-UF9BVE9NSUMpOw0KPiANCj4gDQo+IGlzIHRoaXMgYWxsb2MgdW5kZXIgc3BpbmxvY2sgcmVhbGx5
-IHJlcXVpcmVkPw0KDQpZZXMgSm9obi4gVGhlcmUgY2FuIGJlIHJlc3BvbnNlcyBmcm9tIG11bHRp
-cGxlIEZDRnMsIHdpdGggbXVsdGlwbGUgdmxhbnMuIA0KRXZlbiB0aG91Z2ggdGhlIHJlc3BvbnNl
-cyBhcmUgc2VyaWFsaXplZCB2aWEgYSBmcmFtZSBxdWV1ZSwNCml0J3Mgbm90IHdvcnRoIHRoZSBl
-ZmZvcnQgb2YganVzdCBkcm9wcGluZyB0aGUgbG9jayBmb3IgdGhlDQpzYWtlIG9mIGFsbG9jYXRp
-bmcgdGhlIHZsYW4uIEhvcGUgdGhpcyBjbGFyaWZpZXMuDQpUaGFua3MgYWdhaW4gZm9yIHlvdXIg
-cmV2aWV3Lg0KDQo+ID4gKy8qKg0KPiA+ICsgKiBmbmljX2hhbmRsZV9lbm9kZV9rYV90aW1lcg0K
-PiA+ICsgKg0KPiA+ICsgKiBGSVAgbm9kZSBrZWVwIGFsaXZlLg0KPiA+ICsgKg0KPiA+ICsgKiBA
-cGFyYW0gZGF0YSBPcGFxdWUgcG9pbnRlciB0byBmbmljIHN0cnVjdA0KPiA+ICsgKi8NCj4gPiAr
-dm9pZCBmbmljX2hhbmRsZV9lbm9kZV9rYV90aW1lcihzdHJ1Y3QgdGltZXJfbGlzdCAqdCkNCj4g
-PiArew0KPiA+ICsJc3RydWN0IGZuaWMgKmZuaWMgPSBmcm9tX3RpbWVyKGZuaWMsIHQsIGVub2Rl
-X2thX3RpbWVyKTsNCj4gPiArDQo+ID4gKwlzdHJ1Y3QgZm5pY19pcG9ydF9zICppcG9ydCA9ICZm
-bmljLT5pcG9ydDsNCj4gPiArCWludCBmcl9sZW47DQo+ID4gKwlzdHJ1Y3QgZmlwX2Vub2RlX2th
-X3MgZW5vZGVfa2E7DQo+ID4gKwl1NjQgZW5vZGVfa2FfdG92Ow0KPiA+ICsNCj4gPiArCWlmIChp
-cG9ydC0+ZmlwLnN0YXRlICE9IEZETFNfRklQX0ZMT0dJX0NPTVBMRVRFKQ0KPiA+ICsJCXJldHVy
-bjsNCj4gPiArDQo+ID4gKwlpZiAoKGlwb3J0LT5zZWxlY3RlZF9mY2Yua2FfZGlzYWJsZWQpDQo+
-ID4gKwkJfHwgKGlwb3J0LT5zZWxlY3RlZF9mY2YuZmthX2Fkdl9wZXJpb2QgPT0gMCkpIHsNCj4g
-PiArCQlyZXR1cm47DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJZnJfbGVuID0gc2l6ZW9mKHN0cnVj
-dCBmaXBfZW5vZGVfa2Ffcyk7DQo+ID4gKw0KPiA+ICsJbWVtY3B5KCZlbm9kZV9rYSwgJmZpcF9l
-bm9kZV9rYV90bXBsLCBmcl9sZW4pOw0KPiA+ICsJbWVtY3B5KGVub2RlX2thLmV0aC5zbWFjLCBp
-cG9ydC0+aHdtYWMsIEVUSF9BTEVOKTsNCj4gPiArCW1lbWNweShlbm9kZV9rYS5ldGguZG1hYywg
-aXBvcnQtPnNlbGVjdGVkX2ZjZi5mY2ZfbWFjLCBFVEhfQUxFTik7DQo+ID4gKwltZW1jcHkoZW5v
-ZGVfa2EubWFjX2Rlc2MubWFjLCBpcG9ydC0+aHdtYWMsIEVUSF9BTEVOKTsNCj4gPiArDQo+ID4g
-KwlmbmljX3NlbmRfZmlwX2ZyYW1lKGlwb3J0LCAmZW5vZGVfa2EsIGZyX2xlbik7DQo+ID4gKwll
-bm9kZV9rYV90b3YgPSBqaWZmaWVzDQo+ID4gKwkJKyBtc2Vjc190b19qaWZmaWVzKGlwb3J0LT5z
-ZWxlY3RlZF9mY2YuZmthX2Fkdl9wZXJpb2QpOw0KPiA+ICsJbW9kX3RpbWVyKCZmbmljLT5lbm9k
-ZV9rYV90aW1lciwgcm91bmRfamlmZmllcyhlbm9kZV9rYV90b3YpKTsNCj4gPiArfQ0KPiA+ICsN
-Cj4gPiArLyoqDQo+ID4gKyAqIGZuaWNfaGFuZGxlX3ZuX2thX3RpbWVyDQo+ID4gKyAqDQo+ID4g
-KyAqIEZJUCB2aXJ0dWFsIHBvcnQga2VlcCBhbGl2ZS4NCj4gPiArICoNCj4gPiArICogQHBhcmFt
-IGRhdGEgT3BhcXVlIHBvaW50ZXIgdG8gZm5pYyBzdHJ1Y3R1cmUNCj4gPiArICovDQo+ID4gKw0K
-PiA+ICt2b2lkIGZuaWNfaGFuZGxlX3ZuX2thX3RpbWVyKHN0cnVjdCB0aW1lcl9saXN0ICp0KQ0K
-PiA+ICt7DQo+ID4gKwlzdHJ1Y3QgZm5pYyAqZm5pYyA9IGZyb21fdGltZXIoZm5pYywgdCwgdm5f
-a2FfdGltZXIpOw0KPiA+ICsNCj4gPiArCXN0cnVjdCBmbmljX2lwb3J0X3MgKmlwb3J0ID0gJmZu
-aWMtPmlwb3J0Ow0KPiA+ICsJaW50IGZyX2xlbjsNCj4gPiArCXN0cnVjdCBmaXBfdm5fcG9ydF9r
-YV9zIHZuX3BvcnRfa2E7DQo+ID4gKwl1NjQgdm5fa2FfdG92Ow0KPiA+ICsJdWludDhfdCBmY2lk
-WzNdOw0KPiA+ICsNCj4gPiArCWlmIChpcG9ydC0+ZmlwLnN0YXRlICE9IEZETFNfRklQX0ZMT0dJ
-X0NPTVBMRVRFKQ0KPiA+ICsJCXJldHVybjsNCj4gPiArDQo+ID4gKwlpZiAoKGlwb3J0LT5zZWxl
-Y3RlZF9mY2Yua2FfZGlzYWJsZWQpDQo+ID4gKwkJfHwgKGlwb3J0LT5zZWxlY3RlZF9mY2YuZmth
-X2Fkdl9wZXJpb2QgPT0gMCkpIHsNCj4gPiArCQlyZXR1cm47DQo+ID4gKwl9DQo+IA0KPiBleGFj
-dCBzYW1lIGNvZGUgaXMgZHVwbGljYXRlZCBmcm9tIGZuaWNfaGFuZGxlX2Vub2RlX2thX3RpbWVy
-KCksIGFib3ZlDQoNClRoYW5rcyBmb3IgdGhpcyBvYnNlcnZhdGlvbiwgSm9obi4gDQpUaGUgY2hh
-bGxlbmdlIHdpdGggaW50ZWdyYXRpbmcgdGhlbSBpbnRvIG9uZSBmdW5jdGlvbiB1c2luZyANCnNv
-bWUgYXJndW1lbnRzIGlzIHRoYXQgd2Ugd291bGQgbm90IGtub3cgd2hpY2ggdGltZXIgZWxhcHNl
-ZC4NClRoZXJlZm9yZSwgd2UgZGVjaWRlZCB0byBnbyB3aXRoIHRoaXMgYXBwcm9hY2ggb2Ygc2Vw
-YXJhdGUNCnRpbWVyIGZ1bmN0aW9ucy4gSG9wZSB0aGlzIGNsYXJpZmllcy4NCg0KUmVnYXJkcywN
-CkthcmFuDQo=
+A recent change to the driver exposed a bug where the MAC RX
+filters (unicast MAC, broadcast MAC, and multicast MAC) are
+configured and enabled before the RX path is fully initialized.
+The result of this bug is that after the PHY is started packets
+that match these MAC RX filters start to flow into the RX FIFO.
+And then, after rx_init() is completed, these packets will go
+into the driver RX ring as well. If enough packets are received
+to fill the RX ring (default size is 128 packets) before the call
+to request_irq() completes, the driver RX function becomes stuck.
+
+This bug is intermittent but is most likely to be seen where the
+oob_net0 interface is connected to a busy network with lots of
+broadcast and multicast traffic.
+
+All the MAC RX filters must be disabled until the RX path is ready,
+i.e. all initialization is done and all the IRQs are installed.
+
+Fixes: f7442a634ac0 ("mlxbf_gige: call request_irq() after NAPI initialized")
+Reviewed-by: Asmaa Mnebhi <asmaa@nvidia.com>
+Signed-off-by: David Thompson <davthompson@nvidia.com>
+---
+ .../ethernet/mellanox/mlxbf_gige/mlxbf_gige.h |  8 +++
+ .../mellanox/mlxbf_gige/mlxbf_gige_main.c     | 10 ++++
+ .../mellanox/mlxbf_gige/mlxbf_gige_regs.h     |  2 +
+ .../mellanox/mlxbf_gige/mlxbf_gige_rx.c       | 50 ++++++++++++++++---
+ 4 files changed, 64 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige.h b/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige.h
+index bc94e75a7aeb..e7777700ee18 100644
+--- a/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige.h
++++ b/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige.h
+@@ -40,6 +40,7 @@
+  */
+ #define MLXBF_GIGE_BCAST_MAC_FILTER_IDX 0
+ #define MLXBF_GIGE_LOCAL_MAC_FILTER_IDX 1
++#define MLXBF_GIGE_MAX_FILTER_IDX       3
+ 
+ /* Define for broadcast MAC literal */
+ #define BCAST_MAC_ADDR 0xFFFFFFFFFFFF
+@@ -175,6 +176,13 @@ enum mlxbf_gige_res {
+ int mlxbf_gige_mdio_probe(struct platform_device *pdev,
+ 			  struct mlxbf_gige *priv);
+ void mlxbf_gige_mdio_remove(struct mlxbf_gige *priv);
++
++void mlxbf_gige_enable_multicast_rx(struct mlxbf_gige *priv);
++void mlxbf_gige_disable_multicast_rx(struct mlxbf_gige *priv);
++void mlxbf_gige_enable_mac_rx_filter(struct mlxbf_gige *priv,
++				     unsigned int index);
++void mlxbf_gige_disable_mac_rx_filter(struct mlxbf_gige *priv,
++				      unsigned int index);
+ void mlxbf_gige_set_mac_rx_filter(struct mlxbf_gige *priv,
+ 				  unsigned int index, u64 dmac);
+ void mlxbf_gige_get_mac_rx_filter(struct mlxbf_gige *priv,
+diff --git a/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c b/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c
+index b157f0f1c5a8..385a56ac7348 100644
+--- a/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c
++++ b/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c
+@@ -168,6 +168,10 @@ static int mlxbf_gige_open(struct net_device *netdev)
+ 	if (err)
+ 		goto napi_deinit;
+ 
++	mlxbf_gige_enable_mac_rx_filter(priv, MLXBF_GIGE_BCAST_MAC_FILTER_IDX);
++	mlxbf_gige_enable_mac_rx_filter(priv, MLXBF_GIGE_LOCAL_MAC_FILTER_IDX);
++	mlxbf_gige_enable_multicast_rx(priv);
++
+ 	/* Set bits in INT_EN that we care about */
+ 	int_en = MLXBF_GIGE_INT_EN_HW_ACCESS_ERROR |
+ 		 MLXBF_GIGE_INT_EN_TX_CHECKSUM_INPUTS |
+@@ -379,6 +383,7 @@ static int mlxbf_gige_probe(struct platform_device *pdev)
+ 	void __iomem *plu_base;
+ 	void __iomem *base;
+ 	int addr, phy_irq;
++	unsigned int i;
+ 	int err;
+ 
+ 	base = devm_platform_ioremap_resource(pdev, MLXBF_GIGE_RES_MAC);
+@@ -423,6 +428,11 @@ static int mlxbf_gige_probe(struct platform_device *pdev)
+ 	priv->rx_q_entries = MLXBF_GIGE_DEFAULT_RXQ_SZ;
+ 	priv->tx_q_entries = MLXBF_GIGE_DEFAULT_TXQ_SZ;
+ 
++	for (i = 0; i <= MLXBF_GIGE_MAX_FILTER_IDX; i++)
++		mlxbf_gige_disable_mac_rx_filter(priv, i);
++	mlxbf_gige_disable_multicast_rx(priv);
++	mlxbf_gige_disable_promisc(priv);
++
+ 	/* Write initial MAC address to hardware */
+ 	mlxbf_gige_initial_mac(priv);
+ 
+diff --git a/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_regs.h b/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_regs.h
+index 98a8681c21b9..4d14cb13fd64 100644
+--- a/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_regs.h
++++ b/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_regs.h
+@@ -62,6 +62,8 @@
+ #define MLXBF_GIGE_TX_STATUS_DATA_FIFO_FULL           BIT(1)
+ #define MLXBF_GIGE_RX_MAC_FILTER_DMAC_RANGE_START     0x0520
+ #define MLXBF_GIGE_RX_MAC_FILTER_DMAC_RANGE_END       0x0528
++#define MLXBF_GIGE_RX_MAC_FILTER_GENERAL              0x0530
++#define MLXBF_GIGE_RX_MAC_FILTER_EN_MULTICAST         BIT(1)
+ #define MLXBF_GIGE_RX_MAC_FILTER_COUNT_DISC           0x0540
+ #define MLXBF_GIGE_RX_MAC_FILTER_COUNT_DISC_EN        BIT(0)
+ #define MLXBF_GIGE_RX_MAC_FILTER_COUNT_PASS           0x0548
+diff --git a/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_rx.c b/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_rx.c
+index 699984358493..eb62620b63c7 100644
+--- a/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_rx.c
++++ b/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_rx.c
+@@ -11,15 +11,31 @@
+ #include "mlxbf_gige.h"
+ #include "mlxbf_gige_regs.h"
+ 
+-void mlxbf_gige_set_mac_rx_filter(struct mlxbf_gige *priv,
+-				  unsigned int index, u64 dmac)
++void mlxbf_gige_enable_multicast_rx(struct mlxbf_gige *priv)
+ {
+ 	void __iomem *base = priv->base;
+-	u64 control;
++	u64 data;
+ 
+-	/* Write destination MAC to specified MAC RX filter */
+-	writeq(dmac, base + MLXBF_GIGE_RX_MAC_FILTER +
+-	       (index * MLXBF_GIGE_RX_MAC_FILTER_STRIDE));
++	data = readq(base + MLXBF_GIGE_RX_MAC_FILTER_GENERAL);
++	data |= MLXBF_GIGE_RX_MAC_FILTER_EN_MULTICAST;
++	writeq(data, base + MLXBF_GIGE_RX_MAC_FILTER_GENERAL);
++}
++
++void mlxbf_gige_disable_multicast_rx(struct mlxbf_gige *priv)
++{
++	void __iomem *base = priv->base;
++	u64 data;
++
++	data = readq(base + MLXBF_GIGE_RX_MAC_FILTER_GENERAL);
++	data &= ~MLXBF_GIGE_RX_MAC_FILTER_EN_MULTICAST;
++	writeq(data, base + MLXBF_GIGE_RX_MAC_FILTER_GENERAL);
++}
++
++void mlxbf_gige_enable_mac_rx_filter(struct mlxbf_gige *priv,
++				     unsigned int index)
++{
++	void __iomem *base = priv->base;
++	u64 control;
+ 
+ 	/* Enable MAC receive filter mask for specified index */
+ 	control = readq(base + MLXBF_GIGE_CONTROL);
+@@ -27,6 +43,28 @@ void mlxbf_gige_set_mac_rx_filter(struct mlxbf_gige *priv,
+ 	writeq(control, base + MLXBF_GIGE_CONTROL);
+ }
+ 
++void mlxbf_gige_disable_mac_rx_filter(struct mlxbf_gige *priv,
++				      unsigned int index)
++{
++	void __iomem *base = priv->base;
++	u64 control;
++
++	/* Disable MAC receive filter mask for specified index */
++	control = readq(base + MLXBF_GIGE_CONTROL);
++	control &= ~(MLXBF_GIGE_CONTROL_EN_SPECIFIC_MAC << index);
++	writeq(control, base + MLXBF_GIGE_CONTROL);
++}
++
++void mlxbf_gige_set_mac_rx_filter(struct mlxbf_gige *priv,
++				  unsigned int index, u64 dmac)
++{
++	void __iomem *base = priv->base;
++
++	/* Write destination MAC to specified MAC RX filter */
++	writeq(dmac, base + MLXBF_GIGE_RX_MAC_FILTER +
++	       (index * MLXBF_GIGE_RX_MAC_FILTER_STRIDE));
++}
++
+ void mlxbf_gige_get_mac_rx_filter(struct mlxbf_gige *priv,
+ 				  unsigned int index, u64 *dmac)
+ {
+-- 
+2.30.1
+
 
