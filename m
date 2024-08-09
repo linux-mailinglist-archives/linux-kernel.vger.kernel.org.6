@@ -1,142 +1,138 @@
-Return-Path: <linux-kernel+bounces-281527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68BEC94D7CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:01:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADDF94D7CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6269E1C2298A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:01:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2645D282B68
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCD21607B0;
-	Fri,  9 Aug 2024 20:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9484B16088F;
+	Fri,  9 Aug 2024 20:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hDWdtJuv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iMEjCWQ1"
-Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="akdgBJIZ"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34321D551;
-	Fri,  9 Aug 2024 20:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2CD1D551
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 20:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723233691; cv=none; b=DblB2cyPwSp28gEeuj8PRVIL140A6I8I2twUhFVrmM5IovrxjaRz+MioXNSdCce4VdoOvY1nAMDsgPYJqnsS1oP7pkHmBei97MIbTDRgaWroTQGcfl2PH4Qnq2CQnCPpa0wUoGnq2jKU3DlQxsLDqCokIgL5SvTfJoB5QkyOjI0=
+	t=1723233706; cv=none; b=Z1/R7VtEfZSEkOaRkdOUSw/Rbe23JCPDrKdBGtPwHN5nQGaJBcPLszQ4KxsxC4kCpmBAEqiP6Wl+l+Ue13wfN1HI92OrsebHGfVIcrtr/aENDSKphpoMz1kJfQ9Qatxjqj3AG/rZR1Vig/azBgQuSN0Sv3AO66PM19PhE5TpNl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723233691; c=relaxed/simple;
-	bh=rt8n2BzdzW4NEsbf9W924RPJfQlH12dEuOTh47WtQ7I=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=oOEZPvDZhMuFUFppD0Mss/BVbB/PbbjmTaux3ge6v7LCSR46lOJyoueo9ITeHS4/4UtjfUGRChvYCCDX1BQTl1tQf7I5/RK+GvHfwVwORp2uBii78mIxt0vrXhyFULmwnvyMaugE47rR8w0r82vK+bSdMIOQKqGwzdLHvGIJW68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hDWdtJuv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iMEjCWQ1; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id D159F1151644;
-	Fri,  9 Aug 2024 16:01:28 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Fri, 09 Aug 2024 16:01:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723233688;
-	 x=1723320088; bh=qWV5qB3M+Ov5ylhWgimjzrAUVghDwxMLEMd9su0pyq4=; b=
-	hDWdtJuvHFJPR5hIVYM3Jh6MCdcit23Bi/FxWj0tapZTlHFvNg+On1899zWAt7JD
-	KRUq1s3iSt46dgr8WKLQoSl/ArLlFQ1A37207DGQB+Zt9EdWDny9U+pgWiXXw91D
-	WzbRTjv6e2OLInqwN/OofzyqWhWDMndHrbUzcGKTI095DjsN4eaA8n9rUXAkMT0n
-	Vx9wl1J8dMqz/6x7rd3hYAdam+Yz7mb8weOVZfnXmhWTuHSI8HUve+yCwTds36cc
-	cvRYOHwD+2AnJtE2ALl8C4rtdRSSATfNzyTs/mCppTAkdYyXGSNl0X9LYLRmRyMT
-	vRuDgzs6UmAJ1NtBeX8Q/g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723233688; x=
-	1723320088; bh=qWV5qB3M+Ov5ylhWgimjzrAUVghDwxMLEMd9su0pyq4=; b=i
-	MEjCWQ1wpXrCKzL1uR1Hi4NtZYEjRSfZZ0Gah0yAuTqER/QLM4jI3OImyli6Z1yr
-	EXy6LSndQqrURcYG7k/kP2DNMBFStIf8gjPk/qgcgTjLoGaNbpvV8UJb26Kz6LQK
-	fKL6lA7qhKCAtCO7YFGV6S1kMELcSwj0num7cE5dfhUrT2BTBj0sm2PQ7C1EjJjC
-	jNfGsIEl3OiyMaA3VB+8vCy9yVb0Jdc/DLmM0z32RigCU8LMw60ytIYsnpUWhUNI
-	6vpCd+skGLiHSI2zEJekrDRid0iJ06WgGH6iOsQ/yUmAIfTnTaadB+YgEclK7LBv
-	uNNCIoqXKNZizUxXrFX/w==
-X-ME-Sender: <xms:mHW2ZrkZsUJuJqKEWAr5euKj1cvE4DndZnwg38j2y5pw25tgfLJF1Q>
-    <xme:mHW2Zu1FBu_-BmvW9nA2PWv8ghC1jtOJH63ngoKv7W3RekKQiv-UiwwbnzZl8OTAI
-    6n_QQZzscbbZqSP_bE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleeggddugedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrd
-    hfrhgrnhhkvghnrdguvgdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhihghho
-    rghtrdgtohhmpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
-    nhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
-    nhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:mHW2ZhoMW1wnmgZrLHG1Ch8lxSvQECiMo7ybzsXKWPmvdeG5jm7yvw>
-    <xmx:mHW2Zjnvfhi9BZorstLg-9KUCRzMCF-9lypTH3j2kdfFCBO95WyHwg>
-    <xmx:mHW2Zp3VyKvBrjY1fk5teSNm_M6jN5Ia1cyzxMALVsc4YLLOkCG3hw>
-    <xmx:mHW2ZiueECjVE0fbhVCqB9LXSu-QsAWUU_C_64Xz-8gVACqoFUXiBw>
-    <xmx:mHW2ZjpfbARIPFKOg4mqDXIqgo5ivZeHxG4VQgAHg5JjJYx8rSwt1Z0a>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 9544FB6008D; Fri,  9 Aug 2024 16:01:28 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723233706; c=relaxed/simple;
+	bh=TNLYKaOh+vXkzGubqpxPtUj8YBAHq2VsF1/p5ZbPDrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DOhMR3koBfvCxt3rdl0QqzT+kRDy8f6KmpBrfr+aUSGHgNNLZukCC2MUR6LrziKIM1M+qOYXC7kaU1GNqRrrjjupXYhiN9lP7K9VxM/2pA2OJi+drJynnjA+xsbKJG77ObRBgV0df2KreFj43aHFJ1pBkY2N5LWLKyhgRVuf3P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=akdgBJIZ; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a156557029so3038308a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 13:01:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723233703; x=1723838503; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KMUz/aPsGaSf3AR0ZEFloy0Ww3muXJ6eOj3CetN6o6E=;
+        b=akdgBJIZpjyZS7QnEJfkRXvuNHjgeh+ItYaNR1DnLujQokt8AOG7cpumc415ZqeHbo
+         RpK3z0nbaeupy9x4ByOOJCiTCkxCLiO710J+FSR9TuCq1qOB5WsXffIV59ethMTzRL2W
+         BRBy280WyYzsm3Ue7nO4VMphrZE4UWxis+iKPP+RDQ4Onhl73wQ779KJLMBu44pS8dOt
+         VSwgcKUoRJKxYJaiS8sfs2pj3nCEwjKlhvcWkX8nk/q2XcOfrbUgB6NvtYDAuGlCdUQA
+         ElsahOwBzRv41ir3XFKH/9BXPp5ZlaGOxAS4fZi6wnrIR6FFVKodDTfdBrLyi0ZV5/F5
+         yC3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723233703; x=1723838503;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KMUz/aPsGaSf3AR0ZEFloy0Ww3muXJ6eOj3CetN6o6E=;
+        b=LBLtoa1UFsmZKs7agrYumbxMWMkc8dNFxcKxpPMBBtYGijo7cDr45BWONMKtVzLP3X
+         kSF5CaAMWqfN+t2XcFno/eb2IEVND3pFGe229J8SiQipDZf28yRJbnd4c3IWvGgciTNl
+         2+jgphS7Pe4z9xRT442ym0aEdfdKkB2vPODdDAI37i5f4hl7eHx9erLYeQRM8JsEk7a5
+         C8tuAhCLFdoEfl9eCstHcLm92LVARh0bUiCGmmBAAQOdwaJm+MnlDj51x9IHUjZ1ylUB
+         KNbEyvlLqDihg97eW7knWjpZRqWV5hyjdgJ3VrujkfFk2JK7DvlnEMTurINORyQmK68k
+         gkrA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqGRR2euacpeBjBZ6FlsrwdjGrtkMzbkVfnrwJnkgNi3C4z0tJgFt+3bvMlbSck0oGaJY3hSFncrdKKoTQB8hqH10qVG+jp372CexF
+X-Gm-Message-State: AOJu0YxHG7V8PsnwZaxoDlBZI69bag83IC6RYyIA/0CbqoijCz4PWsca
+	wm1p1Mh2d/EG+qHMjysxr4ZSkcRRjwlTU+yqG4WFm3vm8Endagd90yjdKtbAOFM=
+X-Google-Smtp-Source: AGHT+IFp6SPqZJvmY4Rp3COtc6Vyho6/Ic6I4+ja8ES14iyIMQ5Ho1Cxum8VvNzfD9FABxLcWUIK0w==
+X-Received: by 2002:a05:6402:43cb:b0:5a1:7362:91d9 with SMTP id 4fb4d7f45d1cf-5bd0a56c918mr1327974a12.22.1723233703104;
+        Fri, 09 Aug 2024 13:01:43 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd191a20fcsm58144a12.36.2024.08.09.13.01.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 13:01:42 -0700 (PDT)
+Date: Fri, 9 Aug 2024 23:01:38 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Dev Jain <dev.jain@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] selftests/mm: compaction_test: Fix off by one in
+ check_compaction()
+Message-ID: <20ad879e-689b-4b09-823c-4cb4f9b010e7@stanley.mountain>
+References: <87470c06-b45a-4e83-92ff-aac2e7b9c6ba@stanley.mountain>
+ <4c709253-50de-45ee-9cbf-8bed65eff857@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 09 Aug 2024 22:01:08 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Huacai Chen" <chenhuacai@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Message-Id: <bd8bbd60-be0c-4add-8c61-5e569af9eaf3@app.fastmail.com>
-In-Reply-To: <f61081e8-6e48-4161-afa5-ec3a7a58ecd6@app.fastmail.com>
-References: <20240809-mips-numa-v1-0-568751803bf8@flygoat.com>
- <20240809-mips-numa-v1-1-568751803bf8@flygoat.com>
- <70f908d0-7cca-40c3-9aaa-c838b02dc4c4@app.fastmail.com>
- <f61081e8-6e48-4161-afa5-ec3a7a58ecd6@app.fastmail.com>
-Subject: Re: [PATCH 1/7] arch_numa: Provide platform numa init hook
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c709253-50de-45ee-9cbf-8bed65eff857@linuxfoundation.org>
 
-On Fri, Aug 9, 2024, at 21:56, Jiaxun Yang wrote:
-> =E5=9C=A82024=E5=B9=B48=E6=9C=889=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=
-=E5=8D=888:41=EF=BC=8CArnd Bergmann=E5=86=99=E9=81=93=EF=BC=9A
->> On Fri, Aug 9, 2024, at 21:25, Jiaxun Yang wrote:
->>> For some pre-devicetree systems, NUMA information may come from
->>> platform specific way.
->>>
->>> Provide platform numa init hook to allow platform code kick in
->>> as last resort method to supply NUMA configuration.
->>>
->>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->>
->> Can you do this with a Kconfig symbol in the header instead
->> of a __weak symbol?
->
-> Sure, is this some kind of subsystem policy or general recommendation
-> applies to the whole tree?
+On Fri, Aug 09, 2024 at 11:20:48AM -0600, Shuah Khan wrote:
+> On 8/9/24 06:32, Dan Carpenter wrote:
+> > The "initial_nr_hugepages" variable is unsigned long so it takes up to
+> > 20 characters to print, plus 1 more character for the NUL terminator.
+> > Unfortunately, this buffer is not quite large enough for the terminator
+> > to fit.  Also use snprintf() for a belt and suspenders approach.
+> > 
+> > Fixes: fb9293b6b015 ("selftests/mm: compaction_test: fix bogus test success and reduce probability of OOM-killer invocation")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >   tools/testing/selftests/mm/compaction_test.c | 5 +++--
+> >   1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/mm/compaction_test.c b/tools/testing/selftests/mm/compaction_test.c
+> > index e140558e6f53..2c3a0eb6b22d 100644
+> > --- a/tools/testing/selftests/mm/compaction_test.c
+> > +++ b/tools/testing/selftests/mm/compaction_test.c
+> > @@ -89,9 +89,10 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
+> >   	int fd, ret = -1;
+> >   	int compaction_index = 0;
+> >   	char nr_hugepages[20] = {0};
+> > -	char init_nr_hugepages[20] = {0};
+> > +	char init_nr_hugepages[24] = {0};
+> 
+> Can we exceed this limit too? Can you make this a define?
+> 
 
-I don't think it's a general policy, possibly it's just me, but I've
-had to debug too many issues that could have been avoided by not
-__weak symbols, so I try to not have them in code I'm responsible
-for like the asm-generic headers.
+It's based on counting the digits in U64_MAX.
 
-The main places that use __weak symbols are arch/mips and
-drivers/pci, but there are also a number of them in mm/
-and kernel/.
+18446744073709551615X
+123456789012345678901
 
-     Arnd
+We don't have any defines for that kind of thing.  It's not a bad idea.
+#define STRLEN_U64_MAX 20
+char init_nr_hugepages[STRLEN_U64_MAX + 1];
+
+But it should be done as part of a kernel wide clean up and not part of this
+buffer overflow fix.  The line above it could be changed as well, for example.
+Let me create a KTODO and hope the internet will take care of it.
+
+KTODO: create defines for STRLEN_[SU]8/16/32/64_MIN/MAX.
+
+Btw, I rounded up to 24 just because I like buffer sizes that are divisible
+by 4 but the compiler is probably going to do that automatically either way.
+
+regards,
+dan carpenter
+
 
