@@ -1,205 +1,121 @@
-Return-Path: <linux-kernel+bounces-281412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B11A394D6BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:54:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C11294D6B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561691F21733
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:54:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C121F22279
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46AC1607BF;
-	Fri,  9 Aug 2024 18:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4401474C3;
+	Fri,  9 Aug 2024 18:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I2+FqQRz"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gLWEQzSS"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4580C15F40A;
-	Fri,  9 Aug 2024 18:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD05517557
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723229620; cv=none; b=rIp49RfR23/EBTsQKlDA8MPpgps8A7o9pnVT4mHL1sUVsfhYnAsvRtENn8HGeYSaUwJQ+j98xJQ5mWlXqCGXVrj9oOHXUeSfQQ7j5NYNn6mqlQ3tAmPCrLhCL0rC2DoA1bAWiYnENP8Q513FlldqMX7lwuQt4ZRJVOoPzY77Shs=
+	t=1723229548; cv=none; b=ZiOCM3mlDkA4efHqgo7EdpWz91UMi0QwnjVJfuTL12VdK5JFJ1Qq0Lt4q05Q9QCaRL5fRi4dxavLeSm715ubJwUqty+MocyDaTtzZdlQfavCwTWrx1sICIDyoRvsbLQrcDNIHG6FG40iOLI/mf13dUqXeEZOQ+4/Qc3K2gEwW94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723229620; c=relaxed/simple;
-	bh=/dHohhjd6mqlamUXfVgbOAeseXKkRFzIWn0NkexjeWE=;
+	s=arc-20240116; t=1723229548; c=relaxed/simple;
+	bh=t3Cj7VDLa1bnw9WsksFqHlQw2fueh0FzL7HEx6ntwFM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fJ1RNHvFTLqM1L8aP0q0MBmuXXNV0lKjyCuDBiKd4/sL6HfrC9rxiRssRHZlRo14xdIVCiRXYAkavxr/R/LiyOE0GQ32M8IjegS4gK15EyuWtgjRUEnvR1Xbpe9LhpuIKFkRZKs2zwp6F4UECd1wmAR7+ONhRZQjLASjWQpMkRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I2+FqQRz; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 479IXdwH010358;
-	Fri, 9 Aug 2024 18:53:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:content-transfer-encoding:in-reply-to; s=pp1; bh=b
-	mEjRON3V05lDNcx6eATNnufsLS6Cq7LkG7wr3fR8CY=; b=I2+FqQRzNFievgARW
-	VpRgqdgGlgm8Pub96+nNNaw3tTkHv/XATg9A2wh6qCN4yHEEyWGa+JQvDl74FnT/
-	XX3yc0nfp9bSoSti26ZtL/NVB7aTEAs5WqwsFO4tLE3nf0YsYXKe0kksinbUF9Y/
-	u9+DIWNV6TpbKwETBT6RufKKm3V/xWeAmiWuCOWUlAny/x07AQn6eIq/HBGKvznb
-	+U4RfiGg536Fxk5o+0xGm4xC7or2zXuKJOqqrqfCerTi1FlCwvosz4vVT1lHvPaX
-	oWcnivpc35RQzMlynLEjvphuF9quEDW+Ip9ZEmoUKciAzYAs1P/G2Mnfv9Vv+eW5
-	ALhFA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wrgg81a3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 18:53:10 +0000 (GMT)
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 479Ir9xV012702;
-	Fri, 9 Aug 2024 18:53:09 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wrgg81a2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 18:53:09 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 479IoHCi024361;
-	Fri, 9 Aug 2024 18:53:09 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy91558d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 18:53:08 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 479Ir4j745875536
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 9 Aug 2024 18:53:07 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CBB3920043;
-	Fri,  9 Aug 2024 18:53:04 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5DA7920040;
-	Fri,  9 Aug 2024 18:53:01 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.43.65.191])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  9 Aug 2024 18:53:00 +0000 (GMT)
-Date: Sat, 10 Aug 2024 00:21:43 +0530
-From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
-        sergeh@kernel.org, bpf@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] cgroup/cpuset: Do not clear xcpus when clearing
- cpus
-Message-ID: <ZrZlP//QMWFEV6gJ@linux.ibm.com>
-References: <20240731092102.2369580-1-chenridong@huawei.com>
- <6a79b50a-ad74-4b1b-a98c-7da8ef341b24@redhat.com>
- <a3cee760-398f-4661-b4b5-f2fcfd5de7b7@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mgtDIV5czrGCXvoI0ZnKOnClP0DEbidSjxb37242AYXCA19v4gdB8Xi7DtN7lxvv3uRLe+Cp7itZM4zpcQuuOIVqumWT0dVpsK4xv5+igKEwcdvEGewKlSso91utVBkSQv/W9/ka0L6UCakiLxNtx6zyXXJ22mRpEpG6lPuEhRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gLWEQzSS; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fd9e70b592so19363115ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 11:52:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723229546; x=1723834346; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L2kxD8+wCHh7kPrw1r+ewjBkSyFLdoVzJbIrH0Dtpss=;
+        b=gLWEQzSS4nQwp2iiDtvu+BKZkZnVMYPb62VPLZRyERWEK6aHxqnDrkXxYhWS+EYTMJ
+         pM/ni8y2NWORWzqY5oYxQ9qA1ZNLlx7sBqQnj4O4tT1uzWGXesp0jF3DdxswVBLlZmLJ
+         rvqiS0fjRYYsWiJBQRf4qk67Jvl1nxEFkS/Do1dBAc6UmP46Eyabd2UVGAeO8n7X4oay
+         1zmUttpDEAH7/xZIDcxO0oq4sTX0fx70aqYi7eF8nYzSj3dSgp0NWEytfnhK3WpZlCaq
+         Lx7tfnDLMkkd4v0IYDuEjPDhHxf4Ul22A1RN+HV7C6ppRLzDO11zaDKtgFOLUU2M6OC8
+         HxVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723229546; x=1723834346;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L2kxD8+wCHh7kPrw1r+ewjBkSyFLdoVzJbIrH0Dtpss=;
+        b=EDW6ce2VwanJd94F7tC82rvyDocGTL2j7kJ+r5OHU1hvmrrC7aR+VK/r+DTW/22zRp
+         FTYmqexPq3xSPJIw2nl5abE/lTzS1Oc0WPqbEtvlFVwwxq0ejRz/tnJoH1zfnDIRHeSm
+         VoWQR3ZxICNa9Yts3hsUVLBMXcMZGNblDvFRQdm7EbbIejycB5oHFupq1FQkWrEiTN2z
+         a6+vbYH/zFTsLgWOURsXrUMHdHdiSSAVpJCS8M6A602TPnUsWKPLmYKE+yetSP6HgEp6
+         xiklYHSCi74siptAb42qSe1/KREDmEhcjqFp97inoKN/DAKGkrg1Oyepkv6W8enx872v
+         4qJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWu9VRJ+287ahls1As7i2xOVPBf1ds+bCnGu3780Pfo0DXw4g5Vu22dxjrAtJA0hcTIpj9GA0KexKTR9gW3sgMVXHCOyE++dMQq+g4R
+X-Gm-Message-State: AOJu0Yy2A8YHKjm661oH3Ec/TC4Scf7+LEy+cBTBSvOTG7qT/xLf51G0
+	/GjQSicx9DLKWQCaT3WM9nLytTJ3SObaO17P87v3ahL71QQ1PcKP4sMEc4tVlw==
+X-Google-Smtp-Source: AGHT+IEfOVhNrAeTDZZOT5dDxnFrZOlxDmQwSQJhCv+U2+iM1w/HDGwYbakEN6xKAfupUHXOX98LGg==
+X-Received: by 2002:a17:903:234a:b0:1fc:3600:5cd7 with SMTP id d9443c01a7336-200ae4b2b0bmr29902105ad.10.1723229545610;
+        Fri, 09 Aug 2024 11:52:25 -0700 (PDT)
+Received: from google.com (57.145.233.35.bc.googleusercontent.com. [35.233.145.57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bba02f2csm773505ad.217.2024.08.09.11.52.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 11:52:24 -0700 (PDT)
+Date: Fri, 9 Aug 2024 18:52:19 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: "J. R. Okajima" <hooanon05g@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	kernel-team@android.com, Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v2 1/3] lockdep: fix upper limit for LOCKDEP_*_BITS
+ configs
+Message-ID: <ZrZlY-5h5N28PMH7@google.com>
+References: <20240807143922.919604-1-cmllamas@google.com>
+ <20240807143922.919604-2-cmllamas@google.com>
+ <1503.1723080058@jrotkm2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a3cee760-398f-4661-b4b5-f2fcfd5de7b7@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: uL465YgwusuPMStJhZi5zVRPI9YVTvU4
-X-Proofpoint-ORIG-GUID: S17c7uSdwnOz9iIQFyQjuFH7szQHnfkZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_14,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- malwarescore=0 spamscore=0 clxscore=1011 priorityscore=1501
- mlxlogscore=983 adultscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408090134
+In-Reply-To: <1503.1723080058@jrotkm2>
 
-On Thu, Aug 01, 2024 at 12:31:44PM -0400, Waiman Long wrote:
+On Thu, Aug 08, 2024 at 10:20:58AM +0900, J. R. Okajima wrote:
+> Carlos Llamas:
+> > Adjust the upper limits to the maximum values that avoid these issues.
+> > The need for anything more, likely points to a problem elsewhere. Note
+> > that LOCKDEP_CHAINS_BITS was intentionally left out as its upper limit
+> > had a different symptom and has already been fixed [1].
 > 
-> On 7/31/24 23:22, Waiman Long wrote:
-> > On 7/31/24 05:21, Chen Ridong wrote:
-> > > After commit 737bb142a00d ("cgroup/cpuset: Make cpuset.cpus.exclusive
-> > > independent of cpuset.cpus"), cpuset.cpus.exclusive and cpuset.cpus
-> > > became independent. However we found that
-> > > cpuset.cpus.exclusive.effective
-> > > is cleared when cpuset.cpus is clear. To fix this issue, just remove
-> > > xcpus
-> > > clearing when cpuset.cpus is being cleared.
-> > > 
-> > > It can be reproduced as below:
-> > > cd /sys/fs/cgroup/
-> > > mkdir test
-> > > echo +cpuset > cgroup.subtree_control
-> > > cd test
-> > > echo 3 > cpuset.cpus.exclusive
-> > > cat cpuset.cpus.exclusive.effective
-> > > 3
-> > > echo > cpuset.cpus
-> > > cat cpuset.cpus.exclusive.effective // was cleared
-> > > 
-> > > Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> > > ---
-> > >   kernel/cgroup/cpuset.c | 5 ++---
-> > >   1 file changed, 2 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > > index a9b6d56eeffa..248c39bebbe9 100644
-> > > --- a/kernel/cgroup/cpuset.c
-> > > +++ b/kernel/cgroup/cpuset.c
-> > > @@ -2523,10 +2523,9 @@ static int update_cpumask(struct cpuset *cs,
-> > > struct cpuset *trialcs,
-> > >        * that parsing.  The validate_change() call ensures that cpusets
-> > >        * with tasks have cpus.
-> > >        */
-> > > -    if (!*buf) {
-> > > +    if (!*buf)
-> > >           cpumask_clear(trialcs->cpus_allowed);
-> > > -        cpumask_clear(trialcs->effective_xcpus);
-> > > -    } else {
-> > > +    else {
-> > >           retval = cpulist_parse(buf, trialcs->cpus_allowed);
-> > >           if (retval < 0)
-> > >               return retval;
-> > 
-> > Yes, that is a corner case bug that has not been properly handled.
-> > 
-> > Reviewed-by: Waiman Long <longman@redhat.com>
-> > 
-> With a second thought, I think we should keep the clearing of
-> effective_xcpus if exclusive_cpus is empty. IOW
+> I tried setting all these configs to maximum, but still I got the error.
+> 	ld: kernel image bigger than KERNEL_IMAGE_SIZE
 > 
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 6ba8313f1fc3..2023cd68d9bc 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -2516,7 +2516,8 @@ static int update_cpumask(struct cpuset *cs, struct
-> cpuset *trialcs,
->          */
->         if (!*buf) {
->                 cpumask_clear(trialcs->cpus_allowed);
-> -               cpumask_clear(trialcs->effective_xcpus);
-> +               if (cpumask_empty(trialcs->exclusive_cpus))
-> + cpumask_clear(trialcs->effective_xcpus);
->         } else {
->                 retval = cpulist_parse(buf, trialcs->cpus_allowed);
->                 if (retval < 0)
+> For me, these are the maximum.
+> They are compilable, but could not boot due to "out of memory".
+> Also I am not sure whether these values are meaningful.
 > 
-> Thanks,
-> Longman
+> CONFIG_LOCKDEP_BITS=23
+> (CONFIG_LOCKDEP_CHAINS_BITS=21)
+> CONFIG_LOCKDEP_STACK_TRACE_BITS=25
+> CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=24
+> CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=22
+
+Yeah, I say that's expected if you bump these values to the max all at
+once. The values I gave were tested individually on top of the defconfig
+and boot completed fine (qemu x86_64 and aarch64 with -m 8G). I think
+it's fair to leave room to configure these knobs individually.
+
+--
+Carlos Llamas
+
 > 
-Hi Longman,
-
-Is there any situation in which we could land here for or after clearing 
-exclusive_cpus. AFAIK only way we could landup after clearing exclusive_cpus 
-to update_exclusive_cpumask(), which anyway clears effective_xcpus. 
-In that case, clearing effective_xcpus would be redundant in update_cpumask().
-
-
-Also, is there any situation in which we could end up clearing exclusive_cpus
-without clearing effective_xcpus as we have a piece of code:
-
-	static inline struct cpumask *fetch_xcpus(struct cpuset *cs)
-	{
-		return !cpumask_empty(cs->exclusive_cpus) ? cs->exclusive_cpus :
-	       	cpumask_empty(cs->effective_xcpus) ? cs->cpus_allowed
-						  : cs->effective_xcpus;
-	}
-
-Thanks,
-Saket
+> J. R. Okajima
 
