@@ -1,94 +1,116 @@
-Return-Path: <linux-kernel+bounces-280318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206F894C8AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F0194C8AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 04:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C97ED1F23DBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:52:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9821B1F2437C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 02:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B376417C69;
-	Fri,  9 Aug 2024 02:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693CE17C79;
+	Fri,  9 Aug 2024 02:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tp2RTvOg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N9W2pB41"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF98F199B9;
-	Fri,  9 Aug 2024 02:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38403179BF
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 02:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723171903; cv=none; b=jvvoBaC+2d2v5n/bPUFMcI1vVPz9pkzQML4IZ36mqAusSQj6dpGXc1v4w7UIeRmud9Wt9a35+rx66GnBx77csW8Gxvv2/+iyG3aHhu9U14+89DQkV++IEX4wjJA4q//tleDHfEtDMF7qAYlo/+aCkbvm+EJZXnTC4dQk8I2MYd4=
+	t=1723172192; cv=none; b=iLPabyz4y4HNlI3WHnq8QC0K6UtGztprAQOCPsLFHwzM8f84uoCAgDEoGNXkmNLZ4FkrCYV3u5RO3YG2rGr5uiYJJAOKOXN7htJ1PAq9Iss/H6dvZbqcqQ2vCPGrWFdCH4jyxX7IF6Y/3GRo3TXZhcbivzyENkE67OIcOE+Ah4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723171903; c=relaxed/simple;
-	bh=Pa7eDJ4t1xpc18+Np23nsKw+Qc3avfwtmBY5kU8KZ50=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H0Owp0FLuGB8BY7d9d4IOTrgY1bK4P325PPJpL3y2UiaQphKK+zNC3l5NxeGm9xu3YDVm1DUzO44Y4vBVK5znurITx8ovneGQbKKtKgugeqqDfF9IBBwi+gpa2EXwLVgP0tkBml7JdLGeqZaZUM+JmykZuGzs52RUWVCYsqh1RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tp2RTvOg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85CACC32786;
-	Fri,  9 Aug 2024 02:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723171902;
-	bh=Pa7eDJ4t1xpc18+Np23nsKw+Qc3avfwtmBY5kU8KZ50=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Tp2RTvOgG3K4xiDPI7cCiLrTQs1QX2Bl8yGPYlnC4aio0GCEidWPGX6jqMoXF7Wre
-	 BWlskMjaVUut6fuLMHcruUIw14PLApn3VNdcGecwOAtQFlR8TnRuOoA52kB1qgw0cA
-	 OYbjLLrJQNTp2eWRq+kIIwlPCXKh6d2GmaJPNnTYkUSrn2DnOXFvjgv4ihKqC03asb
-	 yvUbgW1S45OwDJjdf0CVyyNKNJ9ZyvGxzz/Hg6QmaSMgy0r8cTHgSkw6hbABj+SpCH
-	 okFzxwdgB08ySM0CrPGTjSfPZ286vBBbQOgAKYNmSp9bknI0gvo7ebgL67QW+wlWJD
-	 /GwUgmQDOnz8Q==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-264545214efso912687fac.3;
-        Thu, 08 Aug 2024 19:51:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWiM3V8kfE6/6zcXY+kPwRPcQICUS/K814R4u+E0AZG88fa78jk9jqm2avMlpVcqg9sqWfrSmT+Xv0DnuEe/b4KUWcGkATrqsmli8E5okfuxjRxvGBSfnypibnPKO/vWRGchSEgvqV2lVfI9MWIHqgNqm0IxVFePt5laXo/Ii1mgxalauRyxTMlww==
-X-Gm-Message-State: AOJu0Yxydl7PIT65Oqs1p8krzAkrGtIscUVtSb4FWKFZQUvQMtKto3tL
-	olbB+2xAih6oaynSXceAqJkeBiesu7/zsZ52lJQg34kd/3FgYlFqU0b/eSwenqtykcsPewt+iv0
-	y4vjCwksBIH3V+rKQkV6viGFunJw=
-X-Google-Smtp-Source: AGHT+IEoUjgjrKsz7zNykn14iHMUq5I0duHy7vcOoiOasSgT3fpmZ3N3RprxQxmTKbqOGsGT1nvjMGBGPRFnlESiqUo=
-X-Received: by 2002:a05:6870:46a8:b0:25d:fc34:ba6a with SMTP id
- 586e51a60fabf-26c62cbe04amr286423fac.26.1723171901804; Thu, 08 Aug 2024
- 19:51:41 -0700 (PDT)
+	s=arc-20240116; t=1723172192; c=relaxed/simple;
+	bh=ZHR3bn5YiotMIl1qC+ckMw73ABf9i1FE7xtEpzkgrUY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fPriwuzpRaGNYMbRzMHLVpu2YzR7g8i0ozwVVA0cs0u0BG5DECQX8IJ+YS++zHrMSl4bfq/7wx3uSyVGaHmBWLZpdTYiBQqIBMCF1lo35M1Lyb3FQhI3wpC8b+3yPOJSWExT4KL+otYjWbCbltDaVxMd0+rCZLVxtxzgYbhdHmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N9W2pB41; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723172191; x=1754708191;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZHR3bn5YiotMIl1qC+ckMw73ABf9i1FE7xtEpzkgrUY=;
+  b=N9W2pB41eXUqcbBIx6/h0Y7LzwuppmzNeV7+K/A/Pvj3+q4CZCIxUq+s
+   pKzqCKj6/JBsKjOnIdFoPP9FaS6/RFvB0kPKTkLg9XDo7lyqQDf4vpgFn
+   6pECvPpzcYI/joyK12amtXPqgPp7Rk2xDA618llF2q9CN1quL3xernTQd
+   z6cdT/aQ7Qv6o9fa39ixwJE1qqw9JzSD3w0aBDJTINY+mWxn/G49zhj7H
+   hGO1R+nheAyxWzhYAItNYIWW6ZQQkUiwo72qmCIwZyzSJJofQJo4KN8c5
+   oiICcAtYwpz/0DBzYetxJ4vZOWxRP97mZMSqVW89ffxV0qYSMOqegRkOT
+   Q==;
+X-CSE-ConnectionGUID: MPJ55IgFRKirjKOyWfQD/Q==
+X-CSE-MsgGUID: K5NftRG/Qe6iJ3akhUnLeQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="24239348"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="24239348"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 19:56:30 -0700
+X-CSE-ConnectionGUID: /Iv2pn6fTCWgc2jgCbLPnw==
+X-CSE-MsgGUID: IB1TWKU5R/Cx8wAjpvclhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="62072641"
+Received: from desktoptgl-tinazhang.bj.intel.com ([10.238.156.103])
+  by fmviesa004.fm.intel.com with ESMTP; 08 Aug 2024 19:56:22 -0700
+From: Tina Zhang <tina.zhang@intel.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tina Zhang <tina.zhang@intel.com>
+Subject: [PATCH v2 0/5] Batch IOTLB/dev-IOTLB invalidation
+Date: Fri,  9 Aug 2024 10:54:26 +0800
+Message-Id: <20240809025431.14605-1-tina.zhang@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZrVA1N6Iv0Byb3I7@cute>
-In-Reply-To: <ZrVA1N6Iv0Byb3I7@cute>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 9 Aug 2024 11:51:30 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-5gKBEAO_GvSKBLciiB1qhjevTSd8kre_-nJQpTw+3vQ@mail.gmail.com>
-Message-ID: <CAKYAXd-5gKBEAO_GvSKBLciiB1qhjevTSd8kre_-nJQpTw+3vQ@mail.gmail.com>
-Subject: Re: [PATCH][next] smb: smb2pdu.h: Use static_assert() to check struct sizes
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Steve French <sfrench@samba.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Tom Talpey <tom@talpey.com>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-2024=EB=85=84 8=EC=9B=94 9=EC=9D=BC (=EA=B8=88) =EC=98=A4=EC=A0=84 7:04, Gu=
-stavo A. R. Silva <gustavoars@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=
-=B1:
->
-> Commit 9f9bef9bc5c6 ("smb: smb2pdu.h: Avoid -Wflex-array-member-not-at-en=
-d
-> warnings") introduced tagged `struct create_context_hdr`. We want to
-> ensure that when new members need to be added to the flexible structure,
-> they are always included within this tagged struct.
->
-> So, we use `static_assert()` to ensure that the memory layout for
-> both the flexible structure and the tagged struct is the same after
-> any changes.
->
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-Acked-by: Namjae Jeon <linkinjeon@kernel.org>
+IOTLB and dev-IOTLB invalidation operations are performance-critical.
+The current implementation in the VT-d driver submits these commands
+individually, leading to some inefficiencies due to the IOMMU
+programming and invalidation command processing overhead for each
+operation.
 
-Thanks!
+This patch series enhances the efficiency of Queue Invalidation (QI)
+operations by adding support for batch processing. Microbenchmarks
+show that with a DSA device working in SVA, batching IOTLB and dev-IOTLB
+invalidations can decrease the time spent in qi_submit_sync()
+by roughly more than 800 cycles.
+
+Changelog
+v2:
+ * Rebased on 6.11-rc2
+ * Updated commit messages
+ * Added changes of refactoring IOTLB/Dev-IOTLB invalidation logic
+   and quirk_extra_dev_tlb_flush() logic
+
+v1:
+ https://lore.kernel.org/linux-iommu/20240517003728.251115-1-tina.zhang@intel.com/
+
+Tina Zhang (5):
+  iommu/vt-d: Refactor IOTLB/Dev-IOTLB invalidation command logic
+  iommu/vt-d: Refactor IOTLB and Dev-IOTLB flush logic
+  iommu/vt-d: Introduce interfaces for QI batching operations
+  vt-d/iommu: Refactor quirk_extra_dev_tlb_flush()
+  vt-d/iommu: Enable batching of IOTLB/Dev-IOTLB invalidations
+
+ drivers/iommu/intel/cache.c | 269 ++++++++++++++++++++++++++--------
+ drivers/iommu/intel/dmar.c  | 281 +++++++++++++++++++++++++-----------
+ drivers/iommu/intel/iommu.c |  56 +++++--
+ drivers/iommu/intel/iommu.h |  44 ++++++
+ drivers/iommu/intel/svm.c   |   5 +-
+ 5 files changed, 491 insertions(+), 164 deletions(-)
+
+-- 
+2.43.0
+
 
