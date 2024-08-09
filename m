@@ -1,172 +1,242 @@
-Return-Path: <linux-kernel+bounces-280959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD47994D166
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:36:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5845294D16A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4033E1F22BAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:36:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 940F01C20B69
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D661953BE;
-	Fri,  9 Aug 2024 13:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A435194A43;
+	Fri,  9 Aug 2024 13:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0P2qDVO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OpYdACcN"
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670AC192B9F;
-	Fri,  9 Aug 2024 13:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42E0195803
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723210608; cv=none; b=Lbc6WquMkYx9iSAt5fkmJRzEyu/Eh6KuYnH3+bs5LRTDxlGSgy+vEYOsBcrFVpU12VAUf+UJ8Kd19m8gOeiZge64hE+EH1JJ9obzlQskHSPkLx3/hFo3hSopK3ZkNGskzAYirXwFJZJCDA31eGgRskT59oQcPmYlKW2ZmDvK158=
+	t=1723210659; cv=none; b=lD5JW655+1jbX6UA9H1sm5P7WmUN472ssIY67FwAsd5HBVIA8tbaQW4jn/U4qXdQyO0qMyyMYiGCG8RtMdslF4J1nQlY15/VVHTkkHI2EUUDxXkN62pmVbYOXl5Vt/SymjUxUHkrK8BKnmfQY26l4bHGQXMWTD1Xjbtlaiatnn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723210608; c=relaxed/simple;
-	bh=qbki987gaYsmofTdGaOrSNO/2m7rpUZOrujXQCXht1w=;
+	s=arc-20240116; t=1723210659; c=relaxed/simple;
+	bh=CV2KsuTzZFM3tb3jpFAEOVmdFeFl9DGCIr23w73TUBc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R56B5Sqj5UTTRJW9T55IpGJaZ//voXLd6dT0KzlR1+BVZDXSpr6qmg4ct9ECnEvkQ4PVGYhPEhY7wf7owyzifY8GuoU+c60b2uS827Sh7AJ8QAl3MtWY7nZ+KKxRbXXat4znlk3y4drDmJ7AUoL4JDuk3MSd1nwryQPyZl1uYYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0P2qDVO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996E0C32782;
-	Fri,  9 Aug 2024 13:36:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723210608;
-	bh=qbki987gaYsmofTdGaOrSNO/2m7rpUZOrujXQCXht1w=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=r2/eDHSjbA2tRCz1b1u5Oc2GZPubaqVxx/HsO9JwGq/UkQIgrQj5DiNsD8opnx0UgTkWLCEXDWRCsyiAFVHM6YrN52MFNr4Op0sfCImAYClfwW6ytWZx8pkecDZw3otp6XQDS2zWXN4ijVfIYHPwB23adGxzMxHeWQCGvgdYIqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OpYdACcN; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WgQ2G15hFzsbq;
+	Fri,  9 Aug 2024 15:37:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723210646;
+	bh=8yuEdFJ5d9KshgHjOdDGSrL9W7g0PXB4OxTMQzj+pOw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z0P2qDVONXxvOeB7wDiYJ+x5raP/IoD8prvxqS5xCi1b77IL5lpzGbtSVQMntbMgw
-	 g0L9IyHWLojoOpssXX/AG0jmlZKOq46rDBgZYFCoq11v43yVN5dkTra3+Kq5ZeM1Hn
-	 MOo6/gGFxEC/CVqFLcXBOeLJE7LhqC3zXqpsvg0Ua+tk4T17JWq/MVsyMUqD9FS4Q4
-	 7FY+56yJyMqHf18y6Pj6UdnejnVLkw03Rdt+K7FKWRshPbxY1MTUqjq7G5XZTa2s3t
-	 GCHUQdKbABG52APNgm4S9trksTnKxYkxQ1bcJgOh94PtTT7mYSsxhniFiLLvy53/dz
-	 tVznqBS7/pnBQ==
-Date: Fri, 9 Aug 2024 10:36:45 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Zixian Cai <fzczx123@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Ben Gainey <ben.gainey@arm.com>, Paran Lee <p4ranlee@gmail.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] perf script python: Add the ins_lat field to event
- handler
-Message-ID: <ZrYbbZVE4BQ-oqba@x1>
-References: <20240809080137.3590148-1-fzczx123@gmail.com>
+	b=OpYdACcNA4gLC3N3pH0KoWMirAjjPj2EBVJfEGi4dfMGog77vLpqZuSTrW72bVb3M
+	 +EQ3x26RAlAsnbvc1YpYxMtM/93AA3EBwXiEFROh8BxkZ5/30nqycipm6+yqoJkswN
+	 Bts5A/dMbwc93yssOu8etR1rmfOSZV1LvaBfXbOU=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WgQ2F4g09z7Hk;
+	Fri,  9 Aug 2024 15:37:25 +0200 (CEST)
+Date: Fri, 9 Aug 2024 15:37:20 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>, outreachy@lists.linux.dev, 
+	gnoack@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] Landlock: Add signal control
+Message-ID: <20240809.fee1eiPohphu@digikod.net>
+References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
+ <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
+ <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
+ <20240807.Yee4al2lahCo@digikod.net>
+ <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
+ <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
+ <20240808.kaiyaeZoo1ha@digikod.net>
+ <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
+ <20240809.eejeekoo4Quo@digikod.net>
+ <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240809080137.3590148-1-fzczx123@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Fri, Aug 09, 2024 at 08:01:36AM +0000, Zixian Cai wrote:
-> For example, when using the Alder Lake PMU memory load event, the
-> instruction latency is stored in ins_lat, while the cache latency
-> is stored in weight.
+On Fri, Aug 09, 2024 at 02:44:06PM +0200, Jann Horn wrote:
+> On Fri, Aug 9, 2024 at 12:59 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Thu, Aug 08, 2024 at 04:42:23PM +0200, Jann Horn wrote:
+> > > On Thu, Aug 8, 2024 at 4:09 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > On Thu, Aug 08, 2024 at 03:10:54AM +0200, Jann Horn wrote:
+> > > > > On Thu, Aug 8, 2024 at 1:36 AM Tahera Fahimi <fahimitahera@gmail.com> wrote:
+> > > > > > On Wed, Aug 07, 2024 at 08:16:47PM +0200, Mickaël Salaün wrote:
+> > > > > > > On Tue, Aug 06, 2024 at 11:55:27PM +0200, Jann Horn wrote:
+> > > > > > > > On Tue, Aug 6, 2024 at 8:56 PM Jann Horn <jannh@google.com> wrote:
+> > > > > > > > > On Tue, Aug 6, 2024 at 8:11 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
+> > > > > > > > > > Currently, a sandbox process is not restricted to send a signal
+> > > > > > > > > > (e.g. SIGKILL) to a process outside of the sandbox environment.
+> > > > > > > > > > Ability to sending a signal for a sandboxed process should be
+> > > > > > > > > > scoped the same way abstract unix sockets are scoped. Therefore,
+> > > > > > > > > > we extend "scoped" field in a ruleset with
+> > > > > > > > > > "LANDLOCK_SCOPED_SIGNAL" to specify that a ruleset will deny
+> > > > > > > > > > sending any signal from within a sandbox process to its
+> > > > > > > > > > parent(i.e. any parent sandbox or non-sandboxed procsses).
+> > > > > > > > [...]
+> > > > > > > > > > +       if (is_scoped)
+> > > > > > > > > > +               return 0;
+> > > > > > > > > > +
+> > > > > > > > > > +       return -EPERM;
+> > > > > > > > > > +}
+> > > > > > > > > > +
+> > > > > > > > > > +static int hook_file_send_sigiotask(struct task_struct *tsk,
+> > > > > > > > > > +                                   struct fown_struct *fown, int signum)
+> > > > > > >
+> > > > > > > I was wondering if we should handle this case, but I guess it makes
+> > > > > > > sense to have a consistent policy for all kind of user-triggerable
+> > > > > > > signals.
+> > > > > > >
+> > > > > > > > > > +{
+> > > > > > > > > > +       bool is_scoped;
+> > > > > > > > > > +       const struct landlock_ruleset *dom, *target_dom;
+> > > > > > > > > > +       struct task_struct *result = get_pid_task(fown->pid, fown->pid_type);
+> > > > > > > > >
+> > > > > > > > > I'm not an expert on how the fowner stuff works, but I think this will
+> > > > > > > > > probably give you "result = NULL" if the file owner PID has already
+> > > > > > > > > exited, and then the following landlock_get_task_domain() would
+> > > > > > > > > probably crash? But I'm not entirely sure about how this works.
+> > > > > > > > >
+> > > > > > > > > I think the intended way to use this hook would be to instead use the
+> > > > > > > > > "file_set_fowner" hook to record the owning domain (though the setup
+> > > > > > > > > for that is going to be kind of a pain...), see the Smack and SELinux
+> > > > > > > > > definitions of that hook. Or alternatively maybe it would be even
+> > > > > > > > > nicer to change the fown_struct to record a cred* instead of a uid and
+> > > > > > > > > euid and then use the domain from those credentials for this hook...
+> > > > > > > > > I'm not sure which of those would be easier.
+> > > > > > > >
+> > > > > > > > (For what it's worth, I think the first option would probably be
+> > > > > > > > easier to implement and ship for now, since you can basically copy
+> > > > > > > > what Smack and SELinux are already doing in their implementations of
+> > > > > > > > these hooks. I think the second option would theoretically result in
+> > > > > > > > nicer code, but it might require a bit more work, and you'd have to
+> > > > > > > > include the maintainers of the file locking code in the review of such
+> > > > > > > > refactoring and have them approve those changes. So if you want to get
+> > > > > > > > this patchset into the kernel quickly, the first option might be
+> > > > > > > > better for now?)
+> > > > > > > >
+> > > > > > >
+> > > > > > > I agree, let's extend landlock_file_security with a new "fown" pointer
+> > > > > > > to a Landlock domain. We'll need to call landlock_get_ruleset() in
+> > > > > > > hook_file_send_sigiotask(), and landlock_put_ruleset() in a new
+> > > > > > > hook_file_free_security().
+> > > > > > I think we should add a new hook (hook_file_set_owner()) to initialize
+> > > > > > the "fown" pointer and call landlock_get_ruleset() in that?
+> > > > >
+> > > > > Yeah. Initialize the pointer in the file_set_fowner hook, and read the
+> > > > > pointer in the file_send_sigiotask hook.
+> > > > >
+> > > > > Note that in the file_set_fowner hook, you'll probably need to use
+> > > > > both landlock_get_ruleset() (to take a reference on the ruleset you're
+> > > > > storing in the fown pointer) and landlock_put_ruleset() (to drop the
+> > > > > reference to the ruleset that the fown pointer was pointing to
+> > > > > before). And you'll need to use some kind of lock to protect the fown
+> > > > > pointer - either by adding an appropriate lock next to your fown
+> > > > > pointer or by using some appropriate existing lock in "struct file".
+> > > > > Probably it's cleanest to have your own lock for this? (This lock will
+> > > > > have to be something like a spinlock, not a mutex, since you need to
+> > > > > be able to acquire it in the file_set_fowner hook, which runs inside
+> > > > > an RCU read-side critical section, where sleeping is forbidden -
+> > > > > acquiring a mutex can sleep and therefore is forbidden in this
+> > > > > context, acquiring a spinlock can't sleep.)
+> > > >
+> > > > Yes, I think this should work for file_set_fowner:
+> > > >
+> > > > struct landlock_ruleset *prev_dom, *new_dom;
+> > > >
+> > > > new_dom = landlock_get_current_domain();
+> > > > landlock_get_ruleset(new_dom);
+> > > >
+> > > > /* Cf. f_modown() */
+> > > > write_lock_irq(&filp->f_owner.lock);
+> > > > prev_dom = rcu_replace_pointer(&landlock_file(file)->fown_domain,
+> > > >         new_dom, lockdep_is_held(&filp->f_owner.lock));
+> > > > write_unlock_irq(&filp->f_owner.lock);
+> > > >
+> > > > landlock_put_ruleset_rcu(prev_dom);
+> > > >
+> > > >
+> > > > With landlock_put_ruleset_rcu() define with this:
+> > > >
+> > > > diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> > > > index a93bdbf52fff..897116205520 100644
+> > > > --- a/security/landlock/ruleset.c
+> > > > +++ b/security/landlock/ruleset.c
+> > > > @@ -524,6 +524,20 @@ void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset)
+> > > >         }
+> > > >  }
+> > > >
+> > > > +static void free_ruleset_rcu(struct rcu_head *const head)
+> > > > +{
+> > > > +       struct landlock_ruleset *ruleset;
+> > > > +
+> > > > +       ruleset = container_of(head, struct landlock_ruleset, rcu);
+> > > > +       free_ruleset(ruleset);
+> > > > +}
+> > >
+> > > free_ruleset() can block but RCU callbacks aren't allowed to block,
+> > > that's why landlock_put_ruleset_deferred() exists.
+> >
+> > Yes, but landlock_put_ruleset_deferred() doesn't wait for RCU read-side
+> > critical sections.
 > 
-> This patch reports the ins_lat field for Python scripting.
-
-So, how did you test this? I tried:
-
-Committer testing:
-
-On a Rocket Lake Refresh Intel machine (14th gen):
-
-  root@number:~# grep -m1 'model name' /proc/cpuinfo
-  model name    : Intel(R) Core(TM) i7-14700K
-  root@number:~# perf mem record -a sleep 5
-  Memory events are enabled on a subset of CPUs: 16-27
-  [ perf record: Woken up 85 times to write data ]
-  [ perf record: Captured and wrote 41.236 MB perf.data (191390 samples) ]
-  root@number:~# perf evlist -v
-  cpu_atom/mem-loads,ldlat=30/P: type: 10 (cpu_atom), size: 136, config: 0x5d0 (mem-loads), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, precise_ip: 3, sample_id_all: 1, { bp_addr, config1 }: 0x1f
-  cpu_atom/mem-stores/P: type: 10 (cpu_atom), size: 136, config: 0x6d0 (mem-stores), { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, disabled: 1, inherit: 1, freq: 1, precise_ip: 3, sample_id_all: 1
-  dummy:u: type: 1 (software), size: 136, config: 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq }: 1, sample_type: IP|TID|TIME|ADDR|CPU|IDENTIFIER|DATA_SRC|WEIGHT_STRUCT, read_format: ID|LOST, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, mmap_data: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-  root@number:~#
-
-Now generate a python script to then dump the dictionary that now needs
-to have that 'ins_lat' field:
-
-  root@number:~# perf script --gen python
-  generated Python script: perf-script.py
-  root@number:~# vim perf-script.py
-  root@number:~# perf script -s perf-script.py | head -40
-  in trace_begin
-  in trace_end
-  root@number:~# vim perf-script.py
-
-But now the perf-script.py doesn't have a handler for the events and I
-got just:
-
-  root@number:~# perf script -s perf-script.py 
-  in trace_begin
-  in trace_end
-  root@number:~# perf evlist 
-  cpu_atom/mem-loads,ldlat=30/P
-  cpu_atom/mem-stores/P
-  dummy:u
-  root@number:~# perf report -D | grep PERF_RECORD_SAMPLE | wc -l
-  5857
-  root@number:~#
-
-So now I'm investigating if this is some 'perf script' script generation
-oddity by trying to run this on an AMD machine, non-hybrid...
-
-But in general try to provide the steps to show that the functionality
-that you are adding is actually working, making it easy for other
-people to try reproducing your results.
-
-Thanks,
-
-- Arnaldo
- 
-> Signed-off-by: Zixian Cai <fzczx123@gmail.com>
-> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
-> ---
-> v4) reformat commit message for max line length
-> v3) address review comments
-> v2) rebase on top of perf-tools-next
+> Ah, I phrased that badly - I didn't mean to suggest that you should
+> use landlock_put_ruleset_deferred() as a replacement for call_rcu().
 > 
->  tools/perf/util/scripting-engines/trace-event-python.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> [...]
+> > > So if you want to use RCU lifetime for this, I think you'll have to
+> > > turn landlock_put_ruleset() and landlock_put_ruleset_deferred() into
+> > > one common function that always, when reaching refcount 0, schedules
+> > > an RCU callback which then schedules a work_struct which then does
+> > > free_ruleset().
+> > >
+> > > I think that would be a little ugly, and it would look nicer to just
+> > > use normal locking in the file_send_sigiotask hook?
+> >
+> > I don't see how we can do that without delaying the free_ruleset() call
+> > to after the RCU read-side critical section in f_setown().
 > 
-> diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
-> index fb00f3ad6815..6971dd6c231f 100644
-> --- a/tools/perf/util/scripting-engines/trace-event-python.c
-> +++ b/tools/perf/util/scripting-engines/trace-event-python.c
-> @@ -888,6 +888,8 @@ static PyObject *get_perf_sample_dict(struct perf_sample *sample,
->  	set_sample_read_in_dict(dict_sample, sample, evsel);
->  	pydict_set_item_string_decref(dict_sample, "weight",
->  			PyLong_FromUnsignedLongLong(sample->weight));
-> +	pydict_set_item_string_decref(dict_sample, "ins_lat",
-> +			PyLong_FromUnsignedLong(sample->ins_lat));
->  	pydict_set_item_string_decref(dict_sample, "transaction",
->  			PyLong_FromUnsignedLongLong(sample->transaction));
->  	set_sample_datasrc_in_dict(dict_sample, sample);
-> @@ -1317,7 +1319,7 @@ static void python_export_sample_table(struct db_export *dbe,
->  	struct tables *tables = container_of(dbe, struct tables, dbe);
->  	PyObject *t;
+> It should work if you used landlock_put_ruleset_deferred() instead of
+> landlock_put_ruleset().
+
+Calling landlock_put_ruleset_deferred() in hook_file_set_fowner() or
+replacing all landlock_put_ruleset() calls?
+
+The deferred work queue is not guarantee to run after all concurrent RCU
+read-side critical sections right?  Calling synchronize_rcu() in
+free_ruleset_work() should give this guarantee, but it's not nice.  We
+could add a boolean in landlock_ruleset to only call synchronize_rcu()
+when required (i.e. called from file_set_fowner).
+
 > 
-> -	t = tuple_new(27);
-> +	t = tuple_new(28);
+> > What about calling refcount_dec_and_test() in free_ruleset_rcu()?  That
+> > would almost always queue this call but it looks safe.
 > 
->  	tuple_set_d64(t, 0, es->db_id);
->  	tuple_set_d64(t, 1, es->evsel->db_id);
-> @@ -1346,6 +1348,7 @@ static void python_export_sample_table(struct db_export *dbe,
->  	tuple_set_s32(t, 24, es->sample->flags);
->  	tuple_set_d64(t, 25, es->sample->id);
->  	tuple_set_d64(t, 26, es->sample->stream_id);
-> +	tuple_set_u32(t, 27, es->sample->ins_lat);
+> Every queued RCU invocation needs to have its own rcu_head - I think
+> the approach you're suggesting could end up queuing the same rcu_head
+> multiple times?
+
+Right
+
 > 
->  	call_object(tables->sample_handler, t, "sample_table");
-> 
-> --
-> 2.25.1
+> > An alternative might be to call synchronize_rcu() in free_ruleset(), but
+> > it's a big ugly too.
 
