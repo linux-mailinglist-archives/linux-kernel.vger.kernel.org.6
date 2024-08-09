@@ -1,119 +1,109 @@
-Return-Path: <linux-kernel+bounces-280421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E7A94CA47
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:13:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BAE594CA4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F29B11C20C8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:13:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDBE31F22B31
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7563416CD2D;
-	Fri,  9 Aug 2024 06:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D83D16CD3D;
+	Fri,  9 Aug 2024 06:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ahENB5z+"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZtTjcpQ"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B8B16CD21
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 06:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBFE3770C;
+	Fri,  9 Aug 2024 06:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723183995; cv=none; b=reC1fKG/nhB/KrJeQWLTvv5r7rMNRy1JcP8Fpu8DDeQeZBDsb2J5Iaw5Wv6sV0vn7OXOdnkdE59OmyvG6bBRFWovmjNanAkl0AUZWZSCISIs+uoOym5sGp7JPLiU5BuBdRqQyloHOz2LPnwykt2QdD2e7CsuelYOPirCntcgZ18=
+	t=1723184041; cv=none; b=Rv0ZTYqKLKyykSaWxnZNUtLljKr4207h5vmBxxDu/MBmzWeCK9zo1CJsyVgFa30g5LJIBo+WsRLBtWmcupZTZbEM0BG10AXnxI80vLQEnMe0Xye1gHY0RGilIxJyDw9HZF+XS7jUlKdkNhB99g0u7IjL2B7jtCtfOqNCvtSljRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723183995; c=relaxed/simple;
-	bh=LUfpBH5hJq5mJAgbujuJTG3p5WmKGZYJduZ2mr1FAHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uXILkT7bWKYBvbb1MMs6E1EWoFg5jHlxOGCBM1U3a7TmxSo5GKBBhgu6r1U8kNRu/71bQylsK79gMJkAxiT74Et6z4j6P52bAptYw8P5NK5rWichCqA9e7fnoPAGLjsSYXnKuvYlFnZHu3otnc6OqJVAn3ZynoVYhc4qo3ZwsHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ahENB5z+; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5ba43b433beso1923707a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 23:13:13 -0700 (PDT)
+	s=arc-20240116; t=1723184041; c=relaxed/simple;
+	bh=ARX/Q/sasAYVVryfc9n8DSEOCNqLxXB8Afapu9TF/qc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uj/G8celfMsK4LH3oqK64jFWZWi/76D0GvGUzla+gghyVaI+PjQCjrvZZgvaR7Q7I3a5vlebIpuqVGHEZiDW16xg/yszcZO9q89ys1YC7Rrd9mPo1GlXT38VPiEt3PfB7j0HuKdnUnRz5T20n+CkiTMQ2cQJSMVQ9A33dxhAJ5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZtTjcpQ; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so3615699e87.0;
+        Thu, 08 Aug 2024 23:13:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1723183992; x=1723788792; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v/PjL/AFb85dVI3DKWfWI3LllKjRgfnxTMskidgbimg=;
-        b=ahENB5z+MloBxmOqNh5o1QYSYvHYkF5dx5+tdDiCVP9L4xEx4wrmiAl/juwjLX2mpw
-         wbj8lUSHlXHlWn2r7PlczDt6uygdFYsB6vVM6S2Ta16pTyxFjJg/yrnz9ZIHPUOWG30r
-         crinTGHDv4LAPhjqz1ZardPluk/VYGaguGTmTv5Q0LwWE0lWSEFvPol0cn97P31PblV/
-         q5OpI6W6NnHGKbWfpuI5bKbKHUbgcipQLrDBzAD8Y5H3UoQG/cjt8/n7rG4HTDZ0Jqz6
-         dM+4RBBr9cw8KYPesARAcXpxzERv3h1pdcoYUTuiU/qtuMbKYg9v1iTPbG5pc+mqU2G6
-         e1+A==
+        d=gmail.com; s=20230601; t=1723184037; x=1723788837; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7R+GvxQaqy1SfAZarZjxrPqQ4LKd/QY13USIM9naNYk=;
+        b=bZtTjcpQvX9jCLtaIe2cdoi7gegOL0amopXRnRLlen44yvetyvpIDXGiybrJBFLCVt
+         dx4h/s77vNVqa37PxnbdGFzkS+iYwuFx7z+yAtEEbmbU78pOdrY7vGedxT7mntCPJP+3
+         Lok6khj6o311mPGzNEHkvXxcRIA3nOmzSjBsCna6GXPUEkyhWVJTMk/JUs4xq4vVY5Nv
+         99PCcQFPvRGNO4O1LAWOIE/EOvEQFDuxSkK+YoJpagzGpA2k//N6Dam1KwtjHZvBr1Zg
+         Yfykz5gl8n2HWD9GhtpViRkUIDDsh/h22V8zAo4YJeQ9m+sGVAtxWWUdIuna2u4xSzhd
+         fWLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723183992; x=1723788792;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v/PjL/AFb85dVI3DKWfWI3LllKjRgfnxTMskidgbimg=;
-        b=VmLmQ3eaVTkwsb0Sm+CFBv4C6diVhvMfwFQRouzyh/1sfz5sJmQpJ0YFGPEOLcBSHW
-         pnFdCTozmq87Daj9JRXqMDel+sFfQHEORunjTCxX2IHHnlJ88wKO01dlIMqyo6Mfohwq
-         NSOd4c5USIH7/shQb7X5TOk/QZAGtVBonYR6B+ldF4lr8Daus2JW/Er9XJdns2gJAFuy
-         etn7phP6GDzv2wAPL4egd0brAAy2Pla5o/ET6x71qECsEZLiQ+gG7It/ggou9nTdeLw+
-         1UO7GDe+VWD8GHPqvO+tUQYd/Ko9t1NxcUWtfmfxvAUSItzELtj+QVE/bzPAMlbubEb3
-         hCAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUz0OQbTAZjnxCOQGJmA1BV6ERVC0jETfxN0VW+c6F998dzw5Dlnp2f6SVTSHITjISyax04tkKcrHb6uZPWNujUVlluzxwroK1O0bS7
-X-Gm-Message-State: AOJu0Yxpogl07f9A0P5A1F+yfpOrfrGGA2JqnerBSzLrok+t9ZDHsyqp
-	M+N41mc3Hd7CcRD+DBpw1bm+zcsXepaTPhiqF6CjvW9H3I3hgzj6HNSni7Uk8po=
-X-Google-Smtp-Source: AGHT+IFnQDB/G3rJ1NYoBODYoPhd1Hk0v4H/4m5gWvj74OkkfQijLy8DyS3EE72gRgVcvkWwHXN20Q==
-X-Received: by 2002:a05:6402:280a:b0:5a3:f5c6:7cd9 with SMTP id 4fb4d7f45d1cf-5bd0a65a9acmr429414a12.26.1723183992482;
-        Thu, 08 Aug 2024 23:13:12 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.180])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2d3518dsm1319431a12.78.2024.08.08.23.13.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 23:13:12 -0700 (PDT)
-Message-ID: <b2b3830e-5399-4c50-8676-b21479edebf3@tuxon.dev>
-Date: Fri, 9 Aug 2024 09:13:10 +0300
+        d=1e100.net; s=20230601; t=1723184037; x=1723788837;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7R+GvxQaqy1SfAZarZjxrPqQ4LKd/QY13USIM9naNYk=;
+        b=J4It/YdoytLoMTT4VigQY9ml44NMZ/IeFI1LMr4qAZBuQYW6V8vHXii58jpDbp8T2Z
+         uo5la41mHCqa+rqN9msnxwQIvC8DCiKw0nlb0HzujTbijCKJAnS1iYAt9iosw4Uviqig
+         QrkTnYmZpQBijJSGT3vaBU5a8Fwvydb3nEZqXTJ5hZFEnPWWqF8cHv9SLSFn9rLwaSl+
+         9pu0OIkogtdjd7cFXYu2eBNngX9P6X4fSmmUNI1dkRm5t7LaLBJB0FBiunA4zW6kjva4
+         GKaOfiv7iMnPraqYZbglT8DcWoSJutj6REdbERAlpF8MrfajB3JAsrAwy57qYjnYT4pc
+         eIUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Jw+aonKCizYx1uoQWxoCBiJ+eBCqUISH4i8zN2MYcfBVlIIES6rqzC4N+qZt1klMIAlCajzaNkGfIOudZc/5pD6t6g7fO5yvwFQebwDDkP//YRIjyxDNzFNskopI6N3ohl4m
+X-Gm-Message-State: AOJu0YxfuhQ2V2bZ30gaK8dJf4EdvuZ2ZIA0IiJIBRQFuctHbh5+I35D
+	xbEClc29cXyVKcDIRgAGpVDVYyS/jBAfjq9nQijGzATUBh5Q/xDHrgGLm5Uun1eow4ULe4+0YK/
+	SPXTJEme7UodJLqX69xqmKIEp3xc=
+X-Google-Smtp-Source: AGHT+IG9KRqwmXzjbRJpRGmOXCH3Q/dtEY4RbkmR0dyQnNnDCe++wb1t9DF2EcGshwDzKk4qAhw3sbLKC4y/We4HCKQ=
+X-Received: by 2002:a05:6512:31c4:b0:52c:df8e:a367 with SMTP id
+ 2adb3069b0e04-530eea129b6mr464503e87.53.1723184036963; Thu, 08 Aug 2024
+ 23:13:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] ARM: dts: microchip: at91-sama7g5ek: add EEPROMs
-Content-Language: en-US
-To: Andrei Simion <andrei.simion@microchip.com>, brgl@bgdev.pl,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, arnd@arndb.de,
- gregkh@linuxfoundation.org
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea@microchip.com>
-References: <20240703084704.197697-1-andrei.simion@microchip.com>
- <20240703084704.197697-3-andrei.simion@microchip.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240703084704.197697-3-andrei.simion@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <6c6b2fecaf381b25ec8d5ecc4e30ff2a186cad48.1722925756.git.jamie.bainbridge@gmail.com>
+ <20240808081054.1291238d@kernel.org>
+In-Reply-To: <20240808081054.1291238d@kernel.org>
+From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+Date: Fri, 9 Aug 2024 16:13:45 +1000
+Message-ID: <CAAvyFNj3QBka0fS5DNLqYDXxAWxduBrkWp991yC6J_3JZa5H2w@mail.gmail.com>
+Subject: Re: [PATCH net v4] net-sysfs: check device is present when showing duplex
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Shigeru Yoshida <syoshida@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 9 Aug 2024 at 01:10, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Tue,  6 Aug 2024 16:35:27 +1000 Jamie Bainbridge wrote:
+> > A sysfs reader can race with a device reset or removal, attempting to
+> > read device state when the device is not actually present.
+>
+> True, but..
+>
+> > -     if (netif_running(netdev)) {
+> > +     if (netif_running(netdev) && netif_device_present(netdev)) {
+> >               struct ethtool_link_ksettings cmd;
+> >
+> >               if (!__ethtool_get_link_ksettings(netdev, &cmd)) {
+>
+> ..there are more callers of __ethtool_get_link_ksettings() and only
+> a fraction of them have something resembling a presence check in
+> their path. Can we put the check inside __ethtool_get_link_ksettings()
+> itself?
 
-
-On 03.07.2024 11:47, Andrei Simion wrote:
-> From: Claudiu Beznea <claudiu.beznea@microchip.com>
-> 
-> Our main boot sequence is
-> (1) ROM BOOT -> AT91Bootstrap -> U-Boot -> Linux Kernel.
-> U-Boot is the stage where we set up the MAC address.
-> Also we can skip U-Boot and use the following boot sequence :
-> (2) ROM BOOT -> AT91Boostrap -> Linux Kernel.
-> Add EEPROMs and nvmem-layout to describe eui48 MAC address region
-> to be used for case (2).
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> [andrei.simion@microchip.com: Add nvmem-layout to describe eui48 mac region.
-> Align compatible name with datasheet. Reword commit message.]
-> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
-
-Applied to at91-dt, thanks!
-
-Please note that I've adjusted the commit message.
-Please have a look and let me know if you disagree with the changes.
-
-Thank you,
-Claudiu Beznea
+No worries. iiuc that would also mean reverting commit 4224cfd7fb65
+("net-sysfs: add check for netdevice being present to speed_show")
+because the check is being centralised. Should I do that in the same
+patch, or a separate revert patch?
 
