@@ -1,80 +1,54 @@
-Return-Path: <linux-kernel+bounces-280980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D29F94D194
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:49:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDE794D19D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12BB728729B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:49:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBB3CB20F08
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD91196C86;
-	Fri,  9 Aug 2024 13:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87F1197A77;
+	Fri,  9 Aug 2024 13:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PpBovrYD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="TnOCcVRB"
+Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC1F195805
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C537219645D;
+	Fri,  9 Aug 2024 13:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723211364; cv=none; b=NSV4wNRosaJaJPTzAbVQvolnO3lam6IiCWEwC6uknubF04uFmBmpadDsagj2sQfKz7p34Omf4O7R8rSPCG0cl8nUywsgWFbZ1DF29v6LvKFNjeiXDJRBHeEx05wOTl8Amq0J9H+mj3ENC5LdYy1vhcoI5RAseaXewbXen4D2ohM=
+	t=1723211522; cv=none; b=RgBzObb2n7ro94yrmVyBZUzUZ2Ap/xTthj/DpVTTJDVQK5J+RtnBwEJKqhPR78DLmfUfqaNLobFNI5FxhoxE4Wid/DhmkNaY6PHfXXEN8BM3i9FXazxHQPrnmvxFA1UytNrg5Jbg4UOJmgXxehf1M8hCAAICjLUa0kjz795swbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723211364; c=relaxed/simple;
-	bh=HNB6pfh342t9AnG0iJPolconJkC4Xc2R7QZVU1D94YQ=;
+	s=arc-20240116; t=1723211522; c=relaxed/simple;
+	bh=5ogXGrZdvbT4WutFOAqshOubqCpu2wcZcmFB8geElsw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LnTQfDApj4cpCvYD3A+CrzRK6YkhJiNUsOa9QTdg856DJNGRXQFrb74MMJjBNQaSSU57yFlgAbTEDfvcLTxt7DJ7zvNrV9iPO+YoN+A0xidlLe696Gq3MAWzkttSzYjhAx52lvuLLX8Vf/PNMUygChdYtHoZHvAj8nTMN1NhirM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PpBovrYD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723211362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=d8l6dVkBJNiXSWSlF/TpRr+4mGvpOZoEKaGvvIjG4k8=;
-	b=PpBovrYDvNQo6gCv0TURD5JrtLUsB8Jhf1ygWL/iZjMjek6SMCHX9thV1bvHSowJ2KDJVF
-	RDAKohl+zcmyVLaFgdI+j3OX4yC1M2oKNjlvu3BXymZ6Mx6YjdVpHmkQ00xjRIaJSrb0yS
-	3jKUA5Lab1ggiObyJvb95fLpb8algOM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648--jTLFGzaNaSQbeJNuPtGrw-1; Fri, 09 Aug 2024 09:49:20 -0400
-X-MC-Unique: -jTLFGzaNaSQbeJNuPtGrw-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-36bb24c86d9so1022135f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 06:49:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723211359; x=1723816159;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=d8l6dVkBJNiXSWSlF/TpRr+4mGvpOZoEKaGvvIjG4k8=;
-        b=qqFmuH9/32aTuKOvqjoO+bNFBbudhWxiHOLHM5XpuJoGoB2AjbAzkQEBouByNUKIFe
-         RYtZLxnLrKRoVF9YbTXRpLastm3i2XNw2nsEzFgtjq6dd0AGWJsfPoNsdJdXKLe4EQ69
-         uw1iTmySfHxP/uBAqeMVs0OdMpGu/iJj3IZbvDwc/P0ojEohhvqGuTM3XsJG6DC5qcll
-         WSuAFppvuraPii3BMvQhC1BUGDEHDEXnSFnkkQAyOxxCnQ5UdFq8jfH89lae/+XpPMh6
-         8w8txj69aHDEDCFUkUi/H4WpraS8jIjmTtdINYCB/79kgQ9CG531I5HLmu8bJsUeb9Jk
-         Xr3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVHbkySGJ8yq4byW4+PWsNhzqjxKxs92aJX7TVpr2GKVqzgjUZ3c4tDoZjumuqKsL66HksSChDM1IyMJBgNnk/JFj9T29NzWHDe2T1Q
-X-Gm-Message-State: AOJu0YyYEcvyalXloIybYyrjyZ0djKSXJJj3v42bAd0pYO4+RQ4jio4R
-	72yJurHx8yrxAMkGTWiw/oPNSvGThA9Nkf7qeMSEMY3/ibk/cycsGArE9L8RxyTfwc7c4YfE+XU
-	6ehsLkusnC4q3IJUGJCsA4P8lLa9TlxYPdBffoNqL60E0aK1LjTYvWKk4BBMqKg==
-X-Received: by 2002:a5d:698d:0:b0:367:2945:4093 with SMTP id ffacd0b85a97d-36d60e02be0mr1202070f8f.40.1723211359481;
-        Fri, 09 Aug 2024 06:49:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2Fgphr0/ew/M2B4tBgNWlZeDwEwZSalcRlUdkd7YL6a8ZmcYF/N612CunYj90VETw7tXQQg==
-X-Received: by 2002:a5d:698d:0:b0:367:2945:4093 with SMTP id ffacd0b85a97d-36d60e02be0mr1202041f8f.40.1723211358986;
-        Fri, 09 Aug 2024 06:49:18 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2718a4edsm5371991f8f.53.2024.08.09.06.49.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 06:49:18 -0700 (PDT)
-Message-ID: <17712a89-58bb-4e1a-99bb-9571a6dbfbad@redhat.com>
-Date: Fri, 9 Aug 2024 15:49:17 +0200
+	 In-Reply-To:Content-Type; b=OKhQEZl9+4EZXqXbUDbmPCqV06H3hBz00q2pVmIG4tzmoL/tzaMSvRA+kXFKstdXAj1sTnowJgSIxUa8qQUizQOOzDoi6VUymdtX8+UMVm4LVJl/f4iux0BdvshuhbQZ0XR/sxyvFf1cS+fntTYT06Y9b8Hbr/oP4ydf1/jXYYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=TnOCcVRB; arc=none smtp.client-ip=77.48.224.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
+Received: from mail1.perex.cz (localhost [127.0.0.1])
+	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 2CFDB36295;
+	Fri,  9 Aug 2024 15:51:54 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 2CFDB36295
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
+	t=1723211514; bh=bfR8xK8YRjbeCEtA/tBvDIAuJxRdvXjkUB7dml/F+x4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TnOCcVRBcxKQEqiclDVDFTrDossLOublsWu2dGWoRkqZ+h3Qaz72TZssUWyzHYxdK
+	 uaWbNAq2ALX2pMWExoEQ+iz8Oje7UeXeMUAAosNplUe80deubBxcCYe3jEA9mN6tb8
+	 jxCA6ENCyhEiHkTxixmFYK9DdJ8oqc+zBA7Ifxfw=
+Received: from [192.168.100.98] (unknown [192.168.100.98])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: perex)
+	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
+	Fri,  9 Aug 2024 15:51:40 +0200 (CEST)
+Message-ID: <e087f554-394e-4d61-8fa4-ddbedd485448@perex.cz>
+Date: Fri, 9 Aug 2024 15:51:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,85 +56,200 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/numa: no task_numa_fault() call if page table is
- changed
-To: Zi Yan <ziy@nvidia.com>, "Huang, Ying" <ying.huang@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240807184730.1266736-1-ziy@nvidia.com>
- <956553dc-587c-4a43-9877-7e8844f27f95@linux.alibaba.com>
- <1881267a-723d-4ba0-96d0-d863ae9345a4@redhat.com>
- <09AC6DFA-E50A-478D-A608-6EF08D8137E9@nvidia.com>
- <052552f4-5a8d-4799-8f02-177585a1c8dd@redhat.com>
- <8890DD6A-126A-406D-8AB9-97CF5A1F4DA4@nvidia.com>
- <b0b94a65-51f1-459e-879f-696baba85399@huawei.com>
- <87cymizdvc.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <03D403CE-5893-456D-AB4B-67C9E9F0F532@nvidia.com>
- <874j7uyvyh.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <6233DD66-9A2E-4885-875D-1E79179146D7@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [RFC PATCH 1/6] ALSA: compress: add Sample Rate Converter codec
+ support
+To: Shengjiu Wang <shengjiu.wang@gmail.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, tiwai@suse.com,
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+References: <1722940003-20126-1-git-send-email-shengjiu.wang@nxp.com>
+ <1722940003-20126-2-git-send-email-shengjiu.wang@nxp.com>
+ <e89a56bf-c377-43d8-bba8-6a09e571ed64@linux.intel.com>
+ <CAA+D8AN9JXJr-BZf8aY7d4rB6M60pXS_DG=qv=P6=2r1A18ATA@mail.gmail.com>
+ <ffa85004-8d86-4168-b278-afd24d79f9d8@linux.intel.com>
+ <116041ee-7139-4b77-89be-3a68f699c01b@perex.cz>
+ <930bb152-860a-4ec5-9ef0-1c96f554f365@linux.intel.com>
+ <c9039808-cd04-452d-9f6c-f91811088456@perex.cz>
+ <ed1192e0-00e7-4739-a687-c96dc2d62898@linux.intel.com>
+ <CAA+D8AMOh=G7W5-dYw_=Xx-s0PqEu2suKYorscoWku86Rn-=+A@mail.gmail.com>
+From: Jaroslav Kysela <perex@perex.cz>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <6233DD66-9A2E-4885-875D-1E79179146D7@nvidia.com>
+Autocrypt: addr=perex@perex.cz; keydata=
+ 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
+In-Reply-To: <CAA+D8AMOh=G7W5-dYw_=Xx-s0PqEu2suKYorscoWku86Rn-=+A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-> Hi Andrew,
+On 09. 08. 24 12:14, Shengjiu Wang wrote:
+> On Fri, Aug 9, 2024 at 3:25 PM Pierre-Louis Bossart
+> <pierre-louis.bossart@linux.intel.com> wrote:
+>>
+>>
+>>>>>> Then there's the issue of parameters, we chose to only add parameters
+>>>>>> for standard encoders/decoders. Post-processing is highly specific and
+>>>>>> the parameter definitions varies from one implementation to another -
+>>>>>> and usually parameters are handled in an opaque way with binary
+>>>>>> controls. This is best handled with a UUID that needs to be known only
+>>>>>> to applications and low-level firmware/hardware, the kernel code should
+>>>>>> not have to be modified for each and every processing and to add new
+>>>>>> parameters. It just does not scale and it's unmaintainable.
+>>>>>>
+>>>>>> At the very least if you really want to use this compress API,
+>>>>>> extend it
+>>>>>> to use a non-descript "UUID-defined" type and an opaque set of
+>>>>>> parameters with this UUID passed in a header.
+>>>>>
+>>>>> We don't need to use UUID-defined scheme for simple (A)SRC
+>>>>> implementation. As I noted, the specific runtime controls may use
+>>>>> existing ALSA control API.
+>>>>
+>>>> "Simple (A)SRC" is an oxymoron. There are multiple ways to define the
+>>>> performance, and how the drift estimator is handled. There's nothing
+>>>> simple if you look under the hood. The SOF implementation has for
+>>>> example those parameters:
+>>>>
+>>>> uint32_t source_rate;           /**< Define fixed source rate or */
+>>>>                  /**< use 0 to indicate need to get */
+>>>>                  /**< the rate from stream */
+>>>> uint32_t sink_rate;             /**< Define fixed sink rate or */
+>>>>                  /**< use 0 to indicate need to get */
+>>>>                  /**< the rate from stream */
+>>>> uint32_t asynchronous_mode;     /**< synchronous 0, asynchronous 1 */
+>>>>                  /**< When 1 the ASRC tracks and */
+>>>>                  /**< compensates for drift. */
+>>>> uint32_t operation_mode;        /**< push 0, pull 1, In push mode the */
+>>>>                  /**< ASRC consumes a defined number */
+>>>>                  /**< of frames at input, with varying */
+>>>>                  /**< number of frames at output. */
+>>>>                  /**< In pull mode the ASRC outputs */
+>>>>                  /**< a defined number of frames while */
+>>>>                  /**< number of input frames varies. */
+>>>>
+>>>> They are clearly different from what is suggested above with a 'ratio-
+>>>> mod'.
+>>>
+>>> I don't think so. The proposed (A)SRC for compress-accel is just one
+>>> case for the above configs where the input is known and output is
+>>> controlled by the requested rate. The I/O mechanism is abstracted enough
+>>> in this case and the driver/hardware/firmware must follow it.
+>>
+>> ASRC is usually added when the nominal rates are known but the clock
+>> sources differ and the drift needs to be estimated at run-time and the
+>> coefficients or interpolation modified dynamically
+>>
+>> If the ratio is known exactly and there's no clock drift, then it's a
+>> different problem where the filter coefficients are constant.
+>>
+>>>> Same if you have a 'simple EQ'. there are dozens of ways to implement
+>>>> the functionality with FIR, IIR or a combination of the two, and
+>>>> multiple bands.
+>>>>
+>>>> The point is that you have to think upfront about a generic way to pass
+>>>> parameters. We didn't have to do it for encoders/decoders because we
+>>>> only catered to well-documented standard solutions only. By choosing to
+>>>> support PCM processing, a new can of worms is now open.
+>>>>
+>>>> I repeat: please do not make the mistake of listing all processing with
+>>>> an enum and a new structure for parameters every time someone needs a
+>>>> specific transform in their pipeline. We made that mistake with SOF and
+>>>> had to backtrack rather quickly. The only way to scale is an identifier
+>>>> that is NOT included in the kernel code but is known to higher and
+>>>> lower-levels only.
+>>>
+>>> There are two ways - black box (UUID - as you suggested) - or well
+>>> defined purpose (abstraction). For your example 'simple EQ', the
+>>> parameters should be the band (frequency range) volume values. It's
+>>> abstract and the real filters (resp. implementation) used behind may
+>>> depend on the hardware/driver capabilities.
+>>
+>> Indeed there is a possibility that the parameters are high-level, but
+>> that would require firmware or hardware to be able to generate actual
+>> coefficients from those parameters. That usually requires some advanced
+>> math which isn't necessarily obvious to implement with fixed-point hardware.
+>>
+>>>  From my view, the really special cases may be handled as black box, but
+>>> others like (A)SRC should follow some well-defined abstraction IMHO to
+>>> not force user space to handle all special cases.
+>>
+>> I am not against the high-level abstractions, e.g. along the lines of
+>> what Android defined:
+>> https://developer.android.com/reference/android/media/audiofx/AudioEffect
+>>
+>> That's not sufficient however, we also need to make sure there's an
+>> ability to provide pre-computed coefficients in an opaque manner for
+>> processing that doesn't fit in the well-defined cases. In practice there
+>> are very few 3rd party IP that fits in well-defined cases, everyone has
+>> secret-sauce parameters and options.
 > 
-> Can you fold the fixup below to this patch? Thanks.
+> Appreciate the discussion.
+> 
+> Let me explain the reason for the change:
+> 
+> Why I use the metadata ioctl is because the ALSA controls are binding
+> to the sound card.  What I want is the controls can be bound to
+> snd_compr_stream, because the ASRC compress sound card can
+> support multi instances ( the ASRC can support multi conversion in
+> parallel).   The ALSA controls can't be used for this case,  the only
+> choice in current compress API is metadata ioctl. And metadata
+> ioctl can be called many times which can meet the ratio modifier
+> requirement (ratio may be drift on the fly)
 
-It might be reasonable to send out a new version. At least I am confused 
-now what the latest state is :D
+This argument is not valid. The controls are bound to the card, but the 
+element identifiers have already iface (interface), device and subdevice 
+numbers. We are using controls for PCM devices for example. The binding is 
+straight.
+
+Just add SNDRV_CTL_ELEM_IFACE_COMPRESS define and specify the compress device 
+number in the 'struct snd_ctl_elem_id'.
+
+					Jaroslav
 
 -- 
-Cheers,
-
-David / dhildenb
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
 
 
