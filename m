@@ -1,240 +1,94 @@
-Return-Path: <linux-kernel+bounces-280572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1812894CC3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A543694CC3D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 116E81C22DBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:31:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67FE81C228D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B10175D2C;
-	Fri,  9 Aug 2024 08:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E978C16C6BD;
+	Fri,  9 Aug 2024 08:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Qh/kNdf8"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGI70ITi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2333D1863F
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0A91741C8;
+	Fri,  9 Aug 2024 08:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723192293; cv=none; b=YHMT35SKVY2wU/d9jyDjmrV9oOxTUCKrCpGOubBh2rNOsggaJ7cFc9y+aH18KFMSFihsDrpoi8dMqgCRlTWIpwABuZwkEkEOl5bTjUxk7RWxG2jDx091tf01hsCHr1JVUQPTyL8Eyznju9zP2omkNYKXOos6bPQ2T5WkM28uByo=
+	t=1723192416; cv=none; b=mskQd8dkpagr11gfl24c7ul5yMHa6CHpz5/8QkTyPFO2j+plFj1kqoHzcVUohNtoD89APnJMg84A2PeyW7nX4u8fmHT0dwqp/tFuiBiGi2CsMyZSimz7srJkdOvdQvE81+WZT1EAIpNwRJhTiVk/PRGit07D+VyrSNEkljR6S8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723192293; c=relaxed/simple;
-	bh=OUQHJe4HIfouHx3KtYsuRSLdB69TTvfjBg9tvW1X54A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L7jVnovjZHOI0pTdh4chSDn37ft9X/SlTNcPSf6r054LgQ1F10E73NdiCNnD/JD52jgCgtsjjVwblHs53jlbHU5a39VOQJVgtDqEGivlX/s+9FdooYvBC/3PNoQTGpEF47lIt6g7n+z3dUyv3gbboWMg0DPSV+PxhJGOoNIujRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Qh/kNdf8; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723192282; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=QlWlrLZQRR72Ij7XSLh+rxKaZg6CXu0jngWl55iBYM0=;
-	b=Qh/kNdf8PyFlJalpwTl6Wu9Akgr+RZ3IV81TeiPxZuOKUdKAIArwVbSrNR6V3eDPDedD63E1i+5jF12EQbWIK/NGL+sn117EYKeXG9XM6ctKLB2aO+x4OO0F4AEROuSa01/gkgYC0e/Uy7uipIvxnmge1N3rjBzPWPHaAlcwCO8=
-Received: from 30.97.56.60(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCPMwMW_1723192281)
-          by smtp.aliyun-inc.com;
-          Fri, 09 Aug 2024 16:31:22 +0800
-Message-ID: <747d1319-f746-4379-bf88-a0f6c3f558b4@linux.alibaba.com>
-Date: Fri, 9 Aug 2024 16:31:21 +0800
+	s=arc-20240116; t=1723192416; c=relaxed/simple;
+	bh=tyLdCyDCC6G6/w+ZtOcdI6dtV+ayR9XnwYUxrRl5gqI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ly/8x165vCkmmvA6xYsrAsB5Hx4lOUlRD/W1iyif84MvZHBWNGyr1HS2Q5Du5n+4ChUeiz97/rc7lksRiZgnYTo9XOKZtSglWTAsrpcU8muohInTRfBrbcXkhjPCXgAgChMN1tCt4lfUngCwDr1L8aDiCligDdX1s+Mm4rlynSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGI70ITi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 462BFC32782;
+	Fri,  9 Aug 2024 08:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723192415;
+	bh=tyLdCyDCC6G6/w+ZtOcdI6dtV+ayR9XnwYUxrRl5gqI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=JGI70ITi2gUFJQqkX49+/58kdsRDVW0mhGU4nOxq4PGlhA7s5bwmdy7J6zSzXIBrv
+	 4FpEIrSEr7OGgyKHiUTbGuJSBy7JxMX8CzPFzfaC0y2nKdjfFJgpGG08y6/kyk9GeJ
+	 giT18AIAy2ese0ef/O3dLt3LoNcff35t+n5grebkW6oJTrP43cDwwnRfXu9Eqgglbv
+	 rcvpdMUwBu4iatlYLn+sbQlhjo6zT/SUkkI1TkHx5GGSevoMyI0QIMicyW3EHV/zKw
+	 TJCr5v9TrH2aqBr4POe9jU8I+m+CLKQbL8N75NJMjPDZ+I/Dl0TaBFMIXBV/Kfl9M7
+	 4nYJQXcC3bnrA==
+From: Christian Brauner <brauner@kernel.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	kees@kernel.org,
+	gustavoars@kernel.org
+Subject: Re: [PATCH] fs/select: Annotate struct poll_list with __counted_by()
+Date: Fri,  9 Aug 2024 10:33:20 +0200
+Message-ID: <20240809-lodern-knirschen-43681b70e2bd@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240808150023.72578-2-thorsten.blum@toblux.com>
+References: <20240808150023.72578-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] mm: Tidy up shmem mTHP controls and stats
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <ioworker0@gmail.com>, Gavin Shan <gshan@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240808111849.651867-1-ryan.roberts@arm.com>
- <20240808111849.651867-3-ryan.roberts@arm.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20240808111849.651867-3-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1005; i=brauner@kernel.org; h=from:subject:message-id; bh=tyLdCyDCC6G6/w+ZtOcdI6dtV+ayR9XnwYUxrRl5gqI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRtvRLR+idQPK7ZvCN/sUWt09YN6Y03b33Z3CQwOy+V3 zDtSO/SjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlk5jIy/Ipob/vp6TZvXZsM 388VaUu3vqqNDdi26s3ryxcfV92OOsXwT89ZZEmpkMfDvWlz33zdsnljUKP0oxwBtvynp21uXez u4wQA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+On Thu, 08 Aug 2024 17:00:24 +0200, Thorsten Blum wrote:
+> Add the __counted_by compiler attribute to the flexible array member
+> entries to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
+> 
+> 
 
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-On 2024/8/8 19:18, Ryan Roberts wrote:
-> Previously we had a situation where shmem mTHP controls and stats were
-> not exposed for some supported sizes and were exposed for some
-> unsupported sizes. So let's clean that up.
-> 
-> Anon mTHP can support all large orders [2, PMD_ORDER]. But shmem can
-> support all large orders [1, MAX_PAGECACHE_ORDER]. However, per-size
-> shmem controls and stats were previously being exposed for all the anon
-> mTHP orders, meaning order-1 was not present, and for arm64 64K base
-> pages, orders 12 and 13 were exposed but were not supported internally.
-> 
-> Tidy this all up by defining ctrl and stats attribute groups for anon
-> and file separately. Anon ctrl and stats groups are populated for all
-> orders in THP_ORDERS_ALL_ANON and file ctrl and stats groups are
-> populated for all orders in THP_ORDERS_ALL_FILE_DEFAULT.
-> 
-> Additionally, create "any" ctrl and stats attribute groups which are
-> populated for all orders in (THP_ORDERS_ALL_ANON |
-> THP_ORDERS_ALL_FILE_DEFAULT). swpout stats use this since they apply to
-> anon and shmem.
-> 
-> The side-effect of all this is that different hugepage-*kB directories
-> contain different sets of controls and stats, depending on which memory
-> types support that size. This approach is preferred over the
-> alternative, which is to populate dummy controls and stats for memory
-> types that do not support a given size.
-> 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->   mm/huge_memory.c | 144 +++++++++++++++++++++++++++++++++++++----------
->   1 file changed, 114 insertions(+), 30 deletions(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 0c3075ee00012..082d86b7c6c2f 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -482,8 +482,8 @@ static void thpsize_release(struct kobject *kobj);
->   static DEFINE_SPINLOCK(huge_anon_orders_lock);
->   static LIST_HEAD(thpsize_list);
->   
-> -static ssize_t thpsize_enabled_show(struct kobject *kobj,
-> -				    struct kobj_attribute *attr, char *buf)
-> +static ssize_t anon_enabled_show(struct kobject *kobj,
-> +				 struct kobj_attribute *attr, char *buf)
->   {
->   	int order = to_thpsize(kobj)->order;
->   	const char *output;
-> @@ -500,9 +500,9 @@ static ssize_t thpsize_enabled_show(struct kobject *kobj,
->   	return sysfs_emit(buf, "%s\n", output);
->   }
->   
-> -static ssize_t thpsize_enabled_store(struct kobject *kobj,
-> -				     struct kobj_attribute *attr,
-> -				     const char *buf, size_t count)
-> +static ssize_t anon_enabled_store(struct kobject *kobj,
-> +				  struct kobj_attribute *attr,
-> +				  const char *buf, size_t count)
->   {
->   	int order = to_thpsize(kobj)->order;
->   	ssize_t ret = count;
-> @@ -544,19 +544,35 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
->   	return ret;
->   }
->   
-> -static struct kobj_attribute thpsize_enabled_attr =
-> -	__ATTR(enabled, 0644, thpsize_enabled_show, thpsize_enabled_store);
-> +static struct kobj_attribute anon_enabled_attr =
-> +	__ATTR(enabled, 0644, anon_enabled_show, anon_enabled_store);
->   
-> -static struct attribute *thpsize_attrs[] = {
-> -	&thpsize_enabled_attr.attr,
-> +static struct attribute *anon_ctrl_attrs[] = {
-> +	&anon_enabled_attr.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group anon_ctrl_attr_grp = {
-> +	.attrs = anon_ctrl_attrs,
-> +};
-> +
-> +static struct attribute *file_ctrl_attrs[] = {
->   #ifdef CONFIG_SHMEM
->   	&thpsize_shmem_enabled_attr.attr,
->   #endif
->   	NULL,
->   };
->   
-> -static const struct attribute_group thpsize_attr_group = {
-> -	.attrs = thpsize_attrs,
-> +static const struct attribute_group file_ctrl_attr_grp = {
-> +	.attrs = file_ctrl_attrs,
-> +};
-> +
-> +static struct attribute *any_ctrl_attrs[] = {
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group any_ctrl_attr_grp = {
-> +	.attrs = any_ctrl_attrs,
->   };
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-I wonder why adding a NULL group?
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
->   
->   static const struct kobj_type thpsize_ktype = {
-> @@ -595,64 +611,132 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
->   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->   DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
->   DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
-> +#ifdef CONFIG_SHMEM
->   DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
->   DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
->   DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
-> +#endif
->   DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
->   DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
->   DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
->   
-> -static struct attribute *stats_attrs[] = {
-> +static struct attribute *anon_stats_attrs[] = {
->   	&anon_fault_alloc_attr.attr,
->   	&anon_fault_fallback_attr.attr,
->   	&anon_fault_fallback_charge_attr.attr,
-> +#ifndef CONFIG_SHMEM
->   	&swpout_attr.attr,
->   	&swpout_fallback_attr.attr,
-> -	&shmem_alloc_attr.attr,
-> -	&shmem_fallback_attr.attr,
-> -	&shmem_fallback_charge_attr.attr,
-> +#endif
->   	&split_attr.attr,
->   	&split_failed_attr.attr,
->   	&split_deferred_attr.attr,
->   	NULL,
->   };
->   
-> -static struct attribute_group stats_attr_group = {
-> +static struct attribute_group anon_stats_attr_grp = {
-> +	.name = "stats",
-> +	.attrs = anon_stats_attrs,
-> +};
-> +
-> +static struct attribute *file_stats_attrs[] = {
-> +#ifdef CONFIG_SHMEM
-> +	&shmem_alloc_attr.attr,
-> +	&shmem_fallback_attr.attr,
-> +	&shmem_fallback_charge_attr.attr,
-> +#endif
-> +	NULL,
-> +};
-> +
-> +static struct attribute_group file_stats_attr_grp = {
-> +	.name = "stats",
-> +	.attrs = file_stats_attrs,
-> +};
-> +
-> +static struct attribute *any_stats_attrs[] = {
-> +#ifdef CONFIG_SHMEM
-> +	&swpout_attr.attr,
-> +	&swpout_fallback_attr.attr,
-> +#endif
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Sorry I did not point it out in early version. I think file pages and 
-shmem can also be split, while 'split_deferred' is only for anonymous 
-page. So I think the any_stats_attrs should be:
-static struct attribute *any_stats_attrs[] = {
-#ifdef CONFIG_SHMEM
-	&swpout_attr.attr,
-	&swpout_fallback_attr.attr,
-#endif
-	&split_attr.attr,
-	&split_failed_attr.attr,
-	NULL,
-};
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs/select: Annotate struct poll_list with __counted_by()
+      https://git.kernel.org/vfs/vfs/c/92f7fe9a4c12
 
