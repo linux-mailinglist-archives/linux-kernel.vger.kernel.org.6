@@ -1,292 +1,250 @@
-Return-Path: <linux-kernel+bounces-281285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B28094D51A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:55:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA2194D51C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005C2286D75
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12A01F21355
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25613219F;
-	Fri,  9 Aug 2024 16:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B024D383B1;
+	Fri,  9 Aug 2024 16:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SUIcZ35M"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FZkER0zs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4lrjnf0z";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FZkER0zs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4lrjnf0z"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D837B1CF96
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD9D2940D;
+	Fri,  9 Aug 2024 16:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723222533; cv=none; b=r3EhUCX41hyYV0PDsnfBFqA9EYLPt2FQv5xO9KJZSawn9VpoEoUx09/6sS0RbqqOa/n6Qtv7Bb9bkXP4yug9TTRheiwOYNrEkaCqQaEIGVJAeJQ/Slf8JFFkKklqHCZ39HJOYOfVUBT6STVPz9FMr88Tf81uSGj4ou/DaWqbXek=
+	t=1723222565; cv=none; b=nQXlHhT0qrQJxNELvCtEZK4GPyFPvrQZfCW4V4pv4gOlVweibAl8ucBfQ3sCEn/uf8UqL4b1KVr11ZqWPtzKDK6hAhThppAtdEUNCKkGgHnZ3a/5tU/lMLduVFuQEzHRk78TQWWRQUn2Qem/QF4q2JiQ2BSTWggddi2RLuO+S9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723222533; c=relaxed/simple;
-	bh=J5i/p0omALrzZ58Vf9x0UYTuhGGWDAQBmom9R+mFQxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M112Be79z/PRf87popch16S2YWOC3E2XVMfeT0icdAAVmxaiP5Kg4MbrE41AAog8pKhN9RR8jVvADam3wXQcbLs3CSeJ+vMMfL9BjEXfm3Gdhza3F2V4/aA57x7M0DyHMJn0Mng+qP9qD3KYz8eT0XQUXdeX/l0XV/wI+2tYfy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SUIcZ35M; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-65f9708c50dso23698497b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:55:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723222531; x=1723827331; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J5i/p0omALrzZ58Vf9x0UYTuhGGWDAQBmom9R+mFQxo=;
-        b=SUIcZ35MiRC2E9y4yd3ke6HxBnDjiAxkUubi2TDFphWuMeY7o4z8dyBjWomoAwHicA
-         +2OMmVfiWAHDg5cnmOx36zlSu2nBaZg4UlHPuD/w/TAYO0yzIao9OKwh/I8IBNypXGwa
-         DuuYFUm+zP1X3qcySV43xdK0f9vw7ABC53VzQo8I7+8Rz7Lw9v2tR7cFaRGc/5pPLUDb
-         UAH7p6TdSqhs90GIhVmjuohvlwKjQ14X8zN7OigKYMvD7ALtZeJvIFLuwMS5gx0qYQBC
-         cw/qEL3MITm+D8LlPWIF07xWWRjZPSOLHTRfcLbstW85NvWAwn2HPpe3f133PfsooNZ/
-         Mzvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723222531; x=1723827331;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J5i/p0omALrzZ58Vf9x0UYTuhGGWDAQBmom9R+mFQxo=;
-        b=ZPg9GTSCLtgeG8aVbIkBb0uL/lQQDtH0FBwFgPKaoqnCwTwABTa4d3wkiBewMZL6jA
-         WY+ycUsLre1sXTs/u0f7rRTBH3qS89rT1pGXg7Dq+WFQB+zjQLSozCsce4HAixRpTL0p
-         mig5DotIOUy/ld61pXTCzsc6huFsG0xoaSNThA3aFHtEsKW53gktgKeNf8Tv/uX4w9Yf
-         gtUW5eaY2s4LxczzlFPkkntDhsiCmprnwA3SYuwmGp4SmPgEoyzbIroFKF5b27+9A2Gt
-         z9DXtIj0LiVmpD+KEpl0UK0VFTvVgjYoZwT7xNJ/gMJa0FqA31SM/QqR42MrLYfuwJ9+
-         ytiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRIHkNZJRnJz4pE8T3a6WfwsAuDf3LiSLy774mup3jqKVl0P6jcyAkACjxLjMuQHsl3J8oG3a8LXJhFL7I+ca/BOUs7OjQFJakkly8
-X-Gm-Message-State: AOJu0YxQCtjuOTF3kYzAOCT1ratQ9a2MD2Nq4K+q9/8fTs3SziEFyCpw
-	BUnZiDko8ZtByb695MaWYjqH8Hus5aHk7+gc84IOOXcm3wO3FCo2LqEZl/H0FuNLsU9L3XRCl54
-	YJranjdtPuutQuPePwRAHA5mtWMJSlg0H92CpGaGnnj7Z7RofZw==
-X-Google-Smtp-Source: AGHT+IEck6xMZmVO50703MWINq6qnIu7HvngT5vX/8c+opsyGxR16BYh0iiv5ys03WK109fWbm3Iu+oIo9ZiKO0KJB0=
-X-Received: by 2002:a05:690c:b05:b0:646:3ef4:6ace with SMTP id
- 00721157ae682-69ec66fea64mr28248707b3.24.1723222530393; Fri, 09 Aug 2024
- 09:55:30 -0700 (PDT)
+	s=arc-20240116; t=1723222565; c=relaxed/simple;
+	bh=XsYfTSEFGm7MRDOgLGo+4usD7dTJHctVvyp56GmC11Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nm22eQFNB2LeNnIRNVLw6torRjtO5xMbe5L+MQkLUGnUxSgLiwjJ88yaIYbkw0mrSYr0KRM7a3Y4gqtmTvfwbmW1+nLlO0LbD0cfDbbxzjIezYiOPaGUaGGHASpyDWnQebb7gCTwTFr5smqL8HCdcxruGJFGTakvMQhZL+rOLkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FZkER0zs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4lrjnf0z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FZkER0zs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4lrjnf0z; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0764221E37;
+	Fri,  9 Aug 2024 16:55:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723222553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qpsLrP3CPpD0n7dQtsWffHlUALpNhZUbBKs6DWmYf3I=;
+	b=FZkER0zs8p2WhdWUZA7zbhyEF+JS2F1F08vYDUAAntzA54Mv/Sixd/bf4ow4S2FSxbvCNC
+	TgH0goTVIdjsMt1lWVrJNVYMpQ/vCEBR+2tixiBPo2utTH8Qob/vPEdFErtIvnwspJ2+Zn
+	QlvXPm0N9fvSazYCcOKUHzzEennHl3c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723222553;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qpsLrP3CPpD0n7dQtsWffHlUALpNhZUbBKs6DWmYf3I=;
+	b=4lrjnf0zj11sJ/0WfhLVlKO9uWdXVZR5E21EGOIjAbHu/7UrjxgZl9ojXtqOhHJjBXpikn
+	CXa7GkNUTpxx5iAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=FZkER0zs;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=4lrjnf0z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723222553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qpsLrP3CPpD0n7dQtsWffHlUALpNhZUbBKs6DWmYf3I=;
+	b=FZkER0zs8p2WhdWUZA7zbhyEF+JS2F1F08vYDUAAntzA54Mv/Sixd/bf4ow4S2FSxbvCNC
+	TgH0goTVIdjsMt1lWVrJNVYMpQ/vCEBR+2tixiBPo2utTH8Qob/vPEdFErtIvnwspJ2+Zn
+	QlvXPm0N9fvSazYCcOKUHzzEennHl3c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723222553;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qpsLrP3CPpD0n7dQtsWffHlUALpNhZUbBKs6DWmYf3I=;
+	b=4lrjnf0zj11sJ/0WfhLVlKO9uWdXVZR5E21EGOIjAbHu/7UrjxgZl9ojXtqOhHJjBXpikn
+	CXa7GkNUTpxx5iAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB5241379A;
+	Fri,  9 Aug 2024 16:55:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dHVtORhKtmaYPAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 09 Aug 2024 16:55:52 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 73CC7A084C; Fri,  9 Aug 2024 18:55:48 +0200 (CEST)
+Date: Fri, 9 Aug 2024 18:55:48 +0200
+From: Jan Kara <jack@suse.cz>
+To: zhangshida <starzhangzsd@gmail.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	zhangshida@kylinos.cn, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH V2 2/2] ext4: Replace the __block_write_begin with
+ ext4_block_write_begin
+Message-ID: <20240809165548.nlhsovccmn3kmouw@quack3>
+References: <20240809064606.3490994-1-zhangshida@kylinos.cn>
+ <20240809064606.3490994-3-zhangshida@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807182325.2585582-1-surenb@google.com> <CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com>
- <CAJuCfpHsvhjYxj=aovZjTd2qUvJWHpcnEn1kYfd0m23HVrPwDg@mail.gmail.com>
- <CAEf4BzYqKAaGE6GEcMs9MTcrV4cA+i0M5pniqFTy1LQ+g0Yxkw@mail.gmail.com>
- <CAG48ez08f0GNfkqtKa3EV6-miRs3AbXej9WdVh4TvB8ErA6S3w@mail.gmail.com>
- <CAEf4BzZT+c3VHkGy2qtpsbrRVLQwE9ESTtvhJ3_xtJ9L=Hmi_g@mail.gmail.com>
- <CAG48ez1_xx=oVB=4Q3Ywf7UPyO3aWR+N=HwGE5SEuO9+Fgiw_g@mail.gmail.com>
- <CAEf4BzZQ3oXBUVJVBJJ2C49jWL0hMSSxZiCpbMeadof7Q-KPzw@mail.gmail.com>
- <CAG48ez3Q5PkiEjfKQR1zA=4dL6RXWNTmPqD==MtGKuTZp2HGtw@mail.gmail.com> <CAEf4BzarYwnt-MT+1icXeTVdk0gLUmXuJtV_5dA9=a8CWE3=Tg@mail.gmail.com>
-In-Reply-To: <CAEf4BzarYwnt-MT+1icXeTVdk0gLUmXuJtV_5dA9=a8CWE3=Tg@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 9 Aug 2024 16:55:17 +0000
-Message-ID: <CAJuCfpHquwbc2768MjOp8vUT7fSaV=xd+pBn4fPOUHBHJdNxnA@mail.gmail.com>
-Subject: Re: [RFC 1/1] mm: introduce mmap_lock_speculation_{start|end}
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jann Horn <jannh@google.com>, akpm@linux-foundation.org, peterz@infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240809064606.3490994-3-zhangshida@kylinos.cn>
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: 0764221E37
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-On Fri, Aug 9, 2024 at 4:39=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Fri, Aug 9, 2024 at 8:21=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
-:
-> >
-> > On Fri, Aug 9, 2024 at 12:36=E2=80=AFAM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > > On Thu, Aug 8, 2024 at 3:16=E2=80=AFPM Jann Horn <jannh@google.com> w=
-rote:
-> > > >
-> > > > On Fri, Aug 9, 2024 at 12:05=E2=80=AFAM Andrii Nakryiko
-> > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > On Thu, Aug 8, 2024 at 2:43=E2=80=AFPM Jann Horn <jannh@google.co=
-m> wrote:
-> > > > > >
-> > > > > > On Thu, Aug 8, 2024 at 11:11=E2=80=AFPM Andrii Nakryiko
-> > > > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > > > On Thu, Aug 8, 2024 at 2:02=E2=80=AFPM Suren Baghdasaryan <su=
-renb@google.com> wrote:
-> > > > > > > >
-> > > > > > > > On Thu, Aug 8, 2024 at 8:19=E2=80=AFPM Andrii Nakryiko
-> > > > > > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Wed, Aug 7, 2024 at 11:23=E2=80=AFAM Suren Baghdasarya=
-n <surenb@google.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > Add helper functions to speculatively perform operation=
-s without
-> > > > > > > > > > read-locking mmap_lock, expecting that mmap_lock will n=
-ot be
-> > > > > > > > > > write-locked and mm is not modified from under us.
-> > > > > > > > > >
-> > > > > > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > > > > > > > Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> > > > > > > > > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > > > > > > > > ---
-> > > > > > > > >
-> > > > > > > > > This change makes sense and makes mm's seq a bit more use=
-ful and
-> > > > > > > > > meaningful. I've also tested it locally with uprobe stres=
-s-test, and
-> > > > > > > > > it seems to work great, I haven't run into any problems w=
-ith a
-> > > > > > > > > multi-hour stress test run so far. Thanks!
-> > > > > > > >
-> > > > > > > > Thanks for testing and feel free to include this patch into=
- your set.
-> > > > > > >
-> > > > > > > Will do!
-> > > > > > >
-> > > > > > > >
-> > > > > > > > I've been thinking about this some more and there is a very=
- unlikely
-> > > > > > > > corner case if between mmap_lock_speculation_start() and
-> > > > > > > > mmap_lock_speculation_end() mmap_lock is write-locked/unloc=
-ked so many
-> > > > > > > > times that mm->mm_lock_seq (int) overflows and just happen =
-to reach
-> > > > > > > > the same value as we recorded in mmap_lock_speculation_star=
-t(). This
-> > > > > > > > would generate a false positive, which would show up as if =
-the
-> > > > > > > > mmap_lock was never touched. Such overflows are possible fo=
-r vm_lock
-> > > > > > > > as well (see: https://elixir.bootlin.com/linux/v6.10.3/sour=
-ce/include/linux/mm_types.h#L688)
-> > > > > > > > but they are not critical because a false result would simp=
-ly lead to
-> > > > > > > > a retry under mmap_lock. However for your case this would b=
-e a
-> > > > > > > > critical issue. This is an extremely low probability scenar=
-io but
-> > > > > > > > should we still try to handle it?
-> > > > > > > >
-> > > > > > >
-> > > > > > > No, I think it's fine.
-> > > > > >
-> > > > > > Modern computers don't take *that* long to count to 2^32, even =
-when
-> > > > > > every step involves one or more syscalls. I've seen bugs where,=
- for
-> > > > > > example, a 32-bit refcount is not decremented where it should, =
-making
-> > > > > > it possible to overflow the refcount with 2^32 operations of so=
-me
-> > > > > > kind, and those have taken something like 3 hours to trigger in=
- one
-> > > > > > case (https://bugs.chromium.org/p/project-zero/issues/detail?id=
-=3D2478),
-> > > > > > 14 hours in another case. Or even cases where, if you have enou=
-gh RAM,
-> > > > > > you can create 2^32 legitimate references to an object and over=
-flow a
-> > > > > > refcount that way
-> > > > > > (https://bugs.chromium.org/p/project-zero/issues/detail?id=3D80=
-9 if you
-> > > > > > had more than 32 GiB of RAM, taking only 25 minutes to overflow=
- the
-> > > > > > 32-bit counter - and that is with every step allocating memory)=
-.
-> > > > > > So I'd expect 2^32 simple operations that take the mmap lock fo=
-r
-> > > > > > writing to be faster than 25 minutes on a modern desktop machin=
-e.
-> > > > > >
-> > > > > > So for a reader of some kinda 32-bit sequence count, if it is
-> > > > > > conceivably possible for the reader to take at least maybe a co=
-uple
-> > > > > > minutes or so between the sequence count reads (also counting t=
-ime
-> > > > > > during which the reader is preempted or something like that), t=
-here
-> > > > > > could be a problem. At that point in the analysis, if you wante=
-d to
-> > > > > > know whether it's actually exploitable, I guess you'd have to l=
-ook at
-> > > > > > what kinda context you're running in, and what kinda events can
-> > > > > > interrupt/preempt you (like whether someone can send a sufficie=
-ntly
-> > > > > > dense flood of IPIs to completely prevent you making forward pr=
-ogress,
-> > > > > > like in https://www.vusec.net/projects/ghostrace/), and for how=
- long
-> > > > > > those things can delay you (maybe including what the pessimal
-> > > > > > scheduler behavior looks like if you're in preemptible context,=
- or how
-> > > > > > long clock interrupts can take to execute when processing a gia=
-nt pile
-> > > > > > of epoll watches), and so on...
-> > > > > >
-> > > > >
-> > > > > And here we are talking about *lockless* *speculative* VMA usage =
-that
-> > > > > will last what, at most on the order of a few microseconds?
-> > > >
-> > > > Are you talking about time spent in task context, or time spent whi=
-le
-> > > > the task is on the CPU (including time in interrupt context), or ab=
-out
-> > > > wall clock time?
-> > >
-> > > We are doing, roughly:
-> > >
-> > > mmap_lock_speculation_start();
-> > > rcu_read_lock();
-> > > vma_lookup();
-> > > rb_find();
-> > > rcu_read_unlock();
-> > > mmap_lock_speculation_end();
-> > >
-> > >
-> > > On non-RT kernel this can be prolonged only by having an NMI somewher=
-e
-> > > in the middle.
-> >
-> > I don't think you're running with interrupts off here? Even on kernels
-> > without any preemption support, normal interrupts (like timers,
-> > incoming network traffic, TLB flush IPIs) should still be able to
-> > interrupt here. And in CONFIG_PREEMPT kernels (which enable
-> > CONFIG_PREEMPT_RCU by default), rcu_read_lock() doesn't block
-> > preemption, so you can even get preempted here - I don't think you
-> > need RT for that.
->
-> Fair enough, normal interrupts can happen as well. Still, we are
-> talking about the above fast sequence running long enough (for
-> whatever reason) for the rest of the system to update mm (and not just
-> plan increment counters) for 2 billion times with mmap_write_lock() +
-> actual work + vma_end_write_all() logic. All kinds of bad things will
-> start happening before that: RCU stall warnings, lots of accumulated
-> memory waiting for RCU grace period, blocked threads on
-> synchronize_rcu(), etc.
->
-> >
-> > My understanding is that the main difference between normal
-> > CONFIG_PREEMPT and RT is whether spin_lock() blocks preemption.
-> >
-> > > On RT it can get preempted even within RCU locked
-> > > region, if I understand correctly. If you manage to make this part ru=
-n
-> > > sufficiently long to overflow 31-bit counter, it's probably a bigger
-> > > problem than mmap's sequence wrapping over, no?
-> >
-> > From the perspective of security, I don't consider it to be
-> > particularly severe by itself if a local process can make the system
-> > stall for very long amounts of time. And from the perspective of
-> > reliability, I think scenarios where someone has to very explicitly go
-> > out of their way to destabilize the system don't matter so much?
->
-> So just to be clear. u64 counter is a no-brainer and I have nothing
-> against that. What I do worry about, though, is that this 64-bit
-> counter will be objected to due to it being potentially slower on
-> 32-bit architectures. So I'd rather have
-> mmap_lock_speculation_{start,end}() with a 32-bit mm_lock_seq counter
-> than not have a way to speculate against VMA/mm at all.
+On Fri 09-08-24 14:46:06, zhangshida wrote:
+> From: Shida Zhang <zhangshida@kylinos.cn>
+> 
+> Using __block_write_begin() make it inconvenient to journal the
+> user data dirty process. We can't tell the block layer maintainer,
+> ‘Hey, we want to trace the dirty user data in ext4, can we add some
+> special code for ext4 in __block_write_begin?’:P
+> 
+> So use ext4_block_write_begin() instead.
+> 
+> The two functions are basically doing the same thing except for the
+> fscrypt related code. Narrow the scope of CONFIG_FS_ENCRYPTION
+> so as to allow ext4_block_write_begin() to function like
+> __block_write_begin when the config is disabled.
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
 
-IMHO the probability that the 32-bit counter will wrap around and end
-up at exactly the same value out of 2^32 possible ones is so minuscule
-that we could ignore that possibility.
+There are three more calls to __block_write_begin() in fs/ext4/inline.c.
+Please convert them as well. We don't allow inline data and data
+journalling combination but it is unexpected surprise that those places
+still use __block_write_begin().
+
+								Honza
+
+> ---
+>  fs/ext4/inode.c | 19 ++++---------------
+>  1 file changed, 4 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index de46c0a6842a..31389633086a 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -1046,7 +1046,6 @@ int do_journal_get_write_access(handle_t *handle, struct inode *inode,
+>  	return ret;
+>  }
+>  
+> -#ifdef CONFIG_FS_ENCRYPTION
+>  static int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+>  				  loff_t pos, unsigned len,
+>  				  get_block_t *get_block)
+> @@ -1135,7 +1134,9 @@ static int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+>  							 from, to);
+>  		else
+>  			folio_zero_new_buffers(folio, from, to);
+> -	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+> +	}
+> +#ifdef CONFIG_FS_ENCRYPTION
+> +	else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+>  		for (i = 0; i < nr_wait; i++) {
+>  			int err2;
+>  
+> @@ -1147,10 +1148,10 @@ static int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+>  			}
+>  		}
+>  	}
+> +#endif
+>  
+>  	return err;
+>  }
+> -#endif
+>  
+>  /*
+>   * To preserve ordering, it is essential that the hole instantiation and
+> @@ -1232,20 +1233,12 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+>  	/* In case writeback began while the folio was unlocked */
+>  	folio_wait_stable(folio);
+>  
+> -#ifdef CONFIG_FS_ENCRYPTION
+>  	if (ext4_should_dioread_nolock(inode))
+>  		ret = ext4_block_write_begin(handle, folio, pos, len,
+>  					     ext4_get_block_unwritten);
+>  	else
+>  		ret = ext4_block_write_begin(handle, folio, pos, len,
+>  					     ext4_get_block);
+> -#else
+> -	if (ext4_should_dioread_nolock(inode))
+> -		ret = __block_write_begin(&folio->page, pos, len,
+> -					  ext4_get_block_unwritten);
+> -	else
+> -		ret = __block_write_begin(&folio->page, pos, len, ext4_get_block);
+> -#endif
+>  	if (!ret && ext4_should_journal_data(inode)) {
+>  		ret = ext4_walk_page_buffers(handle, inode,
+>  					     folio_buffers(folio), from, to,
+> @@ -2978,12 +2971,8 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+>  	if (IS_ERR(folio))
+>  		return PTR_ERR(folio);
+>  
+> -#ifdef CONFIG_FS_ENCRYPTION
+>  	ret = ext4_block_write_begin(NULL, folio, pos, len,
+>  				     ext4_da_get_block_prep);
+> -#else
+> -	ret = __block_write_begin(&folio->page, pos, len, ext4_da_get_block_prep);
+> -#endif
+>  	if (ret < 0) {
+>  		folio_unlock(folio);
+>  		folio_put(folio);
+> -- 
+> 2.33.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
