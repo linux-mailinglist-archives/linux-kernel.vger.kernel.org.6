@@ -1,139 +1,84 @@
-Return-Path: <linux-kernel+bounces-281415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9959394D6C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:57:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 809C994D6C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4568F1F2226C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:57:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D9392823B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1698C15A862;
-	Fri,  9 Aug 2024 18:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9334515ADB3;
+	Fri,  9 Aug 2024 19:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="joI7c/oa"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1GxE/Lv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB3014F9F9;
-	Fri,  9 Aug 2024 18:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA09F624;
+	Fri,  9 Aug 2024 19:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723229840; cv=none; b=QLGioAqNerj7z9m8PTLr3Ag8tg/AHc2jzDqo5KiKQpdfEO1opfZUvytC1i+S7Hj4MqnFsWWNNhLUs0VGDMgezJJYo/qRqOIzyhfeqXxrM+XeXWSkFewCouRPjjKJeOfnDGAymXWQ9tZVW80j7FwDJthY8rB4UMY/veHlfizlql4=
+	t=1723230089; cv=none; b=Vbl9ZHB4r0Poqj/Ot4ytGQy0YHH/+1eq+AhrbUO5MdSlyhhBwhChSYwFr1Hq0jnBikP0wqBue0HQZ1H6mhE+JsmDyuNaz7xFweQvORgAmcID3pkTyIi4atgO05eW9k1usazyfXftQn+ONi75NBWPwxRGApl2o9jYFp4OFW/7k0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723229840; c=relaxed/simple;
-	bh=nvFn7mAb0Twh6vUcncc5orvAoBjxgOO3JfZOwABh1rI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=W8sUDJv4MCvLBP1xh2hrSY7e53hJ3QWaYcKbiiNhobSSYHGSeYGupu7OLlv9r9cQ8RNBj9vqPFSLrueO+MsYUfjvd8SaZRmqzNqKR2xs0Kaw9gMZCW/6GVg8batc+2yIT+tbSOFjiBq8QZFeFUfwACzHwSkdbR0nsDEvJVKBmFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=joI7c/oa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 479HfQcj005995;
-	Fri, 9 Aug 2024 18:57:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nvFn7mAb0Twh6vUcncc5orvAoBjxgOO3JfZOwABh1rI=; b=joI7c/oaibUEdfuP
-	bsCgeSJCrk2VKvmu4rZw5kOqaAoRijtZ+qZilWYSrtE8l8sK0puAXOcGTOFjI84Y
-	Nqe6dzO46HGOK9F2kxDK4rfmR/4ExrMQFBjyULqKMp1Pfv3wYdAehLrxR/X/dWEZ
-	iMJsIAaJgMu9+IsUCIR4KaMz+7FVcojQ/PwQ9PJkYnSDUztCNs/AhSvicc0jP2Fr
-	aHcSsytLQnKxCcR0h1k4DSAPpz7TqRAP0OuS4IUG0TtVEab5tSlTLa97mCj+AcYn
-	Mt60nNXPYEcSGgmQpUvXWXIspCGCNuDxOmPQ38m74l1oGivCZ3tlIgOj8CHOg/3T
-	L2hNiA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40weqf9p8x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 Aug 2024 18:57:00 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 479IuxZD008155
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 9 Aug 2024 18:56:59 GMT
-Received: from [10.110.12.164] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
- 11:56:55 -0700
-Message-ID: <1bece984-6f5f-41ad-b785-03803f6a2037@quicinc.com>
-Date: Fri, 9 Aug 2024 11:56:50 -0700
+	s=arc-20240116; t=1723230089; c=relaxed/simple;
+	bh=ZLJsm1HFlTxuiPShZr4R4A26koLmfxhwfvdmvafiIqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=REtHGrka4G7SAhX4tOtTDJt7vu1rm3CFtGRQDEj3sr97akJCXe/Yv9KR8jFS1qb4HtkcfyjsraZ7+nxYgfR467cZY6JhHRO1B/e3q11H5No2Tt9wE9fvvLpFdj4oFSCV30XoLcb+8nu4AVyVCK97Q67Oyl44QxyHcpYertth7PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1GxE/Lv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE459C32782;
+	Fri,  9 Aug 2024 19:01:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723230089;
+	bh=ZLJsm1HFlTxuiPShZr4R4A26koLmfxhwfvdmvafiIqM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=t1GxE/Lv2tzSNQ+iy143aiponLOW1vIazmIBJe4p8umjdyfANs5Kv84Q4uxQvC84y
+	 dVaioklo/IF110c+w93ZLz7wTjge4h5kcVTVdRkHEB/cf/qmDLebKs6VxxCWLLm/XV
+	 bWb4laAidtcCnPQ7UjHq6xAMyGVktjPjnLFs8CeWlrgR8sEAYMdqOAW4HaVgLxaA2D
+	 L/7IlbrWsFZ4h1x5ynUg4oubnMYetE9oA1l0CjZkQqr/uDqKeKn+DDnxgg9V32lYOe
+	 cQ1bCNs0lo+F+wmGsd8CX4lTZNl+2TNolTVCPI1MwEo6S0bcLXl0JLYbGGB+cBV/fh
+	 HB61PtKoZoUHQ==
+Date: Fri, 9 Aug 2024 14:01:27 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jinjian Song <jinjian.song@fibocom.com>
+Cc: chandrashekar.devegowda@intel.com, chiranjeevi.rapolu@linux.intel.com,
+	haijun.liu@mediatek.com, m.chetan.kumar@linux.intel.com,
+	ricardo.martinez@linux.intel.com, loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com, johannes@sipsolutions.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	angelogioacchino.delregno@collabora.com,
+	linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com,
+	corbet@lwn.net, linux-mediatek@lists.infradead.org,
+	danielwinkler@google.com, korneld@google.com
+Subject: Re: [net-next v2] net: wwan: t7xx: PCIe reset rescan
+Message-ID: <20240809190127.GA206091@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Revert use of Unflatten_devicetree APIs from
- reserved_mem
-To: Klara Modin <klarasmodin@gmail.com>
-CC: <robh@kernel.org>, <saravanak@google.com>, <aisheng.dong@nxp.com>,
-        <hch@lst.de>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <will@kernel.org>, <catalin.marinas@arm.com>,
-        <kernel@quicinc.com>
-References: <20240708230613.448846-1-quic_obabatun@quicinc.com>
- <CABq1_vjvPeF-h19-H99q5D1u7wvtbRPoKKqroMJFaMb+yUFLgg@mail.gmail.com>
-Content-Language: en-US
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <CABq1_vjvPeF-h19-H99q5D1u7wvtbRPoKKqroMJFaMb+yUFLgg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0KIsqVITAaWxApNfnxic84WONq5N2WVz
-X-Proofpoint-GUID: 0KIsqVITAaWxApNfnxic84WONq5N2WVz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-09_15,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- spamscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
- mlxlogscore=999 suspectscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408090137
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809033701.4414-1-jinjian.song@fibocom.com>
 
+On Fri, Aug 09, 2024 at 11:37:01AM +0800, Jinjian Song wrote:
+> WWAN device is programmed to boot in normal mode or fastboot mode,
+> when triggering a device reset through ACPI call or fastboot switch
+> command.Maintain state machine synchronization and reprobe logic
+> after a device reset.
+> 
+> Suggestion from Bjorn:
+> Link: https://lore.kernel.org/all/20230127133034.GA1364550@bhelgaas/
+> 
+> Signed-off-by: Jinjian Song <jinjian.song@fibocom.com>
 
-On 7/9/2024 4:30 AM, Klara Modin wrote:
-> Hi,
->
-> Den tis 9 juli 2024 kl 01:06 skrev Oreoluwa Babatunde
-> <quic_obabatun@quicinc.com>:
->> With recent changes made to initialize the cma regions before the page
->> tables are setup, commit f2a524d9ef5b ("of: reserved_mem: Restructure
->> code to call reserved mem init functions earlier"), an issue was
->> introduced where the initialization of the cma regions fail and are
->> initialized as "non-reusable" regions instead of "reusable". [1], [2]
->>
->> This issue occurs because the device_node of the regions are not yet
->> created by the time the cma regions are being initialized.
->>
->> The cma regions need to be initialized before the page tables are setup
->> for them to be configured correctly as was realized in [3].
->>
->> Hence, since the unflatten_devicetree APIs are not available until after
->> the page tables have been setup, revert back to using the fdt APIs. This
->> makes it possible to store a reference to each cma node in the
->> reserved_mem array by the time it is needed in the init function.
->>
->> [1] https://lore.kernel.org/all/DU0PR04MB9299C3EC247E1FE2C373440F80DE2@DU0PR04MB9299.eurprd04.prod.outlook.com/
->>
->> [2] https://lore.kernel.org/all/986361f4-f000-4129-8214-39f2fb4a90da@gmail.com/
->>
->> [3] https://lore.kernel.org/all/20240610213403.GA1697364@thelio-3990X/
->>
-> These reverts also fixes the issue for me. Feel free to CC me when you
-> decide to send the next version if you want and I can retest it.
->
-> Regards,
-> Tested-by: Klara Modin <klarasmodin@gmail.com>
-Hi Klara,
+I'm glad you managed to do this without all the magic workqueue and
+remove and rescan of the device.  Thanks for working on that!
 
-I have uploaded a new version of this patch set and cc'ed you on it.
-Please help me retest to see if it still works for you.
-https://lore.kernel.org/all/20240809184814.2703050-1-quic_obabatun@quicinc.com/
-
-Thank you!
-Oreoluwa
+Bjorn
 
