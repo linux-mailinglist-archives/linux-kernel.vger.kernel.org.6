@@ -1,123 +1,219 @@
-Return-Path: <linux-kernel+bounces-280726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C9F94CE0B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:03:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F2D94CE0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0F21F234A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:03:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA60B2817E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D77819580F;
-	Fri,  9 Aug 2024 09:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iH5Ib4GO"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB9B19309E
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741F9195FE8;
+	Fri,  9 Aug 2024 09:55:12 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D4719309E;
+	Fri,  9 Aug 2024 09:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723197285; cv=none; b=WBnGbNu7vsnhHCgeVIPBGK3+VKwyFKo1mnehfq5Ccjyc5zu1h+lddfvMAFJ6qO6g0nQAhDHUc+4mASi1bLeipy+uI/RjLmmmzN/Jy2fE7eIY8a3agHFr24cv1G9GblV0Ngi3ve5NegA0um2k/YQEAQUovVvaUTjQf0Ee1b/6Kag=
+	t=1723197311; cv=none; b=Z6ohHrL6v0IT1YnFeReE7csoVoUFlsBUpPlCisA3r6Hexa2PTJz58tQgWXMgSJgefityAl+55fbFkVpXWV6C1PZ3TwALjOq4L8Tp8pPY3oNQ6e2sy8+xD13mi52vXMZ5VutanzjgLktZoh7X0H3rF9KvOV1EV1AMBKJfrj42C94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723197285; c=relaxed/simple;
-	bh=8nN98tpzOxdJLkBol1d2DI55X2A4qjjQjWbNntYK5SI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o/X8V4R7QNKPlgGP5nhI2vjy5bssq0zkFRQ4LB2iz7x83lO9OGNJP3acGXqimc/Ky+rAv3zVUOBxPVvMKj5Jadjh2QUjTh1zcLD7j/SLXTxgvXbngn+wK4uMOFJ2vrLx1Q9b8Kng8o0hd8R7LPQKzkpew7JpwULo+FI3r2eRrEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iH5Ib4GO; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3685a564bafso840205f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 02:54:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723197281; x=1723802081; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1EU6S757EEvdN3w56oF3eehAgxdHj+bjsMSmHNikXzw=;
-        b=iH5Ib4GORwrmjFpi5rQEzwIXrGyfM3tSro1TBRuzalo4YeEBPSEzoEkQBGyH6L9/ly
-         YDdBPPwJispvsUDOdtuZf8l7y9xCeWh27B32wKYyoTV9xxDgcJYc+qRw/kju9BH42ET0
-         JqZuW1cLOGNXTWyVpZS0pTxqfKi3uru8uwKKQMQERTfWaX0wYgCoGsU+d5AhkJbxyaj3
-         M/Xc3a3rr/1pDi/NIB7Px7ing0BURwDtbLSNMNWnJuCg8W25560f0yAc3QSqHdDIyYPr
-         uvWWUZ9BNroQTzRM6V22dev/Jdb5bgSQurw6TL3n6dqBWo+bfPvDsPs47f81Kw4DbAfi
-         aKJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723197281; x=1723802081;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1EU6S757EEvdN3w56oF3eehAgxdHj+bjsMSmHNikXzw=;
-        b=tLOlVwhRv2rU6dYuiEYtphdkXt6CLpWtvaQts228Pco6briAEd4McXqh0cLM73XBwX
-         o22fa1n42ZybA/eZAfSXUJzxKDze9BCS811VGCJj5JPZtoMpowvkwXOA3imkedqTifOT
-         oQwA7jjHsK/3pcgmwTE2N4XA+n4AOp3oxR9Hppeu9ZUYRG8AxFV6bP+ZtwL2vfrAArt1
-         pAyCXQYYbmaAMljTSsIB3/f2SGTCFAHaA7HRkH17DjBezkHQ5uWEx+OF1B1CPAgb8KTV
-         YMrDPjyGETLF1wdgCfPYpVNMnIHPhUqn/k0wFSi/VMFujVhSSgFNlmBRmr3Qqvq4FRKz
-         YYag==
-X-Forwarded-Encrypted: i=1; AJvYcCWDhGZkJ9p2/z4FJtdJDOUOwW1aGtAknjulacDQxGpjnkAghx3s3Gtc9Bq2tvEeTuF1y3Zajto6/4N9p88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxhNC6EfRtwQ29yS/+Rap9pkBS/zaO9n2vammRrgcqAwkdgrdd
-	5hNle6RdsIdwe3KBY0YvT+FzMcsWE96yoZOf5RbHPQ7azuwfIvu5aMdrduxIwpQ=
-X-Google-Smtp-Source: AGHT+IEbbNulu8afLxaQLN8NWyJIZFYrmXQldYKP8toTLqGaJ8C2nI0Wqby7kdrFsbMk5339zxnsKw==
-X-Received: by 2002:adf:eac7:0:b0:367:4e05:bb7b with SMTP id ffacd0b85a97d-36d612f11e9mr959936f8f.53.1723197280917;
-        Fri, 09 Aug 2024 02:54:40 -0700 (PDT)
-Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d2722969fsm4786562f8f.105.2024.08.09.02.54.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 02:54:40 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-To: linux-perf-users@vger.kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf test trace_btf_enum: Fix shellcheck warning
-Date: Fri,  9 Aug 2024 10:54:22 +0100
-Message-Id: <20240809095426.3065163-1-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723197311; c=relaxed/simple;
+	bh=bKqR00lMFHSPv2lR/K8iQjWL7W5AESJ79Fo1BCdTLn4=;
+	h=From:Subject:To:Cc:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=H4zRGoTudybElk6pJ7Pn+R5tnhw2QPL5uuoBbqOibG1d0E/3ptIS7JKRVxmK+ZhHru8INgEi8K/RqnFSAwmBwnoMV1AwUDToEtEJYyHawWMxB8ymJlUUyainwBrZN4fiKa5WhGPZnUEG+C3++dSZTBrA2jxktnBS0EA2Yc7iCq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.4.132])
+	by gateway (Coremail) with SMTP id _____8CxuOl657VmoE4NAA--.38231S3;
+	Fri, 09 Aug 2024 17:55:06 +0800 (CST)
+Received: from [10.20.4.132] (unknown [10.20.4.132])
+	by front1 (Coremail) with SMTP id qMiowMAx4+F457Vm6l0LAA--.56196S3;
+	Fri, 09 Aug 2024 17:55:04 +0800 (CST)
+From: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>
+Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
+To: Krzysztof Kozlowski <krzk@kernel.org>, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
+ p.zabel@pengutronix.de
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, loongarch@lists.linux.dev
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+ <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
+ <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
+ <601adbfd-fbb6-48c6-b755-da1b5d321d6b@kernel.org>
+Message-ID: <89e71573-9365-2e61-bb38-759363df1b8b@loongson.cn>
+Date: Fri, 9 Aug 2024 17:55:04 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <601adbfd-fbb6-48c6-b755-da1b5d321d6b@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowMAx4+F457Vm6l0LAA--.56196S3
+X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAgEEBGa0tRkS5gAAsJ
+X-Coremail-Antispam: 1Uk129KBj93XoWxAFyrKFW5ArWkXF4UCw43twc_yoWrCFWfpw
+	45Ca1qyr4qqr15Zw1vqa4xArnIv398JFnrur1DG34UKa90vw1ftr1ftF1Uu3s7WryUZry2
+	qF1UK3yxua15ZrXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jepB-UUUUU=
 
-Shellcheck versions < v0.7.2 can't follow this path so add the helper to
-fix the following warning:
 
-  In tests/shell/trace_btf_enum.sh line 13:
-  . "$(dirname $0)"/lib/probe.sh
-  ^--------------------------^ SC1090: Can't follow non-constant source.
-  Use a directive to specify location.
+在 2024/8/9 13:53, Krzysztof Kozlowski 写道:
+> On 07/08/2024 10:23, 郑豪威 wrote:
+>> 在 2024/8/4 16:43, Krzysztof Kozlowski 写道:
+>>> On 04/08/2024 08:38,zhenghaowei@loongson.cn  wrote:
+>>>
+>>> Due to lack of changelog, I assume you send the same patch, so:
+>>>
+>>> <form letter>
+>>> This is a friendly reminder during the review process.
+>>>
+>>> It seems my or other reviewer's previous comments were not fully
+>>> addressed. Maybe the feedback got lost between the quotes, maybe you
+>>> just forgot to apply it. Please go back to the previous discussion and
+>>> either implement all requested changes or keep discussing them.
+>>>
+>>> Thank you.
+>>> </form letter>
+>>>
+>>> Also:
+>>>
+>>>> +
+>>>> +  clocks:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  fractional-division:
+>>> Where are this and following defined? In which schema?
+>>>
+>> These and the ones below are new definitions, can I use them like this?
+>>
+>> +  fractional-division:
+>> +    description: Enables fractional-N division. Currently,
+>> +      only LS2K1500 and LS2K2000 support this feature.
+>> +    type: boolean
+>>
+> Missing vendor prefix, but what's more important, why would this be
+> property of DT? Just enable it always...
+>
+>>>> +    description: Enables fractional-N division. Currently,
+>>>> +      only LS2K1500 and LS2K2000 support this feature.
+>>>> +
+>>>> +  rts-invert:
+>>>> +    description: Inverts the RTS value in the MCR register.
+>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>>> +
+>>>> +  dtr-invert:
+>>>> +    description: Inverts the DTR value in the MCR register.
+>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>>> +
+>>>> +  cts-invert:
+>>>> +    description: Inverts the CTS value in the MSR register.
+>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>>> +      and Loongson LS7A bridge chips.
+>>>> +
+>>>> +  dsr-invert:
+>>>> +    description: Inverts the DSR value in the MSR register.
+>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>>> +      and Loongson LS7A bridge chips.
+> Same questions for all these. Why choosing invert is a board level
+> decision? If it "should be used" then why it is not used always?
+>
+Because these features are not applicable to all chips, such as 
+'fractional-division',
 
-Fixes: d66763fed30f ("perf test trace_btf_enum: Add regression test for the BTF augmentation of enums in 'perf trace'")
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/tests/shell/trace_btf_enum.sh | 1 +
- 1 file changed, 1 insertion(+)
+which is currently supported only by 2K1500 and 2K2000, and for 
+Loongson-3 series
 
-diff --git a/tools/perf/tests/shell/trace_btf_enum.sh b/tools/perf/tests/shell/trace_btf_enum.sh
-index 7d407b52bea5..5a3b8a5a9b5c 100755
---- a/tools/perf/tests/shell/trace_btf_enum.sh
-+++ b/tools/perf/tests/shell/trace_btf_enum.sh
-@@ -10,6 +10,7 @@ non_syscall="timer:hrtimer_init,timer:hrtimer_start"
- 
- TESTPROG="perf test -w landlock"
- 
-+# shellcheck source=lib/probe.sh
- . "$(dirname $0)"/lib/probe.sh
- skip_if_no_perf_trace || exit 2
- 
--- 
-2.34.1
+CPUs,  'cts-invert' and 'dtr-invert' are not needed. More importantly, 
+for future chip
+
+designs, these issues may no longer exist.
+
+>>>> +
+>>>> +required:
+>>>> +  - compatible
+>>>> +  - reg
+>>>> +  - interrupts
+>>>> +  - clocks
+>>>> +
+>>>> +allOf:
+>>>> +  - $ref: serial.yaml
+>>>> +
+>>>> +unevaluatedProperties: false
+>>>> +
+>>>> +examples:
+>>>> +  - |
+>>>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>>>> +    #include <dt-bindings/clock/loongson,ls2k-clk.h>
+>>>> +
+>>>> +    serial@1fe001e0 {
+>>>> +        compatible = "loongson,ls7a-uart";
+>>>> +        reg = <0x0 0x1fe001e0 0x0 0x10>;
+>>>> +        clock-frequency = <100000000>;
+>>>> +        interrupt-parent = <&liointc>;
+>>>> +        interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
+>>>> +        fractional-division;
+>>>> +        rts-invert;
+>>>> +        dtr-invert;
+>>>> +    };
+>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>> index 8766f3e5e87e..a6306327dba5 100644
+>>>> --- a/MAINTAINERS
+>>>> +++ b/MAINTAINERS
+>>>> @@ -13189,6 +13189,13 @@ S:	Maintained
+>>>>    F:	Documentation/devicetree/bindings/i2c/loongson,ls2x-i2c.yaml
+>>>>    F:	drivers/i2c/busses/i2c-ls2x.c
+>>>>    
+>>>> +LOONGSON UART DRIVER
+>>>> +M:	Haowei Zheng<zhenghaowei@loongson.cn>
+>>>> +L:	linux-serial@vger.kernel.org
+>>>> +S:	Maintained
+>>>> +F:	Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml
+>>>> +F:	drivers/tty/serial/8250/8250_loongson.c
+>>> There is no such file.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>> The file "drivers/tty/serial/8250/8250_loongson.c" will be created in
+>> the patch
+>>
+>> "tty: serial: 8250: Add loongson uart driver support". Is it
+>> inappropriate to reference it here?
+> Apply this patch and run get_maintainers self tests. What do you see?
+>
+> Of course it is not appropriate here. The file does not exist.
+>
+> Best regards,
+> Krzysztof
+
+I got it, I  will include it in the next patch.
+
+
+Best regards,
+
+Haowei Zheng
 
 
