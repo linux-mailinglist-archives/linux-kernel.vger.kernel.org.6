@@ -1,167 +1,195 @@
-Return-Path: <linux-kernel+bounces-280368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763D494C9A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:33:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D3094C9A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2F1286DAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E19286AAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8722116C6AA;
-	Fri,  9 Aug 2024 05:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB90816C697;
+	Fri,  9 Aug 2024 05:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gxYIZ3+C"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LGWMVFQ4"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809E4433D8
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 05:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F810433A7
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 05:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723181595; cv=none; b=chXs2DE9WYDu4KhKt1kSPD447QpB16KmKycz/bsjT2nrcEcx+Ywao+k6mFc6Hci6km38R78Z4x945S4f6MtmKQ6QGRW9S0fXlO/vLdWjWu90Y+zU+zMyguuHrMkoShKQpBjTxcwPM7/YbBHKFIJn5oPIcxI1TRNepVjh5bBsUO4=
+	t=1723181767; cv=none; b=C0QyjiJ4I06Qzp0H/DVCF7egUDnkFN7gQ7klkCCARZdLJ6RbGTyZV0HmWsj1GQq5PBl797EFQ8rDaio+yKCEvO9g+iBKpf8qXBFSWQZ/8qk+9KRINvU9ypZTXMIDfaYp8QE+Pf/B8kKi/GV8erlfZ+eAWNoWP/akXa2sr+BJVbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723181595; c=relaxed/simple;
-	bh=pnz4pn2aIuI7q35aQCwWQSEhHuiNUdJUQyIwuU/LSLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YD0rq8UIM1Ran5nO8beKoPDmNo/X0W+K7JsmPmr+Sg7repejjV5Wi79rftHwLamyO6ayW+S6z4e0a4F6n6DLnlLRB349bOmWTaA8pEA5re9spoQtAKCZh+/WGtdtGjUdxoud4nWSu/I7HqFvbppej5Jp76uCIh1YzxUW4bopkGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gxYIZ3+C; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-710dc3015bfso93154b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 22:33:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723181593; x=1723786393; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Rpcp7sNOdXCekWfh56WPO6OMCeZXKdG+njZ3Axxp7Y8=;
-        b=gxYIZ3+CwZ4w1gVCNA/mqBAaXC53cvrQZGls5BPrVQ45oaK18T8Br91zEat6YzRx3u
-         044HV59tJM4kDzTLq7U4AJnNbI0d4PwzF9Uo0sJWobgNA212Y1dyS5Am+bYM0vSE9+kK
-         nVRxtmKLz30eodpi4aiFRGhkRGqStsqiDA4o9XQb9j7uZef3VmtN4K1ZJ7jo0Xt2SkYq
-         8c+ideIfz46vCdON5S+rMfSUW05L+SpI/AtBB7R0BQijYvcqQqyU4oKasG2oR5EdXeLT
-         98mazfh/3ZzwLFDvFu9AJzprpwPfhEjqfZPLolFs7r8e5Z5q0fP2x3fa3PeSNjEJ2ueQ
-         azuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723181593; x=1723786393;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rpcp7sNOdXCekWfh56WPO6OMCeZXKdG+njZ3Axxp7Y8=;
-        b=larhDEH9mnc+ylr8irlGygwqf0iWwxVluAaTjHHJglu5UXRklli6hNFIitZyj/2nqK
-         M4NE/fa7rhKt2Wpxx4me+Wz23IQISI85THIHurYuqbjx8jnry5EgE7MB/U0JTFyS8Z0U
-         cRlYa76zecgARM2DFgPrVc9apUs4TBbgeMBhq5/ZB8EcjwQ2GZolxHuFejQ/4sf0fWS6
-         X4fRoEKwAhgp64/HQlFPQv9Wbu6A4ObQOrth+yQ2Q8dczYfS3NitrQkxP+p1/aPKyeIv
-         hKT0sFwNyyuV3be2Xykz04YDUlOsE8JAOxbeKHH9+DvPbYHWYnRryCqc3JY8tPjO1Kv9
-         GwuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVehYmcy2Sr0Y6XYhVLaxDMotaaUH3Xp32KTt195tvbiu/9OvssEpuaNcVc3nBYTew/Bf9j7bv69ucZLwq46gvCE4lmQW10F4e/uUYL
-X-Gm-Message-State: AOJu0YyIjiKFN4NZ/mV0Hq0UrsPqv9nHTHaTxHpHkvuXxaBOWi1kIt1s
-	iRvbwnpTUTXUZpX85cptZ82+v2W9iMhFA1PO/8C4rgby3LZoX3g2n3I8rIhBrA==
-X-Google-Smtp-Source: AGHT+IHjsR+odVk/XFoa4hO6BfS6oiJfnTEktUyDC4vLxB+lplkufKntidsEa0rknzxBQC+JIgXZTA==
-X-Received: by 2002:a05:6a00:b8e:b0:70d:2a1b:422c with SMTP id d2e1a72fcca58-710dcd5c457mr847790b3a.7.1723181592792;
-        Thu, 08 Aug 2024 22:33:12 -0700 (PDT)
-Received: from thinkpad ([117.213.100.70])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2e7416sm1934529b3a.158.2024.08.08.22.33.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 22:33:12 -0700 (PDT)
-Date: Fri, 9 Aug 2024 11:03:04 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andrew Halaney <ahalaney@redhat.com>
-Cc: Rob Herring <robh@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
-	bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	vigneshr@ti.com, kishon@kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	stable@vger.kernel.org, srk@ti.com
-Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
-Message-ID: <20240809053304.GB2826@thinkpad>
-References: <20240724065048.285838-1-s-vadapalli@ti.com>
- <20240724161916.GG3349@thinkpad>
- <20240725042001.GC2317@thinkpad>
- <93e864fb-cf52-4cc0-84a0-d689dd829afb@ti.com>
- <20240726115609.GF2628@thinkpad>
- <CAL_JsqJ-mfU88E_Ri=BzH6nAFg405gkPPJTtjdp7UR2n96QMkw@mail.gmail.com>
- <20240805164519.GF7274@thinkpad>
- <CAL_JsqKxF6yYTWbmU8SRhxemNMwErNViHuk05sLyFjFzssh=Eg@mail.gmail.com>
- <wr2z74wsqhitisgp4qsfrmuvvhw3cpp3bdzkp5batawv6btfyd@xcyhug7jyfxg>
+	s=arc-20240116; t=1723181767; c=relaxed/simple;
+	bh=YN+RKJ0/h6Vgx98OyJXkoce60kwJF3xcUQsAW5ygOqw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=rSf2rrWvUJBIgcJ6zdcbHtD+gINMXhNZbOnDvl1k7unrWoA+0ubQfKOUFIhYt3Vo/f6Me1jqKvtOO8KQFLm9gFqbu9kQuKr9FiRStc4qABp1ZurDy8s+ysI7LV7DxMvgQqcmiyCtE++PrL5Oq+R4CxArWHbW2yB2c8wEkktBGYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LGWMVFQ4; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478Cb3I8005727;
+	Fri, 9 Aug 2024 05:35:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	ZKL8Q9qcvjVY5MH9IXvnciiyhYMEMZN0/x4DWSJkYTU=; b=LGWMVFQ44cMhD1G6
+	H8FirD6qcFLsFBZC3mdg1iP72C28Yqb4VEUo5FH+RnLDJRk6x2uywj1mkkAvyN0R
+	wayXmEHdENljkC9LloEJSvrEYTWfoQN1VhjMShvnk/FXWrTPyn8f4YuHokPn5m3T
+	oBc231Y3vl1szuMGxKx2O9sN/y1x/z+dJKlBc/nU3Qa7W13E1xqDiR9u/BFeQeJo
+	W466GtrX8sCGw5vK2VeOaJe9z4PBnoBVQVx1il9oGhv8f4eVPXVQwUHJ0yguTGYw
+	tcxhZ0nKsltNb0GF2NAm6Ny+OR3HMtQdSSLuwzSCl84UJVAHGfZEdF7Eg6ZUbZoY
+	PxwwQQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkca1a8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 05:35:50 +0000 (GMT)
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4795Zn9J030019;
+	Fri, 9 Aug 2024 05:35:49 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40vwkca1a6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 05:35:49 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4794DNjX006462;
+	Fri, 9 Aug 2024 05:35:49 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 40t13mssc6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 05:35:49 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4795Zjlq18219434
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 9 Aug 2024 05:35:47 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 548BA20040;
+	Fri,  9 Aug 2024 05:35:45 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C9D5A2004F;
+	Fri,  9 Aug 2024 05:35:33 +0000 (GMT)
+Received: from [9.43.4.15] (unknown [9.43.4.15])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  9 Aug 2024 05:35:33 +0000 (GMT)
+Message-ID: <ba0c218b-fb38-41a6-8339-265cc75466aa@linux.ibm.com>
+Date: Fri, 9 Aug 2024 11:05:28 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Document/kexec: Generalize crash hotplug description
+To: =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>
+Cc: bhe@redhat.com, Hari Bathini <hbathini@linux.ibm.com>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+References: <20240805050829.297171-1-sourabhjain@linux.ibm.com>
+ <20240808132423.0f313ffe@meshulam.tesarici.cz>
+Content-Language: en-US
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <20240808132423.0f313ffe@meshulam.tesarici.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: HBp7JP1jjSSjsCq5NunZcsWQeKbk0vI8
+X-Proofpoint-ORIG-GUID: kU2XRt0kb8RKUAbJXblqXveslvhGz5mj
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <wr2z74wsqhitisgp4qsfrmuvvhw3cpp3bdzkp5batawv6btfyd@xcyhug7jyfxg>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-09_02,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0
+ malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408090041
 
-On Thu, Aug 08, 2024 at 03:56:10PM -0500, Andrew Halaney wrote:
+Hello Petr,
 
-[...]
+On 08/08/24 16:54, Petr Tesařík wrote:
+> Hi Sourabh,
+>
+> sorry for late reply, was on vacation and then catching up...
+>
+> On Mon,  5 Aug 2024 10:38:29 +0530
+> Sourabh Jain <sourabhjain@linux.ibm.com> wrote:
+>
+>> Commit 79365026f869 ("crash: add a new kexec flag for hotplug support")
+>> generalizes the crash hotplug support to allow architectures to update
+>> multiple kexec segments on CPU/Memory hotplug and not just elfcorehdr.
+>> Therefore, update the relevant kernel documentation to reflect the same.
+>>
+>> No functional change.
+>>
+>> Cc: Petr Tesarik <petr@tesarici.cz>
+>> Cc: Hari Bathini <hbathini@linux.ibm.com>
+>> Cc: kexec@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linuxppc-dev@lists.ozlabs.org
+>> Cc: x86@kernel.org
+>> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+>> ---
+>>
+>> Discussion about the documentation update:
+>> https://lore.kernel.org/all/68d0328d-531a-4a2b-ab26-c97fd8a12e8b@linux.ibm.com/
+>>
+>> ---
+>>   .../ABI/testing/sysfs-devices-memory          |  6 ++--
+>>   .../ABI/testing/sysfs-devices-system-cpu      |  6 ++--
+>>   .../admin-guide/mm/memory-hotplug.rst         |  5 ++--
+>>   Documentation/core-api/cpu_hotplug.rst        | 10 ++++---
+>>   kernel/crash_core.c                           | 29 ++++++++++++-------
+>>   5 files changed, 33 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-devices-memory b/Documentation/ABI/testing/sysfs-devices-memory
+>> index a95e0f17c35a..421acc8e2c6b 100644
+>> --- a/Documentation/ABI/testing/sysfs-devices-memory
+>> +++ b/Documentation/ABI/testing/sysfs-devices-memory
+>> @@ -115,6 +115,6 @@ What:		/sys/devices/system/memory/crash_hotplug
+>>   Date:		Aug 2023
+>>   Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+>>   Description:
+>> -		(RO) indicates whether or not the kernel directly supports
+>> -		modifying the crash elfcorehdr for memory hot un/plug and/or
+>> -		on/offline changes.
+>> +		(RO) indicates whether or not the kernel update of kexec
+>> +		segments on memory hot un/plug and/or on/offline events,
+>> +		avoiding the need to reload kdump kernel.
+> This sentence somehow lacks a verb. My suggestion:
+>
+>    (RO) indicates whether or not the kernel updates relevant kexec
+>    segments on memory hot un/plug and/or on/offline events, avoiding the
+>    need to reload kdump kernel.
 
-> > There's a lot of history and the interrupt parsing is fragile due to
-> > all the "interesting" DT interrupt hierarchies. So while I think it
-> > would work, that's just a guess. I'm open to trying it and seeing.
-> 
-> Would something like this be what you're imagining? If so I can post a
-> patch if this patch is a dead end:
-> 
->     diff --git a/drivers/pci/of.c b/drivers/pci/of.c
->     index dacea3fc5128..4e4ecaa95599 100644
->     --- a/drivers/pci/of.c
->     +++ b/drivers/pci/of.c
->     @@ -512,6 +512,10 @@ static int of_irq_parse_pci(const struct pci_dev *pdev, struct of_phandle_args *
->                             if (ppnode == NULL) {
->                                     rc = -EINVAL;
->                                     goto err;
->     +                       } else if (!of_get_property(ppnode, "interrupt-map", NULL)) {
->     +                               /* No interrupt-map on a host bridge means we're done here */
->     +                               rc = -ENOENT;
->     +                               goto err;
->                             }
->                     } else {
->                             /* We found a P2P bridge, check if it has a node */
-> 
 
-This is a reasonable change if the parent is the host bridge. But if parent is a
-PCI bridge node (note the else condition), then of_irq_parse_raw() will get
-called and we will hit the same issue.
+Thanks for the review. I will update the document as suggested.
 
-IMO, either we need to fix of_irq_parse_raw() or come up with another
-implementation that does the right thing i.e., travese upto the host bridge and
-check for the 'interrupt-map'. Currently it goes till the top level interrupt
-controller.
 
-> I must admit that you being nervous has me being nervous since I'm not all
-> that familiar with PCI... but if y'all think this is ok then I'm for it.
-> I'm sure I'm not picturing all the cases here so would appreciate
-> some scrutiny.
-> 
-> You still end up with warnings, which kind of sucks, since as I
-> understand it the lack of INTx interrupts on this platform is
-> *intentional*:
-> 
->     [    3.342548] pci_bus 0000:00: 2-byte config write to 0000:00:00.0 offset 0x4 may corrupt adjacent RW1C bits
->     [    3.346716] pcieport 0000:00:00.0: of_irq_parse_pci: no interrupt-map found, INTx interrupts not available
->     [    3.346721] PCI: OF: of_irq_parse_pci: possibly some PCI slots don't have level triggered interrupts capability
-> 
+- Sourabh Jain
 
-I propose to demote these prints to debug as these are not warnings by any
-means.
+>
+>> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> index 325873385b71..f4ada1cd2f96 100644
+>> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> @@ -703,9 +703,9 @@ What:		/sys/devices/system/cpu/crash_hotplug
+>>   Date:		Aug 2023
+>>   Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+>>   Description:
+>> -		(RO) indicates whether or not the kernel directly supports
+>> -		modifying the crash elfcorehdr for CPU hot un/plug and/or
+>> -		on/offline changes.
+>> +		(RO) indicates whether or not the kernel update of kexec
+>> +		segments on CPU hot un/plug and/or on/offline events,
+>> +		avoiding the need to reload kdump kernel.
+> Same as above.
+>
+> Otherwise LGTM.
+>
+> Petr T
 
-> You could have a combo of both this patch (to indicate that a specific driver (even further
-> limited to a match data based on compatible) doesn't support these) as well as
-> the above diff (to improve the message printed in the situation where a driver
-> *does* claim to support these interrupts but fails to describe them properly).
-> 
-
-Again, I don't think we need to have the change in the driver. DT already
-indicated that there is no INTx support, so why should driver duplicate the same
-info?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
