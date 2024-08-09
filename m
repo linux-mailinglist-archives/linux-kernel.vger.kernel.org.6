@@ -1,239 +1,208 @@
-Return-Path: <linux-kernel+bounces-280270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028C394C7F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:18:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3169294C7F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 576101F22DA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:18:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 548931C21B24
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BA4846F;
-	Fri,  9 Aug 2024 01:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11739463;
+	Fri,  9 Aug 2024 01:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="B+q5sEgz"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZcz28XY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1771379D0
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 01:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013528BFF;
+	Fri,  9 Aug 2024 01:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723166280; cv=none; b=fvuUA9yh30TceyLAgT5KRgK/0cKtPaZBytoltmt5Laoh5Pkesjv4OjONh1Y4tGcQUdR1L607K3Y62XClYdYiH1xTd7q504S1VF+CIqu0sKNjLs5B1PAAdunaal2JAQbfeITvJ5iZjGfFUtEE6ozc7aI1DO9z+EnuCRZMaVdBcSg=
+	t=1723166371; cv=none; b=QpvUnKJYM4QKpmjgZVNFdl2OI8rD1AMYVgB0Gg8YxukJfghuZfAb55A+9JMsB7Cr9rjNcdsWnzhJq/Z5taqHjqxKHB2nE2BC9huqi47/9fhuqbOYZgrHgw7Wno3fUF57s9H1rNKNhLapJbo3dRv6QoRBY6GsfXm+/NeWBuCsFeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723166280; c=relaxed/simple;
-	bh=fFC+qYwoV2Q72npaQGdXSkqHHWNAjvlZJl/XYpdPq08=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i0REZFDN/G9nl1iwkk5ZoWIy/gkngZ59768wDwrB7j9yORpYHRl24vFsyIsuBEYR1FPWZABNvfagdl5fx5TA5qsZy0HD6h4JzLvjwVpmFmZNjVeLbwa94UosCKxxtvIBaHeZgr/KWgtLHwAnd01hokOsFgmiVgCWiargddLxpAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=B+q5sEgz; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2cb55418470so1352855a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 18:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723166278; x=1723771078; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oYjZjdBTBIdPAqpSrjlxhCk8adkJQbZPHoFFyYw0PrE=;
-        b=B+q5sEgzUqkrFX3PC5naZwNMR5+LfMcEgycGqNuBA6VW3awhLBw0MrW5auUbfi9E61
-         cLblYZub+r38TvzIz7Uz+Futsy1sEbFZ3FtfyhXqxb+xWxYvI+KXjpu+on6RNVDlNgau
-         If2W9lMUiTTC2A6Tv2Gu7acrWAviS2x3XfG/Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723166278; x=1723771078;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oYjZjdBTBIdPAqpSrjlxhCk8adkJQbZPHoFFyYw0PrE=;
-        b=bLOKOtHIvjJuJwDqByha0Z6Rgk9X7ewg1CqyCbDaoICcuNVRG4qVfuUXsSFFoyoIq2
-         jPyQRY+DGgovoy9C2hccAERG95wEwYCi62CdJ39vV7TcZoJKVpRuHOEyjMCbcuntUGmr
-         1CRlWDPLWCnqoQHoK9fKLefXrDG6CGdLTKWybkYfnGKu+ALIsFIxKqpSY8lpOQ/pY9tF
-         bUHpnm+v/sFpbA0qfLaSqguRyBnrQq0Gl0vzq6vfkO9Rlh+neT+AOvVKd7KCeUqET++/
-         KxLizGoUVBiCITAG5NdrGdi5/M1UklhjJuYevvKK2Wm/4f4dIcMHzLC/YyqtXXxaCL5t
-         ljYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIrYixHhxVod8ZB1VgXe2yCM5AlUsZKx3u2PhYV1EXTErY8ghRufvZDwuBSvJzTLR1eQWILGzBysLhPoMZ1mtnUrSjaCxWtsLe1tUl
-X-Gm-Message-State: AOJu0YyvtuEPv/BCeoR1w2TgZ4QIriqh8gB1kLub2/n3szd31/GXDTCH
-	wEYJByr2IcpKt8pxgpC3lyA793hkSmNSx3hxj61en8ocBM+YC0ejGPZDYIuJYsr53KyQZjo6nXP
-	AG2lQVDrFLFDNHCvKRj5DzdkCf/wC8qZZMWKy
-X-Google-Smtp-Source: AGHT+IGNeU+mZ526KJrVKkT/3A9XbhnFswO1iznJt7mrN23m/4oIDjcjgcAyOQgmchZLh8UGBltbebeLSCY6/iXwh8A=
-X-Received: by 2002:a17:90a:2c01:b0:2c9:9c25:757b with SMTP id
- 98e67ed59e1d1-2d1c34707a0mr4459915a91.39.1723166278248; Thu, 08 Aug 2024
- 18:17:58 -0700 (PDT)
+	s=arc-20240116; t=1723166371; c=relaxed/simple;
+	bh=0iUk+IvHcN0VK4Gy5zZfVHKfWr5XjGxNt7vxSsOMg+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bSlcOCdGKJT0jGgdNNiyDPDRiNjFUDmBNe9rxnOHftskdR2QJQJ5vuVVAwW07tcGJGl7F7MtYakxZ0AAn5MeH9XsDaRjLbNI8B+1vQG7kSeJXtufMDVRuqsGxTjTysFi/GvywY6Gq/+gwJvpE4Lpxdq5zFx3R5/3qGkUQRF/8kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZcz28XY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD68C32782;
+	Fri,  9 Aug 2024 01:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723166370;
+	bh=0iUk+IvHcN0VK4Gy5zZfVHKfWr5XjGxNt7vxSsOMg+I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CZcz28XY8mDT7gETVfyCmcX2zOBqad3350YTWHrbCC4eIoAyhjcZXdPKUFzpVl/Bf
+	 QRuRv26uR+ujxuJiv47F04P6wA01w4IJ3N6iOrloq/cpm7Gawnula/hfJDow1frPzM
+	 5RdGdgddV30XARw989Zb85a5IvJ6ns5ZLqc/B9hw/iFziez4qylTQHj9kfUSKDGrT/
+	 0F5x1UFc6hRccBOclCSMC95dV12/AERg0QbClvK0ImnkosNB6y+q5aQeDCip5XFoyJ
+	 iR63uBxghltQROy2ftWeTpp5q8wOOIvms5q0BBcRaChlLaE11Xg/l3evi2gxbnOK7D
+	 s0cJQ7Y03QdEA==
+Date: Fri, 9 Aug 2024 09:19:21 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Roger Quadros <rogerq@kernel.org>,
+	Pawel Laszczak <pawell@cadence.com>,
+	Mathias Nyman <mathias.nyman@intel.com>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Kevin Hilman <khilman@kernel.org>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v5 00/12] Fix USB suspend on TI J7200 (cdns3-ti, cdns3,
+ xhci)
+Message-ID: <20240809011921.GA2673490@nchen-desktop>
+References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802031822.1862030-1-jitendra.vegiraju@broadcom.com>
- <20240802031822.1862030-3-jitendra.vegiraju@broadcom.com> <o4dgczjefqjek3iqw2y3ca7pwolj5e6otjyuinpuvkwcli5xei@dzehe7xde44x>
-In-Reply-To: <o4dgczjefqjek3iqw2y3ca7pwolj5e6otjyuinpuvkwcli5xei@dzehe7xde44x>
-From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-Date: Thu, 8 Aug 2024 18:17:47 -0700
-Message-ID: <CAMdnO-JUkMvoB8yiJqDFLnmCvchsTdBvf0G+Rtcov6YTdh_BVQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 2/3] net: stmmac: Integrate dwxgmac4 into
- stmmac hwif handling
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
-	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	hawk@kernel.org, john.fastabend@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, 
-	linux@armlinux.org.uk, horms@kernel.org, florian.fainelli@broadcom.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
 
-Hi Serge
-On Tue, Aug 6, 2024 at 3:14=E2=80=AFPM Serge Semin <fancer.lancer@gmail.com=
-> wrote:
->
-> On Thu, Aug 01, 2024 at 08:18:21PM -0700, jitendra.vegiraju@broadcom.com =
-wrote:
-> > From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> >
-> > Integrate dwxgmac4 support into stmmac hardware interface handling.
-> > A dwxgmac4 is an xgmac device and hence it inherits properties from
-> > existing stmmac_hw table entry.
-> > The quirks handling facility is used to update dma_ops field to
-> > point to dwxgmac400_dma_ops when the user version field matches.
-> >
-> > Signed-off-by: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> > ---
-> >  drivers/net/ethernet/stmicro/stmmac/common.h |  4 +++
-> >  drivers/net/ethernet/stmicro/stmmac/hwif.c   | 26 +++++++++++++++++++-
-> >  drivers/net/ethernet/stmicro/stmmac/hwif.h   |  1 +
-> >  3 files changed, 30 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net=
-/ethernet/stmicro/stmmac/common.h
-> > index cd36ff4da68c..9bf278e11704 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/common.h
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-> > @@ -37,11 +37,15 @@
-> >  #define DWXGMAC_CORE_2_10    0x21
-> >  #define DWXGMAC_CORE_2_20    0x22
-> >  #define DWXLGMAC_CORE_2_00   0x20
->
-> > +#define DWXGMAC_CORE_4_00    0x40
->
-> DW25GMAC_CORE_4_00?
-Will do.
->
-> >
-> >  /* Device ID */
-> >  #define DWXGMAC_ID           0x76
->
-> What is the device ID in your case? Does it match to DWXGMAC_ID?
-The early adopter 25MAC IP core used on this has 0x76.
-But, synopsis confirmed the 25GMAC is assigned with value 0x55.
-Will define DW25MAC_ID 0x55 and use it for 25GMAC hw_if entry.
-However, we would like to get a suggestion for dealing with this early
-adopter device_id number.
-Can we add override mechanism by defining device_id in stmmac_priv
-structure and let the hardware specific setup function in the glue
-driver update the device_id to 0x55 function?
+On 24-07-26 20:17:48, Théo Lebrun wrote:
+> Currently, system-wide suspend is broken on J7200 because of a
+> controller reset. The TI wrapper does not get re-initialised at resume
+> and the first register access from cdns core fails.
+> 
+> We address that in a few ways:
+>  - In cdns3-ti, if a reset has occured at resume, we reconfigure the HW.
+>  - We pass the XHCI_RESET_ON_RESUME quirk, meaning the XHCI core expects
+>    a resume.
+>  - We add a xhci->lost_power flag.
+> 
+> The previous revision had one big issue: we had to know if
+> reset-on-resume was true, at probe-time. This is where the main
+> difference with previous revisions is. We now pass the information from
+> wrapper devices back up into XHCI. The xhci->lost_power flag gets its
+> default value from the XHCI_RESET_ON_RESUME quirk. It however allows
+> wrappers to signal *at resume* if they still expect a reset.
+> 
+> That means wrappers that are unsure if they will reset should:
+>  - (1) set the quirk at probe and,
+>  - (2) potentially set xhci->lost_power to false at resume.
 
->
-> >  #define DWXLGMAC_ID          0x27
-> >
-> > +/* User Version */
-> > +#define DWXGMAC_USER_VER_X22 0x22
-> > +
-> >  #define STMMAC_CHAN0 0       /* Always supported and default for all c=
-hips */
-> >
-> >  /* TX and RX Descriptor Length, these need to be power of two.
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/e=
-thernet/stmicro/stmmac/hwif.c
-> > index 29367105df54..713cb5aa2c3e 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
-> > @@ -36,6 +36,18 @@ static u32 stmmac_get_dev_id(struct stmmac_priv *pri=
-v, u32 id_reg)
-> >       return (reg & GENMASK(15, 8)) >> 8;
-> >  }
-> >
->
-> > +static u32 stmmac_get_user_version(struct stmmac_priv *priv, u32 id_re=
-g)
-> > +{
-> > +     u32 reg =3D readl(priv->ioaddr + id_reg);
-> > +
-> > +     if (!reg) {
-> > +             dev_info(priv->device, "User Version not available\n");
-> > +             return 0x0;
-> > +     }
-> > +
-> > +     return (reg & GENMASK(23, 16)) >> 16;
-> > +}
-> > +
->
-> The User Version is purely a vendor-specific stuff defined on the
-> IP-core synthesis stage. Moreover I don't see you'll need it anyway.
->
-Yes, we don't need this function with the 25GMAC entry.
-> >  static void stmmac_dwmac_mode_quirk(struct stmmac_priv *priv)
-> >  {
-> >       struct mac_device_info *mac =3D priv->hw;
-> > @@ -82,6 +94,18 @@ static int stmmac_dwmac4_quirks(struct stmmac_priv *=
-priv)
-> >       return 0;
-> >  }
-> >
->
-> > +static int stmmac_dwxgmac_quirks(struct stmmac_priv *priv)
-> > +{
-> > +     struct mac_device_info *mac =3D priv->hw;
-> > +     u32 user_ver;
-> > +
-> > +     user_ver =3D stmmac_get_user_version(priv, GMAC4_VERSION);
-> > +     if (priv->synopsys_id =3D=3D DWXGMAC_CORE_4_00 &&
-> > +         user_ver =3D=3D DWXGMAC_USER_VER_X22)
-> > +             mac->dma =3D &dwxgmac400_dma_ops;
-> > +     return 0;
-> > +}
-> > +
-Will remove this function.
-> >  static int stmmac_dwxlgmac_quirks(struct stmmac_priv *priv)
-> >  {
-> >       priv->hw->xlgmac =3D true;
-> > @@ -256,7 +280,7 @@ static const struct stmmac_hwif_entry {
-> >               .mmc =3D &dwxgmac_mmc_ops,
-> >               .est =3D &dwmac510_est_ops,
-> >               .setup =3D dwxgmac2_setup,
-> > -             .quirks =3D NULL,
-> > +             .quirks =3D stmmac_dwxgmac_quirks,
->
-> Why? You can just introduce a new stmmac_hw[] entry with the DW
-> 25GMAC-specific stmmac_dma_ops instance specified.
->
-Will do.
-> -Serge(y)
->
-> >       }, {
-> >               .gmac =3D false,
-> >               .gmac4 =3D false,
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/e=
-thernet/stmicro/stmmac/hwif.h
-> > index e53c32362774..6213c496385c 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
-> > @@ -683,6 +683,7 @@ extern const struct stmmac_desc_ops dwxgmac210_desc=
-_ops;
-> >  extern const struct stmmac_mmc_ops dwmac_mmc_ops;
-> >  extern const struct stmmac_mmc_ops dwxgmac_mmc_ops;
-> >  extern const struct stmmac_est_ops dwmac510_est_ops;
-> > +extern const struct stmmac_dma_ops dwxgmac400_dma_ops;
-> >
-> >  #define GMAC_VERSION         0x00000020      /* GMAC CORE Version */
-> >  #define GMAC4_VERSION                0x00000110      /* GMAC4+ CORE Ve=
-rsion */
-> > --
-> > 2.34.1
-> >
-> >
+Judge if controller is power lost has implemented at cdns_power_is_lost
+Please check if you could use that.
+
+Peter
+
+> 
+> We implement that for cdns3, by piggybacking on the host role ->resume()
+> callback already receives the information from its caller.
+> 
+> Have a nice day,
+> Théo
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+> Changes in v5:
+> - dt-bindings: take Reviewed-by Rob and Conor for the first
+>   patch: "dt-bindings: usb: ti,j721e-usb: fix compatible list".
+> - cdns3-ti:
+>   - We now do have HW init code inside cdns_ti_reset_and_init_hw().
+>   - It gets called at probe unconditionally and from ->runtime_resume()
+>     if a reset is detected (using the W1 register).
+>   - Auxdata patches have been reworked now that there is default auxdata
+>     since commit b50a2da03bd9 ("usb: cdns3-ti: Add workaround for
+>     Errata i2409"). We now have a patch that moves auxdata to match
+>     data: "usb: cdns3-ti: grab auxdata from match data".
+> - cdns3/xhci: those are three new patches.
+>   - First, we rename "hibernated" to "lost_power" in arguments to
+>     the role ->resume() callbacks.
+>   - Then we add the xhci->lost_power flag, and only have it always copy
+>     the value from XHCI_RESET_ON_RESUME.
+>   - Finally, we set the flag from the host role driver.
+> - Link to v4: https://lore.kernel.org/lkml/20240307-j7200-usb-suspend-v4-0-5ec7615431f3@bootlin.com/
+> 
+> Changes in v4:
+> - dt-bindings: usb: ti,j721e-usb:
+>   - Remove ti,am64-usb single compatible entry.
+>   - Reverse ordering of compatible pair j721e + am64
+>     (becoming am64 + j721e).
+>   - Add j7200 + j721e compatible pair (versus only j7200). It is the
+>     same thing as am64: only the integration differs with base j721e
+>     compatible.
+>   - NOT taking trailers from Conor as patches changed substantially.
+> - arm64: dts: ti: j3-j7200:
+>   - Use j7200 + j721e compatible pair (versus only j7200 previously).
+> - arm64: dts: ti: j3-am64:
+>   - Fix to use am64 + j721e compatible pair (versus only am64).
+>     This is a new patch.
+> - Link to v3: https://lore.kernel.org/r/20240223-j7200-usb-suspend-v3-0-b41c9893a130@bootlin.com
+> 
+> Changes in v3:
+> - dt-bindings: use an enum to list compatibles instead of the previous
+>   odd construct. This is done in a separate patch from the one adding
+>   J7200 compatible.
+> - dt-bindings: dropped Acked-by Conor as the changes were modified a lot.
+> - Add runtime PM back. Put the init sequence in ->runtime_resume(). It
+>   gets called at probe for all compatibles and at resume for J7200.
+> - Introduce a cdns_ti_match_data struct rather than rely on compatible
+>   from code.
+> - Reorder code changes. Add infrastructure based on match data THEN add
+>   compatible and its match data.
+> - DTSI: use only J7200 compatible rather than both J7200 then J721E.
+> - Link to v2: https://lore.kernel.org/r/20231120-j7200-usb-suspend-v2-0-038c7e4a3df4@bootlin.com
+> 
+> Changes in v2:
+> - Remove runtime PM from cdns3-ti; it brings nothing. That means our
+>   cdns3-ti suspend/resume patch is simpler; there is no need to handle
+>   runtime PM at suspend/resume.
+> - Do not add cdns3 host role suspend/resume callbacks; they are not
+>   needed as core detects reset on resume & calls cdns_drd_host_on when
+>   needed.
+> - cdns3-ti: Move usb2_refclk_rate_code assignment closer to the value
+>   computation.
+> - cdns3/host.c: do not pass XHCI_SUSPEND_RESUME_CLKS quirk to xHCI; it
+>   is unneeded on our platform.
+> - Link to v1: https://lore.kernel.org/r/20231113-j7200-usb-suspend-v1-0-ad1ee714835c@bootlin.com
+> 
+> ---
+> Théo Lebrun (12):
+>       dt-bindings: usb: ti,j721e-usb: fix compatible list
+>       dt-bindings: usb: ti,j721e-usb: add ti,j7200-usb compatible
+>       usb: cdns3-ti: move reg writes to separate function
+>       usb: cdns3-ti: run HW init at resume() if HW was reset
+>       usb: cdns3: add quirk to platform data for reset-on-resume
+>       usb: cdns3-ti: grab auxdata from match data
+>       usb: cdns3-ti: add J7200 support with reset-on-resume behavior
+>       usb: cdns3: rename hibernated argument of role->resume() to lost_power
+>       xhci: introduce xhci->lost_power flag
+>       usb: cdns3: host: transmit lost_power signal from wrapper to XHCI
+>       arm64: dts: ti: k3-j7200: use J7200-specific USB compatible
+>       arm64: dts: ti: k3-am64: add USB fallback compatible to J721E
+> 
+>  .../devicetree/bindings/usb/ti,j721e-usb.yaml      |   5 +-
+>  arch/arm64/boot/dts/ti/k3-am64-main.dtsi           |   2 +-
+>  arch/arm64/boot/dts/ti/k3-j7200-main.dtsi          |   2 +-
+>  drivers/usb/cdns3/cdns3-gadget.c                   |   4 +-
+>  drivers/usb/cdns3/cdns3-ti.c                       | 151 ++++++++++++++-------
+>  drivers/usb/cdns3/cdnsp-gadget.c                   |   2 +-
+>  drivers/usb/cdns3/core.h                           |   3 +-
+>  drivers/usb/cdns3/host.c                           |  13 ++
+>  drivers/usb/host/xhci.c                            |   8 +-
+>  drivers/usb/host/xhci.h                            |   6 +
+>  10 files changed, 136 insertions(+), 60 deletions(-)
+> ---
+> base-commit: c33ffdb70cc6df4105160f991288e7d2567d7ffa
+> change-id: 20240726-s2r-cdns-4b180cd960ff
+> 
+> Best regards,
+> -- 
+> Théo Lebrun <theo.lebrun@bootlin.com>
+> 
 
