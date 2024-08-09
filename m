@@ -1,67 +1,94 @@
-Return-Path: <linux-kernel+bounces-281085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 109CD94D2DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:02:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D3594D2E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92C641F21E14
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:02:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0CBD2826F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E69198831;
-	Fri,  9 Aug 2024 15:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58941195FE5;
+	Fri,  9 Aug 2024 15:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="WeAreKJ6"
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kady5WHm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="trrxkWzm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="q2Vn5zKZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JwW7fFYa"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DD7193090;
-	Fri,  9 Aug 2024 15:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D92517552;
+	Fri,  9 Aug 2024 15:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723215748; cv=none; b=u9qL+IkyCgEbJ8cZHhSZdw+HFfNetCBoVh1CTkfBrfP7b8C26wz6lLp7Wp9LawcKMwTynsfkVkO7lOxcOUU1jYpjdWpgaQP5Br9LfJp92wdQdGwjrfSoZVVKOh1iUDahm3C1ZBk57HRaK6TD1K2R6ArswYN3Rn2KrtNquP2c5nU=
+	t=1723215772; cv=none; b=jMT+NZRu92wI8nZ5aOspzxmD1EIzTV8zmvpzLR9zQNd8lNHyaeDsvhWoqRkhBNcm8uIJhm2l9oX//f1XKwUILlGoRFKZdId9CABIBfcto1HHn/Er/9NUapYgfJvqwz3J/mbA0c7PtBFqo/mQ4laqBz0lIcelj/kXXM8BrWm95YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723215748; c=relaxed/simple;
-	bh=9+HKbD4Ve5qJVTWVL3xag+QqynXjWdRArtEOR1Ie4Lc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PqGdTn5/brIwhhVuKVcLsmdbD8iVU1OKGF9E2ElkpvY+UzYbtzGFNrHMRKcLDfFGLZMnwf3Ob9i3gmQRMDsY2Upigf2oVFFlOKw2rT6aMhEGOy+CSXY13tV+DrkPOhWuK1aEwVmaaqG0hrpOA0YgxgihSUWsHPOTGBTesQmr5VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=WeAreKJ6; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1723215746; x=1754751746;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EjelYir35dkUT01oUgeBO2tMVve1XmvlOjCGOs6xT2g=;
-  b=WeAreKJ6gfbSqLgbZNE/sLlQdtD6Vw8n6ppcMCYstzR/RVq9Zd1RnOl0
-   CjefHlSY2mDC8tSa48j3cOW+J0iSjPEQp6fLTlOLlUaZTpkSb344bW731
-   NzBDs3fWfJuda21mF0JhxeDWPK7Rjq7JX/FsV155ToAfCxfdQuJ2LjA94
-   c=;
-X-IronPort-AV: E=Sophos;i="6.09,276,1716249600"; 
-   d="scan'208";a="651681860"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 15:02:22 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:61664]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.46.236:2525] with esmtp (Farcaster)
- id 2d79039a-179a-4945-9978-59e2a9c01080; Fri, 9 Aug 2024 15:02:21 +0000 (UTC)
-X-Farcaster-Flow-ID: 2d79039a-179a-4945-9978-59e2a9c01080
-Received: from EX19D003UWC003.ant.amazon.com (10.13.138.173) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 9 Aug 2024 15:02:21 +0000
-Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.145) by
- EX19D003UWC003.ant.amazon.com (10.13.138.173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 9 Aug 2024 15:02:20 +0000
-Received: from [127.0.0.1] (172.19.88.180) by mail-relay.amazon.com
- (10.250.64.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34 via Frontend
- Transport; Fri, 9 Aug 2024 15:02:17 +0000
-Message-ID: <395cb776-34b1-4285-9275-e899900f8331@amazon.co.uk>
-Date: Fri, 9 Aug 2024 16:02:16 +0100
+	s=arc-20240116; t=1723215772; c=relaxed/simple;
+	bh=SfbfoKGh1o87NkMuFlVDHbXK2eG99rNri0gCCkPN/qc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HmGs2Vo3ZDArcpj4cUGpnxNKZGZGFOtsO2LtPcKbxXjeBpHbJMi7b06dGYt9dKxJ00ohgNevQ79JULFUSHMw2SuSF7v9vvaXO+6MXJ8AjeqITZMITrLnyxg0MwAUIjbIe8/Bls/ih4YdQQg4chlimvYcWQQ6RKFaXSm9hkFTyGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kady5WHm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=trrxkWzm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=q2Vn5zKZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JwW7fFYa; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 87C1A1FF8F;
+	Fri,  9 Aug 2024 15:02:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723215768; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m6ODK5n8Ww4+d1x9prn8X3lC5bnbKDRJfsW7yKouSrs=;
+	b=kady5WHmwOZaRZT/UYfShHdxIuYNj7wSlnCtvh7t12iffakwexzmLi9qcz4k7/HWz14fGe
+	+momoW4JcNFbhkTcv7feHike7c5X154Vz3NmK6vMqrYiFXb6gLNCrHFKwU3OJ+xEjjmUar
+	oHVh+gkuJEdM+pGfJ8F9fCmSzRD6v14=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723215768;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m6ODK5n8Ww4+d1x9prn8X3lC5bnbKDRJfsW7yKouSrs=;
+	b=trrxkWzm/wy/++Pvf5b3e6EpGBWPxGKge55iEyKhZXUw56yv4V42iLbacW5Rp/odpvviQp
+	MpqTbsrD3DiEqbAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723215767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m6ODK5n8Ww4+d1x9prn8X3lC5bnbKDRJfsW7yKouSrs=;
+	b=q2Vn5zKZ6nLDVEhq4Hq01HPqcRPaXt8lnspZxGFumKBtp4iXUJYoUIyzyuSCeNTee2ffc6
+	gwgFijUq62nxK5sRW3/gSgTYZFF+1WvnRRBsgNPOU3hBQWVsGQqE9gD7JIOtxBFD4Wi8Ra
+	mlcfeL6wa0iO9KGvvf4pyCVQ/IjxZzU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723215767;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=m6ODK5n8Ww4+d1x9prn8X3lC5bnbKDRJfsW7yKouSrs=;
+	b=JwW7fFYagAG1R2f8Bv3+ew7sBpSKdmazRtEjiwcrpdktc5AmFCH9qRnwj9yzuZBIvA8LTS
+	oQfq+L16ow5UAUBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 74B311379A;
+	Fri,  9 Aug 2024 15:02:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1lL2GpUvtmZ9HQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 09 Aug 2024 15:02:45 +0000
+Message-ID: <54d62d5a-16e3-4ea9-83c6-8801ee99855e@suse.cz>
+Date: Fri, 9 Aug 2024 17:02:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,537 +96,244 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/4] mm: guest_memfd: Add option to remove guest
- private memory from direct map
-To: Elliot Berman <quic_eberman@quicinc.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini
-	<pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Fuad Tabba
-	<tabba@google.com>, David Hildenbrand <david@redhat.com>,
-	<qperret@google.com>, Ackerley Tng <ackerleytng@google.com>,
-	<linux-coco@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <kvm@vger.kernel.org>,
-	James Gowans <jgowans@amazon.com>, "Kalyazin, Nikita"
-	<kalyazin@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>, "Cali,
- Marco" <xmarcalx@amazon.co.uk>
-References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
- <20240805-guest-memfd-lib-v1-3-e5a29a4ff5d7@quicinc.com>
- <3fc11402-53e1-4325-a3ee-5ebd616b5b63@amazon.co.uk>
- <20240806104702482-0700.eberman@hu-eberman-lv.qualcomm.com>
- <a43ae745-9907-425f-b09d-a49405d6bc2d@amazon.co.uk>
- <90886a03-ad62-4e98-bc05-63875faa9ccc@amazon.co.uk>
- <20240807113514068-0700.eberman@hu-eberman-lv.qualcomm.com>
- <7166d51c-7757-44f2-a6f8-36da3e86bf90@amazon.co.uk>
- <20240808145103617-0700.eberman@hu-eberman-lv.qualcomm.com>
-From: Patrick Roy <roypat@amazon.co.uk>
+Subject: [-next conflict imminent] Re: [PATCH v2 0/7] mm, slub: handle pending
+ kfree_rcu() in kmem_cache_destroy()
 Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <20240808145103617-0700.eberman@hu-eberman-lv.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+To: "Paul E. McKenney" <paulmck@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Jakub Kicinski <kuba@kernel.org>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+ Jann Horn <jannh@google.com>, Mateusz Guzik <mjguzik@gmail.com>
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [0.21 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[kernel.org,joelfernandes.org,joshtriplett.org,gmail.com,linux.com,google.com,canb.auug.org.au];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[goodmis.org,efficios.com,gmail.com,inria.fr,kernel.org,zx2c4.com,linux-foundation.org,linux.dev,kvack.org,vger.kernel.org,google.com,googlegroups.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: 0.21
 
-On Thu, 2024-08-08 at 23:16 +0100, Elliot Berman wrote
-> On Thu, Aug 08, 2024 at 02:05:55PM +0100, Patrick Roy wrote:
->> On Wed, 2024-08-07 at 20:06 +0100, Elliot Berman wrote:
->>>>>>>>  struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags)
->>>>>>>>  {
->>>>>>>> +       unsigned long gmem_flags = (unsigned long)file->private_data;
->>>>>>>>         struct inode *inode = file_inode(file);
->>>>>>>>         struct guest_memfd_operations *ops = inode->i_private;
->>>>>>>>         struct folio *folio;
->>>>>>>> @@ -43,6 +89,12 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
->>>>>>>>                         goto out_err;
->>>>>>>>         }
->>>>>>>>
->>>>>>>> +       if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
->>>>>>>> +               r = guest_memfd_folio_private(folio);
->>>>>>>> +               if (r)
->>>>>>>> +                       goto out_err;
->>>>>>>> +       }
->>>>>>>> +
->>>>>>>
->>>>>>> How does a caller of guest_memfd_grab_folio know whether a folio needs
->>>>>>> to be removed from the direct map? E.g. how can a caller know ahead of
->>>>>>> time whether guest_memfd_grab_folio will return a freshly allocated
->>>>>>> folio (which thus needs to be removed from the direct map), vs a folio
->>>>>>> that already exists and has been removed from the direct map (probably
->>>>>>> fine to remove from direct map again), vs a folio that already exists
->>>>>>> and is currently re-inserted into the direct map for whatever reason
->>>>>>> (must not remove these from the direct map, as other parts of
->>>>>>> KVM/userspace probably don't expect the direct map entries to disappear
->>>>>>> from underneath them). I couldn't figure this one out for my series,
->>>>>>> which is why I went with hooking into the PG_uptodate logic to always
->>>>>>> remove direct map entries on freshly allocated folios.
->>>>>>>
->>>>>>
->>>>>> gmem_flags come from the owner. If the caller (in non-CoCo case) wants
->>>>
->>>> Ah, oops, I got it mixed up with the new `flags` parameter.
->>>>
->>>>>> to restore the direct map right away, it'd have to be a direct
->>>>>> operation. As an optimization, we could add option that asks for page in
->>>>>> "shared" state. If allocating new page, we can return it right away
->>>>>> without removing from direct map. If grabbing existing folio, it would
->>>>>> try to do the private->shared conversion.
->>>>
->>>> My concern is more with the implicit shared->private conversion that
->>>> happens on every call to guest_memfd_grab_folio (and thus
->>>> kvm_gmem_get_pfn) when grabbing existing folios. If something else
->>>> marked the folio as shared, then we cannot punch it out of the direct
->>>> map again until that something is done using the folio (when working on
->>>> my RFC, kvm_gmem_get_pfn was indeed called on existing folios that were
->>>> temporarily marked shared, as I was seeing panics because of this). And
->>>> if the folio is currently private, there's nothing to do. So either way,
->>>> guest_memfd_grab_folio shouldn't touch the direct map entry for existing
->>>> folios.
->>>>
->>>
->>> What I did could be documented/commented better.
->>
->> No worries, thanks for taking the time to walk me through understanding
->> it!
->>
->>> If ops->accessible() is *not* provided, all guest_memfd allocations will
->>> immediately remove from direct map and treat them immediately like guest
->>> private (goal is to match what KVM does today on tip).
->>
->> Ah, so if ops->accessible() is not provided, then there will never be
->> any shared memory inside gmem (like today, where gmem doesn't support
->> shared memory altogether), and thus there's no problems with just
->> unconditionally doing set_direct_map_invalid_noflush in
->> guest_memfd_grab_folio, because all existing folios already have their
->> direct map entry removed. Got it!
->>
->>> If ops->accessible() is provided, then guest_memfd allocations start
->>> as "shared" and KVM/Gunyah need to do the shared->private conversion
->>> when they want to do the private conversion on the folio. "Shared" is
->>> the default because that is effectively a no-op.
->>> For the non-CoCo case you're interested in, we'd have the
->>> ops->accessible() provided and we wouldn't pull out the direct map from
->>> gpc.
->>
->> So in pKVM/Gunyah's case, guest memory starts as shared, and at some
->> point the guest will issue a hypercall (or similar) to flip it to
->> private, at which point it'll get removed from the direct map?
->>
->> That isn't really what we want for our case. We consider the folios as
->> private straight away, as we do not let the guest control their state at
->> all. Everything is always "accessible" to both KVM and userspace in the
->> sense that they can just flip gfns to shared as they please without the
->> guest having any say in it.
->>
->> I think we should untangle the behavior of guest_memfd_grab_folio from
->> the presence of ops->accessible. E.g.  instead of direct map removal
->> being dependent on ops->accessible we should have some
->> GRAB_FOLIO_RETURN_SHARED flag for gmem_flags, which is set for y'all,
->> and not set for us (I don't think we should have a "call
->> set_direct_map_invalid_noflush unconditionally in
->> guest_memfd_grab_folio" mode at all, because if sharing gmem is
->> supported, then that is broken, and if sharing gmem is not supported
->> then only removing direct map entries for freshly allocated folios gets
->> us the same result of "all folios never in the direct map" while
->> avoiding some no-op direct map operations).
->>
->> Because we would still use ->accessible, albeit for us that would be
->> more for bookkeeping along the lines of "which gfns does userspace
->> currently require to be in the direct map?". I haven't completely
->> thought it through, but what I could see working for us would be a pair
->> of ioctls for marking ranges accessible/inaccessible, with
->> "accessibility" stored in some xarray (somewhat like Fuad's patches, I
->> guess? [1]).
->>
->> In a world where we have a "sharing refcount", the "make accessible"
->> ioctl reinserts into the direct map (if needed), lifts the "sharings
->> refcount" for each folio in the given gfn range, and marks the range as
->> accessible.  And the "make inaccessible" ioctl would first check that
->> userspace has unmapped all those gfns again, and if yes, mark them as
->> inaccessible, drop the "sharings refcount" by 1 for each, and removes
->> from the direct map again if it held the last reference (if userspace
->> still has some gfns mapped, the ioctl would just fail).
->>
-> 
-> I am warming up to the sharing refcount idea. How does the sharing
-> refcount look for kvm gpc?
+On 8/7/24 12:31, Vlastimil Babka wrote:
+> Also in git:
+> https://git.kernel.org/vbabka/l/slab-kfree_rcu-destroy-v2r2
 
-I've come up with the below rough draft (written as a new commit on
-top of my RFC series [1], with some bits from your patch copied in).
-With this, I was able to actually boot a Firecracker VM with
-multiple vCPUs (which previously didn't work because of different vCPUs
-putting their kvm-clock structures into the same guest page). 
+I've added this to slab/for-next, there will be some conflicts and here's my
+resulting git show or the merge commit I tried over today's next.
 
-Best, 
-Patrick
+It might look a bit different with tomorrow's next as mm will have v7 of the
+conflicting series from Jann:
 
-[1]: https://lore.kernel.org/kvm/20240709132041.3625501-1-roypat@amazon.co.uk/T/#ma44793da6bc000a2c22b1ffe37292b9615881838
+https://lore.kernel.org/all/1ca6275f-a2fc-4bad-81dc-6257d4f8d750@suse.cz/
 
----
+(also I did resolve it in the way I suggested to move Jann's block before
+taking slab_mutex() but unless that happens in mm-unstable it would probably be more
+correct to keep where he did)
 
-From 2005c5a06b8a8f8568e9140b275d2c219488a71a Mon Sep 17 00:00:00 2001
-From: Patrick Roy <roypat@amazon.co.uk>
-Date: Fri, 9 Aug 2024 15:13:08 +0100
-Subject: [RFC PATCH 009/008] kvm: gmem: Introduce "sharing refcount"
+---8<---
+commit 444486f2b7b0325ba026e0ad129eba3f54c18301
+Merge: 61c01d2e181a 63eac6bdcf9f
+Author: Vlastimil Babka <vbabka@suse.cz>
+Date:   Fri Aug 9 16:49:03 2024 +0200
 
-The assumption that there would never be two gfn_to_pfn_caches holding
-the same gfn was wrong. The guest can put the kvm-clock structures for
-different vCPUs into the same gfn. On KVM's side, one gfn_to_pfn_cache
-is initialized by vCPU, meaning in multi-vCPU setups, multiple
-gfn_to_pfn_caches to the same gfn exist.
+    Merge branch 'slab/for-6.12/rcu_barriers' into HEAD
 
-For gmem, this means that multiple gfn_to_pfn_caches will want direct
-map entries for the same page to be present - the direct map entry needs
-to be removed when the first gpc is initialized, and can only be removed
-again after the last gpc to this page is invalidated. To handle this,
-introduce the concept of a "sharing refcount" to gmem: If something
-inside of KVM wants to access gmem it should now do
-
-struct folio *gmem_folio = /* ... */;
-int r = kvm_gmem_folio_share(gmem_folio);
-if (r)
-    goto err;
-/* do stuff */
-kvm_gmem_folio_unshare(gmem_folio);
-
-The first call to kvm_gmem_folio_share will increment this new "sharing
-refcount" by 1 (and insert the folio back into the direct map if it
-acquires the first refcount), while kvm_gmem_folio_unshare will
-decrement the refcount by 1 (and remove the folio from the direct map
-again if it held the last refcount).
-
-One quirk is that we use "sharing_refcount == 1" to mean "folio is not
-in the direct map" (aka not shared), as letting the refcount temporarily
-drop to 0 would cause refcount_t functions to WARN.
-
-Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
----
- virt/kvm/guest_memfd.c | 139 ++++++++++++++++++++++++++++++++++++++---
- virt/kvm/kvm_main.c    |  32 ++++------
- virt/kvm/kvm_mm.h      |   2 +
- virt/kvm/pfncache.c    |  54 ++--------------
- 4 files changed, 148 insertions(+), 79 deletions(-)
-
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 29abbc883c73a..05fd6149c11c2 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -55,6 +55,96 @@ static bool kvm_gmem_not_present(struct inode *inode)
- 	return ((unsigned long)inode->i_private & KVM_GMEM_NO_DIRECT_MAP) != 0;
- }
-
-+static int kvm_gmem_folio_private(struct folio* folio)
-+{
-+	unsigned long nr_pages = folio_nr_pages(folio);
-+	unsigned long i;
-+	int r;
-+
-+	/*
-+	 * We must only remove direct map entries after the last "sharing
-+	 * reference" has gone away.
-+	 */
-+	if(WARN_ON_ONCE(refcount_read(folio_get_private(folio)) != 1))
-+		return -EPERM;
-+
-+	for (i = 0; i < nr_pages; i++) {
-+		struct page *page = folio_page(folio, i);
-+
-+		r = set_direct_map_invalid_noflush(page);
-+		if (r < 0)
-+			goto out_remap;
-+	}
-+
-+	// We use the private flag to track whether the folio has been removed
-+	// from the direct map. This is because inside of ->free_folio,
-+	// we do not have access to the address_space anymore, meaning we
-+	// cannot check folio_inode(folio)->i_private to determine whether
-+	// KVM_GMEM_NO_DIRECT_MAP was set.
-+	folio_set_private(folio);
-+	return 0;
-+out_remap:
-+	for (; i > 0; i--) {
-+		struct page *page = folio_page(folio, i - 1);
-+
-+		BUG_ON(set_direct_map_default_noflush(page));
-+	}
-+	return r;
-+}
-+
-+static int kvm_gmem_folio_clear_private(struct folio *folio)
-+{
-+	unsigned long start = (unsigned long)folio_address(folio);
-+	unsigned long nr = folio_nr_pages(folio);
-+	unsigned long i;
-+	int r;
-+
-+	/*
-+	 * We must restore direct map entries on acquiring the first "sharing
-+	 * reference" (although restoring it before that is fine too - we
-+	 * restore direct map entries with sharing_refcount == 1 in
-+	 * kvm_gmem_invalidate_folio).
-+	 */
-+	WARN_ON_ONCE(refcount_read(folio_get_private(folio)) > 2);
-+
-+	for (i = 0; i < nr; i++) {
-+		struct page *page = folio_page(folio, i);
-+
-+		r = set_direct_map_default_noflush(page);
-+		if (r)
-+			goto out_remap;
-+	}
-+	flush_tlb_kernel_range(start, start + folio_size(folio));
-+
-+	folio_clear_private(folio);
-+	return 0;
-+out_remap:
-+	for (; i > 0; i--) {
-+		for (; i > 0; i--) {
-+			struct page *page = folio_page(folio, i - 1);
-+
-+			BUG_ON(set_direct_map_invalid_noflush(page));
-+		}
-+	}
-+	return r;
-+}
-+
-+static int kvm_gmem_init_sharing_count(struct folio *folio)
-+{
-+	refcount_t *sharing_count = kmalloc(sizeof(*sharing_count), GFP_KERNEL);
-+	if (!sharing_count)
-+		return -ENOMEM;
-+
-+	/*
-+	 * we need to use sharing_count == 1 to mean "no sharing", because dropping
-+	 * a refcount_t to 0 and later inc-ing it again would result in a WARN
-+	 */
-+	refcount_set(sharing_count, 1);
-+	folio_change_private(folio, (void *)sharing_count);
-+
-+	return 0;
-+}
-+
- static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index, bool prepare)
- {
- 	struct folio *folio;
-@@ -96,16 +186,12 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index, bool
- 	}
-
- 	if (zap_direct_map) {
--		r = set_direct_map_invalid_noflush(&folio->page);
-+		r = kvm_gmem_init_sharing_count(folio);
-+		if (r < 0)
-+			goto out_err;
-+		r = kvm_gmem_folio_private(folio);
- 		if (r < 0)
- 			goto out_err;
--
--		// We use the private flag to track whether the folio has been removed
--		// from the direct map. This is because inside of ->free_folio,
--		// we do not have access to the address_space anymore, meaning we
--		// cannot check folio_inode(folio)->i_private to determine whether
--		// KVM_GMEM_NO_DIRECT_MAP was set.
--		folio_set_private(folio);
- 	}
-
- 	/*
-@@ -413,11 +499,21 @@ static void kvm_gmem_free_folio(struct folio *folio)
- static void kvm_gmem_invalidate_folio(struct folio *folio, size_t start, size_t end)
- {
- 	if (start == 0 && end == PAGE_SIZE) {
-+		refcount_t *sharing_count = folio_get_private(folio);
-+		/*
-+		 * sharing_count != 1 means that something else forgot
-+		 * to call kvm_gmem_folio_unshare after it was done with the
-+		 * folio (meaning the folio has been in the direct map
-+		 * this entire time, which means we haven't been getting the
-+		 * spculation protection we wanted).
-+		 */
-+		WARN_ON_ONCE(refcount_read(sharing_count) != 1);
-+
- 		// We only get here if PG_private is set, which only happens if kvm_gmem_not_present
- 		// returned true in kvm_gmem_get_folio. Thus no need to do that check again.
--		BUG_ON(set_direct_map_default_noflush(&folio->page));
-+		kvm_gmem_folio_clear_private(folio);
-+		kfree(sharing_count);
-
--		folio_clear_private(folio);
- 	}
- }
-
-@@ -610,6 +706,29 @@ void kvm_gmem_unbind(struct kvm_memory_slot *slot)
- 	fput(file);
- }
-
-+int kvm_gmem_folio_unshare(struct folio *folio)
-+{
-+	if (kvm_gmem_not_present(folio_inode(folio))) {
-+		refcount_t *sharing_count = folio_get_private(folio);
-+
-+		refcount_dec(sharing_count);
-+		if (refcount_read(sharing_count) == 1)
-+			return kvm_gmem_folio_private(folio);
-+	}
-+	return 0;
-+}
-+
-+int kvm_gmem_folio_share(struct folio *folio)
-+{
-+	if (kvm_gmem_not_present(folio_inode(folio))) {
-+		refcount_inc(folio_get_private(folio));
-+
-+		if (folio_test_private(folio))
-+			return kvm_gmem_folio_clear_private(folio);
-+	}
-+	return 0;
-+}
-+
- static int __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
- 		       gfn_t gfn, kvm_pfn_t *pfn, int *max_order, bool prepare)
- {
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 762decd9f2da0..d0680564ad52f 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -3301,17 +3301,13 @@ static int __kvm_read_guest_private_page(struct kvm *kvm,
- 	folio = pfn_folio(pfn);
- 	folio_lock(folio);
- 	kaddr = folio_address(folio);
--	if (folio_test_private(folio)) {
--		r = set_direct_map_default_noflush(&folio->page);
--		if (r)
--			goto out_unlock;
--	}
-+	r = kvm_gmem_folio_share(folio);
-+	if (r)
-+		goto out_unlock;
- 	memcpy(data, kaddr + offset, len);
--	if (folio_test_private(folio)) {
--		r = set_direct_map_invalid_noflush(&folio->page);
--		if (r)
--			goto out_unlock;
--	}
-+	r = kvm_gmem_folio_unshare(folio);
-+	if (r)
-+		goto out_unlock;
- out_unlock:
- 	folio_unlock(folio);
- 	folio_put(folio);
-@@ -3458,17 +3454,13 @@ static int __kvm_write_guest_private_page(struct kvm *kvm,
- 	folio = pfn_folio(pfn);
- 	folio_lock(folio);
- 	kaddr = folio_address(folio);
--	if (folio_test_private(folio)) {
--		r = set_direct_map_default_noflush(&folio->page);
--		if (r)
--			goto out_unlock;
--	}
-+	r = kvm_gmem_folio_share(folio);
-+	if (r)
-+		goto out_unlock;
- 	memcpy(kaddr + offset, data, len);
--	if (folio_test_private(folio)) {
--		r = set_direct_map_invalid_noflush(&folio->page);
--		if (r)
--			goto out_unlock;
--	}
-+	r = kvm_gmem_folio_unshare(folio);
-+	if (r)
-+		goto out_unlock;
-
- out_unlock:
- 	folio_unlock(folio);
-diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
-index 715f19669d01f..f3fb31a39a66f 100644
---- a/virt/kvm/kvm_mm.h
-+++ b/virt/kvm/kvm_mm.h
-@@ -41,6 +41,8 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args);
- int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
- 		  unsigned int fd, loff_t offset);
- void kvm_gmem_unbind(struct kvm_memory_slot *slot);
-+int kvm_gmem_folio_share(struct folio *folio);
-+int kvm_gmem_folio_unshare(struct folio *folio);
- #else
- static inline void kvm_gmem_init(struct module *module)
- {
-diff --git a/virt/kvm/pfncache.c b/virt/kvm/pfncache.c
-index 55f39fd60f8af..9f955e07efb90 100644
---- a/virt/kvm/pfncache.c
-+++ b/virt/kvm/pfncache.c
-@@ -111,45 +111,8 @@ static int gpc_map_gmem(kvm_pfn_t pfn)
- 	if (((unsigned long)inode->i_private & KVM_GMEM_NO_DIRECT_MAP) == 0)
- 		goto out;
-
--	/* We need to avoid race conditions where set_memory_np is called for
--	 * pages that other parts of KVM still try to access.  We use the
--	 * PG_private bit for this. If it is set, then the page is removed from
--	 * the direct map. If it is cleared, the page is present in the direct
--	 * map. All changes to this bit, and all modifications of the direct
--	 * map entries for the page happen under the page lock. The _only_
--	 * place where a page will be in the direct map while the page lock is
--	 * _not_ held is if it is inside a gpc. All other parts of KVM that
--	 * temporarily re-insert gmem pages into the direct map (currently only
--	 * guest_{read,write}_page) take the page lock before the direct map
--	 * entry is restored, and hold it until it is zapped again. This means
--	 * - If we reach gpc_map while, say, guest_read_page is operating on
--	 *   this page, we block on acquiring the page lock until
--	 *   guest_read_page is done.
--	 * - If we reach gpc_map while another gpc is already caching this
--	 *   page, the page is present in the direct map and the PG_private
--	 *   flag is cleared. Int his case, we return -EINVAL below to avoid
--	 *   two gpcs caching the same page (since we do not ref-count
--	 *   insertions back into the direct map, when the first cache gets
--	 *   invalidated it would "break" the second cache that assumes the
--	 *   page is present in the direct map until the second cache itself
--	 *   gets invalidated).
--	 * - Lastly, if guest_read_page is called for a page inside of a gpc,
--	 *   it will see that the PG_private flag is cleared, and thus assume
--	 *   it is present in the direct map (and leave the direct map entry
--	 *   untouched). Since it will be holding the page lock, it cannot race
--	 *   with gpc_unmap.
--	 */
- 	folio_lock(folio);
--	if (folio_test_private(folio)) {
--		r = set_direct_map_default_noflush(&folio->page);
--		if (r)
--			goto out_unlock;
--
--		folio_clear_private(folio);
--	} else {
--		r = -EINVAL;
--	}
--out_unlock:
-+	r = kvm_gmem_folio_share(folio);
- 	folio_unlock(folio);
- out:
- 	return r;
-@@ -181,17 +144,10 @@ static void gpc_unmap(kvm_pfn_t pfn, void *khva, bool private)
- 	if (pfn_valid(pfn)) {
- 		if (private) {
- 			struct folio *folio = pfn_folio(pfn);
--			struct inode *inode = folio_inode(folio);
--
--			if ((unsigned long)inode->i_private &
--			    KVM_GMEM_NO_DIRECT_MAP) {
--				folio_lock(folio);
--				BUG_ON(folio_test_private(folio));
--				BUG_ON(set_direct_map_invalid_noflush(
--					&folio->page));
--				folio_set_private(folio);
--				folio_unlock(folio);
--			}
-+
-+			folio_lock(folio);
-+			kvm_gmem_folio_unshare(folio);
-+			folio_unlock(folio);
- 		}
- 		kunmap(pfn_to_page(pfn));
- 		return;
---
-2.46.0
+diff --cc include/linux/rcutree.h
+index 7dbde2b6f714,58e7db80f3a8..90a684f94776
+--- a/include/linux/rcutree.h
++++ b/include/linux/rcutree.h
+@@@ -35,9 -35,10 +35,10 @@@ static inline void rcu_virt_note_contex
+  
+  void synchronize_rcu_expedited(void);
+  void kvfree_call_rcu(struct rcu_head *head, void *ptr);
++ void kvfree_rcu_barrier(void);
+  
+  void rcu_barrier(void);
+ -void rcu_momentary_dyntick_idle(void);
+ +void rcu_momentary_eqs(void);
+  void kfree_rcu_scheduler_running(void);
+  bool rcu_gp_might_be_stalled(void);
+  
+diff --cc kernel/rcu/tree.c
+index 930846f06bee,ebcfed9b570e..4606fa361b06
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@@ -3614,7 -3631,7 +3611,7 @@@ kvfree_rcu_queue_batch(struct kfree_rcu
+  			// be that the work is in the pending state when
+  			// channels have been detached following by each
+  			// other.
+- 			queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
+ -			queued = queue_rcu_work(system_wq, &krwp->rcu_work);
+++			queued = queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
+  		}
+  	}
+  
+diff --cc mm/slab_common.c
+index fc7b1250d929,1a2873293f5d..82f287c21954
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@@ -511,67 -487,40 +505,52 @@@ EXPORT_SYMBOL(kmem_buckets_create)
+   */
+  static void kmem_cache_release(struct kmem_cache *s)
+  {
+- 	if (slab_state >= FULL) {
+- 		sysfs_slab_unlink(s);
++ 	kfence_shutdown_cache(s);
++ 	if (__is_defined(SLAB_SUPPORTS_SYSFS) && slab_state >= FULL)
+  		sysfs_slab_release(s);
+- 	} else {
++ 	else
+  		slab_kmem_cache_release(s);
+- 	}
+  }
+- #else
+- static void kmem_cache_release(struct kmem_cache *s)
++ 
++ void slab_kmem_cache_release(struct kmem_cache *s)
+  {
+- 	slab_kmem_cache_release(s);
++ 	__kmem_cache_release(s);
++ 	kfree_const(s->name);
++ 	kmem_cache_free(kmem_cache, s);
+  }
+- #endif
+  
+- static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work)
++ void kmem_cache_destroy(struct kmem_cache *s)
+  {
+- 	LIST_HEAD(to_destroy);
+- 	struct kmem_cache *s, *s2;
+- 
+- 	/*
+- 	 * On destruction, SLAB_TYPESAFE_BY_RCU kmem_caches are put on the
+- 	 * @slab_caches_to_rcu_destroy list.  The slab pages are freed
+- 	 * through RCU and the associated kmem_cache are dereferenced
+- 	 * while freeing the pages, so the kmem_caches should be freed only
+- 	 * after the pending RCU operations are finished.  As rcu_barrier()
+- 	 * is a pretty slow operation, we batch all pending destructions
+- 	 * asynchronously.
+- 	 */
+- 	mutex_lock(&slab_mutex);
+- 	list_splice_init(&slab_caches_to_rcu_destroy, &to_destroy);
+- 	mutex_unlock(&slab_mutex);
++ 	int err;
+  
+- 	if (list_empty(&to_destroy))
++ 	if (unlikely(!s) || !kasan_check_byte(s))
+  		return;
+  
+- 	rcu_barrier();
++ 	/* in-flight kfree_rcu()'s may include objects from our cache */
++ 	kvfree_rcu_barrier();
+  
+- 	list_for_each_entry_safe(s, s2, &to_destroy, list) {
+- 		debugfs_slab_release(s);
+- 		kfence_shutdown_cache(s);
+- 		kmem_cache_release(s);
+- 	}
+- }
+- 
+- static int shutdown_cache(struct kmem_cache *s)
+- {
+ +	if (IS_ENABLED(CONFIG_SLUB_RCU_DEBUG) &&
+ +	    (s->flags & SLAB_TYPESAFE_BY_RCU)) {
+ +		/*
+ +		 * Under CONFIG_SLUB_RCU_DEBUG, when objects in a
+ +		 * SLAB_TYPESAFE_BY_RCU slab are freed, SLUB will internally
+ +		 * defer their freeing with call_rcu().
+ +		 * Wait for such call_rcu() invocations here before actually
+ +		 * destroying the cache.
+ +		 */
+ +		rcu_barrier();
+ +	}
+ +
++ 	cpus_read_lock();
++ 	mutex_lock(&slab_mutex);
++ 
++ 	s->refcount--;
++ 	if (s->refcount) {
++ 		mutex_unlock(&slab_mutex);
++ 		cpus_read_unlock();
++ 		return;
++ 	}
++ 
+  	/* free asan quarantined objects */
+  	kasan_cache_shutdown(s);
+  
 
 
