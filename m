@@ -1,174 +1,133 @@
-Return-Path: <linux-kernel+bounces-281494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B62B094D77A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:40:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F359094D77B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37CE51F24609
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:40:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF3CA1C21700
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674F316D9B1;
-	Fri,  9 Aug 2024 19:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+4X1BZj"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409BA15FCEA;
+	Fri,  9 Aug 2024 19:40:02 +0000 (UTC)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA643160883;
-	Fri,  9 Aug 2024 19:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522E3381AD
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723232314; cv=none; b=EOLs8l5yR7eaJTwINSbLy16x2JV3FFV8HukhHRVN59fcm1H22RBc927U9c9QIyeLvMQPoj/F65tn8IdRgP1jMYqQsSYdmDZfmqwzBsJ6vKqwCAW4jc6FdR6beCUfCPYtEruVZZ44w5ji82slDzJ8iFDGHL3Xw8zzVwHgFZs6TnA=
+	t=1723232401; cv=none; b=tPSlwJlBjfgnhqDS9SmivKxKN1UlzykRrelzjmnGl/zAGB6/M+FsYX8v2Z9AolFTdYo5JcbtVVQ/Ktb+RV3gwMACY103ZT9urCM0Ybt1mkJ5MR3cDd/dQO5tMlZ6Rm8HwEkF8zHgIJzFxsFhdxwlizSN+PNY2cu3ZjMVxdrEya4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723232314; c=relaxed/simple;
-	bh=MUIgI0Og4nEqKaqgSG8ih/xROp2NjP1rKYFpIp8+vC4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NKP6F+01MbzcnkMM95Cl2Jhb4Z/PzHgVFMOvLW8s/t/Qo8q7c7XURmChH4b5E/Rz/Ku/IzO4Xl61g45IJZgYaLBpHpKrYMTtRuBSAhm0kK33+Z0JGCfvKwhft5eUN6d/8ziBNLu7qkL7egBAAZcDou1pI0GHYH0CVJPBad1hU/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W+4X1BZj; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1723232401; c=relaxed/simple;
+	bh=AwapjTFFhp3dFbRVbLgG7aYAQRlwvpNz0qSnFdm9RMA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MXmaXtcU2HC4v1nwYbC9lQmUlbkByc02CfH2UO7/Vc5q9EqhxBsm082O/uiigjPTbnVqIvhrRUkADbd6CKvU25OFeC7D85K9FgsvIYqkYaSs3aQllvPjD/z2fgD88lJOqakqnw1NJKreeO4dAYMM1+8CSVhrc8I/IbVJqcSYKkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f149845d81so27353331fa.0;
-        Fri, 09 Aug 2024 12:38:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723232310; x=1723837110; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ToeSXl+vM3WNVB6qyUTcA+LVhXh+7FU6kYmOVQ0FknE=;
-        b=W+4X1BZjRD5N40dHcTk6OtWfk4gUM/2Cf0aaMuc23YsX5alPo071xWUP87PB9dhBvF
-         gSlMIqzo1mtwasMtM9qOlMNLasgcobQnqpB+QHKR9/qOsKKBmF1qIQaNxxTvGT+wIRfn
-         P7AdkwlY/w8LAQW9VwZyVuEe7A2DNSGKBwt3Fcv/E+eUwH/E1geh8/PPfcmqPS3g8ov2
-         nz0LtNmBCW83HJLWRO7vU49N+Pl4tlcq2ujJplaxtfQz/FkvmAbve4QKcYFYpA8VXOeI
-         y6k9maFJ/ov/z/PmGs2Ec/1XYwvNCIL1kbtIrigPnBtEanQ55MQO5nqWGHoxJ/Igu/k0
-         8lsA==
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7a264a24ea7so1809520a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:40:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723232310; x=1723837110;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723232399; x=1723837199;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ToeSXl+vM3WNVB6qyUTcA+LVhXh+7FU6kYmOVQ0FknE=;
-        b=IMLybKEKM82VWcab4i+7QRK8gGLk5iprXCxZOAV3v5XII6YucBARLChr6yRUAoErq+
-         TGlBsFO32B+Dlm0VJGa/EEavBHTZwELaWGei4jAl8mxnCcHh99XdcQ8Nz3eVtWx3vYar
-         ZdhFoI7bl9/X8VGZjSuAn2fyvi5JB48Twy/4HPxDVnOIyTGVoUOe3mHLt4BVoCL/gwEc
-         sn7+ER/R+yo7sffsuUrBk+35qCgD6F/e/F+wXvxXVPSmvXV9mZoXcYuJWwO3cvy3Ziuf
-         xXYGJZuhuKWwfOGTSahCLew7H3ruGqDrBhIPW5FQl8teRI4ZkV9TXofJyg8J8qoL8YL2
-         dWeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiVit/gbege71V7BDVMv40QsTBwkp3NG1PbrFtQXBiYf2q8GLb6D5gBFEVlEwhoASWkeC3dP0ZBsKaB3UeyK0rdEI3pWC/Z38kJ13B
-X-Gm-Message-State: AOJu0Yxf2xU4zx4thP3sCOv2Z9u3kQl+lLG7B5tyy84myQHVxPPp06/4
-	/afELqMkp7UdurzmJlUITIrYZWPBQdPd2O9UZaL6X0m/UV9Tew/DYnMpMrpm
-X-Google-Smtp-Source: AGHT+IFoUoqtHP3+J0aLZSfxAPkik547Kb93xmKUBljA7YDmwMP6PtBGU17Q0i0IW3CqK+UCuHDisQ==
-X-Received: by 2002:a2e:f1a:0:b0:2ef:2c87:3bd7 with SMTP id 38308e7fff4ca-2f1a6ce6ea0mr17738631fa.37.1723232310129;
-        Fri, 09 Aug 2024 12:38:30 -0700 (PDT)
-Received: from WBEC325.dom.lan ([2001:470:608f:0:8a4a:2fa4:7fd1:3010])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f291df4987sm451311fa.50.2024.08.09.12.38.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 12:38:29 -0700 (PDT)
-From: Pawel Dembicki <paweldembicki@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Pawel Dembicki <paweldembicki@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v3 5/5] net: phy: vitesse: repair vsc73xx autonegotiation
-Date: Fri,  9 Aug 2024 21:38:06 +0200
-Message-Id: <20240809193807.2221897-6-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240809193807.2221897-1-paweldembicki@gmail.com>
-References: <20240809193807.2221897-1-paweldembicki@gmail.com>
+        bh=N1Qn8YPFxnx8TAiNeYXz9KAEVqW09rM5irsn7sT330Q=;
+        b=EHSq7ztES53cDh0p2Y4tamcZJXo0I/jSx5b05GoTP0ACfctU3kAMcCcTQ2M4fOHKSw
+         RW4PmdTwM6dcsxggLOgDSCeRtVGSMRjhLWB79PPxuR9VPJ7vXHiNyhoVVgMwzJ0VHycJ
+         KdVT6V5qHaIrzVQCNwxQQ9zdgTFXHAU5q80bYzsvCgGRgYxQDdMcZ1fmnW48Ef8DQOpK
+         nYkbO9C0GbPgDGprP5zjb3hu10tMgNTQhvFIGtX/MD1FXD8cXUxu94kcRpYlTuwZpwii
+         tmvAwvHsuUV0IOsQ9JfpNcSO6+shF5QUhFbyHv4WZ8vl8bk7l7HuvZHsfffpBv25NFwT
+         BARw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhhC6TeEDyp6jp52wKSOsPywS/ZPL2qb8tVFdy/U24JuIVWdn3kCqPcH/uI9QiJ7D4JaiBeaH3iNGTFwP/aUfkK0AWcwO3/s0yKuu7
+X-Gm-Message-State: AOJu0YxeERlJgPVDxo1p8640+K64FavcjAqIdYOGuupuEKoU+0ipbHhj
+	sCk5aJGkNnNMYtaLyWsMaTlJHlrMbD+PnHq0YBOfdoYqUtcqpMW8wwO22zhXsr8vvLd4yJj+WsP
+	15EltUpX1MjNreBtyVuWdfVVJvv4=
+X-Google-Smtp-Source: AGHT+IHZLD1Vl+hkAFqTypDM6YJhE/E932sfrVijCNlr1tRNMPomekkC3cYsV2TX/JFvjKl+AWLLfVccvRNLfasKCLw=
+X-Received: by 2002:a17:90b:14a:b0:2c9:7ebd:b957 with SMTP id
+ 98e67ed59e1d1-2d1e7fc6036mr2696515a91.11.1723232399325; Fri, 09 Aug 2024
+ 12:39:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <ZrYsDYh2VVmh3GMw@x1>
+In-Reply-To: <ZrYsDYh2VVmh3GMw@x1>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Fri, 9 Aug 2024 12:39:47 -0700
+Message-ID: <CAM9d7ciushSwEfj7yW4rtDEJBTcCB991V4cswwFEL+cv6QF2pg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] perf debuginfo: Fix the build with !HAVE_DWARF_SUPPORT
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Ian Rogers <irogers@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When the vsc73xx mdio bus work properly, the generic autonegotiation
-configuration works well.
+On Fri, Aug 9, 2024 at 7:47=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> In that case we have a set of placeholder functions, one of them uses a
+> 'Dwarf_Addr' type that is not present as it is defined in the missing
+> DWARF libraries, so provide a placeholder typedef for that as well.
+>
+> The build error before this patch, a static build out of 'make -C tools/p=
+erf build-test':
+>
+>   In file included from util/annotate.c:28:
+>   util/debuginfo.h:44:46: error: unknown type name =E2=80=98Dwarf_Addr=E2=
+=80=99
+>      44 |                                              Dwarf_Addr *offs _=
+_maybe_unused,
+>         |                                              ^~~~~~~~~~
+>   make[6]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build=
+:106: util/annotate.o] Error 1
+>   make[6]: *** Waiting for unfinished jobs....
+>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
----
-v3:
-  - removed MDI-X with disabled autoneg feature (it will goes to
-    net-next in future)
-v2:
-  - resend only
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-This patch came from net-next series[0].
-Changes since net-next:
-  - rebased to netdev/main only
+> ---
+>
+> I have this in perf-tools-next.
 
-[0] https://patchwork.kernel.org/project/netdevbpf/patch/20240729210615.279952-6-paweldembicki@gmail.com/
----
- drivers/net/phy/vitesse.c | 14 --------------
- 1 file changed, 14 deletions(-)
+Thanks,
+Namhyung
 
-diff --git a/drivers/net/phy/vitesse.c b/drivers/net/phy/vitesse.c
-index 897b979ec03c..3b5fcaf0dd36 100644
---- a/drivers/net/phy/vitesse.c
-+++ b/drivers/net/phy/vitesse.c
-@@ -237,16 +237,6 @@ static int vsc739x_config_init(struct phy_device *phydev)
- 	return 0;
- }
- 
--static int vsc73xx_config_aneg(struct phy_device *phydev)
--{
--	/* The VSC73xx switches does not like to be instructed to
--	 * do autonegotiation in any way, it prefers that you just go
--	 * with the power-on/reset defaults. Writing some registers will
--	 * just make autonegotiation permanently fail.
--	 */
--	return 0;
--}
--
- /* This adds a skew for both TX and RX clocks, so the skew should only be
-  * applied to "rgmii-id" interfaces. It may not work as expected
-  * on "rgmii-txid", "rgmii-rxid" or "rgmii" interfaces.
-@@ -444,7 +434,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc738x_config_init,
--	.config_aneg    = vsc73xx_config_aneg,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- }, {
-@@ -453,7 +442,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc738x_config_init,
--	.config_aneg    = vsc73xx_config_aneg,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- }, {
-@@ -462,7 +450,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc739x_config_init,
--	.config_aneg    = vsc73xx_config_aneg,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- }, {
-@@ -471,7 +458,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.phy_id_mask    = 0x000ffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.config_init    = vsc739x_config_init,
--	.config_aneg    = vsc73xx_config_aneg,
- 	.read_page      = vsc73xx_read_page,
- 	.write_page     = vsc73xx_write_page,
- }, {
--- 
-2.34.1
-
+>
+> ---
+>  tools/perf/util/debuginfo.h | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/tools/perf/util/debuginfo.h b/tools/perf/util/debuginfo.h
+> index 4d65b8c605fc5445..ad6422c3f8ca3ef6 100644
+> --- a/tools/perf/util/debuginfo.h
+> +++ b/tools/perf/util/debuginfo.h
+> @@ -40,6 +40,8 @@ static inline void debuginfo__delete(struct debuginfo *=
+dbg __maybe_unused)
+>  {
+>  }
+>
+> +typedef void Dwarf_Addr;
+> +
+>  static inline int debuginfo__get_text_offset(struct debuginfo *dbg __may=
+be_unused,
+>                                              Dwarf_Addr *offs __maybe_unu=
+sed,
+>                                              bool adjust_offset __maybe_u=
+nused)
+> --
+> 2.45.2
+>
 
