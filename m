@@ -1,604 +1,333 @@
-Return-Path: <linux-kernel+bounces-281333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F70194D5A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:51:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D222F94D5A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE99281A2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54DF61F223C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE52145B27;
-	Fri,  9 Aug 2024 17:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B115813D512;
+	Fri,  9 Aug 2024 17:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dyDuqlVm"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010056.outbound.protection.outlook.com [52.101.69.56])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="WVc25u03"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F1217557;
-	Fri,  9 Aug 2024 17:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723225895; cv=fail; b=fktOp5vyB9tC3vt+3ipjilGvMQ8A3FbTDRRrUST8Gwny8bz4qfi3BxGnTjt5KL6JuemQ71lKCVHaGw4lvKym0pjAjl9qo2fjoldPjWPrA9rhkn6+OgqDSw8JRTgUFmB3CAHSikpiFlw/tBEN1RfWHQL4RDpgOgsV+6QB0fKI9HE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723225895; c=relaxed/simple;
-	bh=AzYNprX6QKGDqVV2TvMZHJHiZjCr34y71/xq4PFych4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=SpKqvhL3dMd5gc8/M4B8mne4/iJaaK9ZAs8kYHa8M/ZfSTBorZJS4rXXR4hXA4nIiiXe6O1JObPDDFRvKsml8i70rxJiomNDkLf9e5xJtsVwDRQHt2L3DEiPDnYeDGTPOInSuCb3vymwKxEESxBboj2+rW2ezlK/NrN+C9cOOp4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dyDuqlVm; arc=fail smtp.client-ip=52.101.69.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fyL20g2RINjNIi04qwVQwq8iOZgc+LP4GK6zItj4PqoHUA8pRz68WPhLjVApE5vcwsHRcWYctaBxS37QoDjtbgYcW2DRbBk5y5Qi3XcLEwtM9pVW2Hn/4cby8n21s5OHG2wha5gKDAd7jziXKNWqMSjRwRaOhx/YfgkYrHWbhUQGUIvtv0o0owspsSCAs/3dH7ms9uD4npspIeT8dcUFWyYVsokVdOutZkyErZ7Tmk8e6O5B5jnDXc6jCyetc9I0lJfSbdw+I6Yj+0CYf3ui7fp4fLy4378tO/QcZFZyWu1CA502q6TwVJwWpjlUwIdSEQI7Xk8XdmpA4qMFB1AzNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2CTVRmxbByW2YRbrohBxDwhpt7SeRR15knglV8wjIpc=;
- b=RB/KwfJ1dmmJk6pLIL/FxaN8jjou0SY94gHw6gJzKq+zpjwqINANo+muPajdwekmbQbtnz7gOns7uDlEjl2AACKFFSCl2Nrv9D5LpYyc2M4RnLMSStz0DJ9TXVXMj8Lxkp2PotC/HeWakRPmNPYQKgnubm3sLxNoQdmH5f7FWaluK5O8oPEN8VsKjs+HwViy3QIBlmv0htNoLAoMczv58MzfxANpQRAHWp3cJDmTuEFxjQFo2r3eRu0CimMDzhYKEquhmDTEFYQwbHfHbLpiOlbV6SL3Ot+p5S4haCXZpzcfviClYmFR3+5WHbG9TxIbsP+LFvliX/lLUkBJAReggQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2CTVRmxbByW2YRbrohBxDwhpt7SeRR15knglV8wjIpc=;
- b=dyDuqlVm5zaTaDwTGEowOpeAthsoD8ZnGi5dG9Cg3Cv3/f4en0PePBg4SeOOCeBYsdSbFw8KxBRx9+u1H/CYaskM7lmAz8mDE0mdbXvSNZzQ0YfLv05VnSuOYEQpUjjsJiGf707zh6tR1qxH6eFHhtgJeafeQK9sMxjf4f0iXHQQL0jfqPeltuG5jWQx7TpS0QBa7RSk1MTfmLeb4YJGnKDdcoM3ulAF0qGM9TWYVjbI/nM7VvYd7B+HPLwWqbI3gn1M9OVWwnGsxJ9H/BOfyKF/IPrmSW4aBvzkasMMxpIuDq4DyO2+2KFlCnwQcw90RYEVefBZdf2WhTkdGqEofQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM9PR04MB8398.eurprd04.prod.outlook.com (2603:10a6:20b:3b7::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.15; Fri, 9 Aug
- 2024 17:51:28 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7828.023; Fri, 9 Aug 2024
- 17:51:28 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linuxppc-dev@lists.ozlabs.org (open list:FREESCALE SOC DRIVERS),
-	linux-arm-kernel@lists.infradead.org (moderated list:FREESCALE SOC DRIVERS)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] dt-bindings: soc: fsl: cpm_qe: convert network.txt to yaml
-Date: Fri,  9 Aug 2024 13:51:07 -0400
-Message-Id: <20240809175113.3470393-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0165.namprd03.prod.outlook.com
- (2603:10b6:a03:338::20) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E584A17557;
+	Fri,  9 Aug 2024 17:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723225955; cv=none; b=ddngkzrp8wfoROf5QuYtotLqnmyNjxz2biHi2ZuvbycVl4LDVXbVS196JOXV0ETmqwTTBin3nVexy/KP3HkKH+YM+v/dX1GKE0PY+D8wMhZ4oQ/mDv/0Yz/i00qe4etErD33gZiOAxin17LiPGNcS+ROm1cN3qZBxsCJpdNYlOY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723225955; c=relaxed/simple;
+	bh=JMiRPrc7ttszRNUNFnFZFTPAc3Iy0dRHRiIuyNvROvQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=C6Rygh71Hwa65SABvWV/usHVUmqAlbwqOw0EsIP0dYL9F5V3+iqj1NMvI2U9wXhuHmbT4aRm1vxlr5jd1TYv7aGqhSPJ0F8QEhou4DqS0pqL/w6EI++WMf4mSFTkeAzBxrJ/eZRstNXAR+SQBA0T71riH8XfF/aaHa+nX3ETk2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=WVc25u03; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1723225943; x=1723830743; i=w_armin@gmx.de;
+	bh=Z0dzszRE/GqPiXhqJqEumn2z1CpBQJ4iy0RlrQvHlqA=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=WVc25u035aCzeFOT1W4oKFqcuPUsU0bQhyV4WMNQmRISwFnUtwH3kpnXx49I3pU8
+	 rEGBwnFx32ViiDYcRTkjci3zmhSqz80gQPuAzVKXROz0LRnvtTjGPWaqfKn3CLpJ7
+	 BfYwGWL9GUlpO8lZuIek3Ao1VRn+ItyHFmcIzgh7rTRGvTC1xNDsdztcZbQwrnXeE
+	 GFbEirhyzSmPcr0eGZLGwV2RFpT9r6WrGwm0j1kfHS1UPSNCKRqOFkAzLP0OzsSRb
+	 ajMH+qseAWKpP1oZE4oOBg+E5vwlZXjJp6UrLNMXVHqgvbrYdW4kv0Fl44rEK2ofl
+	 7tdddv6I9zdlMLKCHA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
+ (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1MwQTF-1sK7SE2D2b-00r6Jx; Fri, 09 Aug 2024 19:52:23 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: matan@svgalib.org,
+	ghostwind@gmail.com
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: lg-laptop: Add operation region support
+Date: Fri,  9 Aug 2024 19:52:11 +0200
+Message-Id: <20240809175211.5962-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8398:EE_
-X-MS-Office365-Filtering-Correlation-Id: 56dc0c10-2122-49e6-7bd0-08dcb89be53e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|52116014|1800799024|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dMhbCim6LMVFSvjfuq1cwNmA5UEXMEZP+IqUmgzCAVQAfDjueqr4t5xNcSpW?=
- =?us-ascii?Q?90iOR5dGuyepMUflUy+CZyaXnto5/WvRx8+HyYRLd/dxo1WcvEAURFYfIETH?=
- =?us-ascii?Q?LZq/ZD7Qq2SLOjITqwQe0DGLtidgvxfVTtvaKd6t91elqNiOwUkPdx7dktI2?=
- =?us-ascii?Q?1bIPLqNVzT/PyNqVce4Ui+bpdKDKD4D3fv+RexEx+c3vTu8JYKmEhMz+OkW9?=
- =?us-ascii?Q?6jeM/CK84dZRFLx9rBEifOg6SDorKSxAJm2BJFeN+/2TvR06tqgUzKt053vb?=
- =?us-ascii?Q?u52PE2pGckHdbezWE1HBjD3t3lG2s9Zxy0/NdrjP+XPwoPg308aEurWOGpuf?=
- =?us-ascii?Q?GYyGv/rh4d2Hnut3G82XjqN6/vE48HsnXrKUN7mh+1VLRv2JiD2LXpEYHeoM?=
- =?us-ascii?Q?8C4gUO+nCkeMs58bjHp6vSFBqE2S3zU5uJEY6dHNuf5c7mnfXWNk2iqilMFw?=
- =?us-ascii?Q?BB/kTiYVAIcnShGRDR7KkpTB2prILTV2mujzzmaZyFQYLIrOhc3yzBNQrd5F?=
- =?us-ascii?Q?CnH8aQLzfps7rI0/pvGNZVCslOywDH4OvIruqqfNobKPIn9afUzAFmp5N8Ru?=
- =?us-ascii?Q?+pcIU3JAaqwZxuqaXkK/4ociWjsbEuH/UPWKY3Se+gepYbAKYpw+CifQpn/z?=
- =?us-ascii?Q?XDv+Nhq0FDSQLipLrVQ9CRUf7QlKsAibp1Da/BwCYMfzgTD7TnQfMunjfyuR?=
- =?us-ascii?Q?GHvztIVtFLTEr4ASaq3yohoet8f9eJsPTS0a8NcBnAnKw4/AnIeEUffstLNk?=
- =?us-ascii?Q?SuERvb9SZ7lQFzq/gc2pXLVecO1Wf/LAKO7V62i/YQnfC90VN9DdhiEdDGpL?=
- =?us-ascii?Q?WfhdU5GGLPXlXjIgIPc6/1rYbptTEiH+Oi4TydPgrwtMxs2dkwPpez6+fVmS?=
- =?us-ascii?Q?fYsy8zLFKlGBTgWVmaLZFGXOpeTSWIG1sCVcVQOF2GfchGV+3na5mOENHqVn?=
- =?us-ascii?Q?B06HJdhiWQxx7d7BPf94ihLyyoCPGed6bnBYO/Qp1LP51ZpePGhP7gL2/w/4?=
- =?us-ascii?Q?/J3cAE2ErU3XNqwEouxbdbdAJrJexj4qE3lfO1pAkfZTESntCyTds9ZipYdA?=
- =?us-ascii?Q?NBGnsySUOeteTcYkvH5Zxa7waBSVyjzS/HD2Mor2YjARJZE00QCNZYOga15q?=
- =?us-ascii?Q?feG3EyXMWXmpD9zV/MRN0j+3J0UqXYAFusSoE+KPswS2DlOXEhXXAMIcT4rj?=
- =?us-ascii?Q?bsB51snazFmTAk9ZT7BwG7Ghgz6crAq560DOEDfd3tXg7XGQ5rn+/uNvyKe+?=
- =?us-ascii?Q?1ffRjEaoOCeorwKPbtZ/p65aZbzXMXpDGPeGge3yJmjV66q94WRc3WPQMZP3?=
- =?us-ascii?Q?+TSpLqRQTVI78zr5dwymLZGELUwqDR3UitXU4s+wK0npg9LiXzxFv8ehTMQp?=
- =?us-ascii?Q?M4BoPmo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(52116014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fNg/7PLtaPxOWi9M1lf7G8NDtACYkattK2x2VNevJt/xg3qxLWvYQjoJWeYn?=
- =?us-ascii?Q?oXxZALrGe6uKTEbv8EwPf2XWnGwloDp6Sv9PPDIM9UbXxe+iF68KVb+aWZW5?=
- =?us-ascii?Q?OzHz0udfyHJOb0wYloiCNLtC10ZZRHUXCLrBvMBoocE65ci1wIuc/WSrpjLL?=
- =?us-ascii?Q?78/aht/W8aF093ItDq9hB+ka6/XBEBo0ETsmprBS/5Cbhg1ToH7S381HKVY8?=
- =?us-ascii?Q?KpaRsbTWXCzb6xv/pob+iA148Wu4lL5zuHXCWd7+gi4ZxA9+khumKwjIiouq?=
- =?us-ascii?Q?w7OiIR2Lnrvz6prKkQQmeOfK8SDM4rJ/9NSHd3RljHEC8S1V7Ohy1Zue+Aws?=
- =?us-ascii?Q?9EwiKtnRNfI9MxIWmYxNnjhJHjjOBn9KfOLep2IsYmuVdy4oW9m1ITpnvWbY?=
- =?us-ascii?Q?V4wE40uo5rhImxDby6qFkxDI7goTfXcMnPlqKGNgFJtFnFMwmhplDpxtqTph?=
- =?us-ascii?Q?k9QAkmK7SA+T3h4XYWMlAB/C6KlDYWxaQ6VLWdVZUbHLwkTN5odi/HOgVtkO?=
- =?us-ascii?Q?4vUbs+2rP+e30nbsSPl8VUI6cmNU9VY+fqpCwHCN218ssOTU30p3HiKeH69A?=
- =?us-ascii?Q?E5bQcpQ7Lbnfphigqy8GQmXRtdKQUMl8UyaEKvpG4Z+7vdmcIBh1yV391cu1?=
- =?us-ascii?Q?M8V/psC+I4uESKXvMgSD5a8HwuqfxdtxL4+hfi9WuqzTQNyxB9dnHs4xQYSu?=
- =?us-ascii?Q?gSSYJGJwdWbHH1WV5nYIitqS6HCQTbtrLaxBvoC1Ro1rDFQ9Eg90TzPZf2wN?=
- =?us-ascii?Q?nvxgWY+JPAYjmoO/gYbLWEXv44KDSLbJCMfexmEwhfyEeOImNObaatr6zckn?=
- =?us-ascii?Q?bjNmqp0OLxKatIrJD3XjRXaq163cuhIFlm3Tz3COzMrmt6CT9VjlC1bWFL+D?=
- =?us-ascii?Q?94ZVPtrTvqQIGOLAjfJFDxqo1FEPHTkvQUgVGJlrTlOLj8sUl5wGg2fbT6Du?=
- =?us-ascii?Q?nB34BgSV9hOEflqbM+brpDpvypYCEABep2fMsqxKtIYuIxUgu57pE02IB2fl?=
- =?us-ascii?Q?Punmf4Kr1Tj9oAyKrSQvBCxKnSZzMANGDutZO32Nu1I9o7qKmN5ay72MqjMm?=
- =?us-ascii?Q?dHbB7JOJqN1+7GIqSmEU0t2xeiFYpa2X212swK1nqy5QtwgL7+JSyUNwATLA?=
- =?us-ascii?Q?gMsECpxljiTHDC32D/W8aGS3md1WkE+G+UzsWqRF3fhT9RIklLivx5MCCuk6?=
- =?us-ascii?Q?WiwihidBrQ+xJ0nFRN4pkKj5y4mdaMV7MddP+y+RLqB40mtntzacP7JUmdaK?=
- =?us-ascii?Q?gN7bZXUPJIeFGyqQ6slIpPy9dCOJRpA1iToJJ0Iq+H4WZqvYVGqCfoRvj05G?=
- =?us-ascii?Q?iu1m3n3n5TbMd+CLbufhJ2YGy6z+lU3y46VuWnNvX0trEZIDHa4kCT/qXrSr?=
- =?us-ascii?Q?cQV5YfW5JN0Y8z3cdt6W9OsaUdn+q0lve7w5yu6wY9htaXTXn1q+C2TGFwnL?=
- =?us-ascii?Q?nEg6S3ROivWY+Kxwe/82vQ5nBRtPhjU4DPIhr39VYQi1wPaS2Moe7DzktLek?=
- =?us-ascii?Q?Wsw/KV2oSzfvRhrYoSdDG+fcYyCzal+fdftN5woU9wGjws2f5+NIoN1mQTN/?=
- =?us-ascii?Q?h+3KmQgFSHvIJxtVdYCbgcJXn7oyCRcXPh5UmUcu?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56dc0c10-2122-49e6-7bd0-08dcb89be53e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 17:51:28.7816
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aTvI6yCCdjui9xYuNenKdIfvh2V/JvE4Dyrts6p2Oqfq7qNy21CWRzB/bvkG1AQNUx0vV9bMRpSvUVzxCkhS5Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8398
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:S2Gba/dzy+axnkXov6OUP/bu151m5B3WEqdTfunCuh24GpiTDrj
+ 02UKzJQuvb+hX1nK9Dunkftz/74bar+q/vmkf4uPwnju7aLucTIGoNTwmy3YHU6t6rzdUWD
+ r8Yp+RJS6Pm3DJwZXg9jj4SaQQ6/ZqgLHq3u57O2jwjpSXTsBgm9+Kc0xhAOOkeBZjGbUq3
+ KeMBP8QB7shddHpJhq1Rg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:P9/ER+1wjRs=;0m7fW+xcuJqSbvjcecyvL4V49Lt
+ iMsjS2N+2kQh0ai2u7ajgnxydGymFAn2kKWEz8ZjrSdyE5/4Avm2u2BuI+hUuqDWFU/jyz9iT
+ xAaa5KomSfV2H7jSNzehGUarh3ceO6UQaLsY60O3QdjrypU8DoeGcoJHTwc0Psd9CVOKYGiD3
+ QBw7iNg4UwfgmWAOhQi3lF/GP0YIMbT+xoQn+Q0OarQKKrqEkzvoRn3DI+YtXLPYgAirMiequ
+ LeBgZ7sk6fDDJEIVvF4DeXZkJNQBQvYK0rwzgx6B6aLZLNJSZVVv78FZ3Ja/ZrdFOPbTA+NUZ
+ pdT9oceoJRKKtB6QsyK2TowaQOtrtPFHVibA0FMheKq5ui00ii21ZLSIAN3Z3TK7s64Vg8M7/
+ ReI/1cwoOtt85/mTKIFoilidBgqPInU0qW/FNjzT++f95CEPJQL4sr1wwqPyhpt63xfKBNrZ4
+ vxNpe0Xb1EXHvWZKJxaUhzZq68BtTZVb1N6fHvKKSF1rvYmD6pkI1LejJnSN37F4mEQdPz0Fb
+ 7t/z81dZ/vXflALsHBkC8mk/kveoIQnbg8b2GELJK6X7MPdpDBbqZIwaMGUCfqMQA0x5SfEw+
+ xDvN+GQoFaWgFfN5USJLDI7z9GxV5IBgdu03McIz9oD77EPUPjjdkucvBala9vu2D3T5WDMey
+ xuR/jhijwCii9DVTEMbw/B4TXVXCIEDL0vcaS+QAkznLy9YmW+OeOI4hi15aoCSw9HQ68CcYT
+ rOgRtbyAOX13Bs0qQT1h3JEAJLyxAk7+la7+n/e6cGu6ud2rUbPcFB1T/iKPBRz4vKVEGtoRD
+ ltl6aRBsAgXq4tj2pwYE2eeQ==
 
-Convert binding doc newwork.txt to yaml format.
+The LEGX0820 ACPI device is expected to provide a custom operation
+region:
 
-HDLC part:
-- Convert to "fsl,ucc-hdlc.yaml".
-- Add missed reg and interrupt property.
-- Update example to pass build.
+	OperationRegion (XIN1, 0x8F, Zero, 0x04B0)
+        Field (XIN1, AnyAcc, Lock, Preserve)
+        {
+            DMSG,   8,
+            HDAP,   8,
+            Offset (0x03),
+            AFNM,   8,
+            Offset (0x10),
+            P80B,   8,
+            P81B,   8,
+            P82B,   8,
+            P83B,   8,
+            P84B,   8,
+            P85B,   8,
+            P86B,   8,
+            P87B,   8,
+            Offset (0x20),
+            DTTM,   8,
+            TMP1,   8,
+            LTP1,   8,
+            HTP1,   8,
+            TMP2,   8,
+            LTP2,   8,
+            HTP2,   8,
+            Offset (0x3E8),
+            PMSG,   1600
+        }
 
-ethernet part:
-- Convert to net/fsl,cpm-enet.yaml
-- Add 0x in example, which should be hex value
-- Add ref to ethernet-controller.yaml
+The PMSG field is used by AML code to log debug messages when DMSG is
+true. Since those debug messages are already logged using the standard
+ACPI Debug object, we set DMSG unconditionally to 0x00 and ignore any
+writes to PMSG.
 
-mdio part:
-- Convert to net/fsl,cpm-mdio.yaml
-- Add 0x in example, which should be hex value
-- Add ref to mdio.yaml
+The TMPx, LTPx, HTPx and AFNM fields are used to inform the driver when
+the temperature/(presumably) trip points/fan mode changes. This only
+happens when the DTTM flag is set.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-This one is quite old. The detail informaiton is limited.
----
- .../devicetree/bindings/net/fsl,cpm-enet.yaml |  59 ++++++++
- .../devicetree/bindings/net/fsl,cpm-mdio.yaml |  55 +++++++
- .../bindings/soc/fsl/cpm_qe/fsl,ucc-hdlc.yaml | 140 ++++++++++++++++++
- .../bindings/soc/fsl/cpm_qe/network.txt       | 130 ----------------
- 4 files changed, 254 insertions(+), 130 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/fsl,cpm-enet.yaml
- create mode 100644 Documentation/devicetree/bindings/net/fsl,cpm-mdio.yaml
- create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,ucc-hdlc.yaml
- delete mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/network.txt
+Unfortunately we have to implement support for this operation region
+because the AML codes uses code constructs like this one:
 
-diff --git a/Documentation/devicetree/bindings/net/fsl,cpm-enet.yaml b/Documentation/devicetree/bindings/net/fsl,cpm-enet.yaml
-new file mode 100644
-index 0000000000000..da836477e8bad
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/fsl,cpm-enet.yaml
-@@ -0,0 +1,59 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/fsl,cpm-enet.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+	If (((\_SB.XINI.PLAV !=3D Zero) && (\_SB.XINI.DTTM !=3D Zero)))
+
+The PLAV field gets set to 1 when the driver registers its address space
+handler, so by default XIN1 should not be accessed.
+
+However ACPI does not use short-circuit evaluation when evaluating
+logical conditions. This causes the DTTM field to be accessed even
+when PLAV is 0, which results in an ACPI error.
+Since this check happens inside various thermal-related ACPI control
+methods, various thermal zone become unusable since any attempts to
+read their temperature results in an ACPI error.
+
+Fix this by providing support for this operation region. I suspect
+that the problem does not happen under Windows (which seemingly does
+not use short-circuit evaluation either) because the necessary driver
+comes preinstalled with the machine.
+
+Tested-by: Chris <ghostwind@gmail.com>
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+ drivers/platform/x86/lg-laptop.c | 128 +++++++++++++++++++++++++++++++
+ 1 file changed, 128 insertions(+)
+
+diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-la=
+ptop.c
+index 9c7857842caf..6310a23f808c 100644
+=2D-- a/drivers/platform/x86/lg-laptop.c
++++ b/drivers/platform/x86/lg-laptop.c
+@@ -8,6 +8,8 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
+ #include <linux/acpi.h>
++#include <linux/device.h>
++#include <linux/dev_printk.h>
+ #include <linux/dmi.h>
+ #include <linux/input.h>
+ #include <linux/input/sparse-keymap.h>
+@@ -31,6 +33,25 @@ MODULE_AUTHOR("Matan Ziv-Av");
+ MODULE_DESCRIPTION("LG WMI Hotkey Driver");
+ MODULE_LICENSE("GPL");
+
++static bool fw_debug;
++module_param(fw_debug, bool, 0);
++MODULE_PARM_DESC(fw_debug, "Enable printing of firmware debug messages");
 +
-+title: Network for cpm enet
++#define LG_ADDRESS_SPACE_ID			0x8F
 +
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
++#define LG_ADDRESS_SPACE_DEBUG_FLAG_ADR		0x00
++#define LG_ADDRESS_SPACE_DEBUG_MSG_START_ADR	0x3E8
++#define LG_ADDRESS_SPACE_DEBUG_MSG_END_ADR	0x5E8
 +
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - fsl,cpm1-scc-enet
-+          - fsl,cpm2-scc-enet
-+          - fsl,cpm1-fec-enet
-+          - fsl,cpm2-fcc-enet
-+          - fsl,qe-enet
-+      - items:
-+          - enum:
-+              - fsl,mpc8272-fcc-enet
-+          - const: fsl,cpm2-fcc-enet
++#define LG_ADDRESS_SPACE_DTTM_FLAG_ADR		0x20
++#define LG_ADDRESS_SPACE_FAN_MODE_ADR		0x03
++#define LG_ADDRESS_SPACE_CPU_TEMP_ADR		0x21
++#define LG_ADDRESS_SPACE_CPU_TRIP_LOW_ADR	0x22
++#define LG_ADDRESS_SPACE_CPU_TRIP_HIGH_ADR	0x23
++#define LG_ADDRESS_SPACE_MB_TEMP_ADR		0x24
++#define LG_ADDRESS_SPACE_MB_TRIP_LOW_ADR	0x25
++#define LG_ADDRESS_SPACE_MB_TRIP_HIGH_ADR	0x26
 +
-+  reg:
-+    minItems: 1
-+    maxItems: 3
+ #define WMI_EVENT_GUID0	"E4FB94F9-7F2B-4173-AD1A-CD1D95086248"
+ #define WMI_EVENT_GUID1	"023B133E-49D1-4E10-B313-698220140DC2"
+ #define WMI_EVENT_GUID2	"37BE1AC0-C3F2-4B1F-BFBE-8FDEAF2814D6"
+@@ -646,6 +667,101 @@ static struct platform_driver pf_driver =3D {
+ 	}
+ };
+
++static acpi_status lg_laptop_address_space_write(struct device *dev, acpi=
+_physical_address address,
++						 size_t size, u64 *value)
++{
++	u8 byte;
 +
-+  interrupts:
-+    maxItems: 1
++	/* Ignore any debug messages */
++	if (address >=3D LG_ADDRESS_SPACE_DEBUG_MSG_START_ADR &&
++	    address <=3D LG_ADDRESS_SPACE_DEBUG_MSG_END_ADR)
++		return AE_OK;
 +
-+  fsl,cpm-command:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: cpm command
++	if (size !=3D sizeof(byte))
++		return AE_BAD_PARAMETER;
 +
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
++	byte =3D *value & 0xFF;
 +
-+allOf:
-+  - $ref: ethernet-controller.yaml
++	switch (address) {
++	case LG_ADDRESS_SPACE_FAN_MODE_ADR:
++		dev_dbg(dev, "Fan mode set to mode %u\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_CPU_TEMP_ADR:
++		dev_dbg(dev, "CPU temperature is %u =C2=B0C\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_CPU_TRIP_LOW_ADR:
++		dev_dbg(dev, "CPU lower trip point set to %u =C2=B0C\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_CPU_TRIP_HIGH_ADR:
++		dev_dbg(dev, "CPU higher trip point set to %u =C2=B0C\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_MB_TEMP_ADR:
++		dev_dbg(dev, "Motherboard temperature is %u =C2=B0C\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_MB_TRIP_LOW_ADR:
++		dev_dbg(dev, "Motherboard lower trip point set to %u =C2=B0C\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_MB_TRIP_HIGH_ADR:
++		dev_dbg(dev, "Motherboard higher trip point set to %u =C2=B0C\n", byte)=
+;
++		return AE_OK;
++	default:
++		dev_notice_ratelimited(dev, "Ignoring write to unknown opregion address=
+ %llu\n",
++				       address);
++		return AE_OK;
++	}
++}
 +
-+unevaluatedProperties: false
++static acpi_status lg_laptop_address_space_read(struct device *dev, acpi_=
+physical_address address,
++						size_t size, u64 *value)
++{
++	if (size !=3D 1)
++		return AE_BAD_PARAMETER;
 +
-+examples:
-+  - |
-+    ethernet@11300 {
-+        compatible = "fsl,mpc8272-fcc-enet",
-+                     "fsl,cpm2-fcc-enet";
-+        reg = <0x11300 0x20 0x8400 0x100 0x11390 1>;
-+        local-mac-address = [ 00 00 00 00 00 00 ];
-+        interrupts = <20 8>;
-+        interrupt-parent = <&pic>;
-+        phy-handle = <&phy0>;
-+        fsl,cpm-command = <0x12000300>;
-+    };
++	switch (address) {
++	case LG_ADDRESS_SPACE_DEBUG_FLAG_ADR:
++		/* Debug messages are already printed using the standard ACPI Debug obj=
+ect */
++		*value =3D 0x00;
++		return AE_OK;
++	case LG_ADDRESS_SPACE_DTTM_FLAG_ADR:
++		*value =3D fw_debug;
++		return AE_OK;
++	default:
++		dev_notice_ratelimited(dev, "Attempt to read unknown opregion address %=
+llu\n",
++				       address);
++		return AE_BAD_PARAMETER;
++	}
++}
 +
-diff --git a/Documentation/devicetree/bindings/net/fsl,cpm-mdio.yaml b/Documentation/devicetree/bindings/net/fsl,cpm-mdio.yaml
-new file mode 100644
-index 0000000000000..b1791a3c490e2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/fsl,cpm-mdio.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/fsl,cpm-mdio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++static acpi_status lg_laptop_address_space_handler(u32 function, acpi_phy=
+sical_address address,
++						   u32 bits, u64 *value, void *handler_context,
++						   void *region_context)
++{
++	struct device *dev =3D handler_context;
++	size_t size;
 +
-+title: Freescale CPM MDIO Device
++	if (bits % 8)
++		return AE_BAD_PARAMETER;
 +
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
++	size =3D bits / 8;
 +
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - fsl,pq1-fec-mdio
-+          - fsl,cpm2-mdio-bitbang
-+      - items:
-+          - const: fsl,mpc8272ads-mdio-bitbang
-+          - const: fsl,mpc8272-mdio-bitbang
-+          - const: fsl,cpm2-mdio-bitbang
++	switch (function) {
++	case ACPI_READ:
++		return lg_laptop_address_space_read(dev, address, size, value);
++	case ACPI_WRITE:
++		return lg_laptop_address_space_write(dev, address, size, value);
++	default:
++		return AE_BAD_PARAMETER;
++	}
++}
 +
-+  reg:
-+    maxItems: 1
++static void lg_laptop_remove_address_space_handler(void *data)
++{
++	struct acpi_device *device =3D data;
 +
-+  fsl,mdio-pin:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: pin of port C controlling mdio data
++	acpi_remove_address_space_handler(device->handle, LG_ADDRESS_SPACE_ID,
++					  &lg_laptop_address_space_handler);
++}
 +
-+  fsl,mdc-pin:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: pin of port C controlling mdio clock
+ static int acpi_add(struct acpi_device *device)
+ {
+ 	struct platform_device_info pdev_info =3D {
+@@ -653,6 +769,7 @@ static int acpi_add(struct acpi_device *device)
+ 		.name =3D PLATFORM_NAME,
+ 		.id =3D PLATFORM_DEVID_NONE,
+ 	};
++	acpi_status status;
+ 	int ret;
+ 	const char *product;
+ 	int year =3D 2017;
+@@ -660,6 +777,17 @@ static int acpi_add(struct acpi_device *device)
+ 	if (pf_device)
+ 		return 0;
+
++	status =3D acpi_install_address_space_handler(device->handle, LG_ADDRESS=
+_SPACE_ID,
++						    &lg_laptop_address_space_handler,
++						    NULL, &device->dev);
++	if (ACPI_FAILURE(status))
++		return -ENODEV;
 +
-+required:
-+  - compatible
-+  - reg
++	ret =3D devm_add_action_or_reset(&device->dev, lg_laptop_remove_address_=
+space_handler,
++				       device);
++	if (ret < 0)
++		return ret;
 +
-+allOf:
-+  - $ref: mdio.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    mdio@10d40 {
-+        compatible = "fsl,mpc8272ads-mdio-bitbang",
-+                     "fsl,mpc8272-mdio-bitbang",
-+                     "fsl,cpm2-mdio-bitbang";
-+        reg = <0x10d40 0x14>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        fsl,mdio-pin = <12>;
-+        fsl,mdc-pin = <13>;
-+    };
-+
-diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,ucc-hdlc.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,ucc-hdlc.yaml
-new file mode 100644
-index 0000000000000..64ffbf75dd9d2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,ucc-hdlc.yaml
-@@ -0,0 +1,140 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,ucc-hdlc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: High-Level Data Link Control(HDLC)
-+
-+description: HDLC part in Universal communication controllers (UCCs)
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    const: fsl,ucc-hdlc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  cell-index:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  rx-clock-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    oneOf:
-+      - pattern: "^brg([0-9]|1[0-6])$"
-+      - pattern: "^clk([0-9]|1[0-9]|2[0-4])$"
-+
-+  tx-clock-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    oneOf:
-+      - pattern: "^brg([0-9]|1[0-6])$"
-+      - pattern: "^clk([0-9]|1[0-9]|2[0-4])$"
-+
-+  fsl,tdm-interface:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description: Specify that hdlc is based on tdm-interface
-+
-+  fsl,rx-sync-clock:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: rx-sync
-+    enum:
-+      - none
-+      - rsync_pin
-+      - brg9
-+      - brg10
-+      - brg11
-+      - brg13
-+      - brg14
-+      - brg15
-+
-+  fsl,tx-sync-clock:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: tx-sync
-+    enum:
-+      - none
-+      - tsync_pin
-+      - brg9
-+      - brg10
-+      - brg11
-+      - brg13
-+      - brg14
-+      - brg15
-+
-+  fsl,tdm-framer-type:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: required for tdm interface
-+    enum: [e1, t1]
-+
-+  fsl,tdm-id:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: number of TDM ID
-+
-+  fsl,tx-timeslot-mask:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      required for tdm interface.
-+      time slot mask for TDM operation. Indicates which time
-+      slots used for transmitting and receiving.
-+
-+  fsl,rx-timeslot-mask:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      required for tdm interface.
-+      time slot mask for TDM operation. Indicates which time
-+      slots used for transmitting and receiving.
-+
-+  fsl,siram-entry-id:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      required for tdm interface
-+      Must be 0,2,4...64. the number of TDM entry.
-+
-+  fsl,tdm-internal-loopback:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      optional for tdm interface
-+      Internal loopback connecting on TDM layer.
-+
-+  fsl,hmask:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: |
-+      HDLC address recognition. Set to zero to disable
-+      address filtering of packets:
-+      fsl,hmask = /bits/ 16 <0x0000>;
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    communication@2000 {
-+        compatible = "fsl,ucc-hdlc";
-+        reg = <0x2000 0x200>;
-+        rx-clock-name = "clk8";
-+        tx-clock-name = "clk9";
-+        fsl,rx-sync-clock = "rsync_pin";
-+        fsl,tx-sync-clock = "tsync_pin";
-+        fsl,tx-timeslot-mask = <0xfffffffe>;
-+        fsl,rx-timeslot-mask = <0xfffffffe>;
-+        fsl,tdm-framer-type = "e1";
-+        fsl,tdm-id = <0>;
-+        fsl,siram-entry-id = <0>;
-+        fsl,tdm-interface;
-+    };
-+
-+  - |
-+    communication@2000 {
-+        compatible = "fsl,ucc-hdlc";
-+        reg = <0x2000 0x200>;
-+        rx-clock-name = "brg1";
-+        tx-clock-name = "brg1";
-+    };
-diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/network.txt b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/network.txt
-deleted file mode 100644
-index 6d2dd8a31482a..0000000000000
---- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/network.txt
-+++ /dev/null
-@@ -1,130 +0,0 @@
--* Network
--
--Currently defined compatibles:
--- fsl,cpm1-scc-enet
--- fsl,cpm2-scc-enet
--- fsl,cpm1-fec-enet
--- fsl,cpm2-fcc-enet (third resource is GFEMR)
--- fsl,qe-enet
--
--Example:
--
--	ethernet@11300 {
--		compatible = "fsl,mpc8272-fcc-enet",
--			     "fsl,cpm2-fcc-enet";
--		reg = <11300 20 8400 100 11390 1>;
--		local-mac-address = [ 00 00 00 00 00 00 ];
--		interrupts = <20 8>;
--		interrupt-parent = <&PIC>;
--		phy-handle = <&PHY0>;
--		fsl,cpm-command = <12000300>;
--	};
--
--* MDIO
--
--Currently defined compatibles:
--fsl,pq1-fec-mdio (reg is same as first resource of FEC device)
--fsl,cpm2-mdio-bitbang (reg is port C registers)
--
--Properties for fsl,cpm2-mdio-bitbang:
--fsl,mdio-pin : pin of port C controlling mdio data
--fsl,mdc-pin : pin of port C controlling mdio clock
--
--Example:
--	mdio@10d40 {
--		compatible = "fsl,mpc8272ads-mdio-bitbang",
--			     "fsl,mpc8272-mdio-bitbang",
--			     "fsl,cpm2-mdio-bitbang";
--		reg = <10d40 14>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		fsl,mdio-pin = <12>;
--		fsl,mdc-pin = <13>;
--	};
--
--* HDLC
--
--Currently defined compatibles:
--- fsl,ucc-hdlc
--
--Properties for fsl,ucc-hdlc:
--- rx-clock-name
--- tx-clock-name
--	Usage: required
--	Value type: <string>
--	Definition : Must be "brg1"-"brg16" for internal clock source,
--		     Must be "clk1"-"clk24" for external clock source.
--
--- fsl,tdm-interface
--	Usage: optional
--	Value type: <empty>
--	Definition : Specify that hdlc is based on tdm-interface
--
--The property below is dependent on fsl,tdm-interface:
--- fsl,rx-sync-clock
--	Usage: required
--	Value type: <string>
--	Definition : Must be "none", "rsync_pin", "brg9-11" and "brg13-15".
--
--- fsl,tx-sync-clock
--	Usage: required
--	Value type: <string>
--	Definition : Must be "none", "tsync_pin", "brg9-11" and "brg13-15".
--
--- fsl,tdm-framer-type
--	Usage: required for tdm interface
--	Value type: <string>
--	Definition : "e1" or "t1".Now e1 and t1 are used, other framer types
--		     are not supported.
--
--- fsl,tdm-id
--	Usage: required for tdm interface
--	Value type: <u32>
--	Definition : number of TDM ID
--
--- fsl,tx-timeslot-mask
--- fsl,rx-timeslot-mask
--	Usage: required for tdm interface
--	Value type: <u32>
--	Definition : time slot mask for TDM operation. Indicates which time
--		     slots used for transmitting and receiving.
--
--- fsl,siram-entry-id
--	Usage: required for tdm interface
--	Value type: <u32>
--	Definition : Must be 0,2,4...64. the number of TDM entry.
--
--- fsl,tdm-internal-loopback
--	usage: optional for tdm interface
--	value type: <empty>
--	Definition : Internal loopback connecting on TDM layer.
--- fsl,hmask
--	usage: optional
--	Value type: <u16>
--	Definition: HDLC address recognition. Set to zero to disable
--		    address filtering of packets:
--		    fsl,hmask = /bits/ 16 <0x0000>;
--
--Example for tdm interface:
--
--	ucc@2000 {
--		compatible = "fsl,ucc-hdlc";
--		rx-clock-name = "clk8";
--		tx-clock-name = "clk9";
--		fsl,rx-sync-clock = "rsync_pin";
--		fsl,tx-sync-clock = "tsync_pin";
--		fsl,tx-timeslot-mask = <0xfffffffe>;
--		fsl,rx-timeslot-mask = <0xfffffffe>;
--		fsl,tdm-framer-type = "e1";
--		fsl,tdm-id = <0>;
--		fsl,siram-entry-id = <0>;
--		fsl,tdm-interface;
--	};
--
--Example for hdlc without tdm interface:
--
--	ucc@2000 {
--		compatible = "fsl,ucc-hdlc";
--		rx-clock-name = "brg1";
--		tx-clock-name = "brg1";
--	};
--- 
-2.34.1
+ 	ret =3D platform_driver_register(&pf_driver);
+ 	if (ret)
+ 		return ret;
+=2D-
+2.39.2
 
 
