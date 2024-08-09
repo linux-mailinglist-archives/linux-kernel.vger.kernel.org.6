@@ -1,116 +1,92 @@
-Return-Path: <linux-kernel+bounces-280439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F86794CAB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:35:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7D494CAB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 520571C2207B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:35:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F11D01F23307
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663D516D31E;
-	Fri,  9 Aug 2024 06:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685F716C684;
+	Fri,  9 Aug 2024 06:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="UUY/gQrT"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kEDbXzb/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD0881AD2;
-	Fri,  9 Aug 2024 06:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B9112FF72
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 06:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723185309; cv=none; b=DXrvFpIqVA5XSyBfBoJfBMiQmLxIcYIsNlLKk2sesF8G54X3/lVhccMDwYhiGEZ73UiJiJf/6btuPh5SS6wxHf8OiprprDqlXEDsmTjgYhrwBIO51G66kr60bfSU9S+BwSO18ssUWodOTYBc4ln58D2kVR/kRwPNpxs8jqL5l7E=
+	t=1723185466; cv=none; b=hrLDhaBY7IP9QM/QJBn9ERGyNyi+/atqngekiDln93Lo5FGUHyDB02rlA7TtsO6yD6h4jgt34b673QEJlh/mlK8zbug5EV0gZj3D8RwbgRXhySKjK7+utlUiwHwfwvv2ey3BShnNtK5UbzJoPrXJHa7yjfQpmjQawF1RTeOM330=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723185309; c=relaxed/simple;
-	bh=GKtr8nhc37ZChqd/sIw4sToKmVF2fcW2I+SqjRUqOLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XeDOzwGAwFOanpbfNq59XhjH/kJghwSvlAmCZAdnYecYFffMaaFPxqJHsqUqHC1m5TASkSj8aMrctHAiak3QCAtTqlQu4oKbkmgoUNsawLkxMKiqAhCBTL1nV/ec1DSqygEyszKLRzXK0I8o1rIqcJse76yC0zLrsrlk8MYxFmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=UUY/gQrT; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7aa086b077so172568966b.0;
-        Thu, 08 Aug 2024 23:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1723185306; x=1723790106; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CVnfAEiRYm+yWiEHeMZb+Y8q5Y3EB4cYQYvJxe5LXZs=;
-        b=UUY/gQrT3QlOHUjSVKjb3UIGlgJcainK9iTrHwo2jPhr2KZuKRMOU4DC7oTgNGAhd+
-         wz2neXAb1Ffq0kltnmPyc+aNMTOcjgB/vQfC8+ljVg6kkETRqHVFkLncg80CK72VB/2z
-         0GimHVmfA4LOYEhR5UF+aQGl7XG0tGNwFSkYHiqYRhQZe8v0KPJRc2Po0rSD69wzYOB9
-         rDVaF6wwj7E4Vj5GbozEWe/QXsQ2TeOCC0tKpzbPDaSfyMs6nNyqIzQ80KBxoFC7uvhq
-         N8XgXnAi6FlASlCQ354LLhrtSf/ohhyWRrWiIv1tzR/k6BmxVAjNYCEVZCzj45wwyU/2
-         RLaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723185306; x=1723790106;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CVnfAEiRYm+yWiEHeMZb+Y8q5Y3EB4cYQYvJxe5LXZs=;
-        b=XQWvngZab/qFSvYwjEeb2SVq/z7g5ZBpvzNqzS0JCwNadj7JWg2iD/JdMh/6BYPw/J
-         mkAjcXsnWQhoVFZFrjYoeXpSAU4asYZI1+mem6jLYrlTcDCka65RHNDiCF/3yjE4jtop
-         tqYRMmz1Pf/CnmitXIMknnQoXFIn+qx7qsKCMM4r5Bc4dt/qVceDEFNCpxhsB2w+Kyo9
-         c+4BxFRZWscRzJY/BFSJKxQaWFtZqTyyOCd9b4jt3IgcK+uUlqu5IDlwuiCrpPZ1eDHY
-         J65yFltuuvaP4Fj4nCaafVRlti/R7HuG2JP+jiEOyb/GqruXgWFE0PZ4Rj2PHZ9AD+CP
-         TcgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWzQImJeGIOyvHJzSL5vbQhcfUg2M9HbKa2nSosLfKXX0KhkLx9ELnmNoL2sUCndXbh3jpsEZy0ITT9ge6BB8Ywu2SOZyO3KknolTtFPv/pOHJ6KpsChw/REEZ8k8f74nkqkoa
-X-Gm-Message-State: AOJu0YxOEItbhNr8zI/pc9TnsClijIAZ3YJ3FgLN44zIkiiAEawd2fM/
-	0wyziN96i0hp/gKxZVu5aosXqbMyEmxEisrdwTkXlXyp3sJvjK8=
-X-Google-Smtp-Source: AGHT+IHKSd1693e92TOlqx4CfQaMdz0+zR4H5NztzJSB5vHvlFvXKft6DsSez5D7cfNGjAELfeWMrA==
-X-Received: by 2002:a17:906:d246:b0:a6f:4f2c:1936 with SMTP id a640c23a62f3a-a80aa660067mr42935766b.44.1723185305842;
-        Thu, 08 Aug 2024 23:35:05 -0700 (PDT)
-Received: from [192.168.1.3] (p5b05740f.dip0.t-ipconnect.de. [91.5.116.15])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c6627esm814672766b.95.2024.08.08.23.35.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 23:35:05 -0700 (PDT)
-Message-ID: <0735761c-d172-4db6-a211-6f02bf1be342@googlemail.com>
-Date: Fri, 9 Aug 2024 08:35:03 +0200
+	s=arc-20240116; t=1723185466; c=relaxed/simple;
+	bh=AKgm5hGI3U5WW/tDOgil8Ci0U1WSd3Q9p0NpadTmkEE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ewsh+IP3smPLeSyYyJsHQOjBVWLeqmKaySFMI4BbC6OlMdtZVXRwYUj5kh5EPfKtYAGLFXzQxBDtU8zgPRNyo+XD1vdqXWhr/v10HQFIZcwNoHiusrh5m7emuOym8JPy6lyK8T0UFv2UfpGFYXWRLKX/Iu0xIxqm41vKO9Kbohg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kEDbXzb/; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723185465; x=1754721465;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=AKgm5hGI3U5WW/tDOgil8Ci0U1WSd3Q9p0NpadTmkEE=;
+  b=kEDbXzb/CMHQ3XNTBksTnusuCQk34Ip/wEeBuTFT+HjAkJj1yq5Swe8h
+   2l5/u/CpTIlVDu3/QY3eALGZ8BELjBMBbsO2XHScAcyP9M1ZtbybK7ec0
+   Roz4gx+tZSU6VhbjoK9/ptOP0H+t8ERL7A/50dO5VeauHHmpMXA8MtsGc
+   uuYfhfzs+3wU0oDHqYROaTL3H9YHH+xErtPeaU2IXGIV0oGRpOYj7f5OM
+   iE5Tlg/GXbrQLCY+ZtFCqAqLc8mMwM/g50xnsfPVBfgiNk8pRAxRqal54
+   eKdzODS5myKtC6lJW1u0fku+lFKwuhpYUimGBNSZKtHQXHiwnSlCcaTii
+   A==;
+X-CSE-ConnectionGUID: qihpEeWcQaiZ9yXn/A18jw==
+X-CSE-MsgGUID: YpTqea0PRNudR/gSdqHzDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21157646"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="21157646"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 23:37:44 -0700
+X-CSE-ConnectionGUID: HOCdLXN8TSC6V22qh5iCoA==
+X-CSE-MsgGUID: 5SdCDGM3S3SsmSKSvAZKrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="57443066"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.229.145]) ([10.124.229.145])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 23:37:42 -0700
+Message-ID: <8b4fca1e-72a9-4c57-9ad8-5602def71560@linux.intel.com>
+Date: Fri, 9 Aug 2024 14:37:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/121] 6.6.45-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240807150019.412911622@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240807150019.412911622@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] iommu: Remove unused declaration
+ iommu_sva_unbind_gpasid()
+To: Yue Haibing <yuehaibing@huawei.com>, joro@8bytes.org, will@kernel.org,
+ robin.murphy@arm.com, jgg@ziepe.ca
+References: <20240808140619.2498535-1-yuehaibing@huawei.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240808140619.2498535-1-yuehaibing@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Am 07.08.2024 um 16:58 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.45 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2024/8/8 22:06, Yue Haibing wrote:
+> Commit 0c9f17877891 ("iommu: Remove guest pasid related interfaces and definitions")
+> removed the implementation but leave declaration.
+> 
+> Signed-off-by: Yue Haibing<yuehaibing@huawei.com>
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
-
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Thanks,
+baolu
 
