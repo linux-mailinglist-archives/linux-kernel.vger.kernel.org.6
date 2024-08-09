@@ -1,118 +1,187 @@
-Return-Path: <linux-kernel+bounces-281098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C2594D30F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:13:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F414494D317
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F2E8281668
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:13:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B7D1B2127D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5167197A8B;
-	Fri,  9 Aug 2024 15:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C384198842;
+	Fri,  9 Aug 2024 15:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Y/b+L+ua"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xhUXh7Qg"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0833197A8E
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AAC197A9E;
+	Fri,  9 Aug 2024 15:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723216411; cv=none; b=MqPpFvEt9jck93q+mhuCMhPm1veefxgAXviMVSATKfeZQP7bmEfLCcGBQm0XTeOaoD1h/BAXbCpJHEGQSouHOmrMxTy0sF1QYgsHwmf9FkeXUeI4jBpqFsAow+Ev3MiYRgViYPflIJ3/aZdUIBjuQoWyR8lkTK71IiTxNuZqhKY=
+	t=1723216439; cv=none; b=hm6X7Lr9pN3TkKvB5WBebDoRwb6nHLtt/ODVfA9MqbPepBw4JLLxSWcipEe9YXugoxU2x7gPzGTJl6S5qZ1gdG370+0NyY9+OOmCzyd0dFYFJhzcIbHISVXdx7UdspjXoB7gCHXCxwOdt04o+5PE4lsbh0c5kx5Trz1aMqRkDF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723216411; c=relaxed/simple;
-	bh=zjn3YmKXlPxzbD8VKXj7SB08Iibw46diwUCwOIFAoyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WhjBMb4TUwJTXQ7FjBs8Bhnmj1B5Xr2Sp1QlJv2W04I0MNSGQpmJ1hYdIowSuJCHIwxmBTK2zzzhtExGmcF0hMN1ZrI+RWZKKfhMNacjM5Ertnt+Qq1mOFd9/oennuo9zMeAvd1r0cHz8OJqViy94YzwQhttOdkx6VHf5FOu7CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Y/b+L+ua; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a6135dso2788718a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:13:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1723216407; x=1723821207; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SQb4P6KW7DwW15iPQt+xRBs0vTrFbvLGmJcOvQXiPP0=;
-        b=Y/b+L+ua50oAoynC1EMq9UDW8/xPtKQ0NkckzIl6L8K5HkHg9WjAWD1QN9kVMWip0P
-         3sxALjTpeA9L8cR/IMYwFSKV/vFM2GxsZlSjxFirSDlQgcG9IAOBgi/moCp0SbsnjM3G
-         XaHlVNBWNmtZ+6iqAni6I+wE7Thi2+eYvlOmQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723216407; x=1723821207;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SQb4P6KW7DwW15iPQt+xRBs0vTrFbvLGmJcOvQXiPP0=;
-        b=UTy2rZi0vu0zMYeAFSfvGAhvBy6MK1NqIXX//+uGoxveB+sdpdx1XLengofyN4dGSX
-         7js/Hvzs1E9UtsfrTjAHVvQdvmJpWvxMUJGOzuizGu6gotyeY2mS4ehD0H3BpMofaXP4
-         VSYdoooKpAXsn3MUgqdTCCC6DRZFOUn0aKxFe1mMaVvvg57SNomLm90UWoDHfWSmlvoE
-         iagEGrQMulAk1wUaDGdzDI1aA0cAO0NKc2czYHreCvmZYp6FjPQUxdUtyKTed4zqe+OE
-         zKBBBrzH9DhYL43oESYpfrm9+Ho8tNjM5KeuAwBYcQWDdGJKnPSfbm/39ypYLtEN+GA3
-         tcnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBSVEP9BwLfxAOmKlXZBfwbY5/7ImRpEE+9X50gEZXTngDF7bMkXw6hifv1xV6j/YNaT/qIL2Ofwuc/dJwll6VvREfEejMZiKWbHLP
-X-Gm-Message-State: AOJu0YxWY+HklLGYSp5L6VtVmcegTMv6BNOZ3jd17zIju3zPYBVewM0K
-	t1f/ettS6QShZtnAHgErVSmGB3jLhPfYppDq1nokMudoZ8x16YQ2KmxeV8aCniqRLbFAIz8z6QU
-	iR/MmCA==
-X-Google-Smtp-Source: AGHT+IFolwMJgIUqglc58CwYSdVtLjYMZXvrgAyYRrJb4R3AhpsQvYDpfY3m4F2X+jdyed+0j1D6mg==
-X-Received: by 2002:a05:6402:5186:b0:5b9:3846:8bb9 with SMTP id 4fb4d7f45d1cf-5bd0a538efcmr1252564a12.10.1723216407099;
-        Fri, 09 Aug 2024 08:13:27 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c6e82csm1707315a12.53.2024.08.09.08.13.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 08:13:25 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so296535366b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:13:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXT+8qvrhwQK6AtQbQbLfbei+vg0zP8E6dAxwraZei09kZc7JjdbgQZpyUMlZK2vK4Xt/+4Ioe2pzpMJu/usxXP84v35vJ8BAsGzBdE
-X-Received: by 2002:a17:907:7e92:b0:a7a:ab8a:391 with SMTP id
- a640c23a62f3a-a80aa65c854mr137777266b.45.1723216405166; Fri, 09 Aug 2024
- 08:13:25 -0700 (PDT)
+	s=arc-20240116; t=1723216439; c=relaxed/simple;
+	bh=ic2zUbWenI+aK0sAV6cBRsJGprmkwAiVoDaglQXTILo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rv7DtIYMxIQItN2dUbZQ2ORX2LQTzTx11cxHXH607k8tYqyeOy7opwb/2IXdGGuIsNVFxqt5YRes+CTn+Xm17UBbFXbivC/SvFfVEBFByf8jOa8wMDED9q3+rZSLYXbCLLm4AXKh64WIHdBJ1bWqtVfMy4ZQ1xYzT+JLkXqufrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xhUXh7Qg; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4799oVn4020207;
+	Fri, 9 Aug 2024 17:13:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=DFo1fYl9nCcaq9Zjb9msp/
+	A8hQ7oocxj4j73HSkUytY=; b=xhUXh7QgMtiq51FQ2PBRFBr2JxHE7/pXl9qbL7
+	tnH2StFkY0LSOnB8gF7gQHH9VSNIpTa+f/F8rUS9GK8/O4omf0y2yHcTl/EPINAj
+	3/bLMF/JmoeSuLP62Gt7o4tPL11RHQ/df5NnxEekZGZV4jyhHIu/NqNMd3Hsa6cC
+	/aPK1wxjGac1SH/0/OzkZ9R5/6KQ/oE8tA6/1wzAcJO5i/Mpy7JbeqKGx3L8xTmu
+	dWADCQqmXgX/Y2sEEr46fbSoZlPest5CLVnZLNKPGYlMYqGkSVBbSakq27p4FhBE
+	oQIPaFVCoFSkg7CV0UsCETtuDrHQLNKm04M61ucNw3IhGZAg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40tu6nwcx1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 17:13:24 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 49C7140046;
+	Fri,  9 Aug 2024 17:13:17 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ACEC12612A9;
+	Fri,  9 Aug 2024 17:13:17 +0200 (CEST)
+Received: from localhost (10.252.26.60) by EQNDAG1NODE6.st.com (10.75.129.135)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 9 Aug
+ 2024 17:13:17 +0200
+From: Yannick Fertre <yannick.fertre@foss.st.com>
+To: Yannick Fertre <yannick.fertre@foss.st.com>,
+        Raphael Gallais-Pou
+	<raphael.gallais-pou@foss.st.com>,
+        Philippe Cornu
+	<philippe.cornu@foss.st.com>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter
+	<daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] dt-bindings: display: st,stm32-ltdc: Document stm32mp25 compatible
+Date: Fri, 9 Aug 2024 17:13:14 +0200
+Message-ID: <20240809151314.221746-1-yannick.fertre@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
- <CAHk-=wh_P7UR6RiYmgBDQ4L-kgmmLMziGarLsx_0bUn5vYTJUw@mail.gmail.com> <875xs93glh.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <875xs93glh.fsf@email.froward.int.ebiederm.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 9 Aug 2024 08:13:09 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj+buZ5Efw4so9FbaJ5Q=xLr0+bcYDafouehVG93Msd7w@mail.gmail.com>
-Message-ID: <CAHk-=wj+buZ5Efw4so9FbaJ5Q=xLr0+bcYDafouehVG93Msd7w@mail.gmail.com>
-Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Brian Mak <makb@juniper.net>, Kees Cook <kees@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To EQNDAG1NODE6.st.com
+ (10.75.129.135)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-09_12,2024-08-07_01,2024-05-17_01
 
-On Fri, 9 Aug 2024 at 07:40, Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> I asked him to perform this at snapshot time.  Plus it is obvious at
-> snapshot time that you can change the allocated array, while it is
-> not so obvious in the ->core_dump methods.
+Add "st,stm32mp25-ltdc" compatible for SOC MP25. This new SOC introduce
+new clocks (bus, ref & lvds). Bus clock was separated from lcd clock.
+New sources are possible for lcd clock (lvds / ref).
 
-Fair enough. The days when we supported a.out dumps are obviously long
-long gone, and aren't coming back.
+Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
+---
+Changes in v2: Rework clock property.
+ .../bindings/display/st,stm32-ltdc.yaml       | 51 +++++++++++++++----
+ 1 file changed, 41 insertions(+), 10 deletions(-)
 
-So I am not adamant that it has to be done in the dumper, and I
-probably just have that historical "we have multiple different dumpers
-with different rules" mindset that isn't really relevant any more.
+diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+index d6ea4d62a2cf..cc578ad9f040 100644
+--- a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
++++ b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+@@ -12,7 +12,9 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    const: st,stm32-ltdc
++    enum:
++      - st,stm32-ltdc
++      - st,stm32mp25-ltdc
+ 
+   reg:
+     maxItems: 1
+@@ -23,13 +25,6 @@ properties:
+       - description: errors interrupt line.
+     minItems: 1
+ 
+-  clocks:
+-    maxItems: 1
+-
+-  clock-names:
+-    items:
+-      - const: lcd
+-
+   resets:
+     maxItems: 1
+ 
+@@ -46,11 +41,47 @@ required:
+   - compatible
+   - reg
+   - interrupts
+-  - clocks
+-  - clock-names
+   - resets
+   - port
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - st,stm32mp25-ltdc
++    then:
++      properties:
++        clocks:
++          maxItems: 4
++          items:
++            - description: Lcd Clock
++            - description: Bus Clock
++            - description: Reference Clock
++            - description: Lvds Clock
++        clock-names:
++          items:
++            - const: lcd
++            - const: bus
++            - const: ref
++            - const: lvds
++      required:
++        - clocks
++        - clock-names
++    else:
++      properties:
++        clocks:
++          maxItems: 1
++          items:
++            - description: Lcd Clock
++        clock-names:
++          items:
++            - const: lcd
++      required:
++        - clocks
++        - clock-names
++
+ additionalProperties: false
+ 
+ examples:
+-- 
+2.34.1
 
-> I would argue that the long term maintainable thing to do is to
-> merge elf_core_dump and elf_fdpic_core_dump and put all of the code
-> in fs/coredump.c
-
-I wouldn't object. It's not like there's any foreseeable new core dump
-format that we'd expect, and the indirection makes the code flow
-harder to follow.
-
-Not that most people look at this code a lot.
-
-             Linus
 
