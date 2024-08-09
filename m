@@ -1,277 +1,165 @@
-Return-Path: <linux-kernel+bounces-281330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED93994D599
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:42:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EAE94D59B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9ED7281DFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:42:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87C128133D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310FD13D638;
-	Fri,  9 Aug 2024 17:42:25 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C738D7316E
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 17:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C9F84D11;
+	Fri,  9 Aug 2024 17:43:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D40E60DCF;
+	Fri,  9 Aug 2024 17:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723225344; cv=none; b=kkNhGDk92I3JdRlEJUiW7nlIO9ya/nDDXMknr2mK//BzM0NCHm78EyTetpUepzXGB9HZYDwE36qpqMIGDF/QA7MI2Abvva3A0lyu7ogvFSKPEVUg9/Sn6jxpT5RpBzb8rnyC6rep91INnhNnSMkKr7EHaIGaBGPO7IaWLnyL1N8=
+	t=1723225434; cv=none; b=AlOzw1P2T1XFeQQNzb+9uPS0iiuNW+Jc13cNM5cbqRObZuF/bxlE67EuLcw8lyZDWpqtoNSW1ahEZ/inHm2DVdiy8jPVuYPukicqFXlAYup+6csxFRAC/geoxo/2kXXCUt6hyriNxqNH+Ut3yHhztko5tmAryascre7LnlVDqJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723225344; c=relaxed/simple;
-	bh=2EPSHaSW0yT5CPf+czwsFP98vo+s3mtIrzY0EJqp4nY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l86vDd5W6qQ7sBhF3o27VuxNS+y3vt06rUJPpWG7pytCErpzPrxay2+ikU8TcOPqQgAI7R9NhHUlj9dOeMwnjrlVfiI19RNIo6fS6WQAXLxiV3VHEy9f2b8zfbHPO45rsE1o6A38FhnYYEzAVIjQPPpFLBiQw6zPn215p230K5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f8edd731cso278147039f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 10:42:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723225342; x=1723830142;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r9SikiXrI54ueCXpMjmkzPfTZL2o5GTEvSUXBGW0l+c=;
-        b=Nf0Uj5nECdjAwlGBo8ae8H1ni2x56DdS5nuDuX8quuF12pEluvhhgDKs/iErhqVxfy
-         k52XdIwPllzuTYNSfk6YWaJkGzk1PSweHYkagFMmG9Flt6qtNbAix/MUIihS9riFGH5F
-         3q5ss4ZNXEm50nSEmLs1lvdtdtq1A7VqJtbGq26OACSZ95yp1g8LS2sX6S4UpLKK9l6v
-         ypH7Hkpgx5mqvRGAQyfoMZNfE83ULK5mnxs3ePEzadeDuRKNsxUir9BLDmDF9BVCjJHc
-         YZGP5Gkb6Rzt+2N18ebOnDawBuAuGs2YXYyPQS3b+Edg2g496TFB3SWTG+T8N+0ata0h
-         4Icg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWRhSFgiFo0CSBdc2B5UFJnJtdtOcIFL4o0XP2jd9s59dAAk5cWo+Kuf3mPAYeCOacPTiZAqTq9w/et/U7QIdZit/ZRKiojY/+7np0
-X-Gm-Message-State: AOJu0YxQ12rBwtLpX8WumzZhYqYOguTcLuy9/VadpE+YZ8lbkjLgNiiN
-	ibFKASY4RF+JiUPch14Jpz7ZkVbvVKhPAILscWE2IY73W6ApjZzUJ5gwnH2H9bVz8h9LAmNIgKT
-	W10EI4xp89ht/XN7K1T8fVyb3ZODLHQro3WUyIy5cEw32eWOm333rNP8=
-X-Google-Smtp-Source: AGHT+IG9Oc8XZg6vWyomVTHNWwBsWAUBtRLh7A5wdI4Uy01LkStS9EX8Y34o0MyDKdmQ4OK7nIWE3jiqaRJ3GuUFnwOr/Q4SRsMU
+	s=arc-20240116; t=1723225434; c=relaxed/simple;
+	bh=cM/0CrQLED8CsE5zqK/fBlp7UuuJHwRTMRWCvCDrJxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rO+vItfaagGelcXB2HLAB35MhI4W11k8qBDCJUPHHgGX4dLerg2ic0yK93TRBBCtzqa81S8rmiO0LmQawiUHpP9fSMkpcp8t+aK/Dva7Wz6r8mQKz7Iyd25zaiUnRK6nGicovzqQzD0Zc8oFD6Qjs7kSL/Yi8+2izM6+RVrpbUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBA3A13D5;
+	Fri,  9 Aug 2024 10:44:17 -0700 (PDT)
+Received: from [10.57.46.232] (unknown [10.57.46.232])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35A9B3F6A8;
+	Fri,  9 Aug 2024 10:43:50 -0700 (PDT)
+Message-ID: <f4c4a142-d0bb-44c5-8bb9-56136c8f7cf2@arm.com>
+Date: Fri, 9 Aug 2024 18:43:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:13c3:b0:81f:c103:3e70 with SMTP id
- ca18e2360f4ac-8225ee71692mr8376839f.4.1723225341905; Fri, 09 Aug 2024
- 10:42:21 -0700 (PDT)
-Date: Fri, 09 Aug 2024 10:42:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005f5a6d061f43aabe@google.com>
-Subject: [syzbot] [net?] [virt?] BUG: stack guard page was hit in vsock_bpf_recvmsg
-From: syzbot <syzbot+bdb4bd87b5e22058e2a4@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sgarzare@redhat.com, syzkaller-bugs@googlegroups.com, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] iommu/dma: Support MSIs through nested domains
+To: "Tian, Kevin" <kevin.tian@intel.com>, Nicolin Chen <nicolinc@nvidia.com>
+Cc: "jgg@nvidia.com" <jgg@nvidia.com>, "joro@8bytes.org" <joro@8bytes.org>,
+ "will@kernel.org" <will@kernel.org>, "shuah@kernel.org" <shuah@kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+References: <cover.1722644866.git.nicolinc@nvidia.com>
+ <b1b8ff9c716f22f524be0313ad12e5c6d10f5bd4.1722644866.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276E59FBD67B1119B3E2A858CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <6da4f216-594b-4c51-848c-86e281402820@arm.com>
+ <ZrVN05VylFq8lK4q@Asurada-Nvidia>
+ <BN9PR11MB5276D9387CB50D58E4A7585F8CBA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <BN9PR11MB5276D9387CB50D58E4A7585F8CBA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 2024-08-09 9:00 am, Tian, Kevin wrote:
+>> From: Nicolin Chen <nicolinc@nvidia.com>
+>> Sent: Friday, August 9, 2024 7:00 AM
+>>
+>> On Thu, Aug 08, 2024 at 01:38:44PM +0100, Robin Murphy wrote:
+>>> On 06/08/2024 9:25 am, Tian, Kevin wrote:
+>>>>> From: Nicolin Chen <nicolinc@nvidia.com>
+>>>>> Sent: Saturday, August 3, 2024 8:32 AM
+>>>>>
+>>>>> From: Robin Murphy <robin.murphy@arm.com>
+>>>>>
+>>>>> Currently, iommu-dma is the only place outside of IOMMUFD and
+>> drivers
+>>>>> which might need to be aware of the stage 2 domain encapsulated
+>> within
+>>>>> a nested domain. This would be in the legacy-VFIO-style case where
+>> we're
+>>>>
+>>>> why is it a legacy-VFIO-style? We only support nested in IOMMUFD.
+>>>
+>>> Because with proper nesting we ideally shouldn't need the host-managed
+>>> MSI mess at all, which all stems from the old VFIO paradigm of
+>>> completely abstracting interrupts from userspace. I'm still hoping
+>>> IOMMUFD can grow its own interface for efficient MSI passthrough, where
+>>> the VMM can simply map the physical MSI doorbell into whatever IPA (GPA)
+>>> it wants it to appear at in the S2 domain, then whatever the guest does
+>>> with S1 it can program the MSI address into the endpoint accordingly
+>>> without us having to fiddle with it.
+>>
+>> Hmm, until now I wasn't so convinced myself that it could work as I
+>> was worried about the data. But having a second thought, since the
+>> host configures the MSI, it can still set the correct data. What we
+>> only need is to change the MSI address from a RMRed IPA/gIOVA to a
+>> real gIOVA of the vITS page.
+>>
+>> I did a quick hack to test that loop. MSI in the guest still works
+>> fine without having the RMR node in its IORT. Sweet!
+>>
+>> To go further on this path, we will need the following changes:
+>> - MSI configuration in the host (via a VFIO_IRQ_SET_ACTION_TRIGGER
+>>    hypercall) should set gIOVA instead of fetching from msi_cookie.
+>>    That hypercall doesn't forward an address currently, since host
+>>    kernel pre-sets the msi_cookie. So, we need a way to forward the
+>>    gIOVA to kernel and pack it into the msi_msg structure. I haven't
+>>    read the VFIO PCI code thoroughly, yet wonder if we could just
+>>    let the guest program the gIOVA to the PCI register and fall it
+>>    through to the hardware, so host kernel handling that hypercall
+>>    can just read it back from the register?
+>> - IOMMUFD should provide VMM a way to tell the gPA (or directly +
+>>    GITS_TRANSLATER?). Then kernel should do the stage-2 mapping. I
+>>    have talked to Jason about this a while ago, and we have a few
+>>    thoughts how to implement it. But eventually, I think we still
+>>    can't avoid a middle man like msi_cookie to associate the gPA in
+>>    IOMMUFD to PA in irqchip?
+> 
+> Probably a new IOMMU_DMA_MSI_COOKIE_USER type which uses
+> GPA (passed in in ALLOC_HWPT for a nested_parent type) as IOVA
+> in iommu_dma_get_msi_page()?
 
-syzbot found the following issue on:
+No, the whole point is to get away from cookies and having to keep track 
+of things in the kernel that can and should just be simple regular 
+user-owned S2 mappings.
 
-HEAD commit:    eb3ab13d997a net: ti: icssg_prueth: populate netdev of_node
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16bc9dbd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
-dashboard link: https://syzkaller.appspot.com/bug?extid=bdb4bd87b5e22058e2a4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d4f4f5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17522ec5980000
+>> One more concern is the MSI window size. VMM sets up a MSI region
+>> that must fit the hardware window size. Most of ITS versions have
+>> only one page size but one of them can have multiple pages? What
+>> if vITS is one-page size while the underlying pITS has multiple?
+>>
+>> My understanding of the current kernel-defined 1MB size is also a
+>> hard-coding window to potential fit all cases, since IOMMU code in
+>> the code can just eyeball what's going on in the irqchip subsystem
+>> and adjust accordingly if someday it needs to. But VMM can't?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/451ec795f57e/disk-eb3ab13d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e6f090c32577/vmlinux-eb3ab13d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ac63cb5127b1/bzImage-eb3ab13d.xz
+The existing design is based around the kernel potentially having to 
+stuff multiple different mappings for different devices into the MSI 
+hole in a single domain, since VFIO userspace is allowed to do wacky 
+things like emulate INTx using an underlying physical MSI, so there may 
+not be any actual vITS region in the VM IPA space at all. I think that 
+was also why it ended up being a fake reserved region exposed by the 
+SMMU drivers rather than relying on userspace to say where to put it - 
+making things look superficially a bit more x86-like meant fewer changes 
+to userspace, which I think by now we can consider a tasty slice of 
+technical debt.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bdb4bd87b5e22058e2a4@syzkaller.appspotmail.com
+For a dedicated "MSI passthrough" model where, in parallel to IOMMU 
+nesting, the abstraction is thinner and userspace is in on the game of 
+knowingly emulating a GIC ITS backed by a GIC ITS, I'd imagine it could 
+be pretty straightforward, at least conceptually. Userspace has 
+something like an IOAS_MAP_MSI(device, IOVA) to indicate where it's 
+placing a vITS to which it wants that device's MSIs to be able to go, 
+the kernel resolves the PA from the IRQ layer and maps it, job done. If 
+userspace wants to associate two devices with the same vITS when they 
+have different physical ITSes, either we split the IOAS into two HWPTs 
+to hold the different mappings, or we punt it back to userspace to 
+resolve at the IOAS level.
 
-BUG: TASK stack guard page was hit at ffffc9000358ff58 (stack is ffffc90003590000..ffffc90003598000)
-Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5231 Comm: syz-executor149 Not tainted 6.11.0-rc2-syzkaller-00271-geb3ab13d997a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:validate_chain+0x1f/0x5900 kernel/locking/lockdep.c:3824
-Code: 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 e0 48 81 ec c0 02 00 00 49 89 ce <89> 54 24 58 48 89 bc 24 80 00 00 00 65 48 8b 04 25 28 00 00 00 48
-RSP: 0018:ffffc9000358ff60 EFLAGS: 00010086
-RAX: 1ffffffff268c780 RBX: ffffffff93463c00 RCX: 7195f92be3ffb448
-RDX: 0000000000000001 RSI: ffff88807cc6c6e0 RDI: ffff88807cc6bc00
-RBP: ffffc90003590260 R08: ffffffff9372e8cf R09: 1ffffffff26e5d19
-R10: dffffc0000000000 R11: fffffbfff26e5d1a R12: 0000000000000001
-R13: ffff88807cc6c6d8 R14: 7195f92be3ffb448 R15: ffff88807cc6c700
-FS:  000055556f04f380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc9000358ff58 CR3: 0000000023e1e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <#DF>
- </#DF>
- <TASK>
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
- reacquire_held_locks+0x3eb/0x690 kernel/locking/lockdep.c:5284
- __lock_release kernel/locking/lockdep.c:5473 [inline]
- lock_release+0x396/0xa30 kernel/locking/lockdep.c:5780
- sock_release_ownership include/net/sock.h:1722 [inline]
- release_sock+0x12f/0x1f0 net/core/sock.c:3564
- vsock_bpf_recvmsg+0x60f/0x1090 net/vmw_vsock/vsock_bpf.c:88
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- vsock_bpf_recvmsg+0xcf5/0x1090
- sock_recvmsg_nosec net/socket.c:1046 [inline]
- sock_recvmsg+0x22f/0x280 net/socket.c:1068
- ____sys_recvmsg+0x1db/0x470 net/socket.c:2816
- ___sys_recvmsg net/socket.c:2858 [inline]
- __sys_recvmsg+0x2f0/0x3e0 net/socket.c:2888
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f66591e2c79
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe616028d8 EFLAGS: 00000246 ORIG_RAX: 000000000000002f
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f66591e2c79
-RDX: 0000000000010042 RSI: 00000000200003c0 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000000006 R09: 0000000000000006
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:validate_chain+0x1f/0x5900 kernel/locking/lockdep.c:3824
-Code: 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 e0 48 81 ec c0 02 00 00 49 89 ce <89> 54 24 58 48 89 bc 24 80 00 00 00 65 48 8b 04 25 28 00 00 00 48
-RSP: 0018:ffffc9000358ff60 EFLAGS: 00010086
-RAX: 1ffffffff268c780 RBX: ffffffff93463c00 RCX: 7195f92be3ffb448
-RDX: 0000000000000001 RSI: ffff88807cc6c6e0 RDI: ffff88807cc6bc00
-RBP: ffffc90003590260 R08: ffffffff9372e8cf R09: 1ffffffff26e5d19
-R10: dffffc0000000000 R11: fffffbfff26e5d1a R12: 0000000000000001
-R13: ffff88807cc6c6d8 R14: 7195f92be3ffb448 R15: ffff88807cc6c700
-FS:  000055556f04f380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc9000358ff58 CR3: 0000000023e1e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	90                   	nop
-   1:	90                   	nop
-   2:	90                   	nop
-   3:	90                   	nop
-   4:	90                   	nop
-   5:	90                   	nop
-   6:	90                   	nop
-   7:	90                   	nop
-   8:	90                   	nop
-   9:	90                   	nop
-   a:	90                   	nop
-   b:	f3 0f 1e fa          	endbr64
-   f:	55                   	push   %rbp
-  10:	48 89 e5             	mov    %rsp,%rbp
-  13:	41 57                	push   %r15
-  15:	41 56                	push   %r14
-  17:	41 55                	push   %r13
-  19:	41 54                	push   %r12
-  1b:	53                   	push   %rbx
-  1c:	48 83 e4 e0          	and    $0xffffffffffffffe0,%rsp
-  20:	48 81 ec c0 02 00 00 	sub    $0x2c0,%rsp
-  27:	49 89 ce             	mov    %rcx,%r14
-* 2a:	89 54 24 58          	mov    %edx,0x58(%rsp) <-- trapping instruction
-  2e:	48 89 bc 24 80 00 00 	mov    %rdi,0x80(%rsp)
-  35:	00
-  36:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
-  3d:	00 00
-  3f:	48                   	rex.W
+Or I guess the really cheeky version is the IRQ layer exposes its own 
+thing for userspace to mmap the ITS, then it can call a literal IOAS_MAP 
+on that mapping... :D
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Robin.
 
