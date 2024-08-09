@@ -1,129 +1,141 @@
-Return-Path: <linux-kernel+bounces-281242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE6794D4C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:33:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8659B94D4C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C7FFB21F69
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:33:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BC971F230AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50FF1C6A5;
-	Fri,  9 Aug 2024 16:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAF02232A;
+	Fri,  9 Aug 2024 16:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELvcMjOX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpANO2kj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D75338394;
-	Fri,  9 Aug 2024 16:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F823D551;
+	Fri,  9 Aug 2024 16:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723221183; cv=none; b=HzWdASINrr1v4jADEOCZycx6qd+vspn+DokUJd2z44M54insUTEMU4aL+cKEEQ/xZrGXRGgjFTSZ3kCm65skopJHlx3iQQKzjpNA/kJooXiM8oPRtkdnf5KSy5lMLh+lpBOLvfN6dGx3F9NqEXLZKu+CHCG+oY3+bsH2V3522Eo=
+	t=1723221199; cv=none; b=CCBBu0ZtC5p3lmMO6pOO7B2Swjai8vHoCux76x4aawAVZYQ4jObwyJBRAEjnfXe8Jpsdkxc6j5maV+jwO+WHoj9qQQl4DF8nCuWa8iP8GcpjYfXCgecPvIPAqAACq64LVm0hFInvxVYNIzNgrkU0WAfqd0fBO/KIm5TXYiooh2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723221183; c=relaxed/simple;
-	bh=1ubKv9iYakEVw8NVhxMtu+IrpAtVCtKDNpr+xRZOhk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QDUu8TwVcqoNyRIiMxNS0e8YrP2VbNBfF0FehntJVqAtV0Vhz0gcKG/hJW2lkRVaraX4WJtEtiFJkS5NWdLBd6HEFsQUrPPigXMHdB+y9WfOZrNqX1GFXEJamhU7YMo4WcLyA97066iIcuKDEaHYq0ydRxu4uOXarGq8OUoDVk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELvcMjOX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 157E4C32782;
-	Fri,  9 Aug 2024 16:33:01 +0000 (UTC)
+	s=arc-20240116; t=1723221199; c=relaxed/simple;
+	bh=XC/qQpmOshEYF8U7yU/VK9HlEgr0jSs2SieZLK7Pjz0=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=CsKOiWJYoFckT2DFStBOnre8zHT+LCXZvb0d5uTYlLBzLlAr6uv9N2IQetj13fqpZ1FMz1A9+LJ9gHRFY4lr65CK7Pgrh9SZ8eE+EOqIs6svkFpnvaa5S1Z8LDLuLn9XrSuKtGznhZNFMCMgcuGwRupJuFNu4CfnRkjdTPxxAQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpANO2kj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64940C32782;
+	Fri,  9 Aug 2024 16:33:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723221182;
-	bh=1ubKv9iYakEVw8NVhxMtu+IrpAtVCtKDNpr+xRZOhk0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ELvcMjOXSJvDg/yRqQsKVs5fRAWH5zGBZFk0nlPxRcA77KkbM/SHsxp1nHo535Nt0
-	 POTyM8nnCT6j6X4yirmfIJsEJHWPPXMEhIA3J/WMdGRyhoocp3MYiJI12L3sE86sd9
-	 A2t2gW1ulbaCjiLGP1DHGHEw93SBw388iY63R11uWdUTTP/G0+tLkUDroqOzMYWQJ0
-	 rAX3bR+5z6sDVVDwLa28Q5KbP2+8rco4l5a6LL9WABl+3Czl9Ze6LV+QFemFEnsnnq
-	 VyccyiZfPqLnd5exLpJfxDskDJXIv0NXfzWQ8ciYF0/ufiLhub+K6Nt5Qoc+gYlCpQ
-	 iNoOGIOWvX1mA==
-Date: Fri, 9 Aug 2024 10:32:59 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] wifi: ath12k: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <ZrZEuxJihMzAaTVh@cute>
+	s=k20201202; t=1723221198;
+	bh=XC/qQpmOshEYF8U7yU/VK9HlEgr0jSs2SieZLK7Pjz0=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=NpANO2kj24mAtvtCGVfgh2YWortGOLuvsgc+gej7F3/whHAxdt2HmbBfXVzJ3uy26
+	 4tYzKQyC16nNxjAKQ6ZWLxyL6aUVbqXNgQXtinv+xzCN/xO5wYPQX4M/tfR8+YX7Hm
+	 Js7Coz3CUkJZbvnnFcmPsmiM7wqDuj85eK7UzW5/yE4upXRfDlVRiYHvjxzc/Ddw6U
+	 pevMiIWz/d5NKn/aNMGdB/GOa0iv5qgnQCw9MtrwOPAwpABrswkmZKBE/Sw+TnTYs9
+	 8+vwxX4XmPQ9gSlICvDGYD2n7gKIHYTlGTYxLSpu+JBcFGnbmjtrnZmBHZ2BCGlaSV
+	 SvRavsP9VP30Q==
+Date: Fri, 09 Aug 2024 10:33:17 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Paul Kocialkowski <contact@paulk.fr>, Maxime Ripard <mripard@kernel.org>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ dri-devel@lists.freedesktop.org, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ linux-i2c@vger.kernel.org, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Robert Foss <rfoss@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Dragan Cvetic <dragan.cvetic@amd.com>, Jonas Karlman <jonas@kwiboo.se>, 
+ Derek Kiernan <derek.kiernan@amd.com>, 
+ Saravana Kannan <saravanak@google.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Arnd Bergmann <arnd@arndb.de>, 
+ =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>, 
+ David Airlie <airlied@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20240809-hotplug-drm-bridge-v3-1-b4c178380bc9@bootlin.com>
+References: <20240809-hotplug-drm-bridge-v3-0-b4c178380bc9@bootlin.com>
+ <20240809-hotplug-drm-bridge-v3-1-b4c178380bc9@bootlin.com>
+Message-Id: <172322119734.685133.9977747524284458277.robh@kernel.org>
+Subject: Re: [PATCH v3 1/7] dt-bindings: connector: add GE SUNH hotplug
+ addon connector
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
 
-Move the conflicting declaration to the end of the structure. Notice
-that `struct ieee80211_chanctx_conf` is a flexible structure --a
-structure that contains a flexible-array member.
+On Fri, 09 Aug 2024 17:34:49 +0200, Luca Ceresoli wrote:
+> Add bindings for the GE SUNH add-on connector. This is a physical,
+> hot-pluggable connector that allows to attach and detach at runtime an
+> add-on adding peripherals on non-discoverable busses.
+> 
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> 
+> ---
+> 
+> Changed in v3:
+>  - change the layout to only add subnodes, not properties
+>  - add the 'nobus-devices' node description to hold devices not on any bus
+>  - add 'i2c-*' nodes for the I2C busses, using a i2c-parent phandle
+>  - and the 'dsi' node for the DSI bus
+>  - move the entire port@1 node to the overlay (not only the remote-endpoint
+>    property)
+>  - remove the overlay examples (Overlays in examples are not supported)
+>  - add more clarifying descriptions and comments for examples
+>  - some rewording
+> 
+> This patch was added in v2.
+> ---
+>  .../connector/ge,sunh-addon-connector.yaml         | 185 +++++++++++++++++++++
+>  MAINTAINERS                                        |   5 +
+>  2 files changed, 190 insertions(+)
+> 
 
-Also, remove an unused structure.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Fix the following warnings:
-drivers/net/wireless/ath/ath12k/core.h:290:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/ath/ath12k/dp.h:1499:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+yamllint warnings/errors:
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/net/wireless/ath/ath12k/core.h |  4 +++-
- drivers/net/wireless/ath/ath12k/dp.h   | 12 ------------
- 2 files changed, 3 insertions(+), 13 deletions(-)
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/connector/ge,sunh-addon-connector.example.dtb: /: 'compatible' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/connector/ge,sunh-addon-connector.example.dtb: /: 'model' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/connector/ge,sunh-addon-connector.example.dtb: /: '#address-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/connector/ge,sunh-addon-connector.example.dtb: /: '#size-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
 
-diff --git a/drivers/net/wireless/ath/ath12k/core.h b/drivers/net/wireless/ath/ath12k/core.h
-index cdfd43a7321a..bd23c7401637 100644
---- a/drivers/net/wireless/ath/ath12k/core.h
-+++ b/drivers/net/wireless/ath/ath12k/core.h
-@@ -287,7 +287,6 @@ struct ath12k_vif {
- 	int txpower;
- 	bool rsnie_present;
- 	bool wpaie_present;
--	struct ieee80211_chanctx_conf chanctx;
- 	u32 key_cipher;
- 	u8 tx_encap_type;
- 	u8 vdev_stats_id;
-@@ -295,6 +294,9 @@ struct ath12k_vif {
- 	bool ps;
- 	struct ath12k_vif_cache *cache;
- 	struct ath12k_rekey_data rekey_data;
-+
-+	/* Must be last - ends in a flexible-array member. */
-+	struct ieee80211_chanctx_conf chanctx;
- };
- 
- struct ath12k_vif_iter {
-diff --git a/drivers/net/wireless/ath/ath12k/dp.h b/drivers/net/wireless/ath/ath12k/dp.h
-index b77497c14ac4..2fb18b83b3ee 100644
---- a/drivers/net/wireless/ath/ath12k/dp.h
-+++ b/drivers/net/wireless/ath/ath12k/dp.h
-@@ -1495,18 +1495,6 @@ struct htt_ppdu_stats_user_rate {
- #define HTT_TX_INFO_PEERID(_flags) \
- 			u32_get_bits(_flags, HTT_PPDU_STATS_TX_INFO_FLAGS_PEERID_M)
- 
--struct htt_tx_ppdu_stats_info {
--	struct htt_tlv tlv_hdr;
--	__le32 tx_success_bytes;
--	__le32 tx_retry_bytes;
--	__le32 tx_failed_bytes;
--	__le32 flags; /* %HTT_PPDU_STATS_TX_INFO_FLAGS_ */
--	__le16 tx_success_msdus;
--	__le16 tx_retry_msdus;
--	__le16 tx_failed_msdus;
--	__le16 tx_duration; /* united in us */
--} __packed;
--
- enum  htt_ppdu_stats_usr_compln_status {
- 	HTT_PPDU_STATS_USER_STATUS_OK,
- 	HTT_PPDU_STATS_USER_STATUS_FILTERED,
--- 
-2.34.1
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240809-hotplug-drm-bridge-v3-1-b4c178380bc9@bootlin.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
