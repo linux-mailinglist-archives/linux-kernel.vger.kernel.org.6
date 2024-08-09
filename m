@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-281487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8380894D76D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:38:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E96794D770
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E377BB22A13
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:38:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A3F0281BBD
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E3E161304;
-	Fri,  9 Aug 2024 19:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D2915FCEB;
+	Fri,  9 Aug 2024 19:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CL7uYEYQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hT4gKk6b"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFF316D4DA;
-	Fri,  9 Aug 2024 19:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315591465BA;
+	Fri,  9 Aug 2024 19:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723232200; cv=none; b=gay9H1mWtBjreWWn0sKe1sJqi/bmfFKONJS1Bg32GTiE/H2ImBFRnW3iYBV8kMrncgtIlXmBn49KA5qT9TPAypBwnlzheIW9jqLzMVIDJCX+gd64DNk/nIYNcvs3V24ul1hfRwiDY9LidbjOjzYVwSh3Zv4LG49NeLPMbaxKaKI=
+	t=1723232305; cv=none; b=Sn1qImItPS5Bb9h+TdLukJqif/f9/d6wwz3eGiiGTw/HZex1CAGmOEMDbWBkhup4+yuXi2reZmZhHa46FLln1VFKSb/eZZvokF9iBHtMRvWUjdOJYThMoS9nht1yhsYcNerQPGw4meCxZWtIYtkK/uYLkq8MgGkKeiAE5nfY03M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723232200; c=relaxed/simple;
-	bh=mkPEFV98KvnOaAAN7g/wYK5Tu1zCY+dlV5z7gwpWU2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fTemm6MF5uEU7E3wXwzfe14tuIa/SJnC7PeCSVVo/jAJo1eD7STjl+sxeeH4KQYetgIj6JiQEvZpOFNSErYbiXvc/9gv7cxScBjrS6wdFQvU1TMTsxbLvl9r/P5ZXlX6aeZnBk0TtPoGwkHTMGb/fxHoKK4Pz3yUiNOuQx5F9Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CL7uYEYQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC19C4AF0F;
-	Fri,  9 Aug 2024 19:36:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723232200;
-	bh=mkPEFV98KvnOaAAN7g/wYK5Tu1zCY+dlV5z7gwpWU2g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CL7uYEYQAr/juursVo6E/rVuKkgEgzuoszPNBzBAKJAI6fLASZ2N6PLbQon0a2JcN
-	 C+5re9FhKI8DGNfI8noiYet6fLox5J/PnZoFeOCss7rkFqIak+1c2Mi6/tCmg0TNOR
-	 3JcPglXTOZP3Er2zQib/SKVfTqWuHWXXT/gS6zMY2TYJTOG6J5lUQVmCQkRRTQdBWH
-	 dkEaZipMeFFEz0zk0W7lPBXIcdxVX80hfPVzMovcm0kdX6XE4yboPsiDJc6n5OkIGN
-	 /L7Ua83mB7Ux4Qgt0XGvrb156rP3/WCIo8fVs8JjNHuf1LGrdnyTIll0oIcQDOIgDb
-	 ct6G8Du9dHIfQ==
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-66c7aeac627so24790977b3.1;
-        Fri, 09 Aug 2024 12:36:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXPvcHj0NYN/y+286SZBHxdVPdnSDh+cy8tjpbO6wQg+Jko8C5qhnbolyEQUvzGQWsT49P7shGXEtfQMzczvD6piUTKKo8hltwbIKT+ubwP7FEU6Bd+j+k70WUba6MSJmRsrhUTaQCDfkLw8kKpoIckYcIBaVhjzY616uWnO5IJz9x/UA==
-X-Gm-Message-State: AOJu0YzqOqgVf03hVVNTrx6uxEQ980ty9DAech2qsm5yxzBaItsY6G6Q
-	B/PyH8G++cYUss7C25vDDO1RhnguNvlmtQikSvvSIM1owZ0mzEBEjhsmjye1ZlWsw3Buy3Huj5M
-	qt+57doxbNmp748lHcCLL9mzokg==
-X-Google-Smtp-Source: AGHT+IHBGl9q4G8F8pliJY8Zk++lUNGSb02vw079AJRuY1yoNpvNqDe4xQYpgv06h2WkxHSBvtV3ggLblPSN7rtiP4s=
-X-Received: by 2002:a05:6902:230d:b0:e0b:ab0b:6ec6 with SMTP id
- 3f1490d57ef6-e0eb9946e2bmr2664155276.19.1723232199336; Fri, 09 Aug 2024
- 12:36:39 -0700 (PDT)
+	s=arc-20240116; t=1723232305; c=relaxed/simple;
+	bh=lWL21pWMUbbm+vGeQxnkHKUVTONIyKs2DXLfdyTbY+A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dl0gGLYTi1fSeudReQmXEPqhredtFyb+YQ9/3cxxsI+bDsW+Pl1k2uS5wF/4a+7lADHx3188RS//NUHsRiHiqofrWnU54Y2u/ojIY3vkJhfd8jTOOQ5VPJu0gvaAYpNMOyaamTCnzBT8+3wX6i98Ttar92CXbJOvfCG6B7r0Rg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hT4gKk6b; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f032cb782dso26435111fa.3;
+        Fri, 09 Aug 2024 12:38:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723232302; x=1723837102; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZYtJIwI36rJzqDs+I9wOI8fK5hCxFXCO5iPjfGyIUTI=;
+        b=hT4gKk6bmtCpECn554vCYf2XZH8/nvJ71z10LRoJvsqk9NDLMpy14CZHxQWor0bk2Z
+         kxzcaE4muqTpVuQAZx5uprs1JXg0T+E1FEmZyiQ7CaZ994at7tawsZ2ZMLVcDCQYHA2E
+         CThQj+byqEUVHpb4QG/lOwQxQYwdxFqvu26u375IMpODvTAS9BS4NIlBGREoyEB2Xq+u
+         BtsVgOYbvbXt4AVOoQ2IKlptyToRyZuk1jO1DCMGaZdXDCtQHeHuu6UMJQpiJwvkN9/8
+         mwf6QzZIh0oqB4toykTqbPqSahzfHpiL4DURDtEolJwosTFFArEochwlZxQSU3YIOhBc
+         s7sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723232302; x=1723837102;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZYtJIwI36rJzqDs+I9wOI8fK5hCxFXCO5iPjfGyIUTI=;
+        b=rpxIn5SD5OnS7ouSiYOV3UcfRAbQ70ApqlX2ebj639SFu97ZDM4If+ipKyXwpH/Zf8
+         czRETar0FA/XrNmUHcgHTHq5Sqkwuf8gVfZWYoRvJhA2La/cxMIBDafCW62sRKyhjVCR
+         oi7XjfMLU4P0yci47Zr7BqQSEH35uftKVBWG1b0SaEjBH2bSVY1uT51y+AB3+WcvukOV
+         0boWXHY95HNJEAC2ex9AxwYxwutMcletvOuS3sgSVbOOBUtxJwmHVSqYUMhfXYCUcewn
+         oJ8pVJfpSMIx//cvCzyAxeuNw2j4HgdzqjVgSjjLeAA1GN1C2TSmeJmr71bipxde/Zth
+         P3ug==
+X-Forwarded-Encrypted: i=1; AJvYcCVPzWOe21Z4JSFuoeIxFAvOU+GZ1AkU2IVIASw8UjhzOLPma6mgntMX5qkxj5xDCPM+Q9ArLYnh9iywxzFZz7GBgAmyKtk6yrYExU/L
+X-Gm-Message-State: AOJu0YwOmhRdIyxPjMb+a0Bx5gRgATpLHjGWRgQ4t2OUSrOmRheUKXua
+	LQ6jYJt51IqC/dv3TsAR8waNQ2DEqEz5REof7Hbvfqgut7OeFjB0LZWusyD4
+X-Google-Smtp-Source: AGHT+IGzdGE7enXekVvIaPhxLLUQwGT3Al0wnuqWSGVKcgRQ8lbgEsRiiPx3gKTNOGkDJFElOyaSrA==
+X-Received: by 2002:a2e:3606:0:b0:2ef:2c4b:b799 with SMTP id 38308e7fff4ca-2f1a6d1f284mr19623591fa.28.1723232301424;
+        Fri, 09 Aug 2024 12:38:21 -0700 (PDT)
+Received: from WBEC325.dom.lan ([2001:470:608f:0:8a4a:2fa4:7fd1:3010])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f291df4987sm451311fa.50.2024.08.09.12.38.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 12:38:20 -0700 (PDT)
+From: Pawel Dembicki <paweldembicki@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Pawel Dembicki <paweldembicki@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v3 0/5] net: dsa: vsc73xx: fix MDIO bus access and PHY operations
+Date: Fri,  9 Aug 2024 21:38:01 +0200
+Message-Id: <20240809193807.2221897-1-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809151213.94533-1-matthew.gerlach@linux.intel.com>
- <20240809151213.94533-2-matthew.gerlach@linux.intel.com> <20240809181401.GA973841-robh@kernel.org>
- <98185d65-805f-f09d-789-6eda61c4b36d@linux.intel.com>
-In-Reply-To: <98185d65-805f-f09d-789-6eda61c4b36d@linux.intel.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 9 Aug 2024 13:36:25 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJg_ahW451sBht1k5SxP9s4dE09F-EWrgdXdDpUPFDfcQ@mail.gmail.com>
-Message-ID: <CAL_JsqJg_ahW451sBht1k5SxP9s4dE09F-EWrgdXdDpUPFDfcQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] dt-bindings: PCI: altera: Convert to YAML
-To: matthew.gerlach@linux.intel.com
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, dinguyen@kernel.org, 
-	joyce.ooi@intel.com, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 9, 2024 at 12:43=E2=80=AFPM <matthew.gerlach@linux.intel.com> w=
-rote:
-> On Fri, 9 Aug 2024, Rob Herring wrote:
->
-> > On Fri, Aug 09, 2024 at 10:12:07AM -0500, matthew.gerlach@linux.intel.c=
-om wrote:
-> >> From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-> >>
-> >> Convert the device tree bindings for the Altera Root Port PCIe control=
-ler
-> >> from text to YAML. Update the entries in the interrupt-map field to ha=
-ve
-> >> the correct number of address cells for the interrupt parent.
-> >>
-> >> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-> >> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> >> ---
-> >> v8:
-> >
-> > v2 or v8 or ??? I'm confused and tools will be too.
->
-> Sorry for the confusion. Patch 1 and patch 2 were individually reviewed
-> previously. Patch 1 was previously reviewed up to v8, and I included them
-> in the greater patch set for convience and completeness, and this is v2 o=
-f
-> the entire patch set.
->
-> How should this be handled for better clarity? Would it be better to not
-> to include Patch 1 and 2 in the patch set and refer to them, or would it
-> better to remove the history in patch 1 and 2, or something else?
+This series are extracted patches from net-next series [0].
 
-Generally, if you added new patches you keep the versioning and say
-"vN: new patch" in the new patches.
+The VSC73xx driver has issues with PHY configuration. This patch series
+fixes most of them.
 
-If this was 2 prior series, combined, there's not really a good answer
-other than don't do that.
+The first patch synchronizes the register configuration routine with the
+datasheet recommendations.
 
-Rob
+Patches 2-3 restore proper communication on the MDIO bus. Currently,
+the write value isn't sent to the MDIO register, and without a busy check,
+communication with the PHY can be interrupted. This causes the PHY to
+receive improper configuration and autonegotiation could fail.
+
+The fourth patch removes the PHY reset blockade, as it is no longer
+required.
+
+After fixing the MDIO operations, autonegotiation became possible.
+The last patch removes the blockade, which became unnecessary after
+the MDIO operations fix.
+
+[0] https://patchwork.kernel.org/project/netdevbpf/list/?series=874739&state=%2A&archive=both
+
+Pawel Dembicki (5):
+  net: dsa: vsc73xx: fix port MAC configuration in full duplex mode
+  net: dsa: vsc73xx: pass value in phy_write operation
+  net: dsa: vsc73xx: check busy flag in MDIO operations
+  net: dsa: vsc73xx: allow phy resetting
+  net: phy: vitesse: repair vsc73xx autonegotiation
+
+ drivers/net/dsa/vitesse-vsc73xx-core.c | 54 +++++++++++++++++++-------
+ drivers/net/phy/vitesse.c              | 14 -------
+ 2 files changed, 41 insertions(+), 27 deletions(-)
+
+-- 
+2.34.1
+
 
