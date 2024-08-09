@@ -1,212 +1,131 @@
-Return-Path: <linux-kernel+bounces-281403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF76594D686
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:43:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E49394D6A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19BF61C21FEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:43:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C197C1C2234C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627F915ECC0;
-	Fri,  9 Aug 2024 18:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469CA15F301;
+	Fri,  9 Aug 2024 18:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NqeHxe67"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3CE75mH"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD7913C8F4;
-	Fri,  9 Aug 2024 18:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2631415CD42
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 18:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723229002; cv=none; b=iDyGQ71C4AO3e5yVzAjhk3bqywToyu0vDxCLZOKgMrjE4iNrbjf1YGgf9jN1yki/icpvixSMXCB2GDj0mSFf6SqtC97gORFr2Z1u3vyoe13h1FIqmSR2qzKnUyqa+CGI3c2lKVFidaUPbppJMx41QIwI7cQRtZFY1MlC6Oj9pmg=
+	t=1723229130; cv=none; b=LqgT7Jrfvi0cRypKXFvkUOs9hMS0rHUx5BGrOMttCX2UhaokEDp6/vIxP3FHZLxEu/x5d8hyG48tRZxfifUJdDLjVJrP/vGMf/FWXHo3fD3rUkZmkfwqwqpXJooe2lyOMPUNaodwTGVEdPh/HJmOdOmJ9Qasw5tlMGyYT7bqltQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723229002; c=relaxed/simple;
-	bh=H9FXHLpYfMUXWbFJSEQFUoSRkz4T4dpFivSoqqloZSg=;
+	s=arc-20240116; t=1723229130; c=relaxed/simple;
+	bh=9/p3SylQpex58YQMjwfSJg89oiO/p4Q8CMC4t6aIxTw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oGoc7NgmGDsIzJ/zBelWiqNYvgtkqwLScZWbqwvMWKbSUIoQOSPuqxP0RtgXDxRKqNfKCVEYpun83WYzpUux1r64Pql+MB0Re9/Dz7D/2BaKIaRtl/9kLehmFFR+1LhpL6+1Ll991I/JASIrUmLmGDjgxGIuz2TuIyMqoBJaMpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NqeHxe67; arc=none smtp.client-ip=209.85.216.49
+	 To:Content-Type; b=dOukEKNMxR4RFg9o8SsOwuG1w250M5FJvA/xv4vHPjuSR8TUOY+QEfnSMAlHeOM29jiGT1old8w80190/t3O+sOxASJ+4BFsvshKAU4Q6tmWfb+fNEAS59z8cqn1hVD+gq0Qbc31xnr6m4GrKj7s/Ge11gHKtRJFqHx9OvIknps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3CE75mH; arc=none smtp.client-ip=209.85.221.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cf93dc11c6so1901390a91.1;
-        Fri, 09 Aug 2024 11:43:20 -0700 (PDT)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4f6ac1628dfso869335e0c.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 11:45:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723229000; x=1723833800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1723229128; x=1723833928; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q6v/APqpkjljeWsKuKvJifVCNrWaIH3KrJtyq7+urjQ=;
-        b=NqeHxe677jNI7V4opI6VRANVY6D0IvCahel1bjW6xBsXvYjgehxvI3iKJ8Z76fgHSG
-         TWMFpRBRON+Gpuhuula3YDVjSWeqK9I2LQzNTs7npmNtPAsuRxl1SQ+52SyCMX6LY+i0
-         /0NW4Avw48OBrseI6CMvsOAzNfx/BmUrUWUozB96gCC+/DfVy03qkGUeg72hfni2pxGY
-         f+4jT8PnMAFrYpEwNVbJZDV7OFLOpAsqCsBf4yMiSI6Kw6lvXZ1HN5qYxR32yLRiS7j3
-         YXMzMX6Ew/4LYOQ+oT55ymtgHw419Kkjzu2BPqGKoN73xHrHVNFAqb8AZe8FLjfE+JuX
-         5mbA==
+        bh=9/p3SylQpex58YQMjwfSJg89oiO/p4Q8CMC4t6aIxTw=;
+        b=V3CE75mHz9XVnpmOtSTFpq4WvUmkKRnA1tfJ9tB4Cd/2atebGt+AbiEWPokLypkz/5
+         4n7Vm1Rpj6kx6lpNQML4LWXLM3Z1vQylaHWPwWeM0piSR8l3qHniDQjXTlXI9Zo6Uaha
+         2jozjTqE2kn4zB65v45MxBQWPz3w9dkPTlfZAWFEc+NgkkTYfDJbLUwiDeu4YPCtOdvT
+         iVLORfH+05pW/UrX3gENMEaxakKzpDBl69lrP/lbzW1XkPdCWX5MeZWrgnZux0lTlo6J
+         4Gos6ecFiEkTgHEVN6ZHh+OX7Fx0iR/znaaSC4lmFXua7ry8rW4HdRipLCkv7KH99ep3
+         Obxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723229000; x=1723833800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1723229128; x=1723833928;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q6v/APqpkjljeWsKuKvJifVCNrWaIH3KrJtyq7+urjQ=;
-        b=JLxiKdTN4hrihWphyz0di8kN1OHjnV5nK4QChAp2n7goduN1B93w/8vIWdnt6hQJm3
-         Et7+nzgAynsVA5BupLW3zqDa0eQ+StiTRJBxl54Bt9IgGu0qkzK65vp037o7hbkTfv8m
-         x63Q4juXYCSRLajYbBoIPVoM6KdduO1J2MCavudKyqjC7bKz2dt8PxJmi6TSJ/I2F0KQ
-         P7L0Gxt2HgdV8rnVAquhQHohk8BaGKhElMN6yRbOfg1D2Wg3fiEx0LqsnoFotdFyc3zg
-         K2HWKvYEtmL8cBQDgs6ExADYydDyRtLYscR7rcVwpHZfJ7EdKnYgXMFeOxozHRHe7aKr
-         /1sg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7uxkmJVbipgGoycWfeuEpadizNO+MnnmaQ8UqwTUffLs6Wmfi3Aeonwpek2Xt91xlFbRdCJkrH5O8HiXaV62Lq3G2+PAI0iNJhH2s+QpN9FED1Lbp9cpOKqIrcBc6X6x/XUWUpkF7hQSeBY+lxT0eMb7jnOs5YbdcV0fS6s4n43eM9rla
-X-Gm-Message-State: AOJu0Ywdjjl9Pd4fMMLl5q/k9OINMeTEprAOwft4VSUTeSkVNJNBeCq0
-	Y4DmTeKmRFTrXMFra3U+kOpiRZE+8YKEdhU1J/UUKbGSW5GmZs/hrTxUFGmQ7D1Kznobsfzz7gY
-	w54OgyQwVnu0nmj2gXqQ/4F6yC18=
-X-Google-Smtp-Source: AGHT+IFbHS8h9BI8SNX7Kxkg+6R8B5ycqFbc+TxbxK49+cr4DQJrVJ7Lw0LCL/3Dtjc2Pzhrf3fSwVd4DMJFNKiXBVA=
-X-Received: by 2002:a17:90a:4b87:b0:2c9:6d8:d823 with SMTP id
- 98e67ed59e1d1-2d1e7fa91b6mr2955323a91.1.1723229000137; Fri, 09 Aug 2024
- 11:43:20 -0700 (PDT)
+        bh=9/p3SylQpex58YQMjwfSJg89oiO/p4Q8CMC4t6aIxTw=;
+        b=bUzn8mC2AYxEXP2Ze53m5OPY7PkrCgyUPPa+UX44FfkuTcwJe6QxfLn2dcjl0kQAa9
+         M2it3kYxoUOLSB1wf+JbvpZTeADns3sX1XshKxpGNv5A41kjiAHZ0Dm57ExJHNp981Ts
+         fSdkpn2lmiWEyVG8MeiRZZ3DLMwJL0fDoVFSSpEnyqQLM3EAgsbHTAOf1vk6H4lr2Eol
+         sNc5Wj4Exeq2f/8Hg9WWOXKXsUwdkl/uoUvIEYtyO8AAcDeu7LfuHr8c/IPQUyINHM1z
+         OXqwzAwuDhSN0K+APHFLp4kVnlM7jb7oS10WwWhV/h0e/JwLz4SImJMEFYst6LUO+B1U
+         rdXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtwOia5SOw8VhIZ2IoLvD1sb5fXBwl2qGR+c+DMRT84BhPpbyLP1CZswhTavo8H90tf0viTYFo7uKhWoAu4y3Ay79EbXHlhG0kB+IX
+X-Gm-Message-State: AOJu0YwWOYHwd4fBozsiwHgUus2RjbEerr1fbZT6T8/Q0nsMSwez8/PP
+	8sJ6q4GiqqJOo4J1LLEVMO5kODJ/YKxzvmrUh2OB9SQXXVPEKUZFYmBINaUvljODo8I2YKSIWAB
+	fiN19maH/gSyNM0CnFGr/QkhJleQ=
+X-Google-Smtp-Source: AGHT+IGO1JCPOBeO85kZqWEF9K7sRPfiwZEmC5y22fviesmzsajPdFAWbt4mXA17JwJ6hPn+zWBwbY5hOwUA9ilsVcU=
+X-Received: by 2002:a05:6122:134e:b0:4ed:52b:dd29 with SMTP id
+ 71dfb90a1353d-4f912eecd0dmr2917204e0c.3.1723229128034; Fri, 09 Aug 2024
+ 11:45:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805202803.1813090-1-andrii@kernel.org> <ZrHSts7eySxHs4wh@krava>
- <CAEf4Bzaq86fPVGWtXqvxLtbsk06coGBebnAO5YiuvuUF2v7++w@mail.gmail.com> <20240808064353.7470f6bfab89bd28dbcdebe0@kernel.org>
-In-Reply-To: <20240808064353.7470f6bfab89bd28dbcdebe0@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 9 Aug 2024 11:43:07 -0700
-Message-ID: <CAEf4BzYeVT_pSaZP6HNVtdH1EpntXLbXB=6TLymnsA9YOjsWhg@mail.gmail.com>
-Subject: Re: [PATCH] uprobes: get rid of bogus trace_uprobe hit counter
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org, peterz@infradead.org, 
-	oleg@redhat.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240807211309.2729719-1-pedro.falcato@gmail.com>
+ <20240807211309.2729719-5-pedro.falcato@gmail.com> <52wapi4gdnh3i2oiyk44utrco4ck5zph5mikoejfjrlfz2pwhe@eyiaozi4q23x>
+In-Reply-To: <52wapi4gdnh3i2oiyk44utrco4ck5zph5mikoejfjrlfz2pwhe@eyiaozi4q23x>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Fri, 9 Aug 2024 19:45:16 +0100
+Message-ID: <CAKbZUD102gMDJeryA600LJ--GpKOm8q_18i-zhqWYXKvHNU1yQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] mm/mremap: Replace can_modify_mm with can_modify_vma
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Pedro Falcato <pedro.falcato@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, jeffxu@google.com, 
+	Michael Ellerman <mpe@ellerman.id.au>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 7, 2024 at 2:44=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.or=
-g> wrote:
+On Fri, Aug 9, 2024 at 5:06=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracle=
+.com> wrote:
 >
-> On Tue, 6 Aug 2024 10:26:25 -0700
-> Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
+> * Pedro Falcato <pedro.falcato@gmail.com> [240807 17:13]:
+> > Delegate all can_modify checks to the proper places. Unmap checks are
+> > done in do_unmap (et al).
+> >
+> > This patch allows for mremap partial failure in certain cases (for
+> > instance, when destination VMAs aren't sealed, but the source VMA is).
+> > It shouldn't be too troublesome, as you'd need to go out of your way to
+> > do illegal operations on a VMA.
 >
-> > On Tue, Aug 6, 2024 at 12:37=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> =
-wrote:
-> > >
-> > > On Mon, Aug 05, 2024 at 01:28:03PM -0700, Andrii Nakryiko wrote:
-> > > > trace_uprobe->nhit counter is not incremented atomically, so its va=
-lue
-> > > > is bogus in practice. On the other hand, it's actually a pretty big
-> > > > uprobe scalability problem due to heavy cache line bouncing between=
- CPUs
-> > > > triggering the same uprobe.
-> > >
-> > > so you're seeing that in the benchmark, right? I'm curious how bad
-> > > the numbers are
-> > >
-> >
-> > Yes. So, once we get rid of all the uprobe/uretprobe/mm locks (ongoing
-> > work), this one was the last limiter to linear scalability.
-> >
-> > With this counter, I was topping out at about 12 mln/s uprobe
-> > triggering (I think it was 32 CPUs, but I don't remember exactly now).
-> > About 30% of CPU cycles were spent in this increment.
-> >
-> > But those 30% don't paint the full picture. Once the counter is
-> > removed, the same uprobe throughput jumps to 62 mln/s or so. So we
-> > definitely have to do something about it.
-> >
-> > > >
-> > > > Drop it and emit obviously unrealistic value in its stead in
-> > > > uporbe_profiler seq file.
-> > > >
-> > > > The alternative would be allocating per-CPU counter, but I'm not su=
-re
-> > > > it's justified.
-> > > >
-> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > > ---
-> > > >  kernel/trace/trace_uprobe.c | 4 +---
-> > > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprob=
-e.c
-> > > > index 52e76a73fa7c..5d38207db479 100644
-> > > > --- a/kernel/trace/trace_uprobe.c
-> > > > +++ b/kernel/trace/trace_uprobe.c
-> > > > @@ -62,7 +62,6 @@ struct trace_uprobe {
-> > > >       struct uprobe                   *uprobe;
-> > > >       unsigned long                   offset;
-> > > >       unsigned long                   ref_ctr_offset;
-> > > > -     unsigned long                   nhit;
-> > > >       struct trace_probe              tp;
-> > > >  };
-> > > >
-> > > > @@ -821,7 +820,7 @@ static int probes_profile_seq_show(struct seq_f=
-ile *m, void *v)
-> > > >
-> > > >       tu =3D to_trace_uprobe(ev);
-> > > >       seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
-> > > > -                     trace_probe_name(&tu->tp), tu->nhit);
-> > > > +                trace_probe_name(&tu->tp), ULONG_MAX);
-> > >
-> > > seems harsh.. would it be that bad to create per cpu counter for that=
-?
-> >
-> > Well, consider this patch a conversation starter. There are two
-> > reasons why I'm removing the counter instead of doing per-CPU one:
-> >
-> >   - it's less work to send out a patch pointing out the problem (but
-> > the solution might change)
-> >   - this counter was never correct in the presence of multiple
-> > threads, so I'm not sure how useful it is.
-> >
-> > Yes, I think we can do per-CPU counters, but do we want to pay the
-> > memory price? That's what I want to get from Masami, Steven, or Peter
-> > (whoever cares enough).
->
-> I would like to make it per-cpu counter *and* make it kconfig optional.
-> Or just remove with the file (but it changes the user interface without
-> option).
->
-> For the kprobes, the profile file is useful because it shows "missed"
-> counter. This tells user whether your trace data drops some events or not=
-.
-> But if uprobes profile only shows the number of hit, we can use the
-> histogram trigger if needed.
->
+> As mseal() is supposed to be a security thing, is the illegal operation
+> not a concern?
 
-I really don't like extra Kconfig options for something like this. So
-I'll just go ahead and switch this to per-CPU counters
-unconditionally.
+My 3 cents (note: I'm not a security guy):
 
-For BPF, this is unnecessary memory overhead, but as we shift to
-multi-uprobe (which doesn't go through trace_uprobe logic), it
-probably isn't a big deal over the longer term.
+- Linux m*() operations have been allowed to partially fail for ages.
+POSIX only disallows this in the munmap case (which is why we need all
+that detached VMA logic), but not in any other case. We have a lot of
+other failure points in these syscalls, and would require extensive
+refactoring to patch this up (very likely with an inevitable
+performance regression, as we saw in this case).
 
-> Thank you,
->
-> >
-> > >
-> > > jirka
-> > >
-> > > >       return 0;
-> > > >  }
-> > > >
-> > > > @@ -1507,7 +1506,6 @@ static int uprobe_dispatcher(struct uprobe_co=
-nsumer *con, struct pt_regs *regs)
-> > > >       int ret =3D 0;
-> > > >
-> > > >       tu =3D container_of(con, struct trace_uprobe, consumer);
-> > > > -     tu->nhit++;
-> > > >
-> > > >       udd.tu =3D tu;
-> > > >       udd.bp_addr =3D instruction_pointer(regs);
-> > > > --
-> > > > 2.43.5
-> > > >
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+- Despite allowing for partial failure, this patch set always keeps
+the sealed VMAs untouched (so that invariant isn't broken). The munmap
+semantics remain untouched (and POSIXly correct) due to the detached
+VMA logic.
+
+- I personally have not heard of a single attack making use of this,
+and the performance hit is very measurable and exists _for every
+user_, despite mseal being a very niche feature (I cannot find a
+single user of mseal upstream, both in debian code search, github,
+chromium, v8, glibc, and what have you).
+
+I remember SIGKILL on a bad operation being a possibility during the
+mseal patch set talks, and if people are really scared of this partial
+stuff, I would guess that's still a possibility. There are no users
+after all...
+
+--=20
+Pedro
 
