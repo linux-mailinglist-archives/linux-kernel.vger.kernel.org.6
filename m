@@ -1,251 +1,163 @@
-Return-Path: <linux-kernel+bounces-281140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E069A94D383
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:33:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A99BC94D382
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09AE01C221E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:33:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375A0286B6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF6C198A36;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EAE4198A19;
 	Fri,  9 Aug 2024 15:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="x2JlbjXH"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2042.outbound.protection.outlook.com [40.107.102.42])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fznazss9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BB7197549
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723217570; cv=fail; b=lZUaF3aaW7a/Xid9IXTMczICPvwD+BAI9rt9hRxs4Zlp5xZeaPZ43Lot5wD3P7XLenZtWnWTKOppf6ICIYE7WfZB5c4URsmYmMrHuzbUUgyzqZX6WGLecN79sVk9evwTw83Lsg9YRanqzE5KQWeRbADlx/fyRWSX3dq7v7c3ahs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DC81922CD
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723217570; cv=none; b=h0jrCWYRVMdEQsCxqY0qdWetAiX/0reVdMJr+KtYGYvQE4Tn0lpPSUqG6v7hgJfOkLfKICLm/NktpAvhi8v+XcLpQbTLandgst8DMUOtynUmdd1Pv9lUV/pf1hGutLWgikCIpnKIFk4bfQVyXVU5AjojkBHsnvOnrnB9/Jng/4w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723217570; c=relaxed/simple;
-	bh=5SNoUNFD0wh19k8dXGoYCp4v/y5PjR+PPYHKqwoTufs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PaeO0Ol3Y2kz4YyUlvBKcf7DAEXsTHmV4qz3jaKxmzkZeRNXTye6UXxYeJEkDnR8gOXmkz1qwOqyVkzts6kpHukl8RC4Iak0nTAfrQN5N8zg3K7r78WT/pWBeYfepb9wXZdbnI7cJ+lIEA8AO3OcWthCB95WksNK5urrO73jLq8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=x2JlbjXH; arc=fail smtp.client-ip=40.107.102.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=chi8YEMq8aBTurf1oI1EhatOUdoAvi/j0lTt5VlNGQWbyJISqvgcwy2wQZv44h6HsecpzushPJd+Jzby62+NHy54oqh4xo4RX5DMuCkexVK7xQLaBL3oaHX9wLIS/rM02RNWaJj+KwpDCx6BIoht0sY1Z0uw70tvLDFLu8c+DkcBld9hT3ZVMsmMkQhBP12L9ZWCLxEVlExwcjVT6pDbR+cyMo8mapa9wO0huGz1fkmi/1iSf4iwXUdFiajd48kDr7UyW8knWc1lA8xaC3xbxEOKfTF3yOr9TRhiVuO6Nmf6/AnMmTvscvdRuzcg4n6nLr37912XwdH6pbaTMmx+0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E4SVVrldHxV0C3h3vUfNSeEAp4hGuf1/B7pi3b8TPVA=;
- b=p9XOwaIDYJs9ghAS8bXKZLi59RSFUwx6nbyOwFecX0M5MmrY9ZXnpExAKtX5DaC/8IQN/Ajn7euf5ArwQWXM6Zn+qg0xZG/dNNH8euBTANqkhO/ybbVsAon1lsR7oot4Q0/LgIOztNnejk6foU6RbynBrz5vHWDJ6CnxN2dZ86AwK65WeEbWKSm2LQUn5oOfKI4jb54InLdqApFDee+FNkaSHDtMQ0ebZNy92P7hptW57fSD77xWnpfzKPgJDy02cNt2fxitnNiWExN6oBK0MhJgZ0CO+ZFiYIhnCxuzWggZvQ8SHgOG9CLwWaylGylrC2I2pL19DFR+vIYTCE5jjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E4SVVrldHxV0C3h3vUfNSeEAp4hGuf1/B7pi3b8TPVA=;
- b=x2JlbjXHx6xJ4KsvrLxsbJjZM/LcsCc5ChEwOgeFt0oMtK67pt9ItNkA3fM5PiU9Gx5HaNhJxF6u4+EaRNufSWuqnIg6MoclpixoTHxkmG3HUE1ArtFVOgGmQEz7fBfL6fotOpZctFctDo8xAA+tRSkMW7ZFcYtUvC28vexVPcA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
- by CH3PR12MB9100.namprd12.prod.outlook.com (2603:10b6:610:1a8::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.25; Fri, 9 Aug
- 2024 15:32:46 +0000
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4%4]) with mapi id 15.20.7849.015; Fri, 9 Aug 2024
- 15:32:46 +0000
-Message-ID: <c6ef0253-9f32-46d6-a658-295e39c926b2@amd.com>
-Date: Fri, 9 Aug 2024 21:02:35 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 1/6] i3c: mipi-i3c-hci: Add MIPI0100 ACPI ID to
- the I3C Support List
-Content-Language: en-US
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
- Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
- <20240807052359.290046-2-Shyam-sundar.S-k@amd.com>
- <e94efd42-bc3f-4003-8ad8-2da6500f0f13@linux.intel.com>
- <ZrYlNOjFQE9dHsVV@smile.fi.intel.com>
-From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-In-Reply-To: <ZrYlNOjFQE9dHsVV@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0074.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:23::19) To BL1PR12MB5176.namprd12.prod.outlook.com
- (2603:10b6:208:311::19)
+	bh=+pTk2aEi/ogCsdRxsYBqnWsuQm3ye5bJGdOKQ1d7M/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DtcDtTi+lIwOVRNUYbnRiYKEBwlXaFrSfdT/uzLWf+jS0V8FXIvUCdYPdBiPHJaTE6NzCTGyLOOS75cGq9TRuX4+QdBfZDVazUGF/ZDW9OQi6NtA7BVtl+U0P47NWJJPUZccf+5HXf4egIZ53o0cRmYocv0vpoz+U0XwB75ZJ3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fznazss9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723217567;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W+bDlh7xaItgyuKYxRJ95n8/JjvqS8mQFp8R1hqMxuE=;
+	b=Fznazss9C29Z5ygof64lX9eBVEeo96Iy/gh031MS9gCCP1okwlJ6EZftdraPRJTlIO/0XE
+	xdr8cinGvq8GnI86hte0Nd+uZqBc1YMGXtLuLO2de6aGLgXv3qvYyh3z0pV7M7dIf1Z9W/
+	tuhHJjIcse1gSbGAgW5oun0XYdQp1jw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-412-EN57wZX2NFWPH0-SXLCKUQ-1; Fri, 09 Aug 2024 11:32:46 -0400
+X-MC-Unique: EN57wZX2NFWPH0-SXLCKUQ-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42671a6fb9dso14883765e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:32:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723217565; x=1723822365;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=W+bDlh7xaItgyuKYxRJ95n8/JjvqS8mQFp8R1hqMxuE=;
+        b=mhzWhdR13kXGXHPZHgR5AaMC7/MmHoNnd6KXhpXBgtSauRmRrx70l9NsgkBSiRcHgh
+         Zwsu/Eo76Al5MUikO0Dq2ro7Htu1VGWKChPVzr3SGQtaAWogxjS7hsXoeXH5S9z9MlVR
+         Hhib71mtqY3Dw47pIU77cLe+VE3uXds3rlUcEJeansT/Ncv5Jb//oQC0Gz234HKJzCjs
+         ssLCYLH5p4bg2irAHz5WozvusxvOqouejoJyYkGM6cVbq0UgXyUYAduIxepOhMBQ7APE
+         KQ/Sltkmfu/6czck6RNE56gmwLrKCRLsNaoxcIp6I31p6mudWdZyr3jxYuUzd5Qdhcf2
+         mBwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSH+WK6titnGXlK38288m8GR/LIyHwndUgMWN9h2VJkZIaumI1l2O5CJTds+Qt36dqsLCTb/+DwcNLG8QFSBya24wzeh0y2WDhz9Rk
+X-Gm-Message-State: AOJu0YweqM3ObkDECGg1wC8hguinFKGO/4piRZpSqtghZuERWT1zGaJ1
+	1roBCBQPBvkeO5TiWfmt/Cj6BAKt9v1qYIdNblF7C7yjChkdxV9IxN4DjlW7ryLbqhESgkTJhSY
+	3XEFt5Eaun8kiSQU+ZtIKxuvdUd6AsC/HrPynBajWC4r/YgOjnqtZxIn5XHxQEA==
+X-Received: by 2002:a05:600c:1f92:b0:428:1e8c:ff75 with SMTP id 5b1f17b1804b1-429c3a58e43mr14390515e9.35.1723217564974;
+        Fri, 09 Aug 2024 08:32:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE8qqzCZxjocJRmOEkMUj674dhjVNuLeTJsDldTBnAkT9Q6D4eLgZ56K8asvE2PExbGKakAHw==
+X-Received: by 2002:a05:600c:1f92:b0:428:1e8c:ff75 with SMTP id 5b1f17b1804b1-429c3a58e43mr14390315e9.35.1723217564539;
+        Fri, 09 Aug 2024 08:32:44 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c74a9d2sm79848155e9.27.2024.08.09.08.32.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 08:32:44 -0700 (PDT)
+Message-ID: <17597d58-7da8-4555-b583-1997d78be018@redhat.com>
+Date: Fri, 9 Aug 2024 17:32:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|CH3PR12MB9100:EE_
-X-MS-Office365-Filtering-Correlation-Id: 331d2ff3-3fd0-4f2f-d706-08dcb8888486
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZVJXdER0dEFZdzJFV1RxeTdadlQzMW9EQnRQcGN5L1RVRnkrcm9tb0l1dmxr?=
- =?utf-8?B?MHY5Y1gvU3hGOUNqS0x5VitNcmtFS0g1QnhCc0pjblRLbmdYamw4NGhyU0dK?=
- =?utf-8?B?MHJ3VW1MajhUaFBmQXJmeUtWdE1pRnNiOCtBcXMvVVp1RFlyQStPb2RiTGFU?=
- =?utf-8?B?K2ZTUVRjY2IwbFpQcDQycmd4ZnZodU8zVUx4SWU2enJFamZyK1dZU0d3WW84?=
- =?utf-8?B?dytKK1pxYW5GWUdkK0tPWWVRaFRhNzJUaHI1MGpzbTVnb0gza1Z0NWUvcmVT?=
- =?utf-8?B?RWRwMHhDaVVsYzRyZWNFSTRMU1VPUmlrNFJzb3MraU9nTDB6ZFZqSWpuWFhi?=
- =?utf-8?B?Vmx3YjVmb3d5Q2QvL0ZyQkdQWTJVVit0K1V1ZEEzRXhaWHZEYm9HbDNFSzdq?=
- =?utf-8?B?aVdNUG4zVndTQ2Y1bkVtaFlESXp5V1R5VmUvVCs5aEJaOVJlUGpERXRBNzZT?=
- =?utf-8?B?bnBzbVllV0s3Y0l1Uk90blVWSE9rWEViQW53T3pqSFVSQUc1bnV1UUgrQkl4?=
- =?utf-8?B?eEpBaXh3dHI1MzU5TkliOHljcTFmOWswM2pvMUJCZEhBbjM1YUdaZGtWVENF?=
- =?utf-8?B?QWV0ZnpqU0xaS3prUHlMUk9UNmtiRVJrZ05XbHk2RlJmUFI2MC9UYU9iRkJB?=
- =?utf-8?B?bzJOVnYrbG9HU2dpa2N2N2VLdGtlRUZnRTlQMEVNdTdvY0JPTXlGNTNyOE1w?=
- =?utf-8?B?QWlYNXUvWmhJNW0zYng4MHl0VVUxck1QMVBLUTVaMzJyTkNrRFJ0aWgwNG9j?=
- =?utf-8?B?dys0S3hVRVdvZnBVREdOVndnczY4dzBqTGlSclBGVjZBbktnV2ZmUVJEeC9T?=
- =?utf-8?B?azBncEtDSjFQcy9IYzQrZktlSUpscUk0V0pJTjB4Mm04M1hQOXZIYW9FUjZp?=
- =?utf-8?B?K3JQcjk2TzVDTm91YTVuYnBqbUR0dlJNanRSVzlGMjRYZjFBQ0hGMWdHdUk5?=
- =?utf-8?B?LzJmcHpreGZQUTZzYWJNUzd3cHhiY25OaHpVZHJWcXFFb3RBQVF2UktvdkpK?=
- =?utf-8?B?VkVSYStCN0ZYWjMyQzNYVG4rQnUzamhlOU5JRGNsWjZFVzJzSFBSWTJaYWVu?=
- =?utf-8?B?REVuWlltTEZkVFdqaVBKSUZoRyt5dWZQMkJ5Q3BVcm5SKzlMTEJ1QVdvaDZx?=
- =?utf-8?B?c0xSZ1dPcTZjdzEzV3daMytmSGtPbEp5TStzTVhkVjU0SmdtSkZCc0FXd1hm?=
- =?utf-8?B?a3ZOTWRKSk4xcUl4bVhBZ1R4aWdDaWxycVpGUUw1amI2SG5iNTJWaDlVZGY5?=
- =?utf-8?B?Ulh3azBHVmZ0NU41dFVFQjRBb0ZHMm1QL1Z5WDhOdWxGbW9pWkZSWmJhVmww?=
- =?utf-8?B?VjJaZzNyZ0ptNTF6MUZza25UdlFzZExhUDlqSWlJd2oxNWMyTHg4ZjVjQjBk?=
- =?utf-8?B?anZ2UkpvSnhtS3lJNUE2aDhtRTIxNmxVUFFkNVhtRFB2cDMwSFgyS2tsT2Jz?=
- =?utf-8?B?NCtmTUJlT2VBS2M2Vld0L2JnZ2d2OE8yQWVoU2tZbE51MTJmQi9wME96SFMr?=
- =?utf-8?B?SStlOTJnQ3BuR0dXUU5rSkhkQTVUWXhPTkxZVWtxbVFKdkl6WjYxZ09iWG1u?=
- =?utf-8?B?RE14R211ZjcxcTNQVWZsVFQyNzlNK2VKZGFhS1lWMzZ5K0ZJalcvVDM2RjhJ?=
- =?utf-8?B?QTloWWo4TUpmUzBBVSt0cGlXMEJ3WmNyU1NlRzBMaC9YREdrUjJqdnI1Qnhv?=
- =?utf-8?B?UmpqY0lIS1N6UDJ4L0hNTjJ5SDdhMnY4VllpMklsVUZZQVhqMDFSc2w5TVdr?=
- =?utf-8?Q?gWNLk5nfHwg0a3JWMY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NFJmT1dGOXlqUWpVbnFuWTNubjdkbU96d1hyR3RSUXVlc3pZdW1nRUQzWWhR?=
- =?utf-8?B?Mkk0cEx6aENkNlZjOVRuQkkwMzhybnBRZzMwamEwQ3ZJd0IxZHdnUk5lcDdG?=
- =?utf-8?B?Q3lYOW9UY0dVZU5XaXNRdjlHM0gwREQ4dWxmbnlBdUFBUFA2dVROazlhZDFm?=
- =?utf-8?B?bG1mbTdVWXJ6aE82VExGREVyMnlsS25PbDNtSXhkWldYRzd4ekRwWSsyK1A2?=
- =?utf-8?B?cTVZdThLUzVWVForNVFTMENMYTI4SWdJL0xSSkhuazRXZGxXZ3F3c2I5N2ZU?=
- =?utf-8?B?QzlhWnhXakhCeG81Vzg0MDBBR1N6bE9CaTY5bDB5M2lsam55SVVFS0Q1Z1ph?=
- =?utf-8?B?ZnVxME1Qa0dVMWFSWlF4OTR0LzJVNWIvVlJxSmxNbFgrbUdadWQ2aGwrZXJa?=
- =?utf-8?B?QVdXKzYyRkM3VjNQeExuUXFkTGkwdDRvVXpMRmhVS2RQdGZ1L1V0QTY2bU16?=
- =?utf-8?B?K0VrMWtGMUM0Yk1xNTFWZTl6dWtTblpPdjlNcTlkb0xndlE4TE5MTmlCNDZr?=
- =?utf-8?B?RHhGRHI5MmtWRUF3OGwyOVRKb1Vvc0pzcWUxUXIyTVpydmxjNDdWTVF6K3JT?=
- =?utf-8?B?VVhmbEdGZVkxOGR1N3hqNUdkZm1weGo3aC9tbVJYbmhTTmlUc1NiTElDRjNU?=
- =?utf-8?B?SmwrM01BWVVYZlNqZXFYTTQxamo0VTZNN2lVRFlOS1BsNzQrbDVQRFpoZ3FJ?=
- =?utf-8?B?UjZPQ09yalV0L0lPRVZSRmZlOFdrNUtReWlEbW0yVnJaL29IOFFvdDhoLzNY?=
- =?utf-8?B?aTdTRzJReXNpWWRyMm1KZTF3cHUwRVBaUEJXWVd5U2Zta3ZNaHdzUWkvOUUv?=
- =?utf-8?B?WWZZSjhiVmxlYWt1SXRtNFpjaE15UjZkc0NYSDBFZW5rVWUvVTRIZlo4b2Mw?=
- =?utf-8?B?OVlzdGE1eTU4RE0xMTF2TmtZSkZ0ZXltWDBXUWQwbmc0RDRuVHBsTmR2blpx?=
- =?utf-8?B?dXNKd2xXaFQ1YlZ2QzlZaklzbEdsZFJ6NXpyWGdIUUtvRm9NMC9XUWdHNDUx?=
- =?utf-8?B?V0JVcHYvNzVrWXRlRWdNTzN1WVdib2Voek1ibkUxS0NwSi9vR1UwZjJ4RDI2?=
- =?utf-8?B?UFhlbjIraEo0NXZSUVV1TnFpbHRSa1lqZXBlZzFERmRlbWR6b2FKTTdBbjUy?=
- =?utf-8?B?L3B4anhxY2VQa3cyTlprbFlaaHZaUFdJdE9VVURmYkNtUnIyRmF6K0Q0bHBK?=
- =?utf-8?B?VTlST29jOU80WVBTYVJWVWR3UHhseUtOaVFTeFNQbzFhQVpaektnbDM5RW0z?=
- =?utf-8?B?MElqeVdsSG1LM1A2Q0NoK09xQVQxWHdLdkwvdnBZMHlLSXJXWlB1Z3M1YWgy?=
- =?utf-8?B?L1VFSUhMWjY5M2lBQUNLRkdPTDBKbzFTeEpGNFV1QWF0d0o0R25ISmlTZVdV?=
- =?utf-8?B?YVpqMERtQ2JwdWEwMmd0MVYraDNCMmxSWVpPemxONGl3TGN2RDNSNHMyWWha?=
- =?utf-8?B?OFB0M01pTE03UThJNzQ1UnozVUhhRnlYa0IvRFlhS0V3Snd3ZXFkd1BCNkd6?=
- =?utf-8?B?NmZTaTF5ckN1NUl3U3c5V1h2WkdIeC9jdnVObjQzWU96dTJSOFA0UndqaHkx?=
- =?utf-8?B?VldQTHFjWjQ4bzZNRVYzdXhWZEcxWmxqdVo3eXRQM3Q5ZVp5QllYSTloUHRx?=
- =?utf-8?B?NUgxWDU4VEVqUHdtclhOQjQxRUlmeTRJVVdmNFZDYVJQcFBySElNdHhqTERy?=
- =?utf-8?B?SXRpaTQyKzdPRFdWNURSS3l3a0cxOXVPTjJHRG9XQmdndFFXQ1paaXlOTit4?=
- =?utf-8?B?SEpISEVyVkRGODY2akxDek0wMlhjME5BOEVVSW5LOVhER25LVFByRU5hSnM0?=
- =?utf-8?B?OEJWN0FJVHV4cys5T3ArNGZiZ2x4elRVRWduejRqU3JGUktTaFA2dy9UaXhk?=
- =?utf-8?B?S3YvamZUTTlyanpYdm41VUY1ajByQXFITWtTQmVwNHNvYmVmUHNJcDVhTzBs?=
- =?utf-8?B?cGJkZUtGSlJub2YwbTBUbG9XQWpmWlpCK3JLeDRqejZWcTRQQXlGTXJlUXIv?=
- =?utf-8?B?ZWtBSlRDQ1Bvb1IrRCtRMWlCdFpUcjVOUTlPb0pPYXMyZnJTWVRjcStST3p2?=
- =?utf-8?B?bHJSbE9IMlhxbTJxWXJDQTlzZmFXL2lWRFBPdFFSZFl6REJXWUlNRkpzeXlY?=
- =?utf-8?Q?NrYDpQ79NrzZhZu7L29xfz0cY?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 331d2ff3-3fd0-4f2f-d706-08dcb8888486
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 15:32:46.2895
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yrq76VY9jzBmTV8lg8VoxVbBo76uNQSad897dQ+5MuqI9O00JcfS5pFSWm1/dKGJd9M+xAo6Xg3T8UdMjgum2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] mm/migrate: move common code to numa_migrate_check
+ (was numa_migrate_prep)
+To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Huang, Ying" <ying.huang@intel.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Yang Shi <shy828301@gmail.com>,
+ Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org
+References: <20240809145906.1513458-1-ziy@nvidia.com>
+ <20240809145906.1513458-4-ziy@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240809145906.1513458-4-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 8/9/2024 19:48, Andy Shevchenko wrote:
-> On Fri, Aug 09, 2024 at 04:54:18PM +0300, Jarkko Nikula wrote:
->> Hi
->>
->> I Cc'ed Andy and Rafael because of ACPI ID allocation question that came to
->> my mind below which I'm not expert enough to answer.
->>
->> On 8/7/24 8:23 AM, Shyam Sundar S K wrote:
->>> The current driver code lacks the necessary plumbing for ACPI IDs,
->>> preventing the mipi-i3c-hci driver from being loaded on x86
->>> platforms that advertise I3C ACPI support.
->>>
->>> This update adds the MIPI0100 ACPI ID to the list of supported IDs.
+On 09.08.24 16:59, Zi Yan wrote:
+> do_numa_page() and do_huge_pmd_numa_page() share a lot of common code. To
+> reduce redundancy, move common code to numa_migrate_prep() and rename
+> the function to numa_migrate_check() to reflect its functionality.
 > 
-> When adding a new ACPI ID, always provide the following information:
-> 
-> 1) link (in some form) to the official confirmation / documentation for
-> the allocated ID by the vendor (MIPI in this case) _OR_ (very exceptional!)
-> why the bad ID had been allocated;
+> Now do_huge_pmd_numa_page() also checks shared folios to set TNF_SHARED
+> flag.
 
-Member version:
-https://members.mipi.org/wg/All-Members/document/previewpdf/89465
+Yeah, I was also wondering why we didn't check that in the PMD case.
 
-Public version: https://www.mipi.org/mipi-disco-for-i3c-download (this
-requires a signup).
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Since there is no direct link available for preview, I did not include
-them in the commit-msg. But left a note that the MIPI ID is the one as
-specified in the MIPI DisCo spec.
+-- 
+Cheers,
 
-> 
-> 2) are there devices in the wild (on the market) that use the being added ID(s)?
-> 
+David / dhildenb
 
-Not in the wild. But the latest platform will have this support
-included. So, these device IDs are crucial for the i3c-hci to be
-supported on AMD platforms.
-
-
-> 3) excerpt from the device (independently if it's public already, see above,
-> or not) DSDT ACPI table.
-> 
-> With the given patch it looks to me that you most likely need a local, AMD
-> specific ID as well.
-> 
-> So, in my ideal world the DSDT should be like
-> 
-> 	Device (I3CC)
-> 	{
-> 		Name (_HID, "...") // AMD specific _HID
-> 		Name (_CID, "MIPI0100") // Compatible ID for generic I3C controller
-> 		...
-> 	}
-> 
-> Is this the case? Why not?
-
-Please refer to the MIPI HCI I3C DisCo specification
-(https://members.mipi.org/wg/All-Members/document/previewpdf/89465)
-section 5.4. The ASL looks the same in case of AMD.
-
-MSFT says that they want to use MIPI0100 as mentioned in the
-specification.
-
-What would you advise?
-
-> 
-> P.S. Make sure you Cc me on ACPI ID matters in the future.
-> 
-
-Sure, will do.
-
-Thanks,
-Shyam
 
