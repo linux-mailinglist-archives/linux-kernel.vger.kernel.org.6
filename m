@@ -1,174 +1,103 @@
-Return-Path: <linux-kernel+bounces-281136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F20294D37E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:29:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168AF94D380
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CAB91C223F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:29:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43F21F23950
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063BA198A30;
-	Fri,  9 Aug 2024 15:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B16197A81;
+	Fri,  9 Aug 2024 15:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eCjKLWlK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ntjEetIO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE54198850
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56145168DC;
+	Fri,  9 Aug 2024 15:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723217391; cv=none; b=oJvackMxr3rnnaUSdmNpLLi1FwGq2Lr4/noteCkdZCG4lGb0bRsuBEZbj/6clboW+4CelyXdROzzunaaqap716pSQfppuHKgSSIz127iGG5w2ra4jgy0lsOEURxKLqI18tZuUwYv5x/zvCC34SeQJN+99TOWRKCOGswFgNFa6yU=
+	t=1723217427; cv=none; b=fwhRbZ/jx5nZsz99xCI7UGCsKl/qQpQTk8U4kzvnjSiXt/C3WDHmGiy+b9wpUwRH0WTQNCbxTHHRIFJJZxbyFxcyOX5A4xVbtn0v6VA4y/1Gt4TjTmc5TuYagd2ORtAz2Fk1WCkGUyqs3d8gs7UYSwr2fK3edh5LRE/RrZ9Ivj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723217391; c=relaxed/simple;
-	bh=Cre+FQ/kmBnvYs5YgX6DqNdezSARA5lCioFzGEHHVvw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SLM8MCasVliFdBS0Yjo5s1unazmrbipqdL7l1rSS0qtGeW9M49Dtmij4IxhXOx4otfU5t9lYNp6fledRMuhq0f0/QLayPkqBPUA6LxRek0E/4Na4bNSkcMoXyO4vWgapWCLXT14wLtiXmFk76ih36jr+9j7jZsw0plA4OtzNwGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eCjKLWlK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723217387;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+qb0Tn3R4/F9P9guJ4b8TeJDGiJ6K5JkcxwGHngJl1Y=;
-	b=eCjKLWlK7+jeuTMv6R/dSpZMcokjwiKnoCbUX8rRhVBMFKpjS5mmJibpnDJjcytC5mvL9V
-	Z2E6MSHIfdV0BQo2rGXB8iJzbuyDFKI2TkElwB5DeA5xQkaXVEs4E9ZYZRJ9sRl5ZYx05b
-	rBQpgQ+DilUFTwEPXKrtv3thzbdnaow=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-365-MSEAx86sOqeKqLUXPuh9zA-1; Fri, 09 Aug 2024 11:29:46 -0400
-X-MC-Unique: MSEAx86sOqeKqLUXPuh9zA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4280cf2be19so14857155e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:29:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723217385; x=1723822185;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+qb0Tn3R4/F9P9guJ4b8TeJDGiJ6K5JkcxwGHngJl1Y=;
-        b=dd1YfOzKL6C5UIkS8v4Yvolg8KWrKxMl0pMJtPuiH4piNimRClLdcz8PeIcjELtYpb
-         gftvxTTo3NQH3OCLpJZYcN9LZb2fWoskZ9yJRHKNLoOcTUk9RBhE0G1fhGb/1G6MhVYs
-         2gAc0JAhaj8CaIik+xSFpY+sUtIrnA5A1hNdkWminj11UbJIz03CuWS/zg02M3wU/VBw
-         DNSYcfRTULEuh8o13UrOQ6lUKAOOo/097xdlk00/ZbQQmtIgOH4ZeYC/W/5FLYi9b6kM
-         5MeW9Ifd+GS6kQY4vJfnmvhOCo7X4cak/C80jzlMNTNbA8BxdNMnFxlFY1Fn8dPvjhNG
-         P0dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmx9/7o6VVQsxwf8mLqsAxL0azZRwY/obz0xRp1V1s76g5cJ+6P2tTVT5KfVbxwJjJoDsR4JIKUo516uxML8ff3+qO6lRAGE26Qn2B
-X-Gm-Message-State: AOJu0YwkAErMmAuQYBNCHkObyYohZjevTmF7Y81fB7+ZNad6YipeZKaJ
-	AogG1rv+u7+sO3YlMtm1gKF27slypMzi/g/bd+ixG6LzjSKHKQnIpX4vlabebBgmZ3DELE1szlC
-	ZGeebiRvVCFyJViu8lBSsERrb5MBrM5sVnWEsSxUO2RGgoHjidcipMaz9Ahcahw==
-X-Received: by 2002:a05:600c:3588:b0:426:647b:1bfa with SMTP id 5b1f17b1804b1-429c3a174c2mr14386855e9.8.1723217385222;
-        Fri, 09 Aug 2024 08:29:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKTiQa7A0hgIVpw/ZWs2EQKjIeTX5+pvF0wUqZq/lUQ9GaeOmQ8UyiigVuIJHlsZzHtD3kPw==
-X-Received: by 2002:a05:600c:3588:b0:426:647b:1bfa with SMTP id 5b1f17b1804b1-429c3a174c2mr14386615e9.8.1723217384686;
-        Fri, 09 Aug 2024 08:29:44 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059e0082sm133666195e9.48.2024.08.09.08.29.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 08:29:44 -0700 (PDT)
-Message-ID: <13318f5e-6a76-49ca-8c7a-9f461061d1d7@redhat.com>
-Date: Fri, 9 Aug 2024 17:29:43 +0200
+	s=arc-20240116; t=1723217427; c=relaxed/simple;
+	bh=brmlbu97JZ/VhthJ9c1/pnOkJpPrJo/ghGpbEHPx2G8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aZCkjbs2H+n97UhDCgzrr8bDWZHdcPznrZ84l5sJADjq8NosnBrfVtYogJ2ynTzi6JMl7HY6ZiMhH6VXIC0xFdVx7DItTSizwJJR7e5azO8UBqQ3H4mm5BMQS7p1uprOpzq6mJgR48kB7P171xYFsvCCFf5tPYCRKL+bdoGLqgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ntjEetIO; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723217426; x=1754753426;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=brmlbu97JZ/VhthJ9c1/pnOkJpPrJo/ghGpbEHPx2G8=;
+  b=ntjEetIOFzKTXk4u2tLE2xTjTvMK+4xFZ6Tq21wkCi2ChHrOi/X4yEqW
+   GugX4XT1SViRceh8ngcRVxImGGQBiYycwtgm7eH9iTzmp1pAoF9oJpqpj
+   hGM23b/d+a1UiY9gwjjqCHx/vQdaJsLTGIRD5nyDVYlj3gISK08AK45ao
+   RMHjkBJXuL8zdZQEo53fEBPjX8ikfIrZdNwlb7CXD/GJdbW+C0Okww6qQ
+   ojAoCDmwmdJ5YTYv9ZVd4iKgJ35diCnau96kLblbLdOQ5w8Ze/sieicFV
+   i5Lrf24uFb2YOxN9kC5mDc3bHk8Do59B/BtZierslrQ6myCs4DlDGyCm0
+   Q==;
+X-CSE-ConnectionGUID: ztwAuLGtQHqQAjIWZQThhg==
+X-CSE-MsgGUID: eqv7flRNS26ZLRgVfzeJag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="32020579"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="32020579"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:30:25 -0700
+X-CSE-ConnectionGUID: eozMyWarQ4arVcw8xp332Q==
+X-CSE-MsgGUID: OxKrmaGTSm22puMLsKVA8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="80832728"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 08:30:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1scRZM-0000000DSMQ-3IaT;
+	Fri, 09 Aug 2024 18:30:20 +0300
+Date: Fri, 9 Aug 2024 18:30:20 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Raag Jadav <raag.jadav@intel.com>, jarkko.nikula@linux.intel.com,
+	mika.westerberg@linux.intel.com, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] LPSS PWM cleanups
+Message-ID: <ZrY2DGa4zHQUc3SX@smile.fi.intel.com>
+References: <20240605131533.20037-1-raag.jadav@intel.com>
+ <ZodsUkFQ4BJDU1JY@black.fi.intel.com>
+ <y5r5dtuvkvoigk5nidn3vywwh4tlvx3oij3crpt243jamvajok@imghdifonrwd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] mm/numa: no task_numa_fault() call if PMD is
- changed
-To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Huang, Ying" <ying.huang@intel.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Yang Shi <shy828301@gmail.com>,
- Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240809145906.1513458-1-ziy@nvidia.com>
- <20240809145906.1513458-3-ziy@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240809145906.1513458-3-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <y5r5dtuvkvoigk5nidn3vywwh4tlvx3oij3crpt243jamvajok@imghdifonrwd>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 09.08.24 16:59, Zi Yan wrote:
-> When handling a numa page fault, task_numa_fault() should be called by a
-> process that restores the page table of the faulted folio to avoid
-> duplicated stats counting. Commit c5b5a3dd2c1f ("mm: thp: refactor NUMA
-> fault handling") restructured do_huge_pmd_numa_page() and did not avoid
-> task_numa_fault() call in the second page table check after a numa
-> migration failure. Fix it by making all !pmd_same() return immediately.
-> 
-> This issue can cause task_numa_fault() being called more than necessary
-> and lead to unexpected numa balancing results (It is hard to tell whether
-> the issue will cause positive or negative performance impact due to
-> duplicated numa fault counting).
-> 
-> Reported-by: "Huang, Ying" <ying.huang@intel.com>
-> Closes: https://lore.kernel.org/linux-mm/87zfqfw0yw.fsf@yhuang6-desk2.ccr.corp.intel.com/
-> Fixes: c5b5a3dd2c1f ("mm: thp: refactor NUMA fault handling")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
+On Fri, Jul 05, 2024 at 10:28:55AM +0200, Uwe Kleine-König wrote:
+> On Fri, Jul 05, 2024 at 06:45:22AM +0300, Raag Jadav wrote:
+> > On Wed, Jun 05, 2024 at 06:45:31PM +0530, Raag Jadav wrote:
 
-Acked-by: David Hildenbrand <david@redhat.com>
+...
+
+> just swapping your S-o-b and Andy's R-b in the commit log to have your tag
+> last.
+
+It's not required by the documentation as Rb != SoB.
 
 -- 
-Cheers,
+With Best Regards,
+Andy Shevchenko
 
-David / dhildenb
 
 
