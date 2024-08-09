@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-281021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED0294D1F8
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DB394D1F7
 	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E23B71C216EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:16:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D08D9B20A90
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A870197A6E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D43F197559;
 	Fri,  9 Aug 2024 14:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JsvI8Y55"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="lrzxzqAF"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30A1197A62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA51D197A65
 	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723212968; cv=none; b=sBxBIS30y2z+LbrbVFMal3ssvFmEODkthyPZy9QtOUAmmVj7TH7jQPTQntyz0iLvfKGT7oih3YwqTakF2NBlt8bIfBkMjxZMN26MFBvgClOk9jj/Ofdc53D6VdWSVIRfVkV3Ucb89IsDwpXxjAeS/ZYXi/f/PvIYalnIU3Il22I=
+	t=1723212968; cv=none; b=JCQ1ZyaiX3BBxOuQkcg2svdSPblzaf6OS3tEWLdJLGsZMHiG5Dz976J34v9QhROYeOkL79wqPqAVsn1HA2KXDS6XiMijCjOuEcXcsQ4kGqlSzYvDWSf3seK+Qe0R6L1M+9KOdtLb2XIUnI26yJI7vEhfbbjnal2HSqc/G6iZnvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723212968; c=relaxed/simple;
-	bh=i+8btDDh4eAP9SWK/QrveYXoOZhr9JkOlwFDq6hZ13U=;
+	bh=si420KfCAbUwj7Tl7OeH9FIMAx1kEhyq0ushc0tBMas=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eA5x+dqO+PdgIS6fDQUNTT6Wv5y5yK8NrxBhREllhnP5pBkBczn3NXo2OLDoVCYwNna5a9fLWHmsMP/yv0/wX923Y1pNJWYyw5mDbciR4FdSbQkaV2Dc0y/CES11JbIU4pO0s9mW82eHTIzq1w+NPG6Io25m+vdoQMUEiKue+yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JsvI8Y55; arc=none smtp.client-ip=209.85.208.175
+	 In-Reply-To:To:Cc; b=laIiFjoWwf14fFkG22m3iltvav8Bnhh3xof2a3jL39yNQ3cbxF5aassRlon7gdl36NX3VgSwEmabFN10Hi0bCP2TpRfnC26H11Bj7nw5wZtOXpHXqfAAfrPfkzH4L67g8Q3noUz9ZiaRAvR8nOhjvvVafeQxsGHVa1JnnOkNmgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=lrzxzqAF; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f15dd0b489so26553891fa.3
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f15e48f35bso21370981fa.0
         for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 07:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723212963; x=1723817763; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jw4ZuLFuVy5A0IKctkeTjrnq6fclS4FD7LJSylrulPM=;
-        b=JsvI8Y55uxyDWBVnlzmj70P18OKqgLdDAdMHugOOVTP8aOkTV2Wl2Feh7vjvX7Uwax
-         8tE2ZK8W+MWf4uC1ZO891jWmeLPO/F8m5tCIZS1xK3SA9DQv7O3pO2F5Dy+z39hMxliQ
-         u6YvrpBprK9n25Ut2RQoc5gKDu1TfQd70ujGrgFw+iF6t2PqtzB8jOg/ADCyall9P9kS
-         m4Ge3/JFMrzfCdBv7n0uutBnoG14MXXk3T0NgZtIKzHQ++VXJDK8EYP0xjOeqKozP+5K
-         NSdIKXFi2Hqc0kourbv1zqtDJmnQkkJLeqH5uLBYz8wOpwY0vGbgX5KOXsJxV/O7sqEy
-         /jRw==
+        bh=DuEBO4wKbN1vPlCMZPv1/VInONtPQvpG32vpeJJnsnw=;
+        b=lrzxzqAFBZ4Z5iAz72nTvPLaSTMo3McM57G+4F+drQsZt9Lu+6qJLmBk7UGJBkwJU9
+         vAzUetucm9YkPfdY1tHdDbMYTiPCHNcTbQAis3Ug2lcMQcTAzaxjZVVH7LWLUf6FarTU
+         D6zRMMqt3mD+ewcDBSnUtvhiuzfv/s8iLTI9ekjO26suSxmVHjeYvugOqKC7g4/96DEf
+         eg/9+c5FhPKjTXaKgP9mkOGJCLui7aH+CjWmWZFpCKuO0Ui4jZz6qdwN6iTEQvpFtPWb
+         +apLnUSH6qM42kRwVQSeuMAcVxKZR20bYKIUY46UNn5CdXYo9keRHW9gdXvrKbFK/GSB
+         NFgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1723212963; x=1723817763;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jw4ZuLFuVy5A0IKctkeTjrnq6fclS4FD7LJSylrulPM=;
-        b=XSPZuEDTmCLz/EDygGDyA+K0HTNXQG53R+UvzWbS/+tO54GwT2RLw9jkHEhDcyr2jf
-         96phAKGkkwzSzMYI5NlVui7i7yhUz78uK4OVSheVKERiMWhVxfzuCPWW57+nZIm5anHz
-         Q49vuxedpDymkUxVi/iXo4OgAuQeJzX/bLmiOaOPm/cTpTDiglUi5NvzNSfmnTYYImdl
-         aa5o43uvrLRiZQSGNvjgyg5923LLWRoz2qpi9elsUvWrpH/t52b9/wnpK50aJZngEPVL
-         PAX7F3UfXZCo1qa++IbOM8wzFPlOdBTm7CiTLuulh7QTkUa46lBUD7QHXyZAbiW6XTMM
-         1HzA==
-X-Gm-Message-State: AOJu0YyA1NB3qWwDgXJAlY6kYHjzYca0aTRrSFKcS7zj4JkzGFQsuRju
-	4J1sxc7sOqrmtVdvwvI+M69pM0rkdgN+JHlnMTux9KwviPcGpq54FnsEZ7mhudClAlfE1EuMs6H
-	XRgU=
-X-Google-Smtp-Source: AGHT+IGSWBqiDzqWNZ16J6q2xOQFHIW/0cm+Wng43GKPXHyaq5g5Ofcwe7rozGe3QCXi21w1t4YbuQ==
-X-Received: by 2002:a2e:a581:0:b0:2ec:500c:b2e0 with SMTP id 38308e7fff4ca-2f1a6d1d1e9mr16504981fa.22.1723212962223;
+        bh=DuEBO4wKbN1vPlCMZPv1/VInONtPQvpG32vpeJJnsnw=;
+        b=MQU1FPZi9PRB3zML+oqkcaeKI0FUONheNSxniW/cn3a4odNS5u6U6t/39cNARY+eSq
+         IJsvpWg5gLXuajWXbLdpYi4zNsfTsviDhEp0VawdYDp/NJXVWRqvrMn6dnsxRLKswt7L
+         qJUGcEE3Ie7X5ejzNAlkN1ab2sMgT3SBFBiMxJRar5PkQ5oEH5uFqbHsRONrPp91AT4S
+         pCiVOCI4Za794K3gP62CAhTRFwqckOlYbBZTemSj/2uecRdBAhnjkOO+nsz/WK85qHHf
+         XeOWrIc1OqN3/N7u5nrh4i9qVVejLB+wegr2krQMyhiC5v1z5bZbP/Vvnd82x544Ji5o
+         jMHA==
+X-Gm-Message-State: AOJu0Yz6leWiMgQW0Ep4WxXM5ohjLkmnhDYRXxRDf2ETC98L8PvLvYBi
+	IQEX1hIRc3WAEnSoYMpmgyrb6UIeBHX2gFXbJuwx6692U6JEnuDnYCRVRD40W0M9D/GaXDhUcqj
+	O8lY=
+X-Google-Smtp-Source: AGHT+IHVxYZTB3+5C/bLdwl8tmgK2qdlEhZuk6zmXr9zkNR1b9s7hNzCSmnIVjdrgk9ya98wdxofAQ==
+X-Received: by 2002:a2e:6101:0:b0:2f0:198e:cf86 with SMTP id 38308e7fff4ca-2f1a6d58063mr13387381fa.33.1723212962857;
         Fri, 09 Aug 2024 07:16:02 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:8289:d6d0:e805:3543])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290598e049sm130484035e9.23.2024.08.09.07.16.01
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290598e049sm130484035e9.23.2024.08.09.07.16.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 07:16:01 -0700 (PDT)
+        Fri, 09 Aug 2024 07:16:02 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 09 Aug 2024 16:15:54 +0200
-Subject: [PATCH 1/3] memory: ti-aemif: remove platform data support
+Date: Fri, 09 Aug 2024 16:15:55 +0200
+Subject: [PATCH 2/3] memory: ti-aemif: use devm_clk_get_enabled() and
+ shrink the code
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240809-ti-aemif-v1-1-27b1e5001390@linaro.org>
+Message-Id: <20240809-ti-aemif-v1-2-27b1e5001390@linaro.org>
 References: <20240809-ti-aemif-v1-0-27b1e5001390@linaro.org>
 In-Reply-To: <20240809-ti-aemif-v1-0-27b1e5001390@linaro.org>
 To: Santosh Shilimkar <ssantosh@kernel.org>, 
@@ -85,161 +86,116 @@ To: Santosh Shilimkar <ssantosh@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4154;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2490;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=cpSevJ2ayz1pxZPzQQW6QFuyfNJMjPqSMprWbgtPFNo=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmtiSgMqu6sE1r9IF+kEXBQ4R9OlsWgdltF2P41
- j5m/rhZLXWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZrYkoAAKCRARpy6gFHHX
- cqWpD/4oV1G8yMje0xaFGMm9dYihYXoH0q8ITVxJYLeGCNIG6x1FTXM8qEfb8ppmRV2gADAWz7L
- i+BQQvDmJRiL7hgoQ/JbC+GuCfdPROHGYWOJNyX9+63mQ3uaiXW0I13ai0vuQFo/LpLKs6+5an/
- QX7x1TSLXOlJJbgwfPg5M8Hth0Wzl9wK9N6gPNPWJ/5YzHOCsNwdgcsnuhTbfcUWgcjDwnOfXhF
- 3NMq4D7tY2tpyMX890Z8rs+Tlq6CSRoVFyw47/7pRVC7PRb9AgFHIDnu13fnQLA8vgul1OzRs9I
- FvcT8ycbAt62KQthjFWZR1F/Vr4kiiROkZsg6cdnZn2CLAiQjfMo9i2xninBQUzITFvwyl7NLoF
- F7/7pgKdiNxaA5eg6ioWaU/CfctrccAD5rK4T/x3Bct9ZxqKVXOB7/TJRHZOgx/QPC1BQw7bp+E
- ah39POPT+RjKUwP37RNY3zy21YucEvksOns6Ojmv7z2HzPvlDkbe7CVkBGWVq0c1E4hU2RSlwc0
- QeT7LXIy0bytVVYtIkt3eddIAiRlWMdoy/3rWTjC0umnazsIM4kFFeuOXY4PxPwR7/uYYD/CAV9
- nob17tgJPGpBvbkYtlT1URxTGkBErOxIQjnlvokya0Pni2FtYQre4jO+14WSq15vDAO+Z8Uh2IW
- hEDgqh9hdlqQZTQ==
+ bh=QLCOikcdb83kfBUsdtAVnu7nuom9wFaV6X9ZQKuXYVg=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmtiSgMppcNGIE0Wpw0P2Ejq6cXxo2JMWS1m8+X
+ rXRS5dJ4k+JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZrYkoAAKCRARpy6gFHHX
+ cnxUEADL7a37jKreuJKSkNeGmkGxP6NSiJXUjqFFgOIEBNBc3LDde9fg4rpdd8f3Am2ELrahJDk
+ f69Y1FvkBuGz+ziXUXnKGp4n6OF92iLgjj68Uzna36bFtg9Oz4nt1PmUHuOlj4iADLpOHCFtUNm
+ E2U2RhPesW0N5mYY209bdJ/OkqfU38dJC0OyNRoqp1lmobgeFE7VsTq8XX0yJjODbO5r9s3w0gO
+ 7oLwA6JG4x5KRQuK8LzJ5kd2Th3fCtdkQflJy0+cVms37ned0hEC0ppyjafQSpTOMIqNjawZW03
+ GhXrGf7L9KVPyupQC0+jcCHt8AanX+HJifhRgFOFw07sxpKLVIvkJNubxuSbkIX2dn6La9jObf8
+ 2FJTlKHx48WYfwe/p3WHvR3/K7PjQ68Z+ZIB4O9ZsJxBCYQ87FZyn7FNHqHeJe1KmydjWpOw3aq
+ fcBE4szjMDFfNcMEPOxBAwyJAPf8w6If8GzrYGzA4TW1BkaCa7AGsrtpa5a7j5GFClaidslEtJR
+ e+3HL739Ml1zNqukuq2Tq9hdfcYNeM6hLDXZM7hRj27LYGSBZflq1fkqNJ4FgagHWTh3cQLuSBD
+ El+TaSH31FvVY5iT+jkZQS7mZlm/3JpJ2rtq6gGRkWzbUEy5Gdxu/tAKsPI1zm5CJklLk7DoNe6
+ PzzEmLCNMWVkMfA==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-There are no longer any users of the ti-aemif driver that set up platform
-data from board files. We can shrink the driver by removing support for
-it.
+Remove several lines of code and a jump label by using the managed
+variant of clk_get() that also prepares and enables the clock (and
+disables and unprepares it on driver detach).
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/memory/ti-aemif.c              | 25 +------------------
- include/linux/platform_data/ti-aemif.h | 45 ----------------------------------
- 2 files changed, 1 insertion(+), 69 deletions(-)
+ drivers/memory/ti-aemif.c | 29 ++++++-----------------------
+ 1 file changed, 6 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
-index e192db9e0e4b..b92cab455cbb 100644
+index b92cab455cbb..fbe0786f5ac4 100644
 --- a/drivers/memory/ti-aemif.c
 +++ b/drivers/memory/ti-aemif.c
-@@ -17,7 +17,6 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
--#include <linux/platform_data/ti-aemif.h>
+@@ -338,26 +338,20 @@ static int aemif_probe(struct platform_device *pdev)
  
- #define TA_SHIFT	2
- #define RHOLD_SHIFT	4
-@@ -332,16 +331,11 @@ static int aemif_probe(struct platform_device *pdev)
- 	struct device_node *np = dev->of_node;
- 	struct device_node *child_np;
- 	struct aemif_device *aemif;
--	struct aemif_platform_data *pdata;
--	struct of_dev_auxdata *dev_lookup;
- 
- 	aemif = devm_kzalloc(dev, sizeof(*aemif), GFP_KERNEL);
- 	if (!aemif)
- 		return -ENOMEM;
- 
--	pdata = dev_get_platdata(&pdev->dev);
--	dev_lookup = pdata ? pdata->dev_lookup : NULL;
--
  	platform_set_drvdata(pdev, aemif);
  
- 	aemif->clk = devm_clk_get(dev, NULL);
-@@ -358,8 +352,6 @@ static int aemif_probe(struct platform_device *pdev)
+-	aemif->clk = devm_clk_get(dev, NULL);
++	aemif->clk = devm_clk_get_enabled(dev, NULL);
+ 	if (IS_ERR(aemif->clk)) {
+ 		dev_err(dev, "cannot get clock 'aemif'\n");
+ 		return PTR_ERR(aemif->clk);
+ 	}
+ 
+-	ret = clk_prepare_enable(aemif->clk);
+-	if (ret)
+-		return ret;
+-
+ 	aemif->clk_rate = clk_get_rate(aemif->clk) / MSEC_PER_SEC;
  
  	if (np && of_device_is_compatible(np, "ti,da850-aemif"))
  		aemif->cs_offset = 2;
--	else if (pdata)
--		aemif->cs_offset = pdata->cs_offset;
  
  	aemif->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(aemif->base)) {
-@@ -381,11 +373,6 @@ static int aemif_probe(struct platform_device *pdev)
- 				goto error;
- 			}
- 		}
--	} else if (pdata && pdata->num_abus_data > 0) {
--		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
--			aemif->cs_data[i].cs = pdata->abus_data[i].cs;
--			aemif_get_hw_params(pdev, i);
--		}
- 	}
+-	if (IS_ERR(aemif->base)) {
+-		ret = PTR_ERR(aemif->base);
+-		goto error;
+-	}
++	if (IS_ERR(aemif->base))
++		return PTR_ERR(aemif->base);
  
- 	for (i = 0; i < aemif->num_cs; i++) {
-@@ -403,22 +390,12 @@ static int aemif_probe(struct platform_device *pdev)
- 	 */
  	if (np) {
- 		for_each_available_child_of_node(np, child_np) {
--			ret = of_platform_populate(child_np, NULL,
--						   dev_lookup, dev);
-+			ret = of_platform_populate(child_np, NULL, NULL, dev);
+ 		/*
+@@ -370,7 +364,7 @@ static int aemif_probe(struct platform_device *pdev)
+ 			ret = of_aemif_parse_abus_config(pdev, child_np);
  			if (ret < 0) {
  				of_node_put(child_np);
- 				goto error;
+-				goto error;
++				return ret;
  			}
  		}
--	} else if (pdata) {
--		for (i = 0; i < pdata->num_sub_devices; i++) {
--			pdata->sub_devices[i].dev.parent = dev;
--			ret = platform_device_register(&pdata->sub_devices[i]);
--			if (ret) {
--				dev_warn(dev, "Error register sub device %s\n",
--					 pdata->sub_devices[i].name);
--			}
--		}
+ 	}
+@@ -380,7 +374,7 @@ static int aemif_probe(struct platform_device *pdev)
+ 		if (ret < 0) {
+ 			dev_err(dev, "Error configuring chip select %d\n",
+ 				aemif->cs_data[i].cs);
+-			goto error;
++			return ret;
+ 		}
+ 	}
+ 
+@@ -393,27 +387,16 @@ static int aemif_probe(struct platform_device *pdev)
+ 			ret = of_platform_populate(child_np, NULL, NULL, dev);
+ 			if (ret < 0) {
+ 				of_node_put(child_np);
+-				goto error;
++				return ret;
+ 			}
+ 		}
  	}
  
  	return 0;
-diff --git a/include/linux/platform_data/ti-aemif.h b/include/linux/platform_data/ti-aemif.h
-deleted file mode 100644
-index 77625251df07..000000000000
---- a/include/linux/platform_data/ti-aemif.h
-+++ /dev/null
-@@ -1,45 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * TI DaVinci AEMIF platform glue.
-- *
-- * Copyright (C) 2017 BayLibre SAS
-- *
-- * Author:
-- *   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-- */
+-error:
+-	clk_disable_unprepare(aemif->clk);
+-	return ret;
+-}
 -
--#ifndef __TI_DAVINCI_AEMIF_DATA_H__
--#define __TI_DAVINCI_AEMIF_DATA_H__
+-static void aemif_remove(struct platform_device *pdev)
+-{
+-	struct aemif_device *aemif = platform_get_drvdata(pdev);
 -
--#include <linux/of_platform.h>
--
--/**
-- * struct aemif_abus_data - Async bus configuration parameters.
-- *
-- * @cs - Chip-select number.
-- */
--struct aemif_abus_data {
--	u32 cs;
--};
--
--/**
-- * struct aemif_platform_data - Data to set up the TI aemif driver.
-- *
-- * @dev_lookup: of_dev_auxdata passed to of_platform_populate() for aemif
-- *              subdevices.
-- * @cs_offset: Lowest allowed chip-select number.
-- * @abus_data: Array of async bus configuration entries.
-- * @num_abus_data: Number of abus entries.
-- * @sub_devices: Array of platform subdevices.
-- * @num_sub_devices: Number of subdevices.
-- */
--struct aemif_platform_data {
--	struct of_dev_auxdata *dev_lookup;
--	u32 cs_offset;
--	struct aemif_abus_data *abus_data;
--	size_t num_abus_data;
--	struct platform_device *sub_devices;
--	size_t num_sub_devices;
--};
--
--#endif /* __TI_DAVINCI_AEMIF_DATA_H__ */
+-	clk_disable_unprepare(aemif->clk);
+ }
+ 
+ static struct platform_driver aemif_driver = {
+ 	.probe = aemif_probe,
+-	.remove_new = aemif_remove,
+ 	.driver = {
+ 		.name = "ti-aemif",
+ 		.of_match_table = of_match_ptr(aemif_of_match),
 
 -- 
 2.43.0
