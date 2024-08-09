@@ -1,319 +1,244 @@
-Return-Path: <linux-kernel+bounces-280485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F6894CB3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:25:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A1594CB4E
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFAFEB23F0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:25:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97D791C222ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85653176AAD;
-	Fri,  9 Aug 2024 07:24:53 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2A81791ED;
+	Fri,  9 Aug 2024 07:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDYrv8Ko"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A774170A02
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9653617BA2;
+	Fri,  9 Aug 2024 07:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723188292; cv=none; b=mwERytnU7/ymvIxW7sx1PkAQaaMqWmZh7SxwAimURZYwCX0SA+7AHg0stSFfL6Q1VPAP1+Kl5s8Pldif89NQ+sKgaNf54p4IVPVlcxqKQQXbudx9K91pS6FfeMi57FF0lt5cPL9EFNDmwhdPIsf1Y6JnLdPSrqzCCq7N02xEGBE=
+	t=1723188366; cv=none; b=UpQAka4Ly124SV2L9O8KIsydSnZLN7aiUWdpWO65v0yapGSStWjetS5lio7JSDua6hVB4nb2qBrCuEVHIu78h/NxKSHWaVUbqdRP64prV2Rr9OB13wsdenvOk0oZf/j2PLTEcPFitFUPXRGp8/urcPt/Fn/XU1RTa2jjkt2sGH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723188292; c=relaxed/simple;
-	bh=vlbkNoYP2j5e0GPK16xqyatdla3pugrJU/oYKYwjJSo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Lg84oND2nSiaNkHN77uP2Ge+dcJF9MfJqiOc1SA/a16LnM8+BdDJtcy5g3msKD5/3UdgW+hQC7cDh/sSTqpvLCWYeFDMLrT7FtvZaBS/uct0XmKhjKbhBWwnr+UbiDoWgQ2EoTl2Mvg/X+cCgDvxyxMXuz7vOGKgyy9PAG8iliU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1scJzO-0001f8-Tu; Fri, 09 Aug 2024 09:24:42 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1scJzN-005bux-4w; Fri, 09 Aug 2024 09:24:41 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1scJzN-00EaZM-0G;
-	Fri, 09 Aug 2024 09:24:41 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v3 3/3] net: phy: dp83tg720: Add cable testing support
-Date: Fri,  9 Aug 2024 09:24:39 +0200
-Message-Id: <20240809072440.3477125-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240809072440.3477125-1-o.rempel@pengutronix.de>
-References: <20240809072440.3477125-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1723188366; c=relaxed/simple;
+	bh=deZLgU33CIdweE3yY90TLwMZ4pWclMltbTkCveFC5ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pBDi6Re+NOz0J4cwNDdm28pF4kSzU5FozMZFYI5GhM0Xk+Du9JMYA7uG+hMlzKEqnhD2sKVmbPJuJsW9Ed6By+QMgxNh6TyL8es+n5Gk3R+MidEYoBE13rNVe7sxEqJv+nl5Qi6DGgHNCOTARh56PqJVLX1dIcDReQNYPYtBP9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDYrv8Ko; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01F9AC32782;
+	Fri,  9 Aug 2024 07:26:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723188366;
+	bh=deZLgU33CIdweE3yY90TLwMZ4pWclMltbTkCveFC5ts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UDYrv8KoN6eN5im3upqcseRRXlOyR+uADNLkq3oWEnq9z2excCt6smJ6VbGaGFIuw
+	 QZTPlrrCv2wPpMdujRZ+nT1it7S5luLlFrVnpJsu0gC11WhvyR4KelNCts9SO743Bl
+	 JJRImTu+RHn2oPq1wLT7+Rjy9pWk2bjcxdgh/s7Hf3TVsoWWfHXWLuhnuwBkclj1ae
+	 NrlfM2K7IrXvzTMFRga2az9ilpa+X7udbyw/4Kre42eYSxYmUoRhC3rFpn2tb47mO7
+	 n4kEQn0n83kCJg1P8DWfpsWpdtFsgoNZdMaankr5Qw2JD7hPtcF2fufgW55ZvFBYio
+	 U+8gB2jQfNTUA==
+Date: Fri, 9 Aug 2024 12:55:58 +0530
+From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, Petr Mladek <pmladek@suse.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Ryo Takakura <takakura@valinux.co.jp>
+Subject: Re: linux-next: manual merge of the rcu tree with the printk tree
+Message-ID: <20240809072557.GA734505@neeraj.linux>
+References: <20240809122321.5675db8f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809122321.5675db8f@canb.auug.org.au>
 
-Introduce cable testing support for the DP83TG720 PHY. This implementation
-is based on the "DP83TG720S-Q1: Configuring for Open Alliance Specification
-Compliance (Rev. B)" application note.
+Hi Stephen
 
-The feature has been tested with cables of various lengths:
-- No cable: 1m till open reported.
-- 5 meter cable: reported properly.
-- 20 meter cable: reported as 19m.
-- 40 meter cable: reported as cable ok.
+On Fri, Aug 09, 2024 at 12:23:21PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the rcu tree got a conflict in:
+> 
+>   kernel/rcu/tree_exp.h
+> 
+> between commit:
+> 
+>   9a30ceb4d93e ("rcu: Mark emergency sections in rcu stalls")
+> 
+> from the printk tree and commits:
+> 
+>   34863005f96e ("rcu: Extract synchronize_rcu_expedited_stall() from synchronize_rcu_expedited_wait()")
+>   c925e2f61399 ("rcu: Let dump_cpu_task() be used without preemption disabled")
+> 
+> from the rcu tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+> 
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v3:
-- select OPEN_ALLIANCE_HELPERS
-changes v2:
-- use open alliance specific helpers for the TDR results
----
- drivers/net/phy/Kconfig     |   1 +
- drivers/net/phy/dp83tg720.c | 154 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 155 insertions(+)
+Thank you! The resolution looks good to me. I will mention this conflict
+during PR submission and coordinate with the maintainer of the printk
+tree.
 
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index 874422e530ff0..f530fcd092fe4 100644
---- a/drivers/net/phy/Kconfig
-+++ b/drivers/net/phy/Kconfig
-@@ -417,6 +417,7 @@ config DP83TD510_PHY
- 
- config DP83TG720_PHY
- 	tristate "Texas Instruments DP83TG720 Ethernet 1000Base-T1 PHY"
-+	select OPEN_ALLIANCE_HELPERS
- 	help
- 	  The DP83TG720S-Q1 is an automotive Ethernet physical layer
- 	  transceiver compliant with IEEE 802.3bp and Open Alliance
-diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
-index c706429b225a2..0ef4d7dba0656 100644
---- a/drivers/net/phy/dp83tg720.c
-+++ b/drivers/net/phy/dp83tg720.c
-@@ -3,10 +3,13 @@
-  * Copyright (c) 2023 Pengutronix, Oleksij Rempel <kernel@pengutronix.de>
-  */
- #include <linux/bitfield.h>
-+#include <linux/ethtool_netlink.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/phy.h>
- 
-+#include "open_alliance_helpers.h"
-+
- #define DP83TG720S_PHY_ID			0x2000a284
- 
- /* MDIO_MMD_VEND2 registers */
-@@ -14,6 +17,17 @@
- #define DP83TG720S_STS_MII_INT			BIT(7)
- #define DP83TG720S_LINK_STATUS			BIT(0)
- 
-+/* TDR Configuration Register (0x1E) */
-+#define DP83TG720S_TDR_CFG			0x1e
-+/* 1b = TDR start, 0b = No TDR */
-+#define DP83TG720S_TDR_START			BIT(15)
-+/* 1b = TDR auto on link down, 0b = Manual TDR start */
-+#define DP83TG720S_CFG_TDR_AUTO_RUN		BIT(14)
-+/* 1b = TDR done, 0b = TDR in progress */
-+#define DP83TG720S_TDR_DONE			BIT(1)
-+/* 1b = TDR fail, 0b = TDR success */
-+#define DP83TG720S_TDR_FAIL			BIT(0)
-+
- #define DP83TG720S_PHY_RESET			0x1f
- #define DP83TG720S_HW_RESET			BIT(15)
- 
-@@ -22,18 +36,155 @@
- /* Power Mode 0 is Normal mode */
- #define DP83TG720S_LPS_CFG3_PWR_MODE_0		BIT(0)
- 
-+/* Open Aliance 1000BaseT1 compatible HDD.TDR Fault Status Register */
-+#define DP83TG720S_TDR_FAULT_STATUS		0x30f
-+
-+/* Register 0x0301: TDR Configuration 2 */
-+#define DP83TG720S_TDR_CFG2			0x301
-+
-+/* Register 0x0303: TDR Configuration 3 */
-+#define DP83TG720S_TDR_CFG3			0x303
-+
-+/* Register 0x0304: TDR Configuration 4 */
-+#define DP83TG720S_TDR_CFG4			0x304
-+
-+/* Register 0x0405: Unknown Register */
-+#define DP83TG720S_UNKNOWN_0405			0x405
-+
-+/* Register 0x0576: TDR Master Link Down Control */
-+#define DP83TG720S_TDR_MASTER_LINK_DOWN		0x576
-+
- #define DP83TG720S_RGMII_DELAY_CTRL		0x602
- /* In RGMII mode, Enable or disable the internal delay for RXD */
- #define DP83TG720S_RGMII_RX_CLK_SEL		BIT(1)
- /* In RGMII mode, Enable or disable the internal delay for TXD */
- #define DP83TG720S_RGMII_TX_CLK_SEL		BIT(0)
- 
-+/* Register 0x083F: Unknown Register */
-+#define DP83TG720S_UNKNOWN_083F			0x83f
-+
- #define DP83TG720S_SQI_REG_1			0x871
- #define DP83TG720S_SQI_OUT_WORST		GENMASK(7, 5)
- #define DP83TG720S_SQI_OUT			GENMASK(3, 1)
- 
- #define DP83TG720_SQI_MAX			7
- 
-+/**
-+ * dp83tg720_cable_test_start - Start the cable test for the DP83TG720 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ *
-+ * This sequence is based on the documented procedure for the DP83TG720 PHY.
-+ *
-+ * Returns: 0 on success, a negative error code on failure.
-+ */
-+static int dp83tg720_cable_test_start(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* Initialize the PHY to run the TDR test as described in the
-+	 * "DP83TG720S-Q1: Configuring for Open Alliance Specification
-+	 * Compliance (Rev. B)" application note.
-+	 * Most of the registers are not documented. Some of register names
-+	 * are guessed by comparing the register offsets with the DP83TD510E.
-+	 */
-+
-+	/* Force master link down */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2,
-+			       DP83TG720S_TDR_MASTER_LINK_DOWN, 0x0400);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG2,
-+			    0xa008);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG3,
-+			    0x0928);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG4,
-+			    0x0004);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_UNKNOWN_0405,
-+			    0x6400);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_UNKNOWN_083F,
-+			    0x3003);
-+	if (ret)
-+		return ret;
-+
-+	/* Start the TDR */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG,
-+			       DP83TG720S_TDR_START);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+/**
-+ * dp83tg720_cable_test_get_status - Get the status of the cable test for the
-+ *                                   DP83TG720 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ * @finished: Pointer to a boolean that indicates whether the test is finished.
-+ *
-+ * The function sets the @finished flag to true if the test is complete.
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+static int dp83tg720_cable_test_get_status(struct phy_device *phydev,
-+					   bool *finished)
-+{
-+	int ret, stat;
-+
-+	*finished = false;
-+
-+	/* Read the TDR status */
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Check if the TDR test is done */
-+	if (!(ret & DP83TG720S_TDR_DONE))
-+		return 0;
-+
-+	/* Check for TDR test failure */
-+	if (!(ret & DP83TG720S_TDR_FAIL)) {
-+		int location;
-+
-+		/* Read fault status */
-+		ret = phy_read_mmd(phydev, MDIO_MMD_VEND2,
-+				   DP83TG720S_TDR_FAULT_STATUS);
-+		if (ret < 0)
-+			return ret;
-+
-+		/* Get fault type */
-+		stat = oa_1000bt1_get_ethtool_cable_result_code(ret);
-+
-+		/* Determine fault location */
-+		location = oa_1000bt1_get_tdr_distance(ret);
-+		if (location > 0)
-+			ethnl_cable_test_fault_length(phydev,
-+						      ETHTOOL_A_CABLE_PAIR_A,
-+						      location);
-+	} else {
-+		/* Active link partner or other issues */
-+		stat = ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
-+	}
-+
-+	*finished = true;
-+
-+	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A, stat);
-+
-+	return phy_init_hw(phydev);
-+}
-+
- static int dp83tg720_config_aneg(struct phy_device *phydev)
- {
- 	int ret;
-@@ -195,12 +346,15 @@ static struct phy_driver dp83tg720_driver[] = {
- 	PHY_ID_MATCH_MODEL(DP83TG720S_PHY_ID),
- 	.name		= "TI DP83TG720S",
- 
-+	.flags          = PHY_POLL_CABLE_TEST,
- 	.config_aneg	= dp83tg720_config_aneg,
- 	.read_status	= dp83tg720_read_status,
- 	.get_features	= genphy_c45_pma_read_ext_abilities,
- 	.config_init	= dp83tg720_config_init,
- 	.get_sqi	= dp83tg720_get_sqi,
- 	.get_sqi_max	= dp83tg720_get_sqi_max,
-+	.cable_test_start = dp83tg720_cable_test_start,
-+	.cable_test_get_status = dp83tg720_cable_test_get_status,
- 
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
--- 
-2.39.2
+
+- Neeraj
+
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc kernel/rcu/tree_exp.h
+> index be2d251e84f8,c3266bf709d5..000000000000
+> --- a/kernel/rcu/tree_exp.h
+> +++ b/kernel/rcu/tree_exp.h
+> @@@ -543,6 -542,67 +543,68 @@@ static bool synchronize_rcu_expedited_w
+>   	return false;
+>   }
+>   
+> + /*
+> +  * Print out an expedited RCU CPU stall warning message.
+> +  */
+> + static void synchronize_rcu_expedited_stall(unsigned long jiffies_start, unsigned long j)
+> + {
+> + 	int cpu;
+> + 	unsigned long mask;
+> + 	int ndetected;
+> + 	struct rcu_node *rnp;
+> + 	struct rcu_node *rnp_root = rcu_get_root();
+> + 
+> + 	if (READ_ONCE(csd_lock_suppress_rcu_stall) && csd_lock_is_stuck()) {
+> + 		pr_err("INFO: %s detected expedited stalls, but suppressed full report due to a stuck CSD-lock.\n", rcu_state.name);
+> + 		return;
+> + 	}
+> + 	pr_err("INFO: %s detected expedited stalls on CPUs/tasks: {", rcu_state.name);
+> + 	ndetected = 0;
+> + 	rcu_for_each_leaf_node(rnp) {
+> + 		ndetected += rcu_print_task_exp_stall(rnp);
+> + 		for_each_leaf_node_possible_cpu(rnp, cpu) {
+> + 			struct rcu_data *rdp;
+> + 
+> + 			mask = leaf_node_cpu_bit(rnp, cpu);
+> + 			if (!(READ_ONCE(rnp->expmask) & mask))
+> + 				continue;
+> + 			ndetected++;
+> + 			rdp = per_cpu_ptr(&rcu_data, cpu);
+> + 			pr_cont(" %d-%c%c%c%c", cpu,
+> + 				"O."[!!cpu_online(cpu)],
+> + 				"o."[!!(rdp->grpmask & rnp->expmaskinit)],
+> + 				"N."[!!(rdp->grpmask & rnp->expmaskinitnext)],
+> + 				"D."[!!data_race(rdp->cpu_no_qs.b.exp)]);
+> + 		}
+> + 	}
+> + 	pr_cont(" } %lu jiffies s: %lu root: %#lx/%c\n",
+> + 		j - jiffies_start, rcu_state.expedited_sequence, data_race(rnp_root->expmask),
+> + 		".T"[!!data_race(rnp_root->exp_tasks)]);
+> + 	if (ndetected) {
+> + 		pr_err("blocking rcu_node structures (internal RCU debug):");
+> + 		rcu_for_each_node_breadth_first(rnp) {
+> + 			if (rnp == rnp_root)
+> + 				continue; /* printed unconditionally */
+> + 			if (sync_rcu_exp_done_unlocked(rnp))
+> + 				continue;
+> + 			pr_cont(" l=%u:%d-%d:%#lx/%c",
+> + 				rnp->level, rnp->grplo, rnp->grphi, data_race(rnp->expmask),
+> + 				".T"[!!data_race(rnp->exp_tasks)]);
+> + 		}
+> + 		pr_cont("\n");
+> + 	}
+> + 	rcu_for_each_leaf_node(rnp) {
+> + 		for_each_leaf_node_possible_cpu(rnp, cpu) {
+> + 			mask = leaf_node_cpu_bit(rnp, cpu);
+> + 			if (!(READ_ONCE(rnp->expmask) & mask))
+> + 				continue;
+> + 			dump_cpu_task(cpu);
+> ++			nbcon_cpu_emergency_flush();
+> + 		}
+> + 		rcu_exp_print_detail_task_stall_rnp(rnp);
+> + 	}
+> + }
+> + 
+>   /*
+>    * Wait for the expedited grace period to elapse, issuing any needed
+>    * RCU CPU stall warnings along the way.
+> @@@ -597,60 -652,8 +657,11 @@@ static void synchronize_rcu_expedited_w
+>   		j = jiffies;
+>   		rcu_stall_notifier_call_chain(RCU_STALL_NOTIFY_EXP, (void *)(j - jiffies_start));
+>   		trace_rcu_stall_warning(rcu_state.name, TPS("ExpeditedStall"));
+> - 		pr_err("INFO: %s detected expedited stalls on CPUs/tasks: {",
+> - 		       rcu_state.name);
+> - 		ndetected = 0;
+> - 		rcu_for_each_leaf_node(rnp) {
+> - 			ndetected += rcu_print_task_exp_stall(rnp);
+> - 			for_each_leaf_node_possible_cpu(rnp, cpu) {
+> - 				struct rcu_data *rdp;
+> - 
+> - 				mask = leaf_node_cpu_bit(rnp, cpu);
+> - 				if (!(READ_ONCE(rnp->expmask) & mask))
+> - 					continue;
+> - 				ndetected++;
+> - 				rdp = per_cpu_ptr(&rcu_data, cpu);
+> - 				pr_cont(" %d-%c%c%c%c", cpu,
+> - 					"O."[!!cpu_online(cpu)],
+> - 					"o."[!!(rdp->grpmask & rnp->expmaskinit)],
+> - 					"N."[!!(rdp->grpmask & rnp->expmaskinitnext)],
+> - 					"D."[!!data_race(rdp->cpu_no_qs.b.exp)]);
+> - 			}
+> - 		}
+> - 		pr_cont(" } %lu jiffies s: %lu root: %#lx/%c\n",
+> - 			j - jiffies_start, rcu_state.expedited_sequence,
+> - 			data_race(rnp_root->expmask),
+> - 			".T"[!!data_race(rnp_root->exp_tasks)]);
+> - 		if (ndetected) {
+> - 			pr_err("blocking rcu_node structures (internal RCU debug):");
+> - 			rcu_for_each_node_breadth_first(rnp) {
+> - 				if (rnp == rnp_root)
+> - 					continue; /* printed unconditionally */
+> - 				if (sync_rcu_exp_done_unlocked(rnp))
+> - 					continue;
+> - 				pr_cont(" l=%u:%d-%d:%#lx/%c",
+> - 					rnp->level, rnp->grplo, rnp->grphi,
+> - 					data_race(rnp->expmask),
+> - 					".T"[!!data_race(rnp->exp_tasks)]);
+> - 			}
+> - 			pr_cont("\n");
+> - 		}
+> - 		rcu_for_each_leaf_node(rnp) {
+> - 			for_each_leaf_node_possible_cpu(rnp, cpu) {
+> - 				mask = leaf_node_cpu_bit(rnp, cpu);
+> - 				if (!(READ_ONCE(rnp->expmask) & mask))
+> - 					continue;
+> - 				preempt_disable(); // For smp_processor_id() in dump_cpu_task().
+> - 				dump_cpu_task(cpu);
+> - 				preempt_enable();
+> - 				nbcon_cpu_emergency_flush();
+> - 			}
+> - 			rcu_exp_print_detail_task_stall_rnp(rnp);
+> - 		}
+> + 		synchronize_rcu_expedited_stall(jiffies_start, j);
+>   		jiffies_stall = 3 * rcu_exp_jiffies_till_stall_check() + 3;
+>  +
+>  +		nbcon_cpu_emergency_exit();
+>  +
+>   		panic_on_rcu_stall();
+>   	}
+>   }
+
 
 
