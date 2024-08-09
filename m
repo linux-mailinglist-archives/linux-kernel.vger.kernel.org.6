@@ -1,203 +1,251 @@
-Return-Path: <linux-kernel+bounces-280557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F69294CC20
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7276E94CC26
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B221C21956
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:25:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 504A41C22B63
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB1818DF8F;
-	Fri,  9 Aug 2024 08:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C5918DF9E;
+	Fri,  9 Aug 2024 08:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kMGhqPRQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="J5y08/sJ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2C118DF62
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA0017556C;
+	Fri,  9 Aug 2024 08:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723191897; cv=fail; b=FUGfeeVLLh4JEUkWfn6hSirM+RxQZjEVhuktHdl2AGF0cfF2YU4c/2OGychzwaLMOYnimFgRDfDs7i4U+K78G1wTKOTA9n/3cRRkBPElvOtKqmp2w/YXzE7qHZ/UqdNJdbbR2zGR6DdSX0S2XbNeDcrGdPKFj7a4e2SQrFFN6lQ=
+	t=1723191944; cv=pass; b=MtCUnLPbYqlbGn96MQrQ8lj6il7ISE4/VCWFBW0weBuVp9RcXWIC/0YhY8YAGnnGDYjwOhp5ngvOUX3SoKaydW3r/HQn0zyEJqFwDjgbmzctvcHP1NoTDmlvUbnlbgyFIIiTj2UiJmWUqDin7gtUrK/ZmY92pb8KYkxGHIDOObM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723191897; c=relaxed/simple;
-	bh=HvMBQ+hxkYJITmgrvFYRvurko+H3XtVxSDjtLa0n/5g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HZqM339CdhgzlkRdzbG/mAMTvoOBInjMSzm0Qw16Vyb075qXsZ9BHIefAzM5zA50tH9lmJ1W44F8FsP0cp/4rwoFtyc/nD0AclF/EwCj1OOF8Gvoknw+jzh5b+noovtGslEBl4R3dgMMrxF7n6n8xNDEn3Io0TG9y0TZ9YdiMJA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kMGhqPRQ; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723191896; x=1754727896;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=HvMBQ+hxkYJITmgrvFYRvurko+H3XtVxSDjtLa0n/5g=;
-  b=kMGhqPRQFFLE1Qy2t5/u8vAZpaCT1J2vXnGSywT/ZvuetjbahNCqCf1J
-   Cy0O5vt6ywuFDkzvqt67yas1r0MMqy4cT04Ztz/EOs2pvYK34+hQqZHHl
-   xUKFl+UMgD66/DD29KqZBNCTB0saOMCI+DwlX+nMtkwxN4o2B8X2eBtdZ
-   d/zPM0gGzz6OANU/lumDGwtD2cuMlkN/6Y1yc6sAvn+fn0R4u3YalFcff
-   LVdaeCw0mm5YtK8jc6R87G7EAe+d12QEU4sieWsvKPsPH5TOd1qplAq9W
-   mfye43QuvO72jKzCF/Dbsc6S2O9wamgNs+FQBSN8wnsTnbAidgP9Jk6W4
-   Q==;
-X-CSE-ConnectionGUID: SPmRVkQUQNSV+XpK278VZA==
-X-CSE-MsgGUID: hZrHleg9Qres+aDmVCfPYg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25226958"
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="25226958"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:24:56 -0700
-X-CSE-ConnectionGUID: SHi2vGjUTNiRmS8/lRe5jw==
-X-CSE-MsgGUID: j+moJKQ+SbKa8ltgsS6I3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
-   d="scan'208";a="61894820"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Aug 2024 01:24:55 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 9 Aug 2024 01:24:55 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 9 Aug 2024 01:24:55 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.43) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 9 Aug 2024 01:24:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pvr6Xlf94TEcj09YQ1/n/tjvFXEyTpss5hJVclwY0qQJSy5S5ixxrUka+Q1vCT0Yun+CfVJDjnt8qNL82J9I/st5EyZgLgWic1r8q98PweUE4eX6RVA0JERMG8CmIyvIK0J0LSLfJTghe/FMNvgLcx6mIlUW1QGJ3/P/F1LU6JTii5XikEwc3geogon2cH5lV0R8TVWQ37AwgcZms5CPN8ZcL7nkIhubNMkKj7RPnwTKfdcvBb/o99k2FzDbsuDhyei636htKX7k9EhVous9+G99W+GvjROgQearBYk73ud/1OOgvtk5MRTIZzsdY33TkHRpnbXC81sedYFFCw50SQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HvMBQ+hxkYJITmgrvFYRvurko+H3XtVxSDjtLa0n/5g=;
- b=VSyDjnNwtOSx3/8LldHZ8n4Ew0A9SHisjUClc+j/FhPeANyRg6BuxIlXq6pgX2X3ylZATfQ7n9ESJDKfyczpAQ8R24Q3rBSjLGa8Zt958cK9LER1J2DvnmlbvuTc04VHrob1fkiyLKQmaCaxrM7h/4+OqkvPDB4+Aru+1bj2B6SKCJJCZWcbSvb0Hz5woi95fgpIU1xF4r+jWoByDtUy6SV8leXGJrjWt3Ngz+sgDCxdgOJARzDAoMtldI003fEq9Mul6tn0Ilu5TfSDMPd6sxKhS3ocxvaXmx2rq7Y8qSJhTLkGR0C4pUvL0qhtcu9FQ0ZDup7idsByz41dGAdfMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by DS0PR11MB7333.namprd11.prod.outlook.com (2603:10b6:8:13e::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.29; Fri, 9 Aug
- 2024 08:24:52 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%3]) with mapi id 15.20.7828.023; Fri, 9 Aug 2024
- 08:24:52 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
- Gunthorpe" <jgg@ziepe.ca>
-CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Jason
- Gunthorpe" <jgg@nvidia.com>
-Subject: RE: [PATCH v4 3/7] iommu/vt-d: Always reserve a domain ID for
- identity setup
-Thread-Topic: [PATCH v4 3/7] iommu/vt-d: Always reserve a domain ID for
- identity setup
-Thread-Index: AQHa6iEirY9sSCYyg0WDLjD07k2ujrIelo5g
-Date: Fri, 9 Aug 2024 08:24:52 +0000
-Message-ID: <BN9PR11MB5276F11AD99A214CEE9E77548CBA2@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240809055431.36513-1-baolu.lu@linux.intel.com>
- <20240809055431.36513-4-baolu.lu@linux.intel.com>
-In-Reply-To: <20240809055431.36513-4-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DS0PR11MB7333:EE_
-x-ms-office365-filtering-correlation-id: e1070bd4-6c42-4927-dafc-08dcb84cbe49
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?+p2pvF9C/IX3BFRyxlvWFIqYS9hj15uOX+cz//+fyZ8GI5FAQ7SfE/y+k8HI?=
- =?us-ascii?Q?ujWQ+5O0msOmGIAsFDjBIAL8VmsKbdJrE0sw7UJfWrtVy3Jk810jjXQnQ+X7?=
- =?us-ascii?Q?jQrhF/m62WOeM1tA0xPN+YIY+foDhzrytULJH7gRof1zvXAmmftRTSOEoviL?=
- =?us-ascii?Q?U2CvrJffqOyV4ndSd5SxrYlmOiIjUOZE9+TYzuUhD2zhDGjg94IxkZ6mbzI6?=
- =?us-ascii?Q?kqIHu+qxDUhxqyxR6egY2f2l3SH3ua5b4n7V7Epcsfhg5xYi3iD8FLBoUgIi?=
- =?us-ascii?Q?c+/fnxJXlMLe/nBd09B0fsjFR50UEBkQ47FC015qOjQjvc0JMQykxW4dmxzL?=
- =?us-ascii?Q?fUMLn+Soer8HKg7IB3/XwjsU8ciQMEmziMXPeLg1/xKxnvhHh/LQzrvbRLwm?=
- =?us-ascii?Q?NmXA2wS/K6QErxE9doi7SJLYsbsSWFlzYSFYYejlpoHN1wZzamX5U8Meu2RS?=
- =?us-ascii?Q?zcOOwsnpuN+I5frx65UVIU3QL2MI12D8lh0rXJNtMnN8e67w964Kvu7tYYi6?=
- =?us-ascii?Q?zqWKOeZstJGUdDM7JWKmb3jCyP9dsyEm27HX+aSbdhUVMpMkPRRQ8h58mCIb?=
- =?us-ascii?Q?WM/GQ8Of/jq2COKPa0HyiJExat1bI4wVI2lzWFi92cp6PpTLTyvBOZxqthEm?=
- =?us-ascii?Q?v2sYf22QAjA7q1baFCRLP7HMLfEydb1UtApkhqJQcANMUDDf20RJiCyVP3Ax?=
- =?us-ascii?Q?pA8b1SrMfepctt+aje2f3mLbBhes73pe+swIhyz+y1b8jBjewvJgY4iJZ8Xe?=
- =?us-ascii?Q?OMGXZbGLevuXPb0C5NNjGHiUL2ciwwhHv9TaIihnsp7EJb6v/E8cqxNkDpKP?=
- =?us-ascii?Q?QonfJqpfqnuyhrUz5Z1Kkf7aLKu/7gOsTM5svUl3XOKcDFFE0OgliydFAKA2?=
- =?us-ascii?Q?u/WVGvT4yEYafgRbJu2TOHSR8VXxGKM9ZxOkDLUyaMqVrp/Xp7ZDw9HJRsFz?=
- =?us-ascii?Q?mWuibQIf5E7t5LA8yc3dff6R2+vEN3NzFUlftW7IEt+jG5/iD0TCz4noNVDi?=
- =?us-ascii?Q?pggvH0/7WWC2WUPPtX2QN3dJOcKRUvq/UvYYmd1dlqjDb47qbNKL+IOHeX+6?=
- =?us-ascii?Q?YyW4bYYSy5o8SzMNpGFCL4ea3Cm1FZsNGlZ++cKFPRcmPulTLc5ViFRbskLI?=
- =?us-ascii?Q?eQWJeV6nwIOLMyNA1Ryy/cr9E3A7XcPgX3SoLHQPiTURu/36NydQ/nR2a3lx?=
- =?us-ascii?Q?CFo+ey4dXwfSz2dDjcA9wlB7QqGix6DhJosd2nycETUv+lSMIHe9iSwPSv5j?=
- =?us-ascii?Q?hk1mna/S4f+2hlhnF68oGcCTfMXZzsJ2t0d1j5VTQRQI6wxC7U1kxV/aagFU?=
- =?us-ascii?Q?kM1uBf7qjEgRS3NFlNPnbLSFnFZav1Ncd0S22f6EYXpl0Dm024hnJeoS9KkI?=
- =?us-ascii?Q?NV2/2ATi+wZeFPLRfFUJyEC4pMf4mQPBzEicy7D0JOJ+xqSJhQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?1sGW6JMrv7GX1TDDWZtikI8WqqFx02ZkfAPsrKBjQ9KY8TSwUu70NzAYwbdH?=
- =?us-ascii?Q?R9QcFL7cukpyeKLhCNXrvbw3VIDq5P3T8bU6x6rJ5yW9QFkh6q7iE/Miiq5O?=
- =?us-ascii?Q?Mr6zj6AoOzzt22gfRuk8RuJWca5fnalaP3E78UW+FpffiQL/4kKwyUXFKE7I?=
- =?us-ascii?Q?uh2dq3bFpd4CjN2vux/f5/uACf5+xglZZKS2N/QSsSXys+lMpAXD/f8VpuKp?=
- =?us-ascii?Q?zP1uOZVp/+TZXRVlZmMko+/Ep4h6DEmbI8ykl0OoO3uw/FcUcSIKlHkPc93J?=
- =?us-ascii?Q?zXxJrBdiug6CexGrSFfpkR3lKXImrf6/g0Wq2s2cT/QCWfYC57cMNm8trLc/?=
- =?us-ascii?Q?zod2sZW/9Gouzous86uQkXoRk7+6z/0v+U9iBVycVqjeMOekLcV4kHGXYTHj?=
- =?us-ascii?Q?clx6ZeZO9X1hPJlfTM+qyvzEdaCazcT2SV5Fsv0M2n8ghbnF6xIlTV5m314/?=
- =?us-ascii?Q?xpLGMrwKnW7fhiilaku2xkY2mSZhJeGp10anhtMNzS8A1wXq86k7VLwoMQo/?=
- =?us-ascii?Q?lqZ1LGypnjO4LUP68oYjkOflcvZGFwGoE4B0Bz2Dbzrn+4pGoWAOjIQGbrfW?=
- =?us-ascii?Q?wt23wJOa/JoOv7xl8TqU7X98Eyp4ehaBcagRw1Pt05gvdpvzgiDi3NDm5oOv?=
- =?us-ascii?Q?/mZFCmvpZLVO7Q4QWZIP64EOd/k7Ps8OoADmr1Xl5R4H3xi59ckrOaVKlw3a?=
- =?us-ascii?Q?iaGRW9m6ev2oexnMaBpkVjEbk3H9YRWxga+A9CnNYZA019X33ZtBwCYSaz3h?=
- =?us-ascii?Q?nMNzcZYxT6naaAd19M4FonVd3Oq7TrgNImf40rS4SyzO/J37SC2EJf+faXDk?=
- =?us-ascii?Q?0t56CwGg9IC+6qrS5Mln5zn/gEunzQ8Q45Xukm4JAf50TZRqJ4Yljq9rVbEV?=
- =?us-ascii?Q?uhOR7A1A+iOZXR4ijTP2g6X4iqYCadtbLemX0fRORkiui2bTBG6IOCPBzNbn?=
- =?us-ascii?Q?jJYaCyPtUTUdNw4AP73zV7p/zJfJlKl74QGoxlip+WTClfStLW70/ZlQjtEg?=
- =?us-ascii?Q?/mKZsLXe4n8RBL938iZOo9lmVYH3RRr2vYdAg4frRZDXXOeB97fVMcrHhecV?=
- =?us-ascii?Q?x5axwbOC4nJ9Dp8HV5Ts3wX3mGUbeShmweva/6WzPrMAZkkbt9BA2Prbw/Rq?=
- =?us-ascii?Q?wWlyNU5Y1txYTMzKbqR4nTU3iL5LvqQBD02I87Tr2n836yP/u1mV2lvXKRk/?=
- =?us-ascii?Q?XZKkV1s3y766Qs/yN1SyZfgnIj2IM8rASyteZyvbzgRmpJYTrImohHn/Kwez?=
- =?us-ascii?Q?4S/c91MO89u2dxRmc4/y2WKlS6LLjBUIswDDOIHBfR4L/4vWuC6iDsB7094D?=
- =?us-ascii?Q?Ym+1Kg4XPclI3MVeGzemv8/6o8KjGj9HVQzUJGMSTw4tAaVYd5uSgekwPEUa?=
- =?us-ascii?Q?Q5H0/t5NcAEQcr3qp0Kz5DbqEI7kcYaGC2po8PjpixZYY9IfgzyWmaDS2lKm?=
- =?us-ascii?Q?1IA8sFfpfovHz1kgl/Ny59v0YWyNJtjPTkJLaN+PaZAKjBnH3/Y8h/3l1XO/?=
- =?us-ascii?Q?inaWwqyZg84LkBufhEv4bZS9s688rYbZSMN0tAKuSLgs8r9ttP91n5QCs63M?=
- =?us-ascii?Q?EHL4d8idlgGUmzu8QFNkI25yWC57V2muYIa6SxdV?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1723191944; c=relaxed/simple;
+	bh=hNhkS5s4pZ/TvPiMVzZP4/+E4B4Kp6Tp4r2or3Nb49g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LOcsIEG3lJvUNfIpGV/tBAkgpIjaBRlwVpwBpUDdyxIUh28JSxlxQhSEXJFtNJOEdx6hcuRk/QewBP8O0nk4d+Jss4J/NiBDc9638cAiM2RZTJiu62rX8Dk4ljLc+gxPW3FwJeNpriO380T9C3vp09hq94OGXRToKDLlRgx+19Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=J5y08/sJ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: usama.anjum@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723191931; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=X5r0Hj1uIIiLsjBYiKa6Z37Abt5npPlrIY9CPYNSQjGU8ICmGL7Dmdo6rxJm3FKZOQ4eESI+mJUjdYJE+Dmc4f3sMVV+9wXlDNMbgoayjDrroQXRwIy6kTc5FhEZ/0O0Zg8QuTJHIVhIki0qh5koPVO/PNPeBirrsfTn075Ck74=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723191931; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ARoGuwCRmzTNnu/zj+XGQUUTD1/UnUzYPaVkcwelbf8=; 
+	b=n2L+1UcFnl5J/P9X9bzVXOyKpO/aTZZ6Fo2AaF9d0fEYbNa0d4kGeIkhU05xmieTSr5/oaXihqXcRw/1hJmjMGt+5KqX8soK4llU8h4UUwAoBQNVZvlCvxzutRoVkf2W2HRsqWGmR9HRUPAxYfqllni70Ig6iJk6DXVZQKIdU48=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723191931;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=ARoGuwCRmzTNnu/zj+XGQUUTD1/UnUzYPaVkcwelbf8=;
+	b=J5y08/sJWA/tUY8j5hz3pFViQRkicFYOGrpqydElIaUGGgFtoieRS2zEGS0NKx38
+	FB7MvyyWlMP1ciJHyCAW0A/YIUJ3UcQD9z7ulLk+g4icNRjjKHpbh67L2QCj1z1b7bw
+	qE5GvcexW8dK94Em0/m3iPSuNsRitistGVh0sf00=
+Received: by mx.zohomail.com with SMTPS id 1723191930315384.302913310908;
+	Fri, 9 Aug 2024 01:25:30 -0700 (PDT)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Jeff Xu <jeffxu@chromium.org>,
+	Kees Cook <kees@kernel.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	kernel@collabora.com,
+	stable@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: mm: Fix build errors on armhf
+Date: Fri,  9 Aug 2024 13:25:11 +0500
+Message-Id: <20240809082511.497266-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1070bd4-6c42-4927-dafc-08dcb84cbe49
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 08:24:52.8931
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dQGOLnbtKTN/MfgAeHAAbjah3WbUFD/To2kQbGDtH/GaUtWuXCNaC7cP6mzmBhdCTjqU68B80dpuX+HSH/RI7w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7333
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-> From: Lu Baolu <baolu.lu@linux.intel.com>
-> Sent: Friday, August 9, 2024 1:54 PM
->=20
-> We will use a global static identity domain. Reserve a static domain ID
-> for it.
->=20
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+The __NR_mmap isn't found on armhf. The mmap() is commonly available
+system call and its wrapper is presnet on all architectures. So it
+should be used directly. It solves problem for armhf and doesn't create
+problem for architectures as well. Remove sys_mmap() functions as they
+aren't doing anything else other than calling mmap(). There is no need
+to set errno = 0 manually as glibc always resets it.
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+For reference errors are as following:
+
+  CC       seal_elf
+seal_elf.c: In function 'sys_mmap':
+seal_elf.c:39:33: error: '__NR_mmap' undeclared (first use in this function)
+   39 |         sret = (void *) syscall(__NR_mmap, addr, len, prot,
+      |                                 ^~~~~~~~~
+
+mseal_test.c: In function 'sys_mmap':
+mseal_test.c:90:33: error: '__NR_mmap' undeclared (first use in this function)
+   90 |         sret = (void *) syscall(__NR_mmap, addr, len, prot,
+      |                                 ^~~~~~~~~
+
+Cc: stable@vger.kernel.org
+Fixes: 4926c7a52de7 ("selftest mm/mseal memory sealing")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ tools/testing/selftests/mm/mseal_test.c | 37 +++++++++----------------
+ tools/testing/selftests/mm/seal_elf.c   | 13 +--------
+ 2 files changed, 14 insertions(+), 36 deletions(-)
+
+diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
+index a818f010de479..bfcea5cf9a484 100644
+--- a/tools/testing/selftests/mm/mseal_test.c
++++ b/tools/testing/selftests/mm/mseal_test.c
+@@ -81,17 +81,6 @@ static int sys_mprotect_pkey(void *ptr, size_t size, unsigned long orig_prot,
+ 	return sret;
+ }
+ 
+-static void *sys_mmap(void *addr, unsigned long len, unsigned long prot,
+-	unsigned long flags, unsigned long fd, unsigned long offset)
+-{
+-	void *sret;
+-
+-	errno = 0;
+-	sret = (void *) syscall(__NR_mmap, addr, len, prot,
+-		flags, fd, offset);
+-	return sret;
+-}
+-
+ static int sys_munmap(void *ptr, size_t size)
+ {
+ 	int sret;
+@@ -172,7 +161,7 @@ static void setup_single_address(int size, void **ptrOut)
+ {
+ 	void *ptr;
+ 
+-	ptr = sys_mmap(NULL, size, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
++	ptr = mmap(NULL, size, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+ 	*ptrOut = ptr;
+ }
+ 
+@@ -181,7 +170,7 @@ static void setup_single_address_rw(int size, void **ptrOut)
+ 	void *ptr;
+ 	unsigned long mapflags = MAP_ANONYMOUS | MAP_PRIVATE;
+ 
+-	ptr = sys_mmap(NULL, size, PROT_READ | PROT_WRITE, mapflags, -1, 0);
++	ptr = mmap(NULL, size, PROT_READ | PROT_WRITE, mapflags, -1, 0);
+ 	*ptrOut = ptr;
+ }
+ 
+@@ -205,7 +194,7 @@ bool seal_support(void)
+ 	void *ptr;
+ 	unsigned long page_size = getpagesize();
+ 
+-	ptr = sys_mmap(NULL, page_size, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
++	ptr = mmap(NULL, page_size, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+ 	if (ptr == (void *) -1)
+ 		return false;
+ 
+@@ -481,8 +470,8 @@ static void test_seal_zero_address(void)
+ 	int prot;
+ 
+ 	/* use mmap to change protection. */
+-	ptr = sys_mmap(0, size, PROT_NONE,
+-			MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
++	ptr = mmap(0, size, PROT_NONE,
++		   MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+ 	FAIL_TEST_IF_FALSE(ptr == 0);
+ 
+ 	size = get_vma_size(ptr, &prot);
+@@ -1209,8 +1198,8 @@ static void test_seal_mmap_overwrite_prot(bool seal)
+ 	}
+ 
+ 	/* use mmap to change protection. */
+-	ret2 = sys_mmap(ptr, size, PROT_NONE,
+-			MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
++	ret2 = mmap(ptr, size, PROT_NONE,
++		    MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+ 	if (seal) {
+ 		FAIL_TEST_IF_FALSE(ret2 == MAP_FAILED);
+ 		FAIL_TEST_IF_FALSE(errno == EPERM);
+@@ -1240,8 +1229,8 @@ static void test_seal_mmap_expand(bool seal)
+ 	}
+ 
+ 	/* use mmap to expand. */
+-	ret2 = sys_mmap(ptr, size, PROT_READ,
+-			MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
++	ret2 = mmap(ptr, size, PROT_READ,
++		    MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+ 	if (seal) {
+ 		FAIL_TEST_IF_FALSE(ret2 == MAP_FAILED);
+ 		FAIL_TEST_IF_FALSE(errno == EPERM);
+@@ -1268,8 +1257,8 @@ static void test_seal_mmap_shrink(bool seal)
+ 	}
+ 
+ 	/* use mmap to shrink. */
+-	ret2 = sys_mmap(ptr, 8 * page_size, PROT_READ,
+-			MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
++	ret2 = mmap(ptr, 8 * page_size, PROT_READ,
++		    MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+ 	if (seal) {
+ 		FAIL_TEST_IF_FALSE(ret2 == MAP_FAILED);
+ 		FAIL_TEST_IF_FALSE(errno == EPERM);
+@@ -1650,7 +1639,7 @@ static void test_seal_discard_ro_anon_on_filebacked(bool seal)
+ 	ret = fallocate(fd, 0, 0, size);
+ 	FAIL_TEST_IF_FALSE(!ret);
+ 
+-	ptr = sys_mmap(NULL, size, PROT_READ, mapflags, fd, 0);
++	ptr = mmap(NULL, size, PROT_READ, mapflags, fd, 0);
+ 	FAIL_TEST_IF_FALSE(ptr != MAP_FAILED);
+ 
+ 	if (seal) {
+@@ -1680,7 +1669,7 @@ static void test_seal_discard_ro_anon_on_shared(bool seal)
+ 	int ret;
+ 	unsigned long mapflags = MAP_ANONYMOUS | MAP_SHARED;
+ 
+-	ptr = sys_mmap(NULL, size, PROT_READ, mapflags, -1, 0);
++	ptr = mmap(NULL, size, PROT_READ, mapflags, -1, 0);
+ 	FAIL_TEST_IF_FALSE(ptr != (void *)-1);
+ 
+ 	if (seal) {
+diff --git a/tools/testing/selftests/mm/seal_elf.c b/tools/testing/selftests/mm/seal_elf.c
+index 7aa1366063e4e..d9f8ba8d5050b 100644
+--- a/tools/testing/selftests/mm/seal_elf.c
++++ b/tools/testing/selftests/mm/seal_elf.c
+@@ -30,17 +30,6 @@ static int sys_mseal(void *start, size_t len)
+ 	return sret;
+ }
+ 
+-static void *sys_mmap(void *addr, unsigned long len, unsigned long prot,
+-	unsigned long flags, unsigned long fd, unsigned long offset)
+-{
+-	void *sret;
+-
+-	errno = 0;
+-	sret = (void *) syscall(__NR_mmap, addr, len, prot,
+-		flags, fd, offset);
+-	return sret;
+-}
+-
+ static inline int sys_mprotect(void *ptr, size_t size, unsigned long prot)
+ {
+ 	int sret;
+@@ -56,7 +45,7 @@ static bool seal_support(void)
+ 	void *ptr;
+ 	unsigned long page_size = getpagesize();
+ 
+-	ptr = sys_mmap(NULL, page_size, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
++	ptr = mmap(NULL, page_size, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+ 	if (ptr == (void *) -1)
+ 		return false;
+ 
+-- 
+2.39.2
+
 
