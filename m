@@ -1,156 +1,171 @@
-Return-Path: <linux-kernel+bounces-281282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03CE94D515
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:54:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 582B794D516
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5664C285BF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:53:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FFE51C22AEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF7D3C6BA;
-	Fri,  9 Aug 2024 16:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F722941B;
+	Fri,  9 Aug 2024 16:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eqDyiEmd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yd00n64u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DBD14F70
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD9922087
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723222418; cv=none; b=VnqW+b6XptASm6J5PaAVqI+6vNwoXg2Mc9VgwxR/WM67zn8qaLmxN4sJXW9J9j2b41RQlYBdBsAl8sEy8d+4OJcPHnNwKOaUVy96yan6C5Z4kKyV2hDirJJqU3ZV60CdWxNjgboCtrbGO7+ahiXIMKZPdHpYwCIWlwm286RxWzc=
+	t=1723222450; cv=none; b=pNsdLI/xdfuGfnWP46cZ3aX75SPXE2Y/ciTinM+rXychSVAt/CdKFd4472JoF+GnGurZUuIcyhVN1eucbrRTqPK6yUeoyHGZDAQs+kdl/Z7UKJlaFjmuFS+V5VGSkfxTT6uxWt+Ct+UtNGhsk85OCsC54MkTvFVhtK0VR9upEPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723222418; c=relaxed/simple;
-	bh=Ot6pDchm1hxiXy4sOfaytvjIT4EULapO/lvEbV0ci1k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jJ2+xZFZp5M77wC+BzgPcy6HReIWE/HJpaImmel7GnBAYqXMZfyvZW2oa8dJGXuyG/BSMN1YQP7w7ZvHmU+iEhYDhXf/JoxCZlaYVkgLt3heU1hIvZ1kdm34FckKt+UjK/rn4BM838aA8iKbs6TjBMYZiLH6QKaZ3hGtzKIULiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eqDyiEmd; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1723222450; c=relaxed/simple;
+	bh=DUGaX4dOaBc1SKm+QpUZxIx4yUNvGBVKHqKpcVtH7b0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FN+HryWNCu241h0IVnY3P2P6hFdvLUW2nkcWs9teWc6Rg5G6NaCdQmK7HJ5+C/XYZOLafznYsSbQWjPjDBhbJu3V0Db1fowFRpQB8wR7rmddmHc2jgmmCO8v+MhMHjF49Dcv+Yc1PvZR3XIx1qB0go9yayzCJiHkQt0t2qTtWY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yd00n64u; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723222415;
+	s=mimecast20190719; t=1723222448;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3gNM1Um+DBkxuDVxehFnpUWCFgg5MJ0B55Pe48VVIUY=;
-	b=eqDyiEmdEv4j1cHCbcNR7AiRxFFHE/Fv6PzoBOJgY2IX5Kz1CG+S7l56j2T0hVS8Gp/Yor
-	2XwZ+bTDMRfw/TULxRutRxmPt/FExw1UYX7qNTQdoJoU1FZQYXceaPNfp6mXZMaZ92g6yu
-	+/w9dK9jl99lvt9G7YO93n+dvSPspRI=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=86nPCx79W6PGHL+fSL/w3sszGXq3z8SJRXsfiXl5Py8=;
+	b=Yd00n64uRebULzb//ETznVQTiLn5Z8Q6elTJSV2V9WnbH5tjLVLTPms+CeqqtxGQrjBbG8
+	mxv7c9PV56UwQiXgZMbz4mvxLLYgapoyCC6pvFGMJ2k0DMXb9yVqHat/PFVgMoCPVVMtIs
+	vK+couAIINM7bDaMerWmakfnVHwalxA=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-146-BPXu2IyBPYSJ3iEiNvL3uA-1; Fri, 09 Aug 2024 12:53:33 -0400
-X-MC-Unique: BPXu2IyBPYSJ3iEiNvL3uA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42816aacabcso15936355e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:53:33 -0700 (PDT)
+ us-mta-493-7tAaW00OPEmPmn-8xoruJg-1; Fri, 09 Aug 2024 12:54:06 -0400
+X-MC-Unique: 7tAaW00OPEmPmn-8xoruJg-1
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7093890e502so485133a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:54:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723222413; x=1723827213;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3gNM1Um+DBkxuDVxehFnpUWCFgg5MJ0B55Pe48VVIUY=;
-        b=R0lIjMmUqXqD223fzi6sAOJgtyjqoutf3pi6oX0s+xIzcVQatUUZwsIR+G3TgsCSQa
-         DJ1BgBovEh/I4K3wGFF8kAkRQQjGffqZ84sRO6KGv1ZL/lScgXkJazxxGJchobD4amvn
-         zNxHhQeTeJePKrygCg403VGjwfUw61xTN+moXv0Us1jqdfIWEspgxxUsonpe4CaMLV8X
-         3kCAdVdCL1CTFEYoK04v/xtHB7jnSNPbLocT9pFZMWQ2TGWqP8KZrwKsMyYWMDGIcJPU
-         gQpK07fuEomu1Lj1/U523gHc2vcau7zYH/4LFO72M6993BmTtEhRjb85tpkhao6yX7SI
-         3vww==
-X-Forwarded-Encrypted: i=1; AJvYcCXaSdo98k7WJM4JwuteQSKenzmJhbymU8HazmXl4vcgdxOMAvx434tIa1EPABiduuRtKGQStLG/PK9IBW8wv+sy73994wJd8secZExe
-X-Gm-Message-State: AOJu0Yzm0apaSRZdYWocBXjs3ghAy3qLWlb5zFHOg83B39LnJasN1Sor
-	GHri46uG4afcHcNuu7gbxb/QHJ1KP5JyvrhTSRSwZIF5w14udfcB3S2u4e2CeQuUkIhkLZQ0RYA
-	frMPMNJxBHKSVSmZQpuukE/gKREWHqJTct7LTBQUf6CtFTQI5NayI48ypg+BSEw==
-X-Received: by 2002:a05:600c:4686:b0:426:6b92:387d with SMTP id 5b1f17b1804b1-429c3a2a820mr16062875e9.21.1723222412593;
-        Fri, 09 Aug 2024 09:53:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZghwnwa2m2YAZo1XbIltaBf9u3WZiS+/fAODv6gjUee6eEHauw2dNVGuSHWkr+JsYbvwZ8Q==
-X-Received: by 2002:a05:600c:4686:b0:426:6b92:387d with SMTP id 5b1f17b1804b1-429c3a2a820mr16062605e9.21.1723222412100;
-        Fri, 09 Aug 2024 09:53:32 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c74a96bsm83750995e9.24.2024.08.09.09.53.30
+        d=1e100.net; s=20230601; t=1723222446; x=1723827246;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=86nPCx79W6PGHL+fSL/w3sszGXq3z8SJRXsfiXl5Py8=;
+        b=l6LJmkrxRw4z5ldxzC/1t5fsViszPftSsYGolWJ6GHWyl+TkM91QB9EkH3H6f03VSO
+         hAOa5SW77iTZ5hkdPmRe0vW/adYveB2pUS735M/Fde89Qu7V1jWuZLPoOAbzulQnaz+i
+         1TqPk9MH+ChiW4OHTI2Ot8/YDmmWkan11JynUZum9fH4+4000jLpjrw0oGR2zpMPafco
+         jB9bZKEUosf/7AbCF5nCGPSIXoMu/0G7R44DiZrEKKaMvt/t7ri2mPlVnPBPkntbh1nB
+         UBtFjEOZ4qh5djS0IfjSE2sJBWA0VmrdMjLsvCpCYIpq+maG0MCtaHPTrj3py2Pw27eP
+         giXw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8vchlMdvdhQkSFxRyLwIwVw8nUOvX5GBlT7YHktgDn+uZcMT5lvetZCwIbiWOhDsWkcGAt5K2P5M4szM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+xf1rpE95JSWdakz8HuR/ZdO9NqwcES/BdKElcwgD1jecuTHr
+	gVI1JpGlQ0FXcZeYXHFu29tNeCLFJYw+Dk0rGGorzRyX4/6DsI0wNe/nOpe1q4Rdp0M+M1FguVW
+	7F46BuyI66FxXdkffXO3FGzoxWqbl1uEuZhICgn43jWFf4Mw/c2ozwfoWeipd9A==
+X-Received: by 2002:a05:6830:2b25:b0:703:5c54:ddac with SMTP id 46e09a7af769-70b7470a670mr1628360a34.2.1723222445784;
+        Fri, 09 Aug 2024 09:54:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpuMCJfrpcp3WHIjMj9LLfZZ/K5MFK4Lv5p2xqcXiI3Eo7cosoDQu8/NAx31jVVYmRJIlX7w==
+X-Received: by 2002:a05:6830:2b25:b0:703:5c54:ddac with SMTP id 46e09a7af769-70b7470a670mr1628345a34.2.1723222445418;
+        Fri, 09 Aug 2024 09:54:05 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3786cce67sm279215085a.116.2024.08.09.09.54.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 09:53:31 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, linux-kernel@vger.kernel.org
-Cc: kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
- youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 07/24] sched/fair: Re-organize dequeue_task_fair()
-In-Reply-To: <20240727105028.977256873@infradead.org>
-References: <20240727102732.960974693@infradead.org>
- <20240727105028.977256873@infradead.org>
-Date: Fri, 09 Aug 2024 18:53:30 +0200
-Message-ID: <xhsmhh6bty6wl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        Fri, 09 Aug 2024 09:54:04 -0700 (PDT)
+Date: Fri, 9 Aug 2024 12:54:01 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: Re: [PATCH 06/19] mm/pagewalk: Check pfnmap early for
+ folio_walk_start()
+Message-ID: <ZrZJqd8FBLU_GqFH@x1n>
+References: <20240809160909.1023470-1-peterx@redhat.com>
+ <20240809160909.1023470-7-peterx@redhat.com>
+ <b103edb7-c41b-4a5b-9d9f-9690c5b25eb7@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b103edb7-c41b-4a5b-9d9f-9690c5b25eb7@redhat.com>
 
-On 27/07/24 12:27, Peter Zijlstra wrote:
-> Working towards delaying dequeue, notably also inside the hierachy,
-> rework dequeue_task_fair() such that it can 'resume' an interrupted
-> hierarchy walk.
->
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/sched/fair.c |   61 ++++++++++++++++++++++++++++++++++------------------
->  1 file changed, 40 insertions(+), 21 deletions(-)
->
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6861,34 +6861,43 @@ enqueue_task_fair(struct rq *rq, struct
->  static void set_next_buddy(struct sched_entity *se);
->
->  /*
-> - * The dequeue_task method is called before nr_running is
-> - * decreased. We remove the task from the rbtree and
-> - * update the fair scheduling stats:
-> + * Basically dequeue_task_fair(), except it can deal with dequeue_entity()
-> + * failing half-way through and resume the dequeue later.
-> + *
-> + * Returns:
-> + * -1 - dequeue delayed
-> + *  0 - dequeue throttled
-> + *  1 - dequeue complete
->   */
-> -static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-> +static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
->  {
-> -	struct cfs_rq *cfs_rq;
-> -	struct sched_entity *se = &p->se;
-> -	int task_sleep = flags & DEQUEUE_SLEEP;
-> -	int idle_h_nr_running = task_has_idle_policy(p);
->       bool was_sched_idle = sched_idle_rq(rq);
->       int rq_h_nr_running = rq->cfs.h_nr_running;
-> +	bool task_sleep = flags & DEQUEUE_SLEEP;
-> +	struct task_struct *p = NULL;
-> +	int idle_h_nr_running = 0;
-> +	int h_nr_running = 0;
-> +	struct cfs_rq *cfs_rq;
->
-> -	util_est_dequeue(&rq->cfs, p);
-> +	if (entity_is_task(se)) {
-> +		p = task_of(se);
-> +		h_nr_running = 1;
-> +		idle_h_nr_running = task_has_idle_policy(p);
-> +	}
->
+On Fri, Aug 09, 2024 at 06:20:06PM +0200, David Hildenbrand wrote:
+> On 09.08.24 18:08, Peter Xu wrote:
+> > Pfnmaps can always be identified with special bits in the ptes/pmds/puds.
+> > However that's unnecessary if the vma is stable, and when it's mapped under
+> > VM_PFNMAP | VM_IO.
+> > 
+> > Instead of adding similar checks in all the levels for huge pfnmaps, let
+> > folio_walk_start() fail even earlier for these mappings.  It's also
+> > something gup-slow already does, so make them match.
+> > 
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> >   mm/pagewalk.c | 5 +++++
+> >   1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/mm/pagewalk.c b/mm/pagewalk.c
+> > index cd79fb3b89e5..fd3965efe773 100644
+> > --- a/mm/pagewalk.c
+> > +++ b/mm/pagewalk.c
+> > @@ -727,6 +727,11 @@ struct folio *folio_walk_start(struct folio_walk *fw,
+> >   	p4d_t *p4dp;
+> >   	mmap_assert_locked(vma->vm_mm);
+> > +
+> > +	/* It has no folio backing the mappings at all.. */
+> > +	if (vma->vm_flags & (VM_IO | VM_PFNMAP))
+> > +		return NULL;
+> > +
+> 
+> That is in general not what we want, and we still have some places that
+> wrongly hard-code that behavior.
+> 
+> In a MAP_PRIVATE mapping you might have anon pages that we can happily walk.
+> 
+> vm_normal_page() / vm_normal_page_pmd() [and as commented as a TODO,
+> vm_normal_page_pud()] should be able to identify PFN maps and reject them,
+> no?
 
-This leaves the *h_nr_running to 0 for non-task entities. IIUC this makes
-sense for ->sched_delayed entities (they should be empty of tasks), not so
-sure for the other case. However, this only ends up being used for non-task
-entities in:
-- pick_next_entity(), if se->sched_delayed
-- unregister_fair_sched_group()
+Yep, I think we can also rely on special bit.
 
-IIRC unregister_fair_sched_group() can only happen after the group has been
-drained, so it would then indeed be empty of tasks, but I reckon this could
-do with a comment/assert in dequeue_entities(), no? Or did I get too
-confused by cgroups again?
+When I was working on this whole series I must confess I am already
+confused on the real users of MAP_PRIVATE pfnmaps.  E.g. we probably don't
+need either PFNMAP for either mprotect/fork/... at least for our use case,
+then VM_PRIVATE is even one step further.
+
+Here I chose to follow gup-slow, and I suppose you meant that's also wrong?
+If so, would it make sense we keep them aligned as of now, and change them
+altogether?  Or do you think we should just rely on the special bits?
+
+And, just curious: is there any use case you're aware of that can benefit
+from caring PRIVATE pfnmaps yet so far, especially in this path?
+
+As far as I read, none of folio_walk_start() users so far should even
+stumble on top of a pfnmap, share or private.  But that's a fairly quick
+glimps only.  IOW, I was wondering whether I'm just over cautious here.
+
+Thanks,
+
+-- 
+Peter Xu
 
 
