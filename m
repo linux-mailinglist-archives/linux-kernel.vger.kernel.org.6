@@ -1,393 +1,241 @@
-Return-Path: <linux-kernel+bounces-280402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4F494CA0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:03:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5881594CA07
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 468AC289C54
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:03:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A41D2B215C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B863416C879;
-	Fri,  9 Aug 2024 06:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EF816CD01;
+	Fri,  9 Aug 2024 06:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="qQHoVzYR"
-Received: from esa14.fujitsucc.c3s2.iphmx.com (esa14.fujitsucc.c3s2.iphmx.com [68.232.156.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1v8C7fK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2A6184;
-	Fri,  9 Aug 2024 06:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.156.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723183389; cv=fail; b=t2ed+u1/U3TnVS3bONkIytv9nqK6EVbykdwOIwS8OCUB1FttlpNK5mtM6JrneMXq8wS7Qx1nPO1h7WYGJq9tGTv4DMo4U0L/4WesX+OJAxyZKPneB4ewgj2H2WMvWQwFUJ8T1Y34RCIyrvJSi+u0kdPOWWwZztAm74Ch9NfNWDU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723183389; c=relaxed/simple;
-	bh=mohZU1iYsNmGlnVKH1/vkXevI0cAg1Rh4ja50+BIbJU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=t3EqBNM+BkvWqZHSzmo1pS3bqh/MRl7tOAoSxKlIY4CstmwXyK1C8i4hG2Ba/qKglBoSx09zPbOOmiK2fOye1rp2DDSQqWWYzR8GV+RrIpAthCa7kIe05Zw0Rz6nBqNLrc1liKpau6GcB2PcQyIwnWUodQLs0H9RqvHAYHRjuVU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=qQHoVzYR; arc=fail smtp.client-ip=68.232.156.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1723183387; x=1754719387;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=mohZU1iYsNmGlnVKH1/vkXevI0cAg1Rh4ja50+BIbJU=;
-  b=qQHoVzYR+sL6UcXjl0ISLeghMTSSXX1bkYLaCEYMcJbJyaAvvzwsY04+
-   F5wtfRqhxnJ6HIm5PKqArZdG/HUNMqXAMPA5eJSGyNg+haYvoCNl0rlhd
-   L91f1O4/7XPImgp6FcyEW1+Yh3uA1Lbx6U4HEJ5HoK8m2y35sxciHdkKf
-   2ngote3CO/uLws3C1i1dsuNKKLgQrXMDz2fkOxIAk+7YeW7Fw/s4g3kvY
-   XEgu4bpUnDa8BUwLvjOLJL2yMIQhDlCV+CSI47AA0FZHgZDO1fQqt/7s/
-   umrCKcOyDPjF7gDRD+c69vrrWf5HXNqHcyaMpclIn+VlqBijYOfdqcaN7
-   g==;
-X-CSE-ConnectionGUID: WrkQ10cQRl2RhXcbGqIt8w==
-X-CSE-MsgGUID: ktJhuQ5TSX2WvflOMJeJug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="127260604"
-X-IronPort-AV: E=Sophos;i="6.09,275,1716217200"; 
-   d="scan'208";a="127260604"
-Received: from mail-japaneastazlp17010007.outbound.protection.outlook.com (HELO TY3P286CU002.outbound.protection.outlook.com) ([40.93.73.7])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 15:02:57 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wj29HXMGBAJIOzw1cAak3i9jYM3agwAFbBLJjjaaqIyFZgalMnRSBJl6hgRHVJi+OhIKNoYUTvR9fKfFa5oJmcKPUT4/1XamUMd4wk1nvHV1F14gndNyPbdbwMHA/OYd/K6j/mUq0Pbn3jkH9hoZuUG1PXkmXYsKQhS1p8wQz+Fnzl6SfNvytwhoCAhBkuj0p8bzSO3XwACF6aN3vXfBVMohwA6WVGZod0ZEA4CWco35fFlwJC5ExXNoNOuHD3imn8HaTKA+tGOLwV9i/lrmeviF46AVTHVzAgyVb/HYRiWbmu6A8aob/ylqMBO6Yi5GLgTehKCjLkL9N1utjdqO/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BLctyC4SoRFs8XX4bWEH87DP1FBGtMBjWcU4FxR5+5w=;
- b=amPmwD1eAk8KP4Vrvyn00yXLG/WS+FSNxOAoggcKT7DG6AOPl/Jl2GFOi49hwEaBNwbHFCro2ORYWVvVk9a7QPrV99QLxI/axdSaPgZMmYJj2xwNz2MF9uoyF45EplRag8xanUrgK7ZKnaezsUUXUXDBeI705a6kIZB+sd+gRlpUeFxkMgM+JckZ0neGb87s+aq0gCeerKl/rrmvDFXRWiT5gJTtenp/22WKQEnS2ZxIECriQSvmUz/ULXDLhwcz/pwC7AMQgqmTMFyc2vA+Mp/B5vqvvwyX853R4hq9nv+NG5VbRIq3371Jl9yWqLuBsor0wCkp5w6wXAcg7//2rQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-Received: from TY3PR01MB11148.jpnprd01.prod.outlook.com
- (2603:1096:400:3d4::10) by OSZPR01MB7913.jpnprd01.prod.outlook.com
- (2603:1096:604:1b6::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.14; Fri, 9 Aug
- 2024 06:02:53 +0000
-Received: from TY3PR01MB11148.jpnprd01.prod.outlook.com
- ([fe80::1c1d:87e4:ae79:4947]) by TY3PR01MB11148.jpnprd01.prod.outlook.com
- ([fe80::1c1d:87e4:ae79:4947%6]) with mapi id 15.20.7849.014; Fri, 9 Aug 2024
- 06:02:53 +0000
-From: "Tomohiro Misono (Fujitsu)" <misono.tomohiro@fujitsu.com>
-To: 'Ankur Arora' <ankur.a.arora@oracle.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
-	<will@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "wanpengli@tencent.com" <wanpengli@tencent.com>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "arnd@arndb.de"
-	<arnd@arndb.de>, "lenb@kernel.org" <lenb@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "harisokn@amazon.com" <harisokn@amazon.com>,
-	"mtosatti@redhat.com" <mtosatti@redhat.com>, "sudeep.holla@arm.com"
-	<sudeep.holla@arm.com>, "cl@gentwo.org" <cl@gentwo.org>,
-	"joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
-	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
-Subject: RE: [PATCH v6 00/10] Enable haltpoll on arm64
-Thread-Topic: [PATCH v6 00/10] Enable haltpoll on arm64
-Thread-Index: AQHa35hwUs4dbjmKiUW5dt3OvsFHwrIegdtw
-Date: Fri, 9 Aug 2024 06:02:50 +0000
-Deferred-Delivery: Fri, 9 Aug 2024 06:02:50 +0000
-Message-ID:
- <TY3PR01MB111481E9B0AF263ACC8EA5D4AE5BA2@TY3PR01MB11148.jpnprd01.prod.outlook.com>
-References: <20240726201332.626395-1-ankur.a.arora@oracle.com>
-In-Reply-To: <20240726201332.626395-1-ankur.a.arora@oracle.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ActionId=dc7f891e-7698-43c1-9a1a-bfb00a0fcb3f;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ContentBits=0;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Enabled=true;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Method=Privileged;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Name=FUJITSU-PUBLIC?;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SetDate=2024-08-09T05:55:36Z;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11148:EE_|OSZPR01MB7913:EE_
-x-ms-office365-filtering-correlation-id: 255f6d7f-0391-4031-6217-08dcb838e81a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018|1580799027;
-x-microsoft-antispam-message-info:
- =?iso-2022-jp?B?UnlLczV1TzJjV3BqQUVuVmQ4OVpqc1FWTGwwdWhGVE81LzlkMlI0aHJF?=
- =?iso-2022-jp?B?WmhrRjljTVRFVlMyREtnekxsZ0RFeDB6dHJyOXptd3FKSlJzelM2NnFk?=
- =?iso-2022-jp?B?dnFQaHR6bDNJbmk4TURZMlZJbWVsamRhYURXbFpmVGFyTStMVDA0VEhK?=
- =?iso-2022-jp?B?QUFqemc3UER1TGVEdmxNNUVJN3ZqQWJKQy8xbTJQRVh6LzFvbFlzeHAz?=
- =?iso-2022-jp?B?M0lmMHhsNjJhbk1OZlYxeU14RGpQUHZvVEpYeDRxazc1b290NHczYk5C?=
- =?iso-2022-jp?B?ZCtTbmJCMlNxa2RXWDQ3ME8zbDUybXhpZ1FlWklrYmd2K3dqWkNtL0Zi?=
- =?iso-2022-jp?B?VE0rWlljdmRpY2xLc2I0TnU4ZEJvdDFlYmlIWWpZMFN2aE10QXExazBp?=
- =?iso-2022-jp?B?SS90SmxTOUtwTzU3cXgrTVFxL1NralRSZSs4WmRaVWRkcHNrNWlWcjJJ?=
- =?iso-2022-jp?B?b0dJb3FpZHo5dk9IYy9ablFVd2RQZyttcDE4SXhNcTVSdmpDVjZRU2tI?=
- =?iso-2022-jp?B?TUNFQVRXaitMTGpkU3FNWkJvNEhVZGc1TTB4bFA2Mk5jMTNzZWdpRzNG?=
- =?iso-2022-jp?B?bHF1OXQybjNQdHBXSWdWcXgveVJHdm4wOGRqZTlrL0ZzeW9WUjhBZ2Yw?=
- =?iso-2022-jp?B?SEVvaE16Ym4vdFZkKzJ0NWluR3g5NFd4dnZmazA3OEtaam5BemlOUUdo?=
- =?iso-2022-jp?B?VzNVbm5qU1BWbzBaYUJJc2tscERLSU9jcnNVTThBV0dLellDMzl4VmZQ?=
- =?iso-2022-jp?B?eGsyaXJEeDNBVFRKcHZYbTQ3TUlnQkVQWS9LUmlPS045YjVNOUhWTE5Y?=
- =?iso-2022-jp?B?cnpMZjMyaDhEZkpuWWVYTU5MUTJEUCt1U1lWOGV2N3YxVVNzS0JHKzJB?=
- =?iso-2022-jp?B?Q2NjUThXbmg4cEhveDZvd2hjek0yMTExaHY2WUFkLzVpQk5hakNzWUJH?=
- =?iso-2022-jp?B?VTBlbUl5TjFveURRZllMR1M0dHVGT01iejhDeGROOFR3Y2QzUW9QdXdw?=
- =?iso-2022-jp?B?VjBMWDdFblhNNjNtLzlYQ2RGcExkbVpDS1NrOHB1azlsT3RnanY1dVlp?=
- =?iso-2022-jp?B?ekxqK2ZYRFUvOWcvNFFPQmk5VWZjdzc3YVZ6N3VKekkrd05YN2pPOTI5?=
- =?iso-2022-jp?B?bWJnVWxjaHkzdm10RS9SeFdlaVBSZTFhSmhScDhDTlJGZmNocTA1Y2FJ?=
- =?iso-2022-jp?B?SGtnaEEzQ29CUkRSN2JJVFVCK3R4VUNtNDRnVCtTcEFpekNwT0tLQ2RE?=
- =?iso-2022-jp?B?UTA5ZEJsRjVZRWdoVHVvd2RqNzQ2aExGWTFESEhNM3VFcDRPS1VIQW5o?=
- =?iso-2022-jp?B?R0VjRTZlaEZBL0d0a3ZoYVZsaTZHUUdCaG1UaGZRMDNNRlBRMVdOR010?=
- =?iso-2022-jp?B?QmIxQmhBdGozMXhKV1czTXNlRVhPaEs0NitDVVlsSlA0eEZiaHBxU0Er?=
- =?iso-2022-jp?B?NHorUDFybE05SnBxZGF1Ryt1UlpEWktSZ0wzRlJyUEVzSUJMYW5MemlH?=
- =?iso-2022-jp?B?K0IvbTRUcG56V2g0UHNxMUh2alNTYk80ZGFTalZvRjFQR2pnNzdLamVR?=
- =?iso-2022-jp?B?eklxUkdlSkI0ZkZIOUptNDlVM2x4aytqUGpHUWVoeUdzbm1HMzlaUS8y?=
- =?iso-2022-jp?B?Y0pvUGhwd3ZnZy85NUhpcDhzMmdCdXBxc2RMYU16NFdZYmpjOXpTYytS?=
- =?iso-2022-jp?B?T3RXcjZ4OTNxL2NrWVlQOUhtS1RYNXNPOGVJaTdJODJlQlQ1Zmo3WXlJ?=
- =?iso-2022-jp?B?YUJIeWR0bExsN0dwYXFidzBka3Q3WkV1Tnl6ZWpyY1FBSjIzR2tqRlpl?=
- =?iso-2022-jp?B?MUl6VUtySnJOM1pmQXJ3Y3pWTTZpd2dQM2FlMnZob3grbnhGcHViU1Zt?=
- =?iso-2022-jp?B?MTRmREFzbDlUZ2xoTGN3SFluWGZZOCtpdTgrcmV5QmV5VkM5RnRMQXFC?=
- =?iso-2022-jp?B?ekhhM2cycXhsb2o2QnR5TmJnWTN6U00vY29SZXZGcjVuODBjUU1KWExF?=
- =?iso-2022-jp?B?TlNDeEQ4MHJRbWQwMHhVdWI5SmRZcHdLUkp0QjYzcW1oTlBMaXRabS9R?=
- =?iso-2022-jp?B?YmRBb0paSU44YkpJcnJJZmxBQnRyelE9?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11148.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018)(1580799027);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-2022-jp?B?RVB0Q0Y3Y1hYRDFXMFA2V0ZPenRZQXVVTFRIRmVKZitxSlhUZktuUHBl?=
- =?iso-2022-jp?B?U3FBRkNPR2J4Y3Z5ek9lcUhaRWsxYmNEZ3BKMUFaNGltcE9ZQmIwV0E0?=
- =?iso-2022-jp?B?Y1JVZzJxaHZobVE0ZnpaWFErdFhhR2ltOExDajhmN091NmR3K3RhVHoy?=
- =?iso-2022-jp?B?WWdYekNNeDRNK3AvQmxpcURhRDBRL1l5MTVRdUNZbW9qWVR6VUptYnNl?=
- =?iso-2022-jp?B?VmdRRnJMM2RrNFZRL0E0Um9RNHdWZXBXeUY1THFPd1VsSmFGbDRZM0lw?=
- =?iso-2022-jp?B?MHM2QU45Z2ZsSGF3Ly9janphQXRRaHpCMFFxdEFhdDJHZmI4QjNwa2Q0?=
- =?iso-2022-jp?B?RThKMURSUEhaZHU1NGk1NUJyY3l4bkdNT2gvK3Zxek55NFBNU0ZJM0Vr?=
- =?iso-2022-jp?B?V245YTJVajhKRUpacWZKVllMb0RhRnhiMFRMUHZFV0pqZUc0M3poME1o?=
- =?iso-2022-jp?B?VjJia0Njb1dmWStsL3ltL0p1RGxjbkV1MTdCeFlIdFdkMkM2aDZNMWF4?=
- =?iso-2022-jp?B?YVBOMG4xSG9WdE5OUHNKTnFPS3ZCcW9hQVZSdVlUTWFiWVc5eUtTR000?=
- =?iso-2022-jp?B?UEhJM3lCLy8yTFh0Q1ArY0dHYnk1bXk5bHQzRmxLZG5hYkdnL3oxb0lm?=
- =?iso-2022-jp?B?MkJ5ckxvRUhDZTlVL1haTUJyTjc5bHJpYkdqQkdkbkRQaGpLOE5MeVZR?=
- =?iso-2022-jp?B?a0duTUxVT0lrUCtmamphVkNBN0hlcHlCakNiQVU0c1hQbHdnS3JiNDR5?=
- =?iso-2022-jp?B?MHpHdHN2SEJqL0tXNUgrcGszNS8yYXFjL0hXZUZSVXVNdkZHTXFrbzNq?=
- =?iso-2022-jp?B?aW55WFBEcHQ2N2k0dHozZ29WNkVvVHZzWEErRnpZTThwYUNIT1hrYTZv?=
- =?iso-2022-jp?B?LzdSREZxYlRHc0pPeXRINEZhRnhRdm5VbGU2ZCtxOGtFM3lITFJOS1kr?=
- =?iso-2022-jp?B?Z1NQK0JveHU3U3ozNFdobEJwV1BkcmRWZEY2L2RrNktGM2JNaGdsU1Ja?=
- =?iso-2022-jp?B?YmxVaGxwS3JqcjdMVHl5em5ySmFjTlQ5NHFvWWRVQVlSN21KUmw3SEhP?=
- =?iso-2022-jp?B?dHlUSmVvbkNKOXZnVEtqc0lUOGRWV080Vm9rbGF0K25mdHZhV3E4ZkZr?=
- =?iso-2022-jp?B?bFIxN256UHhEbC92bTFkTUpoa1Q1Tkh4UEt2M1NNUW5lME5QbFRTdG1S?=
- =?iso-2022-jp?B?MVVkSHVFNzFnYnM4MEQ4aklOditSM3FBYWNOdFRaMDN5bzAxdUExa2Rx?=
- =?iso-2022-jp?B?U1FVVVNoZTI5YW5valJCTnArbWFiSk1WaC85ckJHWkNVT3I0VmY5aUJW?=
- =?iso-2022-jp?B?S2ZzdFhWTVV0dXZlbnNxM1ZpMUFKUkZGYzArTUZ1MlJsTTBoazVEaVRS?=
- =?iso-2022-jp?B?TjFjVVhOZGJHWG5FMHF2TU4zcG1oZSs0WkpNdWE5SFE3RytISExiYVB1?=
- =?iso-2022-jp?B?czF1K2RwUUlQbFZvRmIzZWdValYwRXczQlZEUCtOL3VjTG9tdGFGQzRq?=
- =?iso-2022-jp?B?OHJleUpybHAzc1lvY1ljcWQzcncrNC9CKzRrUlFiQzA2SXd6ZlNDSXZ4?=
- =?iso-2022-jp?B?bElsY2lGZ2Foc2dJVm1wRHQ0YjhraEZtVUZRL2pqSHY3RFRUc00vSFhY?=
- =?iso-2022-jp?B?ZWNQWmRjSk1DU0VuZUhGUjh6dzdFRnd2U0VyaVlKeVJaN2lNeVpKdEpa?=
- =?iso-2022-jp?B?MXFaeWM0dWtpbU9oUzF1SlQvSTFsMjZoQ2FnRkJoWmlpU0RaYnZUay9x?=
- =?iso-2022-jp?B?aVZ3amJkMlhMMEZWSUhPTEk2L0ppSnJlUFdDOXRVU0p1MDJ1RFhMTjRu?=
- =?iso-2022-jp?B?a1k2a3JRdkFQeFZ6UlhrSDNNcE1WRm1HVURJYTBQOVExNFUrcUt1LzY4?=
- =?iso-2022-jp?B?dGU1cXR2ZFp4U3E1MmNiS2dsalhFd2hyWjdvZnJZMEt5U1lWOHRYSEVi?=
- =?iso-2022-jp?B?NjB2VjJUeHFibWpXZnF5MEFDSkNJRHh4eExrbEY0Y3F4Ukl3L3pMWGNh?=
- =?iso-2022-jp?B?aHdKKzAvdnBSZmpaLzBVM0FsbkZzOU1UVTk3a3R0TUF0QWlla1BYd1RS?=
- =?iso-2022-jp?B?SWVhSXdUdHV3MStzSmFBRmpabktVSkRRZ0Y1RXljdEFTTTV0djh2TW1j?=
- =?iso-2022-jp?B?a2lOSjJWeVN2TnAzY0FNaGltaHplaG5zb2R1bDRzUVV0QjlLMFRDNStH?=
- =?iso-2022-jp?B?TW8wZkNVR0YvR0FHZ1ZOU3g2MmtpVGFlUDJzZGVmTnk5U2pNTHpjaWp3?=
- =?iso-2022-jp?B?N0JwR0VybUsxVm9oRTk0VTNDekkwMmtJWCtHUUpheGFUVnJRUWlsZmRV?=
- =?iso-2022-jp?B?SjdHWGQrNzQyM0I2clhjYWduMmFleXVtK1E9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1ED184;
+	Fri,  9 Aug 2024 06:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723183381; cv=none; b=KBD+9hXqnTQHOttbmptA8dl2d6lUXbzmJ6scjmf7ue622Kku5BbZL19QVc3NdAOs4alwaDEecInRQxj0tRKyluhz6BoGSAuy1AcWvyXm+V8eyshqgMs0/G1BcgnTiicGKNtpwVFqQYaz1a6Vl3Tdq+ayi1pnhNjsuJQfztKo40w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723183381; c=relaxed/simple;
+	bh=V+1sLQhFCrQC2Vy4s55nqZfheQ6QUK1MscUIXDb0v7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RdA8AJZo5N4mGXcTRhgN44Dsf1usDTzEG73+CFHwg/pdjqOirgo9WOPuD4/v+h1zswVX7rPXeiadMzCvu46pzjIBK1N7N4kTrc/hOb8aND95jIbn94X6sQkJVIiBIKrtQUCqAmZyX2jj8vqoHisPVZhTDu+zYndt3ITGOVIKYh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1v8C7fK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 438D6C32782;
+	Fri,  9 Aug 2024 06:02:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723183381;
+	bh=V+1sLQhFCrQC2Vy4s55nqZfheQ6QUK1MscUIXDb0v7E=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=D1v8C7fKtO/Zg0g/+KAA7IA385tZpqCexZ0KX/X2wIzhtrPTWPbfCoVNeCtuQ4rJt
+	 USjRfN7YosdNVfAjuRLI7ZTRSlssI0HRxGYFR+bQnm9gyjVXXUtdl5bwjLZV/EHM7V
+	 oASsgX6P64UrD/IwrZhNP5FsuRbxbw9MX5+u+AZBYytHmOfL+UUCd8p231vTwQOtwR
+	 FGTy6vkN8R27NPUbkkYGpPUVjJDDQIl9HKFi0bPbp9DGgdJEay19L5rzP1yhAqZvfg
+	 ++80VvrWz/LP6wW8wVImjgWIvE6Y12Y3MpAOFZKQs1GLak+++yh4SELbQfHYcgOzVd
+	 XFxX656iFOhcA==
+Message-ID: <10809e91-31be-4110-86c1-1e1ccb05b664@kernel.org>
+Date: Fri, 9 Aug 2024 08:02:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	jc4DjJHbfVB3wU8jiMIdPD5FLO/W9uvAJ6f/HhBj27LEnKnRnR1LqQzpiQGxsvKt4/hzlW/ITEvYqyNDZfsgdi11dT8VCiJM51MgZjoIxJMO9jaSWTvbeCYL7e+RWVJaaeaQGlW5p+fGkwDNUWO3sDakH2B5SM4gdjPAbGu0Uw9Pu2upjS0usXTblv9xh3ALl3cA5dyRE8DqrYJZoiuSKorcOFTe4usE9YtAymmWF8UKRDYMjIRqx1Ap3u75j3llmXC5EE3O2ZPhGaFSo0dzaRIWtvRlFXMpre/7cCqIqgJjOy/OtARC8MpBR6s+GGc0dBK630efVu6Pn2tGKR1LDOfvv5OGM11ycdaYDiVSUwH6pHj33aucPZRKArhzx3lhbOyqiKtoL64mBSMo3YpicRTxrugLNzXsO7u6MHCMqDgMsqFEYL+mq/fGAyMBgWyQVzValu7NrTExJP8jRrfcn487Jc6b6JvTyMYIZJtCcK0wueqkvlgxio0N0K5SXRE3L0MTNcom17JbH6okG6PEmCWSeuAVrDx0zCm+ernQQcJyo63Dzohsxi0ZrbKTN4J3MmlBGzUsbWLCAw0Ez3QYhY0P55iWLBZ0mK1kt6r0AWpsFyxKHw5q7QUrqvWTHy7l
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11148.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 255f6d7f-0391-4031-6217-08dcb838e81a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 06:02:52.9161
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yU5irMOOaEGgC0IERtaaMq3gG0MgrXpLRfJQ0hQhBY2rpNIPNkP4CvR2ODoyFoQry6zGONEQwq9f29K+G+FrNThMYV2WUJU3pgNIybk397w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB7913
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+ <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
+ <2f27285e-6aa5-4e42-b361-224d8d164113@kernel.org>
+ <OS8PR06MB75416FAD2A1A16E7BE2D255DF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <OS8PR06MB75416FAD2A1A16E7BE2D255DF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> Subject: [PATCH v6 00/10] Enable haltpoll on arm64
->=20
-> This patchset enables the cpuidle-haltpoll driver and its namesake
-> governor on arm64. This is specifically interesting for KVM guests by
-> reducing IPC latencies.
->=20
-> Comparing idle switching latencies on an arm64 KVM guest with
-> perf bench sched pipe:
->=20
->                                      usecs/op       %stdev
->=20
->   no haltpoll (baseline)               13.48       +-  5.19%
->   with haltpoll                         6.84       +- 22.07%
+On 09/08/2024 07:55, Ryan Chen wrote:
+>> Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
+>>
+>> On 08/08/2024 09:59, Ryan Chen wrote:
+>>> Add compatible support for AST2700 clk, reset, pinctrl, silicon-id and
+>>> example for AST2700 scu.
+>>>
+>>> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+>>> ---
+>>>  .../bindings/mfd/aspeed,ast2x00-scu.yaml      | 31
+>> +++++++++++++++++--
+>>>  1 file changed, 29 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>> b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>> index 86ee69c0f45b..c0965f08ae8c 100644
+>>> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>> @@ -21,6 +21,8 @@ properties:
+>>>            - aspeed,ast2400-scu
+>>>            - aspeed,ast2500-scu
+>>>            - aspeed,ast2600-scu
+>>> +          - aspeed,ast2700-scu0
+>>> +          - aspeed,ast2700-scu1
+>>
+>> What are the differences between these two?
+> 
+> The next [PATCH 4/4] is scu driver that include ast2700-scu0 and ast2700-scu1
+> CLK_OF_DECLARE_DRIVER(ast2700_soc0, "aspeed,ast2700-scu0", ast2700_soc0_clk_init);
+> CLK_OF_DECLARE_DRIVER(ast2700_soc1, "aspeed,ast2700-scu1", ast2700_soc1_clk_init);
 
-I got similar results with VM on Grace machine (applied to 6.10).
+What are hardware differences? Entirely different devices?
 
-[default]
-# cat /sys/devices/system/cpu/cpuidle/current_driver
-none
-# perf bench sched pipe
-# Running 'sched/pipe' benchmark:
-# Executed 1000000 pipe operations between two processes
+> So I add these two.
+> 
+>>
+>>>        - const: syscon
+>>>        - const: simple-mfd
+>>>
+>>> @@ -30,10 +32,12 @@ properties:
+>>>    ranges: true
+>>>
+>>>    '#address-cells':
+>>> -    const: 1
+>>> +    minimum: 1
+>>> +    maximum: 2
+>>>
+>>>    '#size-cells':
+>>> -    const: 1
+>>> +    minimum: 1
+>>> +    maximum: 2
+>>>
+>>>    '#clock-cells':
+>>>      const: 1
+>>> @@ -56,6 +60,8 @@ patternProperties:
+>>>              - aspeed,ast2400-pinctrl
+>>>              - aspeed,ast2500-pinctrl
+>>>              - aspeed,ast2600-pinctrl
+>>> +            - aspeed,ast2700-soc0-pinctrl
+>>> +            - aspeed,ast2700-soc1-pinctrl
+>>>
+>>>      required:
+>>>        - compatible
+>>> @@ -76,6 +82,7 @@ patternProperties:
+>>>                - aspeed,ast2400-silicon-id
+>>>                - aspeed,ast2500-silicon-id
+>>>                - aspeed,ast2600-silicon-id
+>>> +              - aspeed,ast2700-silicon-id
+>>>            - const: aspeed,silicon-id
+>>>
+>>>        reg:
+>>> @@ -115,4 +122,24 @@ examples:
+>>>              reg = <0x7c 0x4>, <0x150 0x8>;
+>>>          };
+>>>      };
+>>> +  - |
+>>> +    soc0 {
+>>> +        #address-cells = <2>;
+>>> +        #size-cells = <2>;
+>>
+>> That's the same example as previous, right? The drop, no need.
+> 
+> AST2700 is 64bits address mode platform, that the reason.
+> So I add example for 64bits platform descript in dtsi
+> I have to add soc0 to be address-cells and size-cells to be <2>
+> Then I can define the register to be 64bits address and size.
 
-     Total time: 23.832 [sec]
+That's trivial. Drop.
 
-      23.832644 usecs/op
-          41959 ops/sec
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> ************* Email Confidentiality Notice ********************
+> 免責聲明:
+> 本信件(或其附件)可能包含機密資訊，並受法律保護。如 台端非指定之收件者，請以電子郵件通知本電子郵件之發送者, 並請立即刪除本電子郵件及其附件和銷毀所有複印件。謝謝您的合作!
+> 
+> DISCLAIMER:
+> This message (and any attachments) may contain legally privileged and/or other confidential information. If you have received it in error, please notify the sender by reply e-mail and immediately delete the e-mail and any attachments without copying or disclosing the contents. Thank you.
 
-[With "cpuidle-haltpoll.force=3D1" commandline]
-# cat /sys/devices/system/cpu/cpuidle/current_driver
-haltpoll
-# perf bench sched pipe
-# Running 'sched/pipe' benchmark:
-# Executed 1000000 pipe operations between two processes
+Maybe I am the intended recipient of your message, maybe not. I don't
+want to have any legal questions regarding upstream, public
+collaboration, thus probably I should just remove your messages.
 
-     Total time: 6.340 [sec]
+Please talk with your IT that such disclaimers in open-source are not
+desired (and maybe even harmful).
+If you do not understand why, please also see:
+https://www.youtube.com/live/fMeH7wqOwXA?si=GY7igfbda6vnjXlJ&t=835
 
-       6.340116 usecs/op
-         157725 ops/sec
+If you need to go around company SMTP server, then consider using b4
+web-relay: https://b4.docs.kernel.org/en/latest/contributor/send.html
 
-Tested-by: Misono Tomohiro <misono.tomohiro@fujitsu.com>
-Regards,
-Tomohiro
+I will not respond to any other confidential emails. That's the last one
+you got.
 
+To be clear: all messages from your company will be made published. By
+responding to this email you agree that all communications from you
+and/or your company is made public.
 
->=20
->=20
-> No change in performance for a similar test on x86:
->=20
->                                      usecs/op        %stdev
->=20
->   haltpoll w/ cpu_relax() (baseline)     4.75      +-  1.76%
->   haltpoll w/ smp_cond_load_relaxed()    4.78      +-  2.31%
->=20
-> Both sets of tests were on otherwise idle systems with guest VCPUs
-> pinned to specific PCPUs. One reason for the higher stdev on arm64
-> is that trapping of the WFE instruction by the host KVM is contingent
-> on the number of tasks on the runqueue.
->=20
->=20
-> The patch series is organized in three parts:
->=20
->  - patch 1, reorganizes the poll_idle() loop, switching to
->    smp_cond_load_relaxed() in the polling loop.
->    Relatedly patches 2, 3 mangle the config option ARCH_HAS_CPU_RELAX,
->    renaming it to ARCH_HAS_OPTIMIZED_POLL.
->=20
->  - patches 4-6 reorganize the haltpoll selection and init logic
->    to allow architecture code to select it.
->=20
->  - and finally, patches 7-10 add the bits for arm64 support.
->=20
->=20
-> What is still missing: this series largely completes the haltpoll side
-> of functionality for arm64. There are, however, a few related areas
-> that still need to be threshed out:
->=20
->  - WFET support: WFE on arm64 does not guarantee that poll_idle()
->    would terminate in halt_poll_ns. Using WFET would address this.
->  - KVM_NO_POLL support on arm64
->  - KVM TWED support on arm64: allow the host to limit time spent in
->    WFE.
->=20
->=20
-> Changelog:
->=20
-> v6:
->=20
->  - reordered the patches to keep poll_idle() and ARCH_HAS_OPTIMIZED_POLL
->    changes together (comment from Christoph Lameter)
->  - threshes out the commit messages a bit more (comments from Christoph
->    Lameter, Sudeep Holla)
->  - also rework selection of cpuidle-haltpoll. Now selected based
->    on the architectural selection of ARCH_CPUIDLE_HALTPOLL.
->  - moved back to arch_haltpoll_want() (comment from Joao Martins)
->    Also, arch_haltpoll_want() now takes the force parameter and is
->    now responsible for the complete selection (or not) of haltpoll.
->  - fixes the build breakage on i386
->  - fixes the cpuidle-haltpoll module breakage on arm64 (comment from
->    Tomohiro Misono, Haris Okanovic)
->=20
->=20
-> v5:
->  - rework the poll_idle() loop around smp_cond_load_relaxed() (review
->    comment from Tomohiro Misono.)
->  - also rework selection of cpuidle-haltpoll. Now selected based
->    on the architectural selection of ARCH_CPUIDLE_HALTPOLL.
->  - arch_haltpoll_supported() (renamed from arch_haltpoll_want()) on
->    arm64 now depends on the event-stream being enabled.
->  - limit POLL_IDLE_RELAX_COUNT on arm64 (review comment from Haris Okanov=
-ic)
->  - ARCH_HAS_CPU_RELAX is now renamed to ARCH_HAS_OPTIMIZED_POLL.
->=20
-> v4 changes from v3:
->  - change 7/8 per Rafael input: drop the parens and use ret for the final=
- check
->  - add 8/8 which renames the guard for building poll_state
->=20
-> v3 changes from v2:
->  - fix 1/7 per Petr Mladek - remove ARCH_HAS_CPU_RELAX from arch/x86/Kcon=
-fig
->  - add Ack-by from Rafael Wysocki on 2/7
->=20
-> v2 changes from v1:
->  - added patch 7 where we change cpu_relax with smp_cond_load_relaxed per=
- PeterZ
->    (this improves by 50% at least the CPU cycles consumed in the tests ab=
-ove:
->    10,716,881,137 now vs 14,503,014,257 before)
->  - removed the ifdef from patch 1 per RafaelW
->=20
-> Please review.
->=20
-> Ankur Arora (5):
->   cpuidle: rename ARCH_HAS_CPU_RELAX to ARCH_HAS_OPTIMIZED_POLL
->   cpuidle-haltpoll: condition on ARCH_CPUIDLE_HALTPOLL
->   arm64: idle: export arch_cpu_idle
->   arm64: support cpuidle-haltpoll
->   cpuidle/poll_state: limit POLL_IDLE_RELAX_COUNT on arm64
->=20
-> Joao Martins (4):
->   Kconfig: move ARCH_HAS_OPTIMIZED_POLL to arch/Kconfig
->   cpuidle-haltpoll: define arch_haltpoll_want()
->   governors/haltpoll: drop kvm_para_available() check
->   arm64: define TIF_POLLING_NRFLAG
->=20
-> Mihai Carabas (1):
->   cpuidle/poll_state: poll via smp_cond_load_relaxed()
->=20
->  arch/Kconfig                              |  3 +++
->  arch/arm64/Kconfig                        | 10 ++++++++++
->  arch/arm64/include/asm/cpuidle_haltpoll.h |  9 +++++++++
->  arch/arm64/include/asm/thread_info.h      |  2 ++
->  arch/arm64/kernel/cpuidle.c               | 23 +++++++++++++++++++++++
->  arch/arm64/kernel/idle.c                  |  1 +
->  arch/x86/Kconfig                          |  5 ++---
->  arch/x86/include/asm/cpuidle_haltpoll.h   |  1 +
->  arch/x86/kernel/kvm.c                     | 13 +++++++++++++
->  drivers/acpi/processor_idle.c             |  4 ++--
->  drivers/cpuidle/Kconfig                   |  5 ++---
->  drivers/cpuidle/Makefile                  |  2 +-
->  drivers/cpuidle/cpuidle-haltpoll.c        | 12 +-----------
->  drivers/cpuidle/governors/haltpoll.c      |  6 +-----
->  drivers/cpuidle/poll_state.c              | 21 ++++++++++++++++-----
->  drivers/idle/Kconfig                      |  1 +
->  include/linux/cpuidle.h                   |  2 +-
->  include/linux/cpuidle_haltpoll.h          |  5 +++++
->  18 files changed, 94 insertions(+), 31 deletions(-)
->  create mode 100644 arch/arm64/include/asm/cpuidle_haltpoll.h
->=20
-> --
-> 2.43.5
+Best regards,
+Krzysztof
 
 
