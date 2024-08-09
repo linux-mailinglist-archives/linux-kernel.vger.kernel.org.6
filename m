@@ -1,105 +1,122 @@
-Return-Path: <linux-kernel+bounces-280929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9392394D117
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C382394D118
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C831C21B1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:19:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F8C1C21068
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 13:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C906195803;
-	Fri,  9 Aug 2024 13:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22567194C65;
+	Fri,  9 Aug 2024 13:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PyQkc1T2"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IEXIkJTa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C599193070
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12E519046B
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 13:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723209573; cv=none; b=tzHK2U7Zo7HmgcnUZrZeQ30EuKcPaQEPQt6Re+OqpXgBAnBlFR/i9I++olqyrp3Wgn48E5f89OaFQkrXj720FUIq5/AL7r11uBW+JcI+mCVInThPgjNfRGtepnZVXBQ9B2KE3AS/VqRtY0Iz+F5hslQKYLxV5VgNpalGq7eHRf8=
+	t=1723209682; cv=none; b=ezPvRCwbbnuLvkrpwjDE4QXdI6AqW47dDF62561vwSqkrtDERpsYT458lYHZc3jXMjuYtm4bW7Ay2c/gjRKMN2V1dKmHdiWbculoXouxSFHjARRfbERHRpyt34LxLGurifp5v2htCXhJ2WWjVhFefPYOjnhXyqHtNanjXkZzE4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723209573; c=relaxed/simple;
-	bh=hX4prB1rS1ph3HqURVsdgX5nADQOV9sRydK/J8HxadM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D6Z/QLnm+JYt+F6EjBBfCFV3AGUQ4Z0HNzcwZQwRMoyvZUuHN7mSVBFHjnm20lt2QjvNBcqrGY49tPoDQYsaYDG7CsHEnF86Tzx/lAvQPoi6mjujzt9VFW572FmiwL/1ttlfgx32XFfsvNsV3yoQYmi/5VWYJj2JF0ZJ3Exw9jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PyQkc1T2; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-368526b1333so1868634f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 06:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723209570; x=1723814370; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hX4prB1rS1ph3HqURVsdgX5nADQOV9sRydK/J8HxadM=;
-        b=PyQkc1T27w9PziA7tP/pA51KoiOWraBSWzLTAb5pRiz69+Bwd0Az07CBpn0yBpHnCf
-         t3WSJ30+BAbYFZNsap83H9nk7qRhLaAgjaBXbNrl/iuyX5IxH/zVROS9+i8YXzTsJ4oJ
-         Bb4wxxQXHFzNWJZNh1qGBlYsl4VEA35O/ChT4y4pbe8+3A6cO1OFNlev525sThMsy0Lk
-         cFQFo92cQ7m1gmJLGHBev+P7MMFJghIbDi9a7+SGF2qRAlqaNlCPh3snt1Pfkc6cTCU1
-         Tc7hQZJhSfZGgOKSre3LzxU3T+nUV99fr2wpyvJ58ZxoGB7qWFXWX6ZahQODwZGJrFvb
-         BxIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723209570; x=1723814370;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hX4prB1rS1ph3HqURVsdgX5nADQOV9sRydK/J8HxadM=;
-        b=XLR2hwn+6c5VCWvbdYFHMAkZ9tC28J5EI1xdM3H9NZrKDvW+E5vxVG9F9a8e6seoGR
-         lmbV9KlkTGUQvWAWpu7CYz7O8P5JqQMeSpAWsrsY24nF728HVshNppdFioJkE96swW3z
-         l00Q3vxU7HfIdlRpRlwmyhel1mlNW/CBRByP26i5KQlkv3gK0X647pTE9HXl71hYLdfC
-         bzDfhb7STG0C9A5GS+mJXebvtWdBMhRWCeGji2bpUErcdQnSb5Gyyv6b7mUX53vPXYxl
-         sz65Dydf/4/y44NvGgOSmBrLbyCu1IqKRcSo02c538XdRRWuXxKYYKWNHL09d+naA3zK
-         G8Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCU18BXWD7IEB77xSDM6cvPDETZRuUwU2H9SuIEDMUih4v9Ycd+bMYCAWU0myi0s3KlpyHq4B2jCsTuqn1KzaaTI8u+WKEADfEuaD81i
-X-Gm-Message-State: AOJu0YwujL2YLgkfjQArieZjgqdlwdA8J7+ixdIIPzcmcv9ulkI2ZXDH
-	88S5jyVVh5zzvgGBCj84NdZRjWGiJ5cuZNpzfT6HdMgeS9WMOLdBDSXsGXdmUTW30KlAsxb0/D6
-	OXFTiphu/1z8S/dN7OtGIIG0khXMvuT/FHetk
-X-Google-Smtp-Source: AGHT+IGNzIaEFkMjqIqsgcveX2voN9uSFLP9w8tPwHgiFhpGT/YS3dCloVdYIRTwq0c/M+SghUXleXsSnC1QOnNSZjg=
-X-Received: by 2002:a5d:66d1:0:b0:367:8fee:4434 with SMTP id
- ffacd0b85a97d-36d68d9de50mr1201834f8f.16.1723209570197; Fri, 09 Aug 2024
- 06:19:30 -0700 (PDT)
+	s=arc-20240116; t=1723209682; c=relaxed/simple;
+	bh=21XDyHoIvdr2kmFYpi3tjvKxqhkqRnTC/2zgaZaZaJg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qmUBgnCVG4uOFCkyUcpyrfJJG2NnSJFTHKRmD+kit7mpaUKoW4tw1f6fHveKOCC1Ev008OyIezfbHXCfLDlsyoddMiBTNT4kCSUV6KPRfReZUBSR4I0Qeae4s7XWvS6lZCD6jSbh/jo/gdBd4GHbCEYEaNA1whSUdX6s3nQunb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IEXIkJTa; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723209681; x=1754745681;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=21XDyHoIvdr2kmFYpi3tjvKxqhkqRnTC/2zgaZaZaJg=;
+  b=IEXIkJTaT89LunDjJgRfh7goBqN5kc8gi6Qe74MghjFXXynquduKjPxu
+   S8r8SBWwzCWMJdkQWuLf6TbF87VhJelJoVMiqGMLq8NZRXtli2HyiW2aA
+   7uwEuMTLfQ8uPSlia0XTyag1uxtZz94lM2tEosASvm6vat52ocJDos+Nb
+   jefocqwkELWjQtYXjukhThD35hj01lZxm6nxQi/r5UBYEc6w1H2/FpIZI
+   YOL3RzcNOcMT4QHkZB19OSSpUoEjaVqxreGM/NJrYwvGFlj0W0e4u5Huk
+   J8CaNeax5R23UNLY9i3ensv5qelIgN5Tz0JIxah6fZJubdh0dLoo869FJ
+   w==;
+X-CSE-ConnectionGUID: U2Zm9xqDRgCVokPbJXMKPw==
+X-CSE-MsgGUID: PWRSDTUjSluu70T4zu0h/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21534230"
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="21534230"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 06:21:20 -0700
+X-CSE-ConnectionGUID: 2kR6hczSQoKB6JEPPB6kqA==
+X-CSE-MsgGUID: EpyfFweMQY6Frlz242WdmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,276,1716274800"; 
+   d="scan'208";a="80799493"
+Received: from unknown (HELO [10.237.72.57]) ([10.237.72.57])
+  by fmviesa002.fm.intel.com with ESMTP; 09 Aug 2024 06:21:18 -0700
+Message-ID: <ce725e2b-378c-46ba-86ad-a877de0e1ef4@linux.intel.com>
+Date: Fri, 9 Aug 2024 16:21:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809064222.3527881-1-aliceryhl@google.com> <7f38151b-9c9a-42d0-98b8-345c4513a8d1@kernel.org>
-In-Reply-To: <7f38151b-9c9a-42d0-98b8-345c4513a8d1@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 9 Aug 2024 15:19:18 +0200
-Message-ID: <CAH5fLgiPzm=K5FWdLWdTW159OBedLX8-FU=S_u4Rt1HsU_xDqg@mail.gmail.com>
-Subject: Re: [PATCH] rust: sort includes in bindings_helper.h
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, linux-block@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v3 2/6] i3c: mipi-i3c-hci: Read HC_CONTROL_PIO_MODE
+ only after i3c hci v1.1
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
+ Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
+ <20240807052359.290046-3-Shyam-sundar.S-k@amd.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20240807052359.290046-3-Shyam-sundar.S-k@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 9, 2024 at 3:01=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> On 8/9/24 8:42 AM, Alice Ryhl wrote:
-> > Dash has ascii value 45 and underscore has ascii value 95, so to
-> > correctly sort the includes, the underscore should be last.
-> >
-> > Fixes: 3253aba3408a ("rust: block: introduce `kernel::block::mq` module=
-")
->
-> I don't think this patch needs a "Fixes" tag, it's usually for bugs only.
->
-> But it still makes sense to mention the commit that introduced the includ=
-e
-> in the commit message.
+Hi
 
-Ok. I can make this change.
+On 8/7/24 8:23 AM, Shyam Sundar S K wrote:
+> The HC_CONTROL_PIO_MODE bit was introduced in the HC_CONTROL register
+> starting from version 1.1. Therefore, checking the HC_CONTROL_PIO_MODE bit
+> on hardware that adheres to older specification revisions (i.e., versions
+> earlier than 1.1) is incorrect. To address this, add an additional check
+> to read the HCI version before attempting to read the HC_CONTROL_PIO_MODE
+> status.
+> 
+> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> ---
+>   drivers/i3c/master/mipi-i3c-hci/core.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
+> index 24dd4603d6c6..a16da70bdfe1 100644
+> --- a/drivers/i3c/master/mipi-i3c-hci/core.c
+> +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
+> @@ -33,6 +33,7 @@
+>   #define reg_clear(r, v)		reg_write(r, reg_read(r) & ~(v))
+>   
+>   #define HCI_VERSION			0x00	/* HCI Version (in BCD) */
+> +#define HCI_VERSION_V1			0x100   /* MIPI HCI Version number V1.0 */
+>   
+>   #define HC_CONTROL			0x04
+>   #define HC_CONTROL_BUS_ENABLE		BIT(31)
+> @@ -756,7 +757,7 @@ static int i3c_hci_init(struct i3c_hci *hci)
+>   	/* Try activating DMA operations first */
+>   	if (hci->RHS_regs) {
+>   		reg_clear(HC_CONTROL, HC_CONTROL_PIO_MODE);
+> -		if (reg_read(HC_CONTROL) & HC_CONTROL_PIO_MODE) {
+> +		if (regval > HCI_VERSION_V1 && !(reg_read(HC_CONTROL) & HC_CONTROL_PIO_MODE)) {
+>   			dev_err(&hci->master.dev, "PIO mode is stuck\n");
+>   			ret = -EIO;
+>   		} else {
 
-Alice
+Here's typo and logic is reversed.
 
