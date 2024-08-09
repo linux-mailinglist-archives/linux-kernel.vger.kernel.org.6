@@ -1,119 +1,237 @@
-Return-Path: <linux-kernel+bounces-280650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EFB94CD49
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9479594CD50
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F331C20ED1
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:27:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B92221C2149F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A181917FA;
-	Fri,  9 Aug 2024 09:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09701917F8;
+	Fri,  9 Aug 2024 09:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="ZocnFN+p"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W8RMUO+m"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF5718FDBC;
-	Fri,  9 Aug 2024 09:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2641B190059;
+	Fri,  9 Aug 2024 09:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723195663; cv=none; b=P47dWNe5K+lVVj5KE2RZEhKTkErqxmSlu5K2g1F6z/fqrfTzot/k6GX2E10AVyWhgiY11CR/9qLAKsHQhxyFOH1Odp0micPUmb+3aYKUtiBTsqSv2SrU97eZoHo8pgveZr9/lZdGtq84WDCI6rrw2ov1WDH8r3XVmhIAAeOvvec=
+	t=1723195688; cv=none; b=C/UKYYRipw4ShhYXyOL0a+8juUHmfGbjHHFWSWjlh5B7yz8Ijt0e+MCbe1gs9v/bCHAeyqLjkjgWv+gkKdnVhNob5fGaiEJiiX6OsV3alUDjTAlTda/M9uKImn50fTS7XQpZm1Ig8UQyW6156ehSBnBaGiLiUdFHG4Gk5OwkXEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723195663; c=relaxed/simple;
-	bh=n3NhaaEDX80/2TzfeEQq8Sqn7B7+AA/mO1GNp1zKs5g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=InCX4unFuXre+3cP9OROcCWlp9XWJsDi1A2hIcMe4fs36tfbGIHbuIDg/8S8YhLamtgwCJszOL+XN3rjsQs3nWulwG1f+aOD7qQg0iMPyrO4R/pwUIFP6UUznYBBSMX+TEh9DXuAK1kdmTaJhAiFnpskvUVThjBOGozWIefiyQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=ZocnFN+p; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4799Qm1gA631844, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1723195608; bh=n3NhaaEDX80/2TzfeEQq8Sqn7B7+AA/mO1GNp1zKs5g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=ZocnFN+pA1Gb/ZoBrHmRad/UhssL0zRzWAzYYw7sXIiKWaVaQNX3RwjC8O7AVs3k3
-	 3eUFIAEKFkSKpbHlrPAaYOu+u99XLIqv2Xgkd9mBXm6DF+TvkrZDdzGnPt9NmvygLO
-	 KsXz2D0RLIIW8Mt1cgPUEMDuGE9F3On3rnn0DUPv6Wr/Pr4BSaLxWmW8Pm1bkFQH9Y
-	 wZUb1pjcedIgHD0EVdPBlSgAOwpyj35pp/aQbncyPkHy5VbV6tqDDse/aGP2FpmRSW
-	 7xrmTwsi4y0+t9Fd9QnyQk9xD9maAFoh3Qxq9ktTrnFnmVjq0T3Q2jo2afT+0vw9sx
-	 yhhroR9HWM1qQ==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 4799Qm1gA631844
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 9 Aug 2024 17:26:48 +0800
-Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 9 Aug 2024 17:26:49 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 9 Aug 2024 17:26:48 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Fri, 9 Aug 2024 17:26:48 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-CC: Brian Norris <briannorris@chromium.org>,
-        Francesco Dolcini
-	<francesco@dolcini.it>,
-        Kalle Valo <kvalo@kernel.org>,
-        Yogesh Ashok Powar
-	<yogeshp@marvell.com>,
-        Bing Zhao <bzhao@marvell.com>,
-        "John W. Linville"
-	<linville@tuxdriver.com>,
-        Amitkumar Karwar <akarwar@marvell.com>,
-        "Avinash
- Patil" <patila@marvell.com>,
-        Kiran Divekar <dkiran@marvell.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH] mwifiex: duplicate static structs used in driver instances
-Thread-Topic: [PATCH] mwifiex: duplicate static structs used in driver
- instances
-Thread-Index: AQHa6jPW1qXxj1kE10+gt4nIKUPfkrIenWTw//+AnwCAAIns8A==
-Date: Fri, 9 Aug 2024 09:26:48 +0000
-Message-ID: <33fa77bdf10b48a48105f25ebed50fe0@realtek.com>
-References: <20240809-mwifiex-duplicate-static-structs-v1-1-6837b903b1a4@pengutronix.de>
- <4021e822699b44939f6a4731290e2627@realtek.com>
- <ZrXdgIJe6U4sJJwU@pengutronix.de>
-In-Reply-To: <ZrXdgIJe6U4sJJwU@pengutronix.de>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1723195688; c=relaxed/simple;
+	bh=8z0RNqm4IYEJL7Ozdmk/ZQpKUUiP799ITk9k9P6piCc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=R/x9d4DMjuS1w41ExJ2/xvmMjf+HmJmF19Y/aIPCknIHfZpt3lbxSG8w0pJo9vjkZ358SWR4ofhq26cDJyYcVCZr3byKl61J7RJDAbcDcWDQBmQyfzkCLdxgYDdQeqtkjwScAHd8QQr9kNkVws/gAjMPquBE8bjZlfcIBXFqyL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W8RMUO+m; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 478Mw92L021550;
+	Fri, 9 Aug 2024 09:27:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aT2lq/ScsMwR+hiwwVtO66hcVCXxLtNWldspF0vhSsc=; b=W8RMUO+mLSL2phRr
+	/hDoPvRn8BgYVLHxf3ZDmhs/lxYAc80odDplE1yEwgLEwbtdYWT5v/1WRdPGeojF
+	vnPga2ITewt5b2UVUKTz8qvEcbMs9Q27KIH9nY8gPnya5dYkoIM68aG/vOYb4+GB
+	M6XQjgtcvnrkyuS5e6j1dlcyVAcpswxK+F8OfyoUe1i9HbEdrBEe1hP/HKiWipZ6
+	Iq2n4q+idykgYw4asrPcRTZgwsq2qvxpxfEqcTNtM6vnXLT4kHQTu/P6YhcOyxMJ
+	0+aFctpfSE+yQN8+idGjlz3/zAZAz6d8r7DbIusRGeEAVRUfi5P4LrECGaUrsK1n
+	tzv28A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vmc549ys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Aug 2024 09:27:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4799Rll5024293
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 9 Aug 2024 09:27:47 GMT
+Received: from [10.216.10.180] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
+ 02:27:41 -0700
+Message-ID: <b16a25d0-3f39-3231-bc80-d79739dc0168@quicinc.com>
+Date: Fri, 9 Aug 2024 14:57:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 1/2] PM: domains: add device managed version of
+ dev_pm_domain_attach|detach_list()
+To: Dhruva Gole <d-gole@ti.com>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        "Len
+ Brown" <len.brown@intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio"
+	<konrad.dybcio@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf
+ Hansson <ulf.hansson@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <1723014947-15571-1-git-send-email-quic_dikshita@quicinc.com>
+ <1723014947-15571-2-git-send-email-quic_dikshita@quicinc.com>
+ <20240808104130.3lehlvkcprag2md6@lcpd911>
+ <36de7f9c-701f-6650-468b-bf07453e2e21@quicinc.com>
+ <9b852bed-0daf-634c-13c9-00c6b8dd327a@quicinc.com>
+ <20240809041913.frh4ooo25gfakwia@lcpd911>
+Content-Language: en-US
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <20240809041913.frh4ooo25gfakwia@lcpd911>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xyZpKgcZX66aN0H37akwIzlyWCh72K3I
+X-Proofpoint-ORIG-GUID: xyZpKgcZX66aN0H37akwIzlyWCh72K3I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-09_06,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ bulkscore=0 lowpriorityscore=0 adultscore=0 suspectscore=0 spamscore=0
+ clxscore=1015 malwarescore=0 mlxlogscore=999 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408090069
 
-Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> On Fri, Aug 09, 2024 at 08:49:32AM +0000, Ping-Ke Shih wrote:
-> > Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> > > +       wiphy->bands[NL80211_BAND_2GHZ] =3D devm_kmemdup(adapter->dev=
-,
-> > > +                                                      &mwifiex_band_=
-2ghz,
-> > > +                                                      sizeof(mwifiex=
-_band_2ghz),
-> > > +                                                      GFP_KERNEL);
-> >
-> > It seems like you forget to free the duplicate memory somewhere?
->=20
-> It's freed automatically when adapter->dev is released, see the various
-> devm_* functions
->=20
 
-Cool. Thanks for the info.=20
 
+On 8/9/2024 9:49 AM, Dhruva Gole wrote:
+> Hi,
+> 
+> On Aug 08, 2024 at 16:29:12 +0530, Dikshita Agarwal wrote:
+>>
+>>
+>> On 8/8/2024 4:25 PM, Dikshita Agarwal wrote:
+>>>
+>>>
+>>> On 8/8/2024 4:11 PM, Dhruva Gole wrote:
+>>>> On Aug 07, 2024 at 12:45:46 +0530, Dikshita Agarwal wrote:
+>>>>> Add the devres-enabled version of dev_pm_domain_attach|detach_list.
+>>>>> If client drivers use devm_pm_domain_attach_list() to attach the
+>>>>> PM domains, devm_pm_domain_detach_list() will be invoked implicitly
+>>>>> during remove phase.
+>>>>>
+>>>>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>>>>> ---
+>>>>>  drivers/base/power/common.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+>>>>>  include/linux/pm_domain.h   | 13 +++++++++++++
+>>>>>  2 files changed, 57 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+>>>>> index 327d168..729d6c2 100644
+>>>>> --- a/drivers/base/power/common.c
+>>>>> +++ b/drivers/base/power/common.c
+>>>>> @@ -277,6 +277,50 @@ int dev_pm_domain_attach_list(struct device *dev,
+>>>>>  EXPORT_SYMBOL_GPL(dev_pm_domain_attach_list);
+>>>>>  
+>>>>>  /**
+>>>>> + * devm_pm_domain_detach_list - devres-enabled version of dev_pm_domain_detach_list.
+>>>>> + * @_list: The list of PM domains to detach.
+>>>>> + *
+>>>>> + * This function reverse the actions from devm_pm_domain_attach_list().
+>>>>> + * it will be invoked during the remove phase from drivers implicitly if driver
+>>>>> + * uses devm_pm_domain_attach_list() to attach the PM domains.
+>>>>> + */
+>>>>> +void devm_pm_domain_detach_list(void *_list)
+> 
+> My problem is with the type of parameter used being void, why void?
+> Why not be explicit about it and call it dev_pm_domain_list *list like
+> the non-devres version of the API?
+> 
+devm_add_action_or_reset API expects the argument as void (*)(void *).
+
+Below are code references following the same way:
+https://elixir.bootlin.com/linux/v6.11-rc2/source/drivers/devfreq/devfreq.c#L1332
+https://elixir.bootlin.com/linux/v6.11-rc2/source/drivers/clk/clk.c#L1033
+
+If I change the type of argument as you are suggesting, it will throw
+compilation error.
+"expected 'void (*)(void *)' but argument is of type 'void (*)(struct
+dev_pm_domain_list *)'"
+>>>>> +{
+>>>>> +	struct dev_pm_domain_list *list = _list;
+>>>>> +
+>>>>> +	dev_pm_domain_detach_list(list);
+>>>>> +}
+>>>>> +EXPORT_SYMBOL_GPL(devm_pm_domain_detach_list);
+>>>>> +
+>>>>> +/**
+>>>>> + * devm_pm_domain_attach_list - devres-enabled version of dev_pm_domain_attach_list
+>>>>> + * @dev: The device used to lookup the PM domains for.
+>>>>> + * @data: The data used for attaching to the PM domains.
+>>>>> + * @list: An out-parameter with an allocated list of attached PM domains.
+>>>>> + *
+>>>>> + * NOTE: this will also handle calling devm_pm_domain_detach_list() for
+>>>>> + * you during remove phase.
+>>>>> + *
+>>>>> + * Returns the number of attached PM domains or a negative error code in case of
+>>>>> + * a failure.
+>>>>> + */
+>>>>> +int devm_pm_domain_attach_list(struct device *dev,
+>>>>> +			       const struct dev_pm_domain_attach_data *data,
+>>>>> +			       struct dev_pm_domain_list **list)
+>>>>> +{
+>>>>> +	int ret, num_pds = 0;
+>>>>
+>>>> Do we require this =0? In the very next line you're initing this anyway.
+>>>>
+>>> That's correct, will fix this. Thanks.
+>>>>> +
+>>>>> +	num_pds = dev_pm_domain_attach_list(dev, data, list);
+>>>>> +
+>>>>> +	ret = devm_add_action_or_reset(dev, devm_pm_domain_detach_list, *list);
+>>>>> +	if (ret)
+>>>>> +		return ret;
+>>>>> +
+>>>>> +	return num_pds;
+>>>>> +}
+>>>>> +EXPORT_SYMBOL_GPL(devm_pm_domain_attach_list);
+>>>>> +
+>>>>> +/**
+>>>>>   * dev_pm_domain_detach - Detach a device from its PM domain.
+>>>>>   * @dev: Device to detach.
+>>>>>   * @power_off: Used to indicate whether we should power off the device.
+>>>>> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+>>>>> index 772d328..efd517017 100644
+>>>>> --- a/include/linux/pm_domain.h
+>>>>> +++ b/include/linux/pm_domain.h
+>>>>> @@ -450,8 +450,12 @@ struct device *dev_pm_domain_attach_by_name(struct device *dev,
+>>>>>  int dev_pm_domain_attach_list(struct device *dev,
+>>>>>  			      const struct dev_pm_domain_attach_data *data,
+>>>>>  			      struct dev_pm_domain_list **list);
+>>>>> +int devm_pm_domain_attach_list(struct device *dev,
+>>>>> +			       const struct dev_pm_domain_attach_data *data,
+>>>>> +			       struct dev_pm_domain_list **list);
+>>>>>  void dev_pm_domain_detach(struct device *dev, bool power_off);
+>>>>>  void dev_pm_domain_detach_list(struct dev_pm_domain_list *list);
+>>>>> +void devm_pm_domain_detach_list(void *list);
+>>>>
+>>>> Why not just call it dev_pm_domain_list *list? Why make it void? I am a
+>>>> bit confused.
+>>>>
+>>> This comment is not clear to me, could you pls elaborate?
+>> Ah! Sorry, pls ignore my below comment. But can you still explain the
+>> concern here?
+> 
+> I have explained above near the func definition.
+> 
 
