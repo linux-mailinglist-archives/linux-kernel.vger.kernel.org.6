@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-281480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBD194D764
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:36:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC7E94D765
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66A3CB212B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:36:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B802B21752
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A70F16132E;
-	Fri,  9 Aug 2024 19:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA7316728B;
+	Fri,  9 Aug 2024 19:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qlghef/t"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NbRyz7Rn"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C63315F303
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F4A15FA73
 	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723232187; cv=none; b=r+oqZGUqaTqJVoFSQa6abRC6vxWCK/gNvLyeMubuaNNFv0a/wqqVXcYkFplUuKfFHU+IDChFKymsGOyUAclFiz1U3AbSh2hzAYED8nqmbIini+c0v8SAkM00NM+G5dRi58nfmi9X3Fl+ARrgsyxzTrWXAT39nm3VFIj5Gctpy+E=
+	t=1723232188; cv=none; b=XLJCQcnMFzPxLFkvTR5c7N/OLthNriJgnpkz5Mxsd/3uNfTkFWVEeVtSq4ag0pr2QOV1l7jGIkDVNTVBqUGW+NEHWIRV7Ofm/to3NeRelVTDkRnI/svWhcsxB8GFZjiPTR7qEOE9O7fo8kOGDieTQkDwSjahk14dq/yK7pBqZDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723232187; c=relaxed/simple;
-	bh=LAeMWAPS7iDhVHc+K6GXs/juHcJ5BmLOJVWCWGPDs+s=;
+	s=arc-20240116; t=1723232188; c=relaxed/simple;
+	bh=9GH8dd6Q1rS60og/Ou29NLpQfxk9EW9ZPhM8wZt55OM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nTyQRr2wE5eE+xZ7ov2ewJ7d5xvBLy8sp6slhQTvbazIW5Jm8+n5QCMnvU1cXZpW+DM79anpwyCDK0m32vetLiWcQoDVkwdFwfxzdomGTrvVw9YOGeEiH7jOduZvPqr2J3fXTDqQZHHRPj73/al1KPI6MD5eylq8SeiCLFe2ULI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qlghef/t; arc=none smtp.client-ip=95.215.58.189
+	 MIME-Version; b=ZQAnvDmhlDkZHuFUu/rHdtDuYHWX+JMS/FDEwrXMAViWjRpYyQZRWXEGZk2SM+l9+v2pCBXCvoxFy6sJgOmviNC1l89015fRyijuQccNJmK5PmfjMaMJ9HcXDI6GQGqhVO1oCcWjByBEUAilx036yFwQRxXhuKwaA1tSEf2YILs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NbRyz7Rn; arc=none smtp.client-ip=95.215.58.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723232181;
+	t=1723232183;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Jzac6s167f/EibwxsfpMGlvZd8RAd5X1jF/kZBreWa0=;
-	b=qlghef/ttCZexKig9Jch5lSW2xzc7BANS7o9DC1GOHOq2kxjB71oEFiEt0WkpXzg/M7aBT
-	PPzsOlK9tE+2thach6XanfFKFbREhHDTS//1b5Qs3OE1nPurVT23GxbwYm0ZEBrkTRl19R
-	bczk3ly0v1y2D5tdvhKaTtoIcwr/tGE=
+	bh=oK3GkwlYIbgKa5E/wcr/BC9b4B3l2udsFuim2xq4G6g=;
+	b=NbRyz7RnF3xFMrm9ajZjqSRV7IRnkXVtqP44r7fxyRPE7Rm/iNQvh8oTKhuxCqXPSmMZD7
+	ApYqn2y7xtEUgwTM20tVrjSa96Z66akv/brrEKBeNVS9vMVZ5/3OpWQsQUdkP/FMcea0t8
+	kdGJE8I4uZhBS8uWQdEew8jUuBoeyn0=
 From: Sean Anderson <sean.anderson@linux.dev>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -54,9 +54,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Daniel Vetter <daniel@ffwll.ch>,
 	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
 	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH v6 1/8] drm: zynqmp_kms: Unplug DRM device before removal
-Date: Fri,  9 Aug 2024 15:35:53 -0400
-Message-Id: <20240809193600.3360015-2-sean.anderson@linux.dev>
+Subject: [PATCH v6 2/8] drm: zynqmp_dp: Add locking
+Date: Fri,  9 Aug 2024 15:35:54 -0400
+Message-Id: <20240809193600.3360015-3-sean.anderson@linux.dev>
 In-Reply-To: <20240809193600.3360015-1-sean.anderson@linux.dev>
 References: <20240809193600.3360015-1-sean.anderson@linux.dev>
 Precedence: bulk
@@ -68,36 +68,141 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Prevent userspace accesses to the DRM device from causing
-use-after-frees by unplugging the device before we remove it. This
-causes any further userspace accesses to result in an error without
-further calls into this driver's internals.
+Add some locking to prevent the IRQ/workers/bridge API calls from stepping
+on each other's toes. This lock protects:
 
-Fixes: d76271d22694 ("drm: xlnx: DRM/KMS driver for Xilinx ZynqMP DisplayPort Subsystem")
-Closes: https://lore.kernel.org/dri-devel/4d8f4c9b-2efb-4774-9a37-2f257f79b2c9@linux.dev/
+- Non-atomic registers configuring the link. That is, everything but the
+  IRQ registers (since these are accessed in an atomic fashion), and the DP
+  AUX registers (since these don't affect the link). We also access AUX
+  while holding this lock, so it would be very tricky to support.
+- Link configuration. This is effectively everything in zynqmp_dp which
+  isn't read-only after probe time. So from next_bridge onward.
+
+This lock is designed to protect configuration changes so we don't have to
+do anything tricky. Configuration should never be in the hot path, so I'm
+not worried about performance.
+
 Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 ---
-Thanks to Maxime for pointing out the correct function to use here.
 
-Changes in v6:
-- New
+(no changes since v2)
 
- drivers/gpu/drm/xlnx/zynqmp_kms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- Split off the HPD IRQ work into another commit
+- Expand the commit message
 
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_kms.c b/drivers/gpu/drm/xlnx/zynqmp_kms.c
-index bd1368df7870..4556af2faa0f 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_kms.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_kms.c
-@@ -536,7 +536,7 @@ void zynqmp_dpsub_drm_cleanup(struct zynqmp_dpsub *dpsub)
- {
- 	struct drm_device *drm = &dpsub->drm->dev;
+ drivers/gpu/drm/xlnx/zynqmp_dp.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+index 129beac4c073..abfccd8bb5a7 100644
+--- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
++++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+@@ -280,6 +280,7 @@ struct zynqmp_dp_config {
+  * @dpsub: Display subsystem
+  * @iomem: device I/O memory for register access
+  * @reset: reset controller
++ * @lock: Mutex protecting this struct and register access (but not AUX)
+  * @irq: irq
+  * @bridge: DRM bridge for the DP encoder
+  * @next_bridge: The downstream bridge
+@@ -294,11 +295,16 @@ struct zynqmp_dp_config {
+  * @link_config: common link configuration between IP core and sink device
+  * @mode: current mode between IP core and sink device
+  * @train_set: set of training data
++ *
++ * @lock covers the link configuration in this struct and the device's
++ * registers. It does not cover @aux. It is not strictly required for any of
++ * the members which are only modified at probe/remove time (e.g. @dev).
+  */
+ struct zynqmp_dp {
+ 	struct drm_dp_aux aux;
+ 	struct drm_bridge bridge;
+ 	struct work_struct hpd_work;
++	struct mutex lock;
  
--	drm_dev_unregister(drm);
-+	drm_dev_unplug(drm);
- 	drm_atomic_helper_shutdown(drm);
- 	drm_encoder_cleanup(&dpsub->drm->encoder);
- 	drm_kms_helper_poll_fini(drm);
+ 	struct drm_bridge *next_bridge;
+ 	struct device *dev;
+@@ -1386,8 +1392,10 @@ zynqmp_dp_bridge_mode_valid(struct drm_bridge *bridge,
+ 	}
+ 
+ 	/* Check with link rate and lane count */
++	mutex_lock(&dp->lock);
+ 	rate = zynqmp_dp_max_rate(dp->link_config.max_rate,
+ 				  dp->link_config.max_lanes, dp->config.bpp);
++	mutex_unlock(&dp->lock);
+ 	if (mode->clock > rate) {
+ 		dev_dbg(dp->dev, "filtered mode %s for high pixel rate\n",
+ 			mode->name);
+@@ -1414,6 +1422,7 @@ static void zynqmp_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 
+ 	pm_runtime_get_sync(dp->dev);
+ 
++	mutex_lock(&dp->lock);
+ 	zynqmp_dp_disp_enable(dp, old_bridge_state);
+ 
+ 	/*
+@@ -1474,6 +1483,7 @@ static void zynqmp_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 	zynqmp_dp_write(dp, ZYNQMP_DP_SOFTWARE_RESET,
+ 			ZYNQMP_DP_SOFTWARE_RESET_ALL);
+ 	zynqmp_dp_write(dp, ZYNQMP_DP_MAIN_STREAM_ENABLE, 1);
++	mutex_unlock(&dp->lock);
+ }
+ 
+ static void zynqmp_dp_bridge_atomic_disable(struct drm_bridge *bridge,
+@@ -1481,6 +1491,7 @@ static void zynqmp_dp_bridge_atomic_disable(struct drm_bridge *bridge,
+ {
+ 	struct zynqmp_dp *dp = bridge_to_dp(bridge);
+ 
++	mutex_lock(&dp->lock);
+ 	dp->enabled = false;
+ 	cancel_work(&dp->hpd_work);
+ 	zynqmp_dp_write(dp, ZYNQMP_DP_MAIN_STREAM_ENABLE, 0);
+@@ -1491,6 +1502,7 @@ static void zynqmp_dp_bridge_atomic_disable(struct drm_bridge *bridge,
+ 		zynqmp_dp_write(dp, ZYNQMP_DP_TX_AUDIO_CONTROL, 0);
+ 
+ 	zynqmp_dp_disp_disable(dp, old_bridge_state);
++	mutex_unlock(&dp->lock);
+ 
+ 	pm_runtime_put_sync(dp->dev);
+ }
+@@ -1533,6 +1545,8 @@ static enum drm_connector_status zynqmp_dp_bridge_detect(struct drm_bridge *brid
+ 	u32 state, i;
+ 	int ret;
+ 
++	mutex_lock(&dp->lock);
++
+ 	/*
+ 	 * This is from heuristic. It takes some delay (ex, 100 ~ 500 msec) to
+ 	 * get the HPD signal with some monitors.
+@@ -1560,11 +1574,13 @@ static enum drm_connector_status zynqmp_dp_bridge_detect(struct drm_bridge *brid
+ 					       dp->num_lanes);
+ 
+ 		dp->status = connector_status_connected;
++		mutex_unlock(&dp->lock);
+ 		return connector_status_connected;
+ 	}
+ 
+ disconnected:
+ 	dp->status = connector_status_disconnected;
++	mutex_unlock(&dp->lock);
+ 	return connector_status_disconnected;
+ }
+ 
+@@ -1725,6 +1741,7 @@ int zynqmp_dp_probe(struct zynqmp_dpsub *dpsub)
+ 	dp->dev = &pdev->dev;
+ 	dp->dpsub = dpsub;
+ 	dp->status = connector_status_disconnected;
++	mutex_init(&dp->lock);
+ 
+ 	INIT_WORK(&dp->hpd_work, zynqmp_dp_hpd_work_func);
+ 
+@@ -1838,4 +1855,5 @@ void zynqmp_dp_remove(struct zynqmp_dpsub *dpsub)
+ 
+ 	zynqmp_dp_phy_exit(dp);
+ 	zynqmp_dp_reset(dp, true);
++	mutex_destroy(&dp->lock);
+ }
 -- 
 2.35.1.1320.gc452695387.dirty
 
