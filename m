@@ -1,208 +1,234 @@
-Return-Path: <linux-kernel+bounces-280386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A7F94C9E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:51:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E80B94C9E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BFF71F2435C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1644E283D87
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 05:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA67316C850;
-	Fri,  9 Aug 2024 05:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F6616CD01;
+	Fri,  9 Aug 2024 05:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dTKy1jfc"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDmnZlXe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6830534CDD;
-	Fri,  9 Aug 2024 05:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723182658; cv=fail; b=MDzUvZZl7i6QVKecpXNrJXbX0WUF4uCz3eznOhJ3wMDqRpCdABJMm81qiihgdn2RoeccBOsiOvZamZh7UIFnVdIEXHNmVY6B7imEVrUsgrdtuEfilWf7KIw/ZQHbmWFecD5LZ0SQ9ixysswxgW6x0UTVQr6oELmkD8SsEZcs6Dc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723182658; c=relaxed/simple;
-	bh=UrnCH11idcJnzVSwNIYDKEmOmBcygJSHMmxt2fy3U88=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mc7ZSgud3uQe84OehxK54MvKf2KIFZxMoFqxRZwzLJyWyZRnF4yJGwBKiOIplfH+WYJliyBREDjxzJ77j5JydiWguUPl5/Q40c8Kc9BGz5+SaavukgDVNmhzO/VqgBvW4wqi40ZlY3B9AjJSDwtKTgobaGnaIG7RFIEs92zOXQU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dTKy1jfc; arc=fail smtp.client-ip=40.107.93.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yLMLDoY0G2nAO/jKGNsPcGBS5yMBAHlb6QP6aPeHKTlL0WZk2LAImcUZ+LZmrxsFokCXbXgb/YOejETVyqDxWZEkfWREpUL1tLj5OOqoJpzmnMpPjWbP23DVYp1tqnUOZ1y13M5IrLmFak4zAy2N77ijXVFooXByLU21tLNpPKQv8rX3wpwmsG+7znIzPBGV9CTa34f7avx2tcSDCntJ+eAnozW6Rt0x9D+5LyutvIkXBg++AL+AwMVnnEZlbVjWgOS+9jLIw7xPkFjD71VfbQO2/I/MSBVHVr1+/h1NuC36N8/T28/tYjV1Rtot4pmkrd/uothH63GuXGt6xQtAjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hQX00fxidpyK91SZHFqAZGBmiXIZqpVfcMVx7uURFY8=;
- b=OWQd0WiralaDm2TDtHRY3jTnZ34Uvn16QwqVwJCIRpZBc3JUW2ahO6dtqKrBIEvcE7CBbLTXsYZ6BWUh0zpvek1dxwRRVjM/F0YvNTNmu0VB/yJPJvwrlsKUvk7L5+A35q7J403HASHglTwLbIWzF3vPX68lCLmlnqEU1lXCbIbqug6gyuKgAF+luefSUoIPRIZOyJzcdcaNAFqEishYUrA+WMdSrf54suUAJPeSrqzAq3qNtxiUULMVWMOOpgnbjJv7lJEXq9aQuZwYc/p6yKBrjUT2Lqj2Z+7uUs9zn/mD7fQN3N5VIFZW1kJ06IHpAzZ9QwVnZf1+eDR1BHpRGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hQX00fxidpyK91SZHFqAZGBmiXIZqpVfcMVx7uURFY8=;
- b=dTKy1jfcG2LUIlNZGuwOAhalHhnvGfrhIyaXwvU+56KhZZAHw291F9lN0ZWgZnXdl6CCdFYda4ASwP7wxbYgQjt8P69sRctw3VtjJMC6gA/2EKoFXCH/HnlJT1TTI9ZbP+lTwvgL2fQp0ouD+Lh9OkVu5YgWgXQEhD/n1w3p75I=
-Received: from SJ0PR05CA0107.namprd05.prod.outlook.com (2603:10b6:a03:334::22)
- by SA0PR12MB7461.namprd12.prod.outlook.com (2603:10b6:806:24b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Fri, 9 Aug
- 2024 05:50:53 +0000
-Received: from CO1PEPF000044F5.namprd05.prod.outlook.com
- (2603:10b6:a03:334:cafe::a1) by SJ0PR05CA0107.outlook.office365.com
- (2603:10b6:a03:334::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.11 via Frontend
- Transport; Fri, 9 Aug 2024 05:50:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044F5.mail.protection.outlook.com (10.167.241.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Fri, 9 Aug 2024 05:50:53 +0000
-Received: from pyuan-Chachani-VN.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 9 Aug 2024 00:50:48 -0500
-From: Perry Yuan <perry.yuan@amd.com>
-To: <rafael.j.wysocki@intel.com>, <Mario.Limonciello@amd.com>,
-	<viresh.kumar@linaro.org>, <Ray.Huang@amd.com>, <gautham.shenoy@amd.com>,
-	<Borislav.Petkov@amd.com>, <00107082@163.com>
-CC: <Xinmei.Huang@amd.com>, <Xiaojian.Du@amd.com>, <Li.Meng@amd.com>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] cpufreq: amd-pstate: add quirk for Ryzen 3000 series processor
-Date: Fri, 9 Aug 2024 13:50:34 +0800
-Message-ID: <20240809055034.769443-1-perry.yuan@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0C312E7E;
+	Fri,  9 Aug 2024 05:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723182811; cv=none; b=dT8KymI9ZT4F7tDbjEgUF2h0oGbDf7cyXS34B9gnLae7CqWsvgAORf3G4tEBqHxISNKtiAyeVNEKZvDmxfGH4uvQzEIodS4TU/UPXfL3wQ3vUUHfiCe21S6kNS31mPvR1P1VXBdn1pcJqgqa+2iKHIvcY5JPtGd2KbCxb6bBywU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723182811; c=relaxed/simple;
+	bh=WPtOAuV9aswhmETP6KB3Lze/3iFuPjnW3egrPbSzqJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J0CMipgd4FFY+YH2i8fVtmYUVrIoSr2H4Iwqy8B9hk/WzdmhpVwp99rZyykeX7mZxI4enVcLmgeZCh9LpL5LExhZ+dfmZiZvxeYzbXRp68ykQho7zQ6XW/t0fME4bh8V6E2uJxmJEUUS8ZLasPMnOWjypR0hgvAcwoC7E6b9418=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDmnZlXe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59810C4AF0D;
+	Fri,  9 Aug 2024 05:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723182810;
+	bh=WPtOAuV9aswhmETP6KB3Lze/3iFuPjnW3egrPbSzqJQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aDmnZlXeCEO3tHifcSQMguhtDDfJ+JF3K9nfD+p4O7uCus75dPUrMZKJbVR9VaktW
+	 dLa8HNIqkFVfbu5f0udFDUhymTSsAiaXWNwHPlxTMhB43oTDx3Odg9NmezTnYCPRF4
+	 7BEu6I/800tTW8D5ve8TcYDsrk1kcl89cRSWcBVJxr5RQHO8Wj29rvP0Nldw4zNgDZ
+	 rEaeGm4TMKTa1Egg7d3ZQAkYVuU736YW6WBxt3k/fcpjuiHTNtg3/zLBskSidKLTAK
+	 SHAi7gmqahvwIKRLMzJbzxQK5WNbnce1FaT8bFnB40ExpKNXcUQQ93x+eGoBhiMM85
+	 cc8Q7v3ltxnxw==
+Message-ID: <601adbfd-fbb6-48c6-b755-da1b5d321d6b@kernel.org>
+Date: Fri, 9 Aug 2024 07:53:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
+To: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
+ kernel@xen0n.name, p.zabel@pengutronix.de
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, loongarch@lists.linux.dev
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+ <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
+ <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F5:EE_|SA0PR12MB7461:EE_
-X-MS-Office365-Filtering-Correlation-Id: b617648e-9775-4c64-74c4-08dcb8373b11
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ER2y+8sRBdFdXfkzatg7PaLBjjl3FpjkR+o6WiDghXg4W481ttvXwmbSXTYh?=
- =?us-ascii?Q?hez6cEiokZPHf2M+/g3gqu1tWQGYBxV9XDiUvyy/VC7ISUWX3cOXEGpcKWVG?=
- =?us-ascii?Q?3UJT6HIBuJFc10Bt0vpWFqW65cmqGizVuSqjBqwVxb5RtQ+IFdV8dLYWGptc?=
- =?us-ascii?Q?MnlvJBRHGPhq/gROnh5UVIBlXmTyK9D3WtcvogP64pIchw0FgenHAMlQAc7+?=
- =?us-ascii?Q?Cz7HKwn0V2Eub1Fy0NlQAOReGFvtXC9R2Hbcdf/s/1JJ8sw3Btod6DWurIsY?=
- =?us-ascii?Q?7QBbDtbeCWdm1Wi+ccQxDLh8fg1m1k0fWoy1yLYH3BMOLNSwdHSbVMOHQj00?=
- =?us-ascii?Q?21IH9uab7T6ag54w1UsZvvcXDq+sHhSx5naF7GCB/Mn5OEQR8goj51gkI1TO?=
- =?us-ascii?Q?TK3X6VqijDB7Gf1wX0H7Et9BGiNclvTCQR+maVViuA5Htg7G32VtT512Gf0z?=
- =?us-ascii?Q?qD3xuH5ShsCUHxi2rBs4W4Qgj90CzL5MHy97l6bipBWU5uLLjQqq4Au3G1/K?=
- =?us-ascii?Q?7+n6nk16HzzuTOZWkjd6e48VcVbU7s+8n2JfxLgJ81ANbOllUlPIX9i+pMue?=
- =?us-ascii?Q?AAGA3tumDz5C318QpOEDHslZIXSv66YCW3QPmazM1XC27heNljUbBp9xb5DF?=
- =?us-ascii?Q?Ew59/vummlvOystYIRi6x+2hpOQdjuqYLA3p7C1TdJaIGTntr3iL/7aGlUHH?=
- =?us-ascii?Q?Nm1vfpWslSsjkhFhPFcrpTSqPLo5RrEPMjo9YuZLmCBU8DC6TfuVOQLrfmdz?=
- =?us-ascii?Q?IXY0jOM08cjKFq1/E23Rpe3cVMqb/FWt5ienhW3YYRAbbNVC2pCTV0wtwb1e?=
- =?us-ascii?Q?LbNcap0HFcbXdyxbSwUaWVC94+oKOpHjqdDwcpwHK9y5bpMyCd0pL7aTNv1P?=
- =?us-ascii?Q?afKz+aCPaTqi4huIiL3bLI84D0gISiAzzPWXQ0ahHqfqCQ8YSR1C6r+Vmwm7?=
- =?us-ascii?Q?dzP619n3nK/8pMFo8c5JymubRG2FwuSAZZGGeq4YqmnLblTZjvguqGT2yE9k?=
- =?us-ascii?Q?ztsnCSxa6fYcbRGyMdOuWfsbCM40vyID+aNEgQo2SOudsgpZZVlm23juwcRI?=
- =?us-ascii?Q?GI2S48dJMqQQQBwNFLo/STowuhEV088lrPXtThcYk1+ys2XaIrputUC4I1II?=
- =?us-ascii?Q?8ViMKON4vBN3NLRCX4nqRhYchMHqDI6IzBB/EJdDVwOn0qoSpmK33qckm/3C?=
- =?us-ascii?Q?MxLb/fEIEtuM/gNbH4GDMydQYO1KwWu47Fy+UuOzTQlWMSs/306Gha+zI8jp?=
- =?us-ascii?Q?Dfp3k1YFamfYnGO5Sakw38sIQlX4hMDs6hSbGWXHaaPmLpBap30d8ZOu5MVb?=
- =?us-ascii?Q?DU/7xDEUiE0DHjwq/hdnu5TUufZjhyeCJC+gu1e4JwYtcoIgDYwzDE+kNOpY?=
- =?us-ascii?Q?T4WzAlTjWvaCM7jQIv661TOqSg+af2uhmXAZovCZDzOqPvoaQgOQijwT0thR?=
- =?us-ascii?Q?fXvkr/XCCZ92RZRlcewzQqr2nTYd4KEn?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 05:50:53.1760
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b617648e-9775-4c64-74c4-08dcb8373b11
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F5.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7461
 
-The Ryzen 3000 series processors have been observed lacking the
-nominal_freq and lowest_freq parameters in their ACPI tables. This
-absence causes issues with loading the amd-pstate driver on these
-systems. Introduces a fix to resolve the dependency issue
-by adding a quirk specifically for the Ryzen 3000 series.
+On 07/08/2024 10:23, 郑豪威 wrote:
+> 
+> 在 2024/8/4 16:43, Krzysztof Kozlowski 写道:
+>> On 04/08/2024 08:38,zhenghaowei@loongson.cn wrote:
+>>
+>> Due to lack of changelog, I assume you send the same patch, so:
+>>
+>> <form letter>
+>> This is a friendly reminder during the review process.
+>>
+>> It seems my or other reviewer's previous comments were not fully
+>> addressed. Maybe the feedback got lost between the quotes, maybe you
+>> just forgot to apply it. Please go back to the previous discussion and
+>> either implement all requested changes or keep discussing them.
+>>
+>> Thank you.
+>> </form letter>
+>>
+>> Also:
+>>
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 1
+>>> +
+>>> +  fractional-division:
+>> Where are this and following defined? In which schema?
+>>
+> These and the ones below are new definitions, can I use them like this?
+> 
+> +  fractional-division:
+> +    description: Enables fractional-N division. Currently,
+> +      only LS2K1500 and LS2K2000 support this feature.
+> +    type: boolean
+> 
 
-Signed-off-by: Perry Yuan <perry.yuan@amd.com>
----
- drivers/cpufreq/amd-pstate.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Missing vendor prefix, but what's more important, why would this be
+property of DT? Just enable it always...
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 68c616b572f2..07d26ae80454 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -142,6 +142,11 @@ static struct quirk_entry quirk_amd_7k62 = {
- 	.lowest_freq = 550,
- };
- 
-+static struct quirk_entry quirk_amd_mts = {
-+	.nominal_freq = 3600,
-+	.lowest_freq = 550,
-+};
-+
- static int __init dmi_matched_7k62_bios_bug(const struct dmi_system_id *dmi)
- {
- 	/**
-@@ -158,6 +163,21 @@ static int __init dmi_matched_7k62_bios_bug(const struct dmi_system_id *dmi)
- 	return 0;
- }
- 
-+static int __init dmi_matched_mts_bios_bug(const struct dmi_system_id *dmi)
-+{
-+	/**
-+	 * match the broken bios for ryzen 3000 series processor support CPPC V2
-+	 * broken BIOS lack of nominal_freq and lowest_freq capabilities
-+	 * definition in ACPI tables
-+	 */
-+	if (cpu_feature_enabled(X86_FEATURE_ZEN2)) {
-+		quirks = dmi->driver_data;
-+		pr_info("Overriding nominal and lowest frequencies for %s\n", dmi->ident);
-+		return 1;
-+	}
-+
-+	return 0;
-+}
- static const struct dmi_system_id amd_pstate_quirks_table[] __initconst = {
- 	{
- 		.callback = dmi_matched_7k62_bios_bug,
-@@ -168,6 +188,16 @@ static const struct dmi_system_id amd_pstate_quirks_table[] __initconst = {
- 		},
- 		.driver_data = &quirk_amd_7k62,
- 	},
-+	{
-+		.callback = dmi_matched_mts_bios_bug,
-+		.ident = "AMD Ryzen 3000",
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_NAME, "B450M MORTAR MAX (MS-7B89)"),
-+			DMI_MATCH(DMI_BIOS_RELEASE, "06/10/2020"),
-+			DMI_MATCH(DMI_BIOS_VERSION, "5.14"),
-+		},
-+		.driver_data = &quirk_amd_7k62,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(dmi, amd_pstate_quirks_table);
--- 
-2.34.1
+>>> +    description: Enables fractional-N division. Currently,
+>>> +      only LS2K1500 and LS2K2000 support this feature.
+>>> +
+>>> +  rts-invert:
+>>> +    description: Inverts the RTS value in the MCR register.
+>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>> +
+>>> +  dtr-invert:
+>>> +    description: Inverts the DTR value in the MCR register.
+>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>> +
+>>> +  cts-invert:
+>>> +    description: Inverts the CTS value in the MSR register.
+>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>> +      and Loongson LS7A bridge chips.
+>>> +
+>>> +  dsr-invert:
+>>> +    description: Inverts the DSR value in the MSR register.
+>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>> +      and Loongson LS7A bridge chips.
+
+Same questions for all these. Why choosing invert is a board level
+decision? If it "should be used" then why it is not used always?
+
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - interrupts
+>>> +  - clocks
+>>> +
+>>> +allOf:
+>>> +  - $ref: serial.yaml
+>>> +
+>>> +unevaluatedProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>>> +    #include <dt-bindings/clock/loongson,ls2k-clk.h>
+>>> +
+>>> +    serial@1fe001e0 {
+>>> +        compatible = "loongson,ls7a-uart";
+>>> +        reg = <0x0 0x1fe001e0 0x0 0x10>;
+>>> +        clock-frequency = <100000000>;
+>>> +        interrupt-parent = <&liointc>;
+>>> +        interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
+>>> +        fractional-division;
+>>> +        rts-invert;
+>>> +        dtr-invert;
+>>> +    };
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index 8766f3e5e87e..a6306327dba5 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -13189,6 +13189,13 @@ S:	Maintained
+>>>   F:	Documentation/devicetree/bindings/i2c/loongson,ls2x-i2c.yaml
+>>>   F:	drivers/i2c/busses/i2c-ls2x.c
+>>>   
+>>> +LOONGSON UART DRIVER
+>>> +M:	Haowei Zheng<zhenghaowei@loongson.cn>
+>>> +L:	linux-serial@vger.kernel.org
+>>> +S:	Maintained
+>>> +F:	Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml
+>>> +F:	drivers/tty/serial/8250/8250_loongson.c
+>> There is no such file.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> The file "drivers/tty/serial/8250/8250_loongson.c" will be created in 
+> the patch
+> 
+> "tty: serial: 8250: Add loongson uart driver support". Is it 
+> inappropriate to reference it here?
+
+Apply this patch and run get_maintainers self tests. What do you see?
+
+Of course it is not appropriate here. The file does not exist.
+
+Best regards,
+Krzysztof
 
 
