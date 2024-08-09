@@ -1,401 +1,215 @@
-Return-Path: <linux-kernel+bounces-281235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C476294D4B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:27:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D65B94D4AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C3C1F2172A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:27:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BCBBB20C8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA31F1991D7;
-	Fri,  9 Aug 2024 16:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ov4Zyi+Y"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CA41990D9;
+	Fri,  9 Aug 2024 16:27:22 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A393B1990C4;
-	Fri,  9 Aug 2024 16:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C956A159582
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723220843; cv=none; b=HAbuJEtGoz2Rcgsht5KKTygv1e5r5GakQ3RSPghuDkk8i9cmazS3t1zjFSz15GMmIwMRpChiEIwLg/zIM9HR7Zy5Saz48OWD0J9ThX3YTJsisOeaR1Afp7UGYjqaHsLg9ihaNuy0y3bzyEcn1y1ModjdD4JwT2nL3FcCc97p3kE=
+	t=1723220841; cv=none; b=Vne0+NBqFfNt8vkfvuZzXNW2HcesIxodDWvkQn3wC1rGxcNEK6GAJLpw5Aff0ANG+CIgCMM/czRSg+wX7w+LfRc+zgEzat05KHG2y52+rJkz+Jzx3SqVoUkGxoUHRLgkZtu+KMzfrTW1jDMCRLuXsz2fmx0H/mfnfB/b1uTKMls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723220843; c=relaxed/simple;
-	bh=XC2t3eglu+1wwUwBcRuMSErGz59BiCXXn+Jmim/CEUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKqbhVO6XfUF0OGyelFAJqlXch7/EK6pWPV+8DypC1EDUISkqO0aYsJQoZxr+swLzFBeHnVdfAas/JpEP4fHzYLZaZZp8nklEtK4T6Sud15woDouBXnxw2UO8JRBp5MA39Iru9McbUtdEZ0FWnAB0oocdalvATDREZMynK7+YQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ov4Zyi+Y; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cb7cd6f5f2so1798259a91.2;
-        Fri, 09 Aug 2024 09:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723220841; x=1723825641; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i2vO+BsBv874WQr9+ko25g/qycgoznJt7V/QYU2K3xY=;
-        b=Ov4Zyi+YVrqrF541vyg/L6hc8mGDv8q+SNjKVfWNwMNlkTq4I/4Kz4Yuw1BYrO+59c
-         AULm/GUeQqjAu5KDaGMqpGIInbGNoKi/IWCthAoGAMPPVVaFqDDkBm7QUioQRu+1tkT7
-         KxlaZw+AU2LpBf395uzpsne4egRrIBKKbI1Uc0VmEzA4iHTp192XOybQk+LG403bqOsV
-         KBaFawPIPgS13byfi3zGATZCnBGcCDYnYO5BQYEB1R7DXiiMouwmrND5j100UnTOpl1s
-         XdcAnIpfiBL22CV6WfCQENjy1QiR4rCb7KMMsIP7b2tnNvRKHeDuIlT64+DfX3gwnrDi
-         9iXA==
+	s=arc-20240116; t=1723220841; c=relaxed/simple;
+	bh=KmT9S6YnjdLEKW1Btglbp6RJ7wlkQVh3zDswSu2nS0M=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QFg9y1d8ouWOivZZl8QmwIq14Uf3169qqWeOOn8Kw6eNrDyneoCO9rHMiLQJOgyNokZ71al4niLvJBDP8y0nsMROga03T/zTm/uyNtk/X5bHNpxfGmYD7JBDT4NAv1azYoF3dNOiMT2BeRXRdSRcETOSP3pFPj3WjqY9jDq8omI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39b331c43deso30785015ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:27:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723220841; x=1723825641;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i2vO+BsBv874WQr9+ko25g/qycgoznJt7V/QYU2K3xY=;
-        b=v5ibEkmvcdtr9V8ZrxvVxltZHgHqSNrH8CRljzgOCa6BO1CEt1JXl7VgxjTnoN0coS
-         F0WNiILdWEtBmrVRTLJ3kMYZ5vuIbmx2bFuJLUYCKOYF0YTdCCXGbdDIdv0dPY3maoxI
-         8PuD2vgmS2LtkkErg/xXvx6f0uufUE0FSqetYz66JQ7L3GrCEmHCSnEj615Pz54JvcCq
-         F4Fjng0F350ggUAiC0x+BzxqKW/2ipFwRXa/oHWaF8F/dgfs+jq+KAXCna+w0qdh//pU
-         lQ3c62tkQ1JF80yQr/jgAuv/05KlyAk9oPHgYvysmq43hRP+G3O94kB2yJhdBcyzgB8M
-         R8jA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqol4hOBhxFK8Iy4GtDS9J8OOoXJCSs3eOqBK2J/Z+WqSGvgWOW2jptie8ksgHSYSDRS+tUrs63la8IaBvumI=@vger.kernel.org, AJvYcCV0+LKk4zAK6Jz3tN0EYhu9aRWSxFN5MsUfpVd/PBZJNxFupIqB/Qs+9SrTkCqicMrjlXOXc3ktjbnp3lu9@vger.kernel.org, AJvYcCWNVKL1JawzRKkrEVBE2cWFP3gbRfRRUPTnTsmIIVv+cjOuNnC74AdEHyVxd1fT0TcywGK500ci/KfV@vger.kernel.org, AJvYcCWuUzJRZzLsn8NREieIp1v7EdIDqaqbKhQuiibOtrB4hBLx1RNQIZvrs5FEYkqXEdU9fodgQe6NRLIW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrXVGB+ya1wx1bou9wBVTdWzNlqiuSCTXHPCci3xMCLZbBUjh4
-	fodOpmVdlF84MfY7pEtDT1dhyqJeYZEqXn0cShvDNrBs4CRnUuEz
-X-Google-Smtp-Source: AGHT+IH8jnctbuqSrq6dqDgvGc4MjSwcpaVVRHBke9TrvYbHFnyuMvCGjc89UybL4VKtI6KrFRwmaA==
-X-Received: by 2002:a17:90a:348f:b0:2c9:8650:404 with SMTP id 98e67ed59e1d1-2d1e80565f6mr2236934a91.30.1723220840700;
-        Fri, 09 Aug 2024 09:27:20 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9db3b9asm3190095a91.43.2024.08.09.09.27.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 09:27:19 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 9 Aug 2024 09:27:18 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com
-Subject: Re: [PATCH 4/5] watchdog: Congatec Board Controller watchdog timer
- driver
-Message-ID: <d37e3fea-d35e-4688-a845-02be6ea5eaa3@roeck-us.net>
-References: <20240503-congatec-board-controller-v1-0-fec5236270e7@bootlin.com>
- <20240503-congatec-board-controller-v1-4-fec5236270e7@bootlin.com>
+        d=1e100.net; s=20230601; t=1723220839; x=1723825639;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8IoWvVemz5fRuzPVv+MJCIjU8SsZaaUaeY1frfcjMFQ=;
+        b=EToFH0R9+DKXLvI71WcoZ0j5ZtIbfEcWpOgNXO+ZVcRrf0xOYQPf+1bwNJ52+hDbzO
+         jCAsLagprGWJWTYwOFFPiKF3cNSVRq3woFgnX58G7sKgb7zs4B0yTT0yPtklckO/ZfNf
+         /NY82IZcz2oCs75wo1V5WHs9IbK7WE2M8kOEERHWaeieTVKRAAmKp6JMsRS6rkS7smwp
+         tSaRAa5z4yz3XoymFgWAiCQWI08a804BfMz+mQIYKVubmKmLCAiog/Q8+b9mN0FXcUIP
+         5xllv2bRnSNdmvy9X9ZUinQCzXscih+QbeC3zlpgTZZom+hULlfpmBFalzhCOzkVwazH
+         3oYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfUjxSCIi2hJR2GCccewg/oTt6OSlZJw6DTPCBVWnzGax3m3JrOUpO5oSLp7awDTvefw77iGGYEWxHEt/vj6BUdG/ZEW7ASLD7s4wN
+X-Gm-Message-State: AOJu0YwQS3CEThAzl1MPGlNEmGWSlg18qQknjg7bjU8OClq5tY9ImVgp
+	XduUQcYhZBQg+jlXb66DcPAF6IqQQBWKLvFi+ARWwK+nBAo2SRC4DeDxDXCN6M7GpvmCDW6JXy8
+	Ll6JOVQr2/47h1WtFNyWa20haxu5QRy1gF2zvdHv0RKam051hLINZc+Q=
+X-Google-Smtp-Source: AGHT+IEYPB0NcLXMa8rZp5vk5+VX7bqLAv2iGd98rafYrCk99iBVDa/r7lQb6Wz/oPTUODYIbP4PyAhPUr/VcZ6kZANB8tIckK79
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240503-congatec-board-controller-v1-4-fec5236270e7@bootlin.com>
+X-Received: by 2002:a05:6e02:1a86:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-39b7484a7famr1619015ab.1.1723220839017; Fri, 09 Aug 2024
+ 09:27:19 -0700 (PDT)
+Date: Fri, 09 Aug 2024 09:27:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fabef5061f429db7@google.com>
+Subject: [syzbot] [net?] [s390?] general protection fault in smc_diag_dump_proto
+From: syzbot <syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com>
+To: agordeev@linux.ibm.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
+	edumazet@google.com, guwen@linux.alibaba.com, jaka@linux.ibm.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 09, 2024 at 04:52:08PM +0200, Thomas Richard wrote:
-> Add watchdog timer support for the Congatec Board Controller.
-> 
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-> ---
->  drivers/watchdog/Kconfig    |  10 ++
->  drivers/watchdog/Makefile   |   1 +
->  drivers/watchdog/cgbc_wdt.c | 217 ++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 228 insertions(+)
-> 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index bae1d97cce89..07b711fc8bb2 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -1142,6 +1142,16 @@ config ALIM7101_WDT
->  
->  	  Most people will say N.
->  
-> +config CGBC_WDT
-> +	tristate "Congatec Board Controller Watchdog Timer"
-> +	depends on MFD_CGBC
-> +	select WATCHDOG_CORE
-> +	help
-> +	  Enables watchdog timer support for the Congatec Board Controller.
-> +
-> +	  This driver can also be built as a module. If so, the module will be
-> +	  called cgbc_wdt.
-> +
->  config EBC_C384_WDT
->  	tristate "WinSystems EBC-C384 Watchdog Timer"
->  	depends on (X86 || COMPILE_TEST) && HAS_IOPORT
-> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-> index b51030f035a6..5aa66ba91346 100644
-> --- a/drivers/watchdog/Makefile
-> +++ b/drivers/watchdog/Makefile
-> @@ -106,6 +106,7 @@ obj-$(CONFIG_ADVANTECH_WDT) += advantechwdt.o
->  obj-$(CONFIG_ADVANTECH_EC_WDT) += advantech_ec_wdt.o
->  obj-$(CONFIG_ALIM1535_WDT) += alim1535_wdt.o
->  obj-$(CONFIG_ALIM7101_WDT) += alim7101_wdt.o
-> +obj-$(CONFIG_CGBC_WDT) += cgbc_wdt.o
->  obj-$(CONFIG_EBC_C384_WDT) += ebc-c384_wdt.o
->  obj-$(CONFIG_EXAR_WDT) += exar_wdt.o
->  obj-$(CONFIG_F71808E_WDT) += f71808e_wdt.o
-> diff --git a/drivers/watchdog/cgbc_wdt.c b/drivers/watchdog/cgbc_wdt.c
-> new file mode 100644
-> index 000000000000..9327e87b52e8
-> --- /dev/null
-> +++ b/drivers/watchdog/cgbc_wdt.c
-> @@ -0,0 +1,217 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Congatec Board Controller watchdog driver
-> + *
-> + * Copyright (C) 2024 Bootlin
-> + * Author: Thomas Richard <thomas.richard@bootlin.com>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/watchdog.h>
-> +
-> +#include <linux/mfd/cgbc.h>
-> +
-> +#define CGBC_WDT_CMD_TRIGGER	0x27
-> +#define CGBC_WDT_CMD_INIT	0x28
-> +#define CGBC_WDT_DISABLE	0x00
-> +
-> +#define CGBC_WDT_MODE_SINGLE_EVENT 0x02
-> +
-> +#define DEFAULT_TIMEOUT_SEC	30
-> +#define DEFAULT_PRETIMEOUT_SEC	0
-> +
-> +enum action {
-> +	ACTION_INT = 0,
-> +	ACTION_SMI,
-> +	ACTION_RESET,
-> +	ACTION_BUTTON,
-> +};
-> +
-> +static unsigned int timeout = DEFAULT_TIMEOUT_SEC;
-> +module_param(timeout, uint, 0);
-> +MODULE_PARM_DESC(timeout,
-> +		 "Watchdog timeout in seconds. (>=0, default="
-> +		 __MODULE_STRING(DEFAULT_TIMEOUT_SEC) ")");
-> +
-> +static unsigned int pretimeout = DEFAULT_PRETIMEOUT_SEC;
-> +module_param(pretimeout, uint, 0);
-> +MODULE_PARM_DESC(pretimeout,
-> +		 "Watchdog pretimeout in seconds. (>=0, default="
-> +		 __MODULE_STRING(DEFAULT_PRETIMEOUT_SEC) ")");
-> +
-> +static bool nowayout = WATCHDOG_NOWAYOUT;
-> +module_param(nowayout, bool, 0);
-> +MODULE_PARM_DESC(nowayout,
-> +		 "Watchdog cannot be stopped once started (default="
-> +		 __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-> +
-> +struct cgbc_wdt_data {
-> +	struct cgbc_device_data	*cgbc;
-> +	struct watchdog_device	wdd;
-> +	enum action timeout_action;
-> +	enum action pretimeout_action;
-> +};
-> +
-> +struct cgbc_wdt_cmd_cfg {
-> +	u8 cmd;
-> +	u8 mode;
-> +	u8 action;
-> +	u8 timeout1[3];
-> +	u8 timeout2[3];
-> +	u8 reserved[3];
-> +	u8 delay[3];
-> +} __packed;
-> +
-> +static_assert(sizeof(struct cgbc_wdt_cmd_cfg) == 15);
+Hello,
 
-static_assert() is declared in linux/build_bug.h. Please include all
-necessary include files explicitly and do not depend on indirect includes.
+syzbot found the following issue on:
 
-> +
-> +static int cgbc_wdt_start(struct watchdog_device *wdd)
-> +{
-> +	struct cgbc_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
+HEAD commit:    d7e78951a8b8 Merge tag 'net-6.11-rc0' of git://git.kernel...
+git tree:       net-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=173cfd3d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a6f4e2cb79bdcd45
+dashboard link: https://syzkaller.appspot.com/bug?extid=f69bfae0a4eb29976e44
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15900a9d980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1008b645980000
 
-Unusual way to get wdt_data instead of using container_of().
-Any special reason ?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6b22bae2c3c1/disk-d7e78951.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/37db35e4bb64/vmlinux-d7e78951.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3e489cf2c28e/bzImage-d7e78951.xz
 
-> +	struct cgbc_device_data *cgbc = wdt_data->cgbc;
-> +	unsigned int timeout1 = (wdd->timeout - wdd->pretimeout) * 1000;
-> +	unsigned int timeout2 = wdd->pretimeout * 1000;
-> +	u8 action;
-> +
-> +	struct cgbc_wdt_cmd_cfg cmd_start = {
-> +		.cmd = CGBC_WDT_CMD_INIT,
-> +		.mode = CGBC_WDT_MODE_SINGLE_EVENT,
-> +		.timeout1[0] = (u8)timeout1,
-> +		.timeout1[1] = (u8)(timeout1 >> 8),
-> +		.timeout1[2] = (u8)(timeout1 >> 16),
-> +		.timeout2[0] = (u8)timeout2,
-> +		.timeout2[1] = (u8)(timeout2 >> 8),
-> +		.timeout2[2] = (u8)(timeout2 >> 16),
-> +	};
-> +
-> +	if (wdd->pretimeout) {
-> +		action = 2;
-> +		action |= wdt_data->pretimeout_action << 2;
-> +		action |= wdt_data->timeout_action << 4;
-> +	} else {
-> +		action = 1;
-> +		action |= wdt_data->timeout_action << 2;
-> +	}
-> +
-> +	cmd_start.action = action;
-> +
-> +	return cgbc_command(cgbc, &cmd_start, sizeof(cmd_start), NULL, 0, NULL);
-> +}
-> +
-> +static int cgbc_wdt_stop(struct watchdog_device *wdd)
-> +{
-> +	struct cgbc_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
-> +	struct cgbc_device_data *cgbc = wdt_data->cgbc;
-> +	struct cgbc_wdt_cmd_cfg cmd_stop = {
-> +		.cmd = CGBC_WDT_CMD_INIT,
-> +		.mode = CGBC_WDT_DISABLE,
-> +	};
-> +
-> +	return cgbc_command(cgbc, &cmd_stop, sizeof(cmd_stop), NULL, 0, NULL);
-> +}
-> +
-> +static int cgbc_wdt_keepalive(struct watchdog_device *wdd)
-> +{
-> +	struct cgbc_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
-> +	struct cgbc_device_data *cgbc = wdt_data->cgbc;
-> +	u8 cmd_ping = CGBC_WDT_CMD_TRIGGER;
-> +
-> +	return cgbc_command(cgbc, &cmd_ping, sizeof(cmd_ping), NULL, 0, NULL);
-> +}
-> +
-> +static int cgbc_wdt_set_pretimeout(struct watchdog_device *wdd,
-> +				   unsigned int pretimeout)
-> +{
-> +	struct cgbc_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
-> +
-> +	wdd->pretimeout = pretimeout;
-> +	wdt_data->pretimeout_action = ACTION_SMI;
-> +
-> +	if (watchdog_active(wdd))
-> +		return cgbc_wdt_start(wdd);
-> +
-> +	return 0;
-> +}
-> +
-> +static int cgbc_wdt_set_timeout(struct watchdog_device *wdd,
-> +				unsigned int timeout)
-> +{
-> +	struct cgbc_wdt_data *wdt_data = watchdog_get_drvdata(wdd);
-> +
-> +	if (timeout < wdd->pretimeout) {
-> +		dev_warn(wdd->parent, "timeout <= pretimeout. Setting pretimeout to zero\n");
+Bisection is inconclusive: the first bad commit could be any of:
 
-That is a normal condition which does not warrant a log message.
-Also see drivers/watchdog/watchdog_dev.c around line 385.
+5bcd9a0a5995 wifi: brcm80211: remove unused structs
+f29dcae96ec8 Merge tag 'rtw-next-2024-06-04' of https://github.com/pkshih/rtw
 
-> +		wdd->pretimeout = 0;
-> +	}
-> +
-> +	wdd->timeout = timeout;
-> +	wdt_data->timeout_action = ACTION_RESET;
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17196f19980000
 
-Both timeout_action and pretimeout_action are set statically.
-What is the point of doing that instead of just using
-ACTION_RESET and ACTION_SMI as needed irectly ?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
 
-> +
-> +	if (watchdog_active(wdd))
-> +		return cgbc_wdt_start(wdd);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct watchdog_info cgbc_wdt_info = {
-> +	.identity	= "CGBC Watchdog",
-> +	.options	= WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING |
-> +		WDIOF_MAGICCLOSE | WDIOF_PRETIMEOUT
-> +};
-> +
-> +static const struct watchdog_ops cgbc_wdt_ops = {
-> +	.owner		= THIS_MODULE,
-> +	.start		= cgbc_wdt_start,
-> +	.stop		= cgbc_wdt_stop,
-> +	.ping		= cgbc_wdt_keepalive,
-> +	.set_timeout	= cgbc_wdt_set_timeout,
-> +	.set_pretimeout = cgbc_wdt_set_pretimeout,
-> +};
-> +
-> +static int cgbc_wdt_probe(struct platform_device *pdev)
-> +{
-> +	struct cgbc_device_data *cgbc = dev_get_drvdata(pdev->dev.parent);
-> +	struct device *dev = &pdev->dev;
-> +	struct cgbc_wdt_data *wdt_data;
-> +	struct watchdog_device *wdd;
-> +	int ret;
-> +
-> +	wdt_data = devm_kzalloc(dev, sizeof(*wdt_data), GFP_KERNEL);
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 1 PID: 6338 Comm: syz-executor175 Not tainted 6.10.0-syzkaller-09703-gd7e78951a8b8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
+RIP: 0010:__smc_diag_dump net/smc/smc_diag.c:89 [inline]
+RIP: 0010:smc_diag_dump_proto+0x709/0x3270 net/smc/smc_diag.c:217
+Code: 08 48 89 df e8 f8 0d 9d f6 48 8b 44 24 28 4c 8d 68 14 48 8b 1b 48 83 c3 0e 48 89 d8 48 c1 e8 03 49 bf 00 00 00 00 00 fc ff df <42> 0f b6 04 38 84 c0 0f 85 46 1b 00 00 0f b7 1b 66 c1 c3 08 4c 89
+RSP: 0018:ffffc90009d56b00 EFLAGS: 00010203
+RAX: 0000000000000001 RBX: 000000000000000e RCX: ffff88807c439e00
+RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
+RBP: ffffc90009d56f90 R08: ffffffff8990c562 R09: 1ffff11005a1084b
+R10: dffffc0000000000 R11: ffffed1005a1084c R12: 1ffff11005a108e0
+R13: ffff88801f600014 R14: ffff88802d084200 R15: dffffc0000000000
+FS:  00007f92fcb0b6c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f92fcb0bd58 CR3: 000000002290e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ smc_diag_dump+0x59/0xa0 net/smc/smc_diag.c:236
+ netlink_dump+0x647/0xd80 net/netlink/af_netlink.c:2325
+ __netlink_dump_start+0x59f/0x780 net/netlink/af_netlink.c:2440
+ netlink_dump_start include/linux/netlink.h:339 [inline]
+ smc_diag_handler_dump+0x1ab/0x250 net/smc/smc_diag.c:251
+ sock_diag_rcv_msg+0x3dc/0x5f0
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ sock_sendmsg+0x134/0x200 net/socket.c:768
+ splice_to_socket+0xa13/0x10b0 fs/splice.c:889
+ do_splice_from fs/splice.c:941 [inline]
+ do_splice+0xd77/0x1900 fs/splice.c:1354
+ __do_splice fs/splice.c:1436 [inline]
+ __do_sys_splice fs/splice.c:1652 [inline]
+ __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f92fcb924d9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f92fcb0b218 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
+RAX: ffffffffffffffda RBX: 00007f92fcb0b6c0 RCX: 00007f92fcb924d9
+RDX: 0000000000000005 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007f92fcc1c348 R08: 0000000080000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f92fcc1c340
+R13: 00007f92fcbe9074 R14: 00007ffd7bd61c20 R15: 00007ffd7bd61d08
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
+RIP: 0010:__smc_diag_dump net/smc/smc_diag.c:89 [inline]
+RIP: 0010:smc_diag_dump_proto+0x709/0x3270 net/smc/smc_diag.c:217
+Code: 08 48 89 df e8 f8 0d 9d f6 48 8b 44 24 28 4c 8d 68 14 48 8b 1b 48 83 c3 0e 48 89 d8 48 c1 e8 03 49 bf 00 00 00 00 00 fc ff df <42> 0f b6 04 38 84 c0 0f 85 46 1b 00 00 0f b7 1b 66 c1 c3 08 4c 89
+RSP: 0018:ffffc90009d56b00 EFLAGS: 00010203
+RAX: 0000000000000001 RBX: 000000000000000e RCX: ffff88807c439e00
+RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
+RBP: ffffc90009d56f90 R08: ffffffff8990c562 R09: 1ffff11005a1084b
+R10: dffffc0000000000 R11: ffffed1005a1084c R12: 1ffff11005a108e0
+R13: ffff88801f600014 R14: ffff88802d084200 R15: dffffc0000000000
+FS:  00007f92fcb0b6c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f92fcb0bd58 CR3: 000000002290e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	08 48 89             	or     %cl,-0x77(%rax)
+   3:	df e8                	fucomip %st(0),%st
+   5:	f8                   	clc
+   6:	0d 9d f6 48 8b       	or     $0x8b48f69d,%eax
+   b:	44 24 28             	rex.R and $0x28,%al
+   e:	4c 8d 68 14          	lea    0x14(%rax),%r13
+  12:	48 8b 1b             	mov    (%rbx),%rbx
+  15:	48 83 c3 0e          	add    $0xe,%rbx
+  19:	48 89 d8             	mov    %rbx,%rax
+  1c:	48 c1 e8 03          	shr    $0x3,%rax
+  20:	49 bf 00 00 00 00 00 	movabs $0xdffffc0000000000,%r15
+  27:	fc ff df
+* 2a:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 46 1b 00 00    	jne    0x1b7d
+  37:	0f b7 1b             	movzwl (%rbx),%ebx
+  3a:	66 c1 c3 08          	rol    $0x8,%bx
+  3e:	4c                   	rex.WR
+  3f:	89                   	.byte 0x89
 
-devm_kzalloc() is declared in linux/device.h. Again, please include all
-necessary include files explicitly.
 
-> +	if (!wdt_data)
-> +		return -ENOMEM;
-> +
-> +	wdt_data->cgbc = cgbc;
-> +	wdd = &wdt_data->wdd;
-> +	wdd->parent = dev;
-> +
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-No limits ? That is unusual. Are you sure the driver accepts all
-timeouts from 0 to UINT_MAX ?
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-> +	wdd->info = &cgbc_wdt_info;
-> +	wdd->ops = &cgbc_wdt_ops;
-> +
-> +	watchdog_set_drvdata(wdd, wdt_data);
-> +	watchdog_set_nowayout(wdd, nowayout);
-> +
-> +	cgbc_wdt_set_timeout(wdd, timeout);
-> +	cgbc_wdt_set_pretimeout(wdd, pretimeout);
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-The more common approach would be to set default limits in wdd->{timout,pretimeout}
-and only override the values if needed, ie if provided using module parameters.
-That implies initializing the module parameters with 0. YOur call, though.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-> +
-> +	platform_set_drvdata(pdev, wdt_data);
-> +	watchdog_stop_on_reboot(wdd);
-> +	watchdog_stop_on_unregister(wdd);
-> +
-> +	ret = devm_watchdog_register_device(dev, wdd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Why not just
-	return devm_watchdog_register_device(dev, wdd);
-?
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-> +}
-> +
-> +static struct platform_driver cgbc_wdt_driver = {
-> +	.driver		= {
-> +		.name	= "cgbc-wdt",
-> +	},
-> +	.probe		= cgbc_wdt_probe,
-> +};
-> +
-> +module_platform_driver(cgbc_wdt_driver);
-> +
-> +MODULE_DESCRIPTION("Congatec Board Controller Watchdog Driver");
-> +MODULE_AUTHOR("Thomas Richard <thomas.richard@bootlin.com>");
-> +MODULE_LICENSE("GPL");
-> 
-> -- 
-> 2.39.2
-> 
-> 
+If you want to undo deduplication, reply with:
+#syz undup
 
