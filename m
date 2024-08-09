@@ -1,579 +1,329 @@
-Return-Path: <linux-kernel+bounces-280544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD14594CBFF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:15:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FA594CC02
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D191F1C21C19
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:15:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CC17281280
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACEE16DC2D;
-	Fri,  9 Aug 2024 08:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C74C16D4D4;
+	Fri,  9 Aug 2024 08:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/+pM1KQ"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="FS1WO2dK";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="ZJ+TGrj0"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADB062171
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723191317; cv=none; b=uZPaE5JVrsROAZ2ZvAPAz7A+jjgLoMGKaSnWaiHzNHScS4RGyU7Q0jBaEOf2CtYncPYuDh2LJCY8zixdhtqcaF9UootbKPgnOvL+sdAUyxGdumtYekTkWEj9KGZ73gZK9MdThuUVuyKbXGbAWNZTxDjtIA5fI6/YEvvFV2/8WTY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723191317; c=relaxed/simple;
-	bh=mht7Y3Q1bqg0pRZQxyXqf8ebDRpUDdz8Zsp+lTG2Cjc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NCbrCtZ8RNHN2k8w/cEgmUpN2scqvIb3r4bikxheLnqDGfhqYFjKEYZ6p926EIevnKLre81D//lpOwxcHjxtkQHyGqvz6iF9X0rbAF1x5Q2z0bMvqW5FlMSU4FKizKQe0/9E/FSMSpYRX+KZltewJzhZabihuW3353uXB5x1O88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q/+pM1KQ; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso2147680a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:15:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F057234CC4
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723191359; cv=fail; b=qRuaY3u90gXlo2K1DnhRXbuXdlxYxf445SnUb8SXdFtTwyIEYwQRnn0CXOPTSUDMzNsyVl+1Lvy3K3Ljllzc2TDIVdPHIy4fcAU8UcMcuuijwxeYT8fZUPJnedUIKcoir2Ja/N98lmnDLM91OT7mIk0263D2VuqO64U2J2fHKI4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723191359; c=relaxed/simple;
+	bh=zQTmU14R3g+hm0SfXLio5BJK2Cr/KzBtK6v112xDMLo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JJCvfFEk80ZgSiF/4LMH0+Jc8iO9pkW2N1awKBCc1SJA5HLzA8S1JC1XRYE2md9pOO73rJ65PnKA+K+WBiNbjLlHpmahl3EhDkWIZBVcrcqCKlkC+bUkjTq1JgBSai30EnF8W0l7G/92Ls1SB75ap4b/kCaN8WPO9+HZpLykLdg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=FS1WO2dK; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=ZJ+TGrj0; arc=fail smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 951d672c562711ef87684b57767b52b1-20240809
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=zQTmU14R3g+hm0SfXLio5BJK2Cr/KzBtK6v112xDMLo=;
+	b=FS1WO2dK/87qXwCyoVd8IpbhA+aWsIT+xZitJmxVheTmPi5II2+3tTF1cGJ4LxWJ2WwGackWFygSnZKZ5pXfDLFeWtNhgn1NI4c99G/cTTMs5TY8jCUPsTyHfCrrYpS6q/rPZkOhj6zSqgocygKhVRsfdQR2NoDPPXwJUcQiFjA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:ee97200f-5282-452e-87ff-bdfe254764a9,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:eb79ed3e-6019-4002-9080-12f7f4711092,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 951d672c562711ef87684b57767b52b1-20240809
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1599120088; Fri, 09 Aug 2024 16:15:47 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 9 Aug 2024 16:15:46 +0800
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 9 Aug 2024 16:15:46 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MGkukwkpLP84pd1ZY9Q0pPo2FixGCbUE9PPkTHMLueFGRDSKGXCBDt4Q8IpqWAUWw2F4GgmT6VY1D8NiMNzPFx13aQAj0NKgDZs7HmesMAASo7rXWh1iymnyNS8JnZaE7RlktDmVugkXxfeEZgAggiBc0VehuOP7/2BSnBTu+c3eY66VOcGDN0cABHLM5KyBMefSN1ekWMwW3j5sOMww10wyZ5EWVd7FSTwn1hNFromuDvPXzeU2orGLoDwHKNi6XdDW8CEIz7ixTXXw1D4yGz42KfHqPwHvnYg7Xtryqot0owfIj+enjqOM+JygpAS2KS0S01rO2Dv3gI5ZKNdZHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zQTmU14R3g+hm0SfXLio5BJK2Cr/KzBtK6v112xDMLo=;
+ b=mF38UdA9UXeABdwvRVIPmzZZMcDQtpqrzC0G920mDAGBaDv/4SotmjBveWGZVQ9+xiBqq+rXAb6/7gUB1qu3hfx2NMmZPgyHiQu7BMNcbPS/FvHEfLehOng8TWCjVT/kFiZWO983jCPWCcAjIUA0WVldhWQp0PwHVRzkcJYzqL10YumykpAN5oETy1Dk5bstTh8hA/UrkLObks4ugRTi7HYUctDHsAgtQI/okxlr36PBTyGrAh7844c5KeWu7vV5teCjGbvkuGEZGkEStQb6snhc3wlldY157KxGwnHu25/ogKEHMWd90/EWMgRo1B98b6cF6QQcxuR6+bOU02V0cw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723191313; x=1723796113; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CTY3OFn8xmWS9BaXbrM/9l+/iBTQNq3zaueVhWRUhf8=;
-        b=Q/+pM1KQDy5peYIlx5OFKe1IqGSU2KsoYWgpZTTYntGFcNJlLw/cIZS4OqbDVu9wZp
-         jB1WD/44nwgGAHRIsjHjZx9qvs9eI6awM25KNNCyckm0Vy0EDV2UlHHFujHe+kl2OL+m
-         NsODFVB4aHJl1tHbbrcn5CZ1bSSLJucqtYp/mBT27s4c4y3RENKlvf8mu60mMAbBuiVL
-         9gxiq60EfwFx6U9KYIgEFPPSLcNoiZCI5Ez1qZ39nxyYyh2lGP+JgMWRbF4Je0gaC91j
-         5ab0bZbxevQWqzC3ChubTZgpeN5ems9Hsm+gj9uUa3QMlokTdXsgvMRsDMNk/gMHGi3u
-         OmuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723191313; x=1723796113;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CTY3OFn8xmWS9BaXbrM/9l+/iBTQNq3zaueVhWRUhf8=;
-        b=IS9KIeBENLq+oSA7m8UmPKp9JxAIxGzWHQhnDn7P3F/1lm+qngYHACRi6R4knMoHgX
-         9gy4uF+dDoT6alqtSxqo9NJhqDhLjnkBCNLsKXsBnO1KcOkwMddkO6n6Vb1VppDo373X
-         S6rBHJoAeCikvEc5nTGyIJAjKJxpRHRi4T4xaqUYrIztlDnpEwr0KbDbLa1+4wd5outz
-         Xoc5oL6jOCOYtlFeNht9L6FbpbE/4/8AOz4uZSNf/PXMyyS0Hhbd2O9Slpi5UqIOFyfZ
-         GhD31ZHdIkYISFUGURuaFKyZSZUrsi+9vppCoi1B6kCPb1zgN8OaV+eF2vxDbYB3k7t0
-         KEQQ==
-X-Gm-Message-State: AOJu0Yy0VPzXdBwxTlekfiDgVQrs1EHZX6QX10MOQYDRgOHAfe57WF3i
-	O5Su+qAQdq78t3/hblRpCSg19poTMWrIajJa9U8UFNLeXoHAu+2OzE6Vo43gEmMROOdMTeCedbQ
-	85rswusaKwsjGNgeyGpLIZqDIzL4=
-X-Google-Smtp-Source: AGHT+IGiPO5v32DWtLwQFdYePAJVXi0zCEhdLWuvX1iXJVCrV/J6gfKCgXG6r3xipl43sMqgS93Z6mJDlQIWL20n/9Q=
-X-Received: by 2002:a17:907:e697:b0:a7a:a212:be4e with SMTP id
- a640c23a62f3a-a80aa5516cdmr63270466b.7.1723191312590; Fri, 09 Aug 2024
- 01:15:12 -0700 (PDT)
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zQTmU14R3g+hm0SfXLio5BJK2Cr/KzBtK6v112xDMLo=;
+ b=ZJ+TGrj03UmAPVe3tIhHUQlUg+jLlHweol472kZbtEixF12izuUZaAKJdz12ohByf83IBKMXd8VlyNIpfNQWMko8BzxHIv1+pcYeUqBh70G/kJvwx1BLhQNwUmnnhwEiQMXebirj9xwPTDARTEEGxBm+H5GzDKNExIBeHGwk2+U=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by KL1PR03MB7455.apcprd03.prod.outlook.com (2603:1096:820:ed::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27; Fri, 9 Aug
+ 2024 08:15:44 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%4]) with mapi id 15.20.7828.023; Fri, 9 Aug 2024
+ 08:15:44 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: =?utf-8?B?U2h1aWppbmcgTGkgKOadjuawtOmdmSk=?= <Shuijing.Li@mediatek.com>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+	=?utf-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "airlied@gmail.com" <airlied@gmail.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Project_Global_Chrome_Upstream_Group
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: Re: [PATCH v4] drm/mediatek: dsi: Add dsi per-frame lp code for
+ mt8188
+Thread-Topic: [PATCH v4] drm/mediatek: dsi: Add dsi per-frame lp code for
+ mt8188
+Thread-Index: AQHa4+qWvSJl5Up3QEu6RU2Prg/rNbIeoNKA
+Date: Fri, 9 Aug 2024 08:15:44 +0000
+Message-ID: <ac28d576de8ef20ff0927fc1779c7ede57c8d251.camel@mediatek.com>
+References: <20240801081144.22372-1-shuijing.li@mediatek.com>
+In-Reply-To: <20240801081144.22372-1-shuijing.li@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|KL1PR03MB7455:EE_
+x-ms-office365-filtering-correlation-id: cb02420d-82d8-459f-7626-08dcb84b7777
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?VzRxSDREM2w5bmlpVGVpUVlQVDJWS3llMWlrL0xqaWx3Z3pNbVZkQytUTXR6?=
+ =?utf-8?B?QnRRVmhRaFdlS0V2YjRwdzRKSkZaS3M4NkFhek9SdmF4R2dJaHZMa3F0ckMr?=
+ =?utf-8?B?SXZLSjM3N09SelhHSmUzR1N2c2JBN05aMWc4cXFZVytObkZkQUlIRGZMUFgy?=
+ =?utf-8?B?aGRUQjhLanRCbERLeDY2eWVwbDI5SUdWNWJ0YVNpY2lEc2ZwbzIzZXRXWHZP?=
+ =?utf-8?B?ZTl5b1liWC9nbHRweW84K1ZrOFREQ2hTTnNzQi9qL3RrLzEzSFRvTFcxeEdK?=
+ =?utf-8?B?dlVZSHliUHduWU5MS2JIdjFBSmtvdXVuT3VFODF3S1lqeFBYWlNacnB5SzNJ?=
+ =?utf-8?B?Q2hFWVkvSlViMnlReVErQTA3cllFYXBnS3lmWjVuK1BERDEzSE81TWlneTRY?=
+ =?utf-8?B?elBQb1E3Y0JSbHlJUkZ6SnZrOTBQWXN1YlVSM2ZjOVdlTDIycWswUytGbk1O?=
+ =?utf-8?B?Y0c0YnFJL3BGaU5sWU4ycEFpWmlPV29mYTV2Slo3eDBKck9va1puaHp1bElk?=
+ =?utf-8?B?MUhIejI5Z3hnN1VVTGlXRVdpL2t5anBhRDk3Q04yY1hXbkNVeVVoc0E1aktF?=
+ =?utf-8?B?T3FPNDFaSnlqV2Jkb3NUZHpjTk1ObXhobStyY1h3RENjWDNiRW9hMXFnWXhJ?=
+ =?utf-8?B?MFFhSWo5akFyK1hqMFphcmhCbExGRDB3SnFLUzJFdmcxQnRIWndzSU1oQkRa?=
+ =?utf-8?B?VnRsMUNMT2dxQzJmYUdWMTFKWW5hRXM1K1pvOFVOODRtTnFrbzRCZW01K3dK?=
+ =?utf-8?B?d0dHTzRmRXQ4WGc0VnMvOW9KWHFLSlMxcUFPMU5yQ1N5QjJmYnNDcU8wY2VS?=
+ =?utf-8?B?SERFM3d0ZWtYbUpiQ2xxT3hac0dOZFRzWUFvekVmc3lBYnhOUWViazY5UjRG?=
+ =?utf-8?B?Mk1uc1U2SmVBZEREYlFpY01wdlJtMkliN2syQzZLbUdIRVVJOU85NlArRGZQ?=
+ =?utf-8?B?QTJ0cmIxUldFMWRTWXlqajdjbU9wSDZXY2dpWCtHYVE0cWNab1F6c2lFUk1O?=
+ =?utf-8?B?SVdlQ1gxN1FoUm1VWEk5bXU4amhHUmxObXBOazVzZzdhQzA4VktRalRKc05z?=
+ =?utf-8?B?Zi9DbWVUMk04UjFKR3lPNVJJZUNTYzN5dGxhNlNkSGtsWVQwUzE5czN2ejAr?=
+ =?utf-8?B?UTBpVDM0NWRJV2syT3A4a2REUDZhMEdMSlRNRmR1aEd0RFNvVlFhaWFjTmtu?=
+ =?utf-8?B?Q0hPTkVtc2pWTlE2UjBqMDFnNjV2dEl4VE9sTlgrTXVhWllJbXVHeksvUDV1?=
+ =?utf-8?B?N2ZMS2VBd1h0NkZFOG5senlONXAwSHc5T3BTMDJMZHNkZUhaMU5xZ3dJTjhN?=
+ =?utf-8?B?d2VwVkJjV0pTZlFaTXdGQmF5QmU4bDd6MWRCRkgrZ1VWak9ZMTY4bS9KMG45?=
+ =?utf-8?B?blNmOFdWSXc4cU9wNHNXcktKQ1E3ci9VNHJqdWxZTHRxNnprREhIRnJHUEp2?=
+ =?utf-8?B?QVNtUXR3MFJuMGhxRUFhOHltSnVicW1aSkx4d2tVVnpGMVJxREFYeEs1QXNk?=
+ =?utf-8?B?L0VVS2s3dXh2U1dWckg0aWR4ZDdHa1E4by9BejczWlpnTjExT3J3WVkzRWxT?=
+ =?utf-8?B?bmx2c1FCVk53U29SaFZTaTU1Z3lnTFFOS3had1l5VW9jOTFHRlZXZ3prQXUw?=
+ =?utf-8?B?MTRsem1EOGN2eFFoNUM2ajg1NTZKb1BZSkJQT0Q5eGFMRHlPa21JeDc5Ymhq?=
+ =?utf-8?B?QWdjc3ZtQnRBMnh1ODNERUJZUWUzYmxBWTk2T2J0aXpsQjN4Y3F0ZzNlalJ0?=
+ =?utf-8?B?MkN4dUlrNnN4ZjZuUHNZdUIvNU1IZ2JzamhiU21YUXRreXFMMVV0OGdDVGxP?=
+ =?utf-8?B?MmV4K2RtWERDUXZHMWxUZ1g2MUxEOVBpR2lVY0J3L0J5UGtBWGxMRXg5cHQ2?=
+ =?utf-8?B?ZU5ycHNIeGt0V3RrNDNlSjFlc0t0RDRlRGQrY3hBbVh3N3c9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Q3puSVJmQ1VXSUw2ckhKcWxEL2kwUklxQnNKTFZZRjJacUpidVNoUlFKUEJj?=
+ =?utf-8?B?K2pudzVMcTJKNW1BakJGVWg0RFRobE1BZWNmYVJNRzVzTlhXcUZKYUR6bFp0?=
+ =?utf-8?B?RklCSUZKMHRMS2htTkt6YUVibituQWxJK3ZkNjRGdFpLR1ArWmVDMjFITm1i?=
+ =?utf-8?B?MnB1ZmlmazdJZ2xNcXk2NUNGandSYXcvd01VRllUV1FRNHVFMGMyRFBKWmtJ?=
+ =?utf-8?B?VkRHcjdnSE12TEhDS2Z0NXE0dmJtZTZHTElMaTVmS2lNOUZGb3JIcDAvUllr?=
+ =?utf-8?B?aU45ckhMMHFQT0QwN3Z3eXA3RG02YWp4V3llRDh1OU5mNCtHTVFHU1dHVHdR?=
+ =?utf-8?B?Z2s0REFrQ2RQcFFPeWxWb0FJQlVWVzFUSHFXcjZhVm8xS3Btcm5kalBFa1hB?=
+ =?utf-8?B?NlVSL1JPbENQMmJGMi96emNWSFBKdFdvQnRtRFgyK2JyQy9uRFNtUzRweThI?=
+ =?utf-8?B?QzJEYlp3OTREai9rNDI0OGdVb1lvWkJwejhPVTFmbkpHMndaS2lCT2U1V2Zj?=
+ =?utf-8?B?TlE0R2huMG1wOWVVcE1jWjNFb1J5RkRvTXhUaXdRY3JqdkJWUWEzMzRYU1R5?=
+ =?utf-8?B?MlMvVVhxMjFDWU44ZWc1djh5Nk9rSFh2Z0pXRnVHQmpxNFREdlB1T2Nsc3NP?=
+ =?utf-8?B?VXBTQTdCK3hpNnBFRVNoZHEvM0xiRWJhVE1nWHNYVHNZbllCcEJabitTclRp?=
+ =?utf-8?B?cFBwc0doU1JxNkRmUHdIb1VmbG8xRU5nV1lqMEYwczBJaS9CMEVzS0RtSzJH?=
+ =?utf-8?B?V0w0elRseExscFRCakMrNHhMM20xSUtvNUpzYWdaSTlXd2ZFSEZMVkIrN2Yy?=
+ =?utf-8?B?ZVVIN3M4Q2RZc1hNRTBTd0pQMlFxUlpoOGJxUnlMTU1XcVg4MnZZall0TFJB?=
+ =?utf-8?B?dzg1Tk1EOHlMZXBuQllHYmUweVc4OGNBd3gwdVRRWkpNNWh2TGJPejV1Q2Ju?=
+ =?utf-8?B?aTd4RXZiZWJjZ3BFeXJ1U3IwcXl6YmlXcUdYbUVtdldIMXZST1JvMUpTQ2dI?=
+ =?utf-8?B?VitaSVRoOHJJMVBaNzJCdW4zdDJzZDdDS2x5RWJNc09DUkd3a2dUckZLbndu?=
+ =?utf-8?B?bm5kcmxqS1lhMEZpZGNEYmQzamdjd3dZSEpzRGYyc0JQWWdHNjQ0ODIzNi9o?=
+ =?utf-8?B?aWpDUkl1YVdVaFZkZHV5ZFVvMUY0UUw5TVc5RTl2TWliYUhVV3FxUit0cFU3?=
+ =?utf-8?B?YzlUd2lpK3p4UFJHeFgwN0pWWlkxTUZQZUs0UFJ5TjdsejRWTGZoT056bmQ3?=
+ =?utf-8?B?YlphMmdYRlZHRnUvOThnckIvVGM3RTJCakxTbHprNjhPUGRTUU1MbExFREFa?=
+ =?utf-8?B?OXVyajlDemFaYWgvS3kwR3BNZ3lMR2xqZ1ZHL3E5eis3L1MwUmZkZnBoQ1RN?=
+ =?utf-8?B?NVVwNUgxUG1LcjNVZk1NQ1hPZ2pXdW1taGtPNjBqRFQreFNwSXNKNDBWUW1o?=
+ =?utf-8?B?WmpVTVdpOGs0MVhoTVl2dDVoLzh5RUlCVVdGNUpQWDRjTkFtK3A0UWdVdTJU?=
+ =?utf-8?B?NU5WTDdpbkdrMU0rdEloaFlCWEltYkd4cy9XUWNJQWx1N2pTRGZ4dC8xQnFp?=
+ =?utf-8?B?LzBnQzZnc2xWWjY1NHBVdy9ESTh1eTFIaVdTbVRXNlFVdUZ6NGloMUlBcmUw?=
+ =?utf-8?B?RXFocWczOGYxR1UzUXh2ZkFiMmgvNWEzMGpFL1Yxd2ozMlV6czI0bFRqVzJq?=
+ =?utf-8?B?WEhSdjh3SEJhc1VwbGNyd0c5dG5CQmdQSnA4dTUzbFJBa0Q4Z2lPS211NWZI?=
+ =?utf-8?B?ZWxYK0NRUDJLVStBMFd3RUlKeW9XdnRhck9FSDFVVkdVTjBhcHF4bU5xVndl?=
+ =?utf-8?B?eVRmdzRjWXhFbXhpcmltWGZsVmd0R0pVRGhRYll6U3loZGFOYjVJaGgvQXcx?=
+ =?utf-8?B?ZEswaDAzR3U1RWhqb3FhSlFueVFRMkl0VXI3blRuLzloaXpZL0Y0M1ZTNGNY?=
+ =?utf-8?B?eko1bURvN2ZGVzJUVlNXSFplMEZlRGtrZDUxSnFyc09zWWVDQXRhZ3kwNUdm?=
+ =?utf-8?B?VXB3VU5uWGZmNmYyazRKWVpzbFp3YkpFMTZSTGg4RXRsWUJMTlVqUmZ6UUpC?=
+ =?utf-8?B?L3Uxa21ZZzM0aElYWHN3QkRtVXBPSVhmd1piUlhmMWdaQkVtOU5UbHhHUUN2?=
+ =?utf-8?Q?52xCoZdiHlDCXNVDtarAL7+CL?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <00ECE2CA2EACF540B127C86280C382D5@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808185949.1094891-1-mjguzik@gmail.com> <CAJuCfpEsYi77cuUhvQrFOazFX1OK0vp0PyevKqZsi0f1DeT3NA@mail.gmail.com>
- <CAGudoHHHOH=+ka=xw6cy51EYaGsUZEaC=LXYFvnXgFT+co9mKQ@mail.gmail.com>
- <CAJuCfpFXdx40UGRsXUYFgFGvEy-nM02f+TQ9nOPPepw6gbykmA@mail.gmail.com> <CAJuCfpH36sXvCaYL88nzi_8-Yr1tpxHuaLfCMqCac-zN6QHWmg@mail.gmail.com>
-In-Reply-To: <CAJuCfpH36sXvCaYL88nzi_8-Yr1tpxHuaLfCMqCac-zN6QHWmg@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 9 Aug 2024 10:14:58 +0200
-Message-ID: <CAGudoHHB3PEQBbcmZwwLAUrNLUqwOt8fnantO--3mF19C1A+6g@mail.gmail.com>
-Subject: Re: [RFC PATCH] vm: align vma allocation and move the lock back into
- the struct
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, pedro.falcato@gmail.com, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb02420d-82d8-459f-7626-08dcb84b7777
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 08:15:44.5516
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vAqWdb3urgalTCxcp3chulo7zeZxZi5Lr2pMwEEYTkKX7n0Qyhcdg1BMTETgzkhmDrbQHJyif3r7YtfqtuOC/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7455
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--13.288800-8.000000
+X-TMASE-MatchedRID: HXSqh3WYKfsOwH4pD14DsPHkpkyUphL9IR1rLBJm/M782ks92f+Gmgef
+	5FoKtUGzZMI44OwacXNVpaMde16oQMl6p6KoPhJI4pdq9sdj8LWIrmqDVyayv/t592eq2xoTMCm
+	LSFOvZt2TuTIXgx3qzJPJbwBiOizgtt90M/7M5GaiAZ3zAhQYglo1rFkFFs1apkUWHRtJ9JnLDO
+	wJx4cAjyPbwndZ0NosfqGSKh5yGVlb2IrxDCpMMZ4CIKY/Hg3AwWulRtvvYxTUHQeTVDUrIuB8J
+	9aWc1v/VymkLM+r7VQ7AFczfjr/7NgWuFYsnEIhz+UayHeCIaXUYNS9WMEt9WwkImb/drYLvrxV
+	sjY9l2g=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--13.288800-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	5036F1FADD3F8C4D4562C8FAA835F1AC1D7E2F85E15F99CBEE7C1C0EC5138AA82000:8
 
-On Fri, Aug 9, 2024 at 5:57=E2=80=AFAM Suren Baghdasaryan <surenb@google.co=
-m> wrote:
->
-> On Thu, Aug 8, 2024 at 9:19=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
-com> wrote:
-> >
-> > On Thu, Aug 8, 2024 at 1:04=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com=
-> wrote:
-> > >
-> > > On Thu, Aug 8, 2024 at 9:39=E2=80=AFPM Suren Baghdasaryan <surenb@goo=
-gle.com> wrote:
-> > > >
-> > > > On Thu, Aug 8, 2024 at 7:00=E2=80=AFPM Mateusz Guzik <mjguzik@gmail=
-.com> wrote:
-> > > > >
-> > > > > ACHTUNG: this is more of a request for benchmarking than a patch
-> > > > > proposal at this stage
-> > > > >
-> > > > > I was pointed at your patch which moved the vma lock to a separat=
-e
-> > > > > allocation [1]. The commit message does not say anything about ma=
-king
-> > > > > sure the object itself is allocated with proper alignment and I f=
-ound
-> > > > > that the cache creation lacks the HWCACHE_ALIGN flag, which may o=
-r may
-> > > > > not be the problem.
-> > > > >
-> > > > > I verified with a simple one-liner than on a stock kernel the vma=
-s keep
-> > > > > roaming around with a 16-byte alignment:
-> > > > > # bpftrace -e 'kretprobe:vm_area_alloc  { @[retval & 0x3f] =3D co=
-unt(); }'
-> > > > > @[16]: 39
-> > > > > @[0]: 46
-> > > > > @[32]: 53
-> > > > > @[48]: 56
-> > > > >
-> > > > > Note the stock vma lock cache also lacks the alignment flag. Whil=
-e I
-> > > > > have not verified experimentally, if they are also romaing it wou=
-ld mean
-> > > > > that 2 unrelated vmas can false-share locks. If the patch below i=
-s a
-> > > > > bust, the flag should probably be added to that one.
-> > > > >
-> > > > > The patch has slapped-around vma lock cache removal + HWALLOC for=
- the
-> > > > > vma cache. I left a pointer to not change relative offsets betwee=
-n
-> > > > > current fields. I does compile without CONFIG_PER_VMA_LOCK.
-> > > > >
-> > > > > Vlastimil says you tested a case where the struct got bloated to =
-256
-> > > > > bytes, but the lock remained separate. It is unclear to me if thi=
-s
-> > > > > happened with allocations made with the HWCACHE_ALIGN flag though=
-.
-> > > > >
-> > > > > There is 0 urgency on my end, but it would be nice if you could t=
-ry
-> > > > > this out with your test rig.
-> > > >
-> > > > Hi Mateusz,
-> > > > Sure, I'll give it a spin but I'm not optimistic. Your code looks
-> > > > almost identical to my latest attempt where I tried placing vm_lock
-> > > > into different cachelines including a separate one and using
-> > > > HWCACHE_ALIGN. And yet all my attempts showed regression.
-> > > > Just FYI, the test I'm using is the pft-threads test from mmtests
-> > > > suite. I'll post results today evening.
-> > > > Thanks,
-> > > > Suren.
-> > >
-> > > Ok, well maybe you did not leave the pointer in place? :)
-> >
-> > True, maybe that will make a difference. I'll let you know soon.
-> >
-> > >
-> > > It is plausible the problem is on vs off cpu behavior of rwsems --
-> > > there is a corner case where they neglect to spin. It is plausible
-> > > perf goes down simply because there is less on cpu time.
-> > >
-> > > Thus you bench can you make sure to time(1)?
-> >
-> > Sure, will do once I'm home. Thanks for the hints!
->
-> Unfortunately the same regression shows its ugly face:
->
-> compare-mmtests.pl Hmean results:
-> Hmean     faults/cpu-1    471264.4904 (   0.00%)   473085.6736 *   0.39%*
-> Hmean     faults/cpu-4    434571.7116 (   0.00%)   431214.3974 *  -0.77%*
-> Hmean     faults/cpu-7    407755.3217 (   0.00%)   395773.4052 *  -2.94%*
-> Hmean     faults/cpu-12   335604.9251 (   0.00%)   285426.3358 * -14.95%*
-> Hmean     faults/cpu-21   187588.9077 (   0.00%)   171227.7179 *  -8.72%*
-> Hmean     faults/cpu-30   140875.7878 (   0.00%)   124120.3437 * -11.89%*
-> Hmean     faults/cpu-48   106175.5493 (   0.00%)    93073.1499 * -12.34%*
-> Hmean     faults/cpu-56    92585.2536 (   0.00%)    82837.4299 * -10.53%*
-> Hmean     faults/sec-1    470924.4946 (   0.00%)   472730.9937 *   0.38%*
-> Hmean     faults/sec-4   1714823.8198 (   0.00%)  1693226.7248 *  -1.26%*
-> Hmean     faults/sec-7   2801395.1898 (   0.00%)  2717561.9417 *  -2.99%*
-> Hmean     faults/sec-12  3934168.2690 (   0.00%)  3319710.7540 * -15.62%*
-> Hmean     faults/sec-21  3736832.4592 (   0.00%)  3444687.9145 *  -7.82%*
-> Hmean     faults/sec-30  3845187.2636 (   0.00%)  3403585.7064 * -11.48%*
-> Hmean     faults/sec-48  4712317.7461 (   0.00%)  4180658.4710 * -11.28%*
-> Hmean     faults/sec-56  4873233.9844 (   0.00%)  4423608.6568 *  -9.23%*
->
-> This is the time(1) output with the baseline:
-> 920.47user 7748.31system 18:30.85elapsed 780%CPU (0avgtext+0avgdata
-> 26385096maxresident)k
-> 140848inputs+19744outputs (66major+1583463207minor)pagefaults 0swaps
->
-> This is the time(1) output with your change:
-> 1025.73user 8618.74system 19:10.79elapsed 838%CPU (0avgtext+0avgdata
-> 26385116maxresident)k
-> 16584inputs+19512outputs (61major+1583468687minor)pagefaults 0swaps
->
-> Maybe it has something to do with NUMA? The system I'm running has 2 NUMA=
- nodes:
->
-
-hrmpf. final cheap stab I forgot to mention is that plausibly this is
-all about the adjacent cacheline prefetcher.
-
-google-fu temporarily fails me, but there was a one-liner to toggle
-that on Linux. Worst case you can flip it in the BIOS
-
-if that does not change anything, I'm going to grab a numa box of
-similar scale to poke around myself, but I don't have an ETA
-
-even so, do you have a handy one-liner to run the case with 56
-threads? *maybe* comparing instructions which generate cache misses
-before/after will explain what's up
-
-> $ lscpu
-> Architecture:             x86_64
->   CPU op-mode(s):         32-bit, 64-bit
->   Address sizes:          46 bits physical, 48 bits virtual
->   Byte Order:             Little Endian
-> CPU(s):                   56
->   On-line CPU(s) list:    0-55
-> Vendor ID:                GenuineIntel
->   Model name:             Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
->     CPU family:           6
->     Model:                79
->     Thread(s) per core:   2
->     Core(s) per socket:   14
->     Socket(s):            2
->     Stepping:             1
->     CPU max MHz:          3500.0000
->     CPU min MHz:          1200.0000
->     BogoMIPS:             5188.26
->     Flags:                fpu vme de pse tsc msr pae mce cx8 apic sep
-> mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht
-> tm pbe syscall nx pdpe1gb rdtscp lm constant_ts
->                           c arch_perfmon pebs bts rep_good nopl
-> xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor
-> ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm p
->                           cid dca sse4_1 sse4_2 x2apic movbe popcnt
-> tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch
-> cpuid_fault epb cat_l3 cdp_l3 pti intel_ppin ss
->                           bd ibrs ibpb stibp tpr_shadow flexpriority
-> ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms
-> invpcid rtm cqm rdt_a rdseed adx smap intel_pt xsave
->                           opt cqm_llc cqm_occup_llc cqm_mbm_total
-> cqm_mbm_local dtherm ida arat pln pts vnmi md_clear flush_l1d
-> Virtualization features:
->   Virtualization:         VT-x
-> Caches (sum of all):
->   L1d:                    896 KiB (28 instances)
->   L1i:                    896 KiB (28 instances)
->   L2:                     7 MiB (28 instances)
->   L3:                     70 MiB (2 instances)
-> NUMA:
->   NUMA node(s):           2
->   NUMA node0 CPU(s):      0-13,28-41
->   NUMA node1 CPU(s):      14-27,42-55
->
-> Any ideas?
->
->
->
->
->
->
->
->
-> >
-> > >
-> > > For example with zsh I got:
-> > > ./run-mmtests.sh --no-monitor --config configs/config-workload-pft-th=
-reads
-> > >
-> > > 39.35s user 445.45s system 390% cpu 124.04s (2:04.04) total
-> > >
-> > > I verified with offcputime-bpfcc -K that indeed there is a bunch of
-> > > pft going off cpu from down_read/down_write even at the modest scale
-> > > this was running in my case.
-> > >
-> > > >
-> > > > >
-> > > > > 1: https://lore.kernel.org/all/20230227173632.3292573-34-surenb@g=
-oogle.com/T/#u
-> > > > >
-> > > > > ---
-> > > > >  include/linux/mm.h       | 18 +++++++--------
-> > > > >  include/linux/mm_types.h | 10 ++++-----
-> > > > >  kernel/fork.c            | 47 ++++------------------------------=
-------
-> > > > >  mm/userfaultfd.c         |  6 ++---
-> > > > >  4 files changed, 19 insertions(+), 62 deletions(-)
-> > > > >
-> > > > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > > > index 43b40334e9b2..6d8b668d3deb 100644
-> > > > > --- a/include/linux/mm.h
-> > > > > +++ b/include/linux/mm.h
-> > > > > @@ -687,7 +687,7 @@ static inline bool vma_start_read(struct vm_a=
-rea_struct *vma)
-> > > > >         if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(vma->vm_=
-mm->mm_lock_seq))
-> > > > >                 return false;
-> > > > >
-> > > > > -       if (unlikely(down_read_trylock(&vma->vm_lock->lock) =3D=
-=3D 0))
-> > > > > +       if (unlikely(down_read_trylock(&vma->vm_lock) =3D=3D 0))
-> > > > >                 return false;
-> > > > >
-> > > > >         /*
-> > > > > @@ -702,7 +702,7 @@ static inline bool vma_start_read(struct vm_a=
-rea_struct *vma)
-> > > > >          * This pairs with RELEASE semantics in vma_end_write_all=
-().
-> > > > >          */
-> > > > >         if (unlikely(vma->vm_lock_seq =3D=3D smp_load_acquire(&vm=
-a->vm_mm->mm_lock_seq))) {
-> > > > > -               up_read(&vma->vm_lock->lock);
-> > > > > +               up_read(&vma->vm_lock);
-> > > > >                 return false;
-> > > > >         }
-> > > > >         return true;
-> > > > > @@ -711,7 +711,7 @@ static inline bool vma_start_read(struct vm_a=
-rea_struct *vma)
-> > > > >  static inline void vma_end_read(struct vm_area_struct *vma)
-> > > > >  {
-> > > > >         rcu_read_lock(); /* keeps vma alive till the end of up_re=
-ad */
-> > > > > -       up_read(&vma->vm_lock->lock);
-> > > > > +       up_read(&vma->vm_lock);
-> > > > >         rcu_read_unlock();
-> > > > >  }
-> > > > >
-> > > > > @@ -740,7 +740,7 @@ static inline void vma_start_write(struct vm_=
-area_struct *vma)
-> > > > >         if (__is_vma_write_locked(vma, &mm_lock_seq))
-> > > > >                 return;
-> > > > >
-> > > > > -       down_write(&vma->vm_lock->lock);
-> > > > > +       down_write(&vma->vm_lock);
-> > > > >         /*
-> > > > >          * We should use WRITE_ONCE() here because we can have co=
-ncurrent reads
-> > > > >          * from the early lockless pessimistic check in vma_start=
-_read().
-> > > > > @@ -748,7 +748,7 @@ static inline void vma_start_write(struct vm_=
-area_struct *vma)
-> > > > >          * we should use WRITE_ONCE() for cleanliness and to keep=
- KCSAN happy.
-> > > > >          */
-> > > > >         WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
-> > > > > -       up_write(&vma->vm_lock->lock);
-> > > > > +       up_write(&vma->vm_lock);
-> > > > >  }
-> > > > >
-> > > > >  static inline void vma_assert_write_locked(struct vm_area_struct=
- *vma)
-> > > > > @@ -760,7 +760,7 @@ static inline void vma_assert_write_locked(st=
-ruct vm_area_struct *vma)
-> > > > >
-> > > > >  static inline void vma_assert_locked(struct vm_area_struct *vma)
-> > > > >  {
-> > > > > -       if (!rwsem_is_locked(&vma->vm_lock->lock))
-> > > > > +       if (!rwsem_is_locked(&vma->vm_lock))
-> > > > >                 vma_assert_write_locked(vma);
-> > > > >  }
-> > > > >
-> > > > > @@ -827,10 +827,6 @@ static inline void assert_fault_locked(struc=
-t vm_fault *vmf)
-> > > > >
-> > > > >  extern const struct vm_operations_struct vma_dummy_vm_ops;
-> > > > >
-> > > > > -/*
-> > > > > - * WARNING: vma_init does not initialize vma->vm_lock.
-> > > > > - * Use vm_area_alloc()/vm_area_free() if vma needs locking.
-> > > > > - */
-> > > > >  static inline void vma_init(struct vm_area_struct *vma, struct m=
-m_struct *mm)
-> > > > >  {
-> > > > >         memset(vma, 0, sizeof(*vma));
-> > > > > @@ -839,6 +835,8 @@ static inline void vma_init(struct vm_area_st=
-ruct *vma, struct mm_struct *mm)
-> > > > >         INIT_LIST_HEAD(&vma->anon_vma_chain);
-> > > > >         vma_mark_detached(vma, false);
-> > > > >         vma_numab_state_init(vma);
-> > > > > +       init_rwsem(&vma->vm_lock);
-> > > > > +       vma->vm_lock_seq =3D -1;
-> > > > >  }
-> > > > >
-> > > > >  /* Use when VMA is not part of the VMA tree and needs no locking=
- */
-> > > > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > > > > index 003619fab20e..caffdb4eeb94 100644
-> > > > > --- a/include/linux/mm_types.h
-> > > > > +++ b/include/linux/mm_types.h
-> > > > > @@ -615,10 +615,6 @@ static inline struct anon_vma_name *anon_vma=
-_name_alloc(const char *name)
-> > > > >  }
-> > > > >  #endif
-> > > > >
-> > > > > -struct vma_lock {
-> > > > > -       struct rw_semaphore lock;
-> > > > > -};
-> > > > > -
-> > > > >  struct vma_numab_state {
-> > > > >         /*
-> > > > >          * Initialised as time in 'jiffies' after which VMA
-> > > > > @@ -716,8 +712,7 @@ struct vm_area_struct {
-> > > > >          * slowpath.
-> > > > >          */
-> > > > >         int vm_lock_seq;
-> > > > > -       /* Unstable RCU readers are allowed to read this. */
-> > > > > -       struct vma_lock *vm_lock;
-> > > > > +       void *vm_dummy;
-> > > > >  #endif
-> > > > >
-> > > > >         /*
-> > > > > @@ -770,6 +765,9 @@ struct vm_area_struct {
-> > > > >         struct vma_numab_state *numab_state;    /* NUMA Balancing=
- state */
-> > > > >  #endif
-> > > > >         struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-> > > > > +#ifdef CONFIG_PER_VMA_LOCK
-> > > > > +       struct rw_semaphore vm_lock ____cacheline_aligned_in_smp;
-> > > > > +#endif
-> > > > >  } __randomize_layout;
-> > > > >
-> > > > >  #ifdef CONFIG_NUMA
-> > > > > diff --git a/kernel/fork.c b/kernel/fork.c
-> > > > > index 92bfe56c9fed..eab04a24d5f1 100644
-> > > > > --- a/kernel/fork.c
-> > > > > +++ b/kernel/fork.c
-> > > > > @@ -436,35 +436,6 @@ static struct kmem_cache *vm_area_cachep;
-> > > > >  /* SLAB cache for mm_struct structures (tsk->mm) */
-> > > > >  static struct kmem_cache *mm_cachep;
-> > > > >
-> > > > > -#ifdef CONFIG_PER_VMA_LOCK
-> > > > > -
-> > > > > -/* SLAB cache for vm_area_struct.lock */
-> > > > > -static struct kmem_cache *vma_lock_cachep;
-> > > > > -
-> > > > > -static bool vma_lock_alloc(struct vm_area_struct *vma)
-> > > > > -{
-> > > > > -       vma->vm_lock =3D kmem_cache_alloc(vma_lock_cachep, GFP_KE=
-RNEL);
-> > > > > -       if (!vma->vm_lock)
-> > > > > -               return false;
-> > > > > -
-> > > > > -       init_rwsem(&vma->vm_lock->lock);
-> > > > > -       vma->vm_lock_seq =3D -1;
-> > > > > -
-> > > > > -       return true;
-> > > > > -}
-> > > > > -
-> > > > > -static inline void vma_lock_free(struct vm_area_struct *vma)
-> > > > > -{
-> > > > > -       kmem_cache_free(vma_lock_cachep, vma->vm_lock);
-> > > > > -}
-> > > > > -
-> > > > > -#else /* CONFIG_PER_VMA_LOCK */
-> > > > > -
-> > > > > -static inline bool vma_lock_alloc(struct vm_area_struct *vma) { =
-return true; }
-> > > > > -static inline void vma_lock_free(struct vm_area_struct *vma) {}
-> > > > > -
-> > > > > -#endif /* CONFIG_PER_VMA_LOCK */
-> > > > > -
-> > > > >  struct vm_area_struct *vm_area_alloc(struct mm_struct *mm)
-> > > > >  {
-> > > > >         struct vm_area_struct *vma;
-> > > > > @@ -474,10 +445,6 @@ struct vm_area_struct *vm_area_alloc(struct =
-mm_struct *mm)
-> > > > >                 return NULL;
-> > > > >
-> > > > >         vma_init(vma, mm);
-> > > > > -       if (!vma_lock_alloc(vma)) {
-> > > > > -               kmem_cache_free(vm_area_cachep, vma);
-> > > > > -               return NULL;
-> > > > > -       }
-> > > > >
-> > > > >         return vma;
-> > > > >  }
-> > > > > @@ -496,10 +463,8 @@ struct vm_area_struct *vm_area_dup(struct vm=
-_area_struct *orig)
-> > > > >          * will be reinitialized.
-> > > > >          */
-> > > > >         data_race(memcpy(new, orig, sizeof(*new)));
-> > > > > -       if (!vma_lock_alloc(new)) {
-> > > > > -               kmem_cache_free(vm_area_cachep, new);
-> > > > > -               return NULL;
-> > > > > -       }
-> > > > > +       init_rwsem(&new->vm_lock);
-> > > > > +       new->vm_lock_seq =3D -1;
-> > > > >         INIT_LIST_HEAD(&new->anon_vma_chain);
-> > > > >         vma_numab_state_init(new);
-> > > > >         dup_anon_vma_name(orig, new);
-> > > > > @@ -511,7 +476,6 @@ void __vm_area_free(struct vm_area_struct *vm=
-a)
-> > > > >  {
-> > > > >         vma_numab_state_free(vma);
-> > > > >         free_anon_vma_name(vma);
-> > > > > -       vma_lock_free(vma);
-> > > > >         kmem_cache_free(vm_area_cachep, vma);
-> > > > >  }
-> > > > >
-> > > > > @@ -522,7 +486,7 @@ static void vm_area_free_rcu_cb(struct rcu_he=
-ad *head)
-> > > > >                                                   vm_rcu);
-> > > > >
-> > > > >         /* The vma should not be locked while being destroyed. */
-> > > > > -       VM_BUG_ON_VMA(rwsem_is_locked(&vma->vm_lock->lock), vma);
-> > > > > +       VM_BUG_ON_VMA(rwsem_is_locked(&vma->vm_lock), vma);
-> > > > >         __vm_area_free(vma);
-> > > > >  }
-> > > > >  #endif
-> > > > > @@ -3192,10 +3156,7 @@ void __init proc_caches_init(void)
-> > > > >                         SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUN=
-T,
-> > > > >                         NULL);
-> > > > >
-> > > > > -       vm_area_cachep =3D KMEM_CACHE(vm_area_struct, SLAB_PANIC|=
-SLAB_ACCOUNT);
-> > > > > -#ifdef CONFIG_PER_VMA_LOCK
-> > > > > -       vma_lock_cachep =3D KMEM_CACHE(vma_lock, SLAB_PANIC|SLAB_=
-ACCOUNT);
-> > > > > -#endif
-> > > > > +       vm_area_cachep =3D KMEM_CACHE(vm_area_struct, SLAB_PANIC|=
-SLAB_ACCOUNT|SLAB_HWCACHE_ALIGN);
-> > > > >         mmap_init();
-> > > > >         nsproxy_cache_init();
-> > > > >  }
-> > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > > index 3b7715ecf292..e95ecb2063d2 100644
-> > > > > --- a/mm/userfaultfd.c
-> > > > > +++ b/mm/userfaultfd.c
-> > > > > @@ -92,7 +92,7 @@ static struct vm_area_struct *uffd_lock_vma(str=
-uct mm_struct *mm,
-> > > > >                  * mmap_lock, which guarantees that nobody can lo=
-ck the
-> > > > >                  * vma for write (vma_start_write()) under us.
-> > > > >                  */
-> > > > > -               down_read(&vma->vm_lock->lock);
-> > > > > +               down_read(&vma->vm_lock);
-> > > > >         }
-> > > > >
-> > > > >         mmap_read_unlock(mm);
-> > > > > @@ -1468,9 +1468,9 @@ static int uffd_move_lock(struct mm_struct =
-*mm,
-> > > > >                  * See comment in uffd_lock_vma() as to why not u=
-sing
-> > > > >                  * vma_start_read() here.
-> > > > >                  */
-> > > > > -               down_read(&(*dst_vmap)->vm_lock->lock);
-> > > > > +               down_read(&(*dst_vmap)->vm_lock);
-> > > > >                 if (*dst_vmap !=3D *src_vmap)
-> > > > > -                       down_read_nested(&(*src_vmap)->vm_lock->l=
-ock,
-> > > > > +                       down_read_nested(&(*src_vmap)->vm_lock,
-> > > > >                                          SINGLE_DEPTH_NESTING);
-> > > > >         }
-> > > > >         mmap_read_unlock(mm);
-> > > > > --
-> > > > > 2.43.0
-> > > > >
-> > >
-> > >
-> > >
-> > > --
-> > > Mateusz Guzik <mjguzik gmail.com>
-
-
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+SGksIFNodWlqaW5nOg0KDQpPbiBUaHUsIDIwMjQtMDgtMDEgYXQgMTY6MTEgKzA4MDAsIFNodWlq
+aW5nIExpIHdyb3RlOg0KPiBBZGRpbmcgdGhlIHBlci1mcmFtZSBscCBmdW5jdGlvbiBvZiBtdDgx
+ODgsIHdoaWNoIGNhbiBrZWVwIEhGUCBpbiBIUyBhbmQNCj4gcmVkdWNlIHRoZSB0aW1lIHJlcXVp
+cmVkIGZvciBlYWNoIGxpbmUgdG8gZW50ZXIgYW5kIGV4aXQgbG93IHBvd2VyLg0KPiBQZXIgRnJh
+bWUgTFA6DQo+ICAgfDwtLS0tLS0tLS0tT25lIEFjdGl2ZSBGcmFtZS0tLS0tLS0tPnwNCj4gLS1f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXy0tLS1fX19fX19fX19fX19fX19f
+X19fDQo+ICAgXkhTQStIQlBeXlJHQl5eSEZQXl5IU0ErSEJQXl5SR0JeXkhGUF4gICAgXkhTQStI
+QlBeXlJHQl5eSEZQXg0KPiANCj4gUGVyIExpbmUgTFA6DQo+ICAgfDwtLS0tLS0tLS0tLS0tLS1P
+bmUgQWN0aXZlIEZyYW1lLS0tLS0tLS0tLS0+fA0KPiAtLV9fX19fX19fX19fX19fLS1fX19fX19f
+X19fX19fXy0tX19fX19fX19fX19fX18tLS0tX19fX19fX19fX19fX18NCj4gICBeSFNBK0hCUF5e
+UkdCXiAgXkhTQStIQlBeXlJHQl4gIF5IU0ErSEJQXl5SR0JeICAgIF5IU0ErSEJQXl5SR0JeDQo+
+IA0KPiBTaWduZWQtb2ZmLWJ5OiBTaHVpamluZyBMaSA8c2h1aWppbmcubGlAbWVkaWF0ZWsuY29t
+Pg0KPiAtLS0NCg0KW3NuaXBdDQoNCj4gKw0KPiAgc3RhdGljIHZvaWQgbXRrX2RzaV9jb25maWdf
+dmRvX3RpbWluZyhzdHJ1Y3QgbXRrX2RzaSAqZHNpKQ0KPiAgew0KPiAgCXUzMiBob3Jpem9udGFs
+X3N5bmNfYWN0aXZlX2J5dGU7DQo+IEBAIC00NDksNTcgKzU2MCw2MSBAQCBzdGF0aWMgdm9pZCBt
+dGtfZHNpX2NvbmZpZ192ZG9fdGltaW5nKHN0cnVjdCBtdGtfZHNpICpkc2kpDQo+ICAJd3JpdGVs
+KHZtLT52ZnJvbnRfcG9yY2gsIGRzaS0+cmVncyArIERTSV9WRlBfTkwpOw0KPiAgCXdyaXRlbCh2
+bS0+dmFjdGl2ZSwgZHNpLT5yZWdzICsgRFNJX1ZBQ1RfTkwpOw0KPiAgDQo+IC0JaWYgKGRzaS0+
+ZHJpdmVyX2RhdGEtPmhhc19zaXplX2N0bCkNCj4gLQkJd3JpdGVsKEZJRUxEX1BSRVAoRFNJX0hF
+SUdIVCwgdm0tPnZhY3RpdmUpIHwNCj4gLQkJICAgICAgIEZJRUxEX1BSRVAoRFNJX1dJRFRILCB2
+bS0+aGFjdGl2ZSksDQo+IC0JCSAgICAgICBkc2ktPnJlZ3MgKyBEU0lfU0laRV9DT04pOw0KDQpJ
+ZiBzdXBwb3J0X3Blcl9mcmFtZV9scCBpcyB0cnVlLCB0aGlzIGNvZGUgd291bGQgbm90IGJlIGV4
+ZWN1dGUsDQpidXQgaGFzX3NpemVfY3RsIGlzIHRydWUgaW4gbXQ4MTg4Lg0KRG9lcyB0aGlzIG1l
+YW4gd2hlbiBzdXBwb3J0X3Blcl9mcmFtZV9scCBpcyB0cnVlLCBoYXNfc2l6ZV9jdGwgc2hvdWxk
+IGJlIGZhbHNlPw0KDQpSZWdhcmRzLA0KQ0sNCg0KPiAtDQo+IC0JaG9yaXpvbnRhbF9zeW5jX2Fj
+dGl2ZV9ieXRlID0gKHZtLT5oc3luY19sZW4gKiBkc2lfdG1wX2J1Zl9icHAgLSAxMCk7DQo+IC0N
+Cj4gLQlpZiAoZHNpLT5tb2RlX2ZsYWdzICYgTUlQSV9EU0lfTU9ERV9WSURFT19TWU5DX1BVTFNF
+KQ0KPiAtCQlob3Jpem9udGFsX2JhY2twb3JjaF9ieXRlID0gdm0tPmhiYWNrX3BvcmNoICogZHNp
+X3RtcF9idWZfYnBwIC0gMTA7DQo+IC0JZWxzZQ0KPiAtCQlob3Jpem9udGFsX2JhY2twb3JjaF9i
+eXRlID0gKHZtLT5oYmFja19wb3JjaCArIHZtLT5oc3luY19sZW4pICoNCj4gLQkJCQkJICAgIGRz
+aV90bXBfYnVmX2JwcCAtIDEwOw0KPiAtDQo+IC0JZGF0YV9waHlfY3ljbGVzID0gdGltaW5nLT5s
+cHggKyB0aW1pbmctPmRhX2hzX3ByZXBhcmUgKw0KPiAtCQkJICB0aW1pbmctPmRhX2hzX3plcm8g
+KyB0aW1pbmctPmRhX2hzX2V4aXQgKyAzOw0KPiAtDQo+IC0JZGVsdGEgPSBkc2ktPm1vZGVfZmxh
+Z3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPX0JVUlNUID8gMTggOiAxMjsNCj4gLQlkZWx0YSArPSBk
+c2ktPm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX05PX0VPVF9QQUNLRVQgPyAwIDogMjsNCj4g
+KwlpZiAoZHNpLT5kcml2ZXJfZGF0YS0+c3VwcG9ydF9wZXJfZnJhbWVfbHApDQo+ICsJCW10a19k
+c2lfY29uZmlnX3Zkb190aW1pbmdfcGVyX2ZyYW1lX2xwKGRzaSk7DQo+ICsJZWxzZSB7DQo+ICsJ
+CWlmIChkc2ktPmRyaXZlcl9kYXRhLT5oYXNfc2l6ZV9jdGwpDQo+ICsJCQl3cml0ZWwoRklFTERf
+UFJFUChEU0lfSEVJR0hULCB2bS0+dmFjdGl2ZSkgfA0KPiArCQkJCUZJRUxEX1BSRVAoRFNJX1dJ
+RFRILCB2bS0+aGFjdGl2ZSksDQo+ICsJCQkJZHNpLT5yZWdzICsgRFNJX1NJWkVfQ09OKTsNCj4g
+IA0KPiAtCWhvcml6b250YWxfZnJvbnRwb3JjaF9ieXRlID0gdm0tPmhmcm9udF9wb3JjaCAqIGRz
+aV90bXBfYnVmX2JwcDsNCj4gLQlob3Jpem9udGFsX2Zyb250X2JhY2tfYnl0ZSA9IGhvcml6b250
+YWxfZnJvbnRwb3JjaF9ieXRlICsgaG9yaXpvbnRhbF9iYWNrcG9yY2hfYnl0ZTsNCj4gLQlkYXRh
+X3BoeV9jeWNsZXNfYnl0ZSA9IGRhdGFfcGh5X2N5Y2xlcyAqIGRzaS0+bGFuZXMgKyBkZWx0YTsN
+Cj4gKwkJaG9yaXpvbnRhbF9zeW5jX2FjdGl2ZV9ieXRlID0gKHZtLT5oc3luY19sZW4gKiBkc2lf
+dG1wX2J1Zl9icHAgLSAxMCk7DQo+ICANCj4gLQlpZiAoaG9yaXpvbnRhbF9mcm9udF9iYWNrX2J5
+dGUgPiBkYXRhX3BoeV9jeWNsZXNfYnl0ZSkgew0KPiAtCQlob3Jpem9udGFsX2Zyb250cG9yY2hf
+Ynl0ZSAtPSBkYXRhX3BoeV9jeWNsZXNfYnl0ZSAqDQo+IC0JCQkJCSAgICAgIGhvcml6b250YWxf
+ZnJvbnRwb3JjaF9ieXRlIC8NCj4gLQkJCQkJICAgICAgaG9yaXpvbnRhbF9mcm9udF9iYWNrX2J5
+dGU7DQo+IC0NCj4gLQkJaG9yaXpvbnRhbF9iYWNrcG9yY2hfYnl0ZSAtPSBkYXRhX3BoeV9jeWNs
+ZXNfYnl0ZSAqDQo+IC0JCQkJCSAgICAgaG9yaXpvbnRhbF9iYWNrcG9yY2hfYnl0ZSAvDQo+IC0J
+CQkJCSAgICAgaG9yaXpvbnRhbF9mcm9udF9iYWNrX2J5dGU7DQo+IC0JfSBlbHNlIHsNCj4gLQkJ
+RFJNX1dBUk4oIkhGUCArIEhCUCBsZXNzIHRoYW4gZC1waHksIEZQUyB3aWxsIHVuZGVyIDYwSHpc
+biIpOw0KPiAtCX0NCj4gLQ0KPiAtCWlmICgoZHNpLT5tb2RlX2ZsYWdzICYgTUlQSV9EU0lfSFNf
+UEtUX0VORF9BTElHTkVEKSAmJg0KPiAtCSAgICAoZHNpLT5sYW5lcyA9PSA0KSkgew0KPiAtCQlo
+b3Jpem9udGFsX3N5bmNfYWN0aXZlX2J5dGUgPQ0KPiAtCQkJcm91bmR1cChob3Jpem9udGFsX3N5
+bmNfYWN0aXZlX2J5dGUsIGRzaS0+bGFuZXMpIC0gMjsNCj4gLQkJaG9yaXpvbnRhbF9mcm9udHBv
+cmNoX2J5dGUgPQ0KPiAtCQkJcm91bmR1cChob3Jpem9udGFsX2Zyb250cG9yY2hfYnl0ZSwgZHNp
+LT5sYW5lcykgLSAyOw0KPiAtCQlob3Jpem9udGFsX2JhY2twb3JjaF9ieXRlID0NCj4gLQkJCXJv
+dW5kdXAoaG9yaXpvbnRhbF9iYWNrcG9yY2hfYnl0ZSwgZHNpLT5sYW5lcykgLSAyOw0KPiAtCQlo
+b3Jpem9udGFsX2JhY2twb3JjaF9ieXRlIC09DQo+IC0JCQkodm0tPmhhY3RpdmUgKiBkc2lfdG1w
+X2J1Zl9icHAgKyAyKSAlIGRzaS0+bGFuZXM7DQo+ICsJCWlmIChkc2ktPm1vZGVfZmxhZ3MgJiBN
+SVBJX0RTSV9NT0RFX1ZJREVPX1NZTkNfUFVMU0UpDQo+ICsJCQlob3Jpem9udGFsX2JhY2twb3Jj
+aF9ieXRlID0gdm0tPmhiYWNrX3BvcmNoICogZHNpX3RtcF9idWZfYnBwIC0gMTA7DQo+ICsJCWVs
+c2UNCj4gKwkJCWhvcml6b250YWxfYmFja3BvcmNoX2J5dGUgPSAodm0tPmhiYWNrX3BvcmNoICsg
+dm0tPmhzeW5jX2xlbikgKg0KPiArCQkJCQkJCWRzaV90bXBfYnVmX2JwcCAtIDEwOw0KPiArDQo+
+ICsJCWRhdGFfcGh5X2N5Y2xlcyA9IHRpbWluZy0+bHB4ICsgdGltaW5nLT5kYV9oc19wcmVwYXJl
+ICsNCj4gKwkJCQl0aW1pbmctPmRhX2hzX3plcm8gKyB0aW1pbmctPmRhX2hzX2V4aXQgKyAzOw0K
+PiArDQo+ICsJCWRlbHRhID0gZHNpLT5tb2RlX2ZsYWdzICYgTUlQSV9EU0lfTU9ERV9WSURFT19C
+VVJTVCA/IDE4IDogMTI7DQo+ICsJCWRlbHRhICs9IGRzaS0+bW9kZV9mbGFncyAmIE1JUElfRFNJ
+X01PREVfTk9fRU9UX1BBQ0tFVCA/IDAgOiAyOw0KPiArDQo+ICsJCWhvcml6b250YWxfZnJvbnRw
+b3JjaF9ieXRlID0gdm0tPmhmcm9udF9wb3JjaCAqIGRzaV90bXBfYnVmX2JwcDsNCj4gKwkJaG9y
+aXpvbnRhbF9mcm9udF9iYWNrX2J5dGUgPSBob3Jpem9udGFsX2Zyb250cG9yY2hfYnl0ZSArIGhv
+cml6b250YWxfYmFja3BvcmNoX2J5dGU7DQo+ICsJCWRhdGFfcGh5X2N5Y2xlc19ieXRlID0gZGF0
+YV9waHlfY3ljbGVzICogZHNpLT5sYW5lcyArIGRlbHRhOw0KPiArDQo+ICsJCWlmIChob3Jpem9u
+dGFsX2Zyb250X2JhY2tfYnl0ZSA+IGRhdGFfcGh5X2N5Y2xlc19ieXRlKSB7DQo+ICsJCQlob3Jp
+em9udGFsX2Zyb250cG9yY2hfYnl0ZSAtPSBkYXRhX3BoeV9jeWNsZXNfYnl0ZSAqDQo+ICsJCQkJ
+CQkJaG9yaXpvbnRhbF9mcm9udHBvcmNoX2J5dGUgLw0KPiArCQkJCQkJCWhvcml6b250YWxfZnJv
+bnRfYmFja19ieXRlOw0KPiArDQo+ICsJCQlob3Jpem9udGFsX2JhY2twb3JjaF9ieXRlIC09IGRh
+dGFfcGh5X2N5Y2xlc19ieXRlICoNCj4gKwkJCQkJCQlob3Jpem9udGFsX2JhY2twb3JjaF9ieXRl
+IC8NCj4gKwkJCQkJCQlob3Jpem9udGFsX2Zyb250X2JhY2tfYnl0ZTsNCj4gKwkJfSBlbHNlIHsN
+Cj4gKwkJCURSTV9XQVJOKCJIRlAgKyBIQlAgbGVzcyB0aGFuIGQtcGh5LCBGUFMgd2lsbCB1bmRl
+ciA2MEh6XG4iKTsNCj4gKwkJfQ0KPiArDQo+ICsJCWlmICgoZHNpLT5tb2RlX2ZsYWdzICYgTUlQ
+SV9EU0lfSFNfUEtUX0VORF9BTElHTkVEKSAmJg0KPiArCQkJKGRzaS0+bGFuZXMgPT0gNCkpIHsN
+Cj4gKwkJCWhvcml6b250YWxfc3luY19hY3RpdmVfYnl0ZSA9DQo+ICsJCQkJcm91bmR1cChob3Jp
+em9udGFsX3N5bmNfYWN0aXZlX2J5dGUsIGRzaS0+bGFuZXMpIC0gMjsNCj4gKwkJCWhvcml6b250
+YWxfZnJvbnRwb3JjaF9ieXRlID0NCj4gKwkJCQlyb3VuZHVwKGhvcml6b250YWxfZnJvbnRwb3Jj
+aF9ieXRlLCBkc2ktPmxhbmVzKSAtIDI7DQo+ICsJCQlob3Jpem9udGFsX2JhY2twb3JjaF9ieXRl
+ID0NCj4gKwkJCQlyb3VuZHVwKGhvcml6b250YWxfYmFja3BvcmNoX2J5dGUsIGRzaS0+bGFuZXMp
+IC0gMjsNCj4gKwkJCWhvcml6b250YWxfYmFja3BvcmNoX2J5dGUgLT0NCj4gKwkJCQkodm0tPmhh
+Y3RpdmUgKiBkc2lfdG1wX2J1Zl9icHAgKyAyKSAlIGRzaS0+bGFuZXM7DQo+ICsJCX0NCj4gKw0K
+PiArCQl3cml0ZWwoaG9yaXpvbnRhbF9zeW5jX2FjdGl2ZV9ieXRlLCBkc2ktPnJlZ3MgKyBEU0lf
+SFNBX1dDKTsNCj4gKwkJd3JpdGVsKGhvcml6b250YWxfYmFja3BvcmNoX2J5dGUsIGRzaS0+cmVn
+cyArIERTSV9IQlBfV0MpOw0KPiArCQl3cml0ZWwoaG9yaXpvbnRhbF9mcm9udHBvcmNoX2J5dGUs
+IGRzaS0+cmVncyArIERTSV9IRlBfV0MpOw0KPiAgCX0NCj4gIA0KPiAtCXdyaXRlbChob3Jpem9u
+dGFsX3N5bmNfYWN0aXZlX2J5dGUsIGRzaS0+cmVncyArIERTSV9IU0FfV0MpOw0KPiAtCXdyaXRl
+bChob3Jpem9udGFsX2JhY2twb3JjaF9ieXRlLCBkc2ktPnJlZ3MgKyBEU0lfSEJQX1dDKTsNCj4g
+LQl3cml0ZWwoaG9yaXpvbnRhbF9mcm9udHBvcmNoX2J5dGUsIGRzaS0+cmVncyArIERTSV9IRlBf
+V0MpOw0KPiAtDQo+ICAJbXRrX2RzaV9wc19jb250cm9sKGRzaSwgZmFsc2UpOw0KPiAgfQ0KPiAg
+DQo+IEBAIC0xMTk3LDYgKzEzMTIsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG10a19kc2lfZHJp
+dmVyX2RhdGEgbXQ4MTg4X2RzaV9kcml2ZXJfZGF0YSA9IHsNCj4gIAkuaGFzX3NoYWRvd19jdGwg
+PSB0cnVlLA0KPiAgCS5oYXNfc2l6ZV9jdGwgPSB0cnVlLA0KPiAgCS5jbWRxX2xvbmdfcGFja2V0
+X2N0bCA9IHRydWUsDQo+ICsJLnN1cHBvcnRfcGVyX2ZyYW1lX2xwID0gdHJ1ZSwNCj4gIH07DQo+
+ICANCg==
 
