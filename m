@@ -1,143 +1,155 @@
-Return-Path: <linux-kernel+bounces-281054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F5B94D271
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:48:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21E894D275
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF881F24BDE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:48:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CC2A1C20F0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDFD196D9D;
-	Fri,  9 Aug 2024 14:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900B4197512;
+	Fri,  9 Aug 2024 14:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dBZkVzJQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eZbR59GZ"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xGRZ2EY8"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB62213FFC
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215E81CF83
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723214885; cv=none; b=sHiB5qvdf2hR61q3II0gHGYM4ULP4P0OwHLpdf0+AkjvgmWzRYxGrN+gEDIwe0yCuIcQUobpzhtyLxDq84fcZrLxYXvy/LQEpkWKAzRjO46oR87P/QZ254h1siD6kMaybi5RDBNOoCk935V4HOhb1shHq4OubeH4qXg3jW95Q1I=
+	t=1723214922; cv=none; b=TCDh1ixyunRgh3RPiwzB2Y+M2mZ+Rjsz4ZinfAqTM1Wm5zC5sNA5udW8F6Jz9dXoI/HtjAeERm7Yww/cTMjx8rZoo3k+48X1AIBHKiduV4MkxoqVFkM31YXv+N4BZoSCqK+Q40Oiq1fv5C/B5qowrBTaKn/8VcilOPhzc5dWEI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723214885; c=relaxed/simple;
-	bh=wwHqCQ7oXb3dk7d6B4VaQj3pbfd2OP93/Zw0s+uKaoM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=hQutHackDG0F1nkK6lC6YFOyZ8xj8Df7BXvtgf4PxqxZOodOfq9shKtuHyfOWR5htClW61iZWCIiqz5tb+5LZYe31lmpCjrfSEFFuJxTK7tqx95n5AGi0VkKO/G+T991nCu+9Re6xlDz5RWINfnBqFc/BrMk8XFYzlzd+YXou1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dBZkVzJQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eZbR59GZ; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 130E0138D8D0;
-	Fri,  9 Aug 2024 10:48:02 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Fri, 09 Aug 2024 10:48:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723214882;
-	 x=1723301282; bh=5ni6AdfPBznvU83xL6paslqlLx67PEUkh/hkcnAU01Y=; b=
-	dBZkVzJQBZpNLv87oZ4kg0i7Gbnu513FzxSbNNGScuNPOER5Godd/m5TN7gADraA
-	xTXnbcnRhutjyzRXIqJJyGcUoT+pUZMkkGWFn8GDwAv4QLUtK6flXLI6SPZFpQnj
-	BV6/4rz6sCeA58N1Xw6abneISLU0QCm3L3xZAK6S4N8iJ+DfVQVSX3OQHxU5W0+J
-	nnB2exbPNSbOwuKyHDY15FnTsTyUNq9qvLVQ2ZR8T0gwchfdGGKJCPNAGXHmlxaL
-	3BgVRUxFTAH5cKZF524JdGo/qV10D6P2pwuiL8jijJuH7vUWpR9cHmXfTXG8UeTq
-	jO9biyU2IBzuneuM3sIysw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723214882; x=
-	1723301282; bh=5ni6AdfPBznvU83xL6paslqlLx67PEUkh/hkcnAU01Y=; b=e
-	ZbR59GZJPbhsjM5XATcWATySFiePqBoPMkMIiq9T+DUcLEpzX/yXKnrzCerZzK7q
-	lRXsB69sJwxP/F/bmqmaqybniLM+4uYI/USDwpWEW+uyUJD53yZhp3bhqaSvE2P3
-	98bklOl0UzfWsKXq9eaKPsOTo107Jvl/Sk2jSWPH/LOGsjvorUQdAczs9OUqB4Yt
-	BFDqXEMJNJ0IRjLX2BPDVYfxXpdB48qkolaRou+N+F2yHdSidHvRsTVfAUH8UW7m
-	ckRHPbv91Tv3CzHk81YlzDzLJTUTGOq4sCGp/UoPGby1w+4cBnMA8LLmipMDL6NN
-	HQwR71SMY7vFiUt61uztw==
-X-ME-Sender: <xms:ISy2Zuuq7UjrBJs5nQgcNrrX780Mj-lAg9AQFJLCIpUReSB-pXbsQg>
-    <xme:ISy2ZjcEWzfXU3OQXRZwBE4uHlhcwQKUSr4PsfjmUY6uVZ13udgFHp9WKG5AgjLdd
-    R2tK_tXT0WEo190QL0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleeggdejlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeek
-    leffjeetvedvgefhhfeihfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhn
-    uggsrdguvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheprhhm
-    khdokhgvrhhnvghlsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepmhgrih
-    hlvdhhghhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhiuhihuhhnthgrohduvdes
-    hhhurgifvghirdgtohhmpdhrtghpthhtohepmhgrshgrhhhirhhohieskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhg
-    pdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrggu
-    vggrugdrohhrghdprhgtphhtthhopegvrhhitgdruggvvhholhguvghrsehorhgrtghlvg
-    drtghomh
-X-ME-Proxy: <xmx:ISy2ZpyNnuMVxP1_hnXpe8GgX3RcWPG5RMzOzLm7EAPM9k2Dw3QSxw>
-    <xmx:ISy2ZpPfb3b5M_WaSCZi2D29YhkB7Zy2RDfw2OtcPNvNxe0TElVbDg>
-    <xmx:ISy2Zu8HSMId--mGSKJNQUAg7TjDDWH_IEgV0NG979MXVyNY2jFEDA>
-    <xmx:ISy2ZhW3BoOcMB5BGQABSc9ftDAf2O-c0ju_zYc3O8KW8FmMoLa5UQ>
-    <xmx:Iiy2Zv1zDK0EQ3GWwFgFgr1ZfdCde7chkhvl8KfLeS1K-K_Lria8Nj1p>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5EEE4B6008D; Fri,  9 Aug 2024 10:48:01 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723214922; c=relaxed/simple;
+	bh=4I5b2H9NUEiAhmrSpLhpqMq35zTGGlKoTm2KVgYDd8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NaC0RZBpgGMHSEnxSeDB70zLdlaToznCXAqucNH3RpUtR8MZiFJ1W9EWzEHMfM0Sub3eCQZOIBTZ9gimZPLM/MI1hqY0PpFk0G6QE7k/5tFvfFYj9S2zoScQThAvkb4BfnYWTUQ1Z0IyUuhwhay1Z/rk10M/sA3fAHC1Feg6rko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xGRZ2EY8; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a1f9bc80e3so840237a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 07:48:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723214919; x=1723819719; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tFtgPj7cDJPPMnEzJqYuz4oTx2v5U6jmL1KNLX38x4Q=;
+        b=xGRZ2EY84cWKdcwGaBmL4Do9kjrLYeq3e3nNsKqv4TFpGAiy+K8u4RCVWzlD170hOy
+         KFZh6VFfBBfqLNNSYoSPswFKt+ieVqPLhOOCXc3IevlUD/ervn+hVOKrTfNZOpkwoq9p
+         tyWTQuMovkhxYlOaciC31JlXsFz65Q1H6GCKHfidhiCPE7RGG5zOqKNwtxXgckquJ7W5
+         IcbTF02mI0Wx+JEsVaFfWhQ7iYnq36eh+s1g7c3xSX+c1BCODJS/2q2drZCmJeSCadxo
+         cRsWAmc4xJXi/jsJ7KQy0Z4UGi22ja0luL2nCzQlA36PwaK9ZOslp3gYy34U2a4j89Lx
+         o3zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723214919; x=1723819719;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tFtgPj7cDJPPMnEzJqYuz4oTx2v5U6jmL1KNLX38x4Q=;
+        b=fl8H6jeA3eCHrS+ZqW7HDzsa0CvoqinAUbRyDs2+YGSAVTMApC/OwHNwE3995rDXdb
+         LTZAXWf7jMwTRIS+fXp3Jv2Oriy7m+PX8hhqvq2dC1db4NXiZOx1iUqEtrEFvGIxtykG
+         M0XJA3IKzalR4on2VhCRGftyO+0r0yHqUSh4za/sLsR1N18R37FpVzK7TQLZGRLGhkuq
+         +D6Uy9lBf95xO4TbkfX2bXttmkfq6lJVGqm2Go9d8TLOxN3Sp5CtKw8synlQ59M29gLu
+         8iamJplk7UYFZziZJ/8jOhCKY80PUsogPt4/rVHxKI54b0Ta3BFgrKkaKU4iPKPLo3gG
+         o2qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaGhOmmameEI+qrgNSrSB6THsIVfPwnmCpdp5B/STLC4xnZu2rThlOK7me7Sict8kOsW2BmH98yQfEqtkt4G0WRuC/C7bPxynzvISm
+X-Gm-Message-State: AOJu0YyhbRB0lfk50LJS2okkDNiN6OIJbVQh0mpwUAM9CC51V6VYmGmb
+	tn8g1x1nLvw1YdQMdweYA2AUX61kRWLG4kYoNV2rRerV+jf11qxCByMRv//2cwk=
+X-Google-Smtp-Source: AGHT+IFBY2Fa09LrgoQHpcmAJetlamh86kOIIRg78Yt85HeAsUAmRa90xiVBDSWmTBmcEOH2cLKoNw==
+X-Received: by 2002:a05:6402:510e:b0:5a1:b6d8:b561 with SMTP id 4fb4d7f45d1cf-5bd0a535c1emr1850330a12.9.1723214919081;
+        Fri, 09 Aug 2024 07:48:39 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2e5c8edsm1596620a12.81.2024.08.09.07.48.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 07:48:38 -0700 (PDT)
+Date: Fri, 9 Aug 2024 17:48:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] fbdev: omapfb: panel-sony-acx565akm: Simplify
+ show_cabc_available_modes()
+Message-ID: <eb7fc428-3987-4858-b24a-d5c127077acb@stanley.mountain>
+References: <91fc9049558a4865d441930c8f4732461f478eca.1723110340.git.christophe.jaillet@wanadoo.fr>
+ <aa43c1f8-05bc-4edd-b7ba-474953f28f5c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 09 Aug 2024 16:47:41 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Yuntao Liu" <liuyuntao12@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: "Russell King" <linux@armlinux.org.uk>,
- "Harith George" <mail2hgg@gmail.com>, "Andrew Davis" <afd@ti.com>,
- "Russell King" <rmk+kernel@armlinux.org.uk>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Eric DeVolder" <eric.devolder@oracle.com>,
- "Masahiro Yamada" <masahiroy@kernel.org>
-Message-Id: <b9aa586e-5685-4b5b-9732-81f2dec7120a@app.fastmail.com>
-In-Reply-To: <20240808123556.681609-1-liuyuntao12@huawei.com>
-References: <20240808123556.681609-1-liuyuntao12@huawei.com>
-Subject: Re: [PATCH] arm: Fix build issue with LD_DEAD_CODE_DATA_ELIMINATION
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa43c1f8-05bc-4edd-b7ba-474953f28f5c@stanley.mountain>
 
-On Thu, Aug 8, 2024, at 14:35, Yuntao Liu wrote:
-> There is a build issue with LD segmentation fault, while
-> CONFIG_LD_DEAD_CODE_DATA_ELIMINATION is not enabled, as bellow.
->
-> scripts/link-vmlinux.sh: line 49:  3796 Segmentation fault
->  (core dumped) ${ld} ${ldflags} -o ${output} ${wl}--whole-archive
->  ${objs} ${wl}--no-whole-archive ${wl}--start-group
->  ${libs} ${wl}--end-group ${kallsymso} ${btf_vmlinux_bin_o} ${ldlibs}
->
-> The error occurs in older versions of the GNU ld with version earlier
-> than 2.36. It makes most sense to have a minimum LD version as
-> a dependency for HAVE_LD_DEAD_CODE_DATA_ELIMINATION and eliminate
-> the impact of ".reloc  .text, R_ARM_NONE, ." when
-> CONFIG_LD_DEAD_CODE_DATA_ELIMINATION is not enabled.
->
-> Fixes: ed0f94102251 ("ARM: 9404/1: arm32: enable 
-> HAVE_LD_DEAD_CODE_DATA_ELIMINATION")
-> Reported-by: Harith George <mail2hgg@gmail.com>
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
-> Link: 
-> https://lore.kernel.org/all/14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com/
+On Fri, Aug 09, 2024 at 05:42:32PM +0300, Dan Carpenter wrote:
+> On Thu, Aug 08, 2024 at 11:46:11AM +0200, Christophe JAILLET wrote:
+> > Use sysfs_emit_at() instead of snprintf() + custom logic.
+> > Using sysfs_emit_at() is much more simple.
+> > 
+> > Also, sysfs_emit() is already used in this function, so using
+> > sysfs_emit_at() is more consistent.
+> > 
+> > Also simplify the logic:
+> >   - always add a space after an entry
+> >   - change the last space into a '\n'
+> > 
+> > Finally it is easy to see that, given the size of cabc_modes, PAGE_SIZE
+> > can not be reached.
+> > So better keep everything simple (and correct).
+> > 
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> >  .../omap2/omapfb/displays/panel-sony-acx565akm.c  | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c b/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
+> > index 71d2e015960c..fc975615d5c9 100644
+> > --- a/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
+> > +++ b/drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.c
+> > @@ -466,19 +466,20 @@ static ssize_t show_cabc_available_modes(struct device *dev,
+> >  		char *buf)
+> >  {
+> >  	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+> > -	int len;
+> > +	int len = 0;
+> >  	int i;
+> >  
+> >  	if (!ddata->has_cabc)
+> >  		return sysfs_emit(buf, "%s\n", cabc_modes[0]);
+> >  
+> > -	for (i = 0, len = 0;
+> > -	     len < PAGE_SIZE && i < ARRAY_SIZE(cabc_modes); i++)
+> > -		len += snprintf(&buf[len], PAGE_SIZE - len, "%s%s%s",
+> > -			i ? " " : "", cabc_modes[i],
+> > -			i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
+> > +	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++)
+> > +		len += sysfs_emit_at(buf, len, "%s ", cabc_modes[i]);
+> > +
+> > +	/* Remove the trailing space */
+> > +	if (len)
+> > +		buf[len - 1] = '\n';
+> 
+> I'm uncomfortable with this line.  It assumes we don't overflow PAGE_SIZE where
+> the original code was careful about checking.  Probably easiest to do what the
+> original code did and say:
+> 
+> 	for (i = 0; i < ARRAY_SIZE(cabc_modes); i++)
+> 		len += sysfs_emit_at(buf, len, "%s%s", cabc_modes[i],
+> 				     i == ARRAY_SIZE(cabc_modes) - 1 ? "\n" : "");
 
-Looks good to me,
+Or you could change it to:
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+	if (len)
+		sysfs_emit_at(buf, len - 1, "\n");
+
+But that feels weird.
+
+regards,
+dan carpenter
+
 
