@@ -1,105 +1,127 @@
-Return-Path: <linux-kernel+bounces-280455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFCAD94CAD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:58:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1740994CADA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A20351F22DDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:58:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E5BE1C22002
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EF816D4D6;
-	Fri,  9 Aug 2024 06:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7FC16D4CA;
+	Fri,  9 Aug 2024 06:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="icugcXWv"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ksmHMeM2"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E086B16D338;
-	Fri,  9 Aug 2024 06:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DE516D32D
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 06:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723186719; cv=none; b=OGnutdtb8oyqbt3/NSzKGWM8+2JQIUabDWqK7z5JGBJ94CCip59WY0wtEIRS6RtjKQy28wx+GYPffbWuhuyZ5oB9iZV4kCN0HcjawvfpqJpk6I/D0s7zA8HSuJ26wwIn+SfWVjq0B453rV+PT3ldiqMQOjtSCXG0jPlfd9VlTSg=
+	t=1723186731; cv=none; b=DEHHFTIDVrz5Z50CD261RslPhzoO0hl1cSx6T/OV50epz1FL1SjcHzHLxkn1r8K6LCgUejyENgSlfRgjnjIIvY1mDv4JtXW0RiyUA/qL/Nknt1/oqkdIv9eelUIQw2fZgSy7V1VzDV/HjHKsDRktnhZibUo5vZDNzwUKqZiRQ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723186719; c=relaxed/simple;
-	bh=+bxn97L5U0jovluQjgn3cx2MdOyOfAmSYZM+tbGjxcg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZXMQnVH8cpJ4tiUX8F2goVnenIF1S2VdMf6INIDbzijzaIZ8qhkBjK6QtxGPkeS+ISPOgF+RLAq6EIgC7UrE889aHwx2u1ZdfpdA2Pd0vBmAZ1Rbj2vzGbSI89mDM0QpSnXDbPhAUVieQmVQRseNi5MW4KvMGIGlaIeH/uREBT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=icugcXWv; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6510c0c8e29so16712327b3.0;
-        Thu, 08 Aug 2024 23:58:37 -0700 (PDT)
+	s=arc-20240116; t=1723186731; c=relaxed/simple;
+	bh=TxEuo8PSvKW7sduTd2C/87bj5Lf0zFoWEoWYisJcNJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=N+wIa1D5j7l0YlhqcYNEDwhUdIfWFNtFC/EwotPE3HuOD39UyQpxUG0z1o4S6JuOaflowApKzvogUN/bacwDHBMlhAwFUbH97rrJJOA4B4H6eeg+aino7UfjL37oE1GkC9uAbXTJS4yOraTfb8m24mT7X69V+sb5YhKND21paLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ksmHMeM2; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-426526d30aaso11661875e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 23:58:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723186717; x=1723791517; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+bxn97L5U0jovluQjgn3cx2MdOyOfAmSYZM+tbGjxcg=;
-        b=icugcXWv+r9/Yc7iF4ApE4N/26tbMs/QhDwOoWtv7UHT6BExKMvweZFVrXDXkxoL3P
-         2ks59NLIEF/AMBivwTj37NYZkGIKGDSUSOoS+ppeimgaGNDyrOWu+74ZbZdBBzDwXVI2
-         W3dTVWkO05yjOZOLM5r5GQDJ7BYe2oykLk/PfZM1cFQnoGfJ1oWY6sZqlN0HEZFu9xGR
-         PF5f2jcwx1LlQpXb4ohkG33v7N+RCXto5DFa9sltrIjR/58hQCQL3uwGr7MUoWiBUkAN
-         jdqbGyeZN70YWL935MleAw54QdcznvUDDgwOHAHX4+JS5YA9Hih+F7ywtpzTuMdXeZPn
-         r+hA==
+        d=tuxon.dev; s=google; t=1723186728; x=1723791528; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uGc5A46qV6UquRjkM3ksrI4LyOrgPjryvM1vbGxiy2w=;
+        b=ksmHMeM2e8uvc8yogRehvFr1Ign4n0h2lQ81ghIlONzkHeIMO15w3ujKcuplxYx8cM
+         ligaw2GhyOiT3Hi6G+7Znb6YAB3mRtlYJ9woD3O5zpNynn77Jzbtw92SBSVS4oSM7jLZ
+         /KHyuaa5WcyTEuKAqESU18VeY0KPYldQEYd+oYFDAcdq4JeY6X/qqSVfNUDTWfc9zUst
+         HspSXIxMfwvAeV/o7rxJjDV8WMV5c3qzwJdVmJzDGIEzX+9n1dFqfNnazHogCWdQRDVX
+         fjNejHrioNcC3z2snm8Rp9XV3aFnSJJjSbDL8eHgZ51aRdHtIXk5RXYe5JEr02Lnw2AP
+         VrZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723186717; x=1723791517;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+bxn97L5U0jovluQjgn3cx2MdOyOfAmSYZM+tbGjxcg=;
-        b=xDisQ7WGnR50eFho/hIkRdfE8CwteE7j5b70cchfKX9sXXhBtAbI9BD0wGU+C6gsYO
-         Q7e2xhXvvM8QAXgyvlOhmXSGXrz/b0WmVIoRd6zzQxho8b0e+0QNbvtwmVGi6vktEdnr
-         bEYnG+VVZHl0XEAblIFAqB6pC+Su2UeRxDdM+5Sn8ySWLI58PIs1FPxSj0Uvlp5MilQz
-         WV2JBLkuDw9xXIHikRtIoSPAJ7jtqRT3W2X5oJAnyLzt9cs9xL/Gjxc68iDRPNhN5IrD
-         RemrH+mvw+9/3jqV1OFjhjaHBS1LgsGNAE79N+8z34EmxH69J1lhP6bhTJzsIe8GaiCo
-         QyyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUdb5+bV1mFXtGt6XscnI01QZvmYv7hTfbZU79djHls9w8tc1cH+/2ani7R4q/gfiyobCQ3220suqX4WFW0/7oMW6rL09baEkVEtltU3a7verwiOLd1NyjOuXu9cOnNeQCe/6OP3TH
-X-Gm-Message-State: AOJu0Yy64//7YqlTosKTxgT9q2qnm0kqTYYYaZ5EvBpSuLzhwlOJqBzm
-	fVbNot+x1GkcntKi42wLLW18OQc2SAFzdfcbwdXPt9hgIMk2KbqHZsuoaC9g8OoG7aX7G9Z/l1Z
-	vueKfPidKl8tmv21clGVrSwowxjc=
-X-Google-Smtp-Source: AGHT+IGCdlIhf/gSlPZiFWzLSwIS6W3p+Q5jsx4eyh8as6SsULfzMey0q4qy5+vvZxORjfzvWv3Eg8Dm3aS7oSC+XsU=
-X-Received: by 2002:a05:6902:2683:b0:e0e:b200:a222 with SMTP id
- 3f1490d57ef6-e0eb9a18415mr707067276.38.1723186716780; Thu, 08 Aug 2024
- 23:58:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723186728; x=1723791528;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uGc5A46qV6UquRjkM3ksrI4LyOrgPjryvM1vbGxiy2w=;
+        b=Q+yTN3u1OvBxeDPtUmLFwZucMniVt1dYCGZcqggSSwqVIyEoHVAMQ3erWLqKHTmUcq
+         iofdlxDgP60fiG8vNNGqwrDKRsiWNINfqD4vVgCQQ0VqFN7tabpms037PuJm2y8DFZJO
+         ifGRdALW3nSzelF0heH6BBvhP1dd3U27w7+1CBGNhZczkzkDYOA0guqY/JHGYcZ7b1ke
+         E2xBMktnjBBhP33pAly4slCV1kHK0TKXcz4q5YoKHymWWZ+rF0mNH6EDUhyYBtqqnu1w
+         ngFpJkRSm3esF626YerMeHFs2fhgBUPsmNBeGgft+bw6dVL1PZbub5EvIGK6pLtzxQmz
+         +PSg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6glaGcIpFOX74ZG+BhBmIGfMUB3LJTcAJqiO9o5dmbDUqrGt39visBzTemQdKEP9mFg9w4l6NdA3R7WQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9zi+dug1Hms4MexAWvaTjg3i9znhunCK42ll2LAcsYUHpNEPz
+	OwmRPw5XA4Mt7Dgw7XXARxUYwuB4H3B4t0iGb0FalVPCHlZlu845cZEpFof1kDo=
+X-Google-Smtp-Source: AGHT+IGm/y8RDXHzdicUeoWix6eAGqqwf0eYXZPWoxOm/P5yFySKVcqSkslxkgIrKK/4iP9LU3HPEA==
+X-Received: by 2002:a05:600c:1d01:b0:426:593c:9351 with SMTP id 5b1f17b1804b1-429c3a179ddmr3569475e9.6.1723186727736;
+        Thu, 08 Aug 2024 23:58:47 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.180])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290597199fsm115055415e9.14.2024.08.08.23.58.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 23:58:47 -0700 (PDT)
+Message-ID: <58117740-1414-49fa-b58c-db228079f406@tuxon.dev>
+Date: Fri, 9 Aug 2024 09:58:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806162756.607002-1-rick.wertenbroek@gmail.com> <7a44e4cb-9f91-47e3-badc-8c6d406d1ea0@kernel.org>
-In-Reply-To: <7a44e4cb-9f91-47e3-badc-8c6d406d1ea0@kernel.org>
-From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Date: Fri, 9 Aug 2024 08:58:00 +0200
-Message-ID: <CAAEEuho9oyoyGjbWB0qLPEjjC71cnp2hSuzZ=QNQMfaLDodOtA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: endpoint: pci-epf-test: Move DMA check into
- read/write/copy functions
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Niklas Cassel <cassel@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/11] i2c: riic: Enable runtime PM autosuspend support
+Content-Language: en-US
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+ magnus.damm@gmail.com, p.zabel@pengutronix.de,
+ linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240711115207.2843133-5-claudiu.beznea.uj@bp.renesas.com>
+ <ZrTfc5imZgvduGc8@shikoro>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <ZrTfc5imZgvduGc8@shikoro>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 7, 2024 at 6:08=E2=80=AFPM Damien Le Moal <dlemoal@kernel.org> =
-wrote:
->
->
-> While at it, can we change this message to be clear, e.g. "DMA not suppor=
-ted".
-> "Cannot ..." is vague and does not state the reason why it cannot be done=
- :)
->
+Hi, Wolfram,
 
-I can change this, it makes sense to make the message clearer, I'll
-add this change to the v2.
+On 08.08.2024 18:08, Wolfram Sang wrote:
+> On Thu, Jul 11, 2024 at 02:52:00PM +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Enable runtime PM autosuspend support for the RIIC driver. With this, in
+>> case there are consecutive xfer requests the device wouldn't be runtime
+>> enabled/disabled after each consecutive xfer but after the
+>> the delay configured by user. With this, we can avoid touching hardware
+>> registers involved in runtime PM suspend/resume saving in this way some
+>> cycles. The default chosen autosuspend delay is zero to keep the
+>> previous driver behavior.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Basically, OK with me. I'd just like a comment here like:
+> 
+> /* Default 0 to save power. Can be overridden via sysfs for lower latency */
 
-Thanks.
-Regards,
-Rick
+Ok, I'll update it in the next version.
+
+Thank you,
+Claudiu Beznea
+
+>> +	pm_runtime_set_autosuspend_delay(dev, 0);
+>> +	pm_runtime_use_autosuspend(dev);
+> 
+> Other than that:
+> 
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
 
