@@ -1,115 +1,119 @@
-Return-Path: <linux-kernel+bounces-280264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB43194C7D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:01:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A767694C7DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 03:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60BBC1F23A21
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:01:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4240C1F23AC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 01:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4904F8BFC;
-	Fri,  9 Aug 2024 01:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C338F49;
+	Fri,  9 Aug 2024 01:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JK50byOm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lCH1ZerB"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FB8610D
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 01:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A078801
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 01:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723165259; cv=none; b=ctOMp10Koufh4Q17pSb0Xy630HHajrFVPrpSFteZW0+LMMJAwuHdws+SnOwDy4kRG4w23h6rdONJFiVQourOBgzvOEsdwiITLRKNxJrlMwNvqYI6DT+lHqxzjONTZplZYYVyoJGeJyctNG9V8rhcHuQ9tqNYLsaRm1y+ie5O61k=
+	t=1723165405; cv=none; b=awxTb5HF0OH2RIexJWPil2qFuXbEqu9Y7PG1sFgu5DqlHSx/YlElyQqJubZT3j1UpbsaYUUFkkHbEs8OZx72VnFREXmDKtW7jqSzv5Nms1swxCu5Vc5HcqBJsQnhZqt08mOi/astyv0jKrV50SnT7OFMvRHJmogLlXOpIxb9Pac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723165259; c=relaxed/simple;
-	bh=TzrW3y6SzsbNFighfe8q6Qkw+b/AgGKoiKBOEDWYo2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=if+79NYiYgcik6HvMSy5lCpikYgbmSe5sxVBN8QcIcTmIpTfSQPFugL4v8JX7XSCBrAaz1aCrgmFI/JAkcKpUW0grQtYnulHZh4PD08sL6n8Qn22N3nbzb2F9sGRuohyWkxSXEDE/MRLTUy0NpMQbN3GZDymE8jT4p4csrNwWhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JK50byOm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723165256;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FUh2ZcyYR28eZFFdQirdhBUZopZzvCQuM/XbmHwKiM8=;
-	b=JK50byOmQxxOIcx3FX4aPWuI4GzJYlaMM047a4eeO9RNEEz4ZXeLg3KtteThw+4QRH/qUy
-	LEE7N+0LDcrX9RUaMdjdO68d2w4CKW1tCNTEz9PuFiCmnbOBoddYTEo5d/6yxpUwL5z5FL
-	BWxVZNIOX9EgsidGU2kUj9/+CWeKd2I=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-467-5hjdLnQtP42zcJyK7MW5VA-1; Thu,
- 08 Aug 2024 21:00:54 -0400
-X-MC-Unique: 5hjdLnQtP42zcJyK7MW5VA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 44FB31945104;
-	Fri,  9 Aug 2024 01:00:53 +0000 (UTC)
-Received: from asgard.redhat.com (unknown [10.45.242.6])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2B4BB19560A3;
-	Fri,  9 Aug 2024 01:00:49 +0000 (UTC)
-Date: Fri, 9 Aug 2024 03:00:44 +0200
-From: Eugene Syromiatnikov <esyr@redhat.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Artem Savkov <asavkov@redhat.com>, linux-sound@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH] selftests/alsa/Makefile: fix relative rpath usage
-Message-ID: <20240809010044.GA28665@asgard.redhat.com>
-References: <20240808145639.GA20510@asgard.redhat.com>
- <83d4e1a3-73fc-4634-b133-82b9e883b98b@linuxfoundation.org>
+	s=arc-20240116; t=1723165405; c=relaxed/simple;
+	bh=vJhVH2X37ELBHuoxXkhWpNap4BFlrkMbHDkfQh6ryrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QRTL0f59UDAkgrRueR72edh1bakworNV7HG4Z/6QaKY7MUA/vk3jSkr7PYZ3Zx1FRHJxJeb1FkgdJ+PFsieU6f9npv7iOwDVZu8H5TFH3TQB5jFH0vyP0U3tKfQaS4n0q57VMFDoXPCwbnzCU27l4meVeeloDGNLkVnaRU/XgK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lCH1ZerB; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-427fc9834deso23155e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Aug 2024 18:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723165402; x=1723770202; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rQvnvDDJliCS6DXZAljXXWbpdOI+Rnw4LC1b+8K9HSQ=;
+        b=lCH1ZerBSx3E26+2L/W2I5JYn1aBNpj/+Qk6Gi+OFU1pFZMGkds2mo4eILevby/P66
+         aIt01Fk445z6arijwmIOtyzOu+JqD6ppGds5kEozZe22+sEVbn3bJIGIysl1RDUsN+Q3
+         7DBzb+RgZu0A7e8j4ztlDTK2X681HSDVQws2rTo1E/GoxzK5pl1d9QVX1RiFqKe5puO5
+         d5VN+4Nipey1os2Pv/wplSkRr0RJoenD2WbCnFHbyiIjV1JCDbbRZpYBC8IxLsomD3jv
+         GOV2eDw7cTjLMyacsbZ3aGo+p4oJpN/GcHzfb4cidPLGfOxEV81lkttlEKO+wKNEn8qL
+         T3Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723165402; x=1723770202;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rQvnvDDJliCS6DXZAljXXWbpdOI+Rnw4LC1b+8K9HSQ=;
+        b=ngB62TL2i7breDS4pBebW4ReLOnNH+QyrchIqkQhh8Fna8Tn5cQ1fN1MzMDjMt3GLw
+         5g34hcZr+0v3+4at1spULUnLDAOJ3o+xsCtqYD3wFKzfXaSf1MkG0U4crxTgBEshbTNT
+         olAAVI7G47suDlu7S0DbALwMiI+0rm330Sgjmcxn6WAV6K6RONARv8lHRJexu4TZU0KU
+         mHvgnGK6F3xszzUFv41F2jxNQDM5i5mlo5ldh9PZAT8po8OKmdhio+9BKx0MBvfPUu3g
+         YZPi6gR+QGrm77NKowsB1zfLipVNzySWlRzF5UdZrRA6BM3TFMUcYDRCt0gGZVrdW+e1
+         CnUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWB3lXfSByVY3BVNYVnOPhCReh+wLWRrLJi8CLWVXD21Osxey2oS2KRM76HT7ilN/3RumJipPV+D8ytCYxPGz7rShjeUvK4b4G5Ye1Y
+X-Gm-Message-State: AOJu0YwZbqv+xDjMJ//1EI3J1xaJIH2gUbIwDLDvYhMYHQwCpSUmXGaL
+	oeSpJlpI1Wnazh5mrzEKzVf1e0ZV3Wk4BwdF1dknA0c0iVS7KtDgir2TMMKSZUO7rABcwivo7yd
+	rrdpRVtPPaTAjVGHcTsTUa505k2ENsuQI1EUZ
+X-Google-Smtp-Source: AGHT+IHBSqalngtieBRIXl5nEDZR5Pj11uAddRxf8W4HoKGihDUCk65JKJgn8uiV2pn0vs6L/Pvn/vb2mlELKCYPg28=
+X-Received: by 2002:a05:600c:1f0a:b0:426:68ce:c97a with SMTP id
+ 5b1f17b1804b1-429c23553ecmr419855e9.7.1723165400572; Thu, 08 Aug 2024
+ 18:03:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <83d4e1a3-73fc-4634-b133-82b9e883b98b@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20240807211309.2729719-1-pedro.falcato@gmail.com>
+ <20240808161226.b853642c0ecf530b5cef2ecc@linux-foundation.org> <CAKbZUD0_BSv6KOgaRuqjLWGnttzcprcUu5WysSZeX8FXAvui5w@mail.gmail.com>
+In-Reply-To: <CAKbZUD0_BSv6KOgaRuqjLWGnttzcprcUu5WysSZeX8FXAvui5w@mail.gmail.com>
+From: Jeff Xu <jeffxu@google.com>
+Date: Thu, 8 Aug 2024 18:02:42 -0700
+Message-ID: <CALmYWFs0v07z5vheDt1h3hD+3--yr6Va0ZuQeaATo+-8MuRJ-g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] mm: Optimize mseal checks
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2024 at 02:20:21PM -0600, Shuah Khan wrote:
-> Wouldn't make sense to fix fix this in selftests main Makefile
-> instead of changing the all the test makefiles
+On Thu, Aug 8, 2024 at 5:34=E2=80=AFPM Pedro Falcato <pedro.falcato@gmail.c=
+om> wrote:
+>
+> On Fri, Aug 9, 2024 at 12:12=E2=80=AFAM Andrew Morton <akpm@linux-foundat=
+ion.org> wrote:
+> >
+> > On Wed,  7 Aug 2024 22:13:03 +0100 Pedro Falcato <pedro.falcato@gmail.c=
+om> wrote:
+> >
+> > > This series also depends on (and will eventually very slightly confli=
+ct with)
+> > > the powerpc series that removes arch_unmap[2].
+> >
+> > That's awkward.  Please describe the dependency?
+>
+> One of the transformations done in this patch series (patch 2) assumes
+> that arch_unmap either doesn't exist or does nothing.
+> PPC is the only architecture with an arch_unmap implementation, and
+> through the series I linked they're going to make it work via
+> ->close().
+>
+> What's the easiest way to deal with this? Can the PPC series go
+> through the mm tree?
+>
+This patch can't be merged until arch_unmap() is all removed (ppc change)
 
-As of now, the usage of rpath is localised, so it is relatively easy
-to evaluate the effect/prudence of such a change;  I am not so confident
-in imposing rpath on all of the selftests (and, if doing so, I would
-rather opt for runpath, to leave out an ability to override the search
-path via LD_LIBRARY_PATH, if such need arises);  in that case it is possibly
-also worth to add -L$(OUTPUT) to the CFLAGS as well, as the compile-time
-counterpart.  But, again, I was trying to avoid the task of evaluating
-the possible side effects of such a change, considering the variability
-in environments and setups selftests are run.
+Also I'm still doing a test/reviewing for this patch,  perhaps it is
+better to wait till my test is done.
 
-> Same comment on all other files.
-
-> It would be easier to send these as series
-
-I hesitated to do so due to the fact that different selftests are seemingly
-maintained by different people.
-
-> please mentioned the tests run as well after this change.
-
-I have checked the ldd output after the change remained the same (and that ldd
-is able to find the libraries used when run outside the directory the tests
-reside in) and did a cursory check of the results of the run of the affected
-tests (but not so sure about the BPF selftests, as they don't compile as-is
-due to numerous "incompatible pointer types" warnings that are forced
-into errors by -Werror and the fact that it hanged the machine I tried
-to run them on).
-
-> thanks,
-> -- Shuah
-> 
-> 
-
+Thanks
+-Jeff
 
