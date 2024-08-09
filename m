@@ -1,155 +1,181 @@
-Return-Path: <linux-kernel+bounces-281599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5763294D8A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:16:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D81394D8AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470881C220C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:16:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116422840A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA10D16B3A6;
-	Fri,  9 Aug 2024 22:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9843E16B750;
+	Fri,  9 Aug 2024 22:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RAGXeTcW"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aD+YBh+d"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4821B62171;
-	Fri,  9 Aug 2024 22:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447A962171
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 22:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723241765; cv=none; b=a6D/4T35sBCj5yDZ8rAhRXqUbps4HRwcD1CeknN1gG/zgEaiWxipzhpMvtZrEiUHl9Tlkjh/N7ikRun8eByF+BsXt6gWAlA3XSjuybOnswKffh0sjk5xIsHorGjQ5KnRy1ZbBgFbIg/GazERneiWmDBmdI7JxeksZrllZI2A5cw=
+	t=1723241849; cv=none; b=CcOMrh2Oru7O2BtVXVRQ+mExNQMuS+eEksJSYlOoCXXwefvlwzV8CQmdQg2beYlkGlKYuAM/NsBBaUDU0fz5qzc1oHQ5Jdka4A+Lg/1zg6aRgSq83qermnCsDq7kPNbqqE93VVxcltLleYIe8g6KiaozgZZ1BlP36ekEMZpvtWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723241765; c=relaxed/simple;
-	bh=Vyz7mOQSobTax2GI/PV4PZxzi76IZVTiDNoNh8/txbE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AIPYurQcIwD+KY8G2WUma4xE7hf0bsNzd5t93AtEkGsLPEkU9g2z0+pn6SOoveTNS4sf3uaEUEePVgXQTJJZvBj8tjVjBNYtO4YVuHfR+17RPWxAQLLWPKo4TvJlESTezB1sA9dsm/brb3T2lbCd4vrIjNGmLfILiQtdcEhyq/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RAGXeTcW; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d1fe3754f4so110595a91.1;
-        Fri, 09 Aug 2024 15:16:03 -0700 (PDT)
+	s=arc-20240116; t=1723241849; c=relaxed/simple;
+	bh=IkI9GJng3SPoqG0cbJlLuvKkdUA0vhJ3h3IFiOlPhQc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gs2K+qr/pKnFiSoDrKNi5pyyRMp3GegQMiC/kWfLjKaIXZV/CCd/NB+GMWdUW8UMGcKRuVuk8F/7T54IHw8VDg61JXG/44RBfRuqasViv4GRAVUlOnB1K8m2JX0ImQUT54O/R8CfMaUGl7GeL+TBHyJjDwUf40pm8/jUetaCBWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aD+YBh+d; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-261112c303bso1880270fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 15:17:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723241762; x=1723846562; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7QajCiM9J1gZRiKmQalSp88+y2PjJcBm2h12qCDW+tY=;
-        b=RAGXeTcW+izDyZ8ldcXoG7+CfOij1gmziunJy+JJPqwo7eGaxQIIzv0DEkEGjDTnr+
-         eQ91CQm44AZg+4g6dme4hLkMmgCfaqIrNmlOVeKFLew6RsnDAkwnKt75WVKAu20D2YB5
-         DTSlzGjgxgeumfYOZaT2TwQ/xIHYxyqsbu9xdGSt8l3xTI9QNYie8Z8ADvHdKd3aS3+Q
-         KaUwcSHIPYvVMDNk6988nSNhwwhAMfspLrYYyzN3fnbN0/7/WJEkmuoX5RjqZsB72lfD
-         M5J+UCZl0mlPLjftvMQoe/H2iNu4mHuXk1xjMRhWG3SoRULa+Ibb+hLjl+KZnRwS+/dR
-         U6MA==
+        d=broadcom.com; s=google; t=1723241847; x=1723846647; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=5kEy5ImbuRfG3E8dfn7QOP7C4wiO9nk+hec1rC2Q+Qs=;
+        b=aD+YBh+dUf+LkkLQ+7nH0pJDRuxl0K5qCudeK8KIpxH+CWJYiYLcji48dsnnJPugk8
+         jeuu/O4cI8nhy4T99UEgXv1uP0nhb01I0g+Bz0nDZhpbBPXq1GDpvXCuQ730yn/Vb5nJ
+         Zjr40Sw5MXVwCla2arkH7jGPq8VbUpdjegbRQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723241762; x=1723846562;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7QajCiM9J1gZRiKmQalSp88+y2PjJcBm2h12qCDW+tY=;
-        b=OtVKp0RUfdpLYgd0Dz0zj4Wh8bgEPfwjNrFm/3IxJ5CCPm92eOdtA9t1sdQkuQOI/U
-         vVycAZi+HSSb0RjKNqAEoS9kK9z0jJarNjPIacbWvfw8oTRMj6dET/VB7Ks2tw5EjHDh
-         NLx34bfsliWNcMunbgy5zMEPGAoClVM5kdK/vlisIvKrqQ6GJAO8niYpsGb/j9UH0uZD
-         41/ECBTwo2ed0XX6og6YNCHyOscTsJ8vxW5tTg49kJApXrMn0NYBHMrq+cThRShwb8AS
-         oeom5cqlWkGbN1MY01ysf+8sLACdtdk4CjOft8a22XnkAd4kVIIXWjPIS8HDt3Ak8vbr
-         YuWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeh8rNuK4mK9w6O1R8zfQOYpHBhLDgdEOvVjOC2M1v1OBPDR9tLDL4L1qSNU8V4fbRDVnNdjW61M2LpFm77jvoFLLAJbERFLosGdVChgauZqUm+QuqdUdmxZvbJoF4cFCnkey2fTBPp1Ycths=
-X-Gm-Message-State: AOJu0YwaSmxZ7X4fIDsFuXsJO4YTknwnuJ3+W6SEMFgBM9u3E6wNR/Ae
-	oIjRraIUEbLLWICtMr15phEkKu9WVrYQRwcGt2HzsfuZJ+jvuKzBim2WOX17uU10Gdvs3S1gANz
-	mhfRGA+Bv7DuAHBjzWqjdJo8wxzA=
-X-Google-Smtp-Source: AGHT+IGqhAIMpdcPgTvG4Lm0bG1VLto7lgkIz+dlldbt0bpWrxp0o616hdq+TZ0DclexAS+zwSJY7UTJsSeXk+LcnK0=
-X-Received: by 2002:a17:90a:b113:b0:2cd:b915:c80b with SMTP id
- 98e67ed59e1d1-2d1e8082b97mr3276313a91.27.1723241762470; Fri, 09 Aug 2024
- 15:16:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723241847; x=1723846647;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5kEy5ImbuRfG3E8dfn7QOP7C4wiO9nk+hec1rC2Q+Qs=;
+        b=Cng2kUYP6dIp8VBZFvGso+oO9Zl9Te5/mLiCgKi5y13bZRWV+n/rqESSyaXRXU1wGm
+         cISsPABelVL8xGDO/IWF/zrQ863LuOD6CcycGp6aW+jUIQyCyhkfykLupMHkcbwXGA+Q
+         jUrpWLqAwJjRtUv9RgTh7LtpTEfRLiH3yNttXu3h9IGH3wt4aMCQnkGA4Fv/rMVlVsXP
+         Cg3yDIAsxdoU/D3lcekQmLn33aK7DD2Aaal6zuZZ3tQhChB6IfDjY6LfOg0nyg6k7Enj
+         sr8KfdIuuZmVD0U7E2hKch2hhqJqw8u9IPmGAcmJLjxvViQgQN1KtRudKuwuzvL5Iu12
+         wlRA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8jTtX+rLN+AQsmcSYU3Bz5Gpyu0uJpo+A9KBjbjklONJTVIC99pukpvjyeQOGByF5bDtI4iRyb74sY2BcX6ujIq557dBYk0jwJCet
+X-Gm-Message-State: AOJu0YxeM1I3F2AFLrweDMu27kltR9mATfAWAJeh5OPQt7rQzD52Qtjs
+	HowvKVNiRQw9UAjN0DiqK5Miba5nEwgJMBZUsldpSmzbMR1rT2jt+qGPvjr7KQ==
+X-Google-Smtp-Source: AGHT+IEHyKJiarzqZbT6Jlx8LoLMCgKFUq9SysPXMLOAh8UnpD4dLPkM0uDHd0fLaLzI4KXr6ykujw==
+X-Received: by 2002:a05:6870:3924:b0:25e:1610:9705 with SMTP id 586e51a60fabf-26c62c4296emr3318640fac.2.1723241847267;
+        Fri, 09 Aug 2024 15:17:27 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e589e8e7sm237580b3a.45.2024.08.09.15.17.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 15:17:26 -0700 (PDT)
+Message-ID: <2c4a42ee-164b-447f-b51d-07b2585345b3@broadcom.com>
+Date: Fri, 9 Aug 2024 15:17:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806144558.114461-1-ojeda@kernel.org>
-In-Reply-To: <20240806144558.114461-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 10 Aug 2024 00:15:50 +0200
-Message-ID: <CANiq72nH9KZZKtDsMkfosmHpgVjvGM6=yy7fRyNP2NrDFUrkvQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: x86: remove `-3dnow{,a}` from target features
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
-	Nikita Popov <github@npopov.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 3/3] net: stmmac: Add PCI driver support for
+ BCM8958x
+To: Andrew Lunn <andrew@lunn.ch>,
+ Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com,
+ joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+ bcm-kernel-feedback-list@broadcom.com, richardcochran@gmail.com,
+ ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
+ linux@armlinux.org.uk, horms@kernel.org
+References: <20240802031822.1862030-1-jitendra.vegiraju@broadcom.com>
+ <20240802031822.1862030-4-jitendra.vegiraju@broadcom.com>
+ <c2e2f11a-89d8-42fa-a655-972a4ab372da@lunn.ch>
+ <CAMdnO-JBznFpExduwCAm929N73Z_p4S4_nzRaowL9SzseqC6LA@mail.gmail.com>
+ <de5b4d42-c81d-4687-b244-073142e2967b@lunn.ch>
+ <CAMdnO-+_2Fy=uNgGevtnL8PGPvKyWXPvYaxOJwKcUZj+nnfqYg@mail.gmail.com>
+ <5ff4a297-bafd-4b33-aae1-5a983f49119a@lunn.ch>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <5ff4a297-bafd-4b33-aae1-5a983f49119a@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 6, 2024 at 4:47=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
-e:
->
-> LLVM 19 is dropping support for 3DNow! in commit f0eb5587ceeb ("Remove
-> support for 3DNow!, both intrinsics and builtins. (#96246)"):
->
->     Remove support for 3DNow!, both intrinsics and builtins. (#96246)
->
->     This set of instructions was only supported by AMD chips starting in
->     the K6-2 (introduced 1998), and before the "Bulldozer" family
->     (2011). They were never much used, as they were effectively supersede=
-d
->     by the more-widely-implemented SSE (first implemented on the AMD side
->     in Athlon XP in 2001).
->
->     This is being done as a predecessor towards general removal of MMX
->     register usage. Since there is almost no usage of the 3DNow!
->     intrinsics, and no modern hardware even implements them, simple
->     removal seems like the best option.
->
-> Thus we should avoid passing these to the backend, since otherwise we
-> get a diagnostic about it:
->
->     '-3dnow' is not a recognized feature for this target (ignoring featur=
-e)
->     '-3dnowa' is not a recognized feature for this target (ignoring featu=
-re)
->
-> We could try to disable them only up to LLVM 19 (not the C side one,
-> but the one used by `rustc`, which may be built with a range of
-> LLVMs). However, to avoid more complexity, we can likely just remove
-> them altogether. According to Nikita [2]:
->
-> > I don't think it's needed because LLVM should not generate 3dnow
-> instructions unless specifically asked to, using intrinsics that Rust
-> does not provide in the first place.
->
-> Thus do so, like Rust did for one of their builtin targets [3].
->
-> For those curious: Clang will warn only about trying to enable them
-> (`-m3dnow{,a}`), but not about disabling them (`-mno-3dnow{,a}`), so
-> there is no change needed there.
->
-> Cc: Nikita Popov <github@npopov.com>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: x86@kernel.org
-> Link: https://github.com/llvm/llvm-project/commit/f0eb5587ceeb641445b64cb=
-264c822b4751de04a [1]
-> Link: https://github.com/rust-lang/rust/pull/127864#issuecomment-22358987=
-60 [2]
-> Link: https://github.com/rust-lang/rust/pull/127864 [3]
-> Closes: https://github.com/Rust-for-Linux/linux/issues/1094
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+On 8/9/24 13:12, Andrew Lunn wrote:
+> On Thu, Aug 08, 2024 at 06:54:51PM -0700, Jitendra Vegiraju wrote:
+>> On Tue, Aug 6, 2024 at 4:15 PM Andrew Lunn <andrew@lunn.ch> wrote:
+>>>
+>>> On Mon, Aug 05, 2024 at 05:56:43PM -0700, Jitendra Vegiraju wrote:
+>>>> On Fri, Aug 2, 2024 at 4:08 PM Andrew Lunn <andrew@lunn.ch> wrote:
+>>>>>
+>>>>>> Management of integrated ethernet switch on this SoC is not handled by
+>>>>>> the PCIe interface.
+>>>>>
+>>>>> MDIO? SPI? I2C?
+>>>>>
+>>>> The device uses SPI interface. The switch has internal ARM M7 for
+>>>> controller firmware.
+>>>
+>>> Will there be a DSA driver sometime soon talking over SPI to the
+>>> firmware?
+>>>
+>> Hi Andrew,
+> 
+> So the switch will be left in dumb switch everything to every port
+> mode? Or it will be totally autonomous using the in build firmware?
+> 
+> What you cannot expect is we allow you to manage the switch from Linux
+> using something other than an in kernel driver, probably DSA or pure
+> switchdev.
 
-Applied to `rust-fixes` -- thanks everyone!
+This looks reasonable as an advice about to ideally fit within the 
+existing Linux subsystems, however that is purely informational and it 
+should not impair the review and acceptance of the stmmac drivers.
 
-(If someone from x86 still wants to take a look / Ack it, please let me kno=
-w!)
+Doing otherwise, and rejecting the stmmac changes because now you and 
+other reviewers/maintainers know how it gets used in the bigger picture 
+means this is starting to be overreaching. Yes silicon vendor companies 
+like to do all sorts of proprietary things for random reasons, I think 
+we have worked together long enough on DSA that you know my beliefs on 
+that aspect.
 
-Cheers,
-Miguel
+I think the stmmac changes along have their own merit, and I would 
+seriously like to see a proper DSA or switchdev driver for the switching 
+silicon that is being used, but I don't think we need to treat the 
+latter as a prerequisite for merging the former.
+
+Thanks!
+-- 
+Florian
+
 
