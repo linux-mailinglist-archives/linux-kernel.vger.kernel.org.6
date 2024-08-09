@@ -1,312 +1,142 @@
-Return-Path: <linux-kernel+bounces-281526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3969F94D7C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:00:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BEC94D7CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A76BB1C229BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:00:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6269E1C2298A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 20:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ED715ECD2;
-	Fri,  9 Aug 2024 20:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCD21607B0;
+	Fri,  9 Aug 2024 20:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTSgxrie"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hDWdtJuv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iMEjCWQ1"
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442AF24B2F
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 20:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34321D551;
+	Fri,  9 Aug 2024 20:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723233624; cv=none; b=MPkLAZKJ0hcdImMFUA0wfa02SExjHMcg7aAaHgIKLYBN+0AxyLuI3yhSNMBsVgFtc5aDe+rl9v+iNCCD6NbaDfhUZzl6MUlUOcS3ONfdqbhifyDI3LT8utWpU/GzLDgWR02wDHBM0fWxeB5SunbaNn2wzEwlYQDM7VZ6yvizvhs=
+	t=1723233691; cv=none; b=DblB2cyPwSp28gEeuj8PRVIL140A6I8I2twUhFVrmM5IovrxjaRz+MioXNSdCce4VdoOvY1nAMDsgPYJqnsS1oP7pkHmBei97MIbTDRgaWroTQGcfl2PH4Qnq2CQnCPpa0wUoGnq2jKU3DlQxsLDqCokIgL5SvTfJoB5QkyOjI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723233624; c=relaxed/simple;
-	bh=Tpdy4cgdbsFT29gQug1bFyuPJ0g0lNrJa1Tx2WH9Wys=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZkVaqtIeJ/OrFe6p/MmIKxjjcjWnTRdaaUprrUw8Q14NUAGuToYa8wOIWlIqT/CDzwE1jbG+IoSLDapEI1manxO6pcgJQV7t3pEflaEd1BKU9tBujl4FasP4C+J+LDtcyH5IYAWr0i+LQCs7U6lW5PeKjoALgx/R90jdqumkeLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTSgxrie; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bba25c1e15so2885681a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 13:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723233620; x=1723838420; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=q/ZW3nV5tNcjPS6iptoriBrB0i5jeyrg1616ntHGkoU=;
-        b=aTSgxrieXk2IcRB9UCnENYpaJ0BUK9pNmfRWCF3ARlIF5aZaZ5n8bZ9yASVykwqHhT
-         6UNQI9qftkRWU/Cohoe39ix/6bVUs1vt6TLMHnz8HCrr112mV0cRmYXlL48vd7LbLtmv
-         pGNYmvMmu/7OK/G4fdomzRw2PqFo64vZhU6FIQ376SJB6/plqMqNyhg06rHt35kvidpV
-         M2Ve27r/hsuYZNRGtYYySyo5K4djpFsgiVyydRqlQA9/fCllOvvleW1xYjyVARjv1ItL
-         IHAqf6vSl/LvGPmlGbNzheHUDYd721v+r4d1S4yaeP9Ckjzl0c8IZLXzC98ocFbI54vk
-         buNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723233620; x=1723838420;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q/ZW3nV5tNcjPS6iptoriBrB0i5jeyrg1616ntHGkoU=;
-        b=ORwN9/W7Q+zwnWtmsJki7wpi9BIUyC9n5vn14BbS+WtjQfuAl5+sXfbklLVqX8bN1D
-         EN7iIswpX08vGpX5uwED6ZkkB84fSdgk25OeJrH8e1pMij6ISUekaq3GyIjh+S97rdrL
-         wAcjXVH25+ukbRUmENcDFyPbrAcTrep+k4iOPP5yVAiu7/OKLNRs4SPIK+BLudE8Ts8G
-         TYmwOeLVneDeqMCMI/YleMgFASEtGlbEsyKzs1JqZfJPFlCvYpGiQ0iJC8eyZZGGLgTH
-         ciNsWFXs8DKJ68Clh6zajd32I4X7YHj8XTxBbDjEh25jy2ESLLaN/335LfeQVmq10sOA
-         7ARQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYgbiUJDGWT97/cL5GxDYRGzTGeEXkvjdpBSzEuDZTouQExAHbDM2NCxrGJxz1BIn064e2NBtpm767muA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4ACXqMvRu9AgHuJ/lm3bLqp8X4N22vd0eBzn17MaYXPPJEgl9
-	/rgRxJpJiKCa7Ioan9gTQ9yL407YSA8g55oV/o0LuEC984FKOjIBqoz7IHmOniuKuXrN+0pVxKs
-	D3RpQxSO7EobyuXNjl3Sz0xrxNt0=
-X-Google-Smtp-Source: AGHT+IER4wDD4pBbs3PQSGPA4ATqufxR+7PRC0XRU0hX1k+RT9NExlXC/+x7kc54KGWyv5Nh9Qjh9AVvd9sF6bJTD3U=
-X-Received: by 2002:a17:907:7da3:b0:a7a:a0c9:124e with SMTP id
- a640c23a62f3a-a80aa53909emr188358066b.4.1723233620228; Fri, 09 Aug 2024
- 13:00:20 -0700 (PDT)
+	s=arc-20240116; t=1723233691; c=relaxed/simple;
+	bh=rt8n2BzdzW4NEsbf9W924RPJfQlH12dEuOTh47WtQ7I=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=oOEZPvDZhMuFUFppD0Mss/BVbB/PbbjmTaux3ge6v7LCSR46lOJyoueo9ITeHS4/4UtjfUGRChvYCCDX1BQTl1tQf7I5/RK+GvHfwVwORp2uBii78mIxt0vrXhyFULmwnvyMaugE47rR8w0r82vK+bSdMIOQKqGwzdLHvGIJW68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hDWdtJuv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iMEjCWQ1; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id D159F1151644;
+	Fri,  9 Aug 2024 16:01:28 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Fri, 09 Aug 2024 16:01:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1723233688;
+	 x=1723320088; bh=qWV5qB3M+Ov5ylhWgimjzrAUVghDwxMLEMd9su0pyq4=; b=
+	hDWdtJuvHFJPR5hIVYM3Jh6MCdcit23Bi/FxWj0tapZTlHFvNg+On1899zWAt7JD
+	KRUq1s3iSt46dgr8WKLQoSl/ArLlFQ1A37207DGQB+Zt9EdWDny9U+pgWiXXw91D
+	WzbRTjv6e2OLInqwN/OofzyqWhWDMndHrbUzcGKTI095DjsN4eaA8n9rUXAkMT0n
+	Vx9wl1J8dMqz/6x7rd3hYAdam+Yz7mb8weOVZfnXmhWTuHSI8HUve+yCwTds36cc
+	cvRYOHwD+2AnJtE2ALl8C4rtdRSSATfNzyTs/mCppTAkdYyXGSNl0X9LYLRmRyMT
+	vRuDgzs6UmAJ1NtBeX8Q/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723233688; x=
+	1723320088; bh=qWV5qB3M+Ov5ylhWgimjzrAUVghDwxMLEMd9su0pyq4=; b=i
+	MEjCWQ1wpXrCKzL1uR1Hi4NtZYEjRSfZZ0Gah0yAuTqER/QLM4jI3OImyli6Z1yr
+	EXy6LSndQqrURcYG7k/kP2DNMBFStIf8gjPk/qgcgTjLoGaNbpvV8UJb26Kz6LQK
+	fKL6lA7qhKCAtCO7YFGV6S1kMELcSwj0num7cE5dfhUrT2BTBj0sm2PQ7C1EjJjC
+	jNfGsIEl3OiyMaA3VB+8vCy9yVb0Jdc/DLmM0z32RigCU8LMw60ytIYsnpUWhUNI
+	6vpCd+skGLiHSI2zEJekrDRid0iJ06WgGH6iOsQ/yUmAIfTnTaadB+YgEclK7LBv
+	uNNCIoqXKNZizUxXrFX/w==
+X-ME-Sender: <xms:mHW2ZrkZsUJuJqKEWAr5euKj1cvE4DndZnwg38j2y5pw25tgfLJF1Q>
+    <xme:mHW2Zu1FBu_-BmvW9nA2PWv8ghC1jtOJH63ngoKv7W3RekKQiv-UiwwbnzZl8OTAI
+    6n_QQZzscbbZqSP_bE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleeggddugedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
+    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrd
+    hfrhgrnhhkvghnrdguvgdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhihghho
+    rghtrdgtohhmpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+    nhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+    nhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:mHW2ZhoMW1wnmgZrLHG1Ch8lxSvQECiMo7ybzsXKWPmvdeG5jm7yvw>
+    <xmx:mHW2Zjnvfhi9BZorstLg-9KUCRzMCF-9lypTH3j2kdfFCBO95WyHwg>
+    <xmx:mHW2Zp3VyKvBrjY1fk5teSNm_M6jN5Ia1cyzxMALVsc4YLLOkCG3hw>
+    <xmx:mHW2ZiueECjVE0fbhVCqB9LXSu-QsAWUU_C_64Xz-8gVACqoFUXiBw>
+    <xmx:mHW2ZjpfbARIPFKOg4mqDXIqgo5ivZeHxG4VQgAHg5JjJYx8rSwt1Z0a>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 9544FB6008D; Fri,  9 Aug 2024 16:01:28 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Sat, 10 Aug 2024 06:00:08 +1000
-Message-ID: <CAPM=9txFVKQ-E5rPvgUJSo_ypt4uWW4dCyozsb_A5HD8Ldc5zQ@mail.gmail.com>
-Subject: [git pull] drm fixes for 6.11-rc3
-To: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 09 Aug 2024 22:01:08 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Message-Id: <bd8bbd60-be0c-4add-8c61-5e569af9eaf3@app.fastmail.com>
+In-Reply-To: <f61081e8-6e48-4161-afa5-ec3a7a58ecd6@app.fastmail.com>
+References: <20240809-mips-numa-v1-0-568751803bf8@flygoat.com>
+ <20240809-mips-numa-v1-1-568751803bf8@flygoat.com>
+ <70f908d0-7cca-40c3-9aaa-c838b02dc4c4@app.fastmail.com>
+ <f61081e8-6e48-4161-afa5-ec3a7a58ecd6@app.fastmail.com>
+Subject: Re: [PATCH 1/7] arch_numa: Provide platform numa init hook
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Fri, Aug 9, 2024, at 21:56, Jiaxun Yang wrote:
+> =E5=9C=A82024=E5=B9=B48=E6=9C=889=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=
+=E5=8D=888:41=EF=BC=8CArnd Bergmann=E5=86=99=E9=81=93=EF=BC=9A
+>> On Fri, Aug 9, 2024, at 21:25, Jiaxun Yang wrote:
+>>> For some pre-devicetree systems, NUMA information may come from
+>>> platform specific way.
+>>>
+>>> Provide platform numa init hook to allow platform code kick in
+>>> as last resort method to supply NUMA configuration.
+>>>
+>>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>>
+>> Can you do this with a Kconfig symbol in the header instead
+>> of a __weak symbol?
+>
+> Sure, is this some kind of subsystem policy or general recommendation
+> applies to the whole tree?
 
-Weekly regular fixes, mostly amdgpu with i915/xe having a few each,
-and then some misc bits across the board, seems about right for rc3
-time.
+I don't think it's a general policy, possibly it's just me, but I've
+had to debug too many issues that could have been avoided by not
+__weak symbols, so I try to not have them in code I'm responsible
+for like the asm-generic headers.
 
-Regards,
-Dave.
+The main places that use __weak symbols are arch/mips and
+drivers/pci, but there are also a number of them in mm/
+and kernel/.
 
-drm-fixes-2024-08-10:
-drm fixes for 6.11-rc3
-
-client:
-- fix null ptr deref
-
-bridge:
-- connector: fix double free
-
-atomic:
-- fix async flip update
-
-panel:
-- document panel
-
-omap:
-- add config dependency
-
-tests:
-- fix gem shmem test
-
-drm buddy:
-- Add start address to trim function
-
-amdgpu:
-- DMCUB fix
-- Fix DET programming on some DCNs
-- DCC fixes
-- DCN 4.0.1 fixes
-- SMU 14.0.x update
-- MMHUB fix
-- DCN 3.1.4 fix
-- GC 12.0 fixes
-- Fix soft recovery error propogation
-- SDMA 7.0 fixes
-- DSC fix
-
-xe:
-- Fix off-by-one when processing RTP rules
-- Use dma_fence_chain_free in chain fence unused as a sync
-- Fix PL1 disable flow in xe_hwmon_power_max_write
-- Take ref to VM in delayed dump snapshot
-
-i915:
-- correct dual pps handling for MTL_PCH+ [display]
-- Adjust vma offset for framebuffer mmap offset [gem]
-- Fix Virtual Memory mapping boundaries calculation [gem]
-- Allow evicting to use the requested placement
-- Attempt to get pages without eviction first
-The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
-
-  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
-
-are available in the Git repository at:
-
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-08-10
-
-for you to fetch changes up to 06f5b920d1d0b686d794426264dc39aa8582db14:
-
-  Merge tag 'drm-intel-fixes-2024-08-08' of
-https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
-(2024-08-09 17:16:29 +1000)
-
-----------------------------------------------------------------
-drm fixes for 6.11-rc3
-
-client:
-- fix null ptr deref
-
-bridge:
-- connector: fix double free
-
-atomic:
-- fix async flip update
-
-panel:
-- document panel
-
-omap:
-- add config dependency
-
-tests:
-- fix gem shmem test
-
-drm buddy:
-- Add start address to trim function
-
-amdgpu:
-- DMCUB fix
-- Fix DET programming on some DCNs
-- DCC fixes
-- DCN 4.0.1 fixes
-- SMU 14.0.x update
-- MMHUB fix
-- DCN 3.1.4 fix
-- GC 12.0 fixes
-- Fix soft recovery error propogation
-- SDMA 7.0 fixes
-- DSC fix
-
-xe:
-- Fix off-by-one when processing RTP rules
-- Use dma_fence_chain_free in chain fence unused as a sync
-- Fix PL1 disable flow in xe_hwmon_power_max_write
-- Take ref to VM in delayed dump snapshot
-
-i915:
-- correct dual pps handling for MTL_PCH+ [display]
-- Adjust vma offset for framebuffer mmap offset [gem]
-- Fix Virtual Memory mapping boundaries calculation [gem]
-- Allow evicting to use the requested placement
-- Attempt to get pages without eviction first
-
-----------------------------------------------------------------
-Andi Shyti (2):
-      drm/i915/gem: Adjust vma offset for framebuffer mmap offset
-      drm/i915/gem: Fix Virtual Memory mapping boundaries calculation
-
-Arnd Bergmann (1):
-      drm/omap: add CONFIG_MMU dependency
-
-Arunpravin Paneer Selvam (3):
-      drm/buddy: Add start address support to trim function
-      drm/amdgpu: Add address alignment support to DCC buffers
-      drm/amdgpu: Add DCC GFX12 flag to enable address alignment
-
-Cristian Ciocaltea (1):
-      drm/bridge-connector: Fix double free in error handling paths
-
-Dave Airlie (5):
-      drm/test: fix the gem shmem test to map the sg table.
-      Merge tag 'drm-misc-fixes-2024-08-08' of
-https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
-      Merge tag 'amd-drm-fixes-6.11-2024-08-08' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
-      Merge tag 'drm-xe-fixes-2024-08-08' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-      Merge tag 'drm-intel-fixes-2024-08-08' of
-https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
-
-David Gow (2):
-      drm/i915: Allow evicting to use the requested placement
-      drm/i915: Attempt to get pages without eviction first
-
-Dnyaneshwar Bhadane (1):
-      drm/i915/display: correct dual pps handling for MTL_PCH+
-
-Fangzhi Zuo (1):
-      drm/amd/display: Skip Recompute DSC Params if no Stream on Link
-
-Frank Min (2):
-      drm/amdgpu: change non-dcc buffer copy configuration
-      drm/amdgpu: correct sdma7 max dw
-
-Joshua Ashton (1):
-      drm/amdgpu: Forward soft recovery errors to userspace
-
-Karthik Poosa (1):
-      drm/xe/hwmon: Fix PL1 disable flow in xe_hwmon_power_max_write
-
-Kenneth Feng (1):
-      drm/amd/pm: update powerplay structure on smu v14.0.2/3
-
-Likun Gao (2):
-      drm/amdgpu: force to use legacy inv in mmhub
-      drm/amdgpu: add golden setting for gc v12
-
-Lucas De Marchi (1):
-      drm/xe/rtp: Fix off-by-one when processing rules
-
-Ma Ke (1):
-      drm/client: fix null pointer dereference in drm_client_modeset_probe
-
-Matthew Brost (2):
-      drm/xe: Use dma_fence_chain_free in chain fence unused as a sync
-      drm/xe: Take ref to VM in delayed snapshot
-
-Rob Clark (1):
-      dt-bindings: display: panel: samsung,atna45dc02: Document ATNA45DC02
-
-Rodrigo Siqueira (6):
-      drm/amd/display: Replace dm_execute_dmub_cmd with
-dc_wake_and_execute_dmub_cmd
-      drm/amd/display: Add missing DET segments programming
-      drm/amd/display: Add dcc propagation value
-      drm/amd/display: Add missing mcache registers
-      drm/amd/display: Add missing DCN314 to the DML Makefile
-      drm/amd/display: Add missing program DET segment call to pipe init
-
-Simon Ser (1):
-      drm/atomic: allow no-op FB_ID updates for async flips
-
- .../bindings/display/panel/samsung,atna33xc20.yaml |  9 ++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.h            |  6 +++
- drivers/gpu/drm/amd/amdgpu/amdgpu_job.c            |  3 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c       | 36 +++++++++++++-
- drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c             | 27 +++++++++++
- drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c             | 18 +++++++
- drivers/gpu/drm/amd/amdgpu/mmhub_v4_1_0.c          |  3 +-
- drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c             |  7 +--
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  3 ++
- drivers/gpu/drm/amd/display/dc/dce/dmub_replay.c   |  3 +-
- drivers/gpu/drm/amd/display/dc/dml/Makefile        |  2 +
- .../drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c    |  2 +
- .../drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c    |  2 +
- .../display/dc/resource/dcn401/dcn401_resource.c   |  1 +
- .../display/dc/resource/dcn401/dcn401_resource.h   |  4 +-
- .../gpu/drm/amd/pm/swsmu/inc/smu_v14_0_2_pptable.h | 52 +++++++++++++++++---
- drivers/gpu/drm/drm_atomic_uapi.c                  | 15 ++----
- drivers/gpu/drm/drm_bridge_connector.c             |  8 +---
- drivers/gpu/drm/drm_buddy.c                        | 25 +++++++++-
- drivers/gpu/drm/drm_client_modeset.c               |  5 ++
- drivers/gpu/drm/i915/display/intel_backlight.c     |  3 ++
- drivers/gpu/drm/i915/display/intel_pps.c           |  3 ++
- drivers/gpu/drm/i915/gem/i915_gem_mman.c           | 55 +++++++++++++++++++---
- drivers/gpu/drm/i915/gem/i915_gem_ttm.c            | 13 ++---
- drivers/gpu/drm/omapdrm/Kconfig                    |  1 +
- drivers/gpu/drm/tests/drm_gem_shmem_test.c         | 11 +++++
- drivers/gpu/drm/xe/xe_hwmon.c                      |  3 +-
- drivers/gpu/drm/xe/xe_lrc.c                        | 15 +++++-
- drivers/gpu/drm/xe/xe_rtp.c                        |  2 +-
- drivers/gpu/drm/xe/xe_sync.c                       |  2 +-
- drivers/gpu/drm/xe/xe_ttm_vram_mgr.c               |  2 +-
- include/drm/drm_buddy.h                            |  2 +
- 32 files changed, 287 insertions(+), 56 deletions(-)
+     Arnd
 
