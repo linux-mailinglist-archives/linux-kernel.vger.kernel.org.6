@@ -1,89 +1,130 @@
-Return-Path: <linux-kernel+bounces-280537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196B894CBD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:05:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28D094CBD9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 282031C21522
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:05:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8FB2861DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC23118C90C;
-	Fri,  9 Aug 2024 08:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AAB18C90C;
+	Fri,  9 Aug 2024 08:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZMaLTIPC"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="JzEsI228"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B94C8D1;
-	Fri,  9 Aug 2024 08:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723190743; cv=none; b=M20Ga9PlA23Y1PQj2I4sUVoenAw9tZ3EHcwQr0sQG1RthpkwtH6IIOGZncw6js2CZwB+OI6kalxEfV1+DrsMxN6m3hWVroKbYOPH+ZIHU9VSl9HQtcDXrWYLq/Dzz8jKP/PeT/fWaCW8XuG+sTYJlgorSSMJSqt+fI/EfdLMW6o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723190743; c=relaxed/simple;
-	bh=PV2/IPy3/F9H9IEkab5gV/JXvBjk34SNXEZw8Og8RPg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gxfZotTF4QTBPt66aQlkGf22Tg/I33JMj4GlfAL0QvlGjxorJo38QF/syU0cWnZA24YmuoHVGArmc7VnXTxUtbevoYhfWFW55wDO6N6LdcsAiiWAmKC5Nrpjj6A4MXpcSbRd03Q1tRMLQh7pjMIMD1qF0DtlmFh5b1A4haqFE+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZMaLTIPC; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723190732; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=NwcqZgI6fC9qkkzgxcvY/VNJ+r0cNe7XQ8n4c/eG3Ig=;
-	b=ZMaLTIPCIT4368EG4Fe3wMD5MzjekcCE00FWGMWwb0jNsSKGrYC99h61n8vSWhM8GWAMgV8T8Ycwr9UOrtfMXQWzxnSJfu6yLauGaHmhSnFfLoa4K8YekFo4h1GsbT01L7k2IdU2PbAmOJXNDqTF+s9MXr9ny5BZKS/z6OrZq8I=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0WCPEg4x_1723190725;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WCPEg4x_1723190725)
-          by smtp.aliyun-inc.com;
-          Fri, 09 Aug 2024 16:05:31 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: ukleinek@kernel.org
-Cc: linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] pwm: lp3943: Fix an incorrect type in lp3943_pwm_parse_dt()
-Date: Fri,  9 Aug 2024 16:05:23 +0800
-Message-Id: <20240809080523.32717-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4010FC8D1;
+	Fri,  9 Aug 2024 08:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723190773; cv=pass; b=V8TLWs+rsg9XKS7V5LL02ip6BAKcncDMdX7vxYNuyD6S90YZGYSwubBD3eAAs/z9LRgI1eAtjUyzdnp6yCZT5FXcQeigvpR0ckNVkBTT8Xp51DwILnyzwNA95likmmHaBwnbLOZ9CWo8z2T0Q1ZcDXkJcH7pg5ODOnGY41/kZ7Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723190773; c=relaxed/simple;
+	bh=Cl9Dewi2Rq6zcHumdBriW/ismSmPNEXUrJwFR0TJw6M=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mNR2FPriSDTUUIrantqpdO6b1E5eVMXlAmvndEH3rpP4OWPDqqNLBPi9Zty02SlQ5178smE7gmMUxnnU19IAmOKLeDSBKQ2fGK0350ZFc2xYCOX1/smNMq8wVdMNGKySEaqXIpAKhDx7KHm9rmuGxjjZRGZTKse08D37gocxbow=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=JzEsI228; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: Usama.Anjum@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723190748; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=VlXtCAvDnV2VIVqxe/V8j6kVAHrGofQSuKDkUUnFmbX3QvndtkB2sJtpjMPLDbbN/kakDWCgm5G+xlWe40bIK/1Bk9Kp0Lo/xSGv94X21quU5LOJ877t//9K+t1kWCuA+vQJXntnLYFVLgnluyn5hfph0hLQCXH3HMSrRjuL3SA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723190748; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=6MyEdyt6ey7wA9ddBiHtScRZUQGHpxzx9hd6e/N8ulk=; 
+	b=eYUe9AsPe4SWctNi/pIlYr3ltQ/0IbT8xN6Jryh8fI12IXA5Vl3AbXBpxBK5vEDafxrnQvSnbCU8UaHoMbN5arPdxgSM7KHEewdNwYbfimSr4YcAbq5wFtr3eTLubVv6zY/gTcqy2RXDeifjDrFmijM8/yvxqB47tw9z5eoqP2o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723190748;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=6MyEdyt6ey7wA9ddBiHtScRZUQGHpxzx9hd6e/N8ulk=;
+	b=JzEsI228OODI9Cj4siY5Pz79/EMI4OzM7XrkT55dwqX4L6L2fre3q8w1USL9p2tU
+	4+tsp4co4JKS2MDu379udw5Efk9DuIC+9B5JkIpCKgdBXIqgSPO7Biv/7gWJf2q/TMg
+	RfZaMxuJjSa9xp+MLIC3KbPfSzLPg1TH2HF0uPtg=
+Received: by mx.zohomail.com with SMTPS id 1723190745513476.6928946853733;
+	Fri, 9 Aug 2024 01:05:45 -0700 (PDT)
+Message-ID: <080c4692-c53c-417f-9975-0b4ced0b044c@collabora.com>
+Date: Fri, 9 Aug 2024 13:05:38 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, Fenghua Yu <fenghua.yu@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Shuah Khan <shuah@kernel.org>,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, kernel@collabora.com,
+ Shuah Khan <skhan@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] selftests: resctrl: ignore builds for unsupported
+ architectures
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20240809071059.265914-1-usama.anjum@collabora.com>
+ <d60cf782-9ab0-ed4a-0b3e-ba7a73ae8d51@linux.intel.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <d60cf782-9ab0-ed4a-0b3e-ba7a73ae8d51@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-The return value from the call to of_property_count_u32_elems() is int.
-However, the return value is being assigned to an u32 variable
-'num_outputs', so making 'num_outputs' an int.
+On 8/9/24 12:23 PM, Ilpo Järvinen wrote:
+> On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
+> 
+>> This test doesn't have support for other architectures. Altough resctrl
+>> is supported on x86 and ARM, but arch_supports_noncont_cat() shows that
+>> only x86 for AMD and Intel are supported by the test.
+> 
+> One does not follow from the other. arch_supports_noncont_cat() is only 
+> small part of the tests so saying "This test" based on a small subset of 
+> all tests is bogus. Also, I don't see any reason why ARCH_ARM could not be 
+> added and arch_supports_noncont_cat() adapted accordingly.
+I'm not familiar with resctrl and the architectural part of it. Feel
+free to fix it and ignore this patch.
 
-./drivers/pwm/pwm-lp3943.c:238:6-17: WARNING: Unsigned expression compared with zero: num_outputs <= 0.
+If more things are missing than just adjusting
+arch_supports_noncont_cat(), the test should be turned off until proper
+support is added to the test.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9710
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/pwm/pwm-lp3943.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+>> We get build
+>> errors when built for ARM and ARM64.
+> 
+> As this seems the real reason, please quote any errors when you use them 
+> as justification so it can be reviewed if the reasoning is sound or not.
 
-diff --git a/drivers/pwm/pwm-lp3943.c b/drivers/pwm/pwm-lp3943.c
-index f0e94c9e5956..90b0733c00c1 100644
---- a/drivers/pwm/pwm-lp3943.c
-+++ b/drivers/pwm/pwm-lp3943.c
-@@ -218,8 +218,7 @@ static int lp3943_pwm_parse_dt(struct device *dev,
- 	struct lp3943_platform_data *pdata;
- 	struct lp3943_pwm_map *pwm_map;
- 	enum lp3943_pwm_output *output;
--	int i, err, count = 0;
--	u32 num_outputs;
-+	int i, err, num_outputs, count = 0;
- 
- 	if (!node)
- 		return -EINVAL;
+  CC       resctrl_tests
+In file included from resctrl.h:24,
+                 from cat_test.c:11:
+In function 'arch_supports_noncont_cat',
+    inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
+../kselftest.h:74:9: error: impossible constraint in 'asm'
+   74 |         __asm__ __volatile__ ("cpuid\n\t"
+       \
+      |         ^~~~~~~
+cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
+  301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+      |                 ^~~~~~~~~~~~~
+../kselftest.h:74:9: error: impossible constraint in 'asm'
+   74 |         __asm__ __volatile__ ("cpuid\n\t"
+       \
+      |         ^~~~~~~
+cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
+  303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+      |                 ^~~~~~~~~~~~~
+
+
 -- 
-2.32.0.3.g01195cf9f
+BR,
+Muhammad Usama Anjum
 
 
