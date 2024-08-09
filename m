@@ -1,258 +1,219 @@
-Return-Path: <linux-kernel+bounces-281070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A42D94D2AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:54:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37E994D2B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017222821BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:54:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F49EB2261A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64C3197A8B;
-	Fri,  9 Aug 2024 14:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75A8198E93;
+	Fri,  9 Aug 2024 14:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KuubxAu6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="BguUhqgs"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8E3195F0D
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF87198857
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723215233; cv=none; b=RcTn5vL1Vlw6gC5kgwPf0m1tB1iTlez6+fztbQr7Yw16qGYmMJlfnRH9Hh5LzeeeZgMDNAWD8pdcK1l25mTtYriDdsaz8/xqmm/WMteOK9cUh558Dr1rGB3RxUoITJwomiCP8GdvXvCl5R5rWJSYth10wZRJ2oDzkch4YAB4o2Y=
+	t=1723215259; cv=none; b=I5ArKtO6JlRqMr2MW5UJgT3vy+hpyKAmXLbgS4BN7Yv2QsTuhrCuhqONlD98dxxeaRWyUmzHSSSHl35LERQjOwZ1MebHG3mps7iMRCuTv2BZ+GXtDPDmIY/aFrQvyEhS3NcYNeCw90AGHv8m4SIAwpj9AGUYt4bL1g2F4nxjaAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723215233; c=relaxed/simple;
-	bh=GSzMuwNbO0R/haLtymCCrn2VcacmkVi1sA+7fw+Ikp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cTUVOfeXi2F1oQoYslSS31eq7/YC7WiR+7JW7ey1nXaylj5CFEVXIF1xf3MlsDpfu8AqnSxApilhXczWLFthgBajP3JE30x3Ur9u4VX+bcCkaGT52Ps6k+rPX9UvuyF1H/MasW4Rllpm8CIVOYpF+VopyMvYgyM79XXYBiyefKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KuubxAu6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723215231;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S3hmYgUok+ozXUThpLpe+47uXAQDhVMRnl+vdYpiArY=;
-	b=KuubxAu681pql0ystz0RJniV5GQSPS0lgx+jZxpM5kufxC7A9bP6DTc8HDX3V5Hr+pw9tb
-	5VggQDpQ3xjYeWHZMP4uZjVkXrRJWR86hkSQIHmtwI3dAaWSBZ9DmLHWfcz3l/rSpSHFDj
-	wn6J5/FMj7cTCsWcfek32Y8jPpB1/as=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-112-tLJEm6q_PmKvEMMDC9bkdg-1; Fri,
- 09 Aug 2024 10:53:47 -0400
-X-MC-Unique: tLJEm6q_PmKvEMMDC9bkdg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B25119560A2;
-	Fri,  9 Aug 2024 14:53:42 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.16])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0EEFF19560AA;
-	Fri,  9 Aug 2024 14:53:22 +0000 (UTC)
-Date: Fri, 9 Aug 2024 22:53:16 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Daniel Wagner <dwagner@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>,
+	s=arc-20240116; t=1723215259; c=relaxed/simple;
+	bh=F4r1SDEDspkkGJVIp7wGrRgL/9GVTKZM0CjVdwMn7ww=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Lu7buTb5IXZFy8xkLzgXXACPM61Jq/8UkJkRBJd/8wQaBK9yiKojVXI+DTzGDs2qKl6q59x9Y4Qzs8mIlcYJcNH+/Ljh88OxGf4dPLhYV1EUtssi6h//E8nqPxrJXmR6xJIe7UFiApzl6Mtd0OTsfGbW5t0CBxgGeZEQMn8QGgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=BguUhqgs; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1723215204; x=1723820004; i=spasswolf@web.de;
+	bh=iCMZstcGMe+1x8lfdwO0SvthifgHmTscD3Tqg2hX+To=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BguUhqgs4ZGRLUSY3iRUaM6Ygo0nVHzE7pEMP7pLftIN9p0KVudS/GFSnqmcZJVL
+	 qGJv6MQLmqTzwX0ucOWE2rT0mpvy93dqEZ/9HQppDTGllJIYgyhSIk1jmhVPiMNIs
+	 5jTSY13g/Z4XAYRxqfbHs3sfgQLI+MxRkuRqdr8U3nEeJHZ/Zdw555SErho3Vanmz
+	 J3jdjVLle0EBOw1/5oCuUIlShYNI6lBJe4+BFlaSuHT4DXm/IsG/SmrrsMT+ukkWU
+	 L0oVL7Nz1PtIwGfqgiQqKyeYSCqYuu+H17Sx14s47zEkh9vl6Ur1gjdlMZ+RhMK9l
+	 QVBp0ppNVcrDMW5IuA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
+ (mrweb005 [213.165.67.108]) with ESMTPSA (Nemesis) id
+ 1N6sG3-1s8dfH21bL-015I34; Fri, 09 Aug 2024 16:53:24 +0200
+From: Bert Karwatzki <spasswolf@web.de>
+To: mingo@kernel.org
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	akpm@linux-foundation.org,
+	Oleg Nesterov <oleg@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Christoph Hellwig <hch@lst.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	John Garry <john.g.garry@oracle.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Kashyap Desai <kashyap.desai@broadcom.com>,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
-	Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	Nilesh Javali <njavali@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	Jonathan Corbet <corbet@lwn.net>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>,
-	Sridhar Balaraman <sbalaraman@parallelwireless.com>,
-	"brookxu.cn" <brookxu.cn@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, virtualization@lists.linux.dev,
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 15/15] blk-mq: use hk cpus only when isolcpus=io_queue
- is enabled
-Message-ID: <ZrYtXDrdPjn48r6k@fedora>
-References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
- <20240806-isolcpus-io-queues-v3-15-da0eecfeaf8b@suse.de>
- <ZrI5TcaAU82avPZn@fedora>
- <253ec223-98e1-4e7e-b138-0a83ea1a7b0e@flourine.local>
- <ZrRXEUko5EwKJaaP@fedora>
- <856091db-431f-48f5-9daa-38c292a6bbd2@flourine.local>
+	Uros Bizjak <ubizjak@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	peterz@infradead.org
+Subject: Re: commit 81106b7e0b13 can break asm_int80_emulation on x86_64
+Date: Fri,  9 Aug 2024 16:53:19 +0200
+Message-ID: <20240809145320.77100-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: 20240808015752.65088-1-spasswolf@web.de
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <856091db-431f-48f5-9daa-38c292a6bbd2@flourine.local>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GWJB+daNVqTrK5YVMnPWk6kAbywQQ/Zvt7qNtyTrsv7Q/5Qs2+l
+ vqENDo2BVjmVd1p3Kfhsce2+Pq6N55dn8uW2m1sw/jh7j/RuLbLee026zLTmu2Ati8dkThD
+ ETqg5BcKkS+DQq9yoTYVHxsaszVeGNAtJa3uLP7fXicfSq6HXww51yuaK3Ghdomlkj9aLtb
+ 3NuuhCjHTQiRVcl9Qomhg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NAzLfyxshz4=;enQ70EJdQbRZaA5thxyiEwjLvGk
+ BhG7eRXK+H5kk/PeibvJju/utyBfrK0KUPj8EpaHEDHsuWBmkmk1NhwOJ40b6kZODXv9jRE2k
+ C4YZkYS3mWqGIkgcoI9rJ/5fozjym8X6pAT4RbhP48wveOazrTtqLS/Gvy9RoT3ghgL5r7vte
+ xDpTj1HeX3j9BN2PgFmi8kbIFMJuMEWfvotVs7efFqZoQjWS6yeABDWyV08ZEBJYmmXdr75T7
+ Z9osoPpKvNfmkByskRaM4Yc2MNKmBmZYQxqXowABihw6Uauzf6K5uzHMLP2UmMGBhArugKLyG
+ fzKtGlYRGd1IFGLn3SfXq4Kxt0w/NL9DAPlHwgVtsWzbc9zjI6js/Q7OguUEHxpMPpcuCYCOk
+ 5NPZIrwbw8VmAAMbpceSKp2TFv3eY3HBkX17c+AfslJXPEL7tS+E96tNYJwIjCRxrbuyYcMu3
+ tcREKcgkhQedPotIjUiNCfIaHWr94E5zUv4410wi9m/WcT4ffdIA3Nm+NR7ucsRBmVB+30d+u
+ 9OSZzwJEeAs8d84OrkFy32oe8kK+QYZhZbajdgLbFz9klcwiLvvFivTy/a/nxTndLtBpt5fLQ
+ k/r3ifMp9N11lTXmSzN9a16MZFMBV/mY9B6qNSR3swN4YUgdTUE/idGmMtE3IpZCzsCSd/ECB
+ 11Akxcn7riWHbMwU3HRTFfmYQOjr+rGJ+IPxzjtz95Zo1SWKOU2C30Z3gBnYvKuQs1/tbQJ7I
+ wXTVPs5jDfy/laAdxEraPiXlnzmzzkyySNY4C5mm+yYgDLMvT6mweDPyC1AMxZxMdgNoSw14H
+ /QGH7eGfTm5zs7X6wxr9Pbvg==
 
-On Fri, Aug 09, 2024 at 09:22:11AM +0200, Daniel Wagner wrote:
-> On Thu, Aug 08, 2024 at 01:26:41PM GMT, Ming Lei wrote:
-> > Isolated CPUs are removed from queue mapping in this patchset, when someone
-> > submit IOs from the isolated CPU, what is the correct hctx used for handling
-> > these IOs?
-> 
-> No, every possible CPU gets a mapping. What this patch series does, is
-> to limit/aligns the number of hardware context to the number of
-> housekeeping CPUs. There is still a complete ctx-hctc mapping. So
+I did some experimentation on the bug with the help of the following patch=
+:
 
-OK, then I guess patch 1~7 aren't supposed to belong to this series,
-cause you just want to reduce nr_hw_queues, meantime spread
-house-keeping CPUs first for avoiding queues with all isolated cpu mask.
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index bcbbb433cece..70064da40f9d 100644
+=2D-- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -1212,6 +1212,7 @@ static int copy_from_buffer(void *dst, unsigned int =
+offset, unsigned int size,
+ 	if (kbuf) {
+ 		memcpy(dst, kbuf + offset, size);
+ 	} else {
++		printk(KERN_INFO "%s: calling copy_from_user with to =3D %px from =3D %=
+px, n =3D 0x%x\n", __func__, dst, ubuf + offset, size);
+ 		if (copy_from_user(dst, ubuf + offset, size))
+ 			return -EFAULT;
+ 	}
+@@ -1257,6 +1258,8 @@ static int copy_uabi_to_xstate(struct fpstate *fpsta=
+te, const void *kbuf,
+ 	int i;
 
-> whenever an user thread on an isolated CPU is issuing an IO a
-> housekeeping CPU will also be involved (with the additional overhead,
-> which seems to be okay for these users).
-> 
-> Without hardware queue on the isolated CPUs ensures we really never get
-> any unexpected IO on those CPUs unless userspace does it own its own.
-> It's a safety net.
-> 
-> Just to illustrate it, the non isolcpus configuration (default) map
-> for an 8 CPU setup:
-> 
-> queue mapping for /dev/vda
->         hctx0: default 0
->         hctx1: default 1
->         hctx2: default 2
->         hctx3: default 3
->         hctx4: default 4
->         hctx5: default 5
->         hctx6: default 6
->         hctx7: default 7
-> 
-> and with isolcpus=io_queue,2-3,6-7
-> 
-> queue mapping for /dev/vda
->         hctx0: default 0 2
->         hctx1: default 1 3
->         hctx2: default 4 6
->         hctx3: default 5 7
+ 	offset =3D offsetof(struct xregs_state, header);
++	printk(KERN_INFO "%s %d: calling copy_from buffer with offset =3D 0x%x, =
+size =3D 0x%lx\n",
++			__func__, __LINE__, offset, sizeof(hdr));
+ 	if (copy_from_buffer(&hdr, offset, sizeof(hdr), kbuf, ubuf))
+ 		return -EFAULT;
 
-OK, Looks I missed the point in patch 15 in which you added isolated cpu
-into mapping manually, just wondering why not take the current two-stage
-policy to cover both house-keeping and isolated CPUs in group_cpus_evenly()?
+@@ -1269,6 +1272,8 @@ static int copy_uabi_to_xstate(struct fpstate *fpsta=
+te, const void *kbuf,
+ 		u32 mxcsr[2];
 
-Such as spread house-keeping CPUs first, then isolated CPUs, just like
-what we did for present & non-present cpus.
+ 		offset =3D offsetof(struct fxregs_state, mxcsr);
++		printk(KERN_INFO "%s %d: calling copy_from buffer with offset =3D 0x%x,=
+ size =3D 0x%lx\n",
++				__func__, __LINE__, offset, sizeof(mxcsr));
+ 		if (copy_from_buffer(mxcsr, offset, sizeof(mxcsr), kbuf, ubuf))
+ 			return -EFAULT;
 
-Then the whole patchset can be simplified a lot.
+@@ -1292,6 +1297,8 @@ static int copy_uabi_to_xstate(struct fpstate *fpsta=
+te, const void *kbuf,
+ 			offset =3D xstate_offsets[i];
+ 			size =3D xstate_sizes[i];
 
-> 
-> > From current implementation, it depends on implied zero filled
-> > tag_set->map[type].mq_map[isolated_cpu], so hctx 0 is used.
-> > 
-> > During CPU offline, in blk_mq_hctx_notify_offline(),
-> > blk_mq_hctx_has_online_cpu() returns true even though the last cpu in
-> > hctx 0 is offline because isolated cpus join hctx 0 unexpectedly, so IOs in
-> > hctx 0 won't be drained.
-> > 
-> > However managed irq core code still shutdowns the hw queue's irq because all
-> > CPUs in this hctx are offline now. Then IO hang is triggered, isn't
-> > it?
-> 
-> Thanks for the explanation. I was able to reproduce this scenario, that
-> is a hardware context with two CPUs which go offline. Initially, I used
-> fio for creating the workload but this never hit the hanger. Instead
-> some background workload from systemd-journald is pretty reliable to
-> trigger the hanger you describe.
-> 
-> Example:
-> 
->   hctx2: default 4 6
-> 
-> CPU 0 stays online, CPU 1-5 are offline. CPU 6 is offlined:
-> 
->   smpboot: CPU 5 is now offline
->   blk_mq_hctx_has_online_cpu:3537 hctx3 offline
->   blk_mq_hctx_has_online_cpu:3537 hctx2 offline
-> 
-> and there is no forward progress anymore, the cpuhotplug state machine
-> is blocked and an IO is hanging:
-> 
->   # grep busy /sys/kernel/debug/block/*/hctx*/tags | grep -v busy=0
->   /sys/kernel/debug/block/vda/hctx2/tags:busy=61
-> 
-> and blk_mq_hctx_notify_offline busy loops forever:
-> 
->    task:cpuhp/6         state:D stack:0     pid:439   tgid:439   ppid:2      flags:0x00004000
->    Call Trace:
->     <TASK>
->     __schedule+0x79d/0x15c0
->     ? lockdep_hardirqs_on_prepare+0x152/0x210
->     ? kvm_sched_clock_read+0xd/0x20
->     ? local_clock_noinstr+0x28/0xb0
->     ? local_clock+0x11/0x30
->     ? lock_release+0x122/0x4a0
->     schedule+0x3d/0xb0
->     schedule_timeout+0x88/0xf0
->     ? __pfx_process_timeout+0x10/0x10d
->     msleep+0x28/0x40
->     blk_mq_hctx_notify_offline+0x1b5/0x200
->     ? cpuhp_thread_fun+0x41/0x1f0
->     cpuhp_invoke_callback+0x27e/0x780
->     ? __pfx_blk_mq_hctx_notify_offline+0x10/0x10
->     ? cpuhp_thread_fun+0x42/0x1f0
->     cpuhp_thread_fun+0x178/0x1f0
->     smpboot_thread_fn+0x12e/0x1c0
->     ? __pfx_smpboot_thread_fn+0x10/0x10
->     kthread+0xe8/0x110
->     ? __pfx_kthread+0x10/0x10
->     ret_from_fork+0x33/0x40
->     ? __pfx_kthread+0x10/0x10
->     ret_from_fork_asm+0x1a/0x30
->     </TASK>
-> 
-> I don't think this is a new problem this code introduces. This problem
-> exists for any hardware context which has more than one CPU. As far I
-> understand it, the problem is that there is no forward progress possible
-> for the IO itself (I assume the corresponding resources for the CPU
++			printk(KERN_INFO "%s %d: calling copy_from buffer %d with offset =3D 0=
+x%x, size =3D 0x%x, dst =3D %px, kbuf =3D %px, ubuf =3D %px\n",
++					__func__, __LINE__, i, offset, size, dst, kbuf, ubuf);
+ 			if (copy_from_buffer(dst, offset, size, kbuf, ubuf))
+ 				return -EFAULT;
+ 		}
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/main.c b/drivers/ne=
+t/wireless/mediatek/mt76/mt7921/main.c
+index 1bab93d049df..23b228804289 100644
+=2D-- a/drivers/net/wireless/mediatek/mt76/mt7921/main.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7921/main.c
+@@ -1183,7 +1183,7 @@ static void mt7921_ipv6_addr_change(struct ieee80211=
+_hw *hw,
+ 				    struct inet6_dev *idev)
+ {
+ 	struct mt792x_vif *mvif =3D (struct mt792x_vif *)vif->drv_priv;
+-	struct mt792x_dev *dev =3D mvif->phy->dev;
++	struct mt792x_dev *dev =3D mt792x_hw_dev(hw);
+ 	struct inet6_ifaddr *ifa;
+ 	struct in6_addr ns_addrs[IEEE80211_BSS_ARP_ADDR_LIST_LEN];
+ 	struct sk_buff *skb;
+diff --git a/mm/slub.c b/mm/slub.c
+index 513f0fb80f1b..3a62bf2f355d 100644
+=2D-- a/mm/slub.c
++++ b/mm/slub.c
+@@ -5636,6 +5636,10 @@ void __check_heap_object(const void *ptr, unsigned =
+long n,
+ 	    n <=3D s->useroffset - offset + s->usersize)
+ 		return;
 
-When blk_mq_hctx_notify_offline() is running, the current CPU isn't
-offline yet, and the hctx is active, same with the managed irq, so it is fine
-to wait until all in-flight IOs originated from this hctx completed there.
++	printk(KERN_INFO "%s: ptr =3D %px slab =3D %px s =3D %px\n", __func__, p=
+tr, slab, s);
++	printk(KERN_INFO "%s: offset =3D 0x%x s->useroffset =3D 0x%x\n", __func_=
+_, offset, s->useroffset);
++	printk(KERN_INFO "%s: offset - s->useroffset =3D 0x%x s->usersize =3D 0x=
+%x\n", __func__, offset - s->useroffset, s->usersize);
++	printk(KERN_INFO "%s: n =3D 0x%lx s->useroffset - offset + s->usersize =
+=3D 0x%x\n", __func__, n, s->useroffset - offset + s->usersize);
+ 	usercopy_abort("SLUB object", s->name, to_user, offset, n);
+ }
+ #endif /* CONFIG_HARDENED_USERCOPY */
 
-The reason is why these requests can't be completed? And the forward
-progress is provided by blk-mq. And these requests are very likely
-allocated & submitted from CPU6.
+which gives the following output (before the usual backtrace) :
 
-Can you figure out what is effective mask for irq of hctx2?  It is
-supposed to be cpu6. And block debugfs for vda should provide helpful
-hint.
+[  223.785491] [  T46217] copy_uabi_to_xstate 1261: calling copy_from buff=
+er with offset =3D 0x200, size =3D 0x40
+[  223.785501] [  T46217] copy_from_buffer: calling copy_from_user with to=
+ =3D ffffa85f5387fd58 from =3D 000000003ffef840, n =3D 0x40
+[  223.785506] [  T46217] copy_uabi_to_xstate 1275: calling copy_from buff=
+er with offset =3D 0x18, size =3D 0x8
+[  223.785509] [  T46217] copy_from_buffer: calling copy_from_user with to=
+ =3D ffffa85f5387fd50 from =3D 000000003ffef658, n =3D 0x8
+[  223.785512] [  T46217] copy_uabi_to_xstate 1300: calling copy_from buff=
+er 0 with offset =3D 0x0, size =3D 0xa0, dst =3D ffff8c819c239b80, kbuf =
+=3D 0000000000000000, ubuf =3D 000000003ffef640
+[  223.785516] [  T46217] copy_from_buffer: calling copy_from_user with to=
+ =3D ffff8c819c239b80 from =3D 000000003ffef640, n =3D 0xa0
+[  223.785520] [  T46217] __check_heap_object: ptr =3D ffff8c819c239b80 sl=
+ab =3D ffffd5368c708e00 s =3D ffff8c7f800d1400
+[  223.785523] [  T46217] __check_heap_object: offset =3D 0xc00 s->useroff=
+set =3D 0x0
+[  223.785525] [  T46217] __check_heap_object: offset - s->useroffset =3D =
+0xc00 s->usersize =3D 0x0 FIXME?
+[  223.785528] [  T46217] __check_heap_object: n =3D 0xa0 s->useroffset - =
+offset + s->usersize =3D 0xfffff400
+[  223.785530] [  T46217] usercopy: Kernel memory overwrite attempt detect=
+ed to SLUB object 'task_struct' (offset 3072, size 160)!
+[  223.785545] [  T46217] ------------[ cut here ]------------
+[  223.785547] [  T46217] kernel BUG at mm/usercopy.c:102!
 
-> going offline have already been shutdown, thus no progress?) and
-> blk_mq_hctx_notifiy_offline isn't doing anything in this scenario.
+So the problem seems to be that the kmem_cache object *s has usersize 0. T=
+his
+should be impossible in theory as kmem_cache_create_usercopy() should prin=
+t
+a warning in case of (!usersize && useroffset).
 
-RH has internal cpu hotplug stress test, but not see such report so far.
-
-I will try to setup such kind of setting and see if it can be
-reproduced.
-
-> 
-> Couldn't we do something like:
-
-I usually won't thinking about any solution until root-cause is figured
-out, :-)
- 
-
-Thanks, 
-Ming
+Bert Karwatzki
 
 
