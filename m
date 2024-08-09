@@ -1,123 +1,312 @@
-Return-Path: <linux-kernel+bounces-280607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F08E94CCC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:56:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0731694CCC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF0B81F21DE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:56:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6FA1281882
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D932718FC68;
-	Fri,  9 Aug 2024 08:56:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1273B129E9C
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF5718FC85;
+	Fri,  9 Aug 2024 08:57:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEB1129E9C
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723193764; cv=none; b=oaK/XtMYP4hgSh6MXyfD2ceiYXfg86G0RKgnqdmsxIUWu7FpYB5t7zgWEICPTPTHfjnvaNzQgXsvHfx2ycqNo0p39Lnw1k2XIUxw4EJBGw7ibw0kXxVRkt1XHLc9+La6akKz99C/ZrUKTbQ27uCneulT6hl0EEqEFi3vb1OhrUc=
+	t=1723193840; cv=none; b=dlgUKEAvkWTWhwBNwSL/oNL5XNX+7mFetPcu5bxJkX+eRUX6hvi90AX+Ff6I3I/NnRTgxp4c094zY6MwI8umQrV2rsKgMmVKL9+WhkvtS9TtVHXRXtLo7KvUU1TaRKzWxRYNP7nKXxA+ficrKVABZ7iR4m0f9QjEVQiNwwyuDZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723193764; c=relaxed/simple;
-	bh=bbZgZIoiG27SFmYN/lsacOlLUj58fCfeMZXNrYP+rDQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=f1dF1MIQmYYWiCwzPjwwGjoe+0q+2ejMSrKf7DFJpHRCF/SRKTOL2lYOgHXxhMKTk+nbI9wWFxvgp8eIvnbkbSnfuGs5iua2FcHZDMXohuOKGR7EoZJiAa/Ix/FiB4/T+agqahcEVJBPpiLcKyLhtsVEo9fJQeDWCsIr1oq9eHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39915b8e08dso25482145ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:56:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723193762; x=1723798562;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zq/3p0txHm2fdfnRa+7KgJfvchkPRGb/K8AQIJnimgY=;
-        b=YwibV4G5hTjZ/xs2pztbR0YsBwzMYdtIwirt61nMwLmuyzXBCx1N9R9wnh/cX2+amb
-         eY/DfPwX87uThAvqgF6ELNGgL90qhN2UyZrX8o2UP+dD+uF096c/VIF4YW86GsWokRju
-         U3sRvz+tCfq2zvL4SGxnMvtoz76vUdstIs4xOTiD5MhMxHB3JGEh6I2ONlMFpacExw+F
-         0l5nIbB4UZNkSadPAoXqlylrbpnKRdQGVwJvi+VSBFrUSWZblU9JqhAvClVprYpiRn9N
-         823a84G+xqNBmvfWnWIghJ76xLDG2DAgAHXJdxOvWCppZy3c+J+5xTeXXRbkFm3g5PHo
-         WnDw==
-X-Gm-Message-State: AOJu0YwdV4Po2V6/7AuzV/S3YYE289OJF37ZBTkiwZb0r1RNJgLNPq33
-	k/VBHyeU/N8E1/L5MhS33JhnQNJxjENaWtg0nkHMYuVKKiBwem/27QXiSE3ClMWaEAeowBEYyJW
-	l0rsZKS0qAdOmaqisIsVODe5GI0d+TuYi4UauKwi/kOchMhbIhRchn6w=
-X-Google-Smtp-Source: AGHT+IG3vg+1Uaz9jnJEPVNRkl78vAqczCRKpMYJsYE/PhVeggnxpCjQKHkHsWgzDxusdk7Zdl8ApDD5xS/HTvIG1s9CvBeZsgWn
+	s=arc-20240116; t=1723193840; c=relaxed/simple;
+	bh=DyoDyzDDmJq2N0QbVPAtkFu4MvXTxSXorrZmNmiKcKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ouElIG2HBz9ozTE31ZgecWAUpZb03UjQ2ggQ6rLxCbY/gSVENEY3fQtkTxzdIjKWkcNnv76NUU8j/KROeZyPlghJNx/AIpxP/1L8B8zgk25PNbkEhCArVpysrd58LgZzC63SwqjPRPFLpHIj9kf4cdhrHYd1+ZxPY+L9b64/FPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA100FEC;
+	Fri,  9 Aug 2024 01:57:42 -0700 (PDT)
+Received: from [10.57.95.64] (unknown [10.57.95.64])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A944B3F6A8;
+	Fri,  9 Aug 2024 01:57:15 -0700 (PDT)
+Message-ID: <f50a4630-c3bf-4af5-a17f-133ef599e705@arm.com>
+Date: Fri, 9 Aug 2024 09:57:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12ca:b0:375:a55e:f5fc with SMTP id
- e9e14a558f8ab-39b7484d58cmr750985ab.1.1723193762198; Fri, 09 Aug 2024
- 01:56:02 -0700 (PDT)
-Date: Fri, 09 Aug 2024 01:56:02 -0700
-In-Reply-To: <20240809083558.2702436-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000135217061f3c503c@google.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: Override mTHP "enabled" defaults at kernel cmdline
+Content-Language: en-GB
+To: Barry Song <baohua@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
+ Lance Yang <ioworker0@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240808101700.571701-1-ryan.roberts@arm.com>
+ <CAGsJ_4zPCFhngM0R5X6zGSw6KHPYqT8b7izQZt2xoFPSxCpRng@mail.gmail.com>
+ <fe784034-0321-481b-96c0-ac5c48e0fb84@arm.com>
+ <CAGsJ_4x8ruPspuk_FQVggJMWcXLbRuZFq44gg-Dt7Ewt3ExqTw@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAGsJ_4x8ruPspuk_FQVggJMWcXLbRuZFq44gg-Dt7Ewt3ExqTw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 09/08/2024 09:31, Barry Song wrote:
+> On Fri, Aug 9, 2024 at 3:58 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> On 08/08/2024 22:17, Barry Song wrote:
+>>> On Thu, Aug 8, 2024 at 10:17 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>
+>>>> Add thp_anon= cmdline parameter to allow specifying the default
+>>>> enablement of each supported anon THP size. The parameter accepts the
+>>>> following format and can be provided multiple times to configure each
+>>>> size:
+>>>>
+>>>> thp_anon=<size>[KMG]:<value>
+>>>>
+>>>> See Documentation/admin-guide/mm/transhuge.rst for more details.
+>>>>
+>>>> Configuring the defaults at boot time is useful to allow early user
+>>>> space to take advantage of mTHP before its been configured through
+>>>> sysfs.
+>>>>
+>>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>>> ---
+>>>>
+>>>> Hi All,
+>>>>
+>>>> I've split this off from my RFC at [1] because Barry highlighted that he would
+>>>> benefit from it immediately [2]. There are no changes vs the version in that
+>>>> series.
+>>>>
+>>>> It applies against today's mm-unstable (275d686abcb59). (although I had to fix a
+>>>> minor build bug in stackdepot.c due to MIN() not being defined in this tree).
+>>>>
+>>>> Thanks,
+>>>> Ryan
+>>>>
+>>>>
+>>>>  .../admin-guide/kernel-parameters.txt         |  8 +++
+>>>>  Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
+>>>>  mm/huge_memory.c                              | 55 ++++++++++++++++++-
+>>>>  3 files changed, 82 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>>>> index bcdee8984e1f0..5c79b58c108ec 100644
+>>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>>>> @@ -6631,6 +6631,14 @@
+>>>>                         <deci-seconds>: poll all this frequency
+>>>>                         0: no polling (default)
+>>>>
+>>>> +       thp_anon=       [KNL]
+>>>> +                       Format: <size>[KMG]:always|madvise|never|inherit
+>>>> +                       Can be used to control the default behavior of the
+>>>> +                       system with respect to anonymous transparent hugepages.
+>>>> +                       Can be used multiple times for multiple anon THP sizes.
+>>>> +                       See Documentation/admin-guide/mm/transhuge.rst for more
+>>>> +                       details.
+>>>> +
+>>>>         threadirqs      [KNL,EARLY]
+>>>>                         Force threading of all interrupt handlers except those
+>>>>                         marked explicitly IRQF_NO_THREAD.
+>>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>>>> index 24eec1c03ad88..f63b0717366c6 100644
+>>>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>>>> @@ -284,13 +284,27 @@ that THP is shared. Exceeding the number would block the collapse::
+>>>>
+>>>>  A higher value may increase memory footprint for some workloads.
+>>>>
+>>>> -Boot parameter
+>>>> -==============
+>>>> +Boot parameters
+>>>> +===============
+>>>>
+>>>> -You can change the sysfs boot time defaults of Transparent Hugepage
+>>>> -Support by passing the parameter ``transparent_hugepage=always`` or
+>>>> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
+>>>> -to the kernel command line.
+>>>> +You can change the sysfs boot time default for the top-level "enabled"
+>>>> +control by passing the parameter ``transparent_hugepage=always`` or
+>>>> +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
+>>>> +kernel command line.
+>>>> +
+>>>> +Alternatively, each supported anonymous THP size can be controlled by
+>>>> +passing ``thp_anon=<size>[KMG]:<state>``, where ``<size>`` is the THP size
+>>>> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
+>>>> +``inherit``.
+>>>> +
+>>>> +For example, the following will set 64K THP to ``always``::
+>>>> +
+>>>> +       thp_anon=64K:always
+>>>> +
+>>>> +``thp_anon=`` may be specified multiple times to configure all THP sizes as
+>>>> +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
+>>>> +not explicitly configured on the command line are implicitly set to
+>>>> +``never``.
+>>>>
+>>>>  Hugepages in tmpfs/shmem
+>>>>  ========================
+>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>> index 0c3075ee00012..c2c0da1eb94e6 100644
+>>>> --- a/mm/huge_memory.c
+>>>> +++ b/mm/huge_memory.c
+>>>> @@ -82,6 +82,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
+>>>>  unsigned long huge_anon_orders_always __read_mostly;
+>>>>  unsigned long huge_anon_orders_madvise __read_mostly;
+>>>>  unsigned long huge_anon_orders_inherit __read_mostly;
+>>>> +static bool anon_orders_configured;
+>>>>
+>>>>  unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>>>>                                          unsigned long vm_flags,
+>>>> @@ -672,7 +673,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
+>>>>          * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
+>>>>          * constant so we have to do this here.
+>>>>          */
+>>>> -       huge_anon_orders_inherit = BIT(PMD_ORDER);
+>>>> +       if (!anon_orders_configured) {
+>>>> +               huge_anon_orders_inherit = BIT(PMD_ORDER);
+>>>> +               anon_orders_configured = true;
+>>>> +       }
+>>>
+>>> If a user configures 64KB and doesn't adjust anything for PMD_ORDER,
+>>> then PMD_ORDER will  be set to "never", correct? This seems to change
+>>> the default behavior of PMD_ORDER. Could we instead achieve this by
+>>> checking if PMD_ORDER has been explicitly configured?
+>>
+>> Yes, that's how it's implemented in this patch, and the accompanying docs also
+>> state:
+>>
+>>   If ``thp_anon=`` is specified at least once, any anon THP sizes
+>>   not explicitly configured on the command line are implicitly set to
+>>   ``never``.
+>>
+>> My initial approach did exactly as you suggest. But in the original series, I
+>> also had a similar patch to configure file thp with "thp_file=". And for file,
+>> all of the orders default to `always`. So if taking the same approach with that
+>> control, the user would have to explicitly opt-out of all supported orders
+>> rather than just opt-in to the orders they want. And I thought that could get
+>> tricky in future if support is added for more orders. I felt that was
+>> potentially very confusing so decided it was clearer to have the above rule and
+>> make both controls consistent.
+>>
+>> What do you think?
+> 
+> If this is the intention, once the user sets the command line, they should
+> realize that the default settings have been overridden. I am perfectly fine
+> with this strategy.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in v9fs_begin_writeback
+OK. I can see it from both sides to be honest. Let's see if anyone else has
+issue with this approach.
 
-------------[ cut here ]------------
-folio expected an open fid inode->i_ino=1901336
-WARNING: CPU: 2 PID: 609 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
-WARNING: CPU: 2 PID: 609 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
-Modules linked in:
-CPU: 2 UID: 0 PID: 609 Comm: kworker/u32:5 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: writeback wb_workfn (flush-9p-21)
-RIP: 0010:v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
-RIP: 0010:v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
-Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 66 48 8b 73 40 48 c7 c7 20 9a 8e 8b e8 51 4a 0d fe 90 <0f> 0b 90 90 e9 62 ff ff ff e8 32 2b a8 fe e9 51 ff ff ff e8 98 2a
-RSP: 0018:ffffc90003f3f480 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff8880321a6d70 RCX: ffffffff814cc379
-RDX: ffff88801f710000 RSI: ffffffff814cc386 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff88802eb42408
-R13: dffffc0000000000 R14: ffffc90003f3f840 R15: ffff88802eb42658
-FS:  0000000000000000(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000740 CR3: 000000004221c000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netfs_writepages+0x656/0xde0 fs/netfs/write_issue.c:534
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
- __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
- writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
- wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
- wb_do_writeback fs/fs-writeback.c:2274 [inline]
- wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+> 
+> with the below cmdline:
+>  thp_anon=64K:always thp_anon=8K:inherit thp_anon=32K:madvise
+> thp_anon=1M:inherit thp_anon=2M:always
+> 
+> I am getting:
+>   / # cat /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled
+>   [always] inherit madvise never
+>   / # cat /sys/kernel/mm/transparent_hugepage/hugepages-32kB/enabled
+>   always inherit [madvise] never
+>   / # cat /sys/kernel/mm/transparent_hugepage/hugepages-1024kB/enabled
+>   always [inherit] madvise never
+>   / # cat /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+>   [always] inherit madvise never
 
+And you should also be seeing a warning in the boot log that thp_anon=8K:inherit
+is unrecognised (since anon doesn't support order-1).
 
-Tested on:
+> 
+> Thus,
+> 
+> Tested-by: Barry Song <baohua@kernel.org>
 
-commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b83d11980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10689dbd980000
+Thanks!
+
+> 
+>>
+>>
+>>>
+>>>>
+>>>>         *hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
+>>>>         if (unlikely(!*hugepage_kobj)) {
+>>>> @@ -857,6 +861,55 @@ static int __init setup_transparent_hugepage(char *str)
+>>>>  }
+>>>>  __setup("transparent_hugepage=", setup_transparent_hugepage);
+>>>>
+>>>> +static int __init setup_thp_anon(char *str)
+>>>> +{
+>>>> +       unsigned long size;
+>>>> +       char *state;
+>>>> +       int order;
+>>>> +       int ret = 0;
+>>>> +
+>>>> +       if (!str)
+>>>> +               goto out;
+>>>> +
+>>>> +       size = (unsigned long)memparse(str, &state);
+>>>> +       order = ilog2(size >> PAGE_SHIFT);
+>>>> +       if (*state != ':' || !is_power_of_2(size) || size <= PAGE_SIZE ||
+>>>> +           !(BIT(order) & THP_ORDERS_ALL_ANON))
+>>>> +               goto out;
+>>>> +
+>>>> +       state++;
+>>>> +
+>>>> +       if (!strcmp(state, "always")) {
+>>>> +               clear_bit(order, &huge_anon_orders_inherit);
+>>>> +               clear_bit(order, &huge_anon_orders_madvise);
+>>>> +               set_bit(order, &huge_anon_orders_always);
+>>>> +               ret = 1;
+>>>> +       } else if (!strcmp(state, "inherit")) {
+>>>> +               clear_bit(order, &huge_anon_orders_always);
+>>>> +               clear_bit(order, &huge_anon_orders_madvise);
+>>>> +               set_bit(order, &huge_anon_orders_inherit);
+>>>> +               ret = 1;
+>>>> +       } else if (!strcmp(state, "madvise")) {
+>>>> +               clear_bit(order, &huge_anon_orders_always);
+>>>> +               clear_bit(order, &huge_anon_orders_inherit);
+>>>> +               set_bit(order, &huge_anon_orders_madvise);
+>>>> +               ret = 1;
+>>>> +       } else if (!strcmp(state, "never")) {
+>>>> +               clear_bit(order, &huge_anon_orders_always);
+>>>> +               clear_bit(order, &huge_anon_orders_inherit);
+>>>> +               clear_bit(order, &huge_anon_orders_madvise);
+>>>> +               ret = 1;
+>>>> +       }
+>>>> +
+>>>> +       if (ret)
+>>>> +               anon_orders_configured = true;
+>>>
+>>> I mean:
+>>>
+>>> if (ret && order == PMD_ORDER)
+>>>             anon_pmd_order_configured = true;
+>>>
+>>>> +out:
+>>>> +       if (!ret)
+>>>> +               pr_warn("thp_anon=%s: cannot parse, ignored\n", str);
+>>>> +       return ret;
+>>>> +}
+>>>> +__setup("thp_anon=", setup_thp_anon);
+>>>> +
+>>>>  pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+>>>>  {
+>>>>         if (likely(vma->vm_flags & VM_WRITE))
+>>>> --
+>>>> 2.43.0
+>>>>
+>>>
+>>> Thanks
+>>> Barry
+>>
 
 
