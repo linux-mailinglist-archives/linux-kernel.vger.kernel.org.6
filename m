@@ -1,123 +1,244 @@
-Return-Path: <linux-kernel+bounces-281257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E63D94D4E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:42:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75E994D4E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB5DFB210BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECFAA1C20DCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125BD1CA94;
-	Fri,  9 Aug 2024 16:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501FA2233B;
+	Fri,  9 Aug 2024 16:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="HtzYKJt9"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="DONaFIp8"
+Received: from alln-iport-7.cisco.com (alln-iport-7.cisco.com [173.37.142.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51F61CAAC
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6327738384;
+	Fri,  9 Aug 2024 16:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.142.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723221730; cv=none; b=Mbwa3kANMqEpnXGqky100jig63j1v1vbTW50v2CaFW7MujkId/moUoxKWvK90JzEnbyqd+9e7fDe9q8QiD/4yIvE6NNWklC4slK4c38BMgXOs0cb97w76mDx2Kz8SKKJxUk3GvA+OM1GwRGfldPFJ4hC/3cILBx8414jSmao3EI=
+	t=1723221850; cv=none; b=Ujf+N4kBJf2JX7aYTu0EMwHX1lQwD1c6FVaJDC2bDalrsc+DDFbS5Q/cWy2aDWbEEPzR+rd0VV8uBmEHOEG01wxXkBiuuUH6VgfFmNJszVEVX5z+bGUPK7snOEUCt1JvotHWvuGt+taupIZeLjSkygbhUWSZnAQ5KmHTDtBEt3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723221730; c=relaxed/simple;
-	bh=5QIavNohw/UnZ+iYVJ6jnEmILfZebfqlufkySWpOPPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tim+or48NTF89GOZ2GSTY8BljP0ISkD1y3WI+nshCV1WuS2xoeIzSKCFparCmNCPZ/Xxbh5rlIQ2R5qokknIWA+pMfZZQFQdDy+N+Xm/eehtjq2KuJrgnJPuDg+p739oDM2gYtiVAMS9SoiaOKz9VspzOnED5j5KPxnuUZz4hKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=HtzYKJt9; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db1d0fca58so1497250b6e.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:42:07 -0700 (PDT)
+	s=arc-20240116; t=1723221850; c=relaxed/simple;
+	bh=gcOmM3i2BQnMJIObxhWfH2FGaKFymiQiWIbGoJzhZPc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qpXu2kF9ZOBUIAv8yXU1S7GQBc/VqJjZ+oBwMIF+5qYtuqc0rZO+voJJJHF0MYwMDGsCCV8kqOoKNuF435N1re0/FklzU3MzPhvip52wM14TKMVtnEXizOcbFn6+4c+Sv7FeqWaAp6LCGbXY/Vlv6u9HvDD5SFT8gx45CFKqDzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=DONaFIp8; arc=none smtp.client-ip=173.37.142.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1723221726; x=1723826526; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hzuVtB2v6flDP47Da5zBNwElSW8197o0ha4r0qeCzWA=;
-        b=HtzYKJt9C7sbG4xnOcF8wKLM+VVy1kiDVyELmF/4Jpoh1+q8AtCS9A5fgisS6Dhg77
-         6pvk4DU3c9ZHMBWg+Pehnjx2n8VFu5rceBdqJouVrDVlmVS3HbejqPHIC7Sy2vUb3zhh
-         y6P1lCLTX5xbv4ZxM2xErVdeORhoCF4nQUndL3qJLJAZ8DT8eQ6JULKDJVEM3jIJTbKO
-         06/wIlgDOpEQmwe/0lKq8DEQTbVwpd1gcl0THqeIeMfPLYbWBhS0X0JrMrh/wfdSrT1g
-         Dm27GxgNhmbFLv8oTvkh41khW+m/NjuPYaHR3gmWs0lAnRmxOUWSs0efyLSiqtzGL4sv
-         5wLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723221726; x=1723826526;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hzuVtB2v6flDP47Da5zBNwElSW8197o0ha4r0qeCzWA=;
-        b=G1TwpzwLfqIfTmXaYCU0NhYz9NOkBMwXDHqlz649C1yJDwfvAr9dYspCHRosUw32rc
-         tuFKxoCTW9RywxiA50T478HU1TkeZN9eCrSjCtLiatRQUPiPyOMQAFjU3p/CGQELun+z
-         XB9O1w/9sNl4lZj/BLp4ijE1Q9tf7srJKuae4iDTvTYnjj9awys4p6wJPyCuupd7hrf+
-         fx8ncDhpo3dHi771ijvteEJzRRAsaavLVBuEV839tikRnFSz0aCx7uLkecrwTFlCN2pt
-         kDcm9gNPuPv+n4pHDfGMo/QCl0ReD3kPVg3c+IkwXhOVIOwpOW68s5kPYdvcrXDUnd3R
-         0wvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhHbeEffW28lmzSONQTLuCMn2WnihAXPJd5AMZp8kN7uBSQXeLzIWYvfVQxFIDSGryiyWHs5nE7JdTUnSb2tzGfKaVLrFKuu4uTo2t
-X-Gm-Message-State: AOJu0Yz3ykZmvVxdQBJhsp6vNyTdeYJo4BVWYq63gPZ0mCNBrPh3EOZc
-	unLbWu45AHY3N+9nvz3+YcbNP37oR4I6atUgVyTnJJGfgZA39+rMTmM7HE40Cqs=
-X-Google-Smtp-Source: AGHT+IHSihy3BzUjozeYZvvsK5K12DhAcqxa8bU0v3dyqc3p2o+V1bmf3nTK94hnjncm1DJo6yMPJw==
-X-Received: by 2002:a05:6808:1453:b0:3d9:e22a:8fb8 with SMTP id 5614622812f47-3dc4168b248mr2480400b6e.26.1723221726620;
-        Fri, 09 Aug 2024 09:42:06 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2ccf1esm2820658b3a.129.2024.08.09.09.42.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 09:42:06 -0700 (PDT)
-Date: Fri, 9 Aug 2024 09:42:03 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Potnuri Bharat Teja <bharat@chelsio.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jamal Hadi Salim
- <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko
- <jiri@resnulli.us>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2][next] UAPI: net/sched: Avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <20240809094203.378b5224@hermes.local>
-In-Reply-To: <ZrY1d01+JrX/SwqB@cute>
-References: <ZrY1d01+JrX/SwqB@cute>
+  d=cisco.com; i=@cisco.com; l=6807; q=dns/txt; s=iport;
+  t=1723221848; x=1724431448;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ICuJRUEtyt5rd57B6O6Tu1k6JyVqKRztOAzdX81XrJI=;
+  b=DONaFIp8EV1fWRG8vJlhwYl3jDPD9mQXZWjfXRTPgqrMclq5ESeROpV9
+   Le/zxANgEwi6bMPajmZjorkVKsLio7+NDc9B6+nvkkE+yY6U+BiKPVlby
+   YIFFHcAjdc3LYmrRT+Lyi+mChPFMFwcWWO05cfl+rsFENhbAM1tiDanS3
+   E=;
+X-CSE-ConnectionGUID: /ElXYdoiTOK964jFpsGAkA==
+X-CSE-MsgGUID: I2SXSi0fQ5m4OSQ1kP4fPg==
+X-IronPort-AV: E=Sophos;i="6.09,276,1716249600"; 
+   d="scan'208";a="329533379"
+Received: from rcdn-core-5.cisco.com ([173.37.93.156])
+  by alln-iport-7.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 16:42:59 +0000
+Received: from localhost.cisco.com ([10.193.101.253])
+	(authenticated bits=0)
+	by rcdn-core-5.cisco.com (8.15.2/8.15.2) with ESMTPSA id 479Ggo2V031305
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 9 Aug 2024 16:42:58 GMT
+From: Karan Tilak Kumar <kartilak@cisco.com>
+To: sebaddel@cisco.com
+Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com, mkai2@cisco.com,
+        satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Karan Tilak Kumar <kartilak@cisco.com>
+Subject: [PATCH v2 00/14] Introduce support for Fabric Discovery and
+Date: Fri,  9 Aug 2024 09:42:26 -0700
+Message-Id: <20240809164240.47561-1-kartilak@cisco.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Authenticated-User: kartilak@cisco.com
+X-Outbound-SMTP-Client: 10.193.101.253, [10.193.101.253]
+X-Outbound-Node: rcdn-core-5.cisco.com
 
-On Fri, 9 Aug 2024 09:27:51 -0600
-"Gustavo A. R. Silva" <gustavoars@kernel.org> wrote:
+Hi Martin, reviewers,
 
-> -Wflex-array-member-not-at-end has been introduced in GCC-14, and we
-> are getting ready to enable it, globally.
-> 
-> So, in order to avoid ending up with a flexible-array member in the
-> middle of multiple other structs, we use the `__struct_group()`
-> helper to create a new tagged `struct tc_u32_sel_hdr`. This structure
-> groups together all the members of the flexible `struct tc_u32_sel`
-> except the flexible array.
-> 
-> As a result, the array is effectively separated from the rest of the
-> members without modifying the memory layout of the flexible structure.
-> We then change the type of the middle struct member currently causing
-> trouble from `struct tc_u32_sel` to `struct tc_u32_sel_hdr`.
-> 
-> This approach avoids having to implement `struct tc_u32_sel_hdr`
-> as a completely separate structure, thus preventing having to maintain
-> two independent but basically identical structures, closing the door
-> to potential bugs in the future.
-> 
-> So, with these changes, fix the following warning:
-> drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32_parse.h:245:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+This cover letter describes the feature: add support for Fabric
+Discovery and Login Services (FDLS) to fnic driver.
 
-Tested this with iproute2-next and clang and no problem.
+This functionality is needed to support port channel RSCN (PC-RSCN)
+handling and serves as a base to create FC-NVME initiators
+(planned later), and eCPU handling (planned later).
 
-The patch might be better split into two parts?
+It is used to discover the fabric and target ports associated with the
+fabric.
+It will then login to the target ports that are zoned to it.
+The driver uses the tport structure presented by FDLS.
+
+Port channel RSCN is a Cisco vendor specific RSCN
+event. It is applicable only to Cisco UCS fabrics.
+
+In cases where the eCPU in the UCS VIC (Unified Computing Services
+Virtual Interface Card) hangs, a fabric log out is sent to the fabric.
+Upon successful log out from the fabric, the IO path is failed over
+to a new path.
+
+Generally from a feature perspective, the code is divided into adding
+support for this functionality initially. Then, code has been added to
+modify the IO path and interfaces. Finally, support for port channel
+RSCN handling has been added.
+
+Here are the headers of some of the salient patches:
+
+o add headers and definitions for FDLS
+o add support for fabric based solicited requests and responses
+o add support for target based solicited requests and responses
+o add support for unsolicited requests and responses
+o add support for FDMI
+o add support for FIP
+o add functionality in fnic to support FDLS
+o modify IO path to use FDLS and tport
+o modify fnic interfaces to use FDLS
+o add support to handle port channel RSCN
+
+Even though the patches have been made into a series, some patches are
+heavier than others. But, every effort has been made to keep the
+purpose of each patch as a single-purpose, and to compile cleanly.
+All the individual patches compile cleanly. There are some unused
+function warnings, but since the function calls happen in later
+patches, those warnings go away.
+
+This patchset has been tested as a whole. Therefore, the tested-by
+fields have been added only to one patch in the set.
+I've refrained from adding tested-by to most of the patches,
+so as to not mislead the reviewer/reader.
+
+A brief note on the unit tests:
+
+o. Perform zone in zone out testing in a loop: remove a target
+port from the zone, add it to the zone in a loop. 1000+ iterations
+of this test have been successful.
+o. Configure multipathing, and run link flaps on single link.
+IOs drop briefly, but pick up as expected.
+o. Configure multipathing, and run link flaps on two links, with a
+30 second delay in between. IOs drop briefly, but pick up as expected.
+o. Module load/unload test.
+o. Repeat the above tests with 1 queue and 64 queues.
+All tests were successful.
+
+Please consider this patch series for the next merge window.
+
+Changes between v1 and v2:
+	Replace pr_err with printk.
+	Replace simultaneous use of fc_tport_abts_s and tport_abts with
+    just tport_abts.
+	Incorporate review comments by Hannes:
+		Replace pr_info with dev_info.
+		Replace pr_err with dev_err.
+		Restore usage of tagset iterators.
+		Replace fnic_del_tport_timer_sync macro calls with function
+		calls.
+		Use the correct kernel-doc format.
+		Replace definitions with standard definitions from
+		fc_els.h.
+		Replace htonll() with get_unaligned_be64().
+		Use standard definitions from scsi_transport_fc.h for
+		port speeds.
+		Refactor definitions in struct fnic to avoid cache holes.
+		Replace memcmp with not equal to operator.
+		Fix indentation.
+		Replace fnic_del_fabric_timer_sync macro calls to function
+		calls.
+		Rename fc_abts_s to fc_tport_abts_s.
+		Modify fc_tport_abts_s to be a global frame.
+		Rename variable pfc_abts to tport_abts.
+		Modify functions with returns in the middle to if else
+		clauses.
+		Remove double newline.
+		Fix indentation in fnic_send_frame.
+		Add fnic_del_fabric_timer_sync as an inline function.
+		Add fnic_del_tport_timer_sync as an inline function.
+		Modify fc_abts_s variable name to fc_fabric_abts_s.
+		Modify fc_fabric_abts_s to be a global frame.
+		Rename pfc_abts to fabric_abts.
+		Remove redundant patch description.
+		Replace htonll() with get_unaligned_be64().
+		Replace raw values with macro names.
+		Remove fnic_del_fabric_timer_sync macro.
+		Remove fnic_del_tport_timer_sync macro.
+		Add fnic_del_fabric_timer_sync function declaration.
+		Add fnic_del_tport_timer_sync function declaration.
+		Move FDMI function declaration.
+		Modify patch heading and description appropriately.
+	Incorporate review comments from John:
+		Remove unreferenced variable.
+		Use standard definitions of true and false.
+		Replace if else clauses with switch statement.
+		Use kzalloc instead of kmalloc.
+		Modify fnic_send_fcoe_frame to not send a return value.
+		Replace int return value with void.
+	Fix warning from kernel test robot:
+		Remove version.h
+
+Thanks and regards,
+Karan
+
+
+Karan Tilak Kumar (14):
+  scsi: fnic: Replace shost_printk with dev_info/dev_err
+  scsi: fnic: Add headers and definitions for FDLS
+  scsi: fnic: Add support for fabric based solicited requests and
+    responses
+  scsi: fnic: Add support for target based solicited requests and
+    responses
+  scsi: fnic: Add support for unsolicited requests and responses
+  scsi: fnic: Add and integrate support for FDMI
+  scsi: fnic: Add and integrate support for FIP
+  scsi: fnic: Add functionality in fnic to support FDLS
+  scsi: fnic: Modify IO path to use FDLS
+  scsi: fnic: Modify fnic interfaces to use FDLS
+  scsi: fnic: Add stats and related functionality
+  scsi: fnic: Code cleanup
+  scsi: fnic: Add support to handle port channel RSCN
+  scsi: fnic: Increment driver version
+
+ drivers/scsi/fnic/Makefile                |    5 +-
+ drivers/scsi/fnic/fdls_disc.c             | 3909 +++++++++++++++++++++
+ drivers/scsi/fnic/fdls_fc.h               |  555 +++
+ drivers/scsi/fnic/fip.c                   |  841 +++++
+ drivers/scsi/fnic/fip.h                   |  341 ++
+ drivers/scsi/fnic/fnic.h                  |  216 +-
+ drivers/scsi/fnic/fnic_attrs.c            |   12 +-
+ drivers/scsi/fnic/fnic_debugfs.c          |   30 +-
+ drivers/scsi/fnic/fnic_fcs.c              | 1772 ++++------
+ drivers/scsi/fnic/fnic_fdls.h             |  358 ++
+ drivers/scsi/fnic/fnic_io.h               |   14 +-
+ drivers/scsi/fnic/fnic_isr.c              |   28 +-
+ drivers/scsi/fnic/fnic_main.c             |  673 ++--
+ drivers/scsi/fnic/fnic_pci_subsys_devid.c |  131 +
+ drivers/scsi/fnic/fnic_res.c              |   77 +-
+ drivers/scsi/fnic/fnic_scsi.c             | 1163 +++---
+ drivers/scsi/fnic/fnic_stats.h            |   48 +-
+ drivers/scsi/fnic/fnic_trace.c            |   83 +-
+ 18 files changed, 8380 insertions(+), 1876 deletions(-)
+ create mode 100644 drivers/scsi/fnic/fdls_disc.c
+ create mode 100644 drivers/scsi/fnic/fdls_fc.h
+ create mode 100644 drivers/scsi/fnic/fip.c
+ create mode 100644 drivers/scsi/fnic/fip.h
+ create mode 100644 drivers/scsi/fnic/fnic_fdls.h
+ create mode 100644 drivers/scsi/fnic/fnic_pci_subsys_devid.c
+
+-- 
+2.31.1
 
 
