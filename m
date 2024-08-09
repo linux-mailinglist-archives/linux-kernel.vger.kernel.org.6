@@ -1,109 +1,203 @@
-Return-Path: <linux-kernel+bounces-280556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649AB94CC1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:24:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F69294CC20
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF235B2495B
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:24:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B221C21956
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4859D18DF6C;
-	Fri,  9 Aug 2024 08:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB1818DF8F;
+	Fri,  9 Aug 2024 08:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DeBXzDhu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kMGhqPRQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE1218CBFA
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723191855; cv=none; b=l13qiSEGnvZfVnan55NuDGqi9kTa8xIevQpWp1hsZKmH35K9+5LTbUZcXd9vfowsOpue4DjJsWz/D5fx1tfOf4rsitwOZuTKRYQhuMh4iPxJwQgUVhYV4tkCWngw/9ES5OoefDGeqWpmZ1BBwxTcL8g5S8GuWCf+lPTn6G5etis=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723191855; c=relaxed/simple;
-	bh=eCPYO7k8einZmGW1UrDuHki8qQ6ec/+2EnDneiq2HZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a8epNsPKOsS2Na+zOtM4tpcd8g4VzF5YiAk6KFr5m/kDGk7A9fY3BZz6jRzzdtJrmOQtVou2MTUJPecGjs+GXHKQgxvK8z8YAKgwzcPwfFEN8tuiK06Y1t0tkodb12EgEl2u8zCYl6uOMZlCC29GByTdRg4TnA8q7rS3LCEXd+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DeBXzDhu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D9C8C32782;
-	Fri,  9 Aug 2024 08:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723191855;
-	bh=eCPYO7k8einZmGW1UrDuHki8qQ6ec/+2EnDneiq2HZ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DeBXzDhuqZUaRs00yRhoABN21W0kmvnS+rp31D95QzOB8JtfX8ORd1Ewl0ecdBCaj
-	 P6nzJD7ELL21XOecdzwwQ8j3Q+AkZDmSoLERd/NTWTMAuuX9yQUvUNVvgEgowKmhsD
-	 Bm0883My3nWU1pa2Tupw/vwAGwvh/D1eJ96oPUolqpMxY3JqaENs0hj431J2t1MgMS
-	 fy5L3c9y1R4rDye21rUYqrfeh0ZTvgachzwetEhskgNxTLx1Zezda10e8PG+RiT+yn
-	 KlSmiPrJA+W6PFvxGun2mpKc8YTh12EJZi75NLAzQEzAYY3cWZRU1huPCoDgh4Xix9
-	 1+K58H5Wj0UuQ==
-Date: Fri, 9 Aug 2024 10:24:09 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: John Snow <jsnow@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, Cleber Rosa <crosa@redhat.com>,
- linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v5 7/7] scripts/ghes_inject: add a script to generate
- GHES error inject
-Message-ID: <20240809102409.136837ec@foz.lan>
-In-Reply-To: <CAFn=p-ZM8cgKvUx+5v7YU6TaPZySJL1QnHqjmN5rQpF=D_V=8Q@mail.gmail.com>
-References: <cover.1722634602.git.mchehab+huawei@kernel.org>
-	<0654a89fe24f4343016b9cecc0752594ad1cd49f.1722634602.git.mchehab+huawei@kernel.org>
-	<CAFn=p-Y27zap1P5G3NibdZS26iGwCqh8U0vgW0Vw31f53+oU1w@mail.gmail.com>
-	<20240809004137.01f97da2@foz.lan>
-	<CAFn=p-ZM8cgKvUx+5v7YU6TaPZySJL1QnHqjmN5rQpF=D_V=8Q@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2C118DF62
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723191897; cv=fail; b=FUGfeeVLLh4JEUkWfn6hSirM+RxQZjEVhuktHdl2AGF0cfF2YU4c/2OGychzwaLMOYnimFgRDfDs7i4U+K78G1wTKOTA9n/3cRRkBPElvOtKqmp2w/YXzE7qHZ/UqdNJdbbR2zGR6DdSX0S2XbNeDcrGdPKFj7a4e2SQrFFN6lQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723191897; c=relaxed/simple;
+	bh=HvMBQ+hxkYJITmgrvFYRvurko+H3XtVxSDjtLa0n/5g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HZqM339CdhgzlkRdzbG/mAMTvoOBInjMSzm0Qw16Vyb075qXsZ9BHIefAzM5zA50tH9lmJ1W44F8FsP0cp/4rwoFtyc/nD0AclF/EwCj1OOF8Gvoknw+jzh5b+noovtGslEBl4R3dgMMrxF7n6n8xNDEn3Io0TG9y0TZ9YdiMJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kMGhqPRQ; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723191896; x=1754727896;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=HvMBQ+hxkYJITmgrvFYRvurko+H3XtVxSDjtLa0n/5g=;
+  b=kMGhqPRQFFLE1Qy2t5/u8vAZpaCT1J2vXnGSywT/ZvuetjbahNCqCf1J
+   Cy0O5vt6ywuFDkzvqt67yas1r0MMqy4cT04Ztz/EOs2pvYK34+hQqZHHl
+   xUKFl+UMgD66/DD29KqZBNCTB0saOMCI+DwlX+nMtkwxN4o2B8X2eBtdZ
+   d/zPM0gGzz6OANU/lumDGwtD2cuMlkN/6Y1yc6sAvn+fn0R4u3YalFcff
+   LVdaeCw0mm5YtK8jc6R87G7EAe+d12QEU4sieWsvKPsPH5TOd1qplAq9W
+   mfye43QuvO72jKzCF/Dbsc6S2O9wamgNs+FQBSN8wnsTnbAidgP9Jk6W4
+   Q==;
+X-CSE-ConnectionGUID: SPmRVkQUQNSV+XpK278VZA==
+X-CSE-MsgGUID: hZrHleg9Qres+aDmVCfPYg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25226958"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="25226958"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 01:24:56 -0700
+X-CSE-ConnectionGUID: SHi2vGjUTNiRmS8/lRe5jw==
+X-CSE-MsgGUID: j+moJKQ+SbKa8ltgsS6I3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="61894820"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Aug 2024 01:24:55 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 9 Aug 2024 01:24:55 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 9 Aug 2024 01:24:55 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.43) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 9 Aug 2024 01:24:54 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pvr6Xlf94TEcj09YQ1/n/tjvFXEyTpss5hJVclwY0qQJSy5S5ixxrUka+Q1vCT0Yun+CfVJDjnt8qNL82J9I/st5EyZgLgWic1r8q98PweUE4eX6RVA0JERMG8CmIyvIK0J0LSLfJTghe/FMNvgLcx6mIlUW1QGJ3/P/F1LU6JTii5XikEwc3geogon2cH5lV0R8TVWQ37AwgcZms5CPN8ZcL7nkIhubNMkKj7RPnwTKfdcvBb/o99k2FzDbsuDhyei636htKX7k9EhVous9+G99W+GvjROgQearBYk73ud/1OOgvtk5MRTIZzsdY33TkHRpnbXC81sedYFFCw50SQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HvMBQ+hxkYJITmgrvFYRvurko+H3XtVxSDjtLa0n/5g=;
+ b=VSyDjnNwtOSx3/8LldHZ8n4Ew0A9SHisjUClc+j/FhPeANyRg6BuxIlXq6pgX2X3ylZATfQ7n9ESJDKfyczpAQ8R24Q3rBSjLGa8Zt958cK9LER1J2DvnmlbvuTc04VHrob1fkiyLKQmaCaxrM7h/4+OqkvPDB4+Aru+1bj2B6SKCJJCZWcbSvb0Hz5woi95fgpIU1xF4r+jWoByDtUy6SV8leXGJrjWt3Ngz+sgDCxdgOJARzDAoMtldI003fEq9Mul6tn0Ilu5TfSDMPd6sxKhS3ocxvaXmx2rq7Y8qSJhTLkGR0C4pUvL0qhtcu9FQ0ZDup7idsByz41dGAdfMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by DS0PR11MB7333.namprd11.prod.outlook.com (2603:10b6:8:13e::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.29; Fri, 9 Aug
+ 2024 08:24:52 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%3]) with mapi id 15.20.7828.023; Fri, 9 Aug 2024
+ 08:24:52 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
+ Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Jason
+ Gunthorpe" <jgg@nvidia.com>
+Subject: RE: [PATCH v4 3/7] iommu/vt-d: Always reserve a domain ID for
+ identity setup
+Thread-Topic: [PATCH v4 3/7] iommu/vt-d: Always reserve a domain ID for
+ identity setup
+Thread-Index: AQHa6iEirY9sSCYyg0WDLjD07k2ujrIelo5g
+Date: Fri, 9 Aug 2024 08:24:52 +0000
+Message-ID: <BN9PR11MB5276F11AD99A214CEE9E77548CBA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240809055431.36513-1-baolu.lu@linux.intel.com>
+ <20240809055431.36513-4-baolu.lu@linux.intel.com>
+In-Reply-To: <20240809055431.36513-4-baolu.lu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DS0PR11MB7333:EE_
+x-ms-office365-filtering-correlation-id: e1070bd4-6c42-4927-dafc-08dcb84cbe49
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?+p2pvF9C/IX3BFRyxlvWFIqYS9hj15uOX+cz//+fyZ8GI5FAQ7SfE/y+k8HI?=
+ =?us-ascii?Q?ujWQ+5O0msOmGIAsFDjBIAL8VmsKbdJrE0sw7UJfWrtVy3Jk810jjXQnQ+X7?=
+ =?us-ascii?Q?jQrhF/m62WOeM1tA0xPN+YIY+foDhzrytULJH7gRof1zvXAmmftRTSOEoviL?=
+ =?us-ascii?Q?U2CvrJffqOyV4ndSd5SxrYlmOiIjUOZE9+TYzuUhD2zhDGjg94IxkZ6mbzI6?=
+ =?us-ascii?Q?kqIHu+qxDUhxqyxR6egY2f2l3SH3ua5b4n7V7Epcsfhg5xYi3iD8FLBoUgIi?=
+ =?us-ascii?Q?c+/fnxJXlMLe/nBd09B0fsjFR50UEBkQ47FC015qOjQjvc0JMQykxW4dmxzL?=
+ =?us-ascii?Q?fUMLn+Soer8HKg7IB3/XwjsU8ciQMEmziMXPeLg1/xKxnvhHh/LQzrvbRLwm?=
+ =?us-ascii?Q?NmXA2wS/K6QErxE9doi7SJLYsbsSWFlzYSFYYejlpoHN1wZzamX5U8Meu2RS?=
+ =?us-ascii?Q?zcOOwsnpuN+I5frx65UVIU3QL2MI12D8lh0rXJNtMnN8e67w964Kvu7tYYi6?=
+ =?us-ascii?Q?zqWKOeZstJGUdDM7JWKmb3jCyP9dsyEm27HX+aSbdhUVMpMkPRRQ8h58mCIb?=
+ =?us-ascii?Q?WM/GQ8Of/jq2COKPa0HyiJExat1bI4wVI2lzWFi92cp6PpTLTyvBOZxqthEm?=
+ =?us-ascii?Q?v2sYf22QAjA7q1baFCRLP7HMLfEydb1UtApkhqJQcANMUDDf20RJiCyVP3Ax?=
+ =?us-ascii?Q?pA8b1SrMfepctt+aje2f3mLbBhes73pe+swIhyz+y1b8jBjewvJgY4iJZ8Xe?=
+ =?us-ascii?Q?OMGXZbGLevuXPb0C5NNjGHiUL2ciwwhHv9TaIihnsp7EJb6v/E8cqxNkDpKP?=
+ =?us-ascii?Q?QonfJqpfqnuyhrUz5Z1Kkf7aLKu/7gOsTM5svUl3XOKcDFFE0OgliydFAKA2?=
+ =?us-ascii?Q?u/WVGvT4yEYafgRbJu2TOHSR8VXxGKM9ZxOkDLUyaMqVrp/Xp7ZDw9HJRsFz?=
+ =?us-ascii?Q?mWuibQIf5E7t5LA8yc3dff6R2+vEN3NzFUlftW7IEt+jG5/iD0TCz4noNVDi?=
+ =?us-ascii?Q?pggvH0/7WWC2WUPPtX2QN3dJOcKRUvq/UvYYmd1dlqjDb47qbNKL+IOHeX+6?=
+ =?us-ascii?Q?YyW4bYYSy5o8SzMNpGFCL4ea3Cm1FZsNGlZ++cKFPRcmPulTLc5ViFRbskLI?=
+ =?us-ascii?Q?eQWJeV6nwIOLMyNA1Ryy/cr9E3A7XcPgX3SoLHQPiTURu/36NydQ/nR2a3lx?=
+ =?us-ascii?Q?CFo+ey4dXwfSz2dDjcA9wlB7QqGix6DhJosd2nycETUv+lSMIHe9iSwPSv5j?=
+ =?us-ascii?Q?hk1mna/S4f+2hlhnF68oGcCTfMXZzsJ2t0d1j5VTQRQI6wxC7U1kxV/aagFU?=
+ =?us-ascii?Q?kM1uBf7qjEgRS3NFlNPnbLSFnFZav1Ncd0S22f6EYXpl0Dm024hnJeoS9KkI?=
+ =?us-ascii?Q?NV2/2ATi+wZeFPLRfFUJyEC4pMf4mQPBzEicy7D0JOJ+xqSJhQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?1sGW6JMrv7GX1TDDWZtikI8WqqFx02ZkfAPsrKBjQ9KY8TSwUu70NzAYwbdH?=
+ =?us-ascii?Q?R9QcFL7cukpyeKLhCNXrvbw3VIDq5P3T8bU6x6rJ5yW9QFkh6q7iE/Miiq5O?=
+ =?us-ascii?Q?Mr6zj6AoOzzt22gfRuk8RuJWca5fnalaP3E78UW+FpffiQL/4kKwyUXFKE7I?=
+ =?us-ascii?Q?uh2dq3bFpd4CjN2vux/f5/uACf5+xglZZKS2N/QSsSXys+lMpAXD/f8VpuKp?=
+ =?us-ascii?Q?zP1uOZVp/+TZXRVlZmMko+/Ep4h6DEmbI8ykl0OoO3uw/FcUcSIKlHkPc93J?=
+ =?us-ascii?Q?zXxJrBdiug6CexGrSFfpkR3lKXImrf6/g0Wq2s2cT/QCWfYC57cMNm8trLc/?=
+ =?us-ascii?Q?zod2sZW/9Gouzous86uQkXoRk7+6z/0v+U9iBVycVqjeMOekLcV4kHGXYTHj?=
+ =?us-ascii?Q?clx6ZeZO9X1hPJlfTM+qyvzEdaCazcT2SV5Fsv0M2n8ghbnF6xIlTV5m314/?=
+ =?us-ascii?Q?xpLGMrwKnW7fhiilaku2xkY2mSZhJeGp10anhtMNzS8A1wXq86k7VLwoMQo/?=
+ =?us-ascii?Q?lqZ1LGypnjO4LUP68oYjkOflcvZGFwGoE4B0Bz2Dbzrn+4pGoWAOjIQGbrfW?=
+ =?us-ascii?Q?wt23wJOa/JoOv7xl8TqU7X98Eyp4ehaBcagRw1Pt05gvdpvzgiDi3NDm5oOv?=
+ =?us-ascii?Q?/mZFCmvpZLVO7Q4QWZIP64EOd/k7Ps8OoADmr1Xl5R4H3xi59ckrOaVKlw3a?=
+ =?us-ascii?Q?iaGRW9m6ev2oexnMaBpkVjEbk3H9YRWxga+A9CnNYZA019X33ZtBwCYSaz3h?=
+ =?us-ascii?Q?nMNzcZYxT6naaAd19M4FonVd3Oq7TrgNImf40rS4SyzO/J37SC2EJf+faXDk?=
+ =?us-ascii?Q?0t56CwGg9IC+6qrS5Mln5zn/gEunzQ8Q45Xukm4JAf50TZRqJ4Yljq9rVbEV?=
+ =?us-ascii?Q?uhOR7A1A+iOZXR4ijTP2g6X4iqYCadtbLemX0fRORkiui2bTBG6IOCPBzNbn?=
+ =?us-ascii?Q?jJYaCyPtUTUdNw4AP73zV7p/zJfJlKl74QGoxlip+WTClfStLW70/ZlQjtEg?=
+ =?us-ascii?Q?/mKZsLXe4n8RBL938iZOo9lmVYH3RRr2vYdAg4frRZDXXOeB97fVMcrHhecV?=
+ =?us-ascii?Q?x5axwbOC4nJ9Dp8HV5Ts3wX3mGUbeShmweva/6WzPrMAZkkbt9BA2Prbw/Rq?=
+ =?us-ascii?Q?wWlyNU5Y1txYTMzKbqR4nTU3iL5LvqQBD02I87Tr2n836yP/u1mV2lvXKRk/?=
+ =?us-ascii?Q?XZKkV1s3y766Qs/yN1SyZfgnIj2IM8rASyteZyvbzgRmpJYTrImohHn/Kwez?=
+ =?us-ascii?Q?4S/c91MO89u2dxRmc4/y2WKlS6LLjBUIswDDOIHBfR4L/4vWuC6iDsB7094D?=
+ =?us-ascii?Q?Ym+1Kg4XPclI3MVeGzemv8/6o8KjGj9HVQzUJGMSTw4tAaVYd5uSgekwPEUa?=
+ =?us-ascii?Q?Q5H0/t5NcAEQcr3qp0Kz5DbqEI7kcYaGC2po8PjpixZYY9IfgzyWmaDS2lKm?=
+ =?us-ascii?Q?1IA8sFfpfovHz1kgl/Ny59v0YWyNJtjPTkJLaN+PaZAKjBnH3/Y8h/3l1XO/?=
+ =?us-ascii?Q?inaWwqyZg84LkBufhEv4bZS9s688rYbZSMN0tAKuSLgs8r9ttP91n5QCs63M?=
+ =?us-ascii?Q?EHL4d8idlgGUmzu8QFNkI25yWC57V2muYIa6SxdV?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1070bd4-6c42-4927-dafc-08dcb84cbe49
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2024 08:24:52.8931
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dQGOLnbtKTN/MfgAeHAAbjah3WbUFD/To2kQbGDtH/GaUtWuXCNaC7cP6mzmBhdCTjqU68B80dpuX+HSH/RI7w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7333
+X-OriginatorOrg: intel.com
 
-Em Thu, 8 Aug 2024 19:33:32 -0400
-John Snow <jsnow@redhat.com> escreveu:
+> From: Lu Baolu <baolu.lu@linux.intel.com>
+> Sent: Friday, August 9, 2024 1:54 PM
+>=20
+> We will use a global static identity domain. Reserve a static domain ID
+> for it.
+>=20
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-> > > Then here you'd use qmp.cmd (raises exception on QMPError) or qmp.cmd_raw
-> > > or qmp.cmd_obj (returns the QMP response as the return value even if it  
-> > was  
-> > > an error.)  
-> >
-> > Good to know, I'll try and see what fits best.
-> >  
-> 
-> I might *suggest* you try to use the exception-raising interface and catch
-> exceptions to interrogate expected errors as it aligns better with the
-> "idiomatic python API" - I have no plans to support an external API that
-> *returns* error objects except via the exception class. This approach will
-> be easier to port when I drop the legacy interface in the future, see below.
-> 
-> But, that said, whichever is easiest. We use all three interfaces in many
-> places in the QEMU tree. I have no grounds to require you to use a specific
-> one ;)
-
-While a python-style exception handling is cool, I ended opting to use 
-cmd_obj(), as the script needs to catch the end of /machine/unattached/device[]
-array, and using cmd_obj() made the conversion easier.
-
-One of the things I missed at the documentation is a description of the
-possible exceptions that cmd() could raise.
-
-It is probably worth documenting it and placing them on a QMP-specific
-error class, but a change like that would probably be incompatible with
-the existing applications. Probably something to be considered on your
-TODO list to move this from legacy ;-)
-
-Anyway, I already folded the changes at the branch I'll be using as basis
-for the next submission (be careful to use it, as I'm always rebasing it):
-
-	https://gitlab.com/mchehab_kernel/qemu/-/commit/62feb8f6037ab762a9848eb601a041fbbbe2a77a#b665bcbc1e5ae3a488f1c0f20f8c29ae640bfa63_0_17
-
-
-Thanks,
-Mauro
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
