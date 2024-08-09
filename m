@@ -1,219 +1,160 @@
-Return-Path: <linux-kernel+bounces-281073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37E994D2B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:55:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6426694D2B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F49EB2261A
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:55:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6CF3B22421
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75A8198E93;
-	Fri,  9 Aug 2024 14:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD22D198E6F;
+	Fri,  9 Aug 2024 14:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="BguUhqgs"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IzdzhlIN"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF87198857
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 14:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527F2198A2F;
+	Fri,  9 Aug 2024 14:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723215259; cv=none; b=I5ArKtO6JlRqMr2MW5UJgT3vy+hpyKAmXLbgS4BN7Yv2QsTuhrCuhqONlD98dxxeaRWyUmzHSSSHl35LERQjOwZ1MebHG3mps7iMRCuTv2BZ+GXtDPDmIY/aFrQvyEhS3NcYNeCw90AGHv8m4SIAwpj9AGUYt4bL1g2F4nxjaAM=
+	t=1723215244; cv=none; b=PoNjKBIPkpGD1PkIsRbt7loCsdixsyzbdHA6htkFub/7XrrEhRm4x+eUbfNmuDOCujpVipFRk7vj/Ll4mAUo4kHx84Ho3uP+AjJtXHQ0WX/3lMXQxa1R2G3+DdYF5i4RA/IiIY+Bdvq6mIv9pydqiZPF9d2OrCXwoi6zsp1Ltbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723215259; c=relaxed/simple;
-	bh=F4r1SDEDspkkGJVIp7wGrRgL/9GVTKZM0CjVdwMn7ww=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lu7buTb5IXZFy8xkLzgXXACPM61Jq/8UkJkRBJd/8wQaBK9yiKojVXI+DTzGDs2qKl6q59x9Y4Qzs8mIlcYJcNH+/Ljh88OxGf4dPLhYV1EUtssi6h//E8nqPxrJXmR6xJIe7UFiApzl6Mtd0OTsfGbW5t0CBxgGeZEQMn8QGgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=BguUhqgs; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1723215204; x=1723820004; i=spasswolf@web.de;
-	bh=iCMZstcGMe+1x8lfdwO0SvthifgHmTscD3Tqg2hX+To=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BguUhqgs4ZGRLUSY3iRUaM6Ygo0nVHzE7pEMP7pLftIN9p0KVudS/GFSnqmcZJVL
-	 qGJv6MQLmqTzwX0ucOWE2rT0mpvy93dqEZ/9HQppDTGllJIYgyhSIk1jmhVPiMNIs
-	 5jTSY13g/Z4XAYRxqfbHs3sfgQLI+MxRkuRqdr8U3nEeJHZ/Zdw555SErho3Vanmz
-	 J3jdjVLle0EBOw1/5oCuUIlShYNI6lBJe4+BFlaSuHT4DXm/IsG/SmrrsMT+ukkWU
-	 L0oVL7Nz1PtIwGfqgiQqKyeYSCqYuu+H17Sx14s47zEkh9vl6Ur1gjdlMZ+RhMK9l
-	 QVBp0ppNVcrDMW5IuA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
- (mrweb005 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 1N6sG3-1s8dfH21bL-015I34; Fri, 09 Aug 2024 16:53:24 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: mingo@kernel.org
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	akpm@linux-foundation.org,
-	Oleg Nesterov <oleg@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	peterz@infradead.org
-Subject: Re: commit 81106b7e0b13 can break asm_int80_emulation on x86_64
-Date: Fri,  9 Aug 2024 16:53:19 +0200
-Message-ID: <20240809145320.77100-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: 20240808015752.65088-1-spasswolf@web.de
-References: 
+	s=arc-20240116; t=1723215244; c=relaxed/simple;
+	bh=dfz7Gu0AJZg8x8XBlSIzUNGnlZE09dP5QTbcK9p0RCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lwMaStmuX9Sbq30kKGb1xT0LMJ7lDbhcfbgOSNEn7o9W+DWqUB8BaiW30MWDf395a3f3n1DBK4tHFZmpsB69HxDnnOa9BIdcVHPlqE2MVA4xV6onQYgBWhJEBitwu2B5QgrOZq9yXAHo/EzzqgCjS7mUrmCZgXh94AA9TD3SSrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IzdzhlIN; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ff67158052so16393485ad.0;
+        Fri, 09 Aug 2024 07:54:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723215241; x=1723820041; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=v+b94j3kq0TfnZlhwtN292H78EBl3r523BhYnNAMjHM=;
+        b=IzdzhlINjH6g4Z1RD/DZQfWCuEcjB7GxYcHL26LgObOW2i/hWQbEAwVP965/BXzEnJ
+         fsMGHBq7UObCsLvNpOqkJ/MA3kdUWnF/L4EscXk5CvD93yiZsPguPXPbskHIfioGm8DZ
+         iu7Nu6m4UVH0CbhHMKjonlMX99BYIqdC+7b67L8kHTLI5blJ5M6lZWfUB7YNrq0fUCkz
+         g69tXVrWb9OrbY58K+vj1w73H+hS9jLA5vM0ptW1GTRLR1EY7UVSberuDfdYxLnIZ8pn
+         bi9NciljYCf0i3GklCVTT+XoUgPgFJxZsAZ7AZMgdpboZIfn1eY6OrZ8L52YzejDV7UR
+         68AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723215241; x=1723820041;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v+b94j3kq0TfnZlhwtN292H78EBl3r523BhYnNAMjHM=;
+        b=YZC/5aOoRbzXER/++3vRDuYuLZJoVUIkL5gtsj4DXsFtu6nEQ3Y+K26gmEJNE5eQts
+         B0D4sjLNKriI9IhTA62hwEdBuuh76gZj2xtRN3P4jXNmFAeCUPetmjLyYfD+cc7UJ4eE
+         BCNKvOXPAvV0QczMlglP6FLfFny0zbwVvzwU8OvQy8BzRessdlfpE4dTEQ/Td8zOSigT
+         Hbwo8yVx0oKqEvrYyINMJAjT4UQu1bq30Nm1KrBsj41SbBfUsek9gBXxpldT/MhJADAt
+         436Z/hWnx/A1AsCD7bbAZuarDUSkp7A2AZ51hsI+hIzELl1N+vF6HkU2g67brMy9JhLA
+         9siw==
+X-Forwarded-Encrypted: i=1; AJvYcCWezdkIH3+QC6JktGl91wXjlXWFKTtLsmpgr9fxBK/OCHWXl7roafbrmtAmYkcIKDS7Y4X8p/KY9oO/07Ou/CTKW0+L7aSbdT26gzMSHodI4SeKpHGYeoMRJEeXFMdYTdzYNOP7rhe4VA==
+X-Gm-Message-State: AOJu0YyPNXPAEzRH9ReHtcJTujKVQJ5BOWcvrcIxOGUY6Yaz9rlr3Id/
+	F1mZpoSqakv+UseTYaYTd3YCRGEtQqfXXZfRipafUiV6TL+aPDpWCNesJw==
+X-Google-Smtp-Source: AGHT+IGMB0naLUwvEEGDGNgPU8kh/Co7oZ+hEF2rJJl1e6tstmRHP4+3YJf53U6e/suF0Tkl4j8o8Q==
+X-Received: by 2002:a17:902:d50d:b0:200:869c:9602 with SMTP id d9443c01a7336-200ae5a312dmr17668955ad.34.1723215241288;
+        Fri, 09 Aug 2024 07:54:01 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f5346csm143863585ad.66.2024.08.09.07.53.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 07:54:00 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <6fe6061a-6fa7-4799-8b36-93ad5724f07c@roeck-us.net>
+Date: Fri, 9 Aug 2024 07:53:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:GWJB+daNVqTrK5YVMnPWk6kAbywQQ/Zvt7qNtyTrsv7Q/5Qs2+l
- vqENDo2BVjmVd1p3Kfhsce2+Pq6N55dn8uW2m1sw/jh7j/RuLbLee026zLTmu2Ati8dkThD
- ETqg5BcKkS+DQq9yoTYVHxsaszVeGNAtJa3uLP7fXicfSq6HXww51yuaK3Ghdomlkj9aLtb
- 3NuuhCjHTQiRVcl9Qomhg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:NAzLfyxshz4=;enQ70EJdQbRZaA5thxyiEwjLvGk
- BhG7eRXK+H5kk/PeibvJju/utyBfrK0KUPj8EpaHEDHsuWBmkmk1NhwOJ40b6kZODXv9jRE2k
- C4YZkYS3mWqGIkgcoI9rJ/5fozjym8X6pAT4RbhP48wveOazrTtqLS/Gvy9RoT3ghgL5r7vte
- xDpTj1HeX3j9BN2PgFmi8kbIFMJuMEWfvotVs7efFqZoQjWS6yeABDWyV08ZEBJYmmXdr75T7
- Z9osoPpKvNfmkByskRaM4Yc2MNKmBmZYQxqXowABihw6Uauzf6K5uzHMLP2UmMGBhArugKLyG
- fzKtGlYRGd1IFGLn3SfXq4Kxt0w/NL9DAPlHwgVtsWzbc9zjI6js/Q7OguUEHxpMPpcuCYCOk
- 5NPZIrwbw8VmAAMbpceSKp2TFv3eY3HBkX17c+AfslJXPEL7tS+E96tNYJwIjCRxrbuyYcMu3
- tcREKcgkhQedPotIjUiNCfIaHWr94E5zUv4410wi9m/WcT4ffdIA3Nm+NR7ucsRBmVB+30d+u
- 9OSZzwJEeAs8d84OrkFy32oe8kK+QYZhZbajdgLbFz9klcwiLvvFivTy/a/nxTndLtBpt5fLQ
- k/r3ifMp9N11lTXmSzN9a16MZFMBV/mY9B6qNSR3swN4YUgdTUE/idGmMtE3IpZCzsCSd/ECB
- 11Akxcn7riWHbMwU3HRTFfmYQOjr+rGJ+IPxzjtz95Zo1SWKOU2C30Z3gBnYvKuQs1/tbQJ7I
- wXTVPs5jDfy/laAdxEraPiXlnzmzzkyySNY4C5mm+yYgDLMvT6mweDPyC1AMxZxMdgNoSw14H
- /QGH7eGfTm5zs7X6wxr9Pbvg==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: trivial-devices: add isil,isl69260
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Yin <peteryin.openbmc@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Noah Wang <noahwang.wang@outlook.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Patrick Rudolph <patrick.rudolph@9elements.com>,
+ Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240809070056.3588694-1-peteryin.openbmc@gmail.com>
+ <3f523574-931f-4ce7-a457-a176190fa0db@kernel.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <3f523574-931f-4ce7-a457-a176190fa0db@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I did some experimentation on the bug with the help of the following patch=
-:
+On 8/9/24 00:28, Krzysztof Kozlowski wrote:
+> On 09/08/2024 09:00, Peter Yin wrote:
+>> Document the "isl,isl69260" compatible, which is already used in the
+>> DTS files but was not previously documented in the bindings.
+>> The ISL69260 is a digital dual output multiphase controller
+>> that supports Intel VR13, VR13.HC, and VR14 specifications.
+>>
+>> Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
+>> ---
+> 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index bcbbb433cece..70064da40f9d 100644
-=2D-- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -1212,6 +1212,7 @@ static int copy_from_buffer(void *dst, unsigned int =
-offset, unsigned int size,
- 	if (kbuf) {
- 		memcpy(dst, kbuf + offset, size);
- 	} else {
-+		printk(KERN_INFO "%s: calling copy_from_user with to =3D %px from =3D %=
-px, n =3D 0x%x\n", __func__, dst, ubuf + offset, size);
- 		if (copy_from_user(dst, ubuf + offset, size))
- 			return -EFAULT;
- 	}
-@@ -1257,6 +1258,8 @@ static int copy_uabi_to_xstate(struct fpstate *fpsta=
-te, const void *kbuf,
- 	int i;
+The hwmon subsystem wasn't copied, so I assume that the patch
+will be applied through a devicetree branch.
 
- 	offset =3D offsetof(struct xregs_state, header);
-+	printk(KERN_INFO "%s %d: calling copy_from buffer with offset =3D 0x%x, =
-size =3D 0x%lx\n",
-+			__func__, __LINE__, offset, sizeof(hdr));
- 	if (copy_from_buffer(&hdr, offset, sizeof(hdr), kbuf, ubuf))
- 		return -EFAULT;
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-@@ -1269,6 +1272,8 @@ static int copy_uabi_to_xstate(struct fpstate *fpsta=
-te, const void *kbuf,
- 		u32 mxcsr[2];
-
- 		offset =3D offsetof(struct fxregs_state, mxcsr);
-+		printk(KERN_INFO "%s %d: calling copy_from buffer with offset =3D 0x%x,=
- size =3D 0x%lx\n",
-+				__func__, __LINE__, offset, sizeof(mxcsr));
- 		if (copy_from_buffer(mxcsr, offset, sizeof(mxcsr), kbuf, ubuf))
- 			return -EFAULT;
-
-@@ -1292,6 +1297,8 @@ static int copy_uabi_to_xstate(struct fpstate *fpsta=
-te, const void *kbuf,
- 			offset =3D xstate_offsets[i];
- 			size =3D xstate_sizes[i];
-
-+			printk(KERN_INFO "%s %d: calling copy_from buffer %d with offset =3D 0=
-x%x, size =3D 0x%x, dst =3D %px, kbuf =3D %px, ubuf =3D %px\n",
-+					__func__, __LINE__, i, offset, size, dst, kbuf, ubuf);
- 			if (copy_from_buffer(dst, offset, size, kbuf, ubuf))
- 				return -EFAULT;
- 		}
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/main.c b/drivers/ne=
-t/wireless/mediatek/mt76/mt7921/main.c
-index 1bab93d049df..23b228804289 100644
-=2D-- a/drivers/net/wireless/mediatek/mt76/mt7921/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7921/main.c
-@@ -1183,7 +1183,7 @@ static void mt7921_ipv6_addr_change(struct ieee80211=
-_hw *hw,
- 				    struct inet6_dev *idev)
- {
- 	struct mt792x_vif *mvif =3D (struct mt792x_vif *)vif->drv_priv;
--	struct mt792x_dev *dev =3D mvif->phy->dev;
-+	struct mt792x_dev *dev =3D mt792x_hw_dev(hw);
- 	struct inet6_ifaddr *ifa;
- 	struct in6_addr ns_addrs[IEEE80211_BSS_ARP_ADDR_LIST_LEN];
- 	struct sk_buff *skb;
-diff --git a/mm/slub.c b/mm/slub.c
-index 513f0fb80f1b..3a62bf2f355d 100644
-=2D-- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -5636,6 +5636,10 @@ void __check_heap_object(const void *ptr, unsigned =
-long n,
- 	    n <=3D s->useroffset - offset + s->usersize)
- 		return;
-
-+	printk(KERN_INFO "%s: ptr =3D %px slab =3D %px s =3D %px\n", __func__, p=
-tr, slab, s);
-+	printk(KERN_INFO "%s: offset =3D 0x%x s->useroffset =3D 0x%x\n", __func_=
-_, offset, s->useroffset);
-+	printk(KERN_INFO "%s: offset - s->useroffset =3D 0x%x s->usersize =3D 0x=
-%x\n", __func__, offset - s->useroffset, s->usersize);
-+	printk(KERN_INFO "%s: n =3D 0x%lx s->useroffset - offset + s->usersize =
-=3D 0x%x\n", __func__, n, s->useroffset - offset + s->usersize);
- 	usercopy_abort("SLUB object", s->name, to_user, offset, n);
- }
- #endif /* CONFIG_HARDENED_USERCOPY */
-
-which gives the following output (before the usual backtrace) :
-
-[  223.785491] [  T46217] copy_uabi_to_xstate 1261: calling copy_from buff=
-er with offset =3D 0x200, size =3D 0x40
-[  223.785501] [  T46217] copy_from_buffer: calling copy_from_user with to=
- =3D ffffa85f5387fd58 from =3D 000000003ffef840, n =3D 0x40
-[  223.785506] [  T46217] copy_uabi_to_xstate 1275: calling copy_from buff=
-er with offset =3D 0x18, size =3D 0x8
-[  223.785509] [  T46217] copy_from_buffer: calling copy_from_user with to=
- =3D ffffa85f5387fd50 from =3D 000000003ffef658, n =3D 0x8
-[  223.785512] [  T46217] copy_uabi_to_xstate 1300: calling copy_from buff=
-er 0 with offset =3D 0x0, size =3D 0xa0, dst =3D ffff8c819c239b80, kbuf =
-=3D 0000000000000000, ubuf =3D 000000003ffef640
-[  223.785516] [  T46217] copy_from_buffer: calling copy_from_user with to=
- =3D ffff8c819c239b80 from =3D 000000003ffef640, n =3D 0xa0
-[  223.785520] [  T46217] __check_heap_object: ptr =3D ffff8c819c239b80 sl=
-ab =3D ffffd5368c708e00 s =3D ffff8c7f800d1400
-[  223.785523] [  T46217] __check_heap_object: offset =3D 0xc00 s->useroff=
-set =3D 0x0
-[  223.785525] [  T46217] __check_heap_object: offset - s->useroffset =3D =
-0xc00 s->usersize =3D 0x0 FIXME?
-[  223.785528] [  T46217] __check_heap_object: n =3D 0xa0 s->useroffset - =
-offset + s->usersize =3D 0xfffff400
-[  223.785530] [  T46217] usercopy: Kernel memory overwrite attempt detect=
-ed to SLUB object 'task_struct' (offset 3072, size 160)!
-[  223.785545] [  T46217] ------------[ cut here ]------------
-[  223.785547] [  T46217] kernel BUG at mm/usercopy.c:102!
-
-So the problem seems to be that the kmem_cache object *s has usersize 0. T=
-his
-should be impossible in theory as kmem_cache_create_usercopy() should prin=
-t
-a warning in case of (!usersize && useroffset).
-
-Bert Karwatzki
+Guenter
 
 
