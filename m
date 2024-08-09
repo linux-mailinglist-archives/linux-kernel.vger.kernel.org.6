@@ -1,93 +1,92 @@
-Return-Path: <linux-kernel+bounces-280877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FB194D05C
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:42:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 643F894D062
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47D871C20E10
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:42:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3DC0B2161C
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BCF194A42;
-	Fri,  9 Aug 2024 12:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF4B1946A8;
+	Fri,  9 Aug 2024 12:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qic2Ni+b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="kboeo9Dv"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4922217BBF;
-	Fri,  9 Aug 2024 12:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3F017BBF;
+	Fri,  9 Aug 2024 12:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723207317; cv=none; b=KETkwnn5ZTpe+6kix4BQI+CEBx+OgNxQBM3yGhnnBo/dcwdlw05vkhFxfiKemqOE7VLzKK89dNv3gTtMEo6+mdJUC+GOGvN7R/7gLyPQ6BT8s631kEkVLTY5h3X6atkhR8wrROIlZAOWMRb4Y7zldBWOK9T01i4rPpPk7tR026c=
+	t=1723207335; cv=none; b=b3/AVdi/MOQUeuW4fK2OOO4tqZW1JJ4vdK6Z2rRYOmVPuZJwaubXGxDvqeCSiK51uJWO49DhZ7QwkE3s0MV2EuXEsFPrVolnjZsMFkDc/qZlIhjYLZotBSgvJv1ULNnV7m+VBgmuF1MGd3bf7vJV3mO86CDhpCPbGsgqHG5FQxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723207317; c=relaxed/simple;
-	bh=HLwCPtG30FgCakDxpDhYlf35tiSqg1izGiXN6Rtuzz8=;
+	s=arc-20240116; t=1723207335; c=relaxed/simple;
+	bh=yIahYZ07aWyWxU0yFWmwIGEE58zc5LynmOxxqoncrns=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=doeB7mEO2pZulkD6LFMSgYGHgKVGm2JUKcqJhfPUwn2CxPPFyFd3QFsgwBISexp3DzlO03duY4ZfWb6V2nPJB4hFn0OgoXkZImVZ5ofwtlRgGA7lDu4cNadmhYjQ01GPHmjBvTOuyJHjLK9HYm6ogVSAgdhnS73khjEcGy8+FeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qic2Ni+b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7854C32782;
-	Fri,  9 Aug 2024 12:41:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723207316;
-	bh=HLwCPtG30FgCakDxpDhYlf35tiSqg1izGiXN6Rtuzz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qic2Ni+b7Qjzo7+vXHNGnv6ARiXfWDmGvoPf/qDSDkNAkb3/N2M4r+wMjZE1r2vuq
-	 C/wZ2iW++TjCcNWim5gKEu0KmFzDQorqxmIe4+J0FdaoSHmK7R6KGJnK+qYkBSW4vP
-	 D6p2XmAkD4KCCYA34YQmn/Xp8QudUx2KyKRxiFhwuqHkA0XBz7XOUJFcVl4w/Ixh4K
-	 ft1muRG6VgIDhMJOsmKbCiPsP+3QGxhyflhcflIgmUfDXbimGRLlWt4uGapmYiwOGl
-	 K+bsa8xXCwMEU5TGihEe2xv/tfmPATrELn549BtuSW6vGWZ3JxtK91VBoPFM1i4gzh
-	 JXCgmPPV/WSPw==
-Date: Fri, 9 Aug 2024 14:41:52 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Morten Hein Tiljeset <morten@tiljeset.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Debugging stuck mount
-Message-ID: <20240809-marsch-kreis-1323acfac954@brauner>
-References: <22578d44-b822-40ff-87fb-e50b961fab15@app.fastmail.com>
- <20240808-hangar-jobverlust-2235f6ef0ccb@brauner>
- <e244e74d-9e26-4d4e-a575-ea4908a8a893@app.fastmail.com>
- <20240808-kontinental-knauf-d119d211067e@brauner>
- <dc25520d-e068-49bd-9faa-07c6f6928c35@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J3bzqGN4PCbghyX6U8lsMlXTKjnokmCnQu6jUyx0PWWXH9mtCmXdGeapxZKIdSCkmiL4LX408jyC4ohW578Ay5CQCSbAZAS2QGZAMRsoHZifwx7ZdPuBU+z5EXyAhN1e9x5GKRu8B9oJhrsRwTL7NtSeCn9nUPAmFVybTIp/riA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=kboeo9Dv; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 36FBA2123B;
+	Fri,  9 Aug 2024 14:42:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1723207330;
+	bh=mAdsZ4ZkKnviA8Ia2Q4VxyaL5nzQPmXGq5rdi5fFuIE=;
+	h=Received:From:To:Subject;
+	b=kboeo9DvXEQBA3X6Pm6PymITn7ioU/zrnzj5lc+Jj24qm8DQi6NLWOtKIpBNoHlUe
+	 Uny5+wW5ERFbm+r3lmRv98Y8KjtarN4gpfDYBJ23V9kK7eO6+NQCyAx+q1jtjoMMxz
+	 8MMUwjtvQShJVO0s1Cnp1glaw7bzWUm74kR1opWG7XOeDQ10ZeVn+8kUMGxOjKy/E1
+	 XSF6N6+GCzMAlTB5oOJvimC3ahOisjxmW9Moo9JkBuyPNLjtk/khkpPTjNHtMVGqDO
+	 qG8x0SalHdlIN88hnD9F1HRJPmF7CC9ul+oPnwbWUMLhfQ2n72lMMOz2oaC1EQmu2q
+	 38nojC1YirAQw==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id CC2017F99B; Fri,  9 Aug 2024 14:42:09 +0200 (CEST)
+Date: Fri, 9 Aug 2024 14:42:09 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>,
+	Yogesh Ashok Powar <yogeshp@marvell.com>,
+	Bing Zhao <bzhao@marvell.com>,
+	"John W. Linville" <linville@tuxdriver.com>,
+	Amitkumar Karwar <akarwar@marvell.com>,
+	Avinash Patil <patila@marvell.com>,
+	Kiran Divekar <dkiran@marvell.com>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] mwifiex: duplicate static structs used in driver
+ instances
+Message-ID: <ZrYOoTRWlKTL_e3o@gaggiata.pivistrello.it>
+References: <20240809-mwifiex-duplicate-static-structs-v1-1-6837b903b1a4@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dc25520d-e068-49bd-9faa-07c6f6928c35@app.fastmail.com>
+In-Reply-To: <20240809-mwifiex-duplicate-static-structs-v1-1-6837b903b1a4@pengutronix.de>
 
-On Fri, Aug 09, 2024 at 09:39:41AM GMT, Morten Hein Tiljeset wrote:
-> > The file descriptor could already be closed but the task could be stuck
-> > exiting and so queued task work including destroying files wouldn't be
-> > done yet. You could also try and see if you can figure out what tasks
-> > require your workload to do a lazy umount in the first place. That might
-> > bring you closer to the root cause.
-> >
-> > What kernel version are you running anyway?
-> That's an interesting idea about the stuck task, I'll try looking into that. We're not
-> doing lazy unmounts on purpose -- I'm only concluding that it must be happening based on
-> the mount namespace being NULL. I wonder if the lazy unmount could happen implicitly
-> as a consequence of some other operation?
+On Fri, Aug 09, 2024 at 10:11:33AM +0200, Sascha Hauer wrote:
+> mwifiex_band_2ghz and mwifiex_band_5ghz are statically allocated, but
+> used and modified in driver instances. Duplicate them before using
+> them in driver instances so that different driver instances do not
+> influence each other.
+> 
+> This was observed on a board which has one PCIe and one SDIO mwifiex
+> adapter. It blew up in mwifiex_setup_ht_caps(). This was called with
+> the statically allocated struct which is modified in this function.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: d6bffe8bb520 ("mwifiex: support for creation of AP interface")
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-You don't need a lazy umount for this. You could also just have a
-container or service exiting that uses a mount namespace. In that case
-the last exiting task will close all of its open files and then put the
-mount namespace. The mount namespace will unmount all mounts that were
-still around NULLing the mntns.
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-Say P1 has somehow managed to get hold of a file descriptor in some
-other mount namespace M1 and holds a file descriptor referring to some
-mount in there. Now the last process pinning M1 exists and puts all
-mounts associated with M1. Now P1 holds a file descriptor pointing to a
-mount that has a NULL mount namespace.
-
-A task could hang running task work because of some device file or
-whatever that it's closing. Or it could hang exiting namespaces. I
-vaguely remember that years ago on earlier kernels we had some issues
-there.
 
