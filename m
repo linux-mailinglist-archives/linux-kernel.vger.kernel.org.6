@@ -1,125 +1,180 @@
-Return-Path: <linux-kernel+bounces-281496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501B994D781
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 794FE94D785
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 21:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88361F24D41
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:42:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0640D1F22E9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC1F1607A3;
-	Fri,  9 Aug 2024 19:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E4A168481;
+	Fri,  9 Aug 2024 19:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="rp46QHR+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jp5zb9cG"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pmwlJHrB"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54784101E6;
-	Fri,  9 Aug 2024 19:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7B415F401
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 19:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723232542; cv=none; b=lhJKoB7VKPaxmiNimhkWkiQuplm73JVTK1vFJ5Gqgj2l3gZ0+X9oaI514UPyNk/PFLVzINF/u2G4Rmba48skOh5dEqHEWtjnn4YVA2/Cr2O2+Dl2/b7WIyj9EEYzlHifCMZ9mLiB0TLp6TCmNpUK43GH711eKfxCJ4LhB96ROTE=
+	t=1723232624; cv=none; b=o9BlEKrwbk33durTPecgtVs6vBXD+KK2D+LAcogAwXdtcxNzyKi0d7Q3aTvSHV+hV1rBKryobzEpTaKUOnGmPpoFydXsv9lXSHSsrBtfXv5AgA60a4AAiazsE+t1ADetqrAbS250VrILHJFVEEgLHTKzpU+PKcn42KHqEtd3T68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723232542; c=relaxed/simple;
-	bh=tclaRpL2H/toCm7e347ieAc2LgjeBry9iVGCm1RK9yA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=X6bEg6S4p+ZsvTR1g5cMO1EYtr9wt1JZ4SpK6ftMb++edIOMuLeU3uibh+HjqwM3cxxlBi64m1MCCQKTtUc8NJYUL+PSGzsTCYrp5TIdx1AXmFISVRKdFKYubBHOSTBwqPlhOgNBcR+3l1mhNoiFh9M63smAaHjDJyyN0jvaMaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=rp46QHR+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jp5zb9cG; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 5E3CD1388200;
-	Fri,  9 Aug 2024 15:42:19 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Fri, 09 Aug 2024 15:42:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723232539;
-	 x=1723318939; bh=+jbITZ+KV7Pn3QxvU2tZAWF7/BSd4ZxIKMbe2jdtxbw=; b=
-	rp46QHR+NS7tu0DvKopq43Y2KP6ZrkXmfdARB8avwh3qDkYO8AJExNO5KXzDrEc6
-	JVzVAJoV7j86EN6RzqxgDzGBPjjvA4+2YekVYZGdzWdf9SHth81uIgq6U0jqQJcz
-	CAEPYr0uBYsQ9+wD5JFMElXEn8lDuFE2VoOYoudbt0eUIszfSuMfocHEw3DiAXEA
-	gQ4g5IvExQuDUnJfPIIsDW8zs7afMMbuTIYQb9k2SgMSfd4Dwtrla5YWh8s03gID
-	kR5JC/mlIMB7Hf+hYhL8mE3mvXi/P+N42O6UpkK8Ri95gM4upAqFHma2i0Xogyzr
-	pCGZhbQAKiD04aIAungeKw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723232539; x=
-	1723318939; bh=+jbITZ+KV7Pn3QxvU2tZAWF7/BSd4ZxIKMbe2jdtxbw=; b=j
-	p5zb9cGC6fhszmL887QilwM2dpEm119NrOc6Y9qX9E/G4RLT5nIYSNrWGQyEWrRr
-	jYhPvVQGm0CsyPp2FnqZOggFPEc8USWmJoW72lryl0bEJ9N3kO7rSr9FzWkHXYCC
-	iFeAE9mOh1EJpWQnI/rc7C8V41qpprdl2mQ5SmL2l8GN1eiNH//J29mUjZgsNSoF
-	uMWCDp94bPhLV2FHAJm99X6ZF2ozLrEhxK1HMpB/x6LykNkL+7MA2b9bGOYiBpeC
-	Q1z57o9v5dEpIcJ1qZd1c2YF8mBL+ss7QID3y0ksEjZDSJ0U1joqzqQDg/TM7oAS
-	wmd8eIzmon1WiEd1spaUA==
-X-ME-Sender: <xms:G3G2ZqrSUk14jpj63l271Fbtv1xy6A6XHKRn7Kl2kNB86sJeWRR5iw>
-    <xme:G3G2ZoqKNj6XlipcnLBgdIDsSffcjgmbs1TTXGf4pnSNYo4KDXxa1P1tZxCPz1558
-    dsSEfLXik2kuH5jonA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleeggddufeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrd
-    hfrhgrnhhkvghnrdguvgdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhihghho
-    rghtrdgtohhmpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
-    nhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
-    nhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:G3G2ZvNQSdgYaiJfiGWLO_021SkZdI4ZXOflLWMNDILXDbT9tuhwNw>
-    <xmx:G3G2Zp412ZR3cM1VQ6ZN0-XNTOmzgZ8SAj4idhBo-GmfW09Zbqrr1g>
-    <xmx:G3G2Zp6MkzRC14SmhUBg4v1uEbOeTq66AbFDJ--PICShdgnhzyKb7w>
-    <xmx:G3G2ZphvtxlGKuOANKGtlib6D4ng8ubCOtuMzQdTE-NeGr5cqogFkA>
-    <xmx:G3G2Zms2IiiyHNlyrW8Lb9roaJn3dar-q96lVj7xHuv5DLhPHarsdFxS>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 23EC8B6008D; Fri,  9 Aug 2024 15:42:19 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723232624; c=relaxed/simple;
+	bh=1XlkVjHo+suzkHDpODakK3YnPz0xLR07kWNXlLZwdNY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eCIUkMxI6C8MZnRHujdLp3wGDbMfbDapKLfKAj6Z/YXAClyrH0LxLfAFomPkQIKD+TZgw0le2eotVgCVZg0gmJ9V2ZHqudRpiTddf+zApEqh7FrwBNE5gHjBd0kFMC0/dTlrnG7aptijWRncEks0FhJ+ZjEQgk3lMx3EaDXu638=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pmwlJHrB; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-672bea19c63so57965527b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 12:43:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723232619; x=1723837419; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EgnPdPJ37XkRkd0MNy853KicoIlpIy484NkRqLT7dIc=;
+        b=pmwlJHrBVaVp24Bda74go0FLWflaT/2/GqFiWP7+PbPum0y20CoeyhmDhTKjqTmvuH
+         aW9H+5wGQ6+l07UCgLx9mH07f0RV4Hl9tfxK/uvbQHTBYDpvfz1imsBkellhb0I73RYN
+         Rf/44kj5RJTu9v7A9GYvhdwGh1XyFKI/ItCnYzSsGDLnv4hINTsLDIqJF8N34TYuJicQ
+         hIQwjbcJewlX6lPD7QsNDIAMOH7gS6hayxwp5pvFYZE6LCjWHNFwUM1Ruwzv0ClfYweY
+         iN5xB70PjpgysZmHRuMhU9NxX59Hlon6mVeDgTvvxDjJ3/ocGYMuoYt7sGhABAchNG4N
+         IgeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723232619; x=1723837419;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EgnPdPJ37XkRkd0MNy853KicoIlpIy484NkRqLT7dIc=;
+        b=EesBRzsPjJ1ukkaGFyo3/hfCghBlYvfpYupQuT4SsqkwERvhFr7IMna4VvwKYmmjhV
+         e8sFMHhVxaj4h99jdVfECXyuiPGn33tm83Q/7umKY6dLBtkp2aj7kAB4JYxOEArdYv/b
+         ClVclykfDcoWCLmVIcQeve3iO7w0IGx4Z/w2CZYOIqr0yh2McAw8xWlcxDE8PiStK5s4
+         LsRLWtUpP+g8//UYS5N1SnNJx+oE0Ji1zYi+ZJZajdd4Js41qmNMHsOVzdCLXTbdUpdb
+         GpxlqVnUmAQ4VDuVWASF/qxy11upulXFyjJMNiz/zsxa4h8opiO1Q1+38U08KRg4fUFo
+         EkdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBHS4P39+LIO1gTA2PxEiEKZif1DRl/fQLpt+AusuUwezjCjbopLRqHtAgxjqjg+9dfwMraS/jLADkkg44RKsqIvlavcCGf+Xiwi42
+X-Gm-Message-State: AOJu0YxlYjzl6w3eFk/qg9qxmHFRdJ7n3oi8aks1goAjAZS7sp2bpFR3
+	6E7BCl5yTPZ4KddCUC/5sCJilgPB2UW5xtZfQgKRPwaXG0UP/Eq6sAlW4tlsnsA9gAh1RNaJr/j
+	Ssw==
+X-Google-Smtp-Source: AGHT+IHSbQtzYx2tkfW7590mmdt6dl9zn2glE7iKVYY/9v60Qq7jrhPhZwoWuWBhDE6LSdVzbuCPHHbm6x0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a0d:f4c3:0:b0:62c:ff73:83f with SMTP id
+ 00721157ae682-69ec9637eefmr863697b3.8.1723232619634; Fri, 09 Aug 2024
+ 12:43:39 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri,  9 Aug 2024 12:43:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Date: Fri, 09 Aug 2024 21:41:31 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Huacai Chen" <chenhuacai@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-mips@vger.kernel.org
-Message-Id: <70f908d0-7cca-40c3-9aaa-c838b02dc4c4@app.fastmail.com>
-In-Reply-To: <20240809-mips-numa-v1-1-568751803bf8@flygoat.com>
-References: <20240809-mips-numa-v1-0-568751803bf8@flygoat.com>
- <20240809-mips-numa-v1-1-568751803bf8@flygoat.com>
-Subject: Re: [PATCH 1/7] arch_numa: Provide platform numa init hook
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240809194335.1726916-1-seanjc@google.com>
+Subject: [PATCH 00/22] KVM: x86/mmu: Allow yielding on mmu_notifier zap
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>, 
+	James Houghton <jthoughton@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 9, 2024, at 21:25, Jiaxun Yang wrote:
-> For some pre-devicetree systems, NUMA information may come from
-> platform specific way.
->
-> Provide platform numa init hook to allow platform code kick in
-> as last resort method to supply NUMA configuration.
->
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+The main intent of this series is to allow yielding, i.e. cond_resched(),
+when unmapping memory in shadow MMUs in response to an mmu_notifier
+invalidation.  There is zero reason not to yield, and in fact I _thought_
+KVM did yield, but because of how KVM grew over the years, the unmap path
+got left behind.
 
-Can you do this with a Kconfig symbol in the header instead
-of a __weak symbol?
+The first half of the series is reworks max_guest_memory_test into
+mmu_stress_test, to give some confidence in the mmu_notifier-related
+changes.
 
-      Arnd
+Oliver and Marc, there's on patch lurking in here to enable said test on
+arm64.  It's as well tested as I can make it (and that took much longer
+than anticipated because arm64 hit races in the test that x86 doesn't
+for whatever reason).
+
+The middle of the series reworks x86's shadow MMU logic to use the
+zap flow that can yield.
+
+The last third or so is a wee bit adventurous, and is kinda of an RFC, but
+well tested.  It's essentially prep/post work for James' MGLRU, and allows
+aging SPTEs in x86's shadow MMU to run outside of mmu_lock, e.g. so that
+nested TDP (stage-2) MMUs can participate in MGLRU.
+
+If everything checks out, my goal is to land the selftests and yielding
+changes in 6.12.  The aging stuff is incomplete and meaningless without
+James' MGLRU, I'm posting it here purely so that folks can see the end
+state when the mmu_notifier invalidation paths also moves to a different
+API.
+
+James, the aging stuff is quite well tested (see below).  Can you try
+working into/on-top of your MGLRU series?  And if you're feeling very
+kind, hammer it a bit more? :-)  I haven't looked at the latest ideas
+and/or discussion on the MGLRU series, but I'm hoping that being able to
+support the shadow MMU (absent the stupid eptad=0 case) in MGLRU will
+allow for few shenanigans, e.g. no need to toggle flags during runtime.
+
+As for testing, I spun up a VM and ran a compilation loop and `stress` in
+the VM, while simultaneously running a small userspace program to age the
+VM's memory (also in an infinite loop), using the same basic methodology as
+access_tracking_perf_test.c (I put almost all of guest memory into a
+memfd and then aged only that range of memory).
+
+I confirmed that the locking does work, e.g. that there was (infrequent)
+contention, and am fairly confident that the idea pans out.  E.g. I hit
+the BUG_ON(!is_shadow_present_pte()) using that setup, which is the only
+reason those patches exist :-)
+
+Sean Christopherson (22):
+  KVM: selftests: Check for a potential unhandled exception iff KVM_RUN
+    succeeded
+  KVM: selftests: Rename max_guest_memory_test to mmu_stress_test
+  KVM: selftests: Only muck with SREGS on x86 in mmu_stress_test
+  KVM: selftests: Compute number of extra pages needed in
+    mmu_stress_test
+  KVM: selftests: Enable mmu_stress_test on arm64
+  KVM: selftests: Use vcpu_arch_put_guest() in mmu_stress_test
+  KVM: selftests: Precisely limit the number of guest loops in
+    mmu_stress_test
+  KVM: selftests: Add a read-only mprotect() phase to mmu_stress_test
+  KVM: selftests: Verify KVM correctly handles mprotect(PROT_READ)
+  KVM: x86/mmu: Move walk_slot_rmaps() up near
+    for_each_slot_rmap_range()
+  KVM: x86/mmu: Plumb a @can_yield parameter into __walk_slot_rmaps()
+  KVM: x86/mmu: Add a helper to walk and zap rmaps for a memslot
+  KVM: x86/mmu: Honor NEED_RESCHED when zapping rmaps and blocking is
+    allowed
+  KVM: x86/mmu: Morph kvm_handle_gfn_range() into an aging specific
+    helper
+  KVM: x86/mmu: Fold mmu_spte_age() into kvm_rmap_age_gfn_range()
+  KVM: x86/mmu: Add KVM_RMAP_MANY to replace open coded '1' and '1ul'
+    literals
+  KVM: x86/mmu: Refactor low level rmap helpers to prep for walking w/o
+    mmu_lock
+  KVM: x86/mmu: Use KVM_PAGES_PER_HPAGE() instead of an open coded
+    equivalent
+  KVM: x86/mmu: Add infrastructure to allow walking rmaps outside of
+    mmu_lock
+  KVM: x86/mmu: Add support for lockless walks of rmap SPTEs
+  KVM: x86/mmu: Support rmap walks without holding mmu_lock when aging
+    gfns
+  ***HACK*** KVM: x86: Don't take mmu_lock when aging gfns
+
+ arch/x86/kvm/mmu/mmu.c                        | 527 +++++++++++-------
+ arch/x86/kvm/svm/svm.c                        |   2 +
+ arch/x86/kvm/vmx/vmx.c                        |   2 +
+ tools/testing/selftests/kvm/Makefile          |   3 +-
+ tools/testing/selftests/kvm/lib/kvm_util.c    |   3 +-
+ ..._guest_memory_test.c => mmu_stress_test.c} | 144 ++++-
+ virt/kvm/kvm_main.c                           |   7 +-
+ 7 files changed, 482 insertions(+), 206 deletions(-)
+ rename tools/testing/selftests/kvm/{max_guest_memory_test.c => mmu_stress_test.c} (65%)
+
+
+base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
+-- 
+2.46.0.76.ge559c4bf1a-goog
+
 
