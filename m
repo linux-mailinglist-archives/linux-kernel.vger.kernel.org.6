@@ -1,199 +1,164 @@
-Return-Path: <linux-kernel+bounces-281613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3B894D8CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:49:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F365094D8D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09B91B21FF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:49:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 749441F225D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 22:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAE1168489;
-	Fri,  9 Aug 2024 22:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B9B16C690;
+	Fri,  9 Aug 2024 22:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jk0Fll7W"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2088.outbound.protection.outlook.com [40.107.101.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="F+ensDy0"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FCE2232A;
-	Fri,  9 Aug 2024 22:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723243757; cv=fail; b=EbtLH71gK3uUBCrz9wirogZ2w4+RH2dI8OERj1DbTj+DM5LNfx5cuFn1LI6kh0BKRlJIKUJ1BqfwXxp4wspWzfp2ZO3MYNYhdt1eDnY22D+snuxmDxoaNC4lwCMACfaHHT/ntxznGoLCwpkxvFrixP2kpwXcBJg9vyvdNuPj8iQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723243757; c=relaxed/simple;
-	bh=o5Ywyv+XPBuC+eMkOgTAGonBwfBjmXSX00DkhjSolUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WuoAOLC3tDDdYdZVMWci9n25N2CLYb27KZTitVuBottkNfQ51IazPgPj+VLbbPUZN2gr7RXyQYomqYN7byfnefbZcS4TrAKgkEPzat8qnwq8Ci9WJQTW0QKPne84rj43XR7MHT/vUvIep1lrtcVlPulPDCnzHtiE+fYNGEs/lYA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jk0Fll7W; arc=fail smtp.client-ip=40.107.101.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qap2y0U1HW+T4tJocS96lgmGTMV3ZUzsseSt+5Via6JlRS8isHiz4Boi3+Ymcotnf41fJOP4tf3wL4G370oZmwt888zIg0ztsg/27HD+6vh3+aBsIfV7GfdnDgdIAAv9mizNuC42duYwmXsZvJW7uvYBi5kaEqTmEPEaDaKCeGYywlxouh70oE64mDE2pPb7BZVr7VvPeSAEirbQ6LkonTXVNLq/vynH21DwYNlPRdlpFlf9oDDbwL4rytcxFDXcxll90g5uUvxCJxThYE7G79dkurxNXj/rJqUvpHlZzxjzijqrWjB1Kp96C1qQouXc1kouhAj7vzYTzSie329ZoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0awsxYJ6lvsop/iPV9IREAqtvO9n29xLjcjidJhyT0I=;
- b=wZza/T6tCEMboIk/k++w69SPs9wIcZ1fkhKXpWK/AamkqUSa/EasoB/dtnFDEv+7up9d/k7Pg4bqMh1BDM+vETJ0J5Td7SIwbEC0GWe8s5siXKCpugiyomWYyLoDWU1QAVmCgd6bum5PoC7Y+M2S+lua/q1Yw0GhxksdLgs27OQY42Ge3Lj6HUk+or6LxI7rXSdX1qHRjNr7w4YNQHgumTv0J/eyYo9PzhK745XQNKIFzHKSm5MHPxql9QTmEONGGHeUvNUwUfc701QQkwUhGpVic5Sp7NskvBlgc3cOdniPqPjmMjDbiO18dfXKT3HqczJaV3hRJkfzFC4Le2Kn7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0awsxYJ6lvsop/iPV9IREAqtvO9n29xLjcjidJhyT0I=;
- b=jk0Fll7Wg8AS7LYtNhDdi93acYJINcjDFZCyVzuPgk7R40IFfZ8yP6fX53wr7IUri6XVGU3o3iO+lmCyo12Jd2DsqteCGMp67o6H42QUudKlvNQJZhnSL8MW0OrIA6Q1Z1GCCJV2hPJ7vWaFi7vio8AUaOgEv5WdOeyxgRpVsH0h3dRxsDDzx1AbrMFvOBEnvu6cLdRyDJKCcieQAr1o6fggRKrGsQbbTY21l7JE7bIC0Ly8QPB9vYe7SxlNB7KiTLJsJ8QbuBTnFtpL2XTkqHjToTRMnm1Ud/WIXv30u+C3sCtwwo8nWrcZtaARZH2ut5t/sRx9l7Nc4CIY0fdS0g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
- by DM4PR12MB6349.namprd12.prod.outlook.com (2603:10b6:8:a4::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.13; Fri, 9 Aug 2024 22:49:11 +0000
-Received: from CH3PR12MB7763.namprd12.prod.outlook.com
- ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
- ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7849.014; Fri, 9 Aug 2024
- 22:49:11 +0000
-Date: Fri, 9 Aug 2024 19:49:10 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-	"Tian, Kevin" <kevin.tian@intel.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF351168487
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 22:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723244107; cv=none; b=qpJgohKfua+9Cm4pHwle8cep1M/KXH9ttVip9AfVD1rHdcGA9QqyqDmKar8Gb5Su7XBOhEWBKY1uX4bXIWyibb0xq4Q09GS8VMx9IdrXtfVGNwo/dq1TbbA6iZXDvxBz7R3OweVCZr2PzpCJiz07DWfuecbDkh8A7kliRu9waA4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723244107; c=relaxed/simple;
+	bh=tNe2LFr/FcocX0SNv8D3Bp6H8lTM7t+jbCnnc23mn40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZgCwUWS/6r6ZloOUjWc4JiqxIWYbwsS0Tu6FNz2WKfHlbSnU6dfiGdiK6nCC+1DX2wODt7I6dJp7x/m76ux1NKdpjq+g5hdu+qSPxWSZaeXhpbNQPu1mhMyu2vkoOSIZ0D302fiCvBotkJ5PR3p93itdL37FVhVjDT9KIqTgv94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=F+ensDy0; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso1951761b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 15:55:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1723244105; x=1723848905; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M3U4FJtdTJjwTjN2hjPa6fLm6h455o/oHaTN6sg8QaE=;
+        b=F+ensDy0X4c/jjMBEpdAHQi6iAz7rV0xoP2IxcDEXqdbFaLLQsYMsAgAsBT/xTaryM
+         gdJW5yW5NTRfJeKdtFRLMTxZz4eASAQKtfrE9TUFg5W38p77WDjFxpZP0nbPtt4u/U9H
+         RhPzcL/98XIOcmFm2lxFTa1L8jbVoWAORpBT62kyvB6fXknHCR9mUCpahIfiAcbsgFad
+         CIzLFdVeiJ85W4uOd1Y3ctELbY1luUxkp2krLIFHqld4y/rY8pLCudV6xCK01crQ+HhD
+         bfTFSdtpHLyAjjHNauAUn8h5cW7QH29PHE7mVgSnXGDLNsi/QMgQNIfGQ6LutfBprdSn
+         KPSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723244105; x=1723848905;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M3U4FJtdTJjwTjN2hjPa6fLm6h455o/oHaTN6sg8QaE=;
+        b=EQShbojKVwqcJLct7WHrFhL4c0MROLQPwEGTm63cJ8iv9kNOhACUR5B4ziZjt4bF2U
+         oUni1R3MCtzU4kVqc5iS/VbmojLrwLxvynTLOzkNNZloy2fQCw+Hrjeb+9Si0QM81tmN
+         vJIdpLfl5W3HCFRQ7t6AbSvrs4qdpUXQU3mEToLNy+ySIyQ66Oul7Ka6to7Nsea9z699
+         FSpPF8iuJnr7qKzk50hG8LlxuwYdQtFvMe5BbUY3T3QkU0ryAKfQIpaLMerzBxDDRNbL
+         ZCf1Js7VsTujBc0TcISorw1a0ce/Ti06nsENkofKeFrAwO45NJ1a0GHjCV20pku0ssQ9
+         8yKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmpS2xMxj+kp6colhFdBP6VgTVjDbBZXPmW9Q5M1BO64FhUmu6Ub7VyJC8IcftV05LMwE0IIVY/od3ucS6z6axz+qeENz52WGGVzXI
+X-Gm-Message-State: AOJu0YxA+RBQ+n7eAxT2eQSyfWKqmqs/Dv6Mt3tyGQTyQ5Uc0Ew5608g
+	GP+JP3I6xjL74mefiPbU/0OkviSm1/KokisZYZ+LRXjMHW8XsySnniZj0Y3v6DI=
+X-Google-Smtp-Source: AGHT+IGho8K4vEAF3AslwLv4ESQL8Sw02109Qz2/iziyqFknPsWj2z3zBpe9Ptc5YgDmlGGLNoHuaQ==
+X-Received: by 2002:a05:6a00:1389:b0:706:65f6:3ab9 with SMTP id d2e1a72fcca58-710dcaeffb7mr3701018b3a.20.1723244105055;
+        Fri, 09 Aug 2024 15:55:05 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58ca6a3sm268190b3a.90.2024.08.09.15.55.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 15:55:04 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1scYVh-00BPfA-29;
+	Sat, 10 Aug 2024 08:55:01 +1000
+Date: Sat, 10 Aug 2024 08:55:01 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Anders Blomdell <anders.blomdell@gmail.com>
+Cc: linux-xfs@vger.kernel.org,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] iommu/dma: Support MSIs through nested domains
-Message-ID: <20240809224910.GM8378@nvidia.com>
-References: <cover.1722644866.git.nicolinc@nvidia.com>
- <b1b8ff9c716f22f524be0313ad12e5c6d10f5bd4.1722644866.git.nicolinc@nvidia.com>
- <BN9PR11MB5276E59FBD67B1119B3E2A858CBF2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <6da4f216-594b-4c51-848c-86e281402820@arm.com>
- <20240809184136.GL8378@nvidia.com>
- <ZrZrku/Av/y7ID0w@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrZrku/Av/y7ID0w@Asurada-Nvidia>
-X-ClientProxiedBy: MN0PR04CA0019.namprd04.prod.outlook.com
- (2603:10b6:208:52d::33) To CH3PR12MB7763.namprd12.prod.outlook.com
- (2603:10b6:610:145::10)
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: XFS mount timeout in linux-6.9.11
+Message-ID: <ZraeRdPmGXpbRM7V@dread.disaster.area>
+References: <71864473-f0f7-41c3-95f2-c78f6edcfab9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|DM4PR12MB6349:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3936daf6-3080-4715-c311-08dcb8c57c57
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BetaDwj0/23pCE7hhzVEmiR0d40wMfSWtvGrUnd4ZjJECY32iTYlj1p8LXmJ?=
- =?us-ascii?Q?88Pu+dMpe2WoYbaVDhenRC8RqqR6Bqv0J9dDHO5KIv4JN2f9yMewAjCZA9qG?=
- =?us-ascii?Q?YOsoaIRDGltfrK9IGOipf9VDIMUckEyZldn8bge+4lEvUuM54rKZguOzyj8M?=
- =?us-ascii?Q?vo+LtDr9oFWEPd2oYyHmZ8v70KVHUsQ6RfOWPjDcKXYEHChiMaNYMRO/SiT8?=
- =?us-ascii?Q?YKalQhBC24W9paVRStoQPgLDmOf1fziQpUbWh8rL9IGni/guweI+5I54DNZe?=
- =?us-ascii?Q?KNOavjQHf4XA3+/mnURBdoLaECNWoCkCDfZdWJsji67NeyOAWOXHucc+pyHq?=
- =?us-ascii?Q?tnWi77gDkszLTgnndiOYTm/3GkIXmBwFkw4py00kHSVQr4XpGtiATxnddpA0?=
- =?us-ascii?Q?RFIprHt0x56t1qjPx0cPD4NErj2ZXk33LfsK9XTXp2t+qdJBjVFihxIxYuVJ?=
- =?us-ascii?Q?WfvOCJHtTwVT38jNYAi9WuhWtD9dGUm83YtvsTI9jpuXPjWOGN5leqhVByr/?=
- =?us-ascii?Q?Vs1Ac53Kp9p477/rugZ/n9xB273uigD6mLeV+E9WSW3w89qzfub+8Su7P83O?=
- =?us-ascii?Q?H3gvuyNThe++FHk/ZZfkMv4wx4nTTlq2LPOYbxQ4RHz8aEXdQ6/gMQEuu/a+?=
- =?us-ascii?Q?MbrV6ugwGjYIRotuW9oYhcy+qdI5WoXUskk+nC+VAn8AmmNTFiI/ZRB4Y4QK?=
- =?us-ascii?Q?2qjXYkdZEcMm4dNOnOJr9/AJNpgbGy1vWnG/gTnjn+2qVDjIEhHUw+A7tRJy?=
- =?us-ascii?Q?u2IHsbWQ5VRj2qPTX9gzHPv3GXRnZAGSg1W2U1bez2guNzUbhOAmuJkZO9PG?=
- =?us-ascii?Q?DgaP4Gn4GJK2CEmG8OeAyxZl48C6uN4czkrepvQjJ/HlSJQuBpIb+wgASMqC?=
- =?us-ascii?Q?sd/gObl6dG+e7BI5UmIr58vQylgqPrwgDs6hXYWpJttFBDGE67MR9CQ4TEL6?=
- =?us-ascii?Q?z4uYN/nYs2VQtB70FooJB4ozjX7jexMknCUdmCflQAF/aY9YTcw1i8x079xm?=
- =?us-ascii?Q?A9gQSXUhDGJvq12Ox1kTWkKP96dCVYwqjzghECisnwVUdiHzDkt0ZX8aCNCz?=
- =?us-ascii?Q?d5xKGtEjajs6Ihrw2NkTVZhmEj9QxIPuJvsK4+5MPcK3gRBcTdxA4miiGExu?=
- =?us-ascii?Q?wg0U/c+81/Bqc+zWZAWYYdW1ut0eqLXmHxujY82wLl8B7CWM0RV0uAiJ/nRT?=
- =?us-ascii?Q?WBgQ28HLCnuTwfYFUJKWa25/T2AgbIMfOabeuAoyosaoxJqS1rprnODHhIO2?=
- =?us-ascii?Q?dAtY/4etFODqXGhGfc0kTpCQGC9TPgllFL1noWsokBPQu9e8Bhbsd8xCwmzq?=
- =?us-ascii?Q?ON5AmcSkeQxYFRXNs3vTSUKAAki9mywjU5YSvWI/H7vBZg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZiM3hlOPTXPeSC52WYI2Xnm/ayEASD9OVggaOy4uO4fXRhEMIuE8ux+1U8Jz?=
- =?us-ascii?Q?7J5ca64DiyODG/DscRc7xnGqHO0SmuwY1OeKNBSpsszyqRpJ21mZrv0Fxqa6?=
- =?us-ascii?Q?YgWXeoPPiNpijwza57BYGlbITw0BoOEaZDj7B6cX68ZEu6wgO2gS/61/mEQ7?=
- =?us-ascii?Q?MpW64tpO/V84FFn91Om56bA4JOtOeugYCshzS7CHFt8Kayx/6I9Iqer2W2QA?=
- =?us-ascii?Q?7qpiMkTtrubU7u5OxKI0hDxi7BqzZO/L/9cAtd/nLv3Mgjnze3BuRdxARqIh?=
- =?us-ascii?Q?LC+VPveoyCAjVKZ8xsPiwbwoIvk3CI7kIopPBJcKO+43aTkCSL2DMhTyBm4t?=
- =?us-ascii?Q?3Wf6npe+svBrE22G9j35CJJ6qTnBxWq8lH4R5K03euqoMa+MDCtrV1nDDBaO?=
- =?us-ascii?Q?ZovWHK5LOGfhHnwkg/4FkeMfmEQkQbXDZWN5N6XhtVtS08b338dTk0EyshrG?=
- =?us-ascii?Q?DjdN6SZO7BTmUJwTl0YklMidnt0C2O27LQBXTwpBExjh0gTq6oT6oDhSKuJ8?=
- =?us-ascii?Q?1ukkdjFP72plIgMnyZIWlJAIr3gzfSDUn62U6A9MCpmY3uqDBJcFRUd9Hv+g?=
- =?us-ascii?Q?VmSO+U+aC3SXaBDA8S9MUFW3AKSoOoysZnJuceE2YBu5YmVLmAjIFNxMDuQp?=
- =?us-ascii?Q?8VOy+hmlik7drb/rmpyMCTsBsKLaPkG8FnQQ0uZCo8MJyqQL8KNeKb7jw4Hl?=
- =?us-ascii?Q?XwKZlTWyB+II9UkSPkpU9SC2uKjKd6F20iwcO2sceu30TpTJ7yp+hpRO0VE0?=
- =?us-ascii?Q?v4cxGI7anZbul/GkJrQ7zewPFBIVX3jKYmXzoMmjZGXRWZ3WLkaK1E5bEsgU?=
- =?us-ascii?Q?x2cpQeLgt6Y649RPxHOeP5cVv/dOLR34dfxTzWRehc9NJx9VjX44WW0aRtl5?=
- =?us-ascii?Q?0jacDR4jZLZ6/OBmXhEf39da8Ts7k5TszGMo315gK+/LGCrZ42m5vjxwU9J0?=
- =?us-ascii?Q?gNMQxHB+BXY8Ed78cvNu/Bof4ORRdvG22AmMrumXDhIcQUF/GAghf4FkOl8m?=
- =?us-ascii?Q?NqohDVxfrAIgqMjrj2GKUuWwpHaYNL8CFU2ybt6VPeMIlKGmq6+bZCYEadPr?=
- =?us-ascii?Q?yr/ATgCNedWw/qlsWJsOe4wfAaHWUYib8iuKQTsYH2TgtpAeAQ8Xuji5jIS8?=
- =?us-ascii?Q?TFOR28EPg4W9E33lyYTgIHdXt79TUgFE4FR6NCD83XfUZaa193/xKAN6XWbM?=
- =?us-ascii?Q?fCKsl1HIDIN5AC148to704wz2RPfS8JaqNHZXh+kPArA6SfSYUmuxUdK27QE?=
- =?us-ascii?Q?wGaiwxlVaWEEQOJlQL7uniVE5qu9GXIqU3VwpMB+61C1wpTRKwKNZQNrAlD1?=
- =?us-ascii?Q?OMqW8QeSjUzZxGP3AEs+Mn+7rPf06Sa7Ii/B6R4dRAsQhz8cM9qkLYdC35xy?=
- =?us-ascii?Q?EklN8pVWnsnuakm5UNLm/QInE/XZ4JFTHHBga6VaegDql0gRGBUvM5jyMHgc?=
- =?us-ascii?Q?H6AcmgYLRqu5zDHCkJU5Q2sjLERb7cXIjEE1A4+tRCdpz83oktkgNA2IZxoh?=
- =?us-ascii?Q?YGWO4tThoGvrwMQKg2Sci1UJA8VQIHjhegdydhkmlrKP3gP3NJMSiMtjn4zB?=
- =?us-ascii?Q?LAEUj/a30w9aQw81PJk=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3936daf6-3080-4715-c311-08dcb8c57c57
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 22:49:11.4977
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aJcWmAbzWi6b1czx4y4Ruj2O7H2riN5RzV1TUrJaja6FLr5dfm71BnJyB29WYeZm
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6349
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <71864473-f0f7-41c3-95f2-c78f6edcfab9@gmail.com>
 
-On Fri, Aug 09, 2024 at 12:18:42PM -0700, Nicolin Chen wrote:
+On Fri, Aug 09, 2024 at 07:08:41PM +0200, Anders Blomdell wrote:
+> With a filesystem that contains a very large amount of hardlinks
+> the time to mount the filesystem skyrockets to around 15 minutes
+> on 6.9.11-200.fc40.x86_64 as compared to around 1 second on
+> 6.8.10-300.fc40.x86_64,
 
-> > The bigger issue is that we still have the hypervisor GIC driver
-> > controlling things and it will need to know to use the guest provided
-> > MSI address captured during the MSI trap, not its own address. I don't
-> > have an idea how to connect those two parts yet.
+That sounds like the filesystem is not being cleanly unmounted on
+6.9.11-200.fc40.x86_64 and so is having to run log recovery on the
+next mount and so is recovering lots of hardlink operations that
+weren't written back at unmount.
+
+Hence this smells like an unmount or OS shutdown process issue, not
+a mount issue. e.g. if something in the shutdown scripts hangs,
+systemd may time out the shutdown and power off/reboot the machine
+wihtout completing the full shutdown process. The result of this is
+the filesystem has to perform recovery on the next mount and so you
+see a long mount time because of some other unrelated issue.
+
+What is the dmesg output for the mount operations? That will tell us
+if journal recovery is the difference for certain.  Have you also
+checked to see what is happening in the shutdown/unmount process
+before the long mount times occur?
+
+> this of course makes booting drop
+> into emergency mode if the filesystem is in /etc/fstab. A git bisect
+> nails the offending commit as 14dd46cf31f4aaffcf26b00de9af39d01ec8d547.
+
+Commit 14dd46cf31f4 ("xfs: split xfs_inobt_init_cursor") doesn't
+seem like a candidate for any sort of change of behaviour. It's just
+a refactoring patch that doesn't change any behaviour at all. Are
+you sure the reproducer you used for the bisect is reliable?
+
+> The filesystem is a collection of daily snapshots of a live filesystem
+> collected over a number of years, organized as a storage of unique files,
+> that are reflinked to inodes that contain the actual {owner,group,permission,
+> mtime}, and these inodes are hardlinked into the daily snapshot trees.
+
+So it's reflinks and hardlinks. Recovering a reflink takes a lot
+more CPU time and journal traffic than recovering a hardlink, so
+that will also be a contributing factor.
+
+> The numbers for the filesystem are:
 > 
-> You mean the gPA of the vITS v.s. PA of the ITS, right? I think
-> that's because only VMM knows the virtual IRQ number to insert?
-> We don't seem to have a choice for that unless we want to poke
-> a hole to the vGIC design..
+>   Total file size:           3.6e+12 bytes
 
-I mean what you explained in your other email:
+3.6TB, not a large data set by any measurement.
 
-> - MSI configuration in the host (via a VFIO_IRQ_SET_ACTION_TRIGGER
->   hypercall) should set gIOVA instead of fetching from msi_cookie.
->   That hypercall doesn't forward an address currently, since host
->   kernel pre-sets the msi_cookie. So, we need a way to forward the
->   gIOVA to kernel and pack it into the msi_msg structure. I haven't
->   read the VFIO PCI code thoroughly, yet wonder if we could just
->   let the guest program the gIOVA to the PCI register and fall it
->   through to the hardware, so host kernel handling that hypercall
->   can just read it back from the register?
+>   Unique files:             12.4e+06
 
-We still need to convay the MSI-X address from the register trap into
-the kernel and use the VM supplied address instead of calling
-iommu_dma_compose_msi_msg().
+12M files, not a lot.
 
-When you did your test you may have lucked out that the guest was
-putting the ITS at the same place the host kernel expected because
-they are both running the same software and making the same 
-decision :)
+>   Reflink inodes:           18.6e+06
 
-Maybe take a look at what pushing the address down through the
-VFIO_IRQ_SET_ACTION_TRIGGER would look like?
+18M inodes with shared extents, not a huge number, either.
 
-Jason
+>   Hardlinks:                15.7e+09
+
+Ok, 15.7 billion hardlinks is a *lot*.
+
+And by a lot, I mean that's the largest number of hardlinks in an
+XFS filesystem I've personally ever heard about in 20 years.
+
+As a warning: hope like hell you never have a disaster with that
+storage and need to run xfs_repair on that filesystem. It you don't
+have many, many TBs of RAM, just checking the hardlinks resolve
+correctly could take billions of IOs...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
