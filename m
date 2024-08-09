@@ -1,130 +1,84 @@
-Return-Path: <linux-kernel+bounces-280564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B2E94CC2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:28:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E4394CC2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 10:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22F97B24288
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:28:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B122813DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABF118E75C;
-	Fri,  9 Aug 2024 08:28:42 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5602618E741;
+	Fri,  9 Aug 2024 08:29:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CE718E043;
-	Fri,  9 Aug 2024 08:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A388218E053
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 08:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723192121; cv=none; b=smCIfozxjyvDUUtKVToBE4H7pzdmYuka8wr7YnCyKYb6uwRsjPGU/O8h5M8PzlEA2ogntbQnZYCc+g0GMCYS2dWYNtvSNrFGniv/aMGJwCnY4925E830cB3Faaj/C9vY/eVubZOEyfJwX2JhA9J6tBpMf9V6amnM+CVyrFkb9Kc=
+	t=1723192145; cv=none; b=ObPXPAkKaSa4u5264pEXrxMkJb1o5ph72acTtvEGuMkIsEixrMhQ6fOQtrPfCitEH8tub1atBWpfKBkE4TnOln1V3eCy3W5v4y2FQn32uZ1e+S4RozL0bfw/fuXOidk90Ef1sxZ4sE3y2yDwfDPy7mDnfyLFp6KlhJpZmPsSnPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723192121; c=relaxed/simple;
-	bh=/l0yUZUpC/nMUugQZnOrV9FPr+m9pokntN5G6vFoWtU=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Yfo5koqlRJvutMqSBn7h4LD1KT6F6p1kI3cy4cL2ASu0rNQMvU8aCjJbx+PP3FEXJA9gtqgWyA4LWSMKbY9D3OOK7IPa+xJArt4FX7LBfRU0rl7d5eS/nuSqhjvYYP/oul07iUJElNKixIX/PG2G2googAsQdMrM6RqIOEMDUdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WgH7Z6LhTzfb7b;
-	Fri,  9 Aug 2024 16:26:34 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id A8650140121;
-	Fri,  9 Aug 2024 16:28:29 +0800 (CST)
-Received: from [10.67.120.126] (10.67.120.126) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 9 Aug 2024 16:28:29 +0800
-Subject: Re: [PATCH] scsi: sd: Have scsi-ml retry START_STOP errors
-To: Bart Van Assche <bvanassche@acm.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-References: <20240808034619.768289-1-liyihang9@huawei.com>
- <17c0a914-9bd7-43ef-b739-d2105ec46567@acm.org>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<prime.zeng@huawei.com>, <linuxarm@huawei.com>, <liyihang9@huawei.com>
-From: Yihang Li <liyihang9@huawei.com>
-Message-ID: <35f5f7d3-3cbf-b45a-8a3b-eb1a3f34ddec@huawei.com>
-Date: Fri, 9 Aug 2024 16:28:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1723192145; c=relaxed/simple;
+	bh=cU9RcXb4S5gQpOyUv/FA7jli1JE8vbCBxShMU7mfGws=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VM599GAJcgJdwyrqrji7pXcOO655FQgdKRjObRLj/0km+RKur6T6lbKfqX3aD8Idf9I4VUd+O+37/7DODOGpwMZzOVRUw2wLWpsVpN5dy0gCx1nhUzVjfdtd2hTSZRrTXYMM/rj454eUNoJjNzinbh9s+GzdV/8i+3OPj+HjjVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81fc0896188so206430839f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 01:29:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723192142; x=1723796942;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IjDidAQL48GQw9meQC+l38N/hrXlDPXoqULwhYHkPS0=;
+        b=WL985FlITh+CZoFGIRNQgrJnO64aEiV8WppKp25ni+MjDyelnLjiP7N7PuY0P6AecE
+         d97JYVTWFAYD1meLJYxdJ0SkkyFqcbIOmD59bL3/Rg4AtxxwKQCUAzxzSPSkNRbUYo6B
+         wXmKCElnIIr/Y4ATWyMaNZM/kpGl6VTgSTvlzgJ06KMIkQYI/BztA1sIf6mR7YiKEph6
+         qPlmbAUJn5Afojw2wb2XG1VwRmqgp5dTwQOqSayLZPrwCkhbKfAw3EXrHPrX4gtQdIHp
+         F2IMErkRyn8ICs2tqADUgRgyIxColWrV1cbFJSm67EbsldZxpYLiD7q4fg4H+RYtKRli
+         7Phw==
+X-Gm-Message-State: AOJu0Yz4FaiGKJTO5/00ckw83v0zQrLjnLmC0MeoVBcfQpN6Lks8X242
+	R01Jqog+ywF3zzOrwQDPU0QVDwytiqDiMMAl1A05Uo7c2ekElh//aJGwhikOmoHxwfthRkfK2FR
+	yAB9FU1eWCKENOPzgCYg8zxOdAvq+e6L02HeNWfXJm436zjxB906RoRQ=
+X-Google-Smtp-Source: AGHT+IHK2vanXUSbRzlZmZ9m29CKvfo+J0dY4OeaazqkQ3RCcZNgX65L2FA2Q2Bv00pbyKudnf8St+FAeFMdyBcRYmTJR+G9dxfP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <17c0a914-9bd7-43ef-b739-d2105ec46567@acm.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf100013.china.huawei.com (7.185.36.179)
+X-Received: by 2002:a05:6638:8401:b0:4c0:896c:515d with SMTP id
+ 8926c6da1cb9f-4ca6edc9cd5mr44150173.5.1723192142561; Fri, 09 Aug 2024
+ 01:29:02 -0700 (PDT)
+Date: Fri, 09 Aug 2024 01:29:02 -0700
+In-Reply-To: <20240809081544.2529127-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008994cd061f3befad@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot tried to test the proposed patch but the build/boot failed:
+
+fs/9p/fid.c:98:9: error: implicit declaration of function 'fget'; did you mean 'sget'? [-Werror=implicit-function-declaration]
 
 
+Tested on:
 
-On 2024/8/9 1:20, Bart Van Assche wrote:
-> On 8/7/24 8:46 PM, Yihang Li wrote:
->> When sending START_STOP commands to resume scsi_device, it may be
->> interrupted by exception operations such as host reset or PCI FLR. Once
->> the command of START_STOP is failed, the runtime_status of scsi device
->> will be error and it is difficult for user to recover it.
-> 
-> How is the PCI FLR sent to the device? Shouldn't PCI FLRs only be
-> triggered by the SCSI LLD from inside an error handler callback? How can
-> a PCI FLR be triggered while a START STOP UNIT command is being
-> processed? Why can PCI FLRs only be triggered while a START STOP UNIT
-> command is being processed and not while any other command is being
-> processed?
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14722213980000
 
-The PCI FLR mentioned in my description is not sent to the SCSI device,
-but to the SCSI host.
-
-When the START STOP UNIT command is submitted to the SCSI device,
-the command is sent to the SCSI device through the SCSI host.
-If the user triggers the PCI FLR through the sysfs interface or
-the host is reset due to an error, the START STOP UNIT command
-(other commands are the same) is interrupted. So I think the command
-needs to be retried.
-
-> 
->> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
->> index 5cd88a8eea73..29f30407d713 100644
->> --- a/drivers/scsi/sd.c
->> +++ b/drivers/scsi/sd.c
->> @@ -4088,9 +4088,20 @@ static int sd_start_stop_device(struct scsi_disk *sdkp, int start)
->>   {
->>       unsigned char cmd[6] = { START_STOP };    /* START_VALID */
->>       struct scsi_sense_hdr sshdr;
->> +    struct scsi_failure failure_defs[] = {
->> +        {
->> +            .allowed = 3,
->> +            .result = SCMD_FAILURE_RESULT_ANY,
->> +        },
->> +        {}
->> +    };
->> +    struct scsi_failures failures = {
->> +        .failure_definitions = failure_defs,
->> +    };
->>       const struct scsi_exec_args exec_args = {
->>           .sshdr = &sshdr,
->>           .req_flags = BLK_MQ_REQ_PM,
->> +        .failures = &failures,
->>       };
->>       struct scsi_device *sdp = sdkp->device;
->>       int res;
-> 
-> The above change makes the START STOP UNIT command to be retried
-> unconditionally. A START STOP UNIT command should not be retried
-> unconditionally.
-> 
-> Please take a look at the following patch series (posted yesterday):
-> https://lore.kernel.org/linux-scsi/20240807203215.2439244-1-bvanassche@acm.org/
-
-I will reconsider the retry of the START STOP UNIT command, and try this patch series as well.
-
-Thanks,
-
-Yihang.
 
