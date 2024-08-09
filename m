@@ -1,167 +1,218 @@
-Return-Path: <linux-kernel+bounces-281289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8A594D523
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 18:59:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C28D94D526
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BCCE1F216DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 16:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616391C21C4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D0E381A4;
-	Fri,  9 Aug 2024 16:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45D02F855;
+	Fri,  9 Aug 2024 17:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H3dnOSgN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LVb7AG9r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RwaS7286";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LVb7AG9r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RwaS7286"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74CA3219F
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 16:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B918D2F26;
+	Fri,  9 Aug 2024 17:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723222789; cv=none; b=TfqigAmAvG4NadbmcopWKr0AZpR1AGRPb1lQW1JZy0BV/YOjFlJDSvUj9r6L506MtkX6l1YKzBLBb0YYRDeROnwG0dCYKuzM/dnDdbe3TpRXOZ1NoKO6T6dadAPICBIi+GgeK+Joxn13DhdPEtqyOqKZuaDvg/P/CSmjGsErfrs=
+	t=1723222831; cv=none; b=bUizZWCHh2uk0EVnXt665vkmH55uQMwi+d39mkx9z6BSjavj8ofpNeXUractOHuy/XtKGsFIfZp85EueODwwAs3PA1NFTH/ydwAK5gJLp/c2ZFva4V/JQ+YRk2olgcaLiNNezLo8ED5sjAx/putTiodXw2ygbAiSVxND4nmOa1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723222789; c=relaxed/simple;
-	bh=LRmfoQ7bRPL7TE4kwyHxzBUsQnz982hdoFu9pvJtp/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K8KAX0ppxqLgj49iooXjP71ym/EJSTAPcH+FtGI03mDo0QzECAfLWSuy3z08juIRLrsPmVWKSBL8UtsnQz+t2Iv/gBSNzKaxFkiijjzbUiWlhu2SD/DdqOREtNNF/gCRDFsyDnzBabPIm/OmKvxjEutbotmv3IijKqenvJ/tDp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H3dnOSgN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723222786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4vBISjU3wc8bbFt9cGZRVmI4aFRJJnxKYVQ2bi1B1P4=;
-	b=H3dnOSgN8i2J+E0H+DdeE3dz0h9otkeLD89l+9za+Y1rhr0+WVZcQ4YPVnKm2yIAe12l5f
-	+7xCR672tqqTW/VN1CHxYhGIyhZpSoaA7QQMTzgkt4K6wtL47w7zCzGpDLAPSc8LuTks1+
-	R3Pu9OZOMYg16MmeuLPmVJVyKfqsbhI=
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
- [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-302-c0SqOUruPOqryVWt4zj_qQ-1; Fri, 09 Aug 2024 12:59:45 -0400
-X-MC-Unique: c0SqOUruPOqryVWt4zj_qQ-1
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3db181f240cso197029b6e.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 09:59:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723222784; x=1723827584;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4vBISjU3wc8bbFt9cGZRVmI4aFRJJnxKYVQ2bi1B1P4=;
-        b=DCMCm/P7I0GoR+A6tTDnex+opSv5Y6MwtgfcAoHvnxFxr5oSnVF9Xwef0DoKTgCUjV
-         kjspr9pFcqcYQKjPO6lT22QSOg68AZmEr9IsQJ7lAat/l69FXm/UvE/A+EmH9aA67JHF
-         RtrbK6r05ypo/Lw+YhFUykkIZ1p2mYmGATA/TMXpNJMlVx0207oBLBJXcIPQmgwIn1pa
-         kEU96SOJziHq9HtemBzPLa+yumFLOwbiBSEg66HpdnqJVFQX2R8LizLJPvhN5+Wg2Jpz
-         GIdr6B0LDtVKMlaQ99pE2XqAghB2R8/m7DhyQPkcxLv9i9ep9PXH07dAxR17y7hocf5T
-         Tf9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUNjxXhgubNv4XNA2KYTLl12uevD0aTmsKqqBlNB4E2HppuI5ndtjFKwfEK4rIJEbj8a5j2EkQsVcfPtnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS2efgJtn+f6r9hWOzdGsdOHguUCzgFM86vheWptcEz3WiKTG9
-	+/NbXiHmMxHC4MX3zzPfu60D+21V8oV02ubh5+SVhVmhgCwR71tseJfqC/n2Hq9NewUnJNBYODH
-	zevTNd7Bgrf+p/yY23W7HjJAFzlmhDPQ426kBE6dANXk/qQZFELF7Ih84fM4f3Q==
-X-Received: by 2002:a05:6358:e498:b0:1ac:ee25:ea01 with SMTP id e5c5f4694b2df-1b176f25c65mr138665755d.2.1723222784502;
-        Fri, 09 Aug 2024 09:59:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhzrEIAv0YtSNyCDkni9NvGO/yGcX0KWO+ywGAIyNJzMZXEzyIqhBTcGWxs3CX0V3QMBcTvQ==
-X-Received: by 2002:a05:6358:e498:b0:1ac:ee25:ea01 with SMTP id e5c5f4694b2df-1b176f25c65mr138663855d.2.1723222784120;
-        Fri, 09 Aug 2024 09:59:44 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c79ba4asm78773856d6.36.2024.08.09.09.59.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 09:59:43 -0700 (PDT)
-Date: Fri, 9 Aug 2024 12:59:40 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: Re: [PATCH 05/19] mm/gup: Detect huge pfnmap entries in gup-fast
-Message-ID: <ZrZK_Pk1fMGUCLUN@x1n>
-References: <20240809160909.1023470-1-peterx@redhat.com>
- <20240809160909.1023470-6-peterx@redhat.com>
- <67d734e4-86ea-462b-b389-6dc14c0b66f9@redhat.com>
+	s=arc-20240116; t=1723222831; c=relaxed/simple;
+	bh=SNouAK50ZRCMWr6AoVFBn9CZIzz8cJQZROM2EviWqkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rmmxFKZPdCX2lDdRP5ThdewSHDavhfr6+8rXEstHes10ZzxjyYErqI3z8lbfxo9F6mJySQiPcOFAHHTAC+NfXJQRxcsvDqR6egx1Un28wQI9kl8UDfaA7D6SIEy/S1mH7fvcurpL5kOeT1CB+345nzeiVVIrQDU6liajsQHc3gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LVb7AG9r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RwaS7286; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LVb7AG9r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RwaS7286; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C6D961FF9E;
+	Fri,  9 Aug 2024 17:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723222827; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UnpsEyaTqfp5mqmiYMWnD58QubCP6KfKObWoXHLeoao=;
+	b=LVb7AG9r6x4xHrN3tgun1h0luPsZvrRjvSmng59gLy5wkEik5yIZrZ2L2ZQOd2qFsSZKFT
+	eaZuYDAkc7JDQuTizVDBZgJHUW9UXvWLjCXbWqgtnyP2nCgU7WkI9wyb8RmIA1/9vXR25U
+	+Z3nWVsFcgMWbT8j4qwphctoPSYZfiM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723222827;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UnpsEyaTqfp5mqmiYMWnD58QubCP6KfKObWoXHLeoao=;
+	b=RwaS7286GhvOCoLpK/ScgtXmtubuzCnlk/JbdieE6GyRdMwmgUO9EwlRihvEOV4gG9lrix
+	jDNm6hjXksxouCBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LVb7AG9r;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=RwaS7286
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723222827; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UnpsEyaTqfp5mqmiYMWnD58QubCP6KfKObWoXHLeoao=;
+	b=LVb7AG9r6x4xHrN3tgun1h0luPsZvrRjvSmng59gLy5wkEik5yIZrZ2L2ZQOd2qFsSZKFT
+	eaZuYDAkc7JDQuTizVDBZgJHUW9UXvWLjCXbWqgtnyP2nCgU7WkI9wyb8RmIA1/9vXR25U
+	+Z3nWVsFcgMWbT8j4qwphctoPSYZfiM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723222827;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UnpsEyaTqfp5mqmiYMWnD58QubCP6KfKObWoXHLeoao=;
+	b=RwaS7286GhvOCoLpK/ScgtXmtubuzCnlk/JbdieE6GyRdMwmgUO9EwlRihvEOV4gG9lrix
+	jDNm6hjXksxouCBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 89BAC1379A;
+	Fri,  9 Aug 2024 17:00:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FNikICtLtmYXPgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 09 Aug 2024 17:00:27 +0000
+Message-ID: <6a6c1c59-eee3-4263-9cad-53b57d78c018@suse.cz>
+Date: Fri, 9 Aug 2024 19:00:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <67d734e4-86ea-462b-b389-6dc14c0b66f9@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] rcu/kvfree: Add kvfree_rcu_barrier() API
+Content-Language: en-US
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Jakub Kicinski <kuba@kernel.org>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+ Jann Horn <jannh@google.com>, Mateusz Guzik <mjguzik@gmail.com>
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+ <20240807-b4-slab-kfree_rcu-destroy-v2-5-ea79102f428c@suse.cz>
+ <ZrZDPLN9CRvRrbMy@pc636>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <ZrZDPLN9CRvRrbMy@pc636>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -3.00
+X-Rspamd-Queue-Id: C6D961FF9E
+X-Spamd-Result: default: False [-3.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[26];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,joelfernandes.org,joshtriplett.org,gmail.com,linux.com,google.com,goodmis.org,efficios.com,inria.fr,zx2c4.com,linux-foundation.org,linux.dev,kvack.org,vger.kernel.org,googlegroups.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-On Fri, Aug 09, 2024 at 06:23:53PM +0200, David Hildenbrand wrote:
-> On 09.08.24 18:08, Peter Xu wrote:
-> > Since gup-fast doesn't have the vma reference, teach it to detect such huge
-> > pfnmaps by checking the special bit for pmd/pud too, just like ptes.
-> > 
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > ---
-> >   mm/gup.c | 6 ++++++
-> >   1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/mm/gup.c b/mm/gup.c
-> > index d19884e097fd..a49f67a512ee 100644
-> > --- a/mm/gup.c
-> > +++ b/mm/gup.c
-> > @@ -3038,6 +3038,9 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
-> >   	if (!pmd_access_permitted(orig, flags & FOLL_WRITE))
-> >   		return 0;
-> > +	if (pmd_special(orig))
-> > +		return 0;
-> > +
-> >   	if (pmd_devmap(orig)) {
-> >   		if (unlikely(flags & FOLL_LONGTERM))
-> >   			return 0;
-> > @@ -3082,6 +3085,9 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
-> >   	if (!pud_access_permitted(orig, flags & FOLL_WRITE))
-> >   		return 0;
-> > +	if (pud_special(orig))
-> > +		return 0;
-> > +
-> >   	if (pud_devmap(orig)) {
-> >   		if (unlikely(flags & FOLL_LONGTERM))
-> >   			return 0;
+On 8/9/24 18:26, Uladzislau Rezki wrote:
+> Hello, Vlastimil!
+> I need to send out a v2. What is a best way? Please let me know. I have not
+> checked where this series already landed.
+
+Hi,
+
+you can just send it separately based on v6.11-rc2, as you did v1 and I will
+replace it in the slab/for-next. Thanks!
+
+Vlastimil
+
+> Thank you!
 > 
-> In gup_fast_pte_range() we check after checking pte_devmap(). Do we want to
-> do it in a similar fashion here, or is there a reason to do it differently?
-
-IIUC they should behave the same, as the two should be mutual exclusive so
-far.  E.g. see insert_pfn():
-
-	if (pfn_t_devmap(pfn))
-		entry = pte_mkdevmap(pfn_t_pte(pfn, prot));
-	else
-		entry = pte_mkspecial(pfn_t_pte(pfn, prot));
-
-It might change for sure if Alistair move on with the devmap work, though..
-these two always are processed together now, so I hope that won't add much
-burden which series will land first, then we may need some care on merging
-them.  I don't expect anything too tricky in merge if that was about
-removal of the devmap bits.
-
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
-
-Thanks, I'll take this one first.
-
--- 
-Peter Xu
+> --
+> Uladzislau Rezki
 
 
