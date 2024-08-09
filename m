@@ -1,145 +1,146 @@
-Return-Path: <linux-kernel+bounces-281167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678F894D3D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:45:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F1694D3DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AAC31C21DFC
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:45:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13BC4B21390
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 15:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354BA198A39;
-	Fri,  9 Aug 2024 15:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ags7VAjT"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBDB1946B9;
+	Fri,  9 Aug 2024 15:45:21 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBFA38DE4
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68843198E6E
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 15:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723218315; cv=none; b=rDQH1dzLsouKYfhQyMnRLXy7FsowMPlUt3MceF4pQ5otOYi3XwZDC3nTwoVyK2yOT/BNhgCHYgfi0OcDBz6eWcxdC+hiL/X00AoZc2jUMJah3DCKdtryBxYUt0LJ6W2t8W4mDfUOi60kF8oTpy+BRknmK0/MFxxO4ZtnkAJBB/Y=
+	t=1723218320; cv=none; b=VJJ2V/bgciI0CF6FRSwIxUuzN/VbaMJpvFAmBSBXzS4eCmbr+TzQYt7iTZAbt5KV/RL1i2oI/n8izfAhGOmnpz94Nfcy6D2HkD1TL3f7xy0Vh6vRoq2kTwXK4THKOIUJMUHbHCMu+04g44K9JW+IPPM/JRCJ9y5ZTb269STIBXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723218315; c=relaxed/simple;
-	bh=4xKAdAddRSzH31ADhKLaPGKj1tnhAdZ+HE6xwKWHgfw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pAoReWobpfCLKdN8nBw2CJzID8Xwj8Y8/8qx3ZZaUsc3Nl11o4gCXiyqCn6/mNxauN7Han5og2qZnkAS5AcUFBee/ESwZ5RRuwtfJVPPQGfU+D1v2TKU2c60Qx3XC/kpMaxtJkr3LNHJ+OrAvXbLB12/XHiRNIjSrlIhU/U3upw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ags7VAjT; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-64b70c4a269so45186817b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:45:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723218313; x=1723823113; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ufzxNYpm833F4D+it9EVre+p13feWMXlScCKKRbhPtg=;
-        b=Ags7VAjTEKTy69FBDkWR/XJ5jldPb/DhIGL4gTq7FIeNqV0WdSc28yWvkCj8XOANxF
-         1jviKApndwtFJNKzB/hgm9dX3I+3WiWBTREUUHqnAgQazJWQ4YnpZE7U8Kj1ceOuNus5
-         WjusSSsDTsAvG7kwQXam1lCgkj9o3bRbdrvkiFkHNNsX/p0oZkulGvXw5TC/QiSJ4pP0
-         eRRgiYDxt65JJd0NTTJlWGFG1xjqD1ZDYzz0SNb9FoDrE994jSA+KFGCLe4ryVwg4yUt
-         UR8HuqTOUBLSvuV6IDSU0cyXRzM2MRtWtkG1j1nEosOtFmKtKWUb9LIqSD2n2jljhQ3H
-         JTzQ==
+	s=arc-20240116; t=1723218320; c=relaxed/simple;
+	bh=5fGXuXdavB5QrFI6ZW2XId6XrsCE8kEszsjvz4ngG2s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f13ggLFvs6FliUPNYDtEUB3jJ2e3FJKRvqL+vnJLzdGmswmXNFQeYACK1rJx9qu0MBYb4HUyKNoSp98otYrRwejxMh5S9jJxo8JWUbct7Eo+hlkXJuqiYZeU2+ofnwGqwkn2IV7cwgtEHER5exFPm1iOjU6FsLGayukp6byCcnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f93601444so275597239f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 08:45:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723218313; x=1723823113;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ufzxNYpm833F4D+it9EVre+p13feWMXlScCKKRbhPtg=;
-        b=HRmOXK9/sNIY8UZe2s0ZgKq01VwXlq9iFEosALBZEcyeDDoQ3k7Oon/K6rszVK7SMu
-         Vm7LgM1aYoaUO2WYDJWS4hE3Hc6E0gPNDd364CMrKlq04snGM0h7+p1TgFpj3klabxBj
-         2eFYbbW+vVqQaUDjTLObOaPNzq42dTxN2PykUdfvtfdVikv1HG/Y06jK6dmXpokdNQ2x
-         EBR/pxrJ7X/WrH24Rgrd5xYD8kgPCT59cejLrQZlNsxNXkGaISQDufX9ws26PqLTwNN1
-         1ryRsgpvrZXXDX8ZtIp+0tAtN3U6VuRAt905phK7eX0cfbKj59bT9cSyN2SCaq/X5NC7
-         I7Og==
-X-Forwarded-Encrypted: i=1; AJvYcCVlmcR+M7UqtJdUXDa6ZjbTUt5v5CrSgPfHIc7evAaWRg55rPWgji1EPkfqTjNqkof1E04HzwLzdS8ZCnOQeolB/ZqBLqlvh748xRWA
-X-Gm-Message-State: AOJu0YzX0wJvv33x1K8VZdY8ha2BjwCZsuqpjbJIhfMqBNL5fPZ6mVWE
-	LcVVEn5GI9fsvXrkvZQf+/jhItPMiVvl71GuRf/JwKJsJ7QHTUUi5VTmcg4XDLoLAzwpJE1g6FH
-	5VQ==
-X-Google-Smtp-Source: AGHT+IGmKxWqzG8EPgakjna8JtWGPg62vJdK+0Bc2Qodmrlh2F+IyIYu6Pp5IsmyEemyLyeZWsSJxb5C0rY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:2f04:b0:65c:1db1:9235 with SMTP id
- 00721157ae682-69ebf29b861mr647807b3.0.1723218312835; Fri, 09 Aug 2024
- 08:45:12 -0700 (PDT)
-Date: Fri, 9 Aug 2024 08:45:11 -0700
-In-Reply-To: <98c1f8e2-3b24-49c4-b5fc-506e4283248d@amd.com>
+        d=1e100.net; s=20230601; t=1723218318; x=1723823118;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gYMz9DavZgsxe/N7/Nv+CrURGsOaUrjPtpaY60Rs55I=;
+        b=EfMeFvP3z5JIDFalTm9+3V+FByYMdrkmgDbzZonxw0GoRJIKk/nC99F6AZLvd1TcCF
+         nPzBOPEW2TPFFTEQ4nmIg8mRa0nsWLKR5e9lH0wJ8m6Rh0Yo8C9y16uFnzG+l7zssB9Q
+         hlnK4gHW5UxH7ps1YVAo6N3Vwbxd7y3FdHAmM4O8MC2gzmJVwAoLuypTP157gm8U7UkM
+         n08km4nPbMp4HQUvnQh8VrS2YYEzQ/Az9StlaRPXRbU8/XqG3omT+W3h10i+ECXCEv7e
+         co1cKTfqH1oDMYaUVeq+x3onkNnp/jLJ1eOEsANw5KOo3tJDODqGl4fSD7O2QfmxCelO
+         xJ8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVGBuHhz4X4tBjz37qmoVZZ81RltCmS1YGvjuIXSaCNaSIMsC9lkE915rfhJFpHQL+gB8olE0BvCMuhDrEDEIRCkrtfqMDSwkEQ70cO
+X-Gm-Message-State: AOJu0YyJLJ9NZ0UoMy7XOQtW9zHRfUU7kh5t1WiLsCMB8lV4E/hI8SIe
+	CIGZGRkJa8ivVkj1/oNYQa/8AZeE3lOnoyNmC4eZkaYs1P6ex6v+L/yuhZgcM8Ihph/gM1De0Gh
+	NZtaYtZgbcrrgWdcVG6eGfVPCj8cPfsEVBi/6G3BFeqFRAMKW6dgAeQA=
+X-Google-Smtp-Source: AGHT+IFwhpqZCjS2l9vlcjlDvow0WdXD/3oRZfuPiyMtgyfKfprUnxaBRZ7BjqZgSF2yYMSbw7i4s8zHFSsIHCNAteczZ6D/DVxm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240710220540.188239-1-pratikrajesh.sampat@amd.com>
- <20240710220540.188239-4-pratikrajesh.sampat@amd.com> <8870ca39-f5a9-8d33-3372-77a6693ad739@amd.com>
- <98c1f8e2-3b24-49c4-b5fc-506e4283248d@amd.com>
-Message-ID: <ZrY5h746smS4j5ak@google.com>
-Subject: Re: [RFC 3/5] selftests: KVM: SEV IOCTL test
-From: Sean Christopherson <seanjc@google.com>
-To: Pratik Rajesh Sampat <pratikrajesh.sampat@amd.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, kvm@vger.kernel.org, shuah@kernel.org, 
-	michael.roth@amd.com, pbonzini@redhat.com, pgonda@google.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:411b:b0:4c0:9a3e:c263 with SMTP id
+ 8926c6da1cb9f-4ca6eba4580mr51129173.0.1723218318381; Fri, 09 Aug 2024
+ 08:45:18 -0700 (PDT)
+Date: Fri, 09 Aug 2024 08:45:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bce370061f4207cf@google.com>
+Subject: [syzbot] [kernel?] WARNING in firmware_fallback_sysfs (2)
+From: syzbot <syzbot+8f06445357a052a92657@syzkaller.appspotmail.com>
+To: dakr@redhat.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	mcgrof@kernel.org, rafael@kernel.org, russ.weight@linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 11, 2024, Pratik Rajesh Sampat wrote:
-> >> +static void sev_guest_status_assert(struct kvm_vm *vm, uint32_t type)
-> >> +{
-> >> +	struct kvm_sev_guest_status status;
-> >> +	bool cond;
-> >> +	int ret;
-> >> +
-> >> +	ret = __vm_sev_ioctl(vm, KVM_SEV_GUEST_STATUS, &status);
-> >> +	cond = type == KVM_X86_SEV_VM ? !ret : ret;
-> >> +	TEST_ASSERT(cond,
-> >> +		    "KVM_SEV_GUEST_STATUS should fail, invalid VM Type.");
-> >> +}
-> >> +
-> >> +static void test_sev_launch(void *guest_code, uint32_t type, uint64_t policy)
-> >> +{
-> >> +	struct kvm_vcpu *vcpu;
-> >> +	struct kvm_vm *vm;
-> >> +	struct ucall uc;
-> >> +	bool cond;
-> >> +	int ret;
-> >> +
-> > 
-> > Maybe a block comment here indicating what you're actually doing would
-> > be good, because I'm a bit confused.
-> > 
-> > A policy value of 0 is valid for SEV, so you expect each call to
-> > succeed, right? And, actually, for SEV-ES the launch start will succeed,
-> > too, but the launch update will fail because LAUNCH_UPDATE_VMSA is not
-> > valid for SEV, but then the launch measure should succeed. Is that
-> > right? What about the other calls?
-> > 
-> 
-> Sure, I can do that.
-> Yes for SEV, the policy value of 0 succeeds for everything except when
-> we try to run and we see a KVM_EXIT_IO.
-> 
-> For SEV-ES, with the policy value of 0 - we don't see launch_start
-> succeed. It fails with EIO in this case. Post that all the calls for
-> SEV-ES also fail subsequent to that. I guess the core idea behind this
-> test is to ensure that once the first bad case of launch_start fails, we
-> should see a cascading list of failures.
->
-> >> +	vm = vm_sev_create_with_one_vcpu(type, guest_code, &vcpu);
-> >> +	ret = sev_vm_launch_start(vm, 0);
-> >> +	cond = type == KVM_X86_SEV_VM ? !ret : ret;
-> >> +	TEST_ASSERT(cond,
+Hello,
 
-Don't bury the result in a local boolean.  It's confusing, and _worse_ for debug
-as it makes it impossible to see what actually failed (the assert message will
-simply print "cond", which is useless).
+syzbot found the following issue on:
+
+HEAD commit:    de9c2c66ad8e Linux 6.11-rc2
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14019861980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
+dashboard link: https://syzkaller.appspot.com/bug?extid=8f06445357a052a92657
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2a5965e13719/disk-de9c2c66.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/52c0d9ae2edc/vmlinux-de9c2c66.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3c8963098f5f/bzImage-de9c2c66.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8f06445357a052a92657@syzkaller.appspotmail.com
+
+usb 1-1: Direct firmware load for v4l-pvrusb2-29xxx-01.fw failed with error -2
+usb 1-1: Falling back to sysfs fallback for: v4l-pvrusb2-29xxx-01.fw
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 2036 at drivers/base/firmware_loader/fallback.c:148 fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:148 [inline]
+WARNING: CPU: 0 PID: 2036 at drivers/base/firmware_loader/fallback.c:148 firmware_fallback_sysfs+0x782/0x9e0 drivers/base/firmware_loader/fallback.c:238
+Modules linked in:
+CPU: 0 UID: 0 PID: 2036 Comm: pvrusb2-context Not tainted 6.11.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:148 [inline]
+RIP: 0010:firmware_fallback_sysfs+0x782/0x9e0 drivers/base/firmware_loader/fallback.c:238
+Code: 1c 24 e9 4d fc ff ff e8 ec cb 9f fb c6 05 45 f0 0d 0a 01 48 c7 c7 80 83 86 8c e8 f9 1e bf 05 e9 72 fc ff ff e8 cf cb 9f fb 90 <0f> 0b 90 48 89 df 48 c7 c6 60 84 86 8c 4c 89 ea e8 29 85 c1 05 e9
+RSP: 0018:ffffc90004daf730 EFLAGS: 00010293
+RAX: ffffffff85f3ab21 RBX: ffff88805bb470a8 RCX: ffff8880258a8000
+RDX: 0000000000000000 RSI: 00000000fffffff5 RDI: 0000000000000000
+RBP: 000000000000003c R08: ffffffff85f3a530 R09: 1ffffffff26e5922
+R10: dffffc0000000000 R11: fffffbfff26e5923 R12: 00000000fffffff5
+R13: ffffffff8cddfb00 R14: 0000000000000001 R15: 0000000000001770
+FS:  0000000000000000(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020bc5000 CR3: 000000000e734000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ _request_firmware+0xcf5/0x12b0 drivers/base/firmware_loader/main.c:914
+ request_firmware+0x36/0x50 drivers/base/firmware_loader/main.c:963
+ pvr2_locate_firmware+0xb1/0x500 drivers/media/usb/pvrusb2/pvrusb2-hdw.c:1359
+ pvr2_upload_firmware1+0x1c6/0x950 drivers/media/usb/pvrusb2/pvrusb2-hdw.c:1426
+ pvr2_hdw_setup_low drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2107 [inline]
+ pvr2_hdw_setup drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2261 [inline]
+ pvr2_hdw_initialize+0x411/0x3d10 drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2338
+ pvr2_context_check drivers/media/usb/pvrusb2/pvrusb2-context.c:111 [inline]
+ pvr2_context_thread_func+0x4b3/0xb50 drivers/media/usb/pvrusb2/pvrusb2-context.c:158
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
-> >> +		    "KVM_SEV_LAUNCH_START should fail, invalid policy.");
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-This is a blatant lie, because the KVM_X86_SEV_VM case apparently expects success.
-Similar to Tom's comments about explaing what this code is doing, these assert
-messages need to explain what the actually expected result it, provide a hint as
-to _why_ that result is expected, and print the result.  As is, this will be
-unnecessarily difficult to debug if/when it fails.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
