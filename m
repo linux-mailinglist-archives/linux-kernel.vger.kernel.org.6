@@ -1,155 +1,246 @@
-Return-Path: <linux-kernel+bounces-281291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E67AB94D529
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADB494D52D
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 19:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92EEB1F21DAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:02:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CE61F21EB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 17:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACA13B1A2;
-	Fri,  9 Aug 2024 17:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC323B298;
+	Fri,  9 Aug 2024 17:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fyZecz6t"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dza6BCoS"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B39D2F56
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 17:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A8517C7C;
+	Fri,  9 Aug 2024 17:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723222912; cv=none; b=UO/qsvCVbqRf9h3lFGoJHld0Es7EALqAGMW7+7puObClV5ElXiiaMIHDhWgjF0BzIweZNa/l19CW3txW6jlY0JOUswomS1GRr7iY/9ga4f8s2jP96GDNDDuFL8FGYfBqRSfTkoeSDsJ1yj20BrfqUf8dYxLZbdhPME7AW36wC3E=
+	t=1723223088; cv=none; b=F8ienx9We0WvD8siaRD3YJtS3hrRRUSHFrOQ7Wn+BqpzniTcN7mQoNo2GANwtbLywphSyF5KyVFA12xKzluT2SHWkhyFkfJADxbBlZvlkSIKwTQlA1y5fDyyKZ80Ca5JFa/OtNW7rYxO3oVrBCa5rM9uxvUV/+0FMZGvcEs44rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723222912; c=relaxed/simple;
-	bh=kO+4Qg2Kos2wHUaffFnXRBuCVtxo8Uf72SitEfqHUNg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l5qdB00WeOWGzjxby/qTEhY12MlN6XqU5GM2VwIqkDYuMtbd2AVwtPzyJ03xc+NzL/m5G1A0oN3yILINhgQ+kplmPO70VCZYDTINcTsbzf96FDNmQhpb4UcYRLosLcRRqHdKIHoGAkk8nKwlx0ymeLPtvDUuzO8ukAjvRlgEYTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fyZecz6t; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-82241ca933aso6834539f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 10:01:50 -0700 (PDT)
+	s=arc-20240116; t=1723223088; c=relaxed/simple;
+	bh=hrnmeErojdiA+I0k4NgvkckjQHkW1luP3yBhEUDmQ/4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=LdouMNy6F6zkb73ZUTUxUnG0Avxcl+0VBvLwJizzZbEAGm9HwEjlJ5m7PIsEsckn5D4MLwm5rizy5k2JdYxhUS00WsYA4ab7uqeTMz3Ww31OBcl/3rr3FB3+PZMqPt/NVquXAHt6wMr+UptBu+cEIuTI5vnFDNB968f5ZXrUN4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dza6BCoS; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eeb1ba0481so30067041fa.2;
+        Fri, 09 Aug 2024 10:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723222909; x=1723827709; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cDDjHGtk+i/sBtfC6S1Ya7WBwtIwzRoHly+Mr+MUcXc=;
-        b=fyZecz6txWfWabkJ5SO8+fnoemqimtdBt2U84K9lxPKxAUN4ueK4cxRavlcFHAfud/
-         0PPAlBbmbj3PdhdfJ04l5nL664pBkc2OM5PEhSm7AtUqh+TGBZYmwN2WKk74Vmp97Fkd
-         NLrs2gAFDEcZvqzqN6f4a1cwUREZaXO5zsgSc=
+        d=gmail.com; s=20230601; t=1723223084; x=1723827884; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CA8BUMo2DWii/pf5hxjTIaLLXUnl8JdFP7LfFEv3HGw=;
+        b=dza6BCoSTWXfA61ulTG9Sw+NiwjF5qfwx3Q+g/IaAyESfrNCFx24A3pKNbgRQ2t/cz
+         ye5b9AVlnpqGXqfjRSQKA0njMSVLoyJMrZAmwaozPKnLf62OUewYtEyYu01Q+Twpisii
+         ZfnIIr3YNAdffWUsHonBurr40ALoDjCjcdzAvqqniW6TRJIdULBiDuK4cP/IsxSaAiVh
+         wxnRep9yZVvlHGPKxBfNIMx9CvVET/k3BRCqb6MslXhr+oHy+2DrAudctj7AuHL25Hty
+         Xvao+9DkW5n077ukV/mHJesNYNbvCbUreorpVlPzmWORKEUcgIpWqNJn28/Jew6jHcQ5
+         +0aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723222909; x=1723827709;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cDDjHGtk+i/sBtfC6S1Ya7WBwtIwzRoHly+Mr+MUcXc=;
-        b=KoNsE/wVb8LMpE8DQPriELvtVQL4mfKkhcwXG8KtvuyCaakh2/zm+qkaQFBYUnxSHG
-         rncV3aR1ytYQr0Rvmw4FXYugWu4JHYN2xwzFBckJ1y2R5H4Yzl+Wjwbe5tkgbmJ9QUek
-         LZVzpKMMJsvzPRpYtEp5+Icm8VSrKqEWqZhBfk24rDthOmKkfG5UgQKYTPfuBeKKUlBC
-         c37z6iYydIsj2Y65H/FBcr4DMH6iqTJKII/G7EjVw1BUtPRsYBWaI1IOilvrHuREG2qS
-         HYToeeA71LjAofLduw0Pkp5LCVatPuhYtyvxDkX5TEW/FpBInLVK1xVrAB+ElYXJSq6o
-         gwqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHlnOZc7k2puKpTY+54aDcOqjycOn3n2dbmpzWiQ9FGVTYzbErIQLLkspQ3A7KJi5o4kftlYbONN/tbns=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi4DMPSBM0qsy3QDePI54QWipZ2v4AxIhjX6OYjaxTAW+FCHVR
-	bBdpctRRh+YbndyCYkFgIgCW8SBdZQxQhn0lYOSg49XSdRPWjWwI4wPT7oVBgrw=
-X-Google-Smtp-Source: AGHT+IEVM26zTJDnq4KUOavT/txNlVM1PwFY7bjzhsFY01vmETUlAlxZW29W+mujXaC/jkXCKqSlMA==
-X-Received: by 2002:a5d:9755:0:b0:822:3c35:5fc0 with SMTP id ca18e2360f4ac-8225ee4d6a1mr150211739f.3.1723222909444;
-        Fri, 09 Aug 2024 10:01:49 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ca769105cbsm9501173.27.2024.08.09.10.01.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 10:01:49 -0700 (PDT)
-Message-ID: <41cb60af-3175-42ab-896f-b890e51cde0d@linuxfoundation.org>
-Date: Fri, 9 Aug 2024 11:01:48 -0600
+        d=1e100.net; s=20230601; t=1723223084; x=1723827884;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CA8BUMo2DWii/pf5hxjTIaLLXUnl8JdFP7LfFEv3HGw=;
+        b=cJ1YR+/hMLT6g5nEeKic6TwWGx+LUCLmkGETOHxzkyVaVzBSaymCFqwnL1fiwopj2U
+         yLzZeHnkk8dKmWhworOro6shCnMBqGU3S1FA7cGM2/YpOHI8pWyOg2DDSz2flwsK4xLG
+         VWdrmbbpgkEqE0+NFZ0mSrfQrHw1CFQ+cNETSicrdyRFQSbJDRkL78IDbb9WaSXImpHf
+         gPT3hVyZUUDYHq/TxaWN921jYpxMWVWxMS+LVaK1oZ012BcdShMw57+QjLL0H9aJEEO/
+         d6wgTFxjlKF3jL8C5BUry1a6DPSGHnxLzLimuHWsw4odWVqsad0U3BOszKY/0u62UjBZ
+         uhyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWI15/KWXQLrbCrXgeQhmgkvt1pSsamJovhdhHa43EtTpT1waBmHucsoC03eWzJMO389QaNdaa6dUNpBOPD1XXvlZForWm8JFtAcEElTV/n8F4fe4aMnoai7Y3WDCSRIp1sWSUIgcHOyO4mZ2EkfgotO1WMqzhI3zbf7dmer5CDwIY11YbzFDs9
+X-Gm-Message-State: AOJu0YwRWM8wf+sGRBbCU99J8vpHWdB871MSwWcoYK+sHhWOK16u/X/d
+	lJOTCVj3yqCA2dPKzk5cRMbaoS1qY/YR8kwxRxo1KTCZcNurwOTB
+X-Google-Smtp-Source: AGHT+IEogaHQ+6erGmkf2603lsnpyfvBNsTgKIdI7sJBTj58O9/d5ZootY8/r4dSB4VYNpignB5Ccw==
+X-Received: by 2002:a2e:851:0:b0:2ee:7a71:6e3b with SMTP id 38308e7fff4ca-2f1a6c777bdmr14272561fa.27.1723223083892;
+        Fri, 09 Aug 2024 10:04:43 -0700 (PDT)
+Received: from localhost (host-87-20-57-122.retail.telecomitalia.it. [87.20.57.122])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c7a1b3dsm85626915e9.40.2024.08.09.10.04.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 10:04:43 -0700 (PDT)
+Date: Fri, 09 Aug 2024 19:04:42 +0200
+From: Matteo Martelli <matteomartelli3@gmail.com>
+To: Matteo Martelli <matteomartelli3@gmail.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: dan.carpenter@linaro.org, 
+ jic23@kernel.org, 
+ kernel-janitors@vger.kernel.org, 
+ lars@metafoo.de, 
+ linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <66b64c2a27042_51cac37047@njaxe.notmuch>
+In-Reply-To: <66b63af81a153_27fed37066@njaxe.notmuch>
+References: <1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain>
+ <36b1a47a-7af2-4baf-8188-72f6eed78529@wanadoo.fr>
+ <66b5c5df76766_133d37031@njaxe.notmuch>
+ <93f18533-da95-4f29-b6d9-8b8337a4cc90@wanadoo.fr>
+ <66b63af81a153_27fed37066@njaxe.notmuch>
+Subject: Re: [PATCH] iio: adc: pac1921: add missing error return in probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/alsa/Makefile: fix relative rpath usage
-To: Eugene Syromiatnikov <esyr@redhat.com>
-Cc: Artem Savkov <asavkov@redhat.com>, linux-sound@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240808145639.GA20510@asgard.redhat.com>
- <83d4e1a3-73fc-4634-b133-82b9e883b98b@linuxfoundation.org>
- <20240809010044.GA28665@asgard.redhat.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240809010044.GA28665@asgard.redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 8/8/24 19:00, Eugene Syromiatnikov wrote:
-> On Thu, Aug 08, 2024 at 02:20:21PM -0600, Shuah Khan wrote:
->> Wouldn't make sense to fix fix this in selftests main Makefile
->> instead of changing the all the test makefiles
-> 
-> As of now, the usage of rpath is localised, so it is relatively easy
-> to evaluate the effect/prudence of such a change;  I am not so confident
-> in imposing rpath on all of the selftests (and, if doing so, I would
-> rather opt for runpath, to leave out an ability to override the search
-> path via LD_LIBRARY_PATH, if such need arises);  in that case it is possibly
-> also worth to add -L$(OUTPUT) to the CFLAGS as well, as the compile-time
-> counterpart.  But, again, I was trying to avoid the task of evaluating
-> the possible side effects of such a change, considering the variability
-> in environments and setups selftests are run.
+Matteo Martelli wrote:
+> Christophe JAILLET wrote:
+> > Le 09/08/2024 =C3=A0 09:31, Matteo Martelli a =C3=A9crit=C2=A0:
+> > > Christophe JAILLET wrote:
+> > >> Le 08/08/2024 =C3=A0 21:28, Dan Carpenter a =C3=A9crit=C2=A0:
+> > >>> This error path was intended to return, and not just print an err=
+or.  The
+> > >>> current code will lead to an error pointer dereference.
+> > >>>
+> > >>> Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
+> > >>> Signed-off-by: Dan Carpenter <dan.carpenter-QSEj5FYQhm4dnm+yROfE0=
+A@public.gmane.org>
+> > >>> ---
+> > >>>    drivers/iio/adc/pac1921.c | 4 ++--
+> > >>>    1 file changed, 2 insertions(+), 2 deletions(-)
+> > >>>
+> > >>> diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.=
+c
+> > >>> index d04c6685d780..8200a47bdf21 100644
+> > >>> --- a/drivers/iio/adc/pac1921.c
+> > >>> +++ b/drivers/iio/adc/pac1921.c
+> > >>> @@ -1168,8 +1168,8 @@ static int pac1921_probe(struct i2c_client =
+*client)
+> > >>>    =
 
-Okay.
+> > >>>    	priv->regmap =3D devm_regmap_init_i2c(client, &pac1921_regmap=
+_config);
+> > >>>    	if (IS_ERR(priv->regmap))
+> > >>> -		dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> > >>> -			      "Cannot initialize register map\n");
+> > >>> +		return dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> > >>
+> > >> The (int) is unusual.
+> > >>
+> > > The (int) explicit cast is to address Wconversion warnings since de=
+v_err_probe
+> > > takes an int as argument.
+> > =
 
-> 
->> Same comment on all other files.
-> 
->> It would be easier to send these as series
-> 
-> I hesitated to do so due to the fact that different selftests are seemingly
-> maintained by different people.
+> > Ok, but:
+> > =
 
-You can cc everybody on the cover-letter explaining the change
-and the individual patches can be sent selectively.
+> > 1) With the cast removed, on my x86_64:
+> > 	$ make CFLAGS=3D"-Wconversion" drivers/iio/adc/pac1921.o
+> > =
 
-This is a kind of change it would be good to go as a series so
-it will be easier for reviewers.
+> > doesn't generate any error.
+> > =
 
-I had to comment on all 3 patches you sent - instead I could have
-sent one reply to the cover letter. It makes it so much easier for
-people to follow the discussion and add to it.
+> I can't reproduce the warning in that way either, but maybe CFLAGS gets=
 
-> 
->> please mentioned the tests run as well after this change.
-> 
-> I have checked the ldd output after the change remained the same (and that ldd
-> is able to find the libraries used when run outside the directory the tests
-> reside in) and did a cursory check of the results of the run of the affected
-> tests
+> overridden in that case because with the following method I can see the=
 
-Please mention that then in the change log.
+> warning:
+> =
 
-I applied this patch and ran alsa test without any issues. You
-could do the same with:
+> $ print "CFLAGS_pac1921.o :=3D -Wconversion" >> drivers/iio/adc/Makefil=
+e
+> $ print "CONFIG_IIO=3Dy\nCONFIG_PAC1921=3Dy" >> arch/x86/configs/x86_64=
+_defconfig
+> $ sed -i 's/CONFIG_WERROR=3Dy/CONFIG_WERROR=3Dn/g' arch/x86/configs/x86=
+_64_defconfig
+> $ make x86_64_defconfig
+> $ make -j7
+> =
 
-make kselftest TARGETS=alsa
+> drivers/iio/adc/pac1921.c: In function =E2=80=98pac1921_probe=E2=80=99:=
 
-(but not so sure about the BPF selftests, as they don't compile as-is
-> due to numerous "incompatible pointer types" warnings that are forced
-> into errors by -Werror and the fact that it hanged the machine I tried
-> to run them on).
-> 
+> drivers/iio/adc/pac1921.c:1171:36: warning: conversion from =E2=80=98lo=
+ng int=E2=80=99 to =E2=80=98int=E2=80=99 may change value [-Wconversion]
+>  1171 |                 dev_err_probe(dev, PTR_ERR(priv->regmap),
+>       |                                    ^~~~~~~~~~~~~~~~~~~~~
+> =
 
-I see a bpf patch from you in the inbox - if you mention the issues bpf
-people might be able to help you.
+> Built with gcc version: gcc version 14.1.1 20240522 (GCC)
+> =
 
-I am not replying to your other patches. Take these as comments on others
-as well.
+> Same thing building for aarch64 with gcc version 12.2.0 (Debian 12.2.0-=
+14)
+> =
 
-thanks,
--- Shuah
+> > 2)
+> > 	$ it grep dev_err_probe.*\)PTR_ERR | wc -l
+> > 	2
+> > =
 
+> > 	$ it grep dev_err_probe.*PTR_ERR | wc -l
+> > 	1948
+> > So, should the cast be needed, maybe another fix could make sense?
+> >
+> It could be assigned to the ret value if that would be preferred:
+> 	if (IS_ERR(priv->regmap)) {
+> 		ret =3D (int)PTR_ERR(priv->regmap);
+> 		return dev_err_probe(dev, ret, "Cannot initialize register map\n");
+> 	}
+>
+> Otherwise a more generic approach could be to let PTR_ERR directly cast=
+ to
+> (int). I would say that if it is always called after an IS_ERR() it sho=
+uld be
+> safe to cast to (int) since the latter should guarantee the pointer val=
+ue is
+> inside int size boundaries. The similar PTR_ERR_OR_ZERO also casts (imp=
+licitly)
+> to int but it also checks for IS_ERR before the cast.
+> Maybe another solution could be introducing a new macro that does the c=
+ast but
+> before it checks the ptr with IS_ERR(), I came up with the following ev=
+en
+> though it doesn't look very idiomatic:
+> =
 
+> #define WITH_PTR_ERR(ret, ptr) if (IS_ERR(ptr) && (ret =3D (int)PTR_ERR=
+(ptr)))
+> ...
+> static int pac1921_probe(struct i2c_client *client)
+> {
+>         ...
+> 	WITH_PTR_ERR(ret, priv->regmap) {
+> 		return dev_err_probe(dev, ret, "Cannot initialize register map\n");
+> 	}
+> }
+> =
+
+> Maybe there is already some similar use case?
+> =
+
+> Anyway, if in general it is preferred to avoid the explicit cast despit=
+e the
+> Wconversion warning I would be fine with it.
+>
+
+Adding another simple alternative I didn't think of before:
+        ...
+	ret =3D PTR_ERR_OR_ZERO(priv->regmap);
+	if (ret)
+		return dev_err_probe(dev, ret, "Cannot initialize register map\n");
+
+The warning would still be produced due to the implicit cast inside
+PTR_ERR_OR_ZERO but it could be fixed for all users with an explicit cast=
+ if
+there will be interest in future to do so.
+
+Also used a bit around:
+grep -R -A 3 'ret =3D PTR_ERR_OR_ZERO' . | grep -e '_err.*(' | wc -l
+69
+
+Thanks,
+Matteo Martelli=
 
