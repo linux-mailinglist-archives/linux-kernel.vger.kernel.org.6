@@ -1,310 +1,207 @@
-Return-Path: <linux-kernel+bounces-280884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B6D94D074
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:46:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A24494D076
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 14:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943851F2284F
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1EF28289A
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 12:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848711957F0;
-	Fri,  9 Aug 2024 12:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5858195FF1;
+	Fri,  9 Aug 2024 12:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RjY/UVK6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3ur547LM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B43jrcsz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77DE19046B;
-	Fri,  9 Aug 2024 12:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380CD193090
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 12:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723207534; cv=none; b=PyV2uXimY0zu+Mg0wUarR7Nz6JXr6FxzHeE0zqyOIxpWjhYVMQBVsFAss0SA0hUm1pc9N9gkVSAdwRUmqMsS31RJhxuSyJ00hymucwE14zf0MqisAPkkDSrA/K4kQkyjO2+B2wKR+sGmX2hO1w047hk8y3NuNJjyl0/cOfR24X4=
+	t=1723207542; cv=none; b=ZZ+Su1iSx1+bRQ2ZcEzXQ73LMjG9fG6hL1gd9AM+z3rqGRkGLkvvcEZt+7/1K0RIop0c+NTdWt1QpWDPc4HtOK6DUs2lrmzBSvVpI4bga6uUeRUW19wFm0FUIbP/E+LLLzLTDNRjZ0McoZTtPLkgCaeNavTxzx/tRcqqz52prhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723207534; c=relaxed/simple;
-	bh=TWZ+kAKZUmEZ+awAV/l7dZNHcssqps+lkUJpULyQYp8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=tgmJ9tNyOEtxMr3EqnvdW5xhNQuCdbLxOGWPJijIpJZi66zUlIWJKEIR34phQfOXHF2l5mnYtJNPWiXPJkD3fnBrbGK1vX2xzEvBtJfS4MKRcDTxca/lR2FJu5oFQ6rEbyZhtSbRc49t+5YLEBMcoXi7ekmChEynhO2oRC/aaJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RjY/UVK6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3ur547LM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 09 Aug 2024 12:45:30 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723207531;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1723207542; c=relaxed/simple;
+	bh=OHsMxJbHlfzLzzFLnyU1QGANT9Y8RpTv5K2L8dxIoSE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SFIMbHA/cgGA4/GXLrq4kPIfBPVroDm2H1DHnrs0HfW/gbU5AUoZ2pf+zYtVwWBt6/BxhVer9dB84qQLIi32mcfxR7sQr9cisd3iixUeYNe/wMjrgELWAx6B9lf0kalk8KKFXC8pgLh3DEXkEyRPEuJQdFCmkI2xF0GXuommFak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B43jrcsz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723207540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=STRJU+gcIQkS2T+RIrDw4AoOCXN1FJFRZyuPoBCu3qQ=;
-	b=RjY/UVK6uaWWSPF/PzNQ+UCLHXeYKTuSIYRvgrLt5GYazkH8kx0XhLG/ZEdwz8uoz3apLc
-	fuZzCxdql4kwSZziHlnMTt3VpyqouD1HAj50L7o9Apr2+emcbiiY//A/GZ8+tAByal0LaU
-	ali70igWgcwbBCwmIbfl75z8LDCbRZ6+dV6AEa57qjiG62K2CBld+swdJa5ALheJV/9yW8
-	gZpV+gZjs4COhKqoYbhWaYOpHxXZmvCii3rCFCtROXcv2dik8skLbYAl00dGoC6o7CClCi
-	pgzsSYRnwQ/LzTsI/DupqEN5TY4h9cPaibyC80xKnoY8m06eGBoLI6pxUFxA5w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723207531;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=STRJU+gcIQkS2T+RIrDw4AoOCXN1FJFRZyuPoBCu3qQ=;
-	b=3ur547LMhYy+ZA151kE7mXCjm8ht3kNqOVbvRzAb6zx0lgV2lE1yl7n5Mb+5UfQYdghvQF
-	CyV9gvjoizCJeIBg==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/apic] x86/apic: Remove logical destination mode for 64-bit
-Cc: Rob Newcater <rob@durendal.co.uk>, Christian Heusel <christian@heusel.eu>,
- Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <877cd5u671.ffs@tglx>
-References: <877cd5u671.ffs@tglx>
+	bh=bDR1PreyBYXGgczYYRhC/utTNT8xvL5WwhzEE5DaLg4=;
+	b=B43jrcszpK6BbHxOWX7rcgHl+4uMh4DJMbSJfevfjq+sUwriDX59nPEqjOyPnvNF7drNnR
+	cVDXGH4stz6mClkiKBROmTVT3ZQvK4tZBfsXdODAf9jN4VF3o4IbiyLslOraoazGtkIjOf
+	o6i3HwWEQIyGefJduELBu0+MOLEQ8ok=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-zdCCivmsNiCVqwdf8W-mog-1; Fri, 09 Aug 2024 08:45:39 -0400
+X-MC-Unique: zdCCivmsNiCVqwdf8W-mog-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280c0b3017so15470975e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 05:45:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723207538; x=1723812338;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDR1PreyBYXGgczYYRhC/utTNT8xvL5WwhzEE5DaLg4=;
+        b=X2bYtxA9zUgvkQtIrPjpoN/SUoz3aQDfmfbxF0X8LCSy42EA7AsUOs8aszqxc17GFy
+         g2Gac1MYAYYqJkk71+8lzKOkE5wDRnpGrr4N6hjmCQFXCHnyr6zlXd4TpRSJ+WwlqxqQ
+         DWmh6hNiSnbZlH20x/5Fx/AJ9F4nefm6D32wAcdy8dfe1jwWuq/xxDIv/rRxpdxWvUFr
+         q5i5fOxrF5T9nG8WyR+VUXNajejbfIA8tArsmJOmX461h9ZkeTgJAFnLz3YPhosnmuwW
+         AK8RUYtwTPJiFn0z5E+Pyc70iZDa2RgHYe/4D8OIdsiUafpWHsBKTJyjKjuakhtsAepV
+         YyPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWebIxPbbY7AaP/hE5FA9umiDQ6YfCnsKtPDOnS8dQzRzNCpc3fjBtfZxWKlDn3UHY+VMNjAki9GqHnGHEn7tiFOVUQkLyQskp54St
+X-Gm-Message-State: AOJu0YxYmEQaKle0Su4ftTejhbKa6QUIcr2i8RQfEBIrD1lkNGQF2TSX
+	ZD1NAEK6jGeALT+Hc0OUPD2khCknp0hUgfHNGfH6fuGb4EYxNrRaSERpTRyvyhugDDNngUL3rnI
+	l5t3+g/oMiJZREXtLgS5XcxnNTj3BRHpd4Es7unZ2zMdKKauTDLXnknVWI1fhvQ==
+X-Received: by 2002:a05:600c:4e91:b0:428:1799:35e3 with SMTP id 5b1f17b1804b1-429c3a28d5dmr10716095e9.21.1723207537737;
+        Fri, 09 Aug 2024 05:45:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEiZUexO1DxZTYudFFvKsUA1By+NJF96m1YQZNLJ7cfOIryu3poJzd7dWE4i1OcJvheN6NR3g==
+X-Received: by 2002:a05:600c:4e91:b0:428:1799:35e3 with SMTP id 5b1f17b1804b1-429c3a28d5dmr10715775e9.21.1723207537234;
+        Fri, 09 Aug 2024 05:45:37 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429059cd2b3sm126267855e9.44.2024.08.09.05.45.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 05:45:36 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 240EF14ADA65; Fri, 09 Aug 2024 14:45:33 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>, Daniel Xu <dxu@dxuuu.xyz>
+Cc: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>, Alexander Lobakin
+ <alexandr.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Larysa Zaremba <larysa.zaremba@intel.com>, Michal Swiatkowski
+ <michal.swiatkowski@linux.intel.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+ Magnus Karlsson
+ <magnus.karlsson@intel.com>, Maciej Fijalkowski
+ <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, David Miller <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, John Fastabend <john.fastabend@gmail.com>,
+ Yajun Deng <yajun.deng@linux.dev>, Willem de Bruijn <willemb@google.com>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xdp-hints@xdp-project.net
+Subject: Re: [xdp-hints] Re: [PATCH RFC bpf-next 32/52] bpf, cpumap: switch
+ to GRO from netif_receive_skb_list()
+In-Reply-To: <99662019-7e9b-410d-99fe-a85d04af215c@intel.com>
+References: <20220628194812.1453059-1-alexandr.lobakin@intel.com>
+ <20220628194812.1453059-33-alexandr.lobakin@intel.com>
+ <cadda351-6e93-4568-ba26-21a760bf9a57@app.fastmail.com>
+ <ZrRPbtKk7RMXHfhH@lore-rh-laptop>
+ <54aab7ec-80e9-44fd-8249-fe0cabda0393@intel.com>
+ <308fd4f1-83a9-4b74-a482-216c8211a028@app.fastmail.com>
+ <99662019-7e9b-410d-99fe-a85d04af215c@intel.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Fri, 09 Aug 2024 14:45:33 +0200
+Message-ID: <875xs9q2z6.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172320753038.2215.9554166329388312328.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-The following commit has been merged into the x86/apic branch of tip:
+Alexander Lobakin <aleksander.lobakin@intel.com> writes:
 
-Commit-ID:     838ba7733e4e3a94a928e8d0a058de1811a58621
-Gitweb:        https://git.kernel.org/tip/838ba7733e4e3a94a928e8d0a058de1811a58621
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Sun, 28 Jul 2024 13:06:10 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 09 Aug 2024 14:34:16 +02:00
+> From: Daniel Xu <dxu@dxuuu.xyz>
+> Date: Thu, 08 Aug 2024 16:52:51 -0400
+>
+>> Hi,
+>> 
+>> On Thu, Aug 8, 2024, at 7:57 AM, Alexander Lobakin wrote:
+>>> From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+>>> Date: Thu, 8 Aug 2024 06:54:06 +0200
+>>>
+>>>>> Hi Alexander,
+>>>>>
+>>>>> On Tue, Jun 28, 2022, at 12:47 PM, Alexander Lobakin wrote:
+>>>>>> cpumap has its own BH context based on kthread. It has a sane batch
+>>>>>> size of 8 frames per one cycle.
+>>>>>> GRO can be used on its own, adjust cpumap calls to the
+>>>>>> upper stack to use GRO API instead of netif_receive_skb_list() which
+>>>>>> processes skbs by batches, but doesn't involve GRO layer at all.
+>>>>>> It is most beneficial when a NIC which frame come from is XDP
+>>>>>> generic metadata-enabled, but in plenty of tests GRO performs better
+>>>>>> than listed receiving even given that it has to calculate full frame
+>>>>>> checksums on CPU.
+>>>>>> As GRO passes the skbs to the upper stack in the batches of
+>>>>>> @gro_normal_batch, i.e. 8 by default, and @skb->dev point to the
+>>>>>> device where the frame comes from, it is enough to disable GRO
+>>>>>> netdev feature on it to completely restore the original behaviour:
+>>>>>> untouched frames will be being bulked and passed to the upper stack
+>>>>>> by 8, as it was with netif_receive_skb_list().
+>>>>>>
+>>>>>> Signed-off-by: Alexander Lobakin <alexandr.lobakin@intel.com>
+>>>>>> ---
+>>>>>>  kernel/bpf/cpumap.c | 43 ++++++++++++++++++++++++++++++++++++++-----
+>>>>>>  1 file changed, 38 insertions(+), 5 deletions(-)
+>>>>>>
+>>>>>
+>>>>> AFAICT the cpumap + GRO is a good standalone improvement. I think
+>>>>> cpumap is still missing this.
+>>>
+>>> The only concern for having GRO in cpumap without metadata from the NIC
+>>> descriptor was that when the checksum status is missing, GRO calculates
+>>> the checksum on CPU, which is not really fast.
+>>> But I remember sometimes GRO was faster despite that.
+>> 
+>> Good to know, thanks. IIUC some kind of XDP hint support landed already?
+>> 
+>> My use case could also use HW RSS hash to avoid a rehash in XDP prog.
+>
+> Unfortunately, for now it's impossible to get HW metadata such as RSS
+> hash and checksum status in cpumap. They're implemented via kfuncs
+> specific to a particular netdevice and this info is available only when
+> running XDP prog.
+>
+> But I think one solution could be:
+>
+> 1. We create some generic structure for cpumap, like
+>
+> struct cpumap_meta {
+> 	u32 magic;
+> 	u32 hash;
+> }
+>
+> 2. We add such check in the cpumap code
+>
+> 	if (xdpf->metalen == sizeof(struct cpumap_meta) &&
+> 	    <here we check magic>)
+> 		skb->hash = meta->hash;
+>
+> 3. In XDP prog, you call Rx hints kfuncs when they're available, obtain
+> RSS hash and then put it in the struct cpumap_meta as XDP frame metadata.
 
-x86/apic: Remove logical destination mode for 64-bit
+Yes, except don't make this cpumap-specific, make it generic for kernel
+consumption of the metadata. That way it doesn't even have to be stored
+in the xdp metadata area, it can be anywhere we want (and hence not
+subject to ABI issues), and we can use it for skb creation after
+redirect in other places than cpumap as well (say, on veth devices).
 
-Logical destination mode of the local APIC is used for systems with up to
-8 CPUs. It has an advantage over physical destination mode as it allows to
-target multiple CPUs at once with IPIs.
+So it'll be:
 
-That advantage was definitely worth it when systems with up to 8 CPUs
-were state of the art for servers and workstations, but that's history.
+struct kernel_meta {
+	u32 hash;
+	u32 timestamp;
+        ...etc
+}
 
-Aside of that there are systems which fail to work with logical destination
-mode as the ACPI/DMI quirks show and there are AMD Zen1 systems out there
-which fail when interrupt remapping is enabled as reported by Rob and
-Christian. The latter problem can be cured by firmware updates, but not all
-OEMs distribute the required changes.
+and a kfunc:
 
-Physical destination mode is guaranteed to work because it is the only way
-to get a CPU up and running via the INIT/INIT/STARTUP sequence.
+void store_xdp_kernel_meta(struct kernel meta *meta);
 
-As the number of CPUs keeps increasing, logical destination mode becomes a
-less used code path so there is no real good reason to keep it around.
+which the XDP program can call to populate the metadata area.
 
-Therefore remove logical destination mode support for 64-bit and default to
-physical destination mode.
+-Toke
 
-Reported-by: Rob Newcater <rob@durendal.co.uk>
-Reported-by: Christian Heusel <christian@heusel.eu>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Borislav Petkov (AMD) <bp@alien8.de>
-Tested-by: Rob Newcater <rob@durendal.co.uk>
-Link: https://lore.kernel.org/all/877cd5u671.ffs@tglx
-
----
- arch/x86/include/asm/apic.h         |   8 +--
- arch/x86/kernel/apic/apic_flat_64.c | 119 +--------------------------
- 2 files changed, 7 insertions(+), 120 deletions(-)
-
-diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-index 9dd22ee..53f0844 100644
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -350,20 +350,12 @@ extern struct apic *apic;
-  * APIC drivers are probed based on how they are listed in the .apicdrivers
-  * section. So the order is important and enforced by the ordering
-  * of different apic driver files in the Makefile.
-- *
-- * For the files having two apic drivers, we use apic_drivers()
-- * to enforce the order with in them.
-  */
- #define apic_driver(sym)					\
- 	static const struct apic *__apicdrivers_##sym __used		\
- 	__aligned(sizeof(struct apic *))			\
- 	__section(".apicdrivers") = { &sym }
- 
--#define apic_drivers(sym1, sym2)					\
--	static struct apic *__apicdrivers_##sym1##sym2[2] __used	\
--	__aligned(sizeof(struct apic *))				\
--	__section(".apicdrivers") = { &sym1, &sym2 }
--
- extern struct apic *__apicdrivers[], *__apicdrivers_end[];
- 
- /*
-diff --git a/arch/x86/kernel/apic/apic_flat_64.c b/arch/x86/kernel/apic/apic_flat_64.c
-index f37ad33..e0308d8 100644
---- a/arch/x86/kernel/apic/apic_flat_64.c
-+++ b/arch/x86/kernel/apic/apic_flat_64.c
-@@ -8,129 +8,25 @@
-  * Martin Bligh, Andi Kleen, James Bottomley, John Stultz, and
-  * James Cleverdon.
-  */
--#include <linux/cpumask.h>
- #include <linux/export.h>
--#include <linux/acpi.h>
- 
--#include <asm/jailhouse_para.h>
- #include <asm/apic.h>
- 
- #include "local.h"
- 
--static struct apic apic_physflat;
--static struct apic apic_flat;
--
--struct apic *apic __ro_after_init = &apic_flat;
--EXPORT_SYMBOL_GPL(apic);
--
--static int flat_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
--{
--	return 1;
--}
--
--static void _flat_send_IPI_mask(unsigned long mask, int vector)
--{
--	unsigned long flags;
--
--	local_irq_save(flags);
--	__default_send_IPI_dest_field(mask, vector, APIC_DEST_LOGICAL);
--	local_irq_restore(flags);
--}
--
--static void flat_send_IPI_mask(const struct cpumask *cpumask, int vector)
--{
--	unsigned long mask = cpumask_bits(cpumask)[0];
--
--	_flat_send_IPI_mask(mask, vector);
--}
--
--static void
--flat_send_IPI_mask_allbutself(const struct cpumask *cpumask, int vector)
--{
--	unsigned long mask = cpumask_bits(cpumask)[0];
--	int cpu = smp_processor_id();
--
--	if (cpu < BITS_PER_LONG)
--		__clear_bit(cpu, &mask);
--
--	_flat_send_IPI_mask(mask, vector);
--}
--
--static u32 flat_get_apic_id(u32 x)
-+static u32 physflat_get_apic_id(u32 x)
- {
- 	return (x >> 24) & 0xFF;
- }
- 
--static int flat_probe(void)
-+static int physflat_probe(void)
- {
- 	return 1;
- }
- 
--static struct apic apic_flat __ro_after_init = {
--	.name				= "flat",
--	.probe				= flat_probe,
--	.acpi_madt_oem_check		= flat_acpi_madt_oem_check,
--
--	.dest_mode_logical		= true,
--
--	.disable_esr			= 0,
--
--	.init_apic_ldr			= default_init_apic_ldr,
--	.cpu_present_to_apicid		= default_cpu_present_to_apicid,
--
--	.max_apic_id			= 0xFE,
--	.get_apic_id			= flat_get_apic_id,
--
--	.calc_dest_apicid		= apic_flat_calc_apicid,
--
--	.send_IPI			= default_send_IPI_single,
--	.send_IPI_mask			= flat_send_IPI_mask,
--	.send_IPI_mask_allbutself	= flat_send_IPI_mask_allbutself,
--	.send_IPI_allbutself		= default_send_IPI_allbutself,
--	.send_IPI_all			= default_send_IPI_all,
--	.send_IPI_self			= default_send_IPI_self,
--	.nmi_to_offline_cpu		= true,
--
--	.read				= native_apic_mem_read,
--	.write				= native_apic_mem_write,
--	.eoi				= native_apic_mem_eoi,
--	.icr_read			= native_apic_icr_read,
--	.icr_write			= native_apic_icr_write,
--	.wait_icr_idle			= apic_mem_wait_icr_idle,
--	.safe_wait_icr_idle		= apic_mem_wait_icr_idle_timeout,
--};
--
--/*
-- * Physflat mode is used when there are more than 8 CPUs on a system.
-- * We cannot use logical delivery in this case because the mask
-- * overflows, so use physical mode.
-- */
- static int physflat_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
- {
--#ifdef CONFIG_ACPI
--	/*
--	 * Quirk: some x86_64 machines can only use physical APIC mode
--	 * regardless of how many processors are present (x86_64 ES7000
--	 * is an example).
--	 */
--	if (acpi_gbl_FADT.header.revision >= FADT2_REVISION_ID &&
--		(acpi_gbl_FADT.flags & ACPI_FADT_APIC_PHYSICAL)) {
--		printk(KERN_DEBUG "system APIC only can use physical flat");
--		return 1;
--	}
--
--	if (!strncmp(oem_id, "IBM", 3) && !strncmp(oem_table_id, "EXA", 3)) {
--		printk(KERN_DEBUG "IBM Summit detected, will use apic physical");
--		return 1;
--	}
--#endif
--
--	return 0;
--}
--
--static int physflat_probe(void)
--{
--	return apic == &apic_physflat || num_possible_cpus() > 8 || jailhouse_paravirt();
-+	return 1;
- }
- 
- static struct apic apic_physflat __ro_after_init = {
-@@ -146,7 +42,7 @@ static struct apic apic_physflat __ro_after_init = {
- 	.cpu_present_to_apicid		= default_cpu_present_to_apicid,
- 
- 	.max_apic_id			= 0xFE,
--	.get_apic_id			= flat_get_apic_id,
-+	.get_apic_id			= physflat_get_apic_id,
- 
- 	.calc_dest_apicid		= apic_default_calc_apicid,
- 
-@@ -166,8 +62,7 @@ static struct apic apic_physflat __ro_after_init = {
- 	.wait_icr_idle			= apic_mem_wait_icr_idle,
- 	.safe_wait_icr_idle		= apic_mem_wait_icr_idle_timeout,
- };
-+apic_driver(apic_physflat);
- 
--/*
-- * We need to check for physflat first, so this order is important.
-- */
--apic_drivers(apic_physflat, apic_flat);
-+struct apic *apic __ro_after_init = &apic_physflat;
-+EXPORT_SYMBOL_GPL(apic);
 
