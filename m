@@ -1,133 +1,154 @@
-Return-Path: <linux-kernel+bounces-280518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2EF94CB91
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:42:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F6F94CB93
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23042282388
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:42:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023571F24EA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 07:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84D817CA09;
-	Fri,  9 Aug 2024 07:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F5517D896;
+	Fri,  9 Aug 2024 07:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GcmghpNv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mvyiaiCC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+mc2Z3jk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mvyiaiCC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+mc2Z3jk"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5896B17CA04
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 07:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AE517CA14;
+	Fri,  9 Aug 2024 07:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723189368; cv=none; b=Srq31Lra67VPe/7NaeXgQahSC8EGZZMSdpaODP5rVLrC1GM3k9jRyG5RzD0gfqZUF/eoYMyK5x1oCwjVdA5MFGfORpSYcl9nZIOLIwhXGcgU16g8ZAkU/4Zsmst4T9HU5T0QZjXAZigYOIULoePGvoauZCBfLEI2dJzNDfPeckc=
+	t=1723189385; cv=none; b=Ns0MjLCWqensz6mbF3YeYCJ3WYCM0HdhfJ/SBM5HfUU8UHHq2kqoFRe6nLnFKFsXBnHv8p+vYCldx9vI+dUs/aR37QwmEpT2q2M3tk0DwsJ1j0YSwRrCLyo6QecjC5vZGs5eTQnCirirs3mZz07NLB9PnLk0Y7xxVCbU3izeVBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723189368; c=relaxed/simple;
-	bh=iqpqY4Mz02a4XXRlY5NSi535Wlig7PeZ+dkLg0mpRq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PMtuZoBAEaJzCC9Exv0EOVUc9sBL+yocxnFMFc8cyoqO5AatKdkWwZ1TMFRW6TqCZdGu2khzDpJlA/0osvTv6/QoJh2c+vizfO5rJtpOn5bEtCs/Nbdhb5y80UR90ZOzgiSFHf/5amo44rUkmOaKvPhlmxbr0gGPZffv8k0304U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GcmghpNv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723189364;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1723189385; c=relaxed/simple;
+	bh=MUNK1MC9nNM3if/M7wOMj4s/Sk9qNqsGtLb9K9dr+5E=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ckd2RnZ81AP1avgHqPxofWKfCWdRdxJrcEh4kFaEde8bmKbitza/gAaUgv7WSlhwua/w2pPo2k8sEN6YqQFlelT/A+CKjAICqYdDeh7D9uCaBy3AFnpp6fD1k8aCFGACPLr+NFSSJTYOqr5FjjVR7bcS1B3nHHBeVNu+KeuyAus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mvyiaiCC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+mc2Z3jk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mvyiaiCC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+mc2Z3jk; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DE3FC1FF1B;
+	Fri,  9 Aug 2024 07:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723189381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3mzbNoONi9GdzgSxgBM7Loyz11zvAii/cozyn0JFv8s=;
-	b=GcmghpNvhU/2ULAOIaVC9+i733dXh7pR/iTgBMbzA+Ko+xanVNsjj5Q14NgQaYdJGe4iS1
-	MZO9dI/N+wGaxixJPppSq0W4iYUs97ykwIL1BYmbiwuNpIfmvfSUYz5Ma4gGrXKyJqT1mv
-	r3MCxqQp2yP7EQgRk2lBE3r5o1D0INk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-519-2jZ2Fb4pOgurFt6V2IOFwA-1; Fri, 09 Aug 2024 03:42:43 -0400
-X-MC-Unique: 2jZ2Fb4pOgurFt6V2IOFwA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4281d0d1c57so13460645e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 00:42:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723189362; x=1723794162;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3mzbNoONi9GdzgSxgBM7Loyz11zvAii/cozyn0JFv8s=;
-        b=G+TmLm+ThqeCnAFGpyexiGpQAAHiP8K3hrori0S5/ZoJudZEc1WdI1TbJVvm24KHOF
-         UxS+dyWxjSbJtoST1Va68H6ZAjpeomffWlsZm8V51zhxLTKCXI5bHmC5WiP4Jf0+Kx4s
-         rivXC0Ad2/S+H9Oq+nxEE58Red8Zmnh/ocCFYwsEECKPo+NmEN0bHMciH+cDw2rfEda3
-         YUUn8XFAxwBIkLXtI9j8opcc2FwIXlP1D+QmP3G88nSH57/A0EnOSsNgJuK+1VaSp22G
-         WzFP80Cy68YUwrm1s3Ho7ULP4alrtGTU+JZdQu/l+xws5cq0texOpuwrOG6YqFvExakv
-         mT5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU/ysC3o6eM0L+A6L9K94l5pQ9fOlUvpvsN3a2gCb3zvXtNLz39e9TTbYLKHXVs9zwp3QviXqybiIM9MEqcNMpzIyrfvvr2TcdZ/Xu7
-X-Gm-Message-State: AOJu0YwopRaG7xWvLHC7446wC6eHsFAzZiEjD6QmeTKvJ5XF4QKPTSwi
-	dotyRJuQSrzblf+wC49hQEucop7DYUjwxTO+LQ4ag/imVP+NWcY+2tQtX4iWO96S6DvLpjVMGfD
-	NM2eeLwZcgAb73fnwtptk3sEcmRtgasf7VBo0IQD1FZlUmapQ/l6jaAEd1MzOFg==
-X-Received: by 2002:a05:600c:3ba1:b0:428:b4a:7001 with SMTP id 5b1f17b1804b1-4290b8ddf1bmr33446945e9.15.1723189362408;
-        Fri, 09 Aug 2024 00:42:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7SDkNhvKREFsyY1hymxa4EHM9XWF0EINXQbTXDvdD7OWRKmOjdwEhS84+VW/DzwLaII9zcQ==
-X-Received: by 2002:a05:600c:3ba1:b0:428:b4a:7001 with SMTP id 5b1f17b1804b1-4290b8ddf1bmr33446755e9.15.1723189361912;
-        Fri, 09 Aug 2024 00:42:41 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.159.67])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36d27208d75sm4399714f8f.85.2024.08.09.00.42.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 00:42:41 -0700 (PDT)
-Date: Fri, 9 Aug 2024 09:42:39 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Christian Loehle <christian.loehle@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-pm@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] sched/cpufreq: Use USEC_PER_SEC for deadline task
-Message-ID: <ZrXIb7BFOWY11DKt@jlelli-thinkpadt14gen4.remote.csb>
-References: <3c726cf5-0c94-4cc6-aff0-a453d840d452@arm.com>
- <20240809012410.marjxrio3sjequnn@airbuntu>
+	bh=L9ys9DELbUmcV7BaxDeRtIVEoPz61t8Oy5OkhzdcExc=;
+	b=mvyiaiCCkn9/dwcmlKOUB0xUlhygaoQ8tnvKKC3F4SJcukJzPGap26cSE3JvQUWejCh6Rp
+	O6Rf5gSfe2zLe4kKH29pkuaYSEaX9fE5N/DxXCOxjas3syI0/p2ScwKHUc/ynPgISQh0/C
+	smjM+a6/4/1Lzmt/GhD/S8+f/e5BsEg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723189381;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L9ys9DELbUmcV7BaxDeRtIVEoPz61t8Oy5OkhzdcExc=;
+	b=+mc2Z3jkCC47yU/N9PL6/4NmIi1I3NNCaDEEDbT1VPkZVtdkLvkPazZA7SGN7qwe3PYX0m
+	o7PeWPFYbesGs6BQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723189381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L9ys9DELbUmcV7BaxDeRtIVEoPz61t8Oy5OkhzdcExc=;
+	b=mvyiaiCCkn9/dwcmlKOUB0xUlhygaoQ8tnvKKC3F4SJcukJzPGap26cSE3JvQUWejCh6Rp
+	O6Rf5gSfe2zLe4kKH29pkuaYSEaX9fE5N/DxXCOxjas3syI0/p2ScwKHUc/ynPgISQh0/C
+	smjM+a6/4/1Lzmt/GhD/S8+f/e5BsEg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723189381;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L9ys9DELbUmcV7BaxDeRtIVEoPz61t8Oy5OkhzdcExc=;
+	b=+mc2Z3jkCC47yU/N9PL6/4NmIi1I3NNCaDEEDbT1VPkZVtdkLvkPazZA7SGN7qwe3PYX0m
+	o7PeWPFYbesGs6BQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A5EFE1379A;
+	Fri,  9 Aug 2024 07:43:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qTc0J4XItWatFgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 09 Aug 2024 07:43:01 +0000
+Date: Fri, 09 Aug 2024 09:43:41 +0200
+Message-ID: <875xsa87ki.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound tree
+In-Reply-To: <20240809112252.5af8025f@canb.auug.org.au>
+References: <20240809112252.5af8025f@canb.auug.org.au>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809012410.marjxrio3sjequnn@airbuntu>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.993];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_DN_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 09/08/24 02:24, Qais Yousef wrote:
-> Adding more sched folks to CC
+On Fri, 09 Aug 2024 03:22:52 +0200,
+Stephen Rothwell wrote:
 > 
-> On 08/06/24 14:41, Christian Loehle wrote:
-> > Convert the sugov deadline task attributes to use the available
-> > definitions to make them more readable.
-> > No functional change.
-> > 
-> > Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> > ---
-> >  kernel/sched/cpufreq_schedutil.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > index eece6244f9d2..012b38a04894 100644
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -654,9 +654,9 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
-> >  		 * Fake (unused) bandwidth; workaround to "fix"
-> >  		 * priority inheritance.
-> >  		 */
-> > -		.sched_runtime	=  1000000,
-> > -		.sched_deadline = 10000000,
-> > -		.sched_period	= 10000000,
-> > +		.sched_runtime	= USEC_PER_SEC,
-> > +		.sched_deadline = 10 * USEC_PER_SEC,
-> > +		.sched_period	= 10 * USEC_PER_SEC,
+> Hi all,
 > 
-> I think NSEC_PER_MSEC is the correct one. The units in
-> include/uapi/linux/sched/types.h is not specified. Had to look at
-> sched-deadline.rst to figure it out.
+> After merging the sound tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> sound/usb/caiaq/audio.c: In function 'snd_usb_caiaq_pcm_prepare':
+> sound/usb/caiaq/audio.c:179:41: error: unused variable 'i' [-Werror=unused-variable]
+>   179 |         int bytes_per_sample, bpp, ret, i;
+>       |                                         ^
+> cc1: all warnings being treated as errors
+> 
+> Caused by commit
+> 
+>   e95b9f7f2ee0 ("ALSA: snd-usb-caiaq: use snd_pcm_rate_to_rate_bit")
+> 
+> I used the sound tree from next-20240808 for today.
 
-In practice it's the same number :). But, you are correct, we want
-1ms/10ms and unit is nanoseconds, so NSEC_PER_MSEC.
+Thanks, I corrected now.
 
+
+Takashi
 
