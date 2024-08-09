@@ -1,81 +1,154 @@
-Return-Path: <linux-kernel+bounces-280437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B907494CA7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:29:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F9D94CA62
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 08:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75B61285995
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:29:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83EAB1C216B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 06:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0967C16D31F;
-	Fri,  9 Aug 2024 06:28:58 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A98A16CD1A;
-	Fri,  9 Aug 2024 06:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D481716D9B5;
+	Fri,  9 Aug 2024 06:19:26 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257D43D6D;
+	Fri,  9 Aug 2024 06:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723184937; cv=none; b=Esul6B2AyxeboG5OO3qZgJg5HT02Jw45iYJxb7LTToF/bEX9xlQjDxqQjmZXV4/G33ACNRe1nquR7sMLCF3XcZJnE2x3xeTH5Odof/A6k/24qKcNK8a9UtaN3x6auVUT109+12icag+8eIKr9ylKPF0YIBKiRTwMabd9QXKcQDE=
+	t=1723184366; cv=none; b=VrvdaQZKvEGV7iPkfl/OR6VZu0L2gIW38y90OG/bl4a14yWJQkIWyLK9ZDg2R8qObd5o+/+mDNGY+8WRsd0QtWKnhia89MFQAOZgY/PSjGerWUr31PwwVHLWVO/fdOcjtdYr4//1zKW4W674pMRRIlg6IBagIVWjzcEMYZ6XC64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723184937; c=relaxed/simple;
-	bh=8gWESIod1mxQfva6n/2hb/tIdrqIw1m4+uiG4XkLFrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZ+Fn6Lu7w2AninsQ44eZzL7Nnif7c05oJgJO287UY5u7nJgj/wo7HqkFgxyOiIC3ushRfNa0P9g6ZkXZakM//P1g5nKV7GeMh3Y4KR8hL/IeYpla0ci20Rgb4P3BlnnFP83JyGul4aq3ziDGbOuYtnBv5uKZ4md4+EMCskeH/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1scIZm-0006p0-00; Fri, 09 Aug 2024 07:54:10 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 93196C014D; Thu,  8 Aug 2024 23:42:28 +0200 (CEST)
-Date: Thu, 8 Aug 2024 23:42:28 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] MIPS: Loongson64: Set timer mode in cpu-probe
-Message-ID: <ZrU7xIaKVL+27r6x@alpha.franken.de>
-References: <20240723-loongson-exttimer-v1-1-974bef8c2f88@flygoat.com>
+	s=arc-20240116; t=1723184366; c=relaxed/simple;
+	bh=EP11qnwz+80UiyRdrrWPiaQyDh38T5RZQd0bBdCvHBo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nPVPPexW7Mnv1n6YldwS2/IgDw2yg2ccNOyw9sWFrSN2IbDRk04k4thf5BVuT0Vj3wjtH1ERKQrwzE+MHTqtAuKO/yjgjPqiRZkILLy3rEFMvrnIDtWZf9WcCMOPm1aw3DbeFgOo6WZ9QSQmeda2feTUxt1hwej+LpzUiV4J+Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WgDJC5tmtz1T6th;
+	Fri,  9 Aug 2024 14:18:51 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id B41581800D0;
+	Fri,  9 Aug 2024 14:19:14 +0800 (CST)
+Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
+ (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 9 Aug
+ 2024 14:19:13 +0800
+From: Liao Chang <liaochang1@huawei.com>
+To: <mhiramat@kernel.org>, <oleg@redhat.com>, <peterz@infradead.org>,
+	<mingo@redhat.com>, <acme@kernel.org>, <namhyung@kernel.org>,
+	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+	<jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
+	<kan.liang@linux.intel.com>, <andrii@kernel.org>, <rostedt@goodmis.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
+Subject: [PATCH v2 0/2] uprobes: Improve scalability by reducing the contention on siglock
+Date: Fri, 9 Aug 2024 06:10:02 +0000
+Message-ID: <20240809061004.2112369-1-liaochang1@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723-loongson-exttimer-v1-1-974bef8c2f88@flygoat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On Tue, Jul 23, 2024 at 05:15:44PM +0800, Jiaxun Yang wrote:
-> Loongson64 C and G processors have EXTIMER feature which
-> is conflicting with CP0 counter.
-> 
-> Although the processor resets in EXTIMER disabled & INTIMER
-> enabled mode, which is compatible with MIPS CP0 compare, firmware
-> may attempt to enable EXTIMER and interfere CP0 compare.
-> 
-> Set timer mode back to MIPS compatible mode to fix booting on
-> systems with such firmware before we have an actual driver for
-> EXTIMER.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
-> Please take this patch via fixes (or second 6.11 PR) tree so it can
-> reach stable faster.
-> 
-> Thansks!
-> ---
->  arch/mips/kernel/cpu-probe.c | 4 ++++
->  1 file changed, 4 insertions(+)
+The profiling result of BPF selftest on ARM64 platform reveals the
+significant contention on the current->sighand->siglock is the
+scalability bottleneck. The reason is also very straightforward that all
+producer threads of benchmark have to contend the spinlock mentioned to
+resume the TIF_SIGPENDING bit in thread_info that might be removed in
+uprobe_deny_signal().
 
-applied to mips-fixes.
+The contention on current->sighand->siglock is unnecessary, this series
+remove them thoroughly. I've use the script developed by Andrii in [1]
+to run benchmark. The CPU used was Kunpeng916 (Hi1616), 4 NUMA nodes,
+64 cores@2.4GHz running the kernel on next tree + the optimization in
+[2] for get_xol_insn_slot().
 
-Thomas.
+before-opt
+----------
+uprobe-nop      ( 1 cpus):    0.907 ± 0.003M/s  (  0.907M/s/cpu)
+uprobe-nop      ( 2 cpus):    1.676 ± 0.008M/s  (  0.838M/s/cpu)
+uprobe-nop      ( 4 cpus):    3.210 ± 0.003M/s  (  0.802M/s/cpu)
+uprobe-nop      ( 8 cpus):    4.457 ± 0.003M/s  (  0.557M/s/cpu)
+uprobe-nop      (16 cpus):    3.724 ± 0.011M/s  (  0.233M/s/cpu)
+uprobe-nop      (32 cpus):    2.761 ± 0.003M/s  (  0.086M/s/cpu)
+uprobe-nop      (64 cpus):    1.293 ± 0.015M/s  (  0.020M/s/cpu)
+
+uprobe-push     ( 1 cpus):    0.883 ± 0.001M/s  (  0.883M/s/cpu)
+uprobe-push     ( 2 cpus):    1.642 ± 0.005M/s  (  0.821M/s/cpu)
+uprobe-push     ( 4 cpus):    3.086 ± 0.002M/s  (  0.771M/s/cpu)
+uprobe-push     ( 8 cpus):    3.390 ± 0.003M/s  (  0.424M/s/cpu)
+uprobe-push     (16 cpus):    2.652 ± 0.005M/s  (  0.166M/s/cpu)
+uprobe-push     (32 cpus):    2.713 ± 0.005M/s  (  0.085M/s/cpu)
+uprobe-push     (64 cpus):    1.313 ± 0.009M/s  (  0.021M/s/cpu)
+
+uprobe-ret      ( 1 cpus):    1.774 ± 0.000M/s  (  1.774M/s/cpu)
+uprobe-ret      ( 2 cpus):    3.350 ± 0.001M/s  (  1.675M/s/cpu)
+uprobe-ret      ( 4 cpus):    6.604 ± 0.000M/s  (  1.651M/s/cpu)
+uprobe-ret      ( 8 cpus):    6.706 ± 0.005M/s  (  0.838M/s/cpu)
+uprobe-ret      (16 cpus):    5.231 ± 0.001M/s  (  0.327M/s/cpu)
+uprobe-ret      (32 cpus):    5.743 ± 0.003M/s  (  0.179M/s/cpu)
+uprobe-ret      (64 cpus):    4.726 ± 0.016M/s  (  0.074M/s/cpu)
+
+after-opt
+---------
+uprobe-nop      ( 1 cpus):    0.985 ± 0.002M/s  (  0.985M/s/cpu)
+uprobe-nop      ( 2 cpus):    1.773 ± 0.005M/s  (  0.887M/s/cpu)
+uprobe-nop      ( 4 cpus):    3.304 ± 0.001M/s  (  0.826M/s/cpu)
+uprobe-nop      ( 8 cpus):    5.328 ± 0.002M/s  (  0.666M/s/cpu)
+uprobe-nop      (16 cpus):    6.475 ± 0.002M/s  (  0.405M/s/cpu)
+uprobe-nop      (32 cpus):    4.831 ± 0.082M/s  (  0.151M/s/cpu)
+uprobe-nop      (64 cpus):    2.564 ± 0.053M/s  (  0.040M/s/cpu)
+
+uprobe-push     ( 1 cpus):    0.964 ± 0.001M/s  (  0.964M/s/cpu)
+uprobe-push     ( 2 cpus):    1.766 ± 0.002M/s  (  0.883M/s/cpu)
+uprobe-push     ( 4 cpus):    3.290 ± 0.009M/s  (  0.823M/s/cpu)
+uprobe-push     ( 8 cpus):    4.670 ± 0.002M/s  (  0.584M/s/cpu)
+uprobe-push     (16 cpus):    5.197 ± 0.004M/s  (  0.325M/s/cpu)
+uprobe-push     (32 cpus):    5.068 ± 0.161M/s  (  0.158M/s/cpu)
+uprobe-push     (64 cpus):    2.605 ± 0.026M/s  (  0.041M/s/cpu)
+
+uprobe-ret      ( 1 cpus):    1.833 ± 0.001M/s  (  1.833M/s/cpu)
+uprobe-ret      ( 2 cpus):    3.384 ± 0.003M/s  (  1.692M/s/cpu)
+uprobe-ret      ( 4 cpus):    6.677 ± 0.004M/s  (  1.669M/s/cpu)
+uprobe-ret      ( 8 cpus):    6.854 ± 0.005M/s  (  0.857M/s/cpu)
+uprobe-ret      (16 cpus):    6.508 ± 0.006M/s  (  0.407M/s/cpu)
+uprobe-ret      (32 cpus):    5.793 ± 0.009M/s  (  0.181M/s/cpu)
+uprobe-ret      (64 cpus):    4.743 ± 0.016M/s  (  0.074M/s/cpu)
+
+Above benchmark results demonstrates a obivious improvement in the
+scalability of trig-uprobe-nop and trig-uprobe-push, the peak throughput
+of which are from 4.5M/s to 6.4M/s and 3.3M/s to 5.1M/s individually.
+
+v2->v1:
+Oleg pointed out the _DENY_SIGNAL will be replaced by _ACK upon the
+completion of singlestep which leads to handle_singlestep() has no
+chance to restore the removed TIF_SIGPENDING [3] and some case in
+question. So this revision proposes to use a flag in uprobe_task to
+track the denied TIF_SIGPENDING instead of new UPROBE_SSTEP state.
+
+[1] https://lore.kernel.org/all/20240731214256.3588718-1-andrii@kernel.org
+[2] https://lore.kernel.org/all/20240727094405.1362496-1-liaochang1@huawei.com
+[3] https://lore.kernel.org/all/20240801082407.1618451-1-liaochang1@huawei.com
+
+Liao Chang (2):
+  uprobes: Remove redundant spinlock in uprobe_deny_signal()
+  uprobes: Remove the spinlock within handle_singlestep()
+
+ include/linux/uprobes.h |  1 +
+ kernel/events/uprobes.c | 10 +++++-----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.34.1
+
 
