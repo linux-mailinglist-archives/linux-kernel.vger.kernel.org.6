@@ -1,230 +1,151 @@
-Return-Path: <linux-kernel+bounces-280689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-280668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB1C94CDA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:51:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B56494CD80
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 11:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71FFF2820FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E08D283859
+	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 09:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751F5198A06;
-	Fri,  9 Aug 2024 09:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD403190692;
+	Fri,  9 Aug 2024 09:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="T/hmNLA2"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012065.outbound.protection.outlook.com [52.101.66.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="di31CBAo"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8355E197A9F;
-	Fri,  9 Aug 2024 09:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723196820; cv=fail; b=Yi6n1n3MU8FZrwqm5H1eMONAXNIY3UPgoYD92Io5OM3xkF6QRZQ0LeV0BsD6WtDJ6Tj5f2JqQyS3IVAKSJU2iCEbWXYJTKf1WPwbHrdArsohcI/G1XXRWe6TTr7O8skK01T1ao1VbF7H/+Moqyp4dU3AcvpvHXxmaoe3QQQzPj0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723196820; c=relaxed/simple;
-	bh=iPW7EHV4dQiVydUK5ulmopwJMF61KcLFxV9VKtsRCjA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LCqCfLgGW0ASUaPVzoFt3DELHoyYzbzXRJDLMta7fChWSb550HC7VhqqBsGls+eW0eBNOd9XL0RILt6hOvaC81htpH/hKM6O2JjAKqiCUy6HTZJLOvVobCSP8JOtRHio+HDRGgIE7sDSpwyZssvEmCOsQ7OPK6ahzQS92H7psHY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=T/hmNLA2; arc=fail smtp.client-ip=52.101.66.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HyA+qKbl4OM6JoGDokQvb/tQOB6Zm7rz/iUbuWtSv6KlS9CAEX/eruP1sdJhzyvRXL3ZvBmaNvgZrscNu7pF6iTaAHnOiBTth12tzK8V+MGwJJF/Z+muw0nTjSIPdOeK4sBaqBSNBq+6eFuyjF6taPvERa0rR+ls5KV1eIf2oajZEiqN0oS4OzHuEfxLXjlXYtZp3OMnTHJrpVt8Wv2G1d4vjvgh9ah+NyWA0MXH+4imZwisc6iVS824bTQQLDI2MIssAirocF7FVoLpa47p3gbcq45Wkc+/XMHwi8ngbtSuc2Vi6M9psM7nSlIjr1C6CCdlnr+Q+LfTWTo2h8svtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kp/RnIW8RGclZufIVPDrZzne5U+G9qMYZazV6y6yN1o=;
- b=GTPphNxh/GXjDOWevUPlv9rUNwX/UFtOqV/YMAbCrVrpqFbQym5y/PfTY1f7y+4OpIVJ/Y9P1SMr8zNyiySRxvfX/dDqziRtvsfxSUCGq6MhhR+l9vunXyyS/aC/wqxSXyou/EoBvppEYX8dDZ1xnLq+bKQ6Dgyks9REVo/jqpcXqsrmKxTVTkTn7Gm+uI9b2AICCMGUSMhA37hOH7Eb0Bjmd7PesHGg3YF/nfgBcvQ8ie7jIjB7OV7I8vvsFphK6DhhZuakIOOXVDoiIuOtJcl27ahBjMFOEJwtNfEr9uNwPcS9yFXSZ7DoeONR+jSODP9hvDQQLqf5v2/MhvYElw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kp/RnIW8RGclZufIVPDrZzne5U+G9qMYZazV6y6yN1o=;
- b=T/hmNLA2VdEnKJROxaPm7cLClIHcdKQbd1nWN/L0xBNMWOKd8332v23ve1tHU63tZzlYsAtKz/4RWaV+dmBvwHlVfdqXPZBdS9HLb8vTE2gZwbuUU8vAEzJOmYPSIE/Mvi4lY+7/PWpyBDVCl4UhoaloUHjfWuixWwjNP1ly/mueZ7F3c1HyxBH14nv+NoAaWyj5NligNu2Hy4PxUR3Dm9IHTJjYlVbsTsGTb1I3MumqFCYUfjU33A3VHT2AA6cHUZgiD1886w9SJCWK3MTUXz/da8QJ9lrd+vjHuEJSVvzm3jHSd7Bsz58qyxO2pye4/vAhPF4msLBcnlR8vXXRSg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by GVXPR04MB9949.eurprd04.prod.outlook.com (2603:10a6:150:112::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Fri, 9 Aug
- 2024 09:46:50 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%5]) with mapi id 15.20.7828.023; Fri, 9 Aug 2024
- 09:46:50 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kvalo@kernel.org,
-	johannes@sipsolutions.net,
-	briannorris@chromium.org,
-	francesco@dolcini.it,
-	tsung-hsien.hsieh@nxp.com,
-	David Lin <yu-hao.lin@nxp.com>
-Subject: [PATCH v2 18/43] wifi: nxpwifi: add ethtool.c
-Date: Fri,  9 Aug 2024 17:45:08 +0800
-Message-Id: <20240809094533.1660-19-yu-hao.lin@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240809094533.1660-1-yu-hao.lin@nxp.com>
-References: <20240809094533.1660-1-yu-hao.lin@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0178.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c6::9) To PA4PR04MB9638.eurprd04.prod.outlook.com
- (2603:10a6:102:273::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA051917F2
+	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 09:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723196715; cv=none; b=RE3Uen1i4b5Sa3wm31zmDqPdqzXaEKOMk/r5h5Xcy6ps+5j6oTMAVJkD3lpWrCpFiUDl2pr/XWW9dZWrpu4A6iF83lG9s2RxWkhZhO4qOpuqXS6yK5EomYoaKiYXR/+hMaROW6vXtgFJp+F2dORrzGNs7aMiubirWqc2tyE16Po=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723196715; c=relaxed/simple;
+	bh=EOaDU9ZrvO+zFZ0tRj0//IuDM0YhighaUzovEeTesJk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hQdJMdi+ncrrFp6UunvaJMcovFytLsb7uo3QGAPnBKfVTONzY/kl1m8a8C3Dk/jF6vYNzvMOWprjK4B6PmQ36oHLscCC3BjgkAeayYgEb/YoMrXwUBx/cqK9BuMhkhUKGJt2xAB3NPUsl3neXHflCMRNU3nKWweSyewtoko4baw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=di31CBAo; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a9e25008aso227680966b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 02:45:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723196711; x=1723801511; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=bfXHI7YRjtVXLrVhuwcVI4WW/iq2ERr9gXv13LmzL3Q=;
+        b=di31CBAoUgfIi2zCYxTYd9kFhetiMmGR02w7ABL4Z57hJwoyegRLttNzfvWuVfljPJ
+         u5zPYumU4v+bztq4j16K1pWzASyAfR9ozaNsEJjwxY9bivYihFqJQdUrXOb+MzhUARkr
+         LlOMgO6ttH9VKtR8YMrq/wksLiQbC29pWumrUJm3z5PbB1ET29Ih0Rq3pz5H3CXzDRUj
+         TKlSyV9AcOV/7+xtttm/sHL0zADBrm9CnS3SMLLxkg2kTfO3hc5qMFvdBYzIysNcrEsd
+         YqbiMbl0604CoSDhvQOZLMRGMQ4UlAIGXUQ8M0yM+ZJgvGS/nMCT+dwMN1EqC2346SK0
+         LUhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723196711; x=1723801511;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bfXHI7YRjtVXLrVhuwcVI4WW/iq2ERr9gXv13LmzL3Q=;
+        b=pX+Mi7N5DOs2xHhhmhVqfdZGjRI4QPqv1uV8ktUV6OgzKeBuXWSMniyvyCYXA+3myk
+         hKRUtN91Cga895nEpqaVu0d2H5Ie4t8Qr+cNgXtjMw+9cy5A4n6WjaXIB1uiVqA1u3y1
+         2kZj9Fgyjj8hcberOMxeGq9l0nUrOIuql2Y84tuNtVh0I+sLD3CQxzJVZdKHlFOluFeP
+         xV6S5OiQ9Qagjpw/I6TlAZUVNmj0Ujd8dHzQScxns3B4Qpf1hnpziw0y3xzgBw1h0m2x
+         j3vkYjnOJPwk+akzDILq7Klh1756SWcAl61kTqVydmMnciyAxjJ3vwacO/5x7K2qDxNZ
+         WI6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVmZvP0Acb61CSOKnDQhE5MVKfmjlN5NXDOMTwOGAnQPDouSRhht1aMhumCGuva6Yw5c4AoW78FrcQ5gr54O2HsAHFS7DKCLfo3IZDo
+X-Gm-Message-State: AOJu0Yw8mhk7fetV2jPqygouRgC725+RyU0RjCWB7BuyJeL7ddmRJGcV
+	zDOujHJooS5gOe0kTbj9WVmphzeJ1KDqGLveJsOoIgWG10vi6VtGHeC4NsOXOWJEPYy0J8Snuww
+	=
+X-Google-Smtp-Source: AGHT+IHXEVmAihnXwyVjAcegGO2zuDmd5+TRNNiO5xOEembNdL9LIMP2KZqkz3FjqAEANanlRGVsqA==
+X-Received: by 2002:a17:907:7ea1:b0:a7a:8cfb:6568 with SMTP id a640c23a62f3a-a80aa67340dmr72208466b.57.1723196710628;
+        Fri, 09 Aug 2024 02:45:10 -0700 (PDT)
+Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0ca0bsm823132366b.74.2024.08.09.02.45.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 02:45:10 -0700 (PDT)
+Message-ID: <64e0ac51-690d-4c44-85fb-6a0b8415fcb7@suse.com>
+Date: Fri, 9 Aug 2024 11:45:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB9638:EE_|GVXPR04MB9949:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6311fd95-07d1-45f9-76f8-08dcb858311e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|52116014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YYBA6ZwFrWZ3LsfEcFHyMBYniIfMSGQghhhuVP3KTbs+zsi7G1I/yipCxGTf?=
- =?us-ascii?Q?megnmUhERjnd7hxG2XG07ntWz8tupFJTNeqdjt//MlobxqiBeyG80b/NNCIP?=
- =?us-ascii?Q?RBrl2SLJsGrEjJWcS3C8RyChjNEXfEWwXunhdkI6fZXBESIgGmM2zW5GneQ0?=
- =?us-ascii?Q?8HGS2tlH4/opwLOiMMvu0o7en2dtHgaxCZyrn8BZRjZZUn5Hx1CUWhIGVisI?=
- =?us-ascii?Q?+9MAJGvGSdNqlChiRvm6nBUXOOVhgoD0Rx2n+C/WUHfjhMPk/rjbAyYBg81F?=
- =?us-ascii?Q?myBgkmTOTbKlZTVaW/X/zwzWsQ8gbdEiwWixn84QgqKK1uIlGr9viAqsINPE?=
- =?us-ascii?Q?6DrBNulaMjmla+J3vCcjuSBL3jjK/R5SWymGWjFYx5r4ehUUtpyiNEVTZGLS?=
- =?us-ascii?Q?r+mW47PnRDwH0RO6MbYulQoxfGI+27rRz/lkZ6QCBEG4YtTwyaQsDfuHxdOk?=
- =?us-ascii?Q?XWrxlDhCpPqKlmmcvLnU1NrkA3umgLy6KfevR9khxwRYYLePxFT9kXwoh6/e?=
- =?us-ascii?Q?pozmScckd9vLsbPl2mGUEtbI2FewVaHWaD8nM8Oiju8yYXJazl5ehq9MJ38B?=
- =?us-ascii?Q?QjfA847ofPaWCDrvx0AEP6HvO5g/SBExTBoah4Y6vAxElEAzY8365WtVWwM4?=
- =?us-ascii?Q?uafH19PxRDyE817Aesvi3WErcDQ3XgRv+i62npw+iHmh9KjNuDtCkkUdAb+N?=
- =?us-ascii?Q?IXhBEKWkk0CdY7Lh7J3x7IY8z7Q4bciI+0LlFbbNS26ze2LW8Ttcbfspy+j5?=
- =?us-ascii?Q?cC6N+mE+gWo4Sc51uA3UE95OOVaLYnk2k9Hee94cwk83WtUhdLfEbEttRQHm?=
- =?us-ascii?Q?Hr4x94SOMvt6TV7FalHfebLMw/uEdbz2RsiN4wa7VMV1puVyBPBfwifGw4eu?=
- =?us-ascii?Q?2MYxF5LgJ9mYKZ7sS42cY81rz/wHjflAKpy1tyTlUyIjL8LrUn4PGsUiAsUB?=
- =?us-ascii?Q?UM7Eb4HAnFPSTLIDP3/V2fWiwPAAPQ/eMAA8pfIhleRZQPJ8WTUqt4oqyxQG?=
- =?us-ascii?Q?UBFPRANXaCeoairshOy9AkulAx9j+dHeY57LAOn6FwL1+EbrLKnVWDBMEDIa?=
- =?us-ascii?Q?D0U34kcjkWkPxT/FJioI9TpeOx+6WAmwLTOHQLThIYiwQnCMaLTVV0XJZntd?=
- =?us-ascii?Q?eOzuwy+JLPQ96vbBpfFH75qfLbhYuL8RUgh/g+e6Drq2tgp5YELe22jKF+Cr?=
- =?us-ascii?Q?vDRqEm6PcmwCjEtGuEgQ54kZEavjyNVewVridBLwxtzLrXuAAhoN+RUO6Cs/?=
- =?us-ascii?Q?WlIpAPwJQ5eC+LFm2lfWnGG3iZFXJnkuOxDWMy6mT4G+6fAmMduAhgs4N4rQ?=
- =?us-ascii?Q?0utcSCe33KjLRdcgwlv0LHcTq4d7s8ezIVHAdl3/BwLnIw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+3OlpeWA0FDIf3rdAcc97iZ1wcsJAV9IS4v6Tfujl39m2jsP33Jyu1DBX/Cf?=
- =?us-ascii?Q?03KPtcJCv58Un60qTyuo4X+uUfwTWEVY6OEZ9PIoMcDtmaUkF1BOwNP8E/Y8?=
- =?us-ascii?Q?6okvyjXrfPR9G+sdh2YnB1f5aIZ7ot1GK1QX7dab6WUpyL61GZzt1XEhQrr7?=
- =?us-ascii?Q?P/t3qhW53FvAEBUmjM1SO45/8YrqcPd07nb/v6OiqGH4Sf/EbRJ9iMC09T46?=
- =?us-ascii?Q?NiiBie9v93VUAar2Ux8NtkQeW7kZXqOD+MOZAhOTeWS4Ps9st94Gv3pwMsDW?=
- =?us-ascii?Q?GPE91ifUmDivhJCg6rA0YESny+ORmsrdMDE/bco4lzHAfRnwsHI08XmffVNe?=
- =?us-ascii?Q?UXdlGMWKvzRJy6x98ZIHGF+eTQWsGzird1VFlgiLIs+UQ/R5rxRlDP0eSA4b?=
- =?us-ascii?Q?TTsJlYx3WiVIV6AX0NA9yUXK4swajieqHkSj4te27jzvUnkzdw83R4M5VWkS?=
- =?us-ascii?Q?/T1x7Xyjx+NR622hNy9BqVwIsJhoXeSpOkFO5HxMI71fJRwhtb2kqsKAQ7kr?=
- =?us-ascii?Q?p8g5uSqEJPtAMuXIa9TugewBEla02wyPSbWp/dIt5+yz+6m+dZVVroihO/JH?=
- =?us-ascii?Q?rACR8ekSBH5aiy489ZQE7uudmN9ljZrIzvv025ibWa1VhvtJgnR+5trac7KU?=
- =?us-ascii?Q?Ga2OojJoK+mNmvwY9saTRoq8fPxG3AbfZXW29iShVu9pljWmWqfsAJUmnYBP?=
- =?us-ascii?Q?pd/PfOJpxFoTPSjUMVB1TMW3baBDWU5o+2OM9lZ4vuAGPKJvgef3i4czon8b?=
- =?us-ascii?Q?WGrw9umo664ReVbzm7BE7mQohS7YLX2o4aKGUeCdcV6xt58rnrnPfdiXuOAf?=
- =?us-ascii?Q?8fSJvf5NFsvlrg5nbpTKznCCDDXDPIl0hc6l5W9alC3r1WjAn00kHrqT34F1?=
- =?us-ascii?Q?fXMcfXSAlUfCMkNpULZn3sW+DA2rGsjcg9sBVaU8SRYhrnxOYdvUTy6Ubj65?=
- =?us-ascii?Q?PYCwBY6TOFGZ7ed95eEeqmxplaafXF0V8F0xAlX1GCO1bmarg3r42SxwqKsz?=
- =?us-ascii?Q?PMQzkbhxT7fbS/EuFT+ty3nsRAw2aJF2bHFt4mjzt0Dd6+u0LEKX/sHkjsdg?=
- =?us-ascii?Q?BQgSe2QBUQZoaafB6v8EsHnx5Gqej9OgYTlY4D9syKC/OSJJK40G9No8Ugj4?=
- =?us-ascii?Q?pxsrQSQXZo/2qxsJvUQJudbqmK65yElheEFhj49CP3w73o/bMpg9BEUF6wqZ?=
- =?us-ascii?Q?1c2CNCNwlvaqxSqRzfcTrcNs+vqrhb4T8e7MA0qf+yj6pVTNv8T8pZk9JMgF?=
- =?us-ascii?Q?/XKXDPz6wjcXsomzl/DH7+6DgBwgB0K9OC6IzNUbOImONgipJ2uplCyBmebx?=
- =?us-ascii?Q?+nFGNjmCJSNt1iYyU599mmXq588Qi3xLVOExjC7HI1C7DxMsEiRdTzG5cgFQ?=
- =?us-ascii?Q?wTaIAFO5ng7itJx/wRdf9Fje+r0pRFIkg2eZ98blDum3iHDNckh12nS4aLQH?=
- =?us-ascii?Q?wiuqkbIeDj8o5Z0UYADjrHl5h2QTR4vUC7zwuyuxMenScvB30/vVCCNoNuY+?=
- =?us-ascii?Q?qoMDp0t1xJCgBjERp6ZtnYYz4SikMcwH9YrfoO+dkPvP9PtG9E/BtaymOvne?=
- =?us-ascii?Q?pjWAXHpRewH48nonyDAURkrK1lb5sT78kqtDfJL/Eweu7hnnlRFpRPKj4/5w?=
- =?us-ascii?Q?hdIhXesyLWsT8GJsi4lEJZt/fwaoCh514/YBbK13FvS8?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6311fd95-07d1-45f9-76f8-08dcb858311e
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2024 09:46:50.1682
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Hy4jXdfSqiqY8CjPJMSsmTS2IEEtKT276UrQOb9V7r6hBFDD+sFZcZw44ena4ZCTzhbPqDc58+5YdT6VkEGevQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9949
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] xen: tolerate ACPI NVS memory overlapping with Xen
+ allocated memory
+From: Jan Beulich <jbeulich@suse.com>
+To: Juergen Gross <jgross@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org,
+ =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?=
+ <marmarek@invisiblethingslab.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+References: <20240807104110.18117-1-jgross@suse.com>
+ <20240807104110.18117-6-jgross@suse.com>
+ <90d67e10-6e35-487e-a9e7-611a0fa3b00b@suse.com>
+Content-Language: en-US
+Autocrypt: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
+ e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
+ hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
+ IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
+ FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
+ t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
+ AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
+ HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
+ mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
+ m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
+ EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
+ wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
+ nAuWpQkjM1ASeQwSHEeAWPgskBQL
+In-Reply-To: <90d67e10-6e35-487e-a9e7-611a0fa3b00b@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
----
- drivers/net/wireless/nxp/nxpwifi/ethtool.c | 58 ++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 drivers/net/wireless/nxp/nxpwifi/ethtool.c
+On 07.08.2024 14:05, Jan Beulich wrote:
+> On 07.08.2024 12:41, Juergen Gross wrote:
+>> In order to minimize required special handling for running as Xen PV
+>> dom0, the memory layout is modified to match that of the host. This
+>> requires to have only RAM at the locations where Xen allocated memory
+>> is living. Unfortunately there seem to be some machines, where ACPI
+>> NVS is located at 64 MB, resulting in a conflict with the loaded
+>> kernel or the initial page tables built by Xen.
+>>
+>> As ACPI NVS needs to be accessed by the kernel only for saving and
+>> restoring it across suspend operations, it can be relocated in the
+>> dom0's memory map by swapping it with unused RAM (this is possible
+>> via modification of the dom0 P2M map).
+> 
+> While the kernel may not (directly) need to access it for other purposes,
+> what about AML accessing it? As you can't advertise the movement to ACPI,
+> and as non-RAM mappings are carried out by drivers/acpi/osl.c:acpi_map()
+> using acpi_os_ioremap(), phys-to-machine translations won't cover for
+> that (unless I'm overlooking something, which unfortunately seems like I
+> might be).
 
-diff --git a/drivers/net/wireless/nxp/nxpwifi/ethtool.c b/drivers/net/wireless/nxp/nxpwifi/ethtool.c
-new file mode 100644
-index 000000000000..6cefa6e6f5b3
---- /dev/null
-+++ b/drivers/net/wireless/nxp/nxpwifi/ethtool.c
-@@ -0,0 +1,58 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * NXP Wireless LAN device driver: ethtool
-+ *
-+ * Copyright 2011-2024 NXP
-+ */
-+
-+#include "main.h"
-+
-+static void nxpwifi_ethtool_get_wol(struct net_device *dev,
-+				    struct ethtool_wolinfo *wol)
-+{
-+	struct nxpwifi_private *priv = nxpwifi_netdev_get_priv(dev);
-+	u32 conditions = le32_to_cpu(priv->adapter->hs_cfg.conditions);
-+
-+	wol->supported = WAKE_UCAST | WAKE_MCAST | WAKE_BCAST | WAKE_PHY;
-+
-+	if (conditions == HS_CFG_COND_DEF)
-+		return;
-+
-+	if (conditions & HS_CFG_COND_UNICAST_DATA)
-+		wol->wolopts |= WAKE_UCAST;
-+	if (conditions & HS_CFG_COND_MULTICAST_DATA)
-+		wol->wolopts |= WAKE_MCAST;
-+	if (conditions & HS_CFG_COND_BROADCAST_DATA)
-+		wol->wolopts |= WAKE_BCAST;
-+	if (conditions & HS_CFG_COND_MAC_EVENT)
-+		wol->wolopts |= WAKE_PHY;
-+}
-+
-+static int nxpwifi_ethtool_set_wol(struct net_device *dev,
-+				   struct ethtool_wolinfo *wol)
-+{
-+	struct nxpwifi_private *priv = nxpwifi_netdev_get_priv(dev);
-+	u32 conditions = 0;
-+
-+	if (wol->wolopts & ~(WAKE_UCAST | WAKE_MCAST | WAKE_BCAST | WAKE_PHY))
-+		return -EOPNOTSUPP;
-+
-+	if (wol->wolopts & WAKE_UCAST)
-+		conditions |= HS_CFG_COND_UNICAST_DATA;
-+	if (wol->wolopts & WAKE_MCAST)
-+		conditions |= HS_CFG_COND_MULTICAST_DATA;
-+	if (wol->wolopts & WAKE_BCAST)
-+		conditions |= HS_CFG_COND_BROADCAST_DATA;
-+	if (wol->wolopts & WAKE_PHY)
-+		conditions |= HS_CFG_COND_MAC_EVENT;
-+	if (wol->wolopts == 0)
-+		conditions |= HS_CFG_COND_DEF;
-+	priv->adapter->hs_cfg.conditions = cpu_to_le32(conditions);
-+
-+	return 0;
-+}
-+
-+const struct ethtool_ops nxpwifi_ethtool_ops = {
-+	.get_wol = nxpwifi_ethtool_get_wol,
-+	.set_wol = nxpwifi_ethtool_set_wol,
-+};
--- 
-2.34.1
+Thinking some more about this, the above may be pointing in the wrong
+direction. If from acpi_os_ioremap() downwards no address translation
+(PFN -> MFN) occurred, then what's coming from AML would still be
+handled correctly as far as page table entries go. The problem then
+might instead be that the mapping would appear to be covering RAM, not
+the ACPI NVS region (and there may be checks for that).
 
+Jan
 
