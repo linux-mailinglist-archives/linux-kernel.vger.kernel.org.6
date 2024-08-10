@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-282059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F5694DF40
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 01:54:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E7B94DF45
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 01:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C03B1C20B5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 23:54:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7011F2182A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 23:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4525E144309;
-	Sat, 10 Aug 2024 23:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EE6145358;
+	Sat, 10 Aug 2024 23:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g0i3Jm4k"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Le7wwKbQ"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8C413D285;
-	Sat, 10 Aug 2024 23:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B83A14431F
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 23:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723334052; cv=none; b=PKKNbNiCg9XByOhPTn1Qz44guYBGyeuTUpz7p4mEnEj4qXe3A2G8XgB4ecTOEOaoLlCce4lB4pAgi/GxVVDrx9tHy/d6ILKzvAL+39Wuz9Zp/inY826jjdHTkMFskxsThB51n7ou499EKepd9ZlRYCWgDiUXd1ITyO/m1dyA7KQ=
+	t=1723334080; cv=none; b=fYSpiBd0IEubdRiW3k0aNgDk5T9GqyixyHI7NycVqS4hL10Y9EwGuFW80NPjZ9XSinu7Ek58BVt3vzm1bqDQ6aCQyuJ4FIinBkXZrsMzN5LHUzNjgZyPau3sRVuVMRMTetSW/U6yNUBSjw+5KDhismdBtSI3WmGmNcszn1uADdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723334052; c=relaxed/simple;
-	bh=jELHr4OfQX75YNJR6rcQVmwfUsLpvDrUG7RynsU1oys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U7PzPrxiCSQ4WvXhlG/ApfD5Ea2EPahTesnhh1TqZvpBiP4aZbN71Eh2bGlDCasIaJnIprCGg04QlmqeKe7jwmfSBr77Ya6g8fYbImR8ZhuM1cS05zfBjMeE9+uw3gXufBiE8CGyet3Mxuu+G25e4xFHdc+upiif/XjLaZvHtAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g0i3Jm4k; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723334051; x=1754870051;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jELHr4OfQX75YNJR6rcQVmwfUsLpvDrUG7RynsU1oys=;
-  b=g0i3Jm4korPxmB/boX1M0VkdXUagtAfsYr0BPy6Iu85CYAB5wH+VcQtI
-   syANQrMw0FAun/yhUKYoqZz9zBKs/fI8DZJQQugGzGQSAYb0sPO6Uyg3+
-   jK7GVeWWDrexHILIBCfxnEcdyKeykAi0nxDm/MB+XVGgtbTnC7d04QCT3
-   ZOvP+Xim+9xHianOZxZ5n59nPy+oxJbnzFFf5A+MNice2U0EAoPCaLp95
-   l4VxNxSuFbl7AqQUfEcZg3Rh+tbXtlnOyiVkimGlfIRLr+HwnL9oRRQVD
-   z8lguE6us5+snx3KJQNJpIo9PqOXQqNMrDmbDwG1DnDI5kgGoUBhvxujL
-   w==;
-X-CSE-ConnectionGUID: HzQKKNy5Rnilm/Fb5GQSAw==
-X-CSE-MsgGUID: EDXbe70DSvWgOEjl6TQvPw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11160"; a="25341572"
-X-IronPort-AV: E=Sophos;i="6.09,280,1716274800"; 
-   d="scan'208";a="25341572"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2024 16:54:10 -0700
-X-CSE-ConnectionGUID: G3SzeE3bQJKREYtogpp9JA==
-X-CSE-MsgGUID: 80sDJ7y7RxqrcWtRJ7Bj1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,280,1716274800"; 
-   d="scan'208";a="62566866"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Aug 2024 16:54:09 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scvuQ-000AOn-2W;
-	Sat, 10 Aug 2024 23:54:06 +0000
-Date: Sun, 11 Aug 2024 07:53:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maximilian Luz <luzmaximilian@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: oe-kbuild-all@lists.linux.dev, Maximilian Luz <luzmaximilian@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (surface_fan) Change dependency on
- SURFACE_AGGREGATOR_BUS to 'select'
-Message-ID: <202408110753.1wxzPUwV-lkp@intel.com>
-References: <20240810214709.425095-1-luzmaximilian@gmail.com>
+	s=arc-20240116; t=1723334080; c=relaxed/simple;
+	bh=6P0A7FpSLHTGitN9MQjoscGYq7XoUHY7xMizbSAh+k0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=OLcEablW7hUuuCQcDZE0N+CAeA76bOav0lhZkNVPL3Dz6yHSBXWyE7fvbq6L4sO5t231noecnk1Cvd8kHpMD5WIZ41HWNOwVAxfgMGXvRp+t/RYQV1x65vYloP0Ep6yjXygLLYdBHjZnHIQoQY7/hKGjfm43fD/c43oXH9ViGN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Le7wwKbQ; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 4ED91138FE11;
+	Sat, 10 Aug 2024 19:54:37 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Sat, 10 Aug 2024 19:54:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1723334077; x=1723420477; bh=m354HSntUIw53mWwYckb3QrVoIhw
+	BudqJw1LrOjJosM=; b=Le7wwKbQi7oYt9UzKSLW7e0kkZWkCc9y6i03i0VRNg55
+	+dFc9KriAe53A/rlOSpO03ImDGmYiza0qRH6ZpEx2Tpu43/RNp6bBZZS/YoTraNX
+	3rYub5D2h5JJWQaSxbM6/Z3XYlr1827kFxqtLReMB7Sg+6ZoXH9i4LxrUXctWHsK
+	iC1KJQ+8Xxu1xLiZkj1b6eqAZmYSYSuILs5sZHLkuzOvqOHRdRB3i61UqyEQy79m
+	XdIE3A/+yRikAXSYrDKtHYma6j8uQztLJgz17L1V7LNtYnzPeecDofihXDVOs1nq
+	pQVNM8r/8fRW/k7XKxZqo5FW8tQq128Fjhe/XIonIw==
+X-ME-Sender: <xms:vP23ZgCqEC1IIzBVDH_rD-E5madC9V6RkzRNCdBQrxC6NaKhvDACjg>
+    <xme:vP23Zih-yijOubFJdzFZnGIdkdkuSbrm7uaZpYcWgZO1WNT4quVcvQJsuhW39c1m9
+    MOYKT96VtOkBKz46FY>
+X-ME-Received: <xmr:vP23Zjn_zz9zr7w7mx_GqFYZ4FvIKk5FirIK0oYG81_QnGjp0x5Bk1ELjYu1URg-o_BGvhUjQbWnBN3cxR6ClZ-7N-_K56pOUtE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleejgddvlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfh
+    rhhomhephfhinhhnucfvhhgrihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdroh
+    hrgheqnecuggftrfgrthhtvghrnhepleeuheelheekgfeuvedtveetjeekhfffkeefffff
+    tdfgjeevkeegfedvueehueelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghr
+    tghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgvvghrtheslh
+    hinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepghgvrhhgsehlihhnuhigqdhmieekkhdrohhrghdprhgtph
+    htthhopehushgvrhhmheejseihrghhohhordgtohhmpdhrtghpthhtoheplhhinhhugidq
+    mheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:vP23ZmxNTAaDTsqfSZHpDiKpSqOulMP9-X-_8m6wRfWvEqbsHWectA>
+    <xmx:vP23ZlTD3394Xfipf3g3H2mOloVHS5_aXrVDE8Z69tMGwKw5zhLw6Q>
+    <xmx:vP23ZhY_GuYjj5qA8rrV4bNGih4Emfr_tfeHaJzQPEd4-SurHhiIow>
+    <xmx:vP23ZuQxwDw0Yv7JBMO0SMJmohq5sfLECx6xl9xoX7JAgsOoQTPQVw>
+    <xmx:vf23ZuICurxguAF7gShVSGunD0D1xPW2IddGUvd6QNQ1h_uLDEeUhyix>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 10 Aug 2024 19:54:34 -0400 (EDT)
+Date: Sun, 11 Aug 2024 09:54:42 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: Christian Brauner <brauner@kernel.org>, Greg Ungerer <gerg@linux-m68k.org>, 
+    Stan Johnson <userm57@yahoo.com>, linux-m68k@lists.linux-m68k.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] m68k: Fix kernel_clone_args.flags in m68k_clone()
+In-Reply-To: <CAMuHMdURykHCL1KEvgK=yC5sW-DAkEo+C+bbOBMUsbhD8aPSMw@mail.gmail.com>
+Message-ID: <1f7aadab-29f2-b8fa-4d5f-090fc49cf0b2@linux-m68k.org>
+References: <ac8100050f448caa1dc46c131079e615e73021a4.1723273396.git.fthain@linux-m68k.org> <CAMuHMdURykHCL1KEvgK=yC5sW-DAkEo+C+bbOBMUsbhD8aPSMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240810214709.425095-1-luzmaximilian@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Maximilian,
 
-kernel test robot noticed the following build errors:
+On Sat, 10 Aug 2024, Geert Uytterhoeven wrote:
 
-[auto build test ERROR on groeck-staging/hwmon-next]
-[also build test ERROR on linus/master v6.11-rc2 next-20240809]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> >         /* regs will be equal to current_pt_regs() */
+> >         struct kernel_clone_args args = {
+> > -               .flags          = regs->d1 & ~CSIGNAL,
+> > +               .flags          = (lower_32_bits(regs->d1) & ~CSIGNAL),
+> 
+> While other architectures (nios2, sparc, generic code) do use
+> lower_32_bits() in similar code[*], IMHO this is misleading here, as
+> regs->d1 is never 64-bit.  What you really want is to avoid the sign
+> extension in the promotion from signed 32-bit to unsigned 64-bit.
+> So I think a cast to u32 makes more sense?
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maximilian-Luz/hwmon-surface_fan-Change-dependency-on-SURFACE_AGGREGATOR_BUS-to-select/20240811-054808
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20240810214709.425095-1-luzmaximilian%40gmail.com
-patch subject: [PATCH] hwmon: (surface_fan) Change dependency on SURFACE_AGGREGATOR_BUS to 'select'
-config: x86_64-rhel-8.3-rust (attached as .config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240811/202408110753.1wxzPUwV-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408110753.1wxzPUwV-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> error: recursive dependency detected!
-   symbol GPIOLIB is selected by I2C_MUX_LTC4306
-   symbol I2C_MUX_LTC4306 depends on I2C_MUX
-   symbol I2C_MUX is selected by MPU3050_I2C
-   symbol MPU3050_I2C depends on IIO
-   symbol IIO is implied by HID_MCP2221
-   symbol HID_MCP2221 depends on HID
-   symbol HID is selected by SURFACE_HID_CORE
-   symbol SURFACE_HID_CORE is selected by SURFACE_HID
-   symbol SURFACE_HID depends on SURFACE_AGGREGATOR_REGISTRY
-   symbol SURFACE_AGGREGATOR_REGISTRY depends on SURFACE_AGGREGATOR_BUS
-   symbol SURFACE_AGGREGATOR_BUS is selected by SENSORS_SURFACE_FAN
-   symbol SENSORS_SURFACE_FAN depends on HWMON
-   symbol HWMON is selected by EEEPC_LAPTOP
-   symbol EEEPC_LAPTOP depends on ACPI_VIDEO
-   symbol ACPI_VIDEO depends on BACKLIGHT_CLASS_DEVICE
-   symbol BACKLIGHT_CLASS_DEVICE is selected by FB_BACKLIGHT
-   symbol FB_BACKLIGHT is selected by FB_SSD1307
-   symbol FB_SSD1307 depends on GPIOLIB
-   For a resolution refer to Documentation/kbuild/kconfig-language.rst
-   subsection "Kconfig recursive dependency limitations"
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yes, I think your solution is better.
 
