@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-281670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A366E94D9B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:18:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A341094D9BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21BE6B22023
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:18:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D4F41F22D57
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480044438B;
-	Sat, 10 Aug 2024 01:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333FD3C463;
+	Sat, 10 Aug 2024 01:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iM27uoS5"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMNgrZye"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E807D611E;
-	Sat, 10 Aug 2024 01:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E9F347C7;
+	Sat, 10 Aug 2024 01:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723252684; cv=none; b=j8Wl0pk40t/w0C/xFYZiyvhgTC1sT5WxG2MPyAUEYUYKEsivZDNBvB3dJ3vtBRhg76QtfvNJyH/Z9mm6WfzkFWZuvmvR5XDYvCdwLtlUHbrHtUMEhPd8yEuTIL3WlQ0SuhgOKPJFMLayItC2O/KI1gWHc+1Oo9tOPyP6YGgBdNY=
+	t=1723252788; cv=none; b=brcM5h9CgKuDI8J5CWzzbAWbvaBC1W/jYHNg5zzHxv7S0Bum4oW2vzGb8bnR28P1EewaOvrWUI2NE91GscWq2C9RR4rodvP+RcwhGdipk6XoVXc6vNCbVJSGe0btDnAJqQtaFesMGrHE+a8PT3Waumctj+tEC5X4h+Q2IjP3qCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723252684; c=relaxed/simple;
-	bh=FbqkE5Z1mqOjU6e9oJ9gni56OCinpzmu9lx2bC1HRgo=;
+	s=arc-20240116; t=1723252788; c=relaxed/simple;
+	bh=xvFJ5qXzptSAzs6ufRw0K7CflT3GapudSbUz1XEx3p0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T7vhfU7bkD8F9ezFhrB6eEq9fes1Ro6YBF2+mROjhpW7Ec6aMgiShDY0Y8x3V9EgAxPO560NmWH3ROcy+7JPRXVqdueiaF53HCZsZieCZY526nQhhmnSWf4aUMRWohglQ/+TO7xJ+gCbWtNXiliuFibRan8UCpSMUQSsh20a0o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iM27uoS5; arc=none smtp.client-ip=209.85.167.49
+	 In-Reply-To:Content-Type; b=S4cGNRdfQZOE4biHM6zmh86S/00jEY/u+bfYoMOsMRQ131MG8M2OzibINRlT2S+B1EzkPMMRNaKmsONhfGIAVC19w2BgQ1guhZRae+25j07x+E7qWxsvURyngKK3LHTwbL2Pdn2VPtVgEowm/Tpk59M+H6o73syGVVuLxN1Ceq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SMNgrZye; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-530d0882370so2542031e87.3;
-        Fri, 09 Aug 2024 18:18:02 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-36d2a601c31so1054609f8f.0;
+        Fri, 09 Aug 2024 18:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723252681; x=1723857481; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723252785; x=1723857585; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=WiHyUKVkySZubcJbigoVW/AddydrPdWYeFB33p+5Ops=;
-        b=iM27uoS5gDBUJuhH6IlqLbm1Jkd/QGg2bqVePr3JBadIChy8J6zuQ8LLvzq8EmA7Qu
-         1XqUNmYFpPhmKqJVwBbG7hSS7N4ncu8/Sunc7oXO/ca2YEcTaFhjqNmTfqNOgygdHmVU
-         sw9dCvWPU1rygfeFcx0x7W2zviD5UdjwrenVF2xrkTc73kN/CTNHxUSf6oy+cD9FspjD
-         jFknL51iw15EYDEsLaqleVmeJZG/ZztxBAflo7hKforsBxoslItAlh1BhedtnETK/lpE
-         wCf+BsAncemHtmB0hSFqqjoARIFKf+T2qEqfsvZ+W1+xUgclXF7vraK7skKBxj3mfXAi
-         KjpA==
+        bh=Ed27wLGIi8TfTxQJR9Xp4Dn3qUixlhgtcR9BAz+hQCA=;
+        b=SMNgrZyeBaULlM3TrPAFjzI/ojU8utbtJewDB1TIOthJQGu2HIlbsRggIqGx3iY7x0
+         7g/x4WwfTsHPSRZ9kxZ/kiggAkmHT42ch8ZjdqVm/GnM01M+wznzdFJWF+AWPz/q1xt9
+         PxVIvEXcd7hJFhzr8Hgs/SBbZ2P16GmAZtOjsx0PzCHdd2IR3VAxuKu7ziQstIHERYFG
+         g7NgjRS8uXm5lj4xZrO/ivst17xeQXxwP+cO64EJpPWku4ceSrdcX6ZO4icBs80iczhH
+         kbk1Ftz1QFBnr6V2mZsL0GyufGWRNWrsSrUcf3HVqjBG6JuuBNgN0Ek4w+PrGFXadaYt
+         DB5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723252681; x=1723857481;
+        d=1e100.net; s=20230601; t=1723252785; x=1723857585;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WiHyUKVkySZubcJbigoVW/AddydrPdWYeFB33p+5Ops=;
-        b=jN1ih0ChWPrpmGBP533BfzOcVTgJUIA2VDO0O5dDDOjm2E+TC9lNMBdezDAHSRi4tA
-         DitiFNJS/SpiwhlZyD9X6uYM04hM3nplwY+V4t8QPXKaz1Q0mU0dImgUHEpfMVoLM0ZY
-         CjkpiuDbZFAhNyBSjAghIMJaPHBSbPNu3KkbHrSbUi1eE4JvyiqF/9JiqiywrAWapQC2
-         V1Q+mw9G8LaBsNAVdoGEDRtmUR8PZkHPFllWrknuM2nZXORj2Cez/M6YbdHqHstnHYya
-         6mNNeTjDUDuX0uqCWGBsjTvnMOu9nAuwlOtgmiKDlTtIZSO1IHtWeKAxlKOd1TURiWI1
-         9wnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAk0XJhUyCtiDGvA3Kh18RWI0ibjV8xxNSJ7Y4FQrdSGOalk8ebf7e+F93QGLZkao3bOuGQWnQfPIl3XvyFaQvS4nEBQsJFzzn3wW6Cy5/zNDF0OhuHpQci6oLMq3HU5/pZpHkux2reqgOsJ1k8ZjQ0EdLB7R/U0dPev9Wg+/lJ+fDZ4j4zQtXQrJXpE4+Z72mwYdI8JlEdgUSGgjARqWY1j3KnXHqqFe5uWvCzZU3TG0+AEOUUyungsOZOBNSjWffcd5CThbK
-X-Gm-Message-State: AOJu0Yw2zt9jO+VJKkCA1JTCnfGLTqJzn/jF4loFRKzfTDpfj6VPlY92
-	cRIG2qbTSvP0qHYm9Fcan8AUsAfKDtFh/RtFpCJM6HuXrKOEtSXd
-X-Google-Smtp-Source: AGHT+IEa1szWAiYYE3Q8w0SfO4rsdTq5qK8AyQqTLdz7t3BCORmboLathkL4jOxjT9WqDsr+4sdsnQ==
-X-Received: by 2002:a05:6512:3d09:b0:52c:f3fa:86c with SMTP id 2adb3069b0e04-530ee979d95mr2452518e87.18.1723252680431;
-        Fri, 09 Aug 2024 18:18:00 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb09007asm25022066b.4.2024.08.09.18.17.58
+        bh=Ed27wLGIi8TfTxQJR9Xp4Dn3qUixlhgtcR9BAz+hQCA=;
+        b=CfZNH17A/ufSheDKV8lfWUAyLw67cmCSNo2qyja9TXVrg8P0NdTN5DF5Hd3PjI6Meo
+         3/rGyTuJNa4BiHpa4+BCyzKyUj7nR7ImqiUfhsAnoV0xHo2VfGkEx20JeN72eTE9ZeTa
+         h4zFw7opQliP/QfoWqB+jOC4rzu2LOJR+Kf6tl3juOcww6dXlnu4XPV0i5PaILgssZa/
+         UQXx6U0DJsYXhskKubCishHpw6ZTP0hExFiyNJDpWiEvVSgOiu+5cgLnd6uKNbMl/fr4
+         HsC7we+6P299SyW8USZXOLF25tNKnn4UpvHBsT7OD2udzeaxCasn31neAarRgDpBZYWz
+         xXPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmqsMXRez8gXK1YcTKcbul1LgfZXc7QAUrdZI5tdo9Hj4/5+I69MfaghjUfeHROTWiaM25EMVOWSKLUknVT5kf2btf8QfiS35fCsbDErzPj+fdhrPQNsB12ynhI34GTcVQwn9fdhUjNOM=
+X-Gm-Message-State: AOJu0Yw4iQPi1TKsTVuqN0mwkG0iqGSmPoDXnDAaAh/T44DAw76bgYQ3
+	zdm5aZBYK+m0XrBeidpR9N6Bw99iMbptEQt+7ECI6UmJK8lA5j7a
+X-Google-Smtp-Source: AGHT+IGlOuoPmSRMK0/G5JR5K6t9fbYw142XeGbhQM/kww2n3HQtaq1P/i4K65m3+WJV7P9xvecwDg==
+X-Received: by 2002:adf:b1dd:0:b0:367:434f:caa2 with SMTP id ffacd0b85a97d-36d5ad9c793mr2195752f8f.0.1723252784638;
+        Fri, 09 Aug 2024 18:19:44 -0700 (PDT)
+Received: from ?IPV6:2a02:8071:b783:140:927c:82ba:d32d:99c1? ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e48c784basm862675f8f.0.2024.08.09.18.19.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 18:17:59 -0700 (PDT)
-Message-ID: <b4e8b275-bc5f-4a8e-9f78-20ca5b67977e@gmail.com>
-Date: Sat, 10 Aug 2024 03:17:57 +0200
+        Fri, 09 Aug 2024 18:19:44 -0700 (PDT)
+Message-ID: <8ce2ae38-51da-470b-9d3a-7408b79cf6e4@gmail.com>
+Date: Sat, 10 Aug 2024 03:19:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,71 +75,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] platform/surface: Add OF support
-To: Maximilian Luz <luzmaximilian@gmail.com>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-References: <20240809-topic-sam-v1-0-05bca1932614@quicinc.com>
- <20240809-topic-sam-v1-3-05bca1932614@quicinc.com>
- <9ee8eb9d-1e1c-439f-a382-c003fbd7259c@gmail.com>
- <ea348f62-49e9-4b5e-9041-b0a696aaa736@gmail.com>
- <f9c9601b-737b-42d1-9449-2072afdec580@gmail.com>
+Subject: Re: [PATCH v2] hwmon: Add thermal sensor driver for Surface
+ Aggregator Module
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>, Hans de Goede <hdegoede@redhat.com>,
+ Ivor Wanders <ivor@iwanders.net>, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+References: <20240804230832.247852-1-luzmaximilian@gmail.com>
+ <2419e2ab-25e2-483b-a163-6b4fbfef6866@roeck-us.net>
+ <5d11350f-71b0-44fc-8631-01e1740581d6@gmail.com>
+ <5208afb1-92dc-43d3-b6ed-36a2fdd40ec7@roeck-us.net>
+ <b66f1fed-20a2-4de3-85c5-bf6fb90c2649@gmail.com>
+ <851fe373-471e-4892-addb-343d84334daa@roeck-us.net>
 Content-Language: en-US
-From: Konrad Dybcio <konradybcio@gmail.com>
-In-Reply-To: <f9c9601b-737b-42d1-9449-2072afdec580@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Maximilian Luz <luzmaximilian@gmail.com>
+In-Reply-To: <851fe373-471e-4892-addb-343d84334daa@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10.08.2024 3:15 AM, Maximilian Luz wrote:
-> On 8/10/24 12:44 AM, Konrad Dybcio wrote:
->> On 9.08.2024 8:09 PM, Maximilian Luz wrote:
->>>>    +static int ssam_serdev_setup(struct acpi_device *ssh, struct serdev_device *serdev)
->>>> +{
->>>> +    if (ssh)
->>>> +        return ssam_serdev_setup_via_acpi(serdev, ssh->handle);
->>>> +
->>>> +    /* TODO: these values may differ per board/implementation */
->>>> +    serdev_device_set_baudrate(serdev, 4 * HZ_PER_MHZ);
+On 8/7/24 10:37 PM, Guenter Roeck wrote:
+> On 8/7/24 13:11, Maximilian Luz wrote:
+>> On 8/7/24 9:50 PM, Guenter Roeck wrote:
+>>> On 8/7/24 12:25, Maximilian Luz wrote:
+>>>> On 8/7/24 2:32 AM, Guenter Roeck wrote:
+>>>>> On 8/4/24 16:08, Maximilian Luz wrote:
+>>>>
+>>>> [...]
+>>>>
+>>>>>> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+>>>>>> index b60fe2e58ad6..70c6385f0ed6 100644
+>>>>>> --- a/drivers/hwmon/Kconfig
+>>>>>> +++ b/drivers/hwmon/Kconfig
+>>>>>> @@ -2080,6 +2080,16 @@ config SENSORS_SURFACE_FAN
+>>>>>>         Select M or Y here, if you want to be able to read the fan's speed.
+>>>>>> +config SENSORS_SURFACE_TEMP
+>>>>>> +    tristate "Microsoft Surface Thermal Sensor Driver"
+>>>>>> +    depends on SURFACE_AGGREGATOR
+>>>>>
+>>>>> As the kernel test robot points out, this dependency is wrong.
+>>>>> __ssam_device_driver_register() is only available
+>>>>> if SURFACE_AGGREGATOR_BUS is enabled.
+>>>>
+>>>> Right, I should have spotted this before submission, sorry. This should
+>>>> be
+>>>>
+>>>>    depends on SURFACE_AGGREGATOR
+>>>>    depends on SURFACE_AGGREGATOR_BUS
+>>>>
 >>>
->>> Isn't this defined in the DT spec that you're adding as "current-speed"
->>> in patch 2? Why not load it from there?
+>>> SURFACE_AGGREGATOR_BUS already depends on SURFACE_AGGREGATOR, so the extra
+>>> dependency is not needed.
 >>
->> Yeah and it's not under `required:`.. i added it for future proofing
-> 
-> Okay.
-> 
-> [...]
-> 
->>>> +static const struct software_node *ssam_node_group_sl7[] = {
->>>> +    &ssam_node_root,
->>>> +    &ssam_node_bat_ac,
->>>> +    &ssam_node_bat_main,
->>>> +    &ssam_node_tmp_perf_profile_with_fan,
->>>> +    &ssam_node_fan_speed,
->>>> +    &ssam_node_hid_sam_keyboard,
->>>
->>> Did you check if there are any other HID devices connected? In the past,
->>> keyboard and touchpad have been split into two separate devices, so is
->>> it a combo keyboard + touchpad device this time? Some models also had
->>> HID-based sensor and other devices.
+>> Unfortunately, SURFACE_AGGREGATOR_BUS is a bool and SURFACE_AGGREGATOR
+>> tri-state, and the inference of whether SURFACE_AGGREGATOR needs to be
+>> built in or not breaks because of that. Meaning we could have something
+>> like
 >>
->> No, touchpad is wired directly to the SoC via QSPI, same for the touch
->> panel
+>>      SENSORS_SURFACE_TEMP=y      (tri-state, module)
+>>      SURFACE_AGGREGATOR_BUS=y    (bool, optional-code-flag)
+>>      SURFACE_AGGREGATOR=m        (tri-state, module)
+>>
+>> because SURFACE_AGGREGATOR_BUS is fine with either m or y. But in
+>> reality, SENSORS_SURFACE_TEMP=y would require SURFACE_AGGREGATOR=y.
+>>
 > 
-> Ah I see. So somewhat similar to the SLS2 I believe. Does it work with
-> multiple fingers out-of-the-box? Or does it send raw heatmaps like on
-> the SLS2 that require post-processing?
+> Ah yes, I can see that the double dependency is there everywhere. Normally I'd
+> have assumed that to be handled with SURFACE_AGGREGATOR_BUS as non-configurable
+> option and its users selecting it, i.e.,
+> 
+>      depends on SURFACE_AGGREGATOR
+>      select SURFACE_AGGREGATOR_BUS
+> 
+> but, sure, it is your call to make SURFACE_AGGREGATOR_BUS a configurable
+> (instead of selectable) option. I don't understand the benefit of being able
+> to enable SURFACE_AGGREGATOR_BUS without any users, but then maybe I just
+> don't have sufficient understanding of the context.
 
-We'll see when the QSPI driver for this soc is done ;)
+No... you're completely right. "select" does make more sense.
 
-Konrad
+I'll add a patch to change that for surface_fan as well for v3 (and then
+I guess slowly update it for the other subsystems too).
+
+Best regards,
+Max
 
