@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-281953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB10994DD6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:01:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5EE94DD70
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 138431C20C4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:01:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E13E4B21665
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6A1160887;
-	Sat, 10 Aug 2024 15:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7D315FA85;
+	Sat, 10 Aug 2024 15:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4OBHjDa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+HdHYxe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD0922F19;
-	Sat, 10 Aug 2024 15:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B456E22F19;
+	Sat, 10 Aug 2024 15:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723302090; cv=none; b=Qbneb4j04gPgTJL4dlTLqWpuqWyEoS6KN35V4Bl/HJ/IUayAVGoFD+Q5NOGvkip+mgrFj85LBh9RKWwIRms34q0TIiXQsbq5ewp+zQC6aGduEAATVMhRHHo4r+rCf6MfZzLMdWPBT5+X+2ZvslIYVESof+n9OBrQoFSgz/sjLg4=
+	t=1723302155; cv=none; b=dsoyd5uzL9E4qRxpLAjCT3Fm7xJ4IsEq5g4frY4Ks/mAzlnwH1an04d85L5PnJlmvwOLkLpQXSiDSjsEA4eSK7SU85QxzmPowM9zKHIxitxlry+VGeuHPYjn8ksJiFeo68Hppwu8OzJrufJDvJFR61HAXlRloO85QsQGPUvs8mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723302090; c=relaxed/simple;
-	bh=WqZr764VG+6RGtpCUqRo7kbO8EuyA1ULgDH83LvHGlc=;
+	s=arc-20240116; t=1723302155; c=relaxed/simple;
+	bh=bpKMjFWUW7toItj/pj+ZBkopdB7KxryNY5WZTZXJASI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OdWoVUUH7tCFJiCxJ5Zsi3okKvJJJ4kMM0yQdDOMfMDBYiGmFQ7XlmyV89sAUouWZHtxgJ29KJfp6o+TCZQAcXYwAonimdPNiEHd3pcJx+AxIOR3fPMnryTmFDZweNBBOAnGWo0nKxh3zZgwa3gnmSg+zV/9MFyILi4NSRbnSWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4OBHjDa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B986C32781;
-	Sat, 10 Aug 2024 15:01:25 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=GKE6DYTNyrev7C4IjUbvhVKIl6yM1ko+wT5F2v6XfuTe3ELoQGGr527bZQATGurThQkLb+beJtQgGY3enqkHo94A0CXcILXw4hG0BwuAEnxsl9C2GJ/cRKz1zX+NJmwN41vmeBaUy+SYLcOFENf/QDX053wLtMtK9txCFVzwMcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+HdHYxe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D053C32781;
+	Sat, 10 Aug 2024 15:02:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723302090;
-	bh=WqZr764VG+6RGtpCUqRo7kbO8EuyA1ULgDH83LvHGlc=;
+	s=k20201202; t=1723302155;
+	bh=bpKMjFWUW7toItj/pj+ZBkopdB7KxryNY5WZTZXJASI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L4OBHjDaZ9MeEPKWrnStmR/9LLqw/8dQQcPSsqLRIy9HWqIjr3GK6EvJEWqQQu1f1
-	 bH8PG/kbe++hb1ZoN9oIA6WSs/4SkAEPEHevsAN5/6V8aT710WVmWdq5nMaSIV0QCR
-	 0+ECWoDCsdeE7fkTxI1VcNFujFbA9EF6wZ+yvtcLk/11Uc9B+KL/ixkZgm2USpJtgT
-	 aJf41E2xqj+OGwcCceBFc8/gyeqo4z+oGgW5/1M481vST5inXOdeE8TE7qcKPJfRjr
-	 lvMRY/z3Hs5w5RZmuh4auarZyX786v/2H05NwIzrRosWrqX0HMZytusXtuhYJmmTTg
-	 HX++wGLOIx1Zg==
-Message-ID: <4608d029-9cad-4de7-b8be-aeecf6768bc8@kernel.org>
-Date: Sat, 10 Aug 2024 17:01:23 +0200
+	b=h+HdHYxevX7q7VzingiDmeGmxpaul08z3JEt5z4Wcpo5uvrcBA+6B5Y0LZDcIC7Er
+	 76y9MaSkHAVis02lGNat1Gaqakt5y45L/h9uHTrBiKPruTymTPMNszXfELIsVzGKeg
+	 +QXDiRjc5TTscQG2QlsYKg0AFQvhyfAMjHNi1ItF/hWCRWKsB/ZeSXcRTQlNjyfoQH
+	 plH7n2JiwPpH5SIBhgAheZH9WXut8T5VOGLZDEyTLxF7OwgAu1Dn2xR4VRvXCgI5cW
+	 BVb/DWGrRAFPzejas6WMKaAh9NflvJrkqihE9JGgel77CktaTEet2NreEwP2fMcQVp
+	 s7bmt+xOaGkHg==
+Message-ID: <a65b3654-e123-4521-b753-6308ecd87a5d@kernel.org>
+Date: Sat, 10 Aug 2024 17:02:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] PCI: mobiveil: Drop layerscape-gen4 support
-To: Frank Li <Frank.li@nxp.com>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Zhiqiang.Hou@nxp.com,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-References: <20240808-mobivel_cleanup-v1-3-f4f6ea5b16de@nxp.com>
- <20240808172644.GA151261@bhelgaas>
- <ZrUJngABI8v3pN6o@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH v2 1/1] dt-bindings: net: fsl,qoriq-mc-dpmac: using
+ unevaluatedProperties
+To: Frank Li <Frank.Li@nxp.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ioana Ciornei <ioana.ciornei@nxp.com>,
+ "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240810145257.3617413-1-Frank.Li@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,27 +106,50 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ZrUJngABI8v3pN6o@lizhi-Precision-Tower-5810>
+In-Reply-To: <20240810145257.3617413-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/08/2024 20:08, Frank Li wrote:
-> On Thu, Aug 08, 2024 at 12:26:44PM -0500, Bjorn Helgaas wrote:
->> On Thu, Aug 08, 2024 at 12:02:16PM -0400, Frank Li wrote:
->>> Only lx2160 rev1 use mobiveil PCIe controller. Rev2 switch to designware
->>> PCIe controller. Rev2 is mass production chip and Rev1 will be not
->>> supported. So drop related code.
->>
->> I'd love to drop this, but only if you're confident that no Rev 1
->> controllers are in the field with people using them.  The explanation
->> above doesn't go quite that far.  It's not enough that Mobiveil
->> doesn't want to support Rev 1.  If we know that all Rev 1 controllers
->> have been destroyed, that would be perfect and useful to include here.
+On 10/08/2024 16:52, Frank Li wrote:
+> Replace additionalProperties with unevaluatedProperties because it have
+> allOf: $ref: ethernet-controller.yaml#.
 > 
-> I can't guarrantee all Rev1 have been destroyed because some may left on
-> someone's drawer or lab. How about drop all document firstly,
+> Remove all properties, which already defined in ethernet-controller.yaml.
+> 
+> Fixed below CHECK_DTBS warnings:
+> arch/arm64/boot/dts/freescale/fsl-lx2160a-bluebox3.dtb:
+>    fsl-mc@80c000000: dpmacs:ethernet@11: 'fixed-link' does not match any of the regexes: 'pinctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/misc/fsl,qoriq-mc.yaml#
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - Remove properties, which already defined in ethernet-controller.yaml
+> ---
+>  .../bindings/net/fsl,qoriq-mc-dpmac.yaml         | 16 +---------------
+>  1 file changed, 1 insertion(+), 15 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml b/Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml
+> index a1b71b35319e7..0a91d839382d0 100644
+> --- a/Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml
+> @@ -24,24 +24,10 @@ properties:
+>      maxItems: 1
+>      description: The DPMAC number
+>  
+> -  phy-handle: true
+> -
+> -  phy-connection-type: true
+> -
+> -  phy-mode: true
+> -
+> -  pcs-handle:
+> -    maxItems: 1
+> -    description:
+> -      A reference to a node representing a PCS PHY device found on
+> -      the internal MDIO bus.
 
-No, documents are LAST things which are being dropped.
+pcs-handle must stay because you must limit number of items.
 
 Best regards,
 Krzysztof
