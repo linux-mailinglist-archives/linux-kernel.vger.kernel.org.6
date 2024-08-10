@@ -1,193 +1,190 @@
-Return-Path: <linux-kernel+bounces-281897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A37994DCB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:21:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF4294DD07
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F7B32821B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:21:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE714B20FE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 13:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C8A158546;
-	Sat, 10 Aug 2024 12:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCcNXD2C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEA415886D;
+	Sat, 10 Aug 2024 13:07:26 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FA113E02A;
-	Sat, 10 Aug 2024 12:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A3F4502F;
+	Sat, 10 Aug 2024 13:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723292497; cv=none; b=b9qLIKxagQeXhMiWwPjyk7tE4e/+nNG8lcuiA0+oAroHPz9N0YIbbkgpuslxInUtUTzqZxAOaJeW0BR6kEwO6+PjVaOdpLbroglSotfMK6BZ12k1vPK61AXEc0g1Ub67JTIiAomRarjc107u5SaVFo6QkmYZ3ztW9M0+MIIhs3c=
+	t=1723295246; cv=none; b=GnbWRwB2pA3zxFpuCL2M0oKvUFfBU6SdHWFnfP78bTXZ/FQWIGoGoR4/RwB6rhjw3iBZo7t25tqomwvX6skNlgkIGnL9+gs2OYLB0NBw86K780sFS0VRe71fG3Y2rVQnuGrSd5nqrSP1T3vgOZ4rH+znZUVpf25GhoxJOTn12L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723292497; c=relaxed/simple;
-	bh=BUO7G27ozlxUWdCf9RP7tbhzzSrPxYy/G08Wuj3qLpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K7np6Pt0PXW2SiIr2DQfvcb8RwjmFP7UHhjF9RnH7pUmWp1hH8PQPbm0EdITVz3FGWNi5/h/7+l1kiaoGLe8Q7haDZ+6usYpae3f0S7+dQXmvLx0yCYqYZsJ3P0l/uTzUacRuLlipZ8l1OppnVSFB4nOjbIpAvoU1c4UR7a08l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCcNXD2C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E43C32781;
-	Sat, 10 Aug 2024 12:21:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723292497;
-	bh=BUO7G27ozlxUWdCf9RP7tbhzzSrPxYy/G08Wuj3qLpU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OCcNXD2CzuLrZ1X2Mc2SrEexHq31MgvQjnWU8QsftVzNaFkK3AsP9P/MSZ6usZKNW
-	 Oh+bQ1sv6Jq6Pj9hITzsbDpOrIq82BaycMfJ5tT3wbvnqZBL5O93ocR/kHo+Irl0GM
-	 Tm5pdUGT4JhO4WJvYP52GH4PTKJknNkEnmEvr76qdnmncQ0lg+BIagMTRy7xHT+dgJ
-	 jj1WVCqRew5OEgq60RWcZ0YwDyxw+eIV9g2T47BAhkXRQOGwJaxV0Lprbdy3BgOm3w
-	 sztzsXbHvzj6xt1ymDINmePmaabS/Wrq0lFi/d4TytRTzRTjPn/NgfK/ENnLeyyg5X
-	 RJU2T6ZtGnXyQ==
-Message-ID: <ac41ac85-fdf5-4aa8-953d-6b3ab3c23f37@kernel.org>
-Date: Sat, 10 Aug 2024 14:21:31 +0200
+	s=arc-20240116; t=1723295246; c=relaxed/simple;
+	bh=lA7wfsTzEeALFVA1uePvAiyAa2UikxL8+WrnzDm/SRo=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=IgaROTYh/+H+sgpSdFAH+1KCd8EsuIyGG2nAHPyEEVWuaDKVyc1niZzN8M6D8hDS5PRg8CJF7cy0YuxtjIZA2EpCGAoFggCNZIUrwmFp62aBY73jcoa1tcI6KYCTx5rK4fJROXUYZftjtOdBlFVb9Gy5Bv+NCW2FyDDu2oYrejs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:40214)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sclEN-009WSV-KQ; Sat, 10 Aug 2024 06:30:00 -0600
+Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:33268 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sclEM-00GlCe-80; Sat, 10 Aug 2024 06:29:59 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Brian Mak <makb@juniper.net>
+Cc: Kees Cook <kees@kernel.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+  "linux-mm@kvack.org" <linux-mm@kvack.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Oleg
+ Nesterov <oleg@redhat.com>,  Linus Torvalds
+ <torvalds@linux-foundation.org>
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+Date: Sat, 10 Aug 2024 07:28:44 -0500
+In-Reply-To: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net> (Brian Mak's
+	message of "Tue, 6 Aug 2024 18:16:02 +0000")
+Message-ID: <87ttfs1s03.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] arm64: dts: lx2160a: Change PCIe compatible string to
- fsl,ls2088a-pcie
-To: Frank Li <Frank.li@nxp.com>, Conor Dooley <conor@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- "moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- imx@lists.linux.dev
-References: <20240808153120.3305203-1-Frank.Li@nxp.com>
- <20240808-frosted-voicing-883f4f728527@spud>
- <ZrTphsdTZVsbiGo/@lizhi-Precision-Tower-5810>
- <20240808-linoleum-evasion-ad7111a2afc4@spud>
- <ZrTvB/3GGIhEOItT@lizhi-Precision-Tower-5810>
- <20240809-freewill-compactor-4f441a4a60bb@spud>
- <ZrZNzqDKUaOqzl7k@lizhi-Precision-Tower-5810>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZrZNzqDKUaOqzl7k@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1sclEM-00GlCe-80;;;mid=<87ttfs1s03.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/rrQC2FQR/9/Kgl9SrfSvI8sFe1P4ilOg=
+X-SA-Exim-Connect-IP: 68.227.165.127
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: 
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Brian Mak <makb@juniper.net>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 509 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 3.9 (0.8%), b_tie_ro: 2.6 (0.5%), parse: 1.02
+	(0.2%), extract_message_metadata: 15 (3.0%), get_uri_detail_list: 2.3
+	(0.5%), tests_pri_-2000: 13 (2.6%), tests_pri_-1000: 2.0 (0.4%),
+	tests_pri_-950: 1.04 (0.2%), tests_pri_-900: 0.79 (0.2%),
+	tests_pri_-90: 158 (31.1%), check_bayes: 144 (28.2%), b_tokenize: 7
+	(1.4%), b_tok_get_all: 43 (8.5%), b_comp_prob: 2.2 (0.4%),
+	b_tok_touch_all: 88 (17.2%), b_finish: 0.73 (0.1%), tests_pri_0: 303
+	(59.5%), check_dkim_signature: 0.42 (0.1%), check_dkim_adsp: 6 (1.2%),
+	poll_dns_idle: 0.84 (0.2%), tests_pri_10: 1.72 (0.3%), tests_pri_500:
+	6 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
-On 09/08/2024 19:11, Frank Li wrote:
-> On Fri, Aug 09, 2024 at 04:07:25PM +0100, Conor Dooley wrote:
->> On Thu, Aug 08, 2024 at 12:15:03PM -0400, Frank Li wrote:
->>> On Thu, Aug 08, 2024 at 04:55:14PM +0100, Conor Dooley wrote:
->>>> On Thu, Aug 08, 2024 at 11:51:34AM -0400, Frank Li wrote:
->>>>> On Thu, Aug 08, 2024 at 04:34:32PM +0100, Conor Dooley wrote:
->>>>>> On Thu, Aug 08, 2024 at 11:31:20AM -0400, Frank Li wrote:
->>>>>>> The mass production lx2160 rev2 use designware PCIe Controller. Old Rev1
->>>>>>> which use mobivel PCIe controller was not supported. Although uboot
->>>>>>> fixup can change compatible string fsl,lx2160a-pcie to fsl,ls2088a-pcie
->>>>>>> since 2019, it is quite confused and should correctly reflect hardware
->>>>>>> status in fsl-lx2160a.dtsi.
->>>>>>
->>>>>> This does not begin to explain why removing the soc-specific compatible,
->>>>>> and instead putting the compatible for another soc is the right fix.
->>>>>> Come up with a new compatible for this device, that perhaps falls back
->>>>>> to the ls2088a, but this change doesn't seem right to me.
->>>>>
->>>>> It can't fallback to fsl,ls2088a-pcie if fsl,lx2160a-pcie exist, which are
->>>>> totally imcompatible between fsl,ls2088a-pcie and fsl,lx2160a-pcie.
->>>>>
->>>>> Previous dtb can work just because uboot dynamtic change fsl,lx2160a-pcie
->>>>> to fsl,ls2088a-pcie when boot kernel.
->>>>>
->>>>> fsl,lx2160a-pcie should be removed because Rev1 have not mass productioned.
->>>>
->>>> Please re-read what I wrote. I said to come up with a new compatible for
->>>> this device, not fall back from the existing fsl,lx2160a-pcie to
->>>> fsl,ls2088a-pcie.
->>>
->>> According to my understand, It needn't add new compatible string if nothing
->>> difference. for example, it use fsl,vf610-i2c for all i2c without add
->>> new soc-specific fsl,lx2160-i2c.
->>
->> No, you should have soc-specific compatibles regardless. Just because
->> you got away with it once, doesn't mean I'm not going to complain about
->> it here!
-> 
+Brian Mak <makb@juniper.net> writes:
 
-Above... and here:
-https://lore.kernel.org/all/20220817202538.21493-2-leoyang.li@nxp.com/
+> Large cores may be truncated in some scenarios, such as with daemons
+> with stop timeouts that are not large enough or lack of disk space. This
+> impacts debuggability with large core dumps since critical information
+> necessary to form a usable backtrace, such as stacks and shared library
+> information, are omitted.
+>
+> We attempted to figure out which VMAs are needed to create a useful
+> backtrace, and it turned out to be a non-trivial problem. Instead, we
+> try simply sorting the VMAs by size, which has the intended effect.
+>
+> By sorting VMAs by dump size and dumping in that order, we have a
+> simple, yet effective heuristic.
 
-Uh, this is so confusing. You have fsl,lx2160a device with PCIe and
-fsl,lx2160a-pcie compatible. You claim that these are wrong. Instead of
-fixing driver, you use entirely different device's compatible?
+To make finding the history easier I would include:
+v1: https://lkml.kernel.org/r/CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net
+v2: https://lkml.kernel.org/r/C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net
 
-Wow, that's confusing.
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-> Rob:
-> 	What's current policy for this? Not only for this one. If new SOC
-> appear such as iMX10 (maybe many derived chip i.MX101, i.MX102...), there
-> are bunch of IPs, Do we need add fsl,imx10* for everyone, which most part
-> is exactly the same as old one and bloat binding doc.
+As Kees has already picked this up this is quite possibly silly.
+But *shrug* that was when I was out.
 
 
-NXP since early days was following this approach of having specific
-compatibles, so why changing it now?
-
-In general you need specific front-compatibles, except for different
-pinout or fused values.
-
-But that's not the problem here. Earlier confusion is the problem. This
-is very weird change.
-
-> 
-> 	I remember that I got a feedback that required provide the
-> difference during I try to add new compatible string. I am sorry, I can't
-> find origial dicussion thread.
-> 
-
-
-Best regards,
-Krzysztof
-
+> Signed-off-by: Brian Mak <makb@juniper.net>
+> ---
+>
+> Hi all,
+>
+> Still need to run rr tests on this, per Kees Cook's suggestion, will
+> update back once done. GDB and readelf show that this patch works
+> without issue though.
+>
+> Thanks,
+> Brian Mak
+>
+> v3: Edited commit message to better convey alternative solution as
+>     non-trivial
+>
+>     Moved sorting logic to fs/coredump.c to make it in place
+>
+>     Above edits suggested by Eric Biederman <ebiederm@xmission.com>
+>
+> v2: Edited commit message to include more reasoning for sorting VMAs
+>     
+>     Removed conditional VMA sorting with debugfs knob
+>     
+>     Above edits suggested by Eric Biederman <ebiederm@xmission.com>
+>
+>  fs/coredump.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index 7f12ff6ad1d3..33c5ac53ab31 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/personality.h>
+>  #include <linux/binfmts.h>
+>  #include <linux/coredump.h>
+> +#include <linux/sort.h>
+>  #include <linux/sched/coredump.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/sched/task_stack.h>
+> @@ -1191,6 +1192,18 @@ static void free_vma_snapshot(struct coredump_params *cprm)
+>  	}
+>  }
+>  
+> +static int cmp_vma_size(const void *vma_meta_lhs_ptr, const void *vma_meta_rhs_ptr)
+> +{
+> +	const struct core_vma_metadata *vma_meta_lhs = vma_meta_lhs_ptr;
+> +	const struct core_vma_metadata *vma_meta_rhs = vma_meta_rhs_ptr;
+> +
+> +	if (vma_meta_lhs->dump_size < vma_meta_rhs->dump_size)
+> +		return -1;
+> +	if (vma_meta_lhs->dump_size > vma_meta_rhs->dump_size)
+> +		return 1;
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Under the mmap_lock, take a snapshot of relevant information about the task's
+>   * VMAs.
+> @@ -1253,5 +1266,8 @@ static bool dump_vma_snapshot(struct coredump_params *cprm)
+>  		cprm->vma_data_size += m->dump_size;
+>  	}
+>  
+> +	sort(cprm->vma_meta, cprm->vma_count, sizeof(*cprm->vma_meta),
+> +		cmp_vma_size, NULL);
+> +
+>  	return true;
+>  }
+>
+> base-commit: eb5e56d1491297e0881c95824e2050b7c205f0d4
 
