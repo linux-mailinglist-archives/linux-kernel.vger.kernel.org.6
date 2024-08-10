@@ -1,274 +1,214 @@
-Return-Path: <linux-kernel+bounces-281786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2288A94DB4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:02:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FA294DB50
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B331B21EC7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:02:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C169A1F221E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8A414AD0D;
-	Sat, 10 Aug 2024 08:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBD414B081;
+	Sat, 10 Aug 2024 08:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PffINWOV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ExPgPpOw"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2033.outbound.protection.outlook.com [40.92.42.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D44495E5
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 08:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723276945; cv=none; b=Yq3RQBbNuc54FuI4qQronWSCi2+7afkgE9EE4L5QZ8NKxL+REKS2bZIN4Epxf0Qj5KMQUYsW9ADnGXIGpvouJR8dBsbk7oFKG2bzF4LTM3UrqDg4dE1EJZZrm8JClsocA8lefdg7i8vMg/0glrPxMo/aexEwcRpi7vFnrqtwaNg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723276945; c=relaxed/simple;
-	bh=ScafrKHLDmywyJAhuxq8zU3jN37C4ehxZ+0tG7NIiUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VsN526yzje/GfhYA5vCyzYYZo4gN1wiNa3qD4wTMek61sd2Vb7aFg7wyWIB6Fr+CSI3acL8gM+9elzKzsj76shEJP/Gr8rjV1wqyGm57ayGbqhOkTriAQ9VygRSvDDVvGEGoeAv/UMfP2h/9VIhy+FC64RcJkRNI+cNfISdX+yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PffINWOV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723276942;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UPjljH6iA3oWOviZCmtQ15dhjMJkybfiIUkL/U+qP9w=;
-	b=PffINWOVWheAFREfPa7qVTPe340dR3QzHAt2oBW7KvkN4SjLQ0cuIL7/QfsmE/EBIedp2z
-	stEJ0eXk/Dw+yNqivr+0Xs3JPjcpZVHRatwcCBzcYhyW/xfXQiKKM1JJRzKN81PnDnYvYl
-	MMo+gWXBlR9QO2AbywSG1vABoxi0Z/U=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-245-x_lKJJOiO_28CBsYzkq48g-1; Sat, 10 Aug 2024 04:02:21 -0400
-X-MC-Unique: x_lKJJOiO_28CBsYzkq48g-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-428fc34f41bso21126235e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 01:02:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723276933; x=1723881733;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UPjljH6iA3oWOviZCmtQ15dhjMJkybfiIUkL/U+qP9w=;
-        b=gl3HzinA0u4fmp6DZOu7Y94YbceT6xHGdnY23oElQVPNSP5a9/2jqKc/3RiILfBYSv
-         m9K1CsYx9/BwyKHt/vXe+1YSoNy9+x9ePXXBKgI01fz25xvBBJcSrccAvqwbZHjYIctA
-         j8EbJEeeOdcJswWUaEJkRVEmkrxVDxFoO2a+qAQtuOnM9o/kd5qpk3rVlKTy+rx11yu3
-         WN5X8x6iDvwAtuI8A/eptyxjJv0lc9rJ6tS/fJtLLQf5vpQSH5hC0gpb6c9SW8NnawoZ
-         9zc9uQyq3bulNShUfOBPc0aUldrLBW87Lrv6M9d0qhjcFMknbh21GxKPPzkgZ3Z4/yS3
-         UQPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcVcfwPDEyoAYZa0cmITYIJdHkkdBNlGp1ubL6Srkc9rxu3F2RBxMICNYfM1GeZXmHzA5Pq04Wh+MpzLOOuvM3Cj6DAFjJblAWe3R9
-X-Gm-Message-State: AOJu0YwZAMdCdRETIhbKwGl0En/11LBLKUcxA2bLTMRkLCyc37K2Gf4D
-	dcBE7eGSPMuyL/1MH+ReQGOj3F2W0XfKsihoq0v3j8AFx8pbE7fQDigjuphAZ3X5PDs9t2bKg49
-	0FDmGKJGXo2KhpV17S/IEmVNzayar+Bo70ADSGnaVoiMlspJIgCi9ZJN2i+vPCg==
-X-Received: by 2002:a05:600c:c1b:b0:426:6822:861 with SMTP id 5b1f17b1804b1-429c3a5a0eemr24962635e9.36.1723276933049;
-        Sat, 10 Aug 2024 01:02:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEswwbJndKkTgRmb2GZMwgJGUmCsGI2khfChZ1jJnnBT6x87O9kGvzmqv4CHnpklOnjHkE8XA==
-X-Received: by 2002:a05:600c:c1b:b0:426:6822:861 with SMTP id 5b1f17b1804b1-429c3a5a0eemr24962345e9.36.1723276932491;
-        Sat, 10 Aug 2024 01:02:12 -0700 (PDT)
-Received: from localhost (53.116.107.80.static.otenet.gr. [80.107.116.53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c750f0absm19507625e9.17.2024.08.10.01.02.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Aug 2024 01:02:12 -0700 (PDT)
-Date: Sat, 10 Aug 2024 10:02:09 +0200
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-To: Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	Alexander Lobakin <alexandr.lobakin@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Larysa Zaremba <larysa.zaremba@intel.com>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Jonathan Lemon <jonathan.lemon@gmail.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	David Miller <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Yajun Deng <yajun.deng@linux.dev>,
-	Willem de Bruijn <willemb@google.com>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xdp-hints@xdp-project.net
-Subject: Re: [xdp-hints] Re: [PATCH RFC bpf-next 32/52] bpf, cpumap: switch
- to GRO from netif_receive_skb_list()
-Message-ID: <ZrcegfBkreaOmRgV@lore-rh-laptop>
-References: <20220628194812.1453059-1-alexandr.lobakin@intel.com>
- <20220628194812.1453059-33-alexandr.lobakin@intel.com>
- <cadda351-6e93-4568-ba26-21a760bf9a57@app.fastmail.com>
- <ZrRPbtKk7RMXHfhH@lore-rh-laptop>
- <54aab7ec-80e9-44fd-8249-fe0cabda0393@intel.com>
- <308fd4f1-83a9-4b74-a482-216c8211a028@app.fastmail.com>
- <99662019-7e9b-410d-99fe-a85d04af215c@intel.com>
- <875xs9q2z6.fsf@toke.dk>
- <22333deb-21f8-43a9-b32f-bc3e60892661@intel.com>
- <8734ndq0cd.fsf@toke.dk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AD934CE5;
+	Sat, 10 Aug 2024 08:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723277038; cv=fail; b=SZ4MWGM9dsv83Pm3j/0+nVDKAPtUXg+s9c04xNj4oZikA25LNSVxnhYjpT813y3dtdw7eYvBaspdrLjQd7wcNsLXnI5J6e2GMxu0jc6P4/G7U9kjjlG/c4K7qFNHISKFwmNqBEDMjHsihNW2nTEj97CwkOhLFgeQA9E32xObLF4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723277038; c=relaxed/simple;
+	bh=f5u7/HOWtC3oS9BWDOOz4KxoWLRlqmrS7rql1RDNLSE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=XJE+RTtJ6y5ZZDr/O1UDeDVQj2VyDXE0PmiJ9TnvXcJNhy1P0JSbE10C60j8FDHDA5XwrMaz56zx8pMbIhiH9CgDzpw+sivEGaKK38pdmwgCjGvP5ZFz+HBNVBjhyBFt13K8W1VJoaowOAXaLCOD26oOjqDxHEJJQ1tnAVhSx+A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ExPgPpOw; arc=fail smtp.client-ip=40.92.42.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Qn6bYJo4DDY/gGFfQvSrRdsITQvs8skjGEbwvcQrSNnCJe3oJgTfLgTT4Wqxxx8cIWwI3Gi90QXJnnts38bUTpW9Uwm+h4MKDBXoUKAIRbcNJDuMb+43epSqypKTWJ3hFYIwudatVoFeVJFkfgYmDVU22DtMdICvriT3fNTBSpGuMNgHOw91NfwnDQrzQo+kQnkbxSfH/Tz/HuW33nni5YdkLt+2pQKQaXiSC5EIxLD1peczKZciUR7NeOFJTC1oSpB72Fk+Ldq/EJxa3RmD3Uzey535cFUsOeMEcT8L+axO+HorXTVjhPRXp65ultIdmgMSSDUjnwsweIMx2kDCxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Mi3Az0JRlQjKq+1wQWxafTGjvrVZazpXaXtVblE35I0=;
+ b=UYnZD0Oj3wMRJHlCX5cQjeqdDuW3AvRtxM8NLC2POMookpti+4iQ5WW1UopD1Si+K89vE4nMIpAvcZR/INQG1ulc+Tr0TLW31515g0UkdxY5dJ4GhJNA+YWeFtSSbfAA6V4j8fieibnhZfYxzy9XmGmlwQrkG2MhYhyergZnLJ769+1MM0KKBjaNG2zrD2cAyyjuyvvjJLDqrm2iViuYi6F4L6o/lW4coUu2OCddvi5uttip7H1QVIFIIuBc2SBPYfk7Hko2qZZghnj5SDE8F5Ifl0dEi95WkFKCAE+XQuI7Hivel7llW40RoXOfjljuCRpqsyuXoYtUQ7ctuFSBaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mi3Az0JRlQjKq+1wQWxafTGjvrVZazpXaXtVblE35I0=;
+ b=ExPgPpOwnbrurTK7djWgV13tvdz8XdX5Dryb17X6KKCy/UAUZyW4bD2tol3mYbhfk532EdRbA/NJc6moaYGVxMPjGryUgjfa1PJFUsPTaf+bk0nF+SjvFW/yJcGp6AhsW8zjwkzl8MynOmH3cZB9vSd4FTqo4JDnDxk2jHKdSDb5as3G5FJsUg7KXKebZcvse4kirdia4qeSzEQwYmPkAEwzhh48G2GRdEQp8p/kcdqepiJis2iTs2HPOgYkpwhOxHO9nmUYOOlWBqOZnmS9hN8cngF80CQ8QBuWeo7vMp5utXDc3oZ1FeflI7kwOzAwD5+pXPhCn3QNbgDVz4wZMA==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by PH7PR20MB5117.namprd20.prod.outlook.com (2603:10b6:510:1b0::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.24; Sat, 10 Aug
+ 2024 08:03:50 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%4]) with mapi id 15.20.7849.015; Sat, 10 Aug 2024
+ 08:03:50 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Guo Ren <guoren@kernel.org>,
+	Chao Wei <chao.wei@sophgo.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Hal Feng <hal.feng@starfivetech.com>
+Cc: linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v10 0/4] riscv: sophgo: Add SG2042 external hardware monitor support
+Date: Sat, 10 Aug 2024 16:03:13 +0800
+Message-ID:
+ <IA1PR20MB4953C5DB4AC5DF01236CE785BBBB2@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.46.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [fUL1MM2j2DHRk5Sq2Af3uE7/7Ch5OAk7b+ng64cyD6c=]
+X-ClientProxiedBy: TYCP286CA0154.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:383::19) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20240810080314.382409-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4vCVb17oaXeHlWt+"
-Content-Disposition: inline
-In-Reply-To: <8734ndq0cd.fsf@toke.dk>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|PH7PR20MB5117:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a649d99-a707-4c97-74bd-08dcb912f831
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799006|19110799003|15080799003|5072599009|461199028|1602099012|440099028|4302099013|3412199025|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	niZzoufR1FtIbRAcByuqxhSu52kGc7NGr53bu1N9OlUm2GTL8xpvIIPHC+RcrRGo04v0985rRt/FupH6Z2No50zvoWB9bMGBo8FPwDfXUlCUqxnSrRA23MwkhCsBB3JzaKaADIQW7PrT2IQdyDmeYYp3HMz2ysOKhThBu4wm+xy4dP6qxtyprhNG5VDAzq7PJ5uORazBFke66leW1bWO7HVUiyvb3fvouDGJZJVFokO1iwmUR6RtT1W8HwLfcnO+7n7vrWnd8ZrkJZRKJyC72Kcn99mD/t+zTY3dg/OqrVrgrjbMPZYRAi/N1YE5zXxzLytplV8KFjisUf9EA5ParZaENYQQGPUXcZ+VM9KTV8r14k6wG79+wxI1SQ4bDxZl2IV4JwkpFK7U0WB2ZiVs1XVs/AxvHelm52rSq0LVsTQ6xQBUuH7YicP1k7rmussnhdI3NZiRXozpnHCtlmfD5r5VehgM1tRDCdBZOK9C4OmXvqOmj/cU6lk6gJ5d+0KezhnWy30s2aPeaQ+tSfZC4E51cYbwyAh4yyDjVB2s1KvIEj5RoDBl2XHAAqV6NSE7rDGRNAuhRVl4VAzEvfgkfn/WhC/2sT3i54BEtzPCJGhC8TxIx66SKyFN4Dr65v/ppz3vX+3/kYlTd/wii76el4UXhEIpTa7HCzlbS84jR/N9Buf0NlCK7Mzs1Og97Z4lEHrRvsqGJVwuo1OTj0RGvxUbwpQBtrwl67QnAp8RzyX6mGJ3gbXQXql8SL9eldDeLJ8oIdYv/VlqnlZ8WEHdQTIwrr9a2wAQYBkapc9+ouoe5LggTih6r7y1swamXn3jUJ9oZ5bFInOCBtZBqxPmjw==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pTfspcu0mgXLvIxMq6VJAQwnU380kp6VKOrVsZk5+li5r2RUXs7rL8i9V/Rf?=
+ =?us-ascii?Q?naDMpI5CN4mhUOWknO1O7+YN37bWlruLgxU69pvl+I/8tymmsLqs970yVXk3?=
+ =?us-ascii?Q?zwm9Q75CRf5lvmVbNBEYctA99mRhRSS8185iA87X4JVbKCk9pQxZSwmIDC9u?=
+ =?us-ascii?Q?qJIIE5yCDJKFapI/sDKJtTi6NAgey/WxMAUSx5FWHtP7WJ482ynn7OJTyBdE?=
+ =?us-ascii?Q?aNRCELOPUGqC8aJsjL+Q+S0rqFEuIy2s31TdFGx/v7w6tpq7F6x55HgZ3XiR?=
+ =?us-ascii?Q?bOfYqzH/uH7QWAklfEXzpLlDqM2yxqMuyQXrCRgESGDZgB6+Ji/Bv1v0NUJK?=
+ =?us-ascii?Q?c/FRg+HM5I3WlSDultKiaJTFUYTehwe5jLf8H3l7sRm3/KBv73jdxGxHdmHl?=
+ =?us-ascii?Q?FgplLjXiw6kzhdrNmKaKxE1cvHeCUY7q/bjvkuIm5ADuhrsk9keUkPbzhft0?=
+ =?us-ascii?Q?ezJAY+dorKAc+uI95glpP3v8P7+RW5cv0+XeJSMuNuablP19WYrtSuiykUTo?=
+ =?us-ascii?Q?mko6JxBV4B8OYgcPAMXpYVuZ2UpUIvtlKGnFeUc649V5vgSFeejNhVBn/I9D?=
+ =?us-ascii?Q?DY/pBioRoAwTSEKsi3nifq3fH9qyq140kiaPZb+jZWas2SXhIuYTjsqsJyRK?=
+ =?us-ascii?Q?hEEforW0+vAPHjLUjoPEX98SQFx0mh4ZWza9MlOg21irIWo0SPV8av1SZ+4S?=
+ =?us-ascii?Q?42FHcSN3nUbgm9Rn3aCczKYUqIESwId9NHKf8lSp10iyVXiGXbnVdcYGDf5s?=
+ =?us-ascii?Q?bSac2cltgx/CptjMezhjr7GEh1Y4yqQUhriFG2DZDLFvGUf8Pxuz5Okzrmg2?=
+ =?us-ascii?Q?ydYuwLB/SJKzLXTilyL4vvxdxqLlo+WmcdrO2EgZIOeaSd7KznnBZX+lGVes?=
+ =?us-ascii?Q?YZnwMZbYRzuLuF+0rC6Cm3yyInKULPgLx2yjyKGEnMO8GtdyX/F8UaQ8LhuU?=
+ =?us-ascii?Q?MHVwGiFm5Ldb734ub+1PEU+FOmDXTGkZhgnLdstFZWXB5uY+ExdO339iFu+q?=
+ =?us-ascii?Q?0A+hsgoom7344HEAlNbWrzyZZousyL9snVVZi+s3vBge7b+uMMOwB7Bj/G/w?=
+ =?us-ascii?Q?g1V9ZnLbVmHyIp4wFEbB8EH23bz9Ql8FuMtdB01jlWPZNzu8jGkttr/URzcX?=
+ =?us-ascii?Q?UD4QD/bgSbcNDWDj7YdzTFipdEwbjeOn9FESRiUCq5DkHxdpLSQetCuzFtzT?=
+ =?us-ascii?Q?rhZBGzL9hsyIbwJeqvDXGVMqCk8+76rrGXLUqSTEcu4fIbtFJxAKI2PKgGc5?=
+ =?us-ascii?Q?a8N/2/w6MZymrkYS9wpb?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a649d99-a707-4c97-74bd-08dcb912f831
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2024 08:03:50.6542
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR20MB5117
+
+Add support for the onboard hardware monitor for SG2042.
+Can be tested with OpenSBI v1.5.
+
+The patch require the following i2c patch:
+https://lore.kernel.org/all/IA1PR20MB4953DB82FB7D75BF8409FFF4BBB72@IA1PR20MB4953.namprd20.prod.outlook.com/
+
+Changed from v9:
+1. remove missed wrong return value.
+2. add documentation for the other interface of the driver.
+3. rename repower_action to repower_policy.
+4. use break to unify "return 0" in is_visible function.
+
+Changed from v8:
+1. rename critical_action to repower_action, and add some comment
+2. remove unnecessary wrap function
+3. use guard macro to simplify mutex process.
+
+Changed from v7:
+1. add mutex protected and fix the return value when writing
+"critical_action"
+
+Changed from v6:
+1. restore the driver name to sg2042-mcu
+2. remove unnecessary wrap function and check in the driver.
+3. add dts and config entry.
+
+Changed from v5:
+1. rename driver name to sgmcu as it will support more sophgo chip.
+2. move some attr to debugfs.
+3. add standard crit_hyst support
+4. add documentation
+
+Changed from v4:
+1. use fix patch for binding ref.
+2. use unevaluatedProperties instead of additionalProperties for binding
+
+Changed from v3:
+1. add thermal-sensor check.
+2. change node type from syscon to hwmon
+
+Changed from v2:
+1. fix bindings id path.
+
+Changed from v1:
+1. Move patch from soc to hwmon.
+2. Fix typo.
+
+Inochi Amaoto (4):
+  dt-bindings: hwmon: Add Sophgo SG2042 external hardware monitor
+    support
+  drivers: hwmon: sophgo: Add SG2042 external hardware monitor support
+  riscv: dts: sophgo: Add mcu device for Milk-V Pioneer
+  riscv: defconfig: Enable MCU support for SG2042
+
+ .../hwmon/sophgo,sg2042-hwmon-mcu.yaml        |  43 ++
+ Documentation/hwmon/index.rst                 |   1 +
+ Documentation/hwmon/sg2042-mcu.rst            |  77 ++++
+ .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |  60 +++
+ arch/riscv/configs/defconfig                  |   1 +
+ drivers/hwmon/Kconfig                         |  11 +
+ drivers/hwmon/Makefile                        |   1 +
+ drivers/hwmon/sg2042-mcu.c                    | 388 ++++++++++++++++++
+ 8 files changed, 582 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml
+ create mode 100644 Documentation/hwmon/sg2042-mcu.rst
+ create mode 100644 drivers/hwmon/sg2042-mcu.c
 
 
---4vCVb17oaXeHlWt+
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Aug 09, Toke wrote:
-> Alexander Lobakin <aleksander.lobakin@intel.com> writes:
->=20
-> > From: Toke H=F8iland-J=F8rgensen <toke@redhat.com>
-> > Date: Fri, 09 Aug 2024 14:45:33 +0200
-> >
-> >> Alexander Lobakin <aleksander.lobakin@intel.com> writes:
-> >>=20
-> >>> From: Daniel Xu <dxu@dxuuu.xyz>
-> >>> Date: Thu, 08 Aug 2024 16:52:51 -0400
-> >>>
-> >>>> Hi,
-> >>>>
-> >>>> On Thu, Aug 8, 2024, at 7:57 AM, Alexander Lobakin wrote:
-> >>>>> From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-> >>>>> Date: Thu, 8 Aug 2024 06:54:06 +0200
-> >>>>>
-> >>>>>>> Hi Alexander,
-> >>>>>>>
-> >>>>>>> On Tue, Jun 28, 2022, at 12:47 PM, Alexander Lobakin wrote:
-> >>>>>>>> cpumap has its own BH context based on kthread. It has a sane ba=
-tch
-> >>>>>>>> size of 8 frames per one cycle.
-> >>>>>>>> GRO can be used on its own, adjust cpumap calls to the
-> >>>>>>>> upper stack to use GRO API instead of netif_receive_skb_list() w=
-hich
-> >>>>>>>> processes skbs by batches, but doesn't involve GRO layer at all.
-> >>>>>>>> It is most beneficial when a NIC which frame come from is XDP
-> >>>>>>>> generic metadata-enabled, but in plenty of tests GRO performs be=
-tter
-> >>>>>>>> than listed receiving even given that it has to calculate full f=
-rame
-> >>>>>>>> checksums on CPU.
-> >>>>>>>> As GRO passes the skbs to the upper stack in the batches of
-> >>>>>>>> @gro_normal_batch, i.e. 8 by default, and @skb->dev point to the
-> >>>>>>>> device where the frame comes from, it is enough to disable GRO
-> >>>>>>>> netdev feature on it to completely restore the original behaviou=
-r:
-> >>>>>>>> untouched frames will be being bulked and passed to the upper st=
-ack
-> >>>>>>>> by 8, as it was with netif_receive_skb_list().
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Alexander Lobakin <alexandr.lobakin@intel.com>
-> >>>>>>>> ---
-> >>>>>>>>  kernel/bpf/cpumap.c | 43 ++++++++++++++++++++++++++++++++++++++=
------
-> >>>>>>>>  1 file changed, 38 insertions(+), 5 deletions(-)
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> AFAICT the cpumap + GRO is a good standalone improvement. I think
-> >>>>>>> cpumap is still missing this.
-> >>>>>
-> >>>>> The only concern for having GRO in cpumap without metadata from the=
- NIC
-> >>>>> descriptor was that when the checksum status is missing, GRO calcul=
-ates
-> >>>>> the checksum on CPU, which is not really fast.
-> >>>>> But I remember sometimes GRO was faster despite that.
-> >>>>
-> >>>> Good to know, thanks. IIUC some kind of XDP hint support landed alre=
-ady?
-> >>>>
-> >>>> My use case could also use HW RSS hash to avoid a rehash in XDP prog.
-> >>>
-> >>> Unfortunately, for now it's impossible to get HW metadata such as RSS
-> >>> hash and checksum status in cpumap. They're implemented via kfuncs
-> >>> specific to a particular netdevice and this info is available only wh=
-en
-> >>> running XDP prog.
-> >>>
-> >>> But I think one solution could be:
-> >>>
-> >>> 1. We create some generic structure for cpumap, like
-> >>>
-> >>> struct cpumap_meta {
-> >>> 	u32 magic;
-> >>> 	u32 hash;
-> >>> }
-> >>>
-> >>> 2. We add such check in the cpumap code
-> >>>
-> >>> 	if (xdpf->metalen =3D=3D sizeof(struct cpumap_meta) &&
-> >>> 	    <here we check magic>)
-> >>> 		skb->hash =3D meta->hash;
-> >>>
-> >>> 3. In XDP prog, you call Rx hints kfuncs when they're available, obta=
-in
-> >>> RSS hash and then put it in the struct cpumap_meta as XDP frame metad=
-ata.
-> >>=20
-> >> Yes, except don't make this cpumap-specific, make it generic for kernel
-> >> consumption of the metadata. That way it doesn't even have to be stored
-> >> in the xdp metadata area, it can be anywhere we want (and hence not
-> >> subject to ABI issues), and we can use it for skb creation after
-> >> redirect in other places than cpumap as well (say, on veth devices).
-> >>=20
-> >> So it'll be:
-> >>=20
-> >> struct kernel_meta {
-> >> 	u32 hash;
-> >> 	u32 timestamp;
-> >>         ...etc
-> >> }
-> >>=20
-> >> and a kfunc:
-> >>=20
-> >> void store_xdp_kernel_meta(struct kernel meta *meta);
-> >>=20
-> >> which the XDP program can call to populate the metadata area.
-> >
-> > Hmm, nice!
-> >
-> > But where to store this info in case of cpumap if not in xdp->data_meta?
-> > When you convert XDP frames to skbs in the cpumap code, you only have
-> > &xdp_frame and that's it. XDP prog was already run earlier from the
-> > driver code at that point.
->=20
-> Well, we could put it in skb_shared_info? IIRC, some of the metadata
-> (timestamps?) end up there when building an skb anyway, so we won't even
-> have to copy it around...
-
-Before vacation I started looking into it a bit, I will resume this work in=
- one
-week or so.
-
-Regards,
-Lorenzo
-
->=20
-> -Toke
->=20
-
---4vCVb17oaXeHlWt+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZrcefgAKCRA6cBh0uS2t
-rAWhAQCetdkAp+Z/1Ns5m03sBessZJS+q8gRJodpZZdXxU1EuAEAvK0zIPcM7BiO
-hwuk4Jk43IjVvL7JR6J8TLYC7G85KA4=
-=qu8K
------END PGP SIGNATURE-----
-
---4vCVb17oaXeHlWt+--
+base-commit: d2d190621b60d77496d36659e1621b20c897b25d
+prerequisite-patch-id: 5e7221ed1c63bb4d68e4a2a0141440e32d29e397
+--
+2.46.0
 
 
