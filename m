@@ -1,179 +1,191 @@
-Return-Path: <linux-kernel+bounces-281807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4396F94DB8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:45:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD2994DB85
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3900281833
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:45:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2CE1C20F8E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9241614A602;
-	Sat, 10 Aug 2024 08:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DCE14C583;
+	Sat, 10 Aug 2024 08:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ljiuYpet";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="74XQaywc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RxQTC84H";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="L9SKZ51N";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RxQTC84H";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="L9SKZ51N"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AF114C5B5;
-	Sat, 10 Aug 2024 08:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C842D14A619;
+	Sat, 10 Aug 2024 08:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723279521; cv=none; b=UiCLAsn7jfoBo37Xj/LSpzHBsoG8xMIjFt8w6cDBU/P/eQtV4JKPGLr1m5MXf6kj9lNZwZrpbjmOyXkVkTvH6r7052RNA6Y2geAfHlhQjVGcwwXq/ppf6CNDZ8TRiP73Up3/cmrK0ESJ+QOra07v1+EZaAXh9tCyK6JFmLvTwsw=
+	t=1723279485; cv=none; b=LPrgh8dwax4JYteMmxhAmLnfWztNrgeSqVWDVMax1HBxK11Fzi2M8U1oKYhiXyi1OztkQqmn/dvlKtrmjS1ptsrEdLUB0hvnkQ4Us+S4hmp+f1/m/6xGZWQWOBviWCP0dknFtGNzoIQTvqtt1PDgRuIix/GPZGD6CB3wwwF7vHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723279521; c=relaxed/simple;
-	bh=ilpXUuTUXGs5exW2A+RhdHqgfWS/fpbIuz78AEWYgCI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=AfI+wx2+yW2QDKg9oUhFxRz+re+WPPB37Z13Efsa+5DWAJFGpP8SJG2tPy1Eqir7u0pOrhSLeAqrxpzazMyMIBYo2DeQ1s7LWnakzcMnUDf4ap3+X2PqlgsksSi2se5zpbXx2IlMwbPb+A0u2RQxzBb0IpsyHH/5CqLPdKNjI2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ljiuYpet; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=74XQaywc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 10 Aug 2024 08:45:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723279518;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1723279485; c=relaxed/simple;
+	bh=c/RwEOaUSKi72KfqmIBZa825Bnw3eHT31tA7kOS3oH0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=afxXS17r0UgSM4b0BvWj+VPBBhw7L73ZLsR1ITdrveV2an1SKpEU/w5VXpkidtESHgpTnK8rv3KIQnonFSQhpu2wQulitBC6WmMUa+QJtMhQ103xnqUAQTN5f+wDAjYJEMxxhkThhTEHo6fGnAOpZgdflYeff/ZPU3/Z9wTtKhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RxQTC84H; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=L9SKZ51N; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RxQTC84H; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=L9SKZ51N; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BE70B22190;
+	Sat, 10 Aug 2024 08:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723279481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qoXMfZjLY0rWS4/ESdXfLyEJcJJFrL/q2UORtfRycsE=;
-	b=ljiuYpetE2p7mxRqnsOu3CXVVv0wxW397kSTSYSrNzVc8x1ieagvsHcBkjtVMoS3Pa5+ze
-	1Yu5Ayakpftf++5507xHyQK/mIA423gDw0TcyYRuot0zLR9x/ua8Zmb4u8ySF20+4sgJUY
-	rHp6cxygrOLuopck+Cft17TUOPqPwaoX7r+Ph1HAuroYBhPze/4v+QIdMaH6MTGQ16e91D
-	BS40BFZU2DGnz1s0vAoidrXZXEGwQGFBEd2P2BVItMwkJVKDHgKWwPTFVD1MpWCTt3Z5kk
-	SRzTxLM0IMyWKrkT9LQwAQc5jwnUpn1URwcn2xIl5Qd7KHxGWL6ADYMFstTmbw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723279518;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	bh=KxsbgKosTuzCKczBe+icPm36tufV1HnIqOg/8PB14oM=;
+	b=RxQTC84HcXmhzwzzN4gobnLun34okD6A3xUEeNboNuEsaS5tFmh3VEqLZrtopkp9rmMVoo
+	QYKhW+kHLVyzQY337QPCusCBEHD7hX/W0tJbgLwJXxuSI221zO1Q8Y1NO3GGzn9tojZNHv
+	H+Xr5dXAAR7cMO3P55voaWI9Fadevfg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723279481;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qoXMfZjLY0rWS4/ESdXfLyEJcJJFrL/q2UORtfRycsE=;
-	b=74XQaywcfwHVzMR3xL+MwKz50ZdbeBvkIjrBhiYt2tioElH3q8zFIzufyHxp4nsrzEZ34e
-	IqwtUnlc0SeeMTAQ==
-From: "tip-bot2 for Yong-Xuan Wang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/riscv-aplic: Retrigger MSI interrupt on
- source configuration
-Cc: "Yong-Xuan Wang" <yongxuan.wang@sifive.com>,
- Thomas Gleixner <tglx@linutronix.de>, Vincent Chen <vincent.chen@sifive.com>,
- Anup Patel <anup@brainfault.org>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240809071049.2454-1-yongxuan.wang@sifive.com>
-References: <20240809071049.2454-1-yongxuan.wang@sifive.com>
+	bh=KxsbgKosTuzCKczBe+icPm36tufV1HnIqOg/8PB14oM=;
+	b=L9SKZ51NdjMHhH087N0BgdqmAwZCJ/xAiL/z711h/wiD5r0j4tPS6DFZo7dUYytYIHjPdX
+	vL0992pcTgbVrsAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=RxQTC84H;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=L9SKZ51N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723279481; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KxsbgKosTuzCKczBe+icPm36tufV1HnIqOg/8PB14oM=;
+	b=RxQTC84HcXmhzwzzN4gobnLun34okD6A3xUEeNboNuEsaS5tFmh3VEqLZrtopkp9rmMVoo
+	QYKhW+kHLVyzQY337QPCusCBEHD7hX/W0tJbgLwJXxuSI221zO1Q8Y1NO3GGzn9tojZNHv
+	H+Xr5dXAAR7cMO3P55voaWI9Fadevfg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723279481;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KxsbgKosTuzCKczBe+icPm36tufV1HnIqOg/8PB14oM=;
+	b=L9SKZ51NdjMHhH087N0BgdqmAwZCJ/xAiL/z711h/wiD5r0j4tPS6DFZo7dUYytYIHjPdX
+	vL0992pcTgbVrsAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6274113704;
+	Sat, 10 Aug 2024 08:44:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id X4bcFnkot2arJQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 10 Aug 2024 08:44:41 +0000
+Date: Sat, 10 Aug 2024 10:45:21 +0200
+Message-ID: <878qx4lqam.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: =?GB2312?B?uvrBrMfa?= <hulianqin@vivo.com>
+Cc: "perex@perex.cz" <perex@perex.cz>,
+	"tiwai@suse.com" <tiwai@suse.com>,
+	"mbarriolinares@gmail.com" <mbarriolinares@gmail.com>,
+	"wangdicheng@kylinos.cn" <wangdicheng@kylinos.cn>,
+	"sean@mess.org"
+	<sean@mess.org>,
+	"alexander@tsoy.me" <alexander@tsoy.me>,
+	"xristos.thes@gmail.com" <xristos.thes@gmail.com>,
+	"knuesel@gmail.com"
+	<knuesel@gmail.com>,
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	opensource.kernel <opensource.kernel@vivo.com>,
+	"akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>
+Subject: Re: [PATCH] ALSA: usb-audio: Add delay quirk for VIVO USB-C-XE710 HEADSET
+In-Reply-To: <PUZPR06MB6224FEB85F27A5AB7A59A1BCD2BA2@PUZPR06MB6224.apcprd06.prod.outlook.com>
+References: <PUZPR06MB6224FEB85F27A5AB7A59A1BCD2BA2@PUZPR06MB6224.apcprd06.prod.outlook.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <172327951735.2215.9481646283292037219.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=GB2312
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: BE70B22190
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,gmail.com,kylinos.cn,mess.org,tsoy.me,vger.kernel.org,vivo.com,linux-foundation.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-The following commit has been merged into the irq/urgent branch of tip:
+On Fri, 09 Aug 2024 12:38:52 +0200,
+ºúÁ¬ÇÚ wrote:
+> 
+> From: Lianqin Hu <hulianqin@vivo.com>
+> 
+> Audio control requests that sets sampling frequency sometimes fail on
+> this card. Adding delay between control messages eliminates that problem.
+> 
+> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
+> ---
+>  sound/usb/quirks.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+> index ea063a14cdd8..4c7f0f9d15de 100644
+> --- a/sound/usb/quirks.c
+> +++ b/sound/usb/quirks.c
+> @@ -2119,6 +2119,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
+>  		   QUIRK_FLAG_GENERIC_IMPLICIT_FB),
+>  	DEVICE_FLG(0x07fd, 0x000b, /* MOTU M Series 2nd hardware revision */
+>  		   QUIRK_FLAG_CTL_MSG_DELAY_1M),
+> +	DEVICE_FLG(0x2d95, 0x8021, /* VIVO USB-C-XE710 HEADSET */
+> +		   QUIRK_FLAG_CTL_MSG_DELAY_1M),
+>  	DEVICE_FLG(0x08bb, 0x2702, /* LineX FM Transmitter */
+>  		   QUIRK_FLAG_IGNORE_CTL_ERROR),
+>  	DEVICE_FLG(0x0951, 0x16ad, /* Kingston HyperX */
 
-Commit-ID:     03f9885c60adf73488fe32aab628ee3d4a39598e
-Gitweb:        https://git.kernel.org/tip/03f9885c60adf73488fe32aab628ee3d4a39598e
-Author:        Yong-Xuan Wang <yongxuan.wang@sifive.com>
-AuthorDate:    Fri, 09 Aug 2024 15:10:47 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 10 Aug 2024 10:42:04 +02:00
+The quirk table entry is sorted in the ID number order.
+Could you try to put the new entry at the right position?
 
-irqchip/riscv-aplic: Retrigger MSI interrupt on source configuration
 
-The section 4.5.2 of the RISC-V AIA specification says that "any write
-to a sourcecfg register of an APLIC might (or might not) cause the
-corresponding interrupt-pending bit to be set to one if the rectified
-input value is high (= 1) under the new source mode."
+thanks,
 
-When the interrupt type is changed in the sourcecfg register, the APLIC
-device might not set the corresponding pending bit, so the interrupt might
-never become pending.
-
-To handle sourcecfg register changes for level-triggered interrupts in MSI
-mode, manually set the pending bit for retriggering interrupt so it gets
-retriggered if it was already asserted.
-
-Fixes: ca8df97fe679 ("irqchip/riscv-aplic: Add support for MSI-mode")
-Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Vincent Chen <vincent.chen@sifive.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/20240809071049.2454-1-yongxuan.wang@sifive.com
----
- drivers/irqchip/irq-riscv-aplic-msi.c | 32 ++++++++++++++++++++------
- 1 file changed, 25 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/irqchip/irq-riscv-aplic-msi.c b/drivers/irqchip/irq-riscv-aplic-msi.c
-index 028444a..d7773f7 100644
---- a/drivers/irqchip/irq-riscv-aplic-msi.c
-+++ b/drivers/irqchip/irq-riscv-aplic-msi.c
-@@ -32,15 +32,10 @@ static void aplic_msi_irq_unmask(struct irq_data *d)
- 	aplic_irq_unmask(d);
- }
- 
--static void aplic_msi_irq_eoi(struct irq_data *d)
-+static void aplic_msi_irq_retrigger_level(struct irq_data *d)
- {
- 	struct aplic_priv *priv = irq_data_get_irq_chip_data(d);
- 
--	/*
--	 * EOI handling is required only for level-triggered interrupts
--	 * when APLIC is in MSI mode.
--	 */
--
- 	switch (irqd_get_trigger_type(d)) {
- 	case IRQ_TYPE_LEVEL_LOW:
- 	case IRQ_TYPE_LEVEL_HIGH:
-@@ -59,6 +54,29 @@ static void aplic_msi_irq_eoi(struct irq_data *d)
- 	}
- }
- 
-+static void aplic_msi_irq_eoi(struct irq_data *d)
-+{
-+	/*
-+	 * EOI handling is required only for level-triggered interrupts
-+	 * when APLIC is in MSI mode.
-+	 */
-+	aplic_msi_irq_retrigger_level(d);
-+}
-+
-+static int aplic_msi_irq_set_type(struct irq_data *d, unsigned int type)
-+{
-+	int rc = aplic_irq_set_type(d, type);
-+
-+	if (rc)
-+		return rc;
-+	/*
-+	 * Updating sourcecfg register for level-triggered interrupts
-+	 * requires interrupt retriggering when APLIC is in MSI mode.
-+	 */
-+	aplic_msi_irq_retrigger_level(d);
-+	return 0;
-+}
-+
- static void aplic_msi_write_msg(struct irq_data *d, struct msi_msg *msg)
- {
- 	unsigned int group_index, hart_index, guest_index, val;
-@@ -130,7 +148,7 @@ static const struct msi_domain_template aplic_msi_template = {
- 		.name			= "APLIC-MSI",
- 		.irq_mask		= aplic_msi_irq_mask,
- 		.irq_unmask		= aplic_msi_irq_unmask,
--		.irq_set_type		= aplic_irq_set_type,
-+		.irq_set_type		= aplic_msi_irq_set_type,
- 		.irq_eoi		= aplic_msi_irq_eoi,
- #ifdef CONFIG_SMP
- 		.irq_set_affinity	= irq_chip_set_affinity_parent,
+Takashi
 
