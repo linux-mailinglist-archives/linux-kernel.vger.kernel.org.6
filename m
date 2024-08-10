@@ -1,130 +1,154 @@
-Return-Path: <linux-kernel+bounces-281981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A70794DDCA
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 19:44:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC5A94DDD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 19:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF6F71C208CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:44:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD291F217B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF92516A957;
-	Sat, 10 Aug 2024 17:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5FE16A92E;
+	Sat, 10 Aug 2024 17:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2zDCk826"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rSeMNaIC"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5681B810;
-	Sat, 10 Aug 2024 17:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C42166F21;
+	Sat, 10 Aug 2024 17:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723311854; cv=none; b=tyF232J8VxmQPhZkX5U0OZlDysSqetMtkV81ik9jLFVEX9scnrsut5Qdj4XXY4/C94rSUeseL0aeKxct4M5RTL9ZioN/BGV1EKjX4Eh6ESjcEcPb7mTo+h7McGmXaptj5PnutAZ6+pzmmR++KnuraUaGPDWdPE0mYQ87WUe8mgQ=
+	t=1723311921; cv=none; b=LwdJRcSJEhG2lvLxZaZOlNRTgpcoOyFMEyS1/hHZXNNJNsbUi7Xkb+sFDpXAJJe8v/Fp82m1z58PNIjfVQpFAV0chiX/O9/7GvQMKeqURqIKrKAt5HLSnbVWAHAW4WG43g7wzQuv3Yrrl9APDR4rb2JVmFEd9rjv2EOeBNQi3LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723311854; c=relaxed/simple;
-	bh=yxAsryxOArQAIt6pcgRoQ5BqqAfNMKr9c2igsDRFd0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+qcjK6GAUYyUTdyF0echCsUdJMZXXTSbrabh1swkkOw/9gubmcYh0EV9rhT6JjvVaEZ7Hu0pv90i4IvUYHcE7uDvuXfkJ2G4Hf2WI0Dt+tHL+3PYE5xppWV8ldEf4NbR1edDtFt9l6BLjmtH/K1cNpoD5cp25xGzV4rqgB2d/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2zDCk826; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=6TJv0MO1TD/A8rw0DqiXOfv6PFXDaLY6RcDsOL6qfl8=; b=2zDCk826cy6Vj8QE6tjpucfRpt
-	uqHLbrjmVMYgvTRD+piUxOvO6FNs4sWKrNv+WNCSyNPtagwQNbZ6I+/P0I/zcWL46BH/dmEgjOgOP
-	tEquTIVjy8Xp/k0RpGBHnN7xQjol/g/87UwPClSo+TvWA+mzY8ADef6WnbvoIrmYnnLM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1scq8I-004SNu-2y; Sat, 10 Aug 2024 19:44:02 +0200
-Date: Sat, 10 Aug 2024 19:44:02 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tristram.Ha@microchip.com
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
-	devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Marek Vasut <marex@denx.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/4] net: dsa: microchip: handle most interrupts
- in KSZ9477/KSZ9893 switch families
-Message-ID: <301c5f90-0307-4c23-b867-6677d41dce47@lunn.ch>
-References: <20240809233840.59953-1-Tristram.Ha@microchip.com>
- <20240809233840.59953-4-Tristram.Ha@microchip.com>
+	s=arc-20240116; t=1723311921; c=relaxed/simple;
+	bh=cFTCSWFQe/+IR1CW82SHHVsPjnLcBFckQ5Bo+52TQSE=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pep0WJTkh7Whmxz3z5RYVUA1sGM4DlaaKwf/dgRItCQ9fon5g/tfyKVmmF+BhWvYTQQvo9exV9AjaykMKdG5BOsawKZkS15d+69b8npZKIFmXmhwUlROdXxpqTghlCi3UmGE48rPasCtEwlnL8yQK5XJLtF8q/G7HlAeBLPgVyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rSeMNaIC; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47AHj0fu017978;
+	Sat, 10 Aug 2024 12:45:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723311900;
+	bh=g9Y9wP/9cK6ztXhUCkhRXn1bzVTr/5G3RhlgTpbvTdg=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date;
+	b=rSeMNaIC/KMcjsFbuVEJX1BLEXWDEc/HqA2P1OBWS4qvolnpBplk9bRopQaj68mCT
+	 BiBKP7vEfaOGI6IGrvZU0dX9GHnwQh0thOgwvyV0n7PmY1vZm1Yg7P9kcBxYUlJwTP
+	 nooWgEBaLJ1SnP7mMJQrvPwr3Yg+V2FiMTMYvGx0=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47AHj0iF039751
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 10 Aug 2024 12:45:00 -0500
+Received: from flwvowa02.ent.ti.com (10.64.41.53) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 10
+ Aug 2024 12:44:59 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by flwvowa02.ent.ti.com
+ (10.64.41.53) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Sat, 10 Aug
+ 2024 12:44:59 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 10 Aug 2024 12:44:59 -0500
+Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47AHiwI1025308;
+	Sat, 10 Aug 2024 12:44:59 -0500
+From: Kamlesh Gurudasani <kamlesh@ti.com>
+To: Waiman Long <longman@redhat.com>,
+        Steffen Klassert
+	<steffen.klassert@secunet.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Waiman
+ Long" <longman@redhat.com>
+Subject: Re: [PATCH] padata: Fix possible divide-by-0 panic in
+ padata_mt_helper()
+In-Reply-To: <20240806174647.1050398-1-longman@redhat.com>
+References: <20240806174647.1050398-1-longman@redhat.com>
+Date: Sat, 10 Aug 2024 23:14:58 +0530
+Message-ID: <87jzgonug5.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809233840.59953-4-Tristram.Ha@microchip.com>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-> +static irqreturn_t ksz9477_handle_port_irq(struct ksz_device *dev, u8 port,
-> +					   u8 *data)
-> +{
-> +	struct dsa_switch *ds = dev->ds;
-> +	struct phy_device *phydev;
-> +	int cnt = 0;
+Waiman Long <longman@redhat.com> writes:
+
+> We are hit with a not easily reproducible divide-by-0 panic in padata.c
+> at bootup time.
+>
+>   [   10.017908] Oops: divide error: 0000 1 PREEMPT SMP NOPTI
+>   [   10.017908] CPU: 26 PID: 2627 Comm: kworker/u1666:1 Not tainted 6.10.0-15.el10.x86_64 #1
+>   [   10.017908] Hardware name: Lenovo ThinkSystem SR950 [7X12CTO1WW]/[7X12CTO1WW], BIOS [PSE140J-2.30] 07/20/2021
+>   [   10.017908] Workqueue: events_unbound padata_mt_helper
+>   [   10.017908] RIP: 0010:padata_mt_helper+0x39/0xb0
+>     :
+>   [   10.017963] Call Trace:
+>   [   10.017968]  <TASK>
+>   [   10.018004]  ? padata_mt_helper+0x39/0xb0
+>   [   10.018084]  process_one_work+0x174/0x330
+>   [   10.018093]  worker_thread+0x266/0x3a0
+>   [   10.018111]  kthread+0xcf/0x100
+>   [   10.018124]  ret_from_fork+0x31/0x50
+>   [   10.018138]  ret_from_fork_asm+0x1a/0x30
+>   [   10.018147]  </TASK>
+>
+> Looking at the padata_mt_helper() function, the only way a divide-by-0
+> panic can happen is when ps->chunk_size is 0. The way that chunk_size is
+> initialized in padata_do_multithreaded(), chunk_size can be 0 when the
+> min_chunk in the passed-in padata_mt_job structure is 0.
+>
+> Fix this divide-by-0 panic by making sure that chunk_size will be at
+> least 1 no matter what the input parameters are.
+>
+> Fixes: 004ed42638f4 ("padata: add basic support for multithreaded jobs")
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  kernel/padata.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/kernel/padata.c b/kernel/padata.c
+> index 53f4bc912712..0fa6c2895460 100644
+> --- a/kernel/padata.c
+> +++ b/kernel/padata.c
+> @@ -517,6 +517,13 @@ void __init padata_do_multithreaded(struct padata_mt_job *job)
+>  	ps.chunk_size = max(ps.chunk_size, job->min_chunk);
+>  	ps.chunk_size = roundup(ps.chunk_size, job->align);
+>  
+> +	/*
+> +	 * chunk_size can be 0 if the caller sets min_chunk to 0. So force it
+> +	 * to at least 1 to prevent divide-by-0 panic in padata_mt_helper().`
+> +	 */
+Thanks for the patch and detailed comment.
+> +	if (!ps.chunk_size)
+> +		ps.chunk_size = 1U;
 > +
-> +	phydev = mdiobus_get_phy(ds->user_mii_bus, port);
-> +	if (*data & PORT_PHY_INT) {
-> +		/* Handle the interrupt if there is no PHY device or its
-> +		 * interrupt is not registered yet.
-> +		 */
-> +		if (!phydev || phydev->interrupts != PHY_INTERRUPT_ENABLED) {
-> +			u8 phy_status;
-> +
-> +			ksz_pread8(dev, port, REG_PORT_PHY_INT_STATUS,
-> +				   &phy_status);
-> +			if (phydev)
-> +				phy_trigger_machine(phydev);
-> +			++cnt;
-> +			*data &= ~PORT_PHY_INT;
-> +		}
-> +	}
+could it be
+        ps.chunk_size = max(ps.chunk_size, 1U);
+        
+or can be merged with earlier max()
+  	ps.chunk_size = max(ps.chunk_size, max(job->min_chunk, 1U));
+  	ps.chunk_size = roundup(ps.chunk_size, job->align);
 
-This looks like a layering violation. Why is this needed? An interrupt
-controller generally has no idea what the individual interrupt is
-about. It just calls into the interrupt core to get the handler
-called, and then clears the interrupt. Why does that not work here?
+sits well with how entire file is written and compiler is optimizing
+them to same level.
 
-What other DSA drivers do if they need to handle some of the
-interrupts is just request the interrupt like any other driver:
+Kamlesh
 
-https://elixir.bootlin.com/linux/v6.10.3/source/drivers/net/dsa/mv88e6xxx/pcs-639x.c#L95
-
-> +irqreturn_t ksz9477_handle_irq(struct ksz_device *dev, u8 port, u8 *data)
-> +{
-> +	irqreturn_t ret = IRQ_NONE;
-> +	u32 data32;
-> +
-> +	if (port > 0)
-> +		return ksz9477_handle_port_irq(dev, port - 1, data);
-> +
-> +	ksz_read32(dev, REG_SW_INT_STATUS__4, &data32);
-> +	if (data32 & LUE_INT) {
-> +		u8 lue;
-> +
-> +		ksz_read8(dev, REG_SW_LUE_INT_STATUS, &lue);
-> +		ksz_write8(dev, REG_SW_LUE_INT_STATUS, lue);
-> +		if (lue & LEARN_FAIL_INT)
-> +			dev_info_ratelimited(dev->dev, "lue learn fail\n");
-> +		if (lue & WRITE_FAIL_INT)
-> +			dev_info_ratelimited(dev->dev, "lue write fail\n");
-> +		ret = IRQ_HANDLED;
-> +	}
-
-https://elixir.bootlin.com/linux/v6.10.3/source/drivers/net/dsa/mv88e6xxx/global1_atu.c#L474
-
-	Andrew
+>  	list_for_each_entry(pw, &works, pw_list)
+>  		if (job->numa_aware) {
+>  			int old_node = atomic_read(&last_used_nid);
+> -- 
+> 2.43.5
 
