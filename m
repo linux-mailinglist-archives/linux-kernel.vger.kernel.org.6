@@ -1,149 +1,128 @@
-Return-Path: <linux-kernel+bounces-281879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE8F94DC6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 13:18:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A2794DC74
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 13:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C7F281F9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:18:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275C21C20C2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55A0157495;
-	Sat, 10 Aug 2024 11:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0F0158219;
+	Sat, 10 Aug 2024 11:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZMAZs/o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XxshvrE6"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004621B810;
-	Sat, 10 Aug 2024 11:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EC7146D75;
+	Sat, 10 Aug 2024 11:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723288685; cv=none; b=kTTIoE+364Pl+W67drdCOTcmRzAQWABn5jSbjy/yDSqX7IDVRvDWGxXpFD00+h6osVMZTsGwcSFRofpC89Nb6B7hzJ37VI3zGWeFcD+enXv9Z3iXMKhLl4alQkL19r0BWd4IKTCFrSoc6OeCQSF+c9S6Vp7yFwW12q0/UKbPMHU=
+	t=1723288909; cv=none; b=YriLNIPkyMwpEp/Sn6LqCP7Axe7qjK6P5L8F18sQA14lfZhSpYnyqkHXp+n/zjJUodjEBDALBWxV+l0qTy0q30HJCd31wwTfUJKUEayQLXLl2sPIi4KcOpEOoBvuu98K3Di4j9/PnWb1HG6EhsTsV/HuWEoqANqy1v/ObpinDs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723288685; c=relaxed/simple;
-	bh=dBUPbdDGqDsX3bSVuvRws3j2ItrGNGnfm8wLIuuT2M4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l2/95ZPPdPtbv32JEsxoaTduPR1Viu26wIqCkl8J8m+crs9AtPiaNum2V20SiYQMK2WYS6mHO9lqQZMLN+sqGZVCRYP6x8OD1QBFkPizSQVWgvlEd87oWi53sb0JFbV35O8e+dJuS59BTNNU+489fhJkcH7soaFtnabc/tyA0Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZMAZs/o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB11AC32781;
-	Sat, 10 Aug 2024 11:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723288684;
-	bh=dBUPbdDGqDsX3bSVuvRws3j2ItrGNGnfm8wLIuuT2M4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GZMAZs/oAitTdGmz233ivEIikyJSUy7fzw9Z/hbH9QdBYfnUitfGjBcewpAuEt36U
-	 34eZWQ/6SEPwKy2epQcyguO3uvZifFRxwq2URDpmVM7fwPPq+HT/7oQPCUbRJmRQmv
-	 xHDDQBqhofens7+4Yo5Kh2A0N0hYCGBWMd6M7gbQSfDX0UyRiklt8cs+vSILlGKdQs
-	 DzzLnRa0r3owCSAr2H+6yAVuQQirf5sst1mK0/b5QV4ddlkQ1EpI1KVVzDW6VhTTVJ
-	 tvZGikHDlYIBJVtTGFcJvCPOXUpuBQoZlMSj0zVB4PA42F/fGzVxhc8NF/UAxprXr3
-	 d1Sbbp4vdroWg==
-Date: Sat, 10 Aug 2024 13:18:01 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.11-rc3
-Message-ID: <ZrdMaWTfpmCfKqeA@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=arc-20240116; t=1723288909; c=relaxed/simple;
+	bh=wLPOcrQJc9FeMQqebv2m9OcS09IY4lRJtR9nrEtBRl4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E4jbsg6DBjmYFnYmmOYFkNCeA+Vn0SxM7D+k9otHvf9fp2aKTTEC2HFjzyH6v0Bn+qkvAtXhUIreifAI5SFyWd6e8pJN4zpNul5DmsCjZzKvKMzLOskFElTVEgdIx0DnXZ881to7L/x9Kq5iuX8ywmpie+eTCXWyYEE4K9OCYag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XxshvrE6; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a6135dso3564623a12.1;
+        Sat, 10 Aug 2024 04:21:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723288906; x=1723893706; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sF0hj7C/4NCQYLu5xK63NUdOHcybLZHrNwCQSR6snIE=;
+        b=XxshvrE62w04Y/J1P76A4ntyU0IS287a+jMEy6g01DC+F3HxfR91Y6v04ECVM5X1gO
+         dZO81XZ2e3SW3JyITi4e6pPDMgjxBnzg1cHKWKk2bbJ2F6PGvv39qBAeZkhJvQUD61Bw
+         HlnKp5GtmyzG7N094exy2sY4/hXJOAVjtIzVeu6iYcJ/ji6WDiY45kfDp1f52kmViyhb
+         4J+i18Jf+PMYwPMfmcmZ5R0+psq4P1pvUOdbq53XgpXxy0SyDPYK+ESVx9M3mMr+47jT
+         AMtVf4gD7cIUBkcxSZIsIJBewyw1Sio6ARTyCo3g7QSOznESd7Fka2kxfv6NUVR1bOs6
+         BonQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723288906; x=1723893706;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sF0hj7C/4NCQYLu5xK63NUdOHcybLZHrNwCQSR6snIE=;
+        b=h+qdGblTlkdCcoKimuSUIwzGZCTr4w8ij/FavJUeKOgf+t/iTGeUtpVorZFfTfxOBN
+         I1wQL3Z2pY5lzMCpIG1XkrRk+t7XhP7GsMTXVms1gu9y53a4kRBoAFmkkpwVyOaLe9W9
+         NOjNfyf26IhI+b/gPFDZ+RiTjgZ54GJbvTdIH6mijDY2oKpDdq4W2qk2F4NYWCjszUUh
+         zX8Tdo+8FnhNBKLIP2jsesRi95eF3UnN1cRADbud/iO7OvtOjyGtQ95PvrxfpAZFDvif
+         RIW2jzMnBKjz9tcwXIRX1BZtPEBULXjvUta906Lq+Rw2Nr9gzYnNDwYVRsGge5pQlNy+
+         fOzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmQCqwUBils4vdZW6SjhCfKm8MK+ULfZqn7j+Z1Uvc/Nl4qps8k0+WO5VyuFsJUoTnVrMY48wmp40eC+x2dyz5N+GuM63IZSi6qTtcdmhDoXLxPklK6ZWqxFVuBgCjA3oiWBdwGrClPQN6iC8ftRN73A3wj5kiBgcS7YpxMPEaAfwFd2lvfumUqqXZzJQDr8QbKMO2OhEmBzpAqSe9ommDm9EIWSVywsY0Lgyjn79F2Vur5wJVfWPrUcWvZC9aIlglV1NXgMy1
+X-Gm-Message-State: AOJu0YzwiBXbVKC9OlpmMVkBTMUYm44wOe72Ulmj3nBfOUqHdSgjPEGg
+	GZCqv9PtXoduv2T7X29wC8CYI1ToDFQdj79B090ZFzEZi1FUFoYH
+X-Google-Smtp-Source: AGHT+IFiMn5l0mYrV3pmmOEjFgDtqUkKKjZO23fLTyfw2nrpYHDA+qyn7nI8r77AsCjGuJgW4dPkEQ==
+X-Received: by 2002:a17:906:bc1a:b0:a7a:b385:37c8 with SMTP id a640c23a62f3a-a80aa54fb24mr316599766b.5.1723288905274;
+        Sat, 10 Aug 2024 04:21:45 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb08fe5dsm61155666b.3.2024.08.10.04.21.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 Aug 2024 04:21:44 -0700 (PDT)
+Message-ID: <d01c19a3-dc76-46f5-bca4-f5fdc7bd8798@gmail.com>
+Date: Sat, 10 Aug 2024 13:21:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+oB5Gc7SstWijNr7"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] platform/surface: Add OF support
+To: Maximilian Luz <luzmaximilian@gmail.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20240810-topic-sam-v2-0-8a8eb368a4f0@quicinc.com>
+ <20240810-topic-sam-v2-3-8a8eb368a4f0@quicinc.com>
+ <c4b23a43-7ff6-450a-bdc8-3348cc935145@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@gmail.com>
+In-Reply-To: <c4b23a43-7ff6-450a-bdc8-3348cc935145@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 10.08.2024 3:47 AM, Maximilian Luz wrote:
+> On 8/10/24 3:28 AM, Konrad Dybcio wrote:
+>> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+> 
+> [...]
+> 
+>> @@ -299,7 +302,7 @@ static const struct attribute_group ssam_sam_group = {
+>>   };
+>>     -/* -- ACPI based device setup. ---------------------------------------------- */
+>> +/* -- Serial device setup. ------------------------------------------------- */
+> 
+> One more :)
 
---+oB5Gc7SstWijNr7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Right, cursor at 80 != 80-long :P
 
-The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
+[...]
 
-  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
+> Are these two changes required? Surface 3 power and SAN should AFAIK be
+> fairly "legacy" and ACPI-only drivers, which I don't expect to be used
+> on any of the new ARM devices (apart from there probably being other
+> changes required to make them work with DT).
+> 
+> I think with that addressed, it should be fine. I'll give it a spin
+> tomorrow and send in my r-b and t-b (assuming everything goes well).
 
-are available in the Git repository at:
+No, I went overly defensive here. Will drop for v3 next week.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.11-rc3
-
-for you to fetch changes up to 01a620d491592ead12eca039fe1c9e74908c35cf:
-
-  Merge tag 'i2c-host-fixes-6.11-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-08-09 15:28:08 +0200)
-
-----------------------------------------------------------------
-i2c-for-6.11-rc3
-
-SMBusAlert handling in the I2C core gets two fixes. One to avoid an
-endless loop when scanning for handlers and one to make sure handlers
-are always called even if HW has broken behaviour. The I2C header gets a
-compilation fix is ACPI is enabled but I2C isn't. The testunit gets a
-rename in the code to match the documentation.
-
-Two fixes on the Qualcomm GENI I2C controller are cleaning up the
-error exit patch in the runtime_resume() function. The first is
-disabling the clock, the second disables the icc on the way out.
-
-----------------------------------------------------------------
-Gaosheng Cui (2):
-      i2c: qcom-geni: Add missing clk_disable_unprepare in geni_i2c_runtime_resume
-      i2c: qcom-geni: Add missing geni_icc_disable in geni_i2c_runtime_resume
-
-Guenter Roeck (2):
-      i2c: smbus: Improve handling of stuck alerts
-      i2c: smbus: Send alert notifications to all devices if source not found
-
-Richard Fitzgerald (1):
-      i2c: Fix conditional for substituting empty ACPI functions
-
-Wolfram Sang (2):
-      i2c: testunit: match HostNotify test name with docs
-      Merge tag 'i2c-host-fixes-6.11-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Vladimir Zapolskiy (2):
-      (Rev.) i2c: qcom-geni: Add missing geni_icc_disable in geni_i2c_runtime_resume
-      (Rev.) i2c: qcom-geni: Add missing clk_disable_unprepare in geni_i2c_runtime_resume
-
-Wolfram Sang (1):
-      (Test) i2c: smbus: Improve handling of stuck alerts
-
- drivers/i2c/busses/i2c-qcom-geni.c |  5 ++-
- drivers/i2c/i2c-slave-testunit.c   |  4 +--
- drivers/i2c/i2c-smbus.c            | 64 +++++++++++++++++++++++++++++++++-----
- include/linux/i2c.h                |  2 +-
- 4 files changed, 64 insertions(+), 11 deletions(-)
-
---+oB5Gc7SstWijNr7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma3TGQACgkQFA3kzBSg
-KbZ4Kw/9FcqLUEB0fCwAg2JvxRqEO1Eav/SwbswJxWe/qEC1qFY/OJ74zg6iNKye
-4XGyERDS+nKBYCQWsfe3nCHH2AI9+q5+d0JGv3wJGAaIjisxZRxL+BTb9S3Qw7hI
-xP6/iRBH6ZVFPpUyP/zTJoiFDSwjbxIeRVM1Bm33TAJTfnhFVqPCooOJOWIGuv0E
-DeTADWGuEpLLhOFFb52c/5CPeSWr6yiHvsV3jaep69CKbO63L1GU4CeJBShKWJcl
-vD+C1YJ7CqiATbtVyxc/Y5XXjPvX0J1hsmjhRcSHhsw4eOsACarP9Z7pJL7fXXCR
-iT4iH3HVWOT5gTUYxwSZvabqgNGn0ullZNXEqSe/idg+hjazjBznSdnT4dDceUBS
-qFDDMCW+RYlT5LYsnl04EFG+G44tnwTlyf02eTS+BSB1W0yuPJiVOeX+tE1/OQA6
-3Nip1j0HULN6BmOjtJOc+SmEC0ZZrk/P1Ax5sfKSSqFqmIsynv5rThR24TFgH8Sb
-mn/H4wVRXu2f9V6zE30uCllDcWvYfWYp/CgGDZbv7zgut9k2i5vkbSLLM372rwr1
-n059RwKbk9Rp2u6bRDhAMw5i+W9RpCGZ/UA7xdwjV1x4sYuLXEI4DoXkvYmFi+co
-ZM6bTHucu0nfHoQ/7XEUr/eH1vd09Ig/hpA2VoPnfzl43dMEp6w=
-=zXid
------END PGP SIGNATURE-----
-
---+oB5Gc7SstWijNr7--
+Konrad
 
