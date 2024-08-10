@@ -1,85 +1,103 @@
-Return-Path: <linux-kernel+bounces-281756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B9894DAD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:06:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC7A94DADB
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560FD1C20F45
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0523E282DC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECC313C8EC;
-	Sat, 10 Aug 2024 05:06:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3965D13C81B;
+	Sat, 10 Aug 2024 05:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouNVjOF3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7B913958F
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 05:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A72F15C0;
+	Sat, 10 Aug 2024 05:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723266365; cv=none; b=KJ0I7vqFzhC9XDskBqSYrK49ivdmCPH9JiPLhRUy4wa8SmVM7pLvLGQtk7dWmpr2uKvSgB8GgSeN7DYkf38D0Ytz2YRZni+suuk0EtupWwqkbgN7cMJcR5ewLuBrpQUFj+9kydvFv5JcIA+W8OfYWuAutBGewmjcZgdcI5DyjkI=
+	t=1723267235; cv=none; b=f3whW5SBxB0KXRo+cgdf0ks5w63H/o2Km5/QYynb05F/k38sJWdvBO0jmkVYdsCOXzfj8vLcFtwK2imWVURRycSUAO4Ls1kYROYqQ54kxCC8SZl2QqM7gUnHlzNYjQg6n37juH6ANKCR+3nSy8NhCpoG6xNbwwiqko4XXJBa0II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723266365; c=relaxed/simple;
-	bh=/7uc8Z4Q3ZEr8R0keMJnUERoXNHLMZcACPIqGfwSqBk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tl4j292L9GClHVHgw6f3Gjt7dxlw3QReZSbCCGfMmPSzmAw8kGeO2vWDAYCrwGYulbKZwLnlXMeGBJB4y4sqYk0U3x0yJGutqHWnZd5yr5wSRgwBEsrwGxszDemqVCCumgGdAeH4RPgEq20iNAxQ2l/gUEi1oDAWLExND0wHcJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f87561de0so311957239f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 22:06:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723266362; x=1723871162;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AJzHHhFTs3eZa8zOnkLcr2VdeIWvesEC3cX2tGLvN9k=;
-        b=r9WOmEbqNtgbeAUONAoFDwZS4ILbCfmN6qhUSuT5RyGBJPPchpBB4DNATMWHIfLgsy
-         7DexY3GOXC3bncF3+1sLVg+xC8eEN7BKz6raLAPJ0VTbf7N5H8/oImAcCx5PmP+KTnRH
-         1asMhvPK9nYFlFj+9L+frivg2omMault9Zt6+SMsKI/9MVh8X7Ztxfu2VEPbZUa4DEsK
-         1hYvhlhfB5MtDxBaFA7azjdZlnrr4Dekt1rwiJw6EcXpxOtdMR1I8DJkak7RzvnEZumB
-         nGOVc5MwkgtrmkpK34eUgfaovLeC1G7ZJH8LVKWKuSshb8M1YQUD7bSNhm0rBorLjcPU
-         hpGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUr8SahqdEmZlycnscRK217pdWeQ1IHQNYEYsp3vsMFQbfTcN7H+cH/9xsqiOvTEBFa0zGty/gOQy/YRX3aGhYt5Xh9iiVAexoTYUmd
-X-Gm-Message-State: AOJu0YyYrkwt3IFSGjCVaii51bTbMn04dhhGbhMgbvvIwAcJmIQUARNL
-	h9R4THGLyRrx5fbHXJQfCXkG99KCRY1xnTBHhVaNes430HhexmJnJDr3kfHB1HkieQm9FRBHgo9
-	csB6gg1rWgy36wwKXgZ8UC27O2soUjp1WbKkDOHJrDkhqXAxDl2Be0us=
-X-Google-Smtp-Source: AGHT+IH2MO9xQPt5gqo5DiWjroh4Yv8s0fUSJXXjvooQDu07jNG5gyY7dIR0kgDL5KMwjhE+rFM8p1pOjV6HddUINuABtVUK9EST
+	s=arc-20240116; t=1723267235; c=relaxed/simple;
+	bh=4t9MZ/peOgftmugUsMu11XbhTMGWMCiZrCe7d4ROebA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=OFeULKmXSlWFy4MYtg2LjPQ0VnXB4RKl0Lq1hG3Lp9nmozrAknfiMyFAnypmdw1wdcX2kblHWgK8NPdrh0Uc+j8guN1eAe8x0quXpO+B80y1h2NPNw6ZC8CbQvi9o3rc+pvmQuqQ1xmgW0yuD677UsfM7GKDXwQDaB/b+9eDaPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouNVjOF3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C05EC32786;
+	Sat, 10 Aug 2024 05:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723267235;
+	bh=4t9MZ/peOgftmugUsMu11XbhTMGWMCiZrCe7d4ROebA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ouNVjOF3erXM5y/j1KtrT+AjiNF2rgm52PrCeWL4Z0vCEZvYoPwjENSsRNoc7Qs88
+	 o9tKO3uuW06GRjk78pftn7CRfye3ajrbkFePA4Zu5nk/Ivpjn5lMxXsU2P0FPDdzHW
+	 ieCsRe5Qk4R2UF6UANR+sEslCfhkxJPss80u1aGFzpZxBRuEUKwCOawuaZEWyXmIeV
+	 sk8VTXIpM+s6DepOM42YnbWumooEj96Kv+t4OzgYIacCYg/MAm9y6YPlnz+E0Q33P0
+	 yqYqk+HdnyUnxl4AC4XHrCnjdxf2FFhyOyP4RJ1i/vQ1Ur6kIPH0Y29iUuC6NBSSBB
+	 PzsERrn8S7Arg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7124C382333F;
+	Sat, 10 Aug 2024 05:20:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8405:b0:4b9:ad20:51f7 with SMTP id
- 8926c6da1cb9f-4ca6ecc9a63mr122066173.1.1723266362435; Fri, 09 Aug 2024
- 22:06:02 -0700 (PDT)
-Date: Fri, 09 Aug 2024 22:06:02 -0700
-In-Reply-To: <tencent_A4D16DD09714EB42ECAACD247A966CA42C0A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000062fb2b061f4d37c3@google.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: fs_enet: Fix warning due to wrong type
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172326723426.4145426.15655037908010047292.git-patchwork-notify@kernel.org>
+Date: Sat, 10 Aug 2024 05:20:34 +0000
+References: <ec67ea3a3bef7e58b8dc959f7c17d405af0d27e4.1723101144.git.christophe.leroy@csgroup.eu>
+In-Reply-To: <ec67ea3a3bef7e58b8dc959f7c17d405af0d27e4.1723101144.git.christophe.leroy@csgroup.eu>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: pantelis.antoniou@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
 
-Hello,
+Hello:
 
-syzbot tried to test the proposed patch but the build/boot failed:
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-fs/9p/vfs_file.c:409:38: error: 'filp' undeclared (first use in this function); did you mean 'file'?
+On Thu,  8 Aug 2024 09:16:48 +0200 you wrote:
+> Building fs_enet on powerpc e500 leads to following warning:
+> 
+>     CC      drivers/net/ethernet/freescale/fs_enet/mac-scc.o
+>   In file included from ./include/linux/build_bug.h:5,
+>                    from ./include/linux/container_of.h:5,
+>                    from ./include/linux/list.h:5,
+>                    from ./include/linux/module.h:12,
+>                    from drivers/net/ethernet/freescale/fs_enet/mac-scc.c:15:
+>   drivers/net/ethernet/freescale/fs_enet/mac-scc.c: In function 'allocate_bd':
+>   ./include/linux/err.h:28:49: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>      28 | #define IS_ERR_VALUE(x) unlikely((unsigned long)(void *)(x) >= (unsigned long)-MAX_ERRNO)
+>         |                                                 ^
+>   ./include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
+>      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+>         |                                             ^
+>   drivers/net/ethernet/freescale/fs_enet/mac-scc.c:138:13: note: in expansion of macro 'IS_ERR_VALUE'
+>     138 |         if (IS_ERR_VALUE(fep->ring_mem_addr))
+>         |             ^~~~~~~~~~~~
+> 
+> [...]
 
+Here is the summary with links:
+  - [net] net: fs_enet: Fix warning due to wrong type
+    https://git.kernel.org/netdev/net-next/c/c146f3d19114
 
-Tested on:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15a9b97d980000
 
 
