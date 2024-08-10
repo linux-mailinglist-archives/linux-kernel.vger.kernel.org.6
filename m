@@ -1,153 +1,202 @@
-Return-Path: <linux-kernel+bounces-281796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9499E94DB70
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14E794DB72
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44FC11F217B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:29:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998CD2827B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEA1155756;
-	Sat, 10 Aug 2024 08:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A372814B964;
+	Sat, 10 Aug 2024 08:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMOnmKtl"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fdo3H4Zi"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10261514E2;
-	Sat, 10 Aug 2024 08:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA5414B090;
+	Sat, 10 Aug 2024 08:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723278517; cv=none; b=mqJeYphflGQ95BvfT6DE+eZkslDHgGsX8KthX4TxZLscfYqFbqtkCvpnkisKKPkqgQYaa5nTZ7EexIVyW9JBzkEpORg7bBDKal9/r6/wXOu6o0YE3wNrNx0XdTKRe69hFOI5FcXk0PNfcxPSHhL2GMCHaYVq0XtJi+QkF1D6hhM=
+	t=1723278586; cv=none; b=kblH26VwVkVS35wD2nrlYQVCCDj6bnjvtoKnPFa+29FKqZkEBukVRbToBi7qvHxvlTXaPxRSxwZEBOr4F6Mv2/BS/IBgU/VVL8sUzujo2w0gJAbiGDTX3TGFcux49MywFtGR1h/hWNCHFaJAKFkv/d7WZx0ZKRxx6bE6KRq+1AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723278517; c=relaxed/simple;
-	bh=pgVoWRfxgQs6Hha/2qLVeJyPGpJ96P+XjQIWWOGJFXg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c8T3fQAsAEFCvnxUl001CoVvk9j3FcmOSGUEd1FO4mRxYNt9WE+JXdYGwDtyvq+vf5NPEHsQI6ehXIz7enjRpC5KHg5HPIEeobfz1Lu6MtQPj76OxtnUfepJ3KR2kZVJhnF8NnMcywCnML+m1G6lqaVjJ4ZOUxc00j02WrMNxgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TMOnmKtl; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1723278586; c=relaxed/simple;
+	bh=+U/WSWoZiq1NNzQuvc0HgFuRNc2G7WpQvVR3KrAg8Hs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bdrN2c+KUvFu6AV9o/ErYvzWyiXNNE9t8L8aQVeujykfXTmONhnMw3FQ2o+kp9O62+wiOlRGrtsfPMoC4OvIRC/WCfHgo+/QyGSUZCbCCgBvtSJr5pNa0oGbqmQlOKAWZ1zG7AmybQSkHY5Y2gZBNvQafxHrTQRA2mOJFUnvCHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fdo3H4Zi; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d18112b60so1823505b3a.1;
-        Sat, 10 Aug 2024 01:28:35 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f01b8738dso2506202e87.1;
+        Sat, 10 Aug 2024 01:29:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723278515; x=1723883315; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=adNFyWjIXtMjUcXG11VGomGh7BHR8ZvgxWwTiurTFvU=;
-        b=TMOnmKtlq85YkVvida9HrOBEO696fRpHOXhfiJ+OCcf4yssYrAGeLQZgDbOF+/iIpS
-         Yydkqi4rDGMvOxXpbDzARWqH3ZBswCCNHY99RcCi4MyJw9LsLY3G15UXm8L7iQU4Tl2D
-         Mpx02fwPu1m3Vj3sJvf0cJ0igDpc/iWN27gGxU7NMceHjeJScgZ/AseRT0BV2YOJBrU1
-         jEDiLqIsceHkkvi3O43A6wXjX/1t1rDOuRYA3qiR8yoR+xKUJG/BJXA6xIN7U/v8w+S7
-         42SxTGyvHb92VQaNnBpRJLpifByFRigL24+mmA9lUBsItp7ec8CeLB0GOhIRf7KHtwFq
-         vbiA==
+        d=gmail.com; s=20230601; t=1723278583; x=1723883383; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YeCuEGx9luAQ2+Oji6MqCQGLfxWCFImTTTV2T41ZgRY=;
+        b=fdo3H4Zi889hAzJxVkUISYDaVOqVT2qTm7CntDkpJBiJ2MunaETy/9fWFgcpNx8ZLr
+         bzouM6DittwEOtH58oEyzqbfPs+tvHMioHmCAtDQZ9cOA2GWPRzt/boOs/hffU1xZ5p3
+         ohcqRGTlwIPYV0txK6zvhfxeOAq8PxG42QPm3/LA6QrKpkLCG7SKqyFIbg3AHFXbK45X
+         juVNRwX/A0EJ0tZjQiABT43qWH5YEqkWI+0lfvzKYI5YaLRIHWNNMxMvlLXOdwOMYyYM
+         OwH5vtm2S0t/zjtR8MpMUk04nI0+g4b2WptSDBnVdO2fEtbAIFp8nFfYUCb/BkfIaeA/
+         CrwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723278515; x=1723883315;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=adNFyWjIXtMjUcXG11VGomGh7BHR8ZvgxWwTiurTFvU=;
-        b=QKzQxs4iJifBsALPwBcHOY1RNpu1nDmb7pTe5uD+vYZUWhYOiqOOY6Giw/kspMXJfQ
-         jJVYf1eOq826vL3Fv90U+nC284aQsFEsJja9074mRw10srbJ528QQZ70Vpk9+iVwXhoa
-         rJHqSvPPEgYCKokO+YRkrDDjiOLOAqcKrX1+tHmu13u0k1m573unYR3sNpBNCAJ5H4bi
-         DR0yUPeEMJWNcFlTHWbe1wT4sYi09s6s0NGbchzeAVPaGeQvJGGtoswT77uJHekNthlP
-         ihE6DkOuv1VmrsQcIAIGL67rTl0brv7qZ+bLLQfypMU+EKCuKiAAkLNVl92ouKQvX5A6
-         Eb/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVpIQnkPcNNSO3WBZ1iI8SpRgzbkV4TR//H08/N6qbYGd0AJp2ksoHl2CPQ4GUEV1k78hSiiWUCsO+OBt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjgyOiq44mTgUQh+UpMVOyfAbzaUmOLirITyAhOTtml+pRIB9G
-	tfWuCiKNA1ge5mnaTeQOuJdnFhq+2iglM97NYdK24wAWtPWreHcS
-X-Google-Smtp-Source: AGHT+IFR72KuXHFDYfNVANkWiU3aZvT48F4qXTFGZyp86Cy2+d7Yk4ks6c5rk6vIcD+Fj6ABmrgakg==
-X-Received: by 2002:aa7:8d53:0:b0:705:d6ad:2495 with SMTP id d2e1a72fcca58-710cc90db8cmr11683860b3a.12.1723278514878;
-        Sat, 10 Aug 2024 01:28:34 -0700 (PDT)
-Received: from localhost.localdomain ([163.53.18.10])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a8c454sm854092b3a.180.2024.08.10.01.28.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Aug 2024 01:28:34 -0700 (PDT)
-From: zhangshida <starzhangzsd@gmail.com>
-X-Google-Original-From: zhangshida <zhangshida@kylinos.cn>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.com
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhangshida@kylinos.cn,
-	starzhangzsd@gmail.com
-Subject: [RFC PATCH v3 3/3] ext4: remove the superfluous things left by __block_write_begin
-Date: Sat, 10 Aug 2024 16:28:14 +0800
-Message-Id: <20240810082814.3709867-4-zhangshida@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240810082814.3709867-1-zhangshida@kylinos.cn>
-References: <20240810082814.3709867-1-zhangshida@kylinos.cn>
+        d=1e100.net; s=20230601; t=1723278583; x=1723883383;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YeCuEGx9luAQ2+Oji6MqCQGLfxWCFImTTTV2T41ZgRY=;
+        b=Ht7ffBFbmUJ50InYWxK1uGhLepEinnLIBSlEN5qCQxQwE6CJuLK9n03+LHup1AFmAs
+         gq/p+nMb+Wa7RHIcOKQJAuudlugj52CwzDJxVjubQ4XO3ukWyeQPB9Mdl+kNa0OkuzOi
+         q8WkIieLnkZlfLDzkQeaY06CAuvrQUHBUv6SgmSxZeu/xlYjbfGntOagytpoqQeEoQ9W
+         yY7/R/lauQVN2Dce69TsWMN3nwG+zH6BximIKQDxsCCrTsGzvcyavySRh2oyyrV+uohT
+         eMVgEkXU3QhhgDdjF4fUx71Y6ADGYiLztQW73qHPdcrbWiYvTiOwI4ZALGZIUAdcpYlQ
+         XfhA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9w9txDsFYokN7jqKiXpZl66LXk/XawkYtan2X3TbiUAQ9/xSMuKawIz+LnIZyPO1IzMZbLLkUNjoL9hv/rHY3Od90y/5XD4MU5CSy
+X-Gm-Message-State: AOJu0YzAhmUjMlPfQVgcuHUbg4Je9vGrW8yIUIZIjUq9RJGus36clEdn
+	BJQANs1UlOotxKb6mPs45zmHmtECvnbQ8QVqyyzc8weHjIapB1FvBWcEkYi7
+X-Google-Smtp-Source: AGHT+IEggfPN1vpAkp1UUJNnkvfUddZErKWbv9eoFdy7YFz5CcS1LQPJJ3y9I9mzmTWhnHYifmZYBA==
+X-Received: by 2002:a05:6512:108d:b0:52c:e00c:d3a9 with SMTP id 2adb3069b0e04-530ee96c74cmr2789858e87.1.1723278582755;
+        Sat, 10 Aug 2024 01:29:42 -0700 (PDT)
+Received: from ?IPV6:2a00:801:56b:e722:f008:fe67:227a:e9f4? ([2a00:801:56b:e722:f008:fe67:227a:e9f4])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53200f42271sm152991e87.255.2024.08.10.01.29.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 Aug 2024 01:29:42 -0700 (PDT)
+Message-ID: <252d91e2-282e-4af4-b99b-3b8147d98bc3@gmail.com>
+Date: Sat, 10 Aug 2024 10:29:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: XFS mount timeout in linux-6.9.11
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-xfs@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong"
+ <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>
+References: <71864473-f0f7-41c3-95f2-c78f6edcfab9@gmail.com>
+ <ZraeRdPmGXpbRM7V@dread.disaster.area>
+Content-Language: en-US
+From: Anders Blomdell <anders.blomdell@gmail.com>
+In-Reply-To: <ZraeRdPmGXpbRM7V@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Shida Zhang <zhangshida@kylinos.cn>
 
-This kinda revert the commit 56d35a4cd13e("ext4: Fix dirtying of
-journalled buffers in data=journal mode") made by Jan 14 years ago.
 
-Now that the whole __block_write_begin and improperly dirty things
-were removed from the code. Remove the related code, too.
+On 2024-08-10 00:55, Dave Chinner wrote:
+> On Fri, Aug 09, 2024 at 07:08:41PM +0200, Anders Blomdell wrote:
+>> With a filesystem that contains a very large amount of hardlinks
+>> the time to mount the filesystem skyrockets to around 15 minutes
+>> on 6.9.11-200.fc40.x86_64 as compared to around 1 second on
+>> 6.8.10-300.fc40.x86_64,
+> 
+> That sounds like the filesystem is not being cleanly unmounted on
+> 6.9.11-200.fc40.x86_64 and so is having to run log recovery on the
+> next mount and so is recovering lots of hardlink operations that
+> weren't written back at unmount.
+> 
+> Hence this smells like an unmount or OS shutdown process issue, not
+> a mount issue. e.g. if something in the shutdown scripts hangs,
+> systemd may time out the shutdown and power off/reboot the machine
+> wihtout completing the full shutdown process. The result of this is
+> the filesystem has to perform recovery on the next mount and so you
+> see a long mount time because of some other unrelated issue.
+> 
+> What is the dmesg output for the mount operations? That will tell us
+> if journal recovery is the difference for certain.  Have you also
+> checked to see what is happening in the shutdown/unmount process
+> before the long mount times occur?
+echo $(uname -r) $(date +%H:%M:%S) > /dev/kmsg
+mount /dev/vg1/test /test
+echo $(uname -r) $(date +%H:%M:%S) > /dev/kmsg
+umount /test
+echo $(uname -r) $(date +%H:%M:%S) > /dev/kmsg
+mount /dev/vg1/test /test
+echo $(uname -r) $(date +%H:%M:%S) > /dev/kmsg
 
-Now we get a better and cleaner world!
+[55581.470484] 6.8.0-rc4-00129-g14dd46cf31f4 09:17:20
+[55581.492733] XFS (dm-7): Mounting V5 Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+[56048.292804] XFS (dm-7): Ending clean mount
+[56516.433008] 6.8.0-rc4-00129-g14dd46cf31f4 09:32:55
+[56516.434695] XFS (dm-7): Unmounting Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+[56516.925145] 6.8.0-rc4-00129-g14dd46cf31f4 09:32:56
+[56517.039873] XFS (dm-7): Mounting V5 Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+[56986.017144] XFS (dm-7): Ending clean mount
+[57454.876371] 6.8.0-rc4-00129-g14dd46cf31f4 09:48:34
 
-Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
----
- fs/ext4/inode.c | 20 +++-----------------
- 1 file changed, 3 insertions(+), 17 deletions(-)
+And rebooting to the kernel before the offending commit:
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 4c34827da56e..cb6de9921655 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1023,27 +1023,13 @@ static int ext4_dirty_journalled_data(handle_t *handle, struct buffer_head *bh)
- int do_journal_get_write_access(handle_t *handle, struct inode *inode,
- 				struct buffer_head *bh)
- {
--	int dirty = buffer_dirty(bh);
--	int ret;
-+	ASSERT(!buffer_dirty(bh));
- 
- 	if (!buffer_mapped(bh) || buffer_freed(bh))
- 		return 0;
--	/*
--	 * __block_write_begin() could have dirtied some buffers. Clean
--	 * the dirty bit as jbd2_journal_get_write_access() could complain
--	 * otherwise about fs integrity issues. Setting of the dirty bit
--	 * by __block_write_begin() isn't a real problem here as we clear
--	 * the bit before releasing a page lock and thus writeback cannot
--	 * ever write the buffer.
--	 */
--	if (dirty)
--		clear_buffer_dirty(bh);
- 	BUFFER_TRACE(bh, "get write access");
--	ret = ext4_journal_get_write_access(handle, inode->i_sb, bh,
-+	return ext4_journal_get_write_access(handle, inode->i_sb, bh,
- 					    EXT4_JTR_NONE);
--	if (!ret && dirty)
--		ret = ext4_dirty_journalled_data(handle, bh);
--	return ret;
- }
- 
- int ext4_block_write_begin(handle_t *handle, struct folio *folio,
-@@ -1246,7 +1232,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
- 
- 		folio_unlock(folio);
- 		/*
--		 * __block_write_begin may have instantiated a few blocks
-+		 * ext4_block_write_begin may have instantiated a few blocks
- 		 * outside i_size.  Trim these off again. Don't need
- 		 * i_size_read because we hold i_rwsem.
- 		 *
--- 
-2.33.0
+[   60.177951] 6.8.0-rc4-00128-g8541a7d9da2d 10:23:00
+[   61.009283] SGI XFS with ACLs, security attributes, realtime, scrub, quota, no debug enabled
+[   61.017422] XFS (dm-7): Mounting V5 Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+[   61.351100] XFS (dm-7): Ending clean mount
+[   61.366359] 6.8.0-rc4-00128-g8541a7d9da2d 10:23:01
+[   61.367673] XFS (dm-7): Unmounting Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+[   61.444552] 6.8.0-rc4-00128-g8541a7d9da2d 10:23:01
+[   61.459358] XFS (dm-7): Mounting V5 Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+[   61.513938] XFS (dm-7): Ending clean mount
+[   61.524056] 6.8.0-rc4-00128-g8541a7d9da2d 10:23:01
 
+
+> 
+>> this of course makes booting drop
+>> into emergency mode if the filesystem is in /etc/fstab. A git bisect
+>> nails the offending commit as 14dd46cf31f4aaffcf26b00de9af39d01ec8d547.
+> 
+> Commit 14dd46cf31f4 ("xfs: split xfs_inobt_init_cursor") doesn't
+> seem like a candidate for any sort of change of behaviour. It's just
+> a refactoring patch that doesn't change any behaviour at all. 
+> Are you sure the reproducer you used for the bisect is reliable?
+Yes.
+
+>> The filesystem is a collection of daily snapshots of a live filesystem
+>> collected over a number of years, organized as a storage of unique files,
+>> that are reflinked to inodes that contain the actual {owner,group,permission,
+>> mtime}, and these inodes are hardlinked into the daily snapshot trees.
+> 
+> So it's reflinks and hardlinks. Recovering a reflink takes a lot
+> more CPU time and journal traffic than recovering a hardlink, so
+> that will also be a contributing factor.
+> 
+>> The numbers for the filesystem are:
+>>
+>>    Total file size:           3.6e+12 bytes
+> 
+> 3.6TB, not a large data set by any measurement.
+> 
+>>    Unique files:             12.4e+06
+> 
+> 12M files, not a lot.
+> 
+>>    Reflink inodes:           18.6e+06
+> 
+> 18M inodes with shared extents, not a huge number, either.
+> 
+>>    Hardlinks:                15.7e+09
+> 
+> Ok, 15.7 billion hardlinks is a *lot*.
+:-)
+> 
+> And by a lot, I mean that's the largest number of hardlinks in an
+> XFS filesystem I've personally ever heard about in 20 years.
+Glad to be of service.
+
+> 
+> As a warning: hope like hell you never have a disaster with that
+> storage and need to run xfs_repair on that filesystem. It you don't
+> have many, many TBs of RAM, just checking the hardlinks resolve
+> correctly could take billions of IOs...
+I hope so as well :-), but it is not a critical system (used for testing
+and statistics, will take about a month to rebuild though :-/).
+
+> 
+> -Dave.
 
