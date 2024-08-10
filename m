@@ -1,174 +1,136 @@
-Return-Path: <linux-kernel+bounces-281773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB5694DB25
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:52:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C06694DB32
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5581F22024
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEF591C2128D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E777514A4E7;
-	Sat, 10 Aug 2024 06:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E97114A4F9;
+	Sat, 10 Aug 2024 07:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBvigmjH"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c868azLX"
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D261B21A0B;
-	Sat, 10 Aug 2024 06:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A79B3B782
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 07:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723272769; cv=none; b=GPTgOlnNGyUPYjyIyFPpvVjABnphLzU23i4aLHOzKLLeC4XKKTYjrasSzab7qDyN45VqIZ8R8pBRqR+yk/+lp+/YdqRwjGKt2X2o2+hQHGyP4vmRMH247KsoKpEnyWYe7H4zUKu0cA6CIE7AI+eOLrQ7XlPZUYH0dPxWpI9l8x0=
+	t=1723274087; cv=none; b=bssJDPpvvoUyMsYyDENnX8zWdTH2boO8Fdosq/Zf5vGkK2ifPG0/nP2bYK+eL14D70TG8vfjOjEeDSapcBL9R195bJxCNlv1L/hOx93+9KaNs2LOcu7NugeMsqSFcrVqpY1+J1lypaigwwZdW9YIF3Ldq3rDEKhZ8k+/DNfEgEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723272769; c=relaxed/simple;
-	bh=FudGx2PxtWdv1Ey9bknRFbztOC+S9px4S1BtXbCAxoA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IDKq+Z6IiJqSC3lGIqgcOQZZxSv6dnP93aYWZg3kHgP9I7ZVgmnzjtz1h/YAbBTbRrPMJz8umB/1xSo5fy9k2qBEd5yDUmuIEGAdl1PvMxFV1s0EAPqNu7+IjEsCOzasXoygHDPGDf/Q/5D8nGbed9YI14mMqSRJIHOj9ba0Apw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XBvigmjH; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7b594936e9bso1961433a12.1;
-        Fri, 09 Aug 2024 23:52:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723272767; x=1723877567; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HxgVMOpRDF5vpjeN8YLiua76dTY/jjl6Cq5qYi3DIs4=;
-        b=XBvigmjHkQJiaan6EOdvktOjrQV6b/OrKiBoGTeilzoe9lum8rY1rx6hz7mkX1g57G
-         T3uKIBS8ITVyG/Gwj8Rj3T6KZtdlWHTZBL1E74naH1DiICQ4uwZHgndYHh581X7cwUs+
-         jWoBRive1jhZR/gPXO7aNicQDR9kDhk78g7/gMD6SCBTfNJCIa1ExCznQLNzdyyqFnZg
-         QhGLB2fqy07pub0npxfwu+lnGlk60jVRHGdEH9lsxZJczNqK0HLKndNz8HsYSH+ghjoD
-         Gap6uJGlyBb0KVcXu/IZ5xGb3JFVH2JrniX44kLKlbSK9clJ7qezOzF0sQ+LlW+3rfdR
-         IVBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723272767; x=1723877567;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HxgVMOpRDF5vpjeN8YLiua76dTY/jjl6Cq5qYi3DIs4=;
-        b=ifxBQuZCX7OWHDrCEScSsOfeDohhj4OIZKKYXKUs9q83D3LUFaHTfxrroSYqOG/OEH
-         AC6EWMnFBnihU83axumY8h54HvLQfpq0/i+CjUEJaAeFmydguj/jfT/A+2ef+w3VZBgS
-         JbIO5pvgaazEv01C+YAGTX6uSUuTz0u623eYLL0F28KmLew3dMCzIRZeQODO8XgLPLee
-         8wKI9FLiUKhAl6TbnSA85yFrcmwg1Hdz/sm6HYDZxEOh15cK/pgoh7vv3BM7jEJJuBNJ
-         HCmFTe7aZoUHo5TEIDzU1yCDtlOoXyunAQjo4yaJfWBtFpCJfyBnxCQMjYTcHY5+4ba0
-         E/xg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwmfHYbUilDciUDd5dpAmr/yN/k7oNtaxESjIPd9Q9+YOPvXEZVHmYKUyH7G8i6nJNk8PmsC6L+iQT403Ln/8Aj05MEkvv4sWq0mSy
-X-Gm-Message-State: AOJu0Yzinak873TvhdRaxexye2iUBOATMx5gKrgz7/2mZZdxVjVlJdVb
-	cuou1ewIdMX4RPpKjMES2zHJpd7K4lCwQJ1X1+PXTqAl1cCLAkNg1d8AWA==
-X-Google-Smtp-Source: AGHT+IFkEJeQJF3PLn1zazXFMXbKgsFiU7lFDe7Yoq3f2s8oZB9b7Wz3ghCtOXaMyCaK/tragUJ8Lw==
-X-Received: by 2002:a05:6a20:e68e:b0:1c2:8cf4:766c with SMTP id adf61e73a8af0-1c8a00bbdd1mr4639753637.33.1723272766822;
-        Fri, 09 Aug 2024 23:52:46 -0700 (PDT)
-Received: from carrot.. (i222-151-34-139.s42.a014.ap.plala.or.jp. [222.151.34.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9c7becasm4123166a91.18.2024.08.09.23.52.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 23:52:45 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nilfs2: fix missing cleanup on rollforward recovery error
-Date: Sat, 10 Aug 2024 15:52:42 +0900
-Message-Id: <20240810065242.3701-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723274087; c=relaxed/simple;
+	bh=2tS0eWCBDxDsUSBGp58+pIxhFuhjHlr+aBuREye6C0o=;
+	h=To:Cc:Message-Id:From:Subject:Date; b=ULrnkEz0dQHjj8OSveDu1ru24RIK3BFvsG/4dYR5fl97KIhRpS0x4GAxMKm1+V43EQTPjTqV7sI7arALggtjybSg66Vj7fd5gOrJg+g2rxGg79S9m9iDagI8vfWEKWEmSWEocUBJrTCmgFVb4gvbEcRP7/gTrvKdXt5iVKvzzNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c868azLX; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 379BB1151DE1;
+	Sat, 10 Aug 2024 03:14:44 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Sat, 10 Aug 2024 03:14:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1723274084; x=1723360484; bh=pzWoJ6kpdS8AV
+	2GwnkxogI+qF4smRK+n1tauPh28B5g=; b=c868azLXhPFjbtTy8JFTz45STXwir
+	7oWG5Tk8J1gmexFRXp+AFmM3fB/Z13TJHNtqClyMM2oFPZ2yvCUM+xJYN7HJa1rl
+	UlE3A22DmMtvjZYyECtFuAnAFQCPGor12T5neHKT0Am5Zl0oMB1otAk4IdyzFKp7
+	ksFg0ybwnOhp3mkz8JHcmRP3+g91IXO4asaYMwxEJvdnDbj3sECHIdnqa2PfKnJ5
+	J63QZZ7z/wSH1G+wlAj/3QbalpZXIO65L+0iH5V1PSGoIrvNynQKzYl+PeZJVOdp
+	x2fqcYGTTihyh9zi3lDZdlPBM8dStUIJDfsLDJC2SB0o1RsfL7TMc8Pcg==
+X-ME-Sender: <xms:YxO3ZvM8oBrRztxMPuuR1ni1DuDnU5YniRW3RVUbRAdC1oxfnWbQZQ>
+    <xme:YxO3Zp9h9n5J4sOA9zrBHi3KOCJ_8TFL4b10g2yQAxUP5U42ypvmaw2RGrwzp8UDc
+    fUtVifqZHeaf8JXE8A>
+X-ME-Received: <xmr:YxO3ZuTCkEIEgdFTRtOdtFUnVZsw4etBsDH5t9Zh4SxH9qvO84HXhLKE5Uy1F-DotO_pv2S18HxiewPnoO1igPAnGJ_TgmfLxQ4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleehgdduudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepvfevkffhufffsedttdertddttddtnecuhfhrohhm
+    pefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqe
+    enucggtffrrghtthgvrhhnpeffueeileegffegtdehveefkeffveffiedugeefveeuvdet
+    tdefiefflefgteegueenucffohhmrghinhepuggvsghirghnrdhorhhgnecuvehluhhsth
+    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgrihhnsehlihhn
+    uhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthht
+    ohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgvrhhgsehlih
+    hnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehushgvrhhmheejseihrghhohhordgt
+    ohhmpdhrtghpthhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmie
+    ekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrgh
+X-ME-Proxy: <xmx:YxO3Zjs_zw0T1lHBEMWfDJ133rn9KVmCMztf3XK3ginS7dNKtbdtVA>
+    <xmx:YxO3ZneytMSIo89NjdROVcZuSwYvYl0hDQIpc-XMdka-RNMQC7WU7g>
+    <xmx:YxO3Zv2C4VF_ZAoICtLi_pIUIij5DcVfSR_5JsiEAlvM5Z5J9D5X4w>
+    <xmx:YxO3Zj-ljRLitzyfu8BjB5ibykDxQLLhAqxj5YbL8vfx4h91fFsFAw>
+    <xmx:ZBO3ZoF7ir5_fKnj-6OiX12mtjxL9Bf-U9KB2h7hUkHU19FAmh4tbTIg>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 10 Aug 2024 03:14:42 -0400 (EDT)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+    Greg Ungerer <gerg@linux-m68k.org>,
+    Stan Johnson <userm57@yahoo.com>,
+    linux-m68k@lists.linux-m68k.org,
+    linux-kernel@vger.kernel.org
+Message-Id: <ac8100050f448caa1dc46c131079e615e73021a4.1723273396.git.fthain@linux-m68k.org>
+From: Finn Thain <fthain@linux-m68k.org>
+Subject: [PATCH] m68k: Fix kernel_clone_args.flags in m68k_clone()
+Date: Sat, 10 Aug 2024 17:03:16 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-In an error injection test of a routine for mount-time recovery, KASAN
-found a use-after-free bug.
+Stan Johnson recently reported a failure from the 'dump' command:
 
-It turned out that if data recovery was performed using partial logs
-created by dsync writes, but an error occurred before starting the log
-writer to create a recovered checkpoint, the inodes whose data had
-been recovered were left in the ns_dirty_files list of the nilfs
-object and were not freed.
+  DUMP: Date of this level 0 dump: Fri Aug  9 23:37:15 2024
+  DUMP: Dumping /dev/sda (an unlisted file system) to /dev/null
+  DUMP: Label: none
+  DUMP: Writing 10 Kilobyte records
+  DUMP: mapping (Pass I) [regular files]
+  DUMP: mapping (Pass II) [directories]
+  DUMP: estimated 3595695 blocks.
+  DUMP: Context save fork fails in parent 671
 
-Fix this issue by cleaning up inodes that have read the recovery data
-if the recovery routine fails midway before the log writer starts.
+The dump program uses the clone syscall with the CLONE_IO flag, that is,
+flags == 0x80000000. When that value is cast from long int to u64 by
+m68k_clone(), it undergoes sign-extension. The new value includes
+CLONE_INTO_CGROUP so the validation in cgroup_css_set_fork() fails and
+the syscall returns -EBADFD.
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Fixes: 0f3e1c7f23f8 ("nilfs2: recovery functions")
-Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: stable@vger.kernel.org
+Avoid sign-extension by adopting the idiom used in kernel/fork.c when
+casting clone flags.
+
+Cc: Stan Johnson <userm57@yahoo.com>
+Reported-by: Stan Johnson <userm57@yahoo.com>
+Closes: https://lists.debian.org/debian-68k/2024/08/msg00000.html
+Fixes: 6aabc1facdb2 ("m68k: Implement copy_thread_tls()")
+Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 ---
-Andrew, please apply this as a bug fix.
+ arch/m68k/kernel/process.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This fixes missing cleanup on error that KASAN detected during an
-error injection test of recovery on mount.
-
-Thanks,
-Ryusuke Konishi
-
- fs/nilfs2/recovery.c | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nilfs2/recovery.c b/fs/nilfs2/recovery.c
-index b638dc06df2f..61e25a980f73 100644
---- a/fs/nilfs2/recovery.c
-+++ b/fs/nilfs2/recovery.c
-@@ -715,6 +715,33 @@ static void nilfs_finish_roll_forward(struct the_nilfs *nilfs,
- 	brelse(bh);
- }
- 
-+/**
-+ * nilfs_abort_roll_forward - cleaning up after a failed rollforward recovery
-+ * @nilfs: nilfs object
-+ */
-+static void nilfs_abort_roll_forward(struct the_nilfs *nilfs)
-+{
-+	struct nilfs_inode_info *ii, *n;
-+	LIST_HEAD(head);
-+
-+	/* Abandon inodes that have read recovery data */
-+	spin_lock(&nilfs->ns_inode_lock);
-+	list_splice_init(&nilfs->ns_dirty_files, &head);
-+	spin_unlock(&nilfs->ns_inode_lock);
-+	if (list_empty(&head))
-+		return;
-+
-+	set_nilfs_purging(nilfs);
-+	list_for_each_entry_safe(ii, n, &head, i_dirty) {
-+		spin_lock(&nilfs->ns_inode_lock);
-+		list_del_init(&ii->i_dirty);
-+		spin_unlock(&nilfs->ns_inode_lock);
-+
-+		iput(&ii->vfs_inode);
-+	}
-+	clear_nilfs_purging(nilfs);
-+}
-+
- /**
-  * nilfs_salvage_orphan_logs - salvage logs written after the latest checkpoint
-  * @nilfs: nilfs object
-@@ -773,15 +800,19 @@ int nilfs_salvage_orphan_logs(struct the_nilfs *nilfs,
- 		if (unlikely(err)) {
- 			nilfs_err(sb, "error %d writing segment for recovery",
- 				  err);
--			goto failed;
-+			goto put_root;
- 		}
- 
- 		nilfs_finish_roll_forward(nilfs, ri);
- 	}
- 
-- failed:
-+put_root:
- 	nilfs_put_root(root);
- 	return err;
-+
-+failed:
-+	nilfs_abort_roll_forward(nilfs);
-+	goto put_root;
- }
- 
- /**
+diff --git a/arch/m68k/kernel/process.c b/arch/m68k/kernel/process.c
+index 2584e94e2134..873dc94fdcd8 100644
+--- a/arch/m68k/kernel/process.c
++++ b/arch/m68k/kernel/process.c
+@@ -117,7 +117,7 @@ asmlinkage int m68k_clone(struct pt_regs *regs)
+ {
+ 	/* regs will be equal to current_pt_regs() */
+ 	struct kernel_clone_args args = {
+-		.flags		= regs->d1 & ~CSIGNAL,
++		.flags		= (lower_32_bits(regs->d1) & ~CSIGNAL),
+ 		.pidfd		= (int __user *)regs->d3,
+ 		.child_tid	= (int __user *)regs->d4,
+ 		.parent_tid	= (int __user *)regs->d3,
 -- 
-2.34.1
+2.39.5
 
 
