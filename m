@@ -1,179 +1,284 @@
-Return-Path: <linux-kernel+bounces-281965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03CAF94DD8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:55:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF1494DD94
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 18:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46DD281C6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:55:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7D80B215B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 16:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5904A168493;
-	Sat, 10 Aug 2024 15:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B439C160796;
+	Sat, 10 Aug 2024 16:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5Doqizf"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="GlmRtO9N"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C0A3FBA7;
-	Sat, 10 Aug 2024 15:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2473C062
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 16:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723305316; cv=none; b=EE8BY8N6jOxYqr+lsA/xGMOjR7oerC4i00wr87AIFTL/yNtj0pzaBzcizfxQxhMHFsYI1TT5JNnxlnLnbRoreY2kiE1kWdwTwW/KYqJYCBuJD5WTK973xqZ6lLVIWf4xbjyRNTVjaeQdtTJeaBeebbtZijBwOh3w9qi9FMIi3tA=
+	t=1723305887; cv=none; b=ojNVJMRp2iCPm25rclJd5EqIg/PaJe4vQEICh3HZ4RiXKrhj0uRQo7BUf0nEPmGvBMeYas/hLvJG2Yq+X6mA+x1H1/0iYntyTiS+QZYTJWfBascYsLRuEZfjk6Z0roi+3gDJyh5Dq5og/IJDyr5RW+XCgtye2NrfaiShShSNg+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723305316; c=relaxed/simple;
-	bh=5V0zAGfH9jyn7ZkZUvjOM6Q4j/PtRye2pQe0OKFNNAk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j27bfrsvpvvZg6BrjMigfiJ7A1KfxY3nJxsdK1HNOK+8JcPQpP/jjVTEgQDMOXWjq5swPc599ri6qqpHMKqoyEg4w+Y3uROiPOYPae7VMcnjJqXpQgIEh5u7BDB290lFB9D8DH9YCv1yB60jvHxkfpqgOCRBiFTecV1Dfg1QJMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P5Doqizf; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cfdc4deeecso2389004a91.3;
-        Sat, 10 Aug 2024 08:55:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723305314; x=1723910114; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NsrGSuD1JwGElXKXCp9CKeDOTjJCIjAdbtMoFt9rIDs=;
-        b=P5DoqizfZDLAA9YAvXylFhJQdnO/uN1Y89CSjdXdeZDzBmiEmG9QatPANvJaEZo4oh
-         VZMDT4vZj5JtjVWfS0kVRbig7PU1SMzWn6dJOsr9wwQqhPBAumdp+WsWwXIRzVlsPUzR
-         wejmgl/g62KRru1p7xECYnbid3O8uKL19WWRGLHeHBkCGBOSPWB6NT7FehrgPWlVzj11
-         NwRH1AavnyHPRKIpKZ10qPbyvRgEoxqS/3roQC4xcIUpnNbIodRnSyyYvgGVXuTGYNTz
-         2q2rXA1sRhC1ODO6ADZT4xKCKJ/O3Uk9bfX+rEOn26q99SNv33HTRdHLTpeNR4G1mc3+
-         IXbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723305314; x=1723910114;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NsrGSuD1JwGElXKXCp9CKeDOTjJCIjAdbtMoFt9rIDs=;
-        b=qphdngUkxKlTBdB3XvLeNhZKfJZEvtjLyb/QHIWJK3RIvOzTSnDD+H1aW/4aFseRBI
-         VeyVuAIo8sVAJbxkbmQLyfIXqMzuuQmLj6Ks107qElIwCJ65KgU/kGZ0/I5t4lw82DTk
-         grY2txqUkNvW+lfeOK/vJXGmdTLT2WD1ImzE8gKPY7KWvek7J5ECT480XcauAewz5Wuf
-         3BjCfcTOTme/VTteHTo7qlE9C9JEW0GuevdLmUAeeq5p4+GaqG3aG4K8NPNESQF2QKoP
-         0dwveeyhmge5LMFEP/QLKhRhlMEuzABngtyxtNcsuv27Rl3vcP6SDPVreoJib8DsPeYv
-         7mrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqJA/RFgFBQVuqCe8UixzwMY3TQvQsN1K3QQIy7BRiVJVEg0Bx1VHH4IleJg793U/b72D1d39wW3L3JTOtswQzSgXyl76HEmGx1/EM/V9cmVZhOcf0Tkv8kwxAHC8cMSs0V8ll
-X-Gm-Message-State: AOJu0YxxsJa6N5t8sse1kBUqgWl4KsyT5Hhc5BQmmIv3LoFk/r8CR/kt
-	3hWTQl7kf32CCLmk5c0grrim6PWdeu1XCvjz9RlXghs+cwH0Mb8Poh06jnQPg1/joLgktKMt25S
-	vRLYRm45ag+O7FghOAeWV6Ru6hFg=
-X-Google-Smtp-Source: AGHT+IECdVPHYVoLR83HwZIQDHuvtWvM0Nkn2UqCCLm17o/8mmDQdCg8ENQpzWlF1lQprIstUWaHnBoC4oMIU4XDvxw=
-X-Received: by 2002:a17:90b:3cc3:b0:2c9:8891:e128 with SMTP id
- 98e67ed59e1d1-2d1e7f9594emr5591559a91.4.1723305314230; Sat, 10 Aug 2024
- 08:55:14 -0700 (PDT)
+	s=arc-20240116; t=1723305887; c=relaxed/simple;
+	bh=AjNZFW4boODP/HK3hCLHDgFiARPS9nX9uOKEiJ9b/oI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFwxMJUsxb+cCq164wt2wZF4gB+xM5UMTMkYYIIrnsZ9Sx34rE3kpbh8XF3BaGOE3FNsL8ZpEI7/fERnSVIVsB3m8dqI7NUoUz8ZxWaTwolsvi+xjzam1IKP7fv/0SlxJcmVgztgbDSD043AiZEZdF0CtW8GkaLWEkIoP8kpjOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=GlmRtO9N; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1723305876;
+	bh=AjNZFW4boODP/HK3hCLHDgFiARPS9nX9uOKEiJ9b/oI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GlmRtO9N1XPHKWbG2smXh4Tuf1Wcxpszt+CyIMyzsuSo939eXmo/VtgBRM5wpO4V/
+	 lMJq80WGhyrqnKS2UOSkxP665IeOk3ZYe5y0p/g8StFjdgY31fNPld7FXCpCez9jrL
+	 zpTxpVJ4JqbPLTE13X5SpJ4B1aAXT7hby6gSfI8s=
+Date: Sat, 10 Aug 2024 18:04:36 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] tools/nolibc: x86_64: wrap asm functions in functions
+Message-ID: <384a1d29-13ca-4e4b-b4b7-2a99e3fdb01b@t-8ch.de>
+References: <20240810-nolibc-lto-v1-0-a86e514c7fc1@weissschuh.net>
+ <20240810-nolibc-lto-v1-3-a86e514c7fc1@weissschuh.net>
+ <ZrdZKcQ1SClUHWa1@biznet-home.integral.gnuweeb.org>
+ <121f58b7-b781-44cf-a18f-6f8893c82187@t-8ch.de>
+ <20240810143556.GA9168@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240810002302.2054816-1-vinicius.gomes@intel.com> <Zrb0wdmIsksG38Uc@hoboy.vegasvil.org>
-In-Reply-To: <Zrb0wdmIsksG38Uc@hoboy.vegasvil.org>
-From: Daiwei Li <daiweili@gmail.com>
-Date: Sat, 10 Aug 2024 08:55:03 -0700
-Message-ID: <CAN0jFd1CpPtid7TGJcgzajRXQ5oxYN1LjLjLwK7HjQ1piuZ_XQ@mail.gmail.com>
-Subject: Re: [PATCH iwl-net v1] igb: Fix not clearing TimeSync interrupts for 82580
-To: Richard Cochran <richardcochran@gmail.com>
-Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>, intel-wired-lan@lists.osuosl.org, 
-	sasha.neftin@intel.com, kurt@linutronix.de, anthony.l.nguyen@intel.com, 
-	netdev@vger.kernel.org, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240810143556.GA9168@1wt.eu>
 
-> @Daiwei Li, I don't have a 82580 handy, please confirm that the patch
-fixes the issue you are having.
+On 2024-08-10 16:35:56+0000, Willy Tarreau wrote:
+> On Sat, Aug 10, 2024 at 02:37:19PM +0200, Thomas Weißschuh wrote:
+> > On 2024-08-10 19:12:25+0000, Ammar Faizi wrote:
+> > > On Sat, Aug 10, 2024 at 12:54:46PM +0200, Thomas Weißschuh wrote:
+> > > > +__attribute__((weak,unused,section(".text.nolibc_memmove")))
+> > > > +__nolibc_naked __no_stack_protector
+> > > > +void *memmove(void *dst __attribute__((unused)),
+> > > > +	      const void *src __attribute__((unused)),
+> > > > +	      size_t len __attribute__((unused)))
+> > > > +{
+> > > > +	__asm__ volatile (
+> > > > +		"movq %rdx, %rcx\n\t"
+> > > > +		"movq %rdi, %rax\n\t"
+> > > > +		"movq %rdi, %rdx\n\t"
+> > > > +		"subq %rsi, %rdx\n\t"
+> > > > +		"cmpq %rcx, %rdx\n\t"
+> > > > +		"jb   .Lbackward_copy\n\t"
+> > > > +		"rep movsb\n\t"
+> > > > +		"retq\n"
+> > > > +		".Lbackward_copy:"
+> > > > +		"leaq -1(%rdi, %rcx, 1), %rdi\n\t"
+> > > > +		"leaq -1(%rsi, %rcx, 1), %rsi\n\t"
+> > > > +		"std\n\t"
+> > > > +		"rep movsb\n\t"
+> > > > +		"cld\n\t"
+> > > > +		"retq\n"
+> > > > +	);
+> > > > +	__nolibc_naked_epilogue();
+> > > > +}
+> > > 
+> > > NAK for this patch.
+> > 
+> > Thanks for the feedback!
+> > 
+> > (I'm not an assembler programmer, so regard my notes with a grain of salt)
+> > 
+> > > This approach appears highly dangerous, particularly when the compiler
+> > > inlines the call. When using inline assembly within a function, it's
+> > > crucial to define proper constraints and a clobber list to ensure the
+> > > arguments are correctly bound to the inline assembly.
+> > 
+> > Aren't the constraints a feature of Extended Asm?
+> > This is a Basic Asm block.
+> > Indeed naked functions only support Basic Asm, so there is no way to
+> > explicitly bind arguments to their registers.
+> 
+> That's indeed what is said in GNU docs, but a quick test with gcc 9 and 11
+> shows me that both accept both naked and extended asm. However clang doesn't
+> seem happy about it.
+> 
+> The problem here is dual:
+>   - first, the naked attribute can be emulated if not supported by the
+>     compiler and we'll only have optimize(-Os,-fomit-frame-pointer), and
+>     in this case the compiler does not respect well the registers (I'm
+>     seeing bad code being emitted in callers if I mark the function
+>     static for example).
 
-Thank you for the patch! I can confirm it fixes my issue. Below I offer a
-patch that also works in response to Paul's feedback.
+Ack.
 
-> Please also add a description of the test case
+Would it help to mark the function as non-inlineable?
 
-I am running ptp4l to serve PTP to a client device attached to the NIC.
-To test, I am rebuilding igb.ko and reloading it.
-Without this patch, I see repeatedly in the output of ptp4l:
+>   - second, nothing prevents the compiler from inlining that function
+>     and in this case, as Ammar says, we have no control over what
+>     registers arguments will be placed into since the main purpose of
+>     inlining precisely is to build optimal code that limits register
+>     moves. However, in my tests, it appears that when marked naked,
+>     the compiler never inlines it and even emits a warning if I try
+>     to mark it inline, saying it was already noinline. So maybe naked
+>     implies noinline.
 
-> timed out while polling for tx timestamp increasing tx_timestamp_timeout =
-or
-> increasing kworker priority may correct this issue, but a driver bug like=
-ly
-> causes it
+I did not manage yet to get it inlined.
+With __attribute__((always_inline)) gcc even gives:
 
-as well as my client device failing to sync time.
+sysroot/x86_64/include/arch.h:214:1: error: ignoring attribute 'always_inline' because it conflicts with attribute 'noinline' [-Werror=attributes]
 
-> and maybe the PCI vendor and device code of your network device.
+> In any case, depending on the availability of naked, we have two clearly
+> different layouts to deal with :-/
 
-% lspci -nn | grep Network
-17:00.0 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
-Network Connection [8086:150e] (rev 01)
-17:00.1 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
-Network Connection [8086:150e] (rev 01)
-17:00.2 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
-Network Connection [8086:150e] (rev 01)
-17:00.3 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
-Network Connection [8086:150e] (rev 01)
+Indeed...
 
-> Bug, or was it a feature?
+> We could imagine not marking it naked and keeping the optimize(Os...)
+> stuff only, then using extended asm like in other functions maybe.
+> Otherwise this could require two versions, which is less fun.
 
-According to https://lore.kernel.org/all/CDCB8BE0.1EC2C%25matthew.vick@inte=
-l.com/
-it was a bug. It looks like the datasheet was not updated to
-acknowledge this bug:
-https://www.intel.com/content/www/us/en/content-details/333167/intel-82580-=
-eb-82580-db-gbe-controller-datasheet.html
-(section 8.17.28.1).
+Note: __attribute__((naked)) on gcc x86_64 is supported since gcc 8.1.
 
-> Is there a nicer way to write this, so `ack` is only assigned in case
-> for the 82580?
+> > Looking at the object code for various on both gcc and clang show always
+> > the same object code.
+> > (Although GCC adds a "ud2" after the "ret")
+> 
+> It *seems* so as well for me but in the not-really-naked case, you
+> really have zero control over it. Also one thing it does to me in the
+> not-naked-case is that registers are not saved by the caller and are
+> clobbered by the asm statement:
+> 
+>   void *memmove2(void *dst __attribute__((unused)),
+>                  void *src __attribute__((unused)),
+>                  size_t len __attribute__((unused)))
+>   {
+>         memmove(dst, src, len);
+>         memmove(src, dst, len);
+>         return 0;
+>   }
+> 
+> Gives me this with the naked attribute:
+> 0000000000000025 <memmove2>:
+>   25:   55                      push   %rbp
+>   26:   48 89 f5                mov    %rsi,%rbp
+>   29:   50                      push   %rax
+>   2a:   48 89 14 24             mov    %rdx,(%rsp)
+>   2e:   e8 00 00 00 00          callq  33 <memmove2+0xe>
+>   33:   48 8b 14 24             mov    (%rsp),%rdx
+>   37:   48 89 ef                mov    %rbp,%rdi
+>   3a:   48 89 c6                mov    %rax,%rsi
+>   3d:   e8 00 00 00 00          callq  42 <memmove2+0x1d>
+>   42:   31 c0                   xor    %eax,%eax
+>   44:   5a                      pop    %rdx
+>   45:   5d                      pop    %rbp
+>   46:   c3                      retq   
+> 
+> But the alternate form (optimize(-Os...)):
+> 0000000000000024 <memmove2>:
+>   24:   49 89 f0                mov    %rsi,%r8
+>   27:   e8 00 00 00 00          callq  2c <memmove2+0x8>
+>   2c:   48 89 fe                mov    %rdi,%rsi
+>   2f:   4c 89 c7                mov    %r8,%rdi
+>   32:   e8 00 00 00 00          callq  37 <memmove2+0x13>
+>   37:   31 c0                   xor    %eax,%eax
+>   39:   c3                      retq   
+> 
+> See how rdi and rdx were expected to be preserved after the first call
+> but were not? This was with gcc-9.5 (which supports naked but it's for
+> illustration purposes of the risk of leaving unconstrained asm like this).
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c
-b/drivers/net/ethernet/intel/igb/igb_main.c
-index ada42ba63549..87ec1258e22a 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -6986,6 +6986,10 @@ static void igb_tsync_interrupt(struct
-igb_adapter *adapter)
-        struct e1000_hw *hw =3D &adapter->hw;
-        u32 tsicr =3D rd32(E1000_TSICR);
-        struct ptp_clock_event event;
-+       const u32 mask =3D (TSINTR_SYS_WRAP | E1000_TSICR_TXTS |
-+                          TSINTR_TT0 | TSINTR_TT1 |
-+                          TSINTR_AUTT0 | TSINTR_AUTT1);
-+
+To be honest, I don't see it. Not enough asm experience I guess, but
+I'll look at it some more.
 
-        if (tsicr & TSINTR_SYS_WRAP) {
-                event.type =3D PTP_CLOCK_PPS;
-@@ -7009,6 +7013,13 @@ static void igb_tsync_interrupt(struct
-igb_adapter *adapter)
+> I also managed to get clang to complain about the .Lbackward_copy label
+> being already defined, but I don't know how I managed to do it. I think
+> we should not leave it as a global label like this and instead just use
+> the regular numbered labels if the asm is inlined.
 
-        if (tsicr & TSINTR_AUTT1)
-                igb_extts(adapter, 1);
-+
-+       if (hw->mac.type =3D=3D e1000_82580) {
-+               /* 82580 has a hardware bug that requires a explicit
-+                * write to clear the TimeSync interrupt cause.
-+                */
-+               wr32(E1000_TSICR, tsicr & mask);
-+       }
- }
-On Fri, Aug 9, 2024 at 10:04=E2=80=AFPM Richard Cochran
-<richardcochran@gmail.com> wrote:
->
-> On Fri, Aug 09, 2024 at 05:23:02PM -0700, Vinicius Costa Gomes wrote:
-> > It was reported that 82580 NICs have a hardware bug that makes it
-> > necessary to write into the TSICR (TimeSync Interrupt Cause) register
-> > to clear it.
->
-> Bug, or was it a feature?
->
-> Or IOW, maybe i210 changed the semantics of the TSICR?
->
-> And what about the 82576?
->
-> Thanks,
-> Richard
+Ack, this was easy to fix.
+
+> Also I'm wondering why there are errors about memcpy and memmove being
+> already defined with -flto, because these ones are marked "weak". Maybe
+> we need to add something else, that gcc emits with the functions when
+> using lto ?
+
+I think normally .weak would only be resolved by the linker.
+What happens here is that the assembler is already presented with
+duplicate definitions which it is not prepared to handle.
+(See below for an example)
+
+It works on gcc without -flto and on clang with and without -flto.
+It seems like a compiler bug to me. If you agree I'll open a ticket
+against GCC.
+Then we can fix only the label to make it work on clang and wait for a
+fixed GCC.
+
+
+Example:
+
+$ cat a.c
+#include "func.h"
+
+int main(void)
+{
+	return 0;
+}
+
+$ cat b.c 
+#include "func.h"
+
+$ cat func.h 
+__asm__(
+	".weak foo\n"
+	"foo:\n"
+	"retq\n"
+);
+
+$ gcc -flto -save-temps a.c b.c
+./a.ltrans0.ltrans.s: Assembler messages:
+./a.ltrans0.ltrans.s:28: Error: symbol `foo' is already defined
+lto-wrapper: fatal error: gcc returned 1 exit status
+compilation terminated.
+/usr/bin/ld: error: lto-wrapper failed
+collect2: error: ld returned 1 exit status
+
+$ cat ./a.ltrans0.ltrans.s
+	.file	"<artificial>"
+	.text
+#APP
+	.weak foo
+foo:
+retq
+
+#NO_APP
+	.globl	main
+	.type	main, @function
+main:
+.LFB0:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	$0, %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+.LFE0:
+	.size	main, .-main
+#APP
+	.weak foo
+foo:
+retq
+
+	.ident	"GCC: (GNU) 14.2.1 20240805"
+	.section	.note.GNU-stack,"",@progbits
 
