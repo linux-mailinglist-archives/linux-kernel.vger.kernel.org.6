@@ -1,128 +1,119 @@
-Return-Path: <linux-kernel+bounces-281902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DF494DCD0
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:37:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA7F94DCD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC4C928240A
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E242F1F218CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E5D1586CD;
-	Sat, 10 Aug 2024 12:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6157182D8;
+	Sat, 10 Aug 2024 12:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnaiYeBb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="bRUvfYHu"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0A4158520;
-	Sat, 10 Aug 2024 12:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428B0158552
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 12:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723293433; cv=none; b=XKRnFMMC1uwvWKRK2sx7cxZ7BQEda4+nkF5OwO7LiuzHw4C55Cbjxk5xzXXQPwyBrEU/7DyMb6rIIZ9On3eDiQvLqsnOc1EsGyCzJb1+LGQvP6u1l+5PcCCqlFBKATZViPFg1vw5iwhRSuS3hwowCqVBo+0F/HdgbY0xQEBqviI=
+	t=1723293444; cv=none; b=JDL4XBuEGyQgtq8NKqYZOTHafRvWI0TGFkBVIt42xo57tpdsKrUCzJPpXk7yd29Ko7I+SYHnYaPvMxW+WnZ+4Gtt3X7h+F6US06Keq0C/d66HAmEYm4HQLDfkRj9pajIz436r4ScYqlufgPavMUiTNNz6edUCrqA/pWr5x379fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723293433; c=relaxed/simple;
-	bh=xXGthnQb+Qw3gokaosvDgIsRr+6EIcuaKbr8TVT9Bog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/OHdpbt67XCRHS3h4Ky0Y6wecTBYldVrSiMdj8VX29hYRQJW8uaEeHU8S6FllNVaU7qnRfinOu3/1Yew/u5z8gptD7gD/KISnpp8uHh6gbfjXskqHbtqjU99BW12GSTTwY6xKNQZwHUojpbw4uM0mWmTdQolZrpXKWDMxS4tOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnaiYeBb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3421CC32781;
-	Sat, 10 Aug 2024 12:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723293432;
-	bh=xXGthnQb+Qw3gokaosvDgIsRr+6EIcuaKbr8TVT9Bog=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MnaiYeBbSqTuo79qSOc6F3uaHrMYEaXbE9GyhnhDkQxZPDY2rWCc6pamjFBF0WPL0
-	 gFPn/x5z8HCnD3jzEKhYCv5TTL38yYlN8m2M6ucQklWLxPxebzrdMvL64+KNismnUY
-	 EM5qVhMReVaIWfLUToqG5pvF1Rgh/DW9Mr72Gmn+ySkpm1eQs3vlP4p+kVs8HChKFC
-	 L58oHSvcLs9Hshr5zTsERJtzD6zUDPlGePDbM7j3f0Hxk39dg7AYm+tSvAdfptiCjG
-	 zXuOl8n1sXo+qTXs6Z4kkxfk5ZDwkh0MZQCtPLWMnjgKxqREHlBJQAch0aGTEyGR/u
-	 3a0RsdWpZas1Q==
-Message-ID: <a8c46d0e-e98b-4150-9a12-bcbd815e0257@kernel.org>
-Date: Sat, 10 Aug 2024 14:37:05 +0200
+	s=arc-20240116; t=1723293444; c=relaxed/simple;
+	bh=QNRQdtQjv2pE1wqbDdQ7/ZG/vWctN7xJv2AR7zCUqnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZrwRz2Jn2/v7iooZtMwnbDJNCVEPQ/mzvboJOtyf2vOhizc7/ci/NWCeN/LAyfhuS37zueC0SSOtqRpQDvksk8RMm+aMK01BVVme0WrII9EmKba2TuS/tOW8Z7AmDZHdhw6d2118URf9S7d63JYkAYhm5i5vhLjWe8w8kytERA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=bRUvfYHu; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1723293440;
+	bh=QNRQdtQjv2pE1wqbDdQ7/ZG/vWctN7xJv2AR7zCUqnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bRUvfYHukZd5ayjjnh4qtNrRxHbWEQJtnvZrbcslRANP9nJg1/QXZT3oDv3f0ws3p
+	 TcQNj5ObVmoK3oxKxsyFQNOyX1K7D8lRcm7JkewJTLtGmXceoUzKuJyqwTl3E4LjLh
+	 b1b0sasvCx0gKnrGpa48Q1nCRQNOAK8L2r+u83fE=
+Date: Sat, 10 Aug 2024 14:37:19 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc: Willy Tarreau <w@1wt.eu>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] tools/nolibc: x86_64: wrap asm functions in functions
+Message-ID: <121f58b7-b781-44cf-a18f-6f8893c82187@t-8ch.de>
+References: <20240810-nolibc-lto-v1-0-a86e514c7fc1@weissschuh.net>
+ <20240810-nolibc-lto-v1-3-a86e514c7fc1@weissschuh.net>
+ <ZrdZKcQ1SClUHWa1@biznet-home.integral.gnuweeb.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: net: convert maxim,ds26522.txt to yaml
- format
-To: Frank Li <Frank.Li@nxp.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "open list:NETWORKING DRIVERS"
- <netdev@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20240809143208.3447888-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240809143208.3447888-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrdZKcQ1SClUHWa1@biznet-home.integral.gnuweeb.org>
 
-On 09/08/2024 16:32, Frank Li wrote:
-> Convert binding doc maxim,ds26522.txt to yaml format.
-> Additional changes
-> - Remove spi-max-frequency because ref to
-> /schemas/spi/spi-peripheral-props.yaml
-> - Add address-cells and size-cells in example
+On 2024-08-10 19:12:25+0000, Ammar Faizi wrote:
+> On Sat, Aug 10, 2024 at 12:54:46PM +0200, Thomas Weißschuh wrote:
+> > +__attribute__((weak,unused,section(".text.nolibc_memmove")))
+> > +__nolibc_naked __no_stack_protector
+> > +void *memmove(void *dst __attribute__((unused)),
+> > +	      const void *src __attribute__((unused)),
+> > +	      size_t len __attribute__((unused)))
+> > +{
+> > +	__asm__ volatile (
+> > +		"movq %rdx, %rcx\n\t"
+> > +		"movq %rdi, %rax\n\t"
+> > +		"movq %rdi, %rdx\n\t"
+> > +		"subq %rsi, %rdx\n\t"
+> > +		"cmpq %rcx, %rdx\n\t"
+> > +		"jb   .Lbackward_copy\n\t"
+> > +		"rep movsb\n\t"
+> > +		"retq\n"
+> > +		".Lbackward_copy:"
+> > +		"leaq -1(%rdi, %rcx, 1), %rdi\n\t"
+> > +		"leaq -1(%rsi, %rcx, 1), %rsi\n\t"
+> > +		"std\n\t"
+> > +		"rep movsb\n\t"
+> > +		"cld\n\t"
+> > +		"retq\n"
+> > +	);
+> > +	__nolibc_naked_epilogue();
+> > +}
 > 
+> NAK for this patch.
 
-This could go to trivial-devices, I think. Well, fine also as is.
+Thanks for the feedback!
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+(I'm not an assembler programmer, so regard my notes with a grain of salt)
 
-Best regards,
-Krzysztof
+> This approach appears highly dangerous, particularly when the compiler
+> inlines the call. When using inline assembly within a function, it's
+> crucial to define proper constraints and a clobber list to ensure the
+> arguments are correctly bound to the inline assembly.
 
+Aren't the constraints a feature of Extended Asm?
+This is a Basic Asm block.
+Indeed naked functions only support Basic Asm, so there is no way to
+explicitly bind arguments to their registers.
+
+Looking at the object code for various on both gcc and clang show always
+the same object code.
+(Although GCC adds a "ud2" after the "ret")
+
+> Moreover, as it stands, there is no indication to the compiler that the
+> inline assembly modifies registers such as %rax, %rdi, %rsi, %rdx, %rcx,
+> or "memory", which could lead to unpredictable behavior.
+
+> Unfortunately, I can't spend more time on this right now as I'm
+> currently traveling. I'll get back to it later when I'm in transit.
+
+There is no urgency on this, I'll wait on your further feedback.
+
+Thanks again,
+Thomas
 
