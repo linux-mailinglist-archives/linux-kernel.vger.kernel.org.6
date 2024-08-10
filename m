@@ -1,190 +1,111 @@
-Return-Path: <linux-kernel+bounces-281863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A0894DC3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:19:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3204794DC49
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC3D4B20B6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:19:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94871F21F3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F0B158521;
-	Sat, 10 Aug 2024 10:18:30 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DC7157E62;
+	Sat, 10 Aug 2024 10:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9gPX5W/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12A21514DC;
-	Sat, 10 Aug 2024 10:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394F62F2A;
+	Sat, 10 Aug 2024 10:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723285110; cv=none; b=tcNM2nQFOH6UwRxpaTDwNuT7x2cIQNmsUItB5nEqLfQX254AFHx8r8kl/6lT37/LG3BWTsGzFNjf1kBTey1nq/azP/O34TxA/M5w2G6F1bVx+b2oSiiS4mAvtM59x0snFQHaoXPYMxxHqVl8Smw/TrKaraHWvKRKkPb/e/btm60=
+	t=1723285641; cv=none; b=Z3N+WW7aLD5/Uwmss59cKjYYuTSXb/EzHF7r7bG7A/h1NjnidRlV/8/ERESb2kMQwluNPQb9egT6qsPs2tH2JWuo1O3UBNdXaTKdogtf2fcBS7Lo/p326zX7qEKE1YrA22eqCwdJt4ZVbRveTIKde41DQEii5yDASTKnQ5PYBUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723285110; c=relaxed/simple;
-	bh=IbU8lDGRSb6RrSmjo8Ux+vm167vgMSbXpHUYhLvr66M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MLnF83MMK5Z51BTzcjVBdB/m69GQ4T3vcAaiOrZGpIIVMvIDAm2WgYSM15I0BvxNO8ReGGCiuKYF4Z39B1Z57PHrS/DX3NUDegQysgpwKs0Q85hVrxDBrXrCOJI9XIGMhoCEi19iIMWIR1hUVe8mAi1Ba4oBla07KhBcDw1vs+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WgxYv10Mxz4f3jdG;
-	Sat, 10 Aug 2024 18:18:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A4C631A1629;
-	Sat, 10 Aug 2024 18:18:24 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.67.174.193])
-	by APP4 (Coremail) with SMTP id gCh0CgBXfoRuPrdmTV4rBQ--.16555S6;
-	Sat, 10 Aug 2024 18:18:24 +0800 (CST)
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-To: peterz@infradead.org
-Cc: mingo@redhat.com,
-	acme@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	luogengkun@huaweicloud.com
-Subject: [PATCH v3 2/2] perf/core: Fix incorrected time diff in tick adjust period
-Date: Sat, 10 Aug 2024 10:24:05 +0000
-Message-Id: <20240810102406.1190402-3-luogengkun@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240810102406.1190402-1-luogengkun@huaweicloud.com>
-References: <20240810102406.1190402-1-luogengkun@huaweicloud.com>
+	s=arc-20240116; t=1723285641; c=relaxed/simple;
+	bh=4p1ePSehn6ap5Nr4r9eTXpSRW2G1jRSVhIhPjiiBpUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tLlGva+Mwe0bBujy9JXvJB/DJ8k7uFu8WOXv/XSV57h6FFY1nlzJ4GoTS0ogol72Svg6HOukx6Q2e7H1ErBVn/raPFGmWP9GKpns+rcW4g57rJcLmy+UWwXPb110SvMsKGN4ZhsNKNgxuOZ1+ENyzwOvt5GrrHEwqUbyq2UaznM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9gPX5W/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE6CEC32781;
+	Sat, 10 Aug 2024 10:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723285640;
+	bh=4p1ePSehn6ap5Nr4r9eTXpSRW2G1jRSVhIhPjiiBpUU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=q9gPX5W/BtB6fZkWzxeQtX8m1z+0ElHnXjrxBxiM6TrKEICi7ukNQdR1mzsWCT/sl
+	 KVmwR7ciiDrkI6McW4pHIQWy6+pEXijIJIEiKFx9NQweps0j+ZpU84GxVgvZiTa9Pt
+	 iSO4HWaz8/ni8o3cibIONX1m4HgSFknC6yYavH8+hH+at8QMr2YBLxe2PpUtwy7ktA
+	 F+zPF5gQA/cWHTf35a4kcyTj5iTI1yZ4W3ZqJ1rd/d3lbzbSanLtvZAnNnVB5f7SxQ
+	 0axncJFjBcUIDkIYJLlxx6by1H8ZI/r2713qWSx6mD9AJBQcXZL0c3FVuV03UrLvsr
+	 E1wGUuGKl+jaw==
+Date: Sat, 10 Aug 2024 11:27:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Albrieux <jonathan.albrieux@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux@mainlining.org
+Subject: Re: [PATCH v2 1/3] iio: magnetometer: ak8975: Fix reading for
+ ak099xx sensors
+Message-ID: <20240810112712.191d6576@jic23-huawei>
+In-Reply-To: <45915CD6-A9BB-4071-ABCC-8DE76F7066C3@mainlining.org>
+References: <20240806-ak09918-v2-0-c300da66c198@mainlining.org>
+	<20240806-ak09918-v2-1-c300da66c198@mainlining.org>
+	<20240806171925.7c512c63@jic23-huawei>
+	<45915CD6-A9BB-4071-ABCC-8DE76F7066C3@mainlining.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXfoRuPrdmTV4rBQ--.16555S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF4xCw4xuF4UCFWDZrykGrg_yoWrWFyUpr
-	Z0yry3tFsrJF1j9wnYka4Fgry5Ww48Aan8G348Cw18Aw1fGr9xJF4kKF1UGF98AFZrZFyI
-	y3s0gw4ayFWjqaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AK
-	xVWUtVW8ZwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
-	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
-	cVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
-	CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUADGOUUUUU=
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Adrian found that there is a probability that the number of samples
-is small, which is caused by the unreasonable large sampling period.
+On Tue, 06 Aug 2024 19:54:56 +0200
+Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining.org> wrote:
 
- # taskset --cpu 0 perf record -F 1000 -e cs -- taskset --cpu 1 ./test
- [ perf record: Woken up 1 times to write data ]
- [ perf record: Captured and wrote 0.010 MB perf.data (204 samples) ]
- # perf script
- ...
- test   865   265.377846:         16 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.378900:         15 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.379845:         14 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.380770:         14 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.381647:         15 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.382638:         16 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.383647:         16 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.384704:         15 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.385649:         14 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.386578:        152 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.396383:        154 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.406183:        154 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.415839:        154 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.425445:        154 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.435052:        154 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.444708:        154 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.454314:        154 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.463970:        154 cs:  ffffffff832e927b schedule+0x2b
- test   865   265.473577:        154 cs:  ffffffff832e927b schedule+0x2b
- ...
+> On August 6, 2024 6:19:25 PM GMT+02:00, Jonathan Cameron <jic23@kernel.or=
+g> wrote:
+> >On Tue, 06 Aug 2024 08:10:18 +0200
+> >Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining.org> wrote:
+> >
+> >Hi Barnab=C3=A1s,
+> >
+> >Welcome to IIO.
+> > =20
+> >> ST2 register read should be placed after read measurment data,
+> >> because it will get correct values after it. =20
+> >
+> >What is the user visible result of this? Do we detect errors when none
+> >are there?  Do we have a datasheet reference for the status being
+> >update on the read command, not after the trigger? =20
+>=20
+> Second read will fail. In the datasheet ST2 comes after measurment data r=
+ead. Here is some explanation from datasheet.
+>=20
+> "When ST2 register is read, AK09918 judges that data reading is finished.=
+ Stored measurement data is
+> protected during data reading and data is not updated. By reading ST2 reg=
+ister, this protection is
+> released. It is required to read ST2 register after data reading."
+>=20
+Thanks. Please add more of that detail to the patch description for v3.
 
-And the reason is perf_adjust_freq_unthr_events() calculates a value that is too
-big because it incorrectly assumes the count has accumulated only since the last
-tick, whereas it can have been much longer. To fix this problem, perf can calculate
-the tick interval by itself. For perf_adjust_freq_unthr_events we can use jiffies
-to calculate the tick interval more efficiently, as sugguested by Adrian.
+> So if ST2 is read before measurment it will stuck at protected mode.
+> >> =20
+> >Needs a Fixes tag to let us know how far to backport the fix. =20
+> I think it is broken since 09912 was added but i cannot verify i have onl=
+y devices with 09918.
+> >
+I wasn't meaning devices, but rather what patch broke the kernel code.
+It might be the original driver introduction.
 
-Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
----
- include/linux/perf_event.h |  1 +
- kernel/events/core.c       | 16 +++++++++++++---
- 2 files changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index afb028c54f33..2708f1d0692c 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -265,6 +265,7 @@ struct hw_perf_event {
- 	 * State for freq target events, see __perf_event_overflow() and
- 	 * perf_adjust_freq_unthr_context().
- 	 */
-+	u64				freq_tick_stamp;
- 	u64				freq_time_stamp;
- 	u64				freq_count_stamp;
- #endif
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index cad50d3439f1..309af5520f52 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -55,6 +55,7 @@
- #include <linux/pgtable.h>
- #include <linux/buildid.h>
- #include <linux/task_work.h>
-+#include <linux/jiffies.h>
- 
- #include "internal.h"
- 
-@@ -4112,7 +4113,7 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
- {
- 	struct perf_event *event;
- 	struct hw_perf_event *hwc;
--	u64 now, period = TICK_NSEC;
-+	u64 now, period, tick_stamp;
- 	s64 delta;
- 
- 	/*
-@@ -4151,6 +4152,10 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
- 		 */
- 		event->pmu->stop(event, PERF_EF_UPDATE);
- 
-+		tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
-+		period = tick_stamp - hwc->freq_tick_stamp;
-+		hwc->freq_tick_stamp = tick_stamp;
-+
- 		now = local64_read(&event->count);
- 		delta = now - hwc->freq_count_stamp;
- 		hwc->freq_count_stamp = now;
-@@ -4162,8 +4167,13 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
- 		 * to perf_adjust_period() to avoid stopping it
- 		 * twice.
- 		 */
--		if (delta > 0)
--			perf_adjust_period(event, period, delta, false);
-+		if (delta > 0) {
-+			/*
-+			 * we skip first tick adjust period
-+			 */
-+			if (likely(period != tick_stamp))
-+				perf_adjust_period(event, period, delta, false);
-+		}
- 
- 		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
- 	next:
--- 
-2.34.1
-
+If we can add a Fixes tag that makes it much easier for stable + distributi=
+ons
+to work out whether to pick the fix up or not.
 
