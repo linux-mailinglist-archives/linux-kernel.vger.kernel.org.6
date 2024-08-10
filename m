@@ -1,101 +1,195 @@
-Return-Path: <linux-kernel+bounces-282058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28DAD94DF3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 01:53:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B5994DF44
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 01:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 526881C20B55
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 23:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2A91C20B17
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 23:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B008142625;
-	Sat, 10 Aug 2024 23:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB16C1465AB;
+	Sat, 10 Aug 2024 23:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bWJd4BJk"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IiTDnyS1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DC213D285
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 23:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4225413D889;
+	Sat, 10 Aug 2024 23:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723333982; cv=none; b=s1VO3kDgddBtuNWz8mr5UwsRzo+n+uNzgss1L8FVnNzbQewFRMp4fVQkHfB8m+rb+4bxb8Af/fDfHsnNqJxojeqFSGYC6aHyFQDdgKGPJHli1h8j8P6v3lpSY/vzfIBUQbmwHwpIX13BLuuMxysAXfNggzpY+0dcqBaUSZP6ql0=
+	t=1723334054; cv=none; b=GNVee2FO8ds+7zmBkYVojRo9ydBWXBB+94M85QN4zshGlk7lzpWuHi3J4cM9/TKFaZTB4pznUY0DU+p9X0wThmt86w95uzahJ9C8CQiM01PUozAF4NhfOjw39hfumM2WNXuwUcteRPCRxBkSOeGX5/R3vq/jUIsUfoLWlFLCZm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723333982; c=relaxed/simple;
-	bh=JJ4hxCgt/zZRGJRZcW2lxFYlxh1Kv1BkXwpOc/rkGdo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Fjivb1ul80i4vYiRPKdzqp+Hbbxxp9b3KLJ/6sETjEihw/erfkk23w7/iBHzpl9jIQ8xNSDZ1TkUS1Bv9JlSvohVTaqQ0TNY+uR0tDGbxig+flVJDyR5LxtOePCL6APIYERscPaxe676lKxEFZbPVMgKecj5E0OCNT+2+dvDCfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bWJd4BJk; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-39a16fab332so147995ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 16:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723333980; x=1723938780; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VgxdgCi5bSfE/GAvB/15M/mq1SHMagercw+5Gq3yw68=;
-        b=bWJd4BJkVXDEhpT3XhDbmr9k2USyu5zEIbOIiWYvBg08t7xwkpwmacIJ3N3lcn2i/q
-         YZUe/9jSjkTUKiwtqTxlxk0lS5gFevl3Uhi4/PJivhyn5lUa6Zq7Xto67jd7f8+N9Jz+
-         GdCmrZvwAJxL1rRELpwow0tnjmrXF/v2RJ8aDBeRWSKJw+afeTQ4cwcedlxPMJ6lc/ec
-         ljZUm1T6A2hHNj9uXPwFw8KsTzpNxtpzm7lupiZnaB1eb6aCbyDM/xULGgDK6WyLvlRS
-         jAlaY1FIm6ylxObYv9Ox4USFehZ+QYRcXviUQDL0XspyahWM80MNNOeTAiFzEKgQm7uN
-         TvKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723333980; x=1723938780;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VgxdgCi5bSfE/GAvB/15M/mq1SHMagercw+5Gq3yw68=;
-        b=SgBdvngKSrgZtpJFsZepHbps5jLWfkqZb66/sYHTius0MxJ9LkZVOj7mF7FFm48dK/
-         azZ/l58GIs7Rig0vcdSMSamFQiqaOgsbVhWwmQjFPwF6Br+5PtS0wF5BDfcnaRzU76Fi
-         8+HRBtZM4JqL6SPD5mJqCQwELnsQpf4y2ctGLoE4QaLhauzi99V2ce/lDwgunXUTJ+Nh
-         CnZRbzNV+Ryvx/qZ0/8fi4FhImm18E8nYlMQNW21YW0kWctIFU0jt6RCeW4YUMXfPIjL
-         vyyf46T008lhIbnO7Wj5M4qzkR3vR4bBNU1wgMnKojEpptwXGJc7OIFuYQVftBuqTFFk
-         C5nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwsIHCsGUqxjEc90xOx5HrFTXlXxcscdhUht/blpk7K79xCufDhFILm8Z896yLtS5GDLKMQ7XPFM2l/0rWSJ923BaWgNudux2jQl6t
-X-Gm-Message-State: AOJu0YxlQHKb/PyZnb9L/RR0NE+UWpUE5phxSr8BTdyaAzzNubZ2eLoo
-	wjOZyVTW0PFQfPQC9MN4xtlLfM08eRlxgz7jTVxpkhUj1GHnytGuPbo/sY79Yg==
-X-Google-Smtp-Source: AGHT+IG9GaxuyPHGuUtD7gW7fpHR/LYezf3P32bkziAiQAo4kNJTO5ydInMkzc14fFTOZ5OcEEZk5g==
-X-Received: by 2002:a05:6e02:1609:b0:397:2c0:4a58 with SMTP id e9e14a558f8ab-39c314ba612mr1998525ab.29.1723333979838;
-        Sat, 10 Aug 2024 16:52:59 -0700 (PDT)
-Received: from [2620:0:1008:15:8522:e02:424a:c5b5] ([2620:0:1008:15:8522:e02:424a:c5b5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb9b4dcesm16021725ad.139.2024.08.10.16.52.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Aug 2024 16:52:59 -0700 (PDT)
-Date: Sat, 10 Aug 2024 16:52:57 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-To: Axel Rasmussen <axelrasmussen@google.com>
-cc: Andrew Morton <akpm@linux-foundation.org>, 
-    Christoph Lameter <cl@linux.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-    Joonsoo Kim <iamjoonsoo.kim@lge.com>, Pekka Enberg <penberg@kernel.org>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: Re: [PATCH] mm, slub: print CPU id on slab OOM
-In-Reply-To: <20240806232649.3258741-1-axelrasmussen@google.com>
-Message-ID: <4e06d3ee-de78-9a71-ccec-6c0a5aa0c7f6@google.com>
-References: <20240806232649.3258741-1-axelrasmussen@google.com>
+	s=arc-20240116; t=1723334054; c=relaxed/simple;
+	bh=cdUzVchCaRhLUnErCbZsZUKbLBcgxHpYnYNip9ALhpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUBxSeAtlfgLLlEOLrUvhxFnhZh0HnwvJB2iMeF1oBDaA43Rc8v1hSHZxFjKhB3mc98IVKbVfH2FBBQE+oHotHsfooGm8XkxZe8sohgb7U593t6CpSuIhleibtgazXa6g9xKQAS/dr1pTTfaH1nSoKC20ZBZ62oMdN6EgRhllYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IiTDnyS1; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723334053; x=1754870053;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cdUzVchCaRhLUnErCbZsZUKbLBcgxHpYnYNip9ALhpI=;
+  b=IiTDnyS15D/jSc4DtBXJW46r58u2dNGL3wtT6pNMh1z1B4iVUPSciQXw
+   qZxeyQ2VHtmkqAJB0ZWkQHyGy26KM1Wc0IDIrt5TfOSgKQhXPkMqfvAKv
+   8EznXvYkWmjqVflkg/k5f0k4ZtOKb474oKU+alEBZcYAaamlqUSMwlKG4
+   WfKCGsT/TQAqs4kWbpQhw/cAp8/im0mrwJSrZyYV7f35MxaPWng/CL+ww
+   K8g+MYTLRJl4HsfH7xQOgf3Y47+DlzXVEXm/uPc8QdzCg1FSAbBHunBGg
+   jKONhOPn+WmO5esubqFqlpTMtC8JbKsdFOZUoeYpvkbgAQ8m+cyFveoVZ
+   Q==;
+X-CSE-ConnectionGUID: 927cxkWtRAOHvyja/Go48A==
+X-CSE-MsgGUID: lQ51+Kf5RQG7viCB2nmnDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11160"; a="25341576"
+X-IronPort-AV: E=Sophos;i="6.09,280,1716274800"; 
+   d="scan'208";a="25341576"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2024 16:54:13 -0700
+X-CSE-ConnectionGUID: bKTUh9daSDKjYaYFacB/9A==
+X-CSE-MsgGUID: H/ZbzCnHRWWnZV8q+ukxLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,280,1716274800"; 
+   d="scan'208";a="62566867"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 10 Aug 2024 16:54:09 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1scvuQ-000AOl-2S;
+	Sat, 10 Aug 2024 23:54:06 +0000
+Date: Sun, 11 Aug 2024 07:53:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+	quic_leiwei@quicinc.com, Luo Jie <quic_luoj@quicinc.com>
+Subject: Re: [PATCH 2/4] clk: qcom: Add common PLL clock controller driver
+ for IPQ SoC
+Message-ID: <202408110756.rSXn1ZRu-lkp@intel.com>
+References: <20240808-qcom_ipq_cmnpll-v1-2-b0631dcbf785@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808-qcom_ipq_cmnpll-v1-2-b0631dcbf785@quicinc.com>
 
-On Tue, 6 Aug 2024, Axel Rasmussen wrote:
+Hi Luo,
 
-> Depending on how remote_node_defrag_ratio is configured, allocations can
-> end up in this path as a result of the local node being OOM, despite the
-> allocation overall being unconstrained (node == -1).
-> 
-> When we print a warning, printing the current CPU makes that situation
-> more clear (i.e., you can immediately see which node's OOM status
-> matters for the allocation at hand).
-> 
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+kernel test robot noticed the following build errors:
 
-Acked-by: David Rientjes <rientjes@google.com>
+[auto build test ERROR on 222a3380f92b8791d4eeedf7cd750513ff428adf]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Luo-Jie/dt-bindings-clock-qcom-Add-common-PLL-clock-controller-for-IPQ-SoC/20240808-221059
+base:   222a3380f92b8791d4eeedf7cd750513ff428adf
+patch link:    https://lore.kernel.org/r/20240808-qcom_ipq_cmnpll-v1-2-b0631dcbf785%40quicinc.com
+patch subject: [PATCH 2/4] clk: qcom: Add common PLL clock controller driver for IPQ SoC
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240811/202408110756.rSXn1ZRu-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240811/202408110756.rSXn1ZRu-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408110756.rSXn1ZRu-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/qcom/clk-ipq-cmn-pll.c: In function 'ipq_cmn_pll_config':
+>> drivers/clk/qcom/clk-ipq-cmn-pll.c:96:24: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+      96 |                 val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 3);
+         |                        ^~~~~~~~~~
+
+
+vim +/FIELD_PREP +96 drivers/clk/qcom/clk-ipq-cmn-pll.c
+
+    77	
+    78	static int ipq_cmn_pll_config(struct device *dev, unsigned long parent_rate)
+    79	{
+    80		void __iomem *base;
+    81		u32 val;
+    82	
+    83		base = devm_of_iomap(dev, dev->of_node, 0, NULL);
+    84		if (IS_ERR(base))
+    85			return PTR_ERR(base);
+    86	
+    87		val = readl(base + CMN_PLL_REFCLK_CONFIG);
+    88		val &= ~(CMN_PLL_REFCLK_EXTERNAL | CMN_PLL_REFCLK_INDEX);
+    89	
+    90		/*
+    91		 * Configure the reference input clock selection as per the given rate.
+    92		 * The output clock rates are always of fixed value.
+    93		 */
+    94		switch (parent_rate) {
+    95		case 25000000:
+  > 96			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 3);
+    97			break;
+    98		case 31250000:
+    99			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 4);
+   100			break;
+   101		case 40000000:
+   102			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 6);
+   103			break;
+   104		case 48000000:
+   105			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+   106			break;
+   107		case 50000000:
+   108			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
+   109			break;
+   110		case 96000000:
+   111			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+   112			val &= ~CMN_PLL_REFCLK_DIV;
+   113			val |= FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
+   114			break;
+   115		default:
+   116			return -EINVAL;
+   117		}
+   118	
+   119		writel(val, base + CMN_PLL_REFCLK_CONFIG);
+   120	
+   121		/* Update the source clock rate selection. Only 96 MHZ uses 0. */
+   122		val = readl(base + CMN_PLL_REFCLK_SRC_SELECTION);
+   123		val &= ~CMN_PLL_REFCLK_SRC_DIV;
+   124		if (parent_rate != 96000000)
+   125			val |= FIELD_PREP(CMN_PLL_REFCLK_SRC_DIV, 1);
+   126	
+   127		writel(val, base + CMN_PLL_REFCLK_SRC_SELECTION);
+   128	
+   129		/*
+   130		 * Reset the common PLL block by asserting/de-asserting for 100 ms
+   131		 * each, to ensure the updated configurations take effect.
+   132		 */
+   133		val = readl(base + CMN_PLL_POWER_ON_AND_RESET);
+   134		val &= ~CMN_ANA_EN_SW_RSTN;
+   135		writel(val, base);
+   136		msleep(100);
+   137	
+   138		val |= CMN_ANA_EN_SW_RSTN;
+   139		writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
+   140		msleep(100);
+   141	
+   142		return 0;
+   143	}
+   144	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
