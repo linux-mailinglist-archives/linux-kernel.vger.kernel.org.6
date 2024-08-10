@@ -1,157 +1,106 @@
-Return-Path: <linux-kernel+bounces-281754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3C894DACE
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:03:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A238E94DAD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F8F2282D94
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:03:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CA9E1F22409
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51A213C69C;
-	Sat, 10 Aug 2024 05:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C6013BC0E;
+	Sat, 10 Aug 2024 05:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="bxt12D9J"
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4keRsET"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A19543AB9;
-	Sat, 10 Aug 2024 05:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4AE42AB3;
+	Sat, 10 Aug 2024 05:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723266181; cv=none; b=XLnGXpibHQrQ+hxk56yk9MeCVdPS2TWaS/fydlQ6ouTiiBGTvgCBPLGRA7kHHzfioVicDxDWqztGlfx1bFvcS9rNTq63VGrwpijLZgFBNTBj4iAbB5NaOXNWZblZ4GeSmeN281moZmd5M2/7wADqEWP9EKWXIicdewQ8i1hmaVc=
+	t=1723266246; cv=none; b=CvSKo5vRcIOJjmkYzKopEuoYhJbZh2Cgllj/a2mPN6oYpPpVtwEZ8k+YDstuVOBLOt25VPupXLuxzZ9QKGL2uFCznjohkzsPIF/FEz4Bbln/tPeo4PP2eBDDgPV8qdxx/Mso/ZeB2o+u79e0hxz9pLttkbkVWdVfX/pe0r8Nicg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723266181; c=relaxed/simple;
-	bh=p90VjkHd2QSyI8gT0inSZQc3MjLbk9DQli2MMojVYxM=;
+	s=arc-20240116; t=1723266246; c=relaxed/simple;
+	bh=EF1ylEYDfUpPrmMSUJqw9uq/GgTVKqGyTRiONwYjiXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRUWqkAwS7eiOf9xKhUqFqTNMofv7fDmHMK9d0YjE2nHBwu8TGM3WNrVak0Il+dqEXHKA170wdkBV3QefrQ4+nG2/bRvxlL1hEI0wF/g1W3YjfutcwYbluXh2SIaYzXbABPpGP5eDaQCR42HZexzUUwP00pprqfV/TLl9TACZ+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=bxt12D9J; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Reply-To:Content-ID:Content-Description;
-	bh=TKG+hP+MGaJcpG0oBhsja88fT5jqXMjmRyL9ouWt+d8=; b=bxt12D9Ji/p6jCn44E8utmb17D
-	PyiIkjjSF9cp5+gxfeP15vQCP16pm/a1gXSakW2ZmrV/x5SAEbilaufYH2eWdE0YmvBaumJNLvryi
-	5c8s0CW1h3gTlS9361X/YfHvj/UOtP2sVAFjpWrx8//s2gLyoHs3FgCgvPIzXlOGsRwpKlyZTVv7i
-	xZJ8TQRysHxPfBEpunUDxYRz+/QoEC6VpkhQrghLTlKVXRJ1iOnTKCk4Bgy7H7icsytLHr0lnXZlA
-	au0IbTK9x/hX8Wx/wVdlvYl7a7seMfFKHkXsW+3TSUp4NLs9MJLeNoXlcKDpjjv/TrKbEbtha4Ru4
-	olpwOSDg==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <carnil@debian.org>)
-	id 1sceFN-003iGQ-F4; Sat, 10 Aug 2024 05:02:33 +0000
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id F1440BE2DE0; Sat, 10 Aug 2024 07:02:31 +0200 (CEST)
-Date: Sat, 10 Aug 2024 07:02:31 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	Hardik Garg <hargar@linux.microsoft.com>,
-	Akemi Yagi <toracat@elrepo.org>, bpf@vger.kernel.org,
-	Sahil Siddiq <icegambit91@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Tao Chen <chen.dylane@gmail.com>, Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc2 review
-Message-ID: <Zrb0Z0MJDkSzFwDD@eldamar.lan>
-References: <20240808091131.014292134@linuxfoundation.org>
- <ZrSe8gZ_GyFv1knq@eldamar.lan>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JR64hTJ6DzKQXVR7rZ3ayV6WUiBaNOtjoT89Tclrl+dnzpmi9K8JJ/lG2R5qqR+3vIKCgnL9l7RDcyRPAFcKhDdK5lHirisomll1+GcJukM1Vf0NaPAzM1PFefmb7iuuVcXtFm/cZqUY3ciH53pxZmtWRh9XomupCtlTTF9HOfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4keRsET; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70d26cb8f71so134274b3a.2;
+        Fri, 09 Aug 2024 22:04:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723266244; x=1723871044; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EF1ylEYDfUpPrmMSUJqw9uq/GgTVKqGyTRiONwYjiXs=;
+        b=K4keRsETpen9RnhM7uU3egubjlmzeNOacduZ2phxsl7oJJLUPbcgKJNfwixBA93N9M
+         ZkTo1Ro/+o+tTgO+ZT+05CG8aQK5mVqgUgZ+B/ueZgVUnrFfGEg8/hCuCwCO7WWzxL10
+         lVJjy16peTPRxEXt2q70F29fItT0ow8m9XbH0eSdsos3ZdsOEak/lvBy58IfVWkNLL2K
+         H0S41bnUdby2Nocp652oaTDIJxkpJ6oxz5RimSnJazqn4eUukU0+41wjddEOv6GEqfps
+         cZoSm4ZfjRrMYvjOk8bGezZUcqsLlQd6XVY9PJdN/UtMNnE+dXJRjMiA1AvQRTFW+4zD
+         QCdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723266244; x=1723871044;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EF1ylEYDfUpPrmMSUJqw9uq/GgTVKqGyTRiONwYjiXs=;
+        b=KL2jsVaQoZygDBpwYXU7kj6beogcpay4qgU4qZMkDk2oI20GmRnW37NyMlimPAP+5g
+         ap2bECFNfmIXysR1+v+fCq8YQP3ayjcJqMuHp5/MInMe0Yx3VetVFdbnsWyWmMXnc4PR
+         mWHIh0us5g0LH4zI+5EMGE5hbmdtRetPoc+w2gSgAoOyAKr738Tx01XvjQ6pFGSz7J/4
+         +BmswDz4+dvVnMOgq3rhY5km7NjJ+rZ5OfA6GmxNB5hVgNIXXnu9LZFJ1JXCritTMT7u
+         OUdCx+NgQ9XMQ0yNCO9J/Utmr+2z7awr48lG8IowesHNXbwYZWcqNC2OVbDx4czrSfNg
+         AwIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXPmhcJZvnfomq+3ZphVMUn6b++6Dcj6rbyICQ3FRRh/grkx7HyN0n5S6Kj+mOjN6NeWtC5Mo/WVdYnx4=@vger.kernel.org, AJvYcCVbapg2n2I7rOSjBmJA6DceqpG/sNRQMuTniMkjiQJSPzNgLVFPaK7rXCqrmsyo7Yh65hRpXNiM@vger.kernel.org
+X-Gm-Message-State: AOJu0YysvDsgjtzT35ToMHQW0wcTRXHLqlwt80KNbW1znAwqBaUXiCmX
+	mnGxZhkFHKp8wtQZuPlDyFKL4gxJalf4My3cm3ZhaP392RwlVamU1K7k+A==
+X-Google-Smtp-Source: AGHT+IFHjTn9AA8sti07RfxyPTI0/0m0irWEAB86cudnkSZ5wPUtQ79956cjbv3Kdbpl7zgp7QKHpg==
+X-Received: by 2002:a05:6a00:91e9:b0:70b:705f:8c5d with SMTP id d2e1a72fcca58-710dcb4aaf2mr2365053b3a.4.1723266244019;
+        Fri, 09 Aug 2024 22:04:04 -0700 (PDT)
+Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58bd3bfsm571455b3a.89.2024.08.09.22.04.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 22:04:03 -0700 (PDT)
+Date: Fri, 9 Aug 2024 22:04:01 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, daiweili@gmail.com,
+	sasha.neftin@intel.com, kurt@linutronix.de,
+	anthony.l.nguyen@intel.com, netdev@vger.kernel.org,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH iwl-net v1] igb: Fix not clearing TimeSync interrupts for
+ 82580
+Message-ID: <Zrb0wdmIsksG38Uc@hoboy.vegasvil.org>
+References: <20240810002302.2054816-1-vinicius.gomes@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZrSe8gZ_GyFv1knq@eldamar.lan>
-X-Debian-User: carnil
+In-Reply-To: <20240810002302.2054816-1-vinicius.gomes@intel.com>
 
-Hi Greg,
+On Fri, Aug 09, 2024 at 05:23:02PM -0700, Vinicius Costa Gomes wrote:
+> It was reported that 82580 NICs have a hardware bug that makes it
+> necessary to write into the TSICR (TimeSync Interrupt Cause) register
+> to clear it.
 
-[adding as well people involved in the original commit and the
-backporting for 6.1.y branch]
+Bug, or was it a feature?
 
-On Thu, Aug 08, 2024 at 12:33:22PM +0200, Salvatore Bonaccorso wrote:
-> Hi Greg,
->=20
-> On Thu, Aug 08, 2024 at 11:11:49AM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 6.1.104 release.
-> > There are 86 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >=20
-> > Responses should be made by Sat, 10 Aug 2024 09:11:02 +0000.
-> > Anything received after that time might be too late.
->=20
-> Sorry for bothering you again with it (see previous comment on
-> 6.1.103, respectively 6.1.104-rc1): bpftool still would fail to
-> compile:
->=20
-> gcc -O2 -W -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initial=
-izers -Wbad-function-cast -Wdeclaration-after-statement -Wformat-security -=
-Wformat-y2k -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wno-sy=
-stem-headers -Wold-style-definition -Wpacked -Wredundant-decls -Wstrict-pro=
-totypes -Wswitch-default -Wundef -Wwrite-strings -Wformat -Wno-type-limits =
--Wstrict-aliasing=3D3 -Wshadow -DPACKAGE=3D'"bpftool"' -D__EXPORTED_HEADERS=
-__ -I. -I/home/build/linux-stable-rc/tools/bpf/bpftool/libbpf/include -I/ho=
-me/build/linux-stable-rc/kernel/bpf/ -I/home/build/linux-stable-rc/tools/in=
-clude -I/home/build/linux-stable-rc/tools/include/uapi -DUSE_LIBCAP -DBPFTO=
-OL_WITHOUT_SKELETONS -c -MMD prog.c -o prog.o
-> prog.c: In function =E2=80=98load_with_options=E2=80=99:
-> prog.c:1710:23: warning: implicit declaration of function =E2=80=98create=
-_and_mount_bpffs_dir=E2=80=99 [-Wimplicit-function-declaration]
->  1710 |                 err =3D create_and_mount_bpffs_dir(pinmaps);
->       |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> gcc -O2 -W -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initial=
-izers -Wbad-function-cast -Wdeclaration-after-statement -Wformat-security -=
-Wformat-y2k -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wno-sy=
-stem-headers -Wold-style-definition -Wpacked -Wredundant-decls -Wstrict-pro=
-totypes -Wswitch-default -Wundef -Wwrite-strings -Wformat -Wno-type-limits =
--Wstrict-aliasing=3D3 -Wshadow -DPACKAGE=3D'"bpftool"' -D__EXPORTED_HEADERS=
-__ -I. -I/home/build/linux-stable-rc/tools/bpf/bpftool/libbpf/include -I/ho=
-me/build/linux-stable-rc/kernel/bpf/ -I/home/build/linux-stable-rc/tools/in=
-clude -I/home/build/linux-stable-rc/tools/include/uapi -DUSE_LIBCAP -DBPFTO=
-OL_WITHOUT_SKELETONS  btf.o btf_dumper.o cfg.o cgroup.o common.o feature.o =
-gen.o iter.o json_writer.o link.o main.o map.o map_perf_ring.o net.o netlin=
-k_dumper.o perf.o pids.o prog.o struct_ops.o tracelog.o xlated_dumper.o dis=
-asm.o /home/build/linux-stable-rc/tools/bpf/bpftool/libbpf/libbpf.a -lelf -=
-lz -lcap -o bpftool
-> /bin/ld: prog.o: in function `load_with_options':
-> prog.c:(.text+0x2f98): undefined reference to `create_and_mount_bpffs_dir'
-> /bin/ld: prog.c:(.text+0x2ff2): undefined reference to `create_and_mount_=
-bpffs_dir'
-> collect2: error: ld returned 1 exit status
-> make[1]: *** [Makefile:216: bpftool] Error 1
-> make: *** [Makefile:113: bpftool] Error 2
->=20
-> Reverting 65dd9cbafec2f6f7908cebcab0386f750fc352af fixes the issue. In
-> fact 65dd9cbafec2f6f7908cebcab0386f750fc352af is the only commit
-> adding call to create_and_mount_bpffs_dir:
->=20
-> $ git grep create_and_mount_bpffs_dir
-> tools/bpf/bpftool/prog.c:               err =3D create_and_mount_bpffs_di=
-r(pinmaps);
+Or IOW, maybe i210 changed the semantics of the TSICR?
 
-Just one additional note, at least 478a535ae54a ("bpftool: Mount bpffs
-on provided dir instead of parent dir") would be a reqisite where the
-code was refactored introducing create_and_mount_bpffs_dir() (but
-won't apply cleanly to 6.1.y). But are more requisites needed?
+And what about the 82576?
 
-Should it be safest to just revert the breaking commit for the bpftool
-build?
-
-Regards,
-Salvatore
+Thanks,
+Richard
 
