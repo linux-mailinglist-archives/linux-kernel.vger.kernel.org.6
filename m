@@ -1,307 +1,192 @@
-Return-Path: <linux-kernel+bounces-281657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3600594D98F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C45394D990
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D261C212D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA7501F226AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81491BC2F;
-	Sat, 10 Aug 2024 00:31:42 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8293E1B969;
+	Sat, 10 Aug 2024 00:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="RnPHw2gp"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazolkn19010014.outbound.protection.outlook.com [52.103.66.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B51A182D8;
-	Sat, 10 Aug 2024 00:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723249902; cv=none; b=CeKiMvS/zdURZZ4dfC6rj+zfgw5rcpwFjCrqXqM/9SxUDeI7Gz0F8XK0lAIGxj+ZZCDIInn1tA8TXNtigMHRb2pso9GTXf6y4i9EN/Ex39XNFi39r5TGvUvsm5lCyQtR0EOSefxkeYssgX5mr1SV6Lg0WVqkZuH8auiDAdgqM6c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723249902; c=relaxed/simple;
-	bh=JGAyMGAG4j2hlYG3BpMddGtpc8MWUx6wf7wBPm2PqjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tvyyHjG5wPvFriBcqVsecTvm70HVojhBLIurcaofalRy6Bd5LsaG+a9aeTNUQTU3aS3enFjmL13FgIQLnlxRH4I3708o+BDMeh0Ny76At13P+KHuIYZe3nS3LnWm3Z0G1+UcdyQuW3DjwJRvQY9por5A6nSY9nkNU9qLuA/WKrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WghXt1Tcyzcd49;
-	Sat, 10 Aug 2024 08:31:26 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 454FB1800FF;
-	Sat, 10 Aug 2024 08:31:36 +0800 (CST)
-Received: from [10.174.176.88] (10.174.176.88) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 10 Aug 2024 08:31:35 +0800
-Message-ID: <c593ed3d-dc27-48c0-9e3e-519e9cf2e54d@huawei.com>
-Date: Sat, 10 Aug 2024 08:31:34 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CB4624
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 00:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723249970; cv=fail; b=K8zjg8oabBRZs7vFLRJVPpbGEuBY2wniexy0VD1KyV4RygyEUeVfwE4dk4BPT97eZ5HXfxiJiZo3VZdsJDpodsbgrayXM6Lr6aL/nHcU2p8+LP6tXiEIfNN5Q7Ad7H33uiHMhl4znsg/lZmARBOhVB/IcGmnRX7ctrThOYdUkYs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723249970; c=relaxed/simple;
+	bh=gcu81d+707Ao4lTERj1iNzJLd87PRsJ4xv4nPShH/yI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=pSaARjpxol2gAF6nocqXfhrNy4VBGC15FE3e0NXUSkrzVpkGAaN4/9y9ygCY8cNL1MnaYilwN2gvPzhBUR64MUJlRZy/s0WgrWpVUxO/JLD9kRxHADb8WelVgpcqCGaHK6x6Qe/u9rP1yT2vCoNnEdYDVTB+FtiC6lFmCNYkEXg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=RnPHw2gp; arc=fail smtp.client-ip=52.103.66.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nVNoho16vsymUP5StkS4rIKoBk9FnaSGXN16LfOtiwYI1GbgpPGvA8r2D/xc2K7dg6OVf2X4UUUELNSWje3eBMLtk9pNwBh6hD0fUODWtQsAEJqPbgEP5IujYHjQwppeps9JUzjs8C9NjKkULbrDqlgbm4Cjhiax2ULKHxaik/VZzo5Y7Ot2yjhbg0FGD7aDk8SH3Y31wAONV8A2vaIMBuJWcdS7xwx5JpT4DDvhB6S009B4toqgrVuaCgsBOGF1fNfBSUdPY1kb2KoUghYhO+UnMlVRddtLbQMK9ik/7IQmxYvpOOyc/GH00BxQji+/yVpNkyYc47mhR0Kghs83Og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lbBMl+snsPCqePB02m6PN1aor1VR7xEqscVzhoPMU3E=;
+ b=ivoG1zhYvDy+dbbTwrdaiMFk/9lVTKio8KBr4SKiG1JtSZA8RRnfqAD7sx5fmqvYYiNeB74BclcaeiC/ef5R/xwV/vO6zWgAoWBDmVWyVBwEIZDh0BQHKjV3lmER765H2cu9s+p0XfPo/imXJmjt4U/b3SXSX623ro1mtfsDchSgKzRl3bue09zk0lkrwm3mUGdju3PF74e3UVwAHBg+u1nIE15fm4+jGjTI1DYKd5lKP2edNSXFzatQIAGGiwTNp7jfsEu9DrKasy5QJFI9H7oJSR7tm9wfTXYCJkkJkURlye63w1yCWClHAuuw3jkEEWhsYG3hYAisPvdZUeElDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lbBMl+snsPCqePB02m6PN1aor1VR7xEqscVzhoPMU3E=;
+ b=RnPHw2gpdtCiE9FoHJE05fzSg8cRu8eBYXLdvqV0W44mhptJ+ihE2PJsYRYtyYKqm6Bv7Rt29hhXbiStSyGyx1ym2v7gdxDdGrcXJwxGtPgR4j6Sada4JxeCA97eZ3aUCo7EziVi0B6JyzGGq1EiFkOjX8ZprltOd6z9U+aS2pp0FSN/IEgjt/rEPR84h51pS1ptPUihJZBPZPTYo9j7Ie3qtiw39mclZgT/lyA+CqLDKD8uXUDcrscdIzcs00owRcfvG0+qlM58ZnaX6UDRhfu8VkWz4JHhehQQYwowfYBZ6sDYcEmJwraUljoMbMczyFH/sNm1+og1rHFaxSYovQ==
+Received: from TY2PR01MB3322.jpnprd01.prod.outlook.com (2603:1096:404:d8::12)
+ by OS3PR01MB8587.jpnprd01.prod.outlook.com (2603:1096:604:19c::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.15; Sat, 10 Aug
+ 2024 00:32:45 +0000
+Received: from TY2PR01MB3322.jpnprd01.prod.outlook.com
+ ([fe80::2580:b866:1150:d0d]) by TY2PR01MB3322.jpnprd01.prod.outlook.com
+ ([fe80::2580:b866:1150:d0d%5]) with mapi id 15.20.7849.014; Sat, 10 Aug 2024
+ 00:32:45 +0000
+Date: Sat, 10 Aug 2024 08:32:39 +0800
+From: Zhang Ning <zhangn1985@outlook.com>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org,
+	linux-kernel@vger.kernel.org, lee@kernel.org
+Subject: Re: mfd: intel_soc_pmic_bxtwc: irq 0 issue, tmu and typec components
+ fail to probe.
+Message-ID:
+ <TY2PR01MB33220011C5C0D630FD83EC64CDBB2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+References: <TY2PR01MB3322FEDCDC048B7D3794F922CDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <ZrYMne34hVa33qKf@smile.fi.intel.com>
+ <TY2PR01MB33222D8BE4B1107EB3A1917FCDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <ZrYjLdPryElDubaM@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZrYjLdPryElDubaM@smile.fi.intel.com>
+X-TMN: [m2v5J/L7/F5/Sg7QHwyrNJl2nLTcNwEkdbTqqqt29XGmblZd7d5GNDwVxN1hEK0m]
+X-ClientProxiedBy: KL1P15301CA0052.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:820:3d::10) To TY2PR01MB3322.jpnprd01.prod.outlook.com
+ (2603:1096:404:d8::12)
+X-Microsoft-Original-Message-ID: <Zra1J6b_hQ2KLwd5@orangepipc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] xfs: Make the fsmap more precise
-To: Carlos Maiolino <cem@kernel.org>
-CC: <chandan.babu@oracle.com>, <djwong@kernel.org>, <dchinner@redhat.com>,
-	<osandov@fb.com>, <john.g.garry@oracle.com>, <linux-xfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>
-References: <20240808144759.1330237-1-wozizhi@huawei.com>
- <3oq52rri7iwsxhpiquztikmb7k3t324tt3b64yd5ac43lb42jy@m2twc7tvphca>
-From: Zizhi Wo <wozizhi@huawei.com>
-In-Reply-To: <3oq52rri7iwsxhpiquztikmb7k3t324tt3b64yd5ac43lb42jy@m2twc7tvphca>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PR01MB3322:EE_|OS3PR01MB8587:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81278dba-e525-4df6-c46c-08dcb8d3f3db
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|8060799006|461199028|15080799003|5072599009|3412199025|440099028|4302099013|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	wltQpBO3A/aMv9o+5GR1maCm1YlRNkuMKg5variF6yJrCzxxZhCXuf0D4/w7DxA3OrqO0aEIARZ+AcZeua6qVrYc8dekeyhfe1avmQbUcgIa6mMFDPvWJ1mf35ibaxlriUMuKw/Npyl1Uy6xQfHkItynsg6xUc44IUOexHGYXi36TbqEoWUW8JDEreHYXCMOm7IRu5hdNz8jreLv7lZtQfjTh/N4wHxGD8zSPcIu4JYSKZPa3Ag8BP7u4bK56QAwoqGVJN6HIeioqs7X4IDIC91Eqp1vwT3dDCjgkiNjAFBHBh+nLPnF6Ee9llwOhFgVXZapIIw9vpa456y/e3JXwxolPPhFPxHjs6SH7VlWbVPRMGCmwam//BJ30YiBMAXoeQeTisZ1FD+olNM8f9G2CwE+lS0+mURfwnCIlNIj0F1mOT3nBR4moZfOPwd/HVU/L2ExFNjNr6weGHct82yirEWW+QyEi24HEUwd+xV8z+YR5OjpQmn6djyN9cHwF+rbrUOlUyDNIfZa59fPPn63fUfYD0nkUK05Emgp15gQvT8Wy9MIQwU8zCuW8du5DI061vv+gAXk9NFF6/HA/EoAKzKtu+0n2cHqazax0GPGHqmEOkZvc6cnK6hKa6IuB67E1pWD0qm1mbxg0om0+9j3IEW53F0na6UdJRM1uLk7ZrIrlK5hCgmIqrr8c5Z0TayvxyvMDSaE8g783cFkUUTp+qL4bQjL0gS/P9LC55GlUVCxo1KaUDm1OjcCqFCPNJS9xz4dnEXaKwdVRUCaYy0A/pi2G1tEokBImnAkWrEYYcHxFTGFkNuQ7vszc/OqjGg10HYRZ3rKuqfA45BGVbjhh7189YSOuam2MVJRs9ZpM4hCDSyCmBjckp2EvLNrgDl1
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dysvdUFLczdjTmtoMGtJQzNkVWdOR3ZEV0ZXcmtiU0RoTDRMd0VpTWtuYmYw?=
+ =?utf-8?B?cnh5QjBBaVMwVUJBMUVVam40Ly9TdkhXUUtybytseEdLTjAzZzM0b2pXelha?=
+ =?utf-8?B?aGRCajdXaytOMnVJZ2R2bkoyTDIvWUI3WXBUWXlNWkpRZzZ6YjN0TWdTTjR4?=
+ =?utf-8?B?KzlGZE1MQUVFc0N1S0tPQUxSTzRta0ZtTDJJK1creGMyUnV0bWFNSFFNUTcw?=
+ =?utf-8?B?NURmNWhQUS9SMGhETnp5aDZCT1dOa0xhOTZHMDhmMHBjcGlxN1RYMytDSVhH?=
+ =?utf-8?B?Z20rZVBaUGYvQUNxczNRZUtDVlcxT3g0T0NRZ3VPVmpwZk1QcmJTVXdGdXVN?=
+ =?utf-8?B?UnlnNDB0QnIzVHpKZkg2OXN4c1BRejRsbE9zRWRCZnRpc2duTSt6VlB5R2tk?=
+ =?utf-8?B?a2xzRFdPMldzazloemlnaWQrbXdqalUyQ0pnajllMUozMllKMC9YU2FGZG1L?=
+ =?utf-8?B?azNhcjhpanlhanYvc1l0UjFRY3FpWjZPNUV6N25jNXlFYjRpeVpsMUtLZWdo?=
+ =?utf-8?B?NE50by9jeHAxVHRZTllwM3p5cEhhKzZybUl4c1gzalA2TE1rOVNQZWFlRmJP?=
+ =?utf-8?B?MDYwTHhiU1pDYnI3QVVzam9jV3MvMVFveDhJOGtucDlYaVFrZDA2MjV2VEw3?=
+ =?utf-8?B?ek5FWDVSdTJzKzBieTdPTHI0N04zM3BkS1Y3OXBLZEcxVmIvRUVWY3dQSUto?=
+ =?utf-8?B?bktNUlg4YXR4ZVB2MXMwdzF3ZUYyTGsrSGQ1ZUxPOHUrVHdNdXc4amtrTHJ4?=
+ =?utf-8?B?UzRDU28yWk14M3FWdkpWcDJwU1BENkVYTzhSVTdiZ0VkMGpFd2RsOGJkcUk1?=
+ =?utf-8?B?blF0NVJsMU05bnFWTGo1OXZIdFJ0by9RY2lqTUdFRXkvV05ndTN4TG8vZDZX?=
+ =?utf-8?B?UkZkUFgvTDU1OUo4ZFVoV1FQTzkvM2NFVGxabm14eTlKNGFYYyt1cXZMd2dH?=
+ =?utf-8?B?K01aMlE2Y3k0VjRtT3pHMjFKTUt4eUw1UVVDVCtmZmdCcjNneU1XVFJlbjFv?=
+ =?utf-8?B?MUFDODZsNk1mV0pQNGpFRW84UXVQcDJVMklMTTlnT0hxcWtvR0FJWTVXMFJj?=
+ =?utf-8?B?cHBhV1pzeTVUZjdSMW9DeUFwRjNMUHVjU2ZDckZrcE8wMWRIb3d3QnlhNzVW?=
+ =?utf-8?B?ejV5N0cvbi9kMUZ5aStNOHpSWklCWStyZzhQSTFVNXRXNkhNM2xKWGRmTmFI?=
+ =?utf-8?B?S20zZW1LZm84cEFpc1p0QXNacktyZUhYSG9scHlVSk5ZVGVCNUxobzE4bzRx?=
+ =?utf-8?B?Z21pdldCR3VFUDN6TmVWMGtNZFJnQ2FKUEhyeHFyYVRBVm1RR1Axd2RkN2xS?=
+ =?utf-8?B?ODYwcUM2a2dXNkcrNUQvQnVkR0ViQm5wa0JoYUZQQUhhUFlKUjU2am9rUENG?=
+ =?utf-8?B?WUJoR09oQzN4aGg1L0pOTmFWWmF2REpTZFMzYlBxSTR3VXZ3NjZtaUxaK3lZ?=
+ =?utf-8?B?c3dKR29rV1pPWURyMFNtVFNnK3NlOGoxaFVYOHNzN1dpY1pZZXJsM1cwdXJB?=
+ =?utf-8?B?SnhqUlFoQkVhejFZZGg4MVZYdzdvdDAxWWtmOVZucTNGYnZGWG55bWRUZTU2?=
+ =?utf-8?B?dGRZZG1mekt1aGZ1K3JUZDFyZllkQ3I3UG5ETnJRV0lTQmlkbk1xR3MyZ21J?=
+ =?utf-8?B?cmVTc0lpK0RJOExlN3RWaFcydUE1MWtsZnRvSzlrc1JFMWFxU25MUlZITzJM?=
+ =?utf-8?B?T2dKT3JnOUdHd1ZtRlQyRXQvdkpIbEFHZHVwWGFnS21rRW8vMVVYREtEc1FE?=
+ =?utf-8?Q?+QDEpLTJvroA/CGecM=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81278dba-e525-4df6-c46c-08dcb8d3f3db
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3322.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2024 00:32:45.2532
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8587
 
+On Fri, Aug 09, 2024 at 05:09:49PM +0300, Andy Shevchenko wrote:
+> On Fri, Aug 09, 2024 at 08:53:24PM +0800, Zhang Ning wrote:
+> > On Fri, Aug 09, 2024 at 03:33:33PM +0300, Andy Shevchenko wrote:
+> > > On Fri, Aug 09, 2024 at 08:02:43PM +0800, Zhang Ning wrote:
+> > > > Hi, Greg & Rafael
+> > > > 
+> > > > recently, when I try to enable mfd components for intel_soc_pmic_bxtwc
+> > > > for debian kernel[0]. I find tmu and typec failed to probe.
+> > > > 
+> > > > after check source code, I find irq for these two devices are 0, when
+> > > > use platform_get_irq, it will alway fail.
+> > > > 
+> > > > 	if (WARN(!ret, "0 is an invalid IRQ number\n"))
+> > > > 		return -EINVAL;
+> > > > 	return ret;
+> > > > 
+> > > > My workaround for debian is to hardcode irq to 0, instead to use api.
+> > > > 
+> > > > I don't know how to write a good solution, thus send an email to you.
+> > > 
+> > > Hold on, how the heck you got 0 in the first place?A
+> > 
+> > use tmu as an example
+> > 
+> > enum bxtwc_irqs_tmu {
+> >         BXTWC_TMU_IRQ = 0,
+> > };
 
+is it good to set BXTWC_TMU_IRQ = 1?
 
-在 2024/8/9 17:09, Carlos Maiolino 写道:
-> On Thu, Aug 08, 2024 at 10:47:59PM GMT, Zizhi Wo wrote:
->> In commit 63ef7a35912d ("xfs: fix interval filtering in multi-step fsmap
->> queries"), Darrick has solved a fsmap bug about incorrect filter condition.
->> But I still notice two problems in fsmap:
->>
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
->>   EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
->>     0: 253:32 [0..7]:               static fs metadata                  0  (0..7)                    8
->>     1: 253:32 [8..23]:              per-AG metadata                     0  (8..23)                  16
->>     2: 253:32 [24..39]:             inode btree                         0  (24..39)                 16
->>     ......
->>
->> Bug 1:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 3 7' /mnt
->> [root@fedora ~]#
->> Normally, we should be able to get [3, 7), but we got nothing.
->>
->> Bug 2:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 15 20' /mnt
->>   EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
->>     0: 253:32 [8..23]:         per-AG metadata                   0  (8..23)             16
->> Normally, we should be able to get [15, 20), but we obtained a whole
->> segment of extent.
->>
->> The first problem is caused by shifting. When the query interval is before
->> the first extent which can be find in btree, no records can meet the
->> requirement. And the gap will be obtained in the last query. However,
->> rec_daddr is calculated based on the start_block recorded in key[1], which
->> is converted by calling XFS_BB_TO_FSBT. Then if rec_daddr does not exceed
->> info->next_daddr, which means keys[1].fmr_physical >> (mp)->m_blkbb_log
->> <= info->next_daddr, no records will be displayed. In the above example,
->> 3 >> (mp)->m_blkbb_log = 0 and 7 >> (mp)->m_blkbb_log = 0, so the two are
->> reduced to 0 and the gap is ignored:
->>
->> before calculate ----------------> after shifting
->>   3(st)    7(ed)                       0(st/ed)
->>    |---------|                            |
->>    sector size                        block size
->>
->> Resolve this issue by introducing the "tail_daddr" field in
->> xfs_getfsmap_info. This records |key[1].fmr_physical + key[1].length| at
->> the granularity of sector. If the current query is the last, the rec_daddr
->> is tail_daddr to prevent missing interval problems caused by shifting.
+> > 
+> > static const struct regmap_irq bxtwc_regmap_irqs_tmu[] = {
+> >         REGMAP_IRQ_REG(BXTWC_TMU_IRQ, 0, GENMASK(2, 1)),
+> > };
+> > 
+> > static const struct resource tmu_resources[] = {
+> >         DEFINE_RES_IRQ_NAMED(BXTWC_TMU_IRQ, "TMU"),
+> > };
+> > 
+> >         {
+> >                 .name = "bxt_wcove_tmu",
+> >                 .num_resources = ARRAY_SIZE(tmu_resources),
+> >                 .resources = tmu_resources,
+> >         },
+> > 
+> > this is why I got 0, and I don't do any hack.
 > 
-> You mention the introduction of the 'tail_daddr' field, but your patch
-> does not introduce such field. Your patch description should properly match
-> your patch.
+> Thanks for elaboration, I will look at this a bit later (may be next or one
+> after next week, just returned from vacations).
 > 
-
-I'm very sorry, I mistakenly referred to "end_daddr" as "tail_daddr"!
-Next time, I will carefully review the commit message of the patch.
-To fix the first bug, introducing "end_daddr" is sufficient, but fixing
-the second bug requires both "start_daddr" and "end_daddr".
-
+> > > > [0]: https://salsa.debian.org/kernel-team/linux/-/merge_requests/1156/diffs
 > 
->> We
->> only need to focus on the last query, because xfs disks are internally
->> aligned with disk blocksize that are powers of two and minimum 512, so
->> there is no problem with shifting in previous queries.
->>
->> The second problem is that the resulting range is not truncated precisely
->> according to the boundary.
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 > 
-> Even though they are related, I'd prefer these two fixes split this into 2
-> separated patches, not a single one. This makes reviewers lives easier to
-> follow what you are fixing.
-> 
-
-Sure, I'll split them. Thanks for the suggestion. However, as Darrick
-mentioned, the second issue of displaying the entire range might not be
-a problem. So I'll address the first bug in the next version.
-
-Thanks,
-Zizhi Wo
-
-> 
->> Currently, the query display mechanism for owner
->> and missing_owner is different. The query of missing_owner (e.g. freespace
->> in rmapbt/ unknown space in bnobt) is obtained by subtraction (gap), which
->> can accurately lock the range. In the query of owner which almostly finded
->> by btree, as long as certain conditions met, the entire interval is
->> recorded, regardless of the starting address of the key[0] and key[1]
->> incoming from the user state. Focus on the following scenario:
->>
->>                      a       b
->>                      |-------|
->> 	              query
->>                   c             d
->> |----------------|-------------|----------------|
->>    missing owner1      owner      missing owner2
->>
->> Currently query is directly displayed as [c, d), the correct display should
->> be [a, b). This problem is solved by calculating max(a, c) and min(b, d) to
->> identify the head and tail of the range. To be able to determine the bounds
->> of the low key, "start_daddr" is introduced in xfs_getfsmap_info.
-> 
-> Here you properly describe what your patch is doing.
-> 
-> Carlos
-> 
->> Although
->> in some scenarios, similar results can be achieved without introducing
->> "start_daddr" and relying solely on info->next_daddr (e.g. in bnobt), it is
->> ineffective for overlapping scenarios in rmapbt.
->>
->> After applying this patch, both of the above issues have been fixed (the
->> same applies to boundary queries for the log device and realtime device):
->> 1)
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 3 7' /mnt
->>   EXT: DEV    BLOCK-RANGE      OWNER              FILE-OFFSET      AG AG-OFFSET        TOTAL
->>     0: 253:32 [3..6]:          static fs metadata                  0  (3..6)               4
->> 2)
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 15 20' /mnt
->>   EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
->>     0: 253:32 [15..19]:        per-AG metadata                   0  (15..19)             5
->>
->> Note that due to the current query range being more precise, high.rm_owner
->> needs to be handled carefully. When it is 0, set it to the maximum value to
->> prevent missing intervals in rmapbt.
->>
->> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
->> ---
->>   fs/xfs/xfs_fsmap.c | 42 ++++++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 40 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
->> index 85dbb46452ca..e7bb21497e5c 100644
->> --- a/fs/xfs/xfs_fsmap.c
->> +++ b/fs/xfs/xfs_fsmap.c
->> @@ -162,6 +162,8 @@ struct xfs_getfsmap_info {
->>   	xfs_daddr_t		next_daddr;	/* next daddr we expect */
->>   	/* daddr of low fsmap key when we're using the rtbitmap */
->>   	xfs_daddr_t		low_daddr;
->> +	xfs_daddr_t		start_daddr;	/* daddr of low fsmap key */
->> +	xfs_daddr_t		end_daddr;	/* daddr of high fsmap key */
->>   	u64			missing_owner;	/* owner of holes */
->>   	u32			dev;		/* device id */
->>   	/*
->> @@ -276,6 +278,7 @@ xfs_getfsmap_helper(
->>   	struct xfs_mount		*mp = tp->t_mountp;
->>   	bool				shared;
->>   	int				error;
->> +	int				trunc_len;
->>   
->>   	if (fatal_signal_pending(current))
->>   		return -EINTR;
->> @@ -283,6 +286,13 @@ xfs_getfsmap_helper(
->>   	if (len_daddr == 0)
->>   		len_daddr = XFS_FSB_TO_BB(mp, rec->rm_blockcount);
->>   
->> +	/*
->> +	 * Determine the maximum boundary of the query to prepare for
->> +	 * subsequent truncation.
->> +	 */
->> +	if (info->last && info->end_daddr)
->> +		rec_daddr = info->end_daddr;
->> +
->>   	/*
->>   	 * Filter out records that start before our startpoint, if the
->>   	 * caller requested that.
->> @@ -348,6 +358,21 @@ xfs_getfsmap_helper(
->>   		return error;
->>   	fmr.fmr_offset = XFS_FSB_TO_BB(mp, rec->rm_offset);
->>   	fmr.fmr_length = len_daddr;
->> +	/*  If the start address of the record is before the low key, truncate left. */
->> +	if (info->start_daddr > rec_daddr) {
->> +		trunc_len = info->start_daddr - rec_daddr;
->> +		fmr.fmr_physical += trunc_len;
->> +		fmr.fmr_length -= trunc_len;
->> +		/* need to update the offset in rmapbt. */
->> +		if (info->missing_owner == XFS_FMR_OWN_FREE)
->> +			fmr.fmr_offset += trunc_len;
->> +	}
->> +	/* If the end address of the record exceeds the high key, truncate right. */
->> +	if (info->end_daddr) {
->> +		fmr.fmr_length = umin(fmr.fmr_length, info->end_daddr - fmr.fmr_physical);
->> +		if (fmr.fmr_length == 0)
->> +			goto out;
->> +	}
->>   	if (rec->rm_flags & XFS_RMAP_UNWRITTEN)
->>   		fmr.fmr_flags |= FMR_OF_PREALLOC;
->>   	if (rec->rm_flags & XFS_RMAP_ATTR_FORK)
->> @@ -364,7 +389,7 @@ xfs_getfsmap_helper(
->>   
->>   	xfs_getfsmap_format(mp, &fmr, info);
->>   out:
->> -	rec_daddr += len_daddr;
->> +	rec_daddr = fmr.fmr_physical + fmr.fmr_length;
->>   	if (info->next_daddr < rec_daddr)
->>   		info->next_daddr = rec_daddr;
->>   	return 0;
->> @@ -655,6 +680,13 @@ __xfs_getfsmap_datadev(
->>   			error = xfs_fsmap_owner_to_rmap(&info->high, &keys[1]);
->>   			if (error)
->>   				break;
->> +			/*
->> +			 * Set the owner of high_key to the maximum again to
->> +			 * prevent missing intervals during the query.
->> +			 */
->> +			if (info->high.rm_owner == 0 &&
->> +			    info->missing_owner == XFS_FMR_OWN_FREE)
->> +			    info->high.rm_owner = ULLONG_MAX;
->>   			xfs_getfsmap_set_irec_flags(&info->high, &keys[1]);
->>   		}
->>   
->> @@ -946,6 +978,9 @@ xfs_getfsmap(
->>   
->>   	info.next_daddr = head->fmh_keys[0].fmr_physical +
->>   			  head->fmh_keys[0].fmr_length;
->> +	/* Assignment is performed only for the first time. */
->> +	if (head->fmh_keys[0].fmr_length == 0)
->> +		info.start_daddr = info.next_daddr;
->>   	info.fsmap_recs = fsmap_recs;
->>   	info.head = head;
->>   
->> @@ -966,8 +1001,10 @@ xfs_getfsmap(
->>   		 * low key, zero out the low key so that we get
->>   		 * everything from the beginning.
->>   		 */
->> -		if (handlers[i].dev == head->fmh_keys[1].fmr_device)
->> +		if (handlers[i].dev == head->fmh_keys[1].fmr_device) {
->>   			dkeys[1] = head->fmh_keys[1];
->> +			info.end_daddr = dkeys[1].fmr_physical + dkeys[1].fmr_length;
->> +		}
->>   		if (handlers[i].dev > head->fmh_keys[0].fmr_device)
->>   			memset(&dkeys[0], 0, sizeof(struct xfs_fsmap));
->>   
->> @@ -991,6 +1028,7 @@ xfs_getfsmap(
->>   		xfs_trans_cancel(tp);
->>   		tp = NULL;
->>   		info.next_daddr = 0;
->> +		info.start_daddr = 0;
->>   	}
->>   
->>   	if (tp)
->> -- 
->> 2.39.2
->>
->>
 > 
 
