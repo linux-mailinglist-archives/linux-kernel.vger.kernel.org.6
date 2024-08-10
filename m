@@ -1,50 +1,86 @@
-Return-Path: <linux-kernel+bounces-281683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7A294D9E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:59:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 491A194D9E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485421F22639
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:59:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90155B22543
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C37C12D760;
-	Sat, 10 Aug 2024 01:59:21 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCFC12D766;
+	Sat, 10 Aug 2024 02:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P74P4bv3"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F9D624;
-	Sat, 10 Aug 2024 01:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955B11802B;
+	Sat, 10 Aug 2024 02:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723255160; cv=none; b=LyaRrzPQHLthgT2W2UU/POmTvO7p9ImfvaAeML5+mZfKscyBqUa2FGVEoARfv+Gedh3uaTRkZzJPgEhdL0cJ+1PquU48UsgPIwnThE38WhGtXGw/IGMoM3MPx84NrAzkZtKQyrwq7DBEjuwoHGY7GaFl7cg50aNEdhRrWcswTzQ=
+	t=1723255642; cv=none; b=ZTVUSA1rDF07JyigbETJNseCi4VoZ+UGqVY8BSPXPeLR8EZSxyjqB7iJx3kND0/byWMt9MdBvUqynafoX3gGOd1ed8w1QldcmCO0mr5TEw8lG4loghQ1wAHqkG6ZX6owysb06EJv+vYWu40QBAwAlicMass/N7neCMbyX43W01I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723255160; c=relaxed/simple;
-	bh=e8NzsslWTIbCv+cUJVSB3myVpG22fEa+NUnCy99JIxA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WUJCxt3+bvqqPn4p699+P4tTa+YySfjOs467/TrHQa79QRoVXtoNGm2Nf7bJ6kPVmiEumYDVTTMLzhC0ibatDxo4csxwYJ1x86rsaQ0qoPfInBDWa0/BVn4d9DYafyErdL6Pms0E/4NTkMScL5ZFOA+OxV5LCR0FJEL7M+bmVnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WgkQj3llkz20lKl;
-	Sat, 10 Aug 2024 09:56:13 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1BF8214022D;
-	Sat, 10 Aug 2024 09:59:13 +0800 (CST)
-Received: from localhost.huawei.com (10.50.165.33) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 10 Aug 2024 09:59:12 +0800
-From: Yihang Li <liyihang9@huawei.com>
-To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<liyihang9@huawei.com>, <linuxarm@huawei.com>, <prime.zeng@huawei.com>
-Subject: [PATCH v2] scsi: sd: retry command SYNC CACHE if format in progress
-Date: Sat, 10 Aug 2024 09:59:12 +0800
-Message-ID: <20240810015912.856223-1-liyihang9@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1723255642; c=relaxed/simple;
+	bh=FszU0eWGF+7YV5v6loTRFKt9FQXPF/rqGxQmR77obo8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n2OcOvDmOF69aJRWH2m+H8k0Vx+40xhYMxEGGalE04a1UdAKEQ9uBO9fbDqM7n19EP+YMCda+xUVJk+Ujoa1GLx1TTOfND9gSNb4s6Pd0y2p0W90CxWK0sPdCjfukXXFTrbY8B7uEOHM8KcYt8RoK6H5vzgSHIFYOBjrfyv1VPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P74P4bv3; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1fc491f9b55so21139885ad.3;
+        Fri, 09 Aug 2024 19:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723255639; x=1723860439; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EO3mVztBgbiVsE4xJVCsdRCCfzIJ6lRteSoBlqZb/Ms=;
+        b=P74P4bv3z4M+Ht2W6cO3wLfr+JQ7ybt6gLqaPGr6bdJ8RYlV6M5S0GIQAbZutA06SW
+         Gydpo3Dcw56XnmY/iGNF+XhFGhKesXNk45h4hKyyS7BtMje6ez9RTX+e7doM6qf6mDs2
+         rWUthV66wgp7rgYFtDgFi/umJiwbwK1ROqbTmBFf7shW+WMXZI48yncby4lI6+ngt8o4
+         gjnltyH3MFNMNPI6FGtAXiH7PQeqeUD3Q/FTLCZxC6RLs9SC+wiUiO3gsPwsZfh5UoOo
+         Qoxf0UUWX/kfW4gbKfaKnz6v9J774YvH2FxeUiyUvmmACZtNkpSbCUlFXO7dNu6W14Qy
+         s+5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723255639; x=1723860439;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EO3mVztBgbiVsE4xJVCsdRCCfzIJ6lRteSoBlqZb/Ms=;
+        b=UXaSzXAFrzmdrxxFuGVvHFDwt+8kgZIjK8lxDVkf5xfn9w77JYE4+U5yIp8Xhli2My
+         opnPO1c8+TN/iw7na+H3pkP7Yz7HGIPUSt78zvoFGvHKyxQORvBaYXUJ8cw12kUCoV94
+         wuHLm+gOa5cVbB4f9KVKnPDf6UWuO/8pu2PYE3UjFrdLOkKLi7SFPfqP5M8aZ5/2rOzR
+         EepOmZsm5S2GiR5Q/tXsH33xMN1NSKofXXJq1Yr57i+tGBaTFKso0EKmtIHtYqdkWokd
+         0y1H5zZNMNetKDwvGb6TBqCN/rMHOkyf/aZ8S5A6LAbmq4KMFAiWH+CNZmzPIbgPkVKQ
+         YZ0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWaOrG23KNABTaA1V1WfxY2SA1jhnbZlx/+GKSlNeNqwQ+9wDqwz7Y4PacsOaV1F6F4OTNuuOiAlCXhMNaZ2llBD/S1j/vknq7vjuhz3XuxrnIZtX9ccV75MDEPc/1c589mFj3l
+X-Gm-Message-State: AOJu0Ywb0z3BTNJgrkPdvwIEKDC2oaOOJFX/1jtUArODXoHnmEBAHiB3
+	nBg1r/VO+M7pedAuI+ikpNgJkzfUGgGhLzJNURBQyKea9/bUTdfP
+X-Google-Smtp-Source: AGHT+IE29VQRew1pZF4nx0oomtXBBNwOeMsSjUnyHugVMaDdB4CGqdPsdW5FeDg6fsq99QTJW5HQPg==
+X-Received: by 2002:a17:903:230a:b0:1fd:6766:6848 with SMTP id d9443c01a7336-200ae4d9da4mr35459185ad.17.1723255638720;
+        Fri, 09 Aug 2024 19:07:18 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bba01c8dsm3677385ad.231.2024.08.09.19.07.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 19:07:18 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: kuba@kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	idosch@nvidia.com,
+	amcohen@nvidia.com,
+	gnault@redhat.com,
+	dongml2@chinatelecom.cn,
+	b.galvani@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: vxlan: remove duplicated initialization in vxlan_xmit
+Date: Sat, 10 Aug 2024 10:06:32 +0800
+Message-Id: <20240810020632.367019-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,54 +88,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf100013.china.huawei.com (7.185.36.179)
 
-If formatting a suspended disk (such as formatting with different DIF
-type), the disk will be resuming first, and then the format command will
-submit to the disk through SG_IO ioctl.
+The variable "did_rsc" is initialized twice, which is unnecessary. Just
+remove one of them.
 
-When the disk is processing the format command, the system does not submit
-other commands to the disk. Therefore, the system attempts to suspend the
-disk again and sends the SYNC CACHE command. However, the SYNC CACHE
-command will fail because the disk is in the formatting process, which
-will cause the runtime_status of the disk to error and it is difficult
-for user to recover it. Error info like:
-
-[  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
-[  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
-[  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
-[  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
-
-To solve the issue, retry the command until format command is finished.
-
-Signed-off-by: Yihang Li <liyihang9@huawei.com>
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 ---
-Changes since v1:
-- Updated and added error information to the patch description.
+ drivers/net/vxlan/vxlan_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
----
- drivers/scsi/sd.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index adeaa8ab9951..5cd88a8eea73 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1823,6 +1823,11 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
- 			    (sshdr.asc == 0x74 && sshdr.ascq == 0x71))	/* drive is password locked */
- 				/* this is no error here */
- 				return 0;
-+
-+			/* retry if format in progress */
-+			if (sshdr.asc == 0x4 && sshdr.ascq == 0x4)
-+				return -EBUSY;
-+
- 			/*
- 			 * This drive doesn't support sync and there's not much
- 			 * we can do because this is called during shutdown
+diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
+index fa3c4e08044a..0ddb2eca744d 100644
+--- a/drivers/net/vxlan/vxlan_core.c
++++ b/drivers/net/vxlan/vxlan_core.c
+@@ -2710,11 +2710,11 @@ static netdev_tx_t vxlan_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	struct vxlan_dev *vxlan = netdev_priv(dev);
+ 	struct vxlan_rdst *rdst, *fdst = NULL;
+ 	const struct ip_tunnel_info *info;
+-	bool did_rsc = false;
+ 	struct vxlan_fdb *f;
+ 	struct ethhdr *eth;
+ 	__be32 vni = 0;
+ 	u32 nhid = 0;
++	bool did_rsc;
+ 
+ 	info = skb_tunnel_info(skb);
+ 
 -- 
-2.33.0
+2.39.2
 
 
