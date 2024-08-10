@@ -1,102 +1,112 @@
-Return-Path: <linux-kernel+bounces-281770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCEB694DB19
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:31:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851E794DB04
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE96C1C21113
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:31:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A42F1F21EAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269FA14A4F1;
-	Sat, 10 Aug 2024 06:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="OgsJwxET"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FC8182D8
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 06:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D99614A4CC;
+	Sat, 10 Aug 2024 06:17:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29B54085D
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 06:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723271512; cv=none; b=qyV7d0syTCO8xlFwyjpQQKL4on40wFdxZdSdQdTVprcjM97pq1EemsO7LqCLm+l3xkeNVYmiX9rWdtvrppiLVVBdveEIWKLAHcFxfdIZsRfUqKy0fQ4VWTaYXj+8nriS5n+2cuSXst/1WC+R+qdeW9SDVTt0bQf9DLPogTMCKCQ=
+	t=1723270650; cv=none; b=ddqrCwKhHA2bqqP0mDEoBScHssLx9h4Puq3tMHxSau6JJK9eV9DTGFqw0HtL/kUnGrMou5Ywne/hh7JMFnQvgWusddQen9N3AcNj8VbXIucT9zlIgICWKIzNOGDjjBFOoxRJ9Sttd0ObQwEaMcVVbhiP66p6s4C9nlbTf/pW2ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723271512; c=relaxed/simple;
-	bh=44hefx8Mq5igjs+XonNUvlS1FT1Y2XNRHAyX2T7F860=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=rFmPEsMmY7NeE5MZvgwtc9OLeg9xSlFm+wrZ92UE3JpmHrLYk2HBFeeh3oKoC8Qqq3bZa6ig/7/R1kQlQpxPYqF759EjrxNOyPDhneExzL7+jEHtIpxpa1olzxiqJh+bMXLFfuxg9KQdlcPRY3mWbHPIp9wC8mKd2sAD3DfJURc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=OgsJwxET; arc=none smtp.client-ip=220.197.31.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=LIGLXSFjNXiP5pR+2/
-	To2QWyASHDuTsautJcNOBg/+o=; b=OgsJwxETnr4hrNrtWZOUEs6O1nbmQKOuEU
-	qhmyz/8lukp2YwFFLaITKX7m5NA98vIjr8k8q4dU5X4pZNk55yMfrJcnbX+OSKOs
-	RilSt8l2RLkGH/jXfL8i7M9udsaAEQzFuCa0UW5bLiKDSzT/UVLnuYz1kg9V9I0J
-	a2iSqKLfo=
-Received: from hg-OptiPlex-7040.hygon.cn (unknown [118.242.3.34])
-	by gzga-smtp-mta-g0-0 (Coremail) with SMTP id _____wDnrzWiBbdmdazfAA--.16456S2;
-	Sat, 10 Aug 2024 14:16:03 +0800 (CST)
-From: yangge1116@126.com
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	21cnbao@gmail.com,
-	david@redhat.com,
-	baolin.wang@linux.alibaba.com,
-	liuzixing@hygon.cn,
-	yangge <yangge1116@126.com>
-Subject: [PATCH] mm/swap: take folio refcount after testing the LRU flag
-Date: Sat, 10 Aug 2024 14:15:58 +0800
-Message-Id: <1723270558-31674-1-git-send-email-yangge1116@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID:_____wDnrzWiBbdmdazfAA--.16456S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Xw4UArWfWw4rWw47uw4DJwb_yoWkGrg_Kr
-	48tas5Wayrtrn3KF1ft347Xr92va93Cr1j9F4xtF43Ary5t3Z7AF4kKF13uryxWF4rCrs5
-	Z3yDAws8AwnxCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRi2Nt3UUUUU==
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiGAY3G2VLdFPbZgAAsG
+	s=arc-20240116; t=1723270650; c=relaxed/simple;
+	bh=3G2xvIVxQ9xAaCRHUkSUICl9SMXsX+BHBEkyWUYkFhc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ioxDYF91x6LzkQP8N47S8o3ogkK8Ah035Co0u7Jb1A4SWAWtm9/sNIxctJ6gmramI7HjVbgDEEq8mZkbJGRmb9dPXvnzHkC055bPoHOKqf/i3DZORTH6YcYlPDNVqpmcETZRZIsgpGZrFUZEKr8DqaRarfUXEijiolVEstldYaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1scfPG-0005E2-T8; Sat, 10 Aug 2024 08:16:50 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1scfPE-005pzl-Bc; Sat, 10 Aug 2024 08:16:48 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1scfPE-00Cbp7-0m;
+	Sat, 10 Aug 2024 08:16:48 +0200
+Date: Sat, 10 Aug 2024 08:16:48 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: kernel test robot <lkp@intel.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH net-next v3 3/3] net: phy: dp83tg720: Add cable testing
+ support
+Message-ID: <ZrcF0HyEUMSudk5M@pengutronix.de>
+References: <20240809072440.3477125-3-o.rempel@pengutronix.de>
+ <202408100348.U6S1jP0z-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202408100348.U6S1jP0z-lkp@intel.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: yangge <yangge1116@126.com>
+On Sat, Aug 10, 2024 at 03:57:35AM +0800, kernel test robot wrote:
+> Hi Oleksij,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on net-next/main]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/phy-Add-Open-Alliance-helpers-for-the-PHY-framework/20240809-172119
+> base:   net-next/main
+> patch link:    https://lore.kernel.org/r/20240809072440.3477125-3-o.rempel%40pengutronix.de
+> patch subject: [PATCH net-next v3 3/3] net: phy: dp83tg720: Add cable testing support
+> config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240810/202408100348.U6S1jP0z-lkp@intel.com/config)
+> compiler: m68k-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240810/202408100348.U6S1jP0z-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408100348.U6S1jP0z-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/net/phy/open_alliance_helpers.c: In function 'oa_1000bt1_get_ethtool_cable_result_code':
+> >> drivers/net/phy/open_alliance_helpers.c:34:25: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
+>       34 |         u8 tdr_status = FIELD_GET(OA_1000BT1_HDD_TDR_STATUS_MASK, reg_value);
+>          |                         ^~~~~~~~~
 
-Whoever passes a folio to __folio_batch_add_and_move() must hold
-a reference, otherwise something else would already be messed up.
-If the folio is referenced, it will not be freed elsewhere, so we
-can safely clear the folio's lru flag. As discussed with David
-in [1], we should take the reference after testing the LRU flag,
-not before.
+Huh.. why it builds on arm?
 
-Link: https://lore.kernel.org/lkml/d41865b4-d6fa-49ba-890a-921eefad27dd@redhat.com/ [1]
-Signed-off-by: yangge <yangge1116@126.com>
----
- mm/swap.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/mm/swap.c b/mm/swap.c
-index 67a2467..6b83898 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -226,12 +226,10 @@ static void __folio_batch_add_and_move(struct folio_batch __percpu *fbatch,
- {
- 	unsigned long flags;
- 
--	folio_get(folio);
--
--	if (on_lru && !folio_test_clear_lru(folio)) {
--		folio_put(folio);
-+	if (on_lru && !folio_test_clear_lru(folio))
- 		return;
--	}
-+
-+	folio_get(folio);
- 
- 	if (disable_irq)
- 		local_lock_irqsave(&cpu_fbatches.lock_irq, flags);
 -- 
-2.7.4
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
