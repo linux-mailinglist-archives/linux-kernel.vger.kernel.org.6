@@ -1,212 +1,231 @@
-Return-Path: <linux-kernel+bounces-281803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E9994DB84
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:42:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C3694DB88
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21E9AB21741
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:42:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E7651C20D61
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7AD14D283;
-	Sat, 10 Aug 2024 08:42:21 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB2E14C583;
+	Sat, 10 Aug 2024 08:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="EWVz73eW"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2058.outbound.protection.outlook.com [40.92.102.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B791014A619
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 08:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723279341; cv=none; b=gLN+OdUUT7ORtyvNOwuXi7JQIhZrAtj0FPrqbSN8r+mgO0NGJYwI6KGeQC9qlHvpxI5WZ1XBQZ+HHI/XH42z0KlOuYVS4M1FLwUX9S8N/yK3t/DuJUdpyuJqIw6gIr29NPvh3+XYznGMX2gr5S8m7vfDXjkS6s35UCb/0ZAZmPo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723279341; c=relaxed/simple;
-	bh=yQEbVHn6BaKMCt0IVCu3suh1Y+atI0rmkyG9pZIs4PM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=saPxgKFFhf+PInULRkt3CpsdSXC6mivvw3nZRadUNE+Rb0dRMh6JAo2U51FZKQR263UJ83fD4UgT5JHsbF90vesOd7idqnP60H5u5kmshqlN5fJkHQsdop/CTpW/KBmd4BmYueg2PyG7mJVQMgajWX1tyiKloPdHOu1xNmQWYrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39b3a9f9f5bso33019365ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 01:42:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723279339; x=1723884139;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wbcGf+ZscPGswmn1AVRKuI6rDAL+SV2cKXetUeYdang=;
-        b=hkxoT5y8MHM5i14aOC2ukCYA7d/aGiP0FqjIqWi6WXwy0Ofs4fi2fop0/aOra5XxXN
-         41eJHrFfCtkxbNgH8G9V0VhoEkLsFzTmdrejMYZXcq1lBq84DdfQOYfE6YrZPYHhXCOp
-         5petRMo+3MWc+Fwr2NSGDfpVu02s2dXock/+LufqgIeQ69uywD5c/mer2CzT+M8ZzUx2
-         4kzEAd6C69ia1Ag8S5FLD9qjvmtqYRUfirj2GTRPCbsLQhwk53roy5dN/xnp+pvpdfL2
-         Xiaw+pKDTArUZqAsaGaBsUknXgdPFBaV0noE8kuObrS6J4EmygJ6nvw67tGyceXLkCgk
-         lJlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRE3u/jmaD/EsNVqAFuggb65eihSGEIK1/n0Dis+tqSNKu9zZc/KGqR7ozOGeVs01yCv3FUgOMehJJi/bX/hXV9z4pOzFUwD07zxZF
-X-Gm-Message-State: AOJu0YzmbSV/ZS3RRWQpAIPinE7mLnIYNcPia8mguSlVo7sT/CmAVL0y
-	AQbEzPiNxhcM0N/1MAxLkxL9sBian+DDlwUsUSAhk8VxvUB2unAQZQSmHGAqt4b/P+VUavYyE7T
-	Mk0+wQrudgZzQxDK7Bdw9A6kEMm8OJaTJw1TWYmmlw/DqMm3ymLIYyKw=
-X-Google-Smtp-Source: AGHT+IF6nOx97wMoZLJrKo88WJeuHpchdPI9KzP5X+aTL6qZPqUHzN3Uaipw/gIl2ZDGD+Nk9btllFUgTdWIW705hYTAmlWgjSQ2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A301474C3;
+	Sat, 10 Aug 2024 08:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723279517; cv=fail; b=R/Anr9C6bNMK2TuvQ0bHwFIAa25m7eb7fETviuo7qRu4DmZJG6AFEwSvPbHx11soq8Td6rdz2NgrV7RRK5/x/NfmfQ4hxAok1V58/rkFmXikJIzAGhptt2iX/e7CKqrWO4bwbqsI8WEcF60BaNGXhauK3zVHt4yJCG8vfDvVGrQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723279517; c=relaxed/simple;
+	bh=7+sP8H4r1FlqiTf61OoqGUyoHg22uMxCbdQRsU8iwts=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DcPYgGPakfM6M4DxHnQHyegCNRNcLo1G84BHasup3D2yV22nxfDlEMkdpk6lJ1saLe13UWie9PETQjVSdlMVvGwMTtu7qJv5mna+TSJp0qyV2w8IyzhQgpZAjhQYqyYC37OOOGi/eJfhzpY7U/CfZ6DHfXqu2X9qyO4nNZLJdwo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=EWVz73eW; arc=fail smtp.client-ip=40.92.102.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=L4f7B0hCb0OSmjpK/QtbfhexH1B5rXlbSarLbhnbLaNo3tPSYePo2SGV4wXWnSfb7o/W/uKE93tcfKroQk7s3yJfVbt/RXhyWID1R6lBpuyeA+7gMEYdU8xNu2hagbxINP9d/ZGhUrUi9uVYEWaEVDdUh++DW0OEQodfQtI/Cpu1MmXYL1iXG5wEmU9c4ysc0EXKU1AFy//Qpag0MWDJsq/mdau4MADJQyW4EeSn5dRz87C/iMPfX3Cu9o+0XIYAJov2jC+sF4UY+hy/CCorx/d/p4CyJ1bjevCuiMfZvCETv5icSY2yDNfuAtr1R/Mw/axTHGMeX9NEHpHzZd701w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IKeO3KY0ZGF0LRzcPMg0swtCXBI9vvV2vcZkKL2g3EQ=;
+ b=dK6bLnWwiUl04q7evzSLH/fVRF13ANhB90Hl43UwDfoqjzgwPh3GNBqGTaf/rXa/cvOxvUlI8yFQStXkWM2d5r65Pmxg2AQWm6JVFmrZtczZjvjYpERzfuD78jEw0K4bZBYRQ/vhwHJ2a8zMkXRGWeVthUEoFAawXrhKc30TrFDEatKl86S6maV6kEWn7oLLouHTWAPeplGFPKINNV7Z97vmJfQMtE+PUzJi5AySWq+Jmsaqkow6sru8/l5fjyqc7Q4CELQ4+ppc+v358D65MOvFQYPOTID6LUKQ5Of14I8PsTvXXUKdwgfLXioAs1Fjetd8soeQ368yX4kkFLHLzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IKeO3KY0ZGF0LRzcPMg0swtCXBI9vvV2vcZkKL2g3EQ=;
+ b=EWVz73eWgCRcjfChXN3O1eMtZSYgS/VxXnZnjwm9oLSDKKobd9oWlO7M42nelfCTuKWdfzwMIZxCl0s4Pz0ZVUj2Gj6YEVVYU1tjzmIvu9o+QqsfCzSm/cDqLday2RckBytWQk2FxystCe2WnmVqL19nJsHxuyIsKSCl1e78GhaV+COp/sgpNS9QdciZpir4wSoO5Jy3EC8t5iVSTOVgIHxOP23ZZ3gHxAHeWBGcnIOUOPrsVJZeVDI4v7EzReTpRE6+z3Ces3BOUlKNnetHYl+7SUjaVVVzXM0AAAB8+sIixOdlGELtUOFNQPC0QMZDbP9VzYbXhqEfWoVQd1Js4w==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN0P287MB1153.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:141::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.18; Sat, 10 Aug 2024 08:45:09 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.015; Sat, 10 Aug 2024
+ 08:45:09 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
+CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: [PATCH v4 0/10] Touch Bar support for T2 Macs
+Thread-Topic: [PATCH v4 0/10] Touch Bar support for T2 Macs
+Thread-Index: AQHa6wGbVnv2F2HmGUyiZHmthnK98Q==
+Date: Sat, 10 Aug 2024 08:45:09 +0000
+Message-ID: <20190CD7-46CE-400D-9C58-29798479660E@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [DkgCAXVrzzN0X8+BsSlQ6X7UbaKvGvA4aOuCI9EsScqYw6ZhEEfw/Ll3nYBob4ifg4HAT5Fz5z0=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN0P287MB1153:EE_
+x-ms-office365-filtering-correlation-id: 5f15c4e8-1acb-4c84-1faa-08dcb918bd9c
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8060799006|461199028|19110799003|15080799003|3412199025|440099028|4302099013|102099032|1602099012;
+x-microsoft-antispam-message-info:
+ FWmPVEIPKE6TzhBZPLzQwWlv5MlnM7mjpbCZs327YF27wjdbfORbDjmUt2DzRgpHOhHYj04M6DobRifSshhFBjGH+FeftS+NW9TWwawAKqISpRnhAcSlVvD3zPisleElAeptpd6sJUsF6C8deWJvxPmYLVlm70qc5GLRwr6GwXsnaLx1QbMBUoQZ1hKo83Y7+3YjY8sX05xyvedKdj3c+vdXD7xBZbyFregZuIuaDglZgfw96p4QEuIq41Nm/VLZeVUufjG3fKz0dLTXPMaP7H/5zEJeeVtls2yGx6jI/JWkmUBiV+kKMdrJTfiL+2Ek8krTGTtpCzJgT8vy8p4ic+qsMpPRnHb5yeGGmVyOqgjzeISdQFljjBxzbrDgWvUzONRKkEYHtfEUu2WvdT0ZtvKJFIi9JsbZwLwkicd3GETuklp7qjc5LDXrw5jS8ztOhfvlb64YIlUSKLLJLTOYvociwvr77j4lHyeyUkOJk6ULZynDefMV8NLRvlGtm0zTPZTfzJNA/n7WbKyRdLxPP6s3COXm9QYzHDrccmlgpFPE1CX5X19WXQcub9a0FNyBnhpre8uIijHJH0OyYohf6Wb1rRxlMSZsqdA7KdwSEpOJ7RBFqyNMTlQxbcF8Z9g4zUSGxsHhJwBTOXtX1PKo8y2EpBmhuOna63L2cgToE2s/7cUJ5osMe4mwmFlGBAYA8seugREXAhxbbugzT9oF9cS4/+NRAw7iTvh56gmRn9Fo4pordxgGBriNI4xo08HgcKbbvXspQY3FwwhOBCxgAJAOqWlLr90eQkHSwTvio7c=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?LmNUda/FWCbH6NiNKQH3OUWxEGuLQbt39jEqsuhDWnBJRR92WJLSyC2EkhGp?=
+ =?us-ascii?Q?vTCH4Y0aRYyCF8OXptJaFJPxuPYGRAoSec1OlTeplUP6JS0MdJ67z5aJp/cY?=
+ =?us-ascii?Q?3M8TvRzlkcsSpokUfRu+nsEdUyEiu+UMUwEAtZFkRThDUYxgjWQwwFiuZo4m?=
+ =?us-ascii?Q?Ez0W1CrN61fPvsB8NQ0EqgPAKuOql8Gmxq5ZuuC3Q9pFzyxhI2Kxw6xCdtts?=
+ =?us-ascii?Q?KiiVw4PC5NkH+rDfgHTxOVOHxxf/kpKKe/2on8/hfHWiAws77pnqj46DowYQ?=
+ =?us-ascii?Q?KiPwKoYq7Rdb3ZEDtEaSlRpEFmT45Dl1H4EoiuR1SM7drT5wN/SLv82SyY73?=
+ =?us-ascii?Q?ytWoR7g3C7L0VYERTx59x0NJ3IrYgrsYxtZ3Vq8FmbOfvv7DRMhq4v5Zcy2h?=
+ =?us-ascii?Q?nSx94koud2GLe+hibQiVeynEITzt5Xgw3aXsqreGxQds1MdkFyN8tgP2cqja?=
+ =?us-ascii?Q?CewJNmnTxBDSwkf4DQ5n4ykLhL3tLSLzpFhQZGxyGOoIY5duyIss9cf9ItZV?=
+ =?us-ascii?Q?YWNeP/t/2TrmW8Icj+RwHK48kl7tyhDWEQ7WV+kDtocB8UAuoJBUgmA9blHr?=
+ =?us-ascii?Q?9uUM4i4CRsSmyt05MppAsmXkvyXX9OTKZjOR+/3gXdmc3f54pucHFxEGQln1?=
+ =?us-ascii?Q?WCKK7NrMHRe7AXuGuarykseHLvhqtdxZyFIaz0DbtkiLOSqYwf1/EInZeqXS?=
+ =?us-ascii?Q?lWRasElSnPz0nySyRECXjYrgoqvZyVW3hVI7Wa15yz1A6/xZWtZNexUoNHET?=
+ =?us-ascii?Q?t9gV1KeANoZ0jkr1Olsabf+9voxOcFKuN8gVgp0Jt4///IZQi4OFN2c6TO5C?=
+ =?us-ascii?Q?dCXogp3dphtyYUAzRtk4+L9s8SJV9PDjfHLmTZuyEP9360c9s64uu+AQOMPJ?=
+ =?us-ascii?Q?DTOwl2O4iRPRNWh4/blAPz+WN+iRGu8dUkBZzrBvuvhgDe2z/m0CG3QnlAup?=
+ =?us-ascii?Q?3JGx8b8UuB4h392rYlxy6D3SKfMyVrjl3pIwL6rbczsiNsGyIhKdosuj5dps?=
+ =?us-ascii?Q?/ug4YbFC/OMhEiALJoGXT+V7FNw3B1m4vGD2zw79uc7ZQq6sP5lOs+FThVWd?=
+ =?us-ascii?Q?OGkMcmrqXXiMEHX/yo/0dim6WBcvb/HFsXUfU1RCg3vk1s/QvwdgJgy7eDqc?=
+ =?us-ascii?Q?PCli3MyRVspKTjeMx4xrsLtQNcswnY593wJ2j4H7r6lhes9IKtMRxuwB0GI5?=
+ =?us-ascii?Q?xeg1XDX5X6iKJywu/kzh4C+ascNAh+Nu1gko0sxFjdezObRVI6ar9CLtHxEr?=
+ =?us-ascii?Q?wCPAEPgHtFTFXTJjimHE005NOXee7iKRYttMYGfgkJ0ImXC842r8C8FYJndN?=
+ =?us-ascii?Q?DoAiw2Aw477Ckv1N2m0HYPyB?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A5819DF9AB1EE249A347C6F8CA10856C@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c562:0:b0:381:24e:7a8c with SMTP id
- e9e14a558f8ab-39b7a474c66mr2146205ab.1.1723279338904; Sat, 10 Aug 2024
- 01:42:18 -0700 (PDT)
-Date: Sat, 10 Aug 2024 01:42:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d830f0061f503c6a@google.com>
-Subject: [syzbot] [wireless?] KMSAN: uninit-value in skb_trim (2)
-From: syzbot <syzbot+98afa303be379af6cdb2@syzkaller.appspotmail.com>
-To: kvalo@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, toke@toke.dk
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f15c4e8-1acb-4c84-1faa-08dcb918bd9c
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Aug 2024 08:45:09.1132
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1153
 
-Hello,
+Hi Maintainers
 
-syzbot found the following issue on:
+The Touch Bars found on x86 Macs support two USB configurations: one
+where the device presents itself as a HID keyboard and can display
+predefined sets of keys, and one where the operating system has full
+control over what is displayed.
 
-HEAD commit:    b446a2dae984 Merge tag 'linux_kselftest-fixes-6.11-rc3' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13eb467d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=305509ad8eb5f9b8
-dashboard link: https://syzkaller.appspot.com/bug?extid=98afa303be379af6cdb2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+This patch series adds support for both the configurations.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The hid-appletb-bl driver adds support for the backlight of the Touch Bar.
+This enables the user to control the brightness of the Touch Bar from
+userspace. The Touch Bar supports 3 modes here: Max brightness, Dim and Off=
+.
+So, daemons, used to manage Touch Bar can easily manage these modes by writ=
+ing
+to /sys/class/backlight/appletb_backlight/brightness. It is needed by both =
+the
+configurations of the Touch Bar.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/49d96e53e1c4/disk-b446a2da.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f05350d128a7/vmlinux-b446a2da.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/805c7d86a2db/bzImage-b446a2da.xz
+The hid-appletb-kbd adds support for the first (predefined keys) configurat=
+ion.
+There are 4 modes here: Esc key only, Fn mode, Media keys and No keys.
+Mode can be changed by writing to /sys/bus/hid/drivers/hid-appletb-kbd/<dev=
+>/mode
+This configuration is what Windows uses with the official Apple Bootcamp dr=
+ivers.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+98afa303be379af6cdb2@syzkaller.appspotmail.com
+Rest patches support the second configuration, where the OS has full contro=
+l
+on what's displayed on the Touch Bar. It is achieved by the patching the
+hid-multitouch driver to add support for touch feedback from the Touch Bar
+and the appletbdrm driver, that displays what we want to on the Touch Bar.
+This configuration is what macOS uses.
 
-=====================================================
-BUG: KMSAN: uninit-value in skb_trim+0x13a/0x190 net/core/skbuff.c:2673
- skb_trim+0x13a/0x190 net/core/skbuff.c:2673
- ath9k_hif_usb_reg_in_cb+0x582/0x970 drivers/net/wireless/ath/ath9k/hif_usb.c:758
- __usb_hcd_giveback_urb+0x572/0x840 drivers/usb/core/hcd.c:1650
- usb_hcd_giveback_urb+0x157/0x720 drivers/usb/core/hcd.c:1734
- dummy_timer+0xd3f/0x6aa0 drivers/usb/gadget/udc/dummy_hcd.c:1987
- __run_hrtimer kernel/time/hrtimer.c:1689 [inline]
- __hrtimer_run_queues+0x564/0xe40 kernel/time/hrtimer.c:1753
- hrtimer_interrupt+0x3ab/0x1490 kernel/time/hrtimer.c:1815
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
- __sysvec_apic_timer_interrupt+0xa6/0x3a0 arch/x86/kernel/apic/apic.c:1049
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x7e/0x90 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
- __nr_to_section include/linux/mmzone.h:1862 [inline]
- __pfn_to_section include/linux/mmzone.h:1970 [inline]
- pfn_valid include/linux/mmzone.h:2023 [inline]
- kmsan_virt_addr_valid arch/x86/include/asm/kmsan.h:94 [inline]
- virt_to_page_or_null+0x7a/0x150 mm/kmsan/shadow.c:75
- kmsan_get_metadata+0x13e/0x1c0 mm/kmsan/shadow.c:141
- kmsan_get_shadow_origin_ptr+0x38/0xb0 mm/kmsan/shadow.c:97
- get_shadow_origin_ptr mm/kmsan/instrumentation.c:38 [inline]
- __msan_metadata_ptr_for_load_4+0x24/0x40 mm/kmsan/instrumentation.c:93
- stack_trace_consume_entry+0x16f/0x1e0 kernel/stacktrace.c:94
- arch_stack_walk+0x1ca/0x2d0 arch/x86/kernel/stacktrace.c:27
- stack_trace_save+0xaa/0xe0 kernel/stacktrace.c:122
- kmsan_save_stack_with_flags mm/kmsan/core.c:73 [inline]
- kmsan_internal_poison_memory+0x49/0x90 mm/kmsan/core.c:57
- kmsan_slab_alloc+0xdf/0x160 mm/kmsan/hooks.c:66
- slab_post_alloc_hook mm/slub.c:3994 [inline]
- slab_alloc_node mm/slub.c:4037 [inline]
- __do_kmalloc_node mm/slub.c:4157 [inline]
- __kmalloc_node_track_caller_noprof+0x6c7/0xf90 mm/slub.c:4177
- kmalloc_reserve+0x23e/0x4a0 net/core/skbuff.c:605
- __alloc_skb+0x363/0x7b0 net/core/skbuff.c:674
- alloc_skb include/linux/skbuff.h:1320 [inline]
- nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:748 [inline]
- nsim_dev_trap_report drivers/net/netdevsim/dev.c:805 [inline]
- nsim_dev_trap_report_work+0x3f5/0x1230 drivers/net/netdevsim/dev.c:850
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea5/0x1520 kernel/workqueue.c:3390
- kthread+0x3dd/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+The appletbdrm driver is based on the similar driver made for Windows by
+imbushuo [1].
 
-Uninit was created at:
- __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4723
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page mm/slub.c:2321 [inline]
- allocate_slab+0x203/0x1220 mm/slub.c:2484
- new_slab mm/slub.c:2537 [inline]
- ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3723
- __slab_alloc mm/slub.c:3813 [inline]
- __slab_alloc_node mm/slub.c:3866 [inline]
- slab_alloc_node mm/slub.c:4025 [inline]
- kmem_cache_alloc_noprof+0x57a/0xb20 mm/slub.c:4044
- skb_clone+0x303/0x550 net/core/skbuff.c:2071
- deliver_clone net/bridge/br_forward.c:125 [inline]
- maybe_deliver+0x3ad/0x590 net/bridge/br_forward.c:190
- br_flood+0x574/0xbd0 net/bridge/br_forward.c:236
- br_dev_xmit+0x1bfa/0x1f10
- __netdev_start_xmit include/linux/netdevice.h:4913 [inline]
- netdev_start_xmit include/linux/netdevice.h:4922 [inline]
- xmit_one net/core/dev.c:3580 [inline]
- dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3596
- __dev_queue_xmit+0x358c/0x5610 net/core/dev.c:4423
- dev_queue_xmit include/linux/netdevice.h:3105 [inline]
- neigh_resolve_output+0x9ca/0xae0 net/core/neighbour.c:1565
- neigh_output include/net/neighbour.h:542 [inline]
- ip6_finish_output2+0x233e/0x2ba0 net/ipv6/ip6_output.c:137
- __ip6_finish_output net/ipv6/ip6_output.c:211 [inline]
- ip6_finish_output+0xbb8/0x14b0 net/ipv6/ip6_output.c:222
- NF_HOOK_COND include/linux/netfilter.h:303 [inline]
- ip6_output+0x356/0x620 net/ipv6/ip6_output.c:243
- dst_output include/net/dst.h:450 [inline]
- NF_HOOK include/linux/netfilter.h:314 [inline]
- ndisc_send_skb+0xb9f/0x14c0 net/ipv6/ndisc.c:511
- ndisc_send_rs+0x97b/0xae0 net/ipv6/ndisc.c:721
- addrconf_rs_timer+0x488/0x6f0 net/ipv6/addrconf.c:4040
- call_timer_fn+0x49/0x580 kernel/time/timer.c:1792
- expire_timers kernel/time/timer.c:1843 [inline]
- __run_timers kernel/time/timer.c:2417 [inline]
- __run_timer_base+0x84e/0xe90 kernel/time/timer.c:2428
- run_timer_base kernel/time/timer.c:2437 [inline]
- run_timer_softirq+0x3a/0x70 kernel/time/timer.c:2447
- handle_softirqs+0x1ce/0x800 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0x68/0x120 kernel/softirq.c:637
- irq_exit_rcu+0x12/0x20 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x83/0x90 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
+Currently, a daemon named tiny-dfr [2] is being used to display function ke=
+ys
+and media controls using the second configuration for both Apple Silicon an=
+d
+T2 Macs.
 
-CPU: 1 UID: 0 PID: 5253 Comm: kworker/1:6 Not tainted 6.11.0-rc2-syzkaller-00004-gb446a2dae984 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: events nsim_dev_trap_report_work
-=====================================================
+A daemon for the first configuration is being developed, but that's a users=
+pace
+thing.
 
+[1]: https://github.com/imbushuo/DFRDisplayKm
+[2]: https://github.com/WhatAmISupposedToPutHere/tiny-dfr
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v2:
+  1. Cleaned up some code in the hid-appletb-kbd driver.
+  2. Fixed wrong subject in drm/format-helper patch.
+  3. Fixed Co-developed-by wrongly added to hid-multitouch patch.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+v3:
+  1. Fixed key mapping for Function keys in hid-appletb-kbd driver.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+v4:
+  1. Added support for fn key toggle in the hid-appletb-kbd driver.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Aditya Garg (1):
+  HID: hid-appletb-kbd: add support for fn toggle between media and
+    function mode
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Kerem Karabay (9):
+  HID: hid-appletb-bl: add driver for the backlight of Apple Touch Bars
+  HID: hid-appletb-kbd: add driver for the keyboard mode of Apple Touch
+    Bars
+  HID: multitouch: support getting the contact ID from
+    HID_DG_TRANSDUCER_INDEX fields
+  HID: multitouch: support getting the tip state from HID_DG_TOUCH
+    fields
+  HID: multitouch: take cls->maxcontacts into account for devices
+    without a HID_DG_CONTACTMAX field too
+  HID: multitouch: allow specifying if a device is direct in a class
+  HID: multitouch: add device ID for Apple Touch Bars
+  drm/format-helper: Add conversion from XRGB8888 to BGR888 conversion
+  drm/tiny: add driver for Apple Touch Bars in x86 Macs
 
-If you want to undo deduplication, reply with:
-#syz undup
+ .../ABI/testing/sysfs-driver-hid-appletb-kbd  |  13 +
+ MAINTAINERS                                   |   6 +
+ drivers/gpu/drm/drm_format_helper.c           |  54 ++
+ .../gpu/drm/tests/drm_format_helper_test.c    |  81 +++
+ drivers/gpu/drm/tiny/Kconfig                  |  12 +
+ drivers/gpu/drm/tiny/Makefile                 |   1 +
+ drivers/gpu/drm/tiny/appletbdrm.c             | 624 ++++++++++++++++++
+ drivers/hid/Kconfig                           |  22 +
+ drivers/hid/Makefile                          |   2 +
+ drivers/hid/hid-appletb-bl.c                  | 206 ++++++
+ drivers/hid/hid-appletb-kbd.c                 | 432 ++++++++++++
+ drivers/hid/hid-multitouch.c                  |  60 +-
+ drivers/hid/hid-quirks.c                      |   8 +-
+ include/drm/drm_format_helper.h               |   3 +
+ 14 files changed, 1508 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
+ create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
+ create mode 100644 drivers/hid/hid-appletb-bl.c
+ create mode 100644 drivers/hid/hid-appletb-kbd.c
+
+--=20
+2.43.0
+
 
