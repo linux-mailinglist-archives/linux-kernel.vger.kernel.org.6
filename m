@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-281858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8021194DC30
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:10:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C04F94DC33
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34AD1C21112
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:10:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D315B1F21E76
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CB9153BFC;
-	Sat, 10 Aug 2024 10:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49854153814;
+	Sat, 10 Aug 2024 10:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQrYOoWM"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRX6S7QG"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA09B182B3;
-	Sat, 10 Aug 2024 10:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4033EA69;
+	Sat, 10 Aug 2024 10:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723284613; cv=none; b=cfRz33NCJD3a8K6yMYh7+J43rW5l/4goy8bFcmY8wAJYPOaGhkA0OAuhLTsfEvpDhVkEdQ1OgY/KpgItVxkYHfsgSOADZ8pTyqftapNJkhCgT8dI9RAFlZoBGv46QroOTlIlqSwWMlFZ9q5jtIi1N8eb+E8rCnMFg2+VJjWSbLE=
+	t=1723284944; cv=none; b=ZeRQ4ynvE9WKzRX/+NpMowXdARoVlIXpRdgj1/usTDlAJIG6XuMPzJiFAdPsrNfJv7gvaRnZ9CWBskVpwGsJZhytwnBrhKuZMUuRC3v+1V618/JblMAZF/hap3M55QBRG/7r2gO+SpWAEqRgS0HxHAC+OQEdYMgkOoaNB1qDm98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723284613; c=relaxed/simple;
-	bh=FozgqAqsV9AfGatMUbFMh3AeCsad4eoVWnIQ29u1RLs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=gEbNBqxl0b4I8NIdWG09yVdMDuZbyoYYNoCn89UT3tx1pAUsq5bNGoErjh8ELIh34ps/nU13Pz3+01V8CUx+5EZSLlWZKYEq8mMjzZ9j5QDODJsz35adFxZPSGoqHPEGCFQ/k/mDtL4KQR9JBtMw2cvV4ccd1l8zwATRGXbjhMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQrYOoWM; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1723284944; c=relaxed/simple;
+	bh=0GgeJAjV0gQMUS7xoQJKeK4/4fRBaf7/9vUfHdpslSY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ke9+3xlCHuceBPOUvG1P3WkStdUlqffTGUC73Mu4hZqLxnMMAO/Z1E8hBA8dJ8Ugmpendn4HRhoURMIIisXq+aGVHc/7NwXMV4kgkZdM5vOMDO+9SRl4pf9VNoV9BxFCz9zkoV+wjz8g+QykgMlH8yDuVM8UnCxQ2CvbsProzOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRX6S7QG; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428178fc07eso18823395e9.3;
-        Sat, 10 Aug 2024 03:10:11 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-36dd8a35722so512297f8f.1;
+        Sat, 10 Aug 2024 03:15:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723284610; x=1723889410; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723284940; x=1723889740; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uzm1ViTlvvMr3QTzeVkc2Asr4wTxPuKRSgPRgd0aNNc=;
-        b=dQrYOoWMyfRRG31YZGE6OODr+pwax5v8H+DgeGEW0PJSH0/OmmuEdsXP07JU7UZKON
-         l0TcXp/ir8hyWRecCTUvQm3TfwGh6UY32/EthhQz9XFqZMTkAXhIIU4KeMyutGOQ0Iox
-         zlqa0JthCd0AeuOM/mCMbvzMkvJTazaESG4giOMxQXJMEkmYUR0zVjn0NxKA3SGO7jvr
-         7IbOz0+xtOybMon9JpAvjWXwqmnx6EYkIGmiyET+VisnVlmlyXv0yK1C13DSqdFMWGZV
-         16u2wdKsXKEtKRVeRcTuIotUHSpDDnlOKG7Eaf57tzF07d18U5KwrcjuMnB2ENvgzwGf
-         DGBQ==
+        bh=3JdHa3p631wFmGh5Fy5+ZcRKvN82h7bdynK6mL8llGc=;
+        b=iRX6S7QGZzeMQLRDCm+XeKvv/HlA87Hh3P/NYJABgHAgQz0M+7NzQPfIyOHNt2xmC1
+         sdZc/qxSnjkoJzFYCrl+VboZBh2eHPUPUy44wJm1VK+Mzanoj0v7UsX7YwtYB3sAk9Dv
+         wPkZAz7TwPoARkRztoj85NTX4h3Pcru8QuzU8Fg6h+WqSDpM8EjX9YRB8OA1iTZfLAp6
+         xJPUcdweP4aSidH+MMlDa0OQ6+D96zgIg3ngdHz8Qd6BWH0NyWm4XMNzDWNRNBKEHMa9
+         4JC2THct1DGT5L/XHHgTVhU+3v/fICJQyw2pxOKuw2be9ef3+jjhfkOXVcXL/gFmYBQo
+         X9jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723284610; x=1723889410;
+        d=1e100.net; s=20230601; t=1723284940; x=1723889740;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uzm1ViTlvvMr3QTzeVkc2Asr4wTxPuKRSgPRgd0aNNc=;
-        b=VJgOKb8RPHgM8wex0x36YJEIvvOJFR64GJL9oxezFsLXafJdLD89ER1hxYBdH+M+Tg
-         3qTn677RuFsWILFLxvqWmBenvwzAregYvHmKWPpXkoWXbtJtkpyQEzzZwa54Es7tsSnm
-         KtIMnGRkGOkMvxca+lgMYoeOygEoX4h9gknNLNlqYXCIGJzt+rG32EAITk6TZZ/gT3ZT
-         L0sjjt4wFxULqtdAoc1MfkVrP0rP5H0cxpnmygvZ6NsN7zw4ChtQIjcCaUe8VfNkODrJ
-         dwc+4k28lewZjkc/Hl9SqR/4w+gnX2OAqtFHkeFULmGugHMe4UVf2KAAh+Q8SGSMkKWW
-         msgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZUnBrWH7oM+YED0el12WBnZ0ioMDnMYo6yjj+SLErwjUjtoR5CrVe7IQ+T2kWatxlJcWn7kXTiWd7ijchwKvHgJJ3YQeiS6dfBKAO
-X-Gm-Message-State: AOJu0Yzvbgn+yYw2gLcEfY9N19heKb14nKQeTtO56iNSkdYYPUmaEVI0
-	KSh83G4/DR2TEUqhpzxuGptIgIp+40ZuYIQWRMSYAvFgpRZCj2zTZeZYXyPr
-X-Google-Smtp-Source: AGHT+IGqBNT6WWYMMvj58QdRoIEZrYFHwdqZ1ETY5ytkXFpwlf8B5rQsEt2F4rXmimwckxr8p79Y2g==
-X-Received: by 2002:a05:600c:310d:b0:427:d8f7:b718 with SMTP id 5b1f17b1804b1-429c3a51e0bmr28732775e9.24.1723284609478;
-        Sat, 10 Aug 2024 03:10:09 -0700 (PDT)
+        bh=3JdHa3p631wFmGh5Fy5+ZcRKvN82h7bdynK6mL8llGc=;
+        b=miQmlQL+LPpYYhcJmk2Y151pBMx5+DUpTAZCE05cd/Bo8qyHphKBR2fj1uquUeA3f4
+         i3NsCYun4l6kuuaD+g2xZ8nP1t7PADErXZZQUFFpxKZeRJjHgRMpTAcvOdR1BOGlx3J3
+         xKpp1mOz+vw1cjsJcakZmvLNLlhdTdN+kKiLX8B4gcER3iMvpic2JOI3RDJYhuOR1sSR
+         JJPhg/ZTD6aLBy/rNQv2YeWVN5gVcvSYWrTiorBnA/AtETSThHze4h1mGoN5zESJm9DS
+         co3SndtRTiasI2YffDfFodLOcULwmDsDXVKGPq5HsAvQlm0gCVjCLlHc4mIyNe4KIw27
+         I9KA==
+X-Forwarded-Encrypted: i=1; AJvYcCWS1NJ+aSrVt8LEKj8LV/qgtCxe3ydZA5avtiPoT/UwyDc+DdwOP4bjuQFJVbZPh9Yeeci0FUR0xuAszMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0dCLOEUqPNVC6364MAdHKP4AQs276kLrmOuOG8aELoIsFtX7z
+	Iod6Y28BWrdSVAe6bJBajeIAq59aurQCyQi2hZ1wL5OcwNcxgOqQ
+X-Google-Smtp-Source: AGHT+IFoEnXnGioMpe8JeLbXDuAdpO8xbuaEpuik291F9hovZxlaCGh0UZ4H6n6iAMNNp8XccJ6Xbg==
+X-Received: by 2002:adf:f412:0:b0:368:5d2:9e58 with SMTP id ffacd0b85a97d-36d5afac168mr3007894f8f.0.1723284939807;
+        Sat, 10 Aug 2024 03:15:39 -0700 (PDT)
 Received: from laptop.. (117.red-83-52-251.dynamicip.rima-tde.net. [83.52.251.117])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c775c509sm23990445e9.44.2024.08.10.03.10.07
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd3631sm1799227f8f.110.2024.08.10.03.15.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Aug 2024 03:10:08 -0700 (PDT)
+        Sat, 10 Aug 2024 03:15:38 -0700 (PDT)
 From: =?UTF-8?q?Sergio=20Gonz=C3=A1lez=20Collado?= <sergio.collado@gmail.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Bjorn Helgaas <bhelgaas@google.com>,
@@ -73,8 +73,8 @@ Cc: linux-doc@vger.kernel.org,
 	linux-kernel-mentees@lists.linuxfoundation.org,
 	=?UTF-8?q?Sergio=20Gonz=C3=A1lez=20Collado?= <sergio.collado@gmail.com>
 Subject: [PATCH v3] docs/sp_SP: Add translation for scheduler/sched-bwc.rst
-Date: Sat, 10 Aug 2024 12:09:55 +0200
-Message-Id: <20240810100955.14901-1-sergio.collado@gmail.com>
+Date: Sat, 10 Aug 2024 12:15:22 +0200
+Message-Id: <20240810101522.15299-1-sergio.collado@gmail.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -94,8 +94,8 @@ v1 -> v2 typos corrected
 v2 -> v3 typos corrected
 ---
  .../translations/sp_SP/scheduler/index.rst    |   1 +
- .../sp_SP/scheduler/sched-bwc.rst             | 288 ++++++++++++++++++
- 2 files changed, 289 insertions(+)
+ .../sp_SP/scheduler/sched-bwc.rst             | 287 ++++++++++++++++++
+ 2 files changed, 288 insertions(+)
  create mode 100644 Documentation/translations/sp_SP/scheduler/sched-bwc.rst
 
 diff --git a/Documentation/translations/sp_SP/scheduler/index.rst b/Documentation/translations/sp_SP/scheduler/index.rst
@@ -109,10 +109,10 @@ index 768488d6f001..3aef47ca87e0 100644
 +    sched-bwc
 diff --git a/Documentation/translations/sp_SP/scheduler/sched-bwc.rst b/Documentation/translations/sp_SP/scheduler/sched-bwc.rst
 new file mode 100644
-index 000000000000..ee9b34673560
+index 000000000000..52b372f8a502
 --- /dev/null
 +++ b/Documentation/translations/sp_SP/scheduler/sched-bwc.rst
-@@ -0,0 +1,288 @@
+@@ -0,0 +1,287 @@
 +.. include:: ../disclaimer-sp.rst
 +
 +:Original: :ref:`Documentation/scheduler/sched-design-CFS.rst <sched_design_CFS>`
@@ -138,7 +138,7 @@ index 000000000000..ee9b34673560
 +en porciones de tiempo de ejecución en la CPU según los hilos de ejecución
 +del grupo de tareas van siendo candidatos a ejecutarse. Una vez toda la cuota
 +ha sido asignada cualquier petición adicional de cuota resultará en esos hilos
-+de ejecución siendo limitados/estrangulados. Los hilos de ejecución limitados,
++de ejecución siendo limitados/estrangulados. Los hilos de ejecución limitados
 +no serán capaces de ejecutarse de nuevo hasta el siguiente periodo cuando
 +la cuota sea restablecida.
 +
@@ -163,13 +163,12 @@ index 000000000000..ee9b34673560
 +Esto garantiza dos cosas: que cada tiempo límite de ejecución es cumplido
 +y que el sistema es estable. De todas formas, si U fuese > 1, entonces
 +por cada segundo de tiempo de reloj de una tarea, tendríamos que
-+ejecutar más de un segundo de tiempo de ejecución de programa, y
-+obviamente no se cumpliría con el tiempo límite de ejecución de la
-+tarea, pero en el siguiente periodo de ejecución el tiempo límite de
-+la tarea estaría todavía más lejos, y nunca se tendría tiempo de alcanzar
-+la ejecución, cayendo así en un fallo no acotado.
++ejecutar más de un segundo, y obviamente no se cumpliría con el tiempo
++límite de ejecución de la tarea, pero en el siguiente periodo de ejecución
++el tiempo límite de la tarea estaría todavía más lejos, y nunca se tendría
++tiempo de alcanzar la ejecución, cayendo así en un fallo no acotado.
 +
-+La característica de ráfaga implica el trabajo de una tarea no siempre
++La característica de ráfaga implica que el trabajo de una tarea no siempre
 +consuma totalmente la cuota; esto permite que se pueda describir u_i
 +como una distribución estadística.
 +
@@ -210,7 +209,7 @@ index 000000000000..ee9b34673560
 +de cgroupfs.
 +
 +.. note::
-+   Los archivos cgroupfs descritos en esta sección solo se aplican a el
++   Los archivos cgroupfs descritos en esta sección solo se aplican al
 +   cgroup v1. Para cgroup v2, ver :ref:`Documentation/admin-guide/cgroup-v2.rst <cgroup-v2-cpu>`.
 +
 +- cpu.cfs_quota_us: tiempo de ejecución que se refresca cada periodo (en microsegundos)
@@ -284,7 +283,7 @@ index 000000000000..ee9b34673560
 +Consideraciones jerárquicas
 +---------------------------
 +
-+El interfaz refuerza que el ancho de banda de una entidad individual
++La interfaz refuerza que el ancho de banda de una entidad individual
 +sea siempre factible, esto es: max(c_i) <= C. De todas maneras,
 +la sobre-suscripción en el caso agregado está explícitamente permitida
 +para hacer posible semánticas de conservación de trabajo dentro de una
