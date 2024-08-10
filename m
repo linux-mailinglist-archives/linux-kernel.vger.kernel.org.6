@@ -1,315 +1,179 @@
-Return-Path: <linux-kernel+bounces-281966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23FE394DD92
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:58:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CAF94DD8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74D94B21013
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:58:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46DD281C6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D37E166316;
-	Sat, 10 Aug 2024 15:58:08 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5904A168493;
+	Sat, 10 Aug 2024 15:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5Doqizf"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A033FBA7;
-	Sat, 10 Aug 2024 15:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C0A3FBA7;
+	Sat, 10 Aug 2024 15:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723305487; cv=none; b=rAJclqgCAPoE2uiODU8J3Ji3mGE9FWW6QrAInyNpiff9V6wGllWKgSOO0FbSSaTCiRsEUcg5D2exmTqYlBNhWgapljWdGM4bi6rKrUSKvr5tnphBfN+cKa8LbSP1uap9NkD3Puplfv1vmGRUfzQ9KHzzjw4NGObOi5lw/u0YJu4=
+	t=1723305316; cv=none; b=EE8BY8N6jOxYqr+lsA/xGMOjR7oerC4i00wr87AIFTL/yNtj0pzaBzcizfxQxhMHFsYI1TT5JNnxlnLnbRoreY2kiE1kWdwTwW/KYqJYCBuJD5WTK973xqZ6lLVIWf4xbjyRNTVjaeQdtTJeaBeebbtZijBwOh3w9qi9FMIi3tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723305487; c=relaxed/simple;
-	bh=ZNScjajJuLcwG7dBxdnslRyE7cM7YMOX7T0eRP8Gb7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iu/Y7v0sUjl7EFsA6D55pPOFjTKUtFfDzMfP5Tak4AzWeiHhtNRreH1zxAirvkFp4reH3sslF9etzgI9prDKyw7+wYQBLCP8zCH5cvS4oM8iKrz/LZUmTOY2EvbFVUIsYZRX3845d4QY9HxDn7fm+UEcGoYI2eqTkHYZHUpFHvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 25B87234; Sat, 10 Aug 2024 10:50:00 -0500 (CDT)
-Date: Sat, 10 Aug 2024 10:50:00 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Fan Wu <wufan@linux.microsoft.com>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-	serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
-	axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-	mpatocka@redhat.com, eparis@redhat.com, paul@paul-moore.com,
-	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
-	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Deven Bowers <deven.desai@linux.microsoft.com>
-Subject: Re: [PATCH v20 02/20] ipe: add policy parser
-Message-ID: <20240810155000.GA35219@mail.hallyn.com>
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
- <1722665314-21156-3-git-send-email-wufan@linux.microsoft.com>
+	s=arc-20240116; t=1723305316; c=relaxed/simple;
+	bh=5V0zAGfH9jyn7ZkZUvjOM6Q4j/PtRye2pQe0OKFNNAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j27bfrsvpvvZg6BrjMigfiJ7A1KfxY3nJxsdK1HNOK+8JcPQpP/jjVTEgQDMOXWjq5swPc599ri6qqpHMKqoyEg4w+Y3uROiPOYPae7VMcnjJqXpQgIEh5u7BDB290lFB9D8DH9YCv1yB60jvHxkfpqgOCRBiFTecV1Dfg1QJMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P5Doqizf; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cfdc4deeecso2389004a91.3;
+        Sat, 10 Aug 2024 08:55:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723305314; x=1723910114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NsrGSuD1JwGElXKXCp9CKeDOTjJCIjAdbtMoFt9rIDs=;
+        b=P5DoqizfZDLAA9YAvXylFhJQdnO/uN1Y89CSjdXdeZDzBmiEmG9QatPANvJaEZo4oh
+         VZMDT4vZj5JtjVWfS0kVRbig7PU1SMzWn6dJOsr9wwQqhPBAumdp+WsWwXIRzVlsPUzR
+         wejmgl/g62KRru1p7xECYnbid3O8uKL19WWRGLHeHBkCGBOSPWB6NT7FehrgPWlVzj11
+         NwRH1AavnyHPRKIpKZ10qPbyvRgEoxqS/3roQC4xcIUpnNbIodRnSyyYvgGVXuTGYNTz
+         2q2rXA1sRhC1ODO6ADZT4xKCKJ/O3Uk9bfX+rEOn26q99SNv33HTRdHLTpeNR4G1mc3+
+         IXbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723305314; x=1723910114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NsrGSuD1JwGElXKXCp9CKeDOTjJCIjAdbtMoFt9rIDs=;
+        b=qphdngUkxKlTBdB3XvLeNhZKfJZEvtjLyb/QHIWJK3RIvOzTSnDD+H1aW/4aFseRBI
+         VeyVuAIo8sVAJbxkbmQLyfIXqMzuuQmLj6Ks107qElIwCJ65KgU/kGZ0/I5t4lw82DTk
+         grY2txqUkNvW+lfeOK/vJXGmdTLT2WD1ImzE8gKPY7KWvek7J5ECT480XcauAewz5Wuf
+         3BjCfcTOTme/VTteHTo7qlE9C9JEW0GuevdLmUAeeq5p4+GaqG3aG4K8NPNESQF2QKoP
+         0dwveeyhmge5LMFEP/QLKhRhlMEuzABngtyxtNcsuv27Rl3vcP6SDPVreoJib8DsPeYv
+         7mrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqJA/RFgFBQVuqCe8UixzwMY3TQvQsN1K3QQIy7BRiVJVEg0Bx1VHH4IleJg793U/b72D1d39wW3L3JTOtswQzSgXyl76HEmGx1/EM/V9cmVZhOcf0Tkv8kwxAHC8cMSs0V8ll
+X-Gm-Message-State: AOJu0YxxsJa6N5t8sse1kBUqgWl4KsyT5Hhc5BQmmIv3LoFk/r8CR/kt
+	3hWTQl7kf32CCLmk5c0grrim6PWdeu1XCvjz9RlXghs+cwH0Mb8Poh06jnQPg1/joLgktKMt25S
+	vRLYRm45ag+O7FghOAeWV6Ru6hFg=
+X-Google-Smtp-Source: AGHT+IECdVPHYVoLR83HwZIQDHuvtWvM0Nkn2UqCCLm17o/8mmDQdCg8ENQpzWlF1lQprIstUWaHnBoC4oMIU4XDvxw=
+X-Received: by 2002:a17:90b:3cc3:b0:2c9:8891:e128 with SMTP id
+ 98e67ed59e1d1-2d1e7f9594emr5591559a91.4.1723305314230; Sat, 10 Aug 2024
+ 08:55:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1722665314-21156-3-git-send-email-wufan@linux.microsoft.com>
+References: <20240810002302.2054816-1-vinicius.gomes@intel.com> <Zrb0wdmIsksG38Uc@hoboy.vegasvil.org>
+In-Reply-To: <Zrb0wdmIsksG38Uc@hoboy.vegasvil.org>
+From: Daiwei Li <daiweili@gmail.com>
+Date: Sat, 10 Aug 2024 08:55:03 -0700
+Message-ID: <CAN0jFd1CpPtid7TGJcgzajRXQ5oxYN1LjLjLwK7HjQ1piuZ_XQ@mail.gmail.com>
+Subject: Re: [PATCH iwl-net v1] igb: Fix not clearing TimeSync interrupts for 82580
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>, intel-wired-lan@lists.osuosl.org, 
+	sasha.neftin@intel.com, kurt@linutronix.de, anthony.l.nguyen@intel.com, 
+	netdev@vger.kernel.org, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 02, 2024 at 11:08:16PM -0700, Fan Wu wrote:
-> From: Deven Bowers <deven.desai@linux.microsoft.com>
-> 
-> IPE's interpretation of the what the user trusts is accomplished through
+> @Daiwei Li, I don't have a 82580 handy, please confirm that the patch
+fixes the issue you are having.
 
-nit: "of what the user trusts" (drop the extra 'the')
+Thank you for the patch! I can confirm it fixes my issue. Below I offer a
+patch that also works in response to Paul's feedback.
 
-> its policy. IPE's design is to not provide support for a single trust
-> provider, but to support multiple providers to enable the end-user to
-> choose the best one to seek their needs.
-> 
-> This requires the policy to be rather flexible and modular so that
-> integrity providers, like fs-verity, dm-verity, or some other system,
-> can plug into the policy with minimal code changes.
-> 
-> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
-> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> Please also add a description of the test case
 
-This all looks fine.  Just one comment below.
+I am running ptp4l to serve PTP to a client device attached to the NIC.
+To test, I am rebuilding igb.ko and reloading it.
+Without this patch, I see repeatedly in the output of ptp4l:
 
+> timed out while polling for tx timestamp increasing tx_timestamp_timeout =
+or
+> increasing kworker priority may correct this issue, but a driver bug like=
+ly
+> causes it
 
-> +/**
-> + * parse_rule() - parse a policy rule line.
-> + * @line: Supplies rule line to be parsed.
-> + * @p: Supplies the partial parsed policy.
-> + *
-> + * Return:
-> + * * 0		- Success
-> + * * %-ENOMEM	- Out of memory (OOM)
-> + * * %-EBADMSG	- Policy syntax error
-> + */
-> +static int parse_rule(char *line, struct ipe_parsed_policy *p)
-> +{
-> +	enum ipe_action_type action = IPE_ACTION_INVALID;
-> +	enum ipe_op_type op = IPE_OP_INVALID;
-> +	bool is_default_rule = false;
-> +	struct ipe_rule *r = NULL;
-> +	bool first_token = true;
-> +	bool op_parsed = false;
-> +	int rc = 0;
-> +	char *t;
-> +
-> +	r = kzalloc(sizeof(*r), GFP_KERNEL);
-> +	if (!r)
-> +		return -ENOMEM;
-> +
-> +	INIT_LIST_HEAD(&r->next);
-> +	INIT_LIST_HEAD(&r->props);
-> +
-> +	while (t = strsep(&line, IPE_POLICY_DELIM), line) {
+as well as my client device failing to sync time.
 
-If line is passed in as NULL, t will be NULL on the first test.  Then
-you'll break out and call parse_action(NULL), which calls
-match_token(NULL, ...), which I do not think is safe.
+> and maybe the PCI vendor and device code of your network device.
 
-I realize the current caller won't pass in NULL, but it seems worth
-checking for here in case some future caller is added by someone
-who's unaware.
+% lspci -nn | grep Network
+17:00.0 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
+Network Connection [8086:150e] (rev 01)
+17:00.1 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
+Network Connection [8086:150e] (rev 01)
+17:00.2 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
+Network Connection [8086:150e] (rev 01)
+17:00.3 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
+Network Connection [8086:150e] (rev 01)
 
-Or, maybe add 'line must not be null' to the function description.
+> Bug, or was it a feature?
 
-> +		if (*t == '\0')
-> +			continue;
-> +		if (first_token && token_default(t)) {
-> +			is_default_rule = true;
-> +		} else {
-> +			if (!op_parsed) {
-> +				op = parse_operation(t);
-> +				if (op == IPE_OP_INVALID)
-> +					rc = -EBADMSG;
-> +				else
-> +					op_parsed = true;
-> +			} else {
-> +				rc = parse_property(t, r);
-> +			}
-> +		}
-> +
-> +		if (rc)
-> +			goto err;
-> +		first_token = false;
-> +	}
-> +
-> +	action = parse_action(t);
-> +	if (action == IPE_ACTION_INVALID) {
-> +		rc = -EBADMSG;
-> +		goto err;
-> +	}
-> +
-> +	if (is_default_rule) {
-> +		if (!list_empty(&r->props)) {
-> +			rc = -EBADMSG;
-> +		} else if (op == IPE_OP_INVALID) {
-> +			if (p->global_default_action != IPE_ACTION_INVALID)
-> +				rc = -EBADMSG;
-> +			else
-> +				p->global_default_action = action;
-> +		} else {
-> +			if (p->rules[op].default_action != IPE_ACTION_INVALID)
-> +				rc = -EBADMSG;
-> +			else
-> +				p->rules[op].default_action = action;
-> +		}
-> +	} else if (op != IPE_OP_INVALID && action != IPE_ACTION_INVALID) {
-> +		r->op = op;
-> +		r->action = action;
-> +	} else {
-> +		rc = -EBADMSG;
-> +	}
-> +
-> +	if (rc)
-> +		goto err;
-> +	if (!is_default_rule)
-> +		list_add_tail(&r->next, &p->rules[op].rules);
-> +	else
-> +		free_rule(r);
-> +
-> +	return rc;
-> +err:
-> +	free_rule(r);
-> +	return rc;
-> +}
-> +
-> +/**
-> + * ipe_free_parsed_policy() - free a parsed policy structure.
-> + * @p: Supplies the parsed policy.
-> + */
-> +void ipe_free_parsed_policy(struct ipe_parsed_policy *p)
-> +{
-> +	struct ipe_rule *pp, *t;
-> +	size_t i = 0;
-> +
-> +	if (IS_ERR_OR_NULL(p))
-> +		return;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(p->rules); ++i)
-> +		list_for_each_entry_safe(pp, t, &p->rules[i].rules, next) {
-> +			list_del(&pp->next);
-> +			free_rule(pp);
-> +		}
-> +
-> +	kfree(p->name);
-> +	kfree(p);
-> +}
-> +
-> +/**
-> + * validate_policy() - validate a parsed policy.
-> + * @p: Supplies the fully parsed policy.
-> + *
-> + * Given a policy structure that was just parsed, validate that all
-> + * operations have their default rules or a global default rule is set.
-> + *
-> + * Return:
-> + * * %0		- Success
-> + * * %-EBADMSG	- Policy is invalid
-> + */
-> +static int validate_policy(const struct ipe_parsed_policy *p)
-> +{
-> +	size_t i = 0;
-> +
-> +	if (p->global_default_action != IPE_ACTION_INVALID)
-> +		return 0;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(p->rules); ++i) {
-> +		if (p->rules[i].default_action == IPE_ACTION_INVALID)
-> +			return -EBADMSG;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * ipe_parse_policy() - Given a string, parse the string into an IPE policy.
-> + * @p: partially filled ipe_policy structure to populate with the result.
-> + *     it must have text and textlen set.
-> + *
-> + * Return:
-> + * * %0		- Success
-> + * * %-EBADMSG	- Policy is invalid
-> + * * %-ENOMEM	- Out of Memory
-> + * * %-ERANGE	- Policy version number overflow
-> + * * %-EINVAL	- Policy version parsing error
-> + */
-> +int ipe_parse_policy(struct ipe_policy *p)
-> +{
-> +	struct ipe_parsed_policy *pp = NULL;
-> +	char *policy = NULL, *dup = NULL;
-> +	bool header_parsed = false;
-> +	char *line = NULL;
-> +	size_t len;
-> +	int rc = 0;
-> +
-> +	if (!p->textlen)
-> +		return -EBADMSG;
-> +
-> +	policy = kmemdup_nul(p->text, p->textlen, GFP_KERNEL);
-> +	if (!policy)
-> +		return -ENOMEM;
-> +	dup = policy;
-> +
-> +	pp = new_parsed_policy();
-> +	if (IS_ERR(pp)) {
-> +		rc = PTR_ERR(pp);
-> +		goto out;
-> +	}
-> +
-> +	while ((line = strsep(&policy, IPE_LINE_DELIM)) != NULL) {
-> +		remove_comment(line);
-> +		len = remove_trailing_spaces(line);
-> +		if (!len)
-> +			continue;
-> +
-> +		if (!header_parsed) {
-> +			rc = parse_header(line, pp);
-> +			if (rc)
-> +				goto err;
-> +			header_parsed = true;
-> +		} else {
-> +			rc = parse_rule(line, pp);
-> +			if (rc)
-> +				goto err;
-> +		}
-> +	}
-> +
-> +	if (!header_parsed || validate_policy(pp)) {
-> +		rc = -EBADMSG;
-> +		goto err;
-> +	}
-> +
-> +	p->parsed = pp;
-> +
-> +out:
-> +	kfree(dup);
-> +	return rc;
-> +err:
-> +	ipe_free_parsed_policy(pp);
-> +	goto out;
-> +}
-> diff --git a/security/ipe/policy_parser.h b/security/ipe/policy_parser.h
-> new file mode 100644
-> index 000000000000..62b6209019a2
-> --- /dev/null
-> +++ b/security/ipe/policy_parser.h
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2020-2024 Microsoft Corporation. All rights reserved.
-> + */
-> +#ifndef _IPE_POLICY_PARSER_H
-> +#define _IPE_POLICY_PARSER_H
-> +
-> +int ipe_parse_policy(struct ipe_policy *p);
-> +void ipe_free_parsed_policy(struct ipe_parsed_policy *p);
-> +
-> +#endif /* _IPE_POLICY_PARSER_H */
-> -- 
-> 2.44.0
+According to https://lore.kernel.org/all/CDCB8BE0.1EC2C%25matthew.vick@inte=
+l.com/
+it was a bug. It looks like the datasheet was not updated to
+acknowledge this bug:
+https://www.intel.com/content/www/us/en/content-details/333167/intel-82580-=
+eb-82580-db-gbe-controller-datasheet.html
+(section 8.17.28.1).
+
+> Is there a nicer way to write this, so `ack` is only assigned in case
+> for the 82580?
+
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c
+b/drivers/net/ethernet/intel/igb/igb_main.c
+index ada42ba63549..87ec1258e22a 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -6986,6 +6986,10 @@ static void igb_tsync_interrupt(struct
+igb_adapter *adapter)
+        struct e1000_hw *hw =3D &adapter->hw;
+        u32 tsicr =3D rd32(E1000_TSICR);
+        struct ptp_clock_event event;
++       const u32 mask =3D (TSINTR_SYS_WRAP | E1000_TSICR_TXTS |
++                          TSINTR_TT0 | TSINTR_TT1 |
++                          TSINTR_AUTT0 | TSINTR_AUTT1);
++
+
+        if (tsicr & TSINTR_SYS_WRAP) {
+                event.type =3D PTP_CLOCK_PPS;
+@@ -7009,6 +7013,13 @@ static void igb_tsync_interrupt(struct
+igb_adapter *adapter)
+
+        if (tsicr & TSINTR_AUTT1)
+                igb_extts(adapter, 1);
++
++       if (hw->mac.type =3D=3D e1000_82580) {
++               /* 82580 has a hardware bug that requires a explicit
++                * write to clear the TimeSync interrupt cause.
++                */
++               wr32(E1000_TSICR, tsicr & mask);
++       }
+ }
+On Fri, Aug 9, 2024 at 10:04=E2=80=AFPM Richard Cochran
+<richardcochran@gmail.com> wrote:
+>
+> On Fri, Aug 09, 2024 at 05:23:02PM -0700, Vinicius Costa Gomes wrote:
+> > It was reported that 82580 NICs have a hardware bug that makes it
+> > necessary to write into the TSICR (TimeSync Interrupt Cause) register
+> > to clear it.
+>
+> Bug, or was it a feature?
+>
+> Or IOW, maybe i210 changed the semantics of the TSICR?
+>
+> And what about the 82576?
+>
+> Thanks,
+> Richard
 
