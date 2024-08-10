@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-281898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1845B94DCC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:29:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B30394DCC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEFA3281D04
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69AF51C20DCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A39158556;
-	Sat, 10 Aug 2024 12:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D82158559;
+	Sat, 10 Aug 2024 12:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOrPCoie"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEtFWszX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6A413E02A;
-	Sat, 10 Aug 2024 12:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E973D182D8;
+	Sat, 10 Aug 2024 12:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723292963; cv=none; b=i9nSlPAhF3MQiOuTS9mtj13xPUpSqqvff68qZnMknhWtPyuOCo8VxpF0JTrpzZLr/CU4XWorIOWA2eJ2/3P7WF/sdSv5jc88+VR5D0ruJGQLxPWg5f74vjt2fmiZhiktpFeopOgPVERJ6G/d5RSHFAK3RTF4uCZNkUIx1rzy1c0=
+	t=1723293128; cv=none; b=HO200SW/U1hYD9RpwGEFV2hQ6W6bNlSjINvoKTz8ch/VJ/cPxwqj930sOoEUSlGgakeKHL17jDiaUvACQePps5ety1tMJidzqNdUh8Q5aMbZtfRFZAcfZ0kFSO0459RZ0ON45CC7iPfH+MenQ7ohP7BMa4fXBcCXFdE2FlUI814=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723292963; c=relaxed/simple;
-	bh=s09tt5kUfqGeZK7vMpooPY2p4dcDe4zacRBUn0/9Gko=;
+	s=arc-20240116; t=1723293128; c=relaxed/simple;
+	bh=HnGsUuF9x9ZgA2drCBsxqDipQcuqcb3ZJNQgAJuj7Nw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O+Gp5CQyJdM6LUAvGxSRdpnDuq44yGSdp7SCQRyQZiIAorPRT7/rCKT8oKVSVGePDFrmYVvdvC2Atn2r0KOQkJ665D7J47++b/uBFa6MgPdMnBO9cxH4YGCDdjJJogLO8oMdFdBul2YXzboQMvBV1iuBiXBviT1CS0Hvp0GqvV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOrPCoie; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA98C32781;
-	Sat, 10 Aug 2024 12:29:17 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ncn7wuz/2SECMPUy9Exg+P7G7fARPd4sC2835m66IffKjJJX4qLT1MuTKzIoBMjkFJOUTzcYmFHM6NhEjcoVJOnvEvQcw6KTEpHV0TT5nzzD1JV7PIM9ikf4Fu94BtGerTjtiHOj34UQVxDZETsPljZciQTZt83ImuJQMM9/gUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEtFWszX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB4EC32781;
+	Sat, 10 Aug 2024 12:32:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723292962;
-	bh=s09tt5kUfqGeZK7vMpooPY2p4dcDe4zacRBUn0/9Gko=;
+	s=k20201202; t=1723293127;
+	bh=HnGsUuF9x9ZgA2drCBsxqDipQcuqcb3ZJNQgAJuj7Nw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rOrPCoieA1i8HZJPTWyhPYfcgtBtkSZFjajrXO00z7YCk7nGEBnXD7R+49lmkbltS
-	 IYG80R6eJUlh7DB+xcikOpSieXKpniLCexiP80ASYzyDoN7v50QmG6PSjxiQNZ/obY
-	 lhbNvu+9scw/F1JnrHj9n0glZk33mELHy3QTH7OjP0I2WgZrqiedDpuyNolCzwI5fP
-	 qKMPOr07oFE6LVJybKqwgMX8Ic/unduS5JiH68xIJ8unRkPc3dKQFSsuVATS8+Gvdp
-	 L5xNhsfx5rg81LKzcipvO7eiY4xfrEhTGWHYUG5qLoc62Zqrhtdy62fvfgcSmAK7Uv
-	 QPd5aA9rrautQ==
-Message-ID: <5bfe6251-796c-4036-8db6-783147b4ebd9@kernel.org>
-Date: Sat, 10 Aug 2024 14:29:15 +0200
+	b=jEtFWszXlkWVaZRRH2Wh5kUU3T9cMBsvn3RmQCdwCw1+dYtaWd0g2jOsmdsSlCnZn
+	 EHqW2LbUUHQnoF4w8zQFXFr+0g+jqvKNPty+nkk3j60q1O8debbh5tOj0pb0RGrgtQ
+	 1zbjrvIqB3rnCZ0xMav3UF+tvcBsijxgA4g5QRZzfP9YnouRU2OqI8869XxPE6Ld8r
+	 Y+uft1uKoB8YDIMwiqsVEKXjacz7Qi7NeAueS3ssG7d683aj6QPsFO+NbowyZmGelH
+	 84plmLdrxe+WkO8gIyUNEuNLey7VoZiRv1D2YS18q8PflMZlAkQhGb8UtDGMRlhs/z
+	 mbdg+7IrIIP5A==
+Message-ID: <0e46f4c2-5092-4803-9e6a-aa539a106fab@kernel.org>
+Date: Sat, 10 Aug 2024 14:32:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: reset: Add rk3576 reset definitions
+Subject: Re: [PATCH v2 1/3] dt-bindings: mmc: Add support for rk3576 dw-mshc
 To: Detlev Casanova <detlev.casanova@collabora.com>,
  linux-kernel@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com,
- Sugar Zhang <sugar.zhang@rock-chips.com>
-References: <20240809125553.3889-1-detlev.casanova@collabora.com>
- <20240809125553.3889-2-detlev.casanova@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+References: <20240808164900.81871-1-detlev.casanova@collabora.com>
+ <20240808164900.81871-2-detlev.casanova@collabora.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -108,30 +105,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240809125553.3889-2-detlev.casanova@collabora.com>
+In-Reply-To: <20240808164900.81871-2-detlev.casanova@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/08/2024 14:54, Detlev Casanova wrote:
-> Add reset ID defines for rk3576.
+On 08/08/2024 18:47, Detlev Casanova wrote:
+> Add the compatible string for rockchip,rk3576-dw-mshc and add support
+> for the rockchip,v2-tuning flag, a new feature of this core.
 > 
-> Compared to the downstream bindings this uses continous gapless
-> reset IDs starting at 1 instead of register offsets as IDs, as
-> introduced in the RK3588 bindings.
-> Thus all numbers are different between upstream and downstream,
-> but names are kept exactly the same.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
 > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 > ---
->  .../dt-bindings/reset/rockchip,rk3576-cru.h   | 564 ++++++++++++++++++
+>  .../devicetree/bindings/mmc/rockchip-dw-mshc.yaml          | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> index 211cd0b0bc5f3..86c986a7adb23 100644
+> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+> @@ -39,6 +39,7 @@ properties:
+>                - rockchip,rk3368-dw-mshc
+>                - rockchip,rk3399-dw-mshc
+>                - rockchip,rk3568-dw-mshc
+> +              - rockchip,rk3576-dw-mshc
+>                - rockchip,rk3588-dw-mshc
+>                - rockchip,rv1108-dw-mshc
+>                - rockchip,rv1126-dw-mshc
+> @@ -95,6 +96,12 @@ properties:
+>        If not specified, the host will do tuning for 360 times,
+>        namely tuning for each degree.
+>  
+> +  rockchip,v2-tuning:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Specify when the v2 tuning is supported. In this case, the hardware
+> +      inherits pre-stage loader's phase settings.
 
-I think I was clear:
-
-"These are bindings. Must be squashed with previous patch."
-
-Other comments were also not implemented?
+Is supported? This sounds compatible specific, so drop it. Unless it is
+bootloader dependent, but how?
 
 Best regards,
 Krzysztof
