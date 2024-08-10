@@ -1,89 +1,71 @@
-Return-Path: <linux-kernel+bounces-281751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF60094DAC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:55:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8018394DACB
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC0C282C67
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:55:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28E11C2112D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD4913D2B7;
-	Sat, 10 Aug 2024 04:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B441311B5;
+	Sat, 10 Aug 2024 05:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTaD6V5A"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="tC921Vkr"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBD713D243
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 04:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02E21CD37
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 05:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723265710; cv=none; b=ePaRAh/2xtH3UYKk3xKBE0Nq4BJ6NsauBQQsjbAK5UnpKC6d90A7B91TAEHrTFZ2kpDiUqSf/PiXd2CHUNtWtekhUNS2q23LPiUKCOQ0I8HJ/DNuZAqr5aPzXZlwsu2mnvIeOhcwUMRUYrzh2TQMvzEjWoKJWz1/+PsHasHybcg=
+	t=1723266077; cv=none; b=nBByRJl+pk8K+3Xz/bM3Hm3ouCHHTZ+3HhTm0A+z3lzUprY5IBCf1Ac5Uvtsgd1HQYbmXUMuu5/TyS7jdF6sa2UgPOzJY9aWjkfvNH2bDKDi1ukA6LB+jfdxyv1qn7wc0AggpFP3RXc1gqePlqSp3MOmbBQH7KaFfbyJ0gzugLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723265710; c=relaxed/simple;
-	bh=LqEkVqT0zJjqip7n6TGZEDAtPSc7ms/WQ5BGpRJDb0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uAy6ZdR50vU5FM+/tcapOsbr6VyEkAE4Ny189LiuN8MfqF8iZJUgHjoDFc/8nNid19ty+HioPQEuOckaAvFOkhUHWTKBJU8dDcxC9fKfviQ9HnBUD7v7Vg9jcV5k1w8iyt6e4+nwFQZcr4TMIt5qZfgr8H3y/aDyZRycEb9GyXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XTaD6V5A; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fd65aaac27so26106385ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 21:55:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723265708; x=1723870508; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=19rt3cYGIz9ovZGS8R2mAVuVxzzyQDGkKj8/iUwXAXE=;
-        b=XTaD6V5ATFlz1/WW3wKh/0atbfxpZcPhCtFtxw8ip/fiTFZ4LqdGtWPyUmudXsXriZ
-         NDnhd+ImFIK2BLDG2dkTAxUUIHh+1mfJMQX5v3Bb0/bT8ayr5I7+H4kq5sXREuSkXto/
-         WA/cW3glfl9tXIGDWHFrUt6ZiFxQmic4oSWgCf60A74wLo/xwHg5zh05XZxg64RWlCWP
-         Lpb9nMUEmzwMwZAJTuLqDoI8bSSSEsxoVPYQ51V+VNPhnS4AhhCjiOeLEu6oBQsBngSk
-         wDZB9cVwG0NHIpfJCxX+tiZqBCqJMFDjEKP/LWx/BQvbC3BUyKHj0O0gwEJhTMZoNoIs
-         dNcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723265708; x=1723870508;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=19rt3cYGIz9ovZGS8R2mAVuVxzzyQDGkKj8/iUwXAXE=;
-        b=b9AbarXW7vYUQy7DzuMYDrjLcpXzAomD0aVQVQ+ScRUIa3ZM91iU7qDHeJ2vRByh39
-         Lxb8HcGTMVCYSv9xgzwl9naIn/EIp2nv2N3zAVjzlZTZAsx9/ZoNa69y1z2Vho2uyQKt
-         Aq6soLfAGupNeQ5cGZrL7qg9mV874k4J8dKsjUnFX6ZlUnJ6crPfiZyKzx5UgcVio4Q5
-         5qewO5lSufVCJ4GsnCrVwEDcn6KsuBXjqckmjim3l/hcLSYNK/HXHEo+fImOpXyG16vz
-         c5OqiImcH7JB0LfHtF9QKzRPMPcujcR/QEubWdVwEReRK2u42yKiJWhf6MS/tQgLDGjz
-         Sv7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUzvqqFRpB1FeM5fSdeyOPxzs2Nu9OPbYVpjmURod7V18OQArn3IFRKBQpR91p2mQlI0CY6Fdc+1IGHJIsLU9TwTL6Nc/oeDewhKVjv
-X-Gm-Message-State: AOJu0YydEyzmZkhuTz4lLdr0jguoOVTqYUnBHCGkBQZxxydAm6wbGypE
-	ZCqv/kr5nyBXzU8J48CcSYKhNooa5lgB/dxHUB3IeWyB0caNA5B1
-X-Google-Smtp-Source: AGHT+IHlx1kQsTJ98HNGtbgTUm2+DBvCCePAmf3vd6I3xO5Wjd0CVQtCUkh5r/ZzM9mb4PGZk+PFeQ==
-X-Received: by 2002:a17:903:2345:b0:1f7:3a70:9e71 with SMTP id d9443c01a7336-200ae540e3amr57633735ad.13.1723265707658;
-        Fri, 09 Aug 2024 21:55:07 -0700 (PDT)
-Received: from distilledx.srmu.edu.in ([103.4.221.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb8fd82asm5227005ad.73.2024.08.09.21.55.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 21:55:07 -0700 (PDT)
-From: Tejas Vipin <tejasvipin76@gmail.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com
-Cc: dianders@chromium.org,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH 2/2] drm/panel: jdi-fhd-r63452: transition to mipi_dsi wrapped functions
-Date: Sat, 10 Aug 2024 10:24:04 +0530
-Message-ID: <20240810045404.188146-3-tejasvipin76@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240810045404.188146-1-tejasvipin76@gmail.com>
-References: <20240810045404.188146-1-tejasvipin76@gmail.com>
+	s=arc-20240116; t=1723266077; c=relaxed/simple;
+	bh=W/x1kTg/W03lX3XO7DXybywD1PVtoShkqxLDPJudPBA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=kaTPJimo8blX0uVqx96JR4b+2ejDja34YVHqA8KyU8YngLjK4iYJyAVAA7nyxIQvPS8kdxJep/LLyd6tekOgAHfJYP63QaZzErAsY7bOucGeaEUPBQAQflLly7JBJGDBMdt/PNmaXOeFk59E/RxY1scdJqATBtoKqBWaUs9Dmpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=tC921Vkr; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723266067; bh=rESwxL2foN+gTOOrJzXsPD28kV2jL54G1Ier0aU7sc8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=tC921VkrDpuKg4/7IEssDxgV4LyKcM9LEJfnZRDoZ0caaRr6ENdJ+NK3DAyCF7D+T
+	 rP38ShzXrr0Zq7OVSfrD47rnqO+jb4luDlnmw+ywhsKee971F2s5TNRJnqL+rJuc7G
+	 Ts2drLM4dcLjj53i/oaMjLIqWq/N0BuXeQrDCq3Y=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id DC115C90; Sat, 10 Aug 2024 12:55:01 +0800
+X-QQ-mid: xmsmtpt1723265701t7sj5q2nz
+Message-ID: <tencent_741B7B2507BA67BBF633729E061B244B3808@qq.com>
+X-QQ-XMAILINFO: MIAHdi1iQo+z/lyYWoIZvGMCSomaLI5hgGxpTYumVva/VhSBC149c/IT4fKygn
+	 GBi9bi3PuvFWq+vu98JOFgmi5Y2kSnuvoJbq5yd2aSCEDa25KiIqrHbPBf/9ZdmTJrhlmWzaWOw7
+	 3QHvOIdA9gAKYukNv7TvybjT4p2yLX7dH6u6k+u/ZQ6A1JjrhM7Ycxw3XPuFrSQmioHOz5/0Y2Ht
+	 te7Ev1Cg3LzmJFDrjLe+AMI1SXucsmAJSjVG+1uGeWr1Z6WAVMiX3dstLuheLG52ai5IorVf6G5e
+	 SkM54eNOGz5Wp40X6ER4lNHoeIyrjz7tEKQjLoVxr4dHdVrQ/andpO3gXF/kgZqxOaaDdkqbjlCI
+	 2NKB83z/gNKLjVr51AptWF3mSbOKbO+znPpgLyhpgrmE6t6DSdoO1kQVmAZXma2DwGK8Ojwc7OOT
+	 ihheXe4FpoOxppoSdZFnN0NrjXO4j5zncAmiD/vl8bT6tgfph5UiSA078X6lVxwC9V1lXxPywFlN
+	 HspCPSItTm8YLExWJYOYbr+X+mIHBBsXoBtTmALInI0IdcJNcyCSPvKkioZV3eJrV8BmgYQVOV+q
+	 BJ2IH2/INha7bJF2j/GiITr8kP0oDJlHw6IKDMrWV/FMLt/7BimElRQ4dwxZjv5jmbW5IZJu5QL2
+	 UnjRc8iwPa2TgeBGk4q2e1LpYDWNZgke6j2JDJdAoLi/CTQlftW9S2yGU0Dh2InP0O7ygZphA3ch
+	 mm/DsKcB0XdEyDsBl2T0Wo5giz64eUnPGngWcCnXKVvR9HzUJAE6tEQhTRi88kzpGeLOWkUmYRmM
+	 mC58ahkr3/4FqLpuiYmUMxAXAjmx8uE+nv6zngRbcXg21YitkOHMM1cwavrm4jeI0WJA5HtZP/Y3
+	 v2Kd/FOhOaV5vmTntexAWvw/WB8u9/GCLiJXRgAvDY1i25xDg7bHPYsus9e/Ay/OTN9Ge51pksKs
+	 2AjJpWnAKFCkMNCUSttDN9BZoZ4Xum8Z8pbj35v7w=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Date: Sat, 10 Aug 2024 12:55:01 +0800
+X-OQ-MSGID: <20240810045500.2108796-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+References: <0000000000007ec511061f00a7b2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,170 +74,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Changes the jdi-fhd-r63452 panel to use multi style functions for
-improved error handling.
+debug
 
-Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
----
- drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c | 125 ++++++-------------
- 1 file changed, 39 insertions(+), 86 deletions(-)
+#syz test: upstream c0ecd6388360
 
-diff --git a/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c b/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
-index 483dc88d16d8..32a244d4bae7 100644
---- a/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
-+++ b/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
-@@ -41,79 +41,41 @@ static void jdi_fhd_r63452_reset(struct jdi_fhd_r63452 *ctx)
- static int jdi_fhd_r63452_on(struct jdi_fhd_r63452 *ctx)
+diff --git a/fs/9p/fid.c b/fs/9p/fid.c
+index de009a33e0e2..b5ccab74bb6f 100644
+--- a/fs/9p/fid.c
++++ b/fs/9p/fid.c
+@@ -13,6 +13,7 @@
+ #include <linux/sched.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
++#include <linux/file.h>
+ 
+ #include "v9fs.h"
+ #include "v9fs_vfs.h"
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index a97ceb105cd8..7768cc70439d 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -34,6 +34,7 @@ static void v9fs_begin_writeback(struct netfs_io_request *wreq)
  {
- 	struct mipi_dsi_device *dsi = ctx->dsi;
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 	struct p9_fid *fid;
  
- 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
++	printk("ino: %lx, %s\n", wreq->inode->i_ino, __func__);
+ 	fid = v9fs_fid_find_inode(wreq->inode, true, INVALID_UID, true);
+ 	if (!fid) {
+ 		WARN_ONCE(1, "folio expected an open fid inode->i_ino=%lx\n",
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index e0d34e4e9076..3fe715ab6efd 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -219,6 +219,15 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 			retval = filemap_fdatawrite(inode->i_mapping);
  
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x00);
--	mipi_dsi_generic_write_seq(dsi, 0xd6, 0x01);
--	mipi_dsi_generic_write_seq(dsi, 0xec,
--				   0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
--				   0x13, 0x15, 0x68, 0x0b, 0xb5);
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x03);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xd6, 0x01);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xec,
-+					 0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
-+					 0x13, 0x15, 0x68, 0x0b, 0xb5);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x03);
- 
--	ret = mipi_dsi_dcs_set_tear_on(dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set tear on: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_tear_on_multi(&dsi_ctx, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
- 
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_ADDRESS_MODE, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_SET_ADDRESS_MODE, 0x00);
- 
--	ret = mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set pixel format: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
-+	mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0x0000, 0x0437);
-+	mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0x0000, 0x077f);
-+	mipi_dsi_dcs_set_tear_scanline_multi(&dsi_ctx, 0x0000);
-+	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x00ff);
- 
--	ret = mipi_dsi_dcs_set_column_address(dsi, 0x0000, 0x0437);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set column address: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x24);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_POWER_SAVE, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_SET_CABC_MIN_BRIGHTNESS, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x84, 0x00);
- 
--	ret = mipi_dsi_dcs_set_page_address(dsi, 0x0000, 0x077f);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set page address: %d\n", ret);
--		return ret;
--	}
--
--	ret = mipi_dsi_dcs_set_tear_scanline(dsi, 0x0000);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set tear scanline: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 20);
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 80);
- 
--	ret = mipi_dsi_dcs_set_display_brightness(dsi, 0x00ff);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set display brightness: %d\n", ret);
--		return ret;
--	}
--
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x24);
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_POWER_SAVE, 0x00);
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_CABC_MIN_BRIGHTNESS, 0x00);
--	mipi_dsi_dcs_write_seq(dsi, 0x84, 0x00);
--
--	ret = mipi_dsi_dcs_set_display_on(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set display on: %d\n", ret);
--		return ret;
--	}
--	msleep(20);
--
--	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to exit sleep mode: %d\n", ret);
--		return ret;
--	}
--	msleep(80);
--
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x04);
--	mipi_dsi_dcs_write_seq(dsi, 0x84, 0x00);
--	mipi_dsi_generic_write_seq(dsi, 0xc8, 0x11);
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x03);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x04);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x84, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xc8, 0x11);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x03);
- 
- 	return 0;
- }
-@@ -121,31 +83,22 @@ static int jdi_fhd_r63452_on(struct jdi_fhd_r63452 *ctx)
- static int jdi_fhd_r63452_off(struct jdi_fhd_r63452 *ctx)
- {
- 	struct mipi_dsi_device *dsi = ctx->dsi;
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
- 
- 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
- 
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x00);
--	mipi_dsi_generic_write_seq(dsi, 0xd6, 0x01);
--	mipi_dsi_generic_write_seq(dsi, 0xec,
--				   0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
--				   0x13, 0x15, 0x68, 0x0b, 0x95);
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x03);
--
--	ret = mipi_dsi_dcs_set_display_off(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set display off: %d\n", ret);
--		return ret;
--	}
--	usleep_range(2000, 3000);
--
--	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
--		return ret;
--	}
--	msleep(120);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xd6, 0x01);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xec,
-+					 0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
-+					 0x13, 0x15, 0x68, 0x0b, 0x95);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x03);
+ 		spin_lock(&inode->i_lock);
++		printk("del, ino: %lx, ino sync: %d, comm: %s, %s\n", inode->i_ino, inode->i_state & I_SYNC, current->comm, __func__);
++		if (I_SYNC & inode->i_state) {
++			spin_unlock(&inode->i_lock);
++			if (wait_on_bit_timeout(&inode->i_state, I_SYNC,
++						TASK_UNINTERRUPTIBLE, 5 * HZ))
++				return -EBUSY;
++			spin_lock(&inode->i_lock);
++		}
 +
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-+	if (!dsi_ctx.accum_err)
-+		usleep_range(2000, 3000);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 120);
+ 		hlist_del(&fid->ilist);
+ 		spin_unlock(&inode->i_lock);
+ 		put_err = p9_fid_put(fid);
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 348cc90bf9c5..ed319921a898 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -22,6 +22,7 @@
+ #include <linux/slab.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
++#include <linux/security.h>
  
- 	return 0;
- }
--- 
-2.46.0
+ #include "v9fs.h"
+ #include "v9fs_vfs.h"
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index 9258d30cffe3..4c03b8911375 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -522,12 +522,19 @@ int netfs_writepages(struct address_space *mapping,
+ 	trace_netfs_write(wreq, netfs_write_trace_writeback);
+ 	netfs_stat(&netfs_n_wh_writepages);
+ 
++	unsigned long  i_state = wreq->inode->i_state;
++	wreq->inode->i_state |= I_SYNC;
++	printk("doing sync: %d, before sync: %d, ino: %lx, comm: %s, %s\n", wreq->inode->i_state & I_SYNC,
++			i_state & I_SYNC,
++			wreq->inode->i_ino, current->comm, __func__);
++
+ 	do {
+ 		_debug("wbiter %lx %llx", folio->index, wreq->start + wreq->submitted);
+ 
+ 		/* It appears we don't have to handle cyclic writeback wrapping. */
+ 		WARN_ON_ONCE(wreq && folio_pos(folio) < wreq->start + wreq->submitted);
+ 
++		printk("ino: %lx, folio: %p, %s\n", wreq->inode->i_ino, folio, __func__);
+ 		if (netfs_folio_group(folio) != NETFS_FOLIO_COPY_TO_CACHE &&
+ 		    unlikely(!test_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags))) {
+ 			set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
+@@ -538,6 +545,9 @@ int netfs_writepages(struct address_space *mapping,
+ 		if (error < 0)
+ 			break;
+ 	} while ((folio = writeback_iter(mapping, wbc, folio, &error)));
++	wreq->inode->i_state &= ~I_SYNC;
++	printk("end sync: %d, ino: %lx, comm: %s, error: %d, %s\n", wreq->inode->i_state & I_SYNC,
++			wreq->inode->i_ino, current->comm, error, __func__);
+ 
+ 	for (int s = 0; s < NR_IO_STREAMS; s++)
+ 		netfs_issue_write(wreq, &wreq->io_streams[s]);
 
 
