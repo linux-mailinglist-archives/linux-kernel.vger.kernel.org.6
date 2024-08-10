@@ -1,146 +1,134 @@
-Return-Path: <linux-kernel+bounces-281959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CDE694DD7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:37:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC1894DD81
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FB011C20C9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:37:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D53881C20CCA
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC19B166F21;
-	Sat, 10 Aug 2024 15:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFEE166305;
+	Sat, 10 Aug 2024 15:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GTqGJu15"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAHA4kTz"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2685B3FB31;
-	Sat, 10 Aug 2024 15:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8AE1870;
+	Sat, 10 Aug 2024 15:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723304221; cv=none; b=ZRf4uFigPuX5ApemOZNnRCENHzPufSN9KqM7bTaHWQnZeWZhYKyv9tEtEiup+75m+vOcv6kZKteiDggx08J+qFmsm5+UFBr7LEqbaYqvKIdBNVyMcePWvyCwXqoHpAFY4WlUaR28Uz38sRbEgLydwtOmehuyFjq9g3C/EDIS2gI=
+	t=1723304400; cv=none; b=clubkSb24+oH/IQBXvaqb2SzqAqugHfRjHCZA4Z2qVItZ++Var5cnAhqZq17+Suc11ouRUBff5NSKl4zRZXrjFecT61W8q7VL/I0UadRIcxMTC4SDX6sNtdUhLcWwEe8VNWzGyu37bCiu3J04DuhydKuRXPL5L42rAmwR+KbxxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723304221; c=relaxed/simple;
-	bh=rk0h//kNadRvGwUIVsLSY/s8fPXfayYXmdtWiPMuN/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d74mcegHvQfhcCfU6D2H++6MtmmUoeZu4IHdnz9bdw1XCBK1ittNANilaHUs1sqDJS8/TqVA90K2/ZP7aqOI7lUscq3l26PyMTGHsfdgoeQ2gbJveLmsGpNWZzLMv0Xmy/0e51uA27crdPBIOgHLaDHnpNpztmCRnWfEshWgezQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GTqGJu15; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=E6Oda4HdEg1Enuz9oVCvlhnuHEVkoHUTSD/lPFZ9MFI=; b=GTqGJu15CPkEq9qQukFSlynL7I
-	6wInbFE+gXvcb/fC1W0v/3izIKn/Ucjf03Ba8RD2Y4+uULi6tOVrsU+hnh3b4Qq4ivzAmUsc3pRuh
-	XO+2EOzk+1H7i3XmVVkWqQtr2vZPn7mW7EHg/9NdR/TJm6OTpx86wskrhEfcG8Ti/fBQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sco8w-004SCV-Rr; Sat, 10 Aug 2024 17:36:34 +0200
-Date: Sat, 10 Aug 2024 17:36:34 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: EnDe Tan <ende.tan@starfivetech.com>
-Cc: Tan En De <endeneer@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-	"joabreu@synopsys.com" <joabreu@synopsys.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>
-Subject: Re: [net,1/1] net: stmmac: Set OWN bit last in dwmac4_set_rx_owner()
-Message-ID: <a3b52da3-a084-4fc5-a60f-90e18d9f8132@lunn.ch>
-References: <20240809144229.1370-1-ende.tan@starfivetech.com>
- <06297829-0bf7-4a06-baaf-e32c39888947@lunn.ch>
- <NTZPR01MB1018A388BD187A1CB38833B3F8BB2@NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1723304400; c=relaxed/simple;
+	bh=HiDiD/Vl6USvlsydHRLj7zjEuU3+T1Z09cmxYg7M7cQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jyP4weHO3dPYN4onkj6AqbU5vULYANoFazdxkEiC/qNfLyZbSsm0hyI2nP9+O9YixhBiaOdOhh/YI6ThVOPp8eL2i03/5okQVoqgbBzazIzgmT9gRj+cODwKvVu5UZDajMfA+mg3vsH2sD6q2mxMJVXfKgUySLq1xaojy3naaak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EAHA4kTz; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f025b94e07so34536581fa.0;
+        Sat, 10 Aug 2024 08:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723304397; x=1723909197; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fKIBXeUHPOeUk9KK7mcaPVaWFm3r4O3HLvUz5rIXpAM=;
+        b=EAHA4kTzIQN+agjyPJjSVByxz1JgLyMRdmBWE74L9SqX7zfl3ldlPKDg4KO50rXCsW
+         J6Xu4lYpCTGBFdss8ZqUdSCclACZV/i+8eEjs36fFxYWl0w3NFxF85JbRriz1UpDfe65
+         LxwKqLmCOGzKMGoL4PSksMABbPS+apk6DZkzPW6MuUl8PdlpmuyoGwJE8+iYM27V72ig
+         r6yY1mc5x1zWVPi/xIEg9s/l/1MxMTJTxONZlTNKncAvZxweFmBalZVXWdDr2ZcLB1Gs
+         absgI0FrMhpo2iN8MFHeteEaacEC2aLW/uPWtS8z3a04BtBQeNVIIyczxY3xWj0wvE3s
+         tApA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723304397; x=1723909197;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fKIBXeUHPOeUk9KK7mcaPVaWFm3r4O3HLvUz5rIXpAM=;
+        b=b9G14Ldm3KLJRT+j+z6PqJpPL8BOXVXuNRcMAV+quwAd4o5DS4szxdxpKfPlRg+R9I
+         T7q+aXdtf/FaST7ykjfYUa5tyl9MnlRN6oUc8X7x+q7l2hMQ1mMrLLdZVrhcOWhEJbCN
+         aHWT9brgqF/ZP5ZyiBuxZOn8PjnFNrHXN54vTakLeBH7gIMPQZ2MAyXVzzB+gSUsURWP
+         dZYq4uMHu2yImtwncwXXq9sC9vrZc3t36Y/9qz+7m7MqIpaJxrJoAnqUnZhuUIQB2jrs
+         xYOUIu7Va/jYmXf2tp2S/eNXmZlbKvN6NKzd8R1f3Noe0DQpZUiptL9M8qFPIIrZjvbF
+         1gVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWA1HwCZWP7WwCplJFH8ILphV8yRuJKU8xoilyyy26PAAkY1tS6UUQ4bFCs0p1apiQ1SyYVo73+uGnUqkhHrLP7FCa8n2aYA8PN/F5QsNAU1oyrvYNuEVNmq1oYLqWD9q6xmwuImTGE/7lnRTy7
+X-Gm-Message-State: AOJu0YxUCEmloeCnIDGN5MJhtdz+D5ziz8YjOrSNJRjputwq262fXJsD
+	lVf+dH/DOFvbjjj6aYXOWp9jmvRXxVdedQ7CdrqeiCcJfNFthb9sdyRjODboSVHkIIHuLMB1cqJ
+	pZvLQWPjMOR2y0ux9ufZOl1GWNfA=
+X-Google-Smtp-Source: AGHT+IHPlLVs3FLJyUL/zE0EGLj7c7V2EqrrIhIaWRbx96D6J0Wv7FOAPX6lQNQiAzkLg41JwA7AGP/SIyyMStskatQ=
+X-Received: by 2002:a05:6512:b02:b0:52c:adc4:137c with SMTP id
+ 2adb3069b0e04-530ee984de9mr3205983e87.20.1723304397023; Sat, 10 Aug 2024
+ 08:39:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <NTZPR01MB1018A388BD187A1CB38833B3F8BB2@NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn>
+References: <20240808-b4-string_helpers_caa133-v1-1-686a455167c4@google.com>
+ <CAHp75VfBjKLf3LqDXvAehW5sxGzYnU4sS3fr=JoaM-6p_gR34w@mail.gmail.com>
+ <202408081609.D08D11C@keescook> <CAHp75Vd3wKyq2XE2UPoW_q3KjmncSeaEebL4ff5Gpx8Lz+dB9A@mail.gmail.com>
+ <dyigpya2tb7obniv3g2rzhtahvjhximzjlvoi42c45fqkb7hx5@tw3loxvglexa>
+In-Reply-To: <dyigpya2tb7obniv3g2rzhtahvjhximzjlvoi42c45fqkb7hx5@tw3loxvglexa>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 10 Aug 2024 18:39:20 +0300
+Message-ID: <CAHp75Vcpy3+wZ-UuLRMVtvhK8u7X9wAyB8_5t1v8M50NCyTYEA@mail.gmail.com>
+Subject: Re: [PATCH] lib/string_helpers: rework overflow-dependent code
+To: Justin Stitt <justinstitt@google.com>
+Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 10, 2024 at 02:58:50AM +0000, EnDe Tan wrote:
->  Hi Andrew, thanks for taking a look at my patch.
-> 
-> > Are you seeing things going wrong with real hardware, or is this just code
-> > review? If this is a real problem, please add a description of what the user
-> > would see.
-> >
-> > Does this need to be backported in stable?
-> 
-> On my FPGA, after running iperf3 for a while, the GMAC somehow got stuck,
-> as shown by 0.00 bits/sec, for example:
-> ```
-> iperf3 -t 6000 -c 192.168.xxx.xxx -i 10 -P 2 -l 128
-> ...
-> [  5] 220.00-230.00 sec  2.04 MBytes  1.71 Mbits/sec    3   1.41 KBytes
-> [  7] 220.00-230.00 sec  2.04 MBytes  1.71 Mbits/sec    3   1.41 KBytes
-> [SUM] 220.00-230.00 sec  4.07 MBytes  3.42 Mbits/sec    6
-> - - - - - - - - - - - - - - - - - - - - - - - - -
-> [  5] 230.00-240.01 sec  0.00 Bytes  0.00 bits/sec    2   1.41 KBytes
-> [  7] 230.00-240.01 sec  0.00 Bytes  0.00 bits/sec    2   1.41 KBytes
-> [SUM] 230.00-240.01 sec  0.00 Bytes  0.00 bits/sec    4
-> ```
-> 
-> Used devmem to check registers:
-> 0x780 (Rx_Packets_Count_Good_Bad)
-> - The count was incrementing, so packets were still received.
-> 0x114C (DMA_CH0_Current_App_RxDesc)
-> - Value was changing, so DMA did update the RX descriptor address pointer.
-> 0x1160 (DMA_CH0_Status).
-> - Receive Buffer Unavailable RBU = 0.
-> - Receive Interrupt RI = 1 (stuck at 1).
-> 
-> which led me to suspect that there was missed RX interrupt.
-> I then came across dwmac4_set_rx_owner() function, and saw the possibility of 
-> missed interrupt (when DMA sees OWN bit before INT_ON_COMPLETION bit).
-> 
-> However, even with this patch, the problem persists on my FPGA.
-> Therefore, I'd treat this patch as a code review, as I can't provide a concrete proof
-> that this patch fixes any real hardware.
+On Sat, Aug 10, 2024 at 2:53=E2=80=AFAM Justin Stitt <justinstitt@google.co=
+m> wrote:
+> On Fri, Aug 09, 2024 at 02:07:57PM GMT, Andy Shevchenko wrote:
+> > On Fri, Aug 9, 2024 at 2:11=E2=80=AFAM Kees Cook <kees@kernel.org> wrot=
+e:
 
-O.K. Please target this patch to net-next. We can always get it
-backported to stable later.
+...
 
-> > Is the problem here that RDES3_INT_ON_COMPLETION_EN is added after the
-> > RDES3_OWN above has hit the hardware, so it gets ignored?
-> > 
-> > It seems like it would be better to calculate the value in a local variable, and
-> > then assign to p->des3 once.
-> 
-> I didn't use local variable because I worry about CPU out-of-order execution. 
-> For example,
-> ```
-> local_var = (INT_ON_COMPLETION | OWN)
-> des3 |= local_var
-> ```
-> CPU optimization might result in this
-> ```
-> des3 |= INT_ON_COMPLETION
-> des3 |= OWN
-> ```
-> or worst, out of order like this
-> ```
-> des3 |= OWN
-> des3 |= INT_ON_COMPLETION
-> ```
-> which could cause missing interrupt.
+> > Okay, but the patch has an off-by-one error (which has no impact on
+> > the behavior as it's close to unrealistic to have the SIZE_MAX array).
+> > I prefer that patch can be reconsidered to keep original behaviour,
+> > otherwise it might be not so clear why 0 is SIZE_MAX - 1 in _this_
+> > case.
+>
+> Right, it is technically different but still functionally provides the
+> "unlimited" behavior.
+>
+> But, we could  do this too:
 
-I'm assuming the des3 is mapped as non-cached. So each access is
-expensive. If you can convince the compiler to assemble the value in a
-register and then perform one write, it will be cheaper than two
-writes.
+>  int string_unescape(char *src, char *dst, size_t size, unsigned int flag=
+s)
+>  {
+>         char *out =3D dst;
+> +       bool unlimited =3D !size;
+>
+> -       while (*src && --size) {
+> -               if (src[0] =3D=3D '\\' && src[1] !=3D '\0' && size > 1) {
+> +       while (*src && (unlimited || --size)) {
+> +               if (src[0] =3D=3D '\\' && src[1] !=3D '\0' &&
+> +                   (unlimited || size > 1)) {
+>                         src++;
+> -                       size--;
+> +                       size -=3D !unlimited;
+>
+>                         if (flags & UNESCAPE_SPACE &&
+>                                         unescape_space(&src, &out))
+>
+> Really, I am fine with either.
 
-	Andrew
+This one is worse, I think.
+Let's take time and not hurry up and think more about better approaches.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
