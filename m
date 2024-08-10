@@ -1,164 +1,212 @@
-Return-Path: <linux-kernel+bounces-281802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CC294DB81
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:41:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E9994DB84
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C5B282808
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:41:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21E9AB21741
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0116A14BF87;
-	Sat, 10 Aug 2024 08:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hvMyslfl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="twiaINLH";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hvMyslfl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="twiaINLH"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7AD14D283;
+	Sat, 10 Aug 2024 08:42:21 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F7D24B2F
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 08:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B791014A619
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 08:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723279258; cv=none; b=WnnDwGbnqzCZPuyCU7/Kb97hHk3ceZiv+jhHffa51UPGisNZd7+vsMS+JUyP7gyUO6zQB70Ts2fAACZydrBiiVIvwuy2YbDG/I95AusxJ/ogOv/yXAElI10I02ew/5zrnH/O8Kw7CQk7EtmsDQD6nl0IRWjrARyMXWEmJbWUNM8=
+	t=1723279341; cv=none; b=gLN+OdUUT7ORtyvNOwuXi7JQIhZrAtj0FPrqbSN8r+mgO0NGJYwI6KGeQC9qlHvpxI5WZ1XBQZ+HHI/XH42z0KlOuYVS4M1FLwUX9S8N/yK3t/DuJUdpyuJqIw6gIr29NPvh3+XYznGMX2gr5S8m7vfDXjkS6s35UCb/0ZAZmPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723279258; c=relaxed/simple;
-	bh=zT5rASv96Ev8n9CddTVeF1TAdQH7tDQYlH/IQ8smeuo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VaN/qqne8ckv9LynWtXmG5+3OlvASBFlslnGioKaa9HR4KRH1WU/2cekNBCBVmFBXjhXHs7/BdkwiC0Iploz7RB/QTZVhZrPE3Ry+LH+SsXwra4r6eeansgQ9jE5qbS2HPIwe4n1Z1SCQ81T5GBqaq6nqm++QG+1oFUnq5izOCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hvMyslfl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=twiaINLH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hvMyslfl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=twiaINLH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B7F69220E0;
-	Sat, 10 Aug 2024 08:40:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723279254; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JOlgF9chdSFGs3DgiXE9oTOri2EHGPEGhgk4hioJWuk=;
-	b=hvMyslfl1Oe1tI1q7bQBtBd3LHUe8KIm0hQU618WeXvPxVIsct/+tlF6Hn66KzO2jXJED1
-	etjr1czhUcMEn2TLUXOQVzLf58UwgRLxpDAgTGF0FNrFXVLYgMOTKGszugJzFeZDTzcVIG
-	KFpinlXggNhdo0DBinz0/nNqLHRUuZ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723279254;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JOlgF9chdSFGs3DgiXE9oTOri2EHGPEGhgk4hioJWuk=;
-	b=twiaINLHiatdKiMDBzGlMbjAu+R6EdysgaDWY9WtiebRK0SlrdFODd3EM5eEHBmU/C7tC6
-	nXke1zuo+a+Sq3Dw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723279254; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JOlgF9chdSFGs3DgiXE9oTOri2EHGPEGhgk4hioJWuk=;
-	b=hvMyslfl1Oe1tI1q7bQBtBd3LHUe8KIm0hQU618WeXvPxVIsct/+tlF6Hn66KzO2jXJED1
-	etjr1czhUcMEn2TLUXOQVzLf58UwgRLxpDAgTGF0FNrFXVLYgMOTKGszugJzFeZDTzcVIG
-	KFpinlXggNhdo0DBinz0/nNqLHRUuZ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723279254;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JOlgF9chdSFGs3DgiXE9oTOri2EHGPEGhgk4hioJWuk=;
-	b=twiaINLHiatdKiMDBzGlMbjAu+R6EdysgaDWY9WtiebRK0SlrdFODd3EM5eEHBmU/C7tC6
-	nXke1zuo+a+Sq3Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 76EC913704;
-	Sat, 10 Aug 2024 08:40:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aPHFGpYnt2azJAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 10 Aug 2024 08:40:54 +0000
-Date: Sat, 10 Aug 2024 10:41:34 +0200
-Message-ID: <87a5hklqgx.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Norman Bintang <normanbt@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	broonie@kernel.org,
-	alsa-devel@alsa-project.org,
-	Takashi Iwai <tiwai@suse.com>,
-	cujomalainey@chromium.org,
-	Chih-Yang Hsia <paulhsia@chromium.org>,
-	David Riley <davidriley@chromium.org>
-Subject: Re: [PATCH] ALSA: pcm: Add xrun counter for snd_pcm_substream
-In-Reply-To: <20240809140648.3414349-1-normanbt@chromium.org>
-References: <20240809140648.3414349-1-normanbt@chromium.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1723279341; c=relaxed/simple;
+	bh=yQEbVHn6BaKMCt0IVCu3suh1Y+atI0rmkyG9pZIs4PM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=saPxgKFFhf+PInULRkt3CpsdSXC6mivvw3nZRadUNE+Rb0dRMh6JAo2U51FZKQR263UJ83fD4UgT5JHsbF90vesOd7idqnP60H5u5kmshqlN5fJkHQsdop/CTpW/KBmd4BmYueg2PyG7mJVQMgajWX1tyiKloPdHOu1xNmQWYrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39b3a9f9f5bso33019365ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 01:42:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723279339; x=1723884139;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wbcGf+ZscPGswmn1AVRKuI6rDAL+SV2cKXetUeYdang=;
+        b=hkxoT5y8MHM5i14aOC2ukCYA7d/aGiP0FqjIqWi6WXwy0Ofs4fi2fop0/aOra5XxXN
+         41eJHrFfCtkxbNgH8G9V0VhoEkLsFzTmdrejMYZXcq1lBq84DdfQOYfE6YrZPYHhXCOp
+         5petRMo+3MWc+Fwr2NSGDfpVu02s2dXock/+LufqgIeQ69uywD5c/mer2CzT+M8ZzUx2
+         4kzEAd6C69ia1Ag8S5FLD9qjvmtqYRUfirj2GTRPCbsLQhwk53roy5dN/xnp+pvpdfL2
+         Xiaw+pKDTArUZqAsaGaBsUknXgdPFBaV0noE8kuObrS6J4EmygJ6nvw67tGyceXLkCgk
+         lJlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRE3u/jmaD/EsNVqAFuggb65eihSGEIK1/n0Dis+tqSNKu9zZc/KGqR7ozOGeVs01yCv3FUgOMehJJi/bX/hXV9z4pOzFUwD07zxZF
+X-Gm-Message-State: AOJu0YzmbSV/ZS3RRWQpAIPinE7mLnIYNcPia8mguSlVo7sT/CmAVL0y
+	AQbEzPiNxhcM0N/1MAxLkxL9sBian+DDlwUsUSAhk8VxvUB2unAQZQSmHGAqt4b/P+VUavYyE7T
+	Mk0+wQrudgZzQxDK7Bdw9A6kEMm8OJaTJw1TWYmmlw/DqMm3ymLIYyKw=
+X-Google-Smtp-Source: AGHT+IF6nOx97wMoZLJrKo88WJeuHpchdPI9KzP5X+aTL6qZPqUHzN3Uaipw/gIl2ZDGD+Nk9btllFUgTdWIW705hYTAmlWgjSQ2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.993];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+X-Received: by 2002:a92:c562:0:b0:381:24e:7a8c with SMTP id
+ e9e14a558f8ab-39b7a474c66mr2146205ab.1.1723279338904; Sat, 10 Aug 2024
+ 01:42:18 -0700 (PDT)
+Date: Sat, 10 Aug 2024 01:42:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d830f0061f503c6a@google.com>
+Subject: [syzbot] [wireless?] KMSAN: uninit-value in skb_trim (2)
+From: syzbot <syzbot+98afa303be379af6cdb2@syzkaller.appspotmail.com>
+To: kvalo@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, toke@toke.dk
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 09 Aug 2024 16:06:45 +0200,
-Norman Bintang wrote:
-> 
-> This patch adds an xrun counter to snd_pcm_substream as an alternative
-> to using logs from XRUN_DEBUG_BASIC. The counter provides a way to track
-> the number of xrun occurences, accessible through the /proc interface.
-> 
-> The counter is enabled when CONFIG_SND_PCM_XRUN_DEBUG is set.
-> 
-> Example output:
-> 
-> $ cat /proc/asound/card0/pcm9p/sub0/status
-> 
-> owner_pid   : 1425
-> trigger_time: 235.248957291
-> tstamp      : 0.000000000
-> delay       : 1912
-> avail       : 480
-> avail_max   : 1920
-> -----
-> hw_ptr      : 672000
-> appl_ptr    : 673440
-> xrun_counter: 3  # (new row)
-> 
-> Signed-off-by: Norman Bintang <normanbt@chromium.org>
-> Reviewed-by: Chih-Yang Hsia <paulhsia@chromium.org>
-> Tested-by: Chih-Yang Hsia <paulhsia@chromium.org>
-> Reviewed-by: David Riley <davidriley@chromium.org>
+Hello,
 
-Applied to for-next branch.  Thanks.
+syzbot found the following issue on:
+
+HEAD commit:    b446a2dae984 Merge tag 'linux_kselftest-fixes-6.11-rc3' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13eb467d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=305509ad8eb5f9b8
+dashboard link: https://syzkaller.appspot.com/bug?extid=98afa303be379af6cdb2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/49d96e53e1c4/disk-b446a2da.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f05350d128a7/vmlinux-b446a2da.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/805c7d86a2db/bzImage-b446a2da.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+98afa303be379af6cdb2@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in skb_trim+0x13a/0x190 net/core/skbuff.c:2673
+ skb_trim+0x13a/0x190 net/core/skbuff.c:2673
+ ath9k_hif_usb_reg_in_cb+0x582/0x970 drivers/net/wireless/ath/ath9k/hif_usb.c:758
+ __usb_hcd_giveback_urb+0x572/0x840 drivers/usb/core/hcd.c:1650
+ usb_hcd_giveback_urb+0x157/0x720 drivers/usb/core/hcd.c:1734
+ dummy_timer+0xd3f/0x6aa0 drivers/usb/gadget/udc/dummy_hcd.c:1987
+ __run_hrtimer kernel/time/hrtimer.c:1689 [inline]
+ __hrtimer_run_queues+0x564/0xe40 kernel/time/hrtimer.c:1753
+ hrtimer_interrupt+0x3ab/0x1490 kernel/time/hrtimer.c:1815
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
+ __sysvec_apic_timer_interrupt+0xa6/0x3a0 arch/x86/kernel/apic/apic.c:1049
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0x7e/0x90 arch/x86/kernel/apic/apic.c:1043
+ asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
+ __nr_to_section include/linux/mmzone.h:1862 [inline]
+ __pfn_to_section include/linux/mmzone.h:1970 [inline]
+ pfn_valid include/linux/mmzone.h:2023 [inline]
+ kmsan_virt_addr_valid arch/x86/include/asm/kmsan.h:94 [inline]
+ virt_to_page_or_null+0x7a/0x150 mm/kmsan/shadow.c:75
+ kmsan_get_metadata+0x13e/0x1c0 mm/kmsan/shadow.c:141
+ kmsan_get_shadow_origin_ptr+0x38/0xb0 mm/kmsan/shadow.c:97
+ get_shadow_origin_ptr mm/kmsan/instrumentation.c:38 [inline]
+ __msan_metadata_ptr_for_load_4+0x24/0x40 mm/kmsan/instrumentation.c:93
+ stack_trace_consume_entry+0x16f/0x1e0 kernel/stacktrace.c:94
+ arch_stack_walk+0x1ca/0x2d0 arch/x86/kernel/stacktrace.c:27
+ stack_trace_save+0xaa/0xe0 kernel/stacktrace.c:122
+ kmsan_save_stack_with_flags mm/kmsan/core.c:73 [inline]
+ kmsan_internal_poison_memory+0x49/0x90 mm/kmsan/core.c:57
+ kmsan_slab_alloc+0xdf/0x160 mm/kmsan/hooks.c:66
+ slab_post_alloc_hook mm/slub.c:3994 [inline]
+ slab_alloc_node mm/slub.c:4037 [inline]
+ __do_kmalloc_node mm/slub.c:4157 [inline]
+ __kmalloc_node_track_caller_noprof+0x6c7/0xf90 mm/slub.c:4177
+ kmalloc_reserve+0x23e/0x4a0 net/core/skbuff.c:605
+ __alloc_skb+0x363/0x7b0 net/core/skbuff.c:674
+ alloc_skb include/linux/skbuff.h:1320 [inline]
+ nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:748 [inline]
+ nsim_dev_trap_report drivers/net/netdevsim/dev.c:805 [inline]
+ nsim_dev_trap_report_work+0x3f5/0x1230 drivers/net/netdevsim/dev.c:850
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea5/0x1520 kernel/workqueue.c:3390
+ kthread+0x3dd/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4723
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page mm/slub.c:2321 [inline]
+ allocate_slab+0x203/0x1220 mm/slub.c:2484
+ new_slab mm/slub.c:2537 [inline]
+ ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3723
+ __slab_alloc mm/slub.c:3813 [inline]
+ __slab_alloc_node mm/slub.c:3866 [inline]
+ slab_alloc_node mm/slub.c:4025 [inline]
+ kmem_cache_alloc_noprof+0x57a/0xb20 mm/slub.c:4044
+ skb_clone+0x303/0x550 net/core/skbuff.c:2071
+ deliver_clone net/bridge/br_forward.c:125 [inline]
+ maybe_deliver+0x3ad/0x590 net/bridge/br_forward.c:190
+ br_flood+0x574/0xbd0 net/bridge/br_forward.c:236
+ br_dev_xmit+0x1bfa/0x1f10
+ __netdev_start_xmit include/linux/netdevice.h:4913 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4922 [inline]
+ xmit_one net/core/dev.c:3580 [inline]
+ dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3596
+ __dev_queue_xmit+0x358c/0x5610 net/core/dev.c:4423
+ dev_queue_xmit include/linux/netdevice.h:3105 [inline]
+ neigh_resolve_output+0x9ca/0xae0 net/core/neighbour.c:1565
+ neigh_output include/net/neighbour.h:542 [inline]
+ ip6_finish_output2+0x233e/0x2ba0 net/ipv6/ip6_output.c:137
+ __ip6_finish_output net/ipv6/ip6_output.c:211 [inline]
+ ip6_finish_output+0xbb8/0x14b0 net/ipv6/ip6_output.c:222
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip6_output+0x356/0x620 net/ipv6/ip6_output.c:243
+ dst_output include/net/dst.h:450 [inline]
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ ndisc_send_skb+0xb9f/0x14c0 net/ipv6/ndisc.c:511
+ ndisc_send_rs+0x97b/0xae0 net/ipv6/ndisc.c:721
+ addrconf_rs_timer+0x488/0x6f0 net/ipv6/addrconf.c:4040
+ call_timer_fn+0x49/0x580 kernel/time/timer.c:1792
+ expire_timers kernel/time/timer.c:1843 [inline]
+ __run_timers kernel/time/timer.c:2417 [inline]
+ __run_timer_base+0x84e/0xe90 kernel/time/timer.c:2428
+ run_timer_base kernel/time/timer.c:2437 [inline]
+ run_timer_softirq+0x3a/0x70 kernel/time/timer.c:2447
+ handle_softirqs+0x1ce/0x800 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0x68/0x120 kernel/softirq.c:637
+ irq_exit_rcu+0x12/0x20 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0x83/0x90 arch/x86/kernel/apic/apic.c:1043
+ asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
+
+CPU: 1 UID: 0 PID: 5253 Comm: kworker/1:6 Not tainted 6.11.0-rc2-syzkaller-00004-gb446a2dae984 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Workqueue: events nsim_dev_trap_report_work
+=====================================================
 
 
-Takashi
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
