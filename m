@@ -1,229 +1,78 @@
-Return-Path: <linux-kernel+bounces-282003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F4A94DE2B
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 20:53:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F34B94DE2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 21:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA3D528330E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 18:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137F81C215C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 19:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF517E59A;
-	Sat, 10 Aug 2024 18:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E361D4EB38;
+	Sat, 10 Aug 2024 19:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eTQWIUP1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1aQd6wE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307EE18AF9
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 18:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2AC3AC2B;
+	Sat, 10 Aug 2024 19:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723315973; cv=none; b=uEFFVeBm/8I59CaU9s9V59+LCfzs4elZyuSM7uGkYorYGHPwsXlAQrdTYMpitpiPBmVCahmVFvLFPkcFQvlCgonpEHfTnIRNecMymztY7GZCdZxQa1LJNHuhhZ+ksOxwN6hmtjmk/EhQabfI1XCIS+b3FMu3ErPt7XQ8gzv2dbQ=
+	t=1723316797; cv=none; b=c5w1DvSaME5v55wr2KbMLy+16zloBKm7eCH3Vg7m58lTkotRidP1wb63eaxtf7kmtvYruUez9iUniPr7HMHIpe+h71no2OhsOHZ8+mD8i7EAarXkPSGmxUKxZbdDn13/Ii7XLFBxu6gEe+/HAUrLPz2KGJDFkFs+l+YZPSx2qME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723315973; c=relaxed/simple;
-	bh=HuvOjzj4M0v/4VIs+YjWRqwxLTRmD74OI6BSf9wpuT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XyLKyWWmbKVhp8BjbuFzDvyyQGRNzNe1qDWJUGA6xyqXUq8AphJ4XHa/csaS6JDa9dCChdwyf6apA3jPv684m9vFkSKrQZ/JjEyv9Evlofg4YNNo9ZIwMYqFOI9t7IEiQcmwy09HMHPzGa7TXz5uaXeItBiC4iaS4Nj+C9BP/Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eTQWIUP1; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723315971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GiY4Ptbx93Q4ZMaxX4AuvjWNIDTQVcJ7tTpeIk/YoQc=;
-	b=eTQWIUP1axGlm1AjF/hGTpDwD3aZf9coAnL82/Kc75zs3LppVYs3KfDLwUtkvvzeKEoSHx
-	luBep6H1hW2XvJMtl7YO5WXmHVCDG5bvmLBLqEggBFPauhcPl20DqcN5wPi2HRRJ0zwiS7
-	4L1tmzn/N8e7GEEcdf8JJJAtpmo/7PY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-517-SVtTmFNbNPWvEld4PCcx_Q-1; Sat, 10 Aug 2024 14:52:49 -0400
-X-MC-Unique: SVtTmFNbNPWvEld4PCcx_Q-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42820af1106so21599145e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 11:52:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723315968; x=1723920768;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GiY4Ptbx93Q4ZMaxX4AuvjWNIDTQVcJ7tTpeIk/YoQc=;
-        b=ezNYPivDvTZddCuDa9JvBurQaKtwMk/48HHiEAHkVGn2oVhVj6jukd7XTvKIaW51ZC
-         imm9lZVYJJELyA5vIyb3WR5RUyvS0EVGI2Zhn81sZifD5FpVIf91A0O03M1DHKWR1Vmt
-         3pCkYbQNDzigMS7/u6p5hV9MfXtWsxh5TSjHeMaqSvHOefGxOQabFDT5GR0ZejN4wamC
-         2CHMxK0joFZl/KzSqN3VmXZtXNAIlulFz+Jgc3+qxU7gu6vTfp3lOsMKY0fHu436NUac
-         E0TnVnDr0Ngb81S16F74mH5ETve0LEQ5CAlYKDPMBPgeAcQo8BFJpHDZEyr7qUSzJ2bk
-         VdTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFXwwG1UW4Kfz2UPVdiuxgGqbmuRWiYF3/UYCKWSLXdQ27D8zkjJZH1GDIZ1aQFTwMJCrF0jgRpWVYGCneIloG8ZLBssZLqggA2xMv
-X-Gm-Message-State: AOJu0Yz7Iv0q1mJhXbHa/8nkamKnwTPR+1JelwDZb2gIdSg+DsrYU7Zs
-	E1w+3KQ+fvIjhyBCJ72f9J3LHrrq+RJpZw4jMpfPA7EgnsIA40pkux3SglNSkF/w5qsOzOu3/mE
-	JmeeGVC6nw3ug6wwjOC4NEtQ6yDIUFxboA97dYc/1tEMoUqth3E9CnEcEUVPpgg==
-X-Received: by 2002:a05:600c:198a:b0:426:6e95:78d6 with SMTP id 5b1f17b1804b1-429c3a19090mr34632425e9.4.1723315968594;
-        Sat, 10 Aug 2024 11:52:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGaf6qLn2siA5GFoQ2VSPHv8IsNhJK3LW/FvEvssbsyLHKpa6yYw2DZ7pGIVpXmy3MKfn9LrQ==
-X-Received: by 2002:a05:600c:198a:b0:426:6e95:78d6 with SMTP id 5b1f17b1804b1-429c3a19090mr34632085e9.4.1723315968027;
-        Sat, 10 Aug 2024 11:52:48 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c751b021sm40350645e9.21.2024.08.10.11.52.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Aug 2024 11:52:47 -0700 (PDT)
-Message-ID: <367b0403-7477-4857-9e7c-5a749c723432@redhat.com>
-Date: Sat, 10 Aug 2024 20:52:44 +0200
+	s=arc-20240116; t=1723316797; c=relaxed/simple;
+	bh=lmd5aJ588sbrBdCpej78VqDLsJDEtsyPzMzIxAGed6c=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=XoFHg+PoxmK4EF0mDVm4IS0PL5o9SB/0GkSnMTXGcXSW2+WXHGTHILGlRFQKCH1kyjtocrF42dwENDljuZ4Fv57w05DemMGx6uVJyXrbO4YF/keAou5umLWYMKZTYdcySB9aLS7Ta/nxEr29gR6PZzAbCxjkgsCvNJVb62Hs8bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1aQd6wE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB35C32781;
+	Sat, 10 Aug 2024 19:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723316797;
+	bh=lmd5aJ588sbrBdCpej78VqDLsJDEtsyPzMzIxAGed6c=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=t1aQd6wEEW3ahLz7o4DCXErSt7P/HRY5daCqITO+PsdgY9mKEbiSKhtCo8C1CVCVC
+	 H6sYpaUN3AtBCsv8ykZBGL4dlwI8hs50YExDieojfc8FugWGOxEVozE0qkDbnv+Ycy
+	 UZSZ4pGc+0NSyQvefw6EGNDSp34wBgdqWHHqd9kUB/jibRG40dgejEE1oWC9HSo1Wy
+	 4N1Bspiqrb4InVZ3dAlevvevnx3U+3TEyWujGhA35Fd7jSusv/LW4vMuvGMJhnpRXo
+	 dT3EUgAFtdKpeAzR2GeF8DlCptPLa27yjo7qtHWXchg2k8KbpMCgXZd0ufXX6bM7j/
+	 nLKgeLeG5uVSA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 37209382333F;
+	Sat, 10 Aug 2024 19:06:37 +0000 (UTC)
+Subject: Re: [GIT PULL] nfsd fixes for v6.11
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZremFwYpY1m/5w88@tissot.1015granger.net>
+References: <ZremFwYpY1m/5w88@tissot.1015granger.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZremFwYpY1m/5w88@tissot.1015granger.net>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.11-1
+X-PR-Tracked-Commit-Id: 91da337e5d506f2c065d20529d105ca40090e320
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5189dafa4cf950e675f02ee04b577dfbbad0d9b1
+Message-Id: <172331679550.56378.5106937401387094973.pr-tracker-bot@kernel.org>
+Date: Sat, 10 Aug 2024 19:06:35 +0000
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, shuah@kernel.org,
- willy@infradead.org
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- osalvador@suse.de, baolin.wang@linux.alibaba.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- ioworker0@gmail.com, gshan@redhat.com, mark.rutland@arm.com,
- kirill.shutemov@linux.intel.com, hughd@google.com, aneesh.kumar@kernel.org,
- yang@os.amperecomputing.com, peterx@redhat.com, broonie@kernel.org,
- mgorman@techsingularity.net, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-References: <20240809103129.365029-1-dev.jain@arm.com>
- <20240809103129.365029-2-dev.jain@arm.com>
- <761ba58e-9d6f-4a14-a513-dcc098c2aa94@redhat.com>
- <5a4ae1d3-d753-4261-97a8-926e44d4217a@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <5a4ae1d3-d753-4261-97a8-926e44d4217a@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 10.08.24 20:42, Dev Jain wrote:
-> 
-> On 8/9/24 19:17, David Hildenbrand wrote:
->> On 09.08.24 12:31, Dev Jain wrote:
->>> As already being done in __migrate_folio(), wherein we backoff if the
->>> folio refcount is wrong, make this check during the unmapping phase,
->>> upon
->>> the failure of which, the original state of the PTEs will be restored
->>> and
->>> the folio lock will be dropped via migrate_folio_undo_src(), any racing
->>> thread will make progress and migration will be retried.
->>>
->>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>> ---
->>>    mm/migrate.c | 9 +++++++++
->>>    1 file changed, 9 insertions(+)
->>>
->>> diff --git a/mm/migrate.c b/mm/migrate.c
->>> index e7296c0fb5d5..477acf996951 100644
->>> --- a/mm/migrate.c
->>> +++ b/mm/migrate.c
->>> @@ -1250,6 +1250,15 @@ static int migrate_folio_unmap(new_folio_t
->>> get_new_folio,
->>>        }
->>>          if (!folio_mapped(src)) {
->>> +        /*
->>> +         * Someone may have changed the refcount and maybe sleeping
->>> +         * on the folio lock. In case of refcount mismatch, bail out,
->>> +         * let the system make progress and retry.
->>> +         */
->>> +        struct address_space *mapping = folio_mapping(src);
->>> +
->>> +        if (folio_ref_count(src) != folio_expected_refs(mapping, src))
->>> +            goto out;
->>
->> This really seems to be the latest point where we can "easily" back
->> off and unlock the source folio -- in this function :)
->>
->> I wonder if we should be smarter in the migrate_pages_batch() loop
->> when we start the actual migrations via migrate_folio_move(): if we
->> detect that a folio has unexpected references *and* it has waiters
->> (PG_waiters), back off then and retry the folio later. If it only has
->> unexpected references, just keep retrying: no waiters -> nobody is
->> waiting for the lock to make progress.
-> 
-> 
-> The patch currently retries migration irrespective of the reason of
-> refcount change.
-> 
-> If you are suggesting that, break the retrying according to two conditions:
+The pull request you sent on Sat, 10 Aug 2024 13:40:39 -0400:
 
-That's not what I am suggesting ...
+> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.11-1
 
-> 
-> 
->> This really seems to be the latest point where we can "easily" back
->> off and unlock the source folio -- in this function :)
->> For example, when migrate_folio_move() fails with -EAGAIN, check if
->> there are waiters (PG_waiter?) and undo+unlock to try again later.
-> 
-> 
-> Currently, on -EAGAIN, migrate_folio_move() returns without undoing src
-> and dst; even if we were to fall
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5189dafa4cf950e675f02ee04b577dfbbad0d9b1
 
-...
-
-I am wondering if we should detect here if there are waiters and undo 
-src+dst.
-
-Does that make sense?
+Thank you!
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
