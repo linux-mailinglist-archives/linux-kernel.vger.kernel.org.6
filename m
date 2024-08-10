@@ -1,197 +1,86 @@
-Return-Path: <linux-kernel+bounces-281712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C282594DA22
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C3F94DA30
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213AA1F224E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F43A1F21FBA
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060F91311A7;
-	Sat, 10 Aug 2024 02:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D701B1386B3;
+	Sat, 10 Aug 2024 02:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E6Asb0GG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qAZCCvTN"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD7BA48;
-	Sat, 10 Aug 2024 02:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C623C062
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 02:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723256484; cv=none; b=YNo5dS4bjBZaNkxjsuXWdSaQD4CdJOBKiyZEHcpLeN/oOawXLlwxk6XJ+BfbE/Yzft+9GAbe38ZjhLIHmNk6JJ4284Vph/LLg2Pt0/9cCbngfUuPMvgWg+gutVlNTdrUDZYJySeMc71Xcx3ErRXn/CMhYPK5OkAEUHIUEgcIlrU=
+	t=1723257572; cv=none; b=CK+Oqs208DU9VVF3NS+LC7L5zd/fGc99ccsuaYOqitZQg1MrhxwHf/9XtEkUq38Sxw6M9DgKXwlseNXBvUPQ2Mu8OaP6+wxgI9MM4VmiXIOIxqiYu0PPo/uTFRQOOCgV7Frv9MJi4gAsrCDEb1iojw7MrY4d72gjtv80M7UgaqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723256484; c=relaxed/simple;
-	bh=c8XOrfbLn4szTf8GfdDJDvKMldI5+D24v2UFaIrfRls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mTzqdg5icx4LH52kJv8q6UWowWmW292/9SUF/0bRQ5gfvCs/pdaKfs1RUcmCnqPfa25dCQ+Xl0t5KAh3tyEaOfGV0xTJYUTuwZhytui/M56F3ltxUlsWvua5K9FbhdfSuipvwhjqlDQ8YQouMSf+JvEorF8G5wqAdSKDlDJsw6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E6Asb0GG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47A0Xjqu032443;
-	Sat, 10 Aug 2024 02:21:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	98RgCUpNJYLjdc9KHu/DCjP9Nu3Ihp6wUSaZA+69PCo=; b=E6Asb0GG+7f5sL14
-	8ls8bpDZ5zB4CTFcrr9joR2GsomJ3FjHBu5l878PQGHPkPPe5DDcMPXOOJKqXirw
-	kG8RonmovXXZRL2RIbDO202SfbJ+VmPonDazXc8xudOpGxlsSdI/OMDIowkcn05g
-	Og740XDHIonkp6tyc0V/J1TVB8Zm+4dM0XoRxSxwyrAKx8ItAKUOYYfaqc5hg3If
-	KBUGTPHFdZd25LfMvKWAkV2OQbEbTg5EDxqrjJrszVrCICKjUhrjdO4WUNUb6odL
-	P44ZGkY8uQrwEX+UKWmYUjyeXFS35Hm07Thg00YGG2jwb+eNYqLR0OrDdPY94Q80
-	5mCz7g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40wwjn03uk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 10 Aug 2024 02:21:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 47A2LBgC012871
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 10 Aug 2024 02:21:11 GMT
-Received: from [10.111.178.37] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
- 19:21:11 -0700
-Message-ID: <8d31adac-fd43-4cf9-8fc8-655b359a573c@quicinc.com>
-Date: Fri, 9 Aug 2024 19:21:10 -0700
+	s=arc-20240116; t=1723257572; c=relaxed/simple;
+	bh=+weEgowa/sf3AGpmMQCdg5onlZflD/OQ1Rk7FS6GN4A=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=s2aJ4PgTLQHVWmuVmXoGH76feRhnMSP31SyvOFym2SQnZPLjsHeXh7dOAicnVhM2ezpfxAG2vmGRMEsRrgNLJlaMN0udOvBHYyiVzqlaqiIgxs1hflmTVinwNwYBujtZnqod5hWKdFp3RAV7kd4+L9Eket5goRtmNtm8PJlkPvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qAZCCvTN; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723257566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nI+Vi4pbj0gTCrjL7DMWl6AgcfOJvlF0DoxzDvU62co=;
+	b=qAZCCvTN+nVPafsEp6qVwXKPq06wHrt4RBcMMu7V+s7rzc1tzF7VlhTLNgg8wqeK4awn8Q
+	l93xiM3ku8MTrGEowOu+XmXcm0jLvQv7VINKf6if/UjuSDBbgOSin4YgpHzitU85jEBZ7v
+	sQ9SgslhesrDKyrfPL1z2CsAR1ynrfg=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] wifi: ath11k: Avoid -Wflex-array-member-not-at-end
- warnings
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Kalle Valo
-	<kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-CC: <linux-wireless@vger.kernel.org>, <ath11k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>
-References: <ZrZB3Rjswe0ZXtug@cute>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <ZrZB3Rjswe0ZXtug@cute>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] memcg: replace memcg ID idr with xarray
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20240809172618.2946790-1-shakeel.butt@linux.dev>
+Date: Sat, 10 Aug 2024 10:38:50 +0800
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Meta kernel team <kernel-team@meta.com>,
+ cgroups@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xvaVOjwy3M799k-1WttWrW3yKTBXUBF7
-X-Proofpoint-ORIG-GUID: xvaVOjwy3M799k-1WttWrW3yKTBXUBF7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-10_01,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
- malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1011 bulkscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408100016
+Message-Id: <C0B6D310-2EE0-4DCC-B41A-E682C1E018AA@linux.dev>
+References: <20240809172618.2946790-1-shakeel.butt@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On 8/9/2024 9:20 AM, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
+
+
+> On Aug 10, 2024, at 01:26, Shakeel Butt <shakeel.butt@linux.dev> wrote:
 > 
-> Move the conflicting declaration to the end of the structure. Notice
-> that `struct ieee80211_chanctx_conf` is a flexible structure --a
-> structure that contains a flexible-array member.
+> At the moment memcg IDs are managed through IDR which requires external
+> synchronization mechanisms and makes the allocation code a bit awkward.
+> Let's switch to xarray and make the code simpler.
 > 
-> Also, remove a couple of unused structures.
-> 
-> Fix the following warnings:
-> drivers/net/wireless/ath/ath11k/core.h:409:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/ath/ath11k/dp.h:1309:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/ath/ath11k/dp.h:1368:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  drivers/net/wireless/ath/ath11k/core.h |  4 +++-
->  drivers/net/wireless/ath/ath11k/dp.h   | 23 -----------------------
->  2 files changed, 3 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath11k/core.h b/drivers/net/wireless/ath/ath11k/core.h
-> index df24f0e409af..e283415dccf3 100644
-> --- a/drivers/net/wireless/ath/ath11k/core.h
-> +++ b/drivers/net/wireless/ath/ath11k/core.h
-> @@ -406,11 +406,13 @@ struct ath11k_vif {
->  	bool wpaie_present;
->  	bool bcca_zero_sent;
->  	bool do_not_send_tmpl;
-> -	struct ieee80211_chanctx_conf chanctx;
->  	struct ath11k_arp_ns_offload arp_ns_offload;
->  	struct ath11k_rekey_data rekey_data;
->  
->  	struct ath11k_reg_tpc_power_info reg_tpc_info;
-> +
-> +	/* Must be last - ends in a flexible-array member. */
-> +	struct ieee80211_chanctx_conf chanctx;
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-there is something illogical about this since the vif is allocated using
-sizeof() and hence there will never be memory allocated for the flexible
-array, and it is assigned using either struct assignment or memcpy using the
-struct size which (fortunately) would not transfer the flexible array contents:
-		arvif->chanctx = *ctx;
+Reviewed-by: Muchun Song <muchun.song@linux.dev>
 
-		memcpy(&arvif->chanctx, ctx, sizeof(*ctx));
-
-since ath11k doesn't actually use the drv_priv[] I guess this change is OK, it
-is just strange to me.
-
-also makes me wonder why ath11k keeps a copy of the chanctx instead of just
-getting it from the underlying ieee80211_link_data. but that is outside the
-scope of this discussion.
-
->  };
->  
->  struct ath11k_vif_iter {
-> diff --git a/drivers/net/wireless/ath/ath11k/dp.h b/drivers/net/wireless/ath/ath11k/dp.h
-> index 2f6dd69d3be2..65d2bc0687c8 100644
-> --- a/drivers/net/wireless/ath/ath11k/dp.h
-> +++ b/drivers/net/wireless/ath/ath11k/dp.h
-> @@ -1305,18 +1305,6 @@ struct htt_ppdu_stats_user_rate {
->  #define HTT_TX_INFO_PEERID(_flags) \
->  			FIELD_GET(HTT_PPDU_STATS_TX_INFO_FLAGS_PEERID_M, _flags)
->  
-> -struct htt_tx_ppdu_stats_info {
-> -	struct htt_tlv tlv_hdr;
-> -	u32 tx_success_bytes;
-> -	u32 tx_retry_bytes;
-> -	u32 tx_failed_bytes;
-> -	u32 flags; /* %HTT_PPDU_STATS_TX_INFO_FLAGS_ */
-> -	u16 tx_success_msdus;
-> -	u16 tx_retry_msdus;
-> -	u16 tx_failed_msdus;
-> -	u16 tx_duration; /* united in us */
-> -} __packed;
-> -
->  enum  htt_ppdu_stats_usr_compln_status {
->  	HTT_PPDU_STATS_USER_STATUS_OK,
->  	HTT_PPDU_STATS_USER_STATUS_FILTERED,
-> @@ -1364,17 +1352,6 @@ struct htt_ppdu_stats_usr_cmpltn_ack_ba_status {
->  	u32 success_bytes;
->  } __packed;
->  
-> -struct htt_ppdu_stats_usr_cmn_array {
-> -	struct htt_tlv tlv_hdr;
-> -	u32 num_ppdu_stats;
-> -	/* tx_ppdu_stats_info is filled by multiple struct htt_tx_ppdu_stats_info
-> -	 * elements.
-> -	 * tx_ppdu_stats_info is variable length, with length =
-> -	 *     number_of_ppdu_stats * sizeof (struct htt_tx_ppdu_stats_info)
-> -	 */
-> -	struct htt_tx_ppdu_stats_info tx_ppdu_info[];
-> -} __packed;
-> -
->  struct htt_ppdu_user_stats {
->  	u16 peer_id;
->  	u32 tlv_flags;
-
-the second part if definitely ok.
-
-Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Thanks.
 
 
