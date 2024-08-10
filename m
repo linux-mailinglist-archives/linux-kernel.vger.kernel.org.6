@@ -1,248 +1,164 @@
-Return-Path: <linux-kernel+bounces-281649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE98F94D94D
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 060A494D957
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A809281BA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  9 Aug 2024 23:54:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D77282504
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32DC16D9A2;
-	Fri,  9 Aug 2024 23:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309A3C13C;
+	Sat, 10 Aug 2024 00:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CcmmHr6y"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Pea0Te1b"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1073816A954
-	for <linux-kernel@vger.kernel.org>; Fri,  9 Aug 2024 23:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED7A8BE0
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 00:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723247632; cv=none; b=HITP3gXPJ5LxjlQYOdTxVGxhp+npQwpdCEAjoAmkLHeLc4HvHdQFBgKDVIC6g272tr0egNAzwWSk5PE1WoN1gA5n4vjcSn9UIkw+oBath+Wml44pvYTmhBswBpphMvqlhiSXcUXbKu1e0GfuSoMbxolWUTSUTsgQbOzIDpUu28k=
+	t=1723248105; cv=none; b=NwfOrG83ycAXzR5xZNVw3idnOMsS9TMwucxVAXzsWiOCFR+dhTdIN8hh07dKr4RKZnOdTq2k5QH8pMOPLxEr2Vsj6txNZT5uwi1TeNnniAFI4zUU0Ku/uB0YfIN+vFzSzopF9FZ0PInxAqxl1Pnxbz5IvCll6WCTkEjoGNnqqiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723247632; c=relaxed/simple;
-	bh=HiMaJ05PvcGBJhRURAFR1FXTDjngE0Ksn22Y6TKykVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FROrlXg5cL1GxidMrAQBLxn2vgYOyQpwzVs3p0IdQgHcRBLDbDWQrVHR1aWUV0zBAHWe42buZ/SzMuZRRzbvbn05LCPV6JeXC/Nm9RmG1rZh4a7AjwZPD4bN/rz85rZi/Z3bNTY0d9ivUMFk8ifohK+PAUSmav6AwCeO/IP3Meg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CcmmHr6y; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <5f91072d-fd63-4d81-8442-ef7aa62e192f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723247628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AcCTKFmLpEfmRVEEyH2Kvr6lxqMjtURj8dPlApZvU4s=;
-	b=CcmmHr6yNbpW8rn1ulCYH75veld/ufL6LqjFWfJAtZc3YiohjUZi6xdQRP+N0+bThDaqph
-	S+vm33nuavQti0NEt/QNdzMXA91Sr5Vz9EXB6yYrvHGDHQKWmXQtPSy1J82ucXDZ8vk59F
-	Tb5LnGk93bj22RibilbBWiQjwS86dkU=
-Date: Fri, 9 Aug 2024 16:53:36 -0700
+	s=arc-20240116; t=1723248105; c=relaxed/simple;
+	bh=QxSEIOusEi+oao13s+ZbIMHvHKKwAOmE+kHzE4TDFjY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=opaHlXcBgsUJ7YUcc+N+8TdXs6STZ8wIntN9hTMnbzF4cPI/pO9PiaW1LXyiP3dVpKpfcLSC2jAR/Ca+muv47z97PJatCsH+eCWY7bI+m4onqI8AQRmuzkxk7KPHczlEG7bf4g4GTd93fQvbgGhu6cnt8/RALyPvvPKHrMHxFxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Pea0Te1b; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 47A018PN1960292
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 9 Aug 2024 17:01:09 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 47A018PN1960292
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024071601; t=1723248071;
+	bh=cRmBgKVxsd+EUI1weZ+0PW9UCdNNgqE+aBL3mNIwz0s=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Pea0Te1bJZAqI3XbpgNU524uyz5Gz0KkGUewIwRCpE3a4XhujPKR484mN3ZwiO5+f
+	 CU4YYQV4G1QX77TLWvb2g56HlAIB9zdmc+0BnfkIv4YWfHunx0jUDE84oDIsP7XrKw
+	 nigsca+QxvyE5uL3+ymTQkq8k5r0tcWvyo+jpnwzE+huRafaYtFioMOnxJ8mOLIBqm
+	 +PtS7ynzC2S7WoYZRo68prsP7H2QEcqop/T8+epmlMZ5v7AhuI34un1Mq6y1GAnkUw
+	 EXiBH1BAVponzarZC5wjkSanRT+FVlKF+Oq2ZUCRvdFXt3em0qlPTGadc16Sh+7dTS
+	 ctPRXeeWeikfA==
+Date: Fri, 09 Aug 2024 17:01:06 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Andrew Cooper <andrew.cooper3@citrix.com>,
+        "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
+CC: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
+        seanjc@google.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1_2/3=5D_x86/msr=3A_Switch_between_WRM?=
+ =?US-ASCII?Q?SRNS_and_WRMSR_with_the_alternatives_mechanism?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
+References: <20240807054722.682375-1-xin@zytor.com> <20240807054722.682375-3-xin@zytor.com> <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
+Message-ID: <81CE6282-4791-42AB-9A51-4535E094D67C@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2 4/4] selftests/bpf: convert
- test_skb_cgroup_id_user to test_progs
-To: =?UTF-8?Q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?=
- <alexis.lothore@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20240806-convert_cgroup_tests-v2-0-180c57e5b710@bootlin.com>
- <20240806-convert_cgroup_tests-v2-4-180c57e5b710@bootlin.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-Content-Language: en-US
-In-Reply-To: <20240806-convert_cgroup_tests-v2-4-180c57e5b710@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 8/6/24 12:55 AM, Alexis Lothoré (eBPF Foundation) wrote:
-> diff --git a/tools/testing/selftests/bpf/prog_tests/cgroup_ancestor.c b/tools/testing/selftests/bpf/prog_tests/cgroup_ancestor.c
-> new file mode 100644
-> index 000000000000..4e41463533c0
-> --- /dev/null
-> +++ b/tools/testing/selftests/bpf/prog_tests/cgroup_ancestor.c
-> @@ -0,0 +1,154 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include "test_progs.h"
-> +#include "network_helpers.h"
-> +#include "cgroup_helpers.h"
-> +#include "cgroup_ancestor.skel.h"
-> +
-> +#define VETH_PREFIX "test_cgid_"
-> +#define VETH_1 VETH_PREFIX "1"
-> +#define VETH_2 VETH_PREFIX "2"
-> +#define CGROUP_PATH "/skb_cgroup_test"
-> +#define NUM_CGROUP_LEVELS 4
-> +#define WAIT_AUTO_IP_MAX_ATTEMPT 10
-> +#define DST_ADDR "ff02::1"
-> +#define DST_PORT 1234
-> +#define MAX_ASSERT_NAME 32
-> +
-> +struct test_data {
-> +	struct cgroup_ancestor *skel;
-> +	struct bpf_tc_hook qdisc;
-> +	struct bpf_tc_opts tc_attach;
-> +};
-> +
-> +static int send_datagram(void)
-> +{
-> +	unsigned char buf[] = "some random test data";
-> +	struct sockaddr_in6 addr = { .sin6_family = AF_INET6,
-> +				     .sin6_port = htons(DST_PORT),
-> +				     .sin6_scope_id = if_nametoindex(VETH_1) };
-> +	int sock, n;
-> +
-> +	if (!ASSERT_EQ(inet_pton(AF_INET6, DST_ADDR, &addr.sin6_addr), 1,
-> +		       "inet_pton"))
-> +		return -1;
-> +
-> +	sock = socket(AF_INET6, SOCK_DGRAM, 0);
+On August 9, 2024 4:07:35 PM PDT, Andrew Cooper <andrew=2Ecooper3@citrix=2E=
+com> wrote:
+>On 07/08/2024 6:47 am, Xin Li (Intel) wrote:
+>> From: Andrew Cooper <andrew=2Ecooper3@citrix=2Ecom>
+>>
+>> Per the discussion about FRED MSR writes with WRMSRNS instruction [1],
+>> use the alternatives mechanism to choose WRMSRNS when it's available,
+>> otherwise fallback to WRMSR=2E
+>>
+>> [1] https://lore=2Ekernel=2Eorg/lkml/15f56e6a-6edd-43d0-8e83-bb64300965=
+14@citrix=2Ecom/
+>>
+>> Signed-off-by: Andrew Cooper <andrew=2Ecooper3@citrix=2Ecom>
+>> Signed-off-by: Xin Li (Intel) <xin@zytor=2Ecom>
+>> ---
+>>  arch/x86/include/asm/msr=2Eh | 28 ++++++++++++++--------------
+>>  1 file changed, 14 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/msr=2Eh b/arch/x86/include/asm/msr=2E=
+h
+>> index d642037f9ed5=2E=2E3e402d717815 100644
+>> --- a/arch/x86/include/asm/msr=2Eh
+>> +++ b/arch/x86/include/asm/msr=2Eh
+>> @@ -99,19 +99,6 @@ static __always_inline void __wrmsr(unsigned int msr=
+, u32 low, u32 high)
+>>  		     : : "c" (msr), "a"(low), "d" (high) : "memory");
+>>  }
+>> =20
+>> -/*
+>> - * WRMSRNS behaves exactly like WRMSR with the only difference being
+>> - * that it is not a serializing instruction by default=2E
+>> - */
+>> -static __always_inline void __wrmsrns(u32 msr, u32 low, u32 high)
+>> -{
+>> -	/* Instruction opcode for WRMSRNS; supported in binutils >=3D 2=2E40=
+=2E */
+>> -	asm volatile("1: =2Ebyte 0x0f,0x01,0xc6\n"
+>> -		     "2:\n"
+>> -		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_WRMSR)
+>> -		     : : "c" (msr), "a"(low), "d" (high));
+>> -}
+>> -
+>>  #define native_rdmsr(msr, val1, val2)			\
+>>  do {							\
+>>  	u64 __val =3D __rdmsr((msr));			\
+>> @@ -312,9 +299,22 @@ do {							\
+>> =20
+>>  #endif	/* !CONFIG_PARAVIRT_XXL */
+>> =20
+>> +/* Instruction opcode for WRMSRNS supported in binutils >=3D 2=2E40 */
+>> +#define WRMSRNS _ASM_BYTES(0x0f,0x01,0xc6)
+>> +
+>> +/* Non-serializing WRMSR, when available=2E  Falls back to a serializi=
+ng WRMSR=2E */
+>>  static __always_inline void wrmsrns(u32 msr, u64 val)
+>>  {
+>> -	__wrmsrns(msr, val, val >> 32);
+>> +	/*
+>> +	 * WRMSR is 2 bytes=2E  WRMSRNS is 3 bytes=2E  Pad WRMSR with a redun=
+dant
+>> +	 * DS prefix to avoid a trailing NOP=2E
+>> +	 */
+>> +	asm volatile("1: "
+>> +		     ALTERNATIVE("ds wrmsr",
+>
+>This isn't the version I presented, and there's no discussion of the
+>alteration=2E
+>
+>The choice of CS over DS was deliberate, and came from Intel:
+>
+>https://www=2Eintel=2Ecom/content/dam/support/us/en/documents/processors/=
+mitigations-jump-conditional-code-erratum=2Epdf
+>
+>So unless Intel want to retract that whitepaper, and all the binutils
+>work with it, I'd suggest keeping it as CS like we use elsewhere, and as
+>explicitly instructed by Intel=2E
+>
+>~Andrew
 
-sock is leaked.
+I looked around the kernel, and I believe we are inconsistent=2E I see bot=
+h 0x2e (CS) and 0x3e (DS) prefixes used for padding where open-coded=2E
 
-> +	if (!ASSERT_OK_FD(sock, "create socket"))
-> +		return sock;
-> +
-> +	n = sendto(sock, buf, sizeof(buf), 0, (const struct sockaddr *)&addr,
-> +		   sizeof(addr));
-> +	if (!ASSERT_EQ(n, sizeof(buf), "send data"))
-> +		return n;
-> +
-> +	return 0;
-> +}
-> +
-> +static int wait_local_ip(void)
-> +{
-> +	char *ping_cmd = ping_command(AF_INET6);
-> +	int i, err;
-> +
-> +	for (i = 0; i < WAIT_AUTO_IP_MAX_ATTEMPT; i++) {
-> +		err = SYS_NOFAIL("%s -c 1 -W 1 %s%%%s", ping_cmd, DST_ADDR,
-> +				 VETH_1);
-> +		if (!err)
-> +			break;
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +static int setup_network(struct test_data *t)
-> +{
-> +	int ret;
-> +
-> +	SYS(fail, "ip link add dev %s type veth peer name %s", VETH_1, VETH_2);
-> +	SYS(fail, "ip link set %s up", VETH_1);
-> +	SYS(fail, "ip link set %s up", VETH_2);
+We can't use cs in all cases, since you can't do a store to the code segme=
+nt (always readonly) so we use 0x3e (DS) to patch out LOCK=2E
 
-Same. Do it under a new netns.
+In the paper you describe, it only mentions 0x2e as a "benign prefix" in a=
+ specific example, not as any kind of specific recommendation=2E It is part=
+icularly irrelevant when it comes to padding a two instructions to the same=
+ length as the paper deals with assignment=2E=20
 
-> +
-> +	ret = wait_local_ip();
-> +	if (!ASSERT_EQ(ret, 0, "wait local ip"))
-> +		goto fail;
-> +
-> +	memset(&t->qdisc, 0, sizeof(t->qdisc));
-> +	t->qdisc.sz = sizeof(t->qdisc);
-> +	t->qdisc.attach_point = BPF_TC_EGRESS;
-> +	t->qdisc.ifindex = if_nametoindex(VETH_1);
-> +	if (!ASSERT_NEQ(t->qdisc.ifindex, 0, "if_nametoindex"))
-> +		goto cleanup_interfaces;
-> +	if (!ASSERT_OK(bpf_tc_hook_create(&t->qdisc), "qdisc add"))
-> +		goto cleanup_interfaces;
-> +
-> +	memset(&t->tc_attach, 0, sizeof(t->tc_attach));
-> +	t->tc_attach.sz = sizeof(t->tc_attach);
-> +	t->tc_attach.prog_fd = bpf_program__fd(t->skel->progs.log_cgroup_id);
-> +	if (!ASSERT_OK(bpf_tc_attach(&t->qdisc, &t->tc_attach), "filter add"))
-> +		goto cleanup_qdisc;
-> +
-> +	return 0;
-> +
-> +cleanup_qdisc:
-> +	bpf_tc_hook_destroy(&t->qdisc);
-> +cleanup_interfaces:
-> +	SYS_NOFAIL("ip link del %s", VETH_1);
-> +fail:
-> +	return 1;
-> +}
-> +
-> +static void cleanup_network(struct test_data *t)
-> +{
-> +	bpf_tc_detach(&t->qdisc, &t->tc_attach);
-> +	bpf_tc_hook_destroy(&t->qdisc);
-> +	/* Deleting first interface will also delete peer interface */
-> +	SYS_NOFAIL("ip link del %s", VETH_1);
-> +}
-> +
-> +static void check_ancestors_ids(struct test_data *t)
-> +{
-> +	__u64 expected_ids[NUM_CGROUP_LEVELS];
-> +	char assert_name[MAX_ASSERT_NAME];
-> +	__u32 level;
-> +
-> +	expected_ids[0] = get_cgroup_id("/.."); /* root cgroup */
-> +	expected_ids[1] = get_cgroup_id("");
-> +	expected_ids[2] = get_cgroup_id(CGROUP_PATH);
-> +	expected_ids[3] = 0; /* non-existent cgroup */
-> +
-> +	for (level = 0; level < NUM_CGROUP_LEVELS; level++) {
-> +		snprintf(assert_name, MAX_ASSERT_NAME,
-> +			 "ancestor id at level %d", level);
-> +		ASSERT_EQ(t->skel->bss->cgroup_ids[level], expected_ids[level],
-> +			  assert_name);
-> +	}
-> +}
-> +
-> +void test_cgroup_ancestor(void)
-> +{
-> +	struct test_data t;
-> +	int cgroup_fd;
-> +
-> +	t.skel = cgroup_ancestor__open_and_load();
-> +	if (!ASSERT_OK_PTR(t.skel, "open and load"))
-> +		return;
-> +
-> +	if (setup_network(&t))
-> +		goto cleanup_progs;
-> +
-> +	cgroup_fd = cgroup_setup_and_join(CGROUP_PATH);
-
-cgroup_fd is leaked.
-
-Thanks for working on this.
-
-> +	if (cgroup_fd < 0)
-> +		goto cleanup_network;
-> +
-> +	if (send_datagram())
-> +		goto cleanup_cgroups;
-> +
-> +	check_ancestors_ids(&t);
-> +
-> +cleanup_cgroups:
-> +	cleanup_cgroup_environment();
-> +cleanup_network:
-> +	cleanup_network(&t);
-> +cleanup_progs:
-> +	cgroup_ancestor__destroy(t.skel);
-> +}
+If you want, I'm perfectly happy to go and ask if there is any general rec=
+ommendation (except for direct conditional branch hints, of course=2E)
 
