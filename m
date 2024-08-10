@@ -1,161 +1,124 @@
-Return-Path: <linux-kernel+bounces-281671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A341094D9BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:19:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C895694D9BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D4F41F22D57
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C858F1C213DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333FD3C463;
-	Sat, 10 Aug 2024 01:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMNgrZye"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197543D55D;
+	Sat, 10 Aug 2024 01:21:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E9F347C7;
-	Sat, 10 Aug 2024 01:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDAC1EB35
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 01:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723252788; cv=none; b=brcM5h9CgKuDI8J5CWzzbAWbvaBC1W/jYHNg5zzHxv7S0Bum4oW2vzGb8bnR28P1EewaOvrWUI2NE91GscWq2C9RR4rodvP+RcwhGdipk6XoVXc6vNCbVJSGe0btDnAJqQtaFesMGrHE+a8PT3Waumctj+tEC5X4h+Q2IjP3qCQ=
+	t=1723252864; cv=none; b=YK39clhXfdHM7V5VmAtPtw+tDJh7PtPFQlNstsUMQ6kDsN/OxN8p4WTj+2qZV5iKusE3AK+6hTHgNk7wYIU3+g86FKt93VhsHKVlS/A9SMFfRk1M39thQ9JEDKM/yjsp6ln+eIW+6lJTlixtO1Iwd+gZBH+xFshzFaZ7dqHexXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723252788; c=relaxed/simple;
-	bh=xvFJ5qXzptSAzs6ufRw0K7CflT3GapudSbUz1XEx3p0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S4cGNRdfQZOE4biHM6zmh86S/00jEY/u+bfYoMOsMRQ131MG8M2OzibINRlT2S+B1EzkPMMRNaKmsONhfGIAVC19w2BgQ1guhZRae+25j07x+E7qWxsvURyngKK3LHTwbL2Pdn2VPtVgEowm/Tpk59M+H6o73syGVVuLxN1Ceq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SMNgrZye; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-36d2a601c31so1054609f8f.0;
-        Fri, 09 Aug 2024 18:19:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723252785; x=1723857585; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ed27wLGIi8TfTxQJR9Xp4Dn3qUixlhgtcR9BAz+hQCA=;
-        b=SMNgrZyeBaULlM3TrPAFjzI/ojU8utbtJewDB1TIOthJQGu2HIlbsRggIqGx3iY7x0
-         7g/x4WwfTsHPSRZ9kxZ/kiggAkmHT42ch8ZjdqVm/GnM01M+wznzdFJWF+AWPz/q1xt9
-         PxVIvEXcd7hJFhzr8Hgs/SBbZ2P16GmAZtOjsx0PzCHdd2IR3VAxuKu7ziQstIHERYFG
-         g7NgjRS8uXm5lj4xZrO/ivst17xeQXxwP+cO64EJpPWku4ceSrdcX6ZO4icBs80iczhH
-         kbk1Ftz1QFBnr6V2mZsL0GyufGWRNWrsSrUcf3HVqjBG6JuuBNgN0Ek4w+PrGFXadaYt
-         DB5Q==
+	s=arc-20240116; t=1723252864; c=relaxed/simple;
+	bh=/KZgtwTnGNrVi5uqrp3hj4UXfuVBILcRjfq+oFSm8KE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BtKfEH1EeNK/y7G/pae9hEDkj07BMA1fNLKT5j6y6LkwOnMstIQHHJG/1O6gsHE1QamPNT0GQoFD8OZnb5d5cfshH3BU1GXPMW/fDySPZT1VbgV4/UHOoeFH+Jsnvk2mSNbPhPLfJzb6nLa6QzjrQqI9uS4R1LUqEk3FgsfKtA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b391cf336so40181405ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 18:21:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723252785; x=1723857585;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1723252862; x=1723857662;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ed27wLGIi8TfTxQJR9Xp4Dn3qUixlhgtcR9BAz+hQCA=;
-        b=CfZNH17A/ufSheDKV8lfWUAyLw67cmCSNo2qyja9TXVrg8P0NdTN5DF5Hd3PjI6Meo
-         3/rGyTuJNa4BiHpa4+BCyzKyUj7nR7ImqiUfhsAnoV0xHo2VfGkEx20JeN72eTE9ZeTa
-         h4zFw7opQliP/QfoWqB+jOC4rzu2LOJR+Kf6tl3juOcww6dXlnu4XPV0i5PaILgssZa/
-         UQXx6U0DJsYXhskKubCishHpw6ZTP0hExFiyNJDpWiEvVSgOiu+5cgLnd6uKNbMl/fr4
-         HsC7we+6P299SyW8USZXOLF25tNKnn4UpvHBsT7OD2udzeaxCasn31neAarRgDpBZYWz
-         xXPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmqsMXRez8gXK1YcTKcbul1LgfZXc7QAUrdZI5tdo9Hj4/5+I69MfaghjUfeHROTWiaM25EMVOWSKLUknVT5kf2btf8QfiS35fCsbDErzPj+fdhrPQNsB12ynhI34GTcVQwn9fdhUjNOM=
-X-Gm-Message-State: AOJu0Yw4iQPi1TKsTVuqN0mwkG0iqGSmPoDXnDAaAh/T44DAw76bgYQ3
-	zdm5aZBYK+m0XrBeidpR9N6Bw99iMbptEQt+7ECI6UmJK8lA5j7a
-X-Google-Smtp-Source: AGHT+IGlOuoPmSRMK0/G5JR5K6t9fbYw142XeGbhQM/kww2n3HQtaq1P/i4K65m3+WJV7P9xvecwDg==
-X-Received: by 2002:adf:b1dd:0:b0:367:434f:caa2 with SMTP id ffacd0b85a97d-36d5ad9c793mr2195752f8f.0.1723252784638;
-        Fri, 09 Aug 2024 18:19:44 -0700 (PDT)
-Received: from ?IPV6:2a02:8071:b783:140:927c:82ba:d32d:99c1? ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e48c784basm862675f8f.0.2024.08.09.18.19.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Aug 2024 18:19:44 -0700 (PDT)
-Message-ID: <8ce2ae38-51da-470b-9d3a-7408b79cf6e4@gmail.com>
-Date: Sat, 10 Aug 2024 03:19:42 +0200
+        bh=bOjcroTxiXS01J/mgD48xC1SyD8vtDV4JFo7zMvjHOk=;
+        b=bWQ9kE0K3sXSZa6IR13X/t6vp4IdsdnuOSmh7z1mfI8OM4PawwNid4aRDWrP7MFRFd
+         Qjg4Ub5NMJSep5aYgwpGdXIfJkRVon8JISFvVarnHhvHKhXAWvJux7BsRvSWJj5wSoYU
+         8/9SIAOyMdAxJpEFxjihbhd6sxk2yjCOOfrqZhQQf4sOFMK/J1E4UhbzmorcjcWRDXUA
+         LwmEorwaZnC/k/kI+T3YHWcnKha2JlIgrCpVXf6LQJjkZrbw/7SH9XAqJQsOUCP6eknj
+         ZQO023Iyectx1Oky5rXZDJjQx2Idbi9DEKf51FglsAmoxznEcDvJjvX/OsoIP61vNMfp
+         2FSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIDq/VRuQmCe7QwXWIDnx4bzFj9hFZOQ/+FpjdDrO8mlNBa5BAsiRZSJzNNsRY2RrSUrKS9bAOpvrxBx5qIYnX62Mf+P5xF/Cn56yZ
+X-Gm-Message-State: AOJu0YwaoQv2aEpke8hZEJFgfGQvBCfKZfmWttI7rmkKURX29SnKqpeM
+	DS0B+pMj4Kxc21nJcTkkc9949UgMR22ACha8bgXjKANydDDhm+LOcS4ntAoymrCidhkloX/W9U+
+	VvtROZG3E3pk6nxImcmFENsg8KJM2eUrtDkoGhWHKJGbMMprYDmp2au8=
+X-Google-Smtp-Source: AGHT+IHM+auSRG4EltT837WfTWDqFUxm4HL09/9k2Z0/hrEchkuMpHbjljAOtsfUo1bDg5xzxyy0EhXblrkumr0ECW/94OT57VML
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] hwmon: Add thermal sensor driver for Surface
- Aggregator Module
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, Hans de Goede <hdegoede@redhat.com>,
- Ivor Wanders <ivor@iwanders.net>, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-References: <20240804230832.247852-1-luzmaximilian@gmail.com>
- <2419e2ab-25e2-483b-a163-6b4fbfef6866@roeck-us.net>
- <5d11350f-71b0-44fc-8631-01e1740581d6@gmail.com>
- <5208afb1-92dc-43d3-b6ed-36a2fdd40ec7@roeck-us.net>
- <b66f1fed-20a2-4de3-85c5-bf6fb90c2649@gmail.com>
- <851fe373-471e-4892-addb-343d84334daa@roeck-us.net>
-Content-Language: en-US
-From: Maximilian Luz <luzmaximilian@gmail.com>
-In-Reply-To: <851fe373-471e-4892-addb-343d84334daa@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:b2d:b0:39b:c00:85aa with SMTP id
+ e9e14a558f8ab-39bc704b058mr2190625ab.0.1723252862296; Fri, 09 Aug 2024
+ 18:21:02 -0700 (PDT)
+Date: Fri, 09 Aug 2024 18:21:02 -0700
+In-Reply-To: <tencent_234974A3B3644C9769777466C1F365636505@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b732a5061f4a12b1@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/7/24 10:37 PM, Guenter Roeck wrote:
-> On 8/7/24 13:11, Maximilian Luz wrote:
->> On 8/7/24 9:50 PM, Guenter Roeck wrote:
->>> On 8/7/24 12:25, Maximilian Luz wrote:
->>>> On 8/7/24 2:32 AM, Guenter Roeck wrote:
->>>>> On 8/4/24 16:08, Maximilian Luz wrote:
->>>>
->>>> [...]
->>>>
->>>>>> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
->>>>>> index b60fe2e58ad6..70c6385f0ed6 100644
->>>>>> --- a/drivers/hwmon/Kconfig
->>>>>> +++ b/drivers/hwmon/Kconfig
->>>>>> @@ -2080,6 +2080,16 @@ config SENSORS_SURFACE_FAN
->>>>>>         Select M or Y here, if you want to be able to read the fan's speed.
->>>>>> +config SENSORS_SURFACE_TEMP
->>>>>> +    tristate "Microsoft Surface Thermal Sensor Driver"
->>>>>> +    depends on SURFACE_AGGREGATOR
->>>>>
->>>>> As the kernel test robot points out, this dependency is wrong.
->>>>> __ssam_device_driver_register() is only available
->>>>> if SURFACE_AGGREGATOR_BUS is enabled.
->>>>
->>>> Right, I should have spotted this before submission, sorry. This should
->>>> be
->>>>
->>>>    depends on SURFACE_AGGREGATOR
->>>>    depends on SURFACE_AGGREGATOR_BUS
->>>>
->>>
->>> SURFACE_AGGREGATOR_BUS already depends on SURFACE_AGGREGATOR, so the extra
->>> dependency is not needed.
->>
->> Unfortunately, SURFACE_AGGREGATOR_BUS is a bool and SURFACE_AGGREGATOR
->> tri-state, and the inference of whether SURFACE_AGGREGATOR needs to be
->> built in or not breaks because of that. Meaning we could have something
->> like
->>
->>      SENSORS_SURFACE_TEMP=y      (tri-state, module)
->>      SURFACE_AGGREGATOR_BUS=y    (bool, optional-code-flag)
->>      SURFACE_AGGREGATOR=m        (tri-state, module)
->>
->> because SURFACE_AGGREGATOR_BUS is fine with either m or y. But in
->> reality, SENSORS_SURFACE_TEMP=y would require SURFACE_AGGREGATOR=y.
->>
-> 
-> Ah yes, I can see that the double dependency is there everywhere. Normally I'd
-> have assumed that to be handled with SURFACE_AGGREGATOR_BUS as non-configurable
-> option and its users selecting it, i.e.,
-> 
->      depends on SURFACE_AGGREGATOR
->      select SURFACE_AGGREGATOR_BUS
-> 
-> but, sure, it is your call to make SURFACE_AGGREGATOR_BUS a configurable
-> (instead of selectable) option. I don't understand the benefit of being able
-> to enable SURFACE_AGGREGATOR_BUS without any users, but then maybe I just
-> don't have sufficient understanding of the context.
+Hello,
 
-No... you're completely right. "select" does make more sense.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in v9fs_begin_writeback
 
-I'll add a patch to change that for surface_fan as well for v3 (and then
-I guess slowly update it for the other subsystems too).
+ino: 1901336, folio: ffffea0000e18200, netfs_writepages
+ino: 1901336, v9fs_begin_writeback
+------------[ cut here ]------------
+folio expected an open fid inode->i_ino=1901336
+WARNING: CPU: 0 PID: 65 at fs/9p/vfs_addr.c:40 v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
+Modules linked in:
+CPU: 0 UID: 0 PID: 65 Comm: kworker/u32:3 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: writeback wb_workfn (flush-9p-7)
+RIP: 0010:v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
+Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7a 48 8b 73 40 48 c7 c7 a0 9b 8e 8b e8 a5 49 0d fe 90 <0f> 0b 90 90 eb 80 e8 89 2a a8 fe e9 6f ff ff ff e8 ef 29 a8 fe e9
+RSP: 0018:ffffc90000d27478 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff888032adb9f0 RCX: ffffffff814cc379
+RDX: ffff888019ac8000 RSI: ffffffff814cc386 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888032adb9f0
+R13: ffffc90000d27840 R14: ffff88802036a658 R15: ffff88802036a3c0
+FS:  0000000000000000(0000) GS:ffff88806b000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc78e97db8 CR3: 0000000044b02000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ netfs_writepages+0x82c/0x1040 fs/netfs/write_issue.c:541
+ do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
+ __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
+ writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
+ wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
+ wb_do_writeback fs/fs-writeback.c:2274 [inline]
+ wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-Best regards,
-Max
+
+Tested on:
+
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1121115d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=146ec67d980000
+
 
