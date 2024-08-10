@@ -1,145 +1,121 @@
-Return-Path: <linux-kernel+bounces-281720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B8E94DA44
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:15:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD60294DA50
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A19F31C20E2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2423283454
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E5A1339B1;
-	Sat, 10 Aug 2024 03:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FDC139CEE;
+	Sat, 10 Aug 2024 03:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h0BusgFh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiqvyIhi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564B9179BC;
-	Sat, 10 Aug 2024 03:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD6D1799F;
+	Sat, 10 Aug 2024 03:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723259724; cv=none; b=s2Ll9QgeKThN/haSpIQwDaKyZq8pLGJo248xQTkBRqTMxRGm9RLNKYywzQVWhXSbOHDBKYawIpLArcHrN0W4qEHlpYLAYs3hi4xpY1ORk9I954llDsUknzIQqUQv1/nxPnDIJ0pE8u0x6cX9pEyPy0H2VBAFKhpPZspp4Juje48=
+	t=1723260970; cv=none; b=uoFwuHEm29PU+twGWP0kqRQoXaFd7rcJRMpcbX7uXZhGFiz6mFPXh7H78iG67gc0y5bdlzMPjkknVm7qjaFp6fc+XdCnayZMb8J3yspf+fxL7P5qwlgMMon+BvVwTOgTtFVH8bqkTvwUFwQsuzNQeaBUHIE5eS7mhmXyvQEytOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723259724; c=relaxed/simple;
-	bh=O9KoFdDnMMbLwa3iE08BPsmUNtkolKPePIVJLiReEDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U7o+oDEVe7MM8fiWHTtPbKFEwUgdW1JMh2DvpldyUROq2vU69TAAieVcCSDXSCcTsceRLUhErX/5iUsG1slQhsRgWUf+bPc9OOta+YAKy/6p69SGWLrMisnkeFn4s6DZ87jhPNxkusqNFw10JUMAjs5RT64u/yWCszeR63NjwZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h0BusgFh; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723259723; x=1754795723;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O9KoFdDnMMbLwa3iE08BPsmUNtkolKPePIVJLiReEDo=;
-  b=h0BusgFhK5BQ0BaGChT56C+Kg7A1S0C94Zj9AmwBRsZrKH8yiB8s2b2v
-   JpIICdlfPHyILLYujt/VVAR1g2+Y+17RY8S3M3o4epWbVZ++3q7maIN/F
-   cbTWBBwTxZd/bEjBbU7kOKa2UbIKqyhGKb+Cn8+aUBrlshAi+bT+P5snl
-   bTI0v0XfeL1vHjQrrOeqo/Cx4q2JI9FXvJzHphhWQwJDwu9hOOfO18W9b
-   BrQc79beQqa/67G0sxPxjO28VPNq49qu/GVKYs/qEloxHFd5Ue6iopnxZ
-   MembK2E863ITvHRQALNr58Sv1fjzUeQTc8/t5KcodIv7KxHLofjDTe1Ws
-   A==;
-X-CSE-ConnectionGUID: p3Tj0tAjT5Oa+pLbWQgDfQ==
-X-CSE-MsgGUID: XHJ10sb1Swmn4iAlowq/eg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="32124232"
-X-IronPort-AV: E=Sophos;i="6.09,278,1716274800"; 
-   d="scan'208";a="32124232"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 20:15:21 -0700
-X-CSE-ConnectionGUID: thWUoZKZS8GOunRq0xE3Tg==
-X-CSE-MsgGUID: hJybC2d4R9ikc5O+20Ul/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,278,1716274800"; 
-   d="scan'208";a="57408512"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 09 Aug 2024 20:15:20 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sccZZ-0009Yj-2t;
-	Sat, 10 Aug 2024 03:15:17 +0000
-Date: Sat, 10 Aug 2024 11:14:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Hutterer <peter.hutterer@who-t.net>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] HID: hidraw - add HIDIOCREVOKE ioctl
-Message-ID: <202408101044.nmAzxQqQ-lkp@intel.com>
-References: <20240809100342.GA52163@quokka>
+	s=arc-20240116; t=1723260970; c=relaxed/simple;
+	bh=4W740LMxQSHpD+a8jut0olyJQpP8ghD1qCvb9gqE2+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=azxFpbB1NCHgPc0LZaHLGB1PZw7KsH8WZ0VzfcX+g9dyMdq/TvNLNBmm2I4k5/0yhKNcE0K271odLKuERLQPzU8YyauZ+d+T6ALqO2ObtJ20j0JWJegZQUF54KVMG+JK5YOkJmPuJHYnQBmsfdixNUHoutl3ZF0lw0r8kGFKpZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiqvyIhi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CE0C32782;
+	Sat, 10 Aug 2024 03:36:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723260969;
+	bh=4W740LMxQSHpD+a8jut0olyJQpP8ghD1qCvb9gqE2+s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GiqvyIhi1kv5o/hv4hzAWewMCSQvtMxAZfqm8DgYQDjhMdvNKv4GJgxzF6BoD0psa
+	 WpAxGTfAGzCkbyHkHgVMGVVx0lBHg6Fl/elaEcRAT0RI4PaHiPuIXQPsysm0ZWhYXw
+	 RkIXSkAFUkjIfah+JG5OUYOvQEPlBMOj+8GCBGN6UiVDPzdj4kkjdKGnRE66SaT9JM
+	 t9x7jTsCQbc6gfjTwZtGYEy3jrCj2P9lz+SFdgYlDAqIWAvic8ClhxI2xRh5hHPCtz
+	 TtnLoEN5zew+WdSexRheOV2wfoIgE8x1G3LIG/x+Yn5HpS1cTSOOMy6J4egkfjy0Ab
+	 kRqMUzsmiW7OQ==
+Date: Fri, 9 Aug 2024 20:36:06 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Allen <allen.lkml@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ jes@trained-monkey.org, kda@linux-powerpc.org, cai.huoqing@linux.dev,
+ dougmill@linux.ibm.com, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+ aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com,
+ tlfalcon@linux.ibm.com, cooldavid@cooldavid.org, marcin.s.wojtas@gmail.com,
+ mlindner@marvell.com, stephen@networkplumber.org, nbd@nbd.name,
+ sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com, lorenzo@kernel.org,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ borisp@nvidia.com, bryan.whitehead@microchip.com,
+ UNGLinuxDriver@microchip.com, louis.peens@corigine.com,
+ richardcochran@gmail.com, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-acenic@sunsite.dk,
+ linux-net-drivers@amd.com, netdev@vger.kernel.org, Sunil Goutham
+ <sgoutham@marvell.com>
+Subject: Re: [net-next v3 05/15] net: cavium/liquidio: Convert tasklet API
+ to new bottom half workqueue mechanism
+Message-ID: <20240809203606.69010c5b@kernel.org>
+In-Reply-To: <CAOMdWSJF3L+bj-f5yz5BULTHR1rsCV-rr_MK0bobpKgRwuM9kA@mail.gmail.com>
+References: <20240730183403.4176544-1-allen.lkml@gmail.com>
+	<20240730183403.4176544-6-allen.lkml@gmail.com>
+	<20240731190829.50da925d@kernel.org>
+	<CAOMdWS+HJfjDpQX1yE+2O3nb1qAkQJC_GSiCjrrAJVrRB5r_rg@mail.gmail.com>
+	<20240801175756.71753263@kernel.org>
+	<CAOMdWSKRFXFdi4SF20LH528KcXtxD+OL=HzSh9Gzqy9HCqkUGw@mail.gmail.com>
+	<20240805123946.015b383f@kernel.org>
+	<CAOMdWS+=5OVmtez1NPjHTMbYy9br8ciRy8nmsnaFguTKJQiD9g@mail.gmail.com>
+	<20240807073752.01bce1d2@kernel.org>
+	<CAOMdWSJF3L+bj-f5yz5BULTHR1rsCV-rr_MK0bobpKgRwuM9kA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809100342.GA52163@quokka>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Peter,
+On Thu, 8 Aug 2024 19:31:57 -0700 Allen wrote:
+> > > In the context of of the driver, the conversion from tasklet_enable()
+> > > to enable_and_queue_work() is correct because the callback function
+> > > associated with the work item is designed to be safe even if there
+> > > is no immediate work to process. The callback function can handle
+> > > being invoked in such situations without causing errors or undesirable
+> > > behavior. This makes the workqueue approach a suitable and safe
+> > > replacement for the current tasklet mechanism, as it provides the
+> > > necessary flexibility and ensures that the work item is properly
+> > > scheduled and executed.  
+> >
+> > Fewer words, clearer indication that you read the code would be better
+> > for the reviewer. Like actually call out what in the code makes it safe.
+> >  
+> Okay.
+> > Just to be clear -- conversions to enable_and_queue_work() will require
+> > manual inspection in every case.  
+> 
+> Attempting again.
+> 
+> The enable_and_queue_work() only schedules work if it is not already
+> enabled, similar to how tasklet_enable() would only allow a tasklet to run
+> if it had been previously scheduled.
+> 
+> In the current driver, where we are attempting conversion, enable_work()
+> checks whether the work is already enabled and only enables it if it
+> was disabled. If no new work is queued, queue_work() won't be called.
+> Hence, the callback is safe even if there's no work.
 
-kernel test robot noticed the following build warnings:
+Hm. Let me give you an example of what I was hoping to see for this
+patch (in addition to your explanation of the API difference):
 
-[auto build test WARNING on hid/for-next]
-[also build test WARNING on linus/master v6.11-rc2 next-20240809]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Hutterer/HID-hidraw-add-HIDIOCREVOKE-ioctl/20240809-202833
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240809100342.GA52163%40quokka
-patch subject: [PATCH v2] HID: hidraw - add HIDIOCREVOKE ioctl
-config: x86_64-randconfig-102-20240809 (https://download.01.org/0day-ci/archive/20240810/202408101044.nmAzxQqQ-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240810/202408101044.nmAzxQqQ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408101044.nmAzxQqQ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/hid/hidraw.c:41:22: warning: no previous prototype for function 'hidraw_is_revoked' [-Wmissing-prototypes]
-      41 | __weak noinline bool hidraw_is_revoked(struct hidraw_list *list)
-         |                      ^
-   drivers/hid/hidraw.c:41:17: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      41 | __weak noinline bool hidraw_is_revoked(struct hidraw_list *list)
-         |                 ^
-         |                 static 
->> drivers/hid/hidraw.c:47:21: warning: no previous prototype for function 'hidraw_open_errno' [-Wmissing-prototypes]
-      47 | __weak noinline int hidraw_open_errno(__u32 major, __u32 minor)
-         |                     ^
-   drivers/hid/hidraw.c:47:17: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      47 | __weak noinline int hidraw_open_errno(__u32 major, __u32 minor)
-         |                 ^
-         |                 static 
-   2 warnings generated.
-
-
-vim +/hidraw_is_revoked +41 drivers/hid/hidraw.c
-
-    40	
-  > 41	__weak noinline bool hidraw_is_revoked(struct hidraw_list *list)
-    42	{
-    43		return list->revoked;
-    44	}
-    45	ALLOW_ERROR_INJECTION(hidraw_is_revoked, TRUE);
-    46	
-  > 47	__weak noinline int hidraw_open_errno(__u32 major, __u32 minor)
-    48	{
-    49		return 0;
-    50	}
-    51	ALLOW_ERROR_INJECTION(hidraw_open_errno, ERRNO);
-    52	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ The conversion for oct_priv->droq_bh_work should be safe. While
+ the work is per adapter, the callback (octeon_droq_bh()) walks all
+ queues, and for each queue checks whether the oct->io_qmask.oq mask
+ has a bit set. In case of spurious scheduling of the work - none of
+ the bits should be set, making the callback a noop.
 
