@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-281899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B30394DCC7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:32:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F17594DCCA
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69AF51C20DCB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:32:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52AF51C20E98
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D82158559;
-	Sat, 10 Aug 2024 12:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D8115855A;
+	Sat, 10 Aug 2024 12:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEtFWszX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEE/RsMk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E973D182D8;
-	Sat, 10 Aug 2024 12:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FEA182D8;
+	Sat, 10 Aug 2024 12:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723293128; cv=none; b=HO200SW/U1hYD9RpwGEFV2hQ6W6bNlSjINvoKTz8ch/VJ/cPxwqj930sOoEUSlGgakeKHL17jDiaUvACQePps5ety1tMJidzqNdUh8Q5aMbZtfRFZAcfZ0kFSO0459RZ0ON45CC7iPfH+MenQ7ohP7BMa4fXBcCXFdE2FlUI814=
+	t=1723293289; cv=none; b=Zh0eMTVST7+j7yXRWHrtAe+BU+xcqn1ZiaN/VuwYIMu2E9pEffCemTwHkVc2BdCW5jffRZfrkQhDbTdtb1b891iNmHYfKi35cMvFUyBndyrQq2BZOgfunnWlnOIXezpZeGh9IRvJZ7GaSTpnJuXpaFh4j20yMBNtBeVQJS/DQTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723293128; c=relaxed/simple;
-	bh=HnGsUuF9x9ZgA2drCBsxqDipQcuqcb3ZJNQgAJuj7Nw=;
+	s=arc-20240116; t=1723293289; c=relaxed/simple;
+	bh=pqU60wcz/zHy1LAxaY+gFrvb0pLQXVtGs+HcDy2Q57Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ncn7wuz/2SECMPUy9Exg+P7G7fARPd4sC2835m66IffKjJJX4qLT1MuTKzIoBMjkFJOUTzcYmFHM6NhEjcoVJOnvEvQcw6KTEpHV0TT5nzzD1JV7PIM9ikf4Fu94BtGerTjtiHOj34UQVxDZETsPljZciQTZt83ImuJQMM9/gUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEtFWszX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB4EC32781;
-	Sat, 10 Aug 2024 12:32:03 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=RZ4AeyCA4VGFDJtC/G812I5OLeweUHKgT2iIk0h21Qox4GyfyNvVAWosS2HMj1aOKCr2F7T1T3BASHY9TVg0+PxrTOrog/7SzBnb1FUcBIUOn/OePq3J/dlinCs4LZHRrcadEDLo4F4/rwoY9YfIcmhGehlTZVbmggw8V1OQ9Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEE/RsMk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BE2BC32781;
+	Sat, 10 Aug 2024 12:34:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723293127;
-	bh=HnGsUuF9x9ZgA2drCBsxqDipQcuqcb3ZJNQgAJuj7Nw=;
+	s=k20201202; t=1723293288;
+	bh=pqU60wcz/zHy1LAxaY+gFrvb0pLQXVtGs+HcDy2Q57Y=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jEtFWszXlkWVaZRRH2Wh5kUU3T9cMBsvn3RmQCdwCw1+dYtaWd0g2jOsmdsSlCnZn
-	 EHqW2LbUUHQnoF4w8zQFXFr+0g+jqvKNPty+nkk3j60q1O8debbh5tOj0pb0RGrgtQ
-	 1zbjrvIqB3rnCZ0xMav3UF+tvcBsijxgA4g5QRZzfP9YnouRU2OqI8869XxPE6Ld8r
-	 Y+uft1uKoB8YDIMwiqsVEKXjacz7Qi7NeAueS3ssG7d683aj6QPsFO+NbowyZmGelH
-	 84plmLdrxe+WkO8gIyUNEuNLey7VoZiRv1D2YS18q8PflMZlAkQhGb8UtDGMRlhs/z
-	 mbdg+7IrIIP5A==
-Message-ID: <0e46f4c2-5092-4803-9e6a-aa539a106fab@kernel.org>
-Date: Sat, 10 Aug 2024 14:32:01 +0200
+	b=HEE/RsMkq/YeYoen1nvTpnQL/9Q+x4w+om9ilKnYvrItVqTiYF+BlW4wfOikxGmmJ
+	 M0kTZZ529eZdttPNut0Yz+UhkQ9cHyy5mecCakhgYd6qr3lhpO96gNx8txn4815Tnp
+	 LyUxawPTY6E7KA7b4hss55ql414r2K2IyJiRWIIV+erBIz9TYfoIHFl8u44ZzQSa4g
+	 9Giwe9McUR7E3hllQ7oxmj+PbY1wAQHsXT9MDglqtH7LYHyr0ec3ALnPoO70/Nf3Pg
+	 K+lrbrPVx5ZqlFSJMea0JhG4bGyBUGKPmyMMhcVW/A3XvqdrQAK+n0UYHwuRRJUZ1k
+	 QLOon5mJvspWQ==
+Message-ID: <f984d88c-d88f-46bc-8566-a6b21c98b89a@kernel.org>
+Date: Sat, 10 Aug 2024 14:34:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: mmc: Add support for rk3576 dw-mshc
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240808164900.81871-1-detlev.casanova@collabora.com>
- <20240808164900.81871-2-detlev.casanova@collabora.com>
+Subject: Re: [PATCH 1/1] dt-bindings: gpio: gpio-davinci: Add the
+ gpio-reserved-ranges property
+To: Jared McArthur <j-mcarthur@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
+ <linus.walleij@linaro.org>, Keerthy <j-keerthy@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240809154638.394091-1-j-mcarthur@ti.com>
+ <20240809154638.394091-2-j-mcarthur@ti.com>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,43 +104,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240808164900.81871-2-detlev.casanova@collabora.com>
+In-Reply-To: <20240809154638.394091-2-j-mcarthur@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/08/2024 18:47, Detlev Casanova wrote:
-> Add the compatible string for rockchip,rk3576-dw-mshc and add support
-> for the rockchip,v2-tuning flag, a new feature of this core.
+On 09/08/2024 17:46, Jared McArthur wrote:
+> Current definition of the davinci gpio controller doesn't include the
+> gpio-reserved-ranges property. Add the gpio-reserved-ranges property
+> so it can be used within device tree files.
 > 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
->  .../devicetree/bindings/mmc/rockchip-dw-mshc.yaml          | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Will prevent users from trying to access gpios that don't exist.
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> index 211cd0b0bc5f3..86c986a7adb23 100644
-> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> @@ -39,6 +39,7 @@ properties:
->                - rockchip,rk3368-dw-mshc
->                - rockchip,rk3399-dw-mshc
->                - rockchip,rk3568-dw-mshc
-> +              - rockchip,rk3576-dw-mshc
->                - rockchip,rk3588-dw-mshc
->                - rockchip,rv1108-dw-mshc
->                - rockchip,rv1126-dw-mshc
-> @@ -95,6 +96,12 @@ properties:
->        If not specified, the host will do tuning for 360 times,
->        namely tuning for each degree.
->  
-> +  rockchip,v2-tuning:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Specify when the v2 tuning is supported. In this case, the hardware
-> +      inherits pre-stage loader's phase settings.
+> Signed-off-by: Jared McArthur <j-mcarthur@ti.com>
 
-Is supported? This sounds compatible specific, so drop it. Unless it is
-bootloader dependent, but how?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
